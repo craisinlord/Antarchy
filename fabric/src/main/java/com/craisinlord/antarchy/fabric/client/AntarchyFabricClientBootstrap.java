@@ -183,6 +183,7 @@ public final class AntarchyFabricClientBootstrap {
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.TORCHFLOWER_BUSH.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.HUSHWEED.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.CORNEA_STALK.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.FALLEN_KING_CROWN_BLOCK.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.ANTIMETAL_SCAFFOLDING.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.UMBRAL_MOSS_CARPET.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.NYXITE_SPIKE.get(), RenderType.cutout());

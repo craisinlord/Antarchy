@@ -39,7 +39,6 @@ import com.craisinlord.antarchy.content.effect.ShrinkMobEffect;
 import com.craisinlord.antarchy.content.entity.AppleCowEntityVariants.AppleCow;
 import com.craisinlord.antarchy.content.entity.AppleCowEntityVariants.EnchantedGoldenAppleCow;
 import com.craisinlord.antarchy.content.entity.AppleCowEntityVariants.GoldenAppleCow;
-import com.craisinlord.antarchy.content.entity.AppleCowEntityVariants.HoneyedAppleCow;
 import com.craisinlord.antarchy.content.entity.cloud_shark.CloudSharkEntity;
 import com.craisinlord.antarchy.content.entity.BedBugEntity;
 import com.craisinlord.antarchy.content.entity.ButterflyEntity;
@@ -217,11 +216,6 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 
 public final class AntarchyFabricContent {
-    public static final boolean CREATE_LOADED = isModLoaded("create");
-    private static final ResourceLocation THORAXIS_DIMENSION_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "thoraxis");
-    private static final long THORAXIS_SPAWN_DEBUG_INTERVAL = 200L;
-    private static long lastThoraxisSpawnSummaryLogTick = Long.MIN_VALUE;
-    private static long lastThoraxisSpawnPlacementLogTick = Long.MIN_VALUE;
     private static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Antarchy.MODID);
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Antarchy.MODID);
     private static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Antarchy.MODID);
@@ -782,6 +776,13 @@ public final class AntarchyFabricContent {
             () -> new com.craisinlord.antarchy.content.block.AntimetalScaffoldingBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SCAFFOLDING)));
     public static final DeferredBlock<CorneaStalkBlock> CORNEA_STALK = BLOCKS.register("cornea_stalk",
             () -> new CorneaStalkBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SWEET_BERRY_BUSH).randomTicks()));
+    public static final DeferredBlock<Block> FALLEN_KING_CROWN_BLOCK = BLOCKS.register("fallen_king_crown",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .strength(0.2F)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()
+                    .isSuffocating((state, level, pos) -> false)
+                    .isViewBlocking((state, level, pos) -> false)));
     public static final DeferredBlock<AmethystClusterBlock> SMALL_BLOOD_CRYSTAL_BUD = BLOCKS.register("small_blood_crystal_bud",
             () -> new AmethystClusterBlock(3.0F, 4.0F, BlockBehaviour.Properties.ofFullCopy(Blocks.SMALL_AMETHYST_BUD)));
     public static final DeferredBlock<AmethystClusterBlock> MEDIUM_BLOOD_CRYSTAL_BUD = BLOCKS.register("medium_blood_crystal_bud",
@@ -1364,9 +1365,6 @@ public final class AntarchyFabricContent {
             () -> buildCowType(GoldenAppleCow::new, "golden_apple_cow"));
     public static final DeferredHolder<EntityType<?>, EntityType<EnchantedGoldenAppleCow>> ENCHANTED_GOLDEN_APPLE_COW = ENTITY_TYPES.register("enchanted_golden_apple_cow",
             () -> buildCowType(EnchantedGoldenAppleCow::new, "enchanted_golden_apple_cow"));
-    public static final DeferredHolder<EntityType<?>, EntityType<HoneyedAppleCow>> HONEYED_APPLE_COW = CREATE_LOADED
-            ? ENTITY_TYPES.register("honeyed_apple_cow", () -> buildCowType(HoneyedAppleCow::new, "honeyed_apple_cow"))
-            : null;
     public static final DeferredHolder<EntityType<?>, EntityType<DrTrayaurusEntity>> DR_TRAYAURUS = ENTITY_TYPES.register("dr_trayaurus",
             () -> EntityType.Builder.of(DrTrayaurusEntity::new, MobCategory.MISC)
                     .sized(0.6F, 1.95F)
@@ -1476,9 +1474,6 @@ public final class AntarchyFabricContent {
             () -> new DeferredSpawnEggItem(GOLDEN_APPLE_COW, 0xFFE14A, 0x32FF32, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> ENCHANTED_GOLDEN_APPLE_COW_SPAWN_EGG = ITEMS.register("enchanted_golden_apple_cow_spawn_egg",
             () -> new DeferredSpawnEggItem(ENCHANTED_GOLDEN_APPLE_COW, 0x7040B6, 0xFFE14A, new Item.Properties()));
-    public static final DeferredItem<DeferredSpawnEggItem> HONEYED_APPLE_COW_SPAWN_EGG = CREATE_LOADED
-            ? ITEMS.register("honeyed_apple_cow_spawn_egg", () -> new DeferredSpawnEggItem(HONEYED_APPLE_COW, 0xC07A23, 0xF0C75A, new Item.Properties()))
-            : null;
     public static final DeferredItem<DeferredSpawnEggItem> DR_TRAYAURUS_SPAWN_EGG = ITEMS.register("dr_trayaurus_spawn_egg",
             () -> new DeferredSpawnEggItem(DR_TRAYAURUS, 0xB7A27B, 0x4A3D29, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> WASP_SPAWN_EGG = ITEMS.register("wasp_spawn_egg",
@@ -1575,10 +1570,6 @@ public final class AntarchyFabricContent {
         FabricDefaultAttributeRegistry.register(APPLE_COW.get(), cowAttributes);
         FabricDefaultAttributeRegistry.register(GOLDEN_APPLE_COW.get(), cowAttributes);
         FabricDefaultAttributeRegistry.register(ENCHANTED_GOLDEN_APPLE_COW.get(), cowAttributes);
-        if (CREATE_LOADED && HONEYED_APPLE_COW != null) {
-            FabricDefaultAttributeRegistry.register(HONEYED_APPLE_COW.get(), cowAttributes);
-        }
-
         FabricDefaultAttributeRegistry.register(DR_TRAYAURUS.get(), Villager.createAttributes().build());
         FabricDefaultAttributeRegistry.register(CLOUD_SHARK.get(), CloudSharkEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(KRAKEN.get(), KrakenEntity.createAttributes().build());
@@ -1622,9 +1613,6 @@ public final class AntarchyFabricContent {
         SpawnPlacements.register(APPLE_COW.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Cow::checkAnimalSpawnRules);
         SpawnPlacements.register(GOLDEN_APPLE_COW.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Cow::checkAnimalSpawnRules);
         SpawnPlacements.register(ENCHANTED_GOLDEN_APPLE_COW.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Cow::checkAnimalSpawnRules);
-        if (CREATE_LOADED && HONEYED_APPLE_COW != null) {
-            SpawnPlacements.register(HONEYED_APPLE_COW.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Cow::checkAnimalSpawnRules);
-        }
         SpawnPlacements.register(CLOUD_SHARK.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CloudSharkEntity::canSpawn);
         SpawnPlacements.register(WASP.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaspEntity::canSpawn);
         SpawnPlacements.register(BOMBER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BomberEntity::canSpawn);

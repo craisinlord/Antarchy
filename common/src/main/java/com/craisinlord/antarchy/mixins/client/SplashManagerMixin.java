@@ -34,5 +34,6 @@ public abstract class SplashManagerMixin {
         this.splashes.add("Ants Ants Revolution!");
         this.splashes.add("Rainbow sugar yummy");
         this.splashes.add("Now with inverted gravity!");
+        this.splashes.add("Everything we need is already here");
     }
 }

@@ -44,17 +44,29 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.animation.keyframe.event.builtin.AutoPlayingSoundKeyframeHandler;
 import software.bernie.geckolib.util.GeckoLibUtil;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 
 import java.util.UUID;
 import java.util.function.Predicate;
 
 public class BasiliskEntity extends Monster implements GeoEntity {
+    private static final EntityDataAccessor<Integer> ANIMATION_STATE =
+            SynchedEntityData.defineId(BasiliskEntity.class, EntityDataSerializers.INT);
     private static final byte ATTACK_ENTITY_EVENT = 4;
     private static final int ATTACK_ANIM_TICKS = 18;
+    private static final int DEATH_TICKS = 25;
+
+    private static final int ANIM_IDLE = 0;
+    private static final int ANIM_WALK = 1;
+    private static final int ANIM_ATTACK = 2;
+    private static final int ANIM_DEATH = 3;
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
     private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenPlay("attack");
+    private static final RawAnimation DEATH_ANIM = RawAnimation.begin().thenPlay("death");
 
     private static final int HISS_COOLDOWN_TICKS = 600;
     private static final double GAZE_RANGE = 12.0D;
@@ -80,6 +92,12 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     public BasiliskEntity(EntityType<? extends BasiliskEntity> entityType, Level level) {
         super(entityType, level);
         this.xpReward = 50;
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(ANIMATION_STATE, ANIM_IDLE);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -149,12 +167,18 @@ public class BasiliskEntity extends Monster implements GeoEntity {
             this.attackAnimTicks--;
         }
 
+        if (this.isDeadOrDying()) {
+            this.updateAnimationState();
+            return;
+        }
+
         if (this.level().isClientSide) {
             return;
         }
 
         this.tickPlayerPetrification();
         this.tickPreyPetrification();
+        this.updateAnimationState();
     }
 
     private void tickPlayerPetrification() {
@@ -346,8 +370,14 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     }
 
     private PlayState mainController(AnimationState<BasiliskEntity> state) {
-        if (this.attackAnimTicks > 0) {
+        if (this.getAnimationState() == ANIM_DEATH) {
+            return state.setAndContinue(DEATH_ANIM);
+        }
+        if (this.getAnimationState() == ANIM_ATTACK) {
             return state.setAndContinue(ATTACK_ANIM);
+        }
+        if (this.getAnimationState() == ANIM_WALK) {
+            return state.setAndContinue(WALK_ANIM);
         }
         if (this.getTarget() != null || this.hissChargeTimer > 0 || this.pendingTargetId != null) {
             return state.setAndContinue(WALK_ANIM);
@@ -367,9 +397,62 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     public void handleEntityEvent(byte id) {
         if (id == ATTACK_ENTITY_EVENT) {
             this.attackAnimTicks = ATTACK_ANIM_TICKS;
+            this.setAnimationState(ANIM_ATTACK);
             return;
         }
         super.handleEntityEvent(id);
+    }
+
+    @Override
+    public void die(DamageSource damageSource) {
+        if (!this.level().isClientSide) {
+            this.setAnimationState(ANIM_DEATH);
+            this.attackAnimTicks = 0;
+            this.hissChargeTimer = 0;
+            this.pendingTargetId = null;
+            this.getNavigation().stop();
+            this.setDeltaMovement(Vec3.ZERO);
+        }
+        super.die(damageSource);
+    }
+
+    @Override
+    protected void tickDeath() {
+        this.deathTime++;
+        if (this.deathTime == 1) {
+            this.setAnimationState(ANIM_DEATH);
+        }
+        if (this.deathTime >= DEATH_TICKS) {
+            this.remove(RemovalReason.KILLED);
+        }
+    }
+
+    private void updateAnimationState() {
+        if (this.isDeadOrDying()) {
+            this.setAnimationState(ANIM_DEATH);
+            return;
+        }
+        if (this.attackAnimTicks > 0) {
+            this.setAnimationState(ANIM_ATTACK);
+            return;
+        }
+        if (this.getTarget() != null || this.hissChargeTimer > 0 || this.pendingTargetId != null) {
+            this.setAnimationState(ANIM_WALK);
+            return;
+        }
+        if (this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-4D) {
+            this.setAnimationState(ANIM_WALK);
+            return;
+        }
+        this.setAnimationState(ANIM_IDLE);
+    }
+
+    private int getAnimationState() {
+        return this.entityData.get(ANIMATION_STATE);
+    }
+
+    private void setAnimationState(int state) {
+        this.entityData.set(ANIMATION_STATE, state);
     }
 
     @Override

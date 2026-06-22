@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -225,6 +226,9 @@ public class TriffidEntity extends Monster implements GeoEntity {
     public boolean hurt(DamageSource source, float amount) {
         if (this.isInvulnerableTo(source)) {
             return false;
+        }
+        if (source.is(DamageTypeTags.IS_PROJECTILE)) {
+            amount *= 0.33333334F;
         }
         return super.hurt(source, amount);
     }
