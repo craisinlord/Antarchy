@@ -1,0 +1,77 @@
+{
+  "trades": [
+    {
+      "buy": {
+        "item": "antarchy:uranium_ingot",
+        "count": 4
+      },
+      "sell": {
+        "item": "minecraft:spyglass",
+        "count": 1
+      },
+      "max_uses": 16,
+      "villager_xp": 1,
+      "price_multiplier": 0.05
+    },
+    {
+      "buy": {
+        "item": "antarchy:titanium_ingot",
+        "count": 6
+      },
+      "sell": {
+        "item": "antarchy:duct_tape",
+        "count": 2
+      },
+      "max_uses": 12,
+      "villager_xp": 5,
+      "price_multiplier": 0.05
+    },
+    {
+      "buy": {
+        "item": "antarchy:uranium_ingot",
+        "count": 8
+      },
+      "second_buy": {
+        "item": "antarchy:kraken_tooth",
+        "count": 1
+      },
+      "sell": {
+        "item": "antarchy:duplicator_sapling",
+        "count": 1
+      },
+      "max_uses": 6,
+      "villager_xp": 10,
+      "price_multiplier": 0.1
+    },
+    {
+      "buy": {
+        "item": "antarchy:titanium_ingot",
+        "count": 10
+      },
+      "sell": {
+        "item": "antarchy:easter_bunny_spawn_egg",
+        "count": 1
+      },
+      "max_uses": 3,
+      "villager_xp": 5,
+      "price_multiplier": 0.05
+    },
+    {
+      "buy": {
+        "item": "antarchy:uranium_ingot",
+        "count": 16
+      },
+      "second_buy": {
+        "item": "antarchy:titanium_ingot",
+        "count": 8
+      },
+      "sell": {
+        "item": "minecraft:enchanted_golden_apple",
+        "count": 1
+      },
+      "max_uses": 2,
+      "villager_xp": 20,
+      "price_multiplier": 0.2
+    }
+  ]
+}

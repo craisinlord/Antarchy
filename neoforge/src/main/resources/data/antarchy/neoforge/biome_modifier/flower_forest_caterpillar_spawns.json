@@ -1,0 +1,12 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#antarchy:flower_forest_caterpillar_spawn_biomes",
+  "spawners": [
+    {
+      "type": "antarchy:caterpillar",
+      "weight": 24,
+      "minCount": 2,
+      "maxCount": 4
+    }
+  ]
+}

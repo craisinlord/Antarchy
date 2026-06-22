@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "craft_growth_ray": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:growth_ray"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.growth_ray_craft.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:growth_ray"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.growth_ray_craft.title"
+    }
+  },
+  "requirements": [
+    [
+      "craft_growth_ray"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

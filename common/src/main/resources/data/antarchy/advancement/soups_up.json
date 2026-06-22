@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "eat_soup": {
+      "conditions": {
+        "item": {
+          "items": [
+            "antarchy:cloud_shark_fin_soup"
+          ]
+        }
+      },
+      "trigger": "minecraft:consume_item"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.soups_up.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:cloud_shark_fin_soup"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.soups_up.title"
+    }
+  },
+  "requirements": [
+    [
+      "eat_soup"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

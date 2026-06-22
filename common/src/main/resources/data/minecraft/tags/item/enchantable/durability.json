@@ -1,0 +1,32 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:ultimate_axe",
+    "antarchy:ultimate_pickaxe",
+    "antarchy:ultimate_shovel",
+    "antarchy:ultimate_hoe",
+    "antarchy:ultimate_sword",
+    "antarchy:battle_axe",
+    "antarchy:big_bertha",
+    "antarchy:nightmare_sword",
+    "antarchy:basilisk_dagger",
+    "antarchy:ultimate_bow",
+    "antarchy:ultimate_crossbow",
+    "antarchy:brutalfly_elytra",
+    "antarchy:ultimate_helmet",
+    "antarchy:ultimate_chestplate",
+    "antarchy:ultimate_leggings",
+    "antarchy:ultimate_boots",
+    "antarchy:nightmare_helmet",
+    "antarchy:nightmare_chestplate",
+    "antarchy:nightmare_leggings",
+    "antarchy:nightmare_boots",
+    "antarchy:moggles",
+    "antarchy:blood_crystal_katana",
+    "antarchy:blood_crystal_helmet",
+    "antarchy:blood_crystal_chestplate",
+    "antarchy:blood_crystal_leggings",
+    "antarchy:blood_crystal_boots",
+    "antarchy:fallen_king_crown"
+  ]
+}

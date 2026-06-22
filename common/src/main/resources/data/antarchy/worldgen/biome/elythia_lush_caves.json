@@ -1,0 +1,88 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.72,
+  "downfall": 1.0,
+  "effects": {
+    "fog_color": 8084735,
+    "water_color": 5021432,
+    "water_fog_color": 2502722,
+    "sky_color": 8084735,
+    "foliage_color": 2867501,
+    "grass_color": 4304168,
+    "grass_color_modifier": "none",
+    "particle": {
+      "probability": 0.01428,
+      "options": {
+        "type": "minecraft:spore_blossom_air"
+      }
+    },
+    "ambient_sound": "minecraft:ambient.cave",
+    "mood_sound": {
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 6000,
+      "block_search_extent": 8,
+      "offset": 2.0
+    }
+  },
+  "spawn_costs": {},
+  "carvers": {
+    "air": [],
+    "liquid": []
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "minecraft:large_dripstone",
+      "minecraft:pointed_dripstone",
+      "minecraft:lush_caves_clay"
+    ],
+    [],
+    [
+      "minecraft:lush_caves_vegetation",
+      "minecraft:rooted_azalea_tree",
+      "minecraft:spore_blossom",
+      "minecraft:classic_vines_cave_feature",
+      "minecraft:cave_vines",
+      "minecraft:lush_caves_ceiling_vegetation"
+    ],
+    []
+  ],
+  "creature_spawn_probability": 0.03,
+  "spawners": {
+    "monster": [],
+    "creature": [],
+    "ambient": [
+      {
+        "type": "minecraft:bat",
+        "weight": 10,
+        "minCount": 8,
+        "maxCount": 8
+      }
+    ],
+    "axolotls": [
+      {
+        "type": "minecraft:axolotl",
+        "weight": 10,
+        "minCount": 4,
+        "maxCount": 6
+      }
+    ],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [
+      {
+        "type": "minecraft:tropical_fish",
+        "weight": 25,
+        "minCount": 8,
+        "maxCount": 8
+      }
+    ],
+    "misc": []
+  }
+}

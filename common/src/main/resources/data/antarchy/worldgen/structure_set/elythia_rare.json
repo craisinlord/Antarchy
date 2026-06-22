@@ -1,0 +1,18 @@
+{
+  "structures": [
+    {
+      "structure": "antarchy:trayaurus_lab",
+      "weight": 1
+    },
+    {
+      "structure": "antarchy:fallen_kingdom_castle",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 659843583,
+    "spacing": 75,
+    "separation": 68,
+    "type": "integrated_api:advanced_random_spread"
+  }
+}

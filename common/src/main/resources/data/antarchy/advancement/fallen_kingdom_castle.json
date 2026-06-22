@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "discover_castle": {
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "structures": "antarchy:fallen_kingdom_castle"
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:location"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.fallen_kingdom_castle.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:stone_bricks"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.fallen_kingdom_castle.title"
+    }
+  },
+  "requirements": [
+    [
+      "discover_castle"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

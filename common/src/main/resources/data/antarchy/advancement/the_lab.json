@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "discover_lab": {
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "structures": "antarchy:trayaurus_lab"
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:location"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.the_lab.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:diamond_minecart"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.the_lab.title"
+    }
+  },
+  "requirements": [
+    [
+      "discover_lab"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

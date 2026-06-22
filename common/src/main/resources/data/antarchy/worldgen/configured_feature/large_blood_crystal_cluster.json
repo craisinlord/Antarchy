@@ -1,0 +1,27 @@
+{
+  "type": "antarchy:thoraxis_blood_crystal_spires",
+  "config": {
+    "base_state": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "antarchy:blood_crystal_block"
+      }
+    },
+    "crystal_state": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "antarchy:blood_crystal_cluster"
+      }
+    },
+    "min_height": 16,
+    "max_height": 24,
+    "min_base_radius": 3,
+    "max_base_radius": 5,
+    "tip_radius": 1,
+    "sway": 4,
+    "side_crystal_chance": 0.32,
+    "branch_chance": 0.16
+  }
+}
+
+

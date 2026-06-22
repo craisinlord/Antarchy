@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "kill_bed_bug": {
+      "conditions": {
+        "entity": {
+          "type": "antarchy:bed_bug"
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.dont_let_the_bed_bugs_bite.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:bed_bug_egg"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.dont_let_the_bed_bugs_bite.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_bed_bug"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

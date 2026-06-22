@@ -1,0 +1,72 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.76,
+  "downfall": 0.98,
+  "effects": {
+    "fog_color": 8084735,
+    "water_color": 5021432,
+    "water_fog_color": 2502722,
+    "sky_color": 8084735,
+    "foliage_color": 2867501,
+    "grass_color": 4304168,
+    "grass_color_modifier": "none",
+    "mood_sound": {
+      "sound": "minecraft:ambient.crimson_forest.mood",
+      "tick_delay": 7000,
+      "block_search_extent": 8,
+      "offset": 2.0
+    }
+  },
+  "spawn_costs": {},
+  "carvers": {
+    "air": [],
+    "liquid": []
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "minecraft:ore_coal_upper",
+      "minecraft:ore_coal_lower",
+      "minecraft:ore_iron_upper",
+      "minecraft:ore_iron_middle",
+      "minecraft:ore_iron_small",
+      "minecraft:ore_gold",
+      "minecraft:ore_gold_lower",
+      "minecraft:ore_redstone",
+      "minecraft:ore_redstone_lower",
+      "minecraft:ore_diamond",
+      "minecraft:ore_diamond_medium",
+      "minecraft:ore_diamond_large",
+      "minecraft:ore_diamond_buried",
+      "minecraft:ore_lapis",
+      "minecraft:ore_lapis_buried",
+      "minecraft:ore_copper"
+    ],
+    [
+      "antarchy:elythia_underground",
+      "minecraft:large_dripstone",
+      "minecraft:pointed_dripstone"
+    ],
+    [],
+    [
+      "antarchy:elythia_meadow_flora"
+    ],
+    []
+  ],
+  "creature_spawn_probability": 0.04,
+  "spawners": {
+    "monster": [],
+    "creature": [],
+    "ambient": [],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  }
+}

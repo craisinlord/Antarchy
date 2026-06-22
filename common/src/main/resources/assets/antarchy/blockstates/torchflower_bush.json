@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "half=lower": {
+      "model": "antarchy:block/torchflower_bush_bottom"
+    },
+    "half=upper": {
+      "model": "antarchy:block/torchflower_bush_top"
+    }
+  }
+}

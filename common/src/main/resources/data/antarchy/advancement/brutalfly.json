@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "brutalfly": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:brutalfly_elytra"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.brutalfly.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:brutalfly_elytra"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.brutalfly.title"
+    }
+  },
+  "requirements": [
+    [
+      "brutalfly"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

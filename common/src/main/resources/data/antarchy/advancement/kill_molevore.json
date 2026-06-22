@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "kill_molevore": {
+      "conditions": {
+        "entity": {
+          "type": "antarchy:molevore"
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.kill_molevore.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:molevore_nose"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.kill_molevore.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_molevore"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

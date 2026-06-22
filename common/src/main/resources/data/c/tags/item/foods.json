@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "#c:foods/soup",
+    "antarchy:blood_crystal_apple",
+    "antarchy:mud_pie",
+    "antarchy:rainbow_sugar",
+    "antarchy:cornea_ear",
+    "antarchy:moleworm"
+  ]
+}

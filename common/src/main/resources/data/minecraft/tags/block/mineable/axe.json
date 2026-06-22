@@ -1,0 +1,24 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:ouranwood_log",
+    "antarchy:ouranwood_wood",
+    "antarchy:mossy_ouranwood_log",
+    "antarchy:mossy_ouranwood_wood",
+    "antarchy:stripped_ouranwood_log",
+    "antarchy:stripped_ouranwood_wood",
+    "antarchy:ouranwood_planks",
+    "antarchy:ouranwood_stairs",
+    "antarchy:ouranwood_slab",
+    "antarchy:ouranwood_fence",
+    "antarchy:ouranwood_fence_gate",
+    "antarchy:ouranwood_door",
+    "antarchy:ouranwood_trapdoor",
+    "antarchy:ouranwood_pressure_plate",
+    "antarchy:ouranwood_button",
+    "antarchy:ouranwood_sign",
+    "antarchy:ouranwood_wall_sign",
+    "antarchy:ouranwood_hanging_sign",
+    "antarchy:ouranwood_wall_hanging_sign"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "parent": "antarchy:fallen_kingdom_castle",
+  "criteria": {
+    "fallen_king_crown": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:fallen_king_crown"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.fallen_king_crown.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:fallen_king_crown"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.fallen_king_crown.title"
+    }
+  },
+  "requirements": [
+    [
+      "fallen_king_crown"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

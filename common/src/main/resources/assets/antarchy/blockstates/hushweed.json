@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "vertical_direction=up": {
+      "model": "antarchy:block/hushweed"
+    },
+    "vertical_direction=down": {
+      "model": "antarchy:block/hushweed",
+      "x": 180
+    }
+  }
+}

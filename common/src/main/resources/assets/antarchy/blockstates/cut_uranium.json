@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "antarchy:block/cut_uranium", "y": 180 },
+    "facing=east": { "model": "antarchy:block/cut_uranium", "y": 270 },
+    "facing=south": { "model": "antarchy:block/cut_uranium" },
+    "facing=west": { "model": "antarchy:block/cut_uranium", "y": 90 }
+  }
+}

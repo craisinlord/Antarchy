@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "antarchy:block/ouranwood_slab"
+    },
+    "type=double": {
+      "model": "antarchy:block/ouranwood_planks"
+    },
+    "type=top": {
+      "model": "antarchy:block/ouranwood_slab_top"
+    }
+  }
+}

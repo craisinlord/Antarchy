@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "minecraft:block/magma",
+    "down": "minecraft:block/magma",
+    "up": "antarchy:block/red_ant_nest_top",
+    "north": "minecraft:block/magma",
+    "south": "minecraft:block/magma",
+    "west": "minecraft:block/magma",
+    "east": "minecraft:block/magma"
+  }
+}

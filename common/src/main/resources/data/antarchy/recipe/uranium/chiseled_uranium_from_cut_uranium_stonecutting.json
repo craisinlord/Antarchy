@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:cut_uranium"
+  },
+  "result": {
+    "id": "antarchy:chiseled_uranium"
+  }
+}

@@ -1,0 +1,40 @@
+modLoader="javafml" #mandatory
+loaderVersion="[2,)" #mandatory
+license="All rights reserved"
+
+[[mods]] #mandatory
+modId="antarchy" #mandatory
+logoFile="../assets/antarchy_/antarchy_logo.png"
+    logoBlur=false
+    version="${version}" #mandatory
+    displayName="Antarchy" #mandatory
+displayURL="https://www.curseforge.com/minecraft/mc-mods/antarchy"
+    authors="CraisinLord"
+    description='''
+    ANTS! ANTS! ANTS! ANTS!
+    '''
+
+[[mixins]]
+    config = "antarchy-common.mixins.json"
+
+[[mixins]]
+    config = "antarchy-neoforge.mixins.json"
+
+[[dependencies.antarchy]]
+    modId="minecraft"
+    type="required"
+    versionRange="[1.21.1,)"
+
+[[dependencies.antarchy]]
+    modId="integrated_api"
+    type="required"
+    versionRange="[1.6.2,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.antarchy]]
+    modId="geckolib"
+    type="required"
+    versionRange="*"
+    ordering="AFTER"
+    side="BOTH"

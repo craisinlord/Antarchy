@@ -1,0 +1,1620 @@
+{
+  "squidzooka_fire": {
+    "subtitle": "subtitles.antarchy.squidzooka_fire",
+    "sounds": [
+      {
+        "name": "antarchy:squidzooka/squizooka1"
+      },
+      {
+        "name": "antarchy:squidzooka/squizooka2"
+      },
+      {
+        "name": "antarchy:squidzooka/squizooka3"
+      },
+      {
+        "name": "antarchy:squidzooka/squizooka4"
+      }
+    ]
+  },
+  "shrink_ray": {
+    "subtitle": "subtitles.antarchy.shrink_ray",
+    "sounds": [
+      {
+        "name": "antarchy:size_ray/shrink_ray"
+      }
+    ]
+  },
+  "growth_ray": {
+    "subtitle": "subtitles.antarchy.growth_ray",
+    "sounds": [
+      {
+        "name": "antarchy:size_ray/growth_ray"
+      }
+    ]
+  },
+  "size_ray_charge": {
+    "subtitle": "subtitles.antarchy.size_ray_charge",
+    "sounds": [
+      {
+        "name": "antarchy:size_ray/size_ray_charge"
+      }
+    ]
+  },
+  "ant_ambient": {
+    "subtitle": "subtitles.antarchy.ant_ambient",
+    "sounds": [
+      {
+        "name": "antarchy:mob/ant/ant_ambient"
+      }
+    ]
+  },
+  "ant_idle": {
+    "subtitle": "subtitles.antarchy.ant_idle",
+    "sounds": [
+      {
+        "name": "antarchy:mob/ant/ant_idle1"
+      },
+      {
+        "name": "antarchy:mob/ant/ant_idle2"
+      },
+      {
+        "name": "antarchy:mob/ant/ant_idle3"
+      },
+      {
+        "name": "antarchy:mob/ant/ant_idle4"
+      },
+      {
+        "name": "antarchy:mob/ant/ant_idle5"
+      },
+      {
+        "name": "antarchy:mob/ant/ant_idle6"
+      }
+    ]
+  },
+  "ant_hurt": {
+    "subtitle": "subtitles.antarchy.ant_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/ant/ant_hurt"
+      }
+    ]
+  },
+  "ant_bite": {
+    "subtitle": "subtitles.antarchy.ant_bite",
+    "sounds": [
+      {
+        "name": "antarchy:mob/ant/ant_bite"
+      }
+    ]
+  },
+  "ant_gather": {
+    "subtitle": "subtitles.antarchy.ant_gather",
+    "sounds": [
+      {
+        "name": "antarchy:mob/ant/ant_gather1"
+      },
+      {
+        "name": "antarchy:mob/ant/ant_gather2"
+      }
+    ]
+  },
+  "ant_nest": {
+    "subtitle": "subtitles.antarchy.ant_nest",
+    "sounds": [
+      {
+        "name": "antarchy:block/ant_nest_exit"
+      }
+    ]
+  },
+  "cloud_shark_bite": {
+    "subtitle": "subtitles.antarchy.cloud_shark_bite",
+    "sounds": [
+      {
+        "name": "antarchy:mob/cloud_shark/cloud_shark_bite"
+      }
+    ]
+  },
+  "cloud_shark_idle": {
+    "subtitle": "subtitles.antarchy.cloud_shark_idle",
+    "sounds": [
+      {
+        "name": "antarchy:mob/cloud_shark/cloud_shark_idle1"
+      },
+      {
+        "name": "antarchy:mob/cloud_shark/cloud_shark_idle2"
+      },
+      {
+        "name": "antarchy:mob/cloud_shark/cloud_shark_idle3"
+      },
+      {
+        "name": "antarchy:mob/cloud_shark/cloud_shark_idle4"
+      }
+    ]
+  },
+  "cloud_shark_hurt": {
+    "subtitle": "subtitles.antarchy.cloud_shark_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/cloud_shark/cloud_shark_hurt"
+      }
+    ]
+  },
+  "cloud_shark_death": {
+    "subtitle": "subtitles.antarchy.cloud_shark_death",
+    "sounds": [
+      {
+        "name": "antarchy:mob/cloud_shark/cloud_shark_death"
+      }
+    ]
+  },
+  "cloud_shark_fly": {
+    "subtitle": "subtitles.antarchy.cloud_shark_fly",
+    "sounds": [
+      {
+        "name": "antarchy:mob/cloud_shark/cloud_shark_fly1"
+      }
+    ]
+  },
+  "caterpillar_idle": {
+    "subtitle": "subtitles.antarchy.caterpillar_idle",
+    "sounds": [
+      {
+        "name": "antarchy:mob/caterpillar/caterpillar_idle1"
+      },
+      {
+        "name": "antarchy:mob/caterpillar/caterpillar_idle2"
+      }
+    ]
+  },
+  "caterpillar_hurt": {
+    "subtitle": "subtitles.antarchy.caterpillar_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/caterpillar/caterpillar_hurt1"
+      },
+      {
+        "name": "antarchy:mob/caterpillar/caterpillar_hurt2"
+      },
+      {
+        "name": "antarchy:mob/caterpillar/caterpillar_hurt3"
+      }
+    ]
+  },
+  "caterpillar_crawl": {
+    "subtitle": "subtitles.antarchy.caterpillar_crawl",
+    "sounds": [
+      {
+        "name": "antarchy:mob/caterpillar/caterpillar_crawl1"
+      },
+      {
+        "name": "antarchy:mob/caterpillar/caterpillar_crawl2"
+      },
+      {
+        "name": "antarchy:mob/caterpillar/caterpillar_crawl3"
+      },
+      {
+        "name": "antarchy:mob/caterpillar/caterpillar_crawl4"
+      },
+      {
+        "name": "antarchy:mob/caterpillar/caterpillar_crawl5"
+      },
+      {
+        "name": "antarchy:mob/caterpillar/caterpillar_crawl6"
+      }
+    ]
+  },
+  "butterfly_hurt": {
+    "subtitle": "subtitles.antarchy.butterfly_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/caterpillar/caterpillar_hurt1"
+      },
+      {
+        "name": "antarchy:mob/caterpillar/caterpillar_hurt2"
+      },
+      {
+        "name": "antarchy:mob/caterpillar/caterpillar_hurt3"
+      }
+    ]
+  },
+  "brutalfly_idle": {
+    "subtitle": "subtitles.antarchy.brutalfly_idle",
+    "sounds": [
+      {
+        "name": "antarchy:mob/brutalfly/brutalfly_idle1"
+      },
+      {
+        "name": "antarchy:mob/brutalfly/brutalfly_idle2"
+      },
+      {
+        "name": "antarchy:mob/brutalfly/brutalfly_idle3"
+      }
+    ]
+  },
+  "brutalfly_death": {
+    "subtitle": "subtitles.antarchy.brutalfly_death",
+    "sounds": [
+      {
+        "name": "antarchy:mob/brutalfly/brutalfly_death1"
+      }
+    ]
+  },
+  "missile_squid_ambient": {
+    "subtitle": "subtitles.antarchy.missile_squid_ambient",
+    "sounds": [
+      {
+        "name": "entity.squid.ambient",
+        "type": "event"
+      }
+    ]
+  },
+  "missile_squid_hurt": {
+    "subtitle": "subtitles.antarchy.missile_squid_hurt",
+    "sounds": [
+      {
+        "name": "entity.squid.hurt",
+        "type": "event"
+      }
+    ]
+  },
+  "missile_squid_death": {
+    "subtitle": "subtitles.antarchy.missile_squid_death",
+    "sounds": [
+      {
+        "name": "entity.squid.death",
+        "type": "event"
+      }
+    ]
+  },
+  "missile_squid_attack": {
+    "subtitle": "subtitles.antarchy.missile_squid_attack",
+    "sounds": [
+      {
+        "name": "antarchy:mob/missile_squid/missile_squid_attack1"
+      },
+      {
+        "name": "antarchy:mob/missile_squid/missile_squid_attack2"
+      },
+      {
+        "name": "antarchy:mob/missile_squid/missile_squid_attack3"
+      }
+    ]
+  },
+  "kraken_flying_loop": {
+    "subtitle": "subtitles.antarchy.kraken_flying_loop",
+    "sounds": [
+      {
+        "name": "antarchy:mob/kraken/kraken_flying_loop1",
+        "stream": true
+      },
+      {
+        "name": "antarchy:mob/kraken/kraken_flying_loop2",
+        "stream": true
+      }
+    ]
+  },
+  "kraken_flying_sideways_loop": {
+    "subtitle": "subtitles.antarchy.kraken_flying_sideways_loop",
+    "sounds": [
+      {
+        "name": "antarchy:mob/kraken/kraken_flying_sideways_loop1",
+        "stream": true
+      },
+      {
+        "name": "antarchy:mob/kraken/kraken_flying_sideways_loop2",
+        "stream": true
+      }
+    ]
+  },
+  "kraken_attack": {
+    "subtitle": "subtitles.antarchy.kraken_attack",
+    "sounds": [
+      {
+        "name": "antarchy:mob/kraken/kraken_attack1"
+      }
+    ]
+  },
+  "kraken_spin": {
+    "subtitle": "subtitles.antarchy.kraken_spin",
+    "sounds": [
+      {
+        "name": "antarchy:mob/kraken/kraken_spin"
+      }
+    ]
+  },
+  "kraken_roar": {
+    "subtitle": "subtitles.antarchy.kraken_roar",
+    "sounds": [
+      {
+        "name": "antarchy:mob/kraken/kraken_roar"
+      }
+    ]
+  },
+  "kraken_summon": {
+    "subtitle": "subtitles.antarchy.kraken_summon",
+    "sounds": [
+      {
+        "name": "antarchy:mob/kraken/kraken_spawn"
+      }
+    ]
+  },
+  "kraken_hurt": {
+    "subtitle": "subtitles.antarchy.kraken_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/kraken/kraken_hurt1"
+      },
+      {
+        "name": "antarchy:mob/kraken/kraken_hurt2"
+      }
+    ]
+  },
+  "kraken_death": {
+    "subtitle": "subtitles.antarchy.kraken_death",
+    "sounds": [
+      {
+        "name": "antarchy:mob/kraken/kraken_death"
+      }
+    ]
+  },
+  "basilisk_idle_loop": {
+    "subtitle": "subtitles.antarchy.basilisk_idle_loop",
+    "sounds": [
+      {
+        "name": "antarchy:mob/basilisk/basilisk_idle_loop1",
+        "stream": true
+      },
+      {
+        "name": "antarchy:mob/basilisk/basilisk_idle_loop2",
+        "stream": true
+      }
+    ]
+  },
+  "basilisk_slither_loop": {
+    "subtitle": "subtitles.antarchy.basilisk_slither_loop",
+    "sounds": [
+      {
+        "name": "antarchy:mob/basilisk/basilisk_slither_loop1",
+        "stream": true
+      },
+      {
+        "name": "antarchy:mob/basilisk/basilisk_slither_loop2",
+        "stream": true
+      }
+    ]
+  },
+  "basilisk_bite": {
+    "subtitle": "subtitles.antarchy.basilisk_bite",
+    "sounds": [
+      {
+        "name": "antarchy:mob/basilisk/basilisk_bite"
+      }
+    ]
+  },
+  "basilisk_hiss": {
+    "subtitle": "subtitles.antarchy.basilisk_hiss",
+    "sounds": [
+      {
+        "name": "antarchy:mob/basilisk/basilisk_hiss"
+      }
+    ]
+  },
+  "basilisk_hurt": {
+    "subtitle": "subtitles.antarchy.basilisk_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/basilisk/basilisk_hurt1"
+      },
+      {
+        "name": "antarchy:mob/basilisk/basilisk_hurt2"
+      }
+    ]
+  },
+  "basilisk_death": {
+    "subtitle": "subtitles.antarchy.basilisk_death",
+    "sounds": [
+      {
+        "name": "antarchy:mob/basilisk/basilisk_death"
+      }
+    ]
+  },
+  "thoraxis_nightmare_wastes_ambient": {
+    "subtitle": "subtitles.antarchy.thoraxis_nightmare_wastes_ambient",
+    "sounds": [
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/ambience_reversed",
+        "volume": 0.28,
+        "weight": 4
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/dark1_reversed",
+        "volume": 0.24,
+        "weight": 2
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/dark2_reversed",
+        "volume": 0.24,
+        "weight": 2
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/ground1_reversed",
+        "volume": 0.2,
+        "weight": 1
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/ground2_reversed",
+        "volume": 0.2,
+        "weight": 1
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/ground3_reversed",
+        "volume": 0.2,
+        "weight": 1
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/ground4_reversed",
+        "volume": 0.2,
+        "weight": 1
+      }
+    ]
+  },
+  "thoraxis_nightmare_wastes_additions": {
+    "subtitle": "subtitles.antarchy.thoraxis_nightmare_wastes_additions",
+    "sounds": [
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/addition1_reversed",
+        "volume": 0.6
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/addition2_reversed",
+        "volume": 0.6
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/addition3_reversed",
+        "volume": 0.6
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/addition4_reversed",
+        "volume": 0.6
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/addition5_reversed",
+        "volume": 0.6
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/addition6_reversed",
+        "volume": 0.6
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/addition7_reversed",
+        "volume": 0.6
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/addition8_reversed",
+        "volume": 0.6
+      }
+    ]
+  },
+  "thoraxis_nightmare_wastes_mood": {
+    "subtitle": "subtitles.antarchy.thoraxis_nightmare_wastes_mood",
+    "sounds": [
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/mood1_reversed",
+        "volume": 0.5
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/mood2_reversed",
+        "volume": 0.5
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/mood3_reversed",
+        "volume": 0.5
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/mood4_reversed",
+        "volume": 0.5
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/nightmare_wastes/mood5_reversed",
+        "volume": 0.5
+      }
+    ]
+  },
+  "thoraxis_dream_dunes_ambient": {
+    "subtitle": "subtitles.antarchy.thoraxis_dream_dunes_ambient",
+    "sounds": [
+      {
+        "name": "antarchy:ambient/thoraxis/dream_dunes/wind1_reversed",
+        "volume": 0.3,
+        "weight": 3
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/dream_dunes/wind2_reversed",
+        "volume": 0.3,
+        "weight": 3
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/dream_dunes/wind3_reversed",
+        "volume": 0.3,
+        "weight": 3
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/dream_dunes/wind4_reversed",
+        "volume": 0.3,
+        "weight": 3
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/dream_dunes/with1_reversed",
+        "volume": 0.24,
+        "weight": 2
+      }
+    ]
+  },
+  "thoraxis_dream_dunes_additions": {
+    "subtitle": "subtitles.antarchy.thoraxis_dream_dunes_additions",
+    "sounds": [
+      {
+        "name": "ambient/nether/soulsand_valley/sand1",
+        "volume": 0.65,
+        "weight": 3
+      },
+      {
+        "name": "ambient/nether/soulsand_valley/sand2",
+        "volume": 0.65,
+        "weight": 3
+      },
+      {
+        "name": "ambient/nether/soulsand_valley/sand3",
+        "volume": 0.65,
+        "weight": 3
+      },
+      {
+        "name": "ambient/nether/soulsand_valley/ambience",
+        "volume": 0.5,
+        "weight": 2
+      },
+      {
+        "name": "ambient/nether/soulsand_valley/mood1",
+        "volume": 0.45,
+        "weight": 1
+      },
+      {
+        "name": "ambient/nether/soulsand_valley/mood2",
+        "volume": 0.45,
+        "weight": 1
+      }
+    ]
+  },
+  "thoraxis_dream_dunes_mood": {
+    "subtitle": "subtitles.antarchy.thoraxis_dream_dunes_mood",
+    "sounds": [
+      {
+        "name": "ambient/nether/soulsand_valley/mood1",
+        "volume": 0.45,
+        "weight": 2
+      },
+      {
+        "name": "ambient/nether/soulsand_valley/mood2",
+        "volume": 0.45,
+        "weight": 2
+      }
+    ]
+  },
+  "thoraxis_lucid_pools_ambient": {
+    "subtitle": "subtitles.antarchy.thoraxis_lucid_pools_ambient",
+    "sounds": [
+      {
+        "name": "antarchy:ambient/thoraxis/lucid_pools/ambient",
+        "volume": 0.26,
+        "weight": 4
+      }
+    ]
+  },
+  "thoraxis_lucid_pools_additions": {
+    "subtitle": "subtitles.antarchy.thoraxis_lucid_pools_additions",
+    "sounds": [
+      {
+        "name": "antarchy:ambient/thoraxis/lucid_pools/curse1",
+        "volume": 0.48
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/lucid_pools/curse2",
+        "volume": 0.48
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/lucid_pools/curse3",
+        "volume": 0.48
+      },
+      {
+        "name": "antarchy:ambient/thoraxis/lucid_pools/curse4",
+        "volume": 0.48
+      }
+    ]
+  },
+  "thoraxis_lucid_pools_mood": {
+    "subtitle": "subtitles.antarchy.thoraxis_lucid_pools_mood",
+    "sounds": [
+      {
+        "name": "ambient/nether/soulsand_valley/mood1",
+        "volume": 0.45,
+        "weight": 2
+      },
+      {
+        "name": "ambient/nether/soulsand_valley/mood2",
+        "volume": 0.45,
+        "weight": 2
+      }
+    ]
+  },
+  "lucid_ambient": {
+    "subtitle": "subtitles.antarchy.lucid_ambient",
+    "sounds": [
+      {
+        "name": "antarchy:mob/lucid/lucid_ambience",
+        "stream": true
+      }
+    ]
+  },
+  "lucid_flying": {
+    "subtitle": "subtitles.antarchy.lucid_flying",
+    "sounds": [
+      {
+        "name": "antarchy:mob/lucid/lucid_flying",
+        "stream": true
+      }
+    ]
+  },
+  "lucid_attack": {
+    "subtitle": "subtitles.antarchy.lucid_attack",
+    "sounds": [
+      {
+        "name": "antarchy:mob/lucid/lucid_attack"
+      }
+    ]
+  },
+  "lucid_bolt": {
+    "subtitle": "subtitles.antarchy.lucid_bolt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/lucid/lucid_bolt"
+      }
+    ]
+  },
+  "lucid_hurt": {
+    "subtitle": "subtitles.antarchy.lucid_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/lucid/lucid_hurt1"
+      },
+      {
+        "name": "antarchy:mob/lucid/lucid_hurt2"
+      }
+    ]
+  },
+  "lucid_death": {
+    "subtitle": "subtitles.antarchy.lucid_death",
+    "sounds": [
+      {
+        "name": "antarchy:mob/lucid/lucid_death"
+      }
+    ]
+  },
+  "reverie_idle": {
+    "subtitle": "subtitles.antarchy.reverie_idle",
+    "sounds": [
+      {
+        "name": "antarchy:mob/reverie/reverie_idle1",
+        "volume": 0.5
+      },
+      {
+        "name": "antarchy:mob/reverie/reverie_idle2",
+        "volume": 0.5
+      },
+      {
+        "name": "antarchy:mob/reverie/reverie_idle3",
+        "volume": 0.5
+      }
+    ]
+  },
+  "reverie_hurt": {
+    "subtitle": "subtitles.antarchy.reverie_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/reverie/reverie_hurt1",
+        "volume": 0.5
+      },
+      {
+        "name": "antarchy:mob/reverie/reverie_hurt2",
+        "volume": 0.5
+      },
+      {
+        "name": "antarchy:mob/reverie/reverie_hurt3",
+        "volume": 0.5
+      }
+    ]
+  },
+  "reverie_worry": {
+    "subtitle": "subtitles.antarchy.reverie_worry",
+    "sounds": [
+      {
+        "name": "antarchy:mob/reverie/reverie_worry1",
+        "volume": 0.5
+      },
+      {
+        "name": "antarchy:mob/reverie/reverie_worry2",
+        "volume": 0.5
+      }
+    ]
+  },
+  "reverie_save": {
+    "subtitle": "subtitles.antarchy.reverie_save",
+    "sounds": [
+      {
+        "name": "antarchy:mob/reverie/reverie_save1",
+        "volume": 0.5
+      },
+      {
+        "name": "antarchy:mob/reverie/reverie_save2",
+        "volume": 0.5
+      },
+      {
+        "name": "antarchy:mob/reverie/reverie_save3",
+        "volume": 0.5
+      }
+    ]
+  },
+  "reverie_join_player": {
+    "subtitle": "subtitles.antarchy.reverie_join_player",
+    "sounds": [
+      {
+        "name": "antarchy:mob/reverie/reverie_joinplayer1",
+        "volume": 0.5
+      },
+      {
+        "name": "antarchy:mob/reverie/reverie_joinplayer2",
+        "volume": 0.5
+      },
+      {
+        "name": "antarchy:mob/reverie/reverie_joinplayer3",
+        "volume": 0.5
+      }
+    ]
+  },
+  "reverie_alert": {
+    "subtitle": "subtitles.antarchy.reverie_alert",
+    "sounds": [
+      {
+        "name": "antarchy:mob/reverie/reverie_alert1",
+        "volume": 0.5
+      },
+      {
+        "name": "antarchy:mob/reverie/reverie_alert2",
+        "volume": 0.5
+      },
+      {
+        "name": "antarchy:mob/reverie/reverie_alert3",
+        "volume": 0.5
+      }
+    ]
+  },
+  "flying_squirrel_idle": {
+    "subtitle": "subtitles.antarchy.flying_squirrel_idle",
+    "sounds": [
+      {
+        "name": "antarchy:mob/flying_squirrel/flying_squirrel_idle1"
+      },
+      {
+        "name": "minecraft:mob/fox/sniff1"
+      },
+      {
+        "name": "minecraft:mob/fox/sniff2"
+      },
+      {
+        "name": "minecraft:mob/fox/sniff4"
+      }
+    ]
+  },
+  "flying_squirrel_beg": {
+    "subtitle": "subtitles.antarchy.flying_squirrel_beg",
+    "sounds": [
+      {
+        "name": "entity.cat.beg_for_food",
+        "type": "event"
+      }
+    ]
+  },
+  "flying_squirrel_nut": {
+    "subtitle": "subtitles.antarchy.flying_squirrel_nut",
+    "sounds": [
+      {
+        "name": "minecraft:mob/fox/eat1"
+      },
+      {
+        "name": "minecraft:mob/fox/eat2"
+      },
+      {
+        "name": "minecraft:mob/fox/eat3"
+      }
+    ]
+  },
+  "flying_squirrel_glide_loop": {
+    "subtitle": "subtitles.antarchy.flying_squirrel_glide_loop",
+    "sounds": [
+      {
+        "name": "antarchy:mob/flying_squirrel/flying_squirrel_glide_loop"
+      }
+    ]
+  },
+  "flying_squirrel_hurt": {
+    "subtitle": "subtitles.antarchy.flying_squirrel_hurt",
+    "sounds": [
+      {
+        "name": "minecraft:mob/fox/hurt1"
+      },
+      {
+        "name": "minecraft:mob/fox/hurt2"
+      },
+      {
+        "name": "minecraft:mob/fox/hurt3"
+      },
+      {
+        "name": "minecraft:mob/fox/hurt4"
+      }
+    ]
+  },
+  "flying_squirrel_death": {
+    "subtitle": "subtitles.antarchy.flying_squirrel_death",
+    "sounds": [
+      {
+        "name": "minecraft:mob/fox/death1"
+      },
+      {
+        "name": "minecraft:mob/fox/death2"
+      }
+    ]
+  },
+  "nightmare_idle": {
+    "subtitle": "subtitles.antarchy.nightmare_idle",
+    "sounds": [
+      {
+        "name": "antarchy:mob/nightmare/nightmare_idle1"
+      },
+      {
+        "name": "antarchy:mob/nightmare/nightmare_idle2"
+      },
+      {
+        "name": "antarchy:mob/nightmare/nightmare_idle3"
+      },
+      {
+        "name": "antarchy:mob/nightmare/nightmare_idle4"
+      }
+    ]
+  },
+  "nightmare_hurt": {
+    "subtitle": "subtitles.antarchy.nightmare_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/nightmare/nightmare_hurt1"
+      }
+    ]
+  },
+  "nightmare_roar": {
+    "subtitle": "subtitles.antarchy.nightmare_roar",
+    "sounds": [
+      {
+        "name": "antarchy:mob/nightmare/nightmare_roar1"
+      },
+      {
+        "name": "antarchy:mob/nightmare/nightmare_roar2"
+      }
+    ]
+  },
+  "nightmare_death": {
+    "subtitle": "subtitles.antarchy.nightmare_death",
+    "sounds": [
+      {
+        "name": "antarchy:mob/nightmare/nightmare_death"
+      }
+    ]
+  },
+  "nightmare_bite": {
+    "subtitle": "subtitles.antarchy.nightmare_bite",
+    "sounds": [
+      {
+        "name": "minecraft:mob/phantom/bite1"
+      },
+      {
+        "name": "minecraft:mob/phantom/bite2"
+      }
+    ]
+  },
+  "nightmare_flap": {
+    "subtitle": "subtitles.antarchy.nightmare_flap",
+    "sounds": [
+      {
+        "name": "minecraft:mob/enderdragon/wings1"
+      },
+      {
+        "name": "minecraft:mob/enderdragon/wings2"
+      },
+      {
+        "name": "minecraft:mob/enderdragon/wings3"
+      },
+      {
+        "name": "minecraft:mob/enderdragon/wings4"
+      },
+      {
+        "name": "minecraft:mob/enderdragon/wings5"
+      },
+      {
+        "name": "minecraft:mob/enderdragon/wings6"
+      }
+    ]
+  },
+  "mantis_ambient": {
+    "subtitle": "subtitles.antarchy.mantis_ambient",
+    "sounds": [
+      {
+        "name": "antarchy:mob/mantis/mantis_idle1"
+      },
+      {
+        "name": "antarchy:mob/mantis/mantis_idle2"
+      },
+      {
+        "name": "antarchy:mob/mantis/mantis_idle3"
+      },
+      {
+        "name": "antarchy:mob/mantis/mantis_idle4"
+      },
+      {
+        "name": "antarchy:mob/mantis/mantis_idle5"
+      },
+      {
+        "name": "antarchy:mob/mantis/mantis_idle6"
+      },
+      {
+        "name": "antarchy:mob/mantis/mantis_idle7"
+      }
+    ]
+  },
+  "mantis_hurt": {
+    "subtitle": "subtitles.antarchy.mantis_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/mantis/mantis_hurt1"
+      },
+      {
+        "name": "antarchy:mob/mantis/mantis_hurt2"
+      },
+      {
+        "name": "antarchy:mob/mantis/mantis_hurt3"
+      }
+    ]
+  },
+  "mantis_attack": {
+    "subtitle": "subtitles.antarchy.mantis_attack",
+    "sounds": [
+      {
+        "name": "antarchy:mob/mantis/mantis_attack1"
+      },
+      {
+        "name": "antarchy:mob/mantis/mantis_attack2"
+      },
+      {
+        "name": "antarchy:mob/mantis/mantis_attack3"
+      },
+      {
+        "name": "antarchy:mob/mantis/mantis_attack4"
+      }
+    ]
+  },
+  "mantis_fly_loop": {
+    "subtitle": "subtitles.antarchy.mantis_fly_loop",
+    "sounds": [
+      {
+        "name": "antarchy:mob/mantis/mantis_fly_loop",
+        "stream": true
+      }
+    ]
+  },
+  "gravity_gun_pickup": {
+    "subtitle": "subtitles.antarchy.gravity_gun_pickup",
+    "sounds": [
+      {
+        "name": "antarchy:gravity_gun/gravity_gun_pickup"
+      }
+    ]
+  },
+  "gravity_gun_drop": {
+    "subtitle": "subtitles.antarchy.gravity_gun_drop",
+    "sounds": [
+      {
+        "name": "antarchy:gravity_gun/gravity_gun_drop"
+      }
+    ]
+  },
+  "gravity_gun_hold_loop": {
+    "subtitle": "subtitles.antarchy.gravity_gun_hold_loop",
+    "sounds": [
+      {
+        "name": "antarchy:gravity_gun/gravity_gun_hold_loop"
+      }
+    ]
+  },
+  "gravity_gun_launch": {
+    "subtitle": "subtitles.antarchy.gravity_gun_launch",
+    "sounds": [
+      {
+        "name": "antarchy:gravity_gun/gravity_gun_launch1"
+      },
+      {
+        "name": "antarchy:gravity_gun/gravity_gun_launch2"
+      },
+      {
+        "name": "antarchy:gravity_gun/gravity_gun_launch3"
+      },
+      {
+        "name": "antarchy:gravity_gun/gravity_gun_launch4"
+      }
+    ]
+  },
+  "gravity_gun_dryfire": {
+    "subtitle": "subtitles.antarchy.gravity_gun_dryfire",
+    "sounds": [
+      {
+        "name": "antarchy:gravity_gun/gravity_gun_dryfire"
+      }
+    ]
+  },
+  "bed_bug_ambient": {
+    "subtitle": "subtitles.antarchy.bed_bug_ambient",
+    "sounds": [
+      {
+        "name": "antarchy:mob/bed_bug/bed_bug_ambient1"
+      },
+      {
+        "name": "antarchy:mob/bed_bug/bed_bug_ambient2"
+      }
+    ]
+  },
+  "bed_bug_hurt": {
+    "subtitle": "subtitles.antarchy.bed_bug_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/bed_bug/bed_bug_hurt1"
+      },
+      {
+        "name": "antarchy:mob/bed_bug/bed_bug_hurt2"
+      }
+    ]
+  },
+  "bed_bug_attack": {
+    "subtitle": "subtitles.antarchy.bed_bug_attack",
+    "sounds": [
+      {
+        "name": "antarchy:mob/bed_bug/bed_bug_attack1"
+      }
+    ]
+  },
+  "wasp_idle": {
+    "subtitle": "subtitles.antarchy.wasp_idle",
+    "sounds": [
+      {
+        "name": "antarchy:mob/wasp/buzz1"
+      },
+      {
+        "name": "antarchy:mob/wasp/buzz2"
+      }
+    ]
+  },
+  "wasp_hurt": {
+    "subtitle": "subtitles.antarchy.wasp_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/wasp/hurt1"
+      },
+      {
+        "name": "antarchy:mob/wasp/hurt2"
+      },
+      {
+        "name": "antarchy:mob/wasp/hurt3"
+      }
+    ]
+  },
+  "wasp_attack": {
+    "subtitle": "subtitles.antarchy.wasp_attack",
+    "sounds": [
+      {
+        "name": "antarchy:mob/wasp/attack1"
+      },
+      {
+        "name": "antarchy:mob/wasp/attack2"
+      },
+      {
+        "name": "antarchy:mob/wasp/attack3"
+      },
+      {
+        "name": "antarchy:mob/wasp/attack4"
+      },
+      {
+        "name": "antarchy:mob/wasp/attack5"
+      }
+    ]
+  },
+  "wasp_death": {
+    "subtitle": "subtitles.antarchy.wasp_death",
+    "sounds": [
+      {
+        "name": "antarchy:mob/wasp/death1"
+      },
+      {
+        "name": "antarchy:mob/wasp/death2"
+      }
+    ]
+  },
+  "scorpion_ambient": {
+    "subtitle": "subtitles.antarchy.scorpion_ambient",
+    "sounds": [
+      {
+        "name": "antarchy:mob/scorpion/scorpion_ambient1"
+      }
+    ]
+  },
+  "scorpion_hurt": {
+    "subtitle": "subtitles.antarchy.scorpion_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/scorpion/scorpion_hurt1"
+      },
+      {
+        "name": "antarchy:mob/scorpion/scorpion_hurt2"
+      },
+      {
+        "name": "antarchy:mob/scorpion/scorpion_hurt3"
+      }
+    ]
+  },
+  "scorpion_attack": {
+    "subtitle": "subtitles.antarchy.scorpion_attack",
+    "sounds": [
+      {
+        "name": "antarchy:mob/scorpion/scorpion_attack1"
+      },
+      {
+        "name": "antarchy:mob/scorpion/scorpion_attack2"
+      }
+    ]
+  },
+  "emperor_scorpion_ambient": {
+    "subtitle": "subtitles.antarchy.emperor_scorpion_ambient",
+    "sounds": [
+      {
+        "name": "antarchy:mob/emperor_scorpion/emperor_scorpion_ambient1"
+      }
+    ]
+  },
+  "emperor_scorpion_hurt": {
+    "subtitle": "subtitles.antarchy.emperor_scorpion_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/emperor_scorpion/emperor_scorpion_hurt1"
+      },
+      {
+        "name": "antarchy:mob/emperor_scorpion/emperor_scorpion_hurt2"
+      },
+      {
+        "name": "antarchy:mob/emperor_scorpion/emperor_scorpion_hurt3"
+      }
+    ]
+  },
+  "emperor_scorpion_attack": {
+    "subtitle": "subtitles.antarchy.emperor_scorpion_attack",
+    "sounds": [
+      {
+        "name": "antarchy:mob/emperor_scorpion/emperor_scorpion_attack1"
+      }
+    ]
+  },
+  "emperor_scorpion_roar": {
+    "subtitle": "subtitles.antarchy.emperor_scorpion_roar",
+    "sounds": [
+      {
+        "name": "antarchy:mob/emperor_scorpion/emperor_scorpion_roar1"
+      }
+    ]
+  },
+  "moleworm_ambient": {
+    "subtitle": "subtitles.antarchy.moleworm_ambient",
+    "sounds": [
+      {
+        "name": "antarchy:mob/moleworm/moleworm_idle1"
+      },
+      {
+        "name": "antarchy:mob/moleworm/moleworm_idle2"
+      },
+      {
+        "name": "antarchy:mob/moleworm/moleworm_idle3"
+      },
+      {
+        "name": "antarchy:mob/moleworm/moleworm_idle4"
+      },
+      {
+        "name": "antarchy:mob/moleworm/moleworm_idle5"
+      },
+      {
+        "name": "antarchy:mob/moleworm/moleworm_idle6"
+      },
+      {
+        "name": "antarchy:mob/moleworm/moleworm_idle7"
+      }
+    ]
+  },
+  "moleworm_hurt": {
+    "subtitle": "subtitles.antarchy.moleworm_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/moleworm/moleworm_hurt1"
+      },
+      {
+        "name": "antarchy:mob/moleworm/moleworm_hurt2"
+      },
+      {
+        "name": "antarchy:mob/moleworm/moleworm_hurt3"
+      }
+    ]
+  },
+  "moleworm_attack": {
+    "subtitle": "subtitles.antarchy.moleworm_attack",
+    "sounds": [
+      {
+        "name": "antarchy:mob/moleworm/moleworm_attack1"
+      },
+      {
+        "name": "antarchy:mob/moleworm/moleworm_attack2"
+      }
+    ]
+  },
+  "moleworm_dig": {
+    "subtitle": "subtitles.antarchy.moleworm_dig",
+    "sounds": [
+      {
+        "name": "antarchy:mob/moleworm/moleworm_dig1"
+      },
+      {
+        "name": "antarchy:mob/moleworm/moleworm_dig2"
+      },
+      {
+        "name": "antarchy:mob/moleworm/moleworm_dig3"
+      }
+    ]
+  },
+  "molevore_ambient": {
+    "subtitle": "subtitles.antarchy.molevore_ambient",
+    "sounds": [
+      {
+        "name": "antarchy:mob/molevore/molevore_idle1"
+      },
+      {
+        "name": "antarchy:mob/molevore/molevore_idle2"
+      },
+      {
+        "name": "antarchy:mob/molevore/molevore_idle3"
+      }
+    ]
+  },
+  "molevore_hurt": {
+    "subtitle": "subtitles.antarchy.molevore_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/molevore/molevore_hurt1"
+      },
+      {
+        "name": "antarchy:mob/molevore/molevore_hurt2"
+      },
+      {
+        "name": "antarchy:mob/molevore/molevore_hurt3"
+      }
+    ]
+  },
+  "molevore_attack": {
+    "subtitle": "subtitles.antarchy.molevore_attack",
+    "sounds": [
+      {
+        "name": "antarchy:mob/molevore/molevore_attack1"
+      },
+      {
+        "name": "antarchy:mob/molevore/molevore_attack2"
+      },
+      {
+        "name": "antarchy:mob/molevore/molevore_attack3"
+      }
+    ]
+  },
+  "molevore_dig": {
+    "subtitle": "subtitles.antarchy.molevore_dig",
+    "sounds": [
+      {
+        "name": "antarchy:mob/molevore/molevore_dig1"
+      }
+    ]
+  },
+  "duct_tape_use": {
+    "subtitle": "subtitles.antarchy.duct_tape_use",
+    "sounds": [
+      {
+        "name": "antarchy:block/duct_tape/duct_tape1"
+      },
+      {
+        "name": "antarchy:block/duct_tape/duct_tape2"
+      },
+      {
+        "name": "antarchy:block/duct_tape/duct_tape3"
+      },
+      {
+        "name": "antarchy:block/duct_tape/duct_tape4"
+      },
+      {
+        "name": "antarchy:block/duct_tape/duct_tape5"
+      },
+      {
+        "name": "antarchy:block/duct_tape/duct_tape6"
+      },
+      {
+        "name": "antarchy:block/duct_tape/duct_tape7"
+      },
+      {
+        "name": "antarchy:block/duct_tape/duct_tape8"
+      }
+    ]
+  },
+  "potent_nyxite_hypnotic_gas": {
+    "subtitle": "subtitles.antarchy.potent_nyxite_hypnotic_gas",
+    "sounds": [
+      {
+        "name": "antarchy:block/potent_nyxite/hypnotic_gas/ambient1"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/hypnotic_gas/ambient2"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/hypnotic_gas/ambient3"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/hypnotic_gas/ambient4"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/hypnotic_gas/ambient5"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/hypnotic_gas/ambient6"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/hypnotic_gas/ambient7"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/hypnotic_gas/ambient8"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/hypnotic_gas/ambient9"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/hypnotic_gas/ambient10"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/hypnotic_gas/ambient11"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/hypnotic_gas/ambient12"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/hypnotic_gas/ambient13"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/hypnotic_gas/ambient14"
+      }
+    ]
+  },
+  "potent_nyxite_geyser_eruption_start": {
+    "subtitle": "subtitles.antarchy.potent_nyxite_geyser_eruption",
+    "sounds": [
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption1"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption2"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption3"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption4"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption5"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption6"
+      }
+    ]
+  },
+  "potent_nyxite_geyser_eruption_active": {
+    "subtitle": "subtitles.antarchy.potent_nyxite_geyser_eruption",
+    "sounds": [
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption_active1"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption_active2"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption_active3"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption_active4"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption_active5"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption_active6"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption_active7"
+      }
+    ]
+  },
+  "potent_nyxite_geyser_continuous_start": {
+    "subtitle": "subtitles.antarchy.potent_nyxite_geyser_continuous",
+    "sounds": [
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption1"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption2"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption3"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption4"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption5"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption6"
+      }
+    ]
+  },
+  "potent_nyxite_geyser_continuous_active": {
+    "subtitle": "subtitles.antarchy.potent_nyxite_geyser_continuous",
+    "sounds": [
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption_active1"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption_active2"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption_active3"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption_active4"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption_active5"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption_active6"
+      },
+      {
+        "name": "antarchy:block/potent_nyxite/geyser_continuous/eruption_active7"
+      }
+    ]
+  },
+  "ambient.elythia.firefly": {
+    "sounds": [
+      {
+        "name": "antarchy:ambient/elythia/firefly/firefly_bush1",
+        "stream": false
+      },
+      {
+        "name": "antarchy:ambient/elythia/firefly/firefly_bush2",
+        "stream": false
+      },
+      {
+        "name": "antarchy:ambient/elythia/firefly/firefly_bush3",
+        "stream": false
+      },
+      {
+        "name": "antarchy:ambient/elythia/firefly/firefly_bush4",
+        "stream": false
+      },
+      {
+        "name": "antarchy:ambient/elythia/firefly/firefly_bush5",
+        "stream": false
+      },
+      {
+        "name": "antarchy:ambient/elythia/firefly/firefly_bush6",
+        "stream": false
+      },
+      {
+        "name": "antarchy:ambient/elythia/firefly/firefly_bush7",
+        "stream": false
+      },
+      {
+        "name": "antarchy:ambient/elythia/firefly/firefly_bush8",
+        "stream": false
+      },
+      {
+        "name": "antarchy:ambient/elythia/firefly/firefly_bush9",
+        "stream": false
+      },
+      {
+        "name": "antarchy:ambient/elythia/firefly/firefly_bush10",
+        "stream": false
+      },
+      {
+        "name": "antarchy:ambient/elythia/firefly/firefly_bush11",
+        "stream": false
+      }
+    ]
+  },
+  "triffid_attack": {
+    "subtitle": "subtitles.antarchy.triffid_attack",
+    "sounds": [
+      {
+        "name": "antarchy:mob/triffid/triffid_attack1"
+      }
+    ]
+  },
+  "triffid_grab": {
+    "subtitle": "subtitles.antarchy.triffid_grab",
+    "sounds": [
+      {
+        "name": "antarchy:mob/triffid/triffid_grab1"
+      }
+    ]
+  },
+  "triffid_hurt": {
+    "subtitle": "subtitles.antarchy.triffid_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/triffid/triffid_hurt1"
+      },
+      {
+        "name": "antarchy:mob/triffid/triffid_hurt2"
+      },
+      {
+        "name": "antarchy:mob/triffid/triffid_hurt3"
+      }
+    ]
+  },
+  "triffid_death": {
+    "subtitle": "subtitles.antarchy.triffid_death",
+    "sounds": [
+      {
+        "name": "antarchy:mob/triffid/triffid_hurt3"
+      }
+    ]
+  },
+  "triffid_hiss": {
+    "subtitle": "subtitles.antarchy.triffid_hiss",
+    "sounds": [
+      {
+        "name": "antarchy:mob/triffid/triffid_hiss1"
+      }
+    ]
+  },
+  "triffid_growl": {
+    "subtitle": "subtitles.antarchy.triffid_growl",
+    "sounds": [
+      {
+        "name": "antarchy:mob/triffid/triffid_growl1"
+      },
+      {
+        "name": "antarchy:mob/triffid/triffid_growl2"
+      }
+    ]
+  }
+}

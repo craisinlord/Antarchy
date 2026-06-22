@@ -1,0 +1,26 @@
+{
+  "type": "antarchy:antiwater_springs",
+  "config": {
+    "state": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "antarchy:antiwater"
+      }
+    },
+    "horizontal_search_radius": 6,
+    "floor_search_below": 20,
+    "floor_search_above": 12,
+    "vent_offset_radius": 2,
+    "base_clusters": 1,
+    "extra_cluster_chance": 4,
+    "min_small_vent_count": 1,
+    "max_small_vent_count": 2,
+    "min_large_vent_count": 2,
+    "max_large_vent_count": 4,
+    "large_vent_cluster_chance": 5,
+    "min_depth": 1,
+    "max_depth": 4,
+    "large_cluster_min_depth": 2,
+    "large_cluster_max_depth": 5
+  }
+}

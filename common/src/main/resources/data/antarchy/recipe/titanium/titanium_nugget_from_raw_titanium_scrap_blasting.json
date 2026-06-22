@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "ingredient": {
+    "item": "antarchy:raw_titanium_scrap"
+  },
+  "result": {
+    "id": "antarchy:titanium_nugget"
+  },
+  "experience": 0.1,
+  "cookingtime": 100
+}

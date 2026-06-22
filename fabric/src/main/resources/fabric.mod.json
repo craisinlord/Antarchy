@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": [
+    "${mod_author}"
+  ],
+  "contact": {
+    "homepage": "${homepage_url}",
+    "sources": "${sources_url}",
+    "issues": "${issues_url}"
+  },
+  "license": "${license}",
+  "environment": "*",
+  "icon": "${logo_fabric}",
+  "entrypoints": {
+    "main": [
+      "com.craisinlord.antarchy.fabric.AntarchyFabric"
+    ],
+    "client": [
+      "com.craisinlord.antarchy.fabric.client.AntarchyFabricClient"
+    ]
+  },
+  "mixins": [
+    "antarchy-common.mixins.json",
+    "antarchy-fabric.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "minecraft": "~${minecraft_version}",
+    "java": ">=21",
+    "fabric-api": "*",
+    "integrated_api": "*",
+    "geckolib": "*"
+  }
+}

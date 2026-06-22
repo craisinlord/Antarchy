@@ -1,0 +1,9 @@
+{
+  "asset_name": "titanium",
+  "ingredient": "antarchy:titanium_ingot",
+  "item_model_index": 0.83,
+  "description": {
+    "color": "#86BEC5",
+    "translate": "trim_material.antarchy.titanium"
+  }
+}

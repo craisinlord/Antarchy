@@ -1,0 +1,26 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:entity.creeper.primed",
+    "minecraft:entity.spider.ambient",
+    "minecraft:entity.skeleton.ambient",
+    "minecraft:entity.zombie.ambient",
+    "minecraft:entity.zombie.hurt",
+    "minecraft:entity.skeleton.hurt",
+    "minecraft:entity.creeper.hurt",
+    "minecraft:entity.spider.hurt",
+    "minecraft:ambient.cave",
+    "antarchy:basilisk_hiss",
+    "antarchy:basilisk_bite",
+    "antarchy:bed_bug_ambient",
+    "antarchy:bed_bug_attack",
+    "antarchy:scorpion_ambient",
+    "antarchy:scorpion_attack",
+    "antarchy:cloud_shark_idle",
+    "antarchy:cloud_shark_bite",
+    "antarchy:nightmare_idle",
+    "antarchy:nightmare_hurt",
+    "antarchy:nightmare_roar",
+    "antarchy:nightmare_bite"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#c:is_plains",
+    "#c:is_forest",
+    "#c:is_taiga",
+    "antarchy:ouranwood_forest",
+    "antarchy:elythia_meadow"
+  ]
+}

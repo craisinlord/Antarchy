@@ -1,0 +1,90 @@
+{
+  "has_precipitation": false,
+  "temperature": 2.0,
+  "downfall": 0.0,
+  "effects": {
+    "fog_color": 983040,
+    "water_color": 327680,
+    "water_fog_color": 0,
+    "sky_color": 524288,
+    "particle": {
+      "probability": 0.004,
+      "options": {
+        "type": "minecraft:ash"
+      }
+    },
+    "ambient_sound": "antarchy:thoraxis_dream_dunes_ambient",
+    "additions_sound": {
+      "sound": "antarchy:thoraxis_dream_dunes_additions",
+      "tick_chance": 0.002100000
+    },
+    "mood_sound": {
+      "sound": "antarchy:thoraxis_dream_dunes_mood",
+      "tick_delay": 8572,
+      "block_search_extent": 8,
+      "offset": 2.0
+    }
+  },
+  "spawn_costs": {
+    "antarchy:emperor_scorpion": {
+      "energy_budget": 0.18,
+      "charge": 1.4
+    }
+  },
+  "carvers": {
+    "air": [],
+    "liquid": []
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:patch_fire"
+    ],
+    [
+      "antarchy:nyxite_spikes",
+      "antarchy:patch_ceiling_fire"
+    ],
+    [
+      "antarchy:cornea_stalk_patch",
+      "antarchy:patch_ceiling_cornea_stalk"
+    ],
+    []
+  ],
+  "creature_spawn_probability": 0.03,
+  "spawners": {
+    "monster": [
+      {
+        "type": "antarchy:scorpion",
+        "weight": 20,
+        "minCount": 2,
+        "maxCount": 5
+      },
+      {
+        "type": "antarchy:emperor_scorpion",
+        "weight": 3,
+        "minCount": 1,
+        "maxCount": 1
+      }
+    ],
+    "creature": [
+      {
+        "type": "antarchy:bed_bug",
+        "weight": 15,
+        "minCount": 2,
+        "maxCount": 4
+      }
+    ],
+    "ambient": [],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  }
+}

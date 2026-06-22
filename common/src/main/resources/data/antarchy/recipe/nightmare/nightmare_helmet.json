@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "SSS",
+    "S S"
+  ],
+  "key": {
+    "S": {
+      "item": "antarchy:nightmare_scale"
+    }
+  },
+  "result": {
+    "id": "antarchy:nightmare_helmet",
+    "count": 1
+  }
+}

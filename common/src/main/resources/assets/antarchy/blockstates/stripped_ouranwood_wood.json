@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "antarchy:block/stripped_ouranwood_wood",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "antarchy:block/stripped_ouranwood_wood"
+    },
+    "axis=z": {
+      "model": "antarchy:block/stripped_ouranwood_wood",
+      "x": 90
+    }
+  }
+}

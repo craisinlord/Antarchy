@@ -1,0 +1,151 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 256,
+				"texture_height": 256,
+				"visible_bounds_width": 6,
+				"visible_bounds_height": 5.5,
+				"visible_bounds_offset": [0, 2.25, 0]
+			},
+			"bones": [
+				{
+					"name": "Toreterror",
+					"pivot": [0.0625, 21.6731, -10.63321]
+				},
+				{
+					"name": "R-Leg",
+					"parent": "Toreterror",
+					"pivot": [-9, 18, -13],
+					"cubes": [
+						{"origin": [-13, 2, -19], "size": [8, 18, 12], "inflate": 0.01, "uv": [72, 75]}
+					]
+				},
+				{
+					"name": "L-Leg",
+					"parent": "Toreterror",
+					"pivot": [9, 18, -13],
+					"cubes": [
+						{"origin": [5, 2, -19], "size": [8, 18, 12], "inflate": 0.01, "uv": [72, 75], "mirror": true}
+					]
+				},
+				{
+					"name": "Torso",
+					"parent": "Toreterror",
+					"pivot": [0.25, 18, -9.5]
+				},
+				{
+					"name": "R_arm",
+					"parent": "Torso",
+					"pivot": [-12.75, 43.25, -12],
+					"cubes": [
+						{"origin": [-26, 37, -16], "size": [16, 8, 9], "uv": [84, 58]}
+					]
+				},
+				{
+					"name": "R_arm2",
+					"parent": "R_arm",
+					"pivot": [-25.5, 41, -12.5],
+					"cubes": [
+						{"origin": [-52, 35, -18], "size": [27, 11, 14], "uv": [138, 0]}
+					]
+				},
+				{
+					"name": "L_arm",
+					"parent": "Torso",
+					"pivot": [12.75, 43.25, -12],
+					"cubes": [
+						{"origin": [10, 37, -16], "size": [16, 8, 9], "uv": [84, 58], "mirror": true}
+					]
+				},
+				{
+					"name": "L_arm2",
+					"parent": "L_arm",
+					"pivot": [25.5, 41, -12.5],
+					"cubes": [
+						{"origin": [25, 35, -18], "size": [27, 11, 14], "uv": [138, 0], "mirror": true}
+					]
+				},
+				{
+					"name": "Shell",
+					"parent": "Torso",
+					"pivot": [-1.75, 32.65328, -0.7294],
+					"cubes": [
+						{"origin": [-17, 17, -6], "size": [34, 32, 12], "pivot": [4, 32, -1], "rotation": [22.5, 0, 0], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "cannon",
+					"parent": "Shell",
+					"pivot": [-3.5, 32, -1],
+					"cubes": [
+						{"origin": [-8, 35, 6], "size": [16, 12, 7], "pivot": [-5, 32, -1], "rotation": [22.5, 0, 0], "uv": [92, 0]}
+					]
+				},
+				{
+					"name": "barrel",
+					"parent": "cannon",
+					"pivot": [-1.16667, 49.50153, 3.17891],
+					"cubes": [
+						{"origin": [-3.5, 64, 6], "size": [7, 17, 7], "pivot": [-3.5, 32, -1], "rotation": [22.5, 0, 0], "uv": [48, 105]},
+						{"origin": [-2.5, 47, 7], "size": [5, 17, 5], "pivot": [-3.5, 32, -1], "rotation": [22.5, 0, 0], "uv": [76, 105]},
+						{"origin": [-3.5, 75, -7], "size": [0, 4, 16], "pivot": [-3.5, 32, -1], "rotation": [22.5, 0, 0], "uv": [16, 102]}
+					]
+				},
+				{
+					"name": "Torso_2",
+					"parent": "Torso",
+					"pivot": [-0.4, 37.8, -11.5],
+					"cubes": [
+						{"origin": [-10.5, 18, -16], "size": [21, 12, 15], "uv": [0, 75]},
+						{"origin": [-13, 28, -17], "size": [26, 15, 16], "uv": [0, 44]}
+					]
+				},
+				{
+					"name": "Head",
+					"parent": "Torso_2",
+					"pivot": [-2, 43, -16],
+					"cubes": [
+						{"origin": [-6, 45, -23], "size": [12, 7, 11], "uv": [92, 19]},
+						{"origin": [-5, 45, -28], "size": [10, 3, 5], "uv": [96, 105]},
+						{"origin": [-3, 43, -28], "size": [6, 2, 1], "uv": [48, 102]}
+					]
+				},
+				{
+					"name": "Jaw",
+					"parent": "Head",
+					"pivot": [-2, 46.08333, -12.08333],
+					"cubes": [
+						{"origin": [-5, 41, -27], "size": [10, 3, 4], "uv": [92, 37]},
+						{"origin": [-5, 37.5, -26.5], "size": [10, 4, 0], "uv": [116, 37]},
+						{"origin": [-6.5, 41, -23], "size": [13, 3, 11], "uv": [0, 102]},
+						{"origin": [-6.5, 44, -22], "size": [0, 4, 2], "uv": [0, 114]},
+						{"origin": [6.5, 44, -22], "size": [0, 4, 2], "uv": [0, 114], "mirror": true},
+						{"origin": [-6.5, 39, -23], "size": [0, 2, 4], "uv": [7, 112]},
+						{"origin": [6.5, 39, -23], "size": [0, 2, 4], "uv": [7, 112], "mirror": true},
+						{"origin": [-7, 41, -20], "size": [1, 5, 8], "uv": [112, 75]},
+						{"origin": [6, 41, -20], "size": [1, 5, 8], "uv": [112, 75], "mirror": true}
+					]
+				},
+				{
+					"name": "R_eye",
+					"parent": "Head",
+					"pivot": [-4.5, 48.5, -23],
+					"cubes": [
+						{"origin": [-5, 48, -23], "size": [1, 1, 0], "inflate": 0.1, "uv": [101, 29]}
+					]
+				},
+				{
+					"name": "L_eye",
+					"parent": "Head",
+					"pivot": [4.5, 48.5, -23],
+					"cubes": [
+						{"origin": [4, 48, -23], "size": [1, 1, 0], "inflate": 0.1, "uv": [101, 29], "mirror": true}
+					]
+				}
+			]
+		}
+	]
+}

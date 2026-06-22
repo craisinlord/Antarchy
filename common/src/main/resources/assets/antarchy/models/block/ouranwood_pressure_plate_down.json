@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/jungle_pressure_plate_down",
+  "textures": {
+    "texture": "antarchy:block/ouranwood/ouranwood_planks"
+  }
+}

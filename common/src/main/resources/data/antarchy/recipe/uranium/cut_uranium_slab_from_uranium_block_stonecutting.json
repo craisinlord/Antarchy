@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:uranium_block"
+  },
+  "result": {
+    "count": 8,
+    "id": "antarchy:cut_uranium_slab"
+  }
+}

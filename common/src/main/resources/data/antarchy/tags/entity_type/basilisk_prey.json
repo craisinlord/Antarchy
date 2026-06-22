@@ -1,0 +1,20 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:rabbit",
+    "minecraft:pig",
+    "minecraft:chicken",
+    "minecraft:sheep",
+    "minecraft:cow",
+    "minecraft:mooshroom",
+    "antarchy:flying_squirrel",
+    "antarchy:moleworm",
+    "antarchy:red_ant",
+    "antarchy:brown_ant",
+    "antarchy:rainbow_ant",
+    "antarchy:apple_cow",
+    "antarchy:golden_apple_cow",
+    "antarchy:enchanted_golden_apple_cow",
+    "antarchy:caterpillar"
+  ]
+}

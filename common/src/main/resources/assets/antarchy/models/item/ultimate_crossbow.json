@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:item/crossbow",
+  "textures": {
+    "layer0": "antarchy:item/ultimate/ultimate_crossbow_standby"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "pulling": 1,
+        "pull": 0.0
+      },
+      "model": "antarchy:item/ultimate/ultimate_crossbow_pull1"
+    },
+    {
+      "predicate": {
+        "pulling": 1,
+        "pull": 0.58
+      },
+      "model": "antarchy:item/ultimate/ultimate_crossbow_pull2"
+    },
+    {
+      "predicate": {
+        "pulling": 1,
+        "pull": 1.0
+      },
+      "model": "antarchy:item/ultimate/ultimate_crossbow_pull3"
+    },
+    {
+      "predicate": {
+        "charged": 1,
+        "firework": 0
+      },
+      "model": "antarchy:item/ultimate/ultimate_crossbow_arrow"
+    },
+    {
+      "predicate": {
+        "charged": 1,
+        "firework": 1
+      },
+      "model": "antarchy:item/ultimate/ultimate_crossbow_arrow"
+    }
+  ]
+}

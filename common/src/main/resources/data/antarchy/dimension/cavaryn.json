@@ -1,0 +1,11 @@
+{
+  "type": "antarchy:cavaryn",
+  "generator": {
+    "type": "minecraft:noise",
+    "settings": "antarchy:cavaryn",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "antarchy:cavaryn"
+    }
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "has_precipitation": false,
+  "temperature": 2.0,
+  "downfall": 0.0,
+  "effects": {
+    "fog_color": 983040,
+    "water_color": 327680,
+    "water_fog_color": 0,
+    "sky_color": 524288,
+    "particle": {
+      "probability": 0.005,
+      "options": {
+        "type": "minecraft:crimson_spore"
+      }
+    },
+    "ambient_sound": "antarchy:thoraxis_lucid_pools_ambient",
+    "additions_sound": {
+      "sound": "antarchy:thoraxis_lucid_pools_additions",
+      "tick_chance": 0.000600000
+    },
+    "mood_sound": {
+      "sound": "antarchy:thoraxis_lucid_pools_mood",
+      "tick_delay": 12000,
+      "block_search_extent": 8,
+      "offset": 2.0
+    }
+  },
+  "carvers": {
+    "air": [],
+    "liquid": []
+  },
+  "spawn_costs": {
+    "antarchy:lucid": {
+      "energy_budget": 0.10,
+      "charge": 7.0
+    }
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:lucid_blood_crystal_spires",
+      "antarchy:lucid_medium_blood_crystal_spires",
+      "antarchy:lucid_large_blood_crystal_spires"
+    ],
+    [],
+    [],
+    [
+      "antarchy:lucid_antiwater_pools",
+      "antarchy:antiwater_springs",
+      "antarchy:bed_bug_surface_cluster",
+      "antarchy:red_ant_nest_magma",
+      "antarchy:nyxite_spikes",
+      "antarchy:patch_fire_sparse",
+      "antarchy:patch_ceiling_fire"
+    ],
+    [],
+    [
+      "antarchy:cornea_stalk_patch",
+      "antarchy:patch_ceiling_cornea_stalk",
+      "antarchy:bed_bug_nest"
+    ],
+    []
+  ],
+  "creature_spawn_probability": 0.06,
+  "spawners": {
+    "monster": [
+      {
+        "type": "antarchy:lucid",
+        "weight": 7,
+        "minCount": 1,
+        "maxCount": 1
+      }
+    ],
+    "creature": [
+      {
+        "type": "antarchy:bed_bug",
+        "weight": 7,
+        "minCount": 2,
+        "maxCount": 4
+      }
+    ],
+    "ambient": [],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  }
+}
+

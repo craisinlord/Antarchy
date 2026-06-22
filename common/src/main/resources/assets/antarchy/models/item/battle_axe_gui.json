@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "gui_light": "front",
+  "textures": {
+    "layer0": "antarchy:item/battle_axe/battle_axe_item"
+  }
+}

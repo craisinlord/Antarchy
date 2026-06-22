@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SSS",
+    "PPP"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:slime_balls"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    }
+  },
+  "result": {
+    "id": "antarchy:duct_tape",
+    "count": 1
+  }
+}

@@ -1,0 +1,147 @@
+{
+  "type": "antarchy:thoraxis",
+  "generator": {
+    "type": "minecraft:noise",
+    "settings": "antarchy:thoraxis",
+    "biome_source": {
+      "type": "antarchy:thoraxis_biome_source",
+      "dream_dunes_max_y": 96,
+      "umbral_hills_max_y": 100,
+      "lucid_pools_min_y": 116,
+      "biomes": [
+        {
+          "parameters": {
+            "temperature": [-1.0, 1.0],
+            "humidity": [-1.0, 1.0],
+            "continentalness": [-1.0, 1.0],
+            "erosion": [-1.0, 1.0],
+            "weirdness": [-1.0, 1.0],
+            "depth": [0.0, 1.0],
+            "offset": 0.0
+          },
+          "biome": "antarchy:dream_dunes"
+        },
+        {
+          "parameters": {
+            "temperature": [-1.0, 1.0],
+            "humidity": [-1.0, 1.0],
+            "continentalness": [-1.0, 1.0],
+            "erosion": [-1.0, 1.0],
+            "weirdness": [-1.0, 1.0],
+            "depth": [0.0, 1.0],
+            "offset": 0.02
+          },
+          "biome": "antarchy:umbral_hills"
+        },
+        {
+          "parameters": {
+            "temperature": [-1.0, 1.0],
+            "humidity": [-1.0, 1.0],
+            "continentalness": [-1.0, 1.0],
+            "erosion": [-1.0, 1.0],
+            "weirdness": [-1.0, 1.0],
+            "depth": [0.0, 1.0],
+            "offset": 0.0
+          },
+          "biome": "antarchy:nightmare_wastes"
+        },
+        {
+          "parameters": {
+            "temperature": [-1.0, 1.0],
+            "humidity": [-1.0, 1.0],
+            "continentalness": [-1.0, 1.0],
+            "erosion": [-1.0, 1.0],
+            "weirdness": [-1.0, 1.0],
+            "depth": [0.0, 1.0],
+            "offset": 0.04
+          },
+          "biome": "antarchy:nightmare_wastes"
+        },
+        {
+          "parameters": {
+            "temperature": [-1.0, 1.0],
+            "humidity": [-1.0, 1.0],
+            "continentalness": [-1.0, 1.0],
+            "erosion": [-1.0, 1.0],
+            "weirdness": [-1.0, 1.0],
+            "depth": [0.0, 1.0],
+            "offset": 0.12
+          },
+          "biome": "antarchy:nightmare_wastes"
+        },
+        {
+          "parameters": {
+            "temperature": [-1.0, 1.0],
+            "humidity": [-1.0, 1.0],
+            "continentalness": [-1.0, 1.0],
+            "erosion": [-1.0, 1.0],
+            "weirdness": [-1.0, 1.0],
+            "depth": [0.0, 1.0],
+            "offset": 0.18
+          },
+          "biome": "antarchy:nightmare_wastes"
+        },
+        {
+          "parameters": {
+            "temperature": [-1.0, 1.0],
+            "humidity": [-1.0, 1.0],
+            "continentalness": [-1.0, 1.0],
+            "erosion": [-1.0, 1.0],
+            "weirdness": [-1.0, 1.0],
+            "depth": [0.0, 1.0],
+            "offset": 0.24
+          },
+          "biome": "antarchy:nightmare_wastes"
+        },
+        {
+          "parameters": {
+            "temperature": [-1.0, 1.0],
+            "humidity": [-1.0, 1.0],
+            "continentalness": [-1.0, 1.0],
+            "erosion": [-1.0, 1.0],
+            "weirdness": [-1.0, 1.0],
+            "depth": [0.0, 1.0],
+            "offset": 0.6
+          },
+          "biome": "antarchy:lucid_pools"
+        },
+        {
+          "parameters": {
+            "temperature": [-1.0, 1.0],
+            "humidity": [-1.0, 1.0],
+            "continentalness": [-1.0, 1.0],
+            "erosion": [-1.0, 1.0],
+            "weirdness": [-1.0, 1.0],
+            "depth": [0.0, 1.0],
+          "offset": 0.965
+        },
+        "biome": "antarchy:cloud_sea"
+      },
+      {
+          "parameters": {
+            "temperature": [-1.0, 1.0],
+            "humidity": [-1.0, 1.0],
+            "continentalness": [-1.0, 1.0],
+            "erosion": [-1.0, 1.0],
+            "weirdness": [-1.0, 1.0],
+            "depth": [0.0, 1.0],
+          "offset": 0.93
+        },
+        "biome": "antarchy:cloud_sea"
+      },
+      {
+          "parameters": {
+            "temperature": [-1.0, 1.0],
+            "humidity": [-1.0, 1.0],
+            "continentalness": [-1.0, 1.0],
+            "erosion": [-1.0, 1.0],
+            "weirdness": [-1.0, 1.0],
+            "depth": [0.0, 1.0],
+          "offset": 0.985
+        },
+        "biome": "antarchy:cloud_sea"
+      }
+      ]
+    }
+  }
+}

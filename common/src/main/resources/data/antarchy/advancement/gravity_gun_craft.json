@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "craft_gravity_gun": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:gravity_gun"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.gravity_gun_craft.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:gravity_gun"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.gravity_gun_craft.title"
+    }
+  },
+  "requirements": [
+    [
+      "craft_gravity_gun"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

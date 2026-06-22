@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "NNN",
+    "NNN",
+    "NNN"
+  ],
+  "key": {
+    "N": {
+      "item": "antarchy:uranium_nugget"
+    }
+  },
+  "result": {
+    "id": "antarchy:uranium_ingot",
+    "count": 1
+  }
+}

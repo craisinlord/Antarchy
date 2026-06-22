@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "kill_basilisk": {
+      "conditions": {
+        "entity": {
+          "type": "antarchy:basilisk"
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.stone_cold.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:basilisk_fang"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.stone_cold.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_basilisk"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

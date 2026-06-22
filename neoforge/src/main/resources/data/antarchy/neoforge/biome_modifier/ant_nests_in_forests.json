@@ -1,0 +1,9 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#antarchy:overworld_ant_nest_spawn_biomes",
+  "features": [
+    "antarchy:brown_ant_nest",
+    "antarchy:rainbow_ant_nest"
+  ],
+  "step": "vegetal_decoration"
+}

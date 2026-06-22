@@ -1,0 +1,7 @@
+{
+  "message_id": "cornea_stalk_prick",
+  "scaling": "never",
+  "exhaustion": 0.1,
+  "effects": "hurt",
+  "death_message_type": "default"
+}

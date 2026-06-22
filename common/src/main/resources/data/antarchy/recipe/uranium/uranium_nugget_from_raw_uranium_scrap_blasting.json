@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "ingredient": {
+    "item": "antarchy:raw_uranium_scrap"
+  },
+  "result": {
+    "id": "antarchy:uranium_nugget"
+  },
+  "experience": 0.1,
+  "cookingtime": 100
+}

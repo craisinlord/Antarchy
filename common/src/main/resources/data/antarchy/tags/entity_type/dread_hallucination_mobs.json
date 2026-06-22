@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:nightmare",
+    "antarchy:kraken",
+    "antarchy:emperor_scorpion",
+    "antarchy:basilisk",
+    "antarchy:molevore",
+    "minecraft:wither",
+    "minecraft:creeper",
+    "minecraft:skeleton",
+    "minecraft:spider"
+  ]
+}

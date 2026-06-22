@@ -1,0 +1,10 @@
+{
+  "asset_name": "blood_crystal",
+  "ingredient": "antarchy:blood_crystal_shard",
+  "item_model_index": 0.81,
+  "description": {
+    "color": "#AC3E5C",
+    "translate": "trim_material.antarchy.blood_crystal"
+  }
+}
+

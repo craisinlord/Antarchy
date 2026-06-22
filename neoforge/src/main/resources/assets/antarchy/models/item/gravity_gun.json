@@ -1,0 +1,18 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "base": {
+    "parent": "antarchy:item/gravity_gun_held_geo"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "antarchy:item/gravity_gun_gui"
+    },
+    "ground": {
+      "parent": "antarchy:item/gravity_gun_gui"
+    },
+    "fixed": {
+      "parent": "antarchy:item/gravity_gun_gui"
+    }
+  }
+}

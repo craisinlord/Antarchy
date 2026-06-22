@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "  G",
+    "CD ",
+    "AB "
+  ],
+  "key": {
+    "A": {
+      "item": "antarchy:mantis_claw"
+    },
+    "B": {
+      "item": "antarchy:brutalfly_wing"
+    },
+    "C": {
+      "item": "antarchy:triffid_goo"
+    },
+    "D": {
+      "item": "antarchy:primordial_scute"
+    },
+    "G": {
+      "item": "antarchy:gravity_gun"
+    }
+  },
+  "result": {
+    "id": "antarchy:big_bertha_handle",
+    "count": 1
+  }
+}

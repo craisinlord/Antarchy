@@ -1,0 +1,398 @@
+{
+  "type": "antarchy:elythia",
+  "generator": {
+    "type": "minecraft:noise",
+    "settings": "antarchy:elythia",
+    "biome_source": {
+      "type": "antarchy:elythia_biome_source",
+      "moleworm_caves_max_y": 30,
+      "surface_biome_sample_y": 160,
+      "biomes": [
+        {
+          "biome": "antarchy:moleworm_caves",
+          "parameters": {
+            "temperature": 0.69,
+            "humidity": 0.95,
+            "continentalness": 0.56,
+            "erosion": 0.2,
+            "weirdness": 0.16,
+            "depth": 0.3,
+            "offset": 0.3
+          }
+        },
+        {
+          "biome": "antarchy:moleworm_caves",
+          "parameters": {
+            "temperature": 0.62,
+            "humidity": 0.92,
+            "continentalness": 0.48,
+            "erosion": 0.38,
+            "weirdness": -0.55,
+            "depth": 0.3,
+            "offset": 0.3
+          }
+        },
+        {
+          "biome": "antarchy:moleworm_caves",
+          "parameters": {
+            "temperature": 0.75,
+            "humidity": 0.96,
+            "continentalness": 0.64,
+            "erosion": 0.10,
+            "weirdness": 0.65,
+            "depth": 0.3,
+            "offset": 0.3
+          }
+        },
+        {
+          "biome": "antarchy:elythia_lush_caves",
+          "parameters": {
+            "temperature": 0.72,
+            "humidity": 1.0,
+            "continentalness": 0.52,
+            "erosion": 0.15,
+            "weirdness": -0.1,
+            "depth": 0.35,
+            "offset": 0.1
+          }
+        },
+        {
+          "biome": "antarchy:elythia_lush_caves",
+          "parameters": {
+            "temperature": 0.68,
+            "humidity": 0.99,
+            "continentalness": 0.60,
+            "erosion": 0.28,
+            "weirdness": 0.42,
+            "depth": 0.4,
+            "offset": 0.1
+          }
+        },
+        {
+          "biome": "antarchy:elythia_meadow",
+          "parameters": {
+            "temperature": 0.70,
+            "humidity": 0.94,
+            "continentalness": 0.55,
+            "erosion": 0.22,
+            "weirdness": -0.30,
+            "depth": 0.3,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:elythia_meadow",
+          "parameters": {
+            "temperature": 0.68,
+            "humidity": 0.96,
+            "continentalness": 0.57,
+            "erosion": 0.18,
+            "weirdness": 0.55,
+            "depth": 0.3,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:ouranwood_forest",
+          "parameters": {
+            "temperature": 0.67,
+            "humidity": 0.93,
+            "continentalness": 0.54,
+            "erosion": 0.25,
+            "weirdness": -0.50,
+            "depth": 0.45,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:sparse_ouranwood_forest",
+          "parameters": {
+            "temperature": 0.67,
+            "humidity": 0.93,
+            "continentalness": 0.54,
+            "erosion": 0.25,
+            "weirdness": -0.50,
+            "depth": 0.45,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:ouranwood_forest",
+          "parameters": {
+            "temperature": 0.45,
+            "humidity": 0.85,
+            "continentalness": 0.55,
+            "erosion": -0.15,
+            "weirdness": -0.75,
+            "depth": 0.3,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:ouranwood_forest",
+          "parameters": {
+            "temperature": 0.55,
+            "humidity": 0.9,
+            "continentalness": 0.9,
+            "erosion": 0.12,
+            "weirdness": -0.2,
+            "depth": 0.3,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:elythia_meadow",
+          "parameters": {
+            "temperature": 0.7,
+            "humidity": 0.95,
+            "continentalness": 0.38,
+            "erosion": 0.12,
+            "weirdness": -0.1,
+            "depth": 0.3,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:elythia_meadow",
+          "parameters": {
+            "temperature": 0.62,
+            "humidity": 0.98,
+            "continentalness": 0.78,
+            "erosion": 0.05,
+            "weirdness": 0.5,
+            "depth": 0.3,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:ouranwood_forest",
+          "parameters": {
+            "temperature": 0.45,
+            "humidity": 0.85,
+            "continentalness": 0.55,
+            "erosion": -0.15,
+            "weirdness": -0.75,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:ouranwood_forest",
+          "parameters": {
+            "temperature": 0.45,
+            "humidity": 0.85,
+            "continentalness": 0.75,
+            "erosion": 0.0,
+            "weirdness": 0.7,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:ouranwood_forest",
+          "parameters": {
+            "temperature": 0.55,
+            "humidity": 0.9,
+            "continentalness": 0.9,
+            "erosion": 0.12,
+            "weirdness": -0.2,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:sparse_ouranwood_forest",
+          "parameters": {
+            "temperature": 0.45,
+            "humidity": 0.85,
+            "continentalness": 0.75,
+            "erosion": 0.0,
+            "weirdness": 0.7,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:sparse_ouranwood_forest",
+          "parameters": {
+            "temperature": 0.55,
+            "humidity": 0.9,
+            "continentalness": 0.9,
+            "erosion": 0.12,
+            "weirdness": -0.2,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:torchflower_fields",
+          "parameters": {
+            "temperature": 0.76,
+            "humidity": 0.98,
+            "continentalness": 0.62,
+            "erosion": 0.18,
+            "weirdness": 0.32,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:butterfly_fields",
+          "parameters": {
+            "temperature": 0.74,
+            "humidity": 0.99,
+            "continentalness": 0.60,
+            "erosion": 0.17,
+            "weirdness": 0.28,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:butterfly_fields",
+          "parameters": {
+            "temperature": 0.76,
+            "humidity": 0.995,
+            "continentalness": 0.68,
+            "erosion": 0.12,
+            "weirdness": 0.36,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:elythia_meadow",
+          "parameters": {
+            "temperature": 0.7,
+            "humidity": 0.95,
+            "continentalness": 0.38,
+            "erosion": 0.12,
+            "weirdness": -0.1,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:elythia_meadow",
+          "parameters": {
+            "temperature": 0.7,
+            "humidity": 0.95,
+            "continentalness": 0.55,
+            "erosion": 0.22,
+            "weirdness": 0.15,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:ouranwood_forest",
+          "parameters": {
+            "temperature": 0.45,
+            "humidity": 0.85,
+            "continentalness": 0.55,
+            "erosion": -0.15,
+            "weirdness": -0.75,
+            "depth": 0.5,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:ouranwood_forest",
+          "parameters": {
+            "temperature": 0.45,
+            "humidity": 0.85,
+            "continentalness": 0.75,
+            "erosion": 0.0,
+            "weirdness": 0.7,
+            "depth": 0.5,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:ouranwood_forest",
+          "parameters": {
+            "temperature": 0.55,
+            "humidity": 0.9,
+            "continentalness": 0.9,
+            "erosion": 0.12,
+            "weirdness": -0.2,
+            "depth": 0.5,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:ouranwood_forest",
+          "parameters": {
+            "temperature": 0.50,
+            "humidity": 0.87,
+            "continentalness": 0.70,
+            "erosion": -0.05,
+            "weirdness": 0.0,
+            "depth": 0.85,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:butterfly_fields",
+          "parameters": {
+            "temperature": 0.66,
+            "humidity": 0.96,
+            "continentalness": 0.62,
+            "erosion": 0.13,
+            "weirdness": 0.20,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:butterfly_fields",
+          "parameters": {
+            "temperature": 0.70,
+            "humidity": 0.97,
+            "continentalness": 0.64,
+            "erosion": 0.15,
+            "weirdness": 0.10,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:butterfly_fields",
+          "parameters": {
+            "temperature": 0.72,
+            "humidity": 0.98,
+            "continentalness": 0.66,
+            "erosion": 0.14,
+            "weirdness": 0.32,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:torchflower_fields",
+          "parameters": {
+            "temperature": 0.74,
+            "humidity": 0.985,
+            "continentalness": 0.58,
+            "erosion": 0.16,
+            "weirdness": 0.24,
+            "depth": 0.5,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:elythia_meadow",
+          "parameters": {
+            "temperature": 0.66,
+            "humidity": 0.96,
+            "continentalness": 0.62,
+            "erosion": 0.13,
+            "weirdness": 0.20,
+            "depth": 0.85,
+            "offset": 0.0
+          }
+        }
+      ]
+    }
+  }
+}

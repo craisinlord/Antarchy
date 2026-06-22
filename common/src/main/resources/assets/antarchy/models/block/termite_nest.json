@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "antarchy:block/termite_nest_front",
+    "side": "antarchy:block/termite_nest_side",
+    "top": "antarchy:block/termite_nest_top"
+  }
+}

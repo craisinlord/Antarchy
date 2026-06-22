@@ -1,0 +1,23 @@
+{
+  "required": true,
+  "package": "com.craisinlord.antarchy.neoforge.mixins",
+  "refmap": "antarchy.refmap.json",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "compat.SablePhysicsColliderBlockGetterMixin",
+    "item.BucketItemThoraxisWaterMixin",
+    "entity.MultipartEntityBridgeMixin",
+    "entity.MultipartEntityLevelRegistryMixin",
+    "entity.ParalyzedMobFreezeMixin",
+    "infinity.PortalCreatorMixin",
+    "infinity.RandomSpringMixin",
+    "level.ClientLevelPartEntitiesAccessor",
+    "level.ServerLevelPartEntitiesAccessor"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

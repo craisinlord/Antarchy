@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "III",
+    "III",
+    "III"
+  ],
+  "key": {
+    "I": {
+      "item": "antarchy:raw_uranium"
+    }
+  },
+  "result": {
+    "id": "antarchy:raw_uranium_block",
+    "count": 1
+  }
+}

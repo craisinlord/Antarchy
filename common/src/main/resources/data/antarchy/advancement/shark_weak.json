@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "kill_cloud_shark": {
+      "conditions": {
+        "entity": {
+          "type": "antarchy:cloud_shark"
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.shark_weak.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:cloud_shark_fin"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.shark_weak.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_cloud_shark"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

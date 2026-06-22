@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "antarchy:torchflower_bush"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "id": "minecraft:orange_dye"
+  }
+}

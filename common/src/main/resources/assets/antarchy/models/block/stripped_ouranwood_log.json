@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/stripped_jungle_log",
+  "textures": {
+    "end": "antarchy:block/ouranwood/stripped_ouranwood_log_top",
+    "side": "antarchy:block/ouranwood/stripped_ouranwood_log"
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.82,
+  "downfall": 1.0,
+  "effects": {
+    "fog_color": 8084735,
+    "water_color": 5021432,
+    "water_fog_color": 2502722,
+    "sky_color": 8084735,
+    "foliage_color": 2867501,
+    "grass_color": 4304168,
+    "grass_color_modifier": "none",
+    "mood_sound": {
+      "sound": "minecraft:ambient.basalt_deltas.mood",
+      "tick_delay": 8000,
+      "block_search_extent": 8,
+      "offset": 2.0
+    }
+  },
+  "spawn_costs": {
+    "antarchy:mantis": {
+      "energy_budget": 0.1,
+      "charge": 15.0
+    }
+  },
+  "carvers": {
+    "air": [],
+    "liquid": []
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "minecraft:ore_coal_upper",
+      "minecraft:ore_coal_lower",
+      "minecraft:ore_iron_upper",
+      "minecraft:ore_iron_middle",
+      "minecraft:ore_iron_small",
+      "minecraft:ore_gold",
+      "minecraft:ore_gold_lower",
+      "minecraft:ore_redstone",
+      "minecraft:ore_redstone_lower",
+      "minecraft:ore_diamond",
+      "minecraft:ore_diamond_medium",
+      "minecraft:ore_diamond_large",
+      "minecraft:ore_diamond_buried",
+      "minecraft:ore_lapis",
+      "minecraft:ore_lapis_buried",
+      "minecraft:ore_copper"
+    ],
+    [
+      "antarchy:elythia_underground",
+      "minecraft:large_dripstone",
+      "minecraft:pointed_dripstone"
+    ],
+    [],
+    [
+      "antarchy:elythia_large_tuff_boulders",
+      "antarchy:elythia_tuff_boulders",
+      "antarchy:elythia_meadow_flora",
+      "antarchy:elythia_brown_ant_nests"
+    ],
+    []
+  ],
+  "creature_spawn_probability": 0.2,
+  "spawners": {
+    "creature": [
+      {
+        "type": "antarchy:caterpillar",
+        "weight": 24,
+        "minCount": 1,
+        "maxCount": 1
+      },
+      {
+        "type": "antarchy:apple_cow",
+        "weight": 24,
+        "minCount": 1,
+        "maxCount": 3
+      },
+      {
+        "type": "antarchy:golden_apple_cow",
+        "weight": 20,
+        "minCount": 1,
+        "maxCount": 3
+      },
+      {
+        "type": "antarchy:enchanted_golden_apple_cow",
+        "weight": 2,
+        "minCount": 1,
+        "maxCount": 1
+      },
+      {
+        "type": "minecraft:sniffer",
+        "weight": 18,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "minecraft:rabbit",
+        "weight": 16,
+        "minCount": 1,
+        "maxCount": 3
+      }
+    ],
+    "ambient": [
+      {
+        "type": "antarchy:butterfly",
+        "weight": 48,
+        "minCount": 2,
+        "maxCount": 4
+      }
+    ],
+    "monster": [
+      {
+        "type": "antarchy:mantis",
+        "weight": 20,
+        "minCount": 1,
+        "maxCount": 1
+      }
+    ],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  }
+}

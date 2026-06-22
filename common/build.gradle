@@ -1,0 +1,61 @@
+dependencies {
+
+    // We depend on fabric loader here to use the fabric @Environment annotations and get the mixin dependencies
+    // Do NOT use other classes from fabric loader
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+
+//    modImplementation("curse.maven:create-${create_curseforge_id}:${create_curseforge_file_id}")
+//    modImplementation("curse.maven:selene-499980:4754433")
+    compileOnly("curse.maven:intapi-${project.intapi_curseforge_id}:${project.intapi_curseforge_file_id_neoforge}")
+    compileOnly("curse.maven:create-${project.create_curseforge_id_neoforge}:${project.create_curseforge_file_id_neoforge}")
+    compileOnly("curse.maven:marvel-${project.marvel_curseforge_id}:${project.marvel_curseforge_file_id}")
+    compileOnly("curse.maven:stellaris-${project.stellaris_curseforge_id}:${project.stellaris_curseforge_file_id}")
+    compileOnly("curse.maven:aperture-${project.aperture_curseforge_id}:${project.aperture_curseforge_file_id}")
+    compileOnly("curse.maven:inventory_pets-${project.inventory_pets_curseforge_id}:${project.inventory_pets_curseforge_file_id}")
+    compileOnly("curse.maven:cataclysm-${project.cataclysm_curseforge_id}:${project.cataclysm_curseforge_file_id}")
+    compileOnly("curse.maven:iaf-${project.iaf_curseforge_id}:${project.iaf_curseforge_file_id}")
+    compileOnly("curse.maven:backpack-${project.backpack_curseforge_id}:${project.backpack_curseforge_file_id}")
+//    compileOnly("curse.maven:regions_unexplored-${project.regions_unexplored_curseforge_id}:${project.regions_unexplored_curseforge_file_id}")
+//    compileOnly("curse.maven:geckolib-${project.geckolib_curseforge_id}:${project.geckolib_curseforge_file_id}")
+    compileOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.1+1.21.1-neoforge.jar"))
+    compileOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.1+1.21.1-fabric.jar"))
+    compileOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.1+1.21.1-neoforge-sources.jar"))
+    compileOnly(files("$rootDir/infinite_dimensions_jars/gravity-api-1.0.7-1.20.1.jar"))
+    compileOnly(files("$rootDir/infinite_dimensions_jars/Cloro's Gravity Gun Mod (Release 1.3.1).jar"))
+//    compileOnly(files("$rootDir/infinite_dimensions_jars/antarchy-1.0.0+1.21.1-neoforge.jar"))
+    compileOnly(files("$rootDir/infinite_dimensions_jars/VanillaBackport-neoforge-1.21.1-1.1.7.6.jar"))
+    compileOnly(files("$rootDir/infinite_dimensions_jars/soul-fire-d-neoforge-1.21-6.1.0.jar"))
+    compileOnly(files("$rootDir/infinite_dimensions_jars/prometheus-neoforge-1.21-1.2.5.jar"))
+    compileOnly(files("$rootDir/infinite_dimensions_jars/sable-neoforge-1.21.1-2.0.3.jar"))
+    compileOnly("software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}")
+//
+//    compileOnly group: 'org.ow2.asm', name: 'asm-tree', version: '9.4'
+//    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
+
+
+    annotationProcessor "org.spongepowered:mixin:0.8.7:processor"
+    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:${rootProject.mixin_extras}"))
+}
+
+architectury {
+    common("fabric", "neoforge")
+}
+
+loom {
+    mixin {
+        useLegacyMixinAp = true
+        defaultRefmapName = "antarchy.refmap.json"
+    }
+}
+
+jar {
+    exclude "architectury.common.json"
+
+    manifest {
+        attributes 'Fabric-Loom-Remap': true
+    }
+}
+
+sourcesJar {
+    exclude "architectury.common.json"
+}

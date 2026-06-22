@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "now_watch_me_whip": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:scorpion_whip"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.now_watch_me_whip.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:scorpion_whip"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.now_watch_me_whip.title"
+    }
+  },
+  "requirements": [
+    [
+      "now_watch_me_whip"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

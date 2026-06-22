@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:butterfly_fields",
+    "antarchy:elythia_lush_caves",
+    "antarchy:elythia_meadow",
+    "antarchy:elythia_river",
+    "antarchy:torchflower_fields",
+    "antarchy:moleworm_caves",
+    "antarchy:ouranwood_forest",
+    "antarchy:sparse_ouranwood_forest"
+  ]
+}

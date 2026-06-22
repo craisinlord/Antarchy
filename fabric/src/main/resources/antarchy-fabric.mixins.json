@@ -1,0 +1,31 @@
+{
+  "required": true,
+  "package": "com.craisinlord.antarchy.fabric.mixin",
+  "refmap": "antarchy.refmap.json",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AntiwaterLivingEntityMixin",
+    "AntiwaterItemEntityMixin",
+    "AntimetalInversionMixin",
+    "AntimetalScaffoldingMixin",
+    "ElytraStartFlyingMixin",
+    "ElytraFallFlyingMixin",
+    "BloodglassEquipMixin",
+    "BloodglassEffectMixin",
+    "BloodglassRespawnMixin",
+    "DreamCampfireBlockEntityMixin",
+    "infinity.RandomSpringMixin",
+    "infinity.PortalCreatorMixin"
+  ],
+  "client": [
+    "client.NightmareCameraShakeMixin",
+    "client.DuctTapeInputMixin",
+    "client.AntiwaterFogMixin",
+    "client.GravityGunMouseScrollMixin",
+    "client.CrossbowArmPoseMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

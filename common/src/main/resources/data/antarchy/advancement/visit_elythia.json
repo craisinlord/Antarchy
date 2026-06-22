@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "entered_elythia": {
+      "conditions": {
+        "to": "antarchy:elythia"
+      },
+      "trigger": "minecraft:changed_dimension"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.visit_elythia.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:brown_ant_nest"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.visit_elythia.title"
+    }
+  },
+  "requirements": [
+    [
+      "entered_elythia"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

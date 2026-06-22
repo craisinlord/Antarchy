@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "craft_shrink_ray": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:shrink_ray"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.shrink_ray_craft.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:shrink_ray"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.shrink_ray_craft.title"
+    }
+  },
+  "requirements": [
+    [
+      "craft_shrink_ray"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

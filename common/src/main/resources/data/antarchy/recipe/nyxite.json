@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SS",
+    "SS"
+  ],
+  "key": {
+    "S": {
+      "item": "antarchy:nyxite_spike"
+    }
+  },
+  "result": {
+    "id": "antarchy:nyxite",
+    "count": 1
+  }
+}

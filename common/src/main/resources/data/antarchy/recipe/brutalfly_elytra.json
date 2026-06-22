@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "BMB",
+    "BEB"
+  ],
+  "key": {
+    "B": {
+      "item": "antarchy:brutalfly_wing"
+    },
+    "M": {
+      "item": "antarchy:duct_tape"
+    },
+    "E": {
+      "item": "minecraft:elytra"
+    }
+  },
+  "result": {
+    "id": "antarchy:brutalfly_elytra",
+    "count": 1
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " U ",
+    " T ",
+    " N "
+  ],
+  "key": {
+    "U": {
+      "item": "antarchy:uranium_ingot"
+    },
+    "T": {
+      "item": "antarchy:titanium_ingot"
+    },
+    "N": {
+      "item": "minecraft:netherite_ingot"
+    }
+  },
+  "result": {
+    "id": "antarchy:ultimate_sword",
+    "count": 1
+  }
+}

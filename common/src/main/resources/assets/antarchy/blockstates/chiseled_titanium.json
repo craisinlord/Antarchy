@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "antarchy:block/chiseled_titanium", "y": 180 },
+    "facing=east": { "model": "antarchy:block/chiseled_titanium", "y": 270 },
+    "facing=south": { "model": "antarchy:block/chiseled_titanium" },
+    "facing=west": { "model": "antarchy:block/chiseled_titanium", "y": 90 }
+  }
+}

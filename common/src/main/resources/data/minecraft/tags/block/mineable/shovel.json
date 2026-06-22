@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:infested_rooted_dirt",
+    "antarchy:infested_coarse_dirt",
+    "antarchy:brown_ant_nest",
+    "antarchy:rainbow_ant_nest",
+    "antarchy:dream_sand",
+    "antarchy:cloud_block"
+  ]
+}

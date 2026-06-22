@@ -1,0 +1,223 @@
+package com.craisinlord.antarchy.content.entity.ant;
+
+import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.config.AntarchySettings;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.GeoEntity;
+
+public class TermiteEntity extends BaseAntEntity implements GeoEntity {
+    private static final int WOOD_SEARCH_INTERVAL_TICKS = 10;
+    private static final int WOOD_REPATH_INTERVAL_TICKS = 6;
+    private static final int WOOD_SEARCH_RADIUS_HORIZONTAL = 12;
+    private static final int WOOD_SEARCH_RADIUS_VERTICAL = 4;
+    @Nullable
+    private BlockPos targetWoodPos;
+    private int nextWoodSearchTick;
+    private int nextWoodRepathTick;
+
+    public TermiteEntity(EntityType<? extends BaseAntEntity> entityType, Level level) {
+        super(entityType, level);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (!this.level().isClientSide && this.targetWoodPos != null && !this.isValidWoodTarget(this.targetWoodPos)) {
+            this.targetWoodPos = null;
+        }
+    }
+
+    @Override
+    protected ResourceKey<Level> destinationDimension() {
+        return AntarchySettings.termiteDestinationDimension();
+    }
+
+    @Override
+    protected TagKey<Item> activationItemsTag() {
+        return AntarchyTags.Items.TERMITE_ACTIVATION_ITEMS;
+    }
+
+    @Override
+    protected TagKey<Item> breedingFoodsTag() {
+        return AntarchyTags.Items.TERMITE_BREEDING_FOODS;
+    }
+
+    @Override
+    protected boolean requiresActivationReagent() {
+        return AntarchySettings.termiteRequiresReagent();
+    }
+
+    @Override
+    protected String activationMessageKey() {
+        return "message.antarchy.termite_activated";
+    }
+
+    @Override
+    protected String needsReagentMessageKey() {
+        return "message.antarchy.termite_needs_reagent";
+    }
+
+    @Override
+    protected double configuredMaxHealth() {
+        return AntarchySettings.termiteHealth();
+    }
+
+    @Override
+    protected boolean canForageGroundFood() {
+        return false;
+    }
+
+    @Override
+    protected boolean canGroupWithNestmates() {
+        return false;
+    }
+
+    @Override
+    protected boolean canMarch() {
+        return false;
+    }
+
+    @Override
+    protected boolean handlePriorityForaging() {
+        if (!this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+            this.targetWoodPos = null;
+            return false;
+        }
+
+        if (this.tryEatNearbyWood()) {
+            this.targetWoodPos = null;
+            return true;
+        }
+
+        BlockPos targetPos = this.getCurrentWoodTarget();
+        if (targetPos == null) {
+            return false;
+        }
+
+        Vec3 moveTarget = this.getWoodApproachTarget(targetPos);
+        if (moveTarget == null) {
+            this.targetWoodPos = null;
+            return false;
+        }
+
+        if (this.getNavigation().isDone() || this.tickCount >= this.nextWoodRepathTick) {
+            this.getNavigation().moveTo(moveTarget.x, moveTarget.y, moveTarget.z, 1.22D);
+            this.nextWoodRepathTick = this.tickCount + WOOD_REPATH_INTERVAL_TICKS;
+        }
+        return true;
+    }
+
+    private boolean tryEatNearbyWood() {
+        for (BlockPos targetPos : this.getImmediateWoodChecks()) {
+            BlockState targetState = this.level().getBlockState(targetPos);
+            if (!targetState.is(AntarchyTags.Blocks.TERMITE_FOODS)) {
+                continue;
+            }
+
+            SoundType soundType = targetState.getSoundType();
+            this.level().destroyBlock(targetPos, false, this);
+            this.level().playSound(null, targetPos, soundType.getBreakSound(), this.getSoundSource(), 0.7F, 1.1F);
+            return true;
+        }
+
+        return false;
+    }
+
+    private BlockPos[] getImmediateWoodChecks() {
+        BlockPos basePos = this.blockPosition();
+        BlockPos abovePos = basePos.above();
+        return new BlockPos[] {
+                basePos.above(),
+                basePos.north(),
+                basePos.south(),
+                basePos.east(),
+                basePos.west(),
+                abovePos.north(),
+                abovePos.south(),
+                abovePos.east(),
+                abovePos.west()
+        };
+    }
+
+    @Nullable
+    private BlockPos getCurrentWoodTarget() {
+        if (this.targetWoodPos != null && this.isValidWoodTarget(this.targetWoodPos)) {
+            return this.targetWoodPos;
+        }
+
+        if (this.tickCount < this.nextWoodSearchTick) {
+            return null;
+        }
+
+        this.nextWoodSearchTick = this.tickCount + WOOD_SEARCH_INTERVAL_TICKS;
+        this.targetWoodPos = this.findClosestWoodTarget();
+        return this.targetWoodPos;
+    }
+
+    @Nullable
+    private BlockPos findClosestWoodTarget() {
+        BlockPos origin = this.blockPosition();
+        BlockPos bestPos = null;
+        double bestDistance = Double.MAX_VALUE;
+
+        for (BlockPos pos : BlockPos.betweenClosed(
+                origin.offset(-WOOD_SEARCH_RADIUS_HORIZONTAL, -WOOD_SEARCH_RADIUS_VERTICAL, -WOOD_SEARCH_RADIUS_HORIZONTAL),
+                origin.offset(WOOD_SEARCH_RADIUS_HORIZONTAL, WOOD_SEARCH_RADIUS_VERTICAL + 2, WOOD_SEARCH_RADIUS_HORIZONTAL))) {
+            if (!this.isValidWoodTarget(pos)) {
+                continue;
+            }
+
+            double distance = pos.distSqr(origin);
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                bestPos = pos.immutable();
+            }
+        }
+
+        return bestPos;
+    }
+
+    private boolean isValidWoodTarget(BlockPos targetPos) {
+        return this.level().getBlockState(targetPos).is(AntarchyTags.Blocks.TERMITE_FOODS);
+    }
+
+    @Nullable
+    private Vec3 getWoodApproachTarget(BlockPos targetPos) {
+        BlockPos belowTarget = targetPos.below();
+        if (this.isWalkableStandPos(belowTarget)) {
+            return Vec3.atBottomCenterOf(belowTarget);
+        }
+
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            BlockPos sidePos = targetPos.relative(direction);
+            if (this.isWalkableStandPos(sidePos)) {
+                return Vec3.atBottomCenterOf(sidePos);
+            }
+
+            BlockPos belowSidePos = sidePos.below();
+            if (this.isWalkableStandPos(belowSidePos)) {
+                return Vec3.atBottomCenterOf(belowSidePos);
+            }
+        }
+
+        return null;
+    }
+
+    private boolean isWalkableStandPos(BlockPos pos) {
+        BlockState floorState = this.level().getBlockState(pos.below());
+        return this.level().getBlockState(pos).isAir()
+                && this.level().getBlockState(pos.above()).isAir()
+                && floorState.isFaceSturdy(this.level(), pos.below(), Direction.UP);
+    }
+}

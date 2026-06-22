@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:nyxite_stairs",
+    "antarchy:nyxite_brick_stairs",
+    "antarchy:polished_nyxite_stairs",
+    "antarchy:dream_sandstone_stairs",
+    "antarchy:smooth_dream_sandstone_stairs",
+    "antarchy:cut_titanium_stairs",
+    "antarchy:cut_uranium_stairs"
+  ]
+}

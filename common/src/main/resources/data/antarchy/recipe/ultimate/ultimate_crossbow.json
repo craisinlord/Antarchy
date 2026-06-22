@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "TUT",
+    "UCU",
+    "TUT"
+  ],
+  "key": {
+    "U": {
+      "item": "antarchy:uranium_ingot"
+    },
+    "T": {
+      "item": "antarchy:titanium_ingot"
+    },
+    "C": {
+      "item": "minecraft:crossbow"
+    }
+  },
+  "result": {
+    "id": "antarchy:ultimate_crossbow",
+    "count": 1
+  }
+}

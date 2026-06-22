@@ -1,0 +1,39 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "become_inverted": {
+      "conditions": {
+        "effects": {
+          "antarchy:inverted": {}
+        }
+      },
+      "trigger": "minecraft:effects_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.in_the_upside_down.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "antarchy:inversion"
+        }
+      }
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.in_the_upside_down.title"
+    }
+  },
+  "requirements": [
+    [
+      "become_inverted"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

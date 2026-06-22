@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " FG",
+    "CDE",
+    "AB "
+  ],
+  "key": {
+    "A": {
+      "item": "antarchy:lucid_eye"
+    },
+    "B": {
+      "item": "antarchy:basilisk_fang"
+    },
+    "C": {
+      "item": "antarchy:emperor_scorpion_stinger"
+    },
+    "D": {
+      "item": "antarchy:ultimate_sword"
+    },
+    "E": {
+      "item": "antarchy:cloud_shark_fin"
+    },
+    "F": {
+      "item": "antarchy:nightmare_scale"
+    },
+    "G": {
+      "item": "antarchy:kraken_tooth"
+    }
+  },
+  "result": {
+    "id": "antarchy:big_bertha_blade",
+    "count": 1
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:smelting",
+  "category": "blocks",
+  "experience": 0.1,
+  "ingredient": {
+    "item": "antarchy:dream_sandstone"
+  },
+  "result": {
+    "id": "antarchy:smooth_dream_sandstone"
+  }
+}

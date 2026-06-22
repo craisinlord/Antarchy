@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "AC ",
+    "CBC",
+    " CA"
+  ],
+  "key": {
+    "A": {
+      "item": "antarchy:vortex_eye"
+    },
+    "B": {
+      "item": "antarchy:molevore_nose"
+    },
+    "C": {
+      "item": "antarchy:jumpy_bug_leg"
+    }
+  },
+  "result": {
+    "id": "antarchy:big_bertha_hilt",
+    "count": 1
+  }
+}

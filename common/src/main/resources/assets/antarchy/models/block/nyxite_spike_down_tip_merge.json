@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/pointed_dripstone",
+  "textures": {
+    "cross": "antarchy:block/nyxite_spike/nyxite_spike_down_tip_merge"
+  }
+}

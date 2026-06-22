@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "antarchy:block/dream_wall_torch"
+    },
+    "facing=north": {
+      "model": "antarchy:block/dream_wall_torch",
+      "y": 270
+    },
+    "facing=south": {
+      "model": "antarchy:block/dream_wall_torch",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "antarchy:block/dream_wall_torch",
+      "y": 180
+    }
+  }
+}

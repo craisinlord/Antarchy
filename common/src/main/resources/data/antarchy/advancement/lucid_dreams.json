@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "kill_lucid": {
+      "conditions": {
+        "entity": {
+          "type": "antarchy:lucid"
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.lucid_dreams.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:lucid_eye"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.lucid_dreams.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_lucid"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

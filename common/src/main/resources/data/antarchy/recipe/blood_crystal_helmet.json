@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "SSS",
+    "S S"
+  ],
+  "key": {
+    "S": {
+      "item": "antarchy:blood_crystal_shard"
+    }
+  },
+  "result": {
+    "id": "antarchy:blood_crystal_helmet",
+    "count": 1
+  }
+}

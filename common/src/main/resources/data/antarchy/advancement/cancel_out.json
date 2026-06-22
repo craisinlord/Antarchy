@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "cancel_out": {
+      "conditions": {
+        "effects": {
+          "antarchy:growth": {},
+          "antarchy:shrinking": {}
+        }
+      },
+      "trigger": "minecraft:effects_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.cancel_out.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:shrink_ray"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.cancel_out.title"
+    }
+  },
+  "requirements": [
+    [
+      "cancel_out"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "kill_kraken": {
+      "conditions": {
+        "entity": {
+          "type": "antarchy:kraken"
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.davy_jones_locker.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:kraken_tooth"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.davy_jones_locker.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_kraken"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

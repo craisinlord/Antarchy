@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "U U",
+    "UTU",
+    "TTT"
+  ],
+  "key": {
+    "U": {
+      "item": "antarchy:uranium_ingot"
+    },
+    "T": {
+      "item": "antarchy:titanium_ingot"
+    }
+  },
+  "result": {
+    "id": "antarchy:ultimate_chestplate",
+    "count": 1
+  }
+}

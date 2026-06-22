@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:smooth_dream_sandstone"
+  },
+  "result": {
+    "id": "antarchy:smooth_dream_sandstone_stairs"
+  }
+}

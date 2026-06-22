@@ -1,0 +1,99 @@
+{
+  "has_precipitation": false,
+  "temperature": 2.0,
+  "downfall": 0.0,
+  "effects": {
+    "fog_color": 983040,
+    "water_color": 327680,
+    "water_fog_color": 0,
+    "sky_color": 524288,
+    "particle": {
+      "probability": 0.005,
+      "options": {
+        "type": "minecraft:crimson_spore"
+      }
+    },
+    "ambient_sound": "antarchy:thoraxis_nightmare_wastes_ambient",
+    "additions_sound": {
+      "sound": "antarchy:thoraxis_nightmare_wastes_additions",
+      "tick_chance": 0.007777778
+    },
+    "mood_sound": {
+      "sound": "antarchy:thoraxis_nightmare_wastes_mood",
+      "tick_delay": 8572,
+      "block_search_extent": 8,
+      "offset": 2.0
+    }
+  },
+  "carvers": {
+    "air": [],
+    "liquid": []
+  },
+  "spawn_costs": {
+    "antarchy:nightmare": {
+      "energy_budget": 0.1,
+      "charge": 11.0
+    }
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:thoraxis_floor_rib_columns",
+      "antarchy:thoraxis_roof_rib_columns",
+      "antarchy:thoraxis_floor_spikes",
+      "antarchy:thoraxis_roof_spikes"
+    ],
+    [],
+    [],
+    [],
+    [
+      "antarchy:antiwater_springs",
+      "antarchy:bed_bug_surface_cluster",
+      "antarchy:red_ant_nest_magma",
+      "antarchy:bed_bug_nest",
+      "antarchy:nyxite_spikes",
+      "antarchy:patch_fire_sparse",
+      "antarchy:patch_ceiling_fire"
+    ],
+    [
+      "antarchy:cornea_stalk_patch",
+      "antarchy:patch_ceiling_cornea_stalk"
+    ],
+    []
+  ],
+  "creature_spawn_probability": 0.08,
+  "spawners": {
+    "monster": [
+      {
+        "type": "antarchy:nightmare",
+        "weight": 6,
+        "minCount": 1,
+        "maxCount": 1
+      }
+    ],
+    "creature": [
+      {
+        "type": "antarchy:bed_bug",
+        "weight": 15,
+        "minCount": 2,
+        "maxCount": 4
+      }
+    ],
+    "ambient": [
+      {
+        "type": "antarchy:reverie",
+        "weight": 10,
+        "minCount": 1,
+        "maxCount": 2
+      }
+    ],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  }
+}
