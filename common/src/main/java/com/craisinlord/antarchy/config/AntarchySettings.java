@@ -147,8 +147,8 @@ public final class AntarchySettings {
     private static boolean basiliskPetrifyingGazeEnabled = true;
     private static int basiliskSpawnMaxLightLevel = 5;
     private static double basiliskHealth = 150.0D;
-    private static double basiliskAttackDamage = 18.0D;
-    private static double basiliskMovementSpeed = 0.35D;
+    private static double basiliskAttackDamage = 8.0D;
+    private static double basiliskMovementSpeed = 0.30D;
     private static double basiliskArmor = 6.0D;
     private static double basiliskKnockbackResistance = 0.5D;
     private static double basiliskFollowRange = 28.0D;

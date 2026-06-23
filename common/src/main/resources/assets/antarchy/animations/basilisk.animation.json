@@ -409,6 +409,11 @@
 		"attack": {
 			"loop": false,
 			"animation_length": 1,
+			"sound_effects": {
+				"0.3333": {
+					"effect": "antarchy:basilisk_bite|1.1|1.0"
+				}
+			},
 			"bones": {
 				"Basilisk": {
 					"position": {

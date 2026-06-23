@@ -560,7 +560,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
     private boolean shouldUseFlight() {
         if (this.landingCooldown > 0) return false;
         LivingEntity target = this.getTarget();
-        return target != null && this.distanceToSqr(target) > FLIGHT_ENGAGE_RANGE_SQR;
+        return target != null
+                && this.distanceToSqr(target) > FLIGHT_ENGAGE_RANGE_SQR
+                && !this.isTooCloseToCeiling();
     }
 
     private boolean canStartAttackOn(LivingEntity target) {
@@ -745,7 +747,8 @@ public class NightmareEntity extends Monster implements GeoEntity {
             LivingEntity target = NightmareEntity.this.getTarget();
             return target != null
                     && NightmareEntity.this.landingCooldown <= 0
-                    && NightmareEntity.this.distanceToSqr(target) > FLIGHT_ENGAGE_RANGE_SQR;
+                    && NightmareEntity.this.distanceToSqr(target) > FLIGHT_ENGAGE_RANGE_SQR
+                    && !NightmareEntity.this.isTooCloseToCeiling();
         }
 
         @Override
@@ -770,6 +773,11 @@ public class NightmareEntity extends Monster implements GeoEntity {
         public void tick() {
             LivingEntity target = NightmareEntity.this.getTarget();
             if (target == null) return;
+            if (NightmareEntity.this.isTooCloseToCeiling()) {
+                NightmareEntity.this.flyingToTarget = false;
+                NightmareEntity.this.getNavigation().stop();
+                return;
+            }
             if (NightmareEntity.this.attackCooldown <= 0 && NightmareEntity.this.canStartAttackOn(target)) {
                 NightmareEntity.this.startAttack(target);
                 return;
