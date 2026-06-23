@@ -80,6 +80,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
 
     private int attackAnimTicks = 0;
     private boolean attackDamagePending = false;
+    private int attackCooldown = 0;
 
     private int hissCooldown = AntarchySettings.basiliskHissCooldownTicks();
     private int hissChargeTimer = 0;
@@ -219,6 +220,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
             return;
         }
 
+        if (this.attackCooldown > 0) this.attackCooldown--;
         this.tickPlayerPetrification();
         this.tickPreyPetrification();
         this.tickAoeDamage();
@@ -447,6 +449,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
             this.setAnimationState(ANIM_DEATH);
             this.attackAnimTicks = 0;
             this.attackDamagePending = false;
+            this.attackCooldown = 0;
             this.hissChargeTimer = 0;
             this.pendingTargetId = null;
             this.getNavigation().stop();
@@ -558,6 +561,11 @@ public class BasiliskEntity extends Monster implements GeoEntity {
             super(mob);
         }
 
+        /** Call this to prevent the move control from reapplying speed this tick. */
+        public void halt() {
+            this.operation = MoveControl.Operation.WAIT;
+        }
+
         @Override
         public void tick() {
             if (this.operation == MoveControl.Operation.MOVE_TO) {
@@ -596,23 +604,42 @@ public class BasiliskEntity extends Monster implements GeoEntity {
                 BasiliskEntity.this.getLookControl().setLookAt(target, 30.0F, 30.0F);
             }
 
+            // super handles path recalc and cooldown timer — always run it
+            super.tick();
+
             if (BasiliskEntity.this.hissChargeTimer > 0 || BasiliskEntity.this.attackAnimTicks > 0) {
                 this.stopMovement();
                 return;
             }
-            
-            super.tick();
 
-            // If we're in range after super ran, kill movement so the basilisk stops and bites
             if (target != null && BasiliskEntity.this.isWithinMeleeAttackRange(target)) {
                 this.stopMovement();
+                this.checkAndPerformAttack(target);
             }
         }
 
         private void stopMovement() {
             BasiliskEntity.this.getNavigation().stop();
+            ((BasiliskMoveControl) BasiliskEntity.this.getMoveControl()).halt();
             BasiliskEntity.this.setSpeed(0.0F);
             BasiliskEntity.this.setZza(0.0F);
+        }
+
+        @Override
+        public boolean canUse() {
+            LivingEntity target = BasiliskEntity.this.getTarget();
+            if (target == null || !target.isAlive()) return false;
+            if (target instanceof Player p && (p.isCreative() || p.isSpectator())) return false;
+            return true;
+        }
+
+        @Override
+        public void start() {
+            LivingEntity target = BasiliskEntity.this.getTarget();
+            if (target != null) {
+                BasiliskEntity.this.getNavigation().moveTo(target, 1.2D);
+            }
+            BasiliskEntity.this.setAggressive(true);
         }
 
         @Override
@@ -623,9 +650,11 @@ public class BasiliskEntity extends Monster implements GeoEntity {
         @Override
         protected void checkAndPerformAttack(LivingEntity target) {
             if (BasiliskEntity.this.attackAnimTicks > 0) return;
-            if (!this.canPerformAttack(target)) return;
+            if (BasiliskEntity.this.attackCooldown > 0) return;
+            if (!BasiliskEntity.this.isWithinMeleeAttackRange(target)) return;
+            if (!BasiliskEntity.this.getSensing().hasLineOfSight(target)) return;
 
-            this.resetAttackCooldown();
+            BasiliskEntity.this.attackCooldown = 20;
             BasiliskEntity.this.performAoeAttack();
         }
     }
