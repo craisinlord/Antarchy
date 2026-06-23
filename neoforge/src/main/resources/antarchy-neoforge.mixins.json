@@ -9,6 +9,7 @@
     "entity.MultipartEntityBridgeMixin",
     "entity.MultipartEntityLevelRegistryMixin",
     "entity.ParalyzedMobFreezeMixin",
+    "infinity.ConfigGenInvocationMixin",
     "infinity.PortalCreatorMixin",
     "infinity.RandomSpringMixin",
     "level.ClientLevelPartEntitiesAccessor",
