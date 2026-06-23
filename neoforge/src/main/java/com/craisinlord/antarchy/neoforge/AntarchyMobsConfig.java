@@ -5,9 +5,9 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public final class AntarchyMobsConfig {
     public static final ModConfigSpec SPEC;
 
-    // -------------------------------------------------------------------------
+
     // Ants
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.BooleanValue ANTS_STEAL_FROM_CHESTS;
 
     private static final ModConfigSpec.BooleanValue BROWN_ANT_REQUIRES_REAGENT;
@@ -35,72 +35,72 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.ConfigValue<String> TERMITE_DESTINATION_DIMENSION;
 
 
-    // -------------------------------------------------------------------------
+
     // Easter Bunny
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.BooleanValue EASTER_BUNNY_ENABLED;
     private static final ModConfigSpec.IntValue     EASTER_BUNNY_NATURAL_SPAWN_CHANCE_PERCENT;
 
-    // -------------------------------------------------------------------------
+
     // Wasp
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.DoubleValue WASP_HEALTH;
     private static final ModConfigSpec.DoubleValue WASP_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue WASP_MOVEMENT_SPEED;
 
-    // -------------------------------------------------------------------------
+
     // Bomber
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.DoubleValue BOMBER_HEALTH;
     private static final ModConfigSpec.DoubleValue BOMBER_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue BOMBER_EXPLOSION_DAMAGE;
     private static final ModConfigSpec.DoubleValue BOMBER_EXPLOSION_RADIUS;
 
-    // -------------------------------------------------------------------------
+
     // Kraken
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.DoubleValue  KRAKEN_HEALTH;
     private static final ModConfigSpec.DoubleValue  KRAKEN_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue  KRAKEN_PROJECTILE_DAMAGE_TAKEN_MULTIPLIER;
     private static final ModConfigSpec.BooleanValue KRAKEN_SQUID_SPAWN_ENABLED;
     private static final ModConfigSpec.BooleanValue KRAKEN_MASS_SPAWN_ENABLED;
 
-    // -------------------------------------------------------------------------
+
     // Brutalfly
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.DoubleValue BRUTALFLY_HEALTH;
     private static final ModConfigSpec.DoubleValue BRUTALFLY_SWIPE_DAMAGE;
     private static final ModConfigSpec.DoubleValue BRUTALFLY_SPIT_DAMAGE;
 
-    // -------------------------------------------------------------------------
+
     // Mantis
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.DoubleValue  MANTIS_HEALTH;
     private static final ModConfigSpec.DoubleValue  MANTIS_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue  MANTIS_MOVEMENT_SPEED;
     private static final ModConfigSpec.DoubleValue  MANTIS_FLYING_SPEED;
     private static final ModConfigSpec.BooleanValue MANTIS_IGNORE_LIGHT_LEVEL;
 
-    // -------------------------------------------------------------------------
+
     // Triffid
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.DoubleValue TRIFFID_HEALTH;
     private static final ModConfigSpec.DoubleValue TRIFFID_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue TRIFFID_GRAB_DAMAGE;
 
-    // -------------------------------------------------------------------------
+
     // Caterpillar
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.DoubleValue CATERPILLAR_PUPATION_TIME_SECONDS;
 
-    // -------------------------------------------------------------------------
+
     // Ant Dance
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.DoubleValue ANT_DANCE_RADIUS;
 
-    // -------------------------------------------------------------------------
+
     // Reverie
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.DoubleValue  REVERIE_HEALTH;
     private static final ModConfigSpec.DoubleValue  REVERIE_INTEREST_RADIUS;
     private static final ModConfigSpec.DoubleValue  REVERIE_ABANDON_PLAYER_DISTANCE;
@@ -114,21 +114,46 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue  REVERIE_WARNING_THREAT_VERTICAL_RANGE;
     private static final ModConfigSpec.IntValue     REVERIE_DUPLICATION_COOLDOWN_TICKS;
 
-    // -------------------------------------------------------------------------
+
+    // Nightmare
+
+    private static final ModConfigSpec.DoubleValue  NIGHTMARE_HEALTH;
+    private static final ModConfigSpec.DoubleValue  NIGHTMARE_ATTACK_DAMAGE;
+
+
     // Basilisk
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.BooleanValue BASILISK_PETRIFYING_GAZE_ENABLED;
     private static final ModConfigSpec.IntValue     BASILISK_SPAWN_MAX_LIGHT_LEVEL;
+    private static final ModConfigSpec.DoubleValue  BASILISK_HEALTH;
+    private static final ModConfigSpec.DoubleValue  BASILISK_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue  BASILISK_MOVEMENT_SPEED;
+    private static final ModConfigSpec.DoubleValue  BASILISK_ARMOR;
+    private static final ModConfigSpec.DoubleValue  BASILISK_KNOCKBACK_RESISTANCE;
+    private static final ModConfigSpec.DoubleValue  BASILISK_FOLLOW_RANGE;
+    private static final ModConfigSpec.IntValue     BASILISK_XP_REWARD;
+    private static final ModConfigSpec.IntValue     BASILISK_ATTACK_ANIM_TICKS;
+    private static final ModConfigSpec.IntValue     BASILISK_ATTACK_DAMAGE_TICK;
+    private static final ModConfigSpec.IntValue     BASILISK_HISS_COOLDOWN_TICKS;
+    private static final ModConfigSpec.DoubleValue  BASILISK_ATTACK_REACH;
+    private static final ModConfigSpec.DoubleValue  BASILISK_GAZE_RANGE;
+    private static final ModConfigSpec.DoubleValue  BASILISK_GAZE_DOT_THRESHOLD;
+    private static final ModConfigSpec.DoubleValue  BASILISK_GAZE_FACING_THRESHOLD;
+    private static final ModConfigSpec.IntValue     BASILISK_HISS_CHARGE_TICKS;
+    private static final ModConfigSpec.IntValue     BASILISK_PLAYER_PARALYZE_TICKS;
+    private static final ModConfigSpec.IntValue     BASILISK_PREY_PETRIFY_COOLDOWN_TICKS;
+    private static final ModConfigSpec.DoubleValue  BASILISK_PREY_PETRIFY_RANGE;
+    private static final ModConfigSpec.IntValue     BASILISK_PREY_PETRIFY_TICKS;
 
-    // -------------------------------------------------------------------------
+
     // Lucid
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.DoubleValue LUCID_ATTACK_RANGE;
     private static final ModConfigSpec.DoubleValue LUCID_PEARL_INVERTED_DURATION_SECONDS;
 
-    // -------------------------------------------------------------------------
+
     // Dread effect
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.BooleanValue DREAD_HALLUCINATION_SOUNDS_ENABLED;
     private static final ModConfigSpec.DoubleValue  DREAD_HALLUCINATION_SOUND_MIN_INTERVAL;
     private static final ModConfigSpec.DoubleValue  DREAD_HALLUCINATION_SOUND_MAX_INTERVAL;
@@ -251,7 +276,7 @@ public final class AntarchyMobsConfig {
         // Kraken
 
         b.push("kraken");
-        KRAKEN_HEALTH                            = b.comment("Base max health.")                                                                                            .defineInRange("health",                           750.0D, 1.0D, 32768.0D);
+        KRAKEN_HEALTH                            = b.comment("Base max health.")                                                                                            .defineInRange("health",                          1500.0D, 1.0D, 32768.0D);
         KRAKEN_ATTACK_DAMAGE                     = b.comment("Base attack damage.")                                                                                         .defineInRange("attackDamage",                     45.0D,  0.0D, 1024.0D);
         KRAKEN_PROJECTILE_DAMAGE_TAKEN_MULTIPLIER = b.comment("Damage multiplier from projectiles. 0.5 means 50% damage.")                                                  .defineInRange("projectileDamageTakenMultiplier",  0.5D,   0.0D, 10.0D);
         KRAKEN_SQUID_SPAWN_ENABLED               = b.comment("If true, killing a Missile Squid has a 1/100 chance to spawn a single Kraken nearby.")                       .define("squidSpawnEnabled",  true);
@@ -323,6 +348,13 @@ public final class AntarchyMobsConfig {
         REVERIE_DUPLICATION_COOLDOWN_TICKS     = b.comment("Cooldown in ticks before Blood Crystal can duplicate the Reverie again.")                                   .defineInRange("duplicationCooldownTicks",    6000, 20, 24000);
         b.pop();
 
+        // Nightmare
+
+        b.push("nightmare");
+        NIGHTMARE_HEALTH = b.comment("Base max health.").defineInRange("health", 180.0D, 1.0D, 32768.0D);
+        NIGHTMARE_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 16.0D, 0.0D, 1024.0D);
+        b.pop();
+
 
         // Basilisk
 
@@ -333,6 +365,25 @@ public final class AntarchyMobsConfig {
         BASILISK_SPAWN_MAX_LIGHT_LEVEL = b
                 .comment("Maximum local raw light level where basilisk natural spawning is allowed.")
                 .defineInRange("spawnMaxLightLevel", 5, 0, 15);
+        BASILISK_HEALTH = b.comment("Base max health.").defineInRange("health", 150.0D, 1.0D, 32768.0D);
+        BASILISK_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 18.0D, 0.0D, 1024.0D);
+        BASILISK_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.35D, 0.0D, 10.0D);
+        BASILISK_ARMOR = b.comment("Base armor value.").defineInRange("armor", 6.0D, 0.0D, 1024.0D);
+        BASILISK_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance.").defineInRange("knockbackResistance", 0.5D, 0.0D, 1.0D);
+        BASILISK_FOLLOW_RANGE = b.comment("Base follow range.").defineInRange("followRange", 28.0D, 1.0D, 128.0D);
+        BASILISK_XP_REWARD = b.comment("Base experience reward.").defineInRange("xpReward", 50, 0, 100000);
+        BASILISK_ATTACK_ANIM_TICKS = b.comment("Ticks for the attack animation window.").defineInRange("attackAnimTicks", 18, 1, 400);
+        BASILISK_ATTACK_DAMAGE_TICK = b.comment("Tick during the attack animation when damage is applied.").defineInRange("attackDamageTick", 9, 0, 400);
+        BASILISK_HISS_COOLDOWN_TICKS = b.comment("Ticks between petrifying gaze attempts.").defineInRange("hissCooldownTicks", 600, 0, 20000);
+        BASILISK_ATTACK_REACH = b.comment("Forward bite reach in blocks measured from the basilisk's center.").defineInRange("attackReach", 3.0D, 0.0D, 128.0D);
+        BASILISK_GAZE_RANGE = b.comment("Range in blocks for petrifying gaze checks.").defineInRange("gazeRange", 12.0D, 0.0D, 128.0D);
+        BASILISK_GAZE_DOT_THRESHOLD = b.comment("Dot threshold for the player gaze check.").defineInRange("gazeDotThreshold", 0.64D, -1.0D, 1.0D);
+        BASILISK_GAZE_FACING_THRESHOLD = b.comment("Dot threshold for the Basilisk facing check.").defineInRange("gazeFacingThreshold", 0.45D, -1.0D, 1.0D);
+        BASILISK_HISS_CHARGE_TICKS = b.comment("Ticks a player must keep looking to trigger petrification.").defineInRange("hissChargeTicks", 30, 0, 2000);
+        BASILISK_PLAYER_PARALYZE_TICKS = b.comment("Ticks the Paralyzed effect lasts on players.").defineInRange("playerParalyzeTicks", 50, 0, 20000);
+        BASILISK_PREY_PETRIFY_COOLDOWN_TICKS = b.comment("Ticks between prey petrification checks.").defineInRange("preyPetrifyCooldownTicks", 500, 0, 20000);
+        BASILISK_PREY_PETRIFY_RANGE = b.comment("Range in blocks for prey petrification checks.").defineInRange("preyPetrifyRange", 8.0D, 0.0D, 128.0D);
+        BASILISK_PREY_PETRIFY_TICKS = b.comment("Ticks the prey petrify effect lasts.").defineInRange("preyPetrifyTicks", 200, 0, 20000);
         b.pop();
 
 
@@ -450,8 +501,30 @@ public final class AntarchyMobsConfig {
     static double  reverieWarningThreatVerticalRange()  { return REVERIE_WARNING_THREAT_VERTICAL_RANGE.get(); }
     static int     reverieDuplicationCooldownTicks()    { return REVERIE_DUPLICATION_COOLDOWN_TICKS.get(); }
 
+    static double  nightmareHealth()                    { return NIGHTMARE_HEALTH.get(); }
+    static double  nightmareAttackDamage()              { return NIGHTMARE_ATTACK_DAMAGE.get(); }
+
     static boolean basiliskPetrifyingGazeEnabled()          { return BASILISK_PETRIFYING_GAZE_ENABLED.get(); }
     static int     basiliskSpawnMaxLightLevel()             { return BASILISK_SPAWN_MAX_LIGHT_LEVEL.get(); }
+    static double  basiliskHealth()                         { return BASILISK_HEALTH.get(); }
+    static double  basiliskAttackDamage()                   { return BASILISK_ATTACK_DAMAGE.get(); }
+    static double  basiliskMovementSpeed()                  { return BASILISK_MOVEMENT_SPEED.get(); }
+    static double  basiliskArmor()                          { return BASILISK_ARMOR.get(); }
+    static double  basiliskKnockbackResistance()            { return BASILISK_KNOCKBACK_RESISTANCE.get(); }
+    static double  basiliskFollowRange()                    { return BASILISK_FOLLOW_RANGE.get(); }
+    static int     basiliskXpReward()                       { return BASILISK_XP_REWARD.get(); }
+    static int     basiliskAttackAnimTicks()                { return BASILISK_ATTACK_ANIM_TICKS.get(); }
+    static int     basiliskAttackDamageTick()               { return BASILISK_ATTACK_DAMAGE_TICK.get(); }
+    static int     basiliskHissCooldownTicks()              { return BASILISK_HISS_COOLDOWN_TICKS.get(); }
+    static double  basiliskAttackReach()                    { return BASILISK_ATTACK_REACH.get(); }
+    static double  basiliskGazeRange()                      { return BASILISK_GAZE_RANGE.get(); }
+    static double  basiliskGazeDotThreshold()               { return BASILISK_GAZE_DOT_THRESHOLD.get(); }
+    static double  basiliskGazeFacingThreshold()            { return BASILISK_GAZE_FACING_THRESHOLD.get(); }
+    static int     basiliskHissChargeTicks()                { return BASILISK_HISS_CHARGE_TICKS.get(); }
+    static int     basiliskPlayerParalyzeTicks()            { return BASILISK_PLAYER_PARALYZE_TICKS.get(); }
+    static int     basiliskPreyPetrifyCooldownTicks()       { return BASILISK_PREY_PETRIFY_COOLDOWN_TICKS.get(); }
+    static double  basiliskPreyPetrifyRange()               { return BASILISK_PREY_PETRIFY_RANGE.get(); }
+    static int     basiliskPreyPetrifyTicks()               { return BASILISK_PREY_PETRIFY_TICKS.get(); }
 
     static double  lucidAttackRange()                       { return LUCID_ATTACK_RANGE.get(); }
     static double  lucidPearlInvertedDurationSeconds()      { return LUCID_PEARL_INVERTED_DURATION_SECONDS.get(); }

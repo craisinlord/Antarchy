@@ -40,7 +40,8 @@ public class AntNestBlockEntity extends BlockEntity {
             nest.populateInitialAnts(level);
         }
 
-        if (level.isNight() || level.isRaining()) {
+        boolean ignoreNight = level.dimensionType().hasFixedTime();
+        if ((!ignoreNight && level.isNight()) || level.isRaining()) {
             return;
         }
 

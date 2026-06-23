@@ -41,7 +41,6 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -93,7 +92,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
     private static final int FLIGHT_CEILING_CLEARANCE_BLOCKS = 4;
 
     private static final double PATROL_SPEED = 0.34D;
-    private static final double COMBAT_FLIGHT_SPEED = 0.58D;
+    private static final double COMBAT_FLIGHT_SPEED = 0.725D;
     private static final double GROUND_APPROACH_SPEED = 0.82D;
     private static final double ATTACK_START_RANGE_SQR = 42.25D;
     private static final double ATTACK_REACH_RADIUS = 2.65D;
@@ -101,34 +100,31 @@ public class NightmareEntity extends Monster implements GeoEntity {
     private static final double FLIGHT_ENGAGE_RANGE_SQR = 100.0D;
     private static final double FLIGHT_DISENGAGE_RANGE_SQR = 36.0D;
     private static final double ROAR_RETRY_DISTANCE_SQR = 400.0D;
-    private static final double PATROL_AIR_MIN_HEIGHT = 1.15D;
-    private static final double PATROL_AIR_HEIGHT_SPAN = 0.85D;
-    private static final float AIR_PATROL_CHANCE = 0.2F;
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("Idle");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
     private static final RawAnimation TAKEOFF_ANIM = RawAnimation.begin().thenPlay("animation").thenLoop("fly");
     private static final RawAnimation FLY_ANIM = RawAnimation.begin().thenLoop("fly");
-    private static final RawAnimation FLY_DAMAGED_ANIM = RawAnimation.begin().thenLoop("fly_damaged");
     private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenPlay("attack").thenLoop("Idle");
     private static final RawAnimation FLY_ATTACK_ANIM = RawAnimation.begin().thenPlay("fly_attack").thenLoop("fly");
     private static final RawAnimation ROAR_ANIM = RawAnimation.begin().thenPlay("roar").thenLoop("Idle");
-    private static final RawAnimation DEATH_ANIM = RawAnimation.begin().thenPlay("death").thenLoop("death");
+    private static final RawAnimation DEATH_ANIM = RawAnimation.begin().thenPlayAndHold("death");
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
-    @Nullable private Vec3 patrolTarget;
-    private int patrolRetargetTicks;
     private int attackCooldown;
     private int attackAnimationTicks;
     private int roarTicks;
     private int roarCooldown;
     private int targetlessTicks;
     private int airborneTicks;
+    private int landingCooldown;
+    private int groundMoveTicks;
     private int wingFlapCooldown;
     private int blockBreakCooldown;
     private boolean attackHitApplied;
     private boolean introRoarUsed;
+    private boolean flyingToTarget;
 
     public NightmareEntity(EntityType<? extends NightmareEntity> entityType, Level level) {
         super(entityType, level);
@@ -141,7 +137,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
                 .add(Attributes.MAX_HEALTH, 180.0D)
                 .add(Attributes.ATTACK_DAMAGE, 14.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.28D)
-                .add(Attributes.FLYING_SPEED, 0.3D)
+                .add(Attributes.FLYING_SPEED, 0.375D)
                 .add(Attributes.FOLLOW_RANGE, 48.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.75D)
                 .add(Attributes.ARMOR, 8.0D);
@@ -164,9 +160,8 @@ public class NightmareEntity extends Monster implements GeoEntity {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new NightmareRoarGoal());
-        this.goalSelector.addGoal(2, new NightmareAttackAnimationGoal());
-        this.goalSelector.addGoal(3, new NightmareFlyToTargetGoal());
-        this.goalSelector.addGoal(4, new NightmareMeleeGoal());
+        this.goalSelector.addGoal(2, new NightmareFlyToTargetGoal());
+        this.goalSelector.addGoal(3, new NightmareMeleeGoal());
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 16.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(7, new NightmareWanderGoal());
@@ -181,12 +176,17 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private PlayState mainAnimController(AnimationState<NightmareEntity> state) {
-        state.getController().setAnimationSpeed(this.getAnimationState() == ANIM_FLY ? 0.45D : 1.0D);
-        return switch (this.getAnimationState()) {
+        int animState = this.getAnimationState();
+        state.getController().setAnimationSpeed(switch (animState) {
+            case ANIM_FLY -> 0.45D;
+            case ANIM_DEATH -> 0.6D;
+            default -> 1.0D;
+        });
+        return switch (animState) {
             case ANIM_WALK -> state.setAndContinue(WALK_ANIM);
             case ANIM_TAKEOFF -> state.setAndContinue(TAKEOFF_ANIM);
             case ANIM_FLY -> state.setAndContinue(FLY_ANIM);
-            case ANIM_FLY_DAMAGED -> state.setAndContinue(FLY_DAMAGED_ANIM);
+//            case ANIM_FLY_DAMAGED -> state.setAndContinue(FLY_ANIM);
             case ANIM_ATTACK -> state.setAndContinue(ATTACK_ANIM);
             case ANIM_FLY_ATTACK -> state.setAndContinue(FLY_ATTACK_ANIM);
             case ANIM_ROAR -> state.setAndContinue(ROAR_ANIM);
@@ -212,7 +212,6 @@ public class NightmareEntity extends Monster implements GeoEntity {
     @Override
     public void tick() {
         super.tick();
-        this.setNoGravity(this.shouldUseFlight() && !this.isTooCloseToCeiling());
 
         if (this.level().isClientSide) {
             this.tickClientParticles();
@@ -220,11 +219,18 @@ public class NightmareEntity extends Monster implements GeoEntity {
             return;
         }
 
+        this.setNoGravity(this.flyingToTarget && !this.isTooCloseToCeiling());
+
+        int prevAirborneTicks = this.airborneTicks;
         this.airborneTicks = this.onGround() ? 0 : this.airborneTicks + 1;
+        if (this.onGround() && prevAirborneTicks > 5) {
+            this.landingCooldown = 100;
+        }
 
         if (this.attackCooldown > 0) this.attackCooldown--;
         if (this.roarCooldown > 0) this.roarCooldown--;
         if (this.blockBreakCooldown > 0) this.blockBreakCooldown--;
+        if (this.landingCooldown > 0) this.landingCooldown--;
 
         LivingEntity target = this.getTarget();
         if (!this.canTargetEntity(target)) {
@@ -248,16 +254,20 @@ public class NightmareEntity extends Monster implements GeoEntity {
             return;
         }
 
+        if (this.attackAnimationTicks > 0) {
+            this.tickAttack(target);
+        }
+
         this.updateAnimationState();
         this.updateFlightRotation();
     }
 
     @Override
     public void travel(Vec3 travelVector) {
-        if (this.isEffectiveAi() && (this.isNoGravity() || !this.onGround())) {
+        if (this.isEffectiveAi() && this.isNoGravity()) {
             this.moveRelative(this.getSpeed(), travelVector);
             this.move(MoverType.SELF, this.getDeltaMovement());
-            this.setDeltaMovement(this.getDeltaMovement().scale(this.onGround() ? 0.88D : 0.91D));
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.91D));
             return;
         }
         super.travel(travelVector);
@@ -393,7 +403,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private void setAnimationState(int animationState) {
-        this.entityData.set(ANIMATION_STATE, animationState);
+        if (this.entityData.get(ANIMATION_STATE) != animationState) {
+            this.entityData.set(ANIMATION_STATE, animationState);
+        }
     }
 
     private boolean shouldStartRoar(LivingEntity target) {
@@ -546,11 +558,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private boolean shouldUseFlight() {
+        if (this.landingCooldown > 0) return false;
         LivingEntity target = this.getTarget();
-        if (target != null) {
-            return this.distanceToSqr(target) > FLIGHT_ENGAGE_RANGE_SQR;
-        }
-        return this.patrolTarget != null && this.patrolTarget.y > this.getY() + 1.5D;
+        return target != null && this.distanceToSqr(target) > FLIGHT_ENGAGE_RANGE_SQR;
     }
 
     private boolean canStartAttackOn(LivingEntity target) {
@@ -589,65 +599,6 @@ public class NightmareEntity extends Monster implements GeoEntity {
         }
     }
 
-    private Vec3 findPatrolTarget() {
-        BlockPos origin = this.blockPosition();
-        for (int attempt = 0; attempt < 18; attempt++) {
-            int x = origin.getX() + this.random.nextInt(29) - 14;
-            int z = origin.getZ() + this.random.nextInt(29) - 14;
-            BlockPos terrainPos = this.level().getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(x, origin.getY(), z));
-            boolean airPatrol = this.random.nextFloat() < AIR_PATROL_CHANCE;
-            double y = airPatrol
-                    ? terrainPos.getY() + PATROL_AIR_MIN_HEIGHT + this.random.nextDouble() * PATROL_AIR_HEIGHT_SPAN
-                    : terrainPos.getY() + 1.0D;
-            Vec3 desired = new Vec3(x + 0.5D, y, z + 0.5D);
-            Vec3 openTarget = this.findNearestFlightTarget(desired);
-            if (openTarget.distanceToSqr(desired) <= 16.0D) return openTarget;
-        }
-        BlockPos fallback = this.level().getHeightmapPos(
-                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                origin.offset(this.random.nextInt(25) - 12, 0, this.random.nextInt(25) - 12)
-        );
-        return new Vec3(fallback.getX() + 0.5D, fallback.getY() + 1.0D, fallback.getZ() + 0.5D);
-    }
-
-    private Vec3 findNearestFlightTarget(Vec3 desired) {
-        BlockPos desiredPos = BlockPos.containing(desired);
-        Vec3 best = null;
-        double bestScore = Double.MAX_VALUE;
-        for (int attempt = 0; attempt < 14; attempt++) {
-            BlockPos candidate = desiredPos.offset(
-                    this.random.nextInt(7) - 3,
-                    this.random.nextInt(5) - 2,
-                    this.random.nextInt(7) - 3
-            );
-            if (!this.isOpenFlightSpace(candidate) || !this.isCeilingBuffered(candidate)) continue;
-            Vec3 center = Vec3.atCenterOf(candidate);
-            double score = center.distanceToSqr(desired) + Math.max(0.0D, center.y - desired.y) * 6.0D;
-            if (score < bestScore) {
-                best = center;
-                bestScore = score;
-            }
-        }
-        if (best != null) return best;
-        for (int down = 0; down <= 12; down++) {
-            BlockPos lowered = desiredPos.below(down);
-            if (this.isOpenFlightSpace(lowered) && this.isCeilingBuffered(lowered)) return Vec3.atCenterOf(lowered);
-        }
-        return desired;
-    }
-
-    private boolean isOpenFlightSpace(BlockPos pos) {
-        return this.level().isEmptyBlock(pos)
-                && this.level().isEmptyBlock(pos.above())
-                && this.level().isEmptyBlock(pos.above(2));
-    }
-
-    private boolean isCeilingBuffered(BlockPos pos) {
-        for (int i = 3; i <= FLIGHT_CEILING_CLEARANCE_BLOCKS; i++) {
-            if (!this.level().isEmptyBlock(pos.above(i))) return false;
-        }
-        return true;
-    }
 
     private boolean isTooCloseToCeiling() {
         BlockPos current = BlockPos.containing(this.getX(), this.getY(), this.getZ());
@@ -689,36 +640,44 @@ public class NightmareEntity extends Monster implements GeoEntity {
     private void updateAnimationState() {
         if (this.isDeadOrDying()) {
             this.setAnimationState(ANIM_DEATH);
+            this.groundMoveTicks = 0;
             this.wingFlapCooldown = 0;
             return;
         }
         if (this.isRoaring()) {
             this.setAnimationState(ANIM_ROAR);
+            this.groundMoveTicks = 0;
             this.wingFlapCooldown = 0;
             return;
         }
         if (this.attackAnimationTicks > 0) {
             this.setAnimationState(this.onGround() ? ANIM_ATTACK : ANIM_FLY_ATTACK);
+            this.groundMoveTicks = 0;
             this.tickWingFlapSound();
             return;
         }
-        if (!this.onGround() && this.airborneTicks > 0 && this.airborneTicks <= 10 && this.shouldUseFlight()) {
-            this.setAnimationState(ANIM_TAKEOFF);
-            this.wingFlapCooldown = 0;
-            return;
-        }
-        if (!this.onGround() && this.hurtTime > 0) {
-            this.setAnimationState(ANIM_FLY_DAMAGED);
-            this.tickWingFlapSound();
+        if (this.flyingToTarget) {
+            this.groundMoveTicks = 0;
+            if (this.onGround() || this.airborneTicks <= 8) {
+                this.setAnimationState(ANIM_TAKEOFF);
+                this.wingFlapCooldown = 0;
+            } else {
+                this.setAnimationState(ANIM_FLY);
+                this.tickWingFlapSound();
+            }
             return;
         }
         if (!this.onGround()) {
+            this.groundMoveTicks = 0;
             this.setAnimationState(ANIM_FLY);
             this.tickWingFlapSound();
             return;
         }
-        Vec3 velocity = this.getDeltaMovement();
-        if (velocity.horizontalDistanceSqr() > 0.008D) {
+        if (this.walkDist - this.walkDistO > 0.005F) {
+            this.groundMoveTicks = 6;
+        }
+        if (this.groundMoveTicks > 0) {
+            this.groundMoveTicks--;
             this.setAnimationState(ANIM_WALK);
             this.wingFlapCooldown = 0;
             return;
@@ -776,27 +735,6 @@ public class NightmareEntity extends Monster implements GeoEntity {
         }
     }
 
-    private final class NightmareAttackAnimationGoal extends Goal {
-        NightmareAttackAnimationGoal() {
-            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
-        }
-
-        @Override
-        public boolean canUse() {
-            return NightmareEntity.this.attackAnimationTicks > 0;
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return NightmareEntity.this.attackAnimationTicks > 0;
-        }
-
-        @Override
-        public void tick() {
-            NightmareEntity.this.tickAttack(NightmareEntity.this.getTarget());
-        }
-    }
-
     private final class NightmareFlyToTargetGoal extends Goal {
         NightmareFlyToTargetGoal() {
             this.setFlags(EnumSet.of(Flag.MOVE));
@@ -805,7 +743,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
         @Override
         public boolean canUse() {
             LivingEntity target = NightmareEntity.this.getTarget();
-            return target != null && NightmareEntity.this.distanceToSqr(target) > FLIGHT_ENGAGE_RANGE_SQR;
+            return target != null
+                    && NightmareEntity.this.landingCooldown <= 0
+                    && NightmareEntity.this.distanceToSqr(target) > FLIGHT_ENGAGE_RANGE_SQR;
         }
 
         @Override
@@ -815,7 +755,14 @@ public class NightmareEntity extends Monster implements GeoEntity {
         }
 
         @Override
+        public void start() {
+            NightmareEntity.this.flyingToTarget = true;
+        }
+
+        @Override
         public void stop() {
+            NightmareEntity.this.flyingToTarget = false;
+            NightmareEntity.this.landingCooldown = 80;
             NightmareEntity.this.getNavigation().stop();
         }
 
@@ -860,48 +807,42 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private final class NightmareWanderGoal extends Goal {
+        private double x, y, z;
+        private int wanderTicks;
+
         NightmareWanderGoal() {
             this.setFlags(EnumSet.of(Flag.MOVE));
         }
 
         @Override
         public boolean canUse() {
-            return NightmareEntity.this.getTarget() == null && !NightmareEntity.this.isDeadOrDying();
+            if (NightmareEntity.this.getTarget() != null || NightmareEntity.this.isDeadOrDying()) return false;
+            if (NightmareEntity.this.random.nextInt(40) != 0) return false;
+            double angle = NightmareEntity.this.random.nextDouble() * Math.PI * 2;
+            double dist = 4 + NightmareEntity.this.random.nextDouble() * 10;
+            this.x = NightmareEntity.this.getX() + Math.cos(angle) * dist;
+            this.z = NightmareEntity.this.getZ() + Math.sin(angle) * dist;
+            this.y = NightmareEntity.this.getY();
+            return true;
         }
 
         @Override
         public boolean canContinueToUse() {
-            return this.canUse();
+            return this.wanderTicks > 0
+                    && NightmareEntity.this.getTarget() == null
+                    && !NightmareEntity.this.isDeadOrDying()
+                    && NightmareEntity.this.distanceToSqr(this.x, this.y, this.z) > 2.25;
         }
 
         @Override
         public void start() {
-            NightmareEntity.this.patrolTarget = null;
-            NightmareEntity.this.patrolRetargetTicks = 0;
-        }
-
-        @Override
-        public void stop() {
-            NightmareEntity.this.getNavigation().stop();
-            NightmareEntity.this.patrolTarget = null;
+            this.wanderTicks = 80 + NightmareEntity.this.random.nextInt(40);
         }
 
         @Override
         public void tick() {
-            if (NightmareEntity.this.patrolRetargetTicks-- <= 0
-                    || NightmareEntity.this.patrolTarget == null
-                    || NightmareEntity.this.position().distanceToSqr(NightmareEntity.this.patrolTarget) < 4.0D) {
-                NightmareEntity.this.patrolRetargetTicks = 30 + NightmareEntity.this.random.nextInt(30);
-                NightmareEntity.this.patrolTarget = NightmareEntity.this.findPatrolTarget();
-            }
-            if (NightmareEntity.this.patrolTarget != null) {
-                NightmareEntity.this.getMoveControl().setWantedPosition(
-                        NightmareEntity.this.patrolTarget.x,
-                        NightmareEntity.this.patrolTarget.y,
-                        NightmareEntity.this.patrolTarget.z,
-                        PATROL_SPEED
-                );
-            }
+            this.wanderTicks--;
+            NightmareEntity.this.getMoveControl().setWantedPosition(this.x, this.y, this.z, PATROL_SPEED);
         }
     }
 }

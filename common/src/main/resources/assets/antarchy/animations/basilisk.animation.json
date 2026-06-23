@@ -4,6 +4,11 @@
 		"idle": {
 			"loop": true,
 			"animation_length": 4,
+			"sound_effects": {
+				"0.0": {
+					"effect": "antarchy:basilisk_idle_loop|0.45|1.0"
+				}
+			},
 			"bones": {
 				"upper_body": {
 					"rotation": {
@@ -402,7 +407,7 @@
 			}
 		},
 		"attack": {
-			"loop": true,
+			"loop": false,
 			"animation_length": 1,
 			"bones": {
 				"Basilisk": {
@@ -891,7 +896,7 @@
 			}
 		},
 		"death": {
-			"loop": true,
+			"loop": false,
 			"animation_length": 1.25,
 			"bones": {
 				"Basilisk": {
@@ -1518,6 +1523,11 @@
 		"walk": {
 			"loop": true,
 			"animation_length": 2,
+			"sound_effects": {
+				"0.0": {
+					"effect": "antarchy:basilisk_slither_loop|0.45|1.0"
+				}
+			},
 			"bones": {
 				"Basilisk": {
 					"position": {

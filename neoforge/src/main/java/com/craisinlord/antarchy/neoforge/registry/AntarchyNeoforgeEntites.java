@@ -214,7 +214,7 @@ public final class AntarchyNeoforgeEntites {
                     .build("scorpion"));
     public static final DeferredHolder<EntityType<?>, EntityType<BasiliskEntity>> BASILISK = ENTITY_TYPES.register("basilisk",
             () -> EntityType.Builder.of(BasiliskEntity::new, MobCategory.MONSTER)
-                    .sized(2.0F, 3.5F)
+                    .sized(3.0F, 3.5F)
                     .clientTrackingRange(14)
                     .build("basilisk"));
     public static final DeferredHolder<EntityType<?>, EntityType<EmperorScorpionEntity>> EMPEROR_SCORPION = ENTITY_TYPES.register("emperor_scorpion",

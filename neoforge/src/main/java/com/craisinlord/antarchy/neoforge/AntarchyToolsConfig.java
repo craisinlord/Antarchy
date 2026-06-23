@@ -5,17 +5,17 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public final class AntarchyToolsConfig {
     public static final ModConfigSpec SPEC;
 
-    // -------------------------------------------------------------------------
+
     // Basilisk Dagger
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.DoubleValue BASILISK_DAGGER_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue BASILISK_DAGGER_ATTACK_SPEED;
     private static final ModConfigSpec.IntValue    BASILISK_DAGGER_POISON_DURATION_TICKS;
     private static final ModConfigSpec.IntValue    BASILISK_DAGGER_POISON_AMPLIFIER;
 
-    // -------------------------------------------------------------------------
+
     // Ultimate Tools
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.DoubleValue  ULTIMATE_SWORD_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue  ULTIMATE_SWORD_ATTACK_SPEED;
     private static final ModConfigSpec.DoubleValue  ULTIMATE_PICKAXE_ATTACK_DAMAGE;
@@ -29,32 +29,32 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.IntValue     ULTIMATE_TOOL_ENCHANTABILITY;
     private static final ModConfigSpec.BooleanValue ULTIMATE_TOOLS_THREE_BY_THREE_ENABLED;
 
-    // -------------------------------------------------------------------------
+
     // Ultimate Bow
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.DoubleValue  ULTIMATE_BOW_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue  ULTIMATE_BOW_PLAYER_HEAL;
     private static final ModConfigSpec.DoubleValue  ULTIMATE_BOW_DRAW_SPEED_MULTIPLIER;
     private static final ModConfigSpec.BooleanValue ULTIMATE_BOW_COMES_ENCHANTED_WITH_FLAME;
     private static final ModConfigSpec.IntValue     ULTIMATE_BOW_ENCHANTABILITY;
 
-    // -------------------------------------------------------------------------
+
     // Ultimate Crossbow
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.DoubleValue ULTIMATE_CROSSBOW_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue ULTIMATE_CROSSBOW_CHARGE_SPEED_MULTIPLIER;
     private static final ModConfigSpec.IntValue    ULTIMATE_CROSSBOW_ENCHANTABILITY;
 
-    // -------------------------------------------------------------------------
+
     // Ultimate Mace
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.DoubleValue ULTIMATE_MACE_DAMAGE_MULTIPLIER;
     private static final ModConfigSpec.DoubleValue ULTIMATE_MACE_ATTACK_SPEED;
     private static final ModConfigSpec.IntValue    ULTIMATE_MACE_ENCHANTABILITY;
 
-    // -------------------------------------------------------------------------
+
     // Ultimate Armor
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.BooleanValue ULTIMATE_ARMOR_COMES_ENCHANTED;
     private static final ModConfigSpec.IntValue     ULTIMATE_ARMOR_ENCHANTABILITY;
     private static final ModConfigSpec.IntValue     ULTIMATE_HELMET_ARMOR_VALUE;
@@ -67,15 +67,15 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.DoubleValue  ULTIMATE_BOOTS_ARMOR_TOUGHNESS;
     private static final ModConfigSpec.DoubleValue  ULTIMATE_ARMOR_KNOCKBACK_RESISTANCE;
 
-    // -------------------------------------------------------------------------
+
     // Battle Axe
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.DoubleValue BATTLE_AXE_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue BATTLE_AXE_ATTACK_SPEED;
 
-    // -------------------------------------------------------------------------
+
     // Big Bertha
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.DoubleValue BIG_BERTHA_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue BIG_BERTHA_REACH_BONUS;
     private static final ModConfigSpec.DoubleValue BIG_BERTHA_ATTACK_SPEED;
@@ -98,9 +98,9 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.DoubleValue BLOOD_CRYSTAL_KATANA_LAUNCH_STRENGTH;
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_KATANA_TRAIL_DURATION_TICKS;
 
-    // -------------------------------------------------------------------------
+
     // Nightmare Gear
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.IntValue    NIGHTMARE_HELMET_ARMOR_VALUE;
     private static final ModConfigSpec.IntValue    NIGHTMARE_CHESTPLATE_ARMOR_VALUE;
     private static final ModConfigSpec.IntValue    NIGHTMARE_LEGGINGS_ARMOR_VALUE;
@@ -115,15 +115,15 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.DoubleValue NIGHTMARE_SWORD_ATTACK_SPEED;
     private static final ModConfigSpec.DoubleValue NIGHTMARE_SWORD_SCALING_FACTOR;
 
-    // -------------------------------------------------------------------------
+
     // Fallen King's Crown
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.IntValue    FALLEN_KING_CROWN_ARMOR_VALUE;
     private static final ModConfigSpec.DoubleValue FALLEN_KING_CROWN_ARMOR_TOUGHNESS;
 
-    // -------------------------------------------------------------------------
+
     // Blood Crystal Armor
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_ARMOR_SHIELD_RECHARGE_TICKS;
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_APPLE_SHIELD_COUNT;
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_APPLE_DURATION_TICKS;
@@ -139,15 +139,15 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_LEGGINGS_DURABILITY;
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_BOOTS_DURABILITY;
 
-    // -------------------------------------------------------------------------
+
     // Squidzooka
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.DoubleValue SQUIDZOOKA_COOLDOWN_SECONDS;
     private static final ModConfigSpec.DoubleValue SQUIDZOOKA_LAUNCH_VELOCITY;
 
-    // -------------------------------------------------------------------------
+
     // Size Rays
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.BooleanValue SIZE_CHANGING_RAYS_ENABLED;
     private static final ModConfigSpec.DoubleValue  SIZE_RAY_COOLDOWN_SECONDS;
     private static final ModConfigSpec.DoubleValue  SIZE_RAY_MIN_SCALE;
@@ -156,9 +156,9 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.DoubleValue  SHRINKING_POTION_DELTA;
     private static final ModConfigSpec.DoubleValue  GROWTH_POTION_DELTA;
 
-    // -------------------------------------------------------------------------
+
     // Gravity Gun
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.BooleanValue GRAVITY_GUN_ENABLED;
     private static final ModConfigSpec.BooleanValue GRAVITY_GUN_BLOCKS_ENABLED;
     private static final ModConfigSpec.BooleanValue GRAVITY_GUN_ENTITIES_ENABLED;
@@ -168,16 +168,16 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.DoubleValue  GRAVITY_GUN_COOLDOWN_SECONDS;
     private static final ModConfigSpec.DoubleValue  GRAVITY_GUN_MAX_HOLD_DISTANCE;
 
-    // -------------------------------------------------------------------------
+
     // Miscellaneous items / consumables
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.DoubleValue  DUCT_TAPE_REPAIR_PERCENT_PER_USE;
     private static final ModConfigSpec.DoubleValue  POTENT_NYXITE_INVERTED_DURATION_SECONDS;
     private static final ModConfigSpec.BooleanValue INVERT_PROJECTILES_FROM_INVERTED_PLAYERS;
     private static final ModConfigSpec.IntValue     CORNEA_EAR_NIGHT_VISION_SECONDS;
-    // -------------------------------------------------------------------------
+
     // Moggles
-    // -------------------------------------------------------------------------
+
     private static final ModConfigSpec.IntValue    MOGGLES_VISION_RADIUS;
     private static final ModConfigSpec.IntValue    MOGGLES_VISION_MAX_LIGHT;
     private static final ModConfigSpec.DoubleValue MOGGLES_VISION_ALPHA;

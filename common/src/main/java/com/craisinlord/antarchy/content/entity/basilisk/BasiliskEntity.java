@@ -9,6 +9,7 @@ import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
@@ -17,9 +18,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
@@ -48,6 +51,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -55,7 +59,6 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     private static final EntityDataAccessor<Integer> ANIMATION_STATE =
             SynchedEntityData.defineId(BasiliskEntity.class, EntityDataSerializers.INT);
     private static final byte ATTACK_ENTITY_EVENT = 4;
-    private static final int ATTACK_ANIM_TICKS = 18;
     private static final int DEATH_TICKS = 25;
 
     private static final int ANIM_IDLE = 0;
@@ -68,30 +71,22 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenPlay("attack");
     private static final RawAnimation DEATH_ANIM = RawAnimation.begin().thenPlay("death");
 
-    private static final int HISS_COOLDOWN_TICKS = 600;
-    private static final double GAZE_RANGE = 12.0D;
-    private static final double GAZE_RANGE_SQR = GAZE_RANGE * GAZE_RANGE;
-    private static final double GAZE_DOT_THRESHOLD = 0.64D;
-    private static final double BASILISK_GAZE_FACING_THRESHOLD = 0.45D;
-    private static final int HISS_CHARGE_TICKS = 30;
-
-    private static final int PREY_PETRIFY_COOLDOWN_TICKS = 500;
-    private static final double PREY_PETRIFY_RANGE = 8.0D;
-    private static final int PREY_PETRIFY_DURATION_TICKS = 200;
+    private static final float TURN_RATE_DEG_PER_TICK = 5.0F;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     private int attackAnimTicks = 0;
 
-    private int hissCooldown = 100;
+    private int hissCooldown = AntarchySettings.basiliskHissCooldownTicks();
     private int hissChargeTimer = 0;
     @Nullable private UUID pendingTargetId;
 
-    private int preyPetrifyCooldown = 200;
+    private int preyPetrifyCooldown = AntarchySettings.basiliskPreyPetrifyCooldownTicks();
 
     public BasiliskEntity(EntityType<? extends BasiliskEntity> entityType, Level level) {
         super(entityType, level);
-        this.xpReward = 50;
+        this.xpReward = AntarchySettings.basiliskXpReward();
+        this.moveControl = new BasiliskMoveControl(this);
     }
 
     @Override
@@ -102,12 +97,12 @@ public class BasiliskEntity extends Monster implements GeoEntity {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 150.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.35D)
-                .add(Attributes.ATTACK_DAMAGE, 18.0D)
-                .add(Attributes.ARMOR, 6.0D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.5D)
-                .add(Attributes.FOLLOW_RANGE, 28.0D);
+                .add(Attributes.MAX_HEALTH, AntarchySettings.basiliskHealth())
+                .add(Attributes.MOVEMENT_SPEED, AntarchySettings.basiliskMovementSpeed())
+                .add(Attributes.ATTACK_DAMAGE, AntarchySettings.basiliskAttackDamage())
+                .add(Attributes.ARMOR, AntarchySettings.basiliskArmor())
+                .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.basiliskKnockbackResistance())
+                .add(Attributes.FOLLOW_RANGE, AntarchySettings.basiliskFollowRange());
     }
 
     public static boolean canSpawn(EntityType<BasiliskEntity> entityType, ServerLevelAccessor level,
@@ -157,6 +152,40 @@ public class BasiliskEntity extends Monster implements GeoEntity {
         }
 
         return hurt;
+    }
+
+    private void performAoeAttack() {
+        if (!(this.level() instanceof ServerLevel serverLevel)) return;
+
+        double attackReach = AntarchySettings.basiliskAttackReach();
+        Vec3 forward = Vec3.directionFromRotation(0, this.getYRot());
+        Vec3 right = new Vec3(-forward.z, 0, forward.x);
+        Vec3 origin = this.position();
+
+        List<LivingEntity> candidates = this.level().getEntitiesOfClass(
+                LivingEntity.class,
+                this.getBoundingBox().inflate(Math.max(4.0D, attackReach + 1.5D)),
+                e -> e != this && e.isAlive()
+        );
+
+        boolean hitAnything = false;
+        for (LivingEntity entity : candidates) {
+            Vec3 toEntity = entity.position().subtract(origin);
+            double fwdDist = toEntity.dot(forward);
+            double sideDist = toEntity.dot(right);
+            // Forward bite volume measured from the basilisk's center.
+            if (fwdDist >= 1.0 && fwdDist <= attackReach && Math.abs(sideDist) <= 1.5) {
+                if (entity.hurt(AntarchyDamageSources.basiliskBite(serverLevel, this),
+                        (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE))) {
+                    hitAnything = true;
+                }
+            }
+        }
+        
+        this.level().broadcastEntityEvent(this, ATTACK_ENTITY_EVENT);
+        if (hitAnything) {
+            this.playSound(AntarchySoundEvents.BASILISK_BITE.get(), 1.1F, 0.95F + this.random.nextFloat() * 0.08F);
+        }
     }
 
     @Override
@@ -213,21 +242,21 @@ public class BasiliskEntity extends Monster implements GeoEntity {
         }
 
         if (!AntarchySettings.basiliskPetrifyingGazeEnabled()) {
-            this.hissCooldown = HISS_COOLDOWN_TICKS;
+            this.hissCooldown = AntarchySettings.basiliskHissCooldownTicks();
             return;
         }
 
         Player target = this.findGazingPlayer();
         if (target == null) {
-            this.hissCooldown = 20;
+            this.hissCooldown = AntarchySettings.basiliskHissCooldownTicks();
             return;
         }
 
         this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                 AntarchySoundEvents.BASILISK_HISS.get(), this.getSoundSource(), 1.4F, 0.92F);
         this.pendingTargetId = target.getUUID();
-        this.hissChargeTimer = HISS_CHARGE_TICKS;
-        this.hissCooldown = HISS_COOLDOWN_TICKS;
+        this.hissChargeTimer = AntarchySettings.basiliskHissChargeTicks();
+        this.hissCooldown = AntarchySettings.basiliskHissCooldownTicks();
         this.getNavigation().stop();
         this.getLookControl().setLookAt(target, 30.0F, 30.0F);
     }
@@ -242,7 +271,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
             return;
         }
 
-        this.preyPetrifyCooldown = PREY_PETRIFY_COOLDOWN_TICKS;
+        this.preyPetrifyCooldown = AntarchySettings.basiliskPreyPetrifyCooldownTicks();
         LivingEntity prey = this.findNearestPrey();
         if (prey == null) {
             return;
@@ -253,7 +282,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
         this.getLookControl().setLookAt(prey, 30.0F, 30.0F);
         prey.addEffect(new MobEffectInstance(
                 AntarchyObjects.PARALYZED_EFFECT.get(),
-                PREY_PETRIFY_DURATION_TICKS,
+                AntarchySettings.basiliskPreyPetrifyTicks(),
                 0,
                 false,
                 true,
@@ -279,7 +308,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
 
         Player nearest = null;
         double nearestDistance = Double.MAX_VALUE;
-        for (Player player : this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(GAZE_RANGE))) {
+        for (Player player : this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(AntarchySettings.basiliskGazeRange()))) {
             if (!this.canMaintainGazeOn(player)) {
                 continue;
             }
@@ -301,7 +330,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
         if (player.getItemBySlot(EquipmentSlot.HEAD).is(Items.CARVED_PUMPKIN)) {
             return false;
         }
-        if (player.distanceToSqr(this) > GAZE_RANGE_SQR) {
+        if (player.distanceToSqr(this) > AntarchySettings.basiliskGazeRange() * AntarchySettings.basiliskGazeRange()) {
             return false;
         }
         if (!this.hasLineOfSight(player)) {
@@ -314,7 +343,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     private boolean isPlayerGazingAtMe(Player player) {
         Vec3 eye = player.getEyePosition();
         Vec3 toMe = this.getEyePosition().subtract(eye).normalize();
-        return player.getLookAngle().dot(toMe) >= GAZE_DOT_THRESHOLD;
+        return player.getLookAngle().dot(toMe) >= AntarchySettings.basiliskGazeDotThreshold();
     }
 
     private boolean isFacingPlayerForGaze(Player player) {
@@ -323,7 +352,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
             return true;
         }
 
-        return this.getViewVector(1.0F).normalize().dot(toPlayer.normalize()) >= BASILISK_GAZE_FACING_THRESHOLD;
+        return this.getViewVector(1.0F).normalize().dot(toPlayer.normalize()) >= AntarchySettings.basiliskGazeFacingThreshold();
     }
 
     private boolean canTargetPlayer(@Nullable Player player) {
@@ -339,7 +368,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
         LivingEntity nearest = null;
         double nearestDistance = Double.MAX_VALUE;
         for (LivingEntity entity : this.level().getEntitiesOfClass(LivingEntity.class,
-                this.getBoundingBox().inflate(PREY_PETRIFY_RANGE))) {
+                this.getBoundingBox().inflate(AntarchySettings.basiliskPreyPetrifyRange()))) {
             if (entity == this || entity instanceof Player || entity.isDeadOrDying()) {
                 continue;
             }
@@ -379,9 +408,6 @@ public class BasiliskEntity extends Monster implements GeoEntity {
         if (this.getAnimationState() == ANIM_WALK) {
             return state.setAndContinue(WALK_ANIM);
         }
-        if (this.getTarget() != null || this.hissChargeTimer > 0 || this.pendingTargetId != null) {
-            return state.setAndContinue(WALK_ANIM);
-        }
         if (state.isMoving()) {
             return state.setAndContinue(WALK_ANIM);
         }
@@ -396,7 +422,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     @Override
     public void handleEntityEvent(byte id) {
         if (id == ATTACK_ENTITY_EVENT) {
-            this.attackAnimTicks = ATTACK_ANIM_TICKS;
+            this.attackAnimTicks = AntarchySettings.basiliskAttackAnimTicks();
             this.setAnimationState(ANIM_ATTACK);
             return;
         }
@@ -456,11 +482,22 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     }
 
     @Override
+    public int getMaxHeadYRot() {
+        return 20;
+    }
+
+    @Override
     public boolean canAttack(LivingEntity target) {
         if (target instanceof Player player) {
             return this.canTargetPlayer(player) && super.canAttack(target);
         }
         return super.canAttack(target);
+    }
+
+    @Override
+    public boolean isWithinMeleeAttackRange(LivingEntity target) {
+        double reach = AntarchySettings.basiliskAttackReach();
+        return this.distanceToSqr(target) <= reach * reach;
     }
 
     @Override
@@ -487,6 +524,31 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     @Override
     protected float getSoundVolume() {
         return 0.7F;
+    }
+
+    /** Limits body rotation to TURN_RATE_DEG_PER_TICK so the long snake turns gradually. */
+    private static final class BasiliskMoveControl extends MoveControl {
+        private BasiliskMoveControl(Mob mob) {
+            super(mob);
+        }
+
+        @Override
+        public void tick() {
+            if (this.operation == MoveControl.Operation.MOVE_TO) {
+                this.operation = MoveControl.Operation.WAIT;
+                double dx = this.wantedX - this.mob.getX();
+                double dz = this.wantedZ - this.mob.getZ();
+                double dy = this.wantedY - this.mob.getY();
+                if (dx * dx + dy * dy + dz * dz < 2.5E-7) {
+                    this.mob.setZza(0.0F);
+                    return;
+                }
+                float targetYaw = (float)(Mth.atan2(dz, dx) * (180.0 / Math.PI)) - 90.0F;
+                this.mob.setYRot(this.rotlerp(this.mob.getYRot(), targetYaw, TURN_RATE_DEG_PER_TICK));
+                this.mob.setSpeed((float)(this.speedModifier * this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED)));
+                this.mob.setZza(1.0F);
+            }
+        }
     }
 
     private final class PersistentNearestAttackableTargetGoal<T extends LivingEntity> extends NearestAttackableTargetGoal<T> {
@@ -516,14 +578,12 @@ public class BasiliskEntity extends Monster implements GeoEntity {
         }
 
         @Override
-        protected void checkAndPerformAttack(LivingEntity enemy) {
-            if (BasiliskEntity.this.attackAnimTicks > 0) {
-                return;
-            }
-            if (this.canPerformAttack(enemy) && this.isTimeToAttack()) {
-                this.resetAttackCooldown();
-                BasiliskEntity.this.doHurtTarget(enemy);
-            }
+        protected void checkAndPerformAttack(LivingEntity target) {
+            if (BasiliskEntity.this.attackAnimTicks > 0) return;
+            if (!this.canPerformAttack(target)) return;
+
+            this.resetAttackCooldown();
+            BasiliskEntity.this.performAoeAttack();
         }
     }
 }

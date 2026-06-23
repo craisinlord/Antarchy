@@ -109,8 +109,30 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setReverieWarningThreatVerticalRange(AntarchyMobsConfig.reverieWarningThreatVerticalRange());
         AntarchySettings.setReverieDuplicationCooldownTicks(AntarchyMobsConfig.reverieDuplicationCooldownTicks());
 
+        AntarchySettings.setNightmareHealth(AntarchyMobsConfig.nightmareHealth());
+        AntarchySettings.setNightmareAttackDamage(AntarchyMobsConfig.nightmareAttackDamage());
+
         AntarchySettings.setBasiliskPetrifyingGazeEnabled(AntarchyMobsConfig.basiliskPetrifyingGazeEnabled());
         AntarchySettings.setBasiliskSpawnMaxLightLevel(AntarchyMobsConfig.basiliskSpawnMaxLightLevel());
+        AntarchySettings.setBasiliskHealth(AntarchyMobsConfig.basiliskHealth());
+        AntarchySettings.setBasiliskAttackDamage(AntarchyMobsConfig.basiliskAttackDamage());
+        AntarchySettings.setBasiliskMovementSpeed(AntarchyMobsConfig.basiliskMovementSpeed());
+        AntarchySettings.setBasiliskArmor(AntarchyMobsConfig.basiliskArmor());
+        AntarchySettings.setBasiliskKnockbackResistance(AntarchyMobsConfig.basiliskKnockbackResistance());
+        AntarchySettings.setBasiliskFollowRange(AntarchyMobsConfig.basiliskFollowRange());
+        AntarchySettings.setBasiliskXpReward(AntarchyMobsConfig.basiliskXpReward());
+        AntarchySettings.setBasiliskAttackAnimTicks(AntarchyMobsConfig.basiliskAttackAnimTicks());
+        AntarchySettings.setBasiliskAttackDamageTick(AntarchyMobsConfig.basiliskAttackDamageTick());
+        AntarchySettings.setBasiliskHissCooldownTicks(AntarchyMobsConfig.basiliskHissCooldownTicks());
+        AntarchySettings.setBasiliskAttackReach(AntarchyMobsConfig.basiliskAttackReach());
+        AntarchySettings.setBasiliskGazeRange(AntarchyMobsConfig.basiliskGazeRange());
+        AntarchySettings.setBasiliskGazeDotThreshold(AntarchyMobsConfig.basiliskGazeDotThreshold());
+        AntarchySettings.setBasiliskGazeFacingThreshold(AntarchyMobsConfig.basiliskGazeFacingThreshold());
+        AntarchySettings.setBasiliskHissChargeTicks(AntarchyMobsConfig.basiliskHissChargeTicks());
+        AntarchySettings.setBasiliskPlayerParalyzeTicks(AntarchyMobsConfig.basiliskPlayerParalyzeTicks());
+        AntarchySettings.setBasiliskPreyPetrifyCooldownTicks(AntarchyMobsConfig.basiliskPreyPetrifyCooldownTicks());
+        AntarchySettings.setBasiliskPreyPetrifyRange(AntarchyMobsConfig.basiliskPreyPetrifyRange());
+        AntarchySettings.setBasiliskPreyPetrifyTicks(AntarchyMobsConfig.basiliskPreyPetrifyTicks());
 
         AntarchySettings.setLucidAttackRange(AntarchyMobsConfig.lucidAttackRange());
         AntarchySettings.setLucidPearlInvertedDurationSeconds(AntarchyMobsConfig.lucidPearlInvertedDurationSeconds());

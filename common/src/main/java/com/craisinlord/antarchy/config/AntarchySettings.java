@@ -88,7 +88,7 @@ public final class AntarchySettings {
     private static ResourceKey<Level> redAntDestinationDimension = dimensionKey("antarchy:thoraxis");
     private static ResourceKey<Level> termiteDestinationDimension = dimensionKey("antarchy:cavaryn");
     private static ResourceKey<Level> rainbowAntNonInfinityFallbackDimension = dimensionKey("antarchy:elythia");
-    private static double krakenHealth = 750.0D;
+    private static double krakenHealth = 1500.0D;
     private static double krakenAttackDamage = 45.0D;
     private static double brutalflyHealth = 400.0D;
     private static double brutalflySwipeDamage = 15.0D;
@@ -146,6 +146,25 @@ public final class AntarchySettings {
     private static double nightmareSwordScalingFactor = 1.0D;
     private static boolean basiliskPetrifyingGazeEnabled = true;
     private static int basiliskSpawnMaxLightLevel = 5;
+    private static double basiliskHealth = 150.0D;
+    private static double basiliskAttackDamage = 18.0D;
+    private static double basiliskMovementSpeed = 0.35D;
+    private static double basiliskArmor = 6.0D;
+    private static double basiliskKnockbackResistance = 0.5D;
+    private static double basiliskFollowRange = 28.0D;
+    private static int basiliskXpReward = 50;
+    private static int basiliskAttackAnimTicks = 18;
+    private static int basiliskAttackDamageTick = 9;
+    private static int basiliskHissCooldownTicks = 600;
+    private static double basiliskAttackReach = 3.0D;
+    private static double basiliskGazeRange = 12.0D;
+    private static double basiliskGazeDotThreshold = 0.64D;
+    private static double basiliskGazeFacingThreshold = 0.45D;
+    private static int basiliskHissChargeTicks = 30;
+    private static int basiliskPlayerParalyzeTicks = 50;
+    private static int basiliskPreyPetrifyCooldownTicks = 500;
+    private static double basiliskPreyPetrifyRange = 8.0D;
+    private static int basiliskPreyPetrifyTicks = 200;
     private static boolean diamondMinecartEnabled = true;
     private static boolean diamondMinecartPlacesRails = true;
     private static double diamondMinecartCruiseSpeed = 0.6D;
@@ -206,25 +225,6 @@ public final class AntarchySettings {
     private static final int     reverieAmbientTargetMaxAgeTicks  = 40;
     private static final int     reverieAmbientPulseIntervalMinTicks = 12;
     private static final int     reverieAmbientPulseIntervalMaxTicks = 19;
-    private static double basiliskHealth = 100.0D;
-    private static double basiliskAttackDamage = 12.0D;
-    private static double basiliskMovementSpeed = 0.25D;
-    private static double basiliskArmor = 6.0D;
-    private static double basiliskKnockbackResistance = 0.5D;
-    private static double basiliskFollowRange = 28.0D;
-    private static int basiliskXpReward = 50;
-    private static int basiliskAttackAnimTicks = 18;
-    private static int basiliskAttackHitTick = 8;
-    private static int basiliskAttackCooldownTicks = 20;
-    private static int basiliskHissCooldownTicks = 600;
-    private static double basiliskGazeRange = 12.0D;
-    private static double basiliskGazeDotThreshold = 0.64D;
-    private static double basiliskFacingThreshold = 0.45D;
-    private static int basiliskHissChargeTicks = 30;
-    private static int basiliskPlayerParalyzeTicks = 50;
-    private static int basiliskPreyPetrifyCooldownTicks = 500;
-    private static double basiliskPreyPetrifyRange = 8.0D;
-    private static int basiliskPreyPetrifyTicks = 200;
     private static double emperorScorpionHealth = 100.0D;
     private static double emperorScorpionAttackDamage = 12.0D;
     private static double emperorScorpionMovementSpeed = 0.32D;
@@ -380,7 +380,7 @@ public final class AntarchySettings {
     private static double molevoreBreakVerticalRange = 2.2D;
     private static double molevoreBreakHalfWidth = 1.1D;
     private static double nightmareHealth = 180.0D;
-    private static double nightmareAttackDamage = 14.0D;
+    private static double nightmareAttackDamage = 16.0D;
     private static double nightmareMovementSpeed = 0.28D;
     private static double nightmareFlyingSpeed = 0.3D;
     private static double nightmareFollowRange = 48.0D;
@@ -1377,8 +1377,62 @@ public final class AntarchySettings {
         basiliskSpawnMaxLightLevel = value;
     }
 
+    public static double basiliskHealth() { return basiliskHealth; }
+    public static void setBasiliskHealth(double value) { basiliskHealth = value; }
+
+    public static double basiliskAttackDamage() { return basiliskAttackDamage; }
+    public static void setBasiliskAttackDamage(double value) { basiliskAttackDamage = value; }
+
+    public static double basiliskMovementSpeed() { return basiliskMovementSpeed; }
+    public static void setBasiliskMovementSpeed(double value) { basiliskMovementSpeed = value; }
+
+    public static double basiliskArmor() { return basiliskArmor; }
+    public static void setBasiliskArmor(double value) { basiliskArmor = value; }
+
+    public static double basiliskKnockbackResistance() { return basiliskKnockbackResistance; }
+    public static void setBasiliskKnockbackResistance(double value) { basiliskKnockbackResistance = value; }
+
+    public static double basiliskFollowRange() { return basiliskFollowRange; }
+    public static void setBasiliskFollowRange(double value) { basiliskFollowRange = value; }
+
+    public static int basiliskXpReward() { return basiliskXpReward; }
+    public static void setBasiliskXpReward(int value) { basiliskXpReward = value; }
+
+    public static int basiliskAttackAnimTicks() { return basiliskAttackAnimTicks; }
+    public static void setBasiliskAttackAnimTicks(int value) { basiliskAttackAnimTicks = value; }
+
+    public static int basiliskAttackDamageTick() { return basiliskAttackDamageTick; }
+    public static void setBasiliskAttackDamageTick(int value) { basiliskAttackDamageTick = value; }
+
+    public static int basiliskHissCooldownTicks() { return basiliskHissCooldownTicks; }
+    public static void setBasiliskHissCooldownTicks(int value) { basiliskHissCooldownTicks = value; }
+
+    public static double basiliskAttackReach() { return basiliskAttackReach; }
+    public static void setBasiliskAttackReach(double value) { basiliskAttackReach = value; }
+
+    public static double basiliskGazeRange() { return basiliskGazeRange; }
+    public static void setBasiliskGazeRange(double value) { basiliskGazeRange = value; }
+
+    public static double basiliskGazeDotThreshold() { return basiliskGazeDotThreshold; }
+    public static void setBasiliskGazeDotThreshold(double value) { basiliskGazeDotThreshold = value; }
+
+    public static double basiliskGazeFacingThreshold() { return basiliskGazeFacingThreshold; }
+    public static void setBasiliskGazeFacingThreshold(double value) { basiliskGazeFacingThreshold = value; }
+
+    public static int basiliskHissChargeTicks() { return basiliskHissChargeTicks; }
+    public static void setBasiliskHissChargeTicks(int value) { basiliskHissChargeTicks = value; }
+
     public static int basiliskPlayerParalyzeTicks() { return basiliskPlayerParalyzeTicks; }
     public static void setBasiliskPlayerParalyzeTicks(int value) { basiliskPlayerParalyzeTicks = value; }
+
+    public static int basiliskPreyPetrifyCooldownTicks() { return basiliskPreyPetrifyCooldownTicks; }
+    public static void setBasiliskPreyPetrifyCooldownTicks(int value) { basiliskPreyPetrifyCooldownTicks = value; }
+
+    public static double basiliskPreyPetrifyRange() { return basiliskPreyPetrifyRange; }
+    public static void setBasiliskPreyPetrifyRange(double value) { basiliskPreyPetrifyRange = value; }
+
+    public static int basiliskPreyPetrifyTicks() { return basiliskPreyPetrifyTicks; }
+    public static void setBasiliskPreyPetrifyTicks(int value) { basiliskPreyPetrifyTicks = value; }
 
     public static boolean diamondMinecartEnabled() { return diamondMinecartEnabled; }
     public static void setDiamondMinecartEnabled(boolean v) { diamondMinecartEnabled = v; }
