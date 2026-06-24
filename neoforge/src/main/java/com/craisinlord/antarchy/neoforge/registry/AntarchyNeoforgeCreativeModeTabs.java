@@ -76,6 +76,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.SCORPION_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.BASILISK_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.EMPEROR_SCORPION_SPAWN_EGG.get());
+            event.accept(AntarchyNeoforgeItems.TORETERROR_SPAWN_EGG.get());
         }
 
         if (event.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS) {
@@ -168,6 +169,21 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.OURANWOOD_BUTTON_ITEM.get());
             event.accept(AntarchyNeoforgeItems.OURANWOOD_SIGN_ITEM.get());
             event.accept(AntarchyNeoforgeItems.OURANWOOD_HANGING_SIGN_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.SHELLSTONE_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.SHELLSTONE_STAIRS_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.SHELLSTONE_SLAB_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.SHELLSTONE_WALL_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.POLISHED_SHELLSTONE_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.POLISHED_SHELLSTONE_STAIRS_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.POLISHED_SHELLSTONE_SLAB_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.POLISHED_SHELLSTONE_WALL_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.SHELLSTONE_BRICKS_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.SHELLSTONE_BRICK_STAIRS_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.SHELLSTONE_BRICK_SLAB_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.SHELLSTONE_BRICK_WALL_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.CHISELED_SHELLSTONE_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.MOSSY_SHELLSTONE_BRICKS_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.CRACKED_SHELLSTONE_BRICKS_ITEM.get());
             event.accept(AntarchyNeoforgeItems.NYXITE_ITEM.get());
             event.accept(AntarchyNeoforgeItems.NYXITE_STAIRS_ITEM.get());
             event.accept(AntarchyNeoforgeItems.NYXITE_SLAB_ITEM.get());
@@ -246,7 +262,12 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.SHRINK_RAY.get());
             event.accept(AntarchyNeoforgeItems.GROWTH_RAY.get());
             event.accept(AntarchyNeoforgeItems.GRAVITY_GUN.get());
+            event.accept(AntarchyNeoforgeItems.WATER_CANNON.get());
             event.accept(AntarchyNeoforgeItems.LUCID_PEARL.get());
+            event.accept(AntarchyNeoforgeItems.PRIMORDIAL_HELMET.get());
+            event.accept(AntarchyNeoforgeItems.PRIMORDIAL_CHESTPLATE.get());
+            event.accept(AntarchyNeoforgeItems.PRIMORDIAL_LEGGINGS.get());
+            event.accept(AntarchyNeoforgeItems.PRIMORDIAL_BOOTS.get());
             event.accept(AntarchyNeoforgeItems.NIGHTMARE_HELMET.get());
             event.accept(AntarchyNeoforgeItems.NIGHTMARE_CHESTPLATE.get());
             event.accept(AntarchyNeoforgeItems.NIGHTMARE_LEGGINGS.get());
@@ -356,12 +377,14 @@ public class AntarchyNeoforgeCreativeModeTabs {
 
             // 17 - Weapons
             case "battle_axe", "basilisk_dagger", "squidzooka", "shrink_ray", "growth_ray",
-                 "gravity_gun", "nightmare_sword", "lucid_pearl", "scorpion_whip", "blood_crystal_katana",
+                 "gravity_gun", "water_cannon", "nightmare_sword", "lucid_pearl", "scorpion_whip", "blood_crystal_katana",
                  "big_bertha", "big_bertha_blade", "big_bertha_handle", "big_bertha_hilt",
                  "ultimate_sword", "ultimate_mace" -> 17;
 
             // 18 - Armor sets
-            case "blood_crystal_helmet", "blood_crystal_chestplate",
+            case "primordial_helmet", "primordial_chestplate",
+                 "primordial_leggings", "primordial_boots",
+                 "blood_crystal_helmet", "blood_crystal_chestplate",
                  "blood_crystal_leggings", "blood_crystal_boots",
                  "nightmare_helmet", "nightmare_chestplate",
                  "nightmare_leggings", "nightmare_boots",

@@ -1,4 +1,20 @@
 {
   "replace": false,
-  "values": []
+  "values": [
+    "antarchy:shellstone",
+    "antarchy:polished_shellstone",
+    "antarchy:shellstone_bricks",
+    "antarchy:chiseled_shellstone",
+    "antarchy:mossy_shellstone_bricks",
+    "antarchy:cracked_shellstone_bricks",
+    "antarchy:shellstone_stairs",
+    "antarchy:shellstone_slab",
+    "antarchy:shellstone_wall",
+    "antarchy:polished_shellstone_stairs",
+    "antarchy:polished_shellstone_slab",
+    "antarchy:polished_shellstone_wall",
+    "antarchy:shellstone_brick_stairs",
+    "antarchy:shellstone_brick_slab",
+    "antarchy:shellstone_brick_wall"
+  ]
 }

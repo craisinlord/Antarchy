@@ -96,9 +96,7 @@ public class HushProjectileEntity extends ThrowableItemProjectile {
             return;
         }
 
-        // Smoothly steer toward the target each tick — no hard phase transition.
-        // The initial upward launch velocity from HushweedBlockEntity gives a natural
-        // rising arc before the homing takes over.
+        // Smoothly steer toward the target each tick
         Vec3 desired = toTarget.normalize().scale(TRAVEL_SPEED);
         this.setDeltaMovement(this.getDeltaMovement().lerp(desired, 0.1D));
     }

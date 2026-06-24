@@ -64,6 +64,10 @@ import com.craisinlord.antarchy.content.entity.ScorpionEntity;
 import com.craisinlord.antarchy.content.item.LucidEyeItem;
 import com.craisinlord.antarchy.content.item.LucidPearlItem;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
+import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
+import com.craisinlord.antarchy.content.entity.WaterBombEntity;
+import com.craisinlord.antarchy.content.item.PrimordialArmorItem;
+import com.craisinlord.antarchy.content.item.WaterCannonItem;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
 import com.craisinlord.antarchy.content.entity.MolevoreEntity;
 import com.craisinlord.antarchy.content.entity.MolewormEntity;
@@ -391,6 +395,18 @@ public final class AntarchyFabricContent {
                     3.0F,
                     (float) AntarchySettings.nightmareArmorKnockbackResistance()
             ));
+    public static final DeferredItem<Item> PRIMORDIAL_SCUTE = ITEMS.registerSimpleItem("primordial_scute",
+            new Item.Properties().rarity(Rarity.UNCOMMON));
+    private static final DeferredHolder<ArmorMaterial, ArmorMaterial> PRIMORDIAL_ARMOR_MATERIAL = ARMOR_MATERIALS.register("primordial",
+            () -> new ArmorMaterial(
+                    createPrimordialArmorDefense(),
+                    15,
+                    SoundEvents.ARMOR_EQUIP_NETHERITE,
+                    () -> Ingredient.of(PRIMORDIAL_SCUTE.get()),
+                    List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "primordial"))),
+                    3.0F,
+                    0.1F
+            ));
     private static final DeferredHolder<ArmorMaterial, ArmorMaterial> BLOOD_CRYSTAL_ARMOR_MATERIAL = ARMOR_MATERIALS.register("blood_crystal",
             () -> new ArmorMaterial(
                     createBloodCrystalArmorDefense(),
@@ -510,6 +526,36 @@ public final class AntarchyFabricContent {
             () -> new net.minecraft.world.level.block.SlabBlock(nyxiteProperties()));
     public static final DeferredBlock<net.minecraft.world.level.block.WallBlock> NYXITE_BRICK_WALL = BLOCKS.register("nyxite_brick_wall",
             () -> new net.minecraft.world.level.block.WallBlock(nyxiteProperties()));
+    public static final DeferredBlock<Block> SHELLSTONE = BLOCKS.register("shellstone",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<Block> POLISHED_SHELLSTONE = BLOCKS.register("polished_shellstone",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<Block> SHELLSTONE_BRICKS = BLOCKS.register("shellstone_bricks",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<Block> CHISELED_SHELLSTONE = BLOCKS.register("chiseled_shellstone",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<Block> MOSSY_SHELLSTONE_BRICKS = BLOCKS.register("mossy_shellstone_bricks",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<Block> CRACKED_SHELLSTONE_BRICKS = BLOCKS.register("cracked_shellstone_bricks",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<net.minecraft.world.level.block.StairBlock> SHELLSTONE_STAIRS = BLOCKS.register("shellstone_stairs",
+            () -> new net.minecraft.world.level.block.StairBlock(SHELLSTONE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<net.minecraft.world.level.block.SlabBlock> SHELLSTONE_SLAB = BLOCKS.register("shellstone_slab",
+            () -> new net.minecraft.world.level.block.SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<net.minecraft.world.level.block.WallBlock> SHELLSTONE_WALL = BLOCKS.register("shellstone_wall",
+            () -> new net.minecraft.world.level.block.WallBlock(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<net.minecraft.world.level.block.StairBlock> POLISHED_SHELLSTONE_STAIRS = BLOCKS.register("polished_shellstone_stairs",
+            () -> new net.minecraft.world.level.block.StairBlock(POLISHED_SHELLSTONE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<net.minecraft.world.level.block.SlabBlock> POLISHED_SHELLSTONE_SLAB = BLOCKS.register("polished_shellstone_slab",
+            () -> new net.minecraft.world.level.block.SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<net.minecraft.world.level.block.WallBlock> POLISHED_SHELLSTONE_WALL = BLOCKS.register("polished_shellstone_wall",
+            () -> new net.minecraft.world.level.block.WallBlock(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<net.minecraft.world.level.block.StairBlock> SHELLSTONE_BRICK_STAIRS = BLOCKS.register("shellstone_brick_stairs",
+            () -> new net.minecraft.world.level.block.StairBlock(SHELLSTONE_BRICKS.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<net.minecraft.world.level.block.SlabBlock> SHELLSTONE_BRICK_SLAB = BLOCKS.register("shellstone_brick_slab",
+            () -> new net.minecraft.world.level.block.SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<net.minecraft.world.level.block.WallBlock> SHELLSTONE_BRICK_WALL = BLOCKS.register("shellstone_brick_wall",
+            () -> new net.minecraft.world.level.block.WallBlock(AntarchyObjects.shellstoneProperties()));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.TriffidGooBlock> TRIFFID_GOO_BLOCK = BLOCKS.register("triffid_goo_block",
             () -> new com.craisinlord.antarchy.content.block.TriffidGooBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK).noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.CloudBlock> CLOUD_BLOCK = BLOCKS.register("cloud_block",
@@ -1031,6 +1077,21 @@ public final class AntarchyFabricContent {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(NYXITE_BRICK_STAIRS);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(NYXITE_BRICK_SLAB);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(NYXITE_BRICK_WALL);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_ITEM = ITEMS.registerSimpleBlockItem(SHELLSTONE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_SHELLSTONE_ITEM = ITEMS.registerSimpleBlockItem(POLISHED_SHELLSTONE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(SHELLSTONE_BRICKS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_SHELLSTONE_ITEM = ITEMS.registerSimpleBlockItem(CHISELED_SHELLSTONE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_SHELLSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(MOSSY_SHELLSTONE_BRICKS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> CRACKED_SHELLSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(CRACKED_SHELLSTONE_BRICKS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(SHELLSTONE_STAIRS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(SHELLSTONE_SLAB);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(SHELLSTONE_WALL);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_SHELLSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(POLISHED_SHELLSTONE_STAIRS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_SHELLSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(POLISHED_SHELLSTONE_SLAB);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_SHELLSTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(POLISHED_SHELLSTONE_WALL);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(SHELLSTONE_BRICK_STAIRS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(SHELLSTONE_BRICK_SLAB);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(SHELLSTONE_BRICK_WALL);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> TRIFFID_GOO_BLOCK_ITEM = ITEMS.register("triffid_goo_block",
             () -> new com.craisinlord.antarchy.content.item.TriffidGooBlockItem(TRIFFID_GOO_BLOCK.get(), new Item.Properties()));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> PALE_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(PALE_NYXITE);
@@ -1090,8 +1151,6 @@ public final class AntarchyFabricContent {
                             .nutrition(2)
                             .saturationModifier(0.4F)
                             .build())));
-    public static final DeferredItem<Item> PRIMORDIAL_SCUTE = ITEMS.register("primordial_scute",
-            () -> new MobComingSoonTooltipItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<Item> TRIFFID_GOO = ITEMS.registerSimpleItem("triffid_goo",
             new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final DeferredItem<Item> VORTEX_EYE = ITEMS.register("vortex_eye",
@@ -1505,6 +1564,33 @@ public final class AntarchyFabricContent {
                     new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON),
                     LUCID_PEARL_PROJECTILE
             ));
+    public static final DeferredItem<WaterCannonItem> WATER_CANNON = ITEMS.register("water_cannon",
+            () -> new WaterCannonItem(new Item.Properties().stacksTo(1).durability(192).rarity(Rarity.RARE)));
+    public static final DeferredItem<PrimordialArmorItem> PRIMORDIAL_HELMET = ITEMS.register("primordial_helmet",
+            () -> new PrimordialArmorItem(net.minecraft.core.Holder.direct(PRIMORDIAL_ARMOR_MATERIAL.get()), ArmorItem.Type.HELMET,
+                    new Item.Properties().rarity(Rarity.RARE).fireResistant().durability(ArmorItem.Type.HELMET.getDurability(37))));
+    public static final DeferredItem<PrimordialArmorItem> PRIMORDIAL_CHESTPLATE = ITEMS.register("primordial_chestplate",
+            () -> new PrimordialArmorItem(net.minecraft.core.Holder.direct(PRIMORDIAL_ARMOR_MATERIAL.get()), ArmorItem.Type.CHESTPLATE,
+                    new Item.Properties().rarity(Rarity.RARE).fireResistant().durability(ArmorItem.Type.CHESTPLATE.getDurability(37))));
+    public static final DeferredItem<PrimordialArmorItem> PRIMORDIAL_LEGGINGS = ITEMS.register("primordial_leggings",
+            () -> new PrimordialArmorItem(net.minecraft.core.Holder.direct(PRIMORDIAL_ARMOR_MATERIAL.get()), ArmorItem.Type.LEGGINGS,
+                    new Item.Properties().rarity(Rarity.RARE).fireResistant().durability(ArmorItem.Type.LEGGINGS.getDurability(37))));
+    public static final DeferredItem<PrimordialArmorItem> PRIMORDIAL_BOOTS = ITEMS.register("primordial_boots",
+            () -> new PrimordialArmorItem(net.minecraft.core.Holder.direct(PRIMORDIAL_ARMOR_MATERIAL.get()), ArmorItem.Type.BOOTS,
+                    new Item.Properties().rarity(Rarity.RARE).fireResistant().durability(ArmorItem.Type.BOOTS.getDurability(37))));
+    public static final DeferredHolder<EntityType<?>, EntityType<ToreterrorEntity>> TORETERROR = ENTITY_TYPES.register("toreterror",
+            () -> EntityType.Builder.of(ToreterrorEntity::new, MobCategory.MONSTER)
+                    .sized(2.5F, 3.0F)
+                    .clientTrackingRange(14)
+                    .build("toreterror"));
+    public static final DeferredHolder<EntityType<?>, EntityType<WaterBombEntity>> WATER_BOMB = ENTITY_TYPES.register("water_bomb",
+            () -> EntityType.Builder.<WaterBombEntity>of(WaterBombEntity::new, MobCategory.MISC)
+                    .sized(0.4F, 0.4F)
+                    .clientTrackingRange(8)
+                    .updateInterval(1)
+                    .build("water_bomb"));
+    public static final DeferredItem<DeferredSpawnEggItem> TORETERROR_SPAWN_EGG = ITEMS.register("toreterror_spawn_egg",
+            () -> new DeferredSpawnEggItem(TORETERROR, 0x90EE90, 0x5C4033, new Item.Properties().rarity(Rarity.EPIC)));
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> ANTARCHY_TAB = CREATIVE_MODE_TABS.register("antarchy",
             () -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
                     .title(net.minecraft.network.chat.Component.translatable("itemGroup.antarchy.antarchy"))
@@ -1584,6 +1670,7 @@ public final class AntarchyFabricContent {
         FabricDefaultAttributeRegistry.register(SCORPION.get(), ScorpionEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(BASILISK.get(), BasiliskEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(EMPEROR_SCORPION.get(), EmperorScorpionEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(TORETERROR.get(), ToreterrorEntity.createAttributes().build());
 
         FabricDefaultAttributeRegistry.register(RED_ANT.get(), buildAntAttributes(
                 AntarchySettings.redAntHealth(),
@@ -1627,6 +1714,7 @@ public final class AntarchyFabricContent {
         SpawnPlacements.register(SCORPION.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ScorpionEntity::canSpawn);
         SpawnPlacements.register(BASILISK.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BasiliskEntity::canSpawn);
         SpawnPlacements.register(EMPEROR_SCORPION.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EmperorScorpionEntity::canSpawn);
+        SpawnPlacements.register(TORETERROR.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ToreterrorEntity::canSpawn);
     }
 
     private static void populateCreativeTab(CreativeModeTab.Output output) {
@@ -1712,7 +1800,9 @@ public final class AntarchyFabricContent {
                  "honeyed_apple_cow_spawn_egg", "dr_trayaurus_spawn_egg", "wasp_spawn_egg",
                  "bomber_spawn_egg", "cloud_shark_spawn_egg", "kraken_spawn_egg", "missile_squid_spawn_egg",
                  "nightmare_spawn_egg", "bed_bug_spawn_egg", "lucid_spawn_egg", "scorpion_spawn_egg",
-                 "basilisk_spawn_egg", "emperor_scorpion_spawn_egg" -> 90;
+                 "basilisk_spawn_egg", "emperor_scorpion_spawn_egg", "toreterror_spawn_egg" -> 90;
+            case "water_cannon" -> 52;
+            case "primordial_helmet", "primordial_chestplate", "primordial_leggings", "primordial_boots" -> 53;
             default -> 50;
         };
     }
@@ -1884,6 +1974,16 @@ public final class AntarchyFabricContent {
         defense.put(ArmorItem.Type.CHESTPLATE, 0);
         defense.put(ArmorItem.Type.HELMET, 2);
         defense.put(ArmorItem.Type.BODY, 2);
+        return defense;
+    }
+
+    private static java.util.EnumMap<ArmorItem.Type, Integer> createPrimordialArmorDefense() {
+        java.util.EnumMap<ArmorItem.Type, Integer> defense = new java.util.EnumMap<>(ArmorItem.Type.class);
+        defense.put(ArmorItem.Type.BOOTS, 3);
+        defense.put(ArmorItem.Type.LEGGINGS, 6);
+        defense.put(ArmorItem.Type.CHESTPLATE, 8);
+        defense.put(ArmorItem.Type.HELMET, 3);
+        defense.put(ArmorItem.Type.BODY, 8);
         return defense;
     }
 
@@ -2101,12 +2201,29 @@ public final class AntarchyFabricContent {
                 BRUTALFLY,
                 BRUTALFLY_ORB,
                 HUSH_PROJECTILE,
+                TORETERROR,
+                WATER_BOMB,
                 () -> DUPLICATOR_LOG.get(),
                 () -> DUPLICATOR_SAPLING.get(),
                 () -> DUCT_TAPE.get(),
                 () -> INFESTED_ROOTED_DIRT.get(),
                 () -> INFESTED_COARSE_DIRT.get(),
                 () -> NYXITE.get(),
+                () -> SHELLSTONE.get(),
+                () -> POLISHED_SHELLSTONE.get(),
+                () -> SHELLSTONE_BRICKS.get(),
+                () -> CHISELED_SHELLSTONE.get(),
+                () -> MOSSY_SHELLSTONE_BRICKS.get(),
+                () -> CRACKED_SHELLSTONE_BRICKS.get(),
+                () -> SHELLSTONE_STAIRS.get(),
+                () -> SHELLSTONE_SLAB.get(),
+                () -> SHELLSTONE_WALL.get(),
+                () -> POLISHED_SHELLSTONE_STAIRS.get(),
+                () -> POLISHED_SHELLSTONE_SLAB.get(),
+                () -> POLISHED_SHELLSTONE_WALL.get(),
+                () -> SHELLSTONE_BRICK_STAIRS.get(),
+                () -> SHELLSTONE_BRICK_SLAB.get(),
+                () -> SHELLSTONE_BRICK_WALL.get(),
                 () -> CLOUD_BLOCK.get(),
                 () -> TRIFFID_GOO_BLOCK.get(),
                 () -> PALE_NYXITE.get(),

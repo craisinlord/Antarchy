@@ -444,6 +444,17 @@ public final class AntarchySettings {
     private static int bloodCrystalChestplateDurability = 112;
     private static int bloodCrystalLeggingsDurability = 105;
     private static int bloodCrystalBootsDurability = 91;
+    private static double toreterrorHealth = 300.0D;
+    private static double toreterrorJumpAttackDamage = 14.0D;
+    private static double toreterrorJumpAttackKnockback = 2.5D;
+    private static double toreterrorSpinDamage = 8.0D;
+    private static double toreterrorSpinKnockback = 1.5D;
+    private static double toreterrorRangedWaterBombChance = 0.5D;
+    private static double waterBombDamage = 6.0D;
+    private static int waterBombLifetimeTicks = 120;
+    private static double waterBombGravity = 0.12D;
+    private static double waterBombKnockback = 1.2D;
+    private static double waterCannonCooldownSeconds = 1.5D;
 
     private AntarchySettings() {
     }
@@ -2306,4 +2317,27 @@ public final class AntarchySettings {
 
     public static int bloodCrystalHardMaxShields() { return bloodCrystalHardMaxShields; }
     public static void setBloodCrystalHardMaxShields(int v) { bloodCrystalHardMaxShields = v; }
+
+    public static double toreterrorHealth() { return toreterrorHealth; }
+    public static void setToreterrorHealth(double v) { toreterrorHealth = v; }
+    public static double toreterrorJumpAttackDamage() { return toreterrorJumpAttackDamage; }
+    public static void setToreterrorJumpAttackDamage(double v) { toreterrorJumpAttackDamage = v; }
+    public static double toreterrorJumpAttackKnockback() { return toreterrorJumpAttackKnockback; }
+    public static void setToreterrorJumpAttackKnockback(double v) { toreterrorJumpAttackKnockback = v; }
+    public static double toreterrorSpinDamage() { return toreterrorSpinDamage; }
+    public static void setToreterrorSpinDamage(double v) { toreterrorSpinDamage = v; }
+    public static double toreterrorSpinKnockback() { return toreterrorSpinKnockback; }
+    public static void setToreterrorSpinKnockback(double v) { toreterrorSpinKnockback = v; }
+    public static double toreterrorRangedWaterBombChance() { return toreterrorRangedWaterBombChance; }
+    public static void setToreterrorRangedWaterBombChance(double v) { toreterrorRangedWaterBombChance = v; }
+    public static double waterBombDamage() { return waterBombDamage; }
+    public static void setWaterBombDamage(double v) { waterBombDamage = v; }
+    public static int waterBombLifetimeTicks() { return waterBombLifetimeTicks; }
+    public static void setWaterBombLifetimeTicks(int v) { waterBombLifetimeTicks = v; }
+    public static double waterBombGravity() { return waterBombGravity; }
+    public static void setWaterBombGravity(double v) { waterBombGravity = v; }
+    public static double waterBombKnockback() { return waterBombKnockback; }
+    public static void setWaterBombKnockback(double v) { waterBombKnockback = v; }
+    public static double waterCannonCooldownSeconds() { return waterCannonCooldownSeconds; }
+    public static void setWaterCannonCooldownSeconds(double v) { waterCannonCooldownSeconds = v; }
 }

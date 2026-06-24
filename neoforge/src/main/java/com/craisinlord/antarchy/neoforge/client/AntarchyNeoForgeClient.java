@@ -114,6 +114,8 @@ public final class AntarchyNeoForgeClient {
         event.registerEntityRenderer(AntarchyNeoforgeEntites.UPWARD_FALLING_BLOCK.get(), com.craisinlord.antarchy.content.client.renderer.UpwardFallingBlockRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.SCORPION.get(), context -> withParalyzedGeoLayer(new ScorpionRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.EMPEROR_SCORPION.get(), context -> withParalyzedGeoLayer(new EmperorScorpionRenderer(context)));
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.TORETERROR.get(), ToreterrorRenderer::new);
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.WATER_BOMB.get(), WaterBombRenderer::new);
     }
 
     @SubscribeEvent
@@ -325,6 +327,7 @@ public final class AntarchyNeoForgeClient {
         registerGeoItemExtensionSizeRay(event, AntarchyNeoforgeItems.GROWTH_RAY.get());
         registerGeoItemExtension(event, AntarchyNeoforgeItems.GRAVITY_GUN.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
         registerGeoItemExtension(event, AntarchyNeoforgeItems.SQUIDZOOKA.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
+        registerGeoItemExtension(event, AntarchyNeoforgeItems.WATER_CANNON.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
         registerGeoItemExtension(event, AntarchyNeoforgeItems.BATTLE_AXE.get());
         registerGeoItemExtension(event, AntarchyNeoforgeItems.BIG_BERTHA.get());
     }

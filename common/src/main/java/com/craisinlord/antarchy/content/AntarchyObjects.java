@@ -6,7 +6,9 @@ import com.craisinlord.antarchy.content.entity.ButterflyEntity;
 import com.craisinlord.antarchy.content.entity.CaterpillarEntity;
 import com.craisinlord.antarchy.content.entity.EasterBunnyEntity;
 import com.craisinlord.antarchy.content.entity.HushProjectileEntity;
+import com.craisinlord.antarchy.content.entity.WaterBombEntity;
 import com.craisinlord.antarchy.content.entity.TriffidEntity;
+import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
 import com.craisinlord.antarchy.content.entity.WaspEntity;
 import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyEntity;
 import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyOrbEntity;
@@ -28,7 +30,9 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class AntarchyObjects {
@@ -71,6 +75,10 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<HushProjectileEntity>> HUSH_PROJECTILE = (Supplier<EntityType<HushProjectileEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<ToreterrorEntity>> TORETERROR = (Supplier<EntityType<ToreterrorEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<WaterBombEntity>> WATER_BOMB = (Supplier<EntityType<WaterBombEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<Block> DUPLICATOR_LOG = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> DUPLICATOR_SAPLING = (Supplier<Block>) UNBOUND;
@@ -82,6 +90,36 @@ public final class AntarchyObjects {
     public static Supplier<Block> INFESTED_COARSE_DIRT = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> NYXITE = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> SHELLSTONE = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> POLISHED_SHELLSTONE = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> SHELLSTONE_BRICKS = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> CHISELED_SHELLSTONE = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> MOSSY_SHELLSTONE_BRICKS = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> CRACKED_SHELLSTONE_BRICKS = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> SHELLSTONE_STAIRS = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> SHELLSTONE_SLAB = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> SHELLSTONE_WALL = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> POLISHED_SHELLSTONE_STAIRS = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> POLISHED_SHELLSTONE_SLAB = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> POLISHED_SHELLSTONE_WALL = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> SHELLSTONE_BRICK_STAIRS = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> SHELLSTONE_BRICK_SLAB = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> SHELLSTONE_BRICK_WALL = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> CLOUD_BLOCK = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -176,12 +214,29 @@ public final class AntarchyObjects {
             Supplier<EntityType<BrutalflyEntity>> brutalfly,
             Supplier<EntityType<BrutalflyOrbEntity>> brutalflyOrb,
             Supplier<EntityType<HushProjectileEntity>> hushProjectile,
+            Supplier<EntityType<ToreterrorEntity>> toreterror,
+            Supplier<EntityType<WaterBombEntity>> waterBomb,
             Supplier<Block> duplicatorLog,
             Supplier<Block> duplicatorSapling,
             Supplier<Block> ductTape,
             Supplier<Block> infestedRootedDirt,
             Supplier<Block> infestedCoarseDirt,
             Supplier<Block> nyxite,
+            Supplier<Block> shellstone,
+            Supplier<Block> polishedShellstone,
+            Supplier<Block> shellstoneBricks,
+            Supplier<Block> chiseledShellstone,
+            Supplier<Block> mossyShellstoneBricks,
+            Supplier<Block> crackedShellstoneBricks,
+            Supplier<Block> shellstoneStairs,
+            Supplier<Block> shellstoneSlab,
+            Supplier<Block> shellstoneWall,
+            Supplier<Block> polishedShellstoneStairs,
+            Supplier<Block> polishedShellstoneSlab,
+            Supplier<Block> polishedShellstoneWall,
+            Supplier<Block> shellstoneBrickStairs,
+            Supplier<Block> shellstoneBrickSlab,
+            Supplier<Block> shellstoneBrickWall,
             Supplier<Block> cloudBlock,
             Supplier<Block> triffidGooBlock,
             Supplier<Block> paleNyxite,
@@ -236,12 +291,29 @@ public final class AntarchyObjects {
         BRUTALFLY = brutalfly;
         BRUTALFLY_ORB = brutalflyOrb;
         HUSH_PROJECTILE = hushProjectile;
+        TORETERROR = toreterror;
+        WATER_BOMB = waterBomb;
         DUPLICATOR_LOG = duplicatorLog;
         DUPLICATOR_SAPLING = duplicatorSapling;
         DUCT_TAPE = ductTape;
         INFESTED_ROOTED_DIRT = infestedRootedDirt;
         INFESTED_COARSE_DIRT = infestedCoarseDirt;
         NYXITE = nyxite;
+        SHELLSTONE = shellstone;
+        POLISHED_SHELLSTONE = polishedShellstone;
+        SHELLSTONE_BRICKS = shellstoneBricks;
+        CHISELED_SHELLSTONE = chiseledShellstone;
+        MOSSY_SHELLSTONE_BRICKS = mossyShellstoneBricks;
+        CRACKED_SHELLSTONE_BRICKS = crackedShellstoneBricks;
+        SHELLSTONE_STAIRS = shellstoneStairs;
+        SHELLSTONE_SLAB = shellstoneSlab;
+        SHELLSTONE_WALL = shellstoneWall;
+        POLISHED_SHELLSTONE_STAIRS = polishedShellstoneStairs;
+        POLISHED_SHELLSTONE_SLAB = polishedShellstoneSlab;
+        POLISHED_SHELLSTONE_WALL = polishedShellstoneWall;
+        SHELLSTONE_BRICK_STAIRS = shellstoneBrickStairs;
+        SHELLSTONE_BRICK_SLAB = shellstoneBrickSlab;
+        SHELLSTONE_BRICK_WALL = shellstoneBrickWall;
         CLOUD_BLOCK = cloudBlock;
         TRIFFID_GOO_BLOCK = triffidGooBlock;
         PALE_NYXITE = paleNyxite;
@@ -282,5 +354,9 @@ public final class AntarchyObjects {
 
     public static boolean isDuplicatorTreeBlock(BlockState state) {
         return state.is(DUPLICATOR_LOG.get()) || state.is(DUPLICATOR_SAPLING.get());
+    }
+
+    public static BlockBehaviour.Properties shellstoneProperties() {
+        return BlockBehaviour.Properties.ofFullCopy(Blocks.STONE).requiresCorrectToolForDrops();
     }
 }

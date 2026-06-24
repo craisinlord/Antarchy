@@ -9,6 +9,7 @@ import com.craisinlord.antarchy.content.entity.flying_squirrel.FlyingSquirrelEnt
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
+import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Cow;
@@ -51,6 +52,7 @@ public class AntarchyNeoforgeEntityAttributes {
         event.put(AntarchyNeoforgeEntites.SCORPION.get(), ScorpionEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.BASILISK.get(), BasiliskEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.EMPEROR_SCORPION.get(), EmperorScorpionEntity.createAttributes().build());
+        event.put(AntarchyNeoforgeEntites.TORETERROR.get(), ToreterrorEntity.createAttributes().build());
 
         AttributeSupplier redAntAttributes = buildAntAttributes(AntarchySettings.redAntHealth(), AntarchySettings.redAntMovementSpeed(), AntarchySettings.redAntAttackDamage()).build();
         AttributeSupplier brownAntAttributes = buildAntAttributes(AntarchySettings.brownAntHealth(), AntarchySettings.brownAntMovementSpeed(), AntarchySettings.brownAntAttackDamage()).build();

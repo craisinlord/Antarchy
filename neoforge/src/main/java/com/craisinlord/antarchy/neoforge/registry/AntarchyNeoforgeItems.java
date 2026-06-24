@@ -13,6 +13,8 @@ import com.craisinlord.antarchy.content.item.BloodCrystalKatanaItem;
 import com.craisinlord.antarchy.content.item.BloodCrystalShardItem;
 import com.craisinlord.antarchy.content.item.ultimate.*;
 import com.craisinlord.antarchy.content.item.NightmareArmorItem;
+import com.craisinlord.antarchy.content.item.PrimordialArmorItem;
+import com.craisinlord.antarchy.content.item.WaterCannonItem;
 import com.craisinlord.antarchy.content.item.NightmareSwordItem;
 import com.craisinlord.antarchy.content.item.LucidEyeItem;
 import com.craisinlord.antarchy.content.item.LucidPearlItem;
@@ -102,6 +104,18 @@ public final class AntarchyNeoforgeItems {
                     List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "moggles"))),
                     0.0F,
                     0.0F
+            ));
+    public static final DeferredItem<Item> PRIMORDIAL_SCUTE = ITEMS.registerSimpleItem("primordial_scute",
+            new Item.Properties().rarity(Rarity.UNCOMMON));
+    private static final DeferredHolder<ArmorMaterial, ArmorMaterial> PRIMORDIAL_ARMOR_MATERIAL = ARMOR_MATERIALS.register("primordial",
+            () -> new ArmorMaterial(
+                    createPrimordialArmorDefense(),
+                    15,
+                    SoundEvents.ARMOR_EQUIP_NETHERITE,
+                    () -> Ingredient.of(PRIMORDIAL_SCUTE.get()),
+                    List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "primordial"))),
+                    3.0F,
+                    0.1F
             ));
     private static final DeferredHolder<ArmorMaterial, ArmorMaterial> FALLEN_KING_CROWN_ARMOR_MATERIAL = ARMOR_MATERIALS.register("fallen_king_crown",
             () -> new ArmorMaterial(
@@ -215,6 +229,21 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_BRICK_STAIRS);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_BRICK_SLAB);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_BRICK_WALL);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_SHELLSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_SHELLSTONE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_BRICKS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_SHELLSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_SHELLSTONE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_SHELLSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_SHELLSTONE_BRICKS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> CRACKED_SHELLSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRACKED_SHELLSTONE_BRICKS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_STAIRS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_SLAB);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_WALL);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_SHELLSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_SHELLSTONE_STAIRS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_SHELLSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_SHELLSTONE_SLAB);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_SHELLSTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_SHELLSTONE_WALL);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_BRICK_STAIRS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_BRICK_SLAB);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_BRICK_WALL);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> TRIFFID_GOO_BLOCK_ITEM = ITEMS.register("triffid_goo_block",
             () -> new com.craisinlord.antarchy.content.item.TriffidGooBlockItem(AntarchyNeoforgeBlocks.TRIFFID_GOO_BLOCK.get(), new Item.Properties()));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> PALE_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PALE_NYXITE);
@@ -274,8 +303,6 @@ public final class AntarchyNeoforgeItems {
                             .nutrition(2)
                             .saturationModifier(0.4F)
                             .build())));
-    public static final DeferredItem<Item> PRIMORDIAL_SCUTE = ITEMS.register("primordial_scute",
-            () -> new MobComingSoonTooltipItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<Item> TRIFFID_GOO = ITEMS.registerSimpleItem("triffid_goo",
             new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final DeferredItem<Item> VORTEX_EYE = ITEMS.register("vortex_eye",
@@ -490,6 +517,18 @@ public final class AntarchyNeoforgeItems {
                     new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON),
                     AntarchyNeoforgeEntites.LUCID_PEARL_PROJECTILE
             ));
+    public static final DeferredItem<WaterCannonItem> WATER_CANNON = ITEMS.register("water_cannon",
+            () -> new WaterCannonItem(new Item.Properties().stacksTo(1).durability(192).rarity(Rarity.RARE)));
+    public static final DeferredItem<PrimordialArmorItem> PRIMORDIAL_HELMET = ITEMS.register("primordial_helmet",
+            () -> new PrimordialArmorItem(PRIMORDIAL_ARMOR_MATERIAL, ArmorItem.Type.HELMET, new Item.Properties().rarity(Rarity.RARE).fireResistant()));
+    public static final DeferredItem<PrimordialArmorItem> PRIMORDIAL_CHESTPLATE = ITEMS.register("primordial_chestplate",
+            () -> new PrimordialArmorItem(PRIMORDIAL_ARMOR_MATERIAL, ArmorItem.Type.CHESTPLATE, new Item.Properties().rarity(Rarity.RARE).fireResistant()));
+    public static final DeferredItem<PrimordialArmorItem> PRIMORDIAL_LEGGINGS = ITEMS.register("primordial_leggings",
+            () -> new PrimordialArmorItem(PRIMORDIAL_ARMOR_MATERIAL, ArmorItem.Type.LEGGINGS, new Item.Properties().rarity(Rarity.RARE).fireResistant()));
+    public static final DeferredItem<PrimordialArmorItem> PRIMORDIAL_BOOTS = ITEMS.register("primordial_boots",
+            () -> new PrimordialArmorItem(PRIMORDIAL_ARMOR_MATERIAL, ArmorItem.Type.BOOTS, new Item.Properties().rarity(Rarity.RARE).fireResistant()));
+    public static final DeferredItem<DeferredSpawnEggItem> TORETERROR_SPAWN_EGG = ITEMS.register("toreterror_spawn_egg",
+            () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.TORETERROR, 0x90EE90, 0x5C4033, new Item.Properties().rarity(Rarity.EPIC)));
 
     private AntarchyNeoforgeItems() {}
 
@@ -568,6 +607,16 @@ public final class AntarchyNeoforgeItems {
         defense.put(ArmorItem.Type.CHESTPLATE, 0);
         defense.put(ArmorItem.Type.HELMET, 2);
         defense.put(ArmorItem.Type.BODY, 2);
+        return defense;
+    }
+
+    private static EnumMap<ArmorItem.Type, Integer> createPrimordialArmorDefense() {
+        EnumMap<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
+        defense.put(ArmorItem.Type.BOOTS, 3);
+        defense.put(ArmorItem.Type.LEGGINGS, 6);
+        defense.put(ArmorItem.Type.CHESTPLATE, 8);
+        defense.put(ArmorItem.Type.HELMET, 3);
+        defense.put(ArmorItem.Type.BODY, 8);
         return defense;
     }
 

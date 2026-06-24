@@ -40,6 +40,8 @@ import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
+import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
+import com.craisinlord.antarchy.content.entity.WaterBombEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -240,6 +242,17 @@ public final class AntarchyNeoforgeEntites {
                     .clientTrackingRange(10)
                     .updateInterval(1)
                     .build("brutalfly_orb"));
+    public static final DeferredHolder<EntityType<?>, EntityType<ToreterrorEntity>> TORETERROR = ENTITY_TYPES.register("toreterror",
+            () -> EntityType.Builder.of(ToreterrorEntity::new, MobCategory.MONSTER)
+                    .sized(2.5F, 3.0F)
+                    .clientTrackingRange(14)
+                    .build("toreterror"));
+    public static final DeferredHolder<EntityType<?>, EntityType<WaterBombEntity>> WATER_BOMB = ENTITY_TYPES.register("water_bomb",
+            () -> EntityType.Builder.<WaterBombEntity>of(WaterBombEntity::new, MobCategory.MISC)
+                    .sized(0.4F, 0.4F)
+                    .clientTrackingRange(8)
+                    .updateInterval(1)
+                    .build("water_bomb"));
     public static final DeferredHolder<EntityType<?>, EntityType<UpwardFallingBlockEntity>> UPWARD_FALLING_BLOCK = ENTITY_TYPES.register("upward_falling_block",
             () -> EntityType.Builder.<UpwardFallingBlockEntity>of(
                             UpwardFallingBlockEntity::new, MobCategory.MISC)

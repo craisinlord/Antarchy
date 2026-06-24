@@ -102,6 +102,8 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricContent.UPWARD_FALLING_BLOCK.get(), UpwardFallingBlockRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.SCORPION.get(), ScorpionRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.EMPEROR_SCORPION.get(), EmperorScorpionRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricContent.TORETERROR.get(), ToreterrorRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricContent.WATER_BOMB.get(), WaterBombRenderer::new);
 
         EntityModelLayerRegistry.registerModelLayer(OuranwoodBoatRenderer.boatLayer(), BoatModel::createBodyModel);
         EntityModelLayerRegistry.registerModelLayer(OuranwoodBoatRenderer.chestBoatLayer(), ChestBoatModel::createBodyModel);

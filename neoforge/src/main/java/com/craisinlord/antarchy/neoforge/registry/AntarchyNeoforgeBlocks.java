@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.neoforge.registry;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.*;
 import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.DreamCampfireBlockEntity;
@@ -123,6 +124,36 @@ public final class AntarchyNeoforgeBlocks {
             () -> new SlabBlock(nyxiteProperties()));
     public static final DeferredBlock<WallBlock> NYXITE_BRICK_WALL = BLOCKS.register("nyxite_brick_wall",
             () -> new WallBlock(nyxiteProperties()));
+    public static final DeferredBlock<Block> SHELLSTONE = BLOCKS.register("shellstone",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<Block> POLISHED_SHELLSTONE = BLOCKS.register("polished_shellstone",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<Block> SHELLSTONE_BRICKS = BLOCKS.register("shellstone_bricks",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<Block> CHISELED_SHELLSTONE = BLOCKS.register("chiseled_shellstone",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<Block> MOSSY_SHELLSTONE_BRICKS = BLOCKS.register("mossy_shellstone_bricks",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<Block> CRACKED_SHELLSTONE_BRICKS = BLOCKS.register("cracked_shellstone_bricks",
+            () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<StairBlock> SHELLSTONE_STAIRS = BLOCKS.register("shellstone_stairs",
+            () -> new StairBlock(SHELLSTONE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<SlabBlock> SHELLSTONE_SLAB = BLOCKS.register("shellstone_slab",
+            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<WallBlock> SHELLSTONE_WALL = BLOCKS.register("shellstone_wall",
+            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<StairBlock> POLISHED_SHELLSTONE_STAIRS = BLOCKS.register("polished_shellstone_stairs",
+            () -> new StairBlock(POLISHED_SHELLSTONE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<SlabBlock> POLISHED_SHELLSTONE_SLAB = BLOCKS.register("polished_shellstone_slab",
+            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<WallBlock> POLISHED_SHELLSTONE_WALL = BLOCKS.register("polished_shellstone_wall",
+            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<StairBlock> SHELLSTONE_BRICK_STAIRS = BLOCKS.register("shellstone_brick_stairs",
+            () -> new StairBlock(SHELLSTONE_BRICKS.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<SlabBlock> SHELLSTONE_BRICK_SLAB = BLOCKS.register("shellstone_brick_slab",
+            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<WallBlock> SHELLSTONE_BRICK_WALL = BLOCKS.register("shellstone_brick_wall",
+            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.TriffidGooBlock> TRIFFID_GOO_BLOCK = BLOCKS.register("triffid_goo_block",
             () -> new com.craisinlord.antarchy.content.block.TriffidGooBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK).noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.CloudBlock> CLOUD_BLOCK = BLOCKS.register("cloud_block",

@@ -146,6 +146,21 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.IntValue     BASILISK_PREY_PETRIFY_TICKS;
 
 
+    // Toreterror
+
+    private static final ModConfigSpec.DoubleValue  TORETERROR_HEALTH;
+    private static final ModConfigSpec.DoubleValue  TORETERROR_JUMP_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue  TORETERROR_JUMP_ATTACK_KNOCKBACK;
+    private static final ModConfigSpec.DoubleValue  TORETERROR_SPIN_DAMAGE;
+    private static final ModConfigSpec.DoubleValue  TORETERROR_SPIN_KNOCKBACK;
+    private static final ModConfigSpec.DoubleValue  TORETERROR_RANGED_WATER_BOMB_CHANCE;
+    private static final ModConfigSpec.DoubleValue  WATER_BOMB_DAMAGE;
+    private static final ModConfigSpec.IntValue     WATER_BOMB_LIFETIME_TICKS;
+    private static final ModConfigSpec.DoubleValue  WATER_BOMB_GRAVITY;
+    private static final ModConfigSpec.DoubleValue  WATER_BOMB_KNOCKBACK;
+    private static final ModConfigSpec.DoubleValue  WATER_CANNON_COOLDOWN_SECONDS;
+
+
     // Lucid
 
     private static final ModConfigSpec.DoubleValue LUCID_ATTACK_RANGE;
@@ -417,6 +432,20 @@ public final class AntarchyMobsConfig {
 
         b.pop(); // dread
 
+        b.push("toreterror");
+        TORETERROR_HEALTH                  = b.comment("Base max health.").defineInRange("health", 300.0D, 1.0D, 32768.0D);
+        TORETERROR_JUMP_ATTACK_DAMAGE      = b.comment("Damage dealt by the jump shockwave.").defineInRange("jumpAttackDamage", 14.0D, 0.0D, 1024.0D);
+        TORETERROR_JUMP_ATTACK_KNOCKBACK   = b.comment("Knockback strength of the jump shockwave.").defineInRange("jumpAttackKnockback", 2.5D, 0.0D, 10.0D);
+        TORETERROR_SPIN_DAMAGE             = b.comment("Damage per spin-attack tick.").defineInRange("spinDamage", 8.0D, 0.0D, 1024.0D);
+        TORETERROR_SPIN_KNOCKBACK          = b.comment("Knockback strength of the spin attack.").defineInRange("spinKnockback", 1.5D, 0.0D, 10.0D);
+        TORETERROR_RANGED_WATER_BOMB_CHANCE = b.comment("Chance (0.0-1.0) the ranged attack fires a Water Bomb instead of Bombers.").defineInRange("rangedWaterBombChance", 0.5D, 0.0D, 1.0D);
+        WATER_BOMB_DAMAGE                  = b.comment("Damage dealt by a Water Bomb hit.").defineInRange("waterBombDamage", 6.0D, 0.0D, 1024.0D);
+        WATER_BOMB_LIFETIME_TICKS          = b.comment("Ticks before a Water Bomb despawns.").defineInRange("waterBombLifetimeTicks", 120, 1, 6000);
+        WATER_BOMB_GRAVITY                 = b.comment("Gravity applied to Water Bombs (higher = steeper arc).").defineInRange("waterBombGravity", 0.12D, 0.0D, 2.0D);
+        WATER_BOMB_KNOCKBACK               = b.comment("Knockback strength when a Water Bomb hits an entity.").defineInRange("waterBombKnockback", 1.2D, 0.0D, 10.0D);
+        WATER_CANNON_COOLDOWN_SECONDS      = b.comment("Cooldown in seconds between Water Cannon shots.").defineInRange("waterCannonCooldownSeconds", 1.5D, 0.0D, 300.0D);
+        b.pop();
+
         SPEC = b.build();
     }
 
@@ -528,6 +557,18 @@ public final class AntarchyMobsConfig {
 
     static double  lucidAttackRange()                       { return LUCID_ATTACK_RANGE.get(); }
     static double  lucidPearlInvertedDurationSeconds()      { return LUCID_PEARL_INVERTED_DURATION_SECONDS.get(); }
+
+    static double  toreterrorHealth()                       { return TORETERROR_HEALTH.get(); }
+    static double  toreterrorJumpAttackDamage()             { return TORETERROR_JUMP_ATTACK_DAMAGE.get(); }
+    static double  toreterrorJumpAttackKnockback()          { return TORETERROR_JUMP_ATTACK_KNOCKBACK.get(); }
+    static double  toreterrorSpinDamage()                   { return TORETERROR_SPIN_DAMAGE.get(); }
+    static double  toreterrorSpinKnockback()                { return TORETERROR_SPIN_KNOCKBACK.get(); }
+    static double  toreterrorRangedWaterBombChance()        { return TORETERROR_RANGED_WATER_BOMB_CHANCE.get(); }
+    static double  waterBombDamage()                        { return WATER_BOMB_DAMAGE.get(); }
+    static int     waterBombLifetimeTicks()                 { return WATER_BOMB_LIFETIME_TICKS.get(); }
+    static double  waterBombGravity()                       { return WATER_BOMB_GRAVITY.get(); }
+    static double  waterBombKnockback()                     { return WATER_BOMB_KNOCKBACK.get(); }
+    static double  waterCannonCooldownSeconds()             { return WATER_CANNON_COOLDOWN_SECONDS.get(); }
 
     static boolean dreadHallucinationSoundsEnabled()        { return DREAD_HALLUCINATION_SOUNDS_ENABLED.get(); }
     static double  dreadHallucinationSoundMinInterval()     { return DREAD_HALLUCINATION_SOUND_MIN_INTERVAL.get(); }

@@ -143,6 +143,18 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setDreadHallucinationMobsEnabled(AntarchyMobsConfig.dreadHallucinationMobsEnabled());
         AntarchySettings.setDreadHallucinationMobMinInterval(AntarchyMobsConfig.dreadHallucinationMobMinInterval());
         AntarchySettings.setDreadHallucinationMobMaxInterval(AntarchyMobsConfig.dreadHallucinationMobMaxInterval());
+
+        AntarchySettings.setToreterrorHealth(AntarchyMobsConfig.toreterrorHealth());
+        AntarchySettings.setToreterrorJumpAttackDamage(AntarchyMobsConfig.toreterrorJumpAttackDamage());
+        AntarchySettings.setToreterrorJumpAttackKnockback(AntarchyMobsConfig.toreterrorJumpAttackKnockback());
+        AntarchySettings.setToreterrorSpinDamage(AntarchyMobsConfig.toreterrorSpinDamage());
+        AntarchySettings.setToreterrorSpinKnockback(AntarchyMobsConfig.toreterrorSpinKnockback());
+        AntarchySettings.setToreterrorRangedWaterBombChance(AntarchyMobsConfig.toreterrorRangedWaterBombChance());
+        AntarchySettings.setWaterBombDamage(AntarchyMobsConfig.waterBombDamage());
+        AntarchySettings.setWaterBombLifetimeTicks(AntarchyMobsConfig.waterBombLifetimeTicks());
+        AntarchySettings.setWaterBombGravity(AntarchyMobsConfig.waterBombGravity());
+        AntarchySettings.setWaterBombKnockback(AntarchyMobsConfig.waterBombKnockback());
+        AntarchySettings.setWaterCannonCooldownSeconds(AntarchyMobsConfig.waterCannonCooldownSeconds());
     }
 
     private static void bakeToolsConfig() {
