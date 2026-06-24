@@ -13,7 +13,10 @@ import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.level.ServerPlayer;
+import com.craisinlord.antarchy.content.SquidzookaDispenseBehavior;
+import com.craisinlord.antarchy.content.WaterCannonDispenseBehavior;
 import net.minecraft.world.level.block.ComposterBlock;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
@@ -35,6 +38,9 @@ public final class AntarchyFabricEvents {
     }
 
     public static void register() {
+        DispenserBlock.registerBehavior(AntarchyFabricContent.SQUIDZOOKA.get(), new SquidzookaDispenseBehavior());
+        DispenserBlock.registerBehavior(AntarchyFabricContent.WATER_CANNON.get(), new WaterCannonDispenseBehavior());
+
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricContent.UMBRAL_MOSS_BLOCK.get().asItem(), 0.65f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricContent.UMBRAL_MOSS_CARPET.get().asItem(), 0.3f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricContent.HUSHWEED.get().asItem(), 0.65f);

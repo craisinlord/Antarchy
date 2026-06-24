@@ -1568,16 +1568,16 @@ public final class AntarchyFabricContent {
             () -> new WaterCannonItem(new Item.Properties().stacksTo(1).durability(192).rarity(Rarity.RARE)));
     public static final DeferredItem<PrimordialArmorItem> PRIMORDIAL_HELMET = ITEMS.register("primordial_helmet",
             () -> new PrimordialArmorItem(net.minecraft.core.Holder.direct(PRIMORDIAL_ARMOR_MATERIAL.get()), ArmorItem.Type.HELMET,
-                    new Item.Properties().rarity(Rarity.RARE).fireResistant().durability(ArmorItem.Type.HELMET.getDurability(37))));
+                    new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant().durability(ArmorItem.Type.HELMET.getDurability(37))));
     public static final DeferredItem<PrimordialArmorItem> PRIMORDIAL_CHESTPLATE = ITEMS.register("primordial_chestplate",
             () -> new PrimordialArmorItem(net.minecraft.core.Holder.direct(PRIMORDIAL_ARMOR_MATERIAL.get()), ArmorItem.Type.CHESTPLATE,
-                    new Item.Properties().rarity(Rarity.RARE).fireResistant().durability(ArmorItem.Type.CHESTPLATE.getDurability(37))));
+                    new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant().durability(ArmorItem.Type.CHESTPLATE.getDurability(37))));
     public static final DeferredItem<PrimordialArmorItem> PRIMORDIAL_LEGGINGS = ITEMS.register("primordial_leggings",
             () -> new PrimordialArmorItem(net.minecraft.core.Holder.direct(PRIMORDIAL_ARMOR_MATERIAL.get()), ArmorItem.Type.LEGGINGS,
-                    new Item.Properties().rarity(Rarity.RARE).fireResistant().durability(ArmorItem.Type.LEGGINGS.getDurability(37))));
+                    new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant().durability(ArmorItem.Type.LEGGINGS.getDurability(37))));
     public static final DeferredItem<PrimordialArmorItem> PRIMORDIAL_BOOTS = ITEMS.register("primordial_boots",
             () -> new PrimordialArmorItem(net.minecraft.core.Holder.direct(PRIMORDIAL_ARMOR_MATERIAL.get()), ArmorItem.Type.BOOTS,
-                    new Item.Properties().rarity(Rarity.RARE).fireResistant().durability(ArmorItem.Type.BOOTS.getDurability(37))));
+                    new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant().durability(ArmorItem.Type.BOOTS.getDurability(37))));
     public static final DeferredHolder<EntityType<?>, EntityType<ToreterrorEntity>> TORETERROR = ENTITY_TYPES.register("toreterror",
             () -> EntityType.Builder.of(ToreterrorEntity::new, MobCategory.MONSTER)
                     .sized(2.5F, 3.0F)

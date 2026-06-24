@@ -381,7 +381,7 @@ public final class AntarchyMobsConfig {
                 .comment("Maximum local raw light level where basilisk natural spawning is allowed.")
                 .defineInRange("spawnMaxLightLevel", 5, 0, 15);
         BASILISK_HEALTH = b.comment("Base max health.").defineInRange("health", 150.0D, 1.0D, 32768.0D);
-        BASILISK_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 18.0D, 0.0D, 1024.0D);
+        BASILISK_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 36.0D, 0.0D, 1024.0D);
         BASILISK_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.35D, 0.0D, 10.0D);
         BASILISK_ARMOR = b.comment("Base armor value.").defineInRange("armor", 6.0D, 0.0D, 1024.0D);
         BASILISK_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance.").defineInRange("knockbackResistance", 0.5D, 0.0D, 1.0D);

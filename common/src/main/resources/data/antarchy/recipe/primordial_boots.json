@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "S S",
+    "S S"
+  ],
+  "key": {
+    "S": {
+      "item": "antarchy:primordial_scute"
+    }
+  },
+  "result": {
+    "id": "antarchy:primordial_boots",
+    "count": 1
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "SSS",
+    "S S",
+    "S S"
+  ],
+  "key": {
+    "S": {
+      "item": "antarchy:primordial_scute"
+    }
+  },
+  "result": {
+    "id": "antarchy:primordial_leggings",
+    "count": 1
+  }
+}
