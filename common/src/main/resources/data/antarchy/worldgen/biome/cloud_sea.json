@@ -16,8 +16,8 @@
   },
   "spawn_costs": {
     "antarchy:cloud_shark": {
-      "energy_budget": 0.14,
-      "charge": 1.0
+      "energy_budget": 0.2,
+      "charge": 9
     }
   },
   "carvers": {
