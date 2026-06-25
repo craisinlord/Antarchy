@@ -20,7 +20,7 @@ public class CreepingHorrorRenderer extends GeoEntityRenderer<CreepingHorrorEnti
     @Override
     public void preRender(PoseStack poseStack, CreepingHorrorEntity animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
         super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
-        if (animatable.isClimbing()) {
+        if (animatable.isWallClimbing()) {
             poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
             poseStack.translate(0, -0.5, 0.5);
         }

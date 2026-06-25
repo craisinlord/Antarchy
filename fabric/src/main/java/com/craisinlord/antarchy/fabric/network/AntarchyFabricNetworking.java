@@ -8,6 +8,7 @@ import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.item.BrutalflyElytraFlightHelper;
 import com.craisinlord.antarchy.content.item.BrutalflyElytraItem;
 import com.craisinlord.antarchy.content.item.JumpyBootsHelper;
+import com.craisinlord.antarchy.fabric.util.JumpyBootsFabricHelper;
 import com.craisinlord.antarchy.content.item.JumpyBootsItem;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
 import com.craisinlord.antarchy.content.network.*;
@@ -299,7 +300,7 @@ public final class AntarchyFabricNetworking {
         player.level().playSound(null, player.blockPosition(), SoundEvents.SLIME_JUMP, SoundSource.PLAYERS,
                 1.0F, 0.6F + (clampedCharge / (float) JumpyBootsHelper.CHARGE_TICKS_MAX) * 0.6F);
 
-        player.getPersistentData().putLong(JumpyBootsHelper.FALL_PROTECTION_NBT_KEY,
+        JumpyBootsFabricHelper.setProtectionUntil(player,
                 player.level().getGameTime() + JumpyBootsHelper.FALL_PROTECTION_TICKS);
 
         player.getCooldowns().addCooldown(boots.getItem(), JumpyBootsHelper.COOLDOWN_TICKS);

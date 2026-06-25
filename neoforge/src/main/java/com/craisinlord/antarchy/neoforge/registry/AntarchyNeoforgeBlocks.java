@@ -202,9 +202,9 @@ public final class AntarchyNeoforgeBlocks {
                     .noOcclusion()
                     .noCollission()
                     .replaceable()));
-    public static final DeferredBlock<CreepingHorrorEggBlock> CREEPING_HORROR_EGGS = BLOCKS.register("creeping_horror_eggs",
+    public static final DeferredBlock<CreepingHorrorEggBlock> CREEPING_HORROR_EGG = BLOCKS.register("creeping_horror_egg",
             () -> new CreepingHorrorEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
-    public static final DeferredBlock<LurkingTerrorEggBlock> LURKING_TERROR_EGGS = BLOCKS.register("lurking_terror_eggs",
+    public static final DeferredBlock<LurkingTerrorEggBlock> LURKING_TERROR_EGG = BLOCKS.register("lurking_terror_egg",
             () -> new LurkingTerrorEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
     public static final DeferredBlock<WaspNestBlock> WASP_NEST = BLOCKS.register("wasp_nest",
             () -> new WaspNestBlock(AntarchyNeoforgeItems::waspNestBlockEntityType, BlockBehaviour.Properties.ofFullCopy(Blocks.BEE_NEST)));

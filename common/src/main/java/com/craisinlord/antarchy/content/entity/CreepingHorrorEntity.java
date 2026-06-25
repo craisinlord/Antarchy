@@ -29,7 +29,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class CreepingHorrorEntity extends Monster implements GeoEntity {
     private static final EntityDataAccessor<Boolean> CLIMBING =
-            SynchedEntityData.defineId(JumpyBugEntity.class, EntityDataSerializers.BOOLEAN);
+            SynchedEntityData.defineId(CreepingHorrorEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
@@ -75,7 +75,11 @@ public class CreepingHorrorEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean onClimbable() {
-        return this.horizontalCollision;
+        return this.entityData.get(CLIMBING);
+    }
+
+    public boolean isWallClimbing() {
+        return this.entityData.get(CLIMBING) && !this.onGround();
     }
 
     @Override
@@ -120,11 +124,9 @@ public class CreepingHorrorEntity extends Monster implements GeoEntity {
     @Override
     public void tick() {
         super.tick();
+        if (!this.level().isClientSide()) {
+            this.entityData.set(CLIMBING, this.horizontalCollision);
+        }
         if (attackAnimTicks > 0) attackAnimTicks--;
-    }
-
-    //TODO IT NEVER ACTUALLY SETS TO CLIMBING
-    public boolean isClimbing() {
-        return this.entityData.get(CLIMBING);
     }
 }

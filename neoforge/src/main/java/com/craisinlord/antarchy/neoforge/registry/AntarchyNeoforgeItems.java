@@ -270,8 +270,8 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_LANTERN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_LANTERN);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_CAMPFIRE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_CAMPFIRE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BED_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BED_BUG_EGG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CREEPING_HORROR_EGGS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CREEPING_HORROR_EGGS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> LURKING_TERROR_EGGS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LURKING_TERROR_EGGS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> CREEPING_HORROR_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CREEPING_HORROR_EGG);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> LURKING_TERROR_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LURKING_TERROR_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> WASP_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.WASP_NEST);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> HUSHWEED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.HUSHWEED);
     public static final DeferredItem<BucketItem> ICHOR_BUCKET = ITEMS.register("ichor_bucket",

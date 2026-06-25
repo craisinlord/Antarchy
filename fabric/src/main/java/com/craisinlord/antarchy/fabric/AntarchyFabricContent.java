@@ -618,7 +618,7 @@ public final class AntarchyFabricContent {
             () -> new DreamFireBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_FIRE)));
     public static final DeferredBlock<DreamCeilingFireBlock> DREAM_CEILING_FIRE = BLOCKS.register("dream_fire_ceiling",
             () -> new DreamCeilingFireBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_FIRE)));
-    public static final DeferredBlock<CreepingHorrorEggBlock> CREEPING_HORROR_EGGS = BLOCKS.register("creeping_horror_eggs",
+    public static final DeferredBlock<CreepingHorrorEggBlock> CREEPING_HORROR_EGG = BLOCKS.register("creeping_horror_egg",
             () -> new CreepingHorrorEggBlock(BlockBehaviour.Properties.of()
                     .strength(0.15F)
                     .sound(SoundType.METAL)
@@ -626,7 +626,7 @@ public final class AntarchyFabricContent {
                     .noOcclusion()
                     .noCollission()
                     .replaceable()));
-    public static final DeferredBlock<LurkingTerrorEggBlock> LURKING_TERROR_EGGS = BLOCKS.register("lurking_terror_eggs",
+    public static final DeferredBlock<LurkingTerrorEggBlock> LURKING_TERROR_EGG = BLOCKS.register("lurking_terror_egg",
             () -> new LurkingTerrorEggBlock(BlockBehaviour.Properties.of()
                     .strength(0.15F)
                     .sound(SoundType.METAL)
@@ -1137,8 +1137,8 @@ public final class AntarchyFabricContent {
             () -> new StandingAndWallBlockItem(DREAM_TORCH.get(), DREAM_WALL_TORCH.get(), new Item.Properties(), Direction.UP));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_LANTERN_ITEM = ITEMS.registerSimpleBlockItem(DREAM_LANTERN);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_CAMPFIRE_ITEM = ITEMS.registerSimpleBlockItem(DREAM_CAMPFIRE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CREEPING_HORROR_EGGS_ITEM = ITEMS.registerSimpleBlockItem(CREEPING_HORROR_EGGS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> LURKING_TERROR_EGGS_ITEM = ITEMS.registerSimpleBlockItem(LURKING_TERROR_EGGS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> CREEPING_HORROR_EGG_ITEM = ITEMS.registerSimpleBlockItem(CREEPING_HORROR_EGG);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> LURKING_TERROR_EGG_ITEM = ITEMS.registerSimpleBlockItem(LURKING_TERROR_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BED_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(BED_BUG_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> WASP_NEST_ITEM = ITEMS.registerSimpleBlockItem(WASP_NEST);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> HUSHWEED_ITEM = ITEMS.registerSimpleBlockItem(HUSHWEED);
@@ -2349,8 +2349,8 @@ public final class AntarchyFabricContent {
                 () -> PINK_MILKWEED.get(),
                 () -> TORCHFLOWER_BUSH.get(),
                 () -> BED_BUG_EGG.get(),
-                () -> CREEPING_HORROR_EGGS.get(),
-                () -> LURKING_TERROR_EGGS.get(),
+                () -> CREEPING_HORROR_EGG.get(),
+                () -> LURKING_TERROR_EGG.get(),
                 () -> WASP_NEST.get(),
                 () -> HUSHWEED.get(),
                 () -> OURANWOOD_SQUIRREL_NEST.get(),

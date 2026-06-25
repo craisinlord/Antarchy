@@ -78,9 +78,9 @@ public class LurkingTerrorEntity extends Monster implements GeoEntity {
 
     private PlayState mainAnimController(AnimationState<LurkingTerrorEntity> state) {
         if (attackAnimTicks > 0) {
-//            if (!this.isOnGround()) {
-//                return state.setAndContinue(ATTACK_AIR_ANIM);
-//            }
+            if (!this.onGround()) {
+                return state.setAndContinue(ATTACK_AIR_ANIM);
+            }
             return state.setAndContinue(ATTACK_LAND_ANIM);
         }
         if (state.isMoving()) {
