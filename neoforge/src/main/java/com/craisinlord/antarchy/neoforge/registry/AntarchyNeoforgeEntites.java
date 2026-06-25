@@ -244,7 +244,7 @@ public final class AntarchyNeoforgeEntites {
                     .build("brutalfly_orb"));
     public static final DeferredHolder<EntityType<?>, EntityType<ToreterrorEntity>> TORETERROR = ENTITY_TYPES.register("toreterror",
             () -> EntityType.Builder.of(ToreterrorEntity::new, MobCategory.MONSTER)
-                    .sized(2.5F, 3.0F)
+                    .sized(2.0F, 3.0F)
                     .clientTrackingRange(14)
                     .build("toreterror"));
     public static final DeferredHolder<EntityType<?>, EntityType<WaterBombEntity>> WATER_BOMB = ENTITY_TYPES.register("water_bomb",

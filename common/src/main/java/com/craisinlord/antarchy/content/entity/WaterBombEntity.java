@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -18,6 +19,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 
 import java.util.HashMap;
@@ -25,6 +28,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public class WaterBombEntity extends ThrowableProjectile {
+
+    private static final EntityDataAccessor<Boolean> HUGE = SynchedEntityData.defineId(WaterBombEntity.class, EntityDataSerializers.BOOLEAN);
 
     private int lifetimeTicks;
     private final Map<UUID, Integer> hitCooldowns = new HashMap<>();
@@ -39,8 +44,18 @@ public class WaterBombEntity extends ThrowableProjectile {
         this.lifetimeTicks = AntarchySettings.waterBombLifetimeTicks();
     }
 
+    public WaterBombEntity(Level level, LivingEntity owner, boolean huge) {
+        this(level, owner);
+        this.entityData.set(HUGE, huge);
+    }
+
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(HUGE, false);
+    }
+
+    public boolean isHuge() {
+        return this.entityData.get(HUGE);
     }
 
     @Override
@@ -75,8 +90,8 @@ public class WaterBombEntity extends ThrowableProjectile {
         UUID id = entity.getUUID();
         if (this.hitCooldowns.getOrDefault(id, 0) > 0) return;
 
-        float damage = (float) AntarchySettings.waterBombDamage();
-        if (living.hurt(this.damageSources().thrown(this, this.getOwner()), damage)) {
+        float damage = (float) AntarchySettings.waterBombDamage() * (this.isHuge() ? 3.0F : 1.0F);
+        if (living.hurt(AntarchyDamageSources.waterSoaked(this.level(), this, this.getOwner()), damage)) {
             this.hitCooldowns.put(id, 15);
             Vec3 knockDir = living.position().subtract(this.position()).normalize();
             double knockback = AntarchySettings.waterBombKnockback();
@@ -89,9 +104,18 @@ public class WaterBombEntity extends ThrowableProjectile {
     protected void onHitBlock(BlockHitResult result) {
         BlockPos hitPos = result.getBlockPos().relative(result.getDirection());
         Level level = this.level();
-        if (level.isEmptyBlock(hitPos) && level.getBlockState(hitPos.below()).isSolid()) {
-            level.setBlock(hitPos, Blocks.WATER.defaultBlockState().setValue(LiquidBlock.LEVEL, 2), 3);
-            level.scheduleTick(hitPos, Fluids.WATER, 2);
+        if (this.isHuge()) {
+            for (BlockPos pos : BlockPos.betweenClosed(hitPos.offset(-1, 0, -1), hitPos.offset(1, 0, 1))) {
+                if (level.isEmptyBlock(pos)) {
+                    level.setBlock(pos, Blocks.WATER.defaultBlockState(), 3);
+                    level.scheduleTick(pos, Fluids.WATER, 2);
+                }
+            }
+        } else {
+            if (level.isEmptyBlock(hitPos) && level.getBlockState(hitPos.below()).isSolid()) {
+                level.setBlock(hitPos, Blocks.WATER.defaultBlockState().setValue(LiquidBlock.LEVEL, 1), 3);
+                level.scheduleTick(hitPos, Fluids.WATER, 2);
+            }
         }
         this.discard();
     }
@@ -100,11 +124,13 @@ public class WaterBombEntity extends ThrowableProjectile {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("LifetimeTicks", this.lifetimeTicks);
+        tag.putBoolean("Huge", this.isHuge());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         this.lifetimeTicks = tag.contains("LifetimeTicks") ? tag.getInt("LifetimeTicks") : AntarchySettings.waterBombLifetimeTicks();
+        if (tag.contains("Huge")) this.entityData.set(HUGE, tag.getBoolean("Huge"));
     }
 }

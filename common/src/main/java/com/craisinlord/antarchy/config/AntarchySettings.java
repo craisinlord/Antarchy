@@ -426,6 +426,7 @@ public final class AntarchySettings {
     private static double ductTapeRepairPercentPerUse = 0.25D;
     private static double ultimateArmorKnockbackResistance = 0.1D;
     private static double nightmareArmorKnockbackResistance = 0.1D;
+    private static double primordialArmorKnockbackPerPiece = 0.5D;
     private static int fallenKingCrownArmorValue = 2;
     private static double fallenKingCrownArmorToughness = 0.0D;
     private static boolean elythiaFireflyParticlesEnabled = true;
@@ -2274,6 +2275,9 @@ public final class AntarchySettings {
 
     public static double nightmareArmorKnockbackResistance() { return nightmareArmorKnockbackResistance; }
     public static void setNightmareArmorKnockbackResistance(double value) { nightmareArmorKnockbackResistance = value; }
+
+    public static double primordialArmorKnockbackPerPiece() { return primordialArmorKnockbackPerPiece; }
+    public static void setPrimordialArmorKnockbackPerPiece(double value) { primordialArmorKnockbackPerPiece = value; }
 
     public static int fallenKingCrownArmorValue() { return fallenKingCrownArmorValue; }
     public static void setFallenKingCrownArmorValue(int value) { fallenKingCrownArmorValue = value; }

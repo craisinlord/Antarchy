@@ -188,6 +188,7 @@ public final class AntarchyConfigModuleFabric {
                     || name.startsWith("nightmareLeggings")
                     || name.startsWith("nightmareBoots")
                     || name.startsWith("nightmareArmorDreadAura")
+                    || name.startsWith("primordialArmor")
                     || name.startsWith("nightmareSword")
                     || name.startsWith("basiliskDagger")
                     || name.startsWith("squidzooka")

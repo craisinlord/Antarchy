@@ -9,7 +9,7 @@ public class ToreterrorRenderer extends GeoEntityRenderer<ToreterrorEntity> {
 
     public ToreterrorRenderer(EntityRendererProvider.Context context) {
         super(context, new ToreterrorModel());
-        this.shadowRadius = 2.0F;
+        this.shadowRadius = 1.6F;
     }
 
     @Override

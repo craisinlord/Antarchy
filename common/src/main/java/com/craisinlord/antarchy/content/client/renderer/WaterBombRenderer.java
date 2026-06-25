@@ -29,7 +29,8 @@ public class WaterBombRenderer extends EntityRenderer<WaterBombEntity> {
     public void render(WaterBombEntity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         poseStack.pushPose();
         poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
-        poseStack.scale(0.5F, 0.5F, 0.5F);
+        float scale = entity.isHuge() ? 1.5F : 0.5F;
+        poseStack.scale(scale, scale, scale);
 
         VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityTranslucent(WATER_TEXTURE));
         PoseStack.Pose pose = poseStack.last();

@@ -237,6 +237,7 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setNightmareBootsArmorToughness(AntarchyToolsConfig.nightmareBootsArmorToughness());
         AntarchySettings.setNightmareArmorKnockbackResistance(AntarchyToolsConfig.nightmareArmorKnockbackResistance());
         AntarchySettings.setNightmareArmorDreadAuraRangePerPiece(AntarchyToolsConfig.nightmareArmorDreadAuraRangePerPiece());
+        AntarchySettings.setPrimordialArmorKnockbackPerPiece(AntarchyToolsConfig.primordialArmorKnockbackPerPiece());
         AntarchySettings.setNightmareSwordBaseDamage(AntarchyToolsConfig.nightmareSwordBaseDamage());
         AntarchySettings.setNightmareSwordAttackSpeed(AntarchyToolsConfig.nightmareSwordAttackSpeed());
         AntarchySettings.setNightmareSwordScalingFactor(AntarchyToolsConfig.nightmareSwordScalingFactor());

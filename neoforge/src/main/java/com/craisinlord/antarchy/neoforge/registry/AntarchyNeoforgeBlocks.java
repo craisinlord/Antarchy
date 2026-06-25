@@ -136,6 +136,12 @@ public final class AntarchyNeoforgeBlocks {
             () -> new Block(AntarchyObjects.shellstoneProperties()));
     public static final DeferredBlock<Block> CRACKED_SHELLSTONE_BRICKS = BLOCKS.register("cracked_shellstone_bricks",
             () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<StairBlock> MOSSY_SHELLSTONE_BRICK_STAIRS = BLOCKS.register("mossy_shellstone_brick_stairs",
+            () -> new StairBlock(MOSSY_SHELLSTONE_BRICKS.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<SlabBlock> MOSSY_SHELLSTONE_BRICK_SLAB = BLOCKS.register("mossy_shellstone_brick_slab",
+            () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<WallBlock> MOSSY_SHELLSTONE_BRICK_WALL = BLOCKS.register("mossy_shellstone_brick_wall",
+            () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
     public static final DeferredBlock<StairBlock> SHELLSTONE_STAIRS = BLOCKS.register("shellstone_stairs",
             () -> new StairBlock(SHELLSTONE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
     public static final DeferredBlock<SlabBlock> SHELLSTONE_SLAB = BLOCKS.register("shellstone_slab",

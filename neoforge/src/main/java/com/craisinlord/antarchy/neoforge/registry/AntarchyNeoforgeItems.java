@@ -235,6 +235,9 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_SHELLSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_SHELLSTONE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_SHELLSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_SHELLSTONE_BRICKS);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> CRACKED_SHELLSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CRACKED_SHELLSTONE_BRICKS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_SHELLSTONE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_SHELLSTONE_BRICK_STAIRS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_SHELLSTONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_SHELLSTONE_BRICK_SLAB);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_SHELLSTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_SHELLSTONE_BRICK_WALL);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_STAIRS);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_SLAB);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SHELLSTONE_WALL);

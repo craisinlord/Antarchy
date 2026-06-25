@@ -538,6 +538,12 @@ public final class AntarchyFabricContent {
             () -> new Block(AntarchyObjects.shellstoneProperties()));
     public static final DeferredBlock<Block> CRACKED_SHELLSTONE_BRICKS = BLOCKS.register("cracked_shellstone_bricks",
             () -> new Block(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<net.minecraft.world.level.block.StairBlock> MOSSY_SHELLSTONE_BRICK_STAIRS = BLOCKS.register("mossy_shellstone_brick_stairs",
+            () -> new net.minecraft.world.level.block.StairBlock(MOSSY_SHELLSTONE_BRICKS.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<net.minecraft.world.level.block.SlabBlock> MOSSY_SHELLSTONE_BRICK_SLAB = BLOCKS.register("mossy_shellstone_brick_slab",
+            () -> new net.minecraft.world.level.block.SlabBlock(AntarchyObjects.shellstoneProperties()));
+    public static final DeferredBlock<net.minecraft.world.level.block.WallBlock> MOSSY_SHELLSTONE_BRICK_WALL = BLOCKS.register("mossy_shellstone_brick_wall",
+            () -> new net.minecraft.world.level.block.WallBlock(AntarchyObjects.shellstoneProperties()));
     public static final DeferredBlock<net.minecraft.world.level.block.StairBlock> SHELLSTONE_STAIRS = BLOCKS.register("shellstone_stairs",
             () -> new net.minecraft.world.level.block.StairBlock(SHELLSTONE.get().defaultBlockState(), AntarchyObjects.shellstoneProperties()));
     public static final DeferredBlock<net.minecraft.world.level.block.SlabBlock> SHELLSTONE_SLAB = BLOCKS.register("shellstone_slab",
@@ -1083,6 +1089,9 @@ public final class AntarchyFabricContent {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_SHELLSTONE_ITEM = ITEMS.registerSimpleBlockItem(CHISELED_SHELLSTONE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_SHELLSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(MOSSY_SHELLSTONE_BRICKS);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> CRACKED_SHELLSTONE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(CRACKED_SHELLSTONE_BRICKS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_SHELLSTONE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(MOSSY_SHELLSTONE_BRICK_STAIRS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_SHELLSTONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(MOSSY_SHELLSTONE_BRICK_SLAB);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_SHELLSTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(MOSSY_SHELLSTONE_BRICK_WALL);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(SHELLSTONE_STAIRS);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(SHELLSTONE_SLAB);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_WALL_ITEM = ITEMS.registerSimpleBlockItem(SHELLSTONE_WALL);
@@ -1580,7 +1589,7 @@ public final class AntarchyFabricContent {
                     new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant().durability(ArmorItem.Type.BOOTS.getDurability(37))));
     public static final DeferredHolder<EntityType<?>, EntityType<ToreterrorEntity>> TORETERROR = ENTITY_TYPES.register("toreterror",
             () -> EntityType.Builder.of(ToreterrorEntity::new, MobCategory.MONSTER)
-                    .sized(2.5F, 3.0F)
+                    .sized(2.0F, 3.0F)
                     .clientTrackingRange(14)
                     .build("toreterror"));
     public static final DeferredHolder<EntityType<?>, EntityType<WaterBombEntity>> WATER_BOMB = ENTITY_TYPES.register("water_bomb",
@@ -1771,27 +1780,33 @@ public final class AntarchyFabricContent {
                  "polished_nyxite_stairs", "polished_nyxite_slab", "polished_nyxite_wall",
                  "nyxite_brick_stairs", "nyxite_brick_slab", "nyxite_brick_wall",
                  "pale_nyxite", "nyxite_spike", "potent_nyxite" -> 1;
-            case "antimetal", "polished_antimetal" -> 2;
+            case "shellstone", "polished_shellstone", "shellstone_bricks", "chiseled_shellstone",
+                 "mossy_shellstone_bricks", "cracked_shellstone_bricks",
+                 "shellstone_stairs", "shellstone_slab", "shellstone_wall",
+                 "polished_shellstone_stairs", "polished_shellstone_slab", "polished_shellstone_wall",
+                 "shellstone_brick_stairs", "shellstone_brick_slab", "shellstone_brick_wall",
+                 "mossy_shellstone_brick_stairs", "mossy_shellstone_brick_slab", "mossy_shellstone_brick_wall" -> 2;
+            case "antimetal", "polished_antimetal" -> 3;
             case "dream_sand", "dream_sandstone", "chiseled_dream_sandstone",
                  "cut_dream_sandstone", "smooth_dream_sandstone",
                  "dream_sandstone_stairs", "dream_sandstone_slab", "dream_sandstone_wall",
                  "smooth_dream_sandstone_stairs", "smooth_dream_sandstone_slab",
-                 "cut_dream_sandstone_slab" -> 3;
-            case "umbral_moss_block", "umbral_moss_carpet" -> 4;
-            case "torchflower_bush", "hushweed", "orange_milkweed", "pink_milkweed" -> 5;
+                 "cut_dream_sandstone_slab" -> 4;
+            case "umbral_moss_block", "umbral_moss_carpet" -> 5;
+            case "torchflower_bush", "hushweed", "orange_milkweed", "pink_milkweed" -> 6;
             case "blood_crystal_block", "budding_blood_crystal",
                  "small_blood_crystal_bud", "medium_blood_crystal_bud",
-                 "large_blood_crystal_bud", "blood_crystal_cluster" -> 6;
+                 "large_blood_crystal_bud", "blood_crystal_cluster" -> 7;
             case "uranium_ore", "deepslate_uranium_ore", "titanium_ore", "deepslate_titanium_ore",
                  "uranium_block", "titanium_block", "raw_uranium_block", "raw_titanium_block",
                  "cut_uranium", "cut_titanium", "cut_uranium_slab", "cut_titanium_slab",
                  "cut_uranium_stairs", "cut_titanium_stairs", "chiseled_uranium",
                  "chiseled_titanium", "uranium_bulb", "titanium_bulb",
                  "uranium_door", "titanium_door", "uranium_trapdoor", "titanium_trapdoor",
-                 "uranium_bars", "titanium_bars" -> 7;
+                 "uranium_bars", "titanium_bars" -> 8;
             case "infested_rooted_dirt", "infested_coarse_dirt", "triffid_goo_block",
-                 "cloud_block" -> 8;
-            case "dream_torch", "dream_lantern", "dream_campfire", "dream_fire", "dream_fire_ceiling" -> 9;
+                 "cloud_block" -> 9;
+            case "dream_torch", "dream_lantern", "dream_campfire", "dream_fire", "dream_fire_ceiling" -> 10;
             case "easter_bunny_spawn_egg", "flying_squirrel_spawn_egg", "caterpillar_spawn_egg",
                  "butterfly_spawn_egg", "reverie_spawn_egg", "brutalfly_spawn_egg",
                  "red_ant_spawn_egg", "brown_ant_spawn_egg", "rainbow_ant_spawn_egg",
@@ -2215,6 +2230,9 @@ public final class AntarchyFabricContent {
                 () -> CHISELED_SHELLSTONE.get(),
                 () -> MOSSY_SHELLSTONE_BRICKS.get(),
                 () -> CRACKED_SHELLSTONE_BRICKS.get(),
+                () -> MOSSY_SHELLSTONE_BRICK_STAIRS.get(),
+                () -> MOSSY_SHELLSTONE_BRICK_SLAB.get(),
+                () -> MOSSY_SHELLSTONE_BRICK_WALL.get(),
                 () -> SHELLSTONE_STAIRS.get(),
                 () -> SHELLSTONE_SLAB.get(),
                 () -> SHELLSTONE_WALL.get(),

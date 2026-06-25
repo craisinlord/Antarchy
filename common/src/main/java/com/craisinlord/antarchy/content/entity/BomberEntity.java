@@ -133,8 +133,17 @@ public class BomberEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (source.is(DamageTypeTags.IS_FIRE)) {
+        if (source.is(DamageTypeTags.IS_FIRE) || source.is(DamageTypeTags.IS_EXPLOSION)) {
             this.primeFuse();
+            return false;
+        }
+        if (this.detonating) {
+            Entity attacker = source.getDirectEntity();
+            if (attacker != null) {
+                Vec3 knockDir = this.position().subtract(attacker.position()).normalize();
+                this.push(knockDir.x * 0.5, 0.2, knockDir.z * 0.5);
+                this.hurtMarked = true;
+            }
             return false;
         }
 

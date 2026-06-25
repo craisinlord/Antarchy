@@ -103,6 +103,12 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<Block> CRACKED_SHELLSTONE_BRICKS = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<Block> MOSSY_SHELLSTONE_BRICK_STAIRS = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> MOSSY_SHELLSTONE_BRICK_SLAB = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> MOSSY_SHELLSTONE_BRICK_WALL = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<Block> SHELLSTONE_STAIRS = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> SHELLSTONE_SLAB = (Supplier<Block>) UNBOUND;
@@ -228,6 +234,9 @@ public final class AntarchyObjects {
             Supplier<Block> chiseledShellstone,
             Supplier<Block> mossyShellstoneBricks,
             Supplier<Block> crackedShellstoneBricks,
+            Supplier<Block> mossyShellstoneBrickStairs,
+            Supplier<Block> mossyShellstoneBrickSlab,
+            Supplier<Block> mossyShellstoneBrickWall,
             Supplier<Block> shellstoneStairs,
             Supplier<Block> shellstoneSlab,
             Supplier<Block> shellstoneWall,
@@ -305,6 +314,9 @@ public final class AntarchyObjects {
         CHISELED_SHELLSTONE = chiseledShellstone;
         MOSSY_SHELLSTONE_BRICKS = mossyShellstoneBricks;
         CRACKED_SHELLSTONE_BRICKS = crackedShellstoneBricks;
+        MOSSY_SHELLSTONE_BRICK_STAIRS = mossyShellstoneBrickStairs;
+        MOSSY_SHELLSTONE_BRICK_SLAB = mossyShellstoneBrickSlab;
+        MOSSY_SHELLSTONE_BRICK_WALL = mossyShellstoneBrickWall;
         SHELLSTONE_STAIRS = shellstoneStairs;
         SHELLSTONE_SLAB = shellstoneSlab;
         SHELLSTONE_WALL = shellstoneWall;

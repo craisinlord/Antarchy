@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "antarchy:toreterror_arena",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 1528736139,
+    "spacing": 75,
+    "separation": 68,
+    "type": "integrated_api:advanced_random_spread"
+  }
+}

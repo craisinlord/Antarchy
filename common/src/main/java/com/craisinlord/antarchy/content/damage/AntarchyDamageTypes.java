@@ -61,6 +61,24 @@ public final class AntarchyDamageTypes {
                     ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "cornea_stalk_prick")
             );
 
+    public static final ResourceKey<DamageType> TORETERROR_SPIN =
+            ResourceKey.create(
+                    Registries.DAMAGE_TYPE,
+                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "toreterror_spin")
+            );
+
+    public static final ResourceKey<DamageType> TORETERROR_JUMP =
+            ResourceKey.create(
+                    Registries.DAMAGE_TYPE,
+                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "toreterror_jump")
+            );
+
+    public static final ResourceKey<DamageType> WATER_SOAKED =
+            ResourceKey.create(
+                    Registries.DAMAGE_TYPE,
+                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "water_soaked")
+            );
+
     private AntarchyDamageTypes() {
     }
 }

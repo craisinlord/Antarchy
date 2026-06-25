@@ -293,4 +293,5 @@ public abstract class LivingEntityMixin {
         );
         original.call(level, particle, pos.x, pos.y, pos.z, dx, dy, dz);
     }
+
 }
