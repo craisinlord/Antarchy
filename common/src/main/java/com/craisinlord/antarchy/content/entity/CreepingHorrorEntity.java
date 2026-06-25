@@ -57,7 +57,7 @@ public class CreepingHorrorEntity extends Monster implements GeoEntity {
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, AntarchySettings.creepingHorrorHealth())
-                .add(Attributes.MOVEMENT_SPEED, 0.30D)
+                .add(Attributes.MOVEMENT_SPEED, 0.38D)
                 .add(Attributes.ATTACK_DAMAGE, AntarchySettings.creepingHorrorAttackDamage())
                 .add(Attributes.FOLLOW_RANGE, 16.0D);
     }

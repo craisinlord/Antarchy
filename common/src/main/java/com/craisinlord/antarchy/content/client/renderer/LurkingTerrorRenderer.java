@@ -9,5 +9,6 @@ public class LurkingTerrorRenderer extends GeoEntityRenderer<LurkingTerrorEntity
     public LurkingTerrorRenderer(EntityRendererProvider.Context context) {
         super(context, new LurkingTerrorModel());
         this.shadowRadius = 0.5F;
+        this.withScale(0.85F);
     }
 }

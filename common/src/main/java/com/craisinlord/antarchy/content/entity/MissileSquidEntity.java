@@ -62,6 +62,7 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
     private static final String LAUNCH_OWNER_KEY = "LaunchOwner";
     private static final String ARMED_AFTER_LANDING_KEY = "ArmedAfterLanding";
     private static final String ACTION_ANIM_TICKS_KEY = "ActionAnimTicks";
+    private static final String SPAWNED_BY_KRAKEN_KEY = "SpawnedByKraken";
     private static final double AGGRO_SPEED = 0.5D;
     private static final double PATROL_SPEED = 0.28D;
     private static final double ATTACH_RANGE_SQR = 2.25D;
@@ -86,6 +87,7 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
     private int attachedTargetId = -1;
     private boolean launchedFromSquidzooka;
     private boolean armedAfterLanding;
+    private boolean spawnedByKraken;
     @Nullable
     private UUID launchOwnerUuid;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
@@ -298,6 +300,7 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
         tag.putBoolean(LAUNCHED_FROM_SQUIDZOOKA_KEY, this.launchedFromSquidzooka);
         tag.putBoolean(ARMED_AFTER_LANDING_KEY, this.armedAfterLanding);
         tag.putInt(ACTION_ANIM_TICKS_KEY, this.actionAnimationTicks);
+        tag.putBoolean(SPAWNED_BY_KRAKEN_KEY, this.spawnedByKraken);
         if (this.launchOwnerUuid != null) {
             tag.putUUID(LAUNCH_OWNER_KEY, this.launchOwnerUuid);
         }
@@ -311,8 +314,17 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
         this.launchedFromSquidzooka = tag.getBoolean(LAUNCHED_FROM_SQUIDZOOKA_KEY);
         this.armedAfterLanding = tag.getBoolean(ARMED_AFTER_LANDING_KEY);
         this.actionAnimationTicks = Math.max(0, tag.getInt(ACTION_ANIM_TICKS_KEY));
+        this.spawnedByKraken = tag.getBoolean(SPAWNED_BY_KRAKEN_KEY);
         this.launchOwnerUuid = tag.hasUUID(LAUNCH_OWNER_KEY) ? tag.getUUID(LAUNCH_OWNER_KEY) : null;
         this.updateAnimationState();
+    }
+
+    public boolean isSpawnedByKraken() {
+        return this.spawnedByKraken;
+    }
+
+    public void setSpawnedByKraken(boolean spawnedByKraken) {
+        this.spawnedByKraken = spawnedByKraken;
     }
 
     private void tickAggroMovement(LivingEntity target) {

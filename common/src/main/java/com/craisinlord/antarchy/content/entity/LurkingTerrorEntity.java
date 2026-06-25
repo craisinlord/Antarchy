@@ -30,6 +30,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class LurkingTerrorEntity extends Monster implements GeoEntity {
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
+    private static final RawAnimation FLY_ANIM = RawAnimation.begin().thenLoop("fly");
     private static final RawAnimation ATTACK_LAND_ANIM = RawAnimation.begin().thenLoop("attackland");
     private static final RawAnimation ATTACK_AIR_ANIM = RawAnimation.begin().thenLoop("attackair");
     private static final byte ATTACK_ANIM_EVENT = 5;
@@ -45,10 +46,10 @@ public class LurkingTerrorEntity extends Monster implements GeoEntity {
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, AntarchySettings.lurkingTerrorHealth())
-                .add(Attributes.MOVEMENT_SPEED, 0.25D)
+                .add(Attributes.MOVEMENT_SPEED, 0.35D)
                 .add(Attributes.ATTACK_DAMAGE, AntarchySettings.lurkingTerrorAttackDamage())
                 .add(Attributes.FOLLOW_RANGE, 16.0D)
-                .add(Attributes.FLYING_SPEED, 0.4D);
+                .add(Attributes.FLYING_SPEED, 0.55D);
     }
 
     @Override
@@ -84,7 +85,7 @@ public class LurkingTerrorEntity extends Monster implements GeoEntity {
             return state.setAndContinue(ATTACK_LAND_ANIM);
         }
         if (state.isMoving()) {
-            return state.setAndContinue(WALK_ANIM);
+            return state.setAndContinue(this.onGround() ? WALK_ANIM : FLY_ANIM);
         }
         return state.setAndContinue(IDLE_ANIM);
     }

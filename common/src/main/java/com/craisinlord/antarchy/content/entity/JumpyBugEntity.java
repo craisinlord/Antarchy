@@ -58,31 +58,23 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
             SynchedEntityData.defineId(JumpyBugEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> CLINGING_TO_CEILING =
             SynchedEntityData.defineId(JumpyBugEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> LATCHED_TARGET_ID =
-            SynchedEntityData.defineId(JumpyBugEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> ATTACK_STATE =
             SynchedEntityData.defineId(JumpyBugEntity.class, EntityDataSerializers.INT);
 
     private static final String POUNCE_COOLDOWN_KEY = "PounceCooldown";
-    private static final String LATCH_COOLDOWN_KEY = "LatchCooldown";
-    private static final String LATCH_TICKS_KEY = "LatchTicksRemaining";
-    private static final String BITE_COOLDOWN_KEY = "BiteCooldown";
     private static final String RECOVERY_TICKS_KEY = "RecoveryTicks";
     private static final String POUNCE_TICKS_KEY = "PounceTicks";
 
     private static final double DEFAULT_MOVEMENT_SPEED = 0.25D;
     private static final double DEFAULT_FOLLOW_RANGE = 16.0D;
-    private static final double DEFAULT_POUNCE_RANGE = 8.0D;
-    private static final int DEFAULT_LATCH_DURATION = 80;
-    private static final int DEFAULT_BITE_INTERVAL = 15;
+    private static final double MELEE_WALK_RANGE = 4.0D;
     private static final int DEFAULT_POUNCE_COOLDOWN = 60;
-    private static final int DEFAULT_LATCH_COOLDOWN = 80;
     private static final int DEFAULT_RECOVERY_TICKS = 20;
     private static final double POUNCE_HORIZONTAL_SPEED = 0.92D;
-    private static final double POUNCE_UPWARD_SPEED = 0.45D;
+    private static final double POUNCE_UPWARD_SPEED = 0.75D;
     private static final double QUICK_MOVE_SQR = 0.14D * 0.14D;
     private static final double CLING_SEARCH_RANGE = 1.5D;
-    private static final double LATCH_CHECK_RANGE = 0.85D;
+    private static final double POUNCE_LAND_DAMAGE_RANGE = 5.0D;
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
@@ -92,9 +84,6 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     private int pounceCooldownTicks;
-    private int latchCooldownTicks;
-    private int latchTicksRemaining;
-    private int biteCooldownTicks;
     private int recoveryTicks;
     private int pounceTicks;
     private float visualAlpha = 1.0F;
@@ -127,20 +116,18 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
         super.defineSynchedData(builder);
         builder.define(CAMOUFLAGED, false);
         builder.define(CLINGING_TO_CEILING, false);
-        builder.define(LATCHED_TARGET_ID, -1);
         builder.define(ATTACK_STATE, AttackState.GROUND.id());
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new LatchedGoal());
-        this.goalSelector.addGoal(2, new PounceAttackGoal());
-        this.goalSelector.addGoal(3, new CeilingClingGoal());
-        this.goalSelector.addGoal(4, new ChaseTargetGoal());
-        this.goalSelector.addGoal(5, new WanderGoal());
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 10.0F));
-        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(1, new PounceAttackGoal());
+        this.goalSelector.addGoal(2, new CeilingClingGoal());
+        this.goalSelector.addGoal(3, new ChaseTargetGoal());
+        this.goalSelector.addGoal(4, new WanderGoal());
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 10.0F));
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
@@ -159,9 +146,6 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt(POUNCE_COOLDOWN_KEY, this.pounceCooldownTicks);
-        tag.putInt(LATCH_COOLDOWN_KEY, this.latchCooldownTicks);
-        tag.putInt(LATCH_TICKS_KEY, this.latchTicksRemaining);
-        tag.putInt(BITE_COOLDOWN_KEY, this.biteCooldownTicks);
         tag.putInt(RECOVERY_TICKS_KEY, this.recoveryTicks);
         tag.putInt(POUNCE_TICKS_KEY, this.pounceTicks);
     }
@@ -170,9 +154,6 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         this.pounceCooldownTicks = tag.getInt(POUNCE_COOLDOWN_KEY);
-        this.latchCooldownTicks = tag.getInt(LATCH_COOLDOWN_KEY);
-        this.latchTicksRemaining = tag.getInt(LATCH_TICKS_KEY);
-        this.biteCooldownTicks = tag.getInt(BITE_COOLDOWN_KEY);
         this.recoveryTicks = tag.getInt(RECOVERY_TICKS_KEY);
         this.pounceTicks = tag.getInt(POUNCE_TICKS_KEY);
     }
@@ -198,19 +179,11 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
         if (this.pounceCooldownTicks > 0) {
             this.pounceCooldownTicks--;
         }
-        if (this.latchCooldownTicks > 0) {
-            this.latchCooldownTicks--;
-        }
-        if (this.biteCooldownTicks > 0) {
-            this.biteCooldownTicks--;
-        }
         if (this.recoveryTicks > 0) {
             this.recoveryTicks--;
         }
 
-        if (this.isLatched()) {
-            this.tickLatched();
-        } else if (this.isClingingToCeiling()) {
+        if (this.isClingingToCeiling()) {
             this.tickClinging();
         } else if (this.isPouncing()) {
             this.tickPouncing();
@@ -227,7 +200,7 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
 
     @Override
     public void travel(Vec3 travelVector) {
-        if (this.isLatched() || this.isClingingToCeiling()) {
+        if (this.isClingingToCeiling()) {
             this.setDeltaMovement(Vec3.ZERO);
             return;
         }
@@ -243,9 +216,6 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
 
         this.setCamouflaged(false);
         this.recoveryTicks = Math.max(this.recoveryTicks, DEFAULT_RECOVERY_TICKS);
-        if (this.isLatched()) {
-            this.detachFromTarget(true);
-        }
         if (this.isClingingToCeiling()) {
             this.stopClinging();
         }
@@ -288,14 +258,6 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
         return this.entityData.get(CLINGING_TO_CEILING);
     }
 
-    public boolean isLatched() {
-        return this.entityData.get(LATCHED_TARGET_ID) != -1;
-    }
-
-    public boolean isLatchedTo(LivingEntity entity) {
-        return this.entityData.get(LATCHED_TARGET_ID) == entity.getId();
-    }
-
     public boolean isPouncing() {
         return this.getAttackState() == AttackState.POUNCING;
     }
@@ -326,7 +288,7 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
 
     private PlayState mainAnimController(AnimationState<JumpyBugEntity> state) {
         AttackState attackState = this.getAttackState();
-        if (attackState == AttackState.POUNCING || attackState == AttackState.LATCHED || attackState == AttackState.CLINGING) {
+        if (attackState == AttackState.POUNCING || attackState == AttackState.CLINGING) {
             return state.setAndContinue(JUMP_ANIM);
         }
         if (attackState == AttackState.RECOVERING) {
@@ -356,54 +318,18 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
         this.setAttackState(AttackState.POUNCING);
         this.setCamouflaged(false);
         this.pounceTicks++;
-        LivingEntity target = this.getTarget();
-        if (target != null && target.isAlive() && this.distanceToSqr(target) <= (this.getBbWidth() + target.getBbWidth() + LATCH_CHECK_RANGE) * (this.getBbWidth() + target.getBbWidth() + LATCH_CHECK_RANGE)) {
-            if (this.tryLatch(target)) {
-                return;
-            }
-        }
 
-        if (this.onGround() && this.pounceTicks > 4) {
+        if (this.onGround() && this.pounceTicks > 8) {
+            LivingEntity target = this.getTarget();
+            if (target != null && target.isAlive() && this.distanceToSqr(target) <= POUNCE_LAND_DAMAGE_RANGE * POUNCE_LAND_DAMAGE_RANGE) {
+                target.hurt(this.damageSources().mobAttack(this), (float) AntarchySettings.jumpyBugPounceDamage());
+            }
             this.finishPounce(false);
         }
     }
 
-    private void tickLatched() {
-        LivingEntity target = this.getLatchedTarget();
-        if (target == null || !target.isAlive() || target.level() != this.level() || target.isRemoved() || target.isInWater()) {
-            this.detachFromTarget(false);
-            return;
-        }
-
-        this.setAttackState(AttackState.LATCHED);
-        this.setCamouflaged(false);
-        this.setNoGravity(true);
-        this.noPhysics = true;
-        this.getNavigation().stop();
-        this.setDeltaMovement(Vec3.ZERO);
-
-        Vec3 latchPos = this.getLatchPosition(target);
-        this.setPos(latchPos.x, latchPos.y, latchPos.z);
-        this.yRotO = this.getYRot();
-        this.setYRot(target.getYHeadRot());
-        this.setYBodyRot(target.getYHeadRot());
-        this.setYHeadRot(target.getYHeadRot());
-        this.setXRot(-20.0F);
-
-        if (--this.latchTicksRemaining <= 0) {
-            this.detachFromTarget(true);
-            return;
-        }
-
-        if (this.biteCooldownTicks <= 0) {
-            target.hurt(this.damageSources().mobAttack(this), (float) AntarchySettings.jumpyBugLatchDamage());
-            this.biteCooldownTicks = DEFAULT_BITE_INTERVAL;
-            this.playSound(SoundEvents.SPIDER_HURT, 0.35F, 1.5F + this.random.nextFloat() * 0.2F);
-        }
-    }
-
     private void updateCamouflage() {
-        if (this.isLatched() || this.isPouncing()) {
+        if (this.isPouncing()) {
             this.setCamouflaged(false);
             return;
         }
@@ -413,63 +339,6 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
         boolean movingQuickly = this.getDeltaMovement().lengthSqr() > QUICK_MOVE_SQR;
         boolean shouldCamouflage = !movingQuickly && (idle || stalking);
         this.setCamouflaged(shouldCamouflage);
-    }
-
-    private boolean tryLatch(LivingEntity target) {
-        if (!(target instanceof Player) || this.latchCooldownTicks > 0 || this.isLatched()) {
-            return false;
-        }
-        if (this.level().getEntitiesOfClass(JumpyBugEntity.class, target.getBoundingBox().inflate(0.75D),
-                bug -> bug != this && bug.isLatchedTo(target)).isEmpty()) {
-            this.entityData.set(LATCHED_TARGET_ID, target.getId());
-            this.latchTicksRemaining = DEFAULT_LATCH_DURATION;
-            this.biteCooldownTicks = 0;
-            this.pounceTicks = 0;
-            this.setAttackState(AttackState.LATCHED);
-            this.setTarget(target);
-            target.hurt(this.damageSources().mobAttack(this), (float) AntarchySettings.jumpyBugPounceDamage());
-            return true;
-        }
-        return false;
-    }
-
-    private void detachFromTarget(boolean knockAway) {
-        LivingEntity target = this.getLatchedTarget();
-        this.entityData.set(LATCHED_TARGET_ID, -1);
-        this.latchTicksRemaining = 0;
-        this.biteCooldownTicks = DEFAULT_BITE_INTERVAL;
-        this.latchCooldownTicks = DEFAULT_LATCH_COOLDOWN;
-        this.setAttackState(AttackState.RECOVERING);
-        this.recoveryTicks = DEFAULT_RECOVERY_TICKS;
-        this.setNoGravity(false);
-        this.noPhysics = false;
-
-        if (knockAway && target != null) {
-            Vec3 away = this.position().subtract(target.position());
-            if (away.lengthSqr() < 1.0E-4D) {
-                away = target.getLookAngle().scale(-1.0D);
-            }
-            away = away.normalize();
-            this.setDeltaMovement(away.x * 0.35D, 0.25D, away.z * 0.35D);
-            this.hasImpulse = true;
-        }
-    }
-
-    @Nullable
-    private LivingEntity getLatchedTarget() {
-        int entityId = this.entityData.get(LATCHED_TARGET_ID);
-        if (entityId == -1) {
-            return null;
-        }
-
-        Entity entity = this.level().getEntity(entityId);
-        return entity instanceof LivingEntity livingEntity ? livingEntity : null;
-    }
-
-    private Vec3 getLatchPosition(LivingEntity target) {
-        Vec3 eyePos = target.position().add(0.0D, target.getEyeHeight() - 0.15D, 0.0D);
-        Vec3 backOffset = target.getLookAngle().normalize().scale(-0.16D);
-        return eyePos.add(backOffset).add(0.0D, -0.18D, 0.0D);
     }
 
     @Nullable
@@ -537,18 +406,15 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
     }
 
     private boolean canUseAmbush() {
-        return !this.isLatched()
-                && !this.isPouncing()
-                && this.recoveryTicks <= 0
-                && this.latchCooldownTicks <= 0;
+        return !this.isPouncing()
+                && this.recoveryTicks <= 0;
     }
 
     private enum AttackState implements StringRepresentable {
         GROUND(0, "ground"),
         CLINGING(1, "clinging"),
         POUNCING(2, "pouncing"),
-        LATCHED(3, "latched"),
-        RECOVERING(4, "recovering");
+        RECOVERING(3, "recovering");
 
         private static final IntFunction<AttackState> BY_ID = ByIdMap.continuous(AttackState::id, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
         public static final Codec<AttackState> CODEC = StringRepresentable.fromEnum(AttackState::values);
@@ -571,27 +437,6 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
         }
     }
 
-    private final class LatchedGoal extends Goal {
-        private LatchedGoal() {
-            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
-        }
-
-        @Override
-        public boolean canUse() {
-            return JumpyBugEntity.this.isLatched();
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            return JumpyBugEntity.this.isLatched();
-        }
-
-        @Override
-        public void tick() {
-            JumpyBugEntity.this.getNavigation().stop();
-        }
-    }
-
     private final class PounceAttackGoal extends Goal {
         private PounceAttackGoal() {
             this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
@@ -604,7 +449,6 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
                     && target.isAlive()
                     && JumpyBugEntity.this.canUseAmbush()
                     && JumpyBugEntity.this.pounceCooldownTicks <= 0
-                    && JumpyBugEntity.this.distanceToSqr(target) <= DEFAULT_POUNCE_RANGE * DEFAULT_POUNCE_RANGE
                     && (JumpyBugEntity.this.hasLineOfSight(target) || JumpyBugEntity.this.distanceToSqr(target) <= 9.0D);
         }
 
@@ -638,7 +482,7 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
                 return JumpyBugEntity.this.random.nextInt(40) == 0 && JumpyBugEntity.this.canClingHere();
             }
 
-            return JumpyBugEntity.this.distanceToSqr(target) <= (DEFAULT_POUNCE_RANGE + CLING_SEARCH_RANGE) * (DEFAULT_POUNCE_RANGE + CLING_SEARCH_RANGE)
+            return JumpyBugEntity.this.distanceToSqr(target) <= (DEFAULT_FOLLOW_RANGE + CLING_SEARCH_RANGE) * (DEFAULT_FOLLOW_RANGE + CLING_SEARCH_RANGE)
                     && JumpyBugEntity.this.canClingHere();
         }
 
@@ -668,7 +512,6 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
 
             JumpyBugEntity.this.getLookControl().setLookAt(target, 30.0F, 30.0F);
             if (JumpyBugEntity.this.pounceCooldownTicks <= 0
-                    && JumpyBugEntity.this.distanceToSqr(target) <= DEFAULT_POUNCE_RANGE * DEFAULT_POUNCE_RANGE
                     && (JumpyBugEntity.this.hasLineOfSight(target) || JumpyBugEntity.this.distanceToSqr(target) <= 4.0D)) {
                 JumpyBugEntity.this.stopClinging();
                 JumpyBugEntity.this.beginPounce(target);
@@ -686,7 +529,6 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
             LivingEntity target = JumpyBugEntity.this.getTarget();
             return target != null
                     && target.isAlive()
-                    && !JumpyBugEntity.this.isLatched()
                     && !JumpyBugEntity.this.isClingingToCeiling()
                     && !JumpyBugEntity.this.isPouncing()
                     && JumpyBugEntity.this.recoveryTicks <= 0;
@@ -705,7 +547,8 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
             }
 
             JumpyBugEntity.this.getLookControl().setLookAt(target, 30.0F, 30.0F);
-            if (JumpyBugEntity.this.distanceToSqr(target) > DEFAULT_POUNCE_RANGE * DEFAULT_POUNCE_RANGE) {
+            // Only walk when close; at range, pounce is the primary approach
+            if (JumpyBugEntity.this.distanceToSqr(target) <= MELEE_WALK_RANGE * MELEE_WALK_RANGE) {
                 JumpyBugEntity.this.getNavigation().moveTo(target, 1.05D);
             } else {
                 JumpyBugEntity.this.getNavigation().stop();
@@ -720,8 +563,7 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
 
         @Override
         public boolean canUse() {
-            return !JumpyBugEntity.this.isLatched()
-                    && !JumpyBugEntity.this.isClingingToCeiling()
+            return !JumpyBugEntity.this.isClingingToCeiling()
                     && !JumpyBugEntity.this.isPouncing()
                     && JumpyBugEntity.this.getTarget() == null
                     && super.canUse();
@@ -729,8 +571,7 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
 
         @Override
         public boolean canContinueToUse() {
-            return !JumpyBugEntity.this.isLatched()
-                    && !JumpyBugEntity.this.isClingingToCeiling()
+            return !JumpyBugEntity.this.isClingingToCeiling()
                     && !JumpyBugEntity.this.isPouncing()
                     && super.canContinueToUse();
         }

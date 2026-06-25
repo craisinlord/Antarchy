@@ -7,6 +7,7 @@ import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
 import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -21,7 +22,11 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -55,17 +60,10 @@ public class SquidzookaItem extends ProjectileWeaponItem implements GeoItem {
         }
 
         if (!level.isClientSide()) {
-            MissileSquidEntity projectileSquid = AntarchyObjects.MISSILE_SQUID.get().create(level);
-            if (projectileSquid != null) {
-                projectileSquid.moveTo(
-                        player.getX(),
-                        player.getEyeY() - 0.2D,
-                        player.getZ(),
-                        player.getYRot(),
-                        player.getXRot()
-                );
-                projectileSquid.launchFromSquidzooka(player, (float) AntarchySettings.squidzookaLaunchVelocity());
-                level.addFreshEntity(projectileSquid);
+            fireSquid(level, player, 0.0F);
+            if (hasMultishot(itemStack)) {
+                fireSquid(level, player, -10.0F);
+                fireSquid(level, player, 10.0F);
             }
             spawnFireParticles((ServerLevel) level, player);
             itemStack.hurtAndBreak(1, player, usedHand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
@@ -116,6 +114,16 @@ public class SquidzookaItem extends ProjectileWeaponItem implements GeoItem {
     }
 
     @Override
+    public boolean isEnchantable(ItemStack stack) {
+        return stack.getCount() == 1;
+    }
+
+    @Override
+    public int getEnchantmentValue() {
+        return 1;
+    }
+
+    @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, FIRE_CONTROLLER, state -> PlayState.STOP)
                 .triggerableAnim(FIRE_ANIMATION, RawAnimation.begin().thenPlay(FIRE_ANIMATION)));
@@ -145,6 +153,32 @@ public class SquidzookaItem extends ProjectileWeaponItem implements GeoItem {
     private void triggerFireAnimation(ServerLevel level, LivingEntity livingEntity, ItemStack stack) {
         long animatableId = GeoItem.getOrAssignId(stack, level);
         triggerAnim(livingEntity, animatableId, FIRE_CONTROLLER, FIRE_ANIMATION);
+    }
+
+    private static void fireSquid(Level level, Player player, float yawOffset) {
+        MissileSquidEntity projectileSquid = AntarchyObjects.MISSILE_SQUID.get().create(level);
+        if (projectileSquid == null) {
+            return;
+        }
+
+        float yaw = player.getYRot() + yawOffset;
+        Vec3 direction = Vec3.directionFromRotation(new Vec2(player.getXRot(), yaw));
+        projectileSquid.moveTo(
+                player.getX(),
+                player.getEyeY() - 0.2D,
+                player.getZ(),
+                yaw,
+                player.getXRot()
+        );
+        projectileSquid.launchAsProjectile(player, direction.scale(AntarchySettings.squidzookaLaunchVelocity()).add(player.getDeltaMovement()));
+        level.addFreshEntity(projectileSquid);
+    }
+
+    private static boolean hasMultishot(ItemStack stack) {
+        return stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY)
+                .keySet()
+                .stream()
+                .anyMatch(holder -> holder.is(Enchantments.MULTISHOT));
     }
 
     private static void spawnFireParticles(ServerLevel level, Player player) {

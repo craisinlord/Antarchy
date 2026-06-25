@@ -58,6 +58,11 @@ public final class JumpyBootsClientHandler {
             wasCharging = true;
         } else if (wasCharging && chargeTicks > 0) {
             storedChargeTicks = chargeTicks;
+            if (jumpPressed) {
+                ClientPlayNetworking.send(new JumpyBootsLaunchPayload(storedChargeTicks, player.isSprinting()));
+                reset();
+                return;
+            }
             primeWindowTicks = JumpyBootsHelper.PRIME_WINDOW_TICKS;
             chargeTicks = 0;
             wasCharging = false;

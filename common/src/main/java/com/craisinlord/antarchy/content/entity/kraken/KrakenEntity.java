@@ -786,6 +786,7 @@ public class KrakenEntity extends Monster implements GeoEntity {
             }
 
             missileSquid.setCanFly(true);
+            missileSquid.setSpawnedByKraken(true);
             missileSquid.moveTo(spawnPos.x, spawnPos.y, spawnPos.z, this.getYRot(), 0.0F);
             serverLevel.addFreshEntity(missileSquid);
             if (launched) {

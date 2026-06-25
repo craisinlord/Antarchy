@@ -391,6 +391,102 @@
             "depth": 0.85,
             "offset": 0.0
           }
+        },
+        {
+          "biome": "antarchy:elythia_ocean",
+          "parameters": {
+            "temperature": 0.65,
+            "humidity": 0.90,
+            "continentalness": -0.50,
+            "erosion": 0.30,
+            "weirdness": 0.0,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:elythia_ocean",
+          "parameters": {
+            "temperature": 0.60,
+            "humidity": 0.88,
+            "continentalness": -0.55,
+            "erosion": 0.25,
+            "weirdness": -0.40,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:elythia_ocean",
+          "parameters": {
+            "temperature": 0.70,
+            "humidity": 0.92,
+            "continentalness": -0.45,
+            "erosion": 0.35,
+            "weirdness": 0.40,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:elythia_ocean",
+          "parameters": {
+            "temperature": 0.65,
+            "humidity": 0.90,
+            "continentalness": -0.50,
+            "erosion": 0.30,
+            "weirdness": 0.0,
+            "depth": 0.5,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:elythia_ocean",
+          "parameters": {
+            "temperature": 0.60,
+            "humidity": 0.88,
+            "continentalness": -0.55,
+            "erosion": 0.25,
+            "weirdness": -0.40,
+            "depth": 0.5,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:elythia_beach",
+          "parameters": {
+            "temperature": 0.68,
+            "humidity": 0.91,
+            "continentalness": -0.08,
+            "erosion": 0.50,
+            "weirdness": 0.0,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:elythia_beach",
+          "parameters": {
+            "temperature": 0.65,
+            "humidity": 0.89,
+            "continentalness": -0.05,
+            "erosion": 0.60,
+            "weirdness": -0.30,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:elythia_beach",
+          "parameters": {
+            "temperature": 0.70,
+            "humidity": 0.93,
+            "continentalness": -0.02,
+            "erosion": 0.55,
+            "weirdness": 0.30,
+            "depth": 0.0,
+            "offset": 0.0
+          }
         }
       ]
     }

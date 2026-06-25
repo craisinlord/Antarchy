@@ -68,6 +68,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.WASP_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.BOMBER_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.JUMPY_BUG_SPAWN_EGG.get());
+            event.accept(AntarchyNeoforgeItems.STINK_BUG_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.CLOUD_SHARK_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.KRAKEN_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.MISSILE_SQUID_SPAWN_EGG.get());
@@ -91,6 +92,8 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.PINK_MILKWEED_ITEM.get());
             event.accept(AntarchyNeoforgeItems.TORCHFLOWER_BUSH_ITEM.get());
             event.accept(AntarchyNeoforgeItems.HUSHWEED_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.AMBER_LICHEN_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.CREEPVINE_ITEM.get());
             event.accept(AntarchyNeoforgeItems.INFESTED_ROOTED_DIRT_ITEM.get());
             event.accept(AntarchyNeoforgeItems.INFESTED_COARSE_DIRT_ITEM.get());
             event.accept(AntarchyNeoforgeItems.TRIFFID_GOO_BLOCK_ITEM.get());
@@ -142,6 +145,8 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.MANTIS_CLAW.get());
             event.accept(AntarchyNeoforgeItems.KING_SCALE.get());
             event.accept(AntarchyNeoforgeItems.QUEEN_SCALE.get());
+            event.accept(AntarchyNeoforgeItems.CHITEN.get());
+            event.accept(AntarchyNeoforgeItems.STINK_BUG.get());
             event.accept(AntarchyNeoforgeItems.BRUTALFLY_WING.get());
             event.accept(AntarchyNeoforgeItems.PRIMORDIAL_SCUTE.get());
             event.accept(AntarchyNeoforgeItems.TRIFFID_GOO.get());
@@ -210,11 +215,11 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.PALE_NYXITE_ITEM.get());
             event.accept(AntarchyNeoforgeItems.NYXITE_SPIKE_ITEM.get());
             event.accept(AntarchyNeoforgeItems.POTENT_NYXITE_ITEM.get());
-            event.accept(AntarchyNeoforgeItems.UMBRAL_MOSS_BLOCK_ITEM.get());
-            event.accept(AntarchyNeoforgeItems.UMBRAL_MOSS_CARPET_ITEM.get());
             event.accept(AntarchyNeoforgeItems.ANTIMETAL_ITEM.get());
             event.accept(AntarchyNeoforgeItems.POLISHED_ANTIMETAL_ITEM.get());
             event.accept(AntarchyNeoforgeItems.ANTIMETAL_SCAFFOLDING_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.UMBRAL_MOSS_BLOCK_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.UMBRAL_MOSS_CARPET_ITEM.get());
             event.accept(AntarchyNeoforgeItems.DREAM_TORCH_ITEM.get());
             event.accept(AntarchyNeoforgeItems.DREAM_LANTERN_ITEM.get());
             event.accept(AntarchyNeoforgeItems.DREAM_CAMPFIRE_ITEM.get());
@@ -235,6 +240,10 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.SMALL_BLOOD_CRYSTAL_BUD_ITEM.get());
             event.accept(AntarchyNeoforgeItems.MEDIUM_BLOOD_CRYSTAL_BUD_ITEM.get());
             event.accept(AntarchyNeoforgeItems.LARGE_BLOOD_CRYSTAL_BUD_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.MYRMITE_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.CHITEN_BLOCK_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.AMBER_MOSS_BLOCK_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.AMBER_MOSS_CARPET_ITEM.get());
             event.accept(AntarchyNeoforgeItems.URANIUM_BLOCK_ITEM.get());
             event.accept(AntarchyNeoforgeItems.RAW_URANIUM_BLOCK_ITEM.get());
             event.accept(AntarchyNeoforgeItems.CUT_URANIUM_ITEM.get());
@@ -298,6 +307,8 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(PotionContents.createItemStack(Items.POTION, AntarchyNeoforgeMisc.EXTREME_SHRINKING));
             event.accept(PotionContents.createItemStack(Items.POTION, AntarchyNeoforgeMisc.PARALYSIS));
             event.accept(PotionContents.createItemStack(Items.POTION, AntarchyNeoforgeMisc.LONG_PARALYSIS));
+            event.accept(PotionContents.createItemStack(Items.POTION, AntarchyNeoforgeMisc.STINKY_POTION));
+            event.accept(PotionContents.createItemStack(Items.POTION, AntarchyNeoforgeMisc.LONG_STINKY));
             event.accept(PotionContents.createItemStack(Items.POTION, AntarchyNeoforgeMisc.HASTE));
             event.accept(PotionContents.createItemStack(Items.POTION, AntarchyNeoforgeMisc.STRONG_HASTE));
             event.accept(PotionContents.createItemStack(Items.POTION, AntarchyNeoforgeMisc.GROWING));
@@ -345,7 +356,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
                  "cut_dream_sandstone_slab" -> 4;
 
             // 5 - Umbral moss
-            case "umbral_moss_block", "umbral_moss_carpet" -> 5;
+            case "umbral_moss_block", "umbral_moss_carpet" -> 4;
 
             // 6 - All ores + metal storage/decorative blocks
             case "uranium_ore", "deepslate_uranium_ore", "titanium_ore", "deepslate_titanium_ore",
@@ -362,7 +373,8 @@ public class AntarchyNeoforgeCreativeModeTabs {
 
             // 8 - Blood crystal blocks (not the shard ingredient)
             case "blood_crystal_block", "small_blood_crystal_bud", "medium_blood_crystal_bud",
-                 "large_blood_crystal_bud", "budding_blood_crystal", "blood_crystal_cluster" -> 8;
+                 "large_blood_crystal_bud", "budding_blood_crystal", "blood_crystal_cluster",
+                 "myrmite", "chiten_block", "amber_moss_block", "amber_moss_carpet" -> 8;
 
             // 9 - Ouranwood leaves
             case "ouranwood_leaves" -> 9;
@@ -371,7 +383,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
             case "duplicator_sapling", "ouranwood_acorn" -> 10;
 
             // 11 - Plants and flowers
-            case "orange_milkweed", "pink_milkweed", "torchflower_bush", "hushweed",
+            case "orange_milkweed", "pink_milkweed", "torchflower_bush", "hushweed", "amber_lichen", "creepvine",
                  "triffid_goo_block", "wasp_nest",
                  "red_ant_nest", "brown_ant_nest", "rainbow_ant_nest" -> 11;
 
@@ -424,7 +436,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
                  "uranium_ingot", "titanium_ingot", "lucid_eye",
                  "mantis_claw", "jumpy_bug_leg", "brutalfly_wing", "cornea_ear",
                  "primordial_scute", "triffid_goo", "vortex_eye",
-                 "king_scale", "queen_scale" -> 22;
+                 "king_scale", "queen_scale", "chiten" -> 22;
 
             // 23 - Arrows (reserved for future arrow types)
 

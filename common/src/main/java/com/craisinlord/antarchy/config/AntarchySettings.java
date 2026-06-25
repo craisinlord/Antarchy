@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 
 public final class AntarchySettings {
-    private static boolean disableInfinityBookPortalCreation = false;
+    private static boolean disableInfinityBookPortalCreation = true;
     private static boolean easterBunnyEnabled = true;
     private static int easterBunnyNaturalSpawnChancePercent = 1;
     private static boolean rainbowAntsLeadToInfinityDimensions = true;

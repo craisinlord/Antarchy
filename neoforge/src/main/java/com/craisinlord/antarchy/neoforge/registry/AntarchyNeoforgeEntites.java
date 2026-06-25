@@ -25,6 +25,7 @@ import com.craisinlord.antarchy.content.entity.OuranwoodChestBoatEntity;
 import com.craisinlord.antarchy.content.entity.ReverieEntity;
 import com.craisinlord.antarchy.content.entity.ScorpionEntity;
 import com.craisinlord.antarchy.content.entity.SizeRayProjectileEntity;
+import com.craisinlord.antarchy.content.entity.StinkBugEntity;
 import com.craisinlord.antarchy.content.entity.TriffidEntity;
 import com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity;
 import com.craisinlord.antarchy.content.entity.WaspEntity;
@@ -110,6 +111,11 @@ public final class AntarchyNeoforgeEntites {
                     .sized(1.15F, 0.8F)
                     .clientTrackingRange(8)
                     .build("bed_bug"));
+    public static final DeferredHolder<EntityType<?>, EntityType<StinkBugEntity>> STINK_BUG = ENTITY_TYPES.register("stink_bug",
+            () -> EntityType.Builder.of(StinkBugEntity::new, MobCategory.CREATURE)
+                    .sized(0.35F, 0.2F)
+                    .clientTrackingRange(8)
+                    .build("stink_bug"));
     public static final DeferredHolder<EntityType<?>, EntityType<WaspEntity>> WASP = ENTITY_TYPES.register("wasp",
             () -> EntityType.Builder.of(WaspEntity::new, MobCategory.MONSTER)
                     .sized(0.8625F, 1.365F)
@@ -263,12 +269,12 @@ public final class AntarchyNeoforgeEntites {
                     .build("water_bomb"));
     public static final DeferredHolder<EntityType<?>, EntityType<CreepingHorrorEntity>> CREEPING_HORROR = ENTITY_TYPES.register("creeping_horror",
             () -> EntityType.Builder.of(CreepingHorrorEntity::new, MobCategory.MONSTER)
-                    .sized(0.7F, 0.5F)
+                    .sized(1.3F, 1.5F)
                     .clientTrackingRange(10)
                     .build("creeping_horror"));
     public static final DeferredHolder<EntityType<?>, EntityType<LurkingTerrorEntity>> LURKING_TERROR = ENTITY_TYPES.register("lurking_terror",
             () -> EntityType.Builder.of(LurkingTerrorEntity::new, MobCategory.MONSTER)
-                    .sized(0.8F, 0.6F)
+                    .sized(1.3F, 1.5F)
                     .clientTrackingRange(10)
                     .build("lurking_terror"));
     public static final DeferredHolder<EntityType<?>, EntityType<UpwardFallingBlockEntity>> UPWARD_FALLING_BLOCK = ENTITY_TYPES.register("upward_falling_block",

@@ -6,6 +6,7 @@ import com.craisinlord.antarchy.content.entity.ButterflyEntity;
 import com.craisinlord.antarchy.content.entity.CaterpillarEntity;
 import com.craisinlord.antarchy.content.entity.EasterBunnyEntity;
 import com.craisinlord.antarchy.content.entity.HushProjectileEntity;
+import com.craisinlord.antarchy.content.entity.StinkBugEntity;
 import com.craisinlord.antarchy.content.entity.WaterBombEntity;
 import com.craisinlord.antarchy.content.entity.TriffidEntity;
 import com.craisinlord.antarchy.content.entity.CreepingHorrorEntity;
@@ -27,6 +28,7 @@ import com.craisinlord.antarchy.content.block.entity.DreamCampfireBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.WaspNestBlockEntity;
 import java.util.function.Supplier;
 import net.minecraft.core.Holder;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.EntityType;
@@ -84,6 +86,8 @@ public final class AntarchyObjects {
     public static Supplier<EntityType<CreepingHorrorEntity>> CREEPING_HORROR = (Supplier<EntityType<CreepingHorrorEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<LurkingTerrorEntity>> LURKING_TERROR = (Supplier<EntityType<LurkingTerrorEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<StinkBugEntity>> STINK_BUG = (Supplier<EntityType<StinkBugEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> DUPLICATOR_LOG = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -165,6 +169,8 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<Item> REVERIE_BOTTLE = (Supplier<Item>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<Item> STINK_BUG_ITEM = (Supplier<Item>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<Holder<MobEffect>> DREAD = (Supplier<Holder<MobEffect>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Holder<Attribute>> DOUBLE_DAMAGE_CHANCE = (Supplier<Holder<Attribute>>) UNBOUND;
@@ -176,6 +182,8 @@ public final class AntarchyObjects {
     public static Supplier<Holder<MobEffect>> PARALYZED_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Holder<MobEffect>> INVERTED_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Holder<MobEffect>> STINKY_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> OURANWOOD_ACORN_BLOCK = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -208,6 +216,8 @@ public final class AntarchyObjects {
     public static Supplier<BlockEntityType<WaspNestBlockEntity>> WASP_NEST_BLOCK_ENTITY = (Supplier<BlockEntityType<WaspNestBlockEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<BlockEntityType<HushweedBlockEntity>> HUSHWEED_BLOCK_ENTITY = (Supplier<BlockEntityType<HushweedBlockEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<SimpleParticleType> STINKY_GAS = (Supplier<SimpleParticleType>) UNBOUND;
 
     private AntarchyObjects() {
     }
@@ -234,6 +244,7 @@ public final class AntarchyObjects {
             Supplier<EntityType<WaterBombEntity>> waterBomb,
             Supplier<EntityType<CreepingHorrorEntity>> creepingHorror,
             Supplier<EntityType<LurkingTerrorEntity>> lurkingTerror,
+            Supplier<EntityType<StinkBugEntity>> stinkBug,
             Supplier<Block> duplicatorLog,
             Supplier<Block> duplicatorSapling,
             Supplier<Block> ductTape,
@@ -274,9 +285,11 @@ public final class AntarchyObjects {
             Supplier<Item> krakenTooth,
             Supplier<Item> moggles,
             Supplier<Item> reverieBottle,
+            Supplier<Item> stinkBugItem,
             Supplier<Holder<MobEffect>> dread,
             Supplier<Holder<MobEffect>> paralyzedEffect,
             Supplier<Holder<MobEffect>> invertedEffect,
+            Supplier<Holder<MobEffect>> stinkyEffect,
             Supplier<Block> ouranwoodAcornBlock,
             Supplier<Block> mossyOuranwoodLog,
             Supplier<Block> mossyOuranwoodWood,
@@ -293,6 +306,7 @@ public final class AntarchyObjects {
             Supplier<BlockEntityType<DreamCampfireBlockEntity>> dreamCampfireBlockEntity,
             Supplier<BlockEntityType<WaspNestBlockEntity>> waspNestBlockEntity,
             Supplier<BlockEntityType<HushweedBlockEntity>> hushweedBlockEntity,
+            Supplier<SimpleParticleType> stinkyGas,
             Supplier<Holder<Attribute>> doubleDamageChance,
             Supplier<Holder<Attribute>> bloodglassMaxHearts,
             Supplier<Holder<MobEffect>> bloodglassWard
@@ -318,6 +332,7 @@ public final class AntarchyObjects {
         WATER_BOMB = waterBomb;
         CREEPING_HORROR = creepingHorror;
         LURKING_TERROR = lurkingTerror;
+        STINK_BUG = stinkBug;
         DUPLICATOR_LOG = duplicatorLog;
         DUPLICATOR_SAPLING = duplicatorSapling;
         DUCT_TAPE = ductTape;
@@ -358,9 +373,11 @@ public final class AntarchyObjects {
         KRAKEN_TOOTH = krakenTooth;
         MOGGLES = moggles;
         REVERIE_BOTTLE = reverieBottle;
+        STINK_BUG_ITEM = stinkBugItem;
         DREAD = dread;
         PARALYZED_EFFECT = paralyzedEffect;
         INVERTED_EFFECT = invertedEffect;
+        STINKY_EFFECT = stinkyEffect;
         OURANWOOD_ACORN_BLOCK = ouranwoodAcornBlock;
         MOSSY_OURANWOOD_LOG = mossyOuranwoodLog;
         MOSSY_OURANWOOD_WOOD = mossyOuranwoodWood;
@@ -377,6 +394,7 @@ public final class AntarchyObjects {
         DREAM_CAMPFIRE_BLOCK_ENTITY = dreamCampfireBlockEntity;
         WASP_NEST_BLOCK_ENTITY = waspNestBlockEntity;
         HUSHWEED_BLOCK_ENTITY = hushweedBlockEntity;
+        STINKY_GAS = stinkyGas;
         DOUBLE_DAMAGE_CHANCE = doubleDamageChance;
         BLOODGLASS_MAX_HEARTS = bloodglassMaxHearts;
         BLOODGLASS_WARD = bloodglassWard;

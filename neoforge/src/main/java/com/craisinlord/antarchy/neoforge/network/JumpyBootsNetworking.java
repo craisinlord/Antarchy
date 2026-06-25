@@ -56,6 +56,7 @@ public final class JumpyBootsNetworking {
             }
 
             player.setDeltaMovement(newX, newY, newZ);
+            player.setPos(player.getX(), player.getY() + 0.001, player.getZ());
             player.hasImpulse = true;
             player.hurtMarked = true;
             player.resetFallDistance();

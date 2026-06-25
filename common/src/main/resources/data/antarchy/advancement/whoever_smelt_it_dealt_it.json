@@ -1,0 +1,39 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "become_stinky": {
+      "conditions": {
+        "effects": {
+          "antarchy:stinky": {}
+        }
+      },
+      "trigger": "minecraft:effects_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.whoever_smelt_it_dealt_it.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "antarchy:stinky"
+        }
+      }
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.whoever_smelt_it_dealt_it.title"
+    }
+  },
+  "requirements": [
+    [
+      "become_stinky"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

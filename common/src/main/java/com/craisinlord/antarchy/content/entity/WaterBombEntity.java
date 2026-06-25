@@ -12,6 +12,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.material.Fluids;
@@ -98,21 +100,32 @@ public class WaterBombEntity extends ThrowableProjectile {
             living.push(knockDir.x * knockback, 0.3D, knockDir.z * knockback);
             living.hurtMarked = true;
         }
+        living.clearFire();
     }
 
     @Override
     protected void onHitBlock(BlockHitResult result) {
-        BlockPos hitPos = result.getBlockPos().relative(result.getDirection());
+        BlockPos blockPos = result.getBlockPos();
+        BlockPos hitPos = blockPos.relative(result.getDirection());
         Level level = this.level();
+        if (level.getBlockState(blockPos).getBlock() instanceof CampfireBlock campfire && level.getBlockState(blockPos).getValue(CampfireBlock.LIT)) {
+            level.setBlock(blockPos, level.getBlockState(blockPos).setValue(CampfireBlock.LIT, false), 3);
+            this.discard();
+            return;
+        }
         if (this.isHuge()) {
             for (BlockPos pos : BlockPos.betweenClosed(hitPos.offset(-1, 0, -1), hitPos.offset(1, 0, 1))) {
-                if (level.isEmptyBlock(pos)) {
+                if (level.getBlockState(pos).getBlock() instanceof BaseFireBlock) {
+                    level.removeBlock(pos, false);
+                } else if (level.isEmptyBlock(pos)) {
                     level.setBlock(pos, Blocks.WATER.defaultBlockState(), 3);
                     level.scheduleTick(pos, Fluids.WATER, 2);
                 }
             }
         } else {
-            if (level.isEmptyBlock(hitPos) && level.getBlockState(hitPos.below()).isSolid()) {
+            if (level.getBlockState(hitPos).getBlock() instanceof BaseFireBlock) {
+                level.removeBlock(hitPos, false);
+            } else if (level.isEmptyBlock(hitPos) && level.getBlockState(hitPos.below()).isSolid()) {
                 level.setBlock(hitPos, Blocks.WATER.defaultBlockState().setValue(LiquidBlock.LEVEL, 1), 3);
                 level.scheduleTick(hitPos, Fluids.WATER, 2);
             }

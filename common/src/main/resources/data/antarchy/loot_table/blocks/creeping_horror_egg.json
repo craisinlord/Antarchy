@@ -1,0 +1,91 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "antarchy:creeping_horror_egg",
+                  "properties": {
+                    "eggs": "4"
+                  }
+                }
+              ],
+              "functions": [
+                {
+                  "function": "minecraft:set_count",
+                  "count": 4.0
+                },
+                {
+                  "function": "minecraft:explosion_decay"
+                }
+              ],
+              "name": "antarchy:creeping_horror_egg"
+            },
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "antarchy:creeping_horror_egg",
+                  "properties": {
+                    "eggs": "3"
+                  }
+                }
+              ],
+              "functions": [
+                {
+                  "function": "minecraft:set_count",
+                  "count": 3.0
+                },
+                {
+                  "function": "minecraft:explosion_decay"
+                }
+              ],
+              "name": "antarchy:creeping_horror_egg"
+            },
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "antarchy:creeping_horror_egg",
+                  "properties": {
+                    "eggs": "2"
+                  }
+                }
+              ],
+              "functions": [
+                {
+                  "function": "minecraft:set_count",
+                  "count": 2.0
+                },
+                {
+                  "function": "minecraft:explosion_decay"
+                }
+              ],
+              "name": "antarchy:creeping_horror_egg"
+            },
+            {
+              "type": "minecraft:item",
+              "functions": [
+                {
+                  "function": "minecraft:explosion_decay"
+                }
+              ],
+              "name": "antarchy:creeping_horror_egg"
+            }
+          ]
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "minecraft:blocks/turtle_egg"
+}

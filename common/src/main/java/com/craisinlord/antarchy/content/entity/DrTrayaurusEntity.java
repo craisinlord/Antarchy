@@ -3,6 +3,9 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.AgeableMob;
@@ -78,6 +81,21 @@ public class DrTrayaurusEntity extends AbstractVillager {
         offers.clear();
         offers.addAll(DrTrayaurusTradeManager.createOffers());
         this.overrideXp(1);
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return SoundEvents.VILLAGER_AMBIENT;
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSource) {
+        return SoundEvents.VILLAGER_HURT;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return SoundEvents.VILLAGER_DEATH;
     }
 
     @Override

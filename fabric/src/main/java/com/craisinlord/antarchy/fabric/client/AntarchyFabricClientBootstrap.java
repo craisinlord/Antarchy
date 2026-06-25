@@ -90,6 +90,7 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricContent.NIGHTMARE.get(), NightmareRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.LUCID.get(), LucidRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.BED_BUG.get(), BedBugRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricContent.STINK_BUG.get(), StinkBugRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.WASP.get(), WaspRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.BOMBER.get(), BomberRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.JUMPY_BUG.get(), JumpyBugRenderer::new);
@@ -166,6 +167,7 @@ public final class AntarchyFabricClientBootstrap {
     private static void registerParticles() {
         ParticleFactoryRegistry registry = ParticleFactoryRegistry.getInstance();
         registry.register(AntarchyFabricContent.DREAM_FIRE_FLAME.get(), DreamFlameParticle.Provider::new);
+        registry.register(AntarchyFabricContent.STINKY_GAS.get(), HypnoticGasParticle.Provider::new);
         registry.register(AntarchyFabricContent.HYPNOTIC_GAS.get(), HypnoticGasParticle.Provider::new);
         registry.register(AntarchyFabricContent.HYPNOTIC_GAS_DOWN.get(), sprites -> new HypnoticGasParticle.Provider(sprites, true));
         registry.register(AntarchyFabricContent.HYPNOTIC_GAS_CLOUD.get(), new HypnoticGasCloudParticle.Provider());
@@ -191,6 +193,9 @@ public final class AntarchyFabricClientBootstrap {
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.FALLEN_KING_CROWN_BLOCK.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.ANTIMETAL_SCAFFOLDING.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.UMBRAL_MOSS_CARPET.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.AMBER_MOSS_CARPET.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.AMBER_LICHEN.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.CREEPVINE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.NYXITE_SPIKE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.SMALL_BLOOD_CRYSTAL_BUD.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.MEDIUM_BLOOD_CRYSTAL_BUD.get(), RenderType.cutout());

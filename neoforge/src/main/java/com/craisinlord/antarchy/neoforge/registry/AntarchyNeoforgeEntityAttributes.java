@@ -46,6 +46,7 @@ public class AntarchyNeoforgeEntityAttributes {
         event.put(AntarchyNeoforgeEntites.MISSILE_SQUID.get(), MissileSquidEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.NIGHTMARE.get(), NightmareEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.BED_BUG.get(), BedBugEntity.createAttributes().build());
+        event.put(AntarchyNeoforgeEntites.STINK_BUG.get(), StinkBugEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.WASP.get(), WaspEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.BOMBER.get(), BomberEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.JUMPY_BUG.get(), JumpyBugEntity.createAttributes().build());

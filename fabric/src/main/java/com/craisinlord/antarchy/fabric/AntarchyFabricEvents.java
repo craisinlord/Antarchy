@@ -51,6 +51,8 @@ public final class AntarchyFabricEvents {
 
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricContent.UMBRAL_MOSS_BLOCK.get().asItem(), 0.65f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricContent.UMBRAL_MOSS_CARPET.get().asItem(), 0.3f);
+        ComposterBlock.COMPOSTABLES.put(AntarchyFabricContent.AMBER_MOSS_BLOCK.get().asItem(), 0.65f);
+        ComposterBlock.COMPOSTABLES.put(AntarchyFabricContent.AMBER_MOSS_CARPET.get().asItem(), 0.3f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricContent.HUSHWEED.get().asItem(), 0.65f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricContent.CORNEA_EAR.get(), 0.65f);
 
@@ -58,7 +60,10 @@ public final class AntarchyFabricEvents {
             if (entity instanceof ServerPlayer sp) {
                 BloodglassManager.handleDeath(sp);
             }
-            if (!(entity instanceof MissileSquidEntity)) {
+            if (!(entity instanceof MissileSquidEntity missileSquid)) {
+                return;
+            }
+            if (missileSquid.isSpawnedByKraken()) {
                 return;
             }
             if (!(entity.level() instanceof ServerLevel serverLevel)) {

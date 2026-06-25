@@ -89,7 +89,7 @@ public final class AntarchyMiscConfig {
         b.push("infinityDimensions");
         DISABLE_INFINITY_BOOK_PORTAL_CREATION = b
                 .comment("If true, book and quills cannot be thrown into nether portals to create random dimensions.")
-                .define("disableInfinityBookPortalCreation", false);
+                .define("disableInfinityBookPortalCreation", true);
         RAINBOW_ANTS_LEAD_TO_INFINITY_DIMENSIONS = b
                 .comment(
                     "Whether rainbow ants open randomly generated Infinity dimensions.",

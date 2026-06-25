@@ -15,6 +15,7 @@ public class CreepingHorrorRenderer extends GeoEntityRenderer<CreepingHorrorEnti
     public CreepingHorrorRenderer(EntityRendererProvider.Context context) {
         super(context, new CreepingHorrorModel());
         this.shadowRadius = 0.5F;
+        this.withScale(0.85F);
     }
 
     @Override

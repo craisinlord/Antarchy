@@ -115,7 +115,8 @@ public final class AntarchyNeoForgeEvents {
     }
 
     public static void onMissileSquidDeath(LivingDeathEvent event) {
-        if (!(event.getEntity() instanceof MissileSquidEntity)) return;
+        if (!(event.getEntity() instanceof MissileSquidEntity missileSquid)) return;
+        if (missileSquid.isSpawnedByKraken()) return;
         if (!(event.getEntity().level() instanceof ServerLevel serverLevel)) return;
 
         BlockPos deathPos = event.getEntity().blockPosition();
@@ -977,6 +978,8 @@ public final class AntarchyNeoForgeEvents {
     static void registerBrewingRecipes(RegisterBrewingRecipesEvent event) {
         event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.LUCID_EYE.get(), AntarchyNeoforgeMisc.INVERSION);
         event.getBuilder().addMix(AntarchyNeoforgeMisc.INVERSION, Items.REDSTONE, AntarchyNeoforgeMisc.LONG_INVERSION);
+        event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.STINK_BUG.get(), AntarchyNeoforgeMisc.STINKY_POTION);
+        event.getBuilder().addMix(AntarchyNeoforgeMisc.STINKY_POTION, Items.REDSTONE, AntarchyNeoforgeMisc.LONG_STINKY);
         event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.BASILISK_FANG.get(), AntarchyNeoforgeMisc.PARALYSIS);
         event.getBuilder().addMix(AntarchyNeoforgeMisc.PARALYSIS, Items.REDSTONE, AntarchyNeoforgeMisc.LONG_PARALYSIS);
         event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.MOLEWORM_ITEM.get(), AntarchyNeoforgeMisc.HASTE);
@@ -1121,6 +1124,8 @@ public final class AntarchyNeoForgeEvents {
             );
             ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeBlocks.UMBRAL_MOSS_BLOCK.get().asItem(), 0.65f);
             ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeBlocks.UMBRAL_MOSS_CARPET.get().asItem(), 0.3f);
+            ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeBlocks.AMBER_MOSS_BLOCK.get().asItem(), 0.65f);
+            ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeBlocks.AMBER_MOSS_CARPET.get().asItem(), 0.3f);
             ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeBlocks.HUSHWEED.get().asItem(), 0.65f);
             ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeItems.CORNEA_EAR.get(), 0.65f);
         });

@@ -292,6 +292,7 @@ public final class AntarchyFabricNetworking {
         }
 
         player.setDeltaMovement(newX, verticalBoost, newZ);
+        player.setPos(player.getX(), player.getY() + 0.001, player.getZ());
         player.hasImpulse = true;
         player.hurtMarked = true;
         player.resetFallDistance();

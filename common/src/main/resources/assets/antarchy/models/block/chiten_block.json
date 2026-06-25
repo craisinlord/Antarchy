@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "antarchy:block/chiten_block",
+    "side": "antarchy:block/chiten_block"
+  }
+}

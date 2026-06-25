@@ -10,6 +10,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT)
@@ -65,6 +67,11 @@ public final class JumpyBootsClientHandler {
             wasCharging = true;
         } else if (wasCharging && chargeTicks > 0) {
             storedChargeTicks = chargeTicks;
+            if (jumpPressed) {
+                PacketDistributor.sendToServer(new JumpyBootsLaunchPayload(storedChargeTicks, player.isSprinting()));
+                reset();
+                return;
+            }
             primeWindowTicks = JumpyBootsHelper.PRIME_WINDOW_TICKS;
             chargeTicks = 0;
             wasCharging = false;
@@ -79,6 +86,17 @@ public final class JumpyBootsClientHandler {
         wasCharging = false;
         primeWindowTicks = 0;
         storedChargeTicks = 0;
+    }
+
+    @SubscribeEvent
+    public static void onRenderGuiLayer(RenderGuiLayerEvent.Pre event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || !JumpyBootsItem.isWearingJumpyBoots(mc.player) || !isCharging()) {
+            return;
+        }
+        if (event.getName().equals(VanillaGuiLayers.EXPERIENCE_BAR) || event.getName().equals(VanillaGuiLayers.EXPERIENCE_LEVEL)) {
+            event.setCanceled(true);
+        }
     }
 
     public static boolean isCharging() {

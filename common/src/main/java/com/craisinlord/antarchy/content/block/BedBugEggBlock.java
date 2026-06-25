@@ -96,7 +96,7 @@ public class BedBugEggBlock extends Block {
 
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (!this.shouldUpdateHatchLevel(level) || !hasHatchSupport(level, pos)) {
+        if (!this.shouldUpdateHatchLevel(level)) {
             return;
         }
 
