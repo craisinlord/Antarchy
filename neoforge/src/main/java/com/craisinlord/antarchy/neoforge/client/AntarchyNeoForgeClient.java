@@ -4,6 +4,8 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.hud.BloodglassHudRenderer;
 import com.craisinlord.antarchy.content.client.particle.*;
 import com.craisinlord.antarchy.content.client.renderer.*;
+import com.craisinlord.antarchy.content.client.renderer.CreepingHorrorRenderer;
+import com.craisinlord.antarchy.content.client.renderer.LurkingTerrorRenderer;
 import com.craisinlord.antarchy.neoforge.AntarchyNeoForgeFluidTypes;
 import com.craisinlord.antarchy.neoforge.registry.AntarchyNeoforgeBlocks;
 import com.craisinlord.antarchy.neoforge.registry.AntarchyNeoforgeEntites;
@@ -104,6 +106,7 @@ public final class AntarchyNeoForgeClient {
         event.registerEntityRenderer(AntarchyNeoforgeEntites.BED_BUG.get(), context -> withParalyzedGeoLayer(new BedBugRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.WASP.get(), context -> withParalyzedGeoLayer(new WaspRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.BOMBER.get(), context -> withParalyzedGeoLayer(new BomberRenderer(context)));
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.JUMPY_BUG.get(), context -> withParalyzedGeoLayer(new JumpyBugRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.BASILISK.get(), context -> withParalyzedGeoLayer(new BasiliskRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.SHRINK_RAY_PROJECTILE.get(), SizeRayProjectileRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.GROWTH_RAY_PROJECTILE.get(), SizeRayProjectileRenderer::new);
@@ -116,6 +119,8 @@ public final class AntarchyNeoForgeClient {
         event.registerEntityRenderer(AntarchyNeoforgeEntites.EMPEROR_SCORPION.get(), context -> withParalyzedGeoLayer(new EmperorScorpionRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.TORETERROR.get(), ToreterrorRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.WATER_BOMB.get(), WaterBombRenderer::new);
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.CREEPING_HORROR.get(), CreepingHorrorRenderer::new);
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.LURKING_TERROR.get(), LurkingTerrorRenderer::new);
     }
 
     @SubscribeEvent
@@ -221,6 +226,10 @@ public final class AntarchyNeoForgeClient {
         event.registerAboveAll(
                 ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "triffid_goo"),
                 (guiGraphics, partialTick) -> TriffidGooHudRenderer.render(guiGraphics)
+        );
+        event.registerAboveAll(
+                ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "jumpy_boots"),
+                (guiGraphics, partialTick) -> JumpyBootsHudRenderer.render(guiGraphics)
         );
     }
 

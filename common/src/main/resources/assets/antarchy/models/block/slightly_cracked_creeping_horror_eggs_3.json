@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/template_three_turtle_eggs",
+  "textures": {
+    "all": "antarchy:block/creeping_horror_eggs/creeping_horror_eggs_slightly_cracked"
+  }
+}

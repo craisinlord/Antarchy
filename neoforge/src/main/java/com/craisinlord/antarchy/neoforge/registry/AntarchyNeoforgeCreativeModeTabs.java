@@ -67,6 +67,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.DR_TRAYAURUS_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.WASP_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.BOMBER_SPAWN_EGG.get());
+            event.accept(AntarchyNeoforgeItems.JUMPY_BUG_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.CLOUD_SHARK_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.KRAKEN_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.MISSILE_SQUID_SPAWN_EGG.get());
@@ -77,6 +78,8 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.BASILISK_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.EMPEROR_SCORPION_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.TORETERROR_SPAWN_EGG.get());
+            event.accept(AntarchyNeoforgeItems.CREEPING_HORROR_SPAWN_EGG.get());
+            event.accept(AntarchyNeoforgeItems.LURKING_TERROR_SPAWN_EGG.get());
         }
 
         if (event.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS) {
@@ -92,6 +95,8 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.INFESTED_COARSE_DIRT_ITEM.get());
             event.accept(AntarchyNeoforgeItems.TRIFFID_GOO_BLOCK_ITEM.get());
             event.accept(AntarchyNeoforgeItems.BED_BUG_EGG_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.CREEPING_HORROR_EGGS_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.LURKING_TERROR_EGGS_ITEM.get());
             event.accept(AntarchyNeoforgeItems.WASP_NEST_ITEM.get());
             event.accept(AntarchyNeoforgeItems.RED_ANT_NEST_ITEM.get());
             event.accept(AntarchyNeoforgeItems.BROWN_ANT_NEST_ITEM.get());
@@ -135,6 +140,8 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.BLOOD_CRYSTAL_SHARD.get());
             event.accept(AntarchyNeoforgeItems.BLOOD_CRYSTAL_APPLE.get());
             event.accept(AntarchyNeoforgeItems.MANTIS_CLAW.get());
+            event.accept(AntarchyNeoforgeItems.KING_SCALE.get());
+            event.accept(AntarchyNeoforgeItems.QUEEN_SCALE.get());
             event.accept(AntarchyNeoforgeItems.BRUTALFLY_WING.get());
             event.accept(AntarchyNeoforgeItems.PRIMORDIAL_SCUTE.get());
             event.accept(AntarchyNeoforgeItems.TRIFFID_GOO.get());
@@ -285,6 +292,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.SCORPION_WHIP.get());
             event.accept(AntarchyNeoforgeItems.FALLEN_KING_CROWN.get());
             event.accept(AntarchyNeoforgeItems.BRUTALFLY_ELYTRA.get());
+            event.accept(AntarchyNeoforgeItems.JUMPY_BOOTS.get());
             event.accept(PotionContents.createItemStack(Items.POTION, AntarchyNeoforgeMisc.SHRINKING));
             event.accept(PotionContents.createItemStack(Items.POTION, AntarchyNeoforgeMisc.STRONG_SHRINKING));
             event.accept(PotionContents.createItemStack(Items.POTION, AntarchyNeoforgeMisc.EXTREME_SHRINKING));
@@ -384,7 +392,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
             case "ichor_bucket", "antiwater_bucket", "cloud_bucket" -> 16;
 
             // 17 - Misc wearables / gadgets
-            case "moggles", "brutalfly_elytra", "fallen_king_crown" -> 17;
+            case "moggles", "brutalfly_elytra", "fallen_king_crown", "jumpy_boots" -> 17;
 
             // 18 - Weapons
             case "battle_axe", "basilisk_dagger", "squidzooka", "shrink_ray", "growth_ray",
@@ -415,7 +423,8 @@ public class AntarchyNeoforgeCreativeModeTabs {
                  "moleworm", "uranium_nugget", "titanium_nugget",
                  "uranium_ingot", "titanium_ingot", "lucid_eye",
                  "mantis_claw", "jumpy_bug_leg", "brutalfly_wing", "cornea_ear",
-                 "primordial_scute", "triffid_goo", "vortex_eye" -> 22;
+                 "primordial_scute", "triffid_goo", "vortex_eye",
+                 "king_scale", "queen_scale" -> 22;
 
             // 23 - Arrows (reserved for future arrow types)
 

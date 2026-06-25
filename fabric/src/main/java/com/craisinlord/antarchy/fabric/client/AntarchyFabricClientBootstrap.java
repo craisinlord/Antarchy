@@ -92,6 +92,7 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricContent.BED_BUG.get(), BedBugRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.WASP.get(), WaspRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.BOMBER.get(), BomberRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricContent.JUMPY_BUG.get(), JumpyBugRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.BASILISK.get(), BasiliskRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.SHRINK_RAY_PROJECTILE.get(), SizeRayProjectileRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.GROWTH_RAY_PROJECTILE.get(), SizeRayProjectileRenderer::new);
@@ -104,6 +105,8 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricContent.EMPEROR_SCORPION.get(), EmperorScorpionRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.TORETERROR.get(), ToreterrorRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.WATER_BOMB.get(), WaterBombRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricContent.CREEPING_HORROR.get(), CreepingHorrorRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricContent.LURKING_TERROR.get(), LurkingTerrorRenderer::new);
 
         EntityModelLayerRegistry.registerModelLayer(OuranwoodBoatRenderer.boatLayer(), BoatModel::createBodyModel);
         EntityModelLayerRegistry.registerModelLayer(OuranwoodBoatRenderer.chestBoatLayer(), ChestBoatModel::createBodyModel);
@@ -285,6 +288,7 @@ public final class AntarchyFabricClientBootstrap {
                 ParalyzedClientHandler.clampPlayerInput(client.player);
             }
             BrutalflyElytraClientHandler.tick();
+            JumpyBootsClientHandler.tick();
             DiamondMinecartClientHandler.tick();
             ParalyzedClientHandler.tick();
             DreadClientHandler.tick();
@@ -303,6 +307,7 @@ public final class AntarchyFabricClientBootstrap {
             DreadHudRenderer.render(guiGraphics);
             ParalyzedHudRenderer.render(guiGraphics);
             BrutalflyElytraHudRenderer.render(guiGraphics);
+            JumpyBootsHudRenderer.render(guiGraphics);
             BloodglassHudRenderer.render(guiGraphics);
             TriffidGooHudRenderer.render(guiGraphics);
         });

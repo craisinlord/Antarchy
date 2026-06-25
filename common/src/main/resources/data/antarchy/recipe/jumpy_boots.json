@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "JBJ",
+    "J J"
+  ],
+  "key": {
+    "J": {
+      "item": "antarchy:jumpy_bug_leg"
+    },
+    "B": {
+      "item": "minecraft:netherite_boots"
+    }
+  },
+  "result": {
+    "id": "antarchy:jumpy_boots",
+    "count": 1
+  }
+}

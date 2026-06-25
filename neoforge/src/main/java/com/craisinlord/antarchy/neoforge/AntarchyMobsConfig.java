@@ -57,6 +57,14 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue BOMBER_EXPLOSION_RADIUS;
 
 
+    // Jumpy Bug
+
+    private static final ModConfigSpec.DoubleValue JUMPY_BUG_HEALTH;
+    private static final ModConfigSpec.DoubleValue JUMPY_BUG_POUNCE_DAMAGE;
+    private static final ModConfigSpec.DoubleValue JUMPY_BUG_LATCH_DAMAGE;
+    private static final ModConfigSpec.DoubleValue JUMPY_BUG_CAMOUFLAGE_ALPHA;
+
+
     // Kraken
 
     private static final ModConfigSpec.DoubleValue  KRAKEN_HEALTH;
@@ -154,11 +162,24 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue  TORETERROR_SPIN_DAMAGE;
     private static final ModConfigSpec.DoubleValue  TORETERROR_SPIN_KNOCKBACK;
     private static final ModConfigSpec.DoubleValue  TORETERROR_RANGED_WATER_BOMB_CHANCE;
+    private static final ModConfigSpec.DoubleValue  TORETERROR_PROJECTILE_DAMAGE_MULTIPLIER;
     private static final ModConfigSpec.DoubleValue  WATER_BOMB_DAMAGE;
     private static final ModConfigSpec.IntValue     WATER_BOMB_LIFETIME_TICKS;
     private static final ModConfigSpec.DoubleValue  WATER_BOMB_GRAVITY;
     private static final ModConfigSpec.DoubleValue  WATER_BOMB_KNOCKBACK;
     private static final ModConfigSpec.DoubleValue  WATER_CANNON_COOLDOWN_SECONDS;
+
+
+    // Creeping Horror
+
+    private static final ModConfigSpec.DoubleValue CREEPING_HORROR_HEALTH;
+    private static final ModConfigSpec.DoubleValue CREEPING_HORROR_ATTACK_DAMAGE;
+
+
+    // Lurking Terror
+
+    private static final ModConfigSpec.DoubleValue LURKING_TERROR_HEALTH;
+    private static final ModConfigSpec.DoubleValue LURKING_TERROR_ATTACK_DAMAGE;
 
 
     // Lucid
@@ -285,6 +306,16 @@ public final class AntarchyMobsConfig {
         BOMBER_ATTACK_DAMAGE    = b.comment("Direct damage dealt on contact before detonation.")       .defineInRange("attackDamage",     4.0D,  0.0D, 1024.0D);
         BOMBER_EXPLOSION_DAMAGE = b.comment("Extra damage dealt at the center of the explosion.")      .defineInRange("explosionDamage",  8.0D,  0.0D, 1024.0D);
         BOMBER_EXPLOSION_RADIUS = b.comment("Explosion radius when a bomber detonates. TNT uses 4.0.").defineInRange("explosionRadius",  4.0D,  0.0D, 128.0D);
+        b.pop();
+
+
+        // Jumpy Bug
+
+        b.push("jumpyBug");
+        JUMPY_BUG_HEALTH = b.comment("Base max health.").defineInRange("health", 12.0D, 1.0D, 32768.0D);
+        JUMPY_BUG_POUNCE_DAMAGE = b.comment("Damage dealt on a successful pounce latch.").defineInRange("pounceDamage", 2.0D, 0.0D, 1024.0D);
+        JUMPY_BUG_LATCH_DAMAGE = b.comment("Damage dealt per bite while latched.").defineInRange("latchDamage", 1.0D, 0.0D, 1024.0D);
+        JUMPY_BUG_CAMOUFLAGE_ALPHA = b.comment("Renderer alpha while camouflaged.").defineInRange("camouflageAlpha", 0.18D, 0.01D, 1.0D);
         b.pop();
 
 
@@ -432,6 +463,16 @@ public final class AntarchyMobsConfig {
 
         b.pop(); // dread
 
+        b.push("creepingHorror");
+        CREEPING_HORROR_HEALTH        = b.comment("Base max health.").defineInRange("health", 15.0D, 1.0D, 32768.0D);
+        CREEPING_HORROR_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 6.0D, 0.0D, 1024.0D);
+        b.pop();
+
+        b.push("lurkingTerror");
+        LURKING_TERROR_HEALTH        = b.comment("Base max health.").defineInRange("health", 15.0D, 1.0D, 32768.0D);
+        LURKING_TERROR_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 6.0D, 0.0D, 1024.0D);
+        b.pop();
+
         b.push("toreterror");
         TORETERROR_HEALTH                  = b.comment("Base max health.").defineInRange("health", 300.0D, 1.0D, 32768.0D);
         TORETERROR_JUMP_ATTACK_DAMAGE      = b.comment("Damage dealt by the jump shockwave.").defineInRange("jumpAttackDamage", 14.0D, 0.0D, 1024.0D);
@@ -439,6 +480,7 @@ public final class AntarchyMobsConfig {
         TORETERROR_SPIN_DAMAGE             = b.comment("Damage per spin-attack tick.").defineInRange("spinDamage", 8.0D, 0.0D, 1024.0D);
         TORETERROR_SPIN_KNOCKBACK          = b.comment("Knockback strength of the spin attack.").defineInRange("spinKnockback", 1.5D, 0.0D, 10.0D);
         TORETERROR_RANGED_WATER_BOMB_CHANCE = b.comment("Chance (0.0-1.0) the ranged attack fires a Water Bomb instead of Bombers.").defineInRange("rangedWaterBombChance", 0.5D, 0.0D, 1.0D);
+        TORETERROR_PROJECTILE_DAMAGE_MULTIPLIER = b.comment("Damage multiplier applied to projectile hits on the Toreterror (0.5 = half damage).").defineInRange("projectileDamageMultiplier", 0.5D, 0.0D, 1.0D);
         WATER_BOMB_DAMAGE                  = b.comment("Damage dealt by a Water Bomb hit.").defineInRange("waterBombDamage", 6.0D, 0.0D, 1024.0D);
         WATER_BOMB_LIFETIME_TICKS          = b.comment("Ticks before a Water Bomb despawns.").defineInRange("waterBombLifetimeTicks", 120, 1, 6000);
         WATER_BOMB_GRAVITY                 = b.comment("Gravity applied to Water Bombs (higher = steeper arc).").defineInRange("waterBombGravity", 0.12D, 0.0D, 2.0D);
@@ -493,6 +535,11 @@ public final class AntarchyMobsConfig {
     static double  bomberAttackDamage()                     { return BOMBER_ATTACK_DAMAGE.get(); }
     static double  bomberExplosionDamage()                  { return BOMBER_EXPLOSION_DAMAGE.get(); }
     static double  bomberExplosionRadius()                  { return BOMBER_EXPLOSION_RADIUS.get(); }
+
+    static double  jumpyBugHealth()                         { return JUMPY_BUG_HEALTH.get(); }
+    static double  jumpyBugPounceDamage()                   { return JUMPY_BUG_POUNCE_DAMAGE.get(); }
+    static double  jumpyBugLatchDamage()                    { return JUMPY_BUG_LATCH_DAMAGE.get(); }
+    static double  jumpyBugCamouflageAlpha()                { return JUMPY_BUG_CAMOUFLAGE_ALPHA.get(); }
 
     static double  krakenHealth()                           { return KRAKEN_HEALTH.get(); }
     static double  krakenAttackDamage()                     { return KRAKEN_ATTACK_DAMAGE.get(); }
@@ -564,6 +611,7 @@ public final class AntarchyMobsConfig {
     static double  toreterrorSpinDamage()                   { return TORETERROR_SPIN_DAMAGE.get(); }
     static double  toreterrorSpinKnockback()                { return TORETERROR_SPIN_KNOCKBACK.get(); }
     static double  toreterrorRangedWaterBombChance()        { return TORETERROR_RANGED_WATER_BOMB_CHANCE.get(); }
+    static double  toreterrorProjectileDamageMultiplier()   { return TORETERROR_PROJECTILE_DAMAGE_MULTIPLIER.get(); }
     static double  waterBombDamage()                        { return WATER_BOMB_DAMAGE.get(); }
     static int     waterBombLifetimeTicks()                 { return WATER_BOMB_LIFETIME_TICKS.get(); }
     static double  waterBombGravity()                       { return WATER_BOMB_GRAVITY.get(); }
@@ -576,4 +624,9 @@ public final class AntarchyMobsConfig {
     static boolean dreadHallucinationMobsEnabled()          { return DREAD_HALLUCINATION_MOBS_ENABLED.get(); }
     static double  dreadHallucinationMobMinInterval()       { return DREAD_HALLUCINATION_MOB_MIN_INTERVAL.get(); }
     static double  dreadHallucinationMobMaxInterval()       { return DREAD_HALLUCINATION_MOB_MAX_INTERVAL.get(); }
+
+    static double  creepingHorrorHealth()                   { return CREEPING_HORROR_HEALTH.get(); }
+    static double  creepingHorrorAttackDamage()             { return CREEPING_HORROR_ATTACK_DAMAGE.get(); }
+    static double  lurkingTerrorHealth()                    { return LURKING_TERROR_HEALTH.get(); }
+    static double  lurkingTerrorAttackDamage()              { return LURKING_TERROR_ATTACK_DAMAGE.get(); }
 }

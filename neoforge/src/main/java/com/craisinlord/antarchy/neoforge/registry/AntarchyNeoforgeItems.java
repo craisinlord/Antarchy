@@ -14,6 +14,7 @@ import com.craisinlord.antarchy.content.item.BloodCrystalShardItem;
 import com.craisinlord.antarchy.content.item.ultimate.*;
 import com.craisinlord.antarchy.content.item.NightmareArmorItem;
 import com.craisinlord.antarchy.content.item.PrimordialArmorItem;
+import com.craisinlord.antarchy.content.item.JumpyBootsItem;
 import com.craisinlord.antarchy.content.item.WaterCannonItem;
 import com.craisinlord.antarchy.content.item.NightmareSwordItem;
 import com.craisinlord.antarchy.content.item.LucidEyeItem;
@@ -114,6 +115,16 @@ public final class AntarchyNeoforgeItems {
                     SoundEvents.ARMOR_EQUIP_NETHERITE,
                     () -> Ingredient.of(PRIMORDIAL_SCUTE.get()),
                     List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "primordial"))),
+                    3.0F,
+                    0.1F
+            ));
+    private static final DeferredHolder<ArmorMaterial, ArmorMaterial> JUMPY_BOOTS_ARMOR_MATERIAL = ARMOR_MATERIALS.register("jumpy_boots",
+            () -> new ArmorMaterial(
+                    createJumpyBootsDefense(),
+                    15,
+                    SoundEvents.ARMOR_EQUIP_NETHERITE,
+                    () -> Ingredient.of(Items.NETHERITE_BOOTS),
+                    List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "jumpy_boots"))),
                     3.0F,
                     0.1F
             ));
@@ -259,6 +270,8 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_LANTERN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_LANTERN);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_CAMPFIRE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_CAMPFIRE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BED_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BED_BUG_EGG);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> CREEPING_HORROR_EGGS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CREEPING_HORROR_EGGS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> LURKING_TERROR_EGGS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LURKING_TERROR_EGGS);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> WASP_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.WASP_NEST);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> HUSHWEED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.HUSHWEED);
     public static final DeferredItem<BucketItem> ICHOR_BUCKET = ITEMS.register("ichor_bucket",
@@ -294,8 +307,13 @@ public final class AntarchyNeoforgeItems {
                     -2.2F
             ));
     public static final DeferredItem<Item> MANTIS_CLAW = ITEMS.registerSimpleItem("mantis_claw", new Item.Properties().rarity(Rarity.UNCOMMON));
-    public static final DeferredItem<Item> JUMPY_BUG_LEG = ITEMS.register("jumpy_bug_leg",
-            () -> new MobComingSoonTooltipItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<Item> KING_SCALE = ITEMS.register("king_scale",
+            () -> new MobComingSoonTooltipItem(new Item.Properties().rarity(Rarity.RARE)));
+    public static final DeferredItem<Item> QUEEN_SCALE = ITEMS.register("queen_scale",
+            () -> new MobComingSoonTooltipItem(new Item.Properties().rarity(Rarity.RARE)));
+    public static final DeferredItem<Item> JUMPY_BUG_LEG = ITEMS.registerSimpleItem("jumpy_bug_leg", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<JumpyBootsItem> JUMPY_BOOTS = ITEMS.register("jumpy_boots",
+            () -> new JumpyBootsItem(JUMPY_BOOTS_ARMOR_MATERIAL, new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON).fireResistant().durability(ArmorItem.Type.BOOTS.getDurability(37))));
     public static final DeferredItem<Item> BRUTALFLY_WING = ITEMS.registerSimpleItem("brutalfly_wing", new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final DeferredItem<BrutalflyElytraItem> BRUTALFLY_ELYTRA = ITEMS.register("brutalfly_elytra",
             () -> new BrutalflyElytraItem(new Item.Properties().rarity(Rarity.UNCOMMON).durability(480)));
@@ -495,6 +513,8 @@ public final class AntarchyNeoforgeItems {
             () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.WASP, 0x111111, 0xF1D800, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> BOMBER_SPAWN_EGG = ITEMS.register("bomber_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.BOMBER, 0x7A7A7A, 0xB32020, new Item.Properties()));
+    public static final DeferredItem<DeferredSpawnEggItem> JUMPY_BUG_SPAWN_EGG = ITEMS.register("jumpy_bug_spawn_egg",
+            () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.JUMPY_BUG, 0x111111, 0xFF7A00, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> CLOUD_SHARK_SPAWN_EGG = ITEMS.register("cloud_shark_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.CLOUD_SHARK, 0xDDEAF4, 0x7F96A8, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> KRAKEN_SPAWN_EGG = ITEMS.register("kraken_spawn_egg",
@@ -532,6 +552,10 @@ public final class AntarchyNeoforgeItems {
             () -> new PrimordialArmorItem(PRIMORDIAL_ARMOR_MATERIAL, ArmorItem.Type.BOOTS, new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
     public static final DeferredItem<DeferredSpawnEggItem> TORETERROR_SPAWN_EGG = ITEMS.register("toreterror_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.TORETERROR, 0x90EE90, 0x5C4033, new Item.Properties().rarity(Rarity.EPIC)));
+    public static final DeferredItem<DeferredSpawnEggItem> CREEPING_HORROR_SPAWN_EGG = ITEMS.register("creeping_horror_spawn_egg",
+            () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.CREEPING_HORROR, 0x6B3A1F, 0x6B0000, new Item.Properties()));
+    public static final DeferredItem<DeferredSpawnEggItem> LURKING_TERROR_SPAWN_EGG = ITEMS.register("lurking_terror_spawn_egg",
+            () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.LURKING_TERROR, 0x2D5A1B, 0x8B0000, new Item.Properties()));
 
     private AntarchyNeoforgeItems() {}
 
@@ -630,6 +654,16 @@ public final class AntarchyNeoforgeItems {
         defense.put(ArmorItem.Type.CHESTPLATE, 0);
         defense.put(ArmorItem.Type.HELMET, 2);
         defense.put(ArmorItem.Type.BODY, 2);
+        return defense;
+    }
+
+    private static EnumMap<ArmorItem.Type, Integer> createJumpyBootsDefense() {
+        EnumMap<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
+        defense.put(ArmorItem.Type.BOOTS, 3);
+        defense.put(ArmorItem.Type.LEGGINGS, 0);
+        defense.put(ArmorItem.Type.CHESTPLATE, 0);
+        defense.put(ArmorItem.Type.HELMET, 0);
+        defense.put(ArmorItem.Type.BODY, 0);
         return defense;
     }
 }

@@ -15,6 +15,7 @@ import com.craisinlord.antarchy.content.entity.DrTrayaurusEntity;
 import com.craisinlord.antarchy.content.entity.EasterBunnyEntity;
 import com.craisinlord.antarchy.content.entity.EmperorScorpionEntity;
 import com.craisinlord.antarchy.content.entity.HushProjectileEntity;
+import com.craisinlord.antarchy.content.entity.JumpyBugEntity;
 import com.craisinlord.antarchy.content.entity.MantisEntity;
 import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
 import com.craisinlord.antarchy.content.entity.MolevoreEntity;
@@ -40,6 +41,8 @@ import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
+import com.craisinlord.antarchy.content.entity.CreepingHorrorEntity;
+import com.craisinlord.antarchy.content.entity.LurkingTerrorEntity;
 import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
 import com.craisinlord.antarchy.content.entity.WaterBombEntity;
 import net.minecraft.core.registries.Registries;
@@ -117,6 +120,11 @@ public final class AntarchyNeoforgeEntites {
                     .sized(0.55F, 0.75F)
                     .clientTrackingRange(8)
                     .build("bomber"));
+    public static final DeferredHolder<EntityType<?>, EntityType<JumpyBugEntity>> JUMPY_BUG = ENTITY_TYPES.register("jumpy_bug",
+            () -> EntityType.Builder.of(JumpyBugEntity::new, MobCategory.MONSTER)
+                    .sized(3.0F, 3.0F)
+                    .clientTrackingRange(8)
+                    .build("jumpy_bug"));
     public static final DeferredHolder<EntityType<?>, EntityType<SizeRayProjectileEntity>> SHRINK_RAY_PROJECTILE = ENTITY_TYPES.register("shrink_ray_projectile",
             () -> EntityType.Builder.<SizeRayProjectileEntity>of(SizeRayProjectileEntity::createShrink, MobCategory.MISC)
                     .sized(0.5F, 0.5F)
@@ -253,6 +261,16 @@ public final class AntarchyNeoforgeEntites {
                     .clientTrackingRange(8)
                     .updateInterval(1)
                     .build("water_bomb"));
+    public static final DeferredHolder<EntityType<?>, EntityType<CreepingHorrorEntity>> CREEPING_HORROR = ENTITY_TYPES.register("creeping_horror",
+            () -> EntityType.Builder.of(CreepingHorrorEntity::new, MobCategory.MONSTER)
+                    .sized(0.7F, 0.5F)
+                    .clientTrackingRange(10)
+                    .build("creeping_horror"));
+    public static final DeferredHolder<EntityType<?>, EntityType<LurkingTerrorEntity>> LURKING_TERROR = ENTITY_TYPES.register("lurking_terror",
+            () -> EntityType.Builder.of(LurkingTerrorEntity::new, MobCategory.MONSTER)
+                    .sized(0.8F, 0.6F)
+                    .clientTrackingRange(10)
+                    .build("lurking_terror"));
     public static final DeferredHolder<EntityType<?>, EntityType<UpwardFallingBlockEntity>> UPWARD_FALLING_BLOCK = ENTITY_TYPES.register("upward_falling_block",
             () -> EntityType.Builder.<UpwardFallingBlockEntity>of(
                             UpwardFallingBlockEntity::new, MobCategory.MISC)

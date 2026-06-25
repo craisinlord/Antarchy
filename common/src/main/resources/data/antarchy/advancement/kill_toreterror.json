@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "kill_toreterror": {
+      "conditions": {
+        "entity": {
+          "type": "antarchy:toreterror"
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.kill_toreterror.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:toreterror_spawn_egg"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.kill_toreterror.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_toreterror"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

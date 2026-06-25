@@ -74,6 +74,11 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setBomberExplosionDamage(AntarchyMobsConfig.bomberExplosionDamage());
         AntarchySettings.setBomberExplosionRadius(AntarchyMobsConfig.bomberExplosionRadius());
 
+        AntarchySettings.setJumpyBugHealth(AntarchyMobsConfig.jumpyBugHealth());
+        AntarchySettings.setJumpyBugPounceDamage(AntarchyMobsConfig.jumpyBugPounceDamage());
+        AntarchySettings.setJumpyBugLatchDamage(AntarchyMobsConfig.jumpyBugLatchDamage());
+        AntarchySettings.setJumpyBugCamouflageAlpha(AntarchyMobsConfig.jumpyBugCamouflageAlpha());
+
         AntarchySettings.setKrakenHealth(AntarchyMobsConfig.krakenHealth());
         AntarchySettings.setKrakenAttackDamage(AntarchyMobsConfig.krakenAttackDamage());
         AntarchySettings.setKrakenProjectileDamageTakenMultiplier(AntarchyMobsConfig.krakenProjectileDamageTakenMultiplier());
@@ -150,11 +155,17 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setToreterrorSpinDamage(AntarchyMobsConfig.toreterrorSpinDamage());
         AntarchySettings.setToreterrorSpinKnockback(AntarchyMobsConfig.toreterrorSpinKnockback());
         AntarchySettings.setToreterrorRangedWaterBombChance(AntarchyMobsConfig.toreterrorRangedWaterBombChance());
+        AntarchySettings.setToreterrorProjectileDamageMultiplier(AntarchyMobsConfig.toreterrorProjectileDamageMultiplier());
         AntarchySettings.setWaterBombDamage(AntarchyMobsConfig.waterBombDamage());
         AntarchySettings.setWaterBombLifetimeTicks(AntarchyMobsConfig.waterBombLifetimeTicks());
         AntarchySettings.setWaterBombGravity(AntarchyMobsConfig.waterBombGravity());
         AntarchySettings.setWaterBombKnockback(AntarchyMobsConfig.waterBombKnockback());
         AntarchySettings.setWaterCannonCooldownSeconds(AntarchyMobsConfig.waterCannonCooldownSeconds());
+
+        AntarchySettings.setCreepingHorrorHealth(AntarchyMobsConfig.creepingHorrorHealth());
+        AntarchySettings.setCreepingHorrorAttackDamage(AntarchyMobsConfig.creepingHorrorAttackDamage());
+        AntarchySettings.setLurkingTerrorHealth(AntarchyMobsConfig.lurkingTerrorHealth());
+        AntarchySettings.setLurkingTerrorAttackDamage(AntarchyMobsConfig.lurkingTerrorAttackDamage());
     }
 
     private static void bakeToolsConfig() {

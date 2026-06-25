@@ -8,6 +8,8 @@ import com.craisinlord.antarchy.content.entity.EasterBunnyEntity;
 import com.craisinlord.antarchy.content.entity.HushProjectileEntity;
 import com.craisinlord.antarchy.content.entity.WaterBombEntity;
 import com.craisinlord.antarchy.content.entity.TriffidEntity;
+import com.craisinlord.antarchy.content.entity.CreepingHorrorEntity;
+import com.craisinlord.antarchy.content.entity.LurkingTerrorEntity;
 import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
 import com.craisinlord.antarchy.content.entity.WaspEntity;
 import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyEntity;
@@ -78,6 +80,10 @@ public final class AntarchyObjects {
     public static Supplier<EntityType<ToreterrorEntity>> TORETERROR = (Supplier<EntityType<ToreterrorEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<WaterBombEntity>> WATER_BOMB = (Supplier<EntityType<WaterBombEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<CreepingHorrorEntity>> CREEPING_HORROR = (Supplier<EntityType<CreepingHorrorEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<LurkingTerrorEntity>> LURKING_TERROR = (Supplier<EntityType<LurkingTerrorEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> DUPLICATOR_LOG = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -185,6 +191,10 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<Block> BED_BUG_EGG = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<Block> CREEPING_HORROR_EGGS = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> LURKING_TERROR_EGGS = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<Block> WASP_NEST = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> HUSHWEED = (Supplier<Block>) UNBOUND;
@@ -222,6 +232,8 @@ public final class AntarchyObjects {
             Supplier<EntityType<HushProjectileEntity>> hushProjectile,
             Supplier<EntityType<ToreterrorEntity>> toreterror,
             Supplier<EntityType<WaterBombEntity>> waterBomb,
+            Supplier<EntityType<CreepingHorrorEntity>> creepingHorror,
+            Supplier<EntityType<LurkingTerrorEntity>> lurkingTerror,
             Supplier<Block> duplicatorLog,
             Supplier<Block> duplicatorSapling,
             Supplier<Block> ductTape,
@@ -272,6 +284,8 @@ public final class AntarchyObjects {
             Supplier<Block> pinkMilkweed,
             Supplier<Block> torchflowerBush,
             Supplier<Block> bedBugEggs,
+            Supplier<Block> creepingHorrorEggs,
+            Supplier<Block> lurkingTerrorEggs,
             Supplier<Block> waspNest,
             Supplier<Block> hushweed,
             Supplier<Block> squirrelNestBlock,
@@ -302,6 +316,8 @@ public final class AntarchyObjects {
         HUSH_PROJECTILE = hushProjectile;
         TORETERROR = toreterror;
         WATER_BOMB = waterBomb;
+        CREEPING_HORROR = creepingHorror;
+        LURKING_TERROR = lurkingTerror;
         DUPLICATOR_LOG = duplicatorLog;
         DUPLICATOR_SAPLING = duplicatorSapling;
         DUCT_TAPE = ductTape;
@@ -352,6 +368,8 @@ public final class AntarchyObjects {
         PINK_MILKWEED = pinkMilkweed;
         TORCHFLOWER_BUSH = torchflowerBush;
         BED_BUG_EGG = bedBugEggs;
+        CREEPING_HORROR_EGGS = creepingHorrorEggs;
+        LURKING_TERROR_EGGS = lurkingTerrorEggs;
         WASP_NEST = waspNest;
         HUSHWEED = hushweed;
         SQUIRREL_NEST_BLOCK = squirrelNestBlock;

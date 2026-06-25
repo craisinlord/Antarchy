@@ -4,6 +4,8 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.*;
+import com.craisinlord.antarchy.content.block.CreepingHorrorEggBlock;
+import com.craisinlord.antarchy.content.block.LurkingTerrorEggBlock;
 import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.DreamCampfireBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.HushweedBlockEntity;
@@ -200,6 +202,10 @@ public final class AntarchyNeoforgeBlocks {
                     .noOcclusion()
                     .noCollission()
                     .replaceable()));
+    public static final DeferredBlock<CreepingHorrorEggBlock> CREEPING_HORROR_EGGS = BLOCKS.register("creeping_horror_eggs",
+            () -> new CreepingHorrorEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
+    public static final DeferredBlock<LurkingTerrorEggBlock> LURKING_TERROR_EGGS = BLOCKS.register("lurking_terror_eggs",
+            () -> new LurkingTerrorEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
     public static final DeferredBlock<WaspNestBlock> WASP_NEST = BLOCKS.register("wasp_nest",
             () -> new WaspNestBlock(AntarchyNeoforgeItems::waspNestBlockEntityType, BlockBehaviour.Properties.ofFullCopy(Blocks.BEE_NEST)));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.OuranwoodSquirrelNestBlock> OURANWOOD_SQUIRREL_NEST = BLOCKS.register("ouranwood_squirrel_nest",

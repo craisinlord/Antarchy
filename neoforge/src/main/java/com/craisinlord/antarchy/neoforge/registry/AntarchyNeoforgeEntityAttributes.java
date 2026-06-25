@@ -2,6 +2,8 @@ package com.craisinlord.antarchy.neoforge.registry;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.entity.*;
+import com.craisinlord.antarchy.content.entity.CreepingHorrorEntity;
+import com.craisinlord.antarchy.content.entity.LurkingTerrorEntity;
 import com.craisinlord.antarchy.content.entity.basilisk.BasiliskEntity;
 import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyEntity;
 import com.craisinlord.antarchy.content.entity.cloud_shark.CloudSharkEntity;
@@ -46,6 +48,7 @@ public class AntarchyNeoforgeEntityAttributes {
         event.put(AntarchyNeoforgeEntites.BED_BUG.get(), BedBugEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.WASP.get(), WaspEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.BOMBER.get(), BomberEntity.createAttributes().build());
+        event.put(AntarchyNeoforgeEntites.JUMPY_BUG.get(), JumpyBugEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.MANTIS.get(), MantisEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.TRIFFID.get(), TriffidEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.LUCID.get(), LucidEntity.createAttributes().build());
@@ -53,6 +56,8 @@ public class AntarchyNeoforgeEntityAttributes {
         event.put(AntarchyNeoforgeEntites.BASILISK.get(), BasiliskEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.EMPEROR_SCORPION.get(), EmperorScorpionEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.TORETERROR.get(), ToreterrorEntity.createAttributes().build());
+        event.put(AntarchyNeoforgeEntites.CREEPING_HORROR.get(), CreepingHorrorEntity.createAttributes().build());
+        event.put(AntarchyNeoforgeEntites.LURKING_TERROR.get(), LurkingTerrorEntity.createAttributes().build());
 
         AttributeSupplier redAntAttributes = buildAntAttributes(AntarchySettings.redAntHealth(), AntarchySettings.redAntMovementSpeed(), AntarchySettings.redAntAttackDamage()).build();
         AttributeSupplier brownAntAttributes = buildAntAttributes(AntarchySettings.brownAntHealth(), AntarchySettings.brownAntMovementSpeed(), AntarchySettings.brownAntAttackDamage()).build();

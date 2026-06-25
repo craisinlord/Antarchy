@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "get_water_cannon": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:water_cannon"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.water_cannon_craft.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:water_cannon"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.water_cannon_craft.title"
+    }
+  },
+  "requirements": [
+    [
+      "get_water_cannon"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -271,6 +271,10 @@ public final class AntarchySettings {
     private static double bedBugAttackLungeHorizontalSpeed = 0.42D;
     private static double bedBugAttackLungeVerticalSpeed = 0.1D;
     private static float bedBugHealAmount = 2.0F;
+    private static double jumpyBugHealth = 12.0D;
+    private static double jumpyBugPounceDamage = 2.0D;
+    private static double jumpyBugLatchDamage = 1.0D;
+    private static double jumpyBugCamouflageAlpha = 0.18D;
     private static double brutalflyArmor = 10.0D;
     private static double brutalflyArmorToughness = 4.0D;
     private static double brutalflyKnockbackResistance = 0.7D;
@@ -451,11 +455,16 @@ public final class AntarchySettings {
     private static double toreterrorSpinDamage = 8.0D;
     private static double toreterrorSpinKnockback = 1.5D;
     private static double toreterrorRangedWaterBombChance = 0.5D;
+    private static double toreterrorProjectileDamageMultiplier = 0.5D;
     private static double waterBombDamage = 6.0D;
     private static int waterBombLifetimeTicks = 120;
     private static double waterBombGravity = 0.12D;
     private static double waterBombKnockback = 1.2D;
     private static double waterCannonCooldownSeconds = 1.5D;
+    private static double creepingHorrorHealth = 15.0D;
+    private static double creepingHorrorAttackDamage = 6.0D;
+    private static double lurkingTerrorHealth = 15.0D;
+    private static double lurkingTerrorAttackDamage = 6.0D;
 
     private AntarchySettings() {
     }
@@ -1811,6 +1820,18 @@ public final class AntarchySettings {
     public static float bedBugHealAmount() { return bedBugHealAmount; }
     public static void setBedBugHealAmount(float value) { bedBugHealAmount = value; }
 
+    public static double jumpyBugHealth() { return jumpyBugHealth; }
+    public static void setJumpyBugHealth(double value) { jumpyBugHealth = value; }
+
+    public static double jumpyBugPounceDamage() { return jumpyBugPounceDamage; }
+    public static void setJumpyBugPounceDamage(double value) { jumpyBugPounceDamage = value; }
+
+    public static double jumpyBugLatchDamage() { return jumpyBugLatchDamage; }
+    public static void setJumpyBugLatchDamage(double value) { jumpyBugLatchDamage = value; }
+
+    public static double jumpyBugCamouflageAlpha() { return jumpyBugCamouflageAlpha; }
+    public static void setJumpyBugCamouflageAlpha(double value) { jumpyBugCamouflageAlpha = value; }
+
     public static double brutalflyArmor() { return brutalflyArmor; }
     public static void setBrutalflyArmor(double value) { brutalflyArmor = value; }
 
@@ -2334,6 +2355,8 @@ public final class AntarchySettings {
     public static void setToreterrorSpinKnockback(double v) { toreterrorSpinKnockback = v; }
     public static double toreterrorRangedWaterBombChance() { return toreterrorRangedWaterBombChance; }
     public static void setToreterrorRangedWaterBombChance(double v) { toreterrorRangedWaterBombChance = v; }
+    public static double toreterrorProjectileDamageMultiplier() { return toreterrorProjectileDamageMultiplier; }
+    public static void setToreterrorProjectileDamageMultiplier(double v) { toreterrorProjectileDamageMultiplier = v; }
     public static double waterBombDamage() { return waterBombDamage; }
     public static void setWaterBombDamage(double v) { waterBombDamage = v; }
     public static int waterBombLifetimeTicks() { return waterBombLifetimeTicks; }
@@ -2344,4 +2367,13 @@ public final class AntarchySettings {
     public static void setWaterBombKnockback(double v) { waterBombKnockback = v; }
     public static double waterCannonCooldownSeconds() { return waterCannonCooldownSeconds; }
     public static void setWaterCannonCooldownSeconds(double v) { waterCannonCooldownSeconds = v; }
+
+    public static double creepingHorrorHealth() { return creepingHorrorHealth; }
+    public static void setCreepingHorrorHealth(double v) { creepingHorrorHealth = v; }
+    public static double creepingHorrorAttackDamage() { return creepingHorrorAttackDamage; }
+    public static void setCreepingHorrorAttackDamage(double v) { creepingHorrorAttackDamage = v; }
+    public static double lurkingTerrorHealth() { return lurkingTerrorHealth; }
+    public static void setLurkingTerrorHealth(double v) { lurkingTerrorHealth = v; }
+    public static double lurkingTerrorAttackDamage() { return lurkingTerrorAttackDamage; }
+    public static void setLurkingTerrorAttackDamage(double v) { lurkingTerrorAttackDamage = v; }
 }

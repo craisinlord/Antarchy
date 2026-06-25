@@ -1,0 +1,76 @@
+{
+  "variants": {
+    "eggs=1,hatch=0": [
+      { "model": "antarchy:block/lurking_terror_eggs_1" },
+      { "model": "antarchy:block/lurking_terror_eggs_1", "y": 90 },
+      { "model": "antarchy:block/lurking_terror_eggs_1", "y": 180 },
+      { "model": "antarchy:block/lurking_terror_eggs_1", "y": 270 }
+    ],
+    "eggs=1,hatch=1": [
+      { "model": "antarchy:block/slightly_cracked_lurking_terror_eggs_1" },
+      { "model": "antarchy:block/slightly_cracked_lurking_terror_eggs_1", "y": 90 },
+      { "model": "antarchy:block/slightly_cracked_lurking_terror_eggs_1", "y": 180 },
+      { "model": "antarchy:block/slightly_cracked_lurking_terror_eggs_1", "y": 270 }
+    ],
+    "eggs=1,hatch=2": [
+      { "model": "antarchy:block/very_cracked_lurking_terror_eggs_1" },
+      { "model": "antarchy:block/very_cracked_lurking_terror_eggs_1", "y": 90 },
+      { "model": "antarchy:block/very_cracked_lurking_terror_eggs_1", "y": 180 },
+      { "model": "antarchy:block/very_cracked_lurking_terror_eggs_1", "y": 270 }
+    ],
+    "eggs=2,hatch=0": [
+      { "model": "antarchy:block/lurking_terror_eggs_2" },
+      { "model": "antarchy:block/lurking_terror_eggs_2", "y": 90 },
+      { "model": "antarchy:block/lurking_terror_eggs_2", "y": 180 },
+      { "model": "antarchy:block/lurking_terror_eggs_2", "y": 270 }
+    ],
+    "eggs=2,hatch=1": [
+      { "model": "antarchy:block/slightly_cracked_lurking_terror_eggs_2" },
+      { "model": "antarchy:block/slightly_cracked_lurking_terror_eggs_2", "y": 90 },
+      { "model": "antarchy:block/slightly_cracked_lurking_terror_eggs_2", "y": 180 },
+      { "model": "antarchy:block/slightly_cracked_lurking_terror_eggs_2", "y": 270 }
+    ],
+    "eggs=2,hatch=2": [
+      { "model": "antarchy:block/very_cracked_lurking_terror_eggs_2" },
+      { "model": "antarchy:block/very_cracked_lurking_terror_eggs_2", "y": 90 },
+      { "model": "antarchy:block/very_cracked_lurking_terror_eggs_2", "y": 180 },
+      { "model": "antarchy:block/very_cracked_lurking_terror_eggs_2", "y": 270 }
+    ],
+    "eggs=3,hatch=0": [
+      { "model": "antarchy:block/lurking_terror_eggs_3" },
+      { "model": "antarchy:block/lurking_terror_eggs_3", "y": 90 },
+      { "model": "antarchy:block/lurking_terror_eggs_3", "y": 180 },
+      { "model": "antarchy:block/lurking_terror_eggs_3", "y": 270 }
+    ],
+    "eggs=3,hatch=1": [
+      { "model": "antarchy:block/slightly_cracked_lurking_terror_eggs_3" },
+      { "model": "antarchy:block/slightly_cracked_lurking_terror_eggs_3", "y": 90 },
+      { "model": "antarchy:block/slightly_cracked_lurking_terror_eggs_3", "y": 180 },
+      { "model": "antarchy:block/slightly_cracked_lurking_terror_eggs_3", "y": 270 }
+    ],
+    "eggs=3,hatch=2": [
+      { "model": "antarchy:block/very_cracked_lurking_terror_eggs_3" },
+      { "model": "antarchy:block/very_cracked_lurking_terror_eggs_3", "y": 90 },
+      { "model": "antarchy:block/very_cracked_lurking_terror_eggs_3", "y": 180 },
+      { "model": "antarchy:block/very_cracked_lurking_terror_eggs_3", "y": 270 }
+    ],
+    "eggs=4,hatch=0": [
+      { "model": "antarchy:block/lurking_terror_eggs_4" },
+      { "model": "antarchy:block/lurking_terror_eggs_4", "y": 90 },
+      { "model": "antarchy:block/lurking_terror_eggs_4", "y": 180 },
+      { "model": "antarchy:block/lurking_terror_eggs_4", "y": 270 }
+    ],
+    "eggs=4,hatch=1": [
+      { "model": "antarchy:block/slightly_cracked_lurking_terror_eggs_4" },
+      { "model": "antarchy:block/slightly_cracked_lurking_terror_eggs_4", "y": 90 },
+      { "model": "antarchy:block/slightly_cracked_lurking_terror_eggs_4", "y": 180 },
+      { "model": "antarchy:block/slightly_cracked_lurking_terror_eggs_4", "y": 270 }
+    ],
+    "eggs=4,hatch=2": [
+      { "model": "antarchy:block/very_cracked_lurking_terror_eggs_4" },
+      { "model": "antarchy:block/very_cracked_lurking_terror_eggs_4", "y": 90 },
+      { "model": "antarchy:block/very_cracked_lurking_terror_eggs_4", "y": 180 },
+      { "model": "antarchy:block/very_cracked_lurking_terror_eggs_4", "y": 270 }
+    ]
+  }
+}

@@ -982,6 +982,7 @@ public final class AntarchyNeoForgeEvents {
         event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.MOLEWORM_ITEM.get(), AntarchyNeoforgeMisc.HASTE);
         event.getBuilder().addMix(AntarchyNeoforgeMisc.HASTE, Items.GLOWSTONE_DUST, AntarchyNeoforgeMisc.STRONG_HASTE);
         event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.CLOUD_SHARK_FIN.get(), Potions.SLOW_FALLING);
+        event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.JUMPY_BUG_LEG.get(), Potions.LEAPING);
         event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.CORNEA_EAR.get(), Potions.NIGHT_VISION);
         event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.URANIUM_NUGGET.get(), AntarchyNeoforgeMisc.SHRINKING);
         event.getBuilder().addMix(AntarchyNeoforgeMisc.SHRINKING, Items.GLOWSTONE_DUST, AntarchyNeoforgeMisc.STRONG_SHRINKING);

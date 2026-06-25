@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.Difficulty;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -219,6 +220,10 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (source.is(net.minecraft.world.damagesource.DamageTypes.DROWN)) return false;
+        if (source.is(DamageTypeTags.IS_PROJECTILE)) {
+            amount *= (float) AntarchySettings.toreterrorProjectileDamageMultiplier();
+        }
         if (!this.isPhase2()) {
             float halfHealth = this.getMaxHealth() * 0.5F;
             if (this.getHealth() - amount <= halfHealth) {

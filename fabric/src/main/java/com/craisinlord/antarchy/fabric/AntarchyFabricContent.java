@@ -55,6 +55,7 @@ import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.HushProjectileEntity;
+import com.craisinlord.antarchy.content.entity.JumpyBugEntity;
 import com.craisinlord.antarchy.content.entity.OuranwoodBoatEntity;
 import com.craisinlord.antarchy.content.entity.OuranwoodChestBoatEntity;
 import com.craisinlord.antarchy.content.entity.MantisEntity;
@@ -66,6 +67,8 @@ import com.craisinlord.antarchy.content.item.LucidPearlItem;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
 import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
 import com.craisinlord.antarchy.content.entity.WaterBombEntity;
+import com.craisinlord.antarchy.content.entity.CreepingHorrorEntity;
+import com.craisinlord.antarchy.content.entity.LurkingTerrorEntity;
 import com.craisinlord.antarchy.content.item.PrimordialArmorItem;
 import com.craisinlord.antarchy.content.item.WaterCannonItem;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
@@ -191,6 +194,7 @@ import net.minecraft.world.item.StandingAndWallBlockItem;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleType;
@@ -614,6 +618,22 @@ public final class AntarchyFabricContent {
             () -> new DreamFireBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_FIRE)));
     public static final DeferredBlock<DreamCeilingFireBlock> DREAM_CEILING_FIRE = BLOCKS.register("dream_fire_ceiling",
             () -> new DreamCeilingFireBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_FIRE)));
+    public static final DeferredBlock<CreepingHorrorEggBlock> CREEPING_HORROR_EGGS = BLOCKS.register("creeping_horror_eggs",
+            () -> new CreepingHorrorEggBlock(BlockBehaviour.Properties.of()
+                    .strength(0.15F)
+                    .sound(SoundType.METAL)
+                    .randomTicks()
+                    .noOcclusion()
+                    .noCollission()
+                    .replaceable()));
+    public static final DeferredBlock<LurkingTerrorEggBlock> LURKING_TERROR_EGGS = BLOCKS.register("lurking_terror_eggs",
+            () -> new LurkingTerrorEggBlock(BlockBehaviour.Properties.of()
+                    .strength(0.15F)
+                    .sound(SoundType.METAL)
+                    .randomTicks()
+                    .noOcclusion()
+                    .noCollission()
+                    .replaceable()));
     public static final DeferredBlock<BedBugEggBlock> BED_BUG_EGG = BLOCKS.register("bed_bug_egg",
             () -> new BedBugEggBlock(BlockBehaviour.Properties.of()
                     .strength(0.15F)
@@ -749,6 +769,11 @@ public final class AntarchyFabricContent {
                     .sized(0.55F, 0.75F)
                     .clientTrackingRange(8)
                     .build("bomber"));
+    public static final DeferredHolder<EntityType<?>, EntityType<JumpyBugEntity>> JUMPY_BUG = ENTITY_TYPES.register("jumpy_bug",
+            () -> EntityType.Builder.of(JumpyBugEntity::new, MobCategory.MONSTER)
+                    .sized(3.0F, 3.0F)
+                    .clientTrackingRange(8)
+                    .build("jumpy_bug"));
     public static final DeferredHolder<EntityType<?>, EntityType<SizeRayProjectileEntity>> SHRINK_RAY_PROJECTILE = ENTITY_TYPES.register("shrink_ray_projectile",
             () -> EntityType.Builder.<SizeRayProjectileEntity>of(SizeRayProjectileEntity::createShrink, MobCategory.MISC)
                     .sized(0.5F, 0.5F)
@@ -1112,6 +1137,8 @@ public final class AntarchyFabricContent {
             () -> new StandingAndWallBlockItem(DREAM_TORCH.get(), DREAM_WALL_TORCH.get(), new Item.Properties(), Direction.UP));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_LANTERN_ITEM = ITEMS.registerSimpleBlockItem(DREAM_LANTERN);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_CAMPFIRE_ITEM = ITEMS.registerSimpleBlockItem(DREAM_CAMPFIRE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> CREEPING_HORROR_EGGS_ITEM = ITEMS.registerSimpleBlockItem(CREEPING_HORROR_EGGS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> LURKING_TERROR_EGGS_ITEM = ITEMS.registerSimpleBlockItem(LURKING_TERROR_EGGS);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BED_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(BED_BUG_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> WASP_NEST_ITEM = ITEMS.registerSimpleBlockItem(WASP_NEST);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> HUSHWEED_ITEM = ITEMS.registerSimpleBlockItem(HUSHWEED);
@@ -1148,8 +1175,26 @@ public final class AntarchyFabricContent {
                     -2.2F
             ));
     public static final DeferredItem<Item> MANTIS_CLAW = ITEMS.registerSimpleItem("mantis_claw", new Item.Properties().rarity(Rarity.UNCOMMON));
-    public static final DeferredItem<Item> JUMPY_BUG_LEG = ITEMS.register("jumpy_bug_leg",
-            () -> new MobComingSoonTooltipItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<Item> KING_SCALE = ITEMS.register("king_scale",
+            () -> new MobComingSoonTooltipItem(new Item.Properties().rarity(Rarity.RARE)));
+    public static final DeferredItem<Item> QUEEN_SCALE = ITEMS.register("queen_scale",
+            () -> new MobComingSoonTooltipItem(new Item.Properties().rarity(Rarity.RARE)));
+    public static final DeferredItem<Item> JUMPY_BUG_LEG = ITEMS.registerSimpleItem("jumpy_bug_leg", new Item.Properties().rarity(Rarity.UNCOMMON));
+    private static final DeferredHolder<ArmorMaterial, ArmorMaterial> JUMPY_BOOTS_ARMOR_MATERIAL = ARMOR_MATERIALS.register("jumpy_boots",
+            () -> new ArmorMaterial(
+                    createJumpyBootsDefense(),
+                    15,
+                    net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_NETHERITE,
+                    () -> Ingredient.of(net.minecraft.world.item.Items.NETHERITE_BOOTS),
+                    java.util.List.of(new ArmorMaterial.Layer(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "jumpy_boots"))),
+                    3.0F,
+                    0.1F
+            ));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.JumpyBootsItem> JUMPY_BOOTS = ITEMS.register("jumpy_boots",
+            () -> new com.craisinlord.antarchy.content.item.JumpyBootsItem(
+                    net.minecraft.core.Holder.direct(JUMPY_BOOTS_ARMOR_MATERIAL.get()),
+                    new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON).fireResistant().durability(ArmorItem.Type.BOOTS.getDurability(37))
+            ));
     public static final DeferredItem<Item> BRUTALFLY_WING = ITEMS.registerSimpleItem("brutalfly_wing", new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final DeferredItem<BrutalflyElytraItem> BRUTALFLY_ELYTRA = ITEMS.register("brutalfly_elytra",
             () -> new BrutalflyElytraItem(new Item.Properties().rarity(Rarity.UNCOMMON).durability(480)));
@@ -1548,6 +1593,8 @@ public final class AntarchyFabricContent {
             () -> new DeferredSpawnEggItem(WASP, 0x111111, 0xF1D800, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> BOMBER_SPAWN_EGG = ITEMS.register("bomber_spawn_egg",
             () -> new DeferredSpawnEggItem(BOMBER, 0x7A7A7A, 0xB32020, new Item.Properties()));
+    public static final DeferredItem<DeferredSpawnEggItem> JUMPY_BUG_SPAWN_EGG = ITEMS.register("jumpy_bug_spawn_egg",
+            () -> new DeferredSpawnEggItem(JUMPY_BUG, 0x111111, 0xFF7A00, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> CLOUD_SHARK_SPAWN_EGG = ITEMS.register("cloud_shark_spawn_egg",
             () -> new DeferredSpawnEggItem(CLOUD_SHARK, 0xDDEAF4, 0x7F96A8, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> KRAKEN_SPAWN_EGG = ITEMS.register("kraken_spawn_egg",
@@ -1598,8 +1645,22 @@ public final class AntarchyFabricContent {
                     .clientTrackingRange(8)
                     .updateInterval(1)
                     .build("water_bomb"));
+    public static final DeferredHolder<EntityType<?>, EntityType<CreepingHorrorEntity>> CREEPING_HORROR = ENTITY_TYPES.register("creeping_horror",
+            () -> EntityType.Builder.of(CreepingHorrorEntity::new, MobCategory.MONSTER)
+                    .sized(0.7F, 0.5F)
+                    .clientTrackingRange(10)
+                    .build("creeping_horror"));
+    public static final DeferredHolder<EntityType<?>, EntityType<LurkingTerrorEntity>> LURKING_TERROR = ENTITY_TYPES.register("lurking_terror",
+            () -> EntityType.Builder.of(LurkingTerrorEntity::new, MobCategory.MONSTER)
+                    .sized(0.8F, 0.6F)
+                    .clientTrackingRange(10)
+                    .build("lurking_terror"));
     public static final DeferredItem<DeferredSpawnEggItem> TORETERROR_SPAWN_EGG = ITEMS.register("toreterror_spawn_egg",
             () -> new DeferredSpawnEggItem(TORETERROR, 0x90EE90, 0x5C4033, new Item.Properties().rarity(Rarity.EPIC)));
+    public static final DeferredItem<DeferredSpawnEggItem> CREEPING_HORROR_SPAWN_EGG = ITEMS.register("creeping_horror_spawn_egg",
+            () -> new DeferredSpawnEggItem(CREEPING_HORROR, 0x6B3A1F, 0x6B0000, new Item.Properties()));
+    public static final DeferredItem<DeferredSpawnEggItem> LURKING_TERROR_SPAWN_EGG = ITEMS.register("lurking_terror_spawn_egg",
+            () -> new DeferredSpawnEggItem(LURKING_TERROR, 0x2D5A1B, 0x8B0000, new Item.Properties()));
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> ANTARCHY_TAB = CREATIVE_MODE_TABS.register("antarchy",
             () -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
                     .title(net.minecraft.network.chat.Component.translatable("itemGroup.antarchy.antarchy"))
@@ -1673,6 +1734,7 @@ public final class AntarchyFabricContent {
         FabricDefaultAttributeRegistry.register(BED_BUG.get(), BedBugEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(WASP.get(), WaspEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(BOMBER.get(), BomberEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(JUMPY_BUG.get(), JumpyBugEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(MANTIS.get(), MantisEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(TRIFFID.get(), TriffidEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(LUCID.get(), LucidEntity.createAttributes().build());
@@ -1680,6 +1742,8 @@ public final class AntarchyFabricContent {
         FabricDefaultAttributeRegistry.register(BASILISK.get(), BasiliskEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(EMPEROR_SCORPION.get(), EmperorScorpionEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(TORETERROR.get(), ToreterrorEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(CREEPING_HORROR.get(), CreepingHorrorEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(LURKING_TERROR.get(), LurkingTerrorEntity.createAttributes().build());
 
         FabricDefaultAttributeRegistry.register(RED_ANT.get(), buildAntAttributes(
                 AntarchySettings.redAntHealth(),
@@ -1712,6 +1776,7 @@ public final class AntarchyFabricContent {
         SpawnPlacements.register(CLOUD_SHARK.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CloudSharkEntity::canSpawn);
         SpawnPlacements.register(WASP.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaspEntity::canSpawn);
         SpawnPlacements.register(BOMBER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BomberEntity::canSpawn);
+        SpawnPlacements.register(JUMPY_BUG.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, JumpyBugEntity::canSpawn);
         SpawnPlacements.register(KRAKEN.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, KrakenEntity::canSpawn);
         SpawnPlacements.register(MISSILE_SQUID.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MissileSquidEntity::canSpawn);
         SpawnPlacements.register(NIGHTMARE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NightmareEntity::canSpawn);
@@ -1813,11 +1878,14 @@ public final class AntarchyFabricContent {
                  "moleworm_spawn_egg", "mantis_spawn_egg", "molevore_spawn_egg", "triffid_spawn_egg",
                  "apple_cow_spawn_egg", "golden_apple_cow_spawn_egg", "enchanted_golden_apple_cow_spawn_egg",
                  "honeyed_apple_cow_spawn_egg", "dr_trayaurus_spawn_egg", "wasp_spawn_egg",
-                 "bomber_spawn_egg", "cloud_shark_spawn_egg", "kraken_spawn_egg", "missile_squid_spawn_egg",
+                 "bomber_spawn_egg", "jumpy_bug_spawn_egg", "cloud_shark_spawn_egg", "kraken_spawn_egg", "missile_squid_spawn_egg",
                  "nightmare_spawn_egg", "bed_bug_spawn_egg", "lucid_spawn_egg", "scorpion_spawn_egg",
-                 "basilisk_spawn_egg", "emperor_scorpion_spawn_egg", "toreterror_spawn_egg" -> 90;
+                 "basilisk_spawn_egg", "emperor_scorpion_spawn_egg", "toreterror_spawn_egg",
+                 "creeping_horror_spawn_egg", "lurking_terror_spawn_egg" -> 90;
             case "water_cannon" -> 52;
             case "primordial_helmet", "primordial_chestplate", "primordial_leggings", "primordial_boots" -> 53;
+            case "jumpy_boots" -> 54;
+            case "king_scale", "queen_scale" -> 22;
             default -> 50;
         };
     }
@@ -1972,6 +2040,16 @@ public final class AntarchyFabricContent {
         return defense;
     }
 
+    private static java.util.EnumMap<ArmorItem.Type, Integer> createJumpyBootsDefense() {
+        java.util.EnumMap<ArmorItem.Type, Integer> defense = new java.util.EnumMap<>(ArmorItem.Type.class);
+        defense.put(ArmorItem.Type.BOOTS, 3);
+        defense.put(ArmorItem.Type.LEGGINGS, 0);
+        defense.put(ArmorItem.Type.CHESTPLATE, 0);
+        defense.put(ArmorItem.Type.HELMET, 0);
+        defense.put(ArmorItem.Type.BODY, 0);
+        return defense;
+    }
+
     private static java.util.EnumMap<ArmorItem.Type, Integer> createBloodCrystalArmorDefense() {
         java.util.EnumMap<ArmorItem.Type, Integer> defense = new java.util.EnumMap<>(ArmorItem.Type.class);
         defense.put(ArmorItem.Type.BOOTS, 2);
@@ -2062,6 +2140,7 @@ public final class AntarchyFabricContent {
             builder.registerPotionRecipe(potionHolder(GROWING), Ingredient.of(Items.GLOWSTONE_DUST), potionHolder(STRONG_GROWING));
             builder.registerPotionRecipe(potionHolder(STRONG_GROWING), Ingredient.of(Items.GLOWSTONE_DUST), potionHolder(EXTREME_GROWING));
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(CLOUD_SHARK_FIN.get()), net.minecraft.world.item.alchemy.Potions.SLOW_FALLING);
+            builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(JUMPY_BUG_LEG.get()), Potions.LEAPING);
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(CORNEA_EAR.get()), net.minecraft.world.item.alchemy.Potions.NIGHT_VISION);
         });
 
@@ -2218,6 +2297,8 @@ public final class AntarchyFabricContent {
                 HUSH_PROJECTILE,
                 TORETERROR,
                 WATER_BOMB,
+                CREEPING_HORROR,
+                LURKING_TERROR,
                 () -> DUPLICATOR_LOG.get(),
                 () -> DUPLICATOR_SAPLING.get(),
                 () -> DUCT_TAPE.get(),
@@ -2268,6 +2349,8 @@ public final class AntarchyFabricContent {
                 () -> PINK_MILKWEED.get(),
                 () -> TORCHFLOWER_BUSH.get(),
                 () -> BED_BUG_EGG.get(),
+                () -> CREEPING_HORROR_EGGS.get(),
+                () -> LURKING_TERROR_EGGS.get(),
                 () -> WASP_NEST.get(),
                 () -> HUSHWEED.get(),
                 () -> OURANWOOD_SQUIRREL_NEST.get(),

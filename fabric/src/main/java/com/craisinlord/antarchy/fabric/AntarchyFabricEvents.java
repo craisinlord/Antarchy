@@ -10,6 +10,9 @@ import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
+import com.craisinlord.antarchy.content.command.CaterpillarCommand;
+import com.craisinlord.antarchy.content.command.GravityCommand;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,6 +41,11 @@ public final class AntarchyFabricEvents {
     }
 
     public static void register() {
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            GravityCommand.register(dispatcher);
+            CaterpillarCommand.register(dispatcher);
+        });
+
         DispenserBlock.registerBehavior(AntarchyFabricContent.SQUIDZOOKA.get(), new SquidzookaDispenseBehavior());
         DispenserBlock.registerBehavior(AntarchyFabricContent.WATER_CANNON.get(), new WaterCannonDispenseBehavior());
 
