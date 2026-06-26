@@ -7,8 +7,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -37,9 +35,12 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class StinkBugEntity extends Animal implements GeoEntity {
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
+    private static final RawAnimation FART_ANIM = RawAnimation.begin().thenPlay("fart");
+    private static final int FART_ANIMATION_TICKS = 30;
     private static final int STINK_BURST_PARTICLES = 32;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private int fartAnimationTicks;
 
     public StinkBugEntity(EntityType<? extends StinkBugEntity> entityType, Level level) {
         super(entityType, level);
@@ -73,18 +74,8 @@ public class StinkBugEntity extends Animal implements GeoEntity {
     public void tick() {
         super.tick();
 
-        if (this.level().isClientSide || this.tickCount % 10 != 0) {
-            return;
-        }
-
-        for (var target : this.level().getEntitiesOfClass(
-                net.minecraft.world.entity.LivingEntity.class,
-                this.getBoundingBox().inflate(StinkyBehavior.STINK_BUG_AURA_RADIUS),
-                entity -> entity != this
-                        && entity.isAlive()
-                        && !entity.getType().is(EntityTypeTags.SENSITIVE_TO_BANE_OF_ARTHROPODS)
-        )) {
-            target.addEffect(new MobEffectInstance(AntarchyObjects.STINKY_EFFECT.get(), StinkyBehavior.STINKY_EFFECT_DURATION_TICKS, 0, false, true, true));
+        if (this.fartAnimationTicks > 0) {
+            this.fartAnimationTicks--;
         }
     }
 
@@ -92,6 +83,7 @@ public class StinkBugEntity extends Animal implements GeoEntity {
     public boolean hurt(DamageSource source, float amount) {
         boolean hurt = super.hurt(source, amount);
         if (hurt) {
+            this.triggerFartAnimation();
             StinkyBehavior.emitBurst(this, STINK_BURST_PARTICLES);
         }
         return hurt;
@@ -119,7 +111,15 @@ public class StinkBugEntity extends Animal implements GeoEntity {
     }
 
     private <T extends StinkBugEntity> PlayState mainAnimController(AnimationState<T> animationState) {
+        if (this.fartAnimationTicks > 0) {
+            animationState.setAnimation(FART_ANIM);
+            return PlayState.CONTINUE;
+        }
         animationState.setAnimation(animationState.isMoving() ? WALK_ANIM : IDLE_ANIM);
         return PlayState.CONTINUE;
+    }
+
+    private void triggerFartAnimation() {
+        this.fartAnimationTicks = FART_ANIMATION_TICKS;
     }
 }

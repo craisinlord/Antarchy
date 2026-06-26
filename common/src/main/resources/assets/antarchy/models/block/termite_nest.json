@@ -1,8 +1,12 @@
 {
-  "parent": "minecraft:block/orientable",
+  "parent": "minecraft:block/cube",
   "textures": {
-    "front": "antarchy:block/termite_nest_front",
-    "side": "antarchy:block/termite_nest_side",
-    "top": "antarchy:block/termite_nest_top"
+    "particle": "antarchy:block/brown_ant_nest/brown_ant_nest",
+    "down": "minecraft:block/coarse_dirt",
+    "up": "antarchy:block/brown_ant_nest/brown_ant_nest_top",
+    "north": "antarchy:block/brown_ant_nest/brown_ant_nest",
+    "south": "antarchy:block/brown_ant_nest/brown_ant_nest",
+    "west": "antarchy:block/brown_ant_nest/brown_ant_nest",
+    "east": "antarchy:block/brown_ant_nest/brown_ant_nest"
   }
 }

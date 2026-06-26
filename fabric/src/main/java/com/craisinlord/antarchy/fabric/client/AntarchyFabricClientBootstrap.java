@@ -73,6 +73,7 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricContent.RED_ANT.get(), AntRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.BROWN_ANT.get(), AntRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.RAINBOW_ANT.get(), AntRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricContent.TERMITE.get(), TermiteRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.MOLEWORM.get(), MolewormRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.MANTIS.get(), MantisRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.MOLEVORE.get(), MolevoreRenderer::new);
@@ -87,6 +88,7 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricContent.CLOUD_SHARK.get(), CloudSharkRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.KRAKEN.get(), KrakenRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.MISSILE_SQUID.get(), MissileSquidRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricContent.OCTOPUS_BOMB.get(), OctopusBombRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.NIGHTMARE.get(), NightmareRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.LUCID.get(), LucidRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.BED_BUG.get(), BedBugRenderer::new);

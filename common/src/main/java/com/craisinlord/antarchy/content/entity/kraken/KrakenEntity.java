@@ -5,8 +5,9 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
-
+import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageTypes;
+
 import java.util.List;
 import java.util.Objects;
 import net.minecraft.core.BlockPos;
@@ -68,24 +69,28 @@ public class KrakenEntity extends Monster implements GeoEntity {
     private static final String ATTACK_COOLDOWN_KEY = "AttackCooldown";
     private static final String ACTION_TICKS_KEY = "ActionTicks";
     private static final String PHASE_TRANSITION_TICKS_KEY = "PhaseTransitionTicks";
-    private static final String NEXT_ATTACK_INDEX_KEY = "NextAttackIndex";
-    private static final String SLAM_COOLDOWN_KEY = "SlamCooldown";
     private static final String PHASE_SUMMON_COOLDOWN_KEY = "PhaseSummonCooldown";
     private static final String LAST_ATTACK_STATE_KEY = "LastAttackState";
     private static final String AGGRO_TRIGGERED_KEY = "AggroTriggered";
     private static final String GRAB_TARGET_KEY = "GrabTarget";
+
     private static final double BOSS_BAR_RANGE = 40.0D;
+
     private static final int ATTACK_NONE = 0;
     private static final int ATTACK_GRAB = 1;
-    private static final int ATTACK_SWIPE = 2;
-    private static final int ATTACK_SLAM = 3;
-    private static final int ANIM_IDLE = 0;
-    private static final int ANIM_IDLE_TWO = 1;
-    private static final int ANIM_SWIM = 2;
-    private static final int ANIM_SWIPE = 3;
-    private static final int ANIM_GRAB = 4;
+    private static final int ATTACK_SWING_LEFT = 2;
+    private static final int ATTACK_SWING_RIGHT = 3;
+
+    // Synced animation state values
+    private static final int ANIM_NONE = 0;
+    private static final int ANIM_CRY = 1;
+    private static final int ANIM_GRAB = 2;
+    private static final int ANIM_SWING_LEFT = 3;
+    private static final int ANIM_SWING_RIGHT = 4;
     private static final int ANIM_DEATH = 5;
+
     private static final int DEATH_ANIM_TICKS = 60;
+
     private static final ResourceLocation PHASE_TWO_SPEED_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "kraken_phase_two_speed");
     private static final ResourceLocation PHASE_TWO_FLYING_SPEED_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "kraken_phase_two_flying_speed");
     private static final ResourceLocation PHASE_TWO_DAMAGE_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "kraken_phase_two_damage");
@@ -96,21 +101,21 @@ public class KrakenEntity extends Monster implements GeoEntity {
     private static final AttributeModifier PHASE_TWO_DAMAGE = new AttributeModifier(PHASE_TWO_DAMAGE_ID, PHASE_TWO_DAMAGE_BONUS, AttributeModifier.Operation.ADD_VALUE);
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
-    private static final RawAnimation SWIM_ANIM = RawAnimation.begin().thenLoop("swim");
-    private static final RawAnimation SWIPE_ANIM = RawAnimation.begin().thenPlay("Swipe");
-    private static final RawAnimation GRAB_ANIM = RawAnimation.begin().thenPlay("Grab");
-    private static final RawAnimation DEATH_ANIM = RawAnimation.begin().thenPlay("Death");
+    private static final RawAnimation CRY_ANIM = RawAnimation.begin().thenPlay("cry");
+    private static final RawAnimation GRAB_ANIM = RawAnimation.begin().thenPlay("grab");
+    private static final RawAnimation SWING_LEFT_ANIM = RawAnimation.begin().thenPlay("swing_left");
+    private static final RawAnimation SWING_RIGHT_ANIM = RawAnimation.begin().thenPlay("swing_right");
+    private static final RawAnimation DEATH_ANIM = RawAnimation.begin().thenPlay("death");
 
     private final ServerBossEvent bossEvent = new ServerBossEvent(Component.literal("The Kraken"), BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.PROGRESS);
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+
     @Nullable
     private Vec3 patrolTarget;
     private int patrolRetargetTicks;
     private int attackCooldown;
     private int actionTicks;
     private int phaseTransitionTicks;
-    private int nextAttackIndex;
-    private int slamCooldown;
     private int phaseSummonCooldown;
     private int lastAttackState;
     private boolean aggroTriggered;
@@ -121,6 +126,7 @@ public class KrakenEntity extends Monster implements GeoEntity {
     private int strafeRetargetTicks;
     private float orbitDirection = 1.0F;
     private boolean stormActive;
+
     public KrakenEntity(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
         this.moveControl = new FlyingMoveControl(this, 20, true);
@@ -149,7 +155,7 @@ public class KrakenEntity extends Monster implements GeoEntity {
         builder.define(ATTACK_STATE, ATTACK_NONE);
         builder.define(ROARING, false);
         builder.define(PHASE_TWO, false);
-        builder.define(ANIMATION_STATE, ANIM_IDLE);
+        builder.define(ANIMATION_STATE, ANIM_NONE);
     }
 
     @Override
@@ -165,17 +171,26 @@ public class KrakenEntity extends Monster implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController)
+        // idle_controller always loops idle; action_controller layers on top when active
+        controllers.add(new AnimationController<>(this, "idle_controller", 0, state -> {
+            if (this.getAnimationState() == ANIM_DEATH) {
+                return PlayState.STOP;
+            }
+            state.setAndContinue(IDLE_ANIM);
+            return PlayState.CONTINUE;
+        }).setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>()));
+        controllers.add(new AnimationController<>(this, "action_controller", 0, this::actionAnimController)
                 .setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>()));
     }
 
-    private PlayState mainAnimController(AnimationState<KrakenEntity> state) {
+    private PlayState actionAnimController(AnimationState<KrakenEntity> state) {
         return switch (this.getAnimationState()) {
+            case ANIM_CRY -> state.setAndContinue(CRY_ANIM);
             case ANIM_GRAB -> state.setAndContinue(GRAB_ANIM);
-            case ANIM_SWIPE -> state.setAndContinue(SWIPE_ANIM);
-            case ANIM_SWIM -> state.setAndContinue(SWIM_ANIM);
+            case ANIM_SWING_LEFT -> state.setAndContinue(SWING_LEFT_ANIM);
+            case ANIM_SWING_RIGHT -> state.setAndContinue(SWING_RIGHT_ANIM);
             case ANIM_DEATH -> state.setAndContinue(DEATH_ANIM);
-            default -> state.setAndContinue(IDLE_ANIM);
+            default -> PlayState.STOP;
         };
     }
 
@@ -220,9 +235,6 @@ public class KrakenEntity extends Monster implements GeoEntity {
 
         if (this.attackCooldown > 0) {
             this.attackCooldown--;
-        }
-        if (this.slamCooldown > 0) {
-            this.slamCooldown--;
         }
         if (this.phaseSummonCooldown > 0) {
             this.phaseSummonCooldown--;
@@ -307,7 +319,8 @@ public class KrakenEntity extends Monster implements GeoEntity {
         if (source.is(DamageTypeTags.IS_FIRE)
                 || source.is(DamageTypes.LIGHTNING_BOLT)
                 || source.is(AntarchyDamageTypes.KRAKEN_LIGHTNING)
-                || source.getEntity() instanceof MissileSquidEntity) {
+                || source.getEntity() instanceof MissileSquidEntity
+                || source.getEntity() instanceof OctopusBombEntity) {
             return false;
         }
 
@@ -351,8 +364,6 @@ public class KrakenEntity extends Monster implements GeoEntity {
         tag.putInt(ATTACK_COOLDOWN_KEY, this.attackCooldown);
         tag.putInt(ACTION_TICKS_KEY, this.actionTicks);
         tag.putInt(PHASE_TRANSITION_TICKS_KEY, this.phaseTransitionTicks);
-        tag.putInt(NEXT_ATTACK_INDEX_KEY, this.nextAttackIndex);
-        tag.putInt(SLAM_COOLDOWN_KEY, this.slamCooldown);
         tag.putInt(PHASE_SUMMON_COOLDOWN_KEY, this.phaseSummonCooldown);
         tag.putInt(LAST_ATTACK_STATE_KEY, this.lastAttackState);
         tag.putBoolean(AGGRO_TRIGGERED_KEY, this.aggroTriggered);
@@ -374,8 +385,6 @@ public class KrakenEntity extends Monster implements GeoEntity {
         this.attackCooldown = tag.getInt(ATTACK_COOLDOWN_KEY);
         this.actionTicks = tag.getInt(ACTION_TICKS_KEY);
         this.phaseTransitionTicks = tag.getInt(PHASE_TRANSITION_TICKS_KEY);
-        this.nextAttackIndex = tag.getInt(NEXT_ATTACK_INDEX_KEY);
-        this.slamCooldown = tag.getInt(SLAM_COOLDOWN_KEY);
         this.phaseSummonCooldown = tag.getInt(PHASE_SUMMON_COOLDOWN_KEY);
         this.lastAttackState = tag.contains(LAST_ATTACK_STATE_KEY) ? tag.getInt(LAST_ATTACK_STATE_KEY) : ATTACK_NONE;
         this.aggroTriggered = tag.getBoolean(AGGRO_TRIGGERED_KEY);
@@ -384,7 +393,7 @@ public class KrakenEntity extends Monster implements GeoEntity {
         this.entityData.set(ROARING, tag.getBoolean("Roaring"));
         this.entityData.set(ATTACK_STATE, tag.getInt("AttackState"));
         this.entityData.set(PHASE_TWO, tag.getBoolean("PhaseTwo"));
-        this.entityData.set(ANIMATION_STATE, tag.contains("AnimationState") ? tag.getInt("AnimationState") : ANIM_IDLE);
+        this.entityData.set(ANIMATION_STATE, tag.contains("AnimationState") ? tag.getInt("AnimationState") : ANIM_NONE);
         this.lightningStrikeCooldown = tag.getInt("LightningStrikeCooldown");
         this.lightningAmbientCooldown = tag.getInt("LightningAmbientCooldown");
         this.stormActive = false;
@@ -475,7 +484,7 @@ public class KrakenEntity extends Monster implements GeoEntity {
         this.getLookControl().setLookAt(target, 25.0F, 20.0F);
 
         if (!this.spawnedPhaseMinions && this.phaseTransitionTicks <= 40) {
-            this.spawnPhaseMinions(1 + this.random.nextInt(2), true, target);
+            this.spawnMinions(1 + this.random.nextInt(2), target);
             this.spawnedPhaseMinions = true;
         }
 
@@ -499,8 +508,8 @@ public class KrakenEntity extends Monster implements GeoEntity {
 
         switch (this.getAttackState()) {
             case ATTACK_GRAB -> this.tickGrabAttack(target);
-            case ATTACK_SWIPE -> this.tickSwipeAttack();
-            case ATTACK_SLAM -> this.tickSlamAttack();
+            case ATTACK_SWING_LEFT -> this.tickSwingAttack(false);
+            case ATTACK_SWING_RIGHT -> this.tickSwingAttack(true);
             default -> this.finishAttack();
         }
     }
@@ -512,12 +521,9 @@ public class KrakenEntity extends Monster implements GeoEntity {
         if (attackState == ATTACK_GRAB) {
             this.actionTicks = 55;
             this.playSound(AntarchySoundEvents.KRAKEN_ATTACK.get(), 1.45F, 0.9F);
-        } else if (attackState == ATTACK_SWIPE) {
+        } else if (attackState == ATTACK_SWING_LEFT || attackState == ATTACK_SWING_RIGHT) {
             this.actionTicks = 40;
             this.playSound(AntarchySoundEvents.KRAKEN_SPIN.get(), 1.3F, 0.95F);
-        } else if (attackState == ATTACK_SLAM) {
-            this.actionTicks = 34;
-            this.playSound(AntarchySoundEvents.KRAKEN_ATTACK.get(), 1.5F, 0.82F);
         }
     }
 
@@ -545,19 +551,10 @@ public class KrakenEntity extends Monster implements GeoEntity {
         }
     }
 
-    private void tickSwipeAttack() {
+    // swingRight=true means ATTACK_SWING_RIGHT, which knocks players to the Kraken's LEFT
+    private void tickSwingAttack(boolean swingRight) {
         if (this.actionTicks == 10) {
-            this.performSwipe();
-        }
-
-        if (--this.actionTicks <= 0) {
-            this.finishAttack();
-        }
-    }
-
-    private void tickSlamAttack() {
-        if (this.actionTicks == 8) {
-            this.performTentacleSlam();
+            this.performSwing(swingRight);
         }
 
         if (--this.actionTicks <= 0) {
@@ -566,15 +563,12 @@ public class KrakenEntity extends Monster implements GeoEntity {
     }
 
     private void finishAttack() {
-        int finishedAttack = this.getAttackState();
+        int finished = this.getAttackState();
         this.setAttackState(ATTACK_NONE);
         this.actionTicks = 0;
         this.attackCooldown = this.isPhaseTwo() ? 12 : 18;
         this.grabbedTargetId = -1;
-        this.lastAttackState = finishedAttack;
-        if (finishedAttack == ATTACK_SLAM) {
-            this.slamCooldown = this.isPhaseTwo() ? 110 : 150;
-        }
+        this.lastAttackState = finished;
         this.updateAnimationState();
     }
 
@@ -614,113 +608,61 @@ public class KrakenEntity extends Monster implements GeoEntity {
     }
 
     private int chooseNextAttack(LivingEntity target) {
-        int[] attackRotation = new int[] {ATTACK_GRAB, ATTACK_SWIPE, ATTACK_SLAM};
-        int[] weightedAttacks = new int[attackRotation.length];
-        int[] weights = new int[attackRotation.length];
-        int eligibleCount = 0;
-        int totalWeight = 0;
+        double distSqr = this.distanceToSqr(target);
+        boolean canGrab = distSqr <= 64.0D;
+        boolean canSwing = distSqr <= 81.0D;
 
-        for (int attack : attackRotation) {
-            if (!this.canUseAttack(attack, target)) {
-                continue;
-            }
-
-            int weight = this.getAttackWeight(attack);
-            if (attack == this.lastAttackState) {
-                weight = Math.max(1, weight / 3);
-            }
-            if (weight <= 0) {
-                continue;
-            }
-
-            weightedAttacks[eligibleCount] = attack;
-            weights[eligibleCount] = weight;
-            totalWeight += weight;
-            eligibleCount++;
-        }
-
-        if (eligibleCount == 0) {
+        if (!canGrab && !canSwing) {
             return ATTACK_NONE;
         }
 
-        int roll = this.random.nextInt(totalWeight);
-        for (int i = 0; i < eligibleCount; i++) {
-            roll -= weights[i];
-            if (roll < 0) {
-                return weightedAttacks[i];
-            }
+        int grabWeight = canGrab ? (this.lastAttackState == ATTACK_GRAB ? 1 : 4) : 0;
+        int swingWeight = canSwing ? (this.isSwingAttack(this.lastAttackState) ? 1 : 5) : 0;
+        int total = grabWeight + swingWeight;
+        if (total == 0) {
+            return ATTACK_NONE;
         }
 
-        return weightedAttacks[eligibleCount - 1];
-    }
-
-    private int getAttackWeight(int attackState) {
-        return switch (attackState) {
-            case ATTACK_GRAB -> 4;
-            case ATTACK_SWIPE -> 5;
-            case ATTACK_SLAM -> this.isPhaseTwo() ? 1 : 0;
-            default -> 0;
-        };
-    }
-
-    private void tickPhaseTwoPressure(LivingEntity target) {
-        if (!this.isPhaseTwo() || this.phaseSummonCooldown > 0) {
-            return;
+        int roll = this.random.nextInt(total);
+        if (roll < grabWeight) {
+            return ATTACK_GRAB;
         }
-        if (this.countNearbyMissileSquids() >= 12) {
-            this.phaseSummonCooldown = 40;
-            return;
-        }
-        this.spawnPhaseMinions(1 + this.random.nextInt(2), true, target);
-        this.phaseSummonCooldown = 90 + this.random.nextInt(50);
+        return this.resolveSwingDirection(target);
     }
 
-    private int countNearbyMissileSquids() {
-        return this.level().getEntitiesOfClass(
-                MissileSquidEntity.class,
-                this.getBoundingBox().inflate(28.0D),
-                squid -> squid.isAlive()
-        ).size();
+    private boolean isSwingAttack(int attackState) {
+        return attackState == ATTACK_SWING_LEFT || attackState == ATTACK_SWING_RIGHT;
     }
 
-    private boolean canUseAttack(int attackState, LivingEntity target) {
-        double distanceToTarget = this.distanceToSqr(target);
-        return switch (attackState) {
-            case ATTACK_GRAB -> distanceToTarget <= 64.0D;
-            case ATTACK_SWIPE -> distanceToTarget <= 81.0D && this.isTargetInFront(target, 0.1D);
-            case ATTACK_SLAM -> this.slamCooldown <= 0 && distanceToTarget <= 144.0D;
-            default -> false;
-        };
-    }
-
-    private boolean isTargetInFront(LivingEntity target, double minimumDot) {
+    // Determines left vs right based on which side the target is on relative to the Kraken.
+    // Kraken's right vector is forward x world-up. If target is on the Kraken's right side,
+    // use swing_right (which knocks them left). If on the left, use swing_left (knocks them right).
+    private int resolveSwingDirection(LivingEntity target) {
         Vec3 forward = this.getViewVector(1.0F);
-        Vec3 toTarget = target.position().subtract(this.position()).normalize();
-        return forward.dot(toTarget) >= minimumDot;
+        Vec3 right = forward.cross(new Vec3(0, 1, 0)).normalize();
+        Vec3 toTarget = target.position().subtract(this.position());
+        return right.dot(toTarget) > 0 ? ATTACK_SWING_RIGHT : ATTACK_SWING_LEFT;
     }
 
-    private void performSwipe() {
+    private void performSwing(boolean swingRight) {
         AABB hitBox = this.getBoundingBox().inflate(7.0D, 3.0D, 7.0D);
-        List<Player> players = this.level().getEntitiesOfClass(Player.class, hitBox, player -> player.isAlive() && this.isTargetInFront(player, -0.15D));
+        List<Player> players = this.level().getEntitiesOfClass(Player.class, hitBox, LivingEntity::isAlive);
+        float damage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
+        Vec3 forward = this.getViewVector(1.0F);
+        // swingRight knocks to Kraken's left (-right), swingLeft knocks to Kraken's right (+right)
+        Vec3 right = forward.cross(new Vec3(0, 1, 0)).normalize();
+        Vec3 knockDir = swingRight ? right.scale(-1) : right;
+
         for (Player player : players) {
-            this.hurtAndKnockback(player, (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE), 1.75D, 0.45D);
+            if (!(this.level() instanceof ServerLevel serverLevel)) continue;
+            if (!player.hurt(AntarchyDamageSources.krakenMauling(serverLevel, this), damage)) continue;
+            player.push(knockDir.x * 1.75D, 0.4D, knockDir.z * 1.75D);
+            player.hurtMarked = true;
         }
 
         if (this.level() instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(ParticleTypes.SPLASH, this.getX(), this.getY() + 0.8D, this.getZ(), 24, 1.2D, 0.4D, 1.2D, 0.08D);
-        }
-    }
-
-    private void performTentacleSlam() {
-        AABB hitBox = this.getBoundingBox().inflate(8.5D, 2.5D, 8.5D);
-        List<Player> players = this.level().getEntitiesOfClass(Player.class, hitBox, LivingEntity::isAlive);
-        float damage = (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE) * 0.75F;
-        for (Player player : players) {
-            this.hurtAndKnockback(player, damage, 1.35D, 0.62D);
-        }
-
-        if (this.level() instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.SPLASH, this.getX(), this.getY() + 0.5D, this.getZ(), 36, 1.8D, 0.5D, 1.8D, 0.12D);
         }
     }
 
@@ -736,14 +678,6 @@ public class KrakenEntity extends Monster implements GeoEntity {
             target.moveTo(anchor.x, anchor.y, anchor.z, target.getYRot(), target.getXRot());
         }
         target.hurtMarked = true;
-    }
-
-    private void hurtAndKnockback(LivingEntity target, float damage, double horizontalStrength, double verticalStrength) {
-        if (!(this.level() instanceof ServerLevel serverLevel) || !target.hurt(AntarchyDamageSources.krakenMauling(serverLevel, this), damage)) {
-            return;
-        }
-
-        this.knockAway(target, horizontalStrength, verticalStrength);
     }
 
     private void knockAway(LivingEntity target, double horizontalStrength, double verticalStrength) {
@@ -771,7 +705,25 @@ public class KrakenEntity extends Monster implements GeoEntity {
         return entity instanceof LivingEntity livingEntity ? livingEntity : null;
     }
 
-    private void spawnPhaseMinions(int desiredCount, boolean launched, @Nullable LivingEntity currentTarget) {
+    private void tickPhaseTwoPressure(LivingEntity target) {
+        if (!this.isPhaseTwo() || this.phaseSummonCooldown > 0) {
+            return;
+        }
+        if (this.countNearbyMinions() >= 12) {
+            this.phaseSummonCooldown = 40;
+            return;
+        }
+        this.spawnMinions(1 + this.random.nextInt(2), target);
+        this.phaseSummonCooldown = 90 + this.random.nextInt(50);
+    }
+
+    private int countNearbyMinions() {
+        net.minecraft.world.phys.AABB range = this.getBoundingBox().inflate(28.0D);
+        return this.level().getEntitiesOfClass(OctopusBombEntity.class, range, OctopusBombEntity::isAlive).size()
+                + this.level().getEntitiesOfClass(MissileSquidEntity.class, range, MissileSquidEntity::isAlive).size();
+    }
+
+    private void spawnMinions(int desiredCount, @Nullable LivingEntity currentTarget) {
         if (!(this.level() instanceof ServerLevel serverLevel)) {
             return;
         }
@@ -779,22 +731,23 @@ public class KrakenEntity extends Monster implements GeoEntity {
         int spawned = 0;
 
         for (int attempt = 0; attempt < desiredCount * 4 && spawned < desiredCount; attempt++) {
-            Vec3 spawnPos = this.findPhaseMinionSpawnPos(currentTarget);
-            MissileSquidEntity missileSquid = AntarchyObjects.MISSILE_SQUID.get().create(serverLevel);
-            if (missileSquid == null) {
-                continue;
-            }
+            Vec3 spawnPos = this.findBombSpawnPos(currentTarget);
+            boolean spawnBomb = this.random.nextBoolean();
 
-            missileSquid.setCanFly(true);
-            missileSquid.setSpawnedByKraken(true);
-            missileSquid.moveTo(spawnPos.x, spawnPos.y, spawnPos.z, this.getYRot(), 0.0F);
-            serverLevel.addFreshEntity(missileSquid);
-            if (launched) {
-                missileSquid.launchAsProjectile(this, this.createPhaseMinionLaunchVelocity(spawnPos, currentTarget));
-            } else if (currentTarget != null) {
-                missileSquid.setTarget(currentTarget);
+            if (spawnBomb) {
+                OctopusBombEntity bomb = AntarchyObjects.OCTOPUS_BOMB.get().create(serverLevel);
+                if (bomb == null) continue;
+                bomb.moveTo(spawnPos.x, spawnPos.y, spawnPos.z, this.getYRot(), 0.0F);
+                serverLevel.addFreshEntity(bomb);
+                bomb.launchAsProjectile(this, this.createBombLaunchVelocity(spawnPos, currentTarget));
+                serverLevel.sendParticles(ParticleTypes.BUBBLE, bomb.getX(), bomb.getY() + 0.4D, bomb.getZ(), 14, 0.3D, 0.25D, 0.3D, 0.03D);
+            } else {
+                MissileSquidEntity squid = AntarchyObjects.MISSILE_SQUID.get().create(serverLevel);
+                if (squid == null) continue;
+                squid.moveTo(spawnPos.x, spawnPos.y, spawnPos.z, this.getYRot(), 0.0F);
+                serverLevel.addFreshEntity(squid);
+                serverLevel.sendParticles(ParticleTypes.BUBBLE, squid.getX(), squid.getY() + 0.4D, squid.getZ(), 14, 0.3D, 0.25D, 0.3D, 0.03D);
             }
-            serverLevel.sendParticles(ParticleTypes.BUBBLE, missileSquid.getX(), missileSquid.getY() + 0.4D, missileSquid.getZ(), 14, 0.3D, 0.25D, 0.3D, 0.03D);
             spawned++;
         }
 
@@ -803,7 +756,7 @@ public class KrakenEntity extends Monster implements GeoEntity {
         }
     }
 
-    private Vec3 findPhaseMinionSpawnPos(@Nullable LivingEntity currentTarget) {
+    private Vec3 findBombSpawnPos(@Nullable LivingEntity currentTarget) {
         Vec3 anchor = currentTarget != null ? currentTarget.position() : this.position();
         for (int attempt = 0; attempt < 18; attempt++) {
             double angle = this.random.nextDouble() * Mth.TWO_PI;
@@ -822,7 +775,7 @@ public class KrakenEntity extends Monster implements GeoEntity {
         return this.position().add(0.0D, this.getBbHeight() * 0.6D, 0.0D);
     }
 
-    private Vec3 createPhaseMinionLaunchVelocity(Vec3 spawnPos, @Nullable LivingEntity currentTarget) {
+    private Vec3 createBombLaunchVelocity(Vec3 spawnPos, @Nullable LivingEntity currentTarget) {
         Vec3 aimPoint = currentTarget != null
                 ? currentTarget.getEyePosition()
                 : this.position().add(this.getViewVector(1.0F).scale(10.0D));
@@ -1043,14 +996,14 @@ public class KrakenEntity extends Monster implements GeoEntity {
     private void updateSwimRotation() {
         Vec3 velocity = this.getDeltaMovement();
         if (velocity.horizontalDistanceSqr() > 1.0E-4D) {
-            float targetYaw = (float)(Mth.atan2(velocity.z, velocity.x) * (180.0D / Math.PI)) - 90.0F;
+            float targetYaw = (float) (Mth.atan2(velocity.z, velocity.x) * (180.0D / Math.PI)) - 90.0F;
             this.setYRot(Mth.approachDegrees(this.getYRot(), targetYaw, 6.0F));
             this.yBodyRot = this.getYRot();
             this.yHeadRot = this.getYRot();
         }
 
         if (velocity.lengthSqr() > 1.0E-4D) {
-            float targetPitch = (float)(-(Mth.atan2(velocity.y, velocity.horizontalDistance()) * (180.0D / Math.PI)));
+            float targetPitch = (float) (-(Mth.atan2(velocity.y, velocity.horizontalDistance()) * (180.0D / Math.PI)));
             this.setXRot(Mth.approachDegrees(this.getXRot(), targetPitch, 4.0F));
         }
     }
@@ -1090,8 +1043,13 @@ public class KrakenEntity extends Monster implements GeoEntity {
             return;
         }
 
-        if (this.phaseTransitionTicks > 0 || this.isRoaring()) {
-            this.setAnimationState(ANIM_IDLE);
+        if (this.isRoaring()) {
+            this.setAnimationState(ANIM_CRY);
+            return;
+        }
+
+        if (this.phaseTransitionTicks > 0) {
+            this.setAnimationState(ANIM_NONE);
             return;
         }
 
@@ -1100,22 +1058,18 @@ public class KrakenEntity extends Monster implements GeoEntity {
                 this.setAnimationState(ANIM_GRAB);
                 return;
             }
-            case ATTACK_SWIPE, ATTACK_SLAM -> {
-                this.setAnimationState(ANIM_SWIPE);
+            case ATTACK_SWING_LEFT -> {
+                this.setAnimationState(ANIM_SWING_LEFT);
+                return;
+            }
+            case ATTACK_SWING_RIGHT -> {
+                this.setAnimationState(ANIM_SWING_RIGHT);
                 return;
             }
             default -> {
             }
         }
 
-        Vec3 velocity = this.getDeltaMovement();
-        double horizontalSpeedSqr = velocity.horizontalDistanceSqr();
-        double verticalSpeedSqr = velocity.y * velocity.y;
-        if (horizontalSpeedSqr > 0.03D && horizontalSpeedSqr > verticalSpeedSqr * 2.5D) {
-            this.setAnimationState(ANIM_SWIM);
-            return;
-        }
-
-        this.setAnimationState(this.isPhaseTwo() ? ANIM_IDLE_TWO : ANIM_IDLE);
+        this.setAnimationState(ANIM_NONE);
     }
 }

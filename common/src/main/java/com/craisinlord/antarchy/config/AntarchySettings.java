@@ -90,6 +90,8 @@ public final class AntarchySettings {
     private static ResourceKey<Level> rainbowAntNonInfinityFallbackDimension = dimensionKey("antarchy:elythia");
     private static double krakenHealth = 1500.0D;
     private static double krakenAttackDamage = 45.0D;
+    private static double octopusBombHealth = 250.0D;
+    private static double octopusBombAttackDamage = 16.0D;
     private static double brutalflyHealth = 400.0D;
     private static double brutalflySwipeDamage = 15.0D;
     private static double brutalflySpitDamage = 5.0D;
@@ -732,6 +734,18 @@ public final class AntarchySettings {
     public static double krakenAttackDamage() {
         return krakenAttackDamage;
     }
+
+    public static double octopusBombHealth() {
+        return octopusBombHealth;
+    }
+
+    public static void setOctopusBombHealth(double value) { octopusBombHealth = value; }
+
+    public static double octopusBombAttackDamage() {
+        return octopusBombAttackDamage;
+    }
+
+    public static void setOctopusBombAttackDamage(double value) { octopusBombAttackDamage = value; }
 
     public static double brutalflyHealth() {
         return brutalflyHealth;

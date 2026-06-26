@@ -4,6 +4,11 @@
 		"idle": {
 			"loop": true,
 			"animation_length": 4,
+			"sound_effects": {
+				"0.0": {
+					"effect": "antarchy:kraken_flying_loop|0.45|1.0"
+				}
+			},
 			"bones": {
 				"l_shoulder": {
 					"rotation": {

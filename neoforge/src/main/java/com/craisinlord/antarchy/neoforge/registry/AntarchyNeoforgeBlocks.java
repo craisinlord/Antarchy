@@ -240,6 +240,8 @@ public final class AntarchyNeoforgeBlocks {
             () -> new AntNestBlock(AntarchyNeoforgeEntites.BROWN_ANT, AntarchyNeoforgeItems::antNestBlockEntityType, BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT).noLootTable()));
     public static final DeferredBlock<AntNestBlock> RAINBOW_ANT_NEST = BLOCKS.register("rainbow_ant_nest",
             () -> new AntNestBlock(AntarchyNeoforgeEntites.RAINBOW_ANT, AntarchyNeoforgeItems::antNestBlockEntityType, BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT).noLootTable()));
+    public static final DeferredBlock<AntNestBlock> TERMITE_NEST = BLOCKS.register("termite_nest",
+            () -> new AntNestBlock(AntarchyNeoforgeEntites.TERMITE, AntarchyNeoforgeItems::antNestBlockEntityType, BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT).noLootTable()));
     public static final DeferredBlock<Block> URANIUM_ORE = BLOCKS.register("uranium_ore",
             () -> createOre(Blocks.EMERALD_ORE, 4, 8));
     public static final DeferredBlock<Block> DEEPSLATE_URANIUM_ORE = BLOCKS.register("deepslate_uranium_ore",
@@ -350,7 +352,8 @@ public final class AntarchyNeoforgeBlocks {
                     AntNestBlockEntity::new,
                     RED_ANT_NEST.get(),
                     BROWN_ANT_NEST.get(),
-                    RAINBOW_ANT_NEST.get()
+                    RAINBOW_ANT_NEST.get(),
+                    TERMITE_NEST.get()
             ).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DreamCampfireBlockEntity>> DREAM_CAMPFIRE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("dream_campfire",
             () -> BlockEntityType.Builder.of(

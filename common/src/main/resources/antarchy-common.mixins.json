@@ -12,6 +12,7 @@
     "FireVisualEntityMixin",
     "GlowVinesUnderLeavesMixin",
     "ServerPlayerGameModeMixin",
+    "SquidzookaEnchantMixin",
     "StinkyLivingEntityMixin",
     "TorchflowerBlockStateMixin",
     "gravity.AbstractArrowGravityMixin",

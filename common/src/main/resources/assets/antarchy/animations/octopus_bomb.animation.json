@@ -203,7 +203,7 @@
 			"animation_length": 2.5,
 			"sound_effects": {
 				"0.0": {
-					"effect": "antarchy:kraken_flying_loop|0.45|1.0"
+					"effect": "antarchy:kraken_flying_loop|0.45|1.19"
 				}
 			},
 			"bones": {
@@ -10276,7 +10276,7 @@
 			"animation_length": 1,
 			"sound_effects": {
 				"0.0": {
-					"effect": "antarchy:kraken_flying_sideways_loop|0.45|1.0"
+					"effect": "antarchy:kraken_flying_sideways_loop|0.45|1.19"
 				}
 			},
 			"bones": {

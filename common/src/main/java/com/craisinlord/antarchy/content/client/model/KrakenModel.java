@@ -12,9 +12,7 @@ public class KrakenModel extends GeoModel<KrakenEntity> {
 
     @Override
     public ResourceLocation getTextureResource(KrakenEntity animatable) {
-        return animatable.isPhaseTwo()
-                ? ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/kraken_purple.png")
-                : ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/kraken.png");
+        return ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/kraken.png");
     }
 
     @Override

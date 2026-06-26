@@ -252,6 +252,7 @@ public class AntarchyNeoforge {
                 () -> AntarchyNeoforgeMisc.BLOODGLASS_MAX_HEARTS,
                 () -> AntarchyNeoforgeMisc.BLOODGLASS_WARD
         );
+        AntarchyObjects.setOctopusBomb(AntarchyNeoforgeEntites.OCTOPUS_BOMB);
     }
 
     private static boolean isModLoaded(String modId) {

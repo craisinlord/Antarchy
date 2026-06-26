@@ -18,6 +18,7 @@ import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyOrbEntity;
 import com.craisinlord.antarchy.content.block.entity.HushweedBlockEntity;
 import com.craisinlord.antarchy.content.entity.flying_squirrel.FlyingSquirrelEntity;
 import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
+import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
 import com.craisinlord.antarchy.content.entity.MolewormEntity;
 import com.craisinlord.antarchy.content.entity.MantisEntity;
@@ -52,6 +53,8 @@ public final class AntarchyObjects {
     public static Supplier<EntityType<KrakenEntity>> KRAKEN = (Supplier<EntityType<KrakenEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<MissileSquidEntity>> MISSILE_SQUID = (Supplier<EntityType<MissileSquidEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<OctopusBombEntity>> OCTOPUS_BOMB = (Supplier<EntityType<OctopusBombEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<MolewormEntity>> MOLEWORM = (Supplier<EntityType<MolewormEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -402,6 +405,10 @@ public final class AntarchyObjects {
 
     public static boolean isDuplicatorTreeBlock(BlockState state) {
         return state.is(DUPLICATOR_LOG.get()) || state.is(DUPLICATOR_SAPLING.get());
+    }
+
+    public static void setOctopusBomb(Supplier<EntityType<OctopusBombEntity>> supplier) {
+        OCTOPUS_BOMB = supplier;
     }
 
     public static BlockBehaviour.Properties shellstoneProperties() {

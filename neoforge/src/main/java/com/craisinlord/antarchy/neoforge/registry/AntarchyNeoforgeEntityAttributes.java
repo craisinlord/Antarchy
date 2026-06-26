@@ -44,6 +44,7 @@ public class AntarchyNeoforgeEntityAttributes {
         event.put(AntarchyNeoforgeEntites.CLOUD_SHARK.get(), CloudSharkEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.KRAKEN.get(), KrakenEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.MISSILE_SQUID.get(), MissileSquidEntity.createAttributes().build());
+        event.put(AntarchyNeoforgeEntites.OCTOPUS_BOMB.get(), OctopusBombEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.NIGHTMARE.get(), NightmareEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.BED_BUG.get(), BedBugEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.STINK_BUG.get(), StinkBugEntity.createAttributes().build());
@@ -67,6 +68,7 @@ public class AntarchyNeoforgeEntityAttributes {
         event.put(AntarchyNeoforgeEntites.RED_ANT.get(), redAntAttributes);
         event.put(AntarchyNeoforgeEntites.BROWN_ANT.get(), brownAntAttributes);
         event.put(AntarchyNeoforgeEntites.RAINBOW_ANT.get(), rainbowAntAttributes);
+        event.put(AntarchyNeoforgeEntites.TERMITE.get(), termiteAttributes);
         event.put(AntarchyNeoforgeEntites.MOLEWORM.get(), MolewormEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.MOLEVORE.get(), MolevoreEntity.createAttributes().build());
     }

@@ -8,7 +8,7 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
 public class KrakenRenderer extends GeoEntityRenderer<KrakenEntity> {
     public KrakenRenderer(EntityRendererProvider.Context context) {
         super(context, new KrakenModel());
-        this.shadowRadius = 3.6F;
-        this.withScale(3.0F);
+        this.shadowRadius = 2.0F;
+        this.withScale(1.5F);
     }
 }

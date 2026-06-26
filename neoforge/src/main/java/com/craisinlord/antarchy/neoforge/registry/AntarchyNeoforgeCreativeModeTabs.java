@@ -57,6 +57,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.RED_ANT_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.BROWN_ANT_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.RAINBOW_ANT_SPAWN_EGG.get());
+            event.accept(AntarchyNeoforgeItems.TERMITE_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.MOLEWORM_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.MANTIS_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.MOLEVORE_SPAWN_EGG.get());
@@ -72,6 +73,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.CLOUD_SHARK_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.KRAKEN_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.MISSILE_SQUID_SPAWN_EGG.get());
+            event.accept(AntarchyNeoforgeItems.OCTOPUS_BOMB_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.NIGHTMARE_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.BED_BUG_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.LUCID_SPAWN_EGG.get());
@@ -104,6 +106,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.RED_ANT_NEST_ITEM.get());
             event.accept(AntarchyNeoforgeItems.BROWN_ANT_NEST_ITEM.get());
             event.accept(AntarchyNeoforgeItems.RAINBOW_ANT_NEST_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.TERMITE_NEST_ITEM.get());
             event.accept(AntarchyNeoforgeItems.URANIUM_ORE_ITEM.get());
             event.accept(AntarchyNeoforgeItems.DEEPSLATE_URANIUM_ORE_ITEM.get());
             event.accept(AntarchyNeoforgeItems.TITANIUM_ORE_ITEM.get());
@@ -385,7 +388,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
             // 11 - Plants and flowers
             case "orange_milkweed", "pink_milkweed", "torchflower_bush", "hushweed", "amber_lichen", "creepvine",
                  "triffid_goo_block", "wasp_nest",
-                 "red_ant_nest", "brown_ant_nest", "rainbow_ant_nest" -> 11;
+                 "red_ant_nest", "brown_ant_nest", "rainbow_ant_nest", "termite_nest" -> 11;
 
             // 12 - Dream lighting
             case "dream_torch", "dream_lantern", "dream_campfire" -> 12;

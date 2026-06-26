@@ -63,9 +63,11 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
     private static final int ANIM_WALK = 1;
     private static final int ANIM_SHOOT = 2;
     private static final int ANIM_JUMP_ATTACK = 3;
-    private static final int ANIM_SPIN = 4;
-    private static final int ANIM_DEATH = 5;
-    private static final int ANIM_RAPID_SHOOT = 6;
+    private static final int ANIM_SPIN_START = 4;
+    private static final int ANIM_SPIN_LOOP = 5;
+    private static final int ANIM_SPIN_END = 6;
+    private static final int ANIM_DEATH = 7;
+    private static final int ANIM_RAPID_SHOOT = 8;
 
     private static final int ATTACK_RAPID_FIRE = 0;
     private static final int ATTACK_HUGE_BOMB = 1;
@@ -81,15 +83,21 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
     private static final int JUMP_TOTAL_TICKS = 40;
     private static final int JUMP_LAUNCH_TICK = 10;
     private static final int JUMP_SHAKE_TICKS = 25;
-    private static final int SPIN_TOTAL_TICKS = 40;
-    private static final int SPIN_START_TICK = 3;
-    private static final int SPIN_END_TICK = 22;
+    private static final int SPIN_START_TOTAL_TICKS = 5;
+    private static final int SPIN_LOOP_MIN_TICKS = 200;
+    private static final int SPIN_LOOP_MAX_TICKS = 300;
+    private static final int SPIN_END_TOTAL_TICKS = 10;
     private static final int SPIN_HIT_INTERVAL = 5;
+    private static final int SPIN_STUCK_FAIL_LIMIT = 10;
 
     private static final double CLOSE_RANGE_SQR = 64.0D;
     private static final double JUMP_RANGE_SQR = 400.0D;
     private static final double RANGED_MAX_RANGE_SQR = 625.0D;
+    private static final double SPIN_TRIGGER_RANGE_SQR = 225.0D;
+    private static final double SPIN_LEASH_RANGE_SQR = 225.0D;
     private static final double SPIN_RADIUS = 4.5D;
+    private static final double SPIN_MOVE_SPEED = 1.7D;
+    private static final double SPIN_ANIMATION_SPEED = 0.7D;
     private static final double JUMP_SHOCKWAVE_RADIUS = 6.0D;
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("Idle");
@@ -97,7 +105,9 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
     private static final RawAnimation SHOOT_ANIM = RawAnimation.begin().thenPlay("shoot").thenLoop("Idle");
     private static final RawAnimation RAPID_SHOOT_ANIM = RawAnimation.begin().thenLoop("shoot");
     private static final RawAnimation JUMP_ANIM = RawAnimation.begin().thenPlay("jump_attack").thenLoop("Idle");
-    private static final RawAnimation SPIN_ANIM = RawAnimation.begin().thenPlay("spin_attack").thenLoop("Idle");
+    private static final RawAnimation SPIN_START_ANIM = RawAnimation.begin().thenPlay("spin_attack_start");
+    private static final RawAnimation SPIN_LOOP_ANIM = RawAnimation.begin().thenLoop("spin_attack");
+    private static final RawAnimation SPIN_END_ANIM = RawAnimation.begin().thenPlay("spin_attack_end");
     private static final RawAnimation DEATH_ANIM = RawAnimation.begin().thenPlayAndHold("death");
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
@@ -105,7 +115,10 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
 
     private int shootAnimTicks;
     private int jumpAnimTicks;
-    private int spinAnimTicks;
+    private int spinStartTicks;
+    private int spinLoopTicks;
+    private int spinEndTicks;
+    private int spinLoopTotalTicks;
     private int shootCooldown;
     private int jumpCooldown;
     private int spinCooldown;
@@ -116,6 +129,9 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
     private boolean shootBomberFired;
     private boolean shootBomberFiredSecond;
     private int rapidFireNextTick;
+    private Vec3 spinDirection = Vec3.ZERO;
+    private int spinStrafeSign = 1;
+    private int spinStuckTicks;
     private final Map<UUID, Integer> spinHitCooldowns = new HashMap<>();
 
     public ToreterrorEntity(EntityType<? extends ToreterrorEntity> entityType, Level level) {
@@ -166,12 +182,18 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
 
     private PlayState mainAnimController(AnimationState<ToreterrorEntity> state) {
         int animState = this.getAnimationState();
+        state.getController().setAnimationSpeed(1.0D);
         return switch (animState) {
             case ANIM_WALK -> state.setAndContinue(WALK_ANIM);
             case ANIM_SHOOT -> state.setAndContinue(SHOOT_ANIM);
             case ANIM_RAPID_SHOOT -> state.setAndContinue(RAPID_SHOOT_ANIM);
             case ANIM_JUMP_ATTACK -> state.setAndContinue(JUMP_ANIM);
-            case ANIM_SPIN -> state.setAndContinue(SPIN_ANIM);
+            case ANIM_SPIN_START -> state.setAndContinue(SPIN_START_ANIM);
+            case ANIM_SPIN_LOOP -> {
+                state.getController().setAnimationSpeed(SPIN_ANIMATION_SPEED);
+                yield state.setAndContinue(SPIN_LOOP_ANIM);
+            }
+            case ANIM_SPIN_END -> state.setAndContinue(SPIN_END_ANIM);
             case ANIM_DEATH -> state.setAndContinue(DEATH_ANIM);
             default -> state.setAndContinue(IDLE_ANIM);
         };
@@ -209,8 +231,8 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
             this.tickShootAnimation();
         } else if (this.jumpAnimTicks > 0) {
             this.tickJumpAnimation();
-        } else if (this.spinAnimTicks > 0) {
-            this.tickSpinAnimation();
+        } else if (this.isSpinSequenceActive()) {
+            this.tickSpinSequence();
         } else {
             this.updateIdleAnimation();
         }
@@ -242,7 +264,6 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
 
     private void enterPhase2() {
         this.entityData.set(PHASE_2, true);
-        this.bossEvent.setColor(BossEvent.BossBarColor.RED);
     }
 
     public boolean isPhase2() {
@@ -303,7 +324,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
             this.setAnimationState(ANIM_DEATH);
             this.shootAnimTicks = 0;
             this.jumpAnimTicks = 0;
-            this.spinAnimTicks = 0;
+            this.stopSpinSequence();
             this.setDeltaMovement(Vec3.ZERO);
             this.getNavigation().stop();
         }
@@ -339,7 +360,11 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
     }
 
     private boolean isInAttackAnimation() {
-        return this.shootAnimTicks > 0 || this.jumpAnimTicks > 0 || this.spinAnimTicks > 0;
+        return this.shootAnimTicks > 0 || this.jumpAnimTicks > 0 || this.isSpinSequenceActive();
+    }
+
+    private boolean isSpinSequenceActive() {
+        return this.spinStartTicks > 0 || this.spinLoopTicks > 0 || this.spinEndTicks > 0;
     }
 
     private void tickShootAnimation() {
@@ -405,19 +430,218 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         }
     }
 
-    private void tickSpinAnimation() {
-        this.setAnimationState(ANIM_SPIN);
-        int elapsed = SPIN_TOTAL_TICKS - this.spinAnimTicks;
+    private void tickSpinSequence() {
         this.getNavigation().stop();
-        this.setDeltaMovement(this.getDeltaMovement().multiply(0.7D, 1.0D, 0.7D));
-        if (elapsed >= SPIN_START_TICK && elapsed <= SPIN_END_TICK && elapsed % SPIN_HIT_INTERVAL == 0) {
+        if (this.spinStartTicks > 0) {
+            this.tickSpinStart();
+            return;
+        }
+        if (this.spinLoopTicks > 0) {
+            this.tickSpinLoop();
+            return;
+        }
+        this.tickSpinEnd();
+    }
+
+    private void tickSpinStart() {
+        this.setAnimationState(ANIM_SPIN_START);
+        this.setDeltaMovement(this.getDeltaMovement().scale(0.75D));
+        LivingEntity target = this.getTarget();
+        if (target != null) {
+            Vec3 towardTarget = horizontalDirectionTo(target.position());
+            if (towardTarget.lengthSqr() > 1.0E-4D) {
+                this.spinDirection = towardTarget;
+                this.lookInDirection(towardTarget);
+            }
+        }
+        this.spinStartTicks--;
+    }
+
+    private void tickSpinLoop() {
+        this.setAnimationState(ANIM_SPIN_LOOP);
+        LivingEntity target = this.getTarget();
+        if (target == null || !target.isAlive()) {
+            this.beginSpinEnd();
+            return;
+        }
+
+        this.updateSpinDirection(target);
+        if (!this.moveDuringSpin()) {
+            this.spinStuckTicks++;
+            if (this.spinStuckTicks >= SPIN_STUCK_FAIL_LIMIT) {
+                this.beginSpinEnd();
+                return;
+            }
+        } else {
+            this.spinStuckTicks = 0;
+        }
+
+        int elapsed = this.spinLoopTotalTicks - this.spinLoopTicks;
+        if (elapsed % SPIN_HIT_INTERVAL == 0) {
             this.applySpinDamage();
         }
-        this.spinAnimTicks--;
-        if (this.spinAnimTicks <= 0) {
-            this.spinCooldown = 160 + this.random.nextInt(80);
+
+        this.lookInDirection(this.spinDirection);
+        this.spinLoopTicks--;
+        if (this.spinLoopTicks <= 0) {
+            this.beginSpinEnd();
+        }
+    }
+
+    private void tickSpinEnd() {
+        this.setAnimationState(ANIM_SPIN_END);
+        this.setDeltaMovement(this.getDeltaMovement().multiply(0.7D, 1.0D, 0.7D));
+        this.spinEndTicks--;
+        if (this.spinEndTicks <= 0) {
+            this.stopSpinSequence();
+            this.spinCooldown = 260 + this.random.nextInt(80);
             this.spinHitCooldowns.clear();
         }
+    }
+
+    private void updateSpinDirection(LivingEntity target) {
+        Vec3 towardTarget = horizontalDirectionTo(target.position());
+        if (towardTarget.lengthSqr() <= 1.0E-4D) {
+            return;
+        }
+        if (this.distanceToSqr(target) > SPIN_LEASH_RANGE_SQR) {
+            this.spinDirection = towardTarget;
+            return;
+        }
+        Vec3 forward = this.spinDirection.lengthSqr() > 1.0E-4D ? this.spinDirection.normalize() : towardTarget;
+        Vec3 strafe = new Vec3(-towardTarget.z, 0.0D, towardTarget.x).scale(this.spinStrafeSign);
+        Vec3 combined = forward.scale(1.2D).add(towardTarget.scale(0.15D)).add(strafe.scale(1.35D));
+        this.spinDirection = combined.lengthSqr() > 1.0E-4D ? combined.normalize() : towardTarget;
+    }
+
+    private boolean moveDuringSpin() {
+        Vec3 direction = this.spinDirection.lengthSqr() > 1.0E-4D ? this.spinDirection.normalize() : Vec3.ZERO;
+        if (direction == Vec3.ZERO) {
+            return false;
+        }
+
+        if (this.trySpinMoves(direction, false)) {
+            return true;
+        }
+
+        this.spinStrafeSign *= -1;
+        Vec3 bounced = rotateHorizontal(direction, this.spinStrafeSign * 35.0D);
+        if (this.trySpinMoves(bounced, true)) {
+            return true;
+        }
+
+        Vec3 reversed = direction.scale(-1.0D);
+        if (this.trySpinMoves(reversed, true)) {
+            return true;
+        }
+
+        Vec3 reversedBounce = rotateHorizontal(reversed, this.spinStrafeSign * 25.0D);
+        return this.trySpinMoves(reversedBounce, true);
+    }
+
+    private boolean trySpinMoves(Vec3 baseDirection, boolean bounced) {
+        Vec3[] attempts = new Vec3[]{
+                baseDirection,
+                rotateHorizontal(baseDirection, 28.0D * this.spinStrafeSign),
+                rotateHorizontal(baseDirection, -28.0D * this.spinStrafeSign),
+                rotateHorizontal(baseDirection, 52.0D * this.spinStrafeSign),
+                rotateHorizontal(baseDirection, -52.0D * this.spinStrafeSign)
+        };
+        for (Vec3 attempt : attempts) {
+            if (this.trySpinMove(attempt, 0.0D, 0.0D) || this.trySpinMove(attempt, 1.0D, 0.42D) || this.trySpinMove(attempt, -1.0D, -0.28D)) {
+                this.spinDirection = attempt.normalize();
+                if (bounced) {
+                    this.spinStrafeSign *= -1;
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean trySpinMove(Vec3 direction, double yOffset, double verticalVelocity) {
+        Vec3 horizontalMove = new Vec3(direction.x * SPIN_MOVE_SPEED, 0.0D, direction.z * SPIN_MOVE_SPEED);
+        AABB movedBox = this.getBoundingBox().move(horizontalMove.x, yOffset, horizontalMove.z);
+        if (!this.level().noCollision(this, movedBox)) {
+            return false;
+        }
+        if (!this.hasSpinSupport(movedBox)) {
+            return false;
+        }
+
+        this.setDeltaMovement(horizontalMove.x, verticalVelocity, horizontalMove.z);
+        this.hasImpulse = true;
+        return true;
+    }
+
+    private boolean hasSpinSupport(AABB box) {
+        double probeY = box.minY - 0.2D;
+        double[][] probes = new double[][]{
+                {box.getCenter().x, box.getCenter().z},
+                {box.minX + 0.25D, box.minZ + 0.25D},
+                {box.minX + 0.25D, box.maxZ - 0.25D},
+                {box.maxX - 0.25D, box.minZ + 0.25D},
+                {box.maxX - 0.25D, box.maxZ - 0.25D}
+        };
+
+        for (double[] probe : probes) {
+            BlockPos supportPos = BlockPos.containing(probe[0], probeY, probe[1]);
+            if (this.level().loadedAndEntityCanStandOnFace(supportPos, this, Direction.UP)) {
+                return true;
+            }
+            BlockPos lowerSupportPos = supportPos.below();
+            if (this.level().loadedAndEntityCanStandOnFace(lowerSupportPos, this, Direction.UP)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Vec3 horizontalDirectionTo(Vec3 targetPos) {
+        Vec3 diff = targetPos.subtract(this.position());
+        Vec3 horizontal = new Vec3(diff.x, 0.0D, diff.z);
+        return horizontal.lengthSqr() > 1.0E-4D ? horizontal.normalize() : Vec3.ZERO;
+    }
+
+    private void lookInDirection(Vec3 direction) {
+        if (direction.lengthSqr() <= 1.0E-4D) {
+            return;
+        }
+        float yaw = (float) (net.minecraft.util.Mth.atan2(direction.z, direction.x) * (180.0D / Math.PI)) - 90.0F;
+        this.setYRot(yaw);
+        this.yBodyRot = yaw;
+        this.yHeadRot = yaw;
+        this.setYHeadRot(yaw);
+    }
+
+    private static Vec3 rotateHorizontal(Vec3 direction, double degrees) {
+        if (direction.lengthSqr() <= 1.0E-4D) {
+            return Vec3.ZERO;
+        }
+        double radians = Math.toRadians(degrees);
+        double cos = Math.cos(radians);
+        double sin = Math.sin(radians);
+        double x = direction.x * cos - direction.z * sin;
+        double z = direction.x * sin + direction.z * cos;
+        return new Vec3(x, 0.0D, z).normalize();
+    }
+
+    private void beginSpinEnd() {
+        this.spinStartTicks = 0;
+        this.spinLoopTicks = 0;
+        if (this.spinEndTicks <= 0) {
+            this.spinEndTicks = SPIN_END_TOTAL_TICKS;
+        }
+    }
+
+    private void stopSpinSequence() {
+        this.spinStartTicks = 0;
+        this.spinLoopTicks = 0;
+        this.spinEndTicks = 0;
+        this.spinLoopTotalTicks = 0;
+        this.spinDirection = Vec3.ZERO;
+        this.spinStrafeSign = 1;
+        this.spinStuckTicks = 0;
     }
 
     private Vec3 calcLaunchVelocity(Vec3 from, Vec3 to, double minSpeed) {
@@ -618,22 +842,32 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
             LivingEntity target = ToreterrorEntity.this.getTarget();
             if (target == null || ToreterrorEntity.this.isInAttackAnimation()) return false;
             if (ToreterrorEntity.this.spinCooldown > 0) return false;
-            return ToreterrorEntity.this.distanceToSqr(target) <= CLOSE_RANGE_SQR && ToreterrorEntity.this.onGround();
+            return ToreterrorEntity.this.distanceToSqr(target) <= SPIN_TRIGGER_RANGE_SQR && ToreterrorEntity.this.onGround();
         }
 
         @Override
         public void start() {
-            ToreterrorEntity.this.spinAnimTicks = SPIN_TOTAL_TICKS;
+            LivingEntity target = ToreterrorEntity.this.getTarget();
+            ToreterrorEntity.this.spinStartTicks = SPIN_START_TOTAL_TICKS;
+            ToreterrorEntity.this.spinLoopTotalTicks = SPIN_LOOP_MIN_TICKS + ToreterrorEntity.this.random.nextInt(SPIN_LOOP_MAX_TICKS - SPIN_LOOP_MIN_TICKS + 1);
+            ToreterrorEntity.this.spinLoopTicks = ToreterrorEntity.this.spinLoopTotalTicks;
+            ToreterrorEntity.this.spinEndTicks = 0;
+            ToreterrorEntity.this.spinStuckTicks = 0;
+            ToreterrorEntity.this.spinStrafeSign = ToreterrorEntity.this.random.nextBoolean() ? 1 : -1;
+            ToreterrorEntity.this.spinHitCooldowns.clear();
+            ToreterrorEntity.this.spinDirection = target == null
+                    ? Vec3.ZERO
+                    : ToreterrorEntity.this.horizontalDirectionTo(target.position());
         }
 
         @Override
         public boolean canContinueToUse() {
-            return ToreterrorEntity.this.spinAnimTicks > 0;
+            return ToreterrorEntity.this.isSpinSequenceActive();
         }
 
         @Override
         public void stop() {
-            ToreterrorEntity.this.spinAnimTicks = 0;
+            ToreterrorEntity.this.stopSpinSequence();
         }
     }
 }

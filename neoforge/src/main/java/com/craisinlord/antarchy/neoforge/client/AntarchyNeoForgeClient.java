@@ -87,6 +87,7 @@ public final class AntarchyNeoForgeClient {
         event.registerEntityRenderer(AntarchyNeoforgeEntites.RED_ANT.get(), context -> withParalyzedGeoLayer(new AntRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.BROWN_ANT.get(), context -> withParalyzedGeoLayer(new AntRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.RAINBOW_ANT.get(), context -> withParalyzedGeoLayer(new AntRenderer(context)));
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.TERMITE.get(), context -> withParalyzedGeoLayer(new TermiteRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.MOLEWORM.get(), context -> withParalyzedGeoLayer(new MolewormRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.MANTIS.get(), context -> withParalyzedGeoLayer(new MantisRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.MOLEVORE.get(), context -> withParalyzedGeoLayer(new MolevoreRenderer(context)));
@@ -101,6 +102,7 @@ public final class AntarchyNeoForgeClient {
         event.registerEntityRenderer(AntarchyNeoforgeEntites.CLOUD_SHARK.get(), context -> withParalyzedGeoLayer(new CloudSharkRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.KRAKEN.get(), context -> withParalyzedGeoLayer(new KrakenRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.MISSILE_SQUID.get(), context -> withParalyzedGeoLayer(new MissileSquidRenderer(context)));
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.OCTOPUS_BOMB.get(), context -> withParalyzedGeoLayer(new OctopusBombRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.NIGHTMARE.get(), context -> withParalyzedGeoLayer(new NightmareRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.LUCID.get(), context -> withParalyzedGeoLayer(new LucidRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.BED_BUG.get(), context -> withParalyzedGeoLayer(new BedBugRenderer(context)));
