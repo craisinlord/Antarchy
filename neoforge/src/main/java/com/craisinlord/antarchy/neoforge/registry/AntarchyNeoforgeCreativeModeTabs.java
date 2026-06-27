@@ -116,6 +116,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.insertAfter(new ItemStack(Items.SHEARS), new ItemStack(AntarchyNeoforgeItems.DUCT_TAPE_ITEM.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.insertAfter(new ItemStack(Items.MINECART), new ItemStack(AntarchyNeoforgeItems.DIAMOND_MINECART_ITEM.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+            event.accept(AntarchyNeoforgeItems.BILE_BUCKET.get());
             event.accept(AntarchyNeoforgeItems.ICHOR_BUCKET.get());
             event.accept(AntarchyNeoforgeItems.ANTIWATER_BUCKET.get());
             event.accept(AntarchyNeoforgeItems.CLOUD_BUCKET.get());
@@ -245,6 +246,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.LARGE_BLOOD_CRYSTAL_BUD_ITEM.get());
             event.accept(AntarchyNeoforgeItems.MYRMITE_ITEM.get());
             event.accept(AntarchyNeoforgeItems.CHITEN_BLOCK_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.CHITEN_SPIKE_ITEM.get());
             event.accept(AntarchyNeoforgeItems.AMBER_MOSS_BLOCK_ITEM.get());
             event.accept(AntarchyNeoforgeItems.AMBER_MOSS_CARPET_ITEM.get());
             event.accept(AntarchyNeoforgeItems.URANIUM_BLOCK_ITEM.get());
@@ -397,14 +399,15 @@ public class AntarchyNeoforgeCreativeModeTabs {
             case "antimetal_scaffolding" -> 13;
 
             // 14 - Infested blocks
-            case "infested_rooted_dirt", "infested_coarse_dirt", "bed_bug_egg" -> 14;
+            case "infested_rooted_dirt", "infested_coarse_dirt", "bed_bug_egg",
+                 "creeping_horror_egg", "lurking_terror_egg" -> 14;
 
             // 15 - Tools
             case "ultimate_pickaxe", "ultimate_axe", "ultimate_shovel", "ultimate_hoe",
                  "duct_tape", "diamond_minecart", "gravity_sculk_sensor" -> 15;
 
             // 16 - Liquid buckets
-            case "ichor_bucket", "antiwater_bucket", "cloud_bucket" -> 16;
+            case "bile_bucket", "ichor_bucket", "antiwater_bucket", "cloud_bucket" -> 16;
 
             // 17 - Misc wearables / gadgets
             case "moggles", "brutalfly_elytra", "fallen_king_crown", "jumpy_boots" -> 17;
@@ -439,7 +442,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
                  "uranium_ingot", "titanium_ingot", "lucid_eye",
                  "mantis_claw", "jumpy_bug_leg", "brutalfly_wing", "cornea_ear",
                  "primordial_scute", "triffid_goo", "vortex_eye",
-                 "king_scale", "queen_scale", "chiten" -> 22;
+                 "king_scale", "queen_scale", "chiten", "stink_bug" -> 22;
 
             // 23 - Arrows (reserved for future arrow types)
 

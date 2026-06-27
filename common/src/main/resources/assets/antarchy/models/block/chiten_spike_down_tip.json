@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/pointed_dripstone",
+  "textures": {
+    "cross": "antarchy:block/chiten_spike/chiten_spike_down_tip"
+  }
+}

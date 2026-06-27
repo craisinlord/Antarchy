@@ -51,18 +51,28 @@
       "antarchy:elythia_underground"
     ],
     [],
-    [],
+    [
+      "minecraft:sea_pickle",
+      "minecraft:warm_ocean_vegetation"
+    ],
     []
   ],
   "creature_spawn_probability": 0.04,
   "spawners": {
-    "monster": [],
-    "creature": [],
+    "monster": [
+      { "type": "antarchy:missile_squid", "weight": 12, "minCount": 1, "maxCount": 3 },
+      { "type": "antarchy:octopus_bomb",  "weight": 4,  "minCount": 1, "maxCount": 2 }
+    ],
+    "creature": [
+      { "type": "minecraft:turtle", "weight": 5, "minCount": 1, "maxCount": 2 }
+    ],
     "ambient": [],
     "axolotls": [],
     "underground_water_creature": [],
     "water_creature": [],
-    "water_ambient": [],
+    "water_ambient": [
+      { "type": "minecraft:tropical_fish", "weight": 20, "minCount": 4, "maxCount": 8 }
+    ],
     "misc": []
   }
 }

@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.fabric.client;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.client.renderer.ElythiaSkyRenderer;
 import com.craisinlord.antarchy.fabric.AntarchyFabricContent;
@@ -36,8 +37,9 @@ public final class ElythiaFireflyManager {
             if (dayTime < NIGHT_START || dayTime > NIGHT_END) return;
 
             long gameTime = level.getGameTime();
+            boolean fireflyBiome = level.getBiome(client.player.blockPosition()).is(AntarchyTags.Biomes.ELYTHIA_FIREFLY_PARTICLE_BIOMES);
 
-            if (AntarchySettings.elythiaFireflyParticlesEnabled()) {
+            if (AntarchySettings.elythiaFireflyParticlesEnabled() && fireflyBiome) {
                 if (gameTime % SPAWN_INTERVAL == 0) {
                     Player player = client.player;
                     int px = (int) player.getX();

@@ -1230,11 +1230,11 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     }
 
     private boolean shouldPlayAttackAnimation() {
-        if (!(this instanceof RedAntEntity)) {
-            return false;
-        }
+        return this.shouldUseBiteAnimation() && this.getBiteAnimationTicks() > 0;
+    }
 
-        return this.getBiteAnimationTicks() > 0;
+    protected boolean shouldUseBiteAnimation() {
+        return this instanceof RedAntEntity;
     }
 
     private int getBiteAnimationTicks() {
@@ -1243,6 +1243,10 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
 
     private void setBiteAnimationTicks(int ticks) {
         this.entityData.set(BITE_ANIM_TICKS, Math.max(0, ticks));
+    }
+
+    protected final void triggerBiteAnimation(int ticks) {
+        this.setBiteAnimationTicks(ticks);
     }
 
     private void syncAttribute(@Nullable AttributeInstance attributeInstance, double desiredValue, boolean rescaleCurrentHealth) {

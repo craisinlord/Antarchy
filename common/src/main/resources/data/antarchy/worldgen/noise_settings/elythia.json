@@ -484,7 +484,7 @@
         "type": "minecraft:condition",
         "if_true": {
           "type": "minecraft:biome",
-          "biome_is": ["antarchy:elythia_ocean"]
+          "biome_is": ["antarchy:elythia_ocean", "antarchy:elythia_coral_spikes"]
         },
         "then_run": {
           "type": "minecraft:sequence",
@@ -499,8 +499,26 @@
                 "surface_type": "floor"
               },
               "then_run": {
-                "type": "minecraft:block",
-                "result_state": { "Name": "minecraft:gravel" }
+                "type": "minecraft:sequence",
+                "sequence": [
+                  {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:water",
+                      "offset": 0,
+                      "surface_depth_multiplier": 0,
+                      "add_stone_depth": false
+                    },
+                    "then_run": {
+                      "type": "minecraft:block",
+                      "result_state": { "Name": "minecraft:gravel" }
+                    }
+                  },
+                  {
+                    "type": "minecraft:block",
+                    "result_state": { "Name": "minecraft:sand" }
+                  }
+                ]
               }
             },
             {
@@ -530,6 +548,10 @@
                 "type": "minecraft:block",
                 "result_state": { "Name": "antarchy:shellstone" }
               }
+            },
+            {
+              "type": "minecraft:block",
+              "result_state": { "Name": "antarchy:shellstone" }
             }
           ]
         }

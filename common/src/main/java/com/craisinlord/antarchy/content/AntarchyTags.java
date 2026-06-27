@@ -76,6 +76,7 @@ public final class AntarchyTags {
         public static final TagKey<Item> DUCT_TAPE_BLACKLIST = TagKey.create(Registries.ITEM, id("duct_tape_blacklist"));
         public static final TagKey<Item> BROWN_ANT_ACTIVATION_ITEMS = TagKey.create(Registries.ITEM, id("brown_ant_activation_items"));
         public static final TagKey<Item> BROWN_ANT_BREEDING_FOODS = TagKey.create(Registries.ITEM, id("brown_ant_breeding_foods"));
+        public static final TagKey<Item> MULTISHOT_ENCHANTABLE = TagKey.create(Registries.ITEM, id("multishot_enchantable"));
         public static final TagKey<Item> RED_ANT_ACTIVATION_ITEMS = TagKey.create(Registries.ITEM, id("red_ant_activation_items"));
         public static final TagKey<Item> RED_ANT_BREEDING_FOODS = TagKey.create(Registries.ITEM, id("red_ant_breeding_foods"));
         public static final TagKey<Item> RAINBOW_ANT_ACTIVATION_ITEMS = TagKey.create(Registries.ITEM, id("rainbow_ant_activation_items"));
@@ -95,6 +96,7 @@ public final class AntarchyTags {
     public static final class Biomes {
         public static final TagKey<Biome> MANTIS_SPAWN_BIOMES = TagKey.create(Registries.BIOME, id("mantis_spawn_biomes"));
         public static final TagKey<Biome> MANTIS_OVERWORLD_SPAWN_BIOMES = TagKey.create(Registries.BIOME, id("mantis_overworld_spawn_biomes"));
+        public static final TagKey<Biome> ELYTHIA_FIREFLY_PARTICLE_BIOMES = TagKey.create(Registries.BIOME, id("elythia_firefly_particle_biomes"));
 
         private Biomes() {
         }

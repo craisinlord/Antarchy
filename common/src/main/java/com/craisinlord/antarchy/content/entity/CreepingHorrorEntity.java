@@ -1,11 +1,16 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.Difficulty;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -18,6 +23,9 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -60,6 +68,25 @@ public class CreepingHorrorEntity extends Monster implements GeoEntity {
                 .add(Attributes.MOVEMENT_SPEED, 0.38D)
                 .add(Attributes.ATTACK_DAMAGE, AntarchySettings.creepingHorrorAttackDamage())
                 .add(Attributes.FOLLOW_RANGE, 16.0D);
+    }
+
+    public static boolean canSpawn(EntityType<CreepingHorrorEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+        if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.COMMAND) {
+            return true;
+        }
+
+        BlockPos belowPos = pos.below();
+        BlockState belowState = level.getBlockState(belowPos);
+        boolean validSupport = !belowState.is(Blocks.BEDROCK)
+                && belowState.blocksMotion()
+                && belowState.isFaceSturdy(level, belowPos, Direction.UP)
+                && belowState.isCollisionShapeFullBlock(level, belowPos);
+
+        return level.getDifficulty() != Difficulty.PEACEFUL
+                && validSupport
+                && level.isEmptyBlock(pos)
+                && level.isEmptyBlock(pos.above())
+                && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);
     }
 
     @Override

@@ -7,7 +7,7 @@
       "type": "antarchy:elythia_biome_source",
       "moleworm_caves_max_y": 30,
       "surface_biome_sample_y": 160,
-      "ocean_max_y": 85,
+      "ocean_max_y": 75,
       "biomes": [
         {
           "biome": "antarchy:moleworm_caves",
@@ -226,6 +226,30 @@
           }
         },
         {
+          "biome": "antarchy:fungal_ouranwood_forest",
+          "parameters": {
+            "temperature": 0.55,
+            "humidity": 0.9,
+            "continentalness": 0.75,
+            "erosion": 0.0,
+            "weirdness": 0.85,
+            "depth": 0.45,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:fungal_ouranwood_forest",
+          "parameters": {
+            "temperature": 0.55,
+            "humidity": 0.9,
+            "continentalness": 0.75,
+            "erosion": 0.0,
+            "weirdness": 0.85,
+            "depth": 0.0,
+            "offset": 0.0
+          }
+        },
+        {
           "biome": "antarchy:torchflower_fields",
           "parameters": {
             "temperature": 0.76,
@@ -398,7 +422,7 @@
           "parameters": {
             "temperature": 0.65,
             "humidity": 0.90,
-            "continentalness": -0.50,
+            "continentalness": -0.88,
             "erosion": 0.30,
             "weirdness": 0.0,
             "depth": 0.0,
@@ -410,7 +434,7 @@
           "parameters": {
             "temperature": 0.60,
             "humidity": 0.88,
-            "continentalness": -0.55,
+            "continentalness": -0.92,
             "erosion": 0.25,
             "weirdness": -0.40,
             "depth": 0.0,
@@ -422,7 +446,7 @@
           "parameters": {
             "temperature": 0.70,
             "humidity": 0.92,
-            "continentalness": -0.45,
+            "continentalness": -0.85,
             "erosion": 0.35,
             "weirdness": 0.40,
             "depth": 0.0,
@@ -434,7 +458,7 @@
           "parameters": {
             "temperature": 0.65,
             "humidity": 0.90,
-            "continentalness": -0.50,
+            "continentalness": -0.88,
             "erosion": 0.30,
             "weirdness": 0.0,
             "depth": 0.5,
@@ -446,7 +470,7 @@
           "parameters": {
             "temperature": 0.60,
             "humidity": 0.88,
-            "continentalness": -0.55,
+            "continentalness": -0.92,
             "erosion": 0.25,
             "weirdness": -0.40,
             "depth": 0.5,
@@ -454,38 +478,50 @@
           }
         },
         {
-          "biome": "antarchy:elythia_beach",
+          "biome": "antarchy:elythia_coral_spikes",
           "parameters": {
-            "temperature": 0.68,
-            "humidity": 0.91,
-            "continentalness": -0.08,
-            "erosion": 0.50,
-            "weirdness": 0.0,
+            "temperature": 0.80,
+            "humidity": 0.85,
+            "continentalness": -0.88,
+            "erosion": 0.20,
+            "weirdness": 0.60,
             "depth": 0.0,
             "offset": 0.0
           }
         },
         {
-          "biome": "antarchy:elythia_beach",
+          "biome": "antarchy:elythia_coral_spikes",
           "parameters": {
-            "temperature": 0.65,
-            "humidity": 0.89,
-            "continentalness": -0.05,
-            "erosion": 0.60,
-            "weirdness": -0.30,
+            "temperature": 0.75,
+            "humidity": 0.82,
+            "continentalness": -0.90,
+            "erosion": 0.15,
+            "weirdness": -0.65,
             "depth": 0.0,
             "offset": 0.0
           }
         },
         {
-          "biome": "antarchy:elythia_beach",
+          "biome": "antarchy:elythia_coral_spikes",
           "parameters": {
-            "temperature": 0.70,
-            "humidity": 0.93,
-            "continentalness": -0.02,
-            "erosion": 0.55,
-            "weirdness": 0.30,
-            "depth": 0.0,
+            "temperature": 0.80,
+            "humidity": 0.85,
+            "continentalness": -0.88,
+            "erosion": 0.20,
+            "weirdness": 0.60,
+            "depth": 0.5,
+            "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:elythia_coral_spikes",
+          "parameters": {
+            "temperature": 0.75,
+            "humidity": 0.82,
+            "continentalness": -0.90,
+            "erosion": 0.15,
+            "weirdness": -0.65,
+            "depth": 0.5,
             "offset": 0.0
           }
         }

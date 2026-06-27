@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/template_two_turtle_eggs",
   "textures": {
-    "all": "antarchy:block/creeping_horror_eggs/creeping_horror_eggs_slightly_cracked"
+    "all": "antarchy:block/creeping_horror_egg/creeping_horror_egg_slightly_cracked"
   }
 }

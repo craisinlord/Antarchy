@@ -16,7 +16,7 @@ public abstract class ElytraStartFlyingMixin {
     @Shadow
     public abstract void startFallFlying();
 
-    @Inject(method = "tryToStartFallFlying", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "tryToStartFallFlying()Z", at = @At("RETURN"), cancellable = true)
     private void antarchy$allowCustomElytra(CallbackInfoReturnable<Boolean> cir) {
         if (cir.getReturnValue()) return;
         Player player = (Player) (Object) this;

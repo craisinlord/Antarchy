@@ -2,7 +2,7 @@
   "type": "integrated_api:generic_structure",
   "start_pool": "antarchy:toreterror_arena/toreterror_arena",
   "size": 2,
-  "valid_biome_radius_check": 1,
+  "valid_biome_radius_check": 5,
   "biomes": "#antarchy:has_structure/toreterror_arena_biomes",
   "step": "surface_structures",
   "terrain_adaptation": "none",

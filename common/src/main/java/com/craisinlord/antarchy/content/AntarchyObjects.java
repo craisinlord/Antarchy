@@ -148,6 +148,10 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<Block> NYXITE_SPIKE = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<Block> CHITEN_BLOCK = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> CHITEN_SPIKE = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<Block> POTENT_NYXITE = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> ANTIMETAL = (Supplier<Block>) UNBOUND;
@@ -276,6 +280,8 @@ public final class AntarchyObjects {
             Supplier<Block> triffidGooBlock,
             Supplier<Block> paleNyxite,
             Supplier<Block> nyxiteSpike,
+            Supplier<Block> chitenBlock,
+            Supplier<Block> chitenSpike,
             Supplier<Block> potentNyxite,
             Supplier<Block> antimetal,
             Supplier<Block> polishedAntimetal,
@@ -364,6 +370,8 @@ public final class AntarchyObjects {
         TRIFFID_GOO_BLOCK = triffidGooBlock;
         PALE_NYXITE = paleNyxite;
         NYXITE_SPIKE = nyxiteSpike;
+        CHITEN_BLOCK = chitenBlock;
+        CHITEN_SPIKE = chitenSpike;
         POTENT_NYXITE = potentNyxite;
         ANTIMETAL = antimetal;
         POLISHED_ANTIMETAL = polishedAntimetal;

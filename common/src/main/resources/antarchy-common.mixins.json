@@ -1,10 +1,12 @@
 {
   "required": true,
   "package": "com.craisinlord.antarchy.mixins",
+  "refmap": "antarchy.refmap.json",
   "plugin": "com.craisinlord.antarchy.mixins.AntarchyMixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AccessorRangedAttribute",
+    "BlockEntitySignMixin",
     "BloodglassMixin",
     "DreamFireBlockMixin",
     "DreamSandLowGravityMixin",
@@ -13,7 +15,7 @@
     "GlowVinesUnderLeavesMixin",
     "ServerPlayerGameModeMixin",
     "SquidzookaEnchantMixin",
-    "StinkyLivingEntityMixin",
+    "SquidzookaMultishotMixin",
     "TorchflowerBlockStateMixin",
     "gravity.AbstractArrowGravityMixin",
     "gravity.BucketItemGravityMixin",
@@ -43,10 +45,10 @@
     "gravity.ServerPlayerGravityMixin",
     "gravity.ThrowableProjectileGravityMixin",
     "gravity.TrackedEntityAccessor",
-    "multipart.EntityMultipartLifecycleMixin",
-    "stellaris.DimensionOxygenManagerMixin"
+    "multipart.EntityMultipartLifecycleMixin"
   ],
   "client": [
+    "client.CavarynSkyMixin",
     "client.ElythiaSkyMixin",
     "client.ElytraModelAccessor",
     "client.LightningBoltRendererMixin",

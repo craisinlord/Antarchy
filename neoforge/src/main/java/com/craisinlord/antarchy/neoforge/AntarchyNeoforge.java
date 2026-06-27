@@ -214,6 +214,8 @@ public class AntarchyNeoforge {
                 () -> AntarchyNeoforgeBlocks.TRIFFID_GOO_BLOCK.get(),
                 () -> AntarchyNeoforgeBlocks.PALE_NYXITE.get(),
                 () -> AntarchyNeoforgeBlocks.NYXITE_SPIKE.get(),
+                () -> AntarchyNeoforgeBlocks.CHITEN_BLOCK.get(),
+                () -> AntarchyNeoforgeBlocks.CHITEN_SPIKE.get(),
                 () -> AntarchyNeoforgeBlocks.POTENT_NYXITE.get(),
                 () -> AntarchyNeoforgeBlocks.ANTIMETAL.get(),
                 () -> AntarchyNeoforgeBlocks.POLISHED_ANTIMETAL.get(),

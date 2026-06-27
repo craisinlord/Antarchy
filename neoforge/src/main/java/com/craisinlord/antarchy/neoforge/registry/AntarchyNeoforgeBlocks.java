@@ -11,6 +11,7 @@ import com.craisinlord.antarchy.content.block.entity.DreamCampfireBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.HushweedBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.PotentNyxiteBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.WaspNestBlockEntity;
+import com.craisinlord.antarchy.content.fluid.BileLiquidBlock;
 import com.craisinlord.antarchy.neoforge.OuranwoodWoodTypes;
 import com.craisinlord.antarchy.neoforge.content.fluid.AntiwaterFluidType;
 import com.mojang.serialization.MapCodec;
@@ -173,6 +174,8 @@ public final class AntarchyNeoforgeBlocks {
             () -> new Block(nyxiteProperties()));
     public static final DeferredBlock<NyxiteSpikeBlock> NYXITE_SPIKE = BLOCKS.register("nyxite_spike",
             () -> new NyxiteSpikeBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.POINTED_DRIPSTONE)));
+    public static final DeferredBlock<ChitenSpikeBlock> CHITEN_SPIKE = BLOCKS.register("chiten_spike",
+            () -> new ChitenSpikeBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.POINTED_DRIPSTONE)));
     public static final DeferredBlock<PotentNyxiteBlock> POTENT_NYXITE = BLOCKS.register("potent_nyxite",
             () -> new PotentNyxiteBlock(
                     AntarchyNeoforgeItems::potentNyxiteBlockEntityType,
@@ -224,6 +227,8 @@ public final class AntarchyNeoforgeBlocks {
             () -> new com.craisinlord.antarchy.content.block.OuranwoodSquirrelNestBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.COARSE_DIRT).noLootTable()));
     public static final DeferredBlock<HushweedBlock> HUSHWEED = BLOCKS.register("hushweed",
             () -> new HushweedBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.AZALEA).noCollission().noOcclusion()));
+    public static final DeferredBlock<LiquidBlock> BILE_BLOCK = BLOCKS.register("bile",
+            () -> new BileLiquidBlock((FlowingFluid) AntarchyNeoforgeMisc.BILE.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER).lightLevel(state -> 5).noLootTable()));
     public static final DeferredBlock<LiquidBlock> ICHOR_BLOCK = BLOCKS.register("ichor",
             () -> new LiquidBlock((FlowingFluid) AntarchyNeoforgeMisc.ICHOR.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER).noLootTable()));
     public static final DeferredBlock<LiquidBlock> ANTIWATER_BLOCK = BLOCKS.register("antiwater",

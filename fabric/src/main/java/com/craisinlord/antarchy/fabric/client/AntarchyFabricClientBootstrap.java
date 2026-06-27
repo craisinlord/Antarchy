@@ -128,6 +128,17 @@ public final class AntarchyFabricClientBootstrap {
 
     private static void registerFluids() {
         FluidRenderHandlerRegistry.INSTANCE.register(
+                AntarchyFabricContent.BILE.get(),
+                AntarchyFabricContent.FLOWING_BILE.get(),
+                new SimpleFluidRenderHandler(
+                        ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/bile/bile_still"),
+                        ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/bile/bile_flowing"),
+                        ResourceLocation.withDefaultNamespace("block/water_overlay"),
+                        0xFFFFFFFF
+                )
+        );
+
+        FluidRenderHandlerRegistry.INSTANCE.register(
                 AntarchyFabricContent.ICHOR.get(),
                 AntarchyFabricContent.FLOWING_ICHOR.get(),
                 new SimpleFluidRenderHandler(
@@ -179,6 +190,7 @@ public final class AntarchyFabricClientBootstrap {
         registry.register(AntarchyFabricContent.INVERTED_GEYSER_POOF.get(), InvertedGeyserBaseParticle.Provider::new);
         registry.register(AntarchyFabricContent.INVERTED_GEYSER_ERUPTION.get(), new InvertedGeyserEruptionParticle.Provider());
         registry.register(AntarchyFabricContent.FIREFLY.get(), FireflyParticle.Provider::new);
+        registry.register(AntarchyFabricContent.ORANGE_ASH.get(), OrangeAshParticle.Provider::new);
     }
 
     private static void registerRenderLayers() {
@@ -199,6 +211,7 @@ public final class AntarchyFabricClientBootstrap {
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.AMBER_LICHEN.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.CREEPVINE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.NYXITE_SPIKE.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.CHITEN_SPIKE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.SMALL_BLOOD_CRYSTAL_BUD.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.MEDIUM_BLOOD_CRYSTAL_BUD.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.LARGE_BLOOD_CRYSTAL_BUD.get(), RenderType.cutout());
@@ -220,6 +233,8 @@ public final class AntarchyFabricClientBootstrap {
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.CLOUD_BLOCK.get(), RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putFluids(
                 RenderType.translucent(),
+                AntarchyFabricContent.BILE.get(),
+                AntarchyFabricContent.FLOWING_BILE.get(),
                 AntarchyFabricContent.ICHOR.get(),
                 AntarchyFabricContent.FLOWING_ICHOR.get(),
                 AntarchyFabricContent.ANTIWATER.get(),

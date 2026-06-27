@@ -25,6 +25,16 @@ public final class AntarchyNeoForgeFluidTypes {
                     .density(1000)
                     .viscosity(1000)));
 
+    public static final DeferredHolder<FluidType, FluidType> BILE_TYPE = FLUID_TYPES.register("bile",
+            () -> new FluidType(FluidType.Properties.create()
+                    .descriptionId("block.antarchy.bile")
+                    .fallDistanceModifier(0.0F)
+                    .supportsBoating(true)
+                    .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
+                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)
+                    .density(1100)
+                    .viscosity(1200)));
+
     public static final DeferredHolder<FluidType, FluidType> ICHOR_TYPE = FLUID_TYPES.register("ichor",
             () -> new FluidType(FluidType.Properties.create()
                     .descriptionId("block.antarchy.ichor")

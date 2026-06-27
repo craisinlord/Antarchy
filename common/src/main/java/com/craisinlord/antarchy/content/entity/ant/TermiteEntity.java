@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 
 public class TermiteEntity extends BaseAntEntity implements GeoEntity {
+    private static final int WOOD_BITE_ANIMATION_TICKS = 8;
     private static final int WOOD_SEARCH_INTERVAL_TICKS = 10;
     private static final int WOOD_REPATH_INTERVAL_TICKS = 6;
     private static final int WOOD_SEARCH_RADIUS_HORIZONTAL = 12;
@@ -89,6 +90,11 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
     }
 
     @Override
+    protected boolean shouldUseBiteAnimation() {
+        return true;
+    }
+
+    @Override
     protected boolean handlePriorityForaging() {
         if (!this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
             this.targetWoodPos = null;
@@ -126,6 +132,7 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
             }
 
             SoundType soundType = targetState.getSoundType();
+            this.triggerBiteAnimation(WOOD_BITE_ANIMATION_TICKS);
             this.level().destroyBlock(targetPos, false, this);
             this.level().playSound(null, targetPos, soundType.getBreakSound(), this.getSoundSource(), 0.7F, 1.1F);
             return true;

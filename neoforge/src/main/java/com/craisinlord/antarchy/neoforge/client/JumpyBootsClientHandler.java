@@ -62,6 +62,12 @@ public final class JumpyBootsClientHandler {
             return;
         }
 
+        if (jumpPressed && wasCharging && chargeTicks > 0) {
+            PacketDistributor.sendToServer(new JumpyBootsLaunchPayload(chargeTicks, player.isSprinting()));
+            reset();
+            return;
+        }
+
         if (sneaking) {
             chargeTicks = Math.min(chargeTicks + 1, JumpyBootsHelper.CHARGE_TICKS_MAX);
             wasCharging = true;
