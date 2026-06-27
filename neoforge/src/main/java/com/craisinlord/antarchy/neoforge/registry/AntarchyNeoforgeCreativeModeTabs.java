@@ -245,6 +245,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.MEDIUM_BLOOD_CRYSTAL_BUD_ITEM.get());
             event.accept(AntarchyNeoforgeItems.LARGE_BLOOD_CRYSTAL_BUD_ITEM.get());
             event.accept(AntarchyNeoforgeItems.MYRMITE_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.BILE_VEIN_ITEM.get());
             event.accept(AntarchyNeoforgeItems.CHITEN_BLOCK_ITEM.get());
             event.accept(AntarchyNeoforgeItems.CHITEN_SPIKE_ITEM.get());
             event.accept(AntarchyNeoforgeItems.AMBER_MOSS_BLOCK_ITEM.get());
@@ -388,7 +389,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
             case "duplicator_sapling", "ouranwood_acorn" -> 10;
 
             // 11 - Plants and flowers
-            case "orange_milkweed", "pink_milkweed", "torchflower_bush", "hushweed", "amber_lichen", "creepvine",
+            case "orange_milkweed", "pink_milkweed", "torchflower_bush", "hushweed", "amber_lichen", "bile_vein", "creepvine",
                  "triffid_goo_block", "wasp_nest",
                  "red_ant_nest", "brown_ant_nest", "rainbow_ant_nest", "termite_nest" -> 11;
 

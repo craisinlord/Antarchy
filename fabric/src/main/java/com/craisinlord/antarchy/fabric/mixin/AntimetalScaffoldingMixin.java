@@ -77,7 +77,7 @@ public abstract class AntimetalScaffoldingMixin {
         BlockState below = level.getBlockState(cursor);
         int distance = 7;
         if (below.is((ScaffoldingBlock) (Object) this)) {
-            distance = below.getValue(ScaffoldingBlock.DISTANCE);
+            distance = below.getValue(ScaffoldingBlock.DISTANCE) + 1;
         } else if (below.isFaceSturdy(level, cursor, Direction.UP)) {
             return 0;
         }

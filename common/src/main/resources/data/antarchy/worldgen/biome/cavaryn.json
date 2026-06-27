@@ -37,11 +37,10 @@
     [],
     [],
     [
-      "antarchy:cavaryn_bile_pools",
-      "antarchy:cavaryn_amber_moss_patch",
+      "antarchy:cavaryn_bile_veins",
+      "antarchy:cavaryn_bile_cysts",
       "antarchy:cavaryn_wall_amber_moss",
       "antarchy:cavaryn_creepvine",
-      "minecraft:glow_lichen",
       "antarchy:cavaryn_chiten_spikes",
       "antarchy:cavaryn_terror_egg_patch"
     ],
@@ -63,14 +62,15 @@
         "maxCount": 5
       }
     ],
-    "creature": [],
-    "ambient": [
+    "creature": [
       {
-        "type": "minecraft:bat",
+        "type": "antarchy:stink_bug",
         "weight": 10,
-        "minCount": 4,
-        "maxCount": 8
+        "minCount": 1,
+        "maxCount": 3
       }
+    ],
+    "ambient": [
     ],
     "axolotls": [],
     "underground_water_creature": [],

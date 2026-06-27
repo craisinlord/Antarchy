@@ -118,12 +118,15 @@ public class ElythiaBiomeSource extends BiomeSource {
         // and ambient effects work correctly above the water surface.
         Climate.TargetPoint target = sampler.sample(x, this.seaLevelQuartY, z);
         if (target.continentalness() < OCEAN_CONTINENTALNESS_THRESHOLD) {
-            return this.delegate.getNoiseBiome(x, this.seaLevelQuartY, z, sampler);
+            Holder<Biome> seaLevelBiome = this.delegate.getNoiseBiome(x, this.seaLevelQuartY, z, sampler);
+            // MultiNoise can return a land biome at sea-level depth — force ocean if so
+            if (isOceanBiome(seaLevelBiome)) return seaLevelBiome;
+            return oceanHolder != null ? oceanHolder : seaLevelBiome;
         }
 
-        // Land column below or at sea level: force ocean for any biome not allowed there.
-        // Use <= so quart 19 (blocks 76-79, partly underwater) is covered.
-        if (y <= this.seaLevelQuartY && oceanHolder != null && !allowedBelowSeaLevel(biome)) {
+        // Land column at or below sea level: force ocean for any biome not allowed there.
+        // +1 quart above seaLevelQuartY so blocks 76-83 (around the waterline) are all caught.
+        if (y <= this.seaLevelQuartY + 1 && oceanHolder != null && !allowedBelowSeaLevel(biome)) {
             return oceanHolder;
         }
 

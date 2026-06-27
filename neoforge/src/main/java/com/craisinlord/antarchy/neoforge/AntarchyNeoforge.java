@@ -250,6 +250,7 @@ public class AntarchyNeoforge {
                 () -> AntarchyNeoforgeBlocks.WASP_NEST_BLOCK_ENTITY.get(),
                 () -> AntarchyNeoforgeBlocks.HUSHWEED_BLOCK_ENTITY.get(),
                 () -> AntarchyNeoforgeMisc.STINKY_GAS.get(),
+                () -> AntarchyNeoforgeMisc.STINKY_FLY.get(),
                 () -> AntarchyNeoforgeMisc.DOUBLE_DAMAGE_CHANCE,
                 () -> AntarchyNeoforgeMisc.BLOODGLASS_MAX_HEARTS,
                 () -> AntarchyNeoforgeMisc.BLOODGLASS_WARD

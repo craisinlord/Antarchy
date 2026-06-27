@@ -12,7 +12,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
 public final class StinkyBehavior {
-    public static final int STINKY_EFFECT_DURATION_TICKS = 60;
     public static final double STINK_BUG_AURA_RADIUS = 5.0D;
     public static final double STINKY_NAUSEA_RADIUS = 4.0D;
     private static final int TRAIL_INTERVAL_TICKS = 4;
@@ -59,6 +58,17 @@ public final class StinkyBehavior {
                 entity.getBbWidth() * 0.12D,
                 0.005D
         );
+        serverLevel.sendParticles(
+                AntarchyObjects.STINKY_FLY.get(),
+                entity.getX(),
+                entity.getY(0.45D),
+                entity.getZ(),
+                1,
+                entity.getBbWidth() * 0.35D,
+                entity.getBbHeight() * 0.2D,
+                entity.getBbWidth() * 0.35D,
+                0.0D
+        );
         applyNearbyNausea(entity, STINKY_NAUSEA_RADIUS, STINKY_NAUSEA_DURATION_TICKS);
         if (entity.tickCount % REACTION_INTERVAL_TICKS == 0) {
             reactToStinkySource(entity);
@@ -79,6 +89,17 @@ public final class StinkyBehavior {
                 entity.getBbHeight() * 0.25D,
                 entity.getBbWidth() * 0.35D,
                 0.045D
+        );
+        serverLevel.sendParticles(
+                AntarchyObjects.STINKY_FLY.get(),
+                entity.getX(),
+                entity.getY(0.45D),
+                entity.getZ(),
+                Math.max(2, count / 6),
+                entity.getBbWidth() * 0.45D,
+                entity.getBbHeight() * 0.25D,
+                entity.getBbWidth() * 0.45D,
+                0.0D
         );
         applyNearbyNausea(entity, STINK_BUG_AURA_RADIUS, STINK_BUG_BURST_NAUSEA_DURATION_TICKS);
     }
@@ -108,6 +129,9 @@ public final class StinkyBehavior {
                 mob -> mob.isAlive() && mob != source
         )) {
             if (mob.getType().is(EntityTypeTags.SENSITIVE_TO_BANE_OF_ARTHROPODS)) {
+                if (source.getType().is(EntityTypeTags.SENSITIVE_TO_BANE_OF_ARTHROPODS)) {
+                    continue;
+                }
                 attractArthropod(mob, source);
                 continue;
             }
@@ -167,4 +191,5 @@ public final class StinkyBehavior {
         }
         return !mob.isAlliedTo(source);
     }
+
 }

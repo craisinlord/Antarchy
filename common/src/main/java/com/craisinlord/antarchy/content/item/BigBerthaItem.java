@@ -62,6 +62,14 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
     private static final String SPIN_TICKS_TAG = "antarchy.big_bertha_spin_ticks";
     private static final String SPIN_DIRECTION_X_TAG = "antarchy.big_bertha_spin_direction_x";
     private static final String SPIN_DIRECTION_Z_TAG = "antarchy.big_bertha_spin_direction_z";
+    private static final String TORETERROR_JUMPING_TAG = "antarchy.toreterror_jumping";
+    private static final String TORETERROR_LAUNCHED_TAG = "antarchy.toreterror_launched";
+    private static final int TORETERROR_LANDING_RADIUS = 6;
+    private static final int TORETERROR_COOLDOWN_TICKS = 200;
+    private static final int TORETERROR_SHAKE_TICKS = 25;
+
+    /** Client-side only: how many ticks of camera shake remain from a Toreterror landing. */
+    public static int clientShakeTicks = 0;
     private static final ResourceLocation ATTACK_RANGE_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "big_bertha_attack_range");
     private final Tier tier;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
@@ -116,6 +124,14 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
             return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
         }
 
+        if (mode == BossMode.TORETERROR) {
+            if (player.getCooldowns().isOnCooldown(this)) {
+                return InteractionResultHolder.fail(stack);
+            }
+            startToreterrorJump(level, player, stack);
+            return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+        }
+
         if (mode != BossMode.MOLEVORE) {
             return InteractionResultHolder.pass(stack);
         }
@@ -144,7 +160,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
             case LUCID -> applyLucidHit(target, player, serverLevel);
             case NIGHTMARE -> applyNightmareHit(target, serverLevel);
             case KRAKEN -> applyKrakenHit(player, target, serverLevel);
-            case MOLEVORE -> {
+            case MOLEVORE, TORETERROR -> {
             }
         }
 
@@ -156,6 +172,32 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
         if (!(entity instanceof Player player)) {
             return;
+        }
+
+        // Toreterror jump tracking
+        if (isToreterrorJumping(stack) && player.getMainHandItem() == stack) {
+            player.fallDistance = 0.0F; // prevent fall damage during the crash-down
+            boolean launched = readInt(stack, TORETERROR_LAUNCHED_TAG) == 1;
+            if (!launched && !player.onGround()) {
+                CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt(TORETERROR_LAUNCHED_TAG, 1));
+            }
+            if (launched && player.onGround()) {
+                CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+                    tag.remove(TORETERROR_JUMPING_TAG);
+                    tag.remove(TORETERROR_LAUNCHED_TAG);
+                });
+                if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+                    applyToreterrorLanding((ServerLevel) level, serverPlayer);
+                }
+                if (level.isClientSide) {
+                    clientShakeTicks = TORETERROR_SHAKE_TICKS;
+                }
+            }
+        }
+
+        // Tick client shake counter
+        if (level.isClientSide && clientShakeTicks > 0) {
+            clientShakeTicks--;
         }
 
         int spinTicks = getSpinTicks(stack);
@@ -315,6 +357,43 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
         if (!level.isClientSide) {
             stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
         }
+    }
+
+    private void startToreterrorJump(Level level, Player player, ItemStack stack) {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putInt(TORETERROR_JUMPING_TAG, 1);
+            tag.remove(TORETERROR_LAUNCHED_TAG);
+        });
+        player.setDeltaMovement(player.getDeltaMovement().x, 1.5D, player.getDeltaMovement().z);
+        player.hasImpulse = true;
+        player.fallDistance = 0.0F;
+        player.getCooldowns().addCooldown(this, TORETERROR_COOLDOWN_TICKS);
+        player.awardStat(Stats.ITEM_USED.get(this));
+        level.playSound(null, player.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 1.0F, 0.6F);
+    }
+
+    private void applyToreterrorLanding(ServerLevel level, ServerPlayer player) {
+        ItemStack heldStack = player.getMainHandItem();
+        float damage = (float) (player.getAttributeValue(Attributes.ATTACK_DAMAGE) * 2.0D);
+        AABB aoe = player.getBoundingBox().inflate(TORETERROR_LANDING_RADIUS, 3.0D, TORETERROR_LANDING_RADIUS);
+        for (LivingEntity victim : level.getEntitiesOfClass(LivingEntity.class, aoe,
+                e -> e.isAlive() && e != player && !e.isSpectator())) {
+            victim.hurt(player.damageSources().playerAttack(player), damage);
+            Vec3 knockDir = victim.position().subtract(player.position()).multiply(1.0D, 0.0D, 1.0D);
+            if (knockDir.lengthSqr() < 1.0E-4D) knockDir = player.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
+            Vec3 normalized = knockDir.normalize();
+            victim.push(normalized.x * 2.5D, 0.6D, normalized.z * 2.5D);
+            victim.hurtMarked = true;
+        }
+        level.playSound(null, player.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 1.5F, 0.75F);
+        level.sendParticles(ParticleTypes.EXPLOSION, player.getX(), player.getY() + 0.5D, player.getZ(), 4, 1.5D, 0.3D, 1.5D, 0.0D);
+        level.sendParticles(ParticleTypes.SPLASH, player.getX(), player.getY() + 0.5D, player.getZ(), 60, 3.0D, 0.5D, 3.0D, 0.2D);
+        level.sendParticles(ParticleTypes.CRIT, player.getX(), player.getY() + 0.5D, player.getZ(), 20, 2.0D, 0.5D, 2.0D, 0.1D);
+        heldStack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+    }
+
+    private static boolean isToreterrorJumping(ItemStack stack) {
+        return readInt(stack, TORETERROR_JUMPING_TAG) == 1;
     }
 
     private void tickMolevoreSpin(ServerLevel level, ServerPlayer player, ItemStack stack, int spinTicks) {
@@ -505,7 +584,8 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
         NIGHTMARE(1, "tooltip.antarchy.big_bertha.mode.nightmare", "message.antarchy.big_bertha.mode.nightmare"),
         KRAKEN(2, "tooltip.antarchy.big_bertha.mode.kraken", "message.antarchy.big_bertha.mode.kraken"),
         MOLEVORE(3, "tooltip.antarchy.big_bertha.mode.molevore", "message.antarchy.big_bertha.mode.molevore"),
-        LUCID(4, "tooltip.antarchy.big_bertha.mode.lucid", "message.antarchy.big_bertha.mode.lucid");
+        LUCID(4, "tooltip.antarchy.big_bertha.mode.lucid", "message.antarchy.big_bertha.mode.lucid"),
+        TORETERROR(5, "tooltip.antarchy.big_bertha.mode.toreterror", "message.antarchy.big_bertha.mode.toreterror");
 
         private final int id;
         private final String tooltipKey;
@@ -523,7 +603,8 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
                 case LUCID -> NIGHTMARE;
                 case NIGHTMARE -> KRAKEN;
                 case KRAKEN -> MOLEVORE;
-                case MOLEVORE -> BASILISK;
+                case MOLEVORE -> TORETERROR;
+                case TORETERROR -> BASILISK;
             };
         }
 

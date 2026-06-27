@@ -13,7 +13,8 @@ import com.craisinlord.antarchy.content.worldgen.ants.BrownAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.RainbowAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.RedAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.TermiteNestFeature;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBilePoolFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBileCystFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBileVeinFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCreepvineFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynEggPatchFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWallAmberMossFeature;
@@ -164,6 +165,8 @@ public final class AntarchyNeoforgeMisc {
             () -> new SimpleParticleType(true));
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> STINKY_GAS = PARTICLE_TYPES.register("stinky_gas",
             () -> new SimpleParticleType(true));
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> STINKY_FLY = PARTICLE_TYPES.register("stinky_fly",
+            () -> new SimpleParticleType(true));
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> HYPNOTIC_GAS = PARTICLE_TYPES.register("hypnotic_gas",
             () -> new SimpleParticleType(true));
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> HYPNOTIC_GAS_CLOUD = PARTICLE_TYPES.register("hypnotic_gas_cloud",
@@ -250,8 +253,10 @@ public final class AntarchyNeoforgeMisc {
             () -> new NyxiteSpikeFeature(NyxiteSpikeConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, ChitenSpikeFeature> CAVARYN_CHITEN_SPIKES = FEATURES.register("cavaryn_chiten_spikes",
             () -> new ChitenSpikeFeature(ChitenSpikeConfiguration.CODEC));
-    public static final DeferredHolder<Feature<?>, CavarynBilePoolFeature> CAVARYN_BILE_POOLS = FEATURES.register("cavaryn_bile_pools",
-            () -> new CavarynBilePoolFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, CavarynBileVeinFeature> CAVARYN_BILE_VEINS = FEATURES.register("cavaryn_bile_veins",
+            () -> new CavarynBileVeinFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, CavarynBileCystFeature> CAVARYN_BILE_CYSTS = FEATURES.register("cavaryn_bile_cysts",
+            () -> new CavarynBileCystFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, CavarynCreepvineFeature> CAVARYN_CREEPVINE = FEATURES.register("cavaryn_creepvine",
             () -> new CavarynCreepvineFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, CavarynWallAmberMossFeature> CAVARYN_WALL_AMBER_MOSS = FEATURES.register("cavaryn_wall_amber_moss",

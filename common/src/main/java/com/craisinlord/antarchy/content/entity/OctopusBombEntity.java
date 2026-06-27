@@ -334,11 +334,18 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
         if (--this.wanderRetargetTicks <= 0) {
             this.wanderRetargetTicks = 40 + this.random.nextInt(40);
             float angle = this.random.nextFloat() * (float) (Math.PI * 2);
-            this.wanderDx = Mth.cos(angle) * 0.1f;
-            this.wanderDy = -0.05f + this.random.nextFloat() * 0.1f;
-            this.wanderDz = Mth.sin(angle) * 0.1f;
+            this.wanderDx = Mth.cos(angle) * 0.015f;
+            this.wanderDz = Mth.sin(angle) * 0.015f;
+            this.wanderDy = -0.01f + this.random.nextFloat() * 0.01f; // slight downward bias
         }
-        this.setDeltaMovement(this.getDeltaMovement().add(this.wanderDx, this.wanderDy, this.wanderDz));
+
+        // Surface avoidance: if the block above is not water, push down
+        float dy = this.wanderDy;
+        if (!this.level().getFluidState(this.blockPosition().above()).is(net.minecraft.tags.FluidTags.WATER)) {
+            dy = -0.03f;
+        }
+
+        this.setDeltaMovement(this.getDeltaMovement().add(this.wanderDx, dy, this.wanderDz));
     }
 
     // -------------------------------------------------------------------------

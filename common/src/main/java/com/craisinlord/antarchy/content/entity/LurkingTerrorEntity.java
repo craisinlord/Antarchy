@@ -111,8 +111,11 @@ public class LurkingTerrorEntity extends Monster implements GeoEntity {
             }
             return state.setAndContinue(ATTACK_LAND_ANIM);
         }
+        if (!this.onGround()) {
+            return state.setAndContinue(FLY_ANIM);
+        }
         if (state.isMoving()) {
-            return state.setAndContinue(this.onGround() ? WALK_ANIM : FLY_ANIM);
+            return state.setAndContinue(WALK_ANIM);
         }
         return state.setAndContinue(IDLE_ANIM);
     }

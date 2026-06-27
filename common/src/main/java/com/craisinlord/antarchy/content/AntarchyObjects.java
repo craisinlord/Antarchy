@@ -225,6 +225,8 @@ public final class AntarchyObjects {
     public static Supplier<BlockEntityType<HushweedBlockEntity>> HUSHWEED_BLOCK_ENTITY = (Supplier<BlockEntityType<HushweedBlockEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<SimpleParticleType> STINKY_GAS = (Supplier<SimpleParticleType>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<SimpleParticleType> STINKY_FLY = (Supplier<SimpleParticleType>) UNBOUND;
 
     private AntarchyObjects() {
     }
@@ -316,6 +318,7 @@ public final class AntarchyObjects {
             Supplier<BlockEntityType<WaspNestBlockEntity>> waspNestBlockEntity,
             Supplier<BlockEntityType<HushweedBlockEntity>> hushweedBlockEntity,
             Supplier<SimpleParticleType> stinkyGas,
+            Supplier<SimpleParticleType> stinkyFly,
             Supplier<Holder<Attribute>> doubleDamageChance,
             Supplier<Holder<Attribute>> bloodglassMaxHearts,
             Supplier<Holder<MobEffect>> bloodglassWard
@@ -406,6 +409,7 @@ public final class AntarchyObjects {
         WASP_NEST_BLOCK_ENTITY = waspNestBlockEntity;
         HUSHWEED_BLOCK_ENTITY = hushweedBlockEntity;
         STINKY_GAS = stinkyGas;
+        STINKY_FLY = stinkyFly;
         DOUBLE_DAMAGE_CHANCE = doubleDamageChance;
         BLOODGLASS_MAX_HEARTS = bloodglassMaxHearts;
         BLOODGLASS_WARD = bloodglassWard;

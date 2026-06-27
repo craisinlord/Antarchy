@@ -1,9 +1,9 @@
 {
-  "feature": "antarchy:cavaryn_terror_egg_patch",
+  "feature": "antarchy:cavaryn_bile_veins",
   "placement": [
     {
       "type": "minecraft:count",
-      "count": 1
+      "count": 5
     },
     {
       "type": "minecraft:in_square"

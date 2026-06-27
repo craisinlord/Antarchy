@@ -19,7 +19,8 @@ import com.craisinlord.antarchy.content.worldgen.ants.BrownAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.RainbowAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.RedAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.TermiteNestFeature;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBilePoolFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBileCystFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBileVeinFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCreepvineFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWallAmberMossFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.NyxiteSpikeConfiguration;
@@ -612,12 +613,16 @@ public final class AntarchyFabricContent {
     public static final DeferredBlock<UmbralMossCarpetBlock> AMBER_MOSS_CARPET = BLOCKS.register("amber_moss_carpet",
             () -> new UmbralMossCarpetBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_CARPET).noOcclusion()));
     public static final DeferredBlock<GlowLichenBlock> AMBER_LICHEN = BLOCKS.register("amber_lichen",
-            () -> new GlowLichenBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLOW_LICHEN).lightLevel(state -> 0)));
+            () -> new GlowLichenBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLOW_LICHEN).lightLevel(state -> 1)));
+    public static final DeferredBlock<Block> BILE_VEIN = BLOCKS.register("bile_vein",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERRACK)));
     public static final DeferredBlock<VineBlock> CREEPVINE = BLOCKS.register("creepvine",
             () -> new VineBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.VINE)));
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> DREAM_FIRE_FLAME = PARTICLE_TYPES.register("dream_fire_flame",
             () -> simpleParticleType());
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> STINKY_GAS = PARTICLE_TYPES.register("stinky_gas",
+            () -> simpleParticleType());
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> STINKY_FLY = PARTICLE_TYPES.register("stinky_fly",
             () -> simpleParticleType());
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> HYPNOTIC_GAS = PARTICLE_TYPES.register("hypnotic_gas",
             () -> simpleParticleType());
@@ -1060,8 +1065,10 @@ public final class AntarchyFabricContent {
             () -> new NyxiteSpikeFeature(NyxiteSpikeConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, ChitenSpikeFeature> CAVARYN_CHITEN_SPIKES = FEATURES.register("cavaryn_chiten_spikes",
             () -> new ChitenSpikeFeature(ChitenSpikeConfiguration.CODEC));
-    public static final DeferredHolder<Feature<?>, CavarynBilePoolFeature> CAVARYN_BILE_POOLS = FEATURES.register("cavaryn_bile_pools",
-            () -> new CavarynBilePoolFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, CavarynBileVeinFeature> CAVARYN_BILE_VEINS = FEATURES.register("cavaryn_bile_veins",
+            () -> new CavarynBileVeinFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, CavarynBileCystFeature> CAVARYN_BILE_CYSTS = FEATURES.register("cavaryn_bile_cysts",
+            () -> new CavarynBileCystFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, CavarynCreepvineFeature> CAVARYN_CREEPVINE = FEATURES.register("cavaryn_creepvine",
             () -> new CavarynCreepvineFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, CavarynWallAmberMossFeature> CAVARYN_WALL_AMBER_MOSS = FEATURES.register("cavaryn_wall_amber_moss",
@@ -1226,6 +1233,7 @@ public final class AntarchyFabricContent {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> AMBER_MOSS_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AMBER_MOSS_BLOCK);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> AMBER_MOSS_CARPET_ITEM = ITEMS.registerSimpleBlockItem(AMBER_MOSS_CARPET);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> AMBER_LICHEN_ITEM = ITEMS.registerSimpleBlockItem(AMBER_LICHEN);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BILE_VEIN_ITEM = ITEMS.registerSimpleBlockItem(BILE_VEIN);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> CREEPVINE_ITEM = ITEMS.registerSimpleBlockItem(CREEPVINE);
     public static final DeferredItem<StandingAndWallBlockItem> DREAM_TORCH_ITEM = ITEMS.register("dream_torch",
             () -> new StandingAndWallBlockItem(DREAM_TORCH.get(), DREAM_WALL_TORCH.get(), new Item.Properties(), Direction.UP));
@@ -1994,6 +2002,7 @@ public final class AntarchyFabricContent {
                  "chiseled_titanium", "uranium_bulb", "titanium_bulb",
                  "uranium_door", "titanium_door", "uranium_trapdoor", "titanium_trapdoor",
                  "uranium_bars", "titanium_bars" -> 8;
+            case "bile_vein" -> 9;
             case "infested_rooted_dirt", "infested_coarse_dirt", "triffid_goo_block",
                  "cloud_block", "creeping_horror_egg", "lurking_terror_egg" -> 9;
             case "dream_torch", "dream_lantern", "dream_campfire", "dream_fire", "dream_fire_ceiling" -> 10;
@@ -2493,6 +2502,7 @@ public final class AntarchyFabricContent {
                 () -> WASP_NEST_BLOCK_ENTITY.get(),
                 () -> HUSHWEED_BLOCK_ENTITY.get(),
                 () -> STINKY_GAS.get(),
+                () -> STINKY_FLY.get(),
                 () -> attributeHolder(DOUBLE_DAMAGE_CHANCE),
                 () -> attributeHolder(BLOODGLASS_MAX_HEARTS),
                 () -> mobEffectHolder(BLOODGLASS_WARD)

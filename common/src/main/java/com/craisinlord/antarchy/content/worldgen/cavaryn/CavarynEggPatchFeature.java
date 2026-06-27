@@ -1,23 +1,33 @@
 package com.craisinlord.antarchy.content.worldgen.cavaryn;
 
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.CreepingHorrorEggBlock;
 import com.craisinlord.antarchy.content.block.LurkingTerrorEggBlock;
 import com.mojang.serialization.Codec;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
 public final class CavarynEggPatchFeature extends Feature<NoneFeatureConfiguration> {
+    private static final ResourceLocation AMBER_MOSS_BLOCK_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "amber_moss_block");
     private static final int SEARCH_RADIUS = 8;
-    private static final int SEARCH_ATTEMPTS = 20;
-    private static final int FLOOR_SCAN_RANGE = 10;
+    private static final int SEARCH_ATTEMPTS = 24;
+    private static final int VERTICAL_SCAN = 12;
+    private static final int MAX_RADIUS_Y = 3;
 
     public CavarynEggPatchFeature(Codec<NoneFeatureConfiguration> codec) {
         super(codec);
@@ -29,77 +39,118 @@ public final class CavarynEggPatchFeature extends Feature<NoneFeatureConfigurati
         RandomSource random = context.random();
         BlockPos origin = context.origin();
 
-        BlockPos surfacePos = findSurfacePos(level, origin, random);
-        if (surfacePos == null) {
+        Block amberMossBlock = getBlock(AMBER_MOSS_BLOCK_ID);
+        BlockPos center = findCavityCenter(level, origin, random);
+        if (center == null) {
             return false;
         }
 
         EggType eggType = random.nextBoolean() ? EggType.CREEPING_HORROR : EggType.LURKING_TERROR;
-        return placePatch(level, surfacePos, random, eggType);
+        return carveCavityAndPlaceEggs(level, center, random, eggType, amberMossBlock);
     }
 
-    private static BlockPos findSurfacePos(WorldGenLevel level, BlockPos origin, RandomSource random) {
+    private static BlockPos findCavityCenter(WorldGenLevel level, BlockPos origin, RandomSource random) {
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
         for (int attempt = 0; attempt < SEARCH_ATTEMPTS; attempt++) {
             int x = origin.getX() + random.nextInt(SEARCH_RADIUS * 2 + 1) - SEARCH_RADIUS;
             int z = origin.getZ() + random.nextInt(SEARCH_RADIUS * 2 + 1) - SEARCH_RADIUS;
-            int startY = origin.getY() + random.nextInt(FLOOR_SCAN_RANGE * 2 + 1) - FLOOR_SCAN_RANGE;
-            startY = Math.max(level.getMinBuildHeight() + 2, Math.min(level.getMaxBuildHeight() - 3, startY));
+            int y = origin.getY() + random.nextInt(VERTICAL_SCAN * 2 + 1) - VERTICAL_SCAN;
+            y = Mth.clamp(y, level.getMinBuildHeight() + MAX_RADIUS_Y + 2, level.getMaxBuildHeight() - MAX_RADIUS_Y - 2);
 
-            for (int y = startY; y >= Math.max(level.getMinBuildHeight() + 1, startY - FLOOR_SCAN_RANGE); y--) {
-                mutable.set(x, y, z);
-                BlockState floorState = level.getBlockState(mutable);
-                BlockState airState = level.getBlockState(mutable.above());
-                if (floorState.getFluidState().isEmpty()
-                        && floorState.blocksMotion()
-                        && floorState.isFaceSturdy(level, mutable, Direction.UP)
-                        && airState.canBeReplaced()) {
-                    return mutable.immutable();
-                }
+            mutable.set(x, y, z);
+            if (isSolidEnoughForCavity(level, mutable)) {
+                return mutable.immutable();
             }
         }
-
         return null;
     }
 
-    private boolean placePatch(WorldGenLevel level, BlockPos center, RandomSource random, EggType eggType) {
-        int radius = 2 + random.nextInt(3);
-        boolean placedAny = false;
-        List<BlockPos> eggSpots = new java.util.ArrayList<>();
+    private static boolean isSolidEnoughForCavity(WorldGenLevel level, BlockPos center) {
+        BlockState centerState = level.getBlockState(center);
+        if (!centerState.blocksMotion() || centerState.is(Blocks.BEDROCK)) {
+            return false;
+        }
 
-        for (int dx = -radius; dx <= radius; dx++) {
-            for (int dz = -radius; dz <= radius; dz++) {
-                double distance = dx * dx + dz * dz;
-                if (distance > radius * radius + random.nextInt(2)) {
-                    continue;
+        int solidCount = 0;
+        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
+        for (int dx = -2; dx <= 2; dx += 2) {
+            for (int dy = -1; dy <= 1; dy++) {
+                for (int dz = -2; dz <= 2; dz += 2) {
+                    mutable.set(center.getX() + dx, center.getY() + dy, center.getZ() + dz);
+                    if (level.getBlockState(mutable).blocksMotion()) {
+                        solidCount++;
+                    }
                 }
+            }
+        }
+        return solidCount >= 9;
+    }
 
-                BlockPos floorPos = center.offset(dx, 0, dz);
-                BlockState floorState = level.getBlockState(floorPos);
-                BlockPos eggPos = floorPos.above();
-                BlockState aboveState = level.getBlockState(eggPos);
-                if (!isValidEggFloor(level, floorPos, floorState, aboveState)) {
-                    continue;
+    private boolean carveCavityAndPlaceEggs(WorldGenLevel level, BlockPos center, RandomSource random, EggType eggType, Block amberMossBlock) {
+        int rx = 3 + random.nextInt(3);
+        int ry = 2 + random.nextInt(2);
+        int rz = 3 + random.nextInt(3);
+
+        for (int dx = -rx; dx <= rx; dx++) {
+            for (int dy = -ry; dy <= ry; dy++) {
+                for (int dz = -rz; dz <= rz; dz++) {
+                    double norm = (double)(dx * dx) / (rx * rx)
+                                + (double)(dy * dy) / (ry * ry)
+                                + (double)(dz * dz) / (rz * rz);
+                    if (norm > 1.0) {
+                        continue;
+                    }
+                    BlockPos pos = center.offset(dx, dy, dz);
+                    BlockState existing = level.getBlockState(pos);
+                    if (!existing.is(Blocks.BEDROCK) && existing.blocksMotion() && existing.getFluidState().isEmpty()) {
+                        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+                    }
                 }
-                eggSpots.add(eggPos);
             }
         }
 
-        if (eggSpots.isEmpty()) {
-            return placedAny;
+        List<BlockPos> eggPositions = new ArrayList<>();
+        for (int dx = -rx; dx <= rx; dx++) {
+            for (int dy = -ry - 1; dy <= ry; dy++) {
+                for (int dz = -rz; dz <= rz; dz++) {
+                    BlockPos pos = center.offset(dx, dy, dz);
+                    if (!level.getBlockState(pos).isAir()) {
+                        continue;
+                    }
+                    BlockPos below = pos.below();
+                    BlockState belowState = level.getBlockState(below);
+                    if (belowState.blocksMotion() && !belowState.isAir() && belowState.isFaceSturdy(level, below, Direction.UP)) {
+                        eggPositions.add(pos);
+                    }
+                }
+            }
         }
 
-        int eggCount = Math.min(eggSpots.size(), 2 + random.nextInt(3));
-        for (int i = 0; i < eggCount; i++) {
-            BlockPos eggPos = eggSpots.get(random.nextInt(eggSpots.size()));
-            if (!level.getBlockState(eggPos).canBeReplaced()) {
+        if (eggPositions.isEmpty()) {
+            return false;
+        }
+
+        boolean placedAny = false;
+        for (BlockPos eggPos : eggPositions) {
+            if (random.nextFloat() > 0.65f) {
                 continue;
+            }
+
+            // Replace the floor block with amber moss so eggs hatch faster
+            if (amberMossBlock != null) {
+                BlockPos floorPos = eggPos.below();
+                BlockState floorState = level.getBlockState(floorPos);
+                if (floorState.blocksMotion() && !floorState.is(Blocks.BEDROCK) && floorState.getFluidState().isEmpty()) {
+                    level.setBlock(floorPos, amberMossBlock.defaultBlockState(), 2);
+                }
             }
 
             BlockState eggState = eggType == EggType.CREEPING_HORROR
                     ? AntarchyObjects.CREEPING_HORROR_EGGS.get().defaultBlockState()
                     : AntarchyObjects.LURKING_TERROR_EGGS.get().defaultBlockState();
-            eggState = eggState.setValue(eggType == EggType.CREEPING_HORROR ? CreepingHorrorEggBlock.EGGS : LurkingTerrorEggBlock.EGGS, 1 + random.nextInt(4));
+            eggState = eggState.setValue(
+                    eggType == EggType.CREEPING_HORROR ? CreepingHorrorEggBlock.EGGS : LurkingTerrorEggBlock.EGGS,
+                    1 + random.nextInt(4));
             level.setBlock(eggPos, eggState, 3);
             placedAny = true;
         }
@@ -107,12 +158,9 @@ public final class CavarynEggPatchFeature extends Feature<NoneFeatureConfigurati
         return placedAny;
     }
 
-    private static boolean isValidEggFloor(WorldGenLevel level, BlockPos floorPos, BlockState floorState, BlockState aboveState) {
-        return !floorState.isAir()
-                && floorState.getFluidState().isEmpty()
-                && floorState.blocksMotion()
-                && floorState.isFaceSturdy(level, floorPos, Direction.UP)
-                && aboveState.canBeReplaced();
+    private static Block getBlock(ResourceLocation id) {
+        Optional<Block> block = BuiltInRegistries.BLOCK.getOptional(id);
+        return block.orElse(null);
     }
 
     private enum EggType {

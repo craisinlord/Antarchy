@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.fabric.mixin.client;
 
 import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
+import com.craisinlord.antarchy.content.item.BigBerthaItem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -17,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GameRenderer.class)
 public abstract class ToreterrorCameraShakeMixin {
     private static final double MAX_SHAKE_RANGE = 48.0D;
+    private static final int TORETERROR_SHAKE_TICKS = 25;
 
     @Shadow @Final private Minecraft minecraft;
 
@@ -35,6 +37,10 @@ public abstract class ToreterrorCameraShakeMixin {
             double distance = Math.sqrt(cameraPos.distanceToSqr(toreterror.position().add(0, toreterror.getBbHeight() * 0.5, 0)));
             if (distance > MAX_SHAKE_RANGE) continue;
             shakeStrength += (float) ((1.0D - distance / MAX_SHAKE_RANGE) * 2.0F);
+        }
+
+        if (BigBerthaItem.clientShakeTicks > 0) {
+            shakeStrength += (float) BigBerthaItem.clientShakeTicks / TORETERROR_SHAKE_TICKS * 2.0F;
         }
 
         if (shakeStrength <= 0.0F) return;

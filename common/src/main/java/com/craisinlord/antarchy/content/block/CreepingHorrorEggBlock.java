@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.entity.CreepingHorrorEntity;
+import com.craisinlord.antarchy.content.block.AmberMossBlock;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -87,7 +88,7 @@ public class CreepingHorrorEggBlock extends Block {
 
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (!this.shouldUpdateHatchLevel(level)) {
+        if (!this.shouldUpdateHatchLevel(level, pos)) {
             return;
         }
 
@@ -174,8 +175,9 @@ public class CreepingHorrorEggBlock extends Block {
         level.setBlock(pos, state.setValue(EGGS, eggs - 1), 2);
     }
 
-    private boolean shouldUpdateHatchLevel(Level level) {
-        return level.random.nextInt(500) == 0;
+    private boolean shouldUpdateHatchLevel(Level level, BlockPos pos) {
+        boolean onAmberMoss = level.getBlockState(pos.below()).getBlock() instanceof AmberMossBlock;
+        return level.random.nextInt(onAmberMoss ? 150 : 500) == 0;
     }
 
     private boolean canDestroyEgg(Level level, Entity entity) {
