@@ -2,8 +2,13 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -13,6 +18,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -39,6 +45,11 @@ import org.jetbrains.annotations.Nullable;
 
 public class ScorpionEntity extends Monster implements GeoEntity {
     private static final byte ATTACK_ANIM_EVENT = 4;
+    private static final EntityDataAccessor<Integer> TEXTURE_VARIANT =
+            SynchedEntityData.defineId(ScorpionEntity.class, EntityDataSerializers.INT);
+    private static final String TEXTURE_VARIANT_KEY = "TextureVariant";
+    public static final int BLUE_VARIANT = 0;
+    public static final int GREEN_VARIANT = 1;
 
     private static final int ATTACK_ANIM_TICKS = 12;
     private static final int ATTACK_HIT_TICK = 6;
@@ -83,6 +94,12 @@ public class ScorpionEntity extends Monster implements GeoEntity {
     }
 
     @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(TEXTURE_VARIANT, BLUE_VARIANT);
+    }
+
+    @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new ScorpionMeleeAttackGoal());
@@ -91,6 +108,13 @@ public class ScorpionEntity extends Monster implements GeoEntity {
         this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+    }
+
+    @Nullable
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+        this.assignRandomTextureVariant();
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
 
     @Override
@@ -209,6 +233,22 @@ public class ScorpionEntity extends Monster implements GeoEntity {
     }
 
     @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt(TEXTURE_VARIANT_KEY, this.getTextureVariant());
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        if (tag.contains(TEXTURE_VARIANT_KEY)) {
+            this.setTextureVariant(tag.getInt(TEXTURE_VARIANT_KEY));
+        } else {
+            this.assignRandomTextureVariant();
+        }
+    }
+
+    @Override
     protected SoundEvent getAmbientSound() {
         return AntarchySoundEvents.SCORPION_AMBIENT.get();
     }
@@ -226,6 +266,18 @@ public class ScorpionEntity extends Monster implements GeoEntity {
     @Override
     protected float getSoundVolume() {
         return 0.6F;
+    }
+
+    public int getTextureVariant() {
+        return this.entityData.get(TEXTURE_VARIANT);
+    }
+
+    public void setTextureVariant(int variant) {
+        this.entityData.set(TEXTURE_VARIANT, variant == GREEN_VARIANT ? GREEN_VARIANT : BLUE_VARIANT);
+    }
+
+    private void assignRandomTextureVariant() {
+        this.setTextureVariant(this.random.nextBoolean() ? BLUE_VARIANT : GREEN_VARIANT);
     }
 
     private final class ScorpionMeleeAttackGoal extends MeleeAttackGoal {

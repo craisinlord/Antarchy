@@ -82,6 +82,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
     private static final int COMBAT_ROAR_TICKS = 30;
     private static final int DEATH_TICKS = 30;
     private static final int TARGET_RESET_TICKS = 60;
+    private static final int MIN_AIRBORNE_TICKS_FOR_FLY_ANIM = 4;
     private static final int DREAD_TICKS = 160;
     private static final int WEAKNESS_TICKS = 100;
     private static final int BLOCK_BREAK_TICKS = 10;
@@ -644,23 +645,18 @@ public class NightmareEntity extends Monster implements GeoEntity {
             return;
         }
         if (this.attackAnimationTicks > 0) {
-            this.setAnimationState(this.onGround() ? ANIM_ATTACK : ANIM_FLY_ATTACK);
+            this.setAnimationState(this.isNoGravity() || this.airborneTicks >= MIN_AIRBORNE_TICKS_FOR_FLY_ANIM ? ANIM_FLY_ATTACK : ANIM_ATTACK);
             this.groundMoveTicks = 0;
             this.tickWingFlapSound();
             return;
         }
         if (this.flyingToTarget) {
             this.groundMoveTicks = 0;
-            if (this.onGround() || this.airborneTicks <= 8) {
-                this.setAnimationState(ANIM_FLY);
-                this.wingFlapCooldown = 0;
-            } else {
-                this.setAnimationState(ANIM_FLY);
-                this.tickWingFlapSound();
-            }
+            this.setAnimationState(ANIM_FLY);
+            this.tickWingFlapSound();
             return;
         }
-        if (!this.onGround()) {
+        if (this.isNoGravity() || this.airborneTicks >= MIN_AIRBORNE_TICKS_FOR_FLY_ANIM) {
             this.groundMoveTicks = 0;
             this.setAnimationState(ANIM_FLY);
             this.tickWingFlapSound();
