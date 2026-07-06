@@ -34,8 +34,6 @@ public class AntarchyNeoforgeSpawnPlacements {
         event.register(AntarchyNeoforgeEntites.CLOUD_SHARK.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CloudSharkEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(AntarchyNeoforgeEntites.WASP.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WaspEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(AntarchyNeoforgeEntites.BOMBER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BomberEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
-        event.register(AntarchyNeoforgeEntites.JUMPY_BUG.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, JumpyBugEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
-        event.register(AntarchyNeoforgeEntites.SPIT_BUG.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpitBugEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(AntarchyNeoforgeEntites.KRAKEN.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, KrakenEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(AntarchyNeoforgeEntites.MISSILE_SQUID.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MissileSquidEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(AntarchyNeoforgeEntites.OCTOPUS_BOMB.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, OctopusBombEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
@@ -44,14 +42,10 @@ public class AntarchyNeoforgeSpawnPlacements {
         event.register(AntarchyNeoforgeEntites.MANTIS.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MantisEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(AntarchyNeoforgeEntites.MOLEVORE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MolevoreEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(AntarchyNeoforgeEntites.BED_BUG.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BedBugEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
-        event.register(AntarchyNeoforgeEntites.STINK_BUG.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, StinkBugEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(AntarchyNeoforgeEntites.LUCID.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LucidEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(AntarchyNeoforgeEntites.SCORPION.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ScorpionEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(AntarchyNeoforgeEntites.BASILISK.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BasiliskEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(AntarchyNeoforgeEntites.EMPEROR_SCORPION.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EmperorScorpionEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
-        event.register(AntarchyNeoforgeEntites.CREEPING_HORROR.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, CreepingHorrorEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
-        event.register(AntarchyNeoforgeEntites.LURKING_TERROR.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LurkingTerrorEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
-        event.register(AntarchyNeoforgeEntites.TERMITE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(AntarchyNeoforgeEntites.CHEEP.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AbstractFish::checkSurfaceWaterAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
     }
 }

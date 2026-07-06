@@ -47,11 +47,8 @@ public class AntarchyNeoforgeEntityAttributes {
         event.put(AntarchyNeoforgeEntites.OCTOPUS_BOMB.get(), OctopusBombEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.NIGHTMARE.get(), NightmareEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.BED_BUG.get(), BedBugEntity.createAttributes().build());
-        event.put(AntarchyNeoforgeEntites.STINK_BUG.get(), StinkBugEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.WASP.get(), WaspEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.BOMBER.get(), BomberEntity.createAttributes().build());
-        event.put(AntarchyNeoforgeEntites.JUMPY_BUG.get(), JumpyBugEntity.createAttributes().build());
-        event.put(AntarchyNeoforgeEntites.SPIT_BUG.get(), SpitBugEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.MANTIS.get(), MantisEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.TRIFFID.get(), TriffidEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.LUCID.get(), LucidEntity.createAttributes().build());
@@ -59,8 +56,6 @@ public class AntarchyNeoforgeEntityAttributes {
         event.put(AntarchyNeoforgeEntites.BASILISK.get(), BasiliskEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.EMPEROR_SCORPION.get(), EmperorScorpionEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.TORETERROR.get(), ToreterrorEntity.createAttributes().build());
-        event.put(AntarchyNeoforgeEntites.CREEPING_HORROR.get(), CreepingHorrorEntity.createAttributes().build());
-        event.put(AntarchyNeoforgeEntites.LURKING_TERROR.get(), LurkingTerrorEntity.createAttributes().build());
 
         AttributeSupplier redAntAttributes = buildAntAttributes(AntarchySettings.redAntHealth(), AntarchySettings.redAntMovementSpeed(), AntarchySettings.redAntAttackDamage()).build();
         AttributeSupplier brownAntAttributes = buildAntAttributes(AntarchySettings.brownAntHealth(), AntarchySettings.brownAntMovementSpeed(), AntarchySettings.brownAntAttackDamage()).build();
@@ -69,12 +64,9 @@ public class AntarchyNeoforgeEntityAttributes {
         event.put(AntarchyNeoforgeEntites.RED_ANT.get(), redAntAttributes);
         event.put(AntarchyNeoforgeEntites.BROWN_ANT.get(), brownAntAttributes);
         event.put(AntarchyNeoforgeEntites.RAINBOW_ANT.get(), rainbowAntAttributes);
-        event.put(AntarchyNeoforgeEntites.TERMITE.get(), termiteAttributes);
         event.put(AntarchyNeoforgeEntites.MOLEWORM.get(), MolewormEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.MOLEVORE.get(), MolevoreEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.CHEEP.get(), com.craisinlord.antarchy.content.entity.CheepEntity.createAttributes().build());
-        event.put(AntarchyNeoforgeEntites.DORRIE.get(), com.craisinlord.antarchy.content.entity.DorrieEntity.createAttributes().build());
-        event.put(AntarchyNeoforgeEntites.HERCULES_BEETLE.get(), com.craisinlord.antarchy.content.entity.HerculesBeetleEntity.createAttributes().build());
     }
 
     private static AttributeSupplier.Builder buildAntAttributes(double health, double speed, double attackDamage) {

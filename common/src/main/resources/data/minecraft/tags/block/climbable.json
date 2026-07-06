@@ -1,7 +1,6 @@
 {
   "replace": false,
   "values": [
-    "minecraft:vine",
-    "antarchy:creepvine"
+    "minecraft:vine"
   ]
 }

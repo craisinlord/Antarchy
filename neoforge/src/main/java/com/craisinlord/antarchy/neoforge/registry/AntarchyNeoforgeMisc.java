@@ -191,8 +191,6 @@ public final class AntarchyNeoforgeMisc {
             () -> new BrownAntNestFeature(SimpleBlockConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, RainbowAntNestFeature> RAINBOW_ANT_NEST_FEATURE = FEATURES.register("rainbow_ant_nest",
             () -> new RainbowAntNestFeature(SimpleBlockConfiguration.CODEC));
-    public static final DeferredHolder<Feature<?>, TermiteNestFeature> TERMITE_NEST_FEATURE = FEATURES.register("termite_nest",
-            () -> new TermiteNestFeature(SimpleBlockConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, OuranwoodTreeFeature> OURANWOOD_LARGE_TREE = FEATURES.register("ouranwood_large_tree",
             () -> new OuranwoodTreeFeature(OuranwoodTreeConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, OuranwoodTreeFeature> OURANWOOD_YOUNG_TREE = FEATURES.register("ouranwood_young_tree",
@@ -247,16 +245,6 @@ public final class AntarchyNeoforgeMisc {
             () -> new ThoraxisSpikeFeature(ThoraxisSpikeConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, NyxiteSpikeFeature> NYXITE_SPIKES = FEATURES.register("nyxite_spikes",
             () -> new NyxiteSpikeFeature(NyxiteSpikeConfiguration.CODEC));
-    public static final DeferredHolder<Feature<?>, ChitenSpikeFeature> CAVARYN_CHITEN_SPIKES = FEATURES.register("cavaryn_chiten_spikes",
-            () -> new ChitenSpikeFeature(ChitenSpikeConfiguration.CODEC));
-    public static final DeferredHolder<Feature<?>, CavarynBileVeinFeature> CAVARYN_BILE_VEINS = FEATURES.register("cavaryn_bile_veins",
-            () -> new CavarynBileVeinFeature(NoneFeatureConfiguration.CODEC));
-    public static final DeferredHolder<Feature<?>, CavarynBileCystFeature> CAVARYN_BILE_CYSTS = FEATURES.register("cavaryn_bile_cysts",
-            () -> new CavarynBileCystFeature(NoneFeatureConfiguration.CODEC));
-    public static final DeferredHolder<Feature<?>, CavarynCreepvineFeature> CAVARYN_CREEPVINE = FEATURES.register("cavaryn_creepvine",
-            () -> new CavarynCreepvineFeature(NoneFeatureConfiguration.CODEC));
-    public static final DeferredHolder<Feature<?>, CavarynWallAmberMossFeature> CAVARYN_WALL_AMBER_MOSS = FEATURES.register("cavaryn_wall_amber_moss",
-            () -> new CavarynWallAmberMossFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, AntiwaterSpringsFeature> ANTIWATER_SPRINGS = FEATURES.register("antiwater_springs",
             () -> new AntiwaterSpringsFeature(AntiwaterSpringsConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, PotentNyxiteFeature> POTENT_NYXITE_FEATURE = FEATURES.register("potent_nyxite",
@@ -269,8 +257,6 @@ public final class AntarchyNeoforgeMisc {
             () -> new BedBugNestFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, BedBugSurfaceClusterFeature> BED_BUG_SURFACE_CLUSTER = FEATURES.register("bed_bug_surface_cluster",
             () -> new BedBugSurfaceClusterFeature(NoneFeatureConfiguration.CODEC));
-    public static final DeferredHolder<Feature<?>, CavarynEggPatchFeature> CAVARYN_TERROR_EGG_PATCH = FEATURES.register("cavaryn_terror_egg_patch",
-            () -> new CavarynEggPatchFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, ThoraxisAntiwaterPoolFeature> THORAXIS_ANTIWATER_POOL = FEATURES.register("thoraxis_antiwater_pool",
             () -> new ThoraxisAntiwaterPoolFeature(ThoraxisAntiwaterPoolConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, LucidAntiwaterPoolFeature> LUCID_ANTIWATER_POOL = FEATURES.register("lucid_antiwater_pool",
@@ -303,19 +289,20 @@ public final class AntarchyNeoforgeMisc {
         ATTRIBUTES.register(modEventBus);
     }
 
-    static BaseFlowingFluid.Properties bileProperties() {
-        return new BaseFlowingFluid.Properties(BILE_TYPE, BILE, FLOWING_BILE)
-                .bucket(() -> AntarchyNeoforgeItems.BILE_BUCKET.get())
-                .block(() -> AntarchyNeoforgeBlocks.BILE_BLOCK.get())
-                .slopeFindDistance(4)
-                .levelDecreasePerBlock(1)
-                .tickRate(5);
-    }
 
     static BaseFlowingFluid.Properties ichorProperties() {
         return new BaseFlowingFluid.Properties(ICHOR_TYPE, ICHOR, FLOWING_ICHOR)
                 .bucket(() -> AntarchyNeoforgeItems.ICHOR_BUCKET.get())
                 .block(() -> AntarchyNeoforgeBlocks.ICHOR_BLOCK.get())
+                .slopeFindDistance(4)
+                .levelDecreasePerBlock(1)
+                .tickRate(5);
+    }
+
+    static BaseFlowingFluid.Properties bileProperties() {
+        return new BaseFlowingFluid.Properties(BILE_TYPE, BILE, FLOWING_BILE)
+                .bucket(() -> AntarchyNeoforgeItems.BILE_BUCKET.get())
+                .block(() -> AntarchyNeoforgeBlocks.BILE_BLOCK.get())
                 .slopeFindDistance(4)
                 .levelDecreasePerBlock(1)
                 .tickRate(5);

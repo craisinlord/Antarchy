@@ -48,7 +48,6 @@
     "multipart.EntityMultipartLifecycleMixin"
   ],
   "client": [
-    "client.CavarynSkyMixin",
     "client.ElythiaSkyMixin",
     "client.ElytraModelAccessor",
     "client.LightningBoltRendererMixin",

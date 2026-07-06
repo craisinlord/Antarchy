@@ -36,29 +36,12 @@
     [],
     [],
     [],
-    [
-      "antarchy:cavaryn_bile_veins",
-      "antarchy:brooding_tunnels_creepvine"
-    ],
-    [
-      "antarchy:cavaryn_bile_cysts"
-    ]
+    [],
+    []
   ],
   "creature_spawn_probability": 0.06,
   "spawners": {
     "monster": [
-      {
-        "type": "antarchy:jumpy_bug",
-        "weight": 95,
-        "minCount": 1,
-        "maxCount": 3
-      },
-      {
-        "type": "antarchy:spit_bug",
-        "weight": 95,
-        "minCount": 2,
-        "maxCount": 5
-      }
     ],
     "creature": [
     ],

@@ -2369,7 +2369,6 @@ public final class AntarchyFabricContent {
         CREATIVE_MODE_TABS.register();
 
         // Wire common-module accessors after all registrations are complete.
-        AntarchyObjects.setHerculesBeetle(() -> HERCULES_BEETLE.get());
 
         AntarchySoundEvents.bind(
                 SQUIDZOOKA_FIRE,
@@ -2521,11 +2520,7 @@ public final class AntarchyFabricContent {
                 HUSH_PROJECTILE,
                 TORETERROR,
                 WATER_BOMB,
-                CREEPING_HORROR,
-                LURKING_TERROR,
-                STINK_BUG,
                 CHEEP,
-                DORRIE,
                 () -> DUPLICATOR_LOG.get(),
                 () -> DUPLICATOR_SAPLING.get(),
                 () -> DUCT_TAPE.get(),
@@ -2554,8 +2549,6 @@ public final class AntarchyFabricContent {
                 () -> TRIFFID_GOO_BLOCK.get(),
                 () -> PALE_NYXITE.get(),
                 () -> NYXITE_SPIKE.get(),
-                () -> CHITEN_BLOCK.get(),
-                () -> CHITEN_SPIKE.get(),
                 () -> POTENT_NYXITE.get(),
                 () -> ANTIMETAL.get(),
                 () -> POLISHED_ANTIMETAL.get(),
@@ -2568,7 +2561,6 @@ public final class AntarchyFabricContent {
                 KRAKEN_TOOTH,
                 () -> MOGGLES.get(),
                 () -> REVERIE_BOTTLE.get(),
-                () -> STINK_BUG_ITEM.get(),
                 () -> mobEffectHolder(DREAD),
                 () -> mobEffectHolder(PARALYZED),
                 () -> mobEffectHolder(INVERTED),
@@ -2580,8 +2572,6 @@ public final class AntarchyFabricContent {
                 () -> PINK_MILKWEED.get(),
                 () -> TORCHFLOWER_BUSH.get(),
                 () -> BED_BUG_EGG.get(),
-                () -> CREEPING_HORROR_EGG.get(),
-                () -> LURKING_TERROR_EGG.get(),
                 () -> WASP_NEST.get(),
                 () -> HUSHWEED.get(),
                 () -> OURANWOOD_SQUIRREL_NEST.get(),

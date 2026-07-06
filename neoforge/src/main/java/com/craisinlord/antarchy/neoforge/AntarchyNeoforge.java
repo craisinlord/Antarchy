@@ -198,11 +198,7 @@ public class AntarchyNeoforge {
                 AntarchyNeoforgeEntites.HUSH_PROJECTILE,
                 AntarchyNeoforgeEntites.TORETERROR,
                 AntarchyNeoforgeEntites.WATER_BOMB,
-                AntarchyNeoforgeEntites.CREEPING_HORROR,
-                AntarchyNeoforgeEntites.LURKING_TERROR,
-                AntarchyNeoforgeEntites.STINK_BUG,
                 AntarchyNeoforgeEntites.CHEEP,
-                AntarchyNeoforgeEntites.DORRIE,
                 () -> AntarchyNeoforgeBlocks.DUPLICATOR_LOG.get(),
                 () -> AntarchyNeoforgeBlocks.DUPLICATOR_SAPLING.get(),
                 () -> AntarchyNeoforgeBlocks.DUCT_TAPE.get(),
@@ -231,8 +227,6 @@ public class AntarchyNeoforge {
                 () -> AntarchyNeoforgeBlocks.TRIFFID_GOO_BLOCK.get(),
                 () -> AntarchyNeoforgeBlocks.PALE_NYXITE.get(),
                 () -> AntarchyNeoforgeBlocks.NYXITE_SPIKE.get(),
-                () -> AntarchyNeoforgeBlocks.CHITEN_BLOCK.get(),
-                () -> AntarchyNeoforgeBlocks.CHITEN_SPIKE.get(),
                 () -> AntarchyNeoforgeBlocks.POTENT_NYXITE.get(),
                 () -> AntarchyNeoforgeBlocks.ANTIMETAL.get(),
                 () -> AntarchyNeoforgeBlocks.POLISHED_ANTIMETAL.get(),
@@ -245,7 +239,6 @@ public class AntarchyNeoforge {
                 AntarchyNeoforgeItems.KRAKEN_TOOTH,
                 () -> AntarchyNeoforgeItems.MOGGLES.get(),
                 () -> AntarchyNeoforgeItems.REVERIE_BOTTLE.get(),
-                () -> AntarchyNeoforgeItems.STINK_BUG.get(),
                 () -> AntarchyNeoforgeMisc.DREAD,
                 () -> AntarchyNeoforgeMisc.PARALYZED,
                 () -> AntarchyNeoforgeMisc.INVERTED,
@@ -257,8 +250,6 @@ public class AntarchyNeoforge {
                 () -> AntarchyNeoforgeBlocks.PINK_MILKWEED.get(),
                 () -> AntarchyNeoforgeBlocks.TORCHFLOWER_BUSH.get(),
                 () -> AntarchyNeoforgeBlocks.BED_BUG_EGG.get(),
-                () -> AntarchyNeoforgeBlocks.CREEPING_HORROR_EGG.get(),
-                () -> AntarchyNeoforgeBlocks.LURKING_TERROR_EGG.get(),
                 () -> AntarchyNeoforgeBlocks.WASP_NEST.get(),
                 () -> AntarchyNeoforgeBlocks.HUSHWEED.get(),
                 () -> AntarchyNeoforgeBlocks.OURANWOOD_SQUIRREL_NEST.get(),
@@ -273,7 +264,6 @@ public class AntarchyNeoforge {
                 () -> AntarchyNeoforgeMisc.BLOODGLASS_MAX_HEARTS,
                 () -> AntarchyNeoforgeMisc.BLOODGLASS_WARD
         );
-        AntarchyObjects.setHerculesBeetle(AntarchyNeoforgeEntites.HERCULES_BEETLE);
         AntarchyObjects.setOctopusBomb(AntarchyNeoforgeEntites.OCTOPUS_BOMB);
     }
 

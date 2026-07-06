@@ -81,8 +81,6 @@ public final class AntarchyNeoforgeEntites {
             () -> buildAntType(BrownAntEntity::new, MobCategory.CREATURE, "brown_ant"));
     public static final DeferredHolder<EntityType<?>, EntityType<RainbowAntEntity>> RAINBOW_ANT = ENTITY_TYPES.register("rainbow_ant",
             () -> buildAntType(RainbowAntEntity::new, MobCategory.CREATURE, "rainbow_ant"));
-    public static final DeferredHolder<EntityType<?>, EntityType<TermiteEntity>> TERMITE = ENTITY_TYPES.register("termite",
-            () -> buildAntType(TermiteEntity::new, MobCategory.CREATURE, "termite"));
     public static final DeferredHolder<EntityType<?>, EntityType<MolewormEntity>> MOLEWORM = ENTITY_TYPES.register("moleworm",
             () -> EntityType.Builder.of(MolewormEntity::new, MobCategory.MONSTER)
                     .sized(0.4F, 0.3F)
@@ -120,11 +118,6 @@ public final class AntarchyNeoforgeEntites {
                     .sized(1.15F, 0.8F)
                     .clientTrackingRange(8)
                     .build("bed_bug"));
-    public static final DeferredHolder<EntityType<?>, EntityType<StinkBugEntity>> STINK_BUG = ENTITY_TYPES.register("stink_bug",
-            () -> EntityType.Builder.of(StinkBugEntity::new, MobCategory.CREATURE)
-                    .sized(0.35F, 0.2F)
-                    .clientTrackingRange(8)
-                    .build("stink_bug"));
     public static final DeferredHolder<EntityType<?>, EntityType<WaspEntity>> WASP = ENTITY_TYPES.register("wasp",
             () -> EntityType.Builder.of(WaspEntity::new, MobCategory.MONSTER)
                     .sized(0.8625F, 1.365F)
@@ -135,22 +128,6 @@ public final class AntarchyNeoforgeEntites {
                     .sized(0.55F, 0.75F)
                     .clientTrackingRange(8)
                     .build("bomber"));
-    public static final DeferredHolder<EntityType<?>, EntityType<JumpyBugEntity>> JUMPY_BUG = ENTITY_TYPES.register("jumpy_bug",
-            () -> EntityType.Builder.of(JumpyBugEntity::new, MobCategory.MONSTER)
-                    .sized(3.0F, 3.0F)
-                    .clientTrackingRange(8)
-                    .build("jumpy_bug"));
-    public static final DeferredHolder<EntityType<?>, EntityType<SpitBugEntity>> SPIT_BUG = ENTITY_TYPES.register("spit_bug",
-            () -> EntityType.Builder.of(SpitBugEntity::new, MobCategory.MONSTER)
-                    .sized(2.5F, 3.0F)
-                    .clientTrackingRange(10)
-                    .build("spit_bug"));
-    public static final DeferredHolder<EntityType<?>, EntityType<SpitBugProjectileEntity>> SPIT_BUG_PROJECTILE = ENTITY_TYPES.register("spit_bug_projectile",
-            () -> EntityType.Builder.<SpitBugProjectileEntity>of(SpitBugProjectileEntity::new, MobCategory.MISC)
-                    .sized(0.5F, 0.5F)
-                    .clientTrackingRange(8)
-                    .updateInterval(1)
-                    .build("spit_bug_projectile"));
     public static final DeferredHolder<EntityType<?>, EntityType<SizeRayProjectileEntity>> SHRINK_RAY_PROJECTILE = ENTITY_TYPES.register("shrink_ray_projectile",
             () -> EntityType.Builder.<SizeRayProjectileEntity>of(SizeRayProjectileEntity::createShrink, MobCategory.MISC)
                     .sized(0.5F, 0.5F)
@@ -292,31 +269,11 @@ public final class AntarchyNeoforgeEntites {
                     .clientTrackingRange(8)
                     .updateInterval(1)
                     .build("water_bomb"));
-    public static final DeferredHolder<EntityType<?>, EntityType<CreepingHorrorEntity>> CREEPING_HORROR = ENTITY_TYPES.register("creeping_horror",
-            () -> EntityType.Builder.of(CreepingHorrorEntity::new, MobCategory.MONSTER)
-                    .sized(1.3F, 1.5F)
-                    .clientTrackingRange(10)
-                    .build("creeping_horror"));
-    public static final DeferredHolder<EntityType<?>, EntityType<LurkingTerrorEntity>> LURKING_TERROR = ENTITY_TYPES.register("lurking_terror",
-            () -> EntityType.Builder.of(LurkingTerrorEntity::new, MobCategory.MONSTER)
-                    .sized(1.3F, 1.5F)
-                    .clientTrackingRange(10)
-                    .build("lurking_terror"));
     public static final DeferredHolder<EntityType<?>, EntityType<CheepEntity>> CHEEP = ENTITY_TYPES.register("cheep",
             () -> EntityType.Builder.of(CheepEntity::new, MobCategory.WATER_AMBIENT)
                     .sized(1.0F, 1.2F)
                     .clientTrackingRange(8)
                     .build("cheep"));
-    public static final DeferredHolder<EntityType<?>, EntityType<DorrieEntity>> DORRIE = ENTITY_TYPES.register("dorrie",
-            () -> EntityType.Builder.of(DorrieEntity::new, MobCategory.WATER_CREATURE)
-                    .sized(2.4F, 2.0F)
-                    .clientTrackingRange(10)
-                    .build("dorrie"));
-    public static final DeferredHolder<EntityType<?>, EntityType<HerculesBeetleEntity>> HERCULES_BEETLE = ENTITY_TYPES.register("hercules_beetle",
-            () -> EntityType.Builder.of(HerculesBeetleEntity::new, MobCategory.MONSTER)
-                    .sized(3.0F, 4.0F)
-                    .clientTrackingRange(12)
-                    .build("hercules_beetle"));
     public static final DeferredHolder<EntityType<?>, EntityType<UpwardFallingBlockEntity>> UPWARD_FALLING_BLOCK = ENTITY_TYPES.register("upward_falling_block",
             () -> EntityType.Builder.<UpwardFallingBlockEntity>of(
                             UpwardFallingBlockEntity::new, MobCategory.MISC)

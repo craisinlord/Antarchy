@@ -80,11 +80,11 @@ public class NightmareEntity extends Monster implements GeoEntity {
     private static final int ANIM_TAKEOFF = 7;
     private static final int ANIM_FLY_DAMAGED = 8;
 
-    private static final int ATTACK_TOTAL_TICKS = 18;
-    private static final int ATTACK_DAMAGE_TICK = 9;
-    private static final int INTRO_ROAR_TICKS = 32;
-    private static final int COMBAT_ROAR_TICKS = 24;
-    private static final int DEATH_TICKS = 36;
+    private static final int ATTACK_TOTAL_TICKS = 20;
+    private static final int ATTACK_DAMAGE_TICK = 10;
+    private static final int INTRO_ROAR_TICKS = 30;
+    private static final int COMBAT_ROAR_TICKS = 30;
+    private static final int DEATH_TICKS = 30;
     private static final int TARGET_RESET_TICKS = 60;
     private static final int DREAD_TICKS = 160;
     private static final int WEAKNESS_TICKS = 100;
@@ -101,14 +101,14 @@ public class NightmareEntity extends Monster implements GeoEntity {
     private static final double FLIGHT_DISENGAGE_RANGE_SQR = 36.0D;
     private static final double ROAR_RETRY_DISTANCE_SQR = 400.0D;
 
-    private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("Idle");
+    private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
-    private static final RawAnimation TAKEOFF_ANIM = RawAnimation.begin().thenPlay("animation").thenLoop("fly");
+    private static final RawAnimation TAKEOFF_ANIM = RawAnimation.begin().thenLoop("fly");
     private static final RawAnimation FLY_ANIM = RawAnimation.begin().thenLoop("fly");
-    private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenPlay("attack").thenLoop("Idle");
-    private static final RawAnimation FLY_ATTACK_ANIM = RawAnimation.begin().thenPlay("fly_attack").thenLoop("fly");
-    private static final RawAnimation ROAR_ANIM = RawAnimation.begin().thenPlay("roar").thenLoop("Idle");
-    private static final RawAnimation DEATH_ANIM = RawAnimation.begin().thenPlayAndHold("death");
+    private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenPlay("attack").thenLoop("idle");
+    private static final RawAnimation FLY_ATTACK_ANIM = RawAnimation.begin().thenPlay("attack2").thenLoop("fly");
+    private static final RawAnimation ROAR_ANIM = RawAnimation.begin().thenPlay("roar").thenLoop("idle");
+    private static final RawAnimation DEATH_ANIM = RawAnimation.begin().thenPlayAndHold("roar");
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 

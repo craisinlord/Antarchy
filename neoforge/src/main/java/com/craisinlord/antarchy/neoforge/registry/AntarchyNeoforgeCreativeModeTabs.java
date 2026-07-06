@@ -57,7 +57,6 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.RED_ANT_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.BROWN_ANT_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.RAINBOW_ANT_SPAWN_EGG.get());
-            event.accept(AntarchyNeoforgeItems.TERMITE_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.MOLEWORM_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.MANTIS_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.MOLEVORE_SPAWN_EGG.get());
@@ -68,9 +67,6 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.DR_TRAYAURUS_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.WASP_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.BOMBER_SPAWN_EGG.get());
-            event.accept(AntarchyNeoforgeItems.JUMPY_BUG_SPAWN_EGG.get());
-            event.accept(AntarchyNeoforgeItems.SPIT_BUG_SPAWN_EGG.get());
-            event.accept(AntarchyNeoforgeItems.STINK_BUG_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.CLOUD_SHARK_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.KRAKEN_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.MISSILE_SQUID_SPAWN_EGG.get());
@@ -82,8 +78,6 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.BASILISK_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.EMPEROR_SCORPION_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.TORETERROR_SPAWN_EGG.get());
-            event.accept(AntarchyNeoforgeItems.CREEPING_HORROR_SPAWN_EGG.get());
-            event.accept(AntarchyNeoforgeItems.LURKING_TERROR_SPAWN_EGG.get());
         }
 
         if (event.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS) {
@@ -95,8 +89,6 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.PINK_MILKWEED_ITEM.get());
             event.accept(AntarchyNeoforgeItems.TORCHFLOWER_BUSH_ITEM.get());
             event.accept(AntarchyNeoforgeItems.HUSHWEED_ITEM.get());
-            event.accept(AntarchyNeoforgeItems.AMBER_LICHEN_ITEM.get());
-            event.accept(AntarchyNeoforgeItems.CREEPVINE_ITEM.get());
             event.accept(AntarchyNeoforgeItems.INFESTED_ROOTED_DIRT_ITEM.get());
             event.accept(AntarchyNeoforgeItems.INFESTED_COARSE_DIRT_ITEM.get());
             event.accept(AntarchyNeoforgeItems.TRIFFID_GOO_BLOCK_ITEM.get());
@@ -107,7 +99,6 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.RED_ANT_NEST_ITEM.get());
             event.accept(AntarchyNeoforgeItems.BROWN_ANT_NEST_ITEM.get());
             event.accept(AntarchyNeoforgeItems.RAINBOW_ANT_NEST_ITEM.get());
-            event.accept(AntarchyNeoforgeItems.TERMITE_NEST_ITEM.get());
             event.accept(AntarchyNeoforgeItems.URANIUM_ORE_ITEM.get());
             event.accept(AntarchyNeoforgeItems.DEEPSLATE_URANIUM_ORE_ITEM.get());
             event.accept(AntarchyNeoforgeItems.TITANIUM_ORE_ITEM.get());
@@ -117,7 +108,6 @@ public class AntarchyNeoforgeCreativeModeTabs {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.insertAfter(new ItemStack(Items.SHEARS), new ItemStack(AntarchyNeoforgeItems.DUCT_TAPE_ITEM.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
             event.insertAfter(new ItemStack(Items.MINECART), new ItemStack(AntarchyNeoforgeItems.DIAMOND_MINECART_ITEM.get()), CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-            event.accept(AntarchyNeoforgeItems.BILE_BUCKET.get());
             event.accept(AntarchyNeoforgeItems.ICHOR_BUCKET.get());
             event.accept(AntarchyNeoforgeItems.ANTIWATER_BUCKET.get());
             event.accept(AntarchyNeoforgeItems.CLOUD_BUCKET.get());
@@ -150,7 +140,6 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.MANTIS_CLAW.get());
             event.accept(AntarchyNeoforgeItems.KING_SCALE.get());
             event.accept(AntarchyNeoforgeItems.QUEEN_SCALE.get());
-            event.accept(AntarchyNeoforgeItems.CHITEN.get());
             event.accept(AntarchyNeoforgeItems.STINK_BUG.get());
             event.accept(AntarchyNeoforgeItems.BRUTALFLY_WING.get());
             event.accept(AntarchyNeoforgeItems.PRIMORDIAL_SCUTE.get());
@@ -245,13 +234,6 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.SMALL_BLOOD_CRYSTAL_BUD_ITEM.get());
             event.accept(AntarchyNeoforgeItems.MEDIUM_BLOOD_CRYSTAL_BUD_ITEM.get());
             event.accept(AntarchyNeoforgeItems.LARGE_BLOOD_CRYSTAL_BUD_ITEM.get());
-            event.accept(AntarchyNeoforgeItems.MYRMITE_ITEM.get());
-            event.accept(AntarchyNeoforgeItems.BROODSTONE_ITEM.get());
-            event.accept(AntarchyNeoforgeItems.BILE_VEIN_ITEM.get());
-            event.accept(AntarchyNeoforgeItems.CHITEN_BLOCK_ITEM.get());
-            event.accept(AntarchyNeoforgeItems.CHITEN_SPIKE_ITEM.get());
-            event.accept(AntarchyNeoforgeItems.AMBER_MOSS_BLOCK_ITEM.get());
-            event.accept(AntarchyNeoforgeItems.AMBER_MOSS_CARPET_ITEM.get());
             event.accept(AntarchyNeoforgeItems.URANIUM_BLOCK_ITEM.get());
             event.accept(AntarchyNeoforgeItems.RAW_URANIUM_BLOCK_ITEM.get());
             event.accept(AntarchyNeoforgeItems.CUT_URANIUM_ITEM.get());
