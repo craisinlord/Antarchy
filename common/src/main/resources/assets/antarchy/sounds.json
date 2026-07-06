@@ -513,6 +513,28 @@
       }
     ]
   },
+  "toreterror_jump_up": {
+    "subtitle": "subtitles.antarchy.toreterror_jump_up",
+    "sounds": [
+      {
+        "name": "antarchy:mob/toreterror/jump_up1"
+      },
+      {
+        "name": "antarchy:mob/toreterror/jump_up2"
+      }
+    ]
+  },
+  "toreterror_jump_land": {
+    "subtitle": "subtitles.antarchy.toreterror_jump_land",
+    "sounds": [
+      {
+        "name": "antarchy:mob/toreterror/jump_land1"
+      },
+      {
+        "name": "antarchy:mob/toreterror/jump_land2"
+      }
+    ]
+  },
   "creeping_horror_growl": {
     "subtitle": "subtitles.antarchy.creeping_horror_growl",
     "sounds": [

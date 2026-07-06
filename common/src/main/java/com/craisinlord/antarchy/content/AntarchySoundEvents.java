@@ -126,6 +126,8 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> TORETERROR_HURT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> TORETERROR_DEATH = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> TORETERROR_BOMBER_FIRE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> TORETERROR_JUMP_UP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> TORETERROR_JUMP_LAND = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> STINKY_FLY = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> CREEPING_HORROR_GROWL = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> CREEPING_HORROR_HURT = (Supplier<SoundEvent>) UNBOUND;
@@ -257,6 +259,8 @@ public final class AntarchySoundEvents {
             Supplier<SoundEvent> toreterrorHurt,
             Supplier<SoundEvent> toreterrorDeath,
             Supplier<SoundEvent> toreterrorBomberFire,
+            Supplier<SoundEvent> toreterrorJumpUp,
+            Supplier<SoundEvent> toreterrorJumpLand,
             Supplier<SoundEvent> stinkyFly,
             Supplier<SoundEvent> creepingHorrorGrowl,
             Supplier<SoundEvent> creepingHorrorHurt,
@@ -384,6 +388,8 @@ public final class AntarchySoundEvents {
         TORETERROR_HURT = toreterrorHurt;
         TORETERROR_DEATH = toreterrorDeath;
         TORETERROR_BOMBER_FIRE = toreterrorBomberFire;
+        TORETERROR_JUMP_UP = toreterrorJumpUp;
+        TORETERROR_JUMP_LAND = toreterrorJumpLand;
         STINKY_FLY = stinkyFly;
         CREEPING_HORROR_GROWL = creepingHorrorGrowl;
         CREEPING_HORROR_HURT = creepingHorrorHurt;

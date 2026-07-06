@@ -75,7 +75,6 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricContent.RED_ANT.get(), AntRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.BROWN_ANT.get(), AntRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.RAINBOW_ANT.get(), AntRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricContent.TERMITE.get(), TermiteRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.MOLEWORM.get(), MolewormRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.MANTIS.get(), MantisRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.MOLEVORE.get(), MolevoreRenderer::new);
@@ -94,11 +93,8 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricContent.NIGHTMARE.get(), NightmareRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.LUCID.get(), LucidRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.BED_BUG.get(), BedBugRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricContent.STINK_BUG.get(), StinkBugRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.WASP.get(), WaspRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.BOMBER.get(), BomberRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricContent.JUMPY_BUG.get(), JumpyBugRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricContent.SPIT_BUG.get(), SpitBugRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.BASILISK.get(), BasiliskRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.SHRINK_RAY_PROJECTILE.get(), SizeRayProjectileRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.GROWTH_RAY_PROJECTILE.get(), SizeRayProjectileRenderer::new);
@@ -106,17 +102,12 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricContent.LUCID_PEARL_PROJECTILE.get(), ThrownItemRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.HUSH_PROJECTILE.get(), HushProjectileRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.BRUTALFLY_ORB.get(), BrutalflyOrbRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricContent.SPIT_BUG_PROJECTILE.get(), SpitBugProjectileRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.UPWARD_FALLING_BLOCK.get(), UpwardFallingBlockRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.SCORPION.get(), ScorpionRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.EMPEROR_SCORPION.get(), EmperorScorpionRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.TORETERROR.get(), ToreterrorRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.WATER_BOMB.get(), WaterBombRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricContent.CREEPING_HORROR.get(), CreepingHorrorRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricContent.LURKING_TERROR.get(), LurkingTerrorRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricContent.CHEEP.get(), com.craisinlord.antarchy.content.client.renderer.CheepRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricContent.DORRIE.get(), com.craisinlord.antarchy.content.client.renderer.DorrieRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricContent.HERCULES_BEETLE.get(), com.craisinlord.antarchy.content.client.renderer.HerculesBeetleRenderer::new);
 
         EntityModelLayerRegistry.registerModelLayer(OuranwoodBoatRenderer.boatLayer(), BoatModel::createBodyModel);
         EntityModelLayerRegistry.registerModelLayer(OuranwoodBoatRenderer.chestBoatLayer(), ChestBoatModel::createBodyModel);
@@ -215,12 +206,7 @@ public final class AntarchyFabricClientBootstrap {
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.FALLEN_KING_CROWN_BLOCK.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.ANTIMETAL_SCAFFOLDING.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.UMBRAL_MOSS_CARPET.get(), RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.AMBER_MOSS_CARPET.get(), RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.AMBER_LICHEN.get(), RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.BILE_VEIN.get(), RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.CREEPVINE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.NYXITE_SPIKE.get(), RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.CHITEN_SPIKE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.SMALL_BLOOD_CRYSTAL_BUD.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.MEDIUM_BLOOD_CRYSTAL_BUD.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricContent.LARGE_BLOOD_CRYSTAL_BUD.get(), RenderType.cutout());

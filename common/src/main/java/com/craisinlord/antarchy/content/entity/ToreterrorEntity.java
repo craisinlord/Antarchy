@@ -3,7 +3,6 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
-import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -453,6 +452,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         if (this.jumpLaunched && this.jumpAirborne && !this.shockwaveApplied) {
             if (this.onGround()) {
                 this.shockwaveApplied = true;
+                this.playSound(AntarchySoundEvents.TORETERROR_JUMP_LAND.get(), 1.2F, 0.9F + this.random.nextFloat() * 0.15F);
                 this.applyJumpShockwave();
                 this.jumpShakeTicks = JUMP_SHAKE_TICKS;
                 this.entityData.set(JUMP_SHAKING, true);
@@ -852,6 +852,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
             ToreterrorEntity.this.jumpLaunched = false;
             ToreterrorEntity.this.jumpAirborne = false;
             ToreterrorEntity.this.shockwaveApplied = false;
+            ToreterrorEntity.this.playSound(AntarchySoundEvents.TORETERROR_JUMP_UP.get(), 1.2F, 0.9F + ToreterrorEntity.this.random.nextFloat() * 0.15F);
         }
 
         @Override

@@ -141,6 +141,8 @@ public class AntarchyNeoforge {
                 AntarchyNeoforgeSounds.TORETERROR_HURT,
                 AntarchyNeoforgeSounds.TORETERROR_DEATH,
                 AntarchyNeoforgeSounds.TORETERROR_BOMBER_FIRE,
+                AntarchyNeoforgeSounds.TORETERROR_JUMP_UP,
+                AntarchyNeoforgeSounds.TORETERROR_JUMP_LAND,
                 AntarchyNeoforgeSounds.STINKY_FLY,
                 AntarchyNeoforgeSounds.CREEPING_HORROR_GROWL,
                 AntarchyNeoforgeSounds.CREEPING_HORROR_HURT,
