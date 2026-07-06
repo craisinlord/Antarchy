@@ -90,6 +90,16 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.BooleanValue MANTIS_IGNORE_LIGHT_LEVEL;
 
 
+    // Alpha Mantis
+
+    private static final ModConfigSpec.DoubleValue ALPHA_MANTIS_HEALTH;
+    private static final ModConfigSpec.DoubleValue ALPHA_MANTIS_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue ALPHA_MANTIS_MOVEMENT_SPEED;
+    private static final ModConfigSpec.DoubleValue ALPHA_MANTIS_FLYING_SPEED;
+    private static final ModConfigSpec.IntValue    ALPHA_MANTIS_SUMMON_INTERVAL_TICKS;
+    private static final ModConfigSpec.IntValue    ALPHA_MANTIS_MAX_MINIONS;
+
+
     // Triffid
 
     private static final ModConfigSpec.DoubleValue TRIFFID_HEALTH;
@@ -368,6 +378,18 @@ public final class AntarchyMobsConfig {
         b.pop();
 
 
+        // Alpha Mantis
+
+        b.push("alphaMantis");
+        ALPHA_MANTIS_HEALTH                = b.comment("Base max health.")                                              .defineInRange("health",             500.0D, 1.0D, 32768.0D);
+        ALPHA_MANTIS_ATTACK_DAMAGE         = b.comment("Base attack damage.")                                           .defineInRange("attackDamage",        18.0D, 0.0D, 1024.0D);
+        ALPHA_MANTIS_MOVEMENT_SPEED        = b.comment("Base movement speed.")                                          .defineInRange("movementSpeed",       0.42D, 0.0D, 10.0D);
+        ALPHA_MANTIS_FLYING_SPEED          = b.comment("Base flying speed.")                                            .defineInRange("flyingSpeed",         0.77D, 0.0D, 10.0D);
+        ALPHA_MANTIS_SUMMON_INTERVAL_TICKS = b.comment("Ticks between mantis minion summons while in combat.")          .defineInRange("summonIntervalTicks",   300, 20, 72000);
+        ALPHA_MANTIS_MAX_MINIONS           = b.comment("Maximum summoned mantises alive near the alpha at once.")       .defineInRange("maxMinions",              4, 0, 32);
+        b.pop();
+
+
         // Triffid
 
         b.push("triffid");
@@ -589,6 +611,12 @@ public final class AntarchyMobsConfig {
     static double  mantisMovementSpeed()                    { return MANTIS_MOVEMENT_SPEED.get(); }
     static double  mantisFlyingSpeed()                      { return MANTIS_FLYING_SPEED.get(); }
     static boolean mantisIgnoreLightLevel()                 { return MANTIS_IGNORE_LIGHT_LEVEL.get(); }
+    static double  alphaMantisHealth()                      { return ALPHA_MANTIS_HEALTH.get(); }
+    static double  alphaMantisAttackDamage()                { return ALPHA_MANTIS_ATTACK_DAMAGE.get(); }
+    static double  alphaMantisMovementSpeed()               { return ALPHA_MANTIS_MOVEMENT_SPEED.get(); }
+    static double  alphaMantisFlyingSpeed()                 { return ALPHA_MANTIS_FLYING_SPEED.get(); }
+    static int     alphaMantisSummonIntervalTicks()         { return ALPHA_MANTIS_SUMMON_INTERVAL_TICKS.get(); }
+    static int     alphaMantisMaxMinions()                  { return ALPHA_MANTIS_MAX_MINIONS.get(); }
 
     static double  triffidHealth()                          { return TRIFFID_HEALTH.get(); }
     static double  triffidAttackDamage()                    { return TRIFFID_ATTACK_DAMAGE.get(); }

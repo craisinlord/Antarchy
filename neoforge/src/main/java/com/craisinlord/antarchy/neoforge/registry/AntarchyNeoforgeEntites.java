@@ -17,6 +17,7 @@ import com.craisinlord.antarchy.content.entity.EmperorScorpionEntity;
 import com.craisinlord.antarchy.content.entity.HushProjectileEntity;
 import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
 import com.craisinlord.antarchy.content.entity.JumpyBugEntity;
+import com.craisinlord.antarchy.content.entity.AlphaMantisEntity;
 import com.craisinlord.antarchy.content.entity.MantisEntity;
 import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
 import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
@@ -91,6 +92,11 @@ public final class AntarchyNeoforgeEntites {
                     .sized(3.125F, 2.5F)
                     .clientTrackingRange(8)
                     .build("mantis"));
+    public static final DeferredHolder<EntityType<?>, EntityType<AlphaMantisEntity>> ALPHA_MANTIS = ENTITY_TYPES.register("alpha_mantis",
+            () -> EntityType.Builder.of(AlphaMantisEntity::new, MobCategory.MONSTER)
+                    .sized(4.0F, 3.25F)
+                    .clientTrackingRange(10)
+                    .build("alpha_mantis"));
     public static final DeferredHolder<EntityType<?>, EntityType<OuranwoodBoatEntity>> OURANWOOD_BOAT_ENTITY = ENTITY_TYPES.register("ouranwood_boat",
             () -> EntityType.Builder.<OuranwoodBoatEntity>of(OuranwoodBoatEntity::new, MobCategory.MISC)
                     .sized(1.375F, 0.5625F)

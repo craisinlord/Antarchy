@@ -34,6 +34,10 @@ public final class AntarchyFabric implements ModInitializer {
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "octopus_bomb_spawn_biomes")
     );
+    private static final TagKey<net.minecraft.world.level.biome.Biome> MANTIS_OVERWORLD_SPAWN_BIOMES = TagKey.create(
+            Registries.BIOME,
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "mantis_overworld_spawn_biomes")
+    );
 
     @Override
     public void onInitialize() {
@@ -74,6 +78,18 @@ public final class AntarchyFabric implements ModInitializer {
                 net.minecraft.world.entity.MobCategory.MONSTER,
                 AntarchyFabricContent.OCTOPUS_BOMB.get(),
                 2, 1, 2
+        );
+        BiomeModifications.addSpawn(
+                BiomeSelectors.tag(MANTIS_OVERWORLD_SPAWN_BIOMES),
+                net.minecraft.world.entity.MobCategory.MONSTER,
+                AntarchyFabricContent.MANTIS.get(),
+                8, 1, 1
+        );
+        BiomeModifications.addSpawn(
+                BiomeSelectors.tag(MANTIS_OVERWORLD_SPAWN_BIOMES),
+                net.minecraft.world.entity.MobCategory.MONSTER,
+                AntarchyFabricContent.ALPHA_MANTIS.get(),
+                1, 1, 1
         );
     }
 }

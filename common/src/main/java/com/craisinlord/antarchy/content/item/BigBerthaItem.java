@@ -378,7 +378,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
         player.fallDistance = 0.0F;
         player.getCooldowns().addCooldown(this, TORETERROR_COOLDOWN_TICKS);
         player.awardStat(Stats.ITEM_USED.get(this));
-        level.playSound(null, player.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 1.0F, 0.6F);
+        level.playSound(null, player.blockPosition(), AntarchySoundEvents.TORETERROR_JUMP_UP.get(), SoundSource.PLAYERS, 1.2F, 0.9F);
     }
 
     private void applyToreterrorLanding(ServerLevel level, ServerPlayer player) {
@@ -394,7 +394,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
             victim.push(normalized.x * 2.5D, 0.6D, normalized.z * 2.5D);
             victim.hurtMarked = true;
         }
-        level.playSound(null, player.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 1.5F, 0.75F);
+        level.playSound(null, player.blockPosition(), AntarchySoundEvents.TORETERROR_JUMP_LAND.get(), SoundSource.PLAYERS, 1.2F, 0.9F);
         level.sendParticles(ParticleTypes.EXPLOSION, player.getX(), player.getY() + 0.5D, player.getZ(), 4, 1.5D, 0.3D, 1.5D, 0.0D);
         level.sendParticles(ParticleTypes.SPLASH, player.getX(), player.getY() + 0.5D, player.getZ(), 60, 3.0D, 0.5D, 3.0D, 0.2D);
         level.sendParticles(ParticleTypes.CRIT, player.getX(), player.getY() + 0.5D, player.getZ(), 20, 2.0D, 0.5D, 2.0D, 0.1D);

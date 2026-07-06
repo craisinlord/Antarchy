@@ -65,6 +65,7 @@ import com.craisinlord.antarchy.content.entity.JumpyBugEntity;
 import com.craisinlord.antarchy.content.entity.StinkBugEntity;
 import com.craisinlord.antarchy.content.entity.OuranwoodBoatEntity;
 import com.craisinlord.antarchy.content.entity.OuranwoodChestBoatEntity;
+import com.craisinlord.antarchy.content.entity.AlphaMantisEntity;
 import com.craisinlord.antarchy.content.entity.MantisEntity;
 import com.craisinlord.antarchy.content.entity.basilisk.BasiliskEntity;
 import com.craisinlord.antarchy.content.entity.EmperorScorpionEntity;
@@ -789,6 +790,11 @@ public final class AntarchyFabricContent {
                     .sized(3.125F, 2.5F)
                     .clientTrackingRange(8)
                     .build("mantis"));
+    public static final DeferredHolder<EntityType<?>, EntityType<AlphaMantisEntity>> ALPHA_MANTIS = ENTITY_TYPES.register("alpha_mantis",
+            () -> EntityType.Builder.of(AlphaMantisEntity::new, MobCategory.MONSTER)
+                    .sized(4.0F, 3.25F)
+                    .clientTrackingRange(10)
+                    .build("alpha_mantis"));
     public static final DeferredHolder<EntityType<?>, EntityType<OuranwoodBoatEntity>> OURANWOOD_BOAT_ENTITY = ENTITY_TYPES.register("ouranwood_boat",
             () -> EntityType.Builder.<OuranwoodBoatEntity>of(OuranwoodBoatEntity::new, MobCategory.MISC)
                     .sized(1.375F, 0.5625F)
@@ -1645,6 +1651,8 @@ public final class AntarchyFabricContent {
             () -> new DeferredSpawnEggItem(MOLEWORM, 0xB8B8B8, 0x8A623A, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> MANTIS_SPAWN_EGG = ITEMS.register("mantis_spawn_egg",
             () -> new DeferredSpawnEggItem(MANTIS, 0xF8F8F2, 0x63B44A, new Item.Properties()));
+    public static final DeferredItem<DeferredSpawnEggItem> ALPHA_MANTIS_SPAWN_EGG = ITEMS.register("alpha_mantis_spawn_egg",
+            () -> new DeferredSpawnEggItem(ALPHA_MANTIS, 0x8FDD6C, 0x2F5D22, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> MOLEVORE_SPAWN_EGG = ITEMS.register("molevore_spawn_egg",
             () -> new DeferredSpawnEggItem(MOLEVORE, 0x4A4A4A, 0x6B4A2B, new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<DeferredSpawnEggItem> TRIFFID_SPAWN_EGG = ITEMS.register("triffid_spawn_egg",
@@ -1799,6 +1807,7 @@ public final class AntarchyFabricContent {
         FabricDefaultAttributeRegistry.register(WASP.get(), WaspEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(BOMBER.get(), BomberEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(MANTIS.get(), MantisEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(ALPHA_MANTIS.get(), AlphaMantisEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(TRIFFID.get(), TriffidEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(LUCID.get(), LucidEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(SCORPION.get(), ScorpionEntity.createAttributes().build());
@@ -1845,6 +1854,7 @@ public final class AntarchyFabricContent {
         SpawnPlacements.register(NIGHTMARE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NightmareEntity::canSpawn);
         SpawnPlacements.register(MOLEWORM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MolewormEntity::canSpawn);
         SpawnPlacements.register(MANTIS.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MantisEntity::canSpawn);
+        SpawnPlacements.register(ALPHA_MANTIS.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AlphaMantisEntity::checkAlphaMantisSpawnRules);
         SpawnPlacements.register(MOLEVORE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MolevoreEntity::canSpawn);
         SpawnPlacements.register(BED_BUG.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BedBugEntity::canSpawn);
         SpawnPlacements.register(LUCID.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LucidEntity::canSpawn);
@@ -1942,7 +1952,7 @@ public final class AntarchyFabricContent {
             case "easter_bunny_spawn_egg", "flying_squirrel_spawn_egg", "caterpillar_spawn_egg",
                  "butterfly_spawn_egg", "reverie_spawn_egg", "brutalfly_spawn_egg",
                  "red_ant_spawn_egg", "brown_ant_spawn_egg", "rainbow_ant_spawn_egg", "termite_spawn_egg",
-                 "moleworm_spawn_egg", "mantis_spawn_egg", "molevore_spawn_egg", "triffid_spawn_egg",
+                 "moleworm_spawn_egg", "mantis_spawn_egg", "alpha_mantis_spawn_egg", "molevore_spawn_egg", "triffid_spawn_egg",
                  "apple_cow_spawn_egg", "golden_apple_cow_spawn_egg", "enchanted_golden_apple_cow_spawn_egg",
                  "honeyed_apple_cow_spawn_egg", "dr_trayaurus_spawn_egg", "wasp_spawn_egg",
                  "bomber_spawn_egg", "jumpy_bug_spawn_egg", "spit_bug_spawn_egg", "stink_bug_spawn_egg", "cloud_shark_spawn_egg", "kraken_spawn_egg", "missile_squid_spawn_egg", "octopus_bomb_spawn_egg",

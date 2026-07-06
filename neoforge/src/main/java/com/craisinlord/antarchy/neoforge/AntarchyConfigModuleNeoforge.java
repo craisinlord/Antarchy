@@ -109,6 +109,13 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setMantisFlyingSpeed(AntarchyMobsConfig.mantisFlyingSpeed());
         AntarchySettings.setMantisIgnoreLightLevel(AntarchyMobsConfig.mantisIgnoreLightLevel());
 
+        AntarchySettings.setAlphaMantisHealth(AntarchyMobsConfig.alphaMantisHealth());
+        AntarchySettings.setAlphaMantisAttackDamage(AntarchyMobsConfig.alphaMantisAttackDamage());
+        AntarchySettings.setAlphaMantisMovementSpeed(AntarchyMobsConfig.alphaMantisMovementSpeed());
+        AntarchySettings.setAlphaMantisFlyingSpeed(AntarchyMobsConfig.alphaMantisFlyingSpeed());
+        AntarchySettings.setAlphaMantisSummonIntervalTicks(AntarchyMobsConfig.alphaMantisSummonIntervalTicks());
+        AntarchySettings.setAlphaMantisMaxMinions(AntarchyMobsConfig.alphaMantisMaxMinions());
+
         AntarchySettings.setTriffidHealth(AntarchyMobsConfig.triffidHealth());
         AntarchySettings.setTriffidAttackDamage(AntarchyMobsConfig.triffidAttackDamage());
         AntarchySettings.setTriffidGrabDamage(AntarchyMobsConfig.triffidGrabDamage());

@@ -100,6 +100,12 @@ public final class AntarchySettings {
     private static double mantisMovementSpeed = 0.42D;
     private static double mantisFlyingSpeed = 0.77D;
     private static boolean mantisIgnoreLightLevel = false;
+    private static double alphaMantisHealth = 500.0D;
+    private static double alphaMantisAttackDamage = 18.0D;
+    private static double alphaMantisMovementSpeed = 0.42D;
+    private static double alphaMantisFlyingSpeed = 0.77D;
+    private static int alphaMantisSummonIntervalTicks = 300;
+    private static int alphaMantisMaxMinions = 4;
     private static double krakenProjectileDamageTakenMultiplier = 0.5D;
     private static boolean krakenSquidSpawnEnabled = true;
     private static boolean krakenMassSpawnEnabled = true;
@@ -789,6 +795,30 @@ public final class AntarchySettings {
         mantisIgnoreLightLevel = value;
     }
 
+    public static double alphaMantisHealth() {
+        return alphaMantisHealth;
+    }
+
+    public static double alphaMantisAttackDamage() {
+        return alphaMantisAttackDamage;
+    }
+
+    public static double alphaMantisMovementSpeed() {
+        return alphaMantisMovementSpeed;
+    }
+
+    public static double alphaMantisFlyingSpeed() {
+        return alphaMantisFlyingSpeed;
+    }
+
+    public static int alphaMantisSummonIntervalTicks() {
+        return alphaMantisSummonIntervalTicks;
+    }
+
+    public static int alphaMantisMaxMinions() {
+        return alphaMantisMaxMinions;
+    }
+
     public static double waspHealth() {
         return waspHealth;
     }
@@ -1191,6 +1221,30 @@ public final class AntarchySettings {
 
     public static void setMantisFlyingSpeed(double value) {
         mantisFlyingSpeed = value;
+    }
+
+    public static void setAlphaMantisHealth(double value) {
+        alphaMantisHealth = value;
+    }
+
+    public static void setAlphaMantisAttackDamage(double value) {
+        alphaMantisAttackDamage = value;
+    }
+
+    public static void setAlphaMantisMovementSpeed(double value) {
+        alphaMantisMovementSpeed = value;
+    }
+
+    public static void setAlphaMantisFlyingSpeed(double value) {
+        alphaMantisFlyingSpeed = value;
+    }
+
+    public static void setAlphaMantisSummonIntervalTicks(int value) {
+        alphaMantisSummonIntervalTicks = value;
+    }
+
+    public static void setAlphaMantisMaxMinions(int value) {
+        alphaMantisMaxMinions = value;
     }
 
     public static void setKrakenProjectileDamageTakenMultiplier(double value) {
