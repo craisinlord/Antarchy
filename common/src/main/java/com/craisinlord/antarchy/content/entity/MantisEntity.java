@@ -71,7 +71,6 @@ public class MantisEntity extends Monster implements GeoEntity {
 
     public MantisEntity(EntityType<? extends MantisEntity> entityType, Level level) {
         super(entityType, level);
-        this.lookControl = new SteadyLookControl(this);
         this.setNoGravity(false);
         this.setPathfindingMalus(PathType.WATER, -1.0F);
         this.setPathfindingMalus(PathType.WATER_BORDER, 16.0F);
@@ -208,14 +207,6 @@ public class MantisEntity extends Monster implements GeoEntity {
             LivingEntity target = this.getTarget();
             if (target != null && target.isAlive()) {
                 this.getLookControl().setLookAt(target, 30.0F, 30.0F);
-                // If the target is horizontally inside our (wide) footprint, walking toward
-                // it only makes us pivot in place — hold position, attack reach covers it
-                double dx = target.getX() - this.getX();
-                double dz = target.getZ() - this.getZ();
-                double halfWidth = this.getBbWidth() * 0.5D;
-                if (!this.isFlyingNow() && dx * dx + dz * dz < halfWidth * halfWidth) {
-                    this.getNavigation().stop();
-                }
             } else if (this.flyBurstTicks <= 0 && this.flyCooldownTicks <= 0 && this.onGround() && this.random.nextInt(180) == 0) {
                 this.startFlightBurst();
             }
@@ -328,31 +319,6 @@ public class MantisEntity extends Monster implements GeoEntity {
 
     private boolean isFlyingNow() {
         return this.flyBurstTicks > 0;
-    }
-
-    /**
-     * The mantis hitbox is several blocks wide, so a melee-range target is often
-     * horizontally inside the footprint. The yaw from body center to such a target
-     * flips wildly as the target moves past the center, which made the mantis spin
-     * instead of facing the player — hold the current heading in that case.
-     */
-    private static class SteadyLookControl extends net.minecraft.world.entity.ai.control.LookControl {
-        SteadyLookControl(Mob mob) {
-            super(mob);
-        }
-
-        @Override
-        public void tick() {
-            if (this.lookAtCooldown > 0) {
-                double dx = this.wantedX - this.mob.getX();
-                double dz = this.wantedZ - this.mob.getZ();
-                double halfWidth = this.mob.getBbWidth() * 0.5D;
-                if (dx * dx + dz * dz < halfWidth * halfWidth) {
-                    return;
-                }
-            }
-            super.tick();
-        }
     }
 
     private void tickDebugLog() {

@@ -133,6 +133,18 @@ processResources {
         exclude "antarchy-common.mixins.json"
     }
 
+    // Fabric needs a refmap on the common mixin config, NeoForge only boots without one.
+    // Generate a fabric-only copy with the refmap injected so the shared file stays refmap-free.
+    def commonMixinConfig = project(':common').file('src/main/resources/antarchy-common.mixins.json')
+    inputs.file commonMixinConfig
+
+    doLast {
+        def json = new groovy.json.JsonSlurper().parse(commonMixinConfig)
+        json.put('refmap', 'antarchy.refmap.json')
+        new File(destinationDir, 'antarchy-common-fabric.mixins.json').text =
+                groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(json))
+    }
+
     filesMatching("fabric.mod.json") {
         expand(
                 version: project.version,

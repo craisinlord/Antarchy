@@ -7,6 +7,9 @@ import software.bernie.geckolib.model.GeoModel;
 
 public class EmperorScorpionModel extends GeoModel<EmperorScorpionEntity> {
 
+    public static final ResourceLocation EMISSIVE_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/emperor_scorpion/emperor_scorpion_emissive.png");
+
     @Override
     public ResourceLocation getModelResource(EmperorScorpionEntity animatable) {
         return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "geo/emperor_scorpion.geo.json");
@@ -14,7 +17,7 @@ public class EmperorScorpionModel extends GeoModel<EmperorScorpionEntity> {
 
     @Override
     public ResourceLocation getTextureResource(EmperorScorpionEntity animatable) {
-        return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/emperor_scorpion.png");
+        return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/emperor_scorpion/emperor_scorpion.png");
     }
 
     @Override

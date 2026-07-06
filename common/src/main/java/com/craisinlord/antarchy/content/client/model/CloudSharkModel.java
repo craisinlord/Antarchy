@@ -6,6 +6,11 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
 
 public class CloudSharkModel extends GeoModel<CloudSharkEntity> {
+    public static final ResourceLocation BASE_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/cloud_shark/cloud_shark.png");
+    public static final ResourceLocation EMISSIVE_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/cloud_shark/cloud_shark_emissive.png");
+
     @Override
     public ResourceLocation getModelResource(CloudSharkEntity animatable) {
         return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "geo/cloud_shark.geo.json");
@@ -13,7 +18,7 @@ public class CloudSharkModel extends GeoModel<CloudSharkEntity> {
 
     @Override
     public ResourceLocation getTextureResource(CloudSharkEntity animatable) {
-        return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/cloud_shark.png");
+        return BASE_TEXTURE;
     }
 
     @Override

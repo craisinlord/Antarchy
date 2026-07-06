@@ -1600,8 +1600,8 @@ public final class AntarchyFabricContent {
                     .build("basilisk"));
     public static final DeferredHolder<EntityType<?>, EntityType<EmperorScorpionEntity>> EMPEROR_SCORPION = ENTITY_TYPES.register("emperor_scorpion",
             () -> EntityType.Builder.of(EmperorScorpionEntity::new, MobCategory.MONSTER)
-                    .sized(4.05F, 1.35F)
-                    .clientTrackingRange(10)
+                    .sized(6.0F, 3.0F)
+                    .clientTrackingRange(12)
                     .build("emperor_scorpion"));
     public static final DeferredHolder<EntityType<?>, EntityType<LucidEyeProjectileEntity>> LUCID_PEARL_PROJECTILE = ENTITY_TYPES.register("lucid_pearl_projectile",
             () -> EntityType.Builder.<LucidEyeProjectileEntity>of(LucidEyeProjectileEntity::new, MobCategory.MISC)
@@ -1688,7 +1688,7 @@ public final class AntarchyFabricContent {
     public static final DeferredItem<DeferredSpawnEggItem> BASILISK_SPAWN_EGG = ITEMS.register("basilisk_spawn_egg",
             () -> new DeferredSpawnEggItem(BASILISK, 0x4A7C40, 0xD4A040, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> EMPEROR_SCORPION_SPAWN_EGG = ITEMS.register("emperor_scorpion_spawn_egg",
-            () -> new DeferredSpawnEggItem(EMPEROR_SCORPION, 0x1A1A0A, 0x8B2200, new Item.Properties()));
+            () -> new DeferredSpawnEggItem(EMPEROR_SCORPION, 0x3A3242, 0xD8CDB4, new Item.Properties()));
     public static final DeferredItem<LucidEyeItem> LUCID_EYE = ITEMS.register("lucid_eye",
             () -> new LucidEyeItem(new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<LucidPearlItem> LUCID_PEARL = ITEMS.register("lucid_pearl",

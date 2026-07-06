@@ -48,40 +48,50 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class EmperorScorpionEntity extends Monster implements GeoEntity {
-    private static final byte CLAW_ATTACK_ANIM_EVENT = 4;
+    private static final byte SNAP_ATTACK_ANIM_EVENT = 4;
     private static final byte STING_ATTACK_ANIM_EVENT = 5;
+    private static final byte AGRO_ANIM_EVENT = 6;
 
-    private static final int CLAW_ATTACK_ANIM_TICKS = 12;
-    private static final int CLAW_ATTACK_HIT_TICK = 6;
-    private static final int CLAW_ATTACK_COOLDOWN_TICKS = 16;
-    private static final int STING_ATTACK_ANIM_TICKS = 18;
-    private static final int STING_ATTACK_HIT_TICK = 9;
-    private static final int STING_ATTACK_COOLDOWN_TICKS = 42;
-    private static final int POISON_DURATION_TICKS = 100;
-    private static final int WEAKNESS_DURATION_TICKS = 80;
-    private static final int SUMMON_INTERVAL_TICKS = 180;
-    private static final int MAX_SUMMONED_SCORPIONS = 4;
+    private static final int SNAP_ATTACK_ANIM_TICKS = 23;
+    private static final int SNAP_ATTACK_HIT_TICK = 12;
+    private static final int SNAP_ATTACK_COOLDOWN_TICKS = 28;
+    private static final int STING_ATTACK_ANIM_TICKS = 25;
+    private static final int STING_ATTACK_HIT_TICK = 13;
+    private static final int STING_ATTACK_COOLDOWN_TICKS = 60;
+    private static final int AGRO_ANIM_TICKS = 30;
+    private static final int DEATH_ANIM_TICKS = 40;
+    private static final float STING_DAMAGE = 18.0F;
+    private static final double STING_AOE_RADIUS = 5.0D;
+    private static final int POISON_DURATION_TICKS = 300;
+    private static final int WEAKNESS_DURATION_TICKS = 120;
+    private static final int SUMMON_INTERVAL_TICKS = 140;
+    private static final int MAX_SUMMONED_SCORPIONS = 8;
     private static final String EMPEROR_SUMMON_TAG = "antarchy_emperor_summoned";
 
     private static final ResourceKey<Level> THORAXIS_KEY =
             ResourceKey.create(Registries.DIMENSION,
                     ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "thoraxis"));
 
-    private static final RawAnimation IDLE_ANIM   = RawAnimation.begin().thenLoop("idle");
-    private static final RawAnimation WALK_ANIM   = RawAnimation.begin().thenLoop("walk");
-    private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenPlay("attack");
+    private static final RawAnimation IDLE_ANIM  = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation WALK_ANIM  = RawAnimation.begin().thenLoop("walk");
+    private static final RawAnimation SNAP_ANIM  = RawAnimation.begin().thenPlay("snap");
+    private static final RawAnimation STING_ANIM = RawAnimation.begin().thenPlay("sting");
+    private static final RawAnimation AGRO_ANIM  = RawAnimation.begin().thenPlay("agro");
+    private static final RawAnimation DEATH_ANIM = RawAnimation.begin().thenPlay("death");
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private final ServerBossEvent bossEvent =
-            new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS);
+            new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.PURPLE, BossEvent.BossBarOverlay.PROGRESS);
 
     private int attackAnimTicks = 0;
     private int attackHitTick = 0;
     private int attackCooldownTicks = 0;
     private int stingCooldownTicks = 0;
+    private int agroAnimTicks = 0;
     private int summonCooldown = 0;
     private boolean attackDamageApplied = false;
     private boolean stingAttackActive = false;
+    private boolean hasAgroed = false;
     @Nullable private LivingEntity attackTarget;
 
     public EmperorScorpionEntity(EntityType<? extends EmperorScorpionEntity> entityType, Level level) {
@@ -92,12 +102,13 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 200.0D)
+                .add(Attributes.MAX_HEALTH, 400.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.32D)
-                .add(Attributes.ATTACK_DAMAGE, 18.0D)
-                .add(Attributes.ARMOR, 6.0D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.6D)
-                .add(Attributes.FOLLOW_RANGE, 32.0D);
+                .add(Attributes.ATTACK_DAMAGE, 28.0D)
+                .add(Attributes.ARMOR, 25.0D)
+                .add(Attributes.ARMOR_TOUGHNESS, 10.0D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.8D)
+                .add(Attributes.FOLLOW_RANGE, 40.0D);
     }
 
     public static boolean canSpawn(EntityType<EmperorScorpionEntity> entityType, ServerLevelAccessor level,
@@ -154,8 +165,25 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
                 this.resetAttackState();
             }
         }
+        if (this.agroAnimTicks > 0) {
+            this.agroAnimTicks--;
+        }
         if (this.summonCooldown > 0) {
             this.summonCooldown--;
+        }
+
+        if (!this.level().isClientSide) {
+            if (this.getTarget() != null) {
+                if (!this.hasAgroed) {
+                    this.hasAgroed = true;
+                    this.agroAnimTicks = AGRO_ANIM_TICKS;
+                    this.getNavigation().stop();
+                    this.level().broadcastEntityEvent(this, AGRO_ANIM_EVENT);
+                    this.playSound(AntarchySoundEvents.EMPEROR_SCORPION_ROAR.get(), 2.0F, 0.7F);
+                }
+            } else {
+                this.hasAgroed = false;
+            }
         }
 
         if (this.getTarget() != null
@@ -175,7 +203,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
             return;
         }
 
-        int toSpawn = 1 + this.random.nextInt(2);
+        int toSpawn = 2 + this.random.nextInt(2);
         EntityType<ScorpionEntity> scorpionType = AntarchyObjects.SCORPION.get();
         for (int i = 0; i < toSpawn; i++) {
             double offsetX = (this.random.nextDouble() - 0.5D) * 6.0D;
@@ -198,10 +226,10 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean doHurtTarget(Entity target) {
-        return this.performStingAttack(target);
+        return this.performSnapAttack(target);
     }
 
-    private boolean performClawAttack(Entity target) {
+    private boolean performSnapAttack(Entity target) {
         boolean hurt = super.doHurtTarget(target);
         if (hurt) {
             this.playSound(AntarchySoundEvents.EMPEROR_SCORPION_ATTACK.get(), 0.9F, 0.95F + this.random.nextFloat() * 0.08F);
@@ -210,32 +238,39 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     }
 
     private boolean performStingAttack(Entity target) {
-        boolean hurt;
-        if (this.level() instanceof ServerLevel serverLevel) {
-            hurt = target.hurt(AntarchyDamageSources.emperorScorpionSting(serverLevel, this),
-                    (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
-        } else {
-            hurt = super.doHurtTarget(target);
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return false;
         }
-        if (hurt && target instanceof LivingEntity living) {
-            int poisonDuration = this.level().getDifficulty() == Difficulty.HARD
-                    ? POISON_DURATION_TICKS * 2 : POISON_DURATION_TICKS;
-            living.addEffect(new MobEffectInstance(MobEffects.POISON, poisonDuration, 0));
-            living.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, WEAKNESS_DURATION_TICKS, 0));
+        boolean hurtAny = false;
+        for (LivingEntity living : serverLevel.getEntitiesOfClass(LivingEntity.class,
+                this.getBoundingBox().inflate(STING_AOE_RADIUS),
+                entity -> entity != this
+                        && entity.isAlive()
+                        && !(entity instanceof EmperorScorpionEntity)
+                        && !(entity instanceof ScorpionEntity))) {
+            if (living.hurt(AntarchyDamageSources.emperorScorpionSting(serverLevel, this), STING_DAMAGE)) {
+                hurtAny = true;
+                int poisonDuration = this.level().getDifficulty() == Difficulty.HARD
+                        ? POISON_DURATION_TICKS * 2 : POISON_DURATION_TICKS;
+                living.addEffect(new MobEffectInstance(MobEffects.POISON, poisonDuration, 1));
+                living.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, WEAKNESS_DURATION_TICKS, 0));
+            }
+        }
+        if (hurtAny) {
             this.playSound(AntarchySoundEvents.EMPEROR_SCORPION_ATTACK.get(), 1.0F, 0.9F + this.random.nextFloat() * 0.08F);
         }
-        return hurt;
+        return hurtAny;
     }
 
-    private void beginClawAttack(LivingEntity target) {
+    private void beginSnapAttack(LivingEntity target) {
         this.attackTarget = target;
-        this.attackAnimTicks = CLAW_ATTACK_ANIM_TICKS;
-        this.attackHitTick = CLAW_ATTACK_HIT_TICK;
-        this.attackCooldownTicks = CLAW_ATTACK_COOLDOWN_TICKS;
+        this.attackAnimTicks = SNAP_ATTACK_ANIM_TICKS;
+        this.attackHitTick = SNAP_ATTACK_HIT_TICK;
+        this.attackCooldownTicks = SNAP_ATTACK_COOLDOWN_TICKS;
         this.attackDamageApplied = false;
         this.stingAttackActive = false;
         this.getNavigation().stop();
-        this.level().broadcastEntityEvent(this, CLAW_ATTACK_ANIM_EVENT);
+        this.level().broadcastEntityEvent(this, SNAP_ATTACK_ANIM_EVENT);
         this.commitLunge(target, 0.42D, 0.10D);
     }
 
@@ -259,14 +294,13 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         }
 
         this.getLookControl().setLookAt(this.attackTarget, 30.0F, 30.0F);
-        if (!this.attackDamageApplied
-                && this.attackAnimTicks == this.attackHitTick
-                && this.distanceToSqr(this.attackTarget) <= this.getAttackReachSqr(this.attackTarget)) {
-            this.attackDamageApplied = true;
+        if (!this.attackDamageApplied && this.attackAnimTicks == this.attackHitTick) {
             if (this.stingAttackActive) {
+                this.attackDamageApplied = true;
                 this.performStingAttack(this.attackTarget);
-            } else {
-                this.performClawAttack(this.attackTarget);
+            } else if (this.distanceToSqr(this.attackTarget) <= this.getAttackReachSqr(this.attackTarget)) {
+                this.attackDamageApplied = true;
+                this.performSnapAttack(this.attackTarget);
             }
         }
 
@@ -306,13 +340,13 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     }
 
     private boolean isAttackLocked() {
-        return this.attackAnimTicks > 0;
+        return this.attackAnimTicks > 0 || this.agroAnimTicks > 0;
     }
 
     @Override
     public void handleEntityEvent(byte id) {
-        if (id == CLAW_ATTACK_ANIM_EVENT) {
-            this.attackAnimTicks = CLAW_ATTACK_ANIM_TICKS;
+        if (id == SNAP_ATTACK_ANIM_EVENT) {
+            this.attackAnimTicks = SNAP_ATTACK_ANIM_TICKS;
             this.attackDamageApplied = false;
             this.stingAttackActive = false;
             return;
@@ -321,6 +355,10 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
             this.attackAnimTicks = STING_ATTACK_ANIM_TICKS;
             this.attackDamageApplied = false;
             this.stingAttackActive = true;
+            return;
+        }
+        if (id == AGRO_ANIM_EVENT) {
+            this.agroAnimTicks = AGRO_ANIM_TICKS;
             return;
         }
         super.handleEntityEvent(id);
@@ -332,13 +370,28 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     }
 
     private PlayState mainController(AnimationState<EmperorScorpionEntity> state) {
+        if (this.isDeadOrDying()) {
+            return state.setAndContinue(DEATH_ANIM);
+        }
         if (this.attackAnimTicks > 0) {
-            return state.setAndContinue(ATTACK_ANIM);
+            return state.setAndContinue(this.stingAttackActive ? STING_ANIM : SNAP_ANIM);
+        }
+        if (this.agroAnimTicks > 0) {
+            return state.setAndContinue(AGRO_ANIM);
         }
         if (state.isMoving()) {
             return state.setAndContinue(WALK_ANIM);
         }
         return state.setAndContinue(IDLE_ANIM);
+    }
+
+    @Override
+    protected void tickDeath() {
+        this.deathTime++;
+        if (this.deathTime >= DEATH_ANIM_TICKS && !this.level().isClientSide && !this.isRemoved()) {
+            this.level().broadcastEntityEvent(this, (byte) 60);
+            this.remove(RemovalReason.KILLED);
+        }
     }
 
     @Override
@@ -421,7 +474,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
                 if (EmperorScorpionEntity.this.shouldUseSting(enemy)) {
                     EmperorScorpionEntity.this.beginStingAttack(enemy);
                 } else {
-                    EmperorScorpionEntity.this.beginClawAttack(enemy);
+                    EmperorScorpionEntity.this.beginSnapAttack(enemy);
                 }
                 return;
             }

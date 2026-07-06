@@ -243,8 +243,8 @@ public final class AntarchyNeoforgeEntites {
                     .build("basilisk"));
     public static final DeferredHolder<EntityType<?>, EntityType<EmperorScorpionEntity>> EMPEROR_SCORPION = ENTITY_TYPES.register("emperor_scorpion",
             () -> EntityType.Builder.of(EmperorScorpionEntity::new, MobCategory.MONSTER)
-                    .sized(4.05F, 1.35F)
-                    .clientTrackingRange(10)
+                    .sized(6.0F, 3.0F)
+                    .clientTrackingRange(12)
                     .build("emperor_scorpion"));
     public static final DeferredHolder<EntityType<?>, EntityType<LucidEyeProjectileEntity>> LUCID_PEARL_PROJECTILE = ENTITY_TYPES.register("lucid_pearl_projectile",
             () -> EntityType.Builder.<LucidEyeProjectileEntity>of(LucidEyeProjectileEntity::new, MobCategory.MISC)

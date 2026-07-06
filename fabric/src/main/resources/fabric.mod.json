@@ -24,7 +24,7 @@
     ]
   },
   "mixins": [
-    "antarchy-common.mixins.json",
+    "antarchy-common-fabric.mixins.json",
     "antarchy-fabric.mixins.json"
   ],
   "depends": {
