@@ -11,9 +11,11 @@ import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.LevelWriter;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CaveVines;
@@ -1476,6 +1478,26 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
     protected static boolean canGrowOn(WorldGenLevel level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         return state.isFaceSturdy(level, pos, Direction.UP);
+    }
+
+    /**
+     * Guards every block write in this feature (and its subclasses) so the tree never places blocks in a chunk
+     * that lies outside the region currently being generated. Large canopies, branches and hanging vines can
+     * reach past the writable region; without this check those writes trip vanilla's
+     * "Detected setBlock in a far chunk" error spam and are silently dropped anyway (issue #13).
+     *
+     * <p>This overloads the inherited {@link Feature#setBlock(LevelWriter, BlockPos, BlockState)} for a
+     * {@link WorldGenLevel} argument, so the existing {@code setBlock(level, pos, state)} call sites route through
+     * it automatically. The cast to {@link LevelWriter} selects the inherited supermethod to perform the actual write.
+     */
+    protected void setBlock(WorldGenLevel level, BlockPos pos, BlockState state) {
+        if (canWriteAt(level, pos)) {
+            setBlock((LevelWriter) level, pos, state);
+        }
+    }
+
+    protected static boolean canWriteAt(WorldGenLevel level, BlockPos pos) {
+        return !(level instanceof WorldGenRegion region) || region.ensureCanWrite(pos);
     }
 
     protected static boolean canReplace(WorldGenLevel level, BlockPos pos) {
