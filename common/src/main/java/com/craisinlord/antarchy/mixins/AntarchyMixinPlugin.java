@@ -24,7 +24,20 @@ public final class AntarchyMixinPlugin implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         String resourcePath = targetClassName.replace('.', '/') + ".class";
-        return this.getClass().getClassLoader().getResource(resourcePath) != null;
+        if (this.getClass().getClassLoader().getResource(resourcePath) == null) {
+            return false;
+        }
+        if (mixinClassName.endsWith(".VillagerTradesMixin") && isNeoForge()) {
+            // NeoForge fires VillagerTradesEvent/WandererTradesEvent after registries are fully
+            // populated, mods loaded early via Sinytra can force to class-load before Antarchy's own
+            // registration. Registering these trades through the NeoForge events instead stops this
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isNeoForge() {
+        return this.getClass().getClassLoader().getResource("net/neoforged/neoforge/common/NeoForge.class") != null;
     }
 
     @Override

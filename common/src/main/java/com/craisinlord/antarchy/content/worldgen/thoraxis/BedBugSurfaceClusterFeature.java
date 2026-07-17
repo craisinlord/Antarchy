@@ -72,7 +72,9 @@ public final class BedBugSurfaceClusterFeature extends Feature<NoneFeatureConfig
                         && floorState.blocksMotion()
                         && floorState.isFaceSturdy(level, mutable, Direction.UP)
                         && airState.canBeReplaced()
-                        && aboveAirState.canBeReplaced()) {
+                        && airState.getFluidState().isEmpty()
+                        && aboveAirState.canBeReplaced()
+                        && aboveAirState.getFluidState().isEmpty()) {
                     return mutable.immutable();
                 }
             }
@@ -87,7 +89,8 @@ public final class BedBugSurfaceClusterFeature extends Feature<NoneFeatureConfig
 
         for (int i = 0; i < spotCount; i++) {
             BlockPos eggPos = originEggPos.offset(random.nextInt(3) - 1, 0, random.nextInt(3) - 1);
-            if (!level.getBlockState(eggPos).canBeReplaced()) {
+            BlockState eggPosState = level.getBlockState(eggPos);
+            if (!eggPosState.canBeReplaced() || !eggPosState.getFluidState().isEmpty()) {
                 continue;
             }
 
@@ -176,7 +179,9 @@ public final class BedBugSurfaceClusterFeature extends Feature<NoneFeatureConfig
                 BlockState headState = level.getBlockState(headPos);
                 BlockState floorState = level.getBlockState(floorPos);
                 if (!feetState.canBeReplaced()
+                        || !feetState.getFluidState().isEmpty()
                         || !headState.canBeReplaced()
+                        || !headState.getFluidState().isEmpty()
                         || !floorState.blocksMotion()
                         || !floorState.isFaceSturdy(level, floorPos, Direction.UP)
                         || !floorState.getFluidState().isEmpty()) {

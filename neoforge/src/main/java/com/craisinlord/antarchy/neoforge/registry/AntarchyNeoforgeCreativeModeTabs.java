@@ -134,6 +134,8 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.LUMEN_BUCKET.get());
             event.accept(AntarchyNeoforgeItems.CLOUD_BUCKET.get());
             event.accept(AntarchyNeoforgeItems.REVERIE_BOTTLE.get());
+            event.accept(AntarchyNeoforgeItems.GLIMMER_BOTTLE.get());
+            event.accept(AntarchyNeoforgeItems.CRITTER_CAGE.get());
             event.accept(AntarchyNeoforgeItems.ULTIMATE_PICKAXE.get());
             event.accept(AntarchyNeoforgeItems.ULTIMATE_AXE.get());
             event.accept(AntarchyNeoforgeItems.ULTIMATE_SHOVEL.get());

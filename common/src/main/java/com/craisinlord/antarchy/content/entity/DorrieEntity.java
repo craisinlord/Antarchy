@@ -73,7 +73,7 @@ public class DorrieEntity extends Animal implements GeoEntity {
     private static final EntityDataAccessor<Integer> QUIRK_TICKS =
             SynchedEntityData.defineId(DorrieEntity.class, EntityDataSerializers.INT);
 
-    private static final int MAX_CHARGE_TICKS = 90;
+    private static final int MAX_CHARGE_TICKS = 22;
     private static final float WATER_RIDE_SPEED = 0.42F;
     private static final float LAND_BEACH_SPEED = 0.07F;
     private static final double ASCEND_SPEED = 0.06D;
@@ -365,6 +365,9 @@ public class DorrieEntity extends Animal implements GeoEntity {
         if (wasInAir && !inAirNow && isLeaping) {
             isLeaping = false;
             landAnimTicks = 12;
+            if (this.isInWater()) {
+                this.playSound(SoundEvents.DOLPHIN_SPLASH, 1.0F, 0.8F + this.random.nextFloat() * 0.4F);
+            }
         }
         wasInAir = inAirNow;
     }
@@ -398,8 +401,10 @@ public class DorrieEntity extends Animal implements GeoEntity {
             Vec3 riddenInput = this.getRiddenInput(rider, travelVector);
             this.setSpeed(this.getRiddenSpeed(rider));
 
-            if (this.isLeaping) {
-                super.travel(travelVector);
+            if (!this.isInWater() && !this.isInLava() && !this.onGround()) {
+                Vec3 mov = this.getDeltaMovement();
+                this.setDeltaMovement(mov.x * 0.91D, mov.y - 0.08D, mov.z * 0.91D);
+                this.move(net.minecraft.world.entity.MoverType.SELF, this.getDeltaMovement());
                 return;
             }
 
@@ -428,18 +433,35 @@ public class DorrieEntity extends Animal implements GeoEntity {
         super.travel(travelVector);
     }
 
+    public void applyJumpImpulseClient() {
+        float power = this.getJumpCharge() / 100f;
+        if (power > 0.05f) {
+            Vec3 look = this.getLookAngle();
+            Vec3 flatLook = new Vec3(look.x, 0.0D, look.z).normalize();
+            Vec3 current = this.getDeltaMovement();
+            double forwardAdd = 0.15D + power * 0.45D;
+            double vertical = 0.55D + power * 0.80D;
+            this.setDeltaMovement(
+                    current.x + flatLook.x * forwardAdd,
+                    vertical,
+                    current.z + flatLook.z * forwardAdd
+            );
+        }
+    }
+
     public void releaseJump() {
         if (!this.level().isClientSide && isCharging) {
             float power = chargeTicks / (float) MAX_CHARGE_TICKS;
             if (power > 0.05F) {
                 Vec3 look = this.getLookAngle();
+                Vec3 flatLook = new Vec3(look.x, 0.0D, look.z).normalize();
                 Vec3 current = this.getDeltaMovement();
-                double forwardAdd = 0.18D + power * 0.42D;
-                double vertical = 0.85D + power * 1.35D;
+                double forwardAdd = 0.15D + power * 0.45D;
+                double vertical = 0.55D + power * 0.80D;
                 this.setDeltaMovement(
-                        current.x + look.x * forwardAdd,
-                        current.y + vertical,
-                        current.z + look.z * forwardAdd
+                        current.x + flatLook.x * forwardAdd,
+                        vertical,
+                        current.z + flatLook.z * forwardAdd
                 );
                 this.hasImpulse = true;
                 isLeaping = true;

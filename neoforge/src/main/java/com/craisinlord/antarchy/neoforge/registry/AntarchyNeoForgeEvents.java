@@ -49,6 +49,10 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.NeoForgeMod;
+import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.item.trading.ItemCost;
+import net.minecraft.world.item.trading.MerchantOffer;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.brewing.RegisterBrewingRecipesEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
@@ -58,6 +62,8 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import net.neoforged.neoforge.event.village.VillagerTradesEvent;
+import net.neoforged.neoforge.event.village.WandererTradesEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import com.craisinlord.antarchy.content.item.MinersDreamExcavationManager;
@@ -118,6 +124,28 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleStartTracking);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleDreamSandLogout);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::registerReloadListeners);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onVillagerTrades);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onWandererTrades);
+    }
+
+    static void onVillagerTrades(VillagerTradesEvent event) {
+        if (event.getType() == VillagerProfession.FARMER) {
+            event.getTrades().get(1).add(emeraldForItems(AntarchyObjects.CORN.get(), 20, 16, 2));
+        } else if (event.getType() == VillagerProfession.BUTCHER) {
+            event.getTrades().get(1).add(emeraldForItems(AntarchyObjects.COOKED_CORNDOG.get(), 5, 16, 2));
+        }
+    }
+
+    static void onWandererTrades(WandererTradesEvent event) {
+        event.getGenericTrades().add(itemsForEmerald(AntarchyObjects.CORN_SEEDS.get(), 1, 3, 12, 2));
+    }
+
+    private static VillagerTrades.ItemListing emeraldForItems(Item item, int count, int maxUses, int villagerXp) {
+        return (trader, random) -> new MerchantOffer(new ItemCost(item, count), new ItemStack(Items.EMERALD), maxUses, villagerXp, 0.05F);
+    }
+
+    private static VillagerTrades.ItemListing itemsForEmerald(Item item, int emeraldCost, int count, int maxUses, int villagerXp) {
+        return (trader, random) -> new MerchantOffer(new ItemCost(Items.EMERALD, emeraldCost), new ItemStack(item, count), maxUses, villagerXp, 0.05F);
     }
 
     public static void onMissileSquidDeath(LivingDeathEvent event) {

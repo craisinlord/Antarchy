@@ -321,6 +321,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
         target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, AntarchySettings.bigBerthaKrakenSlowTicks(), 1));
         level.sendParticles(ParticleTypes.SPLASH, target.getX(), target.getY(0.7D), target.getZ(), 16, 0.35D, 0.3D, 0.35D, 0.08D);
         level.sendParticles(ParticleTypes.ELECTRIC_SPARK, target.getX(), target.getY(0.7D), target.getZ(), 10, 0.25D, 0.25D, 0.25D, 0.02D);
+        com.craisinlord.antarchy.content.entity.kraken.TentacleEntity.spawnAt(level, target.position(), attacker);
     }
 
     private void cycleMode(Level level, Player player, ItemStack stack) {

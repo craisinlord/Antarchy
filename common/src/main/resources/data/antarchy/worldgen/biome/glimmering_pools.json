@@ -27,7 +27,8 @@
     [
       "antarchy:lumen_pools",
       "antarchy:lumen_streams",
-      "antarchy:lumen_lily_pads"
+      "antarchy:lumen_lily_pads",
+      "antarchy:giant_lily_pad_patch_common"
     ],
     [],
     [],

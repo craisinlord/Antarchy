@@ -38,6 +38,9 @@ public final class DorrieJumpClientHandler {
         boolean pressingCharge = AntarchyKeyBindings.isDorrieChargeJumpPressed();
         if (pressingCharge != wasPressingCharge) {
             ClientPlayNetworking.send(new DorrieChargeJumpPayload(pressingCharge));
+            if (!pressingCharge && player.getVehicle() instanceof DorrieEntity dorrie) {
+                dorrie.applyJumpImpulseClient();
+            }
             wasPressingCharge = pressingCharge;
         }
     }

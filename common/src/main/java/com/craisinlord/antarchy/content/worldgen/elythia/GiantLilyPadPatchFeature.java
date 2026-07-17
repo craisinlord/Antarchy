@@ -1,10 +1,10 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.block.GiantLilyPadBlock;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
@@ -31,7 +31,7 @@ public final class GiantLilyPadPatchFeature extends Feature<NoneFeatureConfigura
             int z = origin.getZ() + random.nextInt(17) - 8;
             int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) - 1;
             BlockPos fluidPos = new BlockPos(x, surfaceY, z);
-            if (!level.getFluidState(fluidPos).is(FluidTags.WATER) || !level.getFluidState(fluidPos).isSource()) {
+            if (!level.getFluidState(fluidPos).is(AntarchyTags.Fluids.GIANT_LILY_PAD_SUPPORTING_FLUIDS) || !level.getFluidState(fluidPos).isSource()) {
                 continue;
             }
 

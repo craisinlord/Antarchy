@@ -11,10 +11,12 @@ import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.LevelWriter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CaveVines;
 import net.minecraft.world.level.block.LeavesBlock;
@@ -1476,6 +1478,16 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
     protected static boolean canGrowOn(WorldGenLevel level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         return state.isFaceSturdy(level, pos, Direction.UP);
+    }
+
+    protected void setBlock(WorldGenLevel level, BlockPos pos, BlockState state) {
+        if (canWriteAt(level, pos)) {
+            setBlock((LevelWriter) level, pos, state);
+        }
+    }
+
+    protected static boolean canWriteAt(WorldGenLevel level, BlockPos pos) {
+        return !(level instanceof WorldGenRegion region) || region.ensureCanWrite(pos);
     }
 
     protected static boolean canReplace(WorldGenLevel level, BlockPos pos) {

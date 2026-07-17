@@ -67,10 +67,9 @@ public final class CreativeTabOrder {
             case "dream_torch", "dream_lantern", "dream_campfire", "dream_fire", "dream_fire_ceiling",
                  "lumen_froglight", "roseate_froglight" -> 12;
             case "antimetal_scaffolding" -> 13;
-            case "infested_rooted_dirt", "infested_coarse_dirt", "bed_bug_egg",
-                 "creeping_horror_egg", "lurking_terror_egg" -> 14;
+            case "infested_rooted_dirt", "infested_coarse_dirt", "bed_bug_egg" -> 14;
             case "ultimate_pickaxe", "ultimate_axe", "ultimate_shovel", "ultimate_hoe",
-                 "duct_tape", "diamond_minecart", "gravity_sculk_sensor", "miners_dream" -> 15;
+                 "duct_tape", "diamond_minecart", "critter_cage", "gravity_sculk_sensor", "miners_dream" -> 15;
             case "bile_bucket", "ichor_bucket", "antiwater_bucket", "cloud_bucket", "lumen_bucket" -> 16;
             case "moggles", "brutalfly_elytra", "fallen_king_crown", "jumpy_boots" -> 17;
             case "battle_axe", "basilisk_dagger", "squidzooka", "rpo_launcher", "shrink_ray", "growth_ray",
@@ -230,16 +229,15 @@ public final class CreativeTabOrder {
             case "infested_rooted_dirt" -> 0;
             case "infested_coarse_dirt" -> 1;
             case "bed_bug_egg" -> 2;
-            case "creeping_horror_egg" -> 3;
-            case "lurking_terror_egg" -> 4;
             case "ultimate_pickaxe" -> 0;
             case "ultimate_axe" -> 1;
             case "ultimate_shovel" -> 2;
             case "ultimate_hoe" -> 3;
             case "duct_tape" -> 4;
             case "diamond_minecart" -> 5;
-            case "gravity_sculk_sensor" -> 6;
-            case "miners_dream" -> 7;
+            case "critter_cage" -> 6;
+            case "gravity_sculk_sensor" -> 7;
+            case "miners_dream" -> 8;
             case "bile_bucket" -> 0;
             case "ichor_bucket" -> 1;
             case "antiwater_bucket" -> 2;

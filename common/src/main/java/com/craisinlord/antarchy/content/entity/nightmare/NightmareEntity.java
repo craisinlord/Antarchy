@@ -298,6 +298,19 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     @Override
+    public boolean isInvulnerableTo(DamageSource source) {
+        return source.is(net.minecraft.world.damagesource.DamageTypes.DROWN) || super.isInvulnerableTo(source);
+    }
+
+    @Override
+    public boolean canBeAffected(MobEffectInstance effectInstance) {
+        if (effectInstance.getEffect() == MobEffects.WITHER) {
+            return false;
+        }
+        return super.canBeAffected(effectInstance);
+    }
+
+    @Override
     protected void checkFallDamage(double y, boolean onGround, net.minecraft.world.level.block.state.BlockState state, BlockPos pos) {
     }
 

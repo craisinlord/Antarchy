@@ -141,8 +141,8 @@ public final class AntarchySettings {
     private static double gravityGunBlastStrength = 1.4D;
     private static double gravityGunCooldownSeconds = 0.35D;
     private static double gravityGunMaxHoldDistance = 10.0D;
-    private static double critterCageMaxCapturableWidth = 1.15D;
-    private static double critterCageMaxCapturableHeight = 1.15D;
+    private static double critterCageMaxCapturableWidth = 1.65D;
+    private static double critterCageMaxCapturableHeight = 1.65D;
     private static boolean minersDreamEnabled = true;
     private static int minersDreamMinimumRange = 48;
     private static int minersDreamMaximumRange = 96;

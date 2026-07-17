@@ -711,11 +711,6 @@ public final class AntarchyNeoforgeItems {
                             .nutrition(2)
                             .saturationModifier(0.1F)
                             .build())));
-    public static final DeferredItem<Item> CREEPING_HORROR_EGG_ITEM = ITEMS.register("creeping_horror_egg",
-            () -> new MobComingSoonTooltipItem(new Item.Properties().rarity(Rarity.RARE)));
-    public static final DeferredItem<Item> LURKING_TERROR_EGG_ITEM = ITEMS.register("lurking_terror_egg",
-            () -> new MobComingSoonTooltipItem(new Item.Properties().rarity(Rarity.RARE)));
-
     private AntarchyNeoforgeItems() {}
 
     public static Collection<DeferredHolder<Item,? extends Item>> getItemEntries() {

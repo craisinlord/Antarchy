@@ -116,6 +116,8 @@ public class BedBugEntity extends Animal implements GeoEntity {
         }
 
         return level.getDifficulty() != Difficulty.PEACEFUL
+                && level.getFluidState(pos).isEmpty()
+                && level.getFluidState(pos.above()).isEmpty()
                 && Animal.checkAnimalSpawnRules(entityType, level, spawnReason, pos, random);
     }
 

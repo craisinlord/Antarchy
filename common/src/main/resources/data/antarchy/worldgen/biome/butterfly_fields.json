@@ -72,8 +72,8 @@
       {
         "type": "antarchy:caterpillar",
         "weight": 30,
-        "minCount": 6,
-        "maxCount": 12
+        "minCount": 1,
+        "maxCount": 3
       },
       {
         "type": "antarchy:golden_apple_cow",
@@ -92,8 +92,8 @@
       {
         "type": "antarchy:butterfly",
         "weight": 180,
-        "minCount": 4,
-        "maxCount": 12
+        "minCount": 2,
+        "maxCount": 5
       }
     ],
     "axolotls": [],

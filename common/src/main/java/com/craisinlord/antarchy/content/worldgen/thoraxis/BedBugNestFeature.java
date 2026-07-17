@@ -185,7 +185,9 @@ public final class BedBugNestFeature extends Feature<NoneFeatureConfiguration> {
             BlockState headState = level.getBlockState(mutable.above());
             BlockState floorState = level.getBlockState(mutable.below());
             if (feetState.canBeReplaced()
+                    && feetState.getFluidState().isEmpty()
                     && headState.canBeReplaced()
+                    && headState.getFluidState().isEmpty()
                     && floorState.blocksMotion()
                     && floorState.isFaceSturdy(level, mutable.below(), Direction.UP)
                     && floorState.getFluidState().isEmpty()) {
@@ -205,6 +207,6 @@ public final class BedBugNestFeature extends Feature<NoneFeatureConfiguration> {
     }
 
     private static boolean isOpen(BlockState state) {
-        return state.isAir() || state.canBeReplaced() || !state.blocksMotion();
+        return state.getFluidState().isEmpty() && (state.isAir() || state.canBeReplaced() || !state.blocksMotion());
     }
 }

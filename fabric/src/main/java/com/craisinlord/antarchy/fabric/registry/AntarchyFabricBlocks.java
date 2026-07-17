@@ -335,6 +335,8 @@ public final class AntarchyFabricBlocks {
 
     public static final DeferredBlock<OuranwoodAcornBlock> OURANWOOD_ACORN_BLOCK = BLOCKS.register("ouranwood_acorn",
             () -> new OuranwoodAcornBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING).randomTicks().noCollission()));
+    public static final DeferredBlock<net.minecraft.world.level.block.FlowerPotBlock> POTTED_OURANWOOD_ACORN = BLOCKS.register("potted_ouranwood_acorn",
+            () -> new net.minecraft.world.level.block.FlowerPotBlock(OURANWOOD_ACORN_BLOCK.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_DANDELION)));
 
 
     public static final DeferredBlock<MilkweedBlock> ORANGE_MILKWEED = BLOCKS.register("orange_milkweed",
@@ -351,12 +353,16 @@ public final class AntarchyFabricBlocks {
 
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.SpiderLilyBlock> SPIDER_LILY = BLOCKS.register("spider_lily",
             () -> new com.craisinlord.antarchy.content.block.SpiderLilyBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.POPPY)));
+    public static final DeferredBlock<net.minecraft.world.level.block.FlowerPotBlock> POTTED_SPIDER_LILY = BLOCKS.register("potted_spider_lily",
+            () -> new net.minecraft.world.level.block.FlowerPotBlock(SPIDER_LILY.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_DANDELION)));
 
 
     public static final DeferredBlock<GiantLilyPadBlock> GIANT_LILY_PAD = BLOCKS.register("giant_lily_pad",
             () -> new GiantLilyPadBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LILY_PAD)));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.LotusBlock> LOTUS = BLOCKS.register("lotus",
             () -> new com.craisinlord.antarchy.content.block.LotusBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SPORE_BLOSSOM)));
+    public static final DeferredBlock<net.minecraft.world.level.block.FlowerPotBlock> POTTED_LOTUS = BLOCKS.register("potted_lotus",
+            () -> new net.minecraft.world.level.block.FlowerPotBlock(LOTUS.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_DANDELION)));
     public static final DeferredBlock<SeashellBlock> SEASHELL = BLOCKS.register("seashell",
             () -> new SeashellBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG).noOcclusion()));
     public static final DeferredBlock<CritterCageBlock> CRITTER_CAGE_BLOCK = BLOCKS.register("critter_cage_block",
@@ -441,6 +447,8 @@ public final class AntarchyFabricBlocks {
 
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.PeachSaplingBlock> PEACH_SAPLING = BLOCKS.register("peach_sapling",
             () -> new com.craisinlord.antarchy.content.block.PeachSaplingBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING).randomTicks().noCollission()));
+    public static final DeferredBlock<net.minecraft.world.level.block.FlowerPotBlock> POTTED_PEACH_SAPLING = BLOCKS.register("potted_peach_sapling",
+            () -> new net.minecraft.world.level.block.FlowerPotBlock(PEACH_SAPLING.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_DANDELION)));
 
 
     public static final DeferredBlock<net.minecraft.world.level.block.StandingSignBlock> PEACH_SIGN = BLOCKS.register("peach_sign",

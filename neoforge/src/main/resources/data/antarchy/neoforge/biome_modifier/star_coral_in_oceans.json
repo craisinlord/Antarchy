@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#antarchy:has_star_coral",
+  "features": ["antarchy:star_coral_patch"],
+  "step": "vegetal_decoration"
+}

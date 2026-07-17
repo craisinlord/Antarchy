@@ -7,8 +7,8 @@
   },
   "elements": [
     {
-      "from": [1, 0, 1],
-      "to": [15, 16, 15],
+      "from": [1, 1, 1],
+      "to": [15, 15, 15],
       "faces": {
         "down": { "texture": "#cage", "cullface": "down" },
         "up": { "texture": "#cage", "cullface": "up" },

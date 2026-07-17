@@ -479,8 +479,8 @@ public final class AntarchyToolsConfig {
         // Critter Cage
 
         b.push("critterCage");
-        CRITTER_CAGE_MAX_CAPTURABLE_WIDTH = b.comment("Maximum capturable entity width/depth based on the live hitbox, in blocks.").defineInRange("maxCapturableWidth", 1.15D, 0.1D, 64.0D);
-        CRITTER_CAGE_MAX_CAPTURABLE_HEIGHT = b.comment("Maximum capturable entity height based on the live hitbox, in blocks.").defineInRange("maxCapturableHeight", 1.15D, 0.1D, 64.0D);
+        CRITTER_CAGE_MAX_CAPTURABLE_WIDTH = b.comment("Maximum capturable entity width/depth based on the live hitbox, in blocks.").defineInRange("maxCapturableWidth", 1.65D, 0.1D, 64.0D);
+        CRITTER_CAGE_MAX_CAPTURABLE_HEIGHT = b.comment("Maximum capturable entity height based on the live hitbox, in blocks.").defineInRange("maxCapturableHeight", 1.65D, 0.1D, 64.0D);
         b.pop();
 
 

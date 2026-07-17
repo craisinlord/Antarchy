@@ -269,7 +269,7 @@ public class PotentNyxiteBlock extends BaseEntityBlock {
         BlockPos.MutableBlockPos cursor = pos.relative(direction).mutable();
         while (true) {
             FluidState fluidState = level.getFluidState(cursor);
-            if (!fluidState.isSource() || !isAntiwater(fluidState)) {
+            if (!isAntiwater(fluidState)) {
                 break;
             }
 

@@ -113,6 +113,7 @@ public final class SeashellBlockEntity extends RandomizableContainerBlockEntity 
     }
 
     public boolean hasAnyContents() {
+        this.generateLootIfNeeded(null);
         return this.items.stream().anyMatch(stack -> !stack.isEmpty());
     }
 
@@ -128,6 +129,9 @@ public final class SeashellBlockEntity extends RandomizableContainerBlockEntity 
         this.redstonePowered = powered;
         boolean isOpen = this.isEffectivelyOpen();
         if (wasOpen != isOpen) {
+            if (isOpen) {
+                this.generateLootIfNeeded(null);
+            }
             this.beginTransition(isOpen);
         }
 
@@ -141,6 +145,7 @@ public final class SeashellBlockEntity extends RandomizableContainerBlockEntity 
         }
 
         this.manuallyOpened = true;
+        this.generateLootIfNeeded(null);
         this.beginTransition(true);
         this.setChangedAndSync();
         return true;
@@ -249,7 +254,9 @@ public final class SeashellBlockEntity extends RandomizableContainerBlockEntity 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        net.minecraft.world.ContainerHelper.saveAllItems(tag, this.items, registries);
+        if (!this.trySaveLootTable(tag)) {
+            net.minecraft.world.ContainerHelper.saveAllItems(tag, this.items, registries);
+        }
         tag.putBoolean("VisualOpen", this.visualOpen);
         tag.putBoolean("VisualInitialized", this.initializedVisualState);
         tag.putBoolean("ManuallyOpened", this.manuallyOpened);
@@ -270,7 +277,8 @@ public final class SeashellBlockEntity extends RandomizableContainerBlockEntity 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        if (tag.contains("Items")) {
+        this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+        if (!this.tryLoadLootTable(tag) && tag.contains("Items")) {
             net.minecraft.world.ContainerHelper.loadAllItems(tag, this.items, registries);
         }
         this.visualOpen = tag.getBoolean("VisualOpen");
@@ -285,6 +293,12 @@ public final class SeashellBlockEntity extends RandomizableContainerBlockEntity 
         if (this.level != null) {
             BlockState state = this.getBlockState();
             this.level.sendBlockUpdated(this.worldPosition, state, state, Block.UPDATE_CLIENTS);
+        }
+    }
+
+    private void generateLootIfNeeded(@Nullable Player player) {
+        if (this.level instanceof ServerLevel) {
+            this.unpackLootTable(player);
         }
     }
 

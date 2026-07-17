@@ -380,7 +380,7 @@ public class PotentNyxiteBlockEntity extends BlockEntity {
             FluidState fluidState = level.getFluidState(cursor);
             BlockState blockState = level.getBlockState(cursor);
 
-            if (fluidState.isSource() && isHypnoticGasFluid(fluidState) && isGeyserPassableBlock(level, cursor)) {
+            if (isHypnoticGasFluid(fluidState) && isGeyserPassableBlock(level, cursor)) {
                 cursor.move(direction);
                 continue;
             }

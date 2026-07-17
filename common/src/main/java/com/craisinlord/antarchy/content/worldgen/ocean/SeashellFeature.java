@@ -56,6 +56,7 @@ public final class SeashellFeature extends Feature<NoneFeatureConfiguration> {
             level.setBlock(shellPos, state, 2);
             if (level.getBlockEntity(shellPos) instanceof SeashellBlockEntity seashell) {
                 seashell.setLootTable(LOOT_TABLE, random.nextLong());
+                seashell.setChanged();
             }
             placedAny = true;
         }

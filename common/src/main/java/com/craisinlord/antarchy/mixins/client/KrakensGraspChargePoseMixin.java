@@ -31,6 +31,7 @@ public class KrakensGraspChargePoseMixin {
             PoseStack poseStack, MultiBufferSource buffer, int light, CallbackInfo ci) {
         if (isChargingKrakensGraspWithArm(entity, arm)) {
             poseStack.mulPose(Axis.XP.rotationDegrees(162.0F));
+            poseStack.translate(0.0D, -1.0D, 0.0D);
         }
     }
 

@@ -29,7 +29,7 @@ public class CritterCageRenderer implements BlockEntityRenderer<CritterCageBlock
         }
 
         displayEntity.tickCount = (int) (level.getGameTime() & Integer.MAX_VALUE);
-        float scale = 0.72F / Math.max(Math.max(displayEntity.getBbWidth(), displayEntity.getBbHeight()), 0.5F);
+        float scale = 0.36F / Math.max(Math.max(displayEntity.getBbWidth(), displayEntity.getBbHeight()), 0.5F);
         float rotation = ((level.getGameTime() + partialTick) * 4.0F) % 360.0F;
 
         poseStack.pushPose();

@@ -409,7 +409,7 @@ public final class AntarchyFabricEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<ButterflyEntity>> BUTTERFLY = ENTITY_TYPES.register("butterfly",
             () -> EntityType.Builder.of(ButterflyEntity::new, MobCategory.AMBIENT)
-                    .sized(1.125F, 1.375F)
+                    .sized(1.125F, 0.6875F)
                     .clientTrackingRange(8)
                     .build("butterfly"));
 
