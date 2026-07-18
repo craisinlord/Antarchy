@@ -72,6 +72,7 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue  KRAKEN_PROJECTILE_DAMAGE_TAKEN_MULTIPLIER;
     private static final ModConfigSpec.BooleanValue KRAKEN_SQUID_SPAWN_ENABLED;
     private static final ModConfigSpec.BooleanValue KRAKEN_MASS_SPAWN_ENABLED;
+    private static final ModConfigSpec.BooleanValue KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON;
 
 
     // Brutalfly
@@ -374,6 +375,7 @@ public final class AntarchyMobsConfig {
         KRAKEN_PROJECTILE_DAMAGE_TAKEN_MULTIPLIER = b.comment("Damage multiplier from projectiles. 0.5 means 50% damage.")                                                  .defineInRange("projectileDamageTakenMultiplier",  0.5D,   0.0D, 10.0D);
         KRAKEN_SQUID_SPAWN_ENABLED               = b.comment("If true, a player killing a Missile Squid has a 1/100 chance to spawn a single Kraken nearby.")                       .define("squidSpawnEnabled",  true);
         KRAKEN_MASS_SPAWN_ENABLED                = b.comment("If true, a player killing a Missile Squid has a 1/500 chance to spawn 10 Krakens. Independent from the single spawn.").define("massSpawnEnabled",  true);
+        KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON        = b.comment("If true, the killer must have Bad Omen to summon a single Kraken; chance scales with Bad Omen level. Mass spawn is unaffected by level but still requires Bad Omen when this is on.").define("requireBadOmenToSummon",  true);
         b.pop();
 
 
@@ -639,6 +641,7 @@ public final class AntarchyMobsConfig {
     static double  krakenProjectileDamageTakenMultiplier()  { return KRAKEN_PROJECTILE_DAMAGE_TAKEN_MULTIPLIER.get(); }
     static boolean krakenSquidSpawnEnabled()                { return KRAKEN_SQUID_SPAWN_ENABLED.get(); }
     static boolean krakenMassSpawnEnabled()                 { return KRAKEN_MASS_SPAWN_ENABLED.get(); }
+    static boolean krakenRequireBadOmenToSummon()           { return KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON.get(); }
 
     static double  brutalflyHealth()                        { return BRUTALFLY_HEALTH.get(); }
     static double  brutalflySwipeDamage()                   { return BRUTALFLY_SWIPE_DAMAGE.get(); }

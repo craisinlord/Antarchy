@@ -156,17 +156,29 @@ public final class AntarchyNeoForgeEvents {
             return;
         }
         if (!(event.getEntity().level() instanceof ServerLevel serverLevel)) return;
-        if (!(event.getEntity().getKillCredit() instanceof net.minecraft.world.entity.player.Player)) return;
+        if (!(event.getEntity().getKillCredit() instanceof Player killer)) return;
+
+        boolean requireBadOmen = AntarchySettings.krakenRequireBadOmenToSummon();
+        int badOmenLevel = badOmenLevel(killer);
+        if (requireBadOmen && badOmenLevel <= 0) return;
 
         BlockPos deathPos = event.getEntity().blockPosition();
 
-        if (AntarchySettings.krakenSquidSpawnEnabled() && serverLevel.random.nextInt(100) == 0) {
-            spawnKrakens(serverLevel, deathPos, 1);
+        if (AntarchySettings.krakenSquidSpawnEnabled()) {
+            int chanceDenominator = requireBadOmen ? Math.max(1, 100 / badOmenLevel) : 100;
+            if (serverLevel.random.nextInt(chanceDenominator) == 0) {
+                spawnKrakens(serverLevel, deathPos, 1);
+            }
         }
 
         if (AntarchySettings.krakenMassSpawnEnabled() && serverLevel.random.nextInt(500) == 0) {
             spawnKrakens(serverLevel, deathPos, 10);
         }
+    }
+
+    private static int badOmenLevel(Player player) {
+        MobEffectInstance effect = player.getEffect(MobEffects.BAD_OMEN);
+        return effect != null ? effect.getAmplifier() + 1 : 0;
     }
 
     public static void onPermanentPortalSacrifice(LivingDeathEvent event) {

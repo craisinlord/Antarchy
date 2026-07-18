@@ -127,6 +127,7 @@ public final class AntarchySettings {
     private static double krakenProjectileDamageTakenMultiplier = 0.5D;
     private static boolean krakenSquidSpawnEnabled = true;
     private static boolean krakenMassSpawnEnabled = true;
+    private static boolean krakenRequireBadOmenToSummon = true;
     private static double squidzookaCooldownSeconds = 1.0D;
     private static double squidzookaLaunchVelocity = 2.1D;
     private static double rpoLauncherCooldownSeconds = 1.0D;
@@ -947,6 +948,10 @@ public final class AntarchySettings {
         return krakenMassSpawnEnabled;
     }
 
+    public static boolean krakenRequireBadOmenToSummon() {
+        return krakenRequireBadOmenToSummon;
+    }
+
     public static double squidzookaCooldownSeconds() {
         return squidzookaCooldownSeconds;
     }
@@ -1443,6 +1448,10 @@ public final class AntarchySettings {
 
     public static void setKrakenMassSpawnEnabled(boolean value) {
         krakenMassSpawnEnabled = value;
+    }
+
+    public static void setKrakenRequireBadOmenToSummon(boolean value) {
+        krakenRequireBadOmenToSummon = value;
     }
 
     public static void setSquidzookaCooldownSeconds(double value) {

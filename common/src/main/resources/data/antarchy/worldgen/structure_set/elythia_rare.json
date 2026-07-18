@@ -11,6 +11,10 @@
     {
       "structure": "antarchy:ruined_arena",
       "weight": 1
+    },
+    {
+      "structure": "antarchy:toreterror_arena",
+      "weight": 1
     }
   ],
   "placement": {

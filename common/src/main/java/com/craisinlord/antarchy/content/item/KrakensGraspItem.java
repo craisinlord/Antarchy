@@ -79,14 +79,12 @@ public class KrakensGraspItem extends TridentItem {
 
     public static void strikeLightning(LivingEntity target, ServerLevel level) {
         strikeLightningAt(level, target.getX(), target.getY(), target.getZ());
-        target.hurt(target.damageSources().lightningBolt(), (float) AntarchySettings.krakensGraspLightningDamage());
         level.sendParticles(ParticleTypes.ELECTRIC_SPARK, target.getX(), target.getY(0.7D), target.getZ(), 10, 0.25D, 0.25D, 0.25D, 0.02D);
     }
 
     public static void strikeLightningAt(ServerLevel level, double x, double y, double z) {
         LightningBolt lightningBolt = new LightningBolt(net.minecraft.world.entity.EntityType.LIGHTNING_BOLT, level);
         lightningBolt.moveTo(x, y, z);
-        lightningBolt.setVisualOnly(true);
         level.addFreshEntity(lightningBolt);
         level.sendParticles(ParticleTypes.ELECTRIC_SPARK, x, y + 0.2D, z, 10, 0.25D, 0.25D, 0.25D, 0.02D);
     }

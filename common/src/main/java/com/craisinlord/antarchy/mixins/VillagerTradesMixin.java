@@ -6,8 +6,10 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.ItemCost;
@@ -28,19 +30,19 @@ public abstract class VillagerTradesMixin {
     @Inject(method = "<clinit>", at = @At("TAIL"))
     private static void antarchy$appendTrades(CallbackInfo ci) {
         appendVillagerTrade(VillagerProfession.FARMER, 1,
-                emeraldForItems(AntarchyObjects.CORN.get(), 20, 16, 2));
+                emeraldForItems(AntarchyObjects.CORN, 20, 16, 2));
         appendVillagerTrade(VillagerProfession.BUTCHER, 1,
-                emeraldForItems(AntarchyObjects.COOKED_CORNDOG.get(), 5, 16, 2));
+                emeraldForItems(AntarchyObjects.COOKED_CORNDOG, 5, 16, 2));
         appendWanderingTrade(0,
-                itemsForEmerald(AntarchyObjects.CORN_SEEDS.get(), 1, 3, 12, 2));
+                itemsForEmerald(AntarchyObjects.CORN_SEEDS, 1, 3, 12, 2));
     }
 
-    private static VillagerTrades.ItemListing emeraldForItems(net.minecraft.world.item.Item item, int count, int maxUses, int villagerXp) {
-        return (trader, random) -> new MerchantOffer(new ItemCost(item, count), new ItemStack(Items.EMERALD), maxUses, villagerXp, 0.05F);
+    private static VillagerTrades.ItemListing emeraldForItems(Supplier<? extends Item> itemSupplier, int count, int maxUses, int villagerXp) {
+        return (trader, random) -> new MerchantOffer(new ItemCost(itemSupplier.get(), count), new ItemStack(Items.EMERALD), maxUses, villagerXp, 0.05F);
     }
 
-    private static VillagerTrades.ItemListing itemsForEmerald(net.minecraft.world.item.Item item, int emeraldCost, int count, int maxUses, int villagerXp) {
-        return (trader, random) -> new MerchantOffer(new ItemCost(Items.EMERALD, emeraldCost), new ItemStack(item, count), maxUses, villagerXp, 0.05F);
+    private static VillagerTrades.ItemListing itemsForEmerald(Supplier<? extends Item> itemSupplier, int emeraldCost, int count, int maxUses, int villagerXp) {
+        return (trader, random) -> new MerchantOffer(new ItemCost(Items.EMERALD, emeraldCost), new ItemStack(itemSupplier.get(), count), maxUses, villagerXp, 0.05F);
     }
 
     @SuppressWarnings("unchecked")

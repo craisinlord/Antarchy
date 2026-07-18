@@ -825,10 +825,4 @@
     "advancements.antarchy.squidzooka_craft.description":  "Создайте сквидзуку.",
     "advancements.antarchy.gravity_gun_craft.title":  "Мастер притяжения",
     "advancements.antarchy.gravity_gun_craft.description":  "Создайте гравитационную пушку."
-    "subtitles.antarchy.stink_bug_fart":  "Ð’Ð¾Ð½ÑŒ Ð¶ÑƒÐºÐ° Ð¿ÑƒÐºÐ°ÐµÑ‚",
-    "subtitles.antarchy.stink_bug_idle":  "Ð’Ð¾Ð½ÑŒ Ð¶ÑƒÐº Ð±ÑƒÑ€Ñ‡Ð¸Ñ‚",
-    "subtitles.antarchy.rolly_polly_idle":  "Rolly Polly Ð±ÑƒÑ€Ñ‡Ð¸Ñ‚",
-    "death.attack.spit_bug_disrespect":  "%1$s Ð±Ñ‹Ð» ÑƒÐ½Ð¸Ð¶ÐµÐ½ Spit Bug",
-    "death.attack.jumpy_bug_jump":  "%1$s Ð±Ñ‹Ð» Ð°Ñ‚Ð°ÐºÐ¾Ð²Ð°Ð½ Jumpy Bug",
-    "death.attack.hercules_beetle_obliteration":  "%1$s Ð±Ñ‹Ð» ÑÑ‚Ñ‘Ñ€Ñ‚ Hercules Beetle"
 }

@@ -86,13 +86,22 @@ public final class AntarchyFabricEvents {
             if (!(entity.level() instanceof ServerLevel serverLevel)) {
                 return;
             }
-            if (!(entity.getKillCredit() instanceof net.minecraft.world.entity.player.Player)) {
+            if (!(entity.getKillCredit() instanceof Player killer)) {
+                return;
+            }
+
+            boolean requireBadOmen = AntarchySettings.krakenRequireBadOmenToSummon();
+            int badOmenLevel = badOmenLevel(killer);
+            if (requireBadOmen && badOmenLevel <= 0) {
                 return;
             }
 
             BlockPos deathPos = entity.blockPosition();
-            if (AntarchySettings.krakenSquidSpawnEnabled() && serverLevel.random.nextInt(100) == 0) {
-                spawnKrakens(serverLevel, deathPos, 1);
+            if (AntarchySettings.krakenSquidSpawnEnabled()) {
+                int chanceDenominator = requireBadOmen ? Math.max(1, 100 / badOmenLevel) : 100;
+                if (serverLevel.random.nextInt(chanceDenominator) == 0) {
+                    spawnKrakens(serverLevel, deathPos, 1);
+                }
             }
             if (AntarchySettings.krakenMassSpawnEnabled() && serverLevel.random.nextInt(500) == 0) {
                 spawnKrakens(serverLevel, deathPos, 10);
@@ -118,6 +127,11 @@ public final class AntarchyFabricEvents {
             }
             invertedPlayers.retainAll(activeThisTick);
         });
+    }
+
+    private static int badOmenLevel(Player player) {
+        MobEffectInstance effect = player.getEffect(MobEffects.BAD_OMEN);
+        return effect != null ? effect.getAmplifier() + 1 : 0;
     }
 
     private static void spawnKrakens(ServerLevel level, BlockPos origin, int count) {
