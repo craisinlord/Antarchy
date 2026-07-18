@@ -96,6 +96,16 @@ public class CritterCageBlockEntity extends BlockEntity {
     }
 
     @Nullable
+    public ResourceLocation entityTypeId() {
+        return this.entityTypeId;
+    }
+
+    @Nullable
+    public CompoundTag entityData() {
+        return this.entityData == null ? null : this.entityData.copy();
+    }
+
+    @Nullable
     public Entity getOrCreateClientDisplayEntity(Level level) {
         if (level == null || level.isClientSide == false) {
             return null;

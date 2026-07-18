@@ -6,6 +6,9 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
 
 public class JumpyBugModel extends GeoModel<JumpyBugEntity> {
+    public static final ResourceLocation EMISSIVE_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/jumpy_bug_emissive.png");
+
     @Override
     public ResourceLocation getModelResource(JumpyBugEntity animatable) {
         return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "geo/jumpy_bug.geo.json");

@@ -28,6 +28,7 @@ public class DrTrayaurusEntity extends AbstractVillager {
 
     public DrTrayaurusEntity(EntityType<? extends AbstractVillager> entityType, Level level) {
         super(entityType, level);
+        this.setCustomName(DISPLAY_NAME);
     }
 
     @Override

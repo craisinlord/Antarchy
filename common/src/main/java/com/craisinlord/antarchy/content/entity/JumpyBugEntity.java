@@ -1,6 +1,8 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -71,6 +73,7 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
     private static final double MELEE_WALK_RANGE = 4.0D;
     private static final double CHASE_LEAP_RANGE_SQR = 8.0D * 8.0D;
     private static final int DEFAULT_POUNCE_COOLDOWN = 60;
+    private static final int POUNCE_PREFERENCE_CHANCE = 7;
     private static final int DEFAULT_RECOVERY_TICKS = 20;
     private static final int CHASE_JUMP_COOLDOWN = 25;
     private static final double POUNCE_HORIZONTAL_SPEED = 0.92D;
@@ -79,12 +82,15 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
     private static final double CHASE_LEAP_VERTICAL = 0.55D;
     private static final double QUICK_MOVE_SQR = 0.14D * 0.14D;
     private static final double POUNCE_LAND_DAMAGE_RANGE = 5.0D;
+    private static final int MAX_POUNCE_TICKS = 60;
     private static final int CEILING_SEARCH_RANGE = 30;
     private static final double CAMOUFLAGE_PLAYER_RANGE = 24.0D;
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
-    private static final RawAnimation JUMP_ANIM = RawAnimation.begin().thenLoop("jump");
+    private static final RawAnimation JUMP_ANIM = RawAnimation.begin().thenPlay("jump_start").thenLoop("jump_loop");
+    private static final RawAnimation JUMP_END_ANIM = RawAnimation.begin().thenPlay("jump_end");
+    private static final RawAnimation HANGING_ANIM = RawAnimation.begin().thenLoop("hanging");
     private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenPlay("attack");
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
@@ -94,6 +100,7 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
     private int pounceTicks;
     private int leapingTicks;
     private int chaseJumpCooldownTicks;
+    private boolean preferPounceThisWindow = true;
     private float visualAlpha = 1.0F;
     private float previousVisualAlpha = 1.0F;
 
@@ -130,8 +137,8 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new CloseMeleeGoal());
-        this.goalSelector.addGoal(2, new PounceAttackGoal());
+        this.goalSelector.addGoal(1, new PounceAttackGoal());
+        this.goalSelector.addGoal(2, new CloseMeleeGoal());
         this.goalSelector.addGoal(3, new HideOnCeilingGoal());
         this.goalSelector.addGoal(4, new ChaseTargetGoal());
         this.goalSelector.addGoal(5, new WanderGoal());
@@ -192,6 +199,9 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
 
         if (this.pounceCooldownTicks > 0) {
             this.pounceCooldownTicks--;
+            if (this.pounceCooldownTicks == 0) {
+                this.preferPounceThisWindow = this.random.nextInt(10) < POUNCE_PREFERENCE_CHANCE;
+            }
         }
         if (this.recoveryTicks > 0) {
             this.recoveryTicks--;
@@ -253,13 +263,20 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
     }
 
     @Override
+    public boolean doHurtTarget(Entity target) {
+        return target instanceof LivingEntity livingTarget && this.level() instanceof ServerLevel serverLevel
+                ? livingTarget.hurt(AntarchyDamageSources.jumpyBugJump(serverLevel, this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE))
+                : super.doHurtTarget(target);
+    }
+
+    @Override
     protected SoundEvent getAmbientSound() {
-        return SoundEvents.SPIDER_AMBIENT;
+        return AntarchySoundEvents.JUMPY_BUG_IDLE.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return SoundEvents.SPIDER_HURT;
+        return AntarchySoundEvents.JUMPY_BUG_HURT.get();
     }
 
     @Override
@@ -314,11 +331,14 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
 
     private PlayState mainAnimController(AnimationState<JumpyBugEntity> state) {
         AttackState attackState = this.getAttackState();
-        if (attackState == AttackState.POUNCING || attackState == AttackState.CLINGING || attackState == AttackState.LEAPING_TO_CEILING) {
+        if (attackState == AttackState.CLINGING) {
+            return state.setAndContinue(HANGING_ANIM);
+        }
+        if ((attackState == AttackState.POUNCING || attackState == AttackState.LEAPING_TO_CEILING) && !this.onGround()) {
             return state.setAndContinue(JUMP_ANIM);
         }
         if (attackState == AttackState.RECOVERING) {
-            return state.setAndContinue(ATTACK_ANIM);
+            return state.setAndContinue(JUMP_END_ANIM);
         }
         return state.setAndContinue(state.isMoving() ? WALK_ANIM : IDLE_ANIM);
     }
@@ -345,10 +365,14 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
         this.setCamouflaged(false);
         this.pounceTicks++;
 
-        if (this.onGround() && this.pounceTicks > 8) {
+        if ((this.onGround() && this.pounceTicks > 8) || this.pounceTicks > MAX_POUNCE_TICKS) {
             LivingEntity target = this.getTarget();
             if (target != null && target.isAlive() && this.distanceToSqr(target) <= POUNCE_LAND_DAMAGE_RANGE * POUNCE_LAND_DAMAGE_RANGE) {
-                target.hurt(this.damageSources().mobAttack(this), (float) AntarchySettings.jumpyBugPounceDamage());
+                if (this.level() instanceof ServerLevel serverLevel) {
+                    target.hurt(AntarchyDamageSources.jumpyBugJump(serverLevel, this), (float) AntarchySettings.jumpyBugPounceDamage());
+                } else {
+                    target.hurt(this.damageSources().mobAttack(this), (float) AntarchySettings.jumpyBugPounceDamage());
+                }
             }
             this.finishPounce(false);
         }
@@ -437,6 +461,7 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
         double upwardSpeed = Math.min(2.5D, Math.sqrt(0.16D * Math.max(dy, 1.0D)) + 0.4D);
         this.setDeltaMovement(0.0D, upwardSpeed, 0.0D);
         this.hasImpulse = true;
+        this.playSound(AntarchySoundEvents.JUMPY_BUG_JUMP.get(), 1.0F, 0.95F + this.random.nextFloat() * 0.1F);
     }
 
     private void cancelLeap() {
@@ -460,6 +485,7 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
         double upward = POUNCE_UPWARD_SPEED + Mth.clamp(to.y * 0.08D, -0.04D, 0.22D);
         this.setDeltaMovement(direction.x * POUNCE_HORIZONTAL_SPEED, upward, direction.z * POUNCE_HORIZONTAL_SPEED);
         this.hasImpulse = true;
+        this.playSound(AntarchySoundEvents.JUMPY_BUG_JUMP.get(), 1.0F, 0.95F + this.random.nextFloat() * 0.1F);
     }
 
     private void finishPounce(boolean keepMomentum) {
@@ -573,6 +599,7 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
                     && target.isAlive()
                     && JumpyBugEntity.this.canUseAmbush()
                     && JumpyBugEntity.this.pounceCooldownTicks <= 0
+                    && JumpyBugEntity.this.preferPounceThisWindow
                     && (JumpyBugEntity.this.hasLineOfSight(target) || JumpyBugEntity.this.distanceToSqr(target) <= 9.0D);
         }
 

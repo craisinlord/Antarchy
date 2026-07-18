@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
 
 import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
@@ -13,6 +14,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -39,6 +41,7 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
@@ -91,6 +94,14 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
 
     public RollyPollyEntity(EntityType<? extends RollyPollyEntity> entityType, Level level) {
         super(entityType, level);
+    }
+
+    public static boolean canSpawn(EntityType<RollyPollyEntity> entityType, net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.entity.MobSpawnType spawnReason, BlockPos pos, net.minecraft.util.RandomSource random) {
+        if (spawnReason == net.minecraft.world.entity.MobSpawnType.SPAWN_EGG || spawnReason == net.minecraft.world.entity.MobSpawnType.SPAWNER || spawnReason == net.minecraft.world.entity.MobSpawnType.COMMAND) {
+            return true;
+        }
+
+        return Mob.checkMobSpawnRules(entityType, level, spawnReason, pos, random);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -155,6 +166,9 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
                     if (this.random.nextInt(AntarchySettings.rollyPollyTameChance()) == 0) {
                         this.setTame(true, true);
                         this.setOwnerUUID(player.getUUID());
+                        if (player instanceof ServerPlayer serverPlayer) {
+                            CriteriaTriggers.TAME_ANIMAL.trigger(serverPlayer, this);
+                        }
                         this.stopDefensiveCurl();
                         this.setTarget(null);
                         this.level().broadcastEntityEvent(this, (byte) 7);
@@ -241,14 +255,19 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         this.unrolling = false;
         this.rollTransitionTicks = ROLL_UP_TICKS;
         this.setAnimationState(ANIM_ROLL_UP);
-        this.playSound(SoundEvents.ARMOR_EQUIP_TURTLE.value(), 0.8F, 1.4F);
+        this.playSound(SoundEvents.ARMADILLO_ROLL, 0.8F, 1.0F);
     }
 
     private void startUnroll() {
         this.unrolling = true;
         this.rollTransitionTicks = UNROLL_TICKS;
         this.setAnimationState(ANIM_UNROLL);
-        this.playSound(SoundEvents.ARMOR_EQUIP_TURTLE.value(), 0.8F, 1.1F);
+        this.playSound(SoundEvents.ARMADILLO_UNROLL_START, 0.8F, 1.0F);
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return AntarchySoundEvents.ROLLY_POLLY_IDLE.get();
     }
 
     private void stopDefensiveCurl() {

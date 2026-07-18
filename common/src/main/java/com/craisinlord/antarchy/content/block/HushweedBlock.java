@@ -29,6 +29,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class HushweedBlock extends BaseEntityBlock {
+    private static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 18.0D, 12.0D);
     public static final DirectionProperty FACING = BlockStateProperties.VERTICAL_DIRECTION;
     public static final MapCodec<HushweedBlock> CODEC = Block.simpleCodec(HushweedBlock::new);
 
@@ -61,12 +62,12 @@ public class HushweedBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return Blocks.AZALEA.defaultBlockState().getShape(level, pos, context);
+        return SHAPE;
     }
 
     @Override
     protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return Blocks.AZALEA.defaultBlockState().getCollisionShape(level, pos, context);
+        return SHAPE;
     }
 
     @Override

@@ -6,6 +6,8 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
 
 public class BasiliskModel extends GeoModel<BasiliskEntity> {
+    public static final ResourceLocation EMISSIVE_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/basilisk_emissive.png");
 
     @Override
     public ResourceLocation getModelResource(BasiliskEntity animatable) {

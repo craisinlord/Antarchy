@@ -496,6 +496,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
         }
 
         Vec3 origin = this.getSpitOrigin();
+        this.playSound(AntarchySoundEvents.BRUTALFLY_SPIT.get(), 1.0F, 0.9F + this.random.nextFloat() * 0.2F);
         switch (this.getFightPhase()) {
             case PHASE_THREE -> {
                 this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.POISON, -8.0F);

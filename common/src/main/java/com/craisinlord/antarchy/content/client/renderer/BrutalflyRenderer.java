@@ -7,11 +7,13 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
+import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 public class BrutalflyRenderer extends GeoEntityRenderer<BrutalflyEntity> {
 
@@ -20,6 +22,7 @@ public class BrutalflyRenderer extends GeoEntityRenderer<BrutalflyEntity> {
     public BrutalflyRenderer(EntityRendererProvider.Context context) {
         super(context, new BrutalflyModel());
         this.shadowRadius = 1.35F;
+        this.addRenderLayer(new BrutalflyEmissiveLayer(this));
     }
 
     @Override
@@ -52,5 +55,31 @@ public class BrutalflyRenderer extends GeoEntityRenderer<BrutalflyEntity> {
     @Override
     protected float getDeathMaxRotation(BrutalflyEntity animatable) {
         return 0.0F;
+    }
+
+    private static final class BrutalflyEmissiveLayer extends GeoRenderLayer<BrutalflyEntity> {
+        private BrutalflyEmissiveLayer(GeoEntityRenderer<BrutalflyEntity> renderer) {
+            super(renderer);
+        }
+
+        @Override
+        public void render(PoseStack poseStack, BrutalflyEntity animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType,
+                           MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick,
+                           int packedLight, int packedOverlay) {
+            RenderType emissiveType = RenderType.eyes(BrutalflyModel.EMISSIVE_TEXTURE);
+            VertexConsumer emissiveBuffer = bufferSource.getBuffer(emissiveType);
+            this.getRenderer().reRender(
+                    bakedModel,
+                    poseStack,
+                    bufferSource,
+                    animatable,
+                    emissiveType,
+                    emissiveBuffer,
+                    partialTick,
+                    0xF000F0,
+                    OverlayTexture.NO_OVERLAY,
+                    0xFFFFFFFF
+            );
+        }
     }
 }

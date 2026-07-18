@@ -85,6 +85,24 @@ public final class AntarchyDamageTypes {
                     ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "rpo_launcher_blast")
             );
 
+    public static final ResourceKey<DamageType> SPIT_BUG_DISRESPECT =
+            ResourceKey.create(
+                    Registries.DAMAGE_TYPE,
+                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "spit_bug_disrespect")
+            );
+
+    public static final ResourceKey<DamageType> JUMPY_BUG_JUMP =
+            ResourceKey.create(
+                    Registries.DAMAGE_TYPE,
+                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "jumpy_bug_jump")
+            );
+
+    public static final ResourceKey<DamageType> HERCULES_BEETLE_OBLITERATION =
+            ResourceKey.create(
+                    Registries.DAMAGE_TYPE,
+                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "hercules_beetle_obliteration")
+            );
+
     private AntarchyDamageTypes() {
     }
 }

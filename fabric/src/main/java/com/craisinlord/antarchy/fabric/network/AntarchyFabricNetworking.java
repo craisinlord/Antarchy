@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.fabric.network;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntities;
 
 import com.craisinlord.antarchy.content.entity.DiamondMinecartEntity;
+import com.craisinlord.antarchy.content.client.CameraShakeClientState;
 import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
 import com.craisinlord.antarchy.content.entity.multipart.MultipartEntityOwner;
 import com.craisinlord.antarchy.content.entity.multipart.MultipartFramework;
@@ -74,6 +75,7 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playS2C().register(BrutalflyElytraAnimationPayload.TYPE, BrutalflyElytraAnimationPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(ThoraxisWeatherPayload.TYPE, ThoraxisWeatherPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(HerculesBeetleImpactShakePayload.TYPE, HerculesBeetleImpactShakePayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(ImpactShakePayload.TYPE, ImpactShakePayload.STREAM_CODEC);
 
         PayloadTypeRegistry.playC2S().register(GravityGunPrimaryPayload.TYPE, GravityGunPrimaryPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(GravityGunScrollPayload.TYPE, GravityGunScrollPayload.STREAM_CODEC);
@@ -403,5 +405,14 @@ public final class AntarchyFabricNetworking {
 
     public static void triggerHerculesBeetleImpactShake(int durationTicks) {
         HerculesBeetleImpactShakeClientState.trigger(durationTicks);
+    }
+
+    public static void triggerImpactShake(ImpactShakePayload payload) {
+        CameraShakeClientState.triggerImpact(
+                new Vec3(payload.x(), payload.y(), payload.z()),
+                payload.intensity(),
+                payload.durationTicks(),
+                payload.radius()
+        );
     }
 }

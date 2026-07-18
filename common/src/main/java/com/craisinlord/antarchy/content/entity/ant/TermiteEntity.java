@@ -14,6 +14,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -149,7 +150,7 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
 
     @Nullable
     private BlockPos getCurrentWoodTarget() {
-        if (this.targetWoodPos != null && this.isValidWoodTarget(this.targetWoodPos)) {
+        if (this.targetWoodPos != null && this.isValidWoodTarget(this.targetWoodPos) && this.canReachWoodTarget(this.targetWoodPos)) {
             return this.targetWoodPos;
         }
 
@@ -221,26 +222,42 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
         return this.level().getBlockState(targetPos).is(AntarchyTags.Blocks.TERMITE_FOODS);
     }
 
+    private boolean canReachWoodTarget(BlockPos targetPos) {
+        BlockPos approachPos = this.getWoodApproachBlockPos(targetPos);
+        if (approachPos == null) {
+            return false;
+        }
+
+        Path path = this.getNavigation().createPath(approachPos, 0);
+        return path != null && path.canReach();
+    }
+
     @Nullable
-    private Vec3 getWoodApproachTarget(BlockPos targetPos) {
+    private BlockPos getWoodApproachBlockPos(BlockPos targetPos) {
         BlockPos belowTarget = targetPos.below();
         if (this.isWalkableStandPos(belowTarget)) {
-            return Vec3.atBottomCenterOf(belowTarget);
+            return belowTarget;
         }
 
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             BlockPos sidePos = targetPos.relative(direction);
             if (this.isWalkableStandPos(sidePos)) {
-                return Vec3.atBottomCenterOf(sidePos);
+                return sidePos;
             }
 
             BlockPos belowSidePos = sidePos.below();
             if (this.isWalkableStandPos(belowSidePos)) {
-                return Vec3.atBottomCenterOf(belowSidePos);
+                return belowSidePos;
             }
         }
 
         return null;
+    }
+
+    @Nullable
+    private Vec3 getWoodApproachTarget(BlockPos targetPos) {
+        BlockPos approachPos = this.getWoodApproachBlockPos(targetPos);
+        return approachPos == null ? null : Vec3.atBottomCenterOf(approachPos);
     }
 
     private boolean isWalkableStandPos(BlockPos pos) {

@@ -238,7 +238,10 @@ import net.minecraft.world.level.block.GlowLichenBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.VineBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -366,7 +369,7 @@ public final class AntarchyFabricBlocks {
     public static final DeferredBlock<SeashellBlock> SEASHELL = BLOCKS.register("seashell",
             () -> new SeashellBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG).noOcclusion()));
     public static final DeferredBlock<CritterCageBlock> CRITTER_CAGE_BLOCK = BLOCKS.register("critter_cage_block",
-            () -> new CritterCageBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BARS).noOcclusion()));
+            () -> new CritterCageBlock(BlockBehaviour.Properties.of().strength(5.0F, 6.0F).sound(net.minecraft.world.level.block.SoundType.METAL).noOcclusion()));
 
 
     public static final DeferredBlock<net.minecraft.world.level.block.StandingSignBlock> OURANWOOD_SIGN = BLOCKS.register("ouranwood_sign",
@@ -630,12 +633,20 @@ public final class AntarchyFabricBlocks {
             () -> new AntDimensionPortalBlock(PermanentPortalType.THORAXIS, portalProperties()));
 
 
+    public static final DeferredBlock<AntDimensionPortalBlock> CAVARYN_PORTAL = BLOCKS.register("cavaryn_portal",
+            () -> new AntDimensionPortalBlock(PermanentPortalType.CAVARYN, portalProperties()));
+
+
     public static final DeferredBlock<Block> PALE_NYXITE = BLOCKS.register("pale_nyxite",
             () -> new Block(nyxiteProperties()));
 
 
     public static final DeferredBlock<NyxiteSpikeBlock> NYXITE_SPIKE = BLOCKS.register("nyxite_spike",
             () -> new NyxiteSpikeBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.POINTED_DRIPSTONE)));
+
+
+    public static final DeferredBlock<ChitenSpikeBlock> CHITEN_SPIKE = BLOCKS.register("chiten_spike",
+            () -> new ChitenSpikeBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.POINTED_DRIPSTONE)));
 
 
     public static final DeferredBlock<PotentNyxiteBlock> POTENT_NYXITE = BLOCKS.register("potent_nyxite",
@@ -645,12 +656,100 @@ public final class AntarchyFabricBlocks {
             ));
 
 
+    public static final DeferredBlock<Block> MYRMITE = BLOCKS.register("myrmite",
+            () -> new Block(nyxiteProperties()));
+
+
+    public static final DeferredBlock<Block> BROODSTONE = BLOCKS.register("broodstone",
+            () -> new Block(broodstoneProperties()));
+
+
+    public static final DeferredBlock<Block> POLISHED_BROODSTONE = BLOCKS.register("polished_broodstone",
+            () -> new Block(broodstoneProperties()));
+
+
+    public static final DeferredBlock<Block> CHISELED_BROODSTONE = BLOCKS.register("chiseled_broodstone",
+            () -> new Block(broodstoneProperties()));
+
+
+    public static final DeferredBlock<Block> BROODSTONE_BRICKS = BLOCKS.register("broodstone_bricks",
+            () -> new Block(broodstoneProperties()));
+
+
+    public static final DeferredBlock<StairBlock> BROODSTONE_STAIRS = BLOCKS.register("broodstone_stairs",
+            () -> new StairBlock(BROODSTONE.get().defaultBlockState(), broodstoneProperties()));
+
+
+    public static final DeferredBlock<SlabBlock> BROODSTONE_SLAB = BLOCKS.register("broodstone_slab",
+            () -> new SlabBlock(broodstoneProperties()));
+
+
+    public static final DeferredBlock<WallBlock> BROODSTONE_WALL = BLOCKS.register("broodstone_wall",
+            () -> new WallBlock(broodstoneProperties()));
+
+
+    public static final DeferredBlock<StairBlock> POLISHED_BROODSTONE_STAIRS = BLOCKS.register("polished_broodstone_stairs",
+            () -> new StairBlock(POLISHED_BROODSTONE.get().defaultBlockState(), broodstoneProperties()));
+
+
+    public static final DeferredBlock<SlabBlock> POLISHED_BROODSTONE_SLAB = BLOCKS.register("polished_broodstone_slab",
+            () -> new SlabBlock(broodstoneProperties()));
+
+
+    public static final DeferredBlock<WallBlock> POLISHED_BROODSTONE_WALL = BLOCKS.register("polished_broodstone_wall",
+            () -> new WallBlock(broodstoneProperties()));
+
+
+    public static final DeferredBlock<StairBlock> BROODSTONE_BRICK_STAIRS = BLOCKS.register("broodstone_brick_stairs",
+            () -> new StairBlock(BROODSTONE_BRICKS.get().defaultBlockState(), broodstoneProperties()));
+
+
+    public static final DeferredBlock<SlabBlock> BROODSTONE_BRICK_SLAB = BLOCKS.register("broodstone_brick_slab",
+            () -> new SlabBlock(broodstoneProperties()));
+
+
+    public static final DeferredBlock<WallBlock> BROODSTONE_BRICK_WALL = BLOCKS.register("broodstone_brick_wall",
+            () -> new WallBlock(broodstoneProperties()));
+
+
+    public static final DeferredBlock<Block> BROODSTONE_URANIUM_ORE = BLOCKS.register("broodstone_uranium_ore",
+            () -> createOre(Blocks.DEEPSLATE_EMERALD_ORE, 4, 8));
+
+
+    public static final DeferredBlock<Block> BROODSTONE_TITANIUM_ORE = BLOCKS.register("broodstone_titanium_ore",
+            () -> createOre(Blocks.DEEPSLATE_DIAMOND_ORE, 4, 8));
+
+
+    public static final DeferredBlock<RotatedPillarBlock> CHITEN_BLOCK = BLOCKS.register("chiten_block",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BONE_BLOCK).requiresCorrectToolForDrops()));
+
+
     public static final DeferredBlock<UmbralMossBlock> UMBRAL_MOSS_BLOCK = BLOCKS.register("umbral_moss_block",
             () -> new UmbralMossBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_BLOCK)));
 
 
     public static final DeferredBlock<UmbralMossCarpetBlock> UMBRAL_MOSS_CARPET = BLOCKS.register("umbral_moss_carpet",
             () -> new UmbralMossCarpetBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_CARPET).noOcclusion()));
+
+
+    public static final DeferredBlock<AmberMossBlock> AMBER_MOSS_BLOCK = BLOCKS.register("amber_moss_block",
+            () -> new AmberMossBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_BLOCK)));
+
+
+    public static final DeferredBlock<UmbralMossCarpetBlock> AMBER_MOSS_CARPET = BLOCKS.register("amber_moss_carpet",
+            () -> new UmbralMossCarpetBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_CARPET).noOcclusion()));
+
+
+    public static final DeferredBlock<GlowLichenBlock> AMBER_LICHEN = BLOCKS.register("amber_lichen",
+            () -> new GlowLichenBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLOW_LICHEN).lightLevel(state -> 4)));
+
+
+    public static final DeferredBlock<Block> BILE_VEIN = BLOCKS.register("bile_vein",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERRACK).lightLevel(state -> 2)));
+
+
+    public static final DeferredBlock<VineBlock> CREEPVINE = BLOCKS.register("creepvine",
+            () -> new VineBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.VINE)));
 
 
     public static final DeferredBlock<BlushMossBlock> BLUSH_MOSS_BLOCK = BLOCKS.register("blush_moss_block",
@@ -695,6 +794,18 @@ public final class AntarchyFabricBlocks {
                     .replaceable()));
 
 
+    public static final DeferredBlock<CreepingHorrorEggBlock> CREEPING_HORROR_EGG = BLOCKS.register("creeping_horror_egg",
+            () -> new CreepingHorrorEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
+
+
+    public static final DeferredBlock<JumpyBugEggBlock> JUMPY_BUG_EGG = BLOCKS.register("jumpy_bug_egg",
+            () -> new JumpyBugEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
+
+
+    public static final DeferredBlock<LurkingTerrorEggBlock> LURKING_TERROR_EGG = BLOCKS.register("lurking_terror_egg",
+            () -> new LurkingTerrorEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
+
+
     public static final DeferredBlock<WaspNestBlock> WASP_NEST = BLOCKS.register("wasp_nest",
             () -> new WaspNestBlock(AntarchyFabricBlocks::waspNestBlockEntityType, BlockBehaviour.Properties.ofFullCopy(Blocks.BEE_NEST)));
 
@@ -709,6 +820,14 @@ public final class AntarchyFabricBlocks {
 
     public static final DeferredBlock<HushweedBlock> HUSHWEED = BLOCKS.register("hushweed",
             () -> new HushweedBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.AZALEA).noCollission().noOcclusion()));
+
+
+    public static final DeferredBlock<HangingCreeprootsBlock> HANGING_CREEPROOTS = BLOCKS.register("hanging_creeproots",
+            () -> new HangingCreeprootsBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.HANGING_ROOTS)));
+
+
+    public static final DeferredBlock<MoltingVinesBlock> MOLTING_VINES = BLOCKS.register("molting_vines",
+            () -> new MoltingVinesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WEEPING_VINES)));
 
 
     public static final DeferredBlock<LiquidBlock> BILE_BLOCK = BLOCKS.register("bile",
@@ -754,6 +873,10 @@ public final class AntarchyFabricBlocks {
             () -> new AntNestBlock(AntarchyFabricEntities.RAINBOW_ANT, AntarchyFabricBlocks::antNestBlockEntityType, BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT).noLootTable()));
 
 
+    public static final DeferredBlock<AntNestBlock> TERMITE_NEST = BLOCKS.register("termite_nest",
+            () -> new AntNestBlock(AntarchyFabricEntities.TERMITE, AntarchyFabricBlocks::antNestBlockEntityType, BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT).noLootTable()));
+
+
     public static final DeferredBlock<Block> URANIUM_ORE = BLOCKS.register("uranium_ore",
             () -> createOre(Blocks.EMERALD_ORE, 4, 8));
 
@@ -779,11 +902,11 @@ public final class AntarchyFabricBlocks {
 
 
     public static final DeferredBlock<Block> RAW_URANIUM_BLOCK = BLOCKS.register("raw_uranium_block",
-            () -> createRawStorageBlock(Blocks.RAW_GOLD_BLOCK));
+            () -> createRawStorageBlock(Blocks.EMERALD_ORE));
 
 
     public static final DeferredBlock<Block> RAW_TITANIUM_BLOCK = BLOCKS.register("raw_titanium_block",
-            () -> createRawStorageBlock(Blocks.RAW_IRON_BLOCK));
+            () -> createRawStorageBlock(Blocks.DIAMOND_ORE));
 
 
     public static final DeferredBlock<Block> CUT_URANIUM = BLOCKS.register("cut_uranium",
@@ -864,6 +987,16 @@ public final class AntarchyFabricBlocks {
 
     public static final DeferredBlock<CorneaStalkBlock> CORNEA_STALK = BLOCKS.register("cornea_stalk",
             () -> new CorneaStalkBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SWEET_BERRY_BUSH).randomTicks()));
+
+
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.GlowcapMushroomBlock> GLOWCAP_MUSHROOM = BLOCKS.register("glowcap_mushroom",
+            () -> new com.craisinlord.antarchy.content.block.GlowcapMushroomBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.RED_MUSHROOM).lightLevel(state -> 12).randomTicks()));
+    public static final DeferredBlock<net.minecraft.world.level.block.FlowerPotBlock> POTTED_GLOWCAP_MUSHROOM = BLOCKS.register("potted_glowcap_mushroom",
+            () -> new net.minecraft.world.level.block.FlowerPotBlock(GLOWCAP_MUSHROOM.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_DANDELION).lightLevel(state -> 12)));
+
+
+    public static final DeferredBlock<net.minecraft.world.level.block.HugeMushroomBlock> GLOWCAP_MUSHROOM_BLOCK = BLOCKS.register("glowcap_mushroom_block",
+            () -> new net.minecraft.world.level.block.HugeMushroomBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.RED_MUSHROOM_BLOCK).lightLevel(state -> 13)));
 
 
     public static final DeferredBlock<CornCropBlock> CORN_CROP = BLOCKS.register("corn_crop",
@@ -994,7 +1127,8 @@ public final class AntarchyFabricBlocks {
                     AntNestBlockEntity::new,
                     RED_ANT_NEST.get(),
                     BROWN_ANT_NEST.get(),
-                    RAINBOW_ANT_NEST.get()
+                    RAINBOW_ANT_NEST.get(),
+                    TERMITE_NEST.get()
             ).build(null));
 
 
@@ -1109,6 +1243,10 @@ public final class AntarchyFabricBlocks {
         return BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERRACK);
     }
 
+    private static BlockBehaviour.Properties broodstoneProperties() {
+        return BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE).requiresCorrectToolForDrops();
+    }
+
 
 
     private static BlockBehaviour.Properties portalProperties() {
@@ -1185,9 +1323,7 @@ public final class AntarchyFabricBlocks {
 
 
     private static Block createRawStorageBlock(Block copyFrom) {
-        return new Block(BlockBehaviour.Properties.ofFullCopy(copyFrom)
-                .strength(3.5F, 6.0F)
-                .requiresCorrectToolForDrops());
+        return new Block(BlockBehaviour.Properties.ofFullCopy(copyFrom).requiresCorrectToolForDrops());
     }
 
 

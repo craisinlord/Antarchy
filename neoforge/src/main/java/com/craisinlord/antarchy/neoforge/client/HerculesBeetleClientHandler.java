@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.neoforge.client;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.client.CameraShakeClientState;
 import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
 import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
 import com.craisinlord.antarchy.content.network.HerculesBeetleJumpInputPayload;
@@ -28,6 +29,7 @@ public final class HerculesBeetleClientHandler {
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
+        CameraShakeClientState.tick();
         HerculesBeetleImpactShakeClientState.tick();
 
         Minecraft mc = Minecraft.getInstance();

@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "antarchy:block/chiten_block",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "antarchy:block/chiten_block"
+    },
+    "axis=z": {
+      "model": "antarchy:block/chiten_block",
+      "x": 90
+    }
+  }
+}

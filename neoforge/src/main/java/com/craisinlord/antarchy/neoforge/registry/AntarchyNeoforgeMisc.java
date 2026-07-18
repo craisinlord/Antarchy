@@ -12,6 +12,16 @@ import com.craisinlord.antarchy.content.effect.StinkyMobEffect;
 import com.craisinlord.antarchy.content.worldgen.ants.BrownAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.RainbowAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.RedAntNestFeature;
+import com.craisinlord.antarchy.content.worldgen.ants.TermiteNestFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBileCystFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBileVeinFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCreepvineFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynEggPatchFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWallAmberMossFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.HangingCreeprootsFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.ChitenSpikeConfiguration;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.ChitenSpikeFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.MoltingVinesFeature;
 import com.craisinlord.antarchy.content.worldgen.ocean.SeashellFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.*;
 import com.craisinlord.antarchy.neoforge.worldgen.CornPatchFeature;
@@ -151,36 +161,6 @@ public final class AntarchyNeoforgeMisc {
     public static final DeferredHolder<Potion, Potion> EXTREME_GROWING = POTIONS.register("extreme_growing",
             () -> new Potion("growing", new MobEffectInstance(GROWTH_EFFECT, 600, 2)));
 
-    // Fluid types
-    public static final DeferredHolder<FluidType, FluidType> BILE_TYPE = FLUID_TYPES.register("bile",
-            () -> new FluidType(FluidType.Properties.create()
-                    .descriptionId("block.antarchy.bile")
-                    .fallDistanceModifier(0.0F)
-                    .supportsBoating(true)
-                    .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
-                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)
-                    .density(1100)
-                    .viscosity(1200)));
-    public static final DeferredHolder<FluidType, FluidType> ICHOR_TYPE = FLUID_TYPES.register("ichor",
-            () -> new FluidType(FluidType.Properties.create()
-                    .descriptionId("block.antarchy.ichor")
-                    .fallDistanceModifier(0.0F)
-                    .supportsBoating(true)
-                    .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
-                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)
-                    .density(1200)
-                    .viscosity(1400)));
-    public static final DeferredHolder<FluidType, FluidType> ANTIWATER_TYPE = FLUID_TYPES.register("antiwater",
-            () -> new AntiwaterFluidType(FluidType.Properties.create()
-                    .descriptionId("block.antarchy.antiwater")
-                    .fallDistanceModifier(0.0F)
-                    .canSwim(true)
-                    .supportsBoating(true)
-                    .sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_FILL)
-                    .sound(SoundActions.BUCKET_EMPTY, SoundEvents.BUCKET_EMPTY)
-                    .density(1000)
-                    .viscosity(1000)));
-
     // Fluids
     public static final DeferredHolder<Fluid, Fluid> BILE = FLUIDS.register("bile",
             () -> new BaseFlowingFluid.Source(bileProperties()));
@@ -238,6 +218,8 @@ public final class AntarchyNeoforgeMisc {
             () -> new BrownAntNestFeature(SimpleBlockConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, RainbowAntNestFeature> RAINBOW_ANT_NEST_FEATURE = FEATURES.register("rainbow_ant_nest",
             () -> new RainbowAntNestFeature(SimpleBlockConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, TermiteNestFeature> TERMITE_NEST_FEATURE = FEATURES.register("termite_nest",
+            () -> new TermiteNestFeature(SimpleBlockConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, OuranwoodTreeFeature> OURANWOOD_LARGE_TREE = FEATURES.register("ouranwood_large_tree",
             () -> new OuranwoodTreeFeature(OuranwoodTreeConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, OuranwoodTreeFeature> OURANWOOD_YOUNG_TREE = FEATURES.register("ouranwood_young_tree",
@@ -316,6 +298,26 @@ public final class AntarchyNeoforgeMisc {
             () -> new ThoraxisSpikeFeature(ThoraxisSpikeConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, NyxiteSpikeFeature> NYXITE_SPIKES = FEATURES.register("nyxite_spikes",
             () -> new NyxiteSpikeFeature(NyxiteSpikeConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, ChitenSpikeFeature> CAVARYN_CHITEN_SPIKES = FEATURES.register("cavaryn_chiten_spikes",
+            () -> new ChitenSpikeFeature(ChitenSpikeConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, CavarynBileVeinFeature> CAVARYN_BILE_VEINS = FEATURES.register("cavaryn_bile_veins",
+            () -> new CavarynBileVeinFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, CavarynBileCystFeature> CAVARYN_BILE_CYSTS = FEATURES.register("cavaryn_bile_cysts",
+            () -> new CavarynBileCystFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, CavarynCreepvineFeature> CAVARYN_CREEPVINE = FEATURES.register("cavaryn_creepvine",
+            () -> new CavarynCreepvineFeature(NoneFeatureConfiguration.CODEC));
+
+    public static final DeferredHolder<Feature<?>, HangingCreeprootsFeature> HANGING_CREEPROOTS = FEATURES.register("hanging_creeproots",
+            () -> new HangingCreeprootsFeature(NoneFeatureConfiguration.CODEC));
+
+    public static final DeferredHolder<Feature<?>, MoltingVinesFeature> MOLTING_VINES = FEATURES.register("molting_vines",
+            () -> new MoltingVinesFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.cavaryn.JumpyBugEggCeilingFeature> JUMPY_BUG_EGG_CEILING = FEATURES.register("jumpy_bug_egg_ceiling",
+            () -> new com.craisinlord.antarchy.content.worldgen.cavaryn.JumpyBugEggCeilingFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.cavaryn.RollyCavesGiantCavernFeature> ROLLY_CAVES_GIANT_CAVERN = FEATURES.register("rolly_caves_giant_cavern",
+            () -> new com.craisinlord.antarchy.content.worldgen.cavaryn.RollyCavesGiantCavernFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, CavarynWallAmberMossFeature> CAVARYN_WALL_AMBER_MOSS = FEATURES.register("cavaryn_wall_amber_moss",
+            () -> new CavarynWallAmberMossFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, AntiwaterSpringsFeature> ANTIWATER_SPRINGS = FEATURES.register("antiwater_springs",
             () -> new AntiwaterSpringsFeature(AntiwaterSpringsConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, PotentNyxiteFeature> POTENT_NYXITE_FEATURE = FEATURES.register("potent_nyxite",
@@ -328,6 +330,12 @@ public final class AntarchyNeoforgeMisc {
             () -> new BedBugNestFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, BedBugSurfaceClusterFeature> BED_BUG_SURFACE_CLUSTER = FEATURES.register("bed_bug_surface_cluster",
             () -> new BedBugSurfaceClusterFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, CavarynEggPatchFeature> CAVARYN_TERROR_EGG_PATCH = FEATURES.register("cavaryn_terror_egg_patch",
+            () -> new CavarynEggPatchFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.mushroom.GlowcapHugeMushroomFeature> HUGE_GLOWCAP_MUSHROOM = FEATURES.register("huge_glowcap_mushroom",
+            () -> new com.craisinlord.antarchy.content.worldgen.mushroom.GlowcapHugeMushroomFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.mushroom.GlowcapHugeMushroomWorldgenFeature> HUGE_GLOWCAP_MUSHROOM_WORLDGEN = FEATURES.register("huge_glowcap_mushroom_worldgen",
+            () -> new com.craisinlord.antarchy.content.worldgen.mushroom.GlowcapHugeMushroomWorldgenFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, ThoraxisAntiwaterPoolFeature> THORAXIS_ANTIWATER_POOL = FEATURES.register("thoraxis_antiwater_pool",
             () -> new ThoraxisAntiwaterPoolFeature(ThoraxisAntiwaterPoolConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, LucidAntiwaterPoolFeature> LUCID_ANTIWATER_POOL = FEATURES.register("lucid_antiwater_pool",
@@ -365,7 +373,7 @@ public final class AntarchyNeoforgeMisc {
 
 
     static BaseFlowingFluid.Properties ichorProperties() {
-        return new BaseFlowingFluid.Properties(ICHOR_TYPE, ICHOR, FLOWING_ICHOR)
+        return new BaseFlowingFluid.Properties(com.craisinlord.antarchy.neoforge.AntarchyNeoForgeFluidTypes.ICHOR_TYPE, ICHOR, FLOWING_ICHOR)
                 .bucket(() -> AntarchyNeoforgeItems.ICHOR_BUCKET.get())
                 .block(() -> AntarchyNeoforgeBlocks.ICHOR_BLOCK.get())
                 .slopeFindDistance(4)
@@ -374,7 +382,7 @@ public final class AntarchyNeoforgeMisc {
     }
 
     static BaseFlowingFluid.Properties bileProperties() {
-        return new BaseFlowingFluid.Properties(BILE_TYPE, BILE, FLOWING_BILE)
+        return new BaseFlowingFluid.Properties(com.craisinlord.antarchy.neoforge.AntarchyNeoForgeFluidTypes.BILE_TYPE, BILE, FLOWING_BILE)
                 .bucket(() -> AntarchyNeoforgeItems.BILE_BUCKET.get())
                 .block(() -> AntarchyNeoforgeBlocks.BILE_BLOCK.get())
                 .slopeFindDistance(4)
@@ -383,7 +391,7 @@ public final class AntarchyNeoforgeMisc {
     }
 
     static BaseFlowingFluid.Properties antiwaterProperties() {
-        return new BaseFlowingFluid.Properties(ANTIWATER_TYPE, ANTIWATER, FLOWING_ANTIWATER)
+        return new BaseFlowingFluid.Properties(com.craisinlord.antarchy.neoforge.AntarchyNeoForgeFluidTypes.ANTIWATER_TYPE, ANTIWATER, FLOWING_ANTIWATER)
                 .bucket(() -> AntarchyNeoforgeItems.ANTIWATER_BUCKET.get())
                 .block(() -> AntarchyNeoforgeBlocks.ANTIWATER_BLOCK.get())
                 .slopeFindDistance(4)

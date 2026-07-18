@@ -13,6 +13,7 @@ import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
 import com.craisinlord.antarchy.content.item.ScorpionWhipTetherSync;
+import com.craisinlord.antarchy.content.network.ImpactShakeSync;
 import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakeSync;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
 import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
@@ -117,8 +118,8 @@ public final class AntarchyFabricContent {
                 () -> AntarchyFabricBlocks.ELYTHIA_PORTAL.get(),
                 () -> AntarchyFabricBlocks.NYXITE.get(),
                 () -> AntarchyFabricBlocks.THORAXIS_PORTAL.get(),
-                () -> AntarchyFabricBlocks.NYXITE.get(),
-                () -> AntarchyFabricBlocks.THORAXIS_PORTAL.get()
+                () -> AntarchyFabricBlocks.MYRMITE.get(),
+                () -> AntarchyFabricBlocks.CAVARYN_PORTAL.get()
         );
 
         AntarchySoundEvents.bind(
@@ -245,14 +246,30 @@ public final class AntarchyFabricContent {
                 AntarchyFabricSounds.TORETERROR_JUMP_UP,
                 AntarchyFabricSounds.TORETERROR_JUMP_LAND,
                 AntarchyFabricSounds.STINKY_FLY_SOUND,
-                AntarchyFabricSounds.ANT_IDLE,
-                AntarchyFabricSounds.ANT_HURT,
-                AntarchyFabricSounds.ANT_BITE,
-                AntarchyFabricSounds.ANT_IDLE,
-                AntarchyFabricSounds.ANT_HURT,
-                AntarchyFabricSounds.ANT_BITE,
-                AntarchyFabricSounds.ANT_IDLE,
-                AntarchyFabricSounds.DUCT_TAPE_USE
+                AntarchyFabricSounds.STINK_BUG_FART,
+                AntarchyFabricSounds.STINK_BUG_IDLE,
+                AntarchyFabricSounds.ROLLY_POLLY_IDLE,
+                AntarchyFabricSounds.CREEPING_HORROR_GROWL,
+                AntarchyFabricSounds.CREEPING_HORROR_HURT,
+                AntarchyFabricSounds.CREEPING_HORROR_BITE,
+                AntarchyFabricSounds.LURKING_TERROR_SNARL,
+                AntarchyFabricSounds.LURKING_TERROR_HURT,
+                AntarchyFabricSounds.LURKING_TERROR_BITE,
+                AntarchyFabricSounds.LURKING_TERROR_FLY_LOOP,
+                AntarchyFabricSounds.DUCT_TAPE_USE,
+                AntarchyFabricSounds.HERCULES_BEETLE_IDLE,
+                AntarchyFabricSounds.HERCULES_BEETLE_HURT,
+                AntarchyFabricSounds.HERCULES_BEETLE_ATTACK,
+                AntarchyFabricSounds.HERCULES_BEETLE_CRY,
+                AntarchyFabricSounds.HERCULES_BEETLE_CHARGE_START,
+                AntarchyFabricSounds.HERCULES_BEETLE_KNOCKED_DOWN,
+                AntarchyFabricSounds.JUMPY_BUG_IDLE,
+                AntarchyFabricSounds.SPIT_BUG_IDLE,
+                AntarchyFabricSounds.JUMPY_BUG_HURT,
+                AntarchyFabricSounds.JUMPY_BUG_JUMP,
+                AntarchyFabricSounds.SPIT_BUG_HURT,
+                AntarchyFabricSounds.SPIT_BUG_SPIT,
+                AntarchyFabricSounds.BRUTALFLY_SPIT
         );
 
         AntarchyObjects.setOctopusBomb(AntarchyFabricEntities.OCTOPUS_BOMB);
@@ -311,9 +328,9 @@ public final class AntarchyFabricContent {
                 AntarchyFabricEntities.HUSH_PROJECTILE,
                 AntarchyFabricEntities.TORETERROR,
                 AntarchyFabricEntities.WATER_BOMB,
-                (java.util.function.Supplier) AntarchyFabricEntities.BOMBER,
-                (java.util.function.Supplier) AntarchyFabricEntities.BOMBER,
-                (java.util.function.Supplier) AntarchyFabricEntities.BED_BUG,
+                AntarchyFabricEntities.CREEPING_HORROR,
+                AntarchyFabricEntities.LURKING_TERROR,
+                AntarchyFabricEntities.STINK_BUG,
                 AntarchyFabricEntities.CHEEP,
                 AntarchyFabricEntities.DORRIE,
                 () -> AntarchyFabricBlocks.DUPLICATOR_LOG.get(),
@@ -344,8 +361,8 @@ public final class AntarchyFabricContent {
                 () -> AntarchyFabricBlocks.TRIFFID_GOO_BLOCK.get(),
                 () -> AntarchyFabricBlocks.PALE_NYXITE.get(),
                 () -> AntarchyFabricBlocks.NYXITE_SPIKE.get(),
-                () -> AntarchyFabricBlocks.NYXITE.get(),
-                () -> AntarchyFabricBlocks.NYXITE_SPIKE.get(),
+                () -> AntarchyFabricBlocks.CHITEN_BLOCK.get(),
+                () -> AntarchyFabricBlocks.CHITEN_SPIKE.get(),
                 () -> AntarchyFabricBlocks.POTENT_NYXITE.get(),
                 () -> AntarchyFabricBlocks.ANTIMETAL.get(),
                 () -> AntarchyFabricBlocks.POLISHED_ANTIMETAL.get(),
@@ -373,8 +390,8 @@ public final class AntarchyFabricContent {
                 () -> AntarchyFabricBlocks.ORANGE_MILKWEED.get(),
                 () -> AntarchyFabricBlocks.PINK_MILKWEED.get(),
                 () -> AntarchyFabricBlocks.BED_BUG_EGG.get(),
-                () -> AntarchyFabricBlocks.BED_BUG_EGG.get(),
-                () -> AntarchyFabricBlocks.BED_BUG_EGG.get(),
+                () -> AntarchyFabricBlocks.CREEPING_HORROR_EGG.get(),
+                () -> AntarchyFabricBlocks.LURKING_TERROR_EGG.get(),
                 () -> AntarchyFabricBlocks.WASP_NEST.get(),
                 () -> AntarchyFabricBlocks.HUSHWEED.get(),
                 () -> AntarchyFabricBlocks.OURANWOOD_SQUIRREL_NEST.get(),
@@ -402,6 +419,7 @@ public final class AntarchyFabricContent {
 
         ScorpionWhipTetherSync.setSink(AntarchyFabricNetworking::syncScorpionWhipTether);
         HerculesBeetleImpactShakeSync.setSink((player, ticks) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, new com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload(ticks)));
+        ImpactShakeSync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
         BloodCrystalKatanaItem.setTrailCallback(AntarchyFabricNetworking::syncKatanaTrail);
         com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.setSyncDispatcher(AntarchyFabricNetworking::syncGravityEntity);
         AntarchyFabricEvents.register();

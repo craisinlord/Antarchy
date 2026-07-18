@@ -1,7 +1,9 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import com.craisinlord.antarchy.content.item.BigBerthaItem;
 import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakeSync;
 import java.util.EnumSet;
@@ -18,6 +20,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -315,6 +318,10 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             this.flightCooldown--;
         }
 
+        if (this.isFlying() && this.tickCount % 16 == 0) {
+            this.playSound(AntarchySoundEvents.MANTIS_FLY_LOOP.get(), 0.5F, 0.85F + this.random.nextFloat() * 0.1F);
+        }
+
         if (!this.level().isClientSide && !this.isKnockedDown() && this.isInWall()) {
             this.breakBlocksForSuffocation();
         }
@@ -564,6 +571,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         this.setDeltaMovement(Vec3.ZERO);
         this.actionTicks = KNOCKED_DOWN_TICKS;
         this.setAnimationState(ANIM_KNOCKED_DOWN);
+        this.playSound(AntarchySoundEvents.HERCULES_BEETLE_KNOCKED_DOWN.get(), 1.2F, 0.9F);
     }
 
     @Override
@@ -578,6 +586,9 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
                 if (this.random.nextInt(3) == 0) {
                     this.setTame(true, true);
                     this.setOwnerUUID(player.getUUID());
+                    if (player instanceof ServerPlayer serverPlayer) {
+                        CriteriaTriggers.TAME_ANIMAL.trigger(serverPlayer, this);
+                    }
                     this.setKnockedDown(false);
                     this.heal(this.getMaxHealth());
                     this.setTarget(null);
@@ -702,7 +713,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         this.cryCooldown = CRY_COOLDOWN_TICKS;
         this.combatCryDone = true;
         this.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 200, 1));
-        this.playSound(SoundEvents.RAVAGER_ROAR, 1.5F, 0.7F);
+        this.playSound(AntarchySoundEvents.HERCULES_BEETLE_CRY.get(), 1.5F, 0.7F);
     }
 
     private void startRegularAttack(boolean flyingAttack, @Nullable LivingEntity target) {
@@ -727,14 +738,16 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
                 }
             }
         }
-        this.playSound(SoundEvents.RAVAGER_ATTACK, 1.2F, flyingAttack ? 1.1F : 0.9F);
+        this.playSound(AntarchySoundEvents.HERCULES_BEETLE_ATTACK.get(), 1.2F, flyingAttack ? 1.1F : 0.9F);
     }
 
     private boolean hurtAndLaunchTarget(LivingEntity target, float damage, double horizontalKnockback) {
         if (!this.canHarm(target)) {
             return false;
         }
-        boolean hurt = target.hurt(this.damageSources().mobAttack(this), damage);
+        boolean hurt = this.level() instanceof ServerLevel serverLevel
+                ? target.hurt(AntarchyDamageSources.herculesBeetleObliteration(serverLevel, this), damage)
+                : target.hurt(this.damageSources().mobAttack(this), damage);
         if (hurt) {
             Vec3 push = target.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
             if (push.lengthSqr() < 1.0E-4D) {
@@ -770,7 +783,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         this.pendingMountedCharge = mountedCharge;
         this.setAnimationState(ANIM_CHARGE_START);
         this.actionTicks = CHARGE_START_TICKS;
-        this.playSound(SoundEvents.ENDER_DRAGON_FLAP, 1.3F, 0.7F);
+        this.playSound(AntarchySoundEvents.HERCULES_BEETLE_CHARGE_START.get(), 1.3F, 0.7F);
     }
 
     private void beginChargeLoop() {
@@ -802,7 +815,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             if (victim == this) {
                 continue;
             }
-            if (victim.hurt(this.damageSources().mobAttack(this), damage)) {
+            if (victim.hurt(AntarchyDamageSources.herculesBeetleObliteration(serverLevel, this), damage)) {
                 Vec3 push = victim.position().subtract(this.position());
                 if (push.lengthSqr() < 1.0E-4D) {
                     push = this.chargeDirection;
@@ -1175,17 +1188,17 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return this.isKnockedDown() ? null : SoundEvents.RAVAGER_AMBIENT;
+        return this.isKnockedDown() ? null : AntarchySoundEvents.HERCULES_BEETLE_IDLE.get();
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return SoundEvents.RAVAGER_HURT;
+        return AntarchySoundEvents.HERCULES_BEETLE_HURT.get();
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.RAVAGER_DEATH;
+        return AntarchySoundEvents.HERCULES_BEETLE_HURT.get();
     }
 
     @Override

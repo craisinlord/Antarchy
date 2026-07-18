@@ -79,6 +79,8 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.DoubleValue BIG_BERTHA_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue BIG_BERTHA_REACH_BONUS;
     private static final ModConfigSpec.DoubleValue BIG_BERTHA_ATTACK_SPEED;
+    private static final ModConfigSpec.DoubleValue ATTITUDE_ADJUSTER_BASE_DAMAGE;
+    private static final ModConfigSpec.BooleanValue ATTITUDE_ADJUSTER_BREAKS_BLOCKS;
     private static final ModConfigSpec.DoubleValue KRAKENS_GRASP_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue KRAKENS_GRASP_ATTACK_SPEED;
     private static final ModConfigSpec.DoubleValue KRAKENS_GRASP_THROWN_DAMAGE;
@@ -319,6 +321,11 @@ public final class AntarchyToolsConfig {
         BIG_BERTHA_BASILISK_COOLDOWN_SECONDS         = b.comment("Cooldown in seconds after using Basilisk mode's right-click paralyze.")   .defineInRange("basiliskModeCooldownSeconds",     7.0D, 0.0D, 3600.0D);
         BIG_BERTHA_LUCID_INVERTED_DURATION_SECONDS   = b.comment("How long Lucid mode's inversion lasts on a target, in seconds.")          .defineInRange("lucidModeInvertedDurationSeconds", 3.0D, 0.0D, 3600.0D);
         BIG_BERTHA_LUCID_INVERTED_DAMAGE_BONUS_PERCENT = b.comment("Bonus damage percent from Lucid mode while the wielder is inverted.")    .defineInRange("lucidModeInvertedDamageBonusPercent", 25.0D, 0.0D, 1000.0D);
+        b.pop();
+
+        b.push("attitudeAdjuster");
+        ATTITUDE_ADJUSTER_BASE_DAMAGE = b.comment("Base attack damage of the Attitude Adjuster.").defineInRange("baseDamage", 40.0D, 0.0D, 4096.0D);
+        ATTITUDE_ADJUSTER_BREAKS_BLOCKS = b.comment("If true, player ground slams can break a small patch of blocks on impact.").define("breaksBlocks", true);
         b.pop();
 
         b.push("krakensGrasp");
@@ -584,6 +591,8 @@ public final class AntarchyToolsConfig {
     static double  bigBerthaAttackDamage()                   { return BIG_BERTHA_ATTACK_DAMAGE.get(); }
     static double  bigBerthaReachBonus()                     { return BIG_BERTHA_REACH_BONUS.get(); }
     static double  bigBerthaAttackSpeed()                    { return BIG_BERTHA_ATTACK_SPEED.get(); }
+    static double  attitudeAdjusterBaseDamage()              { return ATTITUDE_ADJUSTER_BASE_DAMAGE.get(); }
+    static boolean attitudeAdjusterBreaksBlocks()            { return ATTITUDE_ADJUSTER_BREAKS_BLOCKS.get(); }
     static int     bigBerthaBasiliskParalyzeDurationTicks()  { return BIG_BERTHA_BASILISK_PARALYZE_DURATION_TICKS.get(); }
     static int     bigBerthaKrakenSlowTicks()                { return BIG_BERTHA_KRAKEN_SLOW_TICKS.get(); }
     static double  bigBerthaBasiliskCooldownSeconds()        { return BIG_BERTHA_BASILISK_COOLDOWN_SECONDS.get(); }

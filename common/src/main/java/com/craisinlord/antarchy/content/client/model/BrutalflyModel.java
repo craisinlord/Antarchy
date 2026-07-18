@@ -6,6 +6,9 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
 
 public class BrutalflyModel extends GeoModel<BrutalflyEntity> {
+    public static final ResourceLocation EMISSIVE_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/brutalfly_emissive.png");
+
     @Override
     public ResourceLocation getModelResource(BrutalflyEntity animatable) {
         return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "geo/brutalfly.geo.json");

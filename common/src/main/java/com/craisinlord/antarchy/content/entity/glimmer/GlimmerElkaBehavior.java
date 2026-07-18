@@ -60,7 +60,7 @@ public class GlimmerElkaBehavior implements GlimmerVariantBehavior {
 
     @Override
     public ResourceLocation emissiveTexture(GlimmerEntity entity) {
-        return rl("textures/entity/glimmer/elka_glimmer_emmisive.png");
+        return rl("textures/entity/glimmer/elka_glimmer_emissive.png");
     }
 
     @Override

@@ -195,6 +195,7 @@ public final class AntarchyConfigModuleFabric {
                     || name.startsWith("ultimate")
                     || name.startsWith("battleAxe")
                     || name.startsWith("bigBertha")
+                    || name.startsWith("attitudeAdjuster")
                     || name.startsWith("scorpionWhip")
                     || name.startsWith("bloodCrystal")
                     || name.startsWith("nightmareHelmet")

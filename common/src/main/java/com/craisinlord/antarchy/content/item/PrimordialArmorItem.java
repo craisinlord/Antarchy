@@ -27,7 +27,7 @@ public class PrimordialArmorItem extends ArmorItem {
     private final Type armorType;
 
     public PrimordialArmorItem(Holder<ArmorMaterial> material, Type type, Properties properties) {
-        super(material, type, properties);
+        super(material, type, properties.stacksTo(1).durability(resolveDurability(type)));
         this.armorType = type;
     }
 
@@ -139,6 +139,15 @@ public class PrimordialArmorItem extends ArmorItem {
             case CHESTPLATE, BODY -> 0.30D;
             case LEGGINGS -> 0.30D;
             case BOOTS -> 0.20D;
+        };
+    }
+
+    private static int resolveDurability(Type armorType) {
+        return switch (armorType) {
+            case HELMET -> Type.HELMET.getDurability(37);
+            case CHESTPLATE, BODY -> Type.CHESTPLATE.getDurability(37);
+            case LEGGINGS -> Type.LEGGINGS.getDurability(37);
+            case BOOTS -> Type.BOOTS.getDurability(37);
         };
     }
 }

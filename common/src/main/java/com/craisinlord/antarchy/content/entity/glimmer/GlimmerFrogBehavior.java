@@ -91,7 +91,7 @@ public class GlimmerFrogBehavior implements GlimmerVariantBehavior {
 
     @Override
     public ResourceLocation emissiveTexture(GlimmerEntity entity) {
-        return rl("textures/entity/glimmer/frog_glimmer_emmisive.png");
+        return rl("textures/entity/glimmer/frog_glimmer_emissive.png");
     }
 
     @Override

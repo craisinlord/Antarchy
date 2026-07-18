@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.neoforge;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.network.ImpactShakeSync;
 import com.craisinlord.antarchy.config.ConfigResetGuard;
 import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakeSync;
@@ -26,6 +27,7 @@ public final class AntarchyConfigModuleNeoforge {
         modContainer.registerConfig(ModConfig.Type.COMMON, AntarchyToolsConfig.SPEC, "antarchy/antarchy_tools.toml");
         modContainer.registerConfig(ModConfig.Type.COMMON, AntarchyMiscConfig.SPEC,  "antarchy/antarchy_misc.toml");
         HerculesBeetleImpactShakeSync.setSink((player, ticks) -> PacketDistributor.sendToPlayer(player, new HerculesBeetleImpactShakePayload(ticks)));
+        ImpactShakeSync.setSink(PacketDistributor::sendToPlayer);
         AntarchyNeoforge.modEventBusTempHolder.addListener(AntarchyConfigModuleNeoforge::onConfigChange);
     }
 
@@ -254,6 +256,8 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setBigBerthaAttackDamage(AntarchyToolsConfig.bigBerthaAttackDamage());
         AntarchySettings.setBigBerthaReachBonus(AntarchyToolsConfig.bigBerthaReachBonus());
         AntarchySettings.setBigBerthaAttackSpeed(AntarchyToolsConfig.bigBerthaAttackSpeed());
+        AntarchySettings.setAttitudeAdjusterBaseDamage(AntarchyToolsConfig.attitudeAdjusterBaseDamage());
+        AntarchySettings.setAttitudeAdjusterBreaksBlocks(AntarchyToolsConfig.attitudeAdjusterBreaksBlocks());
         AntarchySettings.setBigBerthaBasiliskParalyzeDurationTicks(AntarchyToolsConfig.bigBerthaBasiliskParalyzeDurationTicks());
         AntarchySettings.setBigBerthaKrakenSlowTicks(AntarchyToolsConfig.bigBerthaKrakenSlowTicks());
         AntarchySettings.setBigBerthaBasiliskCooldownSeconds(AntarchyToolsConfig.bigBerthaBasiliskCooldownSeconds());

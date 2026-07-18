@@ -150,6 +150,9 @@ public class AntarchyNeoforge {
                 AntarchyNeoforgeSounds.TORETERROR_JUMP_UP,
                 AntarchyNeoforgeSounds.TORETERROR_JUMP_LAND,
                 AntarchyNeoforgeSounds.STINKY_FLY,
+                AntarchyNeoforgeSounds.STINK_BUG_FART,
+                AntarchyNeoforgeSounds.STINK_BUG_IDLE,
+                AntarchyNeoforgeSounds.ROLLY_POLLY_IDLE,
                 AntarchyNeoforgeSounds.CREEPING_HORROR_GROWL,
                 AntarchyNeoforgeSounds.CREEPING_HORROR_HURT,
                 AntarchyNeoforgeSounds.CREEPING_HORROR_BITE,
@@ -157,7 +160,20 @@ public class AntarchyNeoforge {
                 AntarchyNeoforgeSounds.LURKING_TERROR_HURT,
                 AntarchyNeoforgeSounds.LURKING_TERROR_BITE,
                 AntarchyNeoforgeSounds.LURKING_TERROR_FLY_LOOP,
-                AntarchyNeoforgeSounds.DUCT_TAPE_USE
+                AntarchyNeoforgeSounds.DUCT_TAPE_USE,
+                AntarchyNeoforgeSounds.HERCULES_BEETLE_IDLE,
+                AntarchyNeoforgeSounds.HERCULES_BEETLE_HURT,
+                AntarchyNeoforgeSounds.HERCULES_BEETLE_ATTACK,
+                AntarchyNeoforgeSounds.HERCULES_BEETLE_CRY,
+                AntarchyNeoforgeSounds.HERCULES_BEETLE_CHARGE_START,
+                AntarchyNeoforgeSounds.HERCULES_BEETLE_KNOCKED_DOWN,
+                AntarchyNeoforgeSounds.JUMPY_BUG_IDLE,
+                AntarchyNeoforgeSounds.SPIT_BUG_IDLE,
+                AntarchyNeoforgeSounds.JUMPY_BUG_HURT,
+                AntarchyNeoforgeSounds.JUMPY_BUG_JUMP,
+                AntarchyNeoforgeSounds.SPIT_BUG_HURT,
+                AntarchyNeoforgeSounds.SPIT_BUG_SPIT,
+                AntarchyNeoforgeSounds.BRUTALFLY_SPIT
         );
         bindCommonObjects();
         ScorpionWhipTetherSync.setSink((player, targetId) -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(
@@ -192,8 +208,8 @@ public class AntarchyNeoforge {
                 () -> AntarchyNeoforgeBlocks.ELYTHIA_PORTAL.get(),
                 () -> AntarchyNeoforgeBlocks.NYXITE.get(),
                 () -> AntarchyNeoforgeBlocks.THORAXIS_PORTAL.get(),
-                () -> AntarchyNeoforgeBlocks.NYXITE.get(),
-                () -> AntarchyNeoforgeBlocks.THORAXIS_PORTAL.get()
+                () -> AntarchyNeoforgeBlocks.MYRMITE.get(),
+                () -> AntarchyNeoforgeBlocks.CAVARYN_PORTAL.get()
         );
         AntarchyObjects.bind(
                 AntarchyNeoforgeEntites.EASTER_BUNNY,
@@ -215,9 +231,9 @@ public class AntarchyNeoforge {
                 AntarchyNeoforgeEntites.HUSH_PROJECTILE,
                 AntarchyNeoforgeEntites.TORETERROR,
                 AntarchyNeoforgeEntites.WATER_BOMB,
-                (java.util.function.Supplier) AntarchyNeoforgeEntites.BOMBER,
-                (java.util.function.Supplier) AntarchyNeoforgeEntites.BOMBER,
-                (java.util.function.Supplier) AntarchyNeoforgeEntites.BED_BUG,
+                AntarchyNeoforgeEntites.CREEPING_HORROR,
+                AntarchyNeoforgeEntites.LURKING_TERROR,
+                AntarchyNeoforgeEntites.STINK_BUG,
                 AntarchyNeoforgeEntites.CHEEP,
                 AntarchyNeoforgeEntites.DORRIE,
                 () -> AntarchyNeoforgeBlocks.DUPLICATOR_LOG.get(),
@@ -248,8 +264,8 @@ public class AntarchyNeoforge {
                 () -> AntarchyNeoforgeBlocks.TRIFFID_GOO_BLOCK.get(),
                 () -> AntarchyNeoforgeBlocks.PALE_NYXITE.get(),
                 () -> AntarchyNeoforgeBlocks.NYXITE_SPIKE.get(),
-                () -> AntarchyNeoforgeBlocks.NYXITE.get(),
-                () -> AntarchyNeoforgeBlocks.NYXITE_SPIKE.get(),
+                () -> AntarchyNeoforgeBlocks.CHITEN_BLOCK.get(),
+                () -> AntarchyNeoforgeBlocks.CHITEN_SPIKE.get(),
                 () -> AntarchyNeoforgeBlocks.POTENT_NYXITE.get(),
                 () -> AntarchyNeoforgeBlocks.ANTIMETAL.get(),
                 () -> AntarchyNeoforgeBlocks.POLISHED_ANTIMETAL.get(),
@@ -277,8 +293,8 @@ public class AntarchyNeoforge {
                 () -> AntarchyNeoforgeBlocks.ORANGE_MILKWEED.get(),
                 () -> AntarchyNeoforgeBlocks.PINK_MILKWEED.get(),
                 () -> AntarchyNeoforgeBlocks.BED_BUG_EGG.get(),
-                () -> AntarchyNeoforgeBlocks.BED_BUG_EGG.get(),
-                () -> AntarchyNeoforgeBlocks.BED_BUG_EGG.get(),
+                () -> AntarchyNeoforgeBlocks.CREEPING_HORROR_EGG.get(),
+                () -> AntarchyNeoforgeBlocks.LURKING_TERROR_EGG.get(),
                 () -> AntarchyNeoforgeBlocks.WASP_NEST.get(),
                 () -> AntarchyNeoforgeBlocks.HUSHWEED.get(),
                 () -> AntarchyNeoforgeBlocks.OURANWOOD_SQUIRREL_NEST.get(),

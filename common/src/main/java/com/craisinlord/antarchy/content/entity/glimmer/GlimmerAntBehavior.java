@@ -57,7 +57,7 @@ public class GlimmerAntBehavior implements GlimmerVariantBehavior {
 
     @Override
     public ResourceLocation emissiveTexture(GlimmerEntity entity) {
-        return rl("textures/entity/glimmer/glimmer_ant_emmisive.png");
+        return rl("textures/entity/glimmer/glimmer_ant_emissive.png");
     }
 
     @Override

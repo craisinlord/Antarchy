@@ -628,6 +628,15 @@ public final class AntarchyFabricSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> STINKY_FLY_SOUND = registerSoundEvent("stinky_fly");
 
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> STINK_BUG_FART = registerSoundEvent("stink_bug_fart");
+
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> STINK_BUG_IDLE = registerSoundEvent("stink_bug_idle");
+
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> ROLLY_POLLY_IDLE = registerSoundEvent("rolly_polly_idle");
+
+
     public static final DeferredHolder<SoundEvent, SoundEvent> CREEPING_HORROR_GROWL = registerSoundEvent("creeping_horror_growl");
 
 
@@ -647,6 +656,19 @@ public final class AntarchyFabricSounds {
 
 
     public static final DeferredHolder<SoundEvent, SoundEvent> LURKING_TERROR_FLY_LOOP = registerSoundEvent("lurking_terror_fly_loop");
+    public static final DeferredHolder<SoundEvent, SoundEvent> HERCULES_BEETLE_IDLE = registerSoundEvent("hercules_beetle_idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> HERCULES_BEETLE_HURT = registerSoundEvent("hercules_beetle_hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> HERCULES_BEETLE_ATTACK = registerSoundEvent("hercules_beetle_attack");
+    public static final DeferredHolder<SoundEvent, SoundEvent> HERCULES_BEETLE_CRY = registerSoundEvent("hercules_beetle_cry");
+    public static final DeferredHolder<SoundEvent, SoundEvent> HERCULES_BEETLE_CHARGE_START = registerSoundEvent("hercules_beetle_charge_start");
+    public static final DeferredHolder<SoundEvent, SoundEvent> HERCULES_BEETLE_KNOCKED_DOWN = registerSoundEvent("hercules_beetle_knocked_down");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JUMPY_BUG_IDLE = registerSoundEvent("jumpy_bug_idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SPIT_BUG_IDLE = registerSoundEvent("spit_bug_idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JUMPY_BUG_HURT = registerSoundEvent("jumpy_bug_hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JUMPY_BUG_JUMP = registerSoundEvent("jumpy_bug_jump");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SPIT_BUG_HURT = registerSoundEvent("spit_bug_hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SPIT_BUG_SPIT = registerSoundEvent("spit_bug_spit");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BRUTALFLY_SPIT = registerSoundEvent("brutalfly_spit");
 
 
     public static final DeferredHolder<SoundEvent, SoundEvent> DUCT_TAPE_USE = registerSoundEvent("duct_tape_use");

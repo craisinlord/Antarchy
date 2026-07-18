@@ -45,7 +45,8 @@ public final class CreativeTabOrder {
                  "cut_dream_sandstone_slab" -> 4;
             case "umbral_moss_block", "umbral_moss_carpet",
                  "blush_moss_block", "blush_moss_carpet" -> 4;
-            case "uranium_ore", "deepslate_uranium_ore", "titanium_ore", "deepslate_titanium_ore",
+            case "uranium_ore", "deepslate_uranium_ore", "broodstone_uranium_ore",
+                 "titanium_ore", "deepslate_titanium_ore", "broodstone_titanium_ore",
                  "uranium_block", "titanium_block",
                  "cut_uranium", "cut_titanium", "cut_uranium_slab", "cut_titanium_slab",
                  "cut_uranium_stairs", "cut_titanium_stairs",
@@ -56,10 +57,15 @@ public final class CreativeTabOrder {
                  "raw_uranium_block", "raw_titanium_block" -> 7;
             case "blood_crystal_block", "small_blood_crystal_bud", "medium_blood_crystal_bud",
                  "large_blood_crystal_bud", "budding_blood_crystal", "blood_crystal_cluster",
-                 "myrmite", "broodstone", "chiten_block", "chiten_spike", "amber_moss_block", "amber_moss_carpet" -> 8;
+                 "myrmite", "broodstone", "polished_broodstone", "chiseled_broodstone", "broodstone_bricks",
+                 "broodstone_stairs", "broodstone_slab", "broodstone_wall",
+                 "polished_broodstone_stairs", "polished_broodstone_slab", "polished_broodstone_wall",
+                 "broodstone_brick_stairs", "broodstone_brick_slab", "broodstone_brick_wall",
+                 "chiten_block", "chiten_spike", "amber_moss_block", "amber_moss_carpet",
+                 "glowcap_mushroom", "glowcap_mushroom_block" -> 8;
             case "ouranwood_leaves", "peach_leaves" -> 9;
             case "duplicator_sapling", "ouranwood_acorn", "peach_sapling", "corn_seeds" -> 10;
-            case "orange_milkweed", "pink_milkweed", "camellia", "spider_lily", "lotus", "hushweed", "amber_lichen", "creepvine",
+            case "orange_milkweed", "pink_milkweed", "camellia", "spider_lily", "lotus", "hushweed", "hanging_creeproots", "molting_vines", "amber_lichen", "creepvine",
                  "triffid_goo_block", "cloud_block", "wasp_nest",
                  "red_ant_nest", "brown_ant_nest", "rainbow_ant_nest", "termite_nest",
                  "star_coral", "star_coral_fan", "star_coral_block",
@@ -67,14 +73,14 @@ public final class CreativeTabOrder {
             case "dream_torch", "dream_lantern", "dream_campfire", "dream_fire", "dream_fire_ceiling",
                  "lumen_froglight", "roseate_froglight" -> 12;
             case "antimetal_scaffolding" -> 13;
-            case "infested_rooted_dirt", "infested_coarse_dirt", "bed_bug_egg" -> 14;
+            case "infested_rooted_dirt", "infested_coarse_dirt", "bed_bug_egg", "creeping_horror_egg", "lurking_terror_egg", "jumpy_bug_egg" -> 14;
             case "ultimate_pickaxe", "ultimate_axe", "ultimate_shovel", "ultimate_hoe",
                  "duct_tape", "diamond_minecart", "critter_cage", "gravity_sculk_sensor", "miners_dream" -> 15;
             case "bile_bucket", "ichor_bucket", "antiwater_bucket", "cloud_bucket", "lumen_bucket" -> 16;
             case "moggles", "brutalfly_elytra", "fallen_king_crown", "jumpy_boots" -> 17;
             case "battle_axe", "basilisk_dagger", "squidzooka", "rpo_launcher", "shrink_ray", "growth_ray",
                  "gravity_gun", "water_cannon", "nightmare_sword", "lucid_pearl", "scorpion_whip", "blood_crystal_katana",
-                 "big_bertha", "big_bertha_blade", "big_bertha_handle", "big_bertha_hilt",
+                 "attitude_adjuster", "big_bertha", "big_bertha_blade", "big_bertha_handle", "big_bertha_hilt",
                  "ultimate_sword", "ultimate_mace", "krakens_grasp" -> 18;
             case "primordial_helmet", "primordial_chestplate",
                  "primordial_leggings", "primordial_boots",
@@ -87,12 +93,12 @@ public final class CreativeTabOrder {
             case "ultimate_bow", "ultimate_crossbow" -> 20;
             case "cloud_shark_fin_soup", "mud_pie", "peach_pie", "cornbread", "popcorn", "rainbow_sugar",
                  "blood_crystal_apple", "spirit_apple", "peach", "raw_corndog", "cooked_corndog",
-                 "raw_venison", "cooked_venison" -> 21;
+                 "raw_venison", "cooked_venison", "raw_bug_meat", "cooked_bug_meat", "broodfruit" -> 21;
             case "blood_crystal_shard", "cloud_shark_fin", "basilisk_fang", "kraken_tooth", "kraken_tentacle",
                  "emperor_scorpion_stinger", "nightmare_scale", "molevore_nose",
                  "moleworm", "uranium_nugget", "titanium_nugget",
                  "uranium_ingot", "titanium_ingot", "lucid_eye",
-                 "mantis_claw", "jumpy_bug_leg", "brutalfly_wing", "cornea_ear",
+                 "mantis_claw", "hercules_horn", "jumpy_bug_leg", "brutalfly_wing", "cornea_ear",
                  "primordial_scute", "triffid_goo", "vortex_eye",
                  "king_scale", "queen_scale", "chiten", "stink_bug", "corn", "high_fructose_corn_syrup" -> 22;
             case "reverie_bottle", "glimmer_bottle", "root_beer" -> 24;
@@ -102,7 +108,7 @@ public final class CreativeTabOrder {
                  "moleworm_spawn_egg", "mantis_spawn_egg", "alpha_mantis_spawn_egg", "rolly_polly_spawn_egg",
                  "molevore_spawn_egg", "triffid_spawn_egg", "apple_cow_spawn_egg", "golden_apple_cow_spawn_egg",
                  "enchanted_golden_apple_cow_spawn_egg", "dr_trayaurus_spawn_egg", "wasp_spawn_egg",
-                 "bomber_spawn_egg", "jumpy_bug_spawn_egg", "stink_bug_spawn_egg", "cloud_shark_spawn_egg",
+                 "bomber_spawn_egg", "jumpy_bug_spawn_egg", "spit_bug_spawn_egg", "stink_bug_spawn_egg", "cloud_shark_spawn_egg",
                  "kraken_spawn_egg", "missile_squid_spawn_egg", "octopus_bomb_spawn_egg",
                  "nightmare_spawn_egg", "bed_bug_spawn_egg", "lucid_spawn_egg", "scorpion_spawn_egg",
                  "basilisk_spawn_egg", "emperor_scorpion_spawn_egg", "toreterror_spawn_egg",
@@ -163,6 +169,8 @@ public final class CreativeTabOrder {
             case "camellia" -> 2;
             case "spider_lily" -> 3;
             case "hushweed" -> 4;
+            case "hanging_creeproots" -> 21;
+            case "molting_vines" -> 22;
             case "amber_lichen" -> 5;
             case "creepvine" -> 6;
             case "triffid_goo_block" -> 7;
@@ -187,14 +195,30 @@ public final class CreativeTabOrder {
             case "blood_crystal_cluster" -> 5;
             case "myrmite" -> 6;
             case "broodstone" -> 7;
-            case "chiten_block" -> 8;
-            case "chiten_spike" -> 9;
-            case "amber_moss_block" -> 10;
-            case "amber_moss_carpet" -> 11;
+            case "polished_broodstone" -> 8;
+            case "chiseled_broodstone" -> 9;
+            case "broodstone_bricks" -> 10;
+            case "broodstone_stairs" -> 11;
+            case "broodstone_slab" -> 12;
+            case "broodstone_wall" -> 13;
+            case "polished_broodstone_stairs" -> 14;
+            case "polished_broodstone_slab" -> 15;
+            case "polished_broodstone_wall" -> 16;
+            case "broodstone_brick_stairs" -> 17;
+            case "broodstone_brick_slab" -> 18;
+            case "broodstone_brick_wall" -> 19;
+            case "chiten_block" -> 20;
+            case "chiten_spike" -> 21;
+            case "amber_moss_block" -> 22;
+            case "amber_moss_carpet" -> 23;
+            case "glowcap_mushroom" -> 24;
+            case "glowcap_mushroom_block" -> 25;
             case "uranium_ore" -> 0;
             case "deepslate_uranium_ore" -> 1;
-            case "titanium_ore" -> 2;
-            case "deepslate_titanium_ore" -> 3;
+            case "broodstone_uranium_ore" -> 2;
+            case "titanium_ore" -> 3;
+            case "deepslate_titanium_ore" -> 4;
+            case "broodstone_titanium_ore" -> 5;
             case "uranium_block" -> 4;
             case "titanium_block" -> 5;
             case "cut_uranium" -> 6;
@@ -256,16 +280,17 @@ public final class CreativeTabOrder {
             case "gravity_gun" -> 6;
             case "water_cannon" -> 7;
             case "nightmare_sword" -> 8;
-            case "lucid_pearl" -> 9;
-            case "scorpion_whip" -> 10;
-            case "blood_crystal_katana" -> 11;
-            case "big_bertha" -> 12;
-            case "big_bertha_blade" -> 13;
-            case "big_bertha_handle" -> 14;
-            case "big_bertha_hilt" -> 15;
-            case "ultimate_sword" -> 16;
-            case "ultimate_mace" -> 17;
-            case "krakens_grasp" -> 18;
+            case "attitude_adjuster" -> 9;
+            case "lucid_pearl" -> 10;
+            case "scorpion_whip" -> 11;
+            case "blood_crystal_katana" -> 12;
+            case "big_bertha" -> 13;
+            case "big_bertha_blade" -> 14;
+            case "big_bertha_handle" -> 15;
+            case "big_bertha_hilt" -> 16;
+            case "ultimate_sword" -> 17;
+            case "ultimate_mace" -> 18;
+            case "krakens_grasp" -> 19;
             case "primordial_helmet" -> 0;
             case "primordial_chestplate" -> 1;
             case "primordial_leggings" -> 2;
@@ -294,6 +319,9 @@ public final class CreativeTabOrder {
             case "cooked_corndog" -> 7;
             case "raw_venison" -> 8;
             case "cooked_venison" -> 9;
+            case "raw_bug_meat" -> 10;
+            case "cooked_bug_meat" -> 11;
+            case "broodfruit" -> 12;
             case "blood_crystal_apple" -> 10;
             case "spirit_apple" -> 11;
             case "peach" -> 12;
@@ -315,18 +343,19 @@ public final class CreativeTabOrder {
             case "titanium_ingot" -> 12;
             case "lucid_eye" -> 13;
             case "mantis_claw" -> 14;
-            case "jumpy_bug_leg" -> 15;
-            case "brutalfly_wing" -> 16;
-            case "cornea_ear" -> 17;
-            case "primordial_scute" -> 18;
-            case "triffid_goo" -> 19;
-            case "vortex_eye" -> 20;
-            case "king_scale" -> 21;
-            case "queen_scale" -> 22;
-            case "chiten" -> 23;
-            case "stink_bug" -> 24;
-            case "corn" -> 25;
-            case "high_fructose_corn_syrup" -> 26;
+            case "hercules_horn" -> 15;
+            case "jumpy_bug_leg" -> 16;
+            case "brutalfly_wing" -> 17;
+            case "cornea_ear" -> 18;
+            case "primordial_scute" -> 19;
+            case "triffid_goo" -> 20;
+            case "vortex_eye" -> 21;
+            case "king_scale" -> 22;
+            case "queen_scale" -> 23;
+            case "chiten" -> 24;
+            case "stink_bug" -> 25;
+            case "corn" -> 26;
+            case "high_fructose_corn_syrup" -> 27;
             default -> 0;
         };
     }

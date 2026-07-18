@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "hanging=false,rotated=false": {
+      "model": "antarchy:block/jumpy_bug_egg"
+    },
+    "hanging=false,rotated=true": {
+      "model": "antarchy:block/jumpy_bug_egg",
+      "y": 90
+    },
+    "hanging=true,rotated=false": {
+      "model": "antarchy:block/jumpy_bug_egg",
+      "x": 180
+    },
+    "hanging=true,rotated=true": {
+      "model": "antarchy:block/jumpy_bug_egg",
+      "x": 180,
+      "y": 90
+    }
+  }
+}

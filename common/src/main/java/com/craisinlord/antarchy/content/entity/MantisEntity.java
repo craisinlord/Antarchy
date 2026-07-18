@@ -268,8 +268,6 @@ public class MantisEntity extends Monster implements GeoEntity {
 
     @Override
     public void setYBodyRot(float yBodyRot) {
-        // Only sync yRot from body rotation during flight — on the ground this
-        // conflicted with navigation and contributed to post-attack spinning
         if (this.isFlyingNow()) {
             this.setYRot(yBodyRot);
         }
@@ -330,8 +328,6 @@ public class MantisEntity extends Monster implements GeoEntity {
     }
 
     private void updateFlightRotation() {
-        // Only override rotation during actual flight — on the ground this fought the
-        // navigation system, causing the mantis to spin 180° after each attack
         if (!this.isFlyingNow()) {
             return;
         }

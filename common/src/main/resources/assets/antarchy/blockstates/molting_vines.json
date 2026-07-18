@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "growth_direction=up,top_cap=true,bottom_cap=false,broodfruit=false": {
+      "model": "antarchy:block/molting_vines_top"
+    },
+    "growth_direction=up,top_cap=false,bottom_cap=false,broodfruit=false": {
+      "model": "antarchy:block/molting_vines"
+    },
+    "growth_direction=up,top_cap=false,bottom_cap=false,broodfruit=true": {
+      "model": "antarchy:block/molting_vines_broodfruit"
+    },
+    "growth_direction=down,top_cap=false,bottom_cap=true,broodfruit=false": {
+      "model": "antarchy:block/molting_vines_bottom"
+    },
+    "growth_direction=down,top_cap=false,bottom_cap=false,broodfruit=false": {
+      "model": "antarchy:block/molting_vines"
+    },
+    "growth_direction=down,top_cap=false,bottom_cap=false,broodfruit=true": {
+      "model": "antarchy:block/molting_vines_broodfruit"
+    }
+  }
+}

@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.StinkyBehavior;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -20,6 +21,7 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -67,7 +69,7 @@ public class StinkBugEntity extends Animal implements GeoEntity {
             return true;
         }
         return level.getDifficulty() != Difficulty.PEACEFUL
-                && Animal.checkAnimalSpawnRules(entityType, level, spawnReason, pos, random);
+                && Mob.checkMobSpawnRules(entityType, level, spawnReason, pos, random);
     }
 
     @Override
@@ -86,6 +88,7 @@ public class StinkBugEntity extends Animal implements GeoEntity {
         if (this.fartAnimationTicks > 0) {
             this.fartAnimationTicks--;
             if (this.fartAnimationTicks == FART_RELEASE_TICKS && this.pendingFartBurst && !this.level().isClientSide()) {
+                this.playSound(AntarchySoundEvents.STINK_BUG_FART.get(), 0.85F, 0.9F + this.random.nextFloat() * 0.1F);
                 StinkyBehavior.emitBurst(this, STINK_BURST_PARTICLES);
                 StinkyBehavior.applyBurstStinkyEffect(this, STINK_BURST_RADIUS, STINK_BURST_DURATION_TICKS);
                 this.pendingFartBurst = false;
@@ -119,6 +122,11 @@ public class StinkBugEntity extends Animal implements GeoEntity {
         controllers.add(new AnimationController<>(this, MAIN_CONTROLLER, 2, this::mainAnimController));
         controllers.add(new AnimationController<>(this, FART_CONTROLLER, 0, state -> PlayState.STOP)
                 .triggerableAnim(FART_TRIGGER, FART_ANIM));
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return AntarchySoundEvents.STINK_BUG_IDLE.get();
     }
 
     @Override

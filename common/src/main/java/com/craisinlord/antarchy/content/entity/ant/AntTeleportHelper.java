@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.PlayerRespawnLogic;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -98,6 +100,47 @@ public final class AntTeleportHelper {
         return moved instanceof Mob mob ? mob : null;
     }
 
+    public static InteractionResult teleportPlayerToDimension(ServerPlayer player, ResourceKey<Level> destinationKey) {
+        ServerLevel destination = player.server.getLevel(destinationKey);
+        if (destination == null) {
+            return InteractionResult.PASS;
+        }
+
+        Vec3 destinationPos = getDestinationPosition(player, destination);
+        teleportPlayerWithCompanions(player, destination, destinationPos);
+        player.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        return InteractionResult.CONSUME;
+    }
+
+    public static InteractionResult teleportPlayerToReturnDestination(ServerPlayer player) {
+        ServerLevel destination = resolveReturnDestinationLevel(player);
+        Vec3 destinationPos = getDestinationPosition(player, destination);
+        teleportPlayerWithCompanions(player, destination, destinationPos);
+        player.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        return InteractionResult.CONSUME;
+    }
+
+    public static InteractionResult handleCagedAntTeleport(ServerPlayer player, @Nullable ResourceLocation entityTypeId, @Nullable CompoundTag entityData) {
+        if (entityTypeId == null) {
+            return InteractionResult.PASS;
+        }
+
+        if (entityTypeId.equals(ResourceLocation.fromNamespaceAndPath("antarchy", "brown_ant"))) {
+            return teleportPlayerToDimension(player, AntarchySettings.brownAntDestinationDimension());
+        }
+        if (entityTypeId.equals(ResourceLocation.fromNamespaceAndPath("antarchy", "red_ant"))) {
+            return teleportPlayerToDimension(player, AntarchySettings.redAntDestinationDimension());
+        }
+        if (entityTypeId.equals(ResourceLocation.fromNamespaceAndPath("antarchy", "termite"))) {
+            return teleportPlayerToDimension(player, AntarchySettings.termiteDestinationDimension());
+        }
+        if (entityTypeId.equals(ResourceLocation.fromNamespaceAndPath("antarchy", "rainbow_ant"))) {
+            return RainbowAntEntity.teleportPlayerFromStoredData(player, entityData);
+        }
+
+        return InteractionResult.PASS;
+    }
+
     static InteractionResult handleInteraction(BaseAntEntity ant, Player player, ItemStack itemStack) {
         if (ant.requiresActivationReagent() && !ant.isTeleportActivatedState()) {
             if (!(player instanceof ServerPlayer serverPlayer)) {
@@ -161,7 +204,6 @@ public final class AntTeleportHelper {
             return destination;
         }
 
-        // If the player's respawn is not in the overworld, return them to overworld spawn instead
         return player.server.overworld();
     }
 

@@ -10,6 +10,8 @@ public class HerculesBeetleModel extends GeoModel<HerculesBeetleEntity> {
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/hercules_beetle/hercules_beetle.png");
     private static final ResourceLocation TEXTURE_SADDLED =
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/hercules_beetle/hercules_beetle_saddle.png");
+    public static final ResourceLocation EMISSIVE_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/hercules_beetle/hercules_beetle_emissive.png");
 
     @Override
     public ResourceLocation getModelResource(HerculesBeetleEntity animatable) {

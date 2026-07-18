@@ -12,6 +12,9 @@
     "antarchy:smooth_dream_sandstone_slab",
     "antarchy:cut_dream_sandstone_slab",
     "antarchy:cut_uranium_slab",
-    "antarchy:cut_titanium_slab"
+    "antarchy:cut_titanium_slab",
+    "antarchy:broodstone_slab",
+    "antarchy:polished_broodstone_slab",
+    "antarchy:broodstone_brick_slab"
   ]
 }

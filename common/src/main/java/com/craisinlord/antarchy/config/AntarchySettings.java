@@ -53,6 +53,8 @@ public final class AntarchySettings {
     private static double bigBerthaAttackDamage = 55.0D;
     private static double bigBerthaReachBonus = 3.0D;
     private static double bigBerthaAttackSpeed = -3.0D;
+    private static double attitudeAdjusterBaseDamage = 40.0D;
+    private static boolean attitudeAdjusterBreaksBlocks = true;
     private static double krakensGraspAttackDamage = 16.0D;
     private static double krakensGraspAttackSpeed = -2.9D;
     private static double krakensGraspThrownDamage = 32.0D;
@@ -251,8 +253,8 @@ public final class AntarchySettings {
     private static double  reverieWarningThreatVerticalRange = 5.0D;
     private static int     reverieDuplicationCooldownTicks = 6000;
     private static final boolean reverieOnlyPlayerDamage         = true;
-    private static final double  reveriePreferredFollowMinDistance = 3.0D;
-    private static final double  reveriePreferredFollowMaxDistance = 6.0D;
+    private static final double  reveriePreferredFollowMinDistance = 2.5D;
+    private static final double  reveriePreferredFollowMaxDistance = 2.5D;
     private static final double  reverieCatchUpDistance           = 12.0D;
     private static final double  reveriePurpleProtectRadius       = 2.7D;
     private static final int     reverieWarningApproachTicks      = 8;
@@ -688,6 +690,14 @@ public final class AntarchySettings {
 
     public static double bigBerthaAttackSpeed() {
         return bigBerthaAttackSpeed;
+    }
+
+    public static double attitudeAdjusterBaseDamage() {
+        return attitudeAdjusterBaseDamage;
+    }
+
+    public static boolean attitudeAdjusterBreaksBlocks() {
+        return attitudeAdjusterBreaksBlocks;
     }
 
     public static double bigBerthaBasiliskCooldownSeconds() {
@@ -1230,6 +1240,14 @@ public final class AntarchySettings {
 
     public static void setBigBerthaAttackSpeed(double value) {
         bigBerthaAttackSpeed = value;
+    }
+
+    public static void setAttitudeAdjusterBaseDamage(double value) {
+        attitudeAdjusterBaseDamage = value;
+    }
+
+    public static void setAttitudeAdjusterBreaksBlocks(boolean value) {
+        attitudeAdjusterBreaksBlocks = value;
     }
 
     public static void setBigBerthaBasiliskCooldownSeconds(double value) {

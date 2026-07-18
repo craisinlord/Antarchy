@@ -8,6 +8,9 @@
     "antarchy:shellstone_wall",
     "antarchy:polished_shellstone_wall",
     "antarchy:shellstone_brick_wall",
-    "antarchy:mossy_shellstone_brick_wall"
+    "antarchy:mossy_shellstone_brick_wall",
+    "antarchy:broodstone_wall",
+    "antarchy:polished_broodstone_wall",
+    "antarchy:broodstone_brick_wall"
   ]
 }

@@ -132,6 +132,9 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> TORETERROR_JUMP_UP = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> TORETERROR_JUMP_LAND = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> STINKY_FLY = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> STINK_BUG_FART = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> STINK_BUG_IDLE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> ROLLY_POLLY_IDLE = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> CREEPING_HORROR_GROWL = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> CREEPING_HORROR_HURT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> CREEPING_HORROR_BITE = (Supplier<SoundEvent>) UNBOUND;
@@ -140,6 +143,19 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> LURKING_TERROR_BITE = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> LURKING_TERROR_FLY_LOOP = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> DUCT_TAPE_USE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> HERCULES_BEETLE_IDLE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> HERCULES_BEETLE_HURT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> HERCULES_BEETLE_ATTACK = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> HERCULES_BEETLE_CRY = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> HERCULES_BEETLE_CHARGE_START = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> HERCULES_BEETLE_KNOCKED_DOWN = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> JUMPY_BUG_IDLE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> SPIT_BUG_IDLE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> JUMPY_BUG_HURT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> JUMPY_BUG_JUMP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> SPIT_BUG_HURT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> SPIT_BUG_SPIT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> BRUTALFLY_SPIT = (Supplier<SoundEvent>) UNBOUND;
 
     private AntarchySoundEvents() {
     }
@@ -268,6 +284,9 @@ public final class AntarchySoundEvents {
             Supplier<SoundEvent> toreterrorJumpUp,
             Supplier<SoundEvent> toreterrorJumpLand,
             Supplier<SoundEvent> stinkyFly,
+            Supplier<SoundEvent> stinkBugFart,
+            Supplier<SoundEvent> stinkBugIdle,
+            Supplier<SoundEvent> rollyPollyIdle,
             Supplier<SoundEvent> creepingHorrorGrowl,
             Supplier<SoundEvent> creepingHorrorHurt,
             Supplier<SoundEvent> creepingHorrorBite,
@@ -275,7 +294,20 @@ public final class AntarchySoundEvents {
             Supplier<SoundEvent> lurkingTerrorHurt,
             Supplier<SoundEvent> lurkingTerrorBite,
             Supplier<SoundEvent> lurkingTerrorFlyLoop,
-            Supplier<SoundEvent> ductTapeUse
+            Supplier<SoundEvent> ductTapeUse,
+            Supplier<SoundEvent> herculesBeetleIdle,
+            Supplier<SoundEvent> herculesBeetleHurt,
+            Supplier<SoundEvent> herculesBeetleAttack,
+            Supplier<SoundEvent> herculesBeetleCry,
+            Supplier<SoundEvent> herculesBeetleChargeStart,
+            Supplier<SoundEvent> herculesBeetleKnockedDown,
+            Supplier<SoundEvent> jumpyBugIdle,
+            Supplier<SoundEvent> spitBugIdle,
+            Supplier<SoundEvent> jumpyBugHurt,
+            Supplier<SoundEvent> jumpyBugJump,
+            Supplier<SoundEvent> spitBugHurt,
+            Supplier<SoundEvent> spitBugSpit,
+            Supplier<SoundEvent> brutalflySpit
     ) {
         SQUIDZOOKA_FIRE = squidzookaFire;
         SHRINK_RAY_SOUND = shrinkRaySound;
@@ -400,6 +432,9 @@ public final class AntarchySoundEvents {
         TORETERROR_JUMP_UP = toreterrorJumpUp;
         TORETERROR_JUMP_LAND = toreterrorJumpLand;
         STINKY_FLY = stinkyFly;
+        STINK_BUG_FART = stinkBugFart;
+        STINK_BUG_IDLE = stinkBugIdle;
+        ROLLY_POLLY_IDLE = rollyPollyIdle;
         CREEPING_HORROR_GROWL = creepingHorrorGrowl;
         CREEPING_HORROR_HURT = creepingHorrorHurt;
         CREEPING_HORROR_BITE = creepingHorrorBite;
@@ -408,5 +443,18 @@ public final class AntarchySoundEvents {
         LURKING_TERROR_BITE = lurkingTerrorBite;
         LURKING_TERROR_FLY_LOOP = lurkingTerrorFlyLoop;
         DUCT_TAPE_USE = ductTapeUse;
+        HERCULES_BEETLE_IDLE = herculesBeetleIdle;
+        HERCULES_BEETLE_HURT = herculesBeetleHurt;
+        HERCULES_BEETLE_ATTACK = herculesBeetleAttack;
+        HERCULES_BEETLE_CRY = herculesBeetleCry;
+        HERCULES_BEETLE_CHARGE_START = herculesBeetleChargeStart;
+        HERCULES_BEETLE_KNOCKED_DOWN = herculesBeetleKnockedDown;
+        JUMPY_BUG_IDLE = jumpyBugIdle;
+        SPIT_BUG_IDLE = spitBugIdle;
+        JUMPY_BUG_HURT = jumpyBugHurt;
+        JUMPY_BUG_JUMP = jumpyBugJump;
+        SPIT_BUG_HURT = spitBugHurt;
+        SPIT_BUG_SPIT = spitBugSpit;
+        BRUTALFLY_SPIT = brutalflySpit;
     }
 }

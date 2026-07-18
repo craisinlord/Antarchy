@@ -220,23 +220,31 @@ public final class PermanentPortalTeleporter {
         BlockPos preferred = BlockPos.containing(safePos);
         int minY = destination.getMinBuildHeight() + 2;
         int maxY = destination.getMaxBuildHeight() - 4;
-        int clampedY = Mth.clamp(preferred.getY(), minY, maxY);
+        int startY = Mth.clamp(preferred.getY(), minY, maxY);
 
-        for (int radius = 0; radius <= 4; radius++) {
-            for (int xOff = -radius; xOff <= radius; xOff++) {
-                for (int zOff = -radius; zOff <= radius; zOff++) {
-                    if (radius > 0 && Math.abs(xOff) != radius && Math.abs(zOff) != radius) {
-                        continue;
-                    }
+        for (int yOff = 0; yOff <= 6; yOff++) {
+            for (int y : new int[]{startY + yOff, startY - yOff}) {
+                if (y < minY || y > maxY) {
+                    continue;
+                }
 
-                    BlockPos anchor = new BlockPos(preferred.getX() + xOff, clampedY, preferred.getZ() + zOff);
-                    PermanentPortalShape xShape = PermanentPortalShape.create(destination, anchor, type, Direction.Axis.X);
-                    if (xShape != null) {
-                        return xShape;
-                    }
-                    PermanentPortalShape zShape = PermanentPortalShape.create(destination, anchor, type, Direction.Axis.Z);
-                    if (zShape != null) {
-                        return zShape;
+                for (int radius = 0; radius <= 4; radius++) {
+                    for (int xOff = -radius; xOff <= radius; xOff++) {
+                        for (int zOff = -radius; zOff <= radius; zOff++) {
+                            if (radius > 0 && Math.abs(xOff) != radius && Math.abs(zOff) != radius) {
+                                continue;
+                            }
+
+                            BlockPos anchor = new BlockPos(preferred.getX() + xOff, y, preferred.getZ() + zOff);
+                            PermanentPortalShape xShape = PermanentPortalShape.create(destination, anchor, type, Direction.Axis.X);
+                            if (xShape != null) {
+                                return xShape;
+                            }
+                            PermanentPortalShape zShape = PermanentPortalShape.create(destination, anchor, type, Direction.Axis.Z);
+                            if (zShape != null) {
+                                return zShape;
+                            }
+                        }
                     }
                 }
             }

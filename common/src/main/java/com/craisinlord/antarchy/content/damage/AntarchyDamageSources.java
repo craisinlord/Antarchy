@@ -115,6 +115,34 @@ public final class AntarchyDamageSources {
         );
     }
 
+    public static DamageSource spitBugDisrespect(ServerLevel level, @Nullable Entity directEntity, @Nullable Entity causingEntity) {
+        return new DamageSource(
+                level.registryAccess()
+                        .registryOrThrow(Registries.DAMAGE_TYPE)
+                        .getHolderOrThrow(AntarchyDamageTypes.SPIT_BUG_DISRESPECT),
+                directEntity,
+                causingEntity
+        );
+    }
+
+    public static DamageSource jumpyBugJump(ServerLevel level, Entity attacker) {
+        return new DamageSource(
+                level.registryAccess()
+                        .registryOrThrow(Registries.DAMAGE_TYPE)
+                        .getHolderOrThrow(AntarchyDamageTypes.JUMPY_BUG_JUMP),
+                attacker
+        );
+    }
+
+    public static DamageSource herculesBeetleObliteration(ServerLevel level, Entity attacker) {
+        return new DamageSource(
+                level.registryAccess()
+                        .registryOrThrow(Registries.DAMAGE_TYPE)
+                        .getHolderOrThrow(AntarchyDamageTypes.HERCULES_BEETLE_OBLITERATION),
+                attacker
+        );
+    }
+
     public static DamageSource waterSoaked(Level level, @Nullable Entity directEntity, @Nullable Entity causingEntity) {
         return new DamageSource(
                 level.registryAccess()

@@ -49,8 +49,8 @@ public class GlimmerRenderer extends GeoEntityRenderer<GlimmerEntity> {
         poseStack.scale(growth, growth, growth);
 
         // Compute body yaw directly from the entity's own tracked fields rather than trusting
-        // the ambient entityYaw parameter, so the body pose and the head-offset math below are
-        // always self-consistent (this is what caused the head to look "detached" from the body).
+        // the ambient entityYaw parameter, so the body pose and the head-offset math below stay
+        // self-consistent.
         float bodyYaw = Mth.rotLerp(partialTick, entity.yBodyRotO, entity.yBodyRot);
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - bodyYaw));
         poseStack.scale(-1.0F, -1.0F, 1.0F);

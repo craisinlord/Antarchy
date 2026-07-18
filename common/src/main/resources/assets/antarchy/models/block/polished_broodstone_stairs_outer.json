@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/outer_stairs",
+  "textures": {
+    "bottom": "antarchy:block/broodstone/polished_broodstone",
+    "side": "antarchy:block/broodstone/polished_broodstone",
+    "top": "antarchy:block/broodstone/polished_broodstone"
+  }
+}

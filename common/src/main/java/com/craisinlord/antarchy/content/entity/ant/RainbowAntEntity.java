@@ -24,6 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 
 import java.io.IOException;
@@ -44,6 +45,29 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
 
     public RainbowAntEntity(EntityType<? extends BaseAntEntity> entityType, Level level) {
         super(entityType, level);
+    }
+
+    public static InteractionResult teleportPlayerFromStoredData(ServerPlayer player, @Nullable CompoundTag entityData) {
+        if (!AntarchySettings.rainbowAntsLeadToInfinityDimensions() || !InfinityCompat.get().isAvailable()) {
+            return AntTeleportHelper.teleportPlayerToDimension(player, AntarchySettings.rainbowAntNonInfinityFallbackDimension());
+        }
+
+        if (INFINITY_NAMESPACE.equals(player.serverLevel().dimension().location().getNamespace())) {
+            return AntTeleportHelper.teleportPlayerToReturnDestination(player);
+        }
+
+        ResourceLocation dimensionId = parseStoredDimensionId(entityData);
+        if (dimensionId == null) {
+            return AntTeleportHelper.teleportPlayerToDimension(player, AntarchySettings.rainbowAntNonInfinityFallbackDimension());
+        }
+
+        if (!InfinityCompat.get().requestWarp(player, dimensionId)) {
+            player.displayClientMessage(Component.translatable("message.antarchy.rainbow_ant_failed_dimension_create"), true);
+            return InteractionResult.CONSUME;
+        }
+
+        player.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        return InteractionResult.CONSUME;
     }
 
     @Override
@@ -276,6 +300,20 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
     private ResourceLocation parseDimensionId(String storedDimensionId) {
         try {
             return ResourceLocation.parse(storedDimensionId);
+        } catch (Throwable throwable) {
+            return null;
+        }
+    }
+
+    @Nullable
+    private static ResourceLocation parseStoredDimensionId(@Nullable CompoundTag entityData) {
+        if (entityData == null || !entityData.contains(DIMENSION_ID_TAG)) {
+            return null;
+        }
+
+        try {
+            String storedDimensionId = entityData.getString(DIMENSION_ID_TAG);
+            return storedDimensionId.isEmpty() ? null : ResourceLocation.parse(storedDimensionId);
         } catch (Throwable throwable) {
             return null;
         }

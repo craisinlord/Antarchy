@@ -8,8 +8,11 @@ import com.craisinlord.antarchy.content.network.BigBerthaModeCyclePayload;
 import com.craisinlord.antarchy.content.network.GravityGunPrimaryPayload;
 import com.craisinlord.antarchy.content.network.GravityGunScrollPayload;
 import com.craisinlord.antarchy.content.network.GravityStatePayload;
+import com.craisinlord.antarchy.content.network.ImpactShakePayload;
+import com.craisinlord.antarchy.content.client.CameraShakeClientState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -23,6 +26,10 @@ public final class AntarchyGravityNetworking {
                 GravityStatePayload.TYPE,
                 GravityStatePayload.STREAM_CODEC,
                 AntarchyGravityNetworking::handleGravityState
+        ).playToClient(
+                ImpactShakePayload.TYPE,
+                ImpactShakePayload.STREAM_CODEC,
+                AntarchyGravityNetworking::handleImpactShake
         ).playToServer(
                 GravityGunPrimaryPayload.TYPE,
                 GravityGunPrimaryPayload.STREAM_CODEC,
@@ -87,6 +94,15 @@ public final class AntarchyGravityNetworking {
                     payload.transitionRemaining()
             );
         });
+    }
+
+    private static void handleImpactShake(ImpactShakePayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> CameraShakeClientState.triggerImpact(
+                new Vec3(payload.x(), payload.y(), payload.z()),
+                payload.intensity(),
+                payload.durationTicks(),
+                payload.radius()
+        ));
     }
 
     private static void handleGravityGunScroll(GravityGunScrollPayload payload, IPayloadContext context) {

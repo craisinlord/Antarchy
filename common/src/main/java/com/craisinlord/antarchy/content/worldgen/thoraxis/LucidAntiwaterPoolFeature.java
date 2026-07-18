@@ -1,14 +1,11 @@
 package com.craisinlord.antarchy.content.worldgen.thoraxis;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.block.PotentNyxiteBlock;
-import com.craisinlord.antarchy.content.block.state.PotentNyxiteState;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -60,7 +57,6 @@ public final class LucidAntiwaterPoolFeature extends Feature<ThoraxisAntiwaterPo
 
             placedAny |= placeCeilingBasin(level, random, offsetX, floorY, offsetZ, lobeRadius, ceilingY, profile, basaltState, antiwaterSourceState);
             placedAny |= placeAntiwaterSources(level, random, offsetX, floorY, offsetZ, Math.max(2, lobeRadius - 1), ventBudget, antiwaterSourceState);
-//            placedAny |= maybePlacePotentNyxite(level, random, offsetX, floorY, offsetZ, Math.max(2, lobeRadius - 1));
         }
 
         return placedAny;
@@ -227,54 +223,6 @@ public final class LucidAntiwaterPoolFeature extends Feature<ThoraxisAntiwaterPo
         }
 
         return placedAny;
-    }
-
-    private static boolean maybePlacePotentNyxite(
-            WorldGenLevel level,
-            RandomSource random,
-            int centerX,
-            int floorY,
-            int centerZ,
-            int radius
-    ) {
-        if (random.nextInt(8) != 0) {
-            return false;
-        }
-
-        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
-        BlockState magmaState = Blocks.MAGMA_BLOCK.defaultBlockState();
-        BlockState potentState = AntarchyObjects.POTENT_NYXITE.get()
-                .defaultBlockState()
-                .setValue(PotentNyxiteBlock.STATE, PotentNyxiteState.DORMANT);
-
-        for (int attempt = 0; attempt < 12; attempt++) {
-            int dx = random.nextInt(radius * 2 + 1) - radius;
-            int dz = random.nextInt(radius * 2 + 1) - radius;
-            if (dx * dx + dz * dz > radius * radius) {
-                continue;
-            }
-
-            int worldX = centerX + dx;
-            int worldZ = centerZ + dz;
-            int localCeilingY = findCeilingY(level, worldX, worldZ, floorY);
-            if (localCeilingY <= floorY + MIN_CAVITY_HEIGHT) {
-                continue;
-            }
-
-            BlockPos magmaPos = new BlockPos(worldX, localCeilingY, worldZ);
-            BlockPos potentPos = magmaPos.below();
-            if (!isSolidSurface(level.getBlockState(magmaPos)) || !isOpenBlock(level.getBlockState(potentPos))) {
-                continue;
-            }
-
-            mutable.set(magmaPos);
-            level.setBlock(mutable, magmaState, 2);
-            mutable.set(potentPos);
-            level.setBlock(mutable, potentState, 2);
-            return true;
-        }
-
-        return false;
     }
 
     private static BlockPos findSupportedSourcePos(WorldGenLevel level, int x, int floorY, int z) {

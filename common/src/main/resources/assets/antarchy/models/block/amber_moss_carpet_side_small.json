@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/mossy_carpet_side",
+  "textures": {
+    "side": "antarchy:block/amber_moss/amber_moss_carpet"
+  }
+}
