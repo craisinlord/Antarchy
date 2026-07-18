@@ -59,6 +59,19 @@ public class ElythiaBiomeSource extends BiomeSource {
     );
     private static final int[] SURFACE_FALLBACK_BLOCK_YS = new int[]{192, 160, 128, 96, 64, 32, 0};
 
+    private static final class ColumnBiomeCache {
+        long key = Long.MIN_VALUE;
+        Holder<Biome> value;
+    }
+
+    private final ThreadLocal<ColumnBiomeCache> molewormSurfaceFallbackCache = ThreadLocal.withInitial(ColumnBiomeCache::new);
+    private final ThreadLocal<ColumnBiomeCache> peachForestSurfaceFallbackCache = ThreadLocal.withInitial(ColumnBiomeCache::new);
+    private final ThreadLocal<ColumnBiomeCache> landFallbackCache = ThreadLocal.withInitial(ColumnBiomeCache::new);
+
+    private static long packColumnKey(int x, int z) {
+        return ((long) x << 32) ^ (z & 0xFFFFFFFFL);
+    }
+
     public static final MapCodec<ElythiaBiomeSource> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             MultiNoiseBiomeSource.DIRECT_CODEC.forGetter(ElythiaBiomeSource::parameters),
             Codec.INT.optionalFieldOf("moleworm_caves_max_y", 72).forGetter(ElythiaBiomeSource::molewormCavesMaxY),
@@ -75,6 +88,7 @@ public class ElythiaBiomeSource extends BiomeSource {
     private final int seaLevel;
     private final int molewormCavesMaxQuartY;
     private final int surfaceBiomeSampleQuartY;
+    private final int oceanMaxQuartY;
     private final int seaLevelQuartY;
     private final int undergroundGuardMaxQuartY;
     private final Holder<Biome> oceanHolder;
@@ -91,6 +105,7 @@ public class ElythiaBiomeSource extends BiomeSource {
         this.seaLevel = seaLevel;
         this.molewormCavesMaxQuartY = QuartPos.fromBlock(molewormCavesMaxY);
         this.surfaceBiomeSampleQuartY = QuartPos.fromBlock(surfaceBiomeSampleY);
+        this.oceanMaxQuartY = QuartPos.fromBlock(oceanMaxY);
         this.seaLevelQuartY = QuartPos.fromBlock(seaLevel);
         // Cave pockets carved into hills/mountains above sea level have no other guard —
         // they just resolve via raw climate matching, which can land on peach_forest/glimmering_pools
@@ -144,7 +159,7 @@ public class ElythiaBiomeSource extends BiomeSource {
 
         // Cap moleworm caves below their max Y — replace with surface biome above it
         if (biome.is(MOLEWORM_CAVES) && y > this.molewormCavesMaxQuartY) {
-            return resolveSurfaceFallback(x, y, z, sampler, MOLEWORM_CAVES, GLIMMERING_POOLS);
+            return resolveSurfaceFallback(x, z, sampler, this.molewormSurfaceFallbackCache, MOLEWORM_CAVES, GLIMMERING_POOLS);
         }
 
         // Use continentalness o classify the column.
@@ -152,7 +167,7 @@ public class ElythiaBiomeSource extends BiomeSource {
         // and ambient effects work correctly above the water surface.
         // Cave biomes are always preserved even in ocean columns.
         Climate.TargetPoint target = sampler.sample(x, this.seaLevelQuartY, z);
-        if (target.continentalness() < OCEAN_CONTINENTALNESS_THRESHOLD) {
+        if (target.continentalness() < OCEAN_CONTINENTALNESS_THRESHOLD && y <= this.oceanMaxQuartY) {
             if (biome.is(MOLEWORM_CAVES) || biome.is(ELYTHIA_LUSH_CAVES)) return biome;
             Holder<Biome> seaLevelBiome = this.delegate.getNoiseBiome(x, this.seaLevelQuartY, z, sampler);
             // MultiNoise can return a land biome at sea-level depth — force ocean if so
@@ -183,7 +198,7 @@ public class ElythiaBiomeSource extends BiomeSource {
         // Neither peach_forest nor glimmering_pools should ever generate underground —
         // fall back to whatever a nearby surface reference sample would give instead.
         if ((biome.is(PEACH_FOREST) || biome.is(GLIMMERING_POOLS)) && y <= this.undergroundGuardMaxQuartY) {
-            return resolveSurfaceFallback(x, y, z, sampler, PEACH_FOREST, GLIMMERING_POOLS);
+            return resolveSurfaceFallback(x, z, sampler, this.peachForestSurfaceFallbackCache, PEACH_FOREST, GLIMMERING_POOLS);
         }
 
         return biome;
@@ -258,32 +273,52 @@ public class ElythiaBiomeSource extends BiomeSource {
     }
 
     @SafeVarargs
-    private Holder<Biome> resolveSurfaceFallback(int x, int y, int z, Climate.Sampler sampler, ResourceKey<Biome>... excluded) {
-        Holder<Biome> fallback = this.delegate.getNoiseBiome(x, this.surfaceBiomeSampleQuartY, z, sampler);
-        if (!isExcluded(fallback, excluded)) {
-            return fallback;
+    private Holder<Biome> resolveSurfaceFallback(int x, int z, Climate.Sampler sampler, ThreadLocal<ColumnBiomeCache> cacheHolder, ResourceKey<Biome>... excluded) {
+        ColumnBiomeCache cache = cacheHolder.get();
+        long key = packColumnKey(x, z);
+        if (cache.key == key) {
+            return cache.value;
         }
 
-        for (int sampleBlockY : SURFACE_FALLBACK_BLOCK_YS) {
-            Holder<Biome> candidate = this.delegate.getNoiseBiome(x, QuartPos.fromBlock(sampleBlockY), z, sampler);
-            if (!isExcluded(candidate, excluded)) {
-                return candidate;
+        Holder<Biome> result = this.delegate.getNoiseBiome(x, this.surfaceBiomeSampleQuartY, z, sampler);
+        if (isExcluded(result, excluded)) {
+            for (int sampleBlockY : SURFACE_FALLBACK_BLOCK_YS) {
+                Holder<Biome> candidate = this.delegate.getNoiseBiome(x, QuartPos.fromBlock(sampleBlockY), z, sampler);
+                if (!isExcluded(candidate, excluded)) {
+                    result = candidate;
+                    break;
+                }
             }
         }
 
-        return fallback;
+        cache.key = key;
+        cache.value = result;
+        return result;
     }
 
     private Holder<Biome> resolveLandFallback(int x, int z, Climate.Sampler sampler) {
-        Holder<Biome> fallback = this.delegate.getNoiseBiome(x, this.surfaceBiomeSampleQuartY, z, sampler);
-        if (!isOceanOrCave(fallback)) return fallback;
-
-        for (int sampleBlockY : SURFACE_FALLBACK_BLOCK_YS) {
-            Holder<Biome> candidate = this.delegate.getNoiseBiome(x, QuartPos.fromBlock(sampleBlockY), z, sampler);
-            if (!isOceanOrCave(candidate)) return candidate;
+        ColumnBiomeCache cache = this.landFallbackCache.get();
+        long key = packColumnKey(x, z);
+        if (cache.key == key) {
+            return cache.value;
         }
 
-        return defaultLandHolder != null ? defaultLandHolder : fallback;
+        Holder<Biome> result = this.delegate.getNoiseBiome(x, this.surfaceBiomeSampleQuartY, z, sampler);
+        if (isOceanOrCave(result)) {
+            Holder<Biome> resolved = null;
+            for (int sampleBlockY : SURFACE_FALLBACK_BLOCK_YS) {
+                Holder<Biome> candidate = this.delegate.getNoiseBiome(x, QuartPos.fromBlock(sampleBlockY), z, sampler);
+                if (!isOceanOrCave(candidate)) {
+                    resolved = candidate;
+                    break;
+                }
+            }
+            result = resolved != null ? resolved : (defaultLandHolder != null ? defaultLandHolder : result);
+        }
+
+        cache.key = key;
+        cache.value = result;
+        return result;
     }
 
     @SafeVarargs

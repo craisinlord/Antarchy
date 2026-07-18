@@ -12,6 +12,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -36,6 +37,9 @@ public class JumpyBugEggBlock extends Block {
     public static final BooleanProperty HANGING = BlockStateProperties.HANGING;
     public static final BooleanProperty ROTATED = BooleanProperty.create("rotated");
     private static final int MAX_HATCH = 2;
+    private static final double PLAYER_PROXIMITY_RADIUS = 12.0D;
+    private static final float PLAYER_PROXIMITY_HATCH_CHANCE = 0.25F;
+    private static final int PLAYER_PROXIMITY_CHECK_INTERVAL = 200;
     private static final VoxelShape FLOOR_SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
     private static final VoxelShape CEILING_SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
     private static final ResourceLocation JUMPY_BUG_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "jumpy_bug");
@@ -115,6 +119,13 @@ public class JumpyBugEggBlock extends Block {
     }
 
     private boolean shouldUpdateHatchLevel(Level level, BlockPos pos, BlockState state) {
+        if (level.random.nextInt(PLAYER_PROXIMITY_CHECK_INTERVAL) == 0) {
+            Player nearbyPlayer = level.getNearestPlayer(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, PLAYER_PROXIMITY_RADIUS, false);
+            if (nearbyPlayer != null && level.random.nextFloat() < PLAYER_PROXIMITY_HATCH_CHANCE) {
+                return true;
+            }
+        }
+
         BlockPos checkPos = state.getValue(HANGING) ? pos.above() : pos.below();
         boolean onAmberMoss = level.getBlockState(checkPos).getBlock() instanceof AmberMossBlock;
         return level.random.nextInt(onAmberMoss ? 150 : 500) == 0;

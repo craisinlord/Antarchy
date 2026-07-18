@@ -6,15 +6,15 @@
     },
     {
       "structure": "antarchy:fallen_kingdom_castle",
-      "weight": 1
+      "weight": 2
     },
     {
       "structure": "antarchy:ruined_arena",
-      "weight": 1
+      "weight": 3
     },
     {
       "structure": "antarchy:toreterror_arena",
-      "weight": 1
+      "weight": 3
     }
   ],
   "placement": {

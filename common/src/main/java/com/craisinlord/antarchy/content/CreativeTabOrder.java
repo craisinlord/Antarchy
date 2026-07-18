@@ -36,15 +36,16 @@ public final class CreativeTabOrder {
                  "shellstone_stairs", "shellstone_slab", "shellstone_wall",
                  "polished_shellstone_stairs", "polished_shellstone_slab", "polished_shellstone_wall",
                  "shellstone_brick_stairs", "shellstone_brick_slab", "shellstone_brick_wall",
-                 "mossy_shellstone_brick_stairs", "mossy_shellstone_brick_slab", "mossy_shellstone_brick_wall" -> 2;
+                 "mossy_shellstone_brick_stairs", "mossy_shellstone_brick_slab", "mossy_shellstone_brick_wall",
+                 "blush_moss_block", "blush_moss_carpet",
+                 "lumen_froglight", "roseate_froglight" -> 2;
             case "antimetal", "polished_antimetal" -> 3;
             case "dream_sand", "dream_sandstone", "chiseled_dream_sandstone",
                  "cut_dream_sandstone", "smooth_dream_sandstone",
                  "dream_sandstone_stairs", "dream_sandstone_slab", "dream_sandstone_wall",
                  "smooth_dream_sandstone_stairs", "smooth_dream_sandstone_slab",
                  "cut_dream_sandstone_slab" -> 4;
-            case "umbral_moss_block", "umbral_moss_carpet",
-                 "blush_moss_block", "blush_moss_carpet" -> 4;
+            case "umbral_moss_block", "umbral_moss_carpet" -> 4;
             case "uranium_ore", "deepslate_uranium_ore", "broodstone_uranium_ore",
                  "titanium_ore", "deepslate_titanium_ore", "broodstone_titanium_ore",
                  "uranium_block", "titanium_block",
@@ -61,7 +62,7 @@ public final class CreativeTabOrder {
                  "broodstone_stairs", "broodstone_slab", "broodstone_wall",
                  "polished_broodstone_stairs", "polished_broodstone_slab", "polished_broodstone_wall",
                  "broodstone_brick_stairs", "broodstone_brick_slab", "broodstone_brick_wall",
-                 "chiten_block", "chiten_spike", "amber_moss_block", "amber_moss_carpet",
+                 "myrmite_coal_ore", "chiten_block", "chiten_spike", "amber_moss_block", "amber_moss_carpet",
                  "glowcap_mushroom", "glowcap_mushroom_block" -> 8;
             case "ouranwood_leaves", "peach_leaves" -> 9;
             case "duplicator_sapling", "ouranwood_acorn", "peach_sapling", "corn_seeds" -> 10;
@@ -70,8 +71,7 @@ public final class CreativeTabOrder {
                  "red_ant_nest", "brown_ant_nest", "rainbow_ant_nest", "termite_nest",
                  "star_coral", "star_coral_fan", "star_coral_block",
                  "dead_star_coral", "dead_star_coral_fan", "dead_star_coral_block" -> 11;
-            case "dream_torch", "dream_lantern", "dream_campfire", "dream_fire", "dream_fire_ceiling",
-                 "lumen_froglight", "roseate_froglight" -> 12;
+            case "dream_torch", "dream_lantern", "dream_campfire", "dream_fire", "dream_fire_ceiling" -> 12;
             case "antimetal_scaffolding" -> 13;
             case "infested_rooted_dirt", "infested_coarse_dirt", "bed_bug_egg", "creeping_horror_egg", "lurking_terror_egg", "jumpy_bug_egg" -> 14;
             case "ultimate_pickaxe", "ultimate_axe", "ultimate_shovel", "ultimate_hoe",
@@ -207,12 +207,13 @@ public final class CreativeTabOrder {
             case "broodstone_brick_stairs" -> 17;
             case "broodstone_brick_slab" -> 18;
             case "broodstone_brick_wall" -> 19;
-            case "chiten_block" -> 20;
-            case "chiten_spike" -> 21;
-            case "amber_moss_block" -> 22;
-            case "amber_moss_carpet" -> 23;
-            case "glowcap_mushroom" -> 24;
-            case "glowcap_mushroom_block" -> 25;
+            case "myrmite_coal_ore" -> 20;
+            case "chiten_block" -> 21;
+            case "chiten_spike" -> 22;
+            case "amber_moss_block" -> 23;
+            case "amber_moss_carpet" -> 24;
+            case "glowcap_mushroom" -> 25;
+            case "glowcap_mushroom_block" -> 26;
             case "uranium_ore" -> 0;
             case "deepslate_uranium_ore" -> 1;
             case "broodstone_uranium_ore" -> 2;
@@ -248,8 +249,10 @@ public final class CreativeTabOrder {
             case "dream_campfire" -> 2;
             case "dream_fire" -> 3;
             case "dream_fire_ceiling" -> 4;
-            case "lumen_froglight" -> 5;
-            case "roseate_froglight" -> 6;
+            case "blush_moss_block" -> 18;
+            case "blush_moss_carpet" -> 19;
+            case "lumen_froglight" -> 20;
+            case "roseate_froglight" -> 21;
             case "infested_rooted_dirt" -> 0;
             case "infested_coarse_dirt" -> 1;
             case "bed_bug_egg" -> 2;

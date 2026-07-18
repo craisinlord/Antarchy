@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -25,10 +26,31 @@ import org.jetbrains.annotations.Nullable;
 
 public class DrTrayaurusEntity extends AbstractVillager {
     private static final Component DISPLAY_NAME = Component.literal("Dr. Trayaurus");
+    private static final String TRADES_INITIALIZED_KEY = "TradesInitialized";
+    private boolean tradesInitialized;
 
     public DrTrayaurusEntity(EntityType<? extends AbstractVillager> entityType, Level level) {
         super(entityType, level);
         this.setCustomName(DISPLAY_NAME);
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putBoolean(TRADES_INITIALIZED_KEY, this.tradesInitialized);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        this.tradesInitialized = tag.getBoolean(TRADES_INITIALIZED_KEY);
+        if (this.tradesInitialized) {
+            super.readAdditionalSaveData(tag);
+            return;
+        }
+
+        CompoundTag withoutOffers = tag.copy();
+        withoutOffers.remove("Offers");
+        super.readAdditionalSaveData(withoutOffers);
     }
 
     @Override
@@ -82,6 +104,7 @@ public class DrTrayaurusEntity extends AbstractVillager {
         offers.clear();
         offers.addAll(DrTrayaurusTradeManager.createOffers());
         this.overrideXp(1);
+        this.tradesInitialized = true;
     }
 
     @Override

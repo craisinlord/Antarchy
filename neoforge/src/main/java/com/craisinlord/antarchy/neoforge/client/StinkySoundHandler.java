@@ -39,13 +39,15 @@ public final class StinkySoundHandler {
             return;
         }
 
-        mc.level.playSound(
-                null,
-                mc.player.blockPosition(),
+        mc.level.playLocalSound(
+                mc.player.getX(),
+                mc.player.getY(),
+                mc.player.getZ(),
                 AntarchySoundEvents.STINKY_FLY.get(),
                 SoundSource.AMBIENT,
                 0.14F + mc.level.random.nextFloat() * 0.06F,
-                0.92F + mc.level.random.nextFloat() * 0.16F
+                0.92F + mc.level.random.nextFloat() * 0.16F,
+                false
         );
         nextSoundTick = MIN_INTERVAL + mc.level.random.nextInt(MAX_INTERVAL - MIN_INTERVAL + 1);
     }

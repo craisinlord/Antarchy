@@ -2,11 +2,11 @@
   "trades": [
     {
       "buy": {
-        "item": "antarchy:emerald",
+        "item": "minecraft:emerald",
         "count": 7
       },
       "sell": {
-        "item": "minecraft:root_beer",
+        "item": "antarchy:root_beer",
         "count": 1
       },
       "max_uses": 16,
@@ -15,7 +15,7 @@
     },
     {
       "buy": {
-        "item": "antarchy:cooked_corn_dog",
+        "item": "antarchy:cooked_corndog",
         "count": 3
       },
       "sell": {

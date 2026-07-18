@@ -660,6 +660,10 @@ public final class AntarchyFabricBlocks {
             () -> new Block(nyxiteProperties()));
 
 
+    public static final DeferredBlock<Block> MYRMITE_COAL_ORE = BLOCKS.register("myrmite_coal_ore",
+            () -> createOre(Blocks.COAL_ORE, 0, 2));
+
+
     public static final DeferredBlock<Block> BROODSTONE = BLOCKS.register("broodstone",
             () -> new Block(broodstoneProperties()));
 

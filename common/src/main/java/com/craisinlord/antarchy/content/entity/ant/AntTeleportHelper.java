@@ -126,19 +126,33 @@ public final class AntTeleportHelper {
         }
 
         if (entityTypeId.equals(ResourceLocation.fromNamespaceAndPath("antarchy", "brown_ant"))) {
-            return teleportPlayerToDimension(player, AntarchySettings.brownAntDestinationDimension());
+            return teleportToOrFromConfiguredDimension(player, AntarchySettings.brownAntDestinationDimension());
         }
         if (entityTypeId.equals(ResourceLocation.fromNamespaceAndPath("antarchy", "red_ant"))) {
-            return teleportPlayerToDimension(player, AntarchySettings.redAntDestinationDimension());
+            return teleportToOrFromConfiguredDimension(player, AntarchySettings.redAntDestinationDimension());
         }
         if (entityTypeId.equals(ResourceLocation.fromNamespaceAndPath("antarchy", "termite"))) {
-            return teleportPlayerToDimension(player, AntarchySettings.termiteDestinationDimension());
+            return teleportToOrFromConfiguredDimension(player, AntarchySettings.termiteDestinationDimension());
         }
         if (entityTypeId.equals(ResourceLocation.fromNamespaceAndPath("antarchy", "rainbow_ant"))) {
             return RainbowAntEntity.teleportPlayerFromStoredData(player, entityData);
         }
 
         return InteractionResult.PASS;
+    }
+
+    private static InteractionResult teleportToOrFromConfiguredDimension(ServerPlayer player, ResourceKey<Level> configuredDimensionKey) {
+        ServerLevel destination = player.serverLevel().dimension() == configuredDimensionKey
+                ? resolveReturnDestinationLevel(player)
+                : player.server.getLevel(configuredDimensionKey);
+        if (destination == null) {
+            return InteractionResult.PASS;
+        }
+
+        Vec3 destinationPos = getDestinationPosition(player, destination);
+        teleportPlayerWithCompanions(player, destination, destinationPos);
+        player.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        return InteractionResult.CONSUME;
     }
 
     static InteractionResult handleInteraction(BaseAntEntity ant, Player player, ItemStack itemStack) {
@@ -167,18 +181,7 @@ public final class AntTeleportHelper {
             return InteractionResult.SUCCESS;
         }
 
-        ServerLevel configuredDestination = resolveConfiguredDestinationLevel(ant, serverPlayer.serverLevel());
-        ServerLevel destination = configuredDestination != null && serverPlayer.serverLevel().dimension() == configuredDestination.dimension()
-                ? resolveReturnDestinationLevel(serverPlayer)
-                : configuredDestination;
-        if (destination == null) {
-            return InteractionResult.PASS;
-        }
-
-        Vec3 destinationPos = getDestinationPosition(serverPlayer, destination);
-        teleportPlayerWithCompanions(serverPlayer, destination, destinationPos);
-        serverPlayer.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
-        return InteractionResult.CONSUME;
+        return teleportToOrFromConfiguredDimension(serverPlayer, ant.destinationDimension());
     }
 
     private static InteractionResult activateTeleport(BaseAntEntity ant, ServerPlayer player, ItemStack stack) {
@@ -190,11 +193,6 @@ public final class AntTeleportHelper {
         player.displayClientMessage(Component.translatable(ant.activationMessageKey()), true);
         ant.playSound(SoundEvents.END_PORTAL_SPAWN, 0.8F, 1.1F);
         return InteractionResult.CONSUME;
-    }
-
-    @Nullable
-    private static ServerLevel resolveConfiguredDestinationLevel(BaseAntEntity ant, ServerLevel serverLevel) {
-        return serverLevel.getServer().getLevel(ant.destinationDimension());
     }
 
     public static ServerLevel resolveReturnDestinationLevel(ServerPlayer player) {

@@ -63,15 +63,14 @@
         "maxCount": 5
       }
     ],
-    "creature": [
+    "creature": [],
+    "ambient": [
       {
         "type": "antarchy:stink_bug",
-        "weight": 32,
+        "weight": 40,
         "minCount": 2,
         "maxCount": 4
       }
-    ],
-    "ambient": [
     ],
     "axolotls": [],
     "underground_water_creature": [],

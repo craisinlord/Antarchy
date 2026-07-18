@@ -59,14 +59,7 @@
   "creature_spawn_probability": 0.08,
   "spawners": {
     "monster": [],
-    "creature": [
-      {
-        "type": "antarchy:rolly_polly",
-        "weight": 20,
-        "minCount": 1,
-        "maxCount": 2
-      }
-    ],
+    "creature": [],
     "ambient": [],
     "axolotls": [],
     "underground_water_creature": [],

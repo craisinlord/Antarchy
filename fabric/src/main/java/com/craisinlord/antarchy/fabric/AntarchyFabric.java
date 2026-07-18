@@ -2,17 +2,27 @@ package com.craisinlord.antarchy.fabric;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntities;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
 import com.craisinlord.antarchy.content.item.BloodCrystalShardItem;
 import com.craisinlord.antarchy.fabric.network.AntarchyFabricNetworking;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 public final class AntarchyFabric implements ModInitializer {
     private static final TagKey<net.minecraft.world.level.biome.Biome> SHELLSTONE_BIOMES = TagKey.create(
@@ -146,6 +156,24 @@ public final class AntarchyFabric implements ModInitializer {
         BloodglassManager.register();
         Antarchy.init();
         BloodCrystalShardItem.SYNC_BLOODGLASS = BloodglassManager::syncBloodglass;
+        registerTradeReloadListener();
+    }
+
+    private static void registerTradeReloadListener() {
+        DrTrayaurusTradeManager delegate = new DrTrayaurusTradeManager();
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new IdentifiableResourceReloadListener() {
+            @Override
+            public ResourceLocation getFabricId() {
+                return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "trayaurus_trades");
+            }
+
+            @Override
+            public CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier barrier, ResourceManager manager,
+                                                    ProfilerFiller prepareProfiler, ProfilerFiller applyProfiler,
+                                                    Executor prepareExecutor, Executor applyExecutor) {
+                return delegate.reload(barrier, manager, prepareProfiler, applyProfiler, prepareExecutor, applyExecutor);
+            }
+        });
     }
 
     private static final TagKey<net.minecraft.world.level.biome.Biome> CAVARYN_BIOMES = TagKey.create(

@@ -248,6 +248,8 @@ public final class AntarchyNeoforgeBlocks {
             ));
     public static final DeferredBlock<Block> MYRMITE = BLOCKS.register("myrmite",
             () -> new Block(nyxiteProperties()));
+    public static final DeferredBlock<Block> MYRMITE_COAL_ORE = BLOCKS.register("myrmite_coal_ore",
+            () -> createOre(Blocks.COAL_ORE, 0, 2));
     public static final DeferredBlock<Block> BROODSTONE = BLOCKS.register("broodstone",
             () -> new Block(broodstoneProperties()));
     public static final DeferredBlock<Block> POLISHED_BROODSTONE = BLOCKS.register("polished_broodstone",

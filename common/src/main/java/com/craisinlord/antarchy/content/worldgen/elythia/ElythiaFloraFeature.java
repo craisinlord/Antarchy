@@ -350,6 +350,12 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
             if (plantPos == null) {
                 continue;
             }
+
+            BlockPos groundPos = plantPos.below();
+            if (!isValidPlantSpot(level, plantPos, groundPos)) {
+                continue;
+            }
+
             if (bushEligible && random.nextFloat() < 0.12F) {
                 if (placeDouble(level, plantPos, torchflowerBush().defaultBlockState())) {
                     placed = true;

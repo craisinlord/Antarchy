@@ -36,7 +36,7 @@ public class LurkingTerrorEggBlock extends Block {
     public static final MapCodec<LurkingTerrorEggBlock> CODEC = Block.simpleCodec(LurkingTerrorEggBlock::new);
     public static final IntegerProperty HATCH = BlockStateProperties.HATCH;
     public static final IntegerProperty EGGS = BlockStateProperties.EGGS;
-    private static final float PANIC_HATCH_CHANCE = 0.50F;
+    private static final float PANIC_HATCH_CHANCE = 0.25F;
     private static final int MAX_HATCH = 2;
     private static final int MAX_EGGS = 4;
     private static final VoxelShape SINGLE_SHAPE = Block.box(3.0D, 0.0D, 3.0D, 13.0D, 7.0D, 13.0D);

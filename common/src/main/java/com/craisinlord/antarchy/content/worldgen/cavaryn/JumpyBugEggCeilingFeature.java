@@ -19,9 +19,9 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 public final class JumpyBugEggCeilingFeature extends Feature<NoneFeatureConfiguration> {
     private static final ResourceLocation JUMPY_BUG_EGG_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "jumpy_bug_egg");
     private static final int SEARCH_RADIUS = 8;
-    private static final int VERTICAL_SCAN = 6;
-    private static final int SEARCH_ATTEMPTS = 10;
-    private static final float PLACE_CHANCE = 0.5F;
+    private static final int VERTICAL_SCAN = 24;
+    private static final int SEARCH_ATTEMPTS = 24;
+    private static final int MAX_PLACEMENTS = 3;
 
     public JumpyBugEggCeilingFeature(Codec<NoneFeatureConfiguration> codec) {
         super(codec);
@@ -39,26 +39,33 @@ public final class JumpyBugEggCeilingFeature extends Feature<NoneFeatureConfigur
         BlockPos origin = context.origin();
 
         boolean placedAny = false;
+        int placements = 0;
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
-        for (int attempt = 0; attempt < SEARCH_ATTEMPTS; attempt++) {
-            if (random.nextFloat() > PLACE_CHANCE) {
-                continue;
-            }
-
+        for (int attempt = 0; attempt < SEARCH_ATTEMPTS && placements < MAX_PLACEMENTS; attempt++) {
             int x = origin.getX() + random.nextInt(SEARCH_RADIUS * 2 + 1) - SEARCH_RADIUS;
             int z = origin.getZ() + random.nextInt(SEARCH_RADIUS * 2 + 1) - SEARCH_RADIUS;
-            int y = origin.getY() + random.nextInt(VERTICAL_SCAN * 2 + 1) - VERTICAL_SCAN;
-            mutable.set(x, y, z);
+            int startY = origin.getY() + random.nextInt(VERTICAL_SCAN * 2 + 1) - VERTICAL_SCAN;
+            int minY = Math.max(level.getMinBuildHeight() + 1, startY - VERTICAL_SCAN);
+            int maxY = Math.min(level.getMaxBuildHeight() - 2, startY + VERTICAL_SCAN);
 
-            if (!isValidCeilingSpot(level, mutable)) {
-                continue;
+            BlockPos spot = null;
+            for (int y = maxY; y >= minY; y--) {
+                mutable.set(x, y, z);
+                if (isValidCeilingSpot(level, mutable)) {
+                    spot = mutable.immutable();
+                    break;
+                }
             }
 
+            if (spot == null) {
+                continue;
+            }
             BlockState eggState = eggBlock.defaultBlockState()
                     .setValue(JumpyBugEggBlock.HANGING, true)
                     .setValue(JumpyBugEggBlock.ROTATED, random.nextBoolean());
-            level.setBlock(mutable, eggState, 3);
+            level.setBlock(spot, eggState, 3);
             placedAny = true;
+            placements++;
         }
 
         return placedAny;

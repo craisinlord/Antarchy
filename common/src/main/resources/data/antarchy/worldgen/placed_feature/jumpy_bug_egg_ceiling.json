@@ -2,8 +2,12 @@
   "feature": "antarchy:jumpy_bug_egg_ceiling",
   "placement": [
     {
-      "type": "minecraft:rarity_filter",
-      "chance": 6
+      "type": "minecraft:count",
+      "count": {
+        "type": "minecraft:uniform",
+        "min_inclusive": 1,
+        "max_inclusive": 2
+      }
     },
     {
       "type": "minecraft:in_square"

@@ -24,12 +24,12 @@
   },
   "spawn_costs": {
     "antarchy:jumpy_bug": {
-      "energy_budget": 0.2,
-      "charge": 9
+      "energy_budget": 0.4,
+      "charge": 7
     },
     "antarchy:spit_bug": {
-      "energy_budget": 0.7,
-      "charge": 6
+      "energy_budget": 0.9,
+      "charge": 2
     }
   },
   "carvers": {
@@ -57,10 +57,11 @@
       "antarchy:brooding_tunnels_creepvine",
       "antarchy:brooding_tunnels_hanging_creeproots",
       "antarchy:molting_vines",
+      "antarchy:ground_molting_vines",
       "antarchy:jumpy_bug_egg_ceiling"
     ]
   ],
-  "creature_spawn_probability": 0.06,
+  "creature_spawn_probability": 0.12,
   "spawners": {
     "monster": [
       {
@@ -77,7 +78,14 @@
       }
     ],
     "creature": [],
-    "ambient": [],
+    "ambient": [
+      {
+        "type": "antarchy:stink_bug",
+        "weight": 10,
+        "minCount": 1,
+        "maxCount": 3
+      }
+    ],
     "axolotls": [],
     "underground_water_creature": [],
     "water_creature": [],

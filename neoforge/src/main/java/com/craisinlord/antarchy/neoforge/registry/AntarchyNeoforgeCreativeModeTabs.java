@@ -271,6 +271,10 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.MOSSY_SHELLSTONE_BRICK_SLAB_ITEM.get());
             event.accept(AntarchyNeoforgeItems.MOSSY_SHELLSTONE_BRICK_WALL_ITEM.get());
             event.accept(AntarchyNeoforgeItems.CRACKED_SHELLSTONE_BRICKS_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.BLUSH_MOSS_BLOCK_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.BLUSH_MOSS_CARPET_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.LUMEN_FROGLIGHT_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.ROSEATE_FROGLIGHT_ITEM.get());
             event.accept(AntarchyNeoforgeItems.NYXITE_ITEM.get());
             event.accept(AntarchyNeoforgeItems.NYXITE_STAIRS_ITEM.get());
             event.accept(AntarchyNeoforgeItems.NYXITE_SLAB_ITEM.get());
@@ -292,13 +296,9 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.ANTIMETAL_SCAFFOLDING_ITEM.get());
             event.accept(AntarchyNeoforgeItems.UMBRAL_MOSS_BLOCK_ITEM.get());
             event.accept(AntarchyNeoforgeItems.UMBRAL_MOSS_CARPET_ITEM.get());
-            event.accept(AntarchyNeoforgeItems.BLUSH_MOSS_BLOCK_ITEM.get());
-            event.accept(AntarchyNeoforgeItems.BLUSH_MOSS_CARPET_ITEM.get());
             event.accept(AntarchyNeoforgeItems.DREAM_TORCH_ITEM.get());
             event.accept(AntarchyNeoforgeItems.DREAM_LANTERN_ITEM.get());
             event.accept(AntarchyNeoforgeItems.DREAM_CAMPFIRE_ITEM.get());
-            event.accept(AntarchyNeoforgeItems.LUMEN_FROGLIGHT_ITEM.get());
-            event.accept(AntarchyNeoforgeItems.ROSEATE_FROGLIGHT_ITEM.get());
             event.accept(AntarchyNeoforgeItems.DREAM_SAND_ITEM.get());
             event.accept(AntarchyNeoforgeItems.DREAM_SANDSTONE_ITEM.get());
             event.accept(AntarchyNeoforgeItems.CHISELED_DREAM_SANDSTONE_ITEM.get());
@@ -330,6 +330,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.BROODSTONE_BRICK_STAIRS_ITEM.get());
             event.accept(AntarchyNeoforgeItems.BROODSTONE_BRICK_SLAB_ITEM.get());
             event.accept(AntarchyNeoforgeItems.BROODSTONE_BRICK_WALL_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.MYRMITE_COAL_ORE_ITEM.get());
             event.accept(AntarchyNeoforgeItems.BROODSTONE_URANIUM_ORE_ITEM.get());
             event.accept(AntarchyNeoforgeItems.BROODSTONE_TITANIUM_ORE_ITEM.get());
             event.accept(AntarchyNeoforgeItems.BILE_VEIN_ITEM.get());

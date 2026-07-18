@@ -39,7 +39,11 @@
     [],
     [],
     [],
-    [],
+    [
+      "antarchy:myrmite_coal_ore",
+      "antarchy:broodstone_uranium_ore",
+      "antarchy:broodstone_titanium_ore"
+    ],
     [],
     [
       "antarchy:cavaryn_bile_veins",
@@ -76,7 +80,8 @@
         "maxCount": 1
       }
     ],
-    "creature": [
+    "creature": [],
+    "ambient": [
       {
         "type": "antarchy:stink_bug",
         "weight": 10,
@@ -84,7 +89,6 @@
         "maxCount": 3
       }
     ],
-    "ambient": [],
     "axolotls": [],
     "underground_water_creature": [],
     "water_creature": [],

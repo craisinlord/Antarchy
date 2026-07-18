@@ -15,8 +15,15 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
 public final class GiantLilyPadPatchFeature extends Feature<NoneFeatureConfiguration> {
+    private final float lotusChance;
+
     public GiantLilyPadPatchFeature(Codec<NoneFeatureConfiguration> codec) {
+        this(codec, 1.0F);
+    }
+
+    public GiantLilyPadPatchFeature(Codec<NoneFeatureConfiguration> codec, float lotusChance) {
         super(codec);
+        this.lotusChance = lotusChance;
     }
 
     @Override
@@ -43,7 +50,9 @@ public final class GiantLilyPadPatchFeature extends Feature<NoneFeatureConfigura
             GiantLilyPadBlock.placeStructure(level, padPos, GiantLilyPadBlock.PadRotation.values()[random.nextInt(4)]);
             placedAny = true;
 
-            placeLotus(level, padPos);
+            if (random.nextFloat() < this.lotusChance) {
+                placeLotus(level, padPos);
+            }
         }
 
         return placedAny;

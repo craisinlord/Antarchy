@@ -38,13 +38,13 @@
             "type": "minecraft:weighted_state_provider",
             "entries": [
               {
-                "weight": 21,
+                "weight": 24,
                 "data": {
                   "Name": "antarchy:amber_moss_carpet"
                 }
               },
               {
-                "weight": 11,
+                "weight": 12,
                 "data": {
                   "Name": "minecraft:short_grass"
                 }
