@@ -324,7 +324,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
             return state.setAndContinue(BITE_ANIM);
         }
 
-        if (this.getDeltaMovement().horizontalDistanceSqr() > 0.003D) {
+        if (state.isMoving()) {
             state.getController().setAnimationSpeed(1.15D);
             return state.setAndContinue(WALK_ANIM);
         }

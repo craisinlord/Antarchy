@@ -635,6 +635,9 @@ public final class AntarchyFabricSounds {
 
 
     public static final DeferredHolder<SoundEvent, SoundEvent> ROLLY_POLLY_IDLE = registerSoundEvent("rolly_polly_idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ROLLY_POLLY_WHEEL_MODE = registerSoundEvent("rolly_polly_wheel_mode");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ROLLY_POLLY_NORMAL_MODE = registerSoundEvent("rolly_polly_normal_mode");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ROLLY_POLLY_ROLL = registerSoundEvent("rolly_polly_roll");
 
 
     public static final DeferredHolder<SoundEvent, SoundEvent> CREEPING_HORROR_GROWL = registerSoundEvent("creeping_horror_growl");

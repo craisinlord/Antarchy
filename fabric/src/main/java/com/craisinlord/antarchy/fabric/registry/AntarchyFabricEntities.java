@@ -278,11 +278,11 @@ public final class AntarchyFabricEntities {
             () -> buildAntType(com.craisinlord.antarchy.content.entity.ant.TermiteEntity::new, MobCategory.CREATURE, "termite"));
 
 
-//    public static final DeferredHolder<EntityType<?>, EntityType<RollyPollyEntity>> ROLLY_POLLY = ENTITY_TYPES.register("rolly_polly",
-//            () -> EntityType.Builder.of(RollyPollyEntity::new, MobCategory.CREATURE)
-//                    .sized(0.95F, 0.85F)
-//                    .clientTrackingRange(10)
-//                    .build("rolly_polly"));
+    public static final DeferredHolder<EntityType<?>, EntityType<RollyPollyEntity>> ROLLY_POLLY = ENTITY_TYPES.register("rolly_polly",
+            () -> EntityType.Builder.of(RollyPollyEntity::new, MobCategory.CREATURE)
+                    .sized(0.95F, 0.85F)
+                    .clientTrackingRange(10)
+                    .build("rolly_polly"));
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<MolewormEntity>> MOLEWORM = ENTITY_TYPES.register("moleworm",

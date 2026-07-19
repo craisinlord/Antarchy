@@ -25,6 +25,7 @@ import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.minecraft.server.level.ServerPlayer;
 import com.craisinlord.antarchy.content.SquidzookaDispenseBehavior;
 import com.craisinlord.antarchy.content.RpoLauncherDispenseBehavior;
+import com.craisinlord.antarchy.content.SizeRayDispenseBehavior;
 import com.craisinlord.antarchy.content.WaterCannonDispenseBehavior;
 import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.DispenserBlock;
@@ -58,6 +59,9 @@ public final class AntarchyFabricEvents {
         DispenserBlock.registerBehavior(AntarchyFabricItems.SQUIDZOOKA.get(), new SquidzookaDispenseBehavior());
         DispenserBlock.registerBehavior(AntarchyFabricItems.RPO_LAUNCHER.get(), new RpoLauncherDispenseBehavior());
         DispenserBlock.registerBehavior(AntarchyFabricItems.WATER_CANNON.get(), new WaterCannonDispenseBehavior());
+        DispenserBlock.registerBehavior(AntarchyFabricItems.SHRINK_RAY.get(), new SizeRayDispenseBehavior());
+        DispenserBlock.registerBehavior(AntarchyFabricItems.GROWTH_RAY.get(), new SizeRayDispenseBehavior());
+        AntarchyFabricDispenserBehaviors.register();
 
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.UMBRAL_MOSS_BLOCK.get().asItem(), 0.65f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.UMBRAL_MOSS_CARPET.get().asItem(), 0.3f);

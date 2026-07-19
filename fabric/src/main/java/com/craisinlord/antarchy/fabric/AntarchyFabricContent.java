@@ -269,7 +269,10 @@ public final class AntarchyFabricContent {
                 AntarchyFabricSounds.JUMPY_BUG_JUMP,
                 AntarchyFabricSounds.SPIT_BUG_HURT,
                 AntarchyFabricSounds.SPIT_BUG_SPIT,
-                AntarchyFabricSounds.BRUTALFLY_SPIT
+                AntarchyFabricSounds.BRUTALFLY_SPIT,
+                AntarchyFabricSounds.ROLLY_POLLY_WHEEL_MODE,
+                AntarchyFabricSounds.ROLLY_POLLY_NORMAL_MODE,
+                AntarchyFabricSounds.ROLLY_POLLY_ROLL
         );
 
         AntarchyObjects.setOctopusBomb(AntarchyFabricEntities.OCTOPUS_BOMB);

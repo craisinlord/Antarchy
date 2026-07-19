@@ -88,7 +88,6 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playC2S().register(HerculesBeetleJumpInputPayload.TYPE, HerculesBeetleJumpInputPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(HerculesBeetleMountedAttackPayload.TYPE, HerculesBeetleMountedAttackPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(HerculesBeetleMountedChargePayload.TYPE, HerculesBeetleMountedChargePayload.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(com.craisinlord.antarchy.content.network.RollyPollyRollPayload.TYPE, com.craisinlord.antarchy.content.network.RollyPollyRollPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(MultipartAttackPayload.TYPE, MultipartAttackPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(MultipartInteractPayload.TYPE, MultipartInteractPayload.STREAM_CODEC);
     }
@@ -116,8 +115,6 @@ public final class AntarchyFabricNetworking {
                 context.server().execute(() -> handleHerculesBeetleMountedAttack(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(HerculesBeetleMountedChargePayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleHerculesBeetleMountedCharge(context.player(), payload)));
-        ServerPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.RollyPollyRollPayload.TYPE, (payload, context) ->
-                context.server().execute(() -> handleRollyPollyRoll(context.player())));
         ServerPlayNetworking.registerGlobalReceiver(MultipartAttackPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleMultipartAttack(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(MultipartInteractPayload.TYPE, (payload, context) ->
@@ -394,12 +391,6 @@ public final class AntarchyFabricNetworking {
     private static void handleHerculesBeetleMountedCharge(ServerPlayer player, HerculesBeetleMountedChargePayload payload) {
         if (player.getVehicle() instanceof HerculesBeetleEntity beetle) {
             beetle.handleMountedCharge(player, payload.chargeTicks());
-        }
-    }
-
-    private static void handleRollyPollyRoll(ServerPlayer player) {
-        if (player.getVehicle() instanceof com.craisinlord.antarchy.content.entity.RollyPollyEntity rollyPolly) {
-            rollyPolly.handleRollToggle(player);
         }
     }
 

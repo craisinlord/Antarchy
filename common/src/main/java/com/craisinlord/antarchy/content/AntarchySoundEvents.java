@@ -156,6 +156,9 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> SPIT_BUG_HURT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> SPIT_BUG_SPIT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> BRUTALFLY_SPIT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> ROLLY_POLLY_WHEEL_MODE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> ROLLY_POLLY_NORMAL_MODE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> ROLLY_POLLY_ROLL = (Supplier<SoundEvent>) UNBOUND;
 
     private AntarchySoundEvents() {
     }
@@ -307,7 +310,10 @@ public final class AntarchySoundEvents {
             Supplier<SoundEvent> jumpyBugJump,
             Supplier<SoundEvent> spitBugHurt,
             Supplier<SoundEvent> spitBugSpit,
-            Supplier<SoundEvent> brutalflySpit
+            Supplier<SoundEvent> brutalflySpit,
+            Supplier<SoundEvent> rollyPollyWheelMode,
+            Supplier<SoundEvent> rollyPollyNormalMode,
+            Supplier<SoundEvent> rollyPollyRoll
     ) {
         SQUIDZOOKA_FIRE = squidzookaFire;
         SHRINK_RAY_SOUND = shrinkRaySound;
@@ -456,5 +462,8 @@ public final class AntarchySoundEvents {
         SPIT_BUG_HURT = spitBugHurt;
         SPIT_BUG_SPIT = spitBugSpit;
         BRUTALFLY_SPIT = brutalflySpit;
+        ROLLY_POLLY_WHEEL_MODE = rollyPollyWheelMode;
+        ROLLY_POLLY_NORMAL_MODE = rollyPollyNormalMode;
+        ROLLY_POLLY_ROLL = rollyPollyRoll;
     }
 }

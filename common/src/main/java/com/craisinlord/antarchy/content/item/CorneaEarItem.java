@@ -10,6 +10,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -58,6 +59,7 @@ public final class CorneaEarItem extends Item {
         }
 
         level.setBlock(plantPos, stalkState, Block.UPDATE_ALL);
+        level.playSound(null, plantPos, stalkState.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1.0F, 1.0F);
         ItemStack stack = context.getItemInHand();
         Player player = context.getPlayer();
         if (player == null || !player.getAbilities().instabuild) {

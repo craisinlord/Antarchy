@@ -1436,8 +1436,8 @@ public final class AntarchyFabricItems {
             () -> new DeferredSpawnEggItem(AntarchyFabricEntities.ALPHA_MANTIS, 0x8FDD6C, 0x2F5D22, new Item.Properties()));
 
 
-//    public static final DeferredItem<DeferredSpawnEggItem> ROLLY_POLLY_SPAWN_EGG = ITEMS.register("rolly_polly_spawn_egg",
-//            () -> new DeferredSpawnEggItem(AntarchyFabricEntities.ROLLY_POLLY, 0x7284A3, 0xBCC8DB, new Item.Properties()));
+    public static final DeferredItem<DeferredSpawnEggItem> ROLLY_POLLY_SPAWN_EGG = ITEMS.register("rolly_polly_spawn_egg",
+            () -> new DeferredSpawnEggItem(AntarchyFabricEntities.ROLLY_POLLY, 0x7284A3, 0xBCC8DB, new Item.Properties()));
 
 
     public static final DeferredItem<DeferredSpawnEggItem> MOLEVORE_SPAWN_EGG = ITEMS.register("molevore_spawn_egg",

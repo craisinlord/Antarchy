@@ -114,6 +114,7 @@ public final class AntarchyTags {
     public static final class Fluids {
         public static final TagKey<Fluid> LUMEN = TagKey.create(Registries.FLUID, id("lumen"));
         public static final TagKey<Fluid> GIANT_LILY_PAD_SUPPORTING_FLUIDS = TagKey.create(Registries.FLUID, id("giant_lily_pad_supporting_fluids"));
+        public static final TagKey<Fluid> ANTIWATER = TagKey.create(Registries.FLUID, id("antiwater"));
 
         private Fluids() {
         }

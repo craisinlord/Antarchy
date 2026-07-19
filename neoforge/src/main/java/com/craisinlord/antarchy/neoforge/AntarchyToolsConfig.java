@@ -305,7 +305,7 @@ public final class AntarchyToolsConfig {
         // Battle Axe
 
         b.push("battleAxe");
-        BATTLE_AXE_ATTACK_DAMAGE = b.comment("Attack damage of the Battle Axe.").defineInRange("attackDamage", 44.0D, 0.0D, 4096.0D);
+        BATTLE_AXE_ATTACK_DAMAGE = b.comment("Attack damage of the Battle Axe.").defineInRange("attackDamage", 46.0D, 0.0D, 4096.0D);
         BATTLE_AXE_ATTACK_SPEED  = b.comment("Attack speed of the Battle Axe.") .defineInRange("attackSpeed",  -3.1D, -10.0D, 10.0D);
         b.pop();
 
@@ -324,7 +324,7 @@ public final class AntarchyToolsConfig {
         b.pop();
 
         b.push("attitudeAdjuster");
-        ATTITUDE_ADJUSTER_BASE_DAMAGE = b.comment("Base attack damage of the Attitude Adjuster.").defineInRange("baseDamage", 40.0D, 0.0D, 4096.0D);
+        ATTITUDE_ADJUSTER_BASE_DAMAGE = b.comment("Base attack damage of the Attitude Adjuster.").defineInRange("baseDamage", 47.0D, 0.0D, 4096.0D);
         ATTITUDE_ADJUSTER_BREAKS_BLOCKS = b.comment("If true, player ground slams can break a small patch of blocks on impact.").define("breaksBlocks", true);
         b.pop();
 

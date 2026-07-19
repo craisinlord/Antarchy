@@ -299,7 +299,7 @@ public final class AntarchyFabric implements ModInitializer {
                 BiomeSelectors.tag(GOLDEN_APPLE_COW_SPAWN_BIOMES),
                 net.minecraft.world.entity.MobCategory.CREATURE,
                 AntarchyFabricEntities.GOLDEN_APPLE_COW.get(),
-                3, 1, 3
+                1, 1, 3
         );
         BiomeModifications.addSpawn(
                 BiomeSelectors.tag(FLYING_SQUIRREL_SPAWN_BIOMES),

@@ -660,6 +660,30 @@
       }
     ]
   },
+  "rolly_polly_wheel_mode": {
+    "subtitle": "subtitles.antarchy.rolly_polly_wheel_mode",
+    "sounds": [
+      {
+        "name": "antarchy:mob/rolly_polly/wheel_mode"
+      }
+    ]
+  },
+  "rolly_polly_normal_mode": {
+    "subtitle": "subtitles.antarchy.rolly_polly_normal_mode",
+    "sounds": [
+      {
+        "name": "antarchy:mob/rolly_polly/nromal_mode"
+      }
+    ]
+  },
+  "rolly_polly_roll": {
+    "subtitle": "subtitles.antarchy.rolly_polly_roll",
+    "sounds": [
+      {
+        "name": "antarchy:mob/rolly_polly/roll1"
+      }
+    ]
+  },
   "thoraxis_nightmare_wastes_ambient": {
     "subtitle": "subtitles.antarchy.thoraxis_nightmare_wastes_ambient",
     "sounds": [

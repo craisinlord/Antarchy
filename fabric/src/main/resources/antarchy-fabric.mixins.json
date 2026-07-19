@@ -14,6 +14,7 @@
     "BloodglassEffectMixin",
     "BloodglassRespawnMixin",
     "DreamCampfireBlockEntityMixin",
+    "DreamSandMovementMixin",
     "JumpyBootsFallDamageMixin",
     "entity.MultipartEntityLevelRegistryMixin",
     "WoodTypeInvoker",
@@ -24,6 +25,7 @@
     "client.DuctTapeInputMixin",
     "client.AntiwaterFogMixin",
     "client.GravityGunMouseScrollMixin",
+    "client.KeybindingConflictFixMixin",
     "client.CrossbowArmPoseMixin",
     "client.MultipartClientSpawnMixin",
     "client.MultipartEntityLevelRegistryMixin"

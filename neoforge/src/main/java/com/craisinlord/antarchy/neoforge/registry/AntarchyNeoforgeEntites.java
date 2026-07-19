@@ -107,11 +107,11 @@ public final class AntarchyNeoforgeEntites {
                     .sized(4.25F, 3.35F)
                     .clientTrackingRange(10)
                     .build("alpha_mantis"));
-//    public static final DeferredHolder<EntityType<?>, EntityType<RollyPollyEntity>> ROLLY_POLLY = ENTITY_TYPES.register("rolly_polly",
-//            () -> EntityType.Builder.of(RollyPollyEntity::new, MobCategory.CREATURE)
-//                    .sized(0.95F, 0.85F)
-//                    .clientTrackingRange(10)
-//                    .build("rolly_polly"));
+    public static final DeferredHolder<EntityType<?>, EntityType<RollyPollyEntity>> ROLLY_POLLY = ENTITY_TYPES.register("rolly_polly",
+            () -> EntityType.Builder.of(RollyPollyEntity::new, MobCategory.CREATURE)
+                    .sized(0.95F, 0.85F)
+                    .clientTrackingRange(10)
+                    .build("rolly_polly"));
     public static final DeferredHolder<EntityType<?>, EntityType<OuranwoodBoatEntity>> OURANWOOD_BOAT_ENTITY = ENTITY_TYPES.register("ouranwood_boat",
             () -> EntityType.Builder.<OuranwoodBoatEntity>of(OuranwoodBoatEntity::new, MobCategory.MISC)
                     .sized(1.375F, 0.5625F)

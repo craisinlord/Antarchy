@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.entity;
 
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
@@ -12,25 +13,27 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
@@ -38,6 +41,8 @@ import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -77,7 +82,9 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
     private static final int ROLL_UP_TICKS = 15;
     private static final int UNROLL_TICKS = 9;
     private static final int DEFENSIVE_CURL_TICKS = 100;
-    private static final int TUMBLE_DAMAGE_INTERVAL_TICKS = 30;
+    private static final int ROLL_SOUND_INTERVAL_TICKS = 25;
+    private static final ResourceLocation ROLLED_ARMOR_MODIFIER_ID =
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "rolly_polly_rolled_armor");
 
     private static final EntityDataAccessor<Integer> ANIMATION_STATE =
             SynchedEntityData.defineId(RollyPollyEntity.class, EntityDataSerializers.INT);
@@ -89,8 +96,8 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
     private int rollTransitionTicks;
     private boolean unrolling;
     private int defensiveCurlTicks;
-    private int tumbleTicks;
     private boolean hasCompost;
+    private int rollSoundCooldown;
 
     public RollyPollyEntity(EntityType<? extends RollyPollyEntity> entityType, Level level) {
         super(entityType, level);
@@ -108,6 +115,8 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, AntarchySettings.rollyPollyHealth())
                 .add(Attributes.MOVEMENT_SPEED, AntarchySettings.rollyPollyMovementSpeed())
+                .add(Attributes.ATTACK_DAMAGE, AntarchySettings.rollyPollyBowlingDamage())
+                .add(Attributes.ARMOR, AntarchySettings.rollyPollyArmor())
                 .add(Attributes.FOLLOW_RANGE, 16.0D);
     }
 
@@ -128,24 +137,28 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
                 return !RollyPollyEntity.this.isRolled() && !RollyPollyEntity.this.isTame() && super.canUse();
             }
         });
-        this.goalSelector.addGoal(2, new FertilizeCropGoal());
-        this.goalSelector.addGoal(3, new EatCompostItemGoal());
-        this.goalSelector.addGoal(4, new SnuggleOnBedGoal());
-        this.goalSelector.addGoal(5, new TemptGoal(this, 1.1D, Ingredient.of(AntarchyTags.Items.ROLLY_POLLY_FOOD), false) {
+        this.goalSelector.addGoal(2, new BowlingAttackGoal());
+        this.goalSelector.addGoal(3, new FertilizeCropGoal());
+        this.goalSelector.addGoal(4, new EatCompostItemGoal());
+        this.goalSelector.addGoal(5, new SnuggleOnBedGoal());
+        this.goalSelector.addGoal(6, new TemptGoal(this, 1.1D, Ingredient.of(AntarchyTags.Items.ROLLY_POLLY_FOOD), false) {
             @Override
             public boolean canUse() {
                 return !RollyPollyEntity.this.isRolled() && super.canUse();
             }
         });
-        this.goalSelector.addGoal(6, new RollingStrollGoal());
-        this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
+        this.goalSelector.addGoal(7, new FollowOwnerGoal(this, 1.1D, 10.0F, 2.0F));
+        this.goalSelector.addGoal(8, new RollingStrollGoal());
+        this.goalSelector.addGoal(9, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
             @Override
             public boolean canUse() {
-                return !RollyPollyEntity.this.isRolled() && !RollyPollyEntity.this.isVehicle() && super.canUse();
+                return !RollyPollyEntity.this.isRolled() && super.canUse();
             }
         });
-        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(11, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
     }
 
     @Override
@@ -198,13 +211,6 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
 
-        if (this.isTame() && stack.isEmpty() && !player.isShiftKeyDown() && !player.isPassengerOfSameVehicle(this)) {
-            if (!this.level().isClientSide) {
-                player.startRiding(this);
-            }
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
-        }
-
         return super.mobInteract(player, hand);
     }
 
@@ -235,34 +241,36 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(ROLLED, rolled);
     }
 
-    /** Toggles wheel mode; called from the ridden-roll keybind payload. */
-    public void handleRollToggle(ServerPlayer player) {
-        if (!this.isTame() || this.getControllingPassenger() != player) {
-            return;
-        }
-        if (this.rollTransitionTicks > 0) {
-            return;
-        }
-        if (this.isRolled()) {
-            this.startUnroll();
-        } else {
-            this.startRollUp();
-        }
-    }
-
     private void startRollUp() {
         this.setRolled(true);
         this.unrolling = false;
         this.rollTransitionTicks = ROLL_UP_TICKS;
         this.setAnimationState(ANIM_ROLL_UP);
-        this.playSound(SoundEvents.ARMADILLO_ROLL, 0.8F, 1.0F);
+        this.playSound(AntarchySoundEvents.ROLLY_POLLY_WHEEL_MODE.get(), 0.8F, 1.0F);
+        this.applyRolledArmorBonus();
     }
 
     private void startUnroll() {
         this.unrolling = true;
         this.rollTransitionTicks = UNROLL_TICKS;
         this.setAnimationState(ANIM_UNROLL);
-        this.playSound(SoundEvents.ARMADILLO_UNROLL_START, 0.8F, 1.0F);
+        this.playSound(AntarchySoundEvents.ROLLY_POLLY_NORMAL_MODE.get(), 0.8F, 1.0F);
+        this.removeRolledArmorBonus();
+    }
+
+    private void applyRolledArmorBonus() {
+        AttributeInstance armor = this.getAttribute(Attributes.ARMOR);
+        if (armor != null && armor.getModifier(ROLLED_ARMOR_MODIFIER_ID) == null) {
+            armor.addTransientModifier(new AttributeModifier(
+                    ROLLED_ARMOR_MODIFIER_ID, AntarchySettings.rollyPollyRolledArmorBonus(), AttributeModifier.Operation.ADD_VALUE));
+        }
+    }
+
+    private void removeRolledArmorBonus() {
+        AttributeInstance armor = this.getAttribute(Attributes.ARMOR);
+        if (armor != null) {
+            armor.removeModifier(ROLLED_ARMOR_MODIFIER_ID);
+        }
     }
 
     @Override
@@ -272,14 +280,14 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
 
     private void stopDefensiveCurl() {
         this.defensiveCurlTicks = 0;
-        if (this.isRolled() && !this.isVehicle()) {
+        if (this.isRolled()) {
             this.startUnroll();
         }
     }
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (this.isRolled()) {
+        if (this.isRolled() && source.is(DamageTypeTags.IS_PROJECTILE)) {
             amount *= 0.25F;
         }
         boolean hurt = super.hurt(source, amount);
@@ -313,29 +321,27 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         if (this.defensiveCurlTicks > 0) {
             this.defensiveCurlTicks--;
             this.getNavigation().stop();
-            if (this.defensiveCurlTicks <= 0 && this.isRolled() && !this.isVehicle()) {
+            if (this.defensiveCurlTicks <= 0 && this.isRolled()) {
                 this.startUnroll();
             }
         }
 
-        this.tickTumbleDamage();
+        this.tickRollSound();
     }
 
-    private void tickTumbleDamage() {
-        if (!this.isRolled() || this.rollTransitionTicks > 0
-                || !(this.getControllingPassenger() instanceof Player rider)) {
-            this.tumbleTicks = 0;
+    private void tickRollSound() {
+        if (!this.isRolled() || this.rollTransitionTicks > 0 || this.getDeltaMovement().horizontalDistanceSqr() <= 0.003D) {
+            this.rollSoundCooldown = 0;
             return;
         }
-        boolean moving = this.getDeltaMovement().horizontalDistanceSqr() > 0.003D;
-        boolean helmeted = !rider.getItemBySlot(EquipmentSlot.HEAD).isEmpty();
-        if (!moving || helmeted) {
+
+        if (this.rollSoundCooldown > 0) {
+            this.rollSoundCooldown--;
             return;
         }
-        if (++this.tumbleTicks >= TUMBLE_DAMAGE_INTERVAL_TICKS) {
-            this.tumbleTicks = 0;
-            rider.hurt(this.damageSources().generic(), (float) AntarchySettings.rollyPollyTumbleDamage());
-        }
+
+        this.rollSoundCooldown = ROLL_SOUND_INTERVAL_TICKS;
+        this.playSound(AntarchySoundEvents.ROLLY_POLLY_ROLL.get(), 0.7F, 0.9F + this.random.nextFloat() * 0.2F);
     }
 
     private int getAnimationState() {
@@ -347,67 +353,12 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
     }
 
     @Override
-    @Nullable
-    public LivingEntity getControllingPassenger() {
-        if (!this.isTame()) {
-            return null;
-        }
-        Entity passenger = this.getFirstPassenger();
-        return passenger instanceof LivingEntity living ? living : null;
-    }
-
-    @Override
-    public boolean canAddPassenger(Entity passenger) {
-        return this.getPassengers().isEmpty();
-    }
-
-    @Override
-    protected void positionRider(Entity passenger, MoveFunction moveFunction) {
-        if (this.hasPassenger(passenger)) {
-            // When rolled the rider tucks into the center of the ball; otherwise sits on the shell
-            double yOffset = this.isRolled() ? -0.25D : 0.45D;
-            moveFunction.accept(passenger, this.getX(), this.getY() + yOffset, this.getZ());
-        }
-    }
-
-    @Override
     public void travel(Vec3 travelVector) {
-        if (this.defensiveCurlTicks > 0 && !this.isVehicle()) {
+        if (this.defensiveCurlTicks > 0) {
             super.travel(Vec3.ZERO);
             return;
         }
         super.travel(travelVector);
-    }
-
-    @Override
-    protected void tickRidden(Player player, Vec3 travelVector) {
-        super.tickRidden(player, travelVector);
-        this.setRot(player.getYHeadRot(), player.getXRot() * 0.5F);
-        this.yRotO = this.yBodyRot = this.yHeadRot = this.getYRot();
-    }
-
-    @Override
-    protected Vec3 getRiddenInput(Player player, Vec3 travelVector) {
-        if (this.rollTransitionTicks > 0) {
-            // Hold still while rolling up / unrolling
-            return Vec3.ZERO;
-        }
-        float forward = player.zza;
-        float strafe = player.xxa * 0.5F;
-        if (forward < 0.0F) {
-            forward *= 0.4F;
-        }
-        if (this.isRolled()) {
-            // Rolling is fast but drifty
-            strafe *= 0.35F;
-        }
-        return new Vec3(strafe, 0.0D, forward);
-    }
-
-    @Override
-    protected float getRiddenSpeed(Player player) {
-        return (float) (this.getAttributeValue(Attributes.MOVEMENT_SPEED)
-                * (this.isRolled() ? AntarchySettings.rollyPollyRollSpeedMultiplier() : 1.0D));
     }
 
     @Override
@@ -483,7 +434,6 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         public boolean canUse() {
             if (RollyPollyEntity.this.hasCompost
                     || RollyPollyEntity.this.isRolled()
-                    || RollyPollyEntity.this.isVehicle()
                     || RollyPollyEntity.this.defensiveCurlTicks > 0) {
                 return false;
             }
@@ -500,7 +450,6 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         public boolean canContinueToUse() {
             return !RollyPollyEntity.this.hasCompost
                     && !RollyPollyEntity.this.isRolled()
-                    && !RollyPollyEntity.this.isVehicle()
                     && this.targetItem != null
                     && this.targetItem.isAlive()
                     && isCompostable(this.targetItem.getItem());
@@ -571,7 +520,6 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         public boolean canUse() {
             return RollyPollyEntity.this.hasCompost
                     && !RollyPollyEntity.this.isRolled()
-                    && !RollyPollyEntity.this.isVehicle()
                     && RollyPollyEntity.this.defensiveCurlTicks <= 0
                     && super.canUse();
         }
@@ -579,7 +527,6 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         @Override
         public boolean canContinueToUse() {
             return RollyPollyEntity.this.hasCompost
-                    && !RollyPollyEntity.this.isVehicle()
                     && super.canContinueToUse();
         }
 
@@ -653,6 +600,84 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         }
     }
 
+    private class BowlingAttackGoal extends Goal {
+        private static final double CHARGE_SPEED = 1.3D;
+        private static final double HIT_RANGE_SQR = 1.75D * 1.75D;
+        private static final int ATTACK_COOLDOWN_TICKS = 20;
+
+        private int attackCooldown;
+
+        BowlingAttackGoal() {
+            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            LivingEntity target = RollyPollyEntity.this.getTarget();
+            return RollyPollyEntity.this.isTame()
+                    && target != null
+                    && target.isAlive();
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.canUse();
+        }
+
+        @Override
+        public void start() {
+            this.attackCooldown = 0;
+            if (!RollyPollyEntity.this.isRolled() && RollyPollyEntity.this.rollTransitionTicks <= 0) {
+                RollyPollyEntity.this.startRollUp();
+            }
+        }
+
+        @Override
+        public void stop() {
+            RollyPollyEntity.this.getNavigation().stop();
+            if (RollyPollyEntity.this.isRolled() && RollyPollyEntity.this.rollTransitionTicks <= 0) {
+                RollyPollyEntity.this.startUnroll();
+            }
+        }
+
+        @Override
+        public void tick() {
+            LivingEntity target = RollyPollyEntity.this.getTarget();
+            if (target == null) {
+                return;
+            }
+
+            RollyPollyEntity.this.getLookControl().setLookAt(target, 30.0F, 30.0F);
+
+            if (this.attackCooldown > 0) {
+                this.attackCooldown--;
+            }
+
+            if (!RollyPollyEntity.this.isRolled() || RollyPollyEntity.this.rollTransitionTicks > 0) {
+                return;
+            }
+
+            RollyPollyEntity.this.getNavigation().moveTo(target, CHARGE_SPEED);
+
+            if (this.attackCooldown <= 0 && RollyPollyEntity.this.distanceToSqr(target) <= HIT_RANGE_SQR) {
+                this.attackCooldown = ATTACK_COOLDOWN_TICKS;
+                this.performBowlingHit(target);
+            }
+        }
+
+        private void performBowlingHit(LivingEntity target) {
+            boolean hurt = target.hurt(RollyPollyEntity.this.damageSources().mobAttack(RollyPollyEntity.this), (float) RollyPollyEntity.this.getAttributeValue(Attributes.ATTACK_DAMAGE));
+            if (!hurt) {
+                return;
+            }
+
+            double dx = RollyPollyEntity.this.getX() - target.getX();
+            double dz = RollyPollyEntity.this.getZ() - target.getZ();
+            target.knockback(AntarchySettings.rollyPollyBowlingKnockback(), dx, dz);
+            RollyPollyEntity.this.playSound(AntarchySoundEvents.ROLLY_POLLY_ROLL.get(), 1.0F, 0.8F + RollyPollyEntity.this.random.nextFloat() * 0.2F);
+        }
+    }
+
     private class RollingStrollGoal extends Goal {
         @Nullable
         private Vec3 targetPos;
@@ -668,7 +693,6 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         @Override
         public boolean canUse() {
             if (RollyPollyEntity.this.isRolled()
-                    || RollyPollyEntity.this.isVehicle()
                     || RollyPollyEntity.this.defensiveCurlTicks > 0
                     || RollyPollyEntity.this.hasCompost
                     || RollyPollyEntity.this.rollTransitionTicks > 0) {
@@ -685,7 +709,6 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         public boolean canContinueToUse() {
             return !this.finished
                     && this.rollingTicks < this.maxRollingTicks
-                    && !RollyPollyEntity.this.isVehicle()
                     && !RollyPollyEntity.this.hasCompost;
         }
 
@@ -739,7 +762,7 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
 
         @Override
         public boolean canUse() {
-            if (!RollyPollyEntity.this.isTame() || RollyPollyEntity.this.isVehicle()) {
+            if (!RollyPollyEntity.this.isTame()) {
                 return false;
             }
             if (!(RollyPollyEntity.this.getOwner() instanceof Player player) || !player.isSleeping()) {
@@ -763,7 +786,6 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         @Override
         public boolean canContinueToUse() {
             return RollyPollyEntity.this.isTame()
-                    && !RollyPollyEntity.this.isVehicle()
                     && this.ownerPlayer != null
                     && this.ownerPlayer.isSleeping()
                     && this.bedPos != null;

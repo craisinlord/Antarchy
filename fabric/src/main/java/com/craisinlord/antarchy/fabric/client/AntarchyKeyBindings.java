@@ -31,20 +31,12 @@ public final class AntarchyKeyBindings {
             CATEGORY
     );
 
-    public static final KeyMapping ROLLY_POLLY_ROLL = new KeyMapping(
-            "key.antarchy.rolly_polly_roll",
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_R,
-            CATEGORY
-    );
-
     private AntarchyKeyBindings() {}
 
     public static void register() {
         KeyBindingHelper.registerKeyBinding(BRUTALFLY_FLAP);
         KeyBindingHelper.registerKeyBinding(DORRIE_CHARGE_JUMP);
         KeyBindingHelper.registerKeyBinding(HERCULES_BEETLE_CHARGE);
-        KeyBindingHelper.registerKeyBinding(ROLLY_POLLY_ROLL);
     }
 
     public static boolean isBrutalflyFlapPressed() {

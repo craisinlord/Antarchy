@@ -206,7 +206,7 @@ public class MantisEntity extends Monster implements GeoEntity {
 
             if (this.flyBurstTicks > 0) {
                 this.flyBurstTicks--;
-                if (this.flyBurstTicks % 8 == 0) {
+                if (this.flyBurstTicks % 16 == 0) {
                     this.playSound(AntarchySoundEvents.MANTIS_FLY_LOOP.get(), 0.45F, 0.95F + this.random.nextFloat() * 0.1F);
                 }
             }

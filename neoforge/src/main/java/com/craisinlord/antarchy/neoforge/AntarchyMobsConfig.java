@@ -108,6 +108,10 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_ROLL_SPEED_MULTIPLIER;
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_TUMBLE_DAMAGE;
     private static final ModConfigSpec.IntValue    ROLLY_POLLY_TAME_CHANCE;
+    private static final ModConfigSpec.DoubleValue ROLLY_POLLY_BOWLING_DAMAGE;
+    private static final ModConfigSpec.DoubleValue ROLLY_POLLY_BOWLING_KNOCKBACK;
+    private static final ModConfigSpec.DoubleValue ROLLY_POLLY_ARMOR;
+    private static final ModConfigSpec.DoubleValue ROLLY_POLLY_ROLLED_ARMOR_BONUS;
 
 
     // Triffid
@@ -414,11 +418,15 @@ public final class AntarchyMobsConfig {
         // Rolly Polly
 
         b.push("rollyPolly");
-        ROLLY_POLLY_HEALTH                = b.comment("Base max health.")                                                          .defineInRange("health",              12.0D, 1.0D, 32768.0D);
+        ROLLY_POLLY_HEALTH                = b.comment("Base max health.")                                                          .defineInRange("health",              25.0D, 1.0D, 32768.0D);
         ROLLY_POLLY_MOVEMENT_SPEED        = b.comment("Base movement speed.")                                                      .defineInRange("movementSpeed",        0.3D, 0.0D, 10.0D);
-        ROLLY_POLLY_ROLL_SPEED_MULTIPLIER = b.comment("Speed multiplier while rolled up and ridden.")                              .defineInRange("rollSpeedMultiplier",  2.2D, 0.1D, 20.0D);
-        ROLLY_POLLY_TUMBLE_DAMAGE         = b.comment("Damage dealt to a helmetless rider while rolling. 0 disables.")             .defineInRange("tumbleDamage",         1.0D, 0.0D, 1024.0D);
+        ROLLY_POLLY_ROLL_SPEED_MULTIPLIER = b.comment("Speed multiplier while rolled up.")                                         .defineInRange("rollSpeedMultiplier",  2.2D, 0.1D, 20.0D);
+        ROLLY_POLLY_TUMBLE_DAMAGE         = b.comment("Unused (riding removed). Retained for config compatibility.")               .defineInRange("tumbleDamage",         1.0D, 0.0D, 1024.0D);
         ROLLY_POLLY_TAME_CHANCE           = b.comment("Taming succeeds with a 1-in-N chance per food item.")                       .defineInRange("tameChance",               3, 1, 100);
+        ROLLY_POLLY_BOWLING_DAMAGE        = b.comment("Damage dealt by a tamed rolly polly's rolling bowling attack.")             .defineInRange("bowlingDamage",        3.0D, 0.0D, 1024.0D);
+        ROLLY_POLLY_BOWLING_KNOCKBACK     = b.comment("Knockback strength of a tamed rolly polly's rolling bowling attack.")       .defineInRange("bowlingKnockback",     0.8D, 0.0D, 20.0D);
+        ROLLY_POLLY_ARMOR                 = b.comment("Base armor value.")                                                         .defineInRange("armor",                2.0D, 0.0D, 100.0D);
+        ROLLY_POLLY_ROLLED_ARMOR_BONUS    = b.comment("Additional armor gained while rolled up.")                                  .defineInRange("rolledArmorBonus",    16.0D, 0.0D, 100.0D);
         b.pop();
 
 
@@ -663,6 +671,10 @@ public final class AntarchyMobsConfig {
     static double  rollyPollyRollSpeedMultiplier()          { return ROLLY_POLLY_ROLL_SPEED_MULTIPLIER.get(); }
     static double  rollyPollyTumbleDamage()                 { return ROLLY_POLLY_TUMBLE_DAMAGE.get(); }
     static int     rollyPollyTameChance()                   { return ROLLY_POLLY_TAME_CHANCE.get(); }
+    static double  rollyPollyBowlingDamage()                { return ROLLY_POLLY_BOWLING_DAMAGE.get(); }
+    static double  rollyPollyBowlingKnockback()              { return ROLLY_POLLY_BOWLING_KNOCKBACK.get(); }
+    static double  rollyPollyArmor()                        { return ROLLY_POLLY_ARMOR.get(); }
+    static double  rollyPollyRolledArmorBonus()             { return ROLLY_POLLY_ROLLED_ARMOR_BONUS.get(); }
 
     static double  triffidHealth()                          { return TRIFFID_HEALTH.get(); }
     static double  triffidAttackDamage()                    { return TRIFFID_ATTACK_DAMAGE.get(); }

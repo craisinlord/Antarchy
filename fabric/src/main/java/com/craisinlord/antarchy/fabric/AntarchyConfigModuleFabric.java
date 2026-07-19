@@ -180,6 +180,8 @@ public final class AntarchyConfigModuleFabric {
                     || name.equals("glowingTorchflowers")
                     || name.equals("glowVinesUnderLeaves")
                     || name.equals("swingThroughGrassEnabled")
+                    || name.equals("fabricKeybindingConflictFixEnabled")
+                    || name.equals("experimentalSettingsPopupDisabled")
                     || name.equals("entitySpecificFireOverlayEnabled")
                     || name.equals("dreamSandEnabled")
                     || name.startsWith("dreamSand")

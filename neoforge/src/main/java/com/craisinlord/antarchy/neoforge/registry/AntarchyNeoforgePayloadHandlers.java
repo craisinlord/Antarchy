@@ -24,7 +24,6 @@ public class AntarchyNeoforgePayloadHandlers {
         JumpyBootsNetworking.register(registrar);
         DorrieJumpNetworking.register(registrar);
         HerculesBeetleNetworking.register(registrar);
-        com.craisinlord.antarchy.neoforge.network.RollyPollyNetworking.register(registrar);
         registrar.playToClient(
                 com.craisinlord.antarchy.content.network.BloodglassStatePayload.TYPE,
                 com.craisinlord.antarchy.content.network.BloodglassStatePayload.STREAM_CODEC,

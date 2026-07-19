@@ -4,7 +4,7 @@
   "spawners": [
     {
       "type": "antarchy:golden_apple_cow",
-      "weight": 3,
+      "weight": 1,
       "minCount": 1,
       "maxCount": 3
     }

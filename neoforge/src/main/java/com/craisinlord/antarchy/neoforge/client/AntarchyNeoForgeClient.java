@@ -139,7 +139,7 @@ public final class AntarchyNeoForgeClient {
         event.registerEntityRenderer(AntarchyNeoforgeEntites.OURANWOOD_DEER.get(), context -> new com.craisinlord.antarchy.content.client.renderer.OuranwoodDeerRenderer(context));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.GLIMMER.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.glimmer.GlimmerRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.ELKA.get(), context -> new com.craisinlord.antarchy.content.client.renderer.ElkaRenderer(context));
-//        event.registerEntityRenderer(AntarchyNeoforgeEntites.ROLLY_POLLY.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.RollyPollyRenderer(context)));
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.ROLLY_POLLY.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.RollyPollyRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.TERMITE.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.TermiteRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.CREEPING_HORROR.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.CreepingHorrorRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.LURKING_TERROR.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.LurkingTerrorRenderer(context)));

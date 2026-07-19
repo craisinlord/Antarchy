@@ -135,7 +135,7 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.OURANWOOD_DEER.get(), com.craisinlord.antarchy.content.client.renderer.OuranwoodDeerRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.GLIMMER.get(), com.craisinlord.antarchy.content.client.renderer.glimmer.GlimmerRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.ELKA.get(), com.craisinlord.antarchy.content.client.renderer.ElkaRenderer::new);
-//        EntityRendererRegistry.register(AntarchyFabricEntities.ROLLY_POLLY.get(), RollyPollyRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.ROLLY_POLLY.get(), com.craisinlord.antarchy.content.client.renderer.RollyPollyRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.TERMITE.get(), TermiteRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.CREEPING_HORROR.get(), CreepingHorrorRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.LURKING_TERROR.get(), LurkingTerrorRenderer::new);
@@ -448,7 +448,6 @@ public final class AntarchyFabricClientBootstrap {
             ScorpionWhipTetherRenderHandler.tick();
             DorrieJumpClientHandler.tick();
             HerculesBeetleClientHandler.tick();
-            RollyPollyClientHandler.tick();
         });
 
         BigBerthaClientHandler.register();

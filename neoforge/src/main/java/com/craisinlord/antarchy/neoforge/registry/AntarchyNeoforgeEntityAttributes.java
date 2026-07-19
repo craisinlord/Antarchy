@@ -46,7 +46,7 @@ public class AntarchyNeoforgeEntityAttributes {
                 AntarchySettings.termiteMovementSpeed(),
                 AntarchySettings.termiteAttackDamage()
         ).build());
-//        event.put(AntarchyNeoforgeEntites.ROLLY_POLLY.get(), RollyPollyEntity.createAttributes().build());
+        event.put(AntarchyNeoforgeEntites.ROLLY_POLLY.get(), RollyPollyEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.DR_TRAYAURUS.get(), Villager.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.CLOUD_SHARK.get(), CloudSharkEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.KRAKEN.get(), KrakenEntity.createAttributes().build());

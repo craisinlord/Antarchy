@@ -106,7 +106,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     private int attackAnimTicks;
     private int clawCooldownTicks;
     private int stingCooldownTicks;
-    private int hardenCooldownTicks = AntarchySettings.emperorScorpionSummonIntervalTicks();
+    private int hardenCooldownTicks = AntarchySettings.emperorScorpionHardenCooldownTicks();
     private int hardenCastTicks;
     private int hardenCastSpawnTicks;
     private int hardenStateTicks;
@@ -331,7 +331,8 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         switch (this.getHardenPhase()) {
             case CASTING -> {
                 if (this.hardenCastTicks % this.hardenCastSpawnTicks == 0
-                        && this.hardenSummonedScorpions < AntarchySettings.emperorScorpionMaxSummonedScorpions()) {
+                        && this.hardenSummonedScorpions < AntarchySettings.emperorScorpionMaxSummonedScorpions()
+                        && this.countNearbyScorpionMinions() < AntarchySettings.emperorScorpionMaxNearbyScorpions()) {
                     this.summonScorpionMinion();
                     this.hardenSummonedScorpions++;
                     if (this.hardenSummonedScorpions >= AntarchySettings.emperorScorpionMaxSummonedScorpions()) {
@@ -405,6 +406,16 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         this.setHardenPhase(HardenPhase.END);
         this.hardenStateTicks = HARDEN_END_TICKS;
         this.setAggressive(false);
+    }
+
+    private static final double NEARBY_SCORPION_CHECK_RADIUS = 24.0D;
+
+    private int countNearbyScorpionMinions() {
+        return this.level().getEntitiesOfClass(
+                ScorpionEntity.class,
+                this.getBoundingBox().inflate(NEARBY_SCORPION_CHECK_RADIUS),
+                Entity::isAlive
+        ).size();
     }
 
     private void summonScorpionMinion() {

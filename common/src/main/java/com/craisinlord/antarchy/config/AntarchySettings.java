@@ -18,6 +18,8 @@ public final class AntarchySettings {
     private static boolean glowingTorchflowers = true;
     private static boolean glowVinesUnderLeaves = true;
     private static boolean swingThroughGrassEnabled = true;
+    private static boolean fabricKeybindingConflictFixEnabled = true;
+    private static boolean experimentalSettingsPopupDisabled = true;
     private static boolean sizeChangingRaysEnabled = true;
     private static double sizeRayMinScale = 0.1D;
     private static double sizeRayMaxScale = 10.0D;
@@ -49,11 +51,11 @@ public final class AntarchySettings {
     private static double ultimateCrossbowAttackDamage = 8.0D;
     private static double ultimateCrossbowChargeSpeedMultiplier = 0.25D;
     private static double ultimateMaceDamageMultiplier = 1.5D;
-    private static double battleAxeAttackDamage = 44.0D;
+    private static double battleAxeAttackDamage = 46.0D;
     private static double bigBerthaAttackDamage = 55.0D;
     private static double bigBerthaReachBonus = 3.0D;
     private static double bigBerthaAttackSpeed = -3.0D;
-    private static double attitudeAdjusterBaseDamage = 40.0D;
+    private static double attitudeAdjusterBaseDamage = 47.0D;
     private static boolean attitudeAdjusterBreaksBlocks = true;
     private static double krakensGraspAttackDamage = 16.0D;
     private static double krakensGraspAttackSpeed = -2.9D;
@@ -119,11 +121,15 @@ public final class AntarchySettings {
     private static double alphaMantisFlyingSpeed = 0.77D;
     private static int alphaMantisSummonIntervalTicks = 300;
     private static int alphaMantisMaxMinions = 4;
-    private static double rollyPollyHealth = 12.0D;
+    private static double rollyPollyHealth = 25.0D;
     private static double rollyPollyMovementSpeed = 0.3D;
     private static double rollyPollyRollSpeedMultiplier = 2.2D;
     private static double rollyPollyTumbleDamage = 1.0D;
     private static int rollyPollyTameChance = 3;
+    private static double rollyPollyBowlingDamage = 3.0D;
+    private static double rollyPollyBowlingKnockback = 0.8D;
+    private static double rollyPollyArmor = 2.0D;
+    private static double rollyPollyRolledArmorBonus = 16.0D;
     private static double krakenProjectileDamageTakenMultiplier = 0.5D;
     private static boolean krakenSquidSpawnEnabled = true;
     private static boolean krakenMassSpawnEnabled = true;
@@ -168,6 +174,7 @@ public final class AntarchySettings {
     private static double dreamSandGravityMultiplier = 0.45D;
     private static double dreamSandFallDamageMultiplier = 0.35D;
     private static double dreamSandEffectDurationSeconds = 7.0D;
+    private static double dreamSandFallingBlockGravityMultiplier = 0.4D;
     private static boolean ichorWitherEnabled = true;
     private static int nightmareHelmetArmorValue = 3;
     private static int nightmareChestplateArmorValue = 8;
@@ -273,7 +280,7 @@ public final class AntarchySettings {
     private static double emperorScorpionMovementSpeed = 0.384D;
     private static double emperorScorpionArmor = 22.0D;
     private static double emperorScorpionKnockbackResistance = 0.8D;
-    private static double emperorScorpionFollowRange = 40.0D;
+    private static double emperorScorpionFollowRange = 80.0D;
     private static int emperorScorpionXpReward = 25;
     private static int emperorScorpionClawAnimTicks = 23;
     private static int emperorScorpionClawHitTick = 12;
@@ -284,7 +291,9 @@ public final class AntarchySettings {
     private static int emperorScorpionPoisonTicks = 300;
     private static int emperorScorpionWeaknessTicks = 120;
     private static int emperorScorpionSummonIntervalTicks = 140;
-    private static int emperorScorpionMaxSummonedScorpions = 8;
+    private static int emperorScorpionMaxSummonedScorpions = 4;
+    private static int emperorScorpionMaxNearbyScorpions = 3;
+    private static int emperorScorpionHardenCooldownTicks = 2400;
     private static double scorpionHealth = 30.0D;
     private static double scorpionAttackDamage = 5.0D;
     private static double scorpionMovementSpeed = 0.29D;
@@ -579,6 +588,14 @@ public final class AntarchySettings {
 
     public static boolean swingThroughGrassEnabled() {
         return swingThroughGrassEnabled;
+    }
+
+    public static boolean fabricKeybindingConflictFixEnabled() {
+        return fabricKeybindingConflictFixEnabled;
+    }
+
+    public static boolean experimentalSettingsPopupDisabled() {
+        return experimentalSettingsPopupDisabled;
     }
 
     public static boolean sizeChangingRaysEnabled() {
@@ -904,6 +921,22 @@ public final class AntarchySettings {
         return rollyPollyTameChance;
     }
 
+    public static double rollyPollyBowlingDamage() {
+        return rollyPollyBowlingDamage;
+    }
+
+    public static double rollyPollyBowlingKnockback() {
+        return rollyPollyBowlingKnockback;
+    }
+
+    public static double rollyPollyArmor() {
+        return rollyPollyArmor;
+    }
+
+    public static double rollyPollyRolledArmorBonus() {
+        return rollyPollyRolledArmorBonus;
+    }
+
     public static double waspHealth() {
         return waspHealth;
     }
@@ -1109,6 +1142,14 @@ public final class AntarchySettings {
 
     public static void setSwingThroughGrassEnabled(boolean value) {
         swingThroughGrassEnabled = value;
+    }
+
+    public static void setFabricKeybindingConflictFixEnabled(boolean value) {
+        fabricKeybindingConflictFixEnabled = value;
+    }
+
+    public static void setExperimentalSettingsPopupDisabled(boolean value) {
+        experimentalSettingsPopupDisabled = value;
     }
 
     public static void setSizeChangingRaysEnabled(boolean value) {
@@ -1438,6 +1479,22 @@ public final class AntarchySettings {
         rollyPollyTameChance = value;
     }
 
+    public static void setRollyPollyBowlingDamage(double value) {
+        rollyPollyBowlingDamage = value;
+    }
+
+    public static void setRollyPollyBowlingKnockback(double value) {
+        rollyPollyBowlingKnockback = value;
+    }
+
+    public static void setRollyPollyArmor(double value) {
+        rollyPollyArmor = value;
+    }
+
+    public static void setRollyPollyRolledArmorBonus(double value) {
+        rollyPollyRolledArmorBonus = value;
+    }
+
     public static void setKrakenProjectileDamageTakenMultiplier(double value) {
         krakenProjectileDamageTakenMultiplier = value;
     }
@@ -1669,6 +1726,14 @@ public final class AntarchySettings {
 
     public static void setDreamSandEffectDurationSeconds(double value) {
         dreamSandEffectDurationSeconds = value;
+    }
+
+    public static double dreamSandFallingBlockGravityMultiplier() {
+        return dreamSandFallingBlockGravityMultiplier;
+    }
+
+    public static void setDreamSandFallingBlockGravityMultiplier(double value) {
+        dreamSandFallingBlockGravityMultiplier = value;
     }
 
     public static boolean ichorWitherEnabled() {
@@ -2074,6 +2139,12 @@ public final class AntarchySettings {
 
     public static int emperorScorpionMaxSummonedScorpions() { return emperorScorpionMaxSummonedScorpions; }
     public static void setEmperorScorpionMaxSummonedScorpions(int value) { emperorScorpionMaxSummonedScorpions = value; }
+
+    public static int emperorScorpionMaxNearbyScorpions() { return emperorScorpionMaxNearbyScorpions; }
+    public static void setEmperorScorpionMaxNearbyScorpions(int value) { emperorScorpionMaxNearbyScorpions = value; }
+
+    public static int emperorScorpionHardenCooldownTicks() { return emperorScorpionHardenCooldownTicks; }
+    public static void setEmperorScorpionHardenCooldownTicks(int value) { emperorScorpionHardenCooldownTicks = value; }
 
     public static double scorpionHealth() { return scorpionHealth; }
     public static void setScorpionHealth(double value) { scorpionHealth = value; }

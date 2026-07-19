@@ -88,7 +88,7 @@ public class StinkBugEntity extends Animal implements GeoEntity {
         if (this.fartAnimationTicks > 0) {
             this.fartAnimationTicks--;
             if (this.fartAnimationTicks == FART_RELEASE_TICKS && this.pendingFartBurst && !this.level().isClientSide()) {
-                this.playSound(AntarchySoundEvents.STINK_BUG_FART.get(), 0.85F, 0.9F + this.random.nextFloat() * 0.1F);
+                this.playSound(AntarchySoundEvents.STINK_BUG_FART.get(), 1.7F, 0.9F + this.random.nextFloat() * 0.1F);
                 StinkyBehavior.emitBurst(this, STINK_BURST_PARTICLES);
                 StinkyBehavior.applyBurstStinkyEffect(this, STINK_BURST_RADIUS, STINK_BURST_DURATION_TICKS);
                 this.pendingFartBurst = false;

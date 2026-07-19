@@ -48,6 +48,8 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.BooleanValue GLOWING_TORCHFLOWERS;
     private static final ModConfigSpec.BooleanValue GLOW_VINES_UNDER_LEAVES;
     private static final ModConfigSpec.BooleanValue SWING_THROUGH_GRASS_ENABLED;
+    private static final ModConfigSpec.BooleanValue FABRIC_KEYBINDING_CONFLICT_FIX_ENABLED;
+    private static final ModConfigSpec.BooleanValue EXPERIMENTAL_SETTINGS_POPUP_DISABLED;
     private static final ModConfigSpec.BooleanValue ENTITY_SPECIFIC_FIRE_OVERLAY_ENABLED;
 
     static {
@@ -140,6 +142,8 @@ public final class AntarchyMiscConfig {
         GLOWING_TORCHFLOWERS                 = b.comment("Whether fully-grown torchflower blocks emit light.")                                  .define("glowingTorchflowers",              true);
         GLOW_VINES_UNDER_LEAVES              = b.comment("Whether glow vines can be placed and survive when attached under leaf blocks.")       .define("glowVinesUnderLeaves",             true);
         SWING_THROUGH_GRASS_ENABLED          = b.comment("If true, empty collision plants like grass do not block melee target picking.")      .define("swingThroughGrassEnabled",         true);
+        FABRIC_KEYBINDING_CONFLICT_FIX_ENABLED = b.define("fabricKeybindingConflictFixEnabled", true);
+        EXPERIMENTAL_SETTINGS_POPUP_DISABLED = b.define("experimentalSettingsPopupDisabled", true);
         ENTITY_SPECIFIC_FIRE_OVERLAY_ENABLED = b.comment("If true, burning entities use soul fire / dream fire overlays where appropriate.")   .define("entitySpecificFireOverlayEnabled", true);
         b.pop();
 
@@ -162,6 +166,8 @@ public final class AntarchyMiscConfig {
     static boolean glowingTorchflowers()                 { return GLOWING_TORCHFLOWERS.get(); }
     static boolean glowVinesUnderLeaves()                { return GLOW_VINES_UNDER_LEAVES.get(); }
     static boolean swingThroughGrassEnabled()            { return SWING_THROUGH_GRASS_ENABLED.get(); }
+    static boolean fabricKeybindingConflictFixEnabled()  { return FABRIC_KEYBINDING_CONFLICT_FIX_ENABLED.get(); }
+    static boolean experimentalSettingsPopupDisabled()   { return EXPERIMENTAL_SETTINGS_POPUP_DISABLED.get(); }
     static boolean entitySpecificFireOverlayEnabled()    { return ENTITY_SPECIFIC_FIRE_OVERLAY_ENABLED.get(); }
 
     static double  hushweedSporeLifetimeSeconds()        { return HUSHWEED_SPORE_LIFETIME_SECONDS.get(); }

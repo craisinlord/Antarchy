@@ -124,6 +124,10 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setRollyPollyRollSpeedMultiplier(AntarchyMobsConfig.rollyPollyRollSpeedMultiplier());
         AntarchySettings.setRollyPollyTumbleDamage(AntarchyMobsConfig.rollyPollyTumbleDamage());
         AntarchySettings.setRollyPollyTameChance(AntarchyMobsConfig.rollyPollyTameChance());
+        AntarchySettings.setRollyPollyBowlingDamage(AntarchyMobsConfig.rollyPollyBowlingDamage());
+        AntarchySettings.setRollyPollyBowlingKnockback(AntarchyMobsConfig.rollyPollyBowlingKnockback());
+        AntarchySettings.setRollyPollyArmor(AntarchyMobsConfig.rollyPollyArmor());
+        AntarchySettings.setRollyPollyRolledArmorBonus(AntarchyMobsConfig.rollyPollyRolledArmorBonus());
 
         AntarchySettings.setTriffidHealth(AntarchyMobsConfig.triffidHealth());
         AntarchySettings.setTriffidAttackDamage(AntarchyMobsConfig.triffidAttackDamage());
@@ -390,6 +394,8 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setGlowingTorchflowers(AntarchyMiscConfig.glowingTorchflowers());
         AntarchySettings.setGlowVinesUnderLeaves(AntarchyMiscConfig.glowVinesUnderLeaves());
         AntarchySettings.setSwingThroughGrassEnabled(AntarchyMiscConfig.swingThroughGrassEnabled());
+        AntarchySettings.setFabricKeybindingConflictFixEnabled(AntarchyMiscConfig.fabricKeybindingConflictFixEnabled());
+        AntarchySettings.setExperimentalSettingsPopupDisabled(AntarchyMiscConfig.experimentalSettingsPopupDisabled());
         AntarchySettings.setEntitySpecificFireOverlayEnabled(AntarchyMiscConfig.entitySpecificFireOverlayEnabled());
 
         AntarchySettings.setBloodCrystalArmorShieldRechargeTicks(AntarchyToolsConfig.bloodCrystalArmorShieldRechargeTicks());

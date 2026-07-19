@@ -318,7 +318,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             this.flightCooldown--;
         }
 
-        if (this.isFlying() && this.tickCount % 16 == 0) {
+        if (this.isFlying() && this.tickCount % 32 == 0) {
             this.playSound(AntarchySoundEvents.MANTIS_FLY_LOOP.get(), 0.5F, 0.85F + this.random.nextFloat() * 0.1F);
         }
 

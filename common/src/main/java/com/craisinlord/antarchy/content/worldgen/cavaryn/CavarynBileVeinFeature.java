@@ -29,6 +29,8 @@ public final class CavarynBileVeinFeature extends Feature<NoneFeatureConfigurati
     private static final int VERTICAL_SCAN = 12;
     private static final float BRANCH_CHANCE = 0.12f;
     private static final float LIQUID_POCKET_CHANCE = 0.008f;
+    private static final int MAX_DISTANCE_FROM_START = 16;
+    private static final int MAX_DISTANCE_FROM_START_SQR = MAX_DISTANCE_FROM_START * MAX_DISTANCE_FROM_START;
 
     public CavarynBileVeinFeature(Codec<NoneFeatureConfiguration> codec) {
         super(codec);
@@ -36,21 +38,25 @@ public final class CavarynBileVeinFeature extends Feature<NoneFeatureConfigurati
 
     @Override
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
-        Block bileVeinBlock = getBlock(BILE_VEIN_ID);
-        Block bileBlock = getBlock(BILE_ID);
-        if (bileVeinBlock == null || !(bileBlock instanceof LiquidBlock)) {
+        try {
+            Block bileVeinBlock = getBlock(BILE_VEIN_ID);
+            Block bileBlock = getBlock(BILE_ID);
+            if (bileVeinBlock == null || !(bileBlock instanceof LiquidBlock)) {
+                return false;
+            }
+
+            WorldGenLevel level = context.level();
+            RandomSource random = context.random();
+
+            BlockPos start = findStart(level, context.origin(), random);
+            if (start == null) {
+                return false;
+            }
+
+            return growVeinNetwork(level, start, bileVeinBlock, bileBlock, random);
+        } catch (RuntimeException exception) {
             return false;
         }
-
-        WorldGenLevel level = context.level();
-        RandomSource random = context.random();
-
-        BlockPos start = findStart(level, context.origin(), random);
-        if (start == null) {
-            return false;
-        }
-
-        return growVeinNetwork(level, start, bileVeinBlock, bileBlock, random);
     }
 
     private static BlockPos findStart(WorldGenLevel level, BlockPos origin, RandomSource random) {
@@ -81,12 +87,12 @@ public final class CavarynBileVeinFeature extends Feature<NoneFeatureConfigurati
         boolean placedAny = false;
 
         Direction mainDir = Direction.values()[random.nextInt(6)];
-        placedAny |= growArm(level, start, mainDir, 45 + random.nextInt(25), visited, pendingBranches, veinBlock, bileBlock, random);
+        placedAny |= growArm(level, start, start, mainDir, 45 + random.nextInt(25), visited, pendingBranches, veinBlock, bileBlock, random);
 
         for (BranchStart branch : pendingBranches) {
             Direction branchDir = perpendiculars(branch.dir())[random.nextInt(4)];
             int branchLen = 15 + random.nextInt(20);
-            growArm(level, branch.pos(), branchDir, branchLen, visited, null, veinBlock, bileBlock, random);
+            growArm(level, start, branch.pos(), branchDir, branchLen, visited, null, veinBlock, bileBlock, random);
         }
 
         return placedAny;
@@ -94,6 +100,7 @@ public final class CavarynBileVeinFeature extends Feature<NoneFeatureConfigurati
 
     private boolean growArm(
             WorldGenLevel level,
+            BlockPos networkOrigin,
             BlockPos start,
             Direction initialDir,
             int maxSteps,
@@ -108,6 +115,10 @@ public final class CavarynBileVeinFeature extends Feature<NoneFeatureConfigurati
         boolean placedAny = false;
 
         for (int step = 0; step < maxSteps; step++) {
+            if (current.distSqr(networkOrigin) > MAX_DISTANCE_FROM_START_SQR) {
+                break;
+            }
+
             if (visited.contains(current)) {
                 current = current.relative(biasedNextDir(dir, random));
                 continue;
