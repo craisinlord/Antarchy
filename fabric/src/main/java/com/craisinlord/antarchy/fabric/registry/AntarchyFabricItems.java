@@ -792,7 +792,7 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> CREEPING_HORROR_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.CREEPING_HORROR_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> JUMPY_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.JUMPY_BUG_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SPIT_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.SPIT_BUG_EGG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> METROID_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.METROID_EGG);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> JERRY_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.JERRY_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> LURKING_TERROR_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.LURKING_TERROR_EGG);
 
 
@@ -885,6 +885,12 @@ public final class AntarchyFabricItems {
 
 
     public static final DeferredItem<Item> CHITEN = ITEMS.registerSimpleItem("chiten", new Item.Properties().rarity(Rarity.UNCOMMON));
+
+
+    public static final DeferredItem<Item> JERRY_NUCLEUS = ITEMS.registerSimpleItem("jerry_nucleus", new Item.Properties().rarity(Rarity.UNCOMMON));
+
+
+    public static final DeferredItem<Item> CARAPACE = ITEMS.registerSimpleItem("carapace", new Item.Properties().rarity(Rarity.UNCOMMON));
 
 
     public static final DeferredItem<Item> STINK_BUG_ITEM = ITEMS.registerSimpleItem("stink_bug", new Item.Properties().rarity(Rarity.UNCOMMON));
@@ -1575,6 +1581,8 @@ public final class AntarchyFabricItems {
 
     public static final DeferredItem<DeferredSpawnEggItem> HERCULES_BEETLE_SPAWN_EGG = ITEMS.register("hercules_beetle_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyFabricEntities.HERCULES_BEETLE, 0x6B1F2A, 0xD4AF37, new Item.Properties().rarity(Rarity.RARE)));
+    public static final DeferredItem<DeferredSpawnEggItem> JERRY_SPAWN_EGG = ITEMS.register("jerry_spawn_egg",
+            () -> new DeferredSpawnEggItem(AntarchyFabricEntities.JERRY, 0x6D2232, 0x8ED34A, new Item.Properties()));
 
 
     public static final DeferredItem<DeferredSpawnEggItem> TORETERROR_SPAWN_EGG = ITEMS.register("toreterror_spawn_egg",

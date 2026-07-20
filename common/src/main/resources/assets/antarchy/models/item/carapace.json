@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "antarchy:item/metroid_egg_item"
+    "layer0": "antarchy:item/carapace"
   }
 }

@@ -1,8 +1,17 @@
 package com.craisinlord.antarchy.content.block;
 
+import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.entity.JerryEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
@@ -18,18 +27,20 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class MetroidEggBlock extends Block {
-    public static final MapCodec<MetroidEggBlock> CODEC = Block.simpleCodec(MetroidEggBlock::new);
+public class JerryEggBlock extends Block {
+    public static final MapCodec<JerryEggBlock> CODEC = Block.simpleCodec(JerryEggBlock::new);
     public static final BooleanProperty ROTATED = BooleanProperty.create("rotated");
+    private static final ResourceLocation JERRY_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "jerry");
+    private static final int HATCH_CHECK_INTERVAL = 1200;
     private static final VoxelShape SHAPE = Block.box(1.0D, 0.0D, 0.0D, 15.0D, 16.0D, 16.0D);
 
-    public MetroidEggBlock(BlockBehaviour.Properties properties) {
+    public JerryEggBlock(BlockBehaviour.Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(ROTATED, false));
     }
 
     @Override
-    public MapCodec<MetroidEggBlock> codec() {
+    public MapCodec<JerryEggBlock> codec() {
         return CODEC;
     }
 
@@ -63,6 +74,26 @@ public class MetroidEggBlock extends Block {
     @Override
     protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
         return state.canSurvive(level, pos) ? super.updateShape(state, direction, neighborState, level, pos, neighborPos) : Blocks.AIR.defaultBlockState();
+    }
+
+    @Override
+    protected boolean isRandomlyTicking(BlockState state) {
+        return true;
+    }
+
+    @Override
+    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (random.nextInt(HATCH_CHECK_INTERVAL) != 0) {
+            return;
+        }
+        EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(JERRY_ID);
+        if (entityType.create(level) instanceof JerryEntity jerry) {
+            jerry.setStage(JerryEntity.Stage.INFANT);
+            jerry.moveTo(pos.getX() + 0.5D, pos.getY() + 0.15D, pos.getZ() + 0.5D, random.nextFloat() * 360.0F, 0.0F);
+            level.addFreshEntity(jerry);
+            level.destroyBlock(pos, false);
+            level.playSound(null, pos, SoundEvents.TURTLE_EGG_HATCH, SoundSource.HOSTILE, 0.8F, 0.8F + random.nextFloat() * 0.2F);
+        }
     }
 
     @Override

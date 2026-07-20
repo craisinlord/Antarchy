@@ -70,6 +70,7 @@ public class AntarchyNeoforgeEntityAttributes {
         event.put(AntarchyNeoforgeEntites.TORETERROR.get(), ToreterrorEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.CREEPING_HORROR.get(), CreepingHorrorEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.LURKING_TERROR.get(), LurkingTerrorEntity.createAttributes().build());
+        event.put(AntarchyNeoforgeEntites.JERRY.get(), JerryEntity.createAttributes().build());
 
         AttributeSupplier redAntAttributes = buildAntAttributes(AntarchySettings.redAntHealth(), AntarchySettings.redAntMovementSpeed(), AntarchySettings.redAntAttackDamage()).build();
         AttributeSupplier brownAntAttributes = buildAntAttributes(AntarchySettings.brownAntHealth(), AntarchySettings.brownAntMovementSpeed(), AntarchySettings.brownAntAttackDamage()).build();

@@ -26,7 +26,7 @@ public class BiowartTendrilsBlock extends BushBlock {
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        return state.getBlock() instanceof BiowartBlock;
+        return super.mayPlaceOn(state, level, pos);
     }
 
     @Override

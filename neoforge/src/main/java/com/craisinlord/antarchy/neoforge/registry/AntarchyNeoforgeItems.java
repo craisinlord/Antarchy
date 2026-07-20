@@ -351,7 +351,7 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> CREEPING_HORROR_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CREEPING_HORROR_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> JUMPY_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.JUMPY_BUG_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SPIT_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SPIT_BUG_EGG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> METROID_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.METROID_EGG);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> JERRY_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.JERRY_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> LURKING_TERROR_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LURKING_TERROR_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> WASP_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.WASP_NEST);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> HUSHWEED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.HUSHWEED);
@@ -402,6 +402,8 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<Item> QUEEN_SCALE = ITEMS.register("queen_scale",
             () -> new MobComingSoonTooltipItem(new Item.Properties().rarity(Rarity.RARE)));
     public static final DeferredItem<Item> CHITEN = ITEMS.registerSimpleItem("chiten", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> JERRY_NUCLEUS = ITEMS.registerSimpleItem("jerry_nucleus", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> CARAPACE = ITEMS.registerSimpleItem("carapace", new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final DeferredItem<Item> STINK_BUG = ITEMS.registerSimpleItem("stink_bug", new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final DeferredItem<Item> JUMPY_BUG_LEG = ITEMS.registerSimpleItem("jumpy_bug_leg", new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final DeferredItem<JumpyBootsItem> JUMPY_BOOTS = ITEMS.register("jumpy_boots",
@@ -784,6 +786,8 @@ public final class AntarchyNeoforgeItems {
             () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.LURKING_TERROR, 0x2D5A1B, 0x8B0000, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> HERCULES_BEETLE_SPAWN_EGG = ITEMS.register("hercules_beetle_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.HERCULES_BEETLE, 0x6B1F2A, 0xD4AF37, new Item.Properties().rarity(Rarity.RARE)));
+    public static final DeferredItem<DeferredSpawnEggItem> JERRY_SPAWN_EGG = ITEMS.register("jerry_spawn_egg",
+            () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.JERRY, 0x6D2232, 0x8ED34A, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> TORETERROR_SPAWN_EGG = ITEMS.register("toreterror_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.TORETERROR, 0x90EE90, 0x5C4033, new Item.Properties().rarity(Rarity.EPIC)));
     public static final DeferredItem<DeferredSpawnEggItem> CHEEP_SPAWN_EGG = ITEMS.register("cheep_spawn_egg",

@@ -1,16 +1,26 @@
 package com.craisinlord.antarchy.content.client;
 
+import com.craisinlord.antarchy.Antarchy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 
 public final class HordeHudRenderer {
+    private static final ResourceKey<Level> CAVARYN = ResourceKey.create(
+            Registries.DIMENSION,
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "cavaryn")
+    );
+
     private HordeHudRenderer() {
     }
 
     public static void render(GuiGraphics guiGraphics) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player == null || minecraft.player.isDeadOrDying()) {
+        if (minecraft.level == null || minecraft.player == null || minecraft.player.isDeadOrDying() || !minecraft.level.dimension().equals(CAVARYN)) {
             return;
         }
 

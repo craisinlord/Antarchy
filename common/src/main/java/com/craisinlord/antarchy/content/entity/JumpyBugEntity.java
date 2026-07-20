@@ -190,7 +190,9 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
             this.visualAlpha += (targetAlpha - this.visualAlpha) * 0.25F;
         }
 
+        CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
         super.tick();
+        CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
 
         if (this.level().isClientSide) {
             return;
@@ -224,6 +226,11 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
         }
 
         this.updateCamouflage();
+    }
+
+    @Override
+    public boolean isInWall() {
+        return false;
     }
 
     @Override

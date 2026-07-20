@@ -74,7 +74,7 @@ public final class CreativeTabOrder {
                  "dead_star_coral", "dead_star_coral_fan", "dead_star_coral_block" -> 11;
             case "dream_torch", "dream_lantern", "dream_campfire", "dream_fire", "dream_fire_ceiling" -> 12;
             case "antimetal_scaffolding" -> 13;
-            case "infested_rooted_dirt", "infested_coarse_dirt", "bed_bug_egg", "creeping_horror_egg", "lurking_terror_egg", "jumpy_bug_egg", "spit_bug_egg", "metroid_egg" -> 14;
+            case "infested_rooted_dirt", "infested_coarse_dirt", "bed_bug_egg", "creeping_horror_egg", "lurking_terror_egg", "jumpy_bug_egg", "spit_bug_egg", "jerry_egg" -> 14;
             case "ultimate_pickaxe", "ultimate_axe", "ultimate_shovel", "ultimate_hoe",
                  "duct_tape", "diamond_minecart", "critter_cage", "gravity_sculk_sensor", "miners_dream" -> 15;
             case "bile_bucket", "ichor_bucket", "antiwater_bucket", "cloud_bucket", "lumen_bucket" -> 16;
@@ -101,7 +101,8 @@ public final class CreativeTabOrder {
                  "uranium_ingot", "titanium_ingot", "lucid_eye",
                  "mantis_claw", "hercules_horn", "jumpy_bug_leg", "brutalfly_wing", "cornea_ear",
                  "primordial_scute", "triffid_goo", "vortex_eye",
-                 "king_scale", "queen_scale", "chiten", "stink_bug", "corn", "high_fructose_corn_syrup" -> 22;
+                 "king_scale", "queen_scale", "chiten", "jerry_nucleus", "carapace",
+                 "stink_bug", "corn", "high_fructose_corn_syrup" -> 22;
             case "reverie_bottle", "glimmer_bottle", "root_beer" -> 24;
             case "easter_bunny_spawn_egg", "flying_squirrel_spawn_egg", "caterpillar_spawn_egg",
                  "butterfly_spawn_egg", "reverie_spawn_egg", "brutalfly_spawn_egg",
@@ -114,7 +115,7 @@ public final class CreativeTabOrder {
                  "nightmare_spawn_egg", "bed_bug_spawn_egg", "lucid_spawn_egg", "scorpion_spawn_egg",
                  "basilisk_spawn_egg", "emperor_scorpion_spawn_egg", "toreterror_spawn_egg",
                  "dorrie_spawn_egg", "glimmer_spawn_egg", "ouranwood_deer_spawn_egg", "elka_spawn_egg",
-                 "hercules_beetle_spawn_egg", "creeping_horror_spawn_egg", "lurking_terror_spawn_egg" -> 25;
+                 "hercules_beetle_spawn_egg", "creeping_horror_spawn_egg", "lurking_terror_spawn_egg", "jerry_spawn_egg" -> 25;
             default -> 99;
         };
     }
@@ -357,9 +358,11 @@ public final class CreativeTabOrder {
             case "king_scale" -> 22;
             case "queen_scale" -> 23;
             case "chiten" -> 24;
-            case "stink_bug" -> 25;
-            case "corn" -> 26;
-            case "high_fructose_corn_syrup" -> 27;
+            case "jerry_nucleus" -> 25;
+            case "carapace" -> 26;
+            case "stink_bug" -> 27;
+            case "corn" -> 28;
+            case "high_fructose_corn_syrup" -> 29;
             default -> 0;
         };
     }

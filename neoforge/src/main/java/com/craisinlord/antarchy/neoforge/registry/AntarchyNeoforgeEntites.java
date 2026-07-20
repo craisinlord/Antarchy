@@ -19,6 +19,7 @@ import com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity;
 import com.craisinlord.antarchy.content.entity.HushProjectileEntity;
 import com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity;
 import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
+import com.craisinlord.antarchy.content.entity.JerryEntity;
 import com.craisinlord.antarchy.content.entity.JumpyBugEntity;
 import com.craisinlord.antarchy.content.entity.AlphaMantisEntity;
 import com.craisinlord.antarchy.content.entity.RollyPollyEntity;
@@ -282,6 +283,7 @@ public final class AntarchyNeoforgeEntites {
                     .sized(0.5F, 0.5F)
                     .clientTrackingRange(8)
                     .updateInterval(1)
+                    .fireImmune()
                     .build("krakens_grasp_trident"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<TentacleEntity>> TENTACLE = ENTITY_TYPES.register("tentacle",
@@ -350,6 +352,11 @@ public final class AntarchyNeoforgeEntites {
                     .sized(1.3F, 1.5F)
                     .clientTrackingRange(10)
                     .build("lurking_terror"));
+    public static final DeferredHolder<EntityType<?>, EntityType<JerryEntity>> JERRY = ENTITY_TYPES.register("jerry",
+            () -> EntityType.Builder.of(JerryEntity::new, MobCategory.MONSTER)
+                    .sized(1.4F, 1.4F)
+                    .clientTrackingRange(10)
+                    .build("jerry"));
     public static final DeferredHolder<EntityType<?>, EntityType<CheepEntity>> CHEEP = ENTITY_TYPES.register("cheep",
             () -> EntityType.Builder.of(CheepEntity::new, MobCategory.WATER_AMBIENT)
                     .sized(1.0F, 1.2F)

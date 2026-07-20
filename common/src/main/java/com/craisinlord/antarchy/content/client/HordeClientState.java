@@ -1,11 +1,20 @@
 package com.craisinlord.antarchy.content.client;
 
+import com.craisinlord.antarchy.Antarchy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 public final class HordeClientState {
+    private static final ResourceKey<Level> CAVARYN = ResourceKey.create(
+            Registries.DIMENSION,
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "cavaryn")
+    );
     private static float targetIntensity;
     private static float intensity;
 
@@ -22,7 +31,7 @@ public final class HordeClientState {
 
     public static void tick() {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.level == null || minecraft.player == null) {
+        if (minecraft.level == null || minecraft.player == null || !minecraft.level.dimension().equals(CAVARYN)) {
             targetIntensity = 0.0F;
         }
 

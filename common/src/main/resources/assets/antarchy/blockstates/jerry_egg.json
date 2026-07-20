@@ -1,10 +1,10 @@
 {
   "variants": {
     "rotated=false": {
-      "model": "antarchy:block/metroid_egg"
+      "model": "antarchy:block/jerry_egg"
     },
     "rotated=true": {
-      "model": "antarchy:block/metroid_egg",
+      "model": "antarchy:block/jerry_egg",
       "y": 90
     }
   }

@@ -10,11 +10,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "antarchy:metroid_egg"
+          "name": "antarchy:jerry_egg"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "antarchy:blocks/metroid_egg"
+  "random_sequence": "antarchy:blocks/jerry_egg"
 }

@@ -48,11 +48,12 @@ public final class CavarynHordeManager {
             Registries.DIMENSION,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "cavaryn")
     );
-    private static final ResourceLocation JUMPY_BUG_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "jumpy_bug");
-    private static final ResourceLocation SPIT_BUG_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "spit_bug");
-    private static final ResourceLocation CREEPING_HORROR_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "creeping_horror");
-    private static final ResourceLocation LURKING_TERROR_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "lurking_terror");
-    private static final ResourceLocation HERCULES_BEETLE_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "hercules_beetle");
+    private static final ResourceLocation DORMANT_HORDE = hordeId("dormant");
+    private static final ResourceLocation AWAKENING_HORDE = hordeId("awakening");
+    private static final ResourceLocation WAVE_ONE_HORDE = hordeId("wave_1");
+    private static final ResourceLocation WAVE_TWO_HORDE = hordeId("wave_2");
+    private static final ResourceLocation WAVE_THREE_HORDE = hordeId("wave_3");
+    private static final ResourceLocation FINAL_HORDE = hordeId("final");
     private static final String DATA_ID = "antarchy_cavaryn_hordes";
 
     private static final int GROUP_RADIUS_BLOCKS = 128;
@@ -60,6 +61,7 @@ public final class CavarynHordeManager {
     private static final int STALE_ATTENTION_PRUNE_TICKS = 20 * 60 * 20;
     private static final int PLAYER_CHECK_INTERVAL = 20;
     private static final int AREA_ATTENTION_INTERVAL = 20 * 45;
+    private static final int DORMANT_ATTENTION_DECAY_INTERVAL = 20 * 15;
     private static final int DORMANT_MIN_SPAWN_INTERVAL = 20 * 50;
     private static final int DORMANT_RANDOM_SPAWN_INTERVAL = 20 * 35;
     private static final int AWAKENING_SKIRMISH_INTERVAL = 20 * 8;
@@ -162,9 +164,16 @@ public final class CavarynHordeManager {
             UUID uuid = player.getUUID();
             seen.add(uuid);
             PlayerAttention attention = data.players.computeIfAbsent(uuid, ignored -> new PlayerAttention());
+            if (!player.isAlive()) {
+                attention.fade(10);
+                data.setDirty();
+                HordeIntensitySync.send(player, 0.0F);
+                continue;
+            }
+
             boolean inHordeBiome = isHordeBiome(level, player.blockPosition());
             if (!inHordeBiome) {
-                attention.fade(6);
+                attention.fade(10);
                 data.setDirty();
                 HordeIntensitySync.send(player, 0.0F);
                 continue;
@@ -176,13 +185,16 @@ public final class CavarynHordeManager {
             if (attention.areaKey != currentArea) {
                 attention.areaKey = currentArea;
                 attention.areaTicks = 0;
-                attention.fade(4);
+                attention.fade(8);
                 data.setDirty();
             } else if (!isPlayerInActiveEncounter(level, player)) {
                 attention.areaTicks += PLAYER_CHECK_INTERVAL;
                 if (attention.areaTicks >= AREA_ATTENTION_INTERVAL) {
                     attention.areaTicks = 0;
                     attention.add(6);
+                    data.setDirty();
+                } else if (gameTime % DORMANT_ATTENTION_DECAY_INTERVAL == 0L) {
+                    attention.fade(1);
                     data.setDirty();
                 }
             }
@@ -200,7 +212,7 @@ public final class CavarynHordeManager {
 
         for (Map.Entry<UUID, PlayerAttention> entry : data.players.entrySet()) {
             if (!seen.contains(entry.getKey())) {
-                entry.getValue().fade(2);
+                entry.getValue().fade(4);
             }
         }
     }
@@ -260,19 +272,17 @@ public final class CavarynHordeManager {
             return;
         }
 
+        CavarynHordeDefinitions.Definition definition = CavarynHordeDefinitions.get(level, DORMANT_HORDE);
         int existing = countNearbyDirectHordeMobs(level, player.blockPosition(), 48.0D);
-        if (existing >= scaleSpawnCount(level, MAX_DORMANT_MOBS_PER_AREA)) {
+        if (existing >= definition.resolvedMaxActive(level, scaleSpawnCount(level, MAX_DORMANT_MOBS_PER_AREA))) {
             data.areaSpawnCooldowns.put(areaKey, gameTime + DORMANT_MIN_SPAWN_INTERVAL);
             data.setDirty();
             return;
         }
 
-        int count = scaleSpawnCount(level, attention.attention >= ATTENTION_THRESHOLD * 2 / 3 ? 2 : 1);
-        for (int i = 0; i < count; i++) {
-            EntityType<?> type = level.random.nextBoolean() ? creepingHorrorType() : lurkingTerrorType();
-            if (type != null) {
-                spawnDirectMob(level, null, type, player);
-            }
+        boolean highAttention = attention.attention >= ATTENTION_THRESHOLD * 2 / 3;
+        for (CavarynHordeDefinitions.SpawnChoice choice : definition.buildSpawnList(level, 1, highAttention, level.random)) {
+            spawnDirectMob(level, null, choice, player);
         }
         data.areaSpawnCooldowns.put(areaKey, gameTime + DORMANT_MIN_SPAWN_INTERVAL + level.random.nextInt(DORMANT_RANDOM_SPAWN_INTERVAL));
         data.setDirty();
@@ -336,16 +346,15 @@ public final class CavarynHordeManager {
             return;
         }
 
-        List<EntityType<?>> types = new ArrayList<>();
-        addCommon(types, scaleSpawnCount(level, 2 + players));
-        addRepeated(types, spitBugType(), scaleSpawnCount(level, Math.max(1, players)));
+        List<CavarynHordeDefinitions.SpawnChoice> choices = CavarynHordeDefinitions.get(level, AWAKENING_HORDE)
+                .buildSpawnList(level, players, false, level.random);
         int spawned = 0;
-        for (EntityType<?> type : types) {
-            if (spawned >= capacity || type == null) {
+        for (CavarynHordeDefinitions.SpawnChoice choice : choices) {
+            if (spawned >= capacity) {
                 break;
             }
             ServerPlayer target = targets.get(level.random.nextInt(targets.size()));
-            if (spawnDirectMob(level, encounter, type, target)) {
+            if (spawnDirectMob(level, encounter, choice, target)) {
                 spawned++;
             }
         }
@@ -362,39 +371,26 @@ public final class CavarynHordeManager {
             return;
         }
 
-        List<EntityType<?>> types = new ArrayList<>();
-        switch (encounter.wave) {
-            case 0 -> addCommon(types, scaleSpawnCount(level, 12 + players * 3));
-            case 1 -> {
-                addCommon(types, scaleSpawnCount(level, 14 + players * 3));
-                addRepeated(types, spitBugType(), scaleSpawnCount(level, 2 + players));
-            }
-            case 2 -> {
-                addCommon(types, scaleSpawnCount(level, 16 + players * 4));
-                addRepeated(types, spitBugType(), scaleSpawnCount(level, 3 + players));
-                addRepeated(types, jumpyBugType(), scaleSpawnCount(level, 1 + players));
-            }
-            default -> {
-                int beetles = Math.min(scaleSpawnCount(level, 1 + players / 3), 3);
-                addRepeated(types, herculesBeetleType(), beetles);
-                addCommon(types, scaleSpawnCount(level, 8 + players * 2));
+        CavarynHordeDefinitions.Definition definition = CavarynHordeDefinitions.get(level, hordeForWave(encounter.wave));
+        if (definition.shouldWarn()) {
                 warnHercules(level, encounter.center, targets);
-            }
         }
 
+        List<CavarynHordeDefinitions.SpawnChoice> choices = definition.buildSpawnList(level, players, false, level.random);
         int spawned = 0;
-        for (EntityType<?> type : types) {
-            if (spawned >= capacity || type == null) {
+        for (CavarynHordeDefinitions.SpawnChoice choice : choices) {
+            if (spawned >= capacity) {
                 break;
             }
             ServerPlayer target = targets.get(level.random.nextInt(targets.size()));
-            if (spawnDirectMob(level, encounter, type, target)) {
+            if (spawnDirectMob(level, encounter, choice, target)) {
                 spawned++;
             }
         }
     }
 
-    private static boolean spawnDirectMob(ServerLevel level, @Nullable Encounter encounter, EntityType<?> type, ServerPlayer target) {
+    private static boolean spawnDirectMob(ServerLevel level, @Nullable Encounter encounter, CavarynHordeDefinitions.SpawnChoice choice, ServerPlayer target) {
+        EntityType<?> type = choice.type();
         BlockPos spawnPos = findSpawnPos(level, target, type, level.random);
         if (spawnPos == null) {
             return false;
@@ -405,17 +401,21 @@ public final class CavarynHordeManager {
         }
         mob.moveTo(spawnPos.getX() + 0.5D, spawnPos.getY(), spawnPos.getZ() + 0.5D, level.random.nextFloat() * 360.0F, 0.0F);
         mob.finalizeSpawn(level, level.getCurrentDifficultyAt(spawnPos), MobSpawnType.EVENT, null);
-        mob.setTarget(target);
+        if (mob.canAttack(target)) {
+            mob.setTarget(target);
+        }
         if (!level.addFreshEntity(mob)) {
             return false;
         }
         if (encounter != null) {
             encounter.hordeMobIds.add(mob.getUUID());
         }
-        if (type == herculesBeetleType()) {
+        if (choice.trackCompletion()) {
             if (encounter != null) {
                 encounter.herculesIds.add(mob.getUUID());
             }
+        }
+        if (choice.heavyArrivalEffect()) {
             level.playSound(null, spawnPos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 1.5F, 0.65F);
             HerculesBeetleImpactShakeSync.send(target, 28);
         } else {
@@ -427,16 +427,7 @@ public final class CavarynHordeManager {
 
     private static int countNearbyDirectHordeMobs(ServerLevel level, BlockPos center, double radius) {
         AABB box = new AABB(center).inflate(radius);
-        EntityType<?> creepingHorror = creepingHorrorType();
-        EntityType<?> lurkingTerror = lurkingTerrorType();
-        EntityType<?> spitBug = spitBugType();
-        EntityType<?> jumpyBug = jumpyBugType();
-        return level.getEntitiesOfClass(Mob.class, box, mob ->
-                mob.getType() == creepingHorror
-                        || mob.getType() == lurkingTerror
-                        || mob.getType() == spitBug
-                        || mob.getType() == jumpyBug
-        ).size();
+        return level.getEntitiesOfClass(Mob.class, box, mob -> CavarynHordeDefinitions.isConfiguredHordeType(level, mob.getType())).size();
     }
 
     @Nullable
@@ -490,26 +481,6 @@ public final class CavarynHordeManager {
                 && level.isEmptyBlock(pos.above());
     }
 
-    private static void addCommon(List<EntityType<?>> types, int count) {
-        EntityType<?> creepingHorror = creepingHorrorType();
-        EntityType<?> lurkingTerror = lurkingTerrorType();
-        for (int i = 0; i < count; i++) {
-            EntityType<?> type = i % 2 == 0 ? creepingHorror : lurkingTerror;
-            if (type != null) {
-                types.add(type);
-            }
-        }
-    }
-
-    private static void addRepeated(List<EntityType<?>> types, @Nullable EntityType<?> type, int count) {
-        if (type == null) {
-            return;
-        }
-        for (int i = 0; i < count; i++) {
-            types.add(type);
-        }
-    }
-
     private static int scaleSpawnCount(ServerLevel level, int baseCount) {
         if (baseCount <= 0 || level.getDifficulty() == Difficulty.PEACEFUL) {
             return 0;
@@ -523,29 +494,17 @@ public final class CavarynHordeManager {
         return Math.max(1, Mth.ceil(baseCount * multiplier));
     }
 
-    @Nullable
-    private static EntityType<?> spitBugType() {
-        return BuiltInRegistries.ENTITY_TYPE.getOptional(SPIT_BUG_ID).orElse(null);
+    private static ResourceLocation hordeForWave(int wave) {
+        return switch (wave) {
+            case 0 -> WAVE_ONE_HORDE;
+            case 1 -> WAVE_TWO_HORDE;
+            case 2 -> WAVE_THREE_HORDE;
+            default -> FINAL_HORDE;
+        };
     }
 
-    @Nullable
-    private static EntityType<?> jumpyBugType() {
-        return BuiltInRegistries.ENTITY_TYPE.getOptional(JUMPY_BUG_ID).orElse(null);
-    }
-
-    @Nullable
-    private static EntityType<?> creepingHorrorType() {
-        return BuiltInRegistries.ENTITY_TYPE.getOptional(CREEPING_HORROR_ID).orElse(null);
-    }
-
-    @Nullable
-    private static EntityType<?> lurkingTerrorType() {
-        return BuiltInRegistries.ENTITY_TYPE.getOptional(LURKING_TERROR_ID).orElse(null);
-    }
-
-    @Nullable
-    private static EntityType<?> herculesBeetleType() {
-        return BuiltInRegistries.ENTITY_TYPE.getOptional(HERCULES_BEETLE_ID).orElse(null);
+    private static ResourceLocation hordeId(String path) {
+        return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, path);
     }
 
     private static void warnHercules(ServerLevel level, BlockPos center, List<ServerPlayer> targets) {
@@ -574,7 +533,7 @@ public final class CavarynHordeManager {
     private static List<ServerPlayer> targetsFor(ServerLevel level, Encounter encounter) {
         List<ServerPlayer> targets = new ArrayList<>();
         for (ServerPlayer player : level.players()) {
-            if (player.isSpectator() || !isHordeBiome(level, player.blockPosition())) {
+            if (!isValidHordeTarget(player) || !isHordeBiome(level, player.blockPosition())) {
                 continue;
             }
             if (player.blockPosition().distSqr(encounter.center) <= GROUP_RADIUS_BLOCKS * GROUP_RADIUS_BLOCKS) {
@@ -583,6 +542,10 @@ public final class CavarynHordeManager {
             }
         }
         return targets;
+    }
+
+    private static boolean isValidHordeTarget(ServerPlayer player) {
+        return player.isAlive() && !player.isCreative() && !player.isSpectator();
     }
 
     private static BlockPos averageBlockPos(List<ServerPlayer> players) {

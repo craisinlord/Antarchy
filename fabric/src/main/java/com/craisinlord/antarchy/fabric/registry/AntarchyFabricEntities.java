@@ -552,6 +552,7 @@ public final class AntarchyFabricEntities {
                     .sized(0.5F, 0.5F)
                     .clientTrackingRange(8)
                     .updateInterval(1)
+                    .fireImmune()
                     .build("krakens_grasp_trident"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<TentacleEntity>> TENTACLE = ENTITY_TYPES.register("tentacle",
@@ -649,6 +650,13 @@ public final class AntarchyFabricEntities {
                     .sized(1.3F, 1.5F)
                     .clientTrackingRange(10)
                     .build("lurking_terror"));
+
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.JerryEntity>> JERRY = ENTITY_TYPES.register("jerry",
+            () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.JerryEntity::new, MobCategory.MONSTER)
+                    .sized(1.4F, 1.4F)
+                    .clientTrackingRange(10)
+                    .build("jerry"));
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.CheepEntity>> CHEEP = ENTITY_TYPES.register("cheep",

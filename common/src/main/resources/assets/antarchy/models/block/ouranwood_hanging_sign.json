@@ -1,6 +1,5 @@
 {
-  "parent": "minecraft:block/template_hanging_sign",
   "textures": {
-    "texture": "antarchy:models/ouranwood/ouranwood_hanging_sign"
+    "particle": "antarchy:models/ouranwood/ouranwood_hanging_sign"
   }
 }

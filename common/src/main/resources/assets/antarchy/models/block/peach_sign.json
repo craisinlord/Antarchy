@@ -1,6 +1,5 @@
 {
-  "parent": "minecraft:block/template_sign",
   "textures": {
-    "texture": "antarchy:item/peach_sign"
+    "particle": "antarchy:item/peach_sign"
   }
 }

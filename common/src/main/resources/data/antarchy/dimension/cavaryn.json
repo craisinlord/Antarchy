@@ -73,6 +73,36 @@
               1.0
             ],
             "humidity": [
+              0.15,
+              0.85
+            ],
+            "continentalness": [
+              -1.0,
+              1.0
+            ],
+            "erosion": [
+              -1.0,
+              1.0
+            ],
+            "weirdness": [
+              0.45,
+              1.0
+            ],
+            "depth": [
+              -2.0,
+              -0.1
+            ],
+            "offset": 0.0
+          },
+          "biome": "antarchy:biowart_caves"
+        },
+        {
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
               -1.0,
               1.0
             ],

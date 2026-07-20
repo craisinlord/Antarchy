@@ -205,6 +205,17 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue LURKING_TERROR_HEALTH;
     private static final ModConfigSpec.DoubleValue LURKING_TERROR_ATTACK_DAMAGE;
 
+    // Jerry
+
+    private static final ModConfigSpec.DoubleValue JERRY_INFANT_HEALTH;
+    private static final ModConfigSpec.DoubleValue JERRY_INFANT_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue JERRY_MATURE_HEALTH;
+    private static final ModConfigSpec.DoubleValue JERRY_MATURE_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue JERRY_ALPHA_HEALTH;
+    private static final ModConfigSpec.DoubleValue JERRY_ALPHA_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue JERRY_GAMMA_HEALTH;
+    private static final ModConfigSpec.DoubleValue JERRY_GAMMA_ATTACK_DAMAGE;
+
 
     // Cheep
 
@@ -553,6 +564,17 @@ public final class AntarchyMobsConfig {
         LURKING_TERROR_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 6.0D, 0.0D, 1024.0D);
         b.pop();
 
+        b.push("jerry");
+        JERRY_INFANT_HEALTH = b.comment("Infant Jerry max health.").defineInRange("infantHealth", 20.0D, 1.0D, 32768.0D);
+        JERRY_INFANT_ATTACK_DAMAGE = b.comment("Infant Jerry damage per attached damage tick.").defineInRange("infantAttackDamage", 2.0D, 0.0D, 1024.0D);
+        JERRY_MATURE_HEALTH = b.comment("Mature Jerry max health.").defineInRange("matureHealth", 40.0D, 1.0D, 32768.0D);
+        JERRY_MATURE_ATTACK_DAMAGE = b.comment("Mature Jerry damage per attached damage tick.").defineInRange("matureAttackDamage", 3.5D, 0.0D, 1024.0D);
+        JERRY_ALPHA_HEALTH = b.comment("Alpha Jerry max health.").defineInRange("alphaHealth", 60.0D, 1.0D, 32768.0D);
+        JERRY_ALPHA_ATTACK_DAMAGE = b.comment("Alpha Jerry attack damage.").defineInRange("alphaAttackDamage", 6.0D, 0.0D, 1024.0D);
+        JERRY_GAMMA_HEALTH = b.comment("Gamma Jerry max health.").defineInRange("gammaHealth", 60.0D, 1.0D, 32768.0D);
+        JERRY_GAMMA_ATTACK_DAMAGE = b.comment("Gamma Jerry melee attack damage.").defineInRange("gammaAttackDamage", 7.0D, 0.0D, 1024.0D);
+        b.pop();
+
         b.push("cheep");
         CHEEP_HEALTH        = b.comment("Base max health.").defineInRange("health", 8.0D, 1.0D, 32768.0D);
         CHEEP_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 3.0D, 0.0D, 1024.0D);
@@ -748,6 +770,14 @@ public final class AntarchyMobsConfig {
     static double  creepingHorrorAttackDamage()             { return CREEPING_HORROR_ATTACK_DAMAGE.get(); }
     static double  lurkingTerrorHealth()                    { return LURKING_TERROR_HEALTH.get(); }
     static double  lurkingTerrorAttackDamage()              { return LURKING_TERROR_ATTACK_DAMAGE.get(); }
+    static double  jerryInfantHealth()                      { return JERRY_INFANT_HEALTH.get(); }
+    static double  jerryInfantAttackDamage()                { return JERRY_INFANT_ATTACK_DAMAGE.get(); }
+    static double  jerryMatureHealth()                      { return JERRY_MATURE_HEALTH.get(); }
+    static double  jerryMatureAttackDamage()                { return JERRY_MATURE_ATTACK_DAMAGE.get(); }
+    static double  jerryAlphaHealth()                       { return JERRY_ALPHA_HEALTH.get(); }
+    static double  jerryAlphaAttackDamage()                 { return JERRY_ALPHA_ATTACK_DAMAGE.get(); }
+    static double  jerryGammaHealth()                       { return JERRY_GAMMA_HEALTH.get(); }
+    static double  jerryGammaAttackDamage()                 { return JERRY_GAMMA_ATTACK_DAMAGE.get(); }
     static double  cheepHealth()                            { return CHEEP_HEALTH.get(); }
     static double  cheepAttackDamage()                      { return CHEEP_ATTACK_DAMAGE.get(); }
     static double  dorrieHealth()                           { return DORRIE_HEALTH.get(); }

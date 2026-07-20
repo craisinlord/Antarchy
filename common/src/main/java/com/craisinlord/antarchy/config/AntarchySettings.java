@@ -522,6 +522,14 @@ public final class AntarchySettings {
     private static double creepingHorrorAttackDamage = 6.0D;
     private static double lurkingTerrorHealth = 15.0D;
     private static double lurkingTerrorAttackDamage = 6.0D;
+    private static double jerryInfantHealth = 20.0D;
+    private static double jerryInfantAttackDamage = 2.0D;
+    private static double jerryMatureHealth = 40.0D;
+    private static double jerryMatureAttackDamage = 3.5D;
+    private static double jerryAlphaHealth = 60.0D;
+    private static double jerryAlphaAttackDamage = 6.0D;
+    private static double jerryGammaHealth = 60.0D;
+    private static double jerryGammaAttackDamage = 7.0D;
     private static double cheepHealth = 8.0D;
     private static double cheepAttackDamage = 3.0D;
     private static double dorrieHealth = 60.0D;
@@ -2789,6 +2797,22 @@ public final class AntarchySettings {
     public static void setLurkingTerrorHealth(double v) { lurkingTerrorHealth = v; }
     public static double lurkingTerrorAttackDamage() { return lurkingTerrorAttackDamage; }
     public static void setLurkingTerrorAttackDamage(double v) { lurkingTerrorAttackDamage = v; }
+    public static double jerryInfantHealth() { return jerryInfantHealth; }
+    public static void setJerryInfantHealth(double v) { jerryInfantHealth = v; }
+    public static double jerryInfantAttackDamage() { return jerryInfantAttackDamage; }
+    public static void setJerryInfantAttackDamage(double v) { jerryInfantAttackDamage = v; }
+    public static double jerryMatureHealth() { return jerryMatureHealth; }
+    public static void setJerryMatureHealth(double v) { jerryMatureHealth = v; }
+    public static double jerryMatureAttackDamage() { return jerryMatureAttackDamage; }
+    public static void setJerryMatureAttackDamage(double v) { jerryMatureAttackDamage = v; }
+    public static double jerryAlphaHealth() { return jerryAlphaHealth; }
+    public static void setJerryAlphaHealth(double v) { jerryAlphaHealth = v; }
+    public static double jerryAlphaAttackDamage() { return jerryAlphaAttackDamage; }
+    public static void setJerryAlphaAttackDamage(double v) { jerryAlphaAttackDamage = v; }
+    public static double jerryGammaHealth() { return jerryGammaHealth; }
+    public static void setJerryGammaHealth(double v) { jerryGammaHealth = v; }
+    public static double jerryGammaAttackDamage() { return jerryGammaAttackDamage; }
+    public static void setJerryGammaAttackDamage(double v) { jerryGammaAttackDamage = v; }
     public static double cheepHealth() { return cheepHealth; }
     public static void setCheepHealth(double v) { cheepHealth = v; }
     public static double cheepAttackDamage() { return cheepAttackDamage; }

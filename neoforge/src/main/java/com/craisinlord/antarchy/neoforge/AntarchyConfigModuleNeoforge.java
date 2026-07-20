@@ -202,6 +202,14 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setCreepingHorrorAttackDamage(AntarchyMobsConfig.creepingHorrorAttackDamage());
         AntarchySettings.setLurkingTerrorHealth(AntarchyMobsConfig.lurkingTerrorHealth());
         AntarchySettings.setLurkingTerrorAttackDamage(AntarchyMobsConfig.lurkingTerrorAttackDamage());
+        AntarchySettings.setJerryInfantHealth(AntarchyMobsConfig.jerryInfantHealth());
+        AntarchySettings.setJerryInfantAttackDamage(AntarchyMobsConfig.jerryInfantAttackDamage());
+        AntarchySettings.setJerryMatureHealth(AntarchyMobsConfig.jerryMatureHealth());
+        AntarchySettings.setJerryMatureAttackDamage(AntarchyMobsConfig.jerryMatureAttackDamage());
+        AntarchySettings.setJerryAlphaHealth(AntarchyMobsConfig.jerryAlphaHealth());
+        AntarchySettings.setJerryAlphaAttackDamage(AntarchyMobsConfig.jerryAlphaAttackDamage());
+        AntarchySettings.setJerryGammaHealth(AntarchyMobsConfig.jerryGammaHealth());
+        AntarchySettings.setJerryGammaAttackDamage(AntarchyMobsConfig.jerryGammaAttackDamage());
         AntarchySettings.setCheepHealth(AntarchyMobsConfig.cheepHealth());
         AntarchySettings.setCheepAttackDamage(AntarchyMobsConfig.cheepAttackDamage());
         AntarchySettings.setDorrieHealth(AntarchyMobsConfig.dorrieHealth());

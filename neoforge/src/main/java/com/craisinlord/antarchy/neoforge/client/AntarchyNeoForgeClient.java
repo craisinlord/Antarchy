@@ -146,6 +146,7 @@ public final class AntarchyNeoForgeClient {
         event.registerEntityRenderer(AntarchyNeoforgeEntites.CREEPING_HORROR.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.CreepingHorrorRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.LURKING_TERROR.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.LurkingTerrorRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.HERCULES_BEETLE.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.HerculesBeetleRenderer(context)));
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.JERRY.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.JerryRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.JUMPY_BUG.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.JumpyBugRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.SPIT_BUG.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.SpitBugRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.SPIT_BUG_PROJECTILE.get(), com.craisinlord.antarchy.content.client.renderer.SpitBugProjectileRenderer::new);
@@ -590,7 +591,7 @@ public final class AntarchyNeoForgeClient {
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.CLOUD_BLOCK.get(), RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.JUMPY_BUG_EGG.get(), RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.SPIT_BUG_EGG.get(), RenderType.translucent());
-            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.METROID_EGG.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.JERRY_EGG.get(), RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.BIOWART_TENDRILS.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.HANGING_CREEPROOTS.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.MOLTING_VINES.get(), RenderType.cutout());

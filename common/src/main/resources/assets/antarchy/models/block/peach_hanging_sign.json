@@ -1,6 +1,5 @@
 {
-  "parent": "minecraft:block/template_hanging_sign",
   "textures": {
-    "texture": "antarchy:block/peach/peach_hanging"
+    "particle": "antarchy:block/peach/peach_hanging"
   }
 }

@@ -312,6 +312,7 @@ public final class AntarchyFabricEntityAttributes {
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.TORETERROR.get(), ToreterrorEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.CREEPING_HORROR.get(), com.craisinlord.antarchy.content.entity.CreepingHorrorEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.LURKING_TERROR.get(), com.craisinlord.antarchy.content.entity.LurkingTerrorEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.JERRY.get(), com.craisinlord.antarchy.content.entity.JerryEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.CHEEP.get(), com.craisinlord.antarchy.content.entity.CheepEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.DORRIE.get(), com.craisinlord.antarchy.content.entity.DorrieEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.HERCULES_BEETLE.get(), com.craisinlord.antarchy.content.entity.HerculesBeetleEntity.createAttributes().build());

@@ -665,15 +665,15 @@ public final class AntarchyFabricBlocks {
 
 
     public static final DeferredBlock<Block> BIOMITE_TURF = BLOCKS.register("biomite_turf",
-            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERRACK)));
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERRACK).lightLevel(state -> 2)));
 
 
     public static final DeferredBlock<BiowartBlock> BIOWART = BLOCKS.register("biowart",
-            () -> new BiowartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_BLOCK)));
+            () -> new BiowartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_BLOCK).lightLevel(state -> 2)));
 
 
     public static final DeferredBlock<BiowartTendrilsBlock> BIOWART_TENDRILS = BLOCKS.register("biowart_tendrils",
-            () -> new BiowartTendrilsBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_CARPET).noCollission().noOcclusion()));
+            () -> new BiowartTendrilsBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_CARPET).lightLevel(state -> 2).noCollission().noOcclusion()));
 
 
     public static final DeferredBlock<Block> MYRMITE_COAL_ORE = BLOCKS.register("myrmite_coal_ore",
@@ -826,8 +826,8 @@ public final class AntarchyFabricBlocks {
             () -> new SpitBugEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
 
 
-    public static final DeferredBlock<MetroidEggBlock> METROID_EGG = BLOCKS.register("metroid_egg",
-            () -> new MetroidEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
+    public static final DeferredBlock<JerryEggBlock> JERRY_EGG = BLOCKS.register("jerry_egg",
+            () -> new JerryEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG).randomTicks()));
 
 
     public static final DeferredBlock<LurkingTerrorEggBlock> LURKING_TERROR_EGG = BLOCKS.register("lurking_terror_egg",

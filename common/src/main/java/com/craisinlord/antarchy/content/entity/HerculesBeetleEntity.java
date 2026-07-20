@@ -275,7 +275,9 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
 
     @Override
     public void tick() {
+        CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
         super.tick();
+        CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
 
         if (this.level().isClientSide) {
             return;
@@ -320,10 +322,6 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
 
         if (this.isFlying() && this.tickCount % 32 == 0) {
             this.playSound(AntarchySoundEvents.MANTIS_FLY_LOOP.get(), 0.5F, 0.85F + this.random.nextFloat() * 0.1F);
-        }
-
-        if (!this.level().isClientSide && !this.isKnockedDown() && this.isInWall()) {
-            this.breakBlocksForSuffocation();
         }
 
         if (this.isKnockedDown()) {
@@ -1059,6 +1057,11 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
     }
 
     @Override
+    public boolean isInWall() {
+        return false;
+    }
+
+    @Override
     protected void checkFallDamage(double y, boolean onGround, BlockState state, BlockPos pos) {
     }
 
@@ -1079,8 +1082,8 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
 
     @Override
     public boolean canAttack(LivingEntity target) {
-        if (this.isTame() && target instanceof Player) {
-            return false;
+        if (target instanceof Player player) {
+            return !this.isTame() && !player.isCreative() && !player.isSpectator() && super.canAttack(target);
         }
         return super.canAttack(target);
     }
@@ -1226,19 +1229,29 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         public boolean canUse() {
             return !HerculesBeetleEntity.this.isTame()
                     && !HerculesBeetleEntity.this.isKnockedDown()
-                    && HerculesBeetleEntity.this.getTarget() != null;
+                    && HerculesBeetleEntity.this.getTarget() != null
+                    && HerculesBeetleEntity.this.canAttack(HerculesBeetleEntity.this.getTarget());
         }
 
         @Override
         public boolean canContinueToUse() {
             LivingEntity target = HerculesBeetleEntity.this.getTarget();
-            return target != null && target.isAlive() && !HerculesBeetleEntity.this.isTame() && !HerculesBeetleEntity.this.isKnockedDown();
+            return target != null
+                    && target.isAlive()
+                    && !HerculesBeetleEntity.this.isTame()
+                    && !HerculesBeetleEntity.this.isKnockedDown()
+                    && HerculesBeetleEntity.this.canAttack(target);
         }
 
         @Override
         public void tick() {
             LivingEntity target = HerculesBeetleEntity.this.getTarget();
             if (target == null) {
+                return;
+            }
+            if (!HerculesBeetleEntity.this.canAttack(target)) {
+                HerculesBeetleEntity.this.setTarget(null);
+                HerculesBeetleEntity.this.getNavigation().stop();
                 return;
             }
 

@@ -293,6 +293,7 @@ public final class AntarchyFabricSpawnPlacements {
         SpawnPlacements.register(AntarchyFabricEntities.TORETERROR.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ToreterrorEntity::canSpawn);
         SpawnPlacements.register(AntarchyFabricEntities.CREEPING_HORROR.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, com.craisinlord.antarchy.content.entity.CreepingHorrorEntity::canSpawn);
         SpawnPlacements.register(AntarchyFabricEntities.LURKING_TERROR.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, com.craisinlord.antarchy.content.entity.LurkingTerrorEntity::canSpawn);
+        SpawnPlacements.register(AntarchyFabricEntities.JERRY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, com.craisinlord.antarchy.content.entity.JerryEntity::canSpawn);
         SpawnPlacements.register(AntarchyFabricEntities.TERMITE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules);
         SpawnPlacements.register(AntarchyFabricEntities.ROLLY_POLLY.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, com.craisinlord.antarchy.content.entity.RollyPollyEntity::canSpawn);
     }

@@ -1,6 +1,5 @@
 {
-  "parent": "minecraft:block/template_sign",
   "textures": {
-    "texture": "antarchy:models/ouranwood/ouranwood_sign"
+    "particle": "antarchy:models/ouranwood/ouranwood_sign"
   }
 }

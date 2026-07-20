@@ -141,6 +141,7 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.CREEPING_HORROR.get(), CreepingHorrorRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.LURKING_TERROR.get(), LurkingTerrorRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.HERCULES_BEETLE.get(), HerculesBeetleRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.JERRY.get(), JerryRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.JUMPY_BUG.get(), JumpyBugRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.SPIT_BUG.get(), SpitBugRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.SPIT_BUG_PROJECTILE.get(), SpitBugProjectileRenderer::new);
@@ -342,7 +343,7 @@ public final class AntarchyFabricClientBootstrap {
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.CLOUD_BLOCK.get(), RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.JUMPY_BUG_EGG.get(), RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.SPIT_BUG_EGG.get(), RenderType.translucent());
-        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.METROID_EGG.get(), RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.JERRY_EGG.get(), RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.BIOWART_TENDRILS.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.HANGING_CREEPROOTS.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.MOLTING_VINES.get(), RenderType.cutout());

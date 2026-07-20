@@ -89,6 +89,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.CREEPING_HORROR_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.LURKING_TERROR_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.HERCULES_BEETLE_SPAWN_EGG.get());
+            event.accept(AntarchyNeoforgeItems.JERRY_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.DORRIE_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.OURANWOOD_DEER_SPAWN_EGG.get());
             event.accept(AntarchyNeoforgeItems.GLIMMER_SPAWN_EGG.get());
@@ -124,7 +125,7 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.LURKING_TERROR_EGG_ITEM.get());
             event.accept(AntarchyNeoforgeItems.JUMPY_BUG_EGG_ITEM.get());
             event.accept(AntarchyNeoforgeItems.SPIT_BUG_EGG_ITEM.get());
-            event.accept(AntarchyNeoforgeItems.METROID_EGG_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.JERRY_EGG_ITEM.get());
             event.accept(AntarchyNeoforgeItems.WASP_NEST_ITEM.get());
             event.accept(AntarchyNeoforgeItems.RED_ANT_NEST_ITEM.get());
             event.accept(AntarchyNeoforgeItems.BROWN_ANT_NEST_ITEM.get());

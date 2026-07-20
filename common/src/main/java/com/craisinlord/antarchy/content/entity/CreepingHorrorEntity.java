@@ -169,7 +169,9 @@ public class CreepingHorrorEntity extends Monster implements GeoEntity {
 
     @Override
     public void tick() {
+        CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
         super.tick();
+        CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
         if (attackAnimTicks > 0) attackAnimTicks--;
         if (this.level().isClientSide()) return;
 
@@ -193,5 +195,10 @@ public class CreepingHorrorEntity extends Monster implements GeoEntity {
             }
             this.getNavigation().stop();
         }
+    }
+
+    @Override
+    public boolean isInWall() {
+        return false;
     }
 }

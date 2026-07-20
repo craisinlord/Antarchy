@@ -39,7 +39,7 @@ public class SpitBugEggBlock extends Block {
     private static final double PLAYER_PROXIMITY_RADIUS = 12.0D;
     private static final float PLAYER_PROXIMITY_HATCH_CHANCE = 0.25F;
     private static final int PLAYER_PROXIMITY_CHECK_INTERVAL = 200;
-    private static final VoxelShape SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
+    private static final VoxelShape SHAPE = Block.box(1.5D, 0.0D, 1.5D, 14.5D, 16.0D, 14.5D);
     private static final ResourceLocation SPIT_BUG_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "spit_bug");
 
     public SpitBugEggBlock(BlockBehaviour.Properties properties) {
