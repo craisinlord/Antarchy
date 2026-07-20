@@ -15,6 +15,7 @@ import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
 import com.craisinlord.antarchy.content.item.ScorpionWhipTetherSync;
 import com.craisinlord.antarchy.content.network.ImpactShakeSync;
 import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakeSync;
+import com.craisinlord.antarchy.content.network.HordeIntensitySync;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
 import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
 import net.minecraft.core.Holder;
@@ -423,6 +424,7 @@ public final class AntarchyFabricContent {
         ScorpionWhipTetherSync.setSink(AntarchyFabricNetworking::syncScorpionWhipTether);
         HerculesBeetleImpactShakeSync.setSink((player, ticks) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, new com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload(ticks)));
         ImpactShakeSync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
+        HordeIntensitySync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
         BloodCrystalKatanaItem.setTrailCallback(AntarchyFabricNetworking::syncKatanaTrail);
         com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.setSyncDispatcher(AntarchyFabricNetworking::syncGravityEntity);
         AntarchyFabricEvents.register();

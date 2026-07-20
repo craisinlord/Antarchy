@@ -58,7 +58,8 @@
       "antarchy:brooding_tunnels_hanging_creeproots",
       "antarchy:molting_vines",
       "antarchy:ground_molting_vines",
-      "antarchy:jumpy_bug_egg_ceiling"
+      "antarchy:jumpy_bug_egg_ceiling",
+      "antarchy:spit_bug_egg_patch"
     ]
   ],
   "creature_spawn_probability": 0.12,
@@ -69,22 +70,16 @@
         "weight": 95,
         "minCount": 1,
         "maxCount": 3
-      },
-      {
-        "type": "antarchy:spit_bug",
-        "weight": 95,
-        "minCount": 2,
-        "maxCount": 5
       }
     ],
-    "creature": [],
-    "ambient": [
+    "creature": [
       {
         "type": "antarchy:stink_bug",
         "weight": 10,
         "minCount": 1,
         "maxCount": 3
-      }
+      }],
+    "ambient": [
     ],
     "axolotls": [],
     "underground_water_creature": [],

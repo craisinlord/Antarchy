@@ -634,6 +634,10 @@ public final class AntarchyFabricItems {
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NYXITE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.MYRMITE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BIOMITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BIOMITE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BIOMITE_TURF_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BIOMITE_TURF);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BIOWART_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BIOWART);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BIOWART_TENDRILS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BIOWART_TENDRILS);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_BROODSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.POLISHED_BROODSTONE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_BROODSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.CHISELED_BROODSTONE);
@@ -787,6 +791,8 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BED_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BED_BUG_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> CREEPING_HORROR_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.CREEPING_HORROR_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> JUMPY_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.JUMPY_BUG_EGG);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SPIT_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.SPIT_BUG_EGG);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> METROID_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.METROID_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> LURKING_TERROR_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.LURKING_TERROR_EGG);
 
 

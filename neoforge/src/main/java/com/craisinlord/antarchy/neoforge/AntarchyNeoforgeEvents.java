@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.neoforge;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.CaterpillarCommand;
 import com.craisinlord.antarchy.content.command.GravityCommand;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -14,6 +15,7 @@ public final class AntarchyNeoforgeEvents {
 
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
+        CavarynCommand.register(event.getDispatcher());
         GravityCommand.register(event.getDispatcher());
         CaterpillarCommand.register(event.getDispatcher());
     }

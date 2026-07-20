@@ -275,6 +275,10 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> INFESTED_COARSE_DIRT_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.INFESTED_COARSE_DIRT);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BIOMITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BIOMITE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BIOMITE_TURF_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BIOMITE_TURF);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BIOWART_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BIOWART);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BIOWART_TENDRILS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BIOWART_TENDRILS);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_BROODSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_BROODSTONE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_BROODSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_BROODSTONE);
@@ -346,6 +350,8 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BED_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BED_BUG_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> CREEPING_HORROR_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CREEPING_HORROR_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> JUMPY_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.JUMPY_BUG_EGG);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SPIT_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SPIT_BUG_EGG);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> METROID_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.METROID_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> LURKING_TERROR_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LURKING_TERROR_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> WASP_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.WASP_NEST);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> HUSHWEED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.HUSHWEED);

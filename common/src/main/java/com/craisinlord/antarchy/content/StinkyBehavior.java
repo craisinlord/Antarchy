@@ -29,7 +29,10 @@ public final class StinkyBehavior {
         if (!(entity.level() instanceof ServerLevel serverLevel)) {
             return;
         }
-        if (!entity.isAlive() || entity.tickCount % TRAIL_INTERVAL_TICKS != 0 || !entity.hasEffect(AntarchyObjects.STINKY_EFFECT.get())) {
+        if (!entity.isAlive() || !entity.hasEffect(AntarchyObjects.STINKY_EFFECT.get())) {
+            return;
+        }
+        if (entity.tickCount % TRAIL_INTERVAL_TICKS != 0) {
             return;
         }
 

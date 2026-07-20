@@ -248,6 +248,14 @@ public final class AntarchyNeoforgeBlocks {
             ));
     public static final DeferredBlock<Block> MYRMITE = BLOCKS.register("myrmite",
             () -> new Block(nyxiteProperties()));
+    public static final DeferredBlock<Block> BIOMITE = BLOCKS.register("biomite",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERRACK)));
+    public static final DeferredBlock<Block> BIOMITE_TURF = BLOCKS.register("biomite_turf",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERRACK)));
+    public static final DeferredBlock<BiowartBlock> BIOWART = BLOCKS.register("biowart",
+            () -> new BiowartBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_BLOCK)));
+    public static final DeferredBlock<BiowartTendrilsBlock> BIOWART_TENDRILS = BLOCKS.register("biowart_tendrils",
+            () -> new BiowartTendrilsBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_CARPET).noCollission().noOcclusion()));
     public static final DeferredBlock<Block> MYRMITE_COAL_ORE = BLOCKS.register("myrmite_coal_ore",
             () -> createOre(Blocks.COAL_ORE, 0, 2));
     public static final DeferredBlock<Block> BROODSTONE = BLOCKS.register("broodstone",
@@ -324,8 +332,16 @@ public final class AntarchyNeoforgeBlocks {
             () -> new CreepingHorrorEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
     public static final DeferredBlock<JumpyBugEggBlock> JUMPY_BUG_EGG = BLOCKS.register("jumpy_bug_egg",
             () -> new JumpyBugEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
+    public static final DeferredBlock<SpitBugEggBlock> SPIT_BUG_EGG = BLOCKS.register("spit_bug_egg",
+            () -> new SpitBugEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
+    public static final DeferredBlock<MetroidEggBlock> METROID_EGG = BLOCKS.register("metroid_egg",
+            () -> new MetroidEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
     public static final DeferredBlock<LurkingTerrorEggBlock> LURKING_TERROR_EGG = BLOCKS.register("lurking_terror_egg",
             () -> new LurkingTerrorEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
+
+    static {
+        BiowartBlock.bindTendrils(BIOWART_TENDRILS);
+    }
     public static final DeferredBlock<WaspNestBlock> WASP_NEST = BLOCKS.register("wasp_nest",
             () -> new WaspNestBlock(AntarchyNeoforgeItems::waspNestBlockEntityType, BlockBehaviour.Properties.ofFullCopy(Blocks.BEE_NEST)));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.OuranwoodSquirrelNestBlock> OURANWOOD_SQUIRREL_NEST = BLOCKS.register("ouranwood_squirrel_nest",

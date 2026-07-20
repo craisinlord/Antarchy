@@ -50,27 +50,15 @@
   "creature_spawn_probability": 0.09,
   "spawners": {
     "monster": [
-      {
-        "type": "antarchy:creeping_horror",
-        "weight": 95,
-        "minCount": 2,
-        "maxCount": 5
-      },
-      {
-        "type": "antarchy:lurking_terror",
-        "weight": 95,
-        "minCount": 2,
-        "maxCount": 5
-      }
     ],
-    "creature": [],
-    "ambient": [
+    "creature": [
       {
         "type": "antarchy:stink_bug",
         "weight": 40,
         "minCount": 2,
         "maxCount": 4
-      }
+      }],
+    "ambient": [
     ],
     "axolotls": [],
     "underground_water_creature": [],

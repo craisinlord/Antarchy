@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.client.HordeClientState;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
@@ -53,9 +54,10 @@ public final class CavarynSkyRenderer {
             return;
         }
 
-        float red = 0.015F;
-        float green = 0.085F;
-        float blue = 0.035F;
+        float intensity = HordeClientState.intensity();
+        float red = 0.015F + 0.28F * intensity;
+        float green = 0.085F + 0.18F * intensity;
+        float blue = 0.035F + 0.02F * intensity;
 
         RenderSystem.depthMask(false);
         RenderSystem.setShaderColor(red, green, blue, 1.0F);
@@ -64,7 +66,7 @@ public final class CavarynSkyRenderer {
         VertexBuffer.unbind();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-        float starBrightness = 0.8F;
+        float starBrightness = 0.8F + 0.45F * intensity;
         if (orangeStarBuffer == null) {
             orangeStarBuffer = buildOrangeStarBuffer();
         }

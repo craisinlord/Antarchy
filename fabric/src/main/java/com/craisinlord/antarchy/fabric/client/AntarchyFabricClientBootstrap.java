@@ -7,6 +7,7 @@ import com.craisinlord.antarchy.fabric.registry.AntarchyFabricMisc;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.CameraShakeClientState;
 import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
+import com.craisinlord.antarchy.content.client.HordeClientState;
 import com.craisinlord.antarchy.content.client.renderer.*;
 import com.craisinlord.antarchy.content.client.particle.*;
 import com.craisinlord.antarchy.content.client.renderer.AntiwaterFluidRenderer;
@@ -340,6 +341,9 @@ public final class AntarchyFabricClientBootstrap {
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.TITANIUM_BARS.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.CLOUD_BLOCK.get(), RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.JUMPY_BUG_EGG.get(), RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.SPIT_BUG_EGG.get(), RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.METROID_EGG.get(), RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.BIOWART_TENDRILS.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.HANGING_CREEPROOTS.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.MOLTING_VINES.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.GLOWCAP_MUSHROOM.get(), RenderType.cutout());
@@ -413,6 +417,7 @@ public final class AntarchyFabricClientBootstrap {
             if (entityType == EntityType.PLAYER) {
                 if (renderer instanceof net.minecraft.client.renderer.entity.player.PlayerRenderer playerRenderer) {
                     registrationHelper.register(new ParalyzedStonePlayerLayer(playerRenderer));
+                    registrationHelper.register(new GoopedLivingLayer(playerRenderer));
                     registrationHelper.register(new BrutalflyElytraLayer(playerRenderer));
                     registrationHelper.register(new FallenKingCrownLayer(playerRenderer));
                 }
@@ -426,9 +431,11 @@ public final class AntarchyFabricClientBootstrap {
                 software.bernie.geckolib.renderer.GeoEntityRenderer geoRenderer =
                         (software.bernie.geckolib.renderer.GeoEntityRenderer) (Object) renderer;
                 geoRenderer.addRenderLayer(new ParalyzedStoneGeoLayer(geoRenderer));
+                geoRenderer.addRenderLayer(new GoopedGeoLayer(geoRenderer));
                 return;
             }
             registrationHelper.register(new ParalyzedStoneLivingLayer(renderer));
+            registrationHelper.register(new GoopedLivingLayer(renderer));
         });
     }
 
@@ -436,6 +443,7 @@ public final class AntarchyFabricClientBootstrap {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             CameraShakeClientState.tick();
             HerculesBeetleImpactShakeClientState.tick();
+            HordeClientState.tick();
             if (client.player != null) {
                 ParalyzedClientHandler.clampPlayerInput(client.player);
             }
@@ -460,6 +468,8 @@ public final class AntarchyFabricClientBootstrap {
         ReverieTrailHandler.register();
         HudRenderCallback.EVENT.register((guiGraphics, partialTick) -> {
             DreadHudRenderer.render(guiGraphics);
+            com.craisinlord.antarchy.content.client.HordeHudRenderer.render(guiGraphics);
+            com.craisinlord.antarchy.content.client.GoopedHudRenderer.render(guiGraphics);
             ParalyzedHudRenderer.render(guiGraphics);
             BrutalflyElytraHudRenderer.render(guiGraphics);
             JumpyBootsHudRenderer.render(guiGraphics);

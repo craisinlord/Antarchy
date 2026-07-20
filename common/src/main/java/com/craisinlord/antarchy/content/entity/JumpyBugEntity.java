@@ -121,7 +121,6 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
         if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.COMMAND) {
             return true;
         }
-
         return level.getDifficulty() != Difficulty.PEACEFUL
                 && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);
     }
@@ -281,7 +280,7 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.SPIDER_DEATH;
+        return AntarchySoundEvents.JUMPY_BUG_HURT.get();
     }
 
     @Override

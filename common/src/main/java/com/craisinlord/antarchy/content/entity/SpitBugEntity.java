@@ -89,7 +89,6 @@ public class SpitBugEntity extends Monster implements GeoEntity {
         if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.COMMAND) {
             return true;
         }
-
         return level.getDifficulty() != Difficulty.PEACEFUL
                 && level.isEmptyBlock(pos)
                 && level.isEmptyBlock(pos.above())
@@ -167,7 +166,7 @@ public class SpitBugEntity extends Monster implements GeoEntity {
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.SPIDER_DEATH;
+        return AntarchySoundEvents.SPIT_BUG_HURT.get();
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.fabric.network;
 
 import com.craisinlord.antarchy.content.client.BloodglassClientState;
 import com.craisinlord.antarchy.content.client.BrutalflyElytraClientState;
+import com.craisinlord.antarchy.content.client.HordeClientState;
 import com.craisinlord.antarchy.content.client.ScorpionWhipTetherClientState;
 import com.craisinlord.antarchy.content.client.ThoraxisWeatherClientState;
 import com.craisinlord.antarchy.content.entity.multipart.MultipartFramework;
@@ -58,5 +59,7 @@ public final class AntarchyFabricClientNetworking {
                 context.client().execute(() -> AntarchyFabricNetworking.triggerHerculesBeetleImpactShake(payload.durationTicks())));
         ClientPlayNetworking.registerGlobalReceiver(ImpactShakePayload.TYPE, (payload, context) ->
                 context.client().execute(() -> AntarchyFabricNetworking.triggerImpactShake(payload)));
+        ClientPlayNetworking.registerGlobalReceiver(HordeIntensityPayload.TYPE, (payload, context) ->
+                context.client().execute(() -> HordeClientState.update(payload.intensity())));
     }
 }

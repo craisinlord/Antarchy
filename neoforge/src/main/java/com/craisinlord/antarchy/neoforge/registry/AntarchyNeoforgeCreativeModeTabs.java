@@ -123,6 +123,8 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.CREEPING_HORROR_EGG_ITEM.get());
             event.accept(AntarchyNeoforgeItems.LURKING_TERROR_EGG_ITEM.get());
             event.accept(AntarchyNeoforgeItems.JUMPY_BUG_EGG_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.SPIT_BUG_EGG_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.METROID_EGG_ITEM.get());
             event.accept(AntarchyNeoforgeItems.WASP_NEST_ITEM.get());
             event.accept(AntarchyNeoforgeItems.RED_ANT_NEST_ITEM.get());
             event.accept(AntarchyNeoforgeItems.BROWN_ANT_NEST_ITEM.get());
@@ -317,6 +319,10 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.MEDIUM_BLOOD_CRYSTAL_BUD_ITEM.get());
             event.accept(AntarchyNeoforgeItems.LARGE_BLOOD_CRYSTAL_BUD_ITEM.get());
             event.accept(AntarchyNeoforgeItems.MYRMITE_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.BIOMITE_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.BIOMITE_TURF_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.BIOWART_ITEM.get());
+            event.accept(AntarchyNeoforgeItems.BIOWART_TENDRILS_ITEM.get());
             event.accept(AntarchyNeoforgeItems.BROODSTONE_ITEM.get());
             event.accept(AntarchyNeoforgeItems.POLISHED_BROODSTONE_ITEM.get());
             event.accept(AntarchyNeoforgeItems.CHISELED_BROODSTONE_ITEM.get());

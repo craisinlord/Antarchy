@@ -1,6 +1,8 @@
 package com.craisinlord.antarchy.neoforge.client;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.client.GoopedHudRenderer;
+import com.craisinlord.antarchy.content.client.HordeHudRenderer;
 import com.craisinlord.antarchy.content.client.hud.BloodglassHudRenderer;
 import com.craisinlord.antarchy.content.client.particle.*;
 import com.craisinlord.antarchy.content.client.renderer.*;
@@ -158,6 +160,7 @@ public final class AntarchyNeoForgeClient {
                     (LivingEntityRenderer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>>) event.getSkin(skin);
             if (renderer != null) {
                 renderer.addLayer(new ParalyzedStonePlayerLayer(renderer));
+                renderer.addLayer(new GoopedLivingLayer(renderer));
                 renderer.addLayer(new BrutalflyElytraLayer(renderer));
                 renderer.addLayer(new FallenKingCrownLayer(renderer));
             }
@@ -167,7 +170,7 @@ public final class AntarchyNeoForgeClient {
         if (armorStandRenderer != null) {
             armorStandRenderer.addLayer(new FallenKingCrownArmorStandLayer(armorStandRenderer));
         }
-        BuiltInRegistries.ENTITY_TYPE.forEach(entityType -> addParalyzedLayerToEntity(event, entityType));
+        BuiltInRegistries.ENTITY_TYPE.forEach(entityType -> addStatusLayersToEntity(event, entityType));
     }
 
     @SubscribeEvent
@@ -179,7 +182,7 @@ public final class AntarchyNeoForgeClient {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static <E extends Entity> void addParalyzedLayerToEntity(EntityRenderersEvent.AddLayers event, EntityType<E> entityType) {
+    private static <E extends Entity> void addStatusLayersToEntity(EntityRenderersEvent.AddLayers event, EntityType<E> entityType) {
         if (entityType == EntityType.PLAYER) {
             return;
         }
@@ -194,10 +197,12 @@ public final class AntarchyNeoForgeClient {
             return;
         }
         ((LivingEntityRenderer) livingRenderer).addLayer(new ParalyzedStoneLivingLayer<>(livingRenderer));
+        ((LivingEntityRenderer) livingRenderer).addLayer(new GoopedLivingLayer<>(livingRenderer));
     }
 
     private static <T extends LivingEntity & GeoAnimatable> GeoEntityRenderer<T> withParalyzedGeoLayer(GeoEntityRenderer<T> renderer) {
         renderer.addRenderLayer(new ParalyzedStoneGeoLayer<>(renderer));
+        renderer.addRenderLayer(new GoopedGeoLayer<>(renderer));
         return renderer;
     }
 
@@ -291,8 +296,16 @@ public final class AntarchyNeoForgeClient {
                 (guiGraphics, partialTick) -> DreadHudRenderer.render(guiGraphics)
         );
         event.registerAboveAll(
+                ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "horde_intensity"),
+                (guiGraphics, partialTick) -> HordeHudRenderer.render(guiGraphics)
+        );
+        event.registerAboveAll(
                 ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "paralyzed_stone"),
                 (guiGraphics, partialTick) -> ParalyzedHudRenderer.render(guiGraphics)
+        );
+        event.registerAboveAll(
+                ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "gooped_tint"),
+                (guiGraphics, partialTick) -> GoopedHudRenderer.render(guiGraphics)
         );
         event.registerAboveAll(
                 ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "brutalfly_elytra"),
@@ -576,6 +589,9 @@ public final class AntarchyNeoForgeClient {
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.TITANIUM_BARS.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.CLOUD_BLOCK.get(), RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.JUMPY_BUG_EGG.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.SPIT_BUG_EGG.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.METROID_EGG.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.BIOWART_TENDRILS.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.HANGING_CREEPROOTS.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.MOLTING_VINES.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.POTTED_GLOWCAP_MUSHROOM.get(), RenderType.cutout());

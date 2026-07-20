@@ -14,7 +14,9 @@ import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
+import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.craisinlord.antarchy.content.portal.PermanentPortalManager;
+import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.CaterpillarCommand;
 import com.craisinlord.antarchy.content.command.GravityCommand;
 import com.craisinlord.antarchy.content.item.MinersDreamExcavationManager;
@@ -22,6 +24,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.server.level.ServerPlayer;
 import com.craisinlord.antarchy.content.SquidzookaDispenseBehavior;
 import com.craisinlord.antarchy.content.RpoLauncherDispenseBehavior;
@@ -52,6 +55,7 @@ public final class AntarchyFabricEvents {
 
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            CavarynCommand.register(dispatcher);
             GravityCommand.register(dispatcher);
             CaterpillarCommand.register(dispatcher);
         });
@@ -80,6 +84,9 @@ public final class AntarchyFabricEvents {
                 BloodglassManager.handleDeath(sp);
             }
             PermanentPortalManager.handleSacrifice(entity);
+            if (entity.getKillCredit() instanceof ServerPlayer killer) {
+                CavarynHordeManager.recordMobKill(killer, entity);
+            }
             if (entity instanceof MissileSquidEntity missileSquid) {
                 if (missileSquid.isSpawnedByKraken()) {
                     return;
@@ -118,10 +125,16 @@ public final class AntarchyFabricEvents {
             }
             return InteractionResult.PASS;
         });
+        PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
+            if (!world.isClientSide && player instanceof ServerPlayer serverPlayer) {
+                CavarynHordeManager.recordBlockBreak(serverPlayer, state, pos);
+            }
+        });
 
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             Set<UUID> activeThisTick = new HashSet<>();
             for (ServerLevel level : server.getAllLevels()) {
+                CavarynHordeManager.tick(level);
                 tickInvertedPlayers(level, activeThisTick);
                 tickDuctTapePlayers(level);
                 tickIchorPlayers(level);

@@ -51,6 +51,15 @@ public class TentacleEntity extends Mob implements GeoEntity {
     }
 
     @Override
+    public boolean fireImmune() {
+        return true;
+    }
+
+    @Override
+    public void lavaHurt() {
+    }
+
+    @Override
     public void push(net.minecraft.world.entity.Entity entity) {
     }
 

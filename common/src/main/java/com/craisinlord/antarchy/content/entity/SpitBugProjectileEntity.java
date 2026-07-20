@@ -1,13 +1,15 @@
 package com.craisinlord.antarchy.content.entity;
 
+import com.craisinlord.antarchy.content.GoopedEffectHooks;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -128,7 +130,7 @@ public class SpitBugProjectileEntity extends ThrowableItemProjectile {
                 this.getBoundingBox().inflate(LINGER_RADIUS, 0.6D, LINGER_RADIUS),
                 entity -> entity.isAlive() && entity != this.getOwner()
         )) {
-            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 30, 3, false, true, true));
+            applyGooped(target, 30);
             target.makeStuckInBlock(Blocks.HONEY_BLOCK.defaultBlockState(), new Vec3(0.2D, 0.0D, 0.2D));
         }
 
@@ -148,7 +150,7 @@ public class SpitBugProjectileEntity extends ThrowableItemProjectile {
             } else {
                 livingTarget.hurt(this.damageSources().magic(), DIRECT_HIT_DAMAGE);
             }
-            livingTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 80, 3, false, true, true));
+            applyGooped(livingTarget, GoopedEffectHooks.PROJECTILE_DURATION_TICKS);
             livingTarget.makeStuckInBlock(Blocks.HONEY_BLOCK.defaultBlockState(), new Vec3(0.25D, 0.0D, 0.25D));
         }
 
@@ -171,5 +173,12 @@ public class SpitBugProjectileEntity extends ThrowableItemProjectile {
         this.noPhysics = true;
         this.setPos(location.x, location.y + 0.05D, location.z);
         this.setDeltaMovement(Vec3.ZERO);
+    }
+
+    private static void applyGooped(LivingEntity target, int durationTicks) {
+        Holder<MobEffect> gooped = GoopedEffectHooks.holder();
+        if (gooped != null) {
+            target.addEffect(new MobEffectInstance(gooped, durationTicks, 0, false, true, true));
+        }
     }
 }

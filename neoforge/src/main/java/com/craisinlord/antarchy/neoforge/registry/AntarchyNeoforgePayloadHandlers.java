@@ -45,6 +45,13 @@ public class AntarchyNeoforgePayloadHandlers {
                         com.craisinlord.antarchy.content.client.ScorpionWhipTetherClientState.update(payload.playerId(), payload.targetId())
                 )
         );
+        registrar.playToClient(
+                com.craisinlord.antarchy.content.network.HordeIntensityPayload.TYPE,
+                com.craisinlord.antarchy.content.network.HordeIntensityPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() ->
+                        com.craisinlord.antarchy.content.client.HordeClientState.update(payload.intensity())
+                )
+        );
         MultipartNetworking.register(registrar);
         // ThoraxisWeatherNetworking.register(registrar);
     }

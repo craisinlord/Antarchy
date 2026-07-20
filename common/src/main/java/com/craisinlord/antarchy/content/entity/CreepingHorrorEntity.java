@@ -78,7 +78,6 @@ public class CreepingHorrorEntity extends Monster implements GeoEntity {
         if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.COMMAND) {
             return true;
         }
-
         BlockPos belowPos = pos.below();
         BlockState belowState = level.getBlockState(belowPos);
         boolean validSupport = !belowState.is(Blocks.BEDROCK)

@@ -58,7 +58,8 @@ public final class CreativeTabOrder {
                  "raw_uranium_block", "raw_titanium_block" -> 7;
             case "blood_crystal_block", "small_blood_crystal_bud", "medium_blood_crystal_bud",
                  "large_blood_crystal_bud", "budding_blood_crystal", "blood_crystal_cluster",
-                 "myrmite", "broodstone", "polished_broodstone", "chiseled_broodstone", "broodstone_bricks",
+                 "myrmite", "biomite", "biomite_turf", "biowart", "biowart_tendrils",
+                 "broodstone", "polished_broodstone", "chiseled_broodstone", "broodstone_bricks",
                  "broodstone_stairs", "broodstone_slab", "broodstone_wall",
                  "polished_broodstone_stairs", "polished_broodstone_slab", "polished_broodstone_wall",
                  "broodstone_brick_stairs", "broodstone_brick_slab", "broodstone_brick_wall",
@@ -73,7 +74,7 @@ public final class CreativeTabOrder {
                  "dead_star_coral", "dead_star_coral_fan", "dead_star_coral_block" -> 11;
             case "dream_torch", "dream_lantern", "dream_campfire", "dream_fire", "dream_fire_ceiling" -> 12;
             case "antimetal_scaffolding" -> 13;
-            case "infested_rooted_dirt", "infested_coarse_dirt", "bed_bug_egg", "creeping_horror_egg", "lurking_terror_egg", "jumpy_bug_egg" -> 14;
+            case "infested_rooted_dirt", "infested_coarse_dirt", "bed_bug_egg", "creeping_horror_egg", "lurking_terror_egg", "jumpy_bug_egg", "spit_bug_egg", "metroid_egg" -> 14;
             case "ultimate_pickaxe", "ultimate_axe", "ultimate_shovel", "ultimate_hoe",
                  "duct_tape", "diamond_minecart", "critter_cage", "gravity_sculk_sensor", "miners_dream" -> 15;
             case "bile_bucket", "ichor_bucket", "antiwater_bucket", "cloud_bucket", "lumen_bucket" -> 16;

@@ -1,6 +1,8 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import com.craisinlord.antarchy.content.network.ImpactShakePayload;
 import com.craisinlord.antarchy.content.network.ImpactShakeSync;
 import java.util.HashMap;
@@ -103,8 +105,10 @@ public final class AttitudeAdjusterSlamManager {
             return false;
         }
         PLAYER_SLAMS.put(player.getUUID(), new PlayerSlamState(player.getUUID(), player.serverLevel().dimension().location().toString(), player.serverLevel().getGameTime() + SLAM_TIMEOUT_TICKS, player.fallDistance));
+        AntarchyGravityDirection gravityDirection = AntarchyGravityRotationUtil.getGravityDownDirection(player) == Direction.UP ? AntarchyGravityDirection.UP : AntarchyGravityDirection.DOWN;
         Vec3 motion = player.getDeltaMovement();
-        player.setDeltaMovement(motion.x * 0.25D, PLAYER_SLAM_START_VELOCITY, motion.z * 0.25D);
+        Vec3 localMotion = AntarchyGravityRotationUtil.vecWorldToPlayer(motion, gravityDirection);
+        player.setDeltaMovement(AntarchyGravityRotationUtil.vecPlayerToWorld(new Vec3(localMotion.x * 0.25D, PLAYER_SLAM_START_VELOCITY, localMotion.z * 0.25D), gravityDirection));
         player.hurtMarked = true;
         player.fallDistance = 0.0F;
         player.swing(hand, true);
@@ -164,23 +168,31 @@ public final class AttitudeAdjusterSlamManager {
             if (!player.onGround()) {
                 continue;
             }
+            Direction gravityDown = AntarchyGravityRotationUtil.getGravityDownDirection(player);
             Vec3 impactPos = player.position();
-            BlockPos groundPos = player.getOnPosLegacy();
-            double impactStrength = Math.max(Math.abs(Math.min(player.getDeltaMovement().y, PLAYER_SLAM_START_VELOCITY)), Math.max(state.startFallDistance, player.fallDistance) * 0.15D);
+            BlockPos groundPos = getSlamSurfacePos(player, gravityDown);
+            double localVerticalSpeed = AntarchyGravityRotationUtil.vecWorldToPlayer(player.getDeltaMovement(), gravityDown == Direction.UP ? AntarchyGravityDirection.UP : AntarchyGravityDirection.DOWN).y;
+            double impactStrength = Math.max(Math.abs(Math.min(localVerticalSpeed, PLAYER_SLAM_START_VELOCITY)), Math.max(state.startFallDistance, player.fallDistance) * 0.15D);
             float damage = (float) Mth.clamp(PLAYER_SLAM_BASE_DAMAGE + impactStrength * PLAYER_SLAM_DAMAGE_SCALE * 10.0D, PLAYER_SLAM_BASE_DAMAGE, PLAYER_SLAM_MAX_DAMAGE);
             AABB area = new AABB(impactPos.x - PLAYER_SLAM_RADIUS, impactPos.y - 1.5D, impactPos.z - PLAYER_SLAM_RADIUS, impactPos.x + PLAYER_SLAM_RADIUS, impactPos.y + 2.5D, impactPos.z + PLAYER_SLAM_RADIUS);
+            Vec3 awayFromSurface = new Vec3(-gravityDown.getStepX(), -gravityDown.getStepY(), -gravityDown.getStepZ());
             for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, area, candidate -> candidate.isAlive() && candidate != player)) {
                 if (!target.hurt(level.damageSources().playerAttack(player), damage)) {
                     continue;
                 }
                 Vec3 away = horizontalAway(impactPos, target.position(), player.getLookAngle()).scale(PLAYER_SLAM_HORIZONTAL_KNOCKBACK);
                 double resistanceScale = resistanceScale(target);
-                target.setDeltaMovement(target.getDeltaMovement().add(away.x * resistanceScale, Math.max(PLAYER_SLAM_UPWARD_KNOCKBACK * resistanceScale, 0.35D), away.z * resistanceScale));
+                double surfaceKnockback = Math.max(PLAYER_SLAM_UPWARD_KNOCKBACK * resistanceScale, 0.35D);
+                target.setDeltaMovement(target.getDeltaMovement().add(
+                        away.x * resistanceScale + awayFromSurface.x * surfaceKnockback,
+                        away.y * resistanceScale + awayFromSurface.y * surfaceKnockback,
+                        away.z * resistanceScale + awayFromSurface.z * surfaceKnockback
+                ));
                 target.hurtMarked = true;
             }
             playSlamImpact(level, impactPos, groundPos, false);
             if (AntarchySettings.attitudeAdjusterBreaksBlocks()) {
-                breakBlocks(level, player, groundPos);
+                breakBlocks(level, player, groundPos, gravityDown);
             }
             if (player.getMainHandItem().getItem() instanceof AttitudeAdjusterItem item) {
                 player.getCooldowns().addCooldown(item, PLAYER_SLAM_COOLDOWN_TICKS);
@@ -189,9 +201,19 @@ public final class AttitudeAdjusterSlamManager {
         }
     }
 
-    private static void breakBlocks(ServerLevel level, ServerPlayer player, BlockPos center) {
+    private static BlockPos getSlamSurfacePos(Entity entity, Direction gravityDown) {
+        if (gravityDown == Direction.UP) {
+            return BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY + 0.05D, entity.getZ());
+        }
+        return entity.getOnPosLegacy();
+    }
+
+    private static void breakBlocks(ServerLevel level, ServerPlayer player, BlockPos center, Direction gravityDown) {
         int broken = 0;
-        for (int y = -1; y <= 0 && broken < MAX_BROKEN_BLOCKS; y++) {
+        int minY = gravityDown == Direction.UP ? 0 : -1;
+        int maxY = gravityDown == Direction.UP ? 1 : 0;
+        Direction supportFace = gravityDown.getOpposite();
+        for (int y = minY; y <= maxY && broken < MAX_BROKEN_BLOCKS; y++) {
             for (int x = -1; x <= 1 && broken < MAX_BROKEN_BLOCKS; x++) {
                 for (int z = -1; z <= 1 && broken < MAX_BROKEN_BLOCKS; z++) {
                     BlockPos pos = center.offset(x, y, z);
@@ -200,7 +222,7 @@ public final class AttitudeAdjusterSlamManager {
                     if (state.isAir() || blockEntity != null || state.getDestroySpeed(level, pos) < 0.0F || state.getDestroySpeed(level, pos) > NORMAL_BREAK_HARDNESS_LIMIT) {
                         continue;
                     }
-                    if (!state.isFaceSturdy(level, pos, Direction.UP) && pos.getY() < center.getY()) {
+                    if (!state.isFaceSturdy(level, pos, supportFace) && pos.getY() != center.getY()) {
                         continue;
                     }
                     if (player.gameMode.destroyBlock(pos)) {

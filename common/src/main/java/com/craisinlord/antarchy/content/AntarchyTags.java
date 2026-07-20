@@ -32,6 +32,7 @@ public final class AntarchyTags {
         public static final TagKey<Block> TERMITE_FOODS = TagKey.create(Registries.BLOCK, id("termite_foods"));
         public static final TagKey<Block> UMBRAL_MOSS_REPLACEABLE = TagKey.create(Registries.BLOCK, id("umbral_moss_replaceable"));
         public static final TagKey<Block> BLUSH_MOSS_REPLACEABLE = TagKey.create(Registries.BLOCK, id("blush_moss_replaceable"));
+        public static final TagKey<Block> BIOWART_REPLACEABLE = TagKey.create(Registries.BLOCK, id("biowart_replaceable"));
         public static final TagKey<Block> HERCULES_BEETLE_CHARGE_IMMUNE_BLOCKS = TagKey.create(Registries.BLOCK, id("hercules_beetle_charge_immune_blocks"));
         public static final TagKey<Block> ELYTHIA_PORTAL_FRAMES = TagKey.create(Registries.BLOCK, id("elythia_portal_frames"));
         public static final TagKey<Block> THORAXIS_PORTAL_FRAMES = TagKey.create(Registries.BLOCK, id("thoraxis_portal_frames"));
@@ -125,6 +126,7 @@ public final class AntarchyTags {
         public static final TagKey<Biome> MANTIS_OVERWORLD_SPAWN_BIOMES = TagKey.create(Registries.BIOME, id("mantis_overworld_spawn_biomes"));
         public static final TagKey<Biome> ELYTHIA_FIREFLY_PARTICLE_BIOMES = TagKey.create(Registries.BIOME, id("elythia_firefly_particle_biomes"));
         public static final TagKey<Biome> WILD_CORN_SPAWN_BIOMES = TagKey.create(Registries.BIOME, id("wild_corn_spawn_biomes"));
+        public static final TagKey<Biome> USES_HORDE_SYSTEM = TagKey.create(Registries.BIOME, id("uses_horde_system"));
 
         private Biomes() {
         }

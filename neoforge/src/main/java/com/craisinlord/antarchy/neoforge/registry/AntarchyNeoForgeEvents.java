@@ -15,6 +15,7 @@ import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.multipart.MultipartFramework;
 import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
+import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.craisinlord.antarchy.content.item.*;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateGearHelper;
 import com.craisinlord.antarchy.content.movement.DreamSandLowGravityAccess;
@@ -116,6 +117,9 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassPlayerDeath);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassRespawn);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassLogin);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleCavarynHordeKill);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleCavarynHordeBlockBreak);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickCavarynHordes);
         modEventBus.addListener(AntarchyNeoForgeEvents::modifyEntityAttributes);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickOverheadInversion);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickDuctTapeStickiness);
@@ -173,6 +177,24 @@ public final class AntarchyNeoForgeEvents {
 
         if (AntarchySettings.krakenMassSpawnEnabled() && serverLevel.random.nextInt(500) == 0) {
             spawnKrakens(serverLevel, deathPos, 10);
+        }
+    }
+
+    static void handleCavarynHordeKill(LivingDeathEvent event) {
+        if (event.getEntity().getKillCredit() instanceof ServerPlayer player) {
+            CavarynHordeManager.recordMobKill(player, event.getEntity());
+        }
+    }
+
+    static void handleCavarynHordeBlockBreak(BlockEvent.BreakEvent event) {
+        if (event.getPlayer() instanceof ServerPlayer player) {
+            CavarynHordeManager.recordBlockBreak(player, event.getState(), event.getPos());
+        }
+    }
+
+    static void tickCavarynHordes(ServerTickEvent.Post event) {
+        for (ServerLevel level : event.getServer().getAllLevels()) {
+            CavarynHordeManager.tick(level);
         }
     }
 
