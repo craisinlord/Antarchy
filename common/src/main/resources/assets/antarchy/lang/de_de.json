@@ -406,6 +406,7 @@
     "item.antarchy.growth_ray": "Wachstumsstrahler",
     "tooltip.antarchy.shrink_ray": "Schrumpft Ziele dauerhaft. Gedrückt halten zum Aufladen.",
     "tooltip.antarchy.growth_ray": "Vergrößert Ziele dauerhaft. Gedrückt halten zum Aufladen.",
+    "tooltip.antarchy.size_ray_milk_reset": "Milch trinken setzt diesen Effekt zurück.",
     "tooltip.antarchy.reverie_bottle.capture": "Rechtsklicke mit einer Glasflasche auf eine Reverie, um sie einzufangen.",
     "tooltip.antarchy.reverie_bottle.release": "Rechtsklick, um die Reverie freizulassen.",
     "item.antarchy.gravity_gun": "Gravitationskanone",

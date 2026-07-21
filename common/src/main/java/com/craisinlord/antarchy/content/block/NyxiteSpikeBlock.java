@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -11,7 +12,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -119,8 +119,7 @@ public class NyxiteSpikeBlock extends PointedDripstoneBlock {
         BlockPos.MutableBlockPos cursor = pos.mutable();
         while (isNyxiteSpikeWithDirection(level.getBlockState(cursor), Direction.UP)) {
             BlockState spikeState = level.getBlockState(cursor);
-            dropResources(spikeState, level, cursor);
-            level.removeBlock(cursor, false);
+            UpwardFallingBlockEntity.fallUp(level, cursor, spikeState);
             cursor.move(Direction.UP);
         }
     }

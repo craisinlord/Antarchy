@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.horde;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.entity.JerryEntity;
 import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakeSync;
 import com.craisinlord.antarchy.content.network.HordeIntensitySync;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.AABB;
@@ -47,6 +49,10 @@ public final class CavarynHordeManager {
     private static final ResourceKey<Level> CAVARYN = ResourceKey.create(
             Registries.DIMENSION,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "cavaryn")
+    );
+    private static final ResourceKey<Biome> BIOWART_CAVES = ResourceKey.create(
+            Registries.BIOME,
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "biowart_caves")
     );
     private static final ResourceLocation DORMANT_HORDE = hordeId("dormant");
     private static final ResourceLocation AWAKENING_HORDE = hordeId("awakening");
@@ -58,6 +64,10 @@ public final class CavarynHordeManager {
 
     private static final int GROUP_RADIUS_BLOCKS = 128;
     private static final int ATTENTION_THRESHOLD = 100;
+    private static final int HOSTILE_KILL_ATTENTION = 4;
+    private static final int MOB_KILL_ATTENTION = 3;
+    private static final int EGG_OR_NEST_BREAK_ATTENTION = 5;
+    private static final int BLOCK_BREAK_ATTENTION = 1;
     private static final int STALE_ATTENTION_PRUNE_TICKS = 20 * 60 * 20;
     private static final int PLAYER_CHECK_INTERVAL = 20;
     private static final int AREA_ATTENTION_INTERVAL = 20 * 45;
@@ -105,7 +115,7 @@ public final class CavarynHordeManager {
         if (isPlayerInActiveEncounter(level, player)) {
             return;
         }
-        addAttention(level, player, killed instanceof Enemy || killed.getType().getCategory() == MobCategory.MONSTER ? 18 : 8);
+        addAttention(level, player, scaleActionAttention(level, killed instanceof Enemy || killed.getType().getCategory() == MobCategory.MONSTER ? HOSTILE_KILL_ATTENTION : MOB_KILL_ATTENTION));
     }
 
     public static void recordBlockBreak(ServerPlayer player, BlockState brokenState, BlockPos pos) {
@@ -115,7 +125,7 @@ public final class CavarynHordeManager {
         if (!isHordeBiome(level, pos) || isPlayerInActiveEncounter(level, player)) {
             return;
         }
-        addAttention(level, player, isEggOrNest(brokenState) ? 22 : 2);
+        addAttention(level, player, scaleActionAttention(level, isEggOrNest(brokenState) ? EGG_OR_NEST_BREAK_ATTENTION : BLOCK_BREAK_ATTENTION));
     }
 
     public static boolean isHordeBiome(ServerLevelAccessor level, BlockPos pos) {
@@ -207,7 +217,7 @@ public final class CavarynHordeManager {
             if (encounter == null) {
                 tickDormantPressure(level, data, player, attention, currentArea, gameTime);
             }
-            HordeIntensitySync.send(player, encounter != null ? encounter.intensity(gameTime) : attention.attention / (float) ATTENTION_THRESHOLD);
+            HordeIntensitySync.send(player, attention.attention / (float) ATTENTION_THRESHOLD);
         }
 
         for (Map.Entry<UUID, PlayerAttention> entry : data.players.entrySet()) {
@@ -272,7 +282,7 @@ public final class CavarynHordeManager {
             return;
         }
 
-        CavarynHordeDefinitions.Definition definition = CavarynHordeDefinitions.get(level, DORMANT_HORDE);
+        CavarynHordeDefinitions.Definition definition = CavarynHordeDefinitions.get(level, hordeForPosition(level, player.blockPosition(), DORMANT_HORDE));
         int existing = countNearbyDirectHordeMobs(level, player.blockPosition(), 48.0D);
         if (existing >= definition.resolvedMaxActive(level, scaleSpawnCount(level, MAX_DORMANT_MOBS_PER_AREA))) {
             data.areaSpawnCooldowns.put(areaKey, gameTime + DORMANT_MIN_SPAWN_INTERVAL);
@@ -310,6 +320,15 @@ public final class CavarynHordeManager {
         data.setDirty();
     }
 
+    private static int scaleActionAttention(ServerLevel level, int amount) {
+        float multiplier = switch (level.getDifficulty()) {
+            case HARD -> 1.5F;
+            case EASY -> 0.75F;
+            default -> 1.0F;
+        };
+        return Math.max(1, Math.round(amount * multiplier));
+    }
+
     private static void startEncounter(ServerLevel level, HordeData data, ServerPlayer seedPlayer) {
         Encounter existing = findNearbyEncounter(data, seedPlayer.blockPosition());
         if (existing != null) {
@@ -336,6 +355,37 @@ public final class CavarynHordeManager {
         data.setDirty();
     }
 
+    private static List<TargetedSpawnChoice> buildTargetedSpawnList(ServerLevel level, ResourceLocation horde, List<ServerPlayer> targets, int players, boolean highAttention) {
+        Map<ResourceLocation, List<ServerPlayer>> targetsByHorde = new HashMap<>();
+        for (ServerPlayer target : targets) {
+            ResourceLocation targetHorde = hordeForPosition(level, target.blockPosition(), horde);
+            targetsByHorde.computeIfAbsent(targetHorde, ignored -> new ArrayList<>()).add(target);
+        }
+
+        List<TargetedSpawnChoice> choices = new ArrayList<>();
+        for (Map.Entry<ResourceLocation, List<ServerPlayer>> entry : targetsByHorde.entrySet()) {
+            List<ServerPlayer> groupTargets = entry.getValue();
+            int groupPlayers = Math.max(1, Math.min(players, groupTargets.size()));
+            List<CavarynHordeDefinitions.SpawnChoice> groupChoices = CavarynHordeDefinitions.get(level, entry.getKey())
+                    .buildSpawnList(level, groupPlayers, highAttention, level.random);
+            for (CavarynHordeDefinitions.SpawnChoice choice : groupChoices) {
+                ServerPlayer target = groupTargets.get(level.random.nextInt(groupTargets.size()));
+                choices.add(new TargetedSpawnChoice(choice, target));
+            }
+        }
+        java.util.Collections.shuffle(choices);
+        return choices;
+    }
+
+    private static boolean shouldWarnForTargets(ServerLevel level, ResourceLocation horde, List<ServerPlayer> targets) {
+        for (ServerPlayer target : targets) {
+            if (CavarynHordeDefinitions.get(level, hordeForPosition(level, target.blockPosition(), horde)).shouldWarn()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static void spawnAwakeningSkirmish(ServerLevel level, Encounter encounter, List<ServerPlayer> targets) {
         if (level.getDifficulty() == Difficulty.PEACEFUL) {
             return;
@@ -346,15 +396,13 @@ public final class CavarynHordeManager {
             return;
         }
 
-        List<CavarynHordeDefinitions.SpawnChoice> choices = CavarynHordeDefinitions.get(level, AWAKENING_HORDE)
-                .buildSpawnList(level, players, false, level.random);
+        List<TargetedSpawnChoice> choices = buildTargetedSpawnList(level, AWAKENING_HORDE, targets, players, false);
         int spawned = 0;
-        for (CavarynHordeDefinitions.SpawnChoice choice : choices) {
+        for (TargetedSpawnChoice choice : choices) {
             if (spawned >= capacity) {
                 break;
             }
-            ServerPlayer target = targets.get(level.random.nextInt(targets.size()));
-            if (spawnDirectMob(level, encounter, choice, target)) {
+            if (spawnDirectMob(level, encounter, choice.choice(), choice.target())) {
                 spawned++;
             }
         }
@@ -371,19 +419,18 @@ public final class CavarynHordeManager {
             return;
         }
 
-        CavarynHordeDefinitions.Definition definition = CavarynHordeDefinitions.get(level, hordeForWave(encounter.wave));
-        if (definition.shouldWarn()) {
-                warnHercules(level, encounter.center, targets);
+        ResourceLocation horde = hordeForWave(encounter.wave);
+        if (shouldWarnForTargets(level, horde, targets)) {
+            warnHercules(level, encounter.center, targets);
         }
 
-        List<CavarynHordeDefinitions.SpawnChoice> choices = definition.buildSpawnList(level, players, false, level.random);
+        List<TargetedSpawnChoice> choices = buildTargetedSpawnList(level, horde, targets, players, false);
         int spawned = 0;
-        for (CavarynHordeDefinitions.SpawnChoice choice : choices) {
+        for (TargetedSpawnChoice choice : choices) {
             if (spawned >= capacity) {
                 break;
             }
-            ServerPlayer target = targets.get(level.random.nextInt(targets.size()));
-            if (spawnDirectMob(level, encounter, choice, target)) {
+            if (spawnDirectMob(level, encounter, choice.choice(), choice.target())) {
                 spawned++;
             }
         }
@@ -401,6 +448,7 @@ public final class CavarynHordeManager {
         }
         mob.moveTo(spawnPos.getX() + 0.5D, spawnPos.getY(), spawnPos.getZ() + 0.5D, level.random.nextFloat() * 360.0F, 0.0F);
         mob.finalizeSpawn(level, level.getCurrentDifficultyAt(spawnPos), MobSpawnType.EVENT, null);
+        applyJerryStage(mob, choice.jerryStage(), level.random);
         if (mob.canAttack(target)) {
             mob.setTarget(target);
         }
@@ -423,6 +471,27 @@ public final class CavarynHordeManager {
         }
         level.sendParticles(net.minecraft.core.particles.ParticleTypes.POOF, spawnPos.getX() + 0.5D, spawnPos.getY() + 0.2D, spawnPos.getZ() + 0.5D, 8, 0.4D, 0.2D, 0.4D, 0.03D);
         return true;
+    }
+
+    private static void applyJerryStage(Mob mob, String stageName, RandomSource random) {
+        if (!(mob instanceof JerryEntity jerry) || stageName == null || stageName.isBlank()) {
+            return;
+        }
+
+        JerryEntity.Stage stage = switch (stageName) {
+            case "random" -> JerryEntity.Stage.values()[random.nextInt(JerryEntity.Stage.values().length)];
+            case "random_young" -> random.nextBoolean() ? JerryEntity.Stage.INFANT : JerryEntity.Stage.MATURE;
+            case "random_adult" -> random.nextBoolean() ? JerryEntity.Stage.ALPHA : JerryEntity.Stage.GAMMA;
+            default -> JerryEntity.Stage.byName(stageName);
+        };
+        jerry.setStage(stage);
+    }
+
+    private static ResourceLocation hordeForPosition(ServerLevel level, BlockPos pos, ResourceLocation horde) {
+        if (level.getBiome(pos).is(BIOWART_CAVES)) {
+            return ResourceLocation.fromNamespaceAndPath(horde.getNamespace(), "biowart_caves/" + horde.getPath());
+        }
+        return horde;
     }
 
     private static int countNearbyDirectHordeMobs(ServerLevel level, BlockPos center, double radius) {
@@ -598,6 +667,9 @@ public final class CavarynHordeManager {
         RECOVERY
     }
 
+    private record TargetedSpawnChoice(CavarynHordeDefinitions.SpawnChoice choice, ServerPlayer target) {
+    }
+
     public static final class HordeData extends SavedData {
         private static final String PLAYERS_KEY = "Players";
         private static final String ENCOUNTERS_KEY = "Encounters";
@@ -715,14 +787,6 @@ public final class CavarynHordeManager {
         private final Set<UUID> targets = new HashSet<>();
         private final Set<UUID> hordeMobIds = new HashSet<>();
         private final Set<UUID> herculesIds = new HashSet<>();
-
-        private float intensity(long gameTime) {
-            return switch (this.phase) {
-                case AWAKENING -> Mth.clamp((gameTime - this.startedAt) / (float) AWAKENING_TICKS, 0.25F, 1.0F);
-                case SWARMING, HERCULES -> 1.0F;
-                case RECOVERY -> Mth.clamp((this.recoveryEndsAt - gameTime) / (float) RECOVERY_TICKS, 0.0F, 0.75F);
-            };
-        }
 
         private CompoundTag save() {
             CompoundTag tag = new CompoundTag();

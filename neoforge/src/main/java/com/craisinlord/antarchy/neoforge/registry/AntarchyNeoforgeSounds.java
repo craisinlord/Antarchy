@@ -136,6 +136,7 @@ public final class AntarchyNeoforgeSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> STINKY_FLY = registerSoundEvent("stinky_fly");
     public static final DeferredHolder<SoundEvent, SoundEvent> STINK_BUG_FART = registerSoundEvent("stink_bug_fart");
     public static final DeferredHolder<SoundEvent, SoundEvent> STINK_BUG_IDLE = registerSoundEvent("stink_bug_idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CAVARYN_HEARTBEAT = registerSoundEvent("cavaryn_heartbeat");
     public static final DeferredHolder<SoundEvent, SoundEvent> ROLLY_POLLY_IDLE = registerSoundEvent("rolly_polly_idle");
     public static final DeferredHolder<SoundEvent, SoundEvent> ROLLY_POLLY_WHEEL_MODE = registerSoundEvent("rolly_polly_wheel_mode");
     public static final DeferredHolder<SoundEvent, SoundEvent> ROLLY_POLLY_NORMAL_MODE = registerSoundEvent("rolly_polly_normal_mode");

@@ -513,7 +513,7 @@ public final class AntarchyToolsConfig {
         b.push("potentNyxite");
         POTENT_NYXITE_INVERTED_DURATION_SECONDS = b
                 .comment("How long the Inverted effect from Potent Nyxite eruptions lasts, in seconds.")
-                .defineInRange("invertedDurationSeconds", 10.0D, 0.0D, 3600.0D);
+                .defineInRange("invertedDurationSeconds", 60.0D, 0.0D, 3600.0D);
         b.pop();
 
         b.push("corneaEar");

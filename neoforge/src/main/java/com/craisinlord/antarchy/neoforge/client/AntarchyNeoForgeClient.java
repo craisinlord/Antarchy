@@ -58,6 +58,7 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
@@ -312,7 +313,8 @@ public final class AntarchyNeoForgeClient {
                 ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "brutalfly_elytra"),
                 (guiGraphics, partialTick) -> BrutalflyElytraHudRenderer.render(guiGraphics)
         );
-        event.registerAboveAll(
+        event.registerBelow(
+                VanillaGuiLayers.CHAT,
                 ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "bloodglass_hearts"),
                 (guiGraphics, partialTick) -> BloodglassHudRenderer.render(guiGraphics)
         );

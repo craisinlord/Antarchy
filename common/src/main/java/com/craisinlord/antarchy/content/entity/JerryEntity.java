@@ -1,11 +1,15 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
@@ -71,6 +75,8 @@ public class JerryEntity extends Monster implements GeoEntity {
     private int stageAgeTicks;
     private int attachDamageTicks;
     private int attackCooldownTicks;
+    private int alphaDiveCooldownTicks;
+    private boolean attachedToTarget;
 
     public JerryEntity(EntityType<? extends JerryEntity> entityType, Level level) {
         super(entityType, level);
@@ -145,6 +151,9 @@ public class JerryEntity extends Monster implements GeoEntity {
         if (this.attackCooldownTicks > 0) {
             this.attackCooldownTicks--;
         }
+        if (this.alphaDiveCooldownTicks > 0) {
+            this.alphaDiveCooldownTicks--;
+        }
 
         Stage stage = this.getStage();
         if (stage == Stage.INFANT || stage == Stage.MATURE) {
@@ -156,20 +165,43 @@ public class JerryEntity extends Monster implements GeoEntity {
 
     private void tickGrowth() {
         Stage stage = this.getStage();
-        if (stage == Stage.ALPHA || stage == Stage.GAMMA) {
+        if (stage == Stage.GAMMA) {
             return;
         }
-        this.stageAgeTicks++;
+        this.stageAgeTicks += this.growthTickAmount();
         if (this.stageAgeTicks < GROWTH_TICKS) {
             return;
         }
         this.stageAgeTicks = 0;
-        this.setStage(stage == Stage.INFANT ? Stage.MATURE : (this.random.nextBoolean() ? Stage.ALPHA : Stage.GAMMA));
+        this.setStage(switch (stage) {
+            case INFANT -> Stage.MATURE;
+            case MATURE -> Stage.ALPHA;
+            case ALPHA -> Stage.GAMMA;
+            case GAMMA -> Stage.GAMMA;
+        });
+    }
+
+    private int growthTickAmount() {
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return 1;
+        }
+
+        int hordeLevel = 0;
+        for (ServerPlayer player : serverLevel.players()) {
+            if (player.isSpectator() || player.distanceToSqr(this) > 96.0D * 96.0D) {
+                continue;
+            }
+            hordeLevel = Math.max(hordeLevel, CavarynHordeManager.getHordeLevel(player));
+        }
+
+        float intensity = Mth.clamp(hordeLevel / (float) CavarynHordeManager.maxHordeLevel(), 0.0F, 1.0F);
+        return 1 + Math.round(intensity * intensity * 99.0F);
     }
 
     private void tickAttachedForm(Stage stage) {
         LivingEntity target = this.getTarget();
         if (target == null || !target.isAlive()) {
+            this.attachedToTarget = false;
             this.drift();
             return;
         }
@@ -182,13 +214,18 @@ public class JerryEntity extends Monster implements GeoEntity {
             this.setDeltaMovement(this.getDeltaMovement().scale(0.55D).add(motion));
         }
         if (distance < 1.15D) {
+            this.attachedToTarget = true;
             this.setPos(targetPos.x, targetPos.y, targetPos.z);
             this.setDeltaMovement(Vec3.ZERO);
             if (++this.attachDamageTicks >= ATTACH_DAMAGE_INTERVAL) {
                 this.attachDamageTicks = 0;
+                Vec3 targetMotion = target.getDeltaMovement();
                 target.hurt(this.damageSources().mobAttack(this), (float) stage.attackDamage());
+                target.setDeltaMovement(targetMotion);
+                target.hurtMarked = true;
             }
         } else {
+            this.attachedToTarget = false;
             this.attachDamageTicks = 0;
         }
     }
@@ -201,14 +238,27 @@ public class JerryEntity extends Monster implements GeoEntity {
         }
 
         Stage stage = this.getStage();
-        Vec3 targetPos = target.getEyePosition().add(0.0D, -0.35D, 0.0D);
+        Vec3 targetPos = target.getEyePosition();
+        Vec3 hoverPos = targetPos.add(0.0D, 5.0D, 0.0D);
+        Vec3 toHover = hoverPos.subtract(this.position());
         Vec3 toTarget = targetPos.subtract(this.position());
-        double distance = toTarget.length();
+        double hoverDistance = toHover.length();
+        double targetDistance = toTarget.length();
+        double horizontalDistance = this.position().subtract(targetPos).horizontalDistance();
         this.faceTarget(target);
-        if (distance > 0.01D) {
-            this.setDeltaMovement(this.getDeltaMovement().scale(0.65D).add(toTarget.normalize().scale(0.22D)));
+        if (this.alphaDiveCooldownTicks > 0) {
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.8D).add(toTarget.normalize().scale(0.28D)).add(0.0D, -0.08D, 0.0D));
+        } else if (hoverDistance > 0.01D) {
+            Vec3 desiredMotion = toHover.normalize().scale(0.20D);
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.72D).add(desiredMotion));
         }
-        if (distance < 2.1D && this.attackCooldownTicks <= 0) {
+
+        if (this.alphaDiveCooldownTicks <= 0 && targetDistance < 9.0D && horizontalDistance < 7.0D) {
+            this.alphaDiveCooldownTicks = 30;
+            this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.55D, 0.0D).add(toTarget.normalize().scale(0.42D)));
+        }
+
+        if (targetDistance < 2.3D && this.attackCooldownTicks <= 0) {
             this.faceTarget(target);
             this.attackCooldownTicks = 24;
             this.entityData.set(ATTACK_ANIM_TICKS, ATTACK_ANIM_DURATION);
@@ -252,9 +302,23 @@ public class JerryEntity extends Monster implements GeoEntity {
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (this.isAdultStage() && stack.getItem() instanceof SpawnEggItem spawnEggItem && spawnEggItem.getType(stack) == this.getType()) {
+        if (stack.is(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(com.craisinlord.antarchy.Antarchy.MODID, "jerry_nucleus")))) {
+            if (!this.level().isClientSide) {
+                Stage nextStage = this.nextGrowthStage();
+                if (nextStage != this.getStage()) {
+                    this.setStage(nextStage);
+                    this.stageAgeTicks = 0;
+                    if (!player.getAbilities().instabuild) {
+                        stack.shrink(1);
+                    }
+                }
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        if (stack.getItem() instanceof SpawnEggItem spawnEggItem && spawnEggItem.getType(stack) == this.getType()) {
             if (this.level() instanceof ServerLevel serverLevel && this.getType().create(serverLevel) instanceof JerryEntity infant) {
-                infant.setStage(Stage.INFANT);
+                infant.setStage(this.isAdultStage() ? Stage.INFANT : this.randomAdultStage());
                 infant.moveTo(this.getX(), this.getY(), this.getZ(), this.random.nextFloat() * 360.0F, 0.0F);
                 infant.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(infant.blockPosition()), MobSpawnType.MOB_SUMMONED, null);
                 serverLevel.addFreshEntity(infant);
@@ -305,6 +369,24 @@ public class JerryEntity extends Monster implements GeoEntity {
     }
 
     @Override
+    public boolean isPushable() {
+        return !this.isAttachedYoungStage() && super.isPushable();
+    }
+
+    @Override
+    public void push(Entity entity) {
+        if (this.isAttachedYoungStage()) {
+            return;
+        }
+        super.push(entity);
+    }
+
+    @Override
+    public boolean canBeCollidedWith() {
+        return !this.isAttachedYoungStage() && super.canBeCollidedWith();
+    }
+
+    @Override
     protected void checkFallDamage(double y, boolean onGround, BlockState state, net.minecraft.core.BlockPos pos) {
     }
 
@@ -352,6 +434,24 @@ public class JerryEntity extends Monster implements GeoEntity {
     private boolean isAdultStage() {
         Stage stage = this.getStage();
         return stage == Stage.ALPHA || stage == Stage.GAMMA;
+    }
+
+    private Stage nextGrowthStage() {
+        return switch (this.getStage()) {
+            case INFANT -> Stage.MATURE;
+            case MATURE -> Stage.ALPHA;
+            case ALPHA -> Stage.GAMMA;
+            case GAMMA -> Stage.GAMMA;
+        };
+    }
+
+    private Stage randomAdultStage() {
+        return this.random.nextBoolean() ? Stage.ALPHA : Stage.GAMMA;
+    }
+
+    private boolean isAttachedYoungStage() {
+        Stage stage = this.getStage();
+        return this.attachedToTarget && (stage == Stage.INFANT || stage == Stage.MATURE);
     }
 
     private class GammaMeleeGoal extends MeleeAttackGoal {

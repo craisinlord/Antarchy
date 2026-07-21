@@ -406,6 +406,7 @@
     "item.antarchy.growth_ray": "生长射线枪",
     "tooltip.antarchy.shrink_ray": "永久缩小目标。按住以蓄力。",
     "tooltip.antarchy.growth_ray": "永久放大目标。按住以蓄力。",
+    "tooltip.antarchy.size_ray_milk_reset": "喝牛奶可重置此效果。",
     "tooltip.antarchy.reverie_bottle.capture": "手持玻璃瓶右键雷弗里即可将其收纳。",
     "tooltip.antarchy.reverie_bottle.release": "右键释放雷弗里。",
     "item.antarchy.gravity_gun": "重力枪",

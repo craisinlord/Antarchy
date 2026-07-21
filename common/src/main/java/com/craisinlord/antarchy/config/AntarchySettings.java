@@ -83,7 +83,7 @@ public final class AntarchySettings {
     private static double bigBerthaBasiliskCooldownSeconds = 7.0D;
     private static double bigBerthaLucidInvertedDurationSeconds = 3.0D;
     private static double bigBerthaLucidInvertedDamageBonusPercent = 25.0D;
-    private static double potentNyxiteInvertedDurationSeconds = 2.0D;
+    private static double potentNyxiteInvertedDurationSeconds = 60.0D;
     private static int ultimateToolEnchantability = 25;
     private static int ultimateArmorEnchantability = 10;
     private static int ultimateBowEnchantability = 20;

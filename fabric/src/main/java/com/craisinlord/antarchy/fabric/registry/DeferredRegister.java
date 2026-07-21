@@ -43,6 +43,10 @@ public class DeferredRegister<T> {
         public DeferredItem<BlockItem> registerSimpleBlockItem(DeferredBlock<? extends Block> block) {
             return this.register(block.getId().getPath(), () -> new BlockItem(block.get(), new Item.Properties()));
         }
+
+        public DeferredItem<BlockItem> registerSimpleBlockItem(DeferredBlock<? extends Block> block, Item.Properties properties) {
+            return this.register(block.getId().getPath(), () -> new BlockItem(block.get(), properties));
+        }
     }
 
     @FunctionalInterface

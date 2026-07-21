@@ -65,9 +65,9 @@
     "creature": [
       {
         "type": "antarchy:stink_bug",
-        "weight": 10,
-        "minCount": 1,
-        "maxCount": 3
+        "weight": 35,
+        "minCount": 2,
+        "maxCount": 4
       }],
     "ambient": [
     ],

@@ -249,6 +249,7 @@ public final class AntarchyFabricContent {
                 AntarchyFabricSounds.STINKY_FLY_SOUND,
                 AntarchyFabricSounds.STINK_BUG_FART,
                 AntarchyFabricSounds.STINK_BUG_IDLE,
+                AntarchyFabricSounds.CAVARYN_HEARTBEAT,
                 AntarchyFabricSounds.ROLLY_POLLY_IDLE,
                 AntarchyFabricSounds.CREEPING_HORROR_GROWL,
                 AntarchyFabricSounds.CREEPING_HORROR_HURT,

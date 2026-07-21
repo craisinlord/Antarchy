@@ -22,6 +22,8 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -132,7 +134,7 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
 
     @Override
     public boolean isInvulnerableTo(DamageSource damageSource) {
-        return true;
+        return !damageSource.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !damageSource.is(DamageTypes.GENERIC);
     }
 
     @Override

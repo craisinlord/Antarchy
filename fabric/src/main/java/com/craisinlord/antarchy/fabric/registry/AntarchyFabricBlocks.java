@@ -246,6 +246,7 @@ import net.minecraft.world.level.block.VineBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.levelgen.DensityFunction;
@@ -677,7 +678,7 @@ public final class AntarchyFabricBlocks {
 
 
     public static final DeferredBlock<Block> MYRMITE_COAL_ORE = BLOCKS.register("myrmite_coal_ore",
-            () -> createOre(Blocks.COAL_ORE, 0, 2));
+            () -> createOre(Blocks.COAL_ORE, 0, 2, MapColor.COLOR_GRAY));
 
 
     public static final DeferredBlock<Block> BROODSTONE = BLOCKS.register("broodstone",
@@ -733,11 +734,11 @@ public final class AntarchyFabricBlocks {
 
 
     public static final DeferredBlock<Block> BROODSTONE_URANIUM_ORE = BLOCKS.register("broodstone_uranium_ore",
-            () -> createOre(Blocks.DEEPSLATE_EMERALD_ORE, 4, 8));
+            () -> createOre(Blocks.DEEPSLATE_EMERALD_ORE, 4, 8, MapColor.COLOR_YELLOW));
 
 
     public static final DeferredBlock<Block> BROODSTONE_TITANIUM_ORE = BLOCKS.register("broodstone_titanium_ore",
-            () -> createOre(Blocks.DEEPSLATE_DIAMOND_ORE, 4, 8));
+            () -> createOre(Blocks.DEEPSLATE_DIAMOND_ORE, 4, 8, MapColor.COLOR_LIGHT_BLUE));
 
 
     public static final DeferredBlock<RotatedPillarBlock> CHITEN_BLOCK = BLOCKS.register("chiten_block",
@@ -911,99 +912,99 @@ public final class AntarchyFabricBlocks {
 
 
     public static final DeferredBlock<Block> URANIUM_ORE = BLOCKS.register("uranium_ore",
-            () -> createOre(Blocks.EMERALD_ORE, 4, 8));
+            () -> createOre(Blocks.EMERALD_ORE, 4, 8, MapColor.COLOR_YELLOW));
 
 
     public static final DeferredBlock<Block> DEEPSLATE_URANIUM_ORE = BLOCKS.register("deepslate_uranium_ore",
-            () -> createOre(Blocks.DEEPSLATE_EMERALD_ORE, 4, 8));
+            () -> createOre(Blocks.DEEPSLATE_EMERALD_ORE, 4, 8, MapColor.COLOR_YELLOW));
 
 
     public static final DeferredBlock<Block> TITANIUM_ORE = BLOCKS.register("titanium_ore",
-            () -> createOre(Blocks.DIAMOND_ORE, 4, 8));
+            () -> createOre(Blocks.DIAMOND_ORE, 4, 8, MapColor.COLOR_LIGHT_BLUE));
 
 
     public static final DeferredBlock<Block> DEEPSLATE_TITANIUM_ORE = BLOCKS.register("deepslate_titanium_ore",
-            () -> createOre(Blocks.DEEPSLATE_DIAMOND_ORE, 4, 8));
+            () -> createOre(Blocks.DEEPSLATE_DIAMOND_ORE, 4, 8, MapColor.COLOR_LIGHT_BLUE));
 
 
     public static final DeferredBlock<Block> URANIUM_BLOCK = BLOCKS.register("uranium_block",
-            () -> createStorageBlock(Blocks.EMERALD_BLOCK));
+            () -> createStorageBlock(Blocks.EMERALD_BLOCK, MapColor.COLOR_YELLOW));
 
 
     public static final DeferredBlock<Block> TITANIUM_BLOCK = BLOCKS.register("titanium_block",
-            () -> createStorageBlock(Blocks.DIAMOND_BLOCK));
+            () -> createStorageBlock(Blocks.DIAMOND_BLOCK, MapColor.COLOR_LIGHT_BLUE));
 
 
     public static final DeferredBlock<Block> RAW_URANIUM_BLOCK = BLOCKS.register("raw_uranium_block",
-            () -> createRawStorageBlock(Blocks.EMERALD_ORE));
+            () -> createRawStorageBlock(Blocks.EMERALD_ORE, MapColor.COLOR_YELLOW));
 
 
     public static final DeferredBlock<Block> RAW_TITANIUM_BLOCK = BLOCKS.register("raw_titanium_block",
-            () -> createRawStorageBlock(Blocks.DIAMOND_ORE));
+            () -> createRawStorageBlock(Blocks.DIAMOND_ORE, MapColor.COLOR_LIGHT_BLUE));
 
 
     public static final DeferredBlock<Block> CUT_URANIUM = BLOCKS.register("cut_uranium",
-            () -> createHorizontalFacingStorageBlock(Blocks.CUT_COPPER));
+            () -> createHorizontalFacingStorageBlock(Blocks.CUT_COPPER, MapColor.COLOR_YELLOW));
 
 
     public static final DeferredBlock<Block> CUT_TITANIUM = BLOCKS.register("cut_titanium",
-            () -> createHorizontalFacingStorageBlock(Blocks.CUT_COPPER));
+            () -> createHorizontalFacingStorageBlock(Blocks.CUT_COPPER, MapColor.COLOR_LIGHT_BLUE));
 
 
     public static final DeferredBlock<net.minecraft.world.level.block.SlabBlock> CUT_URANIUM_SLAB = BLOCKS.register("cut_uranium_slab",
-            () -> new net.minecraft.world.level.block.SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CUT_COPPER_SLAB)));
+            () -> new net.minecraft.world.level.block.SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CUT_COPPER_SLAB).mapColor(MapColor.COLOR_YELLOW)));
 
 
     public static final DeferredBlock<net.minecraft.world.level.block.SlabBlock> CUT_TITANIUM_SLAB = BLOCKS.register("cut_titanium_slab",
-            () -> new net.minecraft.world.level.block.SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CUT_COPPER_SLAB)));
+            () -> new net.minecraft.world.level.block.SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CUT_COPPER_SLAB).mapColor(MapColor.COLOR_LIGHT_BLUE)));
 
 
     public static final DeferredBlock<net.minecraft.world.level.block.StairBlock> CUT_URANIUM_STAIRS = BLOCKS.register("cut_uranium_stairs",
-            () -> new net.minecraft.world.level.block.StairBlock(CUT_URANIUM.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.CUT_COPPER_STAIRS)));
+            () -> new net.minecraft.world.level.block.StairBlock(CUT_URANIUM.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.CUT_COPPER_STAIRS).mapColor(MapColor.COLOR_YELLOW)));
 
 
     public static final DeferredBlock<net.minecraft.world.level.block.StairBlock> CUT_TITANIUM_STAIRS = BLOCKS.register("cut_titanium_stairs",
-            () -> new net.minecraft.world.level.block.StairBlock(CUT_TITANIUM.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.CUT_COPPER_STAIRS)));
+            () -> new net.minecraft.world.level.block.StairBlock(CUT_TITANIUM.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.CUT_COPPER_STAIRS).mapColor(MapColor.COLOR_LIGHT_BLUE)));
 
 
     public static final DeferredBlock<Block> CHISELED_URANIUM = BLOCKS.register("chiseled_uranium",
-            () -> createHorizontalFacingStorageBlock(Blocks.CHISELED_COPPER));
+            () -> createHorizontalFacingStorageBlock(Blocks.CHISELED_COPPER, MapColor.COLOR_YELLOW));
 
 
     public static final DeferredBlock<Block> CHISELED_TITANIUM = BLOCKS.register("chiseled_titanium",
-            () -> createHorizontalFacingStorageBlock(Blocks.CHISELED_COPPER));
+            () -> createHorizontalFacingStorageBlock(Blocks.CHISELED_COPPER, MapColor.COLOR_LIGHT_BLUE));
 
 
     public static final DeferredBlock<SignalSavingBulbBlock> URANIUM_BULB = BLOCKS.register("uranium_bulb",
-            () -> new SignalSavingBulbBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_BULB)));
+            () -> new SignalSavingBulbBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_BULB).mapColor(MapColor.COLOR_YELLOW)));
 
 
     public static final DeferredBlock<SignalSavingBulbBlock> TITANIUM_BULB = BLOCKS.register("titanium_bulb",
-            () -> new SignalSavingBulbBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_BULB)));
+            () -> new SignalSavingBulbBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_BULB).mapColor(MapColor.COLOR_LIGHT_BLUE)));
 
 
     public static final DeferredBlock<net.minecraft.world.level.block.DoorBlock> URANIUM_DOOR = BLOCKS.register("uranium_door",
-            () -> new net.minecraft.world.level.block.DoorBlock(net.minecraft.world.level.block.state.properties.BlockSetType.IRON, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_DOOR)));
+            () -> new net.minecraft.world.level.block.DoorBlock(net.minecraft.world.level.block.state.properties.BlockSetType.IRON, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_DOOR).mapColor(MapColor.COLOR_YELLOW)));
 
 
     public static final DeferredBlock<net.minecraft.world.level.block.DoorBlock> TITANIUM_DOOR = BLOCKS.register("titanium_door",
-            () -> new net.minecraft.world.level.block.DoorBlock(net.minecraft.world.level.block.state.properties.BlockSetType.IRON, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_DOOR)));
+            () -> new net.minecraft.world.level.block.DoorBlock(net.minecraft.world.level.block.state.properties.BlockSetType.IRON, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_DOOR).mapColor(MapColor.COLOR_LIGHT_BLUE)));
 
 
     public static final DeferredBlock<net.minecraft.world.level.block.TrapDoorBlock> URANIUM_TRAPDOOR = BLOCKS.register("uranium_trapdoor",
-            () -> new net.minecraft.world.level.block.TrapDoorBlock(net.minecraft.world.level.block.state.properties.BlockSetType.IRON, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_TRAPDOOR)));
+            () -> new net.minecraft.world.level.block.TrapDoorBlock(net.minecraft.world.level.block.state.properties.BlockSetType.IRON, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_TRAPDOOR).mapColor(MapColor.COLOR_YELLOW)));
 
 
     public static final DeferredBlock<net.minecraft.world.level.block.TrapDoorBlock> TITANIUM_TRAPDOOR = BLOCKS.register("titanium_trapdoor",
-            () -> new net.minecraft.world.level.block.TrapDoorBlock(net.minecraft.world.level.block.state.properties.BlockSetType.IRON, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_TRAPDOOR)));
+            () -> new net.minecraft.world.level.block.TrapDoorBlock(net.minecraft.world.level.block.state.properties.BlockSetType.IRON, BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_TRAPDOOR).mapColor(MapColor.COLOR_LIGHT_BLUE)));
 
 
     public static final DeferredBlock<net.minecraft.world.level.block.IronBarsBlock> URANIUM_BARS = BLOCKS.register("uranium_bars",
-            () -> new net.minecraft.world.level.block.IronBarsBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BARS)));
+            () -> new net.minecraft.world.level.block.IronBarsBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BARS).mapColor(MapColor.COLOR_YELLOW)));
 
 
     public static final DeferredBlock<net.minecraft.world.level.block.IronBarsBlock> TITANIUM_BARS = BLOCKS.register("titanium_bars",
-            () -> new net.minecraft.world.level.block.IronBarsBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BARS)));
+            () -> new net.minecraft.world.level.block.IronBarsBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BARS).mapColor(MapColor.COLOR_LIGHT_BLUE)));
 
 
     public static final DeferredBlock<net.minecraft.world.level.block.RotatedPillarBlock> ANTIMETAL = BLOCKS.register("antimetal",
@@ -1295,26 +1296,26 @@ public final class AntarchyFabricBlocks {
 
 
 
-    private static Block createOre(Block copyFrom) {
-        return new Block(BlockBehaviour.Properties.ofFullCopy(copyFrom).requiresCorrectToolForDrops());
+    private static Block createOre(Block copyFrom, MapColor mapColor) {
+        return new Block(BlockBehaviour.Properties.ofFullCopy(copyFrom).mapColor(mapColor).requiresCorrectToolForDrops());
     }
 
 
 
-    private static Block createOre(Block copyFrom, int minExperience, int maxExperience) {
-        return new DropExperienceBlock(UniformInt.of(minExperience, maxExperience), BlockBehaviour.Properties.ofFullCopy(copyFrom).requiresCorrectToolForDrops());
+    private static Block createOre(Block copyFrom, int minExperience, int maxExperience, MapColor mapColor) {
+        return new DropExperienceBlock(UniformInt.of(minExperience, maxExperience), BlockBehaviour.Properties.ofFullCopy(copyFrom).mapColor(mapColor).requiresCorrectToolForDrops());
     }
 
 
 
-    private static Block createStorageBlock(Block copyFrom) {
-        return new Block(BlockBehaviour.Properties.ofFullCopy(copyFrom).requiresCorrectToolForDrops());
+    private static Block createStorageBlock(Block copyFrom, MapColor mapColor) {
+        return new Block(BlockBehaviour.Properties.ofFullCopy(copyFrom).mapColor(mapColor).requiresCorrectToolForDrops());
     }
 
 
 
-    private static Block createHorizontalFacingStorageBlock(Block copyFrom) {
-        return new SimpleHorizontalFacingBlock(BlockBehaviour.Properties.ofFullCopy(copyFrom).requiresCorrectToolForDrops());
+    private static Block createHorizontalFacingStorageBlock(Block copyFrom, MapColor mapColor) {
+        return new SimpleHorizontalFacingBlock(BlockBehaviour.Properties.ofFullCopy(copyFrom).mapColor(mapColor).requiresCorrectToolForDrops());
     }
 
 
@@ -1355,8 +1356,8 @@ public final class AntarchyFabricBlocks {
 
 
 
-    private static Block createRawStorageBlock(Block copyFrom) {
-        return new Block(BlockBehaviour.Properties.ofFullCopy(copyFrom).requiresCorrectToolForDrops());
+    private static Block createRawStorageBlock(Block copyFrom, MapColor mapColor) {
+        return new Block(BlockBehaviour.Properties.ofFullCopy(copyFrom).mapColor(mapColor).requiresCorrectToolForDrops());
     }
 
 

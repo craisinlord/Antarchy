@@ -406,6 +406,7 @@
     "item.antarchy.growth_ray": "成長光線銃",
     "tooltip.antarchy.shrink_ray": "対象を永久に縮小します。長押しでチャージします。",
     "tooltip.antarchy.growth_ray": "対象を永久に巨大化します。長押しでチャージします。",
+    "tooltip.antarchy.size_ray_milk_reset": "牛乳を飲むとこの効果はリセットされます。",
     "tooltip.antarchy.reverie_bottle.capture": "ガラス瓶を持ってレヴェリーを右クリックすると収納できます。",
     "tooltip.antarchy.reverie_bottle.release": "右クリックでレヴェリーを解放します。",
     "item.antarchy.gravity_gun": "重力銃",

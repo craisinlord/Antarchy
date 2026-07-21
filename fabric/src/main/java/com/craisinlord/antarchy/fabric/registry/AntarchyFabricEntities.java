@@ -360,7 +360,7 @@ public final class AntarchyFabricEntities {
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<StinkBugEntity>> STINK_BUG = ENTITY_TYPES.register("stink_bug",
-            () -> EntityType.Builder.of(StinkBugEntity::new, MobCategory.AMBIENT)
+            () -> EntityType.Builder.of(StinkBugEntity::new, MobCategory.CREATURE)
                     .sized(0.35F, 0.2F)
                     .clientTrackingRange(8)
                     .build("stink_bug"));

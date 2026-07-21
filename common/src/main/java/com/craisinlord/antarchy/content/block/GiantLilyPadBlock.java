@@ -13,6 +13,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -31,6 +33,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
@@ -44,6 +47,9 @@ public final class GiantLilyPadBlock extends Block implements BonemealableBlock 
     private static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 0.5D, 16.0D);
     private static final ThreadLocal<Boolean> REMOVING_STRUCTURE = ThreadLocal.withInitial(() -> false);
     private static final Map<TilePosition, Vec2> OFFSETS = createOffsets();
+    private static final double BOUNCE_FACTOR = 0.35D;
+    private static final double FORWARD_BOOST_MULTIPLIER = 1.05D;
+    private static final double MAX_BOOSTED_HORIZONTAL_SPEED = 0.6D;
 
     public GiantLilyPadBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -146,6 +152,34 @@ public final class GiantLilyPadBlock extends Block implements BonemealableBlock 
         }
         level.playSound(null, pos, net.minecraft.sounds.SoundEvents.LILY_PAD_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
         return ItemInteractionResult.CONSUME;
+    }
+
+    @Override
+    public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
+        super.stepOn(level, pos, state, entity);
+        if (!level.isClientSide) {
+            Vec3 movement = entity.getDeltaMovement();
+            double horizontalSpeed = movement.horizontalDistance();
+            if (horizontalSpeed > 0.02D && horizontalSpeed < MAX_BOOSTED_HORIZONTAL_SPEED) {
+                double boosted = Math.min(horizontalSpeed * FORWARD_BOOST_MULTIPLIER, MAX_BOOSTED_HORIZONTAL_SPEED);
+                double scale = boosted / horizontalSpeed;
+                entity.setDeltaMovement(movement.x * scale, movement.y, movement.z * scale);
+            }
+        }
+    }
+
+    @Override
+    public void updateEntityAfterFallOn(BlockGetter level, Entity entity) {
+        if (entity.isSuppressingBounce()) {
+            super.updateEntityAfterFallOn(level, entity);
+            return;
+        }
+
+        Vec3 movement = entity.getDeltaMovement();
+        if (movement.y < 0.0D) {
+            double bounce = entity instanceof LivingEntity ? BOUNCE_FACTOR : BOUNCE_FACTOR * 0.7D;
+            entity.setDeltaMovement(movement.x, -movement.y * bounce, movement.z);
+        }
     }
 
     @Override

@@ -406,6 +406,7 @@
     "item.antarchy.growth_ray": "Rayon de croissance",
     "tooltip.antarchy.shrink_ray": "Rétrécit définitivement les cibles. Maintenez pour charger.",
     "tooltip.antarchy.growth_ray": "Agrandit définitivement les cibles. Maintenez pour charger.",
+    "tooltip.antarchy.size_ray_milk_reset": "Boire du lait réinitialise cet effet.",
     "tooltip.antarchy.reverie_bottle.capture": "Faites un clic droit sur une Reverie avec une fiole en verre pour la capturer.",
     "tooltip.antarchy.reverie_bottle.release": "Clic droit pour libérer la Reverie.",
     "item.antarchy.gravity_gun": "Canon à gravité",

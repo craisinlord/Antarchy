@@ -213,32 +213,54 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BROWN_ANT_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROWN_ANT_NEST);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> RAINBOW_ANT_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.RAINBOW_ANT_NEST);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> TERMITE_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TERMITE_NEST);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.URANIUM_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> DEEPSLATE_URANIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DEEPSLATE_URANIUM_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TITANIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TITANIUM_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> DEEPSLATE_TITANIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DEEPSLATE_TITANIUM_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.URANIUM_BLOCK);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TITANIUM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TITANIUM_BLOCK);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> RAW_URANIUM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.RAW_URANIUM_BLOCK);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> RAW_TITANIUM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.RAW_TITANIUM_BLOCK);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_URANIUM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CUT_URANIUM);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_TITANIUM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CUT_TITANIUM);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_URANIUM_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CUT_URANIUM_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_TITANIUM_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CUT_TITANIUM_SLAB);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_URANIUM_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CUT_URANIUM_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_TITANIUM_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CUT_TITANIUM_STAIRS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_URANIUM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_URANIUM);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_TITANIUM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_TITANIUM);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_ORE_ITEM = ITEMS.register("uranium_ore",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.URANIUM_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> DEEPSLATE_URANIUM_ORE_ITEM = ITEMS.register("deepslate_uranium_ore",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.DEEPSLATE_URANIUM_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TITANIUM_ORE_ITEM = ITEMS.register("titanium_ore",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.TITANIUM_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> DEEPSLATE_TITANIUM_ORE_ITEM = ITEMS.register("deepslate_titanium_ore",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.DEEPSLATE_TITANIUM_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_BLOCK_ITEM = ITEMS.register("uranium_block",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.URANIUM_BLOCK.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TITANIUM_BLOCK_ITEM = ITEMS.register("titanium_block",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.TITANIUM_BLOCK.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> RAW_URANIUM_BLOCK_ITEM = ITEMS.register("raw_uranium_block",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.RAW_URANIUM_BLOCK.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> RAW_TITANIUM_BLOCK_ITEM = ITEMS.register("raw_titanium_block",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.RAW_TITANIUM_BLOCK.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_URANIUM_ITEM = ITEMS.register("cut_uranium",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.CUT_URANIUM.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_TITANIUM_ITEM = ITEMS.register("cut_titanium",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.CUT_TITANIUM.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_URANIUM_SLAB_ITEM = ITEMS.register("cut_uranium_slab",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.CUT_URANIUM_SLAB.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_TITANIUM_SLAB_ITEM = ITEMS.register("cut_titanium_slab",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.CUT_TITANIUM_SLAB.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_URANIUM_STAIRS_ITEM = ITEMS.register("cut_uranium_stairs",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.CUT_URANIUM_STAIRS.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_TITANIUM_STAIRS_ITEM = ITEMS.register("cut_titanium_stairs",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.CUT_TITANIUM_STAIRS.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_URANIUM_ITEM = ITEMS.register("chiseled_uranium",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.CHISELED_URANIUM.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_TITANIUM_ITEM = ITEMS.register("chiseled_titanium",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.CHISELED_TITANIUM.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_BULB_ITEM = ITEMS.register("uranium_bulb",
-            () -> new com.craisinlord.antarchy.content.item.SignalSavingBulbItem(AntarchyNeoforgeBlocks.URANIUM_BULB.get(), new Item.Properties()));
+            () -> new com.craisinlord.antarchy.content.item.SignalSavingBulbItem(AntarchyNeoforgeBlocks.URANIUM_BULB.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> TITANIUM_BULB_ITEM = ITEMS.register("titanium_bulb",
-            () -> new com.craisinlord.antarchy.content.item.SignalSavingBulbItem(AntarchyNeoforgeBlocks.TITANIUM_BULB.get(), new Item.Properties()));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_DOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.URANIUM_DOOR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TITANIUM_DOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TITANIUM_DOOR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.URANIUM_TRAPDOOR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TITANIUM_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TITANIUM_TRAPDOOR);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_BARS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.URANIUM_BARS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TITANIUM_BARS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TITANIUM_BARS);
+            () -> new com.craisinlord.antarchy.content.item.SignalSavingBulbItem(AntarchyNeoforgeBlocks.TITANIUM_BULB.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_DOOR_ITEM = ITEMS.register("uranium_door",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.URANIUM_DOOR.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TITANIUM_DOOR_ITEM = ITEMS.register("titanium_door",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.TITANIUM_DOOR.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_TRAPDOOR_ITEM = ITEMS.register("uranium_trapdoor",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.URANIUM_TRAPDOOR.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TITANIUM_TRAPDOOR_ITEM = ITEMS.register("titanium_trapdoor",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.TITANIUM_TRAPDOOR.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_BARS_ITEM = ITEMS.register("uranium_bars",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.URANIUM_BARS.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TITANIUM_BARS_ITEM = ITEMS.register("titanium_bars",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.TITANIUM_BARS.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> ANTIMETAL_ITEM = ITEMS.register("antimetal",
             () -> new AntimetalBlockItem(AntarchyNeoforgeBlocks.ANTIMETAL.get(), new Item.Properties()));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ANTIMETAL_ITEM = ITEMS.register("polished_antimetal",
@@ -293,8 +315,10 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_BRICK_SLAB);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_BRICK_WALL);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_COAL_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_COAL_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_URANIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_URANIUM_ORE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_TITANIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_TITANIUM_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_URANIUM_ORE_ITEM = ITEMS.register("broodstone_uranium_ore",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.BROODSTONE_URANIUM_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_TITANIUM_ORE_ITEM = ITEMS.register("broodstone_titanium_ore",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.BROODSTONE_TITANIUM_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_NYXITE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_NYXITE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_BRICKS);
@@ -402,7 +426,11 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<Item> QUEEN_SCALE = ITEMS.register("queen_scale",
             () -> new MobComingSoonTooltipItem(new Item.Properties().rarity(Rarity.RARE)));
     public static final DeferredItem<Item> CHITEN = ITEMS.registerSimpleItem("chiten", new Item.Properties().rarity(Rarity.UNCOMMON));
-    public static final DeferredItem<Item> JERRY_NUCLEUS = ITEMS.registerSimpleItem("jerry_nucleus", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> JERRY_NUCLEUS = ITEMS.registerSimpleItem("jerry_nucleus", new Item.Properties().rarity(Rarity.UNCOMMON)
+            .food(new FoodProperties.Builder()
+                    .nutrition(2)
+                    .saturationModifier(0.1F)
+                    .build()));
     public static final DeferredItem<Item> CARAPACE = ITEMS.registerSimpleItem("carapace", new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final DeferredItem<Item> STINK_BUG = ITEMS.registerSimpleItem("stink_bug", new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final DeferredItem<Item> JUMPY_BUG_LEG = ITEMS.registerSimpleItem("jumpy_bug_leg", new Item.Properties().rarity(Rarity.UNCOMMON));
@@ -442,8 +470,9 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<Item> RAW_BUG_MEAT = ITEMS.register("raw_bug_meat",
             () -> new Item(new Item.Properties()
                     .food(new FoodProperties.Builder()
-                            .nutrition(3)
-                            .saturationModifier(0.3F)
+                            .nutrition(4)
+                            .saturationModifier(0.1F)
+                            .effect(() -> new MobEffectInstance(MobEffects.HUNGER, 600), 0.8F)
                             .build())));
     public static final DeferredItem<Item> COOKED_BUG_MEAT = ITEMS.register("cooked_bug_meat",
             () -> new Item(new Item.Properties()

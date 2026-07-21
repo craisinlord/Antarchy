@@ -59,11 +59,12 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     private final int dreamDunesMaxQuartY;
     private final int umbralHillsMaxQuartY;
     private final int lucidPoolsMinQuartY;
-    private final Holder<Biome> nightmareWastesBiome;
-    private final Holder<Biome> dreamDunesBiome;
-    private final Holder<Biome> umbralHillsBiome;
-    private final Holder<Biome> lucidPoolsBiome;
-    private final Holder<Biome> cloudSeaBiome;
+    private volatile boolean biomesResolved;
+    private Holder<Biome> nightmareWastesBiome;
+    private Holder<Biome> dreamDunesBiome;
+    private Holder<Biome> umbralHillsBiome;
+    private Holder<Biome> lucidPoolsBiome;
+    private Holder<Biome> cloudSeaBiome;
 
     private static final ThreadLocal<Long2DoubleOpenHashMap> CLOUD_SEA_CACHE =
             ThreadLocal.withInitial(() -> new Long2DoubleOpenHashMap(512));
@@ -81,11 +82,23 @@ public final class ThoraxisBiomeSource extends BiomeSource {
         this.dreamDunesMaxQuartY = QuartPos.fromBlock(dreamDunesMaxY);
         this.umbralHillsMaxQuartY = QuartPos.fromBlock(umbralHillsMaxY);
         this.lucidPoolsMinQuartY = QuartPos.fromBlock(lucidPoolsMinY);
-        this.nightmareWastesBiome = this.findBiome(NIGHTMARE_WASTES);
-        this.dreamDunesBiome = this.findBiome(DREAM_DUNES);
-        this.umbralHillsBiome = this.findBiome(UMBRAL_HILLS);
-        this.lucidPoolsBiome = this.findBiome(LUCID_POOLS);
-        this.cloudSeaBiome = this.findBiome(CLOUD_SEA);
+    }
+
+    private void resolveBiomesIfNeeded() {
+        if (this.biomesResolved) {
+            return;
+        }
+        synchronized (this) {
+            if (this.biomesResolved) {
+                return;
+            }
+            this.nightmareWastesBiome = this.findBiome(NIGHTMARE_WASTES);
+            this.dreamDunesBiome = this.findBiome(DREAM_DUNES);
+            this.umbralHillsBiome = this.findBiome(UMBRAL_HILLS);
+            this.lucidPoolsBiome = this.findBiome(LUCID_POOLS);
+            this.cloudSeaBiome = this.findBiome(CLOUD_SEA);
+            this.biomesResolved = true;
+        }
     }
 
     private Climate.ParameterList<Holder<Biome>> parameters() {
@@ -116,6 +129,7 @@ public final class ThoraxisBiomeSource extends BiomeSource {
 
     @Override
     public Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.Sampler sampler) {
+        this.resolveBiomesIfNeeded();
         if (this.cloudSeaBiome != null && cachedIsCloudSeaZone(x, z)) {
             return this.cloudSeaBiome;
         }

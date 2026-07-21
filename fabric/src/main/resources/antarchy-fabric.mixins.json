@@ -22,6 +22,8 @@
   ],
   "client": [
     "client.CameraShakeMixin",
+    "client.BrutalflyElytraExperienceBarMixin",
+    "client.BloodglassChatOrderMixin",
     "client.DuctTapeInputMixin",
     "client.AntiwaterFogMixin",
     "client.GravityGunMouseScrollMixin",

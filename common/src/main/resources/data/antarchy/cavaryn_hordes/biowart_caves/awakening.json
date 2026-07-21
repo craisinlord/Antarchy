@@ -1,0 +1,17 @@
+{
+  "entries": [
+    {
+      "entity_tag": "antarchy:horde_jerry",
+      "jerry_stage": "random_young",
+      "base_count": 3,
+      "per_player_count": 1
+    },
+    {
+      "entity_tag": "antarchy:horde_jerry",
+      "jerry_stage": "alpha",
+      "base_count": 0,
+      "per_player_count": 1,
+      "min_count": 1
+    }
+  ]
+}

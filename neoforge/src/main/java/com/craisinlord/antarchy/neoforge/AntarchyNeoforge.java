@@ -152,6 +152,7 @@ public class AntarchyNeoforge {
                 AntarchyNeoforgeSounds.STINKY_FLY,
                 AntarchyNeoforgeSounds.STINK_BUG_FART,
                 AntarchyNeoforgeSounds.STINK_BUG_IDLE,
+                AntarchyNeoforgeSounds.CAVARYN_HEARTBEAT,
                 AntarchyNeoforgeSounds.ROLLY_POLLY_IDLE,
                 AntarchyNeoforgeSounds.CREEPING_HORROR_GROWL,
                 AntarchyNeoforgeSounds.CREEPING_HORROR_HURT,

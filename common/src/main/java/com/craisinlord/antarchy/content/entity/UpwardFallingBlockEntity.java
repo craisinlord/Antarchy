@@ -21,7 +21,6 @@ import java.util.function.Supplier;
 
 public class UpwardFallingBlockEntity extends Entity {
 
-    /** Set by the platform registration before any block tick fires. */
     public static Supplier<EntityType<UpwardFallingBlockEntity>> TYPE;
 
     private static final EntityDataAccessor<BlockState> DATA_BLOCK_STATE =

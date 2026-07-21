@@ -406,6 +406,7 @@
     "item.antarchy.growth_ray": "Raggio di crescita",
     "tooltip.antarchy.shrink_ray": "Rimpicciolisce permanentemente i bersagli. Tieni premuto per caricare.",
     "tooltip.antarchy.growth_ray": "Ingrandisce permanentemente i bersagli. Tieni premuto per caricare.",
+    "tooltip.antarchy.size_ray_milk_reset": "Bere il latte annulla questo effetto.",
     "tooltip.antarchy.reverie_bottle.capture": "Fai clic destro su una Reverie con una bottiglia di vetro per catturarla.",
     "tooltip.antarchy.reverie_bottle.release": "Fai clic destro per liberare la Reverie.",
     "item.antarchy.gravity_gun": "Cannone gravitazionale",

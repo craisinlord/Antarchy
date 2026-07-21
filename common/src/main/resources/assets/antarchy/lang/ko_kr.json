@@ -406,6 +406,7 @@
     "item.antarchy.growth_ray": "성장 광선총",
     "tooltip.antarchy.shrink_ray": "대상을 영구적으로 축소합니다. 길게 눌러 충전합니다.",
     "tooltip.antarchy.growth_ray": "대상을 영구적으로 성장시킵니다. 길게 눌러 충전합니다.",
+    "tooltip.antarchy.size_ray_milk_reset": "우유를 마시면 이 효과가 초기화됩니다.",
     "tooltip.antarchy.reverie_bottle.capture": "유리병으로 레버리를 우클릭하여 담습니다.",
     "tooltip.antarchy.reverie_bottle.release": "우클릭하여 레버리를 풀어줍니다.",
     "item.antarchy.gravity_gun": "중력총",

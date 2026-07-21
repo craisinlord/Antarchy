@@ -382,6 +382,7 @@
     "item.antarchy.growth_ray":  "Увеличитель",
     "tooltip.antarchy.shrink_ray":  "Навсегда уменьшает цель. Зажмите, чтобы зарядить.",
     "tooltip.antarchy.growth_ray":  "Навсегда увеличивает цель. Зажмите, чтобы зарядить.",
+    "tooltip.antarchy.size_ray_milk_reset":  "Питьё молока сбрасывает этот эффект.",
     "tooltip.antarchy.reverie_bottle.capture":  "Нажмите ПКМ стеклянной бутылочкой по грёзе, чтобы поймать её.",
     "tooltip.antarchy.reverie_bottle.release":  "Нажмите ПКМ, чтобы выпустить грёзу.",
     "item.antarchy.gravity_gun":  "Гравитационная пушка",

@@ -17,9 +17,6 @@ public class JerryRenderer extends GeoEntityRenderer<JerryEntity> {
 
     @Override
     public RenderType getRenderType(JerryEntity animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
-        JerryEntity.Stage stage = animatable.getStage();
-        return stage == JerryEntity.Stage.INFANT || stage == JerryEntity.Stage.MATURE
-                ? RenderType.entityTranslucent(texture)
-                : RenderType.entityCutoutNoCull(texture);
+        return RenderType.entityTranslucent(texture);
     }
 }

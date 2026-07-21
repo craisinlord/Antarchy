@@ -474,7 +474,6 @@ public final class AntarchyFabricClientBootstrap {
             ParalyzedHudRenderer.render(guiGraphics);
             BrutalflyElytraHudRenderer.render(guiGraphics);
             JumpyBootsHudRenderer.render(guiGraphics);
-            BloodglassHudRenderer.render(guiGraphics);
             TriffidGooHudRenderer.render(guiGraphics);
             DorrieJumpHudRenderer.render(guiGraphics);
         });

@@ -1826,6 +1826,14 @@
       }
     ]
   },
+  "cavaryn_heartbeat": {
+    "subtitle": "subtitles.antarchy.cavaryn_heartbeat",
+    "sounds": [
+      {
+        "name": "antarchy:ambient/cavaryn/heartbeat"
+      }
+    ]
+  },
   "triffid_attack": {
     "subtitle": "subtitles.antarchy.triffid_attack",
     "sounds": [

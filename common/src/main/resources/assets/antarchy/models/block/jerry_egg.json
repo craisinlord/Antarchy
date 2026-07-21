@@ -4,7 +4,7 @@
 	"texture_size": [64, 64],
 	"textures": {
 		"1": "antarchy:block/jerry_egg",
-		"particle": "antarchy:block/biomite"
+		"particle": "antarchy:block/jerry_egg_break_particle"
 	},
 	"elements": [
 		{

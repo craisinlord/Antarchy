@@ -134,6 +134,7 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> STINKY_FLY = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> STINK_BUG_FART = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> STINK_BUG_IDLE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> CAVARYN_HEARTBEAT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> ROLLY_POLLY_IDLE = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> CREEPING_HORROR_GROWL = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> CREEPING_HORROR_HURT = (Supplier<SoundEvent>) UNBOUND;
@@ -289,6 +290,7 @@ public final class AntarchySoundEvents {
             Supplier<SoundEvent> stinkyFly,
             Supplier<SoundEvent> stinkBugFart,
             Supplier<SoundEvent> stinkBugIdle,
+            Supplier<SoundEvent> cavarynHeartbeat,
             Supplier<SoundEvent> rollyPollyIdle,
             Supplier<SoundEvent> creepingHorrorGrowl,
             Supplier<SoundEvent> creepingHorrorHurt,
@@ -440,6 +442,7 @@ public final class AntarchySoundEvents {
         STINKY_FLY = stinkyFly;
         STINK_BUG_FART = stinkBugFart;
         STINK_BUG_IDLE = stinkBugIdle;
+        CAVARYN_HEARTBEAT = cavarynHeartbeat;
         ROLLY_POLLY_IDLE = rollyPollyIdle;
         CREEPING_HORROR_GROWL = creepingHorrorGrowl;
         CREEPING_HORROR_HURT = creepingHorrorHurt;

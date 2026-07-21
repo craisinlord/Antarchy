@@ -202,6 +202,7 @@ public class SizeRayItem extends ProjectileWeaponItem implements GeoItem {
                 ? "tooltip.antarchy.shrink_ray"
                 : "tooltip.antarchy.growth_ray";
         tooltipComponents.add(Component.translatable(tooltipKey).withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("tooltip.antarchy.size_ray_milk_reset").withStyle(ChatFormatting.GRAY));
     }
 
     @Override

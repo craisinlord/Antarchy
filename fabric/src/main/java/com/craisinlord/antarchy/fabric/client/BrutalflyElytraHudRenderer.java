@@ -20,7 +20,7 @@ public final class BrutalflyElytraHudRenderer {
     public static void render(GuiGraphics guiGraphics) {
         Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
-        if (player == null || minecraft.screen != null || player.isDeadOrDying()) {
+        if (player == null || minecraft.screen != null || player.isDeadOrDying() || minecraft.options.hideGui) {
             return;
         }
         if (!BrutalflyElytraItem.isWearingBrutalflyElytra(player) || !player.isFallFlying()) {

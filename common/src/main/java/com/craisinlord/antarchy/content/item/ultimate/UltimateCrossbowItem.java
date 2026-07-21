@@ -4,6 +4,9 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -18,6 +21,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ChargedProjectiles;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
@@ -30,6 +34,8 @@ public class UltimateCrossbowItem extends CrossbowItem {
     private static final int FIRE_COOLDOWN_TICKS = 5; // 4 shots/sec
     private static final float SHOOTING_POWER = 3.15F;
     private static final double VANILLA_CROSSBOW_ARROW_DAMAGE = 7.0D;
+    private static final String RESERVE_PROJECTILES_TAG = "UltimateCrossbowProjectiles";
+    private static final String PROJECTILE_ITEM_TAG = "Item";
 
     public UltimateCrossbowItem(Item.Properties properties) {
         super(properties);
@@ -84,15 +90,14 @@ public class UltimateCrossbowItem extends CrossbowItem {
         for (int i = 0; i < toLoad; i++) {
             projectiles.add(ammoType.copyWithCount(1));
         }
-        stack.set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.of(projectiles));
+        saveLoadedProjectiles(stack, player.registryAccess(), projectiles);
 
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.CROSSBOW_LOADING_END.value(), SoundSource.PLAYERS, 1.0F, 1.0F);
     }
 
     private void fireOneShot(Level level, Player player, InteractionHand hand, ItemStack stack) {
-        ChargedProjectiles charged = stack.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY);
-        List<ItemStack> all = new ArrayList<>(charged.getItems().stream().filter(s -> !s.isEmpty()).toList());
+        List<ItemStack> all = getLoadedProjectiles(stack, player.registryAccess());
         if (all.isEmpty()) return;
 
         ItemStack arrow = all.remove(0);
@@ -110,10 +115,7 @@ public class UltimateCrossbowItem extends CrossbowItem {
         this.performShooting(level, player, hand, stack, SHOOTING_POWER, 1.0F, null);
 
         // performShooting clears CHARGED_PROJECTILES; restore remaining valid arrows if any
-        List<ItemStack> remaining = all.stream().filter(s -> !s.isEmpty()).toList();
-        if (!remaining.isEmpty()) {
-            stack.set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.of(remaining));
-        }
+        saveLoadedProjectiles(stack, player.registryAccess(), all);
     }
 
     @Override
@@ -139,10 +141,10 @@ public class UltimateCrossbowItem extends CrossbowItem {
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        ChargedProjectiles charged = stack.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY);
-        if (!charged.isEmpty()) {
-            int count = charged.getItems().size();
-            Component arrowName = charged.getItems().get(0).getHoverName();
+        List<ItemStack> loadedProjectiles = getLoadedProjectiles(stack, context.registries());
+        if (!loadedProjectiles.isEmpty()) {
+            int count = loadedProjectiles.size();
+            Component arrowName = loadedProjectiles.get(0).getHoverName();
             tooltipComponents.add(Component.translatable("item.antarchy.ultimate_crossbow.arrows_remaining", count, arrowName)
                     .withStyle(ChatFormatting.GRAY));
         }
@@ -213,5 +215,59 @@ public class UltimateCrossbowItem extends CrossbowItem {
     @Override
     public int getEnchantmentValue() {
         return AntarchySettings.ultimateCrossbowEnchantability();
+    }
+
+    private static List<ItemStack> getLoadedProjectiles(ItemStack crossbow, net.minecraft.core.HolderLookup.Provider registries) {
+        List<ItemStack> projectiles = new ArrayList<>();
+        ChargedProjectiles charged = crossbow.getOrDefault(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY);
+        for (ItemStack projectile : charged.getItems()) {
+            if (!projectile.isEmpty() && projectiles.size() < MAX_ARROWS) {
+                projectiles.add(projectile.copyWithCount(1));
+            }
+        }
+
+        CompoundTag customData = crossbow.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        ListTag reserve = customData.getList(RESERVE_PROJECTILES_TAG, Tag.TAG_COMPOUND);
+        for (int i = 0; i < reserve.size() && projectiles.size() < MAX_ARROWS; i++) {
+            ItemStack projectile = ItemStack.parseOptional(registries, reserve.getCompound(i).getCompound(PROJECTILE_ITEM_TAG));
+            if (!projectile.isEmpty()) {
+                projectiles.add(projectile.copyWithCount(1));
+            }
+        }
+        return projectiles;
+    }
+
+    private static void saveLoadedProjectiles(ItemStack crossbow, net.minecraft.core.HolderLookup.Provider registries, List<ItemStack> projectiles) {
+        List<ItemStack> sanitizedProjectiles = projectiles.stream()
+                .filter(projectile -> !projectile.isEmpty())
+                .limit(MAX_ARROWS)
+                .map(projectile -> projectile.copyWithCount(1))
+                .toList();
+
+        if (sanitizedProjectiles.isEmpty()) {
+            crossbow.set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY);
+            clearReserveProjectiles(crossbow);
+            return;
+        }
+
+        crossbow.set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.of(List.of(sanitizedProjectiles.get(0))));
+        ListTag reserve = new ListTag();
+        for (int i = 1; i < sanitizedProjectiles.size(); i++) {
+            CompoundTag entry = new CompoundTag();
+            entry.put(PROJECTILE_ITEM_TAG, sanitizedProjectiles.get(i).save(registries));
+            reserve.add(entry);
+        }
+
+        CustomData.update(DataComponents.CUSTOM_DATA, crossbow, tag -> {
+            if (reserve.isEmpty()) {
+                tag.remove(RESERVE_PROJECTILES_TAG);
+            } else {
+                tag.put(RESERVE_PROJECTILES_TAG, reserve);
+            }
+        });
+    }
+
+    private static void clearReserveProjectiles(ItemStack crossbow) {
+        CustomData.update(DataComponents.CUSTOM_DATA, crossbow, tag -> tag.remove(RESERVE_PROJECTILES_TAG));
     }
 }

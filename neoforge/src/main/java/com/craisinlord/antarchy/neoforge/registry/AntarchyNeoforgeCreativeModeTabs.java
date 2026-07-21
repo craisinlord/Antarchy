@@ -188,6 +188,8 @@ public class AntarchyNeoforgeCreativeModeTabs {
             event.accept(AntarchyNeoforgeItems.KING_SCALE.get());
             event.accept(AntarchyNeoforgeItems.QUEEN_SCALE.get());
             event.accept(AntarchyNeoforgeItems.CHITEN.get());
+            event.accept(AntarchyNeoforgeItems.JERRY_NUCLEUS.get());
+            event.accept(AntarchyNeoforgeItems.CARAPACE.get());
             event.accept(AntarchyNeoforgeItems.STINK_BUG.get());
             event.accept(AntarchyNeoforgeItems.BRUTALFLY_WING.get());
             event.accept(AntarchyNeoforgeItems.PRIMORDIAL_SCUTE.get());

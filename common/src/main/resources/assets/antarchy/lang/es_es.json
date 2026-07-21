@@ -406,6 +406,7 @@
     "item.antarchy.growth_ray": "Rayo de crecimiento",
     "tooltip.antarchy.shrink_ray": "Encoge permanentemente a los objetivos. Mantén pulsado para cargar.",
     "tooltip.antarchy.growth_ray": "Aumenta permanentemente a los objetivos. Mantén pulsado para cargar.",
+    "tooltip.antarchy.size_ray_milk_reset": "Beber leche restablece este efecto.",
     "tooltip.antarchy.reverie_bottle.capture": "Haz clic derecho en una Reverie con una botella de cristal para guardarla.",
     "tooltip.antarchy.reverie_bottle.release": "Clic derecho para liberar a la Reverie.",
     "item.antarchy.gravity_gun": "Pistola gravitatoria",

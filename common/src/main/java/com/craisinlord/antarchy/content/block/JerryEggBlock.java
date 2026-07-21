@@ -32,7 +32,7 @@ public class JerryEggBlock extends Block {
     public static final BooleanProperty ROTATED = BooleanProperty.create("rotated");
     private static final ResourceLocation JERRY_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "jerry");
     private static final int HATCH_CHECK_INTERVAL = 1200;
-    private static final VoxelShape SHAPE = Block.box(1.0D, 0.0D, 0.0D, 15.0D, 16.0D, 16.0D);
+    private static final VoxelShape SHAPE = Block.box(1.5D, 0.0D, 1.5D, 14.5D, 16.0D, 14.5D);
 
     public JerryEggBlock(BlockBehaviour.Properties properties) {
         super(properties);

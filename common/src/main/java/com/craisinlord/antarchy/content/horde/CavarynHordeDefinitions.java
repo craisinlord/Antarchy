@@ -113,7 +113,7 @@ public final class CavarynHordeDefinitions {
                 for (int i = 0; i < count; i++) {
                     EntityType<?> type = entry.randomType(random);
                     if (type != null) {
-                        choices.add(new SpawnChoice(type, entry.trackCompletion, entry.heavyArrivalEffect));
+                        choices.add(new SpawnChoice(type, entry.trackCompletion, entry.heavyArrivalEffect, entry.jerryStage));
                     }
                 }
             }
@@ -137,7 +137,7 @@ public final class CavarynHordeDefinitions {
         }
     }
 
-    public record SpawnChoice(EntityType<?> type, boolean trackCompletion, boolean heavyArrivalEffect) {
+    public record SpawnChoice(EntityType<?> type, boolean trackCompletion, boolean heavyArrivalEffect, String jerryStage) {
     }
 
     private static final class Entry {
@@ -153,10 +153,11 @@ public final class CavarynHordeDefinitions {
         private final boolean warning;
         private final boolean trackCompletion;
         private final boolean heavyArrivalEffect;
+        private final String jerryStage;
 
         private Entry(TagKey<EntityType<?>> entityTag, int weight, int baseCount, int highAttentionBaseCount, int perPlayerCount,
                       int perPlayers, int perPlayersCount, int minCount, int maxCount, boolean warning,
-                      boolean trackCompletion, boolean heavyArrivalEffect) {
+                      boolean trackCompletion, boolean heavyArrivalEffect, String jerryStage) {
             this.entityTag = entityTag;
             this.weight = Math.max(1, weight);
             this.baseCount = baseCount;
@@ -169,6 +170,7 @@ public final class CavarynHordeDefinitions {
             this.warning = warning;
             this.trackCompletion = trackCompletion;
             this.heavyArrivalEffect = heavyArrivalEffect;
+            this.jerryStage = jerryStage;
         }
 
         private static Entry fromJson(JsonObject json) {
@@ -191,7 +193,8 @@ public final class CavarynHordeDefinitions {
                     getInt(json, "max_count", Integer.MAX_VALUE),
                     getBoolean(json, "warning", false),
                     getBoolean(json, "track_completion", false),
-                    getBoolean(json, "heavy_arrival_effect", false)
+                    getBoolean(json, "heavy_arrival_effect", false),
+                    getString(json, "jerry_stage", "")
             );
         }
 

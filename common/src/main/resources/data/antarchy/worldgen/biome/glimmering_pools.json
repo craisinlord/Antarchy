@@ -66,15 +66,15 @@
     ],
     []
   ],
-  "creature_spawn_probability": 0.4,
+  "creature_spawn_probability": 0.15,
   "spawners": {
     "monster": [],
     "creature": [
       {
         "type": "antarchy:glimmer",
         "weight": 36,
-        "minCount": 3,
-        "maxCount": 6
+        "minCount": 1,
+        "maxCount": 1
       }
     ],
     "ambient": [
