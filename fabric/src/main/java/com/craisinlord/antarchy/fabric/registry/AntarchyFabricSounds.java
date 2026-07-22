@@ -641,6 +641,14 @@ public final class AntarchyFabricSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> ROLLY_POLLY_WHEEL_MODE = registerSoundEvent("rolly_polly_wheel_mode");
     public static final DeferredHolder<SoundEvent, SoundEvent> ROLLY_POLLY_NORMAL_MODE = registerSoundEvent("rolly_polly_normal_mode");
     public static final DeferredHolder<SoundEvent, SoundEvent> ROLLY_POLLY_ROLL = registerSoundEvent("rolly_polly_roll");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JERRY_YOUNG_IDLE = registerSoundEvent("jerry_young_idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JERRY_YOUNG_HURT = registerSoundEvent("jerry_young_hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JERRY_YOUNG_DEATH = registerSoundEvent("jerry_young_death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JERRY_YOUNG_ATTACK = registerSoundEvent("jerry_young_attack");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JERRY_ADULT_IDLE = registerSoundEvent("jerry_adult_idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JERRY_ADULT_HURT = registerSoundEvent("jerry_adult_hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JERRY_ADULT_DEATH = registerSoundEvent("jerry_adult_death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JERRY_ADULT_ATTACK = registerSoundEvent("jerry_adult_attack");
 
 
     public static final DeferredHolder<SoundEvent, SoundEvent> CREEPING_HORROR_GROWL = registerSoundEvent("creeping_horror_growl");

@@ -539,16 +539,20 @@
     "subtitle": "subtitles.antarchy.water_cannon_fire",
     "sounds": [
       {
-        "name": "antarchy:mob/toreterror/water_cannon1"
+        "name": "antarchy:mob/toreterror/water_cannon1",
+        "attenuation_distance": 28
       },
       {
-        "name": "antarchy:mob/toreterror/water_cannon2"
+        "name": "antarchy:mob/toreterror/water_cannon2",
+        "attenuation_distance": 28
       },
       {
-        "name": "antarchy:mob/toreterror/water_cannon3"
+        "name": "antarchy:mob/toreterror/water_cannon3",
+        "attenuation_distance": 28
       },
       {
-        "name": "antarchy:mob/toreterror/water_cannon4"
+        "name": "antarchy:mob/toreterror/water_cannon4",
+        "attenuation_distance": 28
       }
     ]
   },
@@ -2129,6 +2133,97 @@
       },
       {
         "name": "antarchy:mob/brutalfly/spit4"
+      }
+    ]
+  },
+  "jerry_young_idle": {
+    "subtitle": "subtitles.antarchy.jerry_idle",
+    "sounds": [
+      {
+        "name": "antarchy:mob/jerry/young_idle1"
+      },
+      {
+        "name": "antarchy:mob/jerry/young_idle2"
+      },
+      {
+        "name": "antarchy:mob/jerry/young_idle3"
+      }
+    ]
+  },
+  "jerry_young_hurt": {
+    "subtitle": "subtitles.antarchy.jerry_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/jerry/young_hurt1"
+      }
+    ]
+  },
+  "jerry_young_death": {
+    "subtitle": "subtitles.antarchy.jerry_death",
+    "sounds": [
+      {
+        "name": "antarchy:mob/jerry/young_death1"
+      }
+    ]
+  },
+  "jerry_young_attack": {
+    "subtitle": "subtitles.antarchy.jerry_attack",
+    "sounds": [
+      {
+        "name": "antarchy:mob/jerry/young_attack1"
+      },
+      {
+        "name": "antarchy:mob/jerry/young_attack2"
+      }
+    ]
+  },
+  "jerry_adult_idle": {
+    "subtitle": "subtitles.antarchy.jerry_idle",
+    "sounds": [
+      {
+        "name": "antarchy:mob/jerry/adult_idle1"
+      },
+      {
+        "name": "antarchy:mob/jerry/adult_idle2"
+      },
+      {
+        "name": "antarchy:mob/jerry/adult_idle3"
+      },
+      {
+        "name": "antarchy:mob/jerry/adult_idle4"
+      }
+    ]
+  },
+  "jerry_adult_hurt": {
+    "subtitle": "subtitles.antarchy.jerry_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/jerry/adult_hurt1"
+      }
+    ]
+  },
+  "jerry_adult_death": {
+    "subtitle": "subtitles.antarchy.jerry_death",
+    "sounds": [
+      {
+        "name": "antarchy:mob/jerry/adult_death1"
+      },
+      {
+        "name": "antarchy:mob/jerry/adult_death2"
+      }
+    ]
+  },
+  "jerry_adult_attack": {
+    "subtitle": "subtitles.antarchy.jerry_attack",
+    "sounds": [
+      {
+        "name": "antarchy:mob/jerry/adult_attack1"
+      },
+      {
+        "name": "antarchy:mob/jerry/adult_attack2"
+      },
+      {
+        "name": "antarchy:mob/jerry/adult_attack3"
       }
     ]
   }

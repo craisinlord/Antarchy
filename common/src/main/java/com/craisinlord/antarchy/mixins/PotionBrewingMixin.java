@@ -1,6 +1,6 @@
 package com.craisinlord.antarchy.mixins;
 
-import com.craisinlord.antarchy.content.CustomBrewingRecipes;
+import com.craisinlord.antarchy.content.recipe.CustomBrewingRecipes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionBrewing;
 import org.spongepowered.asm.mixin.Mixin;

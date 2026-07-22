@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.SpitBugEntity;
+import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -37,6 +38,7 @@ public class SpitBugEggBlock extends Block {
     public static final BooleanProperty ROTATED = BooleanProperty.create("rotated");
     private static final int MAX_HATCH = 2;
     private static final double PLAYER_PROXIMITY_RADIUS = 12.0D;
+    private static final double HORDE_ACCELERATION_RADIUS = 5.0D;
     private static final float PLAYER_PROXIMITY_HATCH_CHANCE = 0.25F;
     private static final int PLAYER_PROXIMITY_CHECK_INTERVAL = 200;
     private static final VoxelShape SHAPE = Block.box(1.5D, 0.0D, 1.5D, 14.5D, 16.0D, 14.5D);
@@ -106,6 +108,11 @@ public class SpitBugEggBlock extends Block {
     }
 
     private boolean shouldUpdateHatchLevel(Level level, BlockPos pos) {
+        if (level instanceof ServerLevel serverLevel
+                && CavarynHordeManager.shouldAccelerateNearbyEggHatching(serverLevel, pos, HORDE_ACCELERATION_RADIUS, level.random)) {
+            return true;
+        }
+
         if (level.random.nextInt(PLAYER_PROXIMITY_CHECK_INTERVAL) == 0) {
             Player nearbyPlayer = level.getNearestPlayer(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, PLAYER_PROXIMITY_RADIUS, false);
             if (nearbyPlayer != null && level.random.nextFloat() < PLAYER_PROXIMITY_HATCH_CHANCE) {
@@ -133,6 +140,10 @@ public class SpitBugEggBlock extends Block {
         double spawnZ = pos.getZ() + 0.25D + random.nextDouble() * 0.5D;
         entity.moveTo(spawnX, pos.getY() + 0.1D, spawnZ, random.nextFloat() * 360.0F, 0.0F);
         level.addFreshEntity(entity);
+    }
+
+    public void hatchWithNucleus(ServerLevel level, BlockPos pos) {
+        this.hatch(level, pos, level.random);
     }
 
     @Override

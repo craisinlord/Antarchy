@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompat;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompatVersion;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.CreativeTabContents;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.CreativeTabOrder;
 import com.craisinlord.antarchy.content.block.*;
@@ -270,73 +271,17 @@ public final class AntarchyFabricCreativeModeTabs {
 
 
     private static void populateCreativeTab(CreativeModeTab.Output output) {
-        ArrayList<Item> sortedItems = new ArrayList<>();
-        for (var holder : AntarchyFabricItems.ITEMS.getEntries()) {
-            Item item = holder.get();
-            if (item != Items.AIR) {
-                sortedItems.add(item);
-            }
-        }
-        sortedItems.sort(CreativeTabOrder.COMPARATOR);
-        sortedItems.forEach(item -> {
-            if (item == AntarchyFabricItems.GLIMMER_BOTTLE.get()) {
-                addGlimmerBottleVariants(output);
-            } else {
+        CreativeTabContents.populateAntarchyTab(new CreativeTabContents.AntarchyTabOutput() {
+            @Override
+            public void accept(net.minecraft.world.level.ItemLike item) {
                 output.accept(item);
             }
+
+            @Override
+            public void accept(ItemStack stack) {
+                output.accept(stack);
+            }
         });
-        addPotionVariants(output);
-    }
-
-
-
-    private static void addGlimmerBottleVariants(CreativeModeTab.Output output) {
-        for (com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant variant : com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant.values()) {
-            output.accept(com.craisinlord.antarchy.content.item.GlimmerBottleItem.create(variant));
-        }
-    }
-
-
-
-    private static void addPotionVariants(CreativeModeTab.Output output) {
-        acceptPotionFamily(output, AntarchyFabricMisc.DREAD_POTION);
-        acceptPotionFamily(output, AntarchyFabricMisc.LONG_DREAD);
-        acceptPotionFamily(output, AntarchyFabricMisc.INVERSION);
-        acceptPotionFamily(output, AntarchyFabricMisc.LONG_INVERSION);
-        acceptPotionFamily(output, AntarchyFabricMisc.STINKY_POTION);
-        acceptPotionFamily(output, AntarchyFabricMisc.LONG_STINKY);
-        acceptPotionFamily(output, AntarchyFabricMisc.PARALYSIS);
-        acceptPotionFamily(output, AntarchyFabricMisc.LONG_PARALYSIS);
-        acceptPotionFamily(output, AntarchyFabricMisc.HASTE);
-        acceptPotionFamily(output, AntarchyFabricMisc.STRONG_HASTE);
-        acceptPotionFamily(output, AntarchyFabricMisc.SHRINKING);
-        acceptPotionFamily(output, AntarchyFabricMisc.STRONG_SHRINKING);
-        acceptPotionFamily(output, AntarchyFabricMisc.EXTREME_SHRINKING);
-        acceptPotionFamily(output, AntarchyFabricMisc.GROWING);
-        acceptPotionFamily(output, AntarchyFabricMisc.STRONG_GROWING);
-        acceptPotionFamily(output, AntarchyFabricMisc.EXTREME_GROWING);
-    }
-
-
-
-    private static void acceptPotionFamily(CreativeModeTab.Output output, DeferredHolder<Potion, ? extends Potion> potion) {
-        Holder<Potion> holder = AntarchyFabricContent.potionHolder(potion);
-        output.accept(PotionContents.createItemStack(Items.POTION, holder));
-        output.accept(PotionContents.createItemStack(Items.SPLASH_POTION, holder));
-        output.accept(PotionContents.createItemStack(Items.LINGERING_POTION, holder));
-        output.accept(PotionContents.createItemStack(Items.TIPPED_ARROW, holder));
-    }
-
-
-
-    private static int creativeTabGroup(Item item) {
-        return CreativeTabOrder.group(item);
-    }
-
-
-
-    private static int creativeTabSubOrder(Item item) {
-        return CreativeTabOrder.subOrder(item);
     }
 
 

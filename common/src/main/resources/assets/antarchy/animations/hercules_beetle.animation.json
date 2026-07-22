@@ -2373,26 +2373,6 @@
 						}
 					}
 				},
-				"right_wing": {
-					"scale": {
-						"0.0": {
-							"post": {
-								"vector": [0, 0, 0]
-							},
-							"lerp_mode": "catmullrom"
-						}
-					}
-				},
-				"left_wing": {
-					"scale": {
-						"0.0": {
-							"post": {
-								"vector": [0, 0, 0]
-							},
-							"lerp_mode": "catmullrom"
-						}
-					}
-				},
 				"Hercules_beetle": {
 					"position": {
 						"0.0": {
@@ -2656,26 +2636,6 @@
 						"3.9583": {
 							"post": {
 								"vector": [3.35498, -32.70657, -1.88071]
-							},
-							"lerp_mode": "catmullrom"
-						}
-					}
-				},
-				"right_wing": {
-					"scale": {
-						"0.0": {
-							"post": {
-								"vector": [0, 0, 0]
-							},
-							"lerp_mode": "catmullrom"
-						}
-					}
-				},
-				"left_wing": {
-					"scale": {
-						"0.0": {
-							"post": {
-								"vector": [0, 0, 0]
 							},
 							"lerp_mode": "catmullrom"
 						}

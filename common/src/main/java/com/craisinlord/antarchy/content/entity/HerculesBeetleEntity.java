@@ -88,6 +88,8 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             SynchedEntityData.defineId(HerculesBeetleEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> KNOCKED_DOWN =
             SynchedEntityData.defineId(HerculesBeetleEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> MOUNTED_CHARGE =
+            SynchedEntityData.defineId(HerculesBeetleEntity.class, EntityDataSerializers.INT);
 
     private static final int ANIM_IDLE = 0;
     private static final int ANIM_WALK = 1;
@@ -147,11 +149,13 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
     private static final int MAX_BROKEN_BLOCKS = 32;
     private static final int MAX_SUFFOCATION_BLOCKS = 12;
     private static final EntityDimensions DEFAULT_DIMENSIONS = EntityDimensions.scalable(3.0F, 4.0F);
-    private static final double MOUNTED_FLYING_SPEED_MULTIPLIER = 0.06D;
+    private static final double MOUNTED_FLYING_SPEED_MULTIPLIER = 0.052D;
+    private static final double MOUNTED_GROUND_BRAKE = 0.6D;
+    private static final double MOUNTED_FLIGHT_LIFT = 0.36D;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private final ServerBossEvent bossEvent =
-            new ServerBossEvent(Component.translatable("entity.antarchy.hercules_beetle"), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS);
+            new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this.getUUID(), Component.translatable("entity.antarchy.hercules_beetle"), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS);
 
     private int actionTicks;
     private int actionHitTick;
@@ -164,8 +168,12 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
     private int flightCooldown;
     private int targetlessTicks;
     private int groundedTicks;
+    private int airborneTicks;
+    private int mountedChargeTicks;
     private boolean attackDamageApplied;
     private boolean riderJumpPressed;
+    private boolean riderJumpPressedLastTick;
+    private boolean mountedChargeActive;
     private boolean combatCryDone;
     private boolean pendingChargeStart;
     private boolean pendingMountedCharge;
@@ -242,14 +250,19 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         builder.define(SADDLED, false);
         builder.define(FLYING, false);
         builder.define(KNOCKED_DOWN, false);
+        builder.define(MOUNTED_CHARGE, 0);
     }
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController));
+        controllers.add(new AnimationController<>(this, "flying_charge_controller", 0, this::flyingChargeAnimController));
     }
 
     private PlayState mainAnimController(AnimationState<HerculesBeetleEntity> state) {
+        if (this.isFlying() && (this.getAnimationState() == ANIM_CHARGE_START || this.getAnimationState() == ANIM_CHARGE)) {
+            return state.setAndContinue(FLY_ANIM);
+        }
         return switch (this.getAnimationState()) {
             case ANIM_WALK -> state.setAndContinue(WALK_ANIM);
             case ANIM_FLY -> state.setAndContinue(FLY_ANIM);
@@ -265,6 +278,22 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             case ANIM_CLOSE_WINGS -> state.setAndContinue(CLOSE_WINGS_ANIM);
             case ANIM_DEATH -> state.setAndContinue(DEATH_ANIM);
             default -> state.setAndContinue(IDLE_ANIM);
+        };
+    }
+
+    private PlayState flyingChargeAnimController(AnimationState<HerculesBeetleEntity> state) {
+        if (!this.isFlying()) {
+            state.resetCurrentAnimation();
+            return PlayState.STOP;
+        }
+
+        return switch (this.getAnimationState()) {
+            case ANIM_CHARGE_START -> state.setAndContinue(CHARGE_START_ANIM);
+            case ANIM_CHARGE -> state.setAndContinue(CHARGE_ANIM);
+            default -> {
+                state.resetCurrentAnimation();
+                yield PlayState.STOP;
+            }
         };
     }
 
@@ -305,9 +334,13 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
 
         if (this.onGround()) {
             this.groundedTicks++;
+            this.airborneTicks = 0;
         } else {
             this.groundedTicks = 0;
+            this.airborneTicks++;
         }
+
+        this.tickMountedCharge();
 
         if (this.isDeadOrDying()) {
             this.noPhysics = false;
@@ -353,7 +386,8 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
 
     private void tickKnockedDown() {
         this.getNavigation().stop();
-        this.setDeltaMovement(Vec3.ZERO);
+        Vec3 motion = this.getDeltaMovement();
+        this.setDeltaMovement(0.0D, Math.min(motion.y, 0.0D), 0.0D);
         if (this.getAnimationState() == ANIM_KNOCKED_DOWN && this.actionTicks > 0) {
             this.actionTicks--;
             if (this.actionTicks <= 0) {
@@ -389,6 +423,11 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         switch (state) {
             case ANIM_OPEN_WINGS -> {
                 this.setFlying(true);
+                if (this.getControllingPassenger() instanceof Player) {
+                    Vec3 motion = this.getDeltaMovement();
+                    this.setDeltaMovement(motion.x, Math.max(motion.y, MOUNTED_FLIGHT_LIFT), motion.z);
+                    this.hasImpulse = true;
+                }
                 if (this.pendingChargeStart) {
                     this.pendingChargeStart = false;
                     this.beginChargeStart(this.chargeDirection, this.pendingChargeDuration, this.pendingMountedCharge);
@@ -449,6 +488,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
 
     private void tickMountedMotion() {
         if (!(this.getControllingPassenger() instanceof Player rider) || this.isKnockedDown()) {
+            this.riderJumpPressedLastTick = false;
             return;
         }
         if (this.chargeTicksRemaining > 0 || this.getAnimationState() == ANIM_CHARGE_START || this.getAnimationState() == ANIM_OPEN_WINGS) {
@@ -459,15 +499,36 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         this.yHeadRot = this.getYRot();
         this.yBodyRot = this.getYRot();
 
-        if (this.onGround() && this.isFlying()) {
-            this.requestFlightStop();
+        if (this.isFlying() && this.onGround()) {
+            this.forceMountedFlightStop();
             return;
         }
 
-        boolean wantsFlight = this.riderJumpPressed || rider.getXRot() < -5.0F || this.fallDistance > 2.5F;
-        if (wantsFlight && !this.isFlying() && this.onGround() && this.flightCooldown <= 0) {
-            this.requestFlightStart();
+        if (this.isFlying()) {
+            this.riderJumpPressedLastTick = this.riderJumpPressed;
+            return;
         }
+
+        boolean jumpPressedThisTick = this.riderJumpPressed;
+        boolean jumpPressedEdge = jumpPressedThisTick && !this.riderJumpPressedLastTick;
+
+        if (jumpPressedEdge && this.onGround()) {
+            if (this.flightCooldown <= 0) {
+                this.requestFlightStart();
+            }
+        }
+
+        this.riderJumpPressedLastTick = jumpPressedThisTick;
+    }
+
+    private void forceMountedFlightStop() {
+        this.setFlying(false);
+        this.actionTicks = 0;
+        this.flightCooldown = 8;
+        if (this.getAnimationState() == ANIM_OPEN_WINGS || this.getAnimationState() == ANIM_CLOSE_WINGS) {
+            this.setAnimationState(ANIM_IDLE);
+        }
+        this.updateAmbientAnimation();
     }
 
     private void updateAmbientAnimation() {
@@ -480,13 +541,15 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             return;
         }
         if (!this.onGround()) {
-            this.setAnimationState(ANIM_FLY);
+            this.setAnimationState(ANIM_IDLE);
             return;
         }
-        if (this.getControllingPassenger() instanceof Player rider
-                && (Math.abs(rider.zza) > 0.05F || Math.abs(rider.xxa) > 0.05F)) {
-            this.setAnimationState(ANIM_WALK);
-            return;
+        if (this.getControllingPassenger() instanceof Player rider) {
+            boolean riderMoving = Math.abs(rider.zza) > 0.05F || Math.abs(rider.xxa) > 0.05F;
+            if (riderMoving) {
+                this.setAnimationState(ANIM_WALK);
+                return;
+            }
         }
         Vec3 motion = this.getDeltaMovement();
         boolean moving = motion.horizontalDistanceSqr() > 0.0025D;
@@ -954,6 +1017,10 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         this.riderJumpPressed = riderJumpPressed;
     }
 
+    public int getMountedCharge() {
+        return this.entityData.get(MOUNTED_CHARGE);
+    }
+
     public void handleMountedRegularAttack(ServerPlayer player) {
         if (!this.canPlayerControl(player) || this.attackCooldown > 0 || this.isKnockedDown() || this.isInBusyAnimation() || this.chargeTicksRemaining > 0) {
             return;
@@ -962,14 +1029,29 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         this.startRegularAttack(this.isFlying(), target);
     }
 
-    public void handleMountedCharge(ServerPlayer player, int chargeTicks) {
+    public void startMountedCharge(ServerPlayer player) {
         if (!this.canPlayerControl(player) || this.chargeCooldown > 0 || this.isKnockedDown() || this.isInBusyAnimation() || this.chargeTicksRemaining > 0) {
+            this.resetMountedChargeState();
             return;
         }
-        int clamped = Mth.clamp(chargeTicks, 0, MAX_PLAYER_CHARGE_TICKS);
-        if (clamped <= 0) {
+        this.mountedChargeActive = true;
+    }
+
+    public void releaseMountedCharge(ServerPlayer player) {
+        if (!this.canPlayerControl(player)) {
+            this.resetMountedChargeState();
             return;
         }
+        if (!this.mountedChargeActive) {
+            return;
+        }
+
+        int clamped = Mth.clamp(this.mountedChargeTicks, 0, MAX_PLAYER_CHARGE_TICKS);
+        this.resetMountedChargeState();
+        if (this.chargeCooldown > 0 || this.isKnockedDown() || this.isInBusyAnimation() || this.chargeTicksRemaining > 0 || clamped <= 0) {
+            return;
+        }
+
         int duration = MIN_MOUNTED_CHARGE_TICKS + Mth.floor((MAX_CHARGE_TICKS - MIN_MOUNTED_CHARGE_TICKS) * (clamped / (float) MAX_PLAYER_CHARGE_TICKS));
         this.startCharge(player.getLookAngle(), duration, true);
     }
@@ -1013,7 +1095,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
 
     @Override
     public void travel(Vec3 travelVector) {
-        if (!(this.getControllingPassenger() instanceof Player rider) || !this.isVehicle()) {
+        if (!(this.getControllingPassenger() instanceof Player rider) || !this.isVehicle() || this.isKnockedDown()) {
             super.travel(travelVector);
             return;
         }
@@ -1024,11 +1106,25 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
 
         Vec3 riddenInput = this.getRiddenInput(rider, travelVector);
         this.setSpeed(this.getRiddenSpeed(rider));
-        Vec3 motion = new Vec3(0.0D, this.getDeltaMovement().y, 0.0D);
-        this.moveRelative(this.getSpeed(), new Vec3(riddenInput.x, 0.0D, riddenInput.z));
-        motion = motion.add(this.getDeltaMovement().x, riddenInput.y, this.getDeltaMovement().z);
-        this.setDeltaMovement(motion);
-        this.move(MoverType.SELF, this.getDeltaMovement());
+
+        if (!this.isFlying()) {
+            Vec3 currentMotion = this.getDeltaMovement();
+            Vec3 horizontalMotion = new Vec3(currentMotion.x, 0.0D, currentMotion.z).scale(MOUNTED_GROUND_BRAKE);
+            this.setDeltaMovement(horizontalMotion.x, currentMotion.y, horizontalMotion.z);
+            this.moveRelative(this.getSpeed(), new Vec3(riddenInput.x, 0.0D, riddenInput.z));
+            this.move(MoverType.SELF, this.getDeltaMovement());
+
+            if (Math.abs(rider.zza) < 0.05F && Math.abs(rider.xxa) < 0.05F && this.onGround()) {
+                Vec3 dampedMotion = this.getDeltaMovement();
+                this.setDeltaMovement(dampedMotion.x * 0.35D, dampedMotion.y, dampedMotion.z * 0.35D);
+            }
+        } else {
+            Vec3 motion = new Vec3(0.0D, this.getDeltaMovement().y, 0.0D);
+            this.moveRelative(this.getSpeed(), new Vec3(riddenInput.x, 0.0D, riddenInput.z));
+            motion = motion.add(this.getDeltaMovement().x, riddenInput.y, this.getDeltaMovement().z);
+            this.setDeltaMovement(motion);
+            this.move(MoverType.SELF, this.getDeltaMovement());
+        }
 
         if (!this.isFlying() && rider.zza > 0.0F && this.horizontalCollision) {
             Vec3 stepUpPos = this.position().add(0.0D, 1.0D, 0.0D);
@@ -1211,7 +1307,38 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
-        this.playSound(SoundEvents.RAVAGER_STEP, 0.8F, 0.8F);
+        this.playSound(SoundEvents.RAVAGER_STEP, 0.28F, 0.92F);
+    }
+
+    private void tickMountedCharge() {
+        if (this.level().isClientSide) {
+            return;
+        }
+        if (!(this.getControllingPassenger() instanceof ServerPlayer player) || !this.canPlayerControl(player)) {
+            this.resetMountedChargeState();
+            return;
+        }
+        if (!this.mountedChargeActive) {
+            if (this.getMountedCharge() != 0) {
+                this.entityData.set(MOUNTED_CHARGE, 0);
+            }
+            return;
+        }
+        if (this.chargeCooldown > 0 || this.isKnockedDown() || this.isInBusyAnimation() || this.chargeTicksRemaining > 0) {
+            this.resetMountedChargeState();
+            return;
+        }
+
+        this.mountedChargeTicks = Math.min(this.mountedChargeTicks + 1, MAX_PLAYER_CHARGE_TICKS);
+        this.entityData.set(MOUNTED_CHARGE, Mth.floor((this.mountedChargeTicks / (float) MAX_PLAYER_CHARGE_TICKS) * 100.0F));
+    }
+
+    private void resetMountedChargeState() {
+        this.mountedChargeActive = false;
+        this.mountedChargeTicks = 0;
+        if (this.getMountedCharge() != 0) {
+            this.entityData.set(MOUNTED_CHARGE, 0);
+        }
     }
 
     @Override

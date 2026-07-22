@@ -1,4 +1,4 @@
-package com.craisinlord.antarchy.content;
+package com.craisinlord.antarchy.content.dispenser;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.entity.SizeRayProjectileEntity;

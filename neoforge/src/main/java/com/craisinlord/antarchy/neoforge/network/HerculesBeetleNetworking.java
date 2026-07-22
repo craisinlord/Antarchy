@@ -62,7 +62,11 @@ public final class HerculesBeetleNetworking {
                 return;
             }
             if (player.getVehicle() instanceof HerculesBeetleEntity beetle) {
-                beetle.handleMountedCharge(player, payload.chargeTicks());
+                if (payload.pressing()) {
+                    beetle.startMountedCharge(player);
+                } else {
+                    beetle.releaseMountedCharge(player);
+                }
             }
         });
     }

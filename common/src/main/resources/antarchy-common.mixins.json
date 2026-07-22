@@ -20,6 +20,7 @@
                    "FrogVariantBootstrapMixin",
                    "GlowSquidLumenSpawnMixin",
                    "GlowVinesUnderLeavesMixin",
+                   "MantisClawWallClimbMixin",
                    "MilkBucketSizeResetMixin",
                    "GoopedStepSoundMixin",
                    "ExperimentalSettingsLevelSummaryMixin",
@@ -63,6 +64,7 @@
                    "multipart.EntityMultipartLifecycleMixin"
                ],
     "client":  [
+                   "client.CustomBossBarMixin",
                    "client.CavarynSkyMixin",
                    "client.CavarynHordeFogMixin",
                    "client.CavarynHordeLightTextureMixin",

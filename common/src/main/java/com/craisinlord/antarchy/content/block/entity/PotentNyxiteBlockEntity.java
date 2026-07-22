@@ -5,6 +5,7 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.PotentNyxiteBlock;
 import com.craisinlord.antarchy.content.block.state.PotentNyxiteState;
+import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
@@ -502,7 +503,7 @@ public class PotentNyxiteBlockEntity extends BlockEntity {
     }
 
     private static boolean isHypnoticGasFluid(FluidState fluidState) {
-        return PotentNyxiteBlock.isAntiwater(fluidState);
+        return AntarchyFluidChecks.isAntiwater(fluidState);
     }
 
     private static boolean haveLineOfSight(Level level, Vec3 from, Vec3 to) {

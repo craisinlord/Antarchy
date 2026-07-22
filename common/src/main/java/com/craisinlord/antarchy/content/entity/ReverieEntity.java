@@ -2,11 +2,11 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.AntarchyAdvancements;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
-import com.craisinlord.antarchy.content.block.PotentNyxiteBlock;
+import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
@@ -37,7 +37,6 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -1022,7 +1021,7 @@ public class ReverieEntity extends PathfinderMob implements FlyingAnimal, GeoEnt
             for (int y = min.getY(); y <= max.getY(); y++) {
                 for (int z = min.getZ(); z <= max.getZ(); z++) {
                     cursor.set(x, y, z);
-                    if (PotentNyxiteBlock.isAntiwater(this.level().getFluidState(cursor))) {
+                    if (AntarchyFluidChecks.isAntiwater(this.level().getFluidState(cursor))) {
                         return true;
                     }
                 }
@@ -1239,4 +1238,3 @@ public class ReverieEntity extends PathfinderMob implements FlyingAnimal, GeoEnt
         }
     }
 }
-

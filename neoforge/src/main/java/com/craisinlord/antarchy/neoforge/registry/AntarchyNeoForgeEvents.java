@@ -4,9 +4,13 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
-import com.craisinlord.antarchy.content.CustomBrewingRecipes;
+import com.craisinlord.antarchy.content.recipe.CustomBrewingRecipes;
 import com.craisinlord.antarchy.content.block.DuctTapeBlock;
-import com.craisinlord.antarchy.content.block.PotentNyxiteBlock;
+import com.craisinlord.antarchy.content.dispenser.RpoLauncherDispenseBehavior;
+import com.craisinlord.antarchy.content.dispenser.SizeRayDispenseBehavior;
+import com.craisinlord.antarchy.content.dispenser.SquidzookaDispenseBehavior;
+import com.craisinlord.antarchy.content.dispenser.WaterCannonDispenseBehavior;
+import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.antarchy.content.bloodglass.BloodglassAccess;
 import com.craisinlord.antarchy.content.entity.*;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
@@ -1027,7 +1031,7 @@ public final class AntarchyNeoForgeEvents {
                 for (int z = min.getZ(); z <= max.getZ(); z++) {
                     cursor.set(x, y, z);
                     FluidState fluidState = entity.level().getFluidState(cursor);
-                    if (PotentNyxiteBlock.isAntiwater(fluidState)) {
+                    if (AntarchyFluidChecks.isAntiwater(fluidState)) {
                         return true;
                     }
                 }
@@ -1225,11 +1229,11 @@ public final class AntarchyNeoForgeEvents {
     static void onCommonSetup(FMLCommonSetupEvent event) {
         BloodCrystalShardItem.SYNC_BLOODGLASS = AntarchyNeoForgeEvents::syncBloodglass;
         event.enqueueWork(() -> {
-            DispenserBlock.registerBehavior(AntarchyNeoforgeItems.SHRINK_RAY.get(), new com.craisinlord.antarchy.content.SizeRayDispenseBehavior());
-            DispenserBlock.registerBehavior(AntarchyNeoforgeItems.GROWTH_RAY.get(), new com.craisinlord.antarchy.content.SizeRayDispenseBehavior());
-            DispenserBlock.registerBehavior(AntarchyNeoforgeItems.SQUIDZOOKA.get(), new com.craisinlord.antarchy.content.SquidzookaDispenseBehavior());
-            DispenserBlock.registerBehavior(AntarchyNeoforgeItems.RPO_LAUNCHER.get(), new com.craisinlord.antarchy.content.RpoLauncherDispenseBehavior());
-            DispenserBlock.registerBehavior(AntarchyNeoforgeItems.WATER_CANNON.get(), new com.craisinlord.antarchy.content.WaterCannonDispenseBehavior());
+            DispenserBlock.registerBehavior(AntarchyNeoforgeItems.SHRINK_RAY.get(), new SizeRayDispenseBehavior());
+            DispenserBlock.registerBehavior(AntarchyNeoforgeItems.GROWTH_RAY.get(), new SizeRayDispenseBehavior());
+            DispenserBlock.registerBehavior(AntarchyNeoforgeItems.SQUIDZOOKA.get(), new SquidzookaDispenseBehavior());
+            DispenserBlock.registerBehavior(AntarchyNeoforgeItems.RPO_LAUNCHER.get(), new RpoLauncherDispenseBehavior());
+            DispenserBlock.registerBehavior(AntarchyNeoforgeItems.WATER_CANNON.get(), new WaterCannonDispenseBehavior());
             LucidEyeProjectileEntity.defaultItemSupplier = () -> AntarchyNeoforgeItems.LUCID_PEARL.get();
             LucidEntity.invertedEffectSupplier = () -> AntarchyNeoforgeMisc.INVERTED;
             FluidInteractionRegistry.addInteraction(

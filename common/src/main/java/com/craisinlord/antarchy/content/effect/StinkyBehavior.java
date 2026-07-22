@@ -1,5 +1,7 @@
-package com.craisinlord.antarchy.content;
+package com.craisinlord.antarchy.content.effect;
 
+import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchyTags;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.effect.MobEffectInstance;

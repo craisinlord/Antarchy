@@ -11,9 +11,11 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
@@ -77,6 +79,7 @@ public class UpwardFallingBlockEntity extends Entity {
 
         // Move upward directly — noPhysics=true means move() just calls setPos()
         setPos(getX(), getY() + RISE_SPEED, getZ());
+        damageEntitiesAlongPath(blockState);
 
         BlockPos headPos  = BlockPos.containing(getX(), getY() + getBbHeight(), getZ());
         BlockState above  = level().getBlockState(headPos);
@@ -91,16 +94,38 @@ public class UpwardFallingBlockEntity extends Entity {
         boolean hitScaffolding = above.getBlock() instanceof AntimetalScaffoldingBlock;
 
         if (hitCeiling || hitScaffolding) {
-            BlockPos  placePos = headPos.below();
-            BlockState atPlace = level().getBlockState(placePos);
-            if (atPlace.isAir() || atPlace.canBeReplaced()) {
-                level().setBlock(placePos, blockState, 3);
-            } else {
-                dropAndRemove(blockState);
-                return;
-            }
-            discard();
+            dropAndRemove(blockState);
+            return;
         }
+    }
+
+    private void damageEntitiesAlongPath(BlockState state) {
+        float damage = getImpactDamage(state);
+        if (damage <= 0.0F) {
+            return;
+        }
+
+        AABB hitBox = getBoundingBox().inflate(0.15D);
+        for (LivingEntity living : level().getEntitiesOfClass(LivingEntity.class, hitBox, LivingEntity::isAlive)) {
+            living.hurt(level().damageSources().fallingBlock(this), damage);
+        }
+    }
+
+    private float getImpactDamage(BlockState state) {
+        float travelDistance = (float) this.time * (float) RISE_SPEED;
+        float baseDamage = Math.max(0.0F, travelDistance - 1.5F);
+        if (baseDamage <= 0.0F) {
+            return 0.0F;
+        }
+
+        float thicknessMultiplier = switch (state.getValue(PointedDripstoneBlock.THICKNESS)) {
+            case TIP, TIP_MERGE -> 2.0F;
+            case FRUSTUM -> 1.5F;
+            case MIDDLE -> 1.25F;
+            case BASE -> 1.0F;
+        };
+
+        return Math.min(baseDamage * thicknessMultiplier, 40.0F);
     }
 
     private void dropAndRemove(BlockState state) {

@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerCompanionSavedData;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity;
@@ -80,7 +81,7 @@ public class GlimmerBottleItem extends Item {
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_EMPTY, SoundSource.PLAYERS, 1.0F, 1.0F);
 
         if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
-            com.craisinlord.antarchy.content.AntarchyAdvancements.award(serverPlayer, variant.tameAdvancementId());
+            AntarchyAdvancements.award(serverPlayer, variant.tameAdvancementId());
         }
 
         ItemStack result = ItemUtils.createFilledResult(stack, player, new ItemStack(Items.GLASS_BOTTLE));

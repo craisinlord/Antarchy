@@ -112,7 +112,7 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
 
     private static final Vec3 GRAB_ANCHOR_LOCAL = new Vec3(22.0D / 16.0D, 223.5D / 16.0D, -12.5D / 16.0D);
 
-    private final ServerBossEvent bossEvent = new ServerBossEvent(Component.literal("The Kraken"), BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.PROGRESS);
+    private final ServerBossEvent bossEvent = new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this.getUUID(), Component.translatable("entity.antarchy.kraken"), BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.PROGRESS);
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     @Nullable

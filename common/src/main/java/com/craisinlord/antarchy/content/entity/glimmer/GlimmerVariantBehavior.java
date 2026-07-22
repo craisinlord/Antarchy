@@ -96,6 +96,15 @@ public interface GlimmerVariantBehavior {
     }
 
     /**
+     * Animation to play while idle in place of the default idle loop. Null uses the
+     * shared Glimmer idle animation.
+     */
+    @Nullable
+    default software.bernie.geckolib.animation.RawAnimation idleAnimation(GlimmerEntity entity) {
+        return null;
+    }
+
+    /**
      * Navigation speed multiplier used while following the owner (see {@link GlimmerFollowOwnerGoal}).
      */
     default double followSpeedModifier() {

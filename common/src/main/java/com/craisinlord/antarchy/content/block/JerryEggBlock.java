@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.JerryEntity;
+import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -32,6 +33,7 @@ public class JerryEggBlock extends Block {
     public static final BooleanProperty ROTATED = BooleanProperty.create("rotated");
     private static final ResourceLocation JERRY_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "jerry");
     private static final int HATCH_CHECK_INTERVAL = 1200;
+    private static final double HORDE_ACCELERATION_RADIUS = 5.0D;
     private static final VoxelShape SHAPE = Block.box(1.5D, 0.0D, 1.5D, 14.5D, 16.0D, 14.5D);
 
     public JerryEggBlock(BlockBehaviour.Properties properties) {
@@ -83,9 +85,18 @@ public class JerryEggBlock extends Block {
 
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (random.nextInt(HATCH_CHECK_INTERVAL) != 0) {
+        if (!CavarynHordeManager.shouldAccelerateNearbyEggHatching(level, pos, HORDE_ACCELERATION_RADIUS, random)
+                && random.nextInt(HATCH_CHECK_INTERVAL) != 0) {
             return;
         }
+        this.hatch(level, pos, random);
+    }
+
+    public void hatchWithNucleus(ServerLevel level, BlockPos pos) {
+        this.hatch(level, pos, level.random);
+    }
+
+    private void hatch(ServerLevel level, BlockPos pos, RandomSource random) {
         EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(JERRY_ID);
         if (entityType.create(level) instanceof JerryEntity jerry) {
             jerry.setStage(JerryEntity.Stage.INFANT);

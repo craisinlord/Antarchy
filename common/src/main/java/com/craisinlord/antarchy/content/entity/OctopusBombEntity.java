@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -32,6 +33,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -44,6 +46,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class OctopusBombEntity extends Monster implements GeoEntity {
+    private static final DustParticleOptions OCTOPUS_BOMB_INK_PARTICLE =
+            new DustParticleOptions(new Vector3f(0.02F, 0.02F, 0.02F), 1.2F);
+
     private static final EntityDataAccessor<Integer> ATTACK_STATE = SynchedEntityData.defineId(OctopusBombEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> ANIMATION_STATE = SynchedEntityData.defineId(OctopusBombEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> CAN_FLY = SynchedEntityData.defineId(OctopusBombEntity.class, EntityDataSerializers.BOOLEAN);
@@ -405,8 +410,8 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
 
         serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(),
                 net.minecraft.sounds.SoundEvents.GENERIC_EXPLODE, net.minecraft.sounds.SoundSource.HOSTILE, 2.0F, 0.9F);
-        serverLevel.sendParticles(ParticleTypes.SQUID_INK, this.getX(), this.getY(), this.getZ(), 250, radius * 0.5D, radius * 0.5D, radius * 0.5D, 0.1D);
-        serverLevel.sendParticles(ParticleTypes.SQUID_INK, this.getX(), this.getY(), this.getZ(), 150, radius * 0.2D, radius * 0.2D, radius * 0.2D, 0.2D);
+        serverLevel.sendParticles(OCTOPUS_BOMB_INK_PARTICLE, this.getX(), this.getY(), this.getZ(), 125, radius * 0.5D, radius * 0.5D, radius * 0.5D, 0.1D);
+        serverLevel.sendParticles(OCTOPUS_BOMB_INK_PARTICLE, this.getX(), this.getY(), this.getZ(), 75, radius * 0.2D, radius * 0.2D, radius * 0.2D, 0.2D);
         serverLevel.sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY(), this.getZ(), 4, 0.5D, 0.5D, 0.5D, 0.0D);
         this.discard();
     }
@@ -423,8 +428,8 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
         double cx = this.getX();
         double cy = this.getY() + this.getBbHeight() * 0.5D;
         double cz = this.getZ();
-        serverLevel.sendParticles(ParticleTypes.SQUID_INK, cx, cy, cz, 120, 2.0D, 1.2D, 2.0D, 0.04D);
-        serverLevel.sendParticles(ParticleTypes.SQUID_INK, cx, cy, cz,  60, 3.5D, 1.8D, 3.5D, 0.02D);
+        serverLevel.sendParticles(OCTOPUS_BOMB_INK_PARTICLE, cx, cy, cz, 60, 2.0D, 1.2D, 2.0D, 0.04D);
+        serverLevel.sendParticles(OCTOPUS_BOMB_INK_PARTICLE, cx, cy, cz, 30, 3.5D, 1.8D, 3.5D, 0.02D);
     }
 
     // -------------------------------------------------------------------------

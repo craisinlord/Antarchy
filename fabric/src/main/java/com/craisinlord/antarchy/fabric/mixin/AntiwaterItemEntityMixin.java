@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.fabric.mixin;
 
-import com.craisinlord.antarchy.content.block.PotentNyxiteBlock;
+import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
+import com.craisinlord.antarchy.fabric.util.CustomFluidPhysicsChecks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.material.FluidState;
@@ -20,10 +21,12 @@ public abstract class AntiwaterItemEntityMixin {
         }
 
         Vec3 motion = entity.getDeltaMovement();
+        Vec3 antiwaterFlow = CustomFluidPhysicsChecks.getAntiwaterFlow(entity);
+        Vec3 push = antiwaterFlow.lengthSqr() > 1.0E-6D ? antiwaterFlow.normalize().scale(0.02D) : Vec3.ZERO;
         entity.setDeltaMovement(
-                motion.x * 0.99D,
-                motion.y + (motion.y < 0.06D ? 5.0E-4D : 0.0D),
-                motion.z * 0.99D
+                motion.x * 0.99D + push.x,
+                motion.y * 0.8D + 0.025D + push.y,
+                motion.z * 0.99D + push.z
         );
     }
 
@@ -36,7 +39,7 @@ public abstract class AntiwaterItemEntityMixin {
                 for (int z = min.getZ(); z <= max.getZ(); z++) {
                     cursor.set(x, y, z);
                     FluidState fluidState = entity.level().getFluidState(cursor);
-                    if (PotentNyxiteBlock.isAntiwater(fluidState)) {
+                    if (AntarchyFluidChecks.isAntiwater(fluidState)) {
                         return true;
                     }
                 }

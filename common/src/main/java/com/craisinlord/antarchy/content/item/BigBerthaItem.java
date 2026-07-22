@@ -160,6 +160,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
             case LUCID -> applyLucidHit(target, player, serverLevel);
             case NIGHTMARE -> applyNightmareHit(target, serverLevel);
             case KRAKEN -> applyKrakenHit(player, target, serverLevel);
+            case HERCULES -> applyHerculesHit(player, target, serverLevel);
             case MOLEVORE, TORETERROR -> {
             }
         }
@@ -322,6 +323,31 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
         level.sendParticles(ParticleTypes.SPLASH, target.getX(), target.getY(0.7D), target.getZ(), 16, 0.35D, 0.3D, 0.35D, 0.08D);
         level.sendParticles(ParticleTypes.ELECTRIC_SPARK, target.getX(), target.getY(0.7D), target.getZ(), 10, 0.25D, 0.25D, 0.25D, 0.02D);
         com.craisinlord.antarchy.content.entity.kraken.TentacleEntity.spawnAt(level, target.position(), attacker);
+    }
+
+    private void applyHerculesHit(Player attacker, LivingEntity target, ServerLevel level) {
+        float bonusDamage = (float) (attacker.getAttributeValue(Attributes.ATTACK_DAMAGE) * 0.5D);
+        Vec3 push = target.position().subtract(attacker.position()).multiply(1.0D, 0.0D, 1.0D);
+        if (push.lengthSqr() < 1.0E-4D) {
+            push = attacker.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
+        }
+
+        if (bonusDamage > 0.0F) {
+            target.invulnerableTime = 0;
+            target.hurt(attacker.damageSources().playerAttack(attacker), bonusDamage);
+        }
+
+        if (push.lengthSqr() >= 1.0E-4D) {
+            Vec3 normalized = push.normalize();
+            Vec3 motion = target.getDeltaMovement();
+            target.setDeltaMovement(motion.x + normalized.x * 0.55D, Math.max(motion.y, 1.35D), motion.z + normalized.z * 0.55D);
+        } else {
+            Vec3 motion = target.getDeltaMovement();
+            target.setDeltaMovement(motion.x, Math.max(motion.y, 1.35D), motion.z);
+        }
+        target.hurtMarked = true;
+        level.sendParticles(ParticleTypes.CRIT, target.getX(), target.getY(0.7D), target.getZ(), 12, 0.3D, 0.35D, 0.3D, 0.04D);
+        level.playSound(null, target.blockPosition(), SoundEvents.IRON_GOLEM_ATTACK, SoundSource.PLAYERS, 1.0F, 0.8F);
     }
 
     private void cycleMode(Level level, Player player, ItemStack stack) {
@@ -595,7 +621,8 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
         KRAKEN(2, "tooltip.antarchy.big_bertha.mode.kraken", "message.antarchy.big_bertha.mode.kraken"),
         MOLEVORE(3, "tooltip.antarchy.big_bertha.mode.molevore", "message.antarchy.big_bertha.mode.molevore"),
         LUCID(4, "tooltip.antarchy.big_bertha.mode.lucid", "message.antarchy.big_bertha.mode.lucid"),
-        TORETERROR(5, "tooltip.antarchy.big_bertha.mode.toreterror", "message.antarchy.big_bertha.mode.toreterror");
+        TORETERROR(5, "tooltip.antarchy.big_bertha.mode.toreterror", "message.antarchy.big_bertha.mode.toreterror"),
+        HERCULES(6, "tooltip.antarchy.big_bertha.mode.hercules", "message.antarchy.big_bertha.mode.hercules");
 
         private final int id;
         private final String tooltipKey;
@@ -612,7 +639,8 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
                 case BASILISK -> LUCID;
                 case LUCID -> NIGHTMARE;
                 case NIGHTMARE -> KRAKEN;
-                case KRAKEN -> MOLEVORE;
+                case KRAKEN -> HERCULES;
+                case HERCULES -> MOLEVORE;
                 case MOLEVORE -> TORETERROR;
                 case TORETERROR -> BASILISK;
             };

@@ -6,12 +6,17 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Path;
@@ -21,6 +26,7 @@ import software.bernie.geckolib.animatable.GeoEntity;
 
 public class TermiteEntity extends BaseAntEntity implements GeoEntity {
     private static final int WOOD_BITE_ANIMATION_TICKS = 8;
+    private static final int WOOD_BITE_COOLDOWN_TICKS = 20 * 3;
     private static final int WOOD_SEARCH_INTERVAL_TICKS = 20;
     private static final int WOOD_REPATH_INTERVAL_TICKS = 6;
     private static final int WOOD_SEARCH_RADIUS_HORIZONTAL = 12;
@@ -38,6 +44,7 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
     };
     @Nullable
     private BlockPos targetWoodPos;
+    private int nextWoodBiteTick;
     private int nextWoodSearchTick;
     private int nextWoodRepathTick;
 
@@ -129,20 +136,31 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
     }
 
     private boolean tryEatNearbyWood() {
+        if (this.tickCount < this.nextWoodBiteTick) {
+            return false;
+        }
+
         BlockPos basePos = this.blockPosition();
         for (Vec3i offset : IMMEDIATE_WOOD_OFFSETS) {
             BlockPos targetPos = basePos.offset(offset);
             BlockState targetState = this.level().getBlockState(targetPos);
-            if (!targetState.is(AntarchyTags.Blocks.TERMITE_FOODS)) {
+            if (!this.isTermiteEdible(targetState)) {
                 continue;
             }
 
-            SoundType soundType = targetState.getSoundType();
-            this.triggerBiteAnimation(WOOD_BITE_ANIMATION_TICKS);
-            this.level().destroyBlock(targetPos, false, this);
-            this.level().playSound(null, targetPos, soundType.getBreakSound(), this.getSoundSource(), 0.7F, 1.1F);
-            this.playSound(AntarchySoundEvents.ANT_BITE.get(), 0.35F, 0.95F + this.random.nextFloat() * 0.1F);
-            return true;
+            if (this.tryStripWood(targetPos, targetState)) {
+                return true;
+            }
+
+            if (targetState.is(AntarchyTags.Blocks.TERMITE_FOODS) || this.isStrippedWoodState(targetState)) {
+                SoundType soundType = targetState.getSoundType();
+                this.triggerBiteAnimation(WOOD_BITE_ANIMATION_TICKS);
+                this.nextWoodBiteTick = this.tickCount + WOOD_BITE_COOLDOWN_TICKS;
+                this.level().destroyBlock(targetPos, false, this);
+                this.level().playSound(null, targetPos, soundType.getBreakSound(), this.getSoundSource(), 0.7F, 1.1F);
+                this.playSound(AntarchySoundEvents.ANT_BITE.get(), 0.35F, 0.95F + this.random.nextFloat() * 0.1F);
+                return true;
+            }
         }
 
         return false;
@@ -219,7 +237,65 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
     }
 
     private boolean isValidWoodTarget(BlockPos targetPos) {
-        return this.level().getBlockState(targetPos).is(AntarchyTags.Blocks.TERMITE_FOODS);
+        return this.isTermiteEdible(this.level().getBlockState(targetPos));
+    }
+
+    private boolean isTermiteEdible(BlockState state) {
+        return state.is(AntarchyTags.Blocks.TERMITE_FOODS) || this.isStrippedWoodState(state);
+    }
+
+    private boolean tryStripWood(BlockPos targetPos, BlockState targetState) {
+        BlockState strippedState = this.getStrippedState(targetState);
+        if (strippedState == null) {
+            return false;
+        }
+
+        SoundType soundType = targetState.getSoundType();
+        this.triggerBiteAnimation(WOOD_BITE_ANIMATION_TICKS);
+        this.nextWoodBiteTick = this.tickCount + WOOD_BITE_COOLDOWN_TICKS;
+        this.level().setBlock(targetPos, strippedState, Block.UPDATE_ALL_IMMEDIATE);
+        this.level().playSound(null, targetPos, soundType.getBreakSound(), this.getSoundSource(), 0.6F, 1.2F);
+        this.playSound(AntarchySoundEvents.ANT_BITE.get(), 0.35F, 0.95F + this.random.nextFloat() * 0.1F);
+        return true;
+    }
+
+    @Nullable
+    private BlockState getStrippedState(BlockState state) {
+        ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(state.getBlock());
+        if (blockId == null || this.isStrippedWoodState(state) || !this.isStripTargetState(state, blockId.getPath())) {
+            return null;
+        }
+
+        String path = blockId.getPath();
+        if (path.startsWith("mossy_")) {
+            path = path.substring("mossy_".length());
+        }
+
+        ResourceLocation strippedId = ResourceLocation.fromNamespaceAndPath(blockId.getNamespace(), "stripped_" + path);
+        Block strippedBlock = BuiltInRegistries.BLOCK.getOptional(strippedId).orElse(null);
+        if (strippedBlock == null) {
+            return null;
+        }
+
+        BlockState strippedState = strippedBlock.defaultBlockState();
+        if (state.hasProperty(RotatedPillarBlock.AXIS) && strippedState.hasProperty(RotatedPillarBlock.AXIS)) {
+            strippedState = strippedState.setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS));
+        }
+        return strippedState;
+    }
+
+    private boolean isStripTargetState(BlockState state, String path) {
+        return state.is(BlockTags.LOGS) || path.endsWith("_wood");
+    }
+
+    private boolean isStrippedWoodState(BlockState state) {
+        ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(state.getBlock());
+        if (blockId == null) {
+            return false;
+        }
+
+        String path = blockId.getPath();
+        return path.startsWith("stripped_") && (path.endsWith("_log") || path.endsWith("_wood") || path.endsWith("_stem") || path.endsWith("_hyphae"));
     }
 
     private boolean canReachWoodTarget(BlockPos targetPos) {

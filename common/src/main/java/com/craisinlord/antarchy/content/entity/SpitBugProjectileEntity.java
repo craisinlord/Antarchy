@@ -1,6 +1,6 @@
 package com.craisinlord.antarchy.content.entity;
 
-import com.craisinlord.antarchy.content.GoopedEffectHooks;
+import com.craisinlord.antarchy.content.effect.GoopedEffectHooks;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;

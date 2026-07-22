@@ -1,29 +1,24 @@
-package com.craisinlord.antarchy.content;
+package com.craisinlord.antarchy.content.dispenser;
 
-import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
+import com.craisinlord.antarchy.content.entity.WaterBombEntity;
+import com.craisinlord.antarchy.content.AntarchyObjects;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.block.DispenserBlock;
 
-public class RpoLauncherDispenseBehavior extends DefaultDispenseItemBehavior {
+public class WaterCannonDispenseBehavior extends DefaultDispenseItemBehavior {
     @Override
     protected ItemStack execute(BlockSource source, ItemStack stack) {
         Direction direction = source.state().getValue(DispenserBlock.FACING);
         Position position = DispenserBlock.getDispensePosition(source);
 
-        OctopusBombEntity bomb = AntarchyObjects.OCTOPUS_BOMB.get().create(source.level());
+        WaterBombEntity bomb = AntarchyObjects.WATER_BOMB.get().create(source.level());
         if (bomb == null) return super.execute(source, stack);
-
         bomb.setPos(position.x(), position.y(), position.z());
-        Vec3 vel = new Vec3(direction.getStepX(), direction.getStepY(), direction.getStepZ())
-                .normalize()
-                .scale(AntarchySettings.rpoLauncherLaunchVelocity());
-        bomb.launchAsProjectile(null, vel);
+        bomb.shoot(direction.getStepX(), direction.getStepY() + 0.1D, direction.getStepZ(), 1.5F, 0.0F);
         source.level().addFreshEntity(bomb);
 
         if (stack.isDamageableItem()) {

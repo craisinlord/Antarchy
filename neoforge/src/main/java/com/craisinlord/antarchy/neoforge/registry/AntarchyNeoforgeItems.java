@@ -287,10 +287,12 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> CUT_DREAM_SANDSTONE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CUT_DREAM_SANDSTONE_SLAB);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DEAD_STAR_CORAL_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DEAD_STAR_CORAL_BLOCK);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DEAD_STAR_CORAL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DEAD_STAR_CORAL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> DEAD_STAR_CORAL_FAN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DEAD_STAR_CORAL_FAN);
+    public static final DeferredItem<StandingAndWallBlockItem> DEAD_STAR_CORAL_FAN_ITEM = ITEMS.register("dead_star_coral_fan",
+            () -> new StandingAndWallBlockItem(AntarchyNeoforgeBlocks.DEAD_STAR_CORAL_FAN.get(), AntarchyNeoforgeBlocks.DEAD_STAR_CORAL_WALL_FAN.get(), new Item.Properties(), net.minecraft.core.Direction.UP));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> STAR_CORAL_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STAR_CORAL_BLOCK);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> STAR_CORAL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STAR_CORAL);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> STAR_CORAL_FAN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.STAR_CORAL_FAN);
+    public static final DeferredItem<StandingAndWallBlockItem> STAR_CORAL_FAN_ITEM = ITEMS.register("star_coral_fan",
+            () -> new StandingAndWallBlockItem(AntarchyNeoforgeBlocks.STAR_CORAL_FAN.get(), AntarchyNeoforgeBlocks.STAR_CORAL_WALL_FAN.get(), new Item.Properties(), net.minecraft.core.Direction.UP));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DUCT_TAPE_ITEM = ITEMS.register("duct_tape",
             () -> new DuctTapeBlockItem(AntarchyNeoforgeBlocks.DUCT_TAPE.get(), new Item.Properties().stacksTo(1)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> INFESTED_ROOTED_DIRT_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.INFESTED_ROOTED_DIRT);
@@ -419,18 +421,20 @@ public final class AntarchyNeoforgeItems {
                     AntarchySettings.bloodCrystalKatanaAttackDamage(),
                     -2.2F
             ));
-    public static final DeferredItem<Item> MANTIS_CLAW = ITEMS.registerSimpleItem("mantis_claw", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<MantisClawItem> MANTIS_CLAW = ITEMS.register("mantis_claw",
+            () -> new MantisClawItem(Tiers.IRON, new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<Item> HERCULES_HORN = ITEMS.registerSimpleItem("hercules_horn", new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final DeferredItem<Item> KING_SCALE = ITEMS.register("king_scale",
             () -> new MobComingSoonTooltipItem(new Item.Properties().rarity(Rarity.RARE)));
     public static final DeferredItem<Item> QUEEN_SCALE = ITEMS.register("queen_scale",
             () -> new MobComingSoonTooltipItem(new Item.Properties().rarity(Rarity.RARE)));
     public static final DeferredItem<Item> CHITEN = ITEMS.registerSimpleItem("chiten", new Item.Properties().rarity(Rarity.UNCOMMON));
-    public static final DeferredItem<Item> JERRY_NUCLEUS = ITEMS.registerSimpleItem("jerry_nucleus", new Item.Properties().rarity(Rarity.UNCOMMON)
-            .food(new FoodProperties.Builder()
-                    .nutrition(2)
-                    .saturationModifier(0.1F)
-                    .build()));
+    public static final DeferredItem<Item> JERRY_NUCLEUS = ITEMS.register("jerry_nucleus",
+            () -> new com.craisinlord.antarchy.content.item.JerryNucleusItem(new Item.Properties().rarity(Rarity.UNCOMMON)
+                    .food(new FoodProperties.Builder()
+                            .nutrition(2)
+                            .saturationModifier(0.1F)
+                            .build())));
     public static final DeferredItem<Item> CARAPACE = ITEMS.registerSimpleItem("carapace", new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final DeferredItem<Item> STINK_BUG = ITEMS.registerSimpleItem("stink_bug", new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final DeferredItem<Item> JUMPY_BUG_LEG = ITEMS.registerSimpleItem("jumpy_bug_leg", new Item.Properties().rarity(Rarity.UNCOMMON));

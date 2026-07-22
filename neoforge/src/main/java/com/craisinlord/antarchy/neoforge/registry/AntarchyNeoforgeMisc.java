@@ -10,6 +10,7 @@ import com.craisinlord.antarchy.content.effect.InvertedMobEffect;
 import com.craisinlord.antarchy.content.effect.ParalyzedMobEffect;
 import com.craisinlord.antarchy.content.effect.ShrinkMobEffect;
 import com.craisinlord.antarchy.content.effect.StinkyMobEffect;
+import com.craisinlord.antarchy.content.recipe.AmericanizeRecipe;
 import com.craisinlord.antarchy.content.worldgen.ants.BrownAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.RainbowAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.RedAntNestFeature;
@@ -29,7 +30,6 @@ import com.craisinlord.antarchy.neoforge.worldgen.CornPatchFeature;
 import com.craisinlord.antarchy.neoforge.worldgen.LumenLilyPadFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.*;
 import com.craisinlord.antarchy.neoforge.content.fluid.AntiwaterFluid;
-import com.craisinlord.antarchy.neoforge.content.fluid.AntiwaterFluidType;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.advancements.critereon.EntitySubPredicate;
 import net.minecraft.core.particles.ParticleType;
@@ -50,13 +50,11 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.common.SoundActions;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import net.minecraft.sounds.SoundEvents;
 
 import java.util.function.Function;
 
@@ -107,8 +105,8 @@ public final class AntarchyNeoforgeMisc {
                             .persistent(com.mojang.serialization.Codec.INT)
                             .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.INT)
                             .build());
-    public static final DeferredHolder<net.minecraft.world.item.crafting.RecipeSerializer<?>, net.minecraft.world.item.crafting.RecipeSerializer<com.craisinlord.antarchy.content.AmericanizeRecipe>> AMERICANIZE_SERIALIZER =
-            RECIPE_SERIALIZERS.register("americanize", () -> com.craisinlord.antarchy.content.AmericanizeRecipe.SERIALIZER);
+    public static final DeferredHolder<net.minecraft.world.item.crafting.RecipeSerializer<?>, net.minecraft.world.item.crafting.RecipeSerializer<AmericanizeRecipe>> AMERICANIZE_SERIALIZER =
+            RECIPE_SERIALIZERS.register("americanize", () -> AmericanizeRecipe.SERIALIZER);
 
     public static final DeferredHolder<Attribute, Attribute> DOUBLE_DAMAGE_CHANCE = ATTRIBUTES.register(
             "double_damage_chance",

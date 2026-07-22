@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.block;
 
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
@@ -26,7 +27,7 @@ public class BiowartTendrilsBlock extends BushBlock {
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        return super.mayPlaceOn(state, level, pos);
+        return state.is(AntarchyTags.Blocks.BIOWART_TENDRILS_PLANTABLE) || super.mayPlaceOn(state, level, pos);
     }
 
     @Override

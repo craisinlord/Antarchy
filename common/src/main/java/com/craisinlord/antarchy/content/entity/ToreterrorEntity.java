@@ -93,7 +93,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
     private static final double JUMP_RANGE_SQR = 400.0D;
     private static final double RANGED_MAX_RANGE_SQR = 625.0D;
     private static final double SPIN_TRIGGER_RANGE_SQR = 225.0D;
-    private static final double SPIN_LEASH_RANGE_SQR = 225.0D;
+    private static final double SPIN_LEASH_RANGE_SQR = 400.0D;
     private static final double SPIN_RADIUS = 2.5D;
     private static final double SPIN_MOVE_SPEED = 0.65D;
     private static final double SPIN_ANIMATION_SPEED = 0.49D;
@@ -110,7 +110,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
     private static final RawAnimation DEATH_ANIM = RawAnimation.begin().thenPlayAndHold("death");
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private final ServerBossEvent bossEvent = new ServerBossEvent(Component.translatable("entity.antarchy.toreterror"), BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.PROGRESS);
+    private final ServerBossEvent bossEvent = new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this.getUUID(), Component.translatable("entity.antarchy.toreterror"), BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.PROGRESS);
 
     private int shootAnimTicks;
     private int jumpAnimTicks;
@@ -509,7 +509,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         }
 
         this.updateSpinDirection(target);
-        if (!this.moveDuringSpin()) {
+        if (!this.moveDuringSpin(target)) {
             this.spinStuckTicks++;
             if (this.spinStuckTicks >= SPIN_STUCK_FAIL_LIMIT) {
                 this.beginSpinEnd();
@@ -566,7 +566,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         this.spinDirection = combined.lengthSqr() > 1.0E-4D ? combined.normalize() : towardTarget;
     }
 
-    private boolean moveDuringSpin() {
+    private boolean moveDuringSpin(LivingEntity target) {
         Vec3 direction = this.spinDirection.lengthSqr() > 1.0E-4D ? this.spinDirection.normalize() : Vec3.ZERO;
         if (direction == Vec3.ZERO) {
             return false;
@@ -577,19 +577,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         }
 
         this.playSpinRicochetSound();
-        this.spinStrafeSign *= -1;
-        Vec3 bounced = rotateHorizontal(direction, this.spinStrafeSign * 35.0D);
-        if (this.trySpinMoves(bounced, true)) {
-            return true;
-        }
-
-        Vec3 reversed = direction.scale(-1.0D);
-        if (this.trySpinMoves(reversed, true)) {
-            return true;
-        }
-
-        Vec3 reversedBounce = rotateHorizontal(reversed, this.spinStrafeSign * 25.0D);
-        return this.trySpinMoves(reversedBounce, true);
+        return this.trySpinRicochetTowardTarget(target, direction);
     }
 
     private void playSpinRicochetSound() {
@@ -598,6 +586,33 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         }
         this.spinRicochetCooldown = 6;
         this.playSound(AntarchySoundEvents.TORETERROR_RICOCHET.get(), 1.0F, 0.95F + this.random.nextFloat() * 0.1F);
+    }
+
+    private boolean trySpinRicochetTowardTarget(LivingEntity target, Vec3 fallbackDirection) {
+        this.spinStrafeSign *= -1;
+        Vec3 towardTarget = horizontalDirectionTo(target.position());
+        if (towardTarget.lengthSqr() <= 1.0E-4D) {
+            towardTarget = fallbackDirection;
+        }
+
+        if (this.trySpinMoves(towardTarget, true)) {
+            this.spinDirection = towardTarget.normalize();
+            return true;
+        }
+
+        Vec3 slightRight = rotateHorizontal(towardTarget, 18.0D);
+        if (this.trySpinMoves(slightRight, true)) {
+            this.spinDirection = towardTarget.normalize();
+            return true;
+        }
+
+        Vec3 slightLeft = rotateHorizontal(towardTarget, -18.0D);
+        if (this.trySpinMoves(slightLeft, true)) {
+            this.spinDirection = towardTarget.normalize();
+            return true;
+        }
+
+        return false;
     }
 
     private boolean trySpinMoves(Vec3 baseDirection, boolean bounced) {
@@ -705,6 +720,20 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         this.spinStuckTicks = 0;
         this.spinProgressAnchor = Vec3.ZERO;
         this.spinProgressTicks = 0;
+    }
+
+    private void startSpinSequence(LivingEntity target) {
+        this.spinStartTicks = SPIN_START_TOTAL_TICKS;
+        this.spinLoopTotalTicks = SPIN_LOOP_MIN_TICKS + this.random.nextInt(SPIN_LOOP_MAX_TICKS - SPIN_LOOP_MIN_TICKS + 1);
+        this.spinLoopTicks = this.spinLoopTotalTicks;
+        this.spinEndTicks = 0;
+        this.spinStuckTicks = 0;
+        this.spinProgressAnchor = this.position();
+        this.spinProgressTicks = 0;
+        this.spinStrafeSign = this.random.nextBoolean() ? 1 : -1;
+        this.spinHitCooldowns.clear();
+        this.spinDirection = target == null ? Vec3.ZERO : this.horizontalDirectionTo(target.position());
+        this.playSound(AntarchySoundEvents.TORETERROR_SPIN.get(), 0.66F, 0.95F + this.random.nextFloat() * 0.1F);
     }
 
     private Vec3 calcLaunchVelocity(Vec3 from, Vec3 to, double minSpeed) {
@@ -914,20 +943,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
 
         @Override
         public void start() {
-            LivingEntity target = ToreterrorEntity.this.getTarget();
-            ToreterrorEntity.this.spinStartTicks = SPIN_START_TOTAL_TICKS;
-            ToreterrorEntity.this.spinLoopTotalTicks = SPIN_LOOP_MIN_TICKS + ToreterrorEntity.this.random.nextInt(SPIN_LOOP_MAX_TICKS - SPIN_LOOP_MIN_TICKS + 1);
-            ToreterrorEntity.this.spinLoopTicks = ToreterrorEntity.this.spinLoopTotalTicks;
-            ToreterrorEntity.this.spinEndTicks = 0;
-            ToreterrorEntity.this.spinStuckTicks = 0;
-            ToreterrorEntity.this.spinProgressAnchor = ToreterrorEntity.this.position();
-            ToreterrorEntity.this.spinProgressTicks = 0;
-            ToreterrorEntity.this.spinStrafeSign = ToreterrorEntity.this.random.nextBoolean() ? 1 : -1;
-            ToreterrorEntity.this.spinHitCooldowns.clear();
-            ToreterrorEntity.this.spinDirection = target == null
-                    ? Vec3.ZERO
-                    : ToreterrorEntity.this.horizontalDirectionTo(target.position());
-            ToreterrorEntity.this.playSound(AntarchySoundEvents.TORETERROR_SPIN.get(), 1.1F, 0.95F + ToreterrorEntity.this.random.nextFloat() * 0.1F);
+            ToreterrorEntity.this.startSpinSequence(ToreterrorEntity.this.getTarget());
         }
 
         @Override

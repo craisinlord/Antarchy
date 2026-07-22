@@ -30,9 +30,10 @@ public final class HordeHudRenderer {
         }
 
         float pulse = 0.9F + 0.1F * Mth.sin(minecraft.player.tickCount * ((float) Math.PI * 2.0F / 90.0F));
-        int alpha = Mth.clamp((int) (intensity * pulse * 0x78), 0, 0x78);
+        int alpha = Mth.clamp((int) (intensity * pulse * 0x2C), 0, 0x2C);
         int width = minecraft.getWindow().getGuiScaledWidth();
         int height = minecraft.getWindow().getGuiScaledHeight();
-        guiGraphics.fill(0, 0, width, height, (alpha << 24) | 0xD84A16);
+        int color = (alpha << 24) | 0xD84A16;
+        guiGraphics.fill(0, 0, width, height, color);
     }
 }

@@ -330,6 +330,10 @@ public final class AntarchyNeoForgeClient {
                 ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "dorrie_jump"),
                 (guiGraphics, partialTick) -> DorrieJumpHudRenderer.render(guiGraphics)
         );
+        event.registerAboveAll(
+                ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "hercules_beetle_charge"),
+                (guiGraphics, partialTick) -> HerculesBeetleChargeHudRenderer.render(guiGraphics)
+        );
     }
 
     @SubscribeEvent

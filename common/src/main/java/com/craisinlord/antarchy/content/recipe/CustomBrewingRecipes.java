@@ -1,8 +1,9 @@
-package com.craisinlord.antarchy.content;
+package com.craisinlord.antarchy.content.recipe;
 
+import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
 import com.craisinlord.antarchy.content.item.GlimmerBottleItem;
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;

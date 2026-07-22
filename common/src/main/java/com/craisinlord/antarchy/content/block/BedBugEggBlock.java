@@ -180,6 +180,10 @@ public class BedBugEggBlock extends Block {
         }
     }
 
+    public void hatchWithNucleus(ServerLevel level, BlockPos pos, BlockState state) {
+        this.hatchEggs(level, pos, state, level.random);
+    }
+
     private void decreaseEggs(Level level, BlockPos pos, BlockState state) {
         int eggs = state.getValue(EGGS);
         if (eggs <= 1) {

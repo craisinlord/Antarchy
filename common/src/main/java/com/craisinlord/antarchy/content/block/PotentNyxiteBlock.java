@@ -1,9 +1,9 @@
 package com.craisinlord.antarchy.content.block;
 
-import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.block.entity.PotentNyxiteBlockEntity;
 import com.craisinlord.antarchy.content.block.state.PotentNyxiteState;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.mojang.serialization.MapCodec;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
@@ -31,13 +31,9 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 
 public class PotentNyxiteBlock extends BaseEntityBlock {
-    private static final ResourceLocation ANTIWATER_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "antiwater");
-    private static final ResourceLocation FLOWING_ANTIWATER_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "flowing_antiwater");
-    private static final ResourceLocation ICHOR_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "ichor");
-    private static final ResourceLocation FLOWING_ICHOR_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "flowing_ichor");
-    private static final ResourceLocation HYPNOTIC_GAS_SOUND_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "potent_nyxite_hypnotic_gas");
-    private static final ResourceLocation HYPNOTIC_GAS_CLOUD_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "hypnotic_gas_cloud");
-    private static final ResourceLocation HYPNOTIC_GAS_CLOUD_DOWN_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "hypnotic_gas_cloud_down");
+    private static final ResourceLocation HYPNOTIC_GAS_SOUND_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "potent_nyxite_hypnotic_gas");
+    private static final ResourceLocation HYPNOTIC_GAS_CLOUD_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "hypnotic_gas_cloud");
+    private static final ResourceLocation HYPNOTIC_GAS_CLOUD_DOWN_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "hypnotic_gas_cloud_down");
 
     public static final EnumProperty<PotentNyxiteState> STATE = EnumProperty.create("state", PotentNyxiteState.class);
 
@@ -177,16 +173,6 @@ public class PotentNyxiteBlock extends BaseEntityBlock {
         return fluidDirection != null && hasContinuousTrigger(level, pos, fluidDirection);
     }
 
-    public static boolean isAntiwater(FluidState fluidState) {
-        ResourceLocation fluidId = BuiltInRegistries.FLUID.getKey(fluidState.getType());
-        return ANTIWATER_ID.equals(fluidId) || FLOWING_ANTIWATER_ID.equals(fluidId);
-    }
-
-    public static boolean isIchor(FluidState fluidState) {
-        ResourceLocation fluidId = BuiltInRegistries.FLUID.getKey(fluidState.getType());
-        return ICHOR_ID.equals(fluidId) || FLOWING_ICHOR_ID.equals(fluidId);
-    }
-
     public static Direction getEruptionDirection(LevelAccessor level, BlockPos pos) {
         Direction fluidDirection = getFluidColumnDirection(level, pos);
         if (fluidDirection != null) {
@@ -236,12 +222,12 @@ public class PotentNyxiteBlock extends BaseEntityBlock {
 
     public static boolean hasAntiwaterOnSide(LevelAccessor level, BlockPos pos, Direction direction) {
         FluidState fluidState = level.getFluidState(pos.relative(direction));
-        return fluidState.isSource() && isAntiwater(fluidState);
+        return fluidState.isSource() && AntarchyFluidChecks.isAntiwater(fluidState);
     }
 
     public static boolean hasGasFluid(LevelAccessor level, BlockPos pos, Direction direction) {
         FluidState fluidState = level.getFluidState(pos.relative(direction));
-        return fluidState.isSource() && isAntiwater(fluidState);
+        return fluidState.isSource() && AntarchyFluidChecks.isAntiwater(fluidState);
     }
 
     public static boolean hasPeriodicTrigger(LevelAccessor level, BlockPos pos, Direction direction) {
@@ -269,7 +255,7 @@ public class PotentNyxiteBlock extends BaseEntityBlock {
         BlockPos.MutableBlockPos cursor = pos.relative(direction).mutable();
         while (true) {
             FluidState fluidState = level.getFluidState(cursor);
-            if (!isAntiwater(fluidState)) {
+            if (!AntarchyFluidChecks.isAntiwater(fluidState)) {
                 break;
             }
 

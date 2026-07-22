@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.entity.glimmer;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
 import com.craisinlord.antarchy.Antarchy;
 import net.minecraft.network.chat.Component;
@@ -93,6 +94,12 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
             SynchedEntityData.defineId(GlimmerEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> ABILITY_ANIM_TICKS =
             SynchedEntityData.defineId(GlimmerEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> ELKA_IDLE_SITTING =
+            SynchedEntityData.defineId(GlimmerEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> ELKA_IDLE_QUIRK_TICKS =
+            SynchedEntityData.defineId(GlimmerEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> ELKA_IDLE_QUIRK_VARIANT =
+            SynchedEntityData.defineId(GlimmerEntity.class, EntityDataSerializers.INT);
 
     public static final int FADE_DURATION_TICKS = 40;
     private static final int PASSIVE_RANGE = 16;
@@ -103,11 +110,19 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
     private static final String VARIANT_LOCKED_KEY = "VariantLocked";
     private static final String FOLLOWING_KEY = "GlimmerFollowing";
     private static final String ABILITY_COOLDOWN_KEY = "AbilityCooldown";
+    private static final String ELKA_IDLE_SITTING_KEY = "ElkaIdleSitting";
+    private static final String ELKA_IDLE_SIT_TICKS_KEY = "ElkaIdleSitTicks";
+    private static final String ELKA_IDLE_SIT_COOLDOWN_KEY = "ElkaIdleSitCooldown";
+    private static final String ELKA_IDLE_QUIRK_TICKS_KEY = "ElkaIdleQuirkTicks";
+    private static final String ELKA_IDLE_QUIRK_VARIANT_KEY = "ElkaIdleQuirkVariant";
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private boolean variantLocked;
     private float lastOwnerExhaustion = -1.0F;
     private long lastOwnerShieldLostCount = -1L;
+    private int elkaIdleSitTicksRemaining;
+    private int elkaIdleSitCooldownTicks = 20 * 60 * 6;
+    private int elkaIdleAnimationCycleTicks;
 
     public GlimmerEntity(EntityType<? extends GlimmerEntity> entityType, Level level) {
         super(entityType, level);
@@ -152,6 +167,9 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         builder.define(ABILITY_COOLDOWN, 0);
         builder.define(GROWTH_SCALE, 1.0F);
         builder.define(ABILITY_ANIM_TICKS, 0);
+        builder.define(ELKA_IDLE_SITTING, false);
+        builder.define(ELKA_IDLE_QUIRK_TICKS, 0);
+        builder.define(ELKA_IDLE_QUIRK_VARIANT, 0);
     }
 
     public void playAbilityAnimation(int ticks) {
@@ -222,6 +240,54 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
     public void setGrowthScale(float scale) {
         this.entityData.set(GROWTH_SCALE, scale);
         this.refreshDimensions();
+    }
+
+    public boolean isElkaIdleSitting() {
+        return this.entityData.get(ELKA_IDLE_SITTING);
+    }
+
+    public void setElkaIdleSitting(boolean sitting) {
+        this.entityData.set(ELKA_IDLE_SITTING, sitting);
+    }
+
+    public int getElkaIdleQuirkTicks() {
+        return this.entityData.get(ELKA_IDLE_QUIRK_TICKS);
+    }
+
+    public void setElkaIdleQuirkTicks(int ticks) {
+        this.entityData.set(ELKA_IDLE_QUIRK_TICKS, Math.max(0, ticks));
+    }
+
+    public int getElkaIdleQuirkVariant() {
+        return this.entityData.get(ELKA_IDLE_QUIRK_VARIANT);
+    }
+
+    public void setElkaIdleQuirkVariant(int variant) {
+        this.entityData.set(ELKA_IDLE_QUIRK_VARIANT, Math.max(0, variant));
+    }
+
+    public int getElkaIdleSitTicksRemaining() {
+        return this.elkaIdleSitTicksRemaining;
+    }
+
+    public void setElkaIdleSitTicksRemaining(int ticks) {
+        this.elkaIdleSitTicksRemaining = Math.max(0, ticks);
+    }
+
+    public int getElkaIdleSitCooldownTicks() {
+        return this.elkaIdleSitCooldownTicks;
+    }
+
+    public void setElkaIdleSitCooldownTicks(int ticks) {
+        this.elkaIdleSitCooldownTicks = Math.max(0, ticks);
+    }
+
+    public int getElkaIdleAnimationCycleTicks() {
+        return this.elkaIdleAnimationCycleTicks;
+    }
+
+    public void setElkaIdleAnimationCycleTicks(int ticks) {
+        this.elkaIdleAnimationCycleTicks = Math.max(0, ticks);
     }
 
     private void cycleMovementState(Player player) {
@@ -366,7 +432,7 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         }
 
         if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
-            com.craisinlord.antarchy.content.AntarchyAdvancements.award(serverPlayer, this.getVariant().tameAdvancementId());
+            AntarchyAdvancements.award(serverPlayer, this.getVariant().tameAdvancementId());
         }
 
         return InteractionResult.SUCCESS;
@@ -566,6 +632,11 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         tag.putBoolean(VARIANT_LOCKED_KEY, this.variantLocked);
         tag.putBoolean(FOLLOWING_KEY, this.isFollowingOwner());
         tag.putInt(ABILITY_COOLDOWN_KEY, this.entityData.get(ABILITY_COOLDOWN));
+        tag.putBoolean(ELKA_IDLE_SITTING_KEY, this.isElkaIdleSitting());
+        tag.putInt(ELKA_IDLE_SIT_TICKS_KEY, this.elkaIdleSitTicksRemaining);
+        tag.putInt(ELKA_IDLE_SIT_COOLDOWN_KEY, this.elkaIdleSitCooldownTicks);
+        tag.putInt(ELKA_IDLE_QUIRK_TICKS_KEY, this.getElkaIdleQuirkTicks());
+        tag.putInt(ELKA_IDLE_QUIRK_VARIANT_KEY, this.getElkaIdleQuirkVariant());
     }
 
     @Override
@@ -578,6 +649,11 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         this.variantLocked = tag.getBoolean(VARIANT_LOCKED_KEY);
         this.entityData.set(FOLLOWING, !tag.contains(FOLLOWING_KEY) || tag.getBoolean(FOLLOWING_KEY));
         this.entityData.set(ABILITY_COOLDOWN, tag.getInt(ABILITY_COOLDOWN_KEY));
+        this.entityData.set(ELKA_IDLE_SITTING, tag.getBoolean(ELKA_IDLE_SITTING_KEY));
+        this.elkaIdleSitTicksRemaining = tag.getInt(ELKA_IDLE_SIT_TICKS_KEY);
+        this.elkaIdleSitCooldownTicks = tag.contains(ELKA_IDLE_SIT_COOLDOWN_KEY) ? tag.getInt(ELKA_IDLE_SIT_COOLDOWN_KEY) : 20 * 60 * 6;
+        this.entityData.set(ELKA_IDLE_QUIRK_TICKS, tag.getInt(ELKA_IDLE_QUIRK_TICKS_KEY));
+        this.entityData.set(ELKA_IDLE_QUIRK_VARIANT, tag.getInt(ELKA_IDLE_QUIRK_VARIANT_KEY));
     }
 
     @Override
@@ -611,7 +687,8 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
             RawAnimation movingAnim = this.getVariant().getBehavior().movingAnimation(this);
             return state.setAndContinue(movingAnim != null ? movingAnim : WALK_ANIM);
         }
-        return state.setAndContinue(IDLE_ANIM);
+        RawAnimation idleAnim = this.getVariant().getBehavior().idleAnimation(this);
+        return state.setAndContinue(idleAnim != null ? idleAnim : IDLE_ANIM);
     }
 
     @Override

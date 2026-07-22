@@ -239,7 +239,7 @@ public abstract class EntityGravityMixin implements AntarchyGravityAccess {
                 for (int z = min.getZ(); z <= max.getZ(); z++) {
                     cursor.set(x, y, z);
                     FluidState fluidState = entity.level().getFluidState(cursor);
-                    if (com.craisinlord.antarchy.content.block.PotentNyxiteBlock.isAntiwater(fluidState)) {
+                    if (com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks.isAntiwater(fluidState)) {
                         return true;
                     }
                 }

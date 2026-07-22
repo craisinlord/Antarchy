@@ -3,7 +3,7 @@ package com.craisinlord.antarchy.mixins.gravity;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
-import com.craisinlord.antarchy.content.block.PotentNyxiteBlock;
+import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -115,7 +115,7 @@ public abstract class LivingEntityMixin {
                 for (int z = min.getZ(); z <= max.getZ(); z++) {
                     cursor.set(x, y, z);
                     FluidState fluidState = entity.level().getFluidState(cursor);
-                    if (PotentNyxiteBlock.isAntiwater(fluidState)) {
+                    if (AntarchyFluidChecks.isAntiwater(fluidState)) {
                         return true;
                     }
                 }

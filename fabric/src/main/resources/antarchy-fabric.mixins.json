@@ -6,6 +6,9 @@
   "mixins": [
     "AntiwaterLivingEntityMixin",
     "AntiwaterItemEntityMixin",
+    "LivingEntityJumpingAccessor",
+    "WaterlikeFluidLivingEntityMixin",
+    "WaterlikeFluidItemEntityMixin",
     "AntimetalInversionMixin",
     "AntimetalScaffoldingMixin",
     "ElytraStartFlyingMixin",
@@ -25,7 +28,7 @@
     "client.BrutalflyElytraExperienceBarMixin",
     "client.BloodglassChatOrderMixin",
     "client.DuctTapeInputMixin",
-    "client.AntiwaterFogMixin",
+    "client.LiquidFogMixin",
     "client.GravityGunMouseScrollMixin",
     "client.KeybindingConflictFixMixin",
     "client.CrossbowArmPoseMixin",

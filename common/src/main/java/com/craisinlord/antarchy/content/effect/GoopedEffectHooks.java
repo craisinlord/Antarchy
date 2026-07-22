@@ -1,4 +1,4 @@
-package com.craisinlord.antarchy.content;
+package com.craisinlord.antarchy.content.effect;
 
 import com.craisinlord.antarchy.Antarchy;
 import net.minecraft.core.Holder;

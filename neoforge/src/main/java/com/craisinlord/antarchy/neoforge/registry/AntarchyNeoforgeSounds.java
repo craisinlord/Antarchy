@@ -161,6 +161,14 @@ public final class AntarchyNeoforgeSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> SPIT_BUG_HURT = registerSoundEvent("spit_bug_hurt");
     public static final DeferredHolder<SoundEvent, SoundEvent> SPIT_BUG_SPIT = registerSoundEvent("spit_bug_spit");
     public static final DeferredHolder<SoundEvent, SoundEvent> BRUTALFLY_SPIT = registerSoundEvent("brutalfly_spit");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JERRY_YOUNG_IDLE = registerSoundEvent("jerry_young_idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JERRY_YOUNG_HURT = registerSoundEvent("jerry_young_hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JERRY_YOUNG_DEATH = registerSoundEvent("jerry_young_death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JERRY_YOUNG_ATTACK = registerSoundEvent("jerry_young_attack");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JERRY_ADULT_IDLE = registerSoundEvent("jerry_adult_idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JERRY_ADULT_HURT = registerSoundEvent("jerry_adult_hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JERRY_ADULT_DEATH = registerSoundEvent("jerry_adult_death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> JERRY_ADULT_ATTACK = registerSoundEvent("jerry_adult_attack");
     public static final DeferredHolder<SoundEvent, SoundEvent> DUCT_TAPE_USE = registerSoundEvent("duct_tape_use");
     public static final DeferredHolder<SoundEvent, SoundEvent> POTENT_NYXITE_HYPNOTIC_GAS = registerSoundEvent("potent_nyxite_hypnotic_gas");
     public static final DeferredHolder<SoundEvent, SoundEvent> POTENT_NYXITE_GEYSER_ERUPTION_START = registerSoundEvent("potent_nyxite_geyser_eruption_start");

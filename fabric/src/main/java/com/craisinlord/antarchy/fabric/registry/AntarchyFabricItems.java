@@ -105,6 +105,7 @@ import com.craisinlord.antarchy.fabric.item.AntimetalScaffoldingItem;
 import com.craisinlord.antarchy.content.item.CloudSharkFinSoupItem;
 import com.craisinlord.antarchy.content.item.CorneaEarItem;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
+import com.craisinlord.antarchy.content.item.MantisClawItem;
 import com.craisinlord.antarchy.content.item.MinersDreamItem;
 import com.craisinlord.antarchy.content.item.DuctTapeBlockItem;
 import com.craisinlord.antarchy.content.item.BrutalflyElytraItem;
@@ -610,7 +611,8 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DEAD_STAR_CORAL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.DEAD_STAR_CORAL);
 
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> DEAD_STAR_CORAL_FAN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.DEAD_STAR_CORAL_FAN);
+    public static final DeferredItem<StandingAndWallBlockItem> DEAD_STAR_CORAL_FAN_ITEM = ITEMS.register("dead_star_coral_fan",
+            () -> new StandingAndWallBlockItem(AntarchyFabricBlocks.DEAD_STAR_CORAL_FAN.get(), AntarchyFabricBlocks.DEAD_STAR_CORAL_WALL_FAN.get(), new Item.Properties(), Direction.UP));
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> STAR_CORAL_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.STAR_CORAL_BLOCK);
@@ -619,7 +621,8 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> STAR_CORAL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.STAR_CORAL);
 
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> STAR_CORAL_FAN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.STAR_CORAL_FAN);
+    public static final DeferredItem<StandingAndWallBlockItem> STAR_CORAL_FAN_ITEM = ITEMS.register("star_coral_fan",
+            () -> new StandingAndWallBlockItem(AntarchyFabricBlocks.STAR_CORAL_FAN.get(), AntarchyFabricBlocks.STAR_CORAL_WALL_FAN.get(), new Item.Properties(), Direction.UP));
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DUCT_TAPE_ITEM = ITEMS.register("duct_tape",
@@ -872,7 +875,8 @@ public final class AntarchyFabricItems {
             ));
 
 
-    public static final DeferredItem<Item> MANTIS_CLAW = ITEMS.registerSimpleItem("mantis_claw", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<MantisClawItem> MANTIS_CLAW = ITEMS.register("mantis_claw",
+            () -> new MantisClawItem(Tiers.IRON, new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<Item> HERCULES_HORN = ITEMS.registerSimpleItem("hercules_horn", new Item.Properties().rarity(Rarity.UNCOMMON));
 
 
@@ -887,11 +891,12 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<Item> CHITEN = ITEMS.registerSimpleItem("chiten", new Item.Properties().rarity(Rarity.UNCOMMON));
 
 
-    public static final DeferredItem<Item> JERRY_NUCLEUS = ITEMS.registerSimpleItem("jerry_nucleus", new Item.Properties().rarity(Rarity.UNCOMMON)
-            .food(new FoodProperties.Builder()
-                    .nutrition(2)
-                    .saturationModifier(0.1F)
-                    .build()));
+    public static final DeferredItem<Item> JERRY_NUCLEUS = ITEMS.register("jerry_nucleus",
+            () -> new com.craisinlord.antarchy.content.item.JerryNucleusItem(new Item.Properties().rarity(Rarity.UNCOMMON)
+                    .food(new FoodProperties.Builder()
+                            .nutrition(2)
+                            .saturationModifier(0.1F)
+                            .build())));
 
 
     public static final DeferredItem<Item> CARAPACE = ITEMS.registerSimpleItem("carapace", new Item.Properties().rarity(Rarity.UNCOMMON));

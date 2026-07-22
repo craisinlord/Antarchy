@@ -1,6 +1,6 @@
 package com.craisinlord.antarchy.content.client;
 
-import com.craisinlord.antarchy.content.GoopedEffectHooks;
+import com.craisinlord.antarchy.content.effect.GoopedEffectHooks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.Holder;

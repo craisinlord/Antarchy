@@ -23,14 +23,7 @@ public abstract class DreamSandMovementMixin {
         if (!AntarchySettings.dreamSandEnabled() || antarchy$isDreamSandLowGravityBlacklisted(self)) {
             access.antarchy$clearDreamSandLowGravity();
         } else if (antarchy$isStandingOnDreamSand(self)) {
-            self.setDeltaMovement(
-                    self.getDeltaMovement().x,
-                    self.getDeltaMovement().y * AntarchySettings.dreamSandJumpVelocityMultiplier(),
-                    self.getDeltaMovement().z
-            );
-            access.antarchy$setDreamSandLowGravityActive(true);
-            access.antarchy$setDreamSandLowGravityTicksRemaining((int) Math.max(1L, Math.round(AntarchySettings.dreamSandEffectDurationSeconds() * 20.0D)));
-            access.antarchy$setDreamSandLandingGraceTicks(0);
+            antarchy$startDreamSandLowGravity(self, access);
         }
     }
 
@@ -45,7 +38,17 @@ public abstract class DreamSandMovementMixin {
             access.antarchy$setDreamSandLandingGraceTicks(landingGraceTicks - 1);
         }
 
-        if (!AntarchySettings.dreamSandEnabled() || antarchy$isDreamSandLowGravityBlacklisted(self) || !access.antarchy$isDreamSandLowGravityActive()) {
+        if (!AntarchySettings.dreamSandEnabled() || antarchy$isDreamSandLowGravityBlacklisted(self)) {
+            return;
+        }
+
+        if (!access.antarchy$isDreamSandLowGravityActive()
+                && !self.onGround()
+                && antarchy$isStandingOnDreamSand(self)) {
+            antarchy$startDreamSandLowGravity(self, access);
+        }
+
+        if (!access.antarchy$isDreamSandLowGravityActive()) {
             return;
         }
 
@@ -90,7 +93,18 @@ public abstract class DreamSandMovementMixin {
     }
 
     private static boolean antarchy$isStandingOnDreamSand(LivingEntity livingEntity) {
-        return livingEntity.level().getBlockState(livingEntity.getOnPosLegacy()).is(AntarchyFabricBlocks.DREAM_SAND.get());
+        return livingEntity.getBlockStateOn().is(AntarchyFabricBlocks.DREAM_SAND.get());
+    }
+
+    private static void antarchy$startDreamSandLowGravity(LivingEntity self, DreamSandLowGravityAccess access) {
+        self.setDeltaMovement(
+                self.getDeltaMovement().x,
+                self.getDeltaMovement().y * AntarchySettings.dreamSandJumpVelocityMultiplier(),
+                self.getDeltaMovement().z
+        );
+        access.antarchy$setDreamSandLowGravityActive(true);
+        access.antarchy$setDreamSandLowGravityTicksRemaining((int) Math.max(1L, Math.round(AntarchySettings.dreamSandEffectDurationSeconds() * 20.0D)));
+        access.antarchy$setDreamSandLandingGraceTicks(0);
     }
 
     private static boolean antarchy$isDreamSandLowGravityBlacklisted(LivingEntity livingEntity) {

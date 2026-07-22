@@ -214,10 +214,10 @@ public final class AntarchyFabricClientBootstrap {
                 AntarchyFabricMisc.ICHOR.get(),
                 AntarchyFabricMisc.FLOWING_ICHOR.get(),
                 new SimpleFluidRenderHandler(
-                        ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/antiwater_still"),
-                        ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/antiwater_flow"),
+                        ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/bile/bile_still"),
+                        ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/bile/bile_flowing"),
                         ResourceLocation.withDefaultNamespace("block/water_overlay"),
-                        0xFF2A0306
+                        0xFF3D0408
                 )
         );
 
@@ -476,6 +476,7 @@ public final class AntarchyFabricClientBootstrap {
             JumpyBootsHudRenderer.render(guiGraphics);
             TriffidGooHudRenderer.render(guiGraphics);
             DorrieJumpHudRenderer.render(guiGraphics);
+            HerculesBeetleChargeHudRenderer.render(guiGraphics);
         });
 
         WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> {

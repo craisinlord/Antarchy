@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -10,6 +11,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
@@ -220,6 +222,7 @@ public class JerryEntity extends Monster implements GeoEntity {
             if (++this.attachDamageTicks >= ATTACH_DAMAGE_INTERVAL) {
                 this.attachDamageTicks = 0;
                 Vec3 targetMotion = target.getDeltaMovement();
+                this.playSound(this.attackSoundForCurrentStage(), 0.85F, this.voicePitch());
                 target.hurt(this.damageSources().mobAttack(this), (float) stage.attackDamage());
                 target.setDeltaMovement(targetMotion);
                 target.hurtMarked = true;
@@ -262,6 +265,7 @@ public class JerryEntity extends Monster implements GeoEntity {
             this.faceTarget(target);
             this.attackCooldownTicks = 24;
             this.entityData.set(ATTACK_ANIM_TICKS, ATTACK_ANIM_DURATION);
+            this.playSound(this.attackSoundForCurrentStage(), 1.0F, this.voicePitch());
             target.hurt(this.damageSources().mobAttack(this), (float) stage.attackDamage());
         }
     }
@@ -294,9 +298,31 @@ public class JerryEntity extends Monster implements GeoEntity {
         if (target instanceof LivingEntity living) {
             this.faceTarget(living);
         }
+        this.playSound(this.attackSoundForCurrentStage(), 1.0F, this.voicePitch());
         return target instanceof LivingEntity living
                 ? living.hurt(this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE))
                 : super.doHurtTarget(target);
+    }
+
+    @Override
+    @Nullable
+    protected SoundEvent getAmbientSound() {
+        return this.isAdultStage() ? AntarchySoundEvents.JERRY_ADULT_IDLE.get() : AntarchySoundEvents.JERRY_YOUNG_IDLE.get();
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSource) {
+        return this.isAdultStage() ? AntarchySoundEvents.JERRY_ADULT_HURT.get() : AntarchySoundEvents.JERRY_YOUNG_HURT.get();
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return this.isAdultStage() ? AntarchySoundEvents.JERRY_ADULT_DEATH.get() : AntarchySoundEvents.JERRY_YOUNG_DEATH.get();
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return this.isAdultStage() ? 1.0F : 0.8F;
     }
 
     @Override
@@ -434,6 +460,14 @@ public class JerryEntity extends Monster implements GeoEntity {
     private boolean isAdultStage() {
         Stage stage = this.getStage();
         return stage == Stage.ALPHA || stage == Stage.GAMMA;
+    }
+
+    private SoundEvent attackSoundForCurrentStage() {
+        return this.isAdultStage() ? AntarchySoundEvents.JERRY_ADULT_ATTACK.get() : AntarchySoundEvents.JERRY_YOUNG_ATTACK.get();
+    }
+
+    private float voicePitch() {
+        return this.isAdultStage() ? 0.9F + this.random.nextFloat() * 0.2F : 1.1F + this.random.nextFloat() * 0.25F;
     }
 
     private Stage nextGrowthStage() {

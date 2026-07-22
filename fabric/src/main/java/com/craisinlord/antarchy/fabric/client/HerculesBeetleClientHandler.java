@@ -9,12 +9,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 
 public final class HerculesBeetleClientHandler {
-    private static final int MAX_CHARGE_TICKS = 40;
-
     private static boolean wasPressingJump;
     private static boolean wasPressingAttack;
     private static boolean wasCharging;
-    private static int chargeTicks;
 
     private HerculesBeetleClientHandler() {
     }
@@ -45,11 +42,8 @@ public final class HerculesBeetleClientHandler {
         wasPressingAttack = pressingAttack;
 
         boolean charging = AntarchyKeyBindings.isHerculesBeetleChargePressed();
-        if (charging) {
-            chargeTicks = Math.min(chargeTicks + 1, MAX_CHARGE_TICKS);
-        } else if (wasCharging && chargeTicks > 0) {
-            ClientPlayNetworking.send(new HerculesBeetleMountedChargePayload(chargeTicks));
-            chargeTicks = 0;
+        if (charging != wasCharging) {
+            ClientPlayNetworking.send(new HerculesBeetleMountedChargePayload(charging));
         }
         wasCharging = charging;
     }
@@ -61,6 +55,5 @@ public final class HerculesBeetleClientHandler {
         }
         wasPressingAttack = false;
         wasCharging = false;
-        chargeTicks = 0;
     }
 }

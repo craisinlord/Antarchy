@@ -8,7 +8,7 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.DuctTapeBlock;
 import com.craisinlord.antarchy.content.item.AttitudeAdjusterItem;
 import com.craisinlord.antarchy.content.item.AttitudeAdjusterSlamManager;
-import com.craisinlord.antarchy.content.block.PotentNyxiteBlock;
+import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
@@ -26,10 +26,10 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.server.level.ServerPlayer;
-import com.craisinlord.antarchy.content.SquidzookaDispenseBehavior;
-import com.craisinlord.antarchy.content.RpoLauncherDispenseBehavior;
-import com.craisinlord.antarchy.content.SizeRayDispenseBehavior;
-import com.craisinlord.antarchy.content.WaterCannonDispenseBehavior;
+import com.craisinlord.antarchy.content.dispenser.SquidzookaDispenseBehavior;
+import com.craisinlord.antarchy.content.dispenser.RpoLauncherDispenseBehavior;
+import com.craisinlord.antarchy.content.dispenser.SizeRayDispenseBehavior;
+import com.craisinlord.antarchy.content.dispenser.WaterCannonDispenseBehavior;
 import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.core.BlockPos;
@@ -245,7 +245,7 @@ public final class AntarchyFabricEvents {
             for (int y = min.getY(); y <= max.getY(); y++) {
                 for (int z = min.getZ(); z <= max.getZ(); z++) {
                     cursor.set(x, y, z);
-                    if (PotentNyxiteBlock.isIchor(entity.level().getFluidState(cursor))) {
+                    if (AntarchyFluidChecks.isIchor(entity.level().getFluidState(cursor))) {
                         return true;
                     }
                 }

@@ -1,10 +1,11 @@
 package com.craisinlord.antarchy.fabric.mixin;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.block.PotentNyxiteBlock;
+import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.antarchy.fabric.util.CustomFluidPhysicsChecks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
@@ -32,6 +33,11 @@ public abstract class AntiwaterLivingEntityMixin {
         entity.move(MoverType.SELF, entity.getDeltaMovement());
 
         Vec3 motion = entity.getDeltaMovement();
+        double verticalInput = travelVector.y;
+        if (verticalInput == 0.0D && entity instanceof Player player) {
+            verticalInput = player.isShiftKeyDown() ? -1.0D : ((LivingEntityJumpingAccessor) entity).antarchy$isJumping() ? 1.0D : 0.0D;
+        }
+
         if (entity.horizontalCollision && entity.onClimbable()) {
             motion = new Vec3(motion.x, 0.2D, motion.z);
         }
@@ -43,9 +49,13 @@ public abstract class AntiwaterLivingEntityMixin {
 
         double drag = entity.isSwimming() ? 0.9D : 0.8D;
         worldMotion = worldMotion.scale(drag);
+        Vec3 antiwaterFlow = CustomFluidPhysicsChecks.getAntiwaterFlow(entity);
+        if (antiwaterFlow.lengthSqr() > 1.0E-6D) {
+            worldMotion = worldMotion.add(antiwaterFlow.normalize().scale(0.02D));
+        }
         boolean flying = entity instanceof Player player && player.getAbilities().flying;
         if (!flying) {
-            worldMotion = worldMotion.add(0.0D, 0.005D, 0.0D);
+            worldMotion = worldMotion.add(0.0D, 0.005D + verticalInput * 0.04D, 0.0D);
         }
 
         entity.setDeltaMovement(
@@ -89,7 +99,7 @@ public abstract class AntiwaterLivingEntityMixin {
                 for (int z = min.getZ(); z <= max.getZ(); z++) {
                     cursor.set(x, y, z);
                     FluidState fluidState = entity.level().getFluidState(cursor);
-                    if (PotentNyxiteBlock.isAntiwater(fluidState)) {
+                    if (AntarchyFluidChecks.isAntiwater(fluidState)) {
                         return true;
                     }
                 }

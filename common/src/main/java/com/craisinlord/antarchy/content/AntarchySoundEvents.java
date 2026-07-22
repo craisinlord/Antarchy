@@ -160,6 +160,14 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> ROLLY_POLLY_WHEEL_MODE = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> ROLLY_POLLY_NORMAL_MODE = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> ROLLY_POLLY_ROLL = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> JERRY_YOUNG_IDLE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> JERRY_YOUNG_HURT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> JERRY_YOUNG_DEATH = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> JERRY_YOUNG_ATTACK = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> JERRY_ADULT_IDLE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> JERRY_ADULT_HURT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> JERRY_ADULT_DEATH = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> JERRY_ADULT_ATTACK = (Supplier<SoundEvent>) UNBOUND;
 
     private AntarchySoundEvents() {
     }
@@ -315,7 +323,15 @@ public final class AntarchySoundEvents {
             Supplier<SoundEvent> brutalflySpit,
             Supplier<SoundEvent> rollyPollyWheelMode,
             Supplier<SoundEvent> rollyPollyNormalMode,
-            Supplier<SoundEvent> rollyPollyRoll
+            Supplier<SoundEvent> rollyPollyRoll,
+            Supplier<SoundEvent> jerryYoungIdle,
+            Supplier<SoundEvent> jerryYoungHurt,
+            Supplier<SoundEvent> jerryYoungDeath,
+            Supplier<SoundEvent> jerryYoungAttack,
+            Supplier<SoundEvent> jerryAdultIdle,
+            Supplier<SoundEvent> jerryAdultHurt,
+            Supplier<SoundEvent> jerryAdultDeath,
+            Supplier<SoundEvent> jerryAdultAttack
     ) {
         SQUIDZOOKA_FIRE = squidzookaFire;
         SHRINK_RAY_SOUND = shrinkRaySound;
@@ -468,5 +484,13 @@ public final class AntarchySoundEvents {
         ROLLY_POLLY_WHEEL_MODE = rollyPollyWheelMode;
         ROLLY_POLLY_NORMAL_MODE = rollyPollyNormalMode;
         ROLLY_POLLY_ROLL = rollyPollyRoll;
+        JERRY_YOUNG_IDLE = jerryYoungIdle;
+        JERRY_YOUNG_HURT = jerryYoungHurt;
+        JERRY_YOUNG_DEATH = jerryYoungDeath;
+        JERRY_YOUNG_ATTACK = jerryYoungAttack;
+        JERRY_ADULT_IDLE = jerryAdultIdle;
+        JERRY_ADULT_HURT = jerryAdultHurt;
+        JERRY_ADULT_DEATH = jerryAdultDeath;
+        JERRY_ADULT_ATTACK = jerryAdultAttack;
     }
 }

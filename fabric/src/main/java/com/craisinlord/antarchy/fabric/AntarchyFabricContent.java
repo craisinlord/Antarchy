@@ -274,7 +274,15 @@ public final class AntarchyFabricContent {
                 AntarchyFabricSounds.BRUTALFLY_SPIT,
                 AntarchyFabricSounds.ROLLY_POLLY_WHEEL_MODE,
                 AntarchyFabricSounds.ROLLY_POLLY_NORMAL_MODE,
-                AntarchyFabricSounds.ROLLY_POLLY_ROLL
+                AntarchyFabricSounds.ROLLY_POLLY_ROLL,
+                AntarchyFabricSounds.JERRY_YOUNG_IDLE,
+                AntarchyFabricSounds.JERRY_YOUNG_HURT,
+                AntarchyFabricSounds.JERRY_YOUNG_DEATH,
+                AntarchyFabricSounds.JERRY_YOUNG_ATTACK,
+                AntarchyFabricSounds.JERRY_ADULT_IDLE,
+                AntarchyFabricSounds.JERRY_ADULT_HURT,
+                AntarchyFabricSounds.JERRY_ADULT_DEATH,
+                AntarchyFabricSounds.JERRY_ADULT_ATTACK
         );
 
         AntarchyObjects.setOctopusBomb(AntarchyFabricEntities.OCTOPUS_BOMB);

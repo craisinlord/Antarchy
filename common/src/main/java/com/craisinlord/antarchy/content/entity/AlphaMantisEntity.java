@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class AlphaMantisEntity extends MantisEntity {
     private final ServerBossEvent bossEvent =
-            new ServerBossEvent(Component.translatable("entity.antarchy.alpha_mantis"), BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.PROGRESS);
+            new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this.getUUID(), Component.translatable("entity.antarchy.alpha_mantis"), BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.PROGRESS);
 
     private int summonCooldownTicks;
 

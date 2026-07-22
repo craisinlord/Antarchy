@@ -1,6 +1,6 @@
 package com.craisinlord.antarchy.mixins;
 
-import com.craisinlord.antarchy.content.GoopedEffectHooks;
+import com.craisinlord.antarchy.content.effect.GoopedEffectHooks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvents;

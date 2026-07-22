@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.entity.LurkingTerrorEntity;
 import com.craisinlord.antarchy.content.block.AmberMossBlock;
 import com.craisinlord.antarchy.content.block.CreepingHorrorEggBlock;
+import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -37,6 +38,7 @@ public class LurkingTerrorEggBlock extends Block {
     public static final IntegerProperty HATCH = BlockStateProperties.HATCH;
     public static final IntegerProperty EGGS = BlockStateProperties.EGGS;
     private static final float PANIC_HATCH_CHANCE = 0.25F;
+    private static final double HORDE_ACCELERATION_RADIUS = 5.0D;
     private static final int MAX_HATCH = 2;
     private static final int MAX_EGGS = 4;
     private static final VoxelShape SINGLE_SHAPE = Block.box(3.0D, 0.0D, 3.0D, 13.0D, 7.0D, 13.0D);
@@ -204,6 +206,10 @@ public class LurkingTerrorEggBlock extends Block {
         }
     }
 
+    public void hatchWithNucleus(ServerLevel level, BlockPos pos, BlockState state) {
+        this.hatchEggs(level, pos, state, level.random, state.getValue(EGGS));
+    }
+
     private static int rollPanickedEggs(int eggs, RandomSource random) {
         int hatchedEggs = 0;
         for (int i = 0; i < eggs; i++) {
@@ -224,6 +230,11 @@ public class LurkingTerrorEggBlock extends Block {
     }
 
     private boolean shouldUpdateHatchLevel(Level level, BlockPos pos) {
+        if (level instanceof ServerLevel serverLevel
+                && CavarynHordeManager.shouldAccelerateNearbyEggHatching(serverLevel, pos, HORDE_ACCELERATION_RADIUS, level.random)) {
+            return true;
+        }
+
         boolean onAmberMoss = level.getBlockState(pos.below()).getBlock() instanceof AmberMossBlock;
         return level.random.nextInt(onAmberMoss ? 150 : 500) == 0;
     }

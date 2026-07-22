@@ -1,10 +1,10 @@
 package com.craisinlord.antarchy.compat.jei;
 
 import com.craisinlord.antarchy.Antarchy;
-import com.craisinlord.antarchy.content.AmericanizeRecipe;
+import com.craisinlord.antarchy.content.recipe.AmericanizeRecipe;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
-import com.craisinlord.antarchy.content.CustomBrewingRecipes;
+import com.craisinlord.antarchy.content.recipe.CustomBrewingRecipes;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
 import com.craisinlord.antarchy.content.item.GlimmerBottleItem;

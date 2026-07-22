@@ -1,6 +1,6 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
-import com.craisinlord.antarchy.content.GoopedEffectHooks;
+import com.craisinlord.antarchy.content.effect.GoopedEffectHooks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;

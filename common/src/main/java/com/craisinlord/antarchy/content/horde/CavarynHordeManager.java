@@ -67,7 +67,7 @@ public final class CavarynHordeManager {
     private static final int HOSTILE_KILL_ATTENTION = 4;
     private static final int MOB_KILL_ATTENTION = 3;
     private static final int EGG_OR_NEST_BREAK_ATTENTION = 5;
-    private static final int BLOCK_BREAK_ATTENTION = 1;
+    private static final int BLOCK_BREAK_ATTENTION = 0;
     private static final int STALE_ATTENTION_PRUNE_TICKS = 20 * 60 * 20;
     private static final int PLAYER_CHECK_INTERVAL = 20;
     private static final int AREA_ATTENTION_INTERVAL = 20 * 45;
@@ -85,6 +85,7 @@ public final class CavarynHordeManager {
     private static final int MAX_SPAWN_ATTEMPTS_PER_MOB = 18;
     private static final double MIN_SPAWN_DISTANCE = 18.0D;
     private static final double MAX_SPAWN_DISTANCE = 36.0D;
+    private static final int EGG_HATCH_ACCELERATION_MIN_ATTENTION = ATTENTION_THRESHOLD / 2;
 
     private CavarynHordeManager() {
     }
@@ -143,6 +144,34 @@ public final class CavarynHordeManager {
 
         PlayerAttention attention = get(level).players.get(player.getUUID());
         return attention != null ? attention.attention : 0;
+    }
+
+    public static boolean shouldAccelerateNearbyEggHatching(ServerLevel level, BlockPos pos, double playerRadius, RandomSource random) {
+        if (!level.dimension().equals(CAVARYN) || !isHordeBiome(level, pos)) {
+            return false;
+        }
+
+        double radiusSqr = playerRadius * playerRadius;
+        HordeData data = get(level);
+        int highestAttention = 0;
+        for (ServerPlayer player : level.players()) {
+            if (!isValidHordeTarget(player) || player.blockPosition().distSqr(pos) > radiusSqr) {
+                continue;
+            }
+            PlayerAttention attention = data.players.get(player.getUUID());
+            if (attention == null) {
+                continue;
+            }
+            highestAttention = Math.max(highestAttention, attention.attention);
+        }
+
+        if (highestAttention < EGG_HATCH_ACCELERATION_MIN_ATTENTION) {
+            return false;
+        }
+
+        float pressure = highestAttention / (float) ATTENTION_THRESHOLD;
+        float chance = Mth.lerp(pressure, 0.02F, 0.3F);
+        return random.nextFloat() < chance;
     }
 
     public static int setHordeLevel(ServerPlayer player, int levelValue) {
