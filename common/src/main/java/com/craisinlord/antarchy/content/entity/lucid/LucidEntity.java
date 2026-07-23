@@ -97,11 +97,11 @@ public class LucidEntity extends Monster implements GeoEntity {
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, AntarchySettings.lucidHealth())
-                .add(Attributes.ATTACK_DAMAGE, 4.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.22D)
-                .add(Attributes.FLYING_SPEED, 0.35D)
+                .add(Attributes.ATTACK_DAMAGE, AntarchySettings.lucidAttackDamage())
+                .add(Attributes.MOVEMENT_SPEED, AntarchySettings.lucidMovementSpeed())
+                .add(Attributes.FLYING_SPEED, AntarchySettings.lucidFlyingSpeed())
                 .add(Attributes.FOLLOW_RANGE, 40.0D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.5D);
+                .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.lucidKnockbackResistance());
     }
 
     public static boolean canSpawn(EntityType<LucidEntity> entityType, ServerLevelAccessor level,

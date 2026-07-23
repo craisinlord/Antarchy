@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.entity.nightmare;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
@@ -128,9 +129,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 180.0D)
-                .add(Attributes.ATTACK_DAMAGE, 14.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.28D)
+                .add(Attributes.MAX_HEALTH, AntarchySettings.nightmareHealth())
+                .add(Attributes.ATTACK_DAMAGE, AntarchySettings.nightmareAttackDamage())
+                .add(Attributes.MOVEMENT_SPEED, AntarchySettings.nightmareMovementSpeed())
                 .add(Attributes.FLYING_SPEED, 0.375D)
                 .add(Attributes.FOLLOW_RANGE, 48.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.75D)

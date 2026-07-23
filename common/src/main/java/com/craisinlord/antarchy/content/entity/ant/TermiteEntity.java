@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.entity.ant;
 
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -101,13 +102,19 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
     }
 
     @Override
+    protected boolean canMarch() {
+        return false;
+    }
+
+    @Override
     protected boolean shouldUseBiteAnimation() {
         return true;
     }
 
     @Override
     protected boolean handlePriorityForaging() {
-        if (!this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+        if (!this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)
+                || !this.level().getGameRules().getBoolean(AntarchyGameRules.RULE_DO_TERMITE_GREIFING)) {
             this.targetWoodPos = null;
             return false;
         }

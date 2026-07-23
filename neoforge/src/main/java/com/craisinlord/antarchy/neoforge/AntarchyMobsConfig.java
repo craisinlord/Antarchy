@@ -106,9 +106,9 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_HEALTH;
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_MOVEMENT_SPEED;
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_ROLL_SPEED_MULTIPLIER;
-    private static final ModConfigSpec.DoubleValue ROLLY_POLLY_TUMBLE_DAMAGE;
     private static final ModConfigSpec.IntValue    ROLLY_POLLY_TAME_CHANCE;
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_BOWLING_DAMAGE;
+    private static final ModConfigSpec.DoubleValue ROLLY_POLLY_TUMBLE_DAMAGE;
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_BOWLING_KNOCKBACK;
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_ARMOR;
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_ROLLED_ARMOR_BONUS;
@@ -185,13 +185,13 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue  TORETERROR_JUMP_ATTACK_KNOCKBACK;
     private static final ModConfigSpec.DoubleValue  TORETERROR_SPIN_DAMAGE;
     private static final ModConfigSpec.DoubleValue  TORETERROR_SPIN_KNOCKBACK;
-    private static final ModConfigSpec.DoubleValue  TORETERROR_RANGED_WATER_BOMB_CHANCE;
     private static final ModConfigSpec.DoubleValue  TORETERROR_PROJECTILE_DAMAGE_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue  TORETERROR_RANGED_WATER_BOMB_CHANCE;
+    private static final ModConfigSpec.DoubleValue  WATER_CANNON_COOLDOWN_SECONDS;
     private static final ModConfigSpec.DoubleValue  WATER_BOMB_DAMAGE;
     private static final ModConfigSpec.IntValue     WATER_BOMB_LIFETIME_TICKS;
     private static final ModConfigSpec.DoubleValue  WATER_BOMB_GRAVITY;
     private static final ModConfigSpec.DoubleValue  WATER_BOMB_KNOCKBACK;
-    private static final ModConfigSpec.DoubleValue  WATER_CANNON_COOLDOWN_SECONDS;
 
 
     // Creeping Horror
@@ -377,7 +377,7 @@ public final class AntarchyMobsConfig {
         b.push("jumpyBug");
         JUMPY_BUG_HEALTH = b.comment("Base max health.").defineInRange("health", 12.0D, 1.0D, 32768.0D);
         JUMPY_BUG_POUNCE_DAMAGE = b.comment("Damage dealt on a successful pounce latch.").defineInRange("pounceDamage", 2.0D, 0.0D, 1024.0D);
-        JUMPY_BUG_LATCH_DAMAGE = b.comment("Damage dealt per bite while latched.").defineInRange("latchDamage", 1.0D, 0.0D, 1024.0D);
+        JUMPY_BUG_LATCH_DAMAGE = b.comment("Damage dealt while latched onto a target.").defineInRange("latchDamage", 2.0D, 0.0D, 1024.0D);
         JUMPY_BUG_CAMOUFLAGE_ALPHA = b.comment("Renderer alpha while camouflaged.").defineInRange("camouflageAlpha", 0.18D, 0.01D, 1.0D);
         b.pop();
 
@@ -387,7 +387,7 @@ public final class AntarchyMobsConfig {
         b.push("kraken");
         KRAKEN_HEALTH                            = b.comment("Base max health.")                                                                                            .defineInRange("health",                          1500.0D, 1.0D, 32768.0D);
         KRAKEN_ATTACK_DAMAGE                     = b.comment("Base attack damage.")                                                                                         .defineInRange("attackDamage",                     45.0D,  0.0D, 1024.0D);
-        KRAKEN_PROJECTILE_DAMAGE_TAKEN_MULTIPLIER = b.comment("Damage multiplier from projectiles. 0.5 means 50% damage.")                                                  .defineInRange("projectileDamageTakenMultiplier",  0.5D,   0.0D, 10.0D);
+        KRAKEN_PROJECTILE_DAMAGE_TAKEN_MULTIPLIER = b.comment("Multiplier applied to projectile damage taken by the Kraken.").defineInRange("projectileDamageTakenMultiplier", 0.5D, 0.0D, 16.0D);
         KRAKEN_SQUID_SPAWN_ENABLED               = b.comment("If true, a player killing a Missile Squid has a 1/100 chance to spawn a single Kraken nearby.")                       .define("squidSpawnEnabled",  true);
         KRAKEN_MASS_SPAWN_ENABLED                = b.comment("If true, a player killing a Missile Squid has a 1/500 chance to spawn 10 Krakens. Independent from the single spawn.").define("massSpawnEnabled",  true);
         KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON        = b.comment("If true, the killer must have Bad Omen to summon a single Kraken; chance scales with Bad Omen level. Mass spawn is unaffected by level but still requires Bad Omen when this is on.").define("requireBadOmenToSummon",  true);
@@ -432,9 +432,9 @@ public final class AntarchyMobsConfig {
         ROLLY_POLLY_HEALTH                = b.comment("Base max health.")                                                          .defineInRange("health",              25.0D, 1.0D, 32768.0D);
         ROLLY_POLLY_MOVEMENT_SPEED        = b.comment("Base movement speed.")                                                      .defineInRange("movementSpeed",        0.3D, 0.0D, 10.0D);
         ROLLY_POLLY_ROLL_SPEED_MULTIPLIER = b.comment("Speed multiplier while rolled up.")                                         .defineInRange("rollSpeedMultiplier",  2.2D, 0.1D, 20.0D);
-        ROLLY_POLLY_TUMBLE_DAMAGE         = b.comment("Unused (riding removed). Retained for config compatibility.")               .defineInRange("tumbleDamage",         1.0D, 0.0D, 1024.0D);
         ROLLY_POLLY_TAME_CHANCE           = b.comment("Taming succeeds with a 1-in-N chance per food item.")                       .defineInRange("tameChance",               3, 1, 100);
         ROLLY_POLLY_BOWLING_DAMAGE        = b.comment("Damage dealt by a tamed rolly polly's rolling bowling attack.")             .defineInRange("bowlingDamage",        3.0D, 0.0D, 1024.0D);
+        ROLLY_POLLY_TUMBLE_DAMAGE         = b.comment("Damage dealt by a tumbling rolly polly impact.").defineInRange("tumbleDamage", 3.0D, 0.0D, 1024.0D);
         ROLLY_POLLY_BOWLING_KNOCKBACK     = b.comment("Knockback strength of a tamed rolly polly's rolling bowling attack.")       .defineInRange("bowlingKnockback",     0.8D, 0.0D, 20.0D);
         ROLLY_POLLY_ARMOR                 = b.comment("Base armor value.")                                                         .defineInRange("armor",                2.0D, 0.0D, 100.0D);
         ROLLY_POLLY_ROLLED_ARMOR_BONUS    = b.comment("Additional armor gained while rolled up.")                                  .defineInRange("rolledArmorBonus",    16.0D, 0.0D, 100.0D);
@@ -477,7 +477,7 @@ public final class AntarchyMobsConfig {
         REVERIE_NOTICE_DURATION_TICKS          = b.comment("Ticks the Reverie watches a player before becoming bound.")                                                .defineInRange("noticeDurationTicks",          20, 1, 200);
         REVERIE_INTEREST_DURATION_TICKS        = b.comment("Ticks the Reverie stays interested after a color/state change.")                                           .defineInRange("interestDurationTicks",       360, 20, 7200);
         REVERIE_REBIND_COOLDOWN_TICKS          = b.comment("Ticks the Reverie waits after unbinding before it can bind again.")                                        .defineInRange("rebindCooldownTicks",         100, 0, 24000);
-        REVERIE_DAMAGE_REACTION_DURATION_TICKS = b.comment("Ticks the Reverie stays in its hurt warning reaction after being damaged.")                                .defineInRange("damageReactionDurationTicks",  40, 1, 400);
+        REVERIE_DAMAGE_REACTION_DURATION_TICKS = b.comment("Ticks the Reverie remains in its damage reaction state.").defineInRange("damageReactionDurationTicks", 60, 0, 24000);
         REVERIE_DANGEROUS_FALL_DISTANCE        = b.comment("Minimum fall distance before the Reverie considers its player in danger. Vanilla fall damage starts at 3.").defineInRange("dangerousFallDistance",      3.0D, 0.0D, 64.0D);
         REVERIE_DANGEROUS_FALL_SPEED           = b.comment("Minimum vertical speed before a dangerous fall triggers purple protection.")                                .defineInRange("dangerousFallSpeed",         0.18D, 0.0D, 4.0D);
         REVERIE_WARNING_THREAT_RADIUS          = b.comment("Horizontal scan radius for hostiles that trigger red warning mode.")                                        .defineInRange("warningThreatRadius",        10.0D, 1.0D, 64.0D);
@@ -604,13 +604,13 @@ public final class AntarchyMobsConfig {
         TORETERROR_JUMP_ATTACK_KNOCKBACK   = b.comment("Knockback strength of the jump shockwave.").defineInRange("jumpAttackKnockback", 2.5D, 0.0D, 10.0D);
         TORETERROR_SPIN_DAMAGE             = b.comment("Damage per spin-attack tick.").defineInRange("spinDamage", 8.0D, 0.0D, 1024.0D);
         TORETERROR_SPIN_KNOCKBACK          = b.comment("Knockback strength of the spin attack.").defineInRange("spinKnockback", 1.5D, 0.0D, 10.0D);
-        TORETERROR_RANGED_WATER_BOMB_CHANCE = b.comment("Chance (0.0-1.0) the ranged attack fires a Water Bomb instead of Bombers.").defineInRange("rangedWaterBombChance", 0.5D, 0.0D, 1.0D);
         TORETERROR_PROJECTILE_DAMAGE_MULTIPLIER = b.comment("Damage multiplier applied to projectile hits on the Toreterror (0.5 = half damage).").defineInRange("projectileDamageMultiplier", 0.5D, 0.0D, 1.0D);
+        TORETERROR_RANGED_WATER_BOMB_CHANCE = b.comment("Chance each ranged attack cycle launches a water bomb.").defineInRange("rangedWaterBombChance", 0.35D, 0.0D, 1.0D);
+        WATER_CANNON_COOLDOWN_SECONDS      = b.comment("Cooldown between water cannon uses, in seconds.").defineInRange("waterCannonCooldownSeconds", 1.5D, 0.0D, 60.0D);
         WATER_BOMB_DAMAGE                  = b.comment("Damage dealt by a Water Bomb hit.").defineInRange("waterBombDamage", 6.0D, 0.0D, 1024.0D);
         WATER_BOMB_LIFETIME_TICKS          = b.comment("Ticks before a Water Bomb despawns.").defineInRange("waterBombLifetimeTicks", 120, 1, 6000);
         WATER_BOMB_GRAVITY                 = b.comment("Gravity applied to Water Bombs (higher = steeper arc).").defineInRange("waterBombGravity", 0.12D, 0.0D, 2.0D);
         WATER_BOMB_KNOCKBACK               = b.comment("Knockback strength when a Water Bomb hits an entity.").defineInRange("waterBombKnockback", 1.2D, 0.0D, 10.0D);
-        WATER_CANNON_COOLDOWN_SECONDS      = b.comment("Cooldown in seconds between Water Cannon shots.").defineInRange("waterCannonCooldownSeconds", 1.5D, 0.0D, 300.0D);
         b.pop();
 
         SPEC = b.build();
@@ -691,9 +691,9 @@ public final class AntarchyMobsConfig {
     static double  rollyPollyHealth()                       { return ROLLY_POLLY_HEALTH.get(); }
     static double  rollyPollyMovementSpeed()                { return ROLLY_POLLY_MOVEMENT_SPEED.get(); }
     static double  rollyPollyRollSpeedMultiplier()          { return ROLLY_POLLY_ROLL_SPEED_MULTIPLIER.get(); }
-    static double  rollyPollyTumbleDamage()                 { return ROLLY_POLLY_TUMBLE_DAMAGE.get(); }
     static int     rollyPollyTameChance()                   { return ROLLY_POLLY_TAME_CHANCE.get(); }
     static double  rollyPollyBowlingDamage()                { return ROLLY_POLLY_BOWLING_DAMAGE.get(); }
+    static double  rollyPollyTumbleDamage()                 { return ROLLY_POLLY_TUMBLE_DAMAGE.get(); }
     static double  rollyPollyBowlingKnockback()              { return ROLLY_POLLY_BOWLING_KNOCKBACK.get(); }
     static double  rollyPollyArmor()                        { return ROLLY_POLLY_ARMOR.get(); }
     static double  rollyPollyRolledArmorBonus()             { return ROLLY_POLLY_ROLLED_ARMOR_BONUS.get(); }
@@ -751,13 +751,13 @@ public final class AntarchyMobsConfig {
     static double  toreterrorJumpAttackKnockback()          { return TORETERROR_JUMP_ATTACK_KNOCKBACK.get(); }
     static double  toreterrorSpinDamage()                   { return TORETERROR_SPIN_DAMAGE.get(); }
     static double  toreterrorSpinKnockback()                { return TORETERROR_SPIN_KNOCKBACK.get(); }
-    static double  toreterrorRangedWaterBombChance()        { return TORETERROR_RANGED_WATER_BOMB_CHANCE.get(); }
     static double  toreterrorProjectileDamageMultiplier()   { return TORETERROR_PROJECTILE_DAMAGE_MULTIPLIER.get(); }
+    static double  toreterrorRangedWaterBombChance()        { return TORETERROR_RANGED_WATER_BOMB_CHANCE.get(); }
+    static double  waterCannonCooldownSeconds()             { return WATER_CANNON_COOLDOWN_SECONDS.get(); }
     static double  waterBombDamage()                        { return WATER_BOMB_DAMAGE.get(); }
     static int     waterBombLifetimeTicks()                 { return WATER_BOMB_LIFETIME_TICKS.get(); }
     static double  waterBombGravity()                       { return WATER_BOMB_GRAVITY.get(); }
     static double  waterBombKnockback()                     { return WATER_BOMB_KNOCKBACK.get(); }
-    static double  waterCannonCooldownSeconds()             { return WATER_CANNON_COOLDOWN_SECONDS.get(); }
 
     static boolean dreadHallucinationSoundsEnabled()        { return DREAD_HALLUCINATION_SOUNDS_ENABLED.get(); }
     static double  dreadHallucinationSoundMinInterval()     { return DREAD_HALLUCINATION_SOUND_MIN_INTERVAL.get(); }

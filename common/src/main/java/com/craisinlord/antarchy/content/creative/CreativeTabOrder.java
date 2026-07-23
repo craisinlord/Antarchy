@@ -1,4 +1,4 @@
-package com.craisinlord.antarchy.content;
+package com.craisinlord.antarchy.content.creative;
 
 import java.util.Comparator;
 import net.minecraft.core.registries.BuiltInRegistries;

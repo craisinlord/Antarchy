@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.entity;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import java.util.EnumSet;
@@ -74,9 +75,9 @@ public class MolewormEntity extends Monster implements GeoEntity {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 8.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.25D)
-                .add(Attributes.ATTACK_DAMAGE, 1.0D);
+                .add(Attributes.MAX_HEALTH, AntarchySettings.molewormHealth())
+                .add(Attributes.MOVEMENT_SPEED, AntarchySettings.molewormMovementSpeed())
+                .add(Attributes.ATTACK_DAMAGE, AntarchySettings.molewormAttackDamage());
     }
 
     @SuppressWarnings("unchecked")

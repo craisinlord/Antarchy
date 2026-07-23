@@ -62,14 +62,22 @@ public class UpwardFallingBlockEntity extends Entity {
     @Override
     public void tick() {
         super.tick();
-
-        if (level().isClientSide) return;
+        this.setOldPosAndRot();
 
         BlockState blockState = getBlockState();
         if (blockState.isAir()) {
-            discard();
+            if (!level().isClientSide) {
+                discard();
+            }
             return;
         }
+
+        // Move upward directly — noPhysics=true means move() just calls setPos().
+        // Runs on both sides so the client simulates the same deterministic rise
+        // instead of relying on interpolated network updates, matching vanilla FallingBlockEntity.
+        setPos(getX(), getY() + RISE_SPEED, getZ());
+
+        if (level().isClientSide) return;
 
         time++;
         if (time > MAX_TICKS || getY() >= level().getMaxBuildHeight()) {
@@ -77,8 +85,6 @@ public class UpwardFallingBlockEntity extends Entity {
             return;
         }
 
-        // Move upward directly — noPhysics=true means move() just calls setPos()
-        setPos(getX(), getY() + RISE_SPEED, getZ());
         damageEntitiesAlongPath(blockState);
 
         BlockPos headPos  = BlockPos.containing(getX(), getY() + getBbHeight(), getZ());

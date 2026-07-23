@@ -37,6 +37,14 @@ public final class AntarchyKeyBindings {
             CATEGORY
     );
 
+    public static final KeyMapping HERCULES_BEETLE_FLIGHT_TOGGLE = new KeyMapping(
+            "key.antarchy.hercules_beetle_flight_toggle",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            InputConstants.KEY_R,
+            CATEGORY
+    );
+
     private AntarchyKeyBindings() {}
 
     @SubscribeEvent
@@ -44,5 +52,10 @@ public final class AntarchyKeyBindings {
         event.register(BRUTALFLY_FLAP);
         event.register(DORRIE_CHARGE_JUMP);
         event.register(HERCULES_BEETLE_CHARGE);
+        event.register(HERCULES_BEETLE_FLIGHT_TOGGLE);
+    }
+
+    public static boolean isHerculesBeetleFlightTogglePressed() {
+        return HERCULES_BEETLE_FLIGHT_TOGGLE.isDown();
     }
 }

@@ -1,0 +1,48 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "antarchy:block/bluestone_wire_dot",
+        "x": 180
+      }
+    },
+    {
+      "when": {
+        "north": "side|down"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_wire_line0",
+        "x": 180
+      }
+    },
+    {
+      "when": {
+        "east": "side|down"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_wire_line1",
+        "x": 180
+      }
+    },
+    {
+      "when": {
+        "south": "side|down"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_wire_line0",
+        "x": 180,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "side|down"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_wire_line1",
+        "x": 180,
+        "y": 180
+      }
+    }
+  ]
+}

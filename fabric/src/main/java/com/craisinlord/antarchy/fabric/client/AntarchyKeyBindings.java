@@ -31,12 +31,20 @@ public final class AntarchyKeyBindings {
             CATEGORY
     );
 
+    public static final KeyMapping HERCULES_BEETLE_FLIGHT_TOGGLE = new KeyMapping(
+            "key.antarchy.hercules_beetle_flight_toggle",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_R,
+            CATEGORY
+    );
+
     private AntarchyKeyBindings() {}
 
     public static void register() {
         KeyBindingHelper.registerKeyBinding(BRUTALFLY_FLAP);
         KeyBindingHelper.registerKeyBinding(DORRIE_CHARGE_JUMP);
         KeyBindingHelper.registerKeyBinding(HERCULES_BEETLE_CHARGE);
+        KeyBindingHelper.registerKeyBinding(HERCULES_BEETLE_FLIGHT_TOGGLE);
     }
 
     public static boolean isBrutalflyFlapPressed() {
@@ -49,5 +57,9 @@ public final class AntarchyKeyBindings {
 
     public static boolean isHerculesBeetleChargePressed() {
         return Minecraft.getInstance().screen == null && HERCULES_BEETLE_CHARGE.isDown();
+    }
+
+    public static boolean isHerculesBeetleFlightTogglePressed() {
+        return Minecraft.getInstance().screen == null && HERCULES_BEETLE_FLIGHT_TOGGLE.isDown();
     }
 }

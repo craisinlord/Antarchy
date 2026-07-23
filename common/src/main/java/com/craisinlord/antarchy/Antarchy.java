@@ -1,6 +1,6 @@
 package com.craisinlord.antarchy;
 
-import com.craisinlord.antarchy.content.AttributeRangeInit;
+import com.craisinlord.antarchy.content.util.AttributeRangeInit;
 import com.craisinlord.integrated_api.events.lifecycle.ServerGoingToStartEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

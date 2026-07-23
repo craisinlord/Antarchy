@@ -1,4 +1,4 @@
-package com.craisinlord.antarchy.content;
+package com.craisinlord.antarchy.content.util;
 
 import com.craisinlord.antarchy.mixins.AccessorRangedAttribute;
 import com.google.common.collect.ImmutableSet;

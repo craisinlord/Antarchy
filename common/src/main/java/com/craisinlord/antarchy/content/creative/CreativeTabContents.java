@@ -1,4 +1,4 @@
-package com.craisinlord.antarchy.content;
+package com.craisinlord.antarchy.content.creative;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
@@ -170,6 +170,10 @@ public final class CreativeTabContents {
             entry("uranium_trapdoor", "building_blocks"),
             entry("uranium_bars", "building_blocks"),
             entry("uranium_bulb", "building_blocks"),
+            entry("bluestone_block", "building_blocks"),
+            entry("bluestone_repeater", "building_blocks"),
+            entry("bluestone_comparator", "building_blocks"),
+            entry("bluestone_torch", "building_blocks"),
             entry("titanium_block", "building_blocks"),
             entry("raw_titanium_block", "building_blocks"),
             entry("cut_titanium", "building_blocks"),
@@ -218,6 +222,7 @@ public final class CreativeTabContents {
             entry("deepslate_uranium_ore", "natural_blocks"),
             entry("titanium_ore", "natural_blocks"),
             entry("deepslate_titanium_ore", "natural_blocks"),
+            entry("bluestone_ore", "natural_blocks"),
             entry("corn_seeds", "natural_blocks"),
             entry("star_coral", "natural_blocks"),
             entry("star_coral_fan", "natural_blocks"),
@@ -279,6 +284,7 @@ public final class CreativeTabContents {
             entry("jumpy_boots", "combat"),
             entry("raw_uranium_scrap", "ingredients"),
             entry("raw_titanium_scrap", "ingredients"),
+            entry("bluestone", "ingredients"),
             entry("raw_uranium", "ingredients"),
             entry("raw_titanium", "ingredients"),
             entry("uranium_nugget", "ingredients"),

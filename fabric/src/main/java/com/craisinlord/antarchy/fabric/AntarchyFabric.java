@@ -2,11 +2,14 @@ package com.craisinlord.antarchy.fabric;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntities;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
 import com.craisinlord.antarchy.content.item.BloodCrystalShardItem;
 import com.craisinlord.antarchy.fabric.network.AntarchyFabricNetworking;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
+import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
+import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.api.ModInitializer;
@@ -139,6 +142,9 @@ public final class AntarchyFabric implements ModInitializer {
     );
     @Override
     public void onInitialize() {
+        AntarchyGameRules.bootstrap((name, category, defaultValue) ->
+                GameRuleRegistry.register(name, category, GameRuleFactory.createBooleanRule(defaultValue))
+        );
         AntarchyFabricNetworking.register();
         AntarchyFabricNetworking.bootstrapMultipartCommon();
         AntarchyConfigModuleFabric.init();

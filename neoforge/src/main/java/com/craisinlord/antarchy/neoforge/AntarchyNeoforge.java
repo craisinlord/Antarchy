@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.neoforge;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompat;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompatVersion;
+import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.item.BloodCrystalKatanaItem;
@@ -16,7 +17,9 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.minecraft.world.level.block.Blocks;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 
 @Mod(Antarchy.MODID)
@@ -25,6 +28,7 @@ public class AntarchyNeoforge {
 
     public AntarchyNeoforge(IEventBus modEventBus, ModContainer modContainer) {
         modEventBusTempHolder = modEventBus;
+        bootstrapGameRules();
         AntarchyConfigModuleNeoforge.init(modContainer);
         AntarchySoundEvents.bind(
                 AntarchyNeoforgeSounds.SQUIDZOOKA_FIRE,
@@ -214,7 +218,30 @@ public class AntarchyNeoforge {
         Antarchy.init();
     }
 
+    @SuppressWarnings("unchecked")
+    private static void bootstrapGameRules() {
+        AntarchyGameRules.bootstrap((name, category, defaultValue) -> {
+            try {
+                Method create = net.minecraft.world.level.GameRules.BooleanValue.class.getDeclaredMethod("create", boolean.class);
+                create.setAccessible(true);
+                net.minecraft.world.level.GameRules.Type<net.minecraft.world.level.GameRules.BooleanValue> type =
+                        (net.minecraft.world.level.GameRules.Type<net.minecraft.world.level.GameRules.BooleanValue>) create.invoke(null, defaultValue);
+                Method register = net.minecraft.world.level.GameRules.class.getDeclaredMethod(
+                        "register",
+                        String.class,
+                        net.minecraft.world.level.GameRules.Category.class,
+                        net.minecraft.world.level.GameRules.Type.class
+                );
+                register.setAccessible(true);
+                return (net.minecraft.world.level.GameRules.Key<net.minecraft.world.level.GameRules.BooleanValue>) register.invoke(null, name, category, type);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                throw new IllegalStateException("Failed to register boolean gamerule " + name, e);
+            }
+        });
+    }
+
     private static void bindCommonObjects() {
+        com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity.TYPE = AntarchyNeoforgeEntites.UPWARD_FALLING_BLOCK;
         PermanentPortalType.bindBlocks(
                 () -> AntarchyNeoforgeBlocks.MOSSY_OURANWOOD_WOOD.get(),
                 () -> AntarchyNeoforgeBlocks.ELYTHIA_PORTAL.get(),

@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.entity;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.BedBugEggBlock;
@@ -103,11 +104,11 @@ public class BedBugEntity extends Animal implements GeoEntity {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 18.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.24D)
-                .add(Attributes.ATTACK_DAMAGE, 4.0D)
+                .add(Attributes.MAX_HEALTH, AntarchySettings.bedBugHealth())
+                .add(Attributes.MOVEMENT_SPEED, AntarchySettings.bedBugMovementSpeed())
+                .add(Attributes.ATTACK_DAMAGE, AntarchySettings.bedBugAttackDamage())
                 .add(Attributes.FOLLOW_RANGE, 20.0D)
-                .add(Attributes.ARMOR, 2.0D);
+                .add(Attributes.ARMOR, AntarchySettings.bedBugArmor());
     }
 
     public static boolean canSpawn(EntityType<BedBugEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {

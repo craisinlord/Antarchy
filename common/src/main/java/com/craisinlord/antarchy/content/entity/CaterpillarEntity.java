@@ -123,8 +123,8 @@ public class CaterpillarEntity extends Animal implements GeoEntity {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 6.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.156D)
+                .add(Attributes.MAX_HEALTH, AntarchySettings.caterpillarHealth())
+                .add(Attributes.MOVEMENT_SPEED, AntarchySettings.caterpillarMovementSpeed())
                 .add(Attributes.FOLLOW_RANGE, 14.0D);
     }
 

@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.entity.flying_squirrel;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.block.OuranwoodAcornBlock;
@@ -177,8 +178,8 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 10.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.35D)
+                .add(Attributes.MAX_HEALTH, AntarchySettings.flyingSquirrelHealth())
+                .add(Attributes.MOVEMENT_SPEED, AntarchySettings.flyingSquirrelMovementSpeed())
                 .add(Attributes.FOLLOW_RANGE, 16.0D);
     }
 

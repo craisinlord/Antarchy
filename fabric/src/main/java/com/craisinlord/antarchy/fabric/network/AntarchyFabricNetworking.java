@@ -87,6 +87,7 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playC2S().register(DorrieJumpInputPayload.TYPE, DorrieJumpInputPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(com.craisinlord.antarchy.content.network.DorrieChargeJumpPayload.TYPE, com.craisinlord.antarchy.content.network.DorrieChargeJumpPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(HerculesBeetleJumpInputPayload.TYPE, HerculesBeetleJumpInputPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(HerculesBeetleFlightTogglePayload.TYPE, HerculesBeetleFlightTogglePayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(HerculesBeetleMountedAttackPayload.TYPE, HerculesBeetleMountedAttackPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(HerculesBeetleMountedChargePayload.TYPE, HerculesBeetleMountedChargePayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(MultipartAttackPayload.TYPE, MultipartAttackPayload.STREAM_CODEC);
@@ -112,6 +113,8 @@ public final class AntarchyFabricNetworking {
                 context.server().execute(() -> handleDorrieChargeJumpInput(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(HerculesBeetleJumpInputPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleHerculesBeetleJumpInput(context.player(), payload)));
+        ServerPlayNetworking.registerGlobalReceiver(HerculesBeetleFlightTogglePayload.TYPE, (payload, context) ->
+                context.server().execute(() -> handleHerculesBeetleFlightToggle(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(HerculesBeetleMountedAttackPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleHerculesBeetleMountedAttack(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(HerculesBeetleMountedChargePayload.TYPE, (payload, context) ->
@@ -386,6 +389,12 @@ public final class AntarchyFabricNetworking {
     private static void handleHerculesBeetleMountedAttack(ServerPlayer player, HerculesBeetleMountedAttackPayload payload) {
         if (player.getVehicle() instanceof HerculesBeetleEntity beetle) {
             beetle.handleMountedRegularAttack(player);
+        }
+    }
+
+    private static void handleHerculesBeetleFlightToggle(ServerPlayer player, HerculesBeetleFlightTogglePayload payload) {
+        if (player.getVehicle() instanceof HerculesBeetleEntity beetle) {
+            beetle.toggleMountedFlight(player);
         }
     }
 

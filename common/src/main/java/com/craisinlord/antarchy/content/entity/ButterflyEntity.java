@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
@@ -143,9 +144,9 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 6.0D)
-                .add(Attributes.FLYING_SPEED, 0.55D)
-                .add(Attributes.MOVEMENT_SPEED, 0.3D)
+                .add(Attributes.MAX_HEALTH, AntarchySettings.butterflyHealth())
+                .add(Attributes.FLYING_SPEED, AntarchySettings.butterflyFlyingSpeed())
+                .add(Attributes.MOVEMENT_SPEED, AntarchySettings.butterflyMovementSpeed())
                 .add(Attributes.FOLLOW_RANGE, 16.0D);
     }
 

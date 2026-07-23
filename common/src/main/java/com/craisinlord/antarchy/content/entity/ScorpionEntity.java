@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.entity;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -74,12 +75,12 @@ public class ScorpionEntity extends Monster implements GeoEntity {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 30.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.29D)
-                .add(Attributes.ATTACK_DAMAGE, 5.0D)
+                .add(Attributes.MAX_HEALTH, AntarchySettings.scorpionHealth())
+                .add(Attributes.MOVEMENT_SPEED, AntarchySettings.scorpionMovementSpeed())
+                .add(Attributes.ATTACK_DAMAGE, AntarchySettings.scorpionAttackDamage())
                 .add(Attributes.FOLLOW_RANGE, 24.0D)
-                .add(Attributes.ARMOR, 2.0D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.2D);
+                .add(Attributes.ARMOR, AntarchySettings.scorpionArmor())
+                .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.scorpionKnockbackResistance());
     }
 
     public static boolean canSpawn(EntityType<ScorpionEntity> entityType, ServerLevelAccessor level,

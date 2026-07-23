@@ -313,6 +313,8 @@ public final class AntarchyNeoforgeBlocks {
             () -> new DreamTorchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_TORCH)));
     public static final DeferredBlock<DreamWallTorchBlock> DREAM_WALL_TORCH = BLOCKS.register("dream_wall_torch",
             () -> new DreamWallTorchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_WALL_TORCH)));
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.DreamCeilingTorchBlock> DREAM_CEILING_TORCH = BLOCKS.register("dream_ceiling_torch",
+            () -> new com.craisinlord.antarchy.content.block.DreamCeilingTorchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_TORCH)));
     public static final DeferredBlock<LanternBlock> DREAM_LANTERN = BLOCKS.register("dream_lantern",
             () -> new LanternBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_LANTERN)));
     public static final DeferredBlock<DreamCampfireBlock> DREAM_CAMPFIRE = BLOCKS.register("dream_campfire",
@@ -390,6 +392,18 @@ public final class AntarchyNeoforgeBlocks {
             () -> createOre(Blocks.DIAMOND_ORE, 4, 8, MapColor.COLOR_LIGHT_BLUE));
     public static final DeferredBlock<Block> DEEPSLATE_TITANIUM_ORE = BLOCKS.register("deepslate_titanium_ore",
             () -> createOre(Blocks.DEEPSLATE_DIAMOND_ORE, 4, 8, MapColor.COLOR_LIGHT_BLUE));
+    public static final DeferredBlock<BluestoneOreBlock> BLUESTONE_ORE = BLOCKS.register("bluestone_ore",
+            () -> new BluestoneOreBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.REDSTONE_ORE).mapColor(MapColor.COLOR_BLUE)));
+    public static final DeferredBlock<BluestoneWireBlock> BLUESTONE_WIRE = BLOCKS.register("bluestone_wire",
+            () -> new BluestoneWireBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.REDSTONE_WIRE).mapColor(MapColor.COLOR_BLUE).noCollission().instabreak()));
+    public static final DeferredBlock<BluestoneBlock> BLUESTONE_BLOCK = BLOCKS.register("bluestone_block",
+            () -> new BluestoneBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.REDSTONE_BLOCK).mapColor(MapColor.COLOR_BLUE)));
+    public static final DeferredBlock<BluestoneRepeaterBlock> BLUESTONE_REPEATER = BLOCKS.register("bluestone_repeater",
+            () -> new BluestoneRepeaterBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.REPEATER).mapColor(MapColor.COLOR_BLUE).noCollission()));
+    public static final DeferredBlock<BluestoneComparatorBlock> BLUESTONE_COMPARATOR = BLOCKS.register("bluestone_comparator",
+            () -> new BluestoneComparatorBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.COMPARATOR).mapColor(MapColor.COLOR_BLUE).noCollission(), AntarchyNeoforgeBlocks::bluestoneComparatorBlockEntityType));
+    public static final DeferredBlock<BluestoneTorchBlock> BLUESTONE_TORCH = BLOCKS.register("bluestone_torch",
+            () -> new BluestoneTorchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.REDSTONE_TORCH).mapColor(MapColor.COLOR_BLUE).lightLevel(state -> state.getValue(BluestoneTorchBlock.LIT) ? 7 : 0).noCollission().instabreak()));
     public static final DeferredBlock<Block> URANIUM_BLOCK = BLOCKS.register("uranium_block",
             () -> createStorageBlock(Blocks.EMERALD_BLOCK, MapColor.COLOR_YELLOW));
     public static final DeferredBlock<Block> TITANIUM_BLOCK = BLOCKS.register("titanium_block",
@@ -551,6 +565,11 @@ public final class AntarchyNeoforgeBlocks {
                     CritterCageBlockEntity::new,
                     CRITTER_CAGE_BLOCK.get()
             ).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity>> BLUESTONE_COMPARATOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("bluestone_comparator",
+            () -> BlockEntityType.Builder.of(
+                    (pos, state) -> new com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity(pos, state, AntarchyNeoforgeBlocks::bluestoneComparatorBlockEntityType),
+                    BLUESTONE_COMPARATOR.get()
+            ).build(null));
 
     private AntarchyNeoforgeBlocks() {}
 
@@ -608,6 +627,10 @@ public final class AntarchyNeoforgeBlocks {
 
     private static Block bloodCrystalCrystalBlock() {
         return BLOOD_CRYSTAL_CRYSTAL.get();
+    }
+
+    private static BlockEntityType<com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity> bluestoneComparatorBlockEntityType() {
+        return BLUESTONE_COMPARATOR_BLOCK_ENTITY.get();
     }
 
 

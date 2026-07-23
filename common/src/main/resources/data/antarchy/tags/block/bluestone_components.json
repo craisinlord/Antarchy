@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:bluestone_wire",
+    "antarchy:bluestone_block",
+    "antarchy:bluestone_repeater",
+    "antarchy:bluestone_comparator",
+    "antarchy:bluestone_torch"
+  ]
+}

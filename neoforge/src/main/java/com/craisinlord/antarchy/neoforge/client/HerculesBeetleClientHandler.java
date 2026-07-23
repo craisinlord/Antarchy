@@ -5,6 +5,7 @@ import com.craisinlord.antarchy.content.client.CameraShakeClientState;
 import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
 import com.craisinlord.antarchy.content.client.HordeClientState;
 import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
+import com.craisinlord.antarchy.content.network.HerculesBeetleFlightTogglePayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleJumpInputPayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleMountedAttackPayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleMountedChargePayload;
@@ -21,6 +22,7 @@ public final class HerculesBeetleClientHandler {
     private static boolean wasPressingJump;
     private static boolean wasPressingAttack;
     private static boolean wasCharging;
+    private static boolean wasPressingFlightToggle;
 
     private HerculesBeetleClientHandler() {
     }
@@ -60,6 +62,12 @@ public final class HerculesBeetleClientHandler {
             PacketDistributor.sendToServer(new HerculesBeetleMountedChargePayload(charging));
         }
         wasCharging = charging;
+
+        boolean pressingFlightToggle = AntarchyKeyBindings.HERCULES_BEETLE_FLIGHT_TOGGLE.isDown();
+        if (pressingFlightToggle && !wasPressingFlightToggle) {
+            PacketDistributor.sendToServer(new HerculesBeetleFlightTogglePayload());
+        }
+        wasPressingFlightToggle = pressingFlightToggle;
     }
 
     private static void resetAll() {
@@ -69,5 +77,6 @@ public final class HerculesBeetleClientHandler {
         }
         wasPressingAttack = false;
         wasCharging = false;
+        wasPressingFlightToggle = false;
     }
 }

@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.entity.kraken;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
@@ -144,13 +145,13 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 750.0D)
-                .add(Attributes.ATTACK_DAMAGE, 45.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.24D)
-                .add(Attributes.FLYING_SPEED, 0.24D)
+                .add(Attributes.MAX_HEALTH, AntarchySettings.krakenHealth())
+                .add(Attributes.ATTACK_DAMAGE, AntarchySettings.krakenAttackDamage())
+                .add(Attributes.MOVEMENT_SPEED, AntarchySettings.krakenMovementSpeed())
+                .add(Attributes.FLYING_SPEED, AntarchySettings.krakenFlyingSpeed())
                 .add(Attributes.FOLLOW_RANGE, 64.0D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.8D)
-                .add(Attributes.ARMOR, 8.0D);
+                .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.krakenKnockbackResistance())
+                .add(Attributes.ARMOR, AntarchySettings.krakenArmor());
     }
 
     public static boolean canSpawn(EntityType<KrakenEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {

@@ -211,6 +211,10 @@ public final class AntarchyNeoForgeClient {
     @SubscribeEvent
     public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
         event.register(
+                (state, level, pos, tintIndex) -> tintIndex == 0 ? bluestoneWireColor(state.getValue(com.craisinlord.antarchy.content.block.BluestoneWireBlock.POWER)) : -1,
+                AntarchyNeoforgeBlocks.BLUESTONE_WIRE.get()
+        );
+        event.register(
                 (state, level, pos, tintIndex) -> level != null && pos != null
                         ? BiomeColors.getAverageFoliageColor(level, pos)
                         : FoliageColor.getDefaultColor(),
@@ -236,6 +240,10 @@ public final class AntarchyNeoForgeClient {
 
     @SubscribeEvent
     public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
+        event.register(
+                (stack, tintIndex) -> tintIndex == 0 ? bluestoneWireColor(15) : -1,
+                AntarchyNeoforgeItems.BLUESTONE_DUST.get()
+        );
         event.register(
                 (stack, tintIndex) -> FoliageColor.getDefaultColor(),
                 AntarchyNeoforgeItems.OURANWOOD_LEAVES_ITEM.get()
@@ -579,6 +587,10 @@ public final class AntarchyNeoForgeClient {
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.BLOOD_CRYSTAL_CRYSTAL.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.DREAM_TORCH.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.DREAM_WALL_TORCH.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.BLUESTONE_WIRE.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.BLUESTONE_REPEATER.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.BLUESTONE_COMPARATOR.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.BLUESTONE_TORCH.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.DREAM_LANTERN.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.DREAM_CAMPFIRE.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.DREAM_FIRE.get(), RenderType.cutout());
@@ -702,5 +714,13 @@ public final class AntarchyNeoForgeClient {
                 return null;
             }
         }, item);
+    }
+
+    private static int bluestoneWireColor(int power) {
+        float normalized = power / 15.0F;
+        int red = (int) (6.0F + normalized * 54.0F);
+        int green = (int) (22.0F + normalized * 132.0F);
+        int blue = (int) (64.0F + normalized * 191.0F);
+        return red << 16 | green << 8 | blue;
     }
 }

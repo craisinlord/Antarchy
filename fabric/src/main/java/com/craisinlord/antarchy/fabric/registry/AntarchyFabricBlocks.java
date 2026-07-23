@@ -2,16 +2,8 @@ package com.craisinlord.antarchy.fabric.registry;
 
 import com.craisinlord.antarchy.fabric.AntarchyWoodTypes;
 import com.craisinlord.antarchy.Antarchy;
-import com.craisinlord.antarchy.compat.infinity.InfinityCompat;
-import com.craisinlord.antarchy.compat.infinity.InfinityCompatVersion;
-import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.CreativeTabOrder;
 import com.craisinlord.antarchy.content.block.*;
-import com.craisinlord.antarchy.content.AntarchySoundEvents;
-import com.craisinlord.antarchy.content.item.BloodCrystalArmorItem;
-import com.craisinlord.antarchy.content.item.BloodCrystalAppleItem;
-import com.craisinlord.antarchy.content.item.BloodCrystalKatanaItem;
 import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.CritterCageBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.DreamCampfireBlockEntity;
@@ -21,214 +13,11 @@ import com.craisinlord.antarchy.content.block.entity.SeashellBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.WaspNestBlockEntity;
 import com.craisinlord.antarchy.content.fluid.BileLiquidBlock;
 import com.craisinlord.antarchy.content.fluid.LumenLiquidBlock;
-import com.craisinlord.antarchy.content.worldgen.ants.BrownAntNestFeature;
-import com.craisinlord.antarchy.content.worldgen.ants.RainbowAntNestFeature;
-import com.craisinlord.antarchy.content.worldgen.ants.RedAntNestFeature;
-import com.craisinlord.antarchy.content.worldgen.ants.TermiteNestFeature;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBileCystFeature;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBileVeinFeature;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCreepvineFeature;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWallAmberMossFeature;
-import com.craisinlord.antarchy.content.worldgen.overworld.CornPatchFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.NyxiteSpikeConfiguration;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.AntiwaterSpringsConfiguration;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.AntiwaterSpringsFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.NyxiteSpikeFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.PotentNyxiteFeature;
-import com.craisinlord.antarchy.fabric.content.fluid.AntiwaterFluid;
 import com.craisinlord.antarchy.fabric.content.fluid.AntiwaterLiquidBlock;
-import com.craisinlord.antarchy.fabric.item.DeferredSpawnEggItem;
-import com.craisinlord.antarchy.fabric.network.AntarchyFabricNetworking;
-import com.craisinlord.antarchy.fabric.registry.DeferredBlock;
-import com.craisinlord.antarchy.fabric.registry.DeferredHolder;
-import com.craisinlord.antarchy.fabric.registry.DeferredItem;
-import com.craisinlord.antarchy.fabric.registry.DeferredRegister;
-import com.craisinlord.antarchy.content.effect.DreadMobEffect;
-import com.craisinlord.antarchy.content.effect.GrowthMobEffect;
-import com.craisinlord.antarchy.content.effect.InvertedMobEffect;
-import com.craisinlord.antarchy.content.effect.ParalyzedMobEffect;
-import com.craisinlord.antarchy.content.effect.ShrinkMobEffect;
-import com.craisinlord.antarchy.content.effect.StinkyMobEffect;
-import com.craisinlord.antarchy.content.entity.AppleCowEntityVariants.AppleCow;
-import com.craisinlord.antarchy.content.entity.AppleCowEntityVariants.EnchantedGoldenAppleCow;
-import com.craisinlord.antarchy.content.entity.AppleCowEntityVariants.GoldenAppleCow;
-import com.craisinlord.antarchy.content.entity.cloud_shark.CloudSharkEntity;
-import com.craisinlord.antarchy.content.entity.BedBugEntity;
-import com.craisinlord.antarchy.content.entity.ButterflyEntity;
-import com.craisinlord.antarchy.content.entity.CaterpillarEntity;
-import com.craisinlord.antarchy.content.entity.DiamondMinecartEntity;
-import com.craisinlord.antarchy.content.entity.DrTrayaurusEntity;
-import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyEntity;
-import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyOrbEntity;
-import com.craisinlord.antarchy.content.entity.EasterBunnyEntity;
-import com.craisinlord.antarchy.content.entity.flying_squirrel.FlyingSquirrelEntity;
-import com.craisinlord.antarchy.content.entity.ReverieEntity;
-import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
-import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
-import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
-import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
-import com.craisinlord.antarchy.content.entity.HushProjectileEntity;
-import com.craisinlord.antarchy.content.entity.JumpyBugEntity;
-import com.craisinlord.antarchy.content.entity.StinkBugEntity;
-import com.craisinlord.antarchy.content.entity.OuranwoodBoatEntity;
-import com.craisinlord.antarchy.content.entity.OuranwoodChestBoatEntity;
-import com.craisinlord.antarchy.content.entity.AlphaMantisEntity;
-import com.craisinlord.antarchy.content.entity.MantisEntity;
-import com.craisinlord.antarchy.content.entity.RollyPollyEntity;
-import com.craisinlord.antarchy.content.entity.basilisk.BasiliskEntity;
-import com.craisinlord.antarchy.content.entity.EmperorScorpionEntity;
-import com.craisinlord.antarchy.content.entity.ScorpionEntity;
-import com.craisinlord.antarchy.content.item.LucidEyeItem;
-import com.craisinlord.antarchy.content.item.LucidPearlItem;
-import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
-import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
-import com.craisinlord.antarchy.content.entity.WaterBombEntity;
-import com.craisinlord.antarchy.content.item.PrimordialArmorItem;
-import com.craisinlord.antarchy.content.item.WaterCannonItem;
-import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
-import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
-import com.craisinlord.antarchy.content.entity.MolevoreEntity;
-import com.craisinlord.antarchy.content.entity.MolewormEntity;
-import com.craisinlord.antarchy.content.entity.BomberEntity;
-import com.craisinlord.antarchy.content.entity.SizeRayProjectileEntity;
-import com.craisinlord.antarchy.content.entity.TriffidEntity;
-import com.craisinlord.antarchy.content.entity.WaspEntity;
-import com.craisinlord.antarchy.content.entity.ant.BaseAntEntity;
-import com.craisinlord.antarchy.content.entity.ant.BrownAntEntity;
-import com.craisinlord.antarchy.content.entity.ant.RainbowAntEntity;
-import com.craisinlord.antarchy.content.entity.ant.RedAntEntity;
-import com.craisinlord.antarchy.content.item.BattleAxeItem;
-import com.craisinlord.antarchy.content.item.BasiliskDaggerItem;
-import com.craisinlord.antarchy.content.item.BigBerthaItem;
-import com.craisinlord.antarchy.content.item.AntimetalBlockItem;
-import com.craisinlord.antarchy.fabric.item.AntimetalScaffoldingItem;
-import com.craisinlord.antarchy.content.item.CloudSharkFinSoupItem;
-import com.craisinlord.antarchy.content.item.CorneaEarItem;
-import com.craisinlord.antarchy.content.item.GravityGunItem;
-import com.craisinlord.antarchy.content.item.MinersDreamItem;
-import com.craisinlord.antarchy.content.item.DuctTapeBlockItem;
-import com.craisinlord.antarchy.content.item.BrutalflyElytraItem;
-import com.craisinlord.antarchy.content.item.MobComingSoonTooltipItem;
-import com.craisinlord.antarchy.content.item.MogglesItem;
-import com.craisinlord.antarchy.content.item.ultimate.UltimateAxeItem;
-import com.craisinlord.antarchy.content.item.ultimate.UltimateHoeItem;
-import com.craisinlord.antarchy.content.item.ultimate.UltimatePickaxeItem;
-import com.craisinlord.antarchy.content.item.ultimate.UtlimateShovelItem;
-import com.craisinlord.antarchy.content.item.ultimate.UltimateSwordItem;
-import com.craisinlord.antarchy.content.item.DiamondMinecartItem;
-import com.craisinlord.antarchy.content.item.ReverieBottleItem;
-import com.craisinlord.antarchy.content.item.ScorpionWhipItem;
-import com.craisinlord.antarchy.content.item.ScorpionWhipTetherSync;
-import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakeSync;
-import com.craisinlord.antarchy.content.item.SizeRayItem;
-import com.craisinlord.antarchy.content.item.SquidzookaItem;
-import com.craisinlord.antarchy.content.item.SimpleToolTier;
-import com.craisinlord.antarchy.content.item.ultimate.UltimateArmorItem;
-import com.craisinlord.antarchy.content.item.ultimate.UltimateBowItem;
-import com.craisinlord.antarchy.content.item.ultimate.UltimateCrossbowItem;
-import com.craisinlord.antarchy.content.item.NightmareArmorItem;
-import com.craisinlord.antarchy.content.item.NightmareSwordItem;
-import com.craisinlord.antarchy.content.item.OuranwoodBoatOnlyItem;
-import com.craisinlord.antarchy.content.item.OuranwoodChestBoatItem;
-import com.craisinlord.antarchy.content.item.RainbowSugarItem;
-import com.craisinlord.antarchy.content.worldgen.elythia.CoralSpikeFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaBiomeSource;
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverCarveFunction;
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaFloraFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaLargeTuffBoulderFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.PeachForestMossyBoulderFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.PeachForestPondConfiguration;
-import com.craisinlord.antarchy.content.worldgen.elythia.PeachForestPondFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaPondFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaSurfaceCoverFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaTuffBoulderFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaUndergroundFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.MolewormCaveEntranceFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.MolewormSurfaceMoundsFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.BrutalflyCocoonFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.LumenPoolFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.LumenLilyPadFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.LumenStreamFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.MolewormTunnelsFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.MolewormWarrensFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.OuranwoodCocoonTreeFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.OuranwoodTreeConfiguration;
-import com.craisinlord.antarchy.content.worldgen.elythia.OuranwoodTreeFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.PeachTreeConfiguration;
-import com.craisinlord.antarchy.content.worldgen.elythia.PeachTreeFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.TriffidPatchFeature;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynEggPatchFeature;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.ChitenSpikeConfiguration;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.ChitenSpikeFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.BedBugNestFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.BedBugSurfaceClusterFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.CloudSeaCalciteFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.LucidAntiwaterPoolFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBiomeSource;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisDuneConfiguration;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisDuneFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisFissureConfiguration;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisFissureFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBloodCrystalConfiguration;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBloodCrystalFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisAntiwaterPoolConfiguration;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisAntiwaterPoolFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisRibColumnsConfiguration;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisRibColumnsFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisSpikeConfiguration;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisSpikeFeature;
-import com.craisinlord.antarchy.content.client.particle.InvertedGeyserBaseParticleOptions;
-import com.craisinlord.antarchy.content.client.particle.InvertedGeyserParticleOptions;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Comparator;
 import com.mojang.serialization.MapCodec;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
-import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
-import net.minecraft.advancements.critereon.EntitySubPredicate;
-import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionContents;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.Cow;
-import net.minecraft.world.entity.animal.Rabbit;
-import net.minecraft.world.entity.SpawnPlacementTypes;
-import net.minecraft.world.entity.SpawnPlacements;
-import net.minecraft.world.entity.npc.Villager;
-import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.StandingAndWallBlockItem;
-import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.Tiers;
-import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleType;
-import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.AmethystClusterBlock;
@@ -248,18 +37,9 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.biome.BiomeSource;
-import net.minecraft.world.level.levelgen.DensityFunction;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
-import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
-import net.minecraft.world.level.levelgen.Heightmap;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
-import com.craisinlord.antarchy.fabric.AntarchyFabricContent;
 
 public final class AntarchyFabricBlocks {
 
@@ -787,6 +567,8 @@ public final class AntarchyFabricBlocks {
 
     public static final DeferredBlock<DreamWallTorchBlock> DREAM_WALL_TORCH = BLOCKS.register("dream_wall_torch",
             () -> new DreamWallTorchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_WALL_TORCH)));
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.DreamCeilingTorchBlock> DREAM_CEILING_TORCH = BLOCKS.register("dream_ceiling_torch",
+            () -> new com.craisinlord.antarchy.content.block.DreamCeilingTorchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_TORCH)));
 
 
     public static final DeferredBlock<net.minecraft.world.level.block.LanternBlock> DREAM_LANTERN = BLOCKS.register("dream_lantern",
@@ -925,6 +707,24 @@ public final class AntarchyFabricBlocks {
 
     public static final DeferredBlock<Block> DEEPSLATE_TITANIUM_ORE = BLOCKS.register("deepslate_titanium_ore",
             () -> createOre(Blocks.DEEPSLATE_DIAMOND_ORE, 4, 8, MapColor.COLOR_LIGHT_BLUE));
+
+
+    public static final DeferredBlock<BluestoneOreBlock> BLUESTONE_ORE = BLOCKS.register("bluestone_ore",
+            () -> new BluestoneOreBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.REDSTONE_ORE).mapColor(MapColor.COLOR_BLUE)));
+
+
+    public static final DeferredBlock<BluestoneWireBlock> BLUESTONE_WIRE = BLOCKS.register("bluestone_wire",
+            () -> new BluestoneWireBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.REDSTONE_WIRE).mapColor(MapColor.COLOR_BLUE).noCollission().instabreak()));
+
+
+    public static final DeferredBlock<BluestoneBlock> BLUESTONE_BLOCK = BLOCKS.register("bluestone_block",
+            () -> new BluestoneBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.REDSTONE_BLOCK).mapColor(MapColor.COLOR_BLUE)));
+    public static final DeferredBlock<BluestoneRepeaterBlock> BLUESTONE_REPEATER = BLOCKS.register("bluestone_repeater",
+            () -> new BluestoneRepeaterBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.REPEATER).mapColor(MapColor.COLOR_BLUE).noCollission()));
+    public static final DeferredBlock<BluestoneComparatorBlock> BLUESTONE_COMPARATOR = BLOCKS.register("bluestone_comparator",
+            () -> new BluestoneComparatorBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.COMPARATOR).mapColor(MapColor.COLOR_BLUE).noCollission(), AntarchyFabricBlocks::bluestoneComparatorBlockEntityType));
+    public static final DeferredBlock<BluestoneTorchBlock> BLUESTONE_TORCH = BLOCKS.register("bluestone_torch",
+            () -> new BluestoneTorchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.REDSTONE_TORCH).mapColor(MapColor.COLOR_BLUE).lightLevel(state -> state.getValue(BluestoneTorchBlock.LIT) ? 7 : 0).noCollission().instabreak()));
 
 
     public static final DeferredBlock<Block> URANIUM_BLOCK = BLOCKS.register("uranium_block",
@@ -1202,6 +1002,11 @@ public final class AntarchyFabricBlocks {
                     CritterCageBlockEntity::new,
                     CRITTER_CAGE_BLOCK.get()
             ).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity>> BLUESTONE_COMPARATOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("bluestone_comparator",
+            () -> BlockEntityType.Builder.of(
+                    (pos, state) -> new com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity(pos, state, AntarchyFabricBlocks::bluestoneComparatorBlockEntityType),
+                    BLUESTONE_COMPARATOR.get()
+            ).build(null));
 
 
 
@@ -1223,6 +1028,10 @@ public final class AntarchyFabricBlocks {
 
     private static BlockEntityType<SeashellBlockEntity> seashellBlockEntityType() {
         return SEASHELL_BLOCK_ENTITY.get();
+    }
+
+    private static BlockEntityType<com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity> bluestoneComparatorBlockEntityType() {
+        return BLUESTONE_COMPARATOR_BLOCK_ENTITY.get();
     }
 
 

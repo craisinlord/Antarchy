@@ -15,7 +15,6 @@ public final class AntarchySettings {
     private static boolean termiteRequiresReagent = false;
     private static boolean antsStealFromChests = true;
     private static boolean duplicatorTreeEnabled = true;
-    private static boolean glowingTorchflowers = true;
     private static boolean glowVinesUnderLeaves = true;
     private static boolean swingThroughGrassEnabled = true;
     private static boolean fabricKeybindingConflictFixEnabled = true;
@@ -71,12 +70,12 @@ public final class AntarchySettings {
     private static double scorpionWhipReachBonus = 5.0D;
     private static int scorpionWhipPoisonDurationTicks = 100;
     private static double scorpionWhipTetherMaxRange = 10.0D;
-    private static int scorpionWhipReelCooldownTicks = 10;
     private static double scorpionWhipSnapBonusDamage = 6.0D;
-    private static int scorpionWhipSnapCooldownTicks = 30;
     private static double scorpionWhipPullStrength = 0.75D;
     private static double scorpionWhipHeavyPullMultiplier = 0.25D;
     private static double scorpionWhipSelfPullMultiplier = 0.45D;
+    private static int scorpionWhipReelCooldownTicks = 10;
+    private static int scorpionWhipSnapCooldownTicks = 30;
     private static int bloodCrystalKatanaAttackDamage = 7;
     private static double bloodCrystalKatanaLaunchStrength = 1.1D;
     private static int bloodCrystalKatanaTrailDurationTicks = 12;
@@ -124,13 +123,12 @@ public final class AntarchySettings {
     private static double rollyPollyHealth = 25.0D;
     private static double rollyPollyMovementSpeed = 0.3D;
     private static double rollyPollyRollSpeedMultiplier = 2.2D;
-    private static double rollyPollyTumbleDamage = 1.0D;
     private static int rollyPollyTameChance = 3;
     private static double rollyPollyBowlingDamage = 3.0D;
+    private static double rollyPollyTumbleDamage = 3.0D;
     private static double rollyPollyBowlingKnockback = 0.8D;
     private static double rollyPollyArmor = 2.0D;
     private static double rollyPollyRolledArmorBonus = 16.0D;
-    private static double krakenProjectileDamageTakenMultiplier = 0.5D;
     private static boolean krakenSquidSpawnEnabled = true;
     private static boolean krakenMassSpawnEnabled = true;
     private static boolean krakenRequireBadOmenToSummon = true;
@@ -165,15 +163,12 @@ public final class AntarchySettings {
     private static double americanBonusSaturation = 1.0D;
     private static int americanRegenerationDurationTicks = 60;
     private static int americanRegenerationAmplifier = 0;
-    private static int mogglesVisionRadius = 2;
-    private static int mogglesVisionMaxLight = 7;
-    private static float mogglesVisionAlpha = 0.35f;
     private static boolean dreamSandEnabled = true;
     private static boolean entitySpecificFireOverlayEnabled = true;
     private static double dreamSandJumpVelocityMultiplier = 1.3D;
     private static double dreamSandGravityMultiplier = 0.45D;
-    private static double dreamSandFallDamageMultiplier = 0.35D;
     private static double dreamSandEffectDurationSeconds = 7.0D;
+    private static double dreamSandFallDamageMultiplier = 0.4D;
     private static double dreamSandFallingBlockGravityMultiplier = 0.4D;
     private static boolean ichorWitherEnabled = true;
     private static int nightmareHelmetArmorValue = 3;
@@ -185,7 +180,6 @@ public final class AntarchySettings {
     private static double nightmareLeggingsArmorToughness = 3.0D;
     private static double nightmareBootsArmorToughness = 3.0D;
     
-    private static double nightmareArmorDreadAuraRangePerPiece = 1.25D;
     private static double nightmareHelmetDoubleDamageChance = 0.04D;
     private static double nightmareChestplateDoubleDamageChance = 0.06D;
     private static double nightmareLeggingsDoubleDamageChance = 0.05D;
@@ -239,32 +233,27 @@ public final class AntarchySettings {
     private static double termiteAttackDamage = 1.0D;
     private static double flyingSquirrelHealth = 10.0D;
     private static double flyingSquirrelMovementSpeed = 0.35D;
-    private static double flyingSquirrelFollowRange = 16.0D;
     private static double caterpillarHealth = 6.0D;
     private static double caterpillarMovementSpeed = 0.24D;
-    private static double caterpillarFollowRange = 14.0D;
     private static double caterpillarPupationTimeSeconds = 600.0D;
     private static double butterflyHealth = 6.0D;
     private static double butterflyMovementSpeed = 0.3D;
     private static double butterflyFlyingSpeed = 0.55D;
-    private static double butterflyFollowRange = 32.0D;
     private static double  reverieHealth = 20.0D;
     private static double  reverieInterestRadius = 16.0D;
     private static double  reverieAbandonPlayerDistance = 24.0D;
     private static int     reverieNoticeDurationTicks = 20;
     private static int     reverieInterestDurationTicks = 360;
     private static int     reverieRebindCooldownTicks = 100;
-    private static int     reverieDamageReactionDurationTicks = 40;
+    private static int     reverieDamageReactionDurationTicks = 60;
     private static double  reverieDangerousFallDistance = 4.0D;
     private static double  reverieDangerousFallSpeed = 0.18D;
     private static double  reverieWarningThreatRadius = 10.0D;
     private static double  reverieWarningThreatVerticalRange = 5.0D;
     private static int     reverieDuplicationCooldownTicks = 6000;
-    private static final boolean reverieOnlyPlayerDamage         = true;
     private static final double  reveriePreferredFollowMinDistance = 2.5D;
     private static final double  reveriePreferredFollowMaxDistance = 2.5D;
     private static final double  reverieCatchUpDistance           = 12.0D;
-    private static final double  reveriePurpleProtectRadius       = 2.7D;
     private static final int     reverieWarningApproachTicks      = 8;
     private static final int     reverieWarningHoverTicks         = 6;
     private static final int     reverieWarningReturnTicks        = 8;
@@ -299,126 +288,44 @@ public final class AntarchySettings {
     private static double scorpionMovementSpeed = 0.29D;
     private static double scorpionArmor = 2.0D;
     private static double scorpionKnockbackResistance = 0.2D;
-    private static double scorpionFollowRange = 24.0D;
-    private static int scorpionXpReward = 5;
-    private static int scorpionAttackAnimTicks = 12;
-    private static int scorpionAttackHitTick = 6;
-    private static int scorpionAttackCooldownTicks = 16;
-    private static int scorpionPoisonTicks = 80;
     private static double bedBugHealth = 18.0D;
     private static double bedBugAttackDamage = 4.0D;
     private static double bedBugMovementSpeed = 0.24D;
     private static double bedBugArmor = 2.0D;
-    private static double bedBugFollowRange = 20.0D;
-    private static int bedBugXpReward = 4;
-    private static int bedBugBiteAnimTicks = 10;
-    private static int bedBugAttackHitTick = 5;
-    private static int bedBugAttackCooldownTicks = 12;
-    private static int bedBugMinLayEggDelay = 80;
-    private static int bedBugMaxLayEggDelay = 160;
-    private static double bedBugFoodSearchRadius = 10.0D;
-    private static double bedBugEggGuardRadius = 7.0D;
-    private static double bedBugAttackStartReachBuffer = 1.15D;
-    private static double bedBugAttackReachBuffer = 0.3D;
-    private static double bedBugAttackLungeHorizontalSpeed = 0.42D;
-    private static double bedBugAttackLungeVerticalSpeed = 0.1D;
-    private static float bedBugHealAmount = 2.0F;
     private static double jumpyBugHealth = 100.0D;
     private static double jumpyBugPounceDamage = 12.0D;
-    private static double jumpyBugLatchDamage = 1.0D;
+    private static double jumpyBugLatchDamage = 12.0D;
     private static double jumpyBugCamouflageAlpha = 0.18D;
     private static double brutalflyArmor = 10.0D;
     private static double brutalflyArmorToughness = 4.0D;
     private static double brutalflyKnockbackResistance = 0.7D;
     private static double brutalflyMovementSpeed = 0.34D;
     private static double brutalflyFlyingSpeed = 0.55D;
-    private static double brutalflyFollowRange = 48.0D;
-    private static int brutalflyXpReward = 80;
-    private static int brutalflyDeathSpawnCountMin = 5;
-    private static int brutalflyDeathSpawnCountMax = 10;
-    private static int brutalflySpitWindupTicks = 16;
-    private static int brutalflySwipeTicks = 18;
-    private static float brutalflySwipeKnockback = 2.8F;
-    private static int brutalflyPhaseOneSpitCooldownMin = 70;
-    private static int brutalflyPhaseOneSpitCooldownMax = 95;
-    private static int brutalflyPhaseTwoSpitCooldownMin = 42;
-    private static int brutalflyPhaseTwoSpitCooldownMax = 60;
-    private static int brutalflyPhaseThreeSpitCooldownMin = 26;
-    private static int brutalflyPhaseThreeSpitCooldownMax = 40;
-    private static int brutalflyPhaseOneMeleeCooldownMin = 42;
-    private static int brutalflyPhaseOneMeleeCooldownMax = 51;
-    private static int brutalflyPhaseTwoMeleeCooldownMin = 30;
-    private static int brutalflyPhaseTwoMeleeCooldownMax = 37;
-    private static int brutalflyPhaseThreeMeleeCooldownMin = 20;
-    private static int brutalflyPhaseThreeMeleeCooldownMax = 26;
     private static double cloudSharkHealth = 40.0D;
     private static double cloudSharkAttackDamage = 5.0D;
     private static double cloudSharkMovementSpeed = 0.34D;
     private static double cloudSharkFlyingSpeed = 0.5D;
-    private static double cloudSharkFollowRange = 40.0D;
     private static double cloudSharkKnockbackResistance = 0.2D;
-    private static int cloudSharkXpReward = 8;
     private static double krakenMovementSpeed = 0.24D;
     private static double krakenFlyingSpeed = 0.24D;
-    private static double krakenFollowRange = 64.0D;
     private static double krakenKnockbackResistance = 0.8D;
     private static double krakenArmor = 8.0D;
-    private static int krakenXpReward = 60;
-    private static double krakenPhaseTwoSpeedBonus = 0.15D;
-    private static double krakenPhaseTwoFlyingSpeedBonus = 0.15D;
-    private static double krakenPhaseTwoDamageBonus = 4.0D;
+    private static double krakenProjectileDamageTakenMultiplier = 0.5D;
     private static double krakenBossBarRange = 40.0D;
     private static float krakenLightningDamagePhaseOne = 8.0F;
-    private static float krakenLightningDamagePhaseTwo = 12.0F;
-    private static int krakenLightningAmbientCooldownPhaseOneMin = 80;
-    private static int krakenLightningAmbientCooldownPhaseOneMax = 160;
-    private static int krakenLightningAmbientCooldownPhaseTwoMin = 35;
-    private static int krakenLightningAmbientCooldownPhaseTwoMax = 70;
-    private static int krakenLightningStrikeCooldownPhaseOneMin = 60;
-    private static int krakenLightningStrikeCooldownPhaseOneMax = 140;
-    private static int krakenLightningStrikeCooldownPhaseTwoMin = 26;
-    private static int krakenLightningStrikeCooldownPhaseTwoMax = 46;
-    private static int krakenPhaseSummonCooldownPhaseOneMin = 90;
-    private static int krakenPhaseSummonCooldownPhaseOneMax = 140;
-    private static int krakenPhaseSummonCooldownPhaseTwoMin = 90;
-    private static int krakenPhaseSummonCooldownPhaseTwoMax = 140;
-    private static int krakenPhaseSummonedMinionsMin = 1;
-    private static int krakenPhaseSummonedMinionsMax = 2;
-    private static int krakenPhaseTwoMinionsNearbyCap = 12;
-    private static int krakenPhaseTwoMinionSpawnAttempts = 18;
     private static double lucidHealth = 30.0D;
     private static double lucidAttackDamage = 4.0D;
     private static double lucidMovementSpeed = 0.22D;
     private static double lucidFlyingSpeed = 0.35D;
-    private static double lucidFollowRange = 40.0D;
     private static double lucidKnockbackResistance = 0.5D;
-    private static int lucidXpReward = 10;
-    private static int lucidAttackWindupTicks = 16;
-    private static int lucidAttackRecoveryTicks = 8;
-    private static int lucidBurstShots = 3;
-    private static int lucidBurstIntervalTicks = 6;
-    private static int lucidAttackCooldownTicks = 52;
-    private static double lucidMinEffectiveAttackRange = 10.0D;
-    private static double lucidMinHoverRange = 6.5D;
-    private static double lucidCloseRange = 4.5D;
-    private static double lucidDefaultHoverHeight = 2.75D;
-    private static double lucidHitboxWidthScale = 1.3D;
-    private static double lucidHitboxHeightScale = 1.48D;
-    private static double lucidHitboxYOffset = 1.08D;
     private static double missileSquidHealth = 50.0D;
     private static double missileSquidAttackDamage = 6.0D;
     private static double missileSquidMovementSpeed = 0.84D;
     private static double missileSquidFlyingSpeed = 0.84D;
-    private static double missileSquidFollowRange = 20.0D;
     private static double missileSquidKnockbackResistance = 0.15D;
-    private static int missileSquidXpReward = 6;
-    private static int missileSquidLatchDamageInterval = 15;
-    private static float missileSquidLatchDamage = 2.0F;
-    private static double missileSquidAttachRangeSqr = 2.25D;
     private static double molewormHealth = 8.0D;
     private static double molewormAttackDamage = 1.0D;
     private static double molewormMovementSpeed = 0.25D;
-    private static int molewormXpReward = 0;
     private static double triffidHealth = 80.0D;
     private static double triffidAttackDamage = 10.0D;
     private static double triffidGrabDamage = 15.0D;
@@ -452,19 +359,6 @@ public final class AntarchySettings {
     private static int nightmareBedBugEggSearchInterval = 30;
     private static int nightmareDreadTicks = 160;
     private static int nightmareWeaknessTicks = 100;
-    private static double nightmarePatrolSpeed = 0.34D;
-    private static double nightmareCombatFlightSpeed = 0.58D;
-    private static double nightmareGroundApproachSpeed = 0.82D;
-    private static double nightmareAttackStartRangeSqr = 42.25D;
-    private static double nightmareGroundApproachRangeSqr = 16.0D * 16.0D;
-    private static double nightmareAttackReachRadius = 2.65D;
-    private static double nightmareAttackCommitHorizontalRange = 4.2D;
-    private static double nightmareAttackCommitVerticalRange = 2.8D;
-    private static double nightmareFlightReengageRangeSqr = 10.0D * 10.0D;
-    private static double nightmareCloseApproachRangeSqr = 6.0D * 6.0D;
-    private static double nightmareRoarRetryDistanceSqr = 20.0D * 20.0D;
-    private static double nightmareBedBugEggBreakRangeSqr = 2.8D * 2.8D;
-    private static float nightmareAirPatrolChance = 0.2F;
     private static double battleAxeAttackSpeed = -3.1D;
     private static double basiliskDaggerAttackDamage = 6.0D;
     private static double basiliskDaggerAttackSpeed = -1.8D;
@@ -482,7 +376,11 @@ public final class AntarchySettings {
     private static double ductTapeRepairPercentPerUse = 0.25D;
     private static double ultimateArmorKnockbackResistance = 0.1D;
     private static double nightmareArmorKnockbackResistance = 0.1D;
+    private static double nightmareArmorDreadAuraRangePerPiece = 2.0D;
     private static double primordialArmorKnockbackPerPiece = 0.5D;
+    private static double mogglesVisionRadius = 20.0D;
+    private static int mogglesVisionMaxLight = 7;
+    private static double mogglesVisionAlpha = 0.65D;
     private static int fallenKingCrownArmorValue = 2;
     private static double fallenKingCrownArmorToughness = 0.0D;
     private static boolean permanentPortalsEnabled = true;
@@ -491,6 +389,7 @@ public final class AntarchySettings {
     private static boolean thoraxisPortalEnabled = true;
     private static boolean cavarynPortalEnabled = true;
     private static boolean elythiaFireflyParticlesEnabled = true;
+    private static boolean glowingTorchflowers = true;
     private static int bloodCrystalArmorShieldRechargeTicks = 600;
     private static int bloodCrystalAppleShieldCount = 2;
     private static int bloodCrystalAppleDurationTicks = 2400;
@@ -511,7 +410,7 @@ public final class AntarchySettings {
     private static double toreterrorJumpAttackKnockback = 2.5D;
     private static double toreterrorSpinDamage = 6.0D;
     private static double toreterrorSpinKnockback = 0.9D;
-    private static double toreterrorRangedWaterBombChance = 0.5D;
+    private static double toreterrorRangedWaterBombChance = 0.35D;
     private static double toreterrorProjectileDamageMultiplier = 0.5D;
     private static double waterBombDamage = 6.0D;
     private static int waterBombLifetimeTicks = 120;
@@ -586,12 +485,12 @@ public final class AntarchySettings {
         return duplicatorTreeEnabled;
     }
 
-    public static boolean glowingTorchflowers() {
-        return glowingTorchflowers;
-    }
-
     public static boolean glowVinesUnderLeaves() {
         return glowVinesUnderLeaves;
+    }
+
+    public static boolean glowingTorchflowers() {
+        return glowingTorchflowers;
     }
 
     public static boolean swingThroughGrassEnabled() {
@@ -829,7 +728,6 @@ public final class AntarchySettings {
     public static double krakensGraspAttackDamage() { return krakensGraspAttackDamage; }
     public static double krakensGraspAttackSpeed() { return krakensGraspAttackSpeed; }
     public static double krakensGraspThrownDamage() { return krakensGraspThrownDamage; }
-    public static double krakensGraspLightningDamage() { return krakensGraspLightningDamage; }
     public static boolean krakensGraspInnateLoyalty() { return krakensGraspInnateLoyalty; }
     public static int krakensGraspInnateLoyaltyLevel() { return krakensGraspInnateLoyaltyLevel; }
     public static int krakensGraspTentacleDurationTicks() { return krakensGraspTentacleDurationTicks; }
@@ -921,16 +819,16 @@ public final class AntarchySettings {
         return rollyPollyRollSpeedMultiplier;
     }
 
-    public static double rollyPollyTumbleDamage() {
-        return rollyPollyTumbleDamage;
-    }
-
     public static int rollyPollyTameChance() {
         return rollyPollyTameChance;
     }
 
     public static double rollyPollyBowlingDamage() {
         return rollyPollyBowlingDamage;
+    }
+
+    public static double rollyPollyTumbleDamage() {
+        return rollyPollyTumbleDamage;
     }
 
     public static double rollyPollyBowlingKnockback() {
@@ -975,10 +873,6 @@ public final class AntarchySettings {
 
     public static double bomberExplosionRadius() {
         return bomberExplosionRadius;
-    }
-
-    public static double krakenProjectileDamageTakenMultiplier() {
-        return krakenProjectileDamageTakenMultiplier;
     }
 
     public static boolean krakenSquidSpawnEnabled() {
@@ -1140,12 +1034,12 @@ public final class AntarchySettings {
         duplicatorTreeEnabled = value;
     }
 
-    public static void setGlowingTorchflowers(boolean value) {
-        glowingTorchflowers = value;
-    }
-
     public static void setGlowVinesUnderLeaves(boolean value) {
         glowVinesUnderLeaves = value;
+    }
+
+    public static void setGlowingTorchflowers(boolean value) {
+        glowingTorchflowers = value;
     }
 
     public static void setSwingThroughGrassEnabled(boolean value) {
@@ -1479,16 +1373,16 @@ public final class AntarchySettings {
         rollyPollyRollSpeedMultiplier = value;
     }
 
-    public static void setRollyPollyTumbleDamage(double value) {
-        rollyPollyTumbleDamage = value;
-    }
-
     public static void setRollyPollyTameChance(int value) {
         rollyPollyTameChance = value;
     }
 
     public static void setRollyPollyBowlingDamage(double value) {
         rollyPollyBowlingDamage = value;
+    }
+
+    public static void setRollyPollyTumbleDamage(double value) {
+        rollyPollyTumbleDamage = value;
     }
 
     public static void setRollyPollyBowlingKnockback(double value) {
@@ -1501,10 +1395,6 @@ public final class AntarchySettings {
 
     public static void setRollyPollyRolledArmorBonus(double value) {
         rollyPollyRolledArmorBonus = value;
-    }
-
-    public static void setKrakenProjectileDamageTakenMultiplier(double value) {
-        krakenProjectileDamageTakenMultiplier = value;
     }
 
     public static void setKrakenSquidSpawnEnabled(boolean value) {
@@ -1664,30 +1554,6 @@ public final class AntarchySettings {
         americanRegenerationAmplifier = value;
     }
 
-    public static int mogglesVisionRadius() {
-        return mogglesVisionRadius;
-    }
-
-    public static void setMogglesVisionRadius(int value) {
-        mogglesVisionRadius = value;
-    }
-
-    public static int mogglesVisionMaxLight() {
-        return mogglesVisionMaxLight;
-    }
-
-    public static void setMogglesVisionMaxLight(int value) {
-        mogglesVisionMaxLight = value;
-    }
-
-    public static float mogglesVisionAlpha() {
-        return mogglesVisionAlpha;
-    }
-
-    public static void setMogglesVisionAlpha(float value) {
-        mogglesVisionAlpha = value;
-    }
-
     public static boolean dreamSandEnabled() {
         return dreamSandEnabled;
     }
@@ -1720,20 +1586,20 @@ public final class AntarchySettings {
         dreamSandGravityMultiplier = value;
     }
 
-    public static double dreamSandFallDamageMultiplier() {
-        return dreamSandFallDamageMultiplier;
-    }
-
-    public static void setDreamSandFallDamageMultiplier(double value) {
-        dreamSandFallDamageMultiplier = value;
-    }
-
     public static double dreamSandEffectDurationSeconds() {
         return dreamSandEffectDurationSeconds;
     }
 
     public static void setDreamSandEffectDurationSeconds(double value) {
         dreamSandEffectDurationSeconds = value;
+    }
+
+    public static double dreamSandFallDamageMultiplier() {
+        return dreamSandFallDamageMultiplier;
+    }
+
+    public static void setDreamSandFallDamageMultiplier(double value) {
+        dreamSandFallDamageMultiplier = value;
     }
 
     public static double dreamSandFallingBlockGravityMultiplier() {
@@ -1776,8 +1642,14 @@ public final class AntarchySettings {
     public static double nightmareBootsArmorToughness() { return nightmareBootsArmorToughness; }
     public static void setNightmareBootsArmorToughness(double v) { nightmareBootsArmorToughness = v; }
 
-    public static double nightmareArmorDreadAuraRangePerPiece() { return nightmareArmorDreadAuraRangePerPiece; }
     public static void setNightmareArmorDreadAuraRangePerPiece(double v) { nightmareArmorDreadAuraRangePerPiece = v; }
+    public static double nightmareArmorDreadAuraRangePerPiece() { return nightmareArmorDreadAuraRangePerPiece; }
+    public static void setMogglesVisionRadius(double v) { mogglesVisionRadius = v; }
+    public static double mogglesVisionRadius() { return mogglesVisionRadius; }
+    public static void setMogglesVisionMaxLight(int v) { mogglesVisionMaxLight = v; }
+    public static int mogglesVisionMaxLight() { return mogglesVisionMaxLight; }
+    public static void setMogglesVisionAlpha(double v) { mogglesVisionAlpha = v; }
+    public static double mogglesVisionAlpha() { return mogglesVisionAlpha; }
 
     public static double nightmareHelmetDoubleDamageChance() { return nightmareHelmetDoubleDamageChance; }
     public static void setNightmareHelmetDoubleDamageChance(double v) { nightmareHelmetDoubleDamageChance = v; }
@@ -1972,17 +1844,11 @@ public final class AntarchySettings {
     public static double flyingSquirrelMovementSpeed() { return flyingSquirrelMovementSpeed; }
     public static void setFlyingSquirrelMovementSpeed(double value) { flyingSquirrelMovementSpeed = value; }
 
-    public static double flyingSquirrelFollowRange() { return flyingSquirrelFollowRange; }
-    public static void setFlyingSquirrelFollowRange(double value) { flyingSquirrelFollowRange = value; }
-
     public static double caterpillarHealth() { return caterpillarHealth; }
     public static void setCaterpillarHealth(double value) { caterpillarHealth = value; }
 
     public static double caterpillarMovementSpeed() { return caterpillarMovementSpeed; }
     public static void setCaterpillarMovementSpeed(double value) { caterpillarMovementSpeed = value; }
-
-    public static double caterpillarFollowRange() { return caterpillarFollowRange; }
-    public static void setCaterpillarFollowRange(double value) { caterpillarFollowRange = value; }
 
     public static double caterpillarPupationTimeSeconds() { return caterpillarPupationTimeSeconds; }
     public static void setCaterpillarPupationTimeSeconds(double value) { caterpillarPupationTimeSeconds = value; }
@@ -2002,9 +1868,6 @@ public final class AntarchySettings {
     public static double butterflyFlyingSpeed() { return butterflyFlyingSpeed; }
     public static void setButterflyFlyingSpeed(double value) { butterflyFlyingSpeed = value; }
 
-    public static double butterflyFollowRange() { return butterflyFollowRange; }
-    public static void setButterflyFollowRange(double value) { butterflyFollowRange = value; }
-
     public static double  reverieHealth()                      { return reverieHealth; }
     public static void    setReverieHealth(double value)       { reverieHealth = value; }
 
@@ -2022,9 +1885,8 @@ public final class AntarchySettings {
 
     public static int     reverieRebindCooldownTicks()             { return reverieRebindCooldownTicks; }
     public static void    setReverieRebindCooldownTicks(int v)     { reverieRebindCooldownTicks = v; }
-
     public static int     reverieDamageReactionDurationTicks()     { return reverieDamageReactionDurationTicks; }
-    public static void    setReverieDamageReactionDurationTicks(int v){ reverieDamageReactionDurationTicks = v; }
+    public static void    setReverieDamageReactionDurationTicks(int v) { reverieDamageReactionDurationTicks = v; }
 
     public static double  reverieDangerousFallDistance()           { return reverieDangerousFallDistance; }
     public static void    setReverieDangerousFallDistance(double v){ reverieDangerousFallDistance = v; }
@@ -2042,11 +1904,9 @@ public final class AntarchySettings {
     public static void    setReverieDuplicationCooldownTicks(int v){ reverieDuplicationCooldownTicks = v; }
 
     // Hardcoded AI tuning — getters only, no config wiring
-    public static boolean reverieOnlyPlayerDamage()              { return reverieOnlyPlayerDamage; }
     public static double  reveriePreferredFollowMinDistance()    { return reveriePreferredFollowMinDistance; }
     public static double  reveriePreferredFollowMaxDistance()    { return reveriePreferredFollowMaxDistance; }
     public static double  reverieCatchUpDistance()               { return reverieCatchUpDistance; }
-    public static double  reveriePurpleProtectRadius()           { return reveriePurpleProtectRadius; }
     public static int     reverieWarningApproachTicks()          { return reverieWarningApproachTicks; }
     public static int     reverieWarningHoverTicks()             { return reverieWarningHoverTicks; }
     public static int     reverieWarningReturnTicks()            { return reverieWarningReturnTicks; }
@@ -2073,14 +1933,8 @@ public final class AntarchySettings {
     public static double scorpionWhipTetherMaxRange() { return scorpionWhipTetherMaxRange; }
     public static void setScorpionWhipTetherMaxRange(double value) { scorpionWhipTetherMaxRange = value; }
 
-    public static int scorpionWhipReelCooldownTicks() { return scorpionWhipReelCooldownTicks; }
-    public static void setScorpionWhipReelCooldownTicks(int value) { scorpionWhipReelCooldownTicks = value; }
-
     public static double scorpionWhipSnapBonusDamage() { return scorpionWhipSnapBonusDamage; }
     public static void setScorpionWhipSnapBonusDamage(double value) { scorpionWhipSnapBonusDamage = value; }
-
-    public static int scorpionWhipSnapCooldownTicks() { return scorpionWhipSnapCooldownTicks; }
-    public static void setScorpionWhipSnapCooldownTicks(int value) { scorpionWhipSnapCooldownTicks = value; }
 
     public static double scorpionWhipPullStrength() { return scorpionWhipPullStrength; }
     public static void setScorpionWhipPullStrength(double value) { scorpionWhipPullStrength = value; }
@@ -2090,6 +1944,10 @@ public final class AntarchySettings {
 
     public static double scorpionWhipSelfPullMultiplier() { return scorpionWhipSelfPullMultiplier; }
     public static void setScorpionWhipSelfPullMultiplier(double value) { scorpionWhipSelfPullMultiplier = value; }
+    public static int scorpionWhipReelCooldownTicks() { return scorpionWhipReelCooldownTicks; }
+    public static void setScorpionWhipReelCooldownTicks(int value) { scorpionWhipReelCooldownTicks = value; }
+    public static int scorpionWhipSnapCooldownTicks() { return scorpionWhipSnapCooldownTicks; }
+    public static void setScorpionWhipSnapCooldownTicks(int value) { scorpionWhipSnapCooldownTicks = value; }
 
     public static int bloodCrystalKatanaAttackDamage() { return bloodCrystalKatanaAttackDamage; }
     public static void setBloodCrystalKatanaAttackDamage(int value) { bloodCrystalKatanaAttackDamage = value; }
@@ -2169,24 +2027,6 @@ public final class AntarchySettings {
     public static double scorpionKnockbackResistance() { return scorpionKnockbackResistance; }
     public static void setScorpionKnockbackResistance(double value) { scorpionKnockbackResistance = value; }
 
-    public static double scorpionFollowRange() { return scorpionFollowRange; }
-    public static void setScorpionFollowRange(double value) { scorpionFollowRange = value; }
-
-    public static int scorpionXpReward() { return scorpionXpReward; }
-    public static void setScorpionXpReward(int value) { scorpionXpReward = value; }
-
-    public static int scorpionAttackAnimTicks() { return scorpionAttackAnimTicks; }
-    public static void setScorpionAttackAnimTicks(int value) { scorpionAttackAnimTicks = value; }
-
-    public static int scorpionAttackHitTick() { return scorpionAttackHitTick; }
-    public static void setScorpionAttackHitTick(int value) { scorpionAttackHitTick = value; }
-
-    public static int scorpionAttackCooldownTicks() { return scorpionAttackCooldownTicks; }
-    public static void setScorpionAttackCooldownTicks(int value) { scorpionAttackCooldownTicks = value; }
-
-    public static int scorpionPoisonTicks() { return scorpionPoisonTicks; }
-    public static void setScorpionPoisonTicks(int value) { scorpionPoisonTicks = value; }
-
     public static double bedBugHealth() { return bedBugHealth; }
     public static void setBedBugHealth(double value) { bedBugHealth = value; }
 
@@ -2199,54 +2039,11 @@ public final class AntarchySettings {
     public static double bedBugArmor() { return bedBugArmor; }
     public static void setBedBugArmor(double value) { bedBugArmor = value; }
 
-    public static double bedBugFollowRange() { return bedBugFollowRange; }
-    public static void setBedBugFollowRange(double value) { bedBugFollowRange = value; }
-
-    public static int bedBugXpReward() { return bedBugXpReward; }
-    public static void setBedBugXpReward(int value) { bedBugXpReward = value; }
-
-    public static int bedBugBiteAnimTicks() { return bedBugBiteAnimTicks; }
-    public static void setBedBugBiteAnimTicks(int value) { bedBugBiteAnimTicks = value; }
-
-    public static int bedBugAttackHitTick() { return bedBugAttackHitTick; }
-    public static void setBedBugAttackHitTick(int value) { bedBugAttackHitTick = value; }
-
-    public static int bedBugAttackCooldownTicks() { return bedBugAttackCooldownTicks; }
-    public static void setBedBugAttackCooldownTicks(int value) { bedBugAttackCooldownTicks = value; }
-
-    public static int bedBugMinLayEggDelay() { return bedBugMinLayEggDelay; }
-    public static void setBedBugMinLayEggDelay(int value) { bedBugMinLayEggDelay = value; }
-
-    public static int bedBugMaxLayEggDelay() { return bedBugMaxLayEggDelay; }
-    public static void setBedBugMaxLayEggDelay(int value) { bedBugMaxLayEggDelay = value; }
-
-    public static double bedBugFoodSearchRadius() { return bedBugFoodSearchRadius; }
-    public static void setBedBugFoodSearchRadius(double value) { bedBugFoodSearchRadius = value; }
-
-    public static double bedBugEggGuardRadius() { return bedBugEggGuardRadius; }
-    public static void setBedBugEggGuardRadius(double value) { bedBugEggGuardRadius = value; }
-
-    public static double bedBugAttackStartReachBuffer() { return bedBugAttackStartReachBuffer; }
-    public static void setBedBugAttackStartReachBuffer(double value) { bedBugAttackStartReachBuffer = value; }
-
-    public static double bedBugAttackReachBuffer() { return bedBugAttackReachBuffer; }
-    public static void setBedBugAttackReachBuffer(double value) { bedBugAttackReachBuffer = value; }
-
-    public static double bedBugAttackLungeHorizontalSpeed() { return bedBugAttackLungeHorizontalSpeed; }
-    public static void setBedBugAttackLungeHorizontalSpeed(double value) { bedBugAttackLungeHorizontalSpeed = value; }
-
-    public static double bedBugAttackLungeVerticalSpeed() { return bedBugAttackLungeVerticalSpeed; }
-    public static void setBedBugAttackLungeVerticalSpeed(double value) { bedBugAttackLungeVerticalSpeed = value; }
-
-    public static float bedBugHealAmount() { return bedBugHealAmount; }
-    public static void setBedBugHealAmount(float value) { bedBugHealAmount = value; }
-
     public static double jumpyBugHealth() { return jumpyBugHealth; }
     public static void setJumpyBugHealth(double value) { jumpyBugHealth = value; }
 
     public static double jumpyBugPounceDamage() { return jumpyBugPounceDamage; }
     public static void setJumpyBugPounceDamage(double value) { jumpyBugPounceDamage = value; }
-
     public static double jumpyBugLatchDamage() { return jumpyBugLatchDamage; }
     public static void setJumpyBugLatchDamage(double value) { jumpyBugLatchDamage = value; }
 
@@ -2268,63 +2065,6 @@ public final class AntarchySettings {
     public static double brutalflyFlyingSpeed() { return brutalflyFlyingSpeed; }
     public static void setBrutalflyFlyingSpeed(double value) { brutalflyFlyingSpeed = value; }
 
-    public static double brutalflyFollowRange() { return brutalflyFollowRange; }
-    public static void setBrutalflyFollowRange(double value) { brutalflyFollowRange = value; }
-
-    public static int brutalflyXpReward() { return brutalflyXpReward; }
-    public static void setBrutalflyXpReward(int value) { brutalflyXpReward = value; }
-
-    public static int brutalflyDeathSpawnCountMin() { return brutalflyDeathSpawnCountMin; }
-    public static void setBrutalflyDeathSpawnCountMin(int value) { brutalflyDeathSpawnCountMin = value; }
-
-    public static int brutalflyDeathSpawnCountMax() { return brutalflyDeathSpawnCountMax; }
-    public static void setBrutalflyDeathSpawnCountMax(int value) { brutalflyDeathSpawnCountMax = value; }
-
-    public static int brutalflySpitWindupTicks() { return brutalflySpitWindupTicks; }
-    public static void setBrutalflySpitWindupTicks(int value) { brutalflySpitWindupTicks = value; }
-
-    public static int brutalflySwipeTicks() { return brutalflySwipeTicks; }
-    public static void setBrutalflySwipeTicks(int value) { brutalflySwipeTicks = value; }
-
-    public static float brutalflySwipeKnockback() { return brutalflySwipeKnockback; }
-    public static void setBrutalflySwipeKnockback(float value) { brutalflySwipeKnockback = value; }
-
-    public static int brutalflyPhaseOneSpitCooldownMin() { return brutalflyPhaseOneSpitCooldownMin; }
-    public static void setBrutalflyPhaseOneSpitCooldownMin(int value) { brutalflyPhaseOneSpitCooldownMin = value; }
-
-    public static int brutalflyPhaseOneSpitCooldownMax() { return brutalflyPhaseOneSpitCooldownMax; }
-    public static void setBrutalflyPhaseOneSpitCooldownMax(int value) { brutalflyPhaseOneSpitCooldownMax = value; }
-
-    public static int brutalflyPhaseTwoSpitCooldownMin() { return brutalflyPhaseTwoSpitCooldownMin; }
-    public static void setBrutalflyPhaseTwoSpitCooldownMin(int value) { brutalflyPhaseTwoSpitCooldownMin = value; }
-
-    public static int brutalflyPhaseTwoSpitCooldownMax() { return brutalflyPhaseTwoSpitCooldownMax; }
-    public static void setBrutalflyPhaseTwoSpitCooldownMax(int value) { brutalflyPhaseTwoSpitCooldownMax = value; }
-
-    public static int brutalflyPhaseThreeSpitCooldownMin() { return brutalflyPhaseThreeSpitCooldownMin; }
-    public static void setBrutalflyPhaseThreeSpitCooldownMin(int value) { brutalflyPhaseThreeSpitCooldownMin = value; }
-
-    public static int brutalflyPhaseThreeSpitCooldownMax() { return brutalflyPhaseThreeSpitCooldownMax; }
-    public static void setBrutalflyPhaseThreeSpitCooldownMax(int value) { brutalflyPhaseThreeSpitCooldownMax = value; }
-
-    public static int brutalflyPhaseOneMeleeCooldownMin() { return brutalflyPhaseOneMeleeCooldownMin; }
-    public static void setBrutalflyPhaseOneMeleeCooldownMin(int value) { brutalflyPhaseOneMeleeCooldownMin = value; }
-
-    public static int brutalflyPhaseOneMeleeCooldownMax() { return brutalflyPhaseOneMeleeCooldownMax; }
-    public static void setBrutalflyPhaseOneMeleeCooldownMax(int value) { brutalflyPhaseOneMeleeCooldownMax = value; }
-
-    public static int brutalflyPhaseTwoMeleeCooldownMin() { return brutalflyPhaseTwoMeleeCooldownMin; }
-    public static void setBrutalflyPhaseTwoMeleeCooldownMin(int value) { brutalflyPhaseTwoMeleeCooldownMin = value; }
-
-    public static int brutalflyPhaseTwoMeleeCooldownMax() { return brutalflyPhaseTwoMeleeCooldownMax; }
-    public static void setBrutalflyPhaseTwoMeleeCooldownMax(int value) { brutalflyPhaseTwoMeleeCooldownMax = value; }
-
-    public static int brutalflyPhaseThreeMeleeCooldownMin() { return brutalflyPhaseThreeMeleeCooldownMin; }
-    public static void setBrutalflyPhaseThreeMeleeCooldownMin(int value) { brutalflyPhaseThreeMeleeCooldownMin = value; }
-
-    public static int brutalflyPhaseThreeMeleeCooldownMax() { return brutalflyPhaseThreeMeleeCooldownMax; }
-    public static void setBrutalflyPhaseThreeMeleeCooldownMax(int value) { brutalflyPhaseThreeMeleeCooldownMax = value; }
-
     public static double cloudSharkHealth() { return cloudSharkHealth; }
     public static void setCloudSharkHealth(double value) { cloudSharkHealth = value; }
 
@@ -2337,14 +2077,8 @@ public final class AntarchySettings {
     public static double cloudSharkFlyingSpeed() { return cloudSharkFlyingSpeed; }
     public static void setCloudSharkFlyingSpeed(double value) { cloudSharkFlyingSpeed = value; }
 
-    public static double cloudSharkFollowRange() { return cloudSharkFollowRange; }
-    public static void setCloudSharkFollowRange(double value) { cloudSharkFollowRange = value; }
-
     public static double cloudSharkKnockbackResistance() { return cloudSharkKnockbackResistance; }
     public static void setCloudSharkKnockbackResistance(double value) { cloudSharkKnockbackResistance = value; }
-
-    public static int cloudSharkXpReward() { return cloudSharkXpReward; }
-    public static void setCloudSharkXpReward(int value) { cloudSharkXpReward = value; }
 
     public static double krakenMovementSpeed() { return krakenMovementSpeed; }
     public static void setKrakenMovementSpeed(double value) { krakenMovementSpeed = value; }
@@ -2352,83 +2086,19 @@ public final class AntarchySettings {
     public static double krakenFlyingSpeed() { return krakenFlyingSpeed; }
     public static void setKrakenFlyingSpeed(double value) { krakenFlyingSpeed = value; }
 
-    public static double krakenFollowRange() { return krakenFollowRange; }
-    public static void setKrakenFollowRange(double value) { krakenFollowRange = value; }
-
     public static double krakenKnockbackResistance() { return krakenKnockbackResistance; }
     public static void setKrakenKnockbackResistance(double value) { krakenKnockbackResistance = value; }
 
     public static double krakenArmor() { return krakenArmor; }
     public static void setKrakenArmor(double value) { krakenArmor = value; }
-
-    public static int krakenXpReward() { return krakenXpReward; }
-    public static void setKrakenXpReward(int value) { krakenXpReward = value; }
-
-    public static double krakenPhaseTwoSpeedBonus() { return krakenPhaseTwoSpeedBonus; }
-    public static void setKrakenPhaseTwoSpeedBonus(double value) { krakenPhaseTwoSpeedBonus = value; }
-
-    public static double krakenPhaseTwoFlyingSpeedBonus() { return krakenPhaseTwoFlyingSpeedBonus; }
-    public static void setKrakenPhaseTwoFlyingSpeedBonus(double value) { krakenPhaseTwoFlyingSpeedBonus = value; }
-
-    public static double krakenPhaseTwoDamageBonus() { return krakenPhaseTwoDamageBonus; }
-    public static void setKrakenPhaseTwoDamageBonus(double value) { krakenPhaseTwoDamageBonus = value; }
+    public static double krakenProjectileDamageTakenMultiplier() { return krakenProjectileDamageTakenMultiplier; }
+    public static void setKrakenProjectileDamageTakenMultiplier(double value) { krakenProjectileDamageTakenMultiplier = value; }
 
     public static double krakenBossBarRange() { return krakenBossBarRange; }
     public static void setKrakenBossBarRange(double value) { krakenBossBarRange = value; }
 
     public static float krakenLightningDamagePhaseOne() { return krakenLightningDamagePhaseOne; }
     public static void setKrakenLightningDamagePhaseOne(float value) { krakenLightningDamagePhaseOne = value; }
-
-    public static float krakenLightningDamagePhaseTwo() { return krakenLightningDamagePhaseTwo; }
-    public static void setKrakenLightningDamagePhaseTwo(float value) { krakenLightningDamagePhaseTwo = value; }
-
-    public static int krakenLightningAmbientCooldownPhaseOneMin() { return krakenLightningAmbientCooldownPhaseOneMin; }
-    public static void setKrakenLightningAmbientCooldownPhaseOneMin(int value) { krakenLightningAmbientCooldownPhaseOneMin = value; }
-
-    public static int krakenLightningAmbientCooldownPhaseOneMax() { return krakenLightningAmbientCooldownPhaseOneMax; }
-    public static void setKrakenLightningAmbientCooldownPhaseOneMax(int value) { krakenLightningAmbientCooldownPhaseOneMax = value; }
-
-    public static int krakenLightningAmbientCooldownPhaseTwoMin() { return krakenLightningAmbientCooldownPhaseTwoMin; }
-    public static void setKrakenLightningAmbientCooldownPhaseTwoMin(int value) { krakenLightningAmbientCooldownPhaseTwoMin = value; }
-
-    public static int krakenLightningAmbientCooldownPhaseTwoMax() { return krakenLightningAmbientCooldownPhaseTwoMax; }
-    public static void setKrakenLightningAmbientCooldownPhaseTwoMax(int value) { krakenLightningAmbientCooldownPhaseTwoMax = value; }
-
-    public static int krakenLightningStrikeCooldownPhaseOneMin() { return krakenLightningStrikeCooldownPhaseOneMin; }
-    public static void setKrakenLightningStrikeCooldownPhaseOneMin(int value) { krakenLightningStrikeCooldownPhaseOneMin = value; }
-
-    public static int krakenLightningStrikeCooldownPhaseOneMax() { return krakenLightningStrikeCooldownPhaseOneMax; }
-    public static void setKrakenLightningStrikeCooldownPhaseOneMax(int value) { krakenLightningStrikeCooldownPhaseOneMax = value; }
-
-    public static int krakenLightningStrikeCooldownPhaseTwoMin() { return krakenLightningStrikeCooldownPhaseTwoMin; }
-    public static void setKrakenLightningStrikeCooldownPhaseTwoMin(int value) { krakenLightningStrikeCooldownPhaseTwoMin = value; }
-
-    public static int krakenLightningStrikeCooldownPhaseTwoMax() { return krakenLightningStrikeCooldownPhaseTwoMax; }
-    public static void setKrakenLightningStrikeCooldownPhaseTwoMax(int value) { krakenLightningStrikeCooldownPhaseTwoMax = value; }
-
-    public static int krakenPhaseSummonCooldownPhaseOneMin() { return krakenPhaseSummonCooldownPhaseOneMin; }
-    public static void setKrakenPhaseSummonCooldownPhaseOneMin(int value) { krakenPhaseSummonCooldownPhaseOneMin = value; }
-
-    public static int krakenPhaseSummonCooldownPhaseOneMax() { return krakenPhaseSummonCooldownPhaseOneMax; }
-    public static void setKrakenPhaseSummonCooldownPhaseOneMax(int value) { krakenPhaseSummonCooldownPhaseOneMax = value; }
-
-    public static int krakenPhaseSummonCooldownPhaseTwoMin() { return krakenPhaseSummonCooldownPhaseTwoMin; }
-    public static void setKrakenPhaseSummonCooldownPhaseTwoMin(int value) { krakenPhaseSummonCooldownPhaseTwoMin = value; }
-
-    public static int krakenPhaseSummonCooldownPhaseTwoMax() { return krakenPhaseSummonCooldownPhaseTwoMax; }
-    public static void setKrakenPhaseSummonCooldownPhaseTwoMax(int value) { krakenPhaseSummonCooldownPhaseTwoMax = value; }
-
-    public static int krakenPhaseSummonedMinionsMin() { return krakenPhaseSummonedMinionsMin; }
-    public static void setKrakenPhaseSummonedMinionsMin(int value) { krakenPhaseSummonedMinionsMin = value; }
-
-    public static int krakenPhaseSummonedMinionsMax() { return krakenPhaseSummonedMinionsMax; }
-    public static void setKrakenPhaseSummonedMinionsMax(int value) { krakenPhaseSummonedMinionsMax = value; }
-
-    public static int krakenPhaseTwoMinionsNearbyCap() { return krakenPhaseTwoMinionsNearbyCap; }
-    public static void setKrakenPhaseTwoMinionsNearbyCap(int value) { krakenPhaseTwoMinionsNearbyCap = value; }
-
-    public static int krakenPhaseTwoMinionSpawnAttempts() { return krakenPhaseTwoMinionSpawnAttempts; }
-    public static void setKrakenPhaseTwoMinionSpawnAttempts(int value) { krakenPhaseTwoMinionSpawnAttempts = value; }
 
     public static double lucidHealth() { return lucidHealth; }
     public static void setLucidHealth(double value) { lucidHealth = value; }
@@ -2442,50 +2112,8 @@ public final class AntarchySettings {
     public static double lucidFlyingSpeed() { return lucidFlyingSpeed; }
     public static void setLucidFlyingSpeed(double value) { lucidFlyingSpeed = value; }
 
-    public static double lucidFollowRange() { return lucidFollowRange; }
-    public static void setLucidFollowRange(double value) { lucidFollowRange = value; }
-
     public static double lucidKnockbackResistance() { return lucidKnockbackResistance; }
     public static void setLucidKnockbackResistance(double value) { lucidKnockbackResistance = value; }
-
-    public static int lucidXpReward() { return lucidXpReward; }
-    public static void setLucidXpReward(int value) { lucidXpReward = value; }
-
-    public static int lucidAttackWindupTicks() { return lucidAttackWindupTicks; }
-    public static void setLucidAttackWindupTicks(int value) { lucidAttackWindupTicks = value; }
-
-    public static int lucidAttackRecoveryTicks() { return lucidAttackRecoveryTicks; }
-    public static void setLucidAttackRecoveryTicks(int value) { lucidAttackRecoveryTicks = value; }
-
-    public static int lucidBurstShots() { return lucidBurstShots; }
-    public static void setLucidBurstShots(int value) { lucidBurstShots = value; }
-
-    public static int lucidBurstIntervalTicks() { return lucidBurstIntervalTicks; }
-    public static void setLucidBurstIntervalTicks(int value) { lucidBurstIntervalTicks = value; }
-
-    public static int lucidAttackCooldownTicks() { return lucidAttackCooldownTicks; }
-    public static void setLucidAttackCooldownTicks(int value) { lucidAttackCooldownTicks = value; }
-
-    public static double lucidMinEffectiveAttackRange() { return lucidMinEffectiveAttackRange; }
-    public static void setLucidMinEffectiveAttackRange(double value) { lucidMinEffectiveAttackRange = value; }
-
-    public static double lucidMinHoverRange() { return lucidMinHoverRange; }
-    public static void setLucidMinHoverRange(double value) { lucidMinHoverRange = value; }
-
-    public static double lucidCloseRange() { return lucidCloseRange; }
-    public static void setLucidCloseRange(double value) { lucidCloseRange = value; }
-
-    public static double lucidDefaultHoverHeight() { return lucidDefaultHoverHeight; }
-    public static void setLucidDefaultHoverHeight(double value) { lucidDefaultHoverHeight = value; }
-
-    public static double lucidHitboxWidthScale() { return lucidHitboxWidthScale; }
-    public static void setLucidHitboxWidthScale(double value) { lucidHitboxWidthScale = value; }
-
-    public static double lucidHitboxHeightScale() { return lucidHitboxHeightScale; }
-    public static void setLucidHitboxHeightScale(double value) { lucidHitboxHeightScale = value; }
-
-    public static double lucidHitboxYOffset() { return lucidHitboxYOffset; }
-    public static void setLucidHitboxYOffset(double value) { lucidHitboxYOffset = value; }
 
     public static double missileSquidHealth() { return missileSquidHealth; }
     public static void setMissileSquidHealth(double value) { missileSquidHealth = value; }
@@ -2499,23 +2127,8 @@ public final class AntarchySettings {
     public static double missileSquidFlyingSpeed() { return missileSquidFlyingSpeed; }
     public static void setMissileSquidFlyingSpeed(double value) { missileSquidFlyingSpeed = value; }
 
-    public static double missileSquidFollowRange() { return missileSquidFollowRange; }
-    public static void setMissileSquidFollowRange(double value) { missileSquidFollowRange = value; }
-
     public static double missileSquidKnockbackResistance() { return missileSquidKnockbackResistance; }
     public static void setMissileSquidKnockbackResistance(double value) { missileSquidKnockbackResistance = value; }
-
-    public static int missileSquidXpReward() { return missileSquidXpReward; }
-    public static void setMissileSquidXpReward(int value) { missileSquidXpReward = value; }
-
-    public static int missileSquidLatchDamageInterval() { return missileSquidLatchDamageInterval; }
-    public static void setMissileSquidLatchDamageInterval(int value) { missileSquidLatchDamageInterval = value; }
-
-    public static float missileSquidLatchDamage() { return missileSquidLatchDamage; }
-    public static void setMissileSquidLatchDamage(float value) { missileSquidLatchDamage = value; }
-
-    public static double missileSquidAttachRangeSqr() { return missileSquidAttachRangeSqr; }
-    public static void setMissileSquidAttachRangeSqr(double value) { missileSquidAttachRangeSqr = value; }
 
     public static double molewormHealth() { return molewormHealth; }
     public static void setMolewormHealth(double value) { molewormHealth = value; }
@@ -2525,9 +2138,6 @@ public final class AntarchySettings {
 
     public static double molewormMovementSpeed() { return molewormMovementSpeed; }
     public static void setMolewormMovementSpeed(double value) { molewormMovementSpeed = value; }
-
-    public static int molewormXpReward() { return molewormXpReward; }
-    public static void setMolewormXpReward(int value) { molewormXpReward = value; }
 
     public static double triffidHealth() { return triffidHealth; }
     public static void setTriffidHealth(double value) { triffidHealth = value; }
@@ -2543,21 +2153,6 @@ public final class AntarchySettings {
 
     public static double molevoreAttackDamage() { return molevoreAttackDamage; }
     public static void setMolevoreAttackDamage(double value) { molevoreAttackDamage = value; }
-
-    public static double molevoreMovementSpeed() { return molevoreMovementSpeed; }
-    public static void setMolevoreMovementSpeed(double value) { molevoreMovementSpeed = value; }
-
-    public static double molevoreArmor() { return molevoreArmor; }
-    public static void setMolevoreArmor(double value) { molevoreArmor = value; }
-
-    public static double molevoreKnockbackResistance() { return molevoreKnockbackResistance; }
-    public static void setMolevoreKnockbackResistance(double value) { molevoreKnockbackResistance = value; }
-
-    public static double molevoreFollowRange() { return molevoreFollowRange; }
-    public static void setMolevoreFollowRange(double value) { molevoreFollowRange = value; }
-
-    public static int molevoreXpReward() { return molevoreXpReward; }
-    public static void setMolevoreXpReward(int value) { molevoreXpReward = value; }
 
     public static int molevoreSpinTicks() { return molevoreSpinTicks; }
     public static void setMolevoreSpinTicks(int value) { molevoreSpinTicks = value; }
@@ -2586,86 +2181,11 @@ public final class AntarchySettings {
     public static double nightmareMovementSpeed() { return nightmareMovementSpeed; }
     public static void setNightmareMovementSpeed(double value) { nightmareMovementSpeed = value; }
 
-    public static double nightmareFlyingSpeed() { return nightmareFlyingSpeed; }
-    public static void setNightmareFlyingSpeed(double value) { nightmareFlyingSpeed = value; }
-
-    public static double nightmareFollowRange() { return nightmareFollowRange; }
-    public static void setNightmareFollowRange(double value) { nightmareFollowRange = value; }
-
-    public static double nightmareKnockbackResistance() { return nightmareKnockbackResistance; }
-    public static void setNightmareKnockbackResistance(double value) { nightmareKnockbackResistance = value; }
-
-    public static double nightmareArmor() { return nightmareArmor; }
-    public static void setNightmareArmor(double value) { nightmareArmor = value; }
-
-    public static int nightmareXpReward() { return nightmareXpReward; }
-    public static void setNightmareXpReward(int value) { nightmareXpReward = value; }
-
-    public static int nightmareAttackTotalTicks() { return nightmareAttackTotalTicks; }
-    public static void setNightmareAttackTotalTicks(int value) { nightmareAttackTotalTicks = value; }
-
-    public static int nightmareAttackDamageTick() { return nightmareAttackDamageTick; }
-    public static void setNightmareAttackDamageTick(int value) { nightmareAttackDamageTick = value; }
-
-    public static int nightmareIntroRoarTicks() { return nightmareIntroRoarTicks; }
-    public static void setNightmareIntroRoarTicks(int value) { nightmareIntroRoarTicks = value; }
-
-    public static int nightmareCombatRoarTicks() { return nightmareCombatRoarTicks; }
-    public static void setNightmareCombatRoarTicks(int value) { nightmareCombatRoarTicks = value; }
-
-    public static int nightmareDeathTicks() { return nightmareDeathTicks; }
-    public static void setNightmareDeathTicks(int value) { nightmareDeathTicks = value; }
-
-    public static int nightmareTargetResetTicks() { return nightmareTargetResetTicks; }
-    public static void setNightmareTargetResetTicks(int value) { nightmareTargetResetTicks = value; }
-
-    public static int nightmareBedBugEggSearchInterval() { return nightmareBedBugEggSearchInterval; }
-    public static void setNightmareBedBugEggSearchInterval(int value) { nightmareBedBugEggSearchInterval = value; }
-
     public static int nightmareDreadTicks() { return nightmareDreadTicks; }
     public static void setNightmareDreadTicks(int value) { nightmareDreadTicks = value; }
 
     public static int nightmareWeaknessTicks() { return nightmareWeaknessTicks; }
     public static void setNightmareWeaknessTicks(int value) { nightmareWeaknessTicks = value; }
-
-    public static double nightmarePatrolSpeed() { return nightmarePatrolSpeed; }
-    public static void setNightmarePatrolSpeed(double value) { nightmarePatrolSpeed = value; }
-
-    public static double nightmareCombatFlightSpeed() { return nightmareCombatFlightSpeed; }
-    public static void setNightmareCombatFlightSpeed(double value) { nightmareCombatFlightSpeed = value; }
-
-    public static double nightmareGroundApproachSpeed() { return nightmareGroundApproachSpeed; }
-    public static void setNightmareGroundApproachSpeed(double value) { nightmareGroundApproachSpeed = value; }
-
-    public static double nightmareAttackStartRangeSqr() { return nightmareAttackStartRangeSqr; }
-    public static void setNightmareAttackStartRangeSqr(double value) { nightmareAttackStartRangeSqr = value; }
-
-    public static double nightmareGroundApproachRangeSqr() { return nightmareGroundApproachRangeSqr; }
-    public static void setNightmareGroundApproachRangeSqr(double value) { nightmareGroundApproachRangeSqr = value; }
-
-    public static double nightmareAttackReachRadius() { return nightmareAttackReachRadius; }
-    public static void setNightmareAttackReachRadius(double value) { nightmareAttackReachRadius = value; }
-
-    public static double nightmareAttackCommitHorizontalRange() { return nightmareAttackCommitHorizontalRange; }
-    public static void setNightmareAttackCommitHorizontalRange(double value) { nightmareAttackCommitHorizontalRange = value; }
-
-    public static double nightmareAttackCommitVerticalRange() { return nightmareAttackCommitVerticalRange; }
-    public static void setNightmareAttackCommitVerticalRange(double value) { nightmareAttackCommitVerticalRange = value; }
-
-    public static double nightmareFlightReengageRangeSqr() { return nightmareFlightReengageRangeSqr; }
-    public static void setNightmareFlightReengageRangeSqr(double value) { nightmareFlightReengageRangeSqr = value; }
-
-    public static double nightmareCloseApproachRangeSqr() { return nightmareCloseApproachRangeSqr; }
-    public static void setNightmareCloseApproachRangeSqr(double value) { nightmareCloseApproachRangeSqr = value; }
-
-    public static double nightmareRoarRetryDistanceSqr() { return nightmareRoarRetryDistanceSqr; }
-    public static void setNightmareRoarRetryDistanceSqr(double value) { nightmareRoarRetryDistanceSqr = value; }
-
-    public static double nightmareBedBugEggBreakRangeSqr() { return nightmareBedBugEggBreakRangeSqr; }
-    public static void setNightmareBedBugEggBreakRangeSqr(double value) { nightmareBedBugEggBreakRangeSqr = value; }
-
-    public static float nightmareAirPatrolChance() { return nightmareAirPatrolChance; }
-    public static void setNightmareAirPatrolChance(float value) { nightmareAirPatrolChance = value; }
 
     public static double battleAxeAttackSpeed() { return battleAxeAttackSpeed; }
     public static void setBattleAxeAttackSpeed(double value) { battleAxeAttackSpeed = value; }
@@ -2774,8 +2294,8 @@ public final class AntarchySettings {
     public static void setToreterrorSpinDamage(double v) { toreterrorSpinDamage = v; }
     public static double toreterrorSpinKnockback() { return toreterrorSpinKnockback; }
     public static void setToreterrorSpinKnockback(double v) { toreterrorSpinKnockback = v; }
-    public static double toreterrorRangedWaterBombChance() { return toreterrorRangedWaterBombChance; }
     public static void setToreterrorRangedWaterBombChance(double v) { toreterrorRangedWaterBombChance = v; }
+    public static double toreterrorRangedWaterBombChance() { return toreterrorRangedWaterBombChance; }
     public static double toreterrorProjectileDamageMultiplier() { return toreterrorProjectileDamageMultiplier; }
     public static void setToreterrorProjectileDamageMultiplier(double v) { toreterrorProjectileDamageMultiplier = v; }
     public static double waterBombDamage() { return waterBombDamage; }
@@ -2786,8 +2306,8 @@ public final class AntarchySettings {
     public static void setWaterBombGravity(double v) { waterBombGravity = v; }
     public static double waterBombKnockback() { return waterBombKnockback; }
     public static void setWaterBombKnockback(double v) { waterBombKnockback = v; }
-    public static double waterCannonCooldownSeconds() { return waterCannonCooldownSeconds; }
     public static void setWaterCannonCooldownSeconds(double v) { waterCannonCooldownSeconds = v; }
+    public static double waterCannonCooldownSeconds() { return waterCannonCooldownSeconds; }
 
     public static double creepingHorrorHealth() { return creepingHorrorHealth; }
     public static void setCreepingHorrorHealth(double v) { creepingHorrorHealth = v; }

@@ -1,8 +1,7 @@
 package com.craisinlord.antarchy.neoforge.registry;
 
 import com.craisinlord.antarchy.Antarchy;
-import com.craisinlord.antarchy.content.CreativeTabContents;
-import com.craisinlord.antarchy.content.CreativeTabOrder;
+import com.craisinlord.antarchy.content.creative.CreativeTabContents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.*;
 import net.neoforged.bus.api.IEventBus;

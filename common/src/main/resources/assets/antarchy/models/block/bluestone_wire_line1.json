@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/redstone_dust_line1",
+  "textures": {
+    "line": "antarchy:block/bluestone/bluestone_dust_line1",
+    "overlay": "antarchy:block/bluestone/bluestone_dust_overlay"
+  }
+}

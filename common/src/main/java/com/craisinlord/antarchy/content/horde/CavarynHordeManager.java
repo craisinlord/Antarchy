@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.horde;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.JerryEntity;
@@ -96,6 +97,10 @@ public final class CavarynHordeManager {
         }
 
         HordeData data = get(level);
+        if (!hordesEnabled(level)) {
+            clearDisabledState(level, data);
+            return;
+        }
         long gameTime = level.getGameTime();
         if (gameTime % PLAYER_CHECK_INTERVAL == 0L) {
             tickPlayers(level, data, gameTime);
@@ -107,10 +112,10 @@ public final class CavarynHordeManager {
     }
 
     public static void recordMobKill(ServerPlayer player, LivingEntity killed) {
-        if (!(player.level() instanceof ServerLevel level) || !level.dimension().equals(CAVARYN)) {
+        if (!(player.level() instanceof ServerLevel level) || !level.dimension().equals(CAVARYN) || !hordesEnabled(level)) {
             return;
         }
-        if (!isHordeBiome(level, player.blockPosition())) {
+        if (!isValidHordeTarget(player) || !isHordeBiome(level, player.blockPosition())) {
             return;
         }
         if (isPlayerInActiveEncounter(level, player)) {
@@ -120,10 +125,10 @@ public final class CavarynHordeManager {
     }
 
     public static void recordBlockBreak(ServerPlayer player, BlockState brokenState, BlockPos pos) {
-        if (!(player.level() instanceof ServerLevel level) || !level.dimension().equals(CAVARYN)) {
+        if (!(player.level() instanceof ServerLevel level) || !level.dimension().equals(CAVARYN) || !hordesEnabled(level)) {
             return;
         }
-        if (!isHordeBiome(level, pos) || isPlayerInActiveEncounter(level, player)) {
+        if (!isValidHordeTarget(player) || !isHordeBiome(level, pos) || isPlayerInActiveEncounter(level, player)) {
             return;
         }
         addAttention(level, player, scaleActionAttention(level, isEggOrNest(brokenState) ? EGG_OR_NEST_BREAK_ATTENTION : BLOCK_BREAK_ATTENTION));
@@ -147,7 +152,7 @@ public final class CavarynHordeManager {
     }
 
     public static boolean shouldAccelerateNearbyEggHatching(ServerLevel level, BlockPos pos, double playerRadius, RandomSource random) {
-        if (!level.dimension().equals(CAVARYN) || !isHordeBiome(level, pos)) {
+        if (!level.dimension().equals(CAVARYN) || !hordesEnabled(level) || !isHordeBiome(level, pos)) {
             return false;
         }
 
@@ -178,10 +183,18 @@ public final class CavarynHordeManager {
         if (!(player.level() instanceof ServerLevel level) || !level.dimension().equals(CAVARYN)) {
             return -1;
         }
+        if (!isValidHordeTarget(player)) {
+            return -1;
+        }
 
         HordeData data = get(level);
         PlayerAttention attention = data.players.computeIfAbsent(player.getUUID(), ignored -> new PlayerAttention());
-        attention.attention = Mth.clamp(levelValue, 0, ATTENTION_THRESHOLD);
+        int currentAttention = attention.attention;
+        int clampedLevel = Mth.clamp(levelValue, 0, ATTENTION_THRESHOLD);
+        if (!hordesEnabled(level) && clampedLevel > currentAttention) {
+            return currentAttention;
+        }
+        attention.attention = clampedLevel;
         attention.areaKey = areaKey(player.blockPosition());
         attention.areaTicks = 0;
         attention.lastSeenGameTime = level.getGameTime();
@@ -196,7 +209,13 @@ public final class CavarynHordeManager {
     private static void tickPlayers(ServerLevel level, HordeData data, long gameTime) {
         Set<UUID> seen = new HashSet<>();
         for (ServerPlayer player : level.players()) {
-            if (player.isSpectator()) {
+            if (player.isSpectator() || player.isCreative()) {
+                HordeIntensitySync.send(player, 0.0F);
+                PlayerAttention attention = data.players.get(player.getUUID());
+                if (attention != null && attention.attention > 0) {
+                    attention.fade(10);
+                    data.setDirty();
+                }
                 continue;
             }
 
@@ -609,6 +628,24 @@ public final class CavarynHordeManager {
         level.playSound(null, center, AntarchySoundEvents.HERCULES_BEETLE_CRY.get(), SoundSource.HOSTILE, 2.0F, 0.65F);
         for (ServerPlayer player : targets) {
             HerculesBeetleImpactShakeSync.send(player, 35);
+        }
+    }
+
+    private static boolean hordesEnabled(ServerLevel level) {
+        return level.getGameRules().getBoolean(AntarchyGameRules.RULE_DO_CAVARYN_HORDES);
+    }
+
+    private static void clearDisabledState(ServerLevel level, HordeData data) {
+        boolean dirty = false;
+        if (!data.encounters.isEmpty()) {
+            data.encounters.clear();
+            dirty = true;
+        }
+        for (ServerPlayer player : level.players()) {
+            HordeIntensitySync.send(player, 0.0F);
+        }
+        if (dirty) {
+            data.setDirty();
         }
     }
 

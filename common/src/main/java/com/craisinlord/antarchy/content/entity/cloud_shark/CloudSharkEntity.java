@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.entity.cloud_shark;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -102,12 +103,12 @@ public class CloudSharkEntity extends Monster implements GeoEntity {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 40.0D)
-                .add(Attributes.ATTACK_DAMAGE, 5.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.34D)
-                .add(Attributes.FLYING_SPEED, 0.5D)
+                .add(Attributes.MAX_HEALTH, AntarchySettings.cloudSharkHealth())
+                .add(Attributes.ATTACK_DAMAGE, AntarchySettings.cloudSharkAttackDamage())
+                .add(Attributes.MOVEMENT_SPEED, AntarchySettings.cloudSharkMovementSpeed())
+                .add(Attributes.FLYING_SPEED, AntarchySettings.cloudSharkFlyingSpeed())
                 .add(Attributes.FOLLOW_RANGE, 40.0D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.2D);
+                .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.cloudSharkKnockbackResistance());
     }
 
     public static boolean canSpawn(EntityType<CloudSharkEntity> entityType, ServerLevelAccessor level,

@@ -128,11 +128,11 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, AntarchySettings.brutalflyHealth())
                 .add(Attributes.ATTACK_DAMAGE, AntarchySettings.brutalflySwipeDamage())
-                .add(Attributes.ARMOR, 10.0D)
-                .add(Attributes.ARMOR_TOUGHNESS, 4.0D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.7D)
-                .add(Attributes.MOVEMENT_SPEED, 0.34D)
-                .add(Attributes.FLYING_SPEED, 0.55D)
+                .add(Attributes.ARMOR, AntarchySettings.brutalflyArmor())
+                .add(Attributes.ARMOR_TOUGHNESS, AntarchySettings.brutalflyArmorToughness())
+                .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.brutalflyKnockbackResistance())
+                .add(Attributes.MOVEMENT_SPEED, AntarchySettings.brutalflyMovementSpeed())
+                .add(Attributes.FLYING_SPEED, AntarchySettings.brutalflyFlyingSpeed())
                 .add(Attributes.FOLLOW_RANGE, 48.0D);
     }
 

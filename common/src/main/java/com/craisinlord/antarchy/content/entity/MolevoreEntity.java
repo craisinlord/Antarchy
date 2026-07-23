@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import java.util.HashSet;
@@ -108,9 +109,9 @@ public class MolevoreEntity extends Monster implements GeoEntity {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes()
-                .add(Attributes.MAX_HEALTH, 60.0D)
+                .add(Attributes.MAX_HEALTH, AntarchySettings.molevoreHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.27D)
-                .add(Attributes.ATTACK_DAMAGE, 10.0D)
+                .add(Attributes.ATTACK_DAMAGE, AntarchySettings.molevoreAttackDamage())
                 .add(Attributes.ARMOR, 6.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.65D)
                 .add(Attributes.FOLLOW_RANGE, 28.0D);

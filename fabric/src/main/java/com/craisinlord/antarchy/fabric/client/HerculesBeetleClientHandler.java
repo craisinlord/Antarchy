@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.fabric.client;
 
 import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
+import com.craisinlord.antarchy.content.network.HerculesBeetleFlightTogglePayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleJumpInputPayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleMountedAttackPayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleMountedChargePayload;
@@ -12,6 +13,7 @@ public final class HerculesBeetleClientHandler {
     private static boolean wasPressingJump;
     private static boolean wasPressingAttack;
     private static boolean wasCharging;
+    private static boolean wasPressingFlightToggle;
 
     private HerculesBeetleClientHandler() {
     }
@@ -46,6 +48,12 @@ public final class HerculesBeetleClientHandler {
             ClientPlayNetworking.send(new HerculesBeetleMountedChargePayload(charging));
         }
         wasCharging = charging;
+
+        boolean pressingFlightToggle = AntarchyKeyBindings.isHerculesBeetleFlightTogglePressed();
+        if (pressingFlightToggle && !wasPressingFlightToggle) {
+            ClientPlayNetworking.send(new HerculesBeetleFlightTogglePayload());
+        }
+        wasPressingFlightToggle = pressingFlightToggle;
     }
 
     private static void resetAll() {
@@ -55,5 +63,6 @@ public final class HerculesBeetleClientHandler {
         }
         wasPressingAttack = false;
         wasCharging = false;
+        wasPressingFlightToggle = false;
     }
 }

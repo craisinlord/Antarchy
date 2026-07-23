@@ -36,7 +36,7 @@ public final class HerculesBeetleChargeHudRenderer {
         int width = mc.getWindow().getGuiScaledWidth();
         int height = mc.getWindow().getGuiScaledHeight();
         int x0 = width / 2 - BAR_WIDTH / 2;
-        int y0 = height - 39;
+        int y0 = height - 29;
         float chargeRatio = Mth.clamp(charge / 100.0F, 0.0F, 1.0F);
         int filledWidth = Mth.clamp((int) (chargeRatio * BAR_WIDTH), 0, BAR_WIDTH);
 

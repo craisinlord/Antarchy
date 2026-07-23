@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "antarchy:block/bluestone_ore"
+    },
+    "lit=true": {
+      "model": "antarchy:block/bluestone_ore"
+    }
+  }
+}

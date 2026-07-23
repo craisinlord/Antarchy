@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.entity;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
 import net.minecraft.core.BlockPos;
@@ -100,12 +101,12 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 50.0D)
-                .add(Attributes.ATTACK_DAMAGE, 6.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.84D)
-                .add(Attributes.FLYING_SPEED, 0.84D)
+                .add(Attributes.MAX_HEALTH, AntarchySettings.missileSquidHealth())
+                .add(Attributes.ATTACK_DAMAGE, AntarchySettings.missileSquidAttackDamage())
+                .add(Attributes.MOVEMENT_SPEED, AntarchySettings.missileSquidMovementSpeed())
+                .add(Attributes.FLYING_SPEED, AntarchySettings.missileSquidFlyingSpeed())
                 .add(Attributes.FOLLOW_RANGE, 20.0D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.15D);
+                .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.missileSquidKnockbackResistance());
     }
 
     public static boolean canSpawn(EntityType<MissileSquidEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {

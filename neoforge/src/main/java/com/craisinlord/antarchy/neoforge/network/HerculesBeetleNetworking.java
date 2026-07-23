@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.neoforge.network;
 
 import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
 import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
+import com.craisinlord.antarchy.content.network.HerculesBeetleFlightTogglePayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleJumpInputPayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleMountedAttackPayload;
@@ -19,6 +20,10 @@ public final class HerculesBeetleNetworking {
                 HerculesBeetleJumpInputPayload.TYPE,
                 HerculesBeetleJumpInputPayload.STREAM_CODEC,
                 HerculesBeetleNetworking::handleJumpInput
+        ).playToServer(
+                HerculesBeetleFlightTogglePayload.TYPE,
+                HerculesBeetleFlightTogglePayload.STREAM_CODEC,
+                HerculesBeetleNetworking::handleFlightToggle
         ).playToServer(
                 HerculesBeetleMountedAttackPayload.TYPE,
                 HerculesBeetleMountedAttackPayload.STREAM_CODEC,
@@ -52,6 +57,17 @@ public final class HerculesBeetleNetworking {
             }
             if (player.getVehicle() instanceof HerculesBeetleEntity beetle) {
                 beetle.handleMountedRegularAttack(player);
+            }
+        });
+    }
+
+    private static void handleFlightToggle(HerculesBeetleFlightTogglePayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (!(context.player() instanceof ServerPlayer player)) {
+                return;
+            }
+            if (player.getVehicle() instanceof HerculesBeetleEntity beetle) {
+                beetle.toggleMountedFlight(player);
             }
         });
     }

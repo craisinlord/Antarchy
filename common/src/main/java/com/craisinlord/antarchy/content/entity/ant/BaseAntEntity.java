@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.entity.ant;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
@@ -47,6 +48,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -474,6 +476,10 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     protected boolean canGroupWithNestmates() { return true; }
     protected boolean canMarch() { return true; }
     protected boolean canTraverseFluidFloor(FluidState fluidState) { return false; }
+    protected boolean isAntGriefingEnabled() {
+        return this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)
+                && this.level().getGameRules().getBoolean(AntarchyGameRules.RULE_DO_ANT_GREIFING);
+    }
 
     
     protected boolean handlePriorityForaging() { return false; }
@@ -606,7 +612,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     }
 
     private boolean handleGroundFoodForaging() {
-        if (!this.canForageGroundFood() || this.isCarryingFood() || this.isInLove()) {
+        if (!this.isAntGriefingEnabled() || !this.canForageGroundFood() || this.isCarryingFood() || this.isInLove()) {
             return false;
         }
 
@@ -626,7 +632,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     }
 
     private boolean handleChestFoodForaging() {
-        if (!AntarchySettings.antsStealFromChests()) {
+        if (!this.isAntGriefingEnabled() || !AntarchySettings.antsStealFromChests()) {
             return false;
         }
 
@@ -647,7 +653,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     }
 
     private boolean handleSharedMarchChestForaging() {
-        if (this.isCarryingFood() || this.isInLove() || !AntarchySettings.antsStealFromChests()) {
+        if (!this.isAntGriefingEnabled() || this.isCarryingFood() || this.isInLove() || !AntarchySettings.antsStealFromChests()) {
             return false;
         }
 
@@ -669,7 +675,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     }
 
     private boolean handleSharedMarchGroundFoodForaging() {
-        if (this.isCarryingFood() || this.isInLove()) {
+        if (!this.isAntGriefingEnabled() || this.isCarryingFood() || this.isInLove()) {
             return false;
         }
 
@@ -1051,7 +1057,8 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     }
 
     private boolean hasForageTarget() {
-        return this.nearestGroundFood() != null || this.getCurrentFoodChestPos() != null;
+        return this.isAntGriefingEnabled()
+                && (this.nearestGroundFood() != null || this.getCurrentFoodChestPos() != null);
     }
 
     private boolean sharesNestWith(BaseAntEntity otherAnt) {

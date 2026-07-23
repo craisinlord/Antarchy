@@ -155,6 +155,10 @@ public final class AntarchyFabricClientBootstrap {
 
     private static void registerColors() {
         ColorProviderRegistry.BLOCK.register(
+                (state, level, pos, tintIndex) -> tintIndex == 0 ? bluestoneWireColor(state.getValue(com.craisinlord.antarchy.content.block.BluestoneWireBlock.POWER)) : -1,
+                AntarchyFabricBlocks.BLUESTONE_WIRE.get()
+        );
+        ColorProviderRegistry.BLOCK.register(
                 (state, level, pos, tintIndex) -> level != null && pos != null
                         ? BiomeColors.getAverageFoliageColor(level, pos)
                         : FoliageColor.getDefaultColor(),
@@ -172,6 +176,10 @@ public final class AntarchyFabricClientBootstrap {
                         ? BiomeColors.getAverageGrassColor(level, pos)
                         : net.minecraft.world.level.GrassColor.getDefaultColor(),
                 AntarchyFabricBlocks.POTTED_SPIDER_LILY.get()
+        );
+        ColorProviderRegistry.ITEM.register(
+                (stack, tintIndex) -> tintIndex == 0 ? bluestoneWireColor(15) : -1,
+                AntarchyFabricItems.BLUESTONE_DUST.get()
         );
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> FoliageColor.getDefaultColor(), AntarchyFabricItems.OURANWOOD_LEAVES_ITEM.get());
         ColorProviderRegistry.ITEM.register(
@@ -325,6 +333,10 @@ public final class AntarchyFabricClientBootstrap {
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.BLOOD_CRYSTAL_CRYSTAL.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.DREAM_TORCH.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.DREAM_WALL_TORCH.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.BLUESTONE_WIRE.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.BLUESTONE_REPEATER.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.BLUESTONE_COMPARATOR.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.BLUESTONE_TORCH.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.DREAM_LANTERN.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.DREAM_CAMPFIRE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.DREAM_FIRE.get(), RenderType.cutout());
@@ -483,5 +495,13 @@ public final class AntarchyFabricClientBootstrap {
             BloodCrystalKatanaTrailHandler.render(context);
             ScorpionWhipTetherRenderHandler.render(context);
         });
+    }
+
+    private static int bluestoneWireColor(int power) {
+        float normalized = power / 15.0F;
+        int red = (int) (6.0F + normalized * 54.0F);
+        int green = (int) (22.0F + normalized * 132.0F);
+        int blue = (int) (64.0F + normalized * 191.0F);
+        return red << 16 | green << 8 | blue;
     }
 }

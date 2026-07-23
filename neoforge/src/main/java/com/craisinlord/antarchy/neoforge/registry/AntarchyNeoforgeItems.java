@@ -221,6 +221,18 @@ public final class AntarchyNeoforgeItems {
             () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.TITANIUM_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DEEPSLATE_TITANIUM_ORE_ITEM = ITEMS.register("deepslate_titanium_ore",
             () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.DEEPSLATE_TITANIUM_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<Item> BLUESTONE_DUST = ITEMS.register("bluestone",
+            () -> new BluestoneDustItem(AntarchyNeoforgeBlocks.BLUESTONE_WIRE.get(), new Item.Properties()));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BLUESTONE_ORE_ITEM = ITEMS.register("bluestone_ore",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.BLUESTONE_ORE.get(), new Item.Properties()));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BLUESTONE_BLOCK_ITEM = ITEMS.register("bluestone_block",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.BLUESTONE_BLOCK.get(), new Item.Properties()));
+    public static final DeferredItem<CeilingPlacementTooltipBlockItem> BLUESTONE_REPEATER_ITEM = ITEMS.register("bluestone_repeater",
+            () -> new CeilingPlacementTooltipBlockItem(AntarchyNeoforgeBlocks.BLUESTONE_REPEATER.get(), new Item.Properties()));
+    public static final DeferredItem<CeilingPlacementTooltipBlockItem> BLUESTONE_COMPARATOR_ITEM = ITEMS.register("bluestone_comparator",
+            () -> new CeilingPlacementTooltipBlockItem(AntarchyNeoforgeBlocks.BLUESTONE_COMPARATOR.get(), new Item.Properties()));
+    public static final DeferredItem<CeilingPlacementTooltipBlockItem> BLUESTONE_TORCH_ITEM = ITEMS.register("bluestone_torch",
+            () -> new CeilingPlacementTooltipBlockItem(AntarchyNeoforgeBlocks.BLUESTONE_TORCH.get(), new Item.Properties()));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_BLOCK_ITEM = ITEMS.register("uranium_block",
             () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.URANIUM_BLOCK.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> TITANIUM_BLOCK_ITEM = ITEMS.register("titanium_block",
@@ -367,8 +379,8 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> CREEPVINE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CREEPVINE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BLUSH_MOSS_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BLUSH_MOSS_BLOCK);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BLUSH_MOSS_CARPET_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BLUSH_MOSS_CARPET);
-    public static final DeferredItem<StandingAndWallBlockItem> DREAM_TORCH_ITEM = ITEMS.register("dream_torch",
-            () -> new StandingAndWallBlockItem(AntarchyNeoforgeBlocks.DREAM_TORCH.get(), AntarchyNeoforgeBlocks.DREAM_WALL_TORCH.get(), new Item.Properties(), net.minecraft.core.Direction.UP));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.DreamTorchItem> DREAM_TORCH_ITEM = ITEMS.register("dream_torch",
+            () -> new com.craisinlord.antarchy.content.item.DreamTorchItem(AntarchyNeoforgeBlocks.DREAM_TORCH.get(), AntarchyNeoforgeBlocks.DREAM_WALL_TORCH.get(), AntarchyNeoforgeBlocks.DREAM_CEILING_TORCH.get(), new Item.Properties()));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_LANTERN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_LANTERN);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_CAMPFIRE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_CAMPFIRE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> LUMEN_FROGLIGHT_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LUMEN_FROGLIGHT);
@@ -422,7 +434,7 @@ public final class AntarchyNeoforgeItems {
                     -2.2F
             ));
     public static final DeferredItem<MantisClawItem> MANTIS_CLAW = ITEMS.register("mantis_claw",
-            () -> new MantisClawItem(Tiers.IRON, new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+            () -> new MantisClawItem(Tiers.IRON, new Item.Properties().stacksTo(1).durability(50).rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<Item> HERCULES_HORN = ITEMS.registerSimpleItem("hercules_horn", new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final DeferredItem<Item> KING_SCALE = ITEMS.register("king_scale",
             () -> new MobComingSoonTooltipItem(new Item.Properties().rarity(Rarity.RARE)));
