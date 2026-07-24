@@ -64,6 +64,12 @@
     ],
     "creature": [
       {
+        "type": "antarchy:rolly_polly",
+        "weight": 25,
+        "minCount": 1,
+        "maxCount": 3
+      },
+      {
         "type": "antarchy:stink_bug",
         "weight": 35,
         "minCount": 2,

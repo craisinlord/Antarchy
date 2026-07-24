@@ -46,6 +46,7 @@ dependencies {
 //    modLocalRuntime("curse.maven:idas-${idas_curseforge_id}:${idas_curseforge_file_id}")
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    modLocalRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 //    modLocalRuntime("curse.maven:create-${create_curseforge_id}:${create_curseforge_file_id}")
 //    modLocalRuntime("curse.maven:theoneprobe-${top_curseforge_id}:${top_curseforge_file_id}")
 //    modLocalRuntime("curse.maven:worldedit-${worldedit_curseforge_id}:${worldedit_curseforge_file_id}")

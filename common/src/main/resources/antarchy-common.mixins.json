@@ -4,6 +4,7 @@
     "plugin":  "com.craisinlord.antarchy.mixins.AntarchyMixinPlugin",
     "compatibilityLevel":  "JAVA_21",
     "mixins":  [
+                   "AbstractMinecartMixin",
                    "AccessorRangedAttribute",
                    "AmericanFoodConsumeMixin",
                    "AmericanFoodNameMixin",
@@ -12,6 +13,7 @@
                    "DreamFireBlockMixin",
                    "DreamSandFallingSpeedMixin",
                    "DreamSandLowGravityMixin",
+                   "DiodeBlockMixin",
                    "FarChunkSetBlockWarningMixin",
                    "FireVisualBaseFireBlockMixin",
                    "FireVisualEntityMixin",
@@ -22,6 +24,7 @@
                    "GlowVinesUnderLeavesMixin",
                    "MantisClawWallClimbMixin",
                    "MilkBucketSizeResetMixin",
+                   "MinecartItemMixin",
                    "GoopedStepSoundMixin",
                    "ExperimentalSettingsLevelSummaryMixin",
                    "NightmareSwordDamageMixin",
@@ -65,6 +68,8 @@
                    "multipart.EntityMultipartLifecycleMixin"
                ],
     "client":  [
+                   "client.AbstractMinecartRendererMixin",
+                   "client.EntityLightProbeMixin",
                    "client.CustomBossBarMixin",
                    "client.CavarynSkyMixin",
                    "client.CavarynHordeFogMixin",

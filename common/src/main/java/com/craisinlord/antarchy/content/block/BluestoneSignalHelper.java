@@ -4,7 +4,9 @@ import com.craisinlord.antarchy.content.AntarchyTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public final class BluestoneSignalHelper {
@@ -36,6 +38,34 @@ public final class BluestoneSignalHelper {
             return source.getBluestoneSignal(level, pos, state, Direction.DOWN);
         }
         return 0;
+    }
+
+    public static int getSignalExcludingRedstoneWire(LevelReader level, BlockPos pos, Direction direction) {
+        BlockState state = level.getBlockState(pos);
+        if (state.is(Blocks.REDSTONE_WIRE)) {
+            return 0;
+        }
+        int signal = state.getSignal(level, pos, direction);
+        if (state.isRedstoneConductor(level, pos)) {
+            signal = Math.max(signal, getDirectSignalToExcludingRedstoneWire(level, pos));
+        }
+        return signal;
+    }
+
+    private static int getDirectSignalToExcludingRedstoneWire(BlockGetter level, BlockPos pos) {
+        int signal = 0;
+        for (Direction direction : Direction.values()) {
+            BlockPos neighborPos = pos.relative(direction);
+            BlockState neighborState = level.getBlockState(neighborPos);
+            if (neighborState.is(Blocks.REDSTONE_WIRE)) {
+                continue;
+            }
+            signal = Math.max(signal, neighborState.getDirectSignal(level, neighborPos, direction));
+            if (signal >= 15) {
+                return 15;
+            }
+        }
+        return signal;
     }
 
     public static boolean canBluestoneConnectTo(BlockState state) {

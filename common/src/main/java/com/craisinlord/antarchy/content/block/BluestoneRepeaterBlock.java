@@ -6,9 +6,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RepeaterBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -52,6 +55,51 @@ public class BluestoneRepeaterBlock extends RepeaterBlock {
             return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
         }
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+    }
+
+    @Override
+    protected int getAlternateSignal(SignalGetter level, BlockPos pos, BlockState state) {
+        Direction facing = state.getValue(FACING);
+        Direction clockwise = facing.getClockWise();
+        Direction counterClockwise = facing.getCounterClockWise();
+        int signal = this.getBluestoneSideSignal(level, pos.relative(clockwise), clockwise.getOpposite());
+        signal = Math.max(signal, this.getBluestoneSideSignal(level, pos.relative(counterClockwise), counterClockwise.getOpposite()));
+        return signal;
+    }
+
+    @Override
+    protected int getInputSignal(Level level, BlockPos pos, BlockState state) {
+        Direction facing = state.getValue(FACING);
+        BlockPos inputPos = pos.relative(facing);
+        BlockState inputState = level.getBlockState(inputPos);
+        int signal = BluestoneSignalHelper.getSignalExcludingRedstoneWire(level, inputPos, facing);
+        if (signal >= 15) {
+            return signal;
+        }
+        if (inputState.getBlock() instanceof BluestoneSignalSource source) {
+            return Math.max(signal, source.getBluestoneSignal(level, inputPos, inputState, facing));
+        }
+        return signal;
+    }
+
+    @Override
+    public boolean isLocked(LevelReader level, BlockPos pos, BlockState state) {
+        return this.getAlternateSignal(level, pos, state) > 0;
+    }
+
+    private int getBluestoneSideSignal(SignalGetter level, BlockPos pos, Direction towardThisRepeater) {
+        BlockState neighborState = level.getBlockState(pos);
+        if (neighborState.getBlock() instanceof BluestoneRepeaterBlock
+                && neighborState.getValue(POWERED)
+                && neighborState.getValue(FACING) == towardThisRepeater) {
+            return 15;
+        }
+        return 0;
+    }
+
+    @Override
+    protected boolean isSignalSource(BlockState state) {
+        return true;
     }
 
     @Override

@@ -2,8 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "#": "minecraft:stick",
-    "X": "antarchy:bluestone"
+    "#": { "item": "minecraft:stick" },
+    "X": { "item": "antarchy:bluestone" }
   },
   "pattern": [
     "X",

@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.worldgen.cavaryn;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.block.HangingCreeprootsBlock;
+import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.mojang.serialization.Codec;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -55,6 +56,9 @@ public final class HangingCreeprootsFeature extends Feature<NoneFeatureConfigura
                 if (!level.getBlockState(mutable).canBeReplaced()) {
                     continue;
                 }
+                if (AntarchyFluidChecks.hasBileNearby(level, mutable, 1)) {
+                    continue;
+                }
 
                 BlockPos abovePos = mutable.above();
                 BlockState aboveState = level.getBlockState(abovePos);
@@ -79,6 +83,9 @@ public final class HangingCreeprootsFeature extends Feature<NoneFeatureConfigura
 
             BlockState existing = level.getBlockState(rootsPos);
             if (!existing.canBeReplaced() && !existing.is(rootsBlock)) {
+                break;
+            }
+            if (AntarchyFluidChecks.hasBileNearby(level, rootsPos, 1)) {
                 break;
             }
 

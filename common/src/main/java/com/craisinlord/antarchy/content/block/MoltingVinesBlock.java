@@ -6,12 +6,16 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -36,6 +40,7 @@ public class MoltingVinesBlock extends BushBlock implements BonemealableBlock {
     public static final BooleanProperty TOP_CAP = BooleanProperty.create("top_cap");
     public static final BooleanProperty BOTTOM_CAP = BooleanProperty.create("bottom_cap");
     public static final BooleanProperty BROODFRUIT = BooleanProperty.create("broodfruit");
+    public static final BooleanProperty STUNTED = BooleanProperty.create("stunted");
     public static final IntegerProperty DISTANCE = IntegerProperty.create("distance", 0, 6);
     private static final int MAX_DISTANCE = 6;
     private static final int NATURAL_FRUIT_CHANCE = 40;
@@ -49,6 +54,7 @@ public class MoltingVinesBlock extends BushBlock implements BonemealableBlock {
                 .setValue(TOP_CAP, false)
                 .setValue(BOTTOM_CAP, true)
                 .setValue(BROODFRUIT, false)
+                .setValue(STUNTED, false)
                 .setValue(DISTANCE, 0));
     }
 
@@ -134,11 +140,15 @@ public class MoltingVinesBlock extends BushBlock implements BonemealableBlock {
 
     @Override
     protected boolean isRandomlyTicking(BlockState state) {
-        return true;
+        return !state.getValue(STUNTED);
     }
 
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (state.getValue(STUNTED)) {
+            return;
+        }
+
         boolean isTip = state.getValue(GROWTH_DIRECTION) == Direction.DOWN ? state.getValue(BOTTOM_CAP) : state.getValue(TOP_CAP);
         if (isTip && state.getValue(DISTANCE) < MAX_DISTANCE && random.nextInt(6) == 0) {
             BlockPos growPos = pos.relative(state.getValue(GROWTH_DIRECTION));
@@ -181,6 +191,16 @@ public class MoltingVinesBlock extends BushBlock implements BonemealableBlock {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (stack.is(Items.SHEARS) && !state.getValue(STUNTED)) {
+            if (!level.isClientSide) {
+                level.setBlock(pos, state.setValue(STUNTED, true), Block.UPDATE_ALL);
+                stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+                level.playSound(null, pos, SoundEvents.SHEEP_SHEAR, SoundSource.BLOCKS, 1.0F, 1.0F);
+            }
+
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
+
         if (!state.getValue(BROODFRUIT)) {
             return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
         }
@@ -188,6 +208,7 @@ public class MoltingVinesBlock extends BushBlock implements BonemealableBlock {
         if (!level.isClientSide) {
             BuiltInRegistries.ITEM.getOptional(BROODFRUIT_ITEM_ID).ifPresent(item -> harvestFruit(level, pos, item));
             level.setBlock(pos, state.setValue(BROODFRUIT, false), Block.UPDATE_ALL);
+            level.playSound(null, pos, SoundEvents.CAVE_VINES_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.9F + level.random.nextFloat() * 0.2F);
         }
 
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
@@ -198,7 +219,15 @@ public class MoltingVinesBlock extends BushBlock implements BonemealableBlock {
     }
 
     @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!level.isClientSide && state.getValue(BROODFRUIT) && !state.is(newState.getBlock())) {
+            BuiltInRegistries.ITEM.getOptional(BROODFRUIT_ITEM_ID).ifPresent(item -> harvestFruit(level, pos, item));
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(GROWTH_DIRECTION, TOP_CAP, BOTTOM_CAP, BROODFRUIT, DISTANCE);
+        builder.add(GROWTH_DIRECTION, TOP_CAP, BOTTOM_CAP, BROODFRUIT, STUNTED, DISTANCE);
     }
 }

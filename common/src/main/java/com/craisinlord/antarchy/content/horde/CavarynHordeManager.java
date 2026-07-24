@@ -326,7 +326,7 @@ public final class CavarynHordeManager {
 
     private static void tickDormantPressure(ServerLevel level, HordeData data, ServerPlayer player, PlayerAttention attention, long areaKey, long gameTime) {
         long nextSpawnTime = data.areaSpawnCooldowns.getOrDefault(areaKey, 0L);
-        if (gameTime < nextSpawnTime || level.getDifficulty() == Difficulty.PEACEFUL) {
+        if (gameTime < nextSpawnTime || level.getDifficulty() == Difficulty.PEACEFUL || !mobSpawningEnabled(level)) {
             return;
         }
 
@@ -435,7 +435,7 @@ public final class CavarynHordeManager {
     }
 
     private static void spawnAwakeningSkirmish(ServerLevel level, Encounter encounter, List<ServerPlayer> targets) {
-        if (level.getDifficulty() == Difficulty.PEACEFUL) {
+        if (level.getDifficulty() == Difficulty.PEACEFUL || !mobSpawningEnabled(level)) {
             return;
         }
         int players = Math.max(1, targets.size());
@@ -457,7 +457,7 @@ public final class CavarynHordeManager {
     }
 
     private static void spawnPulse(ServerLevel level, Encounter encounter, List<ServerPlayer> targets) {
-        if (level.getDifficulty() == Difficulty.PEACEFUL) {
+        if (level.getDifficulty() == Difficulty.PEACEFUL || !mobSpawningEnabled(level)) {
             return;
         }
 
@@ -485,6 +485,9 @@ public final class CavarynHordeManager {
     }
 
     private static boolean spawnDirectMob(ServerLevel level, @Nullable Encounter encounter, CavarynHordeDefinitions.SpawnChoice choice, ServerPlayer target) {
+        if (!mobSpawningEnabled(level)) {
+            return false;
+        }
         EntityType<?> type = choice.type();
         BlockPos spawnPos = findSpawnPos(level, target, type, level.random);
         if (spawnPos == null) {
@@ -633,6 +636,10 @@ public final class CavarynHordeManager {
 
     private static boolean hordesEnabled(ServerLevel level) {
         return level.getGameRules().getBoolean(AntarchyGameRules.RULE_DO_CAVARYN_HORDES);
+    }
+
+    private static boolean mobSpawningEnabled(ServerLevel level) {
+        return level.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_DOMOBSPAWNING);
     }
 
     private static void clearDisabledState(ServerLevel level, HordeData data) {

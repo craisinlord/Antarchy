@@ -2,9 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "#": "antarchy:bluestone_torch",
-    "I": "minecraft:stone",
-    "X": "minecraft:quartz"
+    "#": { "item": "antarchy:bluestone_torch" },
+    "I": { "item": "minecraft:stone" },
+    "X": { "item": "minecraft:quartz" }
   },
   "pattern": [
     " # ",

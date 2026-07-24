@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.worldgen.cavaryn;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.block.MoltingVinesBlock;
+import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.mojang.serialization.Codec;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -61,6 +62,9 @@ public final class GroundMoltingVinesFeature extends Feature<NoneFeatureConfigur
                 if (!level.getBlockState(mutable).canBeReplaced()) {
                     continue;
                 }
+                if (AntarchyFluidChecks.hasBileNearby(level, mutable, 1)) {
+                    continue;
+                }
                 BlockPos belowPos = mutable.below();
                 BlockState belowState = level.getBlockState(belowPos);
                 if (!belowState.isFaceSturdy(level, belowPos, Direction.UP)) {
@@ -82,6 +86,9 @@ public final class GroundMoltingVinesFeature extends Feature<NoneFeatureConfigur
         while (length < maxLength && mutable.getY() < level.getMaxBuildHeight()) {
             BlockState existing = level.getBlockState(mutable);
             if (!existing.canBeReplaced()) {
+                break;
+            }
+            if (AntarchyFluidChecks.hasBileNearby(level, mutable, 1)) {
                 break;
             }
             length++;

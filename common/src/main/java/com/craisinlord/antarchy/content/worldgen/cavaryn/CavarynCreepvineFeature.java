@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.worldgen.cavaryn;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.mojang.serialization.Codec;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -56,6 +57,9 @@ public final class CavarynCreepvineFeature extends Feature<NoneFeatureConfigurat
                 if (!level.getBlockState(mutable).canBeReplaced()) {
                     continue;
                 }
+                if (AntarchyFluidChecks.hasBileNearby(level, mutable, 1)) {
+                    continue;
+                }
 
                 for (Direction direction : Direction.Plane.HORIZONTAL) {
                     BlockPos supportPos = mutable.relative(direction);
@@ -82,6 +86,9 @@ public final class CavarynCreepvineFeature extends Feature<NoneFeatureConfigurat
 
             BlockState existing = level.getBlockState(vinePos);
             if (!existing.canBeReplaced() && !existing.is(vineBlock)) {
+                break;
+            }
+            if (AntarchyFluidChecks.hasBileNearby(level, vinePos, 1)) {
                 break;
             }
 

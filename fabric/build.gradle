@@ -22,9 +22,11 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
     modApi "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
     modImplementation "software.bernie.geckolib:geckolib-fabric-${project.minecraft_version}:${project.geckolib_version}"
-    compileOnly("curse.maven:intapi-${project.intapi_curseforge_id}:${project.intapi_curseforge_file_id_neoforge}")
+    modCompileOnly("curse.maven:intapi-${project.intapi_curseforge_id}:${project.intapi_curseforge_file_id_fabric}")
+    modLocalRuntime("curse.maven:intapi-${project.intapi_curseforge_id}:${project.intapi_curseforge_file_id_fabric}")
     compileOnly "mezz.jei:jei-${project.minecraft_version}-common-api:${project.jei_version}"
     compileOnly "mezz.jei:jei-${project.minecraft_version}-fabric-api:${project.jei_version}"
+    modLocalRuntime "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}"
 //    compileOnly("curse.maven:create-${project.create_curseforge_id_neoforge}:${project.create_curseforge_file_id_neoforge}")
 //    compileOnly("curse.maven:marvel-${project.marvel_curseforge_id}:${project.marvel_curseforge_file_id}")
 //    compileOnly("curse.maven:stellaris-${project.stellaris_curseforge_id}:${project.stellaris_curseforge_file_id}")
@@ -36,6 +38,7 @@ dependencies {
 //    compileOnly("curse.maven:regions_unexplored-${project.regions_unexplored_curseforge_id}:${project.regions_unexplored_curseforge_file_id}")
 //    compileOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.1+1.21.1-neoforge.jar"))
     compileOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.2+1.21.1-neoforge.jar"))
+    runtimeOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.2+1.21.1-fabric.jar"))
 //    compileOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.1+1.21.1-neoforge-sources.jar"))
     compileOnly(files("$rootDir/infinite_dimensions_jars/gravity-api-1.0.7-1.20.1.jar"))
 //    compileOnly(files("$rootDir/infinite_dimensions_jars/Cloro's Gravity Gun Mod (Release 1.3.1).jar"))

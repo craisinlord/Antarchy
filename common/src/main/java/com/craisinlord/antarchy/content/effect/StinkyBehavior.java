@@ -31,7 +31,7 @@ public final class StinkyBehavior {
         if (!(entity.level() instanceof ServerLevel serverLevel)) {
             return;
         }
-        if (!entity.isAlive() || !entity.hasEffect(AntarchyObjects.STINKY_EFFECT.get())) {
+        if (!entity.isAlive() || !entity.hasEffect(AntarchyObjects.STINKY_EFFECT.get()) || isSpectatorPlayer(entity)) {
             return;
         }
         if (entity.tickCount % TRAIL_INTERVAL_TICKS != 0) {
@@ -82,6 +82,9 @@ public final class StinkyBehavior {
 
     public static void emitBurst(LivingEntity entity, int count) {
         if (!(entity.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        if (isSpectatorPlayer(entity)) {
             return;
         }
         serverLevel.sendParticles(
@@ -221,6 +224,10 @@ public final class StinkyBehavior {
             return false;
         }
         return !mob.isAlliedTo(source);
+    }
+
+    private static boolean isSpectatorPlayer(LivingEntity entity) {
+        return entity instanceof Player player && player.isSpectator();
     }
 
 }

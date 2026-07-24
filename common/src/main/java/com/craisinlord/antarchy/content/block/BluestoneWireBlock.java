@@ -10,6 +10,9 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -17,8 +20,10 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -48,6 +53,7 @@ public class BluestoneWireBlock extends Block implements BluestoneSignalSource {
     private static final VoxelShape WEST_SHAPE = Block.box(0.0D, 14.0D, 3.0D, 13.0D, 16.0D, 13.0D);
     private static final VoxelShape EAST_SHAPE = Block.box(3.0D, 14.0D, 3.0D, 16.0D, 16.0D, 13.0D);
     private static boolean shouldSignal = true;
+    private final BlockState crossState;
 
     public BluestoneWireBlock() {
         this(BlockBehaviour.Properties.of().noCollission().instabreak().sound(SoundType.WOOL));
@@ -55,12 +61,18 @@ public class BluestoneWireBlock extends Block implements BluestoneSignalSource {
 
     public BluestoneWireBlock(BlockBehaviour.Properties properties) {
         super(properties);
-        this.registerDefaultState(this.defaultBlockState()
+        BlockState defaultState = this.defaultBlockState()
                 .setValue(NORTH, BluestoneSide.NONE)
                 .setValue(EAST, BluestoneSide.NONE)
                 .setValue(SOUTH, BluestoneSide.NONE)
                 .setValue(WEST, BluestoneSide.NONE)
-                .setValue(POWER, 0));
+                .setValue(POWER, 0);
+        this.registerDefaultState(defaultState);
+        this.crossState = defaultState
+                .setValue(NORTH, BluestoneSide.SIDE)
+                .setValue(EAST, BluestoneSide.SIDE)
+                .setValue(SOUTH, BluestoneSide.SIDE)
+                .setValue(WEST, BluestoneSide.SIDE);
     }
 
     public MapCodec<BluestoneWireBlock> codec() {
@@ -117,6 +129,7 @@ public class BluestoneWireBlock extends Block implements BluestoneSignalSource {
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean moving) {
         if (!oldState.is(state.getBlock())) {
+            this.notifyNeighborShapes(level, pos);
             this.updateNeighbors(level, pos, state);
         }
     }
@@ -124,13 +137,11 @@ public class BluestoneWireBlock extends Block implements BluestoneSignalSource {
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock())) {
-            BluestoneSignalHelper.updateBluestoneNeighbors(level, pos);
+            this.notifyNeighborShapes(level, pos);
             for (Direction direction : Direction.Plane.HORIZONTAL) {
-                BlockPos neighborPos = pos.relative(direction);
-                BlockState neighborState = level.getBlockState(neighborPos);
-                if (neighborState.is(this)) {
-                    this.updateNeighbors(level, neighborPos, neighborState);
-                }
+                this.updateNeighborWire(level, pos.relative(direction));
+                this.updateNeighborWire(level, pos.relative(direction).above());
+                this.updateNeighborWire(level, pos.relative(direction).below());
             }
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
@@ -169,22 +180,32 @@ public class BluestoneWireBlock extends Block implements BluestoneSignalSource {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (level.isClientSide) {
+        if (!player.getAbilities().mayBuild) {
+            return InteractionResult.PASS;
+        }
+        if (!isCross(state) && !isDot(state)) {
+            return InteractionResult.PASS;
+        }
+        BlockState toggled = isCross(state) ? this.defaultBlockState() : this.crossState;
+        BlockState updated = toggled.setValue(POWER, state.getValue(POWER));
+        if (!hasAnyAutomaticConnections(level, pos)) {
+            if (!updated.equals(state)) {
+                level.setBlock(pos, updated, 3);
+            }
             return InteractionResult.SUCCESS;
         }
-        boolean isDot = state.getValue(NORTH) == BluestoneSide.NONE
-                && state.getValue(EAST) == BluestoneSide.NONE
-                && state.getValue(SOUTH) == BluestoneSide.NONE
-                && state.getValue(WEST) == BluestoneSide.NONE;
-        BlockState updated = isDot
-                ? this.calculateShape(level, pos, state)
-                : state.setValue(NORTH, BluestoneSide.NONE)
-                        .setValue(EAST, BluestoneSide.NONE)
-                        .setValue(SOUTH, BluestoneSide.NONE)
-                        .setValue(WEST, BluestoneSide.NONE);
-        level.setBlock(pos, updated, 3);
-        this.updateNeighbors(level, pos, updated);
-        return InteractionResult.SUCCESS;
+        updated = this.calculateShape(level, pos, updated);
+        if (!updated.equals(state)) {
+            level.setBlock(pos, updated, 3);
+            this.updateNeighbors(level, pos, updated);
+            return InteractionResult.SUCCESS;
+        }
+        return InteractionResult.PASS;
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+        return new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath("antarchy", "bluestone")));
     }
 
     @Override
@@ -235,10 +256,37 @@ public class BluestoneWireBlock extends Block implements BluestoneSignalSource {
         }
         BlockState shaped = this.calculateShape(level, pos, state);
         BlockState powered = this.updatePowerFromNeighbors(level, pos, shaped);
-        if (!powered.equals(state)) {
-            level.setBlock(pos, powered, 3);
+        if (powered.equals(state)) {
+            return;
         }
-        BluestoneSignalHelper.updateBluestoneNeighbors(level, pos);
+        level.setBlock(pos, powered, 2);
+        this.notifyNeighborShapes(level, pos);
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            this.updateNeighborWire(level, pos.relative(direction));
+            this.updateNeighborWire(level, pos.relative(direction).above());
+            this.updateNeighborWire(level, pos.relative(direction).below());
+        }
+    }
+
+    private void updateNeighborWire(Level level, BlockPos pos) {
+        BlockState neighborState = level.getBlockState(pos);
+        if (!neighborState.is(this)) {
+            return;
+        }
+        BlockState shaped = this.calculateShape(level, pos, neighborState);
+        BlockState powered = this.updatePowerFromNeighbors(level, pos, shaped);
+        if (powered.equals(neighborState)) {
+            return;
+        }
+        level.setBlock(pos, powered, 2);
+        this.notifyNeighborShapes(level, pos);
+    }
+
+    private void notifyNeighborShapes(Level level, BlockPos pos) {
+        level.updateNeighborsAt(pos, this);
+        for (Direction direction : Direction.values()) {
+            level.updateNeighborsAt(pos.relative(direction), this);
+        }
     }
 
     private BlockState updatePowerFromNeighbors(Level level, BlockPos pos, BlockState state) {
@@ -249,12 +297,15 @@ public class BluestoneWireBlock extends Block implements BluestoneSignalSource {
     private int calculateTargetStrength(Level level, BlockPos pos) {
         int external = this.getExternalSignal(level, pos);
         int neighborWirePower = 0;
+        boolean openBelowCurrent = !level.getBlockState(pos.below()).isRedstoneConductor(level, pos.below());
 
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             BlockPos sidePos = pos.relative(direction);
+            BlockState sideState = level.getBlockState(sidePos);
             neighborWirePower = Math.max(neighborWirePower, BluestoneSignalHelper.getWireSignal(level, sidePos));
-            neighborWirePower = Math.max(neighborWirePower, BluestoneSignalHelper.getWireSignal(level, sidePos.below()));
-            if (level.getBlockState(sidePos).isRedstoneConductor(level, sidePos)) {
+            if (sideState.isRedstoneConductor(level, sidePos)) {
+                neighborWirePower = Math.max(neighborWirePower, BluestoneSignalHelper.getWireSignal(level, sidePos.below()));
+            } else if (openBelowCurrent) {
                 neighborWirePower = Math.max(neighborWirePower, BluestoneSignalHelper.getWireSignal(level, sidePos.above()));
             }
         }
@@ -281,32 +332,90 @@ public class BluestoneWireBlock extends Block implements BluestoneSignalSource {
         return signal;
     }
 
+    private static boolean isCross(BlockState state) {
+        return state.getValue(NORTH) != BluestoneSide.NONE
+                && state.getValue(EAST) != BluestoneSide.NONE
+                && state.getValue(SOUTH) != BluestoneSide.NONE
+                && state.getValue(WEST) != BluestoneSide.NONE;
+    }
+
+    private static boolean isDot(BlockState state) {
+        return state.getValue(NORTH) == BluestoneSide.NONE
+                && state.getValue(EAST) == BluestoneSide.NONE
+                && state.getValue(SOUTH) == BluestoneSide.NONE
+                && state.getValue(WEST) == BluestoneSide.NONE;
+    }
+
+    private boolean hasAnyAutomaticConnections(LevelReader level, BlockPos pos) {
+        return this.getConnectingSide(level, pos, Direction.NORTH) != BluestoneSide.NONE
+                || this.getConnectingSide(level, pos, Direction.EAST) != BluestoneSide.NONE
+                || this.getConnectingSide(level, pos, Direction.SOUTH) != BluestoneSide.NONE
+                || this.getConnectingSide(level, pos, Direction.WEST) != BluestoneSide.NONE;
+    }
+
     private BlockState calculateShape(LevelReader level, BlockPos pos, BlockState state) {
-        return state.setValue(NORTH, this.getConnectingSide(level, pos, Direction.NORTH))
+        boolean wasDot = isDot(state);
+        BlockState result = state.setValue(NORTH, this.getConnectingSide(level, pos, Direction.NORTH))
                 .setValue(EAST, this.getConnectingSide(level, pos, Direction.EAST))
                 .setValue(SOUTH, this.getConnectingSide(level, pos, Direction.SOUTH))
                 .setValue(WEST, this.getConnectingSide(level, pos, Direction.WEST));
+        if (wasDot && isDot(result)) {
+            return result;
+        }
+
+        boolean north = result.getValue(NORTH) != BluestoneSide.NONE;
+        boolean south = result.getValue(SOUTH) != BluestoneSide.NONE;
+        boolean east = result.getValue(EAST) != BluestoneSide.NONE;
+        boolean west = result.getValue(WEST) != BluestoneSide.NONE;
+        boolean northSouthEmpty = !north && !south;
+        boolean eastWestEmpty = !east && !west;
+        if (!west && northSouthEmpty) {
+            result = result.setValue(WEST, BluestoneSide.SIDE);
+        }
+        if (!east && northSouthEmpty) {
+            result = result.setValue(EAST, BluestoneSide.SIDE);
+        }
+        if (!north && eastWestEmpty) {
+            result = result.setValue(NORTH, BluestoneSide.SIDE);
+        }
+        if (!south && eastWestEmpty) {
+            result = result.setValue(SOUTH, BluestoneSide.SIDE);
+        }
+        return result;
     }
 
     private BluestoneSide getConnectingSide(LevelReader level, BlockPos pos, Direction direction) {
+        boolean openBelowCurrent = !level.getBlockState(pos.below()).isRedstoneConductor(level, pos.below());
+        return this.getConnectingSide(level, pos, direction, openBelowCurrent);
+    }
+
+    private BluestoneSide getConnectingSide(LevelReader level, BlockPos pos, Direction direction, boolean openBelowCurrent) {
         BlockPos sidePos = pos.relative(direction);
         BlockState sideState = level.getBlockState(sidePos);
+        if (openBelowCurrent) {
+            boolean canSupportBelow = sideState.getBlock() instanceof TrapDoorBlock
+                    || Block.canSupportCenter(level, sidePos, Direction.DOWN);
+            if (canSupportBelow && this.canConnectTo(level.getBlockState(sidePos.below()), direction)) {
+                return sideState.isFaceSturdy(level, sidePos, direction.getOpposite()) ? BluestoneSide.DOWN : BluestoneSide.SIDE;
+            }
+        }
+
         if (this.canConnectTo(sideState, direction)) {
             return BluestoneSide.SIDE;
         }
 
-        if (!sideState.isRedstoneConductor(level, sidePos) && this.canConnectTo(level.getBlockState(sidePos.below()), direction)) {
-            return BluestoneSide.DOWN;
+        if (sideState.isRedstoneConductor(level, sidePos)) {
+            return BluestoneSide.NONE;
         }
 
-        if (sideState.isRedstoneConductor(level, sidePos) && this.canConnectTo(level.getBlockState(sidePos.above()), direction)) {
-            return BluestoneSide.SIDE;
-        }
-
-        return BluestoneSide.NONE;
+        BlockPos sidePosAbove = sidePos.above();
+        return this.canConnectTo(level.getBlockState(sidePosAbove), direction) ? BluestoneSide.SIDE : BluestoneSide.NONE;
     }
 
     private boolean canConnectTo(BlockState state, Direction direction) {
+        if (state.getBlock() instanceof RedStoneWireBlock || state.is(net.minecraft.world.level.block.Blocks.REDSTONE_WIRE)) {
+            return false;
+        }
         if (state.getBlock() instanceof BluestoneWireBlock || state.getBlock() instanceof BluestoneTorchBlock || state.getBlock() instanceof BluestoneBlock) {
             return true;
         }

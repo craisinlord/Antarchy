@@ -371,6 +371,16 @@ public final class AntarchyFabricItems {
             () -> new AntimetalScaffoldingItem(AntarchyFabricBlocks.ANTIMETAL_SCAFFOLDING.get(), new Item.Properties()));
 
 
+    public static final DeferredItem<CeilingPlacementTooltipBlockItem> ANTIMETAL_RAIL_ITEM = ITEMS.register("antimetal_rail",
+            () -> new CeilingPlacementTooltipBlockItem(AntarchyFabricBlocks.ANTIMETAL_RAIL.get(), new Item.Properties()));
+    public static final DeferredItem<CeilingPlacementTooltipBlockItem> ANTIMETAL_POWERED_RAIL_ITEM = ITEMS.register("antimetal_powered_rail",
+            () -> new CeilingPlacementTooltipBlockItem(AntarchyFabricBlocks.ANTIMETAL_POWERED_RAIL.get(), new Item.Properties()));
+    public static final DeferredItem<CeilingPlacementTooltipBlockItem> ANTIMETAL_DETECTOR_RAIL_ITEM = ITEMS.register("antimetal_detector_rail",
+            () -> new CeilingPlacementTooltipBlockItem(AntarchyFabricBlocks.ANTIMETAL_DETECTOR_RAIL.get(), new Item.Properties()));
+    public static final DeferredItem<CeilingPlacementTooltipBlockItem> ANTIMETAL_ACTIVATOR_RAIL_ITEM = ITEMS.register("antimetal_activator_rail",
+            () -> new CeilingPlacementTooltipBlockItem(AntarchyFabricBlocks.ANTIMETAL_ACTIVATOR_RAIL.get(), new Item.Properties()));
+
+
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SMALL_BLOOD_CRYSTAL_BUD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.SMALL_BLOOD_CRYSTAL_BUD);
 
 
@@ -503,6 +513,9 @@ public final class AntarchyFabricItems {
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_NYXITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.POLISHED_NYXITE_WALL);
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.CeilingCompatiblePlacementTooltipBlockItem> POLISHED_NYXITE_PRESSURE_PLATE_ITEM = ITEMS.register("polished_nyxite_pressure_plate",
+            () -> new com.craisinlord.antarchy.content.item.CeilingCompatiblePlacementTooltipBlockItem(AntarchyFabricBlocks.POLISHED_NYXITE_PRESSURE_PLATE.get(), new Item.Properties()));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_NYXITE_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.POLISHED_NYXITE_BUTTON);
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NYXITE_BRICK_STAIRS);

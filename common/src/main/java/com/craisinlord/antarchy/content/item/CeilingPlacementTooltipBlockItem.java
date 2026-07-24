@@ -16,7 +16,7 @@ public class CeilingPlacementTooltipBlockItem extends BlockItem {
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.translatable("tooltip.antarchy.bluestone_placement").withStyle(ChatFormatting.BLUE));
+        tooltipComponents.add(Component.translatable("tooltip.antarchy.bluestone_placement").withStyle(ChatFormatting.DARK_AQUA));
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 }

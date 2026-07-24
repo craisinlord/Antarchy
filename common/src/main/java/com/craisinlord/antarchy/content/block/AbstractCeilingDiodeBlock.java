@@ -26,7 +26,7 @@ public abstract class AbstractCeilingDiodeBlock extends DiodeBlock {
 
     @Override
     protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        if (!state.canSurvive(level, pos)) {
+        if (direction == Direction.UP && !state.canSurvive(level, pos)) {
             return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
         }
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);

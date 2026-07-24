@@ -241,10 +241,6 @@ public final class AntarchyNeoForgeClient {
     @SubscribeEvent
     public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
         event.register(
-                (stack, tintIndex) -> tintIndex == 0 ? bluestoneWireColor(15) : -1,
-                AntarchyNeoforgeItems.BLUESTONE_DUST.get()
-        );
-        event.register(
                 (stack, tintIndex) -> FoliageColor.getDefaultColor(),
                 AntarchyNeoforgeItems.OURANWOOD_LEAVES_ITEM.get()
         );
@@ -544,6 +540,10 @@ public final class AntarchyNeoForgeClient {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.ANTIMETAL_RAIL.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.ANTIMETAL_POWERED_RAIL.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.ANTIMETAL_DETECTOR_RAIL.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.ANTIMETAL_ACTIVATOR_RAIL.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.OURANWOOD_LEAVES.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.OURANWOOD_DOOR.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.OURANWOOD_TRAPDOOR.get(), RenderType.cutout());
@@ -587,6 +587,7 @@ public final class AntarchyNeoForgeClient {
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.BLOOD_CRYSTAL_CRYSTAL.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.DREAM_TORCH.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.DREAM_WALL_TORCH.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.DREAM_CEILING_TORCH.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.BLUESTONE_WIRE.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.BLUESTONE_REPEATER.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.BLUESTONE_COMPARATOR.get(), RenderType.cutout());

@@ -26,7 +26,6 @@ public class AntarchyNeoforgeCreativeModeTabs {
                     .displayItems((parameters, output) -> {})
                     .build());
 
-
     static void buildCreativeTabs(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == ANTARCHY_TAB.getKey()) {
             CreativeTabContents.populateAntarchyTab(new CreativeTabContents.AntarchyTabOutput() {

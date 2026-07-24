@@ -41,11 +41,13 @@
     [],
     [],
     [
+      "antarchy:bluestone_ore"
+    ],
+    [
       "antarchy:lucid_blood_crystal_spires",
       "antarchy:lucid_medium_blood_crystal_spires",
       "antarchy:lucid_large_blood_crystal_spires"
     ],
-    [],
     [],
     [
       "antarchy:lucid_antiwater_pools",
@@ -90,4 +92,3 @@
     "misc": []
   }
 }
-

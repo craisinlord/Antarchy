@@ -3,21 +3,21 @@ package com.craisinlord.antarchy.content.entity.lucid;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import net.minecraft.core.Holder;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
 import java.util.function.Supplier;
 
-public class LucidBoltEntity extends AbstractArrow {
+public class LucidBoltEntity extends ThrowableProjectile {
     private static final int MAX_LIFETIME_TICKS = 40;
     private static final int INVERTED_EFFECT_DURATION = 100;
     private static final double BASE_DAMAGE = 3.0D;
@@ -30,29 +30,21 @@ public class LucidBoltEntity extends AbstractArrow {
     }
 
     public LucidBoltEntity(EntityType<? extends LucidBoltEntity> entityType, LivingEntity shooter, Level level) {
-        super(entityType, shooter, level, new ItemStack(Items.BOW), new ItemStack(Items.BOW));
+        super(entityType, shooter, level);
         this.configureBolt();
     }
 
     private void configureBolt() {
-        this.pickup = Pickup.DISALLOWED;
         this.setNoGravity(true);
-        this.setBaseDamage(BASE_DAMAGE);
     }
 
     @Override
-    protected ItemStack getDefaultPickupItem() {
-        return ItemStack.EMPTY;
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
     }
 
     @Override
     protected double getDefaultGravity() {
         return 0.0D;
-    }
-
-    @Override
-    protected net.minecraft.sounds.SoundEvent getDefaultHitGroundSoundEvent() {
-        return AntarchySoundEvents.LUCID_BOLT_SOUND.get();
     }
 
     @Override
@@ -72,14 +64,12 @@ public class LucidBoltEntity extends AbstractArrow {
             return;
         }
 
-        super.onHitEntity(result);
-
         if (!this.level().isClientSide() && result.getEntity() instanceof LivingEntity target) {
             Entity owner = this.getOwner();
             if (owner instanceof LivingEntity shooter) {
-                target.hurt(this.damageSources().mobAttack(shooter), (float) this.getBaseDamage());
+                target.hurt(this.damageSources().mobAttack(shooter), (float) BASE_DAMAGE);
             } else {
-                target.hurt(this.damageSources().magic(), (float) this.getBaseDamage());
+                target.hurt(this.damageSources().magic(), (float) BASE_DAMAGE);
             }
 
             if (invertedEffectSupplier != null) {
@@ -92,7 +82,9 @@ public class LucidBoltEntity extends AbstractArrow {
 
     @Override
     protected void onHitBlock(BlockHitResult result) {
-        super.onHitBlock(result);
+        if (!this.level().isClientSide()) {
+            this.level().playSound(null, result.getBlockPos(), AntarchySoundEvents.LUCID_BOLT_SOUND.get(), SoundSource.HOSTILE, 0.8F, 1.0F);
+        }
         this.discard();
     }
 }

@@ -60,7 +60,7 @@ public final class CavarynBileCystFeature extends Feature<NoneFeatureConfigurati
             y = Mth.clamp(y, level.getMinBuildHeight() + 6, level.getMaxBuildHeight() - 6);
             mutable.set(x, y, z);
 
-            if (!isSolid(level.getBlockState(mutable))) {
+            if (!isSolid(level, mutable)) {
                 continue;
             }
 
@@ -77,7 +77,7 @@ public final class CavarynBileCystFeature extends Feature<NoneFeatureConfigurati
 
             int depth = 1 + random.nextInt(2);
             BlockPos candidate = mutable.immutable().relative(openDir.getOpposite(), depth);
-            if (isSolid(level.getBlockState(candidate))) {
+            if (isSolid(level, candidate)) {
                 return candidate;
             }
         }
@@ -124,8 +124,7 @@ public final class CavarynBileCystFeature extends Feature<NoneFeatureConfigurati
                     }
 
                     BlockPos pos = center.offset(dx, dy, dz);
-                    BlockState existing = level.getBlockState(pos);
-                    if (!isSolid(existing)) {
+                    if (!isSolid(level, pos)) {
                         continue;
                     }
 
@@ -151,7 +150,9 @@ public final class CavarynBileCystFeature extends Feature<NoneFeatureConfigurati
             for (Direction dir : Direction.values()) {
                 BlockPos adj = cystPos.relative(dir);
                 BlockState adjState = level.getBlockState(adj);
-                if ((adjState.isAir() || adjState.canBeReplaced()) && random.nextFloat() < OOZE_CHANCE) {
+                if ((adjState.isAir() || adjState.canBeReplaced())
+                        && !CavarynFoliageGuard.isFoliageNearby(level, adj)
+                        && random.nextFloat() < OOZE_CHANCE) {
                     BlockState bileState = bileBlock.defaultBlockState();
                     level.setBlock(adj, bileState, 2);
                     scheduleFluidTick(level, adj, bileState);
@@ -162,8 +163,10 @@ public final class CavarynBileCystFeature extends Feature<NoneFeatureConfigurati
         return true;
     }
 
-    private static boolean isSolid(BlockState state) {
-        return state.blocksMotion() && !state.is(Blocks.BEDROCK) && state.getFluidState().isEmpty();
+    private static boolean isSolid(WorldGenLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        return state.blocksMotion() && !state.is(Blocks.BEDROCK) && state.getFluidState().isEmpty()
+                && !CavarynFoliageGuard.isFoliageNearby(level, pos);
     }
 
     private static void scheduleFluidTick(WorldGenLevel level, BlockPos pos, BlockState state) {

@@ -349,7 +349,7 @@ public class PeachTreeFeature extends Feature<PeachTreeConfiguration> {
         while (!queue.isEmpty()) {
             BlockPos current = queue.removeFirst();
             int currentDistance = distances.getOrDefault(current, 0);
-            if (currentDistance >= 6) {
+            if (currentDistance >= PeachLeavesBlock.PEACH_MAX_DISTANCE) {
                 continue;
             }
 
@@ -373,14 +373,14 @@ public class PeachTreeFeature extends Feature<PeachTreeConfiguration> {
                 continue;
             }
 
-            IntegerProperty property = state.getBlock() instanceof PeachLeavesBlock ? LeavesBlock.DISTANCE : null;
+            IntegerProperty property = state.getBlock() instanceof PeachLeavesBlock ? PeachLeavesBlock.PEACH_DISTANCE : null;
             if (property == null) {
                 continue;
             }
 
-            int distance = Math.min(6, distances.getOrDefault(pos, 6));
+            int distance = Math.min(PeachLeavesBlock.PEACH_DECAY_DISTANCE, distances.getOrDefault(pos, PeachLeavesBlock.PEACH_DECAY_DISTANCE));
             if (state.getValue(property) != distance) {
-                setBlock(level, pos, state.setValue(property, distance));
+                setBlock(level, pos, PeachLeavesBlock.setPeachDistanceForWorldgen(state, distance));
             }
         }
     }

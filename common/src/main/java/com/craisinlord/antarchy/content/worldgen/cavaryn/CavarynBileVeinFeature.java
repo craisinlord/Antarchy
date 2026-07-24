@@ -68,7 +68,7 @@ public final class CavarynBileVeinFeature extends Feature<NoneFeatureConfigurati
             y = Mth.clamp(y, level.getMinBuildHeight() + 2, level.getMaxBuildHeight() - 3);
             mutable.set(x, y, z);
 
-            if (!isVeinCandidate(level.getBlockState(mutable))) {
+            if (!isVeinCandidate(level, mutable)) {
                 continue;
             }
 
@@ -124,15 +124,13 @@ public final class CavarynBileVeinFeature extends Feature<NoneFeatureConfigurati
                 continue;
             }
 
-            BlockState state = level.getBlockState(current);
-            if (!isVeinCandidate(state)) {
+            if (!isVeinCandidate(level, current)) {
                 BlockPos redirect = findSolidNeighbor(current, dir, visited, level, random);
                 if (redirect == null) {
                     break;
                 }
                 current = redirect;
-                state = level.getBlockState(current);
-                if (!isVeinCandidate(state)) {
+                if (!isVeinCandidate(level, current)) {
                     break;
                 }
             }
@@ -175,7 +173,7 @@ public final class CavarynBileVeinFeature extends Feature<NoneFeatureConfigurati
         }
         for (Direction d : perps) {
             BlockPos candidate = from.relative(d);
-            if (!visited.contains(candidate) && isVeinCandidate(level.getBlockState(candidate))) {
+            if (!visited.contains(candidate) && isVeinCandidate(level, candidate)) {
                 return candidate;
             }
         }
@@ -195,8 +193,7 @@ public final class CavarynBileVeinFeature extends Feature<NoneFeatureConfigurati
             if (visited.contains(candidate)) {
                 continue;
             }
-            BlockState candidateState = level.getBlockState(candidate);
-            if (!isVeinCandidate(candidateState)) {
+            if (!isVeinCandidate(level, candidate)) {
                 continue;
             }
             if (isEnclosed(level, candidate) || random.nextFloat() < 0.01f) {
@@ -219,8 +216,10 @@ public final class CavarynBileVeinFeature extends Feature<NoneFeatureConfigurati
         return true;
     }
 
-    private static boolean isVeinCandidate(BlockState state) {
-        return state.blocksMotion() && !state.is(Blocks.BEDROCK) && state.getFluidState().isEmpty();
+    private static boolean isVeinCandidate(WorldGenLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        return state.blocksMotion() && !state.is(Blocks.BEDROCK) && state.getFluidState().isEmpty()
+                && !CavarynFoliageGuard.isFoliageNearby(level, pos);
     }
 
     private static Direction[] perpendiculars(Direction dir) {

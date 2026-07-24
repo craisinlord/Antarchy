@@ -2,6 +2,8 @@
   "replace": false,
   "values": [
     "antarchy:bluestone_ore",
-    "antarchy:bluestone_block"
+    "antarchy:bluestone_block",
+    "antarchy:polished_nyxite_pressure_plate",
+    "antarchy:polished_nyxite_button"
   ]
 }

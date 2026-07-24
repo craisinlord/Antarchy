@@ -279,6 +279,14 @@ public final class AntarchyNeoforgeItems {
             () -> new AntimetalBlockItem(AntarchyNeoforgeBlocks.POLISHED_ANTIMETAL.get(), new Item.Properties()));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> ANTIMETAL_SCAFFOLDING_ITEM = ITEMS.register("antimetal_scaffolding",
             () -> new AntimetalScaffoldingItem(AntarchyNeoforgeBlocks.ANTIMETAL_SCAFFOLDING.get(), new Item.Properties()));
+    public static final DeferredItem<CeilingPlacementTooltipBlockItem> ANTIMETAL_RAIL_ITEM = ITEMS.register("antimetal_rail",
+            () -> new CeilingPlacementTooltipBlockItem(AntarchyNeoforgeBlocks.ANTIMETAL_RAIL.get(), new Item.Properties()));
+    public static final DeferredItem<CeilingPlacementTooltipBlockItem> ANTIMETAL_POWERED_RAIL_ITEM = ITEMS.register("antimetal_powered_rail",
+            () -> new CeilingPlacementTooltipBlockItem(AntarchyNeoforgeBlocks.ANTIMETAL_POWERED_RAIL.get(), new Item.Properties()));
+    public static final DeferredItem<CeilingPlacementTooltipBlockItem> ANTIMETAL_DETECTOR_RAIL_ITEM = ITEMS.register("antimetal_detector_rail",
+            () -> new CeilingPlacementTooltipBlockItem(AntarchyNeoforgeBlocks.ANTIMETAL_DETECTOR_RAIL.get(), new Item.Properties()));
+    public static final DeferredItem<CeilingPlacementTooltipBlockItem> ANTIMETAL_ACTIVATOR_RAIL_ITEM = ITEMS.register("antimetal_activator_rail",
+            () -> new CeilingPlacementTooltipBlockItem(AntarchyNeoforgeBlocks.ANTIMETAL_ACTIVATOR_RAIL.get(), new Item.Properties()));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SMALL_BLOOD_CRYSTAL_BUD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SMALL_BLOOD_CRYSTAL_BUD);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> MEDIUM_BLOOD_CRYSTAL_BUD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MEDIUM_BLOOD_CRYSTAL_BUD);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> LARGE_BLOOD_CRYSTAL_BUD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LARGE_BLOOD_CRYSTAL_BUD);
@@ -343,6 +351,9 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_NYXITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_NYXITE_STAIRS);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_NYXITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_NYXITE_SLAB);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_NYXITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_NYXITE_WALL);
+    public static final DeferredItem<CeilingCompatiblePlacementTooltipBlockItem> POLISHED_NYXITE_PRESSURE_PLATE_ITEM = ITEMS.register("polished_nyxite_pressure_plate",
+            () -> new CeilingCompatiblePlacementTooltipBlockItem(AntarchyNeoforgeBlocks.POLISHED_NYXITE_PRESSURE_PLATE.get(), new Item.Properties()));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_NYXITE_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_NYXITE_BUTTON);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_BRICK_STAIRS);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_BRICK_SLAB);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_BRICK_WALL);

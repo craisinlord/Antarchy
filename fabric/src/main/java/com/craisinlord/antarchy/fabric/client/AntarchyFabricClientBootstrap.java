@@ -177,10 +177,6 @@ public final class AntarchyFabricClientBootstrap {
                         : net.minecraft.world.level.GrassColor.getDefaultColor(),
                 AntarchyFabricBlocks.POTTED_SPIDER_LILY.get()
         );
-        ColorProviderRegistry.ITEM.register(
-                (stack, tintIndex) -> tintIndex == 0 ? bluestoneWireColor(15) : -1,
-                AntarchyFabricItems.BLUESTONE_DUST.get()
-        );
         ColorProviderRegistry.ITEM.register((stack, tintIndex) -> FoliageColor.getDefaultColor(), AntarchyFabricItems.OURANWOOD_LEAVES_ITEM.get());
         ColorProviderRegistry.ITEM.register(
                 (stack, tintIndex) -> tintIndex == 0 ? net.minecraft.world.level.GrassColor.getDefaultColor() : -1,
@@ -288,6 +284,10 @@ public final class AntarchyFabricClientBootstrap {
     }
 
     private static void registerRenderLayers() {
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.ANTIMETAL_RAIL.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.ANTIMETAL_POWERED_RAIL.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.ANTIMETAL_DETECTOR_RAIL.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.ANTIMETAL_ACTIVATOR_RAIL.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.OURANWOOD_LEAVES.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.OURANWOOD_DOOR.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.OURANWOOD_TRAPDOOR.get(), RenderType.cutout());
@@ -333,6 +333,7 @@ public final class AntarchyFabricClientBootstrap {
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.BLOOD_CRYSTAL_CRYSTAL.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.DREAM_TORCH.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.DREAM_WALL_TORCH.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.DREAM_CEILING_TORCH.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.BLUESTONE_WIRE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.BLUESTONE_REPEATER.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.BLUESTONE_COMPARATOR.get(), RenderType.cutout());

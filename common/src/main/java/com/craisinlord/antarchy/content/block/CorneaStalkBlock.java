@@ -8,6 +8,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
@@ -147,6 +149,7 @@ public class CorneaStalkBlock extends BushBlock implements BonemealableBlock {
         if (!level.isClientSide) {
             this.dropCorneaFruit(level, pos, level.random);
             level.setBlock(pos, state.setValue(AGE, 1), Block.UPDATE_ALL);
+            level.playSound(null, pos, SoundEvents.CAVE_VINES_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.9F + level.random.nextFloat() * 0.2F);
         }
 
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
