@@ -121,7 +121,8 @@ public class BluestoneWireBlock extends Block implements BluestoneSignalSource {
             return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
         }
         if (direction.getAxis().isHorizontal() || direction == Direction.UP || direction == Direction.DOWN) {
-            return this.calculateShape(level, pos, state);
+            BlockState shaped = this.calculateShape(level, pos, state);
+            return level instanceof Level actualLevel ? this.updatePowerFromNeighbors(actualLevel, pos, shaped) : shaped;
         }
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
@@ -295,7 +296,9 @@ public class BluestoneWireBlock extends Block implements BluestoneSignalSource {
     }
 
     private int calculateTargetStrength(Level level, BlockPos pos) {
+        shouldSignal = false;
         int external = this.getExternalSignal(level, pos);
+        shouldSignal = true;
         int neighborWirePower = 0;
         boolean openBelowCurrent = !level.getBlockState(pos.below()).isRedstoneConductor(level, pos.below());
 
@@ -324,7 +327,7 @@ public class BluestoneWireBlock extends Block implements BluestoneSignalSource {
             if (neighborState.getBlock() instanceof BluestoneWireBlock) {
                 continue;
             }
-            signal = Math.max(signal, neighborState.getSignal(level, neighborPos, direction));
+            signal = Math.max(signal, BluestoneSignalHelper.getSignalExcludingRedstoneWire(level, neighborPos, direction.getOpposite()));
             if (signal >= 15) {
                 return 15;
             }

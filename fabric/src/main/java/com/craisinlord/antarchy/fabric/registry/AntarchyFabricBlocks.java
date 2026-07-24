@@ -546,8 +546,8 @@ public final class AntarchyFabricBlocks {
             () -> new UmbralMossCarpetBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_CARPET).noOcclusion()));
 
 
-    public static final DeferredBlock<GlowLichenBlock> AMBER_LICHEN = BLOCKS.register("amber_lichen",
-            () -> new GlowLichenBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLOW_LICHEN).lightLevel(state -> 4)));
+    public static final DeferredBlock<AmberLichenBlock> AMBER_LICHEN = BLOCKS.register("amber_lichen",
+            () -> new AmberLichenBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLOW_LICHEN).lightLevel(state -> 4)));
 
 
     public static final DeferredBlock<Block> BILE_VEIN = BLOCKS.register("bile_vein",

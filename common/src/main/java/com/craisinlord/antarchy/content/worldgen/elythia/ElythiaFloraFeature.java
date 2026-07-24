@@ -99,7 +99,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
         }) {
             placedAny |= this.placeMilkweedPatch(level, origin, random, AntarchyObjects.PINK_MILKWEED.get());
         }
-        if (this.variant == Variant.PEACH_FOREST && random.nextFloat() < 0.035F) {
+        if (this.variant == Variant.PEACH_FOREST && random.nextFloat() < 0.14F) {
             placedAny |= this.placeMilkweedPatch(level, origin, random, antarchyBlock(CAMELLIA_ID));
         }
 

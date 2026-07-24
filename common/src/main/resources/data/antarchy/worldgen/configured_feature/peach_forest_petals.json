@@ -2,10 +2,36 @@
   "type": "minecraft:simple_block",
   "config": {
     "to_place": {
-      "type": "minecraft:simple_state_provider",
-      "state": {
-        "Name": "minecraft:pink_petals"
-      }
+      "type": "minecraft:weighted_state_provider",
+      "entries": [
+        {
+          "data": {
+            "Name": "minecraft:pink_petals",
+            "Properties": {
+              "flower_amount": "2"
+            }
+          },
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "minecraft:pink_petals",
+            "Properties": {
+              "flower_amount": "3"
+            }
+          },
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "minecraft:pink_petals",
+            "Properties": {
+              "flower_amount": "4"
+            }
+          },
+          "weight": 1
+        }
+      ]
     }
   }
 }

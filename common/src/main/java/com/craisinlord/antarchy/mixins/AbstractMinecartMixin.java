@@ -13,6 +13,8 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -97,11 +99,19 @@ public abstract class AbstractMinecartMixin implements AntimetalMinecartAccess {
         }
     }
 
+    @Unique
+    private static final double ANTARCHY$STANDING_PASSENGER_OFFSET = 0.1875D;
+
     @Inject(method = "getPassengerAttachmentPoint", at = @At("RETURN"), cancellable = true)
     private void antarchy$mirrorPassengerAttachment(Entity passenger, EntityDimensions dimensions, float partialTick, CallbackInfoReturnable<Vec3> cir) {
         if (this.antarchy$isOnAntimetalRail()) {
             Vec3 original = cir.getReturnValue();
-            double mirroredY = 2.0D * AntimetalRailHelper.CART_MODEL_PIVOT_Y - original.y + 1.0D;
+            boolean standing = passenger instanceof Villager || passenger instanceof WanderingTrader;
+            double sourceY = standing ? original.y + ANTARCHY$STANDING_PASSENGER_OFFSET : original.y;
+            double mirroredY = 2.0D * AntimetalRailHelper.CART_MODEL_PIVOT_Y - sourceY + 1.0D;
+            if (standing) {
+                mirroredY -= ANTARCHY$STANDING_PASSENGER_OFFSET;
+            }
             cir.setReturnValue(new Vec3(original.x, mirroredY, original.z));
         }
     }

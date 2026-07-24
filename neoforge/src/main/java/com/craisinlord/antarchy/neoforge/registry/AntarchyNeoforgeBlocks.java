@@ -303,8 +303,8 @@ public final class AntarchyNeoforgeBlocks {
             () -> new AmberMossBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_BLOCK)));
     public static final DeferredBlock<UmbralMossCarpetBlock> AMBER_MOSS_CARPET = BLOCKS.register("amber_moss_carpet",
             () -> new UmbralMossCarpetBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_CARPET).noOcclusion()));
-    public static final DeferredBlock<GlowLichenBlock> AMBER_LICHEN = BLOCKS.register("amber_lichen",
-            () -> new GlowLichenBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLOW_LICHEN).lightLevel(state -> 4)));
+    public static final DeferredBlock<AmberLichenBlock> AMBER_LICHEN = BLOCKS.register("amber_lichen",
+            () -> new AmberLichenBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLOW_LICHEN).lightLevel(state -> 4)));
     public static final DeferredBlock<Block> BILE_VEIN = BLOCKS.register("bile_vein",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.NETHERRACK).lightLevel(state -> 2)));
     public static final DeferredBlock<CreepvineBlock> CREEPVINE = BLOCKS.register("creepvine",
