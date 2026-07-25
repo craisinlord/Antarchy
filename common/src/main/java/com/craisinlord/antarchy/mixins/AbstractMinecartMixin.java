@@ -77,12 +77,11 @@ public abstract class AbstractMinecartMixin implements AntimetalMinecartAccess {
         return BaseRailBlock.isRail(state);
     }
 
-    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/vehicle/AbstractMinecart;moveAlongTrack(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V"))
-    private void antarchy$redirectMoveAlongTrack(AbstractMinecart self, BlockPos pos, BlockState state) {
+    @Inject(method = "moveAlongTrack", at = @At("HEAD"), cancellable = true)
+    private void antarchy$redirectMoveAlongTrack(BlockPos pos, BlockState state, CallbackInfo ci) {
         if (antarchy$antimetalActive && antarchy$antimetalRailPos != null && antarchy$antimetalRailState != null) {
-            AntimetalMinecartPhysics.moveAlongTrack(self, antarchy$antimetalRailPos, antarchy$antimetalRailState);
-        } else {
-            this.moveAlongTrack(pos, state);
+            AntimetalMinecartPhysics.moveAlongTrack((AbstractMinecart) (Object) this, antarchy$antimetalRailPos, antarchy$antimetalRailState);
+            ci.cancel();
         }
     }
 
