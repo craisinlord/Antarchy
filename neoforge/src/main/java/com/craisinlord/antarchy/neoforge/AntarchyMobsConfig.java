@@ -375,7 +375,7 @@ public final class AntarchyMobsConfig {
         // Jumpy Bug
 
         b.push("jumpyBug");
-        JUMPY_BUG_HEALTH = b.comment("Base max health.").defineInRange("health", 12.0D, 1.0D, 32768.0D);
+        JUMPY_BUG_HEALTH = b.comment("Base max health.").defineInRange("health", 100.0D, 1.0D, 32768.0D);
         JUMPY_BUG_POUNCE_DAMAGE = b.comment("Damage dealt on a successful pounce latch.").defineInRange("pounceDamage", 2.0D, 0.0D, 1024.0D);
         JUMPY_BUG_LATCH_DAMAGE = b.comment("Damage dealt while latched onto a target.").defineInRange("latchDamage", 2.0D, 0.0D, 1024.0D);
         JUMPY_BUG_CAMOUFLAGE_ALPHA = b.comment("Renderer alpha while camouflaged.").defineInRange("camouflageAlpha", 0.18D, 0.01D, 1.0D);
