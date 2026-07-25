@@ -10,7 +10,6 @@
     "WaterlikeFluidLivingEntityMixin",
     "WaterlikeFluidItemEntityMixin",
     "AntimetalInversionMixin",
-    "AntimetalScaffoldingMixin",
     "ElytraStartFlyingMixin",
     "ElytraFallFlyingMixin",
     "BloodglassEquipMixin",

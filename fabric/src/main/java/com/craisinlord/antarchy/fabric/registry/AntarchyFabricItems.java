@@ -18,7 +18,7 @@ import com.craisinlord.antarchy.content.item.BasiliskDaggerItem;
 import com.craisinlord.antarchy.content.item.BigBerthaItem;
 import com.craisinlord.antarchy.content.item.KrakensGraspItem;
 import com.craisinlord.antarchy.content.item.AntimetalBlockItem;
-import com.craisinlord.antarchy.fabric.item.AntimetalScaffoldingItem;
+import com.craisinlord.antarchy.content.item.AntimetalScaffoldingItem;
 import com.craisinlord.antarchy.content.item.CloudSharkFinSoupItem;
 import com.craisinlord.antarchy.content.item.CorneaEarItem;
 import com.craisinlord.antarchy.content.item.GravityGunItem;

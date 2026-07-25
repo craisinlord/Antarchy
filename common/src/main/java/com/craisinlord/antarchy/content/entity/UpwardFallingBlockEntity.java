@@ -124,12 +124,15 @@ public class UpwardFallingBlockEntity extends Entity {
             return 0.0F;
         }
 
-        float thicknessMultiplier = switch (state.getValue(PointedDripstoneBlock.THICKNESS)) {
-            case TIP, TIP_MERGE -> 2.0F;
-            case FRUSTUM -> 1.5F;
-            case MIDDLE -> 1.25F;
-            case BASE -> 1.0F;
-        };
+        float thicknessMultiplier = 1.0F;
+        if (state.hasProperty(PointedDripstoneBlock.THICKNESS)) {
+            thicknessMultiplier = switch (state.getValue(PointedDripstoneBlock.THICKNESS)) {
+                case TIP, TIP_MERGE -> 2.0F;
+                case FRUSTUM -> 1.5F;
+                case MIDDLE -> 1.25F;
+                case BASE -> 1.0F;
+            };
+        }
 
         return Math.min(baseDamage * thicknessMultiplier, 40.0F);
     }

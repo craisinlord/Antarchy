@@ -1,6 +1,11 @@
 {
   "type": "neoforge:add_spawns",
-  "biomes": "#antarchy:octopus_bomb_spawn_biomes",
+  "biomes": [
+    "minecraft:deep_ocean",
+    "minecraft:deep_cold_ocean",
+    "minecraft:deep_lukewarm_ocean",
+    "minecraft:deep_frozen_ocean"
+  ],
   "spawners": [
     {
       "type": "antarchy:octopus_bomb",

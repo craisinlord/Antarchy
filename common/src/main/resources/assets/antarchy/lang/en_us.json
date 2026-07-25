@@ -165,6 +165,7 @@
     "tooltip.antarchy.signal_saving_bulb":  "Toggles on/off. Has light level equal to the signal strength stored on it.",
     "tooltip.antarchy.bluestone_placement":  "Places below blocks",
     "tooltip.antarchy.ceiling_compatible_placement":  "Can also be placed on ceilings",
+    "tooltip.antarchy.antimetal_scaffolding":  "Acts as normal scaffolding, or inverted scaffolding while your gravity is flipped",
     "block.antarchy.bile":  "Bile",
     "block.antarchy.ichor":  "Ichor",
     "block.antarchy.antiwater":  "Antiwater",

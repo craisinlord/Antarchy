@@ -14,7 +14,7 @@
       "tag": "c:ingots/netherite"
     },
     "C": {
-      "item": "minecraft:comparator"
+      "item": "antarchy:bluestone_comparator"
     }
   },
   "result": {

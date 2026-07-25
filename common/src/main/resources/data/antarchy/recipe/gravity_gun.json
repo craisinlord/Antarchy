@@ -4,7 +4,7 @@
   "pattern": [
     "UGN",
     "UCT",
-    "  T"
+    " BT"
   ],
   "key": {
     "U": {
@@ -21,6 +21,9 @@
     },
     "C": {
       "item": "minecraft:comparator"
+    },
+    "B": {
+      "item": "antarchy:bluestone_comparator"
     }
   },
   "result": {
