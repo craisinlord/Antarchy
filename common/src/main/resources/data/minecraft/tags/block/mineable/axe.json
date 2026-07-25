@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "antarchy:duplicator_log",
     "antarchy:ouranwood_log",
     "antarchy:ouranwood_wood",
     "antarchy:mossy_ouranwood_log",
@@ -36,6 +37,7 @@
     "antarchy:peach_sign",
     "antarchy:peach_wall_sign",
     "antarchy:peach_hanging_sign",
-    "antarchy:peach_wall_hanging_sign"
+    "antarchy:peach_wall_hanging_sign",
+    "antarchy:dream_campfire"
   ]
 }

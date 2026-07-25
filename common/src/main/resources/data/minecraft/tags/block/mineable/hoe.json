@@ -11,8 +11,11 @@
                    "antarchy:blush_moss_carpet",
                    "antarchy:amber_moss_block",
                    "antarchy:amber_moss_carpet",
+                   "antarchy:lumen_froglight",
+                   "antarchy:roseate_froglight",
                    "antarchy:biowart",
                    "antarchy:biowart_tendrils",
-                   "antarchy:glowcap_mushroom_block"
+                   "antarchy:glowcap_mushroom_block",
+                   "antarchy:bile_vein"
                ]
 }
