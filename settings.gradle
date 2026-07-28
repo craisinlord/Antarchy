@@ -1,17 +1,35 @@
 pluginManagement {
     repositories {
         maven { url "https://maven.fabricmc.net/" }
-        maven { url "https://maven.architectury.dev/" }
-        maven { url "https://maven.minecraftforge.net/" }
-        maven { url "https://maven.neoforged.net/" }
+        maven { url "https://maven.neoforged.net/releases" }
         maven { url "https://maven.shedaniel.me/" }
         maven { url "https://maven.terraformersmc.com/releases/" }
+        maven { url "https://maven.parchmentmc.org" }
         gradlePluginPortal()
+    }
+    plugins {
+        id 'net.fabricmc.fabric-loom-remap' version '1.15.5'
     }
 }
 
-include("common")
-include("neoforge")
-include("fabric")
+include("common-1.21.1")
+include("fabric-1.21.1")
+include("neoforge-1.21.1")
+
+include("common-1.20.1")
+
+// fabric-1.20.1 and forge-1.20.1 are intentionally NOT included here — each lives as
+// its own standalone Gradle build. forge-1.20.1 must be standalone because ForgeGradle 6
+// isn't Gradle 9 compatible. fabric-1.20.1 must be standalone because Fabric Loom
+// registers a build-wide "tinyRemapperService" that isn't classloader-safe across two
+// fabric-loom projects targeting different Minecraft versions in the same Gradle
+// invocation — configuring fabric-1.20.1 and fabric-1.21.1 together reliably throws
+// "LoomGradleExtensionImpl_Decorated cannot be cast to LoomGradleExtension".
+// Two ways to access either:
+//   1. CLI from root — `./gradlew forge1201Build` / `fabric120Build` (and RunClient /
+//      RunServer / Assemble / Clean) delegate via Exec — see build.gradle.
+//   2. IDE — in IntelliJ's Gradle tool window, click `+` → Link Gradle Project →
+//      pick forge-1.20.1/build.gradle or fabric-1.20.1/build.gradle. Each appears as
+//      its own root in the sidebar with a full Tasks tree and run configs.
 
 rootProject.name = "Antarchy"

@@ -1,0 +1,41 @@
+{
+  "required": true,
+  "package": "com.craisinlord.antarchy.fabric.mixin",
+  "refmap": "antarchy.mixins.refmap.json",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AntiwaterLivingEntityMixin",
+    "AntiwaterItemEntityMixin",
+    "LivingEntityJumpingAccessor",
+    "WaterlikeFluidLivingEntityMixin",
+    "WaterlikeFluidItemEntityMixin",
+    "AntimetalInversionMixin",
+    "ElytraStartFlyingMixin",
+    "ElytraFallFlyingMixin",
+    "BloodglassEquipMixin",
+    "BloodglassEffectMixin",
+    "BloodglassRespawnMixin",
+    "DreamCampfireBlockEntityMixin",
+    "DreamSandMovementMixin",
+    "JumpyBootsFallDamageMixin",
+    "entity.MultipartEntityLevelRegistryMixin",
+    "WoodTypeInvoker",
+    "infinity.PortalCreatorMixin"
+  ],
+  "client": [
+    "client.CameraShakeMixin",
+    "client.BrutalflyElytraExperienceBarMixin",
+    "client.BloodglassChatOrderMixin",
+    "client.DuctTapeInputMixin",
+    "client.LiquidFogMixin",
+    "client.GravityGunMouseScrollMixin",
+    "client.KeybindingConflictFixMixin",
+    "client.CrossbowArmPoseMixin",
+    "client.MultipartClientSpawnMixin",
+    "client.MultipartEntityLevelRegistryMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}
