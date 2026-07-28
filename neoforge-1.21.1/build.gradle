@@ -1,0 +1,103 @@
+plugins {
+    id 'net.neoforged.moddev' version '2.0.141'
+    id "com.matthewprenger.cursegradle" version "1.4.0"
+    id "me.modmuss50.mod-publish-plugin" version "0.5.1"
+}
+
+base {
+    archivesName = "${mod_id}-neoforge-1.21.1"
+}
+version = "${mod_version}+${project.name}"
+
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(21) }
+    withSourcesJar()
+}
+
+// Add common-1.21.1's sources directly — this module compiles them itself.
+sourceSets {
+    main {
+        java {
+            srcDirs project(':common-1.21.1').sourceSets.main.java.srcDirs
+        }
+        resources {
+            srcDir project(':common-1.21.1').sourceSets.main.resources.srcDirs
+        }
+    }
+}
+
+neoForge {
+    version = neoforge_version_1_21_1
+    mods {
+        create(mod_id) {
+            sourceSet sourceSets.main
+        }
+    }
+    runs {
+        client { client() }
+        server { server() }
+        data {
+            data()
+            programArguments.addAll("--all", "--mod", mod_id)
+            programArguments.addAll("--existing", file("src/main/resources").absolutePath)
+            programArguments.addAll("--output", file("src/main/generated/resources").absolutePath)
+        }
+    }
+}
+
+dependencies {
+    compileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_neoforge}")
+    runtimeOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_neoforge}")
+    implementation "software.bernie.geckolib:geckolib-neoforge-1.21.1:${geckolib_version}"
+    compileOnly(files(rootProject.file("infinite_dimensions_jars/infinity-2.7.2+1.21.1-neoforge.jar")))
+    runtimeOnly(files(rootProject.file("infinite_dimensions_jars/infinity-2.7.2+1.21.1-neoforge.jar")))
+
+    compileOnly(files(rootProject.file("sizeable_foliage_jars/sizeable_foliage-neoforge-1.21.1-1.0.0.jar")))
+    runtimeOnly(files(rootProject.file("sizeable_foliage_jars/sizeable_foliage-neoforge-1.21.1-1.0.0.jar")))
+
+    runtimeOnly("com.telepathicgrunt:CommandStructures-Neoforge:${commandstructures_neoforge}")
+    runtimeOnly("com.telepathicgrunt:StructureVoidToggle-Neoforge:${structurevoidtoggle_neoforge}")
+
+    compileOnly "mezz.jei:jei-1.21.1-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-1.21.1-neoforge-api:${jei_version}"
+    runtimeOnly "mezz.jei:jei-1.21.1-neoforge:${jei_version}"
+
+    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras}"))
+}
+
+tasks.withType(ProcessResources).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    var replaceProperties = [version: project.version]
+    inputs.properties replaceProperties
+
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand replaceProperties
+    }
+}
+
+tasks.withType(Copy).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.withType(Jar).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = rootProject.group
+            artifactId = project.base.archivesName.get()
+            version = project.version
+
+            artifact jar
+            artifact sourcesJar
+
+            pom {
+                name = "${mod_name} (NeoForge 1.21.1)"
+                description = mod_description
+            }
+        }
+    }
+}

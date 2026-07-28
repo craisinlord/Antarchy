@@ -1,0 +1,121 @@
+plugins {
+    id 'net.fabricmc.fabric-loom-remap'
+    id "com.matthewprenger.cursegradle" version "1.4.0"
+    id "me.modmuss50.mod-publish-plugin" version "0.5.1"
+}
+
+base {
+    archivesName = "${mod_id}-fabric-1.21.1"
+}
+version = "${mod_version}+${project.name}"
+
+// Handle duplicates from common-1.21.1's resources
+tasks.withType(AbstractCopyTask).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(21) }
+    withSourcesJar()
+}
+
+// Add common-1.21.1's sources directly — this module compiles them itself.
+sourceSets {
+    main {
+        java {
+            srcDirs project(':common-1.21.1').sourceSets.main.java.srcDirs
+        }
+        resources {
+            srcDir project(':common-1.21.1').sourceSets.main.resources.srcDirs
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:1.21.1"
+    mappings loom.officialMojangMappings()
+
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version_1_21_1}"
+    modApi "net.fabricmc.fabric-api:fabric-api:${fabric_api_version_1_21_1}"
+    modImplementation "software.bernie.geckolib:geckolib-fabric-1.21.1:${geckolib_version}"
+    modCompileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_fabric}")
+    modLocalRuntime("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_fabric}")
+    compileOnly "mezz.jei:jei-1.21.1-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-1.21.1-fabric-api:${jei_version}"
+    modLocalRuntime "mezz.jei:jei-1.21.1-fabric:${jei_version}"
+
+    compileOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.2+1.21.1-neoforge.jar"))
+    runtimeOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.2+1.21.1-fabric.jar"))
+    compileOnly(files("$rootDir/infinite_dimensions_jars/gravity-api-1.0.7-1.20.1.jar"))
+    compileOnly(files("$rootDir/infinite_dimensions_jars/cloth-config-15.0.140-fabric.jar"))
+    compileOnly(files("$rootDir/infinite_dimensions_jars/sable-neoforge-1.21.1-2.0.3.jar"))
+
+    // Compile against the NeoForge jar (official Mojang mappings, matches this module's compile
+    // space) but load the real Fabric jar at runtime — sizeable_foliage's Fabric jar ships
+    // intermediary-mapped, which this compileOnly classpath can't resolve directly.
+    compileOnly(files("$rootDir/sizeable_foliage_jars/sizeable_foliage-neoforge-1.21.1-1.0.0.jar"))
+    runtimeOnly(files("$rootDir/sizeable_foliage_jars/sizeable_foliage-fabric-1.21.1-1.0.0.jar"))
+
+    annotationProcessor "org.spongepowered:mixin:0.8.7:processor"
+    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras}"))
+}
+
+loom {
+    mixin {
+        useLegacyMixinAp = true
+        defaultRefmapName = "antarchy.mixins.refmap.json"
+    }
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+        version              : project.version,
+        minecraft_version    : "1.21.1",
+        fabric_loader_version: fabric_loader_version_1_21_1,
+        mod_id               : mod_id,
+        mod_name             : mod_name,
+        mod_description      : mod_description,
+        mod_author           : mod_author,
+        license              : license,
+        homepage_url         : homepage_url,
+        issues_url           : issues_url,
+        sources_url          : sources_url,
+        logo_fabric          : logo_fabric
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching('fabric.mod.json') {
+        expand replaceProperties
+    }
+}
+
+// common-1.21.1's mixins.json ships refmap-free (NeoForge needs no refmap), but Fabric
+// does — inject the refmap key into fabric's own copy of the shared file after copying.
+tasks.named('processResources', ProcessResources).configure {
+    doLast {
+        var commonMixinConfig = new File(destinationDir, 'antarchy-common.mixins.json')
+        var json = new groovy.json.JsonSlurper().parse(commonMixinConfig)
+        json.put('refmap', 'antarchy.mixins.refmap.json')
+        commonMixinConfig.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(json))
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = rootProject.group
+            artifactId = project.base.archivesName.get()
+            version = project.version
+
+            artifact(project.tasks.named('remapJar'))
+            artifact(project.tasks.named('remapSourcesJar')) {
+                classifier = 'sources'
+            }
+
+            pom {
+                name = "${mod_name} (Fabric 1.21.1)"
+                description = mod_description
+            }
+        }
+    }
+}

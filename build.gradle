@@ -1,40 +1,12 @@
 plugins {
-    id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "1.7-SNAPSHOT" apply false
-//    id "com.modrinth.minotaur" version "2.+"
-    id "com.matthewprenger.cursegradle" version "1.4.0"
-    id "me.modmuss50.mod-publish-plugin" version "0.5.1"
-}
-
-architectury {
-    minecraft = rootProject.minecraft_version
-}
-
-subprojects {
-    apply plugin: "dev.architectury.loom"
-//    apply plugin: "com.modrinth.minotaur"
-    apply plugin: "me.modmuss50.mod-publish-plugin"
-    apply plugin: "com.matthewprenger.cursegradle"
-
-    version = "${rootProject.mod_version}+${rootProject.minecraft_version}-${name}"
-
-    loom {
-        silentMojangMappingsLicense()
-    }
-
-    dependencies {
-        minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
-        mappings loom.officialMojangMappings()
-    }
+    id "java-library"
+    id "maven-publish"
 }
 
 allprojects {
-    apply plugin: "java"
-    apply plugin: "architectury-plugin"
+    apply plugin: "java-library"
     apply plugin: "maven-publish"
 
-    archivesBaseName = rootProject.modid
-    version = "${rootProject.mod_version}+${rootProject.minecraft_version}-${name}"
     group = rootProject.maven_group
 
     repositories {
@@ -60,7 +32,6 @@ allprojects {
             }
         }
         maven { url "https://nexus.resourcefulbees.com/repository/telepathicgrunt/" }
-        maven { url "https://maven.architectury.dev/" }
         maven { url "https://maven.shedaniel.me" }
         maven { url "https://jitpack.io" }
         maven { url "https://www.cursemaven.com" }
@@ -70,13 +41,48 @@ allprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
-        options.release = 21
     }
 
     java {
         withSourcesJar()
-        toolchain {
-            languageVersion = JavaLanguageVersion.of(21)
-        }
+    }
+}
+
+// Don't build the root project itself.
+tasks.named('jar') {
+    enabled = false
+}
+
+// Delegate forge-1.20.1 tasks to its own Gradle 8.8 wrapper. ForgeGradle 6 can't run
+// on Gradle 9 and includeBuild can't mix Gradle versions, so we shell out instead.
+def forge1201Dir = file('forge-1.20.1')
+def forge1201Wrapper = providers.systemProperty('os.name').get().toLowerCase().contains('win')
+        ? new File(forge1201Dir, 'gradlew.bat')
+        : new File(forge1201Dir, 'gradlew')
+
+['build', 'assemble', 'clean', 'runClient', 'runServer'].each { name ->
+    tasks.register("forge1201${name.capitalize()}", Exec) {
+        group = 'forge-1.20.1'
+        description = "Runs ':${name}' inside the forge-1.20.1 build"
+        workingDir = forge1201Dir
+        commandLine forge1201Wrapper.absolutePath, name
+    }
+}
+
+// Delegate fabric-1.20.1 tasks to its own standalone Gradle wrapper. Fabric Loom's
+// build-wide tinyRemapperService isn't classloader-safe across two loom projects
+// targeting different Minecraft versions in the same Gradle invocation, so
+// fabric-1.20.1 can't be a normal included subproject alongside fabric-1.21.1.
+def fabric120Dir = file('fabric-1.20.1')
+def fabric120Wrapper = providers.systemProperty('os.name').get().toLowerCase().contains('win')
+        ? new File(fabric120Dir, 'gradlew.bat')
+        : new File(fabric120Dir, 'gradlew')
+
+['build', 'assemble', 'clean', 'runClient', 'runServer'].each { name ->
+    tasks.register("fabric120${name.capitalize()}", Exec) {
+        group = 'fabric-1.20.1'
+        description = "Runs ':${name}' inside the fabric-1.20.1 build"
+        workingDir = fabric120Dir
+        commandLine fabric120Wrapper.absolutePath, name
     }
 }
