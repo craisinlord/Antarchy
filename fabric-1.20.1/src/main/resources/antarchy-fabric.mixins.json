@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "com.craisinlord.antarchy.fabric.mixin",
+  "refmap": "antarchy.mixins.refmap.json",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

@@ -1,0 +1,166 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'org.spongepowered.mixin' version '0.7.+'
+}
+
+group = mod_group_id
+version = mod_version
+
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(17) }
+    withSourcesJar()
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://maven.minecraftforge.net' }
+    maven { url = 'https://maven.parchmentmc.org' }
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+    maven { url = 'https://www.cursemaven.com' }
+    maven { url = 'https://maven.blamejared.com' }
+    maven { url = 'https://jitpack.io' }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "GeckoLib"
+                url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/"
+            }
+        }
+        filter {
+            includeGroup("software.bernie.geckolib")
+            includeGroup("com.eliotlash.mclib")
+        }
+    }
+}
+
+base {
+    archivesName = "${mod_id}-forge-1.20.1"
+}
+
+// Handle duplicates from common-1.20.1 in all copy tasks
+tasks.withType(AbstractCopyTask).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+minecraft {
+    mappings channel: 'parchment', version: parchment_version
+
+    copyIdeResources = true
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            jvmArgs(
+                "-Dmixin.env.remapRefMap=true",
+                "-Dmixin.env.refMapRemappingFile=${projectDir}/build/createSrgToMcp/output.srg"
+            )
+        }
+
+        server {
+            args '--nogui'
+        }
+    }
+}
+
+// Add common-1.20.1's sources directly. Path is relative because forge-1.20.1 is its
+// own Gradle build (ForgeGradle 6 can't run on the root's Gradle 9) — there is no
+// `:common-1.20.1` project here.
+sourceSets {
+    main {
+        java {
+            srcDirs += file('../common-1.20.1/src/main/java')
+        }
+        resources {
+            srcDirs += file('../common-1.20.1/src/main/resources')
+        }
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    implementation "software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}"
+
+    compileOnly("curse.maven:sizeable_foliage-${sizeable_foliage_curseforge_id}:${sizeable_foliage_curseforge_file_id_forge}")
+    runtimeOnly("curse.maven:sizeable_foliage-${sizeable_foliage_curseforge_id}:${sizeable_foliage_curseforge_file_id_forge}")
+
+    compileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_forge}")
+    runtimeOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_forge}")
+
+    compileOnly("curse.maven:pehkui-${pehkui_curseforge_id}:${pehkui_curseforge_file_id_forge}")
+    runtimeOnly("curse.maven:pehkui-${pehkui_curseforge_id}:${pehkui_curseforge_file_id_forge}")
+
+    compileOnly(files("$rootDir/../infinite_dimensions_jars/infinity-2.7.2+1.20.1-forge.jar"))
+    runtimeOnly(files("$rootDir/../infinite_dimensions_jars/infinity-2.7.2+1.20.1-forge.jar"))
+
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"
+    runtimeOnly "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
+
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras}"))
+}
+
+mixin {
+    add sourceSets.main, "${mod_id}-forge.mixins.refmap.json"
+    config "${mod_id}-common.mixins.json"
+    config "${mod_id}-forge.mixins.json"
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+        version                : project.version,
+        minecraft_version      : minecraft_version,
+        minecraft_version_range: "[${minecraft_version}]",
+        forge_version          : forge_version,
+        forge_version_range    : forge_version_range,
+        loader_version_range   : loader_version_range,
+        mod_id                 : mod_id,
+        mod_name               : mod_name,
+        mod_license            : mod_license,
+        mod_authors            : mod_authors,
+        mod_description        : mod_description
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching('META-INF/mods.toml') {
+        expand replaceProperties
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    finalizedBy 'reobfJar'
+}
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            groupId = project.group
+            artifactId = project.base.archivesName.get()
+            version = project.version
+
+            artifact jar
+            artifact sourcesJar
+
+            pom {
+                name = "${mod_name} (Forge 1.20.1)"
+                description = mod_description
+            }
+        }
+    }
+}

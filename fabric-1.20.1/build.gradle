@@ -1,0 +1,144 @@
+plugins {
+    id 'net.fabricmc.fabric-loom-remap' version '1.15.5'
+    id 'maven-publish'
+}
+
+group = mod_group_id
+version = "${mod_version}+${project.name}"
+
+base {
+    archivesName = "${mod_id}-fabric-1.20.1"
+}
+
+repositories {
+    maven { url "https://maven.fabricmc.net/" }
+    mavenCentral()
+    maven { url "https://www.cursemaven.com" }
+    maven { url "https://maven.blamejared.com" }
+    maven { url "https://repo.spongepowered.org/repository/maven-public/" }
+    maven { url "https://jitpack.io" }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "GeckoLib"
+                url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/"
+            }
+        }
+        filter {
+            includeGroup("software.bernie.geckolib")
+            includeGroup("com.eliotlash.mclib")
+        }
+    }
+}
+
+// Handle duplicates from common-1.20.1's resources
+tasks.withType(AbstractCopyTask).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(17) }
+    withSourcesJar()
+}
+
+// Add common-1.20.1's sources directly. Path is relative because fabric-1.20.1 is its
+// own standalone Gradle build (Fabric Loom can't configure two different-Minecraft-version
+// loom projects in the same Gradle invocation) — there is no `:common-1.20.1` project here.
+sourceSets {
+    main {
+        java {
+            srcDirs += file('../common-1.20.1/src/main/java')
+        }
+        resources {
+            srcDirs += file('../common-1.20.1/src/main/resources')
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.officialMojangMappings()
+
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modApi "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+
+    modImplementation "software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}"
+
+    modCompileOnly("curse.maven:sizeable_foliage-${sizeable_foliage_curseforge_id}:${sizeable_foliage_curseforge_file_id_fabric}")
+    modLocalRuntime("curse.maven:sizeable_foliage-${sizeable_foliage_curseforge_id}:${sizeable_foliage_curseforge_file_id_fabric}")
+
+    modCompileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_fabric}")
+    modLocalRuntime("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_fabric}")
+
+    modCompileOnly("curse.maven:pehkui-${pehkui_curseforge_id}:${pehkui_curseforge_file_id_fabric}")
+    modLocalRuntime("curse.maven:pehkui-${pehkui_curseforge_id}:${pehkui_curseforge_file_id_fabric}")
+
+    modCompileOnly(files("$rootDir/../infinite_dimensions_jars/infinity-2.7.2+1.20.1-fabric.jar"))
+    modLocalRuntime(files("$rootDir/../infinite_dimensions_jars/infinity-2.7.2+1.20.1-fabric.jar"))
+
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}"
+    modLocalRuntime "mezz.jei:jei-${minecraft_version}-fabric:${jei_version}"
+
+    annotationProcessor "org.spongepowered:mixin:0.8.7:processor"
+}
+
+loom {
+    mixin {
+        useLegacyMixinAp = true
+        defaultRefmapName = "antarchy.mixins.refmap.json"
+    }
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+        version              : project.version,
+        minecraft_version    : minecraft_version,
+        fabric_loader_version: fabric_loader_version,
+        mod_id               : mod_id,
+        mod_name             : mod_name,
+        mod_description      : mod_description,
+        mod_author           : mod_author,
+        license              : license,
+        homepage_url         : homepage_url,
+        issues_url           : issues_url,
+        sources_url          : sources_url,
+        logo_fabric          : logo_fabric
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching('fabric.mod.json') {
+        expand replaceProperties
+    }
+}
+
+// common-1.20.1's mixins.json ships refmap-free — inject the refmap key into fabric's
+// own copy after copying (matches the fabric-1.21.1 / neoforge-1.21.1 convention).
+tasks.named('processResources', ProcessResources).configure {
+    doLast {
+        var commonMixinConfig = new File(destinationDir, 'antarchy-common.mixins.json')
+        var json = new groovy.json.JsonSlurper().parse(commonMixinConfig)
+        json.put('refmap', 'antarchy.mixins.refmap.json')
+        commonMixinConfig.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(json))
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = project.group
+            artifactId = project.base.archivesName.get()
+            version = project.version
+
+            artifact(project.tasks.named('remapJar'))
+            artifact(project.tasks.named('remapSourcesJar')) {
+                classifier = 'sources'
+            }
+
+            pom {
+                name = "${mod_name} (Fabric 1.20.1)"
+                description = mod_description
+            }
+        }
+    }
+}

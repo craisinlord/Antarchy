@@ -1,0 +1,23 @@
+{
+  "required": true,
+  "package": "com.craisinlord.antarchy.forge.mixins",
+  "refmap": "antarchy-forge.mixins.refmap.json",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "entity.MultipartEntityBridgeMixin",
+    "entity.MultipartEntityLevelRegistryMixin",
+    "entity.ParalyzedMobFreezeMixin",
+    "infinity.ConfigGenInvocationMixin",
+    "item.BucketItemThoraxisWaterMixin",
+    "level.ClientLevelPartEntitiesAccessor",
+    "level.LevelStemDiagnosticMixin",
+    "level.ServerLevelPartEntitiesAccessor"
+  ],
+  "client": [
+    "client.LiquidBlockRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}
