@@ -17,7 +17,10 @@ import com.craisinlord.antarchy.content.item.JumpyBootsHelper;
 import com.craisinlord.antarchy.fabric.util.JumpyBootsFabricHelper;
 import com.craisinlord.antarchy.content.item.JumpyBootsItem;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
+import com.craisinlord.antarchy.content.item.TigerEyeArmorUtil;
 import com.craisinlord.antarchy.content.network.*;
+import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController;
+import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync;
 import com.craisinlord.antarchy.content.entity.DorrieEntity;
 import com.craisinlord.antarchy.content.network.DorrieJumpInputPayload;
 import com.craisinlord.antarchy.content.network.JumpyBootsLaunchPayload;
@@ -70,6 +73,7 @@ public final class AntarchyFabricNetworking {
     private static void registerPayloadTypes() {
         PayloadTypeRegistry.playS2C().register(GravityStatePayload.TYPE, GravityStatePayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(BloodglassStatePayload.TYPE, BloodglassStatePayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(TigerEyeCamouflageStatePayload.TYPE, TigerEyeCamouflageStatePayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(BloodCrystalKatanaTrailPayload.TYPE, BloodCrystalKatanaTrailPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(ScorpionWhipTetherPayload.TYPE, ScorpionWhipTetherPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(BrutalflyElytraAnimationPayload.TYPE, BrutalflyElytraAnimationPayload.STREAM_CODEC);
@@ -81,6 +85,7 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playC2S().register(GravityGunPrimaryPayload.TYPE, GravityGunPrimaryPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(GravityGunScrollPayload.TYPE, GravityGunScrollPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(BigBerthaModeCyclePayload.TYPE, BigBerthaModeCyclePayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(ToggleTigerEyeCamouflagePayload.TYPE, ToggleTigerEyeCamouflagePayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(DiamondMinecartInputPayload.TYPE, DiamondMinecartInputPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(BrutalflyElytraFlapPayload.TYPE, BrutalflyElytraFlapPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(JumpyBootsLaunchPayload.TYPE, JumpyBootsLaunchPayload.STREAM_CODEC);
@@ -101,6 +106,8 @@ public final class AntarchyFabricNetworking {
                 context.server().execute(() -> handleGravityGunScroll(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(BigBerthaModeCyclePayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleBigBerthaModeCycle(context.player(), payload)));
+        ServerPlayNetworking.registerGlobalReceiver(ToggleTigerEyeCamouflagePayload.TYPE, (payload, context) ->
+                context.server().execute(() -> handleTigerEyeCamouflageToggle(context.player())));
         ServerPlayNetworking.registerGlobalReceiver(DiamondMinecartInputPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleDiamondMinecartInput(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(BrutalflyElytraFlapPayload.TYPE, (payload, context) ->
@@ -156,6 +163,14 @@ public final class AntarchyFabricNetworking {
 
     public static void syncBloodglass(ServerPlayer player, int shieldsActive, int shieldsMax) {
         ServerPlayNetworking.send(player, new BloodglassStatePayload(shieldsActive, shieldsMax));
+    }
+
+    public static void syncTigerEyeCamouflage(ServerPlayer player) {
+        TigerEyeCamouflageStatePayload payload = TigerEyeCamouflageSync.payload(player);
+        for (ServerPlayer tracking : PlayerLookup.tracking(player)) {
+            ServerPlayNetworking.send(tracking, payload);
+        }
+        ServerPlayNetworking.send(player, payload);
     }
 
     public static void syncKatanaTrail(Entity entity, int durationTicks) {
@@ -419,5 +434,25 @@ public final class AntarchyFabricNetworking {
                 payload.durationTicks(),
                 payload.radius()
         );
+    }
+
+    private static void handleTigerEyeCamouflageToggle(ServerPlayer player) {
+        TigerEyeCamouflageController.ToggleResult result = TigerEyeCamouflageController.toggle(player);
+        if (result != TigerEyeCamouflageController.ToggleResult.NO_CHANGE) {
+            syncTigerEyeCamouflage(player);
+        }
+
+        String messageKey = switch (result) {
+            case ACTIVATED -> "message.antarchy.tiger_eye_camouflage.activated";
+            case DEACTIVATED -> "message.antarchy.tiger_eye_camouflage.disabled";
+            case FULL_SET_REQUIRED -> TigerEyeArmorUtil.countEquippedPieces(player) > 0
+                    ? "message.antarchy.tiger_eye_camouflage.full_set_required"
+                    : null;
+            case INVALID_BLOCK -> "message.antarchy.tiger_eye_camouflage.invalid_block";
+            case NO_CHANGE -> null;
+        };
+        if (messageKey != null) {
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable(messageKey), true);
+        }
     }
 }

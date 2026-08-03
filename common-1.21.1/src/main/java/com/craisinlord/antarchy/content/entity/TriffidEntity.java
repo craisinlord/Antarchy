@@ -101,6 +101,13 @@ public class TriffidEntity extends Monster implements GeoEntity {
                 .add(Attributes.MOVEMENT_SPEED, 0.0D);
     }
 
+    @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
+            MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.triffidHealth());
+        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
+    }
+
     public static boolean canSpawn(EntityType<TriffidEntity> entityType, LevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
         if (pos.getY() < level.getMinBuildHeight() || pos.getY() + 7 >= level.getMaxBuildHeight()) {
             return false;

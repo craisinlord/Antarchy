@@ -251,6 +251,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnGroupData) {
         BedBugSpawnData bedBugSpawnData = spawnGroupData instanceof BedBugSpawnData data ? data : new BedBugSpawnData();
         super.finalizeSpawn(level, difficulty, spawnReason, null);
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.bedBugHealth());
 
         if (bedBugSpawnData.eggNestPos == null && (spawnReason == MobSpawnType.NATURAL || spawnReason == MobSpawnType.CHUNK_GENERATION) && this.random.nextFloat() < 0.55F) {
             bedBugSpawnData.eggNestPos = this.createNaturalEggNest(level);

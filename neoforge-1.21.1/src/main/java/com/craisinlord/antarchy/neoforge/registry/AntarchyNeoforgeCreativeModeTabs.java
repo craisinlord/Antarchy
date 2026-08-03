@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.neoforge.registry;
 
-import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.creative.CreativeTabContents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.*;
@@ -10,9 +9,11 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class AntarchyNeoforgeCreativeModeTabs {
+    private static final String MODID = "antarchy";
+
     private AntarchyNeoforgeCreativeModeTabs() {}
 
-    private static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Antarchy.MODID);
+    private static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     public static void register(IEventBus modEventBus) {
         CREATIVE_MODE_TABS.register(modEventBus);

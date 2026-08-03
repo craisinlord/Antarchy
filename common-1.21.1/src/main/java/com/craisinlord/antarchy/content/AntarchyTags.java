@@ -42,6 +42,9 @@ public final class AntarchyTags {
         public static final TagKey<Block> MINERS_DREAM_CARVABLE = TagKey.create(Registries.BLOCK, id("miners_dream_carvable"));
         public static final TagKey<Block> BLUESTONE_COMPONENTS = TagKey.create(Registries.BLOCK, id("bluestone_components"));
         public static final TagKey<Block> BLUESTONE_CONNECTABLE = TagKey.create(Registries.BLOCK, id("bluestone_connectable"));
+        public static final TagKey<Block> ANTIMETAL_INVERSION_BLOCKS = TagKey.create(Registries.BLOCK, id("antimetal_inversion_blocks"));
+        public static final TagKey<Block> TIGER_EYE_CAMOUFLAGE_BLACKLIST = TagKey.create(Registries.BLOCK, id("tiger_eye_camouflage_blacklist"));
+        public static final TagKey<Block> LUCID_ANCHOR_BASE_BLOCKS = TagKey.create(Registries.BLOCK, id("lucid_anchor_base_blocks"));
 
         private Blocks() {
         }
@@ -71,6 +74,8 @@ public final class AntarchyTags {
         public static final TagKey<EntityType<?>> STINKY_REPELLED_HOSTILES = TagKey.create(Registries.ENTITY_TYPE, id("stinky_repelled_hostiles"));
         public static final TagKey<EntityType<?>> SCORPION_WHIP_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("scorpion_whip_immune"));
         public static final TagKey<EntityType<?>> SCORPION_WHIP_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, id("scorpion_whip_blacklist"));
+        public static final TagKey<EntityType<?>> TIGER_EYE_DETECTION_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("tiger_eye_detection_immune"));
+        public static final TagKey<EntityType<?>> LUCID_ANCHOR_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("lucid_anchor_immune"));
 
         private Entities() {
         }
@@ -110,6 +115,7 @@ public final class AntarchyTags {
         public static final TagKey<Item> GLIMMER_AUGMENT_ANT = TagKey.create(Registries.ITEM, id("glimmer_augment_ant"));
         public static final TagKey<Item> GLIMMER_AUGMENT_ELKA = TagKey.create(Registries.ITEM, id("glimmer_augment_elka"));
         public static final TagKey<Item> HFCS_CANNOT_AMERICANIZE = TagKey.create(Registries.ITEM, id("hfcs_cannot_americanize"));
+        public static final TagKey<Item> TIGER_EYE_ARMOR = TagKey.create(Registries.ITEM, id("tigers_eye_armor"));
 
         private Items() {
         }

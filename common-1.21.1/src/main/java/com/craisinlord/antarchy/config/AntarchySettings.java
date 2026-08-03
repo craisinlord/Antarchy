@@ -10,9 +10,13 @@ public final class AntarchySettings {
     private static int easterBunnyNaturalSpawnChancePercent = 1;
     private static boolean rainbowAntsLeadToInfinityDimensions = true;
     private static boolean brownAntRequiresReagent = false;
+    private static boolean brownAntRightClickDimension = true;
     private static boolean redAntRequiresReagent = false;
+    private static boolean redAntRightClickDimension = true;
     private static boolean rainbowAntRequiresReagent = true;
+    private static boolean rainbowAntRightClickDimension = true;
     private static boolean termiteRequiresReagent = false;
+    private static boolean termiteRightClickDimension = true;
     private static boolean antsStealFromChests = true;
     private static boolean duplicatorTreeEnabled = true;
     private static boolean glowVinesUnderLeaves = true;
@@ -459,6 +463,22 @@ public final class AntarchySettings {
 
     public static boolean rainbowAntsLeadToInfinityDimensions() {
         return rainbowAntsLeadToInfinityDimensions;
+    }
+
+    public static boolean brownAntRightClickDimension() {
+        return brownAntRightClickDimension;
+    }
+
+    public static boolean redAntRightClickDimension() {
+        return redAntRightClickDimension;
+    }
+
+    public static boolean rainbowAntRightClickDimension() {
+        return rainbowAntRightClickDimension;
+    }
+
+    public static boolean termiteRightClickDimension() {
+        return termiteRightClickDimension;
     }
 
     public static boolean brownAntRequiresReagent() {
@@ -982,6 +1002,22 @@ public final class AntarchySettings {
 
     public static void setRainbowAntsLeadToInfinityDimensions(boolean value) {
         rainbowAntsLeadToInfinityDimensions = value;
+    }
+
+    public static void setBrownAntRightClickDimension(boolean value) {
+        brownAntRightClickDimension = value;
+    }
+
+    public static void setRedAntRightClickDimension(boolean value) {
+        redAntRightClickDimension = value;
+    }
+
+    public static void setRainbowAntRightClickDimension(boolean value) {
+        rainbowAntRightClickDimension = value;
+    }
+
+    public static void setTermiteRightClickDimension(boolean value) {
+        termiteRightClickDimension = value;
     }
 
     public static void setPermanentPortalsEnabled(boolean value) {

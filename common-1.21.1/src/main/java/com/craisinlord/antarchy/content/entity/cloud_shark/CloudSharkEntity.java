@@ -111,6 +111,12 @@ public class CloudSharkEntity extends Monster implements GeoEntity {
                 .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.cloudSharkKnockbackResistance());
     }
 
+    @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty, net.minecraft.world.entity.MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
+        com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.cloudSharkHealth());
+        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
+    }
+
     public static boolean canSpawn(EntityType<CloudSharkEntity> entityType, ServerLevelAccessor level,
                                    MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
         return level.getDifficulty() != Difficulty.PEACEFUL

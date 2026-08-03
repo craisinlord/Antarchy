@@ -27,6 +27,8 @@ import com.craisinlord.antarchy.content.entity.MolewormEntity;
 import com.craisinlord.antarchy.content.entity.MantisEntity;
 import com.craisinlord.antarchy.content.entity.ReverieEntity;
 import com.craisinlord.antarchy.content.entity.ScorpionEntity;
+import com.craisinlord.antarchy.content.entity.nightmare.NightmareBiteEntity;
+import com.craisinlord.antarchy.content.entity.nightmare.NightmarePortalEntity;
 import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.DreamCampfireBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.SeashellBlockEntity;
@@ -65,6 +67,10 @@ public final class AntarchyObjects {
     public static Supplier<EntityType<KrakensGraspThrownTrident>> KRAKENS_GRASP_TRIDENT = (Supplier<EntityType<KrakensGraspThrownTrident>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<OctopusBombEntity>> OCTOPUS_BOMB = (Supplier<EntityType<OctopusBombEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<NightmarePortalEntity>> NIGHTMARE_PORTAL = (Supplier<EntityType<NightmarePortalEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<NightmareBiteEntity>> NIGHTMARE_BITE = (Supplier<EntityType<NightmareBiteEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<MolewormEntity>> MOLEWORM = (Supplier<EntityType<MolewormEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -201,9 +207,9 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<Block> NYXITE_SPIKE = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
-    public static Supplier<Block> CHITEN_BLOCK = (Supplier<Block>) UNBOUND;
+    public static Supplier<Block> CHITIN_BLOCK = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
-    public static Supplier<Block> CHITEN_SPIKE = (Supplier<Block>) UNBOUND;
+    public static Supplier<Block> CHITIN_SPIKE = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> POTENT_NYXITE = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -250,6 +256,8 @@ public final class AntarchyObjects {
     public static Supplier<Holder<MobEffect>> INVERTED_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Holder<MobEffect>> STINKY_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Holder<MobEffect>> GLIMMERING_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Fluid> LUMEN = (Supplier<Fluid>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -301,6 +309,8 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<Block> CRITTER_CAGE_BLOCK = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<Block> LUCID_ANCHOR = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<BlockEntityType<AntNestBlockEntity>> ANT_NEST_BLOCK_ENTITY = (Supplier<BlockEntityType<AntNestBlockEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<BlockEntityType<DreamCampfireBlockEntity>> DREAM_CAMPFIRE_BLOCK_ENTITY = (Supplier<BlockEntityType<DreamCampfireBlockEntity>>) UNBOUND;
@@ -313,6 +323,9 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.CritterCageBlockEntity>> CRITTER_CAGE_BLOCK_ENTITY =
             (Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.CritterCageBlockEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity>> LUCID_ANCHOR_BLOCK_ENTITY =
+            (Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<SimpleParticleType> STINKY_GAS = (Supplier<SimpleParticleType>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -393,8 +406,8 @@ public final class AntarchyObjects {
             Supplier<Block> triffidGooBlock,
             Supplier<Block> paleNyxite,
             Supplier<Block> nyxiteSpike,
-            Supplier<Block> chitenBlock,
-            Supplier<Block> chitenSpike,
+            Supplier<Block> chitinBlock,
+            Supplier<Block> chitinSpike,
             Supplier<Block> potentNyxite,
             Supplier<Block> antimetal,
             Supplier<Block> polishedAntimetal,
@@ -494,8 +507,8 @@ public final class AntarchyObjects {
         TRIFFID_GOO_BLOCK = triffidGooBlock;
         PALE_NYXITE = paleNyxite;
         NYXITE_SPIKE = nyxiteSpike;
-        CHITEN_BLOCK = chitenBlock;
-        CHITEN_SPIKE = chitenSpike;
+        CHITIN_BLOCK = chitinBlock;
+        CHITIN_SPIKE = chitinSpike;
         POTENT_NYXITE = potentNyxite;
         ANTIMETAL = antimetal;
         POLISHED_ANTIMETAL = polishedAntimetal;
@@ -556,6 +569,14 @@ public final class AntarchyObjects {
         TENTACLE = supplier;
     }
 
+    public static void setNightmarePortal(Supplier<EntityType<NightmarePortalEntity>> supplier) {
+        NIGHTMARE_PORTAL = supplier;
+    }
+
+    public static void setNightmareBite(Supplier<EntityType<NightmareBiteEntity>> supplier) {
+        NIGHTMARE_BITE = supplier;
+    }
+
     public static void setLotus(Supplier<Block> supplier) {
         LOTUS = supplier;
     }
@@ -608,6 +629,10 @@ public final class AntarchyObjects {
         SPIRIT_APPLE = supplier;
     }
 
+    public static void setGlimmeringEffect(Supplier<Holder<MobEffect>> supplier) {
+        GLIMMERING_EFFECT = supplier;
+    }
+
     public static void setElka(Supplier<EntityType<com.craisinlord.antarchy.content.entity.ElkaEntity>> supplier) {
         ELKA = supplier;
     }
@@ -630,6 +655,10 @@ public final class AntarchyObjects {
 
     public static void setCritterCageBlock(Supplier<Block> supplier) {
         CRITTER_CAGE_BLOCK = supplier;
+    }
+
+    public static void setLucidAnchor(Supplier<Block> supplier) {
+        LUCID_ANCHOR = supplier;
     }
 
     public static void setStarCoralBlock(Supplier<Block> supplier) {
@@ -686,6 +715,10 @@ public final class AntarchyObjects {
 
     public static void setCritterCageBlockEntity(Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.CritterCageBlockEntity>> supplier) {
         CRITTER_CAGE_BLOCK_ENTITY = supplier;
+    }
+
+    public static void setLucidAnchorBlockEntity(Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity>> supplier) {
+        LUCID_ANCHOR_BLOCK_ENTITY = supplier;
     }
 
     public static void setCritterCageProjectile(Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity>> supplier) {

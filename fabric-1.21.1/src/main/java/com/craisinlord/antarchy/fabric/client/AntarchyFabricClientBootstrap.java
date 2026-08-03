@@ -8,6 +8,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.CameraShakeClientState;
 import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
 import com.craisinlord.antarchy.content.client.HordeClientState;
+import com.craisinlord.antarchy.content.client.TigerEyeClientHooks;
 import com.craisinlord.antarchy.content.client.renderer.*;
 import com.craisinlord.antarchy.content.client.particle.*;
 import com.craisinlord.antarchy.content.client.renderer.AntiwaterFluidRenderer;
@@ -79,6 +80,10 @@ public final class AntarchyFabricClientBootstrap {
                 (BlockEntityRendererProvider) SeashellRenderer::new
         );
         BlockEntityRendererRegistry.register(
+                (net.minecraft.world.level.block.entity.BlockEntityType) AntarchyFabricBlocks.LUCID_ANCHOR_BLOCK_ENTITY.get(),
+                (BlockEntityRendererProvider) LucidAnchorBlockEntityRenderer::new
+        );
+        BlockEntityRendererRegistry.register(
                 (net.minecraft.world.level.block.entity.BlockEntityType) AntarchyFabricBlocks.CRITTER_CAGE_BLOCK_ENTITY.get(),
                 (BlockEntityRendererProvider) CritterCageRenderer::new
         );
@@ -114,6 +119,8 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.MISSILE_SQUID.get(), MissileSquidRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.OCTOPUS_BOMB.get(), OctopusBombRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.NIGHTMARE.get(), NightmareRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.NIGHTMARE_PORTAL.get(), NightmarePortalRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.NIGHTMARE_BITE.get(), NightmareBiteRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.LUCID.get(), LucidRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.BED_BUG.get(), BedBugRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.WASP.get(), WaspRenderer::new);
@@ -303,6 +310,7 @@ public final class AntarchyFabricClientBootstrap {
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.ORANGE_MILKWEED.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.PINK_MILKWEED.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.AMBER_LICHEN.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.MUCUS.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.CREEPVINE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.CAMELLIA.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.SPIDER_LILY.get(), RenderType.cutout());
@@ -320,7 +328,7 @@ public final class AntarchyFabricClientBootstrap {
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.ANTIMETAL_SCAFFOLDING.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.UMBRAL_MOSS_CARPET.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.NYXITE_SPIKE.get(), RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.CHITEN_SPIKE.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.CHITIN_SPIKE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.STAR_CORAL.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.STAR_CORAL_FAN.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.STAR_CORAL_WALL_FAN.get(), RenderType.cutout());
@@ -354,6 +362,7 @@ public final class AntarchyFabricClientBootstrap {
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.URANIUM_BARS.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.TITANIUM_BARS.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.CLOUD_BLOCK.get(), RenderType.translucent());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.LUCID_ANCHOR.get(), RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.JUMPY_BUG_EGG.get(), RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.SPIT_BUG_EGG.get(), RenderType.translucent());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.JERRY_EGG.get(), RenderType.translucent());
@@ -431,7 +440,9 @@ public final class AntarchyFabricClientBootstrap {
             if (entityType == EntityType.PLAYER) {
                 if (renderer instanceof net.minecraft.client.renderer.entity.player.PlayerRenderer playerRenderer) {
                     registrationHelper.register(new ParalyzedStonePlayerLayer(playerRenderer));
+                    registrationHelper.register(new TigerEyeCamouflagePlayerLayer(playerRenderer));
                     registrationHelper.register(new GoopedLivingLayer(playerRenderer));
+                    registrationHelper.register(new GlimmeringLivingLayer(playerRenderer));
                     registrationHelper.register(new BrutalflyElytraLayer(playerRenderer));
                     registrationHelper.register(new FallenKingCrownLayer(playerRenderer));
                 }
@@ -450,10 +461,12 @@ public final class AntarchyFabricClientBootstrap {
             }
             registrationHelper.register(new ParalyzedStoneLivingLayer(renderer));
             registrationHelper.register(new GoopedLivingLayer(renderer));
+            registrationHelper.register(new GlimmeringLivingLayer(renderer));
         });
     }
 
     private static void registerClientCallbacks() {
+        TigerEyeClientHooks.setCamouflageKeyTextSupplier(() -> AntarchyKeyBindings.TIGERS_EYE_CAMOUFLAGE.getTranslatedKeyMessage());
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             CameraShakeClientState.tick();
             HerculesBeetleImpactShakeClientState.tick();
@@ -466,6 +479,7 @@ public final class AntarchyFabricClientBootstrap {
             DiamondMinecartClientHandler.tick();
             ParalyzedClientHandler.tick();
             DreadClientHandler.tick();
+            TigerEyeCamouflageClientHandler.tick();
             BloodCrystalKatanaTrailHandler.tick();
             ScorpionWhipTetherRenderHandler.tick();
             DorrieJumpClientHandler.tick();
@@ -484,6 +498,7 @@ public final class AntarchyFabricClientBootstrap {
             DreadHudRenderer.render(guiGraphics);
             com.craisinlord.antarchy.content.client.HordeHudRenderer.render(guiGraphics);
             com.craisinlord.antarchy.content.client.GoopedHudRenderer.render(guiGraphics);
+            com.craisinlord.antarchy.content.client.GlimmeringHudRenderer.render(guiGraphics);
             ParalyzedHudRenderer.render(guiGraphics);
             BrutalflyElytraHudRenderer.render(guiGraphics);
             JumpyBootsHudRenderer.render(guiGraphics);

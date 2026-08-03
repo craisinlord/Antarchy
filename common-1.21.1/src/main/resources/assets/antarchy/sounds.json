@@ -916,6 +916,22 @@
       }
     ]
   },
+  "lucid_lullaby": {
+    "sounds": [
+      {
+        "name": "antarchy:music/game/thoraxis/lucid_lullaby",
+        "stream": true
+      }
+    ]
+  },
+  "venenatus": {
+    "sounds": [
+      {
+        "name": "antarchy:music/game/cavaryn/venenatus",
+        "stream": true
+      }
+    ]
+  },
   "lucid_ambient": {
     "subtitle": "subtitles.antarchy.lucid_ambient",
     "sounds": [

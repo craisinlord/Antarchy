@@ -77,6 +77,11 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
 
     @Override
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        if (!AntTeleportHelper.isRightClickDimensionEnabled(this)) {
+            ItemStack heldItem = player.getItemInHand(hand);
+            return this.isFood(heldItem) ? super.mobInteract(player, hand) : InteractionResult.PASS;
+        }
+
         if (!AntarchySettings.rainbowAntsLeadToInfinityDimensions() || !InfinityCompat.get().isAvailable()) {
             return super.mobInteract(player, hand);
         }

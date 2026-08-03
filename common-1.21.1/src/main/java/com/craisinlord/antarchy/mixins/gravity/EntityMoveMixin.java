@@ -4,12 +4,17 @@ import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,6 +24,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 /*
@@ -148,6 +154,71 @@ public abstract class EntityMoveMixin {
         if (landedOnCeiling) {
             entity.setOnGround(true);
         }
+    }
+
+    @Inject(method = "collide", at = @At("HEAD"), cancellable = true)
+    private void antarchy$invertedStepUp(Vec3 movement, CallbackInfoReturnable<Vec3> cir) {
+        Entity entity = (Entity) (Object) this;
+        if (!AntarchyGravityApi.isGravityInverted(entity)) {
+            return;
+        }
+
+        AABB aabb = entity.getBoundingBox();
+        List<VoxelShape> entityShapes = entity.level().getEntityCollisions(entity, aabb.expandTowards(movement));
+        Vec3 collided = movement.lengthSqr() == 0.0 ? movement : Entity.collideBoundingBox(entity, movement, aabb, entity.level(), entityShapes);
+
+        boolean movedX = movement.x != collided.x;
+        boolean movedY = movement.y != collided.y;
+        boolean movedZ = movement.z != collided.z;
+        boolean pressingIntoCeiling = movedY && movement.y > 0.0D;
+        float maxUpStep = entity.maxUpStep();
+
+        if (!(maxUpStep > 0.0F) || !(pressingIntoCeiling || entity.onGround()) || !(movedX || movedZ)) {
+            cir.setReturnValue(collided);
+            return;
+        }
+
+        AABB steppedBox = pressingIntoCeiling ? aabb.move(0.0, collided.y, 0.0) : aabb;
+        AABB searchBox = steppedBox.expandTowards(movement.x, -(double) maxUpStep, movement.z);
+        if (!pressingIntoCeiling) {
+            searchBox = searchBox.expandTowards(0.0, 1.0E-5D, 0.0);
+        }
+
+        List<VoxelShape> stepShapes = new ArrayList<>(entityShapes);
+        entity.level().getBlockCollisions(entity, searchBox).forEach(stepShapes::add);
+
+        float currentStepY = (float) collided.y;
+        float[] candidateHeights = antarchy$collectCandidateStepDownHeights(steppedBox, stepShapes, maxUpStep, currentStepY);
+        for (float candidate : candidateHeights) {
+            Vec3 stepped = Entity.collideBoundingBox(entity, new Vec3(movement.x, -(double) candidate, movement.z), steppedBox, entity.level(), stepShapes);
+            if (stepped.horizontalDistanceSqr() > collided.horizontalDistanceSqr()) {
+                double offset = steppedBox.maxY - aabb.maxY;
+                cir.setReturnValue(stepped.add(0.0, offset, 0.0));
+                return;
+            }
+        }
+
+        cir.setReturnValue(collided);
+    }
+
+    @Unique
+    private static float[] antarchy$collectCandidateStepDownHeights(AABB box, List<VoxelShape> shapes, float maxStep, float currentY) {
+        TreeSet<Float> heights = new TreeSet<>();
+        for (VoxelShape shape : shapes) {
+            for (double coord : shape.getCoords(Direction.Axis.Y)) {
+                float height = (float) (box.maxY - coord);
+                if (height >= 0.0F && height != currentY && height <= maxStep) {
+                    heights.add(height);
+                }
+            }
+        }
+
+        float[] result = new float[heights.size()];
+        int i = 0;
+        for (float height : heights) {
+            result[i++] = height;
+        }
+        return result;
     }
 
     @Unique

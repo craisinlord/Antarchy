@@ -1,4 +1,4 @@
-{
+﻿{
   "type": "minecraft:entity",
   "pools": [
     {
@@ -34,7 +34,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "antarchy:chiten",
+          "name": "antarchy:chitin",
           "functions": [
             {
               "function": "minecraft:set_count",

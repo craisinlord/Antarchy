@@ -7,6 +7,7 @@ import com.craisinlord.antarchy.content.item.BloodCrystalAppleItem;
 import com.craisinlord.antarchy.content.item.BloodCrystalKatanaItem;
 import com.craisinlord.antarchy.content.item.CritterCageItem;
 import com.craisinlord.antarchy.fabric.item.DeferredSpawnEggItem;
+import com.craisinlord.antarchy.content.item.LucidAnchorBlockItem;
 import com.craisinlord.antarchy.content.item.LucidEyeItem;
 import com.craisinlord.antarchy.content.item.LucidPearlItem;
 import com.craisinlord.antarchy.content.item.PrimordialArmorItem;
@@ -221,6 +222,8 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> GIANT_LILY_PAD_ITEM = ITEMS.register("giant_lily_pad",
             () -> new com.craisinlord.antarchy.content.item.GiantLilyPadItem(AntarchyFabricBlocks.GIANT_LILY_PAD.get(), new Item.Properties()));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SEASHELL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.SEASHELL);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> LUCID_ANCHOR_ITEM = ITEMS.register("lucid_anchor",
+            () -> new LucidAnchorBlockItem(AntarchyFabricBlocks.LUCID_ANCHOR.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> LOTUS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.LOTUS);
 
 
@@ -295,6 +298,7 @@ public final class AntarchyFabricItems {
             () -> new CeilingPlacementTooltipBlockItem(AntarchyFabricBlocks.BLUESTONE_COMPARATOR.get(), new Item.Properties()));
     public static final DeferredItem<CeilingPlacementTooltipBlockItem> BLUESTONE_TORCH_ITEM = ITEMS.register("bluestone_torch",
             () -> new CeilingPlacementTooltipBlockItem(AntarchyFabricBlocks.BLUESTONE_TORCH.get(), new Item.Properties()));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BLUESTONE_LAMP_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BLUESTONE_LAMP);
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.URANIUM_BLOCK, new Item.Properties().rarity(Rarity.UNCOMMON));
@@ -365,6 +369,14 @@ public final class AntarchyFabricItems {
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ANTIMETAL_ITEM = ITEMS.register("polished_antimetal",
             () -> new AntimetalBlockItem(AntarchyFabricBlocks.POLISHED_ANTIMETAL.get(), new Item.Properties()));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ANTIMETAL_STAIRS_ITEM = ITEMS.register("antimetal_stairs",
+            () -> new AntimetalBlockItem(AntarchyFabricBlocks.ANTIMETAL_STAIRS.get(), new Item.Properties()));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ANTIMETAL_SLAB_ITEM = ITEMS.register("antimetal_slab",
+            () -> new AntimetalBlockItem(AntarchyFabricBlocks.ANTIMETAL_SLAB.get(), new Item.Properties()));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ANTIMETAL_STAIRS_ITEM = ITEMS.register("polished_antimetal_stairs",
+            () -> new AntimetalBlockItem(AntarchyFabricBlocks.POLISHED_ANTIMETAL_STAIRS.get(), new Item.Properties()));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_ANTIMETAL_SLAB_ITEM = ITEMS.register("polished_antimetal_slab",
+            () -> new AntimetalBlockItem(AntarchyFabricBlocks.POLISHED_ANTIMETAL_SLAB.get(), new Item.Properties()));
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> ANTIMETAL_SCAFFOLDING_ITEM = ITEMS.register("antimetal_scaffolding",
@@ -379,6 +391,7 @@ public final class AntarchyFabricItems {
             () -> new CeilingPlacementTooltipBlockItem(AntarchyFabricBlocks.ANTIMETAL_DETECTOR_RAIL.get(), new Item.Properties()));
     public static final DeferredItem<CeilingPlacementTooltipBlockItem> ANTIMETAL_ACTIVATOR_RAIL_ITEM = ITEMS.register("antimetal_activator_rail",
             () -> new CeilingPlacementTooltipBlockItem(AntarchyFabricBlocks.ANTIMETAL_ACTIVATOR_RAIL.get(), new Item.Properties()));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> UPPER_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.UPPER);
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SMALL_BLOOD_CRYSTAL_BUD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.SMALL_BLOOD_CRYSTAL_BUD);
@@ -401,6 +414,10 @@ public final class AntarchyFabricItems {
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_SAND_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.DREAM_SAND);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ANTIGRAVEL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.ANTIGRAVEL);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> LOAM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.LOAM);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MUCUS_ITEM = ITEMS.register("mucus",
+            () -> new com.craisinlord.antarchy.content.item.MucusBlockItem(AntarchyFabricBlocks.MUCUS.get(), new Item.Properties()));
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_SANDSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.DREAM_SANDSTONE);
@@ -482,6 +499,7 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_BRICK_STAIRS);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_BRICK_SLAB);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_BRICK_WALL);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_PILLAR);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_COAL_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.MYRMITE_COAL_ORE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_URANIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_URANIUM_ORE, new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_TITANIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_TITANIUM_ORE, new Item.Properties().rarity(Rarity.UNCOMMON));
@@ -494,7 +512,7 @@ public final class AntarchyFabricItems {
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NYXITE_BRICKS);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHITEN_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.CHITEN_BLOCK);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHITIN_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.CHITIN_BLOCK);
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NYXITE_STAIRS);
@@ -525,6 +543,7 @@ public final class AntarchyFabricItems {
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NYXITE_BRICK_WALL);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NYXITE_PILLAR);
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.SHELLSTONE);
@@ -579,6 +598,7 @@ public final class AntarchyFabricItems {
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.SHELLSTONE_BRICK_WALL);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.SHELLSTONE_PILLAR);
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> TRIFFID_GOO_BLOCK_ITEM = ITEMS.register("triffid_goo_block",
@@ -589,7 +609,7 @@ public final class AntarchyFabricItems {
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_SPIKE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NYXITE_SPIKE);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHITEN_SPIKE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.CHITEN_SPIKE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> CHITIN_SPIKE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.CHITIN_SPIKE);
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> POTENT_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.POTENT_NYXITE);
@@ -696,6 +716,16 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<BloodCrystalArmorItem> BLOOD_CRYSTAL_BOOTS = ITEMS.register("blood_crystal_boots",
             () -> new BloodCrystalArmorItem(net.minecraft.core.Holder.direct(AntarchyFabricMisc.BLOOD_CRYSTAL_ARMOR_MATERIAL.get()), ArmorItem.Type.BOOTS, new Item.Properties().rarity(Rarity.RARE)));
 
+    public static final DeferredItem<Item> TIGERS_EYE = ITEMS.registerSimpleItem("tigers_eye", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.TigerEyeArmorItem> TIGERS_EYE_HELMET = ITEMS.register("tigers_eye_helmet",
+            () -> new com.craisinlord.antarchy.content.item.TigerEyeArmorItem(net.minecraft.core.Holder.direct(AntarchyFabricMisc.TIGERS_EYE_ARMOR_MATERIAL.get()), ArmorItem.Type.HELMET, new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.TigerEyeArmorItem> TIGERS_EYE_CHESTPLATE = ITEMS.register("tigers_eye_chestplate",
+            () -> new com.craisinlord.antarchy.content.item.TigerEyeArmorItem(net.minecraft.core.Holder.direct(AntarchyFabricMisc.TIGERS_EYE_ARMOR_MATERIAL.get()), ArmorItem.Type.CHESTPLATE, new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.TigerEyeArmorItem> TIGERS_EYE_LEGGINGS = ITEMS.register("tigers_eye_leggings",
+            () -> new com.craisinlord.antarchy.content.item.TigerEyeArmorItem(net.minecraft.core.Holder.direct(AntarchyFabricMisc.TIGERS_EYE_ARMOR_MATERIAL.get()), ArmorItem.Type.LEGGINGS, new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.TigerEyeArmorItem> TIGERS_EYE_BOOTS = ITEMS.register("tigers_eye_boots",
+            () -> new com.craisinlord.antarchy.content.item.TigerEyeArmorItem(net.minecraft.core.Holder.direct(AntarchyFabricMisc.TIGERS_EYE_ARMOR_MATERIAL.get()), ArmorItem.Type.BOOTS, new Item.Properties().rarity(Rarity.UNCOMMON)));
+
 
     public static final DeferredItem<BloodCrystalKatanaItem> BLOOD_CRYSTAL_KATANA = ITEMS.register("blood_crystal_katana",
             () -> new BloodCrystalKatanaItem(
@@ -719,7 +749,7 @@ public final class AntarchyFabricItems {
             () -> new MobComingSoonTooltipItem(new Item.Properties().rarity(Rarity.RARE)));
 
 
-    public static final DeferredItem<Item> CHITEN = ITEMS.registerSimpleItem("chiten", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> CHITIN = ITEMS.registerSimpleItem("chitin", new Item.Properties().rarity(Rarity.UNCOMMON));
 
 
     public static final DeferredItem<Item> JERRY_NUCLEUS = ITEMS.register("jerry_nucleus",
@@ -728,9 +758,6 @@ public final class AntarchyFabricItems {
                             .nutrition(2)
                             .saturationModifier(0.1F)
                             .build())));
-
-
-    public static final DeferredItem<Item> CARAPACE = ITEMS.registerSimpleItem("carapace", new Item.Properties().rarity(Rarity.UNCOMMON));
 
 
     public static final DeferredItem<Item> STINK_BUG_ITEM = ITEMS.registerSimpleItem("stink_bug", new Item.Properties().rarity(Rarity.UNCOMMON));
@@ -1225,6 +1252,14 @@ public final class AntarchyFabricItems {
             "kraken_tentacle",
             new Item.Properties().rarity(Rarity.RARE)
     );
+    public static final DeferredItem<Item> KRAKEN_KALAMARI = ITEMS.register("kraken_kalamari",
+            () -> new Item(new Item.Properties()
+                    .rarity(Rarity.EPIC)
+                    .food(new FoodProperties.Builder()
+                            .nutrition(20)
+                            .saturationModifier(1.2F)
+                            .alwaysEdible()
+                            .build())));
 
     public static final DeferredItem<KrakensGraspItem> KRAKENS_GRASP = ITEMS.register("krakens_grasp",
             () -> new KrakensGraspItem(
@@ -1461,6 +1496,7 @@ public final class AntarchyFabricItems {
                     .food(new FoodProperties.Builder()
                             .nutrition(4)
                             .saturationModifier(0.3F)
+                            .alwaysEdible()
                             .build())));
 
 

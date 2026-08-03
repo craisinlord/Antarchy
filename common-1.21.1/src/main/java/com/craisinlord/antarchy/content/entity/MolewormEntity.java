@@ -80,6 +80,13 @@ public class MolewormEntity extends Monster implements GeoEntity {
                 .add(Attributes.ATTACK_DAMAGE, AntarchySettings.molewormAttackDamage());
     }
 
+    @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
+            MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.molewormHealth());
+        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
+    }
+
     @SuppressWarnings("unchecked")
     public static boolean canSpawn(EntityType<MolewormEntity> entityType, LevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
         return Silverfish.checkSilverfishSpawnRules((EntityType<Silverfish>) (EntityType<?>) entityType, level, spawnReason, pos, random);

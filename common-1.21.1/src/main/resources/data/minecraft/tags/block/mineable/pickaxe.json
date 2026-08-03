@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "antarchy:upper",
     "antarchy:uranium_ore",
     "antarchy:deepslate_uranium_ore",
     "antarchy:titanium_ore",
@@ -106,12 +107,20 @@
     "antarchy:broodstone_titanium_ore",
     "antarchy:biomite",
     "antarchy:biomite_turf",
-    "antarchy:chiten_block",
-    "antarchy:chiten_spike",
+    "antarchy:chitin_block",
+    "antarchy:chitin_spike",
     "antarchy:antimetal",
     "antarchy:polished_antimetal",
+    "antarchy:antimetal_stairs",
+    "antarchy:antimetal_slab",
+    "antarchy:polished_antimetal_stairs",
+    "antarchy:polished_antimetal_slab",
     "antarchy:dream_lantern",
     "antarchy:bluestone_ore",
-    "antarchy:bluestone_block"
+    "antarchy:bluestone_block",
+    "antarchy:bluestone_lamp",
+    "antarchy:shellstone_pillar",
+    "antarchy:nyxite_pillar",
+    "antarchy:broodstone_pillar"
   ]
 }

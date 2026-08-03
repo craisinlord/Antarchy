@@ -23,6 +23,12 @@
       "tick_delay": 6000,
       "block_search_extent": 8,
       "offset": 2.0
+    },
+    "music": {
+      "sound": "antarchy:lucid_lullaby",
+      "min_delay": 12000,
+      "max_delay": 24000,
+      "replace_current_music": true
     }
   },
   "spawn_costs": {
@@ -52,7 +58,8 @@
       "antarchy:bed_bug_surface_cluster",
       "antarchy:nyxite_spikes",
       "antarchy:patch_fire_sparse",
-      "antarchy:patch_ceiling_fire"
+      "antarchy:patch_ceiling_fire",
+      "antarchy:patch_ceiling_antigravel"
     ],
     [],
     [

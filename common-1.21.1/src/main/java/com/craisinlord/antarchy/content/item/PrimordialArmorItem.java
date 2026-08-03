@@ -24,6 +24,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 
 public class PrimordialArmorItem extends ArmorItem {
+    private static final int BASE_DURABILITY_MULTIPLIER = 33;
     private final Type armorType;
 
     public PrimordialArmorItem(Holder<ArmorMaterial> material, Type type, Properties properties) {
@@ -144,10 +145,10 @@ public class PrimordialArmorItem extends ArmorItem {
 
     private static int resolveDurability(Type armorType) {
         return switch (armorType) {
-            case HELMET -> Type.HELMET.getDurability(37);
-            case CHESTPLATE, BODY -> Type.CHESTPLATE.getDurability(37);
-            case LEGGINGS -> Type.LEGGINGS.getDurability(37);
-            case BOOTS -> Type.BOOTS.getDurability(37);
+            case HELMET -> Type.HELMET.getDurability(BASE_DURABILITY_MULTIPLIER);
+            case CHESTPLATE, BODY -> Type.CHESTPLATE.getDurability(BASE_DURABILITY_MULTIPLIER);
+            case LEGGINGS -> Type.LEGGINGS.getDurability(BASE_DURABILITY_MULTIPLIER);
+            case BOOTS -> Type.BOOTS.getDurability(BASE_DURABILITY_MULTIPLIER);
         };
     }
 }

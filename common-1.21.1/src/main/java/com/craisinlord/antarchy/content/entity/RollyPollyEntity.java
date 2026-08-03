@@ -121,6 +121,13 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
     }
 
     @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
+            net.minecraft.world.entity.MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.rollyPollyHealth());
+        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
+    }
+
+    @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(ANIMATION_STATE, ANIM_NONE);

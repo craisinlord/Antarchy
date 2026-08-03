@@ -59,6 +59,10 @@ public class MolevoreEntity extends Monster implements GeoEntity {
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "moleworm_caves")
     );
+    private static final ResourceKey<Biome> CAVARYN_MOLEWORM_CAVES = ResourceKey.create(
+            Registries.BIOME,
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "cavaryn_moleworm_caves")
+    );
     private static final EntityDataAccessor<Integer> ACTION_STATE = SynchedEntityData.defineId(MolevoreEntity.class, EntityDataSerializers.INT);
 
     private static final int ACTION_NONE = 0;
@@ -122,7 +126,7 @@ public class MolevoreEntity extends Monster implements GeoEntity {
     }
 
     private static boolean hasSpawnPocket(LevelAccessor level, BlockPos pos) {
-        if (!level.getBiome(pos).is(MOLEWORM_CAVES)) {
+        if (!level.getBiome(pos).is(MOLEWORM_CAVES) && !level.getBiome(pos).is(CAVARYN_MOLEWORM_CAVES)) {
             return false;
         }
 
@@ -180,6 +184,7 @@ public class MolevoreEntity extends Monster implements GeoEntity {
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnGroupData) {
         SpawnGroupData finalized = super.finalizeSpawn(level, difficulty, spawnReason, spawnGroupData);
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.molevoreHealth());
         if (spawnReason != MobSpawnType.SPAWN_EGG) {
             this.startDigUp();
         }

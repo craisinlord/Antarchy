@@ -109,6 +109,13 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
                 .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.missileSquidKnockbackResistance());
     }
 
+    @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
+            MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.missileSquidHealth());
+        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
+    }
+
     public static boolean canSpawn(EntityType<MissileSquidEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
         return level.getDifficulty() != Difficulty.PEACEFUL
                 && pos.getY() <= level.getSeaLevel() - 10

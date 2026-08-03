@@ -37,6 +37,12 @@ public final class AntarchyKeyBindings {
             GLFW.GLFW_KEY_R,
             CATEGORY
     );
+    public static final KeyMapping TIGERS_EYE_CAMOUFLAGE = new KeyMapping(
+            "key.antarchy.tigers_eye_camouflage",
+            InputConstants.Type.KEYSYM,
+            InputConstants.UNKNOWN.getValue(),
+            CATEGORY
+    );
 
     private AntarchyKeyBindings() {}
 
@@ -45,6 +51,7 @@ public final class AntarchyKeyBindings {
         KeyBindingHelper.registerKeyBinding(DORRIE_CHARGE_JUMP);
         KeyBindingHelper.registerKeyBinding(HERCULES_BEETLE_CHARGE);
         KeyBindingHelper.registerKeyBinding(HERCULES_BEETLE_FLIGHT_TOGGLE);
+        KeyBindingHelper.registerKeyBinding(TIGERS_EYE_CAMOUFLAGE);
     }
 
     public static boolean isBrutalflyFlapPressed() {
@@ -61,5 +68,9 @@ public final class AntarchyKeyBindings {
 
     public static boolean isHerculesBeetleFlightTogglePressed() {
         return Minecraft.getInstance().screen == null && HERCULES_BEETLE_FLIGHT_TOGGLE.isDown();
+    }
+
+    public static boolean consumeTigerEyeCamouflagePressed() {
+        return Minecraft.getInstance().screen == null && TIGERS_EYE_CAMOUFLAGE.consumeClick();
     }
 }

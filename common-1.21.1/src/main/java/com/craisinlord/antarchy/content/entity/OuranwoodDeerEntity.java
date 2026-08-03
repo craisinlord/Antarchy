@@ -160,6 +160,7 @@ public class OuranwoodDeerEntity extends Animal implements GeoEntity {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnGroupData) {
         DeerSpawnData deerSpawnData = spawnGroupData instanceof DeerSpawnData data ? data : new DeerSpawnData();
         SpawnGroupData result = super.finalizeSpawn(level, difficulty, spawnReason, spawnGroupData);
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.ouranwoodDeerHealth());
 
         if (spawnReason == MobSpawnType.NATURAL || spawnReason == MobSpawnType.CHUNK_GENERATION || spawnReason == MobSpawnType.SPAWN_EGG) {
             this.setVariant(Variant.values()[this.random.nextInt(Variant.values().length)]);

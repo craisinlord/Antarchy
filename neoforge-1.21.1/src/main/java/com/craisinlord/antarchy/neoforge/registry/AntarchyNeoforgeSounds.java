@@ -60,6 +60,7 @@ public final class AntarchyNeoforgeSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_LUCID_POOLS_AMBIENT = registerSoundEvent("thoraxis_lucid_pools_ambient");
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_LUCID_POOLS_ADDITIONS = registerSoundEvent("thoraxis_lucid_pools_additions");
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_LUCID_POOLS_MOOD = registerSoundEvent("thoraxis_lucid_pools_mood");
+    public static final DeferredHolder<SoundEvent, SoundEvent> LUCID_LULLABY = registerSoundEvent("lucid_lullaby");
     public static final DeferredHolder<SoundEvent, SoundEvent> LUCID_AMBIENT = registerSoundEvent("lucid_ambient");
     public static final DeferredHolder<SoundEvent, SoundEvent> LUCID_FLYING = registerSoundEvent("lucid_flying");
     public static final DeferredHolder<SoundEvent, SoundEvent> LUCID_ATTACK = registerSoundEvent("lucid_attack");
@@ -137,6 +138,7 @@ public final class AntarchyNeoforgeSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> STINK_BUG_FART = registerSoundEvent("stink_bug_fart");
     public static final DeferredHolder<SoundEvent, SoundEvent> STINK_BUG_IDLE = registerSoundEvent("stink_bug_idle");
     public static final DeferredHolder<SoundEvent, SoundEvent> CAVARYN_HEARTBEAT = registerSoundEvent("cavaryn_heartbeat");
+    public static final DeferredHolder<SoundEvent, SoundEvent> VENENATUS = registerSoundEvent("venenatus");
     public static final DeferredHolder<SoundEvent, SoundEvent> ROLLY_POLLY_IDLE = registerSoundEvent("rolly_polly_idle");
     public static final DeferredHolder<SoundEvent, SoundEvent> ROLLY_POLLY_WHEEL_MODE = registerSoundEvent("rolly_polly_wheel_mode");
     public static final DeferredHolder<SoundEvent, SoundEvent> ROLLY_POLLY_NORMAL_MODE = registerSoundEvent("rolly_polly_normal_mode");

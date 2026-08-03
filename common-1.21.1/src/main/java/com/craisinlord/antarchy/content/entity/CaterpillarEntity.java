@@ -129,6 +129,12 @@ public class CaterpillarEntity extends Animal implements GeoEntity {
     }
 
     @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty, net.minecraft.world.entity.MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.caterpillarHealth());
+        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
+    }
+
+    @Override
     protected PathNavigation createNavigation(Level level) {
         GroundPathNavigation navigation = new GroundPathNavigation(this, level) {
             @Override

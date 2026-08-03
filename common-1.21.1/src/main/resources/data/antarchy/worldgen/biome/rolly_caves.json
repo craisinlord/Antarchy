@@ -20,6 +20,12 @@
       "options": {
         "type": "minecraft:spore_blossom_air"
       }
+    },
+    "music": {
+      "sound": "antarchy:venenatus",
+      "min_delay": 12000,
+      "max_delay": 24000,
+      "replace_current_music": true
     }
   },
   "spawn_costs": {},

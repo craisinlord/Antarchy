@@ -20,6 +20,12 @@
       "options": {
         "type": "antarchy:orange_ash"
       }
+    },
+    "music": {
+      "sound": "antarchy:venenatus",
+      "min_delay": 12000,
+      "max_delay": 24000,
+      "replace_current_music": true
     }
   },
   "spawn_costs": {
@@ -48,7 +54,7 @@
     [
       "antarchy:cavaryn_bile_veins",
       "antarchy:cavaryn_bile_cysts",
-      "antarchy:cavaryn_chiten_spikes",
+      "antarchy:cavaryn_chitin_spikes",
       "antarchy:cavaryn_terror_egg_patch",
       "antarchy:termite_nest_cavaryn"
     ],
