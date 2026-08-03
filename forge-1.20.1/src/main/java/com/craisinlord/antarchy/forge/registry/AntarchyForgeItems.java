@@ -472,7 +472,6 @@ public final class AntarchyForgeItems {
                             .nutrition(2)
                             .saturationMod(0.1F)
                             .build())));
-    public static final RegistryObject<Item> CARAPACE = ITEMS.registerSimpleItem("carapace", new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final RegistryObject<Item> STINK_BUG = ITEMS.registerSimpleItem("stink_bug", new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final RegistryObject<Item> JUMPY_BUG_LEG = ITEMS.registerSimpleItem("jumpy_bug_leg", new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final RegistryObject<JumpyBootsItem> JUMPY_BOOTS = ITEMS.register("jumpy_boots",

@@ -35,7 +35,7 @@ public class NightmareRenderer extends GeoEntityRenderer<NightmareEntity> {
         public void render(PoseStack poseStack, NightmareEntity animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType,
                            MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick,
                            int packedLight, int packedOverlay) {
-            RenderType emissiveType = RenderType.eyes(NightmareModel.EMISSIVE_TEXTURE);
+            RenderType emissiveType = RenderType.eyes(NightmareModel.emissiveTextureFor(animatable));
             VertexConsumer emissiveBuffer = bufferSource.getBuffer(emissiveType);
             this.getRenderer().reRender(
                     bakedModel,

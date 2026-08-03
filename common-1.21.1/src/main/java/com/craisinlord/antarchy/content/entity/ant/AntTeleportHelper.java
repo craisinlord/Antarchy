@@ -125,6 +125,10 @@ public final class AntTeleportHelper {
             return InteractionResult.PASS;
         }
 
+        if (!isRightClickDimensionEnabled(entityTypeId)) {
+            return InteractionResult.PASS;
+        }
+
         if (entityTypeId.equals(ResourceLocation.fromNamespaceAndPath("antarchy", "brown_ant"))) {
             return teleportToOrFromConfiguredDimension(player, AntarchySettings.brownAntDestinationDimension());
         }
@@ -156,6 +160,10 @@ public final class AntTeleportHelper {
     }
 
     static InteractionResult handleInteraction(BaseAntEntity ant, Player player, ItemStack itemStack) {
+        if (!isRightClickDimensionEnabled(ant)) {
+            return InteractionResult.PASS;
+        }
+
         if (ant.requiresActivationReagent() && !ant.isTeleportActivatedState()) {
             if (!(player instanceof ServerPlayer serverPlayer)) {
                 return InteractionResult.SUCCESS;
@@ -182,6 +190,32 @@ public final class AntTeleportHelper {
         }
 
         return teleportToOrFromConfiguredDimension(serverPlayer, ant.destinationDimension());
+    }
+
+    static boolean isRightClickDimensionEnabled(BaseAntEntity ant) {
+        return ant instanceof BrownAntEntity
+                ? AntarchySettings.brownAntRightClickDimension()
+                : ant instanceof RedAntEntity
+                        ? AntarchySettings.redAntRightClickDimension()
+                        : ant instanceof RainbowAntEntity
+                                ? AntarchySettings.rainbowAntRightClickDimension()
+                                : ant instanceof TermiteEntity && AntarchySettings.termiteRightClickDimension();
+    }
+
+    static boolean isRightClickDimensionEnabled(ResourceLocation entityTypeId) {
+        if (entityTypeId.equals(ResourceLocation.fromNamespaceAndPath("antarchy", "brown_ant"))) {
+            return AntarchySettings.brownAntRightClickDimension();
+        }
+        if (entityTypeId.equals(ResourceLocation.fromNamespaceAndPath("antarchy", "red_ant"))) {
+            return AntarchySettings.redAntRightClickDimension();
+        }
+        if (entityTypeId.equals(ResourceLocation.fromNamespaceAndPath("antarchy", "rainbow_ant"))) {
+            return AntarchySettings.rainbowAntRightClickDimension();
+        }
+        if (entityTypeId.equals(ResourceLocation.fromNamespaceAndPath("antarchy", "termite"))) {
+            return AntarchySettings.termiteRightClickDimension();
+        }
+        return true;
     }
 
     private static InteractionResult activateTeleport(BaseAntEntity ant, ServerPlayer player, ItemStack stack) {

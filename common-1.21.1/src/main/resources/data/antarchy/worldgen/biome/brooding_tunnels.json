@@ -20,17 +20,15 @@
       "options": {
         "type": "antarchy:orange_ash"
       }
+    },
+    "music": {
+      "sound": "antarchy:venenatus",
+      "min_delay": 12000,
+      "max_delay": 24000,
+      "replace_current_music": true
     }
   },
   "spawn_costs": {
-    "antarchy:jumpy_bug": {
-      "energy_budget": 0.4,
-      "charge": 7
-    },
-    "antarchy:spit_bug": {
-      "energy_budget": 0.9,
-      "charge": 2
-    }
   },
   "carvers": {
     "air": [],
@@ -65,12 +63,6 @@
   "creature_spawn_probability": 0.12,
   "spawners": {
     "monster": [
-      {
-        "type": "antarchy:jumpy_bug",
-        "weight": 95,
-        "minCount": 1,
-        "maxCount": 3
-      }
     ],
     "creature": [
       {

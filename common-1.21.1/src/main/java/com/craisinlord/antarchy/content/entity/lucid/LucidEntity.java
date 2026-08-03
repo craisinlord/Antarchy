@@ -104,6 +104,13 @@ public class LucidEntity extends Monster implements GeoEntity {
                 .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.lucidKnockbackResistance());
     }
 
+    @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
+            MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
+        com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.lucidHealth());
+        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
+    }
+
     public static boolean canSpawn(EntityType<LucidEntity> entityType, ServerLevelAccessor level,
             MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
         return level.getDifficulty() != Difficulty.PEACEFUL
@@ -547,7 +554,6 @@ public class LucidEntity extends Monster implements GeoEntity {
     }
 
 }
-
 
 
 

@@ -15,6 +15,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
@@ -24,6 +25,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -68,6 +70,7 @@ public class MantisEntity extends Monster implements GeoEntity {
     protected int flyBurstTicks;
     protected int flyCooldownTicks;
     private int debugLogTicks = 0;
+    private int configSyncTicks;
 
     public MantisEntity(EntityType<? extends MantisEntity> entityType, Level level) {
         super(entityType, level);
@@ -87,6 +90,13 @@ public class MantisEntity extends Monster implements GeoEntity {
                 .add(Attributes.FLYING_SPEED, AntarchySettings.mantisFlyingSpeed())
                 .add(Attributes.FOLLOW_RANGE, 32.0D)
                 .add(Attributes.ARMOR, 4.0D);
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnData) {
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, this.configuredMaxHealth());
+        this.syncConfiguredAttributes(false);
+        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
     }
 
     public static boolean canSpawn(EntityType<MantisEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
@@ -200,6 +210,11 @@ public class MantisEntity extends Monster implements GeoEntity {
     public void tick() {
         super.tick();
         if (!this.level().isClientSide) {
+            if (this.configSyncTicks-- <= 0) {
+                this.configSyncTicks = 20;
+                this.syncConfiguredAttributes(true);
+            }
+
             if (this.attackAnimationTicks > 0) {
                 this.attackAnimationTicks--;
             }
@@ -278,6 +293,22 @@ public class MantisEntity extends Monster implements GeoEntity {
         return COMBAT_SPEED;
     }
 
+    protected double configuredMaxHealth() {
+        return AntarchySettings.mantisHealth();
+    }
+
+    protected double configuredAttackDamage() {
+        return AntarchySettings.mantisAttackDamage();
+    }
+
+    protected double configuredMovementSpeed() {
+        return AntarchySettings.mantisMovementSpeed();
+    }
+
+    protected double configuredFlyingSpeed() {
+        return AntarchySettings.mantisFlyingSpeed();
+    }
+
     protected void onActiveTarget(LivingEntity target) {
     }
 
@@ -347,6 +378,36 @@ public class MantisEntity extends Monster implements GeoEntity {
 
     private boolean isFlyingNow() {
         return this.flyBurstTicks > 0;
+    }
+
+    private void syncConfiguredAttributes(boolean rescaleCurrentHealth) {
+        syncAttribute(this.getAttribute(Attributes.MAX_HEALTH), this.configuredMaxHealth(), rescaleCurrentHealth);
+        syncAttribute(this.getAttribute(Attributes.ATTACK_DAMAGE), this.configuredAttackDamage(), false);
+        syncAttribute(this.getAttribute(Attributes.MOVEMENT_SPEED), this.configuredMovementSpeed(), false);
+        syncAttribute(this.getAttribute(Attributes.FLYING_SPEED), this.configuredFlyingSpeed(), false);
+    }
+
+    private void syncAttribute(@Nullable AttributeInstance attributeInstance, double desiredValue, boolean rescaleCurrentHealth) {
+        if (attributeInstance == null) {
+            return;
+        }
+
+        double previousValue = attributeInstance.getBaseValue();
+        if (Math.abs(previousValue - desiredValue) < 1.0E-6D) {
+            return;
+        }
+
+        attributeInstance.setBaseValue(desiredValue);
+        if (!rescaleCurrentHealth) {
+            this.setHealth((float) this.getMaxHealth());
+            return;
+        }
+
+        float currentHealth = this.getHealth();
+        float syncedHealth = previousValue > 0.0D
+                ? (float) net.minecraft.util.Mth.clamp((currentHealth / (float) previousValue) * desiredValue, 0.0D, desiredValue)
+                : (float) desiredValue;
+        this.setHealth(syncedHealth);
     }
 
     private void tickDebugLog() {

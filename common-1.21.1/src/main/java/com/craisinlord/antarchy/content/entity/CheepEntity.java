@@ -49,6 +49,12 @@ public class CheepEntity extends AbstractFish implements GeoEntity {
     }
 
     @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty, net.minecraft.world.entity.MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.cheepHealth());
+        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
+    }
+
+    @Override
     public ItemStack getBucketItemStack() {
         return new ItemStack(Items.WATER_BUCKET);
     }

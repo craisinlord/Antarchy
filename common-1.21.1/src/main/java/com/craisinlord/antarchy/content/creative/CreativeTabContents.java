@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.creative;
 
-import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
 import com.craisinlord.antarchy.content.item.GlimmerBottleItem;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateGearHelper;
@@ -21,6 +20,8 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.ItemLike;
 
 public final class CreativeTabContents {
+    private static final String MODID = "antarchy";
+
     private CreativeTabContents() {}
 
     private record CatalogEntry(String path, String neoTabPath, String insertAfterPath) {}
@@ -89,6 +90,7 @@ public final class CreativeTabContents {
             entry("mossy_shellstone_brick_slab", "building_blocks"),
             entry("mossy_shellstone_brick_wall", "building_blocks"),
             entry("cracked_shellstone_bricks", "building_blocks"),
+            entry("shellstone_pillar", "building_blocks"),
             entry("blush_moss_block", "building_blocks"),
             entry("blush_moss_carpet", "building_blocks"),
             entry("lumen_froglight", "natural_blocks"),
@@ -108,16 +110,22 @@ public final class CreativeTabContents {
             entry("nyxite_brick_slab", "building_blocks"),
             entry("nyxite_brick_wall", "building_blocks"),
             entry("chiseled_nyxite", "building_blocks"),
+            entry("nyxite_pillar", "building_blocks"),
             entry("pale_nyxite", "building_blocks"),
             entry("nyxite_spike", "building_blocks"),
             entry("potent_nyxite", "building_blocks"),
             entry("antimetal", "building_blocks"),
+            entry("antimetal_stairs", "building_blocks"),
+            entry("antimetal_slab", "building_blocks"),
             entry("polished_antimetal", "building_blocks"),
+            entry("polished_antimetal_stairs", "building_blocks"),
+            entry("polished_antimetal_slab", "building_blocks"),
             entry("antimetal_scaffolding", "building_blocks"),
             entry("antimetal_rail", "redstone_blocks"),
             entry("antimetal_powered_rail", "redstone_blocks"),
             entry("antimetal_detector_rail", "redstone_blocks"),
             entry("antimetal_activator_rail", "redstone_blocks"),
+            entry("upper", "redstone_blocks"),
             entry("umbral_moss_block", "building_blocks"),
             entry("umbral_moss_carpet", "building_blocks"),
             entry("dream_torch", "building_blocks"),
@@ -134,6 +142,7 @@ public final class CreativeTabContents {
             entry("smooth_dream_sandstone_stairs", "building_blocks"),
             entry("smooth_dream_sandstone_slab", "building_blocks"),
             entry("cut_dream_sandstone_slab", "building_blocks"),
+            entry("antigravel", "natural_blocks"),
             entry("budding_blood_crystal", "building_blocks"),
             entry("blood_crystal_block", "building_blocks"),
             entry("blood_crystal_cluster", "building_blocks"),
@@ -145,6 +154,7 @@ public final class CreativeTabContents {
             entry("biomite_turf", "building_blocks"),
             entry("biowart", "building_blocks"),
             entry("biowart_tendrils", "building_blocks"),
+            entry("loam", "natural_blocks"),
             entry("broodstone", "building_blocks"),
             entry("polished_broodstone", "building_blocks"),
             entry("chiseled_broodstone", "building_blocks"),
@@ -158,12 +168,13 @@ public final class CreativeTabContents {
             entry("broodstone_brick_stairs", "building_blocks"),
             entry("broodstone_brick_slab", "building_blocks"),
             entry("broodstone_brick_wall", "building_blocks"),
+            entry("broodstone_pillar", "building_blocks"),
             entry("myrmite_coal_ore", "building_blocks"),
             entry("broodstone_uranium_ore", "building_blocks"),
             entry("broodstone_titanium_ore", "building_blocks"),
             entry("bile_vein", "building_blocks"),
-            entry("chiten_block", "building_blocks"),
-            entry("chiten_spike", "building_blocks"),
+            entry("chitin_block", "building_blocks"),
+            entry("chitin_spike", "building_blocks"),
             entry("amber_moss_block", "building_blocks"),
             entry("amber_moss_carpet", "building_blocks"),
             entry("uranium_block", "building_blocks"),
@@ -180,6 +191,7 @@ public final class CreativeTabContents {
             entry("bluestone_repeater", "redstone_blocks"),
             entry("bluestone_comparator", "redstone_blocks"),
             entry("bluestone_torch", "redstone_blocks"),
+            entry("bluestone_lamp", "redstone_blocks"),
             entry("titanium_block", "building_blocks"),
             entry("raw_titanium_block", "building_blocks"),
             entry("cut_titanium", "building_blocks"),
@@ -205,6 +217,7 @@ public final class CreativeTabContents {
             entry("seashell", "natural_blocks"),
             entry("hushweed", "natural_blocks"),
             entry("amber_lichen", "natural_blocks"),
+            entry("mucus", "natural_blocks"),
             entry("creepvine", "natural_blocks"),
             entry("hanging_creeproots", "natural_blocks"),
             entry("molting_vines", "natural_blocks"),
@@ -243,6 +256,7 @@ public final class CreativeTabContents {
             entry("antiwater_bucket", "tools_and_utilities"),
             entry("lumen_bucket", "tools_and_utilities"),
             entry("cloud_bucket", "tools_and_utilities"),
+            entry("lucid_anchor", "tools_and_utilities"),
             entry("reverie_bottle", "tools_and_utilities"),
             entry("glimmer_bottle", "tools_and_utilities"),
             entry("critter_cage", "tools_and_utilities"),
@@ -283,6 +297,10 @@ public final class CreativeTabContents {
             entry("blood_crystal_chestplate", "combat"),
             entry("blood_crystal_leggings", "combat"),
             entry("blood_crystal_boots", "combat"),
+            entry("tigers_eye_helmet", "combat"),
+            entry("tigers_eye_chestplate", "combat"),
+            entry("tigers_eye_leggings", "combat"),
+            entry("tigers_eye_boots", "combat"),
             entry("moggles", "combat"),
             entry("scorpion_whip", "combat"),
             entry("fallen_king_crown", "combat"),
@@ -306,15 +324,15 @@ public final class CreativeTabContents {
             entry("mud_pie", "ingredients"),
             entry("lucid_eye", "ingredients"),
             entry("blood_crystal_shard", "ingredients"),
+            entry("tigers_eye", "ingredients"),
             entry("blood_crystal_apple", "ingredients"),
             entry("spirit_apple", "ingredients"),
             entry("mantis_claw", "combat"),
             entry("hercules_horn", "ingredients"),
             entry("king_scale", "ingredients"),
             entry("queen_scale", "ingredients"),
-            entry("chiten", "ingredients"),
+            entry("chitin", "ingredients"),
             entry("jerry_nucleus", "ingredients"),
-            entry("carapace", "ingredients"),
             entry("stink_bug", "ingredients"),
             entry("brutalfly_wing", "ingredients"),
             entry("primordial_scute", "ingredients"),
@@ -323,6 +341,7 @@ public final class CreativeTabContents {
             entry("emperor_scorpion_stinger", "ingredients"),
             entry("kraken_tooth", "ingredients"),
             entry("kraken_tentacle", "ingredients"),
+            entry("kraken_kalamari", "ingredients"),
             entry("jumpy_bug_leg", "ingredients"),
             entry("cornea_ear", "ingredients"),
             entry("corn", "ingredients"),
@@ -493,7 +512,7 @@ public final class CreativeTabContents {
     }
 
     private static Item item(String path) {
-        return BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, path));
+        return BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(MODID, path));
     }
 
     private static Item vanillaItem(String path) {
@@ -501,7 +520,7 @@ public final class CreativeTabContents {
     }
 
     private static Holder<Potion> potion(String path) {
-        Potion potion = BuiltInRegistries.POTION.get(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, path));
+        Potion potion = BuiltInRegistries.POTION.get(ResourceLocation.fromNamespaceAndPath(MODID, path));
         return potion == null ? null : BuiltInRegistries.POTION.wrapAsHolder(potion);
     }
 }

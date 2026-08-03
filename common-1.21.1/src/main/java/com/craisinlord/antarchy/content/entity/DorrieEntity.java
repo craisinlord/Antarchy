@@ -160,6 +160,12 @@ public class DorrieEntity extends Animal implements GeoEntity {
                 .add(Attributes.ATTACK_DAMAGE, 4.0D);
     }
 
+    @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty, net.minecraft.world.entity.MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.dorrieHealth());
+        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
+    }
+
     public boolean hasSaddle() {
         return this.entityData.get(HAS_SADDLE);
     }

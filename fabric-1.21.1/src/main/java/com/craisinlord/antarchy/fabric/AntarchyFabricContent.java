@@ -16,6 +16,7 @@ import com.craisinlord.antarchy.content.item.ScorpionWhipTetherSync;
 import com.craisinlord.antarchy.content.network.ImpactShakeSync;
 import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakeSync;
 import com.craisinlord.antarchy.content.network.HordeIntensitySync;
+import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
 import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
 import net.minecraft.core.Holder;
@@ -90,6 +91,11 @@ public final class AntarchyFabricContent {
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.CLOUD_SHARK_FIN.get()), net.minecraft.world.item.alchemy.Potions.SLOW_FALLING);
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.JUMPY_BUG_LEG.get()), Potions.LEAPING);
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.CORNEA_EAR.get()), net.minecraft.world.item.alchemy.Potions.NIGHT_VISION);
+            // These two use registerItemRecipe (not registerPotionRecipe) purely to mark corn/syrup
+            // as valid brewing-stand ingredients; the actual water-only output logic still comes
+            // from PotionBrewingMixin -> CustomBrewingRecipes so it stays consistent with NeoForge.
+            builder.registerItemRecipe(Items.POTION, Ingredient.of(AntarchyFabricItems.CORN.get()), AntarchyFabricItems.HIGH_FRUCTOSE_CORN_SYRUP.get());
+            builder.registerItemRecipe(AntarchyFabricItems.HIGH_FRUCTOSE_CORN_SYRUP.get(), Ingredient.of(com.craisinlord.antarchy.content.recipe.CustomBrewingRecipes.rootsTag()), AntarchyFabricItems.ROOT_BEER.get());
         });
 
         AntarchyFabricSounds.SOUND_EVENTS.register();
@@ -287,6 +293,8 @@ public final class AntarchyFabricContent {
 
         AntarchyObjects.setOctopusBomb(AntarchyFabricEntities.OCTOPUS_BOMB);
         AntarchyObjects.setTentacle(AntarchyFabricEntities.TENTACLE);
+        AntarchyObjects.setNightmarePortal(AntarchyFabricEntities.NIGHTMARE_PORTAL);
+        AntarchyObjects.setNightmareBite(AntarchyFabricEntities.NIGHTMARE_BITE);
         AntarchyObjects.setKrakensGraspTrident(AntarchyFabricEntities.KRAKENS_GRASP_TRIDENT);
         AntarchyObjects.setLotus(() -> AntarchyFabricBlocks.LOTUS.get());
         AntarchyObjects.setKrakenTentacle(() -> AntarchyFabricItems.KRAKEN_TENTACLE.get());
@@ -294,6 +302,7 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setOuranwoodDeer(AntarchyFabricEntities.OURANWOOD_DEER);
         AntarchyObjects.setGlimmer(AntarchyFabricEntities.GLIMMER);
         AntarchyObjects.setSpiritApple(() -> AntarchyFabricItems.SPIRIT_APPLE.get());
+        AntarchyObjects.setGlimmeringEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.GLIMMERING));
         AntarchyObjects.setElka(AntarchyFabricEntities.ELKA);
         AntarchyObjects.setPeach(() -> AntarchyFabricItems.PEACH.get());
         AntarchyObjects.setCorn(() -> AntarchyFabricItems.CORN.get());
@@ -316,7 +325,9 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setDorrieInventoryMenu(AntarchyFabricMisc.DORRIE_INVENTORY_MENU);
         AntarchyObjects.setCritterCage(() -> AntarchyFabricItems.CRITTER_CAGE.get());
         AntarchyObjects.setCritterCageBlock(() -> AntarchyFabricBlocks.CRITTER_CAGE_BLOCK.get());
+        AntarchyObjects.setLucidAnchor(() -> AntarchyFabricBlocks.LUCID_ANCHOR.get());
         AntarchyObjects.setCritterCageBlockEntity(() -> AntarchyFabricBlocks.CRITTER_CAGE_BLOCK_ENTITY.get());
+        AntarchyObjects.setLucidAnchorBlockEntity(() -> AntarchyFabricBlocks.LUCID_ANCHOR_BLOCK_ENTITY.get());
         AntarchyObjects.setCritterCageProjectile(() -> AntarchyFabricEntities.CRITTER_CAGE_PROJECTILE.get());
         AntarchyObjects.setCritterCageEntityTypeComponent(() -> AntarchyFabricMisc.CRITTER_CAGE_ENTITY_TYPE_COMPONENT.get());
         AntarchyObjects.setCritterCagePrimaryColorComponent(() -> AntarchyFabricMisc.CRITTER_CAGE_PRIMARY_COLOR_COMPONENT.get());
@@ -374,8 +385,8 @@ public final class AntarchyFabricContent {
                 () -> AntarchyFabricBlocks.TRIFFID_GOO_BLOCK.get(),
                 () -> AntarchyFabricBlocks.PALE_NYXITE.get(),
                 () -> AntarchyFabricBlocks.NYXITE_SPIKE.get(),
-                () -> AntarchyFabricBlocks.CHITEN_BLOCK.get(),
-                () -> AntarchyFabricBlocks.CHITEN_SPIKE.get(),
+                () -> AntarchyFabricBlocks.CHITIN_BLOCK.get(),
+                () -> AntarchyFabricBlocks.CHITIN_SPIKE.get(),
                 () -> AntarchyFabricBlocks.POTENT_NYXITE.get(),
                 () -> AntarchyFabricBlocks.ANTIMETAL.get(),
                 () -> AntarchyFabricBlocks.POLISHED_ANTIMETAL.get(),
@@ -434,6 +445,8 @@ public final class AntarchyFabricContent {
         HerculesBeetleImpactShakeSync.setSink((player, ticks) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, new com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload(ticks)));
         ImpactShakeSync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
         HordeIntensitySync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
+        TigerEyeCamouflageSync.setSendToPlayer((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
+        TigerEyeCamouflageSync.setSyncSelfAndTracking(AntarchyFabricNetworking::syncTigerEyeCamouflage);
         BloodCrystalKatanaItem.setTrailCallback(AntarchyFabricNetworking::syncKatanaTrail);
         com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.setSyncDispatcher(AntarchyFabricNetworking::syncGravityEntity);
         AntarchyFabricEvents.register();

@@ -26,20 +26,32 @@ import org.jetbrains.annotations.Nullable;
 
 public class GlimmerBottleItem extends Item {
     private static final String ABILITY_COOLDOWN_TAG = "AbilityCooldown";
+    private static final String SHEAR_COOLDOWN_TAG = "ShearCooldown";
 
     public GlimmerBottleItem() {
         super(new Item.Properties().stacksTo(1));
     }
 
     public static ItemStack create(GlimmerVariant variant) {
-        return create(variant, 0);
+        return create(variant, 0, 0);
     }
 
     public static ItemStack create(GlimmerVariant variant, int abilityCooldown) {
+        return create(variant, abilityCooldown, 0);
+    }
+
+    public static ItemStack create(GlimmerVariant variant, int abilityCooldown, int shearCooldown) {
         ItemStack stack = new ItemStack(AntarchyObjects.GLIMMER_BOTTLE.get());
         stack.set(AntarchyObjects.GLIMMER_VARIANT_COMPONENT.get(), variant);
-        if (abilityCooldown > 0) {
-            CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt(ABILITY_COOLDOWN_TAG, abilityCooldown));
+        if (abilityCooldown > 0 || shearCooldown > 0) {
+            CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+                if (abilityCooldown > 0) {
+                    tag.putInt(ABILITY_COOLDOWN_TAG, abilityCooldown);
+                }
+                if (shearCooldown > 0) {
+                    tag.putInt(SHEAR_COOLDOWN_TAG, shearCooldown);
+                }
+            });
         }
         return stack;
     }
@@ -51,6 +63,10 @@ public class GlimmerBottleItem extends Item {
 
     public static int getStoredAbilityCooldown(ItemStack stack) {
         return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getInt(ABILITY_COOLDOWN_TAG);
+    }
+
+    public static int getStoredShearCooldown(ItemStack stack) {
+        return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getInt(SHEAR_COOLDOWN_TAG);
     }
 
     @Override
@@ -75,6 +91,7 @@ public class GlimmerBottleItem extends Item {
         glimmer.tame(player);
         glimmer.setOrderedToSit(false);
         glimmer.setAbilityCooldown(getStoredAbilityCooldown(stack));
+        glimmer.startShearCooldown(getStoredShearCooldown(stack));
         level.addFreshEntity(glimmer);
         GlimmerCompanionSavedData.replaceCompanion(((ServerLevel) level).getServer(), player.getUUID(), glimmer.getUUID());
         GlimmerParticles.tickBurst(glimmer);

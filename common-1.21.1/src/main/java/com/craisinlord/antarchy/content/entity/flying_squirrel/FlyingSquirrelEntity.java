@@ -6,6 +6,7 @@ import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.block.OuranwoodAcornBlock;
 import com.craisinlord.antarchy.content.block.OuranwoodLeavesBlock;
+import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ItemParticleOption;
@@ -54,12 +55,14 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.util.GeckoLibUtil;
+import org.slf4j.Logger;
 
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.UUID;
 
 public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final ResourceKey<Level> ELYTHIA_DIMENSION = ResourceKey.create(
             Registries.DIMENSION,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "elythia")
@@ -81,6 +84,8 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
             SynchedEntityData.defineId(FlyingSquirrelEntity.class, EntityDataSerializers.OPTIONAL_UUID);
 
     private static final String PICKUP_ANIM_TICKS_KEY = "PickupAnimTicks";
+    private static final String QUIRK_TICKS_KEY = "QuirkTicks";
+    private static final String QUIRK_VARIANT_KEY = "QuirkVariant";
     private static final String TEXTURE_VARIANT_KEY = "TextureVariant";
     private static final String GLIDE_DIR_X_KEY = "GlideDirX";
     private static final String GLIDE_DIR_Y_KEY = "GlideDirY";
@@ -129,6 +134,9 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     private static final RawAnimation CLIMB_ANIM = RawAnimation.begin().thenLoop("climbing");
     private static final RawAnimation GLIDE_ANIM = RawAnimation.begin().thenLoop("gliding");
     private static final RawAnimation PICKUP_ANIM = RawAnimation.begin().thenPlay("item_pickup");
+    private static final String QUIRK_CONTROLLER = "quirk_controller";
+    private static final String QUIRK_1_TRIGGER = "quirk1";
+    private static final String QUIRK_2_TRIGGER = "quirk2";
     private static final RawAnimation QUIRK_1_ANIM = RawAnimation.begin().thenPlay("quirk1");
     private static final RawAnimation QUIRK_2_ANIM = RawAnimation.begin().thenPlay("quirk2");
 
@@ -178,11 +186,13 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     private ItemEntity cachedNutItem;
     @Nullable
     private BlockPos cachedHarvestableAcorn;
-    private int quirkCooldownTicks = MIN_QUIRK_COOLDOWN_TICKS;
+    private int quirkCooldownTicks;
+    private int lastTriggeredQuirkVariant = QUIRK_NONE;
 
     public FlyingSquirrelEntity(EntityType<? extends FlyingSquirrelEntity> entityType, Level level) {
         super(entityType, level);
         this.setPathfindingMalus(PathType.LEAVES, -2.0F);
+        this.quirkCooldownTicks = this.nextQuirkCooldown();
     }
 
     @Override
@@ -253,9 +263,16 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "main_controller", 5, this::mainAnimController));
+        controllers.add(new AnimationController<>(this, QUIRK_CONTROLLER, 0, state -> PlayState.STOP)
+                .triggerableAnim(QUIRK_1_TRIGGER, QUIRK_1_ANIM)
+                .triggerableAnim(QUIRK_2_TRIGGER, QUIRK_2_ANIM));
     }
 
     private PlayState mainAnimController(AnimationState<FlyingSquirrelEntity> state) {
+        if (this.hasActiveQuirkAnimation()) {
+            return PlayState.STOP;
+        }
+
         if (this.isPickingUpNut()) {
             return state.setAndContinue(PICKUP_ANIM);
         }
@@ -271,11 +288,6 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
 
         if (this.isClimbingToShoulder() || this.isClimbingTrunk()) {
             return state.setAndContinue(CLIMB_ANIM);
-        }
-
-        if (this.getQuirkTicks() > 0) {
-            state.getController().setAnimationSpeed(1.0D);
-            return state.setAndContinue(this.getQuirkVariant() == QUIRK_2 ? QUIRK_2_ANIM : QUIRK_1_ANIM);
         }
 
         Vec3 motion = this.getDeltaMovement();
@@ -303,6 +315,8 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt(PICKUP_ANIM_TICKS_KEY, this.pickupAnimTicks);
+        tag.putInt(QUIRK_TICKS_KEY, this.getQuirkTicks());
+        tag.putInt(QUIRK_VARIANT_KEY, this.getQuirkVariant());
         tag.putInt(TEXTURE_VARIANT_KEY, this.getTextureVariant());
         if (this.glideDirection != null) {
             tag.putDouble(GLIDE_DIR_X_KEY, this.glideDirection.x);
@@ -316,6 +330,8 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
         super.readAdditionalSaveData(tag);
         this.pickupAnimTicks = Math.max(0, tag.getInt(PICKUP_ANIM_TICKS_KEY));
         this.setPickingUpNut(this.pickupAnimTicks > 0);
+        this.setQuirkTicks(Math.max(0, tag.getInt(QUIRK_TICKS_KEY)));
+        this.setQuirkVariant(tag.contains(QUIRK_VARIANT_KEY) ? tag.getInt(QUIRK_VARIANT_KEY) : QUIRK_NONE);
         if (tag.contains(TEXTURE_VARIANT_KEY)) {
             this.setTextureVariant(tag.getInt(TEXTURE_VARIANT_KEY));
         } else {
@@ -388,6 +404,7 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
         if (!this.level().isClientSide) {
             this.tickPickupAnimation();
             this.tickQuirkAnimation();
+            this.syncQuirkAnimationTrigger();
 
             if (this.isClimbingToShoulder()) {
                 Player shoulderPlayer = this.shoulderPlayerId != null
@@ -466,6 +483,9 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
             }
 
             this.tickIdleStallLogging(horizontalSpeed);
+        }
+        if (this.level().isClientSide) {
+            this.syncQuirkAnimationTrigger();
         }
         if (this.isOnShoulder() && this.level().isClientSide) {
             Player shoulderPlayer = this.getShoulderPlayer();
@@ -647,6 +667,7 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnGroupData) {
         SpawnGroupData finalized = super.finalizeSpawn(level, difficulty, spawnReason, spawnGroupData);
+        com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.flyingSquirrelHealth());
         this.assignRandomTextureVariant();
         this.stopGliding("spawn_initialized");
         this.wanderCooldown = 40 + this.random.nextInt(60);
@@ -791,12 +812,36 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
         int variant = this.random.nextBoolean() ? QUIRK_1 : QUIRK_2;
         this.setQuirkVariant(variant);
         this.setQuirkTicks(variant == QUIRK_1 ? QUIRK_1_DURATION_TICKS : QUIRK_2_DURATION_TICKS);
+        LOGGER.info("FlyingSquirrel animation selected={} tick={}", variant == QUIRK_2 ? QUIRK_2_TRIGGER : QUIRK_1_TRIGGER, this.tickCount);
         this.quirkCooldownTicks = this.nextQuirkCooldown();
     }
 
     private void stopQuirkAnimation() {
+        if (this.getQuirkVariant() != QUIRK_NONE || this.getQuirkTicks() > 0) {
+            LOGGER.info("FlyingSquirrel animation state cleared variant={} tick={}", this.getQuirkVariant(), this.tickCount);
+        }
         this.setQuirkTicks(0);
         this.setQuirkVariant(QUIRK_NONE);
+    }
+
+    private void syncQuirkAnimationTrigger() {
+        int quirkVariant = this.getQuirkVariant();
+        if (quirkVariant != QUIRK_NONE && this.getQuirkTicks() > 0 && this.lastTriggeredQuirkVariant != quirkVariant) {
+            String triggerName = quirkVariant == QUIRK_2 ? QUIRK_2_TRIGGER : QUIRK_1_TRIGGER;
+            if (!this.level().isClientSide) {
+                LOGGER.info("FlyingSquirrel triggerAnim called={} tick={}", triggerName, this.tickCount);
+            }
+            this.triggerAnim(QUIRK_CONTROLLER, triggerName);
+            this.lastTriggeredQuirkVariant = quirkVariant;
+            return;
+        }
+        if (quirkVariant == QUIRK_NONE) {
+            this.lastTriggeredQuirkVariant = QUIRK_NONE;
+        }
+    }
+
+    private boolean hasActiveQuirkAnimation() {
+        return this.getQuirkVariant() != QUIRK_NONE && this.getQuirkTicks() > 0;
     }
 
     private int nextQuirkCooldown() {

@@ -57,24 +57,28 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setAntsStealFromChests(AntarchyMobsConfig.antsStealFromChests());
 
         AntarchySettings.setBrownAntRequiresReagent(AntarchyMobsConfig.brownAntRequiresReagent());
+        AntarchySettings.setBrownAntRightClickDimension(AntarchyMobsConfig.brownAntRightClickDimension());
         AntarchySettings.setBrownAntHealth(AntarchyMobsConfig.brownAntHealth());
         AntarchySettings.setBrownAntMovementSpeed(AntarchyMobsConfig.brownAntMovementSpeed());
         AntarchySettings.setBrownAntAttackDamage(AntarchyMobsConfig.brownAntAttackDamage());
         AntarchySettings.setBrownAntDestinationDimension(AntarchyMobsConfig.brownAntDestinationDimension());
 
         AntarchySettings.setRedAntRequiresReagent(AntarchyMobsConfig.redAntRequiresReagent());
+        AntarchySettings.setRedAntRightClickDimension(AntarchyMobsConfig.redAntRightClickDimension());
         AntarchySettings.setRedAntHealth(AntarchyMobsConfig.redAntHealth());
         AntarchySettings.setRedAntMovementSpeed(AntarchyMobsConfig.redAntMovementSpeed());
         AntarchySettings.setRedAntAttackDamage(AntarchyMobsConfig.redAntAttackDamage());
         AntarchySettings.setRedAntDestinationDimension(AntarchyMobsConfig.redAntDestinationDimension());
 
         AntarchySettings.setRainbowAntRequiresReagent(AntarchyMobsConfig.rainbowAntRequiresReagent());
+        AntarchySettings.setRainbowAntRightClickDimension(AntarchyMobsConfig.rainbowAntRightClickDimension());
         AntarchySettings.setRainbowAntHealth(AntarchyMobsConfig.rainbowAntHealth());
         AntarchySettings.setRainbowAntMovementSpeed(AntarchyMobsConfig.rainbowAntMovementSpeed());
         AntarchySettings.setRainbowAntAttackDamage(AntarchyMobsConfig.rainbowAntAttackDamage());
         AntarchySettings.setRainbowAntNonInfinityFallbackDimension(AntarchyMobsConfig.rainbowAntNonInfinityFallbackDimension());
 
         AntarchySettings.setTermiteRequiresReagent(AntarchyMobsConfig.termiteRequiresReagent());
+        AntarchySettings.setTermiteRightClickDimension(AntarchyMobsConfig.termiteRightClickDimension());
         AntarchySettings.setTermiteHealth(AntarchyMobsConfig.termiteHealth());
         AntarchySettings.setTermiteMovementSpeed(AntarchyMobsConfig.termiteMovementSpeed());
         AntarchySettings.setTermiteAttackDamage(AntarchyMobsConfig.termiteAttackDamage());

@@ -157,6 +157,9 @@ public final class AntarchyFabricSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_LUCID_POOLS_MOOD = registerSoundEvent("thoraxis_lucid_pools_mood");
 
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> LUCID_LULLABY = registerSoundEvent("lucid_lullaby");
+
+
     public static final DeferredHolder<SoundEvent, SoundEvent> LUCID_AMBIENT = registerSoundEvent("lucid_ambient");
 
 
@@ -386,6 +389,9 @@ public final class AntarchyFabricSounds {
 
 
     public static final DeferredHolder<SoundEvent, SoundEvent> CAVARYN_HEARTBEAT = registerSoundEvent("cavaryn_heartbeat");
+
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> VENENATUS = registerSoundEvent("venenatus");
 
 
     public static final DeferredHolder<SoundEvent, SoundEvent> ROLLY_POLLY_IDLE = registerSoundEvent("rolly_polly_idle");

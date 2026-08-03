@@ -20,7 +20,7 @@
     "antarchy:shellstone_brick_slab",
     "antarchy:shellstone_brick_wall",
     "antarchy:myrmite_coal_ore",
-    "antarchy:chiten_block",
+    "antarchy:chitin_block",
     "antarchy:broodstone",
     "antarchy:polished_broodstone",
     "antarchy:chiseled_broodstone",
@@ -37,6 +37,8 @@
     "antarchy:biomite",
     "antarchy:biomite_turf",
     "antarchy:bluestone_ore",
-    "antarchy:bluestone_block"
+    "antarchy:bluestone_block",
+    "antarchy:shellstone_pillar",
+    "antarchy:broodstone_pillar"
   ]
 }

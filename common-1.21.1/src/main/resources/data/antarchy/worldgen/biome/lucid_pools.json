@@ -23,6 +23,12 @@
       "tick_delay": 12000,
       "block_search_extent": 8,
       "offset": 2.0
+    },
+    "music": {
+      "sound": "antarchy:lucid_lullaby",
+      "min_delay": 12000,
+      "max_delay": 24000,
+      "replace_current_music": true
     }
   },
   "carvers": {
@@ -56,7 +62,8 @@
       "antarchy:red_ant_nest_magma",
       "antarchy:nyxite_spikes",
       "antarchy:patch_fire_sparse",
-      "antarchy:patch_ceiling_fire"
+      "antarchy:patch_ceiling_fire",
+      "antarchy:patch_ceiling_antigravel"
     ],
     [],
     [

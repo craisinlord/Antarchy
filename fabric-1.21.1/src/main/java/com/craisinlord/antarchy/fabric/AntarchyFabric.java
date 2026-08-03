@@ -152,6 +152,7 @@ public final class AntarchyFabric implements ModInitializer {
         registerWorldgenFeatures();
         AntarchyFabricEvents.register();
         BloodglassManager.register();
+        TigerEyeFabricManager.register();
         Antarchy.init();
         BloodCrystalShardItem.SYNC_BLOODGLASS = BloodglassManager::syncBloodglass;
         registerTradeReloadListener();

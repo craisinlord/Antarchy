@@ -44,11 +44,14 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
 public class ScorpionEntity extends Monster implements GeoEntity {
     private static final byte ATTACK_ANIM_EVENT = 4;
     private static final EntityDataAccessor<Integer> TEXTURE_VARIANT =
             SynchedEntityData.defineId(ScorpionEntity.class, EntityDataSerializers.INT);
     private static final String TEXTURE_VARIANT_KEY = "TextureVariant";
+    private static final String SUMMON_OWNER_KEY = "SummonOwner";
     public static final int BLUE_VARIANT = 0;
     public static final int GREEN_VARIANT = 1;
 
@@ -67,6 +70,7 @@ public class ScorpionEntity extends Monster implements GeoEntity {
     private int attackCooldownTicks = 0;
     private boolean attackDamageApplied = false;
     @Nullable private LivingEntity attackTarget;
+    @Nullable private UUID summonOwner;
 
     public ScorpionEntity(EntityType<? extends ScorpionEntity> entityType, Level level) {
         super(entityType, level);
@@ -115,6 +119,7 @@ public class ScorpionEntity extends Monster implements GeoEntity {
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         this.assignRandomTextureVariant();
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.scorpionHealth());
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
 
@@ -237,6 +242,9 @@ public class ScorpionEntity extends Monster implements GeoEntity {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt(TEXTURE_VARIANT_KEY, this.getTextureVariant());
+        if (this.summonOwner != null) {
+            tag.putUUID(SUMMON_OWNER_KEY, this.summonOwner);
+        }
     }
 
     @Override
@@ -247,6 +255,7 @@ public class ScorpionEntity extends Monster implements GeoEntity {
         } else {
             this.assignRandomTextureVariant();
         }
+        this.summonOwner = tag.hasUUID(SUMMON_OWNER_KEY) ? tag.getUUID(SUMMON_OWNER_KEY) : null;
     }
 
     @Override
@@ -275,6 +284,19 @@ public class ScorpionEntity extends Monster implements GeoEntity {
 
     public void setTextureVariant(int variant) {
         this.entityData.set(TEXTURE_VARIANT, variant == GREEN_VARIANT ? GREEN_VARIANT : BLUE_VARIANT);
+    }
+
+    public void setSummonOwner(@Nullable UUID summonOwner) {
+        this.summonOwner = summonOwner;
+    }
+
+    @Nullable
+    public UUID getSummonOwner() {
+        return this.summonOwner;
+    }
+
+    public boolean isSummonedFor(UUID ownerId) {
+        return ownerId.equals(this.summonOwner);
     }
 
     private void assignRandomTextureVariant() {

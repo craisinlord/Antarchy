@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
+import com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil;
 import com.craisinlord.antarchy.Antarchy;
 import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.CompoundTag;
@@ -133,6 +134,7 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
     public static AttributeSupplier.Builder createAttributes() {
         return TamableAnimal.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, AntarchySettings.glimmerHealth())
+                .add(Attributes.ATTACK_DAMAGE, 1.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.3D)
                 .add(Attributes.FOLLOW_RANGE, 24.0D);
     }
@@ -443,7 +445,8 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
             return InteractionResult.CONSUME;
         }
 
-        ItemStack filled = com.craisinlord.antarchy.content.item.GlimmerBottleItem.create(this.getVariant(), this.entityData.get(ABILITY_COOLDOWN));
+        ItemStack filled = com.craisinlord.antarchy.content.item.GlimmerBottleItem.create(
+                this.getVariant(), this.entityData.get(ABILITY_COOLDOWN), this.entityData.get(SHEAR_COOLDOWN));
         ItemStack result = net.minecraft.world.item.ItemUtils.createFilledResult(stack, player, filled);
         player.setItemInHand(hand, result);
         this.playSound(net.minecraft.sounds.SoundEvents.BOTTLE_FILL, 1.0F, 1.0F);
@@ -460,6 +463,7 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnGroupData) {
         SpawnGroupData result = super.finalizeSpawn(level, difficulty, spawnReason, spawnGroupData);
+        com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.glimmerHealth());
         if (!this.variantLocked) {
             this.setVariant(selectNaturalVariant(level, this.blockPosition()));
             this.variantLocked = true;

@@ -8,8 +8,10 @@ import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.CritterCageBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.DreamCampfireBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.HushweedBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.PotentNyxiteBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.SeashellBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.UpperBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.WaspNestBlockEntity;
 import com.craisinlord.antarchy.content.fluid.BileLiquidBlock;
 import com.craisinlord.antarchy.content.fluid.LumenLiquidBlock;
@@ -149,6 +151,8 @@ public final class AntarchyFabricBlocks {
             () -> new net.minecraft.world.level.block.FlowerPotBlock(LOTUS.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_DANDELION)));
     public static final DeferredBlock<SeashellBlock> SEASHELL = BLOCKS.register("seashell",
             () -> new SeashellBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG).noOcclusion()));
+    public static final DeferredBlock<LucidAnchorBlock> LUCID_ANCHOR = BLOCKS.register("lucid_anchor",
+            () -> new LucidAnchorBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BEACON).strength(3.0F)));
     public static final DeferredBlock<CritterCageBlock> CRITTER_CAGE_BLOCK = BLOCKS.register("critter_cage_block",
             () -> new CritterCageBlock(BlockBehaviour.Properties.of().strength(5.0F, 6.0F).sound(net.minecraft.world.level.block.SoundType.METAL).noOcclusion()));
 
@@ -328,6 +332,10 @@ public final class AntarchyFabricBlocks {
             () -> new net.minecraft.world.level.block.WallBlock(nyxiteProperties()));
 
 
+    public static final DeferredBlock<RotatedPillarBlock> NYXITE_PILLAR = BLOCKS.register("nyxite_pillar",
+            () -> new RotatedPillarBlock(nyxiteProperties()));
+
+
     public static final DeferredBlock<Block> SHELLSTONE = BLOCKS.register("shellstone",
             () -> new Block(AntarchyObjects.shellstoneProperties()));
 
@@ -400,6 +408,10 @@ public final class AntarchyFabricBlocks {
             () -> new net.minecraft.world.level.block.WallBlock(AntarchyObjects.shellstoneProperties()));
 
 
+    public static final DeferredBlock<RotatedPillarBlock> SHELLSTONE_PILLAR = BLOCKS.register("shellstone_pillar",
+            () -> new RotatedPillarBlock(AntarchyObjects.shellstoneProperties()));
+
+
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.TriffidGooBlock> TRIFFID_GOO_BLOCK = BLOCKS.register("triffid_goo_block",
             () -> new com.craisinlord.antarchy.content.block.TriffidGooBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK).noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
 
@@ -431,8 +443,8 @@ public final class AntarchyFabricBlocks {
             () -> new NyxiteSpikeBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.POINTED_DRIPSTONE)));
 
 
-    public static final DeferredBlock<ChitenSpikeBlock> CHITEN_SPIKE = BLOCKS.register("chiten_spike",
-            () -> new ChitenSpikeBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.POINTED_DRIPSTONE)));
+    public static final DeferredBlock<ChitinSpikeBlock> CHITIN_SPIKE = BLOCKS.register("chitin_spike",
+            () -> new ChitinSpikeBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.POINTED_DRIPSTONE)));
 
 
     public static final DeferredBlock<PotentNyxiteBlock> POTENT_NYXITE = BLOCKS.register("potent_nyxite",
@@ -518,6 +530,10 @@ public final class AntarchyFabricBlocks {
             () -> new WallBlock(broodstoneProperties()));
 
 
+    public static final DeferredBlock<RotatedPillarBlock> BROODSTONE_PILLAR = BLOCKS.register("broodstone_pillar",
+            () -> new RotatedPillarBlock(broodstoneProperties()));
+
+
     public static final DeferredBlock<Block> BROODSTONE_URANIUM_ORE = BLOCKS.register("broodstone_uranium_ore",
             () -> createOre(Blocks.DEEPSLATE_EMERALD_ORE, 4, 8, MapColor.COLOR_YELLOW));
 
@@ -526,7 +542,7 @@ public final class AntarchyFabricBlocks {
             () -> createOre(Blocks.DEEPSLATE_DIAMOND_ORE, 4, 8, MapColor.COLOR_LIGHT_BLUE));
 
 
-    public static final DeferredBlock<RotatedPillarBlock> CHITEN_BLOCK = BLOCKS.register("chiten_block",
+    public static final DeferredBlock<RotatedPillarBlock> CHITIN_BLOCK = BLOCKS.register("chitin_block",
             () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BONE_BLOCK).requiresCorrectToolForDrops()));
 
 
@@ -730,6 +746,8 @@ public final class AntarchyFabricBlocks {
             () -> new BluestoneComparatorBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.COMPARATOR).mapColor(MapColor.COLOR_BLUE).noCollission(), AntarchyFabricBlocks::bluestoneComparatorBlockEntityType));
     public static final DeferredBlock<BluestoneTorchBlock> BLUESTONE_TORCH = BLOCKS.register("bluestone_torch",
             () -> new BluestoneTorchBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.REDSTONE_TORCH).mapColor(MapColor.COLOR_BLUE).lightLevel(state -> state.getValue(BluestoneTorchBlock.LIT) ? 7 : 0).noCollission().instabreak()));
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.BluestoneLampBlock> BLUESTONE_LAMP = BLOCKS.register("bluestone_lamp",
+            () -> new com.craisinlord.antarchy.content.block.BluestoneLampBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.REDSTONE_LAMP).mapColor(MapColor.COLOR_BLUE)));
 
 
     public static final DeferredBlock<Block> URANIUM_BLOCK = BLOCKS.register("uranium_block",
@@ -818,12 +836,22 @@ public final class AntarchyFabricBlocks {
 
     public static final DeferredBlock<net.minecraft.world.level.block.RotatedPillarBlock> POLISHED_ANTIMETAL = BLOCKS.register("polished_antimetal",
             () -> new net.minecraft.world.level.block.RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.POLISHED_BASALT)));
+    public static final DeferredBlock<StairBlock> ANTIMETAL_STAIRS = BLOCKS.register("antimetal_stairs",
+            () -> new StairBlock(ANTIMETAL.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT)));
+    public static final DeferredBlock<SlabBlock> ANTIMETAL_SLAB = BLOCKS.register("antimetal_slab",
+            () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT)));
+    public static final DeferredBlock<StairBlock> POLISHED_ANTIMETAL_STAIRS = BLOCKS.register("polished_antimetal_stairs",
+            () -> new StairBlock(POLISHED_ANTIMETAL.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.POLISHED_BASALT)));
+    public static final DeferredBlock<SlabBlock> POLISHED_ANTIMETAL_SLAB = BLOCKS.register("polished_antimetal_slab",
+            () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.POLISHED_BASALT)));
 
 
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.AntimetalScaffoldingBlock> ANTIMETAL_SCAFFOLDING = BLOCKS.register("antimetal_scaffolding",
             () -> new com.craisinlord.antarchy.content.block.AntimetalScaffoldingBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SCAFFOLDING)));
 
 
+    public static final DeferredBlock<UpperBlock> UPPER = BLOCKS.register("upper",
+            () -> new UpperBlock(AntarchyFabricBlocks::upperBlockEntityType, BlockBehaviour.Properties.ofFullCopy(Blocks.HOPPER)));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.AntimetalRailBlock> ANTIMETAL_RAIL = BLOCKS.register("antimetal_rail",
             () -> new com.craisinlord.antarchy.content.block.AntimetalRailBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.RAIL)));
 
@@ -903,6 +931,18 @@ public final class AntarchyFabricBlocks {
 
     public static final DeferredBlock<Block> DREAM_SAND = BLOCKS.register("dream_sand",
             () -> new DreamSandBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SAND)));
+
+
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.AntigravelBlock> ANTIGRAVEL = BLOCKS.register("antigravel",
+            () -> new com.craisinlord.antarchy.content.block.AntigravelBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GRAVEL)));
+
+
+    public static final DeferredBlock<Block> LOAM = BLOCKS.register("loam",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.MUD)));
+
+
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.MucusBlock> MUCUS = BLOCKS.register("mucus",
+            () -> new com.craisinlord.antarchy.content.block.MucusBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLOW_LICHEN).friction(0.98F).lightLevel(state -> 0).sound(SoundType.SLIME_BLOCK)));
 
 
     public static final DeferredBlock<Block> DREAM_SANDSTONE = BLOCKS.register("dream_sandstone",
@@ -1018,6 +1058,11 @@ public final class AntarchyFabricBlocks {
                     SeashellBlockEntity::new,
                     SEASHELL.get()
             ).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LucidAnchorBlockEntity>> LUCID_ANCHOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("lucid_anchor",
+            () -> BlockEntityType.Builder.of(
+                    LucidAnchorBlockEntity::new,
+                    LUCID_ANCHOR.get()
+            ).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CritterCageBlockEntity>> CRITTER_CAGE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("critter_cage_block",
             () -> BlockEntityType.Builder.of(
                     CritterCageBlockEntity::new,
@@ -1027,6 +1072,11 @@ public final class AntarchyFabricBlocks {
             () -> BlockEntityType.Builder.of(
                     (pos, state) -> new com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity(pos, state, AntarchyFabricBlocks::bluestoneComparatorBlockEntityType),
                     BLUESTONE_COMPARATOR.get()
+            ).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<UpperBlockEntity>> UPPER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("upper",
+            () -> BlockEntityType.Builder.of(
+                    (pos, state) -> new UpperBlockEntity(pos, state, AntarchyFabricBlocks::upperBlockEntityType),
+                    UPPER.get()
             ).build(null));
 
 
@@ -1053,6 +1103,10 @@ public final class AntarchyFabricBlocks {
 
     private static BlockEntityType<com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity> bluestoneComparatorBlockEntityType() {
         return BLUESTONE_COMPARATOR_BLOCK_ENTITY.get();
+    }
+
+    private static BlockEntityType<UpperBlockEntity> upperBlockEntityType() {
+        return UPPER_BLOCK_ENTITY.get();
     }
 
 

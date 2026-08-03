@@ -2,7 +2,6 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.content.block.AntimetalScaffoldingBlock;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -14,6 +13,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,6 +32,7 @@ public class UpwardFallingBlockEntity extends Entity {
     private static final int    MAX_TICKS  = 200;
 
     public int time = 0;
+    private boolean breaksOnLeaves = true;
 
     public UpwardFallingBlockEntity(EntityType<UpwardFallingBlockEntity> type, Level level) {
         super(type, level);
@@ -48,6 +49,10 @@ public class UpwardFallingBlockEntity extends Entity {
     }
 
     public static void fallUp(Level level, BlockPos pos, BlockState state) {
+        fallUp(level, pos, state, true);
+    }
+
+    public static void fallUp(Level level, BlockPos pos, BlockState state, boolean breaksOnLeaves) {
         if (level.isClientSide) return;
         // Prevent stacking multiple entities from the same block position
         if (!level.getEntitiesOfClass(UpwardFallingBlockEntity.class, new AABB(pos)).isEmpty()) return;
@@ -55,6 +60,7 @@ public class UpwardFallingBlockEntity extends Entity {
         level.removeBlock(pos, false);
         UpwardFallingBlockEntity entity = new UpwardFallingBlockEntity(TYPE.get(), level);
         entity.entityData.set(DATA_BLOCK_STATE, state);
+        entity.breaksOnLeaves = breaksOnLeaves;
         entity.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
         level.addFreshEntity(entity);
     }
@@ -90,19 +96,33 @@ public class UpwardFallingBlockEntity extends Entity {
         BlockPos headPos  = BlockPos.containing(getX(), getY() + getBbHeight(), getZ());
         BlockState above  = level().getBlockState(headPos);
 
-        // Leaves block the entity but can't hold scaffolding — drop as item
-        if (above.is(BlockTags.LEAVES)) {
+        // Leaves block the entity but can't hold scaffolding — drop as item, unless this
+        // instance is allowed to land on leaves like a normal falling block would
+        if (above.is(BlockTags.LEAVES) && this.breaksOnLeaves) {
             dropAndRemove(blockState);
             return;
         }
 
-        boolean hitCeiling     = above.isFaceSturdy(level(), headPos, Direction.DOWN);
+        boolean hitCeiling     = !above.isAir() && !above.getCollisionShape(level(), headPos).isEmpty();
         boolean hitScaffolding = above.getBlock() instanceof AntimetalScaffoldingBlock;
 
         if (hitCeiling || hitScaffolding) {
-            dropAndRemove(blockState);
+            placeAtLanding(blockState, headPos.below());
             return;
         }
+    }
+
+    private void placeAtLanding(BlockState state, BlockPos landingPos) {
+        if (!level().isClientSide) {
+            BlockState existing = level().getBlockState(landingPos);
+            if (existing.canBeReplaced()) {
+                level().setBlock(landingPos, state, Block.UPDATE_ALL);
+            } else {
+                dropAndRemove(state);
+                return;
+            }
+        }
+        discard();
     }
 
     private void damageEntitiesAlongPath(BlockState state) {

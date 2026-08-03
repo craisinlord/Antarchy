@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:barrier",
+    "minecraft:light",
+    "minecraft:structure_void",
+    "minecraft:end_portal",
+    "minecraft:end_gateway",
+    "minecraft:nether_portal"
+  ]
+}

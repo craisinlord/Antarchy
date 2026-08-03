@@ -9,6 +9,7 @@ import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.item.BloodCrystalKatanaItem;
 import com.craisinlord.antarchy.content.item.ScorpionWhipTetherSync;
 import com.craisinlord.antarchy.content.network.BloodCrystalKatanaTrailPayload;
+import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
 import com.craisinlord.antarchy.neoforge.registry.*;
 import com.craisinlord.antarchy.neoforge.network.AntarchyGravityNetworking;
@@ -200,6 +201,11 @@ public class AntarchyNeoforge {
                 player,
                 new BloodCrystalKatanaTrailPayload(player.getId(), durationTicks)
         ));
+        TigerEyeCamouflageSync.setSendToPlayer(PacketDistributor::sendToPlayer);
+        TigerEyeCamouflageSync.setSyncSelfAndTracking(player -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(
+                player,
+                TigerEyeCamouflageSync.payload(player)
+        ));
         com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.setSyncDispatcher(AntarchyGravityNetworking::syncEntity);
         if (isSupportedInfinityLoaded()) {
             InfinityCompat.bind(new NeoForgeInfinityCompat());
@@ -242,6 +248,8 @@ public class AntarchyNeoforge {
 
     private static void bindCommonObjects() {
         com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity.TYPE = AntarchyNeoforgeEntites.UPWARD_FALLING_BLOCK;
+        AntarchyObjects.setLucidAnchor(() -> AntarchyNeoforgeBlocks.LUCID_ANCHOR.get());
+        AntarchyObjects.setLucidAnchorBlockEntity(() -> AntarchyNeoforgeBlocks.LUCID_ANCHOR_BLOCK_ENTITY.get());
         PermanentPortalType.bindBlocks(
                 () -> AntarchyNeoforgeBlocks.MOSSY_OURANWOOD_WOOD.get(),
                 () -> AntarchyNeoforgeBlocks.ELYTHIA_PORTAL.get(),
@@ -303,8 +311,8 @@ public class AntarchyNeoforge {
                 () -> AntarchyNeoforgeBlocks.TRIFFID_GOO_BLOCK.get(),
                 () -> AntarchyNeoforgeBlocks.PALE_NYXITE.get(),
                 () -> AntarchyNeoforgeBlocks.NYXITE_SPIKE.get(),
-                () -> AntarchyNeoforgeBlocks.CHITEN_BLOCK.get(),
-                () -> AntarchyNeoforgeBlocks.CHITEN_SPIKE.get(),
+                () -> AntarchyNeoforgeBlocks.CHITIN_BLOCK.get(),
+                () -> AntarchyNeoforgeBlocks.CHITIN_SPIKE.get(),
                 () -> AntarchyNeoforgeBlocks.POTENT_NYXITE.get(),
                 () -> AntarchyNeoforgeBlocks.ANTIMETAL.get(),
                 () -> AntarchyNeoforgeBlocks.POLISHED_ANTIMETAL.get(),
@@ -354,6 +362,8 @@ public class AntarchyNeoforge {
         );
         AntarchyObjects.setOctopusBomb(AntarchyNeoforgeEntites.OCTOPUS_BOMB);
         AntarchyObjects.setTentacle(AntarchyNeoforgeEntites.TENTACLE);
+        AntarchyObjects.setNightmarePortal(AntarchyNeoforgeEntites.NIGHTMARE_PORTAL);
+        AntarchyObjects.setNightmareBite(AntarchyNeoforgeEntites.NIGHTMARE_BITE);
         AntarchyObjects.setKrakensGraspTrident(AntarchyNeoforgeEntites.KRAKENS_GRASP_TRIDENT);
         AntarchyObjects.setLotus(() -> AntarchyNeoforgeBlocks.LOTUS.get());
         AntarchyObjects.setKrakenTentacle(() -> AntarchyNeoforgeItems.KRAKEN_TENTACLE.get());
@@ -361,6 +371,7 @@ public class AntarchyNeoforge {
         AntarchyObjects.setOuranwoodDeer(AntarchyNeoforgeEntites.OURANWOOD_DEER);
         AntarchyObjects.setGlimmer(AntarchyNeoforgeEntites.GLIMMER);
         AntarchyObjects.setSpiritApple(() -> AntarchyNeoforgeItems.SPIRIT_APPLE.get());
+        AntarchyObjects.setGlimmeringEffect(() -> AntarchyNeoforgeMisc.GLIMMERING);
         AntarchyObjects.setElka(AntarchyNeoforgeEntites.ELKA);
         AntarchyObjects.setPeach(() -> AntarchyNeoforgeItems.PEACH.get());
         AntarchyObjects.setCorn(() -> AntarchyNeoforgeItems.CORN.get());

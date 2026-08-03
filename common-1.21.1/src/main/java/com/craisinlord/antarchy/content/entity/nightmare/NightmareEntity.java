@@ -5,7 +5,7 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
-
+import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -22,6 +22,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -53,14 +54,19 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
+import org.slf4j.Logger;
 
 import java.util.EnumSet;
 import java.util.List;
 
 public class NightmareEntity extends Monster implements GeoEntity {
-
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final EntityDataAccessor<Integer> ANIMATION_STATE = SynchedEntityData.defineId(NightmareEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> ACTIVE_SPECIAL_ANIMATION = SynchedEntityData.defineId(NightmareEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> ROARING = SynchedEntityData.defineId(NightmareEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> PHASE_TWO = SynchedEntityData.defineId(NightmareEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> PHASE_TWO_TEXTURE = SynchedEntityData.defineId(NightmareEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> PHASE_TRANSITIONING = SynchedEntityData.defineId(NightmareEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final String ATTACK_COOLDOWN_KEY = "AttackCooldown";
     private static final String ATTACK_ANIMATION_TICKS_KEY = "AttackAnimationTicks";
@@ -70,13 +76,33 @@ public class NightmareEntity extends Monster implements GeoEntity {
     private static final String INTRO_ROAR_USED_KEY = "IntroRoarUsed";
     private static final String TARGETLESS_TICKS_KEY = "TargetlessTicks";
     private static final String ANIMATION_STATE_KEY = "AnimationState";
+    private static final String ACTIVE_SPECIAL_ANIMATION_KEY = "ActiveSpecialAnimation";
+    private static final String PHASE_TWO_KEY = "PhaseTwo";
+    private static final String PHASE_TWO_TEXTURE_KEY = "PhaseTwoTexture";
+    private static final String PHASE_TRANSITIONING_KEY = "PhaseTransitioning";
+    private static final String PHASE_TRANSITION_TICKS_KEY = "PhaseTransitionTicks";
+    private static final String PORTAL_COOLDOWN_KEY = "PortalCooldown";
+    private static final String PORTAL_ATTACK_TICKS_KEY = "PortalAttackTicks";
+    private static final String PORTAL_ATTACK_HIT_KEY = "PortalAttackHitApplied";
+    private static final String PORTAL_TRAVEL_TICKS_KEY = "PortalTravelTicks";
+    private static final String PORTAL_ENTRY_ID_KEY = "PortalEntryId";
+    private static final String PORTAL_EXIT_ID_KEY = "PortalExitId";
+    private static final String PORTAL_EXIT_X_KEY = "PortalExitX";
+    private static final String PORTAL_EXIT_Y_KEY = "PortalExitY";
+    private static final String PORTAL_EXIT_Z_KEY = "PortalExitZ";
 
     private static final int ANIM_IDLE = 0;
     private static final int ANIM_WALK = 1;
     private static final int ANIM_FLY = 2;
-    private static final int ANIM_ATTACK = 3;
-    private static final int ANIM_FLY_ATTACK = 4;
-    private static final int ANIM_ROAR = 5;
+    private static final int SPECIAL_NONE = 0;
+    private static final int SPECIAL_ATTACK = 1;
+    private static final int SPECIAL_ATTACK_P2 = 2;
+    private static final int SPECIAL_FLY_ATTACK = 3;
+    private static final int SPECIAL_FLY_ATTACK_P2 = 4;
+    private static final int SPECIAL_ROAR = 5;
+    private static final int SPECIAL_ROAR_P2 = 6;
+    private static final int SPECIAL_PHASE_TWO = 7;
+    private static final int SPECIAL_PORTAL = 8;
     private static final int ATTACK_TOTAL_TICKS = 20;
     private static final int ATTACK_DAMAGE_TICK = 10;
     private static final int INTRO_ROAR_TICKS = 30;
@@ -88,6 +114,13 @@ public class NightmareEntity extends Monster implements GeoEntity {
     private static final int WEAKNESS_TICKS = 100;
     private static final int BLOCK_BREAK_TICKS = 10;
     private static final int FLIGHT_CEILING_CLEARANCE_BLOCKS = 4;
+    private static final int PHASE_TWO_TRANSITION_TICKS = 80;
+    private static final int PHASE_TWO_TEXTURE_SWAP_TICKS = 53;
+    private static final int PORTAL_TOTAL_TICKS = 28;
+    private static final int PORTAL_TELEPORT_TICK = 12;
+    private static final int PORTAL_DAMAGE_TICK = 18;
+    private static final int PORTAL_TRAVEL_INVULNERABLE_TICKS = 8;
+    private static final int PORTAL_LIFETIME_TICKS = 60;
 
     private static final double PATROL_SPEED = 0.34D;
     private static final double COMBAT_FLIGHT_SPEED = 0.725D;
@@ -95,16 +128,47 @@ public class NightmareEntity extends Monster implements GeoEntity {
     private static final double ATTACK_START_RANGE_SQR = 42.25D;
     private static final double ATTACK_REACH_RADIUS = 2.65D;
     private static final double ATTACK_COMMIT_HORIZONTAL_RANGE = 4.2D;
-    private static final double FLIGHT_ENGAGE_RANGE_SQR = 100.0D;
-    private static final double FLIGHT_DISENGAGE_RANGE_SQR = 36.0D;
+    private static final double ATTACK_COMMIT_HORIZONTAL_RANGE_SQR = ATTACK_COMMIT_HORIZONTAL_RANGE * ATTACK_COMMIT_HORIZONTAL_RANGE;
+    private static final double FLIGHT_ENGAGE_RANGE_SQR = 42.25D;
+    private static final double FLIGHT_DISENGAGE_RANGE_SQR = 20.25D;
+    private static final double FLIGHT_ATTACK_RANGE_SQR = 49.0D;
     private static final double ROAR_RETRY_DISTANCE_SQR = 400.0D;
+    private static final double PHASE_TWO_HEALTH_FRACTION = 0.5D;
+    private static final double PORTAL_RANGE = 32.0D;
+    private static final double PORTAL_MIN_RANGE_SQR = 49.0D;
+    private static final double PORTAL_EXIT_OFFSET = 2.35D;
+    private static final double PORTAL_TRANSPORT_RADIUS = 1.25D;
+    private static final double FLYING_APPROACH_STRAFE_OFFSET = 2.1D;
+    private static final double FLYING_APPROACH_HEIGHT = 0.45D;
+    private static final double FLYING_APPROACH_HEIGHT_PHASE_TWO = 0.8D;
+    private static final double FLYING_APPROACH_TOO_CLOSE_RANGE_SQR = 9.0D;
+    private static final double ANIMATION_MOVEMENT_THRESHOLD_SQR = 0.01D;
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
     private static final RawAnimation FLY_ANIM = RawAnimation.begin().thenLoop("fly");
-    private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenPlay("attack").thenLoop("idle");
-    private static final RawAnimation FLY_ATTACK_ANIM = RawAnimation.begin().thenPlay("attack2").thenLoop("fly");
-    private static final RawAnimation ROAR_ANIM = RawAnimation.begin().thenPlay("roar").thenLoop("idle");
+    private static final RawAnimation PHASE_TWO_IDLE_ANIM = RawAnimation.begin().thenLoop("idle_P2");
+    private static final RawAnimation PHASE_TWO_WALK_ANIM = RawAnimation.begin().thenLoop("walk_P2");
+    private static final RawAnimation PHASE_TWO_FLY_ANIM = RawAnimation.begin().thenLoop("fly_P2");
+    private static final String LOCOMOTION_CONTROLLER = "main_controller";
+    private static final String SPECIAL_CONTROLLER = "special_controller";
+    private static final String SPECIAL_ATTACK_TRIGGER = "attack";
+    private static final String SPECIAL_ATTACK_P2_TRIGGER = "attack_P2";
+    private static final String SPECIAL_FLY_ATTACK_TRIGGER = "attack2";
+    private static final String SPECIAL_FLY_ATTACK_P2_TRIGGER = "attack2_P2";
+    private static final String SPECIAL_ROAR_TRIGGER = "roar";
+    private static final String SPECIAL_ROAR_P2_TRIGGER = "roar_P2";
+    private static final String SPECIAL_PHASE_TWO_TRIGGER = "phase2";
+    private static final String SPECIAL_PORTAL_TRIGGER = "portal_out";
+    private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenPlayAndHold("attack");
+    private static final RawAnimation ATTACK_P2_ANIM = RawAnimation.begin().thenPlayAndHold("attack_P2");
+    private static final RawAnimation FLY_ATTACK_ANIM = RawAnimation.begin().thenPlayAndHold("attack2");
+    private static final RawAnimation FLY_ATTACK_P2_ANIM = RawAnimation.begin().thenPlayAndHold("attack2_P2");
+    private static final RawAnimation ROAR_ANIM = RawAnimation.begin().thenPlayAndHold("roar");
+    private static final RawAnimation ROAR_P2_ANIM = RawAnimation.begin().thenPlayAndHold("roar_P2");
+    private static final RawAnimation PHASE_TWO_TRANSITION_ANIM = RawAnimation.begin().thenPlayAndHold("phase2");
+    private static final RawAnimation PORTAL_ATTACK_ANIM = RawAnimation.begin().thenPlayAndHold("portal_out");
+
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     private int attackCooldown;
@@ -117,9 +181,20 @@ public class NightmareEntity extends Monster implements GeoEntity {
     private int groundMoveTicks;
     private int wingFlapCooldown;
     private int blockBreakCooldown;
+    private int phaseTransitionTicks;
+    private int portalCooldown;
+    private int portalAttackTicks;
+    private int portalTravelTicks;
     private boolean attackHitApplied;
     private boolean introRoarUsed;
     private boolean flyingToTarget;
+    private boolean portalAttackHitApplied;
+    private int lastTriggeredSpecialAnimation = SPECIAL_NONE;
+    private Vec3 portalExitPos;
+    @Nullable
+    private NightmarePortalEntity entryPortal;
+    @Nullable
+    private NightmarePortalEntity exitPortal;
 
     public NightmareEntity(EntityType<? extends NightmareEntity> entityType, Level level) {
         super(entityType, level);
@@ -138,6 +213,13 @@ public class NightmareEntity extends Monster implements GeoEntity {
                 .add(Attributes.ARMOR, 8.0D);
     }
 
+    @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
+            MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
+        com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.nightmareHealth());
+        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
+    }
+
     public static boolean canSpawn(EntityType<NightmareEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
         boolean sturdy = level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP);
         boolean posEmpty = level.isEmptyBlock(pos);
@@ -149,17 +231,23 @@ public class NightmareEntity extends Monster implements GeoEntity {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(ANIMATION_STATE, ANIM_IDLE);
+        builder.define(ACTIVE_SPECIAL_ANIMATION, SPECIAL_NONE);
         builder.define(ROARING, false);
+        builder.define(PHASE_TWO, false);
+        builder.define(PHASE_TWO_TEXTURE, false);
+        builder.define(PHASE_TRANSITIONING, false);
     }
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(1, new NightmareRoarGoal());
-        this.goalSelector.addGoal(2, new NightmareFlyToTargetGoal());
-        this.goalSelector.addGoal(3, new NightmareMeleeGoal());
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 16.0F));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
-        this.goalSelector.addGoal(7, new NightmareWanderGoal());
+        this.goalSelector.addGoal(1, new NightmarePhaseTransitionGoal());
+        this.goalSelector.addGoal(2, new NightmarePortalGoal());
+        this.goalSelector.addGoal(3, new NightmareRoarGoal());
+        this.goalSelector.addGoal(4, new NightmareFlyToTargetGoal());
+        this.goalSelector.addGoal(5, new NightmareMeleeGoal());
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 16.0F));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(9, new NightmareWanderGoal());
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::canTargetEntity));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, this::canTargetEntity));
@@ -167,22 +255,29 @@ public class NightmareEntity extends Monster implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController));
+        controllers.add(new AnimationController<>(this, LOCOMOTION_CONTROLLER, 0, this::mainAnimController));
+        controllers.add(new AnimationController<>(this, SPECIAL_CONTROLLER, 0, state -> PlayState.STOP)
+                .triggerableAnim(SPECIAL_ATTACK_TRIGGER, ATTACK_ANIM)
+                .triggerableAnim(SPECIAL_ATTACK_P2_TRIGGER, ATTACK_P2_ANIM)
+                .triggerableAnim(SPECIAL_FLY_ATTACK_TRIGGER, FLY_ATTACK_ANIM)
+                .triggerableAnim(SPECIAL_FLY_ATTACK_P2_TRIGGER, FLY_ATTACK_P2_ANIM)
+                .triggerableAnim(SPECIAL_ROAR_TRIGGER, ROAR_ANIM)
+                .triggerableAnim(SPECIAL_ROAR_P2_TRIGGER, ROAR_P2_ANIM)
+                .triggerableAnim(SPECIAL_PHASE_TWO_TRIGGER, PHASE_TWO_TRANSITION_ANIM)
+                .triggerableAnim(SPECIAL_PORTAL_TRIGGER, PORTAL_ATTACK_ANIM));
     }
 
     private PlayState mainAnimController(AnimationState<NightmareEntity> state) {
+        if (this.hasActiveSpecialAnimation()) {
+            return PlayState.STOP;
+        }
         int animState = this.getAnimationState();
-        state.getController().setAnimationSpeed(switch (animState) {
-            case ANIM_FLY -> 0.45D;
-            default -> 1.0D;
-        });
+        state.getController().setAnimationSpeed(animState == ANIM_FLY ? 0.45D : 1.0D);
+        boolean phaseTwo = this.isPhaseTwo();
         return switch (animState) {
-            case ANIM_WALK -> state.setAndContinue(WALK_ANIM);
-            case ANIM_FLY -> state.setAndContinue(FLY_ANIM);
-            case ANIM_ATTACK -> state.setAndContinue(ATTACK_ANIM);
-            case ANIM_FLY_ATTACK -> state.setAndContinue(FLY_ATTACK_ANIM);
-            case ANIM_ROAR -> state.setAndContinue(ROAR_ANIM);
-            default -> state.setAndContinue(IDLE_ANIM);
+            case ANIM_WALK -> state.setAndContinue(phaseTwo ? PHASE_TWO_WALK_ANIM : WALK_ANIM);
+            case ANIM_FLY -> state.setAndContinue(phaseTwo ? PHASE_TWO_FLY_ANIM : FLY_ANIM);
+            default -> state.setAndContinue(phaseTwo ? PHASE_TWO_IDLE_ANIM : IDLE_ANIM);
         };
     }
 
@@ -205,6 +300,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
         super.tick();
 
         if (this.level().isClientSide) {
+            this.syncSpecialAnimationTrigger();
             this.tickClientParticles();
             this.updateFlightRotation();
             if (this.isRoaring()) {
@@ -218,18 +314,20 @@ public class NightmareEntity extends Monster implements GeoEntity {
             return;
         }
 
-        this.setNoGravity(this.flyingToTarget && !this.isTooCloseToCeiling());
+        this.setNoGravity((this.flyingToTarget || this.portalAttackTicks > 0 || this.portalTravelTicks > 0) && !this.isTooCloseToCeiling());
 
         int prevAirborneTicks = this.airborneTicks;
         this.airborneTicks = this.onGround() ? 0 : this.airborneTicks + 1;
         if (this.onGround() && prevAirborneTicks > 5) {
-            this.landingCooldown = 100;
+            this.landingCooldown = 32;
         }
 
         if (this.attackCooldown > 0) this.attackCooldown--;
         if (this.roarCooldown > 0) this.roarCooldown--;
         if (this.blockBreakCooldown > 0) this.blockBreakCooldown--;
         if (this.landingCooldown > 0) this.landingCooldown--;
+        if (this.portalCooldown > 0) this.portalCooldown--;
+        if (this.portalTravelTicks > 0) this.portalTravelTicks--;
 
         LivingEntity target = this.getTarget();
         if (!this.canTargetEntity(target)) {
@@ -248,15 +346,21 @@ public class NightmareEntity extends Monster implements GeoEntity {
         }
 
         if (this.isDeadOrDying()) {
+            this.clearNightmarePortals();
             this.updateFlightRotation();
             return;
         }
 
-        if (this.attackAnimationTicks > 0) {
+        if (this.isPhaseTransitioning()) {
+            this.tickPhaseTransition(target);
+        } else if (this.portalAttackTicks > 0) {
+            this.tickPortalAttack(target);
+        } else if (this.attackAnimationTicks > 0) {
             this.tickAttack(target);
         }
 
         this.updateAnimationState();
+        this.syncSpecialAnimationTrigger();
         this.updateFlightRotation();
     }
 
@@ -269,6 +373,27 @@ public class NightmareEntity extends Monster implements GeoEntity {
             return;
         }
         super.travel(travelVector);
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        if (this.isPhaseTransitioning() || this.portalTravelTicks > 0 || this.portalAttackTicks > 0) {
+            return false;
+        }
+        if (!this.isPhaseTwo() && amount > 0.0F) {
+            float threshold = (float) (this.getMaxHealth() * PHASE_TWO_HEALTH_FRACTION);
+            if (this.getHealth() > threshold && this.getHealth() - amount <= threshold) {
+                float clampedAmount = this.getHealth() - threshold;
+                boolean hurt = clampedAmount > 0.0F && super.hurt(source, clampedAmount);
+                if (hurt || clampedAmount <= 0.0F) {
+                    this.setHealth(threshold);
+                    this.startPhaseTransition();
+                    return true;
+                }
+                return false;
+            }
+        }
+        return super.hurt(source, amount);
     }
 
     @Override
@@ -358,6 +483,26 @@ public class NightmareEntity extends Monster implements GeoEntity {
         tag.putInt("AirborneTicks", this.airborneTicks);
         tag.putBoolean("Roaring", this.isRoaring());
         tag.putInt(ANIMATION_STATE_KEY, this.getAnimationState());
+        tag.putInt(ACTIVE_SPECIAL_ANIMATION_KEY, this.getActiveSpecialAnimation());
+        tag.putBoolean(PHASE_TWO_KEY, this.isPhaseTwo());
+        tag.putBoolean(PHASE_TWO_TEXTURE_KEY, this.hasPhaseTwoTexture());
+        tag.putBoolean(PHASE_TRANSITIONING_KEY, this.isPhaseTransitioning());
+        tag.putInt(PHASE_TRANSITION_TICKS_KEY, this.phaseTransitionTicks);
+        tag.putInt(PORTAL_COOLDOWN_KEY, this.portalCooldown);
+        tag.putInt(PORTAL_ATTACK_TICKS_KEY, this.portalAttackTicks);
+        tag.putBoolean(PORTAL_ATTACK_HIT_KEY, this.portalAttackHitApplied);
+        tag.putInt(PORTAL_TRAVEL_TICKS_KEY, this.portalTravelTicks);
+        if (this.portalExitPos != null) {
+            tag.putDouble(PORTAL_EXIT_X_KEY, this.portalExitPos.x);
+            tag.putDouble(PORTAL_EXIT_Y_KEY, this.portalExitPos.y);
+            tag.putDouble(PORTAL_EXIT_Z_KEY, this.portalExitPos.z);
+        }
+        if (this.entryPortal != null) {
+            tag.putUUID(PORTAL_ENTRY_ID_KEY, this.entryPortal.getUUID());
+        }
+        if (this.exitPortal != null) {
+            tag.putUUID(PORTAL_EXIT_ID_KEY, this.exitPortal.getUUID());
+        }
     }
 
     @Override
@@ -371,8 +516,22 @@ public class NightmareEntity extends Monster implements GeoEntity {
         this.introRoarUsed = tag.getBoolean(INTRO_ROAR_USED_KEY);
         this.targetlessTicks = tag.getInt(TARGETLESS_TICKS_KEY);
         this.airborneTicks = tag.getInt("AirborneTicks");
+        this.portalCooldown = tag.getInt(PORTAL_COOLDOWN_KEY);
+        this.portalAttackTicks = tag.getInt(PORTAL_ATTACK_TICKS_KEY);
+        this.portalAttackHitApplied = tag.getBoolean(PORTAL_ATTACK_HIT_KEY);
+        this.portalTravelTicks = tag.getInt(PORTAL_TRAVEL_TICKS_KEY);
         this.entityData.set(ROARING, tag.getBoolean("Roaring"));
         this.entityData.set(ANIMATION_STATE, tag.contains(ANIMATION_STATE_KEY) ? tag.getInt(ANIMATION_STATE_KEY) : ANIM_IDLE);
+        this.entityData.set(ACTIVE_SPECIAL_ANIMATION, tag.contains(ACTIVE_SPECIAL_ANIMATION_KEY) ? tag.getInt(ACTIVE_SPECIAL_ANIMATION_KEY) : SPECIAL_NONE);
+        this.setPhaseTwo(tag.getBoolean(PHASE_TWO_KEY));
+        this.setPhaseTwoTexture(tag.contains(PHASE_TWO_TEXTURE_KEY) ? tag.getBoolean(PHASE_TWO_TEXTURE_KEY) : this.isPhaseTwo() && !this.isPhaseTransitioning());
+        this.setPhaseTransitioning(tag.getBoolean(PHASE_TRANSITIONING_KEY));
+        this.phaseTransitionTicks = tag.getInt(PHASE_TRANSITION_TICKS_KEY);
+        if (tag.contains(PORTAL_EXIT_X_KEY)) {
+            this.portalExitPos = new Vec3(tag.getDouble(PORTAL_EXIT_X_KEY), tag.getDouble(PORTAL_EXIT_Y_KEY), tag.getDouble(PORTAL_EXIT_Z_KEY));
+        } else {
+            this.portalExitPos = null;
+        }
     }
 
     @Override
@@ -381,9 +540,14 @@ public class NightmareEntity extends Monster implements GeoEntity {
             this.attackAnimationTicks = 0;
             this.attackCooldown = 0;
             this.roarTicks = 0;
+            this.portalAttackTicks = 0;
+            this.portalTravelTicks = 0;
+            this.phaseTransitionTicks = 0;
+            this.clearActiveSpecialAnimation();
             this.setRoaring(false);
             this.setDeltaMovement(Vec3.ZERO);
             this.getNavigation().stop();
+            this.clearNightmarePortals();
         }
         super.die(damageSource);
     }
@@ -405,6 +569,22 @@ public class NightmareEntity extends Monster implements GeoEntity {
         return this.entityData.get(ANIMATION_STATE);
     }
 
+    public int getActiveSpecialAnimation() {
+        return this.entityData.get(ACTIVE_SPECIAL_ANIMATION);
+    }
+
+    public boolean isPhaseTwo() {
+        return this.entityData.get(PHASE_TWO);
+    }
+
+    public boolean hasPhaseTwoTexture() {
+        return this.entityData.get(PHASE_TWO_TEXTURE);
+    }
+
+    public boolean isPhaseTransitioning() {
+        return this.entityData.get(PHASE_TRANSITIONING);
+    }
+
     private void setRoaring(boolean roaring) {
         this.entityData.set(ROARING, roaring);
     }
@@ -415,13 +595,29 @@ public class NightmareEntity extends Monster implements GeoEntity {
         }
     }
 
+    private void setActiveSpecialAnimation(int specialAnimation) {
+        if (this.entityData.get(ACTIVE_SPECIAL_ANIMATION) != specialAnimation) {
+            this.entityData.set(ACTIVE_SPECIAL_ANIMATION, specialAnimation);
+        }
+    }
+
+    private void setPhaseTwo(boolean phaseTwo) {
+        this.entityData.set(PHASE_TWO, phaseTwo);
+    }
+
+    private void setPhaseTwoTexture(boolean phaseTwoTexture) {
+        this.entityData.set(PHASE_TWO_TEXTURE, phaseTwoTexture);
+    }
+
+    private void setPhaseTransitioning(boolean phaseTransitioning) {
+        this.entityData.set(PHASE_TRANSITIONING, phaseTransitioning);
+    }
+
     private boolean shouldStartRoar(LivingEntity target) {
         if (!this.onGround() || this.roarCooldown > 0 || !this.hasLineOfSight(target)) return false;
         double distanceSqr = this.distanceToSqr(target);
         if (distanceSqr > ROAR_RETRY_DISTANCE_SQR || !this.isInFront(target.position(), -0.1D)) return false;
-        boolean pressureWindow = distanceSqr > ATTACK_START_RANGE_SQR;
-        boolean wounded = this.getHealth() <= this.getMaxHealth() * 0.5F;
-        return pressureWindow || wounded;
+        return distanceSqr > ATTACK_START_RANGE_SQR || this.isPhaseTwo();
     }
 
     private void startRoar() {
@@ -431,6 +627,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
         this.attackAnimationTicks = 0;
         this.attackHitApplied = false;
         this.setRoaring(true);
+        this.selectSpecialAnimation(this.isPhaseTwo() ? SPECIAL_ROAR_P2 : SPECIAL_ROAR);
         this.getNavigation().stop();
         this.setDeltaMovement(this.getDeltaMovement().scale(0.18D));
         this.playSound(AntarchySoundEvents.NIGHTMARE_ROAR.get(), 2.2F, 0.7F + this.random.nextFloat() * 0.06F);
@@ -451,6 +648,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
         if (--this.roarTicks <= 0) {
             this.roarTicks = 0;
             this.setRoaring(false);
+            this.clearActiveSpecialAnimation();
             this.attackCooldown = Math.max(this.attackCooldown, 18);
         }
     }
@@ -459,6 +657,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
         this.attackAnimationTicks = ATTACK_TOTAL_TICKS;
         this.attackHitApplied = false;
         this.attackCooldown = ATTACK_TOTAL_TICKS + 12;
+        this.selectSpecialAnimation(this.selectAttackSpecialAnimation());
         this.getNavigation().stop();
         Vec3 lunge = target.getEyePosition().subtract(this.getEyePosition());
         if (lunge.lengthSqr() > 1.0E-4D) {
@@ -479,11 +678,120 @@ public class NightmareEntity extends Monster implements GeoEntity {
         if (!this.attackHitApplied && elapsed >= ATTACK_DAMAGE_TICK) {
             this.attackHitApplied = true;
             this.playNightmareBiteSound();
+            this.spawnBiteEffect();
             this.performAttackHit();
         }
         if (--this.attackAnimationTicks <= 0) {
             this.attackAnimationTicks = 0;
+            this.clearActiveSpecialAnimation();
         }
+    }
+
+    private void startPhaseTransition() {
+        this.setPhaseTwo(true);
+        this.setPhaseTwoTexture(false);
+        this.setPhaseTransitioning(true);
+        this.selectSpecialAnimation(SPECIAL_PHASE_TWO);
+        this.phaseTransitionTicks = PHASE_TWO_TRANSITION_TICKS;
+        this.attackAnimationTicks = 0;
+        this.portalAttackTicks = 0;
+        this.portalTravelTicks = 0;
+        this.attackHitApplied = false;
+        this.portalAttackHitApplied = false;
+        this.portalExitPos = null;
+        this.clearNightmarePortals();
+        this.getNavigation().stop();
+        this.setRoaring(false);
+        this.setDeltaMovement(Vec3.ZERO);
+        this.roarCooldown = Math.max(this.roarCooldown, 80);
+        this.portalCooldown = Math.max(this.portalCooldown, 140);
+    }
+
+    private void tickPhaseTransition(@Nullable LivingEntity target) {
+        this.getNavigation().stop();
+        this.setDeltaMovement(this.getDeltaMovement().scale(0.45D));
+        this.getMoveControl().setWantedPosition(this.getX(), this.getY(), this.getZ(), 0.0D);
+        if (target != null) {
+            this.getLookControl().setLookAt(target, 35.0F, 20.0F);
+        }
+        if (this.phaseTransitionTicks % 8 == 0 && this.level() instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, this.getX(), this.getY() + 1.9D, this.getZ(), 12, 1.0D, 0.7D, 1.0D, 0.01D);
+            serverLevel.sendParticles(ParticleTypes.SMOKE, this.getX(), this.getY() + 1.9D, this.getZ(), 10, 0.8D, 0.5D, 0.8D, 0.02D);
+        }
+        if (!this.hasPhaseTwoTexture() && PHASE_TWO_TRANSITION_TICKS - this.phaseTransitionTicks >= PHASE_TWO_TEXTURE_SWAP_TICKS) {
+            this.setPhaseTwoTexture(true);
+        }
+        if (--this.phaseTransitionTicks <= 0) {
+            this.phaseTransitionTicks = 0;
+            this.setPhaseTwoTexture(true);
+            this.setPhaseTransitioning(false);
+            this.clearActiveSpecialAnimation();
+            this.attackCooldown = Math.max(this.attackCooldown, 18);
+        }
+    }
+
+    private boolean canStartPortalAttack(LivingEntity target) {
+        if (!this.isPhaseTwo() || this.isPhaseTransitioning() || this.portalCooldown > 0 || this.attackAnimationTicks > 0 || this.roarTicks > 0) return false;
+        if (!this.hasLineOfSight(target) || this.distanceToSqr(target) > PORTAL_RANGE * PORTAL_RANGE) return false;
+        if (this.horizontalDistanceToSqr(target) < PORTAL_MIN_RANGE_SQR) return false;
+        return this.portalAttackTicks <= 0 && this.findPortalExitPos(target) != null;
+    }
+
+    private void startPortalAttack(LivingEntity target) {
+        Vec3 exitPos = this.findPortalExitPos(target);
+        if (exitPos == null || !(this.level() instanceof ServerLevel serverLevel)) return;
+        this.clearNightmarePortals();
+        this.portalExitPos = exitPos;
+        this.portalAttackTicks = PORTAL_TOTAL_TICKS;
+        this.portalTravelTicks = 0;
+        this.portalAttackHitApplied = false;
+        this.attackAnimationTicks = 0;
+        this.attackHitApplied = false;
+        this.attackCooldown = 24;
+        this.portalCooldown = 180 + this.random.nextInt(100);
+        this.selectSpecialAnimation(SPECIAL_PORTAL);
+        this.getNavigation().stop();
+        this.entryPortal = NightmarePortalEntity.spawnAt(serverLevel, this.position().add(this.getViewVector(1.0F).multiply(1.6D, 0.0D, 1.6D)), this, this.position(), PORTAL_LIFETIME_TICKS);
+        this.exitPortal = NightmarePortalEntity.spawnAt(serverLevel, exitPos, this, this.position(), PORTAL_LIFETIME_TICKS);
+        if (this.entryPortal != null && this.exitPortal != null) {
+            this.entryPortal.linkTo(this.exitPortal);
+            this.exitPortal.linkTo(this.entryPortal);
+        }
+    }
+
+    private void tickPortalAttack(@Nullable LivingEntity target) {
+        this.getNavigation().stop();
+        this.setDeltaMovement(this.getDeltaMovement().scale(0.55D));
+        if (target != null) {
+            this.getLookControl().setLookAt(target, 35.0F, 20.0F);
+        }
+        int elapsed = PORTAL_TOTAL_TICKS - this.portalAttackTicks;
+        if (elapsed == PORTAL_TELEPORT_TICK && this.portalExitPos != null) {
+            this.executePortalTeleport(target);
+        }
+        if (!this.portalAttackHitApplied && elapsed >= PORTAL_DAMAGE_TICK) {
+            this.portalAttackHitApplied = true;
+            this.spawnBiteEffect();
+            this.performPortalExitHit();
+        }
+        if (--this.portalAttackTicks <= 0) {
+            this.portalAttackTicks = 0;
+            this.portalExitPos = null;
+            this.clearNightmarePortals();
+            this.clearActiveSpecialAnimation();
+        }
+    }
+
+    private void executePortalTeleport(@Nullable LivingEntity target) {
+        if (this.portalExitPos == null) return;
+        this.portalTravelTicks = PORTAL_TRAVEL_INVULNERABLE_TICKS;
+        this.setPortalCooldown();
+        this.teleportTo(this.portalExitPos.x, this.portalExitPos.y, this.portalExitPos.z);
+        if (target != null) {
+            this.faceTowardTarget(target, 180.0F);
+        }
+        this.setDeltaMovement(Vec3.ZERO);
+        this.hasImpulse = true;
     }
 
     private void performAttackHit() {
@@ -503,6 +811,38 @@ public class NightmareEntity extends Monster implements GeoEntity {
             serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, this.getX(), this.getY() + 1.6D, this.getZ(), 12, 0.9D, 0.35D, 0.9D, 0.02D);
             serverLevel.sendParticles(ParticleTypes.SMOKE, this.getX(), this.getY() + 1.6D, this.getZ(), 8, 0.7D, 0.25D, 0.7D, 0.03D);
         }
+    }
+
+    private void performPortalExitHit() {
+        if (this.portalExitPos == null) return;
+        AABB hitBox = this.getBoundingBox().move(this.portalExitPos.subtract(this.position())).inflate(1.7D, 1.2D, 1.7D);
+        float damage = (float) (this.getAttributeValue(Attributes.ATTACK_DAMAGE) * 1.15F);
+        List<LivingEntity> victims = this.level().getEntitiesOfClass(LivingEntity.class, hitBox, this::canTargetEntity);
+        for (LivingEntity victim : victims) {
+            if (victim.hurt(this.nightmareDamageSource(), damage)) {
+                this.spawnBiteEffectAt(victim);
+                this.applyNightmareStrikeEffects(victim);
+                this.knockAway(victim, 1.35D, 0.35D);
+            }
+        }
+        if (this.level() instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, this.portalExitPos.x, this.portalExitPos.y + 1.0D, this.portalExitPos.z, 18, 0.9D, 0.45D, 0.9D, 0.02D);
+            serverLevel.sendParticles(ParticleTypes.SMOKE, this.portalExitPos.x, this.portalExitPos.y + 1.0D, this.portalExitPos.z, 14, 0.8D, 0.3D, 0.8D, 0.03D);
+        }
+    }
+
+    private void spawnBiteEffect() {
+        if (!(this.level() instanceof ServerLevel serverLevel)) return;
+        Vec3 forward = this.getViewVector(1.0F).normalize();
+        Vec3 spawnPos = this.getEyePosition().add(forward.scale(this.getBbWidth() * 0.65D)).add(0.0D, -0.45D, 0.0D);
+        NightmareBiteEntity.spawnAt(serverLevel, spawnPos, this.getYRot(), this.isPhaseTwo());
+    }
+
+    private void spawnBiteEffectAt(LivingEntity target) {
+        if (!(this.level() instanceof ServerLevel serverLevel)) return;
+        float yaw = target.getYRot() + 180.0F;
+        Vec3 spawnPos = target.getEyePosition().add(0.0D, -0.35D, 0.0D);
+        NightmareBiteEntity.spawnAt(serverLevel, spawnPos, yaw, this.isPhaseTwo());
     }
 
     private void playNightmareBiteSound() {
@@ -564,19 +904,48 @@ public class NightmareEntity extends Monster implements GeoEntity {
         return entity instanceof Mob && entity.isAttackable();
     }
 
-    private boolean shouldUseFlight() {
-        if (this.landingCooldown > 0) return false;
-        LivingEntity target = this.getTarget();
-        return target != null
-                && this.distanceToSqr(target) > FLIGHT_ENGAGE_RANGE_SQR
-                && !this.isTooCloseToCeiling();
-    }
-
     private boolean canStartAttackOn(LivingEntity target) {
         if (!this.hasLineOfSight(target) || this.distanceToSqr(target) > ATTACK_START_RANGE_SQR) return false;
         double hdSqr = this.horizontalDistanceToSqr(target);
         double verticalDistance = Math.abs(target.getEyeY() - this.getEyeY());
-        return hdSqr <= ATTACK_COMMIT_HORIZONTAL_RANGE * ATTACK_COMMIT_HORIZONTAL_RANGE && verticalDistance <= 4.0D;
+        return hdSqr <= ATTACK_COMMIT_HORIZONTAL_RANGE_SQR && verticalDistance <= 4.0D;
+    }
+
+    private boolean shouldUseFlightPressure(LivingEntity target) {
+        if (target == null || this.isTooCloseToCeiling()) {
+            return false;
+        }
+        double distanceSqr = this.distanceToSqr(target);
+        double verticalDistance = Math.abs(target.getEyeY() - this.getEyeY());
+        if (this.flyingToTarget) {
+            return distanceSqr > ATTACK_COMMIT_HORIZONTAL_RANGE_SQR || verticalDistance > 1.25D;
+        }
+        if (distanceSqr >= FLIGHT_ENGAGE_RANGE_SQR) {
+            return true;
+        }
+        return this.isPhaseTwo() && (distanceSqr >= FLIGHT_DISENGAGE_RANGE_SQR || verticalDistance > 1.5D);
+    }
+
+    private Vec3 getFlightApproachPosition(LivingEntity target) {
+        Vec3 toTarget = target.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+        if (toTarget.lengthSqr() < 1.0E-4D) {
+            toTarget = target.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
+        }
+        if (toTarget.lengthSqr() < 1.0E-4D) {
+            toTarget = this.getViewVector(1.0F).multiply(1.0D, 0.0D, 1.0D);
+        }
+        if (toTarget.lengthSqr() < 1.0E-4D) {
+            toTarget = new Vec3(0.0D, 0.0D, 1.0D);
+        }
+        Vec3 forward = toTarget.normalize();
+        Vec3 right = new Vec3(-forward.z, 0.0D, forward.x);
+        double strafe = this.tickCount % 32 < 16 ? FLYING_APPROACH_STRAFE_OFFSET : -FLYING_APPROACH_STRAFE_OFFSET;
+        double height = this.isPhaseTwo() ? FLYING_APPROACH_HEIGHT_PHASE_TWO : FLYING_APPROACH_HEIGHT;
+        Vec3 anchor = target.position().subtract(forward.scale(1.4D)).add(right.scale(strafe));
+        if (this.horizontalDistanceToSqr(target) <= FLYING_APPROACH_TOO_CLOSE_RANGE_SQR) {
+            anchor = target.position().subtract(forward.scale(2.4D));
+        }
+        return new Vec3(anchor.x, target.getEyeY() + height, anchor.z);
     }
 
     private double horizontalDistanceToSqr(LivingEntity target) {
@@ -608,7 +977,6 @@ public class NightmareEntity extends Monster implements GeoEntity {
         }
     }
 
-
     private boolean isTooCloseToCeiling() {
         BlockPos current = BlockPos.containing(this.getX(), this.getY(), this.getZ());
         for (int i = 1; i <= FLIGHT_CEILING_CLEARANCE_BLOCKS; i++) {
@@ -617,8 +985,58 @@ public class NightmareEntity extends Monster implements GeoEntity {
         return false;
     }
 
+    @Nullable
+    private Vec3 findPortalExitPos(LivingEntity target) {
+        Vec3 forward = target.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
+        if (forward.lengthSqr() < 1.0E-4D) {
+            forward = this.getViewVector(1.0F).multiply(1.0D, 0.0D, 1.0D);
+        }
+        if (forward.lengthSqr() < 1.0E-4D) {
+            forward = new Vec3(0.0D, 0.0D, 1.0D);
+        }
+        forward = forward.normalize();
+        Vec3 right = new Vec3(-forward.z, 0.0D, forward.x);
+        Vec3[] candidates = new Vec3[] {
+                target.position().subtract(forward.scale(PORTAL_EXIT_OFFSET)),
+                target.position().subtract(forward.scale(1.4D)).add(right.scale(2.25D)),
+                target.position().subtract(forward.scale(1.4D)).subtract(right.scale(2.25D)),
+                target.position().add(forward.scale(2.4D))
+        };
+        for (Vec3 candidate : candidates) {
+            Vec3 adjusted = this.findValidPortalPosition(candidate);
+            if (adjusted != null && adjusted.distanceToSqr(this.position()) <= PORTAL_RANGE * PORTAL_RANGE) {
+                return adjusted;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private Vec3 findValidPortalPosition(Vec3 base) {
+        EntityDimensions dimensions = this.getType().getDimensions();
+        for (int yOffset = 1; yOffset >= -1; yOffset--) {
+            Vec3 candidate = new Vec3(base.x, base.y + yOffset, base.z);
+            AABB box = dimensions.makeBoundingBox(candidate);
+            if (this.level().noCollision(this, box)) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    private void clearNightmarePortals() {
+        if (this.entryPortal != null && this.entryPortal.isAlive()) {
+            this.entryPortal.discard();
+        }
+        if (this.exitPortal != null && this.exitPortal.isAlive()) {
+            this.exitPortal.discard();
+        }
+        this.entryPortal = null;
+        this.exitPortal = null;
+    }
+
     private void tickClientParticles() {
-        if ((this.isRoaring() || this.attackAnimationTicks > 0) && this.tickCount % 3 == 0) {
+        if ((this.isRoaring() || this.attackAnimationTicks > 0 || this.portalAttackTicks > 0 || this.isPhaseTransitioning()) && this.tickCount % 3 == 0) {
             this.level().addParticle(
                     ParticleTypes.SOUL_FIRE_FLAME,
                     this.getX() + (this.random.nextDouble() - 0.5D) * this.getBbWidth(),
@@ -652,14 +1070,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
             this.wingFlapCooldown = 0;
             return;
         }
-        if (this.isRoaring()) {
-            this.setAnimationState(ANIM_ROAR);
-            this.groundMoveTicks = 0;
-            this.wingFlapCooldown = 0;
-            return;
-        }
-        if (this.attackAnimationTicks > 0) {
-            this.setAnimationState(this.isNoGravity() || this.airborneTicks >= MIN_AIRBORNE_TICKS_FOR_FLY_ANIM ? ANIM_FLY_ATTACK : ANIM_ATTACK);
+        if (this.hasActiveSpecialAnimation()) {
             this.groundMoveTicks = 0;
             this.tickWingFlapSound();
             return;
@@ -676,7 +1087,8 @@ public class NightmareEntity extends Monster implements GeoEntity {
             this.tickWingFlapSound();
             return;
         }
-        if (this.walkDist - this.walkDistO > 0.005F) {
+        Vec3 horizontalVelocity = this.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D);
+        if (horizontalVelocity.lengthSqr() > ANIMATION_MOVEMENT_THRESHOLD_SQR) {
             this.groundMoveTicks = 6;
         }
         if (this.groundMoveTicks > 0) {
@@ -705,6 +1117,112 @@ public class NightmareEntity extends Monster implements GeoEntity {
         this.wingFlapCooldown = 5 + this.random.nextInt(4);
     }
 
+    private boolean hasActiveSpecialAnimation() {
+        return this.getActiveSpecialAnimation() != SPECIAL_NONE;
+    }
+
+    private int selectAttackSpecialAnimation() {
+        boolean flyingAttack = this.isNoGravity() || this.airborneTicks >= MIN_AIRBORNE_TICKS_FOR_FLY_ANIM || this.flyingToTarget;
+        if (flyingAttack) {
+            return this.isPhaseTwo() ? SPECIAL_FLY_ATTACK_P2 : SPECIAL_FLY_ATTACK;
+        }
+        return this.isPhaseTwo() ? SPECIAL_ATTACK_P2 : SPECIAL_ATTACK;
+    }
+
+    private void selectSpecialAnimation(int specialAnimation) {
+        this.setActiveSpecialAnimation(specialAnimation);
+        if (!this.level().isClientSide) {
+            LOGGER.info("Nightmare animation selected={} tick={}", this.specialAnimationName(specialAnimation), this.tickCount);
+        }
+    }
+
+    private void clearActiveSpecialAnimation() {
+        int specialAnimation = this.getActiveSpecialAnimation();
+        if (specialAnimation != SPECIAL_NONE && !this.level().isClientSide) {
+            LOGGER.info("Nightmare animation state cleared={} tick={}", this.specialAnimationName(specialAnimation), this.tickCount);
+        }
+        this.setActiveSpecialAnimation(SPECIAL_NONE);
+    }
+
+    private void syncSpecialAnimationTrigger() {
+        int activeSpecialAnimation = this.getActiveSpecialAnimation();
+        if (activeSpecialAnimation != SPECIAL_NONE && this.lastTriggeredSpecialAnimation != activeSpecialAnimation) {
+            String triggerName = this.specialAnimationTrigger(activeSpecialAnimation);
+            if (triggerName != null) {
+                if (!this.level().isClientSide) {
+                    LOGGER.info("Nightmare triggerAnim called={} tick={}", triggerName, this.tickCount);
+                }
+                this.triggerAnim(SPECIAL_CONTROLLER, triggerName);
+            }
+            this.lastTriggeredSpecialAnimation = activeSpecialAnimation;
+            return;
+        }
+        if (activeSpecialAnimation == SPECIAL_NONE) {
+            this.lastTriggeredSpecialAnimation = SPECIAL_NONE;
+        }
+    }
+
+    @Nullable
+    private String specialAnimationTrigger(int specialAnimation) {
+        return switch (specialAnimation) {
+            case SPECIAL_ATTACK -> SPECIAL_ATTACK_TRIGGER;
+            case SPECIAL_ATTACK_P2 -> SPECIAL_ATTACK_P2_TRIGGER;
+            case SPECIAL_FLY_ATTACK -> SPECIAL_FLY_ATTACK_TRIGGER;
+            case SPECIAL_FLY_ATTACK_P2 -> SPECIAL_FLY_ATTACK_P2_TRIGGER;
+            case SPECIAL_ROAR -> SPECIAL_ROAR_TRIGGER;
+            case SPECIAL_ROAR_P2 -> SPECIAL_ROAR_P2_TRIGGER;
+            case SPECIAL_PHASE_TWO -> SPECIAL_PHASE_TWO_TRIGGER;
+            case SPECIAL_PORTAL -> SPECIAL_PORTAL_TRIGGER;
+            default -> null;
+        };
+    }
+
+    private String specialAnimationName(int specialAnimation) {
+        String triggerName = this.specialAnimationTrigger(specialAnimation);
+        return triggerName != null ? triggerName : "none";
+    }
+
+    private final class NightmarePhaseTransitionGoal extends Goal {
+        NightmarePhaseTransitionGoal() {
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
+        }
+
+        @Override
+        public boolean canUse() {
+            return NightmareEntity.this.isPhaseTransitioning();
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return NightmareEntity.this.isPhaseTransitioning();
+        }
+    }
+
+    private final class NightmarePortalGoal extends Goal {
+        NightmarePortalGoal() {
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            LivingEntity target = NightmareEntity.this.getTarget();
+            return target != null && NightmareEntity.this.canStartPortalAttack(target);
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return NightmareEntity.this.portalAttackTicks > 0;
+        }
+
+        @Override
+        public void start() {
+            LivingEntity target = NightmareEntity.this.getTarget();
+            if (target != null) {
+                NightmareEntity.this.startPortalAttack(target);
+            }
+        }
+    }
+
     private final class NightmareRoarGoal extends Goal {
         NightmareRoarGoal() {
             this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
@@ -713,7 +1231,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
         @Override
         public boolean canUse() {
             LivingEntity target = NightmareEntity.this.getTarget();
-            return target instanceof Player && NightmareEntity.this.shouldStartRoar(target);
+            return target instanceof Player && NightmareEntity.this.shouldStartRoar(target) && !NightmareEntity.this.isPhaseTransitioning() && NightmareEntity.this.portalAttackTicks <= 0;
         }
 
         @Override
@@ -748,14 +1266,17 @@ public class NightmareEntity extends Monster implements GeoEntity {
             LivingEntity target = NightmareEntity.this.getTarget();
             return target != null
                     && NightmareEntity.this.landingCooldown <= 0
-                    && NightmareEntity.this.distanceToSqr(target) > FLIGHT_ENGAGE_RANGE_SQR
-                    && !NightmareEntity.this.isTooCloseToCeiling();
+                    && NightmareEntity.this.shouldUseFlightPressure(target)
+                    && !NightmareEntity.this.isPhaseTransitioning()
+                    && NightmareEntity.this.portalAttackTicks <= 0;
         }
 
         @Override
         public boolean canContinueToUse() {
             LivingEntity target = NightmareEntity.this.getTarget();
-            return target != null && NightmareEntity.this.distanceToSqr(target) > FLIGHT_DISENGAGE_RANGE_SQR;
+            return target != null
+                    && NightmareEntity.this.shouldUseFlightPressure(target)
+                    && NightmareEntity.this.portalAttackTicks <= 0;
         }
 
         @Override
@@ -766,7 +1287,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
         @Override
         public void stop() {
             NightmareEntity.this.flyingToTarget = false;
-            NightmareEntity.this.landingCooldown = 80;
+            NightmareEntity.this.landingCooldown = 18;
             NightmareEntity.this.getNavigation().stop();
         }
 
@@ -779,19 +1300,43 @@ public class NightmareEntity extends Monster implements GeoEntity {
                 NightmareEntity.this.getNavigation().stop();
                 return;
             }
+            if (NightmareEntity.this.onGround() && NightmareEntity.this.distanceToSqr(target) >= FLIGHT_DISENGAGE_RANGE_SQR) {
+                NightmareEntity.this.setDeltaMovement(NightmareEntity.this.getDeltaMovement().add(0.0D, 0.38D, 0.0D));
+                NightmareEntity.this.hasImpulse = true;
+            }
             if (NightmareEntity.this.attackCooldown <= 0 && NightmareEntity.this.canStartAttackOn(target)) {
                 NightmareEntity.this.startAttack(target);
                 return;
             }
-            NightmareEntity.this.getMoveControl().setWantedPosition(
-                    target.getX(), target.getEyeY() + 0.5D, target.getZ(), COMBAT_FLIGHT_SPEED
-            );
+            Vec3 approachPos = NightmareEntity.this.getFlightApproachPosition(target);
+            NightmareEntity.this.faceTowardTarget(target, 10.0F);
+            NightmareEntity.this.getMoveControl().setWantedPosition(approachPos.x, approachPos.y, approachPos.z, COMBAT_FLIGHT_SPEED);
         }
     }
 
     private final class NightmareMeleeGoal extends MeleeAttackGoal {
         NightmareMeleeGoal() {
             super(NightmareEntity.this, GROUND_APPROACH_SPEED, true);
+        }
+
+        @Override
+        public boolean canUse() {
+            LivingEntity target = NightmareEntity.this.getTarget();
+            return !NightmareEntity.this.isPhaseTransitioning()
+                    && NightmareEntity.this.portalAttackTicks <= 0
+                    && target != null
+                    && !NightmareEntity.this.shouldUseFlightPressure(target)
+                    && super.canUse();
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            LivingEntity target = NightmareEntity.this.getTarget();
+            return !NightmareEntity.this.isPhaseTransitioning()
+                    && NightmareEntity.this.portalAttackTicks <= 0
+                    && target != null
+                    && !NightmareEntity.this.shouldUseFlightPressure(target)
+                    && super.canContinueToUse();
         }
 
         @Override
@@ -809,6 +1354,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
 
         @Override
         protected void checkAndPerformAttack(LivingEntity target) {
+            if (NightmareEntity.this.shouldUseFlightPressure(target) && NightmareEntity.this.distanceToSqr(target) >= FLIGHT_ATTACK_RANGE_SQR) {
+                return;
+            }
             if (NightmareEntity.this.attackCooldown <= 0 && NightmareEntity.this.canStartAttackOn(target)) {
                 NightmareEntity.this.startAttack(target);
             }
@@ -816,7 +1364,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private final class NightmareWanderGoal extends Goal {
-        private double x, y, z;
+        private double x;
+        private double y;
+        private double z;
         private int wanderTicks;
 
         NightmareWanderGoal() {
@@ -825,7 +1375,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
 
         @Override
         public boolean canUse() {
-            if (NightmareEntity.this.getTarget() != null || NightmareEntity.this.isDeadOrDying()) return false;
+            if (NightmareEntity.this.getTarget() != null || NightmareEntity.this.isDeadOrDying() || NightmareEntity.this.isPhaseTransitioning() || NightmareEntity.this.portalAttackTicks > 0) return false;
             if (NightmareEntity.this.random.nextInt(40) != 0) return false;
             double angle = NightmareEntity.this.random.nextDouble() * Math.PI * 2;
             double dist = 4 + NightmareEntity.this.random.nextDouble() * 10;

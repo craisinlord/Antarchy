@@ -7,6 +7,7 @@ import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
@@ -63,6 +64,8 @@ public class BasiliskEntity extends Monster implements GeoEntity {
             SynchedEntityData.defineId(BasiliskEntity.class, EntityDataSerializers.INT);
     private static final byte ATTACK_ENTITY_EVENT = 4;
     private static final int DEATH_TICKS = 25;
+    private static final String TAG_HISS_COOLDOWN = "BasiliskHissCooldown";
+    private static final String TAG_PREY_PETRIFY_COOLDOWN = "BasiliskPreyPetrifyCooldown";
 
     private static final int ANIM_IDLE = 0;
     private static final int ANIM_WALK = 1;
@@ -74,13 +77,15 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenPlay("attack");
     private static final RawAnimation DEATH_ANIM = RawAnimation.begin().thenPlay("death");
 
-    private static final float TURN_RATE_DEG_PER_TICK = 10.0F;
+    private static final float MIN_TURN_RATE_DEG_PER_TICK = 5.5F;
+    private static final float MAX_TURN_RATE_DEG_PER_TICK = 13.5F;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     private int attackAnimTicks = 0;
     private boolean attackDamagePending = false;
     private int attackCooldown = 0;
+    private float committedAttackYaw = Float.NaN;
 
     private int hissCooldown = AntarchySettings.basiliskHissCooldownTicks();
     private int hissChargeTimer = 0;
@@ -108,6 +113,12 @@ public class BasiliskEntity extends Monster implements GeoEntity {
                 .add(Attributes.ARMOR, AntarchySettings.basiliskArmor())
                 .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.basiliskKnockbackResistance())
                 .add(Attributes.FOLLOW_RANGE, AntarchySettings.basiliskFollowRange());
+    }
+
+    @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty, net.minecraft.world.entity.MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
+        com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.basiliskHealth());
+        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
     }
 
     public static boolean canSpawn(EntityType<BasiliskEntity> entityType, ServerLevelAccessor level,
@@ -160,9 +171,12 @@ public class BasiliskEntity extends Monster implements GeoEntity {
 
     private void performAoeAttack() {
         if (this.level().isClientSide) return;
-        // Start the animation; damage fires later in tick() when attackAnimTicks reaches the damage threshold
+        this.committedAttackYaw = this.resolveCommittedAttackYaw();
         this.attackAnimTicks = AntarchySettings.basiliskAttackAnimTicks();
         this.attackDamagePending = true;
+        this.stopActiveMovement();
+        this.lockBodyYaw(this.committedAttackYaw);
+        this.setAnimationState(ANIM_ATTACK);
         this.level().broadcastEntityEvent(this, ATTACK_ENTITY_EVENT);
     }
 
@@ -173,33 +187,42 @@ public class BasiliskEntity extends Monster implements GeoEntity {
 
         this.attackDamagePending = false;
 
-        Vec3 forward = Vec3.directionFromRotation(0, this.yBodyRot);
+        float attackYaw = Float.isNaN(this.committedAttackYaw) ? this.yBodyRot : this.committedAttackYaw;
+        Vec3 forward = Vec3.directionFromRotation(0, attackYaw);
         Vec3 right = new Vec3(-forward.z, 0, forward.x);
-        Vec3 origin = this.position();
-        double attackReach = AntarchySettings.basiliskAttackReach();
+        Vec3 attackOrigin = this.position();
+        double attackReach = AntarchySettings.basiliskAttackReach() + 4.0D;
+        double verticalMin = attackOrigin.y - 0.9D;
+        double verticalMax = attackOrigin.y + 2.6D;
 
         List<LivingEntity> candidates = this.level().getEntitiesOfClass(
                 LivingEntity.class,
-                this.getBoundingBox().inflate(Math.max(8.0D, attackReach + 3.5D)),
+                new AABB(attackOrigin, attackOrigin).inflate(attackReach + 1.5D, 3.0D, attackReach + 1.5D),
                 e -> e != this && e.isAlive()
         );
 
-        boolean hitAnything = false;
         for (LivingEntity entity : candidates) {
-            Vec3 toEntity = entity.position().subtract(origin);
+            if (!this.canAttack(entity) || this.isAlliedTo(entity) || !this.hasLineOfSight(entity)) {
+                continue;
+            }
+
+            AABB entityBox = entity.getBoundingBox();
+            if (entityBox.maxY < verticalMin || entityBox.minY > verticalMax) {
+                continue;
+            }
+
+            Vec3 toEntity = entityBox.getCenter().subtract(attackOrigin);
             double fwdDist = toEntity.dot(forward);
             double sideDist = toEntity.dot(right);
-            double upDist = toEntity.y;
-            if (fwdDist >= 2.0 && fwdDist <= 7.0 && Math.abs(sideDist) <= 2.25 && upDist >= -1.0 && upDist <= 3.0) {
-                if (entity.hurt(AntarchyDamageSources.basiliskBite(serverLevel, this),
-                        (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE))) {
-                    hitAnything = true;
-                }
+            double sideAllowance = 1.35D + entity.getBbWidth() * 0.5D + Math.max(0.0D, fwdDist * 0.2D);
+            if (fwdDist < 1.0D || fwdDist > attackReach || Math.abs(sideDist) > sideAllowance) {
+                continue;
             }
-        }
 
-        if (hitAnything) {
-            this.playSound(AntarchySoundEvents.BASILISK_BITE.get(), 1.1F, 0.95F + this.random.nextFloat() * 0.08F);
+            entity.hurt(
+                    AntarchyDamageSources.basiliskBite(serverLevel, this),
+                    (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE)
+            );
         }
     }
 
@@ -209,6 +232,12 @@ public class BasiliskEntity extends Monster implements GeoEntity {
 
         if (this.attackAnimTicks > 0) {
             this.attackAnimTicks--;
+        }
+        if (this.level() instanceof ServerLevel && this.attackAnimTicks > 0 && !Float.isNaN(this.committedAttackYaw)) {
+            this.lockBodyYaw(this.committedAttackYaw);
+        }
+        if (this.attackAnimTicks <= 0) {
+            this.committedAttackYaw = Float.NaN;
         }
 
         if (this.isDeadOrDying()) {
@@ -228,6 +257,10 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     }
 
     private void tickPlayerPetrification() {
+        if (this.isCommittedAttackActive()) {
+            return;
+        }
+
         if (this.hissChargeTimer > 0) {
             Player target = this.getPendingPlayerTarget();
             if (!this.canMaintainGazeOn(target)) {
@@ -236,7 +269,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
                 return;
             }
 
-            this.getNavigation().stop();
+            this.stopActiveMovement();
             this.getLookControl().setLookAt(target, 30.0F, 30.0F);
             this.hissChargeTimer--;
             if (this.hissChargeTimer == 0) {
@@ -274,7 +307,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
         this.pendingTargetId = target.getUUID();
         this.hissChargeTimer = AntarchySettings.basiliskHissChargeTicks();
         this.hissCooldown = AntarchySettings.basiliskHissCooldownTicks();
-        this.getNavigation().stop();
+        this.stopActiveMovement();
         this.getLookControl().setLookAt(target, 30.0F, 30.0F);
     }
 
@@ -284,7 +317,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
             return;
         }
 
-        if (this.getTarget() != null || this.hissChargeTimer > 0) {
+        if (this.getTarget() != null || this.hissChargeTimer > 0 || this.isCommittedAttackActive()) {
             return;
         }
 
@@ -447,15 +480,32 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     public void die(DamageSource damageSource) {
         if (!this.level().isClientSide) {
             this.setAnimationState(ANIM_DEATH);
-            this.attackAnimTicks = 0;
-            this.attackDamagePending = false;
-            this.attackCooldown = 0;
-            this.hissChargeTimer = 0;
-            this.pendingTargetId = null;
-            this.getNavigation().stop();
+            this.resetTransientCombatState();
+            this.hissCooldown = AntarchySettings.basiliskHissCooldownTicks();
+            this.preyPetrifyCooldown = AntarchySettings.basiliskPreyPetrifyCooldownTicks();
             this.setDeltaMovement(Vec3.ZERO);
         }
         super.die(damageSource);
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt(TAG_HISS_COOLDOWN, this.hissCooldown);
+        tag.putInt(TAG_PREY_PETRIFY_COOLDOWN, this.preyPetrifyCooldown);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.hissCooldown = tag.contains(TAG_HISS_COOLDOWN)
+                ? Math.max(0, tag.getInt(TAG_HISS_COOLDOWN))
+                : AntarchySettings.basiliskHissCooldownTicks();
+        this.preyPetrifyCooldown = tag.contains(TAG_PREY_PETRIFY_COOLDOWN)
+                ? Math.max(0, tag.getInt(TAG_PREY_PETRIFY_COOLDOWN))
+                : AntarchySettings.basiliskPreyPetrifyCooldownTicks();
+        this.resetTransientCombatState();
+        this.setAnimationState(ANIM_IDLE);
     }
 
     @Override
@@ -555,7 +605,54 @@ public class BasiliskEntity extends Monster implements GeoEntity {
         return 0.7F;
     }
 
-    /** Limits body rotation to TURN_RATE_DEG_PER_TICK so the long snake turns gradually. */
+    private boolean isCommittedAttackActive() {
+        return this.attackAnimTicks > 0;
+    }
+
+    private boolean isBusyWithAction() {
+        return this.hissChargeTimer > 0 || this.isCommittedAttackActive();
+    }
+
+    private float resolveCommittedAttackYaw() {
+        LivingEntity target = this.getTarget();
+        if (target != null) {
+            Vec3 toTarget = target.position().subtract(this.position());
+            if (toTarget.horizontalDistanceSqr() > 1.0E-6D) {
+                return (float)(Mth.atan2(toTarget.z, toTarget.x) * (180.0D / Math.PI)) - 90.0F;
+            }
+        }
+        return this.yBodyRot;
+    }
+
+    private void lockBodyYaw(float yaw) {
+        this.setYRot(yaw);
+        this.yRotO = yaw;
+        this.yBodyRot = yaw;
+        this.yBodyRotO = yaw;
+        this.yHeadRot = yaw;
+        this.yHeadRotO = yaw;
+    }
+
+    private void stopActiveMovement() {
+        this.getNavigation().stop();
+        if (this.getMoveControl() instanceof BasiliskMoveControl moveControl) {
+            moveControl.halt();
+        }
+        this.setSpeed(0.0F);
+        this.setZza(0.0F);
+    }
+
+    private void resetTransientCombatState() {
+        this.attackAnimTicks = 0;
+        this.attackDamagePending = false;
+        this.attackCooldown = 0;
+        this.committedAttackYaw = Float.NaN;
+        this.hissChargeTimer = 0;
+        this.pendingTargetId = null;
+        this.stopActiveMovement();
+    }
+
+    /** Scales turn rate by intended movement speed so the long body pivots tighter when slow and wider when fast. */
     private static final class BasiliskMoveControl extends MoveControl {
         private BasiliskMoveControl(Mob mob) {
             super(mob);
@@ -568,6 +665,10 @@ public class BasiliskEntity extends Monster implements GeoEntity {
 
         @Override
         public void tick() {
+            if (((BasiliskEntity) this.mob).isBusyWithAction()) {
+                this.mob.setZza(0.0F);
+                return;
+            }
             if (this.operation == MoveControl.Operation.MOVE_TO) {
                 this.operation = MoveControl.Operation.WAIT;
                 double dx = this.wantedX - this.mob.getX();
@@ -577,11 +678,19 @@ public class BasiliskEntity extends Monster implements GeoEntity {
                     this.mob.setZza(0.0F);
                     return;
                 }
+                float turnRate = this.getDynamicTurnRate();
                 float targetYaw = (float)(Mth.atan2(dz, dx) * (180.0 / Math.PI)) - 90.0F;
-                this.mob.setYRot(this.rotlerp(this.mob.getYRot(), targetYaw, TURN_RATE_DEG_PER_TICK));
+                this.mob.setYRot(this.rotlerp(this.mob.getYRot(), targetYaw, turnRate));
                 this.mob.setSpeed((float)(this.speedModifier * this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED)));
                 this.mob.setZza(1.0F);
             }
+        }
+
+        private float getDynamicTurnRate() {
+            double baseSpeed = Math.max(0.01D, this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED));
+            double intendedSpeed = Math.max(0.0D, this.speedModifier * baseSpeed);
+            double normalizedSpeed = Mth.clamp(intendedSpeed / (baseSpeed * 1.2D), 0.0D, 1.0D);
+            return Mth.lerp((float) normalizedSpeed, MAX_TURN_RATE_DEG_PER_TICK, MIN_TURN_RATE_DEG_PER_TICK);
         }
     }
 
@@ -599,6 +708,11 @@ public class BasiliskEntity extends Monster implements GeoEntity {
 
         @Override
         public void tick() {
+            if (BasiliskEntity.this.hissChargeTimer > 0 || BasiliskEntity.this.attackAnimTicks > 0) {
+                this.stopMovement();
+                return;
+            }
+
             LivingEntity target = BasiliskEntity.this.getTarget();
             if (target != null) {
                 BasiliskEntity.this.getLookControl().setLookAt(target, 30.0F, 30.0F);
@@ -607,11 +721,6 @@ public class BasiliskEntity extends Monster implements GeoEntity {
             // super handles path recalc and cooldown timer
             super.tick();
 
-            if (BasiliskEntity.this.hissChargeTimer > 0 || BasiliskEntity.this.attackAnimTicks > 0) {
-                this.stopMovement();
-                return;
-            }
-
             if (target != null && BasiliskEntity.this.isWithinMeleeAttackRange(target)) {
                 this.stopMovement();
                 this.checkAndPerformAttack(target);
@@ -619,14 +728,14 @@ public class BasiliskEntity extends Monster implements GeoEntity {
         }
 
         private void stopMovement() {
-            BasiliskEntity.this.getNavigation().stop();
-            ((BasiliskMoveControl) BasiliskEntity.this.getMoveControl()).halt();
-            BasiliskEntity.this.setSpeed(0.0F);
-            BasiliskEntity.this.setZza(0.0F);
+            BasiliskEntity.this.stopActiveMovement();
         }
 
         @Override
         public boolean canUse() {
+            if (BasiliskEntity.this.isBusyWithAction()) {
+                return false;
+            }
             LivingEntity target = BasiliskEntity.this.getTarget();
             if (target == null || !target.isAlive()) return false;
             if (target instanceof Player p && (p.isCreative() || p.isSpectator())) return false;
@@ -636,7 +745,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
         @Override
         public void start() {
             LivingEntity target = BasiliskEntity.this.getTarget();
-            if (target != null) {
+            if (target != null && !BasiliskEntity.this.isBusyWithAction()) {
                 BasiliskEntity.this.getNavigation().moveTo(target, 1.2D);
             }
             BasiliskEntity.this.setAggressive(true);
@@ -644,7 +753,14 @@ public class BasiliskEntity extends Monster implements GeoEntity {
 
         @Override
         public boolean canContinueToUse() {
-            return BasiliskEntity.this.attackAnimTicks > 0 || super.canContinueToUse();
+            return BasiliskEntity.this.isBusyWithAction() || super.canContinueToUse();
+        }
+
+        @Override
+        public void stop() {
+            super.stop();
+            BasiliskEntity.this.setAggressive(false);
+            this.stopMovement();
         }
 
         @Override

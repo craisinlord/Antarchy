@@ -55,6 +55,10 @@ public final class CavarynHordeManager {
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "biowart_caves")
     );
+    private static final ResourceKey<Biome> CAVARYN_MOLEWORM_CAVES = ResourceKey.create(
+            Registries.BIOME,
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "cavaryn_moleworm_caves")
+    );
     private static final ResourceLocation DORMANT_HORDE = hordeId("dormant");
     private static final ResourceLocation AWAKENING_HORDE = hordeId("awakening");
     private static final ResourceLocation WAVE_ONE_HORDE = hordeId("wave_1");
@@ -541,6 +545,9 @@ public final class CavarynHordeManager {
     private static ResourceLocation hordeForPosition(ServerLevel level, BlockPos pos, ResourceLocation horde) {
         if (level.getBiome(pos).is(BIOWART_CAVES)) {
             return ResourceLocation.fromNamespaceAndPath(horde.getNamespace(), "biowart_caves/" + horde.getPath());
+        }
+        if (level.getBiome(pos).is(CAVARYN_MOLEWORM_CAVES)) {
+            return ResourceLocation.fromNamespaceAndPath(horde.getNamespace(), "cavaryn_moleworm_caves/" + horde.getPath());
         }
         return horde;
     }

@@ -104,6 +104,26 @@ public class AlphaMantisEntity extends MantisEntity {
     }
 
     @Override
+    protected double configuredMaxHealth() {
+        return AntarchySettings.alphaMantisHealth();
+    }
+
+    @Override
+    protected double configuredAttackDamage() {
+        return AntarchySettings.alphaMantisAttackDamage();
+    }
+
+    @Override
+    protected double configuredMovementSpeed() {
+        return AntarchySettings.alphaMantisMovementSpeed();
+    }
+
+    @Override
+    protected double configuredFlyingSpeed() {
+        return AntarchySettings.alphaMantisFlyingSpeed();
+    }
+
+    @Override
     public void tick() {
         super.tick();
         if (this.level().isClientSide) {

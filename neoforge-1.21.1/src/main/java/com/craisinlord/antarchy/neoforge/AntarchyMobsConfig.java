@@ -11,24 +11,28 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.BooleanValue ANTS_STEAL_FROM_CHESTS;
 
     private static final ModConfigSpec.BooleanValue BROWN_ANT_REQUIRES_REAGENT;
+    private static final ModConfigSpec.BooleanValue BROWN_ANT_RIGHT_CLICK_DIMENSION;
     private static final ModConfigSpec.DoubleValue  BROWN_ANT_HEALTH;
     private static final ModConfigSpec.DoubleValue  BROWN_ANT_MOVEMENT_SPEED;
     private static final ModConfigSpec.DoubleValue  BROWN_ANT_ATTACK_DAMAGE;
     private static final ModConfigSpec.ConfigValue<String> BROWN_ANT_DESTINATION_DIMENSION;
 
     private static final ModConfigSpec.BooleanValue RED_ANT_REQUIRES_REAGENT;
+    private static final ModConfigSpec.BooleanValue RED_ANT_RIGHT_CLICK_DIMENSION;
     private static final ModConfigSpec.DoubleValue  RED_ANT_HEALTH;
     private static final ModConfigSpec.DoubleValue  RED_ANT_MOVEMENT_SPEED;
     private static final ModConfigSpec.DoubleValue  RED_ANT_ATTACK_DAMAGE;
     private static final ModConfigSpec.ConfigValue<String> RED_ANT_DESTINATION_DIMENSION;
 
     private static final ModConfigSpec.BooleanValue RAINBOW_ANT_REQUIRES_REAGENT;
+    private static final ModConfigSpec.BooleanValue RAINBOW_ANT_RIGHT_CLICK_DIMENSION;
     private static final ModConfigSpec.DoubleValue  RAINBOW_ANT_HEALTH;
     private static final ModConfigSpec.DoubleValue  RAINBOW_ANT_MOVEMENT_SPEED;
     private static final ModConfigSpec.DoubleValue  RAINBOW_ANT_ATTACK_DAMAGE;
     private static final ModConfigSpec.ConfigValue<String> RAINBOW_ANT_NON_INFINITY_FALLBACK_DIMENSION;
 
     private static final ModConfigSpec.BooleanValue TERMITE_REQUIRES_REAGENT;
+    private static final ModConfigSpec.BooleanValue TERMITE_RIGHT_CLICK_DIMENSION;
     private static final ModConfigSpec.DoubleValue  TERMITE_HEALTH;
     private static final ModConfigSpec.DoubleValue  TERMITE_MOVEMENT_SPEED;
     private static final ModConfigSpec.DoubleValue  TERMITE_ATTACK_DAMAGE;
@@ -278,6 +282,9 @@ public final class AntarchyMobsConfig {
                     "Breeding foods tag: data/antarchy/tags/item/brown_ant_breeding_foods.json"
                 )
                 .define("requiresReagent", false);
+        BROWN_ANT_RIGHT_CLICK_DIMENSION = b
+                .comment("If false, right-clicking brown ants will never teleport players.")
+                .define("rightClickDimension", true);
         BROWN_ANT_HEALTH          = b.comment("Base max health.")        .defineInRange("health",        5.0D, 0.1D, 1024.0D);
         BROWN_ANT_MOVEMENT_SPEED  = b.comment("Base movement speed.")    .defineInRange("movementSpeed", 0.28D, 0.0D, 10.0D);
         BROWN_ANT_ATTACK_DAMAGE   = b.comment("Base attack damage.")     .defineInRange("attackDamage",  1.0D, 0.0D, 1024.0D);
@@ -294,6 +301,9 @@ public final class AntarchyMobsConfig {
                     "Breeding foods tag: data/antarchy/tags/item/red_ant_breeding_foods.json"
                 )
                 .define("requiresReagent", false);
+        RED_ANT_RIGHT_CLICK_DIMENSION = b
+                .comment("If false, right-clicking red ants will never teleport players.")
+                .define("rightClickDimension", true);
         RED_ANT_HEALTH         = b.comment("Base max health.")        .defineInRange("health",        5.0D, 0.1D, 1024.0D);
         RED_ANT_MOVEMENT_SPEED = b.comment("Base movement speed.")    .defineInRange("movementSpeed", 0.30D, 0.0D, 10.0D);
         RED_ANT_ATTACK_DAMAGE  = b.comment("Base attack damage.")     .defineInRange("attackDamage",  3.0D, 0.0D, 1024.0D);
@@ -310,6 +320,9 @@ public final class AntarchyMobsConfig {
                     "Breeding foods tag: data/antarchy/tags/item/rainbow_ant_breeding_foods.json"
                 )
                 .define("requiresReagent", true);
+        RAINBOW_ANT_RIGHT_CLICK_DIMENSION = b
+                .comment("If false, right-clicking rainbow ants will never teleport players.")
+                .define("rightClickDimension", true);
         RAINBOW_ANT_HEALTH         = b.comment("Base max health.")        .defineInRange("health",        5.0D, 0.1D, 1024.0D);
         RAINBOW_ANT_MOVEMENT_SPEED = b.comment("Base movement speed.")    .defineInRange("movementSpeed", 0.28D, 0.0D, 10.0D);
         RAINBOW_ANT_ATTACK_DAMAGE  = b.comment("Base attack damage.")     .defineInRange("attackDamage",  1.0D, 0.0D, 1024.0D);
@@ -326,6 +339,9 @@ public final class AntarchyMobsConfig {
                     "Breeding foods tag: data/antarchy/tags/item/termite_breeding_foods.json"
                 )
                 .define("requiresReagent", false);
+        TERMITE_RIGHT_CLICK_DIMENSION = b
+                .comment("If false, right-clicking termites will never teleport players.")
+                .define("rightClickDimension", true);
         TERMITE_HEALTH         = b.comment("Base max health.")        .defineInRange("health",        5.0D, 0.1D, 1024.0D);
         TERMITE_MOVEMENT_SPEED = b.comment("Base movement speed.")    .defineInRange("movementSpeed", 0.28D, 0.0D, 10.0D);
         TERMITE_ATTACK_DAMAGE  = b.comment("Base attack damage.")     .defineInRange("attackDamage",  1.0D, 0.0D, 1024.0D);
@@ -625,24 +641,28 @@ public final class AntarchyMobsConfig {
     static boolean antsStealFromChests()                    { return ANTS_STEAL_FROM_CHESTS.get(); }
 
     static boolean brownAntRequiresReagent()                { return BROWN_ANT_REQUIRES_REAGENT.get(); }
+    static boolean brownAntRightClickDimension()            { return BROWN_ANT_RIGHT_CLICK_DIMENSION.get(); }
     static double  brownAntHealth()                         { return BROWN_ANT_HEALTH.get(); }
     static double  brownAntMovementSpeed()                  { return BROWN_ANT_MOVEMENT_SPEED.get(); }
     static double  brownAntAttackDamage()                   { return BROWN_ANT_ATTACK_DAMAGE.get(); }
     static String  brownAntDestinationDimension()           { return BROWN_ANT_DESTINATION_DIMENSION.get(); }
 
     static boolean redAntRequiresReagent()                  { return RED_ANT_REQUIRES_REAGENT.get(); }
+    static boolean redAntRightClickDimension()              { return RED_ANT_RIGHT_CLICK_DIMENSION.get(); }
     static double  redAntHealth()                           { return RED_ANT_HEALTH.get(); }
     static double  redAntMovementSpeed()                    { return RED_ANT_MOVEMENT_SPEED.get(); }
     static double  redAntAttackDamage()                     { return RED_ANT_ATTACK_DAMAGE.get(); }
     static String  redAntDestinationDimension()             { return RED_ANT_DESTINATION_DIMENSION.get(); }
 
     static boolean rainbowAntRequiresReagent()              { return RAINBOW_ANT_REQUIRES_REAGENT.get(); }
+    static boolean rainbowAntRightClickDimension()          { return RAINBOW_ANT_RIGHT_CLICK_DIMENSION.get(); }
     static double  rainbowAntHealth()                       { return RAINBOW_ANT_HEALTH.get(); }
     static double  rainbowAntMovementSpeed()                { return RAINBOW_ANT_MOVEMENT_SPEED.get(); }
     static double  rainbowAntAttackDamage()                 { return RAINBOW_ANT_ATTACK_DAMAGE.get(); }
     static String  rainbowAntNonInfinityFallbackDimension() { return RAINBOW_ANT_NON_INFINITY_FALLBACK_DIMENSION.get(); }
 
     static boolean termiteRequiresReagent()                 { return TERMITE_REQUIRES_REAGENT.get(); }
+    static boolean termiteRightClickDimension()             { return TERMITE_RIGHT_CLICK_DIMENSION.get(); }
     static double  termiteHealth()                          { return TERMITE_HEALTH.get(); }
     static double  termiteMovementSpeed()                   { return TERMITE_MOVEMENT_SPEED.get(); }
     static double  termiteAttackDamage()                    { return TERMITE_ATTACK_DAMAGE.get(); }

@@ -234,6 +234,7 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity {
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         this.assignRandomTextureVariant();
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.butterflyHealth());
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
 

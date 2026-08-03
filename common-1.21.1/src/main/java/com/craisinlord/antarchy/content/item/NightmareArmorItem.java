@@ -19,10 +19,11 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 public class NightmareArmorItem extends ArmorItem {
+    private static final int BASE_DURABILITY_MULTIPLIER = 33;
     private final Type armorType;
 
     public NightmareArmorItem(Holder<ArmorMaterial> material, Type type, Properties properties) {
-        super(material, type, properties);
+        super(material, type, properties.stacksTo(1).durability(resolveDurability(type)));
         this.armorType = type;
     }
 
@@ -118,5 +119,14 @@ public class NightmareArmorItem extends ArmorItem {
         tooltipComponents.add(Component.translatable("tooltip.antarchy.nightmare_armor_double_damage", pct).withStyle(ChatFormatting.DARK_PURPLE));
         tooltipComponents.add(Component.translatable("tooltip.antarchy.nightmare_armor_set_bonus").withStyle(ChatFormatting.DARK_RED));
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+    }
+
+    private static int resolveDurability(Type armorType) {
+        return switch (armorType) {
+            case HELMET -> Type.HELMET.getDurability(BASE_DURABILITY_MULTIPLIER);
+            case CHESTPLATE, BODY -> Type.CHESTPLATE.getDurability(BASE_DURABILITY_MULTIPLIER);
+            case LEGGINGS -> Type.LEGGINGS.getDurability(BASE_DURABILITY_MULTIPLIER);
+            case BOOTS -> Type.BOOTS.getDurability(BASE_DURABILITY_MULTIPLIER);
+        };
     }
 }

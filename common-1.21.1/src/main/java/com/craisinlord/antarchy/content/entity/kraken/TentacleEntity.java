@@ -31,6 +31,7 @@ import java.util.UUID;
 
 public class TentacleEntity extends Mob implements GeoEntity {
     private static final RawAnimation GRASP_ANIM = RawAnimation.begin().thenLoop("animation");
+    private static final float SPAWN_SOUND_VOLUME = 0.35F;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private int lifetimeTicks;
@@ -82,7 +83,7 @@ public class TentacleEntity extends Mob implements GeoEntity {
             tentacle.ownerId = owner.getUUID();
         }
         level.addFreshEntity(tentacle);
-        level.playSound(null, pos.x, pos.y, pos.z, AntarchySoundEvents.KRAKEN_ATTACK.get(), SoundSource.HOSTILE, 1.0F, 1.0F);
+        level.playSound(null, pos.x, pos.y, pos.z, AntarchySoundEvents.KRAKEN_ATTACK.get(), SoundSource.HOSTILE, SPAWN_SOUND_VOLUME, 1.0F);
     }
 
     @Override
