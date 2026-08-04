@@ -57,6 +57,8 @@ import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
+import com.craisinlord.antarchy.content.entity.nightmare.NightmareBiteEntity;
+import com.craisinlord.antarchy.content.entity.nightmare.NightmarePortalEntity;
 import com.craisinlord.antarchy.content.entity.CheepEntity;
 import com.craisinlord.antarchy.content.entity.CreepingHorrorEntity;
 import com.craisinlord.antarchy.content.entity.DorrieEntity;
@@ -265,6 +267,18 @@ public final class AntarchyForgeEntites {
                     .sized(3.2F, 3.8F)
                     .clientTrackingRange(12)
                     .build("nightmare"));
+    public static final RegistryObject<EntityType<NightmarePortalEntity>> NIGHTMARE_PORTAL = ENTITY_TYPES.register("nightmare_portal",
+            () -> EntityType.Builder.of(NightmarePortalEntity::new, MobCategory.MISC)
+                    .sized(2.5F, 3.0F)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .build("nightmare_portal"));
+    public static final RegistryObject<EntityType<NightmareBiteEntity>> NIGHTMARE_BITE = ENTITY_TYPES.register("nightmare_bite",
+            () -> EntityType.Builder.of(NightmareBiteEntity::new, MobCategory.MISC)
+                    .sized(2.5F, 2.0F)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .build("nightmare_bite"));
     public static final RegistryObject<EntityType<LucidEntity>> LUCID = ENTITY_TYPES.register("lucid",
             () -> EntityType.Builder.of(LucidEntity::new, MobCategory.MONSTER)
                     .sized(2.0F, 2.0F)

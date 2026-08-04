@@ -199,6 +199,13 @@ public class AntarchyForge {
                 new BloodCrystalKatanaTrailPayload(player.getId(), durationTicks)
         ));
         com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.setSyncDispatcher(AntarchyGravityNetworking::syncEntity);
+        com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.setSendToPlayer(
+                com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore::sendToPlayer);
+        com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.setSyncSelfAndTracking(player ->
+                com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore.sendToTrackingEntity(
+                        player,
+                        com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.payload(player)
+                ));
         com.craisinlord.antarchy.content.effect.AntarchySizeScaling.register(
                 com.craisinlord.antarchy.forge.registry.AntarchyForgeMisc.SHRINKING_EFFECT,
                 com.craisinlord.antarchy.forge.registry.AntarchyForgeMisc.GROWTH_EFFECT
@@ -291,8 +298,8 @@ public class AntarchyForge {
                 () -> AntarchyForgeBlocks.TRIFFID_GOO_BLOCK.get(),
                 () -> AntarchyForgeBlocks.PALE_NYXITE.get(),
                 () -> AntarchyForgeBlocks.NYXITE_SPIKE.get(),
-                () -> AntarchyForgeBlocks.CHITEN_BLOCK.get(),
-                () -> AntarchyForgeBlocks.CHITEN_SPIKE.get(),
+                () -> AntarchyForgeBlocks.CHITIN_BLOCK.get(),
+                () -> AntarchyForgeBlocks.CHITIN_SPIKE.get(),
                 () -> AntarchyForgeBlocks.POTENT_NYXITE.get(),
                 () -> AntarchyForgeBlocks.ANTIMETAL.get(),
                 () -> AntarchyForgeBlocks.POLISHED_ANTIMETAL.get(),
@@ -343,6 +350,8 @@ public class AntarchyForge {
         );
         AntarchyObjects.setOctopusBomb(AntarchyForgeEntites.OCTOPUS_BOMB);
         AntarchyObjects.setTentacle(AntarchyForgeEntites.TENTACLE);
+        AntarchyObjects.setNightmarePortal(AntarchyForgeEntites.NIGHTMARE_PORTAL);
+        AntarchyObjects.setNightmareBite(AntarchyForgeEntites.NIGHTMARE_BITE);
         AntarchyObjects.setKrakensGraspTrident(AntarchyForgeEntites.KRAKENS_GRASP_TRIDENT);
         AntarchyObjects.setLotus(() -> AntarchyForgeBlocks.LOTUS.get());
         AntarchyObjects.setKrakenTentacle(() -> AntarchyForgeItems.KRAKEN_TENTACLE.get());
@@ -350,6 +359,7 @@ public class AntarchyForge {
         AntarchyObjects.setOuranwoodDeer(AntarchyForgeEntites.OURANWOOD_DEER);
         AntarchyObjects.setGlimmer(AntarchyForgeEntites.GLIMMER);
         AntarchyObjects.setSpiritApple(() -> AntarchyForgeItems.SPIRIT_APPLE.get());
+        AntarchyObjects.setGlimmeringEffect(() -> AntarchyForgeMisc.mobEffectHolder(AntarchyForgeMisc.GLIMMERING));
         AntarchyObjects.setElka(AntarchyForgeEntites.ELKA);
         AntarchyObjects.setPeach(() -> AntarchyForgeItems.PEACH.get());
         AntarchyObjects.setCorn(() -> AntarchyForgeItems.CORN.get());
@@ -370,6 +380,8 @@ public class AntarchyForge {
         AntarchyObjects.setCritterCage(() -> AntarchyForgeItems.CRITTER_CAGE.get());
         AntarchyObjects.setCritterCageBlock(() -> AntarchyForgeBlocks.CRITTER_CAGE_BLOCK.get());
         AntarchyObjects.setCritterCageBlockEntity(() -> AntarchyForgeBlocks.CRITTER_CAGE_BLOCK_ENTITY.get());
+        AntarchyObjects.setLucidAnchor(() -> AntarchyForgeBlocks.LUCID_ANCHOR.get());
+        AntarchyObjects.setLucidAnchorBlockEntity(() -> AntarchyForgeBlocks.LUCID_ANCHOR_BLOCK_ENTITY.get());
         AntarchyObjects.setCritterCageProjectile(() -> AntarchyForgeEntites.CRITTER_CAGE_PROJECTILE.get());
     }
 

@@ -281,6 +281,8 @@ public final class AntarchyFabricContent {
 
         AntarchyObjects.setOctopusBomb(AntarchyFabricEntities.OCTOPUS_BOMB);
         AntarchyObjects.setTentacle(AntarchyFabricEntities.TENTACLE);
+        AntarchyObjects.setNightmarePortal(AntarchyFabricEntities.NIGHTMARE_PORTAL);
+        AntarchyObjects.setNightmareBite(AntarchyFabricEntities.NIGHTMARE_BITE);
         AntarchyObjects.setKrakensGraspTrident(AntarchyFabricEntities.KRAKENS_GRASP_TRIDENT);
         AntarchyObjects.setLotus(() -> AntarchyFabricBlocks.LOTUS.get());
         AntarchyObjects.setKrakenTentacle(() -> AntarchyFabricItems.KRAKEN_TENTACLE.get());
@@ -288,6 +290,7 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setOuranwoodDeer(AntarchyFabricEntities.OURANWOOD_DEER);
         AntarchyObjects.setGlimmer(AntarchyFabricEntities.GLIMMER);
         AntarchyObjects.setSpiritApple(() -> AntarchyFabricItems.SPIRIT_APPLE.get());
+        AntarchyObjects.setGlimmeringEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.GLIMMERING));
         AntarchyObjects.setElka(AntarchyFabricEntities.ELKA);
         AntarchyObjects.setPeach(() -> AntarchyFabricItems.PEACH.get());
         AntarchyObjects.setCorn(() -> AntarchyFabricItems.CORN.get());
@@ -309,6 +312,8 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setCritterCage(() -> AntarchyFabricItems.CRITTER_CAGE.get());
         AntarchyObjects.setCritterCageBlock(() -> AntarchyFabricBlocks.CRITTER_CAGE_BLOCK.get());
         AntarchyObjects.setCritterCageBlockEntity(() -> AntarchyFabricBlocks.CRITTER_CAGE_BLOCK_ENTITY.get());
+        AntarchyObjects.setLucidAnchor(() -> AntarchyFabricBlocks.LUCID_ANCHOR.get());
+        AntarchyObjects.setLucidAnchorBlockEntity(() -> AntarchyFabricBlocks.LUCID_ANCHOR_BLOCK_ENTITY.get());
         AntarchyObjects.setCritterCageProjectile(() -> AntarchyFabricEntities.CRITTER_CAGE_PROJECTILE.get());
         AntarchyObjects.bind(
                 AntarchyFabricEntities.EASTER_BUNNY,
@@ -363,8 +368,8 @@ public final class AntarchyFabricContent {
                 () -> AntarchyFabricBlocks.TRIFFID_GOO_BLOCK.get(),
                 () -> AntarchyFabricBlocks.PALE_NYXITE.get(),
                 () -> AntarchyFabricBlocks.NYXITE_SPIKE.get(),
-                () -> AntarchyFabricBlocks.CHITEN_BLOCK.get(),
-                () -> AntarchyFabricBlocks.CHITEN_SPIKE.get(),
+                () -> AntarchyFabricBlocks.CHITIN_BLOCK.get(),
+                () -> AntarchyFabricBlocks.CHITIN_SPIKE.get(),
                 () -> AntarchyFabricBlocks.POTENT_NYXITE.get(),
                 () -> AntarchyFabricBlocks.ANTIMETAL.get(),
                 () -> AntarchyFabricBlocks.POLISHED_ANTIMETAL.get(),
@@ -431,6 +436,12 @@ public final class AntarchyFabricContent {
                 com.craisinlord.antarchy.fabric.network.AntarchyFabricNetworking.sendToPlayer(player, payload, com.craisinlord.antarchy.content.network.HordeIntensityPayload.STREAM_CODEC, com.craisinlord.antarchy.content.network.HordeIntensityPayload.TYPE));
         BloodCrystalKatanaItem.setTrailCallback(AntarchyFabricNetworking::syncKatanaTrail);
         com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.setSyncDispatcher(AntarchyFabricNetworking::syncGravityEntity);
+        com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.setSendToPlayer((player, payload) ->
+                AntarchyFabricNetworking.sendToPlayer(player, payload,
+                        com.craisinlord.antarchy.content.network.TigerEyeCamouflageStatePayload.STREAM_CODEC,
+                        com.craisinlord.antarchy.content.network.TigerEyeCamouflageStatePayload.TYPE));
+        com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.setSyncSelfAndTracking(AntarchyFabricNetworking::syncTigerEyeCamouflage);
+        com.craisinlord.antarchy.fabric.TigerEyeFabricManager.register();
         AntarchyFabricEvents.register();
 
         if (isSupportedInfinityLoaded()) {

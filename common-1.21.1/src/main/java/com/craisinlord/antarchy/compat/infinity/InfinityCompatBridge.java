@@ -16,6 +16,10 @@ public interface InfinityCompatBridge {
         return null;
     }
 
+    default ResourceLocation getRandomDimensionId(RandomSource random, double easterEggChance) {
+        return getRandomDimensionId(random);
+    }
+
     default boolean requestWarp(ServerPlayer player, ResourceLocation dimensionId) {
         return false;
     }

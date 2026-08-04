@@ -7984,7 +7984,7 @@
 						},
 						"0.2917": {
 							"post": {
-								"vector": [0, "-1+math.cos(query.anim_time*90*32)*2", 6]
+								"vector": [0, "-1+math.cos(query.anim_time*32)*2", 6]
 							},
 							"lerp_mode": "catmullrom"
 						},
@@ -8014,7 +8014,7 @@
 						},
 						"0.7917": {
 							"post": {
-								"vector": [0, "-1+math.cos(query.anim_time*90*32)*2", 6]
+								"vector": [0, "-1+math.cos(query.anim_time*32)*2", 6]
 							},
 							"lerp_mode": "catmullrom"
 						},
@@ -8044,7 +8044,7 @@
 						},
 						"1.2917": {
 							"post": {
-								"vector": [0, "-1+math.cos(query.anim_time*90*32)*2", 6]
+								"vector": [0, "-1+math.cos(query.anim_time*32)*2", 6]
 							},
 							"lerp_mode": "catmullrom"
 						},
@@ -9176,13 +9176,13 @@
 						},
 						"1.6667": {
 							"post": {
-								"vector": ["35-math.cos(query.anim_time*90*32-50)*5", 0, 0]
+								"vector": ["35-math.cos(query.anim_time*32-50)*5", 0, 0]
 							},
 							"lerp_mode": "catmullrom"
 						},
 						"1.875": {
 							"post": {
-								"vector": ["35-math.cos(query.anim_time*90*32-50)*5", 0, 0]
+								"vector": ["35-math.cos(query.anim_time*32-50)*5", 0, 0]
 							},
 							"lerp_mode": "catmullrom"
 						},

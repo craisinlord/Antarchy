@@ -374,6 +374,7 @@ public final class AntarchyConfigModuleForge {
 
     private static void bakeMiscConfig() {
         AntarchySettings.setRainbowAntsLeadToInfinityDimensions(AntarchyMiscConfig.rainbowAntsLeadToInfinityDimensions());
+        AntarchySettings.setRainbowAntInfinityEasterEggChance(AntarchyMiscConfig.rainbowAntInfinityEasterEggChance());
         AntarchySettings.setDisableInfinityBookPortalCreation(AntarchyMiscConfig.disableInfinityBookPortalCreation());
         AntarchySettings.setHushweedSporeLifetimeSeconds(AntarchyMiscConfig.hushweedSporeLifetimeSeconds());
         AntarchySettings.setDiamondMinecartEnabled(AntarchyMiscConfig.diamondMinecartEnabled());

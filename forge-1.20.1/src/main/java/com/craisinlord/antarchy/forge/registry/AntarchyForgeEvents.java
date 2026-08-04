@@ -129,6 +129,12 @@ public final class AntarchyForgeEvents {
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleDreadBedSleep);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleStartTracking);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleDreamSandLogout);
+        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleTigerEyeLogin);
+        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleTigerEyeLogout);
+        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleTigerEyeDeath);
+        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleTigerEyeRespawn);
+        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleTigerEyeDimensionChange);
+        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickTigerEyeCamouflage);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::registerReloadListeners);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::onVillagerTrades);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::onWandererTrades);
@@ -269,6 +275,50 @@ public final class AntarchyForgeEvents {
         }
 
         AntarchyGravityNetworking.syncEntity(event.getTarget());
+        if (event.getTarget() instanceof ServerPlayer trackedPlayer && event.getEntity() instanceof ServerPlayer trackingPlayer) {
+            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.syncTo(trackingPlayer, trackedPlayer);
+        }
+    }
+
+    static void handleTigerEyeLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.sync(player);
+        }
+    }
+
+    static void handleTigerEyeLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController.deactivate(player, false);
+        }
+    }
+
+    static void handleTigerEyeDeath(LivingDeathEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController.deactivate(player, false);
+            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.sync(player);
+        }
+    }
+
+    static void handleTigerEyeRespawn(PlayerEvent.PlayerRespawnEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController.deactivate(player, false);
+            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.sync(player);
+        }
+    }
+
+    static void handleTigerEyeDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController.deactivate(player, false);
+            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.sync(player);
+        }
+    }
+
+    static void tickTigerEyeCamouflage(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        if (event.player instanceof ServerPlayer player
+                && com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController.validateOrDeactivate(player)) {
+            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.sync(player);
+        }
     }
 
     private static final String DREAD_BED_BUG_NEXT_SPAWN_KEY = Antarchy.MODID + ":dread_bed_bug_next_spawn";
@@ -423,8 +473,7 @@ public final class AntarchyForgeEvents {
             for (int y = minY; y <= maxY; y++) {
                 for (int z = minZ; z <= maxZ; z++) {
                     net.minecraft.core.BlockPos crystalPos = new net.minecraft.core.BlockPos(x, y + 1, z);
-                    if (entity.level().getBlockState(crystalPos).is(AntarchyForgeBlocks.ANTIMETAL.get())
-                            || entity.level().getBlockState(crystalPos).is(AntarchyForgeBlocks.POLISHED_ANTIMETAL.get())) {
+                    if (entity.level().getBlockState(crystalPos).is(AntarchyTags.Blocks.ANTIMETAL_INVERSION_BLOCKS)) {
                         return true;
                     }
                 }

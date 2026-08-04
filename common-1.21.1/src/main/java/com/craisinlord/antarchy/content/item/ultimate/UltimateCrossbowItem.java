@@ -125,6 +125,9 @@ public class UltimateCrossbowItem extends CrossbowItem {
         super.shootProjectile(shooter, projectile, projectileIndex, velocity, inaccuracy, angle, target);
         if (projectile instanceof AbstractArrow arrow) {
             scaleArrowDamage(arrow);
+            if (projectileIndex > 0) {
+                arrow.pickup = AbstractArrow.Pickup.DISALLOWED;
+            }
             UltimateGearHelper.tagUltimateCrossbowProjectile(arrow);
         }
     }

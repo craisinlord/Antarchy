@@ -10,6 +10,7 @@ import com.craisinlord.antarchy.content.block.entity.DreamCampfireBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.HushweedBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.PotentNyxiteBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.SeashellBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.UpperBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.WaspNestBlockEntity;
 import com.craisinlord.antarchy.content.fluid.BileLiquidBlock;
 import com.craisinlord.antarchy.content.fluid.LumenLiquidBlock;
@@ -95,6 +96,8 @@ public final class AntarchyForgeBlocks {
             () -> new FlowerPotBlock(LOTUS.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION)));
     public static final RegistryObject<SeashellBlock> SEASHELL = BLOCKS.register("seashell",
             () -> new SeashellBlock(BlockBehaviour.Properties.copy(Blocks.TURTLE_EGG).noOcclusion()));
+    public static final RegistryObject<LucidAnchorBlock> LUCID_ANCHOR = BLOCKS.register("lucid_anchor",
+            () -> new LucidAnchorBlock(BlockBehaviour.Properties.copy(Blocks.BEACON).strength(3.0F)));
     public static final RegistryObject<CritterCageBlock> CRITTER_CAGE_BLOCK = BLOCKS.register("critter_cage_block",
             () -> new CritterCageBlock(BlockBehaviour.Properties.of().strength(5.0F, 6.0F).sound(net.minecraft.world.level.block.SoundType.METAL).noOcclusion()));
     public static final RegistryObject<StandingSignBlock> OURANWOOD_SIGN = BLOCKS.register("ouranwood_sign",
@@ -189,6 +192,8 @@ public final class AntarchyForgeBlocks {
             () -> new SlabBlock(nyxiteProperties()));
     public static final RegistryObject<WallBlock> NYXITE_BRICK_WALL = BLOCKS.register("nyxite_brick_wall",
             () -> new WallBlock(nyxiteProperties()));
+    public static final RegistryObject<RotatedPillarBlock> NYXITE_PILLAR = BLOCKS.register("nyxite_pillar",
+            () -> new RotatedPillarBlock(nyxiteProperties()));
     public static final RegistryObject<Block> SHELLSTONE = BLOCKS.register("shellstone",
             () -> new Block(AntarchyObjects.shellstoneProperties()));
     public static final RegistryObject<Block> POLISHED_SHELLSTONE = BLOCKS.register("polished_shellstone",
@@ -225,6 +230,8 @@ public final class AntarchyForgeBlocks {
             () -> new SlabBlock(AntarchyObjects.shellstoneProperties()));
     public static final RegistryObject<WallBlock> SHELLSTONE_BRICK_WALL = BLOCKS.register("shellstone_brick_wall",
             () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
+    public static final RegistryObject<RotatedPillarBlock> SHELLSTONE_PILLAR = BLOCKS.register("shellstone_pillar",
+            () -> new RotatedPillarBlock(AntarchyObjects.shellstoneProperties()));
     public static final RegistryObject<com.craisinlord.antarchy.content.block.TriffidGooBlock> TRIFFID_GOO_BLOCK = BLOCKS.register("triffid_goo_block",
             () -> new com.craisinlord.antarchy.content.block.TriffidGooBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK).noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
     public static final RegistryObject<com.craisinlord.antarchy.content.block.CloudBlock> CLOUD_BLOCK = BLOCKS.register("cloud_block",
@@ -242,8 +249,8 @@ public final class AntarchyForgeBlocks {
             () -> new Block(nyxiteProperties()));
     public static final RegistryObject<NyxiteSpikeBlock> NYXITE_SPIKE = BLOCKS.register("nyxite_spike",
             () -> new NyxiteSpikeBlock(BlockBehaviour.Properties.copy(Blocks.POINTED_DRIPSTONE)));
-    public static final RegistryObject<ChitenSpikeBlock> CHITEN_SPIKE = BLOCKS.register("chiten_spike",
-            () -> new ChitenSpikeBlock(BlockBehaviour.Properties.copy(Blocks.POINTED_DRIPSTONE)));
+    public static final RegistryObject<ChitinSpikeBlock> CHITIN_SPIKE = BLOCKS.register("chitin_spike",
+            () -> new ChitinSpikeBlock(BlockBehaviour.Properties.copy(Blocks.POINTED_DRIPSTONE)));
     public static final RegistryObject<PotentNyxiteBlock> POTENT_NYXITE = BLOCKS.register("potent_nyxite",
             () -> new PotentNyxiteBlock(
                     AntarchyForgeItems::potentNyxiteBlockEntityType,
@@ -291,7 +298,9 @@ public final class AntarchyForgeBlocks {
             () -> createOre(Blocks.DEEPSLATE_EMERALD_ORE, 4, 8, MapColor.COLOR_YELLOW));
     public static final RegistryObject<Block> BROODSTONE_TITANIUM_ORE = BLOCKS.register("broodstone_titanium_ore",
             () -> createOre(Blocks.DEEPSLATE_DIAMOND_ORE, 4, 8, MapColor.COLOR_LIGHT_BLUE));
-    public static final RegistryObject<RotatedPillarBlock> CHITEN_BLOCK = BLOCKS.register("chiten_block",
+    public static final RegistryObject<RotatedPillarBlock> BROODSTONE_PILLAR = BLOCKS.register("broodstone_pillar",
+            () -> new RotatedPillarBlock(broodstoneProperties()));
+    public static final RegistryObject<RotatedPillarBlock> CHITIN_BLOCK = BLOCKS.register("chitin_block",
             () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.BONE_BLOCK).requiresCorrectToolForDrops()));
     public static final RegistryObject<UmbralMossBlock> UMBRAL_MOSS_BLOCK = BLOCKS.register("umbral_moss_block",
             () -> new UmbralMossBlock(BlockBehaviour.Properties.copy(Blocks.MOSS_BLOCK)));
@@ -406,6 +415,8 @@ public final class AntarchyForgeBlocks {
             () -> new BluestoneComparatorBlock(BlockBehaviour.Properties.copy(Blocks.COMPARATOR).mapColor(MapColor.COLOR_BLUE).noCollission(), AntarchyForgeBlocks::bluestoneComparatorBlockEntityType));
     public static final RegistryObject<BluestoneTorchBlock> BLUESTONE_TORCH = BLOCKS.register("bluestone_torch",
             () -> new BluestoneTorchBlock(BlockBehaviour.Properties.copy(Blocks.REDSTONE_TORCH).mapColor(MapColor.COLOR_BLUE).lightLevel(state -> state.getValue(BluestoneTorchBlock.LIT) ? 7 : 0).noCollission().instabreak()));
+    public static final RegistryObject<BluestoneLampBlock> BLUESTONE_LAMP = BLOCKS.register("bluestone_lamp",
+            () -> new BluestoneLampBlock(BlockBehaviour.Properties.copy(Blocks.REDSTONE_LAMP).mapColor(MapColor.COLOR_BLUE)));
     public static final RegistryObject<Block> URANIUM_BLOCK = BLOCKS.register("uranium_block",
             () -> createStorageBlock(Blocks.EMERALD_BLOCK, MapColor.COLOR_YELLOW));
     public static final RegistryObject<Block> TITANIUM_BLOCK = BLOCKS.register("titanium_block",
@@ -450,10 +461,20 @@ public final class AntarchyForgeBlocks {
             () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.BASALT)));
     public static final RegistryObject<RotatedPillarBlock> POLISHED_ANTIMETAL = BLOCKS.register("polished_antimetal",
             () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.POLISHED_BASALT)));
+    public static final RegistryObject<StairBlock> ANTIMETAL_STAIRS = BLOCKS.register("antimetal_stairs",
+            () -> new StairBlock(ANTIMETAL.get().defaultBlockState(), BlockBehaviour.Properties.copy(Blocks.BASALT)));
+    public static final RegistryObject<SlabBlock> ANTIMETAL_SLAB = BLOCKS.register("antimetal_slab",
+            () -> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.BASALT)));
+    public static final RegistryObject<StairBlock> POLISHED_ANTIMETAL_STAIRS = BLOCKS.register("polished_antimetal_stairs",
+            () -> new StairBlock(POLISHED_ANTIMETAL.get().defaultBlockState(), BlockBehaviour.Properties.copy(Blocks.POLISHED_BASALT)));
+    public static final RegistryObject<SlabBlock> POLISHED_ANTIMETAL_SLAB = BLOCKS.register("polished_antimetal_slab",
+            () -> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.POLISHED_BASALT)));
     public static final RegistryObject<com.craisinlord.antarchy.content.block.AntimetalScaffoldingBlock> ANTIMETAL_SCAFFOLDING = BLOCKS.register("antimetal_scaffolding",
             () -> new com.craisinlord.antarchy.content.block.AntimetalScaffoldingBlock(BlockBehaviour.Properties.copy(Blocks.SCAFFOLDING)));
     public static final RegistryObject<com.craisinlord.antarchy.content.block.AntimetalRailBlock> ANTIMETAL_RAIL = BLOCKS.register("antimetal_rail",
             () -> new com.craisinlord.antarchy.content.block.AntimetalRailBlock(BlockBehaviour.Properties.copy(Blocks.RAIL)));
+    public static final RegistryObject<UpperBlock> UPPER = BLOCKS.register("upper",
+            () -> new UpperBlock(AntarchyForgeBlocks::upperBlockEntityType, BlockBehaviour.Properties.copy(Blocks.HOPPER)));
     public static final RegistryObject<com.craisinlord.antarchy.content.block.AntimetalPoweredRailBlock> ANTIMETAL_POWERED_RAIL = BLOCKS.register("antimetal_powered_rail",
             () -> new com.craisinlord.antarchy.content.block.AntimetalPoweredRailBlock(BlockBehaviour.Properties.copy(Blocks.POWERED_RAIL)));
     public static final RegistryObject<com.craisinlord.antarchy.content.block.AntimetalDetectorRailBlock> ANTIMETAL_DETECTOR_RAIL = BLOCKS.register("antimetal_detector_rail",
@@ -499,6 +520,12 @@ public final class AntarchyForgeBlocks {
             () -> new AmethystClusterBlock(7, 3, BlockBehaviour.Properties.copy(Blocks.AMETHYST_CLUSTER)));
     public static final RegistryObject<Block> DREAM_SAND = BLOCKS.register("dream_sand",
             () -> new DreamSandBlock(BlockBehaviour.Properties.copy(Blocks.SAND)));
+    public static final RegistryObject<AntigravelBlock> ANTIGRAVEL = BLOCKS.register("antigravel",
+            () -> new AntigravelBlock(BlockBehaviour.Properties.copy(Blocks.GRAVEL)));
+    public static final RegistryObject<Block> LOAM = BLOCKS.register("loam",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD)));
+    public static final RegistryObject<MucusBlock> MUCUS = BLOCKS.register("mucus",
+            () -> new MucusBlock(BlockBehaviour.Properties.copy(Blocks.GLOW_LICHEN).friction(0.98F).lightLevel(state -> 0).sound(net.minecraft.world.level.block.SoundType.SLIME_BLOCK)));
     public static final RegistryObject<Block> DREAM_SANDSTONE = BLOCKS.register("dream_sandstone",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.SANDSTONE)));
     public static final RegistryObject<Block> CHISELED_DREAM_SANDSTONE = BLOCKS.register("chiseled_dream_sandstone",
@@ -570,6 +597,11 @@ public final class AntarchyForgeBlocks {
                     SeashellBlockEntity::new,
                     SEASHELL.get()
             ).build(null));
+    public static final RegistryObject<BlockEntityType<com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity>> LUCID_ANCHOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("lucid_anchor",
+            () -> BlockEntityType.Builder.of(
+                    com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity::new,
+                    LUCID_ANCHOR.get()
+            ).build(null));
     public static final RegistryObject<BlockEntityType<CritterCageBlockEntity>> CRITTER_CAGE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("critter_cage_block",
             () -> BlockEntityType.Builder.of(
                     CritterCageBlockEntity::new,
@@ -579,6 +611,11 @@ public final class AntarchyForgeBlocks {
             () -> BlockEntityType.Builder.of(
                     (pos, state) -> new com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity(pos, state, AntarchyForgeBlocks::bluestoneComparatorBlockEntityType),
                     BLUESTONE_COMPARATOR.get()
+            ).build(null));
+    public static final RegistryObject<BlockEntityType<UpperBlockEntity>> UPPER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("upper",
+            () -> BlockEntityType.Builder.of(
+                    (pos, state) -> new UpperBlockEntity(pos, state, AntarchyForgeBlocks::upperBlockEntityType),
+                    UPPER.get()
             ).build(null));
 
     private AntarchyForgeBlocks() {}
@@ -641,6 +678,10 @@ public final class AntarchyForgeBlocks {
 
     private static BlockEntityType<com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity> bluestoneComparatorBlockEntityType() {
         return BLUESTONE_COMPARATOR_BLOCK_ENTITY.get();
+    }
+
+    private static BlockEntityType<UpperBlockEntity> upperBlockEntityType() {
+        return UPPER_BLOCK_ENTITY.get();
     }
 
 

@@ -9,6 +9,7 @@ public final class AntarchySettings {
     private static boolean easterBunnyEnabled = true;
     private static int easterBunnyNaturalSpawnChancePercent = 1;
     private static boolean rainbowAntsLeadToInfinityDimensions = true;
+    private static double rainbowAntInfinityEasterEggChance = 0.01D;
     private static boolean brownAntRequiresReagent = false;
     private static boolean brownAntRightClickDimension = true;
     private static boolean redAntRequiresReagent = false;
@@ -316,7 +317,7 @@ public final class AntarchySettings {
     private static double krakenArmor = 8.0D;
     private static double krakenProjectileDamageTakenMultiplier = 0.5D;
     private static double krakenBossBarRange = 40.0D;
-    private static float krakenLightningDamagePhaseOne = 8.0F;
+    private static float krakenLightningDamagePhaseOne = 6.0F;
     private static double lucidHealth = 30.0D;
     private static double lucidAttackDamage = 4.0D;
     private static double lucidMovementSpeed = 0.22D;
@@ -463,6 +464,10 @@ public final class AntarchySettings {
 
     public static boolean rainbowAntsLeadToInfinityDimensions() {
         return rainbowAntsLeadToInfinityDimensions;
+    }
+
+    public static double rainbowAntInfinityEasterEggChance() {
+        return rainbowAntInfinityEasterEggChance;
     }
 
     public static boolean brownAntRightClickDimension() {
@@ -1002,6 +1007,10 @@ public final class AntarchySettings {
 
     public static void setRainbowAntsLeadToInfinityDimensions(boolean value) {
         rainbowAntsLeadToInfinityDimensions = value;
+    }
+
+    public static void setRainbowAntInfinityEasterEggChance(double value) {
+        rainbowAntInfinityEasterEggChance = value;
     }
 
     public static void setBrownAntRightClickDimension(boolean value) {

@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.forge.client;
 import net.minecraftforge.fml.common.Mod;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.client.GlimmeringHudRenderer;
 import com.craisinlord.antarchy.content.client.GoopedHudRenderer;
 import com.craisinlord.antarchy.content.client.HordeHudRenderer;
 import com.craisinlord.antarchy.content.client.hud.BloodglassHudRenderer;
@@ -86,6 +87,7 @@ public final class AntarchyForgeClient {
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(AntarchyForgeBlocks.DREAM_CAMPFIRE_BLOCK_ENTITY.get(), CampfireRenderer::new);
         event.registerBlockEntityRenderer(AntarchyForgeBlocks.SEASHELL_BLOCK_ENTITY.get(), SeashellRenderer::new);
+        event.registerBlockEntityRenderer(AntarchyForgeBlocks.LUCID_ANCHOR_BLOCK_ENTITY.get(), LucidAnchorBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(AntarchyForgeBlocks.CRITTER_CAGE_BLOCK_ENTITY.get(), CritterCageRenderer::new);
         event.registerEntityRenderer(AntarchyForgeEntites.EASTER_BUNNY.get(), context -> withParalyzedGeoLayer(new EasterBunnyRenderer(context)));
         event.registerEntityRenderer(AntarchyForgeEntites.FLYING_SQUIRREL.get(), context -> withParalyzedGeoLayer(new FlyingSquirrelRenderer(context)));
@@ -117,6 +119,8 @@ public final class AntarchyForgeClient {
         event.registerEntityRenderer(AntarchyForgeEntites.MISSILE_SQUID.get(), context -> withParalyzedGeoLayer(new MissileSquidRenderer(context)));
         event.registerEntityRenderer(AntarchyForgeEntites.OCTOPUS_BOMB.get(), context -> withParalyzedGeoLayer(new OctopusBombRenderer(context)));
         event.registerEntityRenderer(AntarchyForgeEntites.NIGHTMARE.get(), context -> withParalyzedGeoLayer(new NightmareRenderer(context)));
+        event.registerEntityRenderer(AntarchyForgeEntites.NIGHTMARE_PORTAL.get(), NightmarePortalRenderer::new);
+        event.registerEntityRenderer(AntarchyForgeEntites.NIGHTMARE_BITE.get(), NightmareBiteRenderer::new);
         event.registerEntityRenderer(AntarchyForgeEntites.LUCID.get(), context -> withParalyzedGeoLayer(new LucidRenderer(context)));
         event.registerEntityRenderer(AntarchyForgeEntites.BED_BUG.get(), context -> withParalyzedGeoLayer(new BedBugRenderer(context)));
         event.registerEntityRenderer(AntarchyForgeEntites.WASP.get(), context -> withParalyzedGeoLayer(new WaspRenderer(context)));
@@ -159,7 +163,9 @@ public final class AntarchyForgeClient {
                     (LivingEntityRenderer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>>) event.getSkin(skin);
             if (renderer != null) {
                 renderer.addLayer(new ParalyzedStonePlayerLayer(renderer));
+                renderer.addLayer(new com.craisinlord.antarchy.content.client.renderer.TigerEyeCamouflagePlayerLayer(renderer));
                 renderer.addLayer(new GoopedLivingLayer(renderer));
+                renderer.addLayer(new GlimmeringLivingLayer(renderer));
                 renderer.addLayer(new BrutalflyElytraLayer(renderer));
                 renderer.addLayer(new FallenKingCrownLayer(renderer));
             }
@@ -198,6 +204,7 @@ public final class AntarchyForgeClient {
         LivingEntityRenderer livingRenderer = (LivingEntityRenderer) renderer;
         livingRenderer.addLayer(new ParalyzedStoneLivingLayer<>(livingRenderer));
         livingRenderer.addLayer(new GoopedLivingLayer<>(livingRenderer));
+        livingRenderer.addLayer(new GlimmeringLivingLayer<>(livingRenderer));
     }
 
     private static <T extends LivingEntity & GeoAnimatable> GeoEntityRenderer<T> withParalyzedGeoLayer(GeoEntityRenderer<T> renderer) {
@@ -302,6 +309,9 @@ public final class AntarchyForgeClient {
         event.registerAboveAll("gooped_tint",
                 (gui, guiGraphics, partialTick, width, height) -> GoopedHudRenderer.render(guiGraphics)
         );
+        event.registerAboveAll("glimmering_tint",
+                (gui, guiGraphics, partialTick, width, height) -> GlimmeringHudRenderer.render(guiGraphics)
+        );
         event.registerAboveAll("brutalfly_elytra",
                 (gui, guiGraphics, partialTick, width, height) -> BrutalflyElytraHudRenderer.render(guiGraphics)
         );
@@ -328,6 +338,8 @@ public final class AntarchyForgeClient {
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             net.minecraft.client.gui.screens.MenuScreens.register(AntarchyForgeMisc.DORRIE_INVENTORY_MENU.get(), com.craisinlord.antarchy.content.client.screen.DorrieInventoryScreen::new);
+            com.craisinlord.antarchy.content.client.TigerEyeClientHooks.setCamouflageKeyTextSupplier(
+                    () -> AntarchyKeyBindings.TIGERS_EYE_CAMOUFLAGE.getTranslatedKeyMessage());
 
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.ANTIMETAL_RAIL.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.ANTIMETAL_POWERED_RAIL.get(), RenderType.cutout());
@@ -363,7 +375,7 @@ public final class AntarchyForgeClient {
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.ANTIMETAL_SCAFFOLDING.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.UMBRAL_MOSS_CARPET.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.NYXITE_SPIKE.get(), RenderType.cutout());
-            ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.CHITEN_SPIKE.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.CHITIN_SPIKE.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.STAR_CORAL.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.STAR_CORAL_FAN.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.STAR_CORAL_WALL_FAN.get(), RenderType.cutout());
