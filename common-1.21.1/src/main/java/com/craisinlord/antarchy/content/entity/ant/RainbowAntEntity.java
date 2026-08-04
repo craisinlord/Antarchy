@@ -291,7 +291,7 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
     }
 
     private String createRandomDimensionId() {
-        ResourceLocation dimensionId = InfinityCompat.get().getRandomDimensionId(this.random);
+        ResourceLocation dimensionId = InfinityCompat.get().getRandomDimensionId(this.random, AntarchySettings.rainbowAntInfinityEasterEggChance());
         if (dimensionId == null) {
             return "";
         }

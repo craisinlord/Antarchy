@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.fabric.mixin;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
@@ -50,8 +51,7 @@ public abstract class AntimetalInversionMixin {
             for (int y = minY; y <= maxY; y++) {
                 for (int z = minZ; z <= maxZ; z++) {
                     BlockPos above = new BlockPos(x, y + 1, z);
-                    if (entity.level().getBlockState(above).is(AntarchyObjects.ANTIMETAL.get())
-                            || entity.level().getBlockState(above).is(AntarchyObjects.POLISHED_ANTIMETAL.get())) {
+                    if (entity.level().getBlockState(above).is(AntarchyTags.Blocks.ANTIMETAL_INVERSION_BLOCKS)) {
                         return true;
                     }
                 }

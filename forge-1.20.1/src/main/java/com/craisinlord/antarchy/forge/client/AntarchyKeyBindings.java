@@ -45,6 +45,13 @@ public final class AntarchyKeyBindings {
             InputConstants.KEY_R,
             CATEGORY
     );
+    public static final KeyMapping TIGERS_EYE_CAMOUFLAGE = new KeyMapping(
+            "key.antarchy.tigers_eye_camouflage",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            InputConstants.UNKNOWN.getValue(),
+            CATEGORY
+    );
 
     private AntarchyKeyBindings() {}
 
@@ -54,9 +61,14 @@ public final class AntarchyKeyBindings {
         event.register(DORRIE_CHARGE_JUMP);
         event.register(HERCULES_BEETLE_CHARGE);
         event.register(HERCULES_BEETLE_FLIGHT_TOGGLE);
+        event.register(TIGERS_EYE_CAMOUFLAGE);
     }
 
     public static boolean isHerculesBeetleFlightTogglePressed() {
         return HERCULES_BEETLE_FLIGHT_TOGGLE.isDown();
+    }
+
+    public static boolean consumeTigerEyeCamouflagePressed() {
+        return TIGERS_EYE_CAMOUFLAGE.consumeClick();
     }
 }

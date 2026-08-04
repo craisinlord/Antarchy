@@ -56,8 +56,8 @@ import com.craisinlord.antarchy.content.worldgen.elythia.PeachTreeConfiguration;
 import com.craisinlord.antarchy.content.worldgen.elythia.PeachTreeFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.TriffidPatchFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynEggPatchFeature;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.ChitenSpikeConfiguration;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.ChitenSpikeFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.ChitinSpikeConfiguration;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.ChitinSpikeFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.BedBugNestFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.BedBugSurfaceClusterFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.CloudSeaCalciteFeature;
@@ -268,6 +268,11 @@ public final class AntarchyFabricMisc {
             () -> Ingredient.of(Items.GOLD_INGOT), 0.0F, 0.0F, "fallen_king_crown");
 
 
+    public static final ArmorMaterial TIGERS_EYE_ARMOR_MATERIAL = armorMaterial(
+            18, createDiamondArmorDefense(), 18, SoundEvents.ARMOR_EQUIP_GOLD,
+            () -> Ingredient.of(AntarchyFabricItems.TIGERS_EYE.get()), 2.0F, 0.0F, "tigers_eye");
+
+
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> DREAM_FIRE_FLAME = PARTICLE_TYPES.register("dream_fire_flame",
             () -> simpleParticleType());
 
@@ -378,6 +383,7 @@ public final class AntarchyFabricMisc {
 
 
     public static final DeferredHolder<MobEffect, GrowthMobEffect> GROWTH_EFFECT = MOB_EFFECTS.register("growth", GrowthMobEffect::new);
+    public static final DeferredHolder<MobEffect, com.craisinlord.antarchy.content.effect.GlimmeringMobEffect> GLIMMERING = MOB_EFFECTS.register("glimmering", com.craisinlord.antarchy.content.effect.GlimmeringMobEffect::new);
 
 
     public static final DeferredHolder<Potion, Potion> PARALYSIS = POTIONS.register("paralysis",
@@ -668,8 +674,8 @@ public final class AntarchyFabricMisc {
             () -> new NyxiteSpikeFeature(NyxiteSpikeConfiguration.CODEC));
 
 
-    public static final DeferredHolder<Feature<?>, ChitenSpikeFeature> CAVARYN_CHITEN_SPIKES = FEATURES.register("cavaryn_chiten_spikes",
-            () -> new ChitenSpikeFeature(ChitenSpikeConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, ChitinSpikeFeature> CAVARYN_CHITIN_SPIKES = FEATURES.register("cavaryn_chitin_spikes",
+            () -> new ChitinSpikeFeature(ChitinSpikeConfiguration.CODEC));
 
 
     public static final DeferredHolder<Feature<?>, CavarynBileVeinFeature> CAVARYN_BILE_VEINS = FEATURES.register("cavaryn_bile_veins",
@@ -816,6 +822,17 @@ public final class AntarchyFabricMisc {
         defense.put(ArmorItem.Type.LEGGINGS, 0);
         defense.put(ArmorItem.Type.CHESTPLATE, 0);
         defense.put(ArmorItem.Type.HELMET, 0);
+        return defense;
+    }
+
+
+
+    private static java.util.EnumMap<ArmorItem.Type, Integer> createDiamondArmorDefense() {
+        java.util.EnumMap<ArmorItem.Type, Integer> defense = new java.util.EnumMap<>(ArmorItem.Type.class);
+        defense.put(ArmorItem.Type.BOOTS, 3);
+        defense.put(ArmorItem.Type.LEGGINGS, 6);
+        defense.put(ArmorItem.Type.CHESTPLATE, 8);
+        defense.put(ArmorItem.Type.HELMET, 3);
         return defense;
     }
 

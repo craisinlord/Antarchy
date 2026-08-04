@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.content.client.BloodglassClientState;
 import com.craisinlord.antarchy.content.client.BrutalflyElytraClientState;
 import com.craisinlord.antarchy.content.client.HordeClientState;
 import com.craisinlord.antarchy.content.client.ScorpionWhipTetherClientState;
+import com.craisinlord.antarchy.content.client.TigerEyeCamouflageClientState;
 import com.craisinlord.antarchy.content.client.ThoraxisWeatherClientState;
 import com.craisinlord.antarchy.content.entity.multipart.MultipartFramework;
 import com.craisinlord.antarchy.content.entity.multipart.network.MultipartAttackPayload;
@@ -84,5 +85,7 @@ public final class AntarchyFabricClientNetworking {
         registerReceiver(ImpactShakePayload.TYPE, ImpactShakePayload.STREAM_CODEC, AntarchyFabricNetworking::triggerImpactShake);
         registerReceiver(HordeIntensityPayload.TYPE, HordeIntensityPayload.STREAM_CODEC, payload ->
                 HordeClientState.update(payload.intensity()));
+        registerReceiver(TigerEyeCamouflageStatePayload.TYPE, TigerEyeCamouflageStatePayload.STREAM_CODEC, payload ->
+                TigerEyeCamouflageClientState.update(payload.entityId(), payload.active(), payload.blockStateId()));
     }
 }

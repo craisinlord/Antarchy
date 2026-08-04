@@ -8,6 +8,7 @@ import com.craisinlord.antarchy.forge.network.DorrieJumpNetworking;
 import com.craisinlord.antarchy.forge.network.HerculesBeetleNetworking;
 import com.craisinlord.antarchy.forge.network.JumpyBootsNetworking;
 import com.craisinlord.antarchy.forge.network.MultipartNetworking;
+import com.craisinlord.antarchy.forge.network.TigerEyeNetworking;
 
 public class AntarchyForgePayloadHandlers {
     private AntarchyForgePayloadHandlers() {}
@@ -18,6 +19,7 @@ public class AntarchyForgePayloadHandlers {
         JumpyBootsNetworking.register();
         DorrieJumpNetworking.register();
         HerculesBeetleNetworking.register();
+        TigerEyeNetworking.register();
         AntarchyForgeNetworkCore.registerS2C(
                 com.craisinlord.antarchy.content.network.BloodglassStatePayload.class,
                 com.craisinlord.antarchy.content.network.BloodglassStatePayload.STREAM_CODEC,

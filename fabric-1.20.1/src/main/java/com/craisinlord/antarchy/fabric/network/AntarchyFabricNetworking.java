@@ -17,6 +17,9 @@ import com.craisinlord.antarchy.content.item.JumpyBootsHelper;
 import com.craisinlord.antarchy.fabric.util.JumpyBootsFabricHelper;
 import com.craisinlord.antarchy.content.item.JumpyBootsItem;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
+import com.craisinlord.antarchy.content.item.TigerEyeArmorUtil;
+import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController;
+import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync;
 import com.craisinlord.antarchy.content.network.*;
 import com.craisinlord.antarchy.content.entity.DorrieEntity;
 import com.craisinlord.antarchy.content.network.DorrieJumpInputPayload;
@@ -104,6 +107,34 @@ public final class AntarchyFabricNetworking {
         registerC2SReceiver(HerculesBeetleMountedChargePayload.TYPE, HerculesBeetleMountedChargePayload.STREAM_CODEC, AntarchyFabricNetworking::handleHerculesBeetleMountedCharge);
         registerC2SReceiver(MultipartAttackPayload.TYPE, MultipartAttackPayload.STREAM_CODEC, AntarchyFabricNetworking::handleMultipartAttack);
         registerC2SReceiver(MultipartInteractPayload.TYPE, MultipartInteractPayload.STREAM_CODEC, AntarchyFabricNetworking::handleMultipartInteract);
+        registerC2SReceiver(ToggleTigerEyeCamouflagePayload.TYPE, ToggleTigerEyeCamouflagePayload.STREAM_CODEC, (player, payload) -> handleTigerEyeCamouflageToggle(player));
+    }
+
+    public static void syncTigerEyeCamouflage(ServerPlayer player) {
+        TigerEyeCamouflageStatePayload payload = TigerEyeCamouflageSync.payload(player);
+        for (ServerPlayer tracking : PlayerLookup.tracking(player)) {
+            sendToPlayer(tracking, payload, TigerEyeCamouflageStatePayload.STREAM_CODEC, TigerEyeCamouflageStatePayload.TYPE);
+        }
+        sendToPlayer(player, payload, TigerEyeCamouflageStatePayload.STREAM_CODEC, TigerEyeCamouflageStatePayload.TYPE);
+    }
+
+    private static void handleTigerEyeCamouflageToggle(ServerPlayer player) {
+        TigerEyeCamouflageController.ToggleResult result = TigerEyeCamouflageController.toggle(player);
+        if (result != TigerEyeCamouflageController.ToggleResult.NO_CHANGE) {
+            syncTigerEyeCamouflage(player);
+        }
+        String messageKey = switch (result) {
+            case ACTIVATED -> "message.antarchy.tiger_eye_camouflage.activated";
+            case DEACTIVATED -> "message.antarchy.tiger_eye_camouflage.disabled";
+            case FULL_SET_REQUIRED -> TigerEyeArmorUtil.countEquippedPieces(player) > 0
+                    ? "message.antarchy.tiger_eye_camouflage.full_set_required"
+                    : null;
+            case INVALID_BLOCK -> "message.antarchy.tiger_eye_camouflage.invalid_block";
+            case NO_CHANGE -> null;
+        };
+        if (messageKey != null) {
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable(messageKey), true);
+        }
     }
 
     public static void syncGravityToPlayer(ServerPlayer target, Entity entity) {

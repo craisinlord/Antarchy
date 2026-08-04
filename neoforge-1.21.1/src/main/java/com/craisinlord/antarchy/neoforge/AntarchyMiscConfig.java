@@ -24,6 +24,7 @@ public final class AntarchyMiscConfig {
     // Infinite Dimensions
     private static final ModConfigSpec.BooleanValue DISABLE_INFINITY_BOOK_PORTAL_CREATION;
     private static final ModConfigSpec.BooleanValue RAINBOW_ANTS_LEAD_TO_INFINITY_DIMENSIONS;
+    private static final ModConfigSpec.DoubleValue RAINBOW_ANT_INFINITY_EASTER_EGG_CHANCE;
 
     // Permanent portals
     private static final ModConfigSpec.BooleanValue PERMANENT_PORTALS_ENABLED;
@@ -105,7 +106,13 @@ public final class AntarchyMiscConfig {
                     "Whether rainbow ants open randomly generated Infinity dimensions.",
                     "Only works if the Infinite Dimensions mod is installed."
                 )
-                .define("rainbowAntsLeadToInfinityDimensions", net.neoforged.fml.ModList.get().isLoaded("infinity"));
+                .define("rainbowAntsLeadToInfinityDimensions", true);
+        RAINBOW_ANT_INFINITY_EASTER_EGG_CHANCE = b
+                .comment(
+                    "Chance for a rainbow ant Infinity destination roll to select an Infinity easter egg dimension instead of a normal generated one.",
+                    "0.01 = 1%, 0 disables easter egg rolls."
+                )
+                .defineInRange("rainbowAntInfinityEasterEggChance", 0.01D, 0.0D, 1.0D);
         b.pop();
 
 
@@ -174,6 +181,7 @@ public final class AntarchyMiscConfig {
 
     static boolean disableInfinityBookPortalCreation()   { return DISABLE_INFINITY_BOOK_PORTAL_CREATION.get(); }
     static boolean rainbowAntsLeadToInfinityDimensions() { return RAINBOW_ANTS_LEAD_TO_INFINITY_DIMENSIONS.get(); }
+    static double  rainbowAntInfinityEasterEggChance()   { return RAINBOW_ANT_INFINITY_EASTER_EGG_CHANCE.get(); }
     public static boolean permanentPortalsEnabled()      { return PERMANENT_PORTALS_ENABLED.get(); }
     public static boolean permanentPortalsFlintAndSteelEnabled() { return PERMANENT_PORTALS_FLINT_AND_STEEL_ENABLED.get(); }
     public static boolean elythiaPortalEnabled()         { return ELYTHIA_PORTAL_ENABLED.get(); }
