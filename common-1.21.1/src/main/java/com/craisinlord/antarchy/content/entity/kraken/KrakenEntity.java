@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
 import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
@@ -150,7 +151,7 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
                 .add(Attributes.ATTACK_DAMAGE, AntarchySettings.krakenAttackDamage())
                 .add(Attributes.MOVEMENT_SPEED, AntarchySettings.krakenMovementSpeed())
                 .add(Attributes.FLYING_SPEED, AntarchySettings.krakenFlyingSpeed())
-                .add(Attributes.FOLLOW_RANGE, 64.0D)
+                .add(Attributes.FOLLOW_RANGE, AntarchySettings.krakenFollowRange())
                 .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.krakenKnockbackResistance())
                 .add(Attributes.ARMOR, AntarchySettings.krakenArmor());
     }
@@ -368,7 +369,15 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
             return false;
         }
 
-        return super.hurt(source, amount);
+        return super.hurt(source, BossCombatUtil.capSingleHitAtHalfHealth(this, amount));
+    }
+
+    @Override
+    public boolean isInvulnerableTo(DamageSource source) {
+        if (super.isInvulnerableTo(source)) {
+            return true;
+        }
+        return BossCombatUtil.isOutOfDamageRange(this, AntarchySettings.krakenDamageRange());
     }
 
     @Override

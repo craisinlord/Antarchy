@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
@@ -593,6 +594,8 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             amount *= 0.5F;
         }
 
+        amount = BossCombatUtil.capSingleHitAtHalfHealth(this, amount);
+
         if (!this.level().isClientSide && !this.isTame() && !this.isKnockedDown() && !this.isDeadOrDying()) {
             float knockThreshold = Math.max(1.0F, this.getMaxHealth() * 0.05F);
             if (this.getHealth() - amount <= knockThreshold) {
@@ -606,6 +609,14 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         }
 
         return super.hurt(source, amount);
+    }
+
+    @Override
+    public boolean isInvulnerableTo(DamageSource source) {
+        if (super.isInvulnerableTo(source)) {
+            return true;
+        }
+        return BossCombatUtil.isOutOfDamageRange(this, AntarchySettings.herculesBeetleDamageRange());
     }
 
     private void enterKnockedDown() {

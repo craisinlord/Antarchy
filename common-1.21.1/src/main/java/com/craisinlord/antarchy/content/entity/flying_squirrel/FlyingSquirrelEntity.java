@@ -130,9 +130,9 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     private static final double SHOULDER_HEAD_Y_OFFSET = 0.26D;
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
-    private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walking");
+    private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
     private static final RawAnimation CLIMB_ANIM = RawAnimation.begin().thenLoop("climbing");
-    private static final RawAnimation GLIDE_ANIM = RawAnimation.begin().thenLoop("gliding");
+    private static final RawAnimation GLIDE_ANIM = RawAnimation.begin().thenLoop("fly");
     private static final RawAnimation PICKUP_ANIM = RawAnimation.begin().thenPlay("item_pickup");
     private static final String QUIRK_CONTROLLER = "quirk_controller";
     private static final String QUIRK_1_TRIGGER = "quirk1";
@@ -2146,10 +2146,10 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
         @Nullable
         protected Vec3 getPosition() {
             BlockPos target = this.findBestArborealDestination();
-            if (target == null) {
-                return null;
+            if (target != null) {
+                return Vec3.atBottomCenterOf(target);
             }
-            return Vec3.atBottomCenterOf(target);
+            return super.getPosition();
         }
 
         @Override

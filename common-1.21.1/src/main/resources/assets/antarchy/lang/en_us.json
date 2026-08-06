@@ -554,6 +554,7 @@
     "death.attack.jumpy_bug_jump":  "%1$s was jumped by Jumpy Bug",
     "death.attack.hercules_beetle_obliteration":  "%1$s was obliterated by Hercules Beetle",
     "message.antarchy.big_bertha.mode":  "Big Bertha Mode: %s",
+    "message.antarchy.big_bertha.mode.none":  "None",
     "message.antarchy.big_bertha.mode.basilisk":  "Basilisk",
     "message.antarchy.big_bertha.mode.lucid":  "Lucid",
     "message.antarchy.big_bertha.mode.nightmare":  "Nightmare",
@@ -591,9 +592,10 @@
     "potion.antarchy.strong_haste":  "Strong Haste Potion",
     "tooltip.antarchy.big_bertha.mode":  "Mode: %s",
     "tooltip.antarchy.big_bertha.toggle_mode":  "Shift + use to cycle boss modes.",
+    "tooltip.antarchy.big_bertha.mode.none":  "Hits deal a small amount of bonus damage.",
     "tooltip.antarchy.big_bertha.mode.basilisk":  "Usage paralyzes a target. Hits inflict poison and slow.",
     "tooltip.antarchy.big_bertha.mode.lucid":  "Hits invert targets for a few seconds. Hits deal more damage while you are inverted.",
-    "tooltip.antarchy.big_bertha.mode.nightmare":  "Players suffer Dread; hits inflict weakness.",
+    "tooltip.antarchy.big_bertha.mode.nightmare":  "Hits deal bonus damage; players suffer Dread and hits inflict weakness.",
     "tooltip.antarchy.big_bertha.mode.kraken":  "Hits slam targets back and call lightning.",
     "tooltip.antarchy.big_bertha.mode.hercules":  "Hits deal bonus damage and launch targets high into the air.",
     "tooltip.antarchy.big_bertha.mode.molevore":  "Use to spin forward and drill through Molevore blocks.",
@@ -1044,6 +1046,8 @@
     "music.antarchy.lucid_lullaby.credit": "hewo_",
     "music.antarchy.venenatus": "Venenatus",
     "music.antarchy.venenatus.credit": "hewo_",
+    "music.antarchy.wistful_wanderings": "Wistful Wanderings",
+    "music.antarchy.wistful_wanderings.credit": "hewo_",
     "tooltip.antarchy.lucid_anchor.pyramid": "Requires an Antimetal Beacon pyramid above it",
     "tooltip.antarchy.lucid_anchor.path": "Projects Inverted downward while it has an unobstructed path to the world below"
 }

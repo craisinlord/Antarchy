@@ -69,6 +69,12 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue JUMPY_BUG_CAMOUFLAGE_ALPHA;
 
 
+    // Emperor Scorpion
+
+    private static final ModConfigSpec.DoubleValue EMPEROR_SCORPION_DAMAGE_RANGE;
+    private static final ModConfigSpec.IntValue    EMPEROR_SCORPION_MIN_DESPAWN_TICKS;
+
+
     // Kraken
 
     private static final ModConfigSpec.DoubleValue  KRAKEN_HEALTH;
@@ -77,6 +83,8 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.BooleanValue KRAKEN_SQUID_SPAWN_ENABLED;
     private static final ModConfigSpec.BooleanValue KRAKEN_MASS_SPAWN_ENABLED;
     private static final ModConfigSpec.BooleanValue KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON;
+    private static final ModConfigSpec.DoubleValue  KRAKEN_FOLLOW_RANGE;
+    private static final ModConfigSpec.DoubleValue  KRAKEN_DAMAGE_RANGE;
 
 
     // Brutalfly
@@ -84,6 +92,7 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue BRUTALFLY_HEALTH;
     private static final ModConfigSpec.DoubleValue BRUTALFLY_SWIPE_DAMAGE;
     private static final ModConfigSpec.DoubleValue BRUTALFLY_SPIT_DAMAGE;
+    private static final ModConfigSpec.DoubleValue BRUTALFLY_DAMAGE_RANGE;
 
 
     // Mantis
@@ -103,6 +112,7 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue ALPHA_MANTIS_FLYING_SPEED;
     private static final ModConfigSpec.IntValue    ALPHA_MANTIS_SUMMON_INTERVAL_TICKS;
     private static final ModConfigSpec.IntValue    ALPHA_MANTIS_MAX_MINIONS;
+    private static final ModConfigSpec.DoubleValue ALPHA_MANTIS_DAMAGE_RANGE;
 
 
     // Rolly Polly
@@ -185,6 +195,7 @@ public final class AntarchyMobsConfig {
     // Toreterror
 
     private static final ModConfigSpec.DoubleValue  TORETERROR_HEALTH;
+    private static final ModConfigSpec.DoubleValue  TORETERROR_DAMAGE_RANGE;
     private static final ModConfigSpec.DoubleValue  TORETERROR_JUMP_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue  TORETERROR_JUMP_ATTACK_KNOCKBACK;
     private static final ModConfigSpec.DoubleValue  TORETERROR_SPIN_DAMAGE;
@@ -247,6 +258,7 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue HERCULES_BEETLE_HEALTH;
     private static final ModConfigSpec.DoubleValue HERCULES_BEETLE_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue HERCULES_BEETLE_CHARGE_DAMAGE;
+    private static final ModConfigSpec.DoubleValue HERCULES_BEETLE_DAMAGE_RANGE;
 
 
     // Lucid
@@ -398,6 +410,18 @@ public final class AntarchyMobsConfig {
         b.pop();
 
 
+        // Emperor Scorpion
+
+        b.push("emperorScorpion");
+        EMPEROR_SCORPION_DAMAGE_RANGE = b
+                .comment("Range in blocks a player must be within for the Emperor Scorpion to be able to take damage. Prevents cheesing it from outside its aggro range.")
+                .defineInRange("damageRange", 80.0D, 1.0D, 256.0D);
+        EMPEROR_SCORPION_MIN_DESPAWN_TICKS = b
+                .comment("Minimum ticks after spawning before the Emperor Scorpion can despawn from being far away. It also never despawns once it has taken damage. 6000 ticks = 5 minutes.")
+                .defineInRange("minDespawnTicks", 6000, 0, 1000000);
+        b.pop();
+
+
         // Kraken
 
         b.push("kraken");
@@ -407,6 +431,8 @@ public final class AntarchyMobsConfig {
         KRAKEN_SQUID_SPAWN_ENABLED               = b.comment("If true, a player killing a Missile Squid has a 1/100 chance to spawn a single Kraken nearby.")                       .define("squidSpawnEnabled",  true);
         KRAKEN_MASS_SPAWN_ENABLED                = b.comment("If true, a player killing a Missile Squid has a 1/500 chance to spawn 10 Krakens. Independent from the single spawn.").define("massSpawnEnabled",  true);
         KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON        = b.comment("If true, the killer must have Bad Omen to summon a single Kraken; chance scales with Bad Omen level. Mass spawn is unaffected by level but still requires Bad Omen when this is on.").define("requireBadOmenToSummon",  true);
+        KRAKEN_FOLLOW_RANGE                      = b.comment("How far the Kraken can see/target players.").defineInRange("followRange", 96.0D, 1.0D, 256.0D);
+        KRAKEN_DAMAGE_RANGE                      = b.comment("Range in blocks a player must be within for the Kraken to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 96.0D, 1.0D, 256.0D);
         b.pop();
 
 
@@ -416,6 +442,7 @@ public final class AntarchyMobsConfig {
         BRUTALFLY_HEALTH      = b.comment("Base max health.")                                          .defineInRange("health",      200.0D, 1.0D, 32768.0D);
         BRUTALFLY_SWIPE_DAMAGE = b.comment("Damage dealt by a claw swipe.")                           .defineInRange("swipeDamage",  15.0D, 0.0D, 1024.0D);
         BRUTALFLY_SPIT_DAMAGE  = b.comment("Direct hit damage from a spit orb before lingering effect.").defineInRange("spitDamage",   5.0D, 0.0D, 1024.0D);
+        BRUTALFLY_DAMAGE_RANGE = b.comment("Range in blocks a player must be within for the Brutalfly to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 48.0D, 1.0D, 256.0D);
         b.pop();
 
 
@@ -439,6 +466,7 @@ public final class AntarchyMobsConfig {
         ALPHA_MANTIS_FLYING_SPEED          = b.comment("Base flying speed.")                                            .defineInRange("flyingSpeed",         0.77D, 0.0D, 10.0D);
         ALPHA_MANTIS_SUMMON_INTERVAL_TICKS = b.comment("Ticks between mantis minion summons while in combat.")          .defineInRange("summonIntervalTicks",   300, 20, 72000);
         ALPHA_MANTIS_MAX_MINIONS           = b.comment("Maximum summoned mantises alive near the alpha at once.")       .defineInRange("maxMinions",              4, 0, 32);
+        ALPHA_MANTIS_DAMAGE_RANGE          = b.comment("Range in blocks a player must be within for the Alpha Mantis to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 48.0D, 1.0D, 256.0D);
         b.pop();
 
 
@@ -612,10 +640,12 @@ public final class AntarchyMobsConfig {
         HERCULES_BEETLE_HEALTH = b.comment("Base max health.").defineInRange("health", 500.0D, 1.0D, 32768.0D);
         HERCULES_BEETLE_ATTACK_DAMAGE = b.comment("Base melee damage for ground and flying attacks.").defineInRange("attackDamage", 30.0D, 0.0D, 1024.0D);
         HERCULES_BEETLE_CHARGE_DAMAGE = b.comment("AOE impact damage dealt when a charge collides.").defineInRange("chargeDamage", 40.0D, 0.0D, 1024.0D);
+        HERCULES_BEETLE_DAMAGE_RANGE = b.comment("Range in blocks a player must be within for the Hercules Beetle to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 48.0D, 1.0D, 256.0D);
         b.pop();
 
         b.push("toreterror");
         TORETERROR_HEALTH                  = b.comment("Base max health.").defineInRange("health", 300.0D, 1.0D, 32768.0D);
+        TORETERROR_DAMAGE_RANGE            = b.comment("Range in blocks a player must be within for the Toreterror to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 48.0D, 1.0D, 256.0D);
         TORETERROR_JUMP_ATTACK_DAMAGE      = b.comment("Damage dealt by the jump shockwave.").defineInRange("jumpAttackDamage", 14.0D, 0.0D, 1024.0D);
         TORETERROR_JUMP_ATTACK_KNOCKBACK   = b.comment("Knockback strength of the jump shockwave.").defineInRange("jumpAttackKnockback", 2.5D, 0.0D, 10.0D);
         TORETERROR_SPIN_DAMAGE             = b.comment("Damage per spin-attack tick.").defineInRange("spinDamage", 8.0D, 0.0D, 1024.0D);
@@ -686,16 +716,22 @@ public final class AntarchyMobsConfig {
     static double  jumpyBugLatchDamage()                    { return JUMPY_BUG_LATCH_DAMAGE.get(); }
     static double  jumpyBugCamouflageAlpha()                { return JUMPY_BUG_CAMOUFLAGE_ALPHA.get(); }
 
+    static double  emperorScorpionDamageRange()             { return EMPEROR_SCORPION_DAMAGE_RANGE.get(); }
+    static int     emperorScorpionMinDespawnTicks()         { return EMPEROR_SCORPION_MIN_DESPAWN_TICKS.get(); }
+
     static double  krakenHealth()                           { return KRAKEN_HEALTH.get(); }
     static double  krakenAttackDamage()                     { return KRAKEN_ATTACK_DAMAGE.get(); }
     static double  krakenProjectileDamageTakenMultiplier()  { return KRAKEN_PROJECTILE_DAMAGE_TAKEN_MULTIPLIER.get(); }
     static boolean krakenSquidSpawnEnabled()                { return KRAKEN_SQUID_SPAWN_ENABLED.get(); }
     static boolean krakenMassSpawnEnabled()                 { return KRAKEN_MASS_SPAWN_ENABLED.get(); }
     static boolean krakenRequireBadOmenToSummon()           { return KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON.get(); }
+    static double  krakenFollowRange()                      { return KRAKEN_FOLLOW_RANGE.get(); }
+    static double  krakenDamageRange()                      { return KRAKEN_DAMAGE_RANGE.get(); }
 
     static double  brutalflyHealth()                        { return BRUTALFLY_HEALTH.get(); }
     static double  brutalflySwipeDamage()                   { return BRUTALFLY_SWIPE_DAMAGE.get(); }
     static double  brutalflySpitDamage()                    { return BRUTALFLY_SPIT_DAMAGE.get(); }
+    static double  brutalflyDamageRange()                   { return BRUTALFLY_DAMAGE_RANGE.get(); }
 
     static double  mantisHealth()                           { return MANTIS_HEALTH.get(); }
     static double  mantisAttackDamage()                     { return MANTIS_ATTACK_DAMAGE.get(); }
@@ -708,6 +744,7 @@ public final class AntarchyMobsConfig {
     static double  alphaMantisFlyingSpeed()                 { return ALPHA_MANTIS_FLYING_SPEED.get(); }
     static int     alphaMantisSummonIntervalTicks()         { return ALPHA_MANTIS_SUMMON_INTERVAL_TICKS.get(); }
     static int     alphaMantisMaxMinions()                  { return ALPHA_MANTIS_MAX_MINIONS.get(); }
+    static double  alphaMantisDamageRange()                 { return ALPHA_MANTIS_DAMAGE_RANGE.get(); }
     static double  rollyPollyHealth()                       { return ROLLY_POLLY_HEALTH.get(); }
     static double  rollyPollyMovementSpeed()                { return ROLLY_POLLY_MOVEMENT_SPEED.get(); }
     static double  rollyPollyRollSpeedMultiplier()          { return ROLLY_POLLY_ROLL_SPEED_MULTIPLIER.get(); }
@@ -767,6 +804,7 @@ public final class AntarchyMobsConfig {
     static double  lucidPearlInvertedDurationSeconds()      { return LUCID_PEARL_INVERTED_DURATION_SECONDS.get(); }
 
     static double  toreterrorHealth()                       { return TORETERROR_HEALTH.get(); }
+    static double  toreterrorDamageRange()                  { return TORETERROR_DAMAGE_RANGE.get(); }
     static double  toreterrorJumpAttackDamage()             { return TORETERROR_JUMP_ATTACK_DAMAGE.get(); }
     static double  toreterrorJumpAttackKnockback()          { return TORETERROR_JUMP_ATTACK_KNOCKBACK.get(); }
     static double  toreterrorSpinDamage()                   { return TORETERROR_SPIN_DAMAGE.get(); }
@@ -806,4 +844,5 @@ public final class AntarchyMobsConfig {
     static double  herculesBeetleHealth()                   { return HERCULES_BEETLE_HEALTH.get(); }
     static double  herculesBeetleAttackDamage()             { return HERCULES_BEETLE_ATTACK_DAMAGE.get(); }
     static double  herculesBeetleChargeDamage()             { return HERCULES_BEETLE_CHARGE_DAMAGE.get(); }
+    static double  herculesBeetleDamageRange()              { return HERCULES_BEETLE_DAMAGE_RANGE.get(); }
 }

@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import com.craisinlord.antarchy.content.entity.ScorpionEntity;
 import net.minecraft.core.BlockPos;
@@ -142,6 +143,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     @Nullable private BlockPos encounterHome;
     @Nullable private LivingEntity attackTarget;
     private final Set<UUID> summonedScorpionIds = new HashSet<>();
+    private boolean hasTakenDamage;
 
     public EmperorScorpionEntity(EntityType<? extends EmperorScorpionEntity> entityType, Level level) {
         super(entityType, level);
@@ -195,12 +197,28 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         if (this.isHardenedStateActive()) {
             return false;
         }
-        return super.hurt(source, amount);
+        amount = BossCombatUtil.capSingleHitAtHalfHealth(this, amount);
+        boolean hurt = super.hurt(source, amount);
+        if (hurt) {
+            this.hasTakenDamage = true;
+        }
+        return hurt;
     }
 
     @Override
     public boolean isInvulnerableTo(DamageSource source) {
-        return this.isHardenedStateActive() || super.isInvulnerableTo(source);
+        if (this.isHardenedStateActive() || super.isInvulnerableTo(source)) {
+            return true;
+        }
+        return BossCombatUtil.isOutOfDamageRange(this, AntarchySettings.emperorScorpionDamageRange());
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        if (this.hasTakenDamage || this.tickCount < AntarchySettings.emperorScorpionMinDespawnTicks()) {
+            return false;
+        }
+        return super.removeWhenFarAway(distanceToClosestPlayer);
     }
 
     @Override
@@ -684,6 +702,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         tag.putInt("HardenDurationTicks", this.hardenDurationTicks);
         tag.putInt("HardenHealTicks", this.hardenHealTicks);
         tag.putInt("HardenSummonedScorpions", this.hardenSummonedScorpions);
+        tag.putBoolean("HasTakenDamage", this.hasTakenDamage);
         if (this.encounterHome != null) {
             tag.putInt("EncounterHomeX", this.encounterHome.getX());
             tag.putInt("EncounterHomeY", this.encounterHome.getY());
@@ -719,6 +738,9 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         }
         if (tag.contains("HardenSummonedScorpions")) {
             this.hardenSummonedScorpions = tag.getInt("HardenSummonedScorpions");
+        }
+        if (tag.contains("HasTakenDamage")) {
+            this.hasTakenDamage = tag.getBoolean("HasTakenDamage");
         }
         if (tag.contains("EncounterHomeX") && tag.contains("EncounterHomeY") && tag.contains("EncounterHomeZ")) {
             this.encounterHome = new BlockPos(tag.getInt("EncounterHomeX"), tag.getInt("EncounterHomeY"), tag.getInt("EncounterHomeZ"));

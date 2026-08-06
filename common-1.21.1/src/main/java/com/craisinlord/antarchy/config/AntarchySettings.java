@@ -68,9 +68,9 @@ public final class AntarchySettings {
     private static boolean krakensGraspInnateLoyalty = true;
     private static int krakensGraspInnateLoyaltyLevel = 3;
     private static int krakensGraspTentacleDurationTicks = 100;
-    private static double krakensGraspTentacleDamage = 3.0D;
     private static double krakensGraspTentacleRadius = 3.0D;
-    private static int krakensGraspTentacleDamageIntervalTicks = 20;
+    private static int krakensGraspTentacleSlownessAmplifier = 8;
+    private static int krakensGraspTentacleSlownessRefreshTicks = 5;
     private static double scorpionWhipBaseDamage = 10.0D;
     private static double scorpionWhipReachBonus = 5.0D;
     private static int scorpionWhipPoisonDurationTicks = 100;
@@ -87,6 +87,8 @@ public final class AntarchySettings {
     private static double bigBerthaBasiliskCooldownSeconds = 7.0D;
     private static double bigBerthaLucidInvertedDurationSeconds = 3.0D;
     private static double bigBerthaLucidInvertedDamageBonusPercent = 25.0D;
+    private static double bigBerthaNoneModeDamageBonusPercent = 15.0D;
+    private static double bigBerthaNightmareDamageBonusPercent = 30.0D;
     private static double potentNyxiteInvertedDurationSeconds = 60.0D;
     private static int ultimateToolEnchantability = 25;
     private static int ultimateArmorEnchantability = 10;
@@ -288,6 +290,8 @@ public final class AntarchySettings {
     private static int emperorScorpionMaxSummonedScorpions = 4;
     private static int emperorScorpionMaxNearbyScorpions = 3;
     private static int emperorScorpionHardenCooldownTicks = 2400;
+    private static double emperorScorpionDamageRange = 80.0D;
+    private static int emperorScorpionMinDespawnTicks = 6000;
     private static double scorpionHealth = 30.0D;
     private static double scorpionAttackDamage = 5.0D;
     private static double scorpionMovementSpeed = 0.29D;
@@ -317,6 +321,12 @@ public final class AntarchySettings {
     private static double krakenArmor = 8.0D;
     private static double krakenProjectileDamageTakenMultiplier = 0.5D;
     private static double krakenBossBarRange = 40.0D;
+    private static double krakenFollowRange = 96.0D;
+    private static double krakenDamageRange = 96.0D;
+    private static double herculesBeetleDamageRange = 48.0D;
+    private static double toreterrorDamageRange = 48.0D;
+    private static double brutalflyDamageRange = 48.0D;
+    private static double alphaMantisDamageRange = 48.0D;
     private static float krakenLightningDamagePhaseOne = 6.0F;
     private static double lucidHealth = 30.0D;
     private static double lucidAttackDamage = 4.0D;
@@ -662,6 +672,14 @@ public final class AntarchySettings {
         return bigBerthaLucidInvertedDamageBonusPercent;
     }
 
+    public static double bigBerthaNoneModeDamageBonusPercent() {
+        return bigBerthaNoneModeDamageBonusPercent;
+    }
+
+    public static double bigBerthaNightmareDamageBonusPercent() {
+        return bigBerthaNightmareDamageBonusPercent;
+    }
+
     public static double potentNyxiteInvertedDurationSeconds() {
         return potentNyxiteInvertedDurationSeconds;
     }
@@ -756,9 +774,9 @@ public final class AntarchySettings {
     public static boolean krakensGraspInnateLoyalty() { return krakensGraspInnateLoyalty; }
     public static int krakensGraspInnateLoyaltyLevel() { return krakensGraspInnateLoyaltyLevel; }
     public static int krakensGraspTentacleDurationTicks() { return krakensGraspTentacleDurationTicks; }
-    public static double krakensGraspTentacleDamage() { return krakensGraspTentacleDamage; }
     public static double krakensGraspTentacleRadius() { return krakensGraspTentacleRadius; }
-    public static int krakensGraspTentacleDamageIntervalTicks() { return krakensGraspTentacleDamageIntervalTicks; }
+    public static int krakensGraspTentacleSlownessAmplifier() { return krakensGraspTentacleSlownessAmplifier; }
+    public static int krakensGraspTentacleSlownessRefreshTicks() { return krakensGraspTentacleSlownessRefreshTicks; }
 
     public static double octopusBombHealth() {
         return octopusBombHealth;
@@ -1255,6 +1273,14 @@ public final class AntarchySettings {
         bigBerthaLucidInvertedDamageBonusPercent = value;
     }
 
+    public static void setBigBerthaNoneModeDamageBonusPercent(double value) {
+        bigBerthaNoneModeDamageBonusPercent = value;
+    }
+
+    public static void setBigBerthaNightmareDamageBonusPercent(double value) {
+        bigBerthaNightmareDamageBonusPercent = value;
+    }
+
     public static void setPotentNyxiteInvertedDurationSeconds(double value) {
         potentNyxiteInvertedDurationSeconds = value;
     }
@@ -1350,9 +1376,9 @@ public final class AntarchySettings {
     public static void setKrakensGraspInnateLoyalty(boolean value) { krakensGraspInnateLoyalty = value; }
     public static void setKrakensGraspInnateLoyaltyLevel(int value) { krakensGraspInnateLoyaltyLevel = value; }
     public static void setKrakensGraspTentacleDurationTicks(int value) { krakensGraspTentacleDurationTicks = value; }
-    public static void setKrakensGraspTentacleDamage(double value) { krakensGraspTentacleDamage = value; }
     public static void setKrakensGraspTentacleRadius(double value) { krakensGraspTentacleRadius = value; }
-    public static void setKrakensGraspTentacleDamageIntervalTicks(int value) { krakensGraspTentacleDamageIntervalTicks = value; }
+    public static void setKrakensGraspTentacleSlownessAmplifier(int value) { krakensGraspTentacleSlownessAmplifier = value; }
+    public static void setKrakensGraspTentacleSlownessRefreshTicks(int value) { krakensGraspTentacleSlownessRefreshTicks = value; }
 
     public static void setBrutalflyHealth(double value) {
         brutalflyHealth = value;
@@ -2057,6 +2083,12 @@ public final class AntarchySettings {
     public static int emperorScorpionHardenCooldownTicks() { return emperorScorpionHardenCooldownTicks; }
     public static void setEmperorScorpionHardenCooldownTicks(int value) { emperorScorpionHardenCooldownTicks = value; }
 
+    public static double emperorScorpionDamageRange() { return emperorScorpionDamageRange; }
+    public static void setEmperorScorpionDamageRange(double value) { emperorScorpionDamageRange = value; }
+
+    public static int emperorScorpionMinDespawnTicks() { return emperorScorpionMinDespawnTicks; }
+    public static void setEmperorScorpionMinDespawnTicks(int value) { emperorScorpionMinDespawnTicks = value; }
+
     public static double scorpionHealth() { return scorpionHealth; }
     public static void setScorpionHealth(double value) { scorpionHealth = value; }
 
@@ -2141,6 +2173,24 @@ public final class AntarchySettings {
 
     public static double krakenBossBarRange() { return krakenBossBarRange; }
     public static void setKrakenBossBarRange(double value) { krakenBossBarRange = value; }
+
+    public static double krakenFollowRange() { return krakenFollowRange; }
+    public static void setKrakenFollowRange(double value) { krakenFollowRange = value; }
+
+    public static double krakenDamageRange() { return krakenDamageRange; }
+    public static void setKrakenDamageRange(double value) { krakenDamageRange = value; }
+
+    public static double herculesBeetleDamageRange() { return herculesBeetleDamageRange; }
+    public static void setHerculesBeetleDamageRange(double value) { herculesBeetleDamageRange = value; }
+
+    public static double toreterrorDamageRange() { return toreterrorDamageRange; }
+    public static void setToreterrorDamageRange(double value) { toreterrorDamageRange = value; }
+
+    public static double brutalflyDamageRange() { return brutalflyDamageRange; }
+    public static void setBrutalflyDamageRange(double value) { brutalflyDamageRange = value; }
+
+    public static double alphaMantisDamageRange() { return alphaMantisDamageRange; }
+    public static void setAlphaMantisDamageRange(double value) { alphaMantisDamageRange = value; }
 
     public static float krakenLightningDamagePhaseOne() { return krakenLightningDamagePhaseOne; }
     public static void setKrakenLightningDamagePhaseOne(float value) { krakenLightningDamagePhaseOne = value; }

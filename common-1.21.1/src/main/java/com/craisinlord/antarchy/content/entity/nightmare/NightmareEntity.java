@@ -102,7 +102,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
     private static final int SPECIAL_ROAR = 5;
     private static final int SPECIAL_ROAR_P2 = 6;
     private static final int SPECIAL_PHASE_TWO = 7;
-    private static final int SPECIAL_PORTAL = 8;
+    private static final int SPECIAL_PORTAL_ENTER = 8;
+    private static final int SPECIAL_PORTAL_EXIT = 9;
+    private static final int SPECIAL_DEATH = 10;
     private static final int ATTACK_TOTAL_TICKS = 20;
     private static final int ATTACK_DAMAGE_TICK = 10;
     private static final int INTRO_ROAR_TICKS = 30;
@@ -136,12 +138,14 @@ public class NightmareEntity extends Monster implements GeoEntity {
     private static final double PHASE_TWO_HEALTH_FRACTION = 0.5D;
     private static final double PORTAL_RANGE = 32.0D;
     private static final double PORTAL_MIN_RANGE_SQR = 49.0D;
+    private static final double PORTAL_ENTRY_EXIT_MIN_RANGE_SQR = 49.0D;
     private static final double PORTAL_EXIT_OFFSET = 2.35D;
-    private static final double PORTAL_TRANSPORT_RADIUS = 1.25D;
     private static final double FLYING_APPROACH_STRAFE_OFFSET = 2.1D;
     private static final double FLYING_APPROACH_HEIGHT = 0.45D;
     private static final double FLYING_APPROACH_HEIGHT_PHASE_TWO = 0.8D;
     private static final double FLYING_APPROACH_TOO_CLOSE_RANGE_SQR = 9.0D;
+    private static final double FLYING_OVERHEAD_STALL_RANGE_SQR = 4.0D;
+    private static final double FLYING_OVERHEAD_STALL_HEIGHT = 2.1D;
     private static final double ANIMATION_MOVEMENT_THRESHOLD_SQR = 0.01D;
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
@@ -159,7 +163,8 @@ public class NightmareEntity extends Monster implements GeoEntity {
     private static final String SPECIAL_ROAR_TRIGGER = "roar";
     private static final String SPECIAL_ROAR_P2_TRIGGER = "roar_P2";
     private static final String SPECIAL_PHASE_TWO_TRIGGER = "phase2";
-    private static final String SPECIAL_PORTAL_TRIGGER = "portal_out";
+    private static final String SPECIAL_PORTAL_ENTER_TRIGGER = "portal_enter";
+    private static final String SPECIAL_PORTAL_EXIT_TRIGGER = "portal_out";
     private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenPlayAndHold("attack");
     private static final RawAnimation ATTACK_P2_ANIM = RawAnimation.begin().thenPlayAndHold("attack_P2");
     private static final RawAnimation FLY_ATTACK_ANIM = RawAnimation.begin().thenPlayAndHold("attack2");
@@ -167,7 +172,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
     private static final RawAnimation ROAR_ANIM = RawAnimation.begin().thenPlayAndHold("roar");
     private static final RawAnimation ROAR_P2_ANIM = RawAnimation.begin().thenPlayAndHold("roar_P2");
     private static final RawAnimation PHASE_TWO_TRANSITION_ANIM = RawAnimation.begin().thenPlayAndHold("phase2");
-    private static final RawAnimation PORTAL_ATTACK_ANIM = RawAnimation.begin().thenPlayAndHold("portal_out");
+    private static final RawAnimation PORTAL_ENTER_ANIM = RawAnimation.begin().thenPlayAndHold("portal_enter");
+    private static final RawAnimation PORTAL_EXIT_ANIM = RawAnimation.begin().thenPlayAndHold("portal_out");
+    private static final RawAnimation DEATH_ANIM = RawAnimation.begin().thenPlayAndHold("death");
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
@@ -264,7 +271,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
                 .triggerableAnim(SPECIAL_ROAR_TRIGGER, ROAR_ANIM)
                 .triggerableAnim(SPECIAL_ROAR_P2_TRIGGER, ROAR_P2_ANIM)
                 .triggerableAnim(SPECIAL_PHASE_TWO_TRIGGER, PHASE_TWO_TRANSITION_ANIM)
-                .triggerableAnim(SPECIAL_PORTAL_TRIGGER, PORTAL_ATTACK_ANIM));
+                .triggerableAnim(SPECIAL_PORTAL_ENTER_TRIGGER, PORTAL_ENTER_ANIM)
+                .triggerableAnim(SPECIAL_PORTAL_EXIT_TRIGGER, PORTAL_EXIT_ANIM)
+                .triggerableAnim("death", DEATH_ANIM));
     }
 
     private PlayState mainAnimController(AnimationState<NightmareEntity> state) {
@@ -555,6 +564,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
     @Override
     protected void tickDeath() {
         this.deathTime++;
+        if (this.deathTime == 1) {
+            this.selectSpecialAnimation(SPECIAL_DEATH);
+        }
         if (this.deathTime >= DEATH_TICKS) {
             this.remove(RemovalReason.KILLED);
             this.dropExperience(this);
@@ -678,7 +690,6 @@ public class NightmareEntity extends Monster implements GeoEntity {
         if (!this.attackHitApplied && elapsed >= ATTACK_DAMAGE_TICK) {
             this.attackHitApplied = true;
             this.playNightmareBiteSound();
-            this.spawnBiteEffect();
             this.performAttackHit();
         }
         if (--this.attackAnimationTicks <= 0) {
@@ -731,14 +742,16 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private boolean canStartPortalAttack(LivingEntity target) {
+        Vec3 entryPos = this.getPortalEntryPosition();
         if (!this.isPhaseTwo() || this.isPhaseTransitioning() || this.portalCooldown > 0 || this.attackAnimationTicks > 0 || this.roarTicks > 0) return false;
         if (!this.hasLineOfSight(target) || this.distanceToSqr(target) > PORTAL_RANGE * PORTAL_RANGE) return false;
         if (this.horizontalDistanceToSqr(target) < PORTAL_MIN_RANGE_SQR) return false;
-        return this.portalAttackTicks <= 0 && this.findPortalExitPos(target) != null;
+        return this.portalAttackTicks <= 0 && this.findPortalExitPos(target, entryPos) != null;
     }
 
     private void startPortalAttack(LivingEntity target) {
-        Vec3 exitPos = this.findPortalExitPos(target);
+        Vec3 entryPos = this.getPortalEntryPosition();
+        Vec3 exitPos = this.findPortalExitPos(target, entryPos);
         if (exitPos == null || !(this.level() instanceof ServerLevel serverLevel)) return;
         this.clearNightmarePortals();
         this.portalExitPos = exitPos;
@@ -749,9 +762,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
         this.attackHitApplied = false;
         this.attackCooldown = 24;
         this.portalCooldown = 180 + this.random.nextInt(100);
-        this.selectSpecialAnimation(SPECIAL_PORTAL);
+        this.selectSpecialAnimation(SPECIAL_PORTAL_ENTER);
         this.getNavigation().stop();
-        this.entryPortal = NightmarePortalEntity.spawnAt(serverLevel, this.position().add(this.getViewVector(1.0F).multiply(1.6D, 0.0D, 1.6D)), this, this.position(), PORTAL_LIFETIME_TICKS);
+        this.entryPortal = NightmarePortalEntity.spawnAt(serverLevel, entryPos, this, this.position(), PORTAL_LIFETIME_TICKS);
         this.exitPortal = NightmarePortalEntity.spawnAt(serverLevel, exitPos, this, this.position(), PORTAL_LIFETIME_TICKS);
         if (this.entryPortal != null && this.exitPortal != null) {
             this.entryPortal.linkTo(this.exitPortal);
@@ -771,7 +784,6 @@ public class NightmareEntity extends Monster implements GeoEntity {
         }
         if (!this.portalAttackHitApplied && elapsed >= PORTAL_DAMAGE_TICK) {
             this.portalAttackHitApplied = true;
-            this.spawnBiteEffect();
             this.performPortalExitHit();
         }
         if (--this.portalAttackTicks <= 0) {
@@ -786,6 +798,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
         if (this.portalExitPos == null) return;
         this.portalTravelTicks = PORTAL_TRAVEL_INVULNERABLE_TICKS;
         this.setPortalCooldown();
+        this.selectSpecialAnimation(SPECIAL_PORTAL_EXIT);
         this.teleportTo(this.portalExitPos.x, this.portalExitPos.y, this.portalExitPos.z);
         if (target != null) {
             this.faceTowardTarget(target, 180.0F);
@@ -820,7 +833,6 @@ public class NightmareEntity extends Monster implements GeoEntity {
         List<LivingEntity> victims = this.level().getEntitiesOfClass(LivingEntity.class, hitBox, this::canTargetEntity);
         for (LivingEntity victim : victims) {
             if (victim.hurt(this.nightmareDamageSource(), damage)) {
-                this.spawnBiteEffectAt(victim);
                 this.applyNightmareStrikeEffects(victim);
                 this.knockAway(victim, 1.35D, 0.35D);
             }
@@ -829,20 +841,6 @@ public class NightmareEntity extends Monster implements GeoEntity {
             serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, this.portalExitPos.x, this.portalExitPos.y + 1.0D, this.portalExitPos.z, 18, 0.9D, 0.45D, 0.9D, 0.02D);
             serverLevel.sendParticles(ParticleTypes.SMOKE, this.portalExitPos.x, this.portalExitPos.y + 1.0D, this.portalExitPos.z, 14, 0.8D, 0.3D, 0.8D, 0.03D);
         }
-    }
-
-    private void spawnBiteEffect() {
-        if (!(this.level() instanceof ServerLevel serverLevel)) return;
-        Vec3 forward = this.getViewVector(1.0F).normalize();
-        Vec3 spawnPos = this.getEyePosition().add(forward.scale(this.getBbWidth() * 0.65D)).add(0.0D, -0.45D, 0.0D);
-        NightmareBiteEntity.spawnAt(serverLevel, spawnPos, this.getYRot(), this.isPhaseTwo());
-    }
-
-    private void spawnBiteEffectAt(LivingEntity target) {
-        if (!(this.level() instanceof ServerLevel serverLevel)) return;
-        float yaw = target.getYRot() + 180.0F;
-        Vec3 spawnPos = target.getEyePosition().add(0.0D, -0.35D, 0.0D);
-        NightmareBiteEntity.spawnAt(serverLevel, spawnPos, yaw, this.isPhaseTwo());
     }
 
     private void playNightmareBiteSound() {
@@ -941,8 +939,14 @@ public class NightmareEntity extends Monster implements GeoEntity {
         Vec3 right = new Vec3(-forward.z, 0.0D, forward.x);
         double strafe = this.tickCount % 32 < 16 ? FLYING_APPROACH_STRAFE_OFFSET : -FLYING_APPROACH_STRAFE_OFFSET;
         double height = this.isPhaseTwo() ? FLYING_APPROACH_HEIGHT_PHASE_TWO : FLYING_APPROACH_HEIGHT;
+        double horizontalDistanceSqr = this.horizontalDistanceToSqr(target);
+        double overheadGap = this.getY() - target.getY();
         Vec3 anchor = target.position().subtract(forward.scale(1.4D)).add(right.scale(strafe));
-        if (this.horizontalDistanceToSqr(target) <= FLYING_APPROACH_TOO_CLOSE_RANGE_SQR) {
+        if (horizontalDistanceSqr <= FLYING_OVERHEAD_STALL_RANGE_SQR && overheadGap >= FLYING_OVERHEAD_STALL_HEIGHT) {
+            anchor = target.position().add(right.scale(strafe * 1.4D)).subtract(forward.scale(0.6D));
+            return new Vec3(anchor.x, target.getEyeY() + 0.15D, anchor.z);
+        }
+        if (horizontalDistanceSqr <= FLYING_APPROACH_TOO_CLOSE_RANGE_SQR) {
             anchor = target.position().subtract(forward.scale(2.4D));
         }
         return new Vec3(anchor.x, target.getEyeY() + height, anchor.z);
@@ -985,8 +989,12 @@ public class NightmareEntity extends Monster implements GeoEntity {
         return false;
     }
 
+    private Vec3 getPortalEntryPosition() {
+        return this.position().add(this.getViewVector(1.0F).multiply(1.6D, 0.0D, 1.6D));
+    }
+
     @Nullable
-    private Vec3 findPortalExitPos(LivingEntity target) {
+    private Vec3 findPortalExitPos(LivingEntity target, Vec3 entryPos) {
         Vec3 forward = target.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
         if (forward.lengthSqr() < 1.0E-4D) {
             forward = this.getViewVector(1.0F).multiply(1.0D, 0.0D, 1.0D);
@@ -1004,7 +1012,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
         };
         for (Vec3 candidate : candidates) {
             Vec3 adjusted = this.findValidPortalPosition(candidate);
-            if (adjusted != null && adjusted.distanceToSqr(this.position()) <= PORTAL_RANGE * PORTAL_RANGE) {
+            if (adjusted != null
+                    && adjusted.distanceToSqr(this.position()) <= PORTAL_RANGE * PORTAL_RANGE
+                    && adjusted.distanceToSqr(entryPos) >= PORTAL_ENTRY_EXIT_MIN_RANGE_SQR) {
                 return adjusted;
             }
         }
@@ -1172,7 +1182,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
             case SPECIAL_ROAR -> SPECIAL_ROAR_TRIGGER;
             case SPECIAL_ROAR_P2 -> SPECIAL_ROAR_P2_TRIGGER;
             case SPECIAL_PHASE_TWO -> SPECIAL_PHASE_TWO_TRIGGER;
-            case SPECIAL_PORTAL -> SPECIAL_PORTAL_TRIGGER;
+            case SPECIAL_PORTAL_ENTER -> SPECIAL_PORTAL_ENTER_TRIGGER;
+            case SPECIAL_PORTAL_EXIT -> SPECIAL_PORTAL_EXIT_TRIGGER;
+            case SPECIAL_DEATH -> "death";
             default -> null;
         };
     }

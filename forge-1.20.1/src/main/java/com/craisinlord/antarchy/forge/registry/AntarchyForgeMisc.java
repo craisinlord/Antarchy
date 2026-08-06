@@ -176,6 +176,10 @@ public final class AntarchyForgeMisc {
             AntarchyForgeMisc::simpleParticleType);
     public static final RegistryObject<SimpleParticleType> ORANGE_ASH = PARTICLE_TYPES.register("orange_ash",
             AntarchyForgeMisc::simpleParticleType);
+    public static final RegistryObject<SimpleParticleType> LUCID_BOLT_IMPACT_SMALL = PARTICLE_TYPES.register("lucid_bolt_impact_small",
+            AntarchyForgeMisc::simpleParticleType);
+    public static final RegistryObject<SimpleParticleType> LUCID_BOLT_IMPACT_LARGE = PARTICLE_TYPES.register("lucid_bolt_impact_large",
+            AntarchyForgeMisc::simpleParticleType);
     public static final RegistryObject<ParticleType<InvertedGeyserBaseParticleOptions>> INVERTED_GEYSER_BASE = PARTICLE_TYPES.register("inverted_geyser_base",
             () -> particleType(InvertedGeyserBaseParticleOptions.deserializer()));
     public static final RegistryObject<ParticleType<InvertedGeyserParticleOptions>> INVERTED_GEYSER_PLUME = PARTICLE_TYPES.register("inverted_geyser_plume",

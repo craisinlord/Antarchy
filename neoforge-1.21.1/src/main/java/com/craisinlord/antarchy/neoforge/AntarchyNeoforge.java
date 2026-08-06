@@ -390,6 +390,8 @@ public class AntarchyNeoforge {
         AntarchyObjects.setLumenFroglight(() -> AntarchyNeoforgeBlocks.LUMEN_FROGLIGHT.get());
         AntarchyObjects.setPeachLeavesParticle(() -> AntarchyNeoforgeMisc.PEACH_LEAVES_PARTICLE.get());
         AntarchyObjects.setLotusPollen(() -> AntarchyNeoforgeMisc.LOTUS_POLLEN.get());
+        AntarchyObjects.setLucidBoltImpactSmall(() -> AntarchyNeoforgeMisc.LUCID_BOLT_IMPACT_SMALL.get());
+        AntarchyObjects.setLucidBoltImpactLarge(() -> AntarchyNeoforgeMisc.LUCID_BOLT_IMPACT_LARGE.get());
         AntarchyObjects.setDorrieInventoryMenu(AntarchyNeoforgeMisc.DORRIE_INVENTORY_MENU);
         AntarchyObjects.setCritterCage(() -> AntarchyNeoforgeItems.CRITTER_CAGE.get());
         AntarchyObjects.setCritterCageBlock(() -> AntarchyNeoforgeBlocks.CRITTER_CAGE_BLOCK.get());

@@ -9,9 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -22,7 +20,6 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.List;
 import java.util.UUID;
 
 public class NightmarePortalEntity extends Entity implements GeoEntity {
@@ -103,39 +100,11 @@ public class NightmarePortalEntity extends Entity implements GeoEntity {
             this.discard();
             return;
         }
-        this.transportEntities();
-    }
-
-    private void transportEntities() {
-        NightmarePortalEntity other = this.getLinkedPortal();
-        Vec3 destination = other != null ? other.position() : this.fallbackDestination;
-        AABB area = this.getBoundingBox().inflate(1.05D, 0.75D, 1.05D);
-        List<LivingEntity> entities = this.level().getEntitiesOfClass(LivingEntity.class, area, entity -> entity.isAlive() && !entity.isSpectator());
-        for (LivingEntity entity : entities) {
-            if (entity.getUUID().equals(this.ownerId)) {
-                continue;
-            }
-            if (entity.isOnPortalCooldown()) {
-                continue;
-            }
-            entity.teleportTo(destination.x, destination.y, destination.z);
-            entity.setPortalCooldown();
-            entity.setDeltaMovement(entity.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D));
-            entity.hurtMarked = true;
-        }
     }
 
     public void linkTo(NightmarePortalEntity other) {
         this.linkedPortalId = other.getUUID();
         this.fallbackDestination = other.position();
-    }
-
-    private NightmarePortalEntity getLinkedPortal() {
-        if (!(this.level() instanceof ServerLevel serverLevel) || this.linkedPortalId == null) {
-            return null;
-        }
-        Entity entity = serverLevel.getEntity(this.linkedPortalId);
-        return entity instanceof NightmarePortalEntity portal ? portal : null;
     }
 
     public boolean isClosing() {

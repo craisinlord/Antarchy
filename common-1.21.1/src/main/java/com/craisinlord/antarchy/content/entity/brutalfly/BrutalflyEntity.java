@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.entity.brutalfly;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import java.util.EnumSet;
@@ -383,12 +384,15 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
             }
             return true;
         }
-        return super.hurt(source, amount);
+        return super.hurt(source, BossCombatUtil.capSingleHitAtHalfHealth(this, amount));
     }
 
     @Override
     public boolean isInvulnerableTo(DamageSource source) {
-        return this.postCocoonInvulnerableTicks > 0 || super.isInvulnerableTo(source);
+        if (this.postCocoonInvulnerableTicks > 0 || super.isInvulnerableTo(source)) {
+            return true;
+        }
+        return BossCombatUtil.isOutOfDamageRange(this, AntarchySettings.brutalflyDamageRange());
     }
 
     private void tickCombat(LivingEntity target) {

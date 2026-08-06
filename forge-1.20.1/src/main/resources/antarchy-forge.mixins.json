@@ -7,6 +7,7 @@
     "entity.MultipartEntityBridgeMixin",
     "entity.MultipartEntityLevelRegistryMixin",
     "entity.ParalyzedMobFreezeMixin",
+    "infinity.AmendmentRareOresMixin",
     "infinity.ConfigGenInvocationMixin",
     "item.BucketItemThoraxisWaterMixin",
     "level.ClientLevelPartEntitiesAccessor",
