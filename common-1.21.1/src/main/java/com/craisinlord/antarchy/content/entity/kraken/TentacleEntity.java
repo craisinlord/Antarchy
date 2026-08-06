@@ -128,27 +128,23 @@ public class TentacleEntity extends Mob implements GeoEntity {
             return;
         }
 
-        int interval = Math.max(1, AntarchySettings.krakensGraspTentacleDamageIntervalTicks());
-        if (this.lifetimeTicks % interval == 0) {
-            this.grabNearbyEntities();
+        int refreshTicks = Math.max(1, AntarchySettings.krakensGraspTentacleSlownessRefreshTicks());
+        if (this.lifetimeTicks % refreshTicks == 0) {
+            this.slowNearbyEntities(refreshTicks);
         }
     }
 
-    private void grabNearbyEntities() {
+    private void slowNearbyEntities(int refreshTicks) {
         double radius = AntarchySettings.krakensGraspTentacleRadius();
         AABB area = this.getBoundingBox().inflate(radius, radius * 0.6D, radius);
         List<LivingEntity> victims = this.level().getEntitiesOfClass(LivingEntity.class, area,
                 entity -> entity.isAlive() && !entity.isSpectator() && !entity.getUUID().equals(this.ownerId)
                         && !(entity instanceof Player player && player.isCreative()));
 
-        for (LivingEntity victim : victims) {
-            if (this.level() instanceof ServerLevel serverLevel) {
-                victim.hurt(this.damageSources().mobAttack(this), (float) AntarchySettings.krakensGraspTentacleDamage());
-                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.SPLASH,
-                        victim.getX(), victim.getY(0.6D), victim.getZ(), 8, 0.2D, 0.2D, 0.2D, 0.05D);
-            }
+        int amplifier = Math.max(0, AntarchySettings.krakensGraspTentacleSlownessAmplifier());
 
-            victim.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, AntarchySettings.krakensGraspTentacleDamageIntervalTicks() + 10, 1, false, true, true));
+        for (LivingEntity victim : victims) {
+            victim.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, refreshTicks + 4, amplifier, false, true, true));
 
             Vec3 pull = this.position().subtract(victim.position()).multiply(1.0D, 0.0D, 1.0D);
             if (pull.lengthSqr() > 1.0E-4D) {

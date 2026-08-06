@@ -924,10 +924,42 @@
       }
     ]
   },
+  "music.game.thoraxis": {
+    "sounds": [
+      {
+        "name": "antarchy:lucid_lullaby",
+        "stream": true
+      }
+    ]
+  },
   "venenatus": {
     "sounds": [
       {
         "name": "antarchy:music/game/cavaryn/venenatus",
+        "stream": true
+      }
+    ]
+  },
+  "music.game.cavaryn": {
+    "sounds": [
+      {
+        "name": "antarchy:venenatus",
+        "stream": true
+      }
+    ]
+  },
+  "wistful_wanderings": {
+    "sounds": [
+      {
+        "name": "antarchy:music/game/elythia/wistful_wanderings",
+        "stream": true
+      }
+    ]
+  },
+  "music.game.elythia": {
+    "sounds": [
+      {
+        "name": "antarchy:wistful_wanderings",
         "stream": true
       }
     ]

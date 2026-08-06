@@ -20,7 +20,8 @@
     "JumpyBootsFallDamageMixin",
     "entity.MultipartEntityLevelRegistryMixin",
     "WoodTypeInvoker",
-    "infinity.PortalCreatorMixin"
+    "infinity.PortalCreatorMixin",
+    "infinity.AmendmentRareOresMixin"
   ],
   "client": [
     "client.CameraShakeMixin",

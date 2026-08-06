@@ -156,9 +156,10 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
         }
 
         switch (getMode(stack)) {
+            case NONE -> applyNoneHit(player, target);
             case BASILISK -> applyBasiliskHit(target, serverLevel);
             case LUCID -> applyLucidHit(target, player, serverLevel);
-            case NIGHTMARE -> applyNightmareHit(target, serverLevel);
+            case NIGHTMARE -> applyNightmareHit(player, target, serverLevel);
             case KRAKEN -> applyKrakenHit(player, target, serverLevel);
             case HERCULES -> applyHerculesHit(player, target, serverLevel);
             case MOLEVORE, TORETERROR -> {
@@ -249,6 +250,22 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
         player.awardStat(Stats.ITEM_USED.get(this));
     }
 
+    private void applyNoneHit(Player attacker, LivingEntity target) {
+        double bonusPercent = AntarchySettings.bigBerthaNoneModeDamageBonusPercent();
+        if (bonusPercent <= 0.0D) {
+            return;
+        }
+
+        float bonusDamage = (float) (attacker.getAttributeValue(Attributes.ATTACK_DAMAGE) * (bonusPercent / 100.0D));
+        if (bonusDamage <= 0.0F) {
+            return;
+        }
+
+        target.invulnerableTime = 0;
+        target.hurt(attacker.damageSources().playerAttack(attacker), bonusDamage);
+        target.hurtMarked = true;
+    }
+
     private void applyBasiliskHit(LivingEntity target, ServerLevel level) {
         target.addEffect(new MobEffectInstance(
                 MobEffects.POISON,
@@ -273,7 +290,9 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
                     true));
         }
 
-        level.sendParticles(ParticleTypes.PORTAL, target.getX(), target.getY(0.8D), target.getZ(), 12, 0.25D, 0.25D, 0.25D, 0.08D);
+        Vec3 impactPos = new Vec3(target.getX(), target.getY(0.8D), target.getZ());
+        LucidBoltEntity.spawnImpactParticles(level, impactPos);
+        level.sendParticles(ParticleTypes.PORTAL, impactPos.x, impactPos.y, impactPos.z, 12, 0.25D, 0.25D, 0.25D, 0.08D);
         if (!AntarchyGravityApi.isGravityInverted(player)) {
             return;
         }
@@ -293,11 +312,22 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
         target.hurtMarked = true;
     }
 
-    private void applyNightmareHit(LivingEntity target, ServerLevel level) {
+    private void applyNightmareHit(Player attacker, LivingEntity target, ServerLevel level) {
         if (target instanceof Player) {
             target.addEffect(new MobEffectInstance(AntarchyObjects.DREAD.get(), AntarchySettings.nightmareDreadTicks(), 0));
         }
         target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, AntarchySettings.nightmareWeaknessTicks(), 0));
+
+        double bonusPercent = AntarchySettings.bigBerthaNightmareDamageBonusPercent();
+        if (bonusPercent > 0.0D) {
+            float bonusDamage = (float) (attacker.getAttributeValue(Attributes.ATTACK_DAMAGE) * (bonusPercent / 100.0D));
+            if (bonusDamage > 0.0F) {
+                target.invulnerableTime = 0;
+                target.hurt(attacker.damageSources().playerAttack(attacker), bonusDamage);
+                target.hurtMarked = true;
+            }
+        }
+
         level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, target.getX(), target.getY(0.8D), target.getZ(), 12, 0.3D, 0.3D, 0.3D, 0.01D);
         level.sendParticles(ParticleTypes.SMOKE, target.getX(), target.getY(0.8D), target.getZ(), 6, 0.2D, 0.2D, 0.2D, 0.02D);
     }
@@ -545,7 +575,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
 
     private static void setMode(ItemStack stack, BossMode mode) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
-            if (mode == BossMode.BASILISK) {
+            if (mode == BossMode.NONE) {
                 tag.remove(MODE_TAG);
             } else {
                 tag.putInt(MODE_TAG, mode.id);
@@ -616,7 +646,8 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
     }
 
     private enum BossMode {
-        BASILISK(0, "tooltip.antarchy.big_bertha.mode.basilisk", "message.antarchy.big_bertha.mode.basilisk"),
+        NONE(0, "tooltip.antarchy.big_bertha.mode.none", "message.antarchy.big_bertha.mode.none"),
+        BASILISK(7, "tooltip.antarchy.big_bertha.mode.basilisk", "message.antarchy.big_bertha.mode.basilisk"),
         NIGHTMARE(1, "tooltip.antarchy.big_bertha.mode.nightmare", "message.antarchy.big_bertha.mode.nightmare"),
         KRAKEN(2, "tooltip.antarchy.big_bertha.mode.kraken", "message.antarchy.big_bertha.mode.kraken"),
         MOLEVORE(3, "tooltip.antarchy.big_bertha.mode.molevore", "message.antarchy.big_bertha.mode.molevore"),
@@ -636,13 +667,14 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
 
         private BossMode next() {
             return switch (this) {
+                case NONE -> BASILISK;
                 case BASILISK -> LUCID;
                 case LUCID -> NIGHTMARE;
                 case NIGHTMARE -> KRAKEN;
                 case KRAKEN -> HERCULES;
                 case HERCULES -> MOLEVORE;
                 case MOLEVORE -> TORETERROR;
-                case TORETERROR -> BASILISK;
+                case TORETERROR -> NONE;
             };
         }
 
@@ -652,7 +684,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
                     return mode;
                 }
             }
-            return BASILISK;
+            return NONE;
         }
     }
 }

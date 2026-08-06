@@ -335,6 +335,10 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<SimpleParticleType> LOTUS_POLLEN = (Supplier<SimpleParticleType>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<SimpleParticleType> LUCID_BOLT_IMPACT_SMALL = (Supplier<SimpleParticleType>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<SimpleParticleType> LUCID_BOLT_IMPACT_LARGE = (Supplier<SimpleParticleType>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.util.Unit>> AMERICAN_COMPONENT =
             (Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.util.Unit>>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -695,6 +699,14 @@ public final class AntarchyObjects {
 
     public static void setLotusPollen(Supplier<SimpleParticleType> supplier) {
         LOTUS_POLLEN = supplier;
+    }
+
+    public static void setLucidBoltImpactSmall(Supplier<SimpleParticleType> supplier) {
+        LUCID_BOLT_IMPACT_SMALL = supplier;
+    }
+
+    public static void setLucidBoltImpactLarge(Supplier<SimpleParticleType> supplier) {
+        LUCID_BOLT_IMPACT_LARGE = supplier;
     }
 
     public static void setPeachLeavesParticle(Supplier<SimpleParticleType> supplier) {

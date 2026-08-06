@@ -88,14 +88,16 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.BooleanValue KRAKENS_GRASP_INNATE_LOYALTY;
     private static final ModConfigSpec.IntValue KRAKENS_GRASP_INNATE_LOYALTY_LEVEL;
     private static final ModConfigSpec.IntValue KRAKENS_GRASP_TENTACLE_DURATION_TICKS;
-    private static final ModConfigSpec.DoubleValue KRAKENS_GRASP_TENTACLE_DAMAGE;
     private static final ModConfigSpec.DoubleValue KRAKENS_GRASP_TENTACLE_RADIUS;
-    private static final ModConfigSpec.IntValue KRAKENS_GRASP_TENTACLE_DAMAGE_INTERVAL_TICKS;
+    private static final ModConfigSpec.IntValue KRAKENS_GRASP_TENTACLE_SLOWNESS_AMPLIFIER;
+    private static final ModConfigSpec.IntValue KRAKENS_GRASP_TENTACLE_SLOWNESS_REFRESH_TICKS;
     private static final ModConfigSpec.IntValue    BIG_BERTHA_BASILISK_PARALYZE_DURATION_TICKS;
     private static final ModConfigSpec.IntValue    BIG_BERTHA_KRAKEN_SLOW_TICKS;
     private static final ModConfigSpec.DoubleValue BIG_BERTHA_BASILISK_COOLDOWN_SECONDS;
     private static final ModConfigSpec.DoubleValue BIG_BERTHA_LUCID_INVERTED_DURATION_SECONDS;
     private static final ModConfigSpec.DoubleValue BIG_BERTHA_LUCID_INVERTED_DAMAGE_BONUS_PERCENT;
+    private static final ModConfigSpec.DoubleValue BIG_BERTHA_NONE_MODE_DAMAGE_BONUS_PERCENT;
+    private static final ModConfigSpec.DoubleValue BIG_BERTHA_NIGHTMARE_DAMAGE_BONUS_PERCENT;
     private static final ModConfigSpec.DoubleValue SCORPION_WHIP_BASE_DAMAGE;
     private static final ModConfigSpec.DoubleValue SCORPION_WHIP_REACH_BONUS;
     private static final ModConfigSpec.IntValue    SCORPION_WHIP_POISON_DURATION_TICKS;
@@ -321,6 +323,8 @@ public final class AntarchyToolsConfig {
         BIG_BERTHA_BASILISK_COOLDOWN_SECONDS         = b.comment("Cooldown in seconds after using Basilisk mode's right-click paralyze.")   .defineInRange("basiliskModeCooldownSeconds",     7.0D, 0.0D, 3600.0D);
         BIG_BERTHA_LUCID_INVERTED_DURATION_SECONDS   = b.comment("How long Lucid mode's inversion lasts on a target, in seconds.")          .defineInRange("lucidModeInvertedDurationSeconds", 3.0D, 0.0D, 3600.0D);
         BIG_BERTHA_LUCID_INVERTED_DAMAGE_BONUS_PERCENT = b.comment("Bonus damage percent from Lucid mode while the wielder is inverted.")    .defineInRange("lucidModeInvertedDamageBonusPercent", 25.0D, 0.0D, 1000.0D);
+        BIG_BERTHA_NONE_MODE_DAMAGE_BONUS_PERCENT      = b.comment("Bonus damage percent dealt while no boss mode is selected (the default mode).").defineInRange("noneModeDamageBonusPercent", 15.0D, 0.0D, 1000.0D);
+        BIG_BERTHA_NIGHTMARE_DAMAGE_BONUS_PERCENT      = b.comment("Bonus damage percent from Nightmare mode hits.")                          .defineInRange("nightmareModeDamageBonusPercent", 30.0D, 0.0D, 1000.0D);
         b.pop();
 
         b.push("attitudeAdjuster");
@@ -336,9 +340,9 @@ public final class AntarchyToolsConfig {
         KRAKENS_GRASP_INNATE_LOYALTY                 = b.comment("Whether Kraken's Grasp automatically returns to its thrower like an enchanted Loyalty trident.").define("innateLoyalty", true);
         KRAKENS_GRASP_INNATE_LOYALTY_LEVEL           = b.comment("Effective Loyalty level used for the innate return, from 1 to 3.")           .defineInRange("innateLoyaltyLevel",                  3, 1, 3);
         KRAKENS_GRASP_TENTACLE_DURATION_TICKS        = b.comment("How long a summoned tentacle lasts, in ticks.")                             .defineInRange("tentacleDurationTicks",              100, 1, 72000);
-        KRAKENS_GRASP_TENTACLE_DAMAGE                = b.comment("Damage a tentacle deals per damage interval to nearby entities.")           .defineInRange("tentacleDamage",                    3.0D, 0.0D, 4096.0D);
-        KRAKENS_GRASP_TENTACLE_RADIUS                = b.comment("Radius in blocks around a tentacle that it can grab and damage.")           .defineInRange("tentacleRadius",                    3.0D, 0.0D, 32.0D);
-        KRAKENS_GRASP_TENTACLE_DAMAGE_INTERVAL_TICKS = b.comment("How often, in ticks, a tentacle damages nearby entities.")                  .defineInRange("tentacleDamageIntervalTicks",         20, 1, 2000);
+        KRAKENS_GRASP_TENTACLE_RADIUS                = b.comment("Radius in blocks around a tentacle that it can grab and slow.")             .defineInRange("tentacleRadius",                    3.0D, 0.0D, 32.0D);
+        KRAKENS_GRASP_TENTACLE_SLOWNESS_AMPLIFIER    = b.comment("Slowness amplifier applied to entities held by a tentacle (0 = Slowness I).").defineInRange("tentacleSlownessAmplifier",           8, 0, 255);
+        KRAKENS_GRASP_TENTACLE_SLOWNESS_REFRESH_TICKS = b.comment("How often, in ticks, a tentacle refreshes its slowness effect on nearby entities. Kept low so the effect fades quickly once an entity leaves.").defineInRange("tentacleSlownessRefreshTicks", 5, 1, 2000);
         b.pop();
 
         b.push("scorpionWhip");
@@ -593,6 +597,8 @@ public final class AntarchyToolsConfig {
     static double  bigBerthaBasiliskCooldownSeconds()        { return BIG_BERTHA_BASILISK_COOLDOWN_SECONDS.get(); }
     static double  bigBerthaLucidInvertedDurationSeconds()   { return BIG_BERTHA_LUCID_INVERTED_DURATION_SECONDS.get(); }
     static double  bigBerthaLucidInvertedDamageBonusPercent(){ return BIG_BERTHA_LUCID_INVERTED_DAMAGE_BONUS_PERCENT.get(); }
+    static double  bigBerthaNoneModeDamageBonusPercent()     { return BIG_BERTHA_NONE_MODE_DAMAGE_BONUS_PERCENT.get(); }
+    static double  bigBerthaNightmareDamageBonusPercent()    { return BIG_BERTHA_NIGHTMARE_DAMAGE_BONUS_PERCENT.get(); }
 
     static double  krakensGraspAttackDamage()                { return KRAKENS_GRASP_ATTACK_DAMAGE.get(); }
     static double  krakensGraspAttackSpeed()                 { return KRAKENS_GRASP_ATTACK_SPEED.get(); }
@@ -601,9 +607,9 @@ public final class AntarchyToolsConfig {
     static boolean krakensGraspInnateLoyalty()                { return KRAKENS_GRASP_INNATE_LOYALTY.get(); }
     static int     krakensGraspInnateLoyaltyLevel()          { return KRAKENS_GRASP_INNATE_LOYALTY_LEVEL.get(); }
     static int     krakensGraspTentacleDurationTicks()       { return KRAKENS_GRASP_TENTACLE_DURATION_TICKS.get(); }
-    static double  krakensGraspTentacleDamage()               { return KRAKENS_GRASP_TENTACLE_DAMAGE.get(); }
     static double  krakensGraspTentacleRadius()               { return KRAKENS_GRASP_TENTACLE_RADIUS.get(); }
-    static int     krakensGraspTentacleDamageIntervalTicks() { return KRAKENS_GRASP_TENTACLE_DAMAGE_INTERVAL_TICKS.get(); }
+    static int     krakensGraspTentacleSlownessAmplifier()   { return KRAKENS_GRASP_TENTACLE_SLOWNESS_AMPLIFIER.get(); }
+    static int     krakensGraspTentacleSlownessRefreshTicks() { return KRAKENS_GRASP_TENTACLE_SLOWNESS_REFRESH_TICKS.get(); }
     static double  scorpionWhipBaseDamage()                  { return SCORPION_WHIP_BASE_DAMAGE.get(); }
     static double  scorpionWhipReachBonus()                  { return SCORPION_WHIP_REACH_BONUS.get(); }
     static int     scorpionWhipPoisonDurationTicks()         { return SCORPION_WHIP_POISON_DURATION_TICKS.get(); }
