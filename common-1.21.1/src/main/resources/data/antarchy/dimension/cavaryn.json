@@ -14,7 +14,7 @@
             ],
             "humidity": [
               -1.0,
-              0.55
+              0.1
             ],
             "continentalness": [
               -1.0,
@@ -43,7 +43,7 @@
               1.0
             ],
             "humidity": [
-              0.5,
+              0.1,
               1.0
             ],
             "continentalness": [
@@ -55,8 +55,8 @@
               1.0
             ],
             "weirdness": [
-              -0.45,
-              0.45
+              -0.55,
+              0.55
             ],
             "depth": [
               -2.0,
@@ -73,8 +73,8 @@
               1.0
             ],
             "humidity": [
-              0.15,
-              0.85
+              0.1,
+              1.0
             ],
             "continentalness": [
               -1.0,
@@ -85,7 +85,37 @@
               1.0
             ],
             "weirdness": [
-              0.45,
+              -0.85,
+              -0.45
+            ],
+            "depth": [
+              -2.0,
+              -0.1
+            ],
+            "offset": 0.0
+          },
+          "biome": "antarchy:glowcap_caves"
+        },
+        {
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              0.1,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              1.0
+            ],
+            "erosion": [
+              -1.0,
+              1.0
+            ],
+            "weirdness": [
+              0.35,
               1.0
             ],
             "depth": [
@@ -103,7 +133,7 @@
               1.0
             ],
             "humidity": [
-              0.15,
+              0.1,
               1.0
             ],
             "continentalness": [
@@ -115,11 +145,41 @@
               1.0
             ],
             "weirdness": [
-              -0.25,
-              0.65
+              0.65,
+              1.0
             ],
             "depth": [
-              0.35,
+              -2.0,
+              -0.1
+            ],
+            "offset": 0.0
+          },
+          "biome": "antarchy:biowart_caves"
+        },
+        {
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              -0.15,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              1.0
+            ],
+            "erosion": [
+              -1.0,
+              1.0
+            ],
+            "weirdness": [
+              -0.6,
+              0.9
+            ],
+            "depth": [
+              0.15,
               2.0
             ],
             "offset": 0.0
@@ -134,6 +194,36 @@
             ],
             "humidity": [
               -1.0,
+              -0.15
+            ],
+            "continentalness": [
+              -1.0,
+              1.0
+            ],
+            "erosion": [
+              -1.0,
+              1.0
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -0.1,
+              2.0
+            ],
+            "offset": 0.0
+          },
+          "biome": "antarchy:brooding_tunnels"
+        },
+        {
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              -0.15,
               1.0
             ],
             "continentalness": [
@@ -146,6 +236,36 @@
             ],
             "weirdness": [
               -1.0,
+              -0.6
+            ],
+            "depth": [
+              -0.1,
+              2.0
+            ],
+            "offset": 0.0
+          },
+          "biome": "antarchy:brooding_tunnels"
+        },
+        {
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              -0.15,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              1.0
+            ],
+            "erosion": [
+              -1.0,
+              1.0
+            ],
+            "weirdness": [
+              0.9,
               1.0
             ],
             "depth": [

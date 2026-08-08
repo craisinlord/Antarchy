@@ -64,7 +64,7 @@
     }
   },
   "noise": {
-    "height": 384,
+    "height": 512,
     "min_y": -64,
     "size_horizontal": 1,
     "size_vertical": 2
@@ -218,7 +218,7 @@
       "cell_height": 8,
       "density": "antarchy:elythia_surface",
       "lower_bound": -64,
-      "upper_bound": 320
+      "upper_bound": 448
     },
     "ridges": "minecraft:overworld/ridges",
     "temperature": {

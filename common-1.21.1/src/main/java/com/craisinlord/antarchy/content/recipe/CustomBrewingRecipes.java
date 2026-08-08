@@ -27,6 +27,20 @@ public final class CustomBrewingRecipes {
         return !getOutput(input, ingredient).isEmpty();
     }
 
+    public static boolean isCustomIngredient(ItemStack stack) {
+        return stack.is(cornItem())
+                || stack.is(ROOTS)
+                || stack.is(AntarchyTags.Items.GLIMMER_AUGMENT_APPLE_COW)
+                || stack.is(AntarchyTags.Items.GLIMMER_AUGMENT_OURANWOOD_DEER)
+                || stack.is(AntarchyTags.Items.GLIMMER_AUGMENT_FROG)
+                || stack.is(AntarchyTags.Items.GLIMMER_AUGMENT_ANT)
+                || stack.is(AntarchyTags.Items.GLIMMER_AUGMENT_ELKA);
+    }
+
+    public static boolean isCustomContainer(ItemStack stack) {
+        return stack.is(highFructoseCornSyrupItem()) || stack.is(AntarchyObjects.GLIMMER_BOTTLE.get());
+    }
+
     public static ItemStack getOutput(ItemStack input, ItemStack ingredient) {
         if (input.isEmpty() || ingredient.isEmpty()) {
             return ItemStack.EMPTY;

@@ -10,6 +10,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PotionBrewing.class)
 public abstract class PotionBrewingMixin {
+    @Inject(method = "isIngredient", at = @At("HEAD"), cancellable = true)
+    private void antarchy$isCustomIngredient(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+        if (CustomBrewingRecipes.isCustomIngredient(stack)) {
+            cir.setReturnValue(true);
+        }
+    }
+
     @Inject(method = "hasMix", at = @At("HEAD"), cancellable = true)
     private void antarchy$hasCustomMix(ItemStack input, ItemStack ingredient, CallbackInfoReturnable<Boolean> cir) {
         if (CustomBrewingRecipes.hasMix(input, ingredient)) {

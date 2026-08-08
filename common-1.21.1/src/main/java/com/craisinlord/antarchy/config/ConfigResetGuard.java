@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public final class ConfigResetGuard {
-    public static final int RESET_GENERATION = 5;
+    public static final int RESET_GENERATION = 6;
     private static final String MARKER_FILE_NAME = ".config_generation";
 
     private ConfigResetGuard() {

@@ -7,6 +7,7 @@ import com.craisinlord.antarchy.content.AntarchySoundEvents;
 
 import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -21,6 +22,7 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
@@ -108,7 +110,15 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
             return true;
         }
 
-        return Mob.checkMobSpawnRules(entityType, level, spawnReason, pos, random);
+        BlockPos belowPos = pos.below();
+        if (level.getDifficulty() == Difficulty.PEACEFUL) {
+            return false;
+        }
+        return level.getBlockState(pos).isAir()
+                && level.getBlockState(pos.above()).isAir()
+                && level.getFluidState(pos).isEmpty()
+                && level.getFluidState(pos.above()).isEmpty()
+                && level.getBlockState(belowPos).isFaceSturdy(level, belowPos, Direction.UP);
     }
 
     public static AttributeSupplier.Builder createAttributes() {

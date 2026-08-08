@@ -6,7 +6,6 @@ public enum ThoraxisWeatherKind {
     NONE("none"),
     INVERSION_STORM("inversion_storm"),
     BLOOD_RAIN("blood_rain"),
-    SHARKNADO("sharknado"),
     SANDSTORM("sandstorm");
 
     private final String id;

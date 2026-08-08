@@ -21,14 +21,16 @@ public final class PermanentPortalShape {
     public static final int MAX_SIZE = 21;
     public static final int ACTIVE_SEARCH_RADIUS = 24;
 
-    private final PermanentPortalType type;
+    private final TagKey<Block> frameTag;
+    private final Block portalBlock;
     private final Direction.Axis axis;
     private final BlockPos bottomLeft;
     private final int width;
     private final int height;
 
-    private PermanentPortalShape(PermanentPortalType type, Direction.Axis axis, BlockPos bottomLeft, int width, int height) {
-        this.type = type;
+    private PermanentPortalShape(TagKey<Block> frameTag, Block portalBlock, Direction.Axis axis, BlockPos bottomLeft, int width, int height) {
+        this.frameTag = frameTag;
+        this.portalBlock = portalBlock;
         this.axis = axis;
         this.bottomLeft = bottomLeft;
         this.width = width;
@@ -36,21 +38,26 @@ public final class PermanentPortalShape {
     }
 
     @Nullable
-    public static PermanentPortalShape findInactive(BlockGetter level, BlockPos interiorPos, PermanentPortalType type, Direction.Axis axis) {
-        return find(level, interiorPos, type, axis, state -> state.isAir());
+    public static PermanentPortalShape findInactive(BlockGetter level, BlockPos interiorPos, TagKey<Block> frameTag, Block portalBlock, Direction.Axis axis) {
+        return find(level, interiorPos, frameTag, portalBlock, axis, state -> state.isAir());
     }
 
     @Nullable
-    public static PermanentPortalShape findInactiveNear(BlockGetter level, BlockPos center, PermanentPortalType type) {
+    public static PermanentPortalShape findInactive(BlockGetter level, BlockPos interiorPos, PermanentPortalType type, Direction.Axis axis) {
+        return findInactive(level, interiorPos, type.frameTag(), type.portalBlock(), axis);
+    }
+
+    @Nullable
+    public static PermanentPortalShape findInactiveNear(BlockGetter level, BlockPos center, TagKey<Block> frameTag, Block portalBlock) {
         for (int x = center.getX() - 2; x <= center.getX() + 2; x++) {
             for (int y = center.getY() - 2; y <= center.getY() + 2; y++) {
                 for (int z = center.getZ() - 2; z <= center.getZ() + 2; z++) {
                     BlockPos candidate = new BlockPos(x, y, z);
-                    PermanentPortalShape xShape = findInactive(level, candidate, type, Direction.Axis.X);
+                    PermanentPortalShape xShape = findInactive(level, candidate, frameTag, portalBlock, Direction.Axis.X);
                     if (xShape != null) {
                         return xShape;
                     }
-                    PermanentPortalShape zShape = findInactive(level, candidate, type, Direction.Axis.Z);
+                    PermanentPortalShape zShape = findInactive(level, candidate, frameTag, portalBlock, Direction.Axis.Z);
                     if (zShape != null) {
                         return zShape;
                     }
@@ -61,9 +68,14 @@ public final class PermanentPortalShape {
     }
 
     @Nullable
+    public static PermanentPortalShape findInactiveNear(BlockGetter level, BlockPos center, PermanentPortalType type) {
+        return findInactiveNear(level, center, type.frameTag(), type.portalBlock());
+    }
+
+    @Nullable
     public static PermanentPortalShape findActive(BlockGetter level, BlockPos interiorPos, PermanentPortalType type, Direction.Axis axis) {
         Block portalBlock = type.portalBlock();
-        return find(level, interiorPos, type, axis, state -> state.is(portalBlock));
+        return find(level, interiorPos, type.frameTag(), portalBlock, axis, state -> state.is(portalBlock));
     }
 
     @Nullable
@@ -90,7 +102,8 @@ public final class PermanentPortalShape {
     private static PermanentPortalShape find(
             BlockGetter level,
             BlockPos interiorPos,
-            PermanentPortalType type,
+            TagKey<Block> frameTag,
+            Block portalBlock,
             Direction.Axis axis,
             Predicate<BlockState> interiorPredicate
     ) {
@@ -110,17 +123,17 @@ public final class PermanentPortalShape {
             cursor = cursor.relative(leftDirection);
         }
 
-        int width = measureWidth(level, cursor, widthDirection, type.frameTag(), interiorPredicate);
+        int width = measureWidth(level, cursor, widthDirection, frameTag, interiorPredicate);
         if (width < MIN_WIDTH) {
             return null;
         }
 
-        int height = measureHeight(level, cursor, widthDirection, width, type.frameTag(), interiorPredicate);
+        int height = measureHeight(level, cursor, widthDirection, width, frameTag, interiorPredicate);
         if (height < MIN_HEIGHT) {
             return null;
         }
 
-        return new PermanentPortalShape(type, axis, cursor.immutable(), width, height);
+        return new PermanentPortalShape(frameTag, portalBlock, axis, cursor.immutable(), width, height);
     }
 
     private static int measureWidth(
@@ -197,7 +210,7 @@ public final class PermanentPortalShape {
     }
 
     public void fill(ServerLevel level) {
-        BlockState portalState = this.type.portalBlock().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_AXIS, this.axis);
+        BlockState portalState = this.portalBlock.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_AXIS, this.axis);
         this.forEachInterior(pos -> level.setBlock(pos, portalState, Block.UPDATE_ALL));
     }
 
@@ -226,7 +239,7 @@ public final class PermanentPortalShape {
             }
         }
 
-        return new PermanentPortalShape(type, axis, bottomLeft.immutable(), 2, 3);
+        return new PermanentPortalShape(type.frameTag(), type.portalBlock(), axis, bottomLeft.immutable(), 2, 3);
     }
 
     private static boolean canCreate(BlockGetter level, BlockPos bottomLeft, PermanentPortalType type, Direction.Axis axis) {

@@ -39,10 +39,6 @@ public final class ThoraxisBiomeSource extends BiomeSource {
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "lucid_pools")
     );
-    private static final ResourceKey<Biome> CLOUD_SEA = ResourceKey.create(
-            Registries.BIOME,
-            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "cloud_sea")
-    );
 
     public static final MapCodec<ThoraxisBiomeSource> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             MultiNoiseBiomeSource.DIRECT_CODEC.forGetter(ThoraxisBiomeSource::parameters),
@@ -64,10 +60,7 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     private Holder<Biome> dreamDunesBiome;
     private Holder<Biome> umbralHillsBiome;
     private Holder<Biome> lucidPoolsBiome;
-    private Holder<Biome> cloudSeaBiome;
 
-    private static final ThreadLocal<Long2DoubleOpenHashMap> CLOUD_SEA_CACHE =
-            ThreadLocal.withInitial(() -> new Long2DoubleOpenHashMap(512));
     private static final ThreadLocal<Long2DoubleOpenHashMap> REGION_CACHE =
             ThreadLocal.withInitial(() -> new Long2DoubleOpenHashMap(512));
     private static final ThreadLocal<Long2DoubleOpenHashMap> VERTICAL_CACHE =
@@ -96,7 +89,6 @@ public final class ThoraxisBiomeSource extends BiomeSource {
             this.dreamDunesBiome = this.findBiome(DREAM_DUNES);
             this.umbralHillsBiome = this.findBiome(UMBRAL_HILLS);
             this.lucidPoolsBiome = this.findBiome(LUCID_POOLS);
-            this.cloudSeaBiome = this.findBiome(CLOUD_SEA);
             this.biomesResolved = true;
         }
     }
@@ -130,10 +122,6 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     @Override
     public Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.Sampler sampler) {
         this.resolveBiomesIfNeeded();
-        if (this.cloudSeaBiome != null && cachedIsCloudSeaZone(x, z)) {
-            return this.cloudSeaBiome;
-        }
-
         if (y >= this.lucidPoolsMinQuartY && this.lucidPoolsBiome != null) {
             return this.lucidPoolsBiome;
         }
@@ -160,7 +148,6 @@ public final class ThoraxisBiomeSource extends BiomeSource {
         this.delegate.addDebugInfo(debug, pos, sampler);
         debug.add("Thoraxis selector: mixed vertical/region noise");
         debug.add("Thoraxis Lucid Pools: y>=" + this.lucidPoolsMinY);
-        debug.add("Thoraxis Cloud Sea: widened noise-selected");
     }
 
     private Holder<Biome> findBiome(ResourceKey<Biome> key) {
@@ -168,18 +155,6 @@ public final class ThoraxisBiomeSource extends BiomeSource {
                 .filter(holder -> holder.is(key))
                 .findFirst()
                 .orElse(null);
-    }
-
-    private boolean cachedIsCloudSeaZone(int quartX, int quartZ) {
-        long key = net.minecraft.world.level.ChunkPos.asLong(quartX, quartZ);
-        Long2DoubleOpenHashMap cache = CLOUD_SEA_CACHE.get();
-        if (cache.containsKey(key)) {
-            return cache.get(key) > 0.0D;
-        }
-        boolean result = isCloudSeaZone(quartX, quartZ);
-        if (cache.size() >= 512) cache.clear();
-        cache.put(key, result ? 1.0D : -1.0D);
-        return result;
     }
 
     private double cachedRegionNoise(int quartX, int quartZ) {
@@ -204,13 +179,6 @@ public final class ThoraxisBiomeSource extends BiomeSource {
         if (cache.size() >= 64) cache.clear();
         cache.put(key, result);
         return result;
-    }
-
-    private static boolean isCloudSeaZone(int quartX, int quartZ) {
-        double primary = sampleNoise(quartX, quartZ, 56);
-        double secondary = sampleNoise(quartX + 137, quartZ - 211, 24);
-        double combined = primary * 0.72D + secondary * 0.28D;
-        return (combined >= 0.892D && combined <= 0.952D) || (combined >= 0.962D && combined <= 0.992D);
     }
 
     private static double sampleRegionNoise(int quartX, int quartZ) {

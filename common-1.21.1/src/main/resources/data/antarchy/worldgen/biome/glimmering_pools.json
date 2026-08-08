@@ -18,8 +18,8 @@
     },
     "music": {
       "sound": "antarchy:music.game.elythia",
-      "min_delay": 12000,
-      "max_delay": 24000,
+      "min_delay": 600,
+      "max_delay": 1800,
       "replace_current_music": true
     }
   },
@@ -83,8 +83,7 @@
         "maxCount": 1
       }
     ],
-    "ambient": [
-    ],
+    "ambient": [],
     "axolotls": [],
     "underground_water_creature": [
       {

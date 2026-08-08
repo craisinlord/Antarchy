@@ -18,8 +18,8 @@
     },
     "music": {
       "sound": "antarchy:music.game.elythia",
-      "min_delay": 12000,
-      "max_delay": 24000,
+      "min_delay": 600,
+      "max_delay": 1800,
       "replace_current_music": true
     }
   },
@@ -82,8 +82,7 @@
   ],
   "creature_spawn_probability": 0.28,
   "spawners": {
-    "monster": [
-    ],
+    "monster": [],
     "creature": [
       {
         "type": "antarchy:elka",
@@ -104,14 +103,11 @@
         "maxCount": 1
       }
     ],
-    "ambient": [
-    ],
+    "ambient": [],
     "axolotls": [],
     "underground_water_creature": [],
-    "water_creature": [
-    ],
-    "water_ambient": [
-    ],
+    "water_creature": [],
+    "water_ambient": [],
     "misc": []
   }
 }

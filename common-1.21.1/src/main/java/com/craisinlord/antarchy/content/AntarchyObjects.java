@@ -108,6 +108,8 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<StinkBugEntity>> STINK_BUG = (Supplier<EntityType<StinkBugEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.RollyPollyEntity>> ROLLY_POLLY = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.RollyPollyEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.CheepEntity>> CHEEP = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.CheepEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.DorrieEntity>> DORRIE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.DorrieEntity>>) UNBOUND;
@@ -603,6 +605,10 @@ public final class AntarchyObjects {
 
     public static void setOuranwoodDeer(Supplier<EntityType<com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity>> supplier) {
         OURANWOOD_DEER = supplier;
+    }
+
+    public static void setRollyPolly(Supplier<EntityType<com.craisinlord.antarchy.content.entity.RollyPollyEntity>> supplier) {
+        ROLLY_POLLY = supplier;
     }
 
     public static void setGlimmer(Supplier<EntityType<com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity>> supplier) {

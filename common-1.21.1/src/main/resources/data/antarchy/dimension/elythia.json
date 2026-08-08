@@ -40,7 +40,7 @@
             "temperature": 0.75,
             "humidity": 0.96,
             "continentalness": 0.64,
-            "erosion": 0.10,
+            "erosion": 0.1,
             "weirdness": 0.65,
             "depth": 0.3,
             "offset": 0.27
@@ -63,7 +63,7 @@
           "parameters": {
             "temperature": 0.68,
             "humidity": 0.99,
-            "continentalness": 0.60,
+            "continentalness": 0.6,
             "erosion": 0.28,
             "weirdness": 0.42,
             "depth": 0.4,
@@ -73,11 +73,11 @@
         {
           "biome": "antarchy:elythia_meadow",
           "parameters": {
-            "temperature": 0.70,
+            "temperature": 0.7,
             "humidity": 0.94,
             "continentalness": 0.55,
             "erosion": 0.22,
-            "weirdness": -0.30,
+            "weirdness": -0.3,
             "depth": 0.3,
             "offset": 0.0
           }
@@ -161,7 +161,7 @@
             "humidity": 0.93,
             "continentalness": 0.54,
             "erosion": 0.25,
-            "weirdness": -0.50,
+            "weirdness": -0.5,
             "depth": 0.45,
             "offset": 0.0
           }
@@ -172,8 +172,8 @@
             "temperature": 0.67,
             "humidity": 0.93,
             "continentalness": 0.54,
-            "erosion": 0.20,
-            "weirdness": -0.40,
+            "erosion": 0.2,
+            "weirdness": -0.4,
             "depth": 0.45,
             "offset": 0.0
           }
@@ -229,7 +229,7 @@
         {
           "biome": "antarchy:sparse_ouranwood_forest",
           "parameters": {
-            "temperature": 0.20,
+            "temperature": 0.2,
             "humidity": 0.62,
             "continentalness": 0.95,
             "erosion": -0.35,
@@ -279,7 +279,7 @@
           "parameters": {
             "temperature": 0.74,
             "humidity": 0.99,
-            "continentalness": 0.60,
+            "continentalness": 0.6,
             "erosion": 0.17,
             "weirdness": 0.28,
             "depth": 0.0,
@@ -353,7 +353,7 @@
             "humidity": 0.96,
             "continentalness": 0.62,
             "erosion": 0.13,
-            "weirdness": 0.20,
+            "weirdness": 0.2,
             "depth": 0.0,
             "offset": 0.0
           }
@@ -361,11 +361,11 @@
         {
           "biome": "antarchy:butterfly_fields",
           "parameters": {
-            "temperature": 0.70,
+            "temperature": 0.7,
             "humidity": 0.97,
             "continentalness": 0.64,
             "erosion": 0.15,
-            "weirdness": 0.10,
+            "weirdness": 0.1,
             "depth": 0.0,
             "offset": 0.0
           }
@@ -389,7 +389,7 @@
             "humidity": 0.96,
             "continentalness": 0.62,
             "erosion": 0.13,
-            "weirdness": 0.20,
+            "weirdness": 0.2,
             "depth": 0.85,
             "offset": 0.0
           }
@@ -398,9 +398,9 @@
           "biome": "antarchy:elythia_ocean",
           "parameters": {
             "temperature": 0.65,
-            "humidity": 0.90,
+            "humidity": 0.9,
             "continentalness": -0.88,
-            "erosion": 0.30,
+            "erosion": 0.3,
             "weirdness": 0.0,
             "depth": 0.0,
             "offset": 0.0
@@ -409,11 +409,11 @@
         {
           "biome": "antarchy:elythia_ocean",
           "parameters": {
-            "temperature": 0.60,
+            "temperature": 0.6,
             "humidity": 0.88,
             "continentalness": -0.92,
             "erosion": 0.25,
-            "weirdness": -0.40,
+            "weirdness": -0.4,
             "depth": 0.0,
             "offset": 0.0
           }
@@ -421,11 +421,11 @@
         {
           "biome": "antarchy:elythia_ocean",
           "parameters": {
-            "temperature": 0.70,
+            "temperature": 0.7,
             "humidity": 0.92,
             "continentalness": -0.85,
             "erosion": 0.35,
-            "weirdness": 0.40,
+            "weirdness": 0.4,
             "depth": 0.0,
             "offset": 0.0
           }
@@ -434,9 +434,9 @@
           "biome": "antarchy:elythia_ocean",
           "parameters": {
             "temperature": 0.65,
-            "humidity": 0.90,
+            "humidity": 0.9,
             "continentalness": -0.88,
-            "erosion": 0.30,
+            "erosion": 0.3,
             "weirdness": 0.0,
             "depth": 0.5,
             "offset": 0.0
@@ -445,11 +445,11 @@
         {
           "biome": "antarchy:elythia_ocean",
           "parameters": {
-            "temperature": 0.60,
+            "temperature": 0.6,
             "humidity": 0.88,
             "continentalness": -0.92,
             "erosion": 0.25,
-            "weirdness": -0.40,
+            "weirdness": -0.4,
             "depth": 0.5,
             "offset": 0.0
           }
@@ -457,11 +457,11 @@
         {
           "biome": "antarchy:elythia_coral_spikes",
           "parameters": {
-            "temperature": 0.80,
+            "temperature": 0.8,
             "humidity": 0.85,
             "continentalness": -0.88,
-            "erosion": 0.20,
-            "weirdness": 0.50,
+            "erosion": 0.2,
+            "weirdness": 0.5,
             "depth": 0.0,
             "offset": 0.0
           }
@@ -471,7 +471,7 @@
           "parameters": {
             "temperature": 0.75,
             "humidity": 0.82,
-            "continentalness": -0.90,
+            "continentalness": -0.9,
             "erosion": 0.15,
             "weirdness": -0.55,
             "depth": 0.0,
@@ -481,11 +481,11 @@
         {
           "biome": "antarchy:elythia_coral_spikes",
           "parameters": {
-            "temperature": 0.80,
+            "temperature": 0.8,
             "humidity": 0.85,
             "continentalness": -0.88,
-            "erosion": 0.20,
-            "weirdness": 0.50,
+            "erosion": 0.2,
+            "weirdness": 0.5,
             "depth": 0.5,
             "offset": 0.0
           }
@@ -495,14 +495,45 @@
           "parameters": {
             "temperature": 0.75,
             "humidity": 0.82,
-            "continentalness": -0.90,
+            "continentalness": -0.9,
             "erosion": 0.15,
             "weirdness": -0.55,
             "depth": 0.5,
             "offset": 0.0
+          }
+        },
+        {
+          "biome": "antarchy:cloud_sea",
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              1.0
+            ],
+            "erosion": [
+              -1.0,
+              1.0
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              0.0,
+              1.0
+            ],
+            "offset": 0.999
           }
         }
-      ]
+      ],
+      "cloud_sea_min_y": 360
     }
   }
 }

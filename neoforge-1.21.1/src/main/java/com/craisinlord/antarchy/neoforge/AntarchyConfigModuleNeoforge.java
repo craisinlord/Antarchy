@@ -145,6 +145,7 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setTriffidHealth(AntarchyMobsConfig.triffidHealth());
         AntarchySettings.setTriffidAttackDamage(AntarchyMobsConfig.triffidAttackDamage());
         AntarchySettings.setTriffidGrabDamage(AntarchyMobsConfig.triffidGrabDamage());
+        AntarchySettings.setTriffidSweepHitCooldownTicks(AntarchyMobsConfig.triffidSweepHitCooldownTicks());
 
         AntarchySettings.setCaterpillarPupationTimeSeconds(AntarchyMobsConfig.caterpillarPupationTimeSeconds());
 

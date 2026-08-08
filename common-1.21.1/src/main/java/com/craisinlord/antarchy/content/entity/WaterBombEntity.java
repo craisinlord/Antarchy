@@ -28,27 +28,44 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class WaterBombEntity extends ThrowableProjectile {
+public class WaterBombEntity extends ThrowableProjectile implements GeoEntity {
+
+    private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
 
     private static final EntityDataAccessor<Boolean> HUGE = SynchedEntityData.defineId(WaterBombEntity.class, EntityDataSerializers.BOOLEAN);
 
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private int lifetimeTicks;
     private final Map<UUID, Integer> hitCooldowns = new HashMap<>();
 
     public WaterBombEntity(EntityType<? extends WaterBombEntity> entityType, Level level) {
         super(entityType, level);
         this.lifetimeTicks = AntarchySettings.waterBombLifetimeTicks();
+        this.configureProjectile();
     }
 
     public WaterBombEntity(Level level, LivingEntity owner) {
         super(AntarchyObjects.WATER_BOMB.get(), owner, level);
         this.lifetimeTicks = AntarchySettings.waterBombLifetimeTicks();
+        this.configureProjectile();
     }
 
     public WaterBombEntity(Level level, LivingEntity owner, boolean huge) {
         this(level, owner);
         this.entityData.set(HUGE, huge);
+    }
+
+    private void configureProjectile() {
+        this.noCulling = true;
     }
 
     @Override
@@ -68,6 +85,7 @@ public class WaterBombEntity extends ThrowableProjectile {
     @Override
     public void tick() {
         super.tick();
+        this.realignToMotion();
 
         this.hitCooldowns.replaceAll((uuid, cd) -> cd - 1);
         this.hitCooldowns.entrySet().removeIf(e -> e.getValue() <= 0);
@@ -142,5 +160,30 @@ public class WaterBombEntity extends ThrowableProjectile {
         super.readAdditionalSaveData(tag);
         this.lifetimeTicks = tag.contains("LifetimeTicks") ? tag.getInt("LifetimeTicks") : AntarchySettings.waterBombLifetimeTicks();
         if (tag.contains("Huge")) this.entityData.set(HUGE, tag.getBoolean("Huge"));
+    }
+
+    private void realignToMotion() {
+        Vec3 motion = this.getDeltaMovement();
+        if (motion.lengthSqr() < 1.0E-6D) {
+            return;
+        }
+
+        double horizontal = Math.sqrt(motion.x * motion.x + motion.z * motion.z);
+        this.setYRot((float) (net.minecraft.util.Mth.atan2(motion.z, motion.x) * (180.0D / Math.PI)) - 90.0F);
+        this.setXRot((float) (-(net.minecraft.util.Mth.atan2(motion.y, horizontal) * (180.0D / Math.PI))));
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "water_bomb_controller", 0, this::waterBombController));
+    }
+
+    private PlayState waterBombController(AnimationState<WaterBombEntity> state) {
+        return state.setAndContinue(IDLE_ANIM);
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
     }
 }

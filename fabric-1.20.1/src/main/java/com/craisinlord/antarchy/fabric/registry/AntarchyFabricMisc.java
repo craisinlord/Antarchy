@@ -60,7 +60,7 @@ import com.craisinlord.antarchy.content.worldgen.cavaryn.ChitinSpikeConfiguratio
 import com.craisinlord.antarchy.content.worldgen.cavaryn.ChitinSpikeFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.BedBugNestFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.BedBugSurfaceClusterFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.CloudSeaCalciteFeature;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaCloudFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.LucidAntiwaterPoolFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBiomeSource;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisDuneConfiguration;
@@ -729,8 +729,8 @@ public final class AntarchyFabricMisc {
             () -> new ThoraxisBloodCrystalFeature(ThoraxisBloodCrystalConfiguration.CODEC));
 
 
-    public static final DeferredHolder<Feature<?>, CloudSeaCalciteFeature> CLOUD_SEA_CALCITE_BANKS = FEATURES.register("cloud_sea_calcite_banks",
-            () -> new CloudSeaCalciteFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, ElythiaCloudFeature> ELYTHIA_CLOUDS = FEATURES.register("elythia_clouds",
+            () -> new ElythiaCloudFeature(NoneFeatureConfiguration.CODEC));
 
 
     public static final DeferredHolder<Feature<?>, BedBugNestFeature> BED_BUG_NEST = FEATURES.register("bed_bug_nest",

@@ -7,7 +7,6 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
 
 public final class DreadMobEffect extends MobEffect {
     public DreadMobEffect() {
@@ -23,8 +22,7 @@ public final class DreadMobEffect extends MobEffect {
             int maxTicks = Math.max(minTicks, (int) Math.round(AntarchySettings.dreadHallucinationMobMaxInterval() * 20.0D));
             int averageTicks = (minTicks + maxTicks) / 2;
             if (player.getRandom().nextInt(averageTicks) == 0) {
-                Vec3 spawnPos = player.position().add(0.0D, player.getBbHeight() * 0.6D, 0.0D);
-                NightmareBiteEntity.spawnAt(serverLevel, spawnPos, player.getYRot(), false);
+                NightmareBiteEntity.spawnAt(serverLevel, player, false);
             }
         }
         return true;

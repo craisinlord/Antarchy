@@ -26,8 +26,8 @@
     },
     "music": {
       "sound": "antarchy:music.game.thoraxis",
-      "min_delay": 12000,
-      "max_delay": 24000,
+      "min_delay": 600,
+      "max_delay": 1800,
       "replace_current_music": true
     }
   },
@@ -57,8 +57,7 @@
     ],
     [
       "antarchy:nyxite_spikes",
-      "antarchy:patch_ceiling_fire",
-      "antarchy:patch_ceiling_antigravel"
+      "antarchy:patch_ceiling_fire"
     ],
     [
       "antarchy:cornea_stalk_patch",

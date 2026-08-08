@@ -663,16 +663,16 @@ public final class AntarchyNeoforgeItems {
             ));
     public static final DeferredItem<ArmorItem> ULTIMATE_HELMET = ITEMS.register("ultimate_helmet",
             () -> new UltimateArmorItem(ULTIMATE_ARMOR_MATERIAL, ArmorItem.Type.HELMET,
-                    new Item.Properties().rarity(Rarity.EPIC).fireResistant().durability(ArmorItem.Type.HELMET.getDurability(41))));
+                    new Item.Properties().rarity(Rarity.EPIC).fireResistant().durability(ArmorItem.Type.HELMET.getDurability(62))));
     public static final DeferredItem<ArmorItem> ULTIMATE_CHESTPLATE = ITEMS.register("ultimate_chestplate",
             () -> new UltimateArmorItem(ULTIMATE_ARMOR_MATERIAL, ArmorItem.Type.CHESTPLATE,
-                    new Item.Properties().rarity(Rarity.EPIC).fireResistant().durability(ArmorItem.Type.CHESTPLATE.getDurability(41))));
+                    new Item.Properties().rarity(Rarity.EPIC).fireResistant().durability(ArmorItem.Type.CHESTPLATE.getDurability(62))));
     public static final DeferredItem<ArmorItem> ULTIMATE_LEGGINGS = ITEMS.register("ultimate_leggings",
             () -> new UltimateArmorItem(ULTIMATE_ARMOR_MATERIAL, ArmorItem.Type.LEGGINGS,
-                    new Item.Properties().rarity(Rarity.EPIC).fireResistant().durability(ArmorItem.Type.LEGGINGS.getDurability(41))));
+                    new Item.Properties().rarity(Rarity.EPIC).fireResistant().durability(ArmorItem.Type.LEGGINGS.getDurability(62))));
     public static final DeferredItem<ArmorItem> ULTIMATE_BOOTS = ITEMS.register("ultimate_boots",
             () -> new UltimateArmorItem(ULTIMATE_ARMOR_MATERIAL, ArmorItem.Type.BOOTS,
-                    new Item.Properties().rarity(Rarity.EPIC).fireResistant().durability(ArmorItem.Type.BOOTS.getDurability(41))));
+                    new Item.Properties().rarity(Rarity.EPIC).fireResistant().durability(ArmorItem.Type.BOOTS.getDurability(62))));
     public static final DeferredItem<UltimateSwordItem> ULTIMATE_SWORD = ITEMS.register("ultimate_sword",
             () -> new UltimateSwordItem(ULTIMATE_TIER,
                     new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant(),

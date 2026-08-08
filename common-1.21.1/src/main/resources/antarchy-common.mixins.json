@@ -78,6 +78,7 @@
                    "client.AbstractMinecartRendererMixin",
                    "client.EntityLightProbeMixin",
                    "client.CustomBossBarMixin",
+                   "client.DimensionMusicMixin",
                    "client.CavarynSkyMixin",
                    "client.CavarynHordeFogMixin",
                    "client.CavarynHordeLightTextureMixin",

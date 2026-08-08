@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "MD",
+    "DM"
+  ],
+  "key": {
+    "M": {
+      "item": "minecraft:mud"
+    },
+    "D": {
+      "item": "antarchy:myrmite"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "antarchy:loam"
+  }
+}

@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompat;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.portal.RainbowPortalIgniter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -73,6 +74,31 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
     @Override
     public boolean requiresCustomPersistence() {
         return this.hasActiveInfinityDestination() || super.requiresCustomPersistence();
+    }
+
+    /**
+     * Called on death. If this ant has already been activated (fed its reagent) and Infinity integration is
+     * enabled, looks for a nearby unlit obsidian Nether-portal frame and, if found, ignites it as a permanent
+     * physical Infinity Dimensions portal to this ant's assigned dimension.
+     */
+    public boolean tryIgniteInfinityPortalOnDeath() {
+        if (!this.infinityActivated) {
+            return false;
+        }
+        if (!AntarchySettings.permanentPortalsEnabled() || !AntarchySettings.rainbowAntsLeadToInfinityDimensions()
+                || !InfinityCompat.get().isAvailable()) {
+            return false;
+        }
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return false;
+        }
+
+        ResourceLocation dimensionId = this.resolveDimensionId();
+        if (dimensionId == null) {
+            return false;
+        }
+
+        return RainbowPortalIgniter.tryIgnite(serverLevel, this.getBoundingBox(), dimensionId);
     }
 
     @Override
@@ -187,6 +213,11 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
             child.assignDimensionId(child.createRandomDimensionId(), false, false);
         }
         return child;
+    }
+
+    @Override
+    public boolean isFood(ItemStack stack) {
+        return this.infinityActivated && super.isFood(stack);
     }
 
     @Override

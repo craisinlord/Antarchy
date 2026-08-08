@@ -369,7 +369,12 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
             return false;
         }
 
-        return super.hurt(source, BossCombatUtil.capSingleHitAtHalfHealth(this, amount));
+        float preHealth = this.getHealth();
+        boolean hurt = super.hurt(source, amount);
+        if (hurt) {
+            BossCombatUtil.clampHalfHealthCrossing(this, preHealth);
+        }
+        return hurt;
     }
 
     @Override

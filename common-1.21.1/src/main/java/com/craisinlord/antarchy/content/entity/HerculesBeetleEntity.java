@@ -56,6 +56,8 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.FlyingAnimal;
@@ -141,6 +143,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
     private static final int CRY_COOLDOWN_TICKS = 120;
     private static final int COMBAT_RESET_TICKS = 60;
     private static final int IMPACT_SHAKE_TICKS = 25;
+    private static final int AIRBORNE_ANIMATION_HYSTERESIS_TICKS = 4;
     private static final double FLIGHT_SPEED = 1.38D;
     private static final double GROUND_SPEED = 0.34D;
     private static final double CHARGE_SPEED = 1.5D;
@@ -250,6 +253,8 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
                         && !this.isKnockedDown()
                         && !player.isCreative()
                         && !player.isSpectator()));
+        this.targetSelector.addGoal(3, new OwnerHurtByTargetGoal(this));
+        this.targetSelector.addGoal(4, new OwnerHurtTargetGoal(this));
     }
 
     @Override
@@ -529,12 +534,11 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             this.setAnimationState(ANIM_KNOCKED_DOWN_IDLE);
             return;
         }
-        if (this.isFlying()) {
+        if (this.isFlying() || this.airborneTicks > AIRBORNE_ANIMATION_HYSTERESIS_TICKS) {
             this.setAnimationState(ANIM_FLY);
             return;
         }
         if (!this.onGround()) {
-            this.setAnimationState(ANIM_IDLE);
             return;
         }
         if (this.getControllingPassenger() instanceof Player rider) {
@@ -594,13 +598,16 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             amount *= 0.5F;
         }
 
-        amount = BossCombatUtil.capSingleHitAtHalfHealth(this, amount);
+        float preHealth = this.getHealth();
 
         if (!this.level().isClientSide && !this.isTame() && !this.isKnockedDown() && !this.isDeadOrDying()) {
             float knockThreshold = Math.max(1.0F, this.getMaxHealth() * 0.05F);
             if (this.getHealth() - amount <= knockThreshold) {
                 float allowedDamage = Math.max(0.0F, this.getHealth() - knockThreshold);
                 boolean hurt = allowedDamage <= 0.0F || super.hurt(source, allowedDamage);
+                if (hurt) {
+                    BossCombatUtil.clampHalfHealthCrossing(this, preHealth);
+                }
                 if (hurt && this.isAlive()) {
                     this.enterKnockedDown();
                 }
@@ -608,13 +615,20 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             }
         }
 
-        return super.hurt(source, amount);
+        boolean hurt = super.hurt(source, amount);
+        if (hurt) {
+            BossCombatUtil.clampHalfHealthCrossing(this, preHealth);
+        }
+        return hurt;
     }
 
     @Override
     public boolean isInvulnerableTo(DamageSource source) {
         if (super.isInvulnerableTo(source)) {
             return true;
+        }
+        if (this.isTame()) {
+            return false;
         }
         return BossCombatUtil.isOutOfDamageRange(this, AntarchySettings.herculesBeetleDamageRange());
     }
@@ -1227,7 +1241,10 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
     @Override
     public boolean canAttack(LivingEntity target) {
         if (target instanceof Player player) {
-            return !this.isTame() && !player.isCreative() && !player.isSpectator() && super.canAttack(target);
+            if (this.isTame() && this.isOwnedBy(player)) {
+                return false;
+            }
+            return !player.isCreative() && !player.isSpectator() && super.canAttack(target);
         }
         return super.canAttack(target);
     }
@@ -1237,7 +1254,10 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             return false;
         }
         if (target instanceof Player player) {
-            return !player.isCreative() && !player.isSpectator() && !this.isTame();
+            if (this.isTame() && this.isOwnedBy(player)) {
+                return false;
+            }
+            return !player.isCreative() && !player.isSpectator();
         }
         return target.canBeSeenAsEnemy();
     }
@@ -1402,8 +1422,8 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
 
         @Override
         public boolean canUse() {
-            return !HerculesBeetleEntity.this.isTame()
-                    && !HerculesBeetleEntity.this.isKnockedDown()
+            return !HerculesBeetleEntity.this.isKnockedDown()
+                    && !HerculesBeetleEntity.this.isVehicle()
                     && HerculesBeetleEntity.this.getTarget() != null
                     && HerculesBeetleEntity.this.canAttack(HerculesBeetleEntity.this.getTarget());
         }
@@ -1413,8 +1433,8 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             LivingEntity target = HerculesBeetleEntity.this.getTarget();
             return target != null
                     && target.isAlive()
-                    && !HerculesBeetleEntity.this.isTame()
                     && !HerculesBeetleEntity.this.isKnockedDown()
+                    && !HerculesBeetleEntity.this.isVehicle()
                     && HerculesBeetleEntity.this.canAttack(target);
         }
 

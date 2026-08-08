@@ -91,11 +91,10 @@ public final class AntarchyFabricContent {
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.CLOUD_SHARK_FIN.get()), net.minecraft.world.item.alchemy.Potions.SLOW_FALLING);
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.JUMPY_BUG_LEG.get()), Potions.LEAPING);
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.CORNEA_EAR.get()), net.minecraft.world.item.alchemy.Potions.NIGHT_VISION);
-            // These two use registerItemRecipe (not registerPotionRecipe) purely to mark corn/syrup
-            // as valid brewing-stand ingredients; the actual water-only output logic still comes
-            // from PotionBrewingMixin -> CustomBrewingRecipes so it stays consistent with NeoForge.
-            builder.registerItemRecipe(Items.POTION, Ingredient.of(AntarchyFabricItems.CORN.get()), AntarchyFabricItems.HIGH_FRUCTOSE_CORN_SYRUP.get());
-            builder.registerItemRecipe(AntarchyFabricItems.HIGH_FRUCTOSE_CORN_SYRUP.get(), Ingredient.of(com.craisinlord.antarchy.content.recipe.CustomBrewingRecipes.rootsTag()), AntarchyFabricItems.ROOT_BEER.get());
+            // Corn/syrup/root-beer are plain items, not Potion holders, so vanilla's Builder#expectPotion
+            // rejects them via registerItemRecipe/registerPotionRecipe. The actual output logic comes from
+            // PotionBrewingMixin -> CustomBrewingRecipes; brewing-stand slot validity for these custom items
+            // is handled by BrewingStandCustomIngredientMixin (Fabric doesn't expose Builder#addContainer).
         });
 
         AntarchyFabricSounds.SOUND_EVENTS.register();
@@ -152,6 +151,7 @@ public final class AntarchyFabricContent {
                 AntarchyFabricSounds.BRUTALFLY_IDLE,
                 AntarchyFabricSounds.BRUTALFLY_DEATH,
                 AntarchyFabricSounds.ELYTHIA_FIREFLY_AMBIENT,
+                AntarchyFabricSounds.ELYTHIA_OURANWOOD_FOREST_AMBIENT,
                 AntarchyFabricSounds.MISSILE_SQUID_AMBIENT,
                 AntarchyFabricSounds.MISSILE_SQUID_HURT,
                 AntarchyFabricSounds.MISSILE_SQUID_DEATH,
@@ -300,6 +300,7 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setKrakenTentacle(() -> AntarchyFabricItems.KRAKEN_TENTACLE.get());
         AntarchyObjects.setKrakensGrasp(() -> AntarchyFabricItems.KRAKENS_GRASP.get());
         AntarchyObjects.setOuranwoodDeer(AntarchyFabricEntities.OURANWOOD_DEER);
+        AntarchyObjects.setRollyPolly(AntarchyFabricEntities.ROLLY_POLLY);
         AntarchyObjects.setGlimmer(AntarchyFabricEntities.GLIMMER);
         AntarchyObjects.setSpiritApple(() -> AntarchyFabricItems.SPIRIT_APPLE.get());
         AntarchyObjects.setGlimmeringEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.GLIMMERING));

@@ -63,7 +63,12 @@ public class AlphaMantisEntity extends MantisEntity {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        return super.hurt(source, BossCombatUtil.capSingleHitAtHalfHealth(this, amount));
+        float preHealth = this.getHealth();
+        boolean hurt = super.hurt(source, amount);
+        if (hurt) {
+            BossCombatUtil.clampHalfHealthCrossing(this, preHealth);
+        }
+        return hurt;
     }
 
     public static boolean checkAlphaMantisSpawnRules(EntityType<AlphaMantisEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {

@@ -18,8 +18,8 @@
     },
     "music": {
       "sound": "antarchy:music.game.cavaryn",
-      "min_delay": 12000,
-      "max_delay": 24000,
+      "min_delay": 600,
+      "max_delay": 1800,
       "replace_current_music": true
     }
   },
@@ -59,7 +59,7 @@
     ],
     []
   ],
-  "creature_spawn_probability": 0.08,
+  "creature_spawn_probability": 0.9,
   "spawners": {
     "monster": [
       {
@@ -75,13 +75,26 @@
         "maxCount": 4
       }
     ],
-    "creature": [],
+    "creature": [
+      {
+        "type": "antarchy:rolly_polly",
+        "weight": 220,
+        "minCount": 3,
+        "maxCount": 7
+      },
+      {
+        "type": "antarchy:stink_bug",
+        "weight": 300,
+        "minCount": 4,
+        "maxCount": 8
+      }
+    ],
     "ambient": [
       {
         "type": "minecraft:bat",
-        "weight": 12,
-        "minCount": 4,
-        "maxCount": 8
+        "weight": 1,
+        "minCount": 1,
+        "maxCount": 2
       }
     ],
     "axolotls": [],
