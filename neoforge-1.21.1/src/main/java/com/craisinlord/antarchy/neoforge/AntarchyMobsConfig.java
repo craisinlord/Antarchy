@@ -133,6 +133,7 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue TRIFFID_HEALTH;
     private static final ModConfigSpec.DoubleValue TRIFFID_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue TRIFFID_GRAB_DAMAGE;
+    private static final ModConfigSpec.IntValue    TRIFFID_SWEEP_HIT_COOLDOWN_TICKS;
 
 
     // Caterpillar
@@ -491,6 +492,9 @@ public final class AntarchyMobsConfig {
         TRIFFID_HEALTH        = b.comment("Base max health.")                     .defineInRange("health",       80.0D, 1.0D, 32768.0D);
         TRIFFID_ATTACK_DAMAGE = b.comment("Damage dealt by the sweep attack.")   .defineInRange("attackDamage", 10.0D, 0.0D, 1024.0D);
         TRIFFID_GRAB_DAMAGE   = b.comment("Damage dealt by the grab attack.")    .defineInRange("grabDamage",   15.0D, 0.0D, 1024.0D);
+        TRIFFID_SWEEP_HIT_COOLDOWN_TICKS = b
+                .comment("Ticks a given entity is immune to repeat sweep-attack damage attempts after being hit once, so shields/armor absorbing a hit can't be shredded by every tick of the sweep's active window.")
+                .defineInRange("sweepHitCooldownTicks", 10, 0, 200);
         b.pop();
 
 
@@ -758,6 +762,7 @@ public final class AntarchyMobsConfig {
     static double  triffidHealth()                          { return TRIFFID_HEALTH.get(); }
     static double  triffidAttackDamage()                    { return TRIFFID_ATTACK_DAMAGE.get(); }
     static double  triffidGrabDamage()                      { return TRIFFID_GRAB_DAMAGE.get(); }
+    static int     triffidSweepHitCooldownTicks()           { return TRIFFID_SWEEP_HIT_COOLDOWN_TICKS.get(); }
 
     static double  caterpillarPupationTimeSeconds()         { return CATERPILLAR_PUPATION_TIME_SECONDS.get(); }
     static double  antDanceRadius()                         { return ANT_DANCE_RADIUS.get(); }

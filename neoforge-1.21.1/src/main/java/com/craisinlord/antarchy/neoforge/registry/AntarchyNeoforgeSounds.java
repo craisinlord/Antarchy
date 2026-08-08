@@ -33,6 +33,7 @@ public final class AntarchyNeoforgeSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> BRUTALFLY_IDLE = registerSoundEvent("brutalfly_idle");
     public static final DeferredHolder<SoundEvent, SoundEvent> BRUTALFLY_DEATH = registerSoundEvent("brutalfly_death");
     public static final DeferredHolder<SoundEvent, SoundEvent> ELYTHIA_FIREFLY_AMBIENT = registerSoundEvent("ambient.elythia.firefly");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ELYTHIA_OURANWOOD_FOREST_AMBIENT = registerSoundEvent("ambient.elythia.ouranwood_forest");
     public static final DeferredHolder<SoundEvent, SoundEvent> MISSILE_SQUID_AMBIENT = registerSoundEvent("missile_squid_ambient");
     public static final DeferredHolder<SoundEvent, SoundEvent> MISSILE_SQUID_HURT = registerSoundEvent("missile_squid_hurt");
     public static final DeferredHolder<SoundEvent, SoundEvent> MISSILE_SQUID_DEATH = registerSoundEvent("missile_squid_death");

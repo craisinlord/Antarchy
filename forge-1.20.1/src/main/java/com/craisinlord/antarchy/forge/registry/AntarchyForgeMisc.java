@@ -306,8 +306,8 @@ public final class AntarchyForgeMisc {
             () -> new PotentNyxiteFeature(NoneFeatureConfiguration.CODEC));
     public static final RegistryObject<ThoraxisBloodCrystalFeature> THORAXIS_BLOOD_CRYSTAL_SPIRES = FEATURES.register("thoraxis_blood_crystal_spires",
             () -> new ThoraxisBloodCrystalFeature(ThoraxisBloodCrystalConfiguration.CODEC));
-    public static final RegistryObject<CloudSeaCalciteFeature> CLOUD_SEA_CALCITE_BANKS = FEATURES.register("cloud_sea_calcite_banks",
-            () -> new CloudSeaCalciteFeature(NoneFeatureConfiguration.CODEC));
+    public static final RegistryObject<ElythiaCloudFeature> ELYTHIA_CLOUDS = FEATURES.register("elythia_clouds",
+            () -> new ElythiaCloudFeature(NoneFeatureConfiguration.CODEC));
     public static final RegistryObject<BedBugNestFeature> BED_BUG_NEST = FEATURES.register("bed_bug_nest",
             () -> new BedBugNestFeature(NoneFeatureConfiguration.CODEC));
     public static final RegistryObject<BedBugSurfaceClusterFeature> BED_BUG_SURFACE_CLUSTER = FEATURES.register("bed_bug_surface_cluster",

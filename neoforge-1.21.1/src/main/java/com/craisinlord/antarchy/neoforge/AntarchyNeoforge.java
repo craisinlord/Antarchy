@@ -54,6 +54,7 @@ public class AntarchyNeoforge {
                 AntarchyNeoforgeSounds.BRUTALFLY_IDLE,
                 AntarchyNeoforgeSounds.BRUTALFLY_DEATH,
                 AntarchyNeoforgeSounds.ELYTHIA_FIREFLY_AMBIENT,
+                AntarchyNeoforgeSounds.ELYTHIA_OURANWOOD_FOREST_AMBIENT,
                 AntarchyNeoforgeSounds.MISSILE_SQUID_AMBIENT,
                 AntarchyNeoforgeSounds.MISSILE_SQUID_HURT,
                 AntarchyNeoforgeSounds.MISSILE_SQUID_DEATH,
@@ -369,6 +370,7 @@ public class AntarchyNeoforge {
         AntarchyObjects.setKrakenTentacle(() -> AntarchyNeoforgeItems.KRAKEN_TENTACLE.get());
         AntarchyObjects.setKrakensGrasp(() -> AntarchyNeoforgeItems.KRAKENS_GRASP.get());
         AntarchyObjects.setOuranwoodDeer(AntarchyNeoforgeEntites.OURANWOOD_DEER);
+        AntarchyObjects.setRollyPolly(AntarchyNeoforgeEntites.ROLLY_POLLY);
         AntarchyObjects.setGlimmer(AntarchyNeoforgeEntites.GLIMMER);
         AntarchyObjects.setSpiritApple(() -> AntarchyNeoforgeItems.SPIRIT_APPLE.get());
         AntarchyObjects.setGlimmeringEffect(() -> AntarchyNeoforgeMisc.GLIMMERING);

@@ -1017,7 +1017,7 @@ public final class AntarchyFabricItems {
                     new Item.Properties()
                             .rarity(Rarity.EPIC)
                             .fireResistant()
-                            .durability(ArmorItem.Type.HELMET.getDurability(41))
+                            .durability(ArmorItem.Type.HELMET.getDurability(62))
             ));
 
 
@@ -1028,7 +1028,7 @@ public final class AntarchyFabricItems {
                     new Item.Properties()
                             .rarity(Rarity.EPIC)
                             .fireResistant()
-                            .durability(ArmorItem.Type.CHESTPLATE.getDurability(41))
+                            .durability(ArmorItem.Type.CHESTPLATE.getDurability(62))
             ));
 
 
@@ -1039,7 +1039,7 @@ public final class AntarchyFabricItems {
                     new Item.Properties()
                             .rarity(Rarity.EPIC)
                             .fireResistant()
-                            .durability(ArmorItem.Type.LEGGINGS.getDurability(41))
+                            .durability(ArmorItem.Type.LEGGINGS.getDurability(62))
             ));
 
 
@@ -1050,7 +1050,7 @@ public final class AntarchyFabricItems {
                     new Item.Properties()
                             .rarity(Rarity.EPIC)
                             .fireResistant()
-                            .durability(ArmorItem.Type.BOOTS.getDurability(41))
+                            .durability(ArmorItem.Type.BOOTS.getDurability(62))
             ));
 
 

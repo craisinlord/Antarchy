@@ -57,6 +57,10 @@ public class ElythiaBiomeSource extends BiomeSource {
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "glimmering_pools")
     );
+    private static final ResourceKey<Biome> CLOUD_SEA = ResourceKey.create(
+            Registries.BIOME,
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "cloud_sea")
+    );
     private static final int[] SURFACE_FALLBACK_BLOCK_YS = new int[]{192, 160, 128, 96, 64, 32, 0};
 
     private static final class ColumnBiomeCache {
@@ -77,7 +81,8 @@ public class ElythiaBiomeSource extends BiomeSource {
             Codec.INT.optionalFieldOf("moleworm_caves_max_y", 72).forGetter(ElythiaBiomeSource::molewormCavesMaxY),
             Codec.INT.optionalFieldOf("surface_biome_sample_y", 160).forGetter(ElythiaBiomeSource::surfaceBiomeSampleY),
             Codec.INT.optionalFieldOf("ocean_max_y", 85).forGetter(ElythiaBiomeSource::oceanMaxY),
-            Codec.INT.optionalFieldOf("sea_level", 78).forGetter(ElythiaBiomeSource::seaLevel)
+            Codec.INT.optionalFieldOf("sea_level", 78).forGetter(ElythiaBiomeSource::seaLevel),
+            Codec.INT.optionalFieldOf("cloud_sea_min_y", 360).forGetter(ElythiaBiomeSource::cloudSeaMinY)
     ).apply(instance, ElythiaBiomeSource::new));
 
     private final Climate.ParameterList<Holder<Biome>> parameters;
@@ -86,28 +91,33 @@ public class ElythiaBiomeSource extends BiomeSource {
     private final int surfaceBiomeSampleY;
     private final int oceanMaxY;
     private final int seaLevel;
+    private final int cloudSeaMinY;
     private final int molewormCavesMaxQuartY;
     private final int surfaceBiomeSampleQuartY;
     private final int oceanMaxQuartY;
     private final int seaLevelQuartY;
     private final int undergroundGuardMaxQuartY;
+    private final int cloudSeaMinQuartY;
     private final Holder<Biome> oceanHolder;
     private final Holder<Biome> defaultLandHolder;
     private final Holder<Biome> glimmeringPoolsHolder;
     private final Holder<Biome> ouranwoodForestHolder;
+    private final Holder<Biome> cloudSeaHolder;
 
-    public ElythiaBiomeSource(Climate.ParameterList<Holder<Biome>> parameters, int molewormCavesMaxY, int surfaceBiomeSampleY, int oceanMaxY, int seaLevel) {
+    public ElythiaBiomeSource(Climate.ParameterList<Holder<Biome>> parameters, int molewormCavesMaxY, int surfaceBiomeSampleY, int oceanMaxY, int seaLevel, int cloudSeaMinY) {
         this.parameters = parameters;
         this.delegate = MultiNoiseBiomeSource.createFromList(parameters);
         this.molewormCavesMaxY = molewormCavesMaxY;
         this.surfaceBiomeSampleY = surfaceBiomeSampleY;
         this.oceanMaxY = oceanMaxY;
         this.seaLevel = seaLevel;
+        this.cloudSeaMinY = cloudSeaMinY;
         this.molewormCavesMaxQuartY = QuartPos.fromBlock(molewormCavesMaxY);
         this.surfaceBiomeSampleQuartY = QuartPos.fromBlock(surfaceBiomeSampleY);
         this.oceanMaxQuartY = QuartPos.fromBlock(oceanMaxY);
         this.seaLevelQuartY = QuartPos.fromBlock(seaLevel);
         this.undergroundGuardMaxQuartY = QuartPos.fromBlock(molewormCavesMaxY + 40);
+        this.cloudSeaMinQuartY = QuartPos.fromBlock(cloudSeaMinY);
         this.oceanHolder = parameters.values().stream()
                 .map(Pair::getSecond)
                 .filter(h -> h.is(ELYTHIA_OCEAN))
@@ -130,6 +140,11 @@ public class ElythiaBiomeSource extends BiomeSource {
                           && !h.is(GLIMMERING_POOLS))
                 .findFirst()
                 .orElse(null);
+        this.cloudSeaHolder = parameters.values().stream()
+                .map(Pair::getSecond)
+                .filter(h -> h.is(CLOUD_SEA))
+                .findFirst()
+                .orElse(null);
     }
 
     private Climate.ParameterList<Holder<Biome>> parameters() { return this.parameters; }
@@ -137,6 +152,7 @@ public class ElythiaBiomeSource extends BiomeSource {
     private int surfaceBiomeSampleY() { return this.surfaceBiomeSampleY; }
     private int oceanMaxY() { return this.oceanMaxY; }
     private int seaLevel() { return this.seaLevel; }
+    private int cloudSeaMinY() { return this.cloudSeaMinY; }
 
     @Override
     protected MapCodec<? extends BiomeSource> codec() {
@@ -148,10 +164,28 @@ public class ElythiaBiomeSource extends BiomeSource {
         return this.delegate.possibleBiomes().stream();
     }
     private static final long OCEAN_CONTINENTALNESS_THRESHOLD = Climate.quantizeCoord(-0.87f);
+    private static final int CLOUD_SEA_CELL_SIZE = 96;
+    private static final long CLOUD_SEA_CHANCE_DENOMINATOR = 5L; // 1-in-5 columns == ~20%
 
     @Override
     public Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.Sampler sampler) {
+        // Only some sky columns are the cloud sea — everywhere else, altitude above the cloud
+        // floor just falls through to whatever biome would normally be there. Decided before
+        // touching the (expensive) delegate at all, both for correctness (multi-noise has no
+        // real notion of raw Y to gate a biome on) and as a speed win for the common case.
+        if (this.cloudSeaHolder != null && y >= this.cloudSeaMinQuartY && isCloudSeaColumn(x, z)) {
+            return this.cloudSeaHolder;
+        }
+
         Holder<Biome> biome = this.delegate.getNoiseBiome(x, y, z, sampler);
+
+        // Defensive: cloud_sea's multi-noise parameter point is reserved far off in "offset"
+        // so it shouldn't win nearest-neighbor on its own, but if it ever does for a query
+        // below the cloud floor, treat it like any other biome that has no business at that
+        // altitude and fall back to a real land biome instead of leaking clouds into terrain.
+        if (biome.is(CLOUD_SEA)) {
+            return resolveLandFallback(x, z, sampler);
+        }
 
         if (biome.is(MOLEWORM_CAVES) && y > this.molewormCavesMaxQuartY) {
             return resolveSurfaceFallback(x, z, sampler, this.molewormSurfaceFallbackCache, MOLEWORM_CAVES, GLIMMERING_POOLS);
@@ -227,6 +261,13 @@ public class ElythiaBiomeSource extends BiomeSource {
         long cellZ = Math.floorDiv(z, 11);
         long gate = Math.floorMod(cellX * 73428767L + cellZ * 912931L, 5L);
         return gate <= 3L;
+    }
+
+    private static boolean isCloudSeaColumn(int x, int z) {
+        long cellX = Math.floorDiv(x, CLOUD_SEA_CELL_SIZE);
+        long cellZ = Math.floorDiv(z, CLOUD_SEA_CELL_SIZE);
+        long gate = Math.floorMod(cellX * 668265263L + cellZ * 2246822519L, CLOUD_SEA_CHANCE_DENOMINATOR);
+        return gate == 0L;
     }
 
     private static boolean isSparseOuranwoodCandidate(Climate.TargetPoint target, int x, int z) {
@@ -312,7 +353,7 @@ public class ElythiaBiomeSource extends BiomeSource {
     private static boolean isOceanOrCave(Holder<Biome> biome) {
         return isOceanBiome(biome) || biome.is(ELYTHIA_BEACH)
                 || biome.is(MOLEWORM_CAVES) || biome.is(ELYTHIA_LUSH_CAVES)
-                || biome.is(GLIMMERING_POOLS);
+                || biome.is(GLIMMERING_POOLS) || biome.is(CLOUD_SEA);
     }
 
     @Override
@@ -323,5 +364,6 @@ public class ElythiaBiomeSource extends BiomeSource {
         }
         debug.add("Elythia mole cave cap: y<=" + this.molewormCavesMaxY);
         debug.add("Elythia sea level: " + this.seaLevel);
+        debug.add("Elythia cloud sea: y>=" + this.cloudSeaMinY + " in ~1/" + CLOUD_SEA_CHANCE_DENOMINATOR + " columns");
     }
 }

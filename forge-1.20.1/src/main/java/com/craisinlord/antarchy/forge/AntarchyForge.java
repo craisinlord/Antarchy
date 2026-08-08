@@ -358,6 +358,7 @@ public class AntarchyForge {
         AntarchyObjects.setKrakensGrasp(() -> AntarchyForgeItems.KRAKENS_GRASP.get());
         AntarchyObjects.setOuranwoodDeer(AntarchyForgeEntites.OURANWOOD_DEER);
         AntarchyObjects.setGlimmer(AntarchyForgeEntites.GLIMMER);
+        AntarchyObjects.setRollyPolly(AntarchyForgeEntites.ROLLY_POLLY);
         AntarchyObjects.setSpiritApple(() -> AntarchyForgeItems.SPIRIT_APPLE.get());
         AntarchyObjects.setGlimmeringEffect(() -> AntarchyForgeMisc.mobEffectHolder(AntarchyForgeMisc.GLIMMERING));
         AntarchyObjects.setElka(AntarchyForgeEntites.ELKA);

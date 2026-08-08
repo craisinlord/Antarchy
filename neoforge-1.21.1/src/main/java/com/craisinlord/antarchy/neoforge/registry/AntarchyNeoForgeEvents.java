@@ -14,6 +14,7 @@ import com.craisinlord.antarchy.content.dispenser.AntimetalMinecartDispenseBehav
 import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.antarchy.content.bloodglass.BloodglassAccess;
 import com.craisinlord.antarchy.content.entity.*;
+import com.craisinlord.antarchy.content.entity.ant.RainbowAntEntity;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
@@ -208,6 +209,7 @@ public final class AntarchyNeoForgeEvents {
     static void tickCavarynHordes(ServerTickEvent.Post event) {
         for (ServerLevel level : event.getServer().getAllLevels()) {
             CavarynHordeManager.tick(level);
+            com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
         }
     }
 
@@ -218,6 +220,9 @@ public final class AntarchyNeoForgeEvents {
 
     public static void onPermanentPortalSacrifice(LivingDeathEvent event) {
         PermanentPortalManager.handleSacrifice(event.getEntity());
+        if (event.getEntity() instanceof RainbowAntEntity rainbowAnt) {
+            rainbowAnt.tryIgniteInfinityPortalOnDeath();
+        }
     }
 
     public static void onLivingBreathe(LivingBreatheEvent event) {

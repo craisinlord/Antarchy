@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -24,6 +25,8 @@ public class SpiritAppleItem extends Item {
         ItemStack result = super.finishUsingItem(stack, level, livingEntity);
         if (!level.isClientSide()) {
             livingEntity.addEffect(new MobEffectInstance(AntarchyObjects.GLIMMERING_EFFECT.get(), GLIMMERING_DURATION_TICKS, 0, false, false, true));
+            livingEntity.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, GLIMMERING_DURATION_TICKS, 0, false, false, true));
+            livingEntity.addEffect(new MobEffectInstance(MobEffects.JUMP, GLIMMERING_DURATION_TICKS, 0, false, false, true));
         }
         return result;
     }

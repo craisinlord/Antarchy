@@ -18,8 +18,8 @@
     },
     "music": {
       "sound": "antarchy:music.game.elythia",
-      "min_delay": 12000,
-      "max_delay": 24000,
+      "min_delay": 600,
+      "max_delay": 1800,
       "replace_current_music": true
     }
   },
@@ -65,19 +65,39 @@
   "creature_spawn_probability": 0.04,
   "spawners": {
     "monster": [
-      { "type": "antarchy:missile_squid", "weight": 12, "minCount": 1, "maxCount": 3 }
+      {
+        "type": "antarchy:missile_squid",
+        "weight": 12,
+        "minCount": 1,
+        "maxCount": 3
+      }
     ],
     "creature": [
-      { "type": "minecraft:turtle", "weight": 5, "minCount": 1, "maxCount": 2 }
+      {
+        "type": "minecraft:turtle",
+        "weight": 5,
+        "minCount": 1,
+        "maxCount": 2
+      }
     ],
     "ambient": [],
     "axolotls": [],
     "underground_water_creature": [],
     "water_creature": [
-      { "type": "antarchy:octopus_bomb", "weight": 4, "minCount": 1, "maxCount": 2 }
+      {
+        "type": "antarchy:octopus_bomb",
+        "weight": 4,
+        "minCount": 1,
+        "maxCount": 2
+      }
     ],
     "water_ambient": [
-      { "type": "minecraft:tropical_fish", "weight": 20, "minCount": 4, "maxCount": 8 }
+      {
+        "type": "minecraft:tropical_fish",
+        "weight": 20,
+        "minCount": 4,
+        "maxCount": 8
+      }
     ],
     "misc": []
   }

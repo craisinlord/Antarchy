@@ -4,9 +4,9 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -78,7 +78,7 @@ public class TriffidEntity extends Monster implements GeoEntity {
     private static final RawAnimation DEATH_ANIM = RawAnimation.begin().thenPlayAndHold("death");
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private final Set<UUID> sweepHitEntities = new HashSet<>();
+    private final Map<UUID, Integer> sweepHitCooldowns = new HashMap<>();
 
     private int actionTicks;
     private int attackCooldown;
@@ -341,7 +341,6 @@ public class TriffidEntity extends Monster implements GeoEntity {
         this.actionTicks = SWEEP_TOTAL_TICKS;
         this.attackCooldown = SWEEP_COOLDOWN_TICKS;
         this.actionStartYaw = this.getAngleTo(target) - 100.0F;
-        this.sweepHitEntities.clear();
         this.setYRot(this.actionStartYaw);
         this.playSound(AntarchySoundEvents.TRIFFID_ATTACK.get(), 0.9F, 0.75F);
     }
@@ -351,6 +350,7 @@ public class TriffidEntity extends Monster implements GeoEntity {
         float progress = elapsed / (float) SWEEP_TOTAL_TICKS;
         this.setYRot(this.actionStartYaw + 200.0F * progress);
 
+        this.tickSweepHitCooldowns();
         if (elapsed >= SWEEP_ACTIVE_START && elapsed <= SWEEP_ACTIVE_END) {
             this.applySweepDamage();
         }
@@ -358,8 +358,15 @@ public class TriffidEntity extends Monster implements GeoEntity {
         this.actionTicks--;
         if (this.actionTicks <= 0) {
             this.setActionState(ACTION_NONE);
-            this.sweepHitEntities.clear();
         }
+    }
+
+    private void tickSweepHitCooldowns() {
+        if (this.sweepHitCooldowns.isEmpty()) {
+            return;
+        }
+        this.sweepHitCooldowns.replaceAll((uuid, ticksRemaining) -> ticksRemaining - 1);
+        this.sweepHitCooldowns.values().removeIf(ticksRemaining -> ticksRemaining <= 0);
     }
 
     private void applySweepDamage() {
@@ -374,7 +381,7 @@ public class TriffidEntity extends Monster implements GeoEntity {
         );
 
         for (LivingEntity candidate : candidates) {
-            if (candidate == this || this.sweepHitEntities.contains(candidate.getUUID())) {
+            if (candidate == this || this.sweepHitCooldowns.containsKey(candidate.getUUID())) {
                 continue;
             }
             if (this.distanceTo(candidate) > SWEEP_RANGE) {
@@ -386,9 +393,12 @@ public class TriffidEntity extends Monster implements GeoEntity {
                 continue;
             }
 
-            if (candidate.hurt(AntarchyDamageSources.triffidMauling(serverLevel, this), (float) AntarchySettings.triffidAttackDamage())) {
-                this.sweepHitEntities.add(candidate.getUUID());
-            }
+            // Put the entity on cooldown before hurting it, regardless of hurt()'s result: a
+            // shield or armor effect can absorb the damage and make hurt() return false without
+            // granting the vanilla invulnerability window, which would otherwise let this attack
+            // re-attempt damage on the same entity every single tick of the active window.
+            this.sweepHitCooldowns.put(candidate.getUUID(), AntarchySettings.triffidSweepHitCooldownTicks());
+            candidate.hurt(AntarchyDamageSources.triffidMauling(serverLevel, this), (float) AntarchySettings.triffidAttackDamage());
         }
     }
 

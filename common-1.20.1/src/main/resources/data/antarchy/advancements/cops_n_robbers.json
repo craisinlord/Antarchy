@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "discover_ruined_prison": {
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "structure": "antarchy:ruined_prison"
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:location"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.cops_n_robbers.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "item": "minecraft:iron_bars"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.cops_n_robbers.title"
+    }
+  },
+  "requirements": [
+    [
+      "discover_ruined_prison"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

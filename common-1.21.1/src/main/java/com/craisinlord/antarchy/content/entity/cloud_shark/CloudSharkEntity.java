@@ -138,7 +138,11 @@ public class CloudSharkEntity extends Monster implements GeoEntity {
         HurtByTargetGoal hurtByTargetGoal = new HurtByTargetGoal(this);
         hurtByTargetGoal.setAlertOthers(CloudSharkEntity.class);
         this.targetSelector.addGoal(1, hurtByTargetGoal);
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, CloudSharkEntity::isTargetablePlayer));
+    }
+
+    private static boolean isTargetablePlayer(LivingEntity target) {
+        return !(target instanceof Player player) || (!player.isCreative() && !player.isSpectator());
     }
 
     @Override
@@ -194,7 +198,7 @@ public class CloudSharkEntity extends Monster implements GeoEntity {
         LivingEntity target = this.getTarget();
         if ((target == null || !target.isAlive()) && this.tickCount % 10 == 0) {
             Player nearbyPlayer = this.level().getNearestPlayer(this, 32.0D);
-            if (nearbyPlayer != null && this.canAttack(nearbyPlayer)) {
+            if (nearbyPlayer != null && isTargetablePlayer(nearbyPlayer) && this.canAttack(nearbyPlayer)) {
                 this.setTarget(nearbyPlayer);
                 target = nearbyPlayer;
             }

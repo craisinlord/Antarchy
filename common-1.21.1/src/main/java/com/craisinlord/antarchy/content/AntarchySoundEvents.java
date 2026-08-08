@@ -31,6 +31,7 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> BRUTALFLY_IDLE = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> BRUTALFLY_DEATH = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> ELYTHIA_FIREFLY_AMBIENT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> ELYTHIA_OURANWOOD_FOREST_AMBIENT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> MISSILE_SQUID_AMBIENT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> MISSILE_SQUID_HURT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> MISSILE_SQUID_DEATH = (Supplier<SoundEvent>) UNBOUND;
@@ -195,6 +196,7 @@ public final class AntarchySoundEvents {
             Supplier<SoundEvent> brutalflyIdle,
             Supplier<SoundEvent> brutalflyDeath,
             Supplier<SoundEvent> elythiaFireflyAmbient,
+            Supplier<SoundEvent> elythiaOuranwoodForestAmbient,
             Supplier<SoundEvent> missileSquidAmbient,
             Supplier<SoundEvent> missileSquidHurt,
             Supplier<SoundEvent> missileSquidDeath,
@@ -355,6 +357,7 @@ public final class AntarchySoundEvents {
         BRUTALFLY_IDLE = brutalflyIdle;
         BRUTALFLY_DEATH = brutalflyDeath;
         ELYTHIA_FIREFLY_AMBIENT = elythiaFireflyAmbient;
+        ELYTHIA_OURANWOOD_FOREST_AMBIENT = elythiaOuranwoodForestAmbient;
         MISSILE_SQUID_AMBIENT = missileSquidAmbient;
         MISSILE_SQUID_HURT = missileSquidHurt;
         MISSILE_SQUID_DEATH = missileSquidDeath;

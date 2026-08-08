@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.content.item.MantisClawItem;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,11 +23,15 @@ public abstract class MantisClawWallClimbMixin extends LivingEntity {
     @Unique
     private static final int antarchy$MANTIS_CLAW_CLIMB_DURABILITY_INTERVAL = 20;
     @Unique
+    private static final int antarchy$MANTIS_CLAW_FALL_RESET_GRACE_TICKS = 10;
+    @Unique
     private boolean antarchy$mantisClinging;
     @Unique
     private int antarchy$mantisWallJumpCooldown;
     @Unique
     private int antarchy$mantisClingDurabilityTicks;
+    @Unique
+    private int antarchy$mantisFallResetTicks;
 
     protected MantisClawWallClimbMixin(EntityType<? extends LivingEntity> entityType, Level level) {
         super(entityType, level);
@@ -36,6 +41,10 @@ public abstract class MantisClawWallClimbMixin extends LivingEntity {
     private void antarchy$tickMantisWallCling(CallbackInfo ci) {
         if (this.antarchy$mantisWallJumpCooldown > 0) {
             this.antarchy$mantisWallJumpCooldown--;
+        }
+        if (this.antarchy$mantisFallResetTicks > 0) {
+            this.antarchy$mantisFallResetTicks--;
+            this.fallDistance = 0.0F;
         }
 
         if (!this.antarchy$canMantisCling()) {
@@ -62,8 +71,19 @@ public abstract class MantisClawWallClimbMixin extends LivingEntity {
         this.setDeltaMovement(motion.x, clampedY, motion.z);
         this.hasImpulse = true;
         this.fallDistance = 0.0F;
+        this.antarchy$mantisFallResetTicks = antarchy$MANTIS_CLAW_FALL_RESET_GRACE_TICKS;
         this.antarchy$mantisClinging = true;
         this.antarchy$damageMantisClawsWhileClimbing();
+    }
+
+    @Inject(method = "causeFallDamage", at = @At("HEAD"), cancellable = true)
+    private void antarchy$preventFallDamageWhileMantisClimbing(float fallDistance, float multiplier, DamageSource source, org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable<Boolean> cir) {
+        if (!this.antarchy$shouldSuppressMantisFallDamage()) {
+            return;
+        }
+
+        this.fallDistance = 0.0F;
+        cir.setReturnValue(false);
     }
 
     @Unique
@@ -120,5 +140,10 @@ public abstract class MantisClawWallClimbMixin extends LivingEntity {
         if (player instanceof ServerPlayer serverPlayer) {
             serverPlayer.containerMenu.broadcastChanges();
         }
+    }
+
+    @Unique
+    private boolean antarchy$shouldSuppressMantisFallDamage() {
+        return this.antarchy$mantisClinging || this.antarchy$mantisFallResetTicks > 0 || this.antarchy$canMantisCling();
     }
 }

@@ -5,14 +5,11 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
-import com.craisinlord.antarchy.content.entity.cloud_shark.CloudSharkEntity;
-import com.craisinlord.antarchy.content.entity.cloud_shark.SharknadoManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -43,10 +40,6 @@ public final class ThoraxisWeatherManager {
     private static final ResourceKey<Biome> LUCID_POOLS = ResourceKey.create(
             net.minecraft.core.registries.Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "lucid_pools")
-    );
-    private static final ResourceKey<Biome> CLOUD_SEA = ResourceKey.create(
-            net.minecraft.core.registries.Registries.BIOME,
-            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "cloud_sea")
     );
     private static final int WEATHER_RECHECK_MIN_TICKS = 400;
     private static final int WEATHER_RECHECK_MAX_TICKS = 900;
@@ -141,7 +134,6 @@ public final class ThoraxisWeatherManager {
         switch (state.kind) {
             case INVERSION_STORM -> tickInversionStorm(level, state, now);
             case BLOOD_RAIN -> tickBloodRain(level, state, now);
-            case SHARKNADO -> tickSharknadoWeather(level, state, now);
             case SANDSTORM -> tickSandstorm(level, state, now);
             default -> {
             }
@@ -233,55 +225,6 @@ public final class ThoraxisWeatherManager {
         );
     }
 
-    private static void tickSharknadoWeather(ServerLevel level, WeatherState state, long now) {
-        if (now == state.startedAt) {
-            seedSharknado(level, state.anchor);
-        }
-
-        if (now % WEATHER_PARTICLE_INTERVAL != 0L) {
-            return;
-        }
-
-        level.sendParticles(
-                ParticleTypes.CLOUD,
-                state.anchor.getX() + 0.5D,
-                state.anchor.getY() + 8.0D,
-                state.anchor.getZ() + 0.5D,
-                26,
-                10.0D,
-                8.0D,
-                10.0D,
-                0.12D
-        );
-    }
-
-    private static void seedSharknado(ServerLevel level, BlockPos anchor) {
-        SharknadoManager manager = SharknadoManager.get(level);
-        for (int i = 0; i < 4; i++) {
-            CloudSharkEntity shark = createCloudShark(level);
-            if (shark == null) {
-                continue;
-            }
-
-            double x = anchor.getX() + level.getRandom().nextDouble() * 10.0D - 5.0D;
-            double y = anchor.getY() + 6.0D + level.getRandom().nextDouble() * 6.0D;
-            double z = anchor.getZ() + level.getRandom().nextDouble() * 10.0D - 5.0D;
-            shark.moveTo(x, y, z, level.getRandom().nextFloat() * 360.0F, 0.0F);
-            level.addFreshEntity(shark);
-            manager.tryFormOrJoin(shark, level);
-        }
-    }
-
-    private static CloudSharkEntity createCloudShark(ServerLevel level) {
-        EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "cloud_shark"))
-                .orElse(null);
-        if (entityType == null) {
-            return null;
-        }
-
-        return entityType.create(level) instanceof CloudSharkEntity cloudShark ? cloudShark : null;
-    }
-
     private static WeatherKindSelection chooseWeather(ServerLevel level, RandomSource random) {
         var players = level.players();
         if (players.isEmpty()) {
@@ -294,10 +237,6 @@ public final class ThoraxisWeatherManager {
 
         if (biome.is(DREAM_DUNES)) {
             return new WeatherKindSelection(ThoraxisWeatherKind.SANDSTORM, anchor);
-        }
-
-        if (biome.is(CLOUD_SEA)) {
-            return new WeatherKindSelection(ThoraxisWeatherKind.SHARKNADO, anchor);
         }
 
         if (biome.is(LUCID_POOLS)) {

@@ -234,6 +234,31 @@
         }
       },
       {
+        "type": "minecraft:condition",
+        "if_true": {
+          "type": "minecraft:stone_depth",
+          "add_surface_depth": false,
+          "offset": 0,
+          "secondary_depth_range": 0,
+          "surface_type": "ceiling"
+        },
+        "then_run": {
+          "type": "minecraft:condition",
+          "if_true": {
+            "type": "minecraft:noise_threshold",
+            "noise": "minecraft:gravel",
+            "min_threshold": -0.05,
+            "max_threshold": 0.05
+          },
+          "then_run": {
+            "type": "minecraft:block",
+            "result_state": {
+              "Name": "antarchy:antigravel"
+            }
+          }
+        }
+      },
+      {
         "type": "minecraft:block",
         "result_state": {
           "Name": "antarchy:nyxite"

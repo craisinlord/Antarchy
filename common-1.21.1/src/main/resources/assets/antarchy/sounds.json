@@ -928,6 +928,7 @@
     "sounds": [
       {
         "name": "antarchy:lucid_lullaby",
+        "type": "event",
         "stream": true
       }
     ]
@@ -944,6 +945,7 @@
     "sounds": [
       {
         "name": "antarchy:venenatus",
+        "type": "event",
         "stream": true
       }
     ]
@@ -960,6 +962,7 @@
     "sounds": [
       {
         "name": "antarchy:wistful_wanderings",
+        "type": "event",
         "stream": true
       }
     ]
@@ -1874,6 +1877,35 @@
       },
       {
         "name": "antarchy:ambient/elythia/firefly/firefly_bush11",
+        "stream": false
+      }
+    ]
+  },
+  "ambient.elythia.ouranwood_forest": {
+    "subtitle": "subtitles.antarchy.ambient_elythia_ouranwood_forest",
+    "sounds": [
+      {
+        "name": "antarchy:ambient/elythia/ouranwood_forest/ouranwoodforest1",
+        "stream": false
+      },
+      {
+        "name": "antarchy:ambient/elythia/ouranwood_forest/ouranwoodforest2",
+        "stream": false
+      },
+      {
+        "name": "antarchy:ambient/elythia/ouranwood_forest/ouranwoodforest3",
+        "stream": false
+      },
+      {
+        "name": "antarchy:ambient/elythia/ouranwood_forest/ouranwoodforest4",
+        "stream": false
+      },
+      {
+        "name": "antarchy:ambient/elythia/ouranwood_forest/ouranwoodforest5",
+        "stream": false
+      },
+      {
+        "name": "antarchy:ambient/elythia/ouranwood_forest/ouranwoodforest6",
         "stream": false
       }
     ]

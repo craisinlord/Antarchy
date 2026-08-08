@@ -3,6 +3,7 @@ import com.craisinlord.antarchy.fabric.registry.AntarchyFabricBlocks;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricItems;
 
 import com.craisinlord.antarchy.content.entity.ReverieEntity;
+import com.craisinlord.antarchy.content.entity.ant.RainbowAntEntity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.DuctTapeBlock;
@@ -91,6 +92,9 @@ public final class AntarchyFabricEvents {
                 BloodglassManager.handleDeath(sp);
             }
             PermanentPortalManager.handleSacrifice(entity);
+            if (entity instanceof RainbowAntEntity rainbowAnt) {
+                rainbowAnt.tryIgniteInfinityPortalOnDeath();
+            }
             if (entity.getKillCredit() instanceof ServerPlayer killer) {
                 CavarynHordeManager.recordMobKill(killer, entity);
             }
@@ -142,6 +146,7 @@ public final class AntarchyFabricEvents {
             Set<UUID> activeThisTick = new HashSet<>();
             for (ServerLevel level : server.getAllLevels()) {
                 CavarynHordeManager.tick(level);
+                com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
                 tickInvertedPlayers(level, activeThisTick);
                 tickDuctTapePlayers(level);
                 tickIchorPlayers(level);

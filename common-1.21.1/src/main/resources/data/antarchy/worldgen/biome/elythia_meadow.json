@@ -18,8 +18,8 @@
     },
     "music": {
       "sound": "antarchy:music.game.elythia",
-      "min_delay": 12000,
-      "max_delay": 24000,
+      "min_delay": 600,
+      "max_delay": 1800,
       "replace_current_music": true
     }
   },
@@ -156,8 +156,18 @@
       }
     ],
     "water_ambient": [
-      { "type": "antarchy:cheep", "weight": 10, "minCount": 3, "maxCount": 6 },
-      { "type": "minecraft:tropical_fish", "weight": 20, "minCount": 4, "maxCount": 8 }
+      {
+        "type": "antarchy:cheep",
+        "weight": 10,
+        "minCount": 3,
+        "maxCount": 6
+      },
+      {
+        "type": "minecraft:tropical_fish",
+        "weight": 20,
+        "minCount": 4,
+        "maxCount": 8
+      }
     ],
     "misc": []
   }

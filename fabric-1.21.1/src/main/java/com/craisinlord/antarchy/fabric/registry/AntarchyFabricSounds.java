@@ -76,6 +76,9 @@ public final class AntarchyFabricSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> ELYTHIA_FIREFLY_AMBIENT = registerSoundEvent("ambient.elythia.firefly");
 
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> ELYTHIA_OURANWOOD_FOREST_AMBIENT = registerSoundEvent("ambient.elythia.ouranwood_forest");
+
+
     public static final DeferredHolder<SoundEvent, SoundEvent> MISSILE_SQUID_AMBIENT = registerSoundEvent("missile_squid_ambient");
 
 

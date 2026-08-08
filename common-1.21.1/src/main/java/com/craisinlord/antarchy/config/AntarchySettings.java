@@ -288,7 +288,7 @@ public final class AntarchySettings {
     private static int emperorScorpionWeaknessTicks = 120;
     private static int emperorScorpionSummonIntervalTicks = 140;
     private static int emperorScorpionMaxSummonedScorpions = 4;
-    private static int emperorScorpionMaxNearbyScorpions = 3;
+    private static int emperorScorpionMaxNearbyScorpions = 4;
     private static int emperorScorpionHardenCooldownTicks = 2400;
     private static double emperorScorpionDamageRange = 80.0D;
     private static int emperorScorpionMinDespawnTicks = 6000;
@@ -344,6 +344,7 @@ public final class AntarchySettings {
     private static double triffidHealth = 80.0D;
     private static double triffidAttackDamage = 10.0D;
     private static double triffidGrabDamage = 15.0D;
+    private static int triffidSweepHitCooldownTicks = 10;
     private static double molevoreHealth = 60.0D;
     private static double molevoreAttackDamage = 10.0D;
     private static double molevoreMovementSpeed = 0.27D;
@@ -2242,6 +2243,9 @@ public final class AntarchySettings {
 
     public static double triffidGrabDamage() { return triffidGrabDamage; }
     public static void setTriffidGrabDamage(double value) { triffidGrabDamage = value; }
+
+    public static int triffidSweepHitCooldownTicks() { return triffidSweepHitCooldownTicks; }
+    public static void setTriffidSweepHitCooldownTicks(int value) { triffidSweepHitCooldownTicks = value; }
 
     public static double molevoreHealth() { return molevoreHealth; }
     public static void setMolevoreHealth(double value) { molevoreHealth = value; }

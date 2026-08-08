@@ -18,13 +18,12 @@
     },
     "music": {
       "sound": "antarchy:music.game.elythia",
-      "min_delay": 12000,
-      "max_delay": 24000,
+      "min_delay": 600,
+      "max_delay": 1800,
       "replace_current_music": true
     }
   },
-  "spawn_costs": {
-  },
+  "spawn_costs": {},
   "carvers": {
     "air": [],
     "liquid": []
@@ -70,10 +69,9 @@
     ],
     []
   ],
-  "creature_spawn_probability": 0.20,
+  "creature_spawn_probability": 0.2,
   "spawners": {
-    "monster": [
-    ],
+    "monster": [],
     "creature": [
       {
         "type": "antarchy:caterpillar",

@@ -10,6 +10,7 @@
     "WaterlikeFluidLivingEntityMixin",
     "WaterlikeFluidItemEntityMixin",
     "AntimetalInversionMixin",
+    "BrewingStandCustomIngredientMixin",
     "ElytraStartFlyingMixin",
     "ElytraFallFlyingMixin",
     "BloodglassEquipMixin",

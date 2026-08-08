@@ -6,6 +6,8 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -23,8 +25,11 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.UUID;
 
 public class NightmarePortalEntity extends Entity implements GeoEntity {
+    private static final int OPEN_TICKS = 10;
+    private static final int CLOSE_TICKS = 10;
     private static final EntityDataAccessor<Boolean> CLOSING = SynchedEntityData.defineId(NightmarePortalEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final RawAnimation OPEN_ANIM = RawAnimation.begin().thenPlay("open").thenLoop("idle");
+    private static final RawAnimation OPEN_ANIM = RawAnimation.begin().thenPlay("open");
+    private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation CLOSE_ANIM = RawAnimation.begin().thenPlay("close");
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
@@ -48,6 +53,7 @@ public class NightmarePortalEntity extends Entity implements GeoEntity {
         portal.fallbackDestination = fallbackDestination;
         portal.lifetimeTicks = lifetimeTicks;
         level.addFreshEntity(portal);
+        level.playSound(null, pos.x, pos.y, pos.z, SoundEvents.END_PORTAL_SPAWN, SoundSource.HOSTILE, 0.22F, 0.95F + owner.getRandom().nextFloat() * 0.1F);
         return portal;
     }
 
@@ -88,12 +94,12 @@ public class NightmarePortalEntity extends Entity implements GeoEntity {
     @Override
     public void tick() {
         super.tick();
+        this.ageTicks++;
         if (this.level().isClientSide) {
             return;
         }
 
-        this.ageTicks++;
-        if (this.ageTicks >= this.lifetimeTicks - 10) {
+        if (this.ageTicks >= this.lifetimeTicks - CLOSE_TICKS) {
             this.entityData.set(CLOSING, true);
         }
         if (this.ageTicks >= this.lifetimeTicks) {
@@ -145,7 +151,14 @@ public class NightmarePortalEntity extends Entity implements GeoEntity {
     }
 
     private PlayState portalController(AnimationState<NightmarePortalEntity> state) {
-        return state.setAndContinue(this.isClosing() ? CLOSE_ANIM : OPEN_ANIM);
+        state.getController().setAnimationSpeed(this.isClosing() || this.ageTicks < OPEN_TICKS ? 4.0D : 1.0D);
+        if (this.isClosing()) {
+            return state.setAndContinue(CLOSE_ANIM);
+        }
+        if (this.ageTicks < OPEN_TICKS) {
+            return state.setAndContinue(OPEN_ANIM);
+        }
+        return state.setAndContinue(IDLE_ANIM);
     }
 
     @Override
