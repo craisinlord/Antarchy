@@ -197,7 +197,14 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
             case ANIM_COCOON_IDLE -> state.setAndContinue(COOCON_IDLE_ANIM);
             case ANIM_COCOON_HATCH -> state.setAndContinue(COOCON_HATCH_ANIM);
             default -> state.setAndContinue(IDLE_ANIM);
-        }));
+        })
+                .triggerableAnim("spit", SPIT_ANIM)
+                .triggerableAnim("swipe", SWIPE_ANIM)
+                .triggerableAnim("death", DEATH_ANIM)
+                .triggerableAnim("Coocon", COOCON_ANIM)
+                .triggerableAnim("Coocon_hit", COOCON_HIT_ANIM)
+                .triggerableAnim("Coocon_idle", COOCON_IDLE_ANIM)
+                .triggerableAnim("Coocon_hatch", COOCON_HATCH_ANIM));
     }
 
     @Override
@@ -618,7 +625,26 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
     }
 
     private void setAnimationState(int animationState) {
-        this.entityData.set(ANIMATION_STATE, animationState);
+        int previous = this.entityData.get(ANIMATION_STATE);
+        if (previous != animationState) {
+            this.entityData.set(ANIMATION_STATE, animationState);
+            String trigger = switch (animationState) {
+                case ANIM_SPIT -> "spit";
+                case ANIM_SWIPE -> "swipe";
+                case ANIM_DEATH -> "death";
+                case ANIM_COCOON -> "Coocon";
+                case ANIM_COCOON_HIT -> "Coocon_hit";
+                case ANIM_COCOON_IDLE -> "Coocon_idle";
+                case ANIM_COCOON_HATCH -> "Coocon_hatch";
+                default -> null;
+            };
+            if (trigger != null) {
+                this.triggerAnim("main_controller", trigger);
+            }
+            if (previous == ANIM_COCOON_IDLE && animationState != ANIM_COCOON_IDLE) {
+                this.stopTriggeredAnim("main_controller", "Coocon_idle");
+            }
+        }
     }
 
     private void updateBaseAnimationState() {

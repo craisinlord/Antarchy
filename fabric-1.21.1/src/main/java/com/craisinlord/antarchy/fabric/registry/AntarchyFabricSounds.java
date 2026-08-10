@@ -13,13 +13,25 @@ public final class AntarchyFabricSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> SQUIDZOOKA_FIRE = registerSoundEvent("squidzooka_fire");
 
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> SHRINK_RAY_SOUND = registerSoundEvent("shrink_ray");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SHRINK_RAY_CHARGE = registerSoundEvent("shrink_ray_charge");
 
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> GROWTH_RAY_SOUND = registerSoundEvent("growth_ray");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SHRINK_RAY_LOOP = registerSoundEvent("shrink_ray_loop");
 
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> SIZE_RAY_CHARGE = registerSoundEvent("size_ray_charge");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GROWTH_RAY_CHARGE = registerSoundEvent("growth_ray_charge");
+
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> GROWTH_RAY_LOOP = registerSoundEvent("growth_ray_loop");
+
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> SIZE_RAY_WEAKSHOT = registerSoundEvent("size_ray_weakshot");
+
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> SIZE_RAY_MEDIUMSHOT = registerSoundEvent("size_ray_mediumshot");
+
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> SIZE_RAY_CRITSHOT = registerSoundEvent("size_ray_critshot");
 
 
     public static final DeferredHolder<SoundEvent, SoundEvent> ANT_AMBIENT = registerSoundEvent("ant_ambient");
@@ -139,6 +151,9 @@ public final class AntarchyFabricSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_NIGHTMARE_WASTES_ADDITIONS = registerSoundEvent("thoraxis_nightmare_wastes_additions");
 
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_NIGHTMARE_WASTES_BIOME_ADDITIONS = registerSoundEvent("thoraxis_nightmare_wastes_biome_additions");
+
+
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_NIGHTMARE_WASTES_MOOD = registerSoundEvent("thoraxis_nightmare_wastes_mood");
 
 
@@ -148,6 +163,9 @@ public final class AntarchyFabricSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_DREAM_DUNES_ADDITIONS = registerSoundEvent("thoraxis_dream_dunes_additions");
 
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_DREAM_DUNES_BIOME_ADDITIONS = registerSoundEvent("thoraxis_dream_dunes_biome_additions");
+
+
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_DREAM_DUNES_MOOD = registerSoundEvent("thoraxis_dream_dunes_mood");
 
 
@@ -155,6 +173,9 @@ public final class AntarchyFabricSounds {
 
 
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_LUCID_POOLS_ADDITIONS = registerSoundEvent("thoraxis_lucid_pools_additions");
+
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_LUCID_POOLS_BIOME_ADDITIONS = registerSoundEvent("thoraxis_lucid_pools_biome_additions");
 
 
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_LUCID_POOLS_MOOD = registerSoundEvent("thoraxis_lucid_pools_mood");

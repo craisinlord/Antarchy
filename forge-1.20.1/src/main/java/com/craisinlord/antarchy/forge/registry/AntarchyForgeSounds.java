@@ -32,6 +32,7 @@ public final class AntarchyForgeSounds {
     public static final RegistryObject<SoundEvent> BRUTALFLY_IDLE = registerSoundEvent("brutalfly_idle");
     public static final RegistryObject<SoundEvent> BRUTALFLY_DEATH = registerSoundEvent("brutalfly_death");
     public static final RegistryObject<SoundEvent> ELYTHIA_FIREFLY_AMBIENT = registerSoundEvent("ambient.elythia.firefly");
+    public static final RegistryObject<SoundEvent> ELYTHIA_OURANWOOD_FOREST_AMBIENT = registerSoundEvent("ambient.elythia.ouranwood_forest");
     public static final RegistryObject<SoundEvent> MISSILE_SQUID_AMBIENT = registerSoundEvent("missile_squid_ambient");
     public static final RegistryObject<SoundEvent> MISSILE_SQUID_HURT = registerSoundEvent("missile_squid_hurt");
     public static final RegistryObject<SoundEvent> MISSILE_SQUID_DEATH = registerSoundEvent("missile_squid_death");
@@ -52,12 +53,15 @@ public final class AntarchyForgeSounds {
     public static final RegistryObject<SoundEvent> BASILISK_DEATH = registerSoundEvent("basilisk_death");
     public static final RegistryObject<SoundEvent> THORAXIS_NIGHTMARE_WASTES_AMBIENT = registerSoundEvent("thoraxis_nightmare_wastes_ambient");
     public static final RegistryObject<SoundEvent> THORAXIS_NIGHTMARE_WASTES_ADDITIONS = registerSoundEvent("thoraxis_nightmare_wastes_additions");
+    public static final RegistryObject<SoundEvent> THORAXIS_NIGHTMARE_WASTES_BIOME_ADDITIONS = registerSoundEvent("thoraxis_nightmare_wastes_biome_additions");
     public static final RegistryObject<SoundEvent> THORAXIS_NIGHTMARE_WASTES_MOOD = registerSoundEvent("thoraxis_nightmare_wastes_mood");
     public static final RegistryObject<SoundEvent> THORAXIS_DREAM_DUNES_AMBIENT = registerSoundEvent("thoraxis_dream_dunes_ambient");
     public static final RegistryObject<SoundEvent> THORAXIS_DREAM_DUNES_ADDITIONS = registerSoundEvent("thoraxis_dream_dunes_additions");
+    public static final RegistryObject<SoundEvent> THORAXIS_DREAM_DUNES_BIOME_ADDITIONS = registerSoundEvent("thoraxis_dream_dunes_biome_additions");
     public static final RegistryObject<SoundEvent> THORAXIS_DREAM_DUNES_MOOD = registerSoundEvent("thoraxis_dream_dunes_mood");
     public static final RegistryObject<SoundEvent> THORAXIS_LUCID_POOLS_AMBIENT = registerSoundEvent("thoraxis_lucid_pools_ambient");
     public static final RegistryObject<SoundEvent> THORAXIS_LUCID_POOLS_ADDITIONS = registerSoundEvent("thoraxis_lucid_pools_additions");
+    public static final RegistryObject<SoundEvent> THORAXIS_LUCID_POOLS_BIOME_ADDITIONS = registerSoundEvent("thoraxis_lucid_pools_biome_additions");
     public static final RegistryObject<SoundEvent> THORAXIS_LUCID_POOLS_MOOD = registerSoundEvent("thoraxis_lucid_pools_mood");
     public static final RegistryObject<SoundEvent> LUCID_AMBIENT = registerSoundEvent("lucid_ambient");
     public static final RegistryObject<SoundEvent> LUCID_FLYING = registerSoundEvent("lucid_flying");

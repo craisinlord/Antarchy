@@ -207,7 +207,12 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
             return PlayState.CONTINUE;
         }).setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>()));
         controllers.add(new AnimationController<>(this, "action_controller", 0, this::actionAnimController)
-                .setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>()));
+                .setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>())
+                .triggerableAnim("cry", CRY_ANIM)
+                .triggerableAnim("grab", GRAB_ANIM)
+                .triggerableAnim("swing_left", SWING_LEFT_ANIM)
+                .triggerableAnim("swing_right", SWING_RIGHT_ANIM)
+                .triggerableAnim("attack", SLAM_ANIM));
     }
 
     private PlayState actionAnimController(AnimationState<KrakenEntity> state) {
@@ -508,7 +513,20 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
     }
 
     private void setAnimationState(int animationState) {
-        this.entityData.set(ANIMATION_STATE, animationState);
+        if (this.entityData.get(ANIMATION_STATE) != animationState) {
+            this.entityData.set(ANIMATION_STATE, animationState);
+            String trigger = switch (animationState) {
+                case ANIM_CRY -> "cry";
+                case ANIM_GRAB -> "grab";
+                case ANIM_SWING_LEFT -> "swing_left";
+                case ANIM_SWING_RIGHT -> "swing_right";
+                case ANIM_SLAM -> "attack";
+                default -> null;
+            };
+            if (trigger != null) {
+                this.triggerAnim("action_controller", trigger);
+            }
+        }
     }
 
     private void startAggroRoar() {

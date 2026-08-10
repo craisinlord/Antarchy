@@ -25,9 +25,11 @@ import java.util.UUID;
 @EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT)
 public final class LucidSoundHandler {
     private static final double START_SCAN_RADIUS = 96.0D;
+    private static final int DISCOVERY_SCAN_INTERVAL_TICKS = 10;
     private static final int ANIM_ATTACK = 2;
     private static final int ANIM_DEATH = 3;
     private static final Map<UUID, LucidLoopSet> ACTIVE_LOOPS = new HashMap<>();
+    private static long nextDiscoveryScanTick;
 
     private LucidSoundHandler() {
     }
@@ -46,7 +48,21 @@ public final class LucidSoundHandler {
         }
 
         pruneStaleLoops(mc);
-        refreshNearbyLucids(mc);
+        refreshActiveLoops(mc);
+
+        long gameTime = mc.level.getGameTime();
+        if (gameTime >= nextDiscoveryScanTick) {
+            nextDiscoveryScanTick = gameTime + DISCOVERY_SCAN_INTERVAL_TICKS;
+            refreshNearbyLucids(mc);
+        }
+    }
+
+    private static void refreshActiveLoops(Minecraft mc) {
+        for (LucidLoopSet set : ACTIVE_LOOPS.values()) {
+            if (set.isValid()) {
+                set.refresh(mc, set.entity);
+            }
+        }
     }
 
     private static void refreshNearbyLucids(Minecraft mc) {
@@ -94,6 +110,7 @@ public final class LucidSoundHandler {
             set.stop(mc);
         }
         ACTIVE_LOOPS.clear();
+        nextDiscoveryScanTick = 0L;
     }
 
     private static final class LucidLoopSet {

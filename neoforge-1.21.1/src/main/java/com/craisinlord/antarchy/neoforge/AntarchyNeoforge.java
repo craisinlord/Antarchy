@@ -33,9 +33,13 @@ public class AntarchyNeoforge {
         AntarchyConfigModuleNeoforge.init(modContainer);
         AntarchySoundEvents.bind(
                 AntarchyNeoforgeSounds.SQUIDZOOKA_FIRE,
-                AntarchyNeoforgeSounds.SHRINK_RAY_SOUND,
-                AntarchyNeoforgeSounds.GROWTH_RAY_SOUND,
-                AntarchyNeoforgeSounds.SIZE_RAY_CHARGE,
+                AntarchyNeoforgeSounds.SHRINK_RAY_CHARGE,
+                AntarchyNeoforgeSounds.SHRINK_RAY_LOOP,
+                AntarchyNeoforgeSounds.GROWTH_RAY_CHARGE,
+                AntarchyNeoforgeSounds.GROWTH_RAY_LOOP,
+                AntarchyNeoforgeSounds.SIZE_RAY_WEAKSHOT,
+                AntarchyNeoforgeSounds.SIZE_RAY_MEDIUMSHOT,
+                AntarchyNeoforgeSounds.SIZE_RAY_CRITSHOT,
                 AntarchyNeoforgeSounds.ANT_AMBIENT,
                 AntarchyNeoforgeSounds.ANT_IDLE,
                 AntarchyNeoforgeSounds.ANT_HURT,
@@ -392,6 +396,7 @@ public class AntarchyNeoforge {
         AntarchyObjects.setLumenFroglight(() -> AntarchyNeoforgeBlocks.LUMEN_FROGLIGHT.get());
         AntarchyObjects.setPeachLeavesParticle(() -> AntarchyNeoforgeMisc.PEACH_LEAVES_PARTICLE.get());
         AntarchyObjects.setLotusPollen(() -> AntarchyNeoforgeMisc.LOTUS_POLLEN.get());
+        AntarchyObjects.setNightmareFireFlame(() -> AntarchyNeoforgeMisc.NIGHTMARE_FIRE_FLAME.get());
         AntarchyObjects.setLucidBoltImpactSmall(() -> AntarchyNeoforgeMisc.LUCID_BOLT_IMPACT_SMALL.get());
         AntarchyObjects.setLucidBoltImpactLarge(() -> AntarchyNeoforgeMisc.LUCID_BOLT_IMPACT_LARGE.get());
         AntarchyObjects.setDorrieInventoryMenu(AntarchyNeoforgeMisc.DORRIE_INVENTORY_MENU);

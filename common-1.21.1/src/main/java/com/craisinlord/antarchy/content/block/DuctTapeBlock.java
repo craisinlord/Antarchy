@@ -63,6 +63,10 @@ public class DuctTapeBlock extends Block {
     private static final double WALL_SIDE_PAD = 0.08D;
     private static final double WALL_INNER_INSET = 0.03D;
     private static final double TRIGGER_INFLATE_DEFAULT = 0.15D;
+    private static final int SEARCH_INTERVAL_TICKS = 4;
+    private static final double SEARCH_MOTION_THRESHOLD_SQR = 1.0E-8D;
+    private static final double SEARCH_PAD_XZ = Math.max(WALL_TRIGGER_DEPTH, TRIGGER_PAD);
+    private static final double SEARCH_PAD_Y = FLOOR_TRIGGER_HEIGHT;
 
     private static final Map<UUID, Long> STICK_SOUND_TIMES = new HashMap<>();
     private static final Map<UUID, String> STICK_CONTACT_KEYS = new HashMap<>();
@@ -306,6 +310,10 @@ public class DuctTapeBlock extends Block {
             releaseEntity(entity);
         }
 
+        if (!shouldSearchForTape(entity)) {
+            return;
+        }
+
         TapeHit hit = findTouchedTape(entity.level(), entity);
         if (hit == null) {
             if (entity.isNoGravity()) {
@@ -340,6 +348,23 @@ public class DuctTapeBlock extends Block {
         }
 
         return findTouchedTape(level, entity) != null;
+    }
+
+    public static boolean shouldTickStuckEntity(Entity entity) {
+        if (entity == null || entity.level().isClientSide() || isStickyBlacklist(entity)) {
+            return false;
+        }
+
+        if (!entity.isAlive() || entity.isRemoved()) {
+            return true;
+        }
+
+        StuckContact contact = STUCK_ENTITIES.get(entity.getUUID());
+        if (contact != null) {
+            return true;
+        }
+
+        return shouldSearchForTape(entity);
     }
 
     private static boolean isStickyBlacklist(Entity entity) {
@@ -418,16 +443,31 @@ public class DuctTapeBlock extends Block {
                 && tapeKey(level, pos).equals(contact.tapeKey());
     }
 
+    private static boolean shouldSearchForTape(Entity entity) {
+        Vec3 velocity = entity.getDeltaMovement();
+        if (velocity.lengthSqr() < SEARCH_MOTION_THRESHOLD_SQR) {
+            return false;
+        }
+
+        return (entity.tickCount + entity.getId()) % SEARCH_INTERVAL_TICKS == 0;
+    }
+
     private static TapeHit findTouchedTape(Level level, Entity entity) {
-        AABB box = entity.getBoundingBox().inflate(0.30D);
+        AABB box = entity.getBoundingBox().inflate(SEARCH_PAD_XZ, SEARCH_PAD_Y, SEARCH_PAD_XZ);
         BlockPos min = BlockPos.containing(box.minX, box.minY, box.minZ);
         BlockPos max = BlockPos.containing(box.maxX, box.maxY, box.maxZ);
+        if (!level.hasChunksAt(min, max)) {
+            return null;
+        }
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int x = min.getX(); x <= max.getX(); x++) {
             for (int y = min.getY(); y <= max.getY(); y++) {
                 for (int z = min.getZ(); z <= max.getZ(); z++) {
                     cursor.set(x, y, z);
                     BlockState state = level.getBlockState(cursor);
+                    if (state.isAir()) {
+                        continue;
+                    }
                     if (state.getBlock() instanceof DuctTapeBlock && touchesTape(level, entity, cursor, state)) {
                         return new TapeHit(cursor.immutable(), state);
                     }

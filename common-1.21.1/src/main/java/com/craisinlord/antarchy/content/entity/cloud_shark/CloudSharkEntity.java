@@ -353,7 +353,8 @@ public class CloudSharkEntity extends Monster implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController));
+        controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController)
+                .triggerableAnim("attack", ATTACK_ANIM));
     }
 
     @Override
@@ -550,7 +551,12 @@ public class CloudSharkEntity extends Monster implements GeoEntity {
     }
 
     private void setAnimationState(int animationState) {
-        this.entityData.set(ANIMATION_STATE, animationState);
+        if (this.entityData.get(ANIMATION_STATE) != animationState) {
+            this.entityData.set(ANIMATION_STATE, animationState);
+            if (animationState == ANIM_ATTACK) {
+                this.triggerAnim("main_controller", "attack");
+            }
+        }
     }
 
     private void updateAnimationState() {

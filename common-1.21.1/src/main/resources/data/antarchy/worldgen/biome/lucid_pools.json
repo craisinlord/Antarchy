@@ -13,10 +13,9 @@
         "type": "minecraft:crimson_spore"
       }
     },
-    "ambient_sound": "antarchy:thoraxis_lucid_pools_ambient",
     "additions_sound": {
-      "sound": "antarchy:thoraxis_lucid_pools_additions",
-      "tick_chance": 0.000600000
+      "sound": "antarchy:thoraxis_lucid_pools_biome_additions",
+      "tick_chance": 0.0005
     },
     "mood_sound": {
       "sound": "antarchy:thoraxis_lucid_pools_mood",
@@ -38,7 +37,7 @@
   "spawn_costs": {
     "antarchy:lucid": {
       "energy_budget": 0.10,
-      "charge": 15.0
+      "charge": 17.0
     }
   },
   "features": [
@@ -77,7 +76,7 @@
     "monster": [
       {
         "type": "antarchy:lucid",
-        "weight": 7,
+        "weight": 3,
         "minCount": 1,
         "maxCount": 1
       }

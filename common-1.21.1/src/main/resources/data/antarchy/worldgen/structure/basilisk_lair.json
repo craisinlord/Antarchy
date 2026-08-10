@@ -1,0 +1,22 @@
+{
+  "type": "integrated_api:generic_structure",
+  "start_pool": "antarchy:basilisk_lair/basilisk_lair",
+  "size": 3,
+  "terrain_height_radius_check": 3,
+  "allowed_terrain_height_range": 10,
+  "valid_biome_radius_check": 1,
+  "biomes": "#antarchy:has_structure/basilisk_lair_biomes",
+  "step": "surface_structures",
+  "enhanced_terrain_adaptation": {
+    "type": "integrated_api:none"
+  },
+  "project_start_to_heightmap": "WORLD_SURFACE_WG",
+  "start_height": {
+    "type": "minecraft:constant",
+    "value": {
+      "absolute": 0
+    }
+  },
+  "spawn_overrides": {},
+  "liquid_settings": "ignore_waterlogging"
+}

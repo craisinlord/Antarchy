@@ -175,7 +175,9 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main_controller", 2, this::mainAnimController));
+        controllers.add(new AnimationController<>(this, "main_controller", 2, this::mainAnimController)
+                .triggerableAnim("dance", DANCE_ANIM)
+                .triggerableAnim("attack", ATTACK_ANIM));
     }
 
     @Override
@@ -1144,7 +1146,14 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     }
 
     private void setDancing(boolean dancing) {
-        this.entityData.set(DANCING, dancing);
+        if (this.isDancing() != dancing) {
+            this.entityData.set(DANCING, dancing);
+            if (dancing) {
+                this.triggerAnim("main_controller", "dance");
+            } else {
+                this.stopTriggeredAnim("main_controller", "dance");
+            }
+        }
     }
 
     private void tickJukeboxDanceState() {
@@ -1256,7 +1265,14 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     }
 
     private void setBiteAnimationTicks(int ticks) {
-        this.entityData.set(BITE_ANIM_TICKS, Math.max(0, ticks));
+        int clamped = Math.max(0, ticks);
+        int previous = this.getBiteAnimationTicks();
+        this.entityData.set(BITE_ANIM_TICKS, clamped);
+        if (previous <= 0 && clamped > 0) {
+            this.triggerAnim("main_controller", "attack");
+        } else if (previous > 0 && clamped <= 0) {
+            this.stopTriggeredAnim("main_controller", "attack");
+        }
     }
 
     protected final void triggerBiteAnimation(int ticks) {

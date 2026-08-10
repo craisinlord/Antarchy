@@ -12,9 +12,13 @@ public final class AntarchyNeoforgeSounds {
     private static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registries.SOUND_EVENT, Antarchy.MODID);
 
     public static final DeferredHolder<SoundEvent, SoundEvent> SQUIDZOOKA_FIRE = registerSoundEvent("squidzooka_fire");
-    public static final DeferredHolder<SoundEvent, SoundEvent> SHRINK_RAY_SOUND = registerSoundEvent("shrink_ray");
-    public static final DeferredHolder<SoundEvent, SoundEvent> GROWTH_RAY_SOUND = registerSoundEvent("growth_ray");
-    public static final DeferredHolder<SoundEvent, SoundEvent> SIZE_RAY_CHARGE = registerSoundEvent("size_ray_charge");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SHRINK_RAY_CHARGE = registerSoundEvent("shrink_ray_charge");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SHRINK_RAY_LOOP = registerSoundEvent("shrink_ray_loop");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GROWTH_RAY_CHARGE = registerSoundEvent("growth_ray_charge");
+    public static final DeferredHolder<SoundEvent, SoundEvent> GROWTH_RAY_LOOP = registerSoundEvent("growth_ray_loop");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SIZE_RAY_WEAKSHOT = registerSoundEvent("size_ray_weakshot");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SIZE_RAY_MEDIUMSHOT = registerSoundEvent("size_ray_mediumshot");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SIZE_RAY_CRITSHOT = registerSoundEvent("size_ray_critshot");
     public static final DeferredHolder<SoundEvent, SoundEvent> ANT_AMBIENT = registerSoundEvent("ant_ambient");
     public static final DeferredHolder<SoundEvent, SoundEvent> ANT_IDLE = registerSoundEvent("ant_idle");
     public static final DeferredHolder<SoundEvent, SoundEvent> ANT_HURT = registerSoundEvent("ant_hurt");
@@ -54,12 +58,15 @@ public final class AntarchyNeoforgeSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> BASILISK_DEATH = registerSoundEvent("basilisk_death");
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_NIGHTMARE_WASTES_AMBIENT = registerSoundEvent("thoraxis_nightmare_wastes_ambient");
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_NIGHTMARE_WASTES_ADDITIONS = registerSoundEvent("thoraxis_nightmare_wastes_additions");
+    public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_NIGHTMARE_WASTES_BIOME_ADDITIONS = registerSoundEvent("thoraxis_nightmare_wastes_biome_additions");
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_NIGHTMARE_WASTES_MOOD = registerSoundEvent("thoraxis_nightmare_wastes_mood");
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_DREAM_DUNES_AMBIENT = registerSoundEvent("thoraxis_dream_dunes_ambient");
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_DREAM_DUNES_ADDITIONS = registerSoundEvent("thoraxis_dream_dunes_additions");
+    public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_DREAM_DUNES_BIOME_ADDITIONS = registerSoundEvent("thoraxis_dream_dunes_biome_additions");
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_DREAM_DUNES_MOOD = registerSoundEvent("thoraxis_dream_dunes_mood");
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_LUCID_POOLS_AMBIENT = registerSoundEvent("thoraxis_lucid_pools_ambient");
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_LUCID_POOLS_ADDITIONS = registerSoundEvent("thoraxis_lucid_pools_additions");
+    public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_LUCID_POOLS_BIOME_ADDITIONS = registerSoundEvent("thoraxis_lucid_pools_biome_additions");
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_LUCID_POOLS_MOOD = registerSoundEvent("thoraxis_lucid_pools_mood");
     public static final DeferredHolder<SoundEvent, SoundEvent> LUCID_LULLABY = registerSoundEvent("lucid_lullaby");
     public static final DeferredHolder<SoundEvent, SoundEvent> MUSIC_GAME_THORAXIS = registerSoundEvent("music.game.thoraxis");

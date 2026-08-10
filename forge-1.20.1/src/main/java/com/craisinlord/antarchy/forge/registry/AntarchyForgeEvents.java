@@ -386,7 +386,9 @@ public final class AntarchyForgeEvents {
     }
 
     static void tickDuctTapeStickiness(LivingEvent.LivingTickEvent event) {
-        DuctTapeBlock.tickStuckEntity(event.getEntity());
+        if (DuctTapeBlock.shouldTickStuckEntity(event.getEntity())) {
+            DuctTapeBlock.tickStuckEntity(event.getEntity());
+        }
     }
 
     static void handleDreadDeath(LivingDeathEvent event) {
@@ -828,13 +830,6 @@ public final class AntarchyForgeEvents {
         }
     }
 
-    private static boolean isWearingFullNightmareArmor(Player player) {
-        for (ItemStack stack : player.getArmorSlots()) {
-            if (!(stack.getItem() instanceof NightmareArmorItem)) return false;
-        }
-        return true;
-    }
-
     static void handleAntiwaterDamage(LivingHurtEvent event) {
         if (!event.getSource().is(DamageTypes.FALL)) {
             return;
@@ -1203,13 +1198,6 @@ public final class AntarchyForgeEvents {
         }
 
         if (event.getEffectInstance().getEffect() == AntarchyForgeMisc.DREAD.get() && !(event.getEntity() instanceof Player)) {
-            event.setResult(net.minecraftforge.eventbus.api.Event.Result.DENY);
-            return;
-        }
-
-        if (event.getEntity() instanceof Player player && isWearingFullNightmareArmor(player)
-                && (event.getEffectInstance().getEffect() == net.minecraft.world.effect.MobEffects.WITHER
-                || event.getEffectInstance().getEffect() == AntarchyForgeMisc.DREAD.get())) {
             event.setResult(net.minecraftforge.eventbus.api.Event.Result.DENY);
             return;
         }

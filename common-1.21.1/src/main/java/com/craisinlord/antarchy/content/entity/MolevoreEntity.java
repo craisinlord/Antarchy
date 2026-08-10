@@ -160,7 +160,11 @@ public class MolevoreEntity extends Monster implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController));
+        controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController)
+                .triggerableAnim("dig_up", DIG_UP_ANIM)
+                .triggerableAnim("claw_swipe", CLAW_SWIPE_ANIM)
+                .triggerableAnim("spin_charge", SPINNING_ANIM)
+                .triggerableAnim("hurt", HURT_ANIM));
     }
 
     private PlayState mainAnimController(AnimationState<MolevoreEntity> state) {
@@ -677,7 +681,19 @@ public class MolevoreEntity extends Monster implements GeoEntity {
     }
 
     private void setActionState(int actionState) {
-        this.entityData.set(ACTION_STATE, actionState);
+        if (this.entityData.get(ACTION_STATE) != actionState) {
+            this.entityData.set(ACTION_STATE, actionState);
+            String trigger = switch (actionState) {
+                case ACTION_DIG_UP -> "dig_up";
+                case ACTION_CLAW_SWIPE, ACTION_IDLE_DIG -> "claw_swipe";
+                case ACTION_SPIN_CHARGE -> "spin_charge";
+                case ACTION_HURT -> "hurt";
+                default -> null;
+            };
+            if (trigger != null) {
+                this.triggerAnim("main_controller", trigger);
+            }
+        }
     }
 
     private boolean canBreakBlocks() {

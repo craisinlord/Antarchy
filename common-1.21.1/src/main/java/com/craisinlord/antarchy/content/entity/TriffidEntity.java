@@ -157,7 +157,10 @@ public class TriffidEntity extends Monster implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController));
+        controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController)
+                .triggerableAnim("attack", SWEEP_ANIM)
+                .triggerableAnim("grab", GRAB_ANIM)
+                .triggerableAnim("death", DEATH_ANIM));
     }
 
     private PlayState mainAnimController(AnimationState<TriffidEntity> state) {
@@ -528,7 +531,18 @@ public class TriffidEntity extends Monster implements GeoEntity {
     }
 
     private void setActionState(int state) {
-        this.entityData.set(ACTION_STATE, state);
+        if (this.entityData.get(ACTION_STATE) != state) {
+            this.entityData.set(ACTION_STATE, state);
+            String trigger = switch (state) {
+                case ACTION_SWEEP -> "attack";
+                case ACTION_GRAB -> "grab";
+                case ACTION_DEATH -> "death";
+                default -> null;
+            };
+            if (trigger != null) {
+                this.triggerAnim("main_controller", trigger);
+            }
+        }
     }
 
     private boolean isAwake() {

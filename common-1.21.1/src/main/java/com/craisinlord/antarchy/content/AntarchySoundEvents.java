@@ -10,9 +10,13 @@ public final class AntarchySoundEvents {
     };
 
     public static Supplier<SoundEvent> SQUIDZOOKA_FIRE = (Supplier<SoundEvent>) UNBOUND;
-    public static Supplier<SoundEvent> SHRINK_RAY_SOUND = (Supplier<SoundEvent>) UNBOUND;
-    public static Supplier<SoundEvent> GROWTH_RAY_SOUND = (Supplier<SoundEvent>) UNBOUND;
-    public static Supplier<SoundEvent> SIZE_RAY_CHARGE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> SHRINK_RAY_CHARGE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> SHRINK_RAY_LOOP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> GROWTH_RAY_CHARGE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> GROWTH_RAY_LOOP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> SIZE_RAY_WEAKSHOT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> SIZE_RAY_MEDIUMSHOT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> SIZE_RAY_CRITSHOT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> ANT_AMBIENT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> ANT_IDLE = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> ANT_HURT = (Supplier<SoundEvent>) UNBOUND;
@@ -175,9 +179,13 @@ public final class AntarchySoundEvents {
 
     public static void bind(
             Supplier<SoundEvent> squidzookaFire,
-            Supplier<SoundEvent> shrinkRaySound,
-            Supplier<SoundEvent> growthRaySound,
-            Supplier<SoundEvent> sizeRayCharge,
+            Supplier<SoundEvent> shrinkRayCharge,
+            Supplier<SoundEvent> shrinkRayLoop,
+            Supplier<SoundEvent> growthRayCharge,
+            Supplier<SoundEvent> growthRayLoop,
+            Supplier<SoundEvent> sizeRayWeakshot,
+            Supplier<SoundEvent> sizeRayMediumshot,
+            Supplier<SoundEvent> sizeRayCritshot,
             Supplier<SoundEvent> antAmbient,
             Supplier<SoundEvent> antIdle,
             Supplier<SoundEvent> antHurt,
@@ -336,9 +344,13 @@ public final class AntarchySoundEvents {
             Supplier<SoundEvent> jerryAdultAttack
     ) {
         SQUIDZOOKA_FIRE = squidzookaFire;
-        SHRINK_RAY_SOUND = shrinkRaySound;
-        GROWTH_RAY_SOUND = growthRaySound;
-        SIZE_RAY_CHARGE = sizeRayCharge;
+        SHRINK_RAY_CHARGE = shrinkRayCharge;
+        SHRINK_RAY_LOOP = shrinkRayLoop;
+        GROWTH_RAY_CHARGE = growthRayCharge;
+        GROWTH_RAY_LOOP = growthRayLoop;
+        SIZE_RAY_WEAKSHOT = sizeRayWeakshot;
+        SIZE_RAY_MEDIUMSHOT = sizeRayMediumshot;
+        SIZE_RAY_CRITSHOT = sizeRayCritshot;
         ANT_AMBIENT = antAmbient;
         ANT_IDLE = antIdle;
         ANT_HURT = antHurt;

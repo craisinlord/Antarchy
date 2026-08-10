@@ -181,7 +181,10 @@ public class CaterpillarEntity extends Animal implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "main_controller", 2, this::mainAnimController)
-                .setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>()));
+                .setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>())
+                .triggerableAnim("eat", EAT_ANIM)
+                .triggerableAnim("pupate", PUPATION_ANIM)
+                .triggerableAnim("chrysalis", CHRYSALIS_ANIM));
     }
 
     private PlayState mainAnimController(AnimationState<CaterpillarEntity> state) {
@@ -537,11 +540,30 @@ public class CaterpillarEntity extends Animal implements GeoEntity {
     }
 
     private void setEatAnimationTicks(int ticks) {
-        this.entityData.set(EAT_ANIMATION_TICKS, Math.max(0, ticks));
+        int clamped = Math.max(0, ticks);
+        boolean wasIdle = this.getEatAnimationTicks() <= 0;
+        this.entityData.set(EAT_ANIMATION_TICKS, clamped);
+        if (wasIdle && clamped > 0) {
+            this.triggerAnim("main_controller", "eat");
+        }
     }
 
     private void setLifeStage(LifeStage stage) {
-        this.entityData.set(LIFE_STAGE, stage.ordinal());
+        LifeStage previous = this.getLifeStage();
+        if (previous != stage) {
+            this.entityData.set(LIFE_STAGE, stage.ordinal());
+            String trigger = switch (stage) {
+                case PUPATING -> "pupate";
+                case CHRYSALIS -> "chrysalis";
+                default -> null;
+            };
+            if (trigger != null) {
+                this.triggerAnim("main_controller", trigger);
+            }
+            if (previous == LifeStage.CHRYSALIS) {
+                this.stopTriggeredAnim("main_controller", "chrysalis");
+            }
+        }
     }
 
     private LifeStage getLifeStage() {

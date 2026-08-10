@@ -516,7 +516,12 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main", 3, this::mainController));
+        controllers.add(new AnimationController<>(this, "main", 3, this::mainController)
+                .triggerableAnim("snap", CLAW_ATTACK_ANIM)
+                .triggerableAnim("sting", STING_ATTACK_ANIM)
+                .triggerableAnim("harden", HARDEN_START_ANIM)
+                .triggerableAnim("harden_state", HARDEN_ACTIVE_ANIM)
+                .triggerableAnim("end_of_harden_state", HARDEN_END_ANIM));
     }
 
     private PlayState mainController(AnimationState<EmperorScorpionEntity> state) {
@@ -547,7 +552,20 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     }
 
     private void setAnimationState(int animationState) {
-        this.entityData.set(ANIMATION_STATE, animationState);
+        if (this.entityData.get(ANIMATION_STATE) != animationState) {
+            this.entityData.set(ANIMATION_STATE, animationState);
+            String trigger = switch (animationState) {
+                case ANIM_CLAW_ATTACK -> "snap";
+                case ANIM_STING_ATTACK -> "sting";
+                case ANIM_HARDEN_START -> "harden";
+                case ANIM_HARDEN_ACTIVE -> "harden_state";
+                case ANIM_HARDEN_END -> "end_of_harden_state";
+                default -> null;
+            };
+            if (trigger != null) {
+                this.triggerAnim("main", trigger);
+            }
+        }
     }
 
     private void setHardenPhase(HardenPhase phase) {

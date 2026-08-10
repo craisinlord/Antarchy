@@ -13,10 +13,9 @@
         "type": "minecraft:ash"
       }
     },
-    "ambient_sound": "antarchy:thoraxis_nightmare_wastes_ambient",
     "additions_sound": {
-      "sound": "antarchy:thoraxis_nightmare_wastes_additions",
-      "tick_chance": 0.0075
+      "sound": "antarchy:thoraxis_nightmare_wastes_biome_additions",
+      "tick_chance": 0.0005
     },
     "mood_sound": {
       "sound": "antarchy:thoraxis_nightmare_wastes_mood",

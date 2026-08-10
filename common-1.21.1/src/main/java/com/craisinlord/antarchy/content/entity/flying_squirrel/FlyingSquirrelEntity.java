@@ -2507,4 +2507,16 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
             }
         }
     }
+
+    @Override
+    public boolean isPushable() {
+        return !this.isOnShoulder() && super.isPushable();
+    }
+
+    @Override
+    public void push(Entity entity) {
+        if (!this.isOnShoulder()) {
+            super.push(entity);
+        }
+    }
 }

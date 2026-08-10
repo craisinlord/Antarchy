@@ -445,7 +445,8 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "main", 3, this::mainController)
-                .setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>()));
+                .setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>())
+                .triggerableAnim("attack", ATTACK_ANIM));
     }
 
     private PlayState mainController(AnimationState<BasiliskEntity> state) {
@@ -544,7 +545,12 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     }
 
     private void setAnimationState(int state) {
-        this.entityData.set(ANIMATION_STATE, state);
+        if (this.entityData.get(ANIMATION_STATE) != state) {
+            this.entityData.set(ANIMATION_STATE, state);
+            if (state == ANIM_ATTACK) {
+                this.triggerAnim("main", "attack");
+            }
+        }
     }
 
     @Override

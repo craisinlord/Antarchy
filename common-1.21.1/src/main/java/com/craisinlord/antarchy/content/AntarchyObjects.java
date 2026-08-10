@@ -331,6 +331,8 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<SimpleParticleType> STINKY_GAS = (Supplier<SimpleParticleType>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<SimpleParticleType> NIGHTMARE_FIRE_FLAME = (Supplier<SimpleParticleType>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<SimpleParticleType> STINKY_FLY = (Supplier<SimpleParticleType>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<SimpleParticleType> PEACH_LEAVES_PARTICLE = (Supplier<SimpleParticleType>) UNBOUND;
@@ -705,6 +707,10 @@ public final class AntarchyObjects {
 
     public static void setLotusPollen(Supplier<SimpleParticleType> supplier) {
         LOTUS_POLLEN = supplier;
+    }
+
+    public static void setNightmareFireFlame(Supplier<SimpleParticleType> supplier) {
+        NIGHTMARE_FIRE_FLAME = supplier;
     }
 
     public static void setLucidBoltImpactSmall(Supplier<SimpleParticleType> supplier) {

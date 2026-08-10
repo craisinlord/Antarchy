@@ -19,7 +19,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -47,7 +46,7 @@ public abstract class FallingBlockEntityBlockDataMixin {
     )
     private boolean antarchy$placeDoublePlantCarriedBlock(Level level, BlockPos pos, BlockState state, int flags, Operation<Boolean> original) {
         FallingBlockEntity entity = (FallingBlockEntity) (Object) this;
-        if (!entity.getTags().contains(GravityGunItem.GRAVITY_GUN_CARRIED_BLOCK_TAG) || !this.antarchy$isCarriedDoublePlant(state)) {
+        if (!entity.getTags().contains(GravityGunItem.GRAVITY_GUN_CARRIED_BLOCK_TAG) || !this.antarchy$isCarriedDoubleBlock(state)) {
             return original.call(level, pos, state, flags);
         }
 
@@ -115,7 +114,7 @@ public abstract class FallingBlockEntityBlockDataMixin {
             }
 
             BlockState placeState = fallingState;
-            if (this.antarchy$isCarriedDoublePlant(placeState)) {
+            if (this.antarchy$isCarriedDoubleBlock(placeState)) {
                 if (this.antarchy$tryPlaceExact(level, pos, placeState)) {
                     self.discard();
                     return true;
@@ -140,7 +139,7 @@ public abstract class FallingBlockEntityBlockDataMixin {
     }
 
     private boolean antarchy$canPlaceAt(Level level, BlockPos pos, BlockState fallingState) {
-        if (this.antarchy$isCarriedDoublePlant(fallingState)) {
+        if (this.antarchy$isCarriedDoubleBlock(fallingState)) {
             BlockState existingLower = level.getBlockState(pos);
             BlockState existingUpper = level.getBlockState(pos.above());
             boolean canReplaceLower = existingLower.canBeReplaced(
@@ -166,13 +165,20 @@ public abstract class FallingBlockEntityBlockDataMixin {
             return false;
         }
 
-        DoublePlantBlock.placeAt(level, fallingState.setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.LOWER), pos, 3);
+        BlockState lowerState = fallingState.setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.LOWER);
+        BlockState upperState = fallingState.setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER);
+        if (!level.setBlock(pos, lowerState, 3)) {
+            return false;
+        }
+        if (!level.setBlock(pos.above(), upperState, 3)) {
+            level.removeBlock(pos, false);
+            return false;
+        }
         return true;
     }
 
-    private boolean antarchy$isCarriedDoublePlant(BlockState state) {
-        return state.getBlock() instanceof DoublePlantBlock
-                && state.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)
+    private boolean antarchy$isCarriedDoubleBlock(BlockState state) {
+        return state.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)
                 && state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER;
     }
 

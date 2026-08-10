@@ -109,7 +109,9 @@ public class LurkingTerrorEntity extends Monster implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main_controller", 3, this::mainAnimController));
+        controllers.add(new AnimationController<>(this, "main_controller", 3, this::mainAnimController)
+                .triggerableAnim("attackland", ATTACK_LAND_ANIM)
+                .triggerableAnim("attackair", ATTACK_AIR_ANIM));
     }
 
     private PlayState mainAnimController(AnimationState<LurkingTerrorEntity> state) {
@@ -138,7 +140,7 @@ public class LurkingTerrorEntity extends Monster implements GeoEntity {
         boolean result = super.doHurtTarget(target);
         if (result) {
             this.playSound(AntarchySoundEvents.LURKING_TERROR_BITE.get(), 1.0F, 0.95F + this.random.nextFloat() * 0.1F);
-            attackAnimTicks = 20;
+            this.setAttackAnimTicks(20);
             this.level().broadcastEntityEvent(this, ATTACK_ANIM_EVENT);
         }
         return result;
@@ -162,7 +164,7 @@ public class LurkingTerrorEntity extends Monster implements GeoEntity {
     @Override
     public void handleEntityEvent(byte id) {
         if (id == ATTACK_ANIM_EVENT) {
-            attackAnimTicks = 20;
+            this.setAttackAnimTicks(20);
             return;
         }
         super.handleEntityEvent(id);
@@ -176,7 +178,18 @@ public class LurkingTerrorEntity extends Monster implements GeoEntity {
         if (!this.level().isClientSide() && !this.onGround() && this.tickCount % 80 == 0) {
             this.playSound(AntarchySoundEvents.LURKING_TERROR_FLY_LOOP.get(), 0.45F, 0.95F + this.random.nextFloat() * 0.1F);
         }
-        if (!this.level().isClientSide() && attackAnimTicks > 0) attackAnimTicks--;
+        if (!this.level().isClientSide() && attackAnimTicks > 0) this.setAttackAnimTicks(attackAnimTicks - 1);
+    }
+
+    private void setAttackAnimTicks(int ticks) {
+        int clamped = Math.max(0, ticks);
+        if (this.attackAnimTicks <= 0 && clamped > 0) {
+            this.triggerAnim("main_controller", this.onGround() ? "attackland" : "attackair");
+        } else if (this.attackAnimTicks > 0 && clamped <= 0) {
+            this.stopTriggeredAnim("main_controller", "attackland");
+            this.stopTriggeredAnim("main_controller", "attackair");
+        }
+        this.attackAnimTicks = clamped;
     }
 
     @Override

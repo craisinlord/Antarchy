@@ -199,7 +199,11 @@ public class DorrieEntity extends Animal implements GeoEntity {
     }
 
     private void setQuirkTicks(int ticks) {
+        boolean wasIdle = this.getQuirkTicks() <= 0;
         this.entityData.set(QUIRK_TICKS, ticks);
+        if (wasIdle && ticks > 0) {
+            this.triggerAnim("main_controller", "quirk");
+        }
     }
 
     @Override
@@ -371,6 +375,9 @@ public class DorrieEntity extends Animal implements GeoEntity {
         if (wasInAir && !inAirNow && isLeaping) {
             isLeaping = false;
             landAnimTicks = 12;
+            if (!this.level().isClientSide) {
+                this.triggerAnim("main_controller", "land");
+            }
             if (this.isInWater()) {
                 this.playSound(SoundEvents.DOLPHIN_SPLASH, 1.0F, 0.8F + this.random.nextFloat() * 0.4F);
             }
@@ -471,6 +478,7 @@ public class DorrieEntity extends Animal implements GeoEntity {
                 );
                 this.hasImpulse = true;
                 isLeaping = true;
+                this.triggerAnim("main_controller", "jump_start");
             }
             isCharging = false;
             chargeTicks = 0;
@@ -565,7 +573,10 @@ public class DorrieEntity extends Animal implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main_controller", 2, this::mainAnimController));
+        controllers.add(new AnimationController<>(this, "main_controller", 2, this::mainAnimController)
+                .triggerableAnim("land", JUMP_LAND_ANIM)
+                .triggerableAnim("jump_start", JUMP_START_ANIM)
+                .triggerableAnim("quirk", QUIRK_ANIM));
     }
 
     private PlayState mainAnimController(AnimationState<DorrieEntity> state) {
