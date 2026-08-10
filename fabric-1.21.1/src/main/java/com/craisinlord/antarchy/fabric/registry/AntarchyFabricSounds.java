@@ -184,6 +184,9 @@ public final class AntarchyFabricSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> LUCID_LULLABY = registerSoundEvent("lucid_lullaby");
 
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> WHISTLING_VOID = registerSoundEvent("whistling_void");
+
+
     public static final DeferredHolder<SoundEvent, SoundEvent> MUSIC_GAME_THORAXIS = registerSoundEvent("music.game.thoraxis");
 
 
