@@ -8,12 +8,16 @@ import java.util.Map;
 import net.minecraft.client.KeyMapping;
 
 public final class KeybindingConflictFixStore {
+    private static final String ANTARCHY_KEY_PREFIX = "key.antarchy.";
     private static final Map<InputConstants.Key, List<KeyMapping>> MAPPINGS = new HashMap<>();
 
     private KeybindingConflictFixStore() {
     }
 
     public static void add(InputConstants.Key key, KeyMapping mapping) {
+        if (!mapping.getName().startsWith(ANTARCHY_KEY_PREFIX)) {
+            return;
+        }
         List<KeyMapping> mappings = MAPPINGS.computeIfAbsent(key, ignored -> new ArrayList<>());
         if (!mappings.contains(mapping)) {
             mappings.add(mapping);

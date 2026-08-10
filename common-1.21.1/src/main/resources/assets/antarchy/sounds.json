@@ -994,10 +994,23 @@
       }
     ]
   },
+  "whistling_void": {
+    "sounds": [
+      {
+        "name": "antarchy:music/game/thoraxis/whistling_void",
+        "stream": true
+      }
+    ]
+  },
   "music.game.thoraxis": {
     "sounds": [
       {
         "name": "antarchy:lucid_lullaby",
+        "type": "event",
+        "stream": true
+      },
+      {
+        "name": "antarchy:whistling_void",
         "type": "event",
         "stream": true
       }
@@ -1033,7 +1046,14 @@
       {
         "name": "antarchy:wistful_wanderings",
         "type": "event",
-        "stream": true
+        "stream": true,
+        "weight": 3
+      },
+      {
+        "name": "minecraft:music.game",
+        "type": "event",
+        "stream": true,
+        "weight": 2
       }
     ]
   },

@@ -19,7 +19,6 @@ public abstract class KeybindingConflictFixMixin {
     @Shadow @Final private static Map<String, KeyMapping> ALL;
     @Shadow private InputConstants.Key key;
     @Shadow private boolean isDown;
-    @Shadow private int clickCount;
 
     @Inject(method = "<init>(Ljava/lang/String;Lcom/mojang/blaze3d/platform/InputConstants$Type;ILjava/lang/String;)V", at = @At("TAIL"))
     private void antarchy$addInitialMapping(String name, InputConstants.Type type, int key, String category, CallbackInfo ci) {
@@ -34,17 +33,6 @@ public abstract class KeybindingConflictFixMixin {
         }
     }
 
-    @Inject(method = "click", at = @At("TAIL"))
-    private static void antarchy$clickConflicts(InputConstants.Key key, CallbackInfo ci) {
-        if (!AntarchySettings.fabricKeybindingConflictFixEnabled()) {
-            return;
-        }
-        KeyMapping active = MAP.get(key);
-        for (KeyMapping mapping : KeybindingConflictFixStore.others(key, active)) {
-            ((KeybindingConflictFixMixin) (Object) mapping).antarchy$click();
-        }
-    }
-
     @Inject(method = "set", at = @At("TAIL"))
     private static void antarchy$setConflicts(InputConstants.Key key, boolean down, CallbackInfo ci) {
         if (!AntarchySettings.fabricKeybindingConflictFixEnabled()) {
@@ -54,11 +42,6 @@ public abstract class KeybindingConflictFixMixin {
         for (KeyMapping mapping : KeybindingConflictFixStore.others(key, active)) {
             ((KeybindingConflictFixMixin) (Object) mapping).antarchy$setDown(down);
         }
-    }
-
-    @Unique
-    private void antarchy$click() {
-        this.clickCount++;
     }
 
     @Unique
