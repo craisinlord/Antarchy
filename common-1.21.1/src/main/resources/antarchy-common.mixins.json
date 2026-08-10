@@ -33,6 +33,7 @@
                    "GoopedStepSoundMixin",
                    "ExperimentalSettingsLevelSummaryMixin",
                    "NightmareSwordDamageMixin",
+                   "NightmareArmorEffectImmunityMixin",
                    "PotionBrewingMixin",
                    "RedStoneWireBlockMixin",
                    "StinkyCrouchMixin",

@@ -156,6 +156,8 @@ public final class AntarchyForgeMisc {
     // Particle types
     public static final RegistryObject<SimpleParticleType> DREAM_FIRE_FLAME = PARTICLE_TYPES.register("dream_fire_flame",
             AntarchyForgeMisc::simpleParticleType);
+    public static final RegistryObject<SimpleParticleType> NIGHTMARE_FIRE_FLAME = PARTICLE_TYPES.register("nightmare_fire_flame",
+            AntarchyForgeMisc::simpleParticleType);
     public static final RegistryObject<SimpleParticleType> STINKY_GAS = PARTICLE_TYPES.register("stinky_gas",
             AntarchyForgeMisc::simpleParticleType);
     public static final RegistryObject<SimpleParticleType> STINKY_FLY = PARTICLE_TYPES.register("stinky_fly",

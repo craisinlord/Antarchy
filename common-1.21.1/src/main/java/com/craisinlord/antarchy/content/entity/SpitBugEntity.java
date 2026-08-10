@@ -115,7 +115,8 @@ public class SpitBugEntity extends Monster implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main_controller", 2, this::mainAnimController));
+        controllers.add(new AnimationController<>(this, "main_controller", 2, this::mainAnimController)
+                .triggerableAnim("spit", SPIT_ANIM));
     }
 
     @Override
@@ -201,6 +202,7 @@ public class SpitBugEntity extends Monster implements GeoEntity {
         this.spitAnimationTicks = SPIT_ANIMATION_TICKS;
         this.spitReleaseTicks = SPIT_RELEASE_TICKS;
         this.entityData.set(SPIT_ANIM_TICKS, this.spitAnimationTicks);
+        this.triggerAnim("main_controller", "spit");
     }
 
     @SuppressWarnings("unchecked")

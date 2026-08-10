@@ -39,9 +39,9 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
@@ -449,17 +449,16 @@ public class GravityGunItem extends Item implements GeoItem {
             return false;
         }
 
-        if (state.getBlock() instanceof DoublePlantBlock) {
-            if (!state.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.DOUBLE_BLOCK_HALF)
-                    || state.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.DOUBLE_BLOCK_HALF) != DoubleBlockHalf.LOWER) {
+        if (state.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)) {
+            if (state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) != DoubleBlockHalf.LOWER) {
                 return false;
             }
 
             BlockPos upperPos = pos.above();
             BlockState upperState = level.getBlockState(upperPos);
             if (!upperState.is(state.getBlock())
-                    || !upperState.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.DOUBLE_BLOCK_HALF)
-                    || upperState.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.DOUBLE_BLOCK_HALF) != DoubleBlockHalf.UPPER) {
+                    || !upperState.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)
+                    || upperState.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) != DoubleBlockHalf.UPPER) {
                 return false;
             }
         }
@@ -469,23 +468,21 @@ public class GravityGunItem extends Item implements GeoItem {
 
     private CarriedBlockCapture resolveCarriedBlockCapture(Level level, BlockPos clickedPos) {
         BlockState clickedState = level.getBlockState(clickedPos);
-        if (!(clickedState.getBlock() instanceof DoublePlantBlock)
-                || !clickedState.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.DOUBLE_BLOCK_HALF)) {
+        if (!clickedState.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)) {
             return new CarriedBlockCapture(clickedPos, clickedState, null);
         }
 
-        DoubleBlockHalf half = clickedState.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.DOUBLE_BLOCK_HALF);
+        DoubleBlockHalf half = clickedState.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF);
         BlockPos basePos = half == DoubleBlockHalf.UPPER ? clickedPos.below() : clickedPos;
         BlockPos upperPos = basePos.above();
         BlockState baseState = level.getBlockState(basePos);
         BlockState upperState = level.getBlockState(upperPos);
-        if (!(baseState.getBlock() instanceof DoublePlantBlock)
-                || !baseState.is(clickedState.getBlock())
-                || !baseState.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.DOUBLE_BLOCK_HALF)
-                || baseState.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.DOUBLE_BLOCK_HALF) != DoubleBlockHalf.LOWER
+        if (!baseState.is(clickedState.getBlock())
+                || !baseState.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)
+                || baseState.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) != DoubleBlockHalf.LOWER
                 || !upperState.is(clickedState.getBlock())
-                || !upperState.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.DOUBLE_BLOCK_HALF)
-                || upperState.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.DOUBLE_BLOCK_HALF) != DoubleBlockHalf.UPPER) {
+                || !upperState.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)
+                || upperState.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) != DoubleBlockHalf.UPPER) {
             return null;
         }
 

@@ -74,10 +74,10 @@ public final class PermanentPortalTeleporter {
             if (created != null) {
                 return created.center();
             }
-            return safe;
+            return createFallbackPortal(destination, BlockPos.containing(safe), type);
         }
 
-        return createFallbackPlatform(destination, preferredPos, type.platformBlock().defaultBlockState());
+        return createFallbackPortal(destination, preferredPos, type);
     }
 
     @Nullable
@@ -199,17 +199,29 @@ public final class PermanentPortalTeleporter {
         return null;
     }
 
-    private static Vec3 createFallbackPlatform(ServerLevel destination, BlockPos preferredPos, BlockState platformState) {
+    private static Vec3 createFallbackPortal(ServerLevel destination, BlockPos preferredPos, PermanentPortalType type) {
         int minY = destination.getMinBuildHeight() + 2;
         int maxY = destination.getMaxBuildHeight() - 4;
         BlockPos center = new BlockPos(preferredPos.getX(), Mth.clamp(preferredPos.getY(), minY, maxY), preferredPos.getZ());
+        BlockState platformState = type.platformBlock().defaultBlockState();
 
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
                 destination.setBlock(center.offset(dx, -1, dz), platformState, Block.UPDATE_ALL);
-                destination.removeBlock(center.offset(dx, 0, dz), false);
-                destination.removeBlock(center.offset(dx, 1, dz), false);
+                for (int dy = 0; dy <= 4; dy++) {
+                    destination.removeBlock(center.offset(dx, dy, dz), false);
+                }
             }
+        }
+
+        PermanentPortalShape xShape = PermanentPortalShape.create(destination, center, type, Direction.Axis.X);
+        if (xShape != null) {
+            return xShape.center();
+        }
+
+        PermanentPortalShape zShape = PermanentPortalShape.create(destination, center, type, Direction.Axis.Z);
+        if (zShape != null) {
+            return zShape.center();
         }
 
         return Vec3.atBottomCenterOf(center);

@@ -2,31 +2,39 @@
   "structures": [
     {
       "structure": "antarchy:trayaurus_lab",
-      "weight": 1
+      "weight": 2
     },
     {
       "structure": "antarchy:fallen_kingdom_castle",
-      "weight": 2
-    },
-    {
-      "structure": "antarchy:ruined_prison",
-      "weight": 2
-    },
-    {
-      "structure": "antarchy:sign",
-      "weight": 2
-    },
-    {
-      "structure": "antarchy:stampys_house",
-      "weight": 2
-    },
-    {
-      "structure": "antarchy:ruined_arena",
       "weight": 3
     },
     {
+      "structure": "antarchy:ruined_prison",
+      "weight": 3
+    },
+    {
+      "structure": "antarchy:sign",
+      "weight": 4
+    },
+    {
+      "structure": "antarchy:stampys_house",
+      "weight": 4
+    },
+    {
+      "structure": "antarchy:temple_of_technoblade",
+      "weight": 1
+    },
+    {
+      "structure": "antarchy:basilisk_lair",
+      "weight": 4
+    },
+    {
+      "structure": "antarchy:ruined_arena",
+      "weight": 4
+    },
+    {
       "structure": "antarchy:toreterror_arena",
-      "weight": 5
+      "weight": 6
     }
   ],
   "placement": {

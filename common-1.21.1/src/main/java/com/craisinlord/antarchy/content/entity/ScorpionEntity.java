@@ -160,6 +160,7 @@ public class ScorpionEntity extends Monster implements GeoEntity {
         this.attackDamageApplied = false;
         this.getNavigation().stop();
         this.level().broadcastEntityEvent(this, ATTACK_ANIM_EVENT);
+        this.triggerAnim("main", "attack");
         this.commitLunge(target, 0.48D, 0.12D);
     }
 
@@ -220,7 +221,8 @@ public class ScorpionEntity extends Monster implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main", 3, this::mainController));
+        controllers.add(new AnimationController<>(this, "main", 3, this::mainController)
+                .triggerableAnim("attack", ATTACK_ANIM));
     }
 
     private PlayState mainController(AnimationState<ScorpionEntity> state) {

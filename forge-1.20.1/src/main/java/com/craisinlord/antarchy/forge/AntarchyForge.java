@@ -377,6 +377,7 @@ public class AntarchyForge {
         AntarchyObjects.setLumenFroglight(() -> AntarchyForgeBlocks.LUMEN_FROGLIGHT.get());
         AntarchyObjects.setPeachLeavesParticle(() -> AntarchyForgeMisc.PEACH_LEAVES_PARTICLE.get());
         AntarchyObjects.setLotusPollen(() -> AntarchyForgeMisc.LOTUS_POLLEN.get());
+        AntarchyObjects.setNightmareFireFlame(() -> AntarchyForgeMisc.NIGHTMARE_FIRE_FLAME.get());
         AntarchyObjects.setLucidBoltImpactSmall(() -> AntarchyForgeMisc.LUCID_BOLT_IMPACT_SMALL.get());
         AntarchyObjects.setLucidBoltImpactLarge(() -> AntarchyForgeMisc.LUCID_BOLT_IMPACT_LARGE.get());
         AntarchyObjects.setDorrieInventoryMenu(AntarchyForgeMisc.DORRIE_INVENTORY_MENU);

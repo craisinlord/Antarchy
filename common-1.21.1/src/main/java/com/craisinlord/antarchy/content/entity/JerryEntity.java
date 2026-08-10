@@ -142,7 +142,7 @@ public class JerryEntity extends Monster implements GeoEntity {
 
         int attackTicks = this.entityData.get(ATTACK_ANIM_TICKS);
         if (attackTicks > 0) {
-            this.entityData.set(ATTACK_ANIM_TICKS, attackTicks - 1);
+            this.setAttackAnimTicks(attackTicks - 1);
         }
 
         if (this.level().isClientSide) {
@@ -264,7 +264,7 @@ public class JerryEntity extends Monster implements GeoEntity {
         if (targetDistance < 2.3D && this.attackCooldownTicks <= 0) {
             this.faceTarget(target);
             this.attackCooldownTicks = 24;
-            this.entityData.set(ATTACK_ANIM_TICKS, ATTACK_ANIM_DURATION);
+            this.setAttackAnimTicks(ATTACK_ANIM_DURATION);
             this.playSound(this.attackSoundForCurrentStage(), 1.0F, this.voicePitch());
             target.hurt(this.damageSources().mobAttack(this), (float) stage.attackDamage());
         }
@@ -294,7 +294,7 @@ public class JerryEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean doHurtTarget(Entity target) {
-        this.entityData.set(ATTACK_ANIM_TICKS, ATTACK_ANIM_DURATION);
+        this.setAttackAnimTicks(ATTACK_ANIM_DURATION);
         if (target instanceof LivingEntity living) {
             this.faceTarget(living);
         }
@@ -359,8 +359,10 @@ public class JerryEntity extends Monster implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main_controller", 3, this::mainAnimController));
-        controllers.add(new AnimationController<>(this, "attack_controller", 0, this::attackAnimController));
+        controllers.add(new AnimationController<>(this, "main_controller", 3, this::mainAnimController)
+                .triggerableAnim("attack", ATTACK_ANIM));
+        controllers.add(new AnimationController<>(this, "attack_controller", 0, this::attackAnimController)
+                .triggerableAnim("attack", ATTACK_ANIM));
     }
 
     private PlayState mainAnimController(AnimationState<JerryEntity> state) {
@@ -442,6 +444,16 @@ public class JerryEntity extends Monster implements GeoEntity {
         if (previous != stage) {
             this.stageAgeTicks = 0;
             this.refreshDimensions();
+        }
+    }
+
+    private void setAttackAnimTicks(int ticks) {
+        int clamped = Math.max(0, ticks);
+        int previous = this.entityData.get(ATTACK_ANIM_TICKS);
+        this.entityData.set(ATTACK_ANIM_TICKS, clamped);
+        if (previous <= 0 && clamped > 0) {
+            this.triggerAnim("main_controller", "attack");
+            this.triggerAnim("attack_controller", "attack");
         }
     }
 

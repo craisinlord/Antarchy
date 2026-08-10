@@ -1,4 +1,22 @@
 {
+  "thoraxis_nightmare_wastes_biome_additions": {
+    "sounds": [
+      { "name": "antarchy:thoraxis_nightmare_wastes_ambient", "type": "event", "weight": 5 },
+      { "name": "antarchy:thoraxis_nightmare_wastes_additions", "type": "event" }
+    ]
+  },
+  "thoraxis_dream_dunes_biome_additions": {
+    "sounds": [
+      { "name": "antarchy:thoraxis_dream_dunes_ambient", "type": "event", "weight": 5 },
+      { "name": "antarchy:thoraxis_dream_dunes_additions", "type": "event" }
+    ]
+  },
+  "thoraxis_lucid_pools_biome_additions": {
+    "sounds": [
+      { "name": "antarchy:thoraxis_lucid_pools_ambient", "type": "event", "weight": 5 },
+      { "name": "antarchy:thoraxis_lucid_pools_additions", "type": "event" }
+    ]
+  },
   "squidzooka_fire": {
     "subtitle": "subtitles.antarchy.squidzooka_fire",
     "sounds": [
@@ -16,27 +34,79 @@
       }
     ]
   },
-  "shrink_ray": {
-    "subtitle": "subtitles.antarchy.shrink_ray",
-    "sounds": [
-      {
-        "name": "antarchy:size_ray/shrink_ray"
-      }
-    ]
-  },
-  "growth_ray": {
-    "subtitle": "subtitles.antarchy.growth_ray",
-    "sounds": [
-      {
-        "name": "antarchy:size_ray/growth_ray"
-      }
-    ]
-  },
-  "size_ray_charge": {
+  "shrink_ray_charge": {
     "subtitle": "subtitles.antarchy.size_ray_charge",
     "sounds": [
       {
-        "name": "antarchy:size_ray/size_ray_charge"
+        "name": "antarchy:size_ray/shrinkraycharge"
+      }
+    ]
+  },
+  "shrink_ray_loop": {
+    "subtitle": "subtitles.antarchy.size_ray_charge",
+    "sounds": [
+      {
+        "name": "antarchy:size_ray/shrinkrayloop",
+        "stream": true
+      }
+    ]
+  },
+  "growth_ray_charge": {
+    "subtitle": "subtitles.antarchy.size_ray_charge",
+    "sounds": [
+      {
+        "name": "antarchy:size_ray/growraycharge"
+      }
+    ]
+  },
+  "growth_ray_loop": {
+    "subtitle": "subtitles.antarchy.size_ray_charge",
+    "sounds": [
+      {
+        "name": "antarchy:size_ray/growrayloop",
+        "stream": true
+      }
+    ]
+  },
+  "size_ray_weakshot": {
+    "subtitle": "subtitles.antarchy.size_ray_fire",
+    "sounds": [
+      {
+        "name": "antarchy:size_ray/weakshot1"
+      },
+      {
+        "name": "antarchy:size_ray/weakshot2"
+      },
+      {
+        "name": "antarchy:size_ray/weakshot3"
+      }
+    ]
+  },
+  "size_ray_mediumshot": {
+    "subtitle": "subtitles.antarchy.size_ray_fire",
+    "sounds": [
+      {
+        "name": "antarchy:size_ray/mediumshot1"
+      },
+      {
+        "name": "antarchy:size_ray/mediumshot2"
+      },
+      {
+        "name": "antarchy:size_ray/mediumshot3"
+      }
+    ]
+  },
+  "size_ray_critshot": {
+    "subtitle": "subtitles.antarchy.size_ray_fire",
+    "sounds": [
+      {
+        "name": "antarchy:size_ray/critshot1"
+      },
+      {
+        "name": "antarchy:size_ray/critshot2"
+      },
+      {
+        "name": "antarchy:size_ray/critshot3"
       }
     ]
   },

@@ -8,15 +8,19 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.level.Level;
 
 public class NightmareArmorItem extends ArmorItem {
     private static final int BASE_DURABILITY_MULTIPLIER = 33;
@@ -114,11 +118,35 @@ public class NightmareArmorItem extends ArmorItem {
     }
 
     @Override
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
+        if (level.isClientSide || !(entity instanceof LivingEntity livingEntity)) {
+            return;
+        }
+
+        if (livingEntity.getItemBySlot(this.armorType.getSlot()) != stack || !isWearingFullSet(livingEntity)) {
+            return;
+        }
+
+        livingEntity.removeEffect(MobEffects.WITHER);
+        livingEntity.removeEffect(AntarchyObjects.DREAD.get());
+    }
+
+    @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         int pct = (int) Math.round(getDoubleDamageChance() * 100);
         tooltipComponents.add(Component.translatable("tooltip.antarchy.nightmare_armor_double_damage", pct).withStyle(ChatFormatting.DARK_PURPLE));
         tooltipComponents.add(Component.translatable("tooltip.antarchy.nightmare_armor_set_bonus").withStyle(ChatFormatting.DARK_RED));
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+    }
+
+    public static boolean isWearingFullSet(LivingEntity livingEntity) {
+        for (ItemStack armorStack : livingEntity.getArmorSlots()) {
+            if (!(armorStack.getItem() instanceof NightmareArmorItem)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static int resolveDurability(Type armorType) {

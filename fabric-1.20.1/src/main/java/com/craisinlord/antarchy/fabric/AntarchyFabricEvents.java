@@ -250,7 +250,9 @@ public final class AntarchyFabricEvents {
 
     private static void tickDuctTapePlayers(ServerLevel level) {
         for (Player player : level.players()) {
-            DuctTapeBlock.tickStuckEntity(player);
+            if (DuctTapeBlock.shouldTickStuckEntity(player)) {
+                DuctTapeBlock.tickStuckEntity(player);
+            }
         }
     }
 

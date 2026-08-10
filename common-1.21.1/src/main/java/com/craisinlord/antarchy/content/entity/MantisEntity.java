@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
@@ -18,7 +19,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
@@ -46,6 +47,8 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.EnumSet;
+
 public class MantisEntity extends Monster implements GeoEntity {
     private static final Logger LOGGER = LoggerFactory.getLogger(MantisEntity.class);
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
@@ -61,14 +64,29 @@ public class MantisEntity extends Monster implements GeoEntity {
     private static final int ANIM_FLY_ATTACK = 4;
     private static final double WANDER_SPEED = 0.48D;
     private static final double COMBAT_SPEED = 0.75D;
+    private static final int ATTACK_ANIM_TICKS = 20;
+    private static final int ATTACK_COMMIT_REMAINING_TICKS = 14;
+    private static final int ATTACK_HIT_REMAINING_TICKS = 10;
+    private static final int ATTACK_COOLDOWN_TICKS = 8;
+    private static final double ATTACK_START_RANGE = 4.25D;
+    private static final double ATTACK_HIT_REACH = 5.25D;
+    private static final double ATTACK_HALF_WIDTH = 2.6D;
+    private static final double ATTACK_VERTICAL_TOLERANCE = 3.0D;
+    private static final float WINDUP_TURN_RATE = 18.0F;
 
     private static final net.minecraft.network.syncher.EntityDataAccessor<Integer> ANIMATION_STATE =
             net.minecraft.network.syncher.SynchedEntityData.defineId(MantisEntity.class, net.minecraft.network.syncher.EntityDataSerializers.INT);
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     protected int attackAnimationTicks;
+    protected int attackCooldownTicks;
     protected int flyBurstTicks;
     protected int flyCooldownTicks;
+    @Nullable
+    protected LivingEntity committedAttackTarget;
+    protected float committedAttackYaw;
+    protected boolean attackDamageApplied;
+    protected boolean attackStartedInFlight;
     private int debugLogTicks = 0;
     private int configSyncTicks;
 
@@ -169,8 +187,8 @@ public class MantisEntity extends Monster implements GeoEntity {
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 5, true, false, null));
     }
 
-    protected MeleeAttackGoal createCombatGoal() {
-        return new MeleeAttackGoal(this, this.getCombatSpeed(), true);
+    protected Goal createCombatGoal() {
+        return new MantisCombatGoal();
     }
 
     protected WaterAvoidingRandomStrollGoal createIdleStrollGoal() {
@@ -188,7 +206,9 @@ public class MantisEntity extends Monster implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController));
+        controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController)
+                .triggerableAnim("attack", ATTACK_ANIM)
+                .triggerableAnim("flyattack", FLY_ATTACK_ANIM));
     }
 
     private PlayState mainAnimController(AnimationState<MantisEntity> state) {
@@ -216,7 +236,17 @@ public class MantisEntity extends Monster implements GeoEntity {
             }
 
             if (this.attackAnimationTicks > 0) {
-                this.attackAnimationTicks--;
+                this.tickCommittedAttack();
+                if (this.attackAnimationTicks > 0) {
+                    this.attackAnimationTicks--;
+                    if (this.attackAnimationTicks <= 0) {
+                        this.finishCommittedAttack();
+                    }
+                }
+            }
+
+            if (this.attackCooldownTicks > 0) {
+                this.attackCooldownTicks--;
             }
 
             if (this.flyBurstTicks > 0) {
@@ -248,12 +278,11 @@ public class MantisEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean doHurtTarget(net.minecraft.world.entity.Entity target) {
-        boolean hurt = super.doHurtTarget(target);
-        if (hurt) {
-            this.attackAnimationTicks = 10;
-            this.playSound(AntarchySoundEvents.MANTIS_ATTACK.get(), 1.0F, 0.95F + this.random.nextFloat() * 0.1F);
+        if (target instanceof LivingEntity livingTarget && this.canBeginCommittedAttack(livingTarget)) {
+            this.beginCommittedAttack(livingTarget);
+            return true;
         }
-        return hurt;
+        return false;
     }
 
     @Override
@@ -325,6 +354,110 @@ public class MantisEntity extends Monster implements GeoEntity {
         this.setNoGravity(false);
     }
 
+    protected boolean isAttackLocked() {
+        return this.attackAnimationTicks > 0;
+    }
+
+    protected boolean canBeginCommittedAttack(LivingEntity target) {
+        return !this.isAttackLocked()
+                && this.attackCooldownTicks <= 0
+                && target.isAlive()
+                && this.distanceToSqr(target) <= this.getAttackStartRange() * this.getAttackStartRange()
+                && this.hasLineOfSight(target);
+    }
+
+    protected void beginCommittedAttack(LivingEntity target) {
+        this.committedAttackTarget = target;
+        this.committedAttackYaw = this.yBodyRot;
+        this.attackAnimationTicks = ATTACK_ANIM_TICKS;
+        this.attackCooldownTicks = ATTACK_COOLDOWN_TICKS;
+        this.attackDamageApplied = false;
+        this.attackStartedInFlight = this.isFlyingNow();
+        this.getNavigation().stop();
+        this.setAggressive(true);
+        this.playSound(AntarchySoundEvents.MANTIS_ATTACK.get(), 1.0F, 0.95F + this.random.nextFloat() * 0.1F);
+    }
+
+    protected void tickCommittedAttack() {
+        this.getNavigation().stop();
+        LivingEntity target = this.committedAttackTarget;
+        if (target == null || !target.isAlive() || !target.level().equals(this.level())) {
+            this.finishCommittedAttack();
+            return;
+        }
+
+        if (this.attackAnimationTicks > ATTACK_COMMIT_REMAINING_TICKS) {
+            this.faceTargetForAttack(target, WINDUP_TURN_RATE);
+            this.committedAttackYaw = this.yBodyRot;
+        } else {
+            this.lockAttackYaw();
+        }
+
+        if (!this.attackDamageApplied && this.attackAnimationTicks == ATTACK_HIT_REMAINING_TICKS) {
+            this.attackDamageApplied = true;
+            if (this.canHitCommittedAttackTarget(target)) {
+                this.applyCommittedAttackDamage(target);
+            }
+        }
+    }
+
+    protected void finishCommittedAttack() {
+        this.attackAnimationTicks = 0;
+        this.attackDamageApplied = false;
+        this.attackStartedInFlight = false;
+        this.committedAttackTarget = null;
+    }
+
+    protected boolean canHitCommittedAttackTarget(LivingEntity target) {
+        if (!target.isAlive() || !this.hasLineOfSight(target)) {
+            return false;
+        }
+
+        Vec3 forward = Vec3.directionFromRotation(0.0F, this.committedAttackYaw).normalize();
+        Vec3 toTarget = target.position().subtract(this.position());
+        double forwardDistance = toTarget.x * forward.x + toTarget.z * forward.z;
+        if (forwardDistance < 0.0D || forwardDistance > this.getAttackHitReach()) {
+            return false;
+        }
+
+        double sideDistance = Math.abs(toTarget.x * forward.z - toTarget.z * forward.x);
+        if (sideDistance > this.getAttackHalfWidth()) {
+            return false;
+        }
+
+        double verticalDistance = Math.abs((target.getY() + target.getBbHeight() * 0.5D) - (this.getY() + this.getBbHeight() * 0.5D));
+        return verticalDistance <= this.getAttackVerticalTolerance();
+    }
+
+    protected boolean applyCommittedAttackDamage(LivingEntity target) {
+        return super.doHurtTarget(target);
+    }
+
+    protected void faceTargetForAttack(LivingEntity target, float maxTurnDegrees) {
+        double dx = target.getX() - this.getX();
+        double dz = target.getZ() - this.getZ();
+        if (dx * dx + dz * dz < 1.0E-4D) {
+            return;
+        }
+        float targetYaw = (float) (Mth.atan2(dz, dx) * (180.0D / Math.PI)) - 90.0F;
+        float yaw = this.approachYaw(this.getYRot(), targetYaw, maxTurnDegrees);
+        this.setYRot(yaw);
+        this.setYHeadRot(yaw);
+        this.yBodyRot = yaw;
+    }
+
+    protected float approachYaw(float currentYaw, float targetYaw, float maxTurnDegrees) {
+        float delta = Mth.wrapDegrees(targetYaw - currentYaw);
+        delta = Math.max(-maxTurnDegrees, Math.min(maxTurnDegrees, delta));
+        return currentYaw + delta;
+    }
+
+    protected void lockAttackYaw() {
+        this.setYRot(this.committedAttackYaw);
+        this.setYHeadRot(this.committedAttackYaw);
+        this.yBodyRot = this.committedAttackYaw;
+    }
+
     private void startFlightBurst() {
         this.flyBurstTicks = 40 + this.random.nextInt(30);
         this.flyCooldownTicks = 160 + this.random.nextInt(80);
@@ -339,12 +472,22 @@ public class MantisEntity extends Monster implements GeoEntity {
     }
 
     private void setAnimationState(int animationState) {
-        this.entityData.set(ANIMATION_STATE, animationState);
+        if (this.entityData.get(ANIMATION_STATE) != animationState) {
+            this.entityData.set(ANIMATION_STATE, animationState);
+            String trigger = switch (animationState) {
+                case ANIM_ATTACK -> "attack";
+                case ANIM_FLY_ATTACK -> "flyattack";
+                default -> null;
+            };
+            if (trigger != null) {
+                this.triggerAnim("main_controller", trigger);
+            }
+        }
     }
 
     private void updateAnimationState() {
         if (this.attackAnimationTicks > 0) {
-            this.setAnimationState(this.isFlyingNow() ? ANIM_FLY_ATTACK : ANIM_ATTACK);
+            this.setAnimationState(this.attackStartedInFlight || this.isFlyingNow() ? ANIM_FLY_ATTACK : ANIM_ATTACK);
             return;
         }
 
@@ -378,6 +521,22 @@ public class MantisEntity extends Monster implements GeoEntity {
 
     private boolean isFlyingNow() {
         return this.flyBurstTicks > 0;
+    }
+
+    protected double getAttackStartRange() {
+        return ATTACK_START_RANGE;
+    }
+
+    protected double getAttackHitReach() {
+        return ATTACK_HIT_REACH;
+    }
+
+    protected double getAttackHalfWidth() {
+        return ATTACK_HALF_WIDTH;
+    }
+
+    protected double getAttackVerticalTolerance() {
+        return ATTACK_VERTICAL_TOLERANCE;
     }
 
     private void syncConfiguredAttributes(boolean rescaleCurrentHealth) {
@@ -429,6 +588,63 @@ public class MantisEntity extends Monster implements GeoEntity {
             this.onGround(),
             this.getNavigation().isDone()
         );
+    }
+
+    private final class MantisCombatGoal extends Goal {
+        private int repathTicks;
+
+        private MantisCombatGoal() {
+            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            LivingEntity target = MantisEntity.this.getTarget();
+            return target != null && target.isAlive();
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            LivingEntity target = MantisEntity.this.getTarget();
+            return MantisEntity.this.isAttackLocked() || (target != null && target.isAlive());
+        }
+
+        @Override
+        public void start() {
+            MantisEntity.this.setAggressive(true);
+            this.repathTicks = 0;
+        }
+
+        @Override
+        public void stop() {
+            if (!MantisEntity.this.isAttackLocked()) {
+                MantisEntity.this.setAggressive(false);
+                MantisEntity.this.getNavigation().stop();
+            }
+        }
+
+        @Override
+        public void tick() {
+            if (MantisEntity.this.isAttackLocked()) {
+                return;
+            }
+
+            LivingEntity target = MantisEntity.this.getTarget();
+            if (target == null || !target.isAlive()) {
+                return;
+            }
+
+            if (MantisEntity.this.canBeginCommittedAttack(target)) {
+                MantisEntity.this.beginCommittedAttack(target);
+                return;
+            }
+
+            MantisEntity.this.getLookControl().setLookAt(target, 30.0F, 30.0F);
+            if (--this.repathTicks <= 0) {
+                this.repathTicks = 4 + MantisEntity.this.random.nextInt(5);
+                MantisEntity.this.getNavigation().moveTo(target, MantisEntity.this.getCombatSpeed());
+            }
+        }
     }
 
 

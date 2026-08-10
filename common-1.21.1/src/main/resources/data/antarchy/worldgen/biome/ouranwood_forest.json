@@ -16,7 +16,10 @@
         "type": "minecraft:spore_blossom_air"
       }
     },
-    "ambient_sound": "antarchy:ambient.elythia.ouranwood_forest",
+    "additions_sound": {
+      "sound": "antarchy:ambient.elythia.ouranwood_forest",
+      "tick_chance": 0.0005
+    },
     "mood_sound": {
       "sound": "minecraft:ambient.crimson_forest.mood",
       "tick_delay": 6000,

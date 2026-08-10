@@ -269,7 +269,10 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController));
+        controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController)
+                .triggerableAnim("cry", CRY_ANIM)
+                .triggerableAnim("attack", ATTACK_ANIM)
+                .triggerableAnim("charge_start", CHARGE_START_ANIM));
         controllers.add(new AnimationController<>(this, "flying_charge_controller", 0, this::flyingChargeAnimController));
     }
 
@@ -773,7 +776,18 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
     }
 
     private void setAnimationState(int animationState) {
-        this.entityData.set(ANIMATION_STATE, animationState);
+        if (this.entityData.get(ANIMATION_STATE) != animationState) {
+            this.entityData.set(ANIMATION_STATE, animationState);
+            String trigger = switch (animationState) {
+                case ANIM_CRY -> "cry";
+                case ANIM_ATTACK -> "attack";
+                case ANIM_CHARGE_START -> "charge_start";
+                default -> null;
+            };
+            if (trigger != null) {
+                this.triggerAnim("main_controller", trigger);
+            }
+        }
     }
 
     private boolean isInBusyAnimation() {

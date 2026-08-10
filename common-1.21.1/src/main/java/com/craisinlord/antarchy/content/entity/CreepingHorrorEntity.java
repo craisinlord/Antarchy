@@ -120,7 +120,8 @@ public class CreepingHorrorEntity extends Monster implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main_controller", 3, this::mainAnimController));
+        controllers.add(new AnimationController<>(this, "main_controller", 3, this::mainAnimController)
+                .triggerableAnim("attack", ATTACK_ANIM));
     }
 
     private PlayState mainAnimController(AnimationState<CreepingHorrorEntity> state) {
@@ -143,10 +144,19 @@ public class CreepingHorrorEntity extends Monster implements GeoEntity {
         boolean result = super.doHurtTarget(target);
         if (result) {
             this.playSound(AntarchySoundEvents.CREEPING_HORROR_BITE.get(), 1.0F, 0.95F + this.random.nextFloat() * 0.1F);
-            attackAnimTicks = 20;
+            this.setAttackAnimTicks(20);
             this.level().broadcastEntityEvent(this, ATTACK_ANIM_EVENT);
         }
         return result;
+    }
+
+    private void setAttackAnimTicks(int ticks) {
+        int clamped = Math.max(0, ticks);
+        boolean wasIdle = attackAnimTicks <= 0;
+        attackAnimTicks = clamped;
+        if (wasIdle && clamped > 0) {
+            this.triggerAnim("main_controller", "attack");
+        }
     }
 
     @Override
@@ -178,7 +188,12 @@ public class CreepingHorrorEntity extends Monster implements GeoEntity {
         CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
         super.tick();
         CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
-        if (attackAnimTicks > 0) attackAnimTicks--;
+        if (attackAnimTicks > 0) {
+            attackAnimTicks--;
+            if (attackAnimTicks <= 0 && !this.level().isClientSide()) {
+                this.stopTriggeredAnim("main_controller", "attack");
+            }
+        }
         if (this.level().isClientSide()) return;
 
         boolean climbing = this.horizontalCollision;

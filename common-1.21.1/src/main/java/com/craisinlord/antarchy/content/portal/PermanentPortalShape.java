@@ -174,11 +174,6 @@ public final class PermanentPortalShape {
         BlockPos rightFrameBase = bottomLeft.relative(widthDirection, width);
 
         for (int height = 0; height < MAX_SIZE; height++) {
-            if (!level.getBlockState(leftFrameBase.above(height)).is(frameTag)
-                    || !level.getBlockState(rightFrameBase.above(height)).is(frameTag)) {
-                return 0;
-            }
-
             for (int x = 0; x < width; x++) {
                 BlockPos interiorPos = bottomLeft.relative(widthDirection, x).above(height);
                 if (!interiorPredicate.test(level.getBlockState(interiorPos))) {
@@ -187,6 +182,11 @@ public final class PermanentPortalShape {
                     }
                     return hasTopFrame(level, bottomLeft, widthDirection, width, height, frameTag) ? height : 0;
                 }
+            }
+
+            if (!level.getBlockState(leftFrameBase.above(height)).is(frameTag)
+                    || !level.getBlockState(rightFrameBase.above(height)).is(frameTag)) {
+                return 0;
             }
         }
 
@@ -255,7 +255,7 @@ public final class PermanentPortalShape {
                     continue;
                 }
                 if (frameSpot) {
-                    if (!state.isAir() && !state.is(frameBlock) && !state.canBeReplaced()) {
+                    if (y != -1 && !state.isAir() && !state.is(frameBlock) && !state.canBeReplaced()) {
                         return false;
                     }
                 } else if (!state.isAir() && !state.canBeReplaced() && !state.is(Blocks.AIR)) {

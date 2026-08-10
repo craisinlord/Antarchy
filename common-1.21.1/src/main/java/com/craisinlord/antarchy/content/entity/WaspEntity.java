@@ -235,6 +235,7 @@ public class WaspEntity extends Monster implements GeoEntity, FlyingAnimal {
         this.swing(InteractionHand.MAIN_HAND);
         if (!this.level().isClientSide) {
             this.level().broadcastEntityEvent(this, ATTACK_ANIM_EVENT);
+            this.triggerAnim("main_controller", "attack");
         }
     }
 
@@ -275,7 +276,8 @@ public class WaspEntity extends Monster implements GeoEntity, FlyingAnimal {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController));
+        controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController)
+                .triggerableAnim("attack", ATTACK_ANIM));
     }
 
     @Override

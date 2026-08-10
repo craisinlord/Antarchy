@@ -76,6 +76,9 @@ public final class AntarchyFabricSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> ELYTHIA_FIREFLY_AMBIENT = registerSoundEvent("ambient.elythia.firefly");
 
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> ELYTHIA_OURANWOOD_FOREST_AMBIENT = registerSoundEvent("ambient.elythia.ouranwood_forest");
+
+
     public static final DeferredHolder<SoundEvent, SoundEvent> MISSILE_SQUID_AMBIENT = registerSoundEvent("missile_squid_ambient");
 
 
@@ -136,6 +139,9 @@ public final class AntarchyFabricSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_NIGHTMARE_WASTES_ADDITIONS = registerSoundEvent("thoraxis_nightmare_wastes_additions");
 
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_NIGHTMARE_WASTES_BIOME_ADDITIONS = registerSoundEvent("thoraxis_nightmare_wastes_biome_additions");
+
+
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_NIGHTMARE_WASTES_MOOD = registerSoundEvent("thoraxis_nightmare_wastes_mood");
 
 
@@ -145,6 +151,9 @@ public final class AntarchyFabricSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_DREAM_DUNES_ADDITIONS = registerSoundEvent("thoraxis_dream_dunes_additions");
 
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_DREAM_DUNES_BIOME_ADDITIONS = registerSoundEvent("thoraxis_dream_dunes_biome_additions");
+
+
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_DREAM_DUNES_MOOD = registerSoundEvent("thoraxis_dream_dunes_mood");
 
 
@@ -152,6 +161,9 @@ public final class AntarchyFabricSounds {
 
 
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_LUCID_POOLS_ADDITIONS = registerSoundEvent("thoraxis_lucid_pools_additions");
+
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_LUCID_POOLS_BIOME_ADDITIONS = registerSoundEvent("thoraxis_lucid_pools_biome_additions");
 
 
     public static final DeferredHolder<SoundEvent, SoundEvent> THORAXIS_LUCID_POOLS_MOOD = registerSoundEvent("thoraxis_lucid_pools_mood");

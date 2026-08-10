@@ -130,9 +130,13 @@ public final class AntarchyFabricContent {
 
         AntarchySoundEvents.bind(
                 AntarchyFabricSounds.SQUIDZOOKA_FIRE,
-                AntarchyFabricSounds.SHRINK_RAY_SOUND,
-                AntarchyFabricSounds.GROWTH_RAY_SOUND,
-                AntarchyFabricSounds.SIZE_RAY_CHARGE,
+                AntarchyFabricSounds.SHRINK_RAY_CHARGE,
+                AntarchyFabricSounds.SHRINK_RAY_LOOP,
+                AntarchyFabricSounds.GROWTH_RAY_CHARGE,
+                AntarchyFabricSounds.GROWTH_RAY_LOOP,
+                AntarchyFabricSounds.SIZE_RAY_WEAKSHOT,
+                AntarchyFabricSounds.SIZE_RAY_MEDIUMSHOT,
+                AntarchyFabricSounds.SIZE_RAY_CRITSHOT,
                 AntarchyFabricSounds.ANT_AMBIENT,
                 AntarchyFabricSounds.ANT_IDLE,
                 AntarchyFabricSounds.ANT_HURT,
@@ -323,6 +327,7 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setLumenFroglight(() -> AntarchyFabricBlocks.LUMEN_FROGLIGHT.get());
         AntarchyObjects.setPeachLeavesParticle(() -> AntarchyFabricMisc.PEACH_LEAVES_PARTICLE.get());
         AntarchyObjects.setLotusPollen(() -> AntarchyFabricMisc.LOTUS_POLLEN.get());
+        AntarchyObjects.setNightmareFireFlame(() -> AntarchyFabricMisc.NIGHTMARE_FIRE_FLAME.get());
         AntarchyObjects.setLucidBoltImpactSmall(() -> AntarchyFabricMisc.LUCID_BOLT_IMPACT_SMALL.get());
         AntarchyObjects.setLucidBoltImpactLarge(() -> AntarchyFabricMisc.LUCID_BOLT_IMPACT_LARGE.get());
         AntarchyObjects.setDorrieInventoryMenu(AntarchyFabricMisc.DORRIE_INVENTORY_MENU);

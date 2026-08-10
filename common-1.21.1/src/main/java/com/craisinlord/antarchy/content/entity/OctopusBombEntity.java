@@ -165,7 +165,10 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController)
-                .setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>()));
+                .setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>())
+                .triggerableAnim("Grab", GRAB_ANIM)
+                .triggerableAnim("Swipe", SWIPE_ANIM)
+                .triggerableAnim("Death", DEATH_ANIM));
     }
 
     private PlayState mainAnimController(AnimationState<OctopusBombEntity> state) {
@@ -335,7 +338,18 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
     }
 
     private void setAnimationState(int state) {
-        this.entityData.set(ANIMATION_STATE, state);
+        if (this.entityData.get(ANIMATION_STATE) != state) {
+            this.entityData.set(ANIMATION_STATE, state);
+            String trigger = switch (state) {
+                case ANIM_GRAB -> "Grab";
+                case ANIM_SWIPE -> "Swipe";
+                case ANIM_DEATH -> "Death";
+                default -> null;
+            };
+            if (trigger != null) {
+                this.triggerAnim("main_controller", trigger);
+            }
+        }
     }
 
     public void launchAsProjectile(net.minecraft.world.entity.Entity owner, Vec3 velocity) {

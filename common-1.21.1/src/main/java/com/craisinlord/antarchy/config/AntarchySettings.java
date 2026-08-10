@@ -290,7 +290,7 @@ public final class AntarchySettings {
     private static int emperorScorpionMaxSummonedScorpions = 4;
     private static int emperorScorpionMaxNearbyScorpions = 4;
     private static int emperorScorpionHardenCooldownTicks = 2400;
-    private static double emperorScorpionDamageRange = 80.0D;
+    private static double emperorScorpionDamageRange = 25.0D;
     private static int emperorScorpionMinDespawnTicks = 6000;
     private static double scorpionHealth = 30.0D;
     private static double scorpionAttackDamage = 5.0D;
@@ -322,11 +322,11 @@ public final class AntarchySettings {
     private static double krakenProjectileDamageTakenMultiplier = 0.5D;
     private static double krakenBossBarRange = 40.0D;
     private static double krakenFollowRange = 96.0D;
-    private static double krakenDamageRange = 96.0D;
-    private static double herculesBeetleDamageRange = 48.0D;
-    private static double toreterrorDamageRange = 48.0D;
-    private static double brutalflyDamageRange = 48.0D;
-    private static double alphaMantisDamageRange = 48.0D;
+    private static double krakenDamageRange = 35.0D;
+    private static double herculesBeetleDamageRange = 25.0D;
+    private static double toreterrorDamageRange = 25.0D;
+    private static double brutalflyDamageRange = 25.0D;
+    private static double alphaMantisDamageRange = 25.0D;
     private static float krakenLightningDamagePhaseOne = 6.0F;
     private static double lucidHealth = 30.0D;
     private static double lucidAttackDamage = 4.0D;

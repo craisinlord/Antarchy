@@ -205,7 +205,9 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main_controller", 2, this::mainAnimController));
+        controllers.add(new AnimationController<>(this, "main_controller", 2, this::mainAnimController)
+                .triggerableAnim("emerge", EMERGE_ANIM)
+                .triggerableAnim("pollinate", POLLINATE_ANIM));
     }
 
     private PlayState mainAnimController(AnimationState<ButterflyEntity> state) {
@@ -436,7 +438,21 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity {
     }
 
     private void setActivityState(ActivityState state) {
-        this.entityData.set(ACTIVITY_STATE, state.ordinal());
+        ActivityState previous = this.getActivityState();
+        if (previous != state) {
+            this.entityData.set(ACTIVITY_STATE, state.ordinal());
+            String trigger = switch (state) {
+                case EMERGING -> "emerge";
+                case POLLINATING -> "pollinate";
+                default -> null;
+            };
+            if (trigger != null) {
+                this.triggerAnim("main_controller", trigger);
+            }
+            if (previous == ActivityState.POLLINATING) {
+                this.stopTriggeredAnim("main_controller", "pollinate");
+            }
+        }
     }
 
     private ActivityState getActivityState() {

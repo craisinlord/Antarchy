@@ -279,6 +279,7 @@ public final class AntarchyForgeClient {
     @SubscribeEvent
     public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(AntarchyForgeMisc.DREAM_FIRE_FLAME.get(), DreamFlameParticle.Provider::new);
+        event.registerSpriteSet(AntarchyForgeMisc.NIGHTMARE_FIRE_FLAME.get(), DreamFlameParticle.Provider::new);
         event.registerSpriteSet(AntarchyForgeMisc.STINKY_GAS.get(), HypnoticGasParticle.Provider::new);
         event.registerSpriteSet(AntarchyForgeMisc.STINKY_FLY.get(), FireflyParticle.Provider::new);
         event.registerSpriteSet(AntarchyForgeMisc.PEACH_LEAVES_PARTICLE.get(), PeachLeavesParticle.Provider::new);

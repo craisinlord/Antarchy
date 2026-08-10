@@ -366,7 +366,17 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
     }
 
     private void setAnimationState(int state) {
-        this.entityData.set(ANIMATION_STATE, state);
+        if (this.entityData.get(ANIMATION_STATE) != state) {
+            this.entityData.set(ANIMATION_STATE, state);
+            String trigger = switch (state) {
+                case ANIM_ROLL_UP -> "wheel_mode";
+                case ANIM_UNROLL -> "normal_mode";
+                default -> null;
+            };
+            if (trigger != null) {
+                this.triggerAnim("main_controller", trigger);
+            }
+        }
     }
 
     @Override
@@ -400,7 +410,9 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "main_controller", 2, this::mainAnimController));
+        controllers.add(new AnimationController<>(this, "main_controller", 2, this::mainAnimController)
+                .triggerableAnim("wheel_mode", ROLL_UP_ANIM)
+                .triggerableAnim("normal_mode", UNROLL_ANIM));
     }
 
     private PlayState mainAnimController(AnimationState<RollyPollyEntity> state) {

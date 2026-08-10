@@ -201,7 +201,8 @@ public class BomberEntity extends Monster implements GeoEntity {
         controllers.add(new AnimationController<>(this, "movement_controller", 0, this::movementAnimController)
                 .setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>()));
         controllers.add(new AnimationController<>(this, "explode_controller", 0, this::explodeAnimController)
-                .setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>()));
+                .setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>())
+                .triggerableAnim("explode", EXPLODE_ANIM));
     }
 
     @Override
@@ -222,6 +223,9 @@ public class BomberEntity extends Monster implements GeoEntity {
             if (this.fuseTicks > 0) {
                 this.fuseTicks--;
                 this.entityData.set(FUSE_TICKS_DATA, this.fuseTicks);
+                if (this.fuseTicks == EXPLODE_ANIM_START_TICKS) {
+                    this.triggerAnim("explode_controller", "explode");
+                }
             }
 
             if (this.fuseTicks <= 0) {

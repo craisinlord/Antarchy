@@ -416,7 +416,7 @@ public final class AntarchyMobsConfig {
         b.push("emperorScorpion");
         EMPEROR_SCORPION_DAMAGE_RANGE = b
                 .comment("Range in blocks a player must be within for the Emperor Scorpion to be able to take damage. Prevents cheesing it from outside its aggro range.")
-                .defineInRange("damageRange", 80.0D, 1.0D, 256.0D);
+                .defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
         EMPEROR_SCORPION_MIN_DESPAWN_TICKS = b
                 .comment("Minimum ticks after spawning before the Emperor Scorpion can despawn from being far away. It also never despawns once it has taken damage. 6000 ticks = 5 minutes.")
                 .defineInRange("minDespawnTicks", 6000, 0, 1000000);
@@ -433,7 +433,7 @@ public final class AntarchyMobsConfig {
         KRAKEN_MASS_SPAWN_ENABLED                = b.comment("If true, a player killing a Missile Squid has a 1/500 chance to spawn 10 Krakens. Independent from the single spawn.").define("massSpawnEnabled",  true);
         KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON        = b.comment("If true, the killer must have Bad Omen to summon a single Kraken; chance scales with Bad Omen level. Mass spawn is unaffected by level but still requires Bad Omen when this is on.").define("requireBadOmenToSummon",  true);
         KRAKEN_FOLLOW_RANGE                      = b.comment("How far the Kraken can see/target players.").defineInRange("followRange", 96.0D, 1.0D, 256.0D);
-        KRAKEN_DAMAGE_RANGE                      = b.comment("Range in blocks a player must be within for the Kraken to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 96.0D, 1.0D, 256.0D);
+        KRAKEN_DAMAGE_RANGE                      = b.comment("Range in blocks a player must be within for the Kraken to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 35.0D, 1.0D, 256.0D);
         b.pop();
 
 
@@ -443,7 +443,7 @@ public final class AntarchyMobsConfig {
         BRUTALFLY_HEALTH      = b.comment("Base max health.")                                          .defineInRange("health",      200.0D, 1.0D, 32768.0D);
         BRUTALFLY_SWIPE_DAMAGE = b.comment("Damage dealt by a claw swipe.")                           .defineInRange("swipeDamage",  15.0D, 0.0D, 1024.0D);
         BRUTALFLY_SPIT_DAMAGE  = b.comment("Direct hit damage from a spit orb before lingering effect.").defineInRange("spitDamage",   5.0D, 0.0D, 1024.0D);
-        BRUTALFLY_DAMAGE_RANGE = b.comment("Range in blocks a player must be within for the Brutalfly to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 48.0D, 1.0D, 256.0D);
+        BRUTALFLY_DAMAGE_RANGE = b.comment("Range in blocks a player must be within for the Brutalfly to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
         b.pop();
 
 
@@ -467,7 +467,7 @@ public final class AntarchyMobsConfig {
         ALPHA_MANTIS_FLYING_SPEED          = b.comment("Base flying speed.")                                            .defineInRange("flyingSpeed",         0.77D, 0.0D, 10.0D);
         ALPHA_MANTIS_SUMMON_INTERVAL_TICKS = b.comment("Ticks between mantis minion summons while in combat.")          .defineInRange("summonIntervalTicks",   300, 20, 72000);
         ALPHA_MANTIS_MAX_MINIONS           = b.comment("Maximum summoned mantises alive near the alpha at once.")       .defineInRange("maxMinions",              4, 0, 32);
-        ALPHA_MANTIS_DAMAGE_RANGE          = b.comment("Range in blocks a player must be within for the Alpha Mantis to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 48.0D, 1.0D, 256.0D);
+        ALPHA_MANTIS_DAMAGE_RANGE          = b.comment("Range in blocks a player must be within for the Alpha Mantis to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
         b.pop();
 
 
@@ -644,12 +644,12 @@ public final class AntarchyMobsConfig {
         HERCULES_BEETLE_HEALTH = b.comment("Base max health.").defineInRange("health", 500.0D, 1.0D, 32768.0D);
         HERCULES_BEETLE_ATTACK_DAMAGE = b.comment("Base melee damage for ground and flying attacks.").defineInRange("attackDamage", 30.0D, 0.0D, 1024.0D);
         HERCULES_BEETLE_CHARGE_DAMAGE = b.comment("AOE impact damage dealt when a charge collides.").defineInRange("chargeDamage", 40.0D, 0.0D, 1024.0D);
-        HERCULES_BEETLE_DAMAGE_RANGE = b.comment("Range in blocks a player must be within for the Hercules Beetle to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 48.0D, 1.0D, 256.0D);
+        HERCULES_BEETLE_DAMAGE_RANGE = b.comment("Range in blocks a player must be within for the Hercules Beetle to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
         b.pop();
 
         b.push("toreterror");
         TORETERROR_HEALTH                  = b.comment("Base max health.").defineInRange("health", 300.0D, 1.0D, 32768.0D);
-        TORETERROR_DAMAGE_RANGE            = b.comment("Range in blocks a player must be within for the Toreterror to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 48.0D, 1.0D, 256.0D);
+        TORETERROR_DAMAGE_RANGE            = b.comment("Range in blocks a player must be within for the Toreterror to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
         TORETERROR_JUMP_ATTACK_DAMAGE      = b.comment("Damage dealt by the jump shockwave.").defineInRange("jumpAttackDamage", 14.0D, 0.0D, 1024.0D);
         TORETERROR_JUMP_ATTACK_KNOCKBACK   = b.comment("Knockback strength of the jump shockwave.").defineInRange("jumpAttackKnockback", 2.5D, 0.0D, 10.0D);
         TORETERROR_SPIN_DAMAGE             = b.comment("Damage per spin-attack tick.").defineInRange("spinDamage", 8.0D, 0.0D, 1024.0D);
