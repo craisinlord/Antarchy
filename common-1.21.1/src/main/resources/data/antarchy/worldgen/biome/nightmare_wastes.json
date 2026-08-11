@@ -52,7 +52,8 @@
       "antarchy:thoraxis_floor_rib_columns",
       "antarchy:thoraxis_roof_rib_columns",
       "antarchy:thoraxis_floor_spikes",
-      "antarchy:thoraxis_roof_spikes"
+      "antarchy:thoraxis_roof_spikes",
+      "antarchy:dimensional_tears"
     ],
     [],
     [],
@@ -76,7 +77,7 @@
     "monster": [
       {
         "type": "antarchy:nightmare",
-        "weight": 6,
+        "weight": 1,
         "minCount": 1,
         "maxCount": 1
       }

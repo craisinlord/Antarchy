@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -23,8 +24,6 @@ public final class MogglesCaveDetector {
     private static final int SCAN_INTERVAL = 40;
     /** How far to flood-fill the player's own air pocket before stopping. */
     private static final int PLAYER_SPACE_LIMIT = 8;
-    /** Search radius for the external cave scan. */
-    private static final int SCAN_RADIUS = 20;
     /** Minimum number of air neighbors a candidate block must have (filters tiny cracks). */
     private static final int MIN_AIR_NEIGHBORS = 2;
 
@@ -81,7 +80,7 @@ public final class MogglesCaveDetector {
         // Scan the wider radius for underground air NOT in the player's space.
         BlockPos nearest = null;
         double nearestDistSq = Double.MAX_VALUE;
-        int r = SCAN_RADIUS;
+        int r = (int) AntarchySettings.mogglesVisionRadius();
 
         for (int dx = -r; dx <= r; dx++) {
             for (int dy = -r; dy <= r; dy++) {

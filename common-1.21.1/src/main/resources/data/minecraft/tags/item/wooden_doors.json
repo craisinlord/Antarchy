@@ -1,7 +1,8 @@
 {
-  "replace": false,
-  "values": [
-    "antarchy:ouranwood_door",
-    "antarchy:peach_door"
-  ]
+    "replace":  false,
+    "values":  [
+                   "antarchy:ouranwood_door",
+                   "antarchy:peach_door",
+                   "antarchy:nadir_door"
+               ]
 }

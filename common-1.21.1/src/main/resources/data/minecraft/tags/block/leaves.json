@@ -1,7 +1,7 @@
 {
-  "replace": false,
-  "values": [
-    "antarchy:ouranwood_leaves",
-    "antarchy:peach_leaves"
-  ]
+    "replace":  false,
+    "values":  [
+                   "antarchy:ouranwood_leaves",
+                   "antarchy:peach_leaves"
+               ]
 }

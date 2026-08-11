@@ -30,6 +30,8 @@ import com.craisinlord.antarchy.content.entity.MolevoreEntity;
 import com.craisinlord.antarchy.content.entity.MolewormEntity;
 import com.craisinlord.antarchy.content.entity.OuranwoodBoatEntity;
 import com.craisinlord.antarchy.content.entity.OuranwoodChestBoatEntity;
+import com.craisinlord.antarchy.content.entity.NadirBoatEntity;
+import com.craisinlord.antarchy.content.entity.NadirChestBoatEntity;
 import com.craisinlord.antarchy.content.entity.PeachBoatEntity;
 import com.craisinlord.antarchy.content.entity.PeachChestBoatEntity;
 import com.craisinlord.antarchy.content.entity.ReverieEntity;
@@ -59,6 +61,7 @@ import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmarePortalEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareBiteEntity;
+import com.craisinlord.antarchy.content.entity.portal.DimensionalTearEntity;
 import com.craisinlord.antarchy.content.entity.CheepEntity;
 import com.craisinlord.antarchy.content.entity.CreepingHorrorEntity;
 import com.craisinlord.antarchy.content.entity.DorrieEntity;
@@ -139,6 +142,18 @@ public final class AntarchyNeoforgeEntites {
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("peach_chest_boat"));
+    public static final DeferredHolder<EntityType<?>, EntityType<NadirBoatEntity>> NADIR_BOAT_ENTITY = ENTITY_TYPES.register("nadir_boat",
+            () -> EntityType.Builder.<NadirBoatEntity>of(NadirBoatEntity::new, MobCategory.MISC)
+                    .sized(1.375F, 0.5625F)
+                    .clientTrackingRange(10)
+                    .updateInterval(10)
+                    .build("nadir_boat"));
+    public static final DeferredHolder<EntityType<?>, EntityType<NadirChestBoatEntity>> NADIR_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("nadir_chest_boat",
+            () -> EntityType.Builder.<NadirChestBoatEntity>of(NadirChestBoatEntity::new, MobCategory.MISC)
+                    .sized(1.375F, 0.5625F)
+                    .clientTrackingRange(10)
+                    .updateInterval(10)
+                    .build("nadir_chest_boat"));
     public static final DeferredHolder<EntityType<?>, EntityType<MolevoreEntity>> MOLEVORE = ENTITY_TYPES.register("molevore",
             () -> EntityType.Builder.of(MolevoreEntity::new, MobCategory.MONSTER)
                     .sized(1.95F, 1.1F)
@@ -274,6 +289,12 @@ public final class AntarchyNeoforgeEntites {
                     .clientTrackingRange(10)
                     .updateInterval(1)
                     .build("nightmare_portal"));
+    public static final DeferredHolder<EntityType<?>, EntityType<DimensionalTearEntity>> DIMENSIONAL_TEAR = ENTITY_TYPES.register("dimensional_tear",
+            () -> EntityType.Builder.of(DimensionalTearEntity::new, MobCategory.MISC)
+                    .sized(2.8F, 3.2F)
+                    .clientTrackingRange(12)
+                    .updateInterval(1)
+                    .build("dimensional_tear"));
     public static final DeferredHolder<EntityType<?>, EntityType<NightmareBiteEntity>> NIGHTMARE_BITE = ENTITY_TYPES.register("nightmare_bite",
             () -> EntityType.Builder.of(NightmareBiteEntity::new, MobCategory.MISC)
                     .sized(2.5F, 2.0F)

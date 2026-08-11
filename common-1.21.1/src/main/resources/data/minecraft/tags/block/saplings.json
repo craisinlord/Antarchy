@@ -1,7 +1,8 @@
 {
-  "replace": false,
-  "values": [
-    "antarchy:ouranwood_acorn",
-    "antarchy:peach_sapling"
-  ]
+    "replace":  false,
+    "values":  [
+                   "antarchy:ouranwood_acorn",
+                   "antarchy:peach_sapling",
+                   "antarchy:nadir_sapling"
+               ]
 }

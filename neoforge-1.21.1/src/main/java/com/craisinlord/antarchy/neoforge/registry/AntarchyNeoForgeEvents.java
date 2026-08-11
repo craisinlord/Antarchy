@@ -1324,6 +1324,7 @@ public final class AntarchyNeoForgeEvents {
             ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeItems.CORNEA_EAR.get(), 0.65f);
             ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeBlocks.PEACH_LEAVES.get().asItem(), 0.3f);
             ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeItems.PEACH_SAPLING_ITEM.get(), 0.3f);
+            ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeItems.NADIR_SAPLING_ITEM.get(), 0.3f);
             ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeItems.CORN.get(), 0.65f);
             ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeItems.CORN_SEEDS.get(), 0.3f);
             ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeItems.PEACH.get(), 0.65f);

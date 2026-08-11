@@ -77,6 +77,8 @@ public final class AntarchyTags {
         public static final TagKey<EntityType<?>> SCORPION_WHIP_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, id("scorpion_whip_blacklist"));
         public static final TagKey<EntityType<?>> TIGER_EYE_DETECTION_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("tiger_eye_detection_immune"));
         public static final TagKey<EntityType<?>> LUCID_ANCHOR_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("lucid_anchor_immune"));
+        public static final TagKey<EntityType<?>> DIMENSIONAL_TEAR_COMMON_SPAWNS = TagKey.create(Registries.ENTITY_TYPE, id("dimensional_tear_common_spawns"));
+        public static final TagKey<EntityType<?>> DIMENSIONAL_TEAR_RARE_SPAWNS = TagKey.create(Registries.ENTITY_TYPE, id("dimensional_tear_rare_spawns"));
 
         private Entities() {
         }

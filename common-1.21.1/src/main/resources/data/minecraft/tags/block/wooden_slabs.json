@@ -1,7 +1,8 @@
 {
-  "replace": false,
-  "values": [
-    "antarchy:ouranwood_slab",
-    "antarchy:peach_slab"
-  ]
+    "replace":  false,
+    "values":  [
+                   "antarchy:ouranwood_slab",
+                   "antarchy:peach_slab",
+                   "antarchy:nadir_slab"
+               ]
 }
