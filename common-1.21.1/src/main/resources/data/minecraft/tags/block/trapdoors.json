@@ -1,7 +1,8 @@
 {
-  "replace": false,
-  "values": [
-    "antarchy:uranium_trapdoor",
-    "antarchy:titanium_trapdoor"
-  ]
+    "replace":  false,
+    "values":  [
+                   "antarchy:uranium_trapdoor",
+                   "antarchy:titanium_trapdoor",
+                   "antarchy:nadir_trapdoor"
+               ]
 }

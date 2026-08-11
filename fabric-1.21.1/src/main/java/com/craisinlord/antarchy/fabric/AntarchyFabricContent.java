@@ -297,8 +297,11 @@ public final class AntarchyFabricContent {
 
         AntarchyObjects.setOctopusBomb(AntarchyFabricEntities.OCTOPUS_BOMB);
         AntarchyObjects.setTentacle(AntarchyFabricEntities.TENTACLE);
+        AntarchyObjects.setNightmare(AntarchyFabricEntities.NIGHTMARE);
         AntarchyObjects.setNightmarePortal(AntarchyFabricEntities.NIGHTMARE_PORTAL);
+        AntarchyObjects.setDimensionalTear(AntarchyFabricEntities.DIMENSIONAL_TEAR);
         AntarchyObjects.setNightmareBite(AntarchyFabricEntities.NIGHTMARE_BITE);
+        AntarchyObjects.setLucid(AntarchyFabricEntities.LUCID);
         AntarchyObjects.setKrakensGraspTrident(AntarchyFabricEntities.KRAKENS_GRASP_TRIDENT);
         AntarchyObjects.setLotus(() -> AntarchyFabricBlocks.LOTUS.get());
         AntarchyObjects.setKrakenTentacle(() -> AntarchyFabricItems.KRAKEN_TENTACLE.get());

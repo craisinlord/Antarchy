@@ -106,8 +106,6 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.DoubleValue SCORPION_WHIP_PULL_STRENGTH;
     private static final ModConfigSpec.DoubleValue SCORPION_WHIP_HEAVY_PULL_MULTIPLIER;
     private static final ModConfigSpec.DoubleValue SCORPION_WHIP_SELF_PULL_MULTIPLIER;
-    private static final ModConfigSpec.IntValue    SCORPION_WHIP_REEL_COOLDOWN_TICKS;
-    private static final ModConfigSpec.IntValue    SCORPION_WHIP_SNAP_COOLDOWN_TICKS;
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_KATANA_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue BLOOD_CRYSTAL_KATANA_LAUNCH_STRENGTH;
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_KATANA_TRAIL_DURATION_TICKS;
@@ -124,8 +122,11 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.DoubleValue NIGHTMARE_LEGGINGS_ARMOR_TOUGHNESS;
     private static final ModConfigSpec.DoubleValue NIGHTMARE_BOOTS_ARMOR_TOUGHNESS;
     private static final ModConfigSpec.DoubleValue NIGHTMARE_ARMOR_KNOCKBACK_RESISTANCE;
+    private static final ModConfigSpec.DoubleValue NIGHTMARE_HELMET_DOUBLE_DAMAGE_CHANCE;
+    private static final ModConfigSpec.DoubleValue NIGHTMARE_CHESTPLATE_DOUBLE_DAMAGE_CHANCE;
+    private static final ModConfigSpec.DoubleValue NIGHTMARE_LEGGINGS_DOUBLE_DAMAGE_CHANCE;
+    private static final ModConfigSpec.DoubleValue NIGHTMARE_BOOTS_DOUBLE_DAMAGE_CHANCE;
     private static final ModConfigSpec.DoubleValue PRIMORDIAL_ARMOR_KNOCKBACK_PER_PIECE;
-    private static final ModConfigSpec.DoubleValue NIGHTMARE_ARMOR_DREAD_AURA_RANGE_PER_PIECE;
     private static final ModConfigSpec.DoubleValue NIGHTMARE_SWORD_BASE_DAMAGE;
     private static final ModConfigSpec.DoubleValue NIGHTMARE_SWORD_ATTACK_SPEED;
     private static final ModConfigSpec.DoubleValue NIGHTMARE_SWORD_SCALING_FACTOR;
@@ -215,8 +216,6 @@ public final class AntarchyToolsConfig {
 
     // Moggles
     private static final ModConfigSpec.DoubleValue MOGGLES_VISION_RADIUS;
-    private static final ModConfigSpec.IntValue    MOGGLES_VISION_MAX_LIGHT;
-    private static final ModConfigSpec.DoubleValue MOGGLES_VISION_ALPHA;
 
 
     static {
@@ -354,8 +353,6 @@ public final class AntarchyToolsConfig {
         SCORPION_WHIP_PULL_STRENGTH = b.comment("Pull strength applied to normal tethered targets.").defineInRange("pullStrength", 0.75D, 0.0D, 8.0D);
         SCORPION_WHIP_HEAVY_PULL_MULTIPLIER = b.comment("Reduced pull strength applied to heavy targets.").defineInRange("heavyPullMultiplier", 0.25D, 0.0D, 8.0D);
         SCORPION_WHIP_SELF_PULL_MULTIPLIER = b.comment("Self-pull strength toward heavy tethered targets.").defineInRange("selfPullMultiplier", 0.45D, 0.0D, 8.0D);
-        SCORPION_WHIP_REEL_COOLDOWN_TICKS = b.comment("Cooldown after reeling with the whip, in ticks.").defineInRange("reelCooldownTicks", 10, 0, 72000);
-        SCORPION_WHIP_SNAP_COOLDOWN_TICKS = b.comment("Cooldown after snapping the whip, in ticks.").defineInRange("snapCooldownTicks", 30, 0, 72000);
         b.pop();
 
         b.push("bloodCrystalKatana");
@@ -377,8 +374,11 @@ public final class AntarchyToolsConfig {
         NIGHTMARE_LEGGINGS_ARMOR_TOUGHNESS        = b.comment("Armor toughness of the Nightmare Leggings.")                                 .defineInRange("leggingsToughness",    3.0D, 0.0D, 100.0D);
         NIGHTMARE_BOOTS_ARMOR_TOUGHNESS           = b.comment("Armor toughness of the Nightmare Boots.")                                    .defineInRange("bootsToughness",       3.0D, 0.0D, 100.0D);
         NIGHTMARE_ARMOR_KNOCKBACK_RESISTANCE      = b.comment("Knockback resistance granted by each Nightmare Armor piece.")                .defineInRange("knockbackResistance",  0.1D, 0.0D, 1.0D);
+        NIGHTMARE_HELMET_DOUBLE_DAMAGE_CHANCE     = b.comment("Chance for the Nightmare Helmet to double an incoming hit's damage.")       .defineInRange("helmetDoubleDamageChance",     0.04D, 0.0D, 1.0D);
+        NIGHTMARE_CHESTPLATE_DOUBLE_DAMAGE_CHANCE = b.comment("Chance for the Nightmare Chestplate to double an incoming hit's damage.")   .defineInRange("chestplateDoubleDamageChance", 0.06D, 0.0D, 1.0D);
+        NIGHTMARE_LEGGINGS_DOUBLE_DAMAGE_CHANCE   = b.comment("Chance for the Nightmare Leggings to double an incoming hit's damage.")     .defineInRange("leggingsDoubleDamageChance",   0.05D, 0.0D, 1.0D);
+        NIGHTMARE_BOOTS_DOUBLE_DAMAGE_CHANCE      = b.comment("Chance for the Nightmare Boots to double an incoming hit's damage.")        .defineInRange("bootsDoubleDamageChance",      0.03D, 0.0D, 1.0D);
         PRIMORDIAL_ARMOR_KNOCKBACK_PER_PIECE      = b.comment("Attack knockback added by each Primordial Armor piece.")      .defineInRange("primordialArmorKnockbackPerPiece", 0.5D, 0.0D, 16.0D);
-        NIGHTMARE_ARMOR_DREAD_AURA_RANGE_PER_PIECE = b.comment("Additional Dread aura range added by each Nightmare armor piece.").defineInRange("dreadAuraRangePerPiece", 2.0D, 0.0D, 64.0D);
         b.pop();
 
         b.push("nightmareSword");
@@ -530,9 +530,7 @@ public final class AntarchyToolsConfig {
         b.pop();
 
         b.push("moggles");
-        MOGGLES_VISION_RADIUS = b.comment("Radius used by Moggles cave detection.").defineInRange("visionRadius", 20.0D, 1.0D, 128.0D);
-        MOGGLES_VISION_MAX_LIGHT = b.comment("Maximum block light level counted as dark enough for Moggles.").defineInRange("visionMaxLight", 7, 0, 15);
-        MOGGLES_VISION_ALPHA = b.comment("Overlay alpha used by Moggles vision rendering.").defineInRange("visionAlpha", 0.65D, 0.0D, 1.0D);
+        MOGGLES_VISION_RADIUS = b.comment("Search radius (in blocks) used by Moggles cave detection.").defineInRange("visionRadius", 20.0D, 1.0D, 128.0D);
         b.pop();
 
         SPEC = b.build();
@@ -618,8 +616,6 @@ public final class AntarchyToolsConfig {
     static double  scorpionWhipPullStrength()                { return SCORPION_WHIP_PULL_STRENGTH.get(); }
     static double  scorpionWhipHeavyPullMultiplier()         { return SCORPION_WHIP_HEAVY_PULL_MULTIPLIER.get(); }
     static double  scorpionWhipSelfPullMultiplier()          { return SCORPION_WHIP_SELF_PULL_MULTIPLIER.get(); }
-    static int     scorpionWhipReelCooldownTicks()           { return SCORPION_WHIP_REEL_COOLDOWN_TICKS.get(); }
-    static int     scorpionWhipSnapCooldownTicks()           { return SCORPION_WHIP_SNAP_COOLDOWN_TICKS.get(); }
     static int     bloodCrystalKatanaAttackDamage()          { return BLOOD_CRYSTAL_KATANA_ATTACK_DAMAGE.get(); }
     static double  bloodCrystalKatanaLaunchStrength()        { return BLOOD_CRYSTAL_KATANA_LAUNCH_STRENGTH.get(); }
     static int     bloodCrystalKatanaTrailDurationTicks()    { return BLOOD_CRYSTAL_KATANA_TRAIL_DURATION_TICKS.get(); }
@@ -633,8 +629,11 @@ public final class AntarchyToolsConfig {
     static double  nightmareLeggingsArmorToughness()         { return NIGHTMARE_LEGGINGS_ARMOR_TOUGHNESS.get(); }
     static double  nightmareBootsArmorToughness()            { return NIGHTMARE_BOOTS_ARMOR_TOUGHNESS.get(); }
     static double  nightmareArmorKnockbackResistance()       { return NIGHTMARE_ARMOR_KNOCKBACK_RESISTANCE.get(); }
+    static double  nightmareHelmetDoubleDamageChance()       { return NIGHTMARE_HELMET_DOUBLE_DAMAGE_CHANCE.get(); }
+    static double  nightmareChestplateDoubleDamageChance()   { return NIGHTMARE_CHESTPLATE_DOUBLE_DAMAGE_CHANCE.get(); }
+    static double  nightmareLeggingsDoubleDamageChance()     { return NIGHTMARE_LEGGINGS_DOUBLE_DAMAGE_CHANCE.get(); }
+    static double  nightmareBootsDoubleDamageChance()        { return NIGHTMARE_BOOTS_DOUBLE_DAMAGE_CHANCE.get(); }
     static double  primordialArmorKnockbackPerPiece()        { return PRIMORDIAL_ARMOR_KNOCKBACK_PER_PIECE.get(); }
-    static double  nightmareArmorDreadAuraRangePerPiece()    { return NIGHTMARE_ARMOR_DREAD_AURA_RANGE_PER_PIECE.get(); }
     static double  nightmareSwordBaseDamage()                { return NIGHTMARE_SWORD_BASE_DAMAGE.get(); }
     static double  nightmareSwordAttackSpeed()               { return NIGHTMARE_SWORD_ATTACK_SPEED.get(); }
     static double  nightmareSwordScalingFactor()             { return NIGHTMARE_SWORD_SCALING_FACTOR.get(); }
@@ -701,8 +700,6 @@ public final class AntarchyToolsConfig {
     static int     americanRegenerationDurationTicks()       { return AMERICAN_REGENERATION_DURATION_TICKS.get(); }
     static int     americanRegenerationAmplifier()            { return AMERICAN_REGENERATION_AMPLIFIER.get(); }
     static double  mogglesVisionRadius()                     { return MOGGLES_VISION_RADIUS.get(); }
-    static int     mogglesVisionMaxLight()                   { return MOGGLES_VISION_MAX_LIGHT.get(); }
-    static double  mogglesVisionAlpha()                      { return MOGGLES_VISION_ALPHA.get(); }
 
 
 }

@@ -76,6 +76,8 @@ public final class AntarchyNeoForgeClient {
     private static final ResourceLocation OURANWOOD_CHEST_BOAT_TEXTURE = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/chest_boat/ouranwood.png");
     private static final ResourceLocation PEACH_BOAT_TEXTURE = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/boat/peach.png");
     private static final ResourceLocation PEACH_CHEST_BOAT_TEXTURE = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/chest_boat/peach.png");
+    private static final ResourceLocation NADIR_BOAT_TEXTURE = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/boat/nadir.png");
+    private static final ResourceLocation NADIR_CHEST_BOAT_TEXTURE = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/chest_boat/nadir.png");
     private static final ResourceLocation WATER_STILL = ResourceLocation.withDefaultNamespace("block/water_still");
     private static final ResourceLocation WATER_FLOW = ResourceLocation.withDefaultNamespace("block/water_flow");
     private static final ResourceLocation WATER_OVERLAY = ResourceLocation.withDefaultNamespace("block/water_overlay");
@@ -111,6 +113,8 @@ public final class AntarchyNeoForgeClient {
         event.registerEntityRenderer(AntarchyNeoforgeEntites.OURANWOOD_CHEST_BOAT_ENTITY.get(), context -> new OuranwoodBoatRenderer<>(context, OURANWOOD_CHEST_BOAT_TEXTURE, true));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.PEACH_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, PEACH_BOAT_TEXTURE, false));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.PEACH_CHEST_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, PEACH_CHEST_BOAT_TEXTURE, true));
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.NADIR_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, NADIR_BOAT_TEXTURE, false));
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.NADIR_CHEST_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, NADIR_CHEST_BOAT_TEXTURE, true));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.APPLE_COW.get(), context -> withParalyzedGeoLayer(new AppleCowRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.GOLDEN_APPLE_COW.get(), context -> withParalyzedGeoLayer(new AppleCowRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.ENCHANTED_GOLDEN_APPLE_COW.get(), context -> withParalyzedGeoLayer(new AppleCowRenderer(context)));
@@ -124,6 +128,7 @@ public final class AntarchyNeoForgeClient {
         event.registerEntityRenderer(AntarchyNeoforgeEntites.OCTOPUS_BOMB.get(), context -> withParalyzedGeoLayer(new OctopusBombRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.NIGHTMARE.get(), context -> withParalyzedGeoLayer(new NightmareRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.NIGHTMARE_PORTAL.get(), NightmarePortalRenderer::new);
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.DIMENSIONAL_TEAR.get(), DimensionalTearRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.NIGHTMARE_BITE.get(), NightmareBiteRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.LUCID.get(), context -> withParalyzedGeoLayer(new LucidRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.BED_BUG.get(), context -> withParalyzedGeoLayer(new BedBugRenderer(context)));
@@ -571,6 +576,11 @@ public final class AntarchyNeoForgeClient {
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.PEACH_TRAPDOOR.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.PEACH_SAPLING.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.POTTED_PEACH_SAPLING.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.NADIR_VEIL.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.NADIR_DOOR.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.NADIR_TRAPDOOR.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.NADIR_SAPLING.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.POTTED_NADIR_SAPLING.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.DUPLICATOR_SAPLING.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.ORANGE_MILKWEED.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.PINK_MILKWEED.get(), RenderType.cutout());

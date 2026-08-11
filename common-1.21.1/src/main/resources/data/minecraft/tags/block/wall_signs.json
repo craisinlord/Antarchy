@@ -1,7 +1,8 @@
 {
-  "replace": false,
-  "values": [
-    "antarchy:ouranwood_wall_sign",
-    "antarchy:peach_wall_sign"
-  ]
+    "replace":  false,
+    "values":  [
+                   "antarchy:ouranwood_wall_sign",
+                   "antarchy:peach_wall_sign",
+                   "antarchy:nadir_wall_sign"
+               ]
 }

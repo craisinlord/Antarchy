@@ -367,8 +367,11 @@ public class AntarchyNeoforge {
         );
         AntarchyObjects.setOctopusBomb(AntarchyNeoforgeEntites.OCTOPUS_BOMB);
         AntarchyObjects.setTentacle(AntarchyNeoforgeEntites.TENTACLE);
+        AntarchyObjects.setNightmare(AntarchyNeoforgeEntites.NIGHTMARE);
         AntarchyObjects.setNightmarePortal(AntarchyNeoforgeEntites.NIGHTMARE_PORTAL);
+        AntarchyObjects.setDimensionalTear(AntarchyNeoforgeEntites.DIMENSIONAL_TEAR);
         AntarchyObjects.setNightmareBite(AntarchyNeoforgeEntites.NIGHTMARE_BITE);
+        AntarchyObjects.setLucid(AntarchyNeoforgeEntites.LUCID);
         AntarchyObjects.setKrakensGraspTrident(AntarchyNeoforgeEntites.KRAKENS_GRASP_TRIDENT);
         AntarchyObjects.setLotus(() -> AntarchyNeoforgeBlocks.LOTUS.get());
         AntarchyObjects.setKrakenTentacle(() -> AntarchyNeoforgeItems.KRAKEN_TENTACLE.get());

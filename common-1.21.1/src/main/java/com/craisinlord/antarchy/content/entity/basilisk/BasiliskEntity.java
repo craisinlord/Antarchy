@@ -125,6 +125,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
                                    MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
         if (spawnReason == MobSpawnType.SPAWN_EGG
                 || spawnReason == MobSpawnType.SPAWNER
+                || spawnReason == MobSpawnType.TRIAL_SPAWNER
                 || spawnReason == MobSpawnType.COMMAND) {
             return true;
         }

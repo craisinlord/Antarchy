@@ -79,8 +79,6 @@ public final class AntarchySettings {
     private static double scorpionWhipPullStrength = 0.75D;
     private static double scorpionWhipHeavyPullMultiplier = 0.25D;
     private static double scorpionWhipSelfPullMultiplier = 0.45D;
-    private static int scorpionWhipReelCooldownTicks = 10;
-    private static int scorpionWhipSnapCooldownTicks = 30;
     private static int bloodCrystalKatanaAttackDamage = 7;
     private static double bloodCrystalKatanaLaunchStrength = 1.1D;
     private static int bloodCrystalKatanaTrailDurationTicks = 12;
@@ -90,6 +88,11 @@ public final class AntarchySettings {
     private static double bigBerthaNoneModeDamageBonusPercent = 15.0D;
     private static double bigBerthaNightmareDamageBonusPercent = 30.0D;
     private static double potentNyxiteInvertedDurationSeconds = 60.0D;
+    private static int dimensionalTearLifetimeTicks = 24000;
+    private static int dimensionalTearInvertedDurationTicks = 2400;
+    private static int dimensionalTearEmergenceMinIntervalTicks = 2400;
+    private static int dimensionalTearEmergenceMaxIntervalTicks = 7200;
+    private static float dimensionalTearLucidEventChance = 0.65F;
     private static int ultimateToolEnchantability = 25;
     private static int ultimateArmorEnchantability = 10;
     private static int ultimateBowEnchantability = 20;
@@ -132,7 +135,6 @@ public final class AntarchySettings {
     private static double rollyPollyRollSpeedMultiplier = 2.2D;
     private static int rollyPollyTameChance = 3;
     private static double rollyPollyBowlingDamage = 3.0D;
-    private static double rollyPollyTumbleDamage = 3.0D;
     private static double rollyPollyBowlingKnockback = 0.8D;
     private static double rollyPollyArmor = 2.0D;
     private static double rollyPollyRolledArmorBonus = 16.0D;
@@ -175,7 +177,6 @@ public final class AntarchySettings {
     private static double dreamSandJumpVelocityMultiplier = 1.3D;
     private static double dreamSandGravityMultiplier = 0.45D;
     private static double dreamSandEffectDurationSeconds = 7.0D;
-    private static double dreamSandFallDamageMultiplier = 0.4D;
     private static double dreamSandFallingBlockGravityMultiplier = 0.4D;
     private static boolean ichorWitherEnabled = true;
     private static int nightmareHelmetArmorValue = 3;
@@ -303,7 +304,6 @@ public final class AntarchySettings {
     private static double bedBugArmor = 2.0D;
     private static double jumpyBugHealth = 100.0D;
     private static double jumpyBugPounceDamage = 12.0D;
-    private static double jumpyBugLatchDamage = 12.0D;
     private static double jumpyBugCamouflageAlpha = 0.18D;
     private static double brutalflyArmor = 10.0D;
     private static double brutalflyArmorToughness = 4.0D;
@@ -319,7 +319,6 @@ public final class AntarchySettings {
     private static double krakenFlyingSpeed = 0.24D;
     private static double krakenKnockbackResistance = 0.8D;
     private static double krakenArmor = 8.0D;
-    private static double krakenProjectileDamageTakenMultiplier = 0.5D;
     private static double krakenBossBarRange = 40.0D;
     private static double krakenFollowRange = 96.0D;
     private static double krakenDamageRange = 35.0D;
@@ -392,11 +391,8 @@ public final class AntarchySettings {
     private static double ductTapeRepairPercentPerUse = 0.25D;
     private static double ultimateArmorKnockbackResistance = 0.1D;
     private static double nightmareArmorKnockbackResistance = 0.1D;
-    private static double nightmareArmorDreadAuraRangePerPiece = 2.0D;
     private static double primordialArmorKnockbackPerPiece = 0.5D;
     private static double mogglesVisionRadius = 20.0D;
-    private static int mogglesVisionMaxLight = 7;
-    private static double mogglesVisionAlpha = 0.65D;
     private static int fallenKingCrownArmorValue = 2;
     private static double fallenKingCrownArmorToughness = 0.0D;
     private static boolean permanentPortalsEnabled = true;
@@ -405,7 +401,6 @@ public final class AntarchySettings {
     private static boolean thoraxisPortalEnabled = true;
     private static boolean cavarynPortalEnabled = true;
     private static boolean elythiaFireflyParticlesEnabled = true;
-    private static boolean glowingTorchflowers = true;
     private static int bloodCrystalArmorShieldRechargeTicks = 600;
     private static int bloodCrystalAppleShieldCount = 2;
     private static int bloodCrystalAppleDurationTicks = 2400;
@@ -426,13 +421,11 @@ public final class AntarchySettings {
     private static double toreterrorJumpAttackKnockback = 2.5D;
     private static double toreterrorSpinDamage = 6.0D;
     private static double toreterrorSpinKnockback = 0.9D;
-    private static double toreterrorRangedWaterBombChance = 0.35D;
     private static double toreterrorProjectileDamageMultiplier = 0.5D;
     private static double waterBombDamage = 6.0D;
     private static int waterBombLifetimeTicks = 120;
     private static double waterBombGravity = 0.12D;
     private static double waterBombKnockback = 1.2D;
-    private static double waterCannonCooldownSeconds = 1.5D;
     private static double creepingHorrorHealth = 15.0D;
     private static double creepingHorrorAttackDamage = 6.0D;
     private static double lurkingTerrorHealth = 15.0D;
@@ -523,10 +516,6 @@ public final class AntarchySettings {
 
     public static boolean glowVinesUnderLeaves() {
         return glowVinesUnderLeaves;
-    }
-
-    public static boolean glowingTorchflowers() {
-        return glowingTorchflowers;
     }
 
     public static boolean swingThroughGrassEnabled() {
@@ -683,6 +672,46 @@ public final class AntarchySettings {
 
     public static double potentNyxiteInvertedDurationSeconds() {
         return potentNyxiteInvertedDurationSeconds;
+    }
+
+    public static int dimensionalTearLifetimeTicks() {
+        return dimensionalTearLifetimeTicks;
+    }
+
+    public static void setDimensionalTearLifetimeTicks(int value) {
+        dimensionalTearLifetimeTicks = value;
+    }
+
+    public static int dimensionalTearInvertedDurationTicks() {
+        return dimensionalTearInvertedDurationTicks;
+    }
+
+    public static void setDimensionalTearInvertedDurationTicks(int value) {
+        dimensionalTearInvertedDurationTicks = value;
+    }
+
+    public static int dimensionalTearEmergenceMinIntervalTicks() {
+        return dimensionalTearEmergenceMinIntervalTicks;
+    }
+
+    public static void setDimensionalTearEmergenceMinIntervalTicks(int value) {
+        dimensionalTearEmergenceMinIntervalTicks = value;
+    }
+
+    public static int dimensionalTearEmergenceMaxIntervalTicks() {
+        return dimensionalTearEmergenceMaxIntervalTicks;
+    }
+
+    public static void setDimensionalTearEmergenceMaxIntervalTicks(int value) {
+        dimensionalTearEmergenceMaxIntervalTicks = value;
+    }
+
+    public static float dimensionalTearLucidEventChance() {
+        return dimensionalTearLucidEventChance;
+    }
+
+    public static void setDimensionalTearLucidEventChance(float value) {
+        dimensionalTearLucidEventChance = value;
     }
 
     public static int ultimateToolEnchantability() {
@@ -869,10 +898,6 @@ public final class AntarchySettings {
 
     public static double rollyPollyBowlingDamage() {
         return rollyPollyBowlingDamage;
-    }
-
-    public static double rollyPollyTumbleDamage() {
-        return rollyPollyTumbleDamage;
     }
 
     public static double rollyPollyBowlingKnockback() {
@@ -1100,10 +1125,6 @@ public final class AntarchySettings {
 
     public static void setGlowVinesUnderLeaves(boolean value) {
         glowVinesUnderLeaves = value;
-    }
-
-    public static void setGlowingTorchflowers(boolean value) {
-        glowingTorchflowers = value;
     }
 
     public static void setSwingThroughGrassEnabled(boolean value) {
@@ -1453,10 +1474,6 @@ public final class AntarchySettings {
         rollyPollyBowlingDamage = value;
     }
 
-    public static void setRollyPollyTumbleDamage(double value) {
-        rollyPollyTumbleDamage = value;
-    }
-
     public static void setRollyPollyBowlingKnockback(double value) {
         rollyPollyBowlingKnockback = value;
     }
@@ -1666,14 +1683,6 @@ public final class AntarchySettings {
         dreamSandEffectDurationSeconds = value;
     }
 
-    public static double dreamSandFallDamageMultiplier() {
-        return dreamSandFallDamageMultiplier;
-    }
-
-    public static void setDreamSandFallDamageMultiplier(double value) {
-        dreamSandFallDamageMultiplier = value;
-    }
-
     public static double dreamSandFallingBlockGravityMultiplier() {
         return dreamSandFallingBlockGravityMultiplier;
     }
@@ -1714,14 +1723,8 @@ public final class AntarchySettings {
     public static double nightmareBootsArmorToughness() { return nightmareBootsArmorToughness; }
     public static void setNightmareBootsArmorToughness(double v) { nightmareBootsArmorToughness = v; }
 
-    public static void setNightmareArmorDreadAuraRangePerPiece(double v) { nightmareArmorDreadAuraRangePerPiece = v; }
-    public static double nightmareArmorDreadAuraRangePerPiece() { return nightmareArmorDreadAuraRangePerPiece; }
     public static void setMogglesVisionRadius(double v) { mogglesVisionRadius = v; }
     public static double mogglesVisionRadius() { return mogglesVisionRadius; }
-    public static void setMogglesVisionMaxLight(int v) { mogglesVisionMaxLight = v; }
-    public static int mogglesVisionMaxLight() { return mogglesVisionMaxLight; }
-    public static void setMogglesVisionAlpha(double v) { mogglesVisionAlpha = v; }
-    public static double mogglesVisionAlpha() { return mogglesVisionAlpha; }
 
     public static double nightmareHelmetDoubleDamageChance() { return nightmareHelmetDoubleDamageChance; }
     public static void setNightmareHelmetDoubleDamageChance(double v) { nightmareHelmetDoubleDamageChance = v; }
@@ -2016,10 +2019,6 @@ public final class AntarchySettings {
 
     public static double scorpionWhipSelfPullMultiplier() { return scorpionWhipSelfPullMultiplier; }
     public static void setScorpionWhipSelfPullMultiplier(double value) { scorpionWhipSelfPullMultiplier = value; }
-    public static int scorpionWhipReelCooldownTicks() { return scorpionWhipReelCooldownTicks; }
-    public static void setScorpionWhipReelCooldownTicks(int value) { scorpionWhipReelCooldownTicks = value; }
-    public static int scorpionWhipSnapCooldownTicks() { return scorpionWhipSnapCooldownTicks; }
-    public static void setScorpionWhipSnapCooldownTicks(int value) { scorpionWhipSnapCooldownTicks = value; }
 
     public static int bloodCrystalKatanaAttackDamage() { return bloodCrystalKatanaAttackDamage; }
     public static void setBloodCrystalKatanaAttackDamage(int value) { bloodCrystalKatanaAttackDamage = value; }
@@ -2122,8 +2121,6 @@ public final class AntarchySettings {
 
     public static double jumpyBugPounceDamage() { return jumpyBugPounceDamage; }
     public static void setJumpyBugPounceDamage(double value) { jumpyBugPounceDamage = value; }
-    public static double jumpyBugLatchDamage() { return jumpyBugLatchDamage; }
-    public static void setJumpyBugLatchDamage(double value) { jumpyBugLatchDamage = value; }
 
     public static double jumpyBugCamouflageAlpha() { return jumpyBugCamouflageAlpha; }
     public static void setJumpyBugCamouflageAlpha(double value) { jumpyBugCamouflageAlpha = value; }
@@ -2169,8 +2166,6 @@ public final class AntarchySettings {
 
     public static double krakenArmor() { return krakenArmor; }
     public static void setKrakenArmor(double value) { krakenArmor = value; }
-    public static double krakenProjectileDamageTakenMultiplier() { return krakenProjectileDamageTakenMultiplier; }
-    public static void setKrakenProjectileDamageTakenMultiplier(double value) { krakenProjectileDamageTakenMultiplier = value; }
 
     public static double krakenBossBarRange() { return krakenBossBarRange; }
     public static void setKrakenBossBarRange(double value) { krakenBossBarRange = value; }
@@ -2393,8 +2388,6 @@ public final class AntarchySettings {
     public static void setToreterrorSpinDamage(double v) { toreterrorSpinDamage = v; }
     public static double toreterrorSpinKnockback() { return toreterrorSpinKnockback; }
     public static void setToreterrorSpinKnockback(double v) { toreterrorSpinKnockback = v; }
-    public static void setToreterrorRangedWaterBombChance(double v) { toreterrorRangedWaterBombChance = v; }
-    public static double toreterrorRangedWaterBombChance() { return toreterrorRangedWaterBombChance; }
     public static double toreterrorProjectileDamageMultiplier() { return toreterrorProjectileDamageMultiplier; }
     public static void setToreterrorProjectileDamageMultiplier(double v) { toreterrorProjectileDamageMultiplier = v; }
     public static double waterBombDamage() { return waterBombDamage; }
@@ -2405,8 +2398,6 @@ public final class AntarchySettings {
     public static void setWaterBombGravity(double v) { waterBombGravity = v; }
     public static double waterBombKnockback() { return waterBombKnockback; }
     public static void setWaterBombKnockback(double v) { waterBombKnockback = v; }
-    public static void setWaterCannonCooldownSeconds(double v) { waterCannonCooldownSeconds = v; }
-    public static double waterCannonCooldownSeconds() { return waterCannonCooldownSeconds; }
 
     public static double creepingHorrorHealth() { return creepingHorrorHealth; }
     public static void setCreepingHorrorHealth(double v) { creepingHorrorHealth = v; }

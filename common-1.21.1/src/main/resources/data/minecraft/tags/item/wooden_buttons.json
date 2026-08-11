@@ -1,7 +1,8 @@
 {
-  "replace": false,
-  "values": [
-    "antarchy:ouranwood_button",
-    "antarchy:peach_button"
-  ]
+    "replace":  false,
+    "values":  [
+                   "antarchy:ouranwood_button",
+                   "antarchy:peach_button",
+                   "antarchy:nadir_button"
+               ]
 }

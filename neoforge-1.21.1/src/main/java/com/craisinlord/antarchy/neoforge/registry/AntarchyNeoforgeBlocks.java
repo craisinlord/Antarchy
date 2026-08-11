@@ -153,6 +153,46 @@ public final class AntarchyNeoforgeBlocks {
             () -> new CeilingHangingSignBlock(AntarchyWoodTypes.PEACH, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_HANGING_SIGN)));
     public static final DeferredBlock<WallHangingSignBlock> PEACH_WALL_HANGING_SIGN = BLOCKS.register("peach_wall_hanging_sign",
             () -> new WallHangingSignBlock(AntarchyWoodTypes.PEACH, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_HANGING_SIGN)));
+    public static final DeferredBlock<RotatedPillarBlock> NADIR_LOG = BLOCKS.register("nadir_log",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LOG)));
+    public static final DeferredBlock<RotatedPillarBlock> NADIR_WOOD = BLOCKS.register("nadir_wood",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WOOD)));
+    public static final DeferredBlock<RotatedPillarBlock> STRIPPED_NADIR_LOG = BLOCKS.register("stripped_nadir_log",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STRIPPED_JUNGLE_LOG)));
+    public static final DeferredBlock<RotatedPillarBlock> STRIPPED_NADIR_WOOD = BLOCKS.register("stripped_nadir_wood",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STRIPPED_JUNGLE_WOOD)));
+    public static final DeferredBlock<Block> NADIR_PLANKS = BLOCKS.register("nadir_planks",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_PLANKS)));
+    public static final DeferredBlock<StairBlock> NADIR_STAIRS = BLOCKS.register("nadir_stairs",
+            () -> new StairBlock(NADIR_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_STAIRS)));
+    public static final DeferredBlock<SlabBlock> NADIR_SLAB = BLOCKS.register("nadir_slab",
+            () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_SLAB)));
+    public static final DeferredBlock<FenceBlock> NADIR_FENCE = BLOCKS.register("nadir_fence",
+            () -> new FenceBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_FENCE)));
+    public static final DeferredBlock<FenceGateBlock> NADIR_FENCE_GATE = BLOCKS.register("nadir_fence_gate",
+            () -> new FenceGateBlock(WoodType.JUNGLE, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_FENCE_GATE)));
+    public static final DeferredBlock<DoorBlock> NADIR_DOOR = BLOCKS.register("nadir_door",
+            () -> new DoorBlock(BlockSetType.JUNGLE, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_DOOR)));
+    public static final DeferredBlock<TrapDoorBlock> NADIR_TRAPDOOR = BLOCKS.register("nadir_trapdoor",
+            () -> new TrapDoorBlock(BlockSetType.JUNGLE, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_TRAPDOOR)));
+    public static final DeferredBlock<PressurePlateBlock> NADIR_PRESSURE_PLATE = BLOCKS.register("nadir_pressure_plate",
+            () -> new PressurePlateBlock(BlockSetType.JUNGLE, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_PRESSURE_PLATE)));
+    public static final DeferredBlock<ButtonBlock> NADIR_BUTTON = BLOCKS.register("nadir_button",
+            () -> new ButtonBlock(BlockSetType.JUNGLE, 30, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_BUTTON)));
+    public static final DeferredBlock<Block> NADIR_VEIL = BLOCKS.register("nadir_veil",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LEAVES).sound(SoundType.SLIME_BLOCK).noOcclusion()));
+    public static final DeferredBlock<NadirSaplingBlock> NADIR_SAPLING = BLOCKS.register("nadir_sapling",
+            () -> new NadirSaplingBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING).randomTicks().noCollission()));
+    public static final DeferredBlock<FlowerPotBlock> POTTED_NADIR_SAPLING = BLOCKS.register("potted_nadir_sapling",
+            () -> new FlowerPotBlock(NADIR_SAPLING.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_DANDELION)));
+    public static final DeferredBlock<StandingSignBlock> NADIR_SIGN = BLOCKS.register("nadir_sign",
+            () -> new StandingSignBlock(AntarchyWoodTypes.NADIR, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_SIGN)));
+    public static final DeferredBlock<WallSignBlock> NADIR_WALL_SIGN = BLOCKS.register("nadir_wall_sign",
+            () -> new WallSignBlock(AntarchyWoodTypes.NADIR, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_SIGN)));
+    public static final DeferredBlock<CeilingHangingSignBlock> NADIR_HANGING_SIGN = BLOCKS.register("nadir_hanging_sign",
+            () -> new CeilingHangingSignBlock(AntarchyWoodTypes.NADIR, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_HANGING_SIGN)));
+    public static final DeferredBlock<WallHangingSignBlock> NADIR_WALL_HANGING_SIGN = BLOCKS.register("nadir_wall_hanging_sign",
+            () -> new WallHangingSignBlock(AntarchyWoodTypes.NADIR, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_HANGING_SIGN)));
     public static final DeferredBlock<DuplicatorSaplingBlock> DUPLICATOR_SAPLING = BLOCKS.register("duplicator_sapling",
             () -> new DuplicatorSaplingBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING).randomTicks().noCollission()));
     public static final DeferredBlock<DuctTapeBlock> DUCT_TAPE = BLOCKS.register("duct_tape",

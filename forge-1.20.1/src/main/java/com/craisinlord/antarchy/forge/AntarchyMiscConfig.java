@@ -13,7 +13,7 @@ public final class AntarchyMiscConfig {
     private static final ForgeConfigSpec.DoubleValue  DREAM_SAND_JUMP_VELOCITY_MULTIPLIER;
     private static final ForgeConfigSpec.DoubleValue  DREAM_SAND_GRAVITY_MULTIPLIER;
     private static final ForgeConfigSpec.DoubleValue  DREAM_SAND_EFFECT_DURATION_SECONDS;
-    private static final ForgeConfigSpec.DoubleValue  DREAM_SAND_FALL_DAMAGE_MULTIPLIER;
+    private static final ForgeConfigSpec.DoubleValue  DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER;
 
     // Ichor
     private static final ForgeConfigSpec.BooleanValue ICHOR_WITHER_ENABLED;
@@ -47,7 +47,6 @@ public final class AntarchyMiscConfig {
     // World / misc toggles
     private static final ForgeConfigSpec.BooleanValue DUPLICATOR_TREE_ENABLED;
     private static final ForgeConfigSpec.BooleanValue GLOW_VINES_UNDER_LEAVES;
-    private static final ForgeConfigSpec.BooleanValue GLOWING_TORCHFLOWERS;
     private static final ForgeConfigSpec.BooleanValue SWING_THROUGH_GRASS_ENABLED;
     private static final ForgeConfigSpec.BooleanValue FABRIC_KEYBINDING_CONFLICT_FIX_ENABLED;
     private static final ForgeConfigSpec.BooleanValue EXPERIMENTAL_SETTINGS_POPUP_DISABLED;
@@ -73,7 +72,7 @@ public final class AntarchyMiscConfig {
         DREAM_SAND_JUMP_VELOCITY_MULTIPLIER  = b.comment("Multiplier applied to upward jump velocity when leaving dream sand.")                          .defineInRange("jumpVelocityMultiplier",  1.3D, 0.0D, 16.0D);
         DREAM_SAND_GRAVITY_MULTIPLIER        = b.comment("Multiplier applied to downward velocity while low gravity is active.")                         .defineInRange("gravityMultiplier",       0.45D, 0.0D, 1.0D);
         DREAM_SAND_EFFECT_DURATION_SECONDS   = b.comment("Seconds the low-gravity effect remains active after leaving dream sand.")                      .defineInRange("effectDurationSeconds",   7.0D, 0.0D, 60.0D);
-        DREAM_SAND_FALL_DAMAGE_MULTIPLIER    = b.comment("Multiplier applied to fall damage after dream sand low gravity.").defineInRange("fallDamageMultiplier", 0.4D, 0.0D, 16.0D);
+        DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER = b.comment("Multiplier applied to dream sand's own falling-block gravity (how slowly it falls as a block, distinct from the player low-gravity effect).").defineInRange("fallingBlockGravityMultiplier", 0.4D, 0.0D, 16.0D);
         b.pop();
 
 
@@ -147,7 +146,6 @@ public final class AntarchyMiscConfig {
         b.push("world");
         DUPLICATOR_TREE_ENABLED              = b.comment("If false, duplicator trees do not generate and duplicator saplings produce nothing.").define("duplicatorTreeEnabled",           true);
         GLOW_VINES_UNDER_LEAVES              = b.comment("Whether glow vines can be placed and survive when attached under leaf blocks.")       .define("glowVinesUnderLeaves",             true);
-        GLOWING_TORCHFLOWERS                 = b.comment("If true, torchflowers use the glowing behavior.").define("glowingTorchflowers", true);
         SWING_THROUGH_GRASS_ENABLED          = b.comment("If true, empty collision plants like grass do not block melee target picking.")      .define("swingThroughGrassEnabled",         true);
         FABRIC_KEYBINDING_CONFLICT_FIX_ENABLED = b.define("fabricKeybindingConflictFixEnabled", true);
         EXPERIMENTAL_SETTINGS_POPUP_DISABLED = b.define("experimentalSettingsPopupDisabled", true);
@@ -165,13 +163,12 @@ public final class AntarchyMiscConfig {
     static double  dreamSandJumpVelocityMultiplier()     { return DREAM_SAND_JUMP_VELOCITY_MULTIPLIER.get(); }
     static double  dreamSandGravityMultiplier()          { return DREAM_SAND_GRAVITY_MULTIPLIER.get(); }
     static double  dreamSandEffectDurationSeconds()      { return DREAM_SAND_EFFECT_DURATION_SECONDS.get(); }
-    static double  dreamSandFallDamageMultiplier()       { return DREAM_SAND_FALL_DAMAGE_MULTIPLIER.get(); }
+    static double  dreamSandFallingBlockGravityMultiplier() { return DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER.get(); }
 
     static boolean ichorWitherEnabled()                  { return ICHOR_WITHER_ENABLED.get(); }
 
     static boolean duplicatorTreeEnabled()               { return DUPLICATOR_TREE_ENABLED.get(); }
     static boolean glowVinesUnderLeaves()                { return GLOW_VINES_UNDER_LEAVES.get(); }
-    static boolean glowingTorchflowers()                 { return GLOWING_TORCHFLOWERS.get(); }
     static boolean swingThroughGrassEnabled()            { return SWING_THROUGH_GRASS_ENABLED.get(); }
     static boolean fabricKeybindingConflictFixEnabled()  { return FABRIC_KEYBINDING_CONFLICT_FIX_ENABLED.get(); }
     static boolean experimentalSettingsPopupDisabled()   { return EXPERIMENTAL_SETTINGS_POPUP_DISABLED.get(); }

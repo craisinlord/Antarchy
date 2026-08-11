@@ -60,6 +60,7 @@ import com.craisinlord.antarchy.content.worldgen.cavaryn.ChitinSpikeConfiguratio
 import com.craisinlord.antarchy.content.worldgen.cavaryn.ChitinSpikeFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.BedBugNestFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.BedBugSurfaceClusterFeature;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.DimensionalTearFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaCloudFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.LucidAntiwaterPoolFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBiomeSource;
@@ -778,6 +779,9 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<Feature<?>, ThoraxisDuneFeature> THORAXIS_DUNE = FEATURES.register("thoraxis_dune",
             () -> new ThoraxisDuneFeature(ThoraxisDuneConfiguration.CODEC));
+
+    public static final DeferredHolder<Feature<?>, DimensionalTearFeature> DIMENSIONAL_TEAR = FEATURES.register("dimensional_tear",
+            () -> new DimensionalTearFeature(NoneFeatureConfiguration.CODEC));
 
 
     public static final DeferredHolder<Feature<?>, CoralSpikeFeature> ELYTHIA_CORAL_SPIKE = FEATURES.register("elythia_coral_spike",

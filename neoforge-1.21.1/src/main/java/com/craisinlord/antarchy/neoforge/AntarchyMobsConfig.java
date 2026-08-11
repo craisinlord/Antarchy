@@ -65,12 +65,30 @@ public final class AntarchyMobsConfig {
 
     private static final ModConfigSpec.DoubleValue JUMPY_BUG_HEALTH;
     private static final ModConfigSpec.DoubleValue JUMPY_BUG_POUNCE_DAMAGE;
-    private static final ModConfigSpec.DoubleValue JUMPY_BUG_LATCH_DAMAGE;
     private static final ModConfigSpec.DoubleValue JUMPY_BUG_CAMOUFLAGE_ALPHA;
 
 
     // Emperor Scorpion
 
+    private static final ModConfigSpec.DoubleValue EMPEROR_SCORPION_HEALTH;
+    private static final ModConfigSpec.DoubleValue EMPEROR_SCORPION_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue EMPEROR_SCORPION_MOVEMENT_SPEED;
+    private static final ModConfigSpec.DoubleValue EMPEROR_SCORPION_ARMOR;
+    private static final ModConfigSpec.DoubleValue EMPEROR_SCORPION_KNOCKBACK_RESISTANCE;
+    private static final ModConfigSpec.DoubleValue EMPEROR_SCORPION_FOLLOW_RANGE;
+    private static final ModConfigSpec.IntValue    EMPEROR_SCORPION_XP_REWARD;
+    private static final ModConfigSpec.IntValue    EMPEROR_SCORPION_CLAW_ANIM_TICKS;
+    private static final ModConfigSpec.IntValue    EMPEROR_SCORPION_CLAW_HIT_TICK;
+    private static final ModConfigSpec.IntValue    EMPEROR_SCORPION_CLAW_COOLDOWN_TICKS;
+    private static final ModConfigSpec.IntValue    EMPEROR_SCORPION_STING_ANIM_TICKS;
+    private static final ModConfigSpec.IntValue    EMPEROR_SCORPION_STING_HIT_TICK;
+    private static final ModConfigSpec.IntValue    EMPEROR_SCORPION_STING_COOLDOWN_TICKS;
+    private static final ModConfigSpec.IntValue    EMPEROR_SCORPION_POISON_TICKS;
+    private static final ModConfigSpec.IntValue    EMPEROR_SCORPION_WEAKNESS_TICKS;
+    private static final ModConfigSpec.IntValue    EMPEROR_SCORPION_SUMMON_INTERVAL_TICKS;
+    private static final ModConfigSpec.IntValue    EMPEROR_SCORPION_MAX_SUMMONED_SCORPIONS;
+    private static final ModConfigSpec.IntValue    EMPEROR_SCORPION_MAX_NEARBY_SCORPIONS;
+    private static final ModConfigSpec.IntValue    EMPEROR_SCORPION_HARDEN_COOLDOWN_TICKS;
     private static final ModConfigSpec.DoubleValue EMPEROR_SCORPION_DAMAGE_RANGE;
     private static final ModConfigSpec.IntValue    EMPEROR_SCORPION_MIN_DESPAWN_TICKS;
 
@@ -79,12 +97,17 @@ public final class AntarchyMobsConfig {
 
     private static final ModConfigSpec.DoubleValue  KRAKEN_HEALTH;
     private static final ModConfigSpec.DoubleValue  KRAKEN_ATTACK_DAMAGE;
-    private static final ModConfigSpec.DoubleValue  KRAKEN_PROJECTILE_DAMAGE_TAKEN_MULTIPLIER;
     private static final ModConfigSpec.BooleanValue KRAKEN_SQUID_SPAWN_ENABLED;
     private static final ModConfigSpec.BooleanValue KRAKEN_MASS_SPAWN_ENABLED;
     private static final ModConfigSpec.BooleanValue KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON;
     private static final ModConfigSpec.DoubleValue  KRAKEN_FOLLOW_RANGE;
     private static final ModConfigSpec.DoubleValue  KRAKEN_DAMAGE_RANGE;
+    private static final ModConfigSpec.DoubleValue  KRAKEN_ARMOR;
+    private static final ModConfigSpec.DoubleValue  KRAKEN_KNOCKBACK_RESISTANCE;
+    private static final ModConfigSpec.DoubleValue  KRAKEN_MOVEMENT_SPEED;
+    private static final ModConfigSpec.DoubleValue  KRAKEN_FLYING_SPEED;
+    private static final ModConfigSpec.DoubleValue  KRAKEN_BOSS_BAR_RANGE;
+    private static final ModConfigSpec.DoubleValue  KRAKEN_LIGHTNING_DAMAGE_PHASE_ONE;
 
 
     // Brutalfly
@@ -93,6 +116,11 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue BRUTALFLY_SWIPE_DAMAGE;
     private static final ModConfigSpec.DoubleValue BRUTALFLY_SPIT_DAMAGE;
     private static final ModConfigSpec.DoubleValue BRUTALFLY_DAMAGE_RANGE;
+    private static final ModConfigSpec.DoubleValue BRUTALFLY_ARMOR;
+    private static final ModConfigSpec.DoubleValue BRUTALFLY_ARMOR_TOUGHNESS;
+    private static final ModConfigSpec.DoubleValue BRUTALFLY_KNOCKBACK_RESISTANCE;
+    private static final ModConfigSpec.DoubleValue BRUTALFLY_MOVEMENT_SPEED;
+    private static final ModConfigSpec.DoubleValue BRUTALFLY_FLYING_SPEED;
 
 
     // Mantis
@@ -122,7 +150,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_ROLL_SPEED_MULTIPLIER;
     private static final ModConfigSpec.IntValue    ROLLY_POLLY_TAME_CHANCE;
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_BOWLING_DAMAGE;
-    private static final ModConfigSpec.DoubleValue ROLLY_POLLY_TUMBLE_DAMAGE;
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_BOWLING_KNOCKBACK;
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_ARMOR;
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_ROLLED_ARMOR_BONUS;
@@ -166,6 +193,14 @@ public final class AntarchyMobsConfig {
 
     private static final ModConfigSpec.DoubleValue  NIGHTMARE_HEALTH;
     private static final ModConfigSpec.DoubleValue  NIGHTMARE_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue  NIGHTMARE_MOVEMENT_SPEED;
+    private static final ModConfigSpec.IntValue     NIGHTMARE_WEAKNESS_TICKS;
+    private static final ModConfigSpec.IntValue     NIGHTMARE_DREAD_TICKS;
+    private static final ModConfigSpec.IntValue     DIMENSIONAL_TEAR_LIFETIME_TICKS;
+    private static final ModConfigSpec.IntValue     DIMENSIONAL_TEAR_INVERTED_DURATION_TICKS;
+    private static final ModConfigSpec.IntValue     DIMENSIONAL_TEAR_EMERGENCE_MIN_INTERVAL_TICKS;
+    private static final ModConfigSpec.IntValue     DIMENSIONAL_TEAR_EMERGENCE_MAX_INTERVAL_TICKS;
+    private static final ModConfigSpec.DoubleValue  DIMENSIONAL_TEAR_LUCID_EVENT_CHANCE;
 
 
     // Basilisk
@@ -202,8 +237,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue  TORETERROR_SPIN_DAMAGE;
     private static final ModConfigSpec.DoubleValue  TORETERROR_SPIN_KNOCKBACK;
     private static final ModConfigSpec.DoubleValue  TORETERROR_PROJECTILE_DAMAGE_MULTIPLIER;
-    private static final ModConfigSpec.DoubleValue  TORETERROR_RANGED_WATER_BOMB_CHANCE;
-    private static final ModConfigSpec.DoubleValue  WATER_CANNON_COOLDOWN_SECONDS;
     private static final ModConfigSpec.DoubleValue  WATER_BOMB_DAMAGE;
     private static final ModConfigSpec.IntValue     WATER_BOMB_LIFETIME_TICKS;
     private static final ModConfigSpec.DoubleValue  WATER_BOMB_GRAVITY;
@@ -266,6 +299,11 @@ public final class AntarchyMobsConfig {
 
     private static final ModConfigSpec.DoubleValue LUCID_ATTACK_RANGE;
     private static final ModConfigSpec.DoubleValue LUCID_PEARL_INVERTED_DURATION_SECONDS;
+    private static final ModConfigSpec.DoubleValue LUCID_HEALTH;
+    private static final ModConfigSpec.DoubleValue LUCID_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue LUCID_MOVEMENT_SPEED;
+    private static final ModConfigSpec.DoubleValue LUCID_FLYING_SPEED;
+    private static final ModConfigSpec.DoubleValue LUCID_KNOCKBACK_RESISTANCE;
 
 
     // Dread effect
@@ -406,7 +444,6 @@ public final class AntarchyMobsConfig {
         b.push("jumpyBug");
         JUMPY_BUG_HEALTH = b.comment("Base max health.").defineInRange("health", 100.0D, 1.0D, 32768.0D);
         JUMPY_BUG_POUNCE_DAMAGE = b.comment("Damage dealt on a successful pounce latch.").defineInRange("pounceDamage", 2.0D, 0.0D, 1024.0D);
-        JUMPY_BUG_LATCH_DAMAGE = b.comment("Damage dealt while latched onto a target.").defineInRange("latchDamage", 2.0D, 0.0D, 1024.0D);
         JUMPY_BUG_CAMOUFLAGE_ALPHA = b.comment("Renderer alpha while camouflaged.").defineInRange("camouflageAlpha", 0.18D, 0.01D, 1.0D);
         b.pop();
 
@@ -414,6 +451,25 @@ public final class AntarchyMobsConfig {
         // Emperor Scorpion
 
         b.push("emperorScorpion");
+        EMPEROR_SCORPION_HEALTH = b.comment("Base max health.").defineInRange("health", 300.0D, 1.0D, 32768.0D);
+        EMPEROR_SCORPION_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 28.0D, 0.0D, 1024.0D);
+        EMPEROR_SCORPION_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.384D, 0.0D, 10.0D);
+        EMPEROR_SCORPION_ARMOR = b.comment("Base armor value.").defineInRange("armor", 22.0D, 0.0D, 1024.0D);
+        EMPEROR_SCORPION_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance.").defineInRange("knockbackResistance", 0.8D, 0.0D, 1.0D);
+        EMPEROR_SCORPION_FOLLOW_RANGE = b.comment("Base follow range.").defineInRange("followRange", 80.0D, 1.0D, 256.0D);
+        EMPEROR_SCORPION_XP_REWARD = b.comment("Base experience reward.").defineInRange("xpReward", 25, 0, 100000);
+        EMPEROR_SCORPION_CLAW_ANIM_TICKS = b.comment("Ticks for the claw attack animation window.").defineInRange("clawAnimTicks", 23, 1, 400);
+        EMPEROR_SCORPION_CLAW_HIT_TICK = b.comment("Tick during the claw animation when damage is applied.").defineInRange("clawHitTick", 12, 0, 400);
+        EMPEROR_SCORPION_CLAW_COOLDOWN_TICKS = b.comment("Ticks between claw attacks.").defineInRange("clawCooldownTicks", 28, 0, 2000);
+        EMPEROR_SCORPION_STING_ANIM_TICKS = b.comment("Ticks for the sting attack animation window.").defineInRange("stingAnimTicks", 25, 1, 400);
+        EMPEROR_SCORPION_STING_HIT_TICK = b.comment("Tick during the sting animation when damage is applied.").defineInRange("stingHitTick", 13, 0, 400);
+        EMPEROR_SCORPION_STING_COOLDOWN_TICKS = b.comment("Ticks between sting attacks.").defineInRange("stingCooldownTicks", 60, 0, 2000);
+        EMPEROR_SCORPION_POISON_TICKS = b.comment("Ticks the Poison effect from a sting lasts.").defineInRange("poisonTicks", 300, 0, 20000);
+        EMPEROR_SCORPION_WEAKNESS_TICKS = b.comment("Ticks the Weakness effect from a sting lasts.").defineInRange("weaknessTicks", 120, 0, 20000);
+        EMPEROR_SCORPION_SUMMON_INTERVAL_TICKS = b.comment("Ticks between minion scorpion summons while hardened.").defineInRange("summonIntervalTicks", 140, 20, 72000);
+        EMPEROR_SCORPION_MAX_SUMMONED_SCORPIONS = b.comment("Maximum scorpions summoned per hardening cast.").defineInRange("maxSummonedScorpions", 4, 0, 32);
+        EMPEROR_SCORPION_MAX_NEARBY_SCORPIONS = b.comment("Maximum owned scorpion minions allowed near this scorpion at once.").defineInRange("maxNearbyScorpions", 4, 0, 32);
+        EMPEROR_SCORPION_HARDEN_COOLDOWN_TICKS = b.comment("Cooldown in ticks before the Emperor Scorpion can harden and summon again.").defineInRange("hardenCooldownTicks", 2400, 0, 200000);
         EMPEROR_SCORPION_DAMAGE_RANGE = b
                 .comment("Range in blocks a player must be within for the Emperor Scorpion to be able to take damage. Prevents cheesing it from outside its aggro range.")
                 .defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
@@ -428,12 +484,17 @@ public final class AntarchyMobsConfig {
         b.push("kraken");
         KRAKEN_HEALTH                            = b.comment("Base max health.")                                                                                            .defineInRange("health",                          1500.0D, 1.0D, 32768.0D);
         KRAKEN_ATTACK_DAMAGE                     = b.comment("Base attack damage.")                                                                                         .defineInRange("attackDamage",                     45.0D,  0.0D, 1024.0D);
-        KRAKEN_PROJECTILE_DAMAGE_TAKEN_MULTIPLIER = b.comment("Multiplier applied to projectile damage taken by the Kraken.").defineInRange("projectileDamageTakenMultiplier", 0.5D, 0.0D, 16.0D);
         KRAKEN_SQUID_SPAWN_ENABLED               = b.comment("If true, a player killing a Missile Squid has a 1/100 chance to spawn a single Kraken nearby.")                       .define("squidSpawnEnabled",  true);
         KRAKEN_MASS_SPAWN_ENABLED                = b.comment("If true, a player killing a Missile Squid has a 1/500 chance to spawn 10 Krakens. Independent from the single spawn.").define("massSpawnEnabled",  true);
         KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON        = b.comment("If true, the killer must have Bad Omen to summon a single Kraken; chance scales with Bad Omen level. Mass spawn is unaffected by level but still requires Bad Omen when this is on.").define("requireBadOmenToSummon",  true);
         KRAKEN_FOLLOW_RANGE                      = b.comment("How far the Kraken can see/target players.").defineInRange("followRange", 96.0D, 1.0D, 256.0D);
         KRAKEN_DAMAGE_RANGE                      = b.comment("Range in blocks a player must be within for the Kraken to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 35.0D, 1.0D, 256.0D);
+        KRAKEN_ARMOR                              = b.comment("Base armor value.").defineInRange("armor", 8.0D, 0.0D, 1024.0D);
+        KRAKEN_KNOCKBACK_RESISTANCE               = b.comment("Base knockback resistance.").defineInRange("knockbackResistance", 0.8D, 0.0D, 1.0D);
+        KRAKEN_MOVEMENT_SPEED                     = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.24D, 0.0D, 10.0D);
+        KRAKEN_FLYING_SPEED                       = b.comment("Base flying speed.").defineInRange("flyingSpeed", 0.24D, 0.0D, 10.0D);
+        KRAKEN_BOSS_BAR_RANGE                     = b.comment("Range in blocks within which the Kraken's boss bar is shown to players.").defineInRange("bossBarRange", 40.0D, 1.0D, 256.0D);
+        KRAKEN_LIGHTNING_DAMAGE_PHASE_ONE         = b.comment("Lightning strike damage during phase one.").defineInRange("lightningDamagePhaseOne", 6.0D, 0.0D, 1024.0D);
         b.pop();
 
 
@@ -444,6 +505,11 @@ public final class AntarchyMobsConfig {
         BRUTALFLY_SWIPE_DAMAGE = b.comment("Damage dealt by a claw swipe.")                           .defineInRange("swipeDamage",  15.0D, 0.0D, 1024.0D);
         BRUTALFLY_SPIT_DAMAGE  = b.comment("Direct hit damage from a spit orb before lingering effect.").defineInRange("spitDamage",   5.0D, 0.0D, 1024.0D);
         BRUTALFLY_DAMAGE_RANGE = b.comment("Range in blocks a player must be within for the Brutalfly to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
+        BRUTALFLY_ARMOR = b.comment("Base armor value.").defineInRange("armor", 10.0D, 0.0D, 1024.0D);
+        BRUTALFLY_ARMOR_TOUGHNESS = b.comment("Base armor toughness.").defineInRange("armorToughness", 4.0D, 0.0D, 100.0D);
+        BRUTALFLY_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance.").defineInRange("knockbackResistance", 0.7D, 0.0D, 1.0D);
+        BRUTALFLY_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.34D, 0.0D, 10.0D);
+        BRUTALFLY_FLYING_SPEED = b.comment("Base flying speed.").defineInRange("flyingSpeed", 0.55D, 0.0D, 10.0D);
         b.pop();
 
 
@@ -479,7 +545,6 @@ public final class AntarchyMobsConfig {
         ROLLY_POLLY_ROLL_SPEED_MULTIPLIER = b.comment("Speed multiplier while rolled up.")                                         .defineInRange("rollSpeedMultiplier",  2.2D, 0.1D, 20.0D);
         ROLLY_POLLY_TAME_CHANCE           = b.comment("Taming succeeds with a 1-in-N chance per food item.")                       .defineInRange("tameChance",               3, 1, 100);
         ROLLY_POLLY_BOWLING_DAMAGE        = b.comment("Damage dealt by a tamed rolly polly's rolling bowling attack.")             .defineInRange("bowlingDamage",        3.0D, 0.0D, 1024.0D);
-        ROLLY_POLLY_TUMBLE_DAMAGE         = b.comment("Damage dealt by a tumbling rolly polly impact.").defineInRange("tumbleDamage", 3.0D, 0.0D, 1024.0D);
         ROLLY_POLLY_BOWLING_KNOCKBACK     = b.comment("Knockback strength of a tamed rolly polly's rolling bowling attack.")       .defineInRange("bowlingKnockback",     0.8D, 0.0D, 20.0D);
         ROLLY_POLLY_ARMOR                 = b.comment("Base armor value.")                                                         .defineInRange("armor",                2.0D, 0.0D, 100.0D);
         ROLLY_POLLY_ROLLED_ARMOR_BONUS    = b.comment("Additional armor gained while rolled up.")                                  .defineInRange("rolledArmorBonus",    16.0D, 0.0D, 100.0D);
@@ -538,6 +603,17 @@ public final class AntarchyMobsConfig {
         b.push("nightmare");
         NIGHTMARE_HEALTH = b.comment("Base max health.").defineInRange("health", 180.0D, 1.0D, 32768.0D);
         NIGHTMARE_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 16.0D, 0.0D, 1024.0D);
+        NIGHTMARE_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.28D, 0.0D, 10.0D);
+        NIGHTMARE_WEAKNESS_TICKS = b.comment("Ticks the Weakness effect from Big Bertha's Nightmare-mode hit lasts.").defineInRange("weaknessTicks", 100, 0, 20000);
+        NIGHTMARE_DREAD_TICKS = b.comment("Ticks the Dread effect from Big Bertha's Nightmare-mode hit lasts.").defineInRange("dreadTicks", 160, 0, 20000);
+        b.pop();
+
+        b.push("dimensionalTear");
+        DIMENSIONAL_TEAR_LIFETIME_TICKS = b.comment("Ticks before naturally generated linked Dimensional Tears collapse.").defineInRange("lifetimeTicks", 24000, 1200, 240000);
+        DIMENSIONAL_TEAR_INVERTED_DURATION_TICKS = b.comment("Ticks of Inverted applied to living entities exiting a Dimensional Tear.").defineInRange("invertedDurationTicks", 2400, 0, 240000);
+        DIMENSIONAL_TEAR_EMERGENCE_MIN_INTERVAL_TICKS = b.comment("Minimum ticks between Nightmare/Lucid emergence events per tear.").defineInRange("emergenceMinIntervalTicks", 2400, 20, 240000);
+        DIMENSIONAL_TEAR_EMERGENCE_MAX_INTERVAL_TICKS = b.comment("Maximum ticks between Nightmare/Lucid emergence events per tear.").defineInRange("emergenceMaxIntervalTicks", 7200, 20, 240000);
+        DIMENSIONAL_TEAR_LUCID_EVENT_CHANCE = b.comment("Chance that an emergence event spawns a Lucid instead of a Nightmare.").defineInRange("lucidEventChance", 0.65D, 0.0D, 1.0D);
         b.pop();
 
 
@@ -581,6 +657,11 @@ public final class AntarchyMobsConfig {
         LUCID_PEARL_INVERTED_DURATION_SECONDS = b
                 .comment("How long the Inverted effect from a Lucid pearl lasts, in seconds.")
                 .defineInRange("pearlInvertedDurationSeconds", 6.0D, 0.0D, 3600.0D);
+        LUCID_HEALTH = b.comment("Base max health.").defineInRange("health", 30.0D, 1.0D, 32768.0D);
+        LUCID_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 4.0D, 0.0D, 1024.0D);
+        LUCID_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.22D, 0.0D, 10.0D);
+        LUCID_FLYING_SPEED = b.comment("Base flying speed.").defineInRange("flyingSpeed", 0.35D, 0.0D, 10.0D);
+        LUCID_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance.").defineInRange("knockbackResistance", 0.5D, 0.0D, 1.0D);
         b.pop();
 
 
@@ -655,8 +736,6 @@ public final class AntarchyMobsConfig {
         TORETERROR_SPIN_DAMAGE             = b.comment("Damage per spin-attack tick.").defineInRange("spinDamage", 8.0D, 0.0D, 1024.0D);
         TORETERROR_SPIN_KNOCKBACK          = b.comment("Knockback strength of the spin attack.").defineInRange("spinKnockback", 1.5D, 0.0D, 10.0D);
         TORETERROR_PROJECTILE_DAMAGE_MULTIPLIER = b.comment("Damage multiplier applied to projectile hits on the Toreterror (0.5 = half damage).").defineInRange("projectileDamageMultiplier", 0.5D, 0.0D, 1.0D);
-        TORETERROR_RANGED_WATER_BOMB_CHANCE = b.comment("Chance each ranged attack cycle launches a water bomb.").defineInRange("rangedWaterBombChance", 0.35D, 0.0D, 1.0D);
-        WATER_CANNON_COOLDOWN_SECONDS      = b.comment("Cooldown between water cannon uses, in seconds.").defineInRange("waterCannonCooldownSeconds", 1.5D, 0.0D, 60.0D);
         WATER_BOMB_DAMAGE                  = b.comment("Damage dealt by a Water Bomb hit.").defineInRange("waterBombDamage", 6.0D, 0.0D, 1024.0D);
         WATER_BOMB_LIFETIME_TICKS          = b.comment("Ticks before a Water Bomb despawns.").defineInRange("waterBombLifetimeTicks", 120, 1, 6000);
         WATER_BOMB_GRAVITY                 = b.comment("Gravity applied to Water Bombs (higher = steeper arc).").defineInRange("waterBombGravity", 0.12D, 0.0D, 2.0D);
@@ -717,25 +796,53 @@ public final class AntarchyMobsConfig {
 
     static double  jumpyBugHealth()                         { return JUMPY_BUG_HEALTH.get(); }
     static double  jumpyBugPounceDamage()                   { return JUMPY_BUG_POUNCE_DAMAGE.get(); }
-    static double  jumpyBugLatchDamage()                    { return JUMPY_BUG_LATCH_DAMAGE.get(); }
     static double  jumpyBugCamouflageAlpha()                { return JUMPY_BUG_CAMOUFLAGE_ALPHA.get(); }
 
+    static double  emperorScorpionHealth()                  { return EMPEROR_SCORPION_HEALTH.get(); }
+    static double  emperorScorpionAttackDamage()             { return EMPEROR_SCORPION_ATTACK_DAMAGE.get(); }
+    static double  emperorScorpionMovementSpeed()            { return EMPEROR_SCORPION_MOVEMENT_SPEED.get(); }
+    static double  emperorScorpionArmor()                    { return EMPEROR_SCORPION_ARMOR.get(); }
+    static double  emperorScorpionKnockbackResistance()      { return EMPEROR_SCORPION_KNOCKBACK_RESISTANCE.get(); }
+    static double  emperorScorpionFollowRange()               { return EMPEROR_SCORPION_FOLLOW_RANGE.get(); }
+    static int     emperorScorpionXpReward()                 { return EMPEROR_SCORPION_XP_REWARD.get(); }
+    static int     emperorScorpionClawAnimTicks()             { return EMPEROR_SCORPION_CLAW_ANIM_TICKS.get(); }
+    static int     emperorScorpionClawHitTick()               { return EMPEROR_SCORPION_CLAW_HIT_TICK.get(); }
+    static int     emperorScorpionClawCooldownTicks()         { return EMPEROR_SCORPION_CLAW_COOLDOWN_TICKS.get(); }
+    static int     emperorScorpionStingAnimTicks()            { return EMPEROR_SCORPION_STING_ANIM_TICKS.get(); }
+    static int     emperorScorpionStingHitTick()              { return EMPEROR_SCORPION_STING_HIT_TICK.get(); }
+    static int     emperorScorpionStingCooldownTicks()        { return EMPEROR_SCORPION_STING_COOLDOWN_TICKS.get(); }
+    static int     emperorScorpionPoisonTicks()               { return EMPEROR_SCORPION_POISON_TICKS.get(); }
+    static int     emperorScorpionWeaknessTicks()             { return EMPEROR_SCORPION_WEAKNESS_TICKS.get(); }
+    static int     emperorScorpionSummonIntervalTicks()       { return EMPEROR_SCORPION_SUMMON_INTERVAL_TICKS.get(); }
+    static int     emperorScorpionMaxSummonedScorpions()      { return EMPEROR_SCORPION_MAX_SUMMONED_SCORPIONS.get(); }
+    static int     emperorScorpionMaxNearbyScorpions()        { return EMPEROR_SCORPION_MAX_NEARBY_SCORPIONS.get(); }
+    static int     emperorScorpionHardenCooldownTicks()       { return EMPEROR_SCORPION_HARDEN_COOLDOWN_TICKS.get(); }
     static double  emperorScorpionDamageRange()             { return EMPEROR_SCORPION_DAMAGE_RANGE.get(); }
     static int     emperorScorpionMinDespawnTicks()         { return EMPEROR_SCORPION_MIN_DESPAWN_TICKS.get(); }
 
     static double  krakenHealth()                           { return KRAKEN_HEALTH.get(); }
     static double  krakenAttackDamage()                     { return KRAKEN_ATTACK_DAMAGE.get(); }
-    static double  krakenProjectileDamageTakenMultiplier()  { return KRAKEN_PROJECTILE_DAMAGE_TAKEN_MULTIPLIER.get(); }
     static boolean krakenSquidSpawnEnabled()                { return KRAKEN_SQUID_SPAWN_ENABLED.get(); }
     static boolean krakenMassSpawnEnabled()                 { return KRAKEN_MASS_SPAWN_ENABLED.get(); }
     static boolean krakenRequireBadOmenToSummon()           { return KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON.get(); }
     static double  krakenFollowRange()                      { return KRAKEN_FOLLOW_RANGE.get(); }
     static double  krakenDamageRange()                      { return KRAKEN_DAMAGE_RANGE.get(); }
+    static double  krakenArmor()                            { return KRAKEN_ARMOR.get(); }
+    static double  krakenKnockbackResistance()              { return KRAKEN_KNOCKBACK_RESISTANCE.get(); }
+    static double  krakenMovementSpeed()                    { return KRAKEN_MOVEMENT_SPEED.get(); }
+    static double  krakenFlyingSpeed()                      { return KRAKEN_FLYING_SPEED.get(); }
+    static double  krakenBossBarRange()                     { return KRAKEN_BOSS_BAR_RANGE.get(); }
+    static float   krakenLightningDamagePhaseOne()          { return KRAKEN_LIGHTNING_DAMAGE_PHASE_ONE.get().floatValue(); }
 
     static double  brutalflyHealth()                        { return BRUTALFLY_HEALTH.get(); }
     static double  brutalflySwipeDamage()                   { return BRUTALFLY_SWIPE_DAMAGE.get(); }
     static double  brutalflySpitDamage()                    { return BRUTALFLY_SPIT_DAMAGE.get(); }
     static double  brutalflyDamageRange()                   { return BRUTALFLY_DAMAGE_RANGE.get(); }
+    static double  brutalflyArmor()                         { return BRUTALFLY_ARMOR.get(); }
+    static double  brutalflyArmorToughness()                { return BRUTALFLY_ARMOR_TOUGHNESS.get(); }
+    static double  brutalflyKnockbackResistance()           { return BRUTALFLY_KNOCKBACK_RESISTANCE.get(); }
+    static double  brutalflyMovementSpeed()                 { return BRUTALFLY_MOVEMENT_SPEED.get(); }
+    static double  brutalflyFlyingSpeed()                   { return BRUTALFLY_FLYING_SPEED.get(); }
 
     static double  mantisHealth()                           { return MANTIS_HEALTH.get(); }
     static double  mantisAttackDamage()                     { return MANTIS_ATTACK_DAMAGE.get(); }
@@ -754,7 +861,6 @@ public final class AntarchyMobsConfig {
     static double  rollyPollyRollSpeedMultiplier()          { return ROLLY_POLLY_ROLL_SPEED_MULTIPLIER.get(); }
     static int     rollyPollyTameChance()                   { return ROLLY_POLLY_TAME_CHANCE.get(); }
     static double  rollyPollyBowlingDamage()                { return ROLLY_POLLY_BOWLING_DAMAGE.get(); }
-    static double  rollyPollyTumbleDamage()                 { return ROLLY_POLLY_TUMBLE_DAMAGE.get(); }
     static double  rollyPollyBowlingKnockback()              { return ROLLY_POLLY_BOWLING_KNOCKBACK.get(); }
     static double  rollyPollyArmor()                        { return ROLLY_POLLY_ARMOR.get(); }
     static double  rollyPollyRolledArmorBonus()             { return ROLLY_POLLY_ROLLED_ARMOR_BONUS.get(); }
@@ -782,6 +888,14 @@ public final class AntarchyMobsConfig {
 
     static double  nightmareHealth()                    { return NIGHTMARE_HEALTH.get(); }
     static double  nightmareAttackDamage()              { return NIGHTMARE_ATTACK_DAMAGE.get(); }
+    static int     dimensionalTearLifetimeTicks()        { return DIMENSIONAL_TEAR_LIFETIME_TICKS.get(); }
+    static int     dimensionalTearInvertedDurationTicks(){ return DIMENSIONAL_TEAR_INVERTED_DURATION_TICKS.get(); }
+    static int     dimensionalTearEmergenceMinIntervalTicks() { return DIMENSIONAL_TEAR_EMERGENCE_MIN_INTERVAL_TICKS.get(); }
+    static int     dimensionalTearEmergenceMaxIntervalTicks() { return DIMENSIONAL_TEAR_EMERGENCE_MAX_INTERVAL_TICKS.get(); }
+    static float   dimensionalTearLucidEventChance()     { return DIMENSIONAL_TEAR_LUCID_EVENT_CHANCE.get().floatValue(); }
+    static double  nightmareMovementSpeed()             { return NIGHTMARE_MOVEMENT_SPEED.get(); }
+    static int     nightmareWeaknessTicks()             { return NIGHTMARE_WEAKNESS_TICKS.get(); }
+    static int     nightmareDreadTicks()                { return NIGHTMARE_DREAD_TICKS.get(); }
 
     static boolean basiliskPetrifyingGazeEnabled()          { return BASILISK_PETRIFYING_GAZE_ENABLED.get(); }
     static int     basiliskSpawnMaxLightLevel()             { return BASILISK_SPAWN_MAX_LIGHT_LEVEL.get(); }
@@ -807,6 +921,11 @@ public final class AntarchyMobsConfig {
 
     static double  lucidAttackRange()                       { return LUCID_ATTACK_RANGE.get(); }
     static double  lucidPearlInvertedDurationSeconds()      { return LUCID_PEARL_INVERTED_DURATION_SECONDS.get(); }
+    static double  lucidHealth()                            { return LUCID_HEALTH.get(); }
+    static double  lucidAttackDamage()                      { return LUCID_ATTACK_DAMAGE.get(); }
+    static double  lucidMovementSpeed()                     { return LUCID_MOVEMENT_SPEED.get(); }
+    static double  lucidFlyingSpeed()                       { return LUCID_FLYING_SPEED.get(); }
+    static double  lucidKnockbackResistance()               { return LUCID_KNOCKBACK_RESISTANCE.get(); }
 
     static double  toreterrorHealth()                       { return TORETERROR_HEALTH.get(); }
     static double  toreterrorDamageRange()                  { return TORETERROR_DAMAGE_RANGE.get(); }
@@ -815,8 +934,6 @@ public final class AntarchyMobsConfig {
     static double  toreterrorSpinDamage()                   { return TORETERROR_SPIN_DAMAGE.get(); }
     static double  toreterrorSpinKnockback()                { return TORETERROR_SPIN_KNOCKBACK.get(); }
     static double  toreterrorProjectileDamageMultiplier()   { return TORETERROR_PROJECTILE_DAMAGE_MULTIPLIER.get(); }
-    static double  toreterrorRangedWaterBombChance()        { return TORETERROR_RANGED_WATER_BOMB_CHANCE.get(); }
-    static double  waterCannonCooldownSeconds()             { return WATER_CANNON_COOLDOWN_SECONDS.get(); }
     static double  waterBombDamage()                        { return WATER_BOMB_DAMAGE.get(); }
     static int     waterBombLifetimeTicks()                 { return WATER_BOMB_LIFETIME_TICKS.get(); }
     static double  waterBombGravity()                       { return WATER_BOMB_GRAVITY.get(); }

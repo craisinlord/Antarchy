@@ -177,7 +177,6 @@ public final class AntarchyConfigModuleFabric {
                     || name.equals("hushweedSporeLifetimeSeconds")
                     || name.equals("elythiaFireflyParticlesEnabled")
                     || name.equals("duplicatorTreeEnabled")
-                    || name.equals("glowingTorchflowers")
                     || name.equals("glowVinesUnderLeaves")
                     || name.equals("swingThroughGrassEnabled")
                     || name.equals("fabricKeybindingConflictFixEnabled")

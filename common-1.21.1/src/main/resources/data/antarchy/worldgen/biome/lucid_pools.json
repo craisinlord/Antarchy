@@ -51,7 +51,8 @@
     [
       "antarchy:lucid_blood_crystal_spires",
       "antarchy:lucid_medium_blood_crystal_spires",
-      "antarchy:lucid_large_blood_crystal_spires"
+      "antarchy:lucid_large_blood_crystal_spires",
+      "antarchy:dimensional_tears"
     ],
     [],
     [
@@ -76,7 +77,7 @@
     "monster": [
       {
         "type": "antarchy:lucid",
-        "weight": 3,
+        "weight": 1,
         "minCount": 1,
         "maxCount": 1
       }

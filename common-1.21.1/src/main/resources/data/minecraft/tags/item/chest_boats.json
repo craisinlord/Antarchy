@@ -1,7 +1,8 @@
 {
-  "replace": false,
-  "values": [
-    "antarchy:ouranwood_chest_boat",
-    "antarchy:peach_chest_boat"
-  ]
+    "replace":  false,
+    "values":  [
+                   "antarchy:ouranwood_chest_boat",
+                   "antarchy:peach_chest_boat",
+                   "antarchy:nadir_chest_boat"
+               ]
 }

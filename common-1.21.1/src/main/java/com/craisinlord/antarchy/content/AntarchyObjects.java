@@ -27,8 +27,11 @@ import com.craisinlord.antarchy.content.entity.MolewormEntity;
 import com.craisinlord.antarchy.content.entity.MantisEntity;
 import com.craisinlord.antarchy.content.entity.ReverieEntity;
 import com.craisinlord.antarchy.content.entity.ScorpionEntity;
+import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
+import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareBiteEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmarePortalEntity;
+import com.craisinlord.antarchy.content.entity.portal.DimensionalTearEntity;
 import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.DreamCampfireBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.SeashellBlockEntity;
@@ -68,9 +71,15 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<OctopusBombEntity>> OCTOPUS_BOMB = (Supplier<EntityType<OctopusBombEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<NightmareEntity>> NIGHTMARE = (Supplier<EntityType<NightmareEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<EntityType<NightmarePortalEntity>> NIGHTMARE_PORTAL = (Supplier<EntityType<NightmarePortalEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<DimensionalTearEntity>> DIMENSIONAL_TEAR = (Supplier<EntityType<DimensionalTearEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<EntityType<NightmareBiteEntity>> NIGHTMARE_BITE = (Supplier<EntityType<NightmareBiteEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<LucidEntity>> LUCID = (Supplier<EntityType<LucidEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<MolewormEntity>> MOLEWORM = (Supplier<EntityType<MolewormEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -581,8 +590,20 @@ public final class AntarchyObjects {
         NIGHTMARE_PORTAL = supplier;
     }
 
+    public static void setDimensionalTear(Supplier<EntityType<DimensionalTearEntity>> supplier) {
+        DIMENSIONAL_TEAR = supplier;
+    }
+
+    public static void setNightmare(Supplier<EntityType<NightmareEntity>> supplier) {
+        NIGHTMARE = supplier;
+    }
+
     public static void setNightmareBite(Supplier<EntityType<NightmareBiteEntity>> supplier) {
         NIGHTMARE_BITE = supplier;
+    }
+
+    public static void setLucid(Supplier<EntityType<LucidEntity>> supplier) {
+        LUCID = supplier;
     }
 
     public static void setLotus(Supplier<Block> supplier) {

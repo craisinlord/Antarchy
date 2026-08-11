@@ -356,6 +356,8 @@ public final class AntarchyNeoforgeMisc {
             () -> new LucidAntiwaterPoolFeature(ThoraxisAntiwaterPoolConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, ThoraxisDuneFeature> THORAXIS_DUNE = FEATURES.register("thoraxis_dune",
             () -> new ThoraxisDuneFeature(ThoraxisDuneConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, DimensionalTearFeature> DIMENSIONAL_TEAR = FEATURES.register("dimensional_tear",
+            () -> new DimensionalTearFeature(NoneFeatureConfiguration.CODEC));
 
     // Biome sources
     public static final DeferredHolder<MapCodec<? extends BiomeSource>, MapCodec<ElythiaBiomeSource>> ELYTHIA_BIOME_SOURCE = BIOME_SOURCES.register("elythia_biome_source",

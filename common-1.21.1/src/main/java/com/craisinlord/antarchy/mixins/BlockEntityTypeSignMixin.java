@@ -30,18 +30,28 @@ public abstract class BlockEntityTypeSignMixin {
     private static Block antarchy$peachHangingSign;
     @Unique
     private static Block antarchy$peachWallHangingSign;
+    @Unique
+    private static Block antarchy$nadirSign;
+    @Unique
+    private static Block antarchy$nadirWallSign;
+    @Unique
+    private static Block antarchy$nadirHangingSign;
+    @Unique
+    private static Block antarchy$nadirWallHangingSign;
 
     @Inject(method = "isValid", at = @At("HEAD"), cancellable = true)
     private void antarchy$allowOuranwoodSigns(BlockState state, CallbackInfoReturnable<Boolean> cir) {
         Object self = this;
         if (self == BlockEntityType.SIGN) {
             if (state.is(antarchy$sign()) || state.is(antarchy$wallSign())
-                    || state.is(antarchy$peachSign()) || state.is(antarchy$peachWallSign())) {
+                    || state.is(antarchy$peachSign()) || state.is(antarchy$peachWallSign())
+                    || state.is(antarchy$nadirSign()) || state.is(antarchy$nadirWallSign())) {
                 cir.setReturnValue(true);
             }
         } else if (self == BlockEntityType.HANGING_SIGN) {
             if (state.is(antarchy$hangingSign()) || state.is(antarchy$wallHangingSign())
-                    || state.is(antarchy$peachHangingSign()) || state.is(antarchy$peachWallHangingSign())) {
+                    || state.is(antarchy$peachHangingSign()) || state.is(antarchy$peachWallHangingSign())
+                    || state.is(antarchy$nadirHangingSign()) || state.is(antarchy$nadirWallHangingSign())) {
                 cir.setReturnValue(true);
             }
         }
@@ -109,6 +119,38 @@ public abstract class BlockEntityTypeSignMixin {
             antarchy$peachWallHangingSign = antarchy$resolve("peach_wall_hanging_sign");
         }
         return antarchy$peachWallHangingSign;
+    }
+
+    @Unique
+    private static Block antarchy$nadirSign() {
+        if (antarchy$nadirSign == null) {
+            antarchy$nadirSign = antarchy$resolve("nadir_sign");
+        }
+        return antarchy$nadirSign;
+    }
+
+    @Unique
+    private static Block antarchy$nadirWallSign() {
+        if (antarchy$nadirWallSign == null) {
+            antarchy$nadirWallSign = antarchy$resolve("nadir_wall_sign");
+        }
+        return antarchy$nadirWallSign;
+    }
+
+    @Unique
+    private static Block antarchy$nadirHangingSign() {
+        if (antarchy$nadirHangingSign == null) {
+            antarchy$nadirHangingSign = antarchy$resolve("nadir_hanging_sign");
+        }
+        return antarchy$nadirHangingSign;
+    }
+
+    @Unique
+    private static Block antarchy$nadirWallHangingSign() {
+        if (antarchy$nadirWallHangingSign == null) {
+            antarchy$nadirWallHangingSign = antarchy$resolve("nadir_wall_hanging_sign");
+        }
+        return antarchy$nadirWallHangingSign;
     }
 
     @Unique
