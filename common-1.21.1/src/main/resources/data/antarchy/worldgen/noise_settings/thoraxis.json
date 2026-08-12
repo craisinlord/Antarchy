@@ -74,7 +74,7 @@
                       "from_value": 0.0,
                       "from_y": -8,
                       "to_value": 1.0,
-                      "to_y": 24
+                      "to_y": 4
                     },
                     "argument2": -2.5
                   },
@@ -150,7 +150,7 @@
               "type": "minecraft:y_above",
               "add_stone_depth": false,
               "anchor": {
-                "absolute": 4
+                "absolute": 1
               },
               "surface_depth_multiplier": 0
             }

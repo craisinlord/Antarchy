@@ -18,7 +18,7 @@ public abstract class MountedVehicleCameraMixin {
 
     @ModifyArgs(
             method = "setup",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;move(FFF)V")
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;move(DDD)V")
     )
     private void antarchy$adjustMountedCameraOffset(
             Args args,
@@ -34,16 +34,16 @@ public abstract class MountedVehicleCameraMixin {
 
         Entity vehicle = this.entity.getVehicle();
         if (vehicle instanceof HerculesBeetleEntity) {
-            args.set(0, (Float) args.get(0) * 1.45F);
-            args.set(1, (Float) args.get(1) + 0.2F);
-            args.set(2, (Float) args.get(2) + 0.45F);
+            args.set(0, (Double) args.get(0) * 1.45D);
+            args.set(1, (Double) args.get(1) + 0.2D);
+            args.set(2, (Double) args.get(2) + 0.45D);
             return;
         }
 
 //        if (vehicle instanceof DorrieEntity) {
-//            args.set(0, (Float) args.get(0) * 0.25F);
-//            args.set(1, (Float) args.get(1) + 0.1F);
-//            args.set(2, (Float) args.get(2) + 0.55F);
+//            args.set(0, (Double) args.get(0) * 0.25D);
+//            args.set(1, (Double) args.get(1) + 0.1D);
+//            args.set(2, (Double) args.get(2) + 0.55D);
 //        }
     }
 }
