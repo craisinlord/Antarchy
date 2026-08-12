@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -145,6 +146,16 @@ public class TriffidEntity extends Monster implements GeoEntity {
         super.defineSynchedData(builder);
         builder.define(ACTION_STATE, ACTION_NONE);
         builder.define(AWAKE, false);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.setActionState(ACTION_NONE);
+        this.actionTicks = 0;
+        this.grabTargetId = -1;
+        this.grabDamageApplied = false;
+        this.sweepHitCooldowns.clear();
     }
 
     @Override

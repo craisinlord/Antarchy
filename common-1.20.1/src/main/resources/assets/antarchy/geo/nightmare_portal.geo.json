@@ -1,0 +1,109 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 256,
+				"texture_height": 256,
+				"visible_bounds_width": 6,
+				"visible_bounds_height": 5,
+				"visible_bounds_offset": [0, 1.5, 0]
+			},
+			"bones": [
+				{
+					"name": "Beam",
+					"pivot": [-1.5, 21, 5.25],
+					"cubes": [
+						{"origin": [-30, 20, -0.75], "size": [60, 5, 0], "uv": [0, 223]}
+					]
+				},
+				{
+					"name": "Portal",
+					"pivot": [0, 21, 4]
+				},
+				{
+					"name": "particle_left",
+					"parent": "Portal",
+					"pivot": [25.24264, 46.57107, -3.75],
+					"cubes": [
+						{"origin": [13.24264, 39.07107, -3.75], "size": [24, 15, 0], "uv": [0, 208]}
+					]
+				},
+				{
+					"name": "particle_right",
+					"parent": "Portal",
+					"pivot": [-25.24264, 46.57107, -3.75],
+					"cubes": [
+						{"origin": [-37.24264, 39.07107, -3.75], "size": [24, 15, 0], "uv": [0, 208], "mirror": true}
+					]
+				},
+				{
+					"name": "particle_right_bottom",
+					"parent": "Portal",
+					"pivot": [-25.24264, -2.57107, -3.75],
+					"cubes": [
+						{"origin": [-37.24264, -10.07107, -3.75], "size": [24, 15, 0], "uv": [0, 208], "mirror": true}
+					]
+				},
+				{
+					"name": "particle_left_bottom",
+					"parent": "Portal",
+					"pivot": [25.24264, -2.57107, -3.75],
+					"cubes": [
+						{"origin": [13.24264, -10.07107, -3.75], "size": [24, 15, 0], "uv": [0, 208]}
+					]
+				},
+				{
+					"name": "Portal_Layer_Highlight",
+					"parent": "Portal",
+					"pivot": [0, 21, -1],
+					"cubes": [
+						{"origin": [-20, 1, -2.75], "size": [37, 40, 0], "uv": [0, 168]},
+						{"origin": [-21, 0, -1], "size": [42, 42, 0], "uv": [0, 126]}
+					]
+				},
+				{
+					"name": "Back_Portal_Layer",
+					"parent": "Portal",
+					"pivot": [0, 21, 5],
+					"cubes": [
+						{"origin": [-21, 0, 5], "size": [42, 42, 0], "uv": [0, 42]}
+					]
+				},
+				{
+					"name": "Back_Portal_Layer2",
+					"parent": "Portal",
+					"pivot": [0, 21, 7],
+					"cubes": [
+						{"origin": [-21, 0, 7], "size": [42, 42, 0], "uv": [0, 42]}
+					]
+				},
+				{
+					"name": "Back_Portal_Layer3",
+					"parent": "Portal",
+					"pivot": [0, 21, 11],
+					"cubes": [
+						{"origin": [-21, 0, 11], "size": [42, 42, 0], "uv": [0, 42]}
+					]
+				},
+				{
+					"name": "Portal_Layer",
+					"parent": "Portal",
+					"pivot": [0, 21, 0],
+					"cubes": [
+						{"origin": [-21, 0, 0], "size": [42, 42, 0], "uv": [0, 84]}
+					]
+				},
+				{
+					"name": "Portal_Layer2",
+					"parent": "Portal",
+					"pivot": [0, 21, 2],
+					"cubes": [
+						{"origin": [-21, 0, 2], "size": [42, 42, 0], "uv": [84, 0]}
+					]
+				}
+			]
+		}
+	]
+}

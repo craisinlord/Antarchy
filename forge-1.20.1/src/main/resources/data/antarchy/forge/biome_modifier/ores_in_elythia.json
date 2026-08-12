@@ -1,0 +1,9 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#antarchy:is_elythia",
+  "features": [
+    "antarchy:uranium_ore",
+    "antarchy:titanium_ore"
+  ],
+  "step": "underground_ores"
+}

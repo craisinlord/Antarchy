@@ -207,6 +207,51 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> PEACH_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.PEACH_SAPLING);
 
 
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NADIR_LOG);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NADIR_WOOD);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> STRIPPED_NADIR_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.STRIPPED_NADIR_LOG);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> STRIPPED_NADIR_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.STRIPPED_NADIR_WOOD);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NADIR_PLANKS);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NADIR_STAIRS);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NADIR_SLAB);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_FENCE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NADIR_FENCE);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NADIR_FENCE_GATE);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_DOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NADIR_DOOR);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NADIR_TRAPDOOR);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NADIR_PRESSURE_PLATE);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NADIR_BUTTON);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_VEIL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NADIR_VEIL);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NADIR_SAPLING);
+
+
     public static final DeferredItem<net.minecraft.world.item.BlockItem> ORANGE_MILKWEED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.ORANGE_MILKWEED);
 
 
@@ -257,6 +302,22 @@ public final class AntarchyFabricItems {
 
     public static final DeferredItem<Item> PEACH_CHEST_BOAT = ITEMS.register("peach_chest_boat",
             () -> new com.craisinlord.antarchy.content.item.PeachChestBoatItem(AntarchyFabricEntities.PEACH_CHEST_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
+
+
+    public static final DeferredItem<net.minecraft.world.item.SignItem> NADIR_SIGN_ITEM = ITEMS.register("nadir_sign",
+            () -> new net.minecraft.world.item.SignItem(new Item.Properties().stacksTo(16), AntarchyFabricBlocks.NADIR_SIGN.get(), AntarchyFabricBlocks.NADIR_WALL_SIGN.get()));
+
+
+    public static final DeferredItem<net.minecraft.world.item.HangingSignItem> NADIR_HANGING_SIGN_ITEM = ITEMS.register("nadir_hanging_sign",
+            () -> new net.minecraft.world.item.HangingSignItem(AntarchyFabricBlocks.NADIR_HANGING_SIGN.get(), AntarchyFabricBlocks.NADIR_WALL_HANGING_SIGN.get(), new Item.Properties().stacksTo(16)));
+
+
+    public static final DeferredItem<Item> NADIR_BOAT = ITEMS.register("nadir_boat",
+            () -> new com.craisinlord.antarchy.content.item.NadirBoatOnlyItem(AntarchyFabricEntities.NADIR_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
+
+
+    public static final DeferredItem<Item> NADIR_CHEST_BOAT = ITEMS.register("nadir_chest_boat",
+            () -> new com.craisinlord.antarchy.content.item.NadirChestBoatItem(AntarchyFabricEntities.NADIR_CHEST_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
 
 
     public static final DeferredItem<CritterCageItem> CRITTER_CAGE = ITEMS.register("critter_cage",

@@ -1,0 +1,12 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#antarchy:apple_cow_spawn_biomes",
+  "spawners": [
+    {
+      "type": "antarchy:apple_cow",
+      "weight": 10,
+      "minCount": 2,
+      "maxCount": 4
+    }
+  ]
+}

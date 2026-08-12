@@ -1,0 +1,14 @@
+{
+  "type": "antarchy:red_ant_nest",
+  "config": {
+    "to_place": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "antarchy:red_ant_nest",
+        "Properties": {
+          "facing": "north"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "antarchy:block/uranium/cut_uranium",
+    "side": "antarchy:block/uranium/cut_uranium",
+    "top": "antarchy:block/uranium/cut_uranium"
+  }
+}

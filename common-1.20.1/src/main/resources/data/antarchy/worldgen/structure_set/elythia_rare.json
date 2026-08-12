@@ -1,0 +1,30 @@
+{
+  "structures": [
+    {
+      "structure": "antarchy:trayaurus_lab",
+      "weight": 1
+    },
+    {
+      "structure": "antarchy:fallen_kingdom_castle",
+      "weight": 2
+    },
+    {
+      "structure": "antarchy:ruined_prison",
+      "weight": 2
+    },
+    {
+      "structure": "antarchy:ruined_arena",
+      "weight": 3
+    },
+    {
+      "structure": "antarchy:toreterror_arena",
+      "weight": 3
+    }
+  ],
+  "placement": {
+    "salt": 659843583,
+    "spacing": 75,
+    "separation": 68,
+    "type": "integrated_api:advanced_random_spread"
+  }
+}

@@ -1,0 +1,1246 @@
+package com.craisinlord.antarchy.content.entity.kraken;
+
+import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.boss.BossCombatUtil;
+import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
+import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
+import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
+import com.craisinlord.antarchy.content.entity.multipart.MultipartEntityOwner;
+import com.craisinlord.antarchy.content.entity.multipart.MultipartLayout;
+import com.craisinlord.antarchy.content.damage.AntarchyDamageTypes;
+
+import java.util.List;
+import java.util.Objects;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.BossEvent;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.FlyingMoveControl;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import com.craisinlord.antarchy.compat.geckolib.AutoPlayingSoundKeyframeHandlerCompat;
+import software.bernie.geckolib.util.GeckoLibUtil;
+
+public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityOwner {
+    private static final EntityDataAccessor<Integer> ATTACK_STATE = SynchedEntityData.defineId(KrakenEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> ROARING = SynchedEntityData.defineId(KrakenEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> PHASE_TWO = SynchedEntityData.defineId(KrakenEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> ANIMATION_STATE = SynchedEntityData.defineId(KrakenEntity.class, EntityDataSerializers.INT);
+
+    private static final String ATTACK_COOLDOWN_KEY = "AttackCooldown";
+    private static final String ACTION_TICKS_KEY = "ActionTicks";
+    private static final String PHASE_TRANSITION_TICKS_KEY = "PhaseTransitionTicks";
+    private static final String PHASE_SUMMON_COOLDOWN_KEY = "PhaseSummonCooldown";
+    private static final String LAST_ATTACK_STATE_KEY = "LastAttackState";
+    private static final String AGGRO_TRIGGERED_KEY = "AggroTriggered";
+    private static final String GRAB_TARGET_KEY = "GrabTarget";
+
+    private static final int ATTACK_NONE = 0;
+    private static final int ATTACK_GRAB = 1;
+    private static final int ATTACK_SWING_LEFT = 2;
+    private static final int ATTACK_SWING_RIGHT = 3;
+    private static final int ATTACK_SLAM = 4;
+
+    // Synced animation state values
+    private static final int ANIM_NONE = 0;
+    private static final int ANIM_CRY = 1;
+    private static final int ANIM_GRAB = 2;
+    private static final int ANIM_SWING_LEFT = 3;
+    private static final int ANIM_SWING_RIGHT = 4;
+    private static final int ANIM_SLAM = 5;
+    private static final int ANIM_DEATH = 6;
+
+    private static final int DEATH_ANIM_TICKS = 60;
+
+    private static final java.util.UUID PHASE_TWO_SPEED_ID = java.util.UUID.nameUUIDFromBytes((Antarchy.MODID + ":kraken_phase_two_speed").getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    private static final java.util.UUID PHASE_TWO_FLYING_SPEED_ID = java.util.UUID.nameUUIDFromBytes((Antarchy.MODID + ":kraken_phase_two_flying_speed").getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    private static final java.util.UUID PHASE_TWO_DAMAGE_ID = java.util.UUID.nameUUIDFromBytes((Antarchy.MODID + ":kraken_phase_two_damage").getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    private static final double PHASE_TWO_SPEED_BONUS = 0.15D;
+    private static final double PHASE_TWO_DAMAGE_BONUS = 4.0D;
+    private static final AttributeModifier PHASE_TWO_SPEED = new AttributeModifier(PHASE_TWO_SPEED_ID, "kraken_phase_two_speed", PHASE_TWO_SPEED_BONUS, AttributeModifier.Operation.MULTIPLY_BASE);
+    private static final AttributeModifier PHASE_TWO_FLYING_SPEED = new AttributeModifier(PHASE_TWO_FLYING_SPEED_ID, "kraken_phase_two_flying_speed", PHASE_TWO_SPEED_BONUS, AttributeModifier.Operation.MULTIPLY_BASE);
+    private static final AttributeModifier PHASE_TWO_DAMAGE = new AttributeModifier(PHASE_TWO_DAMAGE_ID, "kraken_phase_two_damage", PHASE_TWO_DAMAGE_BONUS, AttributeModifier.Operation.ADDITION);
+
+    private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation CRY_ANIM = RawAnimation.begin().thenPlay("cry");
+    private static final RawAnimation GRAB_ANIM = RawAnimation.begin().thenPlay("grab");
+    private static final RawAnimation SWING_LEFT_ANIM = RawAnimation.begin().thenPlay("swing_left");
+    private static final RawAnimation SWING_RIGHT_ANIM = RawAnimation.begin().thenPlay("swing_right");
+    private static final RawAnimation SLAM_ANIM = RawAnimation.begin().thenPlay("attack");
+    private static final RawAnimation DEATH_ANIM = RawAnimation.begin().thenPlay("death");
+
+    private static final Vec3 GRAB_ANCHOR_LOCAL = new Vec3(22.0D / 16.0D, 223.5D / 16.0D, -12.5D / 16.0D);
+
+    private final ServerBossEvent bossEvent = new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this.getUUID(), Component.translatable("entity.antarchy.kraken"), BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.PROGRESS);
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+
+    @Nullable
+    private Vec3 patrolTarget;
+    private int patrolRetargetTicks;
+    private int attackCooldown;
+    private int actionTicks;
+    private int phaseTransitionTicks;
+    private int phaseSummonCooldown;
+    private int lastAttackState;
+    private boolean aggroTriggered;
+    private int grabbedTargetId = -1;
+    private boolean spawnedPhaseMinions;
+    private int lightningStrikeCooldown;
+    private int lightningAmbientCooldown;
+    private int strafeRetargetTicks;
+    private float orbitDirection = 1.0F;
+    private boolean stormActive;
+
+    @Nullable
+    private Entity[] multipartParts;
+
+    public KrakenEntity(EntityType<? extends Monster> entityType, Level level) {
+        super(entityType, level);
+        this.moveControl = new FlyingMoveControl(this, 20, true);
+        this.xpReward = 60;
+        this.bossEvent.setDarkenScreen(false);
+    }
+
+    public static AttributeSupplier.Builder createAttributes() {
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, AntarchySettings.krakenHealth())
+                .add(Attributes.ATTACK_DAMAGE, AntarchySettings.krakenAttackDamage())
+                .add(Attributes.MOVEMENT_SPEED, AntarchySettings.krakenMovementSpeed())
+                .add(Attributes.FLYING_SPEED, AntarchySettings.krakenFlyingSpeed())
+                .add(Attributes.FOLLOW_RANGE, AntarchySettings.krakenFollowRange())
+                .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.krakenKnockbackResistance())
+                .add(Attributes.ARMOR, AntarchySettings.krakenArmor());
+    }
+
+    public static boolean canSpawn(EntityType<KrakenEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+        return level.getFluidState(pos).is(FluidTags.WATER) && level.getFluidState(pos.above()).is(FluidTags.WATER);
+    }
+
+    @Override
+    public MultipartLayout antarchy$getMultipartLayout() {
+        return KrakenMultipartLayout.INSTANCE;
+    }
+
+    @Override
+    @Nullable
+    public Entity[] antarchy$getMultipartParts() {
+        return this.multipartParts;
+    }
+
+    @Override
+    public void antarchy$setMultipartParts(@Nullable Entity[] parts) {
+        this.multipartParts = parts;
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(ATTACK_STATE, ATTACK_NONE);
+        this.entityData.define(ROARING, false);
+        this.entityData.define(PHASE_TWO, false);
+        this.entityData.define(ANIMATION_STATE, ANIM_NONE);
+    }
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 20.0F));
+        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+
+        HurtByTargetGoal hurtByTargetGoal = new HurtByTargetGoal(this);
+        hurtByTargetGoal.setAlertOthers(MissileSquidEntity.class);
+        this.targetSelector.addGoal(1, hurtByTargetGoal);
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        // idle_controller always loops idle; action_controller layers on top when active
+        controllers.add(new AnimationController<>(this, "idle_controller", 0, state -> {
+            if (this.getAnimationState() == ANIM_DEATH) {
+                return PlayState.STOP;
+            }
+            state.setAndContinue(IDLE_ANIM);
+            return PlayState.CONTINUE;
+        }).setSoundKeyframeHandler(AutoPlayingSoundKeyframeHandlerCompat.create()));
+        controllers.add(new AnimationController<>(this, "action_controller", 0, this::actionAnimController)
+                .setSoundKeyframeHandler(AutoPlayingSoundKeyframeHandlerCompat.create())
+                .triggerableAnim("cry", CRY_ANIM)
+                .triggerableAnim("grab", GRAB_ANIM)
+                .triggerableAnim("swing_left", SWING_LEFT_ANIM)
+                .triggerableAnim("swing_right", SWING_RIGHT_ANIM)
+                .triggerableAnim("attack", SLAM_ANIM));
+    }
+
+    private PlayState actionAnimController(AnimationState<KrakenEntity> state) {
+        return switch (this.getAnimationState()) {
+            case ANIM_CRY -> state.setAndContinue(CRY_ANIM);
+            case ANIM_GRAB -> state.setAndContinue(GRAB_ANIM);
+            case ANIM_SWING_LEFT -> state.setAndContinue(SWING_LEFT_ANIM);
+            case ANIM_SWING_RIGHT -> state.setAndContinue(SWING_RIGHT_ANIM);
+            case ANIM_SLAM -> state.setAndContinue(SLAM_ANIM);
+            case ANIM_DEATH -> state.setAndContinue(DEATH_ANIM);
+            default -> PlayState.STOP;
+        };
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    @Override
+    protected PathNavigation createNavigation(Level level) {
+        FlyingPathNavigation navigation = new FlyingPathNavigation(this, level);
+        navigation.setCanOpenDoors(false);
+        navigation.setCanFloat(true);
+        navigation.setCanPassDoors(true);
+        return navigation;
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnData, @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag dataTag) {
+        Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(com.craisinlord.antarchy.config.AntarchySettings.krakenHealth());
+        this.setHealth((float) com.craisinlord.antarchy.config.AntarchySettings.krakenHealth());
+        Objects.requireNonNull(this.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(com.craisinlord.antarchy.config.AntarchySettings.krakenAttackDamage());
+        this.playSound(AntarchySoundEvents.KRAKEN_SUMMON.get(), 2.2F, 0.9F + this.random.nextFloat() * 0.08F);
+        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData, dataTag);
+    }
+
+    @Override
+    public void tick() {
+        if (!this.level().isClientSide && this.level().getDifficulty() == Difficulty.PEACEFUL) {
+            this.remove(Entity.RemovalReason.DISCARDED);
+            return;
+        }
+
+        super.tick();
+        this.setAirSupply(this.getMaxAirSupply());
+        this.setNoGravity(true);
+
+        if (this.level().isClientSide) {
+            this.tickClientParticles();
+            this.updateSwimRotation();
+            return;
+        }
+
+        this.updateBossBarPlayers();
+        this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+        this.tickLightning();
+
+        if (this.attackCooldown > 0) {
+            this.attackCooldown--;
+        }
+        if (this.phaseSummonCooldown > 0) {
+            this.phaseSummonCooldown--;
+        }
+
+        LivingEntity target = this.getTarget();
+        if ((target == null || !target.isAlive()) && this.tickCount % 10 == 0) {
+            Player nearbyPlayer = null;
+            double nearestHorizontalDistanceSqr = Double.MAX_VALUE;
+            for (Player player : this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(this.getBossBarRange(), 192.0D, this.getBossBarRange()))) {
+                if (!player.isAlive() || !this.canAttack(player) || !this.isWithinBossBarRange(player)) {
+                    continue;
+                }
+                double horizontalDistanceSqr = this.horizontalDistanceToSqr(player);
+                if (horizontalDistanceSqr < nearestHorizontalDistanceSqr) {
+                    nearestHorizontalDistanceSqr = horizontalDistanceSqr;
+                    nearbyPlayer = player;
+                }
+            }
+            if (nearbyPlayer != null) {
+                this.setTarget(nearbyPlayer);
+                target = nearbyPlayer;
+            }
+        }
+
+        if (target == null || !target.isAlive()) {
+            this.resetCombatState();
+            this.tickPatrolMovement();
+            this.updateSwimRotation();
+            this.updateAnimationState();
+            return;
+        }
+
+        this.getLookControl().setLookAt(target, 25.0F, 20.0F);
+
+        if (!this.aggroTriggered) {
+            this.startAggroRoar();
+        }
+
+        if (!this.isPhaseTwo() && this.phaseTransitionTicks <= 0 && this.getHealth() <= this.getMaxHealth() * 0.5F) {
+            this.startPhaseTransition();
+        }
+
+        if (this.isRoaring()) {
+            this.tickRoarState(target);
+            this.updateSwimRotation();
+            this.updateAnimationState();
+            return;
+        }
+
+        if (this.phaseTransitionTicks > 0) {
+            this.tickPhaseTransition(target);
+            this.updateSwimRotation();
+            this.updateAnimationState();
+            return;
+        }
+
+        if (this.getAttackState() != ATTACK_NONE) {
+            this.tickCurrentAttack(target);
+            this.updateSwimRotation();
+            this.updateAnimationState();
+            return;
+        }
+
+        this.tickPhaseTwoPressure(target);
+        this.tickPursuitMovement(target);
+
+        if (this.attackCooldown <= 0) {
+            int nextAttack = this.chooseNextAttack(target);
+            if (nextAttack != ATTACK_NONE) {
+                this.startAttack(nextAttack);
+            }
+        }
+
+        this.updateSwimRotation();
+        this.updateAnimationState();
+    }
+
+    @Override
+    public void travel(Vec3 travelVector) {
+        if (this.isEffectiveAi()) {
+            this.moveRelative(this.getSpeed(), travelVector);
+            this.move(MoverType.SELF, this.getDeltaMovement());
+            this.setDeltaMovement(this.getDeltaMovement().scale(this.isInWater() ? 0.92D : 0.91D));
+            return;
+        }
+
+        super.travel(travelVector);
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        if (source.is(DamageTypeTags.IS_FIRE)
+                || source.is(DamageTypes.IN_WALL)
+                || source.is(DamageTypes.LIGHTNING_BOLT)
+                || source.is(AntarchyDamageTypes.KRAKEN_LIGHTNING)
+                || source.getEntity() instanceof MissileSquidEntity
+                || source.getEntity() instanceof OctopusBombEntity) {
+            return false;
+        }
+
+        return super.hurt(source, BossCombatUtil.capSingleHitAtHalfHealth(this, amount));
+    }
+
+    @Override
+    public boolean isInvulnerableTo(DamageSource source) {
+        if (super.isInvulnerableTo(source)) {
+            return true;
+        }
+        return BossCombatUtil.isOutOfDamageRange(this, AntarchySettings.krakenDamageRange());
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return false;
+    }
+
+    @Override
+    protected boolean shouldDespawnInPeaceful() {
+        return true;
+    }
+
+    @Override
+    @Nullable
+    protected SoundEvent getAmbientSound() {
+        return null;
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource damageSource) {
+        return AntarchySoundEvents.KRAKEN_HURT.get();
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return AntarchySoundEvents.KRAKEN_DEATH.get();
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 1.5F;
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt(ATTACK_COOLDOWN_KEY, this.attackCooldown);
+        tag.putInt(ACTION_TICKS_KEY, this.actionTicks);
+        tag.putInt(PHASE_TRANSITION_TICKS_KEY, this.phaseTransitionTicks);
+        tag.putInt(PHASE_SUMMON_COOLDOWN_KEY, this.phaseSummonCooldown);
+        tag.putInt(LAST_ATTACK_STATE_KEY, this.lastAttackState);
+        tag.putBoolean(AGGRO_TRIGGERED_KEY, this.aggroTriggered);
+        if (this.grabbedTargetId >= 0) {
+            tag.putInt(GRAB_TARGET_KEY, this.grabbedTargetId);
+        }
+        tag.putBoolean("PhaseTwo", this.isPhaseTwo());
+        tag.putBoolean("Roaring", this.isRoaring());
+        tag.putInt("AttackState", this.getAttackState());
+        tag.putInt("AnimationState", this.getAnimationState());
+        tag.putBoolean("SpawnedPhaseMinions", this.spawnedPhaseMinions);
+        tag.putInt("LightningStrikeCooldown", this.lightningStrikeCooldown);
+        tag.putInt("LightningAmbientCooldown", this.lightningAmbientCooldown);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.attackCooldown = tag.getInt(ATTACK_COOLDOWN_KEY);
+        this.actionTicks = tag.getInt(ACTION_TICKS_KEY);
+        this.phaseTransitionTicks = tag.getInt(PHASE_TRANSITION_TICKS_KEY);
+        this.phaseSummonCooldown = tag.getInt(PHASE_SUMMON_COOLDOWN_KEY);
+        this.lastAttackState = tag.contains(LAST_ATTACK_STATE_KEY) ? tag.getInt(LAST_ATTACK_STATE_KEY) : ATTACK_NONE;
+        this.aggroTriggered = tag.getBoolean(AGGRO_TRIGGERED_KEY);
+        this.grabbedTargetId = tag.contains(GRAB_TARGET_KEY) ? tag.getInt(GRAB_TARGET_KEY) : -1;
+        this.spawnedPhaseMinions = tag.getBoolean("SpawnedPhaseMinions");
+        this.entityData.set(ROARING, tag.getBoolean("Roaring"));
+        this.entityData.set(ATTACK_STATE, tag.getInt("AttackState"));
+        this.entityData.set(PHASE_TWO, tag.getBoolean("PhaseTwo"));
+        this.entityData.set(ANIMATION_STATE, tag.contains("AnimationState") ? tag.getInt("AnimationState") : ANIM_NONE);
+        this.lightningStrikeCooldown = tag.getInt("LightningStrikeCooldown");
+        this.lightningAmbientCooldown = tag.getInt("LightningAmbientCooldown");
+        this.stormActive = false;
+        if (this.isPhaseTwo()) {
+            this.applyPhaseTwoBuffs();
+        }
+        this.updateAnimationState();
+    }
+
+    @Override
+    public void startSeenByPlayer(net.minecraft.server.level.ServerPlayer player) {
+        super.startSeenByPlayer(player);
+    }
+
+    @Override
+    public void stopSeenByPlayer(net.minecraft.server.level.ServerPlayer player) {
+        super.stopSeenByPlayer(player);
+        this.bossEvent.removePlayer(player);
+    }
+
+    @Override
+    public void remove(Entity.RemovalReason reason) {
+        this.clearKrakenStorm();
+        super.remove(reason);
+        this.bossEvent.removeAllPlayers();
+    }
+
+    public boolean isRoaring() {
+        return this.entityData.get(ROARING);
+    }
+
+    public boolean isPhaseTwo() {
+        return this.entityData.get(PHASE_TWO);
+    }
+
+    public int getAttackState() {
+        return this.entityData.get(ATTACK_STATE);
+    }
+
+    public int getAnimationState() {
+        return this.entityData.get(ANIMATION_STATE);
+    }
+
+    private void setRoaring(boolean roaring) {
+        this.entityData.set(ROARING, roaring);
+    }
+
+    private void setPhaseTwo(boolean phaseTwo) {
+        this.entityData.set(PHASE_TWO, phaseTwo);
+    }
+
+    private void setAttackState(int attackState) {
+        this.entityData.set(ATTACK_STATE, attackState);
+    }
+
+    private void setAnimationState(int animationState) {
+        if (this.entityData.get(ANIMATION_STATE) != animationState) {
+            this.entityData.set(ANIMATION_STATE, animationState);
+            String trigger = switch (animationState) {
+                case ANIM_CRY -> "cry";
+                case ANIM_GRAB -> "grab";
+                case ANIM_SWING_LEFT -> "swing_left";
+                case ANIM_SWING_RIGHT -> "swing_right";
+                case ANIM_SLAM -> "attack";
+                default -> null;
+            };
+            if (trigger != null) {
+                this.triggerAnim("action_controller", trigger);
+            }
+        }
+    }
+
+    private void startAggroRoar() {
+        this.aggroTriggered = true;
+        this.actionTicks = 30;
+        this.setRoaring(true);
+        this.playSound(AntarchySoundEvents.KRAKEN_ROAR.get(), 1.8F, 0.78F);
+        this.getNavigation().stop();
+        this.setDeltaMovement(this.getDeltaMovement().scale(0.2D));
+        this.updateAnimationState();
+    }
+
+    private void tickRoarState(LivingEntity target) {
+        this.getNavigation().stop();
+        this.getMoveControl().setWantedPosition(this.getX(), this.getY(), this.getZ(), 0.0D);
+        this.setDeltaMovement(this.getDeltaMovement().scale(0.6D));
+        this.getLookControl().setLookAt(target, 25.0F, 20.0F);
+
+        if (--this.actionTicks <= 0) {
+            this.actionTicks = 0;
+            this.setRoaring(false);
+            this.attackCooldown = 18;
+        }
+    }
+
+    private void startPhaseTransition() {
+        this.phaseTransitionTicks = 50;
+        this.actionTicks = 0;
+        this.setAttackState(ATTACK_NONE);
+        this.setRoaring(false);
+        this.grabbedTargetId = -1;
+        this.spawnedPhaseMinions = false;
+        this.phaseSummonCooldown = 0;
+        this.playSound(AntarchySoundEvents.KRAKEN_ROAR.get(), 2.0F, 0.82F);
+        this.getNavigation().stop();
+        this.updateAnimationState();
+    }
+
+    private void tickPhaseTransition(LivingEntity target) {
+        this.getNavigation().stop();
+        this.setDeltaMovement(this.getDeltaMovement().scale(0.45D));
+        this.getLookControl().setLookAt(target, 25.0F, 20.0F);
+
+        if (!this.spawnedPhaseMinions && this.phaseTransitionTicks <= 40) {
+            this.spawnMinions(1 + this.random.nextInt(2), target);
+            this.spawnedPhaseMinions = true;
+        }
+
+        if (this.phaseTransitionTicks % 8 == 0 && this.level() instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.SQUID_INK, this.getX(), this.getY() + 1.0D, this.getZ(), 12, 1.0D, 0.7D, 1.0D, 0.02D);
+        }
+
+        if (--this.phaseTransitionTicks <= 0) {
+            this.phaseTransitionTicks = 0;
+            this.setPhaseTwo(true);
+            this.applyPhaseTwoBuffs();
+            this.attackCooldown = 25;
+            this.playSound(AntarchySoundEvents.KRAKEN_ROAR.get(), 2.0F, 0.72F);
+        }
+    }
+
+    private void tickCurrentAttack(LivingEntity target) {
+        this.getNavigation().stop();
+        this.getLookControl().setLookAt(target, 30.0F, 25.0F);
+        this.setDeltaMovement(this.getDeltaMovement().scale(0.8D));
+
+        switch (this.getAttackState()) {
+            case ATTACK_GRAB -> this.tickGrabAttack(target);
+            case ATTACK_SWING_LEFT -> this.tickSwingAttack(false);
+            case ATTACK_SWING_RIGHT -> this.tickSwingAttack(true);
+            case ATTACK_SLAM -> this.tickSlamAttack();
+            default -> this.finishAttack();
+        }
+    }
+
+    private void startAttack(int attackState) {
+        this.setAttackState(attackState);
+        this.grabbedTargetId = -1;
+
+        if (attackState == ATTACK_GRAB) {
+            this.actionTicks = 55;
+            this.playSound(AntarchySoundEvents.KRAKEN_ATTACK.get(), 1.45F, 0.9F);
+        } else if (attackState == ATTACK_SLAM) {
+            this.actionTicks = 40;
+            this.playSound(AntarchySoundEvents.KRAKEN_ATTACK.get(), 1.55F, this.isPhaseTwo() ? 0.78F : 0.84F);
+        } else if (attackState == ATTACK_SWING_LEFT || attackState == ATTACK_SWING_RIGHT) {
+            this.actionTicks = 40;
+            this.playSound(AntarchySoundEvents.KRAKEN_SPIN.get(), 1.3F, 0.95F);
+        }
+    }
+
+    private void tickGrabAttack(LivingEntity target) {
+        if (this.actionTicks == 48 && this.distanceToSqr(target) <= 42.25D) {
+            this.grabbedTargetId = target.getId();
+        }
+
+        LivingEntity grabbedTarget = this.getGrabbedTarget();
+        if (grabbedTarget != null && grabbedTarget.isAlive()) {
+            this.holdGrabbedTarget(grabbedTarget);
+            if (this.actionTicks <= 45 && this.actionTicks > 10 && this.actionTicks % 10 == 0) {
+                if (this.level() instanceof ServerLevel serverLevel) {
+                    grabbedTarget.hurt(AntarchyDamageSources.krakenMauling(serverLevel, this), 4.0F);
+                }
+            }
+        }
+
+        if (--this.actionTicks <= 0) {
+            if (grabbedTarget != null && grabbedTarget.isAlive()) {
+                this.knockAway(grabbedTarget, 2.8D, 4.2D);
+            }
+            this.grabbedTargetId = -1;
+            this.finishAttack();
+        }
+    }
+
+    // swingRight=true means ATTACK_SWING_RIGHT, which knocks players to the Kraken's LEFT
+    private void tickSwingAttack(boolean swingRight) {
+        if (this.actionTicks == 10) {
+            this.performSwing(swingRight);
+        }
+
+        if (--this.actionTicks <= 0) {
+            this.finishAttack();
+        }
+    }
+
+    private void tickSlamAttack() {
+        if (this.actionTicks == 20) {
+            this.performSlam();
+        }
+
+        if (--this.actionTicks <= 0) {
+            this.finishAttack();
+        }
+    }
+
+    private void finishAttack() {
+        int finished = this.getAttackState();
+        this.setAttackState(ATTACK_NONE);
+        this.actionTicks = 0;
+        this.attackCooldown = this.isPhaseTwo() ? 12 : 18;
+        this.grabbedTargetId = -1;
+        this.lastAttackState = finished;
+        this.updateAnimationState();
+    }
+
+    private void tickPursuitMovement(LivingEntity target) {
+        this.patrolTarget = null;
+        if (this.strafeRetargetTicks-- <= 0) {
+            this.strafeRetargetTicks = 10 + this.random.nextInt(12);
+            if (this.random.nextFloat() < 0.4F) {
+                this.orbitDirection *= -1.0F;
+            }
+        }
+
+        Vec3 attackPoint = this.createCombatFlightTarget(target);
+        this.getMoveControl().setWantedPosition(attackPoint.x, attackPoint.y, attackPoint.z, this.isPhaseTwo() ? 1.2D : 1.1D);
+    }
+
+    private void tickPatrolMovement() {
+        if (this.patrolRetargetTicks-- <= 0 || this.patrolTarget == null || this.position().distanceToSqr(this.patrolTarget) < 6.0D) {
+            this.patrolRetargetTicks = 28 + this.random.nextInt(24);
+            this.patrolTarget = this.findPatrolTarget();
+        }
+
+        if (this.patrolTarget != null) {
+            this.getMoveControl().setWantedPosition(this.patrolTarget.x, this.patrolTarget.y, this.patrolTarget.z, 0.45D);
+        }
+    }
+
+    private void resetCombatState() {
+        this.setAttackState(ATTACK_NONE);
+        this.setRoaring(false);
+        this.actionTicks = 0;
+        this.phaseTransitionTicks = 0;
+        this.grabbedTargetId = -1;
+        this.aggroTriggered = false;
+        this.spawnedPhaseMinions = this.isPhaseTwo();
+        this.updateAnimationState();
+    }
+
+    private int chooseNextAttack(LivingEntity target) {
+        double distSqr = this.distanceToSqr(target);
+        boolean canGrab = distSqr <= 64.0D;
+        boolean canSwing = distSqr <= 81.0D;
+        boolean canSlam = distSqr <= 121.0D;
+
+        if (!canGrab && !canSwing && !canSlam) {
+            return ATTACK_NONE;
+        }
+
+        int grabWeight = canGrab ? (this.lastAttackState == ATTACK_GRAB ? 1 : 4) : 0;
+        int swingWeight = canSwing ? (this.isSwingAttack(this.lastAttackState) ? 1 : 5) : 0;
+        int slamWeight = canSlam ? (this.lastAttackState == ATTACK_SLAM ? 1 : 3) : 0;
+        int total = grabWeight + swingWeight + slamWeight;
+        if (total == 0) {
+            return ATTACK_NONE;
+        }
+
+        int roll = this.random.nextInt(total);
+        if (roll < grabWeight) {
+            return ATTACK_GRAB;
+        }
+        roll -= grabWeight;
+        if (roll < slamWeight) {
+            return ATTACK_SLAM;
+        }
+        return this.resolveSwingDirection(target);
+    }
+
+    private boolean isSwingAttack(int attackState) {
+        return attackState == ATTACK_SWING_LEFT || attackState == ATTACK_SWING_RIGHT;
+    }
+
+    private boolean isSlamAttack(int attackState) {
+        return attackState == ATTACK_SLAM;
+    }
+
+    // Determines left vs right based on which side the target is on relative to the Kraken.
+    // Kraken's right vector is forward x world-up. If target is on the Kraken's right side,
+    // use swing_right (which knocks them left). If on the left, use swing_left (knocks them right).
+    private int resolveSwingDirection(LivingEntity target) {
+        Vec3 forward = this.getViewVector(1.0F);
+        Vec3 right = forward.cross(new Vec3(0, 1, 0)).normalize();
+        Vec3 toTarget = target.position().subtract(this.position());
+        return right.dot(toTarget) > 0 ? ATTACK_SWING_RIGHT : ATTACK_SWING_LEFT;
+    }
+
+    private void performSwing(boolean swingRight) {
+        AABB hitBox = this.getBoundingBox().inflate(7.0D, 3.0D, 7.0D);
+        List<Player> players = this.level().getEntitiesOfClass(Player.class, hitBox, LivingEntity::isAlive);
+        float damage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
+
+        Vec3 forward = this.getViewVector(1.0F);
+        // swingRight knocks to Kraken's left (-right), swingLeft knocks to Kraken's right (+right)
+        Vec3 right = forward.cross(new Vec3(0, 1, 0)).normalize();
+        Vec3 knockDir = swingRight ? right.scale(-1) : right;
+
+        for (Player player : players) {
+            if (!(this.level() instanceof ServerLevel serverLevel)) continue;
+            if (!player.hurt(AntarchyDamageSources.krakenMauling(serverLevel, this), damage)) continue;
+            player.push(knockDir.x * 1.75D, 0.4D, knockDir.z * 1.75D);
+            player.hurtMarked = true;
+        }
+
+        if (this.level() instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.SPLASH, this.getX(), this.getY() + 0.8D, this.getZ(), 24, 1.2D, 0.4D, 1.2D, 0.08D);
+        }
+    }
+
+    private void performSlam() {
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        AABB hitBox = this.getBoundingBox().inflate(9.0D, 4.0D, 9.0D);
+        List<Player> players = this.level().getEntitiesOfClass(Player.class, hitBox, LivingEntity::isAlive);
+        float damage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) * 1.4F;
+
+        for (Player player : players) {
+            if (!player.hurt(AntarchyDamageSources.krakenMauling(serverLevel, this), damage)) {
+                continue;
+            }
+            this.knockAway(player, 3.2D, 0.75D);
+        }
+
+        serverLevel.sendParticles(ParticleTypes.SPLASH, this.getX(), this.getY() + 0.8D, this.getZ(), 40, 2.0D, 0.8D, 2.0D, 0.12D);
+        serverLevel.sendParticles(ParticleTypes.BUBBLE, this.getX(), this.getY() + 0.6D, this.getZ(), 30, 1.8D, 0.6D, 1.8D, 0.05D);
+    }
+
+    private void holdGrabbedTarget(LivingEntity target) {
+        Vec3 anchor = this.getGrabAnchorWorldPos();
+        target.setDeltaMovement(anchor.subtract(target.position()).scale(0.35D));
+        target.resetFallDistance();
+        if (target instanceof ServerPlayer serverPlayer) {
+            serverPlayer.connection.teleport(anchor.x, anchor.y, anchor.z, target.getYRot(), target.getXRot());
+        } else {
+            target.moveTo(anchor.x, anchor.y, anchor.z, target.getYRot(), target.getXRot());
+        }
+        target.hurtMarked = true;
+    }
+
+    private Vec3 getGrabAnchorWorldPos() {
+        Vec3 localAnchor = this.getGrabAnchorOffset();
+        Vec3 rotatedAnchor = localToWorldOffset(localAnchor);
+        return this.position().add(rotatedAnchor);
+    }
+
+    private Vec3 getGrabAnchorOffset() {
+        if (this.getAttackState() != ATTACK_GRAB) {
+            return new Vec3(this.getBbWidth() * 0.65D, this.getBbHeight() * 0.28D, 0.0D);
+        }
+
+        double progress = 1.0D - (this.actionTicks / 55.0D);
+        double forward = Mth.lerp(progress, this.getBbWidth() * 0.45D, GRAB_ANCHOR_LOCAL.z);
+        double vertical = Mth.lerp(progress, this.getBbHeight() * 0.18D, GRAB_ANCHOR_LOCAL.y);
+        double lateral = Mth.lerp(progress, this.getBbWidth() * 0.18D, GRAB_ANCHOR_LOCAL.x);
+        return new Vec3(lateral, vertical, forward);
+    }
+
+    private Vec3 localToWorldOffset(Vec3 localOffset) {
+        float bodyYawRadians = this.yBodyRot * Mth.DEG_TO_RAD;
+        double cos = Math.cos(bodyYawRadians);
+        double sin = Math.sin(bodyYawRadians);
+        double worldX = localOffset.x * cos - localOffset.z * sin;
+        double worldZ = localOffset.z * cos + localOffset.x * sin;
+        return new Vec3(worldX, localOffset.y, worldZ);
+    }
+
+    private void knockAway(LivingEntity target, double horizontalStrength, double verticalStrength) {
+        Vec3 direction = target.position().subtract(this.position());
+        Vec3 horizontal = new Vec3(direction.x, 0.0D, direction.z);
+        if (horizontal.lengthSqr() < 1.0E-4D) {
+            horizontal = this.getViewVector(1.0F).multiply(1.0D, 0.0D, 1.0D);
+        }
+        if (horizontal.lengthSqr() < 1.0E-4D) {
+            horizontal = new Vec3(1.0D, 0.0D, 0.0D);
+        }
+
+        horizontal = horizontal.normalize().scale(horizontalStrength);
+        target.push(horizontal.x, verticalStrength, horizontal.z);
+        target.hurtMarked = true;
+    }
+
+    @Nullable
+    private LivingEntity getGrabbedTarget() {
+        if (this.grabbedTargetId < 0) {
+            return null;
+        }
+
+        Entity entity = this.level().getEntity(this.grabbedTargetId);
+        return entity instanceof LivingEntity livingEntity ? livingEntity : null;
+    }
+
+    private void tickPhaseTwoPressure(LivingEntity target) {
+        if (!this.isPhaseTwo() || this.phaseSummonCooldown > 0) {
+            return;
+        }
+        if (this.countNearbyMinions() >= 12) {
+            this.phaseSummonCooldown = 40;
+            return;
+        }
+        this.spawnMinions(1 + this.random.nextInt(2), target);
+        this.phaseSummonCooldown = 90 + this.random.nextInt(50);
+    }
+
+    private int countNearbyMinions() {
+        net.minecraft.world.phys.AABB range = this.getBoundingBox().inflate(28.0D);
+        return this.level().getEntitiesOfClass(OctopusBombEntity.class, range, OctopusBombEntity::isAlive).size()
+                + this.level().getEntitiesOfClass(MissileSquidEntity.class, range, MissileSquidEntity::isAlive).size();
+    }
+
+    private void spawnMinions(int desiredCount, @Nullable LivingEntity currentTarget) {
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        int spawned = 0;
+
+        for (int attempt = 0; attempt < desiredCount * 4 && spawned < desiredCount; attempt++) {
+            Vec3 spawnPos = this.findBombSpawnPos(currentTarget);
+            boolean spawnBomb = this.random.nextBoolean();
+
+            if (spawnBomb) {
+                OctopusBombEntity bomb = AntarchyObjects.OCTOPUS_BOMB.get().create(serverLevel);
+                if (bomb == null) continue;
+                bomb.moveTo(spawnPos.x, spawnPos.y, spawnPos.z, this.getYRot(), 0.0F);
+                serverLevel.addFreshEntity(bomb);
+                bomb.launchAsProjectile(this, this.createBombLaunchVelocity(spawnPos, currentTarget));
+                serverLevel.sendParticles(ParticleTypes.BUBBLE, bomb.getX(), bomb.getY() + 0.4D, bomb.getZ(), 14, 0.3D, 0.25D, 0.3D, 0.03D);
+            } else {
+                MissileSquidEntity squid = AntarchyObjects.MISSILE_SQUID.get().create(serverLevel);
+                if (squid == null) continue;
+                squid.moveTo(spawnPos.x, spawnPos.y, spawnPos.z, this.getYRot(), 0.0F);
+                serverLevel.addFreshEntity(squid);
+                serverLevel.sendParticles(ParticleTypes.BUBBLE, squid.getX(), squid.getY() + 0.4D, squid.getZ(), 14, 0.3D, 0.25D, 0.3D, 0.03D);
+            }
+            spawned++;
+        }
+
+        if (spawned > 0) {
+            this.playSound(AntarchySoundEvents.KRAKEN_ROAR.get(), 1.8F, this.isPhaseTwo() ? 0.74F : 0.82F);
+        }
+    }
+
+    private Vec3 findBombSpawnPos(@Nullable LivingEntity currentTarget) {
+        Vec3 anchor = currentTarget != null ? currentTarget.position() : this.position();
+        for (int attempt = 0; attempt < 18; attempt++) {
+            double angle = this.random.nextDouble() * Mth.TWO_PI;
+            double radius = 7.0D + this.random.nextDouble() * 8.0D;
+            double height = 4.0D + this.random.nextDouble() * (this.isPhaseTwo() ? 6.0D : 4.0D);
+            BlockPos candidate = BlockPos.containing(
+                    anchor.x + Math.cos(angle) * radius,
+                    anchor.y + height,
+                    anchor.z + Math.sin(angle) * radius
+            );
+            if (this.isOpenFlightSpace(candidate)) {
+                return Vec3.atCenterOf(candidate);
+            }
+        }
+
+        return this.position().add(0.0D, this.getBbHeight() * 0.6D, 0.0D);
+    }
+
+    private Vec3 createBombLaunchVelocity(Vec3 spawnPos, @Nullable LivingEntity currentTarget) {
+        Vec3 aimPoint = currentTarget != null
+                ? currentTarget.getEyePosition()
+                : this.position().add(this.getViewVector(1.0F).scale(10.0D));
+        Vec3 direction = aimPoint.subtract(spawnPos);
+        if (direction.lengthSqr() < 1.0E-4D) {
+            direction = this.getViewVector(1.0F);
+        }
+
+        Vec3 spread = new Vec3(
+                (this.random.nextDouble() - 0.5D) * 0.18D,
+                (this.random.nextDouble() - 0.5D) * 0.12D,
+                (this.random.nextDouble() - 0.5D) * 0.18D
+        );
+        return direction.normalize().scale(this.isPhaseTwo() ? 1.45D : 1.2D).add(spread);
+    }
+
+    private boolean isOpenFlightSpace(BlockPos candidate) {
+        return (this.level().isEmptyBlock(candidate) || this.level().getFluidState(candidate).is(FluidTags.WATER))
+                && (this.level().isEmptyBlock(candidate.above()) || this.level().getFluidState(candidate.above()).is(FluidTags.WATER));
+    }
+
+    private Vec3 findPatrolTarget() {
+        BlockPos origin = this.blockPosition();
+        for (int attempt = 0; attempt < 20; attempt++) {
+            BlockPos candidate = origin.offset(
+                    this.random.nextInt(29) - 14,
+                    this.random.nextInt(9) - 4,
+                    this.random.nextInt(29) - 14
+            );
+            if (!this.level().isEmptyBlock(candidate) && !this.level().getFluidState(candidate).is(FluidTags.WATER)) {
+                continue;
+            }
+            if (!this.level().isEmptyBlock(candidate.above()) && !this.level().getFluidState(candidate.above()).is(FluidTags.WATER)) {
+                continue;
+            }
+
+            double clampedY = Mth.clamp(candidate.getY() + 0.5D, this.getY() - 5.0D, this.getY() + 5.0D);
+            return new Vec3(candidate.getX() + 0.5D, clampedY, candidate.getZ() + 0.5D);
+        }
+
+        return this.position().add(0.0D, 1.5D, 0.0D);
+    }
+
+    private Vec3 createCombatFlightTarget(LivingEntity target) {
+        double radius = this.isPhaseTwo() ? 7.0D : 9.0D;
+        double angle = this.tickCount * 0.16D * this.orbitDirection + this.getId() * 0.11D;
+        double x = target.getX() + Math.cos(angle) * radius;
+        double z = target.getZ() + Math.sin(angle) * radius;
+        double y = Mth.clamp(
+                target.getY() + 2.0D + Math.sin((this.tickCount + this.getId()) * 0.18D) * 1.0D,
+                target.getY() - 2.0D,
+                target.getY() + 5.0D
+        );
+        return this.findNearestFlightTarget(new Vec3(x, y, z));
+    }
+
+    private Vec3 findNearestFlightTarget(Vec3 desired) {
+        BlockPos desiredPos = BlockPos.containing(desired);
+        for (int attempt = 0; attempt < 16; attempt++) {
+            BlockPos candidate = desiredPos.offset(
+                    this.random.nextInt(7) - 3,
+                    this.random.nextInt(5) - 2,
+                    this.random.nextInt(7) - 3
+            );
+            if (!this.level().isEmptyBlock(candidate) && !this.level().getFluidState(candidate).is(FluidTags.WATER)) {
+                continue;
+            }
+            if (!this.level().isEmptyBlock(candidate.above()) && !this.level().getFluidState(candidate.above()).is(FluidTags.WATER)) {
+                continue;
+            }
+            return Vec3.atCenterOf(candidate);
+        }
+
+        boolean desiredOpen = this.level().isEmptyBlock(desiredPos) || this.level().getFluidState(desiredPos).is(FluidTags.WATER);
+        boolean desiredOpenAbove = this.level().isEmptyBlock(desiredPos.above()) || this.level().getFluidState(desiredPos.above()).is(FluidTags.WATER);
+        return desiredOpen && desiredOpenAbove ? desired : this.position().add(0.0D, 1.5D, 0.0D);
+    }
+
+    private void tickLightning() {
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        if (this.stormActive && --this.lightningAmbientCooldown <= 0) {
+            this.lightningAmbientCooldown = this.isPhaseTwo() ? 35 + this.random.nextInt(35) : 80 + this.random.nextInt(80);
+            int ambientBolts = this.isPhaseTwo() ? 4 : 2;
+            for (int i = 0; i < ambientBolts; i++) {
+                this.spawnVisualLightning(serverLevel, this.getRandomStormStrikePos(serverLevel));
+            }
+        }
+
+        LivingEntity target = this.getTarget();
+        if (target != null && target.isAlive()) {
+            if (--this.lightningStrikeCooldown <= 0) {
+                this.lightningStrikeCooldown = this.isPhaseTwo() ? 26 + this.random.nextInt(20) : 60 + this.random.nextInt(80);
+                int strikeBolts = this.isPhaseTwo() ? 2 : 1;
+                for (int i = 0; i < strikeBolts; i++) {
+                    this.spawnVisualLightning(serverLevel, this.getTargetStormStrikePos(target));
+                }
+                target.hurt(AntarchyDamageSources.krakenLightning(serverLevel, this), this.isPhaseTwo() ? 12.0F : 8.0F);
+            }
+        } else {
+            this.lightningStrikeCooldown = this.isPhaseTwo() ? 30 : 60;
+        }
+    }
+
+    private void setKrakenStormActive(boolean active) {
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        if (active) {
+            this.stormActive = true;
+            serverLevel.setWeatherParameters(0, 200, true, true);
+            return;
+        }
+
+        if (this.stormActive) {
+            this.stormActive = false;
+            serverLevel.setWeatherParameters(6000, 0, false, false);
+        }
+    }
+
+    private void clearKrakenStorm() {
+        this.setKrakenStormActive(false);
+    }
+
+    private void updateBossBarPlayers() {
+        if (this.tickCount % 20 != 0) {
+            return;
+        }
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        double bossBarRange = this.getBossBarRange();
+        AABB bossBarArea = this.getBoundingBox().inflate(bossBarRange, 192.0D, bossBarRange);
+        List<ServerPlayer> nearbyPlayers = serverLevel.getEntitiesOfClass(
+                ServerPlayer.class,
+                bossBarArea,
+                player -> player.isAlive() && this.isWithinBossBarRange(player)
+        );
+
+        for (ServerPlayer player : List.copyOf(this.bossEvent.getPlayers())) {
+            if (!nearbyPlayers.contains(player)) {
+                this.bossEvent.removePlayer(player);
+            }
+        }
+
+        for (ServerPlayer player : nearbyPlayers) {
+            if (!this.bossEvent.getPlayers().contains(player)) {
+                this.bossEvent.addPlayer(player);
+            }
+        }
+
+        this.setKrakenStormActive(!nearbyPlayers.isEmpty());
+    }
+
+    private double getBossBarRange() {
+        return Math.max(40.0D, com.craisinlord.antarchy.config.AntarchySettings.krakenBossBarRange());
+    }
+
+    private boolean isWithinBossBarRange(Entity entity) {
+        double bossBarRange = this.getBossBarRange();
+        return this.horizontalDistanceToSqr(entity) <= bossBarRange * bossBarRange;
+    }
+
+    private double horizontalDistanceToSqr(Entity entity) {
+        double dx = this.getX() - entity.getX();
+        double dz = this.getZ() - entity.getZ();
+        return dx * dx + dz * dz;
+    }
+
+    private void applyPhaseTwoBuffs() {
+        AttributeInstance movementSpeed = this.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (movementSpeed != null && !(movementSpeed.getModifier(PHASE_TWO_SPEED_ID) != null)) {
+            movementSpeed.addPermanentModifier(PHASE_TWO_SPEED);
+        }
+
+        AttributeInstance flyingSpeed = this.getAttribute(Attributes.FLYING_SPEED);
+        if (flyingSpeed != null && !(flyingSpeed.getModifier(PHASE_TWO_FLYING_SPEED_ID) != null)) {
+            flyingSpeed.addPermanentModifier(PHASE_TWO_FLYING_SPEED);
+        }
+
+        AttributeInstance attackDamage = this.getAttribute(Attributes.ATTACK_DAMAGE);
+        if (attackDamage != null && !(attackDamage.getModifier(PHASE_TWO_DAMAGE_ID) != null)) {
+            attackDamage.addPermanentModifier(PHASE_TWO_DAMAGE);
+        }
+    }
+
+    private Vec3 getRandomStormStrikePos(ServerLevel serverLevel) {
+        double lx = this.getX() + (this.random.nextDouble() - 0.5D) * 56.0D;
+        double lz = this.getZ() + (this.random.nextDouble() - 0.5D) * 56.0D;
+        int ly = serverLevel.getHeight(Heightmap.Types.MOTION_BLOCKING, Mth.floor(lx), Mth.floor(lz));
+        return new Vec3(lx, ly, lz);
+    }
+
+    private Vec3 getTargetStormStrikePos(LivingEntity target) {
+        double spread = this.isPhaseTwo() ? 4.0D : 1.5D;
+        return new Vec3(
+                target.getX() + (this.random.nextDouble() - 0.5D) * spread,
+                target.getY(),
+                target.getZ() + (this.random.nextDouble() - 0.5D) * spread
+        );
+    }
+
+    private void spawnVisualLightning(ServerLevel serverLevel, Vec3 strikePos) {
+        LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(serverLevel);
+        if (bolt == null) {
+            return;
+        }
+
+        bolt.moveTo(strikePos.x, strikePos.y, strikePos.z);
+        bolt.setVisualOnly(true);
+        serverLevel.addFreshEntity(bolt);
+    }
+
+    private void tickClientParticles() {
+        if (this.isRoaring() || this.phaseTransitionTicks > 0 || this.getAttackState() != ATTACK_NONE) {
+            if (this.tickCount % 3 == 0) {
+                this.level().addParticle(
+                        ParticleTypes.BUBBLE,
+                        this.getX() + (this.random.nextDouble() - 0.5D) * this.getBbWidth(),
+                        this.getY() + 0.8D + this.random.nextDouble() * 0.6D,
+                        this.getZ() + (this.random.nextDouble() - 0.5D) * this.getBbWidth(),
+                        0.0D,
+                        0.02D,
+                        0.0D
+                );
+            }
+        }
+    }
+
+    private void updateSwimRotation() {
+        Vec3 velocity = this.getDeltaMovement();
+        if (velocity.horizontalDistanceSqr() > 1.0E-4D) {
+            float targetYaw = (float) (Mth.atan2(velocity.z, velocity.x) * (180.0D / Math.PI)) - 90.0F;
+            this.setYRot(Mth.approachDegrees(this.getYRot(), targetYaw, 6.0F));
+            this.yBodyRot = this.getYRot();
+            this.yHeadRot = this.getYRot();
+        }
+
+        if (velocity.lengthSqr() > 1.0E-4D) {
+            float targetPitch = (float) (-(Mth.atan2(velocity.y, velocity.horizontalDistance()) * (180.0D / Math.PI)));
+            this.setXRot(Mth.approachDegrees(this.getXRot(), targetPitch, 4.0F));
+        }
+    }
+
+    @Override
+    public void die(DamageSource damageSource) {
+        if (!this.level().isClientSide) {
+            this.setAnimationState(ANIM_DEATH);
+            this.actionTicks = 0;
+            this.attackCooldown = 0;
+            this.phaseTransitionTicks = 0;
+            this.setAttackState(ATTACK_NONE);
+            this.setRoaring(false);
+            this.setDeltaMovement(Vec3.ZERO);
+            this.getNavigation().stop();
+        }
+        super.die(damageSource);
+    }
+
+    @Override
+    protected void tickDeath() {
+        this.deathTime++;
+
+        if (this.deathTime == 1) {
+            this.setAnimationState(ANIM_DEATH);
+        }
+
+        if (this.deathTime >= DEATH_ANIM_TICKS) {
+            this.remove(RemovalReason.KILLED);
+            this.dropExperience();
+        }
+    }
+
+    private void updateAnimationState() {
+        if (this.isDeadOrDying()) {
+            this.setAnimationState(ANIM_DEATH);
+            return;
+        }
+
+        if (this.isRoaring()) {
+            this.setAnimationState(ANIM_CRY);
+            return;
+        }
+
+        if (this.phaseTransitionTicks > 0) {
+            this.setAnimationState(ANIM_NONE);
+            return;
+        }
+
+        switch (this.getAttackState()) {
+            case ATTACK_GRAB -> {
+                this.setAnimationState(ANIM_GRAB);
+                return;
+            }
+            case ATTACK_SWING_LEFT -> {
+                this.setAnimationState(ANIM_SWING_LEFT);
+                return;
+            }
+            case ATTACK_SWING_RIGHT -> {
+                this.setAnimationState(ANIM_SWING_RIGHT);
+                return;
+            }
+            case ATTACK_SLAM -> {
+                this.setAnimationState(ANIM_SLAM);
+                return;
+            }
+            default -> {
+            }
+        }
+
+        this.setAnimationState(ANIM_NONE);
+    }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "group": "stone_button",
+  "ingredients": [
+    {
+      "item": "antarchy:polished_nyxite"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "item": "antarchy:polished_nyxite_button"
+  }
+}

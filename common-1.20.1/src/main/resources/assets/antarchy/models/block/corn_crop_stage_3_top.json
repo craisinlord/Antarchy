@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "antarchy:block/corn/corn_crop_stage_3_top"
+  }
+}

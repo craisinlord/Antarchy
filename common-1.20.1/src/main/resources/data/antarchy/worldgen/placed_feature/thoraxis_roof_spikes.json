@@ -1,0 +1,27 @@
+{
+  "feature": "antarchy:thoraxis_stalactite",
+  "placement": [
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 120
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "min_inclusive": {
+          "absolute": 176
+        },
+        "max_inclusive": {
+          "absolute": 240
+        }
+      }
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

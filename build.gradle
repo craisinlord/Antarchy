@@ -12,6 +12,7 @@ allprojects {
     repositories {
         maven { url "https://maven.fabricmc.net/" }
         maven { url "https://maven.neoforged.net/releases" }
+        maven { url "https://maven.architectury.dev/" }
         mavenCentral()
         maven { url = 'https://maven.quiltmc.org/repository/release' }
         maven {

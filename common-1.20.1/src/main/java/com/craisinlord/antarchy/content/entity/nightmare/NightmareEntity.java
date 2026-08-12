@@ -1,0 +1,857 @@
+package com.craisinlord.antarchy.content.entity.nightmare;
+
+import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.FlyingMoveControl;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
+
+import java.util.EnumSet;
+import java.util.List;
+
+public class NightmareEntity extends Monster implements GeoEntity {
+
+    private static final EntityDataAccessor<Integer> ANIMATION_STATE = SynchedEntityData.defineId(NightmareEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> ROARING = SynchedEntityData.defineId(NightmareEntity.class, EntityDataSerializers.BOOLEAN);
+
+    private static final String ATTACK_COOLDOWN_KEY = "AttackCooldown";
+    private static final String ATTACK_ANIMATION_TICKS_KEY = "AttackAnimationTicks";
+    private static final String ATTACK_HIT_APPLIED_KEY = "AttackHitApplied";
+    private static final String ROAR_TICKS_KEY = "RoarTicks";
+    private static final String ROAR_COOLDOWN_KEY = "RoarCooldown";
+    private static final String INTRO_ROAR_USED_KEY = "IntroRoarUsed";
+    private static final String TARGETLESS_TICKS_KEY = "TargetlessTicks";
+    private static final String ANIMATION_STATE_KEY = "AnimationState";
+
+    private static final int ANIM_IDLE = 0;
+    private static final int ANIM_WALK = 1;
+    private static final int ANIM_FLY = 2;
+    private static final int ANIM_ATTACK = 3;
+    private static final int ANIM_FLY_ATTACK = 4;
+    private static final int ANIM_ROAR = 5;
+    private static final int ATTACK_TOTAL_TICKS = 20;
+    private static final int ATTACK_DAMAGE_TICK = 10;
+    private static final int INTRO_ROAR_TICKS = 30;
+    private static final int COMBAT_ROAR_TICKS = 30;
+    private static final int DEATH_TICKS = 30;
+    private static final int TARGET_RESET_TICKS = 60;
+    private static final int MIN_AIRBORNE_TICKS_FOR_FLY_ANIM = 4;
+    private static final int DREAD_TICKS = 160;
+    private static final int WEAKNESS_TICKS = 100;
+    private static final int BLOCK_BREAK_TICKS = 10;
+    private static final int FLIGHT_CEILING_CLEARANCE_BLOCKS = 4;
+
+    private static final double PATROL_SPEED = 0.34D;
+    private static final double COMBAT_FLIGHT_SPEED = 0.725D;
+    private static final double GROUND_APPROACH_SPEED = 0.82D;
+    private static final double ATTACK_START_RANGE_SQR = 42.25D;
+    private static final double ATTACK_REACH_RADIUS = 2.65D;
+    private static final double ATTACK_COMMIT_HORIZONTAL_RANGE = 4.2D;
+    private static final double FLIGHT_ENGAGE_RANGE_SQR = 100.0D;
+    private static final double FLIGHT_DISENGAGE_RANGE_SQR = 36.0D;
+    private static final double ROAR_RETRY_DISTANCE_SQR = 400.0D;
+
+    private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
+    private static final RawAnimation FLY_ANIM = RawAnimation.begin().thenLoop("fly");
+    private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenPlay("attack").thenLoop("idle");
+    private static final RawAnimation FLY_ATTACK_ANIM = RawAnimation.begin().thenPlay("attack2").thenLoop("fly");
+    private static final RawAnimation ROAR_ANIM = RawAnimation.begin().thenPlay("roar").thenLoop("idle");
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+
+    private int attackCooldown;
+    private int attackAnimationTicks;
+    private int roarTicks;
+    private int roarCooldown;
+    private int targetlessTicks;
+    private int airborneTicks;
+    private int landingCooldown;
+    private int groundMoveTicks;
+    private int wingFlapCooldown;
+    private int blockBreakCooldown;
+    private boolean attackHitApplied;
+    private boolean introRoarUsed;
+    private boolean flyingToTarget;
+
+    public NightmareEntity(EntityType<? extends NightmareEntity> entityType, Level level) {
+        super(entityType, level);
+        this.moveControl = new FlyingMoveControl(this, 12, true);
+        this.xpReward = 25;
+    }
+
+    public static AttributeSupplier.Builder createAttributes() {
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, AntarchySettings.nightmareHealth())
+                .add(Attributes.ATTACK_DAMAGE, AntarchySettings.nightmareAttackDamage())
+                .add(Attributes.MOVEMENT_SPEED, AntarchySettings.nightmareMovementSpeed())
+                .add(Attributes.FLYING_SPEED, 0.375D)
+                .add(Attributes.FOLLOW_RANGE, 48.0D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.75D)
+                .add(Attributes.ARMOR, 8.0D);
+    }
+
+    public static boolean canSpawn(EntityType<NightmareEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+        boolean sturdy = level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP);
+        boolean posEmpty = level.isEmptyBlock(pos);
+        boolean aboveEmpty = level.isEmptyBlock(pos.above());
+        return level.getDifficulty() != Difficulty.PEACEFUL && sturdy && posEmpty && aboveEmpty;
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(ANIMATION_STATE, ANIM_IDLE);
+        this.entityData.define(ROARING, false);
+    }
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(1, new NightmareRoarGoal());
+        this.goalSelector.addGoal(2, new NightmareFlyToTargetGoal());
+        this.goalSelector.addGoal(3, new NightmareMeleeGoal());
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 16.0F));
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(7, new NightmareWanderGoal());
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers());
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::canTargetEntity));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Mob.class, 10, true, false, this::canTargetEntity));
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "main_controller", 0, this::mainAnimController));
+    }
+
+    private PlayState mainAnimController(AnimationState<NightmareEntity> state) {
+        int animState = this.getAnimationState();
+        state.getController().setAnimationSpeed(switch (animState) {
+            case ANIM_FLY -> 0.45D;
+            default -> 1.0D;
+        });
+        return switch (animState) {
+            case ANIM_WALK -> state.setAndContinue(WALK_ANIM);
+            case ANIM_FLY -> state.setAndContinue(FLY_ANIM);
+            case ANIM_ATTACK -> state.setAndContinue(ATTACK_ANIM);
+            case ANIM_FLY_ATTACK -> state.setAndContinue(FLY_ATTACK_ANIM);
+            case ANIM_ROAR -> state.setAndContinue(ROAR_ANIM);
+            default -> state.setAndContinue(IDLE_ANIM);
+        };
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    @Override
+    protected PathNavigation createNavigation(Level level) {
+        FlyingPathNavigation navigation = new FlyingPathNavigation(this, level);
+        navigation.setCanOpenDoors(false);
+        navigation.setCanFloat(true);
+        navigation.setCanPassDoors(true);
+        return navigation;
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (this.level().isClientSide) {
+            this.tickClientParticles();
+            this.updateFlightRotation();
+            if (this.isRoaring()) {
+                com.craisinlord.antarchy.content.client.CameraShakeClientState.register(
+                        this,
+                        com.craisinlord.antarchy.content.client.CameraShakeClientState.NIGHTMARE_RANGE,
+                        com.craisinlord.antarchy.content.client.CameraShakeClientState.NIGHTMARE_STRENGTH,
+                        this::isRoaring
+                );
+            }
+            return;
+        }
+
+        this.setNoGravity(this.flyingToTarget && !this.isTooCloseToCeiling());
+
+        int prevAirborneTicks = this.airborneTicks;
+        this.airborneTicks = this.onGround() ? 0 : this.airborneTicks + 1;
+        if (this.onGround() && prevAirborneTicks > 5) {
+            this.landingCooldown = 100;
+        }
+
+        if (this.attackCooldown > 0) this.attackCooldown--;
+        if (this.roarCooldown > 0) this.roarCooldown--;
+        if (this.blockBreakCooldown > 0) this.blockBreakCooldown--;
+        if (this.landingCooldown > 0) this.landingCooldown--;
+
+        LivingEntity target = this.getTarget();
+        if (!this.canTargetEntity(target)) {
+            this.setTarget(null);
+            target = null;
+        }
+
+        if (target == null) {
+            this.targetlessTicks++;
+            if (this.targetlessTicks >= TARGET_RESET_TICKS) {
+                this.introRoarUsed = false;
+            }
+        } else {
+            this.targetlessTicks = 0;
+            this.getLookControl().setLookAt(target, 35.0F, 20.0F);
+        }
+
+        if (this.isDeadOrDying()) {
+            this.updateFlightRotation();
+            return;
+        }
+
+        if (this.attackAnimationTicks > 0) {
+            this.tickAttack(target);
+        }
+
+        this.updateAnimationState();
+        this.updateFlightRotation();
+    }
+
+    @Override
+    public void travel(Vec3 travelVector) {
+        if (this.isEffectiveAi() && this.isNoGravity()) {
+            this.moveRelative(this.getSpeed(), travelVector);
+            this.move(MoverType.SELF, this.getDeltaMovement());
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.91D));
+            return;
+        }
+        super.travel(travelVector);
+    }
+
+    @Override
+    public boolean doHurtTarget(Entity target) {
+        if (!(target instanceof LivingEntity livingTarget)) return false;
+        boolean hurt = this.level() instanceof ServerLevel serverLevel
+                ? livingTarget.hurt(AntarchyDamageSources.nightmareMauling(serverLevel, this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE))
+                : super.doHurtTarget(target);
+        if (hurt) {
+            this.playNightmareBiteSound();
+            this.applyNightmareStrikeEffects(livingTarget);
+        }
+        return hurt;
+    }
+
+    @Override
+    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) {
+        return false;
+    }
+
+    @Override
+    public boolean fireImmune() {
+        return true;
+    }
+
+    @Override
+    public void lavaHurt() {
+    }
+
+    @Override
+    public boolean isInvulnerableTo(DamageSource source) {
+        return source.is(net.minecraft.world.damagesource.DamageTypes.DROWN) || super.isInvulnerableTo(source);
+    }
+
+    @Override
+    public boolean canBeAffected(MobEffectInstance effectInstance) {
+        if (effectInstance.getEffect() == MobEffects.WITHER) {
+            return false;
+        }
+        return super.canBeAffected(effectInstance);
+    }
+
+    @Override
+    protected void checkFallDamage(double y, boolean onGround, net.minecraft.world.level.block.state.BlockState state, BlockPos pos) {
+    }
+
+    @Override
+    public boolean canAttack(LivingEntity target) {
+        return this.canTargetEntity(target) && super.canAttack(target);
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return false;
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return AntarchySoundEvents.NIGHTMARE_IDLE.get();
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return AntarchySoundEvents.NIGHTMARE_DEATH.get();
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 1.25F;
+    }
+
+    @Override
+    public float getVoicePitch() {
+        return 0.75F + this.random.nextFloat() * 0.1F;
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt(ATTACK_COOLDOWN_KEY, this.attackCooldown);
+        tag.putInt(ATTACK_ANIMATION_TICKS_KEY, this.attackAnimationTicks);
+        tag.putBoolean(ATTACK_HIT_APPLIED_KEY, this.attackHitApplied);
+        tag.putInt(ROAR_TICKS_KEY, this.roarTicks);
+        tag.putInt(ROAR_COOLDOWN_KEY, this.roarCooldown);
+        tag.putBoolean(INTRO_ROAR_USED_KEY, this.introRoarUsed);
+        tag.putInt(TARGETLESS_TICKS_KEY, this.targetlessTicks);
+        tag.putInt("AirborneTicks", this.airborneTicks);
+        tag.putBoolean("Roaring", this.isRoaring());
+        tag.putInt(ANIMATION_STATE_KEY, this.getAnimationState());
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.attackCooldown = tag.getInt(ATTACK_COOLDOWN_KEY);
+        this.attackAnimationTicks = tag.getInt(ATTACK_ANIMATION_TICKS_KEY);
+        this.attackHitApplied = tag.getBoolean(ATTACK_HIT_APPLIED_KEY);
+        this.roarTicks = tag.getInt(ROAR_TICKS_KEY);
+        this.roarCooldown = tag.getInt(ROAR_COOLDOWN_KEY);
+        this.introRoarUsed = tag.getBoolean(INTRO_ROAR_USED_KEY);
+        this.targetlessTicks = tag.getInt(TARGETLESS_TICKS_KEY);
+        this.airborneTicks = tag.getInt("AirborneTicks");
+        this.entityData.set(ROARING, tag.getBoolean("Roaring"));
+        this.entityData.set(ANIMATION_STATE, tag.contains(ANIMATION_STATE_KEY) ? tag.getInt(ANIMATION_STATE_KEY) : ANIM_IDLE);
+    }
+
+    @Override
+    public void die(DamageSource damageSource) {
+        if (!this.level().isClientSide) {
+            this.attackAnimationTicks = 0;
+            this.attackCooldown = 0;
+            this.roarTicks = 0;
+            this.setRoaring(false);
+            this.setDeltaMovement(Vec3.ZERO);
+            this.getNavigation().stop();
+        }
+        super.die(damageSource);
+    }
+
+    @Override
+    protected void tickDeath() {
+        this.deathTime++;
+        if (this.deathTime >= DEATH_TICKS) {
+            this.remove(RemovalReason.KILLED);
+            this.dropExperience();
+        }
+    }
+
+    public boolean isRoaring() {
+        return this.entityData.get(ROARING);
+    }
+
+    public int getAnimationState() {
+        return this.entityData.get(ANIMATION_STATE);
+    }
+
+    private void setRoaring(boolean roaring) {
+        this.entityData.set(ROARING, roaring);
+    }
+
+    private void setAnimationState(int animationState) {
+        if (this.entityData.get(ANIMATION_STATE) != animationState) {
+            this.entityData.set(ANIMATION_STATE, animationState);
+        }
+    }
+
+    private boolean shouldStartRoar(LivingEntity target) {
+        if (!this.onGround() || this.roarCooldown > 0 || !this.hasLineOfSight(target)) return false;
+        double distanceSqr = this.distanceToSqr(target);
+        if (distanceSqr > ROAR_RETRY_DISTANCE_SQR || !this.isInFront(target.position(), -0.1D)) return false;
+        boolean pressureWindow = distanceSqr > ATTACK_START_RANGE_SQR;
+        boolean wounded = this.getHealth() <= this.getMaxHealth() * 0.5F;
+        return pressureWindow || wounded;
+    }
+
+    private void startRoar() {
+        this.roarTicks = this.introRoarUsed ? COMBAT_ROAR_TICKS : INTRO_ROAR_TICKS;
+        this.introRoarUsed = true;
+        this.roarCooldown = 240 + this.random.nextInt(140);
+        this.attackAnimationTicks = 0;
+        this.attackHitApplied = false;
+        this.setRoaring(true);
+        this.getNavigation().stop();
+        this.setDeltaMovement(this.getDeltaMovement().scale(0.18D));
+        this.playSound(AntarchySoundEvents.NIGHTMARE_ROAR.get(), 2.2F, 0.7F + this.random.nextFloat() * 0.06F);
+        if (this.level() instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, this.getX(), this.getY() + 2.0D, this.getZ(), 20, 1.1D, 0.8D, 1.1D, 0.02D);
+            serverLevel.sendParticles(ParticleTypes.SMOKE, this.getX(), this.getY() + 2.0D, this.getZ(), 12, 0.9D, 0.6D, 0.9D, 0.02D);
+        }
+    }
+
+    private void tickRoar(@Nullable LivingEntity target) {
+        this.getNavigation().stop();
+        this.getMoveControl().setWantedPosition(this.getX(), this.getY(), this.getZ(), 0.0D);
+        this.setDeltaMovement(this.getDeltaMovement().scale(0.6D));
+        if (target != null) {
+            this.getLookControl().setLookAt(target, 35.0F, 20.0F);
+            this.faceTowardTarget(target, 14.0F);
+        }
+        if (--this.roarTicks <= 0) {
+            this.roarTicks = 0;
+            this.setRoaring(false);
+            this.attackCooldown = Math.max(this.attackCooldown, 18);
+        }
+    }
+
+    private void startAttack(LivingEntity target) {
+        this.attackAnimationTicks = ATTACK_TOTAL_TICKS;
+        this.attackHitApplied = false;
+        this.attackCooldown = ATTACK_TOTAL_TICKS + 12;
+        this.getNavigation().stop();
+        Vec3 lunge = target.getEyePosition().subtract(this.getEyePosition());
+        if (lunge.lengthSqr() > 1.0E-4D) {
+            Vec3 normalized = lunge.normalize();
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.3D).add(normalized.x * 0.85D, normalized.y * 0.18D, normalized.z * 0.85D));
+            this.hasImpulse = true;
+        }
+    }
+
+    private void tickAttack(@Nullable LivingEntity target) {
+        this.getNavigation().stop();
+        this.setDeltaMovement(this.getDeltaMovement().scale(0.93D));
+        if (target != null) {
+            this.getLookControl().setLookAt(target, 35.0F, 20.0F);
+            this.faceTowardTarget(target, 20.0F);
+        }
+        int elapsed = ATTACK_TOTAL_TICKS - this.attackAnimationTicks;
+        if (!this.attackHitApplied && elapsed >= ATTACK_DAMAGE_TICK) {
+            this.attackHitApplied = true;
+            this.playNightmareBiteSound();
+            this.performAttackHit();
+        }
+        if (--this.attackAnimationTicks <= 0) {
+            this.attackAnimationTicks = 0;
+        }
+    }
+
+    private void performAttackHit() {
+        AABB hitBox = this.getBoundingBox()
+                .inflate(ATTACK_REACH_RADIUS, 1.5D, ATTACK_REACH_RADIUS)
+                .expandTowards(this.getViewVector(1.0F).scale(1.9D));
+        List<LivingEntity> victims = this.level().getEntitiesOfClass(LivingEntity.class, hitBox, this::canTargetEntity);
+        float damage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
+        for (LivingEntity victim : victims) {
+            if (!this.isInFront(victim.position(), -0.25D)) continue;
+            if (victim.hurt(this.nightmareDamageSource(), damage)) {
+                this.applyNightmareStrikeEffects(victim);
+                this.knockAway(victim, 1.15D, 0.3D);
+            }
+        }
+        if (this.level() instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, this.getX(), this.getY() + 1.6D, this.getZ(), 12, 0.9D, 0.35D, 0.9D, 0.02D);
+            serverLevel.sendParticles(ParticleTypes.SMOKE, this.getX(), this.getY() + 1.6D, this.getZ(), 8, 0.7D, 0.25D, 0.7D, 0.03D);
+        }
+    }
+
+    private void playNightmareBiteSound() {
+        this.playSound(AntarchySoundEvents.NIGHTMARE_BITE.get(), 1.3F, 0.72F + this.random.nextFloat() * 0.08F);
+    }
+
+    private void applyNightmareStrikeEffects(LivingEntity target) {
+        if (target instanceof Player) {
+            target.addEffect(new MobEffectInstance(AntarchyObjects.DREAD.get(), DREAD_TICKS, 0));
+        }
+        target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, WEAKNESS_TICKS, 0));
+        if (this.level() instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(AntarchyObjects.NIGHTMARE_FIRE_FLAME.get(), target.getX(), target.getY(0.8D), target.getZ(), 10, 0.28D, 0.22D, 0.28D, 0.01D);
+            serverLevel.sendParticles(ParticleTypes.SMOKE, target.getX(), target.getY(0.8D), target.getZ(), 6, 0.22D, 0.16D, 0.22D, 0.02D);
+        }
+    }
+
+    private void knockAway(LivingEntity target, double horizontalStrength, double verticalStrength) {
+        Vec3 direction = target.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+        if (direction.lengthSqr() < 1.0E-4D) direction = this.getViewVector(1.0F).multiply(1.0D, 0.0D, 1.0D);
+        if (direction.lengthSqr() < 1.0E-4D) direction = new Vec3(1.0D, 0.0D, 0.0D);
+        Vec3 push = direction.normalize().scale(horizontalStrength);
+        target.push(push.x, verticalStrength, push.z);
+        target.hurtMarked = true;
+    }
+
+    private DamageSource nightmareDamageSource() {
+        return this.level() instanceof ServerLevel serverLevel
+                ? AntarchyDamageSources.nightmareMauling(serverLevel, this)
+                : this.damageSources().mobAttack(this);
+    }
+
+    private boolean tryBreakBlocksToTarget(LivingEntity target) {
+        int startY = Mth.floor(this.getY());
+        int endY = Math.max(Mth.floor(target.getY()), startY - 16);
+        int x = Mth.floor(this.getX());
+        int z = Mth.floor(this.getZ());
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (int y = startY; y >= endY; y--) {
+            cursor.set(x, y, z);
+            if (this.level().getBlockState(cursor).is(AntarchyTags.Blocks.NIGHTMARE_BREAKABLE)) {
+                if (this.blockBreakCooldown <= 0) {
+                    this.level().destroyBlock(cursor.immutable(), true, this);
+                    this.blockBreakCooldown = BLOCK_BREAK_TICKS;
+                }
+                this.getMoveControl().setWantedPosition(this.getX(), this.getY(), this.getZ(), 0.0D);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean canTargetEntity(@Nullable LivingEntity entity) {
+        if (entity == null || !entity.isAlive() || entity == this || entity.getType() == this.getType()) return false;
+        if (entity.getType().is(AntarchyTags.Entities.NIGHTMARE_NO_ATTACK)) return false;
+        if (entity instanceof Player player) {
+            return !player.isCreative() && !player.isSpectator() && this.level().getDifficulty() != Difficulty.PEACEFUL;
+        }
+        return entity instanceof Mob && entity.isAttackable();
+    }
+
+    private boolean shouldUseFlight() {
+        if (this.landingCooldown > 0) return false;
+        LivingEntity target = this.getTarget();
+        return target != null
+                && this.distanceToSqr(target) > FLIGHT_ENGAGE_RANGE_SQR
+                && !this.isTooCloseToCeiling();
+    }
+
+    private boolean canStartAttackOn(LivingEntity target) {
+        if (!this.hasLineOfSight(target) || this.distanceToSqr(target) > ATTACK_START_RANGE_SQR) return false;
+        double hdSqr = this.horizontalDistanceToSqr(target);
+        double verticalDistance = Math.abs(target.getEyeY() - this.getEyeY());
+        return hdSqr <= ATTACK_COMMIT_HORIZONTAL_RANGE * ATTACK_COMMIT_HORIZONTAL_RANGE && verticalDistance <= 4.0D;
+    }
+
+    private double horizontalDistanceToSqr(LivingEntity target) {
+        double dx = target.getX() - this.getX();
+        double dz = target.getZ() - this.getZ();
+        return dx * dx + dz * dz;
+    }
+
+    private boolean isInFront(Vec3 position, double minimumDot) {
+        Vec3 forward = this.getViewVector(1.0F).multiply(1.0D, 0.0D, 1.0D);
+        Vec3 toTarget = position.subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+        if (forward.lengthSqr() < 1.0E-4D || toTarget.lengthSqr() < 1.0E-4D) return true;
+        return forward.normalize().dot(toTarget.normalize()) >= minimumDot;
+    }
+
+    private void faceTowardTarget(LivingEntity target, float maxTurnDegrees) {
+        Vec3 toTarget = target.getEyePosition().subtract(this.getEyePosition());
+        double horizontal = Math.sqrt(toTarget.x * toTarget.x + toTarget.z * toTarget.z);
+        if (horizontal > 1.0E-4D) {
+            float targetYaw = (float) (Mth.atan2(toTarget.z, toTarget.x) * (180.0D / Math.PI)) - 90.0F;
+            float nextYaw = Mth.approachDegrees(this.getYRot(), targetYaw, maxTurnDegrees);
+            this.setYRot(nextYaw);
+            this.yBodyRot = nextYaw;
+            this.yHeadRot = nextYaw;
+        }
+        if (toTarget.lengthSqr() > 1.0E-4D) {
+            float targetPitch = (float) (-(Mth.atan2(toTarget.y, horizontal) * (180.0D / Math.PI)));
+            this.setXRot(Mth.approachDegrees(this.getXRot(), targetPitch, maxTurnDegrees * 0.7F));
+        }
+    }
+
+
+    private boolean isTooCloseToCeiling() {
+        BlockPos current = BlockPos.containing(this.getX(), this.getY(), this.getZ());
+        for (int i = 1; i <= FLIGHT_CEILING_CLEARANCE_BLOCKS; i++) {
+            if (!this.level().isEmptyBlock(current.above(i))) return true;
+        }
+        return false;
+    }
+
+    private void tickClientParticles() {
+        if ((this.isRoaring() || this.attackAnimationTicks > 0) && this.tickCount % 3 == 0) {
+            this.level().addParticle(
+                    ParticleTypes.SOUL_FIRE_FLAME,
+                    this.getX() + (this.random.nextDouble() - 0.5D) * this.getBbWidth(),
+                    this.getY() + 1.2D + this.random.nextDouble() * 1.1D,
+                    this.getZ() + (this.random.nextDouble() - 0.5D) * this.getBbWidth(),
+                    0.0D, 0.03D, 0.0D
+            );
+        }
+    }
+
+    private void updateFlightRotation() {
+        Vec3 velocity = this.getDeltaMovement();
+        if (velocity.horizontalDistanceSqr() > 1.0E-4D) {
+            float targetYaw = (float) (Mth.atan2(velocity.z, velocity.x) * (180.0D / Math.PI)) - 90.0F;
+            float nextYaw = Mth.approachDegrees(this.getYRot(), targetYaw, 4.0F);
+            this.setYRot(nextYaw);
+            this.yBodyRot = Mth.approachDegrees(this.yBodyRot, nextYaw, 2.5F);
+            this.yHeadRot = Mth.approachDegrees(this.yHeadRot, nextYaw, 3.5F);
+        }
+        if (!this.onGround() && velocity.lengthSqr() > 1.0E-4D) {
+            float targetPitch = (float) (-(Mth.atan2(velocity.y, velocity.horizontalDistance()) * (180.0D / Math.PI)));
+            this.setXRot(Mth.approachDegrees(this.getXRot(), targetPitch, 3.0F));
+        } else {
+            this.setXRot(Mth.approachDegrees(this.getXRot(), 0.0F, 2.0F));
+        }
+    }
+
+    private void updateAnimationState() {
+        if (this.isDeadOrDying()) {
+            this.groundMoveTicks = 0;
+            this.wingFlapCooldown = 0;
+            return;
+        }
+        if (this.isRoaring()) {
+            this.setAnimationState(ANIM_ROAR);
+            this.groundMoveTicks = 0;
+            this.wingFlapCooldown = 0;
+            return;
+        }
+        if (this.attackAnimationTicks > 0) {
+            this.setAnimationState(this.isNoGravity() || this.airborneTicks >= MIN_AIRBORNE_TICKS_FOR_FLY_ANIM ? ANIM_FLY_ATTACK : ANIM_ATTACK);
+            this.groundMoveTicks = 0;
+            this.tickWingFlapSound();
+            return;
+        }
+        if (this.flyingToTarget) {
+            this.groundMoveTicks = 0;
+            this.setAnimationState(ANIM_FLY);
+            this.tickWingFlapSound();
+            return;
+        }
+        if (this.isNoGravity() || this.airborneTicks >= MIN_AIRBORNE_TICKS_FOR_FLY_ANIM) {
+            this.groundMoveTicks = 0;
+            this.setAnimationState(ANIM_FLY);
+            this.tickWingFlapSound();
+            return;
+        }
+        if (this.walkDist - this.walkDistO > 0.005F) {
+            this.groundMoveTicks = 6;
+        }
+        if (this.groundMoveTicks > 0) {
+            this.groundMoveTicks--;
+            this.setAnimationState(ANIM_WALK);
+            this.wingFlapCooldown = 0;
+            return;
+        }
+        this.setAnimationState(ANIM_IDLE);
+        this.wingFlapCooldown = 0;
+    }
+
+    private void tickWingFlapSound() {
+        if (!(this.level() instanceof ServerLevel)) return;
+        if (this.onGround() || this.isRoaring() || this.isDeadOrDying()) {
+            this.wingFlapCooldown = 0;
+            return;
+        }
+        Vec3 movement = this.getDeltaMovement();
+        if (movement.lengthSqr() < 0.01D) return;
+        if (this.wingFlapCooldown > 0) {
+            this.wingFlapCooldown--;
+            return;
+        }
+        this.playSound(AntarchySoundEvents.NIGHTMARE_FLAP.get(), 1.25F, 0.85F + this.random.nextFloat() * 0.08F);
+        this.wingFlapCooldown = 5 + this.random.nextInt(4);
+    }
+
+    private final class NightmareRoarGoal extends Goal {
+        NightmareRoarGoal() {
+            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            LivingEntity target = NightmareEntity.this.getTarget();
+            return target instanceof Player && NightmareEntity.this.shouldStartRoar(target);
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return NightmareEntity.this.isRoaring();
+        }
+
+        @Override
+        public void start() {
+            NightmareEntity.this.startRoar();
+        }
+
+        @Override
+        public void tick() {
+            NightmareEntity.this.tickRoar(NightmareEntity.this.getTarget());
+        }
+
+        @Override
+        public void stop() {
+            NightmareEntity.this.roarTicks = 0;
+            NightmareEntity.this.setRoaring(false);
+        }
+    }
+
+    private final class NightmareFlyToTargetGoal extends Goal {
+        NightmareFlyToTargetGoal() {
+            this.setFlags(EnumSet.of(Flag.MOVE));
+        }
+
+        @Override
+        public boolean canUse() {
+            LivingEntity target = NightmareEntity.this.getTarget();
+            return target != null
+                    && NightmareEntity.this.landingCooldown <= 0
+                    && NightmareEntity.this.distanceToSqr(target) > FLIGHT_ENGAGE_RANGE_SQR
+                    && !NightmareEntity.this.isTooCloseToCeiling();
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            LivingEntity target = NightmareEntity.this.getTarget();
+            return target != null && NightmareEntity.this.distanceToSqr(target) > FLIGHT_DISENGAGE_RANGE_SQR;
+        }
+
+        @Override
+        public void start() {
+            NightmareEntity.this.flyingToTarget = true;
+        }
+
+        @Override
+        public void stop() {
+            NightmareEntity.this.flyingToTarget = false;
+            NightmareEntity.this.landingCooldown = 80;
+            NightmareEntity.this.getNavigation().stop();
+        }
+
+        @Override
+        public void tick() {
+            LivingEntity target = NightmareEntity.this.getTarget();
+            if (target == null) return;
+            if (NightmareEntity.this.isTooCloseToCeiling()) {
+                NightmareEntity.this.flyingToTarget = false;
+                NightmareEntity.this.getNavigation().stop();
+                return;
+            }
+            if (NightmareEntity.this.attackCooldown <= 0 && NightmareEntity.this.canStartAttackOn(target)) {
+                NightmareEntity.this.startAttack(target);
+                return;
+            }
+            NightmareEntity.this.getMoveControl().setWantedPosition(
+                    target.getX(), target.getEyeY() + 0.5D, target.getZ(), COMBAT_FLIGHT_SPEED
+            );
+        }
+    }
+
+    private final class NightmareMeleeGoal extends MeleeAttackGoal {
+        NightmareMeleeGoal() {
+            super(NightmareEntity.this, GROUND_APPROACH_SPEED, true);
+        }
+
+        @Override
+        public void tick() {
+            LivingEntity target = NightmareEntity.this.getTarget();
+            if (target != null) {
+                double hdSqr = NightmareEntity.this.horizontalDistanceToSqr(target);
+                double vertDelta = NightmareEntity.this.getY() - target.getY();
+                if (target.onGround() && hdSqr <= 25.0D && vertDelta > 1.6D) {
+                    NightmareEntity.this.tryBreakBlocksToTarget(target);
+                }
+            }
+            super.tick();
+        }
+
+        @Override
+        protected void checkAndPerformAttack(LivingEntity target, double distToEnemySqr) {
+            if (NightmareEntity.this.attackCooldown <= 0 && NightmareEntity.this.canStartAttackOn(target)) {
+                NightmareEntity.this.startAttack(target);
+            }
+        }
+    }
+
+    private final class NightmareWanderGoal extends Goal {
+        private double x, y, z;
+        private int wanderTicks;
+
+        NightmareWanderGoal() {
+            this.setFlags(EnumSet.of(Flag.MOVE));
+        }
+
+        @Override
+        public boolean canUse() {
+            if (NightmareEntity.this.getTarget() != null || NightmareEntity.this.isDeadOrDying()) return false;
+            if (NightmareEntity.this.random.nextInt(40) != 0) return false;
+            double angle = NightmareEntity.this.random.nextDouble() * Math.PI * 2;
+            double dist = 4 + NightmareEntity.this.random.nextDouble() * 10;
+            this.x = NightmareEntity.this.getX() + Math.cos(angle) * dist;
+            this.z = NightmareEntity.this.getZ() + Math.sin(angle) * dist;
+            this.y = NightmareEntity.this.getY();
+            return true;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.wanderTicks > 0
+                    && NightmareEntity.this.getTarget() == null
+                    && !NightmareEntity.this.isDeadOrDying()
+                    && NightmareEntity.this.distanceToSqr(this.x, this.y, this.z) > 2.25;
+        }
+
+        @Override
+        public void start() {
+            this.wanderTicks = 80 + NightmareEntity.this.random.nextInt(40);
+        }
+
+        @Override
+        public void tick() {
+            this.wanderTicks--;
+            NightmareEntity.this.getMoveControl().setWantedPosition(this.x, this.y, this.z, PATROL_SPEED);
+        }
+    }
+}

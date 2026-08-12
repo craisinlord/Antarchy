@@ -199,6 +199,21 @@ public final class AntarchyForgeItems {
     public static final RegistryObject<net.minecraft.world.item.BlockItem> PEACH_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.PEACH_BUTTON);
     public static final RegistryObject<net.minecraft.world.item.BlockItem> PEACH_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.PEACH_LEAVES);
     public static final RegistryObject<net.minecraft.world.item.BlockItem> PEACH_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.PEACH_SAPLING);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> NADIR_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.NADIR_LOG);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> NADIR_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.NADIR_WOOD);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> STRIPPED_NADIR_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.STRIPPED_NADIR_LOG);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> STRIPPED_NADIR_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.STRIPPED_NADIR_WOOD);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> NADIR_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.NADIR_PLANKS);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> NADIR_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.NADIR_STAIRS);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> NADIR_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.NADIR_SLAB);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> NADIR_FENCE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.NADIR_FENCE);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> NADIR_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.NADIR_FENCE_GATE);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> NADIR_DOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.NADIR_DOOR);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> NADIR_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.NADIR_TRAPDOOR);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> NADIR_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.NADIR_PRESSURE_PLATE);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> NADIR_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.NADIR_BUTTON);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> NADIR_VEIL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.NADIR_VEIL);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> NADIR_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.NADIR_SAPLING);
     public static final RegistryObject<net.minecraft.world.item.BlockItem> ORANGE_MILKWEED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.ORANGE_MILKWEED);
     public static final RegistryObject<net.minecraft.world.item.BlockItem> PINK_MILKWEED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.PINK_MILKWEED);
     public static final RegistryObject<net.minecraft.world.item.BlockItem> CAMELLIA_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.CAMELLIA);
@@ -225,6 +240,14 @@ public final class AntarchyForgeItems {
             () -> new PeachBoatOnlyItem(AntarchyForgeEntites.PEACH_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> PEACH_CHEST_BOAT = ITEMS.register("peach_chest_boat",
             () -> new PeachChestBoatItem(AntarchyForgeEntites.PEACH_CHEST_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<net.minecraft.world.item.SignItem> NADIR_SIGN_ITEM = ITEMS.register("nadir_sign",
+            () -> new net.minecraft.world.item.SignItem(new Item.Properties().stacksTo(16), AntarchyForgeBlocks.NADIR_SIGN.get(), AntarchyForgeBlocks.NADIR_WALL_SIGN.get()));
+    public static final RegistryObject<net.minecraft.world.item.HangingSignItem> NADIR_HANGING_SIGN_ITEM = ITEMS.register("nadir_hanging_sign",
+            () -> new net.minecraft.world.item.HangingSignItem(AntarchyForgeBlocks.NADIR_HANGING_SIGN.get(), AntarchyForgeBlocks.NADIR_WALL_HANGING_SIGN.get(), new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> NADIR_BOAT = ITEMS.register("nadir_boat",
+            () -> new NadirBoatOnlyItem(AntarchyForgeEntites.NADIR_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> NADIR_CHEST_BOAT = ITEMS.register("nadir_chest_boat",
+            () -> new NadirChestBoatItem(AntarchyForgeEntites.NADIR_CHEST_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<CritterCageItem> CRITTER_CAGE = ITEMS.register("critter_cage",
             () -> new CritterCageItem(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<net.minecraft.world.item.BlockItem> DUPLICATOR_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.DUPLICATOR_SAPLING);
@@ -721,9 +744,9 @@ public final class AntarchyForgeItems {
                     new Item.Properties().stacksTo(1).durability(512).rarity(Rarity.RARE).fireResistant(),
                     AntarchyForgeEntites.SHRINK_RAY_PROJECTILE,
                     SizeRayProjectileEntity.SizeRayType.SHRINK,
-                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "geo/shrink_ray.geo.json"),
-                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/models/item/shrink_ray.png"),
-                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "animations/shrink_ray.animation.json"),
+                    new ResourceLocation(Antarchy.MODID, "geo/shrink_ray.geo.json"),
+                    new ResourceLocation(Antarchy.MODID, "textures/models/item/shrink_ray.png"),
+                    new ResourceLocation(Antarchy.MODID, "animations/shrink_ray.animation.json"),
                     "shrink_ray_active"
             ) {
                 @Override
@@ -736,9 +759,9 @@ public final class AntarchyForgeItems {
                     new Item.Properties().stacksTo(1).durability(512).rarity(Rarity.RARE).fireResistant(),
                     AntarchyForgeEntites.GROWTH_RAY_PROJECTILE,
                     SizeRayProjectileEntity.SizeRayType.GROWTH,
-                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "geo/growth_ray.geo.json"),
-                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/models/item/growth_ray.png"),
-                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "animations/growth_ray.animation.json"),
+                    new ResourceLocation(Antarchy.MODID, "geo/growth_ray.geo.json"),
+                    new ResourceLocation(Antarchy.MODID, "textures/models/item/growth_ray.png"),
+                    new ResourceLocation(Antarchy.MODID, "animations/growth_ray.animation.json"),
                     "growth_ray_active"
             ) {
                 @Override
@@ -978,7 +1001,7 @@ public final class AntarchyForgeItems {
     }
 
     static Ingredient bloodCrystalRepairIngredient() {
-        return Ingredient.of(BuiltInRegistries.ITEM.getOptional(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "blood_crystal_shard"))
+        return Ingredient.of(BuiltInRegistries.ITEM.getOptional(new ResourceLocation(Antarchy.MODID, "blood_crystal_shard"))
                 .orElse(Items.AIR));
     }
 

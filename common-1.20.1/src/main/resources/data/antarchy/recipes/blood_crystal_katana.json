@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "  B",
+    " B ",
+    "N  "
+  ],
+  "key": {
+    "N": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "B": {
+      "item": "antarchy:blood_crystal_shard"
+    }
+  },
+  "result": {
+    "item": "antarchy:blood_crystal_katana",
+    "count": 1
+  }
+}

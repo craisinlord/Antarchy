@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:random_selector",
+  "config": {
+    "features": [
+      { "chance": 0.001, "feature": "antarchy:ouranwood_cocoon_trees" },
+      { "chance": 0.08, "feature": "antarchy:ouranwood_medium_trees" },
+      { "chance": 0.027, "feature": "antarchy:ouranwood_young_trees" }
+    ],
+    "default": "antarchy:ouranwood_large_trees"
+  }
+}

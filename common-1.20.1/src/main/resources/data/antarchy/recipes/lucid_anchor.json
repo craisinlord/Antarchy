@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "AAA",
+    "BNB",
+    "BLB"
+  ],
+  "key": {
+    "A": {
+      "item": "antarchy:polished_antimetal"
+    },
+    "B": {
+      "item": "antarchy:blood_crystal_shard"
+    },
+    "N": {
+      "item": "minecraft:nether_star"
+    },
+    "L": {
+      "item": "antarchy:lucid_eye"
+    }
+  },
+  "result": {
+    "item": "antarchy:lucid_anchor",
+    "count": 1
+  }
+}

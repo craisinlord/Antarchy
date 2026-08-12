@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smelting",
+  "category": "food",
+  "cookingtime": 200,
+  "experience": 0.5,
+  "ingredient": {
+    "item": "antarchy:kraken_tentacle"
+  },
+  "result": {
+    "item": "antarchy:kraken_kalamari"
+  }
+}

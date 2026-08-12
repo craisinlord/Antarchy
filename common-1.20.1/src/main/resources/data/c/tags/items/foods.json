@@ -1,0 +1,27 @@
+{
+  "replace": false,
+  "values": [
+    "#c:foods/soup",
+    "antarchy:blood_crystal_apple",
+    "antarchy:cornbread",
+    "antarchy:popcorn",
+    "antarchy:peach_pie",
+    "antarchy:cheep",
+    "antarchy:broodfruit",
+    "antarchy:raw_bug_meat",
+    "antarchy:cooked_bug_meat",
+    "antarchy:raw_venison",
+    "antarchy:cooked_venison",
+    "antarchy:mud_pie",
+    "antarchy:high_fructose_corn_syrup",
+    "antarchy:spirit_apple",
+    "antarchy:rainbow_sugar",
+    "antarchy:cornea_ear",
+    "antarchy:moleworm",
+    "antarchy:peach",
+    "antarchy:corn",
+    "antarchy:raw_corndog",
+    "antarchy:cooked_corndog",
+    "antarchy:root_beer"
+  ]
+}

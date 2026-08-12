@@ -1,0 +1,39 @@
+{
+  "type": "minecraft:squeeze",
+  "argument": {
+    "type": "minecraft:mul",
+    "argument1": 0.72,
+    "argument2": {
+      "type": "minecraft:add",
+      "argument1": {
+        "type": "minecraft:y_clamped_gradient",
+        "from_y": -256,
+        "to_y": -16,
+        "from_value": -2.0,
+        "to_value": 1.05
+      },
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": 0.42,
+        "argument2": {
+          "type": "minecraft:add",
+          "argument1": {
+            "type": "minecraft:mul",
+            "argument1": 0.9,
+            "argument2": "antarchy:thoraxis_underside_noise"
+          },
+          "argument2": {
+            "type": "minecraft:mul",
+            "argument1": 0.35,
+            "argument2": {
+              "type": "minecraft:noise",
+              "noise": "minecraft:surface",
+              "xz_scale": 1.0,
+              "y_scale": 0.0
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:polished_antimetal"
+  },
+  "result": {
+    "id": "antarchy:polished_antimetal_slab"
+  }
+}

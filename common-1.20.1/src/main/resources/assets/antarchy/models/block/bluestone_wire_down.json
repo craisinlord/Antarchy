@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/redstone_dust_up",
+  "textures": {
+    "line": "antarchy:block/bluestone/bluestone_dust_line0",
+    "overlay": "antarchy:block/bluestone/bluestone_dust_overlay",
+    "particle": "antarchy:block/bluestone/bluestone_dust_dot"
+  }
+}

@@ -288,6 +288,7 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setKrakenTentacle(() -> AntarchyFabricItems.KRAKEN_TENTACLE.get());
         AntarchyObjects.setKrakensGrasp(() -> AntarchyFabricItems.KRAKENS_GRASP.get());
         AntarchyObjects.setOuranwoodDeer(AntarchyFabricEntities.OURANWOOD_DEER);
+        AntarchyObjects.setDimensionalTear(AntarchyFabricEntities.DIMENSIONAL_TEAR);
         AntarchyObjects.setGlimmer(AntarchyFabricEntities.GLIMMER);
         AntarchyObjects.setRollyPolly(AntarchyFabricEntities.ROLLY_POLLY);
         AntarchyObjects.setSpiritApple(() -> AntarchyFabricItems.SPIRIT_APPLE.get());

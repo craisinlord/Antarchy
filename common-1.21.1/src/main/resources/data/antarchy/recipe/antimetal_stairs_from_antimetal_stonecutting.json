@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:antimetal"
+  },
+  "result": {
+    "id": "antarchy:antimetal_stairs"
+  }
+}

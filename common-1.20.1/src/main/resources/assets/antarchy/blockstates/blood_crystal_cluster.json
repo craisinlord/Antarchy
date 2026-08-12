@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "facing=down": { "model": "antarchy:block/blood_crystal_cluster", "x": 180 },
+    "facing=east": { "model": "antarchy:block/blood_crystal_cluster", "x": 90, "y": 90 },
+    "facing=north": { "model": "antarchy:block/blood_crystal_cluster", "x": 90 },
+    "facing=south": { "model": "antarchy:block/blood_crystal_cluster", "x": 90, "y": 180 },
+    "facing=up": { "model": "antarchy:block/blood_crystal_cluster" },
+    "facing=west": { "model": "antarchy:block/blood_crystal_cluster", "x": 90, "y": 270 }
+  }
+}
+

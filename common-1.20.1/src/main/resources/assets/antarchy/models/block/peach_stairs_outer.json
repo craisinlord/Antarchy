@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/jungle_stairs_outer",
+  "textures": {
+    "bottom": "antarchy:block/peach/peach_planks",
+    "side": "antarchy:block/peach/peach_planks",
+    "top": "antarchy:block/peach/peach_planks"
+  }
+}
+

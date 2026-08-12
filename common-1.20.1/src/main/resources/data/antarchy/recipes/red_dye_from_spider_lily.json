@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "antarchy:spider_lily"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "item": "minecraft:red_dye"
+  }
+}

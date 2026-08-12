@@ -1,0 +1,219 @@
+package com.craisinlord.antarchy.content.entity;
+
+import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.Difficulty;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.block.state.BlockState;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
+
+public class CreepingHorrorEntity extends Monster implements GeoEntity {
+    private static final EntityDataAccessor<Boolean> CLIMBING =
+            SynchedEntityData.defineId(CreepingHorrorEntity.class, EntityDataSerializers.BOOLEAN);
+
+    private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
+    private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenLoop("attack");
+    private static final byte ATTACK_ANIM_EVENT = 4;
+
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private int attackAnimTicks = 0;
+
+    public CreepingHorrorEntity(EntityType<? extends CreepingHorrorEntity> type, Level level) {
+        super(type, level);
+    }
+
+    @Override
+    public float maxUpStep() {
+        return 1.0F;
+    }
+
+    @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(CLIMBING, false);
+    }
+
+    public static AttributeSupplier.Builder createAttributes() {
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, AntarchySettings.creepingHorrorHealth())
+                .add(Attributes.MOVEMENT_SPEED, 0.38D)
+                .add(Attributes.ATTACK_DAMAGE, AntarchySettings.creepingHorrorAttackDamage())
+                .add(Attributes.FOLLOW_RANGE, 16.0D);
+    }
+
+    public static boolean canSpawn(EntityType<CreepingHorrorEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+        if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.COMMAND) {
+            return true;
+        }
+        BlockPos belowPos = pos.below();
+        BlockState belowState = level.getBlockState(belowPos);
+        boolean validSupport = !belowState.is(Blocks.BEDROCK)
+                && belowState.blocksMotion()
+                && belowState.isFaceSturdy(level, belowPos, Direction.UP)
+                && belowState.isCollisionShapeFullBlock(level, belowPos);
+
+        return level.getDifficulty() != Difficulty.PEACEFUL
+                && validSupport
+                && level.isEmptyBlock(pos)
+                && level.isEmptyBlock(pos.above())
+                && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);
+    }
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, true));
+        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 0.85D));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+    }
+
+    @Override
+    public boolean onClimbable() {
+        return this.entityData.get(CLIMBING);
+    }
+
+    public boolean isWallClimbing() {
+        return this.entityData.get(CLIMBING) && !this.onGround();
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "main_controller", 3, this::mainAnimController)
+                .triggerableAnim("attack", ATTACK_ANIM));
+    }
+
+    private PlayState mainAnimController(AnimationState<CreepingHorrorEntity> state) {
+        if (attackAnimTicks > 0) {
+            return state.setAndContinue(ATTACK_ANIM);
+        }
+        if (state.isMoving()) {
+            return state.setAndContinue(WALK_ANIM);
+        }
+        return state.setAndContinue(IDLE_ANIM);
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return geoCache;
+    }
+
+    @Override
+    public boolean doHurtTarget(net.minecraft.world.entity.Entity target) {
+        boolean result = super.doHurtTarget(target);
+        if (result) {
+            this.playSound(AntarchySoundEvents.CREEPING_HORROR_BITE.get(), 1.0F, 0.95F + this.random.nextFloat() * 0.1F);
+            this.setAttackAnimTicks(20);
+            this.level().broadcastEntityEvent(this, ATTACK_ANIM_EVENT);
+        }
+        return result;
+    }
+
+    private void setAttackAnimTicks(int ticks) {
+        int clamped = Math.max(0, ticks);
+        boolean wasIdle = attackAnimTicks <= 0;
+        attackAnimTicks = clamped;
+        if (wasIdle && clamped > 0) {
+            this.triggerAnim("main_controller", "attack");
+        }
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return AntarchySoundEvents.CREEPING_HORROR_GROWL.get();
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) {
+        return AntarchySoundEvents.CREEPING_HORROR_HURT.get();
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return AntarchySoundEvents.CREEPING_HORROR_HURT.get();
+    }
+
+    @Override
+    public void handleEntityEvent(byte id) {
+        if (id == ATTACK_ANIM_EVENT) {
+            attackAnimTicks = 20;
+            return;
+        }
+        super.handleEntityEvent(id);
+    }
+
+    @Override
+    public void tick() {
+        CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
+        super.tick();
+        CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
+        if (attackAnimTicks > 0) {
+            attackAnimTicks--;
+            if (attackAnimTicks <= 0 && !this.level().isClientSide()) {
+                this.stopTriggeredAnimation("main_controller", "attack");
+            }
+        }
+        if (this.level().isClientSide()) return;
+
+        boolean climbing = this.horizontalCollision;
+        this.entityData.set(CLIMBING, climbing);
+
+        if (climbing && this.getTarget() != null) {
+            LivingEntity target = this.getTarget();
+            Vec3 toTarget = target.position().subtract(this.position());
+            double hDist = Math.sqrt(toTarget.x * toTarget.x + toTarget.z * toTarget.z);
+            double speed = this.getAttributeValue(Attributes.MOVEMENT_SPEED) * 2.8D;
+            if (hDist > 0.01D) {
+                this.setDeltaMovement(
+                    (toTarget.x / hDist) * speed,
+                    0.22D,
+                    (toTarget.z / hDist) * speed
+                );
+            } else {
+                Vec3 mov = this.getDeltaMovement();
+                this.setDeltaMovement(mov.x, 0.22D, mov.z);
+            }
+            this.getNavigation().stop();
+        }
+    }
+
+    @Override
+    public boolean isInWall() {
+        return false;
+    }
+}

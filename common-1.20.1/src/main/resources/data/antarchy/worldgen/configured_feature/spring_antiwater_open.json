@@ -1,0 +1,16 @@
+{
+  "type": "antarchy:lucid_antiwater_pool",
+  "config": {
+    "state": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "antarchy:antiwater"
+      }
+    },
+    "min_radius": 8,
+    "max_radius": 18,
+    "min_depth": 2,
+    "max_depth": 6,
+    "irregularity": 0.25
+  }
+}

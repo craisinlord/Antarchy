@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:broodstone_bricks"
+  },
+  "result": {
+    "item": "antarchy:broodstone_brick_stairs"
+  }
+}

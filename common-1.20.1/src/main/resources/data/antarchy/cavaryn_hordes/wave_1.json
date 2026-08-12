@@ -1,0 +1,10 @@
+{
+  "entries": [
+    {
+      "entity_tag": "antarchy:horde_common",
+      "weight": 1,
+      "base_count": 12,
+      "per_player_count": 3
+    }
+  ]
+}

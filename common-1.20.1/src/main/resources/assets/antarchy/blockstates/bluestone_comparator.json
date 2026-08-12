@@ -1,0 +1,176 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "north",
+        "mode": "compare",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_comparator"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "mode": "compare",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_comparator",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "mode": "compare",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_comparator",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "mode": "compare",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_comparator",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "mode": "compare",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_comparator_on"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "mode": "compare",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_comparator_on",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "mode": "compare",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_comparator_on",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "mode": "compare",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_comparator_on",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "mode": "subtract",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_comparator_subtract"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "mode": "subtract",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_comparator_subtract",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "mode": "subtract",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_comparator_subtract",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "mode": "subtract",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_comparator_subtract",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "mode": "subtract",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_comparator_subtract_on"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "mode": "subtract",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_comparator_subtract_on",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "mode": "subtract",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_comparator_subtract_on",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "mode": "subtract",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_comparator_subtract_on",
+        "y": 270
+      }
+    }
+  ]
+}

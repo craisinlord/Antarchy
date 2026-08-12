@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "obtain_attitude_adjuster": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:attitude_adjuster"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.behavioral_correction.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "item": "antarchy:attitude_adjuster"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.behavioral_correction.title"
+    }
+  },
+  "requirements": [
+    [
+      "obtain_attitude_adjuster"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

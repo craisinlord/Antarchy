@@ -1,0 +1,10 @@
+{
+  "processors": [
+    {
+      "processor_type": "integrated_api:tick_blocks_processor",
+      "blocks_to_tick": [
+        "minecraft:dispenser"
+      ]
+    }
+  ]
+}

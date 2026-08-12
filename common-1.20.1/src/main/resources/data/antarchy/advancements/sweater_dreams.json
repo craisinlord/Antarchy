@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "kill_nightmare": {
+      "conditions": {
+        "entity": {
+          "type": "antarchy:nightmare"
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.sweater_dreams.description"
+    },
+    "frame": "task",
+    "icon": {
+      "item": "minecraft:potion",
+      "nbt": "{Potion:\"antarchy:dread\"}"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.sweater_dreams.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_nightmare"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

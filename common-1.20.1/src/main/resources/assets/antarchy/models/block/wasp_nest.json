@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "particle": "antarchy:block/wasp_nest/wasp_nest_side",
+    "front": "antarchy:block/wasp_nest/wasp_nest_front",
+    "side": "antarchy:block/wasp_nest/wasp_nest_side",
+    "top": "antarchy:block/wasp_nest/wasp_nest_top_bottom"
+  }
+}

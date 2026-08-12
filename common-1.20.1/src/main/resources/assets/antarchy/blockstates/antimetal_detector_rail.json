@@ -1,0 +1,46 @@
+{
+  "variants": {
+    "shape=north_south,powered=false": {
+      "model": "antarchy:block/antimetal_detector_rail"
+    },
+    "shape=east_west,powered=false": {
+      "model": "antarchy:block/antimetal_detector_rail",
+      "y": 90
+    },
+    "shape=ascending_north,powered=false": {
+      "model": "antarchy:block/antimetal_detector_rail_raised_ne"
+    },
+    "shape=ascending_east,powered=false": {
+      "model": "antarchy:block/antimetal_detector_rail_raised_ne",
+      "y": 90
+    },
+    "shape=ascending_south,powered=false": {
+      "model": "antarchy:block/antimetal_detector_rail_raised_sw"
+    },
+    "shape=ascending_west,powered=false": {
+      "model": "antarchy:block/antimetal_detector_rail_raised_sw",
+      "y": 90
+    },
+    "shape=north_south,powered=true": {
+      "model": "antarchy:block/antimetal_detector_rail_on"
+    },
+    "shape=east_west,powered=true": {
+      "model": "antarchy:block/antimetal_detector_rail_on",
+      "y": 90
+    },
+    "shape=ascending_north,powered=true": {
+      "model": "antarchy:block/antimetal_detector_rail_raised_on_ne"
+    },
+    "shape=ascending_east,powered=true": {
+      "model": "antarchy:block/antimetal_detector_rail_raised_on_ne",
+      "y": 90
+    },
+    "shape=ascending_south,powered=true": {
+      "model": "antarchy:block/antimetal_detector_rail_raised_on_sw"
+    },
+    "shape=ascending_west,powered=true": {
+      "model": "antarchy:block/antimetal_detector_rail_raised_on_sw",
+      "y": 90
+    }
+  }
+}

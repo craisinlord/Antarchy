@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "antarchy:block/broodstone/broodstone",
+    "side": "antarchy:block/broodstone/broodstone",
+    "top": "antarchy:block/broodstone/broodstone"
+  }
+}

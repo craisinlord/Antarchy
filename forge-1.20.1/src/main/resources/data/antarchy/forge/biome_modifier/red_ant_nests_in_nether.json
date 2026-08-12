@@ -1,0 +1,8 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#antarchy:red_ant_nest_spawn_biomes",
+  "features": [
+    "antarchy:red_ant_nest"
+  ],
+  "step": "vegetal_decoration"
+}

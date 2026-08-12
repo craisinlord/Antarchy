@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "bottom=false": {
+      "model": "antarchy:block/hanging_creeproots"
+    },
+    "bottom=true": {
+      "model": "antarchy:block/hanging_creeproots_bottom"
+    }
+  }
+}

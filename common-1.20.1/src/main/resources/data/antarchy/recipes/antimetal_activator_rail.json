@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "X": {
+      "item": "antarchy:polished_antimetal"
+    },
+    "Y": {
+      "item": "minecraft:stick"
+    },
+    "Z": {
+      "item": "antarchy:bluestone_torch"
+    }
+  },
+  "pattern": [
+    "XYX",
+    "XZX",
+    "XYX"
+  ],
+  "result": {
+    "item": "antarchy:antimetal_activator_rail",
+    "count": 6
+  }
+}

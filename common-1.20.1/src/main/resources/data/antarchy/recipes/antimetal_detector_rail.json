@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "X": {
+      "item": "antarchy:polished_antimetal"
+    },
+    "Y": {
+      "item": "minecraft:stone_pressure_plate"
+    },
+    "Z": {
+      "item": "antarchy:bluestone"
+    }
+  },
+  "pattern": [
+    "X X",
+    "XYX",
+    "XZX"
+  ],
+  "result": {
+    "item": "antarchy:antimetal_detector_rail",
+    "count": 6
+  }
+}

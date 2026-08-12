@@ -1,0 +1,9 @@
+{
+  "asset_name": "tigers_eye",
+  "ingredient": "antarchy:tigers_eye",
+  "item_model_index": 0.82,
+  "description": {
+    "color": "#C7882C",
+    "translate": "trim_material.antarchy.tigers_eye"
+  }
+}

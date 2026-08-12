@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:vine",
+    "antarchy:creepvine",
+    "antarchy:molting_vines"
+  ]
+}

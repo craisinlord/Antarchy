@@ -67,19 +67,21 @@ import com.craisinlord.antarchy.content.client.AntarchyGeoItemRenderer;
 
 @Mod.EventBusSubscriber(modid = Antarchy.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class AntarchyForgeClient {
-    private static final ResourceLocation DR_TRAYAURUS_TEXTURE = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/dr_trayaurus.png");
-    private static final ResourceLocation OURANWOOD_BOAT_TEXTURE = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/boat/ouranwood.png");
-    private static final ResourceLocation OURANWOOD_CHEST_BOAT_TEXTURE = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/chest_boat/ouranwood.png");
-    private static final ResourceLocation PEACH_BOAT_TEXTURE = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/boat/peach.png");
-    private static final ResourceLocation PEACH_CHEST_BOAT_TEXTURE = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/chest_boat/peach.png");
+    private static final ResourceLocation DR_TRAYAURUS_TEXTURE = new ResourceLocation(Antarchy.MODID, "textures/entity/dr_trayaurus.png");
+    private static final ResourceLocation OURANWOOD_BOAT_TEXTURE = new ResourceLocation(Antarchy.MODID, "textures/entity/boat/ouranwood.png");
+    private static final ResourceLocation OURANWOOD_CHEST_BOAT_TEXTURE = new ResourceLocation(Antarchy.MODID, "textures/entity/chest_boat/ouranwood.png");
+    private static final ResourceLocation PEACH_BOAT_TEXTURE = new ResourceLocation(Antarchy.MODID, "textures/entity/boat/peach.png");
+    private static final ResourceLocation PEACH_CHEST_BOAT_TEXTURE = new ResourceLocation(Antarchy.MODID, "textures/entity/chest_boat/peach.png");
+    private static final ResourceLocation NADIR_BOAT_TEXTURE = new ResourceLocation(Antarchy.MODID, "textures/entity/boat/nadir.png");
+    private static final ResourceLocation NADIR_CHEST_BOAT_TEXTURE = new ResourceLocation(Antarchy.MODID, "textures/entity/chest_boat/nadir.png");
     private static final ResourceLocation WATER_STILL = ResourceLocation.withDefaultNamespace("block/water_still");
     private static final ResourceLocation WATER_FLOW = ResourceLocation.withDefaultNamespace("block/water_flow");
     private static final ResourceLocation WATER_OVERLAY = ResourceLocation.withDefaultNamespace("block/water_overlay");
     private static final ResourceLocation UNDERWATER_OVERLAY = ResourceLocation.withDefaultNamespace("textures/misc/underwater.png");
-    private static final ResourceLocation ANTIWATER_STILL = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/antiwater_still");
-    private static final ResourceLocation ANTIWATER_FLOW = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/antiwater_flow");
-    private static final ResourceLocation BILE_STILL = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/bile/bile_still");
-    private static final ResourceLocation BILE_FLOW = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/bile/bile_flowing");
+    private static final ResourceLocation ANTIWATER_STILL = new ResourceLocation(Antarchy.MODID, "block/antiwater_still");
+    private static final ResourceLocation ANTIWATER_FLOW = new ResourceLocation(Antarchy.MODID, "block/antiwater_flow");
+    private static final ResourceLocation BILE_STILL = new ResourceLocation(Antarchy.MODID, "block/bile/bile_still");
+    private static final ResourceLocation BILE_FLOW = new ResourceLocation(Antarchy.MODID, "block/bile/bile_flowing");
     private AntarchyForgeClient() {
     }
 
@@ -107,6 +109,8 @@ public final class AntarchyForgeClient {
         event.registerEntityRenderer(AntarchyForgeEntites.OURANWOOD_CHEST_BOAT_ENTITY.get(), context -> new OuranwoodBoatRenderer<>(context, OURANWOOD_CHEST_BOAT_TEXTURE, true));
         event.registerEntityRenderer(AntarchyForgeEntites.PEACH_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, PEACH_BOAT_TEXTURE, false));
         event.registerEntityRenderer(AntarchyForgeEntites.PEACH_CHEST_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, PEACH_CHEST_BOAT_TEXTURE, true));
+        event.registerEntityRenderer(AntarchyForgeEntites.NADIR_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, NADIR_BOAT_TEXTURE, false));
+        event.registerEntityRenderer(AntarchyForgeEntites.NADIR_CHEST_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, NADIR_CHEST_BOAT_TEXTURE, true));
         event.registerEntityRenderer(AntarchyForgeEntites.APPLE_COW.get(), context -> withParalyzedGeoLayer(new AppleCowRenderer(context)));
         event.registerEntityRenderer(AntarchyForgeEntites.GOLDEN_APPLE_COW.get(), context -> withParalyzedGeoLayer(new AppleCowRenderer(context)));
         event.registerEntityRenderer(AntarchyForgeEntites.ENCHANTED_GOLDEN_APPLE_COW.get(), context -> withParalyzedGeoLayer(new AppleCowRenderer(context)));
@@ -121,6 +125,7 @@ public final class AntarchyForgeClient {
         event.registerEntityRenderer(AntarchyForgeEntites.NIGHTMARE.get(), context -> withParalyzedGeoLayer(new NightmareRenderer(context)));
         event.registerEntityRenderer(AntarchyForgeEntites.NIGHTMARE_PORTAL.get(), NightmarePortalRenderer::new);
         event.registerEntityRenderer(AntarchyForgeEntites.NIGHTMARE_BITE.get(), NightmareBiteRenderer::new);
+        event.registerEntityRenderer(AntarchyForgeEntites.DIMENSIONAL_TEAR.get(), DimensionalTearRenderer::new);
         event.registerEntityRenderer(AntarchyForgeEntites.LUCID.get(), context -> withParalyzedGeoLayer(new LucidRenderer(context)));
         event.registerEntityRenderer(AntarchyForgeEntites.BED_BUG.get(), context -> withParalyzedGeoLayer(new BedBugRenderer(context)));
         event.registerEntityRenderer(AntarchyForgeEntites.WASP.get(), context -> withParalyzedGeoLayer(new WaspRenderer(context)));
@@ -359,6 +364,11 @@ public final class AntarchyForgeClient {
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.PEACH_TRAPDOOR.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.PEACH_SAPLING.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.POTTED_PEACH_SAPLING.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.NADIR_VEIL.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.NADIR_DOOR.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.NADIR_TRAPDOOR.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.NADIR_SAPLING.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.POTTED_NADIR_SAPLING.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.DUPLICATOR_SAPLING.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.ORANGE_MILKWEED.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.PINK_MILKWEED.get(), RenderType.cutout());
@@ -484,7 +494,7 @@ public final class AntarchyForgeClient {
         );
         ItemProperties.register(
                 AntarchyForgeItems.CRITTER_CAGE.get(),
-                ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "critter_cage_state"),
+                new ResourceLocation(Antarchy.MODID, "critter_cage_state"),
                 (stack, level, entity, seed) -> {
                     if (!(stack.getItem() instanceof com.craisinlord.antarchy.content.item.CritterCageItem cage)) {
                         return 0.0F;

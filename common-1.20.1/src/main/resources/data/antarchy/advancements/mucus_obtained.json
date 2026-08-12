@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "obtain_mucus": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:mucus"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.mucus_obtained.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "item": "antarchy:mucus"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.mucus_obtained.title"
+    }
+  },
+  "requirements": [
+    [
+      "obtain_mucus"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

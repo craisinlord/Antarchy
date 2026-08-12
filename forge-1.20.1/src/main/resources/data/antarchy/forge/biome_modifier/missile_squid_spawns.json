@@ -1,0 +1,12 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#antarchy:missile_squid_spawn_biomes",
+  "spawners": [
+    {
+      "type": "antarchy:missile_squid",
+      "weight": 2,
+      "minCount": 1,
+      "maxCount": 2
+    }
+  ]
+}

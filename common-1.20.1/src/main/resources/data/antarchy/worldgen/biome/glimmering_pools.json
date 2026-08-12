@@ -1,0 +1,93 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.76,
+  "downfall": 1.0,
+  "effects": {
+    "fog_color": 8084735,
+    "water_color": 5923435,
+    "water_fog_color": 3297596,
+    "sky_color": 8084735,
+    "foliage_color": 2867501,
+    "grass_color": 4304168,
+    "grass_color_modifier": "none",
+    "mood_sound": {
+      "sound": "minecraft:ambient.crimson_forest.mood",
+      "tick_delay": 6000,
+      "block_search_extent": 8,
+      "offset": 2.0
+    }
+  },
+  "spawn_costs": {},
+  "carvers": {
+    "air": [],
+    "liquid": []
+  },
+  "features": [
+    [],
+    [
+      "antarchy:lumen_pools",
+      "antarchy:lumen_streams",
+      "antarchy:lumen_lily_pads",
+      "antarchy:giant_lily_pad_patch_common"
+    ],
+    [],
+    [],
+    [],
+    [],
+    [
+      "minecraft:ore_coal_upper",
+      "minecraft:ore_coal_lower",
+      "minecraft:ore_iron_upper",
+      "minecraft:ore_iron_middle",
+      "minecraft:ore_iron_small",
+      "minecraft:ore_gold",
+      "minecraft:ore_gold_lower",
+      "minecraft:ore_redstone",
+      "minecraft:ore_redstone_lower",
+      "minecraft:ore_diamond",
+      "minecraft:ore_diamond_large",
+      "minecraft:ore_diamond_buried",
+      "minecraft:ore_lapis",
+      "minecraft:ore_lapis_buried",
+      "minecraft:ore_copper"
+    ],
+    [
+      "antarchy:elythia_underground",
+      "minecraft:large_dripstone",
+      "minecraft:pointed_dripstone"
+    ],
+    [],
+    [
+      "antarchy:ouranwood_trees_sparse",
+      "antarchy:elythia_forest_flora",
+      "antarchy:elythia_brown_ant_nests",
+      "antarchy:elythia_rainbow_ant_nests"
+    ],
+    []
+  ],
+  "creature_spawn_probability": 0.15,
+  "spawners": {
+    "monster": [],
+    "creature": [
+      {
+        "type": "antarchy:glimmer",
+        "weight": 36,
+        "minCount": 1,
+        "maxCount": 1
+      }
+    ],
+    "ambient": [],
+    "axolotls": [],
+    "underground_water_creature": [
+      {
+        "type": "minecraft:glow_squid",
+        "weight": 14,
+        "minCount": 2,
+        "maxCount": 4
+      }
+    ],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  }
+}

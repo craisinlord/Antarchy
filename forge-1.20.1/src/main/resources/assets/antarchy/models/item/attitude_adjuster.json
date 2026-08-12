@@ -1,0 +1,25 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "textures": {
+    "layer0": "antarchy:item/attitude_adjuster/attitude_adjuster_item"
+  },
+  "base": {
+    "parent": "antarchy:item/attitude_adjuster_held"
+  },
+  "texture_size": [
+    64,
+    64
+  ],
+  "perspectives": {
+    "gui": {
+      "parent": "antarchy:item/attitude_adjuster_gui"
+    },
+    "ground": {
+      "parent": "antarchy:item/attitude_adjuster_gui"
+    },
+    "fixed": {
+      "parent": "antarchy:item/attitude_adjuster_gui"
+    }
+  }
+}

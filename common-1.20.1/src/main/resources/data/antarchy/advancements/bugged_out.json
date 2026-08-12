@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "kill_alpha_mantis": {
+      "conditions": {
+        "entity": {
+          "type": "antarchy:alpha_mantis"
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.bugged_out.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "item": "antarchy:alpha_mantis_spawn_egg"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.bugged_out.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_alpha_mantis"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,9 @@
+{
+    "replace":  false,
+    "values":  [
+                   "antarchy:nadir_log",
+                   "antarchy:nadir_wood",
+                   "antarchy:stripped_nadir_log",
+                   "antarchy:stripped_nadir_wood"
+               ]
+}

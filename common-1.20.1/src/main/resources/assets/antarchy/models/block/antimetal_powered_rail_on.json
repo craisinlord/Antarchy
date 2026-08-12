@@ -1,0 +1,4 @@
+{
+  "parent": "antarchy:block/template_antimetal_rail_flat",
+  "textures": { "rail": "antarchy:block/antimetal/antimetal_powered_rail_on" }
+}

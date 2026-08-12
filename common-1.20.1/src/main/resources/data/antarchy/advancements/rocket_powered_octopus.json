@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "craft_rpo_launcher": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:rpo_launcher"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.rocket_powered_octopus.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "item": "antarchy:rpo_launcher"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.rocket_powered_octopus.title"
+    }
+  },
+  "requirements": [
+    [
+      "craft_rpo_launcher"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,15 @@
+{
+  "name": "antarchy:trayaurus_lab/trayaurus_lab_bottom",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "antarchy:trayaurus_lab/trayaurus_lab_bottom",
+        "processors": "antarchy:generic_processor",
+        "projection": "rigid",
+        "element_type": "integrated_api:integrated_api_single_pool_element"
+      }
+    }
+  ]
+}

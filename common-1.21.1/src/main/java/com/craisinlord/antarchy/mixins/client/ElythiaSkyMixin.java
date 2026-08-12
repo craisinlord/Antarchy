@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.mixins.client;
 
 import com.craisinlord.antarchy.content.client.renderer.ElythiaSkyRenderer;
+import com.craisinlord.antarchy.content.client.renderer.ThoraxisUndersideSkyRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import net.minecraft.client.Camera;
@@ -38,6 +39,23 @@ public abstract class ElythiaSkyMixin {
 
     @Inject(method = "renderSky", at = @At("HEAD"), cancellable = true)
     private void antarchy$renderElythiaSky(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, float partialTick, Camera camera, boolean isFoggy, Runnable setupFog, CallbackInfo ci) {
+        if (this.level != null && ThoraxisUndersideSkyRenderer.shouldRender(this.level, camera)) {
+            PoseStack poseStack = new PoseStack();
+            poseStack.mulPose(modelViewMatrix);
+            ThoraxisUndersideSkyRenderer.render(
+                    this.minecraft,
+                    poseStack,
+                    projectionMatrix,
+                    partialTick,
+                    camera,
+                    isFoggy,
+                    setupFog,
+                    this.skyBuffer
+            );
+            ci.cancel();
+            return;
+        }
+
         if (this.level == null || !ElythiaSkyRenderer.shouldRender(this.level)) {
             return;
         }

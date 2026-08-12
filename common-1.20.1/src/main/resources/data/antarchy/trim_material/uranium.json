@@ -1,0 +1,9 @@
+{
+  "asset_name": "uranium",
+  "ingredient": "antarchy:uranium_ingot",
+  "item_model_index": 0.84,
+  "description": {
+    "color": "#F1DD4D",
+    "translate": "trim_material.antarchy.uranium"
+  }
+}

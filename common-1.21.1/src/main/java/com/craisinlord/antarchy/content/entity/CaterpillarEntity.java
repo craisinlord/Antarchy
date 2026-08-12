@@ -97,8 +97,8 @@ public class CaterpillarEntity extends Animal implements GeoEntity {
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation EAT_ANIM = RawAnimation.begin().thenPlay("eat");
-    private static final RawAnimation PUPATION_ANIM = RawAnimation.begin().thenPlay("Coocon");
-    private static final RawAnimation CHRYSALIS_ANIM = RawAnimation.begin().thenLoop("coocon");
+    private static final RawAnimation PUPATION_ANIM = RawAnimation.begin().thenPlay("cocoon");
+    private static final RawAnimation CHRYSALIS_ANIM = RawAnimation.begin().thenLoop("cocoon_chrysalis");
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 

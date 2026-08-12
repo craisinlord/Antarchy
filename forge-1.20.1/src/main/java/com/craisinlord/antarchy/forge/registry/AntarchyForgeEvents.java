@@ -1131,7 +1131,7 @@ public final class AntarchyForgeEvents {
     static void registerBrewingRecipes() {
         net.minecraft.tags.TagKey<net.minecraft.world.item.Item> rootsTag = net.minecraft.tags.TagKey.create(
                 net.minecraft.core.registries.Registries.ITEM,
-                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "roots")
+                new net.minecraft.resources.ResourceLocation(Antarchy.MODID, "roots")
         );
         net.minecraftforge.common.brewing.BrewingRecipeRegistry.addRecipe(new BrewingRecipe(
                 net.minecraft.world.item.crafting.Ingredient.of(Items.POTION),
@@ -1338,6 +1338,7 @@ public final class AntarchyForgeEvents {
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeItems.CORNEA_EAR.get(), 0.65f);
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeBlocks.PEACH_LEAVES.get().asItem(), 0.3f);
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeItems.PEACH_SAPLING_ITEM.get(), 0.3f);
+            ComposterBlock.COMPOSTABLES.put(AntarchyForgeItems.NADIR_SAPLING_ITEM.get(), 0.3f);
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeItems.CORN.get(), 0.65f);
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeItems.CORN_SEEDS.get(), 0.3f);
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeItems.PEACH.get(), 0.65f);

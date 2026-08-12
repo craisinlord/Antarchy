@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/coral_fan",
+  "textures": {
+    "fan": "antarchy:block/star_coral/dead_star_coral_fan"
+  }
+}

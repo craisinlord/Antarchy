@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smoking",
+  "category": "food",
+  "cookingtime": 100,
+  "experience": 0.5,
+  "ingredient": {
+    "item": "antarchy:kraken_tentacle"
+  },
+  "result": {
+    "id": "antarchy:kraken_kalamari"
+  }
+}

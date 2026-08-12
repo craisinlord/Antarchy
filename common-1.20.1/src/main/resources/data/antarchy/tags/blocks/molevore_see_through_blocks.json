@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:coarse_dirt",
+    "minecraft:dirt",
+    "minecraft:dirt_path",
+    "minecraft:farmland",
+    "minecraft:grass_block",
+    "minecraft:rooted_dirt",
+    "minecraft:mud",
+    "minecraft:mycelium",
+    "minecraft:podzol",
+    "minecraft:grass_block",
+    "minecraft:moss_block",
+    "antarchy:infested_coarse_dirt",
+    "antarchy:infested_rooted_dirt"
+  ]
+}

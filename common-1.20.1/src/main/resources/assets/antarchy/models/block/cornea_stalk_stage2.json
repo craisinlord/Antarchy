@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "antarchy:block/cornea/cornea_stalk_stage2"
+  }
+}

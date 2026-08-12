@@ -1,0 +1,6 @@
+{
+  "parent": "antarchy:item/ultimate_bow",
+  "textures": {
+    "layer0": "antarchy:item/ultimate/ultimate_bow_pull1"
+  }
+}

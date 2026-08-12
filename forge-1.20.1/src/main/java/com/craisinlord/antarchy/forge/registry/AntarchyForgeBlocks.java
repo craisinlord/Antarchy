@@ -150,6 +150,46 @@ public final class AntarchyForgeBlocks {
             () -> new CeilingHangingSignBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_HANGING_SIGN), AntarchyWoodTypes.PEACH));
     public static final RegistryObject<WallHangingSignBlock> PEACH_WALL_HANGING_SIGN = BLOCKS.register("peach_wall_hanging_sign",
             () -> new WallHangingSignBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_WALL_HANGING_SIGN), AntarchyWoodTypes.PEACH));
+    public static final RegistryObject<RotatedPillarBlock> NADIR_LOG = BLOCKS.register("nadir_log",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_LOG)));
+    public static final RegistryObject<RotatedPillarBlock> NADIR_WOOD = BLOCKS.register("nadir_wood",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_WOOD)));
+    public static final RegistryObject<RotatedPillarBlock> STRIPPED_NADIR_LOG = BLOCKS.register("stripped_nadir_log",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_JUNGLE_LOG)));
+    public static final RegistryObject<RotatedPillarBlock> STRIPPED_NADIR_WOOD = BLOCKS.register("stripped_nadir_wood",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_JUNGLE_WOOD)));
+    public static final RegistryObject<Block> NADIR_PLANKS = BLOCKS.register("nadir_planks",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.JUNGLE_PLANKS)));
+    public static final RegistryObject<StairBlock> NADIR_STAIRS = BLOCKS.register("nadir_stairs",
+            () -> new StairBlock(NADIR_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.copy(Blocks.JUNGLE_STAIRS)));
+    public static final RegistryObject<SlabBlock> NADIR_SLAB = BLOCKS.register("nadir_slab",
+            () -> new SlabBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_SLAB)));
+    public static final RegistryObject<FenceBlock> NADIR_FENCE = BLOCKS.register("nadir_fence",
+            () -> new FenceBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_FENCE)));
+    public static final RegistryObject<FenceGateBlock> NADIR_FENCE_GATE = BLOCKS.register("nadir_fence_gate",
+            () -> new FenceGateBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_FENCE_GATE), WoodType.JUNGLE));
+    public static final RegistryObject<DoorBlock> NADIR_DOOR = BLOCKS.register("nadir_door",
+            () -> new DoorBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_DOOR), BlockSetType.JUNGLE));
+    public static final RegistryObject<TrapDoorBlock> NADIR_TRAPDOOR = BLOCKS.register("nadir_trapdoor",
+            () -> new TrapDoorBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_TRAPDOOR), BlockSetType.JUNGLE));
+    public static final RegistryObject<PressurePlateBlock> NADIR_PRESSURE_PLATE = BLOCKS.register("nadir_pressure_plate",
+            () -> new PressurePlateBlock(PressurePlateBlock.Sensitivity.EVERYTHING, BlockBehaviour.Properties.copy(Blocks.JUNGLE_PRESSURE_PLATE), BlockSetType.JUNGLE));
+    public static final RegistryObject<ButtonBlock> NADIR_BUTTON = BLOCKS.register("nadir_button",
+            () -> new ButtonBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_BUTTON), BlockSetType.JUNGLE, 30, false));
+    public static final RegistryObject<Block> NADIR_VEIL = BLOCKS.register("nadir_veil",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.MANGROVE_LEAVES).noCollission().noOcclusion()));
+    public static final RegistryObject<com.craisinlord.antarchy.content.block.NadirSaplingBlock> NADIR_SAPLING = BLOCKS.register("nadir_sapling",
+            () -> new com.craisinlord.antarchy.content.block.NadirSaplingBlock(BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING).randomTicks().noCollission()));
+    public static final RegistryObject<FlowerPotBlock> POTTED_NADIR_SAPLING = BLOCKS.register("potted_nadir_sapling",
+            () -> new FlowerPotBlock(NADIR_SAPLING.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION)));
+    public static final RegistryObject<StandingSignBlock> NADIR_SIGN = BLOCKS.register("nadir_sign",
+            () -> new StandingSignBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_SIGN), AntarchyWoodTypes.NADIR));
+    public static final RegistryObject<WallSignBlock> NADIR_WALL_SIGN = BLOCKS.register("nadir_wall_sign",
+            () -> new WallSignBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_WALL_SIGN), AntarchyWoodTypes.NADIR));
+    public static final RegistryObject<CeilingHangingSignBlock> NADIR_HANGING_SIGN = BLOCKS.register("nadir_hanging_sign",
+            () -> new CeilingHangingSignBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_HANGING_SIGN), AntarchyWoodTypes.NADIR));
+    public static final RegistryObject<WallHangingSignBlock> NADIR_WALL_HANGING_SIGN = BLOCKS.register("nadir_wall_hanging_sign",
+            () -> new WallHangingSignBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_WALL_HANGING_SIGN), AntarchyWoodTypes.NADIR));
     public static final RegistryObject<DuplicatorSaplingBlock> DUPLICATOR_SAPLING = BLOCKS.register("duplicator_sapling",
             () -> new DuplicatorSaplingBlock(BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING).randomTicks().noCollission()));
     public static final RegistryObject<DuctTapeBlock> DUCT_TAPE = BLOCKS.register("duct_tape",

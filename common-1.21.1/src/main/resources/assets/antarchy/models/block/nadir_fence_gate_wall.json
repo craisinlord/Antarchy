@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/jungle_fence_gate_wall",
+  "textures": {
+    "texture": "antarchy:block/nadir/nadir_planks"
+  }
+}
+

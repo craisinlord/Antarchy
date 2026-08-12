@@ -1,0 +1,18 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "base": {
+    "parent": "antarchy:item/rpo_launcher_held_geo"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "antarchy:item/rpo_launcher_gui"
+    },
+    "ground": {
+      "parent": "antarchy:item/rpo_launcher_gui"
+    },
+    "fixed": {
+      "parent": "antarchy:item/rpo_launcher_gui"
+    }
+  }
+}

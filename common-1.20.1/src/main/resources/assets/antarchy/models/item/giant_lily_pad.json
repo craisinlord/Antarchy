@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "antarchy:block/giant_lilypad/giant_lilypad_1x1"
+  }
+}

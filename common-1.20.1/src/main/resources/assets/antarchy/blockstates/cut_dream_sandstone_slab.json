@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=double": {
+      "model": "antarchy:block/cut_dream_sandstone"
+    },
+    "type=bottom": {
+      "model": "antarchy:block/cut_dream_sandstone_slab"
+    },
+    "type=top": {
+      "model": "antarchy:block/cut_dream_sandstone_slab_top"
+    }
+  }
+}

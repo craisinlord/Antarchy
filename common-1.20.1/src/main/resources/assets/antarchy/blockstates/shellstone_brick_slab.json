@@ -1,0 +1,14 @@
+{
+  "variants": {
+    "type=double": {
+      "model": "antarchy:block/shellstone_bricks"
+    },
+    "type=bottom": {
+      "model": "antarchy:block/shellstone_brick_slab"
+    },
+    "type=top": {
+      "model": "antarchy:block/shellstone_brick_slab_top"
+    }
+  }
+}
+

@@ -1,0 +1,25 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "textures": {
+    "layer0": "antarchy:item/battle_axe/battle_axe_item"
+  },
+  "base": {
+    "parent": "antarchy:item/battle_axe_held"
+  },
+  "texture_size": [
+    64,
+    64
+  ],
+  "perspectives": {
+    "gui": {
+      "parent": "antarchy:item/battle_axe_gui"
+    },
+    "ground": {
+      "parent": "antarchy:item/battle_axe_gui"
+    },
+    "fixed": {
+      "parent": "antarchy:item/battle_axe_gui"
+    }
+  }
+}

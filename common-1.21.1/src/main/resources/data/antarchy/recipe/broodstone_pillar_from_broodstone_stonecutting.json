@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:broodstone"
+  },
+  "result": {
+    "id": "antarchy:broodstone_pillar"
+  }
+}

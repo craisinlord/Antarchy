@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:blasting",
+  "category": "blocks",
+  "experience": 0.7,
+  "group": "bluestone",
+  "ingredient": {
+    "item": "antarchy:bluestone_ore"
+  },
+  "result": {
+    "item": "antarchy:bluestone"
+  }
+}

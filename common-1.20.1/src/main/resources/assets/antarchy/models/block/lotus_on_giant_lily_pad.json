@@ -1,0 +1,51 @@
+﻿{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "antarchy:block/lotus",
+    "cross": "antarchy:block/lotus"
+  },
+  "elements": [
+    {
+      "from": [0.8, -0.25, 8.0],
+      "to": [15.2, 15.75, 8.0],
+      "rotation": {
+        "origin": [8.0, 8.0, 8.0],
+        "axis": "y",
+        "angle": 45,
+        "rescale": false
+      },
+      "shade": false,
+      "faces": {
+        "north": {
+          "uv": [0.0, 0.0, 16.0, 16.0],
+          "texture": "#cross"
+        },
+        "south": {
+          "uv": [16.0, 0.0, 0.0, 16.0],
+          "texture": "#cross"
+        }
+      }
+    },
+    {
+      "from": [8.0, -0.25, 0.8],
+      "to": [8.0, 15.75, 15.2],
+      "rotation": {
+        "origin": [8.0, 8.0, 8.0],
+        "axis": "y",
+        "angle": 45,
+        "rescale": false
+      },
+      "shade": false,
+      "faces": {
+        "west": {
+          "uv": [0.0, 0.0, 16.0, 16.0],
+          "texture": "#cross"
+        },
+        "east": {
+          "uv": [16.0, 0.0, 0.0, 16.0],
+          "texture": "#cross"
+        }
+      }
+    }
+  ]
+}

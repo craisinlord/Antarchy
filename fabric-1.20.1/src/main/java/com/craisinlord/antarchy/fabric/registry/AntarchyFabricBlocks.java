@@ -254,6 +254,84 @@ public final class AntarchyFabricBlocks {
             () -> new net.minecraft.world.level.block.WallHangingSignBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_WALL_HANGING_SIGN), AntarchyWoodTypes.PEACH));
 
 
+    public static final DeferredBlock<RotatedPillarBlock> NADIR_LOG = BLOCKS.register("nadir_log",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_LOG)));
+
+
+    public static final DeferredBlock<RotatedPillarBlock> NADIR_WOOD = BLOCKS.register("nadir_wood",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_WOOD)));
+
+
+    public static final DeferredBlock<RotatedPillarBlock> STRIPPED_NADIR_LOG = BLOCKS.register("stripped_nadir_log",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_JUNGLE_LOG)));
+
+
+    public static final DeferredBlock<RotatedPillarBlock> STRIPPED_NADIR_WOOD = BLOCKS.register("stripped_nadir_wood",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.STRIPPED_JUNGLE_WOOD)));
+
+
+    public static final DeferredBlock<Block> NADIR_PLANKS = BLOCKS.register("nadir_planks",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.JUNGLE_PLANKS)));
+
+
+    public static final DeferredBlock<net.minecraft.world.level.block.StairBlock> NADIR_STAIRS = BLOCKS.register("nadir_stairs",
+            () -> new net.minecraft.world.level.block.StairBlock(NADIR_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.copy(Blocks.JUNGLE_STAIRS)));
+
+
+    public static final DeferredBlock<net.minecraft.world.level.block.SlabBlock> NADIR_SLAB = BLOCKS.register("nadir_slab",
+            () -> new net.minecraft.world.level.block.SlabBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_SLAB)));
+
+
+    public static final DeferredBlock<net.minecraft.world.level.block.FenceBlock> NADIR_FENCE = BLOCKS.register("nadir_fence",
+            () -> new net.minecraft.world.level.block.FenceBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_FENCE)));
+
+
+    public static final DeferredBlock<net.minecraft.world.level.block.FenceGateBlock> NADIR_FENCE_GATE = BLOCKS.register("nadir_fence_gate",
+            () -> new net.minecraft.world.level.block.FenceGateBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_FENCE_GATE), net.minecraft.world.level.block.state.properties.WoodType.JUNGLE));
+
+
+    public static final DeferredBlock<net.minecraft.world.level.block.DoorBlock> NADIR_DOOR = BLOCKS.register("nadir_door",
+            () -> new net.minecraft.world.level.block.DoorBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_DOOR), net.minecraft.world.level.block.state.properties.BlockSetType.JUNGLE));
+
+
+    public static final DeferredBlock<net.minecraft.world.level.block.TrapDoorBlock> NADIR_TRAPDOOR = BLOCKS.register("nadir_trapdoor",
+            () -> new net.minecraft.world.level.block.TrapDoorBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_TRAPDOOR), net.minecraft.world.level.block.state.properties.BlockSetType.JUNGLE));
+
+
+    public static final DeferredBlock<net.minecraft.world.level.block.PressurePlateBlock> NADIR_PRESSURE_PLATE = BLOCKS.register("nadir_pressure_plate",
+            () -> new net.minecraft.world.level.block.PressurePlateBlock(net.minecraft.world.level.block.PressurePlateBlock.Sensitivity.EVERYTHING, BlockBehaviour.Properties.copy(Blocks.JUNGLE_PRESSURE_PLATE), net.minecraft.world.level.block.state.properties.BlockSetType.JUNGLE));
+
+
+    public static final DeferredBlock<net.minecraft.world.level.block.ButtonBlock> NADIR_BUTTON = BLOCKS.register("nadir_button",
+            () -> new net.minecraft.world.level.block.ButtonBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_BUTTON), net.minecraft.world.level.block.state.properties.BlockSetType.JUNGLE, 30, false));
+
+
+    public static final DeferredBlock<Block> NADIR_VEIL = BLOCKS.register("nadir_veil",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.MANGROVE_LEAVES).noCollission().noOcclusion()));
+
+
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.NadirSaplingBlock> NADIR_SAPLING = BLOCKS.register("nadir_sapling",
+            () -> new com.craisinlord.antarchy.content.block.NadirSaplingBlock(BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING).randomTicks().noCollission()));
+    public static final DeferredBlock<net.minecraft.world.level.block.FlowerPotBlock> POTTED_NADIR_SAPLING = BLOCKS.register("potted_nadir_sapling",
+            () -> new net.minecraft.world.level.block.FlowerPotBlock(NADIR_SAPLING.get(), BlockBehaviour.Properties.copy(Blocks.POTTED_DANDELION)));
+
+
+    public static final DeferredBlock<net.minecraft.world.level.block.StandingSignBlock> NADIR_SIGN = BLOCKS.register("nadir_sign",
+            () -> new net.minecraft.world.level.block.StandingSignBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_SIGN), AntarchyWoodTypes.NADIR));
+
+
+    public static final DeferredBlock<net.minecraft.world.level.block.WallSignBlock> NADIR_WALL_SIGN = BLOCKS.register("nadir_wall_sign",
+            () -> new net.minecraft.world.level.block.WallSignBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_WALL_SIGN), AntarchyWoodTypes.NADIR));
+
+
+    public static final DeferredBlock<net.minecraft.world.level.block.CeilingHangingSignBlock> NADIR_HANGING_SIGN = BLOCKS.register("nadir_hanging_sign",
+            () -> new net.minecraft.world.level.block.CeilingHangingSignBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_HANGING_SIGN), AntarchyWoodTypes.NADIR));
+
+
+    public static final DeferredBlock<net.minecraft.world.level.block.WallHangingSignBlock> NADIR_WALL_HANGING_SIGN = BLOCKS.register("nadir_wall_hanging_sign",
+            () -> new net.minecraft.world.level.block.WallHangingSignBlock(BlockBehaviour.Properties.copy(Blocks.JUNGLE_WALL_HANGING_SIGN), AntarchyWoodTypes.NADIR));
+
+
     public static final DeferredBlock<DuplicatorSaplingBlock> DUPLICATOR_SAPLING = BLOCKS.register("duplicator_sapling",
             () -> new DuplicatorSaplingBlock(BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING).randomTicks().noCollission()));
 

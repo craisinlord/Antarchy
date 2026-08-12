@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_four_turtle_eggs",
+  "textures": {
+    "all": "antarchy:block/bed_bug_egg_slightly_cracked",
+    "particle": "antarchy:block/bed_bug_egg_slightly_cracked"
+  }
+}

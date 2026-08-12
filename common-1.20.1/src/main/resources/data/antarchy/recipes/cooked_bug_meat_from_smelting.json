@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smelting",
+  "category": "food",
+  "cookingtime": 200,
+  "experience": 0.35,
+  "ingredient": {
+    "item": "antarchy:raw_bug_meat"
+  },
+  "result": {
+    "item": "antarchy:cooked_bug_meat"
+  }
+}

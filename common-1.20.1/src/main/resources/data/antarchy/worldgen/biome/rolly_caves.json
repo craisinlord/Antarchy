@@ -1,0 +1,83 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.7,
+  "downfall": 0.6,
+  "effects": {
+    "fog_color": 4867366,
+    "water_color": 6591296,
+    "water_fog_color": 2440734,
+    "sky_color": 1710351,
+    "grass_color": 10275406,
+    "foliage_color": 10275406,
+    "mood_sound": {
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 60000,
+      "block_search_extent": 8,
+      "offset": 2.0
+    },
+    "particle": {
+      "probability": 0.004,
+      "options": {
+        "type": "minecraft:spore_blossom_air"
+      }
+    }
+  },
+  "spawn_costs": {},
+  "carvers": {
+    "air": [],
+    "liquid": []
+  },
+  "features": [
+    [],
+    [
+      "antarchy:rolly_caves_bile_pool"
+    ],
+    [
+      "antarchy:rolly_caves_giant_cavern"
+    ],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "minecraft:lush_caves_vegetation",
+      "minecraft:lush_caves_ceiling_vegetation",
+      "minecraft:cave_vines",
+      "antarchy:rolly_caves_amber_moss_patch",
+      "antarchy:cavaryn_wall_amber_moss",
+      "antarchy:termite_nest",
+      "minecraft:glow_lichen",
+      "minecraft:patch_tall_grass_2",
+      "minecraft:lush_caves_clay",
+      "minecraft:rooted_azalea_tree",
+      "minecraft:spore_blossom"
+    ],
+    []
+  ],
+  "creature_spawn_probability": 0.08,
+  "spawners": {
+    "monster": [],
+    "creature": [
+      {
+        "type": "antarchy:rolly_polly",
+        "weight": 60,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "antarchy:stink_bug",
+        "weight": 35,
+        "minCount": 2,
+        "maxCount": 4
+      }
+    ],
+    "ambient": [],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  }
+}

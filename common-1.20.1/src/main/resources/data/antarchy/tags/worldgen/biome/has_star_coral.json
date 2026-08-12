@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:is_ocean",
+    {
+      "id": "#neoforge:is_ocean",
+      "required": false
+    },
+    {
+      "id": "#c:ocean",
+      "required": false
+    }
+  ]
+}

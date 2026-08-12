@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:critter_cage"
+        }
+      ],
+      "functions": [
+        {
+          "function": "minecraft:copy_nbt",
+          "source": "block_entity",
+          "ops": [
+            { "source": "EntityType", "target": "antarchy_critter_cage_entity_type", "op": "replace" },
+            { "source": "EntityData", "target": "EntityData", "op": "replace" },
+            { "source": "PrimaryColor", "target": "antarchy_critter_cage_primary_color", "op": "replace" },
+            { "source": "SecondaryColor", "target": "antarchy_critter_cage_secondary_color", "op": "replace" }
+          ]
+        }
+      ]
+    }
+  ]
+}

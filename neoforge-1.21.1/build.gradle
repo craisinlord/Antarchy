@@ -51,6 +51,7 @@ dependencies {
     implementation "software.bernie.geckolib:geckolib-neoforge-1.21.1:${geckolib_version}"
     compileOnly(files(rootProject.file("infinite_dimensions_jars/infinity-2.7.2+1.21.1-neoforge.jar")))
     runtimeOnly(files(rootProject.file("infinite_dimensions_jars/infinity-2.7.2+1.21.1-neoforge.jar")))
+    runtimeOnly("dev.architectury:architectury-neoforge:${architectury_api_version}")
 
     compileOnly(files(rootProject.file("sizeable_foliage_jars/sizeable_foliage-neoforge-1.21.1-1.0.0.jar")))
     runtimeOnly(files(rootProject.file("sizeable_foliage_jars/sizeable_foliage-neoforge-1.21.1-1.0.0.jar")))
@@ -73,6 +74,18 @@ tasks.withType(ProcessResources).configureEach {
 
     filesMatching('META-INF/neoforge.mods.toml') {
         expand replaceProperties
+    }
+}
+
+tasks.matching { it.name in ["runClient", "runServer", "runData"] }.configureEach {
+    doFirst {
+        def infinityConfigPrefix = "config/common/"
+        zipTree(rootProject.file("infinite_dimensions_jars/infinity-2.7.2+1.21.1-neoforge.jar")).visit { details ->
+            if (!details.directory && details.relativePath.pathString.startsWith(infinityConfigPrefix)) {
+                def targetPath = details.relativePath.pathString.substring(infinityConfigPrefix.length())
+                file("run/config/infinity/${targetPath}").parentFile.mkdirs()
+            }
+        }
     }
 }
 

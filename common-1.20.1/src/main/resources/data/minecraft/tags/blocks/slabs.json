@@ -1,0 +1,22 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:nyxite_slab",
+    "antarchy:polished_nyxite_slab",
+    "antarchy:nyxite_brick_slab",
+    "antarchy:shellstone_slab",
+    "antarchy:polished_shellstone_slab",
+    "antarchy:shellstone_brick_slab",
+    "antarchy:mossy_shellstone_brick_slab",
+    "antarchy:dream_sandstone_slab",
+    "antarchy:smooth_dream_sandstone_slab",
+    "antarchy:cut_dream_sandstone_slab",
+    "antarchy:cut_uranium_slab",
+    "antarchy:cut_titanium_slab",
+    "antarchy:broodstone_slab",
+    "antarchy:polished_broodstone_slab",
+    "antarchy:broodstone_brick_slab",
+    "antarchy:antimetal_slab",
+    "antarchy:polished_antimetal_slab"
+  ]
+}

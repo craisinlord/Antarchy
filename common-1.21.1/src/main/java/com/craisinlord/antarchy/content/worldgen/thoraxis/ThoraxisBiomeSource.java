@@ -39,6 +39,10 @@ public final class ThoraxisBiomeSource extends BiomeSource {
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "lucid_pools")
     );
+    private static final ResourceKey<Biome> UNDERSIDE = ResourceKey.create(
+            Registries.BIOME,
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "thoraxis_underside")
+    );
 
     public static final MapCodec<ThoraxisBiomeSource> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             MultiNoiseBiomeSource.DIRECT_CODEC.forGetter(ThoraxisBiomeSource::parameters),
@@ -60,6 +64,7 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     private Holder<Biome> dreamDunesBiome;
     private Holder<Biome> umbralHillsBiome;
     private Holder<Biome> lucidPoolsBiome;
+    private Holder<Biome> undersideBiome;
 
     private static final ThreadLocal<Long2DoubleOpenHashMap> REGION_CACHE =
             ThreadLocal.withInitial(() -> new Long2DoubleOpenHashMap(512));
@@ -89,6 +94,7 @@ public final class ThoraxisBiomeSource extends BiomeSource {
             this.dreamDunesBiome = this.findBiome(DREAM_DUNES);
             this.umbralHillsBiome = this.findBiome(UMBRAL_HILLS);
             this.lucidPoolsBiome = this.findBiome(LUCID_POOLS);
+            this.undersideBiome = this.findBiome(UNDERSIDE);
             this.biomesResolved = true;
         }
     }
@@ -122,6 +128,10 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     @Override
     public Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.Sampler sampler) {
         this.resolveBiomesIfNeeded();
+        if (y < 0 && this.undersideBiome != null) {
+            return this.undersideBiome;
+        }
+
         if (y >= this.lucidPoolsMinQuartY && this.lucidPoolsBiome != null) {
             return this.lucidPoolsBiome;
         }

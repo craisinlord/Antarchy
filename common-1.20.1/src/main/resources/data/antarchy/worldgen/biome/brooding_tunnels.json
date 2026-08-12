@@ -1,0 +1,96 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.45,
+  "downfall": 0.0,
+  "effects": {
+    "fog_color": 655360,
+    "water_color": 327680,
+    "water_fog_color": 0,
+    "sky_color": 262144,
+    "grass_color": 2763554,
+    "foliage_color": 2763554,
+    "mood_sound": {
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 1200000,
+      "block_search_extent": 8,
+      "offset": 2.0
+    },
+    "particle": {
+      "probability": 0.003,
+      "options": {
+        "type": "antarchy:orange_ash"
+      }
+    }
+  },
+  "spawn_costs": {
+    "antarchy:jumpy_bug": {
+      "energy_budget": 0.4,
+      "charge": 7
+    },
+    "antarchy:spit_bug": {
+      "energy_budget": 0.9,
+      "charge": 2
+    }
+  },
+  "carvers": {
+    "air": [],
+    "liquid": []
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:broodstone_uranium_ore",
+      "antarchy:broodstone_titanium_ore"
+    ],
+    [],
+    [
+      "antarchy:cavaryn_bile_veins",
+      "antarchy:cavaryn_bile_cysts",
+      "antarchy:termite_nest"
+    ],
+    [
+      "antarchy:brooding_tunnels_creepvine",
+      "antarchy:brooding_tunnels_hanging_creeproots",
+      "antarchy:molting_vines",
+      "antarchy:ground_molting_vines",
+      "antarchy:jumpy_bug_egg_ceiling",
+      "antarchy:spit_bug_egg_patch"
+    ]
+  ],
+  "creature_spawn_probability": 0.12,
+  "spawners": {
+    "monster": [
+      {
+        "type": "antarchy:jumpy_bug",
+        "weight": 95,
+        "minCount": 1,
+        "maxCount": 3
+      }
+    ],
+    "creature": [
+      {
+        "type": "antarchy:rolly_polly",
+        "weight": 25,
+        "minCount": 1,
+        "maxCount": 3
+      },
+      {
+        "type": "antarchy:stink_bug",
+        "weight": 35,
+        "minCount": 2,
+        "maxCount": 4
+      }],
+    "ambient": [
+    ],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.58,
+  "downfall": 0.25,
+  "effects": {
+    "fog_color": 7639848,
+    "water_color": 9453328,
+    "water_fog_color": 5643034,
+    "sky_color": 5007935,
+    "grass_color": 4569361,
+    "foliage_color": 6018898,
+    "grass_color_modifier": "none",
+    "mood_sound": {
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 60000,
+      "block_search_extent": 8,
+      "offset": 2.0
+    },
+    "particle": {
+      "probability": 0.004,
+      "options": {
+        "type": "antarchy:orange_ash"
+      }
+    }
+  },
+  "spawn_costs": {
+    "antarchy:jerry": {
+      "energy_budget": 0.8,
+      "charge": 4
+    }
+  },
+  "carvers": {
+    "air": [],
+    "liquid": []
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:cavaryn_bile_veins",
+      "antarchy:cavaryn_bile_cysts",
+      "antarchy:termite_nest"
+    ],
+    [
+      "antarchy:jerry_egg_patch"
+    ],
+    [
+      "antarchy:biowart_patch",
+      "antarchy:cavaryn_creepvine",
+      "antarchy:cavaryn_hanging_creeproots"
+    ],
+    []
+  ],
+  "creature_spawn_probability": 0.08,
+  "spawners": {
+    "monster": [
+      {
+        "type": "antarchy:jerry",
+        "weight": 65,
+        "minCount": 1,
+        "maxCount": 2
+      }
+    ],
+    "creature": [
+      {
+        "type": "antarchy:rolly_polly",
+        "weight": 25,
+        "minCount": 1,
+        "maxCount": 3
+      },
+      {
+        "type": "antarchy:stink_bug",
+        "weight": 35,
+        "minCount": 2,
+        "maxCount": 4
+      }
+    ],
+    "ambient": [],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  }
+}

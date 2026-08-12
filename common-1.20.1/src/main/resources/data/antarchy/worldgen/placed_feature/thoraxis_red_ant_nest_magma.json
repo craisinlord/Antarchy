@@ -1,0 +1,27 @@
+{
+  "feature": "antarchy:red_ant_nest",
+  "placement": [
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 16
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "min_inclusive": {
+          "absolute": 32
+        },
+        "max_inclusive": {
+          "absolute": 118
+        }
+      }
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

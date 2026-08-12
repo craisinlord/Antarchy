@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "antarchy:block/chiseled_uranium", "y": 180 },
+    "facing=east": { "model": "antarchy:block/chiseled_uranium", "y": 270 },
+    "facing=south": { "model": "antarchy:block/chiseled_uranium" },
+    "facing=west": { "model": "antarchy:block/chiseled_uranium", "y": 90 }
+  }
+}

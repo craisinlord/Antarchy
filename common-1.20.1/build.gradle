@@ -1,0 +1,26 @@
+plugins {
+    id 'java-library'
+}
+
+base {
+    archivesName = "${mod_id}-common-1.20.1"
+}
+
+// Source-only module — each loader module compiles these sources itself.
+tasks.named('compileJava').configure {
+    enabled = false
+}
+
+tasks.named('jar').configure {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from sourceSets.main.allJava
+    from sourceSets.main.resources
+}
+
+dependencies {
+    compileOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.2+1.20.1-fabric.jar"))
+    compileOnly("software.bernie.geckolib:geckolib-fabric-1.20.1:${geckolib_version}")
+    compileOnly("curse.maven:sizeable_foliage-${sizeable_foliage_curseforge_id_1_20_1}:${sizeable_foliage_curseforge_file_id_1_20_1_fabric}")
+    compileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_1_20_1_fabric}")
+    compileOnly("mezz.jei:jei-1.20.1-common-api:${jei_version_1_20_1}")
+}

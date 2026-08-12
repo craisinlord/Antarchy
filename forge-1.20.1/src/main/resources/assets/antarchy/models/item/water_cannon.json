@@ -1,0 +1,18 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "base": {
+    "parent": "antarchy:item/water_cannon_held_geo"
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "antarchy:item/water_cannon_gui"
+    },
+    "ground": {
+      "parent": "antarchy:item/water_cannon_gui"
+    },
+    "fixed": {
+      "parent": "antarchy:item/water_cannon_gui"
+    }
+  }
+}

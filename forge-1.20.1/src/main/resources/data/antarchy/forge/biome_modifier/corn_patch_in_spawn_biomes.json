@@ -1,0 +1,8 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#antarchy:wild_corn_spawn_biomes",
+  "features": [
+    "antarchy:corn_patch"
+  ],
+  "step": "vegetal_decoration"
+}

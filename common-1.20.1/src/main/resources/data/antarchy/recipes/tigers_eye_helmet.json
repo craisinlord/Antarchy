@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "SSS",
+    "S S"
+  ],
+  "key": {
+    "S": {
+      "item": "antarchy:tigers_eye"
+    }
+  },
+  "result": {
+    "item": "antarchy:tigers_eye_helmet",
+    "count": 1
+  }
+}

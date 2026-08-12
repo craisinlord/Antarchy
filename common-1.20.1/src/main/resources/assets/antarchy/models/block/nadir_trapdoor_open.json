@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/jungle_trapdoor_open",
+  "textures": {
+    "texture": "antarchy:block/nadir/nadir_log_trapdoor"
+  }
+}
+

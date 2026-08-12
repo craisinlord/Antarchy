@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "antarchy:block/cut_titanium", "y": 180 },
+    "facing=east": { "model": "antarchy:block/cut_titanium", "y": 270 },
+    "facing=south": { "model": "antarchy:block/cut_titanium" },
+    "facing=west": { "model": "antarchy:block/cut_titanium", "y": 90 }
+  }
+}

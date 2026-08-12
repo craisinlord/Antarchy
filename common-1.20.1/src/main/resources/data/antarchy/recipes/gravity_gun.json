@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "UGN",
+    "UCT",
+    " BT"
+  ],
+  "key": {
+    "U": {
+      "item": "antarchy:uranium_ingot"
+    },
+    "T": {
+      "item": "antarchy:titanium_ingot"
+    },
+    "G": {
+      "item": "antarchy:lucid_eye"
+    },
+    "N": {
+      "tag": "c:ingots/netherite"
+    },
+    "C": {
+      "item": "minecraft:comparator"
+    },
+    "B": {
+      "item": "antarchy:bluestone_comparator"
+    }
+  },
+  "result": {
+    "item": "antarchy:gravity_gun",
+    "count": 1
+  }
+}

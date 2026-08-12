@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "antarchy:block/roseate_froglight_side",
+    "top": "antarchy:block/roseate_froglight_top",
+    "side": "antarchy:block/roseate_froglight_side"
+  }
+}

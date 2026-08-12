@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:broodstone_bricks"
+  },
+  "result": {
+    "count": 2,
+    "item": "antarchy:broodstone_brick_slab"
+  }
+}

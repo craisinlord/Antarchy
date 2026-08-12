@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:uranium_block",
+    "antarchy:cut_uranium",
+    "antarchy:cut_uranium_slab",
+    "antarchy:cut_uranium_stairs",
+    "antarchy:chiseled_uranium",
+    "antarchy:uranium_door",
+    "antarchy:uranium_trapdoor",
+    "antarchy:uranium_bars",
+    "antarchy:uranium_bulb"
+  ]
+}

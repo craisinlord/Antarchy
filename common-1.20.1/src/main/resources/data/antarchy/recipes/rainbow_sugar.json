@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:sugar"
+    },
+    {
+      "item": "antarchy:uranium_nugget"
+    },
+    {
+      "item": "antarchy:high_fructose_corn_syrup"
+    }
+  ],
+  "result": {
+    "item": "antarchy:rainbow_sugar",
+    "count": 1
+  }
+}
