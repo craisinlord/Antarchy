@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "antarchy:block/uranium/uranium_bulb_lit_powered"
+  }
+}

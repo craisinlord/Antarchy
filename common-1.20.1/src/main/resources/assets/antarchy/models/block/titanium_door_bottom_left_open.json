@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/jungle_door_bottom_left_open",
+  "textures": {
+    "bottom": "antarchy:block/titanium/titanium_door_bottom",
+    "top": "antarchy:block/titanium/titanium_door_top"
+  }
+}

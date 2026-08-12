@@ -18,6 +18,7 @@ import com.craisinlord.antarchy.content.worldgen.overworld.CornPatchFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.NyxiteSpikeConfiguration;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.AntiwaterSpringsConfiguration;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.AntiwaterSpringsFeature;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.DimensionalTearFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.NyxiteSpikeFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.PotentNyxiteFeature;
 import com.craisinlord.antarchy.fabric.content.fluid.AntiwaterFluid;
@@ -767,6 +768,10 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<Feature<?>, CoralSpikeFeature> ELYTHIA_CORAL_SPIKE = FEATURES.register("elythia_coral_spike",
             () -> new CoralSpikeFeature(NoneFeatureConfiguration.CODEC));
+
+
+    public static final DeferredHolder<Feature<?>, DimensionalTearFeature> DIMENSIONAL_TEAR = FEATURES.register("dimensional_tear",
+            () -> new DimensionalTearFeature(NoneFeatureConfiguration.CODEC));
 
 
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.FallenOuranwoodFeature> FALLEN_OURANWOOD_TREE = FEATURES.register("fallen_ouranwood_tree",

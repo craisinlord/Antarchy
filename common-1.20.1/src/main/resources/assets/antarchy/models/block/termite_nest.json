@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "antarchy:block/termite_nest/termite_nest_side",
+    "down": "minecraft:block/rooted_dirt",
+    "up": "antarchy:block/termite_nest/termite_nest_top",
+    "north": "antarchy:block/termite_nest/termite_nest_side",
+    "south": "antarchy:block/termite_nest/termite_nest_side",
+    "west": "antarchy:block/termite_nest/termite_nest_side",
+    "east": "antarchy:block/termite_nest/termite_nest_side"
+  }
+}

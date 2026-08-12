@@ -24,7 +24,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
@@ -59,7 +58,6 @@ public class SpitBugEntity extends Monster implements GeoEntity {
     private static final double ATTACK_DAMAGE = 5.0D;
     private static final double FOLLOW_RANGE = 24.0D;
     private static final double SPIT_RANGE_SQR = 14.0D * 14.0D;
-    private static final double MELEE_RANGE_SQR = 3.5D * 3.5D;
     private static final int SPIT_COOLDOWN_TICKS = 55;
     private static final int SPIT_ANIMATION_TICKS = 18;
     private static final int SPIT_RELEASE_TICKS = 8;
@@ -105,10 +103,9 @@ public class SpitBugEntity extends Monster implements GeoEntity {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new SpitAttackGoal());
-        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, false));
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.9D));
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 12.0F));
-        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 0.9D));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 12.0F));
+        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
@@ -193,8 +190,7 @@ public class SpitBugEntity extends Monster implements GeoEntity {
         return this.spitCooldownTicks <= 0
                 && this.spitAnimationTicks <= 0
                 && this.hasLineOfSight(target)
-                && this.distanceToSqr(target) <= SPIT_RANGE_SQR
-                && this.distanceToSqr(target) > MELEE_RANGE_SQR;
+                && this.distanceToSqr(target) <= SPIT_RANGE_SQR;
     }
 
     private void startSpitAttack() {
@@ -260,6 +256,11 @@ public class SpitBugEntity extends Monster implements GeoEntity {
             }
 
             SpitBugEntity.this.getLookControl().setLookAt(target, 30.0F, 30.0F);
+
+            if (SpitBugEntity.this.spitAnimationTicks > 0) {
+                SpitBugEntity.this.getNavigation().stop();
+                return;
+            }
 
             if (SpitBugEntity.this.canSpitAt(target)) {
                 SpitBugEntity.this.getNavigation().stop();

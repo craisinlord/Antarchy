@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "AC ",
+    "DBG",
+    " EF"
+  ],
+  "key": {
+    "A": {
+      "item": "antarchy:nightmare_scale"
+    },
+    "B": {
+      "item": "antarchy:molevore_nose"
+    },
+    "C": {
+      "item": "antarchy:jumpy_bug_leg"
+    },
+    "D": {
+      "item": "antarchy:jerry_nucleus"
+    },
+    "E": {
+      "item": "antarchy:rainbow_sugar"
+    },
+    "F": {
+      "item": "antarchy:primordial_scute"
+    },
+    "G": {
+      "item": "antarchy:hercules_horn"
+    }
+  },
+  "result": {
+    "item": "antarchy:big_bertha_hilt",
+    "count": 1
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "antarchy:block/peach_slab"
+    },
+    "type=double": {
+      "model": "antarchy:block/peach_planks"
+    },
+    "type=top": {
+      "model": "antarchy:block/peach_slab_top"
+    }
+  }
+}
+

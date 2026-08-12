@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "antarchy:block/shellstone/mossy_shellstone_bricks",
+    "side": "antarchy:block/shellstone/mossy_shellstone_bricks",
+    "top": "antarchy:block/shellstone/mossy_shellstone_bricks"
+  }
+}

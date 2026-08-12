@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "facing=north,powered=false,waterlogged=false": {
+      "model": "antarchy:block/seashell"
+    },
+    "facing=north,powered=false,waterlogged=true": {
+      "model": "antarchy:block/seashell"
+    },
+    "facing=north,powered=true,waterlogged=false": {
+      "model": "antarchy:block/seashell"
+    },
+    "facing=north,powered=true,waterlogged=true": {
+      "model": "antarchy:block/seashell"
+    },
+    "facing=south,powered=false,waterlogged=false": {
+      "model": "antarchy:block/seashell"
+    },
+    "facing=south,powered=false,waterlogged=true": {
+      "model": "antarchy:block/seashell"
+    },
+    "facing=south,powered=true,waterlogged=false": {
+      "model": "antarchy:block/seashell"
+    },
+    "facing=south,powered=true,waterlogged=true": {
+      "model": "antarchy:block/seashell"
+    },
+    "facing=east,powered=false,waterlogged=false": {
+      "model": "antarchy:block/seashell"
+    },
+    "facing=east,powered=false,waterlogged=true": {
+      "model": "antarchy:block/seashell"
+    },
+    "facing=east,powered=true,waterlogged=false": {
+      "model": "antarchy:block/seashell"
+    },
+    "facing=east,powered=true,waterlogged=true": {
+      "model": "antarchy:block/seashell"
+    },
+    "facing=west,powered=false,waterlogged=false": {
+      "model": "antarchy:block/seashell"
+    },
+    "facing=west,powered=false,waterlogged=true": {
+      "model": "antarchy:block/seashell"
+    },
+    "facing=west,powered=true,waterlogged=false": {
+      "model": "antarchy:block/seashell"
+    },
+    "facing=west,powered=true,waterlogged=true": {
+      "model": "antarchy:block/seashell"
+    }
+  }
+}

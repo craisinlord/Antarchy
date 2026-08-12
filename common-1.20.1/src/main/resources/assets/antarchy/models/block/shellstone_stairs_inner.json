@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "antarchy:block/shellstone/shellstone",
+    "side": "antarchy:block/shellstone/shellstone",
+    "top": "antarchy:block/shellstone/shellstone"
+  }
+}
+

@@ -1,0 +1,8 @@
+{
+  "multipart": [
+    { "when": { "lit": "false", "powered": "false" }, "apply": { "model": "antarchy:block/titanium_bulb" } },
+    { "when": { "lit": "true",  "powered": "false" }, "apply": { "model": "antarchy:block/titanium_bulb_lit" } },
+    { "when": { "lit": "false", "powered": "true"  }, "apply": { "model": "antarchy:block/titanium_bulb_powered" } },
+    { "when": { "lit": "true",  "powered": "true"  }, "apply": { "model": "antarchy:block/titanium_bulb_lit_powered" } }
+  ]
+}

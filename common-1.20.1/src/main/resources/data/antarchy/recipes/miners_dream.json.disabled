@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GGG",
+    "RDR",
+    "TTT"
+  ],
+  "key": {
+    "G": { "item": "antarchy:triffid_goo" },
+    "R": { "item": "minecraft:redstone_block" },
+    "D": { "item": "minecraft:diamond_pickaxe" },
+    "T": { "item": "minecraft:tnt" }
+  },
+  "result": {
+    "item": "antarchy:miners_dream",
+    "count": 1
+  }
+}

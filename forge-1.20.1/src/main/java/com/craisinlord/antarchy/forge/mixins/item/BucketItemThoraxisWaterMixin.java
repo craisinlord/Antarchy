@@ -24,7 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(BucketItem.class)
 public abstract class BucketItemThoraxisWaterMixin {
     private static final ResourceLocation THORAXIS_DIMENSION_ID =
-            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "thoraxis");
+            new ResourceLocation(Antarchy.MODID, "thoraxis");
 
     @Shadow
     @Final

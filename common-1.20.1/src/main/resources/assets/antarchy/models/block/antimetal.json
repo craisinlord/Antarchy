@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "antarchy:block/antimetal/antimetal_block_top",
+    "side": "antarchy:block/antimetal/antimetal_block"
+  }
+}

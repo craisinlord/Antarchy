@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:nyxite_stairs",
+    "antarchy:nyxite_brick_stairs",
+    "antarchy:polished_nyxite_stairs",
+    "antarchy:shellstone_stairs",
+    "antarchy:polished_shellstone_stairs",
+    "antarchy:shellstone_brick_stairs",
+    "antarchy:mossy_shellstone_brick_stairs",
+    "antarchy:dream_sandstone_stairs",
+    "antarchy:smooth_dream_sandstone_stairs",
+    "antarchy:cut_titanium_stairs",
+    "antarchy:cut_uranium_stairs",
+    "antarchy:broodstone_stairs",
+    "antarchy:polished_broodstone_stairs",
+    "antarchy:broodstone_brick_stairs",
+    "antarchy:antimetal_stairs",
+    "antarchy:polished_antimetal_stairs"
+  ]
+}

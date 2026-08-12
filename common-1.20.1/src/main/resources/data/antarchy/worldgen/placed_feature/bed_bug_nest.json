@@ -1,0 +1,27 @@
+{
+  "feature": "antarchy:bed_bug_nest",
+  "placement": [
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 12
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "min_inclusive": {
+          "absolute": 10
+        },
+        "max_inclusive": {
+          "absolute": 140
+        }
+      }
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

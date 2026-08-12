@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/jungle_wood",
+  "textures": {
+    "end": "antarchy:block/peach/peach_log",
+    "side": "antarchy:block/peach/peach_log"
+  }
+}
+

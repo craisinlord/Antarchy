@@ -1,0 +1,387 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "delay": "1",
+        "facing": "north",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater"
+      }
+    },
+    {
+      "when": {
+        "delay": "1",
+        "facing": "east",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "delay": "1",
+        "facing": "south",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "delay": "1",
+        "facing": "west",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "delay": "1",
+        "facing": "north",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_on"
+      }
+    },
+    {
+      "when": {
+        "delay": "1",
+        "facing": "east",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_on",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "delay": "1",
+        "facing": "south",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_on",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "delay": "1",
+        "facing": "west",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_on",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "delay": "2",
+        "facing": "north",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay2"
+      }
+    },
+    {
+      "when": {
+        "delay": "2",
+        "facing": "east",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "delay": "2",
+        "facing": "south",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "delay": "2",
+        "facing": "west",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "delay": "2",
+        "facing": "north",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay2_on"
+      }
+    },
+    {
+      "when": {
+        "delay": "2",
+        "facing": "east",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay2_on",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "delay": "2",
+        "facing": "south",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay2_on",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "delay": "2",
+        "facing": "west",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay2_on",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "delay": "3",
+        "facing": "north",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay3"
+      }
+    },
+    {
+      "when": {
+        "delay": "3",
+        "facing": "east",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "delay": "3",
+        "facing": "south",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "delay": "3",
+        "facing": "west",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "delay": "3",
+        "facing": "north",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay3_on"
+      }
+    },
+    {
+      "when": {
+        "delay": "3",
+        "facing": "east",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay3_on",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "delay": "3",
+        "facing": "south",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay3_on",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "delay": "3",
+        "facing": "west",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay3_on",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "delay": "4",
+        "facing": "north",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay4"
+      }
+    },
+    {
+      "when": {
+        "delay": "4",
+        "facing": "east",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "delay": "4",
+        "facing": "south",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay4",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "delay": "4",
+        "facing": "west",
+        "powered": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay4",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "delay": "4",
+        "facing": "north",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay4_on"
+      }
+    },
+    {
+      "when": {
+        "delay": "4",
+        "facing": "east",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay4_on",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "delay": "4",
+        "facing": "south",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay4_on",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "delay": "4",
+        "facing": "west",
+        "powered": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_delay4_on",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "locked": "true",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_lock"
+      }
+    },
+    {
+      "when": {
+        "locked": "true",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_lock",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "locked": "true",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_lock",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "locked": "true",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_repeater_lock",
+        "y": 270
+      }
+    }
+  ]
+}

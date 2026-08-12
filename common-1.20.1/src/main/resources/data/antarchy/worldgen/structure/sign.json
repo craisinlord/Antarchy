@@ -1,0 +1,20 @@
+{
+  "type": "integrated_api:generic_structure",
+  "start_pool": "antarchy:sign/sign",
+  "size": 3,
+  "terrain_height_radius_check": 1,
+  "allowed_terrain_height_range": 10,
+  "valid_biome_radius_check": 1,
+  "biomes": "#antarchy:has_structure/sign_biomes",
+  "step": "surface_structures",
+  "terrain_adaptation": "beard_thin",
+  "project_start_to_heightmap": "WORLD_SURFACE_WG",
+  "start_height": {
+    "type": "minecraft:constant",
+    "value": {
+      "absolute": 0
+    }
+  },
+  "spawn_overrides": {},
+  "liquid_settings": "ignore_waterlogging"
+}

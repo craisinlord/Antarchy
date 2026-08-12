@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "antarchy:item/ultimate/ultimate_axe"
+  }
+}

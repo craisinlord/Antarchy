@@ -1,0 +1,25 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "textures": {
+    "layer0": "antarchy:item/big_bertha/big_bertha_item"
+  },
+  "base": {
+    "parent": "antarchy:item/big_bertha_held"
+  },
+  "texture_size": [
+    64,
+    64
+  ],
+  "perspectives": {
+    "gui": {
+      "parent": "antarchy:item/big_bertha_gui"
+    },
+    "ground": {
+      "parent": "antarchy:item/big_bertha_gui"
+    },
+    "fixed": {
+      "parent": "antarchy:item/big_bertha_gui"
+    }
+  }
+}

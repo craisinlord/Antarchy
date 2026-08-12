@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:giant_lily_pad"
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "antarchy:giant_lily_pad",
+          "properties": {
+            "has_lotus": "true"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:lotus"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "antarchy:blocks/giant_lily_pad"
+}

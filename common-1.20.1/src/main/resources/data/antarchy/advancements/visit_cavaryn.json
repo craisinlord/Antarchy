@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "entered_cavaryn": {
+      "conditions": {
+        "to": "antarchy:cavaryn"
+      },
+      "trigger": "minecraft:changed_dimension"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.visit_cavaryn.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "item": "antarchy:myrmite"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.visit_cavaryn.title"
+    }
+  },
+  "requirements": [
+    [
+      "entered_cavaryn"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

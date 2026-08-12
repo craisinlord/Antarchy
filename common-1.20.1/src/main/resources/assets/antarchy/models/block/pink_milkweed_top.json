@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "antarchy:block/milkweed/pink_milkweed_top"
+  }
+}

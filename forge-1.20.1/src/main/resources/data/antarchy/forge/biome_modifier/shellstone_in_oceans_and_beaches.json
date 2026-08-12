@@ -1,0 +1,9 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#antarchy:has_shellstone",
+  "features": [
+    "antarchy:shellstone_upper",
+    "antarchy:shellstone_lower"
+  ],
+  "step": "underground_ores"
+}

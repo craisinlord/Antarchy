@@ -1,0 +1,111 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 128,
+				"texture_height": 128,
+				"visible_bounds_width": 5,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "bone2",
+					"pivot": [0, 4.16667, 7.5]
+				},
+				{
+					"name": "cocoon",
+					"parent": "bone2",
+					"pivot": [0, 4.16667, 7.5],
+					"cubes": [
+						{"origin": [-7, -2, -17], "size": [14, 13, 18], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "cocoon_2",
+					"parent": "cocoon",
+					"pivot": [-0.75, 2.25, -0.5],
+					"cubes": [
+						{"origin": [-5.5, -1, 1], "size": [11, 11, 16], "uv": [0, 31]}
+					]
+				},
+				{
+					"name": "cocoon_3",
+					"parent": "cocoon_2",
+					"pivot": [0, 3.5, 16.5],
+					"cubes": [
+						{"origin": [-4.5, 0, 17], "size": [9, 7, 9], "uv": [54, 52]}
+					]
+				},
+				{
+					"name": "bone",
+					"parent": "bone2",
+					"pivot": [0, 2.5, -1.09445]
+				},
+				{
+					"name": "upper_body",
+					"parent": "bone",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{"origin": [-5, 0, -6], "size": [10, 9, 12], "uv": [54, 31]}
+					]
+				},
+				{
+					"name": "head",
+					"parent": "bone",
+					"pivot": [0, 4, -8.61667],
+					"cubes": [
+						{"origin": [-2, 0.5, -13], "size": [4, 3, 1], "uv": [42, 58]},
+						{"origin": [-2, -0.5, -13], "size": [1, 1, 1], "uv": [50, 62]},
+						{"origin": [1, -0.5, -13], "size": [1, 1, 1], "uv": [50, 62], "mirror": true},
+						{"origin": [-4.5, 0, -12], "size": [9, 8, 6], "uv": [0, 58]},
+						{"origin": [2.6, 2, -12.1], "size": [2, 2, 2], "uv": [42, 62]},
+						{"origin": [-4.6, 2, -12.1], "size": [2, 2, 2], "uv": [42, 62], "mirror": true}
+					]
+				},
+				{
+					"name": "right_antenna",
+					"parent": "head",
+					"pivot": [-2.5, 6.5, -12],
+					"cubes": [
+						{"origin": [-3.5, 5, -16], "size": [2, 3, 4], "uv": [30, 58]}
+					]
+				},
+				{
+					"name": "left_antenna",
+					"parent": "head",
+					"pivot": [2.5, 6.5, -12],
+					"cubes": [
+						{"origin": [1.5, 5, -16], "size": [2, 3, 4], "uv": [30, 58], "mirror": true}
+					]
+				},
+				{
+					"name": "tail",
+					"parent": "bone",
+					"pivot": [0, 3.5, 5.33333],
+					"cubes": [
+						{"origin": [-4.5, 0, 6], "size": [9, 8, 4], "uv": [64, 13]}
+					]
+				},
+				{
+					"name": "tail_2",
+					"parent": "tail",
+					"pivot": [0, 3.25, 9],
+					"cubes": [
+						{"origin": [-4, 0, 10], "size": [8, 7, 6], "uv": [64, 0]}
+					]
+				},
+				{
+					"name": "tail_3",
+					"parent": "tail_2",
+					"pivot": [0, 3, 16],
+					"cubes": [
+						{"origin": [-3.5, 0, 16], "size": [7, 6, 6], "uv": [30, 68]}
+					]
+				}
+			]
+		}
+	]
+}

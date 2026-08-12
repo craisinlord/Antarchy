@@ -1,0 +1,9 @@
+{
+  "asset_name": "nightmare_scale",
+  "ingredient": "antarchy:nightmare_scale",
+  "item_model_index": 0.82,
+  "description": {
+    "color": "#3F3D5D",
+    "translate": "trim_material.antarchy.nightmare_scale"
+  }
+}

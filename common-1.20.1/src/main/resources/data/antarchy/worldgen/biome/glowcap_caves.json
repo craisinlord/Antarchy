@@ -1,0 +1,75 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.68,
+  "downfall": 0.35,
+  "effects": {
+    "fog_color": 12034454,
+    "water_color": 9453328,
+    "water_fog_color": 5643034,
+    "sky_color": 10787353,
+    "grass_color": 16744192,
+    "foliage_color": 16722688,
+    "grass_color_modifier": "none",
+    "mood_sound": {
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 40000,
+      "block_search_extent": 8,
+      "offset": 2.0
+    },
+    "particle": {
+      "probability": 0.004,
+      "options": {
+        "type": "antarchy:orange_ash"
+      }
+    }
+  },
+  "spawn_costs": {},
+  "carvers": {
+    "air": [],
+    "liquid": []
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:glowcap_caves_floor_patch",
+      "antarchy:glowcap_caves_huge_glowcap_mushroom",
+      "antarchy:glowcap_caves_molting_vines",
+      "antarchy:glowcap_caves_wall_amber_moss",
+      "antarchy:termite_nest"
+    ],
+    []
+  ],
+  "creature_spawn_probability": 0.09,
+  "spawners": {
+    "monster": [
+    ],
+    "creature": [
+      {
+        "type": "antarchy:rolly_polly",
+        "weight": 25,
+        "minCount": 1,
+        "maxCount": 3
+      },
+      {
+        "type": "antarchy:stink_bug",
+        "weight": 40,
+        "minCount": 2,
+        "maxCount": 4
+      }],
+    "ambient": [
+    ],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  }
+}

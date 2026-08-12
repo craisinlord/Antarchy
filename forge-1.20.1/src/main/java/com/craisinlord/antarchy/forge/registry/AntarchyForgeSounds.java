@@ -187,6 +187,6 @@ public final class AntarchyForgeSounds {
 
     private static RegistryObject<SoundEvent> registerSoundEvent(String path) {
         return SOUND_EVENTS.register(path,
-                () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, path)));
+                () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(Antarchy.MODID, path)));
     }
 }

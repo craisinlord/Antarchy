@@ -1,0 +1,15 @@
+{
+  "name": "antarchy:stampys_house/stampys_house_bottom1",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "antarchy:stampys_house/stampys_house_bottom1",
+        "processors": "antarchy:generic_processor",
+        "projection": "rigid",
+        "element_type": "integrated_api:integrated_api_single_pool_element"
+      }
+    }
+  ]
+}

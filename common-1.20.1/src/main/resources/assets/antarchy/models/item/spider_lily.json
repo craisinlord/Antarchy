@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "antarchy:block/spider_lily_stem",
+    "layer1": "antarchy:block/spider_lily_top"
+  }
+}

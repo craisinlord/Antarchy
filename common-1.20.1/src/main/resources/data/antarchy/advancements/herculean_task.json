@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "kill_hercules_beetle": {
+      "conditions": {
+        "entity": {
+          "type": "antarchy:hercules_beetle"
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.herculean_task.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "item": "antarchy:hercules_horn"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.herculean_task.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_hercules_beetle"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

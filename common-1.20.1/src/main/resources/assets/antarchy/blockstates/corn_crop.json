@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "age=0,half=lower": {
+      "model": "antarchy:block/corn_crop_stage_0"
+    },
+    "age=0,half=upper": {
+      "model": "antarchy:block/corn_crop_stage_0"
+    },
+    "age=1,half=lower": {
+      "model": "antarchy:block/corn_crop_stage_1"
+    },
+    "age=1,half=upper": {
+      "model": "antarchy:block/corn_crop_stage_1"
+    },
+    "age=2,half=lower": {
+      "model": "antarchy:block/corn_crop_stage_2_bottom"
+    },
+    "age=2,half=upper": {
+      "model": "antarchy:block/corn_crop_stage_2_top"
+    },
+    "age=3,half=lower": {
+      "model": "antarchy:block/corn_crop_stage_3_bottom"
+    },
+    "age=3,half=upper": {
+      "model": "antarchy:block/corn_crop_stage_3_top"
+    }
+  }
+}

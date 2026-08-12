@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "eat_cooked_bug_meat": {
+      "conditions": {
+        "item": {
+          "items": [
+            "antarchy:cooked_bug_meat"
+          ]
+        }
+      },
+      "trigger": "minecraft:consume_item"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.bug_apetit.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "item": "antarchy:cooked_bug_meat"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.bug_apetit.title"
+    }
+  },
+  "requirements": [
+    [
+      "eat_cooked_bug_meat"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.state.properties.WoodType;
 public final class AntarchyWoodTypes {
     public static final WoodType OURANWOOD = register("ouranwood");
     public static final WoodType PEACH = register("peach");
+    public static final WoodType NADIR = register("nadir");
 
     private AntarchyWoodTypes() {
     }

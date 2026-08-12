@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/jungle_fence_gate",
+  "textures": {
+    "texture": "antarchy:block/ouranwood/ouranwood_planks"
+  }
+}

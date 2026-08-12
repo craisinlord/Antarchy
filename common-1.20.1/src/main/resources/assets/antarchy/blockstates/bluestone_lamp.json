@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "antarchy:block/bluestone_lamp"
+    },
+    "lit=true": {
+      "model": "antarchy:block/bluestone_lamp_on"
+    }
+  }
+}

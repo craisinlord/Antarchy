@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/jungle_slab_top",
+  "textures": {
+    "bottom": "antarchy:block/nadir/nadir_planks",
+    "side": "antarchy:block/nadir/nadir_planks",
+    "top": "antarchy:block/nadir/nadir_planks"
+  }
+}
+

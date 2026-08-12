@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "antarchy:block/polished_antimetal_horizontal",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "antarchy:block/polished_antimetal"
+    },
+    "axis=z": {
+      "model": "antarchy:block/polished_antimetal_horizontal",
+      "x": 90
+    }
+  }
+}

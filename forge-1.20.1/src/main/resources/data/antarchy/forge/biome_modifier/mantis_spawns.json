@@ -1,0 +1,18 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#antarchy:mantis_overworld_spawn_biomes",
+  "spawners": [
+    {
+      "type": "antarchy:mantis",
+      "weight": 8,
+      "minCount": 1,
+      "maxCount": 1
+    },
+    {
+      "type": "antarchy:alpha_mantis",
+      "weight": 1,
+      "minCount": 1,
+      "maxCount": 1
+    }
+  ]
+}

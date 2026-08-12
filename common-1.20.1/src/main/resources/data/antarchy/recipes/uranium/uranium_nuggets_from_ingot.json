@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "antarchy:uranium_ingot"
+    }
+  ],
+  "result": {
+    "item": "antarchy:uranium_nugget",
+    "count": 9
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "HUH",
+    " S ",
+    " S "
+  ],
+  "key": {
+    "H": {
+      "item": "antarchy:hercules_horn"
+    },
+    "U": {
+      "item": "antarchy:uranium_block"
+    },
+    "S": {
+      "item": "minecraft:netherite_ingot"
+    }
+  },
+  "result": {
+    "item": "antarchy:attitude_adjuster",
+    "count": 1
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#antarchy:has_rare_seashell",
+  "features": ["antarchy:seashell_patch_rare"],
+  "step": "vegetal_decoration"
+}

@@ -1,0 +1,115 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 32,
+				"texture_height": 32,
+				"visible_bounds_width": 4,
+				"visible_bounds_height": 4.5,
+				"visible_bounds_offset": [0, 1.75, 0]
+			},
+			"bones": [
+				{
+					"name": "tentacle",
+					"pivot": [0, -3.05, 9],
+					"cubes": [
+						{"origin": [-3, -3, 8], "size": [6, 19, 2], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "tentacle2",
+					"parent": "tentacle",
+					"pivot": [0, 16, 9],
+					"cubes": [
+						{"origin": [-2, 16, 8], "size": [4, 14, 2], "uv": [16, 0]}
+					]
+				},
+				{
+					"name": "tentacle3",
+					"parent": "tentacle2",
+					"pivot": [0, 30.00833, 9],
+					"cubes": [
+						{"origin": [-1, 30, 8], "size": [2, 8, 2], "uv": [0, 21]}
+					]
+				},
+				{
+					"name": "tentacle4",
+					"parent": "tentacle3",
+					"pivot": [0, 38, 9],
+					"cubes": [
+						{"origin": [-3, 38, 8], "size": [6, 8, 2], "uv": [16, 16]},
+						{"origin": [-2, 46, 8], "size": [4, 4, 2], "uv": [8, 26]}
+					]
+				},
+				{
+					"name": "tentacle_right",
+					"pivot": [-9, -3.05, 0],
+					"rotation": [0, -90, 0],
+					"cubes": [
+						{"origin": [-12, -3, -1], "size": [6, 19, 2], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "tentacle_right2",
+					"parent": "tentacle_right",
+					"pivot": [-9, 16, 0],
+					"cubes": [
+						{"origin": [-11, 16, -1], "size": [4, 14, 2], "uv": [16, 0]}
+					]
+				},
+				{
+					"name": "tentacle_right3",
+					"parent": "tentacle_right2",
+					"pivot": [-9, 30.00833, 0],
+					"cubes": [
+						{"origin": [-10, 30, -1], "size": [2, 8, 2], "uv": [0, 21]}
+					]
+				},
+				{
+					"name": "tentacle_right4",
+					"parent": "tentacle_right3",
+					"pivot": [-9, 38, 0],
+					"cubes": [
+						{"origin": [-12, 38, -1], "size": [6, 8, 2], "uv": [16, 16]},
+						{"origin": [-11, 46, -1], "size": [4, 4, 2], "uv": [8, 26]}
+					]
+				},
+				{
+					"name": "tentacle_left",
+					"pivot": [9, -3.05, 0],
+					"rotation": [0, 90, 0],
+					"cubes": [
+						{"origin": [6, -3, -1], "size": [6, 19, 2], "uv": [0, 0], "mirror": true}
+					]
+				},
+				{
+					"name": "tentacle_left2",
+					"parent": "tentacle_left",
+					"pivot": [9, 16, 0],
+					"cubes": [
+						{"origin": [7, 16, -1], "size": [4, 14, 2], "uv": [16, 0], "mirror": true}
+					]
+				},
+				{
+					"name": "tentacle_left3",
+					"parent": "tentacle_left2",
+					"pivot": [9, 30.00833, 0],
+					"cubes": [
+						{"origin": [8, 30, -1], "size": [2, 8, 2], "uv": [0, 21], "mirror": true}
+					]
+				},
+				{
+					"name": "tentacle_left4",
+					"parent": "tentacle_left3",
+					"pivot": [9, 38, 0],
+					"cubes": [
+						{"origin": [6, 38, -1], "size": [6, 8, 2], "uv": [16, 16], "mirror": true},
+						{"origin": [7, 46, -1], "size": [4, 4, 2], "uv": [8, 26], "mirror": true}
+					]
+				}
+			]
+		}
+	]
+}

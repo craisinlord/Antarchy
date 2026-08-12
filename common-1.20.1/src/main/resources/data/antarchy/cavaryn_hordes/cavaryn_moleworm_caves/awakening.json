@@ -1,0 +1,16 @@
+{
+  "entries": [
+    {
+      "entity_tag": "antarchy:horde_moleworm",
+      "base_count": 3,
+      "per_player_count": 1
+    },
+    {
+      "entity_tag": "antarchy:horde_molevore",
+      "base_count": 1,
+      "per_players": 2,
+      "per_players_count": 1,
+      "min_count": 1
+    }
+  ]
+}

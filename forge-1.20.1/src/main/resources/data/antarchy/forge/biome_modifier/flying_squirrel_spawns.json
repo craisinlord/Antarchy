@@ -1,0 +1,12 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#antarchy:flying_squirrel_spawn_biomes",
+  "spawners": [
+    {
+      "type": "antarchy:flying_squirrel",
+      "weight": 8,
+      "minCount": 1,
+      "maxCount": 3
+    }
+  ]
+}

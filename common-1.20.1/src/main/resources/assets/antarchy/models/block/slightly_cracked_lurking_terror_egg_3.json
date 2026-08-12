@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/template_three_turtle_eggs",
+  "textures": {
+    "all": "antarchy:block/lurking_terror_egg/lurking_terror_egg_slightly_cracked"
+  }
+}

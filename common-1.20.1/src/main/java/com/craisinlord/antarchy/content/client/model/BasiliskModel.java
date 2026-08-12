@@ -1,0 +1,26 @@
+package com.craisinlord.antarchy.content.client.model;
+
+import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.entity.basilisk.BasiliskEntity;
+import net.minecraft.resources.ResourceLocation;
+import software.bernie.geckolib.model.GeoModel;
+
+public class BasiliskModel extends GeoModel<BasiliskEntity> {
+    public static final ResourceLocation EMISSIVE_TEXTURE =
+            new ResourceLocation(Antarchy.MODID, "textures/entity/basilisk_emissive.png");
+
+    @Override
+    public ResourceLocation getModelResource(BasiliskEntity animatable) {
+        return new ResourceLocation(Antarchy.MODID, "geo/basilisk.geo.json");
+    }
+
+    @Override
+    public ResourceLocation getTextureResource(BasiliskEntity animatable) {
+        return new ResourceLocation(Antarchy.MODID, "textures/entity/basilisk.png");
+    }
+
+    @Override
+    public ResourceLocation getAnimationResource(BasiliskEntity animatable) {
+        return new ResourceLocation(Antarchy.MODID, "animations/basilisk.animation.json");
+    }
+}

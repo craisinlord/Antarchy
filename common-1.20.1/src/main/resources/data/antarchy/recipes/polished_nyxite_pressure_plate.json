@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "group": "stone_pressure_plate",
+  "key": {
+    "#": {
+      "item": "antarchy:polished_nyxite"
+    }
+  },
+  "pattern": [
+    "##"
+  ],
+  "result": {
+    "count": 1,
+    "item": "antarchy:polished_nyxite_pressure_plate"
+  }
+}

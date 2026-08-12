@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "facing=north": [
+      {"model": "antarchy:block/brown_ant_nest"},
+      {"model": "antarchy:block/brown_ant_nest", "y": 90},
+      {"model": "antarchy:block/brown_ant_nest", "y": 180},
+      {"model": "antarchy:block/brown_ant_nest", "y": 270}
+    ],
+    "facing=east": [
+      {"model": "antarchy:block/brown_ant_nest", "y": 90},
+      {"model": "antarchy:block/brown_ant_nest", "y": 180},
+      {"model": "antarchy:block/brown_ant_nest", "y": 270},
+      {"model": "antarchy:block/brown_ant_nest"}
+    ],
+    "facing=south": [
+      {"model": "antarchy:block/brown_ant_nest", "y": 180},
+      {"model": "antarchy:block/brown_ant_nest", "y": 270},
+      {"model": "antarchy:block/brown_ant_nest"},
+      {"model": "antarchy:block/brown_ant_nest", "y": 90}
+    ],
+    "facing=west": [
+      {"model": "antarchy:block/brown_ant_nest", "y": 270},
+      {"model": "antarchy:block/brown_ant_nest"},
+      {"model": "antarchy:block/brown_ant_nest", "y": 90},
+      {"model": "antarchy:block/brown_ant_nest", "y": 180}
+    ]
+  }
+}

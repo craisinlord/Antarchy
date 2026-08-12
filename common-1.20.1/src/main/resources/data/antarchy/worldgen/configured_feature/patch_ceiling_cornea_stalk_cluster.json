@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:random_patch",
+  "config": {
+    "tries": 12,
+    "xz_spread": 4,
+    "y_spread": 1,
+    "feature": "antarchy:patch_ceiling_cornea_stalk_single"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "type": "minecraft:add",
+  "argument1": {
+    "type": "minecraft:cache_once",
+    "argument": {
+      "type": "minecraft:add",
+      "argument1": {
+        "type": "minecraft:y_clamped_gradient",
+        "from_y": 232,
+        "to_y": 20,
+        "from_value": 1.45,
+        "to_value": 0.12
+      },
+      "argument2": {
+        "type": "minecraft:add",
+        "argument1": {
+          "type": "minecraft:noise",
+          "noise": "minecraft:noodle_thickness",
+          "xz_scale": 1,
+          "y_scale": 7.5
+        },
+        "argument2": {
+          "type": "minecraft:mul",
+          "argument1": {
+            "type": "minecraft:weird_scaled_sampler",
+            "rarity_value_mapper": "type_1",
+            "noise": "minecraft:patch",
+            "input": {
+              "type": "minecraft:interpolated",
+              "argument": 1
+            }
+          },
+          "argument2": {
+            "type": "minecraft:cube",
+            "argument": 0.5
+          }
+        }
+      }
+    }
+  },
+  "argument2": 0.3
+}

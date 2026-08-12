@@ -1,0 +1,69 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.82,
+  "downfall": 1.0,
+  "effects": {
+    "fog_color": 8084735,
+    "water_color": 5021432,
+    "water_fog_color": 736368,
+    "sky_color": 8084735,
+    "foliage_color": 2867501,
+    "grass_color": 4304168,
+    "grass_color_modifier": "none",
+    "mood_sound": {
+      "sound": "minecraft:ambient.basalt_deltas.mood",
+      "tick_delay": 8000,
+      "block_search_extent": 8,
+      "offset": 2.0
+    },
+    "music": {
+      "sound": "antarchy:music.game.elythia",
+      "min_delay": 12000,
+      "max_delay": 24000,
+      "replace_current_music": true
+    }
+  },
+  "spawn_costs": {
+    "antarchy:cloud_shark": {
+      "energy_budget": 0.15,
+      "charge": 22
+    }
+  },
+  "carvers": {
+    "air": [],
+    "liquid": []
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:elythia_clouds"
+    ],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+  ],
+  "creature_spawn_probability": 0.03,
+  "spawners": {
+    "creature": [],
+    "ambient": [],
+    "monster": [
+      {
+        "type": "antarchy:cloud_shark",
+        "weight": 10,
+        "minCount": 1,
+        "maxCount": 2
+      }
+    ],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  }
+}

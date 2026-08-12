@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "antarchy:block/shellstone/shellstone_pillar_top",
+    "side": "antarchy:block/shellstone/shellstone_pillar"
+  }
+}

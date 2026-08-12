@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "X": {
+      "item": "antarchy:blood_crystal_shard"
+    },
+    "Y": {
+      "item": "minecraft:stick"
+    },
+    "Z": {
+      "item": "antarchy:bluestone"
+    }
+  },
+  "pattern": [
+    "X X",
+    "XYX",
+    "XZX"
+  ],
+  "result": {
+    "item": "antarchy:antimetal_powered_rail",
+    "count": 6
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "water_cannon_fire": {
+      "animation_length": 0.5,
+      "loop": false,
+      "bones": {}
+    }
+  }
+}

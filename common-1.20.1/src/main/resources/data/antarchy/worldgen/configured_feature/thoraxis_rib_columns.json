@@ -1,0 +1,13 @@
+{
+  "type": "antarchy:thoraxis_rib_columns",
+  "config": {
+    "min_ribs": 3,
+    "max_ribs": 6,
+    "min_length": 5,
+    "max_length": 12,
+    "min_thickness": 1,
+    "max_thickness": 3,
+    "curve_strength": 8,
+    "claw_gap_chance": 0.35
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "antarchy:item/critter_cage_item"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "antarchy:critter_cage_state": 1.0
+      },
+      "model": "antarchy:item/critter_cage_filled_plain"
+    },
+    {
+      "predicate": {
+        "antarchy:critter_cage_state": 2.0
+      },
+      "model": "antarchy:item/critter_cage_filled_colored"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "antarchy:block/spider_lily_top",
+    "stem": "antarchy:block/spider_lily_stem",
+    "flower": "antarchy:block/spider_lily_top"
+  },
+  "elements": [
+    {
+      "from": [0.8, 0, 8],
+      "to": [15.2, 16, 8],
+      "shade": false,
+      "faces": {
+        "north": { "uv": [0, 0, 16, 16], "texture": "#stem", "tintindex": 0 },
+        "south": { "uv": [16, 0, 0, 16], "texture": "#stem", "tintindex": 0 }
+      }
+    },
+    {
+      "from": [8, 0, 0.8],
+      "to": [8, 16, 15.2],
+      "shade": false,
+      "faces": {
+        "west": { "uv": [0, 0, 16, 16], "texture": "#stem", "tintindex": 0 },
+        "east": { "uv": [16, 0, 0, 16], "texture": "#stem", "tintindex": 0 }
+      }
+    },
+    {
+      "from": [0.8, 0, 8],
+      "to": [15.2, 16, 8],
+      "shade": false,
+      "faces": {
+        "north": { "uv": [0, 0, 16, 16], "texture": "#flower" },
+        "south": { "uv": [16, 0, 0, 16], "texture": "#flower" }
+      }
+    },
+    {
+      "from": [8, 0, 0.8],
+      "to": [8, 16, 15.2],
+      "shade": false,
+      "faces": {
+        "west": { "uv": [0, 0, 16, 16], "texture": "#flower" },
+        "east": { "uv": [16, 0, 0, 16], "texture": "#flower" }
+      }
+    }
+  ]
+}

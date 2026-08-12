@@ -1,0 +1,65 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 64,
+				"texture_height": 64,
+				"visible_bounds_width": 3,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "growth_ray",
+					"pivot": [0, 6, 7]
+				},
+				{
+					"name": "handle",
+					"parent": "growth_ray",
+					"pivot": [0, 6, 7],
+					"cubes": [
+						{"origin": [-1, 0, 6], "size": [2, 6, 2], "pivot": [0, 6, 7], "rotation": [10, 0, 0], "uv": [0, 23]},
+						{"origin": [-1, 2.48798, 2.98412], "size": [2, 1, 4], "inflate": -0.005, "pivot": [0, 2.98798, 5.98412], "rotation": [-21, 0, 0], "uv": [22, 6]},
+						{"origin": [-1, 3.61298, 3.00912], "size": [2, 1.5, 1], "uv": [12, 23]}
+					]
+				},
+				{
+					"name": "ray_body",
+					"parent": "growth_ray",
+					"pivot": [0, 11, 1],
+					"cubes": [
+						{"origin": [-2, 5, 3], "size": [4, 4, 6], "uv": [20, 11]},
+						{"origin": [0, 5, 9], "size": [0, 2, 2], "uv": [8, 23]}
+					]
+				},
+				{
+					"name": "blaster",
+					"parent": "ray_body",
+					"pivot": [0, 7, 0],
+					"cubes": [
+						{"origin": [-1.5, 5.5, 0], "size": [3, 3, 3], "uv": [22, 0]},
+						{"origin": [0, 8, 2], "size": [0, 2, 10], "uv": [0, 11]}
+					]
+				},
+				{
+					"name": "blaster_end",
+					"parent": "blaster",
+					"pivot": [0, 7, 1.5],
+					"cubes": [
+						{"origin": [-3, 4, -9], "size": [6, 6, 5], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "blaster_rotating",
+					"parent": "blaster",
+					"pivot": [0, 7, -2],
+					"cubes": [
+						{"origin": [-1, 6, -4], "size": [2, 2, 4], "uv": [20, 21]}
+					]
+				}
+			]
+		}
+	]
+}

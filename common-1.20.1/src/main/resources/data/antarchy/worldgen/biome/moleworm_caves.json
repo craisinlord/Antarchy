@@ -1,0 +1,80 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.77,
+  "downfall": 0.96,
+  "effects": {
+    "fog_color": 8084735,
+    "water_color": 5021432,
+    "water_fog_color": 2502722,
+    "sky_color": 8084735,
+    "foliage_color": 2867501,
+    "grass_color": 4566565,
+    "grass_color_modifier": "none",
+    "particle": {
+      "probability": 0.009,
+      "options": {
+        "type": "minecraft:ash"
+      }
+    }
+  },
+  "spawn_costs": {
+    "antarchy:molevore": {
+      "energy_budget": 0.9,
+      "charge": 2.2
+    }
+  },
+  "carvers": {
+    "air": [],
+    "liquid": []
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:elythia_moleworm_warrens",
+      "antarchy:elythia_moleworm_cave_entrances",
+      "antarchy:elythia_moleworm_tunnels",
+      "minecraft:large_dripstone",
+      "minecraft:pointed_dripstone"
+    ],
+    [],
+    [],
+    []
+  ],
+  "creature_spawn_probability": 0.08,
+  "spawners": {
+    "monster": [
+      {
+        "type": "antarchy:molevore",
+        "weight": 28,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "antarchy:moleworm",
+        "weight": 20,
+        "minCount": 2,
+        "maxCount": 4
+      }
+    ],
+    "creature": [],
+    "ambient": [
+      {
+        "type": "minecraft:bat",
+        "weight": 12,
+        "minCount": 4,
+        "maxCount": 8
+      }
+    ],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  }
+}

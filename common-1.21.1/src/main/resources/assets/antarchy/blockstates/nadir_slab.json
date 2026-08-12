@@ -1,0 +1,14 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "antarchy:block/nadir_slab"
+    },
+    "type=double": {
+      "model": "antarchy:block/nadir_planks"
+    },
+    "type=top": {
+      "model": "antarchy:block/nadir_slab_top"
+    }
+  }
+}
+

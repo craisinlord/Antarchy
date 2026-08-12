@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "hatch=0,rotated=false": {
+      "model": "antarchy:block/spit_bug_egg"
+    },
+    "hatch=0,rotated=true": {
+      "model": "antarchy:block/spit_bug_egg",
+      "y": 90
+    },
+    "hatch=1,rotated=false": {
+      "model": "antarchy:block/spit_bug_egg"
+    },
+    "hatch=1,rotated=true": {
+      "model": "antarchy:block/spit_bug_egg",
+      "y": 90
+    },
+    "hatch=2,rotated=false": {
+      "model": "antarchy:block/spit_bug_egg"
+    },
+    "hatch=2,rotated=true": {
+      "model": "antarchy:block/spit_bug_egg",
+      "y": 90
+    }
+  }
+}

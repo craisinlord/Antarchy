@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "stage=0": {
+      "model": "antarchy:block/duplicator_sapling"
+    },
+    "stage=1": {
+      "model": "antarchy:block/duplicator_sapling"
+    }
+  }
+}

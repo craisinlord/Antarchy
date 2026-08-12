@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:shellstone"
+  },
+  "result": {
+    "item": "antarchy:shellstone_slab"
+  }
+}

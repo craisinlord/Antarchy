@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "G": { "item": "minecraft:glowstone" },
+    "R": { "item": "antarchy:bluestone" }
+  },
+  "pattern": [
+    " R ",
+    "RGR",
+    " R "
+  ],
+  "result": {
+    "item": "antarchy:bluestone_lamp",
+    "count": 1
+  }
+}

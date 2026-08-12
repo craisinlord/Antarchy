@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "EEE",
+    " T ",
+    " T "
+  ],
+  "key": {
+    "E": {
+      "item": "antarchy:kraken_tooth"
+    },
+    "T": {
+      "item": "antarchy:kraken_tentacle"
+    }
+  },
+  "result": {
+    "item": "antarchy:krakens_grasp",
+    "count": 1
+  }
+}

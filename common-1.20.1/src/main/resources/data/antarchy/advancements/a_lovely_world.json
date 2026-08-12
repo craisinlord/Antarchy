@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "discover_stampys_house": {
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "structures": "antarchy:stampys_house"
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:location"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.a_lovely_world.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "item": "antarchy:ouranwood_door"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.a_lovely_world.title"
+    }
+  },
+  "requirements": [
+    [
+      "discover_stampys_house"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

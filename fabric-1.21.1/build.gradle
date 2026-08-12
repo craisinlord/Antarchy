@@ -40,6 +40,7 @@ dependencies {
     modImplementation "software.bernie.geckolib:geckolib-fabric-1.21.1:${geckolib_version}"
     modCompileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_fabric}")
     modLocalRuntime("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_fabric}")
+    modLocalRuntime("dev.architectury:architectury-fabric:${architectury_api_version}")
     compileOnly "mezz.jei:jei-1.21.1-common-api:${jei_version}"
     compileOnly "mezz.jei:jei-1.21.1-fabric-api:${jei_version}"
     modLocalRuntime "mezz.jei:jei-1.21.1-fabric:${jei_version}"
@@ -97,6 +98,18 @@ tasks.named('processResources', ProcessResources).configure {
         var json = new groovy.json.JsonSlurper().parse(commonMixinConfig)
         json.put('refmap', 'antarchy.mixins.refmap.json')
         commonMixinConfig.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(json))
+    }
+}
+
+tasks.matching { it.name in ["runClient", "runServer", "runDatagen"] }.configureEach {
+    doFirst {
+        def infinityConfigPrefix = "config/common/"
+        zipTree(rootProject.file("infinite_dimensions_jars/infinity-2.7.2+1.21.1-fabric.jar")).visit { details ->
+            if (!details.directory && details.relativePath.pathString.startsWith(infinityConfigPrefix)) {
+                def targetPath = details.relativePath.pathString.substring(infinityConfigPrefix.length())
+                file("run/config/infinity/${targetPath}").parentFile.mkdirs()
+            }
+        }
     }
 }
 

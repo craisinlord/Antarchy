@@ -299,8 +299,6 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
         tag.putInt("LastAttackState", this.lastAttackState);
         tag.putBoolean("CanFly", this.canFly());
         tag.putBoolean("SpawnedByKraken", this.spawnedByKraken);
-        if (this.grabbedTargetId >= 0) tag.putInt("GrabTarget", this.grabbedTargetId);
-        tag.putInt("AttackState", this.getAttackState());
         tag.putInt("AnimationState", this.getAnimationState());
     }
 
@@ -312,9 +310,10 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
         this.lastAttackState = tag.contains("LastAttackState") ? tag.getInt("LastAttackState") : ATTACK_NONE;
         this.setCanFly(tag.getBoolean("CanFly"));
         this.spawnedByKraken = tag.getBoolean("SpawnedByKraken");
-        this.grabbedTargetId = tag.contains("GrabTarget") ? tag.getInt("GrabTarget") : -1;
-        this.entityData.set(ATTACK_STATE, tag.getInt("AttackState"));
-        this.entityData.set(ANIMATION_STATE, tag.contains("AnimationState") ? tag.getInt("AnimationState") : ANIM_IDLE);
+        this.grabbedTargetId = -1;
+        this.actionTicks = 0;
+        this.entityData.set(ATTACK_STATE, ATTACK_NONE);
+        this.entityData.set(ANIMATION_STATE, ANIM_IDLE);
     }
 
     public boolean canFly() {

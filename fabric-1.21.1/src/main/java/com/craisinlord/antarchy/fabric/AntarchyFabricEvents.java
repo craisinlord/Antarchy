@@ -21,6 +21,7 @@ import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.CaterpillarCommand;
 import com.craisinlord.antarchy.content.command.GravityCommand;
 import com.craisinlord.antarchy.content.item.MinersDreamExcavationManager;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -148,6 +149,7 @@ public final class AntarchyFabricEvents {
             for (ServerLevel level : server.getAllLevels()) {
                 CavarynHordeManager.tick(level);
                 com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
+                ThoraxisUndersideManager.tick(level);
                 tickInvertedPlayers(level, activeThisTick);
                 tickDuctTapePlayers(level);
                 tickIchorPlayers(level);

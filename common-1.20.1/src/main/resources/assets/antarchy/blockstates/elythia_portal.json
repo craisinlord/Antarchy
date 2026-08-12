@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "axis=x": { "model": "antarchy:block/elythia_portal_x" },
+    "axis=z": { "model": "antarchy:block/elythia_portal_z" }
+  }
+}

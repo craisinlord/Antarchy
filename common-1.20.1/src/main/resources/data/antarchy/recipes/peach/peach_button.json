@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "group": "wooden_button",
+  "ingredients": [
+    {
+      "item": "antarchy:peach_planks"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "item": "antarchy:peach_button"
+  }
+}

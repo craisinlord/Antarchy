@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "tame_hercules_beetle": {
+      "conditions": {
+        "entity": {
+          "type": "antarchy:hercules_beetle"
+        }
+      },
+      "trigger": "minecraft:tame_animal"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.beetle_buddies.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "item": "antarchy:hercules_beetle_spawn_egg"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.beetle_buddies.title"
+    }
+  },
+  "requirements": [
+    [
+      "tame_hercules_beetle"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

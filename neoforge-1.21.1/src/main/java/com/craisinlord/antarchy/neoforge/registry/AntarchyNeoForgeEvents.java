@@ -23,6 +23,7 @@ import com.craisinlord.antarchy.content.entity.multipart.MultipartFramework;
 import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
 import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.craisinlord.antarchy.content.item.*;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateGearHelper;
 import com.craisinlord.antarchy.content.movement.DreamSandLowGravityAccess;
 import com.craisinlord.antarchy.content.AntarchyTags;
@@ -128,6 +129,7 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleCavarynHordeKill);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleCavarynHordeBlockBreak);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickCavarynHordes);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickThoraxisUnderside);
         modEventBus.addListener(AntarchyNeoForgeEvents::modifyEntityAttributes);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickOverheadInversion);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickDuctTapeStickiness);
@@ -210,6 +212,12 @@ public final class AntarchyNeoForgeEvents {
         for (ServerLevel level : event.getServer().getAllLevels()) {
             CavarynHordeManager.tick(level);
             com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
+        }
+    }
+
+    static void tickThoraxisUnderside(ServerTickEvent.Post event) {
+        for (ServerLevel level : event.getServer().getAllLevels()) {
+            ThoraxisUndersideManager.tick(level);
         }
     }
 

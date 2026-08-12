@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/jungle_door_bottom_right",
+  "textures": {
+    "bottom": "antarchy:block/ouranwood/ouranwood_door_bottom",
+    "top": "antarchy:block/ouranwood/ouranwood_door_top"
+  }
+}

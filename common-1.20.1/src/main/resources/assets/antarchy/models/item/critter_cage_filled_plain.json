@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "antarchy:item/critter_cage_item",
+    "layer1": "antarchy:item/critter_cage_item_overlay"
+  }
+}

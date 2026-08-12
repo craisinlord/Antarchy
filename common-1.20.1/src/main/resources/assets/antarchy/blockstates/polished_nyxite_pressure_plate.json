@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "ceiling=false,powered=false": {
+      "model": "antarchy:block/polished_nyxite_pressure_plate"
+    },
+    "ceiling=false,powered=true": {
+      "model": "antarchy:block/polished_nyxite_pressure_plate_down"
+    },
+    "ceiling=true,powered=false": {
+      "model": "antarchy:block/polished_nyxite_pressure_plate",
+      "x": 180
+    },
+    "ceiling=true,powered=true": {
+      "model": "antarchy:block/polished_nyxite_pressure_plate_down",
+      "x": 180
+    }
+  }
+}

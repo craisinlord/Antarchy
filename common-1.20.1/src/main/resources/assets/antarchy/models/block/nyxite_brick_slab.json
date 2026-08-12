@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "antarchy:block/nyxite_bricks",
+    "side": "antarchy:block/nyxite_bricks",
+    "top": "antarchy:block/nyxite_bricks"
+  }
+}
