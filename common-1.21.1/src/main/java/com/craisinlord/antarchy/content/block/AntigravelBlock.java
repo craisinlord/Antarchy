@@ -34,9 +34,7 @@ public class AntigravelBlock extends Block {
 
     @Override
     protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        if (direction == Direction.UP) {
-            level.scheduleTick(pos, this, 2);
-        }
+        level.scheduleTick(pos, this, 2);
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 

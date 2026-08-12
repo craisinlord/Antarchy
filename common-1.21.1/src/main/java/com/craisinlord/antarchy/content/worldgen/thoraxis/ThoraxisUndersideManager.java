@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.UUID;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -17,6 +18,7 @@ public final class ThoraxisUndersideManager {
     public static final int GRAVITY_FLIP_Y = 0;
     private static final ResourceLocation THORAXIS_DIMENSION = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "thoraxis");
     private static final AntarchyGravityTransition TRANSITION = new AntarchyGravityTransition(12);
+    private static final int EFFECT_DURATION_TICKS = 40;
     private static final Set<UUID> UNDERSIDE_FORCED_GRAVITY = new HashSet<>();
 
     private ThoraxisUndersideManager() {
@@ -33,8 +35,19 @@ public final class ThoraxisUndersideManager {
                 continue;
             }
 
+            boolean inUnderside = entity.getY() < GRAVITY_FLIP_Y;
+
+            if (entity instanceof LivingEntity living) {
+                if (inUnderside) {
+                    living.addEffect(new MobEffectInstance(AntarchyObjects.INVERTED_EFFECT.get(), EFFECT_DURATION_TICKS, 0, true, false, false));
+                } else if (living.hasEffect(AntarchyObjects.INVERTED_EFFECT.get())) {
+                    living.removeEffect(AntarchyObjects.INVERTED_EFFECT.get());
+                }
+                continue;
+            }
+
             UUID uuid = entity.getUUID();
-            if (entity.getY() < GRAVITY_FLIP_Y) {
+            if (inUnderside) {
                 activeThisTick.add(uuid);
                 UNDERSIDE_FORCED_GRAVITY.add(uuid);
                 if (AntarchyGravityApi.getGravityDirection(entity) != AntarchyGravityDirection.UP
@@ -44,28 +57,14 @@ public final class ThoraxisUndersideManager {
                 continue;
             }
 
-            if (!UNDERSIDE_FORCED_GRAVITY.remove(uuid)) {
-                continue;
-            }
-
-            if (shouldReleaseGravity(entity)) {
+            if (UNDERSIDE_FORCED_GRAVITY.remove(uuid)
+                    && AntarchyGravityApi.getGravityDirection(entity) == AntarchyGravityDirection.UP
+                    && AntarchyGravityApi.isGravityForced(entity)) {
                 AntarchyGravityApi.setGravityDirection(entity, AntarchyGravityDirection.DOWN, false, TRANSITION);
             }
         }
 
         UNDERSIDE_FORCED_GRAVITY.retainAll(activeThisTick);
-    }
-
-    private static boolean shouldReleaseGravity(Entity entity) {
-        if (AntarchyGravityApi.getGravityDirection(entity) != AntarchyGravityDirection.UP) {
-            return false;
-        }
-
-        if (entity instanceof LivingEntity living && living.hasEffect(AntarchyObjects.INVERTED_EFFECT.get())) {
-            return false;
-        }
-
-        return AntarchyGravityApi.isGravityForced(entity);
     }
 
     public static boolean isThoraxis(ServerLevel level) {

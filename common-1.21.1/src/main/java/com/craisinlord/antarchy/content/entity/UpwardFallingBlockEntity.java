@@ -11,6 +11,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -28,15 +29,17 @@ public class UpwardFallingBlockEntity extends Entity {
     private static final EntityDataAccessor<BlockState> DATA_BLOCK_STATE =
             SynchedEntityData.defineId(UpwardFallingBlockEntity.class, EntityDataSerializers.BLOCK_STATE);
 
-    private static final double RISE_SPEED = 0.5;
+    private static final double RISE_ACCEL = 0.04;
+    private static final double DRAG       = 0.98;
     private static final int    MAX_TICKS  = 200;
 
     public int time = 0;
     private boolean breaksOnLeaves = true;
+    private double distanceTraveled = 0.0;
 
     public UpwardFallingBlockEntity(EntityType<UpwardFallingBlockEntity> type, Level level) {
         super(type, level);
-        this.noPhysics = true;
+        this.blocksBuilding = true;
     }
 
     @Override
@@ -78,10 +81,11 @@ public class UpwardFallingBlockEntity extends Entity {
             return;
         }
 
-        // Move upward directly — noPhysics=true means move() just calls setPos().
-        // Runs on both sides so the client simulates the same deterministic rise
-        // instead of relying on interpolated network updates, matching vanilla FallingBlockEntity.
-        setPos(getX(), getY() + RISE_SPEED, getZ());
+        double beforeY = getY();
+        setDeltaMovement(getDeltaMovement().add(0.0, RISE_ACCEL, 0.0));
+        move(MoverType.SELF, getDeltaMovement());
+        setDeltaMovement(getDeltaMovement().scale(DRAG));
+        distanceTraveled += Math.max(0.0, getY() - beforeY);
 
         if (level().isClientSide) return;
 
@@ -93,7 +97,7 @@ public class UpwardFallingBlockEntity extends Entity {
 
         damageEntitiesAlongPath(blockState);
 
-        BlockPos headPos  = BlockPos.containing(getX(), getY() + getBbHeight(), getZ());
+        BlockPos headPos  = BlockPos.containing(getX(), getBoundingBox().maxY, getZ());
         BlockState above  = level().getBlockState(headPos);
 
         // Leaves block the entity but can't hold scaffolding — drop as item, unless this
@@ -103,10 +107,9 @@ public class UpwardFallingBlockEntity extends Entity {
             return;
         }
 
-        boolean hitCeiling     = !above.isAir() && !above.getCollisionShape(level(), headPos).isEmpty();
         boolean hitScaffolding = above.getBlock() instanceof AntimetalScaffoldingBlock;
 
-        if (hitCeiling || hitScaffolding) {
+        if (this.verticalCollision || hitScaffolding) {
             placeAtLanding(blockState, headPos.below());
             return;
         }
@@ -138,8 +141,7 @@ public class UpwardFallingBlockEntity extends Entity {
     }
 
     private float getImpactDamage(BlockState state) {
-        float travelDistance = (float) this.time * (float) RISE_SPEED;
-        float baseDamage = Math.max(0.0F, travelDistance - 1.5F);
+        float baseDamage = Math.max(0.0F, (float) this.distanceTraveled - 1.5F);
         if (baseDamage <= 0.0F) {
             return 0.0F;
         }
