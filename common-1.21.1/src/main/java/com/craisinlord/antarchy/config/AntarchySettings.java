@@ -43,10 +43,10 @@ public final class AntarchySettings {
     private static double bomberExplosionDamage = 8.0D;
     private static double bomberExplosionRadius = 4.0D;
     private static double redAntAttackDamage = 3.0D;
-    private static double ultimateSwordAttackDamage = 30.0D;
-    private static double ultimatePickaxeAttackDamage = 22.0D;
-    private static double ultimateAxeAttackDamage = 38.0D;
-    private static double ultimateShovelAttackDamage = 24.0D;
+    private static double ultimateSwordAttackDamage = 34.0D;
+    private static double ultimatePickaxeAttackDamage = 24.0D;
+    private static double ultimateAxeAttackDamage = 42.0D;
+    private static double ultimateShovelAttackDamage = 26.0D;
     private static double ultimateHoeAttackDamage = 8.0D;
     private static double ultimateBowAttackDamage = 18.0D;
     private static double ultimateBowPlayerHeal = 8.0D;
@@ -55,8 +55,8 @@ public final class AntarchySettings {
     private static double ultimateCrossbowAttackDamage = 8.0D;
     private static double ultimateCrossbowChargeSpeedMultiplier = 0.25D;
     private static double ultimateMaceDamageMultiplier = 1.5D;
-    private static double battleAxeAttackDamage = 46.0D;
-    private static double bigBerthaAttackDamage = 55.0D;
+    private static double battleAxeAttackDamage = 50.0D;
+    private static double bigBerthaAttackDamage = 62.0D;
     private static double bigBerthaReachBonus = 3.0D;
     private static double bigBerthaAttackSpeed = -3.0D;
     private static double attitudeAdjusterBaseDamage = 47.0D;
@@ -100,23 +100,23 @@ public final class AntarchySettings {
     private static int ultimateMaceEnchantability = 20;
     private static boolean ultimateToolsThreeByThreeEnabled = true;
     private static boolean ultimateArmorComesEnchanted = true;
-    private static int ultimateHelmetArmorValue = 4;
-    private static int ultimateChestplateArmorValue = 9;
-    private static int ultimateLeggingsArmorValue = 7;
-    private static int ultimateBootsArmorValue = 4;
-    private static double ultimateHelmetArmorToughness = 3.0D;
-    private static double ultimateChestplateArmorToughness = 3.0D;
-    private static double ultimateLeggingsArmorToughness = 3.0D;
-    private static double ultimateBootsArmorToughness = 3.0D;
+    private static int ultimateHelmetArmorValue = 6;
+    private static int ultimateChestplateArmorValue = 11;
+    private static int ultimateLeggingsArmorValue = 9;
+    private static int ultimateBootsArmorValue = 6;
+    private static double ultimateHelmetArmorToughness = 4.5D;
+    private static double ultimateChestplateArmorToughness = 4.5D;
+    private static double ultimateLeggingsArmorToughness = 4.5D;
+    private static double ultimateBootsArmorToughness = 4.5D;
     private static ResourceKey<Level> brownAntDestinationDimension = dimensionKey("antarchy:elythia");
     private static ResourceKey<Level> redAntDestinationDimension = dimensionKey("antarchy:thoraxis");
     private static ResourceKey<Level> termiteDestinationDimension = dimensionKey("antarchy:cavaryn");
     private static ResourceKey<Level> rainbowAntNonInfinityFallbackDimension = dimensionKey("antarchy:elythia");
-    private static double krakenHealth = 1500.0D;
+    private static double krakenHealth = 1800.0D;
     private static double krakenAttackDamage = 45.0D;
     private static double octopusBombHealth = 100.0D;
     private static double octopusBombAttackDamage = 16.0D;
-    private static double brutalflyHealth = 400.0D;
+    private static double brutalflyHealth = 500.0D;
     private static double brutalflySwipeDamage = 15.0D;
     private static double brutalflySpitDamage = 5.0D;
     private static double mantisHealth = 50.0D;
@@ -124,7 +124,7 @@ public final class AntarchySettings {
     private static double mantisMovementSpeed = 0.42D;
     private static double mantisFlyingSpeed = 0.77D;
     private static boolean mantisIgnoreLightLevel = false;
-    private static double alphaMantisHealth = 250.0D;
+    private static double alphaMantisHealth = 380.0D;
     private static double alphaMantisAttackDamage = 18.0D;
     private static double alphaMantisMovementSpeed = 0.546D;
     private static double alphaMantisFlyingSpeed = 0.77D;
@@ -145,8 +145,8 @@ public final class AntarchySettings {
     private static double squidzookaLaunchVelocity = 2.1D;
     private static double rpoLauncherCooldownSeconds = 1.0D;
     private static double rpoLauncherLaunchVelocity = 1.8D;
-    private static double rpoLauncherExplosionDamage = 30.0D;
-    private static double rpoLauncherExplosionRadius = 13.5D;
+    private static double rpoLauncherExplosionDamage = 34.0D;
+    private static double rpoLauncherExplosionRadius = 14.0D;
     private static double sizeRayCooldownSeconds = 1.0D;
     private static boolean invertProjectilesFromInvertedPlayers = false;
     private static boolean gravityGunEnabled = true;
@@ -179,26 +179,26 @@ public final class AntarchySettings {
     private static double dreamSandEffectDurationSeconds = 7.0D;
     private static double dreamSandFallingBlockGravityMultiplier = 0.4D;
     private static boolean ichorWitherEnabled = true;
-    private static int nightmareHelmetArmorValue = 3;
-    private static int nightmareChestplateArmorValue = 8;
-    private static int nightmareLeggingsArmorValue = 6;
-    private static int nightmareBootsArmorValue = 3;
-    private static double nightmareHelmetArmorToughness = 3.0D;
-    private static double nightmareChestplateArmorToughness = 3.0D;
-    private static double nightmareLeggingsArmorToughness = 3.0D;
-    private static double nightmareBootsArmorToughness = 3.0D;
-    
-    private static double nightmareHelmetDoubleDamageChance = 0.04D;
-    private static double nightmareChestplateDoubleDamageChance = 0.06D;
-    private static double nightmareLeggingsDoubleDamageChance = 0.05D;
-    private static double nightmareBootsDoubleDamageChance = 0.03D;
+    private static int nightmareHelmetArmorValue = 4;
+    private static int nightmareChestplateArmorValue = 9;
+    private static int nightmareLeggingsArmorValue = 7;
+    private static int nightmareBootsArmorValue = 4;
+    private static double nightmareHelmetArmorToughness = 4.0D;
+    private static double nightmareChestplateArmorToughness = 4.0D;
+    private static double nightmareLeggingsArmorToughness = 4.0D;
+    private static double nightmareBootsArmorToughness = 4.0D;
 
-    private static double nightmareSwordBaseDamage = 15.0D;
+    private static double nightmareHelmetDoubleDamageChance = 0.05D;
+    private static double nightmareChestplateDoubleDamageChance = 0.07D;
+    private static double nightmareLeggingsDoubleDamageChance = 0.07D;
+    private static double nightmareBootsDoubleDamageChance = 0.05D;
+
+    private static double nightmareSwordBaseDamage = 18.0D;
     
     private static double nightmareSwordScalingFactor = 1.5D;
     private static boolean basiliskPetrifyingGazeEnabled = true;
     private static int basiliskSpawnMaxLightLevel = 5;
-    private static double basiliskHealth = 150.0D;
+    private static double basiliskHealth = 320.0D;
     private static double basiliskAttackDamage = 36.0D;
     private static double basiliskMovementSpeed = 0.18D;
     private static double basiliskArmor = 6.0D;
@@ -219,13 +219,13 @@ public final class AntarchySettings {
     private static int basiliskPreyPetrifyTicks = 200;
     private static boolean diamondMinecartEnabled = true;
     private static boolean diamondMinecartPlacesRails = true;
-    private static double diamondMinecartCruiseSpeed = 0.6D;
-    private static double diamondMinecartMaxSpeed = 1.0D;
-    private static double diamondMinecartAcceleration = 0.03D;
-    private static double diamondMinecartDeceleration = 0.04D;
-    private static double diamondMinecartCoastDeceleration = 0.01D;
-    private static boolean diamondMinecartMobDamageEnabled = true;
-    private static double diamondMinecartMaxMobDamage = 8.0D;
+    private static double diamondMinecartCruiseSpeed = 0.0D;
+    private static double diamondMinecartMaxSpeed = 0.55D;
+    private static double diamondMinecartAcceleration = 0.02D;
+    private static double diamondMinecartDeceleration = 0.05D;
+    private static double diamondMinecartCoastDeceleration = 0.02D;
+    private static boolean diamondMinecartMobDamageEnabled = false;
+    private static double diamondMinecartMaxMobDamage = 4.0D;
     private static boolean dreadHallucinationSoundsEnabled = true;
     private static double dreadHallucinationSoundMinInterval = 3.0D;
     private static double dreadHallucinationSoundMaxInterval = 10.0D;
@@ -272,7 +272,7 @@ public final class AntarchySettings {
     private static final int     reverieAmbientTargetMaxAgeTicks  = 40;
     private static final int     reverieAmbientPulseIntervalMinTicks = 12;
     private static final int     reverieAmbientPulseIntervalMaxTicks = 19;
-    private static double emperorScorpionHealth = 300.0D;
+    private static double emperorScorpionHealth = 420.0D;
     private static double emperorScorpionAttackDamage = 28.0D;
     private static double emperorScorpionMovementSpeed = 0.384D;
     private static double emperorScorpionArmor = 22.0D;
@@ -306,7 +306,7 @@ public final class AntarchySettings {
     private static double jumpyBugPounceDamage = 12.0D;
     private static double jumpyBugCamouflageAlpha = 0.18D;
     private static double brutalflyArmor = 10.0D;
-    private static double brutalflyArmorToughness = 4.0D;
+    private static double brutalflyArmorToughness = 5.0D;
     private static double brutalflyKnockbackResistance = 0.7D;
     private static double brutalflyMovementSpeed = 0.34D;
     private static double brutalflyFlyingSpeed = 0.55D;
@@ -326,25 +326,25 @@ public final class AntarchySettings {
     private static double toreterrorDamageRange = 25.0D;
     private static double brutalflyDamageRange = 25.0D;
     private static double alphaMantisDamageRange = 25.0D;
-    private static float krakenLightningDamagePhaseOne = 6.0F;
-    private static double lucidHealth = 30.0D;
+    private static float krakenLightningDamagePhaseOne = 12.0F;
+    private static double lucidHealth = 70.0D;
     private static double lucidAttackDamage = 4.0D;
     private static double lucidMovementSpeed = 0.22D;
     private static double lucidFlyingSpeed = 0.35D;
     private static double lucidKnockbackResistance = 0.5D;
-    private static double missileSquidHealth = 50.0D;
-    private static double missileSquidAttackDamage = 6.0D;
+    private static double missileSquidHealth = 60.0D;
+    private static double missileSquidAttackDamage = 9.0D;
     private static double missileSquidMovementSpeed = 0.84D;
     private static double missileSquidFlyingSpeed = 0.84D;
     private static double missileSquidKnockbackResistance = 0.15D;
     private static double molewormHealth = 8.0D;
     private static double molewormAttackDamage = 1.0D;
     private static double molewormMovementSpeed = 0.25D;
-    private static double triffidHealth = 80.0D;
+    private static double triffidHealth = 160.0D;
     private static double triffidAttackDamage = 10.0D;
     private static double triffidGrabDamage = 15.0D;
     private static int triffidSweepHitCooldownTicks = 10;
-    private static double molevoreHealth = 60.0D;
+    private static double molevoreHealth = 140.0D;
     private static double molevoreAttackDamage = 10.0D;
     private static double molevoreMovementSpeed = 0.27D;
     private static double molevoreArmor = 6.0D;
@@ -357,7 +357,7 @@ public final class AntarchySettings {
     private static double molevoreBreakRange = 1.8D;
     private static double molevoreBreakVerticalRange = 2.2D;
     private static double molevoreBreakHalfWidth = 1.1D;
-    private static double nightmareHealth = 180.0D;
+    private static double nightmareHealth = 380.0D;
     private static double nightmareAttackDamage = 16.0D;
     private static double nightmareMovementSpeed = 0.28D;
     private static double nightmareFlyingSpeed = 0.3D;
@@ -389,7 +389,7 @@ public final class AntarchySettings {
     private static int bigBerthaBasiliskParalyzeDurationTicks = 80;
     private static int bigBerthaKrakenSlowTicks = 80;
     private static double ductTapeRepairPercentPerUse = 0.25D;
-    private static double ultimateArmorKnockbackResistance = 0.1D;
+    private static double ultimateArmorKnockbackResistance = 0.15D;
     private static double nightmareArmorKnockbackResistance = 0.1D;
     private static double primordialArmorKnockbackPerPiece = 0.5D;
     private static double mogglesVisionRadius = 20.0D;
@@ -405,18 +405,18 @@ public final class AntarchySettings {
     private static int bloodCrystalAppleShieldCount = 2;
     private static int bloodCrystalAppleDurationTicks = 2400;
     private static int bloodCrystalAppleShieldRechargeTicks = 600;
-    private static int bloodCrystalHardMaxShields = 8;
+    private static int bloodCrystalHardMaxShields = 10;
     // Armor stats (iron defense, gold durability, 0 toughness by default)
-    private static int bloodCrystalHelmetDefense = 2;
-    private static int bloodCrystalChestplateDefense = 6;
-    private static int bloodCrystalLeggingsDefense = 5;
-    private static int bloodCrystalBootsDefense = 2;
-    private static double bloodCrystalArmorToughness = 0.0;
+    private static int bloodCrystalHelmetDefense = 3;
+    private static int bloodCrystalChestplateDefense = 7;
+    private static int bloodCrystalLeggingsDefense = 6;
+    private static int bloodCrystalBootsDefense = 3;
+    private static double bloodCrystalArmorToughness = 2.0D;
     private static int bloodCrystalHelmetDurability = 77;
     private static int bloodCrystalChestplateDurability = 112;
     private static int bloodCrystalLeggingsDurability = 105;
     private static int bloodCrystalBootsDurability = 91;
-    private static double toreterrorHealth = 300.0D;
+    private static double toreterrorHealth = 450.0D;
     private static double toreterrorJumpAttackDamage = 14.0D;
     private static double toreterrorJumpAttackKnockback = 2.5D;
     private static double toreterrorSpinDamage = 6.0D;
@@ -441,11 +441,28 @@ public final class AntarchySettings {
     private static double cheepHealth = 8.0D;
     private static double cheepAttackDamage = 3.0D;
     private static double dorrieHealth = 60.0D;
-    private static double herculesBeetleHealth = 500.0D;
+    private static double herculesBeetleHealth = 650.0D;
     private static double herculesBeetleAttackDamage = 30.0D;
     private static double herculesBeetleChargeDamage = 40.0D;
     private static double ouranwoodDeerHealth = 20.0D;
     private static double glimmerHealth = 20.0D;
+
+    private static double lucidArmorToughness = 2.0D;
+    private static double triffidArmorToughness = 3.0D;
+    private static double basiliskArmorToughness = 5.0D;
+    private static double nightmareMobArmorToughness = 5.0D;
+    private static double alphaMantisArmorToughness = 4.0D;
+    private static double herculesBeetleArmorToughness = 4.0D;
+    private static double krakenArmorToughness = 6.0D;
+    private static double nightmareMobArmor = 10.0D;
+
+    private static double bossMagicPerHitCapFraction = 0.12D;
+    private static int bossMagicWindowTicks = 20;
+    private static double bossMagicWindowCapFraction = 0.20D;
+    private static double bossMagicWardReductionFraction = 0.5D;
+    private static int bossMagicWardDurationTicks = 60;
+    private static int bossMagicWardTriggerBreaches = 2;
+    private static java.util.List<String> magicBurstDamageNamespaces = new java.util.ArrayList<>(java.util.List.of("irons_spellbooks"));
 
     private AntarchySettings() {
     }
@@ -2439,4 +2456,21 @@ public final class AntarchySettings {
     public static void setOuranwoodDeerHealth(double v) { ouranwoodDeerHealth = v; }
     public static double glimmerHealth() { return glimmerHealth; }
     public static void setGlimmerHealth(double v) { glimmerHealth = v; }
+
+    public static double lucidArmorToughness() { return lucidArmorToughness; }
+    public static double triffidArmorToughness() { return triffidArmorToughness; }
+    public static double basiliskArmorToughness() { return basiliskArmorToughness; }
+    public static double nightmareMobArmorToughness() { return nightmareMobArmorToughness; }
+    public static double alphaMantisArmorToughness() { return alphaMantisArmorToughness; }
+    public static double herculesBeetleArmorToughness() { return herculesBeetleArmorToughness; }
+    public static double krakenArmorToughness() { return krakenArmorToughness; }
+    public static double nightmareMobArmor() { return nightmareMobArmor; }
+
+    public static double bossMagicPerHitCapFraction() { return bossMagicPerHitCapFraction; }
+    public static int bossMagicWindowTicks() { return bossMagicWindowTicks; }
+    public static double bossMagicWindowCapFraction() { return bossMagicWindowCapFraction; }
+    public static double bossMagicWardReductionFraction() { return bossMagicWardReductionFraction; }
+    public static int bossMagicWardDurationTicks() { return bossMagicWardDurationTicks; }
+    public static int bossMagicWardTriggerBreaches() { return bossMagicWardTriggerBreaches; }
+    public static java.util.List<String> magicBurstDamageNamespaces() { return magicBurstDamageNamespaces; }
 }

@@ -153,7 +153,8 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
                 .add(Attributes.FLYING_SPEED, AntarchySettings.krakenFlyingSpeed())
                 .add(Attributes.FOLLOW_RANGE, AntarchySettings.krakenFollowRange())
                 .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.krakenKnockbackResistance())
-                .add(Attributes.ARMOR, AntarchySettings.krakenArmor());
+                .add(Attributes.ARMOR, AntarchySettings.krakenArmor())
+                .add(Attributes.ARMOR_TOUGHNESS, AntarchySettings.krakenArmorToughness());
     }
 
     public static boolean canSpawn(EntityType<KrakenEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
@@ -365,6 +366,9 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (BossCombatUtil.isMagicWarded(this) && BossCombatUtil.isMagicBurstSource(source)) {
+            amount *= (1.0F - (float) AntarchySettings.bossMagicWardReductionFraction());
+        }
         if (source.is(DamageTypeTags.IS_FIRE)
                 || source.is(DamageTypes.IN_WALL)
                 || source.is(DamageTypes.LIGHTNING_BOLT)

@@ -99,7 +99,8 @@ public class TriffidEntity extends Monster implements GeoEntity {
                 .add(Attributes.ATTACK_DAMAGE, AntarchySettings.triffidAttackDamage())
                 .add(Attributes.FOLLOW_RANGE, FOLLOW_RANGE)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 1.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.0D);
+                .add(Attributes.MOVEMENT_SPEED, 0.0D)
+                .add(Attributes.ARMOR_TOUGHNESS, AntarchySettings.triffidArmorToughness());
     }
 
     @Override

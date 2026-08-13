@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -243,7 +244,8 @@ public class NightmareEntity extends Monster implements GeoEntity {
                 .add(Attributes.FLYING_SPEED, 0.375D)
                 .add(Attributes.FOLLOW_RANGE, 48.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.75D)
-                .add(Attributes.ARMOR, 8.0D);
+                .add(Attributes.ARMOR, AntarchySettings.nightmareMobArmor())
+                .add(Attributes.ARMOR_TOUGHNESS, AntarchySettings.nightmareMobArmorToughness());
     }
 
     @Override
@@ -421,6 +423,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (BossCombatUtil.isMagicWarded(this) && BossCombatUtil.isMagicBurstSource(source)) {
+            amount *= (1.0F - (float) AntarchySettings.bossMagicWardReductionFraction());
+        }
         if (this.isPhaseTransitioning() || this.portalTravelTicks > 0 || this.portalAttackTicks > 0) {
             return false;
         }

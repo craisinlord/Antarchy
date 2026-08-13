@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "S": {
+      "tag": "c:stones"
+    },
+    "C": {
+      "item": "antarchy:chitin"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "SCS",
+    "SSS"
+  ],
+  "result": {
+    "count": 8,
+    "item": "antarchy:myrmite"
+  }
+}

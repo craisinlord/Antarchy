@@ -203,7 +203,8 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
                 .add(Attributes.FLYING_SPEED, FLIGHT_SPEED)
                 .add(Attributes.FOLLOW_RANGE, 48.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.9D)
-                .add(Attributes.ARMOR, 12.0D);
+                .add(Attributes.ARMOR, 12.0D)
+                .add(Attributes.ARMOR_TOUGHNESS, AntarchySettings.herculesBeetleArmorToughness());
     }
 
     @Override
@@ -239,9 +240,16 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             @Override
             public boolean canUse() {
                 return !HerculesBeetleEntity.this.isKnockedDown()
+                        && !HerculesBeetleEntity.this.isLeashed()
                         && !HerculesBeetleEntity.this.isVehicle()
                         && !HerculesBeetleEntity.this.isInBusyAnimation()
                         && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return !HerculesBeetleEntity.this.isLeashed()
+                        && super.canContinueToUse();
             }
         });
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 16.0F));
@@ -376,6 +384,10 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
 
         if (this.isKnockedDown()) {
             this.tickKnockedDown();
+        } else if (this.isLeashed()) {
+            this.getNavigation().stop();
+            this.setTarget(null);
+            this.updateAmbientAnimation();
         } else if (this.chargeTicksRemaining > 0 || this.getAnimationState() == ANIM_CHARGE) {
             this.tickCharge();
         } else if (this.isInBusyAnimation()) {
@@ -593,6 +605,9 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (BossCombatUtil.isMagicWarded(this) && BossCombatUtil.isMagicBurstSource(source)) {
+            amount *= (1.0F - (float) AntarchySettings.bossMagicWardReductionFraction());
+        }
         if (source.is(DamageTypeTags.IS_FALL)) {
             return false;
         }
@@ -1429,6 +1444,11 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         return null;
     }
 
+    @Override
+    public boolean canBeLeashed() {
+        return this.isTame() && super.canBeLeashed();
+    }
+
     private final class HerculesCombatGoal extends Goal {
         HerculesCombatGoal() {
             this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
@@ -1437,6 +1457,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         @Override
         public boolean canUse() {
             return !HerculesBeetleEntity.this.isKnockedDown()
+                    && !HerculesBeetleEntity.this.isLeashed()
                     && !HerculesBeetleEntity.this.isVehicle()
                     && HerculesBeetleEntity.this.getTarget() != null
                     && HerculesBeetleEntity.this.canAttack(HerculesBeetleEntity.this.getTarget());
@@ -1448,6 +1469,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             return target != null
                     && target.isAlive()
                     && !HerculesBeetleEntity.this.isKnockedDown()
+                    && !HerculesBeetleEntity.this.isLeashed()
                     && !HerculesBeetleEntity.this.isVehicle()
                     && HerculesBeetleEntity.this.canAttack(target);
         }

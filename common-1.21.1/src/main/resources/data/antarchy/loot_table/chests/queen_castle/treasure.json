@@ -1,0 +1,12 @@
+{"type":"minecraft:chest","pools":[{"rolls":{"type":"minecraft:uniform","min":7,"max":10},"entries":[
+{"type":"minecraft:item","name":"antarchy:ultimate_helmet","weight":2},{"type":"minecraft:item","name":"antarchy:ultimate_chestplate","weight":2},{"type":"minecraft:item","name":"antarchy:ultimate_leggings","weight":2},{"type":"minecraft:item","name":"antarchy:ultimate_boots","weight":2},
+{"type":"minecraft:item","name":"antarchy:blood_crystal_katana","weight":5},{"type":"minecraft:item","name":"antarchy:lucid_pearl","weight":8},
+{"type":"minecraft:item","name":"antarchy:blood_crystal_shard","weight":14,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":3,"max":8}}]},
+{"type":"minecraft:item","name":"antarchy:blood_crystal_apple","weight":20,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":1,"max":4}}]},
+{"type":"minecraft:item","name":"antarchy:bluestone","weight":14,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":10,"max":24}}]},
+{"type":"minecraft:item","name":"antarchy:nyxite","weight":10,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":4,"max":10}}]},
+{"type":"minecraft:item","name":"antarchy:potent_nyxite","weight":4},{"type":"minecraft:item","name":"minecraft:enchanted_golden_apple","weight":2},
+{"type":"minecraft:item","name":"minecraft:book","weight":14,"functions":[{"function":"minecraft:enchant_randomly","options":["minecraft:mending","minecraft:unbreaking","minecraft:protection","minecraft:efficiency","minecraft:fortune"]}]},
+{"type":"minecraft:item","name":"minecraft:potion","weight":8,"functions":[{"function":"minecraft:set_potion","id":"antarchy:inversion"}]},{"type":"minecraft:item","name":"minecraft:tipped_arrow","weight":8,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":6,"max":16}},{"function":"minecraft:set_potion","id":"antarchy:inversion"}]},
+{"type":"minecraft:item","name":"antarchy:titanium_ingot","weight":1},{"type":"minecraft:item","name":"antarchy:uranium_ingot","weight":1}
+]}],"random_sequence":"antarchy:chests/queen_castle/treasure"}

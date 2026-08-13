@@ -1,0 +1,13 @@
+{"type":"minecraft:chest","pools":[{"rolls":{"type":"minecraft:uniform","min":6,"max":9},"entries":[
+{"type":"minecraft:item","name":"antarchy:lucid_pearl","weight":8},{"type":"minecraft:item","name":"antarchy:blood_crystal_katana","weight":3},
+{"type":"minecraft:item","name":"antarchy:blood_crystal_helmet","weight":2},{"type":"minecraft:item","name":"antarchy:blood_crystal_chestplate","weight":2},{"type":"minecraft:item","name":"antarchy:blood_crystal_leggings","weight":2},{"type":"minecraft:item","name":"antarchy:blood_crystal_boots","weight":2},
+{"type":"minecraft:item","name":"antarchy:potent_nyxite","weight":4},{"type":"minecraft:item","name":"antarchy:nyxite","weight":10,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":3,"max":8}}]},
+{"type":"minecraft:item","name":"antarchy:bluestone","weight":13,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":8,"max":20}}]},
+{"type":"minecraft:item","name":"antarchy:blood_crystal_shard","weight":12,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":2,"max":6}}]},
+{"type":"minecraft:item","name":"antarchy:blood_crystal_apple","weight":16,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":1,"max":3}}]},
+{"type":"minecraft:item","name":"minecraft:diamond_pickaxe","weight":8,"functions":[{"function":"minecraft:enchant_with_levels","levels":{"type":"minecraft:uniform","min":18,"max":30},"options":"#minecraft:on_random_loot"}]},
+{"type":"minecraft:item","name":"minecraft:book","weight":10,"functions":[{"function":"minecraft:enchant_randomly","options":["minecraft:mending","minecraft:unbreaking","minecraft:efficiency","minecraft:protection"]}]},
+{"type":"minecraft:item","name":"minecraft:tipped_arrow","weight":7,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":4,"max":10}},{"function":"minecraft:set_potion","id":"antarchy:inversion"}]},
+{"type":"minecraft:item","name":"minecraft:potion","weight":7,"functions":[{"function":"minecraft:set_potion","id":"antarchy:inversion"}]},
+{"type":"minecraft:item","name":"antarchy:titanium_ingot","weight":1},{"type":"minecraft:item","name":"antarchy:uranium_ingot","weight":1}
+]}],"random_sequence":"antarchy:chests/underside_ruins/treasure"}

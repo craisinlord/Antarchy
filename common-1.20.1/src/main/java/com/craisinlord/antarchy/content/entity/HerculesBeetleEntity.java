@@ -229,9 +229,16 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             @Override
             public boolean canUse() {
                 return !HerculesBeetleEntity.this.isKnockedDown()
+                        && !HerculesBeetleEntity.this.isLeashed()
                         && !HerculesBeetleEntity.this.isVehicle()
                         && !HerculesBeetleEntity.this.isInBusyAnimation()
                         && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return !HerculesBeetleEntity.this.isLeashed()
+                        && super.canContinueToUse();
             }
         });
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 16.0F));
@@ -364,6 +371,10 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
 
         if (this.isKnockedDown()) {
             this.tickKnockedDown();
+        } else if (this.isLeashed()) {
+            this.getNavigation().stop();
+            this.setTarget(null);
+            this.updateAmbientAnimation();
         } else if (this.chargeTicksRemaining > 0 || this.getAnimationState() == ANIM_CHARGE) {
             this.tickCharge();
         } else if (this.isInBusyAnimation()) {
@@ -1402,6 +1413,11 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         return null;
     }
 
+    @Override
+    public boolean canBeLeashed(Player player) {
+        return this.isTame() && super.canBeLeashed(player);
+    }
+
     private final class HerculesCombatGoal extends Goal {
         HerculesCombatGoal() {
             this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
@@ -1410,6 +1426,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         @Override
         public boolean canUse() {
             return !HerculesBeetleEntity.this.isTame()
+                    && !HerculesBeetleEntity.this.isLeashed()
                     && !HerculesBeetleEntity.this.isKnockedDown()
                     && HerculesBeetleEntity.this.getTarget() != null
                     && HerculesBeetleEntity.this.canAttack(HerculesBeetleEntity.this.getTarget());
@@ -1421,6 +1438,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             return target != null
                     && target.isAlive()
                     && !HerculesBeetleEntity.this.isTame()
+                    && !HerculesBeetleEntity.this.isLeashed()
                     && !HerculesBeetleEntity.this.isKnockedDown()
                     && HerculesBeetleEntity.this.canAttack(target);
         }

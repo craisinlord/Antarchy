@@ -134,7 +134,7 @@ public final class AntarchyNeoforgeItems {
                     SoundEvents.ARMOR_EQUIP_NETHERITE,
                     () -> Ingredient.of(PRIMORDIAL_SCUTE.get()),
                     List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "primordial"))),
-                    3.0F,
+                    3.5F,
                     0.1F
             ));
     private static final DeferredHolder<ArmorMaterial, ArmorMaterial> JUMPY_BOOTS_ARMOR_MATERIAL = ARMOR_MATERIALS.register("jumpy_boots",
