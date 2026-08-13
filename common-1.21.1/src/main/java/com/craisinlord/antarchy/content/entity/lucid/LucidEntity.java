@@ -101,7 +101,8 @@ public class LucidEntity extends Monster implements GeoEntity {
                 .add(Attributes.MOVEMENT_SPEED, AntarchySettings.lucidMovementSpeed())
                 .add(Attributes.FLYING_SPEED, AntarchySettings.lucidFlyingSpeed())
                 .add(Attributes.FOLLOW_RANGE, 40.0D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.lucidKnockbackResistance());
+                .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.lucidKnockbackResistance())
+                .add(Attributes.ARMOR_TOUGHNESS, AntarchySettings.lucidArmorToughness());
     }
 
     @Override

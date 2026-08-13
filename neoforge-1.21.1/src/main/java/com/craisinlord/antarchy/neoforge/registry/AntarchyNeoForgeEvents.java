@@ -97,6 +97,7 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleUltimateBowDamage);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleUltimateCrossbowDamage);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleNightmareArmorDoubleDamage);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBossMagicBurstMitigation);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleScorpionWhipAttackEntity);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleAttitudeAdjusterAttackEntity);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleScorpionWhipLeftClickBlock);
@@ -844,6 +845,38 @@ public final class AntarchyNeoForgeEvents {
         }
     }
 
+    static void handleBossMagicBurstMitigation(LivingIncomingDamageEvent event) {
+        LivingEntity boss = event.getEntity();
+        if (!boss.getType().is(AntarchyTags.Entities.SPELL_RESISTANT_BOSS)) return;
+        if (!com.craisinlord.antarchy.content.boss.BossCombatUtil.isMagicBurstSource(event.getSource())) return;
+
+        float maxHealth = boss.getMaxHealth();
+        float amount = event.getAmount();
+
+        float perHitCap = maxHealth * (float) AntarchySettings.bossMagicPerHitCapFraction();
+        if (amount > perHitCap) {
+            amount = perHitCap;
+        }
+
+        float windowCap = maxHealth * (float) AntarchySettings.bossMagicWindowCapFraction();
+        float remainingBudget = com.craisinlord.antarchy.content.boss.BossCombatUtil.remainingWindowBudget(boss, windowCap);
+        boolean breachedWindow = amount > remainingBudget;
+        if (breachedWindow) {
+            amount = Math.max(0.0F, remainingBudget);
+        }
+
+        com.craisinlord.antarchy.content.boss.BossCombatUtil.trackMagicBurstWindow(boss, amount, AntarchySettings.bossMagicWindowTicks());
+
+        if (breachedWindow) {
+            int breaches = com.craisinlord.antarchy.content.boss.BossCombatUtil.recordMagicWindowBreach(boss);
+            if (breaches >= AntarchySettings.bossMagicWardTriggerBreaches()) {
+                com.craisinlord.antarchy.content.boss.BossCombatUtil.triggerMagicWard(boss, AntarchySettings.bossMagicWardDurationTicks());
+            }
+        }
+
+        event.setAmount(amount);
+    }
+
     static void handleAntiwaterDamage(LivingIncomingDamageEvent event) {
         if (!event.getSource().is(DamageTypes.FALL)) {
             return;
@@ -1103,10 +1136,7 @@ public final class AntarchyNeoForgeEvents {
         if (!event.getEffectInstance().is(AntarchyNeoforgeMisc.INVERTED)) return;
         LivingEntity entity = event.getEntity();
         if (!entity.level().isClientSide()) {
-            com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.setGravityDirection(
-                    entity,
-                    com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection.DOWN,
-                    new com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition(12));
+            com.craisinlord.antarchy.content.gravity.AntarchyMountedGravityHelper.syncConnectedStackIgnoring(entity, entity);
             if (entity instanceof Player player) {
                 notifyNearbyReveriesOfInversionChange(player);
             }
@@ -1227,10 +1257,7 @@ public final class AntarchyNeoForgeEvents {
         if (!event.getEffect().is(AntarchyNeoforgeMisc.INVERTED)) return;
         LivingEntity entity = event.getEntity();
         if (!entity.level().isClientSide()) {
-            com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.setGravityDirection(
-                    entity,
-                    com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection.DOWN,
-                    new com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition(12));
+            com.craisinlord.antarchy.content.gravity.AntarchyMountedGravityHelper.syncConnectedStackIgnoring(entity, entity);
             if (entity instanceof Player player) {
                 notifyNearbyReveriesOfInversionChange(player);
             }

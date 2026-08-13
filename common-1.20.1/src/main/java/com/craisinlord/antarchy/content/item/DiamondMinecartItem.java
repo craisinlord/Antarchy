@@ -34,6 +34,14 @@ public class DiamondMinecartItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
+        if (!AntarchySettings.diamondMinecartEnabled()) {
+            tooltipComponents.add(Component.literal("Currently behaves like a regular minecart.").withStyle(ChatFormatting.GRAY));
+            return;
+        }
+        tooltipComponents.add(Component.literal("Hold W to accelerate and S to brake.").withStyle(ChatFormatting.GRAY));
+        if (AntarchySettings.diamondMinecartPlacesRails()) {
+            tooltipComponents.add(Component.literal("Places rails from your inventory while ridden.").withStyle(ChatFormatting.DARK_AQUA));
+        }
     }
 
     @Override

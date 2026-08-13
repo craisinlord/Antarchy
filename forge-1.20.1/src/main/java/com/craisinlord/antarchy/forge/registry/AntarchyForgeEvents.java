@@ -1090,10 +1090,7 @@ public final class AntarchyForgeEvents {
         if (event.getEffectInstance().getEffect() != AntarchyForgeMisc.INVERTED.get()) return;
         LivingEntity entity = event.getEntity();
         if (!entity.level().isClientSide()) {
-            com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.setGravityDirection(
-                    entity,
-                    com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection.DOWN,
-                    new com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition(12));
+            com.craisinlord.antarchy.content.gravity.AntarchyMountedGravityHelper.syncConnectedStackIgnoring(entity, entity);
             if (entity instanceof Player player) {
                 notifyNearbyReveriesOfInversionChange(player);
             }
@@ -1232,10 +1229,7 @@ public final class AntarchyForgeEvents {
         if (event.getEffect() != AntarchyForgeMisc.INVERTED.get()) return;
         LivingEntity entity = event.getEntity();
         if (!entity.level().isClientSide()) {
-            com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.setGravityDirection(
-                    entity,
-                    com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection.DOWN,
-                    new com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition(12));
+            com.craisinlord.antarchy.content.gravity.AntarchyMountedGravityHelper.syncConnectedStackIgnoring(entity, entity);
             if (entity instanceof Player player) {
                 notifyNearbyReveriesOfInversionChange(player);
             }

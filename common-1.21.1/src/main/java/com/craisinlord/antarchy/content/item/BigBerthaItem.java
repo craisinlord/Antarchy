@@ -356,7 +356,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
     }
 
     private void applyHerculesHit(Player attacker, LivingEntity target, ServerLevel level) {
-        float bonusDamage = (float) (attacker.getAttributeValue(Attributes.ATTACK_DAMAGE) * 0.5D);
+        float bonusDamage = (float) (attacker.getAttributeValue(Attributes.ATTACK_DAMAGE) * 0.6D);
         Vec3 push = target.position().subtract(attacker.position()).multiply(1.0D, 0.0D, 1.0D);
         if (push.lengthSqr() < 1.0E-4D) {
             push = attacker.getLookAngle().multiply(1.0D, 0.0D, 1.0D);

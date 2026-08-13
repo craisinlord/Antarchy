@@ -129,15 +129,15 @@ public final class AntarchyMiscConfig {
         // Diamond Minecart
 
         b.push("diamondMinecart");
-        DIAMOND_MINECART_ENABLED            = b.comment("Master toggle. If false, acts like a regular minecart.")                             .define("enabled",           true);
-        DIAMOND_MINECART_PLACES_RAILS       = b.comment("Whether the cart automatically places rails from the rider's inventory.")             .define("placesRails",       true);
-        DIAMOND_MINECART_CRUISE_SPEED       = b.comment("Cruise speed in blocks/tick while ridden (even without holding W).")                  .defineInRange("cruiseSpeed",         0.6D,  0.05D, 2.0D);
-        DIAMOND_MINECART_MAX_SPEED          = b.comment("Maximum boosted speed in blocks/tick when W is held. Vanilla cap is 0.4.")            .defineInRange("maxSpeed",            1.0D,  0.05D, 2.0D);
-        DIAMOND_MINECART_ACCELERATION       = b.comment("Speed gained per tick while accelerating.")                                           .defineInRange("acceleration",        0.03D, 0.001D, 0.5D);
-        DIAMOND_MINECART_DECELERATION       = b.comment("Speed lost per tick while S is held (active braking).")                              .defineInRange("deceleration",        0.04D, 0.001D, 0.5D);
-        DIAMOND_MINECART_COAST_DECELERATION = b.comment("Speed lost per tick when neither W nor S is held (coasting friction).")               .defineInRange("coastDeceleration",   0.01D, 0.001D, 0.5D);
-        DIAMOND_MINECART_MOB_DAMAGE_ENABLED = b.comment("Whether the cart deals damage to mobs it collides with at speed.")                   .define("mobDamageEnabled",  true);
-        DIAMOND_MINECART_MAX_MOB_DAMAGE     = b.comment("Maximum damage dealt at full speed. Scales linearly with current speed.")             .defineInRange("maxMobDamage",        8.0D,  0.0D, 200.0D);
+        DIAMOND_MINECART_ENABLED            = b.comment("Master toggle for the diamond minecart's custom propulsion and rail-laying behavior.") .define("enabled",           true);
+        DIAMOND_MINECART_PLACES_RAILS       = b.comment("Whether the cart automatically places normal rails from the rider's inventory.")       .define("placesRails",       true);
+        DIAMOND_MINECART_CRUISE_SPEED       = b.comment("Minimum maintained speed while ridden without holding W. Set to 0 for manual control.") .defineInRange("cruiseSpeed",         0.0D,  0.0D, 2.0D);
+        DIAMOND_MINECART_MAX_SPEED          = b.comment("Maximum speed in blocks/tick when W is held. Vanilla rideable minecarts cap at 0.4.")  .defineInRange("maxSpeed",            0.55D, 0.05D, 2.0D);
+        DIAMOND_MINECART_ACCELERATION       = b.comment("Speed gained per tick while accelerating.")                                             .defineInRange("acceleration",        0.02D, 0.001D, 0.5D);
+        DIAMOND_MINECART_DECELERATION       = b.comment("Speed lost per tick while S is held (active braking).")                                .defineInRange("deceleration",        0.05D, 0.001D, 0.5D);
+        DIAMOND_MINECART_COAST_DECELERATION = b.comment("Speed lost per tick when neither W nor S is held.")                                     .defineInRange("coastDeceleration",   0.02D, 0.001D, 0.5D);
+        DIAMOND_MINECART_MOB_DAMAGE_ENABLED = b.comment("Whether the cart damages mobs it hits while moving.")                                   .define("mobDamageEnabled",  false);
+        DIAMOND_MINECART_MAX_MOB_DAMAGE     = b.comment("Maximum collision damage dealt at full speed if mob damage is enabled.")               .defineInRange("maxMobDamage",        4.0D,  0.0D, 200.0D);
         b.pop();
 
 

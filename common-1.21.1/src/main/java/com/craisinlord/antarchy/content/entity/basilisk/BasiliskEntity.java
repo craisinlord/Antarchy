@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 
 import net.minecraft.core.BlockPos;
@@ -112,7 +113,16 @@ public class BasiliskEntity extends Monster implements GeoEntity {
                 .add(Attributes.ATTACK_DAMAGE, AntarchySettings.basiliskAttackDamage())
                 .add(Attributes.ARMOR, AntarchySettings.basiliskArmor())
                 .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.basiliskKnockbackResistance())
-                .add(Attributes.FOLLOW_RANGE, AntarchySettings.basiliskFollowRange());
+                .add(Attributes.FOLLOW_RANGE, AntarchySettings.basiliskFollowRange())
+                .add(Attributes.ARMOR_TOUGHNESS, AntarchySettings.basiliskArmorToughness());
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        if (BossCombatUtil.isMagicWarded(this) && BossCombatUtil.isMagicBurstSource(source)) {
+            amount *= (1.0F - (float) AntarchySettings.bossMagicWardReductionFraction());
+        }
+        return super.hurt(source, amount);
     }
 
     @Override

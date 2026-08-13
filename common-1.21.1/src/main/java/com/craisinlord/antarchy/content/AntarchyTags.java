@@ -54,6 +54,8 @@ public final class AntarchyTags {
     public static final class DamageType {
         public static final TagKey<net.minecraft.world.damagesource.DamageType> BYPASSES_BLOODGLASS =
                 TagKey.create(net.minecraft.core.registries.Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath("antarchy", "bypasses_bloodglass"));
+        public static final TagKey<net.minecraft.world.damagesource.DamageType> ANTARCHY_MAGIC_BURST =
+                TagKey.create(net.minecraft.core.registries.Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath("antarchy", "antarchy_magic_burst"));
 
         private DamageType() {
         }
@@ -61,6 +63,7 @@ public final class AntarchyTags {
 
     public static final class Entities {
         public static final TagKey<EntityType<?>> BASILISK_PREY = TagKey.create(Registries.ENTITY_TYPE, id("basilisk_prey"));
+        public static final TagKey<EntityType<?>> SPELL_RESISTANT_BOSS = TagKey.create(Registries.ENTITY_TYPE, id("spell_resistant_boss"));
         public static final TagKey<EntityType<?>> DREAM_SAND_LOW_GRAVITY_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, id("dream_sand_low_gravity_blacklist"));
         public static final TagKey<EntityType<?>> GRAVITY_GUN_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, id("gravity_gun_blacklist"));
         public static final TagKey<EntityType<?>> INVERTED_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("inverted_immune"));

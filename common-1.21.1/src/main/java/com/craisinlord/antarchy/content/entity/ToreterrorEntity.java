@@ -270,6 +270,9 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (BossCombatUtil.isMagicWarded(this) && BossCombatUtil.isMagicBurstSource(source)) {
+            amount *= (1.0F - (float) AntarchySettings.bossMagicWardReductionFraction());
+        }
         if (source.is(net.minecraft.world.damagesource.DamageTypes.DROWN)) return false;
         if (source.is(DamageTypeTags.IS_PROJECTILE)) {
             amount *= (float) AntarchySettings.toreterrorProjectileDamageMultiplier();

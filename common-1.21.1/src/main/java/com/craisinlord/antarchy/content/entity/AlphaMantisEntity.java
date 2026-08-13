@@ -68,6 +68,7 @@ public class AlphaMantisEntity extends MantisEntity {
                 .add(Attributes.FLYING_SPEED, AntarchySettings.alphaMantisFlyingSpeed())
                 .add(Attributes.FOLLOW_RANGE, 48.0D)
                 .add(Attributes.ARMOR, 8.0D)
+                .add(Attributes.ARMOR_TOUGHNESS, AntarchySettings.alphaMantisArmorToughness())
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.8D);
     }
 
@@ -81,6 +82,9 @@ public class AlphaMantisEntity extends MantisEntity {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (BossCombatUtil.isMagicWarded(this) && BossCombatUtil.isMagicBurstSource(source)) {
+            amount *= (1.0F - (float) AntarchySettings.bossMagicWardReductionFraction());
+        }
         float preHealth = this.getHealth();
         boolean hurt = super.hurt(source, amount);
         if (hurt) {

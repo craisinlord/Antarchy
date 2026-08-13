@@ -236,7 +236,7 @@ public final class AntarchyFabricMisc {
                     SoundEvents.ARMOR_EQUIP_NETHERITE,
                     () -> Ingredient.of(AntarchyFabricItems.PRIMORDIAL_SCUTE.get()),
                     List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "primordial"))),
-                    3.0F,
+                    3.5F,
                     0.1F
             ));
 
