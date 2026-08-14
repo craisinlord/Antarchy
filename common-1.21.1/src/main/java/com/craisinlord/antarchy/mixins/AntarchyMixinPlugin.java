@@ -11,6 +11,8 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
  * Mixin plugin for compat-gated mixins and optional deps.
  */
 public final class AntarchyMixinPlugin implements IMixinConfigPlugin {
+    private static final AntarchyRangedAttackPatcher RANGED_ATTACK_PATCHER = new AntarchyRangedAttackPatcher();
+
     @Override
     public void onLoad(String mixinPackage) {
         Mixins.registerErrorHandlerClass(AntarchyMixinErrorHandler.class.getName());
@@ -51,5 +53,6 @@ public final class AntarchyMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
+        RANGED_ATTACK_PATCHER.patch(targetClass);
     }
 }

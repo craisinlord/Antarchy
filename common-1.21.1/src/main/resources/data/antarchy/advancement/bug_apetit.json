@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:adventure/root",
+  "parent": "antarchy:anger_the_hive_mind",
   "criteria": {
     "eat_cooked_bug_meat": {
       "conditions": {

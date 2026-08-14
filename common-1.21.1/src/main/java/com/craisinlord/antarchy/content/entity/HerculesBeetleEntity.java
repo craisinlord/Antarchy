@@ -6,6 +6,9 @@ import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import com.craisinlord.antarchy.content.item.BigBerthaItem;
 import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakeSync;
 import java.util.EnumSet;
@@ -218,10 +221,13 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.COMMAND) {
             return true;
         }
-        return level.getDifficulty() != Difficulty.PEACEFUL
-                && level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP)
+        boolean floorSpawn = level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP)
                 && level.isEmptyBlock(pos)
                 && level.isEmptyBlock(pos.above());
+        boolean ceilingSpawn = level.getBlockState(pos.above()).isFaceSturdy(level, pos.above(), Direction.DOWN)
+                && level.isEmptyBlock(pos)
+                && level.isEmptyBlock(pos.below());
+        return level.getDifficulty() != Difficulty.PEACEFUL && (floorSpawn || ceilingSpawn);
     }
 
     @Override
@@ -416,8 +422,8 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
 
     private void tickKnockedDown() {
         this.getNavigation().stop();
-        Vec3 motion = this.getDeltaMovement();
-        this.setDeltaMovement(0.0D, Math.min(motion.y, 0.0D), 0.0D);
+        Vec3 motion = this.toLocal(this.getDeltaMovement());
+        this.setDeltaMovement(this.toWorld(0.0D, Math.min(motion.y, 0.0D), 0.0D));
         if (this.getAnimationState() == ANIM_KNOCKED_DOWN && this.actionTicks > 0) {
             this.actionTicks--;
             if (this.actionTicks <= 0) {
@@ -454,8 +460,8 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             case ANIM_OPEN_WINGS -> {
                 this.setFlying(true);
                 if (this.getControllingPassenger() instanceof Player) {
-                    Vec3 motion = this.getDeltaMovement();
-                    this.setDeltaMovement(motion.x, Math.max(motion.y, MOUNTED_FLIGHT_LIFT), motion.z);
+                    Vec3 motion = this.toLocal(this.getDeltaMovement());
+                    this.setDeltaMovement(this.toWorld(motion.x, Math.max(motion.y, MOUNTED_FLIGHT_LIFT), motion.z));
                     this.hasImpulse = true;
                 }
                 if (this.pendingChargeStart) {
@@ -533,9 +539,9 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             this.setNoGravity(true);
             this.noPhysics = false;
             this.fallDistance = 0.0F;
-            if (this.onGround() && this.getDeltaMovement().y <= 0.0D) {
-                Vec3 motion = this.getDeltaMovement();
-                this.setDeltaMovement(motion.x, MOUNTED_FLIGHT_LIFT, motion.z);
+            Vec3 motion = this.toLocal(this.getDeltaMovement());
+            if (this.onGround() && motion.y <= 0.0D) {
+                this.setDeltaMovement(this.toWorld(motion.x, MOUNTED_FLIGHT_LIFT, motion.z));
                 this.hasImpulse = true;
             }
         } else {
@@ -753,7 +759,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
     }
 
     private boolean isMountedFlightPoseActive() {
-        return this.isFlying() && (!this.onGround() || this.getDeltaMovement().y > 0.08D);
+        return this.isFlying() && (!this.onGround() || this.toLocal(this.getDeltaMovement()).y > 0.08D);
     }
 
     private void startMountedFlight() {
@@ -763,8 +769,8 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         this.noPhysics = false;
         this.fallDistance = 0.0F;
         this.groundedTicks = 0;
-        Vec3 motion = this.getDeltaMovement();
-        this.setDeltaMovement(motion.x, Math.max(motion.y, MOUNTED_FLIGHT_LIFT), motion.z);
+        Vec3 motion = this.toLocal(this.getDeltaMovement());
+        this.setDeltaMovement(this.toWorld(motion.x, Math.max(motion.y, MOUNTED_FLIGHT_LIFT), motion.z));
         this.hasImpulse = true;
         this.setAnimationState(ANIM_FLY);
     }
@@ -883,23 +889,24 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
                 ? target.hurt(AntarchyDamageSources.herculesBeetleObliteration(serverLevel, this), damage)
                 : target.hurt(this.damageSources().mobAttack(this), damage);
         if (hurt) {
-            Vec3 push = target.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+            Vec3 push = this.toLocalPlane(target.position().subtract(this.position()));
             if (push.lengthSqr() < 1.0E-4D) {
-                push = this.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
+                push = this.toLocalPlane(this.getLookAngle());
             }
             push = push.normalize().scale(horizontalKnockback);
-            target.setDeltaMovement(target.getDeltaMovement().add(push.x, 1.25D, push.z));
+            Vec3 worldPush = this.toWorld(push.x, 1.25D, push.z);
+            target.setDeltaMovement(target.getDeltaMovement().add(worldPush.x, worldPush.y, worldPush.z));
             target.hurtMarked = true;
         }
         return hurt;
     }
 
     private void startCharge(Vec3 direction, int durationTicks, boolean mountedCharge) {
-        Vec3 horizontal = direction.multiply(1.0D, 0.0D, 1.0D);
+        Vec3 horizontal = this.toLocalPlane(direction);
         if (horizontal.lengthSqr() < 1.0E-4D) {
-            horizontal = this.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
+            horizontal = this.toLocalPlane(this.getLookAngle());
         }
-        this.chargeDirection = horizontal.normalize();
+        this.chargeDirection = this.toWorld(horizontal.normalize());
         this.pendingChargeDuration = Mth.clamp(durationTicks, MIN_MOUNTED_CHARGE_TICKS, MAX_CHARGE_TICKS);
         this.pendingMountedCharge = mountedCharge;
 
@@ -954,12 +961,17 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
                 continue;
             }
             if (victim.hurt(AntarchyDamageSources.herculesBeetleObliteration(serverLevel, this), damage)) {
-                Vec3 push = victim.position().subtract(this.position());
+                Vec3 push = this.toLocal(victim.position().subtract(this.position()));
                 if (push.lengthSqr() < 1.0E-4D) {
-                    push = this.chargeDirection;
+                    push = this.toLocal(this.chargeDirection);
                 }
-                push = push.normalize();
-                victim.setDeltaMovement(victim.getDeltaMovement().add(push.x * 1.25D, 0.9D, push.z * 1.25D));
+                Vec3 horizontal = new Vec3(push.x, 0.0D, push.z);
+                if (horizontal.lengthSqr() < 1.0E-4D) {
+                    horizontal = this.toLocalPlane(this.getLookAngle());
+                }
+                horizontal = horizontal.normalize();
+                Vec3 worldPush = this.toWorld(horizontal.x * 1.25D, 0.9D, horizontal.z * 1.25D);
+                victim.setDeltaMovement(victim.getDeltaMovement().add(worldPush.x, worldPush.y, worldPush.z));
                 victim.hurtMarked = true;
             }
         }
@@ -1169,7 +1181,8 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
     @Override
     protected void positionRider(Entity passenger, MoveFunction moveFunction) {
         if (this.hasPassenger(passenger)) {
-            Vec3 forward = this.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
+            Vec3 localForward = this.toLocalPlane(this.getLookAngle());
+            Vec3 forward = localForward.lengthSqr() > 1.0E-4D ? this.toWorld(localForward.normalize()) : this.toWorld(0.0D, 0.0D, 1.0D);
             boolean mountedFlightPose = this.isMountedFlightPoseActive();
             double yOffset = mountedFlightPose ? 5.3D : 3.0D;
             double forwardOffset = mountedFlightPose ? 2.2D : 1.25D;
@@ -1177,11 +1190,12 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
                 yOffset -= 0.25D;
                 forwardOffset += 0.25D;
             }
+            Vec3 seatOffset = forward.scale(forwardOffset).add(this.toWorld(0.0D, yOffset, 0.0D));
             moveFunction.accept(
                     passenger,
-                    this.getX() + forward.x * forwardOffset,
-                    this.getY() + yOffset,
-                    this.getZ() + forward.z * forwardOffset
+                    this.getX() + seatOffset.x,
+                    this.getY() + seatOffset.y,
+                    this.getZ() + seatOffset.z
             );
         }
     }
@@ -1209,14 +1223,15 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             super.travel(new Vec3(riddenInput.x, travelVector.y, riddenInput.z));
 
             if (Math.abs(rider.zza) < 0.05F && Math.abs(rider.xxa) < 0.05F && this.onGround()) {
-                Vec3 dampedMotion = this.getDeltaMovement();
-                this.setDeltaMovement(dampedMotion.x * MOUNTED_GROUND_BRAKE, dampedMotion.y, dampedMotion.z * MOUNTED_GROUND_BRAKE);
+                Vec3 dampedMotion = this.toLocal(this.getDeltaMovement());
+                this.setDeltaMovement(this.toWorld(dampedMotion.x * MOUNTED_GROUND_BRAKE, dampedMotion.y, dampedMotion.z * MOUNTED_GROUND_BRAKE));
             }
         } else {
-            Vec3 motion = new Vec3(0.0D, this.getDeltaMovement().y, 0.0D);
+            Vec3 motion = this.toLocal(this.getDeltaMovement());
             this.moveRelative(this.getSpeed(), new Vec3(riddenInput.x, 0.0D, riddenInput.z));
-            motion = motion.add(this.getDeltaMovement().x, riddenInput.y, this.getDeltaMovement().z);
-            this.setDeltaMovement(motion);
+            Vec3 moved = this.toLocal(this.getDeltaMovement());
+            motion = new Vec3(moved.x, motion.y + riddenInput.y, moved.z);
+            this.setDeltaMovement(this.toWorld(motion));
             this.move(MoverType.SELF, this.getDeltaMovement());
         }
     }
@@ -1292,10 +1307,11 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
     }
 
     private void lookInDirection(Vec3 direction) {
-        if (direction.lengthSqr() <= 1.0E-4D) {
+        Vec3 localDirection = this.toLocalPlane(direction);
+        if (localDirection.lengthSqr() <= 1.0E-4D) {
             return;
         }
-        float yaw = (float) (Mth.atan2(direction.z, direction.x) * (180.0D / Math.PI)) - 90.0F;
+        float yaw = (float) (Mth.atan2(localDirection.z, localDirection.x) * (180.0D / Math.PI)) - 90.0F;
         this.setYRot(yaw);
         this.yBodyRot = yaw;
         this.yHeadRot = yaw;
@@ -1313,16 +1329,37 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
 
     private List<LivingEntity> getFrontTargets(double range, double inflation) {
         AABB box = this.getBoundingBox().expandTowards(this.getLookAngle().scale(range)).inflate(inflation);
-        Vec3 forward = this.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
+        Vec3 forward = this.toLocalPlane(this.getLookAngle());
         return this.level().getEntitiesOfClass(LivingEntity.class, box, this::canHarm).stream()
                 .filter(entity -> {
-                    Vec3 toTarget = entity.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+                    Vec3 toTarget = this.toLocalPlane(entity.position().subtract(this.position()));
                     if (forward.lengthSqr() < 1.0E-4D || toTarget.lengthSqr() < 1.0E-4D) {
                         return true;
                     }
                     return forward.normalize().dot(toTarget.normalize()) >= 0.15D;
                 })
                 .toList();
+    }
+
+    private AntarchyGravityDirection gravityDirection() {
+        return AntarchyGravityApi.getGravityDirection(this);
+    }
+
+    private Vec3 toLocal(Vec3 worldVector) {
+        return AntarchyGravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(Vec3 localVector) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(localVector, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(double x, double y, double z) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
+    }
+
+    private Vec3 toLocalPlane(Vec3 worldVector) {
+        Vec3 local = this.toLocal(worldVector);
+        return new Vec3(local.x, 0.0D, local.z);
     }
 
     @Nullable

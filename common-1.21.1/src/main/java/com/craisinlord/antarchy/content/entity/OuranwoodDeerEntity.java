@@ -3,6 +3,9 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import java.util.EnumSet;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -222,7 +225,7 @@ public class OuranwoodDeerEntity extends Animal implements GeoEntity {
     }
 
     private PlayState mainAnimController(AnimationState<OuranwoodDeerEntity> state) {
-        double speedSqr = this.getDeltaMovement().horizontalDistanceSqr();
+        double speedSqr = this.toLocal(this.getDeltaMovement()).horizontalDistanceSqr();
         if (this.hurtTime > 0 || speedSqr > RUN_SPEED_THRESHOLD_SQR) {
             return state.setAndContinue(RUN_ANIM);
         }
@@ -240,6 +243,14 @@ public class OuranwoodDeerEntity extends Animal implements GeoEntity {
 
     private int createQuirkCooldown() {
         return MIN_QUIRK_COOLDOWN + this.random.nextInt(MAX_QUIRK_COOLDOWN - MIN_QUIRK_COOLDOWN + 1);
+    }
+
+    private AntarchyGravityDirection gravityDirection() {
+        return AntarchyGravityApi.getGravityDirection(this);
+    }
+
+    private Vec3 toLocal(Vec3 worldVector) {
+        return AntarchyGravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
     }
 
     @Override

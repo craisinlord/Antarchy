@@ -2,6 +2,9 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -85,16 +88,22 @@ public class CreepingHorrorEntity extends Monster implements GeoEntity {
             return true;
         }
         BlockPos belowPos = pos.below();
+        BlockPos abovePos = pos.above();
         BlockState belowState = level.getBlockState(belowPos);
-        boolean validSupport = !belowState.is(Blocks.BEDROCK)
+        BlockState aboveState = level.getBlockState(abovePos);
+        boolean floorSupport = !belowState.is(Blocks.BEDROCK)
                 && belowState.blocksMotion()
                 && belowState.isFaceSturdy(level, belowPos, Direction.UP)
                 && belowState.isCollisionShapeFullBlock(level, belowPos);
+        boolean ceilingSupport = !aboveState.is(Blocks.BEDROCK)
+                && aboveState.blocksMotion()
+                && aboveState.isFaceSturdy(level, abovePos, Direction.DOWN)
+                && aboveState.isCollisionShapeFullBlock(level, abovePos);
 
         return level.getDifficulty() != Difficulty.PEACEFUL
-                && validSupport
+                && (floorSupport || ceilingSupport)
                 && level.isEmptyBlock(pos)
-                && level.isEmptyBlock(pos.above())
+                && (level.isEmptyBlock(pos.above()) || level.isEmptyBlock(pos.below()))
                 && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);
     }
 
@@ -202,21 +211,33 @@ public class CreepingHorrorEntity extends Monster implements GeoEntity {
 
         if (climbing && this.getTarget() != null) {
             LivingEntity target = this.getTarget();
-            Vec3 toTarget = target.position().subtract(this.position());
+            Vec3 toTarget = this.toLocal(target.position().subtract(this.position()));
             double hDist = Math.sqrt(toTarget.x * toTarget.x + toTarget.z * toTarget.z);
             double speed = this.getAttributeValue(Attributes.MOVEMENT_SPEED) * 2.8D;
             if (hDist > 0.01D) {
-                this.setDeltaMovement(
+                this.setDeltaMovement(this.toWorld(
                     (toTarget.x / hDist) * speed,
                     0.22D,
                     (toTarget.z / hDist) * speed
-                );
+                ));
             } else {
-                Vec3 mov = this.getDeltaMovement();
-                this.setDeltaMovement(mov.x, 0.22D, mov.z);
+                Vec3 mov = this.toLocal(this.getDeltaMovement());
+                this.setDeltaMovement(this.toWorld(mov.x, 0.22D, mov.z));
             }
             this.getNavigation().stop();
         }
+    }
+
+    private AntarchyGravityDirection gravityDirection() {
+        return AntarchyGravityApi.getGravityDirection(this);
+    }
+
+    private Vec3 toLocal(Vec3 worldVector) {
+        return AntarchyGravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(double x, double y, double z) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
     }
 
     @Override

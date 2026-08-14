@@ -2,6 +2,9 @@ package com.craisinlord.antarchy.content.entity.cloud_shark;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -121,7 +124,7 @@ public class CloudSharkEntity extends Monster implements GeoEntity {
                                    MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
         return level.getDifficulty() != Difficulty.PEACEFUL
                 && level.isEmptyBlock(pos)
-                && level.isEmptyBlock(pos.above())
+                && (level.isEmptyBlock(pos.above()) || level.isEmptyBlock(pos.below()))
                 && level.getFluidState(pos).isEmpty();
     }
 
@@ -303,15 +306,15 @@ public class CloudSharkEntity extends Monster implements GeoEntity {
     public boolean doHurtTarget(Entity target) {
         boolean hurt = super.doHurtTarget(target);
         if (hurt && target instanceof LivingEntity livingTarget) {
-            Vec3 push = livingTarget.position().subtract(this.position());
-            Vec3 horizontal = new Vec3(push.x, 0.0D, push.z);
-            if (horizontal.lengthSqr() < 1.0E-4D) horizontal = this.getForward().multiply(1.0D, 0.0D, 1.0D);
+            Vec3 horizontal = this.toLocalPlane(livingTarget.position().subtract(this.position()));
+            if (horizontal.lengthSqr() < 1.0E-4D) horizontal = this.toLocalPlane(this.getForward());
             if (horizontal.lengthSqr() < 1.0E-4D) horizontal = new Vec3(1.0D, 0.0D, 0.0D);
             horizontal = horizontal.normalize();
             Vec3 sideways = new Vec3(-horizontal.z, 0.0D, horizontal.x);
             if (this.random.nextBoolean()) sideways = sideways.scale(-1.0D);
             Vec3 knockback = horizontal.scale(0.7D).add(sideways.scale(0.45D));
-            livingTarget.push(knockback.x, 0.28D, knockback.z);
+            Vec3 worldKnockback = this.toWorld(knockback.x, 0.28D, knockback.z);
+            livingTarget.push(worldKnockback.x, worldKnockback.y, worldKnockback.z);
             this.playSound(AntarchySoundEvents.CLOUD_SHARK_BITE.get(), 1.0F, 0.85F + this.random.nextFloat() * 0.2F);
         }
         return hurt;
@@ -366,7 +369,7 @@ public class CloudSharkEntity extends Monster implements GeoEntity {
         }
 
         boolean isFlyingAnim = this.getAnimationState() == ANIM_SWIM;
-        boolean isMoving = this.getDeltaMovement().horizontalDistanceSqr() > 0.0125D;
+        boolean isMoving = this.toLocal(this.getDeltaMovement()).horizontalDistanceSqr() > 0.0125D;
         if (!isFlyingAnim || !isMoving) {
             this.flySoundCooldown = 0;
             return;
@@ -462,9 +465,10 @@ public class CloudSharkEntity extends Monster implements GeoEntity {
         if (this.diveCooldown > 0 || !this.hasLineOfSight(target)) return false;
         if (this.strafeTicks > Math.max(6, this.currentStrafeDuration / 2)) return false;
         double distanceToTarget = this.distanceToSqr(target);
+        double localHeight = this.toLocal(target.position().subtract(this.position())).y;
         return distanceToTarget >= 9.0D
                 && distanceToTarget <= 144.0D
-                && this.getY() > target.getY() + 0.5D;
+                && localHeight < -0.5D;
     }
 
     private boolean canConnectDive(LivingEntity target) {
@@ -479,27 +483,30 @@ public class CloudSharkEntity extends Monster implements GeoEntity {
 
     private Vec3 getStrafePoint(LivingEntity target) {
         double angle = this.tickCount * 0.18D * this.orbitDirection + this.currentStrafeAngleOffset;
-        double x = target.getX() + Math.cos(angle) * this.currentStrafeRadius;
-        double z = target.getZ() + Math.sin(angle) * this.currentStrafeRadius;
-        double y = target.getY() + this.currentStrafeHeightOffset
-                + Math.sin((this.tickCount + this.getId()) * 0.14D) * 0.5D;
-        return new Vec3(x, y, z);
+        Vec3 localOffset = new Vec3(
+                Math.cos(angle) * this.currentStrafeRadius,
+                this.currentStrafeHeightOffset + Math.sin((this.tickCount + this.getId()) * 0.14D) * 0.5D,
+                Math.sin(angle) * this.currentStrafeRadius
+        );
+        return target.position().add(this.toWorld(localOffset));
     }
 
     private Vec3 createRecoveryTarget(Vec3 strikeTarget) {
         double radius = this.currentStrafeRadius + 1.5D + this.random.nextDouble() * 1.2D;
         double angle  = this.currentStrafeAngleOffset + (Math.PI / 2.0D) * this.orbitDirection;
-        double x = strikeTarget.x + Math.cos(angle) * radius;
-        double z = strikeTarget.z + Math.sin(angle) * radius;
-        double y = strikeTarget.y + 2.0D + this.random.nextDouble() * 1.2D;
-        return new Vec3(x, y, z);
+        Vec3 localOffset = new Vec3(
+                Math.cos(angle) * radius,
+                2.0D + this.random.nextDouble() * 1.2D,
+                Math.sin(angle) * radius
+        );
+        return strikeTarget.add(this.toWorld(localOffset));
     }
 
     private Vec3 createDiveStrikeTarget(LivingEntity target) {
         Vec3 predictedOffset = target.getDeltaMovement().scale(5.0D);
         return target.position()
                 .add(predictedOffset)
-                .add(0.0D, target.getBbHeight() * 0.45D, 0.0D);
+                .add(this.toWorld(0.0D, target.getBbHeight() * 0.45D, 0.0D));
     }
 
     private Vec3 findPatrolTarget() {
@@ -575,7 +582,7 @@ public class CloudSharkEntity extends Monster implements GeoEntity {
     }
 
     private void updateFlightRotation() {
-        Vec3 velocity = this.getDeltaMovement();
+        Vec3 velocity = this.toLocal(this.getDeltaMovement());
         if (velocity.horizontalDistanceSqr() > 1.0E-4D) {
             float targetYaw = (float) (Mth.atan2(velocity.z, velocity.x) * (180.0D / Math.PI)) - 90.0F;
             this.setYRot(Mth.approachDegrees(this.getYRot(), targetYaw, 8.0F));
@@ -587,6 +594,27 @@ public class CloudSharkEntity extends Monster implements GeoEntity {
                     * (180.0D / Math.PI)));
             this.setXRot(Mth.approachDegrees(this.getXRot(), targetPitch, 6.0F));
         }
+    }
+
+    private AntarchyGravityDirection gravityDirection() {
+        return AntarchyGravityApi.getGravityDirection(this);
+    }
+
+    private Vec3 toLocal(Vec3 worldVector) {
+        return AntarchyGravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(Vec3 localVector) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(localVector, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(double x, double y, double z) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
+    }
+
+    private Vec3 toLocalPlane(Vec3 worldVector) {
+        Vec3 local = this.toLocal(worldVector);
+        return new Vec3(local.x, 0.0D, local.z);
     }
 
     private int nextStrafeDuration() {

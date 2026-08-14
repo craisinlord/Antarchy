@@ -51,6 +51,18 @@ public abstract class EntityGravityFrameMixin {
         cir.setReturnValue(entity.position().add(AntarchyGravityRotationUtil.getEyeOffset(entity, entity.getEyeHeight())).y);
     }
 
+    @Inject(method = "getY(D)D", at = @At("HEAD"), cancellable = true)
+    private void antarchy$fixScaledY(double scale, CallbackInfoReturnable<Double> cir) {
+        Entity entity = (Entity) (Object) this;
+        AntarchyGravityDirection direction = AntarchyGravityApi.getGravityDirection(entity);
+        if (!direction.isInverted()) {
+            return;
+        }
+        cir.setReturnValue(entity.position().add(
+                AntarchyGravityRotationUtil.vecPlayerToWorld(0.0D, entity.getBbHeight() * scale, 0.0D, direction)
+        ).y);
+    }
+
     @Inject(method = "getEyePosition()Lnet/minecraft/world/phys/Vec3;", at = @At("HEAD"), cancellable = true)
     private void antarchy$fixEyePosition(CallbackInfoReturnable<Vec3> cir) {
         Entity entity = (Entity) (Object) this;

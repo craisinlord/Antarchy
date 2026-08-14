@@ -21,15 +21,13 @@ public abstract class GroundPathNavigationMixin {
     @Inject(method = "createPathFinder", at = @At("HEAD"), cancellable = true)
     private void antarchy$useGravityEvaluator(int maxVisitedNodes, CallbackInfoReturnable<PathFinder> cir) {
         var mob = ((PathNavigationAccessor) (Object) this).antarchy$getMob();
-        if (!AntarchyGravityApi.isGravityInverted(mob)) {
-            return;
+        if (AntarchyGravityApi.isGravityInverted(mob)) {
+            LOGGER.debug(
+                    "[Path] swap evaluator mob={} maxVisitedNodes={}",
+                    mob.getClass().getSimpleName(),
+                    maxVisitedNodes
+            );
         }
-
-        LOGGER.debug(
-                "[Path] swap evaluator mob={} maxVisitedNodes={}",
-                mob.getClass().getSimpleName(),
-                maxVisitedNodes
-        );
 
         cir.setReturnValue(new PathFinder(new GravityWalkNodeEvaluator(), maxVisitedNodes));
     }

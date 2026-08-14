@@ -4,6 +4,9 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 
 import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
@@ -111,14 +114,16 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         }
 
         BlockPos belowPos = pos.below();
+        BlockPos abovePos = pos.above();
         if (level.getDifficulty() == Difficulty.PEACEFUL) {
             return false;
         }
         return level.getBlockState(pos).isAir()
-                && level.getBlockState(pos.above()).isAir()
+                && (level.getBlockState(pos.above()).isAir() || level.getBlockState(pos.below()).isAir())
                 && level.getFluidState(pos).isEmpty()
-                && level.getFluidState(pos.above()).isEmpty()
-                && level.getBlockState(belowPos).isFaceSturdy(level, belowPos, Direction.UP);
+                && (level.getFluidState(pos.above()).isEmpty() || level.getFluidState(pos.below()).isEmpty())
+                && (level.getBlockState(belowPos).isFaceSturdy(level, belowPos, Direction.UP)
+                || level.getBlockState(abovePos).isFaceSturdy(level, abovePos, Direction.DOWN));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -347,7 +352,7 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
     }
 
     private void tickRollSound() {
-        if (!this.isRolled() || this.rollTransitionTicks > 0 || this.getDeltaMovement().horizontalDistanceSqr() <= 0.003D) {
+        if (!this.isRolled() || this.rollTransitionTicks > 0 || this.toLocal(this.getDeltaMovement()).horizontalDistanceSqr() <= 0.003D) {
             this.rollSoundCooldown = 0;
             return;
         }
@@ -700,9 +705,12 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
                 return;
             }
 
-            double dx = RollyPollyEntity.this.getX() - target.getX();
-            double dz = RollyPollyEntity.this.getZ() - target.getZ();
-            target.knockback(AntarchySettings.rollyPollyBowlingKnockback(), dx, dz);
+            Vec3 localAway = RollyPollyEntity.this.toLocalPlane(RollyPollyEntity.this.position().subtract(target.position()));
+            if (localAway.lengthSqr() < 1.0E-4D) {
+                localAway = new Vec3(1.0D, 0.0D, 0.0D);
+            }
+            Vec3 worldAway = RollyPollyEntity.this.toWorld(localAway.normalize());
+            target.knockback(AntarchySettings.rollyPollyBowlingKnockback(), worldAway.x, worldAway.z);
             RollyPollyEntity.this.playSound(AntarchySoundEvents.ROLLY_POLLY_ROLL.get(), 1.0F, 0.8F + RollyPollyEntity.this.random.nextFloat() * 0.2F);
         }
     }
@@ -848,8 +856,8 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
                         RollyPollyEntity.this.startUnroll();
                     }
                 } else {
-                    RollyPollyEntity.this.getNavigation().moveTo(
-                            this.bedPos.getX() + 0.5D, this.bedPos.getY() + 1.0D, this.bedPos.getZ() + 0.5D, 1.1D);
+                    Vec3 bedTarget = Vec3.atCenterOf(this.bedPos).add(RollyPollyEntity.this.toWorld(0.0D, 0.5D, 0.0D));
+                    RollyPollyEntity.this.getNavigation().moveTo(bedTarget.x, bedTarget.y, bedTarget.z, 1.1D);
                 }
                 return;
             }
@@ -860,5 +868,26 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
                 RollyPollyEntity.this.startRollUp();
             }
         }
+    }
+
+    private AntarchyGravityDirection gravityDirection() {
+        return AntarchyGravityApi.getGravityDirection(this);
+    }
+
+    private Vec3 toLocal(Vec3 worldVector) {
+        return AntarchyGravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(Vec3 localVector) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(localVector, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(double x, double y, double z) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
+    }
+
+    private Vec3 toLocalPlane(Vec3 worldVector) {
+        Vec3 local = this.toLocal(worldVector);
+        return new Vec3(local.x, 0.0D, local.z);
     }
 }

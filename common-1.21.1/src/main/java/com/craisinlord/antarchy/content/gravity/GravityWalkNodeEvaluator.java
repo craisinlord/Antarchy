@@ -12,6 +12,7 @@ import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 
 public class GravityWalkNodeEvaluator extends WalkNodeEvaluator {
     private static final Logger LOGGER = LoggerFactory.getLogger("Antarchy/Pathfinding");
+    private static final int[] START_Y_SEARCH = {0, 1, -1, 2, -2, 3, -3, 4, -4};
     private static final int[][] INVERTED_NEIGHBOR_OFFSETS = {
             {1, 0, 0},
             {-1, 0, 0},
@@ -68,10 +69,10 @@ public class GravityWalkNodeEvaluator extends WalkNodeEvaluator {
         int x = Mth.floor(this.mob.getX());
         int z = Mth.floor(this.mob.getZ());
         int y = Mth.floor(this.mob.getY() + this.mob.getBbHeight()) - 1;
-
-        Node node = this.getNode(x, y, z);
-        node.type = PathType.WALKABLE;
-        node.costMalus = this.mob.getPathfindingMalus(PathType.WALKABLE);
+        Node node = this.antarchy$findStartNode(x, y, z);
+        if (node == null) {
+            return super.getStart();
+        }
 
         if (this.antarchy$loggedGetStart < 8) {
             LOGGER.debug(
@@ -87,6 +88,43 @@ public class GravityWalkNodeEvaluator extends WalkNodeEvaluator {
         }
 
         return node;
+    }
+
+    private Node antarchy$findStartNode(int x, int y, int z) {
+        for (int dy : START_Y_SEARCH) {
+            int candidateY = y + dy;
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    Node node = this.antarchy$createStartNode(x + dx, candidateY, z + dz);
+                    if (node != null) {
+                        return node;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private Node antarchy$createStartNode(int x, int y, int z) {
+        if (!this.antarchy$hasCeilingSupport(x, y, z)) {
+            return null;
+        }
+
+        PathType type = this.getPathTypeOfMob(this.currentContext, x, y, z, this.mob);
+        float malus = this.mob.getPathfindingMalus(type);
+        if (malus < 0.0F || type == PathType.OPEN) {
+            return null;
+        }
+
+        Node node = this.getNode(x, y, z);
+        node.type = type;
+        node.costMalus = malus;
+        return node;
+    }
+
+    private boolean antarchy$hasCeilingSupport(int x, int y, int z) {
+        PathType ceilingType = this.getPathType(this.currentContext, x, y + 1, z);
+        return this.mob.getPathfindingMalus(ceilingType) < 0.0F;
     }
 
     @Override

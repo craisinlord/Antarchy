@@ -15,6 +15,7 @@ import net.minecraft.server.level.PlayerRespawnLogic;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
@@ -262,8 +263,11 @@ public final class AntTeleportHelper {
             return safeArrivalPos;
         }
 
-        BlockPos fallbackPos = preferredPos;
-        return Vec3.atBottomCenterOf(fallbackPos);
+        if (destination.hasChunkAt(preferredPos)) {
+            return Vec3.atBottomCenterOf(preferredPos);
+        }
+
+        return Vec3.atBottomCenterOf(getClampedFallbackPosition(destination, preferredPos));
     }
 
     @Nullable
@@ -292,8 +296,10 @@ public final class AntTeleportHelper {
                     }
 
                     BlockPos searchPos = preferredPos.offset(xOffset, 0, zOffset);
-                    addArrivalCandidate(candidates, destination.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, searchPos));
-                    addArrivalCandidate(candidates, destination.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, searchPos));
+                    if (destination.hasChunkAt(searchPos)) {
+                        addArrivalCandidate(candidates, destination.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, searchPos));
+                        addArrivalCandidate(candidates, destination.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, searchPos));
+                    }
                 }
             }
         }
@@ -356,13 +362,22 @@ public final class AntTeleportHelper {
 
     @Nullable
     private static Vec3 tryFindSafeDismount(ServerPlayer player, ServerLevel destination, BlockPos candidate) {
+        if (!isSafeDismountAreaLoaded(destination, candidate)) {
+            return null;
+        }
+
         Vec3 safePos = DismountHelper.findSafeDismountLocation(player.getType(), destination, candidate, true);
         if (safePos != null && isValidArrivalPosition(destination, safePos)) {
             return safePos;
         }
 
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            safePos = DismountHelper.findSafeDismountLocation(player.getType(), destination, candidate.relative(direction), true);
+            BlockPos offsetCandidate = candidate.relative(direction);
+            if (!isSafeDismountAreaLoaded(destination, offsetCandidate)) {
+                continue;
+            }
+
+            safePos = DismountHelper.findSafeDismountLocation(player.getType(), destination, offsetCandidate, true);
             if (safePos != null && isValidArrivalPosition(destination, safePos)) {
                 return safePos;
             }
@@ -377,6 +392,31 @@ public final class AntTeleportHelper {
         }
 
         BlockPos standPos = BlockPos.containing(safePos);
+        if (!destination.hasChunkAt(standPos) || !destination.hasChunkAt(standPos.below())) {
+            return false;
+        }
+
         return !destination.getBlockState(standPos.below()).is(Blocks.BEDROCK);
+    }
+
+    private static boolean isSafeDismountAreaLoaded(ServerLevel destination, BlockPos center) {
+        if (!destination.hasChunkAt(center) || !destination.hasChunkAt(center.above()) || !destination.hasChunkAt(center.below())) {
+            return false;
+        }
+
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            BlockPos offset = center.relative(direction);
+            if (!destination.hasChunkAt(offset) || !destination.hasChunkAt(offset.above()) || !destination.hasChunkAt(offset.below())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static BlockPos getClampedFallbackPosition(ServerLevel destination, BlockPos preferredPos) {
+        int minY = destination.getMinBuildHeight() + 1;
+        int maxY = destination.getMaxBuildHeight() - 1;
+        return new BlockPos(preferredPos.getX(), Mth.clamp(preferredPos.getY(), minY, maxY), preferredPos.getZ());
     }
 }

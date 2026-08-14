@@ -3,6 +3,9 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -446,7 +449,7 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
         this.move(MoverType.SELF, velocity);
         Vec3 movedVelocity = this.getDeltaMovement();
         if (!this.isNoGravity()) {
-            movedVelocity = movedVelocity.add(0.0D, -0.08D, 0.0D);
+            movedVelocity = movedVelocity.add(this.toWorld(0.0D, -0.08D, 0.0D));
         }
 
         this.setDeltaMovement(movedVelocity.scale(this.isInWater() ? 0.9D : 0.98D));
@@ -513,9 +516,9 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
     }
 
     private void tickGroundAggroMovement(LivingEntity target) {
-        Vec3 horizontal = target.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+        Vec3 horizontal = this.toLocalPlane(target.position().subtract(this.position()));
         if (horizontal.lengthSqr() > 1.0E-4D && this.onGround()) {
-            Vec3 lunge = horizontal.normalize().scale(0.16D).add(0.0D, 0.24D, 0.0D);
+            Vec3 lunge = this.toWorld(horizontal.normalize().scale(0.16D).add(new Vec3(0.0D, 0.24D, 0.0D)));
             this.setDeltaMovement(this.getDeltaMovement().add(lunge));
             this.hasImpulse = true;
         }
@@ -540,7 +543,7 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
     }
 
     private void updateSwimRotation() {
-        Vec3 velocity = this.getDeltaMovement();
+        Vec3 velocity = this.toLocal(this.getDeltaMovement());
         if (velocity.horizontalDistanceSqr() > 1.0E-4D) {
             float targetYaw = (float) (Mth.atan2(velocity.z, velocity.x) * (180.0D / Math.PI)) - 90.0F;
             this.setYRot(Mth.approachDegrees(this.getYRot(), targetYaw, 10.0F));
@@ -658,15 +661,11 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
     }
 
     private Vec3 createLatchAnchor(LivingEntity target) {
-        return target.position().add(
-                0.0D,
-                target.getBbHeight() + 0.15D,
-                0.0D
-        );
+        return target.position().add(this.toWorld(0.0D, target.getBbHeight() + 0.15D, 0.0D));
     }
 
     private void updateAttachedRotation(LivingEntity target) {
-        Vec3 direction = target.position().subtract(this.position());
+        Vec3 direction = this.toLocal(target.position().subtract(this.position()));
         if (direction.horizontalDistanceSqr() > 1.0E-4D) {
             float targetYaw = (float)(Mth.atan2(direction.z, direction.x) * (180.0D / Math.PI)) - 90.0F;
             this.setYRot(targetYaw);
@@ -721,11 +720,32 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
         if (this.launchedFromSquidzooka
                 || this.getTarget() != null
                 || velocity.lengthSqr() > 1.0E-3D
-                || (this.isInWater() && velocity.horizontalDistanceSqr() > 1.0E-4D)) {
+                || (this.isInWater() && this.toLocal(velocity).horizontalDistanceSqr() > 1.0E-4D)) {
             this.setAnimationState(ANIM_SWIM);
             return;
         }
 
         this.setAnimationState(ANIM_IDLE);
+    }
+
+    private AntarchyGravityDirection gravityDirection() {
+        return AntarchyGravityApi.getGravityDirection(this);
+    }
+
+    private Vec3 toLocal(Vec3 worldVector) {
+        return AntarchyGravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(double x, double y, double z) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(Vec3 localVector) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(localVector, this.gravityDirection());
+    }
+
+    private Vec3 toLocalPlane(Vec3 worldVector) {
+        Vec3 local = this.toLocal(worldVector);
+        return new Vec3(local.x, 0.0D, local.z);
     }
 }

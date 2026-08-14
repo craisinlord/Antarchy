@@ -125,8 +125,10 @@ public final class PermanentPortalTeleporter {
                     }
 
                     BlockPos horizontalPos = preferredPos.offset(xOff, 0, zOff);
-                    addCandidate(candidates, destination.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, horizontalPos));
-                    addCandidate(candidates, destination.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, horizontalPos));
+                    if (destination.hasChunkAt(horizontalPos)) {
+                        addCandidate(candidates, destination.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, horizontalPos));
+                        addCandidate(candidates, destination.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, horizontalPos));
+                    }
                     for (int yOff = 0; yOff <= VERTICAL_SEARCH; yOff++) {
                         addCandidate(candidates, horizontalPos.above(yOff));
                         if (yOff > 0) {
@@ -184,13 +186,22 @@ public final class PermanentPortalTeleporter {
 
     @Nullable
     private static Vec3 tryFindSafePosition(Entity entity, ServerLevel destination, BlockPos candidate) {
+        if (!isSafeDismountAreaLoaded(destination, candidate)) {
+            return null;
+        }
+
         Vec3 safe = DismountHelper.findSafeDismountLocation(entity.getType(), destination, candidate, true);
         if (safe != null && isValidArrivalPosition(destination, safe)) {
             return safe;
         }
 
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            safe = DismountHelper.findSafeDismountLocation(entity.getType(), destination, candidate.relative(direction), true);
+            BlockPos offsetCandidate = candidate.relative(direction);
+            if (!isSafeDismountAreaLoaded(destination, offsetCandidate)) {
+                continue;
+            }
+
+            safe = DismountHelper.findSafeDismountLocation(entity.getType(), destination, offsetCandidate, true);
             if (safe != null && isValidArrivalPosition(destination, safe)) {
                 return safe;
             }
@@ -281,8 +292,27 @@ public final class PermanentPortalTeleporter {
         BlockPos standPos = BlockPos.containing(safePos);
         if (destination.dimension() == AntarchySettings.termiteDestinationDimension()
                 || destination.dimension() == AntarchySettings.redAntDestinationDimension()) {
+            if (!destination.hasChunkAt(standPos) || !destination.hasChunkAt(standPos.below())) {
+                return false;
+            }
+
             return !destination.getBlockState(standPos.below()).is(net.minecraft.world.level.block.Blocks.BEDROCK);
         }
+        return true;
+    }
+
+    private static boolean isSafeDismountAreaLoaded(ServerLevel destination, BlockPos center) {
+        if (!destination.hasChunkAt(center) || !destination.hasChunkAt(center.above()) || !destination.hasChunkAt(center.below())) {
+            return false;
+        }
+
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            BlockPos offset = center.relative(direction);
+            if (!destination.hasChunkAt(offset) || !destination.hasChunkAt(offset.above()) || !destination.hasChunkAt(offset.below())) {
+                return false;
+            }
+        }
+
         return true;
     }
 

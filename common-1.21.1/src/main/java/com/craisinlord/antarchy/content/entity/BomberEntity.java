@@ -2,6 +2,9 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import java.util.Objects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -99,7 +102,7 @@ public class BomberEntity extends Monster implements GeoEntity {
 
         return level.getDifficulty() != Difficulty.PEACEFUL
                 && level.isEmptyBlock(pos)
-                && level.isEmptyBlock(pos.above())
+                && (level.isEmptyBlock(pos.above()) || level.isEmptyBlock(pos.below()))
                 && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);
     }
 
@@ -282,9 +285,10 @@ public class BomberEntity extends Monster implements GeoEntity {
             return;
         }
 
-        double x = this.getX();
-        double y = this.getY(0.0625D);
-        double z = this.getZ();
+        Vec3 explosionCenter = this.position().add(this.toWorld(0.0D, this.getBbHeight() * 0.0625D, 0.0D));
+        double x = explosionCenter.x;
+        double y = explosionCenter.y;
+        double z = explosionCenter.z;
         float radius = (float) (AntarchySettings.bomberExplosionRadius() * EXPLOSION_RADIUS_MULTIPLIER);
         serverLevel.playSound(null, x, y, z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 0.55F, 1.0F);
         serverLevel.explode(
@@ -306,7 +310,7 @@ public class BomberEntity extends Monster implements GeoEntity {
         if (extraDamage > 0.0D) {
             AABB damageBox = this.getBoundingBox().inflate(radius * 2.0D);
             for (LivingEntity livingEntity : serverLevel.getEntitiesOfClass(LivingEntity.class, damageBox, entity -> entity.isAlive() && entity != this)) {
-                double distance = Math.sqrt(this.distanceToSqr(livingEntity));
+                double distance = explosionCenter.distanceTo(livingEntity.position());
                 double falloff = radius <= 0.0F ? 0.0D : Math.max(0.0D, 1.0D - distance / radius);
                 if (falloff <= 0.0D) {
                     continue;
@@ -332,19 +336,37 @@ public class BomberEntity extends Monster implements GeoEntity {
             return;
         }
 
-        double dx = this.getX() - sourceEntity.getX();
-        double dz = this.getZ() - sourceEntity.getZ();
-        double distance = Math.sqrt(dx * dx + dz * dz);
+        Vec3 localAway = this.toLocalPlane(this.position().subtract(sourceEntity.position()));
+        double distance = localAway.length();
         if (distance < 1.0E-4D) {
             return;
         }
 
         double strength = 0.4D * KNOCKBACK_MULTIPLIER;
-        this.push(dx / distance * strength, 0.08D, dz / distance * strength);
+        Vec3 localImpulse = localAway.scale(strength / distance);
+        Vec3 worldImpulse = this.toWorld(localImpulse.x, 0.08D, localImpulse.z);
+        this.push(worldImpulse.x, worldImpulse.y, worldImpulse.z);
     }
 
     private boolean isMovingForAnimation() {
-        return this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-4D || this.getNavigation().isInProgress();
+        return this.toLocal(this.getDeltaMovement()).horizontalDistanceSqr() > 1.0E-4D || this.getNavigation().isInProgress();
+    }
+
+    private AntarchyGravityDirection gravityDirection() {
+        return AntarchyGravityApi.getGravityDirection(this);
+    }
+
+    private Vec3 toLocal(Vec3 worldVector) {
+        return AntarchyGravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(double x, double y, double z) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
+    }
+
+    private Vec3 toLocalPlane(Vec3 worldVector) {
+        Vec3 local = this.toLocal(worldVector);
+        return new Vec3(local.x, 0.0D, local.z);
     }
 
     private final class BomberAttackGoal extends MeleeAttackGoal {

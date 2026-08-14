@@ -70,14 +70,16 @@ public class StinkBugEntity extends Animal implements GeoEntity {
             return true;
         }
         BlockPos belowPos = pos.below();
+        BlockPos abovePos = pos.above();
         if (level.getDifficulty() == Difficulty.PEACEFUL) {
             return false;
         }
         return level.getBlockState(pos).isAir()
-                && level.getBlockState(pos.above()).isAir()
+                && (level.getBlockState(pos.above()).isAir() || level.getBlockState(pos.below()).isAir())
                 && level.getFluidState(pos).isEmpty()
-                && level.getFluidState(pos.above()).isEmpty()
-                && level.getBlockState(belowPos).isFaceSturdy(level, belowPos, Direction.UP);
+                && (level.getFluidState(pos.above()).isEmpty() || level.getFluidState(pos.below()).isEmpty())
+                && (level.getBlockState(belowPos).isFaceSturdy(level, belowPos, Direction.UP)
+                || level.getBlockState(abovePos).isFaceSturdy(level, abovePos, Direction.DOWN));
     }
 
     @Override

@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:adventure/root",
+  "parent": "antarchy:visit_thoraxis",
   "criteria": {
     "kill_lucid": {
       "conditions": {

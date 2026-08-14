@@ -1,6 +1,9 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import java.util.EnumSet;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -416,14 +419,15 @@ public class DorrieEntity extends Animal implements GeoEntity {
 
             if (!this.isInWater() && !this.isInLava() && !this.onGround()) {
                 Vec3 mov = this.getDeltaMovement();
-                this.setDeltaMovement(mov.x * 0.91D, mov.y - 0.08D, mov.z * 0.91D);
+                Vec3 localMotion = this.toLocal(mov);
+                this.setDeltaMovement(this.toWorld(localMotion.x * 0.91D, localMotion.y - 0.08D, localMotion.z * 0.91D));
                 this.move(net.minecraft.world.entity.MoverType.SELF, this.getDeltaMovement());
                 return;
             }
 
             if (this.isInWater() || this.isInLava()) {
                 this.moveRelative(this.getSpeed(), new Vec3(riddenInput.x, 0.0D, riddenInput.z));
-                Vec3 motion = this.getDeltaMovement();
+                Vec3 localMotion = this.toLocal(this.getDeltaMovement());
                 double vertical = 0.0D;
                 if (this.isUnderWater()) {
                     vertical = riddenInput.y * 0.025D;
@@ -433,11 +437,11 @@ public class DorrieEntity extends Animal implements GeoEntity {
                 if (this.pressingJump) {
                     vertical += ASCEND_SPEED;
                 }
-                this.setDeltaMovement(
-                        motion.x * 0.92D,
-                        motion.y * 0.90D + vertical,
-                        motion.z * 0.92D
-                );
+                this.setDeltaMovement(this.toWorld(
+                        localMotion.x * 0.92D,
+                        localMotion.y * 0.90D + vertical,
+                        localMotion.z * 0.92D
+                ));
                 this.move(net.minecraft.world.entity.MoverType.SELF, this.getDeltaMovement());
                 return;
             }
@@ -450,15 +454,15 @@ public class DorrieEntity extends Animal implements GeoEntity {
         float power = this.getJumpCharge() / 100f;
         if (power > 0.05f) {
             Vec3 look = this.getLookAngle();
-            Vec3 flatLook = new Vec3(look.x, 0.0D, look.z).normalize();
-            Vec3 current = this.getDeltaMovement();
+            Vec3 flatLook = this.toLocalPlane(look).normalize();
+            Vec3 current = this.toLocal(this.getDeltaMovement());
             double forwardAdd = 0.15D + power * 0.45D;
             double vertical = 0.55D + power * 0.80D;
-            this.setDeltaMovement(
+            this.setDeltaMovement(this.toWorld(
                     current.x + flatLook.x * forwardAdd,
                     vertical,
                     current.z + flatLook.z * forwardAdd
-            );
+            ));
         }
     }
 
@@ -467,15 +471,15 @@ public class DorrieEntity extends Animal implements GeoEntity {
             float power = chargeTicks / (float) MAX_CHARGE_TICKS;
             if (power > 0.05F) {
                 Vec3 look = this.getLookAngle();
-                Vec3 flatLook = new Vec3(look.x, 0.0D, look.z).normalize();
-                Vec3 current = this.getDeltaMovement();
+                Vec3 flatLook = this.toLocalPlane(look).normalize();
+                Vec3 current = this.toLocal(this.getDeltaMovement());
                 double forwardAdd = 0.15D + power * 0.45D;
                 double vertical = 0.55D + power * 0.80D;
-                this.setDeltaMovement(
+                this.setDeltaMovement(this.toWorld(
                         current.x + flatLook.x * forwardAdd,
                         vertical,
                         current.z + flatLook.z * forwardAdd
-                );
+                ));
                 this.hasImpulse = true;
                 isLeaping = true;
                 this.triggerAnim("main_controller", "jump_start");
@@ -489,11 +493,13 @@ public class DorrieEntity extends Animal implements GeoEntity {
     @Override
     protected void positionRider(Entity passenger, MoveFunction moveFunction) {
         if (this.hasPassenger(passenger)) {
-            Vec3 forward = this.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
+            Vec3 localForward = this.toLocalPlane(this.getLookAngle()).normalize();
+            Vec3 worldForward = this.toWorld(localForward);
+            Vec3 seatOffset = this.toWorld(0.0D, 0.5D, 0.0D).subtract(worldForward.scale(0.65D));
             moveFunction.accept(passenger,
-                    this.getX() - forward.x * 0.65D,
-                    this.getY() + 0.5D,
-                    this.getZ() - forward.z * 0.65D);
+                    this.getX() + seatOffset.x,
+                    this.getY() + seatOffset.y,
+                    this.getZ() + seatOffset.z);
         }
     }
 
@@ -706,10 +712,11 @@ public class DorrieEntity extends Animal implements GeoEntity {
         int bottom = Math.max(minY, this.level().getMinBuildHeight() + 1);
         for (int y = top; y >= bottom; y--) {
             BlockPos pos = BlockPos.containing(x, y, z);
-            if (!this.isWaterAt(pos) || this.isWaterAt(pos.above())) {
+            BlockPos localUp = this.relativeLocal(pos, 0, 1, 0);
+            if (!this.isWaterAt(pos) || this.isWaterAt(localUp)) {
                 continue;
             }
-            return new Vec3(x + 0.5D, y + 0.85D, z + 0.5D);
+            return Vec3.atCenterOf(pos).add(this.toWorld(0.0D, 0.35D, 0.0D));
         }
         return null;
     }
@@ -737,10 +744,11 @@ public class DorrieEntity extends Animal implements GeoEntity {
         int bottom = Math.max(minY, this.level().getMinBuildHeight() + 1);
         for (int y = top; y >= bottom; y--) {
             BlockPos pos = BlockPos.containing(x, y, z);
-            if (!this.isWaterAt(pos) || !this.isWaterAt(pos.below())) {
+            BlockPos localDown = this.relativeLocal(pos, 0, -1, 0);
+            if (!this.isWaterAt(pos) || !this.isWaterAt(localDown)) {
                 continue;
             }
-            return new Vec3(x + 0.5D, y + 0.3D, z + 0.5D);
+            return Vec3.atCenterOf(pos).add(this.toWorld(0.0D, -0.2D, 0.0D));
         }
         return null;
     }
@@ -756,8 +764,34 @@ public class DorrieEntity extends Animal implements GeoEntity {
         if (this.getControllingPassenger() instanceof Player player) {
             return Math.abs(player.zza) > 0.05F || Math.abs(player.xxa) > 0.05F;
         }
-        return this.getDeltaMovement().horizontalDistanceSqr() > MOVING_ANIM_THRESHOLD_SQ
+        return this.toLocal(this.getDeltaMovement()).horizontalDistanceSqr() > MOVING_ANIM_THRESHOLD_SQ
                 || this.getNavigation().isInProgress();
+    }
+
+    private AntarchyGravityDirection gravityDirection() {
+        return AntarchyGravityApi.getGravityDirection(this);
+    }
+
+    private Vec3 toLocal(Vec3 worldVector) {
+        return AntarchyGravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(Vec3 localVector) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(localVector, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(double x, double y, double z) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
+    }
+
+    private Vec3 toLocalPlane(Vec3 worldVector) {
+        Vec3 local = this.toLocal(worldVector);
+        return new Vec3(local.x, 0.0D, local.z);
+    }
+
+    private BlockPos relativeLocal(BlockPos pos, int x, int y, int z) {
+        Vec3 worldOffset = this.toWorld(x, y, z);
+        return pos.offset(Mth.floor(worldOffset.x), Mth.floor(worldOffset.y), Mth.floor(worldOffset.z));
     }
 
     private class DolphinSwimGoal extends Goal {

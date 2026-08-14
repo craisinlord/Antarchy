@@ -46,6 +46,7 @@
                    "TigerEyeCamouflageMixin",
                    "TigerEyeVisibilityMixin",
                    "gravity.AbstractArrowGravityMixin",
+                   "gravity.BehaviorUtilsGravityMixin",
                    "gravity.BucketItemGravityMixin",
                    "gravity.ChunkMapAccessor",
                    "gravity.CrossbowItemGravityMixin",

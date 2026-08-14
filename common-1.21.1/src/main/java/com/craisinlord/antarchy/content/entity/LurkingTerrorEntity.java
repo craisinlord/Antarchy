@@ -74,16 +74,22 @@ public class LurkingTerrorEntity extends Monster implements GeoEntity {
             return true;
         }
         BlockPos belowPos = pos.below();
+        BlockPos abovePos = pos.above();
         BlockState belowState = level.getBlockState(belowPos);
-        boolean validSupport = !belowState.is(Blocks.BEDROCK)
+        BlockState aboveState = level.getBlockState(abovePos);
+        boolean floorSupport = !belowState.is(Blocks.BEDROCK)
                 && belowState.blocksMotion()
                 && belowState.isFaceSturdy(level, belowPos, Direction.UP)
                 && belowState.isCollisionShapeFullBlock(level, belowPos);
+        boolean ceilingSupport = !aboveState.is(Blocks.BEDROCK)
+                && aboveState.blocksMotion()
+                && aboveState.isFaceSturdy(level, abovePos, Direction.DOWN)
+                && aboveState.isCollisionShapeFullBlock(level, abovePos);
 
         return level.getDifficulty() != Difficulty.PEACEFUL
-                && validSupport
+                && (floorSupport || ceilingSupport)
                 && level.isEmptyBlock(pos)
-                && level.isEmptyBlock(pos.above())
+                && (level.isEmptyBlock(pos.above()) || level.isEmptyBlock(pos.below()))
                 && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);
     }
 

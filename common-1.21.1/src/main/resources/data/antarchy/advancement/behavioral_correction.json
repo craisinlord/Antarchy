@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:adventure/root",
+  "parent": "antarchy:herculean_task",
   "criteria": {
     "obtain_attitude_adjuster": {
       "conditions": {
@@ -24,7 +24,7 @@
     },
     "show_toast": true,
     "title": {
-      "translate": "advancements.antarchy.behavioral_correction.title"
+      "text": "Ant-ger Management"
     }
   },
   "requirements": [

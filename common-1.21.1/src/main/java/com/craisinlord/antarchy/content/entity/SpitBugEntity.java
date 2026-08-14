@@ -3,6 +3,9 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -89,7 +92,7 @@ public class SpitBugEntity extends Monster implements GeoEntity {
         }
         return level.getDifficulty() != Difficulty.PEACEFUL
                 && level.isEmptyBlock(pos)
-                && level.isEmptyBlock(pos.above())
+                && (level.isEmptyBlock(pos.above()) || level.isEmptyBlock(pos.below()))
                 && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);
     }
 
@@ -221,7 +224,7 @@ public class SpitBugEntity extends Monster implements GeoEntity {
 
         SpitBugProjectileEntity projectile = new SpitBugProjectileEntity(projectileType, this, serverLevel);
         Vec3 origin = this.position()
-                .add(0.0D, this.getBbHeight() * 0.55D, 0.0D)
+                .add(this.toWorld(0.0D, this.getBbHeight() * 0.55D, 0.0D))
                 .add(this.getViewVector(0.0F).scale(1.35D));
         Vec3 aimPoint = target.getEyePosition().add(target.getDeltaMovement().scale(0.45D));
         Vec3 direction = aimPoint.subtract(origin).normalize();
@@ -230,6 +233,14 @@ public class SpitBugEntity extends Monster implements GeoEntity {
         projectile.shoot(direction.x, direction.y, direction.z, 1.05F, 0.0F);
         serverLevel.addFreshEntity(projectile);
         this.playSound(AntarchySoundEvents.SPIT_BUG_SPIT.get(), 1.0F, 0.85F + this.random.nextFloat() * 0.15F);
+    }
+
+    private AntarchyGravityDirection gravityDirection() {
+        return AntarchyGravityApi.getGravityDirection(this);
+    }
+
+    private Vec3 toWorld(double x, double y, double z) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
     }
 
     private final class SpitAttackGoal extends Goal {
