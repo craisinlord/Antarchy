@@ -1,10 +1,12 @@
 {
-  "parent": "antarchy:visit_elythia",
+  "parent": "antarchy:visit_cavaryn",
   "criteria": {
-    "kill_toreterror": {
+    "kill_horde_common": {
       "conditions": {
         "entity": {
-          "type": "antarchy:toreterror"
+          "type": {
+            "tag": "antarchy:horde_common"
+          }
         }
       },
       "trigger": "minecraft:player_killed_entity"
@@ -13,21 +15,21 @@
   "display": {
     "announce_to_chat": true,
     "description": {
-      "translate": "advancements.antarchy.kill_toreterror.description"
+      "text": "Kill one of Cavaryn's horde-common creatures"
     },
-    "frame": "challenge",
+    "frame": "task",
     "icon": {
       "count": 1,
-      "id": "antarchy:toreterror_spawn_egg"
+      "id": "antarchy:creeping_horror_spawn_egg"
     },
     "show_toast": true,
     "title": {
-      "translate": "advancements.antarchy.kill_toreterror.title"
+      "text": "Anger the Hive Mind"
     }
   },
   "requirements": [
     [
-      "kill_toreterror"
+      "kill_horde_common"
     ]
   ],
   "sends_telemetry_event": true

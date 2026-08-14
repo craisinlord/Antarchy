@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:adventure/root",
+  "parent": "antarchy:visit_elythia",
   "criteria": {
     "discover_ruined_prison": {
       "conditions": {

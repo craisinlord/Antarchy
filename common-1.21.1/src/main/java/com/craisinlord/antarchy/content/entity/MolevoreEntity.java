@@ -4,6 +4,9 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -475,12 +478,13 @@ public class MolevoreEntity extends Monster implements GeoEntity {
             }
 
             if (entity.hurt(this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE))) {
-                Vec3 push = entity.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+                Vec3 push = this.toLocalPlane(entity.position().subtract(this.position()));
                 if (push.lengthSqr() < 1.0E-4D) {
-                    push = this.getViewVector(1.0F).multiply(1.0D, 0.0D, 1.0D);
+                    push = this.toLocalPlane(this.getViewVector(1.0F));
                 }
                 push = push.normalize().scale(0.8D);
-                entity.push(push.x, 0.25D, push.z);
+                Vec3 worldPush = this.toWorld(push.x, 0.25D, push.z);
+                entity.push(worldPush.x, worldPush.y, worldPush.z);
                 entity.hurtMarked = true;
             }
         }
@@ -493,12 +497,12 @@ public class MolevoreEntity extends Monster implements GeoEntity {
     }
 
     private void startSpinCharge(LivingEntity target) {
-        Vec3 horizontal = target.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+        Vec3 horizontal = this.toLocalPlane(target.position().subtract(this.position()));
         if (horizontal.lengthSqr() < 1.0E-4D) {
             return;
         }
 
-        this.spinDirection = horizontal.normalize();
+        this.spinDirection = this.toWorld(horizontal.normalize());
         this.spinHitEntities.clear();
         this.setActionState(ACTION_SPIN_CHARGE);
         this.actionTicks = SPIN_TOTAL_TICKS;
@@ -514,15 +518,15 @@ public class MolevoreEntity extends Monster implements GeoEntity {
 
         if (target != null && inWindup) {
             this.getLookControl().setLookAt(target, 35.0F, 20.0F);
-            Vec3 horizontal = target.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+            Vec3 horizontal = this.toLocalPlane(target.position().subtract(this.position()));
             if (horizontal.lengthSqr() > 1.0E-4D) {
-                this.spinDirection = horizontal.normalize();
+                this.spinDirection = this.toWorld(horizontal.normalize());
             }
             this.setDeltaMovement(this.getDeltaMovement().scale(0.2D));
         } else {
             Vec3 lookTarget = this.position().add(this.spinDirection);
-            this.getLookControl().setLookAt(lookTarget.x, this.getEyeY(), lookTarget.z, 360.0F, 0.0F);
-            Vec3 motion = this.spinDirection.scale(SPIN_SPEED).add(0.0D, this.onGround() ? 0.08D : 0.0D, 0.0D);
+            this.getLookControl().setLookAt(lookTarget.x, lookTarget.y, lookTarget.z, 360.0F, 0.0F);
+            Vec3 motion = this.spinDirection.scale(SPIN_SPEED).add(this.toWorld(0.0D, this.onGround() ? 0.08D : 0.0D, 0.0D));
             this.setDeltaMovement(motion);
             this.hasImpulse = true;
             this.performSpinChargeHit();
@@ -553,8 +557,15 @@ public class MolevoreEntity extends Monster implements GeoEntity {
             }
 
             if (entity.hurt(this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) * 1.65F)) {
-                Vec3 push = this.spinDirection.lengthSqr() > 0.0D ? this.spinDirection : entity.position().subtract(this.position()).normalize();
-                entity.push(push.x * 1.15D, 0.35D, push.z * 1.15D);
+                Vec3 push = this.spinDirection.lengthSqr() > 0.0D
+                        ? this.toLocalPlane(this.spinDirection)
+                        : this.toLocalPlane(entity.position().subtract(this.position()));
+                if (push.lengthSqr() < 1.0E-4D) {
+                    push = this.toLocalPlane(this.getViewVector(1.0F));
+                }
+                push = push.normalize();
+                Vec3 worldPush = this.toWorld(push.x * 1.15D, 0.35D, push.z * 1.15D);
+                entity.push(worldPush.x, worldPush.y, worldPush.z);
                 entity.hurtMarked = true;
                 this.playSound(AntarchySoundEvents.MOLEVORE_ATTACK.get(), 1.0F, 0.65F + this.random.nextFloat() * 0.1F);
             }
@@ -593,21 +604,21 @@ public class MolevoreEntity extends Monster implements GeoEntity {
         Vec3 forward = this.getViewVector(1.0F).normalize();
         Vec3 digCenter = this.position()
                 .add(forward.scale(1.0D))
-                .add(0.0D, -0.5D, 0.0D);
+                .add(this.toWorld(0.0D, -0.5D, 0.0D));
 
         double halfWidth = 0.9D;
         double digDepth = 1.5D;
         BlockPos min = BlockPos.containing(digCenter.x - halfWidth, digCenter.y - digDepth, digCenter.z - halfWidth);
         BlockPos max = BlockPos.containing(digCenter.x + halfWidth, digCenter.y + 0.4D, digCenter.z + halfWidth);
 
-        Vec3 hForward = forward.multiply(1.0D, 0.0D, 1.0D);
+        Vec3 hForward = this.toLocalPlane(forward);
         for (BlockPos pos : BlockPos.betweenClosed(min, max)) {
             BlockState state = this.level().getBlockState(pos);
             if (!state.is(AntarchyTags.Blocks.MOLEVORE_BREAKABLE_BLOCKS) || state.isAir()) {
                 continue;
             }
             if (hForward.lengthSqr() > 1.0E-4D) {
-                Vec3 toBlock = Vec3.atCenterOf(pos).subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+                Vec3 toBlock = this.toLocalPlane(Vec3.atCenterOf(pos).subtract(this.position()));
                 if (toBlock.lengthSqr() > 1.0E-4D && hForward.normalize().dot(toBlock.normalize()) < -0.2D) {
                     continue;
                 }
@@ -642,12 +653,12 @@ public class MolevoreEntity extends Monster implements GeoEntity {
         }
 
         Vec3 forward = direction.normalize();
-        Vec3 center = this.position().add(forward.scale(range * 0.5D)).add(0.0D, this.getBbHeight() * 0.4D, 0.0D);
+        Vec3 center = this.position().add(forward.scale(range * 0.5D)).add(this.toWorld(0.0D, this.getBbHeight() * 0.4D, 0.0D));
         BlockPos min = BlockPos.containing(center.x - halfWidth, center.y - verticalRange * 0.5D, center.z - halfWidth);
         BlockPos max = BlockPos.containing(center.x + halfWidth, center.y + verticalRange * 0.5D, center.z + halfWidth);
 
         boolean broke = false;
-        Vec3 hForward = forward.multiply(1.0D, 0.0D, 1.0D);
+        Vec3 hForward = this.toLocalPlane(forward);
         for (BlockPos pos : BlockPos.betweenClosed(min, max)) {
             BlockState state = this.level().getBlockState(pos);
             if (!state.is(AntarchyTags.Blocks.MOLEVORE_BREAKABLE_BLOCKS) || state.isAir()) {
@@ -655,7 +666,7 @@ public class MolevoreEntity extends Monster implements GeoEntity {
             }
 
             Vec3 blockCenter = Vec3.atCenterOf(pos);
-            Vec3 toBlock = blockCenter.subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+            Vec3 toBlock = this.toLocalPlane(blockCenter.subtract(this.position()));
             if (hForward.lengthSqr() > 1.0E-4D && toBlock.lengthSqr() > 1.0E-4D
                     && hForward.normalize().dot(toBlock.normalize()) < -0.15D) {
                 continue;
@@ -668,12 +679,29 @@ public class MolevoreEntity extends Monster implements GeoEntity {
     }
 
     private boolean isInFront(Vec3 position, double minimumDot) {
-        Vec3 forward = this.getViewVector(1.0F).multiply(1.0D, 0.0D, 1.0D);
-        Vec3 toTarget = position.subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+        Vec3 forward = this.toLocalPlane(this.getViewVector(1.0F));
+        Vec3 toTarget = this.toLocalPlane(position.subtract(this.position()));
         if (forward.lengthSqr() < 1.0E-4D || toTarget.lengthSqr() < 1.0E-4D) {
             return true;
         }
         return forward.normalize().dot(toTarget.normalize()) >= minimumDot;
+    }
+
+    private AntarchyGravityDirection gravityDirection() {
+        return AntarchyGravityApi.getGravityDirection(this);
+    }
+
+    private Vec3 toWorld(double x, double y, double z) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(Vec3 localVector) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(localVector, this.gravityDirection());
+    }
+
+    private Vec3 toLocalPlane(Vec3 worldVector) {
+        Vec3 local = AntarchyGravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+        return new Vec3(local.x, 0.0D, local.z);
     }
 
     private int getActionState() {

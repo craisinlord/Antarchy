@@ -4,6 +4,9 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.boss.BossCombatUtil;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -110,9 +113,14 @@ public class AlphaMantisEntity extends MantisEntity {
         }
 
         boolean atSurface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos).getY() <= pos.getY();
-        boolean posOpen = level.isEmptyBlock(pos) && level.isEmptyBlock(pos.above()) && level.getFluidState(pos).isEmpty();
-        boolean onSolidGround = level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP)
+        boolean hasFloorClearance = level.isEmptyBlock(pos.above());
+        boolean hasCeilingClearance = level.isEmptyBlock(pos.below());
+        boolean floorSupport = level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP)
                 && !(level.getBlockState(pos.below()).getBlock() instanceof LeavesBlock);
+        boolean ceilingSupport = level.getBlockState(pos.above()).isFaceSturdy(level, pos.above(), Direction.DOWN)
+                && !(level.getBlockState(pos.above()).getBlock() instanceof LeavesBlock);
+        boolean posOpen = level.isEmptyBlock(pos) && (hasFloorClearance || hasCeilingClearance) && level.getFluidState(pos).isEmpty();
+        boolean onSolidGround = floorSupport || ceilingSupport;
 
         if (!posOpen || !onSolidGround || !atSurface) {
             return false;
@@ -344,7 +352,8 @@ public class AlphaMantisEntity extends MantisEntity {
         this.finishCommittedAttack();
         this.stopFlightBurst();
         this.getNavigation().stop();
-        this.setDeltaMovement(0.0D, this.getDeltaMovement().y, 0.0D);
+        Vec3 localVelocity = this.toLocal(this.getDeltaMovement());
+        this.setDeltaMovement(this.toWorld(0.0D, localVelocity.y, 0.0D));
         this.setAggressive(false);
         this.summonCooldownTicks = Math.min(this.summonCooldownTicks, AntarchySettings.alphaMantisSummonIntervalTicks() / 2);
     }
@@ -355,7 +364,8 @@ public class AlphaMantisEntity extends MantisEntity {
         }
         this.phaseTransitionTicks--;
         this.getNavigation().stop();
-        this.setDeltaMovement(0.0D, this.getDeltaMovement().y, 0.0D);
+        Vec3 localVelocity = this.toLocal(this.getDeltaMovement());
+        this.setDeltaMovement(this.toWorld(0.0D, localVelocity.y, 0.0D));
         if (this.phaseTransitionTicks <= 0 && this.getTarget() != null) {
             this.setAggressive(true);
         }
@@ -465,5 +475,17 @@ public class AlphaMantisEntity extends MantisEntity {
             this.moveTo(homeCenter.x, this.encounterHome.getY(), homeCenter.z, this.getYRot(), this.getXRot());
             this.setDeltaMovement(Vec3.ZERO);
         }
+    }
+
+    private AntarchyGravityDirection gravityDirection() {
+        return AntarchyGravityApi.getGravityDirection(this);
+    }
+
+    private Vec3 toLocal(Vec3 worldVector) {
+        return AntarchyGravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(double x, double y, double z) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
     }
 }

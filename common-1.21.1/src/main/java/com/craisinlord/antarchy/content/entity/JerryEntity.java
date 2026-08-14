@@ -2,6 +2,9 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -208,7 +211,7 @@ public class JerryEntity extends Monster implements GeoEntity {
             return;
         }
 
-        Vec3 targetPos = target.getEyePosition().add(0.0D, -0.15D, 0.0D);
+        Vec3 targetPos = target.getEyePosition().add(this.toWorld(0.0D, -0.15D, 0.0D));
         Vec3 toTarget = targetPos.subtract(this.position());
         double distance = toTarget.length();
         if (distance > 0.01D) {
@@ -242,15 +245,15 @@ public class JerryEntity extends Monster implements GeoEntity {
 
         Stage stage = this.getStage();
         Vec3 targetPos = target.getEyePosition();
-        Vec3 hoverPos = targetPos.add(0.0D, 5.0D, 0.0D);
+        Vec3 hoverPos = targetPos.add(this.toWorld(0.0D, 5.0D, 0.0D));
         Vec3 toHover = hoverPos.subtract(this.position());
         Vec3 toTarget = targetPos.subtract(this.position());
         double hoverDistance = toHover.length();
         double targetDistance = toTarget.length();
-        double horizontalDistance = this.position().subtract(targetPos).horizontalDistance();
+        double horizontalDistance = this.toLocalPlane(this.position().subtract(targetPos)).length();
         this.faceTarget(target);
         if (this.alphaDiveCooldownTicks > 0) {
-            this.setDeltaMovement(this.getDeltaMovement().scale(0.8D).add(toTarget.normalize().scale(0.28D)).add(0.0D, -0.08D, 0.0D));
+            this.setDeltaMovement(this.getDeltaMovement().scale(0.8D).add(toTarget.normalize().scale(0.28D)).add(this.toWorld(0.0D, -0.08D, 0.0D)));
         } else if (hoverDistance > 0.01D) {
             Vec3 desiredMotion = toHover.normalize().scale(0.20D);
             this.setDeltaMovement(this.getDeltaMovement().scale(0.72D).add(desiredMotion));
@@ -258,7 +261,7 @@ public class JerryEntity extends Monster implements GeoEntity {
 
         if (this.alphaDiveCooldownTicks <= 0 && targetDistance < 9.0D && horizontalDistance < 7.0D) {
             this.alphaDiveCooldownTicks = 30;
-            this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.55D, 0.0D).add(toTarget.normalize().scale(0.42D)));
+            this.setDeltaMovement(this.getDeltaMovement().add(this.toWorld(0.0D, -0.55D, 0.0D)).add(toTarget.normalize().scale(0.42D)));
         }
 
         if (targetDistance < 2.3D && this.attackCooldownTicks <= 0) {
@@ -271,11 +274,12 @@ public class JerryEntity extends Monster implements GeoEntity {
     }
 
     private void faceTarget(LivingEntity target) {
-        Vec3 toTarget = target.position().subtract(this.position());
-        if (toTarget.horizontalDistanceSqr() <= 0.0001D) {
+        Vec3 toTarget = this.toLocal(target.position().subtract(this.position()));
+        Vec3 horizontal = new Vec3(toTarget.x, 0.0D, toTarget.z);
+        if (horizontal.lengthSqr() <= 0.0001D) {
             return;
         }
-        float targetYaw = (float) (Mth.atan2(toTarget.z, toTarget.x) * (180.0F / Math.PI)) - 90.0F;
+        float targetYaw = (float) (Mth.atan2(horizontal.z, horizontal.x) * (180.0F / Math.PI)) - 90.0F;
         this.setYRot(Mth.approachDegrees(this.getYRot(), targetYaw, 30.0F));
         this.yBodyRot = this.getYRot();
         this.yHeadRot = this.getYRot();
@@ -302,6 +306,23 @@ public class JerryEntity extends Monster implements GeoEntity {
         return target instanceof LivingEntity living
                 ? living.hurt(this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE))
                 : super.doHurtTarget(target);
+    }
+
+    private AntarchyGravityDirection gravityDirection() {
+        return AntarchyGravityApi.getGravityDirection(this);
+    }
+
+    private Vec3 toLocal(Vec3 worldVector) {
+        return AntarchyGravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(double x, double y, double z) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
+    }
+
+    private Vec3 toLocalPlane(Vec3 worldVector) {
+        Vec3 local = this.toLocal(worldVector);
+        return new Vec3(local.x, 0.0D, local.z);
     }
 
     @Override

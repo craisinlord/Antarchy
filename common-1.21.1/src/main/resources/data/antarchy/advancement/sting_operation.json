@@ -1,10 +1,10 @@
 {
-  "parent": "antarchy:visit_elythia",
+  "parent": "antarchy:visit_thoraxis",
   "criteria": {
-    "kill_toreterror": {
+    "kill_emperor_scorpion": {
       "conditions": {
         "entity": {
-          "type": "antarchy:toreterror"
+          "type": "antarchy:emperor_scorpion"
         }
       },
       "trigger": "minecraft:player_killed_entity"
@@ -13,21 +13,21 @@
   "display": {
     "announce_to_chat": true,
     "description": {
-      "translate": "advancements.antarchy.kill_toreterror.description"
+      "text": "Defeat the Emperor Scorpion"
     },
     "frame": "challenge",
     "icon": {
       "count": 1,
-      "id": "antarchy:toreterror_spawn_egg"
+      "id": "antarchy:emperor_scorpion_spawn_egg"
     },
     "show_toast": true,
     "title": {
-      "translate": "advancements.antarchy.kill_toreterror.title"
+      "text": "Sting Operation"
     }
   },
   "requirements": [
     [
-      "kill_toreterror"
+      "kill_emperor_scorpion"
     ]
   ],
   "sends_telemetry_event": true

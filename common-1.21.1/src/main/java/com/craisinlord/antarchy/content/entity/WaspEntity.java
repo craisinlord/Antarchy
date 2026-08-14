@@ -3,6 +3,9 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.block.entity.WaspNestBlockEntity;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import java.util.EnumSet;
 import java.util.Objects;
 import net.minecraft.core.BlockPos;
@@ -100,7 +103,7 @@ public class WaspEntity extends Monster implements GeoEntity, FlyingAnimal {
 
         return level.getDifficulty() != Difficulty.PEACEFUL
                 && level.isEmptyBlock(pos)
-                && level.isEmptyBlock(pos.above());
+                && (level.isEmptyBlock(pos.above()) || level.isEmptyBlock(pos.below()));
     }
 
     @Override
@@ -304,7 +307,7 @@ public class WaspEntity extends Monster implements GeoEntity, FlyingAnimal {
 
     @Override
     public Vec3 getLeashOffset() {
-        return new Vec3(0.0D, 0.2D, 0.0D);
+        return this.toWorld(0.0D, 0.2D, 0.0D);
     }
 
     public boolean isPandaVariant() {
@@ -326,6 +329,14 @@ public class WaspEntity extends Monster implements GeoEntity, FlyingAnimal {
     @Override
     public boolean isFlying() {
         return !this.onGround();
+    }
+
+    private AntarchyGravityDirection gravityDirection() {
+        return AntarchyGravityApi.getGravityDirection(this);
+    }
+
+    private Vec3 toWorld(double x, double y, double z) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
     }
 
     private void realignHitbox() {

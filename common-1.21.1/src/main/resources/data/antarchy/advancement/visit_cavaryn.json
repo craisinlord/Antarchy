@@ -1,5 +1,4 @@
 {
-  "parent": "minecraft:adventure/root",
   "criteria": {
     "entered_cavaryn": {
       "conditions": {
@@ -10,6 +9,7 @@
   },
   "display": {
     "announce_to_chat": true,
+    "background": "antarchy:block/myrmite",
     "description": {
       "translate": "advancements.antarchy.visit_cavaryn.description"
     },

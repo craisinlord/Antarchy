@@ -3,6 +3,9 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -409,7 +412,7 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
         this.getNavigation().stop();
         this.setDeltaMovement(Vec3.ZERO);
         this.move(MoverType.SELF, Vec3.ZERO);
-        this.setPos(this.getX(), clingPos.getY() - this.getBbHeight() - 0.01D, this.getZ());
+        this.setPos(this.getX(), AntarchyGravityApi.isGravityInverted(this) ? clingPos.getY() + 1.01D : clingPos.getY() - this.getBbHeight() - 0.01D, this.getZ());
     }
 
     private void tickPouncing() {
@@ -460,7 +463,7 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
         boolean playerNearby = this.level().getNearestPlayer(this, CAMOUFLAGE_PLAYER_RANGE) != null;
         boolean idle = this.getTarget() == null
                 && this.recoveryTicks <= 0
-                && this.getDeltaMovement().horizontalDistanceSqr() < 0.003D
+                && this.toLocal(this.getDeltaMovement()).horizontalDistanceSqr() < 0.003D
                 && this.onGround();
         boolean movingQuickly = this.getDeltaMovement().lengthSqr() > QUICK_MOVE_SQR;
         boolean inAmbushCover = this.findCeilingWithinRange(this.directCeilingSearchHeight()) != null;
@@ -480,7 +483,7 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
     private BlockPos findCeilingWithinRange(int maxBlocks) {
         BlockPos origin = this.blockPosition();
         for (int dy = 1; dy <= maxBlocks; dy++) {
-            BlockPos candidate = origin.above(dy);
+            BlockPos candidate = this.relativeLocal(origin, 0, dy, 0);
             if (this.isUsableCeiling(candidate)) {
                 return candidate;
             }
@@ -504,7 +507,7 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
                     continue;
                 }
                 for (int dy = minHeight; dy <= maxHeight; dy++) {
-                    BlockPos candidate = origin.offset(dx, dy, dz);
+                    BlockPos candidate = this.relativeLocal(origin, dx, dy, dz);
                     if (!this.isUsableCeiling(candidate)) {
                         continue;
                     }
@@ -525,7 +528,7 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
     }
 
     private boolean isCeilingBlock(BlockPos pos) {
-        return this.level().getBlockState(pos).isFaceSturdy(this.level(), pos, Direction.DOWN);
+        return this.level().getBlockState(pos).isFaceSturdy(this.level(), pos, this.gravityDownDirection());
     }
 
     private int minimumCeilingHeight() {
@@ -541,7 +544,9 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
             return false;
         }
         double x = pos.getX() + 0.5D;
-        double y = pos.getY() - this.getBbHeight() - 0.01D;
+        double y = AntarchyGravityApi.isGravityInverted(this)
+                ? pos.getY() + 1.01D
+                : pos.getY() - this.getBbHeight() - 0.01D;
         double z = pos.getZ() + 0.5D;
         return this.canOccupy(x, y, z);
     }
@@ -590,11 +595,14 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
         this.leapingTicks = 0;
         this.getNavigation().stop();
 
-        double dy = ceilingPos.getY() - this.getY();
+        Vec3 localDelta = this.toLocal(Vec3.atCenterOf(ceilingPos).subtract(this.position()));
+        double dy = localDelta.y;
         double upwardSpeed = Math.min(2.5D, Math.sqrt(0.16D * Math.max(dy, 1.0D)) + 0.4D);
-        double dx = ceilingPos.getX() + 0.5D - this.getX();
-        double dz = ceilingPos.getZ() + 0.5D - this.getZ();
-        this.setDeltaMovement(Mth.clamp(dx * 0.18D, -0.35D, 0.35D), upwardSpeed, Mth.clamp(dz * 0.18D, -0.35D, 0.35D));
+        this.setDeltaMovement(this.toWorld(
+                Mth.clamp(localDelta.x * 0.18D, -0.35D, 0.35D),
+                upwardSpeed,
+                Mth.clamp(localDelta.z * 0.18D, -0.35D, 0.35D)
+        ));
         this.hasImpulse = true;
         this.playSound(AntarchySoundEvents.JUMPY_BUG_JUMP.get(), 1.0F, 0.95F + this.random.nextFloat() * 0.1F);
     }
@@ -615,12 +623,11 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
         this.pounceCooldownTicks = DEFAULT_POUNCE_COOLDOWN;
         this.pounceTicks = 0;
 
-        Vec3 from = this.position();
-        Vec3 to = target.getEyePosition().subtract(from);
+        Vec3 to = this.toLocal(target.getEyePosition().subtract(this.position()));
         Vec3 horizontal = new Vec3(to.x, 0.0D, to.z);
-        Vec3 direction = horizontal.lengthSqr() > 1.0E-4D ? horizontal.normalize() : target.getLookAngle();
+        Vec3 direction = horizontal.lengthSqr() > 1.0E-4D ? horizontal.normalize() : this.toLocalPlane(target.getLookAngle()).normalize();
         double upward = POUNCE_UPWARD_SPEED + Mth.clamp(to.y * 0.08D, -0.04D, 0.22D);
-        this.setDeltaMovement(direction.x * POUNCE_HORIZONTAL_SPEED, upward, direction.z * POUNCE_HORIZONTAL_SPEED);
+        this.setDeltaMovement(this.toWorld(direction.x * POUNCE_HORIZONTAL_SPEED, upward, direction.z * POUNCE_HORIZONTAL_SPEED));
         this.hasImpulse = true;
         this.playSound(AntarchySoundEvents.JUMPY_BUG_JUMP.get(), 1.0F, 0.95F + this.random.nextFloat() * 0.1F);
     }
@@ -635,10 +642,10 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
         this.pounceCooldownTicks = DEFAULT_POUNCE_COOLDOWN;
         this.pounceTicks = 0;
 
-        Vec3 to = target.position().add(0.0D, target.getBbHeight() * 0.35D, 0.0D).subtract(this.position());
+        Vec3 to = this.toLocal(target.position().add(this.toWorld(0.0D, target.getBbHeight() * 0.35D, 0.0D)).subtract(this.position()));
         Vec3 horizontal = new Vec3(to.x, 0.0D, to.z);
-        Vec3 direction = horizontal.lengthSqr() > 1.0E-4D ? horizontal.normalize() : target.getLookAngle();
-        this.setDeltaMovement(direction.x * CEILING_DROP_HORIZONTAL_SPEED, CEILING_DROP_UPWARD_SPEED, direction.z * CEILING_DROP_HORIZONTAL_SPEED);
+        Vec3 direction = horizontal.lengthSqr() > 1.0E-4D ? horizontal.normalize() : this.toLocalPlane(target.getLookAngle()).normalize();
+        this.setDeltaMovement(this.toWorld(direction.x * CEILING_DROP_HORIZONTAL_SPEED, CEILING_DROP_UPWARD_SPEED, direction.z * CEILING_DROP_HORIZONTAL_SPEED));
         this.hasImpulse = true;
         this.playSound(AntarchySoundEvents.JUMPY_BUG_JUMP.get(), 1.0F, 0.9F + this.random.nextFloat() * 0.1F);
     }
@@ -646,8 +653,8 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
     private void finishPounce(boolean keepMomentum) {
         this.pounceTicks = 0;
         if (!keepMomentum) {
-            Vec3 movement = this.getDeltaMovement();
-            this.setDeltaMovement(movement.x * 0.25D, Math.max(0.0D, movement.y), movement.z * 0.25D);
+            Vec3 movement = this.toLocal(this.getDeltaMovement());
+            this.setDeltaMovement(this.toWorld(movement.x * 0.25D, Math.max(0.0D, movement.y), movement.z * 0.25D));
         }
         this.setAttackState(AttackState.RECOVERING);
         this.recoveryTicks = DEFAULT_RECOVERY_TICKS;
@@ -906,12 +913,12 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
                 JumpyBugEntity.this.getNavigation().moveTo(target, 1.05D);
             } else if (distSqr > CHASE_LEAP_RANGE_SQR) {
                 if (JumpyBugEntity.this.onGround() && JumpyBugEntity.this.chaseJumpCooldownTicks <= 0) {
-                    Vec3 dir = target.position().subtract(JumpyBugEntity.this.position()).normalize();
-                    JumpyBugEntity.this.setDeltaMovement(
+                    Vec3 dir = JumpyBugEntity.this.toLocalPlane(target.position().subtract(JumpyBugEntity.this.position())).normalize();
+                    JumpyBugEntity.this.setDeltaMovement(JumpyBugEntity.this.toWorld(
                             dir.x * CHASE_LEAP_HORIZONTAL,
                             CHASE_LEAP_VERTICAL,
                             dir.z * CHASE_LEAP_HORIZONTAL
-                    );
+                    ));
                     JumpyBugEntity.this.hasImpulse = true;
                     JumpyBugEntity.this.chaseJumpCooldownTicks = CHASE_JUMP_COOLDOWN;
                 }
@@ -943,5 +950,31 @@ public class JumpyBugEntity extends Monster implements GeoEntity {
                     && !JumpyBugEntity.this.isLeapingToCeiling()
                     && super.canContinueToUse();
         }
+    }
+
+    private AntarchyGravityDirection gravityDirection() {
+        return AntarchyGravityApi.getGravityDirection(this);
+    }
+
+    private Direction gravityDownDirection() {
+        return this.gravityDirection().isInverted() ? Direction.UP : Direction.DOWN;
+    }
+
+    private Vec3 toLocal(Vec3 worldVector) {
+        return AntarchyGravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(double x, double y, double z) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
+    }
+
+    private Vec3 toLocalPlane(Vec3 worldVector) {
+        Vec3 local = this.toLocal(worldVector);
+        return new Vec3(local.x, 0.0D, local.z);
+    }
+
+    private BlockPos relativeLocal(BlockPos origin, int x, int y, int z) {
+        Vec3 worldOffset = this.toWorld(x, y, z);
+        return origin.offset(Mth.floor(worldOffset.x), Mth.floor(worldOffset.y), Mth.floor(worldOffset.z));
     }
 }

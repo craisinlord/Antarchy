@@ -134,9 +134,14 @@ public class MantisEntity extends Monster implements GeoEntity {
         }
 
         boolean atSurface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos).getY() <= pos.getY();
-        boolean posOpen = level.isEmptyBlock(pos) && level.isEmptyBlock(pos.above()) && level.getFluidState(pos).isEmpty();
-        boolean onSolidGround = level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP)
+        boolean hasFloorClearance = level.isEmptyBlock(pos.above());
+        boolean hasCeilingClearance = level.isEmptyBlock(pos.below());
+        boolean floorSupport = level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP)
                 && !(level.getBlockState(pos.below()).getBlock() instanceof LeavesBlock);
+        boolean ceilingSupport = level.getBlockState(pos.above()).isFaceSturdy(level, pos.above(), Direction.DOWN)
+                && !(level.getBlockState(pos.above()).getBlock() instanceof LeavesBlock);
+        boolean posOpen = level.isEmptyBlock(pos) && (hasFloorClearance || hasCeilingClearance) && level.getFluidState(pos).isEmpty();
+        boolean onSolidGround = floorSupport || ceilingSupport;
 
         if (!posOpen || !onSolidGround) {
             return false;
@@ -651,6 +656,4 @@ public class MantisEntity extends Monster implements GeoEntity {
 
 
 }
-
-
 

@@ -1,5 +1,4 @@
 {
-  "parent": "minecraft:adventure/root",
   "criteria": {
     "entered_elythia": {
       "conditions": {
@@ -10,6 +9,7 @@
   },
   "display": {
     "announce_to_chat": true,
+    "background": "antarchy:block/ouranwood/mossy_ouranwood_log",
     "description": {
       "translate": "advancements.antarchy.visit_elythia.description"
     },

@@ -6,6 +6,9 @@ import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -256,10 +259,10 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     public static boolean canSpawn(EntityType<NightmareEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
-        boolean sturdy = level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP);
         boolean posEmpty = level.isEmptyBlock(pos);
-        boolean aboveEmpty = level.isEmptyBlock(pos.above());
-        return level.getDifficulty() != Difficulty.PEACEFUL && sturdy && posEmpty && aboveEmpty;
+        boolean floorSpawn = level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP) && level.isEmptyBlock(pos.above());
+        boolean ceilingSpawn = level.getBlockState(pos.above()).isFaceSturdy(level, pos.above(), Direction.DOWN) && level.isEmptyBlock(pos.below());
+        return level.getDifficulty() != Difficulty.PEACEFUL && posEmpty && (floorSpawn || ceilingSpawn);
     }
 
     @Override
@@ -730,21 +733,23 @@ public class NightmareEntity extends Monster implements GeoEntity {
         this.getNavigation().stop();
         this.faceTowardTarget(target, 180.0F);
         Vec3 lungeTarget = this.shouldUseFlyingLocomotion()
-                ? new Vec3(target.getX(), this.getFlyingAttackTargetY(target), target.getZ())
+                ? this.getFlyingAttackTargetPos(target)
                 : target.getEyePosition();
         Vec3 lunge = lungeTarget.subtract(this.getEyePosition());
         if (lunge.lengthSqr() > 1.0E-4D) {
-            Vec3 normalized = lunge.normalize();
+            AntarchyGravityDirection direction = this.gravityDirection();
+            Vec3 normalized = AntarchyGravityRotationUtil.vecWorldToPlayer(lunge, direction).normalize();
             double verticalBoost = this.shouldUseFlyingLocomotion() ? 0.34D : 0.18D;
-            Vec3 current = this.getDeltaMovement();
+            Vec3 current = AntarchyGravityRotationUtil.vecWorldToPlayer(this.getDeltaMovement(), direction);
             double upward = this.shouldUseFlyingLocomotion()
                     ? Math.max(normalized.y * verticalBoost, -0.08D)
                     : normalized.y * verticalBoost;
-            this.setDeltaMovement(
+            this.setDeltaMovement(AntarchyGravityRotationUtil.vecPlayerToWorld(
                     normalized.x * 0.85D,
                     current.y * 0.18D + upward,
-                    normalized.z * 0.85D
-            );
+                    normalized.z * 0.85D,
+                    direction
+            ));
             this.hasImpulse = true;
         }
     }
@@ -990,26 +995,27 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private void performAttackHit(@Nullable LivingEntity target) {
-        Vec3 forward = this.getViewVector(1.0F).multiply(1.0D, 0.0D, 1.0D);
+        Vec3 forward = this.getPlaneForward(this.getViewVector(1.0F));
         if (forward.lengthSqr() < 1.0E-4D) {
-            float yawRadians = this.getYRot() * Mth.DEG_TO_RAD;
-            forward = new Vec3(-Mth.sin(yawRadians), 0.0D, Mth.cos(yawRadians));
+            forward = this.toWorld(new Vec3(-Mth.sin(this.getYRot() * Mth.DEG_TO_RAD), 0.0D, Mth.cos(this.getYRot() * Mth.DEG_TO_RAD)));
         }
         if (forward.lengthSqr() < 1.0E-4D) {
-            forward = new Vec3(0.0D, 0.0D, 1.0D);
+            forward = this.toWorld(new Vec3(0.0D, 0.0D, 1.0D));
         }
         forward = forward.normalize();
         Vec3 strikeOrigin = this.position()
-                .add(0.0D, this.getBbHeight() * 0.55D, 0.0D)
+                .add(this.toWorld(new Vec3(0.0D, this.getBbHeight() * 0.55D, 0.0D)))
                 .add(forward.scale(0.4D));
         Vec3 strikeCenter = strikeOrigin
                 .add(forward.scale(ATTACK_HIT_FORWARD_OFFSET));
+        Vec3 strikeMin = strikeOrigin.add(this.toWorld(new Vec3(0.0D, ATTACK_HIT_MIN_Y_OFFSET, 0.0D)));
+        Vec3 strikeMax = strikeOrigin.add(this.toWorld(new Vec3(0.0D, ATTACK_HIT_MAX_Y_OFFSET, 0.0D)));
         AABB hitBox = new AABB(
                 Math.min(strikeOrigin.x, strikeCenter.x) - ATTACK_HIT_HALF_WIDTH,
-                this.getBoundingBox().minY + ATTACK_HIT_MIN_Y_OFFSET,
+                Math.min(strikeMin.y, strikeMax.y),
                 Math.min(strikeOrigin.z, strikeCenter.z) - ATTACK_HIT_HALF_WIDTH,
                 Math.max(strikeOrigin.x, strikeCenter.x) + ATTACK_HIT_HALF_WIDTH,
-                this.getBoundingBox().minY + ATTACK_HIT_MAX_Y_OFFSET,
+                Math.max(strikeMin.y, strikeMax.y),
                 Math.max(strikeOrigin.z, strikeCenter.z) + ATTACK_HIT_HALF_WIDTH
         );
         List<LivingEntity> victims = new ArrayList<>(this.level().getEntitiesOfClass(LivingEntity.class, hitBox, this::canTargetEntity));
@@ -1041,17 +1047,20 @@ public class NightmareEntity extends Monster implements GeoEntity {
         if (victim.getBoundingBox().inflate(0.1D).intersects(hitBox)) {
             return true;
         }
-        Vec3 toVictim = victimCenter.subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
-        double forwardDistance = toVictim.dot(forward);
+        Vec3 localForward = this.toLocalPlane(forward);
+        Vec3 toVictim = this.toLocalPlane(victimCenter.subtract(this.position()));
+        double forwardDistance = toVictim.dot(localForward.normalize());
         if (forwardDistance < 0.15D || forwardDistance > ATTACK_HIT_FORWARD_OFFSET + 1.25D) {
             return false;
         }
-        Vec3 lateral = toVictim.subtract(forward.scale(forwardDistance));
+        Vec3 lateral = toVictim.subtract(localForward.normalize().scale(forwardDistance));
         if (lateral.lengthSqr() > (ATTACK_HIT_HALF_WIDTH + 0.55D) * (ATTACK_HIT_HALF_WIDTH + 0.55D)) {
             return false;
         }
-        double minY = this.getBoundingBox().minY + ATTACK_HIT_MIN_Y_OFFSET;
-        double maxY = this.getBoundingBox().minY + ATTACK_HIT_MAX_Y_OFFSET + 0.4D;
+        Vec3 minOffset = this.toWorld(new Vec3(0.0D, ATTACK_HIT_MIN_Y_OFFSET, 0.0D));
+        Vec3 maxOffset = this.toWorld(new Vec3(0.0D, ATTACK_HIT_MAX_Y_OFFSET + 0.4D, 0.0D));
+        double minY = Math.min(this.position().y + minOffset.y, this.position().y + maxOffset.y);
+        double maxY = Math.max(this.position().y + minOffset.y, this.position().y + maxOffset.y);
         return victim.getBoundingBox().maxY >= minY && victim.getBoundingBox().minY <= maxY;
     }
 
@@ -1088,12 +1097,65 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private void knockAway(LivingEntity target, double horizontalStrength, double verticalStrength) {
-        Vec3 direction = target.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
-        if (direction.lengthSqr() < 1.0E-4D) direction = this.getViewVector(1.0F).multiply(1.0D, 0.0D, 1.0D);
-        if (direction.lengthSqr() < 1.0E-4D) direction = new Vec3(1.0D, 0.0D, 0.0D);
-        Vec3 push = direction.normalize().scale(horizontalStrength);
-        target.push(push.x, verticalStrength, push.z);
+        AntarchyGravityDirection direction = this.gravityDirection();
+        Vec3 localDirection = this.toLocalPlane(target.position().subtract(this.position()));
+        if (localDirection.lengthSqr() < 1.0E-4D) localDirection = this.toLocalPlane(this.getViewVector(1.0F));
+        if (localDirection.lengthSqr() < 1.0E-4D) localDirection = new Vec3(1.0D, 0.0D, 0.0D);
+        Vec3 localPush = localDirection.normalize().scale(horizontalStrength);
+        Vec3 worldPush = AntarchyGravityRotationUtil.vecPlayerToWorld(localPush.x, verticalStrength, localPush.z, direction);
+        target.push(worldPush.x, worldPush.y, worldPush.z);
         target.hurtMarked = true;
+    }
+
+    private AntarchyGravityDirection gravityDirection() {
+        return AntarchyGravityApi.getGravityDirection(this);
+    }
+
+    private Vec3 toLocal(Vec3 worldVector) {
+        return AntarchyGravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(Vec3 localVector) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(localVector, this.gravityDirection());
+    }
+
+    private Vec3 toLocalPlane(Vec3 worldVector) {
+        Vec3 local = this.toLocal(worldVector);
+        return new Vec3(local.x, 0.0D, local.z);
+    }
+
+    private Vec3 localDeltaTo(Vec3 worldPosition) {
+        return this.toLocal(worldPosition.subtract(this.position()));
+    }
+
+    private double verticalDistanceTo(LivingEntity target) {
+        return Math.abs(this.toLocal(target.getEyePosition().subtract(this.getEyePosition())).y);
+    }
+
+    private double overheadGapTo(LivingEntity target) {
+        return -this.localDeltaTo(target.position()).y;
+    }
+
+    private Vec3 getPlaneForward(Vec3 worldVector) {
+        Vec3 local = this.toLocalPlane(worldVector);
+        if (local.lengthSqr() < 1.0E-4D) {
+            return Vec3.ZERO;
+        }
+        return this.toWorld(local.normalize());
+    }
+
+    private Vec3 getLocalRight(Vec3 worldForward) {
+        Vec3 localForward = this.toLocalPlane(worldForward);
+        if (localForward.lengthSqr() < 1.0E-4D) {
+            return Vec3.ZERO;
+        }
+        Vec3 normalized = localForward.normalize();
+        return this.toWorld(new Vec3(-normalized.z, 0.0D, normalized.x));
+    }
+
+    private Vec3 getFlyingAttackTargetPos(LivingEntity target) {
+        double targetHeight = Mth.clamp(target.getBbHeight() * 0.4D, FLYING_ATTACK_MIN_TARGET_HEIGHT, FLYING_ATTACK_BODY_TARGET_HEIGHT);
+        return target.position().add(this.toWorld(new Vec3(0.0D, targetHeight, 0.0D)));
     }
 
     private DamageSource nightmareDamageSource() {
@@ -1103,13 +1165,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private boolean tryBreakBlocksToTarget(LivingEntity target) {
-        int startY = Mth.floor(this.getY());
-        int endY = Math.max(Mth.floor(target.getY()), startY - 16);
-        int x = Mth.floor(this.getX());
-        int z = Mth.floor(this.getZ());
-        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
-        for (int y = startY; y >= endY; y--) {
-            cursor.set(x, y, z);
+        Direction gravityDown = AntarchyGravityRotationUtil.getGravityDownDirection(this);
+        BlockPos.MutableBlockPos cursor = this.blockPosition().mutable();
+        for (int i = 0; i <= 16; i++) {
             if (this.level().getBlockState(cursor).is(AntarchyTags.Blocks.NIGHTMARE_BREAKABLE)) {
                 if (this.blockBreakCooldown <= 0) {
                     this.level().destroyBlock(cursor.immutable(), true, this);
@@ -1118,6 +1176,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
                 this.getMoveControl().setWantedPosition(this.getX(), this.getY(), this.getZ(), 0.0D);
                 return true;
             }
+            cursor.move(gravityDown);
         }
         return false;
     }
@@ -1134,9 +1193,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
     private boolean canStartAttackOn(LivingEntity target) {
         if (!this.hasLineOfSight(target) || this.distanceToSqr(target) > ATTACK_START_RANGE_SQR) return false;
         double hdSqr = this.horizontalDistanceToSqr(target);
-        double verticalDistance = Math.abs(target.getEyeY() - this.getEyeY());
+        double verticalDistance = this.verticalDistanceTo(target);
         if (this.shouldUseFlyingLocomotion()) {
-            double overheadGap = this.getY() - target.getY();
+            double overheadGap = this.overheadGapTo(target);
             return hdSqr <= ATTACK_COMMIT_HORIZONTAL_RANGE_SQR
                     && verticalDistance <= 2.5D
                     && overheadGap <= FLYING_ATTACK_MAX_OVERHEAD_COMMIT_HEIGHT;
@@ -1153,9 +1212,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
             return true;
         }
         double distanceSqr = this.distanceToSqr(target);
-        double verticalDistance = Math.abs(target.getEyeY() - this.getEyeY());
+        double verticalDistance = this.verticalDistanceTo(target);
         double horizontalDistanceSqr = this.horizontalDistanceToSqr(target);
-        double overheadGap = this.getY() - target.getY();
+        double overheadGap = this.overheadGapTo(target);
         if (lowProfileTarget
                 && horizontalDistanceSqr <= LOW_PROFILE_FLIGHT_DISENGAGE_RANGE_SQR
                 && verticalDistance <= LOW_PROFILE_FLIGHT_DISENGAGE_VERTICAL
@@ -1179,24 +1238,23 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private Vec3 getFlightApproachPosition(LivingEntity target) {
-        Vec3 toTarget = target.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
-        if (toTarget.lengthSqr() < 1.0E-4D) {
-            toTarget = target.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
+        Vec3 forward = this.getPlaneForward(target.position().subtract(this.position()));
+        if (forward.lengthSqr() < 1.0E-4D) {
+            forward = this.getPlaneForward(target.getLookAngle());
         }
-        if (toTarget.lengthSqr() < 1.0E-4D) {
-            toTarget = this.getViewVector(1.0F).multiply(1.0D, 0.0D, 1.0D);
+        if (forward.lengthSqr() < 1.0E-4D) {
+            forward = this.getPlaneForward(this.getViewVector(1.0F));
         }
-        if (toTarget.lengthSqr() < 1.0E-4D) {
-            toTarget = new Vec3(0.0D, 0.0D, 1.0D);
+        if (forward.lengthSqr() < 1.0E-4D) {
+            forward = this.toWorld(new Vec3(0.0D, 0.0D, 1.0D));
         }
-        Vec3 forward = toTarget.normalize();
-        Vec3 right = new Vec3(-forward.z, 0.0D, forward.x);
+        Vec3 right = this.getLocalRight(forward);
         double strafe = this.tickCount % 32 < 16 ? FLYING_APPROACH_STRAFE_OFFSET : -FLYING_APPROACH_STRAFE_OFFSET;
         double height = this.isPhaseTwo() ? FLYING_APPROACH_HEIGHT_PHASE_TWO : FLYING_APPROACH_HEIGHT;
         double horizontalDistanceSqr = this.horizontalDistanceToSqr(target);
-        double overheadGap = this.getY() - target.getY();
+        double overheadGap = this.overheadGapTo(target);
         boolean lowProfileTarget = this.isLowProfileFlightTarget(target);
-        double attackTargetY = this.getFlyingAttackTargetY(target);
+        Vec3 attackTarget = this.getFlyingAttackTargetPos(target);
         Vec3 anchor = target.position().subtract(forward.scale(1.8D)).add(right.scale(strafe));
         if (horizontalDistanceSqr <= FLYING_OVERHEAD_STALL_RANGE_SQR && overheadGap >= FLYING_OVERHEAD_STALL_HEIGHT) {
             double sideOffset = lowProfileTarget ? LOW_PROFILE_OVERHEAD_DESCENT_SIDE_OFFSET : FLYING_OVERHEAD_DESCENT_SIDE_OFFSET;
@@ -1204,26 +1262,26 @@ public class NightmareEntity extends Monster implements GeoEntity {
             anchor = target.position()
                     .add(right.scale(strafe > 0.0D ? sideOffset : -sideOffset))
                     .subtract(forward.scale(backOffset));
-            return new Vec3(anchor.x, attackTargetY, anchor.z);
+            return new Vec3(anchor.x, attackTarget.y, anchor.z);
         }
         if (horizontalDistanceSqr <= FLYING_APPROACH_TOO_CLOSE_RANGE_SQR) {
             double backOffset = lowProfileTarget ? LOW_PROFILE_TOO_CLOSE_BACK_OFFSET : 2.8D;
             double strafeScale = lowProfileTarget ? LOW_PROFILE_TOO_CLOSE_STRAFE_SCALE : 0.6D;
             anchor = target.position().subtract(forward.scale(backOffset)).add(right.scale(strafe * strafeScale));
         }
-        return new Vec3(anchor.x, attackTargetY + height, anchor.z);
+        Vec3 elevated = attackTarget.add(this.toWorld(new Vec3(0.0D, height, 0.0D)));
+        return new Vec3(anchor.x, elevated.y, anchor.z);
     }
 
     private Vec3 getFlightDescentPosition(LivingEntity target) {
-        Vec3 toTarget = target.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
-        if (toTarget.lengthSqr() < 1.0E-4D) {
-            toTarget = this.getViewVector(1.0F).multiply(1.0D, 0.0D, 1.0D);
+        Vec3 forward = this.getPlaneForward(target.position().subtract(this.position()));
+        if (forward.lengthSqr() < 1.0E-4D) {
+            forward = this.getPlaneForward(this.getViewVector(1.0F));
         }
-        if (toTarget.lengthSqr() < 1.0E-4D) {
-            toTarget = new Vec3(0.0D, 0.0D, 1.0D);
+        if (forward.lengthSqr() < 1.0E-4D) {
+            forward = this.toWorld(new Vec3(0.0D, 0.0D, 1.0D));
         }
-        Vec3 forward = toTarget.normalize();
-        Vec3 right = new Vec3(-forward.z, 0.0D, forward.x);
+        Vec3 right = this.getLocalRight(forward);
         double side = this.tickCount % 20 < 10 ? 1.0D : -1.0D;
         boolean lowProfileTarget = this.isLowProfileFlightTarget(target);
         double sideOffset = lowProfileTarget ? 1.15D : 0.9D;
@@ -1231,33 +1289,29 @@ public class NightmareEntity extends Monster implements GeoEntity {
         Vec3 anchor = target.position()
                 .subtract(forward.scale(backOffset))
                 .add(right.scale(side * sideOffset));
-        return new Vec3(anchor.x, this.getFlyingAttackTargetY(target), anchor.z);
+        return new Vec3(anchor.x, this.getFlyingAttackTargetPos(target).y, anchor.z);
     }
 
     private boolean isLowProfileFlightTarget(LivingEntity target) {
         return target.getBbHeight() <= LOW_PROFILE_TARGET_MAX_HEIGHT;
     }
 
-    private double getFlyingAttackTargetY(LivingEntity target) {
-        double targetHeight = Mth.clamp(target.getBbHeight() * 0.4D, FLYING_ATTACK_MIN_TARGET_HEIGHT, FLYING_ATTACK_BODY_TARGET_HEIGHT);
-        return target.getY() + targetHeight;
-    }
-
     private double horizontalDistanceToSqr(LivingEntity target) {
-        double dx = target.getX() - this.getX();
-        double dz = target.getZ() - this.getZ();
+        Vec3 delta = this.localDeltaTo(target.position());
+        double dx = delta.x;
+        double dz = delta.z;
         return dx * dx + dz * dz;
     }
 
     private boolean isInFront(Vec3 position, double minimumDot) {
-        Vec3 forward = this.getViewVector(1.0F).multiply(1.0D, 0.0D, 1.0D);
-        Vec3 toTarget = position.subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+        Vec3 forward = this.toLocalPlane(this.getViewVector(1.0F));
+        Vec3 toTarget = this.toLocalPlane(position.subtract(this.position()));
         if (forward.lengthSqr() < 1.0E-4D || toTarget.lengthSqr() < 1.0E-4D) return true;
         return forward.normalize().dot(toTarget.normalize()) >= minimumDot;
     }
 
     private void faceTowardTarget(LivingEntity target, float maxTurnDegrees) {
-        Vec3 toTarget = target.getEyePosition().subtract(this.getEyePosition());
+        Vec3 toTarget = this.toLocal(target.getEyePosition().subtract(this.getEyePosition()));
         double horizontal = Math.sqrt(toTarget.x * toTarget.x + toTarget.z * toTarget.z);
         if (horizontal > 1.0E-4D) {
             float targetYaw = (float) (Mth.atan2(toTarget.z, toTarget.x) * (180.0D / Math.PI)) - 90.0F;
@@ -1273,35 +1327,41 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private boolean isTooCloseToCeiling() {
-        BlockPos current = BlockPos.containing(this.getX(), this.getY(), this.getZ());
+        Direction gravityUp = AntarchyGravityRotationUtil.getGravityDownDirection(this).getOpposite();
+        BlockPos current = this.blockPosition();
         for (int i = 1; i <= FLIGHT_CEILING_CLEARANCE_BLOCKS; i++) {
-            if (!this.level().isEmptyBlock(current.above(i))) return true;
+            if (!this.level().isEmptyBlock(current.relative(gravityUp, i))) return true;
         }
         return false;
     }
 
     private Vec3 getPortalEntryPosition() {
-        return this.position().add(this.getViewVector(1.0F).multiply(1.6D, 0.0D, 1.6D));
+        Vec3 forward = this.getPlaneForward(this.getViewVector(1.0F));
+        if (forward.lengthSqr() < 1.0E-4D) {
+            forward = this.toWorld(new Vec3(0.0D, 0.0D, 1.0D));
+        }
+        return this.position().add(forward.scale(1.6D));
     }
 
     @Nullable
     private Vec3 findPortalExitPos(LivingEntity target, Vec3 entryPos) {
-        Vec3 forward = target.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
+        Vec3 forward = this.getPlaneForward(target.getLookAngle());
         if (forward.lengthSqr() < 1.0E-4D) {
-            forward = this.getViewVector(1.0F).multiply(1.0D, 0.0D, 1.0D);
+            forward = this.getPlaneForward(this.getViewVector(1.0F));
         }
         if (forward.lengthSqr() < 1.0E-4D) {
-            forward = new Vec3(0.0D, 0.0D, 1.0D);
+            forward = this.toWorld(new Vec3(0.0D, 0.0D, 1.0D));
         }
         forward = forward.normalize();
-        Vec3 right = new Vec3(-forward.z, 0.0D, forward.x);
+        Vec3 right = this.getLocalRight(forward);
+        Vec3 airOffset = this.toWorld(new Vec3(0.0D, PORTAL_EXIT_AIR_HEIGHT, 0.0D));
         Vec3[] candidates = new Vec3[] {
                 target.position().subtract(forward.scale(PORTAL_EXIT_OFFSET)),
-                target.position().subtract(forward.scale(PORTAL_EXIT_OFFSET)).add(0.0D, PORTAL_EXIT_AIR_HEIGHT, 0.0D),
+                target.position().subtract(forward.scale(PORTAL_EXIT_OFFSET)).add(airOffset),
                 target.position().subtract(forward.scale(PORTAL_EXIT_OFFSET)).add(right.scale(PORTAL_EXIT_SIDE_OFFSET)),
                 target.position().subtract(forward.scale(PORTAL_EXIT_OFFSET)).subtract(right.scale(PORTAL_EXIT_SIDE_OFFSET)),
-                target.position().subtract(forward.scale(PORTAL_EXIT_OFFSET)).add(right.scale(PORTAL_EXIT_SIDE_OFFSET)).add(0.0D, PORTAL_EXIT_AIR_HEIGHT, 0.0D),
-                target.position().subtract(forward.scale(PORTAL_EXIT_OFFSET)).subtract(right.scale(PORTAL_EXIT_SIDE_OFFSET)).add(0.0D, PORTAL_EXIT_AIR_HEIGHT, 0.0D)
+                target.position().subtract(forward.scale(PORTAL_EXIT_OFFSET)).add(right.scale(PORTAL_EXIT_SIDE_OFFSET)).add(airOffset),
+                target.position().subtract(forward.scale(PORTAL_EXIT_OFFSET)).subtract(right.scale(PORTAL_EXIT_SIDE_OFFSET)).add(airOffset)
         };
         for (Vec3 candidate : candidates) {
             Vec3 adjusted = this.findValidPortalPosition(candidate);
@@ -1318,7 +1378,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
     private Vec3 findValidPortalPosition(Vec3 base) {
         EntityDimensions dimensions = this.getType().getDimensions();
         for (int yOffset = 4; yOffset >= -3; yOffset--) {
-            Vec3 candidate = new Vec3(base.x, base.y + yOffset, base.z);
+            Vec3 candidate = base.add(this.toWorld(new Vec3(0.0D, yOffset, 0.0D)));
             AABB box = dimensions.makeBoundingBox(candidate);
             if (this.level().noCollision(this, box)) {
                 return candidate;
@@ -1351,7 +1411,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private void updateFlightRotation() {
-        Vec3 velocity = this.getDeltaMovement();
+        Vec3 velocity = this.toLocal(this.getDeltaMovement());
         if (velocity.horizontalDistanceSqr() > 1.0E-4D) {
             float targetYaw = (float) (Mth.atan2(velocity.z, velocity.x) * (180.0D / Math.PI)) - 90.0F;
             float nextYaw = Mth.approachDegrees(this.getYRot(), targetYaw, 4.0F);
@@ -1392,7 +1452,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
             this.tickWingFlapSound();
             return;
         }
-        Vec3 horizontalVelocity = this.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D);
+        Vec3 horizontalVelocity = this.toLocalPlane(this.getDeltaMovement());
         if (horizontalVelocity.lengthSqr() > ANIMATION_MOVEMENT_THRESHOLD_SQR) {
             this.groundMoveTicks = 6;
         }
@@ -1617,11 +1677,11 @@ public class NightmareEntity extends Monster implements GeoEntity {
                 return;
             }
             if (NightmareEntity.this.onGround() && NightmareEntity.this.distanceToSqr(target) >= FLIGHT_DISENGAGE_RANGE_SQR) {
-                NightmareEntity.this.setDeltaMovement(NightmareEntity.this.getDeltaMovement().add(0.0D, 0.38D, 0.0D));
+                NightmareEntity.this.setDeltaMovement(NightmareEntity.this.getDeltaMovement().add(NightmareEntity.this.toWorld(new Vec3(0.0D, 0.38D, 0.0D))));
                 NightmareEntity.this.hasImpulse = true;
             }
             double horizontalDistanceSqr = NightmareEntity.this.horizontalDistanceToSqr(target);
-            double overheadGap = NightmareEntity.this.getY() - target.getY();
+            double overheadGap = NightmareEntity.this.overheadGapTo(target);
             if (horizontalDistanceSqr <= ATTACK_COMMIT_HORIZONTAL_RANGE_SQR
                     && overheadGap > FLYING_ATTACK_MAX_OVERHEAD_COMMIT_HEIGHT) {
                 Vec3 descentPos = NightmareEntity.this.getFlightDescentPosition(target);
@@ -1681,7 +1741,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
             LivingEntity target = NightmareEntity.this.getTarget();
             if (target != null) {
                 double hdSqr = NightmareEntity.this.horizontalDistanceToSqr(target);
-                double vertDelta = NightmareEntity.this.getY() - target.getY();
+                double vertDelta = NightmareEntity.this.overheadGapTo(target);
                 if (target.onGround() && hdSqr <= 25.0D && vertDelta > 1.6D) {
                     NightmareEntity.this.tryBreakBlocksToTarget(target);
                 }
@@ -1716,9 +1776,11 @@ public class NightmareEntity extends Monster implements GeoEntity {
             if (NightmareEntity.this.random.nextInt(40) != 0) return false;
             double angle = NightmareEntity.this.random.nextDouble() * Math.PI * 2;
             double dist = 4 + NightmareEntity.this.random.nextDouble() * 10;
-            this.x = NightmareEntity.this.getX() + Math.cos(angle) * dist;
-            this.z = NightmareEntity.this.getZ() + Math.sin(angle) * dist;
-            this.y = NightmareEntity.this.getY();
+            Vec3 localOffset = new Vec3(Math.cos(angle) * dist, 0.0D, Math.sin(angle) * dist);
+            Vec3 worldOffset = NightmareEntity.this.toWorld(localOffset);
+            this.x = NightmareEntity.this.getX() + worldOffset.x;
+            this.y = NightmareEntity.this.getY() + worldOffset.y;
+            this.z = NightmareEntity.this.getZ() + worldOffset.z;
             return true;
         }
 
