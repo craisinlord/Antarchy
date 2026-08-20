@@ -367,6 +367,8 @@ public final class AntarchyFabricBlocks {
 
     public static final DeferredBlock<Block> NYXITE_BRICKS = BLOCKS.register("nyxite_bricks",
             () -> new Block(nyxiteProperties()));
+    public static final DeferredBlock<Block> MOSSY_NYXITE_BRICKS = BLOCKS.register("mossy_nyxite_bricks",
+            () -> new Block(nyxiteProperties()));
 
 
     public static final DeferredBlock<net.minecraft.world.level.block.StairBlock> NYXITE_STAIRS = BLOCKS.register("nyxite_stairs",
@@ -407,6 +409,12 @@ public final class AntarchyFabricBlocks {
 
 
     public static final DeferredBlock<net.minecraft.world.level.block.WallBlock> NYXITE_BRICK_WALL = BLOCKS.register("nyxite_brick_wall",
+            () -> new net.minecraft.world.level.block.WallBlock(nyxiteProperties()));
+    public static final DeferredBlock<net.minecraft.world.level.block.StairBlock> MOSSY_NYXITE_BRICK_STAIRS = BLOCKS.register("mossy_nyxite_brick_stairs",
+            () -> new net.minecraft.world.level.block.StairBlock(MOSSY_NYXITE_BRICKS.get().defaultBlockState(), nyxiteProperties()));
+    public static final DeferredBlock<net.minecraft.world.level.block.SlabBlock> MOSSY_NYXITE_BRICK_SLAB = BLOCKS.register("mossy_nyxite_brick_slab",
+            () -> new net.minecraft.world.level.block.SlabBlock(nyxiteProperties()));
+    public static final DeferredBlock<net.minecraft.world.level.block.WallBlock> MOSSY_NYXITE_BRICK_WALL = BLOCKS.register("mossy_nyxite_brick_wall",
             () -> new net.minecraft.world.level.block.WallBlock(nyxiteProperties()));
 
 
@@ -534,6 +542,40 @@ public final class AntarchyFabricBlocks {
 
     public static final DeferredBlock<Block> MYRMITE = BLOCKS.register("myrmite",
             () -> new Block(nyxiteProperties()));
+    public static final DeferredBlock<StairBlock> MYRMITE_STAIRS = BLOCKS.register("myrmite_stairs",
+            () -> new StairBlock(MYRMITE.get().defaultBlockState(), nyxiteProperties()));
+    public static final DeferredBlock<SlabBlock> MYRMITE_SLAB = BLOCKS.register("myrmite_slab",
+            () -> new SlabBlock(nyxiteProperties()));
+    public static final DeferredBlock<WallBlock> MYRMITE_WALL = BLOCKS.register("myrmite_wall",
+            () -> new WallBlock(nyxiteProperties()));
+    public static final DeferredBlock<Block> POLISHED_MYRMITE = BLOCKS.register("polished_myrmite",
+            () -> new Block(nyxiteProperties()));
+    public static final DeferredBlock<StairBlock> POLISHED_MYRMITE_STAIRS = BLOCKS.register("polished_myrmite_stairs",
+            () -> new StairBlock(POLISHED_MYRMITE.get().defaultBlockState(), nyxiteProperties()));
+    public static final DeferredBlock<SlabBlock> POLISHED_MYRMITE_SLAB = BLOCKS.register("polished_myrmite_slab",
+            () -> new SlabBlock(nyxiteProperties()));
+    public static final DeferredBlock<WallBlock> POLISHED_MYRMITE_WALL = BLOCKS.register("polished_myrmite_wall",
+            () -> new WallBlock(nyxiteProperties()));
+    public static final DeferredBlock<Block> CHISELED_MYRMITE = BLOCKS.register("chiseled_myrmite",
+            () -> new Block(nyxiteProperties()));
+    public static final DeferredBlock<Block> MYRMITE_BRICKS = BLOCKS.register("myrmite_bricks",
+            () -> new Block(nyxiteProperties()));
+    public static final DeferredBlock<StairBlock> MYRMITE_BRICK_STAIRS = BLOCKS.register("myrmite_brick_stairs",
+            () -> new StairBlock(MYRMITE_BRICKS.get().defaultBlockState(), nyxiteProperties()));
+    public static final DeferredBlock<SlabBlock> MYRMITE_BRICK_SLAB = BLOCKS.register("myrmite_brick_slab",
+            () -> new SlabBlock(nyxiteProperties()));
+    public static final DeferredBlock<WallBlock> MYRMITE_BRICK_WALL = BLOCKS.register("myrmite_brick_wall",
+            () -> new WallBlock(nyxiteProperties()));
+    public static final DeferredBlock<Block> MOSSY_MYRMITE_BRICKS = BLOCKS.register("mossy_myrmite_bricks",
+            () -> new Block(nyxiteProperties()));
+    public static final DeferredBlock<StairBlock> MOSSY_MYRMITE_BRICK_STAIRS = BLOCKS.register("mossy_myrmite_brick_stairs",
+            () -> new StairBlock(MOSSY_MYRMITE_BRICKS.get().defaultBlockState(), nyxiteProperties()));
+    public static final DeferredBlock<SlabBlock> MOSSY_MYRMITE_BRICK_SLAB = BLOCKS.register("mossy_myrmite_brick_slab",
+            () -> new SlabBlock(nyxiteProperties()));
+    public static final DeferredBlock<WallBlock> MOSSY_MYRMITE_BRICK_WALL = BLOCKS.register("mossy_myrmite_brick_wall",
+            () -> new WallBlock(nyxiteProperties()));
+    public static final DeferredBlock<RotatedPillarBlock> MYRMITE_PILLAR = BLOCKS.register("myrmite_pillar",
+            () -> new RotatedPillarBlock(nyxiteProperties()));
 
 
     public static final DeferredBlock<Block> BIOMITE = BLOCKS.register("biomite",
@@ -570,6 +612,8 @@ public final class AntarchyFabricBlocks {
 
     public static final DeferredBlock<Block> BROODSTONE_BRICKS = BLOCKS.register("broodstone_bricks",
             () -> new Block(broodstoneProperties()));
+    public static final DeferredBlock<Block> MOSSY_BROODSTONE_BRICKS = BLOCKS.register("mossy_broodstone_bricks",
+            () -> new Block(broodstoneProperties()));
 
 
     public static final DeferredBlock<StairBlock> BROODSTONE_STAIRS = BLOCKS.register("broodstone_stairs",
@@ -605,6 +649,12 @@ public final class AntarchyFabricBlocks {
 
 
     public static final DeferredBlock<WallBlock> BROODSTONE_BRICK_WALL = BLOCKS.register("broodstone_brick_wall",
+            () -> new WallBlock(broodstoneProperties()));
+    public static final DeferredBlock<StairBlock> MOSSY_BROODSTONE_BRICK_STAIRS = BLOCKS.register("mossy_broodstone_brick_stairs",
+            () -> new StairBlock(MOSSY_BROODSTONE_BRICKS.get().defaultBlockState(), broodstoneProperties()));
+    public static final DeferredBlock<SlabBlock> MOSSY_BROODSTONE_BRICK_SLAB = BLOCKS.register("mossy_broodstone_brick_slab",
+            () -> new SlabBlock(broodstoneProperties()));
+    public static final DeferredBlock<WallBlock> MOSSY_BROODSTONE_BRICK_WALL = BLOCKS.register("mossy_broodstone_brick_wall",
             () -> new WallBlock(broodstoneProperties()));
 
 
@@ -828,6 +878,10 @@ public final class AntarchyFabricBlocks {
             () -> new com.craisinlord.antarchy.content.block.BluestoneLampBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.REDSTONE_LAMP).mapColor(MapColor.COLOR_BLUE)));
 
 
+    public static final DeferredBlock<Block> TIGERS_EYE_BLOCK = BLOCKS.register("tigers_eye_block",
+            () -> createStorageBlock(Blocks.EMERALD_BLOCK, MapColor.COLOR_ORANGE));
+
+
     public static final DeferredBlock<Block> URANIUM_BLOCK = BLOCKS.register("uranium_block",
             () -> createStorageBlock(Blocks.EMERALD_BLOCK, MapColor.COLOR_YELLOW));
 
@@ -1017,6 +1071,18 @@ public final class AntarchyFabricBlocks {
 
     public static final DeferredBlock<Block> LOAM = BLOCKS.register("loam",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.MUD)));
+    public static final DeferredBlock<Block> PACKED_LOAM = BLOCKS.register("packed_loam",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.PACKED_MUD)));
+    public static final DeferredBlock<Block> LOAM_BRICKS = BLOCKS.register("loam_bricks",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.MUD_BRICKS)));
+    public static final DeferredBlock<StairBlock> LOAM_BRICK_STAIRS = BLOCKS.register("loam_brick_stairs",
+            () -> new StairBlock(LOAM_BRICKS.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.MUD_BRICK_STAIRS)));
+    public static final DeferredBlock<SlabBlock> LOAM_BRICK_SLAB = BLOCKS.register("loam_brick_slab",
+            () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MUD_BRICK_SLAB)));
+    public static final DeferredBlock<WallBlock> LOAM_BRICK_WALL = BLOCKS.register("loam_brick_wall",
+            () -> new WallBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MUD_BRICK_WALL)));
+    public static final DeferredBlock<Block> CHISELED_LOAM_BRICKS = BLOCKS.register("chiseled_loam_bricks",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.MUD_BRICKS)));
 
 
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.MucusBlock> MUCUS = BLOCKS.register("mucus",

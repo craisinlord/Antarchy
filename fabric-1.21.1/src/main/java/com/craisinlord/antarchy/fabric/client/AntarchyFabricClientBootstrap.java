@@ -99,6 +99,7 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.BROWN_ANT.get(), AntRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.RAINBOW_ANT.get(), AntRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.MOLEWORM.get(), MolewormRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.WORM.get(), WormRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.MANTIS.get(), MantisRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.ALPHA_MANTIS.get(), AlphaMantisRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.MOLEVORE.get(), MolevoreRenderer::new);
@@ -124,6 +125,8 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.NIGHTMARE.get(), NightmareRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.NIGHTMARE_PORTAL.get(), NightmarePortalRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.DIMENSIONAL_TEAR.get(), DimensionalTearRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.PORTAL_GUN_PORTAL.get(), PortalGunPortalRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.PORTAL_GUN_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.PortalGunBlackHoleRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.NIGHTMARE_BITE.get(), NightmareBiteRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.LUCID.get(), LucidRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.BED_BUG.get(), BedBugRenderer::new);
@@ -135,6 +138,7 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.LUCID_BOLT.get(), LucidBoltRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.LUCID_PEARL_PROJECTILE.get(), ThrownItemRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.CRITTER_CAGE_PROJECTILE.get(), ThrownItemRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.WORM_HOOK_PROJECTILE.get(), ThrownItemRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.HUSH_PROJECTILE.get(), HushProjectileRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.BRUTALFLY_ORB.get(), BrutalflyOrbRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.UPWARD_FALLING_BLOCK.get(), UpwardFallingBlockRenderer::new);
@@ -494,6 +498,7 @@ public final class AntarchyFabricClientBootstrap {
             TigerEyeCamouflageClientHandler.tick();
             BloodCrystalKatanaTrailHandler.tick();
             ScorpionWhipTetherRenderHandler.tick();
+            WormHookTetherRenderHandler.tick();
             DorrieJumpClientHandler.tick();
             HerculesBeetleClientHandler.tick();
             SizeRaySoundHandler.tick(client);
@@ -501,6 +506,7 @@ public final class AntarchyFabricClientBootstrap {
 
         BigBerthaClientHandler.register();
         GravityGunClientHandler.register();
+        PortalGunClientHandler.register();
 
         ElythiaFireflyManager.register();
         LucidSoundHandler.register();
@@ -523,6 +529,7 @@ public final class AntarchyFabricClientBootstrap {
         WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> {
             BloodCrystalKatanaTrailHandler.render(context);
             ScorpionWhipTetherRenderHandler.render(context);
+            WormHookTetherRenderHandler.render(context);
         });
     }
 

@@ -240,6 +240,8 @@ public final class AntarchyNeoforgeMisc {
             () -> new PeachTreeFeature(PeachTreeConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, PeachTreeFeature> PEACH_LARGE_TREE_FEATURE = FEATURES.register("peach_large_tree",
             () -> new PeachTreeFeature(PeachTreeConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, NadirTreeFeature> NADIR_TREE_FEATURE = FEATURES.register("nadir_tree",
+            () -> new NadirTreeFeature(NadirTreeConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, ElythiaFloraFeature> ELYTHIA_FOREST_FLORA = FEATURES.register("elythia_forest_flora",
             () -> new ElythiaFloraFeature(NoneFeatureConfiguration.CODEC, ElythiaFloraFeature.Variant.FOREST));
     public static final DeferredHolder<Feature<?>, ElythiaFloraFeature> ELYTHIA_MEADOW_FLORA = FEATURES.register("elythia_meadow_flora",

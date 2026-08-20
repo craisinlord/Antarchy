@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.content.client.BloodglassClientState;
 import com.craisinlord.antarchy.content.client.BrutalflyElytraClientState;
 import com.craisinlord.antarchy.content.client.HordeClientState;
 import com.craisinlord.antarchy.content.client.ScorpionWhipTetherClientState;
+import com.craisinlord.antarchy.content.client.WormHookTetherClientState;
 import com.craisinlord.antarchy.content.client.TigerEyeCamouflageClientState;
 import com.craisinlord.antarchy.content.client.ThoraxisWeatherClientState;
 import com.craisinlord.antarchy.content.entity.multipart.MultipartFramework;
@@ -47,6 +48,8 @@ public final class AntarchyFabricClientNetworking {
                 context.client().execute(() -> BloodCrystalKatanaTrailClientState.trigger(payload.entityId(), payload.durationTicks())));
         ClientPlayNetworking.registerGlobalReceiver(ScorpionWhipTetherPayload.TYPE, (payload, context) ->
                 context.client().execute(() -> ScorpionWhipTetherClientState.update(payload.playerId(), payload.targetId())));
+        ClientPlayNetworking.registerGlobalReceiver(WormHookTetherPayload.TYPE, (payload, context) ->
+                context.client().execute(() -> WormHookTetherClientState.update(payload.playerId(), payload.hookId())));
         ClientPlayNetworking.registerGlobalReceiver(BrutalflyElytraAnimationPayload.TYPE, (payload, context) ->
                 context.client().execute(() -> BrutalflyElytraClientState.trigger(payload.entityId(), payload.durationTicks(), payload.strength())));
         ClientPlayNetworking.registerGlobalReceiver(ThoraxisWeatherPayload.TYPE, (payload, context) ->

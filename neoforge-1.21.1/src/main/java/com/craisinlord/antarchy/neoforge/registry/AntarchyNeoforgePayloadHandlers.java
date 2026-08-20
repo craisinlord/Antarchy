@@ -84,6 +84,13 @@ public class AntarchyNeoforgePayloadHandlers {
                 )
         );
         registrar.playToClient(
+                com.craisinlord.antarchy.content.network.WormHookTetherPayload.TYPE,
+                com.craisinlord.antarchy.content.network.WormHookTetherPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() ->
+                        com.craisinlord.antarchy.content.client.WormHookTetherClientState.update(payload.playerId(), payload.hookId())
+                )
+        );
+        registrar.playToClient(
                 com.craisinlord.antarchy.content.network.HordeIntensityPayload.TYPE,
                 com.craisinlord.antarchy.content.network.HordeIntensityPayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() ->

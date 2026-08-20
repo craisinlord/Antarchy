@@ -63,6 +63,8 @@ import com.craisinlord.antarchy.content.worldgen.thoraxis.BedBugSurfaceClusterFe
 import com.craisinlord.antarchy.content.worldgen.thoraxis.DimensionalTearFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaCloudFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.LucidAntiwaterPoolFeature;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.NadirTreeConfiguration;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.NadirTreeFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBiomeSource;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisDuneConfiguration;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisDuneFeature;
@@ -570,6 +572,10 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<Feature<?>, PeachTreeFeature> PEACH_LARGE_TREE_FEATURE = FEATURES.register("peach_large_tree",
             () -> new PeachTreeFeature(PeachTreeConfiguration.CODEC));
+
+
+    public static final DeferredHolder<Feature<?>, NadirTreeFeature> NADIR_TREE_FEATURE = FEATURES.register("nadir_tree",
+            () -> new NadirTreeFeature(NadirTreeConfiguration.CODEC));
 
 
     public static final DeferredHolder<Feature<?>, ElythiaFloraFeature> ELYTHIA_FOREST_FLORA = FEATURES.register("elythia_forest_flora",

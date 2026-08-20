@@ -358,6 +358,11 @@ public final class AntarchyObjects {
     public static Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity>> CRITTER_CAGE_PROJECTILE =
             (Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.WormHookProjectileEntity>> WORM_HOOK_PROJECTILE =
+            (Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.WormHookProjectileEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Item> WORM_HOOK = (Supplier<Item>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.ResourceLocation>> CRITTER_CAGE_ENTITY_TYPE_COMPONENT =
             (Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.ResourceLocation>>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -768,6 +773,14 @@ public final class AntarchyObjects {
 
     public static void setCritterCageProjectile(Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity>> supplier) {
         CRITTER_CAGE_PROJECTILE = supplier;
+    }
+
+    public static void setWormHookProjectile(Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.WormHookProjectileEntity>> supplier) {
+        WORM_HOOK_PROJECTILE = supplier;
+    }
+
+    public static void setWormHook(Supplier<Item> supplier) {
+        WORM_HOOK = supplier;
     }
 
     public static void setCritterCageEntityTypeComponent(Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.ResourceLocation>> supplier) {

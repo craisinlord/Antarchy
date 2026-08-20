@@ -1,0 +1,48 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"idle": {
+			"loop": true,
+			"animation_length": 4.0,
+			"bones": {
+				"Portal_Layer": {
+					"rotation": {
+						"0.0": {"vector": [0, 0, 0]},
+						"4.0": {"vector": [0, 0, 360]}
+					}
+				},
+				"Portal_Layer2": {
+					"rotation": {
+						"0.0": {"vector": [0, 0, 0]},
+						"4.0": {"vector": [0, 0, -360]}
+					}
+				}
+			}
+		},
+		"open": {
+			"loop": false,
+			"animation_length": 0.5,
+			"bones": {
+				"Root": {
+					"scale": {
+						"0.0": {"vector": [0, 0, 0]},
+						"0.35": {"vector": [1.15, 1.15, 1.15]},
+						"0.5": {"vector": [1, 1, 1]}
+					}
+				}
+			}
+		},
+		"close": {
+			"loop": false,
+			"animation_length": 0.4,
+			"bones": {
+				"Root": {
+					"scale": {
+						"0.0": {"vector": [1, 1, 1]},
+						"0.4": {"vector": [0, 0, 0]}
+					}
+				}
+			}
+		}
+	}
+}

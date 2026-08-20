@@ -202,6 +202,12 @@ public class AntarchyNeoforge {
                 player,
                 new com.craisinlord.antarchy.content.network.ScorpionWhipTetherPayload(player.getId(), targetId)
         ));
+        com.craisinlord.antarchy.content.item.WormHookTetherSync.setSink((player, hookId) -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(
+                player,
+                new com.craisinlord.antarchy.content.network.WormHookTetherPayload(player.getId(), hookId)
+        ));
+        AntarchyObjects.setWormHookProjectile(() -> AntarchyNeoforgeEntites.WORM_HOOK_PROJECTILE.get());
+        AntarchyObjects.setWormHook(() -> AntarchyNeoforgeItems.WORM_HOOK.get());
         BloodCrystalKatanaItem.setTrailCallback((player, durationTicks) -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(
                 player,
                 new BloodCrystalKatanaTrailPayload(player.getId(), durationTicks)

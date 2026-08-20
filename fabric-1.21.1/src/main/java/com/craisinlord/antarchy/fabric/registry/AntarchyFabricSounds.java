@@ -316,6 +316,24 @@ public final class AntarchyFabricSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> GRAVITY_GUN_DRYFIRE = registerSoundEvent("gravity_gun_dryfire");
 
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> PORTAL_GUN_FIRE_BLUE = registerSoundEvent("portal_gun_fire_blue");
+
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> PORTAL_GUN_FIRE_ORANGE = registerSoundEvent("portal_gun_fire_orange");
+
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> PORTAL_GUN_INVALID_SURFACE = registerSoundEvent("portal_gun_invalid_surface");
+
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> PORTAL_OPEN_BLUE = registerSoundEvent("portal_open_blue");
+
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> PORTAL_OPEN_ORANGE = registerSoundEvent("portal_open_orange");
+
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> PORTAL_FIZZLE = registerSoundEvent("portal_fizzle");
+
+
     public static final DeferredHolder<SoundEvent, SoundEvent> BED_BUG_AMBIENT = registerSoundEvent("bed_bug_ambient");
 
 

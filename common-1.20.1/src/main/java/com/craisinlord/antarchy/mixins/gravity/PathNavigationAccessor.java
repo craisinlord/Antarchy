@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.mixins.gravity;
 
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.level.pathfinder.NodeEvaluator;
 import net.minecraft.world.level.pathfinder.Path;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
@@ -16,4 +17,7 @@ public interface PathNavigationAccessor {
 
     @Accessor("path")
     Path antarchy$getPath();
+
+    @Accessor("nodeEvaluator")
+    void antarchy$setNodeEvaluator(NodeEvaluator nodeEvaluator);
 }

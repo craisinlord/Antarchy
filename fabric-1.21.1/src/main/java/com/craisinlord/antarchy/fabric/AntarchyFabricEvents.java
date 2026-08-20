@@ -21,6 +21,7 @@ import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.CaterpillarCommand;
 import com.craisinlord.antarchy.content.command.GravityCommand;
 import com.craisinlord.antarchy.content.item.MinersDreamExcavationManager;
+import com.craisinlord.antarchy.content.item.WormHookTetherManager;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -138,6 +139,12 @@ public final class AntarchyFabricEvents {
             }
             return InteractionResult.PASS;
         });
+        net.fabricmc.fabric.api.event.player.AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> {
+            if (player.getMainHandItem().getItem() instanceof com.craisinlord.antarchy.content.item.PortalGunItem) {
+                return InteractionResult.FAIL;
+            }
+            return InteractionResult.PASS;
+        });
         PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
             if (!world.isClientSide && player instanceof ServerPlayer serverPlayer) {
                 CavarynHordeManager.recordBlockBreak(serverPlayer, state, pos);
@@ -156,6 +163,9 @@ public final class AntarchyFabricEvents {
                 tickBloodglassRecharge(level);
                 AttitudeAdjusterSlamManager.tick(level);
                 MinersDreamExcavationManager.tick(level);
+                for (ServerPlayer player : level.players()) {
+                    WormHookTetherManager.tick(player);
+                }
             }
             invertedPlayers.retainAll(activeThisTick);
         });

@@ -1477,6 +1477,81 @@
       }
     ]
   },
+  "portal_gun_fire_blue": {
+    "subtitle": "subtitles.antarchy.portal_gun_fire_blue",
+    "sounds": [
+      {
+        "name": "antarchy:portalgun/wpn_portal_gun_fire_blue_01"
+      },
+      {
+        "name": "antarchy:portalgun/wpn_portal_gun_fire_blue_02"
+      },
+      {
+        "name": "antarchy:portalgun/wpn_portal_gun_fire_blue_03"
+      }
+    ]
+  },
+  "portal_gun_fire_orange": {
+    "subtitle": "subtitles.antarchy.portal_gun_fire_orange",
+    "sounds": [
+      {
+        "name": "antarchy:portalgun/wpn_portal_gun_fire_red_01"
+      },
+      {
+        "name": "antarchy:portalgun/wpn_portal_gun_fire_red_02"
+      },
+      {
+        "name": "antarchy:portalgun/wpn_portal_gun_fire_red_03"
+      }
+    ]
+  },
+  "portal_gun_invalid_surface": {
+    "subtitle": "subtitles.antarchy.portal_gun_invalid_surface",
+    "sounds": [
+      {
+        "name": "antarchy:portalgun/portal_invalid_surface_swt_01"
+      },
+      {
+        "name": "antarchy:portal/portal_invalid_surface_01"
+      },
+      {
+        "name": "antarchy:portal/portal_invalid_surface_02"
+      },
+      {
+        "name": "antarchy:portal/portal_invalid_surface_03"
+      },
+      {
+        "name": "antarchy:portal/portal_invalid_surface_04"
+      }
+    ]
+  },
+  "portal_open_blue": {
+    "subtitle": "subtitles.antarchy.portal_open_blue",
+    "sounds": [
+      {
+        "name": "antarchy:portal/portal_open_blue_01"
+      }
+    ]
+  },
+  "portal_open_orange": {
+    "subtitle": "subtitles.antarchy.portal_open_orange",
+    "sounds": [
+      {
+        "name": "antarchy:portal/portal_open_red_01"
+      }
+    ]
+  },
+  "portal_fizzle": {
+    "subtitle": "subtitles.antarchy.portal_fizzle",
+    "sounds": [
+      {
+        "name": "antarchy:portal/portal_fizzle_01"
+      },
+      {
+        "name": "antarchy:portal/portal_fizzle_02"
+      }
+    ]
+  },
   "bed_bug_ambient": {
     "subtitle": "subtitles.antarchy.bed_bug_ambient",
     "sounds": [

@@ -15,6 +15,13 @@
     "antarchy:cut_titanium_slab",
     "antarchy:broodstone_slab",
     "antarchy:polished_broodstone_slab",
-    "antarchy:broodstone_brick_slab"
+    "antarchy:broodstone_brick_slab",
+    "antarchy:myrmite_slab",
+    "antarchy:polished_myrmite_slab",
+    "antarchy:myrmite_brick_slab",
+    "antarchy:mossy_myrmite_brick_slab",
+    "antarchy:mossy_broodstone_brick_slab",
+    "antarchy:mossy_nyxite_brick_slab",
+    "antarchy:loam_brick_slab"
   ]
 }

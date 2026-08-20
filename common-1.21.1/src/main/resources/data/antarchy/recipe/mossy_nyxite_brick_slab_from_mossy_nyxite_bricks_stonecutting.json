@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:mossy_nyxite_bricks"
+  },
+  "result": {
+    "id": "antarchy:mossy_nyxite_brick_slab"
+  }
+}
+
