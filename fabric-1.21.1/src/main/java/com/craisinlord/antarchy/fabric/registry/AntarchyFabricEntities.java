@@ -21,6 +21,7 @@ import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.HushProjectileEntity;
 import com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity;
+import com.craisinlord.antarchy.content.entity.WormHookProjectileEntity;
 import com.craisinlord.antarchy.content.entity.JumpyBugEntity;
 import com.craisinlord.antarchy.content.entity.StinkBugEntity;
 import com.craisinlord.antarchy.content.entity.OuranwoodBoatEntity;
@@ -37,6 +38,7 @@ import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmarePortalEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareBiteEntity;
 import com.craisinlord.antarchy.content.entity.portal.DimensionalTearEntity;
+import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
 import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
 import com.craisinlord.antarchy.content.entity.WaterBombEntity;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
@@ -45,6 +47,7 @@ import com.craisinlord.antarchy.content.entity.kraken.TentacleEntity;
 import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
 import com.craisinlord.antarchy.content.entity.MolevoreEntity;
 import com.craisinlord.antarchy.content.entity.MolewormEntity;
+import com.craisinlord.antarchy.content.entity.WormEntity;
 import com.craisinlord.antarchy.content.entity.BomberEntity;
 import com.craisinlord.antarchy.content.entity.SizeRayProjectileEntity;
 import com.craisinlord.antarchy.content.entity.TriffidEntity;
@@ -91,6 +94,11 @@ public final class AntarchyFabricEntities {
                     .sized(0.4F, 0.3F)
                     .clientTrackingRange(8)
                     .build("moleworm"));
+    public static final DeferredHolder<EntityType<?>, EntityType<WormEntity>> WORM = ENTITY_TYPES.register("worm",
+            () -> EntityType.Builder.of(WormEntity::new, MobCategory.MONSTER)
+                    .sized(1.35F, 2.75F)
+                    .clientTrackingRange(10)
+                    .build("worm"));
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<MantisEntity>> MANTIS = ENTITY_TYPES.register("mantis",
@@ -363,6 +371,20 @@ public final class AntarchyFabricEntities {
                     .updateInterval(1)
                     .build("dimensional_tear"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<PortalGunPortalEntity>> PORTAL_GUN_PORTAL = ENTITY_TYPES.register("portal_gun_portal",
+            () -> EntityType.Builder.of(PortalGunPortalEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 2.0F)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .build("portal_gun_portal"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.portalgun.PortalGunBlackHoleEntity>> PORTAL_GUN_BLACK_HOLE = ENTITY_TYPES.register("portal_gun_black_hole",
+            () -> EntityType.Builder.of(com.craisinlord.antarchy.content.portalgun.PortalGunBlackHoleEntity::new, MobCategory.MISC)
+                    .sized(1.2F, 1.2F)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .build("portal_gun_black_hole"));
+
     public static final DeferredHolder<EntityType<?>, EntityType<NightmareBiteEntity>> NIGHTMARE_BITE = ENTITY_TYPES.register("nightmare_bite",
             () -> EntityType.Builder.of(NightmareBiteEntity::new, MobCategory.MISC)
                     .sized(2.5F, 2.0F)
@@ -433,6 +455,12 @@ public final class AntarchyFabricEntities {
                     .clientTrackingRange(8)
                     .updateInterval(1)
                     .build("critter_cage_projectile"));
+    public static final DeferredHolder<EntityType<?>, EntityType<WormHookProjectileEntity>> WORM_HOOK_PROJECTILE = ENTITY_TYPES.register("worm_hook_projectile",
+            () -> EntityType.Builder.<WormHookProjectileEntity>of(WormHookProjectileEntity::new, MobCategory.MISC)
+                    .sized(0.25F, 0.25F)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .build("worm_hook_projectile"));
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<HushProjectileEntity>> HUSH_PROJECTILE = ENTITY_TYPES.register("hush_projectile",

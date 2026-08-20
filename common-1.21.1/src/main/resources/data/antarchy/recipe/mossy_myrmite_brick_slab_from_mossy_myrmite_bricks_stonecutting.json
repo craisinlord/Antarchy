@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:mossy_myrmite_bricks"
+  },
+  "result": {
+    "id": "antarchy:mossy_myrmite_brick_slab"
+  }
+}
+

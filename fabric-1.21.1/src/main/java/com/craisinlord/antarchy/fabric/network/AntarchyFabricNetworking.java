@@ -17,6 +17,7 @@ import com.craisinlord.antarchy.content.item.JumpyBootsHelper;
 import com.craisinlord.antarchy.fabric.util.JumpyBootsFabricHelper;
 import com.craisinlord.antarchy.content.item.JumpyBootsItem;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
+import com.craisinlord.antarchy.content.item.PortalGunItem;
 import com.craisinlord.antarchy.content.item.TigerEyeArmorUtil;
 import com.craisinlord.antarchy.content.network.*;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController;
@@ -76,6 +77,7 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playS2C().register(TigerEyeCamouflageStatePayload.TYPE, TigerEyeCamouflageStatePayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(BloodCrystalKatanaTrailPayload.TYPE, BloodCrystalKatanaTrailPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(ScorpionWhipTetherPayload.TYPE, ScorpionWhipTetherPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(WormHookTetherPayload.TYPE, WormHookTetherPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(BrutalflyElytraAnimationPayload.TYPE, BrutalflyElytraAnimationPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(ThoraxisWeatherPayload.TYPE, ThoraxisWeatherPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(HerculesBeetleImpactShakePayload.TYPE, HerculesBeetleImpactShakePayload.STREAM_CODEC);
@@ -83,6 +85,7 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playS2C().register(HordeIntensityPayload.TYPE, HordeIntensityPayload.STREAM_CODEC);
 
         PayloadTypeRegistry.playC2S().register(GravityGunPrimaryPayload.TYPE, GravityGunPrimaryPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(PortalGunPrimaryPayload.TYPE, PortalGunPrimaryPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(GravityGunScrollPayload.TYPE, GravityGunScrollPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(BigBerthaModeCyclePayload.TYPE, BigBerthaModeCyclePayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(ToggleTigerEyeCamouflagePayload.TYPE, ToggleTigerEyeCamouflagePayload.STREAM_CODEC);
@@ -102,6 +105,8 @@ public final class AntarchyFabricNetworking {
     private static void registerServerReceivers() {
         ServerPlayNetworking.registerGlobalReceiver(GravityGunPrimaryPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleGravityGunPrimary(context.player(), payload)));
+        ServerPlayNetworking.registerGlobalReceiver(PortalGunPrimaryPayload.TYPE, (payload, context) ->
+                context.server().execute(() -> handlePortalGunPrimary(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(GravityGunScrollPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleGravityGunScroll(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(BigBerthaModeCyclePayload.TYPE, (payload, context) ->
@@ -191,6 +196,14 @@ public final class AntarchyFabricNetworking {
         ServerPlayNetworking.send(player, payload);
     }
 
+    public static void syncWormHookTether(ServerPlayer player, int hookId) {
+        WormHookTetherPayload payload = new WormHookTetherPayload(player.getId(), hookId);
+        for (ServerPlayer tracking : PlayerLookup.tracking(player)) {
+            ServerPlayNetworking.send(tracking, payload);
+        }
+        ServerPlayNetworking.send(player, payload);
+    }
+
     public static void syncThoraxisWeather(ServerLevel level, ThoraxisWeatherSnapshot snapshot) {
         ThoraxisWeatherPayload payload = new ThoraxisWeatherPayload(
                 snapshot.dimension(),
@@ -228,6 +241,13 @@ public final class AntarchyFabricNetworking {
             return;
         }
         gravityGunItem.firePrimary(player.serverLevel(), player, player.getMainHandItem());
+    }
+
+    private static void handlePortalGunPrimary(ServerPlayer player, PortalGunPrimaryPayload payload) {
+        if (!(player.getMainHandItem().getItem() instanceof PortalGunItem portalGunItem)) {
+            return;
+        }
+        portalGunItem.firePrimary(player.serverLevel(), player, player.getMainHandItem());
     }
 
     private static void handleGravityGunScroll(ServerPlayer player, GravityGunScrollPayload payload) {

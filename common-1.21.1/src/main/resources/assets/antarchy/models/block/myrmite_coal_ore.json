@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "antarchy:block/myrmite_coal_ore"
+    "all": "antarchy:block/myrmite/myrmite_coal_ore"
   }
 }

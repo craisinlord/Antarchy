@@ -4,11 +4,13 @@ import com.craisinlord.antarchy.content.entity.DiamondMinecartEntity;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.item.BigBerthaItem;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
+import com.craisinlord.antarchy.content.item.PortalGunItem;
 import com.craisinlord.antarchy.content.network.BigBerthaModeCyclePayload;
 import com.craisinlord.antarchy.content.network.GravityGunPrimaryPayload;
 import com.craisinlord.antarchy.content.network.GravityGunScrollPayload;
 import com.craisinlord.antarchy.content.network.GravityStatePayload;
 import com.craisinlord.antarchy.content.network.ImpactShakePayload;
+import com.craisinlord.antarchy.content.network.PortalGunPrimaryPayload;
 import com.craisinlord.antarchy.content.client.CameraShakeClientState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.server.level.ServerPlayer;
@@ -34,6 +36,10 @@ public final class AntarchyGravityNetworking {
                 GravityGunPrimaryPayload.TYPE,
                 GravityGunPrimaryPayload.STREAM_CODEC,
                 AntarchyGravityNetworking::handleGravityGunPrimary
+        ).playToServer(
+                PortalGunPrimaryPayload.TYPE,
+                PortalGunPrimaryPayload.STREAM_CODEC,
+                AntarchyGravityNetworking::handlePortalGunPrimary
         ).playToServer(
                 GravityGunScrollPayload.TYPE,
                 GravityGunScrollPayload.STREAM_CODEC,
@@ -152,6 +158,20 @@ public final class AntarchyGravityNetworking {
             }
 
             gravityGunItem.firePrimary(serverPlayer.serverLevel(), serverPlayer, serverPlayer.getMainHandItem());
+        });
+    }
+
+    private static void handlePortalGunPrimary(PortalGunPrimaryPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (!(context.player() instanceof ServerPlayer serverPlayer)) {
+                return;
+            }
+
+            if (!(serverPlayer.getMainHandItem().getItem() instanceof PortalGunItem portalGunItem)) {
+                return;
+            }
+
+            portalGunItem.firePrimary(serverPlayer.serverLevel(), serverPlayer, serverPlayer.getMainHandItem());
         });
     }
 }

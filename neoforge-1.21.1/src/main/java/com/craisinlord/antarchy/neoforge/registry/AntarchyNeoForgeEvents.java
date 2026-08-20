@@ -101,6 +101,7 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleScorpionWhipAttackEntity);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleAttitudeAdjusterAttackEntity);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleScorpionWhipLeftClickBlock);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handlePortalGunLeftClickBlock);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleScorpionWhipRightClickBlock);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleScorpionWhipRightClickItem);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleParalyzedAttackEntity);
@@ -112,6 +113,7 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleDreamSandJump);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickDreadAndIchor);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickScorpionWhips);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickWormHooks);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickDreamSandLowGravity);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickMinersDreamExcavations);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleAntiwaterDamage);
@@ -927,6 +929,13 @@ public final class AntarchyNeoForgeEvents {
         event.setCanceled(true);
     }
 
+    static void handlePortalGunLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+        if (!(event.getEntity().getMainHandItem().getItem() instanceof com.craisinlord.antarchy.content.item.PortalGunItem)) {
+            return;
+        }
+        event.setCanceled(true);
+    }
+
     static void handleScorpionWhipRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
@@ -1034,6 +1043,12 @@ public final class AntarchyNeoForgeEvents {
     static void tickScorpionWhips(PlayerTickEvent.Post event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             ScorpionWhipTetherManager.tick(player);
+        }
+    }
+
+    static void tickWormHooks(PlayerTickEvent.Post event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            com.craisinlord.antarchy.content.item.WormHookTetherManager.tick(player);
         }
     }
 

@@ -14,6 +14,13 @@
     "antarchy:cut_titanium_stairs",
     "antarchy:broodstone_stairs",
     "antarchy:polished_broodstone_stairs",
-    "antarchy:broodstone_brick_stairs"
+    "antarchy:broodstone_brick_stairs",
+    "antarchy:myrmite_stairs",
+    "antarchy:polished_myrmite_stairs",
+    "antarchy:myrmite_brick_stairs",
+    "antarchy:mossy_myrmite_brick_stairs",
+    "antarchy:mossy_broodstone_brick_stairs",
+    "antarchy:mossy_nyxite_brick_stairs",
+    "antarchy:loam_brick_stairs"
   ]
 }

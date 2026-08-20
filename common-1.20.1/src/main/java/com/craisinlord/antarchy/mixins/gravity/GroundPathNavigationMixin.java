@@ -5,6 +5,7 @@ import com.craisinlord.antarchy.content.gravity.GravityWalkNodeEvaluator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
+import net.minecraft.world.level.pathfinder.NodeEvaluator;
 import net.minecraft.world.level.pathfinder.PathFinder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,7 +21,8 @@ public abstract class GroundPathNavigationMixin {
 
     @Inject(method = "createPathFinder", at = @At("HEAD"), cancellable = true)
     private void antarchy$useGravityEvaluator(int maxVisitedNodes, CallbackInfoReturnable<PathFinder> cir) {
-        var mob = ((PathNavigationAccessor) (Object) this).antarchy$getMob();
+        var accessor = (PathNavigationAccessor) (Object) this;
+        var mob = accessor.antarchy$getMob();
         if (!AntarchyGravityApi.isGravityInverted(mob)) {
             return;
         }
@@ -31,6 +33,8 @@ public abstract class GroundPathNavigationMixin {
                 maxVisitedNodes
         );
 
-        cir.setReturnValue(new PathFinder(new GravityWalkNodeEvaluator(), maxVisitedNodes));
+        NodeEvaluator evaluator = new GravityWalkNodeEvaluator();
+        accessor.antarchy$setNodeEvaluator(evaluator);
+        cir.setReturnValue(new PathFinder(evaluator, maxVisitedNodes));
     }
 }

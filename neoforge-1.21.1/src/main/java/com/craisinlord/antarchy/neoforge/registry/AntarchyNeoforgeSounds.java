@@ -113,6 +113,12 @@ public final class AntarchyNeoforgeSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> GRAVITY_GUN_HOLD_LOOP = registerSoundEvent("gravity_gun_hold_loop");
     public static final DeferredHolder<SoundEvent, SoundEvent> GRAVITY_GUN_LAUNCH = registerSoundEvent("gravity_gun_launch");
     public static final DeferredHolder<SoundEvent, SoundEvent> GRAVITY_GUN_DRYFIRE = registerSoundEvent("gravity_gun_dryfire");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PORTAL_GUN_FIRE_BLUE = registerSoundEvent("portal_gun_fire_blue");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PORTAL_GUN_FIRE_ORANGE = registerSoundEvent("portal_gun_fire_orange");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PORTAL_GUN_INVALID_SURFACE = registerSoundEvent("portal_gun_invalid_surface");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PORTAL_OPEN_BLUE = registerSoundEvent("portal_open_blue");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PORTAL_OPEN_ORANGE = registerSoundEvent("portal_open_orange");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PORTAL_FIZZLE = registerSoundEvent("portal_fizzle");
     public static final DeferredHolder<SoundEvent, SoundEvent> BED_BUG_AMBIENT = registerSoundEvent("bed_bug_ambient");
     public static final DeferredHolder<SoundEvent, SoundEvent> BED_BUG_HURT = registerSoundEvent("bed_bug_hurt");
     public static final DeferredHolder<SoundEvent, SoundEvent> BED_BUG_ATTACK = registerSoundEvent("bed_bug_attack");

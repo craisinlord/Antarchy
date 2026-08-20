@@ -11,6 +11,13 @@
     "antarchy:mossy_shellstone_brick_wall",
     "antarchy:broodstone_wall",
     "antarchy:polished_broodstone_wall",
-    "antarchy:broodstone_brick_wall"
+    "antarchy:broodstone_brick_wall",
+    "antarchy:myrmite_wall",
+    "antarchy:polished_myrmite_wall",
+    "antarchy:myrmite_brick_wall",
+    "antarchy:mossy_myrmite_brick_wall",
+    "antarchy:mossy_broodstone_brick_wall",
+    "antarchy:mossy_nyxite_brick_wall",
+    "antarchy:loam_brick_wall"
   ]
 }

@@ -79,6 +79,7 @@ public class AntarchyNeoforgeEntityAttributes {
         event.put(AntarchyNeoforgeEntites.BROWN_ANT.get(), brownAntAttributes);
         event.put(AntarchyNeoforgeEntites.RAINBOW_ANT.get(), rainbowAntAttributes);
         event.put(AntarchyNeoforgeEntites.MOLEWORM.get(), MolewormEntity.createAttributes().build());
+        event.put(AntarchyNeoforgeEntites.WORM.get(), WormEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.MOLEVORE.get(), MolevoreEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.CHEEP.get(), com.craisinlord.antarchy.content.entity.CheepEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.DORRIE.get(), com.craisinlord.antarchy.content.entity.DorrieEntity.createAttributes().build());

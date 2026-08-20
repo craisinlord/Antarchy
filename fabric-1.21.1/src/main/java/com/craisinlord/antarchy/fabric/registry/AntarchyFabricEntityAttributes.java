@@ -28,6 +28,7 @@ import com.craisinlord.antarchy.content.entity.MolewormEntity;
 import com.craisinlord.antarchy.content.entity.BomberEntity;
 import com.craisinlord.antarchy.content.entity.TriffidEntity;
 import com.craisinlord.antarchy.content.entity.WaspEntity;
+import com.craisinlord.antarchy.content.entity.WormEntity;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -121,6 +122,7 @@ public final class AntarchyFabricEntityAttributes {
                 AntarchySettings.termiteAttackDamage()
         ).build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.MOLEWORM.get(), MolewormEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.WORM.get(), WormEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.MOLEVORE.get(), MolevoreEntity.createAttributes().build());
     }
 
