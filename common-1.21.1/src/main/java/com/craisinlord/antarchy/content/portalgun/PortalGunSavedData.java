@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.saveddata.SavedData;
 
 public final class PortalGunSavedData extends SavedData {
@@ -117,6 +118,20 @@ public final class PortalGunSavedData extends SavedData {
         }
         discardIfLoaded(server, current.bluePortalId());
         discardIfLoaded(server, current.orangePortalId());
+    }
+
+    public static PortalGunPortalEntity findLoadedPortal(MinecraftServer server, UUID owner, PortalGunPortalEntity.PortalSide side) {
+        Optional<UUID> portalId = getPortalId(server, owner, side);
+        if (portalId.isEmpty()) {
+            return null;
+        }
+        for (ServerLevel level : server.getAllLevels()) {
+            Entity entity = level.getEntity(portalId.get());
+            if (entity instanceof PortalGunPortalEntity portal && !portal.isRemoved()) {
+                return portal;
+            }
+        }
+        return null;
     }
 
     private static void discardIfLoaded(MinecraftServer server, UUID portalId) {

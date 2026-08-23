@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "truffalo_tuft",
+  "ingredients": [
+    { "tag": "antarchy:truffalo_tuft" },
+    { "item": "minecraft:light_blue_dye" }
+  ],
+  "result": {
+    "count": 1,
+    "id": "antarchy:light_blue_truffalo_tuft"
+  }
+}

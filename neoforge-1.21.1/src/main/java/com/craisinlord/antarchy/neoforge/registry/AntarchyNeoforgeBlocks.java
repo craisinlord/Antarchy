@@ -9,6 +9,8 @@ import com.craisinlord.antarchy.content.block.entity.CritterCageBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.DreamCampfireBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.HushweedBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.PortalGunPortalBaseBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.PortalGunPortalMasterBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.PotentNyxiteBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.SeashellBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.UpperBlockEntity;
@@ -103,6 +105,10 @@ public final class AntarchyNeoforgeBlocks {
             () -> new LucidAnchorBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BEACON).strength(3.0F)));
     public static final DeferredBlock<CritterCageBlock> CRITTER_CAGE_BLOCK = BLOCKS.register("critter_cage_block",
             () -> new CritterCageBlock(BlockBehaviour.Properties.of().strength(5.0F, 6.0F).sound(net.minecraft.world.level.block.SoundType.METAL).noOcclusion()));
+    public static final DeferredBlock<PortalGunPortalMasterBlock> PORTAL_GUN_PORTAL_MASTER = BLOCKS.register("portal_gun_portal_master",
+            () -> new PortalGunPortalMasterBlock(AntarchyNeoforgeBlocks::portalGunPortalMasterBlockEntityType, portalProperties()));
+    public static final DeferredBlock<PortalGunPortalBaseBlock> PORTAL_GUN_PORTAL_BASE = BLOCKS.register("portal_gun_portal_base",
+            () -> new PortalGunPortalBaseBlock(AntarchyNeoforgeBlocks::portalGunPortalBaseBlockEntityType, portalProperties()));
     public static final DeferredBlock<StandingSignBlock> OURANWOOD_SIGN = BLOCKS.register("ouranwood_sign",
             () -> new StandingSignBlock(AntarchyWoodTypes.OURANWOOD, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_SIGN)));
     public static final DeferredBlock<WallSignBlock> OURANWOOD_WALL_SIGN = BLOCKS.register("ouranwood_wall_sign",
@@ -195,6 +201,118 @@ public final class AntarchyNeoforgeBlocks {
             () -> new WallHangingSignBlock(AntarchyWoodTypes.NADIR, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_HANGING_SIGN)));
     public static final DeferredBlock<DuplicatorSaplingBlock> DUPLICATOR_SAPLING = BLOCKS.register("duplicator_sapling",
             () -> new DuplicatorSaplingBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING).randomTicks().noCollission()));
+    public static final DeferredBlock<RotatedPillarBlock> ROYAL_LOG = BLOCKS.register("royal_log",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LOG)));
+    public static final DeferredBlock<RotatedPillarBlock> ROYAL_WOOD = BLOCKS.register("royal_wood",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WOOD)));
+    public static final DeferredBlock<RotatedPillarBlock> STRIPPED_ROYAL_LOG = BLOCKS.register("stripped_royal_log",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STRIPPED_JUNGLE_LOG)));
+    public static final DeferredBlock<RotatedPillarBlock> STRIPPED_ROYAL_WOOD = BLOCKS.register("stripped_royal_wood",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STRIPPED_JUNGLE_WOOD)));
+    public static final DeferredBlock<Block> ROYAL_PLANKS = BLOCKS.register("royal_planks",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_PLANKS)));
+    public static final DeferredBlock<StairBlock> ROYAL_STAIRS = BLOCKS.register("royal_stairs",
+            () -> new StairBlock(ROYAL_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_STAIRS)));
+    public static final DeferredBlock<SlabBlock> ROYAL_SLAB = BLOCKS.register("royal_slab",
+            () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_SLAB)));
+    public static final DeferredBlock<FenceBlock> ROYAL_FENCE = BLOCKS.register("royal_fence",
+            () -> new FenceBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_FENCE)));
+    public static final DeferredBlock<FenceGateBlock> ROYAL_FENCE_GATE = BLOCKS.register("royal_fence_gate",
+            () -> new FenceGateBlock(WoodType.JUNGLE, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_FENCE_GATE)));
+    public static final DeferredBlock<DoorBlock> ROYAL_DOOR = BLOCKS.register("royal_door",
+            () -> new DoorBlock(BlockSetType.JUNGLE, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_DOOR)));
+    public static final DeferredBlock<TrapDoorBlock> ROYAL_TRAPDOOR = BLOCKS.register("royal_trapdoor",
+            () -> new TrapDoorBlock(BlockSetType.JUNGLE, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_TRAPDOOR)));
+    public static final DeferredBlock<PressurePlateBlock> ROYAL_PRESSURE_PLATE = BLOCKS.register("royal_pressure_plate",
+            () -> new PressurePlateBlock(BlockSetType.JUNGLE, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_PRESSURE_PLATE)));
+    public static final DeferredBlock<ButtonBlock> ROYAL_BUTTON = BLOCKS.register("royal_button",
+            () -> new ButtonBlock(BlockSetType.JUNGLE, 30, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_BUTTON)));
+    public static final DeferredBlock<LeavesBlock> ROYAL_LEAVES = BLOCKS.register("royal_leaves",
+            () -> new LeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LEAVES).randomTicks()));
+    public static final DeferredBlock<LeavesBlock> ROYAL_FLOWERING_LEAVES = BLOCKS.register("royal_flowering_leaves",
+            () -> new LeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LEAVES).randomTicks().lightLevel(state -> 12)));
+    public static final DeferredBlock<RoyalSaplingBlock> ROYAL_SAPLING = BLOCKS.register("royal_sapling",
+            () -> new RoyalSaplingBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING).noCollission()));
+    public static final DeferredBlock<FlowerPotBlock> POTTED_ROYAL_SAPLING = BLOCKS.register("potted_royal_sapling",
+            () -> new FlowerPotBlock(ROYAL_SAPLING.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_DANDELION)));
+    public static final DeferredBlock<StandingSignBlock> ROYAL_SIGN = BLOCKS.register("royal_sign",
+            () -> new StandingSignBlock(AntarchyWoodTypes.ROYAL, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_SIGN)));
+    public static final DeferredBlock<WallSignBlock> ROYAL_WALL_SIGN = BLOCKS.register("royal_wall_sign",
+            () -> new WallSignBlock(AntarchyWoodTypes.ROYAL, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_SIGN)));
+    public static final DeferredBlock<CeilingHangingSignBlock> ROYAL_HANGING_SIGN = BLOCKS.register("royal_hanging_sign",
+            () -> new CeilingHangingSignBlock(AntarchyWoodTypes.ROYAL, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_HANGING_SIGN)));
+    public static final DeferredBlock<WallHangingSignBlock> ROYAL_WALL_HANGING_SIGN = BLOCKS.register("royal_wall_hanging_sign",
+            () -> new WallHangingSignBlock(AntarchyWoodTypes.ROYAL, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_HANGING_SIGN)));
+    public static final DeferredBlock<TruffaloLogBlock> TRUFFALO_LOG = BLOCKS.register("truffalo_log",
+            () -> new TruffaloLogBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LOG)));
+    public static final DeferredBlock<RotatedPillarBlock> TRUFFALO_WOOD = BLOCKS.register("truffalo_wood",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WOOD)));
+    public static final DeferredBlock<TruffaloLogBlock> STRIPPED_TRUFFALO_LOG = BLOCKS.register("stripped_truffalo_log",
+            () -> new TruffaloLogBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STRIPPED_JUNGLE_LOG)));
+    public static final DeferredBlock<RotatedPillarBlock> STRIPPED_TRUFFALO_WOOD = BLOCKS.register("stripped_truffalo_wood",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STRIPPED_JUNGLE_WOOD)));
+    public static final DeferredBlock<Block> TRUFFALO_PLANKS = BLOCKS.register("truffalo_planks",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_PLANKS)));
+    public static final DeferredBlock<StairBlock> TRUFFALO_STAIRS = BLOCKS.register("truffalo_stairs",
+            () -> new StairBlock(TRUFFALO_PLANKS.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_STAIRS)));
+    public static final DeferredBlock<SlabBlock> TRUFFALO_SLAB = BLOCKS.register("truffalo_slab",
+            () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_SLAB)));
+    public static final DeferredBlock<FenceBlock> TRUFFALO_FENCE = BLOCKS.register("truffalo_fence",
+            () -> new FenceBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_FENCE)));
+    public static final DeferredBlock<FenceGateBlock> TRUFFALO_FENCE_GATE = BLOCKS.register("truffalo_fence_gate",
+            () -> new FenceGateBlock(WoodType.JUNGLE, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_FENCE_GATE)));
+    public static final DeferredBlock<DoorBlock> TRUFFALO_DOOR = BLOCKS.register("truffalo_door",
+            () -> new DoorBlock(BlockSetType.JUNGLE, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_DOOR)));
+    public static final DeferredBlock<TrapDoorBlock> TRUFFALO_TRAPDOOR = BLOCKS.register("truffalo_trapdoor",
+            () -> new TrapDoorBlock(BlockSetType.JUNGLE, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_TRAPDOOR)));
+    public static final DeferredBlock<PressurePlateBlock> TRUFFALO_PRESSURE_PLATE = BLOCKS.register("truffalo_pressure_plate",
+            () -> new PressurePlateBlock(BlockSetType.JUNGLE, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_PRESSURE_PLATE)));
+    public static final DeferredBlock<ButtonBlock> TRUFFALO_BUTTON = BLOCKS.register("truffalo_button",
+            () -> new ButtonBlock(BlockSetType.JUNGLE, 30, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_BUTTON)));
+    public static final DeferredBlock<TruffaloSaplingBlock> TRUFFALO_SAPLING = BLOCKS.register("truffalo_sapling",
+            () -> new TruffaloSaplingBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING).randomTicks().noCollission()));
+    public static final DeferredBlock<FlowerPotBlock> POTTED_TRUFFALO_SAPLING = BLOCKS.register("potted_truffalo_sapling",
+            () -> new FlowerPotBlock(TRUFFALO_SAPLING.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_DANDELION)));
+    public static final DeferredBlock<StandingSignBlock> TRUFFALO_SIGN = BLOCKS.register("truffalo_sign",
+            () -> new StandingSignBlock(AntarchyWoodTypes.TRUFFALO, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_SIGN)));
+    public static final DeferredBlock<WallSignBlock> TRUFFALO_WALL_SIGN = BLOCKS.register("truffalo_wall_sign",
+            () -> new WallSignBlock(AntarchyWoodTypes.TRUFFALO, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_SIGN)));
+    public static final DeferredBlock<CeilingHangingSignBlock> TRUFFALO_HANGING_SIGN = BLOCKS.register("truffalo_hanging_sign",
+            () -> new CeilingHangingSignBlock(AntarchyWoodTypes.TRUFFALO, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_HANGING_SIGN)));
+    public static final DeferredBlock<WallHangingSignBlock> TRUFFALO_WALL_HANGING_SIGN = BLOCKS.register("truffalo_wall_hanging_sign",
+            () -> new WallHangingSignBlock(AntarchyWoodTypes.TRUFFALO, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_WALL_HANGING_SIGN)));
+    public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_WHITE = BLOCKS.register("white_truffalo_tuft",
+            () -> new TruffaloTuftBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_WOOL)));
+    public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_ORANGE = BLOCKS.register("orange_truffalo_tuft",
+            () -> new TruffaloTuftBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.ORANGE_WOOL)));
+    public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_MAGENTA = BLOCKS.register("magenta_truffalo_tuft",
+            () -> new TruffaloTuftBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MAGENTA_WOOL)));
+    public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_LIGHT_BLUE = BLOCKS.register("light_blue_truffalo_tuft",
+            () -> new TruffaloTuftBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LIGHT_BLUE_WOOL)));
+    public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_YELLOW = BLOCKS.register("yellow_truffalo_tuft",
+            () -> new TruffaloTuftBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.YELLOW_WOOL)));
+    public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_LIME = BLOCKS.register("lime_truffalo_tuft",
+            () -> new TruffaloTuftBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LIME_WOOL)));
+    public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_PINK = BLOCKS.register("pink_truffalo_tuft",
+            () -> new TruffaloTuftBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.PINK_WOOL)));
+    public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_GRAY = BLOCKS.register("gray_truffalo_tuft",
+            () -> new TruffaloTuftBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GRAY_WOOL)));
+    public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_LIGHT_GRAY = BLOCKS.register("light_gray_truffalo_tuft",
+            () -> new TruffaloTuftBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LIGHT_GRAY_WOOL)));
+    public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_CYAN = BLOCKS.register("cyan_truffalo_tuft",
+            () -> new TruffaloTuftBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CYAN_WOOL)));
+    public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_PURPLE = BLOCKS.register("purple_truffalo_tuft",
+            () -> new TruffaloTuftBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.PURPLE_WOOL)));
+    public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_BLUE = BLOCKS.register("blue_truffalo_tuft",
+            () -> new TruffaloTuftBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BLUE_WOOL)));
+    public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_BROWN = BLOCKS.register("brown_truffalo_tuft",
+            () -> new TruffaloTuftBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BROWN_WOOL)));
+    public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_GREEN = BLOCKS.register("green_truffalo_tuft",
+            () -> new TruffaloTuftBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GREEN_WOOL)));
+    public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_RED = BLOCKS.register("red_truffalo_tuft",
+            () -> new TruffaloTuftBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.RED_WOOL)));
+    public static final DeferredBlock<TruffaloTuftBlock> TRUFFALO_TUFT_BLACK = BLOCKS.register("black_truffalo_tuft",
+            () -> new TruffaloTuftBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACK_WOOL)));
     public static final DeferredBlock<DuctTapeBlock> DUCT_TAPE = BLOCKS.register("duct_tape",
             () -> new DuctTapeBlock(BlockBehaviour.Properties.of()
                     .strength(0.2F)
@@ -724,6 +842,16 @@ public final class AntarchyNeoforgeBlocks {
                     (pos, state) -> new UpperBlockEntity(pos, state, AntarchyNeoforgeBlocks::upperBlockEntityType),
                     UPPER.get()
             ).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PortalGunPortalMasterBlockEntity>> PORTAL_GUN_PORTAL_MASTER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("portal_gun_portal_master",
+            () -> BlockEntityType.Builder.of(
+                    (pos, state) -> new PortalGunPortalMasterBlockEntity(pos, state, AntarchyNeoforgeBlocks::portalGunPortalMasterBlockEntityType),
+                    PORTAL_GUN_PORTAL_MASTER.get()
+            ).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PortalGunPortalBaseBlockEntity>> PORTAL_GUN_PORTAL_BASE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("portal_gun_portal_base",
+            () -> BlockEntityType.Builder.of(
+                    (pos, state) -> new PortalGunPortalBaseBlockEntity(pos, state, AntarchyNeoforgeBlocks::portalGunPortalBaseBlockEntityType),
+                    PORTAL_GUN_PORTAL_BASE.get()
+            ).build(null));
 
     private AntarchyNeoforgeBlocks() {}
 
@@ -789,6 +917,14 @@ public final class AntarchyNeoforgeBlocks {
 
     private static BlockEntityType<UpperBlockEntity> upperBlockEntityType() {
         return UPPER_BLOCK_ENTITY.get();
+    }
+
+    private static BlockEntityType<PortalGunPortalMasterBlockEntity> portalGunPortalMasterBlockEntityType() {
+        return PORTAL_GUN_PORTAL_MASTER_BLOCK_ENTITY.get();
+    }
+
+    private static BlockEntityType<PortalGunPortalBaseBlockEntity> portalGunPortalBaseBlockEntityType() {
+        return PORTAL_GUN_PORTAL_BASE_BLOCK_ENTITY.get();
     }
 
 

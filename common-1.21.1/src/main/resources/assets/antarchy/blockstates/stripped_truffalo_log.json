@@ -1,0 +1,14 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "antarchy:block/stripped_truffalo_log_horizontal"
+    },
+    "axis=y": {
+      "model": "antarchy:block/stripped_truffalo_log"
+    },
+    "axis=z": {
+      "model": "antarchy:block/stripped_truffalo_log_horizontal",
+      "y": 90
+    }
+  }
+}

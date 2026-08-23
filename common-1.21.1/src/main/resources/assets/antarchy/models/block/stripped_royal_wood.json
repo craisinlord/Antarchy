@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/stripped_jungle_wood",
+  "textures": {
+    "end": "antarchy:block/royal/stripped_royal_log",
+    "side": "antarchy:block/royal/stripped_royal_log"
+  }
+}

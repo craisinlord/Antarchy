@@ -1,8 +1,10 @@
 {
-    "replace":  false,
-    "values":  [
-                   "antarchy:ouranwood_hanging_sign",
-                   "antarchy:peach_hanging_sign",
-                   "antarchy:nadir_hanging_sign"
-               ]
+    "replace": false,
+    "values": [
+        "antarchy:ouranwood_hanging_sign",
+        "antarchy:peach_hanging_sign",
+        "antarchy:nadir_hanging_sign",
+        "antarchy:royal_hanging_sign",
+        "antarchy:truffalo_hanging_sign"
+    ]
 }

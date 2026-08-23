@@ -4,20 +4,7 @@
 		"idle": {
 			"loop": true,
 			"animation_length": 4.0,
-			"bones": {
-				"Portal_Layer": {
-					"rotation": {
-						"0.0": {"vector": [0, 0, 0]},
-						"4.0": {"vector": [0, 0, 360]}
-					}
-				},
-				"Portal_Layer2": {
-					"rotation": {
-						"0.0": {"vector": [0, 0, 0]},
-						"4.0": {"vector": [0, 0, -360]}
-					}
-				}
-			}
+			"bones": {}
 		},
 		"open": {
 			"loop": false,

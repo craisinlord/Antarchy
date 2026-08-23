@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/jungle_door_top_left_open",
+  "textures": {
+    "bottom": "antarchy:block/truffalo/truffalo_door_bottom",
+    "top": "antarchy:block/truffalo/truffalo_door_top"
+  }
+}
+

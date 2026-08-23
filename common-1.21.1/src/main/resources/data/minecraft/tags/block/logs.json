@@ -1,20 +1,28 @@
 {
-    "replace":  false,
-    "values":  [
-                   "antarchy:ouranwood_log",
-                   "antarchy:ouranwood_wood",
-                   "antarchy:duplicator_log",
-                   "antarchy:mossy_ouranwood_log",
-                   "antarchy:mossy_ouranwood_wood",
-                   "antarchy:stripped_ouranwood_log",
-                   "antarchy:stripped_ouranwood_wood",
-                   "antarchy:peach_log",
-                   "antarchy:peach_wood",
-                   "antarchy:stripped_peach_log",
-                   "antarchy:stripped_peach_wood",
-                   "antarchy:nadir_log",
-                   "antarchy:nadir_wood",
-                   "antarchy:stripped_nadir_log",
-                   "antarchy:stripped_nadir_wood"
-               ]
+    "replace": false,
+    "values": [
+        "antarchy:ouranwood_log",
+        "antarchy:ouranwood_wood",
+        "antarchy:duplicator_log",
+        "antarchy:mossy_ouranwood_log",
+        "antarchy:mossy_ouranwood_wood",
+        "antarchy:stripped_ouranwood_log",
+        "antarchy:stripped_ouranwood_wood",
+        "antarchy:peach_log",
+        "antarchy:peach_wood",
+        "antarchy:stripped_peach_log",
+        "antarchy:stripped_peach_wood",
+        "antarchy:nadir_log",
+        "antarchy:nadir_wood",
+        "antarchy:stripped_nadir_log",
+        "antarchy:stripped_nadir_wood",
+        "antarchy:royal_log",
+        "antarchy:royal_wood",
+        "antarchy:stripped_royal_log",
+        "antarchy:stripped_royal_wood",
+        "antarchy:truffalo_log",
+        "antarchy:truffalo_wood",
+        "antarchy:stripped_truffalo_log",
+        "antarchy:stripped_truffalo_wood"
+    ]
 }

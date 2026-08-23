@@ -1,8 +1,10 @@
 {
-    "replace":  false,
-    "values":  [
-                   "antarchy:ouranwood_fence",
-                   "antarchy:peach_fence",
-                   "antarchy:nadir_fence"
-               ]
+    "replace": false,
+    "values": [
+        "antarchy:ouranwood_fence",
+        "antarchy:peach_fence",
+        "antarchy:nadir_fence",
+        "antarchy:royal_fence",
+        "antarchy:truffalo_fence"
+    ]
 }

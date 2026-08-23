@@ -196,6 +196,7 @@ public final class AntarchyNeoforgeSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> POTENT_NYXITE_GEYSER_ERUPTION_ACTIVE = registerSoundEvent("potent_nyxite_geyser_eruption_active");
     public static final DeferredHolder<SoundEvent, SoundEvent> POTENT_NYXITE_GEYSER_CONTINUOUS_START = registerSoundEvent("potent_nyxite_geyser_continuous_start");
     public static final DeferredHolder<SoundEvent, SoundEvent> POTENT_NYXITE_GEYSER_CONTINUOUS_ACTIVE = registerSoundEvent("potent_nyxite_geyser_continuous_active");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MUSIC_DISC_UNDERSIDE = registerSoundEvent("music_disc_underside");
 
     private AntarchyNeoforgeSounds() {}
 

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/jungle_fence_gate_wall_open",
+  "textures": {
+    "texture": "antarchy:block/royal/royal_planks"
+  }
+}
+

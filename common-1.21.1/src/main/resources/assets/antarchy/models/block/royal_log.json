@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/jungle_log",
+  "textures": {
+    "end": "antarchy:block/royal/royal_log_top",
+    "side": "antarchy:block/royal/royal_log"
+  }
+}
