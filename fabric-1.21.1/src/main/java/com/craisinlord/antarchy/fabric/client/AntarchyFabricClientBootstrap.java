@@ -8,6 +8,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.CameraShakeClientState;
 import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
 import com.craisinlord.antarchy.content.client.HordeClientState;
+import com.craisinlord.antarchy.content.client.PortalGunRollClientState;
 import com.craisinlord.antarchy.content.client.SizeRaySoundHandler;
 import com.craisinlord.antarchy.content.client.TigerEyeClientHooks;
 import com.craisinlord.antarchy.content.client.renderer.*;
@@ -110,6 +111,8 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.PEACH_CHEST_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/chest_boat/peach.png"), true));
         EntityRendererRegistry.register(AntarchyFabricEntities.NADIR_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/boat/nadir.png"), false));
         EntityRendererRegistry.register(AntarchyFabricEntities.NADIR_CHEST_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/chest_boat/nadir.png"), true));
+        EntityRendererRegistry.register(AntarchyFabricEntities.ROYAL_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/boat/royal.png"), false));
+        EntityRendererRegistry.register(AntarchyFabricEntities.ROYAL_CHEST_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/chest_boat/royal.png"), true));
         EntityRendererRegistry.register(AntarchyFabricEntities.APPLE_COW.get(), AppleCowRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.GOLDEN_APPLE_COW.get(), AppleCowRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.ENCHANTED_GOLDEN_APPLE_COW.get(), AppleCowRenderer::new);
@@ -126,7 +129,9 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.NIGHTMARE_PORTAL.get(), NightmarePortalRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.DIMENSIONAL_TEAR.get(), DimensionalTearRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.PORTAL_GUN_PORTAL.get(), PortalGunPortalRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.HOVERBOARD.get(), com.craisinlord.antarchy.content.client.renderer.HoverboardRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.PORTAL_GUN_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.PortalGunBlackHoleRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.PORTAL_GUN_PROJECTILE.get(), com.craisinlord.antarchy.content.client.renderer.PortalGunProjectileRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.NIGHTMARE_BITE.get(), NightmareBiteRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.LUCID.get(), LucidRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.BED_BUG.get(), BedBugRenderer::new);
@@ -322,6 +327,16 @@ public final class AntarchyFabricClientBootstrap {
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.NADIR_TRAPDOOR.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.NADIR_SAPLING.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.POTTED_NADIR_SAPLING.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.ROYAL_LEAVES.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.ROYAL_FLOWERING_LEAVES.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.ROYAL_DOOR.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.ROYAL_TRAPDOOR.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.ROYAL_SAPLING.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.POTTED_ROYAL_SAPLING.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.TRUFFALO_DOOR.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.TRUFFALO_TRAPDOOR.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.TRUFFALO_SAPLING.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.POTTED_TRUFFALO_SAPLING.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.DUPLICATOR_SAPLING.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.ORANGE_MILKWEED.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.PINK_MILKWEED.get(), RenderType.cutout());
@@ -487,6 +502,7 @@ public final class AntarchyFabricClientBootstrap {
             CameraShakeClientState.tick();
             HerculesBeetleImpactShakeClientState.tick();
             HordeClientState.tick();
+            PortalGunRollClientState.tick(client);
             if (client.player != null) {
                 ParalyzedClientHandler.clampPlayerInput(client.player);
             }
@@ -530,6 +546,9 @@ public final class AntarchyFabricClientBootstrap {
             BloodCrystalKatanaTrailHandler.render(context);
             ScorpionWhipTetherRenderHandler.render(context);
             WormHookTetherRenderHandler.render(context);
+            if (context.matrixStack() != null) {
+                com.craisinlord.antarchy.content.client.renderer.PortalGunPortalViewRenderer.render(context.camera(), context.matrixStack().last().pose(), context.tickCounter());
+            }
         });
     }
 

@@ -1,0 +1,6 @@
+{
+  "parent": "antarchy:block/truffalo_tuft_template",
+  "textures": {
+    "all": "antarchy:block/truffalo/gray_truffalo_tuft"
+  }
+}

@@ -29,6 +29,7 @@ import com.craisinlord.antarchy.content.worldgen.elythia.*;
 import com.craisinlord.antarchy.neoforge.worldgen.CornPatchFeature;
 import com.craisinlord.antarchy.neoforge.worldgen.LumenLilyPadFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.*;
+import com.craisinlord.antarchy.content.worldgen.truffalo.*;
 import com.craisinlord.antarchy.neoforge.content.fluid.AntiwaterFluid;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.advancements.critereon.EntitySubPredicate;
@@ -242,6 +243,8 @@ public final class AntarchyNeoforgeMisc {
             () -> new PeachTreeFeature(PeachTreeConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, NadirTreeFeature> NADIR_TREE_FEATURE = FEATURES.register("nadir_tree",
             () -> new NadirTreeFeature(NadirTreeConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, TruffaloTreeFeature> TRUFFALO_TREE_FEATURE = FEATURES.register("truffalo_tree",
+            () -> new TruffaloTreeFeature(TruffaloTreeConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, ElythiaFloraFeature> ELYTHIA_FOREST_FLORA = FEATURES.register("elythia_forest_flora",
             () -> new ElythiaFloraFeature(NoneFeatureConfiguration.CODEC, ElythiaFloraFeature.Variant.FOREST));
     public static final DeferredHolder<Feature<?>, ElythiaFloraFeature> ELYTHIA_MEADOW_FLORA = FEATURES.register("elythia_meadow_flora",

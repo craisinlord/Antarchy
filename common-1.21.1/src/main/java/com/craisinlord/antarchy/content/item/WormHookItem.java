@@ -36,6 +36,7 @@ public final class WormHookItem extends Item {
         WormHookProjectileEntity hook = new WormHookProjectileEntity(AntarchyObjects.WORM_HOOK_PROJECTILE.get(), player, level);
         hook.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 2.2F, 0.5F);
         level.addFreshEntity(hook);
+        WormHookTetherManager.launch(serverPlayer, hook);
 
         stack.hurtAndBreak(1, serverPlayer, LivingEntity.getSlotForHand(hand));
         level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.FISHING_BOBBER_THROW, SoundSource.PLAYERS, 0.7F, 0.9F);

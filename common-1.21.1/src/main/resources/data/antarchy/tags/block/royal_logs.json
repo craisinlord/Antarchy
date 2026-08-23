@@ -1,0 +1,9 @@
+{
+    "replace":  false,
+    "values":  [
+                   "antarchy:royal_log",
+                   "antarchy:royal_wood",
+                   "antarchy:stripped_royal_log",
+                   "antarchy:stripped_royal_wood"
+               ]
+}

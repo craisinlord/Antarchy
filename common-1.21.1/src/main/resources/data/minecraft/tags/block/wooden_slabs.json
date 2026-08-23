@@ -1,8 +1,10 @@
 {
-    "replace":  false,
-    "values":  [
-                   "antarchy:ouranwood_slab",
-                   "antarchy:peach_slab",
-                   "antarchy:nadir_slab"
-               ]
+    "replace": false,
+    "values": [
+        "antarchy:ouranwood_slab",
+        "antarchy:peach_slab",
+        "antarchy:nadir_slab",
+        "antarchy:royal_slab",
+        "antarchy:truffalo_slab"
+    ]
 }

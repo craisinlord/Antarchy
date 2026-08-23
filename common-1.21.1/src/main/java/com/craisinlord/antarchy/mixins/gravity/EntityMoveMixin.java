@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.antarchy.content.portalgun.PortalGunCollisionHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
@@ -174,7 +175,7 @@ public abstract class EntityMoveMixin {
         float maxUpStep = entity.maxUpStep();
 
         if (!(maxUpStep > 0.0F) || !(pressingIntoCeiling || entity.onGround()) || !(movedX || movedZ)) {
-            cir.setReturnValue(collided);
+            cir.setReturnValue(PortalGunCollisionHelper.resolveCollision(entity, aabb, movement, collided));
             return;
         }
 
@@ -193,12 +194,12 @@ public abstract class EntityMoveMixin {
             Vec3 stepped = Entity.collideBoundingBox(entity, new Vec3(movement.x, -(double) candidate, movement.z), steppedBox, entity.level(), stepShapes);
             if (stepped.horizontalDistanceSqr() > collided.horizontalDistanceSqr()) {
                 double offset = steppedBox.maxY - aabb.maxY;
-                cir.setReturnValue(stepped.add(0.0, offset, 0.0));
+                cir.setReturnValue(PortalGunCollisionHelper.resolveCollision(entity, aabb, movement, stepped.add(0.0, offset, 0.0)));
                 return;
             }
         }
 
-        cir.setReturnValue(collided);
+        cir.setReturnValue(PortalGunCollisionHelper.resolveCollision(entity, aabb, movement, collided));
     }
 
     @Unique

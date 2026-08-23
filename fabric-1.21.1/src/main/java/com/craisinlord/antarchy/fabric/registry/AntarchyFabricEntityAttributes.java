@@ -100,6 +100,7 @@ public final class AntarchyFabricEntityAttributes {
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.OURANWOOD_DEER.get(), com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.GLIMMER.get(), com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.ELKA.get(), com.craisinlord.antarchy.content.entity.ElkaEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.HOVERBOARD.get(), com.craisinlord.antarchy.content.entity.HoverboardEntity.createAttributes().build());
 
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.RED_ANT.get(), buildAntAttributes(
                 AntarchySettings.redAntHealth(),

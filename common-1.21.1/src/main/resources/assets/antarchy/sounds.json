@@ -986,6 +986,14 @@
       }
     ]
   },
+  "music_disc_underside": {
+    "sounds": [
+      {
+        "name": "antarchy:records/underside",
+        "stream": true
+      }
+    ]
+  },
   "lucid_lullaby": {
     "sounds": [
       {

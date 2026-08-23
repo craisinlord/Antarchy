@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.mixins.gravity.client;
 
+import com.craisinlord.antarchy.content.client.PortalGunRollClientState;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import net.minecraft.client.Camera;
@@ -128,9 +129,12 @@ public abstract class CameraGravityMixin {
             return;
         }
         if (!AntarchyGravityApi.isGravityInverted(this.entity) && AntarchyGravityApi.getGravityFlipProgress(this.entity, this.antarchy$storedTickDelta) <= 0.0F) {
+            this.rotation.premul(new Quaternionf().fromAxisAngleDeg(0.0F, 0.0F, -1.0F, PortalGunRollClientState.getRollDegrees(this.antarchy$storedTickDelta)));
+            this.antarchy$gravityApplied = true;
             return;
         }
         this.rotation.premul(AntarchyGravityRotationUtil.getCameraRotationQuaternion(this.entity, this.antarchy$storedTickDelta));
+        this.rotation.premul(new Quaternionf().fromAxisAngleDeg(0.0F, 0.0F, -1.0F, PortalGunRollClientState.getRollDegrees(this.antarchy$storedTickDelta)));
         this.antarchy$gravityApplied = true;
     }
 }

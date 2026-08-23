@@ -14,11 +14,14 @@ import com.craisinlord.antarchy.content.item.ultimate.UltimateArmorItem;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateBowItem;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateCrossbowItem;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MobBucketItem;
@@ -65,6 +68,11 @@ public final class AntarchyFabricItems {
 
 
     public static final DeferredItem<Item> NIGHTMARE_SCALE = ITEMS.registerSimpleItem("nightmare_scale", new Item.Properties().rarity(Rarity.RARE).fireResistant());
+
+    public static final DeferredItem<Item> MUSIC_DISC_UNDERSIDE = ITEMS.registerSimpleItem("music_disc_underside",
+            new Item.Properties().stacksTo(1).rarity(Rarity.RARE)
+                    .jukeboxPlayable(ResourceKey.create(Registries.JUKEBOX_SONG,
+                            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "underside"))));
 
 
     public static final DeferredItem<Item> PRIMORDIAL_SCUTE = ITEMS.registerSimpleItem("primordial_scute",
@@ -252,6 +260,42 @@ public final class AntarchyFabricItems {
             () -> new OuranwoodChestBoatItem(AntarchyFabricEntities.OURANWOOD_CHEST_BOAT_ENTITY.get(), new Item.Properties().stacksTo(1)));
 
 
+    public static final DeferredItem<Item> HOVERBOARD = ITEMS.register("hoverboard",
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), null, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> HOVERBOARD_WHITE = ITEMS.register("hoverboard_white",
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.WHITE, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> HOVERBOARD_ORANGE = ITEMS.register("hoverboard_orange",
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.ORANGE, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> HOVERBOARD_MAGENTA = ITEMS.register("hoverboard_magenta",
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.MAGENTA, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> HOVERBOARD_LIGHT_BLUE = ITEMS.register("hoverboard_light_blue",
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.LIGHT_BLUE, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> HOVERBOARD_YELLOW = ITEMS.register("hoverboard_yellow",
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.YELLOW, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> HOVERBOARD_LIME = ITEMS.register("hoverboard_lime",
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.LIME, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> HOVERBOARD_PINK = ITEMS.register("hoverboard_pink",
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.PINK, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> HOVERBOARD_GRAY = ITEMS.register("hoverboard_gray",
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.GRAY, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> HOVERBOARD_LIGHT_GRAY = ITEMS.register("hoverboard_light_gray",
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.LIGHT_GRAY, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> HOVERBOARD_CYAN = ITEMS.register("hoverboard_cyan",
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.CYAN, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> HOVERBOARD_PURPLE = ITEMS.register("hoverboard_purple",
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.PURPLE, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> HOVERBOARD_BLUE = ITEMS.register("hoverboard_blue",
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.BLUE, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> HOVERBOARD_BROWN = ITEMS.register("hoverboard_brown",
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.BROWN, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> HOVERBOARD_GREEN = ITEMS.register("hoverboard_green",
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.GREEN, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> HOVERBOARD_RED = ITEMS.register("hoverboard_red",
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.RED, new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> HOVERBOARD_BLACK = ITEMS.register("hoverboard_black",
+            () -> new HoverboardItem(AntarchyFabricEntities.HOVERBOARD.get(), DyeColor.BLACK, new Item.Properties().stacksTo(1)));
+
+
     public static final DeferredItem<net.minecraft.world.item.SignItem> PEACH_SIGN_ITEM = ITEMS.register("peach_sign",
             () -> new net.minecraft.world.item.SignItem(new Item.Properties().stacksTo(16), AntarchyFabricBlocks.PEACH_SIGN.get(), AntarchyFabricBlocks.PEACH_WALL_SIGN.get()));
 
@@ -282,6 +326,146 @@ public final class AntarchyFabricItems {
 
     public static final DeferredItem<Item> NADIR_CHEST_BOAT = ITEMS.register("nadir_chest_boat",
             () -> new com.craisinlord.antarchy.content.item.NadirChestBoatItem(AntarchyFabricEntities.NADIR_CHEST_BOAT_ENTITY.get(), new Item.Properties().stacksTo(1)));
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.ROYAL_LOG);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.ROYAL_WOOD);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> STRIPPED_ROYAL_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.STRIPPED_ROYAL_LOG);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> STRIPPED_ROYAL_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.STRIPPED_ROYAL_WOOD);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.ROYAL_PLANKS);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.ROYAL_STAIRS);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.ROYAL_SLAB);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_FENCE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.ROYAL_FENCE);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.ROYAL_FENCE_GATE);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_DOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.ROYAL_DOOR);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.ROYAL_TRAPDOOR);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.ROYAL_PRESSURE_PLATE);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.ROYAL_BUTTON);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.ROYAL_LEAVES);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_FLOWERING_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.ROYAL_FLOWERING_LEAVES);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ROYAL_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.ROYAL_SAPLING);
+
+
+    public static final DeferredItem<net.minecraft.world.item.SignItem> ROYAL_SIGN_ITEM = ITEMS.register("royal_sign",
+            () -> new net.minecraft.world.item.SignItem(new Item.Properties().stacksTo(16), AntarchyFabricBlocks.ROYAL_SIGN.get(), AntarchyFabricBlocks.ROYAL_WALL_SIGN.get()));
+
+
+    public static final DeferredItem<net.minecraft.world.item.HangingSignItem> ROYAL_HANGING_SIGN_ITEM = ITEMS.register("royal_hanging_sign",
+            () -> new net.minecraft.world.item.HangingSignItem(AntarchyFabricBlocks.ROYAL_HANGING_SIGN.get(), AntarchyFabricBlocks.ROYAL_WALL_HANGING_SIGN.get(), new Item.Properties().stacksTo(16)));
+
+
+    public static final DeferredItem<Item> ROYAL_BOAT = ITEMS.register("royal_boat",
+            () -> new com.craisinlord.antarchy.content.item.RoyalBoatOnlyItem(AntarchyFabricEntities.ROYAL_BOAT_ENTITY.get(), new Item.Properties().stacksTo(1)));
+
+
+    public static final DeferredItem<Item> ROYAL_CHEST_BOAT = ITEMS.register("royal_chest_boat",
+            () -> new com.craisinlord.antarchy.content.item.RoyalChestBoatItem(AntarchyFabricEntities.ROYAL_CHEST_BOAT_ENTITY.get(), new Item.Properties().stacksTo(1)));
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_LOG);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_WOOD);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> STRIPPED_TRUFFALO_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.STRIPPED_TRUFFALO_LOG);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> STRIPPED_TRUFFALO_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.STRIPPED_TRUFFALO_WOOD);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_PLANKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_PLANKS);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_STAIRS);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_SLAB);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_FENCE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_FENCE);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_FENCE_GATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_FENCE_GATE);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_DOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_DOOR);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_TRAPDOOR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_TRAPDOOR);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_PRESSURE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_PRESSURE_PLATE);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_BUTTON_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_BUTTON);
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_SAPLING);
+
+
+    public static final DeferredItem<net.minecraft.world.item.SignItem> TRUFFALO_SIGN_ITEM = ITEMS.register("truffalo_sign",
+            () -> new net.minecraft.world.item.SignItem(new Item.Properties().stacksTo(16), AntarchyFabricBlocks.TRUFFALO_SIGN.get(), AntarchyFabricBlocks.TRUFFALO_WALL_SIGN.get()));
+
+
+    public static final DeferredItem<net.minecraft.world.item.HangingSignItem> TRUFFALO_HANGING_SIGN_ITEM = ITEMS.register("truffalo_hanging_sign",
+            () -> new net.minecraft.world.item.HangingSignItem(AntarchyFabricBlocks.TRUFFALO_HANGING_SIGN.get(), AntarchyFabricBlocks.TRUFFALO_WALL_HANGING_SIGN.get(), new Item.Properties().stacksTo(16)));
+
+
+    public static final DeferredItem<Item> TRUFFALO_BOAT = ITEMS.register("truffalo_boat",
+            () -> new com.craisinlord.antarchy.content.item.TruffaloBoatOnlyItem(AntarchyFabricEntities.TRUFFALO_BOAT_ENTITY.get(), new Item.Properties().stacksTo(1)));
+
+
+    public static final DeferredItem<Item> TRUFFALO_CHEST_BOAT = ITEMS.register("truffalo_chest_boat",
+            () -> new com.craisinlord.antarchy.content.item.TruffaloChestBoatItem(AntarchyFabricEntities.TRUFFALO_CHEST_BOAT_ENTITY.get(), new Item.Properties().stacksTo(1)));
+
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_TUFT_WHITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_TUFT_WHITE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_TUFT_ORANGE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_TUFT_ORANGE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_TUFT_MAGENTA_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_TUFT_MAGENTA);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_TUFT_LIGHT_BLUE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_TUFT_LIGHT_BLUE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_TUFT_YELLOW_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_TUFT_YELLOW);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_TUFT_LIME_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_TUFT_LIME);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_TUFT_PINK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_TUFT_PINK);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_TUFT_GRAY_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_TUFT_GRAY);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_TUFT_LIGHT_GRAY_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_TUFT_LIGHT_GRAY);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_TUFT_CYAN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_TUFT_CYAN);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_TUFT_PURPLE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_TUFT_PURPLE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_TUFT_BLUE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_TUFT_BLUE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_TUFT_BROWN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_TUFT_BROWN);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_TUFT_GREEN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_TUFT_GREEN);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_TUFT_RED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_TUFT_RED);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRUFFALO_TUFT_BLACK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TRUFFALO_TUFT_BLACK);
 
 
     public static final DeferredItem<CritterCageItem> CRITTER_CAGE = ITEMS.register("critter_cage",
@@ -1248,7 +1432,14 @@ public final class AntarchyFabricItems {
             () -> new GravityGunItem(new Item.Properties().stacksTo(1).durability(512).rarity(Rarity.RARE).fireResistant()));
 
     public static final DeferredItem<PortalGunItem> PORTAL_GUN = ITEMS.register("portal_gun",
-            () -> new PortalGunItem(new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE), AntarchyFabricEntities.PORTAL_GUN_PORTAL, AntarchyFabricEntities.PORTAL_GUN_BLACK_HOLE));
+            () -> new PortalGunItem(
+                    new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
+                    AntarchyFabricEntities.PORTAL_GUN_PORTAL,
+                    AntarchyFabricEntities.PORTAL_GUN_BLACK_HOLE,
+                    AntarchyFabricEntities.PORTAL_GUN_PROJECTILE,
+                    AntarchyFabricBlocks.PORTAL_GUN_PORTAL_MASTER,
+                    AntarchyFabricBlocks.PORTAL_GUN_PORTAL_BASE
+            ));
 
 
     // Temporarily disabled: keeping the code but not registering the item for now.

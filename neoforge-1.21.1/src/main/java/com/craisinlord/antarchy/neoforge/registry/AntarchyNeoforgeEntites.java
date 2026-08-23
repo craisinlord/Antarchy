@@ -20,6 +20,7 @@ import com.craisinlord.antarchy.content.entity.HushProjectileEntity;
 import com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity;
 import com.craisinlord.antarchy.content.entity.WormHookProjectileEntity;
 import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
+import com.craisinlord.antarchy.content.entity.HoverboardEntity;
 import com.craisinlord.antarchy.content.entity.JerryEntity;
 import com.craisinlord.antarchy.content.entity.JumpyBugEntity;
 import com.craisinlord.antarchy.content.entity.AlphaMantisEntity;
@@ -34,6 +35,10 @@ import com.craisinlord.antarchy.content.entity.OuranwoodBoatEntity;
 import com.craisinlord.antarchy.content.entity.OuranwoodChestBoatEntity;
 import com.craisinlord.antarchy.content.entity.NadirBoatEntity;
 import com.craisinlord.antarchy.content.entity.NadirChestBoatEntity;
+import com.craisinlord.antarchy.content.entity.RoyalBoatEntity;
+import com.craisinlord.antarchy.content.entity.RoyalChestBoatEntity;
+import com.craisinlord.antarchy.content.entity.TruffaloBoatEntity;
+import com.craisinlord.antarchy.content.entity.TruffaloChestBoatEntity;
 import com.craisinlord.antarchy.content.entity.PeachBoatEntity;
 import com.craisinlord.antarchy.content.entity.PeachChestBoatEntity;
 import com.craisinlord.antarchy.content.entity.ReverieEntity;
@@ -71,6 +76,7 @@ import com.craisinlord.antarchy.content.entity.LurkingTerrorEntity;
 import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
 import com.craisinlord.antarchy.content.entity.WaterBombEntity;
 import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
+import com.craisinlord.antarchy.content.portalgun.PortalGunProjectileEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -162,6 +168,35 @@ public final class AntarchyNeoforgeEntites {
                     .clientTrackingRange(10)
                     .updateInterval(10)
                     .build("nadir_chest_boat"));
+    public static final DeferredHolder<EntityType<?>, EntityType<RoyalBoatEntity>> ROYAL_BOAT_ENTITY = ENTITY_TYPES.register("royal_boat",
+            () -> EntityType.Builder.<RoyalBoatEntity>of(RoyalBoatEntity::new, MobCategory.MISC)
+                    .sized(1.375F, 0.5625F)
+                    .clientTrackingRange(10)
+                    .updateInterval(10)
+                    .build("royal_boat"));
+    public static final DeferredHolder<EntityType<?>, EntityType<RoyalChestBoatEntity>> ROYAL_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("royal_chest_boat",
+            () -> EntityType.Builder.<RoyalChestBoatEntity>of(RoyalChestBoatEntity::new, MobCategory.MISC)
+                    .sized(1.375F, 0.5625F)
+                    .clientTrackingRange(10)
+                    .updateInterval(10)
+                    .build("royal_chest_boat"));
+    public static final DeferredHolder<EntityType<?>, EntityType<TruffaloBoatEntity>> TRUFFALO_BOAT_ENTITY = ENTITY_TYPES.register("truffalo_boat",
+            () -> EntityType.Builder.<TruffaloBoatEntity>of(TruffaloBoatEntity::new, MobCategory.MISC)
+                    .sized(1.375F, 0.5625F)
+                    .clientTrackingRange(10)
+                    .updateInterval(10)
+                    .build("truffalo_boat"));
+    public static final DeferredHolder<EntityType<?>, EntityType<TruffaloChestBoatEntity>> TRUFFALO_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("truffalo_chest_boat",
+            () -> EntityType.Builder.<TruffaloChestBoatEntity>of(TruffaloChestBoatEntity::new, MobCategory.MISC)
+                    .sized(1.375F, 0.5625F)
+                    .clientTrackingRange(10)
+                    .updateInterval(10)
+                    .build("truffalo_chest_boat"));
+    public static final DeferredHolder<EntityType<?>, EntityType<HoverboardEntity>> HOVERBOARD = ENTITY_TYPES.register("hoverboard",
+            () -> EntityType.Builder.<HoverboardEntity>of(HoverboardEntity::new, MobCategory.MISC)
+                    .sized(1.5F, 0.6875F)
+                    .clientTrackingRange(10)
+                    .build("hoverboard"));
     public static final DeferredHolder<EntityType<?>, EntityType<MolevoreEntity>> MOLEVORE = ENTITY_TYPES.register("molevore",
             () -> EntityType.Builder.of(MolevoreEntity::new, MobCategory.MONSTER)
                     .sized(1.95F, 1.1F)
@@ -316,6 +351,12 @@ public final class AntarchyNeoforgeEntites {
                     .clientTrackingRange(10)
                     .updateInterval(1)
                     .build("portal_gun_black_hole"));
+    public static final DeferredHolder<EntityType<?>, EntityType<PortalGunProjectileEntity>> PORTAL_GUN_PROJECTILE = ENTITY_TYPES.register("portal_gun_projectile",
+            () -> EntityType.Builder.<PortalGunProjectileEntity>of(PortalGunProjectileEntity::new, MobCategory.MISC)
+                    .sized(0.25F, 0.25F)
+                    .clientTrackingRange(8)
+                    .updateInterval(1)
+                    .build("portal_gun_projectile"));
     public static final DeferredHolder<EntityType<?>, EntityType<NightmareBiteEntity>> NIGHTMARE_BITE = ENTITY_TYPES.register("nightmare_bite",
             () -> EntityType.Builder.of(NightmareBiteEntity::new, MobCategory.MISC)
                     .sized(2.5F, 2.0F)

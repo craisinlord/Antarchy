@@ -1,8 +1,10 @@
 {
-    "replace":  false,
-    "values":  [
-                   "antarchy:ouranwood_stairs",
-                   "antarchy:peach_stairs",
-                   "antarchy:nadir_stairs"
-               ]
+    "replace": false,
+    "values": [
+        "antarchy:ouranwood_stairs",
+        "antarchy:peach_stairs",
+        "antarchy:nadir_stairs",
+        "antarchy:royal_stairs",
+        "antarchy:truffalo_stairs"
+    ]
 }

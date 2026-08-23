@@ -1,8 +1,10 @@
 {
-    "replace":  false,
-    "values":  [
-                   "antarchy:ouranwood_pressure_plate",
-                   "antarchy:peach_pressure_plate",
-                   "antarchy:nadir_pressure_plate"
-               ]
+    "replace": false,
+    "values": [
+        "antarchy:ouranwood_pressure_plate",
+        "antarchy:peach_pressure_plate",
+        "antarchy:nadir_pressure_plate",
+        "antarchy:royal_pressure_plate",
+        "antarchy:truffalo_pressure_plate"
+    ]
 }

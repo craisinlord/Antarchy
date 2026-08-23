@@ -17,12 +17,16 @@ import net.minecraft.world.phys.Vec3;
  * a rope anchored to a stuck {@link WormHookProjectileEntity}, wrapping the rope around block
  * corners via {@link WormHookRope} so the swing radius shortens realistically when the player
  * swings around an obstacle.
+ *
+ * A tether entry is created the moment the hook is thrown (so the rope can be rendered following
+ * the flying projectile) and only gains real swing physics once the hook sticks into a block.
  */
 public final class WormHookTetherManager {
-    private static final double DEFAULT_MAX_LEN = 24.0D;
     private static final double MIN_LEN = 2.0D;
     private static final double REEL_SPEED = 0.12D;
+    private static final double REEL_PULL_STRENGTH = 0.16D;
     private static final double BREAK_RANGE_MULTIPLIER = 1.5D;
+    private static final double DEFAULT_BREAK_RANGE = 48.0D;
     private static final double SNAP_BUFFER = 4.0D;
     private static final double PULL_CORRECTION = 0.35D;
 
@@ -44,18 +48,28 @@ public final class WormHookTetherManager {
         return hook instanceof WormHookProjectileEntity wormHook ? wormHook : null;
     }
 
-    public static boolean attach(ServerPlayer player, WormHookProjectileEntity hook) {
+    /** Registers the hook the moment it's thrown, purely so the rope can be rendered following it. */
+    public static void launch(ServerPlayer player, WormHookProjectileEntity hook) {
         clear(player);
+        TETHERS.put(player.getUUID(), new TetherState(hook.getId()));
+        WormHookTetherSync.send(player, hook.getId());
+    }
 
-        double dist = player.getEyePosition().distanceTo(hook.position());
-        if (dist < MIN_LEN) {
+    /** Called once the hook sticks into a block; turns the cosmetic tether into real swing physics. */
+    public static boolean attach(ServerPlayer player, WormHookProjectileEntity hook) {
+        TetherState state = TETHERS.get(player.getUUID());
+        if (state == null || state.hookEntityId != hook.getId()) {
             return false;
         }
 
-        TetherState state = new TetherState(hook.getId(), Math.max(DEFAULT_MAX_LEN, dist));
+        double dist = player.getEyePosition().distanceTo(hook.position());
+        if (dist < MIN_LEN) {
+            clear(player);
+            return false;
+        }
+
+        state.maxLen = Math.max(MIN_LEN, dist);
         state.rope = new WormHookRope(hook.position(), player.getEyePosition());
-        TETHERS.put(player.getUUID(), state);
-        WormHookTetherSync.send(player, hook.getId());
         return true;
     }
 
@@ -90,7 +104,13 @@ public final class WormHookTetherManager {
             return;
         }
 
-        if (player.isShiftKeyDown()) {
+        if (state.rope == null) {
+            // Hook is still flying; nothing to simulate yet, just tracking it for the render sync.
+            return;
+        }
+
+        boolean reeling = player.isShiftKeyDown();
+        if (reeling) {
             state.maxLen = Math.max(MIN_LEN, state.maxLen - REEL_SPEED);
         }
 
@@ -109,6 +129,19 @@ public final class WormHookTetherManager {
             return;
         }
 
+        Vec3 towardPivot = toPlayer.scale(1.0D / dist);
+
+        // Sneaking actively winds the player in toward the anchor, not just shortening
+        // the max length (which alone has no effect until the rope goes taut).
+        if (reeling && dist > MIN_LEN) {
+            Vec3 pull = towardPivot.scale(-REEL_PULL_STRENGTH);
+            Vec3 reelMotion = player.getDeltaMovement().add(pull);
+            reelMotion = new Vec3(reelMotion.x, Mth.clamp(reelMotion.y, -0.6D, 0.6D), reelMotion.z);
+            player.setDeltaMovement(reelMotion);
+            player.hurtMarked = true;
+            player.fallDistance = 0;
+        }
+
         if (dist <= remaining) {
             return;
         }
@@ -121,14 +154,13 @@ public final class WormHookTetherManager {
             return;
         }
 
-        Vec3 direction = toPlayer.scale(1.0D / dist);
         Vec3 motion = player.getDeltaMovement();
-        double outward = motion.dot(direction);
+        double outward = motion.dot(towardPivot);
         if (outward > 0) {
-            motion = motion.subtract(direction.scale(outward));
+            motion = motion.subtract(towardPivot.scale(outward));
         }
 
-        Vec3 correction = direction.scale(-overshoot * PULL_CORRECTION);
+        Vec3 correction = towardPivot.scale(-overshoot * PULL_CORRECTION);
         Vec3 newMotion = motion.add(correction);
         newMotion = new Vec3(newMotion.x, Mth.clamp(newMotion.y, -1.0D, 1.0D), newMotion.z);
         player.setDeltaMovement(newMotion);
@@ -137,12 +169,11 @@ public final class WormHookTetherManager {
     }
 
     private static boolean isValid(ServerPlayer player, WormHookProjectileEntity hook, TetherState state) {
-        double breakRange = state.maxLen * BREAK_RANGE_MULTIPLIER;
+        double breakRange = (state.rope == null ? DEFAULT_BREAK_RANGE : state.maxLen) * BREAK_RANGE_MULTIPLIER;
         return player.isAlive()
                 && hook != null
                 && hook.isAlive()
                 && !hook.isRemoved()
-                && hook.isStuck()
                 && player.level() == hook.level()
                 && isHoldingHook(player)
                 && player.distanceToSqr(hook) <= breakRange * breakRange;
@@ -158,9 +189,8 @@ public final class WormHookTetherManager {
         private double maxLen;
         private WormHookRope rope;
 
-        private TetherState(int hookEntityId, double maxLen) {
+        private TetherState(int hookEntityId) {
             this.hookEntityId = hookEntityId;
-            this.maxLen = maxLen;
         }
     }
 }
