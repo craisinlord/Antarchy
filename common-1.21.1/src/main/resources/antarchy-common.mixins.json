@@ -82,11 +82,9 @@
                ],
     "client":  [
                    "client.AbstractMinecartRendererMixin",
-                   "client.BlockEntityRenderDispatcherPortalMixin",
                    "client.EntityLightProbeMixin",
                    "client.CustomBossBarMixin",
                    "client.DimensionMusicMixin",
-                   "client.EntityRenderDispatcherPortalMixin",
                    "client.CavarynSkyMixin",
                    "client.CavarynHordeFogMixin",
                    "client.CavarynHordeLightTextureMixin",

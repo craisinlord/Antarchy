@@ -546,7 +546,7 @@ public final class AntarchyFabricClientBootstrap {
             BloodCrystalKatanaTrailHandler.render(context);
             ScorpionWhipTetherRenderHandler.render(context);
             WormHookTetherRenderHandler.render(context);
-            if (context.matrixStack() != null) {
+            if (context.matrixStack() != null && com.craisinlord.antarchy.content.client.renderer.PortalGunPortalViewRenderer.isEnabled()) {
                 com.craisinlord.antarchy.content.client.renderer.PortalGunPortalViewRenderer.render(context.camera(), context.matrixStack().last().pose(), context.tickCounter());
             }
         });

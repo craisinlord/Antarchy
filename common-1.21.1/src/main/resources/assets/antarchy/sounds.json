@@ -1560,6 +1560,39 @@
       }
     ]
   },
+  "portal_enter": {
+    "subtitle": "subtitles.antarchy.portal_enter",
+    "sounds": [
+      {
+        "name": "antarchy:portal/portal_enter_01"
+      },
+      {
+        "name": "antarchy:portal/portal_enter_02"
+      },
+      {
+        "name": "antarchy:portal/portal_enter_03"
+      }
+    ]
+  },
+  "portal_exit": {
+    "subtitle": "subtitles.antarchy.portal_exit",
+    "sounds": [
+      {
+        "name": "antarchy:portal/portal_exit_01"
+      },
+      {
+        "name": "antarchy:portal/portal_exit_02"
+      }
+    ]
+  },
+  "portal_ambient": {
+    "subtitle": "subtitles.antarchy.portal_ambient",
+    "sounds": [
+      {
+        "name": "antarchy:portal/wpn_portal_ambient_lp_01"
+      }
+    ]
+  },
   "bed_bug_ambient": {
     "subtitle": "subtitles.antarchy.bed_bug_ambient",
     "sounds": [

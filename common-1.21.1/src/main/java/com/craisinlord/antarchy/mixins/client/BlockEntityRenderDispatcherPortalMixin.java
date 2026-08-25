@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.mixins.client;
 
 import com.craisinlord.antarchy.content.client.PortalGunPortalRenderState;
-import com.craisinlord.antarchy.content.portalgun.PortalGunWorldPortalShape;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -21,18 +20,9 @@ public abstract class BlockEntityRenderDispatcherPortalMixin {
         if (PortalGunPortalRenderState.renderAll() || blockEntity == null || blockEntity.isRemoved()) {
             return;
         }
-        PortalGunWorldPortalShape destinationShape = PortalGunPortalRenderState.getDestinationShape();
-        PortalGunWorldPortalShape sourceShape = PortalGunPortalRenderState.getSourceShape();
-        if (destinationShape == null) {
-            return;
-        }
         BlockPos pos = blockEntity.getBlockPos();
         AABB bounds = new AABB(pos);
-        if (!destinationShape.intersectsFront(bounds, 0.1D)) {
-            ci.cancel();
-            return;
-        }
-        if (sourceShape != null && sourceShape.intersectsFront(bounds, -0.02D)) {
+        if (!PortalGunPortalRenderState.shouldRenderBounds(bounds)) {
             ci.cancel();
         }
     }

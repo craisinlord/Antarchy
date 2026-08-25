@@ -70,8 +70,8 @@ public final class PortalGunCollisionHelper {
         Vec3 endCenter = endBox.getCenter();
         PortalGunWorldPortalShape.PortalLocalCoords startCoords = shape.localCoords(startCenter);
         PortalGunWorldPortalShape.PortalLocalCoords endCoords = shape.localCoords(endCenter);
-        return startCoords.depth() < 0.0D
-                && endCoords.depth() <= PLANE_TOLERANCE
+        return startCoords.depth() > 0.0D
+                && endCoords.depth() >= -PLANE_TOLERANCE
                 && Math.abs(endCoords.horizontal()) <= shape.halfWidth() + EDGE_PADDING
                 && Math.abs(endCoords.vertical()) <= shape.halfHeight() + EDGE_PADDING
                 && projectedWindowOverlap(shape, startBox, endBox);
@@ -82,8 +82,8 @@ public final class PortalGunCollisionHelper {
             PortalGunWorldPortalShape.PortalLocalCoords coords = shape.localCoords(corner);
             if (Math.abs(coords.horizontal()) <= shape.halfWidth() + EDGE_PADDING
                     && Math.abs(coords.vertical()) <= shape.halfHeight() + EDGE_PADDING
-                    && coords.depth() >= -DEPTH_PADDING
-                    && coords.depth() <= PLANE_TOLERANCE) {
+                    && coords.depth() <= DEPTH_PADDING
+                    && coords.depth() >= -PLANE_TOLERANCE) {
                 return true;
             }
         }

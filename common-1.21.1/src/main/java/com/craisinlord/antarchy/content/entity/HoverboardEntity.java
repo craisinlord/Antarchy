@@ -49,9 +49,9 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
     private static final double ACCELERATION = 0.08D;
     private static final double MAX_SPEED = 1.8D;
     private static final double ASCEND_SPEED = 0.15D;
+    private static final double SETTLE_DESCEND_SPEED = 0.08D;
     private static final double DAMPING = 0.955D;
     private static final double RIDER_Y_OFFSET = 0.65D;
-    private static final float RIDER_FORWARD_HEAD_OFFSET = 90.0F;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
@@ -153,15 +153,11 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
             this.yBodyRot = this.getYRot();
             this.yHeadRot = this.getYRot();
             this.setXRot(0.0F);
-            rider.setYHeadRot(rider.getYRot() + RIDER_FORWARD_HEAD_OFFSET);
 
             Vec3 look = Vec3.directionFromRotation(0.0F, this.getYRot());
             float forward = rider.zza;
             boolean holdingJump = ((LivingEntityJumpingAccessor) rider).antarchy$isJumping();
-            double ascend = holdingJump ? ASCEND_SPEED : (rider.isShiftKeyDown() ? -ASCEND_SPEED : 0.0D);
-
-            double groundHeight = this.findGroundHeight();
-            double maxY = groundHeight + MAX_HOVER_HEIGHT;
+            double verticalMotion = this.resolveVerticalMotion(holdingJump);
 
             Vec3 currentHorizontal = new Vec3(this.getDeltaMovement().x, 0.0D, this.getDeltaMovement().z);
             Vec3 horizontalMotion = currentHorizontal.scale(DAMPING).add(look.scale(forward * ACCELERATION));
@@ -172,21 +168,28 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
                 horizontalMotion = new Vec3(horizontalMotion.x * scale, 0.0D, horizontalMotion.z * scale);
             }
 
-            double verticalMotion = ascend;
-            if (this.getY() >= maxY && verticalMotion > 0.0D) {
-                verticalMotion = 0.0D;
-            }
-            if (this.getY() <= groundHeight && verticalMotion < 0.0D) {
-                verticalMotion = 0.0D;
-            }
-
             this.setDeltaMovement(horizontalMotion.x, verticalMotion, horizontalMotion.z);
             this.move(MoverType.SELF, this.getDeltaMovement());
             return;
         }
 
-        this.setDeltaMovement(this.getDeltaMovement().scale(DAMPING));
+        double verticalMotion = this.resolveVerticalMotion(false);
+        Vec3 horizontalMotion = new Vec3(this.getDeltaMovement().x, 0.0D, this.getDeltaMovement().z).scale(DAMPING);
+        this.setDeltaMovement(horizontalMotion.x, verticalMotion, horizontalMotion.z);
         this.move(MoverType.SELF, this.getDeltaMovement());
+    }
+
+    private double resolveVerticalMotion(boolean holdingJump) {
+        double groundHeight = this.findGroundHeight();
+        double maxY = groundHeight + MAX_HOVER_HEIGHT;
+
+        if (this.getY() > maxY) {
+            return -SETTLE_DESCEND_SPEED;
+        }
+        if (holdingJump) {
+            return this.getY() >= maxY ? 0.0D : ASCEND_SPEED;
+        }
+        return this.getY() <= groundHeight ? 0.0D : -SETTLE_DESCEND_SPEED;
     }
 
     private double findGroundHeight() {

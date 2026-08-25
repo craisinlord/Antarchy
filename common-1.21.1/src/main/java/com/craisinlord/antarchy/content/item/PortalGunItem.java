@@ -141,10 +141,12 @@ public class PortalGunItem extends Item implements GeoItem {
         PortalGunPortalEntity existing = this.findPlacedPortal(level, player.getUUID(), side);
         PortalGunPlacement placement = this.findPlacement(level, player, side, hitResult, existing);
         if (placement == null) {
+            Antarchy.LOGGER.info("Portal gun placement failed owner={} side={} hitBlock={} hitFace={} hitLocation={}", player.getUUID(), side, hitResult.getBlockPos(), hitResult.getDirection(), hitResult.getLocation());
             level.playSound(null, impactPos.x, impactPos.y, impactPos.z, PortalGunPortalEntity.sound("portal_gun_invalid_surface", SoundEvents.DISPENSER_FAIL), SoundSource.PLAYERS, 0.55F, 1.0F);
             return;
         }
         if (existing != null) {
+            Antarchy.LOGGER.info("Portal gun replacing existing portal owner={} side={} oldPortal={}", player.getUUID(), side, existing.getUUID());
             existing.discard();
         }
         if (this.isMoonSideArmed(stack, side)) {
@@ -158,17 +160,22 @@ public class PortalGunItem extends Item implements GeoItem {
         portal.configure(player.getUUID(), side, placement);
         portal.moveTo(placement.center().x, placement.center().y, placement.center().z, placement.yaw(), 0.0F);
         if (!this.placePortalBlocks(level, player.getUUID(), side, portal, placement)) {
+            Antarchy.LOGGER.info("Portal gun block placement failed owner={} side={} portal={} center={} facing={} up={} master={} base={}", player.getUUID(), side, portal.getUUID(), placement.center(), placement.facing(), placement.upAxis(), placement.masterPos(), placement.basePos());
             level.playSound(null, impactPos.x, impactPos.y, impactPos.z, PortalGunPortalEntity.sound("portal_gun_invalid_surface", SoundEvents.DISPENSER_FAIL), SoundSource.PLAYERS, 0.55F, 1.0F);
             return;
         }
         level.addFreshEntity(portal);
         PortalGunSavedData.setPortal(level.getServer(), player.getUUID(), side, portal.getUUID());
+        Antarchy.LOGGER.info("Portal gun portal placed owner={} side={} portal={} center={} facing={} up={} width={} master={} base={}", player.getUUID(), side, portal.getUUID(), placement.center(), placement.facing(), placement.upAxis(), placement.widthAxis(), placement.masterPos(), placement.basePos());
         PortalGunPortalEntity other = this.findCounterpart(level, player.getUUID(), side);
         if (other != null) {
             portal.linkTo(other);
             other.linkTo(portal);
             this.syncPortalBlocks(level, portal);
             this.syncPortalBlocks(level, other);
+            Antarchy.LOGGER.info("Portal gun portals linked owner={} placedSide={} placedPortal={} otherPortal={} otherSide={}", player.getUUID(), side, portal.getUUID(), other.getUUID(), other.getPortalSide());
+        } else {
+            Antarchy.LOGGER.info("Portal gun portal waiting for counterpart owner={} side={} portal={}", player.getUUID(), side, portal.getUUID());
         }
         String openPath = side == PortalGunPortalEntity.PortalSide.BLUE ? "portal_open_blue" : "portal_open_orange";
         level.playSound(null, portal.getX(), portal.getY(), portal.getZ(), PortalGunPortalEntity.sound(openPath, SoundEvents.END_PORTAL_SPAWN), SoundSource.PLAYERS, 0.45F, side == PortalGunPortalEntity.PortalSide.BLUE ? 1.05F : 0.92F);

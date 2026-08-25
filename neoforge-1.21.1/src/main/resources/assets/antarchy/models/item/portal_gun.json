@@ -6,13 +6,13 @@
   },
   "perspectives": {
     "gui": {
-      "parent": "antarchy:item/portal_gun_display"
+      "parent": "antarchy:item/portal_gun_gui"
     },
     "ground": {
-      "parent": "antarchy:item/portal_gun_display"
+      "parent": "antarchy:item/portal_gun_gui"
     },
     "fixed": {
-      "parent": "antarchy:item/portal_gun_display"
+      "parent": "antarchy:item/portal_gun_gui"
     }
   }
 }

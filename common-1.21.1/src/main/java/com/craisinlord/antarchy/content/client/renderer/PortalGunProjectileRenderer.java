@@ -26,15 +26,17 @@ public class PortalGunProjectileRenderer extends EntityRenderer<PortalGunProject
         poseStack.pushPose();
         poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
         float age = entity.tickCount + partialTick;
+        float syncedDistance = entity.getSyncedDistance() + partialTick;
         float pulse = 0.8F + 0.2F * (float) Math.sin(age * 0.9F);
-        float trailStretch = 1.1F + (float) Math.min(entity.getDeltaMovement().length() * 0.3D, 1.4D);
+        float travelPulse = 0.82F + 0.18F * (float) Math.sin(syncedDistance * 0.55F);
+        float trailStretch = 1.1F + (float) Math.min(entity.getSyncedVelocity().length() * 0.42D, 1.8D);
         float baseScale = entity.getPortalSide() == com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity.PortalSide.BLUE ? 0.44F : 0.48F;
         ResourceLocation texture = entity.getPortalSide() == com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity.PortalSide.BLUE ? BLUE_TEXTURE : ORANGE_TEXTURE;
         float red = entity.getPortalSide() == com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity.PortalSide.BLUE ? 0.55F : 1.0F;
         float green = entity.getPortalSide() == com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity.PortalSide.BLUE ? 0.82F : 0.56F;
         float blue = entity.getPortalSide() == com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity.PortalSide.BLUE ? 1.0F : 0.18F;
 
-        poseStack.scale(baseScale * trailStretch, baseScale, baseScale);
+        poseStack.scale(baseScale * trailStretch, baseScale * travelPulse, baseScale * travelPulse);
         PoseStack.Pose pose = poseStack.last();
         Matrix4f matrix = pose.pose();
         VertexConsumer core = bufferSource.getBuffer(RenderType.entityTranslucent(texture));
@@ -50,7 +52,7 @@ public class PortalGunProjectileRenderer extends EntityRenderer<PortalGunProject
         glow = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(texture));
         addQuad(glow, pose, matrix, 1.0F, 1.0F, 1.0F, 0.52F * pulse, 0xF000F0, -0.62F, -1.15F, 0.62F, 1.15F);
         poseStack.popPose();
-        }
+    }
 
     @Override
     protected int getBlockLightLevel(PortalGunProjectileEntity entity, BlockPos pos) {
