@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/jungle_wood",
   "textures": {
-    "end": "antarchy:block/truffalo/truffalo_log",
-    "side": "antarchy:block/truffalo/truffalo_log"
+    "end": "antarchy:block/truffalo/truffalo_wood",
+    "side": "antarchy:block/truffalo/truffalo_wood"
   }
 }

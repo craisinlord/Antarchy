@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.mixins.gravity;
 
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -33,7 +34,7 @@ public abstract class BehaviorUtilsGravityMixin {
             @Local float yOffset,
             @Local LivingEntity entity
     ) {
-        if (!AntarchyGravityApi.isGravityInverted(entity)) {
+        if (!antarchy$shouldInvertThrownItem(entity)) {
             return original.call(level, x, y, z, stack);
         }
 
@@ -58,11 +59,17 @@ public abstract class BehaviorUtilsGravityMixin {
             Operation<Void> original,
             @Local LivingEntity entity
     ) {
-        if (!AntarchyGravityApi.isGravityInverted(entity)) {
+        if (!antarchy$shouldInvertThrownItem(entity)) {
             original.call(itemEntity, deltaMovement);
             return;
         }
 
         AntarchyGravityApi.setWorldVelocity(itemEntity, deltaMovement);
+    }
+
+    private static boolean antarchy$shouldInvertThrownItem(LivingEntity entity) {
+        return AntarchyGravityApi.isGravityInverted(entity)
+                && ThoraxisUndersideManager.isThoraxis(entity.level())
+                && entity.getY() < ThoraxisUndersideManager.GRAVITY_FLIP_Y;
     }
 }

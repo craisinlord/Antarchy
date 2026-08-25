@@ -4,7 +4,7 @@
   "group": "planks",
   "ingredients": [
     {
-      "tag": "antarchy:truffalo_logs"
+      "item": "antarchy:truffalo_log"
     }
   ],
   "result": {

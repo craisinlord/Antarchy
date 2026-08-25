@@ -38,7 +38,31 @@ public final class PortalGunTransformUtil {
     }
 
     public static Vec3 transformRelativePosition(PortalGunPortalEntity sourcePortal, PortalGunPortalEntity destinationPortal, Vec3 relativePosition) {
-        return transform(relativePosition, createTransform(sourcePortal, destinationPortal));
+        return transformPosition(sourcePortal, destinationPortal, relativePosition);
+    }
+
+    public static Vec3 transformPosition(PortalGunPortalEntity sourcePortal, PortalGunPortalEntity destinationPortal, Vec3 relativePosition) {
+        Vec3 sourceWidth = sourcePortal.getWidthVec().normalize();
+        Vec3 sourceUp = sourcePortal.getUpVec().normalize();
+        Vec3 sourceNormal = sourcePortal.getNormalVec().normalize();
+        Vec3 destinationWidth = destinationPortal.getWidthVec().normalize();
+        Vec3 destinationUp = destinationPortal.getUpVec().normalize();
+        Vec3 destinationNormal = destinationPortal.getNormalVec().normalize();
+        return destinationWidth.scale(relativePosition.dot(sourceWidth))
+                .add(destinationUp.scale(relativePosition.dot(sourceUp)))
+                .add(destinationNormal.scale(relativePosition.dot(sourceNormal)));
+    }
+
+    public static Vec3 transformVector(PortalGunPortalEntity sourcePortal, PortalGunPortalEntity destinationPortal, Vec3 vector) {
+        Vec3 sourceWidth = sourcePortal.getWidthVec().normalize();
+        Vec3 sourceUp = sourcePortal.getUpVec().normalize();
+        Vec3 sourceInto = sourcePortal.getNormalVec().normalize().scale(-1.0D);
+        Vec3 destinationWidth = destinationPortal.getWidthVec().normalize();
+        Vec3 destinationUp = destinationPortal.getUpVec().normalize();
+        Vec3 destinationOut = destinationPortal.getNormalVec().normalize();
+        return destinationWidth.scale(vector.dot(sourceWidth))
+                .add(destinationUp.scale(vector.dot(sourceUp)))
+                .add(destinationOut.scale(vector.dot(sourceInto)));
     }
 
     public static float yawFromLook(Vec3 look) {

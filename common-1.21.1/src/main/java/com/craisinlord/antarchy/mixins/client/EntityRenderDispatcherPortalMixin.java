@@ -2,7 +2,6 @@ package com.craisinlord.antarchy.mixins.client;
 
 import com.craisinlord.antarchy.content.client.PortalGunPortalRenderState;
 import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
-import com.craisinlord.antarchy.content.portalgun.PortalGunWorldPortalShape;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.Entity;
@@ -18,16 +17,7 @@ public abstract class EntityRenderDispatcherPortalMixin {
         if (PortalGunPortalRenderState.renderAll() || entity instanceof PortalGunPortalEntity) {
             return;
         }
-        PortalGunWorldPortalShape destinationShape = PortalGunPortalRenderState.getDestinationShape();
-        PortalGunWorldPortalShape sourceShape = PortalGunPortalRenderState.getSourceShape();
-        if (destinationShape == null) {
-            return;
-        }
-        if (!destinationShape.intersectsFront(entity.getBoundingBox(), 0.1D)) {
-            cir.setReturnValue(false);
-            return;
-        }
-        if (sourceShape != null && sourceShape.intersectsFront(entity.getBoundingBox(), -0.02D)) {
+        if (!PortalGunPortalRenderState.shouldRenderBounds(entity.getBoundingBox())) {
             cir.setReturnValue(false);
         }
     }

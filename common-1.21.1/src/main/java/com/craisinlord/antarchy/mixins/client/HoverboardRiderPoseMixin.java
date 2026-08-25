@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.mixins.client;
 import com.craisinlord.antarchy.content.entity.HoverboardEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.world.entity.LivingEntity;
@@ -43,6 +44,22 @@ public abstract class HoverboardRiderPoseMixin<T extends LivingEntity, M extends
     private void antarchy$standOnHoverboard(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, CallbackInfo ci) {
         if (entity.getVehicle() instanceof HoverboardEntity) {
             this.getModel().riding = false;
+        }
+    }
+
+    @Inject(
+            method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/model/EntityModel;setupAnim(Lnet/minecraft/world/entity/Entity;FFFFF)V",
+                    shift = At.Shift.AFTER
+            )
+    )
+    private void antarchy$faceHoverboardRiderHeadForward(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, CallbackInfo ci) {
+        if (entity.getVehicle() instanceof HoverboardEntity && this.getModel() instanceof HumanoidModel<?> humanoidModel) {
+            float correction = (float) Math.toRadians(HOVERBOARD_RIDER_RENDER_YAW);
+            humanoidModel.head.yRot += correction;
+            humanoidModel.hat.yRot += correction;
         }
     }
 }

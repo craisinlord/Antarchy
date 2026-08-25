@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT)
 public final class ReverieTrailHandler {
 
     private static final int MAX_TRAIL_POINTS = 20;

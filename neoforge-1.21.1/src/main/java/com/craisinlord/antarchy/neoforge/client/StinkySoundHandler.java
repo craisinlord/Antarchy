@@ -10,7 +10,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 
-@EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT)
 public final class StinkySoundHandler {
     private static final int FIRST_SOUND_DELAY = 20;
     private static final int MIN_INTERVAL = 60;

@@ -26,7 +26,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
 
-@EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT)
 public final class ScorpionWhipTetherRenderHandler {
     private ScorpionWhipTetherRenderHandler() {
     }

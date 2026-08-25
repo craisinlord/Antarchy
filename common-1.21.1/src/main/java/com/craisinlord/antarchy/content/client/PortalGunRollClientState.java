@@ -8,10 +8,9 @@ import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Quaternionf;
 
 public final class PortalGunRollClientState {
-    private static final int TELEPORT_COOLDOWN_TICKS = 15;
+    private static final int TELEPORT_COOLDOWN_TICKS = 40;
     private static final float ROLL_DECAY = 0.85F;
     private static final float ROLL_EPSILON = 0.05F;
     private static final Map<UUID, Long> TELEPORT_COOLDOWNS = new HashMap<>();
@@ -82,10 +81,11 @@ public final class PortalGunRollClientState {
             if (!canTeleport(cameraEntity, gameTime)) {
                 continue;
             }
-            if (portal.resolveCrossingProbe(cameraEntity) == null) {
+            Vec3 crossingProbe = portal.resolveCrossingProbe(cameraEntity);
+            if (crossingProbe == null) {
                 continue;
             }
-            applyPredictedTeleport(cameraEntity, portal, linkedPortal, gameTime);
+            applyPredictedTeleport(cameraEntity, portal, linkedPortal, crossingProbe, gameTime);
             break;
         }
     }
@@ -98,11 +98,26 @@ public final class PortalGunRollClientState {
         return cooldownUntil <= gameTime;
     }
 
-    private static void applyPredictedTeleport(Entity entity, PortalGunPortalEntity sourcePortal, PortalGunPortalEntity destinationPortal, long gameTime) {
-        Quaternionf transform = PortalGunTransformUtil.createTransform(sourcePortal, destinationPortal);
-        Vec3 transformedLook = PortalGunTransformUtil.transform(entity.getLookAngle(), transform).normalize();
-        Vec3 transformedUp = PortalGunTransformUtil.transform(PortalGunTransformUtil.upVectorFromLookAndRoll(entity.getLookAngle(), rollDegrees), transform).normalize();
+    private static void applyPredictedTeleport(Entity entity, PortalGunPortalEntity sourcePortal, PortalGunPortalEntity destinationPortal, Vec3 currentProbe, long gameTime) {
+        Vec3 transformedLook = PortalGunTransformUtil.transformVector(sourcePortal, destinationPortal, entity.getLookAngle()).normalize();
+        Vec3 transformedUp = PortalGunTransformUtil.transformVector(sourcePortal, destinationPortal, PortalGunTransformUtil.upVectorFromLookAndRoll(entity.getLookAngle(), rollDegrees)).normalize();
+        Vec3 relativeProbe = currentProbe.subtract(sourcePortal.position());
+        Vec3 transformedProbe = PortalGunTransformUtil.transformPosition(sourcePortal, destinationPortal, relativeProbe);
+        Vec3 transformedEntityOffset = PortalGunTransformUtil.transformVector(sourcePortal, destinationPortal, entity.position().subtract(currentProbe));
+        Vec3 destinationNormal = destinationPortal.getNormalVec().normalize();
+        double exitClearance = Math.max(0.35D, entity.getBbWidth() * 0.5D + 0.16D);
+        Vec3 exitProbe = destinationPortal.position().add(transformedProbe).add(destinationNormal.scale(exitClearance - transformedProbe.dot(destinationNormal)));
+        Vec3 exitPos = exitProbe.add(transformedEntityOffset);
+        Vec3 transformedMotion = PortalGunTransformUtil.transformVector(sourcePortal, destinationPortal, entity.getDeltaMovement());
+        double outward = transformedMotion.dot(destinationNormal);
+        if (outward < 0.42D) {
+            transformedMotion = transformedMotion.add(destinationNormal.scale(0.42D - outward));
+        }
         rollDegrees = PortalGunTransformUtil.rollFromOrientation(transformedLook, transformedUp);
+        entity.teleportTo(exitPos.x, exitPos.y, exitPos.z);
+        entity.setDeltaMovement(transformedMotion);
+        entity.setYRot(PortalGunTransformUtil.yawFromLook(transformedLook));
+        entity.setXRot(PortalGunTransformUtil.pitchFromLook(transformedLook));
         TELEPORT_COOLDOWNS.put(entity.getUUID(), gameTime + TELEPORT_COOLDOWN_TICKS);
     }
 }

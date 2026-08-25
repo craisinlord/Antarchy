@@ -29,7 +29,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import org.joml.Matrix4f;
 
-@EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT)
 public final class BloodCrystalKatanaTrailHandler {
     private static final int MAX_TRAIL_POINTS = 16;
     private static final int POINT_LIFETIME_TICKS = 10;

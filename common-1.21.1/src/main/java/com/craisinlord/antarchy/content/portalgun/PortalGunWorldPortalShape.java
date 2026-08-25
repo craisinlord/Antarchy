@@ -24,7 +24,7 @@ public record PortalGunWorldPortalShape(
     }
 
     public AABB getScanRange() {
-        return this.getFlatPlane().expandTowards(this.normal.scale(-DEFAULT_SCAN_DISTANCE));
+        return this.getFlatPlane().expandTowards(this.normal.scale(DEFAULT_SCAN_DISTANCE));
     }
 
     public AABB getPortalInsides() {
@@ -77,7 +77,7 @@ public record PortalGunWorldPortalShape(
 
     public boolean shouldRenderFront(Vec3 cameraPos) {
         PortalLocalCoords coords = this.localCoords(cameraPos);
-        if (coords.depth() <= 0.0D) {
+        if (coords.depth() <= -0.25D) {
             return false;
         }
         double depthScale = Math.min(DEFAULT_SCAN_DISTANCE, Math.max(0.0D, coords.depth()));
@@ -94,6 +94,30 @@ public record PortalGunWorldPortalShape(
             }
         }
         return false;
+    }
+
+    public boolean intersectsPortalColumn(AABB box, double horizontalPadding, double verticalPadding, double depthPadding) {
+        double minHorizontal = Double.POSITIVE_INFINITY;
+        double maxHorizontal = Double.NEGATIVE_INFINITY;
+        double minVertical = Double.POSITIVE_INFINITY;
+        double maxVertical = Double.NEGATIVE_INFINITY;
+        double minDepth = Double.POSITIVE_INFINITY;
+        double maxDepth = Double.NEGATIVE_INFINITY;
+        for (Vec3 corner : corners(box)) {
+            PortalLocalCoords coords = this.localCoords(corner);
+            minHorizontal = Math.min(minHorizontal, coords.horizontal());
+            maxHorizontal = Math.max(maxHorizontal, coords.horizontal());
+            minVertical = Math.min(minVertical, coords.vertical());
+            maxVertical = Math.max(maxVertical, coords.vertical());
+            minDepth = Math.min(minDepth, coords.depth());
+            maxDepth = Math.max(maxDepth, coords.depth());
+        }
+        return maxHorizontal >= -this.halfWidth - horizontalPadding
+                && minHorizontal <= this.halfWidth + horizontalPadding
+                && maxVertical >= -this.halfHeight - verticalPadding
+                && minVertical <= this.halfHeight + verticalPadding
+                && maxDepth >= -this.halfDepth - depthPadding
+                && minDepth <= this.halfDepth + depthPadding;
     }
 
     public AABB getBoundsForCulling() {
