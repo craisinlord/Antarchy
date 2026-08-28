@@ -19,6 +19,9 @@ import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
+import com.craisinlord.antarchy.content.entity.vortex.VortexChargeProjectileEntity;
+import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
+import com.craisinlord.antarchy.content.entity.vortex.WindVortexEntity;
 import com.craisinlord.antarchy.content.entity.HushProjectileEntity;
 import com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity;
 import com.craisinlord.antarchy.content.entity.WormHookProjectileEntity;
@@ -450,6 +453,19 @@ public final class AntarchyFabricEntities {
                     .clientTrackingRange(10)
                     .build("lucid"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<VortexEntity>> VORTEX = ENTITY_TYPES.register("vortex",
+            () -> EntityType.Builder.of(VortexEntity::new, MobCategory.MONSTER)
+                    .sized(2.0F, 2.0F)
+                    .clientTrackingRange(10)
+                    .build("vortex"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<WindVortexEntity>> WIND_VORTEX = ENTITY_TYPES.register("wind_vortex",
+            () -> EntityType.Builder.<WindVortexEntity>of(WindVortexEntity::new, MobCategory.MISC)
+                    .sized(3.0F, 5.0F)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .build("wind_vortex"));
+
 
     public static final DeferredHolder<EntityType<?>, EntityType<LucidBoltEntity>> LUCID_BOLT = ENTITY_TYPES.register("lucid_bolt",
             () -> EntityType.Builder.<LucidBoltEntity>of(LucidBoltEntity::new, MobCategory.MISC)
@@ -500,6 +516,12 @@ public final class AntarchyFabricEntities {
                     .clientTrackingRange(8)
                     .updateInterval(1)
                     .build("lucid_pearl_projectile"));
+    public static final DeferredHolder<EntityType<?>, EntityType<VortexChargeProjectileEntity>> VORTEX_CHARGE_PROJECTILE = ENTITY_TYPES.register("vortex_charge_projectile",
+            () -> EntityType.Builder.<VortexChargeProjectileEntity>of(VortexChargeProjectileEntity::new, MobCategory.MISC)
+                    .sized(0.25F, 0.25F)
+                    .clientTrackingRange(8)
+                    .updateInterval(1)
+                    .build("vortex_charge_projectile"));
     public static final DeferredHolder<EntityType<?>, EntityType<CritterCageProjectileEntity>> CRITTER_CAGE_PROJECTILE = ENTITY_TYPES.register("critter_cage_projectile",
             () -> EntityType.Builder.<CritterCageProjectileEntity>of(CritterCageProjectileEntity::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F)

@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.WormHookProjectileEntity;
 import com.craisinlord.antarchy.content.util.WormHookRope;
 import java.util.Map;
@@ -29,6 +30,8 @@ public final class WormHookTetherManager {
     private static final double DEFAULT_BREAK_RANGE = 48.0D;
     private static final double SNAP_BUFFER = 4.0D;
     private static final double PULL_CORRECTION = 0.35D;
+    private static final double FLYING_SOUND_MIN_SPEED_SQR = 0.1D * 0.1D;
+    private static final int FLYING_SOUND_INTERVAL_TICKS = 24;
 
     private static final Map<UUID, TetherState> TETHERS = new ConcurrentHashMap<>();
 
@@ -118,6 +121,7 @@ public final class WormHookTetherManager {
         Vec3 playerEye = player.getEyePosition();
 
         state.rope.update(hook, anchor, playerEye, state.maxLen);
+        tickFlyingSound(player, state);
 
         Vec3 pivot = state.rope.getPivot();
         double consumed = state.rope.getConsumedLength();
@@ -168,6 +172,19 @@ public final class WormHookTetherManager {
         player.fallDistance = 0;
     }
 
+    private static void tickFlyingSound(ServerPlayer player, TetherState state) {
+        if (state.flyingSoundCooldown > 0) {
+            state.flyingSoundCooldown--;
+            return;
+        }
+        if (player.getDeltaMovement().horizontalDistanceSqr() < FLYING_SOUND_MIN_SPEED_SQR) {
+            return;
+        }
+        state.flyingSoundCooldown = FLYING_SOUND_INTERVAL_TICKS;
+        player.level().playSound(null, player.blockPosition(), AntarchySoundEvents.WORM_HOOK_FLYING.get(),
+                SoundSource.PLAYERS, 0.6F, 1.0F);
+    }
+
     private static boolean isValid(ServerPlayer player, WormHookProjectileEntity hook, TetherState state) {
         double breakRange = (state.rope == null ? DEFAULT_BREAK_RANGE : state.maxLen) * BREAK_RANGE_MULTIPLIER;
         return player.isAlive()
@@ -188,6 +205,7 @@ public final class WormHookTetherManager {
         private final int hookEntityId;
         private double maxLen;
         private WormHookRope rope;
+        private int flyingSoundCooldown;
 
         private TetherState(int hookEntityId) {
             this.hookEntityId = hookEntityId;

@@ -19,6 +19,8 @@ import com.craisinlord.antarchy.content.worldgen.thoraxis.NyxiteSpikeConfigurati
 import com.craisinlord.antarchy.content.worldgen.thoraxis.AntiwaterSpringsConfiguration;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.AntiwaterSpringsFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.NyxiteSpikeFeature;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.TyphoniteSpikeConfiguration;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.TyphoniteSpikeFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.PotentNyxiteFeature;
 import com.craisinlord.antarchy.fabric.content.fluid.AntiwaterFluid;
 import com.craisinlord.antarchy.content.effect.DreadMobEffect;
@@ -249,7 +251,7 @@ public final class AntarchyFabricMisc {
             () -> new ArmorMaterial(
                     createBloodCrystalArmorDefense(),
                     30,
-                    SoundEvents.ARMOR_EQUIP_DIAMOND,
+                    net.minecraft.core.Holder.direct(AntarchyFabricSounds.BLOOD_CRYSTAL_ARMOR_EQUIP.get()),
                     AntarchyFabricItems::bloodCrystalRepairIngredient,
                     List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "blood_crystal"))),
                     0.0F,
@@ -339,7 +341,6 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> LUCID_BOLT_IMPACT_LARGE = PARTICLE_TYPES.register("lucid_bolt_impact_large",
             () -> simpleParticleType());
-
 
     public static final DeferredHolder<ParticleType<?>, ParticleType<InvertedGeyserBaseParticleOptions>> INVERTED_GEYSER_BASE = PARTICLE_TYPES.register("inverted_geyser_base",
             () -> particleType(InvertedGeyserBaseParticleOptions::codec, InvertedGeyserBaseParticleOptions::streamCodec));
@@ -708,6 +709,8 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<Feature<?>, NyxiteSpikeFeature> NYXITE_SPIKES = FEATURES.register("nyxite_spikes",
             () -> new NyxiteSpikeFeature(NyxiteSpikeConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, TyphoniteSpikeFeature> TYPHONITE_SPIKES = FEATURES.register("typhonite_spikes",
+            () -> new TyphoniteSpikeFeature(TyphoniteSpikeConfiguration.CODEC));
 
 
     public static final DeferredHolder<Feature<?>, ChitinSpikeFeature> CAVARYN_CHITIN_SPIKES = FEATURES.register("cavaryn_chitin_spikes",

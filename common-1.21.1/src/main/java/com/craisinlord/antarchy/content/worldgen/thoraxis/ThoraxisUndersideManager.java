@@ -2,19 +2,24 @@ package com.craisinlord.antarchy.content.worldgen.thoraxis;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.block.DreamSandBlock;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 public final class ThoraxisUndersideManager {
     public static final int GRAVITY_FLIP_Y = 0;
@@ -43,10 +48,7 @@ public final class ThoraxisUndersideManager {
             if (entity instanceof LivingEntity living) {
                 UUID uuid = entity.getUUID();
                 if (inUnderside) {
-                    if (!living.hasEffect(AntarchyObjects.INVERTED_EFFECT.get())) {
-                        living.addEffect(new MobEffectInstance(AntarchyObjects.INVERTED_EFFECT.get(), EFFECT_DURATION_TICKS, 0, true, false, false));
-                        UNDERSIDE_APPLIED_EFFECT.add(uuid);
-                    }
+                    applyUndersideInversion(living);
                 } else if (UNDERSIDE_APPLIED_EFFECT.remove(uuid)) {
                     if (living.hasEffect(AntarchyObjects.INVERTED_EFFECT.get())) {
                         living.removeEffect(AntarchyObjects.INVERTED_EFFECT.get());
@@ -82,6 +84,38 @@ public final class ThoraxisUndersideManager {
         }
 
         UNDERSIDE_FORCED_GRAVITY.retainAll(activeThisTick);
+    }
+
+    public static void applyUndersideInversion(LivingEntity living) {
+        UNDERSIDE_APPLIED_EFFECT.add(living.getUUID());
+        if (!living.hasEffect(AntarchyObjects.INVERTED_EFFECT.get())) {
+            living.addEffect(new MobEffectInstance(AntarchyObjects.INVERTED_EFFECT.get(), EFFECT_DURATION_TICKS, 0, true, false, false));
+        }
+        if (AntarchyGravityApi.getGravityDirection(living) != AntarchyGravityDirection.UP
+                || !AntarchyGravityApi.isGravityForced(living)) {
+            AntarchyGravityApi.setForcedGravityDirection(living, AntarchyGravityDirection.UP, TRANSITION);
+        }
+    }
+
+    public static boolean shouldSpawnInvertedOnDreamSand(ServerLevelAccessor level, BlockPos pos) {
+        if (!isThoraxis(level.getLevel()) || pos.getY() >= GRAVITY_FLIP_Y) {
+            return false;
+        }
+
+        BlockState bodyState = level.getBlockState(pos);
+        if (!bodyState.isAir() && !bodyState.getCollisionShape(level, pos).isEmpty()) {
+            return false;
+        }
+
+        BlockPos supportPos = pos.above();
+        BlockState supportState = level.getBlockState(supportPos);
+        if (!(supportState.getBlock() instanceof DreamSandBlock)) {
+            return false;
+        }
+
+        return supportState.isFaceSturdy(level, supportPos, Direction.DOWN)
+                && level.getFluidState(pos).isEmpty()
+                && level.isEmptyBlock(pos.below());
     }
 
     public static boolean isThoraxis(Level level) {

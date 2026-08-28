@@ -37,6 +37,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -160,25 +161,26 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
             }
         });
         this.goalSelector.addGoal(2, new BowlingAttackGoal());
-        this.goalSelector.addGoal(3, new FertilizeCropGoal());
-        this.goalSelector.addGoal(4, new EatCompostItemGoal());
-        this.goalSelector.addGoal(5, new SnuggleOnBedGoal());
-        this.goalSelector.addGoal(6, new TemptGoal(this, 1.1D, Ingredient.of(AntarchyTags.Items.ROLLY_POLLY_FOOD), false) {
+        this.goalSelector.addGoal(3, new BreedGoal(this, 1.0D));
+        this.goalSelector.addGoal(4, new FertilizeCropGoal());
+        this.goalSelector.addGoal(5, new EatCompostItemGoal());
+        this.goalSelector.addGoal(6, new SnuggleOnBedGoal());
+        this.goalSelector.addGoal(7, new TemptGoal(this, 1.1D, Ingredient.of(AntarchyTags.Items.ROLLY_POLLY_FOOD), false) {
             @Override
             public boolean canUse() {
                 return !RollyPollyEntity.this.isRolled() && super.canUse();
             }
         });
-        this.goalSelector.addGoal(7, new FollowOwnerGoal(this, 1.1D, 10.0F, 2.0F));
-        this.goalSelector.addGoal(8, new RollingStrollGoal());
-        this.goalSelector.addGoal(9, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
+        this.goalSelector.addGoal(8, new FollowOwnerGoal(this, 1.1D, 10.0F, 2.0F));
+        this.goalSelector.addGoal(9, new RollingStrollGoal());
+        this.goalSelector.addGoal(10, new WaterAvoidingRandomStrollGoal(this, 1.0D) {
             @Override
             public boolean canUse() {
                 return !RollyPollyEntity.this.isRolled() && super.canUse();
             }
         });
-        this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(11, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(11, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(12, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
     }
@@ -192,7 +194,8 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        if (this.isFood(stack) && (!this.isTame() || this.getHealth() < this.getMaxHealth())) {
+        if (this.isFood(stack) && (!this.isTame() || this.getHealth() < this.getMaxHealth()
+                || (this.canFallInLove() && !this.isBaby()))) {
             if (!this.level().isClientSide) {
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);
@@ -210,9 +213,11 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
                     } else {
                         this.level().broadcastEntityEvent(this, (byte) 6);
                     }
-                } else {
+                } else if (this.getHealth() < this.getMaxHealth()) {
                     this.heal(4.0F);
                     this.level().broadcastEntityEvent(this, (byte) 7);
+                } else {
+                    this.setInLove(player);
                 }
             }
             return InteractionResult.sidedSuccess(this.level().isClientSide);
@@ -239,7 +244,7 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
     @Override
     @Nullable
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
-        return null;
+        return com.craisinlord.antarchy.content.AntarchyObjects.ROLLY_POLLY.get().create(level);
     }
 
     private static boolean isCompostable(ItemStack stack) {

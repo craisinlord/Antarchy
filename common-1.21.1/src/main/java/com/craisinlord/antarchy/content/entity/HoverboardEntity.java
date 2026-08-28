@@ -1,6 +1,10 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import com.craisinlord.antarchy.mixins.LivingEntityJumpingAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -41,13 +45,12 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class HoverboardEntity extends PathfinderMob implements GeoEntity {
     private static final EntityDataAccessor<Integer> COLOR = SynchedEntityData.defineId(HoverboardEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> TRAIL_ACTIVE = SynchedEntityData.defineId(HoverboardEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation MOVE_ANIM = RawAnimation.begin().thenLoop("move");
 
     private static final double MAX_HOVER_HEIGHT = 5.0D;
-    private static final double ACCELERATION = 0.08D;
-    private static final double MAX_SPEED = 1.8D;
     private static final double ASCEND_SPEED = 0.15D;
     private static final double SETTLE_DESCEND_SPEED = 0.08D;
     private static final double DAMPING = 0.955D;
@@ -88,6 +91,7 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(COLOR, -1);
+        builder.define(TRAIL_ACTIVE, false);
     }
 
     @Nullable
@@ -98,6 +102,14 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
 
     public void setColor(@Nullable DyeColor color) {
         this.entityData.set(COLOR, color == null ? -1 : color.getId());
+    }
+
+    public boolean isTrailActive() {
+        return this.entityData.get(TRAIL_ACTIVE);
+    }
+
+    private void setTrailActive(boolean active) {
+        this.entityData.set(TRAIL_ACTIVE, active);
     }
 
     @Override
@@ -142,7 +154,13 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
         if (!this.hasPassenger(passenger)) {
             return;
         }
-        moveFunction.accept(passenger, this.getX(), this.getY() + RIDER_Y_OFFSET, this.getZ());
+        Vec3 riderOffset = AntarchyGravityRotationUtil.vecPlayerToWorld(
+                0.0D,
+                RIDER_Y_OFFSET,
+                0.0D,
+                AntarchyGravityApi.getGravityDirection(this)
+        );
+        moveFunction.accept(passenger, this.getX() + riderOffset.x, this.getY() + riderOffset.y, this.getZ() + riderOffset.z);
     }
 
     @Override
@@ -156,15 +174,18 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
 
             Vec3 look = Vec3.directionFromRotation(0.0F, this.getYRot());
             float forward = rider.zza;
+            this.setTrailActive(forward > 0.0F);
             boolean holdingJump = ((LivingEntityJumpingAccessor) rider).antarchy$isJumping();
             double verticalMotion = this.resolveVerticalMotion(holdingJump);
+            double acceleration = AntarchySettings.hoverboardAcceleration();
+            double maxSpeed = AntarchySettings.hoverboardMaxSpeed();
 
             Vec3 currentHorizontal = new Vec3(this.getDeltaMovement().x, 0.0D, this.getDeltaMovement().z);
-            Vec3 horizontalMotion = currentHorizontal.scale(DAMPING).add(look.scale(forward * ACCELERATION));
+            Vec3 horizontalMotion = currentHorizontal.scale(DAMPING).add(look.scale(forward * acceleration));
 
             double horizontalSpeed = horizontalMotion.horizontalDistance();
-            if (horizontalSpeed > MAX_SPEED) {
-                double scale = MAX_SPEED / horizontalSpeed;
+            if (horizontalSpeed > maxSpeed) {
+                double scale = maxSpeed / horizontalSpeed;
                 horizontalMotion = new Vec3(horizontalMotion.x * scale, 0.0D, horizontalMotion.z * scale);
             }
 
@@ -173,6 +194,7 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
             return;
         }
 
+        this.setTrailActive(false);
         double verticalMotion = this.resolveVerticalMotion(false);
         Vec3 horizontalMotion = new Vec3(this.getDeltaMovement().x, 0.0D, this.getDeltaMovement().z).scale(DAMPING);
         this.setDeltaMovement(horizontalMotion.x, verticalMotion, horizontalMotion.z);
@@ -180,25 +202,44 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
     }
 
     private double resolveVerticalMotion(boolean holdingJump) {
-        double groundHeight = this.findGroundHeight();
-        double maxY = groundHeight + MAX_HOVER_HEIGHT;
+        AntarchyGravityDirection gravityDirection = AntarchyGravityApi.getGravityDirection(this);
+        double supportHeight = this.findSupportHeight(gravityDirection);
+        if (!gravityDirection.isInverted()) {
+            double maxY = supportHeight + MAX_HOVER_HEIGHT;
+            if (this.getY() > maxY) {
+                return -SETTLE_DESCEND_SPEED;
+            }
+            if (holdingJump) {
+                return this.getY() >= maxY ? 0.0D : ASCEND_SPEED;
+            }
+            return this.getY() <= supportHeight ? 0.0D : -SETTLE_DESCEND_SPEED;
+        }
 
-        if (this.getY() > maxY) {
-            return -SETTLE_DESCEND_SPEED;
+        double minY = supportHeight - MAX_HOVER_HEIGHT;
+        if (this.getY() < minY) {
+            return SETTLE_DESCEND_SPEED;
         }
         if (holdingJump) {
-            return this.getY() >= maxY ? 0.0D : ASCEND_SPEED;
+            return this.getY() <= minY ? 0.0D : -ASCEND_SPEED;
         }
-        return this.getY() <= groundHeight ? 0.0D : -SETTLE_DESCEND_SPEED;
+        return this.getY() >= supportHeight ? 0.0D : SETTLE_DESCEND_SPEED;
     }
 
-    private double findGroundHeight() {
+    private double findSupportHeight(AntarchyGravityDirection gravityDirection) {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(Mth.floor(this.getX()), Mth.floor(this.getY()), Mth.floor(this.getZ()));
-        int minY = this.level().getMinBuildHeight();
-        while (pos.getY() > minY && this.level().getBlockState(pos).isAir()) {
-            pos.move(Direction.DOWN);
+        if (!gravityDirection.isInverted()) {
+            int minY = this.level().getMinBuildHeight();
+            while (pos.getY() > minY && this.level().getBlockState(pos).isAir()) {
+                pos.move(Direction.DOWN);
+            }
+            return pos.getY() + 1.0D;
         }
-        return pos.getY() + 1.0D;
+
+        int maxY = this.level().getMaxBuildHeight() - 1;
+        while (pos.getY() < maxY && this.level().getBlockState(pos).isAir()) {
+            pos.move(Direction.UP);
+        }
+        return this.level().getBlockState(pos).isAir() ? this.getY() : pos.getY();
     }
 
     @Override

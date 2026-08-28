@@ -195,7 +195,12 @@ public class AntarchyNeoforge {
                 AntarchyNeoforgeSounds.JERRY_ADULT_IDLE,
                 AntarchyNeoforgeSounds.JERRY_ADULT_HURT,
                 AntarchyNeoforgeSounds.JERRY_ADULT_DEATH,
-                AntarchyNeoforgeSounds.JERRY_ADULT_ATTACK
+                AntarchyNeoforgeSounds.JERRY_ADULT_ATTACK,
+                AntarchyNeoforgeSounds.WORM_HOOK_FLYING,
+                AntarchyNeoforgeSounds.BLOOD_CRYSTAL_KATANA_DASH,
+                AntarchyNeoforgeSounds.BLOOD_CRYSTAL_ARMOR_EQUIP,
+                AntarchyNeoforgeSounds.BLOODGLASS_WARD_HEART_BREAK,
+                AntarchyNeoforgeSounds.BLOODGLASS_WARD_HEART_REGEN
         );
         bindCommonObjects();
         ScorpionWhipTetherSync.setSink((player, targetId) -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(
@@ -259,6 +264,8 @@ public class AntarchyNeoforge {
 
     private static void bindCommonObjects() {
         com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity.TYPE = AntarchyNeoforgeEntites.UPWARD_FALLING_BLOCK;
+        com.craisinlord.antarchy.content.block.SpiralingVinesBlock.BODY_BLOCK = () -> AntarchyNeoforgeBlocks.SPIRALING_VINES_PLANT.get();
+        com.craisinlord.antarchy.content.block.SpiralingVinesPlantBlock.HEAD_BLOCK = () -> AntarchyNeoforgeBlocks.SPIRALING_VINES.get();
         AntarchyObjects.setLucidAnchor(() -> AntarchyNeoforgeBlocks.LUCID_ANCHOR.get());
         AntarchyObjects.setLucidAnchorBlockEntity(() -> AntarchyNeoforgeBlocks.LUCID_ANCHOR_BLOCK_ENTITY.get());
         PermanentPortalType.bindBlocks(
@@ -378,6 +385,11 @@ public class AntarchyNeoforge {
         AntarchyObjects.setDimensionalTear(AntarchyNeoforgeEntites.DIMENSIONAL_TEAR);
         AntarchyObjects.setNightmareBite(AntarchyNeoforgeEntites.NIGHTMARE_BITE);
         AntarchyObjects.setLucid(AntarchyNeoforgeEntites.LUCID);
+        AntarchyObjects.setVortex(AntarchyNeoforgeEntites.VORTEX);
+        AntarchyObjects.setWindVortex(() -> AntarchyNeoforgeEntites.WIND_VORTEX.get());
+        AntarchyObjects.setVortexChargeProjectile(() -> AntarchyNeoforgeEntites.VORTEX_CHARGE_PROJECTILE.get());
+        AntarchyObjects.setVortexLens(() -> AntarchyNeoforgeBlocks.VORTEX_LENS.get());
+        AntarchyObjects.setVortexLensBlockEntity(() -> AntarchyNeoforgeBlocks.VORTEX_LENS_BLOCK_ENTITY.get());
         AntarchyObjects.setKrakensGraspTrident(AntarchyNeoforgeEntites.KRAKENS_GRASP_TRIDENT);
         AntarchyObjects.setLotus(() -> AntarchyNeoforgeBlocks.LOTUS.get());
         AntarchyObjects.setKrakenTentacle(() -> AntarchyNeoforgeItems.KRAKEN_TENTACLE.get());

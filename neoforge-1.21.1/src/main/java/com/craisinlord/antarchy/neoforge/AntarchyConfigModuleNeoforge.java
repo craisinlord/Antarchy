@@ -229,6 +229,21 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setLucidMovementSpeed(AntarchyMobsConfig.lucidMovementSpeed());
         AntarchySettings.setLucidFlyingSpeed(AntarchyMobsConfig.lucidFlyingSpeed());
         AntarchySettings.setLucidKnockbackResistance(AntarchyMobsConfig.lucidKnockbackResistance());
+        AntarchySettings.setVortexHealth(AntarchyMobsConfig.vortexHealth());
+        AntarchySettings.setVortexAttackDamage(AntarchyMobsConfig.vortexAttackDamage());
+        AntarchySettings.setVortexMovementSpeed(AntarchyMobsConfig.vortexMovementSpeed());
+        AntarchySettings.setVortexFlyingSpeed(AntarchyMobsConfig.vortexFlyingSpeed());
+        AntarchySettings.setVortexMaxActiveVortexes(AntarchyMobsConfig.vortexMaxActiveVortexes());
+        AntarchySettings.setWindVortexDurationTicks(AntarchyMobsConfig.windVortexDurationTicks());
+        AntarchySettings.setWindVortexPullStrength(AntarchyMobsConfig.windVortexPullStrength());
+        AntarchySettings.setWindVortexLaunchStrength(AntarchyMobsConfig.windVortexLaunchStrength());
+        AntarchySettings.setVortexLensMinRadius(AntarchyMobsConfig.vortexLensMinRadius());
+        AntarchySettings.setVortexLensMaxRadius(AntarchyMobsConfig.vortexLensMaxRadius());
+        AntarchySettings.setVortexLensMinHeight(AntarchyMobsConfig.vortexLensMinHeight());
+        AntarchySettings.setVortexLensMaxHeight(AntarchyMobsConfig.vortexLensMaxHeight());
+        AntarchySettings.setVortexLensPullStrength(AntarchyMobsConfig.vortexLensPullStrength());
+        AntarchySettings.setVortexLensPushStrength(AntarchyMobsConfig.vortexLensPushStrength());
+        AntarchySettings.setVortexLensLaunchStrength(AntarchyMobsConfig.vortexLensLaunchStrength());
 
         AntarchySettings.setDreadHallucinationSoundsEnabled(AntarchyMobsConfig.dreadHallucinationSoundsEnabled());
         AntarchySettings.setDreadHallucinationSoundMinInterval(AntarchyMobsConfig.dreadHallucinationSoundMinInterval());
@@ -354,6 +369,9 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setBloodCrystalKatanaAttackDamage(AntarchyToolsConfig.bloodCrystalKatanaAttackDamage());
         AntarchySettings.setBloodCrystalKatanaLaunchStrength(AntarchyToolsConfig.bloodCrystalKatanaLaunchStrength());
         AntarchySettings.setBloodCrystalKatanaTrailDurationTicks(AntarchyToolsConfig.bloodCrystalKatanaTrailDurationTicks());
+        AntarchySettings.setBloodCrystalKatanaReachBonus(AntarchyToolsConfig.bloodCrystalKatanaReachBonus());
+        AntarchySettings.setBloodCrystalKatanaInvulnTicks(AntarchyToolsConfig.bloodCrystalKatanaInvulnTicks());
+        AntarchySettings.setBloodCrystalKatanaDashCooldownTicks(AntarchyToolsConfig.bloodCrystalKatanaDashCooldownTicks());
 
         AntarchySettings.setNightmareHelmetArmorValue(AntarchyToolsConfig.nightmareHelmetArmorValue());
         AntarchySettings.setNightmareChestplateArmorValue(AntarchyToolsConfig.nightmareChestplateArmorValue());
@@ -435,6 +453,8 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setDiamondMinecartCoastDeceleration(AntarchyMiscConfig.diamondMinecartCoastDeceleration());
         AntarchySettings.setDiamondMinecartMobDamageEnabled(AntarchyMiscConfig.diamondMinecartMobDamageEnabled());
         AntarchySettings.setDiamondMinecartMaxMobDamage(AntarchyMiscConfig.diamondMinecartMaxMobDamage());
+        AntarchySettings.setHoverboardMaxSpeed(AntarchyMiscConfig.hoverboardMaxSpeed());
+        AntarchySettings.setHoverboardAcceleration(AntarchyMiscConfig.hoverboardAcceleration());
         AntarchySettings.setPermanentPortalsEnabled(AntarchyMiscConfig.permanentPortalsEnabled());
         AntarchySettings.setPermanentPortalsFlintAndSteelEnabled(AntarchyMiscConfig.permanentPortalsFlintAndSteelEnabled());
         AntarchySettings.setElythiaPortalEnabled(AntarchyMiscConfig.elythiaPortalEnabled());

@@ -6,8 +6,6 @@ import com.craisinlord.antarchy.content.item.BrutalflyElytraFlightHelper;
 import com.craisinlord.antarchy.content.item.BrutalflyElytraItem;
 import com.craisinlord.antarchy.content.network.BrutalflyElytraFlapPayload;
 import net.minecraft.client.Minecraft;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -18,7 +16,6 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT)
 public final class BrutalflyElytraClientHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger("Antarchy/BrutalflyElytra");
     private static boolean lastJumpDown;
     private static int chargeTicks;
 

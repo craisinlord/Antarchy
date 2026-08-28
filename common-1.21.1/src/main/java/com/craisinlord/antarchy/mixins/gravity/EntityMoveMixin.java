@@ -16,8 +16,6 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,9 +30,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * Fixes move/landing logic that assumes down is always down.
  */
 public abstract class EntityMoveMixin {
-    @Unique
-    private static final Logger ANTARCHY_FALL_LOGGER = LoggerFactory.getLogger("Antarchy/FallDamage");
-
     @Unique
     private double antarchy$lastWorldMoveY = 0.0;
     @Unique
@@ -132,20 +127,7 @@ public abstract class EntityMoveMixin {
             Vec3 delta = endBox.getCenter().subtract(this.antarchy$moveStartBox.getCenter());
             AABB sweptBox = this.antarchy$moveStartBox.expandTowards(delta).minmax(endBox).inflate(0.05D);
             if (antarchy$intersectsAntiwater(entity, sweptBox)) {
-                float previousFallDistance = entity.fallDistance;
                 entity.resetFallDistance();
-                if (!entity.level().isClientSide && ANTARCHY_FALL_LOGGER.isDebugEnabled()) {
-                    ANTARCHY_FALL_LOGGER.debug(
-                            "[FallDamage] Antiwater contact reset during move: entity={} startBox={} endBox={} sweptBox={} playerMoveY={} worldMoveY={} previousFallDistance={}",
-                            entity.getClass().getSimpleName(),
-                            this.antarchy$moveStartBox,
-                            endBox,
-                            sweptBox,
-                            this.antarchy$lastPlayerMoveY,
-                            this.antarchy$lastWorldMoveY,
-                            previousFallDistance
-                    );
-                }
             }
         }
 

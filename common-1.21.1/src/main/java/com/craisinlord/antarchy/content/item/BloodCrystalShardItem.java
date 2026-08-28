@@ -1,7 +1,9 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.bloodglass.BloodglassAccess;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -52,6 +54,8 @@ public class BloodCrystalShardItem extends Item {
         }
 
         player.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                AntarchySoundEvents.BLOODGLASS_WARD_HEART_REGEN.get(), SoundSource.PLAYERS, 1.0F, 1.0F);
         SYNC_BLOODGLASS.accept((ServerPlayer) player);
 
         if (!player.getAbilities().instabuild) {

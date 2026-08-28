@@ -109,6 +109,9 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_KATANA_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue BLOOD_CRYSTAL_KATANA_LAUNCH_STRENGTH;
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_KATANA_TRAIL_DURATION_TICKS;
+    private static final ModConfigSpec.DoubleValue BLOOD_CRYSTAL_KATANA_REACH_BONUS;
+    private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_KATANA_INVULN_TICKS;
+    private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_KATANA_DASH_COOLDOWN_TICKS;
 
 
     // Nightmare Gear
@@ -359,6 +362,9 @@ public final class AntarchyToolsConfig {
         BLOOD_CRYSTAL_KATANA_ATTACK_DAMAGE = b.comment("Attack damage of the Blood Crystal Katana.").defineInRange("attackDamage", 7, 0, 1024);
         BLOOD_CRYSTAL_KATANA_LAUNCH_STRENGTH = b.comment("Forward launch strength applied to the wielder when the katana hits.").defineInRange("launchStrength", 1.1D, 0.0D, 8.0D);
         BLOOD_CRYSTAL_KATANA_TRAIL_DURATION_TICKS = b.comment("How long the crimson trail lingers after a katana hit, in ticks.").defineInRange("trailDurationTicks", 12, 0, 200);
+        BLOOD_CRYSTAL_KATANA_REACH_BONUS = b.comment("Extra entity interaction range in blocks while held in main hand. Lets a swing reach (and dash toward) a target you are looking at from farther away.").defineInRange("reachBonus", 4.0D, 0.0D, 32.0D);
+        BLOOD_CRYSTAL_KATANA_INVULN_TICKS = b.comment("Full-immunity window granted after a full-strength swing dash, in ticks (0 disables).").defineInRange("invulnTicks", 8, 0, 200);
+        BLOOD_CRYSTAL_KATANA_DASH_COOLDOWN_TICKS = b.comment("Minimum ticks between katana dashes.").defineInRange("dashCooldownTicks", 4, 0, 200);
         b.pop();
 
 
@@ -619,6 +625,9 @@ public final class AntarchyToolsConfig {
     static int     bloodCrystalKatanaAttackDamage()          { return BLOOD_CRYSTAL_KATANA_ATTACK_DAMAGE.get(); }
     static double  bloodCrystalKatanaLaunchStrength()        { return BLOOD_CRYSTAL_KATANA_LAUNCH_STRENGTH.get(); }
     static int     bloodCrystalKatanaTrailDurationTicks()    { return BLOOD_CRYSTAL_KATANA_TRAIL_DURATION_TICKS.get(); }
+    static double  bloodCrystalKatanaReachBonus()            { return BLOOD_CRYSTAL_KATANA_REACH_BONUS.get(); }
+    static int     bloodCrystalKatanaInvulnTicks()           { return BLOOD_CRYSTAL_KATANA_INVULN_TICKS.get(); }
+    static int     bloodCrystalKatanaDashCooldownTicks()     { return BLOOD_CRYSTAL_KATANA_DASH_COOLDOWN_TICKS.get(); }
 
     static int     nightmareHelmetArmorValue()               { return NIGHTMARE_HELMET_ARMOR_VALUE.get(); }
     static int     nightmareChestplateArmorValue()           { return NIGHTMARE_CHESTPLATE_ARMOR_VALUE.get(); }

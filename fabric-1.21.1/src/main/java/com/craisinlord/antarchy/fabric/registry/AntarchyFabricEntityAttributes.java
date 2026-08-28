@@ -87,6 +87,7 @@ public final class AntarchyFabricEntityAttributes {
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.ROLLY_POLLY.get(), RollyPollyEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.TRIFFID.get(), TriffidEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.LUCID.get(), LucidEntity.createAttributes().build());
+        FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.VORTEX.get(), com.craisinlord.antarchy.content.entity.vortex.VortexEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.SCORPION.get(), ScorpionEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.BASILISK.get(), BasiliskEntity.createAttributes().build());
         FabricDefaultAttributeRegistry.register(AntarchyFabricEntities.EMPEROR_SCORPION.get(), EmperorScorpionEntity.createAttributes().build());
