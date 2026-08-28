@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:typhonite"
+  },
+  "result": {
+    "id": "antarchy:typhonite_wall"
+  }
+}

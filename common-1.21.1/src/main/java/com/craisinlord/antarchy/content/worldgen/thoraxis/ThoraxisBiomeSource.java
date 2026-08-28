@@ -23,6 +23,8 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     private static final int VERTICAL_NOISE_SCALE = 8;
     private static final double DUNES_SELECTOR_CUTOFF = 0.38D;
     private static final double HILLS_SELECTOR_CUTOFF = 0.24D;
+    private static final double NADIR_FOREST_SELECTOR_MIN = 0.42D;
+    private static final double NADIR_FOREST_SELECTOR_MAX = 0.66D;
     private static final ResourceKey<Biome> NIGHTMARE_WASTES = ResourceKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "nightmare_wastes")
@@ -30,6 +32,10 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     private static final ResourceKey<Biome> DREAM_DUNES = ResourceKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "dream_dunes")
+    );
+    private static final ResourceKey<Biome> VORTEX_EXPANSE = ResourceKey.create(
+            Registries.BIOME,
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "vortex_expanse")
     );
     private static final ResourceKey<Biome> UMBRAL_HILLS = ResourceKey.create(
             Registries.BIOME,
@@ -39,16 +45,17 @@ public final class ThoraxisBiomeSource extends BiomeSource {
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "lucid_pools")
     );
-    private static final ResourceKey<Biome> UNDERSIDE = ResourceKey.create(
+    private static final ResourceKey<Biome> NADIR_FOREST = ResourceKey.create(
             Registries.BIOME,
-            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "thoraxis_underside")
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "nadir_forest")
     );
 
     public static final MapCodec<ThoraxisBiomeSource> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             MultiNoiseBiomeSource.DIRECT_CODEC.forGetter(ThoraxisBiomeSource::parameters),
             Codec.INT.optionalFieldOf("dream_dunes_max_y", 96).forGetter(ThoraxisBiomeSource::dreamDunesMaxY),
             Codec.INT.optionalFieldOf("umbral_hills_max_y", 100).forGetter(ThoraxisBiomeSource::umbralHillsMaxY),
-            Codec.INT.optionalFieldOf("lucid_pools_min_y", 116).forGetter(ThoraxisBiomeSource::lucidPoolsMinY)
+            Codec.INT.optionalFieldOf("lucid_pools_min_y", 116).forGetter(ThoraxisBiomeSource::lucidPoolsMinY),
+            Codec.INT.optionalFieldOf("nadir_forest_min_y", 128).forGetter(ThoraxisBiomeSource::nadirForestMinY)
     ).apply(instance, ThoraxisBiomeSource::new));
 
     private final Climate.ParameterList<Holder<Biome>> parameters;
@@ -56,30 +63,35 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     private final int dreamDunesMaxY;
     private final int umbralHillsMaxY;
     private final int lucidPoolsMinY;
+    private final int nadirForestMinY;
     private final int dreamDunesMaxQuartY;
     private final int umbralHillsMaxQuartY;
     private final int lucidPoolsMinQuartY;
+    private final int nadirForestMinQuartY;
     private volatile boolean biomesResolved;
     private Holder<Biome> nightmareWastesBiome;
     private Holder<Biome> dreamDunesBiome;
+    private Holder<Biome> vortexExpanseBiome;
     private Holder<Biome> umbralHillsBiome;
     private Holder<Biome> lucidPoolsBiome;
-    private Holder<Biome> undersideBiome;
+    private Holder<Biome> nadirForestBiome;
 
     private static final ThreadLocal<Long2DoubleOpenHashMap> REGION_CACHE =
             ThreadLocal.withInitial(() -> new Long2DoubleOpenHashMap(512));
     private static final ThreadLocal<Long2DoubleOpenHashMap> VERTICAL_CACHE =
             ThreadLocal.withInitial(() -> new Long2DoubleOpenHashMap(64));
 
-    public ThoraxisBiomeSource(Climate.ParameterList<Holder<Biome>> parameters, int dreamDunesMaxY, int umbralHillsMaxY, int lucidPoolsMinY) {
+    public ThoraxisBiomeSource(Climate.ParameterList<Holder<Biome>> parameters, int dreamDunesMaxY, int umbralHillsMaxY, int lucidPoolsMinY, int nadirForestMinY) {
         this.parameters = parameters;
         this.delegate = MultiNoiseBiomeSource.createFromList(parameters);
         this.dreamDunesMaxY = dreamDunesMaxY;
         this.umbralHillsMaxY = umbralHillsMaxY;
         this.lucidPoolsMinY = lucidPoolsMinY;
+        this.nadirForestMinY = nadirForestMinY;
         this.dreamDunesMaxQuartY = QuartPos.fromBlock(dreamDunesMaxY);
         this.umbralHillsMaxQuartY = QuartPos.fromBlock(umbralHillsMaxY);
         this.lucidPoolsMinQuartY = QuartPos.fromBlock(lucidPoolsMinY);
+        this.nadirForestMinQuartY = QuartPos.fromBlock(nadirForestMinY);
     }
 
     private void resolveBiomesIfNeeded() {
@@ -92,9 +104,10 @@ public final class ThoraxisBiomeSource extends BiomeSource {
             }
             this.nightmareWastesBiome = this.findBiome(NIGHTMARE_WASTES);
             this.dreamDunesBiome = this.findBiome(DREAM_DUNES);
+            this.vortexExpanseBiome = this.findBiome(VORTEX_EXPANSE);
             this.umbralHillsBiome = this.findBiome(UMBRAL_HILLS);
             this.lucidPoolsBiome = this.findBiome(LUCID_POOLS);
-            this.undersideBiome = this.findBiome(UNDERSIDE);
+            this.nadirForestBiome = this.findBiome(NADIR_FOREST);
             this.biomesResolved = true;
         }
     }
@@ -105,6 +118,10 @@ public final class ThoraxisBiomeSource extends BiomeSource {
 
     private int lucidPoolsMinY() {
         return this.lucidPoolsMinY;
+    }
+
+    private int nadirForestMinY() {
+        return this.nadirForestMinY;
     }
 
     private int dreamDunesMaxY() {
@@ -128,21 +145,29 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     @Override
     public Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.Sampler sampler) {
         this.resolveBiomesIfNeeded();
-        if (y < 0 && this.undersideBiome != null) {
-            return this.undersideBiome;
-        }
-
-        if (y >= this.lucidPoolsMinQuartY && this.lucidPoolsBiome != null) {
-            return this.lucidPoolsBiome;
+        if (y < 0 && this.dreamDunesBiome != null) {
+            return this.dreamDunesBiome;
         }
 
         double region = cachedRegionNoise(x, z);
         double vertical = cachedVerticalNoise(y);
         double dreamDunesSelector = region * 0.65D + (1.0D - vertical) * 0.35D;
         double umbralHillsSelector = region * 0.55D + vertical * 0.45D;
+        double nadirForestSelector = region * 0.78D + vertical * 0.22D;
 
-        if (this.dreamDunesBiome != null && y <= this.dreamDunesMaxQuartY && dreamDunesSelector <= DUNES_SELECTOR_CUTOFF) {
-            return this.dreamDunesBiome;
+        if (this.nadirForestBiome != null
+                && y >= this.nadirForestMinQuartY
+                && nadirForestSelector >= NADIR_FOREST_SELECTOR_MIN
+                && nadirForestSelector <= NADIR_FOREST_SELECTOR_MAX) {
+            return this.nadirForestBiome;
+        }
+
+        if (y >= this.lucidPoolsMinQuartY && this.lucidPoolsBiome != null) {
+            return this.lucidPoolsBiome;
+        }
+
+        if (this.vortexExpanseBiome != null && y <= this.dreamDunesMaxQuartY && dreamDunesSelector <= DUNES_SELECTOR_CUTOFF) {
+            return this.vortexExpanseBiome;
         }
 
         if (this.umbralHillsBiome != null && y <= this.umbralHillsMaxQuartY && umbralHillsSelector <= HILLS_SELECTOR_CUTOFF) {
@@ -158,6 +183,7 @@ public final class ThoraxisBiomeSource extends BiomeSource {
         this.delegate.addDebugInfo(debug, pos, sampler);
         debug.add("Thoraxis selector: mixed vertical/region noise");
         debug.add("Thoraxis Lucid Pools: y>=" + this.lucidPoolsMinY);
+        debug.add("Thoraxis Nadir Forest: y>=" + this.nadirForestMinY);
     }
 
     private Holder<Biome> findBiome(ResourceKey<Biome> key) {

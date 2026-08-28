@@ -36,8 +36,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -50,7 +48,6 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.EnumSet;
 
 public class MantisEntity extends Monster implements GeoEntity {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MantisEntity.class);
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
     private static final RawAnimation FLY_ANIM = RawAnimation.begin().thenLoop("fly");
@@ -87,7 +84,6 @@ public class MantisEntity extends Monster implements GeoEntity {
     protected float committedAttackYaw;
     protected boolean attackDamageApplied;
     protected boolean attackStartedInFlight;
-    private int debugLogTicks = 0;
     private int configSyncTicks;
 
     public MantisEntity(EntityType<? extends MantisEntity> entityType, Level level) {
@@ -275,7 +271,6 @@ public class MantisEntity extends Monster implements GeoEntity {
 
             this.setNoGravity(this.isFlyingNow());
             this.updateAnimationState();
-            this.tickDebugLog();
         }
 
         this.updateFlightRotation();
@@ -574,27 +569,6 @@ public class MantisEntity extends Monster implements GeoEntity {
         this.setHealth(syncedHealth);
     }
 
-    private void tickDebugLog() {
-        if (++this.debugLogTicks < 100) {
-            return;
-        }
-        this.debugLogTicks = 0;
-        LivingEntity target = this.getTarget();
-        int animState = this.getAnimationState();
-        LOGGER.debug(
-            "[Mantis id={}] pos={},{},{} target={} anim={} attackTicks={} flyBurst={} flyCooldown={} onGround={} navDone={}",
-            this.getId(),
-            (int) this.getX(), (int) this.getY(), (int) this.getZ(),
-            target != null ? target.getName().getString() : "none",
-            animState,
-            this.attackAnimationTicks,
-            this.flyBurstTicks,
-            this.flyCooldownTicks,
-            this.onGround(),
-            this.getNavigation().isDone()
-        );
-    }
-
     private final class MantisCombatGoal extends Goal {
         private int repathTicks;
 
@@ -656,4 +630,3 @@ public class MantisEntity extends Monster implements GeoEntity {
 
 
 }
-

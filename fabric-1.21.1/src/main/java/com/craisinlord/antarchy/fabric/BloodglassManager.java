@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.fabric;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.bloodglass.BloodglassAccess;
 import com.craisinlord.antarchy.content.item.BloodCrystalArmorItem;
 import com.craisinlord.antarchy.fabric.network.AntarchyFabricNetworking;
@@ -10,7 +11,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
@@ -55,7 +55,7 @@ public final class BloodglassManager {
 
             ServerLevel serverLevel = (ServerLevel) player.level();
             serverLevel.broadcastEntityEvent(player, (byte) 2);
-            serverLevel.playSound(null, player.blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 1.0f, 1.0f);
+            serverLevel.playSound(null, player.blockPosition(), AntarchySoundEvents.BLOODGLASS_WARD_HEART_BREAK.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
             serverLevel.sendParticles(
                     new DustParticleOptions(new Vector3f(0.85f, 0.18f, 0.38f), 1.2f),
                     player.getX(), player.getEyeY(), player.getZ(),
@@ -186,7 +186,7 @@ public final class BloodglassManager {
 
         if (changed) {
             syncBloodglass(player);
-            player.playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.6f, 1.6f);
+            player.playNotifySound(AntarchySoundEvents.BLOODGLASS_WARD_HEART_REGEN.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
         }
     }
 

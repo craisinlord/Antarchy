@@ -51,6 +51,10 @@ public class UpwardFallingBlockEntity extends Entity {
         return this.entityData.get(DATA_BLOCK_STATE);
     }
 
+    protected double getRiseAccel() {
+        return RISE_ACCEL;
+    }
+
     public static void fallUp(Level level, BlockPos pos, BlockState state) {
         fallUp(level, pos, state, true);
     }
@@ -82,7 +86,7 @@ public class UpwardFallingBlockEntity extends Entity {
         }
 
         double beforeY = getY();
-        setDeltaMovement(getDeltaMovement().add(0.0, RISE_ACCEL, 0.0));
+        setDeltaMovement(getDeltaMovement().add(0.0, getRiseAccel(), 0.0));
         move(MoverType.SELF, getDeltaMovement());
         setDeltaMovement(getDeltaMovement().scale(DRAG));
         distanceTraveled += Math.max(0.0, getY() - beforeY);

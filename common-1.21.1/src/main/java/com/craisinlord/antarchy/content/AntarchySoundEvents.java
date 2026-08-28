@@ -173,6 +173,11 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> JERRY_ADULT_HURT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> JERRY_ADULT_DEATH = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> JERRY_ADULT_ATTACK = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> WORM_HOOK_FLYING = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> BLOOD_CRYSTAL_KATANA_DASH = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> BLOOD_CRYSTAL_ARMOR_EQUIP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> BLOODGLASS_WARD_HEART_BREAK = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> BLOODGLASS_WARD_HEART_REGEN = (Supplier<SoundEvent>) UNBOUND;
 
     private AntarchySoundEvents() {
     }
@@ -341,7 +346,12 @@ public final class AntarchySoundEvents {
             Supplier<SoundEvent> jerryAdultIdle,
             Supplier<SoundEvent> jerryAdultHurt,
             Supplier<SoundEvent> jerryAdultDeath,
-            Supplier<SoundEvent> jerryAdultAttack
+            Supplier<SoundEvent> jerryAdultAttack,
+            Supplier<SoundEvent> wormHookFlying,
+            Supplier<SoundEvent> bloodCrystalKatanaDash,
+            Supplier<SoundEvent> bloodCrystalArmorEquip,
+            Supplier<SoundEvent> bloodglassWardHeartBreak,
+            Supplier<SoundEvent> bloodglassWardHeartRegen
     ) {
         SQUIDZOOKA_FIRE = squidzookaFire;
         SHRINK_RAY_CHARGE = shrinkRayCharge;
@@ -507,5 +517,10 @@ public final class AntarchySoundEvents {
         JERRY_ADULT_HURT = jerryAdultHurt;
         JERRY_ADULT_DEATH = jerryAdultDeath;
         JERRY_ADULT_ATTACK = jerryAdultAttack;
+        WORM_HOOK_FLYING = wormHookFlying;
+        BLOOD_CRYSTAL_KATANA_DASH = bloodCrystalKatanaDash;
+        BLOOD_CRYSTAL_ARMOR_EQUIP = bloodCrystalArmorEquip;
+        BLOODGLASS_WARD_HEART_BREAK = bloodglassWardHeartBreak;
+        BLOODGLASS_WARD_HEART_REGEN = bloodglassWardHeartRegen;
     }
 }

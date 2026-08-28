@@ -68,6 +68,7 @@ public final class AntarchyTags {
         public static final TagKey<EntityType<?>> GRAVITY_GUN_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, id("gravity_gun_blacklist"));
         public static final TagKey<EntityType<?>> INVERTED_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("inverted_immune"));
         public static final TagKey<EntityType<?>> LUCID_BOLT_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("lucid_bolt_immune"));
+        public static final TagKey<EntityType<?>> WIND_VORTEX_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("wind_vortex_immune"));
         public static final TagKey<EntityType<?>> DUCT_TAPE_STICK_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, id("duct_tape_stick_blacklist"));
         public static final TagKey<EntityType<?>> NIGHTMARE_NO_ATTACK = TagKey.create(Registries.ENTITY_TYPE, id("nightmare_no_attack"));
         public static final TagKey<EntityType<?>> SIZE_CHANGING_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("size_changing_immune"));

@@ -138,6 +138,7 @@ public final class AntarchyNeoForgeClient {
         event.registerEntityRenderer(AntarchyNeoforgeEntites.PORTAL_GUN_PROJECTILE.get(), com.craisinlord.antarchy.content.client.renderer.PortalGunProjectileRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.NIGHTMARE_BITE.get(), NightmareBiteRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.LUCID.get(), context -> withParalyzedGeoLayer(new LucidRenderer(context)));
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.VORTEX.get(), context -> withParalyzedGeoLayer(new VortexRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.BED_BUG.get(), context -> withParalyzedGeoLayer(new BedBugRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.WASP.get(), context -> withParalyzedGeoLayer(new WaspRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.BOMBER.get(), context -> withParalyzedGeoLayer(new BomberRenderer(context)));
@@ -146,6 +147,8 @@ public final class AntarchyNeoForgeClient {
         event.registerEntityRenderer(AntarchyNeoforgeEntites.GROWTH_RAY_PROJECTILE.get(), SizeRayProjectileRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.LUCID_BOLT.get(), LucidBoltRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.LUCID_PEARL_PROJECTILE.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.VORTEX_CHARGE_PROJECTILE.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.WIND_VORTEX.get(), WindVortexRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.CRITTER_CAGE_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.WORM_HOOK_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.HUSH_PROJECTILE.get(), HushProjectileRenderer::new);
@@ -621,6 +624,10 @@ public final class AntarchyNeoForgeClient {
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.UMBRAL_MOSS_CARPET.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.NYXITE_SPIKE.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.CHITIN_SPIKE.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.TYPHONITE_SPIKE.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.SPIRALING_VINES.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.SPIRALING_VINES_PLANT.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.WHIRLFLOWER.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.STAR_CORAL.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.STAR_CORAL_FAN.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.STAR_CORAL_WALL_FAN.get(), RenderType.cutout());
@@ -648,6 +655,7 @@ public final class AntarchyNeoForgeClient {
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.ELYTHIA_PORTAL.get(), RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.THORAXIS_PORTAL.get(), RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.TRIFFID_GOO_BLOCK.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.VORTEX_LENS.get(), RenderType.translucent());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.URANIUM_DOOR.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.TITANIUM_DOOR.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.URANIUM_TRAPDOOR.get(), RenderType.cutout());

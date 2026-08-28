@@ -44,6 +44,10 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.BooleanValue DIAMOND_MINECART_MOB_DAMAGE_ENABLED;
     private static final ModConfigSpec.DoubleValue  DIAMOND_MINECART_MAX_MOB_DAMAGE;
 
+    // Hoverboard
+    private static final ModConfigSpec.DoubleValue HOVERBOARD_MAX_SPEED;
+    private static final ModConfigSpec.DoubleValue HOVERBOARD_ACCELERATION;
+
     // World / misc toggles
     private static final ModConfigSpec.BooleanValue DUPLICATOR_TREE_ENABLED;
     private static final ModConfigSpec.BooleanValue GLOW_VINES_UNDER_LEAVES;
@@ -141,6 +145,14 @@ public final class AntarchyMiscConfig {
         b.pop();
 
 
+        // Hoverboard
+
+        b.push("hoverboard");
+        HOVERBOARD_MAX_SPEED    = b.comment("Maximum hoverboard speed in blocks/tick while moving forward.").defineInRange("maxSpeed", 3.0D, 0.05D, 6.0D);
+        HOVERBOARD_ACCELERATION = b.comment("Hoverboard speed gained per tick while moving forward. Lower values take longer to reach top speed.").defineInRange("acceleration", 0.05D, 0.001D, 1.0D);
+        b.pop();
+
+
         // World / visual toggles
 
         b.push("world");
@@ -194,4 +206,6 @@ public final class AntarchyMiscConfig {
     static double  diamondMinecartCoastDeceleration()    { return DIAMOND_MINECART_COAST_DECELERATION.get(); }
     static boolean diamondMinecartMobDamageEnabled()     { return DIAMOND_MINECART_MOB_DAMAGE_ENABLED.get(); }
     static double  diamondMinecartMaxMobDamage()         { return DIAMOND_MINECART_MAX_MOB_DAMAGE.get(); }
+    static double  hoverboardMaxSpeed()                  { return HOVERBOARD_MAX_SPEED.get(); }
+    static double  hoverboardAcceleration()              { return HOVERBOARD_ACCELERATION.get(); }
 }

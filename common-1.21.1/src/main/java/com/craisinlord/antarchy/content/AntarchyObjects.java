@@ -17,6 +17,7 @@ import com.craisinlord.antarchy.content.entity.WaspEntity;
 import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyEntity;
 import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyOrbEntity;
 import com.craisinlord.antarchy.content.block.entity.HushweedBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.VortexLensBlockEntity;
 import com.craisinlord.antarchy.content.entity.flying_squirrel.FlyingSquirrelEntity;
 import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
 import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
@@ -28,6 +29,9 @@ import com.craisinlord.antarchy.content.entity.MantisEntity;
 import com.craisinlord.antarchy.content.entity.ReverieEntity;
 import com.craisinlord.antarchy.content.entity.ScorpionEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
+import com.craisinlord.antarchy.content.entity.vortex.VortexChargeProjectileEntity;
+import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
+import com.craisinlord.antarchy.content.entity.vortex.WindVortexEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareBiteEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmarePortalEntity;
@@ -80,6 +84,16 @@ public final class AntarchyObjects {
     public static Supplier<EntityType<NightmareBiteEntity>> NIGHTMARE_BITE = (Supplier<EntityType<NightmareBiteEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<LucidEntity>> LUCID = (Supplier<EntityType<LucidEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<VortexEntity>> VORTEX = (Supplier<EntityType<VortexEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<WindVortexEntity>> WIND_VORTEX = (Supplier<EntityType<WindVortexEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<VortexChargeProjectileEntity>> VORTEX_CHARGE_PROJECTILE = (Supplier<EntityType<VortexChargeProjectileEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> VORTEX_LENS = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<BlockEntityType<VortexLensBlockEntity>> VORTEX_LENS_BLOCK_ENTITY = (Supplier<BlockEntityType<VortexLensBlockEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<MolewormEntity>> MOLEWORM = (Supplier<EntityType<MolewormEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -609,6 +623,26 @@ public final class AntarchyObjects {
 
     public static void setLucid(Supplier<EntityType<LucidEntity>> supplier) {
         LUCID = supplier;
+    }
+
+    public static void setVortex(Supplier<EntityType<VortexEntity>> supplier) {
+        VORTEX = supplier;
+    }
+
+    public static void setWindVortex(Supplier<EntityType<WindVortexEntity>> supplier) {
+        WIND_VORTEX = supplier;
+    }
+
+    public static void setVortexChargeProjectile(Supplier<EntityType<VortexChargeProjectileEntity>> supplier) {
+        VORTEX_CHARGE_PROJECTILE = supplier;
+    }
+
+    public static void setVortexLens(Supplier<Block> supplier) {
+        VORTEX_LENS = supplier;
+    }
+
+    public static void setVortexLensBlockEntity(Supplier<BlockEntityType<VortexLensBlockEntity>> supplier) {
+        VORTEX_LENS_BLOCK_ENTITY = supplier;
     }
 
     public static void setLotus(Supplier<Block> supplier) {

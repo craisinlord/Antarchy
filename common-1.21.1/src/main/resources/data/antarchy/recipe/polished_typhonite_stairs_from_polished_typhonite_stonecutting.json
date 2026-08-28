@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:polished_typhonite"
+  },
+  "result": {
+    "id": "antarchy:polished_typhonite_stairs"
+  }
+}

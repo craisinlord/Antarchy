@@ -185,7 +185,8 @@ public final class AntarchyConfigModuleFabric {
                     || name.equals("dreamSandEnabled")
                     || name.startsWith("dreamSand")
                     || name.equals("ichorWitherEnabled")
-                    || name.startsWith("diamondMinecart");
+                    || name.startsWith("diamondMinecart")
+                    || name.startsWith("hoverboard");
         }
 
         private static boolean isToolSetting(String name) {

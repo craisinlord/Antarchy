@@ -64,6 +64,7 @@ public class AntarchyNeoforgeEntityAttributes {
         event.put(AntarchyNeoforgeEntites.ALPHA_MANTIS.get(), AlphaMantisEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.TRIFFID.get(), TriffidEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.LUCID.get(), LucidEntity.createAttributes().build());
+        event.put(AntarchyNeoforgeEntites.VORTEX.get(), com.craisinlord.antarchy.content.entity.vortex.VortexEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.SCORPION.get(), ScorpionEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.BASILISK.get(), BasiliskEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.EMPEROR_SCORPION.get(), EmperorScorpionEntity.createAttributes().build());

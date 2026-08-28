@@ -14,6 +14,7 @@ import com.craisinlord.antarchy.content.block.entity.PortalGunPortalMasterBlockE
 import com.craisinlord.antarchy.content.block.entity.PotentNyxiteBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.SeashellBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.UpperBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.VortexLensBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.WaspNestBlockEntity;
 import com.craisinlord.antarchy.content.fluid.BileLiquidBlock;
 import com.craisinlord.antarchy.content.fluid.LumenLiquidBlock;
@@ -22,6 +23,7 @@ import com.craisinlord.antarchy.content.portal.PermanentPortalType;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.AmethystClusterBlock;
@@ -400,7 +402,7 @@ public final class AntarchyFabricBlocks {
 
 
     public static final DeferredBlock<net.minecraft.world.level.block.LeavesBlock> ROYAL_FLOWERING_LEAVES = BLOCKS.register("royal_flowering_leaves",
-            () -> new net.minecraft.world.level.block.LeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LEAVES).randomTicks().lightLevel(state -> 12)));
+            () -> new net.minecraft.world.level.block.LeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LEAVES).randomTicks()));
 
 
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.RoyalSaplingBlock> ROYAL_SAPLING = BLOCKS.register("royal_sapling",
@@ -701,7 +703,7 @@ public final class AntarchyFabricBlocks {
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.CloudBlock> CLOUD_BLOCK = BLOCKS.register("cloud_block",
             () -> new com.craisinlord.antarchy.content.block.CloudBlock(
                     AntarchyFabricItems::cloudBucketItem,
-                    BlockBehaviour.Properties.ofFullCopy(Blocks.POWDER_SNOW).noLootTable().noOcclusion()
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.POWDER_SNOW).noLootTable().noOcclusion().emissiveRendering((state, level, pos) -> true)
             ));
 
 
@@ -1064,6 +1066,9 @@ public final class AntarchyFabricBlocks {
 
     public static final DeferredBlock<BluestoneBlock> BLUESTONE_BLOCK = BLOCKS.register("bluestone_block",
             () -> new BluestoneBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.REDSTONE_BLOCK).mapColor(MapColor.COLOR_BLUE)));
+    public static final DeferredBlock<VortexLensBlock> VORTEX_LENS = BLOCKS.register("vortex_lens",
+            () -> new VortexLensBlock(AntarchyFabricBlocks::vortexLensBlockEntityType,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_BLOCK).mapColor(MapColor.COLOR_GREEN).strength(3.0F, 6.0F).requiresCorrectToolForDrops()));
     public static final DeferredBlock<BluestoneRepeaterBlock> BLUESTONE_REPEATER = BLOCKS.register("bluestone_repeater",
             () -> new BluestoneRepeaterBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.REPEATER).mapColor(MapColor.COLOR_BLUE).noCollission()));
     public static final DeferredBlock<BluestoneComparatorBlock> BLUESTONE_COMPARATOR = BLOCKS.register("bluestone_comparator",
@@ -1159,23 +1164,23 @@ public final class AntarchyFabricBlocks {
 
 
     public static final DeferredBlock<net.minecraft.world.level.block.RotatedPillarBlock> ANTIMETAL = BLOCKS.register("antimetal",
-            () -> new net.minecraft.world.level.block.RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT)));
+            () -> new net.minecraft.world.level.block.RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT).sound(antimetalSoundType())));
 
 
     public static final DeferredBlock<net.minecraft.world.level.block.RotatedPillarBlock> POLISHED_ANTIMETAL = BLOCKS.register("polished_antimetal",
-            () -> new net.minecraft.world.level.block.RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.POLISHED_BASALT)));
+            () -> new net.minecraft.world.level.block.RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.POLISHED_BASALT).sound(antimetalSoundType())));
     public static final DeferredBlock<StairBlock> ANTIMETAL_STAIRS = BLOCKS.register("antimetal_stairs",
-            () -> new StairBlock(ANTIMETAL.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT)));
+            () -> new StairBlock(ANTIMETAL.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT).sound(antimetalSoundType())));
     public static final DeferredBlock<SlabBlock> ANTIMETAL_SLAB = BLOCKS.register("antimetal_slab",
-            () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT)));
+            () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BASALT).sound(antimetalSoundType())));
     public static final DeferredBlock<StairBlock> POLISHED_ANTIMETAL_STAIRS = BLOCKS.register("polished_antimetal_stairs",
-            () -> new StairBlock(POLISHED_ANTIMETAL.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.POLISHED_BASALT)));
+            () -> new StairBlock(POLISHED_ANTIMETAL.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.POLISHED_BASALT).sound(antimetalSoundType())));
     public static final DeferredBlock<SlabBlock> POLISHED_ANTIMETAL_SLAB = BLOCKS.register("polished_antimetal_slab",
-            () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.POLISHED_BASALT)));
+            () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.POLISHED_BASALT).sound(antimetalSoundType())));
 
 
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.AntimetalScaffoldingBlock> ANTIMETAL_SCAFFOLDING = BLOCKS.register("antimetal_scaffolding",
-            () -> new com.craisinlord.antarchy.content.block.AntimetalScaffoldingBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SCAFFOLDING)));
+            () -> new com.craisinlord.antarchy.content.block.AntimetalScaffoldingBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SCAFFOLDING).sound(antimetalScaffoldingSoundType())));
 
 
     public static final DeferredBlock<UpperBlock> UPPER = BLOCKS.register("upper",
@@ -1325,6 +1330,42 @@ public final class AntarchyFabricBlocks {
             () -> new net.minecraft.world.level.block.SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CUT_SANDSTONE_SLAB)));
 
 
+    public static final DeferredBlock<Block> TYPHONITE = BLOCKS.register("typhonite",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE)));
+    public static final DeferredBlock<Block> TYPHONITE_BRICKS = BLOCKS.register("typhonite_bricks",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE)));
+    public static final DeferredBlock<Block> CHISELED_TYPHONITE = BLOCKS.register("chiseled_typhonite",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE)));
+    public static final DeferredBlock<Block> POLISHED_TYPHONITE = BLOCKS.register("polished_typhonite",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE)));
+    public static final DeferredBlock<Block> VEINED_TYPHONITE = BLOCKS.register("veined_typhonite",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE).lightLevel(state -> 8)));
+    public static final DeferredBlock<TyphoniteSpikeBlock> TYPHONITE_SPIKE = BLOCKS.register("typhonite_spike",
+            () -> new TyphoniteSpikeBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.POINTED_DRIPSTONE)));
+    public static final DeferredBlock<StairBlock> TYPHONITE_STAIRS = BLOCKS.register("typhonite_stairs",
+            () -> new StairBlock(TYPHONITE.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE_STAIRS)));
+    public static final DeferredBlock<SlabBlock> TYPHONITE_SLAB = BLOCKS.register("typhonite_slab",
+            () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE_SLAB)));
+    public static final DeferredBlock<WallBlock> TYPHONITE_WALL = BLOCKS.register("typhonite_wall",
+            () -> new WallBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE_WALL)));
+    public static final DeferredBlock<StairBlock> TYPHONITE_BRICK_STAIRS = BLOCKS.register("typhonite_brick_stairs",
+            () -> new StairBlock(TYPHONITE_BRICKS.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE_STAIRS)));
+    public static final DeferredBlock<SlabBlock> TYPHONITE_BRICK_SLAB = BLOCKS.register("typhonite_brick_slab",
+            () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE_SLAB)));
+    public static final DeferredBlock<WallBlock> TYPHONITE_BRICK_WALL = BLOCKS.register("typhonite_brick_wall",
+            () -> new WallBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE_WALL)));
+    public static final DeferredBlock<StairBlock> POLISHED_TYPHONITE_STAIRS = BLOCKS.register("polished_typhonite_stairs",
+            () -> new StairBlock(POLISHED_TYPHONITE.get().defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE_STAIRS)));
+    public static final DeferredBlock<SlabBlock> POLISHED_TYPHONITE_SLAB = BLOCKS.register("polished_typhonite_slab",
+            () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE_SLAB)));
+    public static final DeferredBlock<WallBlock> POLISHED_TYPHONITE_WALL = BLOCKS.register("polished_typhonite_wall",
+            () -> new WallBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE_WALL)));
+    public static final DeferredBlock<SpiralingVinesBlock> SPIRALING_VINES = BLOCKS.register("spiraling_vines",
+            () -> new SpiralingVinesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TWISTING_VINES)));
+    public static final DeferredBlock<SpiralingVinesPlantBlock> SPIRALING_VINES_PLANT = BLOCKS.register("spiraling_vines_plant",
+            () -> new SpiralingVinesPlantBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TWISTING_VINES_PLANT)));
+    public static final DeferredBlock<WhirlflowerBlock> WHIRLFLOWER = BLOCKS.register("whirlflower",
+            () -> new WhirlflowerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.ALLIUM)));
     public static final DeferredBlock<Block> DEAD_STAR_CORAL_BLOCK = BLOCKS.register("dead_star_coral_block",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.TUBE_CORAL_BLOCK)));
 
@@ -1418,6 +1459,11 @@ public final class AntarchyFabricBlocks {
                     (pos, state) -> new UpperBlockEntity(pos, state, AntarchyFabricBlocks::upperBlockEntityType),
                     UPPER.get()
             ).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<VortexLensBlockEntity>> VORTEX_LENS_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("vortex_lens",
+            () -> BlockEntityType.Builder.of(
+                    (pos, state) -> new VortexLensBlockEntity(pos, state, AntarchyFabricBlocks::vortexLensBlockEntityType),
+                    VORTEX_LENS.get()
+            ).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PortalGunPortalMasterBlockEntity>> PORTAL_GUN_PORTAL_MASTER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("portal_gun_portal_master",
             () -> BlockEntityType.Builder.of(
                     (pos, state) -> new PortalGunPortalMasterBlockEntity(pos, state, AntarchyFabricBlocks::portalGunPortalMasterBlockEntityType),
@@ -1457,6 +1503,10 @@ public final class AntarchyFabricBlocks {
 
     private static BlockEntityType<UpperBlockEntity> upperBlockEntityType() {
         return UPPER_BLOCK_ENTITY.get();
+    }
+
+    private static BlockEntityType<VortexLensBlockEntity> vortexLensBlockEntityType() {
+        return VORTEX_LENS_BLOCK_ENTITY.get();
     }
 
     private static BlockEntityType<PortalGunPortalMasterBlockEntity> portalGunPortalMasterBlockEntityType() {
@@ -1600,6 +1650,22 @@ public final class AntarchyFabricBlocks {
 
     private static Block createRawStorageBlock(Block copyFrom, MapColor mapColor) {
         return new Block(BlockBehaviour.Properties.ofFullCopy(copyFrom).mapColor(mapColor).requiresCorrectToolForDrops());
+    }
+
+
+    private static SoundType antimetalSoundType() {
+        return new SoundType(1.0F, 1.0F,
+                AntarchyFabricSounds.ANTIMETAL_PLACE.get(),
+                AntarchyFabricSounds.ANTIMETAL_STEP.get(),
+                AntarchyFabricSounds.ANTIMETAL_PLACE.get(),
+                AntarchyFabricSounds.ANTIMETAL_STEP.get(),
+                AntarchyFabricSounds.ANTIMETAL_PLACE.get());
+    }
+
+
+    private static SoundType antimetalScaffoldingSoundType() {
+        SoundEvent scaffold = AntarchyFabricSounds.ANTIMETAL_SCAFFOLD.get();
+        return new SoundType(1.0F, 1.0F, scaffold, scaffold, scaffold, scaffold, scaffold);
     }
 
 

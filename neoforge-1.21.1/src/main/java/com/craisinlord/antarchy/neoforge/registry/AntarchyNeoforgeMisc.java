@@ -313,6 +313,8 @@ public final class AntarchyNeoforgeMisc {
             () -> new ThoraxisSpikeFeature(ThoraxisSpikeConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, NyxiteSpikeFeature> NYXITE_SPIKES = FEATURES.register("nyxite_spikes",
             () -> new NyxiteSpikeFeature(NyxiteSpikeConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, TyphoniteSpikeFeature> TYPHONITE_SPIKES = FEATURES.register("typhonite_spikes",
+            () -> new TyphoniteSpikeFeature(TyphoniteSpikeConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, ChitinSpikeFeature> CAVARYN_CHITIN_SPIKES = FEATURES.register("cavaryn_chitin_spikes",
             () -> new ChitinSpikeFeature(ChitinSpikeConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, CavarynBileVeinFeature> CAVARYN_BILE_VEINS = FEATURES.register("cavaryn_bile_veins",

@@ -6,11 +6,8 @@ import com.craisinlord.antarchy.content.item.BrutalflyElytraItem;
 import com.craisinlord.antarchy.content.network.BrutalflyElytraFlapPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class BrutalflyElytraClientHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger("Antarchy/BrutalflyElytra");
     private static boolean lastJumpDown;
     private static int chargeTicks;
 
@@ -50,9 +47,6 @@ public final class BrutalflyElytraClientHandler {
         }
 
         if (wasSneakDown && chargeTicks > 0) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("[BrutalflyElytra] Sending flap payload chargeTicks={} fallFlying={} deltaMovement={}", chargeTicks, minecraft.player.isFallFlying(), minecraft.player.getDeltaMovement());
-            }
             ClientPlayNetworking.send(new BrutalflyElytraFlapPayload(chargeTicks));
         }
         chargeTicks = 0;

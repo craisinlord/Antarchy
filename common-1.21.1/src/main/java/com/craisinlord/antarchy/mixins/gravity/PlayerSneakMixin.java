@@ -9,8 +9,6 @@ import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,8 +21,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * Makes sneaking and edge checks work upside down.
  */
 public abstract class PlayerSneakMixin {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger("Antarchy/Sneak");
 
     @Shadow @Final private Abilities abilities;
     @Shadow protected abstract boolean isStayingOnGroundSurface();
@@ -52,9 +48,6 @@ public abstract class PlayerSneakMixin {
             }
         }
 
-        LOGGER.debug("[Sneak] inverted player maybeBackOffFromEdge: isNearCeiling={} flying={} stayOnGround={} type={}",
-                isNearCeiling, this.abilities.flying, this.isStayingOnGroundSurface(), type);
-
         if (!this.abilities.flying
                 && (type == MoverType.SELF || type == MoverType.PLAYER)
                 && this.isStayingOnGroundSurface()
@@ -63,7 +56,6 @@ public abstract class PlayerSneakMixin {
             double d = playerMovement.x;
             double e = playerMovement.z;
 
-            LOGGER.debug("[Sneak] Edge check active: step={} d={} e={}", step, d, e);
             while (d != 0.0D && canFallAtLeastInverted(this_, d, 0.0D, step, direction)) {
                 if (Math.abs(d) <= 0.05D) d = 0.0D;
                 else if (d > 0.0D) d -= 0.05D;
@@ -84,7 +76,6 @@ public abstract class PlayerSneakMixin {
                 else e += 0.05D;
             }
 
-            LOGGER.debug("[Sneak] Adjusted: x {} -> {}  z {} -> {}", playerMovement.x, d, playerMovement.z, e);
             cir.setReturnValue(AntarchyGravityRotationUtil.vecPlayerToWorld(
                     new Vec3(d, playerMovement.y, e), direction));
 

@@ -516,6 +516,16 @@ public final class AntarchyFabricSounds {
 
     public static final DeferredHolder<SoundEvent, SoundEvent> POTENT_NYXITE_GEYSER_CONTINUOUS_ACTIVE = registerSoundEvent("potent_nyxite_geyser_continuous_active");
     public static final DeferredHolder<SoundEvent, SoundEvent> MUSIC_DISC_UNDERSIDE = registerSoundEvent("music_disc_underside");
+    public static final DeferredHolder<SoundEvent, SoundEvent> WORM_HOOK_FLYING = registerSoundEvent("worm_hook_flying");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOOD_CRYSTAL_KATANA_DASH = registerSoundEvent("blood_crystal_katana_dash");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOOD_CRYSTAL_ARMOR_EQUIP = registerSoundEvent("blood_crystal_armor_equip");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOODGLASS_WARD_HEART_BREAK = registerSoundEvent("bloodglass_ward_heart_break");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOODGLASS_WARD_HEART_REGEN = registerSoundEvent("bloodglass_ward_heart_regen");
+
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANTIMETAL_PLACE = registerSoundEvent("antimetal_place");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANTIMETAL_STEP = registerSoundEvent("antimetal_step");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANTIMETAL_SCAFFOLD = registerSoundEvent("antimetal_scaffold");
 
 
 

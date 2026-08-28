@@ -20,6 +20,8 @@ import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.multipart.MultipartFramework;
+import com.craisinlord.antarchy.content.entity.vortex.VortexChargeProjectileEntity;
+import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
 import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
 import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.craisinlord.antarchy.content.item.*;
@@ -684,8 +686,8 @@ public final class AntarchyNeoForgeEvents {
         if (changed && player instanceof ServerPlayer sp) {
             syncBloodglass(sp);
             sp.playNotifySound(
-                    net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_CHIME,
-                    net.minecraft.sounds.SoundSource.PLAYERS, 0.6f, 1.6f);
+                    AntarchySoundEvents.BLOODGLASS_WARD_HEART_REGEN.get(),
+                    net.minecraft.sounds.SoundSource.PLAYERS, 1.0f, 1.0f);
         }
     }
     static void handleBloodCrystalArmorEquip(LivingEquipmentChangeEvent event) {
@@ -789,7 +791,7 @@ public final class AntarchyNeoForgeEvents {
         serverLevel.broadcastEntityEvent(player, (byte) 2);
 
         serverLevel.playSound(null, player.blockPosition(),
-                net.minecraft.sounds.SoundEvents.GLASS_BREAK,
+                AntarchySoundEvents.BLOODGLASS_WARD_HEART_BREAK.get(),
                 net.minecraft.sounds.SoundSource.PLAYERS, 1.0f, 1.0f);
 
         serverLevel.sendParticles(
@@ -1327,6 +1329,7 @@ public final class AntarchyNeoForgeEvents {
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.SQUIDZOOKA.get(), new SquidzookaDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.RPO_LAUNCHER.get(), new RpoLauncherDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.WATER_CANNON.get(), new WaterCannonDispenseBehavior());
+            DispenserBlock.registerBehavior(AntarchyNeoforgeItems.VORTEX_CHARGE.get(), new com.craisinlord.antarchy.content.dispenser.VortexChargeDispenseBehavior());
             AntimetalMinecartDispenseBehavior antimetalMinecartDispenseBehavior = new AntimetalMinecartDispenseBehavior();
             DispenserBlock.registerBehavior(Items.MINECART, antimetalMinecartDispenseBehavior);
             DispenserBlock.registerBehavior(Items.CHEST_MINECART, antimetalMinecartDispenseBehavior);
@@ -1348,6 +1351,10 @@ public final class AntarchyNeoForgeEvents {
             LucidEntity.boltEntityTypeSupplier = () -> AntarchyNeoforgeEntites.LUCID_BOLT.get();
             LucidBoltEntity.invertedEffectSupplier = () -> AntarchyNeoforgeMisc.INVERTED;
             LucidEyeProjectileEntity.invertedEffectSupplier = () -> AntarchyNeoforgeMisc.INVERTED;
+            VortexEntity.windVortexTypeSupplier = () -> AntarchyNeoforgeEntites.WIND_VORTEX.get();
+            VortexChargeProjectileEntity.defaultItemSupplier = () -> AntarchyNeoforgeItems.VORTEX_CHARGE.get();
+            VortexChargeProjectileEntity.projectileTypeSupplier = () -> AntarchyNeoforgeEntites.VORTEX_CHARGE_PROJECTILE.get();
+            VortexChargeProjectileEntity.windVortexTypeSupplier = () -> AntarchyNeoforgeEntites.WIND_VORTEX.get();
             MultipartFramework.bootstrap(
                     (owner, partIndex, spec) -> new MultipartPartEntity((Entity) owner, owner, partIndex, spec),
                     new MultipartFramework.NetworkBridge() {

@@ -12,6 +12,8 @@ import com.craisinlord.antarchy.fabric.registry.DeferredHolder;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
+import com.craisinlord.antarchy.content.entity.vortex.VortexChargeProjectileEntity;
+import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
 import com.craisinlord.antarchy.content.item.ScorpionWhipTetherSync;
 import com.craisinlord.antarchy.content.item.WormHookTetherSync;
 import com.craisinlord.antarchy.content.network.ImpactShakeSync;
@@ -29,6 +31,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.DispenserBlock;
 import net.fabricmc.loader.api.FabricLoader;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricBlocks;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricItems;
@@ -74,6 +77,8 @@ public final class AntarchyFabricContent {
 
     public static void register() {
         com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity.TYPE = AntarchyFabricEntities.UPWARD_FALLING_BLOCK;
+        com.craisinlord.antarchy.content.block.SpiralingVinesBlock.BODY_BLOCK = () -> AntarchyFabricBlocks.SPIRALING_VINES_PLANT.get();
+        com.craisinlord.antarchy.content.block.SpiralingVinesPlantBlock.HEAD_BLOCK = () -> AntarchyFabricBlocks.SPIRALING_VINES.get();
         FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.LUCID_EYE.get()), potionHolder(AntarchyFabricMisc.INVERSION));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.INVERSION), Ingredient.of(Items.REDSTONE), potionHolder(AntarchyFabricMisc.LONG_INVERSION));
@@ -119,6 +124,7 @@ public final class AntarchyFabricContent {
         AntarchyFabricMisc.DATA_COMPONENT_TYPES.register();
         AntarchyFabricMisc.RECIPE_SERIALIZERS.register();
         AntarchyFabricCreativeModeTabs.CREATIVE_MODE_TABS.register();
+        DispenserBlock.registerBehavior(AntarchyFabricItems.VORTEX_CHARGE.get(), new com.craisinlord.antarchy.content.dispenser.VortexChargeDispenseBehavior());
 
         PermanentPortalType.bindBlocks(
                 () -> AntarchyFabricBlocks.MOSSY_OURANWOOD_WOOD.get(),
@@ -293,7 +299,12 @@ public final class AntarchyFabricContent {
                 AntarchyFabricSounds.JERRY_ADULT_IDLE,
                 AntarchyFabricSounds.JERRY_ADULT_HURT,
                 AntarchyFabricSounds.JERRY_ADULT_DEATH,
-                AntarchyFabricSounds.JERRY_ADULT_ATTACK
+                AntarchyFabricSounds.JERRY_ADULT_ATTACK,
+                AntarchyFabricSounds.WORM_HOOK_FLYING,
+                AntarchyFabricSounds.BLOOD_CRYSTAL_KATANA_DASH,
+                AntarchyFabricSounds.BLOOD_CRYSTAL_ARMOR_EQUIP,
+                AntarchyFabricSounds.BLOODGLASS_WARD_HEART_BREAK,
+                AntarchyFabricSounds.BLOODGLASS_WARD_HEART_REGEN
         );
 
         AntarchyObjects.setOctopusBomb(AntarchyFabricEntities.OCTOPUS_BOMB);
@@ -303,6 +314,11 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setDimensionalTear(AntarchyFabricEntities.DIMENSIONAL_TEAR);
         AntarchyObjects.setNightmareBite(AntarchyFabricEntities.NIGHTMARE_BITE);
         AntarchyObjects.setLucid(AntarchyFabricEntities.LUCID);
+        AntarchyObjects.setVortex(AntarchyFabricEntities.VORTEX);
+        AntarchyObjects.setWindVortex(() -> AntarchyFabricEntities.WIND_VORTEX.get());
+        AntarchyObjects.setVortexChargeProjectile(() -> AntarchyFabricEntities.VORTEX_CHARGE_PROJECTILE.get());
+        AntarchyObjects.setVortexLens(() -> AntarchyFabricBlocks.VORTEX_LENS.get());
+        AntarchyObjects.setVortexLensBlockEntity(() -> AntarchyFabricBlocks.VORTEX_LENS_BLOCK_ENTITY.get());
         AntarchyObjects.setKrakensGraspTrident(AntarchyFabricEntities.KRAKENS_GRASP_TRIDENT);
         AntarchyObjects.setLotus(() -> AntarchyFabricBlocks.LOTUS.get());
         AntarchyObjects.setKrakenTentacle(() -> AntarchyFabricItems.KRAKEN_TENTACLE.get());
@@ -454,6 +470,10 @@ public final class AntarchyFabricContent {
         LucidEntity.boltEntityTypeSupplier = () -> AntarchyFabricEntities.LUCID_BOLT.get();
         LucidBoltEntity.invertedEffectSupplier = () -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.INVERTED);
         LucidEyeProjectileEntity.invertedEffectSupplier = () -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.INVERTED);
+        VortexEntity.windVortexTypeSupplier = () -> AntarchyFabricEntities.WIND_VORTEX.get();
+        VortexChargeProjectileEntity.defaultItemSupplier = () -> AntarchyFabricItems.VORTEX_CHARGE.get();
+        VortexChargeProjectileEntity.projectileTypeSupplier = () -> AntarchyFabricEntities.VORTEX_CHARGE_PROJECTILE.get();
+        VortexChargeProjectileEntity.windVortexTypeSupplier = () -> AntarchyFabricEntities.WIND_VORTEX.get();
 
         ScorpionWhipTetherSync.setSink(AntarchyFabricNetworking::syncScorpionWhipTether);
         WormHookTetherSync.setSink(AntarchyFabricNetworking::syncWormHookTether);

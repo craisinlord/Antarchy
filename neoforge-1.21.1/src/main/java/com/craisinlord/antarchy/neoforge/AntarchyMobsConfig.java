@@ -305,6 +305,24 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue LUCID_FLYING_SPEED;
     private static final ModConfigSpec.DoubleValue LUCID_KNOCKBACK_RESISTANCE;
 
+    // Vortex
+
+    private static final ModConfigSpec.DoubleValue VORTEX_HEALTH;
+    private static final ModConfigSpec.DoubleValue VORTEX_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue VORTEX_MOVEMENT_SPEED;
+    private static final ModConfigSpec.DoubleValue VORTEX_FLYING_SPEED;
+    private static final ModConfigSpec.IntValue VORTEX_MAX_ACTIVE_VORTEXES;
+    private static final ModConfigSpec.IntValue WIND_VORTEX_DURATION_TICKS;
+    private static final ModConfigSpec.DoubleValue WIND_VORTEX_PULL_STRENGTH;
+    private static final ModConfigSpec.DoubleValue WIND_VORTEX_LAUNCH_STRENGTH;
+    private static final ModConfigSpec.DoubleValue VORTEX_LENS_MIN_RADIUS;
+    private static final ModConfigSpec.DoubleValue VORTEX_LENS_MAX_RADIUS;
+    private static final ModConfigSpec.DoubleValue VORTEX_LENS_MIN_HEIGHT;
+    private static final ModConfigSpec.DoubleValue VORTEX_LENS_MAX_HEIGHT;
+    private static final ModConfigSpec.DoubleValue VORTEX_LENS_PULL_STRENGTH;
+    private static final ModConfigSpec.DoubleValue VORTEX_LENS_PUSH_STRENGTH;
+    private static final ModConfigSpec.DoubleValue VORTEX_LENS_LAUNCH_STRENGTH;
+
 
     // Dread effect
 
@@ -664,6 +682,26 @@ public final class AntarchyMobsConfig {
         LUCID_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance.").defineInRange("knockbackResistance", 0.5D, 0.0D, 1.0D);
         b.pop();
 
+        // Vortex
+
+        b.push("vortex");
+        VORTEX_HEALTH = b.comment("Base max health.").defineInRange("health", 70.0D, 1.0D, 32768.0D);
+        VORTEX_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 4.0D, 0.0D, 1024.0D);
+        VORTEX_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.22D, 0.0D, 10.0D);
+        VORTEX_FLYING_SPEED = b.comment("Base flying speed.").defineInRange("flyingSpeed", 0.35D, 0.0D, 10.0D);
+        VORTEX_MAX_ACTIVE_VORTEXES = b.comment("Maximum damaging wind vortexes one Vortex mob can maintain at once.").defineInRange("maxActiveVortexes", 3, 0, 32);
+        WIND_VORTEX_DURATION_TICKS = b.comment("Lifetime in ticks for wind vortexes spawned by Vortex charges or Vortex mobs.").defineInRange("windVortexDurationTicks", 140, 1, 1200);
+        WIND_VORTEX_PULL_STRENGTH = b.comment("How strongly wind vortexes pull entities toward their spiral path.").defineInRange("windVortexPullStrength", 0.32D, 0.0D, 4.0D);
+        WIND_VORTEX_LAUNCH_STRENGTH = b.comment("Launch velocity multiplier applied when entities exit the top of a wind vortex.").defineInRange("windVortexLaunchStrength", 1.0D, 0.0D, 4.0D);
+        VORTEX_LENS_MIN_RADIUS = b.comment("Top radius at signal strength 1 for Vortex Lens wind vortexes.").defineInRange("vortexLensMinRadius", 1.5D, 0.1D, 64.0D);
+        VORTEX_LENS_MAX_RADIUS = b.comment("Top radius at signal strength 15 for Vortex Lens wind vortexes.").defineInRange("vortexLensMaxRadius", 10.0D, 0.1D, 128.0D);
+        VORTEX_LENS_MIN_HEIGHT = b.comment("Length at signal strength 1 for Vortex Lens wind vortexes.").defineInRange("vortexLensMinHeight", 3.0D, 0.5D, 128.0D);
+        VORTEX_LENS_MAX_HEIGHT = b.comment("Length at signal strength 15 for Vortex Lens wind vortexes.").defineInRange("vortexLensMaxHeight", 20.0D, 0.5D, 256.0D);
+        VORTEX_LENS_PULL_STRENGTH = b.comment("How strongly redstone-powered Vortex Lens vortexes pull entities inward toward the lens.").defineInRange("vortexLensPullStrength", 0.42D, 0.0D, 8.0D);
+        VORTEX_LENS_PUSH_STRENGTH = b.comment("How strongly bluestone-powered Vortex Lens vortexes push entities outward from the lens.").defineInRange("vortexLensPushStrength", 0.38D, 0.0D, 8.0D);
+        VORTEX_LENS_LAUNCH_STRENGTH = b.comment("Launch velocity multiplier applied at the end of bluestone-powered Vortex Lens vortexes.").defineInRange("vortexLensLaunchStrength", 1.15D, 0.0D, 8.0D);
+        b.pop();
+
 
         // Dread effect
 
@@ -926,6 +964,21 @@ public final class AntarchyMobsConfig {
     static double  lucidMovementSpeed()                     { return LUCID_MOVEMENT_SPEED.get(); }
     static double  lucidFlyingSpeed()                       { return LUCID_FLYING_SPEED.get(); }
     static double  lucidKnockbackResistance()               { return LUCID_KNOCKBACK_RESISTANCE.get(); }
+    static double  vortexHealth()                           { return VORTEX_HEALTH.get(); }
+    static double  vortexAttackDamage()                     { return VORTEX_ATTACK_DAMAGE.get(); }
+    static double  vortexMovementSpeed()                    { return VORTEX_MOVEMENT_SPEED.get(); }
+    static double  vortexFlyingSpeed()                      { return VORTEX_FLYING_SPEED.get(); }
+    static int     vortexMaxActiveVortexes()                { return VORTEX_MAX_ACTIVE_VORTEXES.get(); }
+    static int     windVortexDurationTicks()                { return WIND_VORTEX_DURATION_TICKS.get(); }
+    static double  windVortexPullStrength()                 { return WIND_VORTEX_PULL_STRENGTH.get(); }
+    static double  windVortexLaunchStrength()               { return WIND_VORTEX_LAUNCH_STRENGTH.get(); }
+    static double  vortexLensMinRadius()                    { return VORTEX_LENS_MIN_RADIUS.get(); }
+    static double  vortexLensMaxRadius()                    { return VORTEX_LENS_MAX_RADIUS.get(); }
+    static double  vortexLensMinHeight()                    { return VORTEX_LENS_MIN_HEIGHT.get(); }
+    static double  vortexLensMaxHeight()                    { return VORTEX_LENS_MAX_HEIGHT.get(); }
+    static double  vortexLensPullStrength()                 { return VORTEX_LENS_PULL_STRENGTH.get(); }
+    static double  vortexLensPushStrength()                 { return VORTEX_LENS_PUSH_STRENGTH.get(); }
+    static double  vortexLensLaunchStrength()               { return VORTEX_LENS_LAUNCH_STRENGTH.get(); }
 
     static double  toreterrorHealth()                       { return TORETERROR_HEALTH.get(); }
     static double  toreterrorDamageRange()                  { return TORETERROR_DAMAGE_RANGE.get(); }

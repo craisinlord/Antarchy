@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import com.craisinlord.antarchy.content.worldgen.truffalo.TruffaloTreeGrowers;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -9,6 +10,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
@@ -22,11 +24,13 @@ import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class TruffaloSaplingBlock extends BushBlock implements BonemealableBlock {
     public static final MapCodec<TruffaloSaplingBlock> CODEC = Block.simpleCodec(TruffaloSaplingBlock::new);
+    private static final ResourceLocation LET_IT_GROW_ADVANCEMENT = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "let_it_grow");
     private static final TagKey<Block> SUPPORTS = TagKey.create(
             Registries.BLOCK,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "truffalo_sapling_supports")
@@ -102,6 +106,9 @@ public class TruffaloSaplingBlock extends BushBlock implements BonemealableBlock
 
         level.removeBlock(pos, false);
         if (feature.value().place(level, level.getChunkSource().getGenerator(), random, pos)) {
+            for (ServerPlayer player : level.getEntitiesOfClass(ServerPlayer.class, new AABB(pos).inflate(8.0D))) {
+                AntarchyAdvancements.award(player, LET_IT_GROW_ADVANCEMENT);
+            }
             return;
         }
 

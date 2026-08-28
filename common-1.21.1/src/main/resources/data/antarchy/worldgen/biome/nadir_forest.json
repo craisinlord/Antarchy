@@ -1,0 +1,75 @@
+{
+  "has_precipitation": false,
+  "temperature": 1.6,
+  "downfall": 0.0,
+  "effects": {
+    "fog_color": 1315860,
+    "water_color": 2033514,
+    "water_fog_color": 0,
+    "sky_color": 986895,
+    "particle": {
+      "probability": 0.006,
+      "options": {
+        "type": "minecraft:warped_spore"
+      }
+    },
+    "additions_sound": {
+      "sound": "antarchy:thoraxis_nightmare_wastes_biome_additions",
+      "tick_chance": 0.0005
+    },
+    "mood_sound": {
+      "sound": "antarchy:thoraxis_nightmare_wastes_mood",
+      "tick_delay": 8572,
+      "block_search_extent": 8,
+      "offset": 2.0
+    },
+    "music": {
+      "sound": "antarchy:music.game.thoraxis",
+      "min_delay": 600,
+      "max_delay": 1800,
+      "replace_current_music": true
+    }
+  },
+  "spawn_costs": {},
+  "carvers": {
+    "air": [],
+    "liquid": []
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:bluestone_ore",
+      "antarchy:dimensional_tears"
+    ],
+    [],
+    [],
+    [
+      "antarchy:nadir_forest_ceiling_trees",
+      "antarchy:nadir_forest_ceiling_saplings"
+    ],
+    []
+  ],
+  "creature_spawn_probability": 0.08,
+  "spawners": {
+    "monster": [],
+    "creature": [
+      {
+        "type": "antarchy:bed_bug",
+        "weight": 18,
+        "minCount": 2,
+        "maxCount": 5
+      }
+    ],
+    "ambient": [],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  }
+}

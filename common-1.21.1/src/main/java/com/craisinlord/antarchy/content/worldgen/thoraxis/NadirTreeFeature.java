@@ -16,8 +16,11 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Column;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 public class NadirTreeFeature extends Feature<NadirTreeConfiguration> {
     public NadirTreeFeature(Codec<NadirTreeConfiguration> codec) {
@@ -27,7 +30,7 @@ public class NadirTreeFeature extends Feature<NadirTreeConfiguration> {
     @Override
     public boolean place(FeaturePlaceContext<NadirTreeConfiguration> context) {
         WorldGenLevel level = context.level();
-        BlockPos origin = context.origin();
+        BlockPos origin = findCeilingOrigin(level, context.origin(), 72);
         BlockPos supportPos = origin.above();
         if (!level.getBlockState(supportPos).isFaceSturdy(level, supportPos, Direction.DOWN)) {
             return false;
@@ -46,7 +49,7 @@ public class NadirTreeFeature extends Feature<NadirTreeConfiguration> {
         Set<BlockPos> foliage = new LinkedHashSet<>();
 
         placeTrunk(spine, bottomRadius, logs, random);
-        placeLowerMass(spine, bottomRadius, logs, foliage, random, veilRadius);
+        placeRootWaves(spine, bottomRadius, logs, foliage, random, veilRadius);
         placeBranches(spine, branchCount, branchLength, logs, foliage, random, veilRadius);
         placeVeilCurtains(spine, foliage, random, veilRadius);
 
@@ -75,6 +78,21 @@ public class NadirTreeFeature extends Feature<NadirTreeConfiguration> {
         return true;
     }
 
+    private static BlockPos findCeilingOrigin(WorldGenLevel level, BlockPos origin, int searchRange) {
+        if (level.getBlockState(origin).isAir() && level.getBlockState(origin.above()).isFaceSturdy(level, origin.above(), Direction.DOWN)) {
+            return origin;
+        }
+        Optional<Column> optional = Column.scan(level, origin, searchRange, state -> state.isAir(), state -> !state.isAir());
+        if (optional.isEmpty()) {
+            return origin;
+        }
+        OptionalInt ceiling = optional.get().getCeiling();
+        if (ceiling.isEmpty()) {
+            return origin;
+        }
+        return origin.atY(ceiling.getAsInt() - 1);
+    }
+
     private List<BlockPos> buildSpine(BlockPos origin, int height, RandomSource random) {
         List<BlockPos> spine = new ArrayList<>(height);
         BlockPos current = origin;
@@ -100,7 +118,11 @@ public class NadirTreeFeature extends Feature<NadirTreeConfiguration> {
         for (int index = 0; index < spine.size(); index++) {
             BlockPos center = spine.get(index);
             float progress = spine.size() == 1 ? 1.0F : index / (float) (spine.size() - 1);
-            int radius = Mth.clamp(Math.round(progress * bottomRadius), 0, bottomRadius);
+            float wave = Mth.sin(progress * Mth.PI * 2.75F) * 0.55F + Mth.sin(progress * Mth.PI * 5.5F) * 0.25F;
+            int radius = Mth.clamp(Math.round((0.45F + progress * 0.3F + wave * 0.22F) * bottomRadius), 0, Math.max(1, bottomRadius - 1));
+            if (index < 2) {
+                radius = Math.max(radius, 1);
+            }
             fillTrunkLayer(center, radius, logs, random);
         }
     }
@@ -118,7 +140,7 @@ public class NadirTreeFeature extends Feature<NadirTreeConfiguration> {
                 if (dist > radiusSq + 1) {
                     continue;
                 }
-                if (dist > radiusSq - radius && random.nextFloat() < 0.2F) {
+                if (dist > radiusSq - radius && random.nextFloat() < 0.48F) {
                     continue;
                 }
                 putLog(logs, center.offset(dx, 0, dz), Direction.Axis.Y);
@@ -126,7 +148,7 @@ public class NadirTreeFeature extends Feature<NadirTreeConfiguration> {
         }
     }
 
-    private void placeLowerMass(
+    private void placeRootWaves(
             List<BlockPos> spine,
             int bottomRadius,
             Map<BlockPos, Direction.Axis> logs,
@@ -134,14 +156,28 @@ public class NadirTreeFeature extends Feature<NadirTreeConfiguration> {
             RandomSource random,
             int veilRadius
     ) {
-        int start = Math.max(0, spine.size() - Math.max(3, bottomRadius + 2));
-        for (int index = start; index < spine.size(); index++) {
+        int waveCount = Math.max(4, bottomRadius + 3);
+        for (int wave = 0; wave < waveCount; wave++) {
+            int index = Mth.nextInt(random, 0, Math.max(0, spine.size() - 3));
             BlockPos center = spine.get(index);
-            int extraRadius = Math.max(1, bottomRadius - Math.max(0, spine.size() - 1 - index));
-            for (int dy = 0; dy <= Math.min(2, index - start); dy++) {
-                fillTrunkLayer(center.below(dy), extraRadius, logs, random);
+            Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(random);
+            int length = Mth.nextInt(random, 2, Math.max(3, bottomRadius + 3));
+            BlockPos cursor = center;
+            BlockPos previous = center;
+            for (int step = 0; step < length; step++) {
+                cursor = cursor.relative(direction);
+                if (random.nextFloat() < 0.55F) {
+                    cursor = cursor.below();
+                }
+                if (step > 1 && random.nextFloat() < 0.38F) {
+                    direction = random.nextBoolean() ? direction.getClockWise() : direction.getCounterClockWise();
+                }
+                putLog(logs, cursor, axisForSegment(previous, cursor));
+                previous = cursor;
             }
-            placeVeilCluster(foliage, center.below(), Math.max(1, veilRadius), random, true);
+            if (random.nextFloat() < 0.75F) {
+                placeVeilRibbon(foliage, cursor, direction, Math.max(2, veilRadius + random.nextInt(2)), random);
+            }
         }
     }
 
@@ -179,8 +215,7 @@ public class NadirTreeFeature extends Feature<NadirTreeConfiguration> {
                 previous = cursor;
             }
 
-            placeVeilCluster(foliage, cursor, veilRadius + random.nextInt(2), random, true);
-            placeVeilCluster(foliage, cursor.below(1 + random.nextInt(2)), Math.max(1, veilRadius - 1), random, true);
+            placeVeilRibbon(foliage, cursor, direction, Math.max(2, veilRadius + random.nextInt(3)), random);
 
             if (random.nextFloat() < 0.45F) {
                 BlockPos fork = cursor;
@@ -191,44 +226,41 @@ public class NadirTreeFeature extends Feature<NadirTreeConfiguration> {
                     putLog(logs, next, axisForSegment(fork, next));
                     fork = next;
                 }
-                placeVeilCluster(foliage, fork, Math.max(1, veilRadius - 1), random, true);
+                placeVeilRibbon(foliage, fork, forkDirection, Math.max(2, veilRadius), random);
             }
         }
     }
 
     private void placeVeilCurtains(List<BlockPos> spine, Set<BlockPos> foliage, RandomSource random, int veilRadius) {
         for (int index = 1; index < spine.size(); index++) {
-            if (random.nextFloat() > 0.33F) {
+            if (random.nextFloat() > 0.24F) {
                 continue;
             }
             BlockPos anchor = spine.get(index);
             Direction side = Direction.Plane.HORIZONTAL.getRandomDirection(random);
-            BlockPos start = anchor.relative(side);
-            int length = 2 + random.nextInt(Math.max(2, veilRadius + 1));
-            for (int i = 0; i < length; i++) {
-                BlockPos pos = start.below(i);
-                foliage.add(pos);
-                if (random.nextFloat() < 0.22F) {
-                    foliage.add(pos.relative(side.getClockWise()));
-                }
-            }
+            placeVeilRibbon(foliage, anchor.relative(side), side, Math.max(2, veilRadius + random.nextInt(3)), random);
         }
     }
 
-    private void placeVeilCluster(Set<BlockPos> foliage, BlockPos center, int radius, RandomSource random, boolean stretchDown) {
-        int radiusSq = radius * radius;
-        for (int dx = -radius; dx <= radius; dx++) {
-            for (int dz = -radius; dz <= radius; dz++) {
-                for (int dy = -radius; dy <= 1; dy++) {
-                    int adjustedDy = stretchDown ? Math.max(0, -dy) : Math.abs(dy);
-                    int dist = dx * dx + dz * dz + adjustedDy * adjustedDy;
-                    if (dist > radiusSq + 1) {
-                        continue;
-                    }
-                    if (dist > radiusSq - radius && random.nextFloat() < 0.28F) {
-                        continue;
-                    }
-                    foliage.add(center.offset(dx, dy, dz));
+    private void placeVeilRibbon(Set<BlockPos> foliage, BlockPos start, Direction flow, int length, RandomSource random) {
+        Direction side = random.nextBoolean() ? flow.getClockWise() : flow.getCounterClockWise();
+        BlockPos cursor = start;
+        for (int step = 0; step < length; step++) {
+            foliage.add(cursor);
+            if (random.nextFloat() < 0.34F) {
+                foliage.add(cursor.relative(side));
+            }
+            if (random.nextFloat() < 0.18F) {
+                foliage.add(cursor.relative(side.getOpposite()));
+            }
+            cursor = cursor.below();
+            if (step > 0 && random.nextFloat() < 0.4F) {
+                cursor = cursor.relative(random.nextBoolean() ? side : side.getOpposite());
+            }
+            if (random.nextFloat() < 0.18F) {
+                BlockPos drift = cursor.relative(flow);
+                if (random.nextBoolean()) {
+                    foliage.add(drift);
                 }
             }
         }

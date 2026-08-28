@@ -82,6 +82,9 @@ public final class AntarchySettings {
     private static int bloodCrystalKatanaAttackDamage = 7;
     private static double bloodCrystalKatanaLaunchStrength = 1.1D;
     private static int bloodCrystalKatanaTrailDurationTicks = 12;
+    private static double bloodCrystalKatanaReachBonus = 4.0D;
+    private static int bloodCrystalKatanaInvulnTicks = 8;
+    private static int bloodCrystalKatanaDashCooldownTicks = 4;
     private static double bigBerthaBasiliskCooldownSeconds = 7.0D;
     private static double bigBerthaLucidInvertedDurationSeconds = 3.0D;
     private static double bigBerthaLucidInvertedDamageBonusPercent = 25.0D;
@@ -226,6 +229,8 @@ public final class AntarchySettings {
     private static double diamondMinecartCoastDeceleration = 0.02D;
     private static boolean diamondMinecartMobDamageEnabled = false;
     private static double diamondMinecartMaxMobDamage = 4.0D;
+    private static double hoverboardMaxSpeed = 3.0D;
+    private static double hoverboardAcceleration = 0.05D;
     private static boolean dreadHallucinationSoundsEnabled = true;
     private static double dreadHallucinationSoundMinInterval = 3.0D;
     private static double dreadHallucinationSoundMaxInterval = 10.0D;
@@ -332,6 +337,21 @@ public final class AntarchySettings {
     private static double lucidMovementSpeed = 0.22D;
     private static double lucidFlyingSpeed = 0.35D;
     private static double lucidKnockbackResistance = 0.5D;
+    private static double vortexHealth = 70.0D;
+    private static double vortexAttackDamage = 4.0D;
+    private static double vortexMovementSpeed = 0.22D;
+    private static double vortexFlyingSpeed = 0.35D;
+    private static int vortexMaxActiveVortexes = 3;
+    private static int windVortexDurationTicks = 140;
+    private static double windVortexPullStrength = 0.32D;
+    private static double windVortexLaunchStrength = 1.0D;
+    private static double vortexLensMinRadius = 1.5D;
+    private static double vortexLensMaxRadius = 10.0D;
+    private static double vortexLensMinHeight = 3.0D;
+    private static double vortexLensMaxHeight = 20.0D;
+    private static double vortexLensPullStrength = 0.42D;
+    private static double vortexLensPushStrength = 0.38D;
+    private static double vortexLensLaunchStrength = 1.15D;
     private static double missileSquidHealth = 60.0D;
     private static double missileSquidAttackDamage = 9.0D;
     private static double missileSquidMovementSpeed = 0.84D;
@@ -1861,6 +1881,12 @@ public final class AntarchySettings {
     public static double diamondMinecartMaxMobDamage() { return diamondMinecartMaxMobDamage; }
     public static void setDiamondMinecartMaxMobDamage(double v) { diamondMinecartMaxMobDamage = v; }
 
+    public static double hoverboardMaxSpeed() { return hoverboardMaxSpeed; }
+    public static void setHoverboardMaxSpeed(double value) { hoverboardMaxSpeed = value; }
+
+    public static double hoverboardAcceleration() { return hoverboardAcceleration; }
+    public static void setHoverboardAcceleration(double value) { hoverboardAcceleration = value; }
+
     public static boolean dreadHallucinationSoundsEnabled() {
         return dreadHallucinationSoundsEnabled;
     }
@@ -2046,6 +2072,15 @@ public final class AntarchySettings {
     public static int bloodCrystalKatanaTrailDurationTicks() { return bloodCrystalKatanaTrailDurationTicks; }
     public static void setBloodCrystalKatanaTrailDurationTicks(int value) { bloodCrystalKatanaTrailDurationTicks = value; }
 
+    public static double bloodCrystalKatanaReachBonus() { return bloodCrystalKatanaReachBonus; }
+    public static void setBloodCrystalKatanaReachBonus(double value) { bloodCrystalKatanaReachBonus = value; }
+
+    public static int bloodCrystalKatanaInvulnTicks() { return bloodCrystalKatanaInvulnTicks; }
+    public static void setBloodCrystalKatanaInvulnTicks(int value) { bloodCrystalKatanaInvulnTicks = value; }
+
+    public static int bloodCrystalKatanaDashCooldownTicks() { return bloodCrystalKatanaDashCooldownTicks; }
+    public static void setBloodCrystalKatanaDashCooldownTicks(int value) { bloodCrystalKatanaDashCooldownTicks = value; }
+
     public static double emperorScorpionAttackDamage() { return emperorScorpionAttackDamage; }
     public static void setEmperorScorpionAttackDamage(double value) { emperorScorpionAttackDamage = value; }
 
@@ -2222,6 +2257,51 @@ public final class AntarchySettings {
 
     public static double lucidKnockbackResistance() { return lucidKnockbackResistance; }
     public static void setLucidKnockbackResistance(double value) { lucidKnockbackResistance = value; }
+
+    public static double vortexHealth() { return vortexHealth; }
+    public static void setVortexHealth(double value) { vortexHealth = value; }
+
+    public static double vortexAttackDamage() { return vortexAttackDamage; }
+    public static void setVortexAttackDamage(double value) { vortexAttackDamage = value; }
+
+    public static double vortexMovementSpeed() { return vortexMovementSpeed; }
+    public static void setVortexMovementSpeed(double value) { vortexMovementSpeed = value; }
+
+    public static double vortexFlyingSpeed() { return vortexFlyingSpeed; }
+    public static void setVortexFlyingSpeed(double value) { vortexFlyingSpeed = value; }
+
+    public static int vortexMaxActiveVortexes() { return vortexMaxActiveVortexes; }
+    public static void setVortexMaxActiveVortexes(int value) { vortexMaxActiveVortexes = value; }
+
+    public static int windVortexDurationTicks() { return windVortexDurationTicks; }
+    public static void setWindVortexDurationTicks(int value) { windVortexDurationTicks = value; }
+
+    public static double windVortexPullStrength() { return windVortexPullStrength; }
+    public static void setWindVortexPullStrength(double value) { windVortexPullStrength = value; }
+
+    public static double windVortexLaunchStrength() { return windVortexLaunchStrength; }
+    public static void setWindVortexLaunchStrength(double value) { windVortexLaunchStrength = value; }
+
+    public static double vortexLensMinRadius() { return vortexLensMinRadius; }
+    public static void setVortexLensMinRadius(double value) { vortexLensMinRadius = value; }
+
+    public static double vortexLensMaxRadius() { return vortexLensMaxRadius; }
+    public static void setVortexLensMaxRadius(double value) { vortexLensMaxRadius = value; }
+
+    public static double vortexLensMinHeight() { return vortexLensMinHeight; }
+    public static void setVortexLensMinHeight(double value) { vortexLensMinHeight = value; }
+
+    public static double vortexLensMaxHeight() { return vortexLensMaxHeight; }
+    public static void setVortexLensMaxHeight(double value) { vortexLensMaxHeight = value; }
+
+    public static double vortexLensPullStrength() { return vortexLensPullStrength; }
+    public static void setVortexLensPullStrength(double value) { vortexLensPullStrength = value; }
+
+    public static double vortexLensPushStrength() { return vortexLensPushStrength; }
+    public static void setVortexLensPushStrength(double value) { vortexLensPushStrength = value; }
+
+    public static double vortexLensLaunchStrength() { return vortexLensLaunchStrength; }
+    public static void setVortexLensLaunchStrength(double value) { vortexLensLaunchStrength = value; }
 
     public static double missileSquidHealth() { return missileSquidHealth; }
     public static void setMissileSquidHealth(double value) { missileSquidHealth = value; }

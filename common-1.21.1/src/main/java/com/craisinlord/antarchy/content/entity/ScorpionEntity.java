@@ -5,6 +5,7 @@ import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -97,6 +98,9 @@ public class ScorpionEntity extends Monster implements GeoEntity {
                 || spawnReason == MobSpawnType.COMMAND) {
             return true;
         }
+        if (ThoraxisUndersideManager.shouldSpawnInvertedOnDreamSand(level, pos)) {
+            return level.getDifficulty() != Difficulty.PEACEFUL;
+        }
         return level.getDifficulty() != Difficulty.PEACEFUL
                 && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);
     }
@@ -123,6 +127,9 @@ public class ScorpionEntity extends Monster implements GeoEntity {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         this.assignRandomTextureVariant();
         ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.scorpionHealth());
+        if (ThoraxisUndersideManager.shouldSpawnInvertedOnDreamSand(level, this.blockPosition())) {
+            ThoraxisUndersideManager.applyUndersideInversion(this);
+        }
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
     }
 

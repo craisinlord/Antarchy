@@ -1,0 +1,81 @@
+{
+  "parent": "antarchy:visit_elythia",
+  "criteria": {
+    "obtain_truffalo_tuft": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:white_truffalo_tuft"
+          },
+          {
+            "items": "antarchy:orange_truffalo_tuft"
+          },
+          {
+            "items": "antarchy:magenta_truffalo_tuft"
+          },
+          {
+            "items": "antarchy:light_blue_truffalo_tuft"
+          },
+          {
+            "items": "antarchy:yellow_truffalo_tuft"
+          },
+          {
+            "items": "antarchy:lime_truffalo_tuft"
+          },
+          {
+            "items": "antarchy:pink_truffalo_tuft"
+          },
+          {
+            "items": "antarchy:gray_truffalo_tuft"
+          },
+          {
+            "items": "antarchy:light_gray_truffalo_tuft"
+          },
+          {
+            "items": "antarchy:cyan_truffalo_tuft"
+          },
+          {
+            "items": "antarchy:purple_truffalo_tuft"
+          },
+          {
+            "items": "antarchy:blue_truffalo_tuft"
+          },
+          {
+            "items": "antarchy:brown_truffalo_tuft"
+          },
+          {
+            "items": "antarchy:green_truffalo_tuft"
+          },
+          {
+            "items": "antarchy:red_truffalo_tuft"
+          },
+          {
+            "items": "antarchy:black_truffalo_tuft"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.let_it_die.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:white_truffalo_tuft"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.let_it_die.title"
+    }
+  },
+  "requirements": [
+    [
+      "obtain_truffalo_tuft"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

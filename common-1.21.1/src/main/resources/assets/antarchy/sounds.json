@@ -21,16 +21,16 @@
     "subtitle": "subtitles.antarchy.squidzooka_fire",
     "sounds": [
       {
-        "name": "antarchy:squidzooka/squizooka1"
+        "name": "antarchy:item/squidzooka/squizooka1"
       },
       {
-        "name": "antarchy:squidzooka/squizooka2"
+        "name": "antarchy:item/squidzooka/squizooka2"
       },
       {
-        "name": "antarchy:squidzooka/squizooka3"
+        "name": "antarchy:item/squidzooka/squizooka3"
       },
       {
-        "name": "antarchy:squidzooka/squizooka4"
+        "name": "antarchy:item/squidzooka/squizooka4"
       }
     ]
   },
@@ -38,7 +38,7 @@
     "subtitle": "subtitles.antarchy.size_ray_charge",
     "sounds": [
       {
-        "name": "antarchy:size_ray/shrinkraycharge"
+        "name": "antarchy:item/size_ray/shrinkraycharge"
       }
     ]
   },
@@ -46,7 +46,7 @@
     "subtitle": "subtitles.antarchy.size_ray_charge",
     "sounds": [
       {
-        "name": "antarchy:size_ray/shrinkrayloop",
+        "name": "antarchy:item/size_ray/shrinkrayloop",
         "stream": true
       }
     ]
@@ -55,7 +55,7 @@
     "subtitle": "subtitles.antarchy.size_ray_charge",
     "sounds": [
       {
-        "name": "antarchy:size_ray/growraycharge"
+        "name": "antarchy:item/size_ray/growraycharge"
       }
     ]
   },
@@ -63,7 +63,7 @@
     "subtitle": "subtitles.antarchy.size_ray_charge",
     "sounds": [
       {
-        "name": "antarchy:size_ray/growrayloop",
+        "name": "antarchy:item/size_ray/growrayloop",
         "stream": true
       }
     ]
@@ -72,13 +72,13 @@
     "subtitle": "subtitles.antarchy.size_ray_fire",
     "sounds": [
       {
-        "name": "antarchy:size_ray/weakshot1"
+        "name": "antarchy:item/size_ray/weakshot1"
       },
       {
-        "name": "antarchy:size_ray/weakshot2"
+        "name": "antarchy:item/size_ray/weakshot2"
       },
       {
-        "name": "antarchy:size_ray/weakshot3"
+        "name": "antarchy:item/size_ray/weakshot3"
       }
     ]
   },
@@ -86,13 +86,13 @@
     "subtitle": "subtitles.antarchy.size_ray_fire",
     "sounds": [
       {
-        "name": "antarchy:size_ray/mediumshot1"
+        "name": "antarchy:item/size_ray/mediumshot1"
       },
       {
-        "name": "antarchy:size_ray/mediumshot2"
+        "name": "antarchy:item/size_ray/mediumshot2"
       },
       {
-        "name": "antarchy:size_ray/mediumshot3"
+        "name": "antarchy:item/size_ray/mediumshot3"
       }
     ]
   },
@@ -100,13 +100,13 @@
     "subtitle": "subtitles.antarchy.size_ray_fire",
     "sounds": [
       {
-        "name": "antarchy:size_ray/critshot1"
+        "name": "antarchy:item/size_ray/critshot1"
       },
       {
-        "name": "antarchy:size_ray/critshot2"
+        "name": "antarchy:item/size_ray/critshot2"
       },
       {
-        "name": "antarchy:size_ray/critshot3"
+        "name": "antarchy:item/size_ray/critshot3"
       }
     ]
   },
@@ -986,6 +986,65 @@
       }
     ]
   },
+  "worm_hook_flying": {
+    "subtitle": "subtitles.antarchy.worm_hook_flying",
+    "sounds": [
+      {
+        "name": "entity.player.elytra.flying",
+        "type": "event"
+      }
+    ]
+  },
+  "blood_crystal_katana_dash": {
+    "subtitle": "subtitles.antarchy.blood_crystal_katana_dash",
+    "sounds": [
+      {
+        "name": "antarchy:item/blood_crystal_katana/dash1"
+      },
+      {
+        "name": "antarchy:item/blood_crystal_katana/dash2"
+      },
+      {
+        "name": "antarchy:item/blood_crystal_katana/dash3"
+      },
+      {
+        "name": "antarchy:item/blood_crystal_katana/dash4"
+      }
+    ]
+  },
+  "blood_crystal_armor_equip": {
+    "subtitle": "subtitles.antarchy.blood_crystal_armor_equip",
+    "sounds": [
+      { "name": "antarchy:item/armor/blood_crystal_equip1" },
+      { "name": "antarchy:item/armor/blood_crystal_equip2" },
+      { "name": "antarchy:item/armor/blood_crystal_equip3" },
+      { "name": "antarchy:item/armor/blood_crystal_equip4" },
+      { "name": "antarchy:item/armor/blood_crystal_equip5" },
+      { "name": "antarchy:item/armor/blood_crystal_equip6" }
+    ]
+  },
+  "bloodglass_ward_heart_break": {
+    "subtitle": "subtitles.antarchy.bloodglass_ward_heart_break",
+    "sounds": [
+      { "name": "antarchy:event/mob_effects/bloodglass_ward/heart_break1" },
+      { "name": "antarchy:event/mob_effects/bloodglass_ward/heart_break2" },
+      { "name": "antarchy:event/mob_effects/bloodglass_ward/heart_break3" },
+      { "name": "antarchy:event/mob_effects/bloodglass_ward/heart_break4" },
+      { "name": "antarchy:event/mob_effects/bloodglass_ward/heart_break5" },
+      { "name": "antarchy:event/mob_effects/bloodglass_ward/heart_break6" }
+    ]
+  },
+  "bloodglass_ward_heart_regen": {
+    "subtitle": "subtitles.antarchy.bloodglass_ward_heart_regen",
+    "sounds": [
+      { "name": "antarchy:event/mob_effects/bloodglass_ward/regen_heart1" },
+      { "name": "antarchy:event/mob_effects/bloodglass_ward/regen_heart2" },
+      { "name": "antarchy:event/mob_effects/bloodglass_ward/regen_heart3" },
+      { "name": "antarchy:event/mob_effects/bloodglass_ward/regen_heart4" },
+      { "name": "antarchy:event/mob_effects/bloodglass_ward/regen_heart5" },
+      { "name": "antarchy:event/mob_effects/bloodglass_ward/regen_heart6" }
+    ]
+  },
   "music_disc_underside": {
     "sounds": [
       {
@@ -1440,7 +1499,16 @@
     "subtitle": "subtitles.antarchy.gravity_gun_pickup",
     "sounds": [
       {
-        "name": "antarchy:gravity_gun/gravity_gun_pickup"
+        "name": "antarchy:item/gravity_gun/pickup1",
+        "volume": 1.5
+      },
+      {
+        "name": "antarchy:item/gravity_gun/pickup2",
+        "volume": 1.5
+      },
+      {
+        "name": "antarchy:item/gravity_gun/pickup3",
+        "volume": 1.5
       }
     ]
   },
@@ -1448,7 +1516,16 @@
     "subtitle": "subtitles.antarchy.gravity_gun_drop",
     "sounds": [
       {
-        "name": "antarchy:gravity_gun/gravity_gun_drop"
+        "name": "antarchy:item/gravity_gun/drop1",
+        "volume": 1.5
+      },
+      {
+        "name": "antarchy:item/gravity_gun/drop2",
+        "volume": 1.5
+      },
+      {
+        "name": "antarchy:item/gravity_gun/drop3",
+        "volume": 1.5
       }
     ]
   },
@@ -1456,7 +1533,8 @@
     "subtitle": "subtitles.antarchy.gravity_gun_hold_loop",
     "sounds": [
       {
-        "name": "antarchy:gravity_gun/gravity_gun_hold_loop"
+        "name": "antarchy:item/gravity_gun/hold_loop",
+        "volume": 1.5
       }
     ]
   },
@@ -1464,16 +1542,16 @@
     "subtitle": "subtitles.antarchy.gravity_gun_launch",
     "sounds": [
       {
-        "name": "antarchy:gravity_gun/gravity_gun_launch1"
+        "name": "antarchy:item/gravity_gun/launch1",
+        "volume": 1.5
       },
       {
-        "name": "antarchy:gravity_gun/gravity_gun_launch2"
+        "name": "antarchy:item/gravity_gun/launch2",
+        "volume": 1.5
       },
       {
-        "name": "antarchy:gravity_gun/gravity_gun_launch3"
-      },
-      {
-        "name": "antarchy:gravity_gun/gravity_gun_launch4"
+        "name": "antarchy:item/gravity_gun/launch3",
+        "volume": 1.5
       }
     ]
   },
@@ -1481,7 +1559,67 @@
     "subtitle": "subtitles.antarchy.gravity_gun_dryfire",
     "sounds": [
       {
-        "name": "antarchy:gravity_gun/gravity_gun_dryfire"
+        "name": "antarchy:item/gravity_gun/dryfire1",
+        "volume": 1.5
+      },
+      {
+        "name": "antarchy:item/gravity_gun/dryfire2",
+        "volume": 1.5
+      },
+      {
+        "name": "antarchy:item/gravity_gun/dryfire3",
+        "volume": 1.5
+      }
+    ]
+  },
+  "antimetal_place": {
+    "subtitle": "subtitles.antarchy.antimetal_place",
+    "sounds": [
+      {
+        "name": "antarchy:block/antimetal/place1"
+      },
+      {
+        "name": "antarchy:block/antimetal/place2"
+      },
+      {
+        "name": "antarchy:block/antimetal/place3"
+      },
+      {
+        "name": "antarchy:block/antimetal/place4"
+      }
+    ]
+  },
+  "antimetal_step": {
+    "subtitle": "subtitles.antarchy.antimetal_step",
+    "sounds": [
+      {
+        "name": "antarchy:block/antimetal/step1"
+      },
+      {
+        "name": "antarchy:block/antimetal/step2"
+      },
+      {
+        "name": "antarchy:block/antimetal/step3"
+      },
+      {
+        "name": "antarchy:block/antimetal/step4"
+      }
+    ]
+  },
+  "antimetal_scaffold": {
+    "subtitle": "subtitles.antarchy.antimetal_scaffold",
+    "sounds": [
+      {
+        "name": "antarchy:block/antimetal/scafold1"
+      },
+      {
+        "name": "antarchy:block/antimetal/scafold2"
+      },
+      {
+        "name": "antarchy:block/antimetal/scafold3"
+      },
+      {
+        "name": "antarchy:block/antimetal/scafold4"
       }
     ]
   },
@@ -1489,13 +1627,13 @@
     "subtitle": "subtitles.antarchy.portal_gun_fire_blue",
     "sounds": [
       {
-        "name": "antarchy:portalgun/wpn_portal_gun_fire_blue_01"
+        "name": "antarchy:item/portalgun/wpn_portal_gun_fire_blue_01"
       },
       {
-        "name": "antarchy:portalgun/wpn_portal_gun_fire_blue_02"
+        "name": "antarchy:item/portalgun/wpn_portal_gun_fire_blue_02"
       },
       {
-        "name": "antarchy:portalgun/wpn_portal_gun_fire_blue_03"
+        "name": "antarchy:item/portalgun/wpn_portal_gun_fire_blue_03"
       }
     ]
   },
@@ -1503,13 +1641,13 @@
     "subtitle": "subtitles.antarchy.portal_gun_fire_orange",
     "sounds": [
       {
-        "name": "antarchy:portalgun/wpn_portal_gun_fire_red_01"
+        "name": "antarchy:item/portalgun/wpn_portal_gun_fire_red_01"
       },
       {
-        "name": "antarchy:portalgun/wpn_portal_gun_fire_red_02"
+        "name": "antarchy:item/portalgun/wpn_portal_gun_fire_red_02"
       },
       {
-        "name": "antarchy:portalgun/wpn_portal_gun_fire_red_03"
+        "name": "antarchy:item/portalgun/wpn_portal_gun_fire_red_03"
       }
     ]
   },
@@ -1517,7 +1655,7 @@
     "subtitle": "subtitles.antarchy.portal_gun_invalid_surface",
     "sounds": [
       {
-        "name": "antarchy:portalgun/portal_invalid_surface_swt_01"
+        "name": "antarchy:item/portalgun/portal_invalid_surface_swt_01"
       },
       {
         "name": "antarchy:portal/portal_invalid_surface_01"

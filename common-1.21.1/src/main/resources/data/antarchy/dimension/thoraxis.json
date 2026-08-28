@@ -8,6 +8,7 @@
       "dream_dunes_max_y": 96,
       "umbral_hills_max_y": 100,
       "lucid_pools_min_y": 116,
+      "nadir_forest_min_y": 128,
       "biomes": [
         {
           "parameters": {
@@ -37,7 +38,7 @@
             ],
             "offset": 0.0
           },
-          "biome": "antarchy:thoraxis_underside"
+          "biome": "antarchy:dream_dunes"
         },
         {
           "parameters": {
@@ -67,7 +68,7 @@
             ],
             "offset": 0.0
           },
-          "biome": "antarchy:dream_dunes"
+          "biome": "antarchy:vortex_expanse"
         },
         {
           "parameters": {
@@ -278,6 +279,36 @@
             "offset": 0.6
           },
           "biome": "antarchy:lucid_pools"
+        },
+        {
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              1.0
+            ],
+            "erosion": [
+              -1.0,
+              1.0
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              0.0,
+              1.0
+            ],
+            "offset": 0.7
+          },
+          "biome": "antarchy:nadir_forest"
         }
       ]
     }
