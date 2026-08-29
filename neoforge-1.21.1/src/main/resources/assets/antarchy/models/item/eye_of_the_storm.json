@@ -1,0 +1,25 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "textures": {
+    "layer0": "antarchy:item/eye_of_the_storm/eye_of_the_storm_item"
+  },
+  "base": {
+    "parent": "antarchy:item/eye_of_the_storm_held_geo"
+  },
+  "texture_size": [
+    64,
+    64
+  ],
+  "perspectives": {
+    "gui": {
+      "parent": "antarchy:item/eye_of_the_storm_gui"
+    },
+    "ground": {
+      "parent": "antarchy:item/eye_of_the_storm_gui"
+    },
+    "fixed": {
+      "parent": "antarchy:item/eye_of_the_storm_gui"
+    }
+  }
+}

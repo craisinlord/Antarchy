@@ -197,8 +197,40 @@ public final class AntarchySettings {
     private static double nightmareBootsDoubleDamageChance = 0.05D;
 
     private static double nightmareSwordBaseDamage = 18.0D;
-    
+
     private static double nightmareSwordScalingFactor = 1.5D;
+
+    private static boolean royalArmorComesEnchanted = true;
+    private static int royalArmorProtectionLevel = 10;
+    private static int royalArmorEnchantability = 30;
+    private static int royalArmorDurabilityMultiplier = 93;
+    private static int royalGuardianHelmetArmorValue = 5;
+    private static int royalGuardianChestplateArmorValue = 10;
+    private static int royalGuardianLeggingsArmorValue = 8;
+    private static int royalGuardianBootsArmorValue = 5;
+    private static double royalGuardianArmorToughness = 4.0D;
+    private static double royalGuardianArmorKnockbackResistance = 0.15D;
+    private static int royalAssailantHelmetArmorValue = 5;
+    private static int royalAssailantChestplateArmorValue = 10;
+    private static int royalAssailantLeggingsArmorValue = 8;
+    private static int royalAssailantBootsArmorValue = 5;
+    private static double royalAssailantArmorToughness = 3.0D;
+    private static double royalAssailantArmorKnockbackResistance = 0.15D;
+    private static double royalAssailantHelmetDoubleDamageChance = 0.06D;
+    private static double royalAssailantChestplateDoubleDamageChance = 0.08D;
+    private static double royalAssailantLeggingsDoubleDamageChance = 0.07D;
+    private static double royalAssailantBootsDoubleDamageChance = 0.05D;
+    private static double royalGuardianSwordAttackDamage = 111.0D;
+    private static double royalGuardianSwordAttackSpeed = -2.5D;
+    private static double royalAssailantBattleAxeAttackDamage = 151.0D;
+    private static double royalAssailantBattleAxeAttackSpeed = -2.9D;
+    private static double royalWeaponAttackReachBonus = 1.0D;
+    private static double royalWeaponAttackKnockbackBonus = 1.0D;
+    private static int royalWeaponDurability = 4608;
+    private static int royalWeaponEnchantability = 30;
+    private static int royalGuardianShieldDurability = 1008;
+    private static double royalBoltDamage = 6.0D;
+    private static int royalEggHatchChance = 3;
     private static boolean basiliskPetrifyingGazeEnabled = true;
     private static int basiliskSpawnMaxLightLevel = 5;
     private static double basiliskHealth = 320.0D;
@@ -345,6 +377,20 @@ public final class AntarchySettings {
     private static int windVortexDurationTicks = 140;
     private static double windVortexPullStrength = 0.32D;
     private static double windVortexLaunchStrength = 1.0D;
+    private static boolean eyeOfTheStormEnabled = true;
+    private static int eyeOfTheStormUpdraftCooldownTicks = 40;
+    private static double eyeOfTheStormUpdraftLaunchStrength = 1.15D;
+    private static double eyeOfTheStormUpdraftHeight = 4.0D;
+    private static double eyeOfTheStormUpdraftRadius = 1.3D;
+    private static int eyeOfTheStormUpdraftDurationTicks = 32;
+    private static int eyeOfTheStormSurgeCooldownTicks = 70;
+    private static double eyeOfTheStormSurgeRange = 16.0D;
+    private static int eyeOfTheStormSurgeDurationTicks = 300;
+    private static double eyeOfTheStormSurgeRadius = 3.5D;
+    private static double eyeOfTheStormSurgeHeight = 5.0D;
+    private static double eyeOfTheStormSurgePullStrength = 0.45D;
+    private static double eyeOfTheStormSurgeReturnStrength = 1.4D;
+    private static float eyeOfTheStormSurgeDamage = 5.0F;
     private static double vortexLensMinRadius = 1.5D;
     private static double vortexLensMaxRadius = 10.0D;
     private static double vortexLensMinHeight = 3.0D;
@@ -1775,6 +1821,99 @@ public final class AntarchySettings {
     public static double nightmareBootsDoubleDamageChance() { return nightmareBootsDoubleDamageChance; }
     public static void setNightmareBootsDoubleDamageChance(double v) { nightmareBootsDoubleDamageChance = v; }
 
+    public static boolean royalArmorComesEnchanted() { return royalArmorComesEnchanted; }
+    public static void setRoyalArmorComesEnchanted(boolean v) { royalArmorComesEnchanted = v; }
+
+    public static int royalArmorProtectionLevel() { return royalArmorProtectionLevel; }
+    public static void setRoyalArmorProtectionLevel(int v) { royalArmorProtectionLevel = v; }
+
+    public static int royalArmorEnchantability() { return royalArmorEnchantability; }
+    public static void setRoyalArmorEnchantability(int v) { royalArmorEnchantability = v; }
+
+    public static int royalArmorDurabilityMultiplier() { return royalArmorDurabilityMultiplier; }
+    public static void setRoyalArmorDurabilityMultiplier(int v) { royalArmorDurabilityMultiplier = v; }
+
+    public static int royalGuardianHelmetArmorValue() { return royalGuardianHelmetArmorValue; }
+    public static void setRoyalGuardianHelmetArmorValue(int v) { royalGuardianHelmetArmorValue = v; }
+
+    public static int royalGuardianChestplateArmorValue() { return royalGuardianChestplateArmorValue; }
+    public static void setRoyalGuardianChestplateArmorValue(int v) { royalGuardianChestplateArmorValue = v; }
+
+    public static int royalGuardianLeggingsArmorValue() { return royalGuardianLeggingsArmorValue; }
+    public static void setRoyalGuardianLeggingsArmorValue(int v) { royalGuardianLeggingsArmorValue = v; }
+
+    public static int royalGuardianBootsArmorValue() { return royalGuardianBootsArmorValue; }
+    public static void setRoyalGuardianBootsArmorValue(int v) { royalGuardianBootsArmorValue = v; }
+
+    public static double royalGuardianArmorToughness() { return royalGuardianArmorToughness; }
+    public static void setRoyalGuardianArmorToughness(double v) { royalGuardianArmorToughness = v; }
+
+    public static double royalGuardianArmorKnockbackResistance() { return royalGuardianArmorKnockbackResistance; }
+    public static void setRoyalGuardianArmorKnockbackResistance(double v) { royalGuardianArmorKnockbackResistance = v; }
+
+    public static int royalAssailantHelmetArmorValue() { return royalAssailantHelmetArmorValue; }
+    public static void setRoyalAssailantHelmetArmorValue(int v) { royalAssailantHelmetArmorValue = v; }
+
+    public static int royalAssailantChestplateArmorValue() { return royalAssailantChestplateArmorValue; }
+    public static void setRoyalAssailantChestplateArmorValue(int v) { royalAssailantChestplateArmorValue = v; }
+
+    public static int royalAssailantLeggingsArmorValue() { return royalAssailantLeggingsArmorValue; }
+    public static void setRoyalAssailantLeggingsArmorValue(int v) { royalAssailantLeggingsArmorValue = v; }
+
+    public static int royalAssailantBootsArmorValue() { return royalAssailantBootsArmorValue; }
+    public static void setRoyalAssailantBootsArmorValue(int v) { royalAssailantBootsArmorValue = v; }
+
+    public static double royalAssailantArmorToughness() { return royalAssailantArmorToughness; }
+    public static void setRoyalAssailantArmorToughness(double v) { royalAssailantArmorToughness = v; }
+
+    public static double royalAssailantArmorKnockbackResistance() { return royalAssailantArmorKnockbackResistance; }
+    public static void setRoyalAssailantArmorKnockbackResistance(double v) { royalAssailantArmorKnockbackResistance = v; }
+
+    public static double royalAssailantHelmetDoubleDamageChance() { return royalAssailantHelmetDoubleDamageChance; }
+    public static void setRoyalAssailantHelmetDoubleDamageChance(double v) { royalAssailantHelmetDoubleDamageChance = v; }
+
+    public static double royalAssailantChestplateDoubleDamageChance() { return royalAssailantChestplateDoubleDamageChance; }
+    public static void setRoyalAssailantChestplateDoubleDamageChance(double v) { royalAssailantChestplateDoubleDamageChance = v; }
+
+    public static double royalAssailantLeggingsDoubleDamageChance() { return royalAssailantLeggingsDoubleDamageChance; }
+    public static void setRoyalAssailantLeggingsDoubleDamageChance(double v) { royalAssailantLeggingsDoubleDamageChance = v; }
+
+    public static double royalAssailantBootsDoubleDamageChance() { return royalAssailantBootsDoubleDamageChance; }
+    public static void setRoyalAssailantBootsDoubleDamageChance(double v) { royalAssailantBootsDoubleDamageChance = v; }
+
+    public static double royalGuardianSwordAttackDamage() { return royalGuardianSwordAttackDamage; }
+    public static void setRoyalGuardianSwordAttackDamage(double v) { royalGuardianSwordAttackDamage = v; }
+
+    public static double royalGuardianSwordAttackSpeed() { return royalGuardianSwordAttackSpeed; }
+    public static void setRoyalGuardianSwordAttackSpeed(double v) { royalGuardianSwordAttackSpeed = v; }
+
+    public static double royalAssailantBattleAxeAttackDamage() { return royalAssailantBattleAxeAttackDamage; }
+    public static void setRoyalAssailantBattleAxeAttackDamage(double v) { royalAssailantBattleAxeAttackDamage = v; }
+
+    public static double royalAssailantBattleAxeAttackSpeed() { return royalAssailantBattleAxeAttackSpeed; }
+    public static void setRoyalAssailantBattleAxeAttackSpeed(double v) { royalAssailantBattleAxeAttackSpeed = v; }
+
+    public static double royalWeaponAttackReachBonus() { return royalWeaponAttackReachBonus; }
+    public static void setRoyalWeaponAttackReachBonus(double v) { royalWeaponAttackReachBonus = v; }
+
+    public static double royalWeaponAttackKnockbackBonus() { return royalWeaponAttackKnockbackBonus; }
+    public static void setRoyalWeaponAttackKnockbackBonus(double v) { royalWeaponAttackKnockbackBonus = v; }
+
+    public static int royalWeaponDurability() { return royalWeaponDurability; }
+    public static void setRoyalWeaponDurability(int v) { royalWeaponDurability = v; }
+
+    public static int royalWeaponEnchantability() { return royalWeaponEnchantability; }
+    public static void setRoyalWeaponEnchantability(int v) { royalWeaponEnchantability = v; }
+
+    public static int royalGuardianShieldDurability() { return royalGuardianShieldDurability; }
+    public static void setRoyalGuardianShieldDurability(int v) { royalGuardianShieldDurability = v; }
+
+    public static double royalBoltDamage() { return royalBoltDamage; }
+    public static void setRoyalBoltDamage(double v) { royalBoltDamage = v; }
+
+    public static int royalEggHatchChance() { return royalEggHatchChance; }
+    public static void setRoyalEggHatchChance(int v) { royalEggHatchChance = v; }
+
     public static double nightmareSwordBaseDamage() { return nightmareSwordBaseDamage; }
     public static void setNightmareSwordBaseDamage(double v) { nightmareSwordBaseDamage = v; }
 
@@ -2281,6 +2420,48 @@ public final class AntarchySettings {
 
     public static double windVortexLaunchStrength() { return windVortexLaunchStrength; }
     public static void setWindVortexLaunchStrength(double value) { windVortexLaunchStrength = value; }
+
+    public static boolean eyeOfTheStormEnabled() { return eyeOfTheStormEnabled; }
+    public static void setEyeOfTheStormEnabled(boolean value) { eyeOfTheStormEnabled = value; }
+
+    public static int eyeOfTheStormUpdraftCooldownTicks() { return eyeOfTheStormUpdraftCooldownTicks; }
+    public static void setEyeOfTheStormUpdraftCooldownTicks(int value) { eyeOfTheStormUpdraftCooldownTicks = value; }
+
+    public static double eyeOfTheStormUpdraftLaunchStrength() { return eyeOfTheStormUpdraftLaunchStrength; }
+    public static void setEyeOfTheStormUpdraftLaunchStrength(double value) { eyeOfTheStormUpdraftLaunchStrength = value; }
+
+    public static double eyeOfTheStormUpdraftHeight() { return eyeOfTheStormUpdraftHeight; }
+    public static void setEyeOfTheStormUpdraftHeight(double value) { eyeOfTheStormUpdraftHeight = value; }
+
+    public static double eyeOfTheStormUpdraftRadius() { return eyeOfTheStormUpdraftRadius; }
+    public static void setEyeOfTheStormUpdraftRadius(double value) { eyeOfTheStormUpdraftRadius = value; }
+
+    public static int eyeOfTheStormUpdraftDurationTicks() { return eyeOfTheStormUpdraftDurationTicks; }
+    public static void setEyeOfTheStormUpdraftDurationTicks(int value) { eyeOfTheStormUpdraftDurationTicks = value; }
+
+    public static int eyeOfTheStormSurgeCooldownTicks() { return eyeOfTheStormSurgeCooldownTicks; }
+    public static void setEyeOfTheStormSurgeCooldownTicks(int value) { eyeOfTheStormSurgeCooldownTicks = value; }
+
+    public static double eyeOfTheStormSurgeRange() { return eyeOfTheStormSurgeRange; }
+    public static void setEyeOfTheStormSurgeRange(double value) { eyeOfTheStormSurgeRange = value; }
+
+    public static int eyeOfTheStormSurgeDurationTicks() { return eyeOfTheStormSurgeDurationTicks; }
+    public static void setEyeOfTheStormSurgeDurationTicks(int value) { eyeOfTheStormSurgeDurationTicks = value; }
+
+    public static double eyeOfTheStormSurgeRadius() { return eyeOfTheStormSurgeRadius; }
+    public static void setEyeOfTheStormSurgeRadius(double value) { eyeOfTheStormSurgeRadius = value; }
+
+    public static double eyeOfTheStormSurgeHeight() { return eyeOfTheStormSurgeHeight; }
+    public static void setEyeOfTheStormSurgeHeight(double value) { eyeOfTheStormSurgeHeight = value; }
+
+    public static double eyeOfTheStormSurgePullStrength() { return eyeOfTheStormSurgePullStrength; }
+    public static void setEyeOfTheStormSurgePullStrength(double value) { eyeOfTheStormSurgePullStrength = value; }
+
+    public static double eyeOfTheStormSurgeReturnStrength() { return eyeOfTheStormSurgeReturnStrength; }
+    public static void setEyeOfTheStormSurgeReturnStrength(double value) { eyeOfTheStormSurgeReturnStrength = value; }
+
+    public static float eyeOfTheStormSurgeDamage() { return eyeOfTheStormSurgeDamage; }
+    public static void setEyeOfTheStormSurgeDamage(float value) { eyeOfTheStormSurgeDamage = value; }
 
     public static double vortexLensMinRadius() { return vortexLensMinRadius; }
     public static void setVortexLensMinRadius(double value) { vortexLensMinRadius = value; }

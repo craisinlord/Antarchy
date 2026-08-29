@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.mixins.gravity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.item.EyeOfTheStormItem;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
 import com.craisinlord.antarchy.content.item.PrimordialArmorItem;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -22,13 +23,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class PlayerAttackMixin {
     @Inject(method = "attack", at = @At("HEAD"), cancellable = true)
     private void antarchy$blockGravityGunMelee(Entity target, CallbackInfo ci) {
-        if (!AntarchySettings.gravityGunEnabled()) {
-            return;
-        }
-
         Player player = (Player) (Object) this;
         ItemStack mainHand = player.getMainHandItem();
-        if (mainHand.getItem() instanceof GravityGunItem) {
+        if (AntarchySettings.gravityGunEnabled() && mainHand.getItem() instanceof GravityGunItem) {
+            ci.cancel();
+            return;
+        }
+        if (AntarchySettings.eyeOfTheStormEnabled() && mainHand.getItem() instanceof EyeOfTheStormItem) {
             ci.cancel();
         }
     }

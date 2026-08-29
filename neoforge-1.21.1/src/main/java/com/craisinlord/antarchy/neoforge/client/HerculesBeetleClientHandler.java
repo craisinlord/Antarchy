@@ -57,13 +57,13 @@ public final class HerculesBeetleClientHandler {
         }
         wasPressingAttack = pressingAttack;
 
-        boolean charging = AntarchyKeyBindings.HERCULES_BEETLE_CHARGE.isDown();
+        boolean charging = AntarchyKeyBindings.MOUNT_SPECIAL.isDown();
         if (charging != wasCharging) {
             PacketDistributor.sendToServer(new HerculesBeetleMountedChargePayload(charging));
         }
         wasCharging = charging;
 
-        boolean pressingFlightToggle = AntarchyKeyBindings.HERCULES_BEETLE_FLIGHT_TOGGLE.isDown();
+        boolean pressingFlightToggle = AntarchyKeyBindings.MOUNT_FLIGHT_TOGGLE.isDown();
         if (pressingFlightToggle && !wasPressingFlightToggle) {
             PacketDistributor.sendToServer(new HerculesBeetleFlightTogglePayload());
         }

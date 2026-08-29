@@ -1,0 +1,61 @@
+{
+  "type": "antarchy:royal_tree",
+  "config": {
+    "trunk_provider": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "antarchy:royal_wood",
+        "Properties": {
+          "axis": "y"
+        }
+      }
+    },
+    "leaves_provider": {
+      "type": "minecraft:weighted_state_provider",
+      "entries": [
+        {
+          "weight": 80,
+          "data": {
+            "Name": "antarchy:royal_leaves"
+          }
+        },
+        {
+          "weight": 20,
+          "data": {
+            "Name": "antarchy:royal_flowering_leaves"
+          }
+        }
+      ]
+    },
+    "height": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 27,
+      "max_inclusive": 30
+    },
+    "trunk_drift": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 4,
+      "max_inclusive": 5
+    },
+    "canopy_radius": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 6,
+      "max_inclusive": 7
+    },
+    "canopy_layers": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 4,
+      "max_inclusive": 5
+    },
+    "branch_count": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 3,
+      "max_inclusive": 4
+    },
+    "strut_count": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 3,
+      "max_inclusive": 4
+    }
+  }
+}

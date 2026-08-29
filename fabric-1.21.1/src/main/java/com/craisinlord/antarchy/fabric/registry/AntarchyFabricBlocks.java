@@ -397,12 +397,12 @@ public final class AntarchyFabricBlocks {
             () -> new net.minecraft.world.level.block.ButtonBlock(net.minecraft.world.level.block.state.properties.BlockSetType.JUNGLE, 30, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_BUTTON)));
 
 
-    public static final DeferredBlock<net.minecraft.world.level.block.LeavesBlock> ROYAL_LEAVES = BLOCKS.register("royal_leaves",
-            () -> new net.minecraft.world.level.block.LeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LEAVES).randomTicks()));
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.RoyalLeavesBlock> ROYAL_LEAVES = BLOCKS.register("royal_leaves",
+            () -> new com.craisinlord.antarchy.content.block.RoyalLeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LEAVES).randomTicks()));
 
 
-    public static final DeferredBlock<net.minecraft.world.level.block.LeavesBlock> ROYAL_FLOWERING_LEAVES = BLOCKS.register("royal_flowering_leaves",
-            () -> new net.minecraft.world.level.block.LeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LEAVES).randomTicks()));
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.RoyalLeavesBlock> ROYAL_FLOWERING_LEAVES = BLOCKS.register("royal_flowering_leaves",
+            () -> new com.craisinlord.antarchy.content.block.RoyalLeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LEAVES).randomTicks()));
 
 
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.RoyalSaplingBlock> ROYAL_SAPLING = BLOCKS.register("royal_sapling",
@@ -947,6 +947,11 @@ public final class AntarchyFabricBlocks {
     public static final DeferredBlock<CreepingHorrorEggBlock> CREEPING_HORROR_EGG = BLOCKS.register("creeping_horror_egg",
             () -> new CreepingHorrorEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
 
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.PrinceEggBlock> PRINCE_EGG = BLOCKS.register("prince_egg",
+            () -> new com.craisinlord.antarchy.content.block.PrinceEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DRAGON_EGG).randomTicks().noOcclusion()));
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.PrincessEggBlock> PRINCESS_EGG = BLOCKS.register("princess_egg",
+            () -> new com.craisinlord.antarchy.content.block.PrincessEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DRAGON_EGG).randomTicks().noOcclusion()));
+
 
     public static final DeferredBlock<JumpyBugEggBlock> JUMPY_BUG_EGG = BLOCKS.register("jumpy_bug_egg",
             () -> new JumpyBugEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
@@ -1397,6 +1402,13 @@ public final class AntarchyFabricBlocks {
     public static final DeferredBlock<StarCoralWallFanBlock> STAR_CORAL_WALL_FAN = BLOCKS.register("star_coral_wall_fan",
             () -> new StarCoralWallFanBlock(DEAD_STAR_CORAL_WALL_FAN.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.TUBE_CORAL_WALL_FAN).lightLevel(state -> 8)));
 
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.craisinlord.antarchy.content.block.entity.RoyalEggBlockEntity>> ROYAL_EGG_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("royal_egg",
+            () -> BlockEntityType.Builder.of(
+                    com.craisinlord.antarchy.content.block.entity.RoyalEggBlockEntity::new,
+                    PRINCE_EGG.get(),
+                    PRINCESS_EGG.get()
+            ).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AntNestBlockEntity>> ANT_NEST_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("ant_nest",
             () -> BlockEntityType.Builder.of(

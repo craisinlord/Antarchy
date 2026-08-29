@@ -317,6 +317,12 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setVortex(AntarchyFabricEntities.VORTEX);
         AntarchyObjects.setWindVortex(() -> AntarchyFabricEntities.WIND_VORTEX.get());
         AntarchyObjects.setVortexChargeProjectile(() -> AntarchyFabricEntities.VORTEX_CHARGE_PROJECTILE.get());
+        AntarchyObjects.setPrince(() -> AntarchyFabricEntities.PRINCE.get());
+        AntarchyObjects.setPrincess(() -> AntarchyFabricEntities.PRINCESS.get());
+        AntarchyObjects.setRoyalBolt(() -> AntarchyFabricEntities.ROYAL_BOLT.get());
+        AntarchyObjects.setPrinceEgg(() -> AntarchyFabricBlocks.PRINCE_EGG.get());
+        AntarchyObjects.setPrincessEgg(() -> AntarchyFabricBlocks.PRINCESS_EGG.get());
+        AntarchyObjects.setRoyalEggBlockEntity(() -> AntarchyFabricBlocks.ROYAL_EGG_BLOCK_ENTITY.get());
         AntarchyObjects.setVortexLens(() -> AntarchyFabricBlocks.VORTEX_LENS.get());
         AntarchyObjects.setVortexLensBlockEntity(() -> AntarchyFabricBlocks.VORTEX_LENS_BLOCK_ENTITY.get());
         AntarchyObjects.setKrakensGraspTrident(AntarchyFabricEntities.KRAKENS_GRASP_TRIDENT);

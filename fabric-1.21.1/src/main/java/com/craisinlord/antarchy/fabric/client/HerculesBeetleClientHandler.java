@@ -43,13 +43,13 @@ public final class HerculesBeetleClientHandler {
         }
         wasPressingAttack = pressingAttack;
 
-        boolean charging = AntarchyKeyBindings.isHerculesBeetleChargePressed();
+        boolean charging = AntarchyKeyBindings.isMountSpecialPressed();
         if (charging != wasCharging) {
             ClientPlayNetworking.send(new HerculesBeetleMountedChargePayload(charging));
         }
         wasCharging = charging;
 
-        boolean pressingFlightToggle = AntarchyKeyBindings.isHerculesBeetleFlightTogglePressed();
+        boolean pressingFlightToggle = AntarchyKeyBindings.isMountFlightTogglePressed();
         if (pressingFlightToggle && !wasPressingFlightToggle) {
             ClientPlayNetworking.send(new HerculesBeetleFlightTogglePayload());
         }

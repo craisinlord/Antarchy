@@ -619,6 +619,27 @@ public final class AntarchyFabricEntities {
                     .clientTrackingRange(12)
                     .build("hercules_beetle"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.PrinceEntity>> PRINCE = ENTITY_TYPES.register("prince",
+            () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.royal.PrinceEntity::new, MobCategory.CREATURE)
+                    .sized(2.2F, 2.2F)
+                    .clientTrackingRange(10)
+                    .updateInterval(3)
+                    .fireImmune().build("prince"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.PrincessEntity>> PRINCESS = ENTITY_TYPES.register("princess",
+            () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.royal.PrincessEntity::new, MobCategory.CREATURE)
+                    .sized(2.2F, 2.2F)
+                    .clientTrackingRange(10)
+                    .updateInterval(3)
+                    .fireImmune().build("princess"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBoltEntity>> ROYAL_BOLT = ENTITY_TYPES.register("royal_bolt",
+            () -> EntityType.Builder.<com.craisinlord.antarchy.content.entity.royal.RoyalBoltEntity>of(com.craisinlord.antarchy.content.entity.royal.RoyalBoltEntity::new, MobCategory.MISC)
+                    .sized(0.4F, 0.4F)
+                    .clientTrackingRange(8)
+                    .updateInterval(1)
+                    .fireImmune().build("royal_bolt"));
+
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity>> OURANWOOD_DEER = ENTITY_TYPES.register("ouranwood_deer",
             () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity::new, MobCategory.CREATURE)

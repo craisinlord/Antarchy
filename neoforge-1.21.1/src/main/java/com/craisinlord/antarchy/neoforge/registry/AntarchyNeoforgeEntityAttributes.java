@@ -85,6 +85,8 @@ public class AntarchyNeoforgeEntityAttributes {
         event.put(AntarchyNeoforgeEntites.CHEEP.get(), com.craisinlord.antarchy.content.entity.CheepEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.DORRIE.get(), com.craisinlord.antarchy.content.entity.DorrieEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.HERCULES_BEETLE.get(), com.craisinlord.antarchy.content.entity.HerculesBeetleEntity.createAttributes().build());
+        event.put(AntarchyNeoforgeEntites.PRINCE.get(), com.craisinlord.antarchy.content.entity.royal.PrinceEntity.createAttributes().build());
+        event.put(AntarchyNeoforgeEntites.PRINCESS.get(), com.craisinlord.antarchy.content.entity.royal.PrincessEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.OURANWOOD_DEER.get(), com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.GLIMMER.get(), com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.ELKA.get(), ElkaEntity.createAttributes().build());

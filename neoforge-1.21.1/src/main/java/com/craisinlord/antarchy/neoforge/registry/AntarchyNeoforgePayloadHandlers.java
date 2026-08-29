@@ -42,6 +42,43 @@ public class AntarchyNeoforgePayloadHandlers {
                 )
         );
         registrar.playToServer(
+                com.craisinlord.antarchy.content.network.ToggleRoyalInversionPayload.TYPE,
+                com.craisinlord.antarchy.content.network.ToggleRoyalInversionPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> {
+                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer player) {
+                        com.craisinlord.antarchy.content.item.RoyalAssailantArmorItem.toggleInversion(player);
+                    }
+                })
+        );
+        registrar.playToServer(
+                com.craisinlord.antarchy.content.network.RoyalMountActionPayload.TYPE,
+                com.craisinlord.antarchy.content.network.RoyalMountActionPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> {
+                    if (!(ctx.player() instanceof net.minecraft.server.level.ServerPlayer player)
+                            || !(player.getVehicle() instanceof com.craisinlord.antarchy.content.entity.royal.RoyalMountEntity mount)) {
+                        return;
+                    }
+                    switch (payload.action()) {
+                        case com.craisinlord.antarchy.content.network.RoyalMountActionPayload.FLIGHT_TOGGLE -> mount.toggleMountedFlight(player);
+                        case com.craisinlord.antarchy.content.network.RoyalMountActionPayload.BITE -> mount.handleMountedBite(player);
+                        case com.craisinlord.antarchy.content.network.RoyalMountActionPayload.SPIT -> mount.handleMountedSpit(player);
+                        default -> {
+                        }
+                    }
+                })
+        );
+        registrar.playToServer(
+                com.craisinlord.antarchy.content.network.RoyalMountVerticalPayload.TYPE,
+                com.craisinlord.antarchy.content.network.RoyalMountVerticalPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> {
+                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer player
+                            && player.getVehicle() instanceof com.craisinlord.antarchy.content.entity.royal.RoyalMountEntity mount) {
+                        mount.setRiderAscend(payload.ascend());
+                        mount.setRiderDescend(payload.descend());
+                    }
+                })
+        );
+        registrar.playToServer(
                 ToggleTigerEyeCamouflagePayload.TYPE,
                 ToggleTigerEyeCamouflagePayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> {

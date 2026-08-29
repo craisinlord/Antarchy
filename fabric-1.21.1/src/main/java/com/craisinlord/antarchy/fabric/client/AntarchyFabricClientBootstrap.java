@@ -164,6 +164,9 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.CREEPING_HORROR.get(), CreepingHorrorRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.LURKING_TERROR.get(), LurkingTerrorRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.HERCULES_BEETLE.get(), HerculesBeetleRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.PRINCE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalMountRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.PRINCESS.get(), com.craisinlord.antarchy.content.client.renderer.RoyalMountRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.ROYAL_BOLT.get(), com.craisinlord.antarchy.content.client.renderer.RoyalBoltRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.JERRY.get(), JerryRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.JUMPY_BUG.get(), JumpyBugRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.SPIT_BUG.get(), SpitBugRenderer::new);
@@ -520,17 +523,20 @@ public final class AntarchyFabricClientBootstrap {
             ParalyzedClientHandler.tick();
             DreadClientHandler.tick();
             TigerEyeCamouflageClientHandler.tick();
+            RoyalInversionClientHandler.tick();
             BloodCrystalKatanaTrailHandler.tick();
             ScorpionWhipTetherRenderHandler.tick();
             WormHookTetherRenderHandler.tick();
             DorrieJumpClientHandler.tick();
             HerculesBeetleClientHandler.tick();
+            RoyalMountClientHandler.tick();
             SizeRaySoundHandler.tick(client);
         });
 
         BigBerthaClientHandler.register();
         GravityGunClientHandler.register();
         PortalGunClientHandler.register();
+        EyeOfStormClientHandler.register();
 
         ElythiaFireflyManager.register();
         LucidSoundHandler.register();

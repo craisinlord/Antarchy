@@ -69,6 +69,8 @@ import com.craisinlord.antarchy.content.worldgen.thoraxis.NadirTreeConfiguration
 import com.craisinlord.antarchy.content.worldgen.thoraxis.NadirTreeFeature;
 import com.craisinlord.antarchy.content.worldgen.truffalo.TruffaloTreeConfiguration;
 import com.craisinlord.antarchy.content.worldgen.truffalo.TruffaloTreeFeature;
+import com.craisinlord.antarchy.content.worldgen.royal.RoyalTreeConfiguration;
+import com.craisinlord.antarchy.content.worldgen.royal.RoyalTreeFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBiomeSource;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisDuneConfiguration;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisDuneFeature;
@@ -288,6 +290,30 @@ public final class AntarchyFabricMisc {
                     SoundEvents.ARMOR_EQUIP_GOLD,
                     () -> Ingredient.of(Items.GOLD_INGOT),
                     List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "fallen_king_crown"))),
+                    0.0F,
+                    0.0F
+            ));
+
+
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> ROYAL_GUARDIAN_ARMOR_MATERIAL = ARMOR_MATERIALS.register("royal_guardian",
+            () -> new ArmorMaterial(
+                    new java.util.EnumMap<>(ArmorItem.Type.class),
+                    AntarchySettings.royalArmorEnchantability(),
+                    SoundEvents.ARMOR_EQUIP_NETHERITE,
+                    () -> Ingredient.of(AntarchyFabricItems.KING_SCALE.get()),
+                    List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "royal_guardian"))),
+                    0.0F,
+                    0.0F
+            ));
+
+
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> ROYAL_ASSAILANT_ARMOR_MATERIAL = ARMOR_MATERIALS.register("royal_assailant",
+            () -> new ArmorMaterial(
+                    new java.util.EnumMap<>(ArmorItem.Type.class),
+                    AntarchySettings.royalArmorEnchantability(),
+                    SoundEvents.ARMOR_EQUIP_NETHERITE,
+                    () -> Ingredient.of(AntarchyFabricItems.QUEEN_SCALE.get()),
+                    List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "royal_assailant"))),
                     0.0F,
                     0.0F
             ));
@@ -583,6 +609,10 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<Feature<?>, TruffaloTreeFeature> TRUFFALO_TREE_FEATURE = FEATURES.register("truffalo_tree",
             () -> new TruffaloTreeFeature(TruffaloTreeConfiguration.CODEC));
+
+
+    public static final DeferredHolder<Feature<?>, RoyalTreeFeature> ROYAL_TREE_FEATURE = FEATURES.register("royal_tree",
+            () -> new RoyalTreeFeature(RoyalTreeConfiguration.CODEC));
 
 
     public static final DeferredHolder<Feature<?>, ElythiaFloraFeature> ELYTHIA_FOREST_FLORA = FEATURES.register("elythia_forest_flora",

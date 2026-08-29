@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.creative;
 
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
 import com.craisinlord.antarchy.content.item.GlimmerBottleItem;
+import com.craisinlord.antarchy.content.item.royal.RoyalGearHelper;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateGearHelper;
 import java.util.HashMap;
 import java.util.List;
@@ -406,6 +407,7 @@ public final class CreativeTabContents {
             entry("growth_ray", "combat"),
             entry("gravity_gun", "combat"),
             entry("portal_gun", "combat"),
+            entry("eye_of_the_storm", "combat"),
             entry("water_cannon", "combat"),
             entry("attitude_adjuster", "combat"),
             entry("lucid_pearl", "combat"),
@@ -423,6 +425,19 @@ public final class CreativeTabContents {
             entry("blood_crystal_chestplate", "combat"),
             entry("blood_crystal_leggings", "combat"),
             entry("blood_crystal_boots", "combat"),
+            entry("royal_guardian_sword", "combat"),
+            entry("royal_guardian_helmet", "combat"),
+            entry("royal_guardian_chestplate", "combat"),
+            entry("royal_guardian_leggings", "combat"),
+            entry("royal_guardian_boots", "combat"),
+            entry("royal_guardian_shield", "combat"),
+            entry("royal_assailant_battleaxe", "combat"),
+            entry("royal_assailant_helmet", "combat"),
+            entry("royal_assailant_chestplate", "combat"),
+            entry("royal_assailant_leggings", "combat"),
+            entry("royal_assailant_boots", "combat"),
+            entry("prince_egg", "spawn_eggs"),
+            entry("princess_egg", "spawn_eggs"),
             entry("tigers_eye_helmet", "combat"),
             entry("tigers_eye_chestplate", "combat"),
             entry("tigers_eye_leggings", "combat"),
@@ -618,6 +633,10 @@ public final class CreativeTabContents {
                     output.accept(UltimateGearHelper.createUltimateArmorStack(item(entry.path()), holders));
                     continue;
                 }
+                if (isRoyalArmor(entry.path())) {
+                    output.accept(RoyalGearHelper.createRoyalArmorStack(item(entry.path()), holders));
+                    continue;
+                }
                 if ("ultimate_bow".equals(entry.path())) {
                     output.accept(UltimateGearHelper.createUltimateBowStack(item(entry.path()), holders));
                     continue;
@@ -642,6 +661,17 @@ public final class CreativeTabContents {
                 || "ultimate_chestplate".equals(path)
                 || "ultimate_leggings".equals(path)
                 || "ultimate_boots".equals(path);
+    }
+
+    private static boolean isRoyalArmor(String path) {
+        return "royal_guardian_helmet".equals(path)
+                || "royal_guardian_chestplate".equals(path)
+                || "royal_guardian_leggings".equals(path)
+                || "royal_guardian_boots".equals(path)
+                || "royal_assailant_helmet".equals(path)
+                || "royal_assailant_chestplate".equals(path)
+                || "royal_assailant_leggings".equals(path)
+                || "royal_assailant_boots".equals(path);
     }
 
     private static void acceptPotionFamily(AntarchyTabOutput output, String path) {

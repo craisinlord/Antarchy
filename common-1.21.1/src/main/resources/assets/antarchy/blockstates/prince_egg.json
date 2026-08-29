@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "hatch=0": {
+      "model": "antarchy:block/prince_egg"
+    },
+    "hatch=1": {
+      "model": "antarchy:block/prince_egg"
+    },
+    "hatch=2": {
+      "model": "antarchy:block/prince_egg"
+    }
+  }
+}

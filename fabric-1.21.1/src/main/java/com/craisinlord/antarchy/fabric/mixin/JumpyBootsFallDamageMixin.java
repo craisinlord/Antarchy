@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.fabric.mixin;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.item.BloodCrystalArmorItem;
 import com.craisinlord.antarchy.content.item.JumpyBootsItem;
+import com.craisinlord.antarchy.content.item.royal.RoyalGearHelper;
 import com.craisinlord.antarchy.fabric.util.JumpyBootsFabricHelper;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -25,7 +26,8 @@ public abstract class JumpyBootsFallDamageMixin {
         if (!AntarchyGravityApi.isGravityInverted(player)) {
             return;
         }
-        if (!(player.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof BloodCrystalArmorItem)) {
+        if (!(player.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof BloodCrystalArmorItem)
+                && !RoyalGearHelper.hasUpwardFallImmunityBoots(player)) {
             return;
         }
 

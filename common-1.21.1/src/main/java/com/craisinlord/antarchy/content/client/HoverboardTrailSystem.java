@@ -32,8 +32,8 @@ public final class HoverboardTrailSystem {
     private static final float CORE_HALF_WIDTH = 0.0225f;
     private static final float GLOW_HALF_WIDTH = 0.055f;
     private static final double MIN_DISTANCE_BETWEEN_POINTS = 0.04D;
-    private static final double LATERAL_OFFSET = 0.34D;
-    private static final double REAR_OFFSET = 0.52D;
+    private static final double LATERAL_OFFSET = 0.5275D;
+    private static final double REAR_OFFSET = 0.77D;
     private static final double HEIGHT_OFFSET = 0.14D;
     private static final float[] DEFAULT_COLOR = rgb(0xC9A0FF);
 
