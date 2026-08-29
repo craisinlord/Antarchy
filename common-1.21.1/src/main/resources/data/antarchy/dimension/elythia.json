@@ -83,7 +83,7 @@
           }
         },
         {
-          "biome": "antarchy:elythia_meadow",
+          "biome": "antarchy:truffalo_forest",
           "parameters": {
             "temperature": 0.68,
             "humidity": 0.96,
@@ -203,7 +203,7 @@
           }
         },
         {
-          "biome": "antarchy:elythia_meadow",
+          "biome": "antarchy:truffalo_forest",
           "parameters": {
             "temperature": 0.62,
             "humidity": 0.98,
@@ -311,7 +311,7 @@
           }
         },
         {
-          "biome": "antarchy:elythia_meadow",
+          "biome": "antarchy:truffalo_forest",
           "parameters": {
             "temperature": 0.7,
             "humidity": 0.95,

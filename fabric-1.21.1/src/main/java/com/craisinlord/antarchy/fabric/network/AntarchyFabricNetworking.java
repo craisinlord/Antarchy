@@ -16,6 +16,7 @@ import com.craisinlord.antarchy.content.item.BigBerthaItem;
 import com.craisinlord.antarchy.content.item.JumpyBootsHelper;
 import com.craisinlord.antarchy.fabric.util.JumpyBootsFabricHelper;
 import com.craisinlord.antarchy.content.item.JumpyBootsItem;
+import com.craisinlord.antarchy.content.item.EyeOfTheStormItem;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
 import com.craisinlord.antarchy.content.item.PortalGunItem;
 import com.craisinlord.antarchy.content.item.TigerEyeArmorUtil;
@@ -86,9 +87,13 @@ public final class AntarchyFabricNetworking {
 
         PayloadTypeRegistry.playC2S().register(GravityGunPrimaryPayload.TYPE, GravityGunPrimaryPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(PortalGunPrimaryPayload.TYPE, PortalGunPrimaryPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(EyeOfStormPrimaryPayload.TYPE, EyeOfStormPrimaryPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(RoyalMountActionPayload.TYPE, RoyalMountActionPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(RoyalMountVerticalPayload.TYPE, RoyalMountVerticalPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(GravityGunScrollPayload.TYPE, GravityGunScrollPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(BigBerthaModeCyclePayload.TYPE, BigBerthaModeCyclePayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(ToggleTigerEyeCamouflagePayload.TYPE, ToggleTigerEyeCamouflagePayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(ToggleRoyalInversionPayload.TYPE, ToggleRoyalInversionPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(DiamondMinecartInputPayload.TYPE, DiamondMinecartInputPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(BrutalflyElytraFlapPayload.TYPE, BrutalflyElytraFlapPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(JumpyBootsLaunchPayload.TYPE, JumpyBootsLaunchPayload.STREAM_CODEC);
@@ -107,12 +112,20 @@ public final class AntarchyFabricNetworking {
                 context.server().execute(() -> handleGravityGunPrimary(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(PortalGunPrimaryPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handlePortalGunPrimary(context.player(), payload)));
+        ServerPlayNetworking.registerGlobalReceiver(EyeOfStormPrimaryPayload.TYPE, (payload, context) ->
+                context.server().execute(() -> handleEyeOfStormPrimary(context.player(), payload)));
+        ServerPlayNetworking.registerGlobalReceiver(RoyalMountActionPayload.TYPE, (payload, context) ->
+                context.server().execute(() -> handleRoyalMountAction(context.player(), payload)));
+        ServerPlayNetworking.registerGlobalReceiver(RoyalMountVerticalPayload.TYPE, (payload, context) ->
+                context.server().execute(() -> handleRoyalMountVertical(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(GravityGunScrollPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleGravityGunScroll(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(BigBerthaModeCyclePayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleBigBerthaModeCycle(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(ToggleTigerEyeCamouflagePayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleTigerEyeCamouflageToggle(context.player())));
+        ServerPlayNetworking.registerGlobalReceiver(ToggleRoyalInversionPayload.TYPE, (payload, context) ->
+                context.server().execute(() -> com.craisinlord.antarchy.content.item.RoyalAssailantArmorItem.toggleInversion(context.player())));
         ServerPlayNetworking.registerGlobalReceiver(DiamondMinecartInputPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleDiamondMinecartInput(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(BrutalflyElytraFlapPayload.TYPE, (payload, context) ->
@@ -248,6 +261,33 @@ public final class AntarchyFabricNetworking {
             return;
         }
         portalGunItem.firePrimary(player.serverLevel(), player, player.getMainHandItem());
+    }
+
+    private static void handleRoyalMountAction(ServerPlayer player, RoyalMountActionPayload payload) {
+        if (!(player.getVehicle() instanceof com.craisinlord.antarchy.content.entity.royal.RoyalMountEntity mount)) {
+            return;
+        }
+        switch (payload.action()) {
+            case RoyalMountActionPayload.FLIGHT_TOGGLE -> mount.toggleMountedFlight(player);
+            case RoyalMountActionPayload.BITE -> mount.handleMountedBite(player);
+            case RoyalMountActionPayload.SPIT -> mount.handleMountedSpit(player);
+            default -> {
+            }
+        }
+    }
+
+    private static void handleRoyalMountVertical(ServerPlayer player, RoyalMountVerticalPayload payload) {
+        if (player.getVehicle() instanceof com.craisinlord.antarchy.content.entity.royal.RoyalMountEntity mount) {
+            mount.setRiderAscend(payload.ascend());
+            mount.setRiderDescend(payload.descend());
+        }
+    }
+
+    private static void handleEyeOfStormPrimary(ServerPlayer player, EyeOfStormPrimaryPayload payload) {
+        if (!(player.getMainHandItem().getItem() instanceof EyeOfTheStormItem eyeOfTheStormItem)) {
+            return;
+        }
+        eyeOfTheStormItem.firePrimary(player.serverLevel(), player, player.getMainHandItem());
     }
 
     private static void handleGravityGunScroll(ServerPlayer player, GravityGunScrollPayload payload) {

@@ -53,6 +53,8 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
     private static final double MAX_HOVER_HEIGHT = 5.0D;
     private static final double ASCEND_SPEED = 0.15D;
     private static final double SETTLE_DESCEND_SPEED = 0.08D;
+    private static final double FAST_DESCEND_SPEED = 0.9D;
+    private static final double FAST_DESCEND_RAMP = 0.2D;
     private static final double DAMPING = 0.955D;
     private static final double RIDER_Y_OFFSET = 0.65D;
 
@@ -206,23 +208,31 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
         double supportHeight = this.findSupportHeight(gravityDirection);
         if (!gravityDirection.isInverted()) {
             double maxY = supportHeight + MAX_HOVER_HEIGHT;
-            if (this.getY() > maxY) {
-                return -SETTLE_DESCEND_SPEED;
-            }
             if (holdingJump) {
                 return this.getY() >= maxY ? 0.0D : ASCEND_SPEED;
             }
-            return this.getY() <= supportHeight ? 0.0D : -SETTLE_DESCEND_SPEED;
+            if (this.getY() <= supportHeight) {
+                return 0.0D;
+            }
+            double heightAboveBand = this.getY() - maxY;
+            if (heightAboveBand > 0.0D) {
+                return -Mth.clamp(SETTLE_DESCEND_SPEED + heightAboveBand * FAST_DESCEND_RAMP, SETTLE_DESCEND_SPEED, FAST_DESCEND_SPEED);
+            }
+            return -SETTLE_DESCEND_SPEED;
         }
 
         double minY = supportHeight - MAX_HOVER_HEIGHT;
-        if (this.getY() < minY) {
-            return SETTLE_DESCEND_SPEED;
-        }
         if (holdingJump) {
             return this.getY() <= minY ? 0.0D : -ASCEND_SPEED;
         }
-        return this.getY() >= supportHeight ? 0.0D : SETTLE_DESCEND_SPEED;
+        if (this.getY() >= supportHeight) {
+            return 0.0D;
+        }
+        double depthBelowBand = minY - this.getY();
+        if (depthBelowBand > 0.0D) {
+            return Mth.clamp(SETTLE_DESCEND_SPEED + depthBelowBand * FAST_DESCEND_RAMP, SETTLE_DESCEND_SPEED, FAST_DESCEND_SPEED);
+        }
+        return SETTLE_DESCEND_SPEED;
     }
 
     private double findSupportHeight(AntarchyGravityDirection gravityDirection) {

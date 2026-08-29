@@ -7,7 +7,18 @@
           "type": {
             "tag": "antarchy:horde_common"
           }
-        }
+        },
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "dimension": "antarchy:cavaryn"
+              }
+            }
+          }
+        ]
       },
       "trigger": "minecraft:player_killed_entity"
     }

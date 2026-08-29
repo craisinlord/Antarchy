@@ -74,6 +74,24 @@ public final class AntarchyNeoforgeItems {
             () -> Ingredient.of(AntarchyNeoforgeItems.HERCULES_HORN.get())
     );
 
+    public static final Tier ROYAL_GUARDIAN_TIER = new SimpleToolTier(
+            AntarchySettings.royalWeaponDurability(),
+            12.0F,
+            0.0F,
+            Tiers.NETHERITE.getIncorrectBlocksForDrops(),
+            AntarchySettings.royalWeaponEnchantability(),
+            () -> Ingredient.of(AntarchyNeoforgeItems.KING_SCALE.get())
+    );
+
+    public static final Tier ROYAL_ASSAILANT_TIER = new SimpleToolTier(
+            AntarchySettings.royalWeaponDurability(),
+            12.0F,
+            0.0F,
+            Tiers.NETHERITE.getIncorrectBlocksForDrops(),
+            AntarchySettings.royalWeaponEnchantability(),
+            () -> Ingredient.of(AntarchyNeoforgeItems.QUEEN_SCALE.get())
+    );
+
     public static final DeferredItem<Item> NIGHTMARE_SCALE = ITEMS.registerSimpleItem("nightmare_scale", new Item.Properties().rarity(Rarity.RARE).fireResistant());
 
     public static final DeferredItem<Item> MUSIC_DISC_UNDERSIDE = ITEMS.registerSimpleItem("music_disc_underside",
@@ -100,6 +118,26 @@ public final class AntarchyNeoforgeItems {
                     List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "nightmare_armor"))),
                     3.0F,
                     (float) AntarchySettings.nightmareArmorKnockbackResistance()
+            ));
+    private static final DeferredHolder<ArmorMaterial, ArmorMaterial> ROYAL_GUARDIAN_ARMOR_MATERIAL = ARMOR_MATERIALS.register("royal_guardian",
+            () -> new ArmorMaterial(
+                    new EnumMap<>(ArmorItem.Type.class),
+                    AntarchySettings.royalArmorEnchantability(),
+                    SoundEvents.ARMOR_EQUIP_NETHERITE,
+                    () -> Ingredient.of(AntarchyNeoforgeItems.KING_SCALE.get()),
+                    List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "royal_guardian"))),
+                    0.0F,
+                    0.0F
+            ));
+    private static final DeferredHolder<ArmorMaterial, ArmorMaterial> ROYAL_ASSAILANT_ARMOR_MATERIAL = ARMOR_MATERIALS.register("royal_assailant",
+            () -> new ArmorMaterial(
+                    new EnumMap<>(ArmorItem.Type.class),
+                    AntarchySettings.royalArmorEnchantability(),
+                    SoundEvents.ARMOR_EQUIP_NETHERITE,
+                    () -> Ingredient.of(AntarchyNeoforgeItems.QUEEN_SCALE.get()),
+                    List.of(new ArmorMaterial.Layer(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "royal_assailant"))),
+                    0.0F,
+                    0.0F
             ));
     private static final DeferredHolder<ArmorMaterial, ArmorMaterial> BLOOD_CRYSTAL_ARMOR_MATERIAL = ARMOR_MATERIALS.register("blood_crystal",
             () -> new ArmorMaterial(
@@ -604,6 +642,10 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> ROSEATE_FROGLIGHT_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ROSEATE_FROGLIGHT);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BED_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BED_BUG_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> CREEPING_HORROR_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CREEPING_HORROR_EGG);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> PRINCE_EGG_ITEM = ITEMS.register("prince_egg",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.PRINCE_EGG.get(), new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> PRINCESS_EGG_ITEM = ITEMS.register("princess_egg",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.PRINCESS_EGG.get(), new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> JUMPY_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.JUMPY_BUG_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SPIT_BUG_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SPIT_BUG_EGG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> JERRY_EGG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.JERRY_EGG);
@@ -662,10 +704,8 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<MantisClawItem> MANTIS_CLAW = ITEMS.register("mantis_claw",
             () -> new MantisClawItem(Tiers.IRON, new Item.Properties().stacksTo(1).durability(50).rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<Item> HERCULES_HORN = ITEMS.registerSimpleItem("hercules_horn", new Item.Properties().rarity(Rarity.UNCOMMON));
-    public static final DeferredItem<Item> KING_SCALE = ITEMS.register("king_scale",
-            () -> new MobComingSoonTooltipItem(new Item.Properties().rarity(Rarity.RARE)));
-    public static final DeferredItem<Item> QUEEN_SCALE = ITEMS.register("queen_scale",
-            () -> new MobComingSoonTooltipItem(new Item.Properties().rarity(Rarity.RARE)));
+    public static final DeferredItem<Item> KING_SCALE = ITEMS.registerSimpleItem("king_scale", new Item.Properties().rarity(Rarity.RARE));
+    public static final DeferredItem<Item> QUEEN_SCALE = ITEMS.registerSimpleItem("queen_scale", new Item.Properties().rarity(Rarity.RARE));
     public static final DeferredItem<Item> CHITIN = ITEMS.registerSimpleItem("chitin", new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final DeferredItem<Item> JERRY_NUCLEUS = ITEMS.register("jerry_nucleus",
             () -> new com.craisinlord.antarchy.content.item.JerryNucleusItem(new Item.Properties().rarity(Rarity.UNCOMMON)
@@ -893,6 +933,33 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<NightmareSwordItem> NIGHTMARE_SWORD = ITEMS.register("nightmare_sword",
             () -> new NightmareSwordItem(ULTIMATE_TIER,
                     new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant(), -2.4F));
+
+    public static final DeferredItem<RoyalGuardianArmorItem> ROYAL_GUARDIAN_HELMET = ITEMS.register("royal_guardian_helmet",
+            () -> new RoyalGuardianArmorItem(ROYAL_GUARDIAN_ARMOR_MATERIAL, ArmorItem.Type.HELMET, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+    public static final DeferredItem<RoyalGuardianArmorItem> ROYAL_GUARDIAN_CHESTPLATE = ITEMS.register("royal_guardian_chestplate",
+            () -> new RoyalGuardianArmorItem(ROYAL_GUARDIAN_ARMOR_MATERIAL, ArmorItem.Type.CHESTPLATE, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+    public static final DeferredItem<RoyalGuardianArmorItem> ROYAL_GUARDIAN_LEGGINGS = ITEMS.register("royal_guardian_leggings",
+            () -> new RoyalGuardianArmorItem(ROYAL_GUARDIAN_ARMOR_MATERIAL, ArmorItem.Type.LEGGINGS, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+    public static final DeferredItem<RoyalGuardianArmorItem> ROYAL_GUARDIAN_BOOTS = ITEMS.register("royal_guardian_boots",
+            () -> new RoyalGuardianArmorItem(ROYAL_GUARDIAN_ARMOR_MATERIAL, ArmorItem.Type.BOOTS, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+
+    public static final DeferredItem<RoyalAssailantArmorItem> ROYAL_ASSAILANT_HELMET = ITEMS.register("royal_assailant_helmet",
+            () -> new RoyalAssailantArmorItem(ROYAL_ASSAILANT_ARMOR_MATERIAL, ArmorItem.Type.HELMET, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+    public static final DeferredItem<RoyalAssailantArmorItem> ROYAL_ASSAILANT_CHESTPLATE = ITEMS.register("royal_assailant_chestplate",
+            () -> new RoyalAssailantArmorItem(ROYAL_ASSAILANT_ARMOR_MATERIAL, ArmorItem.Type.CHESTPLATE, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+    public static final DeferredItem<RoyalAssailantArmorItem> ROYAL_ASSAILANT_LEGGINGS = ITEMS.register("royal_assailant_leggings",
+            () -> new RoyalAssailantArmorItem(ROYAL_ASSAILANT_ARMOR_MATERIAL, ArmorItem.Type.LEGGINGS, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+    public static final DeferredItem<RoyalAssailantArmorItem> ROYAL_ASSAILANT_BOOTS = ITEMS.register("royal_assailant_boots",
+            () -> new RoyalAssailantArmorItem(ROYAL_ASSAILANT_ARMOR_MATERIAL, ArmorItem.Type.BOOTS, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+
+    public static final DeferredItem<RoyalGuardianSwordItem> ROYAL_GUARDIAN_SWORD = ITEMS.register("royal_guardian_sword",
+            () -> new RoyalGuardianSwordItem(ROYAL_GUARDIAN_TIER, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
+    public static final DeferredItem<RoyalAssailantBattleAxeItem> ROYAL_ASSAILANT_BATTLEAXE = ITEMS.register("royal_assailant_battleaxe",
+            () -> new RoyalAssailantBattleAxeItem(ROYAL_ASSAILANT_TIER, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
+    public static final DeferredItem<RoyalGuardianShieldItem> ROYAL_GUARDIAN_SHIELD = ITEMS.register("royal_guardian_shield",
+            () -> new RoyalGuardianShieldItem(
+                    new Item.Properties().durability(AntarchySettings.royalGuardianShieldDurability()).rarity(Rarity.EPIC).fireResistant(),
+                    () -> Ingredient.of(KING_SCALE.get())));
     public static final DeferredItem<SizeRayItem> SHRINK_RAY = ITEMS.register("shrink_ray",
             () -> new SizeRayItem(
                     new Item.Properties().stacksTo(1).durability(512).rarity(Rarity.RARE).fireResistant(),
@@ -924,6 +991,8 @@ public final class AntarchyNeoforgeItems {
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_BASE
             ));
+    public static final DeferredItem<EyeOfTheStormItem> EYE_OF_THE_STORM = ITEMS.register("eye_of_the_storm",
+            () -> new EyeOfTheStormItem(new Item.Properties().stacksTo(1).durability(384).rarity(Rarity.EPIC)));
     // Temporarily disabled: keeping the code but not registering the item for now.
     // public static final DeferredItem<MinersDreamItem> MINERS_DREAM = ITEMS.register("miners_dream",
     //         () -> new MinersDreamItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));

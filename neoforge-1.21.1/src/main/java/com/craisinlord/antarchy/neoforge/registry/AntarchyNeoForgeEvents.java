@@ -753,7 +753,8 @@ public final class AntarchyNeoForgeEvents {
     static void handleBloodCrystalBootsFall(LivingFallEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         if (!com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.isGravityInverted(player)) return;
-        if (!(player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.FEET).getItem() instanceof BloodCrystalArmorItem)) return;
+        if (!(player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.FEET).getItem() instanceof BloodCrystalArmorItem)
+                && !com.craisinlord.antarchy.content.item.royal.RoyalGearHelper.hasUpwardFallImmunityBoots(player)) return;
         event.setCanceled(true);
     }
 

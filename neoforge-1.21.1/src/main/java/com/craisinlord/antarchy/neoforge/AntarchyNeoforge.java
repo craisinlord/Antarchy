@@ -388,6 +388,12 @@ public class AntarchyNeoforge {
         AntarchyObjects.setVortex(AntarchyNeoforgeEntites.VORTEX);
         AntarchyObjects.setWindVortex(() -> AntarchyNeoforgeEntites.WIND_VORTEX.get());
         AntarchyObjects.setVortexChargeProjectile(() -> AntarchyNeoforgeEntites.VORTEX_CHARGE_PROJECTILE.get());
+        AntarchyObjects.setPrince(() -> AntarchyNeoforgeEntites.PRINCE.get());
+        AntarchyObjects.setPrincess(() -> AntarchyNeoforgeEntites.PRINCESS.get());
+        AntarchyObjects.setRoyalBolt(() -> AntarchyNeoforgeEntites.ROYAL_BOLT.get());
+        AntarchyObjects.setPrinceEgg(() -> AntarchyNeoforgeBlocks.PRINCE_EGG.get());
+        AntarchyObjects.setPrincessEgg(() -> AntarchyNeoforgeBlocks.PRINCESS_EGG.get());
+        AntarchyObjects.setRoyalEggBlockEntity(() -> AntarchyNeoforgeBlocks.ROYAL_EGG_BLOCK_ENTITY.get());
         AntarchyObjects.setVortexLens(() -> AntarchyNeoforgeBlocks.VORTEX_LENS.get());
         AntarchyObjects.setVortexLensBlockEntity(() -> AntarchyNeoforgeBlocks.VORTEX_LENS_BLOCK_ENTITY.get());
         AntarchyObjects.setKrakensGraspTrident(AntarchyNeoforgeEntites.KRAKENS_GRASP_TRIDENT);

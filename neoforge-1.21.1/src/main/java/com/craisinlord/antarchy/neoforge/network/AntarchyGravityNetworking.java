@@ -3,9 +3,11 @@ package com.craisinlord.antarchy.neoforge.network;
 import com.craisinlord.antarchy.content.entity.DiamondMinecartEntity;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.item.BigBerthaItem;
+import com.craisinlord.antarchy.content.item.EyeOfTheStormItem;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
 import com.craisinlord.antarchy.content.item.PortalGunItem;
 import com.craisinlord.antarchy.content.network.BigBerthaModeCyclePayload;
+import com.craisinlord.antarchy.content.network.EyeOfStormPrimaryPayload;
 import com.craisinlord.antarchy.content.network.GravityGunPrimaryPayload;
 import com.craisinlord.antarchy.content.network.GravityGunScrollPayload;
 import com.craisinlord.antarchy.content.network.GravityStatePayload;
@@ -40,6 +42,10 @@ public final class AntarchyGravityNetworking {
                 PortalGunPrimaryPayload.TYPE,
                 PortalGunPrimaryPayload.STREAM_CODEC,
                 AntarchyGravityNetworking::handlePortalGunPrimary
+        ).playToServer(
+                EyeOfStormPrimaryPayload.TYPE,
+                EyeOfStormPrimaryPayload.STREAM_CODEC,
+                AntarchyGravityNetworking::handleEyeOfStormPrimary
         ).playToServer(
                 GravityGunScrollPayload.TYPE,
                 GravityGunScrollPayload.STREAM_CODEC,
@@ -172,6 +178,20 @@ public final class AntarchyGravityNetworking {
             }
 
             portalGunItem.firePrimary(serverPlayer.serverLevel(), serverPlayer, serverPlayer.getMainHandItem());
+        });
+    }
+
+    private static void handleEyeOfStormPrimary(EyeOfStormPrimaryPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (!(context.player() instanceof ServerPlayer serverPlayer)) {
+                return;
+            }
+
+            if (!(serverPlayer.getMainHandItem().getItem() instanceof EyeOfTheStormItem eyeOfTheStormItem)) {
+                return;
+            }
+
+            eyeOfTheStormItem.firePrimary(serverPlayer.serverLevel(), serverPlayer, serverPlayer.getMainHandItem());
         });
     }
 }

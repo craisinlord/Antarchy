@@ -1,0 +1,25 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "textures": {
+    "layer0": "antarchy:item/royal_assailant/royal_assailant_battleaxe_item"
+  },
+  "base": {
+    "parent": "antarchy:item/royal_assailant_battleaxe_held"
+  },
+  "texture_size": [
+    64,
+    64
+  ],
+  "perspectives": {
+    "gui": {
+      "parent": "antarchy:item/royal_assailant_battleaxe_gui"
+    },
+    "ground": {
+      "parent": "antarchy:item/royal_assailant_battleaxe_gui"
+    },
+    "fixed": {
+      "parent": "antarchy:item/royal_assailant_battleaxe_gui"
+    }
+  }
+}

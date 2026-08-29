@@ -35,6 +35,10 @@
     {
       "structure": "antarchy:toreterror_arena",
       "weight": 6
+    },
+    {
+      "structure": "antarchy:kings_tree",
+      "weight": 1
     }
   ],
   "placement": {

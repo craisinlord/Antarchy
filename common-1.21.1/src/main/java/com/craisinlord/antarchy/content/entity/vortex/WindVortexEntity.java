@@ -58,6 +58,10 @@ public class WindVortexEntity extends Entity {
     private static final String AXIS_X_KEY = "AxisX";
     private static final String AXIS_Y_KEY = "AxisY";
     private static final String AXIS_Z_KEY = "AxisZ";
+    private static final String TRAVEL_X_KEY = "TravelX";
+    private static final String TRAVEL_Y_KEY = "TravelY";
+    private static final String TRAVEL_Z_KEY = "TravelZ";
+    private static final String TRAVELLING_KEY = "Travelling";
 
     private static final double BASE_RADIUS = 0.35D;
     private static final double DRIFT_FRICTION = 0.96D;
@@ -65,13 +69,17 @@ public class WindVortexEntity extends Entity {
     public enum VortexMode {
         UPWARD,
         LENS_PULL,
-        LENS_PUSH
+        LENS_PUSH,
+        GATHER_RETURN
     }
 
     private int age;
     private int durationTicks = 140;
     private double pullStrength = 0.32D;
     private double launchStrength = 1.0D;
+    private float damageOverride = -1.0F;
+    private Vec3 travelVelocity = Vec3.ZERO;
+    private boolean travelling = false;
     private final Map<UUID, Double> carriedProgress = new HashMap<>();
     @Nullable
     private UUID ownerUuid;
@@ -130,9 +138,22 @@ public class WindVortexEntity extends Entity {
             return;
         }
 
-        Vec3 drift = this.getDeltaMovement().multiply(DRIFT_FRICTION, DRIFT_FRICTION, DRIFT_FRICTION);
-        this.setDeltaMovement(drift);
-        this.move(net.minecraft.world.entity.MoverType.SELF, drift);
+        if (this.travelling) {
+            Vec3 from = this.position();
+            Vec3 to = from.add(this.travelVelocity);
+            HitResult blockHit = this.level().clip(
+                    new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+            if (blockHit.getType() != HitResult.Type.MISS) {
+                this.fadeOut();
+                return;
+            }
+            this.setDeltaMovement(this.travelVelocity);
+            this.move(net.minecraft.world.entity.MoverType.SELF, this.travelVelocity);
+        } else {
+            Vec3 drift = this.getDeltaMovement().multiply(DRIFT_FRICTION, DRIFT_FRICTION, DRIFT_FRICTION);
+            this.setDeltaMovement(drift);
+            this.move(net.minecraft.world.entity.MoverType.SELF, drift);
+        }
 
         if ((this.tickCount & 1) == 0) {
             this.applyVortexForces();
@@ -210,6 +231,12 @@ public class WindVortexEntity extends Entity {
                 continue;
             }
 
+            if (mode == VortexMode.GATHER_RETURN && this.age >= this.gatherReturnAtAge()) {
+                this.launchTowardOwner(entity);
+                iterator.remove();
+                continue;
+            }
+
             if (mode == VortexMode.UPWARD && progress >= 0.92D) {
                 this.launch(entity, this.radialVectorAt(entity, progress, basis), progress, basis);
                 iterator.remove();
@@ -264,7 +291,7 @@ public class WindVortexEntity extends Entity {
         double horizontal = Math.max(0.08D, radialVector.length());
         Vec3 radial = radialVector.lengthSqr() < 1.0E-6D ? basis.sideA : radialVector.scale(1.0D / horizontal);
         Vec3 tangent = basis.axis.cross(radial).normalize();
-        double targetRadius = mode == VortexMode.LENS_PULL
+        double targetRadius = mode == VortexMode.LENS_PULL || mode == VortexMode.GATHER_RETURN
                 ? Math.max(0.05D, radius * 0.18D)
                 : Mth.lerp(shapeProgress, BASE_RADIUS, radius * 0.82D);
         double radialError = targetRadius - horizontal;
@@ -276,6 +303,7 @@ public class WindVortexEntity extends Entity {
             case LENS_PULL -> -(0.18D + (1.0D - progress) * 0.18D) * massScale;
             case LENS_PUSH -> (0.18D + progress * 0.22D) * massScale;
             case UPWARD -> (0.13D + progress * 0.16D) * massScale;
+            case GATHER_RETURN -> (0.05D + progress * 0.08D) * massScale;
         } * playerScale;
         if (mode == VortexMode.UPWARD && entity instanceof Player && entity.onGround()) {
             axialSpeed = Math.max(axialSpeed, 0.38D);
@@ -315,8 +343,36 @@ public class WindVortexEntity extends Entity {
         if (living.getType().is(AntarchyTags.Entities.WIND_VORTEX_IMMUNE)) {
             return;
         }
-        float damage = (float) (2.0D * Mth.clamp(this.getTopRadius() / 1.5D, 0.5D, 3.0D));
-        living.hurt(this.damageSource(), damage);
+        living.hurt(this.damageSource(), this.resolveDamage());
+    }
+
+    private float resolveDamage() {
+        if (this.damageOverride >= 0.0F) {
+            return this.damageOverride;
+        }
+        return (float) (2.0D * Mth.clamp(this.getTopRadius() / 1.5D, 0.5D, 3.0D));
+    }
+
+    private int gatherReturnAtAge() {
+        return Math.max(10, (int) (this.durationTicks * 0.55D));
+    }
+
+    private void launchTowardOwner(Entity entity) {
+        Entity owner = this.getOwnerEntity();
+        Vec3 target = owner != null ? owner.getEyePosition() : this.position().add(0.0D, 1.0D, 0.0D);
+        Vec3 toOwner = target.subtract(entity.position());
+        double distance = toOwner.length();
+        Vec3 direction = distance < 1.0E-4D ? new Vec3(0.0D, 1.0D, 0.0D) : toOwner.scale(1.0D / distance);
+        double arc = Mth.clamp(distance * 0.06D, 0.25D, 1.1D);
+        double power = this.launchStrength * Mth.clamp(distance / 6.0D, 0.6D, 2.0D);
+        entity.setDeltaMovement(direction.scale(power).add(0.0D, arc, 0.0D));
+        entity.fallDistance = 0.0F;
+        entity.hasImpulse = true;
+        entity.hurtMarked = true;
+        if (this.isDamaging() && entity instanceof LivingEntity living
+                && !living.getType().is(AntarchyTags.Entities.WIND_VORTEX_IMMUNE)) {
+            living.hurt(this.damageSource(), this.resolveDamage());
+        }
     }
 
     private DamageSource damageSource() {
@@ -393,9 +449,19 @@ public class WindVortexEntity extends Entity {
         this.age = 0;
     }
 
+    public void setTravel(Vec3 velocity) {
+        this.travelVelocity = velocity;
+        this.travelling = true;
+        this.noPhysics = true;
+    }
+
     public void setVortexStrengths(double pullStrength, double launchStrength) {
         this.pullStrength = Math.max(0.0D, pullStrength);
         this.launchStrength = Math.max(0.0D, launchStrength);
+    }
+
+    public void setDamageOverride(float damage) {
+        this.damageOverride = damage;
     }
 
     public void removeFromLens() {
@@ -424,6 +490,11 @@ public class WindVortexEntity extends Entity {
         this.setDamaging(tag.getBoolean(DAMAGING_KEY));
         this.setMode(VortexMode.values()[Mth.clamp(tag.getInt(MODE_KEY), 0, VortexMode.values().length - 1)]);
         this.setAxis(new Vec3(tag.getFloat(AXIS_X_KEY), tag.getFloat(AXIS_Y_KEY), tag.getFloat(AXIS_Z_KEY)));
+        this.travelling = tag.getBoolean(TRAVELLING_KEY);
+        this.travelVelocity = new Vec3(tag.getDouble(TRAVEL_X_KEY), tag.getDouble(TRAVEL_Y_KEY), tag.getDouble(TRAVEL_Z_KEY));
+        if (this.travelling) {
+            this.noPhysics = true;
+        }
         if (tag.hasUUID(OWNER_KEY)) {
             this.ownerUuid = tag.getUUID(OWNER_KEY);
         }
@@ -442,6 +513,10 @@ public class WindVortexEntity extends Entity {
         tag.putFloat(AXIS_X_KEY, (float) this.getAxis().x);
         tag.putFloat(AXIS_Y_KEY, (float) this.getAxis().y);
         tag.putFloat(AXIS_Z_KEY, (float) this.getAxis().z);
+        tag.putBoolean(TRAVELLING_KEY, this.travelling);
+        tag.putDouble(TRAVEL_X_KEY, this.travelVelocity.x);
+        tag.putDouble(TRAVEL_Y_KEY, this.travelVelocity.y);
+        tag.putDouble(TRAVEL_Z_KEY, this.travelVelocity.z);
         if (this.ownerUuid != null) {
             tag.putUUID(OWNER_KEY, this.ownerUuid);
         }

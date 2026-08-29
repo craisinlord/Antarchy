@@ -24,15 +24,15 @@ public final class AntarchyKeyBindings {
             CATEGORY
     );
 
-    public static final KeyMapping HERCULES_BEETLE_CHARGE = new KeyMapping(
-            "key.antarchy.hercules_beetle_charge",
+    public static final KeyMapping MOUNT_SPECIAL = new KeyMapping(
+            "key.antarchy.mount_special",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_LEFT_CONTROL,
             CATEGORY
     );
 
-    public static final KeyMapping HERCULES_BEETLE_FLIGHT_TOGGLE = new KeyMapping(
-            "key.antarchy.hercules_beetle_flight_toggle",
+    public static final KeyMapping MOUNT_FLIGHT_TOGGLE = new KeyMapping(
+            "key.antarchy.mount_flight_toggle",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_R,
             CATEGORY
@@ -44,14 +44,22 @@ public final class AntarchyKeyBindings {
             CATEGORY
     );
 
+    public static final KeyMapping ROYAL_INVERSION_TOGGLE = new KeyMapping(
+            "key.antarchy.royal_inversion_toggle",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_V,
+            CATEGORY
+    );
+
     private AntarchyKeyBindings() {}
 
     public static void register() {
         KeyBindingHelper.registerKeyBinding(BRUTALFLY_FLAP);
         KeyBindingHelper.registerKeyBinding(DORRIE_CHARGE_JUMP);
-        KeyBindingHelper.registerKeyBinding(HERCULES_BEETLE_CHARGE);
-        KeyBindingHelper.registerKeyBinding(HERCULES_BEETLE_FLIGHT_TOGGLE);
+        KeyBindingHelper.registerKeyBinding(MOUNT_SPECIAL);
+        KeyBindingHelper.registerKeyBinding(MOUNT_FLIGHT_TOGGLE);
         KeyBindingHelper.registerKeyBinding(TIGERS_EYE_CAMOUFLAGE);
+        KeyBindingHelper.registerKeyBinding(ROYAL_INVERSION_TOGGLE);
     }
 
     public static boolean isBrutalflyFlapPressed() {
@@ -62,15 +70,19 @@ public final class AntarchyKeyBindings {
         return Minecraft.getInstance().screen == null && DORRIE_CHARGE_JUMP.isDown();
     }
 
-    public static boolean isHerculesBeetleChargePressed() {
-        return Minecraft.getInstance().screen == null && HERCULES_BEETLE_CHARGE.isDown();
+    public static boolean isMountSpecialPressed() {
+        return Minecraft.getInstance().screen == null && MOUNT_SPECIAL.isDown();
     }
 
-    public static boolean isHerculesBeetleFlightTogglePressed() {
-        return Minecraft.getInstance().screen == null && HERCULES_BEETLE_FLIGHT_TOGGLE.isDown();
+    public static boolean isMountFlightTogglePressed() {
+        return Minecraft.getInstance().screen == null && MOUNT_FLIGHT_TOGGLE.isDown();
     }
 
     public static boolean consumeTigerEyeCamouflagePressed() {
         return Minecraft.getInstance().screen == null && TIGERS_EYE_CAMOUFLAGE.consumeClick();
+    }
+
+    public static boolean consumeRoyalInversionTogglePressed() {
+        return Minecraft.getInstance().screen == null && ROYAL_INVERSION_TOGGLE.consumeClick();
     }
 }

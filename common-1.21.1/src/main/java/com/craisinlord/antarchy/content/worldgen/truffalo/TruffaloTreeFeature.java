@@ -51,17 +51,19 @@ public class TruffaloTreeFeature extends Feature<TruffaloTreeConfiguration> {
         for (int i = 0; i < height; i++) {
             trunk[i] = origin.above(i);
         }
-        BlockPos capCenter = trunk[height - 1].above();
+        BlockPos capBase = trunk[height - 1].above();
 
         for (BlockPos pos : trunk) {
             if (!canReplace(level, pos)) {
                 return false;
             }
         }
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                if (!canReplace(level, capCenter.offset(dx, 0, dz))) {
-                    return false;
+        for (int dy = 0; dy <= 2; dy++) {
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    if (!canReplace(level, capBase.offset(dx, dy, dz))) {
+                        return false;
+                    }
                 }
             }
         }
@@ -72,9 +74,11 @@ public class TruffaloTreeFeature extends Feature<TruffaloTreeConfiguration> {
 
         Block tuft = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, color.getName() + "_truffalo_tuft"));
         BlockState tuftState = tuft.defaultBlockState();
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
-                setBlock(level, capCenter.offset(dx, 0, dz), tuftState);
+        for (int dy = 0; dy <= 2; dy++) {
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    setBlock(level, capBase.offset(dx, dy, dz), tuftState);
+                }
             }
         }
 

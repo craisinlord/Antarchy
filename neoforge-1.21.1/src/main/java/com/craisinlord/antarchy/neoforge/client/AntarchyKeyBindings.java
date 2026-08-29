@@ -29,16 +29,16 @@ public final class AntarchyKeyBindings {
             CATEGORY
     );
 
-    public static final KeyMapping HERCULES_BEETLE_CHARGE = new KeyMapping(
-            "key.antarchy.hercules_beetle_charge",
+    public static final KeyMapping MOUNT_SPECIAL = new KeyMapping(
+            "key.antarchy.mount_special",
             KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM,
             InputConstants.KEY_LCONTROL,
             CATEGORY
     );
 
-    public static final KeyMapping HERCULES_BEETLE_FLIGHT_TOGGLE = new KeyMapping(
-            "key.antarchy.hercules_beetle_flight_toggle",
+    public static final KeyMapping MOUNT_FLIGHT_TOGGLE = new KeyMapping(
+            "key.antarchy.mount_flight_toggle",
             KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM,
             InputConstants.KEY_R,
@@ -52,22 +52,39 @@ public final class AntarchyKeyBindings {
             CATEGORY
     );
 
+    public static final KeyMapping ROYAL_INVERSION_TOGGLE = new KeyMapping(
+            "key.antarchy.royal_inversion_toggle",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            InputConstants.KEY_V,
+            CATEGORY
+    );
+
     private AntarchyKeyBindings() {}
 
     @SubscribeEvent
     public static void onRegisterKeyMappings(RegisterKeyMappingsEvent event) {
         event.register(BRUTALFLY_FLAP);
         event.register(DORRIE_CHARGE_JUMP);
-        event.register(HERCULES_BEETLE_CHARGE);
-        event.register(HERCULES_BEETLE_FLIGHT_TOGGLE);
+        event.register(MOUNT_SPECIAL);
+        event.register(MOUNT_FLIGHT_TOGGLE);
         event.register(TIGERS_EYE_CAMOUFLAGE);
+        event.register(ROYAL_INVERSION_TOGGLE);
     }
 
-    public static boolean isHerculesBeetleFlightTogglePressed() {
-        return HERCULES_BEETLE_FLIGHT_TOGGLE.isDown();
+    public static boolean isMountFlightTogglePressed() {
+        return MOUNT_FLIGHT_TOGGLE.isDown();
+    }
+
+    public static boolean isMountSpecialPressed() {
+        return MOUNT_SPECIAL.isDown();
     }
 
     public static boolean consumeTigerEyeCamouflagePressed() {
         return TIGERS_EYE_CAMOUFLAGE.consumeClick();
+    }
+
+    public static boolean consumeRoyalInversionTogglePressed() {
+        return ROYAL_INVERSION_TOGGLE.consumeClick();
     }
 }

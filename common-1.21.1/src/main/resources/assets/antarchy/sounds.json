@@ -1069,6 +1069,22 @@
       }
     ]
   },
+  "haywire": {
+    "sounds": [
+      {
+        "name": "antarchy:music/game/thoraxis/haywire",
+        "stream": true
+      }
+    ]
+  },
+  "inversion_layer": {
+    "sounds": [
+      {
+        "name": "antarchy:music/game/thoraxis/inversion_layer",
+        "stream": true
+      }
+    ]
+  },
   "music.game.thoraxis": {
     "sounds": [
       {
@@ -1078,6 +1094,16 @@
       },
       {
         "name": "antarchy:whistling_void",
+        "type": "event",
+        "stream": true
+      },
+      {
+        "name": "antarchy:haywire",
+        "type": "event",
+        "stream": true
+      },
+      {
+        "name": "antarchy:inversion_layer",
         "type": "event",
         "stream": true
       }

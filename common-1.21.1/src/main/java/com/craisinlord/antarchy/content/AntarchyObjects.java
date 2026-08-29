@@ -139,6 +139,18 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<HerculesBeetleEntity>> HERCULES_BEETLE = (Supplier<EntityType<HerculesBeetleEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.PrinceEntity>> PRINCE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.PrinceEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.PrincessEntity>> PRINCESS = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.PrincessEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBoltEntity>> ROYAL_BOLT = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBoltEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> PRINCE_EGG = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> PRINCESS_EGG = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.RoyalEggBlockEntity>> ROYAL_EGG_BLOCK_ENTITY = (Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.RoyalEggBlockEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity>> OURANWOOD_DEER = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity>> GLIMMER = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity>>) UNBOUND;
@@ -663,6 +675,30 @@ public final class AntarchyObjects {
 
     public static void setHerculesBeetle(Supplier<EntityType<HerculesBeetleEntity>> supplier) {
         HERCULES_BEETLE = supplier;
+    }
+
+    public static void setPrince(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.PrinceEntity>> supplier) {
+        PRINCE = supplier;
+    }
+
+    public static void setPrincess(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.PrincessEntity>> supplier) {
+        PRINCESS = supplier;
+    }
+
+    public static void setRoyalBolt(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBoltEntity>> supplier) {
+        ROYAL_BOLT = supplier;
+    }
+
+    public static void setPrinceEgg(Supplier<Block> supplier) {
+        PRINCE_EGG = supplier;
+    }
+
+    public static void setPrincessEgg(Supplier<Block> supplier) {
+        PRINCESS_EGG = supplier;
+    }
+
+    public static void setRoyalEggBlockEntity(Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.RoyalEggBlockEntity>> supplier) {
+        ROYAL_EGG_BLOCK_ENTITY = supplier;
     }
 
     public static void setOuranwoodDeer(Supplier<EntityType<com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity>> supplier) {
