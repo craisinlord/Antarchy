@@ -66,7 +66,7 @@ public class VortexLensBlockEntity extends BlockEntity {
 
         if (signal <= 0) {
             this.removeActiveVortex();
-            this.updatePoweredState(level, pos, state, false);
+            this.updateBlockState(level, pos, state, false, false);
             return;
         }
 
@@ -93,7 +93,7 @@ public class VortexLensBlockEntity extends BlockEntity {
         vortex.resetVortexAge();
         vortex.setVortexStrengths(strength, AntarchySettings.vortexLensLaunchStrength());
         vortex.setDamaging(false);
-        this.updatePoweredState(level, pos, state, true);
+        this.updateBlockState(level, pos, state, true, pushMode);
     }
 
     @Nullable
@@ -131,9 +131,14 @@ public class VortexLensBlockEntity extends BlockEntity {
         return null;
     }
 
-    private void updatePoweredState(ServerLevel level, BlockPos pos, BlockState state, boolean powered) {
-        if (state.getBlock() instanceof VortexLensBlock && state.getValue(VortexLensBlock.POWERED) != powered) {
-            level.setBlock(pos, state.setValue(VortexLensBlock.POWERED, powered), Block.UPDATE_CLIENTS);
+    private void updateBlockState(ServerLevel level, BlockPos pos, BlockState state, boolean powered, boolean pushing) {
+        if (!(state.getBlock() instanceof VortexLensBlock)) {
+            return;
+        }
+        if (state.getValue(VortexLensBlock.POWERED) != powered || state.getValue(VortexLensBlock.PUSHING) != pushing) {
+            level.setBlock(pos,
+                    state.setValue(VortexLensBlock.POWERED, powered).setValue(VortexLensBlock.PUSHING, pushing),
+                    Block.UPDATE_CLIENTS);
         }
     }
 

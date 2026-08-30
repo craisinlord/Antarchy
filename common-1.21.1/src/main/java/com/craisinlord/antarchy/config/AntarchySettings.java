@@ -231,6 +231,19 @@ public final class AntarchySettings {
     private static int royalGuardianShieldDurability = 1008;
     private static double royalBoltDamage = 6.0D;
     private static int royalEggHatchChance = 3;
+    private static double kingHealth = 6000.0D;
+    private static double queenHealth = 6000.0D;
+    private static double kingAttackDamage = 50.0D;
+    private static double queenAttackDamage = 45.0D;
+    private static double royalBossArmor = 20.0D;
+    private static double royalBossFollowRange = 128.0D;
+    private static double royalBossMovementSpeed = 0.22D;
+    private static double royalBossKnockbackResistance = 1.0D;
+    private static double royalBossStepHeight = 3.0D;
+    private static double royalBossMaxSingleHitDamage = 250.0D;
+    private static double royalBossBiteReach = 10.0D;
+    private static double royalBossBiteDamageMultiplier = 1.6D;
+    private static int royalBossBiteCooldownTicks = 45;
     private static boolean basiliskPetrifyingGazeEnabled = true;
     private static int basiliskSpawnMaxLightLevel = 5;
     private static double basiliskHealth = 320.0D;
@@ -261,7 +274,7 @@ public final class AntarchySettings {
     private static double diamondMinecartCoastDeceleration = 0.02D;
     private static boolean diamondMinecartMobDamageEnabled = false;
     private static double diamondMinecartMaxMobDamage = 4.0D;
-    private static double hoverboardMaxSpeed = 3.0D;
+    private static double hoverboardMaxSpeed = 6.0D;
     private static double hoverboardAcceleration = 0.05D;
     private static boolean dreadHallucinationSoundsEnabled = true;
     private static double dreadHallucinationSoundMinInterval = 3.0D;
@@ -386,18 +399,18 @@ public final class AntarchySettings {
     private static int eyeOfTheStormSurgeCooldownTicks = 70;
     private static double eyeOfTheStormSurgeRange = 16.0D;
     private static int eyeOfTheStormSurgeDurationTicks = 300;
-    private static double eyeOfTheStormSurgeRadius = 3.5D;
-    private static double eyeOfTheStormSurgeHeight = 5.0D;
-    private static double eyeOfTheStormSurgePullStrength = 0.45D;
+    private static double eyeOfTheStormSurgeRadius = 4.0D;
+    private static double eyeOfTheStormSurgeHeight = 6.0D;
+    private static double eyeOfTheStormSurgePullStrength = 0.85D;
     private static double eyeOfTheStormSurgeReturnStrength = 1.4D;
     private static float eyeOfTheStormSurgeDamage = 5.0F;
     private static double vortexLensMinRadius = 1.5D;
     private static double vortexLensMaxRadius = 10.0D;
     private static double vortexLensMinHeight = 3.0D;
     private static double vortexLensMaxHeight = 20.0D;
-    private static double vortexLensPullStrength = 0.42D;
-    private static double vortexLensPushStrength = 0.38D;
-    private static double vortexLensLaunchStrength = 1.15D;
+    private static double vortexLensPullStrength = 0.65D;
+    private static double vortexLensPushStrength = 0.65D;
+    private static double vortexLensLaunchStrength = 1.4D;
     private static double missileSquidHealth = 60.0D;
     private static double missileSquidAttackDamage = 9.0D;
     private static double missileSquidMovementSpeed = 0.84D;
@@ -496,6 +509,10 @@ public final class AntarchySettings {
     private static double creepingHorrorAttackDamage = 6.0D;
     private static double lurkingTerrorHealth = 15.0D;
     private static double lurkingTerrorAttackDamage = 6.0D;
+    private static double manticoreHealth = 40.0D;
+    private static double manticoreAttackDamage = 7.0D;
+    private static int manticoreStingPoisonTicks = 100;
+    private static int queenManticoreCap = 15;
     private static double jerryInfantHealth = 20.0D;
     private static double jerryInfantAttackDamage = 2.0D;
     private static double jerryMatureHealth = 40.0D;
@@ -1914,6 +1931,45 @@ public final class AntarchySettings {
     public static int royalEggHatchChance() { return royalEggHatchChance; }
     public static void setRoyalEggHatchChance(int v) { royalEggHatchChance = v; }
 
+    public static double kingHealth() { return kingHealth; }
+    public static void setKingHealth(double v) { kingHealth = v; }
+
+    public static double queenHealth() { return queenHealth; }
+    public static void setQueenHealth(double v) { queenHealth = v; }
+
+    public static double kingAttackDamage() { return kingAttackDamage; }
+    public static void setKingAttackDamage(double v) { kingAttackDamage = v; }
+
+    public static double queenAttackDamage() { return queenAttackDamage; }
+    public static void setQueenAttackDamage(double v) { queenAttackDamage = v; }
+
+    public static double royalBossArmor() { return royalBossArmor; }
+    public static void setRoyalBossArmor(double v) { royalBossArmor = v; }
+
+    public static double royalBossFollowRange() { return royalBossFollowRange; }
+    public static void setRoyalBossFollowRange(double v) { royalBossFollowRange = v; }
+
+    public static double royalBossMovementSpeed() { return royalBossMovementSpeed; }
+    public static void setRoyalBossMovementSpeed(double v) { royalBossMovementSpeed = v; }
+
+    public static double royalBossKnockbackResistance() { return royalBossKnockbackResistance; }
+    public static void setRoyalBossKnockbackResistance(double v) { royalBossKnockbackResistance = v; }
+
+    public static double royalBossStepHeight() { return royalBossStepHeight; }
+    public static void setRoyalBossStepHeight(double v) { royalBossStepHeight = v; }
+
+    public static double royalBossMaxSingleHitDamage() { return royalBossMaxSingleHitDamage; }
+    public static void setRoyalBossMaxSingleHitDamage(double v) { royalBossMaxSingleHitDamage = v; }
+
+    public static double royalBossBiteReach() { return royalBossBiteReach; }
+    public static void setRoyalBossBiteReach(double v) { royalBossBiteReach = v; }
+
+    public static double royalBossBiteDamageMultiplier() { return royalBossBiteDamageMultiplier; }
+    public static void setRoyalBossBiteDamageMultiplier(double v) { royalBossBiteDamageMultiplier = v; }
+
+    public static int royalBossBiteCooldownTicks() { return royalBossBiteCooldownTicks; }
+    public static void setRoyalBossBiteCooldownTicks(int v) { royalBossBiteCooldownTicks = v; }
+
     public static double nightmareSwordBaseDamage() { return nightmareSwordBaseDamage; }
     public static void setNightmareSwordBaseDamage(double v) { nightmareSwordBaseDamage = v; }
 
@@ -2685,6 +2741,14 @@ public final class AntarchySettings {
     public static void setLurkingTerrorHealth(double v) { lurkingTerrorHealth = v; }
     public static double lurkingTerrorAttackDamage() { return lurkingTerrorAttackDamage; }
     public static void setLurkingTerrorAttackDamage(double v) { lurkingTerrorAttackDamage = v; }
+    public static double manticoreHealth() { return manticoreHealth; }
+    public static void setManticoreHealth(double v) { manticoreHealth = v; }
+    public static double manticoreAttackDamage() { return manticoreAttackDamage; }
+    public static void setManticoreAttackDamage(double v) { manticoreAttackDamage = v; }
+    public static int manticoreStingPoisonTicks() { return manticoreStingPoisonTicks; }
+    public static void setManticoreStingPoisonTicks(int v) { manticoreStingPoisonTicks = v; }
+    public static int queenManticoreCap() { return queenManticoreCap; }
+    public static void setQueenManticoreCap(int v) { queenManticoreCap = v; }
     public static double jerryInfantHealth() { return jerryInfantHealth; }
     public static void setJerryInfantHealth(double v) { jerryInfantHealth = v; }
     public static double jerryInfantAttackDamage() { return jerryInfantAttackDamage; }

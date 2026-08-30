@@ -51,7 +51,7 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
     private static final RawAnimation MOVE_ANIM = RawAnimation.begin().thenLoop("move");
 
     private static final double MAX_HOVER_HEIGHT = 5.0D;
-    private static final double ASCEND_SPEED = 0.15D;
+    private static final double ASCEND_SPEED = 0.2D;
     private static final double SETTLE_DESCEND_SPEED = 0.08D;
     private static final double FAST_DESCEND_SPEED = 0.9D;
     private static final double FAST_DESCEND_RAMP = 0.2D;

@@ -2676,5 +2676,269 @@
         "name": "antarchy:mob/jerry/adult_attack3"
       }
     ]
+  },
+  "king_idle": {
+    "subtitle": "subtitles.antarchy.king_idle",
+    "sounds": [
+      {
+        "name": "antarchy:mob/king/idle_1"
+      },
+      {
+        "name": "antarchy:mob/king/idle_2"
+      },
+      {
+        "name": "antarchy:mob/king/idle_3"
+      }
+    ]
+  },
+  "king_walk": {
+    "subtitle": "subtitles.antarchy.king_walk",
+    "sounds": [
+      {
+        "name": "antarchy:mob/king/walk_1"
+      },
+      {
+        "name": "antarchy:mob/king/walk_2"
+      },
+      {
+        "name": "antarchy:mob/king/walk_3"
+      }
+    ]
+  },
+  "king_fly_loop": {
+    "subtitle": "subtitles.antarchy.king_fly_loop",
+    "sounds": [
+      {
+        "name": "antarchy:mob/king/fly_loop_1"
+      },
+      {
+        "name": "antarchy:mob/king/fly_loop_2"
+      }
+    ]
+  },
+  "king_wing_flap": {
+    "subtitle": "subtitles.antarchy.king_wing_flap",
+    "sounds": [
+      {
+        "name": "antarchy:mob/king/wing_flap"
+      }
+    ]
+  },
+  "king_bite": {
+    "subtitle": "subtitles.antarchy.king_bite",
+    "sounds": [
+      {
+        "name": "antarchy:mob/king/bite_1"
+      },
+      {
+        "name": "antarchy:mob/king/bite_2"
+      }
+    ]
+  },
+  "king_stomp": {
+    "subtitle": "subtitles.antarchy.king_stomp",
+    "sounds": [
+      {
+        "name": "antarchy:mob/king/stomp"
+      }
+    ]
+  },
+  "king_roar": {
+    "subtitle": "subtitles.antarchy.king_roar",
+    "sounds": [
+      {
+        "name": "antarchy:mob/king/roar"
+      }
+    ]
+  },
+  "king_hurt": {
+    "subtitle": "subtitles.antarchy.king_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/king/hurt_1"
+      },
+      {
+        "name": "antarchy:mob/king/hurt_2"
+      },
+      {
+        "name": "antarchy:mob/king/hurt_3"
+      }
+    ]
+  },
+  "king_death": {
+    "subtitle": "subtitles.antarchy.king_death",
+    "sounds": [
+      {
+        "name": "antarchy:mob/king/death"
+      }
+    ]
+  },
+  "king_beam_shoot": {
+    "subtitle": "subtitles.antarchy.king_beam_shoot",
+    "sounds": [
+      {
+        "name": "antarchy:mob/king/laser_shoot"
+      }
+    ]
+  },
+  "king_fireball_shoot": {
+    "subtitle": "subtitles.antarchy.king_fireball_shoot",
+    "sounds": [
+      {
+        "name": "antarchy:mob/king/fireball_shoot"
+      }
+    ]
+  },
+  "king_decree_cast": {
+    "subtitle": "subtitles.antarchy.king_decree_cast",
+    "sounds": [
+      {
+        "name": "antarchy:mob/king/black_hole_shoot"
+      }
+    ]
+  },
+  "queen_idle": {
+    "subtitle": "subtitles.antarchy.queen_idle",
+    "sounds": [
+      {
+        "name": "antarchy:mob/queen/idle_1"
+      },
+      {
+        "name": "antarchy:mob/queen/idle_2"
+      },
+      {
+        "name": "antarchy:mob/queen/idle_3"
+      }
+    ]
+  },
+  "queen_walk": {
+    "subtitle": "subtitles.antarchy.queen_walk",
+    "sounds": [
+      {
+        "name": "antarchy:mob/queen/walk_1"
+      },
+      {
+        "name": "antarchy:mob/queen/walk_2"
+      },
+      {
+        "name": "antarchy:mob/queen/walk_3"
+      }
+    ]
+  },
+  "queen_fly_loop": {
+    "subtitle": "subtitles.antarchy.queen_fly_loop",
+    "sounds": [
+      {
+        "name": "antarchy:mob/queen/fly_loop_1"
+      },
+      {
+        "name": "antarchy:mob/queen/fly_loop_2"
+      }
+    ]
+  },
+  "queen_wing_flap": {
+    "subtitle": "subtitles.antarchy.queen_wing_flap",
+    "sounds": [
+      {
+        "name": "antarchy:mob/queen/wing_flap"
+      }
+    ]
+  },
+  "queen_bite": {
+    "subtitle": "subtitles.antarchy.queen_bite",
+    "sounds": [
+      {
+        "name": "antarchy:mob/queen/bite_1"
+      },
+      {
+        "name": "antarchy:mob/queen/bite_2"
+      }
+    ]
+  },
+  "queen_stomp": {
+    "subtitle": "subtitles.antarchy.queen_stomp",
+    "sounds": [
+      {
+        "name": "antarchy:mob/queen/stomp"
+      }
+    ]
+  },
+  "queen_roar": {
+    "subtitle": "subtitles.antarchy.queen_roar",
+    "sounds": [
+      {
+        "name": "antarchy:mob/queen/roar"
+      }
+    ]
+  },
+  "queen_hurt": {
+    "subtitle": "subtitles.antarchy.queen_hurt",
+    "sounds": [
+      {
+        "name": "antarchy:mob/queen/hurt_1"
+      },
+      {
+        "name": "antarchy:mob/queen/hurt_2"
+      },
+      {
+        "name": "antarchy:mob/queen/hurt_3"
+      }
+    ]
+  },
+  "queen_death": {
+    "subtitle": "subtitles.antarchy.queen_death",
+    "sounds": [
+      {
+        "name": "antarchy:mob/queen/death"
+      }
+    ]
+  },
+  "queen_beam_shoot": {
+    "subtitle": "subtitles.antarchy.queen_beam_shoot",
+    "sounds": [
+      {
+        "name": "antarchy:mob/queen/laser_shoot"
+      }
+    ]
+  },
+  "queen_beam_start": {
+    "subtitle": "subtitles.antarchy.queen_beam_start",
+    "sounds": [
+      {
+        "name": "antarchy:mob/queen/queen_beam_start"
+      }
+    ]
+  },
+  "queen_beam_loop": {
+    "subtitle": "subtitles.antarchy.queen_beam_loop",
+    "sounds": [
+      {
+        "name": "antarchy:mob/queen/queen_beam_loop"
+      }
+    ]
+  },
+  "queen_beam_end": {
+    "subtitle": "subtitles.antarchy.queen_beam_end",
+    "sounds": [
+      {
+        "name": "antarchy:mob/queen/queen_beam_end"
+      }
+    ]
+  },
+  "queen_black_hole_shoot": {
+    "subtitle": "subtitles.antarchy.queen_black_hole_shoot",
+    "sounds": [
+      {
+        "name": "antarchy:mob/queen/black_hole_shoot"
+      }
+    ]
+  },
+  "queen_cast_shoot": {
+    "subtitle": "subtitles.antarchy.queen_cast_shoot",
+    "sounds": [
+      {
+        "name": "antarchy:mob/queen/fireball_shoot"
+      }
+    ]
   }
 }

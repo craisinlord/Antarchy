@@ -109,6 +109,22 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue  KRAKEN_BOSS_BAR_RANGE;
     private static final ModConfigSpec.DoubleValue  KRAKEN_LIGHTNING_DAMAGE_PHASE_ONE;
 
+    // Royal Bosses
+
+    private static final ModConfigSpec.DoubleValue KING_HEALTH;
+    private static final ModConfigSpec.DoubleValue QUEEN_HEALTH;
+    private static final ModConfigSpec.DoubleValue KING_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue QUEEN_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue ROYAL_BOSS_ARMOR;
+    private static final ModConfigSpec.DoubleValue ROYAL_BOSS_FOLLOW_RANGE;
+    private static final ModConfigSpec.DoubleValue ROYAL_BOSS_MOVEMENT_SPEED;
+    private static final ModConfigSpec.DoubleValue ROYAL_BOSS_KNOCKBACK_RESISTANCE;
+    private static final ModConfigSpec.DoubleValue ROYAL_BOSS_STEP_HEIGHT;
+    private static final ModConfigSpec.DoubleValue ROYAL_BOSS_MAX_SINGLE_HIT_DAMAGE;
+    private static final ModConfigSpec.DoubleValue ROYAL_BOSS_BITE_REACH;
+    private static final ModConfigSpec.DoubleValue ROYAL_BOSS_BITE_DAMAGE_MULTIPLIER;
+    private static final ModConfigSpec.IntValue ROYAL_BOSS_BITE_COOLDOWN_TICKS;
+
 
     // Brutalfly
 
@@ -253,6 +269,10 @@ public final class AntarchyMobsConfig {
 
     private static final ModConfigSpec.DoubleValue LURKING_TERROR_HEALTH;
     private static final ModConfigSpec.DoubleValue LURKING_TERROR_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue MANTICORE_HEALTH;
+    private static final ModConfigSpec.DoubleValue MANTICORE_ATTACK_DAMAGE;
+    private static final ModConfigSpec.IntValue MANTICORE_STING_POISON_TICKS;
+    private static final ModConfigSpec.IntValue QUEEN_MANTICORE_CAP;
 
     // Jerry
 
@@ -515,6 +535,22 @@ public final class AntarchyMobsConfig {
         KRAKEN_LIGHTNING_DAMAGE_PHASE_ONE         = b.comment("Lightning strike damage during phase one.").defineInRange("lightningDamagePhaseOne", 6.0D, 0.0D, 1024.0D);
         b.pop();
 
+        b.push("royalBosses");
+        KING_HEALTH = b.comment("Base max health for the King.").defineInRange("kingHealth", 6000.0D, 1.0D, 32768.0D);
+        QUEEN_HEALTH = b.comment("Base max health for the Queen.").defineInRange("queenHealth", 6000.0D, 1.0D, 32768.0D);
+        KING_ATTACK_DAMAGE = b.comment("Base attack damage for the King.").defineInRange("kingAttackDamage", 50.0D, 0.0D, 1024.0D);
+        QUEEN_ATTACK_DAMAGE = b.comment("Base attack damage for the Queen.").defineInRange("queenAttackDamage", 45.0D, 0.0D, 1024.0D);
+        ROYAL_BOSS_ARMOR = b.comment("Base armor value shared by King and Queen.").defineInRange("armor", 20.0D, 0.0D, 1024.0D);
+        ROYAL_BOSS_FOLLOW_RANGE = b.comment("Target acquisition range shared by King and Queen.").defineInRange("followRange", 128.0D, 1.0D, 256.0D);
+        ROYAL_BOSS_MOVEMENT_SPEED = b.comment("Base grounded movement speed shared by King and Queen.").defineInRange("movementSpeed", 0.22D, 0.0D, 10.0D);
+        ROYAL_BOSS_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance shared by King and Queen.").defineInRange("knockbackResistance", 1.0D, 0.0D, 1.0D);
+        ROYAL_BOSS_STEP_HEIGHT = b.comment("Base step height shared by King and Queen.").defineInRange("stepHeight", 3.0D, 0.0D, 32.0D);
+        ROYAL_BOSS_MAX_SINGLE_HIT_DAMAGE = b.comment("Maximum damage a single hit can deal to a Royal boss before later anti-burst systems are added.").defineInRange("maxSingleHitDamage", 250.0D, 1.0D, 32768.0D);
+        ROYAL_BOSS_BITE_REACH = b.comment("Radius around each head anchor that a King or Queen bite can hit.").defineInRange("biteReach", 10.0D, 1.0D, 64.0D);
+        ROYAL_BOSS_BITE_DAMAGE_MULTIPLIER = b.comment("Multiplier applied to base attack damage for King and Queen head bites.").defineInRange("biteDamageMultiplier", 1.6D, 0.0D, 32.0D);
+        ROYAL_BOSS_BITE_COOLDOWN_TICKS = b.comment("Base cooldown in ticks between bites for a single King or Queen head (scaled down at later phases).").defineInRange("biteCooldownTicks", 45, 1, 1200);
+        b.pop();
+
 
         // Brutalfly
 
@@ -731,6 +767,13 @@ public final class AntarchyMobsConfig {
         LURKING_TERROR_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 6.0D, 0.0D, 1024.0D);
         b.pop();
 
+        b.push("manticore");
+        MANTICORE_HEALTH             = b.comment("Base max health.").defineInRange("health", 40.0D, 1.0D, 32768.0D);
+        MANTICORE_ATTACK_DAMAGE      = b.comment("Base attack damage for bites and stings.").defineInRange("attackDamage", 7.0D, 0.0D, 1024.0D);
+        MANTICORE_STING_POISON_TICKS = b.comment("Poison duration in ticks applied by a Manticore sting.").defineInRange("stingPoisonTicks", 100, 0, 12000);
+        QUEEN_MANTICORE_CAP          = b.comment("Maximum number of living Manticores a single Queen may keep summoned.").defineInRange("queenSummonCap", 15, 1, 200);
+        b.pop();
+
         b.push("jerry");
         JERRY_INFANT_HEALTH = b.comment("Infant Jerry max health.").defineInRange("infantHealth", 20.0D, 1.0D, 32768.0D);
         JERRY_INFANT_ATTACK_DAMAGE = b.comment("Infant Jerry damage per attached damage tick.").defineInRange("infantAttackDamage", 2.0D, 0.0D, 1024.0D);
@@ -872,6 +915,20 @@ public final class AntarchyMobsConfig {
     static double  krakenBossBarRange()                     { return KRAKEN_BOSS_BAR_RANGE.get(); }
     static float   krakenLightningDamagePhaseOne()          { return KRAKEN_LIGHTNING_DAMAGE_PHASE_ONE.get().floatValue(); }
 
+    static double  kingHealth()                             { return KING_HEALTH.get(); }
+    static double  queenHealth()                            { return QUEEN_HEALTH.get(); }
+    static double  kingAttackDamage()                       { return KING_ATTACK_DAMAGE.get(); }
+    static double  queenAttackDamage()                      { return QUEEN_ATTACK_DAMAGE.get(); }
+    static double  royalBossArmor()                         { return ROYAL_BOSS_ARMOR.get(); }
+    static double  royalBossFollowRange()                   { return ROYAL_BOSS_FOLLOW_RANGE.get(); }
+    static double  royalBossMovementSpeed()                 { return ROYAL_BOSS_MOVEMENT_SPEED.get(); }
+    static double  royalBossKnockbackResistance()           { return ROYAL_BOSS_KNOCKBACK_RESISTANCE.get(); }
+    static double  royalBossStepHeight()                    { return ROYAL_BOSS_STEP_HEIGHT.get(); }
+    static double  royalBossMaxSingleHitDamage()            { return ROYAL_BOSS_MAX_SINGLE_HIT_DAMAGE.get(); }
+    static double  royalBossBiteReach()                     { return ROYAL_BOSS_BITE_REACH.get(); }
+    static double  royalBossBiteDamageMultiplier()          { return ROYAL_BOSS_BITE_DAMAGE_MULTIPLIER.get(); }
+    static int     royalBossBiteCooldownTicks()             { return ROYAL_BOSS_BITE_COOLDOWN_TICKS.get(); }
+
     static double  brutalflyHealth()                        { return BRUTALFLY_HEALTH.get(); }
     static double  brutalflySwipeDamage()                   { return BRUTALFLY_SWIPE_DAMAGE.get(); }
     static double  brutalflySpitDamage()                    { return BRUTALFLY_SPIT_DAMAGE.get(); }
@@ -1003,6 +1060,10 @@ public final class AntarchyMobsConfig {
     static double  creepingHorrorAttackDamage()             { return CREEPING_HORROR_ATTACK_DAMAGE.get(); }
     static double  lurkingTerrorHealth()                    { return LURKING_TERROR_HEALTH.get(); }
     static double  lurkingTerrorAttackDamage()              { return LURKING_TERROR_ATTACK_DAMAGE.get(); }
+    static double  manticoreHealth()                        { return MANTICORE_HEALTH.get(); }
+    static double  manticoreAttackDamage()                  { return MANTICORE_ATTACK_DAMAGE.get(); }
+    static int     manticoreStingPoisonTicks()              { return MANTICORE_STING_POISON_TICKS.get(); }
+    static int     queenManticoreCap()                      { return QUEEN_MANTICORE_CAP.get(); }
     static double  jerryInfantHealth()                      { return JERRY_INFANT_HEALTH.get(); }
     static double  jerryInfantAttackDamage()                { return JERRY_INFANT_ATTACK_DAMAGE.get(); }
     static double  jerryMatureHealth()                      { return JERRY_MATURE_HEALTH.get(); }

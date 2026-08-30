@@ -10,6 +10,7 @@ import com.craisinlord.antarchy.neoforge.network.DorrieJumpNetworking;
 import com.craisinlord.antarchy.neoforge.network.HerculesBeetleNetworking;
 import com.craisinlord.antarchy.neoforge.network.JumpyBootsNetworking;
 import com.craisinlord.antarchy.neoforge.network.MultipartNetworking;
+import com.craisinlord.antarchy.neoforge.network.AntarchyTimeDilationNetworking;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
@@ -23,6 +24,7 @@ public class AntarchyNeoforgePayloadHandlers {
     static void registerPayloadHandlers(RegisterPayloadHandlersEvent event) {
         var registrar = event.registrar("1");
         AntarchyGravityNetworking.register(registrar);
+        AntarchyTimeDilationNetworking.register(registrar);
         BrutalflyElytraNetworking.register(registrar);
         JumpyBootsNetworking.register(registrar);
         DorrieJumpNetworking.register(registrar);

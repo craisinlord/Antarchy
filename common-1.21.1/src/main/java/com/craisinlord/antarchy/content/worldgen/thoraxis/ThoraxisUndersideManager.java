@@ -26,18 +26,22 @@ public final class ThoraxisUndersideManager {
     private static final ResourceLocation THORAXIS_DIMENSION = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "thoraxis");
     private static final AntarchyGravityTransition TRANSITION = new AntarchyGravityTransition(12);
     private static final int EFFECT_DURATION_TICKS = 40;
+    private static final int MAX_FLIPS_PER_TICK = 8;
     private static final Set<UUID> UNDERSIDE_APPLIED_EFFECT = new HashSet<>();
     private static final Set<UUID> UNDERSIDE_FORCED_GRAVITY = new HashSet<>();
+    private static final Set<UUID> ACTIVE_ITEMS_SCRATCH = new HashSet<>();
 
     private ThoraxisUndersideManager() {
     }
 
     public static void tick(ServerLevel level) {
-        if (!isThoraxis(level)) {
+        if (!isThoraxis(level) || level.players().isEmpty()) {
             return;
         }
 
-        Set<UUID> activeThisTick = new HashSet<>();
+        Set<UUID> activeThisTick = ACTIVE_ITEMS_SCRATCH;
+        activeThisTick.clear();
+        int flipsRemaining = MAX_FLIPS_PER_TICK;
         for (Entity entity : level.getAllEntities()) {
             if (!entity.isAlive() || entity.isSpectator()) {
                 continue;
@@ -48,6 +52,14 @@ public final class ThoraxisUndersideManager {
             if (entity instanceof LivingEntity living) {
                 UUID uuid = entity.getUUID();
                 if (inUnderside) {
+                    boolean needsFlip = AntarchyGravityApi.getGravityDirection(living) != AntarchyGravityDirection.UP
+                            || !AntarchyGravityApi.isGravityForced(living);
+                    if (needsFlip && flipsRemaining <= 0) {
+                        continue;
+                    }
+                    if (needsFlip) {
+                        flipsRemaining--;
+                    }
                     applyUndersideInversion(living);
                 } else if (UNDERSIDE_APPLIED_EFFECT.remove(uuid)) {
                     if (living.hasEffect(AntarchyObjects.INVERTED_EFFECT.get())) {
@@ -67,10 +79,15 @@ public final class ThoraxisUndersideManager {
 
             UUID uuid = entity.getUUID();
             if (inUnderside) {
+                boolean needsFlip = AntarchyGravityApi.getGravityDirection(entity) != AntarchyGravityDirection.UP
+                        || !AntarchyGravityApi.isGravityForced(entity);
+                if (needsFlip && flipsRemaining <= 0) {
+                    continue;
+                }
                 activeThisTick.add(uuid);
                 UNDERSIDE_FORCED_GRAVITY.add(uuid);
-                if (AntarchyGravityApi.getGravityDirection(entity) != AntarchyGravityDirection.UP
-                        || !AntarchyGravityApi.isGravityForced(entity)) {
+                if (needsFlip) {
+                    flipsRemaining--;
                     AntarchyGravityApi.setForcedGravityDirection(entity, AntarchyGravityDirection.UP, TRANSITION);
                 }
                 continue;

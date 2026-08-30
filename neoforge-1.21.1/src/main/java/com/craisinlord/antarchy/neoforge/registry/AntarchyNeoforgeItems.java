@@ -402,8 +402,8 @@ public final class AntarchyNeoforgeItems {
             () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.BLUESTONE_ORE.get(), new Item.Properties()));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BLUESTONE_BLOCK_ITEM = ITEMS.register("bluestone_block",
             () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.BLUESTONE_BLOCK.get(), new Item.Properties()));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> VORTEX_LENS_ITEM = ITEMS.register("vortex_lens",
-            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.VORTEX_LENS.get(), new Item.Properties()));
+    public static final DeferredItem<VortexLensBlockItem> VORTEX_LENS_ITEM = ITEMS.register("vortex_lens",
+            () -> new VortexLensBlockItem(AntarchyNeoforgeBlocks.VORTEX_LENS.get(), new Item.Properties()));
     public static final DeferredItem<CeilingPlacementTooltipBlockItem> BLUESTONE_REPEATER_ITEM = ITEMS.register("bluestone_repeater",
             () -> new CeilingPlacementTooltipBlockItem(AntarchyNeoforgeBlocks.BLUESTONE_REPEATER.get(), new Item.Properties()));
     public static final DeferredItem<CeilingPlacementTooltipBlockItem> BLUESTONE_COMPARATOR_ITEM = ITEMS.register("bluestone_comparator",
@@ -1066,6 +1066,14 @@ public final class AntarchyNeoforgeItems {
             () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.REVERIE, 0xF2F2F2, 0xBFC3C7, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> BRUTALFLY_SPAWN_EGG = ITEMS.register("brutalfly_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.BRUTALFLY, 0x4A2214, 0xFF8A1D, new Item.Properties().rarity(Rarity.EPIC)));
+    public static final DeferredItem<DeferredSpawnEggItem> KING_SPAWN_EGG = ITEMS.register("king_spawn_egg",
+            () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.KING, 0xFFFFFF, 0xD4AF37, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+    public static final DeferredItem<DeferredSpawnEggItem> QUEEN_SPAWN_EGG = ITEMS.register("queen_spawn_egg",
+            () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.QUEEN, 0x080608, 0xB11226, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+    public static final DeferredItem<DeferredSpawnEggItem> PRINCE_SPAWN_EGG = ITEMS.register("prince_spawn_egg",
+            () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.PRINCE, 0xFFFFFF, 0xD4AF37, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+    public static final DeferredItem<DeferredSpawnEggItem> PRINCESS_SPAWN_EGG = ITEMS.register("princess_spawn_egg",
+            () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.PRINCESS, 0x3B0A45, 0xB11226, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
     public static final DeferredItem<DeferredSpawnEggItem> RED_ANT_SPAWN_EGG = ITEMS.register("red_ant_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.RED_ANT, 0xA31818, 0x2B0909, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> BROWN_ANT_SPAWN_EGG = ITEMS.register("brown_ant_spawn_egg",
@@ -1149,6 +1157,8 @@ public final class AntarchyNeoforgeItems {
             () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.CREEPING_HORROR, 0x6B3A1F, 0x6B0000, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> LURKING_TERROR_SPAWN_EGG = ITEMS.register("lurking_terror_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.LURKING_TERROR, 0x2D5A1B, 0x8B0000, new Item.Properties()));
+    public static final DeferredItem<DeferredSpawnEggItem> MANTICORE_SPAWN_EGG = ITEMS.register("manticore_spawn_egg",
+            () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.MANTICORE, 0x8A3B1E, 0x2B1B12, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> HERCULES_BEETLE_SPAWN_EGG = ITEMS.register("hercules_beetle_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.HERCULES_BEETLE, 0x6B1F2A, 0xD4AF37, new Item.Properties().rarity(Rarity.RARE)));
     public static final DeferredItem<DeferredSpawnEggItem> JERRY_SPAWN_EGG = ITEMS.register("jerry_spawn_egg",

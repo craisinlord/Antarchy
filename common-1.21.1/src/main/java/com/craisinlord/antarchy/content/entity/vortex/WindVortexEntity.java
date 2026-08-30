@@ -62,6 +62,7 @@ public class WindVortexEntity extends Entity {
     private static final String TRAVEL_Y_KEY = "TravelY";
     private static final String TRAVEL_Z_KEY = "TravelZ";
     private static final String TRAVELLING_KEY = "Travelling";
+    private static final String HOMING_KEY = "Homing";
 
     private static final double BASE_RADIUS = 0.35D;
     private static final double DRIFT_FRICTION = 0.96D;
@@ -80,6 +81,7 @@ public class WindVortexEntity extends Entity {
     private float damageOverride = -1.0F;
     private Vec3 travelVelocity = Vec3.ZERO;
     private boolean travelling = false;
+    private boolean homing = false;
     private final Map<UUID, Double> carriedProgress = new HashMap<>();
     @Nullable
     private UUID ownerUuid;
@@ -139,6 +141,9 @@ public class WindVortexEntity extends Entity {
         }
 
         if (this.travelling) {
+            if (this.homing) {
+                this.steerTowardPrey();
+            }
             Vec3 from = this.position();
             Vec3 to = from.add(this.travelVelocity);
             HitResult blockHit = this.level().clip(
@@ -158,6 +163,40 @@ public class WindVortexEntity extends Entity {
         if ((this.tickCount & 1) == 0) {
             this.applyVortexForces();
         }
+    }
+
+    private void steerTowardPrey() {
+        double speed = this.travelVelocity.length();
+        if (speed < 1.0E-4D) {
+            return;
+        }
+        AABB seekArea = this.getBoundingBox().inflate(12.0D);
+        Entity best = null;
+        double bestDistSqr = Double.MAX_VALUE;
+        for (Entity candidate : this.level().getEntities(this, seekArea, this::isSeekTarget)) {
+            double distSqr = candidate.distanceToSqr(this);
+            if (distSqr < bestDistSqr) {
+                bestDistSqr = distSqr;
+                best = candidate;
+            }
+        }
+        if (best == null) {
+            return;
+        }
+        Vec3 desired = best.getBoundingBox().getCenter().subtract(this.position());
+        if (desired.lengthSqr() < 1.0E-6D) {
+            return;
+        }
+        Vec3 steered = this.travelVelocity.normalize().lerp(desired.normalize(), 0.18D);
+        if (steered.lengthSqr() < 1.0E-6D) {
+            return;
+        }
+        this.travelVelocity = steered.normalize().scale(speed);
+    }
+
+    private boolean isSeekTarget(Entity entity) {
+        return entity instanceof LivingEntity && !(entity instanceof Player) && !this.isOwnedBy(entity)
+                && this.canAffectEntity(entity);
     }
 
     private boolean isInsideSolidBlock() {
@@ -191,7 +230,7 @@ public class WindVortexEntity extends Entity {
         for (Entity entity : this.level().getEntities(this, area, this::canAffectEntity)) {
             Vec3 relative = entity.position().subtract(this.position());
             double axisDistance = relative.dot(basis.axis);
-            if (axisDistance < -0.25D || axisDistance > height + 0.75D) {
+            if (axisDistance < -1.0D || axisDistance > height + 2.0D) {
                 continue;
             }
             double along = Mth.clamp(axisDistance, 0.0D, height);
@@ -201,9 +240,11 @@ public class WindVortexEntity extends Entity {
             double radius = this.radiusAt(shapeProgress);
             Vec3 axisPoint = basis.axis.scale(axisDistance);
             Vec3 radialVector = relative.subtract(axisPoint);
-            double captureRadius = radius + (entity instanceof Player ? 1.0D : 0.35D);
+            double captureRadius = radius * 1.35D + (entity instanceof Player ? 1.5D : 1.75D);
+            boolean requireLos = !this.travelling && mode == VortexMode.GATHER_RETURN;
 
-            if (radialVector.lengthSqr() > captureRadius * captureRadius || !this.hasClearPathTo(entity)) {
+            if (radialVector.lengthSqr() > captureRadius * captureRadius
+                    || (requireLos && !this.hasClearPathTo(entity))) {
                 continue;
             }
 
@@ -226,6 +267,9 @@ public class WindVortexEntity extends Entity {
             double progress = entry.getValue();
             double direction = mode == VortexMode.LENS_PULL ? -1.0D : 1.0D;
             progress += direction * 0.055D;
+            if (this.travelling) {
+                progress = Math.min(progress, 0.85D);
+            }
             if (mode == VortexMode.LENS_PULL && progress <= 0.0D) {
                 iterator.remove();
                 continue;
@@ -237,7 +281,7 @@ public class WindVortexEntity extends Entity {
                 continue;
             }
 
-            if (mode == VortexMode.UPWARD && progress >= 0.92D) {
+            if (mode == VortexMode.UPWARD && progress >= 0.92D && !this.travelling) {
                 this.launch(entity, this.radialVectorAt(entity, progress, basis), progress, basis);
                 iterator.remove();
                 continue;
@@ -274,9 +318,6 @@ public class WindVortexEntity extends Entity {
         if (!entity.isAlive() || entity.isSpectator() || entity.noPhysics || entity.getType().is(AntarchyTags.Entities.WIND_VORTEX_IMMUNE)) {
             return false;
         }
-        if (entity instanceof Player player && player.isCreative()) {
-            return false;
-        }
         return true;
     }
 
@@ -295,7 +336,9 @@ public class WindVortexEntity extends Entity {
                 ? Math.max(0.05D, radius * 0.18D)
                 : Mth.lerp(shapeProgress, BASE_RADIUS, radius * 0.82D);
         double radialError = targetRadius - horizontal;
-        double playerScale = entity instanceof Player ? 1.8D : 1.0D;
+        boolean lensMode = mode == VortexMode.LENS_PULL || mode == VortexMode.LENS_PUSH;
+        double lensLivingBoost = lensMode && entity instanceof LivingEntity ? 1.6D : 1.0D;
+        double playerScale = (entity instanceof Player ? 1.8D : 1.35D) * lensLivingBoost;
         double pull = this.pullStrength * playerScale * (entity.isShiftKeyDown() ? 0.5D : 1.0D);
         double massScale = Mth.clamp(1.35D / Math.max(0.35D, entity.getBbWidth() * entity.getBbHeight()), 0.28D, 1.0D);
         double spin = (0.24D + progress * 0.34D) * massScale * playerScale;
@@ -305,8 +348,8 @@ public class WindVortexEntity extends Entity {
             case UPWARD -> (0.13D + progress * 0.16D) * massScale;
             case GATHER_RETURN -> (0.05D + progress * 0.08D) * massScale;
         } * playerScale;
-        if (mode == VortexMode.UPWARD && entity instanceof Player && entity.onGround()) {
-            axialSpeed = Math.max(axialSpeed, 0.38D);
+        if (mode == VortexMode.UPWARD && entity.onGround()) {
+            axialSpeed = Math.max(axialSpeed, entity instanceof Player ? 0.38D : 0.3D);
         }
 
         Vec3 wanted = radial.scale(radialError * pull)
@@ -318,8 +361,16 @@ public class WindVortexEntity extends Entity {
                 Mth.lerp(0.58D, current.y, wanted.y),
                 Mth.lerp(0.72D, current.z, wanted.z)
         );
-        if (mode == VortexMode.UPWARD && entity instanceof Player && entity.onGround()) {
-            updatedMovement = new Vec3(updatedMovement.x, Math.max(updatedMovement.y, 0.38D), updatedMovement.z);
+        if (this.travelling) {
+            updatedMovement = updatedMovement.add(this.travelVelocity.x * 0.8D, 0.0D, this.travelVelocity.z * 0.8D);
+        }
+        if (mode == VortexMode.UPWARD && entity.onGround()) {
+            double minRise = entity instanceof Player ? 0.38D : 0.3D;
+            updatedMovement = new Vec3(updatedMovement.x, Math.max(updatedMovement.y, minRise), updatedMovement.z);
+            entity.setOnGround(false);
+        }
+        if (entity instanceof Player) {
+            entity.move(net.minecraft.world.entity.MoverType.SELF, wanted.scale(0.65D));
             entity.setOnGround(false);
         }
         entity.setDeltaMovement(updatedMovement);
@@ -455,6 +506,10 @@ public class WindVortexEntity extends Entity {
         this.noPhysics = true;
     }
 
+    public void setHoming(boolean homing) {
+        this.homing = homing;
+    }
+
     public void setVortexStrengths(double pullStrength, double launchStrength) {
         this.pullStrength = Math.max(0.0D, pullStrength);
         this.launchStrength = Math.max(0.0D, launchStrength);
@@ -491,6 +546,7 @@ public class WindVortexEntity extends Entity {
         this.setMode(VortexMode.values()[Mth.clamp(tag.getInt(MODE_KEY), 0, VortexMode.values().length - 1)]);
         this.setAxis(new Vec3(tag.getFloat(AXIS_X_KEY), tag.getFloat(AXIS_Y_KEY), tag.getFloat(AXIS_Z_KEY)));
         this.travelling = tag.getBoolean(TRAVELLING_KEY);
+        this.homing = tag.getBoolean(HOMING_KEY);
         this.travelVelocity = new Vec3(tag.getDouble(TRAVEL_X_KEY), tag.getDouble(TRAVEL_Y_KEY), tag.getDouble(TRAVEL_Z_KEY));
         if (this.travelling) {
             this.noPhysics = true;
@@ -514,6 +570,7 @@ public class WindVortexEntity extends Entity {
         tag.putFloat(AXIS_Y_KEY, (float) this.getAxis().y);
         tag.putFloat(AXIS_Z_KEY, (float) this.getAxis().z);
         tag.putBoolean(TRAVELLING_KEY, this.travelling);
+        tag.putBoolean(HOMING_KEY, this.homing);
         tag.putDouble(TRAVEL_X_KEY, this.travelVelocity.x);
         tag.putDouble(TRAVEL_Y_KEY, this.travelVelocity.y);
         tag.putDouble(TRAVEL_Z_KEY, this.travelVelocity.z);

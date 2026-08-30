@@ -7,6 +7,8 @@ import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
 import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
 import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyEntity;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
+import com.craisinlord.antarchy.content.entity.royal.KingEntity;
+import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -29,7 +31,9 @@ public final class CustomBossBarRenderer {
             AlphaMantisEntity.class, textures("green", "alpha_mantis", 205, 49, 6),
             BrutalflyEntity.class, textures("brutalfly", "brutalfly", 198, 38, 3),
             HerculesBeetleEntity.class, textures("beetle", "hercules_beetle", 194, 33, 1),
-            EmperorScorpionEntity.class, textures("purple", "scorpion", 218, 34, -2)
+            EmperorScorpionEntity.class, textures("purple", "scorpion", 218, 34, -2),
+            KingEntity.class, textures("king", "king", 256, 67, 4),
+            QueenEntity.class, textures("queen", "queen", 253, 50, 6)
     );
     private static final Map<String, Textures> BY_LOCALIZED_NAME_AND_COLOR = Map.of(
             key(Component.translatable("entity.antarchy.kraken").getString(), BossEvent.BossBarColor.BLUE), BY_ENTITY_CLASS.get(KrakenEntity.class),
@@ -37,7 +41,9 @@ public final class CustomBossBarRenderer {
             key(Component.translatable("entity.antarchy.alpha_mantis").getString(), BossEvent.BossBarColor.GREEN), BY_ENTITY_CLASS.get(AlphaMantisEntity.class),
             key(Component.translatable("entity.antarchy.brutalfly").getString(), BossEvent.BossBarColor.YELLOW), BY_ENTITY_CLASS.get(BrutalflyEntity.class),
             key(Component.translatable("entity.antarchy.hercules_beetle").getString(), BossEvent.BossBarColor.RED), BY_ENTITY_CLASS.get(HerculesBeetleEntity.class),
-            key(Component.translatable("entity.antarchy.emperor_scorpion").getString(), BossEvent.BossBarColor.PURPLE), BY_ENTITY_CLASS.get(EmperorScorpionEntity.class)
+            key(Component.translatable("entity.antarchy.emperor_scorpion").getString(), BossEvent.BossBarColor.PURPLE), BY_ENTITY_CLASS.get(EmperorScorpionEntity.class),
+            key(Component.translatable("entity.antarchy.king").getString(), BossEvent.BossBarColor.YELLOW), BY_ENTITY_CLASS.get(KingEntity.class),
+            key(Component.translatable("entity.antarchy.queen").getString(), BossEvent.BossBarColor.PURPLE), BY_ENTITY_CLASS.get(QueenEntity.class)
     );
 
     private CustomBossBarRenderer() {

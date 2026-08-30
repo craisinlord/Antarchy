@@ -38,6 +38,6 @@ public abstract class CustomBossBarMixin {
 
     @ModifyConstant(method = "render", constant = @Constant(intValue = 9, ordinal = 1))
     private int antarchy$doubleGapForCustomBossBar(int original, @Local LerpingBossEvent bossEvent) {
-        return CustomBossBarRenderer.isCustomBoss(bossEvent) ? original + 19 : original;
+        return CustomBossBarRenderer.isCustomBoss(bossEvent) ? original + 30 : original;
     }
 }

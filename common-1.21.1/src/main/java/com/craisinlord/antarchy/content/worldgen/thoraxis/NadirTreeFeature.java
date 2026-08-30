@@ -48,9 +48,13 @@ public class NadirTreeFeature extends Feature<NadirTreeConfiguration> {
         Map<BlockPos, Direction.Axis> logs = new LinkedHashMap<>();
         Set<BlockPos> foliage = new LinkedHashSet<>();
 
-        placeTrunk(spine, bottomRadius, logs, random);
+        int tierCount = Mth.clamp(2 + branchCount / 2, 3, 5);
+        int outerRadius = 4 + bottomRadius + random.nextInt(3);
+
+        placeTrunk(spine, logs, random);
         placeRootWaves(spine, bottomRadius, logs, foliage, random, veilRadius);
-        placeBranches(spine, branchCount, branchLength, logs, foliage, random, veilRadius);
+        placeChandelierTiers(spine, tierCount, outerRadius, logs, foliage, random, veilRadius);
+        placeBranches(spine, Math.max(1, branchCount / 2), branchLength, logs, foliage, random, veilRadius);
         placeVeilCurtains(spine, foliage, random, veilRadius);
 
         if (logs.isEmpty()) {
@@ -114,36 +118,25 @@ public class NadirTreeFeature extends Feature<NadirTreeConfiguration> {
         return spine;
     }
 
-    private void placeTrunk(List<BlockPos> spine, int bottomRadius, Map<BlockPos, Direction.Axis> logs, RandomSource random) {
+    private void placeTrunk(List<BlockPos> spine, Map<BlockPos, Direction.Axis> logs, RandomSource random) {
         for (int index = 0; index < spine.size(); index++) {
-            BlockPos center = spine.get(index);
-            float progress = spine.size() == 1 ? 1.0F : index / (float) (spine.size() - 1);
-            float wave = Mth.sin(progress * Mth.PI * 2.75F) * 0.55F + Mth.sin(progress * Mth.PI * 5.5F) * 0.25F;
-            int radius = Mth.clamp(Math.round((0.45F + progress * 0.3F + wave * 0.22F) * bottomRadius), 0, Math.max(1, bottomRadius - 1));
-            if (index < 2) {
-                radius = Math.max(radius, 1);
-            }
-            fillTrunkLayer(center, radius, logs, random);
+            fillTrunkLayer(spine.get(index), index < 2, logs, random);
         }
     }
 
-    private void fillTrunkLayer(BlockPos center, int radius, Map<BlockPos, Direction.Axis> logs, RandomSource random) {
-        if (radius <= 0) {
-            putLog(logs, center, Direction.Axis.Y);
-            return;
-        }
-
-        int radiusSq = radius * radius;
-        for (int dx = -radius; dx <= radius; dx++) {
-            for (int dz = -radius; dz <= radius; dz++) {
-                int dist = dx * dx + dz * dz;
-                if (dist > radiusSq + 1) {
-                    continue;
-                }
-                if (dist > radiusSq - radius && random.nextFloat() < 0.48F) {
-                    continue;
-                }
+    private void fillTrunkLayer(BlockPos center, boolean flare, Map<BlockPos, Direction.Axis> logs, RandomSource random) {
+        for (int dx = 0; dx <= 1; dx++) {
+            for (int dz = 0; dz <= 1; dz++) {
                 putLog(logs, center.offset(dx, 0, dz), Direction.Axis.Y);
+            }
+        }
+        if (flare) {
+            for (int dx = -1; dx <= 2; dx++) {
+                for (int dz = -1; dz <= 2; dz++) {
+                    if ((dx == -1 || dx == 2 || dz == -1 || dz == 2) && random.nextFloat() < 0.5F) {
+                        putLog(logs, center.offset(dx, 0, dz), Direction.Axis.Y);
+                    }
+                }
             }
         }
     }
@@ -231,6 +224,67 @@ public class NadirTreeFeature extends Feature<NadirTreeConfiguration> {
         }
     }
 
+    private void placeChandelierTiers(
+            List<BlockPos> spine,
+            int tierCount,
+            int outerRadius,
+            Map<BlockPos, Direction.Axis> logs,
+            Set<BlockPos> foliage,
+            RandomSource random,
+            int veilRadius
+    ) {
+        int top = Math.max(2, spine.size() / 5);
+        int bottom = Math.max(top + 1, spine.size() - 2);
+        for (int tier = 0; tier < tierCount; tier++) {
+            float progress = tierCount == 1 ? 0.0F : tier / (float) (tierCount - 1);
+            int index = Mth.clamp(Math.round(Mth.lerp(progress, top, bottom)), 0, spine.size() - 1);
+            BlockPos hub = spine.get(index);
+            int radius = Math.max(2, Math.round(Mth.lerp(progress, outerRadius, 2.0F)) + random.nextInt(2));
+            int droop = 1 + random.nextInt(2);
+            BlockPos ringCenter = hub.below(droop);
+
+            placeTierRing(ringCenter, radius, logs, random);
+            placeTierSpokes(hub, ringCenter, radius, logs);
+
+            for (Direction spoke : Direction.Plane.HORIZONTAL) {
+                BlockPos rim = ringCenter.relative(spoke, radius);
+                Direction tangent = spoke.getClockWise();
+                placeVeilRibbon(foliage, rim, tangent, Math.max(2, veilRadius + random.nextInt(2)), random);
+            }
+        }
+    }
+
+    private void placeTierRing(BlockPos center, int radius, Map<BlockPos, Direction.Axis> logs, RandomSource random) {
+        int outerSq = (radius + 1) * (radius + 1);
+        int innerSq = (radius - 1) * (radius - 1);
+        for (int dx = -radius - 1; dx <= radius + 1; dx++) {
+            for (int dz = -radius - 1; dz <= radius + 1; dz++) {
+                int distSq = dx * dx + dz * dz;
+                if (distSq > outerSq || distSq < innerSq) {
+                    continue;
+                }
+                if (random.nextFloat() < 0.12F) {
+                    continue;
+                }
+                Direction.Axis axis = Math.abs(dx) >= Math.abs(dz) ? Direction.Axis.X : Direction.Axis.Z;
+                putLog(logs, center.offset(dx, 0, dz), axis);
+            }
+        }
+    }
+
+    private void placeTierSpokes(BlockPos hub, BlockPos ringCenter, int radius, Map<BlockPos, Direction.Axis> logs) {
+        for (Direction spoke : Direction.Plane.HORIZONTAL) {
+            BlockPos previous = hub;
+            for (int step = 1; step <= radius; step++) {
+                float t = step / (float) radius;
+                int y = Math.round(Mth.lerp(t, hub.getY(), ringCenter.getY()));
+                BlockPos next = new BlockPos(hub.getX() + spoke.getStepX() * step, y, hub.getZ() + spoke.getStepZ() * step);
+                putLog(logs, next, axisForSegment(previous, next));
+                previous = next;
+            }
+        }
+    }
+
     private void placeVeilCurtains(List<BlockPos> spine, Set<BlockPos> foliage, RandomSource random, int veilRadius) {
         for (int index = 1; index < spine.size(); index++) {
             if (random.nextFloat() > 0.24F) {
@@ -244,23 +298,22 @@ public class NadirTreeFeature extends Feature<NadirTreeConfiguration> {
 
     private void placeVeilRibbon(Set<BlockPos> foliage, BlockPos start, Direction flow, int length, RandomSource random) {
         Direction side = random.nextBoolean() ? flow.getClockWise() : flow.getCounterClockWise();
-        BlockPos cursor = start;
-        for (int step = 0; step < length; step++) {
-            foliage.add(cursor);
-            if (random.nextFloat() < 0.34F) {
-                foliage.add(cursor.relative(side));
-            }
-            if (random.nextFloat() < 0.18F) {
-                foliage.add(cursor.relative(side.getOpposite()));
-            }
-            cursor = cursor.below();
-            if (step > 0 && random.nextFloat() < 0.4F) {
-                cursor = cursor.relative(random.nextBoolean() ? side : side.getOpposite());
-            }
-            if (random.nextFloat() < 0.18F) {
-                BlockPos drift = cursor.relative(flow);
-                if (random.nextBoolean()) {
-                    foliage.add(drift);
+        int span = Math.max(4, length + 2);
+        int bands = 1 + random.nextInt(2);
+        float phase = random.nextFloat() * Mth.PI * 2.0F;
+        float frequency = 0.55F + random.nextFloat() * 0.45F;
+        for (int band = 0; band < bands; band++) {
+            BlockPos rowAnchor = start.relative(side, band);
+            float bandPhase = phase + band * 1.7F;
+            for (int step = 0; step < span; step++) {
+                float wave = Mth.sin(step * frequency + bandPhase);
+                int lift = Math.round(wave * 1.5F);
+                BlockPos top = rowAnchor.relative(flow, step).offset(0, lift, 0);
+                int strand = Math.max(2, 3 + Math.round((wave + 1.0F) * 2.0F) + random.nextInt(2) - (1 + random.nextInt(3)));
+                BlockPos cursor = top;
+                for (int drop = 0; drop < strand; drop++) {
+                    foliage.add(cursor);
+                    cursor = cursor.below();
                 }
             }
         }

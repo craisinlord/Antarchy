@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 public class VortexLensBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
+    public static final BooleanProperty PUSHING = BooleanProperty.create("pushing");
 
     private final Supplier<? extends BlockEntityType<VortexLensBlockEntity>> blockEntityTypeSupplier;
     private final MapCodec<VortexLensBlock> codec;
@@ -35,7 +36,8 @@ public class VortexLensBlock extends BaseEntityBlock {
         super(properties);
         this.blockEntityTypeSupplier = blockEntityTypeSupplier;
         this.codec = Block.simpleCodec(ignored -> this);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.UP).setValue(POWERED, false));
+        this.registerDefaultState(this.stateDefinition.any()
+                .setValue(FACING, Direction.UP).setValue(POWERED, false).setValue(PUSHING, false));
     }
 
     @Override
@@ -45,14 +47,18 @@ public class VortexLensBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, POWERED);
+        builder.add(FACING, POWERED, PUSHING);
     }
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
+        Level level = context.getLevel();
+        BlockPos pos = context.getClickedPos();
+        boolean bluestone = BluestoneSignalHelper.getBestNeighborSignal(level, pos) > 0;
         return this.defaultBlockState()
                 .setValue(FACING, context.getClickedFace())
-                .setValue(POWERED, hasAnySignal(context.getLevel(), context.getClickedPos()));
+                .setValue(POWERED, hasAnySignal(level, pos))
+                .setValue(PUSHING, bluestone);
     }
 
     @Override
