@@ -3,6 +3,8 @@ package com.craisinlord.antarchy.content.entity.portal;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.entity.ManticoreEntity;
+import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +76,10 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
     private int eventTicks;
     private int nextEventTicks;
     private TearState pendingEvent = TearState.NORMAL;
+    @Nullable
+    private UUID queenOwnerId;
+    private int queenManticoreCount;
+    private boolean queenManticoreSpawned;
 
     public DimensionalTearEntity(EntityType<? extends DimensionalTearEntity> entityType, Level level) {
         super(entityType, level);
@@ -87,6 +93,14 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         tear.moveTo(pos.x, pos.y, pos.z, yaw, 0.0F);
         tear.lifetimeTicks = lifetimeTicks;
         tear.nextEventTicks = tear.randomEventDelay();
+        return tear;
+    }
+
+    public static DimensionalTearEntity createQueenManticoreTear(ServerLevel level, Vec3 pos, float yaw,
+                                                                  int lifetimeTicks, UUID queenId, int count) {
+        DimensionalTearEntity tear = create(level, pos, yaw, lifetimeTicks);
+        tear.queenOwnerId = queenId;
+        tear.queenManticoreCount = Math.max(1, count);
         return tear;
     }
 
@@ -119,6 +133,10 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         if (this.ageTicks >= this.lifetimeTicks) {
             this.removeLinkedPair();
             return;
+        }
+
+        if (this.queenOwnerId != null && this.ageTicks == OPENING_ANIMATION_TICKS) {
+            this.spawnQueenManticores((ServerLevel) this.level());
         }
 
         DimensionalTearEntity linked = this.findLinkedTear();
@@ -177,6 +195,49 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         mob.setNoGravity(true);
         level.addFreshEntity(mob);
         level.playSound(null, this.blockPosition(), eventState == TearState.LUCID ? SoundEvents.AMETHYST_BLOCK_CHIME : SoundEvents.ENDERMAN_SCREAM, SoundSource.HOSTILE, 0.75F, eventState == TearState.LUCID ? 1.45F : 0.85F);
+    }
+
+    private void spawnQueenManticores(ServerLevel level) {
+        if (this.queenManticoreSpawned) {
+            return;
+        }
+        this.queenManticoreSpawned = true;
+        Entity owner = level.getEntity(this.queenOwnerId);
+        if (!(owner instanceof QueenEntity queen) || !queen.isAlive()) {
+            return;
+        }
+        LivingEntity target = queen.getTarget();
+        for (int i = 0; i < this.queenManticoreCount; i++) {
+            if (ManticoreEntity.countSummonedBy(level, queen.getUUID()) >= com.craisinlord.antarchy.config.AntarchySettings.queenManticoreCap()) {
+                break;
+            }
+            ManticoreEntity manticore = AntarchyObjects.MANTICORE.get().create(level);
+            if (manticore == null) {
+                break;
+            }
+            Vec3 exit = this.exitPosition().add(0.0D, 0.8D + i * 0.35D, 0.0D);
+            manticore.moveTo(exit.x, exit.y, exit.z, this.getYRot(), 0.0F);
+            if (!level.noCollision(manticore)) {
+                manticore.discard();
+                continue;
+            }
+            manticore.finalizeSpawn(level, level.getCurrentDifficultyAt(BlockPos.containing(exit)), MobSpawnType.MOB_SUMMONED, null);
+            manticore.markQueenSummoned(queen.getUUID());
+            if (target != null && target.isAlive()) {
+                manticore.setTarget(target);
+            }
+            manticore.setDeltaMovement(this.getViewVector(1.0F).scale(0.2D).add(0.0D, 0.08D, 0.0D));
+            manticore.setNoGravity(true);
+            level.addFreshEntity(manticore);
+        }
+    }
+
+    public static void discardQueenOwnedTears(ServerLevel level, UUID queenId) {
+        for (DimensionalTearEntity tear : level.getEntitiesOfClass(DimensionalTearEntity.class,
+                new AABB(-3.0E7D, level.getMinBuildHeight(), -3.0E7D, 3.0E7D, level.getMaxBuildHeight(), 3.0E7D),
+                tear -> queenId.equals(tear.queenOwnerId))) {
+            tear.discard();
+        }
     }
 
     @Nullable
@@ -331,6 +392,11 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         tag.putDouble("LinkedX", this.linkedFallbackPos.x);
         tag.putDouble("LinkedY", this.linkedFallbackPos.y);
         tag.putDouble("LinkedZ", this.linkedFallbackPos.z);
+        if (this.queenOwnerId != null) {
+            tag.putUUID("QueenOwner", this.queenOwnerId);
+            tag.putInt("QueenManticoreCount", this.queenManticoreCount);
+            tag.putBoolean("QueenManticoreSpawned", this.queenManticoreSpawned);
+        }
     }
 
     @Override
@@ -346,6 +412,11 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
             this.linkedTearId = tag.getUUID("LinkedTearId");
         }
         this.linkedFallbackPos = new Vec3(tag.getDouble("LinkedX"), tag.getDouble("LinkedY"), tag.getDouble("LinkedZ"));
+        if (tag.hasUUID("QueenOwner")) {
+            this.queenOwnerId = tag.getUUID("QueenOwner");
+            this.queenManticoreCount = tag.getInt("QueenManticoreCount");
+            this.queenManticoreSpawned = tag.getBoolean("QueenManticoreSpawned");
+        }
     }
 
     @Override

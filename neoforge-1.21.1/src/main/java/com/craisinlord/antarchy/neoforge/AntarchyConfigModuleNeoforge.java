@@ -149,6 +149,20 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setRoyalBossBiteReach(AntarchyMobsConfig.royalBossBiteReach());
         AntarchySettings.setRoyalBossBiteDamageMultiplier(AntarchyMobsConfig.royalBossBiteDamageMultiplier());
         AntarchySettings.setRoyalBossBiteCooldownTicks(AntarchyMobsConfig.royalBossBiteCooldownTicks());
+        AntarchySettings.setQueenBeamDamage(AntarchyMobsConfig.queenBeamDamage());
+        AntarchySettings.setQueenBeamRange(AntarchyMobsConfig.queenBeamRange());
+        AntarchySettings.setQueenBeamDurationTicks(AntarchyMobsConfig.queenBeamDurationTicks());
+        AntarchySettings.setQueenBeamCooldownTicks(AntarchyMobsConfig.queenBeamCooldownTicks());
+        AntarchySettings.setQueenBeamTracking(AntarchyMobsConfig.queenBeamTracking());
+        AntarchySettings.setQueenBeamTerrainRadius(AntarchyMobsConfig.queenBeamTerrainRadius());
+        AntarchySettings.setQueenBeamTerrainCap(AntarchyMobsConfig.queenBeamTerrainCap());
+        AntarchySettings.setKingBeamDamage(AntarchyMobsConfig.kingBeamDamage());
+        AntarchySettings.setKingBeamRange(AntarchyMobsConfig.kingBeamRange());
+        AntarchySettings.setKingBeamDurationTicks(AntarchyMobsConfig.kingBeamDurationTicks());
+        AntarchySettings.setKingBeamCooldownTicks(AntarchyMobsConfig.kingBeamCooldownTicks());
+        AntarchySettings.setKingBeamTracking(AntarchyMobsConfig.kingBeamTracking());
+        AntarchySettings.setKingBeamTerrainRadius(AntarchyMobsConfig.kingBeamTerrainRadius());
+        AntarchySettings.setKingBeamTerrainCap(AntarchyMobsConfig.kingBeamTerrainCap());
 
         AntarchySettings.setBrutalflyHealth(AntarchyMobsConfig.brutalflyHealth());
         AntarchySettings.setBrutalflySwipeDamage(AntarchyMobsConfig.brutalflySwipeDamage());
@@ -286,6 +300,9 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setManticoreAttackDamage(AntarchyMobsConfig.manticoreAttackDamage());
         AntarchySettings.setManticoreStingPoisonTicks(AntarchyMobsConfig.manticoreStingPoisonTicks());
         AntarchySettings.setQueenManticoreCap(AntarchyMobsConfig.queenManticoreCap());
+        AntarchySettings.setQueenManticoreSummonCooldownTicks(AntarchyMobsConfig.queenManticoreSummonCooldownTicks());
+        AntarchySettings.setQueenManticoreSummonCount(AntarchyMobsConfig.queenManticoreSummonCount());
+        AntarchySettings.setQueenManticoreSummonRange(AntarchyMobsConfig.queenManticoreSummonRange());
         AntarchySettings.setJerryInfantHealth(AntarchyMobsConfig.jerryInfantHealth());
         AntarchySettings.setJerryInfantAttackDamage(AntarchyMobsConfig.jerryInfantAttackDamage());
         AntarchySettings.setJerryMatureHealth(AntarchyMobsConfig.jerryMatureHealth());

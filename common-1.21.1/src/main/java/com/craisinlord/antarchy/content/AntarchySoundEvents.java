@@ -186,6 +186,14 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> QUEEN_HURT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> QUEEN_DEATH = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> QUEEN_BITE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_ROAR = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_BEAM_SHOOT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_FIREBALL_SHOOT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_DECREE_CAST = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_BEAM_SHOOT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_BEAM_START = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_BEAM_LOOP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_BEAM_END = (Supplier<SoundEvent>) UNBOUND;
 
     private AntarchySoundEvents() {
     }
@@ -367,7 +375,15 @@ public final class AntarchySoundEvents {
             Supplier<SoundEvent> queenIdle,
             Supplier<SoundEvent> queenHurt,
             Supplier<SoundEvent> queenDeath,
-            Supplier<SoundEvent> queenBite
+            Supplier<SoundEvent> queenBite,
+            Supplier<SoundEvent> queenRoar,
+            Supplier<SoundEvent> kingBeamShoot,
+            Supplier<SoundEvent> kingFireballShoot,
+            Supplier<SoundEvent> kingDecreeCast,
+            Supplier<SoundEvent> queenBeamShoot,
+            Supplier<SoundEvent> queenBeamStart,
+            Supplier<SoundEvent> queenBeamLoop,
+            Supplier<SoundEvent> queenBeamEnd
     ) {
         SQUIDZOOKA_FIRE = squidzookaFire;
         SHRINK_RAY_CHARGE = shrinkRayCharge;
@@ -546,5 +562,13 @@ public final class AntarchySoundEvents {
         QUEEN_HURT = queenHurt;
         QUEEN_DEATH = queenDeath;
         QUEEN_BITE = queenBite;
+        QUEEN_ROAR = queenRoar;
+        KING_BEAM_SHOOT = kingBeamShoot;
+        KING_FIREBALL_SHOOT = kingFireballShoot;
+        KING_DECREE_CAST = kingDecreeCast;
+        QUEEN_BEAM_SHOOT = queenBeamShoot;
+        QUEEN_BEAM_START = queenBeamStart;
+        QUEEN_BEAM_LOOP = queenBeamLoop;
+        QUEEN_BEAM_END = queenBeamEnd;
     }
 }

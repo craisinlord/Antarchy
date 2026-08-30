@@ -313,7 +313,15 @@ public final class AntarchyFabricContent {
                 AntarchyFabricSounds.QUEEN_IDLE,
                 AntarchyFabricSounds.QUEEN_HURT,
                 AntarchyFabricSounds.QUEEN_DEATH,
-                AntarchyFabricSounds.QUEEN_BITE
+                AntarchyFabricSounds.QUEEN_BITE,
+                AntarchyFabricSounds.QUEEN_ROAR,
+                AntarchyFabricSounds.KING_BEAM_SHOOT,
+                AntarchyFabricSounds.KING_FIREBALL_SHOOT,
+                AntarchyFabricSounds.KING_DECREE_CAST,
+                AntarchyFabricSounds.QUEEN_BEAM_SHOOT,
+                AntarchyFabricSounds.QUEEN_BEAM_START,
+                AntarchyFabricSounds.QUEEN_BEAM_LOOP,
+                AntarchyFabricSounds.QUEEN_BEAM_END
         );
 
         AntarchyObjects.setOctopusBomb(AntarchyFabricEntities.OCTOPUS_BOMB);

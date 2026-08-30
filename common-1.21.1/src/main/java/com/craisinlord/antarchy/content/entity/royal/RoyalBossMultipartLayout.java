@@ -9,11 +9,11 @@ public final class RoyalBossMultipartLayout implements MultipartLayout {
     public static final MultipartPartDefinition BODY = new MultipartPartDefinition(
             "body", 20.0F, 24.0F, 1.00F, 0.0D, 3.0D, 0.0D, true);
     public static final MultipartPartDefinition LEFT_HEAD = new MultipartPartDefinition(
-            "left_head", 8.0F, 8.0F, 1.30F, 12.0D, 20.0D, -7.0D, true);
+            "left_head", 4.0F, 4.0F, 1.30F, 12.0D, 20.0D, -7.0D, true);
     public static final MultipartPartDefinition CENTER_HEAD = new MultipartPartDefinition(
-            "center_head", 9.0F, 9.0F, 1.20F, 13.0D, 22.0D, 0.0D, true);
+            "center_head", 4.5F, 4.5F, 1.20F, 13.0D, 22.0D, 0.0D, true);
     public static final MultipartPartDefinition RIGHT_HEAD = new MultipartPartDefinition(
-            "right_head", 8.0F, 8.0F, 1.30F, 12.0D, 20.0D, 7.0D, true);
+            "right_head", 4.0F, 4.0F, 1.30F, 12.0D, 20.0D, 7.0D, true);
     public static final MultipartPartDefinition LEFT_WING = new MultipartPartDefinition(
             "left_wing", 14.0F, 16.0F, 0.85F, -2.0D, 14.0D, -13.0D, true);
     public static final MultipartPartDefinition RIGHT_WING = new MultipartPartDefinition(

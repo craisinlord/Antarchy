@@ -1807,7 +1807,7 @@ public final class AntarchyFabricItems {
             () -> new DeferredSpawnEggItem(AntarchyFabricEntities.LURKING_TERROR, 0x2D5A1B, 0x8B0000, new Item.Properties()));
 
     public static final DeferredItem<DeferredSpawnEggItem> MANTICORE_SPAWN_EGG = ITEMS.register("manticore_spawn_egg",
-            () -> new DeferredSpawnEggItem(AntarchyFabricEntities.MANTICORE, 0x8A3B1E, 0x2B1B12, new Item.Properties()));
+            () -> new DeferredSpawnEggItem(AntarchyFabricEntities.MANTICORE, 0xA3AEE9, 0x956570, new Item.Properties()));
 
 
     public static final DeferredItem<DeferredSpawnEggItem> HERCULES_BEETLE_SPAWN_EGG = ITEMS.register("hercules_beetle_spawn_egg",

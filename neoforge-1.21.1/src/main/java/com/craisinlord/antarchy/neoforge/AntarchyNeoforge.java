@@ -208,7 +208,15 @@ public class AntarchyNeoforge {
                 AntarchyNeoforgeSounds.QUEEN_IDLE,
                 AntarchyNeoforgeSounds.QUEEN_HURT,
                 AntarchyNeoforgeSounds.QUEEN_DEATH,
-                AntarchyNeoforgeSounds.QUEEN_BITE
+                AntarchyNeoforgeSounds.QUEEN_BITE,
+                AntarchyNeoforgeSounds.QUEEN_ROAR,
+                AntarchyNeoforgeSounds.KING_BEAM_SHOOT,
+                AntarchyNeoforgeSounds.KING_FIREBALL_SHOOT,
+                AntarchyNeoforgeSounds.KING_DECREE_CAST,
+                AntarchyNeoforgeSounds.QUEEN_BEAM_SHOOT,
+                AntarchyNeoforgeSounds.QUEEN_BEAM_START,
+                AntarchyNeoforgeSounds.QUEEN_BEAM_LOOP,
+                AntarchyNeoforgeSounds.QUEEN_BEAM_END
         );
         bindCommonObjects();
         ScorpionWhipTetherSync.setSink((player, targetId) -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(

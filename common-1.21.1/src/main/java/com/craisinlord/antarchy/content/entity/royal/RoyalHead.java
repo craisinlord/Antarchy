@@ -94,6 +94,10 @@ public final class RoyalHead {
         return this.beamActive;
     }
 
+    public boolean shooting() {
+        return this.shootTicks > 0;
+    }
+
     public boolean tickBiteHit() {
         if (this.biteTicks <= 0) {
             return false;

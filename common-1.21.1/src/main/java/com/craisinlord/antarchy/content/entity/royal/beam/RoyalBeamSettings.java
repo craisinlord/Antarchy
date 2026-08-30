@@ -4,6 +4,8 @@ public record RoyalBeamSettings(
         double range,
         double targetTracking,
         double pathStep,
+        int durationTicks,
+        int cooldownTicks,
         float pathDamageRadius,
         float impactDamageRadius,
         float damage,
@@ -24,6 +26,8 @@ public record RoyalBeamSettings(
                 100.0D,
                 0.1D,
                 7.5D,
+                30,
+                90,
                 6.0F,
                 6.0F,
                 damage,
@@ -45,6 +49,8 @@ public record RoyalBeamSettings(
         range = Math.max(1.0D, range);
         targetTracking = Math.clamp(targetTracking, 0.0D, 1.0D);
         pathStep = Math.max(1.0D, pathStep);
+        durationTicks = Math.max(1, durationTicks);
+        cooldownTicks = Math.max(1, cooldownTicks);
         pathDamageRadius = Math.max(0.0F, pathDamageRadius);
         impactDamageRadius = Math.max(0.0F, impactDamageRadius);
         damage = Math.max(0.0F, damage);
