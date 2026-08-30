@@ -20,6 +20,8 @@ import com.craisinlord.antarchy.content.portal.PermanentPortalManager;
 import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.CaterpillarCommand;
 import com.craisinlord.antarchy.content.command.GravityCommand;
+import com.craisinlord.antarchy.content.time.TimeDilationCommand;
+import com.craisinlord.antarchy.content.time.TimeDilationManager;
 import com.craisinlord.antarchy.content.item.MinersDreamExcavationManager;
 import com.craisinlord.antarchy.content.item.WormHookTetherManager;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
@@ -67,6 +69,7 @@ public final class AntarchyFabricEvents {
             CavarynCommand.register(dispatcher);
             GravityCommand.register(dispatcher);
             CaterpillarCommand.register(dispatcher);
+            TimeDilationCommand.register(dispatcher);
         });
 
         DispenserBlock.registerBehavior(AntarchyFabricItems.SQUIDZOOKA.get(), new SquidzookaDispenseBehavior());
@@ -167,6 +170,7 @@ public final class AntarchyFabricEvents {
                     WormHookTetherManager.tick(player);
                 }
             }
+            TimeDilationManager.tickServer(server);
             invertedPlayers.retainAll(activeThisTick);
         });
     }

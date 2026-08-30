@@ -519,7 +519,8 @@ public final class AntarchyFabricItems {
             () -> new BluestoneDustItem(AntarchyFabricBlocks.BLUESTONE_WIRE.get(), new Item.Properties()));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BLUESTONE_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BLUESTONE_ORE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BLUESTONE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BLUESTONE_BLOCK);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> VORTEX_LENS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.VORTEX_LENS);
+    public static final DeferredItem<VortexLensBlockItem> VORTEX_LENS_ITEM = ITEMS.register("vortex_lens",
+            () -> new VortexLensBlockItem(AntarchyFabricBlocks.VORTEX_LENS.get(), new Item.Properties()));
     public static final DeferredItem<CeilingPlacementTooltipBlockItem> BLUESTONE_REPEATER_ITEM = ITEMS.register("bluestone_repeater",
             () -> new CeilingPlacementTooltipBlockItem(AntarchyFabricBlocks.BLUESTONE_REPEATER.get(), new Item.Properties()));
     public static final DeferredItem<CeilingPlacementTooltipBlockItem> BLUESTONE_COMPARATOR_ITEM = ITEMS.register("bluestone_comparator",
@@ -1629,6 +1630,18 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<DeferredSpawnEggItem> BRUTALFLY_SPAWN_EGG = ITEMS.register("brutalfly_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyFabricEntities.BRUTALFLY, 0x4A2214, 0xFF8A1D, new Item.Properties().rarity(Rarity.EPIC)));
 
+    public static final DeferredItem<DeferredSpawnEggItem> KING_SPAWN_EGG = ITEMS.register("king_spawn_egg",
+            () -> new DeferredSpawnEggItem(AntarchyFabricEntities.KING, 0xFFFFFF, 0xD4AF37, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+
+    public static final DeferredItem<DeferredSpawnEggItem> QUEEN_SPAWN_EGG = ITEMS.register("queen_spawn_egg",
+            () -> new DeferredSpawnEggItem(AntarchyFabricEntities.QUEEN, 0x080608, 0xB11226, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+
+    public static final DeferredItem<DeferredSpawnEggItem> PRINCE_SPAWN_EGG = ITEMS.register("prince_spawn_egg",
+            () -> new DeferredSpawnEggItem(AntarchyFabricEntities.PRINCE, 0xFFFFFF, 0xD4AF37, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+
+    public static final DeferredItem<DeferredSpawnEggItem> PRINCESS_SPAWN_EGG = ITEMS.register("princess_spawn_egg",
+            () -> new DeferredSpawnEggItem(AntarchyFabricEntities.PRINCESS, 0x3B0A45, 0xB11226, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+
 
     public static final DeferredItem<DeferredSpawnEggItem> RED_ANT_SPAWN_EGG = ITEMS.register("red_ant_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyFabricEntities.RED_ANT, 0xA31818, 0x2B0909, new Item.Properties()));
@@ -1792,6 +1805,9 @@ public final class AntarchyFabricItems {
 
     public static final DeferredItem<DeferredSpawnEggItem> LURKING_TERROR_SPAWN_EGG = ITEMS.register("lurking_terror_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyFabricEntities.LURKING_TERROR, 0x2D5A1B, 0x8B0000, new Item.Properties()));
+
+    public static final DeferredItem<DeferredSpawnEggItem> MANTICORE_SPAWN_EGG = ITEMS.register("manticore_spawn_egg",
+            () -> new DeferredSpawnEggItem(AntarchyFabricEntities.MANTICORE, 0x8A3B1E, 0x2B1B12, new Item.Properties()));
 
 
     public static final DeferredItem<DeferredSpawnEggItem> HERCULES_BEETLE_SPAWN_EGG = ITEMS.register("hercules_beetle_spawn_egg",

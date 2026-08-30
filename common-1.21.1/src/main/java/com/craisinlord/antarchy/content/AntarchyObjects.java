@@ -32,6 +32,7 @@ import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.vortex.VortexChargeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
 import com.craisinlord.antarchy.content.entity.vortex.WindVortexEntity;
+import com.craisinlord.antarchy.content.time.TimeDilationFieldEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareBiteEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmarePortalEntity;
@@ -81,6 +82,11 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<DimensionalTearEntity>> DIMENSIONAL_TEAR = (Supplier<EntityType<DimensionalTearEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<Block> DIMENSIONAL_TEAR_MARKER = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.DimensionalTearMarkerBlockEntity>> DIMENSIONAL_TEAR_MARKER_BLOCK_ENTITY =
+            (Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.DimensionalTearMarkerBlockEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<EntityType<NightmareBiteEntity>> NIGHTMARE_BITE = (Supplier<EntityType<NightmareBiteEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<LucidEntity>> LUCID = (Supplier<EntityType<LucidEntity>>) UNBOUND;
@@ -90,6 +96,8 @@ public final class AntarchyObjects {
     public static Supplier<EntityType<WindVortexEntity>> WIND_VORTEX = (Supplier<EntityType<WindVortexEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<VortexChargeProjectileEntity>> VORTEX_CHARGE_PROJECTILE = (Supplier<EntityType<VortexChargeProjectileEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<TimeDilationFieldEntity>> TIME_DILATION_FIELD = (Supplier<EntityType<TimeDilationFieldEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> VORTEX_LENS = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -129,6 +137,8 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<LurkingTerrorEntity>> LURKING_TERROR = (Supplier<EntityType<LurkingTerrorEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.ManticoreEntity>> MANTICORE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.ManticoreEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<EntityType<StinkBugEntity>> STINK_BUG = (Supplier<EntityType<StinkBugEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.RollyPollyEntity>> ROLLY_POLLY = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.RollyPollyEntity>>) UNBOUND;
@@ -144,6 +154,10 @@ public final class AntarchyObjects {
     public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.PrincessEntity>> PRINCESS = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.PrincessEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBoltEntity>> ROYAL_BOLT = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBoltEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.KingEntity>> KING = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.KingEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.QueenEntity>> QUEEN = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.QueenEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> PRINCE_EGG = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -625,6 +639,16 @@ public final class AntarchyObjects {
         DIMENSIONAL_TEAR = supplier;
     }
 
+    public static void setDimensionalTearMarker(Supplier<Block> supplier) {
+        DIMENSIONAL_TEAR_MARKER = supplier;
+    }
+
+    public static void setDimensionalTearMarkerBlockEntity(
+            Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.DimensionalTearMarkerBlockEntity>> supplier
+    ) {
+        DIMENSIONAL_TEAR_MARKER_BLOCK_ENTITY = supplier;
+    }
+
     public static void setNightmare(Supplier<EntityType<NightmareEntity>> supplier) {
         NIGHTMARE = supplier;
     }
@@ -647,6 +671,10 @@ public final class AntarchyObjects {
 
     public static void setVortexChargeProjectile(Supplier<EntityType<VortexChargeProjectileEntity>> supplier) {
         VORTEX_CHARGE_PROJECTILE = supplier;
+    }
+
+    public static void setTimeDilationField(Supplier<EntityType<TimeDilationFieldEntity>> supplier) {
+        TIME_DILATION_FIELD = supplier;
     }
 
     public static void setVortexLens(Supplier<Block> supplier) {
@@ -687,6 +715,18 @@ public final class AntarchyObjects {
 
     public static void setRoyalBolt(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBoltEntity>> supplier) {
         ROYAL_BOLT = supplier;
+    }
+
+    public static void setKing(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.KingEntity>> supplier) {
+        KING = supplier;
+    }
+
+    public static void setManticore(Supplier<EntityType<com.craisinlord.antarchy.content.entity.ManticoreEntity>> supplier) {
+        MANTICORE = supplier;
+    }
+
+    public static void setQueen(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.QueenEntity>> supplier) {
+        QUEEN = supplier;
     }
 
     public static void setPrinceEgg(Supplier<Block> supplier) {

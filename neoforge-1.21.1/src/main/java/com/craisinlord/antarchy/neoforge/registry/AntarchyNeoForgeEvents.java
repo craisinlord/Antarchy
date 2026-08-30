@@ -30,6 +30,7 @@ import com.craisinlord.antarchy.content.item.ultimate.UltimateGearHelper;
 import com.craisinlord.antarchy.content.movement.DreamSandLowGravityAccess;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.portal.PermanentPortalManager;
+import com.craisinlord.antarchy.content.time.TimeDilationManager;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync;
 import com.craisinlord.antarchy.neoforge.AntarchyNeoForgeFluidTypes;
@@ -128,6 +129,7 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassWardRemoved);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassWardExpired);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickBloodglassRecharge);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickTimeDilation);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassPlayerDeath);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassRespawn);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassLogin);
@@ -224,6 +226,10 @@ public final class AntarchyNeoForgeEvents {
         for (ServerLevel level : event.getServer().getAllLevels()) {
             ThoraxisUndersideManager.tick(level);
         }
+    }
+
+    static void tickTimeDilation(ServerTickEvent.Post event) {
+        TimeDilationManager.tickServer(event.getServer());
     }
 
     private static int badOmenLevel(Player player) {
@@ -1331,6 +1337,7 @@ public final class AntarchyNeoForgeEvents {
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.RPO_LAUNCHER.get(), new RpoLauncherDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.WATER_CANNON.get(), new WaterCannonDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.VORTEX_CHARGE.get(), new com.craisinlord.antarchy.content.dispenser.VortexChargeDispenseBehavior());
+            DispenserBlock.registerBehavior(AntarchyNeoforgeItems.EYE_OF_THE_STORM.get(), new com.craisinlord.antarchy.content.dispenser.EyeOfTheStormDispenseBehavior());
             AntimetalMinecartDispenseBehavior antimetalMinecartDispenseBehavior = new AntimetalMinecartDispenseBehavior();
             DispenserBlock.registerBehavior(Items.MINECART, antimetalMinecartDispenseBehavior);
             DispenserBlock.registerBehavior(Items.CHEST_MINECART, antimetalMinecartDispenseBehavior);

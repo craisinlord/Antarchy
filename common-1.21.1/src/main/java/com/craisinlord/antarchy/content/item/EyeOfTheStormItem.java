@@ -23,7 +23,9 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -45,8 +47,7 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
     private static final String IDLE_CONTROLLER = "idle_controller";
     private static final String IDLE_ANIMATION = "spinning_idle";
     private static final Map<UUID, Long> LAST_UPDRAFT_TICK = new ConcurrentHashMap<>();
-    private static final Map<UUID, Long> LAST_SURGE_TICK = new ConcurrentHashMap<>();
-    private static final float SURGE_PROJECTILE_SPEED = 0.9F;
+    private static final float SURGE_PROJECTILE_SPEED = 0.65F;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
@@ -107,22 +108,25 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
             return;
         }
 
-        long now = level.getGameTime();
-        Long last = LAST_SURGE_TICK.get(player.getUUID());
-        if (last != null && now - last < AntarchySettings.eyeOfTheStormSurgeCooldownTicks()) {
+        Vec3 look = player.getViewVector(1.0F);
+        launchStormVortex(level, player.getEyePosition().add(look), look, player);
+
+        player.awardStat(Stats.ITEM_USED.get(this));
+        stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+    }
+
+    public static void launchStormVortex(ServerLevel level, Vec3 origin, Vec3 direction, @Nullable LivingEntity owner) {
+        if (!AntarchySettings.eyeOfTheStormEnabled()) {
             return;
         }
-        LAST_SURGE_TICK.put(player.getUUID(), now);
-
-        Vec3 look = player.getViewVector(1.0F);
-        Vec3 spawn = player.getEyePosition().add(look);
+        Vec3 dir = direction.lengthSqr() < 1.0E-6D ? new Vec3(0.0D, 0.0D, 1.0D) : direction.normalize();
 
         WindVortexEntity vortex = WindVortexEntity.create(
                 level,
                 AntarchyObjects.WIND_VORTEX.get(),
-                spawn,
+                origin,
                 Vec3.ZERO,
-                player,
+                owner,
                 true
         );
         vortex.setMode(WindVortexEntity.VortexMode.UPWARD);
@@ -131,14 +135,12 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
         vortex.setVortexDurationTicks(AntarchySettings.eyeOfTheStormSurgeDurationTicks());
         vortex.setVortexStrengths(AntarchySettings.eyeOfTheStormSurgePullStrength(), AntarchySettings.eyeOfTheStormSurgeReturnStrength());
         vortex.setDamageOverride(AntarchySettings.eyeOfTheStormSurgeDamage());
-        vortex.setTravel(look.scale(SURGE_PROJECTILE_SPEED));
+        vortex.setTravel(dir.scale(SURGE_PROJECTILE_SPEED));
+        vortex.setHoming(true);
         level.addFreshEntity(vortex);
 
-        level.playSound(null, spawn.x, spawn.y, spawn.z,
+        level.playSound(null, origin.x, origin.y, origin.z,
                 SoundEvents.BREEZE_WIND_CHARGE_BURST, SoundSource.PLAYERS, 1.0F, 0.8F);
-
-        player.awardStat(Stats.ITEM_USED.get(this));
-        stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
     }
 
     @Override
@@ -148,8 +150,8 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.translatable("tooltip.antarchy.eye_of_the_storm.updraft").withStyle(ChatFormatting.AQUA));
-        tooltipComponents.add(Component.translatable("tooltip.antarchy.eye_of_the_storm.surge").withStyle(ChatFormatting.AQUA));
+        tooltipComponents.add(Component.translatable("tooltip.antarchy.eye_of_the_storm.updraft").withStyle(ChatFormatting.DARK_AQUA));
+        tooltipComponents.add(Component.translatable("tooltip.antarchy.eye_of_the_storm.surge").withStyle(ChatFormatting.DARK_AQUA));
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 

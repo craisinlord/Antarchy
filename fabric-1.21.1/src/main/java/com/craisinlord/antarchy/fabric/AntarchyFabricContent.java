@@ -125,6 +125,7 @@ public final class AntarchyFabricContent {
         AntarchyFabricMisc.RECIPE_SERIALIZERS.register();
         AntarchyFabricCreativeModeTabs.CREATIVE_MODE_TABS.register();
         DispenserBlock.registerBehavior(AntarchyFabricItems.VORTEX_CHARGE.get(), new com.craisinlord.antarchy.content.dispenser.VortexChargeDispenseBehavior());
+        DispenserBlock.registerBehavior(AntarchyFabricItems.EYE_OF_THE_STORM.get(), new com.craisinlord.antarchy.content.dispenser.EyeOfTheStormDispenseBehavior());
 
         PermanentPortalType.bindBlocks(
                 () -> AntarchyFabricBlocks.MOSSY_OURANWOOD_WOOD.get(),
@@ -304,7 +305,15 @@ public final class AntarchyFabricContent {
                 AntarchyFabricSounds.BLOOD_CRYSTAL_KATANA_DASH,
                 AntarchyFabricSounds.BLOOD_CRYSTAL_ARMOR_EQUIP,
                 AntarchyFabricSounds.BLOODGLASS_WARD_HEART_BREAK,
-                AntarchyFabricSounds.BLOODGLASS_WARD_HEART_REGEN
+                AntarchyFabricSounds.BLOODGLASS_WARD_HEART_REGEN,
+                AntarchyFabricSounds.KING_IDLE,
+                AntarchyFabricSounds.KING_HURT,
+                AntarchyFabricSounds.KING_DEATH,
+                AntarchyFabricSounds.KING_BITE,
+                AntarchyFabricSounds.QUEEN_IDLE,
+                AntarchyFabricSounds.QUEEN_HURT,
+                AntarchyFabricSounds.QUEEN_DEATH,
+                AntarchyFabricSounds.QUEEN_BITE
         );
 
         AntarchyObjects.setOctopusBomb(AntarchyFabricEntities.OCTOPUS_BOMB);
@@ -316,15 +325,21 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setLucid(AntarchyFabricEntities.LUCID);
         AntarchyObjects.setVortex(AntarchyFabricEntities.VORTEX);
         AntarchyObjects.setWindVortex(() -> AntarchyFabricEntities.WIND_VORTEX.get());
+        AntarchyObjects.setTimeDilationField(() -> AntarchyFabricEntities.TIME_DILATION_FIELD.get());
         AntarchyObjects.setVortexChargeProjectile(() -> AntarchyFabricEntities.VORTEX_CHARGE_PROJECTILE.get());
         AntarchyObjects.setPrince(() -> AntarchyFabricEntities.PRINCE.get());
         AntarchyObjects.setPrincess(() -> AntarchyFabricEntities.PRINCESS.get());
+        AntarchyObjects.setKing(() -> AntarchyFabricEntities.KING.get());
+        AntarchyObjects.setQueen(() -> AntarchyFabricEntities.QUEEN.get());
+        AntarchyObjects.setManticore(() -> AntarchyFabricEntities.MANTICORE.get());
         AntarchyObjects.setRoyalBolt(() -> AntarchyFabricEntities.ROYAL_BOLT.get());
         AntarchyObjects.setPrinceEgg(() -> AntarchyFabricBlocks.PRINCE_EGG.get());
         AntarchyObjects.setPrincessEgg(() -> AntarchyFabricBlocks.PRINCESS_EGG.get());
         AntarchyObjects.setRoyalEggBlockEntity(() -> AntarchyFabricBlocks.ROYAL_EGG_BLOCK_ENTITY.get());
         AntarchyObjects.setVortexLens(() -> AntarchyFabricBlocks.VORTEX_LENS.get());
         AntarchyObjects.setVortexLensBlockEntity(() -> AntarchyFabricBlocks.VORTEX_LENS_BLOCK_ENTITY.get());
+        AntarchyObjects.setDimensionalTearMarker(() -> AntarchyFabricBlocks.DIMENSIONAL_TEAR_MARKER.get());
+        AntarchyObjects.setDimensionalTearMarkerBlockEntity(() -> AntarchyFabricBlocks.DIMENSIONAL_TEAR_MARKER_BLOCK_ENTITY.get());
         AntarchyObjects.setKrakensGraspTrident(AntarchyFabricEntities.KRAKENS_GRASP_TRIDENT);
         AntarchyObjects.setLotus(() -> AntarchyFabricBlocks.LOTUS.get());
         AntarchyObjects.setKrakenTentacle(() -> AntarchyFabricItems.KRAKEN_TENTACLE.get());
@@ -490,6 +505,9 @@ public final class AntarchyFabricContent {
         TigerEyeCamouflageSync.setSyncSelfAndTracking(AntarchyFabricNetworking::syncTigerEyeCamouflage);
         BloodCrystalKatanaItem.setTrailCallback(AntarchyFabricNetworking::syncKatanaTrail);
         com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.setSyncDispatcher(AntarchyFabricNetworking::syncGravityEntity);
+        com.craisinlord.antarchy.content.time.TimeDilationApi.setSyncDispatcher(
+                com.craisinlord.antarchy.fabric.network.AntarchyFabricTimeDilationNetworking::syncRate
+        );
         AntarchyFabricEvents.register();
 
         if (isSupportedInfinityLoaded()) {

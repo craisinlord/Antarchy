@@ -1,6 +1,7 @@
 {
 	"format_version": "1.21.11",
 	"credit": "Made with Blockbench",
+	"render_type": "translucent",
 	"texture_size": [64, 64],
 	"textures": {
 		"0": "antarchy:block/vortex_lens/vortex_lens_off",

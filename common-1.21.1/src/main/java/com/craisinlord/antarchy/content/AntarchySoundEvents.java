@@ -178,6 +178,14 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> BLOOD_CRYSTAL_ARMOR_EQUIP = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> BLOODGLASS_WARD_HEART_BREAK = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> BLOODGLASS_WARD_HEART_REGEN = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_IDLE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_HURT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_DEATH = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_BITE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_IDLE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_HURT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_DEATH = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_BITE = (Supplier<SoundEvent>) UNBOUND;
 
     private AntarchySoundEvents() {
     }
@@ -351,7 +359,15 @@ public final class AntarchySoundEvents {
             Supplier<SoundEvent> bloodCrystalKatanaDash,
             Supplier<SoundEvent> bloodCrystalArmorEquip,
             Supplier<SoundEvent> bloodglassWardHeartBreak,
-            Supplier<SoundEvent> bloodglassWardHeartRegen
+            Supplier<SoundEvent> bloodglassWardHeartRegen,
+            Supplier<SoundEvent> kingIdle,
+            Supplier<SoundEvent> kingHurt,
+            Supplier<SoundEvent> kingDeath,
+            Supplier<SoundEvent> kingBite,
+            Supplier<SoundEvent> queenIdle,
+            Supplier<SoundEvent> queenHurt,
+            Supplier<SoundEvent> queenDeath,
+            Supplier<SoundEvent> queenBite
     ) {
         SQUIDZOOKA_FIRE = squidzookaFire;
         SHRINK_RAY_CHARGE = shrinkRayCharge;
@@ -522,5 +538,13 @@ public final class AntarchySoundEvents {
         BLOOD_CRYSTAL_ARMOR_EQUIP = bloodCrystalArmorEquip;
         BLOODGLASS_WARD_HEART_BREAK = bloodglassWardHeartBreak;
         BLOODGLASS_WARD_HEART_REGEN = bloodglassWardHeartRegen;
+        KING_IDLE = kingIdle;
+        KING_HURT = kingHurt;
+        KING_DEATH = kingDeath;
+        KING_BITE = kingBite;
+        QUEEN_IDLE = queenIdle;
+        QUEEN_HURT = queenHurt;
+        QUEEN_DEATH = queenDeath;
+        QUEEN_BITE = queenBite;
     }
 }

@@ -136,6 +136,20 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setKrakenBossBarRange(AntarchyMobsConfig.krakenBossBarRange());
         AntarchySettings.setKrakenLightningDamagePhaseOne(AntarchyMobsConfig.krakenLightningDamagePhaseOne());
 
+        AntarchySettings.setKingHealth(AntarchyMobsConfig.kingHealth());
+        AntarchySettings.setQueenHealth(AntarchyMobsConfig.queenHealth());
+        AntarchySettings.setKingAttackDamage(AntarchyMobsConfig.kingAttackDamage());
+        AntarchySettings.setQueenAttackDamage(AntarchyMobsConfig.queenAttackDamage());
+        AntarchySettings.setRoyalBossArmor(AntarchyMobsConfig.royalBossArmor());
+        AntarchySettings.setRoyalBossFollowRange(AntarchyMobsConfig.royalBossFollowRange());
+        AntarchySettings.setRoyalBossMovementSpeed(AntarchyMobsConfig.royalBossMovementSpeed());
+        AntarchySettings.setRoyalBossKnockbackResistance(AntarchyMobsConfig.royalBossKnockbackResistance());
+        AntarchySettings.setRoyalBossStepHeight(AntarchyMobsConfig.royalBossStepHeight());
+        AntarchySettings.setRoyalBossMaxSingleHitDamage(AntarchyMobsConfig.royalBossMaxSingleHitDamage());
+        AntarchySettings.setRoyalBossBiteReach(AntarchyMobsConfig.royalBossBiteReach());
+        AntarchySettings.setRoyalBossBiteDamageMultiplier(AntarchyMobsConfig.royalBossBiteDamageMultiplier());
+        AntarchySettings.setRoyalBossBiteCooldownTicks(AntarchyMobsConfig.royalBossBiteCooldownTicks());
+
         AntarchySettings.setBrutalflyHealth(AntarchyMobsConfig.brutalflyHealth());
         AntarchySettings.setBrutalflySwipeDamage(AntarchyMobsConfig.brutalflySwipeDamage());
         AntarchySettings.setBrutalflySpitDamage(AntarchyMobsConfig.brutalflySpitDamage());
@@ -268,6 +282,10 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setCreepingHorrorAttackDamage(AntarchyMobsConfig.creepingHorrorAttackDamage());
         AntarchySettings.setLurkingTerrorHealth(AntarchyMobsConfig.lurkingTerrorHealth());
         AntarchySettings.setLurkingTerrorAttackDamage(AntarchyMobsConfig.lurkingTerrorAttackDamage());
+        AntarchySettings.setManticoreHealth(AntarchyMobsConfig.manticoreHealth());
+        AntarchySettings.setManticoreAttackDamage(AntarchyMobsConfig.manticoreAttackDamage());
+        AntarchySettings.setManticoreStingPoisonTicks(AntarchyMobsConfig.manticoreStingPoisonTicks());
+        AntarchySettings.setQueenManticoreCap(AntarchyMobsConfig.queenManticoreCap());
         AntarchySettings.setJerryInfantHealth(AntarchyMobsConfig.jerryInfantHealth());
         AntarchySettings.setJerryInfantAttackDamage(AntarchyMobsConfig.jerryInfantAttackDamage());
         AntarchySettings.setJerryMatureHealth(AntarchyMobsConfig.jerryMatureHealth());

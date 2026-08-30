@@ -67,5 +67,6 @@ public final class AntarchyFabricClientNetworking {
                 context.client().execute(() -> AntarchyFabricNetworking.triggerImpactShake(payload)));
         ClientPlayNetworking.registerGlobalReceiver(HordeIntensityPayload.TYPE, (payload, context) ->
                 context.client().execute(() -> HordeClientState.update(payload.intensity())));
+        AntarchyFabricTimeDilationNetworking.registerClientReceiver();
     }
 }

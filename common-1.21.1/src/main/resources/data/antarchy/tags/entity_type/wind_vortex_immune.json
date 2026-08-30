@@ -2,6 +2,8 @@
   "replace": false,
   "values": [
     "antarchy:vortex",
-    "minecraft:breeze"
+    "minecraft:breeze",
+    "antarchy:king",
+    "antarchy:queen"
   ]
 }

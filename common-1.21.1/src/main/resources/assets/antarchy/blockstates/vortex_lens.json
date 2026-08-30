@@ -1,16 +1,33 @@
 {
   "variants": {
-    "facing=up,powered=false": { "model": "antarchy:block/vortex_lens" },
-    "facing=up,powered=true": { "model": "antarchy:block/vortex_lens_on" },
-    "facing=down,powered=false": { "model": "antarchy:block/vortex_lens", "x": 180 },
-    "facing=down,powered=true": { "model": "antarchy:block/vortex_lens_on", "x": 180 },
-    "facing=north,powered=false": { "model": "antarchy:block/vortex_lens", "x": 90 },
-    "facing=north,powered=true": { "model": "antarchy:block/vortex_lens_on", "x": 90 },
-    "facing=south,powered=false": { "model": "antarchy:block/vortex_lens", "x": 270 },
-    "facing=south,powered=true": { "model": "antarchy:block/vortex_lens_on", "x": 270 },
-    "facing=west,powered=false": { "model": "antarchy:block/vortex_lens", "x": 90, "y": 270 },
-    "facing=west,powered=true": { "model": "antarchy:block/vortex_lens_on", "x": 90, "y": 270 },
-    "facing=east,powered=false": { "model": "antarchy:block/vortex_lens", "x": 90, "y": 90 },
-    "facing=east,powered=true": { "model": "antarchy:block/vortex_lens_on", "x": 90, "y": 90 }
+    "facing=up,powered=false,pushing=false": { "model": "antarchy:block/vortex_lens" },
+    "facing=up,powered=false,pushing=true": { "model": "antarchy:block/vortex_lens" },
+    "facing=up,powered=true,pushing=false": { "model": "antarchy:block/vortex_lens_on" },
+    "facing=up,powered=true,pushing=true": { "model": "antarchy:block/vortex_lens_on_bluestone" },
+
+    "facing=down,powered=false,pushing=false": { "model": "antarchy:block/vortex_lens", "x": 180 },
+    "facing=down,powered=false,pushing=true": { "model": "antarchy:block/vortex_lens", "x": 180 },
+    "facing=down,powered=true,pushing=false": { "model": "antarchy:block/vortex_lens_on", "x": 180 },
+    "facing=down,powered=true,pushing=true": { "model": "antarchy:block/vortex_lens_on_bluestone", "x": 180 },
+
+    "facing=north,powered=false,pushing=false": { "model": "antarchy:block/vortex_lens", "x": 90 },
+    "facing=north,powered=false,pushing=true": { "model": "antarchy:block/vortex_lens", "x": 90 },
+    "facing=north,powered=true,pushing=false": { "model": "antarchy:block/vortex_lens_on", "x": 90 },
+    "facing=north,powered=true,pushing=true": { "model": "antarchy:block/vortex_lens_on_bluestone", "x": 90 },
+
+    "facing=south,powered=false,pushing=false": { "model": "antarchy:block/vortex_lens", "x": 270 },
+    "facing=south,powered=false,pushing=true": { "model": "antarchy:block/vortex_lens", "x": 270 },
+    "facing=south,powered=true,pushing=false": { "model": "antarchy:block/vortex_lens_on", "x": 270 },
+    "facing=south,powered=true,pushing=true": { "model": "antarchy:block/vortex_lens_on_bluestone", "x": 270 },
+
+    "facing=west,powered=false,pushing=false": { "model": "antarchy:block/vortex_lens", "x": 90, "y": 270 },
+    "facing=west,powered=false,pushing=true": { "model": "antarchy:block/vortex_lens", "x": 90, "y": 270 },
+    "facing=west,powered=true,pushing=false": { "model": "antarchy:block/vortex_lens_on", "x": 90, "y": 270 },
+    "facing=west,powered=true,pushing=true": { "model": "antarchy:block/vortex_lens_on_bluestone", "x": 90, "y": 270 },
+
+    "facing=east,powered=false,pushing=false": { "model": "antarchy:block/vortex_lens", "x": 90, "y": 90 },
+    "facing=east,powered=false,pushing=true": { "model": "antarchy:block/vortex_lens", "x": 90, "y": 90 },
+    "facing=east,powered=true,pushing=false": { "model": "antarchy:block/vortex_lens_on", "x": 90, "y": 90 },
+    "facing=east,powered=true,pushing=true": { "model": "antarchy:block/vortex_lens_on_bluestone", "x": 90, "y": 90 }
   }
 }

@@ -56,7 +56,14 @@
   ],
   "creature_spawn_probability": 0.08,
   "spawners": {
-    "monster": [],
+    "monster": [
+      {
+        "type": "antarchy:manticore",
+        "weight": 12,
+        "minCount": 1,
+        "maxCount": 2
+      }
+    ],
     "creature": [
       {
         "type": "antarchy:bed_bug",

@@ -206,6 +206,35 @@ public final class AntarchyNeoforgeSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> ANTIMETAL_STEP = registerSoundEvent("antimetal_step");
     public static final DeferredHolder<SoundEvent, SoundEvent> ANTIMETAL_SCAFFOLD = registerSoundEvent("antimetal_scaffold");
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> KING_IDLE = registerSoundEvent("king_idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KING_WALK = registerSoundEvent("king_walk");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KING_FLY_LOOP = registerSoundEvent("king_fly_loop");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KING_WING_FLAP = registerSoundEvent("king_wing_flap");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KING_BITE = registerSoundEvent("king_bite");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KING_STOMP = registerSoundEvent("king_stomp");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KING_ROAR = registerSoundEvent("king_roar");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KING_HURT = registerSoundEvent("king_hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KING_DEATH = registerSoundEvent("king_death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KING_BEAM_SHOOT = registerSoundEvent("king_beam_shoot");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KING_FIREBALL_SHOOT = registerSoundEvent("king_fireball_shoot");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KING_DECREE_CAST = registerSoundEvent("king_decree_cast");
+
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUEEN_IDLE = registerSoundEvent("queen_idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUEEN_WALK = registerSoundEvent("queen_walk");
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUEEN_FLY_LOOP = registerSoundEvent("queen_fly_loop");
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUEEN_WING_FLAP = registerSoundEvent("queen_wing_flap");
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUEEN_BITE = registerSoundEvent("queen_bite");
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUEEN_STOMP = registerSoundEvent("queen_stomp");
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUEEN_ROAR = registerSoundEvent("queen_roar");
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUEEN_HURT = registerSoundEvent("queen_hurt");
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUEEN_DEATH = registerSoundEvent("queen_death");
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUEEN_BEAM_SHOOT = registerSoundEvent("queen_beam_shoot");
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUEEN_BEAM_START = registerSoundEvent("queen_beam_start");
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUEEN_BEAM_LOOP = registerSoundEvent("queen_beam_loop");
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUEEN_BEAM_END = registerSoundEvent("queen_beam_end");
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUEEN_BLACK_HOLE_SHOOT = registerSoundEvent("queen_black_hole_shoot");
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUEEN_CAST_SHOOT = registerSoundEvent("queen_cast_shoot");
+
     private AntarchyNeoforgeSounds() {}
 
     public static void register(IEventBus modEventBus) {

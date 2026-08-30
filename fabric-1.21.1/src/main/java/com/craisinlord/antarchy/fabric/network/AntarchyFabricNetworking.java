@@ -84,6 +84,7 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playS2C().register(HerculesBeetleImpactShakePayload.TYPE, HerculesBeetleImpactShakePayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(ImpactShakePayload.TYPE, ImpactShakePayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(HordeIntensityPayload.TYPE, HordeIntensityPayload.STREAM_CODEC);
+        AntarchyFabricTimeDilationNetworking.registerPayloadTypes();
 
         PayloadTypeRegistry.playC2S().register(GravityGunPrimaryPayload.TYPE, GravityGunPrimaryPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(PortalGunPrimaryPayload.TYPE, PortalGunPrimaryPayload.STREAM_CODEC);

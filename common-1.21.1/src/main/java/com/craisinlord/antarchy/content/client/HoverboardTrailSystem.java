@@ -256,7 +256,24 @@ public final class HoverboardTrailSystem {
         if (color == null) {
             return DEFAULT_COLOR;
         }
-        return rgb(color.getTextureDiffuseColor());
+        return switch (color) {
+            case PURPLE -> rgb(0x00FF3C);
+            case WHITE -> rgb(0xFF1919);
+            case ORANGE -> rgb(0x33CCFF);
+            case LIGHT_BLUE -> rgb(0xFF8A00);
+            case YELLOW -> rgb(0xB026FF);
+            case PINK -> rgb(0x66E0FF);
+            case LIME -> rgb(0xFF00E6);
+            case GRAY -> rgb(0xFF9F4D);
+            case LIGHT_GRAY -> rgb(0x9BFF1A);
+            case BLUE -> rgb(0x2ED9A0);
+            case BROWN -> rgb(0x66C6FF);
+            case GREEN -> rgb(0xFF3B1F);
+            case RED -> rgb(0xFF7A00);
+            case BLACK -> rgb(0xFFFFFF);
+            case MAGENTA -> rgb(0x00E5FF);
+            case CYAN -> rgb(0xFF3DDB);
+        };
     }
 
     private static float[] rgb(int color) {

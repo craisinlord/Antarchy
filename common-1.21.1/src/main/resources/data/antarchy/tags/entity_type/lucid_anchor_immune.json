@@ -1,4 +1,7 @@
 {
   "replace": false,
-  "values": []
+  "values": [
+    "antarchy:king",
+    "antarchy:queen"
+  ]
 }

@@ -6,6 +6,7 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.*;
 import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.CritterCageBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.DimensionalTearMarkerBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.DreamCampfireBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.HushweedBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity;
@@ -111,6 +112,10 @@ public final class AntarchyNeoforgeBlocks {
             () -> new PortalGunPortalMasterBlock(AntarchyNeoforgeBlocks::portalGunPortalMasterBlockEntityType, portalProperties()));
     public static final DeferredBlock<PortalGunPortalBaseBlock> PORTAL_GUN_PORTAL_BASE = BLOCKS.register("portal_gun_portal_base",
             () -> new PortalGunPortalBaseBlock(AntarchyNeoforgeBlocks::portalGunPortalBaseBlockEntityType, portalProperties()));
+    public static final DeferredBlock<DimensionalTearMarkerBlock> DIMENSIONAL_TEAR_MARKER = BLOCKS.register("dimensional_tear_marker",
+            () -> new DimensionalTearMarkerBlock(AntarchyNeoforgeBlocks::dimensionalTearMarkerBlockEntityType,
+                    BlockBehaviour.Properties.of().noCollission().noOcclusion().noLootTable().instabreak()
+                            .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY)));
     public static final DeferredBlock<StandingSignBlock> OURANWOOD_SIGN = BLOCKS.register("ouranwood_sign",
             () -> new StandingSignBlock(AntarchyWoodTypes.OURANWOOD, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_SIGN)));
     public static final DeferredBlock<WallSignBlock> OURANWOOD_WALL_SIGN = BLOCKS.register("ouranwood_wall_sign",
@@ -187,8 +192,8 @@ public final class AntarchyNeoforgeBlocks {
             () -> new PressurePlateBlock(BlockSetType.JUNGLE, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_PRESSURE_PLATE)));
     public static final DeferredBlock<ButtonBlock> NADIR_BUTTON = BLOCKS.register("nadir_button",
             () -> new ButtonBlock(BlockSetType.JUNGLE, 30, BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_BUTTON)));
-    public static final DeferredBlock<Block> NADIR_VEIL = BLOCKS.register("nadir_veil",
-            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LEAVES).sound(SoundType.SLIME_BLOCK).noOcclusion()));
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.NadirVeilBlock> NADIR_VEIL = BLOCKS.register("nadir_veil",
+            () -> new com.craisinlord.antarchy.content.block.NadirVeilBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LEAVES).sound(SoundType.SLIME_BLOCK).noOcclusion()));
     public static final DeferredBlock<NadirSaplingBlock> NADIR_SAPLING = BLOCKS.register("nadir_sapling",
             () -> new NadirSaplingBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING).randomTicks().noCollission()));
     public static final DeferredBlock<FlowerPotBlock> POTTED_NADIR_SAPLING = BLOCKS.register("potted_nadir_sapling",
@@ -628,7 +633,7 @@ public final class AntarchyNeoforgeBlocks {
             () -> new BluestoneBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.REDSTONE_BLOCK).mapColor(MapColor.COLOR_BLUE)));
     public static final DeferredBlock<VortexLensBlock> VORTEX_LENS = BLOCKS.register("vortex_lens",
             () -> new VortexLensBlock(AntarchyNeoforgeBlocks::vortexLensBlockEntityType,
-                    BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_BLOCK).mapColor(MapColor.COLOR_GREEN).strength(3.0F, 6.0F).requiresCorrectToolForDrops()));
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_BLOCK).mapColor(MapColor.COLOR_GREEN).strength(3.0F, 6.0F).requiresCorrectToolForDrops().noOcclusion()));
     public static final DeferredBlock<BluestoneRepeaterBlock> BLUESTONE_REPEATER = BLOCKS.register("bluestone_repeater",
             () -> new BluestoneRepeaterBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.REPEATER).mapColor(MapColor.COLOR_BLUE).noCollission()));
     public static final DeferredBlock<BluestoneComparatorBlock> BLUESTONE_COMPARATOR = BLOCKS.register("bluestone_comparator",
@@ -908,6 +913,11 @@ public final class AntarchyNeoforgeBlocks {
                     (pos, state) -> new PortalGunPortalBaseBlockEntity(pos, state, AntarchyNeoforgeBlocks::portalGunPortalBaseBlockEntityType),
                     PORTAL_GUN_PORTAL_BASE.get()
             ).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DimensionalTearMarkerBlockEntity>> DIMENSIONAL_TEAR_MARKER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("dimensional_tear_marker",
+            () -> BlockEntityType.Builder.of(
+                    (pos, state) -> new DimensionalTearMarkerBlockEntity(pos, state, AntarchyNeoforgeBlocks::dimensionalTearMarkerBlockEntityType),
+                    DIMENSIONAL_TEAR_MARKER.get()
+            ).build(null));
 
     private AntarchyNeoforgeBlocks() {}
 
@@ -999,6 +1009,10 @@ public final class AntarchyNeoforgeBlocks {
 
     private static BlockEntityType<PortalGunPortalBaseBlockEntity> portalGunPortalBaseBlockEntityType() {
         return PORTAL_GUN_PORTAL_BASE_BLOCK_ENTITY.get();
+    }
+
+    private static BlockEntityType<DimensionalTearMarkerBlockEntity> dimensionalTearMarkerBlockEntityType() {
+        return DIMENSIONAL_TEAR_MARKER_BLOCK_ENTITY.get();
     }
 
 

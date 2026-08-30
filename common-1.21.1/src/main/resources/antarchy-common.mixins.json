@@ -78,7 +78,18 @@
                    "gravity.ServerPlayerGravityMixin",
                    "gravity.ThrowableProjectileGravityMixin",
                    "gravity.TrackedEntityAccessor",
-                   "multipart.EntityMultipartLifecycleMixin"
+                   "multipart.EntityMultipartLifecycleMixin",
+                   "time.EntityDeltaMovementTimeDilationMixin",
+                   "time.EntityMoveTimeDilationMixin",
+                   "time.EntityTimeDilationStateMixin",
+                   "time.LivingEntityTimeDilationMixin",
+                   "time.LookControlTimeDilationMixin",
+                   "time.MeleeAttackGoalTimeDilationMixin",
+                   "time.MobAttackTimeDilationMixin",
+                   "time.PrimedTntTimeDilationMixin",
+                   "time.ProjectileMovementTimeDilationMixin",
+                   "time.RangedAttackGoalTimeDilationMixin",
+                   "time.RangedBowAttackGoalTimeDilationMixin"
                ],
     "client":  [
                    "client.AbstractMinecartRendererMixin",
@@ -110,7 +121,10 @@
                    "gravity.client.CameraGravityMixin",
                    "gravity.client.ClientPacketListenerGravityMixin",
                    "gravity.client.EntityRenderDispatcherGravityMixin",
-                   "gravity.client.FallingBlockRendererBlockEntityMixin"
+                   "gravity.client.FallingBlockRendererBlockEntityMixin",
+                   "time.LivingEntityRendererAnimationTimeDilationMixin",
+                   "time.ParticleTimeDilationMixin",
+                   "time.SoundEngineTimeDilationMixin"
                ],
     "injectors":  {
                       "defaultRequire":  1
