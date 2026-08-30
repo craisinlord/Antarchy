@@ -1,6 +1,8 @@
 package com.craisinlord.antarchy.content.entity.royal.beam;
 
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -117,15 +119,16 @@ public final class RoyalBeamController {
         Vec3 direction = beamEnd.subtract(shootFrom).normalize();
         double distance = shootFrom.distanceTo(beamEnd);
         DamageSource damageSource = this.owner.damageSources().mobAttack(this.owner);
+        Set<Integer> damagedThisTick = new HashSet<>();
         for (double walked = settings.pathStep(); walked < Math.min(distance, settings.range()); walked += settings.pathStep()) {
             Vec3 sample = shootFrom.add(direction.scale(walked));
-            hurtEntitiesAround(sample, settings.pathDamageRadius(), settings.damage(), settings.knockback(), damageSource, settings.requireLineOfSightForDamage());
+            hurtEntitiesAround(sample, settings.pathDamageRadius(), settings.damage(), settings.knockback(), damageSource, settings.requireLineOfSightForDamage(), damagedThisTick);
             if (shouldMutateTerrain(settings, walked)) {
                 mutateTerrainAround(sample, settings.pathTerrainRadius(), settings, terrainMode);
             }
         }
 
-        hurtEntitiesAround(beamEnd, settings.impactDamageRadius(), settings.damage(), settings.knockback(), damageSource, settings.requireLineOfSightForDamage());
+        hurtEntitiesAround(beamEnd, settings.impactDamageRadius(), settings.damage(), settings.knockback(), damageSource, settings.requireLineOfSightForDamage(), damagedThisTick);
         if (shouldMutateTerrain(settings, shootFrom.distanceTo(beamEnd))) {
             mutateTerrainAround(beamEnd, settings.impactTerrainRadius(), settings, terrainMode);
         }
@@ -145,7 +148,8 @@ public final class RoyalBeamController {
             float damageAmount,
             float knockbackAmount,
             DamageSource damageSource,
-            boolean requireLineOfSight
+            boolean requireLineOfSight,
+            Set<Integer> damagedThisTick
     ) {
         if (radius <= 0.0F || damageAmount <= 0.0F) {
             return false;
@@ -163,10 +167,12 @@ public final class RoyalBeamController {
                     || this.owner.isAlliedTo(living)
                     || living.getType() == this.owner.getType()
                     || living.distanceToSqr(center) > radius * radius
+                    || damagedThisTick.contains(living.getId())
                     || requireLineOfSight && !canEntityBeHurtFrom(center, living)) {
                 continue;
             }
             if (living.hurt(damageSource, damageAmount)) {
+                damagedThisTick.add(living.getId());
                 hurtAny = true;
                 knockbackTarget(living, knockbackAmount);
             }

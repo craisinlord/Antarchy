@@ -5,6 +5,8 @@ import com.craisinlord.antarchy.content.entity.multipart.MultipartEntityOwner;
 import com.craisinlord.antarchy.content.entity.multipart.MultipartLayout;
 import com.craisinlord.antarchy.content.entity.multipart.MultipartPartDefinition;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamController;
+import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamSettings;
+import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamTerrainMode;
 import java.util.List;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -50,7 +52,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public abstract class RoyalBossEntity extends Monster implements GeoEntity, MultipartEntityOwner {
     public static final float MODEL_RENDER_SCALE = 2.0F;
     public static final float GAMEPLAY_WIDTH = 30.0F;
-    public static final float GAMEPLAY_HEIGHT = 30.0F;
+    public static final float GAMEPLAY_HEIGHT = 15.0F;
 
     public enum Phase {
         ONE(1, 1.00F),
@@ -109,6 +111,10 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             new RoyalHead(RoyalHead.Slot.CENTER),
             new RoyalHead(RoyalHead.Slot.RIGHT)
     };
+    private int beamCooldownTicks;
+    @Nullable
+    private RoyalHead activeBeamHead;
+    private int beamLoopSoundTicks;
 
     @Nullable
     private Entity[] multipartParts;
@@ -135,6 +141,22 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     protected abstract SoundEvent royalDeathSound();
 
     protected abstract SoundEvent royalBiteSound();
+
+    protected abstract SoundEvent royalBeamShootSound();
+
+    protected abstract SoundEvent royalBeamStartSound();
+
+    protected abstract SoundEvent royalBeamLoopSound();
+
+    protected abstract SoundEvent royalBeamEndSound();
+
+    protected abstract RoyalBeamSettings royalBeamSettings();
+
+    protected abstract RoyalBeamTerrainMode royalBeamTerrainMode();
+
+    protected RoyalBeamTerrainMode royalBeamTerrainMode(@Nullable RoyalHead head) {
+        return this.royalBeamTerrainMode();
+    }
 
     public static AttributeSupplier.Builder createBaseAttributes(double health, double attackDamage) {
         return Mob.createMobAttributes()
@@ -272,6 +294,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
 
         this.getLookControl().setLookAt(primaryTarget, 30.0F, 30.0F);
         this.assignHeadTargets(primaryTarget);
+        this.tickRoyalBeam(primaryTarget);
         this.steerTowardTarget(primaryTarget);
         this.tickBodyCrush();
 
@@ -302,6 +325,70 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                 activeHeadAttacks++;
             }
         }
+    }
+
+    private void tickRoyalBeam(LivingEntity primaryTarget) {
+        if (this.beamCooldownTicks > 0) {
+            this.beamCooldownTicks--;
+        }
+
+        if (this.activeBeamHead != null) {
+            LivingEntity beamTarget = this.activeBeamHead.target(this.level());
+            if (!this.activeBeamHead.shooting() || beamTarget == null || !beamTarget.isAlive()) {
+                this.stopRoyalBeam();
+            } else {
+                if (this.beamLoopSoundTicks-- <= 0) {
+                    this.beamLoopSoundTicks = 20;
+                    this.playSound(this.royalBeamLoopSound(), 2.5F, 1.0F);
+                }
+                this.beamController.tick(
+                        this.headAnchor(this.activeBeamHead),
+                        beamTarget,
+                        this.royalBeamSettings(),
+                        this.royalBeamTerrainMode(this.activeBeamHead),
+                        this::setRoyalBeamEndPosition);
+                if (!this.beamController.isFiring()) {
+                    this.stopRoyalBeam();
+                }
+                return;
+            }
+        }
+
+        if (this.beamCooldownTicks > 0) {
+            return;
+        }
+        Phase phase = this.phase();
+        for (RoyalHead head : this.heads) {
+            LivingEntity target = head.target(this.level());
+            if (!head.readyToAttack() || target == null || !this.canAttack(target)
+                    || this.headWithinBiteReach(head, target)) {
+                continue;
+            }
+            int duration = Math.max(1, this.royalBeamSettings().durationTicks());
+            int cooldown = Math.max(1, Mth.floor(this.royalBeamSettings().cooldownTicks() * phase.cooldownScale()));
+            head.startShoot(duration, cooldown);
+            head.setBeamActive(true);
+            this.activeBeamHead = head;
+            this.beamCooldownTicks = cooldown;
+            this.beamController.start(this.headAnchor(head), target.getEyePosition(), duration);
+            this.setFiringRoyalBeam(true);
+            this.triggerAnim(head.slot().controllerName(), "shoot");
+            this.beamLoopSoundTicks = 20;
+            this.playSound(this.royalBeamStartSound(), 3.0F, 1.0F);
+            this.playSound(this.royalBeamShootSound(), 3.0F, 1.0F);
+            return;
+        }
+    }
+
+    private void stopRoyalBeam() {
+        if (this.activeBeamHead != null) {
+            this.activeBeamHead.setBeamActive(false);
+        }
+        this.activeBeamHead = null;
+        this.beamController.stop();
+        this.playSound(this.royalBeamEndSound(), 2.5F, 1.0F);
+        this.setFiringRoyalBeam(false);
+        this.setRoyalBeamEndPosition(null);
     }
 
     public Phase phase() {
@@ -512,6 +599,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     public Vec3 getRoyalBeamShootFrom(float partialTicks) {
+        if (this.activeBeamHead != null) {
+            return this.headAnchor(this.activeBeamHead);
+        }
         double x = Mth.lerp(partialTicks, this.xo, this.getX());
         double y = Mth.lerp(partialTicks, this.yo, this.getY()) + this.getBbHeight() * 0.72D;
         double z = Mth.lerp(partialTicks, this.zo, this.getZ());

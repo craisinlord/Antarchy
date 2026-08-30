@@ -103,6 +103,7 @@ public class ElythiaBiomeSource extends BiomeSource {
     private final Holder<Biome> glimmeringPoolsHolder;
     private final Holder<Biome> ouranwoodForestHolder;
     private final Holder<Biome> cloudSeaHolder;
+    private final Holder<Biome> firstConfiguredHolder;
 
     public ElythiaBiomeSource(Climate.ParameterList<Holder<Biome>> parameters, int molewormCavesMaxY, int surfaceBiomeSampleY, int oceanMaxY, int seaLevel, int cloudSeaMinY) {
         this.parameters = parameters;
@@ -145,6 +146,10 @@ public class ElythiaBiomeSource extends BiomeSource {
                 .filter(h -> h.is(CLOUD_SEA))
                 .findFirst()
                 .orElse(null);
+        this.firstConfiguredHolder = parameters.values().stream()
+                .map(Pair::getSecond)
+                .findFirst()
+                .orElse(null);
     }
 
     private Climate.ParameterList<Holder<Biome>> parameters() { return this.parameters; }
@@ -178,6 +183,9 @@ public class ElythiaBiomeSource extends BiomeSource {
         }
 
         Holder<Biome> biome = this.delegate.getNoiseBiome(x, y, z, sampler);
+        if (biome == null) {
+            return resolveConfiguredFallback(x, y, z, sampler);
+        }
 
         // Defensive: cloud_sea's multi-noise parameter point is reserved far off in "offset"
         // so it shouldn't win nearest-neighbor on its own, but if it ever does for a query
@@ -196,7 +204,7 @@ public class ElythiaBiomeSource extends BiomeSource {
             if (biome.is(MOLEWORM_CAVES) || biome.is(ELYTHIA_LUSH_CAVES)) return biome;
             Holder<Biome> seaLevelBiome = this.delegate.getNoiseBiome(x, this.seaLevelQuartY, z, sampler);
             if (isOceanBiome(seaLevelBiome)) return seaLevelBiome;
-            return oceanHolder != null ? oceanHolder : seaLevelBiome;
+            return oceanHolder != null ? oceanHolder : nullToConfiguredFallback(seaLevelBiome, x, y, z, sampler);
         }
         if (y <= this.seaLevelQuartY && oceanHolder != null && !allowedBelowSeaLevel(biome)) {
             return oceanHolder;
@@ -221,17 +229,17 @@ public class ElythiaBiomeSource extends BiomeSource {
     }
 
     private static boolean allowedBelowSeaLevel(Holder<Biome> biome) {
-        return biome.is(MOLEWORM_CAVES) || biome.is(ELYTHIA_LUSH_CAVES)
-                || biome.is(ELYTHIA_OCEAN) || biome.is(ELYTHIA_CORAL_SPIKES);
+        return biome != null && (biome.is(MOLEWORM_CAVES) || biome.is(ELYTHIA_LUSH_CAVES)
+                || biome.is(ELYTHIA_OCEAN) || biome.is(ELYTHIA_CORAL_SPIKES));
     }
 
     private static boolean isOceanBiome(Holder<Biome> biome) {
-        return biome.is(ELYTHIA_OCEAN) || biome.is(ELYTHIA_CORAL_SPIKES);
+        return biome != null && (biome.is(ELYTHIA_OCEAN) || biome.is(ELYTHIA_CORAL_SPIKES));
     }
 
     private static boolean isOuranwoodBiome(Holder<Biome> biome) {
-        return biome.is(OURANWOOD_FOREST) || biome.is(SPARSE_OURANWOOD_FOREST)
-                || biome.is(FUNGAL_OURANWOOD_FOREST);
+        return biome != null && (biome.is(OURANWOOD_FOREST) || biome.is(SPARSE_OURANWOOD_FOREST)
+                || biome.is(FUNGAL_OURANWOOD_FOREST));
     }
 
     private static boolean isGlimmeringPoolsCandidate(Holder<Biome> biome, Climate.TargetPoint target, int x, int z) {
@@ -311,6 +319,7 @@ public class ElythiaBiomeSource extends BiomeSource {
                 }
             }
         }
+        result = nullToConfiguredFallback(result, x, this.surfaceBiomeSampleQuartY, z, sampler);
 
         cache.key = key;
         cache.value = result;
@@ -336,6 +345,7 @@ public class ElythiaBiomeSource extends BiomeSource {
             }
             result = resolved != null ? resolved : (defaultLandHolder != null ? defaultLandHolder : result);
         }
+        result = nullToConfiguredFallback(result, x, this.surfaceBiomeSampleQuartY, z, sampler);
 
         cache.key = key;
         cache.value = result;
@@ -344,6 +354,9 @@ public class ElythiaBiomeSource extends BiomeSource {
 
     @SafeVarargs
     private static boolean isExcluded(Holder<Biome> biome, ResourceKey<Biome>... excluded) {
+        if (biome == null) {
+            return true;
+        }
         for (ResourceKey<Biome> key : excluded) {
             if (biome.is(key)) return true;
         }
@@ -351,9 +364,28 @@ public class ElythiaBiomeSource extends BiomeSource {
     }
 
     private static boolean isOceanOrCave(Holder<Biome> biome) {
-        return isOceanBiome(biome) || biome.is(ELYTHIA_BEACH)
+        return biome == null || isOceanBiome(biome) || biome.is(ELYTHIA_BEACH)
                 || biome.is(MOLEWORM_CAVES) || biome.is(ELYTHIA_LUSH_CAVES)
                 || biome.is(GLIMMERING_POOLS) || biome.is(CLOUD_SEA);
+    }
+
+    private Holder<Biome> nullToConfiguredFallback(Holder<Biome> biome, int x, int y, int z, Climate.Sampler sampler) {
+        return biome != null ? biome : resolveConfiguredFallback(x, y, z, sampler);
+    }
+
+    private Holder<Biome> resolveConfiguredFallback(int x, int y, int z, Climate.Sampler sampler) {
+        if (y <= this.oceanMaxQuartY && this.oceanHolder != null) {
+            Climate.TargetPoint target = sampler.sample(x, this.seaLevelQuartY, z);
+            if (target.continentalness() < OCEAN_CONTINENTALNESS_THRESHOLD) {
+                return this.oceanHolder;
+            }
+        }
+        if (this.defaultLandHolder != null) return this.defaultLandHolder;
+        if (this.ouranwoodForestHolder != null) return this.ouranwoodForestHolder;
+        if (this.glimmeringPoolsHolder != null) return this.glimmeringPoolsHolder;
+        if (this.oceanHolder != null) return this.oceanHolder;
+        if (this.cloudSeaHolder != null) return this.cloudSeaHolder;
+        return this.firstConfiguredHolder;
     }
 
     @Override

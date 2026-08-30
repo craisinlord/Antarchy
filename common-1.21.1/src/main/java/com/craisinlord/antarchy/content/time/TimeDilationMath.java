@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.time;
 public final class TimeDilationMath {
     public static final double MIN_RATE = 0.05D;
     public static final double NORMAL_RATE = 1.0D;
+    public static final int FIELD_TRANSITION_TICKS = 20;
     private static final double GAUSSIAN_EDGE_EXPONENT = -4.5D;
 
     private TimeDilationMath() {
@@ -30,5 +31,26 @@ public final class TimeDilationMath {
             return 0.0D;
         }
         return Math.pow(clampedRate, clampedFalloff);
+    }
+
+    public static double smoothStep(double value) {
+        double clamped = Math.max(0.0D, Math.min(1.0D, value));
+        return clamped * clamped * (3.0D - 2.0D * clamped);
+    }
+
+    public static double fieldStrength(int age, int durationTicks) {
+        double fadeIn = smoothStep((double) age / FIELD_TRANSITION_TICKS);
+        if (durationTicks < 0) {
+            return fadeIn;
+        }
+
+        double remaining = durationTicks - age;
+        double fadeOut = smoothStep(remaining / FIELD_TRANSITION_TICKS);
+        return Math.min(fadeIn, fadeOut);
+    }
+
+    public static double effectiveFieldRate(double fieldRate, int age, int durationTicks) {
+        double strength = fieldStrength(age, durationTicks);
+        return NORMAL_RATE + (clampRate(fieldRate) - NORMAL_RATE) * strength;
     }
 }

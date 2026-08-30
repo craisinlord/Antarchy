@@ -11,7 +11,7 @@
         "enhanced_terrain_adaptation": {
           "type": "integrated_api:custom",
           "carves": true,
-          "beards": false,
+          "beards": true,
           "kernel_size": 35,
           "kernel_distance": 35
         },

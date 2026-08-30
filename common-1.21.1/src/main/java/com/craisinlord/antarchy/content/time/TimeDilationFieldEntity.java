@@ -78,6 +78,10 @@ public class TimeDilationFieldEntity extends Entity {
         return TimeDilationMath.clampRate(this.entityData.get(RATE));
     }
 
+    public double effectiveFieldRate() {
+        return TimeDilationMath.effectiveFieldRate(this.fieldRate(), this.age, this.durationTicks);
+    }
+
     public int fieldDurationTicks() {
         return this.durationTicks;
     }

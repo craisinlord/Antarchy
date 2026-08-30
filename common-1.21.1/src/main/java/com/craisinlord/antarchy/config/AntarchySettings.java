@@ -513,6 +513,23 @@ public final class AntarchySettings {
     private static double manticoreAttackDamage = 7.0D;
     private static int manticoreStingPoisonTicks = 100;
     private static int queenManticoreCap = 15;
+    private static int queenManticoreSummonCooldownTicks = 600;
+    private static int queenManticoreSummonCount = 3;
+    private static double queenManticoreSummonRange = 24.0D;
+    private static double queenBeamDamage = 45.0D;
+    private static double queenBeamRange = 100.0D;
+    private static int queenBeamDurationTicks = 30;
+    private static int queenBeamCooldownTicks = 90;
+    private static double queenBeamTracking = 0.1D;
+    private static double queenBeamTerrainRadius = 5.0D;
+    private static int queenBeamTerrainCap = 192;
+    private static double kingBeamDamage = 50.0D;
+    private static double kingBeamRange = 100.0D;
+    private static int kingBeamDurationTicks = 30;
+    private static int kingBeamCooldownTicks = 90;
+    private static double kingBeamTracking = 0.1D;
+    private static double kingBeamTerrainRadius = 5.0D;
+    private static int kingBeamTerrainCap = 192;
     private static double jerryInfantHealth = 20.0D;
     private static double jerryInfantAttackDamage = 2.0D;
     private static double jerryMatureHealth = 40.0D;
@@ -2749,6 +2766,40 @@ public final class AntarchySettings {
     public static void setManticoreStingPoisonTicks(int v) { manticoreStingPoisonTicks = v; }
     public static int queenManticoreCap() { return queenManticoreCap; }
     public static void setQueenManticoreCap(int v) { queenManticoreCap = v; }
+    public static int queenManticoreSummonCooldownTicks() { return queenManticoreSummonCooldownTicks; }
+    public static void setQueenManticoreSummonCooldownTicks(int v) { queenManticoreSummonCooldownTicks = v; }
+    public static int queenManticoreSummonCount() { return queenManticoreSummonCount; }
+    public static void setQueenManticoreSummonCount(int v) { queenManticoreSummonCount = v; }
+    public static double queenManticoreSummonRange() { return queenManticoreSummonRange; }
+    public static void setQueenManticoreSummonRange(double v) { queenManticoreSummonRange = v; }
+    public static double queenBeamDamage() { return queenBeamDamage; }
+    public static void setQueenBeamDamage(double v) { queenBeamDamage = v; }
+    public static double queenBeamRange() { return queenBeamRange; }
+    public static void setQueenBeamRange(double v) { queenBeamRange = v; }
+    public static int queenBeamDurationTicks() { return queenBeamDurationTicks; }
+    public static void setQueenBeamDurationTicks(int v) { queenBeamDurationTicks = v; }
+    public static int queenBeamCooldownTicks() { return queenBeamCooldownTicks; }
+    public static void setQueenBeamCooldownTicks(int v) { queenBeamCooldownTicks = v; }
+    public static double queenBeamTracking() { return queenBeamTracking; }
+    public static void setQueenBeamTracking(double v) { queenBeamTracking = v; }
+    public static double queenBeamTerrainRadius() { return queenBeamTerrainRadius; }
+    public static void setQueenBeamTerrainRadius(double v) { queenBeamTerrainRadius = v; }
+    public static int queenBeamTerrainCap() { return queenBeamTerrainCap; }
+    public static void setQueenBeamTerrainCap(int v) { queenBeamTerrainCap = v; }
+    public static double kingBeamDamage() { return kingBeamDamage; }
+    public static void setKingBeamDamage(double v) { kingBeamDamage = v; }
+    public static double kingBeamRange() { return kingBeamRange; }
+    public static void setKingBeamRange(double v) { kingBeamRange = v; }
+    public static int kingBeamDurationTicks() { return kingBeamDurationTicks; }
+    public static void setKingBeamDurationTicks(int v) { kingBeamDurationTicks = v; }
+    public static int kingBeamCooldownTicks() { return kingBeamCooldownTicks; }
+    public static void setKingBeamCooldownTicks(int v) { kingBeamCooldownTicks = v; }
+    public static double kingBeamTracking() { return kingBeamTracking; }
+    public static void setKingBeamTracking(double v) { kingBeamTracking = v; }
+    public static double kingBeamTerrainRadius() { return kingBeamTerrainRadius; }
+    public static void setKingBeamTerrainRadius(double v) { kingBeamTerrainRadius = v; }
+    public static int kingBeamTerrainCap() { return kingBeamTerrainCap; }
+    public static void setKingBeamTerrainCap(int v) { kingBeamTerrainCap = v; }
     public static double jerryInfantHealth() { return jerryInfantHealth; }
     public static void setJerryInfantHealth(double v) { jerryInfantHealth = v; }
     public static double jerryInfantAttackDamage() { return jerryInfantAttackDamage; }

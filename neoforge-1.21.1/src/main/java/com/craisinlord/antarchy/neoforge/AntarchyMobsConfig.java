@@ -124,6 +124,10 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue ROYAL_BOSS_BITE_REACH;
     private static final ModConfigSpec.DoubleValue ROYAL_BOSS_BITE_DAMAGE_MULTIPLIER;
     private static final ModConfigSpec.IntValue ROYAL_BOSS_BITE_COOLDOWN_TICKS;
+    private static final ModConfigSpec.DoubleValue QUEEN_BEAM_DAMAGE, QUEEN_BEAM_RANGE, QUEEN_BEAM_TRACKING, QUEEN_BEAM_TERRAIN_RADIUS;
+    private static final ModConfigSpec.IntValue QUEEN_BEAM_DURATION_TICKS, QUEEN_BEAM_COOLDOWN_TICKS, QUEEN_BEAM_TERRAIN_CAP;
+    private static final ModConfigSpec.DoubleValue KING_BEAM_DAMAGE, KING_BEAM_RANGE, KING_BEAM_TRACKING, KING_BEAM_TERRAIN_RADIUS;
+    private static final ModConfigSpec.IntValue KING_BEAM_DURATION_TICKS, KING_BEAM_COOLDOWN_TICKS, KING_BEAM_TERRAIN_CAP;
 
 
     // Brutalfly
@@ -273,6 +277,9 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue MANTICORE_ATTACK_DAMAGE;
     private static final ModConfigSpec.IntValue MANTICORE_STING_POISON_TICKS;
     private static final ModConfigSpec.IntValue QUEEN_MANTICORE_CAP;
+    private static final ModConfigSpec.IntValue QUEEN_MANTICORE_SUMMON_COOLDOWN_TICKS;
+    private static final ModConfigSpec.IntValue QUEEN_MANTICORE_SUMMON_COUNT;
+    private static final ModConfigSpec.DoubleValue QUEEN_MANTICORE_SUMMON_RANGE;
 
     // Jerry
 
@@ -549,6 +556,20 @@ public final class AntarchyMobsConfig {
         ROYAL_BOSS_BITE_REACH = b.comment("Radius around each head anchor that a King or Queen bite can hit.").defineInRange("biteReach", 10.0D, 1.0D, 64.0D);
         ROYAL_BOSS_BITE_DAMAGE_MULTIPLIER = b.comment("Multiplier applied to base attack damage for King and Queen head bites.").defineInRange("biteDamageMultiplier", 1.6D, 0.0D, 32.0D);
         ROYAL_BOSS_BITE_COOLDOWN_TICKS = b.comment("Base cooldown in ticks between bites for a single King or Queen head (scaled down at later phases).").defineInRange("biteCooldownTicks", 45, 1, 1200);
+        QUEEN_BEAM_DAMAGE = b.defineInRange("queenBeamDamage", 45.0D, 0.0D, 1024.0D);
+        QUEEN_BEAM_RANGE = b.defineInRange("queenBeamRange", 100.0D, 1.0D, 256.0D);
+        QUEEN_BEAM_DURATION_TICKS = b.defineInRange("queenBeamDurationTicks", 30, 1, 1200);
+        QUEEN_BEAM_COOLDOWN_TICKS = b.defineInRange("queenBeamCooldownTicks", 90, 1, 2400);
+        QUEEN_BEAM_TRACKING = b.defineInRange("queenBeamTracking", 0.1D, 0.0D, 1.0D);
+        QUEEN_BEAM_TERRAIN_RADIUS = b.defineInRange("queenBeamTerrainRadius", 5.0D, 0.0D, 32.0D);
+        QUEEN_BEAM_TERRAIN_CAP = b.defineInRange("queenBeamTerrainCap", 192, 0, 4096);
+        KING_BEAM_DAMAGE = b.defineInRange("kingBeamDamage", 50.0D, 0.0D, 1024.0D);
+        KING_BEAM_RANGE = b.defineInRange("kingBeamRange", 100.0D, 1.0D, 256.0D);
+        KING_BEAM_DURATION_TICKS = b.defineInRange("kingBeamDurationTicks", 30, 1, 1200);
+        KING_BEAM_COOLDOWN_TICKS = b.defineInRange("kingBeamCooldownTicks", 90, 1, 2400);
+        KING_BEAM_TRACKING = b.defineInRange("kingBeamTracking", 0.1D, 0.0D, 1.0D);
+        KING_BEAM_TERRAIN_RADIUS = b.defineInRange("kingBeamTerrainRadius", 5.0D, 0.0D, 32.0D);
+        KING_BEAM_TERRAIN_CAP = b.defineInRange("kingBeamTerrainCap", 192, 0, 4096);
         b.pop();
 
 
@@ -772,6 +793,9 @@ public final class AntarchyMobsConfig {
         MANTICORE_ATTACK_DAMAGE      = b.comment("Base attack damage for bites and stings.").defineInRange("attackDamage", 7.0D, 0.0D, 1024.0D);
         MANTICORE_STING_POISON_TICKS = b.comment("Poison duration in ticks applied by a Manticore sting.").defineInRange("stingPoisonTicks", 100, 0, 12000);
         QUEEN_MANTICORE_CAP          = b.comment("Maximum number of living Manticores a single Queen may keep summoned.").defineInRange("queenSummonCap", 15, 1, 200);
+        QUEEN_MANTICORE_SUMMON_COOLDOWN_TICKS = b.comment("Ticks between Queen Manticore summon attempts.").defineInRange("queenSummonCooldownTicks", 600, 20, 200000);
+        QUEEN_MANTICORE_SUMMON_COUNT = b.comment("Maximum Manticores created by one Queen summon attempt.").defineInRange("queenSummonCount", 3, 1, 32);
+        QUEEN_MANTICORE_SUMMON_RANGE = b.comment("Maximum horizontal distance from the Queen used for Manticore spawn positions.").defineInRange("queenSummonRange", 24.0D, 4.0D, 128.0D);
         b.pop();
 
         b.push("jerry");
@@ -928,6 +952,20 @@ public final class AntarchyMobsConfig {
     static double  royalBossBiteReach()                     { return ROYAL_BOSS_BITE_REACH.get(); }
     static double  royalBossBiteDamageMultiplier()          { return ROYAL_BOSS_BITE_DAMAGE_MULTIPLIER.get(); }
     static int     royalBossBiteCooldownTicks()             { return ROYAL_BOSS_BITE_COOLDOWN_TICKS.get(); }
+    static double  queenBeamDamage()                        { return QUEEN_BEAM_DAMAGE.get(); }
+    static double  queenBeamRange()                         { return QUEEN_BEAM_RANGE.get(); }
+    static int     queenBeamDurationTicks()                 { return QUEEN_BEAM_DURATION_TICKS.get(); }
+    static int     queenBeamCooldownTicks()                 { return QUEEN_BEAM_COOLDOWN_TICKS.get(); }
+    static double  queenBeamTracking()                      { return QUEEN_BEAM_TRACKING.get(); }
+    static double  queenBeamTerrainRadius()                 { return QUEEN_BEAM_TERRAIN_RADIUS.get(); }
+    static int     queenBeamTerrainCap()                    { return QUEEN_BEAM_TERRAIN_CAP.get(); }
+    static double  kingBeamDamage()                         { return KING_BEAM_DAMAGE.get(); }
+    static double  kingBeamRange()                          { return KING_BEAM_RANGE.get(); }
+    static int     kingBeamDurationTicks()                  { return KING_BEAM_DURATION_TICKS.get(); }
+    static int     kingBeamCooldownTicks()                  { return KING_BEAM_COOLDOWN_TICKS.get(); }
+    static double  kingBeamTracking()                       { return KING_BEAM_TRACKING.get(); }
+    static double  kingBeamTerrainRadius()                  { return KING_BEAM_TERRAIN_RADIUS.get(); }
+    static int     kingBeamTerrainCap()                     { return KING_BEAM_TERRAIN_CAP.get(); }
 
     static double  brutalflyHealth()                        { return BRUTALFLY_HEALTH.get(); }
     static double  brutalflySwipeDamage()                   { return BRUTALFLY_SWIPE_DAMAGE.get(); }
@@ -1064,6 +1102,9 @@ public final class AntarchyMobsConfig {
     static double  manticoreAttackDamage()                  { return MANTICORE_ATTACK_DAMAGE.get(); }
     static int     manticoreStingPoisonTicks()              { return MANTICORE_STING_POISON_TICKS.get(); }
     static int     queenManticoreCap()                      { return QUEEN_MANTICORE_CAP.get(); }
+    static int     queenManticoreSummonCooldownTicks()      { return QUEEN_MANTICORE_SUMMON_COOLDOWN_TICKS.get(); }
+    static int     queenManticoreSummonCount()              { return QUEEN_MANTICORE_SUMMON_COUNT.get(); }
+    static double  queenManticoreSummonRange()               { return QUEEN_MANTICORE_SUMMON_RANGE.get(); }
     static double  jerryInfantHealth()                      { return JERRY_INFANT_HEALTH.get(); }
     static double  jerryInfantAttackDamage()                { return JERRY_INFANT_ATTACK_DAMAGE.get(); }
     static double  jerryMatureHealth()                      { return JERRY_MATURE_HEALTH.get(); }

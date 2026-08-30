@@ -23,7 +23,7 @@ public final class TimeDilationFieldSampler {
                 continue;
             }
             double falloff = TimeDilationMath.gaussianFalloff(Math.sqrt(distanceSqr), field.fieldRadius());
-            combinedRate *= TimeDilationMath.localFieldRate(field.fieldRate(), falloff);
+            combinedRate *= TimeDilationMath.localFieldRate(field.effectiveFieldRate(), falloff);
         }
         return TimeDilationMath.clampRate(combinedRate);
     }
