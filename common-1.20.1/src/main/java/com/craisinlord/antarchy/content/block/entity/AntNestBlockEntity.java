@@ -20,16 +20,20 @@ import net.minecraft.world.level.block.state.BlockState;
 public class AntNestBlockEntity extends BlockEntity {
     private static final String STORED_ANTS = "StoredAnts";
     private static final String NBT_INITIALIZED = "Initialized";
+    private static final String NBT_REBROOD_COOLDOWN = "RebroodCooldown";
     private static final int RELEASE_COOLDOWN_MIN = 80;
     private static final int RELEASE_COOLDOWN_RANGE = 100;
     private static final int ENTER_NEST_COOLDOWN = 200;
     private static final int INITIAL_ANT_COUNT_MIN = 2;
     private static final int INITIAL_ANT_COUNT_RANGE = 4;
+    private static final int REBROOD_COOLDOWN_TICKS = 20 * 60 * 5;
+    private static final double PLAYER_ACTIVATION_RANGE = 16.0D;
     private static final double SPAWN_OFFSET_XZ = 0.5D;
     private static final double SPAWN_OFFSET_Y = 0.05D;
 
     private final List<StoredAnt> storedAnts = new ArrayList<>();
     private int releaseCooldown = RELEASE_COOLDOWN_MIN;
+    private int rebroodCooldown = REBROOD_COOLDOWN_TICKS;
     private boolean initialized = false;
 
     public AntNestBlockEntity(BlockPos pos, BlockState blockState) {
@@ -37,8 +41,19 @@ public class AntNestBlockEntity extends BlockEntity {
     }
 
     public static void serverTick(ServerLevel level, BlockPos pos, BlockState state, AntNestBlockEntity nest) {
+        boolean playerNearby = level.hasNearbyAlivePlayer(
+                pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, PLAYER_ACTIVATION_RANGE);
+        if (!playerNearby) {
+            return;
+        }
+
         if (!nest.initialized) {
             nest.populateInitialAnts(level);
+        } else if (nest.storedAnts.isEmpty() && nest.nestBlock().shouldPopulateInitialAnts()) {
+            if (--nest.rebroodCooldown <= 0) {
+                nest.rebroodCooldown = REBROOD_COOLDOWN_TICKS;
+                nest.fillWithAnts(level);
+            }
         }
 
         boolean ignoreNight = level.dimensionType().hasFixedTime();
@@ -68,11 +83,16 @@ public class AntNestBlockEntity extends BlockEntity {
             return;
         }
 
+        this.fillWithAnts(level);
+    }
+
+    private void fillWithAnts(ServerLevel level) {
         int amount = INITIAL_ANT_COUNT_MIN + level.random.nextInt(INITIAL_ANT_COUNT_RANGE);
         for (int i = 0; i < amount && this.storedAnts.size() < this.maxOccupants(); i++) {
             EntityType<?> antType = this.nestBlock().initialAntType(level.random);
             this.storedAnts.add(this.createStoredAnt(level, antType));
         }
+        this.rebroodCooldown = REBROOD_COOLDOWN_TICKS;
         this.setChanged();
     }
 
@@ -153,6 +173,7 @@ public class AntNestBlockEntity extends BlockEntity {
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putBoolean(NBT_INITIALIZED, this.initialized);
+        tag.putInt(NBT_REBROOD_COOLDOWN, this.rebroodCooldown);
         ListTag listTag = new ListTag();
         for (StoredAnt storedAnt : this.storedAnts) {
             listTag.add(storedAnt.save());
@@ -164,6 +185,7 @@ public class AntNestBlockEntity extends BlockEntity {
     public void load(CompoundTag tag) {
         super.load(tag);
         this.initialized = tag.getBoolean(NBT_INITIALIZED);
+        this.rebroodCooldown = tag.contains(NBT_REBROOD_COOLDOWN) ? tag.getInt(NBT_REBROOD_COOLDOWN) : REBROOD_COOLDOWN_TICKS;
         this.storedAnts.clear();
         ListTag listTag = tag.getList(STORED_ANTS, Tag.TAG_COMPOUND);
         for (int i = 0; i < listTag.size(); i++) {

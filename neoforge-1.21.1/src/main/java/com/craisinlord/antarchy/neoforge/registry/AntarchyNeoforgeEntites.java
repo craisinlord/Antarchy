@@ -384,6 +384,13 @@ public final class AntarchyNeoforgeEntites {
                     .clientTrackingRange(10)
                     .updateInterval(1)
                     .build("wind_vortex"));
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>> ROYAL_BLACK_HOLE = ENTITY_TYPES.register("royal_black_hole",
+            () -> EntityType.Builder.<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>of(com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 1.0F)
+                    .clientTrackingRange(16)
+                    .updateInterval(2)
+                    .fireImmune()
+                    .build("royal_black_hole"));
     public static final DeferredHolder<EntityType<?>, EntityType<TimeDilationFieldEntity>> TIME_DILATION_FIELD = ENTITY_TYPES.register("time_dilation_field",
             () -> EntityType.Builder.<TimeDilationFieldEntity>of(TimeDilationFieldEntity::new, MobCategory.MISC)
                     .sized(0.5F, 0.5F)

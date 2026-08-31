@@ -216,7 +216,21 @@ public class AntarchyNeoforge {
                 AntarchyNeoforgeSounds.QUEEN_BEAM_SHOOT,
                 AntarchyNeoforgeSounds.QUEEN_BEAM_START,
                 AntarchyNeoforgeSounds.QUEEN_BEAM_LOOP,
-                AntarchyNeoforgeSounds.QUEEN_BEAM_END
+                AntarchyNeoforgeSounds.QUEEN_BEAM_END,
+                AntarchyNeoforgeSounds.KING_STOMP,
+                AntarchyNeoforgeSounds.KING_ROAR,
+                AntarchyNeoforgeSounds.KING_WING_FLAP,
+                AntarchyNeoforgeSounds.KING_FLY_LOOP,
+                AntarchyNeoforgeSounds.PRINCE_IDLE,
+                AntarchyNeoforgeSounds.PRINCE_BITE,
+                AntarchyNeoforgeSounds.PRINCE_SHOOT,
+                AntarchyNeoforgeSounds.PRINCE_FLY,
+                AntarchyNeoforgeSounds.PRINCE_STEP,
+                AntarchyNeoforgeSounds.PRINCESS_IDLE,
+                AntarchyNeoforgeSounds.PRINCESS_BITE,
+                AntarchyNeoforgeSounds.PRINCESS_SHOOT,
+                AntarchyNeoforgeSounds.PRINCESS_FLY,
+                AntarchyNeoforgeSounds.PRINCESS_STEP
         );
         bindCommonObjects();
         ScorpionWhipTetherSync.setSink((player, targetId) -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(
@@ -241,6 +255,9 @@ public class AntarchyNeoforge {
         com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.setSyncDispatcher(AntarchyGravityNetworking::syncEntity);
         com.craisinlord.antarchy.content.time.TimeDilationApi.setSyncDispatcher(
                 com.craisinlord.antarchy.neoforge.network.AntarchyTimeDilationNetworking::syncRate
+        );
+        com.craisinlord.antarchy.content.time.TimeDilationApi.setFieldSyncDispatcher(
+                com.craisinlord.antarchy.neoforge.network.AntarchyTimeDilationNetworking::syncFields
         );
         if (isSupportedInfinityLoaded()) {
             InfinityCompat.bind(new NeoForgeInfinityCompat());
@@ -407,6 +424,7 @@ public class AntarchyNeoforge {
         AntarchyObjects.setVortex(AntarchyNeoforgeEntites.VORTEX);
         AntarchyObjects.setWindVortex(() -> AntarchyNeoforgeEntites.WIND_VORTEX.get());
         AntarchyObjects.setTimeDilationField(() -> AntarchyNeoforgeEntites.TIME_DILATION_FIELD.get());
+        AntarchyObjects.setRoyalBlackHole(() -> AntarchyNeoforgeEntites.ROYAL_BLACK_HOLE.get());
         AntarchyObjects.setVortexChargeProjectile(() -> AntarchyNeoforgeEntites.VORTEX_CHARGE_PROJECTILE.get());
         AntarchyObjects.setPrince(() -> AntarchyNeoforgeEntites.PRINCE.get());
         AntarchyObjects.setPrincess(() -> AntarchyNeoforgeEntites.PRINCESS.get());

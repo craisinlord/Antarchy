@@ -183,6 +183,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
     private static final RawAnimation PHASE_TWO_WALK_ANIM = RawAnimation.begin().thenLoop("walk_P2");
     private static final RawAnimation PHASE_TWO_FLY_ANIM = RawAnimation.begin().thenLoop("fly_P2");
     private static final String LOCOMOTION_CONTROLLER = "main_controller";
+    private static final int LOCOMOTION_TRANSITION_TICKS = 5;
     private static final String SPECIAL_CONTROLLER = "special_controller";
     private static final String SPECIAL_ATTACK_TRIGGER = "attack";
     private static final String SPECIAL_ATTACK_P2_TRIGGER = "attack_P2";
@@ -293,7 +294,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, LOCOMOTION_CONTROLLER, 0, this::mainAnimController));
+        controllers.add(new AnimationController<>(this, LOCOMOTION_CONTROLLER, LOCOMOTION_TRANSITION_TICKS, this::mainAnimController));
         controllers.add(new AnimationController<>(this, SPECIAL_CONTROLLER, 0, state -> PlayState.STOP)
                 .triggerableAnim(SPECIAL_ATTACK_TRIGGER, ATTACK_ANIM)
                 .triggerableAnim(SPECIAL_ATTACK_P2_TRIGGER, ATTACK_P2_ANIM)

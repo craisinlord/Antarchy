@@ -128,6 +128,7 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.IntValue QUEEN_BEAM_DURATION_TICKS, QUEEN_BEAM_COOLDOWN_TICKS, QUEEN_BEAM_TERRAIN_CAP;
     private static final ModConfigSpec.DoubleValue KING_BEAM_DAMAGE, KING_BEAM_RANGE, KING_BEAM_TRACKING, KING_BEAM_TERRAIN_RADIUS;
     private static final ModConfigSpec.IntValue KING_BEAM_DURATION_TICKS, KING_BEAM_COOLDOWN_TICKS, KING_BEAM_TERRAIN_CAP;
+    private static final ModConfigSpec.IntValue ROYAL_DECREE_COOLDOWN_TICKS;
 
 
     // Brutalfly
@@ -570,6 +571,7 @@ public final class AntarchyMobsConfig {
         KING_BEAM_TRACKING = b.defineInRange("kingBeamTracking", 0.1D, 0.0D, 1.0D);
         KING_BEAM_TERRAIN_RADIUS = b.defineInRange("kingBeamTerrainRadius", 5.0D, 0.0D, 32.0D);
         KING_BEAM_TERRAIN_CAP = b.defineInRange("kingBeamTerrainCap", 192, 0, 4096);
+        ROYAL_DECREE_COOLDOWN_TICKS = b.comment("Cooldown in ticks between the end of one King decree and the next.").defineInRange("royalDecreeCooldownTicks", 1200, 1, 72000);
         b.pop();
 
 
@@ -966,6 +968,7 @@ public final class AntarchyMobsConfig {
     static double  kingBeamTracking()                       { return KING_BEAM_TRACKING.get(); }
     static double  kingBeamTerrainRadius()                  { return KING_BEAM_TERRAIN_RADIUS.get(); }
     static int     kingBeamTerrainCap()                     { return KING_BEAM_TERRAIN_CAP.get(); }
+    static int     royalDecreeCooldownTicks()                { return ROYAL_DECREE_COOLDOWN_TICKS.get(); }
 
     static double  brutalflyHealth()                        { return BRUTALFLY_HEALTH.get(); }
     static double  brutalflySwipeDamage()                   { return BRUTALFLY_SWIPE_DAMAGE.get(); }

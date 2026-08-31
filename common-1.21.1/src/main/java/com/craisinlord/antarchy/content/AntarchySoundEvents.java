@@ -194,6 +194,20 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> QUEEN_BEAM_START = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> QUEEN_BEAM_LOOP = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> QUEEN_BEAM_END = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_STOMP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_ROAR = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_WING_FLAP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_FLY_LOOP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCE_IDLE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCE_BITE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCE_SHOOT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCE_FLY = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCE_STEP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCESS_IDLE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCESS_BITE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCESS_SHOOT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCESS_FLY = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCESS_STEP = (Supplier<SoundEvent>) UNBOUND;
 
     private AntarchySoundEvents() {
     }
@@ -383,7 +397,21 @@ public final class AntarchySoundEvents {
             Supplier<SoundEvent> queenBeamShoot,
             Supplier<SoundEvent> queenBeamStart,
             Supplier<SoundEvent> queenBeamLoop,
-            Supplier<SoundEvent> queenBeamEnd
+            Supplier<SoundEvent> queenBeamEnd,
+            Supplier<SoundEvent> kingStomp,
+            Supplier<SoundEvent> kingRoar,
+            Supplier<SoundEvent> kingWingFlap,
+            Supplier<SoundEvent> kingFlyLoop,
+            Supplier<SoundEvent> princeIdle,
+            Supplier<SoundEvent> princeBite,
+            Supplier<SoundEvent> princeShoot,
+            Supplier<SoundEvent> princeFly,
+            Supplier<SoundEvent> princeStep,
+            Supplier<SoundEvent> princessIdle,
+            Supplier<SoundEvent> princessBite,
+            Supplier<SoundEvent> princessShoot,
+            Supplier<SoundEvent> princessFly,
+            Supplier<SoundEvent> princessStep
     ) {
         SQUIDZOOKA_FIRE = squidzookaFire;
         SHRINK_RAY_CHARGE = shrinkRayCharge;
@@ -570,5 +598,19 @@ public final class AntarchySoundEvents {
         QUEEN_BEAM_START = queenBeamStart;
         QUEEN_BEAM_LOOP = queenBeamLoop;
         QUEEN_BEAM_END = queenBeamEnd;
+        KING_STOMP = kingStomp;
+        KING_ROAR = kingRoar;
+        KING_WING_FLAP = kingWingFlap;
+        KING_FLY_LOOP = kingFlyLoop;
+        PRINCE_IDLE = princeIdle;
+        PRINCE_BITE = princeBite;
+        PRINCE_SHOOT = princeShoot;
+        PRINCE_FLY = princeFly;
+        PRINCE_STEP = princeStep;
+        PRINCESS_IDLE = princessIdle;
+        PRINCESS_BITE = princessBite;
+        PRINCESS_SHOOT = princessShoot;
+        PRINCESS_FLY = princessFly;
+        PRINCESS_STEP = princessStep;
     }
 }

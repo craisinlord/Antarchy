@@ -1,14 +1,19 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.content.block.AntimetalScaffoldingBlock;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
@@ -32,10 +37,17 @@ public class UpwardFallingBlockEntity extends Entity {
     private static final double RISE_ACCEL = 0.04;
     private static final double DRAG       = 0.98;
     private static final int    MAX_TICKS  = 200;
+    private static final int    MAX_LIVE_PER_LEVEL = 200;
+    private static final double PLAYER_ACTIVATION_RADIUS = 128.0;
+    private static final int    INSTANT_MOVE_MAX_DISTANCE = 48;
+    private static final double MIN_TRAVEL_FOR_DAMAGE = 1.5;
+
+    private static final Object2IntOpenHashMap<ResourceKey<Level>> LIVE_COUNT = new Object2IntOpenHashMap<>();
 
     public int time = 0;
     private boolean breaksOnLeaves = true;
     private double distanceTraveled = 0.0;
+    private boolean counted = false;
 
     public UpwardFallingBlockEntity(EntityType<UpwardFallingBlockEntity> type, Level level) {
         super(type, level);
@@ -60,16 +72,90 @@ public class UpwardFallingBlockEntity extends Entity {
     }
 
     public static void fallUp(Level level, BlockPos pos, BlockState state, boolean breaksOnLeaves) {
-        if (level.isClientSide) return;
-        // Prevent stacking multiple entities from the same block position
-        if (!level.getEntitiesOfClass(UpwardFallingBlockEntity.class, new AABB(pos)).isEmpty()) return;
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
 
-        level.removeBlock(pos, false);
-        UpwardFallingBlockEntity entity = new UpwardFallingBlockEntity(TYPE.get(), level);
+        ResourceKey<Level> dimension = serverLevel.dimension();
+        int live = LIVE_COUNT.getInt(dimension);
+        if (live >= MAX_LIVE_PER_LEVEL) {
+            live = serverLevel.getEntities(TYPE.get(), Entity::isAlive).size();
+            if (live <= 0) {
+                LIVE_COUNT.removeInt(dimension);
+            } else {
+                LIVE_COUNT.put(dimension, live);
+            }
+        }
+
+        boolean noPlayerNearby = serverLevel.getNearestPlayer(
+                pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, PLAYER_ACTIVATION_RADIUS, EntitySelector.NO_SPECTATORS) == null;
+        if (live >= MAX_LIVE_PER_LEVEL || noPlayerNearby) {
+            resolveInstantly(serverLevel, pos, state, breaksOnLeaves);
+            return;
+        }
+
+        serverLevel.removeBlock(pos, false);
+        UpwardFallingBlockEntity entity = new UpwardFallingBlockEntity(TYPE.get(), serverLevel);
         entity.entityData.set(DATA_BLOCK_STATE, state);
         entity.breaksOnLeaves = breaksOnLeaves;
         entity.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-        level.addFreshEntity(entity);
+        if (serverLevel.addFreshEntity(entity)) {
+            entity.counted = true;
+            LIVE_COUNT.addTo(serverLevel.dimension(), 1);
+        }
+    }
+
+    private static void resolveInstantly(ServerLevel level, BlockPos pos, BlockState state, boolean breaksOnLeaves) {
+        level.removeBlock(pos, false);
+
+        BlockPos.MutableBlockPos rest = pos.mutable();
+        for (int i = 0; i < INSTANT_MOVE_MAX_DISTANCE; i++) {
+            BlockPos above = rest.above();
+            if (above.getY() >= level.getMaxBuildHeight()) {
+                break;
+            }
+            BlockState aboveState = level.getBlockState(above);
+            if (aboveState.getBlock() instanceof AntimetalScaffoldingBlock) {
+                break;
+            }
+            if (breaksOnLeaves && aboveState.is(BlockTags.LEAVES)) {
+                dropAsItem(level, rest, state);
+                return;
+            }
+            if (!aboveState.canBeReplaced()) {
+                break;
+            }
+            rest.move(Direction.UP);
+        }
+
+        if (level.getBlockState(rest).canBeReplaced()) {
+            level.setBlock(rest, state, Block.UPDATE_ALL);
+        } else {
+            dropAsItem(level, rest, state);
+        }
+    }
+
+    private static void dropAsItem(Level level, BlockPos pos, BlockState state) {
+        if (state.isAir()) {
+            return;
+        }
+        ItemStack drop = new ItemStack(state.getBlock().asItem());
+        if (!drop.isEmpty()) {
+            Block.popResource(level, pos, drop);
+        }
+    }
+
+    @Override
+    public void remove(Entity.RemovalReason reason) {
+        if (this.counted) {
+            this.counted = false;
+            ResourceKey<Level> key = this.level().dimension();
+            int remaining = LIVE_COUNT.addTo(key, -1) - 1;
+            if (remaining <= 0) {
+                LIVE_COUNT.removeInt(key);
+            }
+        }
+        super.remove(reason);
     }
 
     @Override
@@ -99,7 +185,9 @@ public class UpwardFallingBlockEntity extends Entity {
             return;
         }
 
-        damageEntitiesAlongPath(blockState);
+        if (distanceTraveled > MIN_TRAVEL_FOR_DAMAGE) {
+            damageEntitiesAlongPath(blockState);
+        }
 
         BlockPos headPos  = BlockPos.containing(getX(), getBoundingBox().maxY, getZ());
         BlockState above  = level().getBlockState(headPos);

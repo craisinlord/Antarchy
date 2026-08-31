@@ -19,6 +19,7 @@ import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.craisinlord.antarchy.content.portal.PermanentPortalManager;
 import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.CaterpillarCommand;
+import com.craisinlord.antarchy.content.command.DimensionalTearCommand;
 import com.craisinlord.antarchy.content.command.GravityCommand;
 import com.craisinlord.antarchy.content.time.TimeDilationCommand;
 import com.craisinlord.antarchy.content.time.TimeDilationManager;
@@ -65,10 +66,19 @@ public final class AntarchyFabricEvents {
     }
 
     public static void register() {
+        net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents.START_TRACKING.register((trackedEntity, player) -> {
+            if (trackedEntity instanceof com.craisinlord.antarchy.content.time.TimeDilationEntityAccess access
+                    && player instanceof ServerPlayer serverPlayer) {
+                com.craisinlord.antarchy.fabric.network.AntarchyFabricTimeDilationNetworking.syncRateToPlayer(
+                        serverPlayer, trackedEntity, access.antarchy$getTimeDilationRate()
+                );
+            }
+        });
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             CavarynCommand.register(dispatcher);
             GravityCommand.register(dispatcher);
             CaterpillarCommand.register(dispatcher);
+            DimensionalTearCommand.register(dispatcher);
             TimeDilationCommand.register(dispatcher);
         });
 

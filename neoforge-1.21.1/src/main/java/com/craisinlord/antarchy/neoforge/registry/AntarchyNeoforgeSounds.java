@@ -235,6 +235,17 @@ public final class AntarchyNeoforgeSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> QUEEN_BLACK_HOLE_SHOOT = registerSoundEvent("queen_black_hole_shoot");
     public static final DeferredHolder<SoundEvent, SoundEvent> QUEEN_CAST_SHOOT = registerSoundEvent("queen_cast_shoot");
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> PRINCE_IDLE = registerSoundEvent("prince_idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PRINCE_BITE = registerSoundEvent("prince_bite");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PRINCE_SHOOT = registerSoundEvent("prince_shoot");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PRINCE_FLY = registerSoundEvent("prince_fly");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PRINCE_STEP = registerSoundEvent("prince_step");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PRINCESS_IDLE = registerSoundEvent("princess_idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PRINCESS_BITE = registerSoundEvent("princess_bite");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PRINCESS_SHOOT = registerSoundEvent("princess_shoot");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PRINCESS_FLY = registerSoundEvent("princess_fly");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PRINCESS_STEP = registerSoundEvent("princess_step");
+
     private AntarchyNeoforgeSounds() {}
 
     public static void register(IEventBus modEventBus) {

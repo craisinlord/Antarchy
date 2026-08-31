@@ -1,21 +1,32 @@
 package com.craisinlord.antarchy.content.time;
 
 import java.util.function.BiConsumer;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
 public final class TimeDilationApi {
-    private static BiConsumer<ServerPlayer, Double> syncDispatcher = (player, rate) -> {
+    private static BiConsumer<Entity, Double> syncDispatcher = (entity, rate) -> {
     };
+    private static BiConsumer<ServerPlayer, List<TimeDilationFieldSnapshot>> fieldSyncDispatcher = (player, fields) -> {
+    };
+    private static final Map<UUID, Double> SYNCED_CLIENT_RATES = new ConcurrentHashMap<>();
 
     private TimeDilationApi() {
     }
 
-    public static void setSyncDispatcher(BiConsumer<ServerPlayer, Double> dispatcher) {
-        syncDispatcher = dispatcher != null ? dispatcher : (player, rate) -> {
+    public static void setSyncDispatcher(BiConsumer<Entity, Double> dispatcher) {
+        syncDispatcher = dispatcher != null ? dispatcher : (entity, rate) -> {
+        };
+    }
+
+    public static void setFieldSyncDispatcher(BiConsumer<ServerPlayer, List<TimeDilationFieldSnapshot>> dispatcher) {
+        fieldSyncDispatcher = dispatcher != null ? dispatcher : (player, fields) -> {
         };
     }
 
@@ -27,6 +38,12 @@ public final class TimeDilationApi {
 
     public static double getRate(Entity entity) {
         if (entity instanceof TimeDilationEntityAccess access) {
+            if (entity.level().isClientSide) {
+                Double syncedRate = SYNCED_CLIENT_RATES.get(entity.getUUID());
+                if (syncedRate != null) {
+                    return syncedRate;
+                }
+            }
             return access.antarchy$getTimeDilationRate();
         }
         return TimeDilationMath.NORMAL_RATE;
@@ -37,19 +54,30 @@ public final class TimeDilationApi {
     }
 
     public static void applySyncedRate(Entity entity, double rate) {
+        applySyncedRate(entity.getUUID(), rate);
         if (entity instanceof TimeDilationEntityAccess access) {
             access.antarchy$setTimeDilationRate(rate);
         }
     }
 
-    public static void syncPlayerRate(ServerPlayer player, double rate) {
-        syncDispatcher.accept(player, TimeDilationMath.clampRate(rate));
+    public static void applySyncedRate(UUID entityUuid, double rate) {
+        double clampedRate = TimeDilationMath.clampRate(rate);
+        SYNCED_CLIENT_RATES.put(entityUuid, clampedRate);
+    }
+
+    public static void clearSyncedClientRates() {
+        SYNCED_CLIENT_RATES.clear();
+    }
+
+    public static void syncEntityRate(Entity entity, double rate) {
+        syncDispatcher.accept(entity, TimeDilationMath.clampRate(rate));
+    }
+
+    public static void syncFields(ServerPlayer player, List<TimeDilationFieldSnapshot> fields) {
+        fieldSyncDispatcher.accept(player, fields);
     }
 
     public static boolean consumeTick(Entity entity, String timerKey) {
-        if (entity instanceof Player) {
-            return true;
-        }
         double rate = getRate(entity);
         if (rate >= TimeDilationMath.NORMAL_RATE || !(entity instanceof TimeDilationEntityAccess access)) {
             return true;

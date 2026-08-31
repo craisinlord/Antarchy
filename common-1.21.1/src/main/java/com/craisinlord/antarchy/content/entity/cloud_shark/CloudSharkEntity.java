@@ -120,12 +120,22 @@ public class CloudSharkEntity extends Monster implements GeoEntity {
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
     }
 
+    private static final int MIN_SPAWN_HEIGHT_ABOVE_TERRAIN = 16;
+
     public static boolean canSpawn(EntityType<CloudSharkEntity> entityType, ServerLevelAccessor level,
                                    MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
-        return level.getDifficulty() != Difficulty.PEACEFUL
-                && level.isEmptyBlock(pos)
-                && (level.isEmptyBlock(pos.above()) || level.isEmptyBlock(pos.below()))
-                && level.getFluidState(pos).isEmpty();
+        if (level.getDifficulty() == Difficulty.PEACEFUL || !level.getFluidState(pos).isEmpty()) {
+            return false;
+        }
+        if (!level.isEmptyBlock(pos) || !level.isEmptyBlock(pos.above()) || !level.isEmptyBlock(pos.below())) {
+            return false;
+        }
+        if (spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.SPAWN_EGG
+                || spawnReason == MobSpawnType.COMMAND || spawnReason == MobSpawnType.BUCKET) {
+            return true;
+        }
+        int terrainHeight = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
+        return pos.getY() >= terrainHeight + MIN_SPAWN_HEIGHT_ABOVE_TERRAIN;
     }
 
     @Override

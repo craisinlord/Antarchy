@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.thoraxis;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
@@ -22,6 +23,10 @@ public final class DimensionalTearFeature extends Feature<NoneFeatureConfigurati
 
     @Override
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
+        if (!AntarchySettings.dimensionalTearsSpawnNaturally()) {
+            return false;
+        }
+
         WorldGenLevel level = context.level();
         if (!(level instanceof ServerLevelAccessor)) {
             return false;

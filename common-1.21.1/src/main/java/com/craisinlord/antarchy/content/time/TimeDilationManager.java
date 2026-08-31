@@ -20,6 +20,7 @@ public final class TimeDilationManager {
     public static void tickServer(MinecraftServer server) {
         for (ServerLevel level : server.getAllLevels()) {
             List<TimeDilationFieldEntity> fields = collectFields(level);
+            syncFieldSnapshots(level, fields);
             if (fields.isEmpty()) {
                 if (DILATED_LEVELS.remove(level.dimension())) {
                     resetRates(level);
@@ -29,6 +30,18 @@ public final class TimeDilationManager {
             DILATED_LEVELS.add(level.dimension());
             updateEntities(level, fields);
             TimeDilationParticles.spawnFieldBorders(level, fields);
+        }
+    }
+
+    private static void syncFieldSnapshots(ServerLevel level, List<TimeDilationFieldEntity> fields) {
+        List<TimeDilationFieldSnapshot> snapshots = fields.stream()
+                .map(field -> new TimeDilationFieldSnapshot(
+                        field.getX(), field.getY(), field.getZ(), field.fieldRadius(), field.fieldRate(),
+                        field.fieldAge(), field.fieldDurationTicks()))
+                .limit(128)
+                .toList();
+        for (ServerPlayer player : level.players()) {
+            TimeDilationApi.syncFields(player, snapshots);
         }
     }
 
@@ -47,11 +60,18 @@ public final class TimeDilationManager {
             if (!(entity instanceof TimeDilationEntityAccess access) || entity instanceof TimeDilationFieldEntity) {
                 continue;
             }
+            if (entity.getType().is(com.craisinlord.antarchy.content.AntarchyTags.Entities.TIME_DILATION_IMMUNE)) {
+                if (access.antarchy$getTimeDilationRate() < TimeDilationMath.NORMAL_RATE) {
+                    access.antarchy$setTimeDilationRate(TimeDilationMath.NORMAL_RATE);
+                    TimeDilationApi.syncEntityRate(entity, TimeDilationMath.NORMAL_RATE);
+                }
+                continue;
+            }
             double previousRate = access.antarchy$getTimeDilationRate();
             double rate = TimeDilationFieldSampler.sample(fields, entity.position());
             access.antarchy$setTimeDilationRate(rate);
-            if (entity instanceof ServerPlayer player && Math.abs(previousRate - rate) > 0.001D) {
-                TimeDilationApi.syncPlayerRate(player, rate);
+            if (Math.abs(previousRate - rate) > 0.001D) {
+                TimeDilationApi.syncEntityRate(entity, rate);
             }
         }
     }
@@ -65,9 +85,7 @@ public final class TimeDilationManager {
                 continue;
             }
             access.antarchy$setTimeDilationRate(TimeDilationMath.NORMAL_RATE);
-            if (entity instanceof ServerPlayer player) {
-                TimeDilationApi.syncPlayerRate(player, TimeDilationMath.NORMAL_RATE);
-            }
+            TimeDilationApi.syncEntityRate(entity, TimeDilationMath.NORMAL_RATE);
         }
     }
 }

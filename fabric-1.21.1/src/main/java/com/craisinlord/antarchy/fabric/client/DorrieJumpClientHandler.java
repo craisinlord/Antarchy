@@ -35,7 +35,7 @@ public final class DorrieJumpClientHandler {
         }
 
         // Left ctrl → charge jump.
-        boolean pressingCharge = AntarchyKeyBindings.isDorrieChargeJumpPressed();
+        boolean pressingCharge = AntarchyKeyBindings.isMountSpecialPressed();
         if (pressingCharge != wasPressingCharge) {
             ClientPlayNetworking.send(new DorrieChargeJumpPayload(pressingCharge));
             if (!pressingCharge && player.getVehicle() instanceof DorrieEntity dorrie) {

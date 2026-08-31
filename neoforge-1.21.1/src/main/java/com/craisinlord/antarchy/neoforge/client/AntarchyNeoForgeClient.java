@@ -150,6 +150,7 @@ public final class AntarchyNeoForgeClient {
         event.registerEntityRenderer(AntarchyNeoforgeEntites.VORTEX_CHARGE_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.WIND_VORTEX.get(), WindVortexRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.TIME_DILATION_FIELD.get(), TimeDilationFieldRenderer::new);
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.ROYAL_BLACK_HOLE.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.CRITTER_CAGE_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.WORM_HOOK_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.HUSH_PROJECTILE.get(), HushProjectileRenderer::new);

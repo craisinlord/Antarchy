@@ -475,6 +475,14 @@ public final class AntarchyFabricEntities {
                     .fireImmune()
                     .build("time_dilation_field"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>> ROYAL_BLACK_HOLE = ENTITY_TYPES.register("royal_black_hole",
+            () -> EntityType.Builder.<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>of(com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 1.0F)
+                    .clientTrackingRange(16)
+                    .updateInterval(2)
+                    .fireImmune()
+                    .build("royal_black_hole"));
+
 
     public static final DeferredHolder<EntityType<?>, EntityType<LucidBoltEntity>> LUCID_BOLT = ENTITY_TYPES.register("lucid_bolt",
             () -> EntityType.Builder.<LucidBoltEntity>of(LucidBoltEntity::new, MobCategory.MISC)

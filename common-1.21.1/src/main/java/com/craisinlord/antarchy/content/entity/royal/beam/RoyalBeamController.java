@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -29,6 +31,8 @@ public final class RoyalBeamController {
     private Vec3 beamEndPosition;
     private int beamTicks;
     private int terrainMutationsThisTick;
+    private static final int ICE_MUTATIONS_PER_TICK = 3;
+    private static final float ICE_IMPACT_RADIUS = 2.0F;
 
     public RoyalBeamController(Mob owner) {
         this.owner = owner;
@@ -101,7 +105,8 @@ public final class RoyalBeamController {
         syncedEndPosition.accept(this.beamEndPosition);
 
         if (!this.owner.level().isClientSide && this.beamEndPosition != null) {
-            marchDamageAndTerrain(shootFrom, this.beamEndPosition, settings, terrainMode);
+            boolean impactedBlock = hit.getType() == HitResult.Type.BLOCK;
+            marchDamageAndTerrain(shootFrom, this.beamEndPosition, settings, terrainMode, impactedBlock);
         }
 
         if (this.beamTicks <= 0) {
@@ -114,22 +119,32 @@ public final class RoyalBeamController {
             Vec3 shootFrom,
             Vec3 beamEnd,
             RoyalBeamSettings settings,
-            RoyalBeamTerrainMode terrainMode
+            RoyalBeamTerrainMode terrainMode,
+            boolean impactedBlock
     ) {
         Vec3 direction = beamEnd.subtract(shootFrom).normalize();
         double distance = shootFrom.distanceTo(beamEnd);
         DamageSource damageSource = this.owner.damageSources().mobAttack(this.owner);
         Set<Integer> damagedThisTick = new HashSet<>();
+        boolean pathMutates = terrainMode == RoyalBeamTerrainMode.DESTROY;
         for (double walked = settings.pathStep(); walked < Math.min(distance, settings.range()); walked += settings.pathStep()) {
             Vec3 sample = shootFrom.add(direction.scale(walked));
             hurtEntitiesAround(sample, settings.pathDamageRadius(), settings.damage(), settings.knockback(), damageSource, settings.requireLineOfSightForDamage(), damagedThisTick);
-            if (shouldMutateTerrain(settings, walked)) {
+            if (pathMutates && shouldMutateTerrain(settings, walked)) {
                 mutateTerrainAround(sample, settings.pathTerrainRadius(), settings, terrainMode);
             }
         }
 
         hurtEntitiesAround(beamEnd, settings.impactDamageRadius(), settings.damage(), settings.knockback(), damageSource, settings.requireLineOfSightForDamage(), damagedThisTick);
-        if (shouldMutateTerrain(settings, shootFrom.distanceTo(beamEnd))) {
+
+        if (!shouldMutateTerrain(settings, distance)) {
+            return;
+        }
+        if (terrainMode == RoyalBeamTerrainMode.BUILD_ICE) {
+            if (impactedBlock) {
+                mutateTerrainAround(beamEnd, ICE_IMPACT_RADIUS, settings, terrainMode);
+            }
+        } else {
             mutateTerrainAround(beamEnd, settings.impactTerrainRadius(), settings, terrainMode);
         }
     }
@@ -233,8 +248,11 @@ public final class RoyalBeamController {
         int maxZ = Mth.floor(center.z + radius);
         float radiusSqr = radius * radius;
 
+        int cap = terrainMode == RoyalBeamTerrainMode.BUILD_ICE
+                ? Math.min(ICE_MUTATIONS_PER_TICK, settings.maxTerrainMutationsPerTick())
+                : settings.maxTerrainMutationsPerTick();
         for (BlockPos cursor : BlockPos.betweenClosed(minX, minY, minZ, maxX, maxY, maxZ)) {
-            if (this.terrainMutationsThisTick >= settings.maxTerrainMutationsPerTick()) {
+            if (this.terrainMutationsThisTick >= cap) {
                 return;
             }
             BlockPos pos = cursor.immutable();
@@ -274,19 +292,33 @@ public final class RoyalBeamController {
     }
 
     private void buildIceBlock(Level level, BlockPos pos, BlockState existing, RoyalBeamSettings settings) {
-        boolean softTarget = existing.isAir()
+        boolean replaceable = existing.isAir()
                 || existing.canBeReplaced()
-                || !existing.getFluidState().isEmpty()
-                || existing.getBlock().getExplosionResistance() <= settings.maxTerrainResistance()
-                        && existing.getDestroySpeed(level, pos) >= 0.0F
-                        && level.getBlockEntity(pos) == null;
-        if (!softTarget) {
+                || !existing.getFluidState().isEmpty();
+        if (!replaceable || level.getBlockEntity(pos) != null || existing.is(BlockTags.ICE)) {
+            return;
+        }
+        if (!touchesFreezableSurface(level, pos)) {
             return;
         }
 
         level.levelEvent(2001, pos, Block.getId(existing));
         level.setBlock(pos, randomIceBlock().defaultBlockState(), Block.UPDATE_ALL);
         this.terrainMutationsThisTick++;
+    }
+
+    private static boolean touchesFreezableSurface(Level level, BlockPos pos) {
+        for (Direction direction : Direction.values()) {
+            BlockPos neighbor = pos.relative(direction);
+            BlockState state = level.getBlockState(neighbor);
+            if (state.is(BlockTags.ICE) || state.is(Blocks.SNOW_BLOCK)) {
+                continue;
+            }
+            if (state.isFaceSturdy(level, neighbor, direction.getOpposite())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Block randomIceBlock() {

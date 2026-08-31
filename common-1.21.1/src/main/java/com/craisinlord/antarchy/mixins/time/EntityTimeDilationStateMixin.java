@@ -16,6 +16,8 @@ public abstract class EntityTimeDilationStateMixin implements TimeDilationEntity
     private final Map<String, Double> antarchy$timeDilationTimerProgress = new HashMap<>();
     @Unique
     private boolean antarchy$inTimeDilationMove;
+    @Unique
+    private boolean antarchy$applyingExternalImpulse;
 
     @Override
     public double antarchy$getTimeDilationRate() {
@@ -56,5 +58,15 @@ public abstract class EntityTimeDilationStateMixin implements TimeDilationEntity
     @Override
     public void antarchy$setInTimeDilationMove(boolean inMove) {
         this.antarchy$inTimeDilationMove = inMove;
+    }
+
+    @Override
+    public boolean antarchy$isApplyingExternalImpulse() {
+        return this.antarchy$applyingExternalImpulse;
+    }
+
+    @Override
+    public void antarchy$setApplyingExternalImpulse(boolean applying) {
+        this.antarchy$applyingExternalImpulse = applying;
     }
 }
