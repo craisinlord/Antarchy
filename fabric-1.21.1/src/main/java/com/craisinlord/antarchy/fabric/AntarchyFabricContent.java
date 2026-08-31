@@ -321,7 +321,21 @@ public final class AntarchyFabricContent {
                 AntarchyFabricSounds.QUEEN_BEAM_SHOOT,
                 AntarchyFabricSounds.QUEEN_BEAM_START,
                 AntarchyFabricSounds.QUEEN_BEAM_LOOP,
-                AntarchyFabricSounds.QUEEN_BEAM_END
+                AntarchyFabricSounds.QUEEN_BEAM_END,
+                AntarchyFabricSounds.KING_STOMP,
+                AntarchyFabricSounds.KING_ROAR,
+                AntarchyFabricSounds.KING_WING_FLAP,
+                AntarchyFabricSounds.KING_FLY_LOOP,
+                AntarchyFabricSounds.PRINCE_IDLE,
+                AntarchyFabricSounds.PRINCE_BITE,
+                AntarchyFabricSounds.PRINCE_SHOOT,
+                AntarchyFabricSounds.PRINCE_FLY,
+                AntarchyFabricSounds.PRINCE_STEP,
+                AntarchyFabricSounds.PRINCESS_IDLE,
+                AntarchyFabricSounds.PRINCESS_BITE,
+                AntarchyFabricSounds.PRINCESS_SHOOT,
+                AntarchyFabricSounds.PRINCESS_FLY,
+                AntarchyFabricSounds.PRINCESS_STEP
         );
 
         AntarchyObjects.setOctopusBomb(AntarchyFabricEntities.OCTOPUS_BOMB);
@@ -334,6 +348,7 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setVortex(AntarchyFabricEntities.VORTEX);
         AntarchyObjects.setWindVortex(() -> AntarchyFabricEntities.WIND_VORTEX.get());
         AntarchyObjects.setTimeDilationField(() -> AntarchyFabricEntities.TIME_DILATION_FIELD.get());
+        AntarchyObjects.setRoyalBlackHole(() -> AntarchyFabricEntities.ROYAL_BLACK_HOLE.get());
         AntarchyObjects.setVortexChargeProjectile(() -> AntarchyFabricEntities.VORTEX_CHARGE_PROJECTILE.get());
         AntarchyObjects.setPrince(() -> AntarchyFabricEntities.PRINCE.get());
         AntarchyObjects.setPrincess(() -> AntarchyFabricEntities.PRINCESS.get());
@@ -515,6 +530,9 @@ public final class AntarchyFabricContent {
         com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.setSyncDispatcher(AntarchyFabricNetworking::syncGravityEntity);
         com.craisinlord.antarchy.content.time.TimeDilationApi.setSyncDispatcher(
                 com.craisinlord.antarchy.fabric.network.AntarchyFabricTimeDilationNetworking::syncRate
+        );
+        com.craisinlord.antarchy.content.time.TimeDilationApi.setFieldSyncDispatcher(
+                com.craisinlord.antarchy.fabric.network.AntarchyFabricTimeDilationNetworking::syncFields
         );
         AntarchyFabricEvents.register();
 

@@ -146,6 +146,7 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.VORTEX_CHARGE_PROJECTILE.get(), ThrownItemRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.WIND_VORTEX.get(), WindVortexRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.TIME_DILATION_FIELD.get(), TimeDilationFieldRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.ROYAL_BLACK_HOLE.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.CRITTER_CAGE_PROJECTILE.get(), ThrownItemRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.WORM_HOOK_PROJECTILE.get(), ThrownItemRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.HUSH_PROJECTILE.get(), HushProjectileRenderer::new);

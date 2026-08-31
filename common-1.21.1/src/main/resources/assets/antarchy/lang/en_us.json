@@ -549,7 +549,6 @@
     "item.antarchy.queen_scale":  "Queen Scale",
     "item.antarchy.jerry_nucleus":  "Jerry Nucleus",
     "tooltip.antarchy.jerry_nucleus.hatch":  "While holding, interact with any bug egg or turtle egg to hatch it instantly.",
-    "key.antarchy.dorrie_charge_jump":  "Dorrie Charge Jump",
     "key.antarchy.mount_special":  "Mount: Special / Charge",
     "key.antarchy.mount_flight_toggle":  "Mount: Toggle Flight",
     "item.antarchy.jumpy_bug_leg":  "Jumpy Bug Leg",
@@ -800,6 +799,10 @@
     "advancements.antarchy.cops_n_robbers.description":  "This is just a nostalgic structure, no affiliation with Sky :)",
     "advancements.antarchy.fallen_king_crown.title":  "Chunks would load when I gave the word...",
     "advancements.antarchy.fallen_king_crown.description":  "Obtain the Fallen King\u0027s Crown.",
+    "advancements.antarchy.long_live_the_prince.title":  "Long Live the Prince",
+    "advancements.antarchy.long_live_the_prince.description":  "Hatch and tame a Prince.",
+    "advancements.antarchy.long_live_the_princess.title":  "Long Live the Princess",
+    "advancements.antarchy.long_live_the_princess.description":  "Hatch and tame a Princess.",
     "advancements.antarchy.the_lab.title":  "Hey everyone, Dan here",
     "advancements.antarchy.the_lab.description":  "Discover Dr. Trayaurus\u0027 lab.",
     "advancements.antarchy.sweater_dreams.title":  "Sweeter Dreams",
@@ -1036,6 +1039,16 @@
     "subtitles.antarchy.queen_beam_end":  "The Queen's beam fades",
     "subtitles.antarchy.queen_black_hole_shoot":  "The Queen tears open a singularity",
     "subtitles.antarchy.queen_cast_shoot":  "The Queen casts",
+    "subtitles.antarchy.prince_idle":  "The Prince chitters",
+    "subtitles.antarchy.prince_bite":  "The Prince bites",
+    "subtitles.antarchy.prince_shoot":  "The Prince spits a volley",
+    "subtitles.antarchy.prince_fly":  "The Prince's wings beat",
+    "subtitles.antarchy.prince_step":  "The Prince's footfalls",
+    "subtitles.antarchy.princess_idle":  "The Princess chitters",
+    "subtitles.antarchy.princess_bite":  "The Princess bites",
+    "subtitles.antarchy.princess_shoot":  "The Princess spits a volley",
+    "subtitles.antarchy.princess_fly":  "The Princess's wings beat",
+    "subtitles.antarchy.princess_step":  "The Princess's footfalls",
     "subtitles.antarchy.stinky_fly":  "Stinky flies buzz",
     "item.minecraft.potion.effect.inversion":  "Potion of Inversion",
     "item.minecraft.potion.effect.long_inversion":  "Potion of Inversion",
@@ -1167,6 +1180,7 @@
     "entity.antarchy.king":  "The King",
     "entity.antarchy.queen":  "The Queen",
     "entity.antarchy.manticore":  "Manticore",
+    "entity.antarchy.royal_black_hole":  "Singularity",
     "entity.antarchy.royal_bolt":  "Royal Bolt",
     "block.antarchy.prince_egg":  "Prince Egg",
     "block.antarchy.princess_egg":  "Princess Egg",
@@ -1323,4 +1337,32 @@
     "block.antarchy.chiseled_loam_bricks":  "Chiseled Loam Bricks",
     "item.antarchy.cooked_cheep":  "Cooked Cheep",
     "item.antarchy.cheep_bucket":  "Bucket of Cheep"
+    ,"decree.antarchy.the_sky_is_mine": "THE SKY IS MINE"
+    ,"decree.antarchy.the_sky_is_mine.subtitle": "Stay grounded."
+    ,"decree.antarchy.do_not_run": "DO NOT RUN"
+    ,"decree.antarchy.do_not_run.subtitle": "Stop sprinting."
+    ,"decree.antarchy.kneel": "KNEEL"
+    ,"decree.antarchy.kneel.subtitle": "Crouch within five seconds."
+    ,"decree.antarchy.close_quarters": "CLOSE QUARTERS"
+    ,"decree.antarchy.close_quarters.subtitle": "Projectiles are forbidden."
+    ,"decree.antarchy.come_no_closer": "COME NO CLOSER"
+    ,"decree.antarchy.come_no_closer.subtitle": "Keep out of the King's inner radius."
+    ,"decree.antarchy.fight_me_coward": "FIGHT ME, COWARD!"
+    ,"decree.antarchy.fight_me_coward.subtitle": "Approach the King."
+    ,"decree.antarchy.no_respite": "NO RESPITE"
+    ,"decree.antarchy.no_respite.subtitle": "Healing is sealed."
+    ,"decree.antarchy.no_retreat": "NO RETREAT"
+    ,"decree.antarchy.no_retreat.subtitle": "Do not flee the King's presence."
+    ,"decree.antarchy.keep_your_distance": "KEEP YOUR DISTANCE"
+    ,"decree.antarchy.keep_your_distance.subtitle": "Stay out of the King's reach."
+    ,"decree.antarchy.stand_tall": "STAND TALL"
+    ,"decree.antarchy.stand_tall.subtitle": "Do not crouch before the King."
+    ,"decree.antarchy.stand_your_ground": "STAND YOUR GROUND"
+    ,"decree.antarchy.stand_your_ground.subtitle": "Do not stray from where you stand."
+    ,"decree.antarchy.hands_off_the_crown": "HANDS OFF THE CROWN"
+    ,"decree.antarchy.hands_off_the_crown.subtitle": "Strike the King and be judged."
+    ,"decree.antarchy.advance": "ADVANCE"
+    ,"decree.antarchy.advance.subtitle": "Close on the King or be judged."
+    ,"decree.antarchy.show_no_mercy": "SHOW NO MERCY"
+    ,"decree.antarchy.show_no_mercy.subtitle": "Keep dealing damage."
 }

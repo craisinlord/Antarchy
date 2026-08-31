@@ -1,13 +1,18 @@
 package com.craisinlord.antarchy.content.entity.royal;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import java.util.UUID;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -40,6 +45,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -91,6 +97,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
     private boolean actionHit;
     private int spitCooldown;
     private int quirkTimer;
+    private int flapSoundTimer;
     private boolean riderAscendPressed;
     private boolean riderDescendPressed;
 
@@ -109,21 +116,43 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         this.xpReward = 20;
     }
 
-    public static AttributeSupplier.Builder createBaseAttributes() {
+    public static AttributeSupplier.Builder createBaseAttributes(
+            double health, double attackDamage, double movementSpeed, double flyingSpeed,
+            double armor, double knockbackResistance, double followRange) {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 120.0D)
-                .add(Attributes.ATTACK_DAMAGE, 12.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.28D)
-                .add(Attributes.FLYING_SPEED, 0.9D)
-                .add(Attributes.FOLLOW_RANGE, 48.0D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.6D)
-                .add(Attributes.ARMOR, 10.0D)
+                .add(Attributes.MAX_HEALTH, health)
+                .add(Attributes.ATTACK_DAMAGE, attackDamage)
+                .add(Attributes.MOVEMENT_SPEED, movementSpeed)
+                .add(Attributes.FLYING_SPEED, flyingSpeed)
+                .add(Attributes.FOLLOW_RANGE, followRange)
+                .add(Attributes.KNOCKBACK_RESISTANCE, knockbackResistance)
+                .add(Attributes.ARMOR, armor)
                 .add(Attributes.STEP_HEIGHT, 1.5D);
     }
 
     protected abstract String geoName();
 
     protected abstract EntityType<? extends RoyalBoltEntity> boltType();
+
+    protected abstract SoundEvent idleSound();
+
+    protected abstract SoundEvent biteSound();
+
+    protected abstract SoundEvent shootSound();
+
+    protected abstract SoundEvent flySound();
+
+    protected abstract SoundEvent stepSound();
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return this.idleSound();
+    }
+
+    @Override
+    protected void playStepSound(BlockPos pos, BlockState state) {
+        this.playSound(this.stepSound(), 0.16F, 1.0F + (this.random.nextFloat() - 0.5F) * 0.2F);
+    }
 
     @Override
     protected PathNavigation createNavigation(Level level) {
@@ -135,7 +164,12 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
+        this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this) {
+            @Override
+            public boolean canUse() {
+                return !RoyalMountEntity.this.isBaby() && super.canUse();
+            }
+        });
         this.goalSelector.addGoal(2, new RoyalMountSpitGoal(this));
         this.goalSelector.addGoal(3, new net.minecraft.world.entity.ai.goal.MeleeAttackGoal(this, 1.2D, true) {
             @Override
@@ -155,14 +189,35 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.8D) {
             @Override
             public boolean canUse() {
-                return !RoyalMountEntity.this.isVehicle() && !RoyalMountEntity.this.isOrderedToSit() && super.canUse();
+                return !RoyalMountEntity.this.isBaby() && !RoyalMountEntity.this.isVehicle()
+                        && !RoyalMountEntity.this.isOrderedToSit() && super.canUse();
             }
         });
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 12.0F));
-        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        this.targetSelector.addGoal(3, new HurtByTargetGoal(this).setAlertOthers());
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this) {
+            @Override
+            public boolean canUse() {
+                return !RoyalMountEntity.this.isBaby() && super.canUse();
+            }
+        });
+        this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this) {
+            @Override
+            public boolean canUse() {
+                return !RoyalMountEntity.this.isBaby() && super.canUse();
+            }
+        });
+        this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this) {
+            @Override
+            public boolean canUse() {
+                return !RoyalMountEntity.this.isBaby() && super.canUse();
+            }
+        });
+        this.targetSelector.addGoal(3, new HurtByTargetGoal(this) {
+            @Override
+            public boolean canUse() {
+                return !RoyalMountEntity.this.isBaby() && super.canUse();
+            }
+        }.setAlertOthers());
     }
 
     @Override
@@ -197,6 +252,9 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
             this.moveControl = flying ? this.flyingMoveControl : this.groundMoveControl;
             this.navigation = flying ? this.flyingNavigation : this.groundNavigation;
             this.setNoGravity(flying);
+            if (flying && !this.level().isClientSide) {
+                this.playSound(this.flySound(), 1.0F, 1.0F + (this.random.nextFloat() - 0.5F) * 0.2F);
+            }
         }
     }
 
@@ -226,15 +284,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return isGoldenTreat(stack);
-    }
-
-    public static boolean isGoldenTreat(ItemStack stack) {
-        if (stack.isEmpty()) {
-            return false;
-        }
-        String path = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath();
-        return path.contains("gold") || path.contains("golden");
+        return stack.is(AntarchyTags.Items.ROYAL_MOUNT_FOOD);
     }
 
     @Override
@@ -327,6 +377,11 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
             this.spitCooldown--;
         }
 
+        if ((this.isFlying() || !this.onGround()) && --this.flapSoundTimer <= 0) {
+            this.flapSoundTimer = 24 + this.random.nextInt(12);
+            this.playSound(this.flySound(), 0.6F, 1.0F + (this.random.nextFloat() - 0.5F) * 0.3F);
+        }
+
         if (this.actionTicks > 0) {
             this.actionTicks--;
             if (!this.actionHit && this.actionTicks <= ACTION_TICKS - BITE_HIT_TICK
@@ -385,6 +440,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         this.actionHit = false;
         this.setAnimState(this.isFlying() ? ANIM_FLY_BITE : ANIM_BITE);
         this.triggerAnim("main", this.isFlying() ? "fly_bite" : "bite");
+        this.playSound(this.biteSound(), 1.2F, 0.9F + this.random.nextFloat() * 0.2F);
     }
 
     private void applyBiteDamage() {
@@ -445,12 +501,17 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
             Vec3 dir = aim.add(right.scale(i * 0.14D)).normalize();
             RoyalBoltEntity bolt = new RoyalBoltEntity(this.boltType(), this.level());
             bolt.setOwner(this);
+            bolt.setElement(this.boltElement(i));
             Vec3 spawn = this.getEyePosition().add(aim.scale(1.6D)).add(right.scale(i * 0.9D));
             bolt.setPos(spawn.x, spawn.y, spawn.z);
             bolt.shoot(dir.x, dir.y, dir.z, 1.4F, 1.0F);
             this.level().addFreshEntity(bolt);
         }
-        this.playSound(SoundEvents.BREEZE_SHOOT, 1.2F, 0.9F);
+        this.playSound(this.shootSound(), 1.2F, 0.9F + this.random.nextFloat() * 0.2F);
+    }
+
+    protected RoyalBeamElement boltElement(int lateralIndex) {
+        return RoyalBeamElement.GENERIC;
     }
 
     public boolean toggleMountedFlight(ServerPlayer player) {

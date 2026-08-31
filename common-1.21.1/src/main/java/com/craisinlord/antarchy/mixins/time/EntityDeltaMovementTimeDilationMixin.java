@@ -15,7 +15,8 @@ public abstract class EntityDeltaMovementTimeDilationMixin {
     private Vec3 antarchy$scaleTimeDilatedVelocityChange(Vec3 nextMovement) {
         Entity entity = (Entity) (Object) this;
         if (!(entity instanceof TimeDilationEntityAccess access)
-                || access.antarchy$isInTimeDilationMove()) {
+                || access.antarchy$isInTimeDilationMove()
+                || access.antarchy$isApplyingExternalImpulse()) {
             return nextMovement;
         }
 

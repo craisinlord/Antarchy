@@ -9,6 +9,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -228,31 +229,17 @@ public class WindVortexEntity extends Entity {
         VortexMode mode = this.getMode();
 
         for (Entity entity : this.level().getEntities(this, area, this::canAffectEntity)) {
-            Vec3 relative = entity.position().subtract(this.position());
-            double axisDistance = relative.dot(basis.axis);
-            if (axisDistance < -1.0D || axisDistance > height + 2.0D) {
-                continue;
-            }
-            double along = Mth.clamp(axisDistance, 0.0D, height);
-            double currentProgress = height <= 0.0D ? 1.0D : along / height;
-            double captureProgress = mode == VortexMode.LENS_PULL ? 1.0D - currentProgress : currentProgress;
-            double shapeProgress = mode == VortexMode.LENS_PULL ? 1.0D - currentProgress : currentProgress;
-            double radius = this.radiusAt(shapeProgress);
-            Vec3 axisPoint = basis.axis.scale(axisDistance);
-            Vec3 radialVector = relative.subtract(axisPoint);
-            double captureRadius = radius * 1.35D + (entity instanceof Player ? 1.5D : 1.75D);
-            boolean requireLos = !this.travelling && mode == VortexMode.GATHER_RETURN;
-
-            if (radialVector.lengthSqr() > captureRadius * captureRadius
-                    || (requireLos && !this.hasClearPathTo(entity))) {
-                continue;
-            }
-
-            this.carriedProgress.putIfAbsent(entity.getUUID(), captureProgress);
+            this.captureEntity(entity, height, basis, mode);
         }
 
         if (!(this.level() instanceof ServerLevel serverLevel)) {
             return;
+        }
+
+        for (ServerPlayer player : serverLevel.players()) {
+            if (area.intersects(player.getBoundingBox())) {
+                this.captureEntity(player, height, basis, mode);
+            }
         }
 
         Iterator<Map.Entry<UUID, Double>> iterator = this.carriedProgress.entrySet().iterator();
@@ -314,8 +301,39 @@ public class WindVortexEntity extends Entity {
         return radial.lengthSqr() < 1.0E-6D ? basis.sideA.scale(this.radiusAt(progress)) : radial;
     }
 
+    private void captureEntity(Entity entity, double height, Basis basis, VortexMode mode) {
+        if (!this.canAffectEntity(entity)) {
+            return;
+        }
+        Vec3 relative = entity.position().subtract(this.position());
+        double axisDistance = relative.dot(basis.axis);
+        if (axisDistance < -1.0D || axisDistance > height + 2.0D) {
+            return;
+        }
+        double along = Mth.clamp(axisDistance, 0.0D, height);
+        double currentProgress = height <= 0.0D ? 1.0D : along / height;
+        double captureProgress = mode == VortexMode.LENS_PULL ? 1.0D - currentProgress : currentProgress;
+        double shapeProgress = mode == VortexMode.LENS_PULL ? 1.0D - currentProgress : currentProgress;
+        double radius = this.radiusAt(shapeProgress);
+        Vec3 axisPoint = basis.axis.scale(axisDistance);
+        Vec3 radialVector = relative.subtract(axisPoint);
+        double captureRadius = radius * 1.35D + (entity instanceof Player ? 1.5D : 1.75D);
+        boolean requireLos = !this.travelling && mode == VortexMode.GATHER_RETURN;
+
+        if (radialVector.lengthSqr() > captureRadius * captureRadius
+                || (requireLos && !this.hasClearPathTo(entity))) {
+            return;
+        }
+
+        this.carriedProgress.putIfAbsent(entity.getUUID(), captureProgress);
+    }
+
     private boolean canAffectEntity(Entity entity) {
-        if (!entity.isAlive() || entity.isSpectator() || entity.noPhysics || entity.getType().is(AntarchyTags.Entities.WIND_VORTEX_IMMUNE)) {
+        if (entity instanceof WindVortexEntity
+                || !entity.isAlive()
+                || entity.isSpectator()
+                || entity.noPhysics
+                || entity.getType().is(AntarchyTags.Entities.WIND_VORTEX_IMMUNE)) {
             return false;
         }
         return true;
@@ -370,7 +388,12 @@ public class WindVortexEntity extends Entity {
             entity.setOnGround(false);
         }
         if (entity instanceof Player) {
-            entity.move(net.minecraft.world.entity.MoverType.SELF, wanted.scale(0.65D));
+            Vec3 before = entity.position();
+            Vec3 playerCarry = wanted.scale(0.65D);
+            entity.move(net.minecraft.world.entity.MoverType.SELF, playerCarry);
+            if (entity.position().distanceToSqr(before) < 1.0E-6D && playerCarry.lengthSqr() > 1.0E-6D) {
+                entity.setPos(before.add(playerCarry));
+            }
             entity.setOnGround(false);
         }
         entity.setDeltaMovement(updatedMovement);

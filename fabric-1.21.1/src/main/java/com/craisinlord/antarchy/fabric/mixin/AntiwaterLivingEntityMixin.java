@@ -1,17 +1,13 @@
 package com.craisinlord.antarchy.fabric.mixin;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import com.craisinlord.antarchy.fabric.util.CustomFluidPhysicsChecks;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,7 +19,7 @@ public abstract class AntiwaterLivingEntityMixin {
     @Inject(method = "travel", at = @At("HEAD"), cancellable = true)
     private void antarchy$moveInAntiwater(Vec3 travelVector, CallbackInfo ci) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        if (!antarchy$isTouchingAntiwaterLocal(entity)) {
+        if (!CustomFluidPhysicsChecks.isTouchingAntiwater(entity)) {
             return;
         }
 
@@ -87,24 +83,5 @@ public abstract class AntiwaterLivingEntityMixin {
         }
 
         return AntarchyGravityDirection.UP;
-    }
-
-    private boolean antarchy$isTouchingAntiwaterLocal(LivingEntity entity) {
-        AABB box = entity.getBoundingBox().inflate(0.05D);
-        BlockPos min = BlockPos.containing(box.minX, box.minY, box.minZ);
-        BlockPos max = BlockPos.containing(box.maxX, box.maxY, box.maxZ);
-        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
-        for (int x = min.getX(); x <= max.getX(); x++) {
-            for (int y = min.getY(); y <= max.getY(); y++) {
-                for (int z = min.getZ(); z <= max.getZ(); z++) {
-                    cursor.set(x, y, z);
-                    FluidState fluidState = entity.level().getFluidState(cursor);
-                    if (AntarchyFluidChecks.isAntiwater(fluidState)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 }

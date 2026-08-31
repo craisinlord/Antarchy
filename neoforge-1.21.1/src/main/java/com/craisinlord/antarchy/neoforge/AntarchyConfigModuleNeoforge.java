@@ -163,6 +163,7 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setKingBeamTracking(AntarchyMobsConfig.kingBeamTracking());
         AntarchySettings.setKingBeamTerrainRadius(AntarchyMobsConfig.kingBeamTerrainRadius());
         AntarchySettings.setKingBeamTerrainCap(AntarchyMobsConfig.kingBeamTerrainCap());
+        AntarchySettings.setRoyalDecreeCooldownTicks(AntarchyMobsConfig.royalDecreeCooldownTicks());
 
         AntarchySettings.setBrutalflyHealth(AntarchyMobsConfig.brutalflyHealth());
         AntarchySettings.setBrutalflySwipeDamage(AntarchyMobsConfig.brutalflySwipeDamage());

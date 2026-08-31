@@ -10,4 +10,8 @@ public interface TimeDilationEntityAccess {
     boolean antarchy$isInTimeDilationMove();
 
     void antarchy$setInTimeDilationMove(boolean inMove);
+
+    boolean antarchy$isApplyingExternalImpulse();
+
+    void antarchy$setApplyingExternalImpulse(boolean applying);
 }

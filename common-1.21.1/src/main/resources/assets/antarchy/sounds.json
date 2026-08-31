@@ -2940,5 +2940,83 @@
         "name": "antarchy:mob/queen/fireball_shoot"
       }
     ]
+  },
+  "prince_idle": {
+    "subtitle": "subtitles.antarchy.prince_idle",
+    "sounds": [
+      { "name": "antarchy:mob/prince/idle1" },
+      { "name": "antarchy:mob/prince/idle2" }
+    ]
+  },
+  "prince_bite": {
+    "subtitle": "subtitles.antarchy.prince_bite",
+    "sounds": [
+      { "name": "antarchy:mob/prince/bite1" }
+    ]
+  },
+  "prince_shoot": {
+    "subtitle": "subtitles.antarchy.prince_shoot",
+    "sounds": [
+      { "name": "antarchy:mob/prince/shoot1" }
+    ]
+  },
+  "prince_fly": {
+    "subtitle": "subtitles.antarchy.prince_fly",
+    "sounds": [
+      { "name": "antarchy:mob/prince/flt4" },
+      { "name": "antarchy:mob/prince/fly1" },
+      { "name": "antarchy:mob/prince/fly2" },
+      { "name": "antarchy:mob/prince/fly3" },
+      { "name": "antarchy:mob/prince/fly5" },
+      { "name": "antarchy:mob/prince/fly6" }
+    ]
+  },
+  "prince_step": {
+    "subtitle": "subtitles.antarchy.prince_step",
+    "sounds": [
+      { "name": "antarchy:mob/prince/walk1" },
+      { "name": "antarchy:mob/prince/walk2" },
+      { "name": "antarchy:mob/prince/walk3" },
+      { "name": "antarchy:mob/prince/walk4" }
+    ]
+  },
+  "princess_idle": {
+    "subtitle": "subtitles.antarchy.princess_idle",
+    "sounds": [
+      { "name": "antarchy:mob/princess/idle1" },
+      { "name": "antarchy:mob/princess/idle2" }
+    ]
+  },
+  "princess_bite": {
+    "subtitle": "subtitles.antarchy.princess_bite",
+    "sounds": [
+      { "name": "antarchy:mob/princess/bite1" }
+    ]
+  },
+  "princess_shoot": {
+    "subtitle": "subtitles.antarchy.princess_shoot",
+    "sounds": [
+      { "name": "antarchy:mob/princess/shoot1" }
+    ]
+  },
+  "princess_fly": {
+    "subtitle": "subtitles.antarchy.princess_fly",
+    "sounds": [
+      { "name": "antarchy:mob/princess/flt4" },
+      { "name": "antarchy:mob/princess/fly1" },
+      { "name": "antarchy:mob/princess/fly2" },
+      { "name": "antarchy:mob/princess/fly3" },
+      { "name": "antarchy:mob/princess/fly5" },
+      { "name": "antarchy:mob/princess/fly6" }
+    ]
+  },
+  "princess_step": {
+    "subtitle": "subtitles.antarchy.princess_step",
+    "sounds": [
+      { "name": "antarchy:mob/princess/walk1" },
+      { "name": "antarchy:mob/princess/walk2" },
+      { "name": "antarchy:mob/princess/walk3" },
+      { "name": "antarchy:mob/princess/walk4" }
+    ]
   }
 }

@@ -17,13 +17,6 @@ public final class AntarchyKeyBindings {
             CATEGORY
     );
 
-    public static final KeyMapping DORRIE_CHARGE_JUMP = new KeyMapping(
-            "key.antarchy.dorrie_charge_jump",
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_LEFT_CONTROL,
-            CATEGORY
-    );
-
     public static final KeyMapping MOUNT_SPECIAL = new KeyMapping(
             "key.antarchy.mount_special",
             InputConstants.Type.KEYSYM,
@@ -55,7 +48,6 @@ public final class AntarchyKeyBindings {
 
     public static void register() {
         KeyBindingHelper.registerKeyBinding(BRUTALFLY_FLAP);
-        KeyBindingHelper.registerKeyBinding(DORRIE_CHARGE_JUMP);
         KeyBindingHelper.registerKeyBinding(MOUNT_SPECIAL);
         KeyBindingHelper.registerKeyBinding(MOUNT_FLIGHT_TOGGLE);
         KeyBindingHelper.registerKeyBinding(TIGERS_EYE_CAMOUFLAGE);
@@ -64,10 +56,6 @@ public final class AntarchyKeyBindings {
 
     public static boolean isBrutalflyFlapPressed() {
         return Minecraft.getInstance().screen == null && BRUTALFLY_FLAP.isDown();
-    }
-
-    public static boolean isDorrieChargeJumpPressed() {
-        return Minecraft.getInstance().screen == null && DORRIE_CHARGE_JUMP.isDown();
     }
 
     public static boolean isMountSpecialPressed() {

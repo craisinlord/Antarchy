@@ -196,7 +196,7 @@ public class ElythiaBiomeSource extends BiomeSource {
         }
 
         if (biome.is(MOLEWORM_CAVES) && y > this.molewormCavesMaxQuartY) {
-            return resolveSurfaceFallback(x, z, sampler, this.molewormSurfaceFallbackCache, MOLEWORM_CAVES, GLIMMERING_POOLS);
+            return resolveSurfaceFallback(x, z, sampler, this.molewormSurfaceFallbackCache, MOLEWORM_CAVES, GLIMMERING_POOLS, CLOUD_SEA);
         }
 
         Climate.TargetPoint target = sampler.sample(x, this.seaLevelQuartY, z);
@@ -222,7 +222,7 @@ public class ElythiaBiomeSource extends BiomeSource {
             biome = this.glimmeringPoolsHolder != null ? this.glimmeringPoolsHolder : biome;
         }
         if ((biome.is(PEACH_FOREST) || biome.is(GLIMMERING_POOLS)) && y <= this.undergroundGuardMaxQuartY) {
-            return resolveSurfaceFallback(x, z, sampler, this.peachForestSurfaceFallbackCache, PEACH_FOREST, GLIMMERING_POOLS);
+            return resolveSurfaceFallback(x, z, sampler, this.peachForestSurfaceFallbackCache, PEACH_FOREST, GLIMMERING_POOLS, CLOUD_SEA);
         }
 
         return biome;
@@ -320,6 +320,9 @@ public class ElythiaBiomeSource extends BiomeSource {
             }
         }
         result = nullToConfiguredFallback(result, x, this.surfaceBiomeSampleQuartY, z, sampler);
+        if (result != null && result.is(CLOUD_SEA) && this.defaultLandHolder != null) {
+            result = this.defaultLandHolder;
+        }
 
         cache.key = key;
         cache.value = result;
@@ -384,7 +387,6 @@ public class ElythiaBiomeSource extends BiomeSource {
         if (this.ouranwoodForestHolder != null) return this.ouranwoodForestHolder;
         if (this.glimmeringPoolsHolder != null) return this.glimmeringPoolsHolder;
         if (this.oceanHolder != null) return this.oceanHolder;
-        if (this.cloudSeaHolder != null) return this.cloudSeaHolder;
         return this.firstConfiguredHolder;
     }
 

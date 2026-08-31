@@ -40,7 +40,7 @@ public final class DorrieJumpClientHandler {
             wasPressingJump = pressingJump;
         }
 
-        boolean pressingCharge = AntarchyKeyBindings.DORRIE_CHARGE_JUMP.isDown();
+        boolean pressingCharge = AntarchyKeyBindings.MOUNT_SPECIAL.isDown();
         if (pressingCharge != wasPressingCharge) {
             PacketDistributor.sendToServer(new DorrieChargeJumpPayload(pressingCharge));
             if (!pressingCharge && player.getVehicle() instanceof DorrieEntity dorrie) {

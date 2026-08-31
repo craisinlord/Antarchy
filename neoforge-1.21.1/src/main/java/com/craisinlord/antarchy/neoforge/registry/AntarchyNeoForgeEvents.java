@@ -304,6 +304,12 @@ public final class AntarchyNeoForgeEvents {
         }
 
         AntarchyGravityNetworking.syncEntity(event.getTarget());
+        if (event.getTarget() instanceof com.craisinlord.antarchy.content.time.TimeDilationEntityAccess access
+                && event.getEntity() instanceof ServerPlayer trackingPlayer) {
+            com.craisinlord.antarchy.neoforge.network.AntarchyTimeDilationNetworking.syncRateToPlayer(
+                    trackingPlayer, event.getTarget(), access.antarchy$getTimeDilationRate()
+            );
+        }
         if (event.getTarget() instanceof ServerPlayer trackedPlayer && event.getEntity() instanceof ServerPlayer trackingPlayer) {
             TigerEyeCamouflageSync.syncTo(trackingPlayer, trackedPlayer);
         }

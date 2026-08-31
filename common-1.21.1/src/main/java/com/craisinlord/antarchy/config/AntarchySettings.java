@@ -91,6 +91,7 @@ public final class AntarchySettings {
     private static double bigBerthaNoneModeDamageBonusPercent = 15.0D;
     private static double bigBerthaNightmareDamageBonusPercent = 30.0D;
     private static double potentNyxiteInvertedDurationSeconds = 60.0D;
+    private static boolean dimensionalTearsSpawnNaturally = false;
     private static int dimensionalTearLifetimeTicks = 24000;
     private static int dimensionalTearInvertedDurationTicks = 2400;
     private static int dimensionalTearEmergenceMinIntervalTicks = 2400;
@@ -231,6 +232,20 @@ public final class AntarchySettings {
     private static int royalGuardianShieldDurability = 1008;
     private static double royalBoltDamage = 6.0D;
     private static int royalEggHatchChance = 3;
+    private static double princeHealth = 120.0D;
+    private static double princeAttackDamage = 14.0D;
+    private static double princeMovementSpeed = 0.28D;
+    private static double princeFlyingSpeed = 0.9D;
+    private static double princeArmor = 10.0D;
+    private static double princeKnockbackResistance = 0.6D;
+    private static double princeFollowRange = 48.0D;
+    private static double princessHealth = 110.0D;
+    private static double princessAttackDamage = 10.0D;
+    private static double princessMovementSpeed = 0.28D;
+    private static double princessFlyingSpeed = 0.95D;
+    private static double princessArmor = 8.0D;
+    private static double princessKnockbackResistance = 0.5D;
+    private static double princessFollowRange = 48.0D;
     private static double kingHealth = 6000.0D;
     private static double queenHealth = 6000.0D;
     private static double kingAttackDamage = 50.0D;
@@ -530,6 +545,7 @@ public final class AntarchySettings {
     private static double kingBeamTracking = 0.1D;
     private static double kingBeamTerrainRadius = 5.0D;
     private static int kingBeamTerrainCap = 192;
+    private static int royalDecreeCooldownTicks = 1200;
     private static double jerryInfantHealth = 20.0D;
     private static double jerryInfantAttackDamage = 2.0D;
     private static double jerryMatureHealth = 40.0D;
@@ -789,6 +805,14 @@ public final class AntarchySettings {
 
     public static double potentNyxiteInvertedDurationSeconds() {
         return potentNyxiteInvertedDurationSeconds;
+    }
+
+    public static boolean dimensionalTearsSpawnNaturally() {
+        return dimensionalTearsSpawnNaturally;
+    }
+
+    public static void setDimensionalTearsSpawnNaturally(boolean value) {
+        dimensionalTearsSpawnNaturally = value;
     }
 
     public static int dimensionalTearLifetimeTicks() {
@@ -1948,6 +1972,36 @@ public final class AntarchySettings {
     public static int royalEggHatchChance() { return royalEggHatchChance; }
     public static void setRoyalEggHatchChance(int v) { royalEggHatchChance = v; }
 
+    public static double princeHealth() { return princeHealth; }
+    public static void setPrinceHealth(double v) { princeHealth = v; }
+    public static double princeAttackDamage() { return princeAttackDamage; }
+    public static void setPrinceAttackDamage(double v) { princeAttackDamage = v; }
+    public static double princeMovementSpeed() { return princeMovementSpeed; }
+    public static void setPrinceMovementSpeed(double v) { princeMovementSpeed = v; }
+    public static double princeFlyingSpeed() { return princeFlyingSpeed; }
+    public static void setPrinceFlyingSpeed(double v) { princeFlyingSpeed = v; }
+    public static double princeArmor() { return princeArmor; }
+    public static void setPrinceArmor(double v) { princeArmor = v; }
+    public static double princeKnockbackResistance() { return princeKnockbackResistance; }
+    public static void setPrinceKnockbackResistance(double v) { princeKnockbackResistance = v; }
+    public static double princeFollowRange() { return princeFollowRange; }
+    public static void setPrinceFollowRange(double v) { princeFollowRange = v; }
+
+    public static double princessHealth() { return princessHealth; }
+    public static void setPrincessHealth(double v) { princessHealth = v; }
+    public static double princessAttackDamage() { return princessAttackDamage; }
+    public static void setPrincessAttackDamage(double v) { princessAttackDamage = v; }
+    public static double princessMovementSpeed() { return princessMovementSpeed; }
+    public static void setPrincessMovementSpeed(double v) { princessMovementSpeed = v; }
+    public static double princessFlyingSpeed() { return princessFlyingSpeed; }
+    public static void setPrincessFlyingSpeed(double v) { princessFlyingSpeed = v; }
+    public static double princessArmor() { return princessArmor; }
+    public static void setPrincessArmor(double v) { princessArmor = v; }
+    public static double princessKnockbackResistance() { return princessKnockbackResistance; }
+    public static void setPrincessKnockbackResistance(double v) { princessKnockbackResistance = v; }
+    public static double princessFollowRange() { return princessFollowRange; }
+    public static void setPrincessFollowRange(double v) { princessFollowRange = v; }
+
     public static double kingHealth() { return kingHealth; }
     public static void setKingHealth(double v) { kingHealth = v; }
 
@@ -2800,6 +2854,8 @@ public final class AntarchySettings {
     public static void setKingBeamTerrainRadius(double v) { kingBeamTerrainRadius = v; }
     public static int kingBeamTerrainCap() { return kingBeamTerrainCap; }
     public static void setKingBeamTerrainCap(int v) { kingBeamTerrainCap = v; }
+    public static int royalDecreeCooldownTicks() { return royalDecreeCooldownTicks; }
+    public static void setRoyalDecreeCooldownTicks(int v) { royalDecreeCooldownTicks = v; }
     public static double jerryInfantHealth() { return jerryInfantHealth; }
     public static void setJerryInfantHealth(double v) { jerryInfantHealth = v; }
     public static double jerryInfantAttackDamage() { return jerryInfantAttackDamage; }
