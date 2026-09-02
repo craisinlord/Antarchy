@@ -80,6 +80,10 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
     private UUID queenOwnerId;
     private int queenManticoreCount;
     private boolean queenManticoreSpawned;
+    @Nullable
+    private UUID staffOwnerId;
+    private int staffManticoreCount;
+    private boolean staffManticoreSpawned;
 
     public DimensionalTearEntity(EntityType<? extends DimensionalTearEntity> entityType, Level level) {
         super(entityType, level);
@@ -101,6 +105,14 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         DimensionalTearEntity tear = create(level, pos, yaw, lifetimeTicks);
         tear.queenOwnerId = queenId;
         tear.queenManticoreCount = Math.max(1, count);
+        return tear;
+    }
+
+    public static DimensionalTearEntity createStaffSummonTear(ServerLevel level, Vec3 pos, float yaw,
+                                                               int lifetimeTicks, UUID playerId, int count) {
+        DimensionalTearEntity tear = create(level, pos, yaw, lifetimeTicks);
+        tear.staffOwnerId = playerId;
+        tear.staffManticoreCount = Math.max(1, count);
         return tear;
     }
 
@@ -139,14 +151,20 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
             this.spawnQueenManticores((ServerLevel) this.level());
         }
 
+        if (this.staffOwnerId != null && this.ageTicks == OPENING_ANIMATION_TICKS) {
+            this.spawnStaffManticores((ServerLevel) this.level());
+        }
+
         DimensionalTearEntity linked = this.findLinkedTear();
         if (linked == null || !linked.isAlive()) {
             this.discard();
             return;
         }
 
-        this.tickMobEvent((ServerLevel) this.level());
-        this.tickTeleport(linked);
+        if (this.staffOwnerId == null && this.ageTicks >= OPENING_ANIMATION_TICKS) {
+            this.tickMobEvent((ServerLevel) this.level());
+            this.tickTeleport(linked);
+        }
     }
 
     private void tickMobEvent(ServerLevel level) {
@@ -225,6 +243,37 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
             manticore.markQueenSummoned(queen.getUUID());
             if (target != null && target.isAlive()) {
                 manticore.setTarget(target);
+            }
+            manticore.setDeltaMovement(this.getViewVector(1.0F).scale(0.2D).add(0.0D, 0.08D, 0.0D));
+            manticore.setNoGravity(true);
+            level.addFreshEntity(manticore);
+        }
+    }
+
+    private void spawnStaffManticores(ServerLevel level) {
+        if (this.staffManticoreSpawned) {
+            return;
+        }
+        this.staffManticoreSpawned = true;
+        Entity owner = level.getEntity(this.staffOwnerId);
+        if (!(owner instanceof net.minecraft.world.entity.player.Player player) || !player.isAlive()) {
+            return;
+        }
+        for (int i = 0; i < this.staffManticoreCount; i++) {
+            ManticoreEntity manticore = AntarchyObjects.MANTICORE.get().create(level);
+            if (manticore == null) {
+                continue;
+            }
+            Vec3 exit = this.exitPosition().add(0.0D, 0.8D + i * 0.35D, 0.0D);
+            manticore.moveTo(exit.x, exit.y, exit.z, this.getYRot(), 0.0F);
+            if (!level.noCollision(manticore)) {
+                manticore.discard();
+                continue;
+            }
+            manticore.finalizeSpawn(level, level.getCurrentDifficultyAt(BlockPos.containing(exit)), MobSpawnType.MOB_SUMMONED, null);
+            manticore.markPlayerSummoned(player.getUUID(), 20 * 30);
+            if (player.getLastHurtMob() != null && player.getLastHurtMob().isAlive()) {
+                manticore.setTarget(player.getLastHurtMob());
             }
             manticore.setDeltaMovement(this.getViewVector(1.0F).scale(0.2D).add(0.0D, 0.08D, 0.0D));
             manticore.setNoGravity(true);

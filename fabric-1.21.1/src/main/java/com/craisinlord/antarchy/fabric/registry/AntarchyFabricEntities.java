@@ -458,6 +458,7 @@ public final class AntarchyFabricEntities {
             () -> EntityType.Builder.of(VortexEntity::new, MobCategory.MONSTER)
                     .sized(2.0F, 2.0F)
                     .clientTrackingRange(10)
+                    .fireImmune()
                     .build("vortex"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<WindVortexEntity>> WIND_VORTEX = ENTITY_TYPES.register("wind_vortex",
@@ -465,6 +466,7 @@ public final class AntarchyFabricEntities {
                     .sized(3.0F, 5.0F)
                     .clientTrackingRange(10)
                     .updateInterval(1)
+                    .fireImmune()
                     .build("wind_vortex"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<TimeDilationFieldEntity>> TIME_DILATION_FIELD = ENTITY_TYPES.register("time_dilation_field",

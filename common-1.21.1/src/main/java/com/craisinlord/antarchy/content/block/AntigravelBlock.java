@@ -15,8 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class AntigravelBlock extends Block {
     public static final MapCodec<AntigravelBlock> CODEC = simpleCodec(AntigravelBlock::new);
 
-    private static final int SETTLE_DELAY = 6;
-    private static final int SETTLE_ATTEMPT_DENOMINATOR = 3;
+    private static final int SETTLE_DELAY = 2;
 
     public AntigravelBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -50,10 +49,6 @@ public class AntigravelBlock extends Block {
         BlockState above = level.getBlockState(abovePos);
         boolean passable = above.isAir() || above.getCollisionShape(level, abovePos).isEmpty();
         if (!passable) {
-            return;
-        }
-        if (random.nextInt(SETTLE_ATTEMPT_DENOMINATOR) != 0) {
-            level.scheduleTick(pos, this, SETTLE_DELAY + random.nextInt(SETTLE_DELAY));
             return;
         }
         UpwardFallingBlockEntity.fallUp(level, pos, state, false);

@@ -135,24 +135,28 @@
       {
         "type": "minecraft:condition",
         "if_true": {
-          "type": "minecraft:y_above",
-          "add_stone_depth": false,
-          "anchor": {
-            "absolute": -1
-          },
-          "surface_depth_multiplier": 0
+          "type": "minecraft:not",
+          "invert": {
+            "type": "minecraft:vertical_gradient",
+            "random_name": "antarchy:thoraxis_border_bedrock_lower",
+            "true_at_and_below": {
+              "absolute": -4
+            },
+            "false_at_and_above": {
+              "absolute": -1
+            }
+          }
         },
         "then_run": {
           "type": "minecraft:condition",
           "if_true": {
-            "type": "minecraft:not",
-            "invert": {
-              "type": "minecraft:y_above",
-              "add_stone_depth": false,
-              "anchor": {
-                "absolute": 1
-              },
-              "surface_depth_multiplier": 0
+            "type": "minecraft:vertical_gradient",
+            "random_name": "antarchy:thoraxis_border_bedrock_upper",
+            "true_at_and_below": {
+              "absolute": 1
+            },
+            "false_at_and_above": {
+              "absolute": 4
             }
           },
           "then_run": {
@@ -197,7 +201,10 @@
             {
               "type": "minecraft:block",
               "result_state": {
-                "Name": "antarchy:dream_sandstone"
+              "Name": "antarchy:dream_sandstone",
+              "Properties": {
+                "vertical_direction": "down"
+              }
               }
             }
           ]
@@ -226,23 +233,10 @@
               "then_run": {
                 "type": "minecraft:block",
                 "result_state": {
-                  "Name": "antarchy:antigravel"
-                }
-              }
-            },
-            {
-              "type": "minecraft:condition",
-              "if_true": {
-                "type": "minecraft:stone_depth",
-                "add_surface_depth": true,
-                "offset": 0,
-                "secondary_depth_range": 0,
-                "surface_type": "floor"
-              },
-              "then_run": {
-                "type": "minecraft:block",
-                "result_state": {
-                  "Name": "antarchy:antigravel"
+                  "Name": "antarchy:nadir_nyxium",
+                  "Properties": {
+                    "vertical_direction": "down"
+                  }
                 }
               }
             }
@@ -342,6 +336,25 @@
               }
             },
             {
+              "type": "minecraft:condition",
+              "if_true": {
+                "type": "minecraft:stone_depth",
+                "add_surface_depth": true,
+                "offset": 0,
+                "secondary_depth_range": 0,
+                "surface_type": "floor"
+              },
+              "then_run": {
+                "type": "minecraft:block",
+                "result_state": {
+                  "Name": "antarchy:verdant_nyxium",
+                  "Properties": {
+                    "vertical_direction": "up"
+                  }
+                }
+              }
+            },
+            {
               "type": "minecraft:block",
               "result_state": {
                 "Name": "antarchy:typhonite"
@@ -406,8 +419,8 @@
           "if_true": {
             "type": "minecraft:noise_threshold",
             "noise": "minecraft:gravel",
-            "min_threshold": -0.05,
-            "max_threshold": 0.05
+            "min_threshold": -0.018,
+            "max_threshold": 0.018
           },
           "then_run": {
             "type": "minecraft:block",

@@ -159,12 +159,9 @@ public class TyphoniteSpikeFeature extends Feature<TyphoniteSpikeConfiguration> 
             return DripstoneThickness.TIP;
         }
         if (offsetFromRoot == length - 2) {
-            return DripstoneThickness.FRUSTUM;
+            return DripstoneThickness.MIDDLE;
         }
-        if (offsetFromRoot == 0) {
-            return DripstoneThickness.BASE;
-        }
-        return DripstoneThickness.MIDDLE;
+        return DripstoneThickness.BASE;
     }
 
     private int getSpikeHeight(RandomSource random, int dx, int dz, double chance, int maxHeight, TyphoniteSpikeConfiguration config) {

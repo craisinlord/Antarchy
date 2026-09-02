@@ -373,8 +373,11 @@ public final class AntarchyFabricClientBootstrap {
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.CHITIN_SPIKE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.TYPHONITE_SPIKE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.SPIRALING_VINES.get(), RenderType.cutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.SPIRALING_VINES_PLANT.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.GOREVINE.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.WHIRLFLOWER.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.NADIR_FERN.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.LARGE_NADIR_FERN.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.DUSKBELL.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.STAR_CORAL.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.STAR_CORAL_FAN.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.STAR_CORAL_WALL_FAN.get(), RenderType.cutout());
@@ -491,6 +494,7 @@ public final class AntarchyFabricClientBootstrap {
                     registrationHelper.register(new GoopedLivingLayer(playerRenderer));
                     registrationHelper.register(new GlimmeringLivingLayer(playerRenderer));
                     registrationHelper.register(new BrutalflyElytraLayer(playerRenderer));
+                    registrationHelper.register(new com.craisinlord.antarchy.content.client.renderer.ManticoreWingsLayer(playerRenderer));
                     registrationHelper.register(new FallenKingCrownLayer(playerRenderer));
                 }
                 return;

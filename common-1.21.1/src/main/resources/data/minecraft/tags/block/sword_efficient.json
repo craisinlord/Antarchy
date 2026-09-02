@@ -1,4 +1,11 @@
 {
   "replace": false,
-  "values": []
+  "values": [
+    "antarchy:nadir_fern",
+    "antarchy:large_nadir_fern",
+    "antarchy:duskbell",
+    "antarchy:whirlflower",
+    "antarchy:spiraling_vines",
+    "antarchy:gorevine"
+  ]
 }

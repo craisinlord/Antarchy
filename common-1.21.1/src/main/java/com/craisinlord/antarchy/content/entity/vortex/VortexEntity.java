@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.entity.vortex;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -95,6 +96,9 @@ public class VortexEntity extends Monster implements GeoEntity {
 
     public static boolean canSpawn(EntityType<VortexEntity> entityType, ServerLevelAccessor level,
             MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+        if (pos.getY() < ThoraxisUndersideManager.GRAVITY_FLIP_Y && ThoraxisUndersideManager.isThoraxis(level.getLevel())) {
+            return false;
+        }
         return level.getDifficulty() != Difficulty.PEACEFUL
                 && level.isEmptyBlock(pos)
                 && level.isEmptyBlock(pos.above())
@@ -241,15 +245,15 @@ public class VortexEntity extends Monster implements GeoEntity {
         if (!(this.level() instanceof ServerLevel serverLevel) || windVortexTypeSupplier == null) {
             return;
         }
-        Vec3 targetPos = target.position();
-        Vec3 fromMob = targetPos.subtract(this.position());
-        Vec3 drift = fromMob.lengthSqr() > 1.0E-6D ? fromMob.normalize().scale(0.045D) : this.getViewVector(0.0F).scale(0.045D);
-        Vec3 position = targetPos.add(
-                (this.random.nextDouble() - 0.5D) * 1.6D,
-                0.05D,
-                (this.random.nextDouble() - 0.5D) * 1.6D
-        );
-        WindVortexEntity vortex = WindVortexEntity.create(serverLevel, windVortexTypeSupplier.get(), position, drift, this, true);
+        Vec3 targetPos = target.getBoundingBox().getCenter();
+        Vec3 origin = this.getEyePosition().add(this.getViewVector(1.0F).scale(0.8D));
+        Vec3 direction = targetPos.subtract(origin);
+        double distance = direction.length();
+        Vec3 drift = distance > 1.0E-6D ? direction.scale(0.24D / distance) : this.getViewVector(1.0F).scale(0.24D);
+        WindVortexEntity vortex = WindVortexEntity.create(serverLevel, windVortexTypeSupplier.get(), origin, Vec3.ZERO, this, true);
+        vortex.setTravel(drift);
+        vortex.setTravelDuration(Mth.clamp((int) Math.ceil(distance / drift.length()), 8, 36));
+        vortex.setHoming(false);
         serverLevel.addFreshEntity(vortex);
         serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.BREEZE_SHOOT, this.getSoundSource(), 1.0F, 0.9F);
     }

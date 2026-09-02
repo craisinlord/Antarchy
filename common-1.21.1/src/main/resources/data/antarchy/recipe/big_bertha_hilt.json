@@ -4,7 +4,7 @@
   "pattern": [
     "AC ",
     "DBG",
-    " EF"
+    "HEF"
   ],
   "key": {
     "A": {
@@ -27,6 +27,9 @@
     },
     "G": {
       "item": "antarchy:hercules_horn"
+    },
+    "H": {
+      "item": "antarchy:triffid_goo"
     }
   },
   "result": {

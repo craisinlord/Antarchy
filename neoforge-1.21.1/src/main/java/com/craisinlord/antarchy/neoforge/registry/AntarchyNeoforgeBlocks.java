@@ -765,8 +765,8 @@ public final class AntarchyNeoforgeBlocks {
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.MUD_BRICKS)));
     public static final DeferredBlock<MucusBlock> MUCUS = BLOCKS.register("mucus",
             () -> new MucusBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLOW_LICHEN).friction(0.98F).lightLevel(state -> 0).sound(SoundType.SLIME_BLOCK)));
-    public static final DeferredBlock<Block> DREAM_SANDSTONE = BLOCKS.register("dream_sandstone",
-            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.SANDSTONE)));
+    public static final DeferredBlock<DreamSandstoneBlock> DREAM_SANDSTONE = BLOCKS.register("dream_sandstone",
+            () -> new DreamSandstoneBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SANDSTONE)));
     public static final DeferredBlock<Block> CHISELED_DREAM_SANDSTONE = BLOCKS.register("chiseled_dream_sandstone",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.CHISELED_SANDSTONE)));
     public static final DeferredBlock<Block> CUT_DREAM_SANDSTONE = BLOCKS.register("cut_dream_sandstone",
@@ -787,6 +787,12 @@ public final class AntarchyNeoforgeBlocks {
             () -> new SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CUT_SANDSTONE_SLAB)));
     public static final DeferredBlock<Block> TYPHONITE = BLOCKS.register("typhonite",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE)));
+    public static final DeferredBlock<DirectionalNyxiumBlock> NADIR_NYXIUM = BLOCKS.register("nadir_nyxium",
+            () -> new DirectionalNyxiumBlock(nyxiteProperties(), DirectionalNyxiumBlock.Type.NADIR));
+    public static final DeferredBlock<DirectionalNyxiumBlock> VERDANT_NYXIUM = BLOCKS.register("verdant_nyxium",
+            () -> new DirectionalNyxiumBlock(nyxiteProperties(), DirectionalNyxiumBlock.Type.VERDANT));
+    public static final DeferredBlock<RotatedPillarBlock> TYPHONITE_PILLAR = BLOCKS.register("typhonite_pillar",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE)));
     public static final DeferredBlock<Block> TYPHONITE_BRICKS = BLOCKS.register("typhonite_bricks",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE)));
     public static final DeferredBlock<Block> CHISELED_TYPHONITE = BLOCKS.register("chiseled_typhonite",
@@ -817,10 +823,16 @@ public final class AntarchyNeoforgeBlocks {
             () -> new WallBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BLACKSTONE_WALL)));
     public static final DeferredBlock<SpiralingVinesBlock> SPIRALING_VINES = BLOCKS.register("spiraling_vines",
             () -> new SpiralingVinesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TWISTING_VINES)));
-    public static final DeferredBlock<SpiralingVinesPlantBlock> SPIRALING_VINES_PLANT = BLOCKS.register("spiraling_vines_plant",
-            () -> new SpiralingVinesPlantBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TWISTING_VINES_PLANT)));
+    public static final DeferredBlock<GorevineBlock> GOREVINE = BLOCKS.register("gorevine",
+            () -> new GorevineBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WEEPING_VINES).lightLevel(state -> 4)));
     public static final DeferredBlock<WhirlflowerBlock> WHIRLFLOWER = BLOCKS.register("whirlflower",
             () -> new WhirlflowerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.ALLIUM)));
+    public static final DeferredBlock<NadirFernBlock> NADIR_FERN = BLOCKS.register("nadir_fern",
+            () -> new NadirFernBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.FERN)));
+    public static final DeferredBlock<LargeNadirFernBlock> LARGE_NADIR_FERN = BLOCKS.register("large_nadir_fern",
+            () -> new LargeNadirFernBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LARGE_FERN).noCollission()));
+    public static final DeferredBlock<DirectionalThoraxisFlowerBlock> DUSKBELL = BLOCKS.register("duskbell",
+            () -> new DirectionalThoraxisFlowerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.ALLIUM).lightLevel(state -> 4)));
     public static final DeferredBlock<Block> DEAD_STAR_CORAL_BLOCK = BLOCKS.register("dead_star_coral_block",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.TUBE_CORAL_BLOCK)));
     public static final DeferredBlock<net.minecraft.world.level.block.BaseCoralPlantBlock> DEAD_STAR_CORAL = BLOCKS.register("dead_star_coral",

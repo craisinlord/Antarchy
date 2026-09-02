@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "antarchy:block/nyxite",
+    "side": "antarchy:block/verdant_nyxium",
+    "top": "antarchy:block/verdant_nyxium_top"
+  }
+}

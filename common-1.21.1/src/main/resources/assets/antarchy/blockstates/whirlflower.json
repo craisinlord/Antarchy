@@ -1,7 +1,11 @@
 {
   "variants": {
-    "": {
+    "vertical_direction=up": {
       "model": "antarchy:block/whirlflower"
+    },
+    "vertical_direction=down": {
+      "model": "antarchy:block/whirlflower",
+      "x": 180
     }
   }
 }

@@ -195,6 +195,7 @@ public final class AntarchyNeoForgeClient {
                 renderer.addLayer(new GoopedLivingLayer(renderer));
                 renderer.addLayer(new GlimmeringLivingLayer(renderer));
                 renderer.addLayer(new BrutalflyElytraLayer(renderer));
+                renderer.addLayer(new com.craisinlord.antarchy.content.client.renderer.ManticoreWingsLayer(renderer));
                 renderer.addLayer(new FallenKingCrownLayer(renderer));
             }
         }
@@ -634,8 +635,11 @@ public final class AntarchyNeoForgeClient {
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.CHITIN_SPIKE.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.TYPHONITE_SPIKE.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.SPIRALING_VINES.get(), RenderType.cutout());
-            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.SPIRALING_VINES_PLANT.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.GOREVINE.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.WHIRLFLOWER.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.NADIR_FERN.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.LARGE_NADIR_FERN.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.DUSKBELL.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.STAR_CORAL.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.STAR_CORAL_FAN.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.STAR_CORAL_WALL_FAN.get(), RenderType.cutout());

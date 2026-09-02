@@ -22,9 +22,10 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     private static final int REGION_DETAIL_SCALE = 41;
     private static final int VERTICAL_NOISE_SCALE = 8;
     private static final double DUNES_SELECTOR_CUTOFF = 0.38D;
+    private static final double DREAM_DUNES_SELECTOR_CUTOFF = 0.12D;
     private static final double HILLS_SELECTOR_CUTOFF = 0.24D;
-    private static final double NADIR_FOREST_SELECTOR_MIN = 0.42D;
-    private static final double NADIR_FOREST_SELECTOR_MAX = 0.66D;
+    private static final double NADIR_FOREST_SELECTOR_MIN = 0.54D;
+    private static final double NADIR_FOREST_SELECTOR_MAX = 0.56D;
     private static final ResourceKey<Biome> NIGHTMARE_WASTES = ResourceKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "nightmare_wastes")
@@ -166,7 +167,11 @@ public final class ThoraxisBiomeSource extends BiomeSource {
             return this.lucidPoolsBiome;
         }
 
-        if (this.vortexExpanseBiome != null && y <= this.dreamDunesMaxQuartY && dreamDunesSelector <= DUNES_SELECTOR_CUTOFF) {
+        if (this.dreamDunesBiome != null && y <= this.dreamDunesMaxQuartY && dreamDunesSelector <= DREAM_DUNES_SELECTOR_CUTOFF) {
+            return this.dreamDunesBiome;
+        }
+
+        if (this.vortexExpanseBiome != null && dreamDunesSelector <= DUNES_SELECTOR_CUTOFF) {
             return this.vortexExpanseBiome;
         }
 

@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "royal_assailant_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:royal_assailant_staff"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.royal_assailant_staff.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:royal_assailant_staff"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.royal_assailant_staff.title"
+    }
+  },
+  "requirements": [
+    [
+      "royal_assailant_staff"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

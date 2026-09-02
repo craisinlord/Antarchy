@@ -1032,7 +1032,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
             }
         }
         if (this.level() instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, this.getX(), this.getY() + 1.6D, this.getZ(), 12, 0.9D, 0.35D, 0.9D, 0.02D);
+            serverLevel.sendParticles(AntarchyObjects.NIGHTMARE_FIRE_FLAME.get(), this.getX(), this.getY() + 1.6D, this.getZ(), 12, 0.9D, 0.35D, 0.9D, 0.02D);
             serverLevel.sendParticles(ParticleTypes.SMOKE, this.getX(), this.getY() + 1.6D, this.getZ(), 8, 0.7D, 0.25D, 0.7D, 0.03D);
         }
     }
@@ -1077,7 +1077,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
             }
         }
         if (this.level() instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, this.portalExitPos.x, this.portalExitPos.y + 1.0D, this.portalExitPos.z, 18, 0.9D, 0.45D, 0.9D, 0.02D);
+            serverLevel.sendParticles(AntarchyObjects.NIGHTMARE_FIRE_FLAME.get(), this.portalExitPos.x, this.portalExitPos.y + 1.0D, this.portalExitPos.z, 18, 0.9D, 0.45D, 0.9D, 0.02D);
             serverLevel.sendParticles(ParticleTypes.SMOKE, this.portalExitPos.x, this.portalExitPos.y + 1.0D, this.portalExitPos.z, 14, 0.8D, 0.3D, 0.8D, 0.03D);
         }
     }
