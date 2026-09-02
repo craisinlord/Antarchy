@@ -6,15 +6,17 @@ import com.craisinlord.antarchy.content.block.DreamSandBlock;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,6 +24,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 
 public final class ThoraxisUndersideManager {
     public static final int GRAVITY_FLIP_Y = 0;
@@ -29,27 +32,36 @@ public final class ThoraxisUndersideManager {
     private static final AntarchyGravityTransition TRANSITION = new AntarchyGravityTransition(12);
     private static final int EFFECT_DURATION_TICKS = 50;
     private static final int EFFECT_REFRESH_THRESHOLD_TICKS = 10;
+    private static final int DISCOVERY_INTERVAL_TICKS = 5;
+    private static final int SIMULATION_DISTANCE_MARGIN_CHUNKS = 1;
     private static final int MAX_FLIPS_PER_TICK = 8;
     private static final int ENTER_UNDERSIDE_Y = GRAVITY_FLIP_Y - 4;
     private static final int EXIT_UNDERSIDE_Y = GRAVITY_FLIP_Y + 4;
     private static final int FLIP_COOLDOWN_TICKS = 40;
-    private static final Set<UUID> UNDERSIDE_FORCED_GRAVITY = new HashSet<>();
-    private static final Set<UUID> ACTIVE_ITEMS_SCRATCH = new HashSet<>();
-    private static final Map<UUID, Long> LAST_FLIP_TICK = new HashMap<>();
+    private static final Map<ServerLevel, TrackingState> STATES = new WeakHashMap<>();
 
     private ThoraxisUndersideManager() {
     }
 
     public static void tick(ServerLevel level) {
-        if (!isThoraxis(level) || level.players().isEmpty()) {
+        if (!isThoraxis(level)) {
+            return;
+        }
+
+        TrackingState tracking = STATES.computeIfAbsent(level, ignored -> new TrackingState());
+        if (level.players().isEmpty()) {
+            tracking.clear();
+            STATES.remove(level);
             return;
         }
 
         long now = level.getGameTime();
-        Set<UUID> activeThisTick = ACTIVE_ITEMS_SCRATCH;
-        activeThisTick.clear();
+        if (now % DISCOVERY_INTERVAL_TICKS == 0L) {
+            tracking.discover(level);
+        }
+
         int flipsRemaining = MAX_FLIPS_PER_TICK;
-        for (Entity entity : level.getAllEntities()) {
+        for (Entity entity : tracking.entities) {
             if (!entity.isAlive() || entity.isSpectator()) {
                 continue;
             }
@@ -68,20 +80,19 @@ public final class ThoraxisUndersideManager {
             }
 
             UUID uuid = entity.getUUID();
-            boolean tracked = UNDERSIDE_FORCED_GRAVITY.contains(uuid);
+            boolean tracked = tracking.forcedItems.contains(entity);
             boolean shouldInvert = tracked ? entity.getY() < EXIT_UNDERSIDE_Y : entity.getY() < ENTER_UNDERSIDE_Y;
 
             if (shouldInvert) {
                 boolean needsFlip = AntarchyGravityApi.getGravityDirection(entity) != AntarchyGravityDirection.UP
                         || !AntarchyGravityApi.isGravityForced(entity);
-                activeThisTick.add(uuid);
-                UNDERSIDE_FORCED_GRAVITY.add(uuid);
-                if (needsFlip && (flipsRemaining <= 0 || !flipReady(uuid, now))) {
+                tracking.forcedItems.add(entity);
+                if (needsFlip && (flipsRemaining <= 0 || !flipReady(tracking, uuid, now))) {
                     continue;
                 }
                 if (needsFlip) {
                     flipsRemaining--;
-                    LAST_FLIP_TICK.put(uuid, now);
+                    tracking.lastFlipTick.put(uuid, now);
                     AntarchyGravityApi.setForcedGravityDirection(entity, AntarchyGravityDirection.UP, TRANSITION);
                 }
                 continue;
@@ -90,24 +101,51 @@ public final class ThoraxisUndersideManager {
             if (tracked) {
                 boolean isForcedUp = AntarchyGravityApi.getGravityDirection(entity) == AntarchyGravityDirection.UP
                         && AntarchyGravityApi.isGravityForced(entity);
-                if (isForcedUp && !flipReady(uuid, now)) {
-                    activeThisTick.add(uuid);
+                if (isForcedUp && !flipReady(tracking, uuid, now)) {
                     continue;
                 }
-                UNDERSIDE_FORCED_GRAVITY.remove(uuid);
+                tracking.forcedItems.remove(entity);
                 if (isForcedUp) {
-                    LAST_FLIP_TICK.put(uuid, now);
+                    tracking.lastFlipTick.put(uuid, now);
                     AntarchyGravityApi.setGravityDirection(entity, AntarchyGravityDirection.DOWN, false, TRANSITION);
                 }
             }
         }
 
-        UNDERSIDE_FORCED_GRAVITY.retainAll(activeThisTick);
-        LAST_FLIP_TICK.values().removeIf(t -> now - t > FLIP_COOLDOWN_TICKS * 4L);
+        tracking.entities.removeIf(entity -> !entity.isAlive() || entity.isRemoved());
+        tracking.forcedItems.removeIf(entity -> !entity.isAlive() || entity.isRemoved());
+        tracking.lastFlipTick.entrySet().removeIf(entry -> now - entry.getValue() > FLIP_COOLDOWN_TICKS * 4L);
     }
 
-    private static boolean flipReady(UUID uuid, long now) {
-        Long last = LAST_FLIP_TICK.get(uuid);
+    private static final class TrackingState {
+        private final Set<Entity> entities = Collections.newSetFromMap(new IdentityHashMap<>());
+        private final Set<Entity> forcedItems = Collections.newSetFromMap(new IdentityHashMap<>());
+        private final Map<UUID, Long> lastFlipTick = new java.util.HashMap<>();
+
+        private void discover(ServerLevel level) {
+            int radius = (level.getServer().getPlayerList().getSimulationDistance() + SIMULATION_DISTANCE_MARGIN_CHUNKS) * 16;
+            for (ServerPlayer player : level.players()) {
+                AABB area = new AABB(
+                        player.getX() - radius, level.getMinBuildHeight(), player.getZ() - radius,
+                        player.getX() + radius, level.getMaxBuildHeight(), player.getZ() + radius
+                );
+                entities.add(player);
+                entities.addAll(level.getEntitiesOfClass(LivingEntity.class, area,
+                        entity -> !entity.isSpectator() && entity.getY() < EXIT_UNDERSIDE_Y));
+                entities.addAll(level.getEntitiesOfClass(ItemEntity.class, area,
+                        entity -> !entity.isSpectator() && entity.getY() < EXIT_UNDERSIDE_Y));
+            }
+        }
+
+        private void clear() {
+            entities.clear();
+            forcedItems.clear();
+            lastFlipTick.clear();
+        }
+    }
+
+    private static boolean flipReady(TrackingState tracking, UUID uuid, long now) {
+        Long last = tracking.lastFlipTick.get(uuid);
         return last == null || now - last >= FLIP_COOLDOWN_TICKS;
     }
 

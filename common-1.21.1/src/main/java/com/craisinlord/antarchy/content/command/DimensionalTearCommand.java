@@ -37,7 +37,8 @@ public final class DimensionalTearCommand {
     }
 
     private static Vec3 anchorPos(ServerPlayer player) {
-        return player.position().add(0.0D, VERTICAL_OFFSET, 0.0D);
+        Vec3 forward = player.getLookAngle().normalize();
+        return player.position().add(forward.scale(4.0D)).add(0.0D, VERTICAL_OFFSET, 0.0D);
     }
 
     private static int spawnSingle(CommandContext<CommandSourceStack> context) throws com.mojang.brigadier.exceptions.CommandSyntaxException {

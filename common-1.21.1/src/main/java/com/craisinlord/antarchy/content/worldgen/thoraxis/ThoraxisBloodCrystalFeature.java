@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class ThoraxisBloodCrystalFeature extends Feature<ThoraxisBloodCrystalConfiguration> {
+    private static final int SURFACE_SEARCH_RANGE = 32;
+
     public ThoraxisBloodCrystalFeature(Codec<ThoraxisBloodCrystalConfiguration> codec) {
         super(codec);
     }
@@ -199,7 +201,8 @@ public final class ThoraxisBloodCrystalFeature extends Feature<ThoraxisBloodCrys
         int z = origin.getZ();
         int startY = Mth.clamp(origin.getY(), level.getMinBuildHeight() + 1, level.getMaxBuildHeight() - 2);
 
-        for (int y = startY; y > level.getMinBuildHeight(); y--) {
+        int minY = Math.max(level.getMinBuildHeight() + 1, startY - SURFACE_SEARCH_RANGE);
+        for (int y = startY; y > minY; y--) {
             BlockPos pos = new BlockPos(x, y, z);
             BlockState state = level.getBlockState(pos);
             if (state.isAir() || state.canBeReplaced() || !state.getFluidState().isEmpty()) {
@@ -219,7 +222,8 @@ public final class ThoraxisBloodCrystalFeature extends Feature<ThoraxisBloodCrys
         int z = origin.getZ();
         int startY = Mth.clamp(origin.getY(), level.getMinBuildHeight() + 1, level.getMaxBuildHeight() - 2);
 
-        for (int y = startY; y < level.getMaxBuildHeight() - 1; y++) {
+        int maxY = Math.min(level.getMaxBuildHeight() - 2, startY + SURFACE_SEARCH_RANGE);
+        for (int y = startY; y < maxY; y++) {
             BlockPos pos = new BlockPos(x, y, z);
             BlockState state = level.getBlockState(pos);
             if (state.isAir() || state.canBeReplaced() || !state.getFluidState().isEmpty()) {
@@ -240,4 +244,3 @@ public final class ThoraxisBloodCrystalFeature extends Feature<ThoraxisBloodCrys
         return min >= max ? min : min + random.nextInt(max - min + 1);
     }
 }
-
