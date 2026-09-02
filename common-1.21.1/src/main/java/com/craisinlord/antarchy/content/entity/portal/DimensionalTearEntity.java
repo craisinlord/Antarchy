@@ -6,8 +6,10 @@ import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.ManticoreEntity;
 import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -67,9 +69,12 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
     private static final double PORTAL_RADIUS = 1.35D;
     private static final double EXIT_OFFSET = 2.4D;
     private static final Map<UUID, Long> TELEPORT_COOLDOWNS = new HashMap<>();
+    private static final Map<UUID, Set<UUID>> QUEEN_TEAR_IDS = new HashMap<>();
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private UUID linkedTearId;
+    @Nullable
+    private DimensionalTearEntity linkedTear;
     private Vec3 linkedFallbackPos = Vec3.ZERO;
     private int ageTicks;
     private int lifetimeTicks = DEFAULT_LIFETIME_TICKS;
@@ -105,6 +110,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         DimensionalTearEntity tear = create(level, pos, yaw, lifetimeTicks);
         tear.queenOwnerId = queenId;
         tear.queenManticoreCount = Math.max(1, count);
+        QUEEN_TEAR_IDS.computeIfAbsent(queenId, ignored -> new HashSet<>()).add(tear.getUUID());
         return tear;
     }
 
@@ -119,6 +125,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
     public void linkTo(DimensionalTearEntity other) {
         this.linkedTearId = other.getUUID();
         this.linkedFallbackPos = other.position();
+        this.linkedTear = other;
     }
 
     @Override
@@ -282,10 +289,15 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
     }
 
     public static void discardQueenOwnedTears(ServerLevel level, UUID queenId) {
-        for (DimensionalTearEntity tear : level.getEntitiesOfClass(DimensionalTearEntity.class,
-                new AABB(-3.0E7D, level.getMinBuildHeight(), -3.0E7D, 3.0E7D, level.getMaxBuildHeight(), 3.0E7D),
-                tear -> queenId.equals(tear.queenOwnerId))) {
-            tear.discard();
+        Set<UUID> tearIds = QUEEN_TEAR_IDS.remove(queenId);
+        if (tearIds == null) {
+            return;
+        }
+        for (UUID tearId : tearIds) {
+            Entity entity = level.getEntity(tearId);
+            if (entity instanceof DimensionalTearEntity tear) {
+                tear.discard();
+            }
         }
     }
 
@@ -351,11 +363,15 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
 
     @Nullable
     private DimensionalTearEntity findLinkedTear() {
+        if (this.linkedTear != null && this.linkedTear.isAlive()) {
+            return this.linkedTear;
+        }
         if (!(this.level() instanceof ServerLevel serverLevel) || this.linkedTearId == null) {
             return null;
         }
         Entity entity = serverLevel.getEntity(this.linkedTearId);
-        return entity instanceof DimensionalTearEntity tear ? tear : null;
+        this.linkedTear = entity instanceof DimensionalTearEntity tear ? tear : null;
+        return this.linkedTear;
     }
 
     private void removeLinkedPair() {
@@ -364,6 +380,20 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
             linked.discard();
         }
         this.discard();
+    }
+
+    @Override
+    public void remove(RemovalReason reason) {
+        if (this.queenOwnerId != null) {
+            Set<UUID> tearIds = QUEEN_TEAR_IDS.get(this.queenOwnerId);
+            if (tearIds != null) {
+                tearIds.remove(this.getUUID());
+                if (tearIds.isEmpty()) {
+                    QUEEN_TEAR_IDS.remove(this.queenOwnerId);
+                }
+            }
+        }
+        super.remove(reason);
     }
 
     private int randomEventDelay() {
