@@ -5,7 +5,7 @@
     "settings": "antarchy:thoraxis",
     "biome_source": {
       "type": "antarchy:thoraxis_biome_source",
-      "dream_dunes_max_y": 96,
+      "dream_dunes_max_y": 24,
       "umbral_hills_max_y": 100,
       "lucid_pools_min_y": 116,
       "nadir_forest_min_y": 128,

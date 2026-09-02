@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "half=bottom,vertical_direction=up": {
+      "model": "antarchy:block/large_nadir_fern_bottom"
+    },
+    "half=top,vertical_direction=up": {
+      "model": "antarchy:block/large_nadir_fern_top"
+    },
+    "half=bottom,vertical_direction=down": {
+      "model": "antarchy:block/large_nadir_fern_bottom",
+      "x": 180
+    },
+    "half=top,vertical_direction=down": {
+      "model": "antarchy:block/large_nadir_fern_top",
+      "x": 180
+    }
+  }
+}

@@ -77,8 +77,6 @@ public final class AntarchyFabricContent {
 
     public static void register() {
         com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity.TYPE = AntarchyFabricEntities.UPWARD_FALLING_BLOCK;
-        com.craisinlord.antarchy.content.block.SpiralingVinesBlock.BODY_BLOCK = () -> AntarchyFabricBlocks.SPIRALING_VINES_PLANT.get();
-        com.craisinlord.antarchy.content.block.SpiralingVinesPlantBlock.HEAD_BLOCK = () -> AntarchyFabricBlocks.SPIRALING_VINES.get();
         FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.LUCID_EYE.get()), potionHolder(AntarchyFabricMisc.INVERSION));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.INVERSION), Ingredient.of(Items.REDSTONE), potionHolder(AntarchyFabricMisc.LONG_INVERSION));

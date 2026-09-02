@@ -300,8 +300,6 @@ public class AntarchyNeoforge {
 
     private static void bindCommonObjects() {
         com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity.TYPE = AntarchyNeoforgeEntites.UPWARD_FALLING_BLOCK;
-        com.craisinlord.antarchy.content.block.SpiralingVinesBlock.BODY_BLOCK = () -> AntarchyNeoforgeBlocks.SPIRALING_VINES_PLANT.get();
-        com.craisinlord.antarchy.content.block.SpiralingVinesPlantBlock.HEAD_BLOCK = () -> AntarchyNeoforgeBlocks.SPIRALING_VINES.get();
         AntarchyObjects.setLucidAnchor(() -> AntarchyNeoforgeBlocks.LUCID_ANCHOR.get());
         AntarchyObjects.setLucidAnchorBlockEntity(() -> AntarchyNeoforgeBlocks.LUCID_ANCHOR_BLOCK_ENTITY.get());
         PermanentPortalType.bindBlocks(

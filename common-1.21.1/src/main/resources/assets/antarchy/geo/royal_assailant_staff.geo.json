@@ -1,0 +1,114 @@
+{
+	"format_version": "1.21.110",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.eye_of_the_storm",
+				"texture_width": 64,
+				"texture_height": 64,
+				"visible_bounds_width": 3,
+				"visible_bounds_height": 4,
+				"visible_bounds_offset": [0, 1, 0]
+			},
+			"bones": [
+				{
+					"name": "royal_assailant_staff",
+					"pivot": [8, 0, -8]
+				},
+				{
+					"name": "staff",
+					"parent": "royal_assailant_staff",
+					"pivot": [1, -8, -1],
+					"cubes": [
+						{
+							"origin": [-0.5, -12, -0.5],
+							"size": [1, 38, 1],
+							"uv": {
+								"north": {"uv": [3, 0], "uv_size": [1, 38]},
+								"east": {"uv": [3, 0], "uv_size": [1, 38]},
+								"south": {"uv": [3, 0], "uv_size": [1, 38]},
+								"west": {"uv": [3, 0], "uv_size": [1, 38]},
+								"up": {"uv": [4, 38], "uv_size": [-1, -38]},
+								"down": {"uv": [4, 38], "uv_size": [-1, -38]}
+							}
+						},
+						{
+							"origin": [-1.5, -15, -1.5],
+							"size": [3, 3, 3],
+							"uv": {
+								"north": {"uv": [17, 20], "uv_size": [3, 3]},
+								"east": {"uv": [17, 20], "uv_size": [3, 3]},
+								"south": {"uv": [17, 20], "uv_size": [3, 3]},
+								"west": {"uv": [17, 20], "uv_size": [3, 3]},
+								"up": {"uv": [23, 23], "uv_size": [-3, -3]},
+								"down": {"uv": [23, 23], "uv_size": [-3, -3]}
+							}
+						}
+					]
+				},
+				{
+					"name": "wings",
+					"parent": "staff",
+					"pivot": [0, 23, 0]
+				},
+				{
+					"name": "right_wing",
+					"parent": "wings",
+					"pivot": [0, 23, 0],
+					"cubes": [
+						{
+							"origin": [0, 16, 0],
+							"size": [12, 14, 0],
+							"uv": {
+								"north": {"uv": [64, 0], "uv_size": [-12, 14]},
+								"east": {"uv": [3, 0], "uv_size": [1, 38]},
+								"south": {"uv": [52, 0], "uv_size": [12, 14]},
+								"west": {"uv": [3, 0], "uv_size": [1, 38]},
+								"up": {"uv": [4, 38], "uv_size": [-1, -38]},
+								"down": {"uv": [4, 38], "uv_size": [-1, -38]}
+							}
+						}
+					]
+				},
+				{
+					"name": "left_wing",
+					"parent": "wings",
+					"pivot": [0, 23, 0],
+					"cubes": [
+						{
+							"origin": [-12, 16, 0],
+							"size": [12, 14, 0],
+							"uv": {
+								"north": {"uv": [52, 0], "uv_size": [12, 14]},
+								"east": {"uv": [3, 0], "uv_size": [1, 38]},
+								"south": {"uv": [64, 0], "uv_size": [-12, 14]},
+								"west": {"uv": [3, 0], "uv_size": [1, 38]},
+								"up": {"uv": [4, 38], "uv_size": [-1, -38]},
+								"down": {"uv": [4, 38], "uv_size": [-1, -38]}
+							}
+						}
+					]
+				},
+				{
+					"name": "eye",
+					"parent": "royal_assailant_staff",
+					"pivot": [0, 26, 0],
+					"cubes": [
+						{
+							"origin": [-3, 25, -3],
+							"size": [6, 6, 6],
+							"uv": {
+								"north": {"uv": [10, 0], "uv_size": [6, 6]},
+								"east": {"uv": [10, 6], "uv_size": [6, 6]},
+								"south": {"uv": [10, 6], "uv_size": [6, 6]},
+								"west": {"uv": [10, 6], "uv_size": [6, 6]},
+								"up": {"uv": [16, 12], "uv_size": [-6, -6], "uv_rotation": 90},
+								"down": {"uv": [16, 6], "uv_size": [-6, 6], "uv_rotation": 270}
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

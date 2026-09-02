@@ -99,6 +99,11 @@ public final class AntarchyFabricEvents {
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.PEACH_LEAVES.get().asItem(), 0.3f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.PEACH_SAPLING_ITEM.get(), 0.3f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.NADIR_SAPLING_ITEM.get(), 0.3f);
+        ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.NADIR_FERN_ITEM.get(), 0.3f);
+        ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.LARGE_NADIR_FERN_ITEM.get(), 0.5f);
+        ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.DUSKBELL_ITEM.get(), 0.65f);
+        ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.WHIRLFLOWER_ITEM.get(), 0.65f);
+        ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.GOREVINE_ITEM.get(), 0.5f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.CORN.get(), 0.65f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.CORN_SEEDS.get(), 0.3f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.PEACH.get(), 0.65f);

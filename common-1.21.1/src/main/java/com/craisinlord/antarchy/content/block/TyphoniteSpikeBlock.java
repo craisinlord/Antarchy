@@ -146,12 +146,11 @@ public class TyphoniteSpikeBlock extends PointedDripstoneBlock {
         }
 
         DripstoneThickness forwardThickness = forwardState.getValue(THICKNESS);
-        if (forwardThickness != DripstoneThickness.TIP && forwardThickness != DripstoneThickness.TIP_MERGE) {
-            BlockState backState = level.getBlockState(pos.relative(opposite));
-            return !isTyphoniteSpikeWithDirection(backState, direction) ? DripstoneThickness.BASE : DripstoneThickness.MIDDLE;
+        if (forwardThickness == DripstoneThickness.TIP || forwardThickness == DripstoneThickness.TIP_MERGE) {
+            return DripstoneThickness.MIDDLE;
         }
 
-        return DripstoneThickness.FRUSTUM;
+        return DripstoneThickness.BASE;
     }
 
     private static boolean isValidPointedDripstonePlacement(LevelReader level, BlockPos pos, Direction direction) {

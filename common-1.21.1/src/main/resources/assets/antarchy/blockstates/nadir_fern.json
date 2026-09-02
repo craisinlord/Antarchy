@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "vertical_direction=up": {
+      "model": "antarchy:block/nadir_fern"
+    },
+    "vertical_direction=down": {
+      "model": "antarchy:block/nadir_fern",
+      "x": 180
+    }
+  }
+}

@@ -46,6 +46,8 @@ public class WindVortexEntity extends Entity {
             SynchedEntityData.defineId(WindVortexEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> AXIS_Z =
             SynchedEntityData.defineId(WindVortexEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Boolean> FADING_OUT =
+            SynchedEntityData.defineId(WindVortexEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final String AGE_KEY = "Age";
     private static final String DURATION_KEY = "Duration";
@@ -67,6 +69,7 @@ public class WindVortexEntity extends Entity {
 
     private static final double BASE_RADIUS = 0.35D;
     private static final double DRIFT_FRICTION = 0.96D;
+    private static final int FADE_OUT_TICKS = 8;
 
     public enum VortexMode {
         UPWARD,
@@ -83,6 +86,8 @@ public class WindVortexEntity extends Entity {
     private Vec3 travelVelocity = Vec3.ZERO;
     private boolean travelling = false;
     private boolean homing = false;
+    private int travelTicksRemaining;
+    private int fadeOutTicksRemaining;
     private final Map<UUID, Double> carriedProgress = new HashMap<>();
     @Nullable
     private UUID ownerUuid;
@@ -119,19 +124,30 @@ public class WindVortexEntity extends Entity {
         builder.define(AXIS_X, 0.0F);
         builder.define(AXIS_Y, 1.0F);
         builder.define(AXIS_Z, 0.0F);
+        builder.define(FADING_OUT, false);
     }
 
     @Override
     public void tick() {
         super.tick();
 
-        boolean lensVortex = this.getMode() != VortexMode.UPWARD;
-        if (!lensVortex && (this.isInLava() || this.isInsideSolidBlock())) {
-            this.fadeOut();
+        if (this.level().isClientSide) {
+            if (this.fadeOutTicksRemaining > 0) {
+                this.fadeOutTicksRemaining--;
+            }
             return;
         }
 
-        if (this.level().isClientSide) {
+        if (this.isFadingOut()) {
+            if (--this.fadeOutTicksRemaining <= 0) {
+                this.discard();
+            }
+            return;
+        }
+
+        boolean lensVortex = this.getMode() != VortexMode.UPWARD;
+        if (!lensVortex && (this.isInLava() || this.isInsideSolidBlock())) {
+            this.fadeOut();
             return;
         }
 
@@ -155,6 +171,12 @@ public class WindVortexEntity extends Entity {
             }
             this.setDeltaMovement(this.travelVelocity);
             this.move(net.minecraft.world.entity.MoverType.SELF, this.travelVelocity);
+            if (--this.travelTicksRemaining <= 0) {
+                this.travelling = false;
+                this.noPhysics = false;
+                this.travelVelocity = Vec3.ZERO;
+                this.setDeltaMovement(Vec3.ZERO);
+            }
         } else {
             Vec3 drift = this.getDeltaMovement().multiply(DRIFT_FRICTION, DRIFT_FRICTION, DRIFT_FRICTION);
             this.setDeltaMovement(drift);
@@ -207,15 +229,17 @@ public class WindVortexEntity extends Entity {
     }
 
     private void fadeOut() {
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide && !this.isFadingOut()) {
+            this.entityData.set(FADING_OUT, true);
+            this.fadeOutTicksRemaining = FADE_OUT_TICKS;
             this.level().broadcastEntityEvent(this, (byte) 60);
-            this.discard();
         }
     }
 
     @Override
     public void handleEntityEvent(byte id) {
         if (id == 60) {
+            this.fadeOutTicksRemaining = FADE_OUT_TICKS;
             return;
         }
         super.handleEntityEvent(id);
@@ -526,7 +550,12 @@ public class WindVortexEntity extends Entity {
     public void setTravel(Vec3 velocity) {
         this.travelVelocity = velocity;
         this.travelling = true;
+        this.travelTicksRemaining = 24;
         this.noPhysics = true;
+    }
+
+    public void setTravelDuration(int ticks) {
+        this.travelTicksRemaining = Math.max(1, ticks);
     }
 
     public void setHoming(boolean homing) {
@@ -556,6 +585,17 @@ public class WindVortexEntity extends Entity {
 
     public void setDamaging(boolean damaging) {
         this.entityData.set(DAMAGING, damaging);
+    }
+
+    public boolean isFadingOut() {
+        return this.entityData.get(FADING_OUT);
+    }
+
+    public float getFadeOutProgress(float partialTick) {
+        if (!this.isFadingOut()) {
+            return 1.0F;
+        }
+        return Mth.clamp((this.fadeOutTicksRemaining - partialTick) / (float) FADE_OUT_TICKS, 0.0F, 1.0F);
     }
 
     @Override

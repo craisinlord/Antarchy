@@ -377,12 +377,14 @@ public final class AntarchyNeoforgeEntites {
             () -> EntityType.Builder.of(VortexEntity::new, MobCategory.MONSTER)
                     .sized(2.0F, 2.0F)
                     .clientTrackingRange(10)
+                    .fireImmune()
                     .build("vortex"));
     public static final DeferredHolder<EntityType<?>, EntityType<WindVortexEntity>> WIND_VORTEX = ENTITY_TYPES.register("wind_vortex",
             () -> EntityType.Builder.<WindVortexEntity>of(WindVortexEntity::new, MobCategory.MISC)
                     .sized(3.0F, 5.0F)
                     .clientTrackingRange(10)
                     .updateInterval(1)
+                    .fireImmune()
                     .build("wind_vortex"));
     public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>> ROYAL_BLACK_HOLE = ENTITY_TYPES.register("royal_black_hole",
             () -> EntityType.Builder.<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>of(com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity::new, MobCategory.MISC)

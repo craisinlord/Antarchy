@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:random_patch",
+  "config": {
+    "tries": 34,
+    "xz_spread": 5,
+    "y_spread": 2,
+    "feature": "antarchy:nadir_fern"
+  }
+}

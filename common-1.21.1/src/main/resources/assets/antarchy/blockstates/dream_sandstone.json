@@ -1,7 +1,11 @@
 {
   "variants": {
-    "": {
+    "vertical_direction=up": {
       "model": "antarchy:block/dream_sandstone"
+    },
+    "vertical_direction=down": {
+      "model": "antarchy:block/dream_sandstone",
+      "x": 180
     }
   }
 }

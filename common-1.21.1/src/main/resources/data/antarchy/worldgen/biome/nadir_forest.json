@@ -50,7 +50,9 @@
     [],
     [
       "antarchy:nadir_forest_ceiling_trees",
-      "antarchy:nadir_forest_ceiling_saplings"
+      "antarchy:nadir_forest_ceiling_saplings",
+      "antarchy:nadir_ferns",
+      "antarchy:duskbells"
     ],
     []
   ],

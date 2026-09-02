@@ -1,7 +1,42 @@
 {
-  "variants": {
-    "": {
-      "model": "antarchy:block/spiraling_vines"
+  "multipart": [
+    {
+      "when": {
+        "growth_direction": "down",
+        "bottom_cap": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/spiraling_vines",
+        "x": 180
+      }
+    },
+    {
+      "when": {
+        "growth_direction": "down",
+        "bottom_cap": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/spiraling_vines_body",
+        "x": 180
+      }
+    },
+    {
+      "when": {
+        "growth_direction": "up",
+        "top_cap": "true"
+      },
+      "apply": {
+        "model": "antarchy:block/spiraling_vines"
+      }
+    },
+    {
+      "when": {
+        "growth_direction": "up",
+        "top_cap": "false"
+      },
+      "apply": {
+        "model": "antarchy:block/spiraling_vines_body"
+      }
     }
-  }
+  ]
 }

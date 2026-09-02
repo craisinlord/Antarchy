@@ -3,7 +3,6 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.content.block.AntimetalScaffoldingBlock;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -13,7 +12,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
@@ -38,8 +36,6 @@ public class UpwardFallingBlockEntity extends Entity {
     private static final double DRAG       = 0.98;
     private static final int    MAX_TICKS  = 200;
     private static final int    MAX_LIVE_PER_LEVEL = 200;
-    private static final double PLAYER_ACTIVATION_RADIUS = 128.0;
-    private static final int    INSTANT_MOVE_MAX_DISTANCE = 48;
     private static final double MIN_TRAVEL_FOR_DAMAGE = 1.5;
 
     private static final Object2IntOpenHashMap<ResourceKey<Level>> LIVE_COUNT = new Object2IntOpenHashMap<>();
@@ -87,10 +83,7 @@ public class UpwardFallingBlockEntity extends Entity {
             }
         }
 
-        boolean noPlayerNearby = serverLevel.getNearestPlayer(
-                pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, PLAYER_ACTIVATION_RADIUS, EntitySelector.NO_SPECTATORS) == null;
-        if (live >= MAX_LIVE_PER_LEVEL || noPlayerNearby) {
-            resolveInstantly(serverLevel, pos, state, breaksOnLeaves);
+        if (live >= MAX_LIVE_PER_LEVEL) {
             return;
         }
 
@@ -102,46 +95,6 @@ public class UpwardFallingBlockEntity extends Entity {
         if (serverLevel.addFreshEntity(entity)) {
             entity.counted = true;
             LIVE_COUNT.addTo(serverLevel.dimension(), 1);
-        }
-    }
-
-    private static void resolveInstantly(ServerLevel level, BlockPos pos, BlockState state, boolean breaksOnLeaves) {
-        level.removeBlock(pos, false);
-
-        BlockPos.MutableBlockPos rest = pos.mutable();
-        for (int i = 0; i < INSTANT_MOVE_MAX_DISTANCE; i++) {
-            BlockPos above = rest.above();
-            if (above.getY() >= level.getMaxBuildHeight()) {
-                break;
-            }
-            BlockState aboveState = level.getBlockState(above);
-            if (aboveState.getBlock() instanceof AntimetalScaffoldingBlock) {
-                break;
-            }
-            if (breaksOnLeaves && aboveState.is(BlockTags.LEAVES)) {
-                dropAsItem(level, rest, state);
-                return;
-            }
-            if (!aboveState.canBeReplaced()) {
-                break;
-            }
-            rest.move(Direction.UP);
-        }
-
-        if (level.getBlockState(rest).canBeReplaced()) {
-            level.setBlock(rest, state, Block.UPDATE_ALL);
-        } else {
-            dropAsItem(level, rest, state);
-        }
-    }
-
-    private static void dropAsItem(Level level, BlockPos pos, BlockState state) {
-        if (state.isAir()) {
-            return;
-        }
-        ItemStack drop = new ItemStack(state.getBlock().asItem());
-        if (!drop.isEmpty()) {
-            Block.popResource(level, pos, drop);
         }
     }
 

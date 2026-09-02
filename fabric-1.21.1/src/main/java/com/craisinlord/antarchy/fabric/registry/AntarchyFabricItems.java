@@ -687,6 +687,9 @@ public final class AntarchyFabricItems {
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> TYPHONITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TYPHONITE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_NYXIUM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NADIR_NYXIUM);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> VERDANT_NYXIUM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.VERDANT_NYXIUM);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TYPHONITE_PILLAR_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TYPHONITE_PILLAR);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> TYPHONITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.TYPHONITE_BRICKS);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_TYPHONITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.CHISELED_TYPHONITE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_TYPHONITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.POLISHED_TYPHONITE);
@@ -702,7 +705,11 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_TYPHONITE_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.POLISHED_TYPHONITE_SLAB);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_TYPHONITE_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.POLISHED_TYPHONITE_WALL);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SPIRALING_VINES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.SPIRALING_VINES);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> GOREVINE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.GOREVINE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> WHIRLFLOWER_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.WHIRLFLOWER);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_FERN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NADIR_FERN);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> LARGE_NADIR_FERN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.LARGE_NADIR_FERN);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> DUSKBELL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.DUSKBELL);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DEAD_STAR_CORAL_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.DEAD_STAR_CORAL_BLOCK);
 
 
@@ -1058,6 +1065,9 @@ public final class AntarchyFabricItems {
 
     public static final DeferredItem<BrutalflyElytraItem> BRUTALFLY_ELYTRA = ITEMS.register("brutalfly_elytra",
             () -> new BrutalflyElytraItem(new Item.Properties().rarity(Rarity.UNCOMMON).durability(480)));
+    public static final DeferredItem<Item> MANTICORE_WING = ITEMS.registerSimpleItem("manticore_wing", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<ManticoreWingsItem> MANTICORE_WINGS = ITEMS.register("manticore_wings",
+            () -> new ManticoreWingsItem(new Item.Properties().rarity(Rarity.RARE).durability(480)));
 
 
     public static final DeferredItem<Item> CORNEA_EAR = ITEMS.register("cornea_ear",
@@ -1093,6 +1103,13 @@ public final class AntarchyFabricItems {
                             .nutrition(2)
                             .saturationModifier(0.1F)
                             .effect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 100, 0), 1.0F)
+                    .build())));
+    public static final DeferredItem<Item> BROODFRUIT_COBBLER = ITEMS.register("broodfruit_cobbler",
+            () -> new Item(new Item.Properties()
+                    .food(new FoodProperties.Builder()
+                            .nutrition(8)
+                            .saturationModifier(0.8F)
+                            .effect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 20 * 90, 1), 1.0F)
                             .build())));
     public static final DeferredItem<Item> RAW_BUG_MEAT = ITEMS.register("raw_bug_meat",
             () -> new Item(new Item.Properties()
@@ -1773,6 +1790,8 @@ public final class AntarchyFabricItems {
                     new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON),
                     AntarchyFabricEntities.LUCID_PEARL_PROJECTILE
             ));
+    public static final DeferredItem<RoyalAssailantStaffItem> ROYAL_ASSAILANT_STAFF = ITEMS.register("royal_assailant_staff",
+            () -> new RoyalAssailantStaffItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
 
 
     public static final DeferredItem<WaterCannonItem> WATER_CANNON = ITEMS.register("water_cannon",

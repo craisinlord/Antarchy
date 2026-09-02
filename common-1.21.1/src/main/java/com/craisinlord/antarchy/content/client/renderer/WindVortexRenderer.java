@@ -30,6 +30,8 @@ public class WindVortexRenderer extends EntityRenderer<WindVortexEntity> {
         float height = entity.getVortexHeight();
         float topRadius = entity.getTopRadius();
         float age = entity.tickCount + partialTick;
+        float fadeIn = Mth.clamp(age / 8.0F, 0.0F, 1.0F);
+        float alphaMultiplier = fadeIn * entity.getFadeOutProgress(partialTick);
         WindVortexEntity.Basis basis = entity.basis();
         boolean pull = entity.getMode() == WindVortexEntity.VortexMode.LENS_PULL;
         boolean push = entity.getMode() == WindVortexEntity.VortexMode.LENS_PUSH;
@@ -41,7 +43,7 @@ public class WindVortexRenderer extends EntityRenderer<WindVortexEntity> {
             float shapeProgress = pull ? 1.0F - progress : progress;
             float radius = Mth.lerp(shapeProgress, BASE_RADIUS, topRadius);
             float ringSpin = spinDirection * age * (0.13F + progress * 0.045F) + ring * 0.47F;
-            float alpha = 1.0F;
+            float alpha = alphaMultiplier;
             float thickness = 0.025F + radius * 0.012F;
             float arcLength = 0.34F + progress * 0.08F;
             int red = push ? 70 : 64;

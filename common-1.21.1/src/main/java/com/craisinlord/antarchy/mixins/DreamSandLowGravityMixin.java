@@ -4,7 +4,6 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.block.DreamSandBlock;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import com.craisinlord.antarchy.content.movement.DreamSandLowGravityAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -85,15 +84,14 @@ public abstract class DreamSandLowGravityMixin implements DreamSandLowGravityAcc
             return;
         }
 
-        AntarchyGravityDirection gravityDirection = AntarchyGravityApi.getGravityDirection(self);
-        Vec3 localMotion = AntarchyGravityRotationUtil.vecWorldToPlayer(self.getDeltaMovement(), gravityDirection);
-        if (localMotion.y >= 0.0D) {
+        Vec3 motion = self.getDeltaMovement();
+        boolean movingWithGravity = motion.y < 0.0D;
+        if (!movingWithGravity) {
             return;
         }
 
         double gravityMultiplier = Math.max(0.0D, Math.min(1.0D, AntarchySettings.dreamSandGravityMultiplier()));
-        Vec3 adjustedLocalMotion = new Vec3(localMotion.x, localMotion.y * gravityMultiplier, localMotion.z);
-        self.setDeltaMovement(AntarchyGravityRotationUtil.vecPlayerToWorld(adjustedLocalMotion, gravityDirection));
+        self.setDeltaMovement(motion.x, motion.y * gravityMultiplier, motion.z);
         self.fallDistance = 0.0F;
         this.antarchy$dreamSandLandingGraceTicks = 5;
     }
@@ -105,18 +103,13 @@ public abstract class DreamSandLowGravityMixin implements DreamSandLowGravityAcc
         }
 
         LivingEntity self = (LivingEntity) (Object) this;
-        AntarchyGravityDirection gravityDirection = AntarchyGravityApi.getGravityDirection(self);
-        Vec3 localMotion = AntarchyGravityRotationUtil.vecWorldToPlayer(self.getDeltaMovement(), gravityDirection);
-        if (localMotion.y <= 0.0D) {
+        Vec3 motion = self.getDeltaMovement();
+        boolean movingAwayFromGravity = motion.y > 0.0D;
+        if (!movingAwayFromGravity) {
             return;
         }
 
-        Vec3 adjustedLocalMotion = new Vec3(
-                localMotion.x,
-                localMotion.y * AntarchySettings.dreamSandJumpVelocityMultiplier(),
-                localMotion.z
-        );
-        self.setDeltaMovement(AntarchyGravityRotationUtil.vecPlayerToWorld(adjustedLocalMotion, gravityDirection));
+        self.setDeltaMovement(motion.x, motion.y * AntarchySettings.dreamSandJumpVelocityMultiplier(), motion.z);
         self.fallDistance = 0.0F;
         this.antarchy$dreamSandLandingGraceTicks = 5;
     }
