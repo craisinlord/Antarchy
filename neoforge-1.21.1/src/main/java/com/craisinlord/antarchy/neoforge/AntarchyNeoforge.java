@@ -232,6 +232,12 @@ public class AntarchyNeoforge {
                 AntarchyNeoforgeSounds.PRINCESS_FLY,
                 AntarchyNeoforgeSounds.PRINCESS_STEP
         );
+        AntarchySoundEvents.bindDimensionalTearSounds(
+                AntarchyNeoforgeSounds.DIMENSIONAL_TEAR_OPEN,
+                AntarchyNeoforgeSounds.DIMENSIONAL_TEAR_IDLE,
+                AntarchyNeoforgeSounds.DIMENSIONAL_TEAR_CREATURE_LEAVES,
+                AntarchyNeoforgeSounds.DIMENSIONAL_TEAR_CLOSE
+        );
         bindCommonObjects();
         ScorpionWhipTetherSync.setSink((player, targetId) -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(
                 player,
@@ -462,6 +468,7 @@ public class AntarchyNeoforge {
         AntarchyObjects.setLumenBucket(() -> AntarchyNeoforgeItems.LUMEN_BUCKET.get());
         AntarchyObjects.setLumenBlock(() -> AntarchyNeoforgeBlocks.LUMEN_BLOCK.get());
         AntarchyObjects.setLumenFroglight(() -> AntarchyNeoforgeBlocks.LUMEN_FROGLIGHT.get());
+        AntarchyObjects.setGlimmeringReed(() -> AntarchyNeoforgeBlocks.GLIMMERING_REED.get());
         AntarchyObjects.setPeachLeavesParticle(() -> AntarchyNeoforgeMisc.PEACH_LEAVES_PARTICLE.get());
         AntarchyObjects.setLotusPollen(() -> AntarchyNeoforgeMisc.LOTUS_POLLEN.get());
         AntarchyObjects.setNightmareFireFlame(() -> AntarchyNeoforgeMisc.NIGHTMARE_FIRE_FLAME.get());

@@ -100,8 +100,12 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     }
 
     public static boolean canSpawn(EntityType<ManticoreEntity> type, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
-        if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.COMMAND) {
+        if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER
+                || spawnReason == MobSpawnType.COMMAND || spawnReason == MobSpawnType.MOB_SUMMONED) {
             return true;
+        }
+        if (pos.getY() >= 0) {
+            return false;
         }
         BlockState below = level.getBlockState(pos.below());
         BlockState above = level.getBlockState(pos.above());

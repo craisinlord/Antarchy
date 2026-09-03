@@ -46,6 +46,7 @@ public final class AntarchyTags {
         public static final TagKey<Block> ANTIMETAL_INVERSION_BLOCKS = TagKey.create(Registries.BLOCK, id("antimetal_inversion_blocks"));
         public static final TagKey<Block> TIGER_EYE_CAMOUFLAGE_BLACKLIST = TagKey.create(Registries.BLOCK, id("tiger_eye_camouflage_blacklist"));
         public static final TagKey<Block> LUCID_ANCHOR_BASE_BLOCKS = TagKey.create(Registries.BLOCK, id("lucid_anchor_base_blocks"));
+        public static final TagKey<Block> NYXIUM = TagKey.create(Registries.BLOCK, id("nyxium"));
 
         private Blocks() {
         }
@@ -125,6 +126,7 @@ public final class AntarchyTags {
         public static final TagKey<Item> GLIMMER_AUGMENT_ELKA = TagKey.create(Registries.ITEM, id("glimmer_augment_elka"));
         public static final TagKey<Item> HFCS_CANNOT_AMERICANIZE = TagKey.create(Registries.ITEM, id("hfcs_cannot_americanize"));
         public static final TagKey<Item> TIGER_EYE_ARMOR = TagKey.create(Registries.ITEM, id("tigers_eye_armor"));
+        public static final TagKey<Item> BIG_BERTHA_INGREDIENT = TagKey.create(Registries.ITEM, id("big_bertha_ingredient"));
 
         private Items() {
         }

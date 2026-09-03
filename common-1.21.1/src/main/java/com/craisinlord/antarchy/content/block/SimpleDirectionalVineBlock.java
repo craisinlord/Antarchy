@@ -27,7 +27,7 @@ public class SimpleDirectionalVineBlock extends BushBlock implements Bonemealabl
     public static final EnumProperty<Direction> GROWTH_DIRECTION = EnumProperty.create("growth_direction", Direction.class, Direction.UP, Direction.DOWN);
     public static final BooleanProperty TOP_CAP = BooleanProperty.create("top_cap");
     public static final BooleanProperty BOTTOM_CAP = BooleanProperty.create("bottom_cap");
-    public static final IntegerProperty DISTANCE = IntegerProperty.create("distance", 0, 6);
+    public static final IntegerProperty DISTANCE = IntegerProperty.create("distance", 0, 15);
     protected static final int MAX_DISTANCE = 6;
     protected static final VoxelShape SHAPE = Block.box(4.0D, 0.0D, 4.0D, 12.0D, 16.0D, 12.0D);
 
@@ -153,9 +153,10 @@ public class SimpleDirectionalVineBlock extends BushBlock implements Bonemealabl
             return;
         }
 
+        int nextDistance = Math.min(state.getValue(DISTANCE) + 1, maxDistance());
         BlockState grownState = this.defaultBlockState()
                 .setValue(GROWTH_DIRECTION, direction)
-                .setValue(DISTANCE, state.getValue(DISTANCE) + 1);
+                .setValue(DISTANCE, nextDistance);
         level.setBlock(targetPos, grownState, Block.UPDATE_ALL);
 
         BlockState posState = level.getBlockState(pos);

@@ -64,7 +64,9 @@
       "antarchy:patch_ceiling_fire"
     ],
     [
-      "antarchy:whirlflower_patch"
+      "antarchy:whirlflower_patch",
+      "antarchy:spiraling_vines_patch",
+      "antarchy:verdant_roots_patch"
     ]
   ],
   "creature_spawn_probability": 0.03,

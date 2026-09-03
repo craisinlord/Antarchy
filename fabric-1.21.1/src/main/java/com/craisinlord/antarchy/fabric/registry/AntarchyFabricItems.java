@@ -246,6 +246,7 @@ public final class AntarchyFabricItems {
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> PINK_MILKWEED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.PINK_MILKWEED);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> GLIMMERING_REED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.GLIMMERING_REED);
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> CAMELLIA_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.CAMELLIA);
@@ -710,6 +711,8 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_FERN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NADIR_FERN);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> LARGE_NADIR_FERN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.LARGE_NADIR_FERN);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DUSKBELL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.DUSKBELL);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_ROOTS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.NADIR_ROOTS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> VERDANT_ROOTS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.VERDANT_ROOTS);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DEAD_STAR_CORAL_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.DEAD_STAR_CORAL_BLOCK);
 
 

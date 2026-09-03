@@ -21,6 +21,9 @@
     ],
     "client": [
       "com.craisinlord.antarchy.fabric.client.AntarchyFabricClient"
+    ],
+    "modmenu": [
+      "com.craisinlord.antarchy.fabric.client.AntarchyModMenuIntegration"
     ]
   },
   "mixins": [
@@ -38,5 +41,9 @@
   },
   "breaks": {
     "infinity": "<2.7.2"
+  },
+  "suggests": {
+    "modmenu": "*",
+    "cloth-config": "*"
   }
 }

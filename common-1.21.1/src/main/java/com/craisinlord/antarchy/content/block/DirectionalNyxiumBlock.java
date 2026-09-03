@@ -29,6 +29,8 @@ public class DirectionalNyxiumBlock extends Block implements BonemealableBlock {
     private static final ResourceLocation NADIR_SAPLING_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "nadir_sapling");
     private static final ResourceLocation WHIRLFLOWER_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "whirlflower");
     private static final ResourceLocation SPIRALING_VINES_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "spiraling_vines");
+    private static final ResourceLocation NADIR_ROOTS_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "nadir_roots");
+    private static final ResourceLocation VERDANT_ROOTS_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "verdant_roots");
     private final Type type;
 
     public DirectionalNyxiumBlock(BlockBehaviour.Properties properties, Type type) {
@@ -93,9 +95,17 @@ public class DirectionalNyxiumBlock extends Block implements BonemealableBlock {
                 if (direction == Direction.DOWN && random.nextInt(7) == 0) {
                     yield NADIR_SAPLING_ID;
                 }
-                yield random.nextInt(4) == 0 ? DUSKBELL_ID : NADIR_FERN_ID;
+                yield switch (random.nextInt(5)) {
+                    case 0 -> DUSKBELL_ID;
+                    case 1, 2 -> NADIR_ROOTS_ID;
+                    default -> NADIR_FERN_ID;
+                };
             }
-            case VERDANT -> random.nextInt(3) == 0 ? SPIRALING_VINES_ID : WHIRLFLOWER_ID;
+            case VERDANT -> switch (random.nextInt(5)) {
+                case 0, 1 -> VERDANT_ROOTS_ID;
+                case 2 -> SPIRALING_VINES_ID;
+                default -> WHIRLFLOWER_ID;
+            };
         };
         Block block = BuiltInRegistries.BLOCK.get(id);
         BlockState growthState = block.defaultBlockState();

@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/cube_column",
   "textures": {
-    "end": "antarchy:block/typhonite_pillar_top",
-    "side": "antarchy:block/typhonite_pillar"
+    "end": "antarchy:block/typhonite/typhonite_pillar_top",
+    "side": "antarchy:block/typhonite/typhonite_pillar"
   }
 }

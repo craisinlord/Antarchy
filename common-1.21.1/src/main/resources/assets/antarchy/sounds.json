@@ -1106,7 +1106,35 @@
         "name": "antarchy:inversion_layer",
         "type": "event",
         "stream": true
+      },
+      {
+        "name": "antarchy:music/game/thoraxis/assimilation",
+        "stream": true
       }
+    ]
+  },
+  "dimensional_tear_open": {
+    "subtitle": "subtitles.antarchy.dimensional_tear_open",
+    "sounds": [
+      { "name": "antarchy:mob/dimensional_tear/tear_open" }
+    ]
+  },
+  "dimensional_tear_idle": {
+    "subtitle": "subtitles.antarchy.dimensional_tear_idle",
+    "sounds": [
+      { "name": "antarchy:mob/dimensional_tear/tear_idle" }
+    ]
+  },
+  "dimensional_tear_creature_leaves": {
+    "subtitle": "subtitles.antarchy.dimensional_tear_creature_leaves",
+    "sounds": [
+      { "name": "antarchy:mob/dimensional_tear/tear_creature_leaves" }
+    ]
+  },
+  "dimensional_tear_close": {
+    "subtitle": "subtitles.antarchy.dimensional_tear_close",
+    "sounds": [
+      { "name": "antarchy:mob/dimensional_tear/tear_close" }
     ]
   },
   "venenatus": {

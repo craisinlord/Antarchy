@@ -48,8 +48,23 @@ dependencies {
     compileOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.2+1.21.1-neoforge.jar"))
     runtimeOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.2+1.21.1-fabric.jar"))
     compileOnly(files("$rootDir/infinite_dimensions_jars/gravity-api-1.0.7-1.20.1.jar"))
-    compileOnly(files("$rootDir/infinite_dimensions_jars/cloth-config-15.0.140-fabric.jar"))
     compileOnly(files("$rootDir/infinite_dimensions_jars/sable-neoforge-1.21.1-2.0.3.jar"))
+
+    // Cloth Config — optional, powers the in-game settings screen (AntarchyClothConfigScreenBuilder)
+    // via the Mod Menu integration below. compileOnly + modLocalRuntime only: never bundled or
+    // required at runtime in the shipped jar. Guarded by FabricLoader.isModLoaded("cloth-config")
+    // in AntarchyModMenuIntegration before any Cloth Config class is touched. Reuses the
+    // clothconfig_curseforge_id/clothconfig_curseforge_file_id pin already in gradle.properties.
+    modCompileOnly("curse.maven:cloth-config-${clothconfig_curseforge_id}:${clothconfig_curseforge_file_id}")
+    modLocalRuntime("curse.maven:cloth-config-${clothconfig_curseforge_id}:${clothconfig_curseforge_file_id}")
+
+    // Mod Menu — optional, provides the "modmenu" fabric.mod.json entrypoint
+    // (AntarchyModMenuIntegration). Same soft-dependency treatment as Cloth Config above; Fabric
+    // Loader only ever resolves the "modmenu" entrypoint if Mod Menu itself is installed and asks
+    // for it, so nothing here is touched when it's absent. Reuses the mod_menu version already
+    // pinned in gradle.properties.
+    modCompileOnly "com.terraformersmc:modmenu:${mod_menu}"
+    modLocalRuntime "com.terraformersmc:modmenu:${mod_menu}"
 
     // Compile against the NeoForge jar (official Mojang mappings, matches this module's compile
     // space) but load the real Fabric jar at runtime — sizeable_foliage's Fabric jar ships

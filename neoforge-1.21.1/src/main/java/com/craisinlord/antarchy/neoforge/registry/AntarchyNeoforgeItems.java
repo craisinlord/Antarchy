@@ -253,6 +253,7 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_SAPLING_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_SAPLING);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> ORANGE_MILKWEED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ORANGE_MILKWEED);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> PINK_MILKWEED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PINK_MILKWEED);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> GLIMMERING_REED_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.GLIMMERING_REED);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> CAMELLIA_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CAMELLIA);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SPIDER_LILY_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SPIDER_LILY);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> GIANT_LILY_PAD_ITEM = ITEMS.register("giant_lily_pad",
@@ -528,6 +529,8 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_FERN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_FERN);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> LARGE_NADIR_FERN_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LARGE_NADIR_FERN);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DUSKBELL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DUSKBELL);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> NADIR_ROOTS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NADIR_ROOTS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> VERDANT_ROOTS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.VERDANT_ROOTS);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DEAD_STAR_CORAL_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DEAD_STAR_CORAL_BLOCK);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DEAD_STAR_CORAL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DEAD_STAR_CORAL);
     public static final DeferredItem<StandingAndWallBlockItem> DEAD_STAR_CORAL_FAN_ITEM = ITEMS.register("dead_star_coral_fan",

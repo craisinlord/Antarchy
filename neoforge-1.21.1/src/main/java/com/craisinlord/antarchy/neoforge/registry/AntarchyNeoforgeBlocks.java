@@ -90,6 +90,8 @@ public final class AntarchyNeoforgeBlocks {
             () -> new MilkweedBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.PEONY)));
     public static final DeferredBlock<MilkweedBlock> PINK_MILKWEED = BLOCKS.register("pink_milkweed",
             () -> new MilkweedBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.PEONY)));
+    public static final DeferredBlock<GlimmeringReedBlock> GLIMMERING_REED = BLOCKS.register("glimmering_reed",
+            () -> new GlimmeringReedBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SUNFLOWER).lightLevel(state -> 8)));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.CamelliaBlock> CAMELLIA = BLOCKS.register("camellia",
             () -> new com.craisinlord.antarchy.content.block.CamelliaBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.PEONY)));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.SpiderLilyBlock> SPIDER_LILY = BLOCKS.register("spider_lily",
@@ -833,6 +835,10 @@ public final class AntarchyNeoforgeBlocks {
             () -> new LargeNadirFernBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LARGE_FERN).noCollission()));
     public static final DeferredBlock<DirectionalThoraxisFlowerBlock> DUSKBELL = BLOCKS.register("duskbell",
             () -> new DirectionalThoraxisFlowerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.ALLIUM).lightLevel(state -> 4)));
+    public static final DeferredBlock<DirectionalThoraxisFlowerBlock> NADIR_ROOTS = BLOCKS.register("nadir_roots",
+            () -> new DirectionalThoraxisFlowerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CRIMSON_ROOTS)));
+    public static final DeferredBlock<DirectionalThoraxisFlowerBlock> VERDANT_ROOTS = BLOCKS.register("verdant_roots",
+            () -> new DirectionalThoraxisFlowerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WARPED_ROOTS)));
     public static final DeferredBlock<Block> DEAD_STAR_CORAL_BLOCK = BLOCKS.register("dead_star_coral_block",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.TUBE_CORAL_BLOCK)));
     public static final DeferredBlock<net.minecraft.world.level.block.BaseCoralPlantBlock> DEAD_STAR_CORAL = BLOCKS.register("dead_star_coral",

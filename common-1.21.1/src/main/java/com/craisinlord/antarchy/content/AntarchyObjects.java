@@ -322,6 +322,8 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<Block> LUMEN_FROGLIGHT = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<Block> GLIMMERING_REED = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<Block> OURANWOOD_ACORN_BLOCK = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> MOSSY_OURANWOOD_LOG = (Supplier<Block>) UNBOUND;
@@ -777,6 +779,10 @@ public final class AntarchyObjects {
 
     public static void setLumenFroglight(Supplier<Block> supplier) {
         LUMEN_FROGLIGHT = supplier;
+    }
+
+    public static void setGlimmeringReed(Supplier<Block> supplier) {
+        GLIMMERING_REED = supplier;
     }
 
     public static void setSpiritApple(Supplier<Item> supplier) {

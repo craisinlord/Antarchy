@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.block;
 
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -49,15 +50,14 @@ public class DirectionalThoraxisFlowerBlock extends BushBlock {
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        return true;
+        return state.is(AntarchyTags.Blocks.NYXIUM);
     }
 
     @Override
     protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         Direction growthDirection = state.getValue(VERTICAL_DIRECTION);
         BlockPos supportPos = pos.relative(growthDirection.getOpposite());
-        BlockState supportState = level.getBlockState(supportPos);
-        return supportState.isFaceSturdy(level, supportPos, growthDirection);
+        return this.mayPlaceOn(level.getBlockState(supportPos), level, supportPos);
     }
 
     @Override
