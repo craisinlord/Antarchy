@@ -106,6 +106,7 @@
     "block.antarchy.black_truffalo_tuft":  "Black Truffalo Tuft",
     "block.antarchy.orange_milkweed":  "Orange Milkweed",
     "block.antarchy.pink_milkweed":  "Pink Milkweed",
+    "block.antarchy.glimmering_reed":  "Glimmering Reed",
     "block.antarchy.camellia":  "Camellia",
     "block.antarchy.spider_lily":  "Spider Lily",
     "block.antarchy.lotus":  "Lotus",
@@ -493,6 +494,7 @@
     "entity.antarchy.truffalo_chest_boat":  "Truffalo Chest Boat",
     "item.antarchy.orange_milkweed":  "Orange Milkweed",
     "item.antarchy.pink_milkweed":  "Pink Milkweed",
+    "item.antarchy.glimmering_reed":  "Glimmering Reed",
     "item.antarchy.camellia":  "Camellia",
     "item.antarchy.spider_lily":  "Spider Lily",
     "item.antarchy.hushweed":  "Hushweed",
@@ -587,6 +589,7 @@
     "entity.antarchy.upward_falling_block":  "Falling Antigravel",
     "entity.antarchy.vortex":  "Vortex",
     "entity.antarchy.wind_vortex":  "Wind Vortex",
+    "entity.antarchy.dimensional_tear":  "Dimensional Tear",
     "item.antarchy.vortex_spawn_egg":  "Vortex Spawn Egg",
     "item.antarchy.ultimate_helmet":  "Ultimate Helmet",
     "item.antarchy.ultimate_chestplate":  "Ultimate Chestplate",
@@ -912,6 +915,10 @@
     "subtitles.antarchy.thoraxis_dream_dunes_additions":  "Dream Dunes rustle",
     "subtitles.antarchy.thoraxis_dream_dunes_mood":  "Dream Dunes sigh",
     "subtitles.antarchy.thoraxis_lucid_pools_ambient":  "Lucid Pools hum",
+    "subtitles.antarchy.dimensional_tear_open":  "A dimensional tear opens",
+    "subtitles.antarchy.dimensional_tear_idle":  "A dimensional tear shimmers",
+    "subtitles.antarchy.dimensional_tear_creature_leaves":  "A creature emerges from the tear",
+    "subtitles.antarchy.dimensional_tear_close":  "A dimensional tear closes",
     "subtitles.antarchy.thoraxis_lucid_pools_additions":  "Lucid Pools curse",
     "subtitles.antarchy.thoraxis_lucid_pools_mood":  "Lucid Pools murmur",
     "subtitles.antarchy.lucid_ambient":  "Lucid hums",
@@ -1350,6 +1357,8 @@
     "block.antarchy.nadir_fern":  "Nadir Fern",
     "block.antarchy.large_nadir_fern":  "Large Nadir Fern",
     "block.antarchy.duskbell":  "Duskbell",
+    "block.antarchy.nadir_roots":  "Nadir Roots",
+    "block.antarchy.verdant_roots":  "Verdant Roots",
     "block.antarchy.gorevine":  "Gorevine"
     ,"decree.antarchy.the_sky_is_mine": "THE SKY IS MINE"
     ,"decree.antarchy.the_sky_is_mine.subtitle": "Stay grounded."

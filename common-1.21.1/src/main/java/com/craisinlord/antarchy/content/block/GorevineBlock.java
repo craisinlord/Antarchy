@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 
 public class GorevineBlock extends SimpleDirectionalVineBlock {
     public static final MapCodec<GorevineBlock> CODEC = simpleCodec(GorevineBlock::new);
-    private static final int MAX_GROWTH_DISTANCE = 12;
+    private static final int MAX_GROWTH_DISTANCE = 7;
 
     public GorevineBlock(BlockBehaviour.Properties properties) {
         super(properties);

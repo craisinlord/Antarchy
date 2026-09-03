@@ -68,7 +68,7 @@ public class WindVortexEntity extends Entity {
     private static final String HOMING_KEY = "Homing";
 
     private static final double BASE_RADIUS = 0.35D;
-    private static final double DRIFT_FRICTION = 0.96D;
+    private static final double DRIFT_FRICTION = 0.995D;
     private static final int FADE_OUT_TICKS = 8;
 
     public enum VortexMode {
@@ -174,8 +174,8 @@ public class WindVortexEntity extends Entity {
             if (--this.travelTicksRemaining <= 0) {
                 this.travelling = false;
                 this.noPhysics = false;
+                this.setDeltaMovement(this.travelVelocity);
                 this.travelVelocity = Vec3.ZERO;
-                this.setDeltaMovement(Vec3.ZERO);
             }
         } else {
             Vec3 drift = this.getDeltaMovement().multiply(DRIFT_FRICTION, DRIFT_FRICTION, DRIFT_FRICTION);

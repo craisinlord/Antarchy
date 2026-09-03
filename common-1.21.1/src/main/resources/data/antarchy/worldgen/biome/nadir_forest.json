@@ -52,20 +52,14 @@
       "antarchy:nadir_forest_ceiling_trees",
       "antarchy:nadir_forest_ceiling_saplings",
       "antarchy:nadir_ferns",
-      "antarchy:duskbells"
+      "antarchy:duskbells",
+      "antarchy:nadir_roots_patch"
     ],
     []
   ],
   "creature_spawn_probability": 0.08,
   "spawners": {
-    "monster": [
-      {
-        "type": "antarchy:manticore",
-        "weight": 12,
-        "minCount": 1,
-        "maxCount": 2
-      }
-    ],
+    "monster": [],
     "creature": [
       {
         "type": "antarchy:bed_bug",

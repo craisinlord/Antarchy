@@ -53,3 +53,10 @@ displayURL="https://www.curseforge.com/minecraft/mc-mods/antarchy"
     ordering="NONE"
     side="BOTH"
     reason="Infinite Dimensions versions below 2.7.2 are no longer supported"
+
+[[dependencies.antarchy]]
+    modId="configured"
+    type="optional"
+    versionRange="*"
+    ordering="NONE"
+    reason="Enables an in-game config screen for Antarchy's settings; Antarchy works fully without it."

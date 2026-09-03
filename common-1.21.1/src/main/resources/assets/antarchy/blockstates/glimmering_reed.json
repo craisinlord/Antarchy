@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "half=lower": {
+      "model": "antarchy:block/glimmering_reed_bottom"
+    },
+    "half=upper": {
+      "model": "antarchy:block/glimmering_reed_top"
+    }
+  }
+}

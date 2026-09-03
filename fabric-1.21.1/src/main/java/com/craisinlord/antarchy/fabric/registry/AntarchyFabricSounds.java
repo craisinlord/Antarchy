@@ -188,6 +188,10 @@ public final class AntarchyFabricSounds {
 
 
     public static final DeferredHolder<SoundEvent, SoundEvent> MUSIC_GAME_THORAXIS = registerSoundEvent("music.game.thoraxis");
+    public static final DeferredHolder<SoundEvent, SoundEvent> DIMENSIONAL_TEAR_OPEN = registerSoundEvent("dimensional_tear_open");
+    public static final DeferredHolder<SoundEvent, SoundEvent> DIMENSIONAL_TEAR_IDLE = registerSoundEvent("dimensional_tear_idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> DIMENSIONAL_TEAR_CREATURE_LEAVES = registerSoundEvent("dimensional_tear_creature_leaves");
+    public static final DeferredHolder<SoundEvent, SoundEvent> DIMENSIONAL_TEAR_CLOSE = registerSoundEvent("dimensional_tear_close");
 
 
     public static final DeferredHolder<SoundEvent, SoundEvent> MUSIC_GAME_CAVARYN = registerSoundEvent("music.game.cavaryn");

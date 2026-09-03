@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LivingEntityRenderer.class)
 public abstract class HoverboardRiderPoseMixin<T extends LivingEntity, M extends EntityModel<T>> {
     private static final float HOVERBOARD_RIDER_RENDER_YAW = -90.0F;
+    private static final float HOVERBOARD_RIDER_TORSO_ROLL = -15.0F;
 
     @Shadow
     public abstract M getModel();
@@ -60,6 +61,7 @@ public abstract class HoverboardRiderPoseMixin<T extends LivingEntity, M extends
             float correction = (float) Math.toRadians(HOVERBOARD_RIDER_RENDER_YAW);
             humanoidModel.head.yRot += correction;
             humanoidModel.hat.yRot += correction;
+            humanoidModel.body.zRot += (float) Math.toRadians(HOVERBOARD_RIDER_TORSO_ROLL);
         }
     }
 }

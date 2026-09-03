@@ -615,6 +615,7 @@ public final class AntarchyNeoForgeClient {
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.DUPLICATOR_SAPLING.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.ORANGE_MILKWEED.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.PINK_MILKWEED.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.GLIMMERING_REED.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.AMBER_LICHEN.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.MUCUS.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.CREEPVINE.get(), RenderType.cutout());
@@ -640,6 +641,8 @@ public final class AntarchyNeoForgeClient {
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.NADIR_FERN.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.LARGE_NADIR_FERN.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.DUSKBELL.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.NADIR_ROOTS.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.VERDANT_ROOTS.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.STAR_CORAL.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.STAR_CORAL_FAN.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.STAR_CORAL_WALL_FAN.get(), RenderType.cutout());

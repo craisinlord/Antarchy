@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:simple_block",
+  "config": {
+    "to_place": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "antarchy:spiraling_vines",
+        "Properties": {
+          "growth_direction": "up",
+          "top_cap": "true",
+          "bottom_cap": "true",
+          "distance": "0"
+        }
+      }
+    }
+  }
+}

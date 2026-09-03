@@ -63,6 +63,13 @@ dependencies {
     compileOnly "mezz.jei:jei-1.21.1-neoforge-api:${jei_version}"
     runtimeOnly "mezz.jei:jei-1.21.1-neoforge:${jei_version}"
 
+    // Configured — optional, gives players an in-game config screen for Antarchy's
+    // ModConfigSpec-based settings (AntarchyMobsConfig/AntarchyToolsConfig/AntarchyMiscConfig)
+    // with zero Java code on this side: NeoForge's own config system is auto-discovered.
+    // No compileOnly needed since nothing here references Configured's classes directly.
+    // Has no Modrinth release, hence cursemaven (repo already declared in the root build.gradle).
+    runtimeOnly("curse.maven:configured-${configured_curseforge_id}:${configured_curseforge_file_id_neoforge}")
+
     implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras}"))
 }
 

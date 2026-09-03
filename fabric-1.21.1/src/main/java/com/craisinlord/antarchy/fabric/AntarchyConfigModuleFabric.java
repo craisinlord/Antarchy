@@ -70,6 +70,40 @@ public final class AntarchyConfigModuleFabric {
         }
     }
 
+    /**
+     * Exposes the reflection-based getter/setter binding map (see {@link #buildBindings()}) so
+     * other Fabric-side code — namely the optional Cloth Config screen builder — can reuse the
+     * exact same set of persisted settings the JSON files already round-trip, instead of
+     * hand-authoring a separate list. Read-only: callers get/set individual values through
+     * {@link SettingBinding#getValue()} / {@link SettingBinding#setValue(Object)}.
+     */
+    public static Map<String, SettingBinding> getBindings() {
+        return SETTINGS;
+    }
+
+    /**
+     * Re-serializes the current live value of every binding back to its JSON file. Intended for
+     * the optional Cloth Config screen's save handler: entries there update the live
+     * {@link AntarchySettings} fields immediately through their own save consumers (same as
+     * {@link SettingBinding#apply(Object)} does below), but nothing writes those changes to disk
+     * until this runs — mirrors the persistence tail of {@link #init()} above.
+     */
+    public static void persist() {
+        Map<ConfigSection, JsonObject> normalized = new LinkedHashMap<>();
+        for (ConfigSection section : ConfigSection.values()) {
+            normalized.put(section, new JsonObject());
+        }
+
+        for (Map.Entry<String, SettingBinding> entry : SETTINGS.entrySet()) {
+            SettingBinding binding = entry.getValue();
+            normalized.get(binding.section).add(entry.getKey(), binding.toJson(binding.getCurrentValue()));
+        }
+
+        for (Map.Entry<ConfigSection, JsonObject> entry : normalized.entrySet()) {
+            writeConfig(entry.getKey().path, entry.getValue());
+        }
+    }
+
     private static JsonObject readConfig(Path path) {
         if (!Files.exists(path)) {
             return null;
@@ -145,7 +179,11 @@ public final class AntarchyConfigModuleFabric {
         return Character.toLowerCase(value.charAt(0)) + value.substring(1);
     }
 
-    private enum ConfigSection {
+    /**
+     * Public so the optional Cloth Config screen builder (fabric.client package) can group
+     * entries into the same Mobs/Tools/Misc categories the JSON files already use.
+     */
+    public enum ConfigSection {
         MOBS("antarchy_mobs.json"),
         TOOLS("antarchy_tools.json"),
         MISC("antarchy_misc.json");
@@ -222,7 +260,15 @@ public final class AntarchyConfigModuleFabric {
         }
     }
 
-    private static final class SettingBinding {
+    /**
+     * Public so the optional Cloth Config screen builder (fabric.client package) can reuse this
+     * exact binding — the same getter/setter pair and JSON section the persistence layer above
+     * already drives — instead of a separate hand-authored entry list. The JSON-specific
+     * machinery (readValue/apply/toJson/getCurrentValue) stays private and is reused internally
+     * by the public getValue()/setValue() wrappers below, so there's exactly one code path for
+     * "what is this setting's current value" and "how do I change it".
+     */
+    public static final class SettingBinding {
         private final String name;
         private final Method getter;
         private final Method setter;
@@ -235,6 +281,31 @@ public final class AntarchyConfigModuleFabric {
             this.setter = setter;
             this.setterType = setter.getParameterTypes()[0];
             this.section = section;
+        }
+
+        /** The AntarchySettings property name, e.g. {@code krakenHealth}. */
+        public String getName() {
+            return name;
+        }
+
+        /** Which of the three JSON files (Mobs/Tools/Misc) this setting persists to. */
+        public ConfigSection getSection() {
+            return section;
+        }
+
+        /** The primitive/String type of the setter's single parameter (boolean/int/double/float/String). */
+        public Class<?> getType() {
+            return setterType;
+        }
+
+        /** The setting's current live value, boxed (Boolean/Integer/Double/Float/String). */
+        public Object getValue() {
+            return getCurrentValue();
+        }
+
+        /** Applies a new value immediately via reflection, same as the JSON loader does at startup. */
+        public void setValue(Object value) {
+            apply(value);
         }
 
         private Object readValue(JsonElement element) {

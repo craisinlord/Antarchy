@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.entity.portal;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.ManticoreEntity;
 import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
@@ -11,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -63,6 +66,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
     private static final RawAnimation CLOSING_ANIM = RawAnimation.begin().thenPlayAndHold("closing");
     private static final int DEFAULT_LIFETIME_TICKS = 20 * 60 * 20;
     private static final int OPENING_ANIMATION_TICKS = 20;
+    private static final int MANTICORE_EMERGENCE_TICKS = OPENING_ANIMATION_TICKS + 20;
     private static final int CLOSING_ANIMATION_TICKS = 10;
     private static final int EVENT_WARNING_TICKS = 80;
     private static final int TELEPORT_COOLDOWN_TICKS = 60;
@@ -72,6 +76,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
     private static final Map<UUID, Set<UUID>> QUEEN_TEAR_IDS = new HashMap<>();
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private boolean idleSoundStarted;
     private UUID linkedTearId;
     @Nullable
     private DimensionalTearEntity linkedTear;
@@ -138,13 +143,20 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         super.tick();
         if (this.level().isClientSide) {
             this.tickClientParticles();
+            this.tickIdleSound();
             return;
         }
 
         this.ageTicks++;
+        if (this.ageTicks == 1) {
+            this.level().playSound(null, this.blockPosition(), AntarchySoundEvents.DIMENSIONAL_TEAR_OPEN.get(), SoundSource.HOSTILE, 1.0F, 1.0F);
+        }
         if (this.ageTicks < OPENING_ANIMATION_TICKS) {
             this.setTearState(TearState.OPENING);
         } else if (this.ageTicks >= this.lifetimeTicks - CLOSING_ANIMATION_TICKS) {
+            if (this.ageTicks == this.lifetimeTicks - CLOSING_ANIMATION_TICKS) {
+                this.level().playSound(null, this.blockPosition(), AntarchySoundEvents.DIMENSIONAL_TEAR_CLOSE.get(), SoundSource.HOSTILE, 1.0F, 1.0F);
+            }
             this.setTearState(TearState.COLLAPSING);
         } else if (this.getTearState() == TearState.OPENING || this.getTearState() == TearState.COLLAPSING) {
             this.setTearState(TearState.NORMAL);
@@ -154,11 +166,11 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
             return;
         }
 
-        if (this.queenOwnerId != null && this.ageTicks == OPENING_ANIMATION_TICKS) {
+        if (this.queenOwnerId != null && this.ageTicks == MANTICORE_EMERGENCE_TICKS) {
             this.spawnQueenManticores((ServerLevel) this.level());
         }
 
-        if (this.staffOwnerId != null && this.ageTicks == OPENING_ANIMATION_TICKS) {
+        if (this.staffOwnerId != null && this.ageTicks == MANTICORE_EMERGENCE_TICKS) {
             this.spawnStaffManticores((ServerLevel) this.level());
         }
 
@@ -219,7 +231,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         mob.setDeltaMovement(this.getViewVector(1.0F).scale(0.35D).add(0.0D, 0.08D, 0.0D));
         mob.setNoGravity(true);
         level.addFreshEntity(mob);
-        level.playSound(null, this.blockPosition(), eventState == TearState.LUCID ? SoundEvents.AMETHYST_BLOCK_CHIME : SoundEvents.ENDERMAN_SCREAM, SoundSource.HOSTILE, 0.75F, eventState == TearState.LUCID ? 1.45F : 0.85F);
+        level.playSound(null, this.blockPosition(), AntarchySoundEvents.DIMENSIONAL_TEAR_CREATURE_LEAVES.get(), SoundSource.HOSTILE, 0.75F, eventState == TearState.LUCID ? 1.15F : 0.9F);
     }
 
     private void spawnQueenManticores(ServerLevel level) {
@@ -412,6 +424,14 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         this.entityData.set(STATE, state.ordinal());
     }
 
+    private void tickIdleSound() {
+        if (this.idleSoundStarted || this.getTearState() == TearState.OPENING) {
+            return;
+        }
+        this.idleSoundStarted = true;
+        Minecraft.getInstance().getSoundManager().play(new TearIdleSoundInstance(this));
+    }
+
     private void tickClientParticles() {
         TearState state = this.getTearState();
         if (this.random.nextInt(state == TearState.NORMAL ? 5 : 2) != 0) {
@@ -522,5 +542,37 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geoCache;
+    }
+
+    private static final class TearIdleSoundInstance extends AbstractTickableSoundInstance {
+        private final DimensionalTearEntity tear;
+
+        private TearIdleSoundInstance(DimensionalTearEntity tear) {
+            super(AntarchySoundEvents.DIMENSIONAL_TEAR_IDLE.get(), SoundSource.HOSTILE, tear.random);
+            this.tear = tear;
+            this.looping = true;
+            this.delay = 0;
+            this.volume = 0.6F;
+            this.pitch = 1.0F;
+            this.x = tear.getX();
+            this.y = tear.getY();
+            this.z = tear.getZ();
+        }
+
+        @Override
+        public void tick() {
+            if (this.tear.isRemoved() || this.tear.getTearState() == TearState.COLLAPSING) {
+                this.stop();
+                return;
+            }
+            this.x = this.tear.getX();
+            this.y = this.tear.getY();
+            this.z = this.tear.getZ();
+        }
+
+        @Override
+        public boolean canStartSilent() {
+            return true;
+        }
     }
 }

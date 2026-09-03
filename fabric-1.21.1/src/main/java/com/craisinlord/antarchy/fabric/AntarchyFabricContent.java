@@ -335,6 +335,12 @@ public final class AntarchyFabricContent {
                 AntarchyFabricSounds.PRINCESS_FLY,
                 AntarchyFabricSounds.PRINCESS_STEP
         );
+        AntarchySoundEvents.bindDimensionalTearSounds(
+                AntarchyFabricSounds.DIMENSIONAL_TEAR_OPEN,
+                AntarchyFabricSounds.DIMENSIONAL_TEAR_IDLE,
+                AntarchyFabricSounds.DIMENSIONAL_TEAR_CREATURE_LEAVES,
+                AntarchyFabricSounds.DIMENSIONAL_TEAR_CLOSE
+        );
 
         AntarchyObjects.setOctopusBomb(AntarchyFabricEntities.OCTOPUS_BOMB);
         AntarchyObjects.setTentacle(AntarchyFabricEntities.TENTACLE);
@@ -387,6 +393,7 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setLumenBucket(() -> AntarchyFabricItems.LUMEN_BUCKET.get());
         AntarchyObjects.setLumenBlock(() -> AntarchyFabricBlocks.LUMEN_BLOCK.get());
         AntarchyObjects.setLumenFroglight(() -> AntarchyFabricBlocks.LUMEN_FROGLIGHT.get());
+        AntarchyObjects.setGlimmeringReed(() -> AntarchyFabricBlocks.GLIMMERING_REED.get());
         AntarchyObjects.setPeachLeavesParticle(() -> AntarchyFabricMisc.PEACH_LEAVES_PARTICLE.get());
         AntarchyObjects.setLotusPollen(() -> AntarchyFabricMisc.LOTUS_POLLEN.get());
         AntarchyObjects.setNightmareFireFlame(() -> AntarchyFabricMisc.NIGHTMARE_FIRE_FLAME.get());

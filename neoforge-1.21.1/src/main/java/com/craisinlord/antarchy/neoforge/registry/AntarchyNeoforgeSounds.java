@@ -71,6 +71,10 @@ public final class AntarchyNeoforgeSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> LUCID_LULLABY = registerSoundEvent("lucid_lullaby");
     public static final DeferredHolder<SoundEvent, SoundEvent> WHISTLING_VOID = registerSoundEvent("whistling_void");
     public static final DeferredHolder<SoundEvent, SoundEvent> MUSIC_GAME_THORAXIS = registerSoundEvent("music.game.thoraxis");
+    public static final DeferredHolder<SoundEvent, SoundEvent> DIMENSIONAL_TEAR_OPEN = registerSoundEvent("dimensional_tear_open");
+    public static final DeferredHolder<SoundEvent, SoundEvent> DIMENSIONAL_TEAR_IDLE = registerSoundEvent("dimensional_tear_idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> DIMENSIONAL_TEAR_CREATURE_LEAVES = registerSoundEvent("dimensional_tear_creature_leaves");
+    public static final DeferredHolder<SoundEvent, SoundEvent> DIMENSIONAL_TEAR_CLOSE = registerSoundEvent("dimensional_tear_close");
     public static final DeferredHolder<SoundEvent, SoundEvent> MUSIC_GAME_CAVARYN = registerSoundEvent("music.game.cavaryn");
     public static final DeferredHolder<SoundEvent, SoundEvent> WISTFUL_WANDERINGS = registerSoundEvent("wistful_wanderings");
     public static final DeferredHolder<SoundEvent, SoundEvent> MUSIC_GAME_ELYTHIA = registerSoundEvent("music.game.elythia");

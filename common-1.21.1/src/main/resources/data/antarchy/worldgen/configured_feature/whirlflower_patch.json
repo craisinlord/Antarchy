@@ -1,9 +1,9 @@
 {
   "type": "minecraft:random_patch",
   "config": {
-    "tries": 6,
-    "xz_spread": 3,
-    "y_spread": 1,
+    "tries": 24,
+    "xz_spread": 4,
+    "y_spread": 2,
     "feature": "antarchy:whirlflower"
   }
 }

@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
-    "antarchy:jumpy_boots"
+    "antarchy:jumpy_boots",
+    "antarchy:royal_guardian_shield",
+    "antarchy:royal_assailant_staff"
   ]
 }

@@ -63,6 +63,10 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> THORAXIS_LUCID_POOLS_AMBIENT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> THORAXIS_LUCID_POOLS_ADDITIONS = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> THORAXIS_LUCID_POOLS_MOOD = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> DIMENSIONAL_TEAR_OPEN = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> DIMENSIONAL_TEAR_IDLE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> DIMENSIONAL_TEAR_CREATURE_LEAVES = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> DIMENSIONAL_TEAR_CLOSE = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> LUCID_AMBIENT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> LUCID_FLYING = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> LUCID_ATTACK = (Supplier<SoundEvent>) UNBOUND;
@@ -612,5 +616,17 @@ public final class AntarchySoundEvents {
         PRINCESS_SHOOT = princessShoot;
         PRINCESS_FLY = princessFly;
         PRINCESS_STEP = princessStep;
+    }
+
+    public static void bindDimensionalTearSounds(
+            Supplier<SoundEvent> dimensionalTearOpen,
+            Supplier<SoundEvent> dimensionalTearIdle,
+            Supplier<SoundEvent> dimensionalTearCreatureLeaves,
+            Supplier<SoundEvent> dimensionalTearClose
+    ) {
+        DIMENSIONAL_TEAR_OPEN = dimensionalTearOpen;
+        DIMENSIONAL_TEAR_IDLE = dimensionalTearIdle;
+        DIMENSIONAL_TEAR_CREATURE_LEAVES = dimensionalTearCreatureLeaves;
+        DIMENSIONAL_TEAR_CLOSE = dimensionalTearClose;
     }
 }

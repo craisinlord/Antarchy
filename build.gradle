@@ -34,6 +34,7 @@ allprojects {
         }
         maven { url "https://nexus.resourcefulbees.com/repository/telepathicgrunt/" }
         maven { url "https://maven.shedaniel.me" }
+        maven { url "https://maven.terraformersmc.com/releases/" }
         maven { url "https://jitpack.io" }
         maven { url "https://www.cursemaven.com" }
         maven { url "https://api.modrinth.com/maven/" }
@@ -47,6 +48,7 @@ allprojects {
     java {
         withSourcesJar()
     }
+
 }
 
 // Don't build the root project itself.

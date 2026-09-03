@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "antarchy:block/glimming_reed/glimmering_reed_top"
+  }
+}

@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,7 +28,6 @@ public class WhirlflowerBlock extends BushBlock {
     private static final VoxelShape UP_SHAPE = Block.box(3.0D, 0.0D, 3.0D, 13.0D, 13.0D, 13.0D);
     private static final VoxelShape DOWN_SHAPE = Block.box(3.0D, 3.0D, 3.0D, 13.0D, 16.0D, 13.0D);
     private static final ResourceLocation VEINED_TYPHONITE_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "veined_typhonite");
-    private static final ResourceLocation VERDANT_NYXIUM_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "verdant_nyxium");
 
     public WhirlflowerBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -54,8 +54,8 @@ public class WhirlflowerBlock extends BushBlock {
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
-        return id.equals(VEINED_TYPHONITE_ID) || id.equals(VERDANT_NYXIUM_ID);
+        return state.is(AntarchyTags.Blocks.NYXIUM)
+                || BuiltInRegistries.BLOCK.getKey(state.getBlock()).equals(VEINED_TYPHONITE_ID);
     }
 
     @Override

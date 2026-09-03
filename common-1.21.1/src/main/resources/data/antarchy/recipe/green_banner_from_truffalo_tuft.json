@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "###",
+    "###",
+    " S "
+  ],
+  "key": {
+    "#": {
+      "item": "antarchy:green_truffalo_tuft"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "id": "minecraft:green_banner"
+  }
+}
