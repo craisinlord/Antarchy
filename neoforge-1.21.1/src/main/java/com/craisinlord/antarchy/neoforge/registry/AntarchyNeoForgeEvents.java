@@ -27,7 +27,6 @@ import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.craisinlord.antarchy.content.item.*;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateGearHelper;
-import com.craisinlord.antarchy.content.movement.DreamSandLowGravityAccess;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.portal.PermanentPortalManager;
 import com.craisinlord.antarchy.content.time.TimeDilationManager;
@@ -113,15 +112,12 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleParalyzedRightClickItem);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleParalyzedEntityInteract);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleParalyzedEntityInteractSpecific);
-        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleDreamSandJump);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickDreadAndIchor);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickScorpionWhips);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickWormHooks);
-        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickDreamSandLowGravity);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickMinersDreamExcavations);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleAntiwaterDamage);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleAntiwaterFall);
-        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleDreamSandFall);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodCrystalBootsFall);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassShield);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodCrystalArmorEquip);
@@ -144,7 +140,6 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleFallenKingCrownKill);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleDreadBedSleep);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleStartTracking);
-        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleDreamSandLogout);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleTigerEyeLogout);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleTigerEyeDeath);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleTigerEyeRespawn);
@@ -285,19 +280,6 @@ public final class AntarchyNeoForgeEvents {
     static void registerReloadListeners(AddReloadListenerEvent event) {
         event.addListener(new DrTrayaurusTradeManager());
     }
-    static void handleDreamSandLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        clearDreamSandLowGravity(event.getEntity());
-    }
-    private static void clearDreamSandLowGravity(LivingEntity livingEntity) {
-        DreamSandLowGravityAccess access = dreamSandAccess(livingEntity);
-        access.antarchy$setDreamSandLowGravityActive(false);
-        access.antarchy$setDreamSandLowGravityTicksRemaining(0);
-        access.antarchy$setDreamSandLandingGraceTicks(0);
-    }
-    private static DreamSandLowGravityAccess dreamSandAccess(LivingEntity livingEntity) {
-        return (DreamSandLowGravityAccess) livingEntity;
-    }
-
     static void handleStartTracking(PlayerEvent.StartTracking event) {
         if (event.getTarget().level().isClientSide()) {
             return;
@@ -423,7 +405,6 @@ public final class AntarchyNeoForgeEvents {
 
     static void handleDreadDeath(LivingDeathEvent event) {
         LivingEntity entity = event.getEntity();
-        clearDreamSandLowGravity(entity);
         if (!entity.hasEffect(AntarchyNeoforgeMisc.DREAD)) {
             return;
         }
@@ -1027,24 +1008,6 @@ public final class AntarchyNeoForgeEvents {
         return player.hasEffect(AntarchyNeoforgeMisc.PARALYZED);
     }
 
-    static void handleDreamSandJump(LivingEvent.LivingJumpEvent event) {
-        LivingEntity livingEntity = event.getEntity();
-        if (!AntarchySettings.dreamSandEnabled() || isDreamSandLowGravityBlacklisted(livingEntity)) {
-            clearDreamSandLowGravity(livingEntity);
-        } else if (isStandingOnDreamSand(livingEntity)) {
-            livingEntity.setDeltaMovement(
-                    livingEntity.getDeltaMovement().x,
-                    livingEntity.getDeltaMovement().y * AntarchySettings.dreamSandJumpVelocityMultiplier(),
-                    livingEntity.getDeltaMovement().z
-            );
-            DreamSandLowGravityAccess access = dreamSandAccess(livingEntity);
-            access.antarchy$setDreamSandLowGravityActive(true);
-            access.antarchy$setDreamSandLowGravityTicksRemaining((int) Math.max(1L, Math.round(AntarchySettings.dreamSandEffectDurationSeconds() * 20.0D)));
-            access.antarchy$setDreamSandLandingGraceTicks(0);
-        }
-
-    }
-
     static void tickDreadAndIchor(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
         if (player.level().isClientSide()) {
@@ -1074,72 +1037,11 @@ public final class AntarchyNeoForgeEvents {
         }
     }
 
-    static void tickDreamSandLowGravity(EntityTickEvent.Post event) {
-        if (!(event.getEntity() instanceof LivingEntity livingEntity)) {
-            return;
-        }
-
-        DreamSandLowGravityAccess access = dreamSandAccess(livingEntity);
-        int landingGraceTicks = access.antarchy$getDreamSandLandingGraceTicks();
-        if (landingGraceTicks > 0) {
-            access.antarchy$setDreamSandLandingGraceTicks(landingGraceTicks - 1);
-        }
-
-        if (!AntarchySettings.dreamSandEnabled() || isDreamSandLowGravityBlacklisted(livingEntity) || !access.antarchy$isDreamSandLowGravityActive()) {
-            return;
-        }
-
-        int remainingTicks = access.antarchy$getDreamSandLowGravityTicksRemaining();
-        if (remainingTicks > 0) {
-            access.antarchy$setDreamSandLowGravityTicksRemaining(remainingTicks - 1);
-        }
-        if (access.antarchy$getDreamSandLowGravityTicksRemaining() <= 0) {
-            clearDreamSandLowGravity(livingEntity);
-            return;
-        }
-
-        if (isOnSolidGround(livingEntity)) {
-            access.antarchy$setDreamSandLowGravityActive(false);
-            access.antarchy$setDreamSandLowGravityTicksRemaining(0);
-            access.antarchy$setDreamSandLandingGraceTicks(2);
-        } else if (!livingEntity.onGround() && livingEntity.getDeltaMovement().y < 0.0D) {
-            livingEntity.setDeltaMovement(
-                    livingEntity.getDeltaMovement().x,
-                    livingEntity.getDeltaMovement().y * AntarchySettings.dreamSandGravityMultiplier(),
-                    livingEntity.getDeltaMovement().z
-            );
-        }
-    }
-
-    private static boolean isOnSolidGround(LivingEntity livingEntity) {
-        return livingEntity.onGround() && livingEntity.getBlockStateOn().blocksMotion();
-    }
-
-    private static boolean isStandingOnDreamSand(LivingEntity livingEntity) {
-        return livingEntity.level().getBlockState(livingEntity.getOnPosLegacy()).is(AntarchyNeoforgeBlocks.DREAM_SAND.get());
-    }
-
     static void handleAntiwaterFall(LivingFallEvent event) {
         LivingEntity livingEntity = event.getEntity();
         if (intersectsAntiwater(livingEntity, livingEntity.getBoundingBox().inflate(0.05D))) {
             event.setCanceled(true);
         }
-    }
-
-    static void handleDreamSandFall(LivingFallEvent event) {
-        LivingEntity livingEntity = event.getEntity();
-        DreamSandLowGravityAccess access = dreamSandAccess(livingEntity);
-        if (!AntarchySettings.dreamSandEnabled()
-                || isDreamSandLowGravityBlacklisted(livingEntity)
-                || (!access.antarchy$isDreamSandLowGravityActive() && access.antarchy$getDreamSandLandingGraceTicks() <= 0)) {
-            return;
-        }
-
-        event.setCanceled(true);
-    }
-
-    private static boolean isDreamSandLowGravityBlacklisted(LivingEntity livingEntity) {
-        return livingEntity.getType().is(AntarchyTags.Entities.DREAM_SAND_LOW_GRAVITY_BLACKLIST);
     }
 
 

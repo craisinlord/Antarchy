@@ -1,14 +1,4 @@
 {
-  "type": "minecraft:simple_block",
-  "config": {
-    "to_place": {
-      "type": "minecraft:simple_state_provider",
-      "state": {
-        "Name": "antarchy:gorevine",
-        "Properties": {
-          "growth_direction": "down"
-        }
-      }
-    }
-  }
+  "type": "antarchy:gorevine",
+  "config": {}
 }

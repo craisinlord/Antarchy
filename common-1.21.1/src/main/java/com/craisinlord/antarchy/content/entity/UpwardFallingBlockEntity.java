@@ -14,7 +14,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -47,7 +46,11 @@ public class UpwardFallingBlockEntity extends Entity {
 
     public UpwardFallingBlockEntity(EntityType<UpwardFallingBlockEntity> type, Level level) {
         super(type, level);
-        this.blocksBuilding = true;
+        // This entity has its own simple upward-flight and landing checks below.  Do not
+        // send it through the normal entity collision solver: Thoraxis can create many of
+        // these at once while chunks are loading, and swept entity collision is needlessly
+        // expensive for a block that only collides with the block directly above it.
+        this.noPhysics = true;
     }
 
     @Override
@@ -126,7 +129,7 @@ public class UpwardFallingBlockEntity extends Entity {
 
         double beforeY = getY();
         setDeltaMovement(getDeltaMovement().add(0.0, getRiseAccel(), 0.0));
-        move(MoverType.SELF, getDeltaMovement());
+        setPos(getX(), getY() + getDeltaMovement().y, getZ());
         setDeltaMovement(getDeltaMovement().scale(DRAG));
         distanceTraveled += Math.max(0.0, getY() - beforeY);
 
@@ -154,7 +157,8 @@ public class UpwardFallingBlockEntity extends Entity {
 
         boolean hitScaffolding = above.getBlock() instanceof AntimetalScaffoldingBlock;
 
-        if (this.verticalCollision || hitScaffolding) {
+        boolean hitCeiling = !above.isAir() && !above.getCollisionShape(level(), headPos).isEmpty();
+        if (hitCeiling || hitScaffolding) {
             placeAtLanding(blockState, headPos.below());
             return;
         }

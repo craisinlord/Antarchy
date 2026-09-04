@@ -17,7 +17,6 @@
     "BloodglassEffectMixin",
     "BloodglassRespawnMixin",
     "DreamCampfireBlockEntityMixin",
-    "DreamSandMovementMixin",
     "JumpyBootsFallDamageMixin",
     "entity.MultipartEntityLevelRegistryMixin",
     "WoodTypeInvoker",

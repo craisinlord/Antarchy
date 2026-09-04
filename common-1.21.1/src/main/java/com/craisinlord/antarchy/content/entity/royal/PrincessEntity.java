@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.entity.royal;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -19,6 +20,15 @@ public class PrincessEntity extends RoyalMountEntity {
                 AntarchySettings.princessMovementSpeed(), AntarchySettings.princessFlyingSpeed(),
                 AntarchySettings.princessArmor(), AntarchySettings.princessKnockbackResistance(),
                 AntarchySettings.princessFollowRange());
+    }
+
+    @Override
+    protected RoyalBeamElement boltElement(int lateralIndex) {
+        return switch (lateralIndex) {
+            case -1 -> RoyalBeamElement.FIRE;
+            case 1 -> RoyalBeamElement.ICE;
+            default -> RoyalBeamElement.LIGHTNING;
+        };
     }
 
     @Override

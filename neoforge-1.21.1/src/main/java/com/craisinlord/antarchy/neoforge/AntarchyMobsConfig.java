@@ -130,6 +130,25 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.IntValue KING_BEAM_DURATION_TICKS, KING_BEAM_COOLDOWN_TICKS, KING_BEAM_TERRAIN_CAP;
     private static final ModConfigSpec.IntValue ROYAL_DECREE_COOLDOWN_TICKS;
 
+    // Royal mounts
+
+    private static final ModConfigSpec.IntValue ROYAL_EGG_HATCH_CHANCE;
+    private static final ModConfigSpec.DoubleValue ROYAL_BOLT_DAMAGE;
+    private static final ModConfigSpec.DoubleValue PRINCE_HEALTH;
+    private static final ModConfigSpec.DoubleValue PRINCE_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue PRINCE_MOVEMENT_SPEED;
+    private static final ModConfigSpec.DoubleValue PRINCE_FLYING_SPEED;
+    private static final ModConfigSpec.DoubleValue PRINCE_ARMOR;
+    private static final ModConfigSpec.DoubleValue PRINCE_KNOCKBACK_RESISTANCE;
+    private static final ModConfigSpec.DoubleValue PRINCE_FOLLOW_RANGE;
+    private static final ModConfigSpec.DoubleValue PRINCESS_HEALTH;
+    private static final ModConfigSpec.DoubleValue PRINCESS_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue PRINCESS_MOVEMENT_SPEED;
+    private static final ModConfigSpec.DoubleValue PRINCESS_FLYING_SPEED;
+    private static final ModConfigSpec.DoubleValue PRINCESS_ARMOR;
+    private static final ModConfigSpec.DoubleValue PRINCESS_KNOCKBACK_RESISTANCE;
+    private static final ModConfigSpec.DoubleValue PRINCESS_FOLLOW_RANGE;
+
 
     // Brutalfly
 
@@ -574,6 +593,25 @@ public final class AntarchyMobsConfig {
         ROYAL_DECREE_COOLDOWN_TICKS = b.comment("Cooldown in ticks between the end of one King decree and the next.").defineInRange("royalDecreeCooldownTicks", 1200, 1, 72000);
         b.pop();
 
+        b.push("royalMounts");
+        ROYAL_EGG_HATCH_CHANCE = b.comment("Chance denominator for a royal egg advancing one hatch stage on a random tick.").defineInRange("eggHatchChance", 3, 1, 100000);
+        ROYAL_BOLT_DAMAGE = b.comment("Direct damage dealt by a Prince or Princess royal bolt.").defineInRange("boltDamage", 6.0D, 0.0D, 1024.0D);
+        PRINCE_HEALTH = b.comment("Prince base max health.").defineInRange("princeHealth", 120.0D, 1.0D, 32768.0D);
+        PRINCE_ATTACK_DAMAGE = b.comment("Prince bite damage.").defineInRange("princeAttackDamage", 14.0D, 0.0D, 1024.0D);
+        PRINCE_MOVEMENT_SPEED = b.comment("Prince grounded movement speed.").defineInRange("princeMovementSpeed", 0.28D, 0.0D, 10.0D);
+        PRINCE_FLYING_SPEED = b.comment("Prince flying movement speed.").defineInRange("princeFlyingSpeed", 0.9D, 0.0D, 10.0D);
+        PRINCE_ARMOR = b.comment("Prince armor value.").defineInRange("princeArmor", 10.0D, 0.0D, 1024.0D);
+        PRINCE_KNOCKBACK_RESISTANCE = b.comment("Prince knockback resistance.").defineInRange("princeKnockbackResistance", 0.6D, 0.0D, 1.0D);
+        PRINCE_FOLLOW_RANGE = b.comment("Prince owner and target range.").defineInRange("princeFollowRange", 48.0D, 1.0D, 256.0D);
+        PRINCESS_HEALTH = b.comment("Princess base max health.").defineInRange("princessHealth", 110.0D, 1.0D, 32768.0D);
+        PRINCESS_ATTACK_DAMAGE = b.comment("Princess bite damage.").defineInRange("princessAttackDamage", 10.0D, 0.0D, 1024.0D);
+        PRINCESS_MOVEMENT_SPEED = b.comment("Princess grounded movement speed.").defineInRange("princessMovementSpeed", 0.28D, 0.0D, 10.0D);
+        PRINCESS_FLYING_SPEED = b.comment("Princess flying movement speed.").defineInRange("princessFlyingSpeed", 0.95D, 0.0D, 10.0D);
+        PRINCESS_ARMOR = b.comment("Princess armor value.").defineInRange("princessArmor", 8.0D, 0.0D, 1024.0D);
+        PRINCESS_KNOCKBACK_RESISTANCE = b.comment("Princess knockback resistance.").defineInRange("princessKnockbackResistance", 0.5D, 0.0D, 1.0D);
+        PRINCESS_FOLLOW_RANGE = b.comment("Princess owner and target range.").defineInRange("princessFollowRange", 48.0D, 1.0D, 256.0D);
+        b.pop();
+
 
         // Brutalfly
 
@@ -969,6 +1007,23 @@ public final class AntarchyMobsConfig {
     static double  kingBeamTerrainRadius()                  { return KING_BEAM_TERRAIN_RADIUS.get(); }
     static int     kingBeamTerrainCap()                     { return KING_BEAM_TERRAIN_CAP.get(); }
     static int     royalDecreeCooldownTicks()                { return ROYAL_DECREE_COOLDOWN_TICKS.get(); }
+
+    static int     royalEggHatchChance()                      { return ROYAL_EGG_HATCH_CHANCE.get(); }
+    static double  royalBoltDamage()                          { return ROYAL_BOLT_DAMAGE.get(); }
+    static double  princeHealth()                             { return PRINCE_HEALTH.get(); }
+    static double  princeAttackDamage()                       { return PRINCE_ATTACK_DAMAGE.get(); }
+    static double  princeMovementSpeed()                     { return PRINCE_MOVEMENT_SPEED.get(); }
+    static double  princeFlyingSpeed()                       { return PRINCE_FLYING_SPEED.get(); }
+    static double  princeArmor()                             { return PRINCE_ARMOR.get(); }
+    static double  princeKnockbackResistance()               { return PRINCE_KNOCKBACK_RESISTANCE.get(); }
+    static double  princeFollowRange()                       { return PRINCE_FOLLOW_RANGE.get(); }
+    static double  princessHealth()                          { return PRINCESS_HEALTH.get(); }
+    static double  princessAttackDamage()                    { return PRINCESS_ATTACK_DAMAGE.get(); }
+    static double  princessMovementSpeed()                  { return PRINCESS_MOVEMENT_SPEED.get(); }
+    static double  princessFlyingSpeed()                    { return PRINCESS_FLYING_SPEED.get(); }
+    static double  princessArmor()                          { return PRINCESS_ARMOR.get(); }
+    static double  princessKnockbackResistance()             { return PRINCESS_KNOCKBACK_RESISTANCE.get(); }
+    static double  princessFollowRange()                    { return PRINCESS_FOLLOW_RANGE.get(); }
 
     static double  brutalflyHealth()                        { return BRUTALFLY_HEALTH.get(); }
     static double  brutalflySwipeDamage()                   { return BRUTALFLY_SWIPE_DAMAGE.get(); }

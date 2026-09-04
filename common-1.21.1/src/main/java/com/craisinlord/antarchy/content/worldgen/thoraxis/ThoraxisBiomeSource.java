@@ -22,8 +22,8 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     private static final int REGION_DETAIL_SCALE = 41;
     private static final int VERTICAL_NOISE_SCALE = 8;
     private static final double DUNES_SELECTOR_CUTOFF = 0.38D;
-    private static final double DREAM_DUNES_SELECTOR_CUTOFF = 0.12D;
-    private static final double HILLS_SELECTOR_CUTOFF = 0.24D;
+    private static final double DREAM_DUNES_SELECTOR_CUTOFF = 0.42D;
+    private static final double HILLS_SELECTOR_CUTOFF = 0.33D;
     private static final double NADIR_FOREST_SELECTOR_MIN = 0.54D;
     private static final double NADIR_FOREST_SELECTOR_MAX = 0.56D;
     private static final ResourceKey<Biome> NIGHTMARE_WASTES = ResourceKey.create(
@@ -53,8 +53,8 @@ public final class ThoraxisBiomeSource extends BiomeSource {
 
     public static final MapCodec<ThoraxisBiomeSource> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             MultiNoiseBiomeSource.DIRECT_CODEC.forGetter(ThoraxisBiomeSource::parameters),
-            Codec.INT.optionalFieldOf("dream_dunes_max_y", 96).forGetter(ThoraxisBiomeSource::dreamDunesMaxY),
-            Codec.INT.optionalFieldOf("umbral_hills_max_y", 100).forGetter(ThoraxisBiomeSource::umbralHillsMaxY),
+            Codec.INT.optionalFieldOf("dream_dunes_max_y", 160).forGetter(ThoraxisBiomeSource::dreamDunesMaxY),
+            Codec.INT.optionalFieldOf("umbral_hills_max_y", 160).forGetter(ThoraxisBiomeSource::umbralHillsMaxY),
             Codec.INT.optionalFieldOf("lucid_pools_min_y", 116).forGetter(ThoraxisBiomeSource::lucidPoolsMinY),
             Codec.INT.optionalFieldOf("nadir_forest_min_y", 128).forGetter(ThoraxisBiomeSource::nadirForestMinY)
     ).apply(instance, ThoraxisBiomeSource::new));

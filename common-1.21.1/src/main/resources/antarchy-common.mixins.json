@@ -14,8 +14,6 @@
                    "BloodCrystalKatanaDashPhaseMixin",
                    "BloodglassMixin",
                    "DreamFireBlockMixin",
-                   "DreamSandFallingSpeedMixin",
-                   "DreamSandLowGravityMixin",
                    "DiodeBlockMixin",
                    "FarChunkSetBlockWarningMixin",
                    "FireVisualBaseFireBlockMixin",

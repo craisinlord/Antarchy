@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/pointed_dripstone",
+  "x": 180,
   "textures": {
     "cross": "antarchy:block/typhonite/typhonite_spike_middle"
   }
