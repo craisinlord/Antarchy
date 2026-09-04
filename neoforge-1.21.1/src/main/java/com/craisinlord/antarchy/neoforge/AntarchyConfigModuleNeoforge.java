@@ -165,6 +165,23 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setKingBeamTerrainCap(AntarchyMobsConfig.kingBeamTerrainCap());
         AntarchySettings.setRoyalDecreeCooldownTicks(AntarchyMobsConfig.royalDecreeCooldownTicks());
 
+        AntarchySettings.setRoyalEggHatchChance(AntarchyMobsConfig.royalEggHatchChance());
+        AntarchySettings.setRoyalBoltDamage(AntarchyMobsConfig.royalBoltDamage());
+        AntarchySettings.setPrinceHealth(AntarchyMobsConfig.princeHealth());
+        AntarchySettings.setPrinceAttackDamage(AntarchyMobsConfig.princeAttackDamage());
+        AntarchySettings.setPrinceMovementSpeed(AntarchyMobsConfig.princeMovementSpeed());
+        AntarchySettings.setPrinceFlyingSpeed(AntarchyMobsConfig.princeFlyingSpeed());
+        AntarchySettings.setPrinceArmor(AntarchyMobsConfig.princeArmor());
+        AntarchySettings.setPrinceKnockbackResistance(AntarchyMobsConfig.princeKnockbackResistance());
+        AntarchySettings.setPrinceFollowRange(AntarchyMobsConfig.princeFollowRange());
+        AntarchySettings.setPrincessHealth(AntarchyMobsConfig.princessHealth());
+        AntarchySettings.setPrincessAttackDamage(AntarchyMobsConfig.princessAttackDamage());
+        AntarchySettings.setPrincessMovementSpeed(AntarchyMobsConfig.princessMovementSpeed());
+        AntarchySettings.setPrincessFlyingSpeed(AntarchyMobsConfig.princessFlyingSpeed());
+        AntarchySettings.setPrincessArmor(AntarchyMobsConfig.princessArmor());
+        AntarchySettings.setPrincessKnockbackResistance(AntarchyMobsConfig.princessKnockbackResistance());
+        AntarchySettings.setPrincessFollowRange(AntarchyMobsConfig.princessFollowRange());
+
         AntarchySettings.setBrutalflyHealth(AntarchyMobsConfig.brutalflyHealth());
         AntarchySettings.setBrutalflySwipeDamage(AntarchyMobsConfig.brutalflySwipeDamage());
         AntarchySettings.setBrutalflySpitDamage(AntarchyMobsConfig.brutalflySpitDamage());

@@ -288,6 +288,10 @@ public final class AntarchyNeoforgeMisc {
             () -> new LumenLilyPadFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.GlimmeringReedFeature> GLIMMERING_REEDS = FEATURES.register("glimmering_reeds",
             () -> new com.craisinlord.antarchy.content.worldgen.elythia.GlimmeringReedFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, NaturalDirectionalVineFeature> SPIRALING_VINES = FEATURES.register("spiraling_vines",
+            () -> new NaturalDirectionalVineFeature(NoneFeatureConfiguration.CODEC, "spiraling_vines", net.minecraft.core.Direction.UP, 4, 12));
+    public static final DeferredHolder<Feature<?>, NaturalDirectionalVineFeature> GOREVINE = FEATURES.register("gorevine",
+            () -> new NaturalDirectionalVineFeature(NoneFeatureConfiguration.CODEC, "gorevine", net.minecraft.core.Direction.DOWN, 8, 16));
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.GiantLilyPadPatchFeature> GIANT_LILY_PAD_PATCH = FEATURES.register("giant_lily_pad_patch",
             () -> new com.craisinlord.antarchy.content.worldgen.elythia.GiantLilyPadPatchFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.GiantLilyPadPatchFeature> GIANT_LILY_PAD_PATCH_PEACH_FOREST = FEATURES.register("giant_lily_pad_patch_peach_forest",
@@ -320,6 +324,8 @@ public final class AntarchyNeoforgeMisc {
             () -> new NyxiteSpikeFeature(NyxiteSpikeConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, TyphoniteSpikeFeature> TYPHONITE_SPIKES = FEATURES.register("typhonite_spikes",
             () -> new TyphoniteSpikeFeature(TyphoniteSpikeConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, TyphoniteSwirlFeature> TYPHONITE_SWIRLS = FEATURES.register("typhonite_swirls",
+            () -> new TyphoniteSwirlFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, ChitinSpikeFeature> CAVARYN_CHITIN_SPIKES = FEATURES.register("cavaryn_chitin_spikes",
             () -> new ChitinSpikeFeature(ChitinSpikeConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, CavarynBileVeinFeature> CAVARYN_BILE_VEINS = FEATURES.register("cavaryn_bile_veins",

@@ -72,8 +72,8 @@ public class TyphoniteSpikeFeature extends Feature<TyphoniteSpikeConfiguration> 
         Column column = optional.get();
         OptionalInt ceiling = column.getCeiling();
         OptionalInt floor = column.getFloor();
-        boolean canGrowDown = ceiling.isPresent() && isTyphonite(level.getBlockState(pos.atY(ceiling.getAsInt())));
-        boolean canGrowUp = floor.isPresent() && isTyphonite(level.getBlockState(pos.atY(floor.getAsInt())));
+        boolean canGrowDown = ceiling.isPresent() && isTyphoniteAnchor(level.getBlockState(pos.atY(ceiling.getAsInt())));
+        boolean canGrowUp = floor.isPresent() && isTyphoniteAnchor(level.getBlockState(pos.atY(floor.getAsInt())));
         if (!canGrowDown && !canGrowUp) {
             return false;
         }
@@ -194,7 +194,8 @@ public class TyphoniteSpikeFeature extends Feature<TyphoniteSpikeConfiguration> 
         );
     }
 
-    private static boolean isTyphonite(BlockState state) {
-        return BuiltInRegistries.BLOCK.getKey(state.getBlock()).equals(TYPHONITE_ID);
+    private static boolean isTyphoniteAnchor(BlockState state) {
+        ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(state.getBlock());
+        return blockId.equals(TYPHONITE_ID) || blockId.equals(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "verdant_nyxium"));
     }
 }

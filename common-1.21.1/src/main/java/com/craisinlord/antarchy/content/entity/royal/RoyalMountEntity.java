@@ -337,7 +337,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
                 return InteractionResult.sidedSuccess(this.level().isClientSide);
             }
 
-            if (stack.isEmpty() && this.isSaddled() && !this.isBaby() && !player.isPassenger()) {
+            if (stack.isEmpty() && !this.isBaby() && !player.isPassenger()) {
                 if (!this.level().isClientSide) {
                     this.setOrderedToSit(false);
                     this.setInSittingPose(false);
@@ -553,7 +553,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
     @Nullable
     @Override
     public LivingEntity getControllingPassenger() {
-        return this.getFirstPassenger() instanceof Player player && this.isSaddled() && this.isOwnedBy(player) ? player : null;
+        return this.getFirstPassenger() instanceof Player player && this.isOwnedBy(player) ? player : null;
     }
 
     @Override

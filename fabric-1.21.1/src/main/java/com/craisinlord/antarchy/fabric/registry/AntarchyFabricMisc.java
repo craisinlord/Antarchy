@@ -21,6 +21,7 @@ import com.craisinlord.antarchy.content.worldgen.thoraxis.AntiwaterSpringsFeatur
 import com.craisinlord.antarchy.content.worldgen.thoraxis.NyxiteSpikeFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.TyphoniteSpikeConfiguration;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.TyphoniteSpikeFeature;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.TyphoniteSwirlFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.PotentNyxiteFeature;
 import com.craisinlord.antarchy.fabric.content.fluid.AntiwaterFluid;
 import com.craisinlord.antarchy.content.effect.DreadMobEffect;
@@ -696,6 +697,10 @@ public final class AntarchyFabricMisc {
             () -> new LumenLilyPadFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.GlimmeringReedFeature> GLIMMERING_REEDS = FEATURES.register("glimmering_reeds",
             () -> new com.craisinlord.antarchy.content.worldgen.elythia.GlimmeringReedFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.thoraxis.NaturalDirectionalVineFeature> SPIRALING_VINES = FEATURES.register("spiraling_vines",
+            () -> new com.craisinlord.antarchy.content.worldgen.thoraxis.NaturalDirectionalVineFeature(NoneFeatureConfiguration.CODEC, "spiraling_vines", net.minecraft.core.Direction.UP, 4, 12));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.thoraxis.NaturalDirectionalVineFeature> GOREVINE = FEATURES.register("gorevine",
+            () -> new com.craisinlord.antarchy.content.worldgen.thoraxis.NaturalDirectionalVineFeature(NoneFeatureConfiguration.CODEC, "gorevine", net.minecraft.core.Direction.DOWN, 8, 16));
 
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.GiantLilyPadPatchFeature> GIANT_LILY_PAD_PATCH = FEATURES.register("giant_lily_pad_patch",
             () -> new com.craisinlord.antarchy.content.worldgen.elythia.GiantLilyPadPatchFeature(NoneFeatureConfiguration.CODEC));
@@ -742,6 +747,8 @@ public final class AntarchyFabricMisc {
             () -> new NyxiteSpikeFeature(NyxiteSpikeConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, TyphoniteSpikeFeature> TYPHONITE_SPIKES = FEATURES.register("typhonite_spikes",
             () -> new TyphoniteSpikeFeature(TyphoniteSpikeConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, TyphoniteSwirlFeature> TYPHONITE_SWIRLS = FEATURES.register("typhonite_swirls",
+            () -> new TyphoniteSwirlFeature(NoneFeatureConfiguration.CODEC));
 
 
     public static final DeferredHolder<Feature<?>, ChitinSpikeFeature> CAVARYN_CHITIN_SPIKES = FEATURES.register("cavaryn_chitin_spikes",
