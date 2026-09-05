@@ -36,8 +36,8 @@
       "charge": 1.4
     },
     "antarchy:vortex": {
-      "energy_budget": 0.2,
-      "charge": 1.6
+      "energy_budget": 0.9,
+      "charge": 12.0
     }
   },
   "carvers": {
@@ -88,7 +88,7 @@
       },
       {
         "type": "antarchy:vortex",
-        "weight": 2,
+        "weight": 1,
         "minCount": 1,
         "maxCount": 1
       }

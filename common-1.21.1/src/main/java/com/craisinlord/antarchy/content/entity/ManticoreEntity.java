@@ -222,13 +222,15 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         this.tickQueenSummonCleanup();
 
         this.tickPlayerSummon();
+        this.tickQueenSummonTarget();
 
         LivingEntity target = this.getTarget();
         if (target != null && target.isAlive()) {
             if (this.onGround() && this.takeoffCooldown <= 0 && this.distanceToSqr(target) > 6.0D) {
                 this.takeoff();
             }
-            if (this.tickCount % SWARM_RETARGET_INTERVAL == 0) {
+            if (!this.isPlayerSummoned() && !this.isQueenSummoned()
+                    && this.tickCount % SWARM_RETARGET_INTERVAL == 0) {
                 this.spreadSwarmTarget(target);
             }
         }
@@ -253,6 +255,24 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         }
         if (target != null && target.isAlive() && this.canTargetEntity(target)) {
             this.setTarget(target);
+        } else if (this.getTarget() != null && !this.canTargetEntity(this.getTarget())) {
+            this.setTarget(null);
+        }
+    }
+
+    private void tickQueenSummonTarget() {
+        if (this.summonerId == null || !(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        Entity entity = serverLevel.getEntity(this.summonerId);
+        if (!(entity instanceof QueenEntity queen) || !queen.isAlive()) {
+            return;
+        }
+        LivingEntity target = queen.getTarget();
+        if (target != null && target.isAlive() && this.canTargetEntity(target)) {
+            this.setTarget(target);
+        } else {
+            this.setTarget(null);
         }
     }
 
