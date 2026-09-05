@@ -12,9 +12,9 @@ import net.minecraft.util.Mth;
 import org.joml.Matrix4f;
 
 public class WindVortexRenderer extends EntityRenderer<WindVortexEntity> {
-    private static final int RINGS = 8;
-    private static final int SEGMENTS_PER_RING = 9;
-    private static final int ARC_STEPS = 4;
+    private static final int RINGS = 10;
+    private static final int SEGMENTS_PER_RING = 12;
+    private static final int ARC_STEPS = 6;
     private static final float BASE_RADIUS = 0.35F;
 
     public WindVortexRenderer(EntityRendererProvider.Context context) {

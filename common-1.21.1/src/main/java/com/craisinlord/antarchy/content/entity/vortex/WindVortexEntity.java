@@ -69,6 +69,9 @@ public class WindVortexEntity extends Entity {
 
     private static final double BASE_RADIUS = 0.35D;
     private static final double DRIFT_FRICTION = 0.995D;
+    private static final double FALL_ACCELERATION = 0.006D;
+    private static final double MAX_FALL_SPEED = 0.08D;
+    private static final double MINIMUM_DOWNWARD_DRIFT = 0.012D;
     private static final int FADE_OUT_TICKS = 8;
 
     public enum VortexMode {
@@ -175,8 +178,25 @@ public class WindVortexEntity extends Entity {
                 this.travelling = false;
                 this.noPhysics = false;
                 this.setDeltaMovement(this.travelVelocity);
-                this.travelVelocity = Vec3.ZERO;
             }
+        } else if (!lensVortex) {
+            Vec3 current = this.getDeltaMovement();
+            double downwardSpeed = Math.min(MAX_FALL_SPEED, Math.max(MINIMUM_DOWNWARD_DRIFT,
+                    -current.y + FALL_ACCELERATION));
+            Vec3 drift = new Vec3(
+                    current.x * DRIFT_FRICTION,
+                    -downwardSpeed,
+                    current.z * DRIFT_FRICTION);
+            Vec3 from = this.position();
+            Vec3 to = from.add(drift);
+            HitResult blockHit = this.level().clip(
+                    new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
+            if (blockHit.getType() != HitResult.Type.MISS) {
+                this.fadeOut();
+                return;
+            }
+            this.setDeltaMovement(drift);
+            this.move(net.minecraft.world.entity.MoverType.SELF, drift);
         } else {
             Vec3 drift = this.getDeltaMovement().multiply(DRIFT_FRICTION, DRIFT_FRICTION, DRIFT_FRICTION);
             this.setDeltaMovement(drift);
