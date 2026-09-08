@@ -7,7 +7,10 @@ import com.craisinlord.antarchy.content.block.OuranwoodLeavesBlock;
 import com.craisinlord.antarchy.content.entity.flying_squirrel.FlyingSquirrelEntity;
 import com.mojang.serialization.Codec;
 import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -1113,43 +1116,87 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
         int minY = Math.max(level.getMinBuildHeight(), origin.getY() - 2);
         int maxY = Math.min(level.getMaxBuildHeight() - 1, origin.getY() + height + canopyDepth + 8);
         List<BlockPos> leafPositions = new ArrayList<>();
+        Map<BlockPos, Integer> distances = new HashMap<>();
+        ArrayDeque<BlockPos> queue = new ArrayDeque<>();
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
 
         for (int x = origin.getX() - horizontalRadius; x <= origin.getX() + horizontalRadius; x++) {
             for (int z = origin.getZ() - horizontalRadius; z <= origin.getZ() + horizontalRadius; z++) {
                 for (int y = minY; y <= maxY; y++) {
                     cursor.set(x, y, z);
-                    if (level.getBlockState(cursor).getBlock() instanceof LeavesBlock) {
-                        leafPositions.add(cursor.immutable());
+                    BlockState state = level.getBlockState(cursor);
+                    if (state.getBlock() instanceof LeavesBlock && this.getLeafDistanceProperty(state) != null) {
+                        BlockPos pos = cursor.immutable();
+                        leafPositions.add(pos);
+                        distances.put(pos, this.getLeafDistanceLimit(state));
                     }
                 }
             }
         }
 
-        for (int pass = 1; pass <= 16; pass++) {
-            boolean anyChanged = false;
-            for (BlockPos pos : leafPositions) {
-                BlockState state = level.getBlockState(pos);
-                IntegerProperty distanceProperty = this.getLeafDistanceProperty(state);
-                if (!(state.getBlock() instanceof LeavesBlock) || distanceProperty == null) {
-                    continue;
+        for (BlockPos pos : leafPositions) {
+            BlockState state = level.getBlockState(pos);
+            int limit = this.getLeafDistanceLimit(state);
+            int bestDistance = limit;
+            for (Direction direction : Direction.values()) {
+                BlockPos neighborPos = pos.relative(direction);
+                BlockState neighbor = level.getBlockState(neighborPos);
+                if (neighbor.is(BlockTags.LOGS)) {
+                    bestDistance = 1;
+                    break;
                 }
 
-                int computedDistance = this.computeLeafDistance(level, pos, state);
-                if (computedDistance == state.getValue(distanceProperty)) {
-                    continue;
+                if (!distances.containsKey(neighborPos)) {
+                    IntegerProperty neighborProperty = this.getLeafDistanceProperty(neighbor);
+                    if (neighborProperty != null) {
+                        bestDistance = Math.min(bestDistance, neighbor.getValue(neighborProperty) + 1);
+                    }
                 }
-
-                BlockState updatedState;
-                if (state.getBlock() instanceof OuranwoodLeavesBlock) {
-                    updatedState = OuranwoodLeavesBlock.setOuranwoodDistanceForWorldgen(state, computedDistance);
-                } else {
-                    updatedState = state.setValue(distanceProperty, computedDistance);
-                }
-                setBlock(level, pos, updatedState);
-                anyChanged = true;
             }
-            if (!anyChanged) break;
+            if (bestDistance < distances.get(pos)) {
+                distances.put(pos, bestDistance);
+                queue.add(pos);
+            }
+        }
+
+        while (!queue.isEmpty()) {
+            BlockPos pos = queue.removeFirst();
+            int distance = distances.get(pos);
+            for (Direction direction : Direction.values()) {
+                BlockPos neighborPos = pos.relative(direction);
+                Integer neighborDistance = distances.get(neighborPos);
+                if (neighborDistance == null) {
+                    continue;
+                }
+
+                BlockState neighborState = level.getBlockState(neighborPos);
+                int candidate = Math.min(this.getLeafDistanceLimit(neighborState), distance + 1);
+                if (candidate < neighborDistance) {
+                    distances.put(neighborPos, candidate);
+                    queue.addLast(neighborPos);
+                }
+            }
+        }
+
+        for (BlockPos pos : leafPositions) {
+            BlockState state = level.getBlockState(pos);
+            IntegerProperty distanceProperty = this.getLeafDistanceProperty(state);
+            if (distanceProperty == null) {
+                continue;
+            }
+
+            int computedDistance = distances.get(pos);
+            if (computedDistance == state.getValue(distanceProperty)) {
+                continue;
+            }
+
+            BlockState updatedState;
+            if (state.getBlock() instanceof OuranwoodLeavesBlock) {
+                updatedState = OuranwoodLeavesBlock.setOuranwoodDistanceForWorldgen(state, computedDistance);
+            } else {
+                updatedState = state.setValue(distanceProperty, computedDistance);
+            }
+            setBlock(level, pos, updatedState);
         }
     }
 

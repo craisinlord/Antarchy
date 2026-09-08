@@ -1035,7 +1035,8 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
                 for (int i = 0; i < strikeBolts; i++) {
                     this.spawnVisualLightning(serverLevel, this.getTargetStormStrikePos(target));
                 }
-                target.hurt(AntarchyDamageSources.krakenLightning(serverLevel, this), this.isPhaseTwo() ? 12.0F : 8.0F);
+                target.hurt(AntarchyDamageSources.krakenLightning(serverLevel, this),
+                        this.isPhaseTwo() ? 12.0F : AntarchySettings.krakenLightningDamagePhaseOne());
             }
         } else {
             this.lightningStrikeCooldown = this.isPhaseTwo() ? 30 : 60;

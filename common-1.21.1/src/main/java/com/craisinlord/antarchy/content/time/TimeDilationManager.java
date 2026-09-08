@@ -1,19 +1,16 @@
 package com.craisinlord.antarchy.content.time;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Level;
+import com.craisinlord.antarchy.content.effect.DilatedMobEffect;
+import com.craisinlord.antarchy.content.effect.RoyalEffectEligibility;
+import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
 
 public final class TimeDilationManager {
-    private static final Set<ResourceKey<Level>> DILATED_LEVELS = new HashSet<>();
-
     private TimeDilationManager() {
     }
 
@@ -21,15 +18,10 @@ public final class TimeDilationManager {
         for (ServerLevel level : server.getAllLevels()) {
             List<TimeDilationFieldEntity> fields = collectFields(level);
             syncFieldSnapshots(level, fields);
-            if (fields.isEmpty()) {
-                if (DILATED_LEVELS.remove(level.dimension())) {
-                    resetRates(level);
-                }
-                continue;
-            }
-            DILATED_LEVELS.add(level.dimension());
             updateEntities(level, fields);
-            TimeDilationParticles.spawnFieldBorders(level, fields);
+            if (!fields.isEmpty()) {
+                TimeDilationParticles.spawnFieldBorders(level, fields);
+            }
         }
     }
 
@@ -60,32 +52,30 @@ public final class TimeDilationManager {
             if (!(entity instanceof TimeDilationEntityAccess access) || entity instanceof TimeDilationFieldEntity) {
                 continue;
             }
-            if (entity.getType().is(com.craisinlord.antarchy.content.AntarchyTags.Entities.TIME_DILATION_IMMUNE)) {
-                if (access.antarchy$getTimeDilationRate() < TimeDilationMath.NORMAL_RATE) {
-                    access.antarchy$setTimeDilationRate(TimeDilationMath.NORMAL_RATE);
-                    TimeDilationApi.syncEntityRate(entity, TimeDilationMath.NORMAL_RATE);
+            if (entity.getType().is(com.craisinlord.antarchy.content.AntarchyTags.Entities.TIME_DILATION_IMMUNE)
+                    || (entity instanceof net.minecraft.world.entity.LivingEntity living && !RoyalEffectEligibility.canApplyDilated(living))) {
+                if (RoyalEffectHooks.dilatedHolder() != null && entity instanceof net.minecraft.world.entity.LivingEntity living) {
+                    living.removeEffect(RoyalEffectHooks.dilatedHolder());
                 }
+                TimeDilationApi.clearRate(entity);
                 continue;
             }
             double previousRate = access.antarchy$getTimeDilationRate();
-            double rate = TimeDilationFieldSampler.sample(fields, entity.position());
-            access.antarchy$setTimeDilationRate(rate);
-            if (Math.abs(previousRate - rate) > 0.001D) {
+            double fieldRate = TimeDilationFieldSampler.sample(fields, entity.position());
+            double effectRate = RoyalEffectHooks.dilatedHolder() != null
+                    && entity instanceof net.minecraft.world.entity.LivingEntity living
+                    && living.hasEffect(RoyalEffectHooks.dilatedHolder())
+                    ? DilatedMobEffect.RATE : TimeDilationMath.NORMAL_RATE;
+            double rate = Math.min(fieldRate, effectRate);
+            if (rate >= TimeDilationMath.NORMAL_RATE) {
+                TimeDilationApi.clearRate(entity);
+            } else {
+                access.antarchy$setTimeDilationRate(rate);
+            }
+            if (rate < TimeDilationMath.NORMAL_RATE && Math.abs(previousRate - rate) > 0.001D) {
                 TimeDilationApi.syncEntityRate(entity, rate);
             }
         }
     }
 
-    private static void resetRates(ServerLevel level) {
-        for (Entity entity : level.getAllEntities()) {
-            if (!(entity instanceof TimeDilationEntityAccess access) || entity instanceof TimeDilationFieldEntity) {
-                continue;
-            }
-            if (access.antarchy$getTimeDilationRate() >= TimeDilationMath.NORMAL_RATE) {
-                continue;
-            }
-            access.antarchy$setTimeDilationRate(TimeDilationMath.NORMAL_RATE);
-            TimeDilationApi.syncEntityRate(entity, TimeDilationMath.NORMAL_RATE);
-        }
-    }
 }

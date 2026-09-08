@@ -9,7 +9,7 @@
   },
   "display": {
     "announce_to_chat": true,
-    "background": "antarchy:block/nyxite",
+    "background": "antarchy:textures/block/nyxite",
     "description": {
       "translate": "advancements.antarchy.visit_thoraxis.description"
     },

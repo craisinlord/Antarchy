@@ -53,6 +53,7 @@
     [],
     [
       "antarchy:bluestone_ore",
+      "antarchy:thoraxis_ichor_lake",
       "antarchy:dimensional_tears",
       "antarchy:typhonite_veined_ore"
     ],
@@ -61,7 +62,7 @@
       "antarchy:patch_fire"
     ],
     [
-      "antarchy:typhonite_spikes",
+      "antarchy:vortex_expanse_typhonite_spikes",
       "antarchy:typhonite_swirls",
       "antarchy:patch_ceiling_fire"
     ],

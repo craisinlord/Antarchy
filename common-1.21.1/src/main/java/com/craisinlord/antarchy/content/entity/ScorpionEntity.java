@@ -38,6 +38,9 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -51,6 +54,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 public class ScorpionEntity extends Monster implements GeoEntity {
+    private static final ResourceKey<net.minecraft.world.level.biome.Biome> DREAM_DUNES = ResourceKey.create(
+            Registries.BIOME,
+            ResourceLocation.fromNamespaceAndPath("antarchy", "dream_dunes")
+    );
     private static final byte ATTACK_ANIM_EVENT = 4;
     private static final EntityDataAccessor<Integer> TEXTURE_VARIANT =
             SynchedEntityData.defineId(ScorpionEntity.class, EntityDataSerializers.INT);
@@ -81,6 +88,11 @@ public class ScorpionEntity extends Monster implements GeoEntity {
         this.xpReward = 5;
     }
 
+    @Override
+    public boolean fireImmune() {
+        return true;
+    }
+
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, AntarchySettings.scorpionHealth())
@@ -97,6 +109,12 @@ public class ScorpionEntity extends Monster implements GeoEntity {
                 || spawnReason == MobSpawnType.SPAWNER
                 || spawnReason == MobSpawnType.COMMAND) {
             return true;
+        }
+        // The Dream Dunes biome is the entire underside below Y=0. Its higher
+        // spawn weight is therefore targeted there without doubling the small
+        // surface-side Dream Dunes band as well.
+        if (pos.getY() >= 0 && level.getBiome(pos).is(DREAM_DUNES) && random.nextBoolean()) {
+            return false;
         }
         if (ThoraxisUndersideManager.shouldSpawnInvertedOnDreamSand(level, pos)) {
             return level.getDifficulty() != Difficulty.PEACEFUL;
@@ -182,7 +200,8 @@ public class ScorpionEntity extends Monster implements GeoEntity {
 
         this.getLookControl().setLookAt(this.attackTarget, 30.0F, 30.0F);
         if (!this.attackDamageApplied
-                && this.attackAnimTicks == ATTACK_HIT_TICK
+                && this.attackAnimTicks > 0
+                && this.attackAnimTicks <= ATTACK_HIT_TICK
                 && this.distanceToSqr(this.attackTarget) <= this.getAttackReachSqr(this.attackTarget)) {
             this.attackDamageApplied = true;
             this.doHurtTarget(this.attackTarget);
@@ -328,6 +347,10 @@ public class ScorpionEntity extends Monster implements GeoEntity {
             if (ScorpionEntity.this.attackTarget != null) {
                 ScorpionEntity.this.getLookControl().setLookAt(ScorpionEntity.this.attackTarget, 30.0F, 30.0F);
             }
+            if (ScorpionEntity.this.isAttackLocked()) {
+                ScorpionEntity.this.getNavigation().stop();
+                return;
+            }
             super.tick();
         }
 
@@ -341,8 +364,10 @@ public class ScorpionEntity extends Monster implements GeoEntity {
             if (ScorpionEntity.this.isAttackLocked()) {
                 return;
             }
-            if (this.canPerformAttack(enemy) && this.isTimeToAttack() && ScorpionEntity.this.attackCooldownTicks <= 0) {
-                this.resetAttackCooldown();
+            // Inverted melee tick handling replaces vanilla MeleeAttackGoal.tick,
+            // so vanilla's internal attack timer is not advanced. The Scorpion's
+            // own cooldown already covers its wind-up and hit timing.
+            if (this.canPerformAttack(enemy) && ScorpionEntity.this.attackCooldownTicks <= 0) {
                 ScorpionEntity.this.beginAttack(enemy);
                 return;
             }

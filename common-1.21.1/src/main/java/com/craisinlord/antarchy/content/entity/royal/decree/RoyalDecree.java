@@ -5,8 +5,18 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 
 public interface RoyalDecree {
+    enum Evaluation {
+        COMPLIANT,
+        VIOLATED,
+        COMPLETE
+    }
+
     String translationKey();
     void apply(ServerLevel level, KingEntity king, LivingEntity target);
+
+    default Evaluation evaluate(ServerLevel level, KingEntity king, LivingEntity target) {
+        return Evaluation.COMPLIANT;
+    }
 
     default int countdownTicks(LivingEntity target) {
         return -1;

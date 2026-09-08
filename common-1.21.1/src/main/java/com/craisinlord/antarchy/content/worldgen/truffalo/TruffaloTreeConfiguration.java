@@ -8,10 +8,14 @@ import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvi
 
 public record TruffaloTreeConfiguration(
         BlockStateProvider trunkProvider,
-        IntProvider height
+        IntProvider height,
+        int tuftRadius,
+        int tuftHeight
 ) implements FeatureConfiguration {
     public static final Codec<TruffaloTreeConfiguration> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             BlockStateProvider.CODEC.fieldOf("trunk_provider").forGetter(TruffaloTreeConfiguration::trunkProvider),
-            IntProvider.codec(4, 9).fieldOf("height").forGetter(TruffaloTreeConfiguration::height)
+            IntProvider.codec(4, 18).fieldOf("height").forGetter(TruffaloTreeConfiguration::height),
+            Codec.INT.optionalFieldOf("tuft_radius", 1).forGetter(TruffaloTreeConfiguration::tuftRadius),
+            Codec.INT.optionalFieldOf("tuft_height", 3).forGetter(TruffaloTreeConfiguration::tuftHeight)
     ).apply(instance, TruffaloTreeConfiguration::new));
 }

@@ -206,7 +206,7 @@ public final class AntarchyFabric implements ModInitializer {
         );
         BiomeModifications.addSpawn(
                 BiomeSelectors.tag(OCTOPUS_BOMB_SPAWN_BIOMES),
-                net.minecraft.world.entity.MobCategory.MONSTER,
+                net.minecraft.world.entity.MobCategory.WATER_CREATURE,
                 AntarchyFabricEntities.OCTOPUS_BOMB.get(),
                 2, 1, 2
         );

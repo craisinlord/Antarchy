@@ -12,7 +12,7 @@ public final class KneelDecree implements RoyalDecree {
         UUID id = target.getUUID();
         if (target.isCrouching()) { deadlines.remove(id); king.clearActiveDecree(target); return; }
         int deadline = deadlines.computeIfAbsent(id, ignored -> target.tickCount + 100);
-        if (target.tickCount >= deadline) { king.invokeJudgment(target); deadlines.put(id, target.tickCount + 100); }
+        if (target.tickCount >= deadline) { king.failActiveDecree(target); }
     }
 
     @Override

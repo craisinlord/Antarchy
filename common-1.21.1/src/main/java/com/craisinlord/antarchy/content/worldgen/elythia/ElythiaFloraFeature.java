@@ -20,6 +20,8 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
     private static final String SIZEABLE_FOLIAGE_MODID = "sizeable_foliage";
@@ -38,6 +40,8 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
         WorldGenLevel level = context.level();
         RandomSource random = context.random();
         BlockPos origin = context.origin();
+        Map<Long, Integer> surfaceHeightCache = new HashMap<>();
+        Map<Long, Integer> oceanFloorHeightCache = new HashMap<>();
         int attempts = switch (this.variant) {
             case FOREST -> 185;
             case MEADOW -> 95;
@@ -68,7 +72,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
                 case FLOWER_FOREST_MILKWEED -> 0.0F;
             };
             if (random.nextFloat() < torchflowerChance) {
-                placedAny |= this.placeTorchflowerPatch(level, origin, random);
+                placedAny |= this.placeTorchflowerPatch(level, origin, random, surfaceHeightCache);
             }
         }
 
@@ -79,7 +83,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
             case FOREST -> 0.05F;
             case FLOWER_FOREST_MILKWEED -> 0.0F;
         }) {
-            placedAny |= this.placePitcherPatch(level, origin, random);
+            placedAny |= this.placePitcherPatch(level, origin, random, surfaceHeightCache);
         }
         if (random.nextFloat() < switch (this.variant) {
             case MEADOW -> 0.16F;
@@ -88,7 +92,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
             case FOREST -> 0.06F;
             case FLOWER_FOREST_MILKWEED -> 0.18F;
         }) {
-            placedAny |= this.placeMilkweedPatch(level, origin, random, AntarchyObjects.ORANGE_MILKWEED.get());
+            placedAny |= this.placeMilkweedPatch(level, origin, random, AntarchyObjects.ORANGE_MILKWEED.get(), surfaceHeightCache);
         }
         if (random.nextFloat() < switch (this.variant) {
             case MEADOW -> 0.16F;
@@ -97,20 +101,20 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
             case FOREST -> 0.06F;
             case FLOWER_FOREST_MILKWEED -> 0.18F;
         }) {
-            placedAny |= this.placeMilkweedPatch(level, origin, random, AntarchyObjects.PINK_MILKWEED.get());
+            placedAny |= this.placeMilkweedPatch(level, origin, random, AntarchyObjects.PINK_MILKWEED.get(), surfaceHeightCache);
         }
         if (this.variant == Variant.PEACH_FOREST && random.nextFloat() < 0.14F) {
-            placedAny |= this.placeMilkweedPatch(level, origin, random, antarchyBlock(CAMELLIA_ID));
+            placedAny |= this.placeMilkweedPatch(level, origin, random, antarchyBlock(CAMELLIA_ID), surfaceHeightCache);
         }
 
         if (this.variant == Variant.FOREST || this.variant == Variant.PEACH_FOREST) {
-            placedAny |= this.placeBigBushes(level, origin, random, radius);
+            placedAny |= this.placeBigBushes(level, origin, random, radius, surfaceHeightCache);
         }
 
         for (int i = 0; i < attempts; i++) {
             int x = origin.getX() + random.nextInt(radius * 2 + 1) - radius;
             int z = origin.getZ() + random.nextInt(radius * 2 + 1) - radius;
-            int y = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z);
+            int y = cachedHeight(level, Heightmap.Types.WORLD_SURFACE_WG, x, z, surfaceHeightCache);
             BlockPos plantPos = new BlockPos(x, y, z);
             BlockPos groundPos = plantPos.below();
 
@@ -125,7 +129,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
             }
         }
 
-        placedAny |= this.placeSeagrass(level, origin, random, radius);
+        placedAny |= this.placeSeagrass(level, origin, random, radius, oceanFloorHeightCache);
 
         return placedAny;
     }
@@ -227,7 +231,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
         return block;
     }
 
-    private boolean placeBigBushes(WorldGenLevel level, BlockPos origin, RandomSource random, int radius) {
+    private boolean placeBigBushes(WorldGenLevel level, BlockPos origin, RandomSource random, int radius, Map<Long, Integer> surfaceHeightCache) {
         Block bushBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath(SIZEABLE_FOLIAGE_MODID, "big_bush"));
         if (!(bushBlock instanceof BigBushBlock)) {
             return false;
@@ -241,7 +245,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
         for (int i = 0; i < bushAttempts; i++) {
             int x = origin.getX() + random.nextInt(radius * 2 + 1) - radius;
             int z = origin.getZ() + random.nextInt(radius * 2 + 1) - radius;
-            int y = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z);
+            int y = cachedHeight(level, Heightmap.Types.WORLD_SURFACE_WG, x, z, surfaceHeightCache);
             BlockPos plantPos = new BlockPos(x, y, z);
 
             if (!isValidPlantSpot(level, plantPos, plantPos.below())) {
@@ -333,8 +337,8 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
         return true;
     }
 
-    private boolean placeTorchflowerPatch(WorldGenLevel level, BlockPos origin, RandomSource random) {
-        BlockPos patchCenter = sampleSurface(level, origin, random, this.variant == Variant.FOREST ? 8 : 12);
+    private boolean placeTorchflowerPatch(WorldGenLevel level, BlockPos origin, RandomSource random, Map<Long, Integer> surfaceHeightCache) {
+        BlockPos patchCenter = sampleSurface(level, origin, random, this.variant == Variant.FOREST ? 8 : 12, surfaceHeightCache);
         if (patchCenter == null) {
             return false;
         }
@@ -346,7 +350,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
         boolean bushEligible = this.variant == Variant.FOREST || this.variant == Variant.MEADOW;
         boolean placed = false;
         for (int i = 0; i < plants; i++) {
-            BlockPos plantPos = samplePatchPos(level, patchCenter, radius, random);
+            BlockPos plantPos = samplePatchPos(level, patchCenter, radius, random, surfaceHeightCache);
             if (plantPos == null) {
                 continue;
             }
@@ -369,8 +373,8 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
         return placed;
     }
 
-    private boolean placePitcherPatch(WorldGenLevel level, BlockPos origin, RandomSource random) {
-        BlockPos patchCenter = sampleSurface(level, origin, random, this.variant == Variant.FOREST ? 8 : 13);
+    private boolean placePitcherPatch(WorldGenLevel level, BlockPos origin, RandomSource random, Map<Long, Integer> surfaceHeightCache) {
+        BlockPos patchCenter = sampleSurface(level, origin, random, this.variant == Variant.FOREST ? 8 : 13, surfaceHeightCache);
         if (patchCenter == null) {
             return false;
         }
@@ -379,7 +383,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
         int plants = this.variant == Variant.BUTTERFLY_FIELDS ? 10 + random.nextInt(12) : this.variant == Variant.FLOWER_FOREST_MILKWEED ? 2 + random.nextInt(3) : 5 + random.nextInt(11);
         boolean placed = false;
         for (int i = 0; i < plants; i++) {
-            BlockPos plantPos = samplePatchPos(level, patchCenter, radius, random);
+            BlockPos plantPos = samplePatchPos(level, patchCenter, radius, random, surfaceHeightCache);
             if (plantPos == null) {
                 continue;
             }
@@ -396,8 +400,8 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
         return placed;
     }
 
-    private boolean placeMilkweedPatch(WorldGenLevel level, BlockPos origin, RandomSource random, Block flower) {
-        BlockPos patchCenter = sampleSurface(level, origin, random, this.variant == Variant.FOREST ? 8 : 13);
+    private boolean placeMilkweedPatch(WorldGenLevel level, BlockPos origin, RandomSource random, Block flower, Map<Long, Integer> surfaceHeightCache) {
+        BlockPos patchCenter = sampleSurface(level, origin, random, this.variant == Variant.FOREST ? 8 : 13, surfaceHeightCache);
         if (patchCenter == null) {
             return false;
         }
@@ -406,7 +410,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
         int plants = this.variant == Variant.BUTTERFLY_FIELDS ? 14 + random.nextInt(16) : this.variant == Variant.FLOWER_FOREST_MILKWEED ? 2 + random.nextInt(4) : 4 + random.nextInt(9);
         boolean placed = false;
         for (int i = 0; i < plants; i++) {
-            BlockPos plantPos = samplePatchPos(level, patchCenter, radius, random);
+            BlockPos plantPos = samplePatchPos(level, patchCenter, radius, random, surfaceHeightCache);
             if (plantPos == null) {
                 continue;
             }
@@ -423,7 +427,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
         return placed;
     }
 
-    private boolean placeSeagrass(WorldGenLevel level, BlockPos origin, RandomSource random, int radius) {
+    private boolean placeSeagrass(WorldGenLevel level, BlockPos origin, RandomSource random, int radius, Map<Long, Integer> oceanFloorHeightCache) {
         int attempts = switch (this.variant) {
             case FOREST -> 3;
             case MEADOW -> 5;
@@ -436,7 +440,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
         for (int i = 0; i < attempts; i++) {
             int x = origin.getX() + random.nextInt(radius * 2 + 1) - radius;
             int z = origin.getZ() + random.nextInt(radius * 2 + 1) - radius;
-            int y = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z);
+            int y = cachedHeight(level, Heightmap.Types.OCEAN_FLOOR_WG, x, z, oceanFloorHeightCache);
             BlockPos seagrassPos = new BlockPos(x, y, z);
             BlockPos floorPos = seagrassPos.below();
 
@@ -455,11 +459,11 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
         return placed;
     }
 
-    private static BlockPos sampleSurface(WorldGenLevel level, BlockPos origin, RandomSource random, int radius) {
+    private static BlockPos sampleSurface(WorldGenLevel level, BlockPos origin, RandomSource random, int radius, Map<Long, Integer> surfaceHeightCache) {
         for (int attempt = 0; attempt < 8; attempt++) {
             int x = origin.getX() + random.nextInt(radius * 2 + 1) - radius;
             int z = origin.getZ() + random.nextInt(radius * 2 + 1) - radius;
-            int y = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z);
+            int y = cachedHeight(level, Heightmap.Types.WORLD_SURFACE_WG, x, z, surfaceHeightCache);
             BlockPos plantPos = new BlockPos(x, y, z);
             if (isValidPlantSpot(level, plantPos, plantPos.below())) {
                 return plantPos;
@@ -468,12 +472,23 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
         return null;
     }
 
-    private static BlockPos samplePatchPos(WorldGenLevel level, BlockPos center, int radius, RandomSource random) {
+    private static BlockPos samplePatchPos(WorldGenLevel level, BlockPos center, int radius, RandomSource random, Map<Long, Integer> surfaceHeightCache) {
         int x = center.getX() + random.nextInt(radius * 2 + 1) - radius;
         int z = center.getZ() + random.nextInt(radius * 2 + 1) - radius;
-        int y = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z);
+        int y = cachedHeight(level, Heightmap.Types.WORLD_SURFACE_WG, x, z, surfaceHeightCache);
         BlockPos plantPos = new BlockPos(x, y, z);
         return isOpenPlantSpot(level, plantPos) ? plantPos : null;
+    }
+
+    private static int cachedHeight(WorldGenLevel level, Heightmap.Types type, int x, int z, Map<Long, Integer> cache) {
+        long key = ((long) x << 32) ^ (z & 0xFFFFFFFFL);
+        Integer cached = cache.get(key);
+        if (cached != null) {
+            return cached;
+        }
+        int height = level.getHeight(type, x, z);
+        cache.put(key, height);
+        return height;
     }
 
     private static void normalizePeachForestGround(WorldGenLevel level, BlockPos groundPos, Variant variant) {

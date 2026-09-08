@@ -1,0 +1,118 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 300,
+				"texture_height": 300,
+				"visible_bounds_width": 33,
+				"visible_bounds_height": 16,
+				"visible_bounds_offset": [0, 7, 0]
+			},
+			"bones": [
+				{
+					"name": "blocks",
+					"pivot": [136, -9, 0],
+					"cubes": [
+						{"origin": [128, -17, -8], "size": [16, 16, 16], "uv": [0, 214]}
+					]
+				},
+				{
+					"name": "blocks11",
+					"pivot": [230, -9, 133],
+					"cubes": [
+						{"origin": [222, -17, 125], "size": [16, 16, 16], "uv": [0, 214]}
+					]
+				},
+				{
+					"name": "blocks10",
+					"pivot": [18, -9, 0],
+					"cubes": [
+						{"origin": [10, -17, -8], "size": [16, 16, 16], "uv": [0, 214]}
+					]
+				},
+				{
+					"name": "blocks9",
+					"pivot": [245, -9, 0],
+					"cubes": [
+						{"origin": [237, -17, -8], "size": [16, 16, 16], "uv": [0, 214]}
+					]
+				},
+				{
+					"name": "blocks6",
+					"pivot": [155, -9, -152],
+					"cubes": [
+						{"origin": [147, -17, -160], "size": [16, 16, 16], "uv": [0, 214]}
+					]
+				},
+				{
+					"name": "blocks3",
+					"pivot": [66, -9, 175],
+					"cubes": [
+						{"origin": [58, -17, 167], "size": [16, 16, 16], "uv": [0, 214]}
+					]
+				},
+				{
+					"name": "blocks2",
+					"pivot": [-111, -9, 0],
+					"cubes": [
+						{"origin": [-119, -17, -8], "size": [16, 16, 16], "uv": [0, 214]}
+					]
+				},
+				{
+					"name": "blocks8",
+					"pivot": [-248, -9, 0],
+					"cubes": [
+						{"origin": [-256, -17, -8], "size": [16, 16, 16], "uv": [0, 214]}
+					]
+				},
+				{
+					"name": "blocks5",
+					"pivot": [-111, -9, 176],
+					"cubes": [
+						{"origin": [-119, -17, 168], "size": [16, 16, 16], "uv": [0, 214]}
+					]
+				},
+				{
+					"name": "blocks4",
+					"pivot": [-35, -9, -146],
+					"cubes": [
+						{"origin": [-43, -17, -154], "size": [16, 16, 16], "uv": [0, 214]}
+					]
+				},
+				{
+					"name": "blocks7",
+					"pivot": [-193, -9, -146],
+					"cubes": [
+						{"origin": [-201, -17, -154], "size": [16, 16, 16], "uv": [0, 214]}
+					]
+				},
+				{
+					"name": "black_hole",
+					"pivot": [0, 151, 0],
+					"cubes": [
+						{"origin": [-75, 151, -75], "size": [150, 0, 150], "uv": [-150, 0]},
+						{"origin": [-16, 130, -16], "size": [32, 32, 32], "uv": [0, 150]},
+						{"origin": [-75, 151, -75], "size": [150, 0, 150], "pivot": [0, 151, 0], "rotation": [90, 0, 0], "uv": [-150, 0]}
+					]
+				},
+				{
+					"name": "beam",
+					"parent": "black_hole",
+					"pivot": [0, 147, 0],
+					"cubes": [
+						{"origin": [-16, 123, -16], "size": [32, 48, 32], "uv": [172, 152]}
+					]
+				},
+				{
+					"name": "group",
+					"pivot": [0, 147, 0],
+					"cubes": [
+						{"origin": [-16, 123, -16], "size": [32, 48, 32], "uv": [172, 152]}
+					]
+				}
+			]
+		}
+	]
+}

@@ -12,9 +12,8 @@ import net.minecraft.util.Mth;
 import org.joml.Matrix4f;
 
 public class WindVortexRenderer extends EntityRenderer<WindVortexEntity> {
-    private static final int RINGS = 10;
-    private static final int SEGMENTS_PER_RING = 12;
-    private static final int ARC_STEPS = 6;
+    private static final int RINGS = 11;
+    private static final int SQUARES_PER_SIDE = 3;
     private static final float BASE_RADIUS = 0.35F;
 
     public WindVortexRenderer(EntityRendererProvider.Context context) {
@@ -44,48 +43,72 @@ public class WindVortexRenderer extends EntityRenderer<WindVortexEntity> {
             float radius = Mth.lerp(shapeProgress, BASE_RADIUS, topRadius);
             float ringSpin = spinDirection * age * (0.13F + progress * 0.045F) + ring * 0.47F;
             float alpha = alphaMultiplier;
-            float thickness = 0.025F + radius * 0.012F;
-            float arcLength = 0.34F + progress * 0.08F;
+            float halfSide = radius * 0.92F;
+            float tileSize = Math.max(0.035F, radius * 0.12F);
             int red = push ? 70 : 64;
             int green = push ? 220 : 255;
             int blue = push ? 255 : 56;
-
-            for (int segment = 0; segment < SEGMENTS_PER_RING; segment++) {
-                float baseAngle = ringSpin + segment * Mth.TWO_PI / SEGMENTS_PER_RING;
-                float start = baseAngle - arcLength * 0.5F;
-                float end = baseAngle + arcLength * 0.5F;
-                drawArc(consumer, pose, basis, radius, axisDistance, thickness, start, end, alpha, red, green, blue);
-            }
+            drawSquareRing(consumer, pose, basis, halfSide, axisDistance, tileSize, ringSpin,
+                    alpha, red, green, blue);
         }
 
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 
-    private static void drawArc(VertexConsumer consumer, Matrix4f pose, WindVortexEntity.Basis basis, float radius,
-            float axisDistance, float thickness, float start, float end, float alpha, int red, int green, int blue) {
-        float previousAngle = start;
-        for (int step = 1; step <= ARC_STEPS; step++) {
-            float angle = Mth.lerp(step / (float) ARC_STEPS, start, end);
-            addLineQuad(consumer, pose, basis, radius, axisDistance, thickness, previousAngle, angle, alpha, red, green, blue);
-            previousAngle = angle;
+    private static void drawSquareRing(VertexConsumer consumer, Matrix4f pose, WindVortexEntity.Basis basis,
+            float halfSide, float axisDistance, float tileSize, float rotation, float alpha,
+            int red, int green, int blue) {
+        for (int side = 0; side < 4; side++) {
+            for (int tile = 0; tile < SQUARES_PER_SIDE; tile++) {
+                float start = -halfSide + (tile + 0.18F) * (2.0F * halfSide / SQUARES_PER_SIDE);
+                float end = -halfSide + (tile + 0.82F) * (2.0F * halfSide / SQUARES_PER_SIDE);
+                float sideAngle = rotation + side * (Mth.TWO_PI / 4.0F);
+                addSquareTile(consumer, pose, basis, halfSide, axisDistance, tileSize,
+                        sideAngle, start, end, alpha, red, green, blue);
+            }
         }
     }
 
-    private static void addLineQuad(VertexConsumer consumer, Matrix4f pose, WindVortexEntity.Basis basis, float radius,
-            float axisDistance, float thickness, float startAngle, float endAngle, float alpha, int red, int green, int blue) {
-        org.joml.Vector3f start = point(basis, radius, axisDistance, startAngle);
-        org.joml.Vector3f end = point(basis, radius, axisDistance, endAngle);
-        org.joml.Vector3f axisOffset = new org.joml.Vector3f((float) basis.axis.x, (float) basis.axis.y, (float) basis.axis.z).mul(thickness);
-        float middleAngle = (startAngle + endAngle) * 0.5F;
-        org.joml.Vector3f radialOffset = new org.joml.Vector3f(
-                (float) (basis.sideA.x * Mth.cos(middleAngle) + basis.sideB.x * Mth.sin(middleAngle)),
-                (float) (basis.sideA.y * Mth.cos(middleAngle) + basis.sideB.y * Mth.sin(middleAngle)),
-                (float) (basis.sideA.z * Mth.cos(middleAngle) + basis.sideB.z * Mth.sin(middleAngle))
-        ).mul(thickness);
+    private static void addSquareTile(VertexConsumer consumer, Matrix4f pose, WindVortexEntity.Basis basis,
+            float halfSide, float axisDistance, float tileSize, float sideAngle, float start, float end,
+            float alpha, int red, int green, int blue) {
+        org.joml.Vector3f center = squarePoint(basis, halfSide, axisDistance, sideAngle, (start + end) * 0.5F);
+        org.joml.Vector3f tangent = new org.joml.Vector3f(
+                (float) (-basis.sideA.x * Mth.sin(sideAngle) + basis.sideB.x * Mth.cos(sideAngle)),
+                (float) (-basis.sideA.y * Mth.sin(sideAngle) + basis.sideB.y * Mth.cos(sideAngle)),
+                (float) (-basis.sideA.z * Mth.sin(sideAngle) + basis.sideB.z * Mth.cos(sideAngle)));
+        org.joml.Vector3f axisOffset = new org.joml.Vector3f(
+                (float) basis.axis.x, (float) basis.axis.y, (float) basis.axis.z).mul(tileSize * 0.5F);
+        tangent.mul(tileSize * 0.5F);
         int a = Mth.clamp((int) (alpha * 255.0F), 0, 255);
+        addVertex(consumer, pose, center.x - tangent.x - axisOffset.x, center.y - tangent.y - axisOffset.y,
+                center.z - tangent.z - axisOffset.z, red, green, blue, a);
+        addVertex(consumer, pose, center.x + tangent.x - axisOffset.x, center.y + tangent.y - axisOffset.y,
+                center.z + tangent.z - axisOffset.z, red, green, blue, a);
+        addVertex(consumer, pose, center.x + tangent.x + axisOffset.x, center.y + tangent.y + axisOffset.y,
+                center.z + tangent.z + axisOffset.z, red, green, blue, a);
+        addVertex(consumer, pose, center.x - tangent.x + axisOffset.x, center.y - tangent.y + axisOffset.y,
+                center.z - tangent.z + axisOffset.z, red, green, blue, a);
+        addVertex(consumer, pose, center.x - tangent.x + axisOffset.x, center.y - tangent.y + axisOffset.y,
+                center.z - tangent.z + axisOffset.z, red, green, blue, a);
+        addVertex(consumer, pose, center.x + tangent.x + axisOffset.x, center.y + tangent.y + axisOffset.y,
+                center.z + tangent.z + axisOffset.z, red, green, blue, a);
+        addVertex(consumer, pose, center.x + tangent.x - axisOffset.x, center.y + tangent.y - axisOffset.y,
+                center.z + tangent.z - axisOffset.z, red, green, blue, a);
+        addVertex(consumer, pose, center.x - tangent.x - axisOffset.x, center.y - tangent.y - axisOffset.y,
+                center.z - tangent.z - axisOffset.z, red, green, blue, a);
+    }
 
-        addQuad(consumer, pose, start, end, axisOffset, red, green, blue, a);
-        addQuad(consumer, pose, start, end, radialOffset, red, green, blue, a);
+    private static org.joml.Vector3f squarePoint(WindVortexEntity.Basis basis, float halfSide,
+            float axisDistance, float sideAngle, float along) {
+        float x = Mth.cos(sideAngle) * halfSide;
+        float z = Mth.sin(sideAngle) * halfSide;
+        float tangentX = -Mth.sin(sideAngle) * along;
+        float tangentZ = Mth.cos(sideAngle) * along;
+        return new org.joml.Vector3f(
+                (float) (basis.axis.x * axisDistance + basis.sideA.x * (x + tangentX) + basis.sideB.x * (z + tangentZ)),
+                (float) (basis.axis.y * axisDistance + basis.sideA.y * (x + tangentX) + basis.sideB.y * (z + tangentZ)),
+                (float) (basis.axis.z * axisDistance + basis.sideA.z * (x + tangentX) + basis.sideB.z * (z + tangentZ)));
     }
 
     private static void addQuad(VertexConsumer consumer, Matrix4f pose, org.joml.Vector3f start,
@@ -94,15 +117,14 @@ public class WindVortexRenderer extends EntityRenderer<WindVortexEntity> {
         addVertex(consumer, pose, end.x - offset.x, end.y - offset.y, end.z - offset.z, red, green, blue, alpha);
         addVertex(consumer, pose, end.x + offset.x, end.y + offset.y, end.z + offset.z, red, green, blue, alpha);
         addVertex(consumer, pose, start.x + offset.x, start.y + offset.y, start.z + offset.z, red, green, blue, alpha);
-    }
 
-    private static org.joml.Vector3f point(WindVortexEntity.Basis basis, float radius, float axisDistance, float angle) {
-        double radialA = Mth.cos(angle) * radius;
-        double radialB = Mth.sin(angle) * radius;
-        double x = basis.axis.x * axisDistance + basis.sideA.x * radialA + basis.sideB.x * radialB;
-        double y = basis.axis.y * axisDistance + basis.sideA.y * radialA + basis.sideB.y * radialB;
-        double z = basis.axis.z * axisDistance + basis.sideA.z * radialA + basis.sideB.z * radialB;
-        return new org.joml.Vector3f((float) x, (float) y, (float) z);
+        // The lightning render type can cull one winding from some camera
+        // angles. Emit the opposite winding as well so every ribbon is
+        // visible from both sides.
+        addVertex(consumer, pose, start.x + offset.x, start.y + offset.y, start.z + offset.z, red, green, blue, alpha);
+        addVertex(consumer, pose, end.x + offset.x, end.y + offset.y, end.z + offset.z, red, green, blue, alpha);
+        addVertex(consumer, pose, end.x - offset.x, end.y - offset.y, end.z - offset.z, red, green, blue, alpha);
+        addVertex(consumer, pose, start.x - offset.x, start.y - offset.y, start.z - offset.z, red, green, blue, alpha);
     }
 
     private static void addVertex(VertexConsumer consumer, Matrix4f pose, float x, float y, float z,

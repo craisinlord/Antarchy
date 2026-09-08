@@ -1368,6 +1368,8 @@ public final class AntarchySettings {
     public static void setKrakensGraspAttackSpeed(double value) { krakensGraspAttackSpeed = value; }
     public static void setKrakensGraspThrownDamage(double value) { krakensGraspThrownDamage = value; }
     public static void setKrakensGraspLightningDamage(double value) { krakensGraspLightningDamage = value; }
+
+    public static double krakensGraspLightningDamage() { return krakensGraspLightningDamage; }
     public static void setKrakensGraspInnateLoyalty(boolean value) { krakensGraspInnateLoyalty = value; }
     public static void setKrakensGraspInnateLoyaltyLevel(int value) { krakensGraspInnateLoyaltyLevel = value; }
     public static void setKrakensGraspTentacleDurationTicks(int value) { krakensGraspTentacleDurationTicks = value; }

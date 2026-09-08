@@ -1,86 +1,137 @@
 {
   "type": "minecraft:cache_once",
   "argument": {
-  "type": "minecraft:clamp",
-  "min": -10.0,
-  "max": 10.0,
-  "input": {
-  "type": "minecraft:add",
-  "argument1": {
-    "type": "minecraft:y_clamped_gradient",
-    "from_y": -64,
-    "to_y": 220,
-    "from_value": 2.20,
-    "to_value": -1.90
-  },
-  "argument2": {
-    "type": "minecraft:add",
-    "argument1": {
+    "type": "minecraft:clamp",
+    "min": -10.0,
+    "max": 10.0,
+    "input": {
       "type": "minecraft:add",
       "argument1": {
-        "type": "minecraft:mul",
-        "argument1": 0.565,
-        "argument2": {
-          "type": "minecraft:noise",
-          "noise": "antarchy:elythia_surface",
-          "xz_scale": 0.65,
-          "y_scale": 0
-        }
+        "type": "minecraft:y_clamped_gradient",
+        "from_y": -64,
+        "to_y": 220,
+        "from_value": 2.20,
+        "to_value": -1.90
       },
       "argument2": {
         "type": "minecraft:add",
         "argument1": {
-        "type": "minecraft:mul",
-        "argument1": 0.01,
-        "argument2": {
-          "type": "minecraft:noise",
-          "noise": "antarchy:elythia_surface_detail",
-            "xz_scale": 1.8,
-            "y_scale": 0
+          "type": "minecraft:add",
+          "argument1": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:mul",
+              "argument1": 0.565,
+              "argument2": {
+                "type": "minecraft:noise",
+                "noise": "antarchy:elythia_surface",
+                "xz_scale": 0.65,
+                "y_scale": 0
+              }
+            },
+            "argument2": {
+              "type": "minecraft:add",
+              "argument1": {
+                "type": "minecraft:mul",
+                "argument1": 0.01,
+                "argument2": {
+                  "type": "minecraft:noise",
+                  "noise": "antarchy:elythia_surface_detail",
+                  "xz_scale": 1.8,
+                  "y_scale": 0
+                }
+              },
+              "argument2": {
+                "type": "minecraft:mul",
+                "argument1": 0.002,
+                "argument2": {
+                  "type": "minecraft:noise",
+                  "noise": "antarchy:elythia_surface_edge",
+                  "xz_scale": 4.2,
+                  "y_scale": 0
+                }
+              }
+            }
+          },
+          "argument2": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:mul",
+              "argument1": 0.17,
+              "argument2": "minecraft:overworld/depth"
+            },
+            "argument2": {
+              "type": "minecraft:add",
+              "argument1": {
+                "type": "minecraft:mul",
+                "argument1": 0.003,
+                "argument2": "minecraft:overworld/ridges"
+              },
+              "argument2": {
+                "type": "minecraft:add",
+                "argument1": {
+                  "type": "antarchy:elythia_river_carve",
+                  "erosion": "minecraft:overworld/erosion",
+                  "ridges": "minecraft:overworld/ridges"
+                },
+                "argument2": {
+                  "type": "minecraft:mul",
+                  "argument1": 0.58,
+                  "argument2": "minecraft:overworld/continents"
+                }
+              }
+            }
           }
-        },
-        "argument2": {
-        "type": "minecraft:mul",
-        "argument1": 0.002,
-        "argument2": {
-          "type": "minecraft:noise",
-          "noise": "antarchy:elythia_surface_edge",
-            "xz_scale": 4.2,
-            "y_scale": 0
-          }
-        }
-      }
-    },
-    "argument2": {
-      "type": "minecraft:add",
-      "argument1": {
-        "type": "minecraft:mul",
-        "argument1": 0.17,
-        "argument2": "minecraft:overworld/depth"
-      },
-      "argument2": {
-        "type": "minecraft:add",
-        "argument1": {
-          "type": "minecraft:mul",
-          "argument1": 0.003,
-          "argument2": "minecraft:overworld/ridges"
         },
         "argument2": {
           "type": "minecraft:add",
           "argument1": {
-            "type": "minecraft:mul",
-            "argument1": -0.06,
-            "argument2": "minecraft:overworld/erosion"
+            "type": "minecraft:range_choice",
+            "input": "minecraft:overworld/continents",
+            "min_inclusive": -1.0,
+            "max_exclusive": -0.93,
+            "when_in_range": {
+              "type": "minecraft:add",
+              "argument1": -0.85,
+              "argument2": {
+                "type": "minecraft:mul",
+                "argument1": 0.05,
+                "argument2": {
+                  "type": "minecraft:noise",
+                  "noise": "antarchy:elythia_terrain_roughness",
+                  "xz_scale": 0.55,
+                  "y_scale": 0
+                }
+              }
+            },
+            "when_out_of_range": 0.0
           },
           "argument2": {
-            "type": "minecraft:mul",
-            "argument1": 0.58,
-            "argument2": "minecraft:overworld/continents"
+            "type": "minecraft:range_choice",
+            "input": "minecraft:overworld/depth",
+            "min_inclusive": 0.35,
+            "max_exclusive": 0.52,
+            "when_in_range": {
+              "type": "minecraft:range_choice",
+              "input": "minecraft:overworld/ridges",
+              "min_inclusive": -0.80,
+              "max_exclusive": -0.30,
+              "when_in_range": {
+                "type": "minecraft:mul",
+                "argument1": 0.07,
+                "argument2": {
+                  "type": "minecraft:noise",
+                  "noise": "antarchy:elythia_terrain_roughness",
+                  "xz_scale": 0.75,
+                  "y_scale": 0
+                }
+              },
+              "when_out_of_range": 0.0
+            },
+            "when_out_of_range": 0.0
           }
         }
       }
     }
-  }
-  }
   }
 }

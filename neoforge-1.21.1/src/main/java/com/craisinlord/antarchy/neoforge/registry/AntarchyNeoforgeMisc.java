@@ -7,6 +7,8 @@ import com.craisinlord.antarchy.content.effect.DreadMobEffect;
 import com.craisinlord.antarchy.content.effect.GoopedMobEffect;
 import com.craisinlord.antarchy.content.effect.GrowthMobEffect;
 import com.craisinlord.antarchy.content.effect.InvertedMobEffect;
+import com.craisinlord.antarchy.content.effect.CommandedMobEffect;
+import com.craisinlord.antarchy.content.effect.DilatedMobEffect;
 import com.craisinlord.antarchy.content.effect.ParalyzedMobEffect;
 import com.craisinlord.antarchy.content.effect.ShrinkMobEffect;
 import com.craisinlord.antarchy.content.effect.StinkyMobEffect;
@@ -127,6 +129,8 @@ public final class AntarchyNeoforgeMisc {
     public static final DeferredHolder<MobEffect, DreadMobEffect> DREAD = MOB_EFFECTS.register("dread", DreadMobEffect::new);
     public static final DeferredHolder<MobEffect, ParalyzedMobEffect> PARALYZED = MOB_EFFECTS.register("paralyzed", ParalyzedMobEffect::new);
     public static final DeferredHolder<MobEffect, InvertedMobEffect> INVERTED = MOB_EFFECTS.register("inverted", InvertedMobEffect::new);
+    public static final DeferredHolder<MobEffect, CommandedMobEffect> COMMANDED = MOB_EFFECTS.register("commanded", CommandedMobEffect::new);
+    public static final DeferredHolder<MobEffect, DilatedMobEffect> DILATED = MOB_EFFECTS.register("dilated", DilatedMobEffect::new);
     public static final DeferredHolder<MobEffect, StinkyMobEffect> STINKY = MOB_EFFECTS.register("stinky", StinkyMobEffect::new);
     public static final DeferredHolder<MobEffect, GoopedMobEffect> GOOPED = MOB_EFFECTS.register("gooped", GoopedMobEffect::new);
     public static final DeferredHolder<MobEffect, com.craisinlord.antarchy.content.effect.BloodglassWardEffect> BLOODGLASS_WARD = MOB_EFFECTS.register("bloodglass_ward", com.craisinlord.antarchy.content.effect.BloodglassWardEffect::new);
@@ -140,6 +144,14 @@ public final class AntarchyNeoforgeMisc {
             () -> new Potion(new MobEffectInstance(INVERTED, 600)));
     public static final DeferredHolder<Potion, Potion> LONG_INVERSION = POTIONS.register("long_inversion",
             () -> new Potion("inversion", new MobEffectInstance(INVERTED, 2400)));
+    public static final DeferredHolder<Potion, Potion> COMMAND = POTIONS.register("command",
+            () -> new Potion(new MobEffectInstance(COMMANDED, 600)));
+    public static final DeferredHolder<Potion, Potion> LONG_COMMAND = POTIONS.register("long_command",
+            () -> new Potion("command", new MobEffectInstance(COMMANDED, 1200)));
+    public static final DeferredHolder<Potion, Potion> TIME_DILATION = POTIONS.register("time_dilation",
+            () -> new Potion(new MobEffectInstance(DILATED, 300)));
+    public static final DeferredHolder<Potion, Potion> LONG_TIME_DILATION = POTIONS.register("long_time_dilation",
+            () -> new Potion("time_dilation", new MobEffectInstance(DILATED, 600)));
     public static final DeferredHolder<Potion, Potion> STINKY_POTION = POTIONS.register("stinky",
             () -> new Potion(new MobEffectInstance(STINKY, 1200)));
     public static final DeferredHolder<Potion, Potion> LONG_STINKY = POTIONS.register("long_stinky",
@@ -374,6 +386,9 @@ public final class AntarchyNeoforgeMisc {
             () -> new ThoraxisDuneFeature(ThoraxisDuneConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, DimensionalTearFeature> DIMENSIONAL_TEAR = FEATURES.register("dimensional_tear",
             () -> new DimensionalTearFeature(NoneFeatureConfiguration.CODEC));
+
+    public static final DeferredHolder<Feature<?>, ThoraxisIchorLakeFeature> THORAXIS_ICHOR_LAKE = FEATURES.register("thoraxis_ichor_lake",
+            () -> new ThoraxisIchorLakeFeature(NoneFeatureConfiguration.CODEC));
 
     // Biome sources
     public static final DeferredHolder<MapCodec<? extends BiomeSource>, MapCodec<ElythiaBiomeSource>> ELYTHIA_BIOME_SOURCE = BIOME_SOURCES.register("elythia_biome_source",

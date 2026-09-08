@@ -21,7 +21,9 @@ import net.minecraft.world.level.Level;
 public final class ManticoreWingsItem extends ElytraItem {
     private static final ResourceLocation REPAIR_MATERIAL_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "manticore_wing");
     private static final int DAMAGE_COOLDOWN_TICKS = 10;
-    private static final float COLLISION_DAMAGE = 8.0F;
+    private static final double MIN_COLLISION_SPEED = 0.2D;
+    private static final float COLLISION_DAMAGE_PER_BLOCK_PER_TICK = 8.0F;
+    private static final float MAX_COLLISION_DAMAGE = 20.0F;
     private static final Map<UUID, Long> LAST_COLLISION_DAMAGE = new ConcurrentHashMap<>();
 
     public ManticoreWingsItem(Properties properties) {
@@ -41,10 +43,16 @@ public final class ManticoreWingsItem extends ElytraItem {
             return;
         }
         long gameTime = level.getGameTime();
+        double speed = player.getDeltaMovement().length();
+        if (speed < MIN_COLLISION_SPEED) {
+            return;
+        }
+        float collisionDamage = Math.min(MAX_COLLISION_DAMAGE,
+                Math.max(1.0F, (float) speed * COLLISION_DAMAGE_PER_BLOCK_PER_TICK));
         for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(0.45D), living ->
                 living != player && living.isAlive() && !player.isAlliedTo(living) && !living.isAlliedTo(player))) {
             long availableAt = LAST_COLLISION_DAMAGE.getOrDefault(target.getUUID(), 0L);
-            if (availableAt <= gameTime && target.hurt(level.damageSources().playerAttack(player), COLLISION_DAMAGE)) {
+            if (availableAt <= gameTime && target.hurt(level.damageSources().playerAttack(player), collisionDamage)) {
                 LAST_COLLISION_DAMAGE.put(target.getUUID(), gameTime + DAMAGE_COOLDOWN_TICKS);
             }
         }

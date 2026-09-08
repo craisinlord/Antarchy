@@ -98,6 +98,8 @@ public class BedBugEntity extends Animal implements GeoEntity {
     @Nullable
     private ItemEntity cachedRottenFlesh;
     private int nextFoodSearchTick;
+    private int ignoredRottenFleshId = -1;
+    private int ignoredRottenFleshUntilTick;
     private int guardNestCooldown;
 
     public BedBugEntity(EntityType<? extends BedBugEntity> entityType, Level level) {
@@ -450,6 +452,24 @@ public class BedBugEntity extends Animal implements GeoEntity {
         this.nextFoodSearchTick = 0;
     }
 
+    private void temporarilyIgnoreRottenFlesh(ItemEntity itemEntity) {
+        this.ignoredRottenFleshId = itemEntity.getId();
+        this.ignoredRottenFleshUntilTick = this.tickCount + 100;
+        this.invalidateFoodCache();
+    }
+
+    private boolean isTemporarilyIgnoredFood(ItemEntity itemEntity) {
+        if (itemEntity.getId() != this.ignoredRottenFleshId) {
+            return false;
+        }
+        if (this.tickCount >= this.ignoredRottenFleshUntilTick) {
+            this.ignoredRottenFleshId = -1;
+            this.ignoredRottenFleshUntilTick = 0;
+            return false;
+        }
+        return true;
+    }
+
     @Nullable
     private ItemEntity findNearestRottenFlesh() {
         return this.level().getEntitiesOfClass(
@@ -457,7 +477,8 @@ public class BedBugEntity extends Animal implements GeoEntity {
                         this.getBoundingBox().inflate(FOOD_SEARCH_RADIUS, 2.0D, FOOD_SEARCH_RADIUS),
                         itemEntity -> itemEntity.isAlive()
                                 && !itemEntity.getItem().isEmpty()
-                                && itemEntity.getItem().is(Items.ROTTEN_FLESH))
+                                && itemEntity.getItem().is(Items.ROTTEN_FLESH)
+                                && !this.isTemporarilyIgnoredFood(itemEntity))
                 .stream()
                 .min(Comparator.comparingDouble(this::distanceToSqr))
                 .orElse(null);
@@ -581,6 +602,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
         private ItemEntity targetFood;
         private double lastDistanceSqr;
         private int stuckTicks;
+        private int pathRefreshCooldown;
 
         private SeekRottenFleshGoal() {
             this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
@@ -614,6 +636,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
             BedBugEntity.this.setTarget(null);
             this.lastDistanceSqr = Double.MAX_VALUE;
             this.stuckTicks = 0;
+            this.pathRefreshCooldown = 0;
         }
 
         @Override
@@ -622,6 +645,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
             this.targetFood = null;
             this.lastDistanceSqr = Double.MAX_VALUE;
             this.stuckTicks = 0;
+            this.pathRefreshCooldown = 0;
         }
 
         @Override
@@ -631,7 +655,14 @@ public class BedBugEntity extends Animal implements GeoEntity {
             }
 
             BedBugEntity.this.getLookControl().setLookAt(this.targetFood, 30.0F, 30.0F);
-            BedBugEntity.this.getNavigation().moveTo(this.targetFood, 1.0D);
+            if (this.pathRefreshCooldown-- <= 0) {
+                if (!BedBugEntity.this.getNavigation().moveTo(this.targetFood, 1.0D)) {
+                    BedBugEntity.this.temporarilyIgnoreRottenFlesh(this.targetFood);
+                    this.targetFood = null;
+                    return;
+                }
+                this.pathRefreshCooldown = 10;
+            }
             double distanceSqr = BedBugEntity.this.distanceToSqr(this.targetFood);
 
             if (distanceSqr < this.lastDistanceSqr - 0.2D) {
@@ -639,7 +670,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
                 this.stuckTicks = 0;
             } else if (BedBugEntity.this.getNavigation().isDone() && distanceSqr > 4.0D) {
                 if (++this.stuckTicks >= 20) {
-                    BedBugEntity.this.invalidateFoodCache();
+                    BedBugEntity.this.temporarilyIgnoreRottenFlesh(this.targetFood);
                     this.targetFood = null;
                     return;
                 }

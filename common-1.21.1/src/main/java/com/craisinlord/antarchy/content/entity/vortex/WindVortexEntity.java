@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -66,6 +67,8 @@ public class WindVortexEntity extends Entity {
     private static final String TRAVEL_Z_KEY = "TravelZ";
     private static final String TRAVELLING_KEY = "Travelling";
     private static final String HOMING_KEY = "Homing";
+    private static final String ANCHORED_KEY = "Anchored";
+    private static final String BOUNCE_ON_IMPACT_KEY = "BounceOnImpact";
 
     private static final double BASE_RADIUS = 0.35D;
     private static final double DRIFT_FRICTION = 0.995D;
@@ -82,15 +85,20 @@ public class WindVortexEntity extends Entity {
     }
 
     private int age;
-    private int durationTicks = 140;
+    private int durationTicks = 240;
     private double pullStrength = 0.32D;
     private double launchStrength = 1.0D;
     private float damageOverride = -1.0F;
     private Vec3 travelVelocity = Vec3.ZERO;
     private boolean travelling = false;
     private boolean homing = false;
+    private boolean bounceOnImpact = false;
     private int travelTicksRemaining;
     private int fadeOutTicksRemaining;
+    private boolean anchoredAtBlock;
+    private double flowTurnRate;
+    private double flowTurnTarget;
+    private int flowTurnChangeTicks;
     private final Map<UUID, Double> carriedProgress = new HashMap<>();
     @Nullable
     private UUID ownerUuid;
@@ -148,6 +156,18 @@ public class WindVortexEntity extends Entity {
             return;
         }
 
+        if (this.anchoredAtBlock) {
+            this.setDeltaMovement(Vec3.ZERO);
+            if ((this.tickCount & 1) == 0) {
+                this.applyVortexForces();
+            }
+            this.age++;
+            if (this.age >= this.durationTicks) {
+                this.fadeOut();
+            }
+            return;
+        }
+
         boolean lensVortex = this.getMode() != VortexMode.UPWARD;
         if (!lensVortex && (this.isInLava() || this.isInsideSolidBlock())) {
             this.fadeOut();
@@ -164,20 +184,27 @@ public class WindVortexEntity extends Entity {
             if (this.homing) {
                 this.steerTowardPrey();
             }
+            if (this.bounceOnImpact) {
+                this.updateFluidDrift();
+            }
             Vec3 from = this.position();
             Vec3 to = from.add(this.travelVelocity);
             HitResult blockHit = this.level().clip(
                     new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
             if (blockHit.getType() != HitResult.Type.MISS) {
-                this.fadeOut();
-                return;
-            }
-            this.setDeltaMovement(this.travelVelocity);
-            this.move(net.minecraft.world.entity.MoverType.SELF, this.travelVelocity);
-            if (--this.travelTicksRemaining <= 0) {
-                this.travelling = false;
-                this.noPhysics = false;
+                if (this.bounceOnImpact) {
+                    this.flowAroundBlock(blockHit);
+                } else {
+                    this.anchorAtBlock(blockHit);
+                }
+            } else {
                 this.setDeltaMovement(this.travelVelocity);
+                this.move(net.minecraft.world.entity.MoverType.SELF, this.travelVelocity);
+                if (--this.travelTicksRemaining <= 0) {
+                    this.travelling = false;
+                    this.noPhysics = false;
+                    this.setDeltaMovement(this.travelVelocity);
+                }
             }
         } else if (!lensVortex) {
             Vec3 current = this.getDeltaMovement();
@@ -192,11 +219,15 @@ public class WindVortexEntity extends Entity {
             HitResult blockHit = this.level().clip(
                     new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
             if (blockHit.getType() != HitResult.Type.MISS) {
-                this.fadeOut();
-                return;
+                if (this.bounceOnImpact) {
+                    this.flowAroundBlock(blockHit);
+                } else {
+                    this.anchorAtBlock(blockHit);
+                }
+            } else {
+                this.setDeltaMovement(drift);
+                this.move(net.minecraft.world.entity.MoverType.SELF, drift);
             }
-            this.setDeltaMovement(drift);
-            this.move(net.minecraft.world.entity.MoverType.SELF, drift);
         } else {
             Vec3 drift = this.getDeltaMovement().multiply(DRIFT_FRICTION, DRIFT_FRICTION, DRIFT_FRICTION);
             this.setDeltaMovement(drift);
@@ -253,6 +284,73 @@ public class WindVortexEntity extends Entity {
             this.entityData.set(FADING_OUT, true);
             this.fadeOutTicksRemaining = FADE_OUT_TICKS;
             this.level().broadcastEntityEvent(this, (byte) 60);
+        }
+    }
+
+    private void anchorAtBlock(HitResult hit) {
+        this.travelling = false;
+        this.noPhysics = false;
+        this.travelVelocity = Vec3.ZERO;
+        this.setDeltaMovement(Vec3.ZERO);
+        if (hit instanceof net.minecraft.world.phys.BlockHitResult blockHit) {
+            Vec3 normal = Vec3.atLowerCornerOf(blockHit.getDirection().getNormal());
+            this.setPos(blockHit.getLocation().add(normal.scale(0.05D)));
+        }
+        this.anchoredAtBlock = true;
+    }
+
+    private void updateFluidDrift() {
+        if (--this.flowTurnChangeTicks <= 0) {
+            this.flowTurnChangeTicks = 24 + this.random.nextInt(32);
+            this.flowTurnTarget = (this.random.nextDouble() * 2.0D - 1.0D) * 0.012D;
+        }
+        this.flowTurnRate = Mth.lerp(0.08D, this.flowTurnRate, this.flowTurnTarget);
+        Vec3 horizontal = new Vec3(this.travelVelocity.x, 0.0D, this.travelVelocity.z);
+        if (horizontal.lengthSqr() > 1.0E-6D) {
+            Vec3 turned = horizontal.yRot((float) this.flowTurnRate);
+            this.travelVelocity = new Vec3(turned.x, this.travelVelocity.y, turned.z);
+        }
+    }
+
+    private void flowAroundBlock(HitResult hit) {
+        if (!(hit instanceof net.minecraft.world.phys.BlockHitResult blockHit)) {
+            return;
+        }
+
+        Vec3 normal = Vec3.atLowerCornerOf(blockHit.getDirection().getNormal());
+        Vec3 incoming = this.travelVelocity.lengthSqr() > 1.0E-6D
+                ? this.travelVelocity
+                : this.getDeltaMovement();
+        double speed = Mth.clamp(incoming.length(), 0.2D, 0.9D);
+        Vec3 flow = incoming;
+        if (normal.y > 0.5D) {
+            flow = new Vec3(incoming.x, 0.0D, incoming.z);
+        } else if (normal.y < -0.5D) {
+            flow = new Vec3(incoming.x, 0.0D, incoming.z).add(0.0D, -0.08D, 0.0D);
+        } else {
+            Vec3 tangent = incoming.subtract(normal.scale(incoming.dot(normal)));
+            if (tangent.lengthSqr() < 1.0E-6D) {
+                tangent = new Vec3(-normal.z, 0.0D, normal.x);
+                if (tangent.lengthSqr() < 1.0E-6D) {
+                    tangent = new Vec3(0.0D, 0.0D, 1.0D);
+                }
+            }
+            flow = tangent.normalize().scale(speed);
+        }
+        if (flow.lengthSqr() < 1.0E-6D) {
+            this.travelVelocity = Vec3.ZERO;
+            this.setDeltaMovement(Vec3.ZERO);
+            this.travelling = false;
+            this.noPhysics = false;
+            return;
+        }
+        this.setPos(blockHit.getLocation().add(normal.scale(0.08D)));
+        this.travelVelocity = flow.normalize().scale(speed * 0.82D);
+        this.setDeltaMovement(this.travelVelocity);
+        this.noPhysics = true;
+        if (--this.travelTicksRemaining <= 0) {
+            this.travelling = false;
+            this.noPhysics = false;
         }
     }
 
@@ -431,18 +529,13 @@ public class WindVortexEntity extends Entity {
             updatedMovement = new Vec3(updatedMovement.x, Math.max(updatedMovement.y, minRise), updatedMovement.z);
             entity.setOnGround(false);
         }
+        entity.setDeltaMovement(updatedMovement);
         if (entity instanceof Player) {
-            Vec3 before = entity.position();
-            Vec3 playerCarry = wanted.scale(0.65D);
-            entity.move(net.minecraft.world.entity.MoverType.SELF, playerCarry);
-            if (entity.position().distanceToSqr(before) < 1.0E-6D && playerCarry.lengthSqr() > 1.0E-6D) {
-                entity.setPos(before.add(playerCarry));
-            }
             entity.setOnGround(false);
         }
-        entity.setDeltaMovement(updatedMovement);
         entity.fallDistance = 0.0F;
         entity.hasImpulse = true;
+        this.syncPlayerMotion(entity);
     }
 
     private void launch(Entity entity, Vec3 radialVector, double progress, Basis basis) {
@@ -452,6 +545,7 @@ public class WindVortexEntity extends Entity {
         double scale = this.launchStrength * Mth.clamp(this.getVortexHeight() / 5.0D, 0.5D, 2.5D);
         entity.setDeltaMovement(tangent.scale(0.72D * scale).add(radial.scale(0.34D * scale)).add(basis.axis.scale((0.78D + progress * 0.28D) * scale)));
         entity.hasImpulse = true;
+        this.syncPlayerMotion(entity);
     }
 
     private void hurtCaughtEntity(Entity entity) {
@@ -487,9 +581,17 @@ public class WindVortexEntity extends Entity {
         entity.fallDistance = 0.0F;
         entity.hasImpulse = true;
         entity.hurtMarked = true;
+        this.syncPlayerMotion(entity);
         if (this.isDamaging() && entity instanceof LivingEntity living
                 && !living.getType().is(AntarchyTags.Entities.WIND_VORTEX_IMMUNE)) {
             living.hurt(this.damageSource(), this.resolveDamage());
+        }
+    }
+
+    private void syncPlayerMotion(Entity entity) {
+        if (entity instanceof ServerPlayer player) {
+            player.hurtMarked = true;
+            player.connection.send(new ClientboundSetEntityMotionPacket(player));
         }
     }
 
@@ -582,6 +684,10 @@ public class WindVortexEntity extends Entity {
         this.homing = homing;
     }
 
+    public void setBounceOnImpact(boolean bounceOnImpact) {
+        this.bounceOnImpact = bounceOnImpact;
+    }
+
     public void setVortexStrengths(double pullStrength, double launchStrength) {
         this.pullStrength = Math.max(0.0D, pullStrength);
         this.launchStrength = Math.max(0.0D, launchStrength);
@@ -630,6 +736,8 @@ public class WindVortexEntity extends Entity {
         this.setAxis(new Vec3(tag.getFloat(AXIS_X_KEY), tag.getFloat(AXIS_Y_KEY), tag.getFloat(AXIS_Z_KEY)));
         this.travelling = tag.getBoolean(TRAVELLING_KEY);
         this.homing = tag.getBoolean(HOMING_KEY);
+        this.bounceOnImpact = tag.getBoolean(BOUNCE_ON_IMPACT_KEY);
+        this.anchoredAtBlock = tag.getBoolean(ANCHORED_KEY);
         this.travelVelocity = new Vec3(tag.getDouble(TRAVEL_X_KEY), tag.getDouble(TRAVEL_Y_KEY), tag.getDouble(TRAVEL_Z_KEY));
         if (this.travelling) {
             this.noPhysics = true;
@@ -654,6 +762,8 @@ public class WindVortexEntity extends Entity {
         tag.putFloat(AXIS_Z_KEY, (float) this.getAxis().z);
         tag.putBoolean(TRAVELLING_KEY, this.travelling);
         tag.putBoolean(HOMING_KEY, this.homing);
+        tag.putBoolean(BOUNCE_ON_IMPACT_KEY, this.bounceOnImpact);
+        tag.putBoolean(ANCHORED_KEY, this.anchoredAtBlock);
         tag.putDouble(TRAVEL_X_KEY, this.travelVelocity.x);
         tag.putDouble(TRAVEL_Y_KEY, this.travelVelocity.y);
         tag.putDouble(TRAVEL_Z_KEY, this.travelVelocity.z);

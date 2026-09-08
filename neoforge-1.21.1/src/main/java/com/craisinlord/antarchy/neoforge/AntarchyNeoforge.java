@@ -221,6 +221,7 @@ public class AntarchyNeoforge {
                 AntarchyNeoforgeSounds.KING_ROAR,
                 AntarchyNeoforgeSounds.KING_WING_FLAP,
                 AntarchyNeoforgeSounds.KING_FLY_LOOP,
+                AntarchyNeoforgeSounds.QUEEN_FLY_LOOP,
                 AntarchyNeoforgeSounds.PRINCE_IDLE,
                 AntarchyNeoforgeSounds.PRINCE_BITE,
                 AntarchyNeoforgeSounds.PRINCE_SHOOT,
@@ -436,6 +437,8 @@ public class AntarchyNeoforge {
         AntarchyObjects.setQueen(() -> AntarchyNeoforgeEntites.QUEEN.get());
         AntarchyObjects.setManticore(() -> AntarchyNeoforgeEntites.MANTICORE.get());
         AntarchyObjects.setRoyalBolt(() -> AntarchyNeoforgeEntites.ROYAL_BOLT.get());
+        AntarchyObjects.setRoyalElementalProjectile(() -> AntarchyNeoforgeEntites.ROYAL_ELEMENTAL_PROJECTILE.get());
+        AntarchyObjects.setRoyalIceSpike(() -> AntarchyNeoforgeEntites.ROYAL_ICE_SPIKE.get());
         AntarchyObjects.setPrinceEgg(() -> AntarchyNeoforgeBlocks.PRINCE_EGG.get());
         AntarchyObjects.setPrincessEgg(() -> AntarchyNeoforgeBlocks.PRINCESS_EGG.get());
         AntarchyObjects.setRoyalEggBlockEntity(() -> AntarchyNeoforgeBlocks.ROYAL_EGG_BLOCK_ENTITY.get());

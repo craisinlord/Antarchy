@@ -12,17 +12,23 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 public class DimensionalTearMarkerBlockEntity extends BlockEntity {
-    private static final int MAX_ATTEMPT_TICKS = 100;
+    private static final int MAX_ATTEMPT_TICKS = 80;
     private static final int MIN_LINK_RANGE = 50;
     private static final int MAX_LINK_RANGE = 500;
-    private static final int PARTNER_ORIGIN_ATTEMPTS = 12;
-    private static final int PARTNER_SEARCH_ATTEMPTS = 48;
-    private static final int LOCAL_SEARCH_ATTEMPTS = 18;
-    private static final int SEARCH_ATTEMPTS_PER_TICK = 2;
+    private static final int PARTNER_ORIGIN_ATTEMPTS = 8;
+    private static final int PARTNER_SEARCH_ATTEMPTS = 32;
+    private static final int LOCAL_SEARCH_ATTEMPTS = 12;
+    private static final int SEARCH_ATTEMPTS_PER_TICK = 1;
+    private static final int MIN_VERTICAL_SEPARATION = 24;
+    private static final int MIN_PARTNER_VERTICAL_OFFSET = 48;
+    private static final int MAX_PARTNER_VERTICAL_OFFSET = 96;
+    private static final int NATURAL_TEAR_LOCAL_RADIUS = 512;
+    private static final int NATURAL_TEAR_LOCAL_CAP = 6;
 
     private int attemptTicks;
     private int localAttempts;
@@ -64,6 +70,11 @@ public class DimensionalTearMarkerBlockEntity extends BlockEntity {
                 continue;
             }
 
+            if (partnerOrigin == null && partnerOriginAttempts == 0
+                    && countNearbyTears(level, origin) >= NATURAL_TEAR_LOCAL_CAP) {
+                return false;
+            }
+
             if (partnerOrigin == null || partnerSearchAttempts >= PARTNER_SEARCH_ATTEMPTS) {
                 if (partnerOriginAttempts >= PARTNER_ORIGIN_ATTEMPTS) {
                     return false;
@@ -75,7 +86,8 @@ public class DimensionalTearMarkerBlockEntity extends BlockEntity {
 
             partnerSearchAttempts++;
             BlockPos candidate = randomCandidate(partnerOrigin, random);
-            if (!isUsablePocket(level, candidate)) {
+            if (Math.abs(candidate.getY() - firstPocket.getY()) < MIN_VERTICAL_SEPARATION
+                    || !isUsablePocket(level, candidate)) {
                 continue;
             }
             return spawnPair(level, random, firstPocket, candidate);
@@ -111,8 +123,14 @@ public class DimensionalTearMarkerBlockEntity extends BlockEntity {
         int distance = Mth.nextInt(random, MIN_LINK_RANGE, MAX_LINK_RANGE);
         int dx = Mth.floor(Math.cos(angle) * distance);
         int dz = Mth.floor(Math.sin(angle) * distance);
-        int dy = Mth.nextInt(random, -36, 36);
+        int verticalOffset = Mth.nextInt(random, MIN_PARTNER_VERTICAL_OFFSET, MAX_PARTNER_VERTICAL_OFFSET);
+        int dy = random.nextBoolean() ? verticalOffset : -verticalOffset;
         return first.offset(dx, dy, dz);
+    }
+
+    private static int countNearbyTears(ServerLevel level, BlockPos origin) {
+        AABB area = new AABB(origin).inflate(NATURAL_TEAR_LOCAL_RADIUS);
+        return level.getEntitiesOfClass(DimensionalTearEntity.class, area).size();
     }
 
     private static boolean isUsablePocket(ServerLevel level, BlockPos pos) {

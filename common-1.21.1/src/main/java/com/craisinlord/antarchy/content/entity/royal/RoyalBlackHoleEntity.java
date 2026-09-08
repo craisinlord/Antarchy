@@ -1,6 +1,8 @@
 package com.craisinlord.antarchy.content.entity.royal;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.time.TimeDilationApi;
+import com.craisinlord.antarchy.config.AntarchySettings;
 import java.util.UUID;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -17,8 +19,16 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class RoyalBlackHoleEntity extends Entity {
+public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
     private static final EntityDataAccessor<Float> RADIUS =
             SynchedEntityData.defineId(RoyalBlackHoleEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Boolean> COLLAPSING =
@@ -36,6 +46,7 @@ public class RoyalBlackHoleEntity extends Entity {
     private UUID ownerId;
     private int age;
     private int activeTicks = DEFAULT_ACTIVE_TICKS;
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     public RoyalBlackHoleEntity(EntityType<? extends RoyalBlackHoleEntity> entityType, Level level) {
         super(entityType, level);
@@ -46,14 +57,14 @@ public class RoyalBlackHoleEntity extends Entity {
     public static RoyalBlackHoleEntity create(ServerLevel level, Vec3 center, double radius, int activeTicks, @Nullable UUID ownerId) {
         RoyalBlackHoleEntity hole = new RoyalBlackHoleEntity(AntarchyObjects.ROYAL_BLACK_HOLE.get(), level);
         hole.setPos(center.x, center.y, center.z);
-        hole.setRadius(radius);
-        hole.activeTicks = Math.max(20, activeTicks);
+        hole.setRadius(radius > 0.0D ? radius : AntarchySettings.queenBlackHoleRadius());
+        hole.activeTicks = activeTicks > 0 ? Math.max(20, activeTicks) : AntarchySettings.queenBlackHoleActiveTicks();
         hole.ownerId = ownerId;
         return hole;
     }
 
     public static RoyalBlackHoleEntity create(ServerLevel level, Vec3 center, @Nullable UUID ownerId) {
-        return create(level, center, DEFAULT_RADIUS, DEFAULT_ACTIVE_TICKS, ownerId);
+        return create(level, center, AntarchySettings.queenBlackHoleRadius(), AntarchySettings.queenBlackHoleActiveTicks(), ownerId);
     }
 
     @Override
@@ -84,6 +95,12 @@ public class RoyalBlackHoleEntity extends Entity {
         this.age++;
         if (!this.isCollapsing()) {
             this.applyPull();
+            if (this.age % 10 == 0 && this.level() instanceof ServerLevel level) {
+                TimeDilationApi.createField(level, this.position(), Math.max(2.0D, this.radius() * 0.55D), 0.18D, 14);
+                if (this.age % 20 == 0 && level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+                    RoyalBlockDestruction.destroySphere(level, this, this.position(), Math.min(2.0D, this.radius() * 0.2D), 8, 30.0D, 0.0F);
+                }
+            }
             if (this.age >= this.activeTicks) {
                 this.entityData.set(COLLAPSING, true);
                 this.age = 0;
@@ -108,7 +125,7 @@ public class RoyalBlackHoleEntity extends Entity {
             if (distance < 0.5D || distance > radius) {
                 continue;
             }
-            double strength = 0.16D * (1.0D - distance / radius);
+            double strength = AntarchySettings.queenBlackHolePullStrength() * (1.0D - distance / radius);
             Vec3 pull = toCenter.scale(strength / distance);
             entity.setDeltaMovement(entity.getDeltaMovement().scale(0.86D).add(pull));
             entity.hasImpulse = true;
@@ -200,5 +217,19 @@ public class RoyalBlackHoleEntity extends Entity {
         if (this.ownerId != null) {
             tag.putUUID(OWNER_KEY, this.ownerId);
         }
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "black_hole_controller", 0, this::blackHoleController));
+    }
+
+    private PlayState blackHoleController(AnimationState<RoyalBlackHoleEntity> state) {
+        return state.setAndContinue(RawAnimation.begin().thenLoop("animation"));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
     }
 }

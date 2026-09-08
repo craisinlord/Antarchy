@@ -106,7 +106,7 @@
       },
       {
         "type": "antarchy:enchanted_golden_apple_cow",
-        "weight": 2,
+        "weight": 1,
         "minCount": 1,
         "maxCount": 1
       },

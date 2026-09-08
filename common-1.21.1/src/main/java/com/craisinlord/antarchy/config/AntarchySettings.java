@@ -91,11 +91,11 @@ public final class AntarchySettings {
     private static double bigBerthaNoneModeDamageBonusPercent = 15.0D;
     private static double bigBerthaNightmareDamageBonusPercent = 30.0D;
     private static double potentNyxiteInvertedDurationSeconds = 60.0D;
-    private static boolean dimensionalTearsSpawnNaturally = false;
+    private static boolean dimensionalTearsSpawnNaturally = true;
     private static int dimensionalTearLifetimeTicks = 24000;
     private static int dimensionalTearInvertedDurationTicks = 2400;
-    private static int dimensionalTearEmergenceMinIntervalTicks = 2400;
-    private static int dimensionalTearEmergenceMaxIntervalTicks = 7200;
+    private static int dimensionalTearEmergenceMinIntervalTicks = 400;
+    private static int dimensionalTearEmergenceMaxIntervalTicks = 1200;
     private static float dimensionalTearLucidEventChance = 0.65F;
     private static int ultimateToolEnchantability = 25;
     private static int ultimateArmorEnchantability = 10;
@@ -250,6 +250,23 @@ public final class AntarchySettings {
     private static double queenHealth = 6000.0D;
     private static double kingAttackDamage = 50.0D;
     private static double queenAttackDamage = 45.0D;
+    private static double royalBossSoundVolume = 4.5D;
+    private static double queenBlackHoleRadius = 14.0D;
+    private static int queenBlackHoleActiveTicks = 120;
+    private static double queenBlackHolePullStrength = 0.16D;
+    private static double queenFinalTimeFieldRadius = 20.0D;
+    private static double queenFinalTimeFieldRate = 0.05D;
+    private static int queenFinalTimeFieldDurationTicks = 45;
+    private static int queenFinalTimeFieldCooldownTicks = 80;
+    private static double kingFireballDamage = 32.0D;
+    private static double kingFireballRadius = 4.5D;
+    private static int kingFireballCooldownTicks = 150;
+    private static double kingIceballDamage = 18.0D;
+    private static double kingIceballRadius = 5.0D;
+    private static int kingIceballCooldownTicks = 190;
+    private static double kingIceSpikeDamage = 24.0D;
+    private static int kingIceSpikeCooldownTicks = 240;
+    private static int kingElementalTerrainCap = 256;
     private static double royalBossArmor = 20.0D;
     private static double royalBossFollowRange = 128.0D;
     private static double royalBossMovementSpeed = 0.22D;
@@ -391,7 +408,7 @@ public final class AntarchySettings {
     private static double toreterrorDamageRange = 25.0D;
     private static double brutalflyDamageRange = 25.0D;
     private static double alphaMantisDamageRange = 25.0D;
-    private static float krakenLightningDamagePhaseOne = 12.0F;
+    private static float krakenLightningDamagePhaseOne = 6.0F;
     private static double lucidHealth = 70.0D;
     private static double lucidAttackDamage = 4.0D;
     private static double lucidMovementSpeed = 0.22D;
@@ -402,7 +419,7 @@ public final class AntarchySettings {
     private static double vortexMovementSpeed = 0.22D;
     private static double vortexFlyingSpeed = 0.35D;
     private static int vortexMaxActiveVortexes = 3;
-    private static int windVortexDurationTicks = 140;
+    private static int windVortexDurationTicks = 240;
     private static double windVortexPullStrength = 0.32D;
     private static double windVortexLaunchStrength = 1.0D;
     private static boolean eyeOfTheStormEnabled = true;
@@ -534,6 +551,8 @@ public final class AntarchySettings {
     private static double queenBeamDamage = 45.0D;
     private static double queenBeamRange = 100.0D;
     private static int queenBeamDurationTicks = 30;
+    private static int queenBeamWindupTicks = 20;
+    private static int queenBeamTravelTicks = 12;
     private static int queenBeamCooldownTicks = 90;
     private static double queenBeamTracking = 0.1D;
     private static double queenBeamTerrainRadius = 5.0D;
@@ -541,6 +560,8 @@ public final class AntarchySettings {
     private static double kingBeamDamage = 50.0D;
     private static double kingBeamRange = 100.0D;
     private static int kingBeamDurationTicks = 30;
+    private static int kingBeamWindupTicks = 20;
+    private static int kingBeamTravelTicks = 12;
     private static int kingBeamCooldownTicks = 90;
     private static double kingBeamTracking = 0.1D;
     private static double kingBeamTerrainRadius = 5.0D;
@@ -802,6 +823,8 @@ public final class AntarchySettings {
     public static double bigBerthaNightmareDamageBonusPercent() {
         return bigBerthaNightmareDamageBonusPercent;
     }
+
+    public static double krakensGraspLightningDamage() { return krakensGraspLightningDamage; }
 
     public static double potentNyxiteInvertedDurationSeconds() {
         return potentNyxiteInvertedDurationSeconds;
@@ -2013,6 +2036,40 @@ public final class AntarchySettings {
 
     public static double queenAttackDamage() { return queenAttackDamage; }
     public static void setQueenAttackDamage(double v) { queenAttackDamage = v; }
+    public static double royalBossSoundVolume() { return royalBossSoundVolume; }
+    public static void setRoyalBossSoundVolume(double v) { royalBossSoundVolume = v; }
+    public static double queenBlackHoleRadius() { return queenBlackHoleRadius; }
+    public static void setQueenBlackHoleRadius(double v) { queenBlackHoleRadius = v; }
+    public static int queenBlackHoleActiveTicks() { return queenBlackHoleActiveTicks; }
+    public static void setQueenBlackHoleActiveTicks(int v) { queenBlackHoleActiveTicks = v; }
+    public static double queenBlackHolePullStrength() { return queenBlackHolePullStrength; }
+    public static void setQueenBlackHolePullStrength(double v) { queenBlackHolePullStrength = v; }
+    public static double queenFinalTimeFieldRadius() { return queenFinalTimeFieldRadius; }
+    public static void setQueenFinalTimeFieldRadius(double v) { queenFinalTimeFieldRadius = v; }
+    public static double queenFinalTimeFieldRate() { return queenFinalTimeFieldRate; }
+    public static void setQueenFinalTimeFieldRate(double v) { queenFinalTimeFieldRate = v; }
+    public static int queenFinalTimeFieldDurationTicks() { return queenFinalTimeFieldDurationTicks; }
+    public static void setQueenFinalTimeFieldDurationTicks(int v) { queenFinalTimeFieldDurationTicks = v; }
+    public static int queenFinalTimeFieldCooldownTicks() { return queenFinalTimeFieldCooldownTicks; }
+    public static void setQueenFinalTimeFieldCooldownTicks(int v) { queenFinalTimeFieldCooldownTicks = v; }
+    public static double kingFireballDamage() { return kingFireballDamage; }
+    public static void setKingFireballDamage(double v) { kingFireballDamage = v; }
+    public static double kingFireballRadius() { return kingFireballRadius; }
+    public static void setKingFireballRadius(double v) { kingFireballRadius = v; }
+    public static int kingFireballCooldownTicks() { return kingFireballCooldownTicks; }
+    public static void setKingFireballCooldownTicks(int v) { kingFireballCooldownTicks = v; }
+    public static double kingIceballDamage() { return kingIceballDamage; }
+    public static void setKingIceballDamage(double v) { kingIceballDamage = v; }
+    public static double kingIceballRadius() { return kingIceballRadius; }
+    public static void setKingIceballRadius(double v) { kingIceballRadius = v; }
+    public static int kingIceballCooldownTicks() { return kingIceballCooldownTicks; }
+    public static void setKingIceballCooldownTicks(int v) { kingIceballCooldownTicks = v; }
+    public static double kingIceSpikeDamage() { return kingIceSpikeDamage; }
+    public static void setKingIceSpikeDamage(double v) { kingIceSpikeDamage = v; }
+    public static int kingIceSpikeCooldownTicks() { return kingIceSpikeCooldownTicks; }
+    public static void setKingIceSpikeCooldownTicks(int v) { kingIceSpikeCooldownTicks = v; }
+    public static int kingElementalTerrainCap() { return kingElementalTerrainCap; }
+    public static void setKingElementalTerrainCap(int v) { kingElementalTerrainCap = v; }
 
     public static double royalBossArmor() { return royalBossArmor; }
     public static void setRoyalBossArmor(double v) { royalBossArmor = v; }
@@ -2832,6 +2889,10 @@ public final class AntarchySettings {
     public static void setQueenBeamRange(double v) { queenBeamRange = v; }
     public static int queenBeamDurationTicks() { return queenBeamDurationTicks; }
     public static void setQueenBeamDurationTicks(int v) { queenBeamDurationTicks = v; }
+    public static int queenBeamWindupTicks() { return queenBeamWindupTicks; }
+    public static void setQueenBeamWindupTicks(int v) { queenBeamWindupTicks = v; }
+    public static int queenBeamTravelTicks() { return queenBeamTravelTicks; }
+    public static void setQueenBeamTravelTicks(int v) { queenBeamTravelTicks = v; }
     public static int queenBeamCooldownTicks() { return queenBeamCooldownTicks; }
     public static void setQueenBeamCooldownTicks(int v) { queenBeamCooldownTicks = v; }
     public static double queenBeamTracking() { return queenBeamTracking; }
@@ -2846,6 +2907,10 @@ public final class AntarchySettings {
     public static void setKingBeamRange(double v) { kingBeamRange = v; }
     public static int kingBeamDurationTicks() { return kingBeamDurationTicks; }
     public static void setKingBeamDurationTicks(int v) { kingBeamDurationTicks = v; }
+    public static int kingBeamWindupTicks() { return kingBeamWindupTicks; }
+    public static void setKingBeamWindupTicks(int v) { kingBeamWindupTicks = v; }
+    public static int kingBeamTravelTicks() { return kingBeamTravelTicks; }
+    public static void setKingBeamTravelTicks(int v) { kingBeamTravelTicks = v; }
     public static int kingBeamCooldownTicks() { return kingBeamCooldownTicks; }
     public static void setKingBeamCooldownTicks(int v) { kingBeamCooldownTicks = v; }
     public static double kingBeamTracking() { return kingBeamTracking; }

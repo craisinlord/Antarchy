@@ -12,9 +12,11 @@ public final class StandYourGroundDecree implements RoyalDecree {
     public String translationKey() { return "decree.antarchy.stand_your_ground"; }
     public void apply(ServerLevel level, KingEntity king, LivingEntity target) {
         Vec3 anchor = this.anchors.computeIfAbsent(target.getUUID(), ignored -> target.position());
-        if (target.position().distanceToSqr(anchor) > ALLOWED_DRIFT * ALLOWED_DRIFT) {
-            king.invokeJudgment(target);
-        }
+    }
+    @Override public Evaluation evaluate(ServerLevel level, KingEntity king, LivingEntity target) {
+        Vec3 anchor = this.anchors.computeIfAbsent(target.getUUID(), ignored -> target.position());
+        return target.position().distanceToSqr(anchor) > ALLOWED_DRIFT * ALLOWED_DRIFT
+                ? Evaluation.VIOLATED : Evaluation.COMPLIANT;
     }
     @Override
     public void onEnded() {

@@ -58,8 +58,8 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         this.shadowRadius = 8.0F * RoyalBossEntity.MODEL_RENDER_SCALE;
     }
 
-    private static final float BEAM_OUTER_RADIUS = 0.55F;
-    private static final float BEAM_INNER_RADIUS = 0.26F;
+    private static final float BEAM_OUTER_RADIUS = 1.10F;
+    private static final float BEAM_INNER_RADIUS = 0.52F;
     private static final float BEAM_TILE_BLOCKS = 3.0F;
     private static final float BEAM_SCROLL_SPEED = 0.32F;
 
