@@ -49,6 +49,7 @@
     [],
     [
       "antarchy:bluestone_ore",
+      "antarchy:thoraxis_ichor_lake",
       "antarchy:dimensional_tears"
     ],
     [],
@@ -69,7 +70,7 @@
     "monster": [
       {
         "type": "antarchy:scorpion",
-        "weight": 20,
+        "weight": 40,
         "minCount": 2,
         "maxCount": 5
       },

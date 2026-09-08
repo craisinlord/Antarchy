@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.entity.royal;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -35,7 +36,6 @@ import org.jetbrains.annotations.Nullable;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamSettings;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamTerrainMode;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
-import com.craisinlord.antarchy.content.entity.royal.decree.AdvanceDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.CloseQuartersDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.ComeNoCloserDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.DoNotRunDecree;
@@ -50,6 +50,7 @@ import com.craisinlord.antarchy.content.entity.royal.decree.ShowNoMercyDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.SkyIsMineDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.StandTallDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.StandYourGroundDecree;
+import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackLane;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.HashMap;
@@ -79,9 +80,10 @@ public class KingEntity extends RoyalBossEntity {
     private int decreeCooldownTicks;
     private int activeDecreeTicks;
     private int stompCooldownTicks;
-    private int stompWindupTicks;
     private int wingGustCooldownTicks;
-    private int wingGustWindupTicks;
+    private int fireballCooldownTicks = 80;
+    private int iceballCooldownTicks = 120;
+    private int iceSpikeCooldownTicks = 160;
     private boolean decreeRetreatPressure;
     private final Map<UUID, Long> judgmentCooldowns = new HashMap<>();
     private final Map<UUID, Long> lastPlayerDamageTime = new HashMap<>();
@@ -91,9 +93,9 @@ public class KingEntity extends RoyalBossEntity {
     private RoyalDecree activeDecree;
     private static final List<RoyalDecree> DECREES = List.of(
             new SkyIsMineDecree(), new DoNotRunDecree(), new KneelDecree(), new CloseQuartersDecree(),
-            new ComeNoCloserDecree(), new FightMeCowardDecree(), new NoRespiteDecree(), new NoRetreatDecree(),
-            new KeepYourDistanceDecree(), new StandTallDecree(), new StandYourGroundDecree(),
-            new HandsOffTheCrownDecree(), new AdvanceDecree(), new ShowNoMercyDecree());
+            new ComeNoCloserDecree(), new FightMeCowardDecree(), new NoRespiteDecree(),
+            new StandTallDecree(), new StandYourGroundDecree(),
+            new HandsOffTheCrownDecree(), new ShowNoMercyDecree());
 
     public KingEntity(EntityType<? extends KingEntity> entityType, Level level) {
         super(entityType, level);
@@ -134,6 +136,11 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     @Override
+    protected SoundEvent royalFlyLoopSound() {
+        return AntarchySoundEvents.KING_FLY_LOOP.get();
+    }
+
+    @Override
     protected SoundEvent royalBiteSound() {
         return AntarchySoundEvents.KING_BITE.get();
     }
@@ -160,7 +167,7 @@ public class KingEntity extends RoyalBossEntity {
     @Override
     protected RoyalBeamSettings royalBeamSettings() {
         return new RoyalBeamSettings(AntarchySettings.kingBeamRange(), AntarchySettings.kingBeamTracking(), 7.5D,
-                AntarchySettings.kingBeamDurationTicks(), AntarchySettings.kingBeamCooldownTicks(), 6.0F, 6.0F,
+                AntarchySettings.kingBeamDurationTicks(), AntarchySettings.kingBeamTravelTicks(), AntarchySettings.kingBeamCooldownTicks(), 6.0F, 6.0F,
                 (float) AntarchySettings.kingBeamDamage(), 1.0F, 3, 100.0D,
                 (float) AntarchySettings.kingBeamTerrainRadius(), 4.0F, AntarchySettings.kingBeamTerrainCap(),
                 1.0F, 0.08F, 15.0F, true, true);
@@ -194,13 +201,13 @@ public class KingEntity extends RoyalBossEntity {
             return;
         }
         var particle = switch (head.slot()) {
-            case LEFT -> ParticleTypes.FLAME;
+            case LEFT -> null;
             case CENTER -> ParticleTypes.ELECTRIC_SPARK;
             case RIGHT -> ParticleTypes.SNOWFLAKE;
         };
         Vec3 direction = end.subtract(start);
         double distance = direction.length();
-        if (distance > 0.001D) {
+        if (particle != null && distance > 0.001D) {
             direction = direction.scale(1.0D / distance);
             for (double walked = 0.0D; walked <= distance; walked += 2.5D) {
                 Vec3 point = start.add(direction.scale(walked));
@@ -311,7 +318,7 @@ public class KingEntity extends RoyalBossEntity {
         }
         if (this.patrolCooldownTicks-- <= 0) {
             this.patrolCooldownTicks = 100 + this.random.nextInt(100);
-            this.playSound(AntarchySoundEvents.KING_WING_FLAP.get(), 2.0F, 0.9F + this.random.nextFloat() * 0.15F);
+            this.playRoyalSound(AntarchySoundEvents.KING_WING_FLAP.get(), 0.9F + this.random.nextFloat() * 0.15F);
             double angle = this.random.nextDouble() * Math.PI * 2.0D;
             double radius = 12.0D + this.random.nextDouble() * 18.0D;
             double px = this.patrolCenter.x + Math.cos(angle) * radius;
@@ -347,37 +354,41 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     private void tickKingWholeBody(ServerLevel level, LivingEntity target) {
-        if (this.stompCooldownTicks > 0) this.stompCooldownTicks--;
-        if (this.wingGustCooldownTicks > 0) this.wingGustCooldownTicks--;
-
         boolean skyIsMine = this.activeDecree instanceof SkyIsMineDecree;
         boolean forceFar = this.decreeRetreatPressure
                 || this.activeDecree instanceof ComeNoCloserDecree
                 || this.activeDecree instanceof KeepYourDistanceDecree;
 
-        if (this.stompWindupTicks > 0) {
-            if (--this.stompWindupTicks == 0) {
-                this.performStomp(level, target);
-            }
-        } else if (this.wingGustWindupTicks > 0) {
-            if (--this.wingGustWindupTicks == 0) {
-                this.performWingGust(level, target);
-            }
-        } else {
+        {
             double distance = target.distanceTo(this);
-            if (this.stompCooldownTicks <= 0 && (distance <= STOMP_RADIUS || skyIsMine)) {
-                this.stompCooldownTicks = skyIsMine ? STOMP_COOLDOWN_TICKS / 2 : STOMP_COOLDOWN_TICKS;
-                this.stompWindupTicks = STOMP_WINDUP_TICKS;
-                this.triggerAnim("body_action", "stomp");
-                this.playSound(AntarchySoundEvents.KING_ROAR.get(), 3.0F, 0.7F);
+            if (this.attackScheduler.ready("stomp", RoyalAttackLane.BODY)
+                    && (distance <= STOMP_RADIUS || skyIsMine)
+                    && this.beginRoyalAttack("stomp", RoyalAttackLane.BODY,
+                    skyIsMine ? STOMP_COOLDOWN_TICKS / 2 : STOMP_COOLDOWN_TICKS,
+                    STOMP_WINDUP_TICKS, 1, 18, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                        @Override public void onStart() {
+                            KingEntity.this.triggerAnim("body_action", "stomp");
+                            KingEntity.this.playRoyalSound(AntarchySoundEvents.KING_ROAR.get(), 0.7F);
+                        }
+                        @Override public void onActive(int elapsedTicks) {
+                            KingEntity.this.performStomp(level, target);
+                        }
+                    })) {
                 if (skyIsMine) {
                     this.getMoveControl().setWantedPosition(this.getX(), target.getY(), this.getZ(), 1.2D);
                 }
-            } else if (this.wingGustCooldownTicks <= 0 && distance <= WING_GUST_RADIUS && (forceFar || this.random.nextInt(3) == 0)) {
-                this.wingGustCooldownTicks = WING_GUST_COOLDOWN_TICKS;
-                this.wingGustWindupTicks = WING_GUST_WINDUP_TICKS;
-                this.triggerAnim("body_action", "wing_gust");
-                this.playSound(AntarchySoundEvents.KING_WING_FLAP.get(), 3.0F, 0.85F);
+            } else if (this.attackScheduler.ready("wing_gust", RoyalAttackLane.BODY)
+                    && distance <= WING_GUST_RADIUS && (forceFar || this.random.nextInt(3) == 0)
+                    && this.beginRoyalAttack("wing_gust", RoyalAttackLane.BODY, WING_GUST_COOLDOWN_TICKS,
+                    WING_GUST_WINDUP_TICKS, 1, 16, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                        @Override public void onStart() {
+                            KingEntity.this.triggerAnim("body_action", "wing_gust");
+                            KingEntity.this.playRoyalSound(AntarchySoundEvents.KING_WING_FLAP.get(), 0.85F);
+                        }
+                        @Override public void onActive(int elapsedTicks) {
+                            KingEntity.this.performWingGust(level, target);
+                        }
+                    })) {
             }
         }
 
@@ -387,6 +398,101 @@ public class KingEntity extends RoyalBossEntity {
             double az = this.getZ() + away.z;
             double ay = this.groundYBelow(ax, az) + FLYING_PREFERRED_HOVER + 6.0D;
             this.getMoveControl().setWantedPosition(ax, ay, az, 1.3D);
+        }
+
+        this.tickKingElementalProjectiles(level, target);
+    }
+
+    private void tickKingElementalProjectiles(ServerLevel level, LivingEntity target) {
+        if (this.fireballCooldownTicks > 0) this.fireballCooldownTicks--;
+        if (this.iceballCooldownTicks > 0) this.iceballCooldownTicks--;
+        if (this.iceSpikeCooldownTicks > 0) this.iceSpikeCooldownTicks--;
+
+        double distance = this.distanceTo(target);
+        String[] candidates = {"fireball", "iceball", "ice_spikes"};
+        String selected = this.attackScheduler.chooseWeighted(candidates, id -> {
+            boolean ready = switch (id) {
+                case "fireball" -> distance >= 14.0D && distance <= 48.0D && this.fireballCooldownTicks <= 0
+                        && this.royalHead(RoyalHead.Slot.LEFT).readyToAttack();
+                case "iceball" -> distance >= 10.0D && distance <= 42.0D && this.iceballCooldownTicks <= 0
+                        && this.royalHead(RoyalHead.Slot.RIGHT).readyToAttack();
+                default -> distance <= 36.0D && this.iceSpikeCooldownTicks <= 0
+                        && this.royalHead(RoyalHead.Slot.RIGHT).readyToAttack();
+            };
+            if (!ready) return 0;
+            return switch (id) {
+                case "fireball" -> this.behaviorScore(Behavior.KEEPING_FAR) + 4;
+                case "iceball" -> this.behaviorScore(Behavior.RETREATING) + 4;
+                default -> this.behaviorScore(Behavior.HUGGING) + 3;
+            };
+        }, this.random);
+        if (selected == null) return;
+        if ("fireball".equals(selected)) {
+            if (!this.beginRoyalAttack("fireball", RoyalAttackLane.LEFT_HEAD,
+                    AntarchySettings.kingFireballCooldownTicks(), 14, 1, 5,
+                    new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                        @Override public void onStart() {
+                            KingEntity.this.triggerAnim(RoyalHead.Slot.LEFT.controllerName(), "shoot");
+                        }
+                        @Override public void onActive(int elapsedTicks) {
+                            Vec3 origin = KingEntity.this.headAnchor(KingEntity.this.royalHead(RoyalHead.Slot.LEFT));
+                            Vec3 predicted = target.position().add(target.getDeltaMovement().scale(10.0D));
+                            Vec3 direction = predicted.add(0.0D, target.getBbHeight() * 0.5D, 0.0D).subtract(origin).normalize();
+                            RoyalElementalProjectileEntity fireball = RoyalElementalProjectileEntity.create(level, KingEntity.this,
+                                    RoyalBeamElement.FIRE, origin, direction);
+                            level.addFreshEntity(fireball);
+                            KingEntity.this.playRoyalSound(AntarchySoundEvents.KING_FIREBALL_SHOOT.get(), 0.9F);
+                        }
+                    })) return;
+            this.fireballCooldownTicks = AntarchySettings.kingFireballCooldownTicks();
+        } else if ("iceball".equals(selected)) {
+            if (!this.beginRoyalAttack("iceball", RoyalAttackLane.RIGHT_HEAD,
+                    AntarchySettings.kingIceballCooldownTicks(), 16, 1, 5,
+                    new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                        @Override public void onStart() {
+                            KingEntity.this.triggerAnim(RoyalHead.Slot.RIGHT.controllerName(), "shoot");
+                        }
+                        @Override public void onActive(int elapsedTicks) {
+                            Vec3 origin = KingEntity.this.headAnchor(KingEntity.this.royalHead(RoyalHead.Slot.RIGHT));
+                            Vec3 direction = target.getEyePosition().subtract(origin).normalize();
+                            RoyalElementalProjectileEntity iceball = RoyalElementalProjectileEntity.create(level, KingEntity.this,
+                                    RoyalBeamElement.ICE, origin, direction);
+                            level.addFreshEntity(iceball);
+                            KingEntity.this.playRoyalSound(AntarchySoundEvents.KING_BEAM_SHOOT.get(), 1.2F);
+                        }
+                    })) return;
+            this.iceballCooldownTicks = AntarchySettings.kingIceballCooldownTicks();
+        } else {
+            if (!this.beginRoyalAttack("ice_spikes", RoyalAttackLane.RIGHT_HEAD,
+                    AntarchySettings.kingIceSpikeCooldownTicks(), 20, 1, 5,
+                    new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                        @Override public void onStart() {
+                            KingEntity.this.triggerAnim(RoyalHead.Slot.RIGHT.controllerName(), "shoot");
+                        }
+                        @Override public void onActive(int elapsedTicks) {
+                            KingEntity.this.raiseIceSpikes(level, target);
+                            KingEntity.this.playRoyalSound(AntarchySoundEvents.KING_BEAM_SHOOT.get(), 0.8F);
+                        }
+                    })) return;
+            this.iceSpikeCooldownTicks = AntarchySettings.kingIceSpikeCooldownTicks();
+        }
+    }
+
+    private void raiseIceSpikes(ServerLevel level, LivingEntity target) {
+        Vec3 start = this.position();
+        Vec3 end = target.position();
+        Vec3 line = end.subtract(start).multiply(1.0D, 0.0D, 1.0D);
+        if (line.lengthSqr() < 1.0E-4D) return;
+        line = line.normalize();
+        Vec3 side = new Vec3(-line.z, 0.0D, line.x);
+        for (int i = 1; i <= 5; i++) {
+            double distance = i * 4.0D;
+            for (int lane = -1; lane <= 1; lane++) {
+                Vec3 point = start.add(line.scale(distance)).add(side.scale(lane * (i % 2 == 0 ? 2.0D : 0.0D)));
+                double y = this.groundYBelow(point.x, point.z) + 0.1D;
+                RoyalIceSpikeEntity spike = RoyalIceSpikeEntity.create(level, new Vec3(point.x, y, point.z));
+                level.addFreshEntity(spike);
+            }
         }
     }
 
@@ -406,7 +512,7 @@ public class KingEntity extends RoyalBossEntity {
         RoyalBlockDestruction.destroySphere(level, this,
                 new Vec3(this.getX(), this.getY(), this.getZ()), STOMP_RADIUS * 0.5D, 96, 80.0D, 0.15F);
         level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, this.getX(), this.getY(), this.getZ(), 6, 4.0D, 0.5D, 4.0D, 0.0D);
-        this.playSound(AntarchySoundEvents.KING_STOMP.get(), 3.5F, 0.8F);
+        this.playRoyalSound(AntarchySoundEvents.KING_STOMP.get(), 0.8F);
     }
 
     private void performWingGust(ServerLevel level, LivingEntity target) {
@@ -434,11 +540,15 @@ public class KingEntity extends RoyalBossEntity {
             if (this.decreeCooldownTicks-- > 0) {
                 return;
             }
+            if (!this.beginRoyalAttack("decree", RoyalAttackLane.DECREE,
+                    AntarchySettings.royalDecreeCooldownTicks(), 300)) {
+                return;
+            }
             this.activeDecreeTicks = 300;
             this.activeDecree = this.pickDecree(target);
             this.decreeRetreatPressure = false;
-            this.playSound(AntarchySoundEvents.KING_DECREE_CAST.get(), 3.0F, 0.9F + this.random.nextFloat() * 0.15F);
-            this.playSound(AntarchySoundEvents.KING_ROAR.get(), 3.0F, 0.8F + this.random.nextFloat() * 0.12F);
+            this.playRoyalSound(AntarchySoundEvents.KING_DECREE_CAST.get(), 0.9F + this.random.nextFloat() * 0.15F);
+            this.playRoyalSound(AntarchySoundEvents.KING_ROAR.get(), 0.8F + this.random.nextFloat() * 0.12F);
             if (target instanceof ServerPlayer player) {
                 player.connection.send(new ClientboundSetTitlesAnimationPacket(5, 300, 10));
                 player.connection.send(new ClientboundSetTitleTextPacket(Component.translatable(this.activeDecree.translationKey())
@@ -452,6 +562,11 @@ public class KingEntity extends RoyalBossEntity {
             level.playSound(null, target.blockPosition(), SoundEvents.BELL_BLOCK, SoundSource.HOSTILE, 0.8F, 1.0F + countdown / 500.0F);
         }
         this.activeDecree.apply(level, this, target);
+        if (this.activeDecree != null
+                && this.activeDecree.evaluate(level, this, target) == RoyalDecree.Evaluation.VIOLATED) {
+            this.failActiveDecree(target);
+            return;
+        }
         if (this.activeDecree != null && --this.activeDecreeTicks <= 0) {
             this.endDecree(target);
         }
@@ -495,6 +610,15 @@ public class KingEntity extends RoyalBossEntity {
         this.endDecree(target);
     }
 
+    /** Resolves a decree violation once, using the existing bounded judgment while the new judgment system is pending. */
+    public void failActiveDecree(@Nullable LivingEntity target) {
+        if (this.activeDecree == null || target == null || !target.isAlive()) {
+            return;
+        }
+        this.invokeJudgment(target);
+        this.endDecree(target);
+    }
+
     public boolean blocksHealing() {
         return this.activeDecree instanceof NoRespiteDecree;
     }
@@ -520,11 +644,11 @@ public class KingEntity extends RoyalBossEntity {
             boolean projectile = source.getDirectEntity() instanceof Projectile;
             this.bumpBehavior(projectile ? Behavior.RANGED : Behavior.HUGGING, 2);
             if (this.activeDecree instanceof CloseQuartersDecree && projectile) {
-                this.invokeJudgment(attacker);
+                this.failActiveDecree(attacker);
             } else if (this.activeDecree instanceof ComeNoCloserDecree && !projectile) {
-                this.invokeJudgment(attacker);
+                this.failActiveDecree(attacker);
             } else if (this.activeDecree instanceof HandsOffTheCrownDecree) {
-                this.invokeJudgment(attacker);
+                this.failActiveDecree(attacker);
             }
         }
         return super.hurt(source, amount);

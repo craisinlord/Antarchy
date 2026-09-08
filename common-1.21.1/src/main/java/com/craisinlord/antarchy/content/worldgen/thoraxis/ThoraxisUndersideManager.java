@@ -35,6 +35,8 @@ public final class ThoraxisUndersideManager {
     private static final int DISCOVERY_INTERVAL_TICKS = 5;
     private static final int SIMULATION_DISTANCE_MARGIN_CHUNKS = 1;
     private static final int MAX_FLIPS_PER_TICK = 8;
+    private static final double SLOW_TICK_WARN_MS = 25.0D;
+    private static final long DIAGNOSTIC_INTERVAL_TICKS = 100L;
     private static final int ENTER_UNDERSIDE_Y = GRAVITY_FLIP_Y - 4;
     private static final int EXIT_UNDERSIDE_Y = GRAVITY_FLIP_Y + 4;
     private static final int FLIP_COOLDOWN_TICKS = 40;
@@ -55,12 +57,20 @@ public final class ThoraxisUndersideManager {
             return;
         }
 
+        long startNanos = System.nanoTime();
         long now = level.getGameTime();
+        int discoveredLiving = 0;
+        int discoveredItems = 0;
         if (now % DISCOVERY_INTERVAL_TICKS == 0L) {
-            tracking.discover(level);
+            DiscoveryStats stats = tracking.discover(level);
+            discoveredLiving = stats.livingEntities();
+            discoveredItems = stats.itemEntities();
         }
 
         int flipsRemaining = MAX_FLIPS_PER_TICK;
+        int refreshedLiving = 0;
+        int flippedItems = 0;
+        int restoredItems = 0;
         for (Entity entity : tracking.entities) {
             if (!entity.isAlive() || entity.isSpectator()) {
                 continue;
@@ -71,6 +81,7 @@ public final class ThoraxisUndersideManager {
                 int threshold = hasEffect ? EXIT_UNDERSIDE_Y : ENTER_UNDERSIDE_Y;
                 if (living.getY() < threshold) {
                     refreshInvertedEffect(living);
+                    refreshedLiving++;
                 }
                 continue;
             }
@@ -94,6 +105,7 @@ public final class ThoraxisUndersideManager {
                     flipsRemaining--;
                     tracking.lastFlipTick.put(uuid, now);
                     AntarchyGravityApi.setForcedGravityDirection(entity, AntarchyGravityDirection.UP, TRANSITION);
+                    flippedItems++;
                 }
                 continue;
             }
@@ -108,6 +120,7 @@ public final class ThoraxisUndersideManager {
                 if (isForcedUp) {
                     tracking.lastFlipTick.put(uuid, now);
                     AntarchyGravityApi.setGravityDirection(entity, AntarchyGravityDirection.DOWN, false, TRANSITION);
+                    restoredItems++;
                 }
             }
         }
@@ -115,26 +128,44 @@ public final class ThoraxisUndersideManager {
         tracking.entities.removeIf(entity -> !entity.isAlive() || entity.isRemoved());
         tracking.forcedItems.removeIf(entity -> !entity.isAlive() || entity.isRemoved());
         tracking.lastFlipTick.entrySet().removeIf(entry -> now - entry.getValue() > FLIP_COOLDOWN_TICKS * 4L);
+
+        double elapsedMs = (System.nanoTime() - startNanos) / 1_000_000.0D;
+        if (elapsedMs >= SLOW_TICK_WARN_MS && now - tracking.lastDiagnosticTick >= DIAGNOSTIC_INTERVAL_TICKS) {
+            tracking.lastDiagnosticTick = now;
+            Antarchy.LOGGER.warn(
+                    "[antarchy-thoraxis] slow underside tick dim={} gameTime={} elapsedMs={} trackedEntities={} forcedItems={} discoveredLiving={} discoveredItems={} refreshedLiving={} flippedItems={} restoredItems={} players={}",
+                    level.dimension().location(), now, elapsedMs, tracking.entities.size(), tracking.forcedItems.size(),
+                    discoveredLiving, discoveredItems, refreshedLiving, flippedItems, restoredItems, level.players().size()
+            );
+        }
     }
 
     private static final class TrackingState {
         private final Set<Entity> entities = Collections.newSetFromMap(new IdentityHashMap<>());
         private final Set<Entity> forcedItems = Collections.newSetFromMap(new IdentityHashMap<>());
         private final Map<UUID, Long> lastFlipTick = new java.util.HashMap<>();
+        private long lastDiagnosticTick = Long.MIN_VALUE / 2L;
 
-        private void discover(ServerLevel level) {
+        private DiscoveryStats discover(ServerLevel level) {
             int radius = (level.getServer().getPlayerList().getSimulationDistance() + SIMULATION_DISTANCE_MARGIN_CHUNKS) * 16;
+            int discoveredLiving = 0;
+            int discoveredItems = 0;
             for (ServerPlayer player : level.players()) {
                 AABB area = new AABB(
                         player.getX() - radius, level.getMinBuildHeight(), player.getZ() - radius,
                         player.getX() + radius, level.getMaxBuildHeight(), player.getZ() + radius
                 );
                 entities.add(player);
-                entities.addAll(level.getEntitiesOfClass(LivingEntity.class, area,
-                        entity -> !entity.isSpectator() && entity.getY() < EXIT_UNDERSIDE_Y));
-                entities.addAll(level.getEntitiesOfClass(ItemEntity.class, area,
-                        entity -> !entity.isSpectator() && entity.getY() < EXIT_UNDERSIDE_Y));
+                java.util.List<LivingEntity> livingEntities = level.getEntitiesOfClass(LivingEntity.class, area,
+                        entity -> !entity.isSpectator() && entity.getY() < EXIT_UNDERSIDE_Y);
+                java.util.List<ItemEntity> itemEntities = level.getEntitiesOfClass(ItemEntity.class, area,
+                        entity -> !entity.isSpectator() && entity.getY() < EXIT_UNDERSIDE_Y);
+                discoveredLiving += livingEntities.size();
+                discoveredItems += itemEntities.size();
+                entities.addAll(livingEntities);
+                entities.addAll(itemEntities);
             }
+            return new DiscoveryStats(discoveredLiving, discoveredItems);
         }
 
         private void clear() {
@@ -147,6 +178,9 @@ public final class ThoraxisUndersideManager {
     private static boolean flipReady(TrackingState tracking, UUID uuid, long now) {
         Long last = tracking.lastFlipTick.get(uuid);
         return last == null || now - last >= FLIP_COOLDOWN_TICKS;
+    }
+
+    private record DiscoveryStats(int livingEntities, int itemEntities) {
     }
 
     public static void applyUndersideInversion(LivingEntity living) {
@@ -183,5 +217,9 @@ public final class ThoraxisUndersideManager {
 
     public static boolean isThoraxis(Level level) {
         return level.dimension().location().equals(THORAXIS_DIMENSION);
+    }
+
+    public static boolean isAboveUndersideExit(Entity entity) {
+        return isThoraxis(entity.level()) && entity.getY() >= EXIT_UNDERSIDE_Y;
     }
 }

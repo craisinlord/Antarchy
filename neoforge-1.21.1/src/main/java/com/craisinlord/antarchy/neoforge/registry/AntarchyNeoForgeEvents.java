@@ -83,10 +83,24 @@ import net.neoforged.neoforge.fluids.FluidInteractionRegistry;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public final class AntarchyNeoForgeEvents {
+    private static final long SERVER_HANG_WARN_NANOS = 5_000_000_000L;
+    private static final long SERVER_IDLE_BUSY_WARN_NANOS = 30_000_000_000L;
+    private static final long SERVER_HANG_REPEAT_NANOS = 30_000_000_000L;
+    private static final double OVERHEAD_INVERSION_WARN_MS = 10.0D;
+    private static final long OVERHEAD_INVERSION_WARN_INTERVAL_TICKS = 100L;
+    private static volatile boolean serverHangWatchdogStarted;
+    private static volatile long serverTickStartNanos;
+    private static volatile long serverTickEndNanos;
+    private static volatile long serverHangLastDumpNanos;
+    private static volatile Thread serverTickThread;
+    private static long lastOverheadInversionWarnTick = Long.MIN_VALUE / 2L;
+
     private AntarchyNeoForgeEvents() {}
 
     public static void register(IEventBus modEventBus) {
         modEventBus.addListener(AntarchyNeoForgeEvents::onCommonSetup);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::beginServerTickWatchdog);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::endServerTickWatchdog);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onMissileSquidDeath);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onPermanentPortalSacrifice);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onLivingBreathe);
@@ -149,6 +163,79 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::registerReloadListeners);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onVillagerTrades);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onWandererTrades);
+    }
+
+    static void beginServerTickWatchdog(ServerTickEvent.Pre event) {
+        ensureServerHangWatchdogStarted();
+        serverTickThread = Thread.currentThread();
+        serverTickStartNanos = System.nanoTime();
+    }
+
+    static void endServerTickWatchdog(ServerTickEvent.Post event) {
+        serverTickEndNanos = System.nanoTime();
+        serverTickStartNanos = 0L;
+    }
+
+    private static synchronized void ensureServerHangWatchdogStarted() {
+        if (serverHangWatchdogStarted) {
+            return;
+        }
+        serverHangWatchdogStarted = true;
+        Thread watchdog = new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(2_000L);
+                } catch (InterruptedException ignored) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+
+                long tickStart = serverTickStartNanos;
+                long tickEnd = serverTickEndNanos;
+                Thread tickThread = serverTickThread;
+                long now = System.nanoTime();
+                if (tickThread == null || now - serverHangLastDumpNanos < SERVER_HANG_REPEAT_NANOS) {
+                    continue;
+                }
+
+                if (tickStart > 0L && now - tickStart >= SERVER_HANG_WARN_NANOS) {
+                    antarchy$dumpServerThreadWatchdog(
+                            "server thread appears hung",
+                            (now - tickStart) / 1_000_000.0D,
+                            tickThread
+                    );
+                    serverHangLastDumpNanos = now;
+                    continue;
+                }
+
+                Thread.State state = tickThread.getState();
+                boolean idleBusy = tickStart <= 0L
+                        && tickEnd > 0L
+                        && now - tickEnd >= SERVER_IDLE_BUSY_WARN_NANOS
+                        && state != Thread.State.WAITING
+                        && state != Thread.State.TIMED_WAITING;
+                if (idleBusy) {
+                    antarchy$dumpServerThreadWatchdog(
+                            "server thread busy outside active tick",
+                            (now - tickEnd) / 1_000_000.0D,
+                            tickThread
+                    );
+                    serverHangLastDumpNanos = now;
+                }
+            }
+        }, "Antarchy Server Hang Watchdog");
+        watchdog.setDaemon(true);
+        watchdog.start();
+    }
+
+    private static void antarchy$dumpServerThreadWatchdog(String message, double elapsedMs, Thread tickThread) {
+        Antarchy.LOGGER.error(
+                "[antarchy-watchdog] {} elapsedMs={} thread={} state={}",
+                message, elapsedMs, tickThread.getName(), tickThread.getState()
+        );
+        for (StackTraceElement element : tickThread.getStackTrace()) {
+            Antarchy.LOGGER.error("[antarchy-watchdog]   at {}", element);
+        }
     }
 
     static void onVillagerTrades(VillagerTradesEvent event) {
@@ -430,6 +517,9 @@ public final class AntarchyNeoForgeEvents {
     }
 
     private static final int ANTIMETAL_INVERTED_REFRESH_TICKS = 20;
+    private static final int ANTIMETAL_INVERTED_REFRESH_THRESHOLD_TICKS = 12;
+    private static final int ANTIMETAL_PLAYER_SCAN_INTERVAL_TICKS = 2;
+    private static final int ANTIMETAL_MOB_SCAN_INTERVAL_TICKS = 10;
 
     static void tickOverheadInversion(EntityTickEvent.Post event) {
         if (!(event.getEntity() instanceof LivingEntity livingEntity)) {
@@ -441,15 +531,54 @@ public final class AntarchyNeoForgeEvents {
         if (livingEntity instanceof Player player && player.isSpectator()) {
             return;
         }
-        if (!isDirectlyBelowAntimetal(livingEntity)) {
+
+        MobEffectInstance existingInverted = livingEntity.getEffect(AntarchyNeoforgeMisc.INVERTED);
+        long gameTime = livingEntity.level().getGameTime();
+        if (!shouldScanOverheadAntimetal(livingEntity, existingInverted, gameTime)) {
             return;
         }
 
-        MobEffectInstance existingInverted = livingEntity.getEffect(AntarchyNeoforgeMisc.INVERTED);
-        if (existingInverted == null || existingInverted.getDuration() <= 5) {
+        long startNanos = System.nanoTime();
+        boolean directlyBelowAntimetal = isDirectlyBelowAntimetal(livingEntity);
+        double elapsedMs = (System.nanoTime() - startNanos) / 1_000_000.0D;
+        if (elapsedMs >= OVERHEAD_INVERSION_WARN_MS
+                && gameTime - lastOverheadInversionWarnTick >= OVERHEAD_INVERSION_WARN_INTERVAL_TICKS) {
+            lastOverheadInversionWarnTick = gameTime;
+            Antarchy.LOGGER.warn(
+                    "[antarchy-gravity] slow overhead antimetal scan targetType={} uuid={} pos=({}, {}, {}) dim={} elapsedMs={} inverted={} forced={} gameTime={}",
+                    livingEntity.getType(), livingEntity.getUUID(), livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(),
+                    livingEntity.level().dimension().location(), elapsedMs,
+                    com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.isGravityInverted(livingEntity),
+                    com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.isGravityForced(livingEntity),
+                    gameTime
+            );
+        }
+        if (!directlyBelowAntimetal) {
+            return;
+        }
+
+        if (existingInverted == null || existingInverted.getDuration() <= ANTIMETAL_INVERTED_REFRESH_THRESHOLD_TICKS) {
+            if (livingEntity instanceof Player || livingEntity.level().dimension().location().toString().equals("antarchy:thoraxis")) {
+                Antarchy.LOGGER.info(
+                        "[antarchy-gravity] overhead antimetal applying inverted effect targetType={} uuid={} pos=({}, {}, {}) dim={} existingDuration={} gameTime={}",
+                        livingEntity.getType(), livingEntity.getUUID(), livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(),
+                        livingEntity.level().dimension().location(),
+                        existingInverted != null ? existingInverted.getDuration() : -1,
+                        gameTime
+                );
+            }
             livingEntity.addEffect(new MobEffectInstance(AntarchyNeoforgeMisc.INVERTED, ANTIMETAL_INVERTED_REFRESH_TICKS, 0, false, false, false));
             spawnAntimetalInversionParticles(livingEntity);
         }
+    }
+
+    private static boolean shouldScanOverheadAntimetal(LivingEntity entity, MobEffectInstance existingInverted, long gameTime) {
+        if (existingInverted != null && existingInverted.getDuration() <= ANTIMETAL_INVERTED_REFRESH_THRESHOLD_TICKS) {
+            return true;
+        }
+        int interval = entity instanceof Player ? ANTIMETAL_PLAYER_SCAN_INTERVAL_TICKS : ANTIMETAL_MOB_SCAN_INTERVAL_TICKS;
+        long phase = (long) entity.getUUID().hashCode() + gameTime;
+        return Math.floorMod(phase, interval) == 0L;
     }
 
     private static boolean isInOrBelowAntimetalScaffolding(LivingEntity entity) {
@@ -484,18 +613,16 @@ public final class AntarchyNeoForgeEvents {
 
         int minX = net.minecraft.util.Mth.floor(bounds.minX);
         int maxX = net.minecraft.util.Mth.floor(bounds.maxX);
-        int minY = net.minecraft.util.Mth.floor(bounds.minY);
         int maxY = net.minecraft.util.Mth.floor(bounds.maxY);
         int minZ = net.minecraft.util.Mth.floor(bounds.minZ);
         int maxZ = net.minecraft.util.Mth.floor(bounds.maxZ);
 
+        net.minecraft.core.BlockPos.MutableBlockPos crystalPos = new net.minecraft.core.BlockPos.MutableBlockPos();
         for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; y <= maxY; y++) {
-                for (int z = minZ; z <= maxZ; z++) {
-                    net.minecraft.core.BlockPos crystalPos = new net.minecraft.core.BlockPos(x, y + 1, z);
-                    if (entity.level().getBlockState(crystalPos).is(com.craisinlord.antarchy.content.AntarchyTags.Blocks.ANTIMETAL_INVERSION_BLOCKS)) {
-                        return true;
-                    }
+            for (int z = minZ; z <= maxZ; z++) {
+                crystalPos.set(x, maxY + 1, z);
+                if (entity.level().getBlockState(crystalPos).is(com.craisinlord.antarchy.content.AntarchyTags.Blocks.ANTIMETAL_INVERSION_BLOCKS)) {
+                    return true;
                 }
             }
         }
@@ -1146,6 +1273,10 @@ public final class AntarchyNeoForgeEvents {
         event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.TITANIUM_NUGGET.get(), AntarchyNeoforgeMisc.GROWING);
         event.getBuilder().addMix(AntarchyNeoforgeMisc.GROWING, Items.GLOWSTONE_DUST, AntarchyNeoforgeMisc.STRONG_GROWING);
         event.getBuilder().addMix(AntarchyNeoforgeMisc.STRONG_GROWING, Items.GLOWSTONE_DUST, AntarchyNeoforgeMisc.EXTREME_GROWING);
+        event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.KING_SCALE.get(), AntarchyNeoforgeMisc.COMMAND);
+        event.getBuilder().addMix(AntarchyNeoforgeMisc.COMMAND, Items.REDSTONE, AntarchyNeoforgeMisc.LONG_COMMAND);
+        event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.QUEEN_SCALE.get(), AntarchyNeoforgeMisc.TIME_DILATION);
+        event.getBuilder().addMix(AntarchyNeoforgeMisc.TIME_DILATION, Items.REDSTONE, AntarchyNeoforgeMisc.LONG_TIME_DILATION);
 
     }
 

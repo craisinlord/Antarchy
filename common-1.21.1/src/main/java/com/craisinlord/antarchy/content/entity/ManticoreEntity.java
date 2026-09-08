@@ -1,8 +1,11 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
@@ -87,6 +90,11 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         super(type, level);
         this.moveControl = new FlyingMoveControl(this, 10, true);
         this.xpReward = 12;
+    }
+
+    @Override
+    public boolean fireImmune() {
+        return true;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -205,6 +213,8 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         if (this.level().isClientSide) {
             return;
         }
+
+        this.tickQueenSummonInversionRule();
 
         boolean flying = !this.onGround();
         if (flying != this.wasFlyingLastTick) {
@@ -367,6 +377,24 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         return AntarchyGravityApi.isGravityInverted(entity) ? new Vec3(0.0D, -1.0D, 0.0D) : new Vec3(0.0D, 1.0D, 0.0D);
     }
 
+    private void tickQueenSummonInversionRule() {
+        if (!this.isQueenSummoned() || this.canUseQueenSummonInversion()) {
+            return;
+        }
+        if (this.hasEffect(AntarchyObjects.INVERTED_EFFECT.get())) {
+            this.removeEffect(AntarchyObjects.INVERTED_EFFECT.get());
+        }
+        if (AntarchyGravityApi.isGravityInverted(this) && AntarchyGravityApi.isGravityForced(this)) {
+            AntarchyGravityApi.setGravityDirection(this, AntarchyGravityDirection.DOWN, false);
+        }
+        this.setNoGravity(false);
+    }
+
+    private boolean canUseQueenSummonInversion() {
+        return ThoraxisUndersideManager.isThoraxis(this.level())
+                && this.getY() < ThoraxisUndersideManager.GRAVITY_FLIP_Y + 4;
+    }
+
     void performSting(LivingEntity enemy) {
         this.swing(InteractionHand.MAIN_HAND);
         if (enemy.hurt(this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE))) {
@@ -392,6 +420,14 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     @Override
     public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) {
         return false;
+    }
+
+    @Override
+    public boolean canBeAffected(MobEffectInstance effectInstance) {
+        if (this.isQueenSummoned() && effectInstance.is(AntarchyObjects.INVERTED_EFFECT.get())) {
+            return this.canUseQueenSummonInversion();
+        }
+        return super.canBeAffected(effectInstance);
     }
 
     @Override

@@ -26,10 +26,13 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 public final class RoyalBeamController {
+    private static final int INITIAL_TRACKING_DELAY_TICKS = 8;
     private final Mob owner;
     private Vec3 serverTarget;
     private Vec3 beamEndPosition;
     private int beamTicks;
+    private int beamAgeTicks;
+    private int trackingDelayTicks;
     private int terrainMutationsThisTick;
     private static final int ICE_MUTATIONS_PER_TICK = 3;
     private static final float ICE_IMPACT_RADIUS = 2.0F;
@@ -55,12 +58,15 @@ public final class RoyalBeamController {
         this.serverTarget = target;
         this.beamEndPosition = target;
         this.beamTicks = Math.max(1, durationTicks);
+        this.beamAgeTicks = 0;
+        this.trackingDelayTicks = INITIAL_TRACKING_DELAY_TICKS;
     }
 
     public void stop() {
         this.serverTarget = null;
         this.beamEndPosition = null;
         this.beamTicks = 0;
+        this.beamAgeTicks = 0;
     }
 
     public void tick(
@@ -76,8 +82,11 @@ public final class RoyalBeamController {
         }
 
         this.beamTicks--;
+        this.beamAgeTicks++;
         this.terrainMutationsThisTick = 0;
-        if (target != null && target.isAlive()) {
+        if (this.trackingDelayTicks > 0) {
+            this.trackingDelayTicks--;
+        } else if (target != null && target.isAlive()) {
             Vec3 targetEye = target.getEyePosition();
             this.serverTarget = this.serverTarget == null
                     ? targetEye
@@ -93,7 +102,10 @@ public final class RoyalBeamController {
         if (direction.lengthSqr() < 1.0E-7D) {
             direction = this.owner.getLookAngle();
         }
-        Vec3 clipEnd = shootFrom.add(direction.scale(settings.range()));
+        double committedDistance = Math.min(settings.range(), shootFrom.distanceTo(this.serverTarget));
+        double travelProgress = Mth.clamp(this.beamAgeTicks / (double) settings.travelTicks(), 0.0D, 1.0D);
+        double currentRange = Math.max(settings.pathStep(), committedDistance * travelProgress);
+        Vec3 clipEnd = shootFrom.add(direction.scale(currentRange));
         HitResult hit = this.owner.level().clip(new ClipContext(
                 shootFrom,
                 clipEnd,

@@ -92,6 +92,10 @@ public final class AntarchyFabricContent {
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.TITANIUM_NUGGET.get()), potionHolder(AntarchyFabricMisc.GROWING));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.GROWING), Ingredient.of(Items.GLOWSTONE_DUST), potionHolder(AntarchyFabricMisc.STRONG_GROWING));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.STRONG_GROWING), Ingredient.of(Items.GLOWSTONE_DUST), potionHolder(AntarchyFabricMisc.EXTREME_GROWING));
+            builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.KING_SCALE.get()), potionHolder(AntarchyFabricMisc.COMMAND));
+            builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.COMMAND), Ingredient.of(Items.REDSTONE), potionHolder(AntarchyFabricMisc.LONG_COMMAND));
+            builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.QUEEN_SCALE.get()), potionHolder(AntarchyFabricMisc.TIME_DILATION));
+            builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.TIME_DILATION), Ingredient.of(Items.REDSTONE), potionHolder(AntarchyFabricMisc.LONG_TIME_DILATION));
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.CLOUD_SHARK_FIN.get()), net.minecraft.world.item.alchemy.Potions.SLOW_FALLING);
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.JUMPY_BUG_LEG.get()), Potions.LEAPING);
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.CORNEA_EAR.get()), net.minecraft.world.item.alchemy.Potions.NIGHT_VISION);
@@ -324,6 +328,7 @@ public final class AntarchyFabricContent {
                 AntarchyFabricSounds.KING_ROAR,
                 AntarchyFabricSounds.KING_WING_FLAP,
                 AntarchyFabricSounds.KING_FLY_LOOP,
+                AntarchyFabricSounds.QUEEN_FLY_LOOP,
                 AntarchyFabricSounds.PRINCE_IDLE,
                 AntarchyFabricSounds.PRINCE_BITE,
                 AntarchyFabricSounds.PRINCE_SHOOT,
@@ -360,6 +365,8 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setQueen(() -> AntarchyFabricEntities.QUEEN.get());
         AntarchyObjects.setManticore(() -> AntarchyFabricEntities.MANTICORE.get());
         AntarchyObjects.setRoyalBolt(() -> AntarchyFabricEntities.ROYAL_BOLT.get());
+        AntarchyObjects.setRoyalElementalProjectile(() -> AntarchyFabricEntities.ROYAL_ELEMENTAL_PROJECTILE.get());
+        AntarchyObjects.setRoyalIceSpike(() -> AntarchyFabricEntities.ROYAL_ICE_SPIKE.get());
         AntarchyObjects.setPrinceEgg(() -> AntarchyFabricBlocks.PRINCE_EGG.get());
         AntarchyObjects.setPrincessEgg(() -> AntarchyFabricBlocks.PRINCESS_EGG.get());
         AntarchyObjects.setRoyalEggBlockEntity(() -> AntarchyFabricBlocks.ROYAL_EGG_BLOCK_ENTITY.get());

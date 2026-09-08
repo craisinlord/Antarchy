@@ -137,6 +137,7 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
         vortex.setDamageOverride(AntarchySettings.eyeOfTheStormSurgeDamage());
         vortex.setTravel(dir.scale(SURGE_PROJECTILE_SPEED));
         vortex.setHoming(true);
+        vortex.setBounceOnImpact(true);
         level.addFreshEntity(vortex);
 
         level.playSound(null, origin.x, origin.y, origin.z,

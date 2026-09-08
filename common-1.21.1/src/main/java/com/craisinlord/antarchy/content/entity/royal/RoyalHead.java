@@ -41,10 +41,7 @@ public final class RoyalHead {
 
     private final Slot slot;
     private int targetId = -1;
-    private int attackCooldown;
-    private int biteTicks;
-    private int biteHitTick = -1;
-    private int shootTicks;
+    private boolean shooting;
     private boolean beamActive;
 
     public RoyalHead(Slot slot) {
@@ -68,22 +65,19 @@ public final class RoyalHead {
     }
 
     public boolean busy() {
-        return this.biteTicks > 0 || this.shootTicks > 0 || this.beamActive;
+        return this.shooting || this.beamActive;
     }
 
     public boolean readyToAttack() {
-        return !this.busy() && this.attackCooldown <= 0;
+        return !this.busy();
     }
 
-    public void startBite(int durationTicks, int hitTick, int cooldownTicks) {
-        this.biteTicks = durationTicks;
-        this.biteHitTick = hitTick;
-        this.attackCooldown = cooldownTicks;
+    public void startShoot() {
+        this.shooting = true;
     }
 
-    public void startShoot(int durationTicks, int cooldownTicks) {
-        this.shootTicks = durationTicks;
-        this.attackCooldown = cooldownTicks;
+    public void stopShoot() {
+        this.shooting = false;
     }
 
     public void setBeamActive(boolean beamActive) {
@@ -95,36 +89,12 @@ public final class RoyalHead {
     }
 
     public boolean shooting() {
-        return this.shootTicks > 0;
-    }
-
-    public boolean tickBiteHit() {
-        if (this.biteTicks <= 0) {
-            return false;
-        }
-        this.biteTicks--;
-        boolean hit = this.biteTicks == this.biteHitTick;
-        if (hit) {
-            this.biteHitTick = -1;
-        }
-        return hit;
-    }
-
-    public void tick() {
-        if (this.attackCooldown > 0) {
-            this.attackCooldown--;
-        }
-        if (this.shootTicks > 0) {
-            this.shootTicks--;
-        }
+        return this.shooting;
     }
 
     public void reset() {
         this.targetId = -1;
-        this.attackCooldown = 0;
-        this.biteTicks = 0;
-        this.biteHitTick = -1;
-        this.shootTicks = 0;
+        this.shooting = false;
         this.beamActive = false;
     }
 }

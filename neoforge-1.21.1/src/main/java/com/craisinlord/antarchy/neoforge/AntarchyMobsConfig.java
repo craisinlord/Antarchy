@@ -125,10 +125,17 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue ROYAL_BOSS_BITE_DAMAGE_MULTIPLIER;
     private static final ModConfigSpec.IntValue ROYAL_BOSS_BITE_COOLDOWN_TICKS;
     private static final ModConfigSpec.DoubleValue QUEEN_BEAM_DAMAGE, QUEEN_BEAM_RANGE, QUEEN_BEAM_TRACKING, QUEEN_BEAM_TERRAIN_RADIUS;
-    private static final ModConfigSpec.IntValue QUEEN_BEAM_DURATION_TICKS, QUEEN_BEAM_COOLDOWN_TICKS, QUEEN_BEAM_TERRAIN_CAP;
+    private static final ModConfigSpec.IntValue QUEEN_BEAM_DURATION_TICKS, QUEEN_BEAM_WINDUP_TICKS, QUEEN_BEAM_TRAVEL_TICKS, QUEEN_BEAM_COOLDOWN_TICKS, QUEEN_BEAM_TERRAIN_CAP;
     private static final ModConfigSpec.DoubleValue KING_BEAM_DAMAGE, KING_BEAM_RANGE, KING_BEAM_TRACKING, KING_BEAM_TERRAIN_RADIUS;
-    private static final ModConfigSpec.IntValue KING_BEAM_DURATION_TICKS, KING_BEAM_COOLDOWN_TICKS, KING_BEAM_TERRAIN_CAP;
+    private static final ModConfigSpec.IntValue KING_BEAM_DURATION_TICKS, KING_BEAM_WINDUP_TICKS, KING_BEAM_TRAVEL_TICKS, KING_BEAM_COOLDOWN_TICKS, KING_BEAM_TERRAIN_CAP;
     private static final ModConfigSpec.IntValue ROYAL_DECREE_COOLDOWN_TICKS;
+    private static final ModConfigSpec.DoubleValue QUEEN_BLACK_HOLE_RADIUS, QUEEN_BLACK_HOLE_PULL_STRENGTH,
+            QUEEN_FINAL_TIME_FIELD_RADIUS, QUEEN_FINAL_TIME_FIELD_RATE;
+    private static final ModConfigSpec.IntValue QUEEN_BLACK_HOLE_ACTIVE_TICKS,
+            QUEEN_FINAL_TIME_FIELD_DURATION_TICKS, QUEEN_FINAL_TIME_FIELD_COOLDOWN_TICKS;
+    private static final ModConfigSpec.DoubleValue ROYAL_BOSS_SOUND_VOLUME;
+    private static final ModConfigSpec.DoubleValue KING_FIREBALL_DAMAGE, KING_FIREBALL_RADIUS, KING_ICEBALL_DAMAGE, KING_ICEBALL_RADIUS, KING_ICE_SPIKE_DAMAGE;
+    private static final ModConfigSpec.IntValue KING_FIREBALL_COOLDOWN_TICKS, KING_ICEBALL_COOLDOWN_TICKS, KING_ICE_SPIKE_COOLDOWN_TICKS, KING_ELEMENTAL_TERRAIN_CAP;
 
     // Royal mounts
 
@@ -579,6 +586,8 @@ public final class AntarchyMobsConfig {
         QUEEN_BEAM_DAMAGE = b.defineInRange("queenBeamDamage", 45.0D, 0.0D, 1024.0D);
         QUEEN_BEAM_RANGE = b.defineInRange("queenBeamRange", 100.0D, 1.0D, 256.0D);
         QUEEN_BEAM_DURATION_TICKS = b.defineInRange("queenBeamDurationTicks", 30, 1, 1200);
+        QUEEN_BEAM_WINDUP_TICKS = b.comment("Charge time before the Queen beam actually fires.").defineInRange("queenBeamWindupTicks", 20, 0, 1200);
+        QUEEN_BEAM_TRAVEL_TICKS = b.comment("Time for the Queen beam to extend from its head to its committed range.").defineInRange("queenBeamTravelTicks", 12, 1, 1200);
         QUEEN_BEAM_COOLDOWN_TICKS = b.defineInRange("queenBeamCooldownTicks", 90, 1, 2400);
         QUEEN_BEAM_TRACKING = b.defineInRange("queenBeamTracking", 0.1D, 0.0D, 1.0D);
         QUEEN_BEAM_TERRAIN_RADIUS = b.defineInRange("queenBeamTerrainRadius", 5.0D, 0.0D, 32.0D);
@@ -586,11 +595,30 @@ public final class AntarchyMobsConfig {
         KING_BEAM_DAMAGE = b.defineInRange("kingBeamDamage", 50.0D, 0.0D, 1024.0D);
         KING_BEAM_RANGE = b.defineInRange("kingBeamRange", 100.0D, 1.0D, 256.0D);
         KING_BEAM_DURATION_TICKS = b.defineInRange("kingBeamDurationTicks", 30, 1, 1200);
+        KING_BEAM_WINDUP_TICKS = b.comment("Charge time before the King beam actually fires.").defineInRange("kingBeamWindupTicks", 20, 0, 1200);
+        KING_BEAM_TRAVEL_TICKS = b.comment("Time for the King beam to extend from its head to its committed range.").defineInRange("kingBeamTravelTicks", 12, 1, 1200);
         KING_BEAM_COOLDOWN_TICKS = b.defineInRange("kingBeamCooldownTicks", 90, 1, 2400);
         KING_BEAM_TRACKING = b.defineInRange("kingBeamTracking", 0.1D, 0.0D, 1.0D);
         KING_BEAM_TERRAIN_RADIUS = b.defineInRange("kingBeamTerrainRadius", 5.0D, 0.0D, 32.0D);
         KING_BEAM_TERRAIN_CAP = b.defineInRange("kingBeamTerrainCap", 192, 0, 4096);
         ROYAL_DECREE_COOLDOWN_TICKS = b.comment("Cooldown in ticks between the end of one King decree and the next.").defineInRange("royalDecreeCooldownTicks", 1200, 1, 72000);
+        QUEEN_BLACK_HOLE_RADIUS = b.defineInRange("queenBlackHoleRadius", 14.0D, 1.0D, 64.0D);
+        QUEEN_BLACK_HOLE_ACTIVE_TICKS = b.defineInRange("queenBlackHoleActiveTicks", 120, 20, 1200);
+        QUEEN_BLACK_HOLE_PULL_STRENGTH = b.defineInRange("queenBlackHolePullStrength", 0.16D, 0.0D, 2.0D);
+        QUEEN_FINAL_TIME_FIELD_RADIUS = b.defineInRange("queenFinalTimeFieldRadius", 20.0D, 1.0D, 64.0D);
+        QUEEN_FINAL_TIME_FIELD_RATE = b.defineInRange("queenFinalTimeFieldRate", 0.05D, 0.05D, 1.0D);
+        QUEEN_FINAL_TIME_FIELD_DURATION_TICKS = b.defineInRange("queenFinalTimeFieldDurationTicks", 45, 1, 1200);
+        QUEEN_FINAL_TIME_FIELD_COOLDOWN_TICKS = b.defineInRange("queenFinalTimeFieldCooldownTicks", 80, 1, 2400);
+        KING_FIREBALL_DAMAGE = b.defineInRange("kingFireballDamage", 32.0D, 0.0D, 1024.0D);
+        KING_FIREBALL_RADIUS = b.defineInRange("kingFireballRadius", 4.5D, 0.5D, 32.0D);
+        KING_FIREBALL_COOLDOWN_TICKS = b.defineInRange("kingFireballCooldownTicks", 150, 1, 2400);
+        KING_ICEBALL_DAMAGE = b.defineInRange("kingIceballDamage", 18.0D, 0.0D, 1024.0D);
+        KING_ICEBALL_RADIUS = b.defineInRange("kingIceballRadius", 5.0D, 0.5D, 32.0D);
+        KING_ICEBALL_COOLDOWN_TICKS = b.defineInRange("kingIceballCooldownTicks", 190, 1, 2400);
+        KING_ICE_SPIKE_DAMAGE = b.defineInRange("kingIceSpikeDamage", 24.0D, 0.0D, 1024.0D);
+        KING_ICE_SPIKE_COOLDOWN_TICKS = b.defineInRange("kingIceSpikeCooldownTicks", 240, 1, 2400);
+        KING_ELEMENTAL_TERRAIN_CAP = b.defineInRange("kingElementalTerrainCap", 256, 0, 4096);
+        ROYAL_BOSS_SOUND_VOLUME = b.comment("Volume multiplier for large King and Queen presence, movement, and attack sounds.").defineInRange("royalBossSoundVolume", 4.5D, 0.5D, 16.0D);
         b.pop();
 
         b.push("royalMounts");
@@ -726,8 +754,8 @@ public final class AntarchyMobsConfig {
         b.push("dimensionalTear");
         DIMENSIONAL_TEAR_LIFETIME_TICKS = b.comment("Ticks before naturally generated linked Dimensional Tears collapse.").defineInRange("lifetimeTicks", 24000, 1200, 240000);
         DIMENSIONAL_TEAR_INVERTED_DURATION_TICKS = b.comment("Ticks of Inverted applied to living entities exiting a Dimensional Tear.").defineInRange("invertedDurationTicks", 2400, 0, 240000);
-        DIMENSIONAL_TEAR_EMERGENCE_MIN_INTERVAL_TICKS = b.comment("Minimum ticks between Nightmare/Lucid emergence events per tear.").defineInRange("emergenceMinIntervalTicks", 2400, 20, 240000);
-        DIMENSIONAL_TEAR_EMERGENCE_MAX_INTERVAL_TICKS = b.comment("Maximum ticks between Nightmare/Lucid emergence events per tear.").defineInRange("emergenceMaxIntervalTicks", 7200, 20, 240000);
+        DIMENSIONAL_TEAR_EMERGENCE_MIN_INTERVAL_TICKS = b.comment("Minimum ticks between Nightmare/Lucid emergence events per tear.").defineInRange("emergenceMinIntervalTicks", 400, 20, 240000);
+        DIMENSIONAL_TEAR_EMERGENCE_MAX_INTERVAL_TICKS = b.comment("Maximum ticks between Nightmare/Lucid emergence events per tear.").defineInRange("emergenceMaxIntervalTicks", 1200, 20, 240000);
         DIMENSIONAL_TEAR_LUCID_EVENT_CHANCE = b.comment("Chance that an emergence event spawns a Lucid instead of a Nightmare.").defineInRange("lucidEventChance", 0.65D, 0.0D, 1.0D);
         b.pop();
 
@@ -787,7 +815,7 @@ public final class AntarchyMobsConfig {
         VORTEX_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.22D, 0.0D, 10.0D);
         VORTEX_FLYING_SPEED = b.comment("Base flying speed.").defineInRange("flyingSpeed", 0.35D, 0.0D, 10.0D);
         VORTEX_MAX_ACTIVE_VORTEXES = b.comment("Maximum damaging wind vortexes one Vortex mob can maintain at once.").defineInRange("maxActiveVortexes", 3, 0, 32);
-        WIND_VORTEX_DURATION_TICKS = b.comment("Lifetime in ticks for wind vortexes spawned by Vortex charges or Vortex mobs.").defineInRange("windVortexDurationTicks", 140, 1, 1200);
+        WIND_VORTEX_DURATION_TICKS = b.comment("Lifetime in ticks for wind vortexes spawned by Vortex charges or Vortex mobs.").defineInRange("windVortexDurationTicks", 240, 1, 1200);
         WIND_VORTEX_PULL_STRENGTH = b.comment("How strongly wind vortexes pull entities toward their spiral path.").defineInRange("windVortexPullStrength", 0.32D, 0.0D, 4.0D);
         WIND_VORTEX_LAUNCH_STRENGTH = b.comment("Launch velocity multiplier applied when entities exit the top of a wind vortex.").defineInRange("windVortexLaunchStrength", 1.0D, 0.0D, 4.0D);
         VORTEX_LENS_MIN_RADIUS = b.comment("Top radius at signal strength 1 for Vortex Lens wind vortexes.").defineInRange("vortexLensMinRadius", 1.5D, 0.1D, 64.0D);
@@ -995,6 +1023,8 @@ public final class AntarchyMobsConfig {
     static double  queenBeamDamage()                        { return QUEEN_BEAM_DAMAGE.get(); }
     static double  queenBeamRange()                         { return QUEEN_BEAM_RANGE.get(); }
     static int     queenBeamDurationTicks()                 { return QUEEN_BEAM_DURATION_TICKS.get(); }
+    static int     queenBeamWindupTicks()                   { return QUEEN_BEAM_WINDUP_TICKS.get(); }
+    static int     queenBeamTravelTicks()                   { return QUEEN_BEAM_TRAVEL_TICKS.get(); }
     static int     queenBeamCooldownTicks()                 { return QUEEN_BEAM_COOLDOWN_TICKS.get(); }
     static double  queenBeamTracking()                      { return QUEEN_BEAM_TRACKING.get(); }
     static double  queenBeamTerrainRadius()                 { return QUEEN_BEAM_TERRAIN_RADIUS.get(); }
@@ -1002,11 +1032,30 @@ public final class AntarchyMobsConfig {
     static double  kingBeamDamage()                         { return KING_BEAM_DAMAGE.get(); }
     static double  kingBeamRange()                          { return KING_BEAM_RANGE.get(); }
     static int     kingBeamDurationTicks()                  { return KING_BEAM_DURATION_TICKS.get(); }
+    static int     kingBeamWindupTicks()                    { return KING_BEAM_WINDUP_TICKS.get(); }
+    static int     kingBeamTravelTicks()                    { return KING_BEAM_TRAVEL_TICKS.get(); }
     static int     kingBeamCooldownTicks()                  { return KING_BEAM_COOLDOWN_TICKS.get(); }
     static double  kingBeamTracking()                       { return KING_BEAM_TRACKING.get(); }
     static double  kingBeamTerrainRadius()                  { return KING_BEAM_TERRAIN_RADIUS.get(); }
     static int     kingBeamTerrainCap()                     { return KING_BEAM_TERRAIN_CAP.get(); }
     static int     royalDecreeCooldownTicks()                { return ROYAL_DECREE_COOLDOWN_TICKS.get(); }
+    static double  queenBlackHoleRadius()                    { return QUEEN_BLACK_HOLE_RADIUS.get(); }
+    static int     queenBlackHoleActiveTicks()               { return QUEEN_BLACK_HOLE_ACTIVE_TICKS.get(); }
+    static double  queenBlackHolePullStrength()              { return QUEEN_BLACK_HOLE_PULL_STRENGTH.get(); }
+    static double  queenFinalTimeFieldRadius()               { return QUEEN_FINAL_TIME_FIELD_RADIUS.get(); }
+    static double  queenFinalTimeFieldRate()                 { return QUEEN_FINAL_TIME_FIELD_RATE.get(); }
+    static int     queenFinalTimeFieldDurationTicks()        { return QUEEN_FINAL_TIME_FIELD_DURATION_TICKS.get(); }
+    static int     queenFinalTimeFieldCooldownTicks()        { return QUEEN_FINAL_TIME_FIELD_COOLDOWN_TICKS.get(); }
+    static double  kingFireballDamage()                      { return KING_FIREBALL_DAMAGE.get(); }
+    static double  kingFireballRadius()                      { return KING_FIREBALL_RADIUS.get(); }
+    static int     kingFireballCooldownTicks()               { return KING_FIREBALL_COOLDOWN_TICKS.get(); }
+    static double  kingIceballDamage()                       { return KING_ICEBALL_DAMAGE.get(); }
+    static double  kingIceballRadius()                       { return KING_ICEBALL_RADIUS.get(); }
+    static int     kingIceballCooldownTicks()                { return KING_ICEBALL_COOLDOWN_TICKS.get(); }
+    static double  kingIceSpikeDamage()                      { return KING_ICE_SPIKE_DAMAGE.get(); }
+    static int     kingIceSpikeCooldownTicks()               { return KING_ICE_SPIKE_COOLDOWN_TICKS.get(); }
+    static int     kingElementalTerrainCap()                 { return KING_ELEMENTAL_TERRAIN_CAP.get(); }
+    static double  royalBossSoundVolume()                    { return ROYAL_BOSS_SOUND_VOLUME.get(); }
 
     static int     royalEggHatchChance()                      { return ROYAL_EGG_HATCH_CHANCE.get(); }
     static double  royalBoltDamage()                          { return ROYAL_BOLT_DAMAGE.get(); }

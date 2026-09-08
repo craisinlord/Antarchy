@@ -29,12 +29,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class DiamondMinecartEntity extends Minecart {
+    private static final long INPUT_TIMEOUT_TICKS = 5L;
     private static final EntityDataAccessor<Float> SYNCED_SPEED =
             SynchedEntityData.defineId(DiamondMinecartEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> SYNCED_FACING =
             SynchedEntityData.defineId(DiamondMinecartEntity.class, EntityDataSerializers.INT);
 
     private byte inputFlags = 0;
+    private long lastInputGameTime = Long.MIN_VALUE;
     private float currentSpeed = 0.0F;
     private Direction facingDir = Direction.SOUTH;
     private BlockPos lastBlockPos = null;
@@ -109,19 +111,38 @@ public class DiamondMinecartEntity extends Minecart {
 
     @Override
     protected double getMaxSpeed() {
-        return 0.4D;
+        return AntarchySettings.diamondMinecartEnabled()
+                ? AntarchySettings.diamondMinecartMaxSpeed()
+                : 0.4D;
     }
 
     public void onInputReceived(byte flags) {
         this.inputFlags = flags;
+        this.lastInputGameTime = this.level().getGameTime();
     }
 
     @Override
     public void tick() {
         super.tick();
+        if (!this.level().isClientSide) {
+            this.serverTick();
+        }
     }
 
     private void serverTick() {
+        if (!AntarchySettings.diamondMinecartEnabled()) {
+            this.inputFlags = 0;
+            this.lastInputGameTime = Long.MIN_VALUE;
+            this.currentSpeed = 0.0F;
+            this.entityData.set(SYNCED_SPEED, 0.0F);
+            this.setDeltaMovement(0.0D, this.getDeltaMovement().y, 0.0D);
+            return;
+        }
+
+        if (this.level().getGameTime() - this.lastInputGameTime > INPUT_TIMEOUT_TICKS) {
+            this.inputFlags = 0;
+        }
+
         Player rider = this.getRidingPlayer();
         boolean hasRider = rider != null;
 
@@ -176,6 +197,17 @@ public class DiamondMinecartEntity extends Minecart {
         if (AntarchySettings.diamondMinecartMobDamageEnabled() && this.currentSpeed > 0.15F && hasRider) {
             this.applyMobCollisionDamage();
         }
+
+        this.applyControlledVelocity();
+    }
+
+    private void applyControlledVelocity() {
+        double speed = this.currentSpeed;
+        this.setDeltaMovement(
+                this.facingDir.getStepX() * speed,
+                this.getDeltaMovement().y,
+                this.facingDir.getStepZ() * speed
+        );
     }
 
     private void onEnteredNewBlock(BlockPos currentPos, @Nullable Player rider) {

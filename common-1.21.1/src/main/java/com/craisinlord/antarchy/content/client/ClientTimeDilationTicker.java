@@ -10,6 +10,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.Mth;
 
 public final class ClientTimeDilationTicker {
@@ -32,6 +33,11 @@ public final class ClientTimeDilationTicker {
             com.craisinlord.antarchy.content.time.TimeDilationApi.clearSyncedClientRates();
         }
         // Entity rates come from the server. Field snapshots are used only for local effects.
+        for (Player player : level.players()) {
+            if (player.isDeadOrDying() || rateAt(player.getX(), player.getY(), player.getZ()) >= TimeDilationMath.NORMAL_RATE) {
+                com.craisinlord.antarchy.content.time.TimeDilationApi.clearRate(player);
+            }
+        }
     }
 
     public static float dilateAnimationTime(Entity entity, float vanillaTime) {

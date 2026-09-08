@@ -512,6 +512,7 @@ public final class AntarchyFabricEntities {
             () -> EntityType.Builder.of(ScorpionEntity::new, MobCategory.MONSTER)
                     .sized(1.5F, 1.0F)
                     .clientTrackingRange(8)
+                    .fireImmune()
                     .build("scorpion"));
 
 
@@ -526,6 +527,7 @@ public final class AntarchyFabricEntities {
             () -> EntityType.Builder.of(EmperorScorpionEntity::new, MobCategory.MONSTER)
                     .sized(6.0F, 3.0F)
                     .clientTrackingRange(12)
+                    .fireImmune()
                     .build("emperor_scorpion"));
 
 
@@ -613,6 +615,7 @@ public final class AntarchyFabricEntities {
             () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.ManticoreEntity::new, MobCategory.MONSTER)
                     .sized(1.95F, 2.0F)
                     .clientTrackingRange(10)
+                    .fireImmune()
                     .build("manticore"));
 
 
@@ -678,6 +681,18 @@ public final class AntarchyFabricEntities {
                     .clientTrackingRange(8)
                     .updateInterval(1)
                     .fireImmune().build("royal_bolt"));
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalElementalProjectileEntity>> ROYAL_ELEMENTAL_PROJECTILE = ENTITY_TYPES.register("royal_elemental_projectile",
+            () -> EntityType.Builder.<com.craisinlord.antarchy.content.entity.royal.RoyalElementalProjectileEntity>of(com.craisinlord.antarchy.content.entity.royal.RoyalElementalProjectileEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 1.0F)
+                    .clientTrackingRange(16)
+                    .updateInterval(1)
+                    .fireImmune().build("royal_elemental_projectile"));
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalIceSpikeEntity>> ROYAL_ICE_SPIKE = ENTITY_TYPES.register("royal_ice_spike",
+            () -> EntityType.Builder.<com.craisinlord.antarchy.content.entity.royal.RoyalIceSpikeEntity>of(com.craisinlord.antarchy.content.entity.royal.RoyalIceSpikeEntity::new, MobCategory.MISC)
+                    .sized(2.0F, 4.0F)
+                    .clientTrackingRange(16)
+                    .updateInterval(1)
+                    .fireImmune().build("royal_ice_spike"));
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity>> OURANWOOD_DEER = ENTITY_TYPES.register("ouranwood_deer",

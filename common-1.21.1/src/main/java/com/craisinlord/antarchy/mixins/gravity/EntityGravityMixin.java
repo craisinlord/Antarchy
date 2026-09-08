@@ -5,10 +5,16 @@ import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
+import com.craisinlord.antarchy.content.entity.BedBugEntity;
+import com.craisinlord.antarchy.content.entity.portal.DimensionalTearEntity;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;
@@ -71,6 +77,51 @@ public abstract class EntityGravityMixin implements AntarchyGravityAccess {
         this.antarchy$gravityForced = tag.getBoolean(ANTARCHY_GRAVITY_FORCED_TAG);
         this.antarchy$gravityTransitionDuration = Math.max(0, tag.getInt(ANTARCHY_GRAVITY_TRANSITION_DURATION_TAG));
         this.antarchy$gravityTransitionRemaining = Math.max(0, tag.getInt(ANTARCHY_GRAVITY_TRANSITION_REMAINING_TAG));
+
+        Entity entity = this.antarchy$entity();
+        if (this.antarchy$gravityDirection.isInverted() && this.antarchy$gravityForced
+                && entity instanceof Mob mob) {
+            MobEffectInstance invertedEffect = mob.getEffect(com.craisinlord.antarchy.content.AntarchyObjects.INVERTED_EFFECT.get());
+            boolean aboveUndersideExit = ThoraxisUndersideManager.isAboveUndersideExit(mob);
+            int nearbyDimensionalTears = this.antarchy$countNearbyDimensionalTears(mob);
+            if (invertedEffect != null
+                    && invertedEffect.isAmbient()
+                    && !invertedEffect.isVisible()
+                    && aboveUndersideExit) {
+                this.antarchy$clearLoadedInversion(mob);
+                com.craisinlord.antarchy.Antarchy.LOGGER.warn(
+                        "[antarchy-gravity] cleared stale underside inversion from loaded mob type={} uuid={} pos=({}, {}, {}) dim={} effectDuration={} nearbyDimensionalTears={}",
+                        mob.getType(), mob.getUUID(), mob.getX(), mob.getY(), mob.getZ(),
+                        mob.level() != null ? mob.level().dimension().location() : "?",
+                        invertedEffect.getDuration(), nearbyDimensionalTears
+                );
+                return;
+            }
+            if (invertedEffect != null
+                    && mob instanceof BedBugEntity
+                    && aboveUndersideExit
+                    && ThoraxisUndersideManager.isThoraxis(mob.level())) {
+                this.antarchy$clearLoadedInversion(mob);
+                com.craisinlord.antarchy.Antarchy.LOGGER.warn(
+                        "[antarchy-gravity] cleared loaded inverted bed bug above underside exit type={} uuid={} pos=({}, {}, {}) dim={} effectDuration={} effectAmbient={} effectVisible={} nearbyDimensionalTears={}",
+                        mob.getType(), mob.getUUID(), mob.getX(), mob.getY(), mob.getZ(),
+                        mob.level() != null ? mob.level().dimension().location() : "?",
+                        invertedEffect.getDuration(), invertedEffect.isAmbient(), invertedEffect.isVisible(), nearbyDimensionalTears
+                );
+                return;
+            }
+            com.craisinlord.antarchy.Antarchy.LOGGER.info(
+                    "[antarchy-gravity] loaded inverted mob type={} uuid={} pos=({}, {}, {}) dim={} hasInvertedEffect={} effectDuration={} effectAmbient={} effectVisible={} aboveUndersideExit={} nearbyDimensionalTears={}",
+                    mob.getType(), mob.getUUID(), mob.getX(), mob.getY(), mob.getZ(),
+                    mob.level() != null ? mob.level().dimension().location() : "?",
+                    invertedEffect != null,
+                    invertedEffect != null ? invertedEffect.getDuration() : -1,
+                    invertedEffect != null && invertedEffect.isAmbient(),
+                    invertedEffect != null && invertedEffect.isVisible(),
+                    aboveUndersideExit,
+                    nearbyDimensionalTears
+            );
+        }
     }
 
     @Inject(method = "baseTick", at = @At("TAIL"))
@@ -134,6 +185,11 @@ public abstract class EntityGravityMixin implements AntarchyGravityAccess {
         }
 
         this.antarchy$gravityForced = forced;
+        if (changed && this.antarchy$entity() instanceof Mob mob) {
+            // Any existing path is expressed in the previous gravity frame.
+            // Keep goals from following stale nodes after a flip.
+            mob.getNavigation().stop();
+        }
         if (changed && !this.antarchy$entity().level().isClientSide) {
             AntarchyGravityApi.notifyGravityStateChanged(this.antarchy$entity());
         }
@@ -170,6 +226,29 @@ public abstract class EntityGravityMixin implements AntarchyGravityAccess {
     @Unique
     private void antarchy$refreshGravityBounds() {
         this.setBoundingBox(this.makeBoundingBox());
+    }
+
+    @Unique
+    private void antarchy$clearLoadedInversion(Mob mob) {
+        mob.removeEffect(com.craisinlord.antarchy.content.AntarchyObjects.INVERTED_EFFECT.get());
+        this.antarchy$gravityDirection = AntarchyGravityDirection.DOWN;
+        this.antarchy$prevGravityDirection = AntarchyGravityDirection.DOWN;
+        this.antarchy$gravityForced = false;
+        this.antarchy$gravityTransitionDuration = 0;
+        this.antarchy$gravityTransitionRemaining = 0;
+        this.antarchy$refreshGravityBounds();
+    }
+
+    @Unique
+    private int antarchy$countNearbyDimensionalTears(Mob mob) {
+        if (!(mob.level() instanceof ServerLevel serverLevel)) {
+            return -1;
+        }
+        return serverLevel.getEntitiesOfClass(
+                DimensionalTearEntity.class,
+                mob.getBoundingBox().inflate(48.0D),
+                Entity::isAlive
+        ).size();
     }
 
     @Unique

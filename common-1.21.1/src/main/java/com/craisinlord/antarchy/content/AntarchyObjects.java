@@ -157,6 +157,10 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBoltEntity>> ROYAL_BOLT = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBoltEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalElementalProjectileEntity>> ROYAL_ELEMENTAL_PROJECTILE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalElementalProjectileEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalIceSpikeEntity>> ROYAL_ICE_SPIKE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalIceSpikeEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.KingEntity>> KING = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.KingEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.QueenEntity>> QUEEN = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.QueenEntity>>) UNBOUND;
@@ -723,6 +727,14 @@ public final class AntarchyObjects {
 
     public static void setRoyalBolt(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBoltEntity>> supplier) {
         ROYAL_BOLT = supplier;
+    }
+
+    public static void setRoyalElementalProjectile(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalElementalProjectileEntity>> supplier) {
+        ROYAL_ELEMENTAL_PROJECTILE = supplier;
+    }
+
+    public static void setRoyalIceSpike(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalIceSpikeEntity>> supplier) {
+        ROYAL_ICE_SPIKE = supplier;
     }
 
     public static void setKing(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.KingEntity>> supplier) {

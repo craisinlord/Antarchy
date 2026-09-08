@@ -13,4 +13,8 @@ public final class FightMeCowardDecree implements RoyalDecree {
             target.hasImpulse = true;
         }
     }
+    @Override
+    public Evaluation evaluate(ServerLevel level, KingEntity king, LivingEntity target) {
+        return target.distanceTo(king) > 28.0D ? Evaluation.VIOLATED : Evaluation.COMPLIANT;
+    }
 }

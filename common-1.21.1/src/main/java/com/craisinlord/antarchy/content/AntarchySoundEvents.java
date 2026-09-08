@@ -202,6 +202,7 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> KING_ROAR = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> KING_WING_FLAP = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> KING_FLY_LOOP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_FLY_LOOP = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> PRINCE_IDLE = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> PRINCE_BITE = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> PRINCE_SHOOT = (Supplier<SoundEvent>) UNBOUND;
@@ -406,6 +407,7 @@ public final class AntarchySoundEvents {
             Supplier<SoundEvent> kingRoar,
             Supplier<SoundEvent> kingWingFlap,
             Supplier<SoundEvent> kingFlyLoop,
+            Supplier<SoundEvent> queenFlyLoop,
             Supplier<SoundEvent> princeIdle,
             Supplier<SoundEvent> princeBite,
             Supplier<SoundEvent> princeShoot,
@@ -606,6 +608,7 @@ public final class AntarchySoundEvents {
         KING_ROAR = kingRoar;
         KING_WING_FLAP = kingWingFlap;
         KING_FLY_LOOP = kingFlyLoop;
+        QUEEN_FLY_LOOP = queenFlyLoop;
         PRINCE_IDLE = princeIdle;
         PRINCE_BITE = princeBite;
         PRINCE_SHOOT = princeShoot;

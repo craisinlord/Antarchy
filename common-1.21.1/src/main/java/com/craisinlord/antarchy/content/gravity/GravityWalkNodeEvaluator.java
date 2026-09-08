@@ -1,6 +1,8 @@
 package com.craisinlord.antarchy.content.gravity;
 
 import net.minecraft.util.Mth;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.PathNavigationRegion;
 import net.minecraft.world.level.pathfinder.Node;
@@ -9,6 +11,11 @@ import net.minecraft.world.level.pathfinder.PathfindingContext;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 
 public class GravityWalkNodeEvaluator extends WalkNodeEvaluator {
+    private static final long LOG_TIME_THRESHOLD_NANOS = 25_000_000L;
+
+    private long antarchy$prepareStartNanos;
+    private int antarchy$nodeProbeCount;
+
     private static final int[] START_Y_SEARCH = {0, 1, -1, 2, -2};
     private static final int[][] INVERTED_CARDINAL_NEIGHBOR_OFFSETS = {
             {1, 0, 0},
@@ -26,10 +33,23 @@ public class GravityWalkNodeEvaluator extends WalkNodeEvaluator {
     @Override
     public void prepare(PathNavigationRegion sourceIn, Mob mob) {
         super.prepare(sourceIn, mob);
+        this.antarchy$prepareStartNanos = System.nanoTime();
+        this.antarchy$nodeProbeCount = 0;
     }
 
     @Override
     public void done() {
+        if (this.mob != null && AntarchyGravityApi.isGravityInverted(this.mob)) {
+            long elapsedNanos = System.nanoTime() - this.antarchy$prepareStartNanos;
+            if (elapsedNanos > LOG_TIME_THRESHOLD_NANOS) {
+                com.craisinlord.antarchy.Antarchy.LOGGER.warn(
+                        "[antarchy-gravity] slow inverted pathfind: type={} uuid={} pos=({}, {}, {}) nodeProbes={} elapsedMs={}",
+                        this.mob.getType(), this.mob.getUUID(),
+                        this.mob.getX(), this.mob.getY(), this.mob.getZ(),
+                        this.antarchy$nodeProbeCount, elapsedNanos / 1_000_000.0
+                );
+            }
+        }
         super.done();
     }
 
@@ -43,10 +63,9 @@ public class GravityWalkNodeEvaluator extends WalkNodeEvaluator {
         int z = Mth.floor(this.mob.getZ());
         int y = Mth.floor(this.mob.getY() + this.mob.getBbHeight()) - 1;
         Node node = this.antarchy$findStartNode(x, y, z);
-        if (node == null) {
-            return super.getStart();
-        }
-
+        // A floor-oriented start is a different coordinate model and must not
+        // be mixed into an inverted search. PathFinder treats null as a clean
+        // no-path result.
         return node;
     }
 
@@ -66,7 +85,8 @@ public class GravityWalkNodeEvaluator extends WalkNodeEvaluator {
     }
 
     private Node antarchy$createStartNode(int x, int y, int z) {
-        if (!this.antarchy$hasCeilingSupport(x, y, z)) {
+        this.antarchy$nodeProbeCount++;
+        if (!this.antarchy$hasCeilingSupport(this.currentContext, x, y, z)) {
             return null;
         }
 
@@ -82,9 +102,16 @@ public class GravityWalkNodeEvaluator extends WalkNodeEvaluator {
         return node;
     }
 
-    private boolean antarchy$hasCeilingSupport(int x, int y, int z) {
-        PathType ceilingType = this.getPathType(this.currentContext, x, y + 1, z);
-        return this.mob.getPathfindingMalus(ceilingType) < 0.0F;
+    private boolean antarchy$hasCeilingSupport(PathfindingContext context, int x, int y, int z) {
+        for (int dx = 0; dx < this.entityWidth; dx++) {
+            for (int dz = 0; dz < this.entityDepth; dz++) {
+                BlockPos ceilingPos = new BlockPos(x + dx, y + 1, z + dz);
+                if (!context.level().getBlockState(ceilingPos).isFaceSturdy(context.level(), ceilingPos, Direction.DOWN)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override
@@ -93,8 +120,7 @@ public class GravityWalkNodeEvaluator extends WalkNodeEvaluator {
             return super.getPathTypeOfMob(context, x, y, z, mob);
         }
 
-        PathType ceilingType = this.getPathType(context, x, y + 1, z);
-        if (mob.getPathfindingMalus(ceilingType) >= 0.0F) {
+        if (!this.antarchy$hasCeilingSupport(context, x, y, z)) {
             return PathType.OPEN;
         }
 
@@ -145,6 +171,18 @@ public class GravityWalkNodeEvaluator extends WalkNodeEvaluator {
             }
         }
 
+        // Relative "up" for an inverted mob is world-Y down. Keep both
+        // vertical directions available so a one-block ceiling step can be
+        // represented in the path instead of trapping the mob below it.
+        Node stepTowardInvertedUp = this.antarchy$getNeighbor(current.x, current.y - 1, current.z);
+        if (stepTowardInvertedUp != null) {
+            neighbors[count++] = stepTowardInvertedUp;
+        }
+        Node stepTowardInvertedDown = this.antarchy$getNeighbor(current.x, current.y + 1, current.z);
+        if (stepTowardInvertedDown != null) {
+            neighbors[count++] = stepTowardInvertedDown;
+        }
+
         return count;
     }
 
@@ -159,12 +197,16 @@ public class GravityWalkNodeEvaluator extends WalkNodeEvaluator {
     }
 
     private Node antarchy$getNeighbor(int x, int y, int z) {
+        this.antarchy$nodeProbeCount++;
         PathType type = this.getPathTypeOfMob(this.currentContext, x, y, z, this.mob);
-        if (this.mob.getPathfindingMalus(type) < 0.0F) {
+        if (type == PathType.OPEN || this.mob.getPathfindingMalus(type) < 0.0F) {
             return null;
         }
 
         Node node = this.getNode(x, y, z);
+        if (node.closed) {
+            return null;
+        }
         node.type = type;
         node.costMalus = this.mob.getPathfindingMalus(type);
         return node;

@@ -75,6 +75,7 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class ReverieEntity extends PathfinderMob implements FlyingAnimal, GeoEntity {
+    private static final int DAMAGE_REACTION_DURATION_TICKS = 40;
     private static final EntityDataAccessor<Integer> MOOD =
             SynchedEntityData.defineId(ReverieEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> ANIMATION_STATE =
@@ -318,7 +319,7 @@ public class ReverieEntity extends PathfinderMob implements FlyingAnimal, GeoEnt
             this.releaseFocus();
             this.clearNoticePlayer();
             this.ambientTarget = null;
-            this.damageReactionTicks = 0;
+            this.damageReactionTicks = DAMAGE_REACTION_DURATION_TICKS;
             this.inversionReactionTicks = 0;
             this.transitionToMood(Mood.WHITE);
         }

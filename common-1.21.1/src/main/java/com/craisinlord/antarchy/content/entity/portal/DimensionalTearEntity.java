@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.entity.portal;
 
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
@@ -176,6 +177,13 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
 
         DimensionalTearEntity linked = this.findLinkedTear();
         if (linked == null || !linked.isAlive()) {
+            Antarchy.LOGGER.warn(
+                    "[antarchy-dimensional-tear] discarding unlinked tear uuid={} pos=({}, {}, {}) dim={} linkedTearId={} fallback=({}, {}, {}) ageTicks={} lifetimeTicks={}",
+                    this.getUUID(), this.getX(), this.getY(), this.getZ(), this.level().dimension().location(),
+                    this.linkedTearId,
+                    this.linkedFallbackPos.x, this.linkedFallbackPos.y, this.linkedFallbackPos.z,
+                    this.ageTicks, this.lifetimeTicks
+            );
             this.discard();
             return;
         }
@@ -264,7 +272,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
                 manticore.setTarget(target);
             }
             manticore.setDeltaMovement(this.getViewVector(1.0F).scale(0.2D).add(0.0D, 0.08D, 0.0D));
-            manticore.setNoGravity(true);
+            manticore.setNoGravity(false);
             level.addFreshEntity(manticore);
         }
     }
@@ -348,6 +356,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
 
     private void teleportEntity(Entity entity, DimensionalTearEntity destination) {
         Vec3 motion = entity.getDeltaMovement();
+        Vec3 startPos = entity.position();
         Vec3 exitPos = destination.exitPosition();
         TELEPORT_COOLDOWNS.put(entity.getUUID(), this.level().getGameTime() + TELEPORT_COOLDOWN_TICKS);
 
@@ -360,7 +369,15 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         entity.setDeltaMovement(motion);
         entity.hasImpulse = true;
         if (entity instanceof LivingEntity living) {
-            living.addEffect(new MobEffectInstance(AntarchyObjects.INVERTED_EFFECT.get(), AntarchySettings.dimensionalTearInvertedDurationTicks(), 0));
+            int invertedDuration = AntarchySettings.dimensionalTearInvertedDurationTicks();
+            Antarchy.LOGGER.info(
+                    "[antarchy-dimensional-tear] applying inverted effect targetType={} uuid={} fromTear={} toTear={} startPos=({}, {}, {}) exitPos=({}, {}, {}) dim={} durationTicks={}",
+                    living.getType(), living.getUUID(), this.getUUID(), destination.getUUID(),
+                    startPos.x, startPos.y, startPos.z,
+                    exitPos.x, exitPos.y, exitPos.z,
+                    this.level().dimension().location(), invertedDuration
+            );
+            living.addEffect(new MobEffectInstance(AntarchyObjects.INVERTED_EFFECT.get(), invertedDuration, 0));
         }
         this.level().playSound(null, this.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 0.7F, 0.65F + this.random.nextFloat() * 0.2F);
     }
@@ -515,6 +532,16 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
             this.queenOwnerId = tag.getUUID("QueenOwner");
             this.queenManticoreCount = tag.getInt("QueenManticoreCount");
             this.queenManticoreSpawned = tag.getBoolean("QueenManticoreSpawned");
+        }
+        if (!this.level().isClientSide) {
+            Antarchy.LOGGER.info(
+                    "[antarchy-dimensional-tear] loaded tear uuid={} pos=({}, {}, {}) dim={} linkedTearId={} fallback=({}, {}, {}) ageTicks={} lifetimeTicks={} eventTicks={} nextEventTicks={} pendingEvent={} queenOwner={} queenManticoreCount={} queenManticoreSpawned={}",
+                    this.getUUID(), this.getX(), this.getY(), this.getZ(), this.level().dimension().location(),
+                    this.linkedTearId,
+                    this.linkedFallbackPos.x, this.linkedFallbackPos.y, this.linkedFallbackPos.z,
+                    this.ageTicks, this.lifetimeTicks, this.eventTicks, this.nextEventTicks, this.pendingEvent,
+                    this.queenOwnerId, this.queenManticoreCount, this.queenManticoreSpawned
+            );
         }
     }
 

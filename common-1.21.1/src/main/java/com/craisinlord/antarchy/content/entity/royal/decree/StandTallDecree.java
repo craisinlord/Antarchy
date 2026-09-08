@@ -5,8 +5,8 @@ import net.minecraft.world.entity.LivingEntity;
 public final class StandTallDecree implements RoyalDecree {
     public String translationKey() { return "decree.antarchy.stand_tall"; }
     public void apply(ServerLevel level, KingEntity king, LivingEntity target) {
-        if (target.isCrouching()) {
-            king.invokeJudgment(target);
-        }
+    }
+    @Override public Evaluation evaluate(ServerLevel level, KingEntity king, LivingEntity target) {
+        return target.isCrouching() ? Evaluation.VIOLATED : Evaluation.COMPLIANT;
     }
 }

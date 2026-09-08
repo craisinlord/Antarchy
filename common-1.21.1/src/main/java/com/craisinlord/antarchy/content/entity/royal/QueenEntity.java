@@ -30,6 +30,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamSettings;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamTerrainMode;
+import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackLane;
+import com.craisinlord.antarchy.content.entity.royal.attack.RoyalEffectController;
 import com.craisinlord.antarchy.content.entity.portal.DimensionalTearEntity;
 import com.craisinlord.antarchy.content.time.TimeDilationApi;
 import net.minecraft.world.damagesource.DamageSource;
@@ -61,13 +63,12 @@ public class QueenEntity extends RoyalBossEntity {
     private int gravityStompCooldownTicks;
     private int timeFieldCooldownTicks;
     private int momentumLockCooldownTicks;
-    private int momentumLockTicks;
     private int crushingGravityCooldownTicks;
-    private int crushingGravityTicks;
     private int accelerationCooldownTicks;
-    private int accelerationTicks;
     private int blackHoleCooldownTicks;
     private int idleWanderCooldownTicks;
+    private int finalTimeControlTicks;
+    private final RoyalEffectController royalEffects = new RoyalEffectController();
     private final Map<UUID, Vec3> frozenVelocities = new HashMap<>();
 
     public QueenEntity(EntityType<? extends QueenEntity> entityType, Level level) {
@@ -85,7 +86,12 @@ public class QueenEntity extends RoyalBossEntity {
 
     @Override
     protected boolean isFlyingBoss() {
-        return false;
+        return true;
+    }
+
+    @Override
+    protected SoundEvent royalFlyLoopSound() {
+        return AntarchySoundEvents.QUEEN_FLY_LOOP.get();
     }
 
     @Override
@@ -128,7 +134,7 @@ public class QueenEntity extends RoyalBossEntity {
     @Override
     protected RoyalBeamSettings royalBeamSettings() {
         return new RoyalBeamSettings(AntarchySettings.queenBeamRange(), AntarchySettings.queenBeamTracking(), 7.5D,
-                AntarchySettings.queenBeamDurationTicks(), AntarchySettings.queenBeamCooldownTicks(), 6.0F, 6.0F,
+                AntarchySettings.queenBeamDurationTicks(), AntarchySettings.queenBeamTravelTicks(), AntarchySettings.queenBeamCooldownTicks(), 6.0F, 6.0F,
                 (float) AntarchySettings.queenBeamDamage(), 1.0F, 3, 100.0D,
                 (float) AntarchySettings.queenBeamTerrainRadius(), 4.0F, AntarchySettings.queenBeamTerrainCap(),
                 1.0F, 0.08F, 15.0F, true, true);
@@ -156,9 +162,8 @@ public class QueenEntity extends RoyalBossEntity {
         }
         this.tickManticoreSummon();
         this.tickQueenAbilities();
-        this.tickRoyalAcceleration();
-        this.tickMomentumLock();
-        this.tickCrushingGravity();
+        this.tickFinalTimeControl();
+        this.royalEffects.tick();
     }
 
     private void tickIdleWander() {
@@ -174,7 +179,7 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private int cooldown(int base) {
-        return this.accelerationTicks > 0 ? Math.max(20, base / 2) : base;
+        return this.royalEffects.active("acceleration") ? Math.max(20, base / 2) : base;
     }
 
     private void tickManticoreSummon() {
@@ -205,7 +210,7 @@ public class QueenEntity extends RoyalBossEntity {
                 : FAILED_SUMMON_RETRY_TICKS;
         if (spawned > 0) {
             this.triggerAnim("body_action", "minion_spawn");
-            this.playSound(AntarchySoundEvents.QUEEN_ROAR.get(), 3.0F, 0.8F + this.random.nextFloat() * 0.12F);
+            this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.8F + this.random.nextFloat() * 0.12F);
             serverLevel.sendParticles(ParticleTypes.PORTAL, this.getX(), this.getY() + 2.0D, this.getZ(),
                     36, 3.0D, 2.0D, 3.0D, 0.15D);
         }
@@ -249,40 +254,97 @@ public class QueenEntity extends RoyalBossEntity {
         }
 
         Phase phase = this.phase();
-        boolean majorBusy = this.momentumLockTicks > 0 || this.crushingGravityTicks > 0;
+        boolean majorBusy = this.royalEffects.active("momentum_lock") || this.royalEffects.active("crushing_gravity");
         boolean allowOverlap = phase != Phase.ONE;
+        String[] candidates = phase == Phase.ONE
+                ? new String[] {"gravity_stomp", "time_field", "black_hole"}
+                : new String[] {"gravity_stomp", "time_field", "black_hole", "momentum_lock", "crushing_gravity", "acceleration"};
+        String selected = this.attackScheduler.chooseWeighted(candidates, id -> {
+            if (!this.queenAttackReady(id, phase, majorBusy, allowOverlap)) return 0;
+            return switch (id) {
+                case "black_hole", "crushing_gravity" -> phase == Phase.THREE ? 5 : 3;
+                case "momentum_lock", "acceleration" -> phase == Phase.THREE ? 4 : 2;
+                default -> 4;
+            };
+        }, this.random);
+        if (selected == null) return;
+        int cooldown = switch (selected) {
+            case "gravity_stomp" -> GRAVITY_STOMP_COOLDOWN;
+            case "time_field" -> TIME_FIELD_COOLDOWN;
+            case "black_hole" -> BLACK_HOLE_COOLDOWN;
+            case "momentum_lock" -> MOMENTUM_LOCK_COOLDOWN;
+            case "crushing_gravity" -> CRUSHING_GRAVITY_COOLDOWN;
+            default -> ACCELERATION_COOLDOWN;
+        };
+        if (!this.beginRoyalAttack(selected, RoyalAttackLane.HAZARD, this.cooldown(cooldown),
+                10, 1, 14, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                    @Override public void onStart() {
+                        if ("gravity_stomp".equals(selected)) {
+                            QueenEntity.this.triggerAnim("body_action", "stomp");
+                        } else {
+                            QueenEntity.this.triggerAnim("body_action", "wing_gust");
+                        }
+                    }
+                    @Override public void onActive(int elapsedTicks) {
+                        QueenEntity.this.performSelectedQueenAttack(selected, phase, cooldown, level, target);
+                    }
+                })) return;
+    }
 
-        if (this.gravityStompCooldownTicks <= 0 && (allowOverlap || !majorBusy)) {
-            this.gravityStompCooldownTicks = this.cooldown(GRAVITY_STOMP_COOLDOWN);
-            this.performGravityStomp(level, target);
+    private void performSelectedQueenAttack(String selected, Phase phase, int cooldown,
+                                            ServerLevel level, LivingEntity target) {
+        switch (selected) {
+            case "gravity_stomp" -> { this.gravityStompCooldownTicks = cooldown; this.performGravityStomp(level, target); }
+            case "time_field" -> {
+                this.timeFieldCooldownTicks = cooldown;
+                double fieldRate = phase == Phase.THREE ? 0.1D : 0.4D;
+                TimeDilationApi.createField(level, target.position(), 12.0D, fieldRate, 140 + phase.ordinal() * 40);
+            }
+            case "black_hole" -> { this.blackHoleCooldownTicks = cooldown; this.castBlackHole(level, target); }
+            case "momentum_lock" -> { this.momentumLockCooldownTicks = cooldown; this.startMomentumLock(level); }
+            case "crushing_gravity" -> {
+                this.crushingGravityCooldownTicks = cooldown;
+                this.royalEffects.start("crushing_gravity", CRUSHING_GRAVITY_DURATION,
+                        () -> {}, this::tickCrushingGravity, () -> {});
+                this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.6F);
+            }
+            case "acceleration" -> { this.accelerationCooldownTicks = cooldown; this.startRoyalAcceleration(); }
         }
-        if (this.timeFieldCooldownTicks <= 0 && (allowOverlap || !majorBusy)) {
-            this.timeFieldCooldownTicks = this.cooldown(TIME_FIELD_COOLDOWN);
-            double fieldRate = phase == Phase.THREE ? 0.1D : 0.4D;
-            TimeDilationApi.createField(level, target.position(), 12.0D, fieldRate, 140 + phase.ordinal() * 40);
-            this.triggerAnim("body_action", "wing_gust");
+    }
+
+    private boolean queenAttackReady(String id, Phase phase, boolean majorBusy, boolean allowOverlap) {
+        if (!allowOverlap && majorBusy) return false;
+        return switch (id) {
+            case "gravity_stomp" -> this.gravityStompCooldownTicks <= 0;
+            case "time_field" -> this.timeFieldCooldownTicks <= 0;
+            case "black_hole" -> this.blackHoleCooldownTicks <= 0;
+            case "momentum_lock" -> !this.royalEffects.active("momentum_lock") && this.momentumLockCooldownTicks <= 0;
+            case "crushing_gravity" -> phase != Phase.ONE && !this.royalEffects.active("crushing_gravity") && this.crushingGravityCooldownTicks <= 0;
+            case "acceleration" -> phase == Phase.THREE && !this.royalEffects.active("acceleration") && this.accelerationCooldownTicks <= 0;
+            default -> false;
+        };
+    }
+
+    private void tickFinalTimeControl() {
+        if (this.phase() != Phase.THREE || !(this.level() instanceof ServerLevel level)) {
+            return;
         }
-        if (this.blackHoleCooldownTicks <= 0 && (allowOverlap || !majorBusy)) {
-            this.blackHoleCooldownTicks = this.cooldown(BLACK_HOLE_COOLDOWN);
-            this.castBlackHole(level, target);
-        }
-        if (this.momentumLockTicks <= 0 && this.momentumLockCooldownTicks <= 0 && (allowOverlap || !majorBusy)) {
-            this.startMomentumLock(level);
-        }
-        if (this.crushingGravityTicks <= 0 && this.crushingGravityCooldownTicks <= 0 && phase != Phase.ONE) {
-            this.crushingGravityCooldownTicks = CRUSHING_GRAVITY_COOLDOWN;
-            this.crushingGravityTicks = CRUSHING_GRAVITY_DURATION;
-            this.playSound(AntarchySoundEvents.QUEEN_ROAR.get(), 3.0F, 0.6F);
-        }
-        if (this.accelerationTicks <= 0 && this.accelerationCooldownTicks <= 0
-                && (phase == Phase.THREE || (phase == Phase.TWO && this.random.nextInt(3) == 0))) {
+        if (!this.royalEffects.active("acceleration") && this.accelerationCooldownTicks <= 0) {
             this.startRoyalAcceleration();
+        }
+        if (this.finalTimeControlTicks-- <= 0) {
+            this.finalTimeControlTicks = AntarchySettings.queenFinalTimeFieldCooldownTicks();
+            LivingEntity target = this.getTarget();
+            if (target != null && target.isAlive()) {
+                TimeDilationApi.createField(level, target.position(), AntarchySettings.queenFinalTimeFieldRadius(),
+                        AntarchySettings.queenFinalTimeFieldRate(), AntarchySettings.queenFinalTimeFieldDurationTicks());
+            }
         }
     }
 
     private void performGravityStomp(ServerLevel level, LivingEntity target) {
         this.triggerAnim("body_action", "stomp");
-        this.playSound(AntarchySoundEvents.QUEEN_ROAR.get(), 3.0F, 0.7F);
+        this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.7F);
         DamageSource source = this.damageSources().mobAttack(this);
         for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(18.0D), entity -> entity instanceof Player && entity.isAlive())) {
@@ -303,30 +365,36 @@ public class QueenEntity extends RoyalBossEntity {
         RoyalBlackHoleEntity hole = RoyalBlackHoleEntity.create(level, anchor, this.getUUID());
         level.addFreshEntity(hole);
         this.triggerAnim("body_action", "wing_gust");
-        this.playSound(AntarchySoundEvents.QUEEN_ROAR.get(), 3.0F, 1.15F);
+        this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 1.0F);
         level.sendParticles(ParticleTypes.REVERSE_PORTAL, anchor.x, anchor.y, anchor.z, 60, 1.0D, 1.0D, 1.0D, 0.4D);
     }
 
     private void startMomentumLock(ServerLevel level) {
         this.momentumLockCooldownTicks = MOMENTUM_LOCK_COOLDOWN;
-        this.momentumLockTicks = MOMENTUM_LOCK_DURATION;
-        this.frozenVelocities.clear();
-        this.triggerAnim("body_action", "wing_gust");
-        this.playSound(AntarchySoundEvents.QUEEN_ROAR.get(), 3.0F, 0.5F);
-        for (Entity entity : level.getEntitiesOfClass(Entity.class,
-                this.getBoundingBox().inflate(MOMENTUM_LOCK_RADIUS))) {
-            if (entity == this || isFieldImmune(entity) || entity instanceof Player player && player.isCreative()) {
-                continue;
+        this.royalEffects.start("momentum_lock", MOMENTUM_LOCK_DURATION, () -> {
+            this.frozenVelocities.clear();
+            for (Entity entity : level.getEntitiesOfClass(Entity.class,
+                    this.getBoundingBox().inflate(MOMENTUM_LOCK_RADIUS))) {
+                if (entity == this || isFieldImmune(entity) || entity instanceof Player player && player.isCreative()) {
+                    continue;
+                }
+                this.frozenVelocities.put(entity.getUUID(), entity.getDeltaMovement());
             }
-            this.frozenVelocities.put(entity.getUUID(), entity.getDeltaMovement());
-        }
+        }, this::tickMomentumLockEffect, () -> {
+            for (Map.Entry<UUID, Vec3> entry : this.frozenVelocities.entrySet()) {
+                Entity entity = level.getEntity(entry.getKey());
+                if (entity != null && entity.isAlive()) {
+                    entity.setDeltaMovement(entry.getValue());
+                    entity.hasImpulse = true;
+                }
+            }
+            this.frozenVelocities.clear();
+        });
+        this.triggerAnim("body_action", "wing_gust");
+        this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.5F);
     }
 
-    private void tickMomentumLock() {
-        if (this.momentumLockTicks <= 0) {
-            return;
-        }
-        this.momentumLockTicks--;
+    private void tickMomentumLockEffect() {
         if (!(this.level() instanceof ServerLevel level)) {
             return;
         }
@@ -335,29 +403,20 @@ public class QueenEntity extends RoyalBossEntity {
             if (entity == null || !entity.isAlive()) {
                 continue;
             }
-            if (this.momentumLockTicks <= 0) {
-                entity.setDeltaMovement(entry.getValue());
-                entity.hasImpulse = true;
-            } else {
-                entity.setDeltaMovement(Vec3.ZERO);
-                entity.fallDistance = 0.0F;
-                entity.hasImpulse = true;
-                if (this.tickCount % 6 == 0 && level instanceof ServerLevel serverLevel) {
-                    serverLevel.sendParticles(ParticleTypes.END_ROD, entity.getX(), entity.getY() + entity.getBbHeight() * 0.5D, entity.getZ(),
-                            2, 0.2D, 0.2D, 0.2D, 0.0D);
-                }
+            entity.setDeltaMovement(Vec3.ZERO);
+            entity.fallDistance = 0.0F;
+            entity.hasImpulse = true;
+            if (this.tickCount % 6 == 0) {
+                level.sendParticles(ParticleTypes.END_ROD, entity.getX(), entity.getY() + entity.getBbHeight() * 0.5D, entity.getZ(),
+                        2, 0.2D, 0.2D, 0.2D, 0.0D);
             }
-        }
-        if (this.momentumLockTicks <= 0) {
-            this.frozenVelocities.clear();
         }
     }
 
     private void tickCrushingGravity() {
-        if (this.crushingGravityTicks <= 0) {
+        if (!this.royalEffects.active("crushing_gravity")) {
             return;
         }
-        this.crushingGravityTicks--;
         if (!(this.level() instanceof ServerLevel level)) {
             return;
         }
@@ -378,11 +437,16 @@ public class QueenEntity extends RoyalBossEntity {
 
     private void startRoyalAcceleration() {
         this.accelerationCooldownTicks = ACCELERATION_COOLDOWN;
-        this.accelerationTicks = ACCELERATION_DURATION;
-        this.setRoyalAccelerated(true);
-        this.playSound(AntarchySoundEvents.QUEEN_ROAR.get(), 3.5F, 1.4F);
-        applyAccelModifier(this.getAttribute(Attributes.MOVEMENT_SPEED), ACCEL_SPEED_ID);
-        applyAccelModifier(this.getAttribute(Attributes.FLYING_SPEED), ACCEL_FLY_ID);
+        this.royalEffects.start("acceleration", ACCELERATION_DURATION, () -> {
+            this.setRoyalAccelerated(true);
+            this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 1.4F);
+            applyAccelModifier(this.getAttribute(Attributes.MOVEMENT_SPEED), ACCEL_SPEED_ID);
+            applyAccelModifier(this.getAttribute(Attributes.FLYING_SPEED), ACCEL_FLY_ID);
+        }, this::tickRoyalAccelerationEffect, () -> {
+            this.setRoyalAccelerated(false);
+            removeAccelModifier(this.getAttribute(Attributes.MOVEMENT_SPEED), ACCEL_SPEED_ID);
+            removeAccelModifier(this.getAttribute(Attributes.FLYING_SPEED), ACCEL_FLY_ID);
+        });
     }
 
     private static void applyAccelModifier(AttributeInstance attribute, ResourceLocation id) {
@@ -398,27 +462,16 @@ public class QueenEntity extends RoyalBossEntity {
         }
     }
 
-    private void tickRoyalAcceleration() {
-        if (this.accelerationTicks <= 0) {
-            if (this.isRoyalAccelerated()) {
-                this.setRoyalAccelerated(false);
-                removeAccelModifier(this.getAttribute(Attributes.MOVEMENT_SPEED), ACCEL_SPEED_ID);
-                removeAccelModifier(this.getAttribute(Attributes.FLYING_SPEED), ACCEL_FLY_ID);
-            }
+    private void tickRoyalAccelerationEffect() {
+        if (!this.isRoyalAccelerated()) {
             return;
         }
-        this.accelerationTicks--;
         if (this.level() instanceof ServerLevel level && this.tickCount % 2 == 0) {
             level.sendParticles(ACCEL_DUST,
                     this.getX() + (this.random.nextDouble() - 0.5D) * this.getBbWidth(),
                     this.getY() + this.random.nextDouble() * this.getBbHeight(),
                     this.getZ() + (this.random.nextDouble() - 0.5D) * this.getBbWidth(),
                     6, 0.4D, 0.6D, 0.4D, 0.02D);
-        }
-        if (this.accelerationTicks <= 0) {
-            this.setRoyalAccelerated(false);
-            removeAccelModifier(this.getAttribute(Attributes.MOVEMENT_SPEED), ACCEL_SPEED_ID);
-            removeAccelModifier(this.getAttribute(Attributes.FLYING_SPEED), ACCEL_FLY_ID);
         }
     }
 
@@ -427,6 +480,8 @@ public class QueenEntity extends RoyalBossEntity {
         if (!this.level().isClientSide && this.level() instanceof ServerLevel level) {
             DimensionalTearEntity.discardQueenOwnedTears(level, this.getUUID());
         }
+        this.royalEffects.clear();
+        this.frozenVelocities.clear();
         removeAccelModifier(this.getAttribute(Attributes.MOVEMENT_SPEED), ACCEL_SPEED_ID);
         removeAccelModifier(this.getAttribute(Attributes.FLYING_SPEED), ACCEL_FLY_ID);
         super.die(damageSource);
@@ -468,8 +523,6 @@ public class QueenEntity extends RoyalBossEntity {
         tag.putInt(SUMMON_COOLDOWN_KEY, this.manticoreSummonCooldownTicks);
         tag.putInt("GravityStompCooldownTicks", this.gravityStompCooldownTicks);
         tag.putInt("TimeFieldCooldownTicks", this.timeFieldCooldownTicks);
-        tag.putInt("MomentumLockCooldownTicks", this.momentumLockCooldownTicks);
-        tag.putInt("CrushingGravityCooldownTicks", this.crushingGravityCooldownTicks);
         tag.putInt("AccelerationCooldownTicks", this.accelerationCooldownTicks);
         tag.putInt("BlackHoleCooldownTicks", this.blackHoleCooldownTicks);
     }

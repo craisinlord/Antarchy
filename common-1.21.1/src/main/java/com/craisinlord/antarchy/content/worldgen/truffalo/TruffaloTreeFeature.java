@@ -58,9 +58,9 @@ public class TruffaloTreeFeature extends Feature<TruffaloTreeConfiguration> {
                 return false;
             }
         }
-        for (int dy = 0; dy <= 2; dy++) {
-            for (int dx = -1; dx <= 1; dx++) {
-                for (int dz = -1; dz <= 1; dz++) {
+        for (int dy = 0; dy < config.tuftHeight(); dy++) {
+            for (int dx = -config.tuftRadius(); dx <= config.tuftRadius(); dx++) {
+                for (int dz = -config.tuftRadius(); dz <= config.tuftRadius(); dz++) {
                     if (!canReplace(level, capBase.offset(dx, dy, dz))) {
                         return false;
                     }
@@ -74,9 +74,9 @@ public class TruffaloTreeFeature extends Feature<TruffaloTreeConfiguration> {
 
         Block tuft = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, color.getName() + "_truffalo_tuft"));
         BlockState tuftState = tuft.defaultBlockState();
-        for (int dy = 0; dy <= 2; dy++) {
-            for (int dx = -1; dx <= 1; dx++) {
-                for (int dz = -1; dz <= 1; dz++) {
+        for (int dy = 0; dy < config.tuftHeight(); dy++) {
+            for (int dx = -config.tuftRadius(); dx <= config.tuftRadius(); dx++) {
+                for (int dz = -config.tuftRadius(); dz <= config.tuftRadius(); dz++) {
                     setBlock(level, capBase.offset(dx, dy, dz), tuftState);
                 }
             }

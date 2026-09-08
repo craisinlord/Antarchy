@@ -313,7 +313,10 @@ public final class AntTeleportHelper {
             return new int[]{100, 200};
         }
         if (dim == AntarchySettings.brownAntDestinationDimension()) {
-            return new int[]{75, 120};
+            return new int[]{60, 240};
+        }
+        if (dim == AntarchySettings.redAntDestinationDimension()) {
+            return new int[]{0, 220};
         }
         return null;
     }
@@ -328,7 +331,7 @@ public final class AntTeleportHelper {
                     }
                     int x = preferredPos.getX() + xOff;
                     int z = preferredPos.getZ() + zOff;
-                    for (int y = maxY; y >= minY + 1; y--) {
+                    for (int y = minY + 1; y <= maxY; y++) {
                         Vec3 safePos = tryFindSafeDismount(player, destination, new BlockPos(x, y, z));
                         if (safePos != null && safePos.y >= minY && safePos.y <= maxY) {
                             return safePos;
