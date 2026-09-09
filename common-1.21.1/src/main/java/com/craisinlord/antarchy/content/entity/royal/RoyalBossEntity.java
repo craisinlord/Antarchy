@@ -98,6 +98,13 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     private static final int OBSTRUCTION_CLEAR_MAX_BLOCKS = 24;
     private static final double OBSTRUCTION_CLEAR_MAX_RESISTANCE = 60.0D;
     private static final float OBSTRUCTION_CLEAR_DROP_CHANCE = 0.1F;
+    // Keep visual muzzle points separate from the centered multipart hitboxes.
+    // Geo mouth fronts are near z=-219, with side heads centered at x=+/-21. At 2x render scale,
+    // one model pixel is 1/8 block.
+    private static final double BEAM_MUZZLE_FORWARD = 27.375D;
+    private static final double BEAM_MUZZLE_CENTER_Y = 11.5D;
+    private static final double BEAM_MUZZLE_SIDE_Y = 10.25D;
+    private static final double BEAM_MUZZLE_LATERAL = 2.625D;
 
     protected static final double FLYING_MIN_HOVER = 2.5D;
     protected static final double FLYING_PREFERRED_HOVER = 6.0D;
@@ -110,6 +117,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     private static final EntityDataAccessor<Boolean> ACCELERATED =
             SynchedEntityData.defineId(RoyalBossEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> BEAM_ELEMENT =
+            SynchedEntityData.defineId(RoyalBossEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> BEAM_HEAD_SLOT =
             SynchedEntityData.defineId(RoyalBossEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Float> BEAM_END_X =
             SynchedEntityData.defineId(RoyalBossEntity.class, EntityDataSerializers.FLOAT);
@@ -260,6 +269,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         builder.define(HAS_BEAM_END, false);
         builder.define(ACCELERATED, false);
         builder.define(BEAM_ELEMENT, RoyalBeamElement.GENERIC.ordinal());
+        builder.define(BEAM_HEAD_SLOT, -1);
         builder.define(BEAM_END_X, 0.0F);
         builder.define(BEAM_END_Y, 0.0F);
         builder.define(BEAM_END_Z, 0.0F);
@@ -396,7 +406,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
 
         if (this.activeBeamHead != null) {
             LivingEntity beamTarget = this.activeBeamHead.target(this.level());
-            if (!this.activeBeamHead.shooting() || beamTarget == null || !beamTarget.isAlive()) {
+            if (!this.activeBeamHead.shooting() || beamTarget == null || !beamTarget.isAlive()
+                    || this.distanceTo(beamTarget) < this.royalBeamMinimumRange()) {
                 this.stopRoyalBeam();
             } else if (!this.beamStarted) {
                 return;
@@ -406,14 +417,14 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                     this.playRoyalSound(this.royalBeamLoopSound(), 1.0F);
                 }
                 this.beamController.tick(
-                        this.headAnchor(this.activeBeamHead),
+                        this.beamAnchor(this.activeBeamHead),
                         beamTarget,
                         this.royalBeamSettings(),
                         this.royalBeamTerrainMode(this.activeBeamHead),
                         this::setRoyalBeamEndPosition);
                 Vec3 beamEnd = this.beamController.beamEndPosition();
                 if (beamEnd != null) {
-                    this.tickRoyalBeamEffects(this.activeBeamHead, this.headAnchor(this.activeBeamHead), beamEnd);
+                    this.tickRoyalBeamEffects(this.activeBeamHead, this.beamAnchor(this.activeBeamHead), beamEnd);
                 }
                 if (!this.beamController.isFiring()) {
                     this.stopRoyalBeam();
@@ -431,6 +442,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             LivingEntity target = head.target(this.level());
             if (!head.readyToAttack() || this.attackScheduler.laneBusy(this.headLane(head))
                     || target == null || !this.canAttack(target)
+                    || this.distanceTo(target) < this.royalBeamMinimumRange()
                     || this.headWithinBiteReach(head, target)) {
                 continue;
             }
@@ -456,8 +468,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                             }
                             RoyalBossEntity.this.beamStarted = true;
                             RoyalBossEntity.this.beamController.start(
-                                    RoyalBossEntity.this.headAnchor(head), committedTarget.getEyePosition(), duration);
+                                    RoyalBossEntity.this.beamAnchor(head), committedTarget.getEyePosition(), duration);
                             RoyalBossEntity.this.entityData.set(BEAM_ELEMENT, RoyalBossEntity.this.royalBeamElement(head).ordinal());
+                            RoyalBossEntity.this.entityData.set(BEAM_HEAD_SLOT, head.slot().ordinal());
                             RoyalBossEntity.this.setFiringRoyalBeam(true);
                             RoyalBossEntity.this.triggerAnim(head.slot().controllerName(), "shoot");
                             RoyalBossEntity.this.beamLoopSoundTicks = 20;
@@ -493,6 +506,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         this.attackScheduler.cancel(this.beamLane());
         this.beamController.stop();
         this.entityData.set(BEAM_ELEMENT, RoyalBeamElement.GENERIC.ordinal());
+        this.entityData.set(BEAM_HEAD_SLOT, -1);
         this.playRoyalSound(this.royalBeamEndSound(), 1.0F);
         this.setFiringRoyalBeam(false);
         this.setRoyalBeamEndPosition(null);
@@ -708,6 +722,30 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                 this.getZ() + forward.z * spec.forwardOffset() + right.z * spec.lateralOffset());
     }
 
+    protected Vec3 beamAnchor(RoyalHead head) {
+        return beamAnchor(head.slot(), this.getX(), this.getY(), this.getZ(), this.getYRot());
+    }
+
+    private Vec3 beamAnchor(RoyalHead.Slot slot, double x, double y, double z, float yaw) {
+        double yawRadians = yaw * Mth.DEG_TO_RAD;
+        Vec3 forward = new Vec3(-Math.sin(yawRadians), 0.0D, Math.cos(yawRadians));
+        Vec3 right = new Vec3(forward.z, 0.0D, -forward.x);
+        double lateral = switch (slot) {
+            case LEFT -> -BEAM_MUZZLE_LATERAL;
+            case CENTER -> 0.0D;
+            case RIGHT -> BEAM_MUZZLE_LATERAL;
+        };
+        double vertical = slot == RoyalHead.Slot.CENTER ? BEAM_MUZZLE_CENTER_Y : BEAM_MUZZLE_SIDE_Y;
+        return new Vec3(
+                x + forward.x * BEAM_MUZZLE_FORWARD + right.x * lateral,
+                y + vertical,
+                z + forward.z * BEAM_MUZZLE_FORWARD + right.z * lateral);
+    }
+
+    protected double royalBeamMinimumRange() {
+        return AntarchySettings.queenBeamMinimumRange();
+    }
+
     protected RoyalHead royalHead(RoyalHead.Slot slot) {
         return this.heads[slot.ordinal()];
     }
@@ -826,8 +864,15 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     public Vec3 getRoyalBeamShootFrom(float partialTicks) {
-        if (this.activeBeamHead != null) {
-            return this.headAnchor(this.activeBeamHead);
+        int slotIndex = this.activeBeamHead != null
+                ? this.activeBeamHead.slot().ordinal()
+                : this.entityData.get(BEAM_HEAD_SLOT);
+        if (slotIndex >= 0 && slotIndex < RoyalHead.Slot.values().length) {
+            double x = Mth.lerp(partialTicks, this.xo, this.getX());
+            double y = Mth.lerp(partialTicks, this.yo, this.getY());
+            double z = Mth.lerp(partialTicks, this.zo, this.getZ());
+            float yaw = Mth.rotLerp(partialTicks, this.yRotO, this.getYRot());
+            return this.beamAnchor(RoyalHead.Slot.values()[slotIndex], x, y, z, yaw);
         }
         double x = Mth.lerp(partialTicks, this.xo, this.getX());
         double y = Mth.lerp(partialTicks, this.yo, this.getY()) + this.getBbHeight() * 0.72D;
@@ -842,18 +887,28 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                 : RoyalBeamElement.GENERIC;
     }
 
+    @Nullable
+    public RoyalHead.Slot getRoyalBeamHeadSlot() {
+        int slotIndex = this.activeBeamHead != null
+                ? this.activeBeamHead.slot().ordinal()
+                : this.entityData.get(BEAM_HEAD_SLOT);
+        return slotIndex >= 0 && slotIndex < RoyalHead.Slot.values().length
+                ? RoyalHead.Slot.values()[slotIndex]
+                : null;
+    }
+
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "locomotion", 4, this::locomotionPredicate));
         controllers.add(new AnimationController<>(this, "head_left", 0, RoyalBossEntity::headIdle)
-                .triggerableAnim("bite", RawAnimation.begin().thenPlay("bite_1"))
-                .triggerableAnim("shoot", RawAnimation.begin().thenPlay("shoot_1")));
-        controllers.add(new AnimationController<>(this, "head_center", 0, RoyalBossEntity::headIdle)
-                .triggerableAnim("bite", RawAnimation.begin().thenPlay("bite_2"))
-                .triggerableAnim("shoot", RawAnimation.begin().thenPlay("shoot_2")));
-        controllers.add(new AnimationController<>(this, "head_right", 0, RoyalBossEntity::headIdle)
                 .triggerableAnim("bite", RawAnimation.begin().thenPlay("bite_3"))
                 .triggerableAnim("shoot", RawAnimation.begin().thenPlay("shoot_3")));
+        controllers.add(new AnimationController<>(this, "head_center", 0, RoyalBossEntity::headIdle)
+                .triggerableAnim("bite", RawAnimation.begin().thenPlay("bite_1"))
+                .triggerableAnim("shoot", RawAnimation.begin().thenPlay("shoot_1")));
+        controllers.add(new AnimationController<>(this, "head_right", 0, RoyalBossEntity::headIdle)
+                .triggerableAnim("bite", RawAnimation.begin().thenPlay("bite_2"))
+                .triggerableAnim("shoot", RawAnimation.begin().thenPlay("shoot_2")));
         controllers.add(new AnimationController<>(this, "body_action", 0, this::bodyActionPredicate)
                 .triggerableAnim("stomp", RawAnimation.begin().thenPlay("stomp"))
                 .triggerableAnim("wing_gust", RawAnimation.begin().thenPlay("wing_gust"))

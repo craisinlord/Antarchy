@@ -28,7 +28,7 @@ public class OuranwoodSquirrelNestBlock extends Block {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(SQUIRREL_COUNT);
     }
 

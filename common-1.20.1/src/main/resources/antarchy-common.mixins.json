@@ -70,7 +70,38 @@
                    "gravity.ServerPlayerGravityMixin",
                    "gravity.ThrowableProjectileGravityMixin",
                    "gravity.TrackedEntityAccessor",
-                   "multipart.EntityMultipartLifecycleMixin"
+                   "multipart.EntityMultipartLifecycleMixin",
+                   "time.EntityDeltaMovementTimeDilationMixin",
+                   "time.EntityMoveTimeDilationMixin",
+                   "time.EntityTimeDilationStateMixin",
+                   "time.EntityRotationTimeDilationMixin",
+                   "time.LivingEntityKnockbackTimeDilationMixin",
+                   "time.CreeperTimeDilationMixin",
+                   "time.EndCrystalTimeDilationMixin",
+                   "time.LivingEntityTimeDilationMixin",
+                   "time.LivingEntityTimeDilationCleanupMixin",
+                   "time.LivingEntityAttackCooldownTimeDilationMixin",
+                   "time.LookControlTimeDilationMixin",
+                   "time.MeleeAttackGoalTimeDilationMixin",
+                   "time.MobAttackTimeDilationMixin",
+                   "time.PrimedTntTimeDilationMixin",
+                   "time.AbstractArrowMovementTimeDilationMixin",
+                   "time.ThrowableProjectileMovementTimeDilationMixin",
+                   "time.HurtingProjectileMovementTimeDilationMixin",
+                   "time.ProjectileTimeDilationMixin",
+                   "time.AbstractArrowActionTimeDilationMixin",
+                   "time.RangedAttackGoalTimeDilationMixin",
+                   "time.RangedBowAttackGoalTimeDilationMixin"
+               ],
+    "client":  [
+                   "time.LivingEntityRendererAnimationTimeDilationMixin",
+                   "time.ParticleTimeDilationMixin",
+                   "time.PortalParticleTimeDilationMixin",
+                   "time.ReversePortalParticleTimeDilationMixin",
+                   "time.SoundEngineTimeDilationMixin",
+                   "time.ItemEntityRotationTimeDilationMixin",
+                   "time.ItemEntityRendererTimeDilationMixin",
+                   "time.ParticlePositionAccessor"
                ],
     "client":  [
                    "client.AbstractMinecartRendererMixin",
@@ -98,7 +129,15 @@
                    "gravity.client.CameraGravityMixin",
                    "gravity.client.ClientPacketListenerGravityMixin",
                    "gravity.client.EntityRenderDispatcherGravityMixin",
-                   "gravity.client.FallingBlockRendererBlockEntityMixin"
+                   "gravity.client.FallingBlockRendererBlockEntityMixin",
+                   "time.LivingEntityRendererAnimationTimeDilationMixin",
+                   "time.ParticleTimeDilationMixin",
+                   "time.PortalParticleTimeDilationMixin",
+                   "time.ReversePortalParticleTimeDilationMixin",
+                   "time.SoundEngineTimeDilationMixin",
+                   "time.ItemEntityRotationTimeDilationMixin",
+                   "time.ItemEntityRendererTimeDilationMixin",
+                   "time.ParticlePositionAccessor"
                ],
     "injectors":  {
                       "defaultRequire":  1

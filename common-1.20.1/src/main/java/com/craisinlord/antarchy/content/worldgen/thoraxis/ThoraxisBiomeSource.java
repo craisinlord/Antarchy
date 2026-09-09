@@ -2,7 +2,6 @@ package com.craisinlord.antarchy.content.worldgen.thoraxis;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap;
 import java.util.stream.Stream;
@@ -39,13 +38,6 @@ public final class ThoraxisBiomeSource extends BiomeSource {
             Registries.BIOME,
             new ResourceLocation(Antarchy.MODID, "lucid_pools")
     );
-
-    public static final MapCodec<ThoraxisBiomeSource> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            MultiNoiseBiomeSource.DIRECT_CODEC.forGetter(ThoraxisBiomeSource::parameters),
-            Codec.INT.optionalFieldOf("dream_dunes_max_y", 96).forGetter(ThoraxisBiomeSource::dreamDunesMaxY),
-            Codec.INT.optionalFieldOf("umbral_hills_max_y", 100).forGetter(ThoraxisBiomeSource::umbralHillsMaxY),
-            Codec.INT.optionalFieldOf("lucid_pools_min_y", 116).forGetter(ThoraxisBiomeSource::lucidPoolsMinY)
-    ).apply(instance, ThoraxisBiomeSource::new));
 
     private final Climate.ParameterList<Holder<Biome>> parameters;
     private final MultiNoiseBiomeSource delegate;
@@ -111,7 +103,7 @@ public final class ThoraxisBiomeSource extends BiomeSource {
 
     @Override
     protected com.mojang.serialization.Codec<? extends BiomeSource> codec() {
-        return CODEC.codec();
+        return CODEC;
     }
 
     @Override

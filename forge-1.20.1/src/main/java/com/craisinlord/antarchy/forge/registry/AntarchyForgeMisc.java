@@ -10,6 +10,7 @@ import com.craisinlord.antarchy.content.effect.InvertedMobEffect;
 import com.craisinlord.antarchy.content.effect.ParalyzedMobEffect;
 import com.craisinlord.antarchy.content.effect.ShrinkMobEffect;
 import com.craisinlord.antarchy.content.effect.StinkyMobEffect;
+import com.craisinlord.antarchy.content.effect.DilatedMobEffect;
 import com.craisinlord.antarchy.content.recipe.AmericanizeRecipe;
 import com.craisinlord.antarchy.content.worldgen.ants.BrownAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.RainbowAntNestFeature;
@@ -98,6 +99,7 @@ public final class AntarchyForgeMisc {
     public static final RegistryObject<DreadMobEffect> DREAD = MOB_EFFECTS.register("dread", DreadMobEffect::new);
     public static final RegistryObject<ParalyzedMobEffect> PARALYZED = MOB_EFFECTS.register("paralyzed", ParalyzedMobEffect::new);
     public static final RegistryObject<InvertedMobEffect> INVERTED = MOB_EFFECTS.register("inverted", InvertedMobEffect::new);
+    public static final RegistryObject<DilatedMobEffect> DILATED = MOB_EFFECTS.register("dilated", DilatedMobEffect::new);
     public static final RegistryObject<StinkyMobEffect> STINKY = MOB_EFFECTS.register("stinky", StinkyMobEffect::new);
     public static final RegistryObject<GoopedMobEffect> GOOPED = MOB_EFFECTS.register("gooped", GoopedMobEffect::new);
     public static final RegistryObject<com.craisinlord.antarchy.content.effect.BloodglassWardEffect> BLOODGLASS_WARD = MOB_EFFECTS.register("bloodglass_ward", com.craisinlord.antarchy.content.effect.BloodglassWardEffect::new);
@@ -110,6 +112,10 @@ public final class AntarchyForgeMisc {
             () -> new Potion(new MobEffectInstance(mobEffectHolder(INVERTED), 600)));
     public static final RegistryObject<Potion> LONG_INVERSION = POTIONS.register("long_inversion",
             () -> new Potion("inversion", new MobEffectInstance(mobEffectHolder(INVERTED), 2400)));
+    public static final RegistryObject<Potion> TIME_DILATION = POTIONS.register("time_dilation",
+            () -> new Potion(new MobEffectInstance(mobEffectHolder(DILATED), 1200)));
+    public static final RegistryObject<Potion> LONG_TIME_DILATION = POTIONS.register("long_time_dilation",
+            () -> new Potion("time_dilation", new MobEffectInstance(mobEffectHolder(DILATED), 1200, 1)));
     public static final RegistryObject<Potion> STINKY_POTION = POTIONS.register("stinky",
             () -> new Potion(new MobEffectInstance(mobEffectHolder(STINKY), 1200)));
     public static final RegistryObject<Potion> LONG_STINKY = POTIONS.register("long_stinky",

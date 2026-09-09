@@ -164,7 +164,7 @@ public class WaspNestBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
+    public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putBoolean("Initialized", this.initialized);
         tag.putBoolean(PANDA_VARIANT, this.pandaVariant);

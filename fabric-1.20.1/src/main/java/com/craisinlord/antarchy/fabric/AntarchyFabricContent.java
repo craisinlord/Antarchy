@@ -88,6 +88,8 @@ public final class AntarchyFabricContent {
         net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistry.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.CLOUD_SHARK_FIN.get()), net.minecraft.world.item.alchemy.Potions.SLOW_FALLING);
         net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistry.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.JUMPY_BUG_LEG.get()), Potions.LEAPING);
         net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistry.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.CORNEA_EAR.get()), net.minecraft.world.item.alchemy.Potions.NIGHT_VISION);
+        net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistry.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.QUEEN_SCALE.get()), potionHolder(AntarchyFabricMisc.TIME_DILATION));
+        net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistry.registerPotionRecipe(potionHolder(AntarchyFabricMisc.TIME_DILATION), Ingredient.of(Items.GLOWSTONE_DUST), potionHolder(AntarchyFabricMisc.LONG_TIME_DILATION));
 
         AntarchyFabricSounds.SOUND_EVENTS.register();
         AntarchyFabricMisc.FLUIDS.register();
@@ -441,6 +443,12 @@ public final class AntarchyFabricContent {
                 com.craisinlord.antarchy.fabric.network.AntarchyFabricNetworking.sendToPlayer(player, payload, com.craisinlord.antarchy.content.network.HordeIntensityPayload.STREAM_CODEC, com.craisinlord.antarchy.content.network.HordeIntensityPayload.TYPE));
         BloodCrystalKatanaItem.setTrailCallback(AntarchyFabricNetworking::syncKatanaTrail);
         com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.setSyncDispatcher(AntarchyFabricNetworking::syncGravityEntity);
+        com.craisinlord.antarchy.content.time.TimeDilationApi.setSyncDispatcher(
+                com.craisinlord.antarchy.fabric.network.AntarchyFabricTimeDilationNetworking::syncRate);
+        com.craisinlord.antarchy.content.time.TimeDilationApi.setFieldSyncDispatcher(
+                com.craisinlord.antarchy.fabric.network.AntarchyFabricTimeDilationNetworking::syncFields);
+        AntarchyObjects.setTimeDilationField(() -> AntarchyFabricEntities.TIME_DILATION_FIELD.get());
+        AntarchyObjects.setDilatedEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.DILATED));
         com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.setSendToPlayer((player, payload) ->
                 AntarchyFabricNetworking.sendToPlayer(player, payload,
                         com.craisinlord.antarchy.content.network.TigerEyeCamouflageStatePayload.STREAM_CODEC,

@@ -24,12 +24,16 @@ import net.minecraft.world.level.block.RailBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DiamondMinecartEntity extends Minecart {
     private static final long INPUT_TIMEOUT_TICKS = 5L;
+    private static final long COLLISION_COOLDOWN_TICKS = 10L;
     private static final EntityDataAccessor<Float> SYNCED_SPEED =
             SynchedEntityData.defineId(DiamondMinecartEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> SYNCED_FACING =
@@ -41,6 +45,7 @@ public class DiamondMinecartEntity extends Minecart {
     private Direction facingDir = Direction.SOUTH;
     private BlockPos lastBlockPos = null;
     private boolean railWarningCooldown = false;
+    private final Map<Integer, Long> collisionCooldowns = new HashMap<>();
 
     private final Item dropItem;
 
@@ -134,6 +139,7 @@ public class DiamondMinecartEntity extends Minecart {
             this.inputFlags = 0;
             this.lastInputGameTime = Long.MIN_VALUE;
             this.currentSpeed = 0.0F;
+            this.collisionCooldowns.clear();
             this.entityData.set(SYNCED_SPEED, 0.0F);
             this.setDeltaMovement(0.0D, this.getDeltaMovement().y, 0.0D);
             return;
@@ -145,6 +151,11 @@ public class DiamondMinecartEntity extends Minecart {
 
         Player rider = this.getRidingPlayer();
         boolean hasRider = rider != null;
+
+        if (!hasRider) {
+            this.inputFlags = 0;
+            this.lastInputGameTime = Long.MIN_VALUE;
+        }
 
         if (this.lastBlockPos == null) {
             if (rider != null) {
@@ -212,10 +223,10 @@ public class DiamondMinecartEntity extends Minecart {
 
     private void onEnteredNewBlock(BlockPos currentPos, @Nullable Player rider) {
         Direction previousFacing = this.facingDir;
-        if (rider != null && (this.inputFlags & 0x01) != 0) {
-            Direction lookedFacing = getLookFacing(rider, this.facingDir);
-            if (lookedFacing != this.facingDir.getOpposite()) {
-                this.facingDir = lookedFacing;
+        if (rider != null) {
+            Direction steeredFacing = getSteeredFacing(rider, this.facingDir);
+            if (steeredFacing != this.facingDir.getOpposite()) {
+                this.facingDir = steeredFacing;
             }
         }
 
@@ -380,7 +391,10 @@ public class DiamondMinecartEntity extends Minecart {
     }
 
     private boolean canPlaceRailAt(BlockPos pos, BlockState existing) {
-        if (!isWithinRailBuildHeight(pos) || !this.level().getBlockState(pos.below()).isSolid()) {
+        if (!isWithinRailBuildHeight(pos)
+                || !this.level().hasChunkAt(pos)
+                || !this.level().getWorldBorder().isWithinBounds(pos)
+                || !this.level().getBlockState(pos.below()).isSolid()) {
             return false;
         }
         return BaseRailBlock.isRail(existing) || existing.isAir() || existing.canBeReplaced();
@@ -390,16 +404,44 @@ public class DiamondMinecartEntity extends Minecart {
         double maxDamage = AntarchySettings.diamondMinecartMaxMobDamage();
         double maxSpeed = AntarchySettings.diamondMinecartMaxSpeed();
         float damage = maxSpeed <= 0.0D ? 0.0F : (float) (maxDamage * (this.currentSpeed / maxSpeed));
+        if (damage <= 0.0F) {
+            return;
+        }
+
+        long gameTime = this.level().getGameTime();
+        this.collisionCooldowns.entrySet().removeIf(entry -> entry.getValue() <= gameTime);
+        Vec3 horizontalVelocity = new Vec3(this.getDeltaMovement().x, 0.0D, this.getDeltaMovement().z);
+        double velocityLength = horizontalVelocity.length();
+        if (velocityLength < 1.0E-4D) {
+            return;
+        }
+        Vec3 movementDirection = horizontalVelocity.scale(1.0D / velocityLength);
 
         DamageSource source = this.level().damageSources().generic();
         AABB hitBox = this.getBoundingBox().inflate(0.2D, 0.0D, 0.2D);
         List<LivingEntity> nearby = this.level().getEntitiesOfClass(LivingEntity.class, hitBox,
-                entity -> !(entity instanceof Player player && this.hasPassenger(player)));
+                entity -> !(entity instanceof Player player && this.hasPassenger(player))
+                        && !entity.isInvulnerable());
 
         for (LivingEntity mob : nearby) {
-            mob.hurt(source, damage);
+            if (this.collisionCooldowns.containsKey(mob.getId())) {
+                continue;
+            }
+
             double dx = mob.getX() - this.getX();
             double dz = mob.getZ() - this.getZ();
+            double distance = Math.sqrt(dx * dx + dz * dz);
+            if (distance > 1.0E-4D) {
+                Vec3 toMob = new Vec3(dx / distance, 0.0D, dz / distance);
+                if (movementDirection.dot(toMob) < -0.2D) {
+                    continue;
+                }
+            }
+
+            if (!mob.hurt(source, damage)) {
+                continue;
+            }
+            this.collisionCooldowns.put(mob.getId(), gameTime + COLLISION_COOLDOWN_TICKS);
             double len = Math.sqrt(dx * dx + dz * dz);
             if (len > 0.001D) {
                 mob.setDeltaMovement(mob.getDeltaMovement().add(
@@ -424,6 +466,18 @@ public class DiamondMinecartEntity extends Minecart {
     private static Direction getLookFacing(Player rider, Direction fallback) {
         Direction direction = Direction.fromYRot(rider.getYRot());
         return direction.getAxis() == Direction.Axis.Y ? fallback : direction;
+    }
+
+    private Direction getSteeredFacing(Player rider, Direction fallback) {
+        boolean left = (this.inputFlags & 0x04) != 0;
+        boolean right = (this.inputFlags & 0x08) != 0;
+        if (left != right) {
+            return left ? fallback.getCounterClockWise() : fallback.getClockWise();
+        }
+        if ((this.inputFlags & 0x01) != 0) {
+            return getLookFacing(rider, fallback);
+        }
+        return fallback;
     }
 
     private static int facingDirectionIndex(Direction dir) {

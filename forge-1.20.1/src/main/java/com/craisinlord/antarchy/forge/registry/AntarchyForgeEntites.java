@@ -62,6 +62,7 @@ import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareBiteEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmarePortalEntity;
 import com.craisinlord.antarchy.content.entity.portal.DimensionalTearEntity;
+import com.craisinlord.antarchy.content.time.TimeDilationFieldEntity;
 import com.craisinlord.antarchy.content.entity.CheepEntity;
 import com.craisinlord.antarchy.content.entity.CreepingHorrorEntity;
 import com.craisinlord.antarchy.content.entity.DorrieEntity;
@@ -428,6 +429,12 @@ public final class AntarchyForgeEntites {
                     .clientTrackingRange(12)
                     .updateInterval(2)
                     .build("dimensional_tear"));
+    public static final RegistryObject<EntityType<TimeDilationFieldEntity>> TIME_DILATION_FIELD = ENTITY_TYPES.register("time_dilation_field",
+            () -> EntityType.Builder.<TimeDilationFieldEntity>of(TimeDilationFieldEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F)
+                    .clientTrackingRange(16)
+                    .updateInterval(20)
+                    .build("time_dilation_field"));
 
     private AntarchyForgeEntites() {}
 

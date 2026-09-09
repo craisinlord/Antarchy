@@ -73,6 +73,7 @@ import net.minecraftforge.event.village.WandererTradesEvent;
 import com.craisinlord.antarchy.content.item.MinersDreamExcavationManager;
 import net.minecraftforge.fluids.FluidInteractionRegistry;
 import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
+import com.craisinlord.antarchy.content.time.TimeDilationManager;
 
 public final class AntarchyForgeEvents {
     private AntarchyForgeEvents() {}
@@ -106,6 +107,7 @@ public final class AntarchyForgeEvents {
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickScorpionWhips);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickDreamSandLowGravity);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickMinersDreamExcavations);
+        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickTimeDilation);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleAntiwaterDamage);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleAntiwaterFall);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleDreamSandFall);
@@ -208,6 +210,13 @@ public final class AntarchyForgeEvents {
         }
     }
 
+    @net.minecraftforge.eventbus.api.SubscribeEvent
+    static void tickTimeDilation(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            TimeDilationManager.tickServer(event.getServer());
+        }
+    }
+
     private static int badOmenLevel(Player player) {
         MobEffectInstance effect = player.getEffect(MobEffects.BAD_OMEN);
         return effect != null ? effect.getAmplifier() + 1 : 0;
@@ -280,6 +289,12 @@ public final class AntarchyForgeEvents {
         }
 
         AntarchyGravityNetworking.syncEntity(event.getTarget());
+        if (event.getTarget() instanceof com.craisinlord.antarchy.content.time.TimeDilationEntityAccess access
+                && event.getEntity() instanceof ServerPlayer trackingPlayer) {
+            com.craisinlord.antarchy.forge.network.AntarchyTimeDilationNetworking.syncRateToPlayer(
+                    trackingPlayer, event.getTarget(), access.antarchy$getTimeDilationRate()
+            );
+        }
         if (event.getTarget() instanceof ServerPlayer trackedPlayer && event.getEntity() instanceof ServerPlayer trackingPlayer) {
             com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.syncTo(trackingPlayer, trackedPlayer);
         }
@@ -1187,6 +1202,8 @@ public final class AntarchyForgeEvents {
         addPotionMix(Potions.AWKWARD, AntarchyForgeItems.TITANIUM_NUGGET.get(), AntarchyForgeMisc.GROWING.get());
         addPotionMix(AntarchyForgeMisc.GROWING.get(), Items.GLOWSTONE_DUST, AntarchyForgeMisc.STRONG_GROWING.get());
         addPotionMix(AntarchyForgeMisc.STRONG_GROWING.get(), Items.GLOWSTONE_DUST, AntarchyForgeMisc.EXTREME_GROWING.get());
+        addPotionMix(Potions.AWKWARD, AntarchyForgeItems.QUEEN_SCALE.get(), AntarchyForgeMisc.TIME_DILATION.get());
+        addPotionMix(AntarchyForgeMisc.TIME_DILATION.get(), Items.GLOWSTONE_DUST, AntarchyForgeMisc.LONG_TIME_DILATION.get());
     }
 
     static void onMobEffectApplicable(MobEffectEvent.Applicable event) {

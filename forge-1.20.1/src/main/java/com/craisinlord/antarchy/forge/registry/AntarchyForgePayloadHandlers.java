@@ -41,5 +41,6 @@ public class AntarchyForgePayloadHandlers {
                 payload -> com.craisinlord.antarchy.content.client.HordeClientState.update(payload.intensity())
         );
         MultipartNetworking.register();
+        com.craisinlord.antarchy.forge.network.AntarchyTimeDilationNetworking.register();
     }
 }

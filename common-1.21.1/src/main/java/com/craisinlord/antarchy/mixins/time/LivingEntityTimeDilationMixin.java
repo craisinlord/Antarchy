@@ -4,7 +4,6 @@ import com.craisinlord.antarchy.content.time.TimeDilationApi;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,22 +19,6 @@ public abstract class LivingEntityTimeDilationMixin {
         }
     }
 
-    @Inject(method = "tickEffects", at = @At("HEAD"), cancellable = true)
-    private void antarchy$slowEffectTicks(CallbackInfo ci) {
-        Entity entity = (Entity) (Object) this;
-        if (!TimeDilationApi.consumeTick(entity, "living_effects")) {
-            ci.cancel();
-        }
-    }
-
-    @Inject(method = "updatingUsingItem", at = @At("HEAD"), cancellable = true)
-    private void antarchy$slowUsingItem(CallbackInfo ci) {
-        Entity entity = (Entity) (Object) this;
-        if (!TimeDilationApi.consumeTick(entity, "living_using_item")) {
-            ci.cancel();
-        }
-    }
-
     @Inject(method = "swing(Lnet/minecraft/world/InteractionHand;Z)V", at = @At("HEAD"), cancellable = true)
     private void antarchy$slowSwingStart(InteractionHand hand, boolean updateSelf, CallbackInfo ci) {
         Entity entity = (Entity) (Object) this;
@@ -44,11 +27,4 @@ public abstract class LivingEntityTimeDilationMixin {
         }
     }
 
-    @Inject(method = "updateUsingItem", at = @At("HEAD"), cancellable = true)
-    private void antarchy$slowItemUseProgress(ItemStack stack, CallbackInfo ci) {
-        Entity entity = (Entity) (Object) this;
-        if (!TimeDilationApi.consumeTick(entity, "living_item_use_progress")) {
-            ci.cancel();
-        }
-    }
 }

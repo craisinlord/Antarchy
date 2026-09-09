@@ -43,10 +43,10 @@ public final class AntarchySettings {
     private static double bomberExplosionDamage = 8.0D;
     private static double bomberExplosionRadius = 4.0D;
     private static double redAntAttackDamage = 3.0D;
-    private static double ultimateSwordAttackDamage = 30.0D;
-    private static double ultimatePickaxeAttackDamage = 22.0D;
-    private static double ultimateAxeAttackDamage = 38.0D;
-    private static double ultimateShovelAttackDamage = 24.0D;
+    private static double ultimateSwordAttackDamage = 34.0D;
+    private static double ultimatePickaxeAttackDamage = 24.0D;
+    private static double ultimateAxeAttackDamage = 42.0D;
+    private static double ultimateShovelAttackDamage = 26.0D;
     private static double ultimateHoeAttackDamage = 8.0D;
     private static double ultimateBowAttackDamage = 18.0D;
     private static double ultimateBowPlayerHeal = 8.0D;
@@ -55,8 +55,8 @@ public final class AntarchySettings {
     private static double ultimateCrossbowAttackDamage = 8.0D;
     private static double ultimateCrossbowChargeSpeedMultiplier = 0.25D;
     private static double ultimateMaceDamageMultiplier = 1.5D;
-    private static double battleAxeAttackDamage = 46.0D;
-    private static double bigBerthaAttackDamage = 55.0D;
+    private static double battleAxeAttackDamage = 50.0D;
+    private static double bigBerthaAttackDamage = 62.0D;
     private static double bigBerthaReachBonus = 3.0D;
     private static double bigBerthaAttackSpeed = -3.0D;
     private static double attitudeAdjusterBaseDamage = 47.0D;
@@ -72,6 +72,7 @@ public final class AntarchySettings {
     private static int krakensGraspTentacleSlownessAmplifier = 8;
     private static int krakensGraspTentacleSlownessRefreshTicks = 5;
     private static double scorpionWhipBaseDamage = 10.0D;
+    private static double scorpionWhipReachBonus = 5.0D;
     private static int scorpionWhipPoisonDurationTicks = 100;
     private static double scorpionWhipTetherMaxRange = 10.0D;
     private static double scorpionWhipSnapBonusDamage = 6.0D;
@@ -81,16 +82,20 @@ public final class AntarchySettings {
     private static int bloodCrystalKatanaAttackDamage = 7;
     private static double bloodCrystalKatanaLaunchStrength = 1.1D;
     private static int bloodCrystalKatanaTrailDurationTicks = 12;
+    private static double bloodCrystalKatanaReachBonus = 4.0D;
+    private static int bloodCrystalKatanaInvulnTicks = 8;
+    private static int bloodCrystalKatanaDashCooldownTicks = 4;
     private static double bigBerthaBasiliskCooldownSeconds = 7.0D;
     private static double bigBerthaLucidInvertedDurationSeconds = 3.0D;
     private static double bigBerthaLucidInvertedDamageBonusPercent = 25.0D;
     private static double bigBerthaNoneModeDamageBonusPercent = 15.0D;
     private static double bigBerthaNightmareDamageBonusPercent = 30.0D;
     private static double potentNyxiteInvertedDurationSeconds = 60.0D;
+    private static boolean dimensionalTearsSpawnNaturally = true;
     private static int dimensionalTearLifetimeTicks = 24000;
     private static int dimensionalTearInvertedDurationTicks = 2400;
-    private static int dimensionalTearEmergenceMinIntervalTicks = 2400;
-    private static int dimensionalTearEmergenceMaxIntervalTicks = 7200;
+    private static int dimensionalTearEmergenceMinIntervalTicks = 400;
+    private static int dimensionalTearEmergenceMaxIntervalTicks = 1200;
     private static float dimensionalTearLucidEventChance = 0.65F;
     private static int ultimateToolEnchantability = 25;
     private static int ultimateArmorEnchantability = 10;
@@ -99,23 +104,23 @@ public final class AntarchySettings {
     private static int ultimateMaceEnchantability = 20;
     private static boolean ultimateToolsThreeByThreeEnabled = true;
     private static boolean ultimateArmorComesEnchanted = true;
-    private static int ultimateHelmetArmorValue = 4;
-    private static int ultimateChestplateArmorValue = 9;
-    private static int ultimateLeggingsArmorValue = 7;
-    private static int ultimateBootsArmorValue = 4;
-    private static double ultimateHelmetArmorToughness = 3.0D;
-    private static double ultimateChestplateArmorToughness = 3.0D;
-    private static double ultimateLeggingsArmorToughness = 3.0D;
-    private static double ultimateBootsArmorToughness = 3.0D;
+    private static int ultimateHelmetArmorValue = 6;
+    private static int ultimateChestplateArmorValue = 11;
+    private static int ultimateLeggingsArmorValue = 9;
+    private static int ultimateBootsArmorValue = 6;
+    private static double ultimateHelmetArmorToughness = 4.5D;
+    private static double ultimateChestplateArmorToughness = 4.5D;
+    private static double ultimateLeggingsArmorToughness = 4.5D;
+    private static double ultimateBootsArmorToughness = 4.5D;
     private static ResourceKey<Level> brownAntDestinationDimension = dimensionKey("antarchy:elythia");
     private static ResourceKey<Level> redAntDestinationDimension = dimensionKey("antarchy:thoraxis");
     private static ResourceKey<Level> termiteDestinationDimension = dimensionKey("antarchy:cavaryn");
     private static ResourceKey<Level> rainbowAntNonInfinityFallbackDimension = dimensionKey("antarchy:elythia");
-    private static double krakenHealth = 1500.0D;
+    private static double krakenHealth = 1800.0D;
     private static double krakenAttackDamage = 45.0D;
     private static double octopusBombHealth = 100.0D;
     private static double octopusBombAttackDamage = 16.0D;
-    private static double brutalflyHealth = 400.0D;
+    private static double brutalflyHealth = 500.0D;
     private static double brutalflySwipeDamage = 15.0D;
     private static double brutalflySpitDamage = 5.0D;
     private static double mantisHealth = 50.0D;
@@ -123,7 +128,7 @@ public final class AntarchySettings {
     private static double mantisMovementSpeed = 0.42D;
     private static double mantisFlyingSpeed = 0.77D;
     private static boolean mantisIgnoreLightLevel = false;
-    private static double alphaMantisHealth = 250.0D;
+    private static double alphaMantisHealth = 380.0D;
     private static double alphaMantisAttackDamage = 18.0D;
     private static double alphaMantisMovementSpeed = 0.546D;
     private static double alphaMantisFlyingSpeed = 0.77D;
@@ -144,8 +149,8 @@ public final class AntarchySettings {
     private static double squidzookaLaunchVelocity = 2.1D;
     private static double rpoLauncherCooldownSeconds = 1.0D;
     private static double rpoLauncherLaunchVelocity = 1.8D;
-    private static double rpoLauncherExplosionDamage = 30.0D;
-    private static double rpoLauncherExplosionRadius = 13.5D;
+    private static double rpoLauncherExplosionDamage = 34.0D;
+    private static double rpoLauncherExplosionRadius = 14.0D;
     private static double sizeRayCooldownSeconds = 1.0D;
     private static boolean invertProjectilesFromInvertedPlayers = false;
     private static boolean gravityGunEnabled = true;
@@ -178,26 +183,102 @@ public final class AntarchySettings {
     private static double dreamSandEffectDurationSeconds = 7.0D;
     private static double dreamSandFallingBlockGravityMultiplier = 0.4D;
     private static boolean ichorWitherEnabled = true;
-    private static int nightmareHelmetArmorValue = 3;
-    private static int nightmareChestplateArmorValue = 8;
-    private static int nightmareLeggingsArmorValue = 6;
-    private static int nightmareBootsArmorValue = 3;
-    private static double nightmareHelmetArmorToughness = 3.0D;
-    private static double nightmareChestplateArmorToughness = 3.0D;
-    private static double nightmareLeggingsArmorToughness = 3.0D;
-    private static double nightmareBootsArmorToughness = 3.0D;
-    
-    private static double nightmareHelmetDoubleDamageChance = 0.04D;
-    private static double nightmareChestplateDoubleDamageChance = 0.06D;
-    private static double nightmareLeggingsDoubleDamageChance = 0.05D;
-    private static double nightmareBootsDoubleDamageChance = 0.03D;
+    private static int nightmareHelmetArmorValue = 4;
+    private static int nightmareChestplateArmorValue = 9;
+    private static int nightmareLeggingsArmorValue = 7;
+    private static int nightmareBootsArmorValue = 4;
+    private static double nightmareHelmetArmorToughness = 4.0D;
+    private static double nightmareChestplateArmorToughness = 4.0D;
+    private static double nightmareLeggingsArmorToughness = 4.0D;
+    private static double nightmareBootsArmorToughness = 4.0D;
 
-    private static double nightmareSwordBaseDamage = 15.0D;
-    
+    private static double nightmareHelmetDoubleDamageChance = 0.05D;
+    private static double nightmareChestplateDoubleDamageChance = 0.07D;
+    private static double nightmareLeggingsDoubleDamageChance = 0.07D;
+    private static double nightmareBootsDoubleDamageChance = 0.05D;
+
+    private static double nightmareSwordBaseDamage = 18.0D;
+
     private static double nightmareSwordScalingFactor = 1.5D;
+
+    private static boolean royalArmorComesEnchanted = true;
+    private static int royalArmorProtectionLevel = 10;
+    private static int royalArmorEnchantability = 30;
+    private static int royalArmorDurabilityMultiplier = 93;
+    private static int royalGuardianHelmetArmorValue = 5;
+    private static int royalGuardianChestplateArmorValue = 10;
+    private static int royalGuardianLeggingsArmorValue = 8;
+    private static int royalGuardianBootsArmorValue = 5;
+    private static double royalGuardianArmorToughness = 4.0D;
+    private static double royalGuardianArmorKnockbackResistance = 0.15D;
+    private static int royalAssailantHelmetArmorValue = 5;
+    private static int royalAssailantChestplateArmorValue = 10;
+    private static int royalAssailantLeggingsArmorValue = 8;
+    private static int royalAssailantBootsArmorValue = 5;
+    private static double royalAssailantArmorToughness = 3.0D;
+    private static double royalAssailantArmorKnockbackResistance = 0.15D;
+    private static double royalAssailantHelmetDoubleDamageChance = 0.06D;
+    private static double royalAssailantChestplateDoubleDamageChance = 0.08D;
+    private static double royalAssailantLeggingsDoubleDamageChance = 0.07D;
+    private static double royalAssailantBootsDoubleDamageChance = 0.05D;
+    private static double royalGuardianSwordAttackDamage = 111.0D;
+    private static double royalGuardianSwordAttackSpeed = -2.5D;
+    private static double royalAssailantBattleAxeAttackDamage = 151.0D;
+    private static double royalAssailantBattleAxeAttackSpeed = -2.9D;
+    private static double royalWeaponAttackReachBonus = 1.0D;
+    private static double royalWeaponAttackKnockbackBonus = 1.0D;
+    private static int royalWeaponDurability = 4608;
+    private static int royalWeaponEnchantability = 30;
+    private static int royalGuardianShieldDurability = 1008;
+    private static double royalBoltDamage = 6.0D;
+    private static int royalEggHatchChance = 3;
+    private static double princeHealth = 120.0D;
+    private static double princeAttackDamage = 14.0D;
+    private static double princeMovementSpeed = 0.28D;
+    private static double princeFlyingSpeed = 0.9D;
+    private static double princeArmor = 10.0D;
+    private static double princeKnockbackResistance = 0.6D;
+    private static double princeFollowRange = 48.0D;
+    private static double princessHealth = 110.0D;
+    private static double princessAttackDamage = 10.0D;
+    private static double princessMovementSpeed = 0.28D;
+    private static double princessFlyingSpeed = 0.95D;
+    private static double princessArmor = 8.0D;
+    private static double princessKnockbackResistance = 0.5D;
+    private static double princessFollowRange = 48.0D;
+    private static double kingHealth = 6000.0D;
+    private static double queenHealth = 6000.0D;
+    private static double kingAttackDamage = 50.0D;
+    private static double queenAttackDamage = 45.0D;
+    private static double royalBossSoundVolume = 4.5D;
+    private static double queenBlackHoleRadius = 14.0D;
+    private static int queenBlackHoleActiveTicks = 120;
+    private static double queenBlackHolePullStrength = 0.16D;
+    private static double queenFinalTimeFieldRadius = 20.0D;
+    private static double queenFinalTimeFieldRate = 0.05D;
+    private static int queenFinalTimeFieldDurationTicks = 45;
+    private static int queenFinalTimeFieldCooldownTicks = 80;
+    private static double kingFireballDamage = 32.0D;
+    private static double kingFireballRadius = 4.5D;
+    private static int kingFireballCooldownTicks = 150;
+    private static double kingIceballDamage = 18.0D;
+    private static double kingIceballRadius = 5.0D;
+    private static int kingIceballCooldownTicks = 190;
+    private static double kingIceSpikeDamage = 24.0D;
+    private static int kingIceSpikeCooldownTicks = 240;
+    private static int kingElementalTerrainCap = 256;
+    private static double royalBossArmor = 20.0D;
+    private static double royalBossFollowRange = 128.0D;
+    private static double royalBossMovementSpeed = 0.22D;
+    private static double royalBossKnockbackResistance = 1.0D;
+    private static double royalBossStepHeight = 3.0D;
+    private static double royalBossMaxSingleHitDamage = 250.0D;
+    private static double royalBossBiteReach = 10.0D;
+    private static double royalBossBiteDamageMultiplier = 1.6D;
+    private static int royalBossBiteCooldownTicks = 45;
     private static boolean basiliskPetrifyingGazeEnabled = true;
     private static int basiliskSpawnMaxLightLevel = 5;
-    private static double basiliskHealth = 150.0D;
+    private static double basiliskHealth = 320.0D;
     private static double basiliskAttackDamage = 36.0D;
     private static double basiliskMovementSpeed = 0.18D;
     private static double basiliskArmor = 6.0D;
@@ -225,6 +306,8 @@ public final class AntarchySettings {
     private static double diamondMinecartCoastDeceleration = 0.02D;
     private static boolean diamondMinecartMobDamageEnabled = false;
     private static double diamondMinecartMaxMobDamage = 4.0D;
+    private static double hoverboardMaxSpeed = 6.0D;
+    private static double hoverboardAcceleration = 0.05D;
     private static boolean dreadHallucinationSoundsEnabled = true;
     private static double dreadHallucinationSoundMinInterval = 3.0D;
     private static double dreadHallucinationSoundMaxInterval = 10.0D;
@@ -271,7 +354,7 @@ public final class AntarchySettings {
     private static final int     reverieAmbientTargetMaxAgeTicks  = 40;
     private static final int     reverieAmbientPulseIntervalMinTicks = 12;
     private static final int     reverieAmbientPulseIntervalMaxTicks = 19;
-    private static double emperorScorpionHealth = 300.0D;
+    private static double emperorScorpionHealth = 420.0D;
     private static double emperorScorpionAttackDamage = 28.0D;
     private static double emperorScorpionMovementSpeed = 0.384D;
     private static double emperorScorpionArmor = 22.0D;
@@ -288,9 +371,9 @@ public final class AntarchySettings {
     private static int emperorScorpionWeaknessTicks = 120;
     private static int emperorScorpionSummonIntervalTicks = 140;
     private static int emperorScorpionMaxSummonedScorpions = 4;
-    private static int emperorScorpionMaxNearbyScorpions = 3;
+    private static int emperorScorpionMaxNearbyScorpions = 4;
     private static int emperorScorpionHardenCooldownTicks = 2400;
-    private static double emperorScorpionDamageRange = 80.0D;
+    private static double emperorScorpionDamageRange = 25.0D;
     private static int emperorScorpionMinDespawnTicks = 6000;
     private static double scorpionHealth = 30.0D;
     private static double scorpionAttackDamage = 5.0D;
@@ -303,10 +386,9 @@ public final class AntarchySettings {
     private static double bedBugArmor = 2.0D;
     private static double jumpyBugHealth = 100.0D;
     private static double jumpyBugPounceDamage = 12.0D;
-    private static double jumpyBugLatchDamage = 12.0D;
     private static double jumpyBugCamouflageAlpha = 0.18D;
     private static double brutalflyArmor = 10.0D;
-    private static double brutalflyArmorToughness = 4.0D;
+    private static double brutalflyArmorToughness = 5.0D;
     private static double brutalflyKnockbackResistance = 0.7D;
     private static double brutalflyMovementSpeed = 0.34D;
     private static double brutalflyFlyingSpeed = 0.55D;
@@ -321,29 +403,59 @@ public final class AntarchySettings {
     private static double krakenArmor = 8.0D;
     private static double krakenBossBarRange = 40.0D;
     private static double krakenFollowRange = 96.0D;
-    private static double krakenDamageRange = 96.0D;
-    private static double herculesBeetleDamageRange = 48.0D;
-    private static double toreterrorDamageRange = 48.0D;
-    private static double brutalflyDamageRange = 48.0D;
-    private static double alphaMantisDamageRange = 48.0D;
+    private static double krakenDamageRange = 35.0D;
+    private static double herculesBeetleDamageRange = 25.0D;
+    private static double toreterrorDamageRange = 25.0D;
+    private static double brutalflyDamageRange = 25.0D;
+    private static double alphaMantisDamageRange = 25.0D;
     private static float krakenLightningDamagePhaseOne = 6.0F;
-    private static double lucidHealth = 30.0D;
+    private static double lucidHealth = 70.0D;
     private static double lucidAttackDamage = 4.0D;
     private static double lucidMovementSpeed = 0.22D;
     private static double lucidFlyingSpeed = 0.35D;
     private static double lucidKnockbackResistance = 0.5D;
-    private static double missileSquidHealth = 50.0D;
-    private static double missileSquidAttackDamage = 6.0D;
+    private static double vortexHealth = 70.0D;
+    private static double vortexAttackDamage = 4.0D;
+    private static double vortexMovementSpeed = 0.22D;
+    private static double vortexFlyingSpeed = 0.35D;
+    private static int vortexMaxActiveVortexes = 3;
+    private static int windVortexDurationTicks = 240;
+    private static double windVortexPullStrength = 0.32D;
+    private static double windVortexLaunchStrength = 1.0D;
+    private static boolean eyeOfTheStormEnabled = true;
+    private static int eyeOfTheStormUpdraftCooldownTicks = 40;
+    private static double eyeOfTheStormUpdraftLaunchStrength = 1.15D;
+    private static double eyeOfTheStormUpdraftHeight = 4.0D;
+    private static double eyeOfTheStormUpdraftRadius = 1.3D;
+    private static int eyeOfTheStormUpdraftDurationTicks = 32;
+    private static int eyeOfTheStormSurgeCooldownTicks = 70;
+    private static double eyeOfTheStormSurgeRange = 16.0D;
+    private static int eyeOfTheStormSurgeDurationTicks = 300;
+    private static double eyeOfTheStormSurgeRadius = 4.0D;
+    private static double eyeOfTheStormSurgeHeight = 6.0D;
+    private static double eyeOfTheStormSurgePullStrength = 0.85D;
+    private static double eyeOfTheStormSurgeReturnStrength = 1.4D;
+    private static float eyeOfTheStormSurgeDamage = 5.0F;
+    private static double vortexLensMinRadius = 1.5D;
+    private static double vortexLensMaxRadius = 10.0D;
+    private static double vortexLensMinHeight = 3.0D;
+    private static double vortexLensMaxHeight = 20.0D;
+    private static double vortexLensPullStrength = 0.65D;
+    private static double vortexLensPushStrength = 0.65D;
+    private static double vortexLensLaunchStrength = 1.4D;
+    private static double missileSquidHealth = 60.0D;
+    private static double missileSquidAttackDamage = 9.0D;
     private static double missileSquidMovementSpeed = 0.84D;
     private static double missileSquidFlyingSpeed = 0.84D;
     private static double missileSquidKnockbackResistance = 0.15D;
     private static double molewormHealth = 8.0D;
     private static double molewormAttackDamage = 1.0D;
     private static double molewormMovementSpeed = 0.25D;
-    private static double triffidHealth = 80.0D;
+    private static double triffidHealth = 160.0D;
     private static double triffidAttackDamage = 10.0D;
     private static double triffidGrabDamage = 15.0D;
-    private static double molevoreHealth = 60.0D;
+    private static int triffidSweepHitCooldownTicks = 10;
+    private static double molevoreHealth = 140.0D;
     private static double molevoreAttackDamage = 10.0D;
     private static double molevoreMovementSpeed = 0.27D;
     private static double molevoreArmor = 6.0D;
@@ -356,7 +468,7 @@ public final class AntarchySettings {
     private static double molevoreBreakRange = 1.8D;
     private static double molevoreBreakVerticalRange = 2.2D;
     private static double molevoreBreakHalfWidth = 1.1D;
-    private static double nightmareHealth = 180.0D;
+    private static double nightmareHealth = 380.0D;
     private static double nightmareAttackDamage = 16.0D;
     private static double nightmareMovementSpeed = 0.28D;
     private static double nightmareFlyingSpeed = 0.3D;
@@ -388,7 +500,7 @@ public final class AntarchySettings {
     private static int bigBerthaBasiliskParalyzeDurationTicks = 80;
     private static int bigBerthaKrakenSlowTicks = 80;
     private static double ductTapeRepairPercentPerUse = 0.25D;
-    private static double ultimateArmorKnockbackResistance = 0.1D;
+    private static double ultimateArmorKnockbackResistance = 0.15D;
     private static double nightmareArmorKnockbackResistance = 0.1D;
     private static double primordialArmorKnockbackPerPiece = 0.5D;
     private static double mogglesVisionRadius = 20.0D;
@@ -404,33 +516,62 @@ public final class AntarchySettings {
     private static int bloodCrystalAppleShieldCount = 2;
     private static int bloodCrystalAppleDurationTicks = 2400;
     private static int bloodCrystalAppleShieldRechargeTicks = 600;
-    private static int bloodCrystalHardMaxShields = 8;
+    private static int bloodCrystalHardMaxShields = 10;
     // Armor stats (iron defense, gold durability, 0 toughness by default)
-    private static int bloodCrystalHelmetDefense = 2;
-    private static int bloodCrystalChestplateDefense = 6;
-    private static int bloodCrystalLeggingsDefense = 5;
-    private static int bloodCrystalBootsDefense = 2;
-    private static double bloodCrystalArmorToughness = 0.0;
+    private static int bloodCrystalHelmetDefense = 3;
+    private static int bloodCrystalChestplateDefense = 7;
+    private static int bloodCrystalLeggingsDefense = 6;
+    private static int bloodCrystalBootsDefense = 3;
+    private static double bloodCrystalArmorToughness = 2.0D;
     private static int bloodCrystalHelmetDurability = 77;
     private static int bloodCrystalChestplateDurability = 112;
     private static int bloodCrystalLeggingsDurability = 105;
     private static int bloodCrystalBootsDurability = 91;
-    private static double toreterrorHealth = 300.0D;
+    private static double toreterrorHealth = 450.0D;
     private static double toreterrorJumpAttackDamage = 14.0D;
     private static double toreterrorJumpAttackKnockback = 2.5D;
     private static double toreterrorSpinDamage = 6.0D;
     private static double toreterrorSpinKnockback = 0.9D;
-    private static double toreterrorRangedWaterBombChance = 0.35D;
     private static double toreterrorProjectileDamageMultiplier = 0.5D;
     private static double waterBombDamage = 6.0D;
     private static int waterBombLifetimeTicks = 120;
     private static double waterBombGravity = 0.12D;
     private static double waterBombKnockback = 1.2D;
-    private static double waterCannonCooldownSeconds = 1.5D;
     private static double creepingHorrorHealth = 15.0D;
     private static double creepingHorrorAttackDamage = 6.0D;
     private static double lurkingTerrorHealth = 15.0D;
     private static double lurkingTerrorAttackDamage = 6.0D;
+    private static double manticoreHealth = 40.0D;
+    private static double manticoreAttackDamage = 7.0D;
+    private static int manticoreStingPoisonTicks = 100;
+    private static int queenManticoreCap = 15;
+    private static int queenManticoreSummonCooldownTicks = 600;
+    private static int queenManticoreSummonCount = 3;
+    private static double queenManticoreSummonRange = 24.0D;
+    private static double queenBeamDamage = 45.0D;
+    private static double queenBeamRange = 100.0D;
+    private static int queenBeamDurationTicks = 30;
+    private static int queenBeamWindupTicks = 20;
+    private static int queenBeamTravelTicks = 12;
+    private static int queenBeamCooldownTicks = 90;
+    private static double queenBeamTracking = 0.1D;
+    private static double queenBeamTerrainRadius = 5.0D;
+    private static int queenBeamTerrainCap = 192;
+    private static double kingBeamDamage = 50.0D;
+    private static double kingBeamRange = 100.0D;
+    private static int kingBeamDurationTicks = 30;
+    private static int kingBeamWindupTicks = 20;
+    private static int kingBeamTravelTicks = 12;
+    private static int kingBeamCooldownTicks = 90;
+    private static double kingBeamTracking = 0.1D;
+    private static double kingBeamTerrainRadius = 5.0D;
+    private static int kingBeamTerrainCap = 192;
+    private static int royalDecreeCooldownTicks = 1200;
+    private static int kingRoyalMusterCooldownTicks = 500;
+    private static int kingRoyalMusterWindupTicks = 30;
+    private static int kingRoyalMusterDurationTicks = 600;
+    private static double kingRoyalMusterRadius = 32.0D;
+    private static int kingRoyalMusterCap = 12;
     private static double jerryInfantHealth = 20.0D;
     private static double jerryInfantAttackDamage = 2.0D;
     private static double jerryMatureHealth = 40.0D;
@@ -442,11 +583,28 @@ public final class AntarchySettings {
     private static double cheepHealth = 8.0D;
     private static double cheepAttackDamage = 3.0D;
     private static double dorrieHealth = 60.0D;
-    private static double herculesBeetleHealth = 500.0D;
+    private static double herculesBeetleHealth = 650.0D;
     private static double herculesBeetleAttackDamage = 30.0D;
     private static double herculesBeetleChargeDamage = 40.0D;
     private static double ouranwoodDeerHealth = 20.0D;
     private static double glimmerHealth = 20.0D;
+
+    private static double lucidArmorToughness = 2.0D;
+    private static double triffidArmorToughness = 3.0D;
+    private static double basiliskArmorToughness = 5.0D;
+    private static double nightmareMobArmorToughness = 5.0D;
+    private static double alphaMantisArmorToughness = 4.0D;
+    private static double herculesBeetleArmorToughness = 4.0D;
+    private static double krakenArmorToughness = 6.0D;
+    private static double nightmareMobArmor = 10.0D;
+
+    private static double bossMagicPerHitCapFraction = 0.12D;
+    private static int bossMagicWindowTicks = 20;
+    private static double bossMagicWindowCapFraction = 0.20D;
+    private static double bossMagicWardReductionFraction = 0.5D;
+    private static int bossMagicWardDurationTicks = 60;
+    private static int bossMagicWardTriggerBreaches = 2;
+    private static java.util.List<String> magicBurstDamageNamespaces = new java.util.ArrayList<>(java.util.List.of("irons_spellbooks"));
 
     private AntarchySettings() {
     }
@@ -671,28 +829,58 @@ public final class AntarchySettings {
         return bigBerthaNightmareDamageBonusPercent;
     }
 
+    public static double krakensGraspLightningDamage() { return krakensGraspLightningDamage; }
+
     public static double potentNyxiteInvertedDurationSeconds() {
         return potentNyxiteInvertedDurationSeconds;
+    }
+
+    public static boolean dimensionalTearsSpawnNaturally() {
+        return dimensionalTearsSpawnNaturally;
+    }
+
+    public static void setDimensionalTearsSpawnNaturally(boolean value) {
+        dimensionalTearsSpawnNaturally = value;
     }
 
     public static int dimensionalTearLifetimeTicks() {
         return dimensionalTearLifetimeTicks;
     }
 
+    public static void setDimensionalTearLifetimeTicks(int value) {
+        dimensionalTearLifetimeTicks = value;
+    }
+
     public static int dimensionalTearInvertedDurationTicks() {
         return dimensionalTearInvertedDurationTicks;
+    }
+
+    public static void setDimensionalTearInvertedDurationTicks(int value) {
+        dimensionalTearInvertedDurationTicks = value;
     }
 
     public static int dimensionalTearEmergenceMinIntervalTicks() {
         return dimensionalTearEmergenceMinIntervalTicks;
     }
 
+    public static void setDimensionalTearEmergenceMinIntervalTicks(int value) {
+        dimensionalTearEmergenceMinIntervalTicks = value;
+    }
+
     public static int dimensionalTearEmergenceMaxIntervalTicks() {
         return dimensionalTearEmergenceMaxIntervalTicks;
     }
 
+    public static void setDimensionalTearEmergenceMaxIntervalTicks(int value) {
+        dimensionalTearEmergenceMaxIntervalTicks = value;
+    }
+
     public static float dimensionalTearLucidEventChance() {
         return dimensionalTearLucidEventChance;
+    }
+
+    public static void setDimensionalTearLucidEventChance(float value) {
+        dimensionalTearLucidEventChance = value;
     }
 
     public static int ultimateToolEnchantability() {
@@ -1236,6 +1424,10 @@ public final class AntarchySettings {
         ultimateCrossbowChargeSpeedMultiplier = value;
     }
 
+    public static void setUltimateMaceDamageMultiplier(double value) {
+        ultimateMaceDamageMultiplier = value;
+    }
+
     public static void setBattleAxeAttackDamage(double value) {
         battleAxeAttackDamage = value;
     }
@@ -1298,6 +1490,10 @@ public final class AntarchySettings {
 
     public static void setUltimateCrossbowEnchantability(int value) {
         ultimateCrossbowEnchantability = value;
+    }
+
+    public static void setUltimateMaceEnchantability(int value) {
+        ultimateMaceEnchantability = value;
     }
 
     public static void setUltimateToolsThreeByThreeEnabled(boolean value) {
@@ -1368,8 +1564,6 @@ public final class AntarchySettings {
     public static void setKrakensGraspAttackSpeed(double value) { krakensGraspAttackSpeed = value; }
     public static void setKrakensGraspThrownDamage(double value) { krakensGraspThrownDamage = value; }
     public static void setKrakensGraspLightningDamage(double value) { krakensGraspLightningDamage = value; }
-
-    public static double krakensGraspLightningDamage() { return krakensGraspLightningDamage; }
     public static void setKrakensGraspInnateLoyalty(boolean value) { krakensGraspInnateLoyalty = value; }
     public static void setKrakensGraspInnateLoyaltyLevel(int value) { krakensGraspInnateLoyaltyLevel = value; }
     public static void setKrakensGraspTentacleDurationTicks(int value) { krakensGraspTentacleDurationTicks = value; }
@@ -1713,6 +1907,202 @@ public final class AntarchySettings {
     public static double nightmareBootsDoubleDamageChance() { return nightmareBootsDoubleDamageChance; }
     public static void setNightmareBootsDoubleDamageChance(double v) { nightmareBootsDoubleDamageChance = v; }
 
+    public static boolean royalArmorComesEnchanted() { return royalArmorComesEnchanted; }
+    public static void setRoyalArmorComesEnchanted(boolean v) { royalArmorComesEnchanted = v; }
+
+    public static int royalArmorProtectionLevel() { return royalArmorProtectionLevel; }
+    public static void setRoyalArmorProtectionLevel(int v) { royalArmorProtectionLevel = v; }
+
+    public static int royalArmorEnchantability() { return royalArmorEnchantability; }
+    public static void setRoyalArmorEnchantability(int v) { royalArmorEnchantability = v; }
+
+    public static int royalArmorDurabilityMultiplier() { return royalArmorDurabilityMultiplier; }
+    public static void setRoyalArmorDurabilityMultiplier(int v) { royalArmorDurabilityMultiplier = v; }
+
+    public static int royalGuardianHelmetArmorValue() { return royalGuardianHelmetArmorValue; }
+    public static void setRoyalGuardianHelmetArmorValue(int v) { royalGuardianHelmetArmorValue = v; }
+
+    public static int royalGuardianChestplateArmorValue() { return royalGuardianChestplateArmorValue; }
+    public static void setRoyalGuardianChestplateArmorValue(int v) { royalGuardianChestplateArmorValue = v; }
+
+    public static int royalGuardianLeggingsArmorValue() { return royalGuardianLeggingsArmorValue; }
+    public static void setRoyalGuardianLeggingsArmorValue(int v) { royalGuardianLeggingsArmorValue = v; }
+
+    public static int royalGuardianBootsArmorValue() { return royalGuardianBootsArmorValue; }
+    public static void setRoyalGuardianBootsArmorValue(int v) { royalGuardianBootsArmorValue = v; }
+
+    public static double royalGuardianArmorToughness() { return royalGuardianArmorToughness; }
+    public static void setRoyalGuardianArmorToughness(double v) { royalGuardianArmorToughness = v; }
+
+    public static double royalGuardianArmorKnockbackResistance() { return royalGuardianArmorKnockbackResistance; }
+    public static void setRoyalGuardianArmorKnockbackResistance(double v) { royalGuardianArmorKnockbackResistance = v; }
+
+    public static int royalAssailantHelmetArmorValue() { return royalAssailantHelmetArmorValue; }
+    public static void setRoyalAssailantHelmetArmorValue(int v) { royalAssailantHelmetArmorValue = v; }
+
+    public static int royalAssailantChestplateArmorValue() { return royalAssailantChestplateArmorValue; }
+    public static void setRoyalAssailantChestplateArmorValue(int v) { royalAssailantChestplateArmorValue = v; }
+
+    public static int royalAssailantLeggingsArmorValue() { return royalAssailantLeggingsArmorValue; }
+    public static void setRoyalAssailantLeggingsArmorValue(int v) { royalAssailantLeggingsArmorValue = v; }
+
+    public static int royalAssailantBootsArmorValue() { return royalAssailantBootsArmorValue; }
+    public static void setRoyalAssailantBootsArmorValue(int v) { royalAssailantBootsArmorValue = v; }
+
+    public static double royalAssailantArmorToughness() { return royalAssailantArmorToughness; }
+    public static void setRoyalAssailantArmorToughness(double v) { royalAssailantArmorToughness = v; }
+
+    public static double royalAssailantArmorKnockbackResistance() { return royalAssailantArmorKnockbackResistance; }
+    public static void setRoyalAssailantArmorKnockbackResistance(double v) { royalAssailantArmorKnockbackResistance = v; }
+
+    public static double royalAssailantHelmetDoubleDamageChance() { return royalAssailantHelmetDoubleDamageChance; }
+    public static void setRoyalAssailantHelmetDoubleDamageChance(double v) { royalAssailantHelmetDoubleDamageChance = v; }
+
+    public static double royalAssailantChestplateDoubleDamageChance() { return royalAssailantChestplateDoubleDamageChance; }
+    public static void setRoyalAssailantChestplateDoubleDamageChance(double v) { royalAssailantChestplateDoubleDamageChance = v; }
+
+    public static double royalAssailantLeggingsDoubleDamageChance() { return royalAssailantLeggingsDoubleDamageChance; }
+    public static void setRoyalAssailantLeggingsDoubleDamageChance(double v) { royalAssailantLeggingsDoubleDamageChance = v; }
+
+    public static double royalAssailantBootsDoubleDamageChance() { return royalAssailantBootsDoubleDamageChance; }
+    public static void setRoyalAssailantBootsDoubleDamageChance(double v) { royalAssailantBootsDoubleDamageChance = v; }
+
+    public static double royalGuardianSwordAttackDamage() { return royalGuardianSwordAttackDamage; }
+    public static void setRoyalGuardianSwordAttackDamage(double v) { royalGuardianSwordAttackDamage = v; }
+
+    public static double royalGuardianSwordAttackSpeed() { return royalGuardianSwordAttackSpeed; }
+    public static void setRoyalGuardianSwordAttackSpeed(double v) { royalGuardianSwordAttackSpeed = v; }
+
+    public static double royalAssailantBattleAxeAttackDamage() { return royalAssailantBattleAxeAttackDamage; }
+    public static void setRoyalAssailantBattleAxeAttackDamage(double v) { royalAssailantBattleAxeAttackDamage = v; }
+
+    public static double royalAssailantBattleAxeAttackSpeed() { return royalAssailantBattleAxeAttackSpeed; }
+    public static void setRoyalAssailantBattleAxeAttackSpeed(double v) { royalAssailantBattleAxeAttackSpeed = v; }
+
+    public static double royalWeaponAttackReachBonus() { return royalWeaponAttackReachBonus; }
+    public static void setRoyalWeaponAttackReachBonus(double v) { royalWeaponAttackReachBonus = v; }
+
+    public static double royalWeaponAttackKnockbackBonus() { return royalWeaponAttackKnockbackBonus; }
+    public static void setRoyalWeaponAttackKnockbackBonus(double v) { royalWeaponAttackKnockbackBonus = v; }
+
+    public static int royalWeaponDurability() { return royalWeaponDurability; }
+    public static void setRoyalWeaponDurability(int v) { royalWeaponDurability = v; }
+
+    public static int royalWeaponEnchantability() { return royalWeaponEnchantability; }
+    public static void setRoyalWeaponEnchantability(int v) { royalWeaponEnchantability = v; }
+
+    public static int royalGuardianShieldDurability() { return royalGuardianShieldDurability; }
+    public static void setRoyalGuardianShieldDurability(int v) { royalGuardianShieldDurability = v; }
+
+    public static double royalBoltDamage() { return royalBoltDamage; }
+    public static void setRoyalBoltDamage(double v) { royalBoltDamage = v; }
+
+    public static int royalEggHatchChance() { return royalEggHatchChance; }
+    public static void setRoyalEggHatchChance(int v) { royalEggHatchChance = v; }
+
+    public static double princeHealth() { return princeHealth; }
+    public static void setPrinceHealth(double v) { princeHealth = v; }
+    public static double princeAttackDamage() { return princeAttackDamage; }
+    public static void setPrinceAttackDamage(double v) { princeAttackDamage = v; }
+    public static double princeMovementSpeed() { return princeMovementSpeed; }
+    public static void setPrinceMovementSpeed(double v) { princeMovementSpeed = v; }
+    public static double princeFlyingSpeed() { return princeFlyingSpeed; }
+    public static void setPrinceFlyingSpeed(double v) { princeFlyingSpeed = v; }
+    public static double princeArmor() { return princeArmor; }
+    public static void setPrinceArmor(double v) { princeArmor = v; }
+    public static double princeKnockbackResistance() { return princeKnockbackResistance; }
+    public static void setPrinceKnockbackResistance(double v) { princeKnockbackResistance = v; }
+    public static double princeFollowRange() { return princeFollowRange; }
+    public static void setPrinceFollowRange(double v) { princeFollowRange = v; }
+
+    public static double princessHealth() { return princessHealth; }
+    public static void setPrincessHealth(double v) { princessHealth = v; }
+    public static double princessAttackDamage() { return princessAttackDamage; }
+    public static void setPrincessAttackDamage(double v) { princessAttackDamage = v; }
+    public static double princessMovementSpeed() { return princessMovementSpeed; }
+    public static void setPrincessMovementSpeed(double v) { princessMovementSpeed = v; }
+    public static double princessFlyingSpeed() { return princessFlyingSpeed; }
+    public static void setPrincessFlyingSpeed(double v) { princessFlyingSpeed = v; }
+    public static double princessArmor() { return princessArmor; }
+    public static void setPrincessArmor(double v) { princessArmor = v; }
+    public static double princessKnockbackResistance() { return princessKnockbackResistance; }
+    public static void setPrincessKnockbackResistance(double v) { princessKnockbackResistance = v; }
+    public static double princessFollowRange() { return princessFollowRange; }
+    public static void setPrincessFollowRange(double v) { princessFollowRange = v; }
+
+    public static double kingHealth() { return kingHealth; }
+    public static void setKingHealth(double v) { kingHealth = v; }
+
+    public static double queenHealth() { return queenHealth; }
+    public static void setQueenHealth(double v) { queenHealth = v; }
+
+    public static double kingAttackDamage() { return kingAttackDamage; }
+    public static void setKingAttackDamage(double v) { kingAttackDamage = v; }
+
+    public static double queenAttackDamage() { return queenAttackDamage; }
+    public static void setQueenAttackDamage(double v) { queenAttackDamage = v; }
+    public static double royalBossSoundVolume() { return royalBossSoundVolume; }
+    public static void setRoyalBossSoundVolume(double v) { royalBossSoundVolume = v; }
+    public static double queenBlackHoleRadius() { return queenBlackHoleRadius; }
+    public static void setQueenBlackHoleRadius(double v) { queenBlackHoleRadius = v; }
+    public static int queenBlackHoleActiveTicks() { return queenBlackHoleActiveTicks; }
+    public static void setQueenBlackHoleActiveTicks(int v) { queenBlackHoleActiveTicks = v; }
+    public static double queenBlackHolePullStrength() { return queenBlackHolePullStrength; }
+    public static void setQueenBlackHolePullStrength(double v) { queenBlackHolePullStrength = v; }
+    public static double queenFinalTimeFieldRadius() { return queenFinalTimeFieldRadius; }
+    public static void setQueenFinalTimeFieldRadius(double v) { queenFinalTimeFieldRadius = v; }
+    public static double queenFinalTimeFieldRate() { return queenFinalTimeFieldRate; }
+    public static void setQueenFinalTimeFieldRate(double v) { queenFinalTimeFieldRate = v; }
+    public static int queenFinalTimeFieldDurationTicks() { return queenFinalTimeFieldDurationTicks; }
+    public static void setQueenFinalTimeFieldDurationTicks(int v) { queenFinalTimeFieldDurationTicks = v; }
+    public static int queenFinalTimeFieldCooldownTicks() { return queenFinalTimeFieldCooldownTicks; }
+    public static void setQueenFinalTimeFieldCooldownTicks(int v) { queenFinalTimeFieldCooldownTicks = v; }
+    public static double kingFireballDamage() { return kingFireballDamage; }
+    public static void setKingFireballDamage(double v) { kingFireballDamage = v; }
+    public static double kingFireballRadius() { return kingFireballRadius; }
+    public static void setKingFireballRadius(double v) { kingFireballRadius = v; }
+    public static int kingFireballCooldownTicks() { return kingFireballCooldownTicks; }
+    public static void setKingFireballCooldownTicks(int v) { kingFireballCooldownTicks = v; }
+    public static double kingIceballDamage() { return kingIceballDamage; }
+    public static void setKingIceballDamage(double v) { kingIceballDamage = v; }
+    public static double kingIceballRadius() { return kingIceballRadius; }
+    public static void setKingIceballRadius(double v) { kingIceballRadius = v; }
+    public static int kingIceballCooldownTicks() { return kingIceballCooldownTicks; }
+    public static void setKingIceballCooldownTicks(int v) { kingIceballCooldownTicks = v; }
+    public static double kingIceSpikeDamage() { return kingIceSpikeDamage; }
+    public static void setKingIceSpikeDamage(double v) { kingIceSpikeDamage = v; }
+    public static int kingIceSpikeCooldownTicks() { return kingIceSpikeCooldownTicks; }
+    public static void setKingIceSpikeCooldownTicks(int v) { kingIceSpikeCooldownTicks = v; }
+    public static int kingElementalTerrainCap() { return kingElementalTerrainCap; }
+    public static void setKingElementalTerrainCap(int v) { kingElementalTerrainCap = v; }
+
+    public static double royalBossArmor() { return royalBossArmor; }
+    public static void setRoyalBossArmor(double v) { royalBossArmor = v; }
+
+    public static double royalBossFollowRange() { return royalBossFollowRange; }
+    public static void setRoyalBossFollowRange(double v) { royalBossFollowRange = v; }
+
+    public static double royalBossMovementSpeed() { return royalBossMovementSpeed; }
+    public static void setRoyalBossMovementSpeed(double v) { royalBossMovementSpeed = v; }
+
+    public static double royalBossKnockbackResistance() { return royalBossKnockbackResistance; }
+    public static void setRoyalBossKnockbackResistance(double v) { royalBossKnockbackResistance = v; }
+
+    public static double royalBossStepHeight() { return royalBossStepHeight; }
+    public static void setRoyalBossStepHeight(double v) { royalBossStepHeight = v; }
+
+    public static double royalBossMaxSingleHitDamage() { return royalBossMaxSingleHitDamage; }
+    public static void setRoyalBossMaxSingleHitDamage(double v) { royalBossMaxSingleHitDamage = v; }
+
+    public static double royalBossBiteReach() { return royalBossBiteReach; }
+    public static void setRoyalBossBiteReach(double v) { royalBossBiteReach = v; }
+
+    public static double royalBossBiteDamageMultiplier() { return royalBossBiteDamageMultiplier; }
+    public static void setRoyalBossBiteDamageMultiplier(double v) { royalBossBiteDamageMultiplier = v; }
+
+    public static int royalBossBiteCooldownTicks() { return royalBossBiteCooldownTicks; }
+    public static void setRoyalBossBiteCooldownTicks(int v) { royalBossBiteCooldownTicks = v; }
+
     public static double nightmareSwordBaseDamage() { return nightmareSwordBaseDamage; }
     public static void setNightmareSwordBaseDamage(double v) { nightmareSwordBaseDamage = v; }
 
@@ -1818,6 +2208,12 @@ public final class AntarchySettings {
 
     public static double diamondMinecartMaxMobDamage() { return diamondMinecartMaxMobDamage; }
     public static void setDiamondMinecartMaxMobDamage(double v) { diamondMinecartMaxMobDamage = v; }
+
+    public static double hoverboardMaxSpeed() { return hoverboardMaxSpeed; }
+    public static void setHoverboardMaxSpeed(double value) { hoverboardMaxSpeed = value; }
+
+    public static double hoverboardAcceleration() { return hoverboardAcceleration; }
+    public static void setHoverboardAcceleration(double value) { hoverboardAcceleration = value; }
 
     public static boolean dreadHallucinationSoundsEnabled() {
         return dreadHallucinationSoundsEnabled;
@@ -1974,6 +2370,9 @@ public final class AntarchySettings {
     public static double scorpionWhipBaseDamage() { return scorpionWhipBaseDamage; }
     public static void setScorpionWhipBaseDamage(double value) { scorpionWhipBaseDamage = value; }
 
+    public static double scorpionWhipReachBonus() { return scorpionWhipReachBonus; }
+    public static void setScorpionWhipReachBonus(double value) { scorpionWhipReachBonus = value; }
+
     public static int scorpionWhipPoisonDurationTicks() { return scorpionWhipPoisonDurationTicks; }
     public static void setScorpionWhipPoisonDurationTicks(int value) { scorpionWhipPoisonDurationTicks = value; }
 
@@ -2000,6 +2399,15 @@ public final class AntarchySettings {
 
     public static int bloodCrystalKatanaTrailDurationTicks() { return bloodCrystalKatanaTrailDurationTicks; }
     public static void setBloodCrystalKatanaTrailDurationTicks(int value) { bloodCrystalKatanaTrailDurationTicks = value; }
+
+    public static double bloodCrystalKatanaReachBonus() { return bloodCrystalKatanaReachBonus; }
+    public static void setBloodCrystalKatanaReachBonus(double value) { bloodCrystalKatanaReachBonus = value; }
+
+    public static int bloodCrystalKatanaInvulnTicks() { return bloodCrystalKatanaInvulnTicks; }
+    public static void setBloodCrystalKatanaInvulnTicks(int value) { bloodCrystalKatanaInvulnTicks = value; }
+
+    public static int bloodCrystalKatanaDashCooldownTicks() { return bloodCrystalKatanaDashCooldownTicks; }
+    public static void setBloodCrystalKatanaDashCooldownTicks(int value) { bloodCrystalKatanaDashCooldownTicks = value; }
 
     public static double emperorScorpionAttackDamage() { return emperorScorpionAttackDamage; }
     public static void setEmperorScorpionAttackDamage(double value) { emperorScorpionAttackDamage = value; }
@@ -2093,8 +2501,6 @@ public final class AntarchySettings {
 
     public static double jumpyBugPounceDamage() { return jumpyBugPounceDamage; }
     public static void setJumpyBugPounceDamage(double value) { jumpyBugPounceDamage = value; }
-    public static double jumpyBugLatchDamage() { return jumpyBugLatchDamage; }
-    public static void setJumpyBugLatchDamage(double value) { jumpyBugLatchDamage = value; }
 
     public static double jumpyBugCamouflageAlpha() { return jumpyBugCamouflageAlpha; }
     public static void setJumpyBugCamouflageAlpha(double value) { jumpyBugCamouflageAlpha = value; }
@@ -2180,6 +2586,93 @@ public final class AntarchySettings {
     public static double lucidKnockbackResistance() { return lucidKnockbackResistance; }
     public static void setLucidKnockbackResistance(double value) { lucidKnockbackResistance = value; }
 
+    public static double vortexHealth() { return vortexHealth; }
+    public static void setVortexHealth(double value) { vortexHealth = value; }
+
+    public static double vortexAttackDamage() { return vortexAttackDamage; }
+    public static void setVortexAttackDamage(double value) { vortexAttackDamage = value; }
+
+    public static double vortexMovementSpeed() { return vortexMovementSpeed; }
+    public static void setVortexMovementSpeed(double value) { vortexMovementSpeed = value; }
+
+    public static double vortexFlyingSpeed() { return vortexFlyingSpeed; }
+    public static void setVortexFlyingSpeed(double value) { vortexFlyingSpeed = value; }
+
+    public static int vortexMaxActiveVortexes() { return vortexMaxActiveVortexes; }
+    public static void setVortexMaxActiveVortexes(int value) { vortexMaxActiveVortexes = value; }
+
+    public static int windVortexDurationTicks() { return windVortexDurationTicks; }
+    public static void setWindVortexDurationTicks(int value) { windVortexDurationTicks = value; }
+
+    public static double windVortexPullStrength() { return windVortexPullStrength; }
+    public static void setWindVortexPullStrength(double value) { windVortexPullStrength = value; }
+
+    public static double windVortexLaunchStrength() { return windVortexLaunchStrength; }
+    public static void setWindVortexLaunchStrength(double value) { windVortexLaunchStrength = value; }
+
+    public static boolean eyeOfTheStormEnabled() { return eyeOfTheStormEnabled; }
+    public static void setEyeOfTheStormEnabled(boolean value) { eyeOfTheStormEnabled = value; }
+
+    public static int eyeOfTheStormUpdraftCooldownTicks() { return eyeOfTheStormUpdraftCooldownTicks; }
+    public static void setEyeOfTheStormUpdraftCooldownTicks(int value) { eyeOfTheStormUpdraftCooldownTicks = value; }
+
+    public static double eyeOfTheStormUpdraftLaunchStrength() { return eyeOfTheStormUpdraftLaunchStrength; }
+    public static void setEyeOfTheStormUpdraftLaunchStrength(double value) { eyeOfTheStormUpdraftLaunchStrength = value; }
+
+    public static double eyeOfTheStormUpdraftHeight() { return eyeOfTheStormUpdraftHeight; }
+    public static void setEyeOfTheStormUpdraftHeight(double value) { eyeOfTheStormUpdraftHeight = value; }
+
+    public static double eyeOfTheStormUpdraftRadius() { return eyeOfTheStormUpdraftRadius; }
+    public static void setEyeOfTheStormUpdraftRadius(double value) { eyeOfTheStormUpdraftRadius = value; }
+
+    public static int eyeOfTheStormUpdraftDurationTicks() { return eyeOfTheStormUpdraftDurationTicks; }
+    public static void setEyeOfTheStormUpdraftDurationTicks(int value) { eyeOfTheStormUpdraftDurationTicks = value; }
+
+    public static int eyeOfTheStormSurgeCooldownTicks() { return eyeOfTheStormSurgeCooldownTicks; }
+    public static void setEyeOfTheStormSurgeCooldownTicks(int value) { eyeOfTheStormSurgeCooldownTicks = value; }
+
+    public static double eyeOfTheStormSurgeRange() { return eyeOfTheStormSurgeRange; }
+    public static void setEyeOfTheStormSurgeRange(double value) { eyeOfTheStormSurgeRange = value; }
+
+    public static int eyeOfTheStormSurgeDurationTicks() { return eyeOfTheStormSurgeDurationTicks; }
+    public static void setEyeOfTheStormSurgeDurationTicks(int value) { eyeOfTheStormSurgeDurationTicks = value; }
+
+    public static double eyeOfTheStormSurgeRadius() { return eyeOfTheStormSurgeRadius; }
+    public static void setEyeOfTheStormSurgeRadius(double value) { eyeOfTheStormSurgeRadius = value; }
+
+    public static double eyeOfTheStormSurgeHeight() { return eyeOfTheStormSurgeHeight; }
+    public static void setEyeOfTheStormSurgeHeight(double value) { eyeOfTheStormSurgeHeight = value; }
+
+    public static double eyeOfTheStormSurgePullStrength() { return eyeOfTheStormSurgePullStrength; }
+    public static void setEyeOfTheStormSurgePullStrength(double value) { eyeOfTheStormSurgePullStrength = value; }
+
+    public static double eyeOfTheStormSurgeReturnStrength() { return eyeOfTheStormSurgeReturnStrength; }
+    public static void setEyeOfTheStormSurgeReturnStrength(double value) { eyeOfTheStormSurgeReturnStrength = value; }
+
+    public static float eyeOfTheStormSurgeDamage() { return eyeOfTheStormSurgeDamage; }
+    public static void setEyeOfTheStormSurgeDamage(float value) { eyeOfTheStormSurgeDamage = value; }
+
+    public static double vortexLensMinRadius() { return vortexLensMinRadius; }
+    public static void setVortexLensMinRadius(double value) { vortexLensMinRadius = value; }
+
+    public static double vortexLensMaxRadius() { return vortexLensMaxRadius; }
+    public static void setVortexLensMaxRadius(double value) { vortexLensMaxRadius = value; }
+
+    public static double vortexLensMinHeight() { return vortexLensMinHeight; }
+    public static void setVortexLensMinHeight(double value) { vortexLensMinHeight = value; }
+
+    public static double vortexLensMaxHeight() { return vortexLensMaxHeight; }
+    public static void setVortexLensMaxHeight(double value) { vortexLensMaxHeight = value; }
+
+    public static double vortexLensPullStrength() { return vortexLensPullStrength; }
+    public static void setVortexLensPullStrength(double value) { vortexLensPullStrength = value; }
+
+    public static double vortexLensPushStrength() { return vortexLensPushStrength; }
+    public static void setVortexLensPushStrength(double value) { vortexLensPushStrength = value; }
+
+    public static double vortexLensLaunchStrength() { return vortexLensLaunchStrength; }
+    public static void setVortexLensLaunchStrength(double value) { vortexLensLaunchStrength = value; }
+
     public static double missileSquidHealth() { return missileSquidHealth; }
     public static void setMissileSquidHealth(double value) { missileSquidHealth = value; }
 
@@ -2213,26 +2706,14 @@ public final class AntarchySettings {
     public static double triffidGrabDamage() { return triffidGrabDamage; }
     public static void setTriffidGrabDamage(double value) { triffidGrabDamage = value; }
 
+    public static int triffidSweepHitCooldownTicks() { return triffidSweepHitCooldownTicks; }
+    public static void setTriffidSweepHitCooldownTicks(int value) { triffidSweepHitCooldownTicks = value; }
+
     public static double molevoreHealth() { return molevoreHealth; }
     public static void setMolevoreHealth(double value) { molevoreHealth = value; }
 
     public static double molevoreAttackDamage() { return molevoreAttackDamage; }
     public static void setMolevoreAttackDamage(double value) { molevoreAttackDamage = value; }
-
-    public static double molevoreMovementSpeed() { return molevoreMovementSpeed; }
-    public static void setMolevoreMovementSpeed(double value) { molevoreMovementSpeed = value; }
-
-    public static double molevoreArmor() { return molevoreArmor; }
-    public static void setMolevoreArmor(double value) { molevoreArmor = value; }
-
-    public static double molevoreKnockbackResistance() { return molevoreKnockbackResistance; }
-    public static void setMolevoreKnockbackResistance(double value) { molevoreKnockbackResistance = value; }
-
-    public static double molevoreFollowRange() { return molevoreFollowRange; }
-    public static void setMolevoreFollowRange(double value) { molevoreFollowRange = value; }
-
-    public static int molevoreXpReward() { return molevoreXpReward; }
-    public static void setMolevoreXpReward(int value) { molevoreXpReward = value; }
 
     public static int molevoreSpinTicks() { return molevoreSpinTicks; }
     public static void setMolevoreSpinTicks(int value) { molevoreSpinTicks = value; }
@@ -2374,8 +2855,6 @@ public final class AntarchySettings {
     public static void setToreterrorSpinDamage(double v) { toreterrorSpinDamage = v; }
     public static double toreterrorSpinKnockback() { return toreterrorSpinKnockback; }
     public static void setToreterrorSpinKnockback(double v) { toreterrorSpinKnockback = v; }
-    public static void setToreterrorRangedWaterBombChance(double v) { toreterrorRangedWaterBombChance = v; }
-    public static double toreterrorRangedWaterBombChance() { return toreterrorRangedWaterBombChance; }
     public static double toreterrorProjectileDamageMultiplier() { return toreterrorProjectileDamageMultiplier; }
     public static void setToreterrorProjectileDamageMultiplier(double v) { toreterrorProjectileDamageMultiplier = v; }
     public static double waterBombDamage() { return waterBombDamage; }
@@ -2386,8 +2865,6 @@ public final class AntarchySettings {
     public static void setWaterBombGravity(double v) { waterBombGravity = v; }
     public static double waterBombKnockback() { return waterBombKnockback; }
     public static void setWaterBombKnockback(double v) { waterBombKnockback = v; }
-    public static void setWaterCannonCooldownSeconds(double v) { waterCannonCooldownSeconds = v; }
-    public static double waterCannonCooldownSeconds() { return waterCannonCooldownSeconds; }
 
     public static double creepingHorrorHealth() { return creepingHorrorHealth; }
     public static void setCreepingHorrorHealth(double v) { creepingHorrorHealth = v; }
@@ -2397,6 +2874,68 @@ public final class AntarchySettings {
     public static void setLurkingTerrorHealth(double v) { lurkingTerrorHealth = v; }
     public static double lurkingTerrorAttackDamage() { return lurkingTerrorAttackDamage; }
     public static void setLurkingTerrorAttackDamage(double v) { lurkingTerrorAttackDamage = v; }
+    public static double manticoreHealth() { return manticoreHealth; }
+    public static void setManticoreHealth(double v) { manticoreHealth = v; }
+    public static double manticoreAttackDamage() { return manticoreAttackDamage; }
+    public static void setManticoreAttackDamage(double v) { manticoreAttackDamage = v; }
+    public static int manticoreStingPoisonTicks() { return manticoreStingPoisonTicks; }
+    public static void setManticoreStingPoisonTicks(int v) { manticoreStingPoisonTicks = v; }
+    public static int queenManticoreCap() { return queenManticoreCap; }
+    public static void setQueenManticoreCap(int v) { queenManticoreCap = v; }
+    public static int queenManticoreSummonCooldownTicks() { return queenManticoreSummonCooldownTicks; }
+    public static void setQueenManticoreSummonCooldownTicks(int v) { queenManticoreSummonCooldownTicks = v; }
+    public static int queenManticoreSummonCount() { return queenManticoreSummonCount; }
+    public static void setQueenManticoreSummonCount(int v) { queenManticoreSummonCount = v; }
+    public static double queenManticoreSummonRange() { return queenManticoreSummonRange; }
+    public static void setQueenManticoreSummonRange(double v) { queenManticoreSummonRange = v; }
+    public static double queenBeamDamage() { return queenBeamDamage; }
+    public static void setQueenBeamDamage(double v) { queenBeamDamage = v; }
+    public static double queenBeamRange() { return queenBeamRange; }
+    public static void setQueenBeamRange(double v) { queenBeamRange = v; }
+    public static int queenBeamDurationTicks() { return queenBeamDurationTicks; }
+    public static void setQueenBeamDurationTicks(int v) { queenBeamDurationTicks = v; }
+    public static int queenBeamWindupTicks() { return queenBeamWindupTicks; }
+    public static void setQueenBeamWindupTicks(int v) { queenBeamWindupTicks = v; }
+    public static int queenBeamTravelTicks() { return queenBeamTravelTicks; }
+    public static void setQueenBeamTravelTicks(int v) { queenBeamTravelTicks = v; }
+    public static int queenBeamCooldownTicks() { return queenBeamCooldownTicks; }
+    public static void setQueenBeamCooldownTicks(int v) { queenBeamCooldownTicks = v; }
+    public static double queenBeamTracking() { return queenBeamTracking; }
+    public static void setQueenBeamTracking(double v) { queenBeamTracking = v; }
+    public static double queenBeamTerrainRadius() { return queenBeamTerrainRadius; }
+    public static void setQueenBeamTerrainRadius(double v) { queenBeamTerrainRadius = v; }
+    public static int queenBeamTerrainCap() { return queenBeamTerrainCap; }
+    public static void setQueenBeamTerrainCap(int v) { queenBeamTerrainCap = v; }
+    public static double kingBeamDamage() { return kingBeamDamage; }
+    public static void setKingBeamDamage(double v) { kingBeamDamage = v; }
+    public static double kingBeamRange() { return kingBeamRange; }
+    public static void setKingBeamRange(double v) { kingBeamRange = v; }
+    public static int kingBeamDurationTicks() { return kingBeamDurationTicks; }
+    public static void setKingBeamDurationTicks(int v) { kingBeamDurationTicks = v; }
+    public static int kingBeamWindupTicks() { return kingBeamWindupTicks; }
+    public static void setKingBeamWindupTicks(int v) { kingBeamWindupTicks = v; }
+    public static int kingBeamTravelTicks() { return kingBeamTravelTicks; }
+    public static void setKingBeamTravelTicks(int v) { kingBeamTravelTicks = v; }
+    public static int kingBeamCooldownTicks() { return kingBeamCooldownTicks; }
+    public static void setKingBeamCooldownTicks(int v) { kingBeamCooldownTicks = v; }
+    public static double kingBeamTracking() { return kingBeamTracking; }
+    public static void setKingBeamTracking(double v) { kingBeamTracking = v; }
+    public static double kingBeamTerrainRadius() { return kingBeamTerrainRadius; }
+    public static void setKingBeamTerrainRadius(double v) { kingBeamTerrainRadius = v; }
+    public static int kingBeamTerrainCap() { return kingBeamTerrainCap; }
+    public static void setKingBeamTerrainCap(int v) { kingBeamTerrainCap = v; }
+    public static int royalDecreeCooldownTicks() { return royalDecreeCooldownTicks; }
+    public static void setRoyalDecreeCooldownTicks(int v) { royalDecreeCooldownTicks = v; }
+    public static int kingRoyalMusterCooldownTicks() { return kingRoyalMusterCooldownTicks; }
+    public static void setKingRoyalMusterCooldownTicks(int v) { kingRoyalMusterCooldownTicks = v; }
+    public static int kingRoyalMusterWindupTicks() { return kingRoyalMusterWindupTicks; }
+    public static void setKingRoyalMusterWindupTicks(int v) { kingRoyalMusterWindupTicks = v; }
+    public static int kingRoyalMusterDurationTicks() { return kingRoyalMusterDurationTicks; }
+    public static void setKingRoyalMusterDurationTicks(int v) { kingRoyalMusterDurationTicks = v; }
+    public static double kingRoyalMusterRadius() { return kingRoyalMusterRadius; }
+    public static void setKingRoyalMusterRadius(double v) { kingRoyalMusterRadius = v; }
+    public static int kingRoyalMusterCap() { return kingRoyalMusterCap; }
+    public static void setKingRoyalMusterCap(int v) { kingRoyalMusterCap = v; }
     public static double jerryInfantHealth() { return jerryInfantHealth; }
     public static void setJerryInfantHealth(double v) { jerryInfantHealth = v; }
     public static double jerryInfantAttackDamage() { return jerryInfantAttackDamage; }
@@ -2429,4 +2968,24 @@ public final class AntarchySettings {
     public static void setOuranwoodDeerHealth(double v) { ouranwoodDeerHealth = v; }
     public static double glimmerHealth() { return glimmerHealth; }
     public static void setGlimmerHealth(double v) { glimmerHealth = v; }
+
+    public static double lucidArmorToughness() { return lucidArmorToughness; }
+    public static double triffidArmorToughness() { return triffidArmorToughness; }
+    public static double basiliskArmorToughness() { return basiliskArmorToughness; }
+    public static double nightmareMobArmorToughness() { return nightmareMobArmorToughness; }
+    public static double alphaMantisArmorToughness() { return alphaMantisArmorToughness; }
+    public static double herculesBeetleArmorToughness() { return herculesBeetleArmorToughness; }
+    public static double krakenArmorToughness() { return krakenArmorToughness; }
+    public static double nightmareMobArmor() { return nightmareMobArmor; }
+
+    public static double bossMagicPerHitCapFraction() { return bossMagicPerHitCapFraction; }
+    public static int bossMagicWindowTicks() { return bossMagicWindowTicks; }
+    public static double bossMagicWindowCapFraction() { return bossMagicWindowCapFraction; }
+    public static double bossMagicWardReductionFraction() { return bossMagicWardReductionFraction; }
+    public static int bossMagicWardDurationTicks() { return bossMagicWardDurationTicks; }
+    public static int bossMagicWardTriggerBreaches() { return bossMagicWardTriggerBreaches; }
+    public static java.util.List<String> magicBurstDamageNamespaces() { return magicBurstDamageNamespaces; }
+    public static double jumpyBugLatchDamage() { return 2.0D; }
+    public static double waterCannonCooldownSeconds() { return 4.0D; }
+    public static double toreterrorRangedWaterBombChance() { return 0.35D; }
 }

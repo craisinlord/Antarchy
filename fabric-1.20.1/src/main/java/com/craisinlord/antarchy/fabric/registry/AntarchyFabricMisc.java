@@ -29,6 +29,7 @@ import com.craisinlord.antarchy.content.effect.InvertedMobEffect;
 import com.craisinlord.antarchy.content.effect.ParalyzedMobEffect;
 import com.craisinlord.antarchy.content.effect.ShrinkMobEffect;
 import com.craisinlord.antarchy.content.effect.StinkyMobEffect;
+import com.craisinlord.antarchy.content.effect.DilatedMobEffect;
 import com.craisinlord.antarchy.content.worldgen.elythia.CoralSpikeFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaBiomeSource;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverCarveFunction;
@@ -348,6 +349,8 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<MobEffect, InvertedMobEffect> INVERTED = MOB_EFFECTS.register("inverted", InvertedMobEffect::new);
 
+    public static final DeferredHolder<MobEffect, DilatedMobEffect> DILATED = MOB_EFFECTS.register("dilated", DilatedMobEffect::new);
+
 
     public static final DeferredHolder<MobEffect, StinkyMobEffect> STINKY = MOB_EFFECTS.register("stinky", StinkyMobEffect::new);
 
@@ -378,6 +381,12 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<Potion, Potion> LONG_INVERSION = POTIONS.register("long_inversion",
             () -> new Potion("inversion", new MobEffectInstance(mobEffectHolder(INVERTED), 2400)));
+
+    public static final DeferredHolder<Potion, Potion> TIME_DILATION = POTIONS.register("time_dilation",
+            () -> new Potion(new MobEffectInstance(mobEffectHolder(DILATED), 1200)));
+
+    public static final DeferredHolder<Potion, Potion> LONG_TIME_DILATION = POTIONS.register("long_time_dilation",
+            () -> new Potion("time_dilation", new MobEffectInstance(mobEffectHolder(DILATED), 1200, 1)));
 
 
     public static final DeferredHolder<Potion, Potion> STINKY_POTION = POTIONS.register("stinky",
@@ -619,12 +628,12 @@ public final class AntarchyFabricMisc {
             () -> new TriffidPatchFeature(NoneFeatureConfiguration.CODEC));
 
 
-    public static final DeferredHolder<com.mojang.serialization.Codec<? extends BiomeSource>, com.mojang.serialization.Codec<ElythiaBiomeSource>> ELYTHIA_BIOME_SOURCE = BIOME_SOURCES.register("elythia_biome_source",
-            () -> ElythiaBiomeSource.CODEC.codec());
+    public static final DeferredHolder<com.mojang.serialization.Codec<? extends BiomeSource>, com.mojang.serialization.Codec<? extends BiomeSource>> ELYTHIA_BIOME_SOURCE = BIOME_SOURCES.register("elythia_biome_source",
+            () -> (com.mojang.serialization.Codec<? extends net.minecraft.world.level.biome.BiomeSource>) (com.mojang.serialization.Codec<?>) ElythiaBiomeSource.CODEC);
 
 
-    public static final DeferredHolder<com.mojang.serialization.Codec<? extends DensityFunction>, com.mojang.serialization.Codec<ElythiaRiverCarveFunction>> ELYTHIA_RIVER_CARVE = DENSITY_FUNCTION_TYPES.register("elythia_river_carve",
-            () -> ElythiaRiverCarveFunction.KEY_CODEC.codec());
+    public static final DeferredHolder<com.mojang.serialization.Codec<? extends DensityFunction>, com.mojang.serialization.Codec<? extends DensityFunction>> ELYTHIA_RIVER_CARVE = DENSITY_FUNCTION_TYPES.register("elythia_river_carve",
+            () -> (com.mojang.serialization.Codec<? extends net.minecraft.world.level.levelgen.DensityFunction>) (com.mojang.serialization.Codec<?>) ElythiaRiverCarveFunction.KEY_CODEC.codec());
 
 
     public static final DeferredHolder<Feature<?>, ElythiaPondFeature> ELYTHIA_POND = FEATURES.register("elythia_pond",
@@ -782,8 +791,8 @@ public final class AntarchyFabricMisc {
             () -> new com.craisinlord.antarchy.content.worldgen.elythia.FungalMushroomFeature(NoneFeatureConfiguration.CODEC));
 
 
-    public static final DeferredHolder<com.mojang.serialization.Codec<? extends BiomeSource>, com.mojang.serialization.Codec<ThoraxisBiomeSource>> THORAXIS_BIOME_SOURCE = BIOME_SOURCES.register("thoraxis_biome_source",
-            () -> ThoraxisBiomeSource.CODEC.codec());
+    public static final DeferredHolder<com.mojang.serialization.Codec<? extends BiomeSource>, com.mojang.serialization.Codec<? extends BiomeSource>> THORAXIS_BIOME_SOURCE = BIOME_SOURCES.register("thoraxis_biome_source",
+            () -> (com.mojang.serialization.Codec<? extends net.minecraft.world.level.biome.BiomeSource>) (com.mojang.serialization.Codec<?>) ThoraxisBiomeSource.CODEC);
 
 
     public static final ArmorMaterial JUMPY_BOOTS_ARMOR_MATERIAL = armorMaterial(

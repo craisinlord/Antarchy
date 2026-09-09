@@ -3,6 +3,8 @@ package com.craisinlord.antarchy.content.entity.royal;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.effect.RoyalEffectEligibility;
+import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -20,10 +22,19 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.ItemStack;
@@ -36,6 +47,8 @@ import org.jetbrains.annotations.Nullable;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamSettings;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamTerrainMode;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
+import com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu;
+import com.craisinlord.antarchy.content.menu.RoyalJudgmentState;
 import com.craisinlord.antarchy.content.entity.royal.decree.CloseQuartersDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.ComeNoCloserDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.DoNotRunDecree;
@@ -85,6 +98,21 @@ public class KingEntity extends RoyalBossEntity {
     private int iceballCooldownTicks = 120;
     private int iceSpikeCooldownTicks = 160;
     private boolean decreeRetreatPressure;
+    @Nullable
+    private ServerPlayer exileTarget;
+    private int exileTicks;
+    @Nullable
+    private ServerPlayer titheTarget;
+    private int titheTicks;
+    @Nullable
+    private ServerPlayer targetShotPlayer;
+    @Nullable
+    private ServerPlayer targetShotVictim;
+    private int targetShotTicks;
+    @Nullable
+    private ServerPlayer sealedTarget;
+    private int sealedTicks;
+    private long sealUntil;
     private final Map<UUID, Long> judgmentCooldowns = new HashMap<>();
     private final Map<UUID, Long> lastPlayerDamageTime = new HashMap<>();
     private final Map<UUID, Integer> iceBuildup = new HashMap<>();
@@ -176,6 +204,11 @@ public class KingEntity extends RoyalBossEntity {
     @Override
     protected RoyalBeamTerrainMode royalBeamTerrainMode() {
         return RoyalBeamTerrainMode.BUILD_ICE;
+    }
+
+    @Override
+    protected double royalBeamMinimumRange() {
+        return AntarchySettings.kingBeamMinimumRange();
     }
 
     @Override
@@ -298,6 +331,7 @@ public class KingEntity extends RoyalBossEntity {
         if (this.level().isClientSide) {
             return;
         }
+        this.tickRoyalPunishment();
         if (this.iceBuildup.size() > 16) {
             this.iceBuildup.clear();
         }
@@ -326,6 +360,262 @@ public class KingEntity extends RoyalBossEntity {
             double py = this.groundYBelow(px, pz) + FLYING_PREFERRED_HOVER + this.random.nextDouble() * 5.0D;
             this.getMoveControl().setWantedPosition(px, py, pz, 1.0D);
         }
+    }
+
+    private void tickRoyalPunishment() {
+        if (this.exileTarget == null && this.titheTarget == null && this.targetShotPlayer == null && this.sealedTarget == null) {
+            return;
+        }
+        if (this.exileTarget != null) {
+            this.tickRoyalExile();
+        }
+        if (this.titheTarget != null) {
+            this.tickRoyalTithe();
+        }
+        if (this.targetShotPlayer != null) {
+            this.tickRoyalTargetShot();
+        }
+        if (this.sealedTarget != null) {
+            this.tickRoyalSeal();
+        }
+    }
+
+    private void tickRoyalExile() {
+        if (this.exileTicks-- <= 0 || !this.exileTarget.isAlive() || this.exileTarget.level() != this.level()
+                || this.isDeadOrDying()) {
+            this.clearExile();
+            return;
+        }
+        this.exileTarget.lookAt(EntityAnchorArgument.Anchor.EYES, this.getEyePosition());
+        this.exileTarget.setPose(Pose.CROUCHING);
+        this.exileTarget.setShiftKeyDown(true);
+        if (this.exileTicks == 1) {
+            Vec3 away = this.exileTarget.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+            if (away.lengthSqr() < 1.0E-4D) {
+                away = this.getLookAngle().multiply(-1.0D, 0.0D, -1.0D);
+            }
+            away = away.normalize();
+            this.exileTarget.setDeltaMovement(away.x * 2.6D, 1.35D, away.z * 2.6D);
+            this.exileTarget.hasImpulse = true;
+            this.triggerAnim("body_action", "wing_gust");
+            this.playRoyalSound(AntarchySoundEvents.KING_WING_FLAP.get(), 0.82F);
+        }
+    }
+
+    private void tickRoyalTithe() {
+        if (!this.titheTarget.isAlive() || this.titheTarget.level() != this.level()
+                || this.isDeadOrDying() || !(this.titheTarget.containerMenu instanceof RoyalJudgmentMenu)) {
+            this.clearTithe();
+            return;
+        }
+        if (--this.titheTicks <= 0) {
+            for (int slot = 0; slot < this.titheTarget.getInventory().getContainerSize(); slot++) {
+                ItemStack stack = this.titheTarget.getInventory().getItem(slot);
+                if (stack.isEmpty() || !isRoyalTitheItem(stack)) continue;
+                ItemStack thrown = stack.split(1);
+                this.titheTarget.getInventory().setChanged();
+                this.titheTarget.drop(thrown, true);
+                this.clearTithe();
+                return;
+            }
+            this.clearTithe();
+        }
+    }
+
+    private void tickRoyalTargetShot() {
+        if (!this.targetShotPlayer.isAlive() || this.targetShotVictim == null || !this.targetShotVictim.isAlive()
+                || this.targetShotPlayer.level() != this.level() || this.isDeadOrDying()
+                || !(this.targetShotPlayer.containerMenu instanceof RoyalJudgmentMenu)) {
+            this.clearTargetShot();
+            return;
+        }
+        this.targetShotPlayer.lookAt(EntityAnchorArgument.Anchor.EYES, this.targetShotVictim.getEyePosition());
+        if (--this.targetShotTicks <= 0) {
+            ItemStack ranged = findRoyalRangedItem(this.targetShotPlayer);
+            if (!ranged.isEmpty()) {
+                Arrow arrow = new Arrow((ServerLevel) this.level(), this.targetShotPlayer, ItemStack.EMPTY, ItemStack.EMPTY);
+                arrow.setPos(this.targetShotPlayer.getX(), this.targetShotPlayer.getEyeY() - 0.1D, this.targetShotPlayer.getZ());
+                Vec3 direction = this.targetShotVictim.getEyePosition().subtract(arrow.position()).normalize();
+                arrow.setDeltaMovement(direction.scale(3.0D));
+                arrow.setBaseDamage(2.0D);
+                ((ServerLevel) this.level()).addFreshEntity(arrow);
+                this.targetShotPlayer.displayClientMessage(Component.literal("The King takes your shot."), true);
+            }
+            this.clearTargetShot();
+        }
+    }
+
+    private void tickRoyalSeal() {
+        if (!this.sealedTarget.isAlive() || this.sealedTarget.level() != this.level() || this.isDeadOrDying()
+                || !(this.sealedTarget.containerMenu instanceof RoyalJudgmentMenu) || --this.sealedTicks <= 0) {
+            this.clearSeal();
+        }
+    }
+
+    private void clearExile() {
+        if (this.exileTarget != null && this.exileTarget.isAlive()) {
+            this.exileTarget.setShiftKeyDown(false);
+            this.exileTarget.setPose(Pose.STANDING);
+        }
+        this.exileTarget = null;
+        this.exileTicks = 0;
+    }
+
+    private void clearTithe() {
+        if (this.titheTarget != null && this.titheTarget.containerMenu instanceof RoyalJudgmentMenu) {
+            this.titheTarget.closeContainer();
+        }
+        this.titheTarget = null;
+        this.titheTicks = 0;
+    }
+
+    private void clearTargetShot() {
+        if (this.targetShotPlayer != null && this.targetShotPlayer.containerMenu instanceof RoyalJudgmentMenu) {
+            this.targetShotPlayer.closeContainer();
+        }
+        this.targetShotPlayer = null;
+        this.targetShotVictim = null;
+        this.targetShotTicks = 0;
+    }
+
+    private void clearSeal() {
+        if (this.sealedTarget != null) {
+            RoyalJudgmentState.clear(this.sealedTarget.getUUID());
+            if (this.sealedTarget.containerMenu instanceof RoyalJudgmentMenu) {
+                this.sealedTarget.closeContainer();
+            }
+        }
+        this.sealedTarget = null;
+        this.sealedTicks = 0;
+    }
+
+    private void startTithe(ServerPlayer target) {
+        this.clearTithe();
+        this.titheTarget = target;
+        this.titheTicks = 20;
+        target.openMenu(new MenuProvider() {
+            @Override
+            public Component getDisplayName() {
+                return Component.translatable("menu.antarchy.royal_judgment");
+            }
+
+            @Override
+            public AbstractContainerMenu createMenu(int containerId, net.minecraft.world.entity.player.Inventory inventory,
+                                                     Player player) {
+                return new RoyalJudgmentMenu(containerId, inventory);
+            }
+        });
+    }
+
+    private void startTargetShot(ServerPlayer target, ServerPlayer victim) {
+        this.clearTargetShot();
+        this.targetShotPlayer = target;
+        this.targetShotVictim = victim;
+        this.targetShotTicks = 20;
+        target.openMenu(new MenuProvider() {
+            @Override
+            public Component getDisplayName() {
+                return Component.translatable("menu.antarchy.royal_judgment");
+            }
+
+            @Override
+            public AbstractContainerMenu createMenu(int containerId, net.minecraft.world.entity.player.Inventory inventory,
+                                                     Player player) {
+                return new RoyalJudgmentMenu(containerId, inventory);
+            }
+        });
+    }
+
+    private void startSeal(ServerPlayer target) {
+        this.clearSeal();
+        java.util.Set<Integer> slots = new java.util.HashSet<>();
+        for (int slot = 9; slot < 18; slot++) slots.add(slot);
+        RoyalJudgmentState.seal(target.getUUID(), slots);
+        this.sealedTarget = target;
+        this.sealedTicks = 100;
+        target.openMenu(new MenuProvider() {
+            @Override
+            public Component getDisplayName() {
+                return Component.translatable("menu.antarchy.royal_judgment");
+            }
+
+            @Override
+            public AbstractContainerMenu createMenu(int containerId, net.minecraft.world.entity.player.Inventory inventory,
+                                                     Player player) {
+                return new RoyalJudgmentMenu(containerId, inventory);
+            }
+        });
+    }
+
+    public boolean debugActivateDecree(String id, ServerPlayer target) {
+        for (RoyalDecree decree : DECREES) {
+            String decreeId = decree.translationKey().substring(decree.translationKey().lastIndexOf('.') + 1);
+            if (decreeId.equalsIgnoreCase(id.replace('-', '_'))) {
+                this.endDecree(this.getTarget());
+                this.activeDecree = decree;
+                this.activeDecreeTicks = 300;
+                this.decreeCooldownTicks = 0;
+                this.sendDecreeTitle(target);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean debugTriggerPunishment(RoyalPunishmentType type, ServerPlayer target) {
+        if (!(this.level() instanceof ServerLevel level) || !target.isAlive() || target.level() != level) {
+            return false;
+        }
+        switch (type) {
+            case ROYAL_EXILE -> {
+                this.clearExile();
+                this.exileTarget = target;
+                this.exileTicks = 25;
+                return true;
+            }
+            case ROYAL_TITHE -> {
+                this.startTithe(target);
+                return true;
+            }
+            case KINGS_TARGET -> {
+                ServerPlayer victim = level.players().stream()
+                        .filter(candidate -> candidate != target && candidate.isAlive() && candidate.distanceToSqr(target) <= 4096.0D)
+                        .min((left, right) -> Double.compare(left.distanceToSqr(target), right.distanceToSqr(target)))
+                        .orElse(null);
+                if (victim == null) return false;
+                ItemStack ranged = findRoyalRangedItem(target);
+                if (ranged.isEmpty()) return false;
+                target.displayClientMessage(Component.literal("The King chooses your target."), true);
+                this.startTargetShot(target, victim);
+                return true;
+            }
+            case KINGS_SEAL -> {
+                this.sealUntil = level.getGameTime() + 100L;
+                target.displayClientMessage(Component.literal("The King seals your inventory."), true);
+                level.sendParticles(ParticleTypes.ENCHANT, target.getX(), target.getY() + 1.0D, target.getZ(),
+                        30, 0.6D, 1.0D, 0.6D, 0.1D);
+                this.startSeal(target);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isRoyalTitheItem(ItemStack stack) {
+        return stack.is(net.minecraft.world.item.Items.ARROW)
+                || stack.is(net.minecraft.world.item.Items.BREAD)
+                || stack.is(net.minecraft.world.item.Items.COBBLESTONE)
+                || stack.is(net.minecraft.world.item.Items.POTION);
+    }
+
+    private static ItemStack findRoyalRangedItem(ServerPlayer player) {
+        for (ItemStack stack : player.getInventory().items) {
+            if (stack.getItem() instanceof net.minecraft.world.item.BowItem
+                    || stack.getItem() instanceof net.minecraft.world.item.CrossbowItem) {
+                return stack;
+            }
+        }
+        return ItemStack.EMPTY;
     }
 
     private void trackBehavior(LivingEntity target) {
@@ -389,6 +679,27 @@ public class KingEntity extends RoyalBossEntity {
                             KingEntity.this.performWingGust(level, target);
                         }
                     })) {
+            } else if (this.attackScheduler.ready("royal_muster", RoyalAttackLane.BODY)
+                    && !this.findRoyalMusterTargets(level).isEmpty()
+                    && (forceFar || this.random.nextInt(4) == 0)
+                    && this.beginRoyalAttack("royal_muster", RoyalAttackLane.BODY,
+                    AntarchySettings.kingRoyalMusterCooldownTicks(),
+                    AntarchySettings.kingRoyalMusterWindupTicks(), 1, 20,
+                    new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                        @Override public void onStart() {
+                            KingEntity.this.triggerAnim("body_action", "minion_spawn");
+                            KingEntity.this.playRoyalSound(AntarchySoundEvents.KING_DECREE_CAST.get(), 0.72F);
+                            level.sendParticles(ParticleTypes.ENCHANT,
+                                    KingEntity.this.getX(), KingEntity.this.getY() + 2.0D, KingEntity.this.getZ(),
+                                    36, 5.0D, 2.0D, 5.0D, 0.12D);
+                        }
+                        @Override public void onActive(int elapsedTicks) {
+                            KingEntity.this.performRoyalMuster(level);
+                        }
+                        @Override public void onComplete() {
+                            KingEntity.this.playRoyalSound(AntarchySoundEvents.KING_ROAR.get(), 0.62F);
+                        }
+                    })) {
             }
         }
 
@@ -401,6 +712,37 @@ public class KingEntity extends RoyalBossEntity {
         }
 
         this.tickKingElementalProjectiles(level, target);
+    }
+
+    private List<Mob> findRoyalMusterTargets(ServerLevel level) {
+        double radius = AntarchySettings.kingRoyalMusterRadius();
+        return level.getEntitiesOfClass(Mob.class, this.getBoundingBox().inflate(radius), mob ->
+                mob.isAlive() && mob != this
+                        && (mob.getType().getCategory() == MobCategory.MONSTER || mob instanceof Enemy)
+                        && !(mob instanceof RoyalBossEntity)
+                        && RoyalEffectEligibility.canApplyCommanded(mob));
+    }
+
+    private void performRoyalMuster(ServerLevel level) {
+        var commanded = RoyalEffectHooks.commandedHolder();
+        if (commanded == null) {
+            return;
+        }
+        int applied = 0;
+        for (Mob mob : this.findRoyalMusterTargets(level)) {
+            if (applied >= AntarchySettings.kingRoyalMusterCap()) {
+                break;
+            }
+            if (mob.addEffect(new MobEffectInstance(commanded, AntarchySettings.kingRoyalMusterDurationTicks()), this)) {
+                applied++;
+                level.sendParticles(ParticleTypes.HAPPY_VILLAGER,
+                        mob.getX(), mob.getY() + mob.getBbHeight() + 0.3D, mob.getZ(),
+                        5, 0.3D, 0.2D, 0.3D, 0.02D);
+            }
+        }
+        if (applied > 0) {
+            this.playRoyalSound(AntarchySoundEvents.KING_DECREE_CAST.get(), 0.95F);
+        }
     }
 
     private void tickKingElementalProjectiles(ServerLevel level, LivingEntity target) {
@@ -549,13 +891,7 @@ public class KingEntity extends RoyalBossEntity {
             this.decreeRetreatPressure = false;
             this.playRoyalSound(AntarchySoundEvents.KING_DECREE_CAST.get(), 0.9F + this.random.nextFloat() * 0.15F);
             this.playRoyalSound(AntarchySoundEvents.KING_ROAR.get(), 0.8F + this.random.nextFloat() * 0.12F);
-            if (target instanceof ServerPlayer player) {
-                player.connection.send(new ClientboundSetTitlesAnimationPacket(5, 300, 10));
-                player.connection.send(new ClientboundSetTitleTextPacket(Component.translatable(this.activeDecree.translationKey())
-                        .withStyle(style -> style.withColor(ChatFormatting.GOLD).withBold(true))));
-                player.connection.send(new ClientboundSetSubtitleTextPacket(Component.translatable(this.activeDecree.instructionKey())
-                        .withStyle(style -> style.withColor(ChatFormatting.WHITE))));
-            }
+            if (target instanceof ServerPlayer player) this.sendDecreeTitle(player);
         }
         int countdown = this.activeDecree.countdownTicks(target);
         if (countdown > 0 && countdown <= 100 && this.tickCount % 20 == 0) {
@@ -589,6 +925,15 @@ public class KingEntity extends RoyalBossEntity {
         return DECREES.get(this.random.nextInt(DECREES.size()));
     }
 
+    private void sendDecreeTitle(ServerPlayer player) {
+        if (this.activeDecree == null) return;
+        player.connection.send(new ClientboundSetTitlesAnimationPacket(5, 300, 10));
+        player.connection.send(new ClientboundSetTitleTextPacket(Component.translatable(this.activeDecree.translationKey())
+                .withStyle(style -> style.withColor(ChatFormatting.GOLD).withBold(true))));
+        player.connection.send(new ClientboundSetSubtitleTextPacket(Component.translatable(this.activeDecree.instructionKey())
+                .withStyle(style -> style.withColor(ChatFormatting.WHITE))));
+    }
+
     private void endDecree(@Nullable LivingEntity target) {
         if (target instanceof ServerPlayer player) {
             player.connection.send(new ClientboundClearTitlesPacket(false));
@@ -615,7 +960,11 @@ public class KingEntity extends RoyalBossEntity {
         if (this.activeDecree == null || target == null || !target.isAlive()) {
             return;
         }
-        this.invokeJudgment(target);
+        if (target instanceof ServerPlayer player) {
+            this.debugTriggerPunishment(RoyalPunishmentType.ROYAL_EXILE, player);
+        } else {
+            this.invokeJudgment(target);
+        }
         this.endDecree(target);
     }
 

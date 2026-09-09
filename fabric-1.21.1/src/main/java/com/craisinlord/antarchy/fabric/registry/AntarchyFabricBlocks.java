@@ -1300,7 +1300,7 @@ public final class AntarchyFabricBlocks {
 
 
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.MucusBlock> MUCUS = BLOCKS.register("mucus",
-            () -> new com.craisinlord.antarchy.content.block.MucusBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLOW_LICHEN).friction(0.98F).lightLevel(state -> 0).sound(SoundType.SLIME_BLOCK)));
+            () -> new com.craisinlord.antarchy.content.block.MucusBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLOW_LICHEN).friction(0.995F).lightLevel(state -> 0).sound(SoundType.SLIME_BLOCK)));
 
 
     public static final DeferredBlock<DreamSandstoneBlock> DREAM_SANDSTONE = BLOCKS.register("dream_sandstone",

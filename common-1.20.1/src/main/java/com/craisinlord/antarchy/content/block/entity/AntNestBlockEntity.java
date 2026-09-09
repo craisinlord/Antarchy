@@ -170,7 +170,7 @@ public class AntNestBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
+    public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putBoolean(NBT_INITIALIZED, this.initialized);
         tag.putInt(NBT_REBROOD_COOLDOWN, this.rebroodCooldown);

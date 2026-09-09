@@ -151,6 +151,7 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setRoyalBossBiteCooldownTicks(AntarchyMobsConfig.royalBossBiteCooldownTicks());
         AntarchySettings.setQueenBeamDamage(AntarchyMobsConfig.queenBeamDamage());
         AntarchySettings.setQueenBeamRange(AntarchyMobsConfig.queenBeamRange());
+        AntarchySettings.setQueenBeamMinimumRange(AntarchyMobsConfig.queenBeamMinimumRange());
         AntarchySettings.setQueenBeamDurationTicks(AntarchyMobsConfig.queenBeamDurationTicks());
         AntarchySettings.setQueenBeamWindupTicks(AntarchyMobsConfig.queenBeamWindupTicks());
         AntarchySettings.setQueenBeamTravelTicks(AntarchyMobsConfig.queenBeamTravelTicks());
@@ -160,6 +161,7 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setQueenBeamTerrainCap(AntarchyMobsConfig.queenBeamTerrainCap());
         AntarchySettings.setKingBeamDamage(AntarchyMobsConfig.kingBeamDamage());
         AntarchySettings.setKingBeamRange(AntarchyMobsConfig.kingBeamRange());
+        AntarchySettings.setKingBeamMinimumRange(AntarchyMobsConfig.kingBeamMinimumRange());
         AntarchySettings.setKingBeamDurationTicks(AntarchyMobsConfig.kingBeamDurationTicks());
         AntarchySettings.setKingBeamWindupTicks(AntarchyMobsConfig.kingBeamWindupTicks());
         AntarchySettings.setKingBeamTravelTicks(AntarchyMobsConfig.kingBeamTravelTicks());
@@ -168,6 +170,11 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setKingBeamTerrainRadius(AntarchyMobsConfig.kingBeamTerrainRadius());
         AntarchySettings.setKingBeamTerrainCap(AntarchyMobsConfig.kingBeamTerrainCap());
         AntarchySettings.setRoyalDecreeCooldownTicks(AntarchyMobsConfig.royalDecreeCooldownTicks());
+        AntarchySettings.setKingRoyalMusterCooldownTicks(AntarchyMobsConfig.kingRoyalMusterCooldownTicks());
+        AntarchySettings.setKingRoyalMusterWindupTicks(AntarchyMobsConfig.kingRoyalMusterWindupTicks());
+        AntarchySettings.setKingRoyalMusterDurationTicks(AntarchyMobsConfig.kingRoyalMusterDurationTicks());
+        AntarchySettings.setKingRoyalMusterRadius(AntarchyMobsConfig.kingRoyalMusterRadius());
+        AntarchySettings.setKingRoyalMusterCap(AntarchyMobsConfig.kingRoyalMusterCap());
         AntarchySettings.setQueenBlackHoleRadius(AntarchyMobsConfig.queenBlackHoleRadius());
         AntarchySettings.setQueenBlackHoleActiveTicks(AntarchyMobsConfig.queenBlackHoleActiveTicks());
         AntarchySettings.setQueenBlackHolePullStrength(AntarchyMobsConfig.queenBlackHolePullStrength());

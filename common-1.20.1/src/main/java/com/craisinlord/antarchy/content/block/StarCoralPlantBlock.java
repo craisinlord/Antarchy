@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.block;
 
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,7 +19,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class StarCoralPlantBlock extends BaseCoralPlantTypeBlock {
     private final Block deadBlock;
-    protected static final VoxelShape SHAPE = Block.box(2.0, 0.0, 2.0, 14.0, 15.0, 14.0);
+    public static final VoxelShape SHAPE = Block.box(2.0, 0.0, 2.0, 14.0, 15.0, 14.0);
 
     public StarCoralPlantBlock(Block deadBlock, Properties properties) {
         super(properties);

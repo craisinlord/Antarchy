@@ -21,7 +21,7 @@ public abstract class EntityDeltaMovementTimeDilationMixin {
         }
 
         double rate = TimeDilationApi.getRate(entity);
-        if (rate >= TimeDilationMath.NORMAL_RATE) {
+        if (Math.abs(rate - TimeDilationMath.NORMAL_RATE) < 0.001D) {
             return nextMovement;
         }
 

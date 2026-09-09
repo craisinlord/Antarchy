@@ -5,6 +5,10 @@ public interface TimeDilationEntityAccess {
 
     void antarchy$setTimeDilationRate(double rate);
 
+    double antarchy$getInheritedTimeDilationRate();
+
+    void antarchy$setInheritedTimeDilationRate(double rate);
+
     boolean antarchy$consumeTimeDilationTick(String timerKey, double rate);
 
     boolean antarchy$isInTimeDilationMove();

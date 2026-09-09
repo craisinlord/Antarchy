@@ -3,7 +3,9 @@ package com.craisinlord.antarchy.content.time;
 public final class TimeDilationMath {
     public static final double MIN_RATE = 0.05D;
     public static final double NORMAL_RATE = 1.0D;
+    public static final double MAX_RATE = 3.0D;
     public static final int FIELD_TRANSITION_TICKS = 20;
+    public static final int EFFECT_TRANSITION_TICKS = 20;
     private static final double GAUSSIAN_EDGE_EXPONENT = -4.5D;
 
     private TimeDilationMath() {
@@ -13,7 +15,16 @@ public final class TimeDilationMath {
         if (Double.isNaN(rate) || Double.isInfinite(rate)) {
             return NORMAL_RATE;
         }
-        return Math.max(MIN_RATE, Math.min(NORMAL_RATE, rate));
+        return Math.max(MIN_RATE, Math.min(MAX_RATE, rate));
+    }
+
+    /** Moves an entity's effective rate toward a new effect/field target without a hard step. */
+    public static double transitionRate(double currentRate, double targetRate) {
+        double current = clampRate(currentRate);
+        double target = clampRate(targetRate);
+        double maximumStep = (MAX_RATE - MIN_RATE) / EFFECT_TRANSITION_TICKS;
+        double delta = Math.max(-maximumStep, Math.min(maximumStep, target - current));
+        return clampRate(current + delta);
     }
 
     public static double gaussianFalloff(double distance, double radius) {

@@ -151,7 +151,7 @@ public class LucidAnchorBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
+    public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putInt("PyramidLevel", this.pyramidLevel);
         tag.putBoolean("Active", this.active);

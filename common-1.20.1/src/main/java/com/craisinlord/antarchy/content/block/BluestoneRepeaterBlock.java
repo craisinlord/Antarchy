@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.block;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -52,7 +51,7 @@ public class BluestoneRepeaterBlock extends RepeaterBlock {
     }
 
     @Override
-    protected int getAlternateSignal(SignalGetter level, BlockPos pos, BlockState state) {
+    public int getAlternateSignal(SignalGetter level, BlockPos pos, BlockState state) {
         Direction facing = state.getValue(FACING);
         Direction clockwise = facing.getClockWise();
         Direction counterClockwise = facing.getCounterClockWise();
@@ -62,7 +61,7 @@ public class BluestoneRepeaterBlock extends RepeaterBlock {
     }
 
     @Override
-    protected int getInputSignal(Level level, BlockPos pos, BlockState state) {
+    public int getInputSignal(Level level, BlockPos pos, BlockState state) {
         Direction facing = state.getValue(FACING);
         BlockPos inputPos = pos.relative(facing);
         BlockState inputState = level.getBlockState(inputPos);

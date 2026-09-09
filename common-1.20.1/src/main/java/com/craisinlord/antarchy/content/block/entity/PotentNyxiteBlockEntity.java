@@ -114,7 +114,7 @@ public class PotentNyxiteBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
+    public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putInt("countdown", this.waitingCountdown);
         tag.putLong("eruption_tick", this.eruptionTick);

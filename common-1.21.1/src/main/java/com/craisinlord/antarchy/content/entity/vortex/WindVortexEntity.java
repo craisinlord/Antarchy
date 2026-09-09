@@ -75,6 +75,7 @@ public class WindVortexEntity extends Entity {
     private static final double FALL_ACCELERATION = 0.006D;
     private static final double MAX_FALL_SPEED = 0.08D;
     private static final double MINIMUM_DOWNWARD_DRIFT = 0.012D;
+    private static final double ENTITY_FORCE_SPEED_SCALE = 0.5D;
     private static final int FADE_OUT_TICKS = 8;
 
     public enum VortexMode {
@@ -509,12 +510,14 @@ public class WindVortexEntity extends Entity {
             case GATHER_RETURN -> (0.05D + progress * 0.08D) * massScale;
         } * playerScale;
         if (mode == VortexMode.UPWARD && entity.onGround()) {
-            axialSpeed = Math.max(axialSpeed, entity instanceof Player ? 0.38D : 0.3D);
+            axialSpeed = Math.max(axialSpeed,
+                    (entity instanceof Player ? 0.38D : 0.3D) * ENTITY_FORCE_SPEED_SCALE);
         }
 
         Vec3 wanted = radial.scale(radialError * pull)
                 .add(tangent.scale(spin))
-                .add(basis.axis.scale(axialSpeed));
+                .add(basis.axis.scale(axialSpeed))
+                .scale(ENTITY_FORCE_SPEED_SCALE);
         Vec3 current = entity.getDeltaMovement();
         Vec3 updatedMovement = new Vec3(
                 Mth.lerp(0.72D, current.x, wanted.x),
@@ -522,10 +525,13 @@ public class WindVortexEntity extends Entity {
                 Mth.lerp(0.72D, current.z, wanted.z)
         );
         if (this.travelling) {
-            updatedMovement = updatedMovement.add(this.travelVelocity.x * 0.8D, 0.0D, this.travelVelocity.z * 0.8D);
+            updatedMovement = updatedMovement.add(
+                    this.travelVelocity.x * 0.8D * ENTITY_FORCE_SPEED_SCALE,
+                    0.0D,
+                    this.travelVelocity.z * 0.8D * ENTITY_FORCE_SPEED_SCALE);
         }
         if (mode == VortexMode.UPWARD && entity.onGround()) {
-            double minRise = entity instanceof Player ? 0.38D : 0.3D;
+            double minRise = (entity instanceof Player ? 0.38D : 0.3D) * ENTITY_FORCE_SPEED_SCALE;
             updatedMovement = new Vec3(updatedMovement.x, Math.max(updatedMovement.y, minRise), updatedMovement.z);
             entity.setOnGround(false);
         }
@@ -543,7 +549,9 @@ public class WindVortexEntity extends Entity {
         Vec3 radial = radialVector.lengthSqr() < 1.0E-6D ? basis.sideA : radialVector.scale(1.0D / horizontal);
         Vec3 tangent = basis.axis.cross(radial).normalize();
         double scale = this.launchStrength * Mth.clamp(this.getVortexHeight() / 5.0D, 0.5D, 2.5D);
-        entity.setDeltaMovement(tangent.scale(0.72D * scale).add(radial.scale(0.34D * scale)).add(basis.axis.scale((0.78D + progress * 0.28D) * scale)));
+        entity.setDeltaMovement(tangent.scale(0.72D * scale * ENTITY_FORCE_SPEED_SCALE)
+                .add(radial.scale(0.34D * scale * ENTITY_FORCE_SPEED_SCALE))
+                .add(basis.axis.scale((0.78D + progress * 0.28D) * scale * ENTITY_FORCE_SPEED_SCALE)));
         entity.hasImpulse = true;
         this.syncPlayerMotion(entity);
     }
@@ -575,8 +583,8 @@ public class WindVortexEntity extends Entity {
         Vec3 toOwner = target.subtract(entity.position());
         double distance = toOwner.length();
         Vec3 direction = distance < 1.0E-4D ? new Vec3(0.0D, 1.0D, 0.0D) : toOwner.scale(1.0D / distance);
-        double arc = Mth.clamp(distance * 0.06D, 0.25D, 1.1D);
-        double power = this.launchStrength * Mth.clamp(distance / 6.0D, 0.6D, 2.0D);
+        double arc = Mth.clamp(distance * 0.06D, 0.25D, 1.1D) * ENTITY_FORCE_SPEED_SCALE;
+        double power = this.launchStrength * Mth.clamp(distance / 6.0D, 0.6D, 2.0D) * ENTITY_FORCE_SPEED_SCALE;
         entity.setDeltaMovement(direction.scale(power).add(0.0D, arc, 0.0D));
         entity.fallDistance = 0.0F;
         entity.hasImpulse = true;

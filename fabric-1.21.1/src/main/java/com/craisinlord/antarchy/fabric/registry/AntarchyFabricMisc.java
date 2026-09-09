@@ -31,6 +31,7 @@ import com.craisinlord.antarchy.content.effect.GrowthMobEffect;
 import com.craisinlord.antarchy.content.effect.InvertedMobEffect;
 import com.craisinlord.antarchy.content.effect.CommandedMobEffect;
 import com.craisinlord.antarchy.content.effect.DilatedMobEffect;
+import com.craisinlord.antarchy.content.effect.ContractedMobEffect;
 import com.craisinlord.antarchy.content.effect.ParalyzedMobEffect;
 import com.craisinlord.antarchy.content.effect.ShrinkMobEffect;
 import com.craisinlord.antarchy.content.effect.StinkyMobEffect;
@@ -168,6 +169,8 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<net.minecraft.world.inventory.MenuType<?>, net.minecraft.world.inventory.MenuType<com.craisinlord.antarchy.content.menu.DorrieInventoryMenu>> DORRIE_INVENTORY_MENU =
             MENUS.register("dorrie_inventory", () -> new net.minecraft.world.inventory.MenuType<>(com.craisinlord.antarchy.content.menu.DorrieInventoryMenu::new, FeatureFlags.DEFAULT_FLAGS));
+    public static final DeferredHolder<net.minecraft.world.inventory.MenuType<?>, net.minecraft.world.inventory.MenuType<com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu>> ROYAL_JUDGMENT_MENU =
+            MENUS.register("royal_judgment", () -> new net.minecraft.world.inventory.MenuType<>(com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu::new, FeatureFlags.DEFAULT_FLAGS));
 
 
     public static final DeferredRegister<net.minecraft.core.component.DataComponentType<?>> DATA_COMPONENT_TYPES =
@@ -435,9 +438,14 @@ public final class AntarchyFabricMisc {
     public static final DeferredHolder<Potion, Potion> LONG_COMMAND = POTIONS.register("long_command",
             () -> new Potion("command", new MobEffectInstance(mobEffectHolder(COMMANDED), 1200)));
     public static final DeferredHolder<Potion, Potion> TIME_DILATION = POTIONS.register("time_dilation",
-            () -> new Potion(new MobEffectInstance(mobEffectHolder(DILATED), 300)));
+            () -> new Potion(new MobEffectInstance(mobEffectHolder(DILATED), 1200)));
     public static final DeferredHolder<Potion, Potion> LONG_TIME_DILATION = POTIONS.register("long_time_dilation",
-            () -> new Potion("time_dilation", new MobEffectInstance(mobEffectHolder(DILATED), 600)));
+            () -> new Potion("time_dilation", new MobEffectInstance(mobEffectHolder(DILATED), 1200, 1)));
+    public static final DeferredHolder<MobEffect, ContractedMobEffect> CONTRACTED = MOB_EFFECTS.register("contracted", ContractedMobEffect::new);
+    public static final DeferredHolder<Potion, Potion> TIME_CONTRACTION = POTIONS.register("time_contraction",
+            () -> new Potion(new MobEffectInstance(mobEffectHolder(CONTRACTED), 1200)));
+    public static final DeferredHolder<Potion, Potion> LONG_TIME_CONTRACTION = POTIONS.register("long_time_contraction",
+            () -> new Potion("time_contraction", new MobEffectInstance(mobEffectHolder(CONTRACTED), 1200, 1)));
 
 
     public static final DeferredHolder<Potion, Potion> STINKY_POTION = POTIONS.register("stinky",

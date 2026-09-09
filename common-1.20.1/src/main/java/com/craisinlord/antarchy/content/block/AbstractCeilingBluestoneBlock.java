@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class AbstractCeilingBluestoneBlock extends Block {
-    protected AbstractCeilingBluestoneBlock(BlockBehaviour.Properties properties) {
+    public AbstractCeilingBluestoneBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }
 

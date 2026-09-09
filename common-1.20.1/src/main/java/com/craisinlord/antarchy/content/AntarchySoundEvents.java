@@ -10,9 +10,16 @@ public final class AntarchySoundEvents {
     };
 
     public static Supplier<SoundEvent> SQUIDZOOKA_FIRE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> SHRINK_RAY_CHARGE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> SHRINK_RAY_LOOP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> GROWTH_RAY_CHARGE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> GROWTH_RAY_LOOP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> SIZE_RAY_WEAKSHOT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> SIZE_RAY_MEDIUMSHOT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> SIZE_RAY_CRITSHOT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> SIZE_RAY_CHARGE = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> SHRINK_RAY_SOUND = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> GROWTH_RAY_SOUND = (Supplier<SoundEvent>) UNBOUND;
-    public static Supplier<SoundEvent> SIZE_RAY_CHARGE = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> ANT_AMBIENT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> ANT_IDLE = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> ANT_HURT = (Supplier<SoundEvent>) UNBOUND;
@@ -31,6 +38,7 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> BRUTALFLY_IDLE = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> BRUTALFLY_DEATH = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> ELYTHIA_FIREFLY_AMBIENT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> ELYTHIA_OURANWOOD_FOREST_AMBIENT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> MISSILE_SQUID_AMBIENT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> MISSILE_SQUID_HURT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> MISSILE_SQUID_DEATH = (Supplier<SoundEvent>) UNBOUND;
@@ -58,6 +66,10 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> THORAXIS_LUCID_POOLS_AMBIENT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> THORAXIS_LUCID_POOLS_ADDITIONS = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> THORAXIS_LUCID_POOLS_MOOD = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> DIMENSIONAL_TEAR_OPEN = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> DIMENSIONAL_TEAR_IDLE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> DIMENSIONAL_TEAR_CREATURE_LEAVES = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> DIMENSIONAL_TEAR_CLOSE = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> LUCID_AMBIENT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> LUCID_FLYING = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> LUCID_ATTACK = (Supplier<SoundEvent>) UNBOUND;
@@ -168,15 +180,58 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> JERRY_ADULT_HURT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> JERRY_ADULT_DEATH = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> JERRY_ADULT_ATTACK = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> WORM_HOOK_FLYING = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> BLOOD_CRYSTAL_KATANA_DASH = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> BLOOD_CRYSTAL_ARMOR_EQUIP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> BLOODGLASS_WARD_HEART_BREAK = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> BLOODGLASS_WARD_HEART_REGEN = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_IDLE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_HURT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_DEATH = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_BITE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_IDLE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_HURT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_DEATH = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_BITE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_ROAR = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_BEAM_SHOOT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_FIREBALL_SHOOT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_DECREE_CAST = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_BEAM_SHOOT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_BEAM_START = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_BEAM_LOOP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_BEAM_END = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_STOMP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_ROAR = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_WING_FLAP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_FLY_LOOP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> QUEEN_FLY_LOOP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCE_IDLE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCE_BITE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCE_SHOOT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCE_FLY = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCE_STEP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCESS_IDLE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCESS_BITE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCESS_SHOOT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCESS_FLY = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> PRINCESS_STEP = (Supplier<SoundEvent>) UNBOUND;
 
     private AntarchySoundEvents() {
     }
 
+    public static void bind(Supplier<?>... ignored) {
+    }
+
     public static void bind(
             Supplier<SoundEvent> squidzookaFire,
-            Supplier<SoundEvent> shrinkRaySound,
-            Supplier<SoundEvent> growthRaySound,
-            Supplier<SoundEvent> sizeRayCharge,
+            Supplier<SoundEvent> shrinkRayCharge,
+            Supplier<SoundEvent> shrinkRayLoop,
+            Supplier<SoundEvent> growthRayCharge,
+            Supplier<SoundEvent> growthRayLoop,
+            Supplier<SoundEvent> sizeRayWeakshot,
+            Supplier<SoundEvent> sizeRayMediumshot,
+            Supplier<SoundEvent> sizeRayCritshot,
             Supplier<SoundEvent> antAmbient,
             Supplier<SoundEvent> antIdle,
             Supplier<SoundEvent> antHurt,
@@ -195,6 +250,7 @@ public final class AntarchySoundEvents {
             Supplier<SoundEvent> brutalflyIdle,
             Supplier<SoundEvent> brutalflyDeath,
             Supplier<SoundEvent> elythiaFireflyAmbient,
+            Supplier<SoundEvent> elythiaOuranwoodForestAmbient,
             Supplier<SoundEvent> missileSquidAmbient,
             Supplier<SoundEvent> missileSquidHurt,
             Supplier<SoundEvent> missileSquidDeath,
@@ -331,12 +387,52 @@ public final class AntarchySoundEvents {
             Supplier<SoundEvent> jerryAdultIdle,
             Supplier<SoundEvent> jerryAdultHurt,
             Supplier<SoundEvent> jerryAdultDeath,
-            Supplier<SoundEvent> jerryAdultAttack
+            Supplier<SoundEvent> jerryAdultAttack,
+            Supplier<SoundEvent> wormHookFlying,
+            Supplier<SoundEvent> bloodCrystalKatanaDash,
+            Supplier<SoundEvent> bloodCrystalArmorEquip,
+            Supplier<SoundEvent> bloodglassWardHeartBreak,
+            Supplier<SoundEvent> bloodglassWardHeartRegen,
+            Supplier<SoundEvent> kingIdle,
+            Supplier<SoundEvent> kingHurt,
+            Supplier<SoundEvent> kingDeath,
+            Supplier<SoundEvent> kingBite,
+            Supplier<SoundEvent> queenIdle,
+            Supplier<SoundEvent> queenHurt,
+            Supplier<SoundEvent> queenDeath,
+            Supplier<SoundEvent> queenBite,
+            Supplier<SoundEvent> queenRoar,
+            Supplier<SoundEvent> kingBeamShoot,
+            Supplier<SoundEvent> kingFireballShoot,
+            Supplier<SoundEvent> kingDecreeCast,
+            Supplier<SoundEvent> queenBeamShoot,
+            Supplier<SoundEvent> queenBeamStart,
+            Supplier<SoundEvent> queenBeamLoop,
+            Supplier<SoundEvent> queenBeamEnd,
+            Supplier<SoundEvent> kingStomp,
+            Supplier<SoundEvent> kingRoar,
+            Supplier<SoundEvent> kingWingFlap,
+            Supplier<SoundEvent> kingFlyLoop,
+            Supplier<SoundEvent> queenFlyLoop,
+            Supplier<SoundEvent> princeIdle,
+            Supplier<SoundEvent> princeBite,
+            Supplier<SoundEvent> princeShoot,
+            Supplier<SoundEvent> princeFly,
+            Supplier<SoundEvent> princeStep,
+            Supplier<SoundEvent> princessIdle,
+            Supplier<SoundEvent> princessBite,
+            Supplier<SoundEvent> princessShoot,
+            Supplier<SoundEvent> princessFly,
+            Supplier<SoundEvent> princessStep
     ) {
         SQUIDZOOKA_FIRE = squidzookaFire;
-        SHRINK_RAY_SOUND = shrinkRaySound;
-        GROWTH_RAY_SOUND = growthRaySound;
-        SIZE_RAY_CHARGE = sizeRayCharge;
+        SHRINK_RAY_CHARGE = shrinkRayCharge;
+        SHRINK_RAY_LOOP = shrinkRayLoop;
+        GROWTH_RAY_CHARGE = growthRayCharge;
+        GROWTH_RAY_LOOP = growthRayLoop;
+        SIZE_RAY_WEAKSHOT = sizeRayWeakshot;
+        SIZE_RAY_MEDIUMSHOT = sizeRayMediumshot;
+        SIZE_RAY_CRITSHOT = sizeRayCritshot;
         ANT_AMBIENT = antAmbient;
         ANT_IDLE = antIdle;
         ANT_HURT = antHurt;
@@ -355,6 +451,7 @@ public final class AntarchySoundEvents {
         BRUTALFLY_IDLE = brutalflyIdle;
         BRUTALFLY_DEATH = brutalflyDeath;
         ELYTHIA_FIREFLY_AMBIENT = elythiaFireflyAmbient;
+        ELYTHIA_OURANWOOD_FOREST_AMBIENT = elythiaOuranwoodForestAmbient;
         MISSILE_SQUID_AMBIENT = missileSquidAmbient;
         MISSILE_SQUID_HURT = missileSquidHurt;
         MISSILE_SQUID_DEATH = missileSquidDeath;
@@ -492,5 +589,53 @@ public final class AntarchySoundEvents {
         JERRY_ADULT_HURT = jerryAdultHurt;
         JERRY_ADULT_DEATH = jerryAdultDeath;
         JERRY_ADULT_ATTACK = jerryAdultAttack;
+        WORM_HOOK_FLYING = wormHookFlying;
+        BLOOD_CRYSTAL_KATANA_DASH = bloodCrystalKatanaDash;
+        BLOOD_CRYSTAL_ARMOR_EQUIP = bloodCrystalArmorEquip;
+        BLOODGLASS_WARD_HEART_BREAK = bloodglassWardHeartBreak;
+        BLOODGLASS_WARD_HEART_REGEN = bloodglassWardHeartRegen;
+        KING_IDLE = kingIdle;
+        KING_HURT = kingHurt;
+        KING_DEATH = kingDeath;
+        KING_BITE = kingBite;
+        QUEEN_IDLE = queenIdle;
+        QUEEN_HURT = queenHurt;
+        QUEEN_DEATH = queenDeath;
+        QUEEN_BITE = queenBite;
+        QUEEN_ROAR = queenRoar;
+        KING_BEAM_SHOOT = kingBeamShoot;
+        KING_FIREBALL_SHOOT = kingFireballShoot;
+        KING_DECREE_CAST = kingDecreeCast;
+        QUEEN_BEAM_SHOOT = queenBeamShoot;
+        QUEEN_BEAM_START = queenBeamStart;
+        QUEEN_BEAM_LOOP = queenBeamLoop;
+        QUEEN_BEAM_END = queenBeamEnd;
+        KING_STOMP = kingStomp;
+        KING_ROAR = kingRoar;
+        KING_WING_FLAP = kingWingFlap;
+        KING_FLY_LOOP = kingFlyLoop;
+        QUEEN_FLY_LOOP = queenFlyLoop;
+        PRINCE_IDLE = princeIdle;
+        PRINCE_BITE = princeBite;
+        PRINCE_SHOOT = princeShoot;
+        PRINCE_FLY = princeFly;
+        PRINCE_STEP = princeStep;
+        PRINCESS_IDLE = princessIdle;
+        PRINCESS_BITE = princessBite;
+        PRINCESS_SHOOT = princessShoot;
+        PRINCESS_FLY = princessFly;
+        PRINCESS_STEP = princessStep;
+    }
+
+    public static void bindDimensionalTearSounds(
+            Supplier<SoundEvent> dimensionalTearOpen,
+            Supplier<SoundEvent> dimensionalTearIdle,
+            Supplier<SoundEvent> dimensionalTearCreatureLeaves,
+            Supplier<SoundEvent> dimensionalTearClose
+    ) {
+        DIMENSIONAL_TEAR_OPEN = dimensionalTearOpen;
+        DIMENSIONAL_TEAR_IDLE = dimensionalTearIdle;
+        DIMENSIONAL_TEAR_CREATURE_LEAVES = dimensionalTearCreatureLeaves;
+        DIMENSIONAL_TEAR_CLOSE = dimensionalTearClose;
     }
 }

@@ -46,6 +46,7 @@ public final class AntarchyTags {
         public static final TagKey<Block> ANTIMETAL_INVERSION_BLOCKS = TagKey.create(Registries.BLOCK, id("antimetal_inversion_blocks"));
         public static final TagKey<Block> LUCID_ANCHOR_BASE_BLOCKS = TagKey.create(Registries.BLOCK, id("lucid_anchor_base_blocks"));
         public static final TagKey<Block> TIGER_EYE_CAMOUFLAGE_BLACKLIST = TagKey.create(Registries.BLOCK, id("tiger_eye_camouflage_blacklist"));
+        public static final TagKey<Block> NYXIUM = TagKey.create(Registries.BLOCK, id("nyxium"));
 
         private Blocks() {
         }
@@ -79,6 +80,10 @@ public final class AntarchyTags {
         public static final TagKey<EntityType<?>> TIGER_EYE_DETECTION_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("tiger_eye_detection_immune"));
         public static final TagKey<EntityType<?>> DIMENSIONAL_TEAR_COMMON_SPAWNS = TagKey.create(Registries.ENTITY_TYPE, id("dimensional_tear_common_spawns"));
         public static final TagKey<EntityType<?>> DIMENSIONAL_TEAR_RARE_SPAWNS = TagKey.create(Registries.ENTITY_TYPE, id("dimensional_tear_rare_spawns"));
+        public static final TagKey<EntityType<?>> TIME_DILATION_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("time_dilation_immune"));
+        public static final TagKey<EntityType<?>> COMMANDED_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, id("commanded_blacklist"));
+        public static final TagKey<EntityType<?>> DILATED_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, id("dilated_blacklist"));
+        public static final TagKey<EntityType<?>> WIND_VORTEX_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("wind_vortex_immune"));
 
         private Entities() {
         }
@@ -110,6 +115,7 @@ public final class AntarchyTags {
         public static final TagKey<Item> BUTTERFLY_BREEDING_FOODS = TagKey.create(Registries.ITEM, id("butterfly_breeding_foods"));
         public static final TagKey<Item> REVERIE_DUPLICATION_ITEMS = TagKey.create(Registries.ITEM, id("reverie_duplication_items"));
         public static final TagKey<Item> HERCULES_BEETLE_FOOD = TagKey.create(Registries.ITEM, id("hercules_beetle_food"));
+        public static final TagKey<Item> ROYAL_MOUNT_FOOD = TagKey.create(Registries.ITEM, id("royal_mount_food"));
         public static final TagKey<Item> ROLLY_POLLY_FOOD = TagKey.create(Registries.ITEM, id("rolly_polly_food"));
         public static final TagKey<Item> OURANWOOD_DEER_FOOD = TagKey.create(Registries.ITEM, id("ouranwood_deer_food"));
         public static final TagKey<Item> GLIMMER_AUGMENT_APPLE_COW = TagKey.create(Registries.ITEM, id("glimmer_augment_apple_cow"));

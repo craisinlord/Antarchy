@@ -533,6 +533,8 @@
     "effect.antarchy.paralyzed.description": "Verhindert, dass sich Ziele bewegen.",
     "effect.antarchy.inverted": "Umgekehrt",
     "effect.antarchy.inverted.description": "Kehrt die Schwerkraft des Ziels um.",
+    "effect.antarchy.commanded.description": "Kämpft für den Spieler, der das Ziel kommandiert hat.",
+    "effect.antarchy.dilated.description": "Verlangsamt den Zeitablauf für das betroffene Wesen.",
     "effect.antarchy.stinky": "Stinkend",
     "effect.antarchy.stinky.description": "Vertreibt passive und neutrale Kreaturen und zieht Gliederfüßer an.",
     "effect.antarchy.gooped.description": "Verlangsamt Bewegung und Angriffsgeschwindigkeit.",

@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.block;
 
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.BlockPos;
@@ -41,7 +40,7 @@ public class StarCoralBlock extends Block {
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 
-    protected boolean scanForWater(BlockGetter level, BlockPos pos) {
+    public boolean scanForWater(BlockGetter level, BlockPos pos) {
         for (Direction direction : Direction.values()) {
             FluidState fluidState = level.getFluidState(pos.relative(direction));
             if (fluidState.is(FluidTags.WATER)) {

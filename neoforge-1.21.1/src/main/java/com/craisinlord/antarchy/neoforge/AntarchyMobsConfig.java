@@ -124,11 +124,14 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue ROYAL_BOSS_BITE_REACH;
     private static final ModConfigSpec.DoubleValue ROYAL_BOSS_BITE_DAMAGE_MULTIPLIER;
     private static final ModConfigSpec.IntValue ROYAL_BOSS_BITE_COOLDOWN_TICKS;
-    private static final ModConfigSpec.DoubleValue QUEEN_BEAM_DAMAGE, QUEEN_BEAM_RANGE, QUEEN_BEAM_TRACKING, QUEEN_BEAM_TERRAIN_RADIUS;
+    private static final ModConfigSpec.DoubleValue QUEEN_BEAM_DAMAGE, QUEEN_BEAM_RANGE, QUEEN_BEAM_MINIMUM_RANGE, QUEEN_BEAM_TRACKING, QUEEN_BEAM_TERRAIN_RADIUS;
     private static final ModConfigSpec.IntValue QUEEN_BEAM_DURATION_TICKS, QUEEN_BEAM_WINDUP_TICKS, QUEEN_BEAM_TRAVEL_TICKS, QUEEN_BEAM_COOLDOWN_TICKS, QUEEN_BEAM_TERRAIN_CAP;
-    private static final ModConfigSpec.DoubleValue KING_BEAM_DAMAGE, KING_BEAM_RANGE, KING_BEAM_TRACKING, KING_BEAM_TERRAIN_RADIUS;
+    private static final ModConfigSpec.DoubleValue KING_BEAM_DAMAGE, KING_BEAM_RANGE, KING_BEAM_MINIMUM_RANGE, KING_BEAM_TRACKING, KING_BEAM_TERRAIN_RADIUS;
     private static final ModConfigSpec.IntValue KING_BEAM_DURATION_TICKS, KING_BEAM_WINDUP_TICKS, KING_BEAM_TRAVEL_TICKS, KING_BEAM_COOLDOWN_TICKS, KING_BEAM_TERRAIN_CAP;
     private static final ModConfigSpec.IntValue ROYAL_DECREE_COOLDOWN_TICKS;
+    private static final ModConfigSpec.DoubleValue KING_ROYAL_MUSTER_RADIUS;
+    private static final ModConfigSpec.IntValue KING_ROYAL_MUSTER_COOLDOWN_TICKS, KING_ROYAL_MUSTER_WINDUP_TICKS,
+            KING_ROYAL_MUSTER_DURATION_TICKS, KING_ROYAL_MUSTER_CAP;
     private static final ModConfigSpec.DoubleValue QUEEN_BLACK_HOLE_RADIUS, QUEEN_BLACK_HOLE_PULL_STRENGTH,
             QUEEN_FINAL_TIME_FIELD_RADIUS, QUEEN_FINAL_TIME_FIELD_RATE;
     private static final ModConfigSpec.IntValue QUEEN_BLACK_HOLE_ACTIVE_TICKS,
@@ -585,6 +588,7 @@ public final class AntarchyMobsConfig {
         ROYAL_BOSS_BITE_COOLDOWN_TICKS = b.comment("Base cooldown in ticks between bites for a single King or Queen head (scaled down at later phases).").defineInRange("biteCooldownTicks", 45, 1, 1200);
         QUEEN_BEAM_DAMAGE = b.defineInRange("queenBeamDamage", 45.0D, 0.0D, 1024.0D);
         QUEEN_BEAM_RANGE = b.defineInRange("queenBeamRange", 100.0D, 1.0D, 256.0D);
+        QUEEN_BEAM_MINIMUM_RANGE = b.comment("Minimum distance from the Queen before she may begin or maintain a beam.").defineInRange("queenBeamMinimumRange", 22.0D, 0.0D, 256.0D);
         QUEEN_BEAM_DURATION_TICKS = b.defineInRange("queenBeamDurationTicks", 30, 1, 1200);
         QUEEN_BEAM_WINDUP_TICKS = b.comment("Charge time before the Queen beam actually fires.").defineInRange("queenBeamWindupTicks", 20, 0, 1200);
         QUEEN_BEAM_TRAVEL_TICKS = b.comment("Time for the Queen beam to extend from its head to its committed range.").defineInRange("queenBeamTravelTicks", 12, 1, 1200);
@@ -594,6 +598,7 @@ public final class AntarchyMobsConfig {
         QUEEN_BEAM_TERRAIN_CAP = b.defineInRange("queenBeamTerrainCap", 192, 0, 4096);
         KING_BEAM_DAMAGE = b.defineInRange("kingBeamDamage", 50.0D, 0.0D, 1024.0D);
         KING_BEAM_RANGE = b.defineInRange("kingBeamRange", 100.0D, 1.0D, 256.0D);
+        KING_BEAM_MINIMUM_RANGE = b.comment("Minimum distance from the King before he may begin or maintain a beam.").defineInRange("kingBeamMinimumRange", 32.0D, 0.0D, 256.0D);
         KING_BEAM_DURATION_TICKS = b.defineInRange("kingBeamDurationTicks", 30, 1, 1200);
         KING_BEAM_WINDUP_TICKS = b.comment("Charge time before the King beam actually fires.").defineInRange("kingBeamWindupTicks", 20, 0, 1200);
         KING_BEAM_TRAVEL_TICKS = b.comment("Time for the King beam to extend from its head to its committed range.").defineInRange("kingBeamTravelTicks", 12, 1, 1200);
@@ -602,6 +607,11 @@ public final class AntarchyMobsConfig {
         KING_BEAM_TERRAIN_RADIUS = b.defineInRange("kingBeamTerrainRadius", 5.0D, 0.0D, 32.0D);
         KING_BEAM_TERRAIN_CAP = b.defineInRange("kingBeamTerrainCap", 192, 0, 4096);
         ROYAL_DECREE_COOLDOWN_TICKS = b.comment("Cooldown in ticks between the end of one King decree and the next.").defineInRange("royalDecreeCooldownTicks", 1200, 1, 72000);
+        KING_ROYAL_MUSTER_COOLDOWN_TICKS = b.comment("Cooldown in ticks between King's command pulses.").defineInRange("kingRoyalMusterCooldownTicks", 500, 1, 72000);
+        KING_ROYAL_MUSTER_WINDUP_TICKS = b.comment("Warning time before the King commands nearby hostile mobs.").defineInRange("kingRoyalMusterWindupTicks", 30, 0, 1200);
+        KING_ROYAL_MUSTER_DURATION_TICKS = b.comment("Duration of Commanded applied by the King's muster.").defineInRange("kingRoyalMusterDurationTicks", 600, 1, 72000);
+        KING_ROYAL_MUSTER_RADIUS = b.comment("Radius of the King's command aura.").defineInRange("kingRoyalMusterRadius", 32.0D, 1.0D, 128.0D);
+        KING_ROYAL_MUSTER_CAP = b.comment("Maximum hostile mobs affected by one command pulse.").defineInRange("kingRoyalMusterCap", 12, 1, 128);
         QUEEN_BLACK_HOLE_RADIUS = b.defineInRange("queenBlackHoleRadius", 14.0D, 1.0D, 64.0D);
         QUEEN_BLACK_HOLE_ACTIVE_TICKS = b.defineInRange("queenBlackHoleActiveTicks", 120, 20, 1200);
         QUEEN_BLACK_HOLE_PULL_STRENGTH = b.defineInRange("queenBlackHolePullStrength", 0.16D, 0.0D, 2.0D);
@@ -1022,6 +1032,7 @@ public final class AntarchyMobsConfig {
     static int     royalBossBiteCooldownTicks()             { return ROYAL_BOSS_BITE_COOLDOWN_TICKS.get(); }
     static double  queenBeamDamage()                        { return QUEEN_BEAM_DAMAGE.get(); }
     static double  queenBeamRange()                         { return QUEEN_BEAM_RANGE.get(); }
+    static double  queenBeamMinimumRange()                  { return QUEEN_BEAM_MINIMUM_RANGE.get(); }
     static int     queenBeamDurationTicks()                 { return QUEEN_BEAM_DURATION_TICKS.get(); }
     static int     queenBeamWindupTicks()                   { return QUEEN_BEAM_WINDUP_TICKS.get(); }
     static int     queenBeamTravelTicks()                   { return QUEEN_BEAM_TRAVEL_TICKS.get(); }
@@ -1031,6 +1042,7 @@ public final class AntarchyMobsConfig {
     static int     queenBeamTerrainCap()                    { return QUEEN_BEAM_TERRAIN_CAP.get(); }
     static double  kingBeamDamage()                         { return KING_BEAM_DAMAGE.get(); }
     static double  kingBeamRange()                          { return KING_BEAM_RANGE.get(); }
+    static double  kingBeamMinimumRange()                   { return KING_BEAM_MINIMUM_RANGE.get(); }
     static int     kingBeamDurationTicks()                  { return KING_BEAM_DURATION_TICKS.get(); }
     static int     kingBeamWindupTicks()                    { return KING_BEAM_WINDUP_TICKS.get(); }
     static int     kingBeamTravelTicks()                    { return KING_BEAM_TRAVEL_TICKS.get(); }
@@ -1039,6 +1051,11 @@ public final class AntarchyMobsConfig {
     static double  kingBeamTerrainRadius()                  { return KING_BEAM_TERRAIN_RADIUS.get(); }
     static int     kingBeamTerrainCap()                     { return KING_BEAM_TERRAIN_CAP.get(); }
     static int     royalDecreeCooldownTicks()                { return ROYAL_DECREE_COOLDOWN_TICKS.get(); }
+    static int     kingRoyalMusterCooldownTicks()             { return KING_ROYAL_MUSTER_COOLDOWN_TICKS.get(); }
+    static int     kingRoyalMusterWindupTicks()                { return KING_ROYAL_MUSTER_WINDUP_TICKS.get(); }
+    static int     kingRoyalMusterDurationTicks()              { return KING_ROYAL_MUSTER_DURATION_TICKS.get(); }
+    static double  kingRoyalMusterRadius()                     { return KING_ROYAL_MUSTER_RADIUS.get(); }
+    static int     kingRoyalMusterCap()                        { return KING_ROYAL_MUSTER_CAP.get(); }
     static double  queenBlackHoleRadius()                    { return QUEEN_BLACK_HOLE_RADIUS.get(); }
     static int     queenBlackHoleActiveTicks()               { return QUEEN_BLACK_HOLE_ACTIVE_TICKS.get(); }
     static double  queenBlackHolePullStrength()              { return QUEEN_BLACK_HOLE_PULL_STRENGTH.get(); }

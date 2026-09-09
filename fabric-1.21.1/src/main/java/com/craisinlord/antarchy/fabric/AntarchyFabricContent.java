@@ -95,7 +95,9 @@ public final class AntarchyFabricContent {
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.KING_SCALE.get()), potionHolder(AntarchyFabricMisc.COMMAND));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.COMMAND), Ingredient.of(Items.REDSTONE), potionHolder(AntarchyFabricMisc.LONG_COMMAND));
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.QUEEN_SCALE.get()), potionHolder(AntarchyFabricMisc.TIME_DILATION));
-            builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.TIME_DILATION), Ingredient.of(Items.REDSTONE), potionHolder(AntarchyFabricMisc.LONG_TIME_DILATION));
+            builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.TIME_DILATION), Ingredient.of(Items.GLOWSTONE_DUST), potionHolder(AntarchyFabricMisc.LONG_TIME_DILATION));
+            builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.TIME_DILATION), Ingredient.of(Items.FERMENTED_SPIDER_EYE), potionHolder(AntarchyFabricMisc.TIME_CONTRACTION));
+            builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.TIME_CONTRACTION), Ingredient.of(Items.GLOWSTONE_DUST), potionHolder(AntarchyFabricMisc.LONG_TIME_CONTRACTION));
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.CLOUD_SHARK_FIN.get()), net.minecraft.world.item.alchemy.Potions.SLOW_FALLING);
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.JUMPY_BUG_LEG.get()), Potions.LEAPING);
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.CORNEA_EAR.get()), net.minecraft.world.item.alchemy.Potions.NIGHT_VISION);
@@ -407,6 +409,7 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setLucidBoltImpactSmall(() -> AntarchyFabricMisc.LUCID_BOLT_IMPACT_SMALL.get());
         AntarchyObjects.setLucidBoltImpactLarge(() -> AntarchyFabricMisc.LUCID_BOLT_IMPACT_LARGE.get());
         AntarchyObjects.setDorrieInventoryMenu(AntarchyFabricMisc.DORRIE_INVENTORY_MENU);
+        AntarchyObjects.setRoyalJudgmentMenu(AntarchyFabricMisc.ROYAL_JUDGMENT_MENU);
         AntarchyObjects.setCritterCage(() -> AntarchyFabricItems.CRITTER_CAGE.get());
         AntarchyObjects.setCritterCageBlock(() -> AntarchyFabricBlocks.CRITTER_CAGE_BLOCK.get());
         AntarchyObjects.setLucidAnchor(() -> AntarchyFabricBlocks.LUCID_ANCHOR.get());

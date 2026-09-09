@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.CaterpillarCommand;
 import com.craisinlord.antarchy.content.command.GravityCommand;
+import com.craisinlord.antarchy.content.time.TimeDilationCommand;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -18,5 +19,6 @@ final class AntarchyForgeCommandEvents {
         CavarynCommand.register(event.getDispatcher());
         GravityCommand.register(event.getDispatcher());
         CaterpillarCommand.register(event.getDispatcher());
+        TimeDilationCommand.register(event.getDispatcher());
     }
 }

@@ -62,6 +62,7 @@ public final class AntarchyFabricClientBootstrap {
     public static void register() {
         AntarchyKeyBindings.register();
         MenuScreens.register(AntarchyFabricMisc.DORRIE_INVENTORY_MENU.get(), com.craisinlord.antarchy.content.client.screen.DorrieInventoryScreen::new);
+        MenuScreens.register(AntarchyFabricMisc.ROYAL_JUDGMENT_MENU.get(), com.craisinlord.antarchy.content.client.screen.RoyalJudgmentScreen::new);
         registerRenderers();
         registerEntityLayers();
         registerColors();

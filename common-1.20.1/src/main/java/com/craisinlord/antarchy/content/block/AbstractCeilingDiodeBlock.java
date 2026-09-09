@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class AbstractCeilingDiodeBlock extends DiodeBlock {
-    protected AbstractCeilingDiodeBlock(BlockBehaviour.Properties properties) {
+    public AbstractCeilingDiodeBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }
 

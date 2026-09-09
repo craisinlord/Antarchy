@@ -37,6 +37,7 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
     private static final String OWNER_KEY = "OwnerUuid";
     private static final String AGE_KEY = "Age";
     private static final String ACTIVE_KEY = "ActiveTicks";
+    private static final String ASSAILANT_KEY = "AssailantVariant";
 
     private static final double DEFAULT_RADIUS = 14.0D;
     private static final int DEFAULT_ACTIVE_TICKS = 120;
@@ -46,6 +47,7 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
     private UUID ownerId;
     private int age;
     private int activeTicks = DEFAULT_ACTIVE_TICKS;
+    private boolean assailantVariant;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     public RoyalBlackHoleEntity(EntityType<? extends RoyalBlackHoleEntity> entityType, Level level) {
@@ -65,6 +67,12 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
 
     public static RoyalBlackHoleEntity create(ServerLevel level, Vec3 center, @Nullable UUID ownerId) {
         return create(level, center, AntarchySettings.queenBlackHoleRadius(), AntarchySettings.queenBlackHoleActiveTicks(), ownerId);
+    }
+
+    public static RoyalBlackHoleEntity createAssailant(ServerLevel level, Vec3 center, @Nullable UUID ownerId) {
+        RoyalBlackHoleEntity hole = create(level, center, AntarchySettings.queenBlackHoleRadius(), AntarchySettings.queenBlackHoleActiveTicks(), ownerId);
+        hole.assailantVariant = true;
+        return hole;
     }
 
     @Override
@@ -94,9 +102,12 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
         }
         this.age++;
         if (!this.isCollapsing()) {
+            if (this.assailantVariant) {
+                this.setPos(this.getX(), this.getY() + 0.035D, this.getZ());
+            }
             this.applyPull();
             if (this.age % 10 == 0 && this.level() instanceof ServerLevel level) {
-                TimeDilationApi.createField(level, this.position(), Math.max(2.0D, this.radius() * 0.55D), 0.18D, 14);
+                TimeDilationApi.createField(level, this.position(), Math.max(2.0D, this.radius() * 0.55D), 0.18D, 14, this.ownerId, !this.assailantVariant);
                 if (this.age % 20 == 0 && level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
                     RoyalBlockDestruction.destroySphere(level, this, this.position(), Math.min(2.0D, this.radius() * 0.2D), 8, 30.0D, 0.0F);
                 }
@@ -207,6 +218,7 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
         this.age = tag.getInt(AGE_KEY);
         this.activeTicks = tag.contains(ACTIVE_KEY) ? tag.getInt(ACTIVE_KEY) : DEFAULT_ACTIVE_TICKS;
         this.ownerId = tag.hasUUID(OWNER_KEY) ? tag.getUUID(OWNER_KEY) : null;
+        this.assailantVariant = tag.getBoolean(ASSAILANT_KEY);
     }
 
     @Override
@@ -217,6 +229,7 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
         if (this.ownerId != null) {
             tag.putUUID(OWNER_KEY, this.ownerId);
         }
+        tag.putBoolean(ASSAILANT_KEY, this.assailantVariant);
     }
 
     @Override

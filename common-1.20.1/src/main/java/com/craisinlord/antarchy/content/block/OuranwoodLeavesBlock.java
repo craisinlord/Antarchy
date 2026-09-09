@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -49,7 +48,7 @@ public class OuranwoodLeavesBlock extends LeavesBlock implements BonemealableBlo
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(LeavesBlock.DISTANCE, OURANWOOD_DISTANCE, PERSISTENT, WATERLOGGED);
     }
 
@@ -70,7 +69,7 @@ public class OuranwoodLeavesBlock extends LeavesBlock implements BonemealableBlo
     }
 
     @Override
-    protected boolean decaying(BlockState state) {
+    public boolean decaying(BlockState state) {
         return !state.getValue(PERSISTENT)
                 && state.getValue(OURANWOOD_DISTANCE) > OURANWOOD_MAX_DISTANCE;
     }

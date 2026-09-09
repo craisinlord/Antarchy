@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
@@ -25,15 +24,9 @@ public record ElythiaRiverCarveFunction(
         DensityFunction ridges
 ) implements DensityFunction {
 
-    public static final MapCodec<ElythiaRiverCarveFunction> CODEC = RecordCodecBuilder.mapCodec(instance ->
-            instance.group(
-                    DensityFunction.HOLDER_HELPER_CODEC.fieldOf("erosion").forGetter(ElythiaRiverCarveFunction::erosion),
-                    DensityFunction.HOLDER_HELPER_CODEC.fieldOf("ridges").forGetter(ElythiaRiverCarveFunction::ridges)
-            ).apply(instance, ElythiaRiverCarveFunction::new)
-    );
-
+    @SuppressWarnings("unchecked")
     public static final KeyDispatchDataCodec<ElythiaRiverCarveFunction> KEY_CODEC =
-            KeyDispatchDataCodec.of(CODEC);
+            (KeyDispatchDataCodec<ElythiaRiverCarveFunction>) (KeyDispatchDataCodec<?>) KeyDispatchDataCodec.of(CODEC);
 
     // Erosion must exceed this for river carving to engage
     private static final double EROSION_THRESHOLD = 0.70;

@@ -151,7 +151,7 @@ public class CritterCageBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
+    public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         if (this.entityTypeId != null) {
             tag.putString(ENTITY_TYPE_TAG, this.entityTypeId.toString());

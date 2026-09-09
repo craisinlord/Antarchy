@@ -9,6 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import java.util.UUID;
 
 public class TimeDilationFieldEntity extends Entity {
     private static final EntityDataAccessor<Float> RADIUS =
@@ -23,6 +24,8 @@ public class TimeDilationFieldEntity extends Entity {
 
     private int durationTicks = -1;
     private int age;
+    private UUID ownerId;
+    private boolean visual = true;
 
     public TimeDilationFieldEntity(EntityType<? extends TimeDilationFieldEntity> entityType, Level level) {
         super(entityType, level);
@@ -31,12 +34,30 @@ public class TimeDilationFieldEntity extends Entity {
     }
 
     public static TimeDilationFieldEntity create(Level level, Vec3 center, double radius, double rate, int durationTicks) {
+        return create(level, center, radius, rate, durationTicks, null);
+    }
+
+    public static TimeDilationFieldEntity create(Level level, Vec3 center, double radius, double rate, int durationTicks, UUID ownerId) {
+        return create(level, center, radius, rate, durationTicks, ownerId, true);
+    }
+
+    public static TimeDilationFieldEntity create(Level level, Vec3 center, double radius, double rate, int durationTicks, UUID ownerId, boolean visual) {
         TimeDilationFieldEntity field = new TimeDilationFieldEntity(AntarchyObjects.TIME_DILATION_FIELD.get(), level);
         field.setPos(center.x, center.y, center.z);
         field.setFieldRadius(radius);
         field.setFieldRate(rate);
         field.durationTicks = durationTicks;
+        field.ownerId = ownerId;
+        field.visual = visual;
         return field;
+    }
+
+    public boolean isOwnedBy(Entity entity) {
+        return this.ownerId != null && entity != null && this.ownerId.equals(entity.getUUID());
+    }
+
+    public boolean isVisual() {
+        return this.visual;
     }
 
     @Override
@@ -105,6 +126,8 @@ public class TimeDilationFieldEntity extends Entity {
         this.setFieldRate(tag.getDouble(RATE_KEY));
         this.durationTicks = tag.contains(DURATION_KEY) ? tag.getInt(DURATION_KEY) : -1;
         this.age = tag.getInt(AGE_KEY);
+        this.ownerId = tag.hasUUID("OwnerUuid") ? tag.getUUID("OwnerUuid") : null;
+        this.visual = !tag.contains("Visual") || tag.getBoolean("Visual");
     }
 
     @Override
@@ -113,5 +136,9 @@ public class TimeDilationFieldEntity extends Entity {
         tag.putDouble(RATE_KEY, this.fieldRate());
         tag.putInt(DURATION_KEY, this.durationTicks);
         tag.putInt(AGE_KEY, this.age);
+        if (this.ownerId != null) {
+            tag.putUUID("OwnerUuid", this.ownerId);
+        }
+        tag.putBoolean("Visual", this.visual);
     }
 }
