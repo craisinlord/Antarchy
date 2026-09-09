@@ -31,7 +31,7 @@ public class PolishedNyxitePressurePlateBlock extends PressurePlateBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(CEILING);
     }
@@ -58,7 +58,7 @@ public class PolishedNyxitePressurePlateBlock extends PressurePlateBlock {
     }
 
     @Override
-    protected int getSignalStrength(Level level, BlockPos pos) {
+    public int getSignalStrength(Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         if (!state.getValue(CEILING)) {
             return super.getSignalStrength(level, pos);

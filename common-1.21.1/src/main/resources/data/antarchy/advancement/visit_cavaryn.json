@@ -9,7 +9,7 @@
   },
   "display": {
     "announce_to_chat": true,
-    "background": "antarchy:textures/block/myrmite/myrmite",
+    "background": "antarchy:textures/block/myrmite/myrmite.png",
     "description": {
       "translate": "advancements.antarchy.visit_cavaryn.description"
     },

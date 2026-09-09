@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.block;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -46,7 +45,7 @@ public class UmbralMossCarpetBlock extends Block {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(BOTTOM, NORTH_WALL, EAST_WALL, SOUTH_WALL, WEST_WALL);
     }
 

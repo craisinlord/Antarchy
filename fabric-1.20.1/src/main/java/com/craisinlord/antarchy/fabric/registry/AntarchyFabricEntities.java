@@ -28,6 +28,7 @@ import com.craisinlord.antarchy.content.entity.NadirChestBoatEntity;
 import com.craisinlord.antarchy.content.entity.OuranwoodBoatEntity;
 import com.craisinlord.antarchy.content.entity.OuranwoodChestBoatEntity;
 import com.craisinlord.antarchy.content.entity.portal.DimensionalTearEntity;
+import com.craisinlord.antarchy.content.time.TimeDilationFieldEntity;
 import com.craisinlord.antarchy.content.entity.AlphaMantisEntity;
 import com.craisinlord.antarchy.content.entity.MantisEntity;
 import com.craisinlord.antarchy.content.entity.RollyPollyEntity;
@@ -459,6 +460,13 @@ public final class AntarchyFabricEntities {
                     .clientTrackingRange(12)
                     .updateInterval(2)
                     .build("dimensional_tear"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<TimeDilationFieldEntity>> TIME_DILATION_FIELD = ENTITY_TYPES.register("time_dilation_field",
+            () -> EntityType.Builder.<TimeDilationFieldEntity>of(TimeDilationFieldEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F)
+                    .clientTrackingRange(16)
+                    .updateInterval(20)
+                    .build("time_dilation_field"));
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<ToreterrorEntity>> TORETERROR = ENTITY_TYPES.register("toreterror",

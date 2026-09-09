@@ -164,7 +164,7 @@
             ],
             "humidity": [
               -0.15,
-              1.0
+              0.45
             ],
             "continentalness": [
               -1.0,
@@ -185,6 +185,36 @@
             "offset": 0.0
           },
           "biome": "antarchy:cavaryn_moleworm_caves"
+        },
+        {
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              0.45,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              1.0
+            ],
+            "erosion": [
+              -1.0,
+              1.0
+            ],
+            "weirdness": [
+              -0.6,
+              0.9
+            ],
+            "depth": [
+              0.15,
+              2.0
+            ],
+            "offset": 0.0
+          },
+          "biome": "antarchy:wormy_caves"
         },
         {
           "parameters": {

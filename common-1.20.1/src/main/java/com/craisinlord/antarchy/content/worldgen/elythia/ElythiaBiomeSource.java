@@ -3,7 +3,6 @@ package com.craisinlord.antarchy.content.worldgen.elythia;
 import com.craisinlord.antarchy.Antarchy;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.stream.Stream;
 import net.minecraft.core.Holder;
@@ -75,15 +74,6 @@ public class ElythiaBiomeSource extends BiomeSource {
     private static long packColumnKey(int x, int z) {
         return ((long) x << 32) ^ (z & 0xFFFFFFFFL);
     }
-
-    public static final MapCodec<ElythiaBiomeSource> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            MultiNoiseBiomeSource.DIRECT_CODEC.forGetter(ElythiaBiomeSource::parameters),
-            Codec.INT.optionalFieldOf("moleworm_caves_max_y", 72).forGetter(ElythiaBiomeSource::molewormCavesMaxY),
-            Codec.INT.optionalFieldOf("surface_biome_sample_y", 160).forGetter(ElythiaBiomeSource::surfaceBiomeSampleY),
-            Codec.INT.optionalFieldOf("ocean_max_y", 85).forGetter(ElythiaBiomeSource::oceanMaxY),
-            Codec.INT.optionalFieldOf("sea_level", 78).forGetter(ElythiaBiomeSource::seaLevel),
-            Codec.INT.optionalFieldOf("cloud_sea_min_y", 360).forGetter(ElythiaBiomeSource::cloudSeaMinY)
-    ).apply(instance, ElythiaBiomeSource::new));
 
     private final Climate.ParameterList<Holder<Biome>> parameters;
     private final MultiNoiseBiomeSource delegate;
@@ -160,7 +150,7 @@ public class ElythiaBiomeSource extends BiomeSource {
 
     @Override
     protected com.mojang.serialization.Codec<? extends BiomeSource> codec() {
-        return CODEC.codec();
+        return CODEC;
     }
 
     @Override

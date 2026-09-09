@@ -26,7 +26,7 @@ public class NadirSaplingBlock extends BushBlock {
     }
 
     @Override
-    protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
+    public boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
         return state.is(BlockTags.DIRT) || state.is(Blocks.FARMLAND);
     }
 

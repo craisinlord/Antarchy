@@ -21,6 +21,7 @@ import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.CaterpillarCommand;
 import com.craisinlord.antarchy.content.command.DimensionalTearCommand;
 import com.craisinlord.antarchy.content.command.GravityCommand;
+import com.craisinlord.antarchy.content.command.RoyalCommand;
 import com.craisinlord.antarchy.content.time.TimeDilationCommand;
 import com.craisinlord.antarchy.content.time.TimeDilationManager;
 import com.craisinlord.antarchy.content.item.MinersDreamExcavationManager;
@@ -80,6 +81,7 @@ public final class AntarchyFabricEvents {
             CaterpillarCommand.register(dispatcher);
             DimensionalTearCommand.register(dispatcher);
             TimeDilationCommand.register(dispatcher);
+            RoyalCommand.register(dispatcher);
         });
 
         DispenserBlock.registerBehavior(AntarchyFabricItems.SQUIDZOOKA.get(), new SquidzookaDispenseBehavior());

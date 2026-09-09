@@ -85,6 +85,20 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         return tear;
     }
 
+    public static DimensionalTearEntity createQueenManticoreTear(ServerLevel level, Vec3 pos, float yaw,
+                                                                  int lifetimeTicks, UUID queenId, int count) {
+        return create(level, pos, yaw, lifetimeTicks);
+    }
+
+    public static void discardQueenOwnedTears(ServerLevel level, UUID queenId) {
+        // The 1.20 compatibility entity does not yet persist the queen-owner index.
+    }
+
+    public static DimensionalTearEntity createStaffSummonTear(ServerLevel level, Vec3 pos, float yaw,
+                                                               int lifetimeTicks, UUID playerId, int count) {
+        return create(level, pos, yaw, lifetimeTicks);
+    }
+
     public void linkTo(DimensionalTearEntity other) {
         this.linkedTearId = other.getUUID();
         this.linkedFallbackPos = other.position();

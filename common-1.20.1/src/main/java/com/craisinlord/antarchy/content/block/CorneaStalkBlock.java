@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
-import com.mojang.serialization.MapCodec;
 import java.util.Optional;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import net.minecraft.core.BlockPos;
@@ -172,7 +171,7 @@ public class CorneaStalkBlock extends BushBlock implements BonemealableBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(AGE, HANGING);
     }
 }

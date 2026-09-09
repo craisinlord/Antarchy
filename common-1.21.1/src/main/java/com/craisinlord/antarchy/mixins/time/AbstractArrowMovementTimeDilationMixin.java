@@ -13,13 +13,13 @@ public abstract class AbstractArrowMovementTimeDilationMixin {
     @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;add(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;"))
     private Vec3 antarchy$slowCollisionPath(Vec3 position, Vec3 movement) {
         double rate = TimeDilationApi.getRate((AbstractArrow) (Object) this);
-        return position.add(rate >= TimeDilationMath.NORMAL_RATE ? movement : movement.scale(rate));
+        return position.add(Math.abs(rate - TimeDilationMath.NORMAL_RATE) < 0.001D ? movement : movement.scale(rate));
     }
 
     @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/AbstractArrow;setPos(DDD)V"))
     private void antarchy$slowPosition(AbstractArrow arrow, double x, double y, double z) {
         double rate = Math.max(TimeDilationMath.MIN_RATE, TimeDilationApi.getRate(arrow));
-        if (rate >= TimeDilationMath.NORMAL_RATE) {
+        if (Math.abs(rate - TimeDilationMath.NORMAL_RATE) < 0.001D) {
             arrow.setPos(x, y, z);
             return;
         }

@@ -124,6 +124,7 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.NIGHTMARE_PORTAL.get(), NightmarePortalRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.NIGHTMARE_BITE.get(), NightmareBiteRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.DIMENSIONAL_TEAR.get(), DimensionalTearRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.TIME_DILATION_FIELD.get(), TimeDilationFieldRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.LUCID.get(), LucidRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.BED_BUG.get(), BedBugRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.WASP.get(), WaspRenderer::new);
@@ -476,6 +477,9 @@ public final class AntarchyFabricClientBootstrap {
 
     private static void registerClientCallbacks() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (client.level != null) {
+                com.craisinlord.antarchy.content.client.ClientTimeDilationTicker.tick(client.level);
+            }
             CameraShakeClientState.tick();
             HerculesBeetleImpactShakeClientState.tick();
             HordeClientState.tick();

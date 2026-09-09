@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.time;
 
 import java.util.List;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
 public final class TimeDilationFieldSampler {
@@ -24,6 +25,25 @@ public final class TimeDilationFieldSampler {
             }
             double falloff = TimeDilationMath.gaussianFalloff(Math.sqrt(distanceSqr), field.fieldRadius());
             combinedRate *= TimeDilationMath.localFieldRate(field.effectiveFieldRate(), falloff);
+        }
+        return TimeDilationMath.clampRate(combinedRate);
+    }
+
+    public static double sample(List<TimeDilationFieldEntity> fields, Entity entity) {
+        double combinedRate = TimeDilationMath.NORMAL_RATE;
+        for (TimeDilationFieldEntity field : fields) {
+            if (field.isOwnedBy(entity)) {
+                continue;
+            }
+            Vec3 center = field.position();
+            double dx = center.x - entity.getX();
+            double dy = center.y - entity.getY();
+            double dz = center.z - entity.getZ();
+            double distanceSqr = dx * dx + dy * dy + dz * dz;
+            if (distanceSqr < field.fieldRadiusSqr()) {
+                double falloff = TimeDilationMath.gaussianFalloff(Math.sqrt(distanceSqr), field.fieldRadius());
+                combinedRate *= TimeDilationMath.localFieldRate(field.effectiveFieldRate(), falloff);
+            }
         }
         return TimeDilationMath.clampRate(combinedRate);
     }

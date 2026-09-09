@@ -87,5 +87,9 @@ public final class AntarchyFabricClientNetworking {
                 HordeClientState.update(payload.intensity()));
         registerReceiver(TigerEyeCamouflageStatePayload.TYPE, TigerEyeCamouflageStatePayload.STREAM_CODEC, payload ->
                 TigerEyeCamouflageClientState.update(payload.entityId(), payload.active(), payload.blockStateId()));
+        registerReceiver(TimeDilationRatePayload.TYPE, TimeDilationRatePayload.STREAM_CODEC, payload ->
+                AntarchyFabricTimeDilationNetworking.handleRate(Minecraft.getInstance().player, payload));
+        registerReceiver(TimeDilationFieldsPayload.TYPE, TimeDilationFieldsPayload.STREAM_CODEC, payload ->
+                com.craisinlord.antarchy.content.client.ClientTimeDilationTicker.applyFields(payload.fields()));
     }
 }

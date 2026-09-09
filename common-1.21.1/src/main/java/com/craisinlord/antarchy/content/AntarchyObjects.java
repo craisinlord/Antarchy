@@ -206,6 +206,8 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<MenuType<com.craisinlord.antarchy.content.menu.DorrieInventoryMenu>> DORRIE_INVENTORY_MENU = (Supplier<MenuType<com.craisinlord.antarchy.content.menu.DorrieInventoryMenu>>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<MenuType<com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu>> ROYAL_JUDGMENT_MENU = (Supplier<MenuType<com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu>>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<net.minecraft.world.item.Item> CHEEP_ITEM = (Supplier<net.minecraft.world.item.Item>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> DUPLICATOR_LOG = (Supplier<Block>) UNBOUND;
@@ -891,6 +893,10 @@ public final class AntarchyObjects {
 
     public static void setDorrieInventoryMenu(Supplier<MenuType<com.craisinlord.antarchy.content.menu.DorrieInventoryMenu>> supplier) {
         DORRIE_INVENTORY_MENU = supplier;
+    }
+
+    public static void setRoyalJudgmentMenu(Supplier<MenuType<com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu>> supplier) {
+        ROYAL_JUDGMENT_MENU = supplier;
     }
 
     public static void setAmericanComponent(Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.util.Unit>> supplier) {

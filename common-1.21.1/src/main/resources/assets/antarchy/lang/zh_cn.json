@@ -533,6 +533,8 @@
     "effect.antarchy.paralyzed.description": "阻止目标移动。",
     "effect.antarchy.inverted": "反转",
     "effect.antarchy.inverted.description": "反转目标的重力。",
+    "effect.antarchy.commanded.description": "为命令它的玩家而战。",
+    "effect.antarchy.dilated.description": "减缓受影响生物的时间流逝。",
     "effect.antarchy.stinky": "臭气",
     "effect.antarchy.stinky.description": "驱赶被动和中立生物，吸引节肢生物。",
     "effect.antarchy.gooped.description": "减缓移动速度和攻击速度。",

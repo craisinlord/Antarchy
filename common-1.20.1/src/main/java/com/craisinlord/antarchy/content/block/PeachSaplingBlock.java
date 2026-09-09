@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.content.worldgen.elythia.PeachTreeGrowers;
-import com.mojang.serialization.MapCodec;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import net.minecraft.core.BlockPos;

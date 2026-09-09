@@ -217,22 +217,22 @@ public final class SeashellBlockEntity extends RandomizableContainerBlockEntity 
     }
 
     @Override
-    protected Component getDefaultName() {
+    public Component getDefaultName() {
         return TITLE;
     }
 
     @Override
-    protected NonNullList<ItemStack> getItems() {
+    public NonNullList<ItemStack> getItems() {
         return this.items;
     }
 
     @Override
-    protected void setItems(NonNullList<ItemStack> items) {
+    public void setItems(NonNullList<ItemStack> items) {
         this.items = items;
     }
 
     @Override
-    protected AbstractContainerMenu createMenu(int containerId, Inventory inventory) {
+    public AbstractContainerMenu createMenu(int containerId, Inventory inventory) {
         return ChestMenu.threeRows(containerId, inventory, this);
     }
 
@@ -252,7 +252,7 @@ public final class SeashellBlockEntity extends RandomizableContainerBlockEntity 
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
+    public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         if (!this.trySaveLootTable(tag)) {
             net.minecraft.world.ContainerHelper.saveAllItems(tag, this.items);

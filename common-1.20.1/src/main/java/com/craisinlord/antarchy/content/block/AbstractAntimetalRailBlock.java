@@ -17,10 +17,10 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public abstract class AbstractAntimetalRailBlock extends BaseRailBlock {
-    protected static final VoxelShape CEILING_FLAT_SHAPE = Block.box(0.0D, 14.0D, 0.0D, 16.0D, 16.0D, 16.0D);
-    protected static final VoxelShape CEILING_SLOPE_SHAPE = Block.box(0.0D, 6.0D, 0.0D, 16.0D, 16.0D, 16.0D);
+    public static final VoxelShape CEILING_FLAT_SHAPE = Block.box(0.0D, 14.0D, 0.0D, 16.0D, 16.0D, 16.0D);
+    public static final VoxelShape CEILING_SLOPE_SHAPE = Block.box(0.0D, 6.0D, 0.0D, 16.0D, 16.0D, 16.0D);
 
-    protected AbstractAntimetalRailBlock(boolean isStraight, BlockBehaviour.Properties properties) {
+    public AbstractAntimetalRailBlock(boolean isStraight, BlockBehaviour.Properties properties) {
         super(isStraight, properties);
     }
 

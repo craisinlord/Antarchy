@@ -6,7 +6,11 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.Projectile;
 import com.craisinlord.antarchy.content.effect.DilatedMobEffect;
+import com.craisinlord.antarchy.content.effect.ContractedMobEffect;
+import com.craisinlord.antarchy.content.effect.ContractedMobEffect;
+import com.craisinlord.antarchy.content.effect.ContractedMobEffect;
 import com.craisinlord.antarchy.content.effect.RoyalEffectEligibility;
 import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
 
@@ -20,7 +24,7 @@ public final class TimeDilationManager {
             syncFieldSnapshots(level, fields);
             updateEntities(level, fields);
             if (!fields.isEmpty()) {
-                TimeDilationParticles.spawnFieldBorders(level, fields);
+                TimeDilationParticles.spawnFieldBorders(level, fields.stream().filter(TimeDilationFieldEntity::isVisual).toList());
             }
         }
     }
@@ -61,18 +65,55 @@ public final class TimeDilationManager {
                 continue;
             }
             double previousRate = access.antarchy$getTimeDilationRate();
-            double fieldRate = TimeDilationFieldSampler.sample(fields, entity.position());
-            double effectRate = RoyalEffectHooks.dilatedHolder() != null
-                    && entity instanceof net.minecraft.world.entity.LivingEntity living
-                    && living.hasEffect(RoyalEffectHooks.dilatedHolder())
-                    ? DilatedMobEffect.RATE : TimeDilationMath.NORMAL_RATE;
-            double rate = Math.min(fieldRate, effectRate);
-            if (rate >= TimeDilationMath.NORMAL_RATE) {
+            double fieldRate = TimeDilationFieldSampler.sample(fields, entity);
+            double effectRate = TimeDilationMath.NORMAL_RATE;
+            if (RoyalEffectHooks.dilatedHolder() != null
+                    && entity instanceof net.minecraft.world.entity.LivingEntity living) {
+                var effect = living.getEffect(RoyalEffectHooks.dilatedHolder());
+                if (effect != null) {
+                    effectRate = DilatedMobEffect.rateForAmplifier(effect.getAmplifier());
+                }
+            }
+            if (RoyalEffectHooks.contractedHolder() != null
+                    && entity instanceof net.minecraft.world.entity.LivingEntity living) {
+                var effect = living.getEffect(RoyalEffectHooks.contractedHolder());
+                if (effect != null) {
+                    effectRate = Math.max(effectRate, ContractedMobEffect.rateForAmplifier(effect.getAmplifier()));
+                }
+            }
+            double inheritedRate = access.antarchy$getInheritedTimeDilationRate();
+            if (entity instanceof Projectile projectile && projectile.getOwner() != null) {
+                double ownerRate = TimeDilationApi.getRate(projectile.getOwner());
+                inheritedRate = ownerRate < TimeDilationMath.NORMAL_RATE
+                        ? Math.min(inheritedRate, ownerRate)
+                        : Math.max(inheritedRate, ownerRate);
+            }
+            double slowRate = TimeDilationMath.NORMAL_RATE;
+            double fastRate = TimeDilationMath.NORMAL_RATE;
+            if (fieldRate < TimeDilationMath.NORMAL_RATE) {
+                slowRate = Math.min(slowRate, fieldRate);
+            } else {
+                fastRate = Math.max(fastRate, fieldRate);
+            }
+            if (effectRate < TimeDilationMath.NORMAL_RATE) {
+                slowRate = Math.min(slowRate, effectRate);
+            } else {
+                fastRate = Math.max(fastRate, effectRate);
+            }
+            if (inheritedRate < TimeDilationMath.NORMAL_RATE) {
+                slowRate = Math.min(slowRate, inheritedRate);
+            } else {
+                fastRate = Math.max(fastRate, inheritedRate);
+            }
+            double targetRate = slowRate < TimeDilationMath.NORMAL_RATE ? slowRate : fastRate;
+            double rate = TimeDilationMath.transitionRate(previousRate, targetRate);
+            if (Math.abs(targetRate - TimeDilationMath.NORMAL_RATE) < 0.001D
+                    && Math.abs(rate - TimeDilationMath.NORMAL_RATE) < 0.001D) {
                 TimeDilationApi.clearRate(entity);
             } else {
                 access.antarchy$setTimeDilationRate(rate);
             }
-            if (rate < TimeDilationMath.NORMAL_RATE && Math.abs(previousRate - rate) > 0.001D) {
+            if (Math.abs(previousRate - rate) > 0.001D) {
                 TimeDilationApi.syncEntityRate(entity, rate);
             }
         }

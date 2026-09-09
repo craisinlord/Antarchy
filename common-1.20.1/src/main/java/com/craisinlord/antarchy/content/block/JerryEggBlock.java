@@ -3,7 +3,6 @@ package com.craisinlord.antarchy.content.block;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.JerryEntity;
 import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -102,7 +101,7 @@ public class JerryEggBlock extends Block {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(ROTATED);
     }
 }

@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.block;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -28,7 +27,7 @@ public class AntimetalActivatorRailBlock extends AbstractAntimetalRailBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(SHAPE, POWERED, WATERLOGGED);
     }
 

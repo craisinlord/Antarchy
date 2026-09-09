@@ -88,6 +88,7 @@
                    "time.EntityMoveTimeDilationMixin",
                    "time.EntityTimeDilationStateMixin",
                    "time.EntityRotationTimeDilationMixin",
+                   "time.EntityCrouchTimeDilationMixin",
                    "time.LivingEntityKnockbackTimeDilationMixin",
                    "time.CreeperTimeDilationMixin",
                    "time.EndCrystalTimeDilationMixin",
@@ -101,9 +102,11 @@
                    "time.AbstractArrowMovementTimeDilationMixin",
                    "time.ThrowableProjectileMovementTimeDilationMixin",
                    "time.HurtingProjectileMovementTimeDilationMixin",
+                   "time.ProjectileTimeDilationMixin",
                    "time.AbstractArrowActionTimeDilationMixin",
                    "time.RangedAttackGoalTimeDilationMixin",
-                   "time.RangedBowAttackGoalTimeDilationMixin"
+                   "time.RangedBowAttackGoalTimeDilationMixin",
+                   "time.GeckoLibAnimationControllerTimeDilationMixin"
                ],
     "client":  [
                    "client.AbstractMinecartRendererMixin",
@@ -117,6 +120,8 @@
                    "client.ElytraModelAccessor",
                    "client.FrogRendererElythiaMixin",
                    "client.GameRendererSwingThroughGrassMixin",
+                   "client.EntityBoundSoundInstanceAccessor",
+                   "client.InventoryScreenRotationBypassMixin",
                    "client.ExperimentalSettingsPopupMixin",
                    "client.KrakensGraspChargePoseMixin",
                    "client.LightningBoltRendererMixin",

@@ -41,6 +41,7 @@ public class AntarchyNeoforgeSpawnPlacements {
         event.register(AntarchyNeoforgeEntites.OCTOPUS_BOMB.get(), SpawnPlacementTypes.IN_WATER, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, OctopusBombEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(AntarchyNeoforgeEntites.NIGHTMARE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, NightmareEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(AntarchyNeoforgeEntites.MOLEWORM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MolewormEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
+        event.register(AntarchyNeoforgeEntites.WORM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, WormEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(AntarchyNeoforgeEntites.MANTIS.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MantisEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(AntarchyNeoforgeEntites.ALPHA_MANTIS.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, AlphaMantisEntity::checkAlphaMantisSpawnRules, RegisterSpawnPlacementsEvent.Operation.OR);
         event.register(AntarchyNeoforgeEntites.MOLEVORE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, MolevoreEntity::canSpawn, RegisterSpawnPlacementsEvent.Operation.OR);

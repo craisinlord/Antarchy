@@ -16,6 +16,7 @@ public final class TimeDilationApi {
     private static BiConsumer<ServerPlayer, List<TimeDilationFieldSnapshot>> fieldSyncDispatcher = (player, fields) -> {
     };
     private static final Map<UUID, Double> SYNCED_CLIENT_RATES = new ConcurrentHashMap<>();
+    private static final ThreadLocal<Integer> ROTATION_BYPASS_DEPTH = ThreadLocal.withInitial(() -> 0);
 
     private TimeDilationApi() {
     }
@@ -31,7 +32,15 @@ public final class TimeDilationApi {
     }
 
     public static TimeDilationFieldEntity createField(ServerLevel level, Vec3 center, double radius, double rate, int durationTicks) {
-        TimeDilationFieldEntity field = TimeDilationFieldEntity.create(level, center, radius, rate, durationTicks);
+        return createField(level, center, radius, rate, durationTicks, null);
+    }
+
+    public static TimeDilationFieldEntity createField(ServerLevel level, Vec3 center, double radius, double rate, int durationTicks, UUID ownerId) {
+        return createField(level, center, radius, rate, durationTicks, ownerId, true);
+    }
+
+    public static TimeDilationFieldEntity createField(ServerLevel level, Vec3 center, double radius, double rate, int durationTicks, UUID ownerId, boolean visual) {
+        TimeDilationFieldEntity field = TimeDilationFieldEntity.create(level, center, radius, rate, durationTicks, ownerId, visual);
         level.addFreshEntity(field);
         return field;
     }
@@ -53,6 +62,29 @@ public final class TimeDilationApi {
         return getRate(entity) < TimeDilationMath.NORMAL_RATE;
     }
 
+    public static void enterRotationBypass() {
+        ROTATION_BYPASS_DEPTH.set(ROTATION_BYPASS_DEPTH.get() + 1);
+    }
+
+    public static void exitRotationBypass() {
+        int depth = ROTATION_BYPASS_DEPTH.get() - 1;
+        if (depth <= 0) {
+            ROTATION_BYPASS_DEPTH.remove();
+        } else {
+            ROTATION_BYPASS_DEPTH.set(depth);
+        }
+    }
+
+    public static boolean isRotationBypassed() {
+        return ROTATION_BYPASS_DEPTH.get() > 0;
+    }
+
+    public static void setInheritedRate(Entity entity, double rate) {
+        if (entity instanceof TimeDilationEntityAccess access) {
+            access.antarchy$setInheritedTimeDilationRate(rate);
+        }
+    }
+
     public static void applySyncedRate(Entity entity, double rate) {
         applySyncedRate(entity.getUUID(), rate);
         if (entity instanceof TimeDilationEntityAccess access) {
@@ -68,7 +100,7 @@ public final class TimeDilationApi {
     /** Clears both the authoritative entity state and any client-side UUID cache. */
     public static void clearRate(Entity entity) {
         if (entity instanceof TimeDilationEntityAccess access) {
-            boolean wasDilated = access.antarchy$getTimeDilationRate() < TimeDilationMath.NORMAL_RATE;
+            boolean wasDilated = Math.abs(access.antarchy$getTimeDilationRate() - TimeDilationMath.NORMAL_RATE) > 0.001D;
             access.antarchy$setTimeDilationRate(TimeDilationMath.NORMAL_RATE);
             if (wasDilated) {
                 syncEntityRate(entity, TimeDilationMath.NORMAL_RATE);
@@ -91,7 +123,7 @@ public final class TimeDilationApi {
 
     public static boolean consumeTick(Entity entity, String timerKey) {
         double rate = getRate(entity);
-        if (rate >= TimeDilationMath.NORMAL_RATE || !(entity instanceof TimeDilationEntityAccess access)) {
+        if (Math.abs(rate - TimeDilationMath.NORMAL_RATE) < 0.001D || !(entity instanceof TimeDilationEntityAccess access)) {
             return true;
         }
         return access.antarchy$consumeTimeDilationTick(timerKey, rate);
@@ -99,7 +131,7 @@ public final class TimeDilationApi {
 
     public static int scaleCooldownTicks(Entity entity, int ticks) {
         double rate = getRate(entity);
-        if (ticks <= 0 || rate >= TimeDilationMath.NORMAL_RATE) {
+        if (ticks <= 0 || Math.abs(rate - TimeDilationMath.NORMAL_RATE) < 0.001D) {
             return ticks;
         }
         return (int) Math.ceil(ticks / Math.max(TimeDilationMath.MIN_RATE, rate));

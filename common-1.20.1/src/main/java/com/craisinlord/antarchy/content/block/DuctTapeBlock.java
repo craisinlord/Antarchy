@@ -5,7 +5,6 @@ import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
-import com.mojang.serialization.MapCodec;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -207,7 +206,7 @@ public class DuctTapeBlock extends Block {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(USES, FACE, FACING);
     }
 

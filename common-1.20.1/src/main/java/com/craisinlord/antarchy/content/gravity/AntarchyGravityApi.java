@@ -1,6 +1,8 @@
 package com.craisinlord.antarchy.content.gravity;
 
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.phys.Vec3;
 
 public final class AntarchyGravityApi {
     public interface GravitySyncDispatcher {
@@ -97,6 +99,10 @@ public final class AntarchyGravityApi {
 
     public static void notifyGravityStateChanged(Entity entity) {
         syncDispatcher.onGravityStateChanged(entity);
+    }
+
+    public static void setWorldVelocity(ItemEntity entity, Vec3 velocity) {
+        entity.setDeltaMovement(velocity);
     }
 
     private static AntarchyGravityAccess access(Entity entity) {

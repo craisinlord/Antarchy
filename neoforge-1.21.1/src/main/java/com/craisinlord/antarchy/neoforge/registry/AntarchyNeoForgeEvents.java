@@ -1276,7 +1276,9 @@ public final class AntarchyNeoForgeEvents {
         event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.KING_SCALE.get(), AntarchyNeoforgeMisc.COMMAND);
         event.getBuilder().addMix(AntarchyNeoforgeMisc.COMMAND, Items.REDSTONE, AntarchyNeoforgeMisc.LONG_COMMAND);
         event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.QUEEN_SCALE.get(), AntarchyNeoforgeMisc.TIME_DILATION);
-        event.getBuilder().addMix(AntarchyNeoforgeMisc.TIME_DILATION, Items.REDSTONE, AntarchyNeoforgeMisc.LONG_TIME_DILATION);
+        event.getBuilder().addMix(AntarchyNeoforgeMisc.TIME_DILATION, Items.GLOWSTONE_DUST, AntarchyNeoforgeMisc.LONG_TIME_DILATION);
+        event.getBuilder().addMix(AntarchyNeoforgeMisc.TIME_DILATION, Items.FERMENTED_SPIDER_EYE, AntarchyNeoforgeMisc.TIME_CONTRACTION);
+        event.getBuilder().addMix(AntarchyNeoforgeMisc.TIME_CONTRACTION, Items.GLOWSTONE_DUST, AntarchyNeoforgeMisc.LONG_TIME_CONTRACTION);
 
     }
 

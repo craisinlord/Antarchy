@@ -199,6 +199,10 @@ public class AntarchyForge {
                 new BloodCrystalKatanaTrailPayload(player.getId(), durationTicks)
         ));
         com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.setSyncDispatcher(AntarchyGravityNetworking::syncEntity);
+        com.craisinlord.antarchy.content.time.TimeDilationApi.setSyncDispatcher(
+                com.craisinlord.antarchy.forge.network.AntarchyTimeDilationNetworking::syncRate);
+        com.craisinlord.antarchy.content.time.TimeDilationApi.setFieldSyncDispatcher(
+                com.craisinlord.antarchy.forge.network.AntarchyTimeDilationNetworking::syncFields);
         com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.setSendToPlayer(
                 com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore::sendToPlayer);
         com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.setSyncSelfAndTracking(player ->
@@ -362,6 +366,8 @@ public class AntarchyForge {
         AntarchyObjects.setRollyPolly(AntarchyForgeEntites.ROLLY_POLLY);
         AntarchyObjects.setSpiritApple(() -> AntarchyForgeItems.SPIRIT_APPLE.get());
         AntarchyObjects.setGlimmeringEffect(() -> AntarchyForgeMisc.mobEffectHolder(AntarchyForgeMisc.GLIMMERING));
+        AntarchyObjects.setTimeDilationField(() -> AntarchyForgeEntites.TIME_DILATION_FIELD.get());
+        AntarchyObjects.setDilatedEffect(() -> AntarchyForgeMisc.mobEffectHolder(AntarchyForgeMisc.DILATED));
         AntarchyObjects.setElka(AntarchyForgeEntites.ELKA);
         AntarchyObjects.setPeach(() -> AntarchyForgeItems.PEACH.get());
         AntarchyObjects.setCorn(() -> AntarchyForgeItems.CORN.get());

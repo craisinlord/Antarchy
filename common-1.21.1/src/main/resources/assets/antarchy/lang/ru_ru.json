@@ -504,6 +504,8 @@
     "effect.antarchy.paralyzed.description":  "Не дает целям двигаться.",
     "effect.antarchy.inverted":  "Инверсия",
     "effect.antarchy.inverted.description":  "Инвертирует гравитацию цели.",
+    "effect.antarchy.commanded.description":  "Сражается за игрока, который им командует.",
+    "effect.antarchy.dilated.description":  "Замедляет течение времени для существа под действием эффекта.",
     "effect.antarchy.stinky":  "Вонючесть",
     "effect.antarchy.stinky.description":  "Отпугивает мирных и нейтральных мобов, но притягивает членистоногих.",
     "effect.antarchy.gooped.description":  "Замедляет движение и скорость атаки.",

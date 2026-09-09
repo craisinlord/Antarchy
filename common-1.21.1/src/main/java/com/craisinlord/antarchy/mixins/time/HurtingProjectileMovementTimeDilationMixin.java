@@ -12,7 +12,7 @@ public abstract class HurtingProjectileMovementTimeDilationMixin {
     @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/AbstractHurtingProjectile;setPos(DDD)V"))
     private void antarchy$slowPosition(AbstractHurtingProjectile projectile, double x, double y, double z) {
         double rate = Math.max(TimeDilationMath.MIN_RATE, TimeDilationApi.getRate(projectile));
-        if (rate >= TimeDilationMath.NORMAL_RATE) {
+        if (Math.abs(rate - TimeDilationMath.NORMAL_RATE) < 0.001D) {
             projectile.setPos(x, y, z);
             return;
         }

@@ -550,6 +550,7 @@ public final class AntarchySettings {
     private static double queenManticoreSummonRange = 24.0D;
     private static double queenBeamDamage = 45.0D;
     private static double queenBeamRange = 100.0D;
+    private static double queenBeamMinimumRange = 22.0D;
     private static int queenBeamDurationTicks = 30;
     private static int queenBeamWindupTicks = 20;
     private static int queenBeamTravelTicks = 12;
@@ -559,6 +560,7 @@ public final class AntarchySettings {
     private static int queenBeamTerrainCap = 192;
     private static double kingBeamDamage = 50.0D;
     private static double kingBeamRange = 100.0D;
+    private static double kingBeamMinimumRange = 32.0D;
     private static int kingBeamDurationTicks = 30;
     private static int kingBeamWindupTicks = 20;
     private static int kingBeamTravelTicks = 12;
@@ -567,6 +569,11 @@ public final class AntarchySettings {
     private static double kingBeamTerrainRadius = 5.0D;
     private static int kingBeamTerrainCap = 192;
     private static int royalDecreeCooldownTicks = 1200;
+    private static int kingRoyalMusterCooldownTicks = 500;
+    private static int kingRoyalMusterWindupTicks = 30;
+    private static int kingRoyalMusterDurationTicks = 600;
+    private static double kingRoyalMusterRadius = 32.0D;
+    private static int kingRoyalMusterCap = 12;
     private static double jerryInfantHealth = 20.0D;
     private static double jerryInfantAttackDamage = 2.0D;
     private static double jerryMatureHealth = 40.0D;
@@ -2887,6 +2894,8 @@ public final class AntarchySettings {
     public static void setQueenBeamDamage(double v) { queenBeamDamage = v; }
     public static double queenBeamRange() { return queenBeamRange; }
     public static void setQueenBeamRange(double v) { queenBeamRange = v; }
+    public static double queenBeamMinimumRange() { return queenBeamMinimumRange; }
+    public static void setQueenBeamMinimumRange(double v) { queenBeamMinimumRange = v; }
     public static int queenBeamDurationTicks() { return queenBeamDurationTicks; }
     public static void setQueenBeamDurationTicks(int v) { queenBeamDurationTicks = v; }
     public static int queenBeamWindupTicks() { return queenBeamWindupTicks; }
@@ -2905,6 +2914,8 @@ public final class AntarchySettings {
     public static void setKingBeamDamage(double v) { kingBeamDamage = v; }
     public static double kingBeamRange() { return kingBeamRange; }
     public static void setKingBeamRange(double v) { kingBeamRange = v; }
+    public static double kingBeamMinimumRange() { return kingBeamMinimumRange; }
+    public static void setKingBeamMinimumRange(double v) { kingBeamMinimumRange = v; }
     public static int kingBeamDurationTicks() { return kingBeamDurationTicks; }
     public static void setKingBeamDurationTicks(int v) { kingBeamDurationTicks = v; }
     public static int kingBeamWindupTicks() { return kingBeamWindupTicks; }
@@ -2921,6 +2932,16 @@ public final class AntarchySettings {
     public static void setKingBeamTerrainCap(int v) { kingBeamTerrainCap = v; }
     public static int royalDecreeCooldownTicks() { return royalDecreeCooldownTicks; }
     public static void setRoyalDecreeCooldownTicks(int v) { royalDecreeCooldownTicks = v; }
+    public static int kingRoyalMusterCooldownTicks() { return kingRoyalMusterCooldownTicks; }
+    public static void setKingRoyalMusterCooldownTicks(int v) { kingRoyalMusterCooldownTicks = v; }
+    public static int kingRoyalMusterWindupTicks() { return kingRoyalMusterWindupTicks; }
+    public static void setKingRoyalMusterWindupTicks(int v) { kingRoyalMusterWindupTicks = v; }
+    public static int kingRoyalMusterDurationTicks() { return kingRoyalMusterDurationTicks; }
+    public static void setKingRoyalMusterDurationTicks(int v) { kingRoyalMusterDurationTicks = v; }
+    public static double kingRoyalMusterRadius() { return kingRoyalMusterRadius; }
+    public static void setKingRoyalMusterRadius(double v) { kingRoyalMusterRadius = v; }
+    public static int kingRoyalMusterCap() { return kingRoyalMusterCap; }
+    public static void setKingRoyalMusterCap(int v) { kingRoyalMusterCap = v; }
     public static double jerryInfantHealth() { return jerryInfantHealth; }
     public static void setJerryInfantHealth(double v) { jerryInfantHealth = v; }
     public static double jerryInfantAttackDamage() { return jerryInfantAttackDamage; }

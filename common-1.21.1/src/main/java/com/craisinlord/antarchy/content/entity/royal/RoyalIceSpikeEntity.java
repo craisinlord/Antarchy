@@ -22,8 +22,9 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class RoyalIceSpikeEntity extends Entity implements GeoEntity {
-    private static final RawAnimation EMERGE_ANIMATION = RawAnimation.begin().thenPlay("ice_spike");
-    private static final RawAnimation IMPACT_ANIMATION = RawAnimation.begin().thenPlay("ice_spike_impact");
+    // The exported asset contains one coordinated animation for all four spike groups.
+    private static final RawAnimation SPIKE_ANIMATION = RawAnimation.begin().thenPlay("animation");
+    private static final String ANIMATION_CONTROLLER = "ice_spike";
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private boolean impacted;
 
@@ -46,15 +47,14 @@ public class RoyalIceSpikeEntity extends Entity implements GeoEntity {
     @Override
     public void tick() {
         super.tick();
-        if (!this.level().isClientSide && this.tickCount == 1) {
-            this.triggerAnim("ice_spike", "emerge");
+        if (this.tickCount == 1) {
+            this.triggerAnim(ANIMATION_CONTROLLER, "emerge");
         }
         if (!this.level().isClientSide && this.tickCount == 6 && !this.impacted) {
             this.impacted = true;
             this.impact((ServerLevel) this.level());
-            this.triggerAnim("ice_spike", "impact");
         }
-        if (!this.level().isClientSide && this.tickCount > 45) {
+        if (!this.level().isClientSide && this.tickCount > 110) {
             this.discard();
         }
         if (this.level().isClientSide && this.tickCount < 10) {
@@ -86,9 +86,8 @@ public class RoyalIceSpikeEntity extends Entity implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "ice_spike", 0, state -> PlayState.STOP)
-                .triggerableAnim("emerge", EMERGE_ANIMATION)
-                .triggerableAnim("impact", IMPACT_ANIMATION));
+        controllers.add(new AnimationController<>(this, ANIMATION_CONTROLLER, 0, state -> PlayState.STOP)
+                .triggerableAnim("emerge", SPIKE_ANIMATION));
     }
 
     @Override

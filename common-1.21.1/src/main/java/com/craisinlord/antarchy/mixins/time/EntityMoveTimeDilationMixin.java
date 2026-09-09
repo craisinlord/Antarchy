@@ -32,7 +32,7 @@ public abstract class EntityMoveTimeDilationMixin {
     private Vec3 antarchy$scaleTimeDilatedMovement(Vec3 movement) {
         Entity entity = (Entity) (Object) this;
         double rate = TimeDilationApi.getRate(entity);
-        if (rate >= TimeDilationMath.NORMAL_RATE) {
+        if (Math.abs(rate - TimeDilationMath.NORMAL_RATE) < 0.001D) {
             return movement;
         }
         return movement.scale(rate);

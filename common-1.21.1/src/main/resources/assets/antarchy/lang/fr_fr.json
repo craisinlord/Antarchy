@@ -533,6 +533,8 @@
     "effect.antarchy.paralyzed.description": "Empêche les cibles de se déplacer.",
     "effect.antarchy.inverted": "Inversé",
     "effect.antarchy.inverted.description": "Inverse la gravité de la cible.",
+    "effect.antarchy.commanded.description": "Combat pour le joueur qui l’a commandé.",
+    "effect.antarchy.dilated.description": "Ralentit le passage du temps pour l’entité affectée.",
     "effect.antarchy.stinky": "Puant",
     "effect.antarchy.stinky.description": "Repousse les créatures passives et neutres, et attire les arthropodes.",
     "effect.antarchy.gooped.description": "Ralentit la vitesse de déplacement et d'attaque.",

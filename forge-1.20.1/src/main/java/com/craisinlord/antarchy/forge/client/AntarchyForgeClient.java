@@ -126,6 +126,7 @@ public final class AntarchyForgeClient {
         event.registerEntityRenderer(AntarchyForgeEntites.NIGHTMARE_PORTAL.get(), NightmarePortalRenderer::new);
         event.registerEntityRenderer(AntarchyForgeEntites.NIGHTMARE_BITE.get(), NightmareBiteRenderer::new);
         event.registerEntityRenderer(AntarchyForgeEntites.DIMENSIONAL_TEAR.get(), DimensionalTearRenderer::new);
+        event.registerEntityRenderer(AntarchyForgeEntites.TIME_DILATION_FIELD.get(), TimeDilationFieldRenderer::new);
         event.registerEntityRenderer(AntarchyForgeEntites.LUCID.get(), context -> withParalyzedGeoLayer(new LucidRenderer(context)));
         event.registerEntityRenderer(AntarchyForgeEntites.BED_BUG.get(), context -> withParalyzedGeoLayer(new BedBugRenderer(context)));
         event.registerEntityRenderer(AntarchyForgeEntites.WASP.get(), context -> withParalyzedGeoLayer(new WaspRenderer(context)));

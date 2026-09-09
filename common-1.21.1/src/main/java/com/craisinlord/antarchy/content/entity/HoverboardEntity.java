@@ -25,6 +25,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -64,6 +65,11 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
         super(entityType, level);
         this.setNoGravity(true);
         this.setPersistenceRequired();
+    }
+
+    @Override
+    public boolean canBeAffected(MobEffectInstance effectInstance) {
+        return false;
     }
 
     public static AttributeSupplier.Builder createAttributes() {

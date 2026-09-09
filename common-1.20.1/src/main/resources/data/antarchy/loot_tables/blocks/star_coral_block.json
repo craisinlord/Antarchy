@@ -32,7 +32,7 @@
                   "condition": "minecraft:survives_explosion"
                 }
               ],
-              "name": "antarchy:dead_star_coral_block"
+              "name": "antarchy:star_coral_block"
             }
           ]
         }

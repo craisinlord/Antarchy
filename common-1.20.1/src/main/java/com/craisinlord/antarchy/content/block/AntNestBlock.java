@@ -3,7 +3,6 @@ package com.craisinlord.antarchy.content.block;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
 import com.craisinlord.antarchy.content.entity.ant.BaseAntEntity;
-import com.mojang.serialization.MapCodec;
 import java.util.List;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
@@ -81,7 +80,7 @@ public class AntNestBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
 

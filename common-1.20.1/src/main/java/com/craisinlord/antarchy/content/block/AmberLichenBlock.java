@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;

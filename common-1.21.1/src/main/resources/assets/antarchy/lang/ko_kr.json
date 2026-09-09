@@ -533,6 +533,8 @@
     "effect.antarchy.paralyzed.description": "대상이 움직이지 못하게 합니다.",
     "effect.antarchy.inverted": "반전",
     "effect.antarchy.inverted.description": "대상의 중력을 반전시킵니다.",
+    "effect.antarchy.commanded.description": "명령한 플레이어를 위해 싸웁니다.",
+    "effect.antarchy.dilated.description": "영향받은 개체의 시간 흐름을 늦춥니다.",
     "effect.antarchy.stinky": "악취",
     "effect.antarchy.stinky.description": "수동적 및 중립적 몹을 쫓아내고 절지동물을 끌어들입니다.",
     "effect.antarchy.gooped.description": "이동 속도와 공격 속도를 늦춥니다.",

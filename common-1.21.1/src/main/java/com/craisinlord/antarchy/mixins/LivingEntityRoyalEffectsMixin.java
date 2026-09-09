@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.mixins;
 
 import com.craisinlord.antarchy.content.effect.CommandedEntityAccess;
 import com.craisinlord.antarchy.content.effect.RoyalEffectEligibility;
+import com.craisinlord.antarchy.content.entity.royal.RoyalBossEntity;
 import java.util.UUID;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -37,19 +38,19 @@ public abstract class LivingEntityRoyalEffectsMixin {
             cir.setReturnValue(false);
             return;
         }
-        PlayerSource playerSource = antarchy$resolvePlayer(source);
-        if (playerSource == null) {
+        Entity commander = antarchy$resolveCommander(source);
+        if (commander == null) {
             cir.setReturnValue(false);
             return;
         }
         CommandedEntityAccess access = (CommandedEntityAccess) mob;
         UUID current = access.antarchy$getCommanderUuid();
-        if (current != null && !current.equals(playerSource.player().getUUID())) {
+        if (current != null && !current.equals(commander.getUUID())) {
             cir.setReturnValue(false);
             return;
         }
         antarchy$previousCommander = current;
-        access.antarchy$setCommanderUuid(playerSource.player().getUUID());
+        access.antarchy$setCommanderUuid(commander.getUUID());
     }
 
     @Inject(method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", at = @At("RETURN"))
@@ -71,20 +72,16 @@ public abstract class LivingEntityRoyalEffectsMixin {
     }
 
     @Unique
-    private PlayerSource antarchy$resolvePlayer(Entity source) {
+    private Entity antarchy$resolveCommander(Entity source) {
         if (source instanceof net.minecraft.world.entity.player.Player player) {
-            return new PlayerSource(player);
+            return player;
         }
         if (source instanceof Projectile projectile && projectile.getOwner() instanceof net.minecraft.world.entity.player.Player player) {
-            return new PlayerSource(player);
+            return player;
         }
         if (source instanceof AreaEffectCloud cloud && cloud.getOwner() instanceof net.minecraft.world.entity.player.Player player) {
-            return new PlayerSource(player);
+            return player;
         }
-        return null;
-    }
-
-    @Unique
-    private record PlayerSource(net.minecraft.world.entity.player.Player player) {
+        return source instanceof RoyalBossEntity ? source : null;
     }
 }

@@ -13,6 +13,8 @@ public abstract class EntityTimeDilationStateMixin implements TimeDilationEntity
     @Unique
     private double antarchy$timeDilationRate = TimeDilationMath.NORMAL_RATE;
     @Unique
+    private double antarchy$inheritedTimeDilationRate = TimeDilationMath.NORMAL_RATE;
+    @Unique
     private final Map<String, Double> antarchy$timeDilationTimerProgress = new HashMap<>();
     @Unique
     private boolean antarchy$inTimeDilationMove;
@@ -33,9 +35,19 @@ public abstract class EntityTimeDilationStateMixin implements TimeDilationEntity
     }
 
     @Override
+    public double antarchy$getInheritedTimeDilationRate() {
+        return this.antarchy$inheritedTimeDilationRate;
+    }
+
+    @Override
+    public void antarchy$setInheritedTimeDilationRate(double rate) {
+        this.antarchy$inheritedTimeDilationRate = TimeDilationMath.clampRate(rate);
+    }
+
+    @Override
     public boolean antarchy$consumeTimeDilationTick(String timerKey, double rate) {
         double clampedRate = TimeDilationMath.clampRate(rate);
-        if (clampedRate >= TimeDilationMath.NORMAL_RATE) {
+        if (Math.abs(clampedRate - TimeDilationMath.NORMAL_RATE) < 0.001D) {
             return true;
         }
 

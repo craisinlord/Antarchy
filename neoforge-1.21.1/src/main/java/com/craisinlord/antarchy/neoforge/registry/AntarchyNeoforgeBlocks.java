@@ -766,7 +766,7 @@ public final class AntarchyNeoforgeBlocks {
     public static final DeferredBlock<Block> CHISELED_LOAM_BRICKS = BLOCKS.register("chiseled_loam_bricks",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.MUD_BRICKS)));
     public static final DeferredBlock<MucusBlock> MUCUS = BLOCKS.register("mucus",
-            () -> new MucusBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLOW_LICHEN).friction(0.98F).lightLevel(state -> 0).sound(SoundType.SLIME_BLOCK)));
+            () -> new MucusBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLOW_LICHEN).friction(0.995F).lightLevel(state -> 0).sound(SoundType.SLIME_BLOCK)));
     public static final DeferredBlock<DreamSandstoneBlock> DREAM_SANDSTONE = BLOCKS.register("dream_sandstone",
             () -> new DreamSandstoneBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SANDSTONE)));
     public static final DeferredBlock<Block> CHISELED_DREAM_SANDSTONE = BLOCKS.register("chiseled_dream_sandstone",

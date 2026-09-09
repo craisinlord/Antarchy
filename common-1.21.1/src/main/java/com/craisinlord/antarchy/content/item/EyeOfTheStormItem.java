@@ -47,6 +47,7 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
     private static final String IDLE_CONTROLLER = "idle_controller";
     private static final String IDLE_ANIMATION = "spinning_idle";
     private static final Map<UUID, Long> LAST_UPDRAFT_TICK = new ConcurrentHashMap<>();
+    private static final Map<UUID, Long> LAST_SURGE_TICK = new ConcurrentHashMap<>();
     private static final float SURGE_PROJECTILE_SPEED = 0.65F;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
@@ -107,6 +108,13 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
         if (!AntarchySettings.eyeOfTheStormEnabled() || player.getMainHandItem() != stack) {
             return;
         }
+
+        long now = level.getGameTime();
+        Long last = LAST_SURGE_TICK.get(player.getUUID());
+        if (last != null && now - last < AntarchySettings.eyeOfTheStormSurgeCooldownTicks()) {
+            return;
+        }
+        LAST_SURGE_TICK.put(player.getUUID(), now);
 
         Vec3 look = player.getViewVector(1.0F);
         launchStormVortex(level, player.getEyePosition().add(look), look, player);

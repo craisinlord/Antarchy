@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.client.renderer;
 import com.craisinlord.antarchy.content.client.model.RoyalBossModel;
 import com.craisinlord.antarchy.content.entity.royal.RoyalBossEntity;
 import com.craisinlord.antarchy.content.entity.royal.KingEntity;
+import com.craisinlord.antarchy.content.entity.royal.RoyalHead;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -58,8 +59,8 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         this.shadowRadius = 8.0F * RoyalBossEntity.MODEL_RENDER_SCALE;
     }
 
-    private static final float BEAM_OUTER_RADIUS = 1.10F;
-    private static final float BEAM_INNER_RADIUS = 0.52F;
+    private static final float BEAM_OUTER_RADIUS = 0.55F;
+    private static final float BEAM_INNER_RADIUS = 0.32F;
     private static final float BEAM_TILE_BLOCKS = 3.0F;
     private static final float BEAM_SCROLL_SPEED = 0.32F;
 
@@ -74,7 +75,12 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         double x = Mth.lerp(partialTick, entity.xo, entity.getX());
         double y = Mth.lerp(partialTick, entity.yo, entity.getY());
         double z = Mth.lerp(partialTick, entity.zo, entity.getZ());
-        Vec3 start = entity.getRoyalBeamShootFrom(partialTick).subtract(x, y, z);
+        RoyalHead.Slot beamHead = entity.getRoyalBeamHeadSlot();
+        Vec3 trackedAnchor = beamHead == null
+                ? null
+                : ((RoyalBossModel) this.getGeoModel()).getTrackedBeamAnchor(beamHead);
+        Vec3 start = (trackedAnchor != null ? trackedAnchor : entity.getRoyalBeamShootFrom(partialTick))
+                .subtract(x, y, z);
         Vec3 finish = end.subtract(x, y, z);
         Vec3 axis = finish.subtract(start);
         double length = axis.length();

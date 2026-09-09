@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.block;
 
-import com.mojang.serialization.MapCodec;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -161,13 +160,13 @@ public class CornCropBlock extends BushBlock implements BonemealableBlock {
         return new ItemStack(this.getBaseSeedId());
     }
 
-    protected ItemLike getBaseSeedId() {
+    public ItemLike getBaseSeedId() {
         Optional<net.minecraft.world.item.Item> item = BuiltInRegistries.ITEM.getOptional(CORN_SEEDS_ID);
         return item.orElse(Blocks.AIR.asItem());
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(AGE, HALF);
     }
 }

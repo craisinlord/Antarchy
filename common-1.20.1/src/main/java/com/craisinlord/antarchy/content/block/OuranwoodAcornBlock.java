@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.content.worldgen.elythia.OuranwoodTreeGrowers;
-import com.mojang.serialization.MapCodec;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
@@ -187,7 +186,7 @@ public class OuranwoodAcornBlock extends BushBlock implements BonemealableBlock 
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(HANGING, STAGE);
     }
 

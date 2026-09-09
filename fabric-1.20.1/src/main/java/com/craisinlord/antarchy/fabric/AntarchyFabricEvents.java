@@ -20,6 +20,8 @@ import com.craisinlord.antarchy.content.portal.PermanentPortalManager;
 import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.CaterpillarCommand;
 import com.craisinlord.antarchy.content.command.GravityCommand;
+import com.craisinlord.antarchy.content.time.TimeDilationCommand;
+import com.craisinlord.antarchy.content.time.TimeDilationManager;
 import com.craisinlord.antarchy.content.item.MinersDreamExcavationManager;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -60,10 +62,18 @@ public final class AntarchyFabricEvents {
     }
 
     public static void register() {
+        net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents.START_TRACKING.register((trackedEntity, player) -> {
+            if (trackedEntity instanceof com.craisinlord.antarchy.content.time.TimeDilationEntityAccess access) {
+                com.craisinlord.antarchy.fabric.network.AntarchyFabricTimeDilationNetworking.syncRateToPlayer(
+                        player, trackedEntity, access.antarchy$getTimeDilationRate()
+                );
+            }
+        });
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             CavarynCommand.register(dispatcher);
             GravityCommand.register(dispatcher);
             CaterpillarCommand.register(dispatcher);
+            TimeDilationCommand.register(dispatcher);
         });
 
         DispenserBlock.registerBehavior(AntarchyFabricItems.SQUIDZOOKA.get(), new SquidzookaDispenseBehavior());
@@ -154,6 +164,7 @@ public final class AntarchyFabricEvents {
                 AttitudeAdjusterSlamManager.tick(level);
                 MinersDreamExcavationManager.tick(level);
             }
+            TimeDilationManager.tickServer(server);
             invertedPlayers.retainAll(activeThisTick);
         });
     }

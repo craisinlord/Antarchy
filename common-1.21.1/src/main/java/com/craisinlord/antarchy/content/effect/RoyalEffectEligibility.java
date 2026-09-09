@@ -8,6 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
+import com.craisinlord.antarchy.content.entity.royal.RoyalBossEntity;
 
 public final class RoyalEffectEligibility {
     private RoyalEffectEligibility() {
@@ -19,6 +20,10 @@ public final class RoyalEffectEligibility {
 
     public static boolean isDilated(MobEffectInstance instance) {
         return RoyalEffectHooks.dilatedHolder() != null && instance.is(RoyalEffectHooks.dilatedHolder());
+    }
+
+    public static boolean isContracted(MobEffectInstance instance) {
+        return RoyalEffectHooks.contractedHolder() != null && instance.is(RoyalEffectHooks.contractedHolder());
     }
 
     public static boolean canApplyCommanded(LivingEntity entity) {
@@ -52,6 +57,6 @@ public final class RoyalEffectEligibility {
     }
 
     public static boolean canUseCommandSource(Entity source) {
-        return source instanceof Player;
+        return source instanceof Player || source instanceof RoyalBossEntity;
     }
 }

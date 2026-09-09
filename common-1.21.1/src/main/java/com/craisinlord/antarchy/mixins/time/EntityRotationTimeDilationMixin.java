@@ -13,6 +13,9 @@ public abstract class EntityRotationTimeDilationMixin {
     @ModifyVariable(method = "setYRot", at = @At("HEAD"), argsOnly = true)
     private float antarchy$slowYaw(float nextYaw) {
         Entity entity = (Entity) (Object) this;
+        if (TimeDilationApi.isRotationBypassed()) {
+            return nextYaw;
+        }
         double rate = TimeDilationApi.getRate(entity);
         if (rate >= TimeDilationMath.NORMAL_RATE) {
             return nextYaw;
@@ -23,6 +26,9 @@ public abstract class EntityRotationTimeDilationMixin {
     @ModifyVariable(method = "setXRot", at = @At("HEAD"), argsOnly = true)
     private float antarchy$slowPitch(float nextPitch) {
         Entity entity = (Entity) (Object) this;
+        if (TimeDilationApi.isRotationBypassed()) {
+            return nextPitch;
+        }
         double rate = TimeDilationApi.getRate(entity);
         if (rate >= TimeDilationMath.NORMAL_RATE) {
             return nextPitch;

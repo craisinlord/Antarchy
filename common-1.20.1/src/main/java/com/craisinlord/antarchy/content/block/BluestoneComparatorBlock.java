@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity;
-import com.mojang.serialization.MapCodec;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -75,13 +74,13 @@ public class BluestoneComparatorBlock extends ComparatorBlock {
     }
 
     @Override
-    protected int getOutputSignal(BlockGetter level, BlockPos pos, BlockState state) {
+    public int getOutputSignal(BlockGetter level, BlockPos pos, BlockState state) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         return blockEntity instanceof BluestoneComparatorBlockEntity comparator ? comparator.getOutputSignal() : 0;
     }
 
     @Override
-    protected int getInputSignal(Level level, BlockPos pos, BlockState state) {
+    public int getInputSignal(Level level, BlockPos pos, BlockState state) {
         Direction facing = state.getValue(FACING);
         BlockPos inputPos = pos.relative(facing);
         BlockState inputState = level.getBlockState(inputPos);
@@ -99,7 +98,7 @@ public class BluestoneComparatorBlock extends ComparatorBlock {
     }
 
     @Override
-    protected int getAlternateSignal(SignalGetter level, BlockPos pos, BlockState state) {
+    public int getAlternateSignal(SignalGetter level, BlockPos pos, BlockState state) {
         Direction facing = state.getValue(FACING);
         Direction clockwise = facing.getClockWise();
         Direction counterClockwise = facing.getCounterClockWise();
@@ -129,7 +128,7 @@ public class BluestoneComparatorBlock extends ComparatorBlock {
     }
 
     @Override
-    protected void checkTickOnNeighbor(Level level, BlockPos pos, BlockState state) {
+    public void checkTickOnNeighbor(Level level, BlockPos pos, BlockState state) {
         if (level.getBlockTicks().willTickThisTick(pos, this)) {
             return;
         }

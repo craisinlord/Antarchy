@@ -331,6 +331,7 @@ public final class AntarchyNeoForgeClient {
     @SubscribeEvent
     public static void registerMenuScreens(RegisterMenuScreensEvent event) {
         event.register(AntarchyNeoforgeMisc.DORRIE_INVENTORY_MENU.get(), com.craisinlord.antarchy.content.client.screen.DorrieInventoryScreen::new);
+        event.register(AntarchyNeoforgeMisc.ROYAL_JUDGMENT_MENU.get(), com.craisinlord.antarchy.content.client.screen.RoyalJudgmentScreen::new);
     }
 
     @SubscribeEvent
@@ -578,6 +579,7 @@ public final class AntarchyNeoForgeClient {
         registerGeoItemExtension(event, AntarchyNeoforgeItems.WATER_CANNON.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
         registerGeoItemExtension(event, AntarchyNeoforgeItems.BATTLE_AXE.get());
         registerGeoItemExtension(event, AntarchyNeoforgeItems.BIG_BERTHA.get());
+        registerGeoItemExtension(event, AntarchyNeoforgeItems.ROYAL_GUARDIAN_SWORD.get());
     }
 
     @SubscribeEvent

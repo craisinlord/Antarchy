@@ -2,7 +2,6 @@ package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
-import com.mojang.serialization.MapCodec;
 import java.util.EnumMap;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
@@ -59,7 +58,7 @@ public final class GiantLilyPadBlock extends Block implements BonemealableBlock 
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(TILE_POSITION, ROTATION, HAS_LOTUS);
     }
 
