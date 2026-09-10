@@ -1,0 +1,58 @@
+{
+  "parent": "antarchy:visit_elythia",
+  "criteria": {
+    "kill_basilisk": {
+      "conditions": {
+        "entity": {
+          "type": "antarchy:basilisk"
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    },
+    "kill_toreterror": {
+      "conditions": {
+        "entity": {
+          "type": "antarchy:toreterror"
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    },
+    "obtain_brutalfly_elytra": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:brutalfly_elytra"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "text": "Defeat Basilisk, Toreterror, and Brutalfly to claim mastery of Elythia"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:brutalfly_elytra"
+    },
+    "show_toast": true,
+    "title": {
+      "text": "Ant-arch of Elythia"
+    }
+  },
+  "requirements": [
+    [
+      "kill_basilisk"
+    ],
+    [
+      "kill_toreterror"
+    ],
+    [
+      "obtain_brutalfly_elytra"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -30,6 +30,7 @@ import com.craisinlord.antarchy.content.effect.ParalyzedMobEffect;
 import com.craisinlord.antarchy.content.effect.ShrinkMobEffect;
 import com.craisinlord.antarchy.content.effect.StinkyMobEffect;
 import com.craisinlord.antarchy.content.effect.DilatedMobEffect;
+import com.craisinlord.antarchy.content.effect.ContractedMobEffect;
 import com.craisinlord.antarchy.content.worldgen.elythia.CoralSpikeFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaBiomeSource;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverCarveFunction;
@@ -49,6 +50,7 @@ import com.craisinlord.antarchy.content.worldgen.elythia.LumenPoolFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.LumenLilyPadFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.LumenStreamFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.LumenSpireFeature;
+import com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.MolewormTunnelsFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.MolewormWarrensFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.OuranwoodCocoonTreeFeature;
@@ -350,6 +352,7 @@ public final class AntarchyFabricMisc {
     public static final DeferredHolder<MobEffect, InvertedMobEffect> INVERTED = MOB_EFFECTS.register("inverted", InvertedMobEffect::new);
 
     public static final DeferredHolder<MobEffect, DilatedMobEffect> DILATED = MOB_EFFECTS.register("dilated", DilatedMobEffect::new);
+    public static final DeferredHolder<MobEffect, ContractedMobEffect> CONTRACTED = MOB_EFFECTS.register("contracted", ContractedMobEffect::new);
 
 
     public static final DeferredHolder<MobEffect, StinkyMobEffect> STINKY = MOB_EFFECTS.register("stinky", StinkyMobEffect::new);
@@ -568,6 +571,9 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<Feature<?>, ElythiaFloraFeature> ELYTHIA_FOREST_FLORA = FEATURES.register("elythia_forest_flora",
             () -> new ElythiaFloraFeature(NoneFeatureConfiguration.CODEC, ElythiaFloraFeature.Variant.FOREST));
+
+    public static final DeferredHolder<Feature<?>, KingsTreeGridFeature> KINGS_TREE_GRID = FEATURES.register("kings_tree_grid",
+            () -> new KingsTreeGridFeature(NoneFeatureConfiguration.CODEC));
 
 
     public static final DeferredHolder<Feature<?>, ElythiaFloraFeature> ELYTHIA_MEADOW_FLORA = FEATURES.register("elythia_meadow_flora",

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/stripped_jungle_log_horizontal",
+  "textures": {
+    "end": "antarchy:block/royal/stripped_royal_log_top",
+    "side": "antarchy:block/royal/stripped_royal_log"
+  }
+}

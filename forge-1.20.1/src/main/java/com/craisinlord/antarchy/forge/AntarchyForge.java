@@ -367,7 +367,9 @@ public class AntarchyForge {
         AntarchyObjects.setSpiritApple(() -> AntarchyForgeItems.SPIRIT_APPLE.get());
         AntarchyObjects.setGlimmeringEffect(() -> AntarchyForgeMisc.mobEffectHolder(AntarchyForgeMisc.GLIMMERING));
         AntarchyObjects.setTimeDilationField(() -> AntarchyForgeEntites.TIME_DILATION_FIELD.get());
+        AntarchyObjects.setRoyalAssailantBlackHole(() -> AntarchyForgeEntites.ROYAL_ASSAILANT_BLACK_HOLE.get());
         AntarchyObjects.setDilatedEffect(() -> AntarchyForgeMisc.mobEffectHolder(AntarchyForgeMisc.DILATED));
+        AntarchyObjects.setContractedEffect(() -> AntarchyForgeMisc.mobEffectHolder(AntarchyForgeMisc.CONTRACTED));
         AntarchyObjects.setElka(AntarchyForgeEntites.ELKA);
         AntarchyObjects.setPeach(() -> AntarchyForgeItems.PEACH.get());
         AntarchyObjects.setCorn(() -> AntarchyForgeItems.CORN.get());

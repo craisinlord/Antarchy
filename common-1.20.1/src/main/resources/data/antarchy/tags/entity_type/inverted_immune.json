@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:ender_dragon",
+    "antarchy:kraken",
+    "antarchy:reverie",
+    "antarchy:lucid",
+    "antarchy:triffid",
+    "antarchy:king"
+  ]
+}

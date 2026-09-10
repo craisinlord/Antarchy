@@ -6,7 +6,6 @@ base {
     archivesName = "${mod_id}-common-1.21.1"
 }
 
-// Source-only module — each loader module compiles these sources itself.
 tasks.named('compileJava').configure {
     enabled = false
 }

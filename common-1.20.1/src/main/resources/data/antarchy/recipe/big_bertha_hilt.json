@@ -1,0 +1,39 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "AC ",
+    "DBG",
+    "HEF"
+  ],
+  "key": {
+    "A": {
+      "item": "antarchy:nightmare_scale"
+    },
+    "B": {
+      "item": "antarchy:molevore_nose"
+    },
+    "C": {
+      "item": "antarchy:jumpy_bug_leg"
+    },
+    "D": {
+      "item": "antarchy:jerry_nucleus"
+    },
+    "E": {
+      "item": "antarchy:primordial_scute"
+    },
+    "F": {
+      "item": "antarchy:worm_tooth"
+    },
+    "G": {
+      "item": "antarchy:hercules_horn"
+    },
+    "H": {
+      "item": "antarchy:triffid_goo"
+    }
+  },
+  "result": {
+    "id": "antarchy:big_bertha_hilt",
+    "count": 1
+  }
+}

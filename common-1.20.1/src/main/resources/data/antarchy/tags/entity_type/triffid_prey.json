@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:flying_squirrel",
+    "antarchy:caterpillar",
+    "antarchy:butterfly",
+    "minecraft:chicken",
+    "minecraft:rabbit",
+    "minecraft:frog",
+    "minecraft:parrot"
+  ]
+}

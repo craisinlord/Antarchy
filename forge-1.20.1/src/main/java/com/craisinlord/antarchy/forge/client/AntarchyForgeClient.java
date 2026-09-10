@@ -127,6 +127,7 @@ public final class AntarchyForgeClient {
         event.registerEntityRenderer(AntarchyForgeEntites.NIGHTMARE_BITE.get(), NightmareBiteRenderer::new);
         event.registerEntityRenderer(AntarchyForgeEntites.DIMENSIONAL_TEAR.get(), DimensionalTearRenderer::new);
         event.registerEntityRenderer(AntarchyForgeEntites.TIME_DILATION_FIELD.get(), TimeDilationFieldRenderer::new);
+        event.registerEntityRenderer(AntarchyForgeEntites.ROYAL_ASSAILANT_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalAssailantBlackHoleRenderer::new);
         event.registerEntityRenderer(AntarchyForgeEntites.LUCID.get(), context -> withParalyzedGeoLayer(new LucidRenderer(context)));
         event.registerEntityRenderer(AntarchyForgeEntites.BED_BUG.get(), context -> withParalyzedGeoLayer(new BedBugRenderer(context)));
         event.registerEntityRenderer(AntarchyForgeEntites.WASP.get(), context -> withParalyzedGeoLayer(new WaspRenderer(context)));
@@ -174,6 +175,8 @@ public final class AntarchyForgeClient {
                 renderer.addLayer(new GlimmeringLivingLayer(renderer));
                 renderer.addLayer(new BrutalflyElytraLayer(renderer));
                 renderer.addLayer(new FallenKingCrownLayer(renderer));
+                renderer.addLayer(new com.craisinlord.antarchy.content.client.renderer.TemporalContractionAfterimageLayer(renderer));
+                renderer.addLayer(new com.craisinlord.antarchy.content.client.renderer.RoyalAssailantAxeAfterimageLayer(renderer));
             }
         }
         LivingEntityRenderer<net.minecraft.world.entity.decoration.ArmorStand, ArmorStandModel> armorStandRenderer =
@@ -211,11 +214,13 @@ public final class AntarchyForgeClient {
         livingRenderer.addLayer(new ParalyzedStoneLivingLayer<>(livingRenderer));
         livingRenderer.addLayer(new GoopedLivingLayer<>(livingRenderer));
         livingRenderer.addLayer(new GlimmeringLivingLayer<>(livingRenderer));
+        livingRenderer.addLayer(new com.craisinlord.antarchy.content.client.renderer.TemporalContractionAfterimageLayer(livingRenderer));
     }
 
     private static <T extends LivingEntity & GeoAnimatable> GeoEntityRenderer<T> withParalyzedGeoLayer(GeoEntityRenderer<T> renderer) {
         renderer.addRenderLayer(new ParalyzedStoneGeoLayer<>(renderer));
         renderer.addRenderLayer(new GoopedGeoLayer<>(renderer));
+        renderer.addRenderLayer(new com.craisinlord.antarchy.content.client.renderer.TemporalContractionGeoLayer<>(renderer));
         return renderer;
     }
 

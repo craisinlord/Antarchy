@@ -1,0 +1,22 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "#side",
+    "end": "antarchy:block/truffalo/truffalo_stripped_log_top",
+    "side": "antarchy:block/truffalo/truffalo_log_stripped"
+  },
+  "elements": [
+    {
+      "from": [0, 4, 4],
+      "to": [16, 12, 12],
+      "faces": {
+        "north": {"uv": [4, 0, 12, 16], "rotation": 90, "texture": "#side"},
+        "south": {"uv": [4, 0, 12, 16], "rotation": 90, "texture": "#side"},
+        "up": {"uv": [4, 0, 12, 16], "rotation": 90, "texture": "#side"},
+        "down": {"uv": [4, 0, 12, 16], "rotation": 90, "texture": "#side"},
+        "east": {"uv": [4, 4, 12, 12], "texture": "#end"},
+        "west": {"uv": [4, 4, 12, 12], "texture": "#end"}
+      }
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": ["MLM", " Q ", " Q "],
+  "key": {
+    "M": { "item": "antarchy:manticore_wing" },
+    "L": { "item": "antarchy:lucid_eye" },
+    "Q": { "item": "antarchy:queen_scale" }
+  },
+  "result": { "id": "antarchy:royal_assailant_staff", "count": 1 }
+}

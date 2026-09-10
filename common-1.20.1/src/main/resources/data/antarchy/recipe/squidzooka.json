@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "TTT",
+    "III",
+    "TTT"
+  ],
+  "key": {
+    "T": {
+      "item": "antarchy:titanium_ingot"
+    },
+    "I": {
+      "item": "minecraft:ink_sac"
+    }
+  },
+  "result": {
+    "id": "antarchy:squidzooka",
+    "count": 1
+  }
+}

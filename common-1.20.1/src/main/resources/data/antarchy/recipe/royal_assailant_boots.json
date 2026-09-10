@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "SSS",
+    "SUS",
+    "SSS"
+  ],
+  "key": {
+    "S": { "item": "antarchy:queen_scale" },
+    "U": { "item": "antarchy:ultimate_boots" }
+  },
+  "result": {
+    "id": "antarchy:royal_assailant_boots",
+    "count": 1
+  }
+}

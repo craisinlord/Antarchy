@@ -1,0 +1,8 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#antarchy:is_elythia",
+  "features": [
+    "antarchy:kings_tree_grid"
+  ],
+  "step": "vegetal_decoration"
+}

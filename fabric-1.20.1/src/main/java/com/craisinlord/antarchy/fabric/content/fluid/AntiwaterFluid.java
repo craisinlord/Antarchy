@@ -1,4 +1,6 @@
 package com.craisinlord.antarchy.fabric.content.fluid;
+
+import com.craisinlord.antarchy.content.fluid.AntiwaterBubbleColumnUtil;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricBlocks;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricItems;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricMisc;
@@ -168,6 +170,8 @@ public abstract class AntiwaterFluid extends FlowingFluid {
         if (state.isEmpty()) {
             return;
         }
+
+        AntiwaterBubbleColumnUtil.update(level, pos, state);
 
         if (!state.isSource() && !this.isFlowingStateValid(level, pos, state)) {
             level.setBlockAndUpdate(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());

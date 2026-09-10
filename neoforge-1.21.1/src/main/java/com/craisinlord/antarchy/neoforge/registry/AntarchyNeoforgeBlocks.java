@@ -239,7 +239,7 @@ public final class AntarchyNeoforgeBlocks {
     public static final DeferredBlock<RoyalLeavesBlock> ROYAL_LEAVES = BLOCKS.register("royal_leaves",
             () -> new RoyalLeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LEAVES).randomTicks()));
     public static final DeferredBlock<RoyalLeavesBlock> ROYAL_FLOWERING_LEAVES = BLOCKS.register("royal_flowering_leaves",
-            () -> new RoyalLeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LEAVES).randomTicks()));
+            () -> new RoyalLeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LEAVES).randomTicks().lightLevel(state -> 12)));
     public static final DeferredBlock<RoyalSaplingBlock> ROYAL_SAPLING = BLOCKS.register("royal_sapling",
             () -> new RoyalSaplingBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING).noCollission()));
     public static final DeferredBlock<FlowerPotBlock> POTTED_ROYAL_SAPLING = BLOCKS.register("potted_royal_sapling",

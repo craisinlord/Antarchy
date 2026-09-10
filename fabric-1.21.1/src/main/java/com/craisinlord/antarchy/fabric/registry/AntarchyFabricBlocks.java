@@ -410,7 +410,7 @@ public final class AntarchyFabricBlocks {
 
 
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.RoyalLeavesBlock> ROYAL_FLOWERING_LEAVES = BLOCKS.register("royal_flowering_leaves",
-            () -> new com.craisinlord.antarchy.content.block.RoyalLeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LEAVES).randomTicks()));
+            () -> new com.craisinlord.antarchy.content.block.RoyalLeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.JUNGLE_LEAVES).randomTicks().lightLevel(state -> 12)));
 
 
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.RoyalSaplingBlock> ROYAL_SAPLING = BLOCKS.register("royal_sapling",

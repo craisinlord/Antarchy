@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.client.renderer;
 import com.craisinlord.antarchy.content.client.model.RoyalBossModel;
 import com.craisinlord.antarchy.content.entity.royal.RoyalBossEntity;
 import com.craisinlord.antarchy.content.entity.royal.KingEntity;
+import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
 import com.craisinlord.antarchy.content.entity.royal.RoyalHead;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
@@ -62,7 +63,9 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
             if (movement.lengthSqr() < 1.0E-5D) return;
             RenderType afterimageType = RenderType.entityTranslucent(this.getRenderer().getTextureLocation(animatable));
             VertexConsumer afterimageBuffer = bufferSource.getBuffer(afterimageType);
-            int[] colors = {0x66FF5F6F, 0x4DFF4D60, 0x33FF3B52, 0x1FFF2944};
+            int[] colors = animatable instanceof QueenEntity
+                    ? new int[]{0x66FF5F6F, 0x4DFF4D60, 0x33FF3B52, 0x1FFF2944}
+                    : new int[]{0x66FFD966, 0x4DFFC94D, 0x33FFB52E, 0x1FFF8C14};
             for (int i = colors.length - 1; i >= 0; i--) {
                 poseStack.pushPose();
                 Vec3 offset = movement.scale(-(i + 1) * 3.0D / RoyalBossEntity.MODEL_RENDER_SCALE);

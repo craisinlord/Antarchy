@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  S",
+    " L ",
+    "L  "
+  ],
+  "key": {
+    "L": {
+      "item": "minecraft:lead"
+    },
+    "S": {
+      "item": "antarchy:emperor_scorpion_stinger"
+    }
+  },
+  "result": {
+    "id": "antarchy:scorpion_whip",
+    "count": 1
+  }
+}

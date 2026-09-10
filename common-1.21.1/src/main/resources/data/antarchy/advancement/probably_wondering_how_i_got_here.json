@@ -1,0 +1,39 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "become_dilated": {
+      "conditions": {
+        "effects": {
+          "antarchy:dilated": {}
+        }
+      },
+      "trigger": "minecraft:effects_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.probably_wondering_how_i_got_here.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "antarchy:time_dilation"
+        }
+      }
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.probably_wondering_how_i_got_here.title"
+    }
+  },
+  "requirements": [
+    [
+      "become_dilated"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

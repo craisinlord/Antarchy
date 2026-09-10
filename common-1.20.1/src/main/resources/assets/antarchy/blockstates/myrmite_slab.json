@@ -1,0 +1,14 @@
+{
+  "variants": {
+    "type=double": {
+      "model": "antarchy:block/myrmite"
+    },
+    "type=bottom": {
+      "model": "antarchy:block/myrmite_slab"
+    },
+    "type=top": {
+      "model": "antarchy:block/myrmite_slab_top"
+    }
+  }
+}
+

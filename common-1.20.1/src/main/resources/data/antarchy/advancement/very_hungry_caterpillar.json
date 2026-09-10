@@ -1,0 +1,29 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "impossible": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.very_hungry_caterpillar.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:caterpillar_spawn_egg"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.very_hungry_caterpillar.title"
+    }
+  },
+  "requirements": [
+    [
+      "impossible"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

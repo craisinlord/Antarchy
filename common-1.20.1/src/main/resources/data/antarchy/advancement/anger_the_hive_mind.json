@@ -1,0 +1,47 @@
+{
+  "parent": "antarchy:visit_cavaryn",
+  "criteria": {
+    "kill_horde_common": {
+      "conditions": {
+        "entity": {
+          "type": {
+            "tag": "antarchy:horde_common"
+          }
+        },
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "dimension": "antarchy:cavaryn"
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "text": "Kill one of Cavaryn's horde-common creatures"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:creeping_horror_spawn_egg"
+    },
+    "show_toast": true,
+    "title": {
+      "text": "Anger the Hive Mind"
+    }
+  },
+  "requirements": [
+    [
+      "kill_horde_common"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

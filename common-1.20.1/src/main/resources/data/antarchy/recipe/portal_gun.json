@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "T N",
+    "TSN",
+    "TBT"
+  ],
+  "key": {
+    "T": {
+      "item": "antarchy:titanium_ingot"
+    },
+    "N": {
+      "item": "antarchy:nightmare_scale"
+    },
+    "S": {
+      "item": "minecraft:nether_star"
+    },
+    "B": {
+      "item": "antarchy:bluestone_comparator"
+    }
+  },
+  "result": {
+    "id": "antarchy:portal_gun"
+  }
+}

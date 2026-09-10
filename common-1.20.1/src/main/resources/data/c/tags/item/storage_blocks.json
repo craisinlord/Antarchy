@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "#c:storage_blocks/uranium",
+    "#c:storage_blocks/raw_uranium",
+    "#c:storage_blocks/titanium",
+    "#c:storage_blocks/raw_titanium"
+  ]
+}

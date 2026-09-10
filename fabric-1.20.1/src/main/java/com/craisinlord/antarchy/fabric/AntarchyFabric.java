@@ -116,6 +116,10 @@ public final class AntarchyFabric implements ModInitializer {
             Registries.PLACED_FEATURE,
             new ResourceLocation(Antarchy.MODID, "titanium_ore")
     );
+    private static final ResourceKey<PlacedFeature> KINGS_TREE_GRID = ResourceKey.create(
+            Registries.PLACED_FEATURE,
+            new ResourceLocation(Antarchy.MODID, "kings_tree_grid")
+    );
     private static final ResourceKey<PlacedFeature> FLOWER_FOREST_MILKWEED = ResourceKey.create(
             Registries.PLACED_FEATURE,
             new ResourceLocation(Antarchy.MODID, "flower_forest_milkweed")
@@ -261,6 +265,11 @@ public final class AntarchyFabric implements ModInitializer {
                 BiomeSelectors.tag(IS_ELYTHIA),
                 GenerationStep.Decoration.UNDERGROUND_ORES,
                 TITANIUM_ORE
+        );
+        BiomeModifications.addFeature(
+                BiomeSelectors.tag(IS_ELYTHIA),
+                GenerationStep.Decoration.VEGETAL_DECORATION,
+                KINGS_TREE_GRID
         );
         BiomeModifications.addFeature(
                 BiomeSelectors.tag(MILKWEED_SPAWN_BIOMES),

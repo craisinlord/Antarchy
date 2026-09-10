@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "antarchy:block/typhonite/typhonite",
+    "side": "antarchy:block/typhonite/typhonite",
+    "top": "antarchy:block/typhonite/typhonite"
+  }
+}

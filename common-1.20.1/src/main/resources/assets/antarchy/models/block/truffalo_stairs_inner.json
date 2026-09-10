@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/jungle_stairs_inner",
+  "textures": {
+    "bottom": "antarchy:block/truffalo/truffalo_planks",
+    "side": "antarchy:block/truffalo/truffalo_planks",
+    "top": "antarchy:block/truffalo/truffalo_planks"
+  }
+}
+

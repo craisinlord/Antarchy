@@ -1,5 +1,7 @@
 package com.craisinlord.antarchy.forge.content.fluid;
 
+import com.craisinlord.antarchy.content.fluid.AntiwaterBubbleColumnUtil;
+
 import com.craisinlord.antarchy.forge.registry.AntarchyForgeBlocks;
 import java.util.HashSet;
 import java.util.Set;
@@ -172,6 +174,8 @@ public abstract class AntiwaterFluid extends ForgeFlowingFluid {
         if (state.isEmpty()) {
             return;
         }
+
+        AntiwaterBubbleColumnUtil.update(level, pos, state);
 
         if (!state.isSource() && !this.isFlowingStateValid(level, pos, state)) {
             level.setBlockAndUpdate(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());

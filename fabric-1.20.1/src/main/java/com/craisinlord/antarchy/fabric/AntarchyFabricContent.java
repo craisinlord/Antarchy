@@ -448,7 +448,9 @@ public final class AntarchyFabricContent {
         com.craisinlord.antarchy.content.time.TimeDilationApi.setFieldSyncDispatcher(
                 com.craisinlord.antarchy.fabric.network.AntarchyFabricTimeDilationNetworking::syncFields);
         AntarchyObjects.setTimeDilationField(() -> AntarchyFabricEntities.TIME_DILATION_FIELD.get());
+        AntarchyObjects.setRoyalAssailantBlackHole(() -> AntarchyFabricEntities.ROYAL_ASSAILANT_BLACK_HOLE.get());
         AntarchyObjects.setDilatedEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.DILATED));
+        AntarchyObjects.setContractedEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.CONTRACTED));
         com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.setSendToPlayer((player, payload) ->
                 AntarchyFabricNetworking.sendToPlayer(player, payload,
                         com.craisinlord.antarchy.content.network.TigerEyeCamouflageStatePayload.STREAM_CODEC,

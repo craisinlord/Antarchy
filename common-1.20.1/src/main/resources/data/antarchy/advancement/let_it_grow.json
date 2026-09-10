@@ -1,0 +1,29 @@
+{
+  "parent": "antarchy:let_it_die",
+  "criteria": {
+    "grow_truffalo_sapling": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.let_it_grow.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:truffalo_sapling"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.let_it_grow.title"
+    }
+  },
+  "requirements": [
+    [
+      "grow_truffalo_sapling"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

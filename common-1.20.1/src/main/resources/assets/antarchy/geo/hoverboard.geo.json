@@ -1,0 +1,75 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 64,
+				"texture_height": 64,
+				"visible_bounds_width": 4,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "hoverboard",
+					"pivot": [0, 5.54167, -1.56398],
+					"cubes": [
+						{"origin": [-4.5, 5, -11], "size": [9, 1, 8], "uv": [0, 0]},
+						{"origin": [-2.5, 5, -2], "size": [5, 1, 5], "uv": [34, 12]},
+						{"origin": [-9, 5, -15], "size": [3, 1, 8], "pivot": [-9.5, 5.5, -9], "rotation": [0, -22.5, 0], "uv": [0, 35]},
+						{"origin": [-10, 5, -13], "size": [1, 1, 2], "pivot": [-9.5, 5.5, -9], "rotation": [0, -22.5, 0], "uv": [44, 21]},
+						{"origin": [-9, 6, -18], "size": [3, 0, 3], "pivot": [-9.5, 5.5, -9], "rotation": [0, -22.5, 0], "uv": [18, 44]},
+						{"origin": [9, 5, -13], "size": [1, 1, 2], "pivot": [9.5, 5.5, -9], "rotation": [0, 22.5, 0], "uv": [44, 24]},
+						{"origin": [6, 6, -18], "size": [3, 0, 3], "pivot": [9.5, 5.5, -9], "rotation": [0, 22.5, 0], "uv": [44, 18]},
+						{"origin": [6, 5, -15], "size": [3, 1, 8], "pivot": [9.5, 5.5, -9], "rotation": [0, 22.5, 0], "uv": [22, 35]},
+						{"origin": [-3.5, 6, -15], "size": [7, 0, 4], "uv": [-1, 44]},
+						{"origin": [-4.5, 5, 4], "size": [9, 1, 8], "uv": [0, 9]},
+						{"origin": [-1.5, 9, 13], "size": [3, 1, 5], "uv": [0, 55]},
+						{"origin": [-4.5, 5, 13], "size": [9, 4, 3], "uv": [0, 48]},
+						{"origin": [-8.5, 5, -6], "size": [2, 4, 4], "uv": [46, 27]},
+						{"origin": [6.5, 5, -6], "size": [2, 4, 4], "uv": [46, 27], "mirror": true},
+						{"origin": [-5, 4, -6], "size": [0, 4, 4], "pivot": [-5, 6, -4], "rotation": [45, 0, 0], "uv": [36, 31]},
+						{"origin": [5, 4, -6], "size": [0, 4, 4], "pivot": [5, 6, -4], "rotation": [45, 0, 0], "uv": [36, 31], "mirror": true}
+					]
+				},
+				{
+					"name": "disk_front",
+					"parent": "hoverboard",
+					"pivot": [0, 2, -7],
+					"cubes": [
+						{"origin": [-3.5, 3, -10], "size": [7, 0, 6], "uv": [26, 29]},
+						{"origin": [-3.5, 1, -10], "size": [7, 0, 6], "uv": [0, 29]}
+					]
+				},
+				{
+					"name": "disk_back",
+					"parent": "hoverboard",
+					"pivot": [0, 2, 8],
+					"cubes": [
+						{"origin": [-3.5, 3, 5], "size": [7, 0, 6], "uv": [34, 6]},
+						{"origin": [-3.5, 1, 5], "size": [7, 0, 6], "uv": [34, 0]}
+					]
+				},
+				{
+					"name": "motor_right",
+					"parent": "hoverboard",
+					"pivot": [-9.06066, 6.5, 8],
+					"cubes": [
+						{"origin": [-8.5, 5, 4], "size": [3, 3, 8], "pivot": [-7, 6.5, 8], "rotation": [0, 0, -45], "uv": [0, 18], "mirror": true},
+						{"origin": [-13.12132, 6.5, 4], "size": [4, 0, 8], "uv": [6, 18], "mirror": true}
+					]
+				},
+				{
+					"name": "motor_left",
+					"parent": "hoverboard",
+					"pivot": [9.06066, 6.5, 8],
+					"cubes": [
+						{"origin": [5.5, 5, 4], "size": [3, 3, 8], "pivot": [7, 6.5, 8], "rotation": [0, 0, 45], "uv": [0, 18]},
+						{"origin": [9.12132, 6.5, 4], "size": [4, 0, 8], "uv": [6, 18]}
+					]
+				}
+			]
+		}
+	]
+}

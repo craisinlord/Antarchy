@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "#c:boots",
+    "#c:leggings",
+    "#c:chestplates",
+    "#c:helmets"
+  ]
+}

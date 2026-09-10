@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:manticore",
+    "antarchy:nightmare",
+    "antarchy:lucid",
+    "antarchy:reverie",
+    "antarchy:bed_bug",
+    "antarchy:creeping_horror",
+    "antarchy:lurking_terror",
+    "antarchy:jumpy_bug"
+  ]
+}

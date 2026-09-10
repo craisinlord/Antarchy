@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:leaves",
+    "#minecraft:dirt",
+    "#minecraft:base_stone_overworld",
+    "antarchy:dream_sand",
+    "antarchy:dream_sandstone",
+    "antarchy:nyxite",
+    "antarchy:pale_nyxite",
+    "antarchy:potent_nyxite"
+  ]
+}

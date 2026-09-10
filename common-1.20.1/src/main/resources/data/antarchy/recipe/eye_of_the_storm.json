@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "combat",
+  "pattern": [
+    "  V",
+    " T ",
+    "T  "
+  ],
+  "key": {
+    "V": {
+      "item": "antarchy:vortex_charge"
+    },
+    "T": {
+      "item": "antarchy:titanium_ingot"
+    }
+  },
+  "result": {
+    "id": "antarchy:eye_of_the_storm",
+    "count": 1
+  }
+}

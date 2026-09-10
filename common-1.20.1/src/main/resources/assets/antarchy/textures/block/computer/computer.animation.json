@@ -1,0 +1,158 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"on_state": {
+			"loop": true,
+			"bones": {
+				"on": {
+					"scale": {
+						"vector": [1, 1, 1]
+					}
+				},
+				"white_flash": {
+					"scale": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"off": {
+					"scale": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"computer_on": {
+					"scale": {
+						"vector": [1, 1, 1]
+					}
+				}
+			}
+		},
+		"off_state": {
+			"loop": true,
+			"bones": {
+				"on": {
+					"scale": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"white_flash": {
+					"scale": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"off": {
+					"scale": {
+						"vector": [1, 1, 1]
+					}
+				},
+				"computer_on": {
+					"scale": {
+						"vector": [0, 0, 0]
+					}
+				}
+			}
+		},
+		"turn_on": {
+			"loop": "hold_on_last_frame",
+			"animation_length": 0.4583,
+			"bones": {
+				"on": {
+					"scale": {
+						"0.0": {
+							"vector": [1, 0, 0]
+						},
+						"0.125": {
+							"vector": [1, 0, 0]
+						},
+						"0.2917": {
+							"vector": [1, 1, 1],
+							"easing": "easeInOutCubic"
+						}
+					}
+				},
+				"white_flash": {
+					"scale": {
+						"0.0": {
+							"vector": [1, 0, 0]
+						},
+						"0.0417": {
+							"vector": [1, 0.2, 0.2]
+						},
+						"0.2083": {
+							"vector": [1, 1, 1],
+							"easing": "easeInOutQuint"
+						}
+					}
+				},
+				"off": {
+					"scale": {
+						"vector": [1, 1, 1]
+					}
+				},
+				"computer_on": {
+					"scale": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.0417": {
+							"vector": [1, 1, 1]
+						}
+					}
+				}
+			}
+		},
+		"turn_off": {
+			"loop": "hold_on_last_frame",
+			"animation_length": 0.4583,
+			"bones": {
+				"on": {
+					"scale": {
+						"0.0": {
+							"vector": [1, 1, 1]
+						},
+						"0.25": {
+							"vector": [1, 0, 1],
+							"easing": "easeInOutQuint"
+						}
+					}
+				},
+				"white_flash": {
+					"scale": {
+						"0.0": {
+							"vector": [1, 1, 0]
+						},
+						"0.125": {
+							"vector": [1, 1, 0]
+						},
+						"0.375": {
+							"vector": [1, 0, 0],
+							"easing": "easeInOutQuart"
+						}
+					}
+				},
+				"off": {
+					"scale": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.0417": {
+							"vector": [1, 1, 1]
+						}
+					}
+				},
+				"computer_on": {
+					"scale": {
+						"0.0": {
+							"vector": [1, 1, 1]
+						},
+						"0.25": {
+							"vector": [1, 1, 1]
+						},
+						"0.2917": {
+							"vector": [0, 0, 0]
+						}
+					}
+				}
+			}
+		}
+	}
+}

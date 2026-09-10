@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "antarchy:titanium_ingot"
+    }
+  ],
+  "result": {
+    "id": "antarchy:titanium_nugget",
+    "count": 9
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:random_patch",
+  "config": {
+    "tries": 24,
+    "xz_spread": 4,
+    "y_spread": 2,
+    "feature": "antarchy:spiraling_vines"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "antarchy:shellstone_bricks"
+    },
+    {
+      "item": "minecraft:moss_block"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "antarchy:mossy_shellstone_bricks"
+  }
+}

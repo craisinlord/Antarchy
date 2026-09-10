@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "antarchy:block/typhonite/polished_typhonite",
+    "side": "antarchy:block/typhonite/polished_typhonite",
+    "top": "antarchy:block/typhonite/polished_typhonite"
+  }
+}

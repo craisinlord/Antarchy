@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "III",
+    "III",
+    "III"
+  ],
+  "key": {
+    "I": {
+      "item": "antarchy:uranium_ingot"
+    }
+  },
+  "result": {
+    "id": "antarchy:uranium_block",
+    "count": 1
+  }
+}

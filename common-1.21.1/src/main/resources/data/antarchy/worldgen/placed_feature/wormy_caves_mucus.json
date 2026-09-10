@@ -1,0 +1,31 @@
+{
+  "feature": "antarchy:wormy_caves_mucus",
+  "placement": [
+    {
+      "type": "minecraft:count",
+      "count": {
+        "type": "minecraft:uniform",
+        "min_inclusive": 64,
+        "max_inclusive": 96
+      }
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "min_inclusive": {
+          "above_bottom": 8
+        },
+        "max_inclusive": {
+          "below_top": 8
+        }
+      }
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

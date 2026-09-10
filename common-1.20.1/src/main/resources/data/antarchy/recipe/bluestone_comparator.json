@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "#": { "item": "antarchy:bluestone_torch" },
+    "I": { "item": "minecraft:stone" },
+    "X": { "item": "minecraft:quartz" }
+  },
+  "pattern": [
+    " # ",
+    "#X#",
+    "III"
+  ],
+  "result": {
+    "id": "antarchy:bluestone_comparator"
+  }
+}

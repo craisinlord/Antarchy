@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "hoverboard",
+  "ingredients": [
+    {
+      "tag": "antarchy:hoverboards"
+    },
+    {
+      "item": "minecraft:magenta_dye"
+    }
+  ],
+  "result": {
+    "id": "antarchy:hoverboard_magenta",
+    "count": 1
+  }
+}
