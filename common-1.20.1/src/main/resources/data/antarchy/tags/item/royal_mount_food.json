@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:golden_apple",
+    "minecraft:enchanted_golden_apple",
+    "minecraft:golden_carrot",
+    "minecraft:glistering_melon_slice",
+    "antarchy:king_scale",
+    "antarchy:queen_scale"
+  ]
+}

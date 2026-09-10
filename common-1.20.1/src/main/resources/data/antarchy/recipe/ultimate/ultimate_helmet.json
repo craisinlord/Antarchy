@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "TUT",
+    "T T"
+  ],
+  "key": {
+    "U": {
+      "item": "antarchy:uranium_ingot"
+    },
+    "T": {
+      "item": "antarchy:titanium_ingot"
+    }
+  },
+  "result": {
+    "id": "antarchy:ultimate_helmet",
+    "count": 1
+  }
+}

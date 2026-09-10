@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "ultimate_bow": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:ultimate_bow"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.ultimate_bow.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:ultimate_bow"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.ultimate_bow.title"
+    }
+  },
+  "requirements": [
+    [
+      "ultimate_bow"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

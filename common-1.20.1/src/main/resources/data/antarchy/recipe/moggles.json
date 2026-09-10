@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "BMB"
+  ],
+  "key": {
+    "B": {
+      "item": "antarchy:titanium_nugget"
+    },
+    "M": {
+      "item": "antarchy:molevore_nose"
+    }
+  },
+  "result": {
+    "id": "antarchy:moggles",
+    "count": 1
+  }
+}

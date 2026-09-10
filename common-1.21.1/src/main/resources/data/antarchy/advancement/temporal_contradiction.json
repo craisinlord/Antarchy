@@ -1,0 +1,35 @@
+{
+  "parent": "antarchy:enter_the_speed_force",
+  "criteria": {
+    "become_contradictory": {
+      "conditions": {
+        "effects": {
+          "antarchy:contracted": {},
+          "antarchy:dilated": {}
+        }
+      },
+      "trigger": "minecraft:effects_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.temporal_contradiction.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:clock"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.temporal_contradiction.title"
+    }
+  },
+  "requirements": [
+    [
+      "become_contradictory"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:titanium_block",
+    "antarchy:cut_titanium",
+    "antarchy:cut_titanium_slab",
+    "antarchy:cut_titanium_stairs",
+    "antarchy:chiseled_titanium",
+    "antarchy:titanium_door",
+    "antarchy:titanium_trapdoor",
+    "antarchy:titanium_bars",
+    "antarchy:titanium_bulb"
+  ]
+}

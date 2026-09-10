@@ -54,6 +54,7 @@ import com.craisinlord.antarchy.content.worldgen.elythia.LumenPoolFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.LumenLilyPadFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.LumenStreamFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.LumenSpireFeature;
+import com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.MolewormTunnelsFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.MolewormWarrensFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.OuranwoodCocoonTreeFeature;
@@ -634,6 +635,9 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<Feature<?>, RoyalTreeFeature> ROYAL_TREE_FEATURE = FEATURES.register("royal_tree",
             () -> new RoyalTreeFeature(RoyalTreeConfiguration.CODEC));
+
+    public static final DeferredHolder<Feature<?>, KingsTreeGridFeature> KINGS_TREE_GRID = FEATURES.register("kings_tree_grid",
+            () -> new KingsTreeGridFeature(NoneFeatureConfiguration.CODEC));
 
 
     public static final DeferredHolder<Feature<?>, ElythiaFloraFeature> ELYTHIA_FOREST_FLORA = FEATURES.register("elythia_forest_flora",

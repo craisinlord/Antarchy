@@ -1,0 +1,51 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.portal_gun_portal",
+				"texture_width": 64,
+				"texture_height": 64,
+				"visible_bounds_width": 4,
+				"visible_bounds_height": 4,
+				"visible_bounds_offset": [0, 0, 0]
+			},
+			"bones": [
+				{
+					"name": "Root",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "Portal_Layer",
+					"parent": "Root",
+					"pivot": [0, 0, -0.4],
+					"cubes": [
+						{
+							"origin": [-8, -16, -0.4],
+							"size": [16, 32, 0],
+							"uv": {
+								"north": {"uv": [0, 0], "uv_size": [64, 64]},
+								"south": {"uv": [0, 0], "uv_size": [64, 64]}
+							}
+						}
+					]
+				},
+				{
+					"name": "Portal_Layer2",
+					"parent": "Root",
+					"pivot": [0, 0, 0.4],
+					"cubes": [
+						{
+							"origin": [-8, -16, 0.4],
+							"size": [16, 32, 0],
+							"uv": {
+								"north": {"uv": [0, 0], "uv_size": [64, 64]},
+								"south": {"uv": [0, 0], "uv_size": [64, 64]}
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

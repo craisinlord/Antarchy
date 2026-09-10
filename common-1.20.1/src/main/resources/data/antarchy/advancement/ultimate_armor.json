@@ -1,0 +1,75 @@
+{
+  "parent": "minecraft:story/root",
+  "criteria": {
+    "ultimate_helmet": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:ultimate_helmet"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "ultimate_chestplate": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:ultimate_chestplate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "ultimate_leggings": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:ultimate_leggings"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "ultimate_boots": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:ultimate_boots"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.ultimate_armor.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:ultimate_chestplate"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.ultimate_armor.title"
+    }
+  },
+  "requirements": [
+    [
+      "ultimate_helmet"
+    ],
+    [
+      "ultimate_chestplate"
+    ],
+    [
+      "ultimate_leggings"
+    ],
+    [
+      "ultimate_boots"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -270,6 +270,8 @@ public final class AntarchyNeoforgeMisc {
             () -> new TruffaloTreeFeature(TruffaloTreeConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, RoyalTreeFeature> ROYAL_TREE_FEATURE = FEATURES.register("royal_tree",
             () -> new RoyalTreeFeature(RoyalTreeConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, KingsTreeGridFeature> KINGS_TREE_GRID = FEATURES.register("kings_tree_grid",
+            () -> new KingsTreeGridFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, ElythiaFloraFeature> ELYTHIA_FOREST_FLORA = FEATURES.register("elythia_forest_flora",
             () -> new ElythiaFloraFeature(NoneFeatureConfiguration.CODEC, ElythiaFloraFeature.Variant.FOREST));
     public static final DeferredHolder<Feature<?>, ElythiaFloraFeature> ELYTHIA_MEADOW_FLORA = FEATURES.register("elythia_meadow_flora",

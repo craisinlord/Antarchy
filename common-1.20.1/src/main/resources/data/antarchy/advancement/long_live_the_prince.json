@@ -1,0 +1,34 @@
+{
+  "parent": "antarchy:fallen_kingdom_castle",
+  "criteria": {
+    "tame_prince": {
+      "conditions": {
+        "entity": {
+          "type": "antarchy:prince"
+        }
+      },
+      "trigger": "minecraft:tame_animal"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.long_live_the_prince.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:prince_egg"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.long_live_the_prince.title"
+    }
+  },
+  "requirements": [
+    [
+      "tame_prince"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

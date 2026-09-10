@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=double": {
+      "model": "antarchy:block/polished_typhonite"
+    },
+    "type=bottom": {
+      "model": "antarchy:block/polished_typhonite_slab"
+    },
+    "type=top": {
+      "model": "antarchy:block/polished_typhonite_slab_top"
+    }
+  }
+}

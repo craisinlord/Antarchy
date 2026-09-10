@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/jungle_slab",
+  "textures": {
+    "bottom": "antarchy:block/royal/royal_planks",
+    "side": "antarchy:block/royal/royal_planks",
+    "top": "antarchy:block/royal/royal_planks"
+  }
+}
+

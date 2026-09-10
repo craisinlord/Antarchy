@@ -27,6 +27,7 @@
                    "GlowSquidLumenSpawnMixin",
                    "GlowVinesUnderLeavesMixin",
                    "GrindstoneMenuMixin",
+                   "KingsTreeLocateCommandMixin",
                    "LivingEntityJumpingAccessor",
                    "CommandedMobMixin",
                    "LivingEntityRoyalEffectsMixin",

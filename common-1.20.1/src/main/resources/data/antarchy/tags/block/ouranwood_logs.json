@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:ouranwood_log",
+    "antarchy:ouranwood_wood",
+    "antarchy:mossy_ouranwood_log",
+    "antarchy:mossy_ouranwood_wood",
+    "antarchy:stripped_ouranwood_log",
+    "antarchy:stripped_ouranwood_wood"
+  ]
+}

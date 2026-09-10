@@ -1,0 +1,97 @@
+package com.craisinlord.antarchy.content.entity.royal;
+
+import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.config.AntarchySettings;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
+
+public class RoyalIceSpikeEntity extends Entity implements GeoEntity {
+    // The exported asset contains one coordinated animation for all four spike groups.
+    private static final RawAnimation SPIKE_ANIMATION = RawAnimation.begin().thenPlay("animation");
+    private static final String ANIMATION_CONTROLLER = "ice_spike";
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private boolean impacted;
+
+    public RoyalIceSpikeEntity(EntityType<? extends RoyalIceSpikeEntity> type, Level level) {
+        super(type, level);
+        this.noPhysics = true;
+        this.noCulling = true;
+    }
+
+    public static RoyalIceSpikeEntity create(ServerLevel level, Vec3 position) {
+        RoyalIceSpikeEntity spike = new RoyalIceSpikeEntity(AntarchyObjects.ROYAL_ICE_SPIKE.get(), level);
+        spike.setPos(position.x, position.y, position.z);
+        return spike;
+    }
+
+    @Override
+    protected void defineSynchedData() {
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (this.tickCount == 1) {
+            this.triggerAnim(ANIMATION_CONTROLLER, "emerge");
+        }
+        if (!this.level().isClientSide && this.tickCount == 6 && !this.impacted) {
+            this.impacted = true;
+            this.impact((ServerLevel) this.level());
+        }
+        if (!this.level().isClientSide && this.tickCount > 110) {
+            this.discard();
+        }
+        if (this.level().isClientSide && this.tickCount < 10) {
+            this.level().addParticle(ParticleTypes.SNOWFLAKE, this.getX(), this.getY() + this.tickCount * 0.4D, this.getZ(), 0.0D, 0.03D, 0.0D);
+        }
+    }
+
+    private void impact(ServerLevel level) {
+        DamageSource source = this.damageSources().magic();
+        for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class,
+                new AABB(this.blockPosition()).inflate(2.2D), entity -> entity.isAlive())) {
+            living.hurt(source, (float) AntarchySettings.kingIceSpikeDamage());
+            living.setTicksFrozen(Math.min(living.getTicksRequiredToFreeze() + 60, living.getTicksFrozen() + 100));
+            living.setDeltaMovement(living.getDeltaMovement().add(0.0D, 0.35D, 0.0D));
+            living.hasImpulse = true;
+        }
+        level.sendParticles(ParticleTypes.SNOWFLAKE, this.getX(), this.getY() + 1.5D, this.getZ(), 25, 1.5D, 1.0D, 1.5D, 0.04D);
+    }
+
+    @Override
+    protected void readAdditionalSaveData(CompoundTag tag) {
+        this.impacted = tag.getBoolean("Impacted");
+    }
+
+    @Override
+    protected void addAdditionalSaveData(CompoundTag tag) {
+        tag.putBoolean("Impacted", this.impacted);
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, ANIMATION_CONTROLLER, 0, state -> PlayState.STOP)
+                .triggerableAnim("emerge", SPIKE_ANIMATION));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+}

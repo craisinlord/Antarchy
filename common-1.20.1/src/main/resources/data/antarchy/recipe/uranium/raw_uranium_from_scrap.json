@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SSS",
+    "SSS",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "antarchy:raw_uranium_scrap"
+    }
+  },
+  "result": {
+    "id": "antarchy:raw_uranium",
+    "count": 1
+  }
+}

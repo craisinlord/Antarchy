@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "###",
+    "PPP"
+  ],
+  "key": {
+    "#": {
+      "item": "antarchy:lime_truffalo_tuft"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "result": {
+    "id": "minecraft:lime_bed"
+  }
+}

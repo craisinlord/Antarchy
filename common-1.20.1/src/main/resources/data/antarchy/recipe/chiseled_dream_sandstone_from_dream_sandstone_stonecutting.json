@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:dream_sandstone"
+  },
+  "result": {
+    "id": "antarchy:chiseled_dream_sandstone"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "food",
+  "ingredients": [
+    {
+      "item": "minecraft:mud"
+    },
+    {
+      "item": "antarchy:moleworm"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "antarchy:mud_pie"
+  }
+}

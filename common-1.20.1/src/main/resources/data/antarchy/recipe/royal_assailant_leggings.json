@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "SSS",
+    "SUS",
+    "SSS"
+  ],
+  "key": {
+    "S": { "item": "antarchy:queen_scale" },
+    "U": { "item": "antarchy:ultimate_leggings" }
+  },
+  "result": {
+    "id": "antarchy:royal_assailant_leggings",
+    "count": 1
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "become_contracted": {
+      "conditions": {
+        "effects": {
+          "antarchy:contracted": {}
+        }
+      },
+      "trigger": "minecraft:effects_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.enter_the_speed_force.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "antarchy:time_contraction"
+        }
+      }
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.enter_the_speed_force.title"
+    }
+  },
+  "requirements": [
+    [
+      "become_contracted"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

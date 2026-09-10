@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "antarchy:nyxite_bricks"
+    },
+    {
+      "item": "antarchy:umbral_moss_block"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "antarchy:mossy_nyxite_bricks"
+  }
+}
+

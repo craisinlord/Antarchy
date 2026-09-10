@@ -103,6 +103,8 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>> ROYAL_BLACK_HOLE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity>> ROYAL_ASSAILANT_BLACK_HOLE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<Block> VORTEX_LENS = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<BlockEntityType<VortexLensBlockEntity>> VORTEX_LENS_BLOCK_ENTITY = (Supplier<BlockEntityType<VortexLensBlockEntity>>) UNBOUND;
@@ -323,6 +325,8 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<MobEffect> GLIMMERING_EFFECT = (Supplier<MobEffect>) UNBOUND;
     public static Supplier<MobEffect> DILATED_EFFECT = (Supplier<MobEffect>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<MobEffect> CONTRACTED_EFFECT = (Supplier<MobEffect>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Fluid> LUMEN = (Supplier<Fluid>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -699,6 +703,10 @@ public final class AntarchyObjects {
         ROYAL_BLACK_HOLE = supplier;
     }
 
+    public static void setRoyalAssailantBlackHole(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity>> supplier) {
+        ROYAL_ASSAILANT_BLACK_HOLE = supplier;
+    }
+
     public static void setVortexLens(Supplier<Block> supplier) {
         VORTEX_LENS = supplier;
     }
@@ -817,6 +825,10 @@ public final class AntarchyObjects {
 
     public static void setDilatedEffect(Supplier<MobEffect> supplier) {
         DILATED_EFFECT = supplier;
+    }
+
+    public static void setContractedEffect(Supplier<MobEffect> supplier) {
+        CONTRACTED_EFFECT = supplier;
     }
 
     public static void setElka(Supplier<EntityType<com.craisinlord.antarchy.content.entity.ElkaEntity>> supplier) {

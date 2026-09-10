@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "  B",
+    " H ",
+    "A  "
+  ],
+  "key": {
+    "B": {
+      "item": "antarchy:big_bertha_blade"
+    },
+    "H": {
+      "item": "antarchy:big_bertha_hilt"
+    },
+    "A": {
+      "item": "antarchy:big_bertha_handle"
+    }
+  },
+  "result": {
+    "id": "antarchy:big_bertha",
+    "count": 1
+  }
+}

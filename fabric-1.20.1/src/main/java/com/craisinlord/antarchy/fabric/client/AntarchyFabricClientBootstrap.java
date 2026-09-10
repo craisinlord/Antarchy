@@ -125,6 +125,7 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.NIGHTMARE_BITE.get(), NightmareBiteRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.DIMENSIONAL_TEAR.get(), DimensionalTearRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.TIME_DILATION_FIELD.get(), TimeDilationFieldRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.ROYAL_ASSAILANT_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalAssailantBlackHoleRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.LUCID.get(), LucidRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.BED_BUG.get(), BedBugRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.WASP.get(), WaspRenderer::new);
@@ -455,6 +456,8 @@ public final class AntarchyFabricClientBootstrap {
                     registrationHelper.register(new GlimmeringLivingLayer(playerRenderer));
                     registrationHelper.register(new BrutalflyElytraLayer(playerRenderer));
                     registrationHelper.register(new FallenKingCrownLayer(playerRenderer));
+                    registrationHelper.register(new com.craisinlord.antarchy.content.client.renderer.TemporalContractionAfterimageLayer(playerRenderer));
+                    registrationHelper.register(new com.craisinlord.antarchy.content.client.renderer.RoyalAssailantAxeAfterimageLayer(playerRenderer));
                 }
                 return;
             }
@@ -467,11 +470,13 @@ public final class AntarchyFabricClientBootstrap {
                         (software.bernie.geckolib.renderer.GeoEntityRenderer) (Object) renderer;
                 geoRenderer.addRenderLayer(new ParalyzedStoneGeoLayer(geoRenderer));
                 geoRenderer.addRenderLayer(new GoopedGeoLayer(geoRenderer));
+                geoRenderer.addRenderLayer(new com.craisinlord.antarchy.content.client.renderer.TemporalContractionGeoLayer(geoRenderer));
                 return;
             }
             registrationHelper.register(new ParalyzedStoneLivingLayer(renderer));
             registrationHelper.register(new GoopedLivingLayer(renderer));
             registrationHelper.register(new GlimmeringLivingLayer(renderer));
+            registrationHelper.register(new com.craisinlord.antarchy.content.client.renderer.TemporalContractionAfterimageLayer(renderer));
         });
     }
 
@@ -479,6 +484,7 @@ public final class AntarchyFabricClientBootstrap {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.level != null) {
                 com.craisinlord.antarchy.content.client.ClientTimeDilationTicker.tick(client.level);
+                com.craisinlord.antarchy.content.client.ContractionAfterimages.tick(client.level);
             }
             CameraShakeClientState.tick();
             HerculesBeetleImpactShakeClientState.tick();

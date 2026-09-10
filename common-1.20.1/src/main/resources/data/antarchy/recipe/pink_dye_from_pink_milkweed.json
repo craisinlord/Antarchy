@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "antarchy:pink_milkweed"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "id": "minecraft:pink_dye"
+  }
+}

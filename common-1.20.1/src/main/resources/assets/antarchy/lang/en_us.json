@@ -588,6 +588,8 @@
     "effect.antarchy.glimmering.description":  "Passes through entities and attacks unharmed, like a spirit.",
     "effect.antarchy.dilated":  "Dilated",
     "effect.antarchy.dilated.description":  "Slows the passage of time for the affected entity.",
+    "effect.antarchy.contracted":  "Temporal Contraction",
+    "effect.antarchy.contracted.description":  "Speeds the passage of time for the affected entity.",
     "death.attack.triffid_mauling":  "%1$s was mauled to death by a plant",
     "death.attack.triffid_mauling.player":  "%1$s was mauled to death by a plant",
     "death.attack.triffid_swallow":  "%1$s was swallowed by a triffid",

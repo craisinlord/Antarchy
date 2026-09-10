@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "antarchy:raw_titanium_block"
+    }
+  ],
+  "result": {
+    "id": "antarchy:raw_titanium",
+    "count": 9
+  }
+}

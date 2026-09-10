@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "craft_squidzooka": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:squidzooka"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.squidzooka_craft.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:squidzooka"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.squidzooka_craft.title"
+    }
+  },
+  "requirements": [
+    [
+      "craft_squidzooka"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

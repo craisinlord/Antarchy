@@ -1,0 +1,17 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "antarchy:block/myrmite_pillar",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "antarchy:block/myrmite_pillar"
+    },
+    "axis=z": {
+      "model": "antarchy:block/myrmite_pillar",
+      "x": 90
+    }
+  }
+}
+

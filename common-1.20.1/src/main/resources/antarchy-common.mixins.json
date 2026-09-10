@@ -26,6 +26,7 @@
                    "GlowSquidLumenSpawnMixin",
                    "GlowVinesUnderLeavesMixin",
                    "GrindstoneMenuMixin",
+                   "KingsTreeLocateCommandMixin",
                    "MantisClawWallClimbMixin",
                    "MilkBucketSizeResetMixin",
                    "MinecartItemMixin",
@@ -79,6 +80,7 @@
                    "time.CreeperTimeDilationMixin",
                    "time.EndCrystalTimeDilationMixin",
                    "time.LivingEntityTimeDilationMixin",
+                   "time.EntityCrouchTimeDilationMixin",
                    "time.LivingEntityTimeDilationCleanupMixin",
                    "time.LivingEntityAttackCooldownTimeDilationMixin",
                    "time.LookControlTimeDilationMixin",
@@ -89,6 +91,7 @@
                    "time.ThrowableProjectileMovementTimeDilationMixin",
                    "time.HurtingProjectileMovementTimeDilationMixin",
                    "time.ProjectileTimeDilationMixin",
+                   "time.GeckoLibAnimationControllerTimeDilationMixin",
                    "time.AbstractArrowActionTimeDilationMixin",
                    "time.RangedAttackGoalTimeDilationMixin",
                    "time.RangedBowAttackGoalTimeDilationMixin"
@@ -104,6 +107,7 @@
                    "time.ParticlePositionAccessor"
                ],
     "client":  [
+                   "client.EntityBoundSoundInstanceAccessor",
                    "client.AbstractMinecartRendererMixin",
                    "client.EntityLightProbeMixin",
                    "client.CustomBossBarMixin",

@@ -1,0 +1,34 @@
+{
+  "parent": "antarchy:visit_thoraxis",
+  "criteria": {
+    "kill_emperor_scorpion": {
+      "conditions": {
+        "entity": {
+          "type": "antarchy:emperor_scorpion"
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "text": "Defeat the Emperor Scorpion"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:emperor_scorpion_spawn_egg"
+    },
+    "show_toast": true,
+    "title": {
+      "text": "Sting Operation"
+    }
+  },
+  "requirements": [
+    [
+      "kill_emperor_scorpion"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

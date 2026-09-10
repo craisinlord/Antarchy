@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "PCP",
+    "P P",
+    "P P"
+  ],
+  "key": {
+    "P": {
+      "item": "antarchy:polished_antimetal"
+    },
+    "C": {
+      "item": "minecraft:chain"
+    }
+  },
+  "result": {
+    "id": "antarchy:antimetal_scaffolding",
+    "count": 16
+  }
+}

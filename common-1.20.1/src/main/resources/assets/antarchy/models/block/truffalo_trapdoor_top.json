@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/jungle_trapdoor_top",
+  "textures": {
+    "texture": "antarchy:block/truffalo/truffalo_trapdoor"
+  }
+}
+

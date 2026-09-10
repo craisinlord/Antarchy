@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:polished_shellstone"
+  },
+  "result": {
+    "id": "antarchy:polished_shellstone_wall"
+  }
+}
