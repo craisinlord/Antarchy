@@ -22,7 +22,6 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class RoyalIceSpikeEntity extends Entity implements GeoEntity {
-    // The exported asset contains one coordinated animation for all four spike groups.
     private static final RawAnimation SPIKE_ANIMATION = RawAnimation.begin().thenPlay("animation");
     private static final String ANIMATION_CONTROLLER = "ice_spike";
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);

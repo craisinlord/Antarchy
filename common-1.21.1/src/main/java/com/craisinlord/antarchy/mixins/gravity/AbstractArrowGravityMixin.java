@@ -1,16 +1,15 @@
 package com.craisinlord.antarchy.mixins.gravity;
 
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(AbstractArrow.class)
 /*
@@ -18,20 +17,24 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
  */
 public abstract class AbstractArrowGravityMixin {
 
-    @ModifyVariable(method = "tick", at = @At(value = "STORE"), ordinal = 0)
-    private Vec3 antarchy$fixArrowGravityDroop(Vec3 velocity) {
-        AbstractArrow self = (AbstractArrow) (Object) this;
+    @WrapOperation(method = "tick", at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/projectile/AbstractArrow;applyGravity()V"))
+    private void antarchy$applyArrowGravityUpward(AbstractArrow self, Operation<Void> original) {
         Entity owner = self.getOwner();
-        if (!(owner instanceof LivingEntity living)) return velocity;
-        if (owner instanceof net.minecraft.world.entity.player.Player && !AntarchySettings.invertProjectilesFromInvertedPlayers()) {
-            return velocity;
+        if (!(owner instanceof LivingEntity living)) {
+            original.call(self);
+            return;
         }
-        AntarchyGravityDirection direction = AntarchyGravityApi.getGravityDirection(living);
-        if (!direction.isInverted()) return velocity;
-        velocity = new Vec3(velocity.x, velocity.y + 0.05D, velocity.z);
-        velocity = AntarchyGravityRotationUtil.vecWorldToPlayer(velocity, direction);
-        velocity = new Vec3(velocity.x, velocity.y - 0.05D, velocity.z);
-        velocity = AntarchyGravityRotationUtil.vecPlayerToWorld(velocity, direction);
-        return velocity;
+        if (owner instanceof net.minecraft.world.entity.player.Player && !AntarchySettings.invertProjectilesFromInvertedPlayers()) {
+            original.call(self);
+            return;
+        }
+        if (!ThoraxisUndersideManager.shouldInvertInUnderside(living)) {
+            original.call(self);
+            return;
+        }
+        double gravity = self.getGravity();
+        self.setDeltaMovement(self.getDeltaMovement().add(0.0D, gravity, 0.0D));
     }
 }

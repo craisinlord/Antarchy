@@ -74,6 +74,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
     private static final double PORTAL_RADIUS = 1.35D;
     private static final double EXIT_OFFSET = 2.4D;
     private static final Map<UUID, Long> TELEPORT_COOLDOWNS = new HashMap<>();
+    private static long lastTeleportCooldownCleanupTick = Long.MIN_VALUE;
     private static final Map<UUID, Set<UUID>> QUEEN_TEAR_IDS = new HashMap<>();
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
@@ -149,6 +150,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         }
 
         this.ageTicks++;
+        cleanupTeleportCooldowns(this.level().getGameTime());
         if (this.ageTicks == 1) {
             this.level().playSound(null, this.blockPosition(), AntarchySoundEvents.DIMENSIONAL_TEAR_OPEN.get(), SoundSource.HOSTILE, 1.0F, 1.0F);
         }
@@ -370,7 +372,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         entity.hasImpulse = true;
         if (entity instanceof LivingEntity living) {
             int invertedDuration = AntarchySettings.dimensionalTearInvertedDurationTicks();
-            Antarchy.LOGGER.info(
+            Antarchy.LOGGER.debug(
                     "[antarchy-dimensional-tear] applying inverted effect targetType={} uuid={} fromTear={} toTear={} startPos=({}, {}, {}) exitPos=({}, {}, {}) dim={} durationTicks={}",
                     living.getType(), living.getUUID(), this.getUUID(), destination.getUUID(),
                     startPos.x, startPos.y, startPos.z,
@@ -380,6 +382,15 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
             living.addEffect(new MobEffectInstance(AntarchyObjects.INVERTED_EFFECT.get(), invertedDuration, 0));
         }
         this.level().playSound(null, this.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 0.7F, 0.65F + this.random.nextFloat() * 0.2F);
+    }
+
+    private static void cleanupTeleportCooldowns(long gameTime) {
+        if (gameTime <= lastTeleportCooldownCleanupTick
+                || gameTime - lastTeleportCooldownCleanupTick < TELEPORT_COOLDOWN_TICKS * 4L) {
+            return;
+        }
+        lastTeleportCooldownCleanupTick = gameTime;
+        TELEPORT_COOLDOWNS.entrySet().removeIf(entry -> entry.getValue() <= gameTime);
     }
 
     private Vec3 exitPosition() {

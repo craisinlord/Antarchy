@@ -2825,6 +2825,30 @@
       }
     ]
   },
+  "king_decree": {
+    "subtitle": "subtitles.antarchy.king_decree",
+    "sounds": [
+      {
+        "name": "antarchy:mob/king/decree"
+      }
+    ]
+  },
+  "king_success": {
+    "subtitle": "subtitles.antarchy.king_success",
+    "sounds": [
+      {
+        "name": "antarchy:mob/king/success"
+      }
+    ]
+  },
+  "king_judgement": {
+    "subtitle": "subtitles.antarchy.king_judgement",
+    "sounds": [
+      {
+        "name": "antarchy:mob/king/judgement"
+      }
+    ]
+  },
   "queen_idle": {
     "subtitle": "subtitles.antarchy.queen_idle",
     "sounds": [

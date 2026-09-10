@@ -340,7 +340,10 @@ public final class AntarchyFabricContent {
                 AntarchyFabricSounds.PRINCESS_BITE,
                 AntarchyFabricSounds.PRINCESS_SHOOT,
                 AntarchyFabricSounds.PRINCESS_FLY,
-                AntarchyFabricSounds.PRINCESS_STEP
+                AntarchyFabricSounds.PRINCESS_STEP,
+                AntarchyFabricSounds.KING_DECREE,
+                AntarchyFabricSounds.KING_SUCCESS,
+                AntarchyFabricSounds.KING_JUDGEMENT
         );
         AntarchySoundEvents.bindDimensionalTearSounds(
                 AntarchyFabricSounds.DIMENSIONAL_TEAR_OPEN,
@@ -360,6 +363,7 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setWindVortex(() -> AntarchyFabricEntities.WIND_VORTEX.get());
         AntarchyObjects.setTimeDilationField(() -> AntarchyFabricEntities.TIME_DILATION_FIELD.get());
         AntarchyObjects.setRoyalBlackHole(() -> AntarchyFabricEntities.ROYAL_BLACK_HOLE.get());
+        AntarchyObjects.setRoyalAssailantBlackHole(() -> AntarchyFabricEntities.ROYAL_ASSAILANT_BLACK_HOLE.get());
         AntarchyObjects.setVortexChargeProjectile(() -> AntarchyFabricEntities.VORTEX_CHARGE_PROJECTILE.get());
         AntarchyObjects.setPrince(() -> AntarchyFabricEntities.PRINCE.get());
         AntarchyObjects.setPrincess(() -> AntarchyFabricEntities.PRINCESS.get());

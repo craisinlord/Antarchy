@@ -7,7 +7,7 @@ public final class KeepYourDistanceDecree implements RoyalDecree {
     public String translationKey() { return "decree.antarchy.keep_your_distance"; }
     public void apply(ServerLevel level, KingEntity king, LivingEntity target) { }
     @Override public Evaluation evaluate(ServerLevel level, KingEntity king, LivingEntity target) {
-        return target.distanceTo(king) <= INNER_RADIUS ? Evaluation.VIOLATED : Evaluation.COMPLIANT;
+        return target.distanceToSqr(king) <= INNER_RADIUS * INNER_RADIUS ? Evaluation.VIOLATED : Evaluation.COMPLIANT;
     }
     @Override
     public int contextWeight(KingEntity king, LivingEntity target) {

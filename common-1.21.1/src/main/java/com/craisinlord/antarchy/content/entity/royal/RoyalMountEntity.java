@@ -4,6 +4,12 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
+import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamController;
+import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamSettings;
+import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamTerrainMode;
+import com.craisinlord.antarchy.content.effect.RoyalEffectEligibility;
+import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
+import com.craisinlord.antarchy.content.time.TimeDilationApi;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -20,10 +26,12 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -40,14 +48,18 @@ import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.core.particles.ParticleTypes;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -73,6 +85,20 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
             SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> SADDLED =
             SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> BEAM_ACTIVE =
+            SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> BEAM_HEAD =
+            SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> HAS_BEAM_END =
+            SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Float> BEAM_END_X =
+            SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> BEAM_END_Y =
+            SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> BEAM_END_Z =
+            SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> GROWTH_PROGRESS =
+            SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.FLOAT);
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation QUIRK_ANIM = RawAnimation.begin().thenLoop("quirk");
@@ -85,7 +111,11 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
 
     private static final int ACTION_TICKS = 12;
     private static final int BITE_HIT_TICK = 6;
-    private static final int GROW_TICKS = 24000;
+    private static final int BEAM_WINDUP_TICKS = 24;
+    private static final int BEAM_COOLDOWN_TICKS = 240;
+    private static final int BEAM_DURATION_TICKS = 12;
+    private static final int COMMAND_COOLDOWN_TICKS = 360;
+    private static final int TIME_FIELD_COOLDOWN_TICKS = 260;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private final MoveControl groundMoveControl;
@@ -100,6 +130,12 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
     private int flapSoundTimer;
     private boolean riderAscendPressed;
     private boolean riderDescendPressed;
+    private final RoyalBeamController beamController = new RoyalBeamController(this);
+    private int beamWindupTicks;
+    private int beamCooldownTicks;
+    private int beamHead;
+    private int commandCooldownTicks;
+    private int timeFieldCooldownTicks;
 
     protected RoyalMountEntity(EntityType<? extends RoyalMountEntity> entityType, Level level) {
         super(entityType, level);
@@ -167,7 +203,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this) {
             @Override
             public boolean canUse() {
-                return !RoyalMountEntity.this.isBaby() && super.canUse();
+                return super.canUse();
             }
         });
         this.goalSelector.addGoal(2, new RoyalMountSpitGoal(this));
@@ -182,14 +218,14 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
 
             @Override
             public boolean canUse() {
-                return !RoyalMountEntity.this.isBaby() && !RoyalMountEntity.this.isVehicle() && super.canUse();
+                return !RoyalMountEntity.this.isVehicle() && super.canUse();
             }
         });
         this.goalSelector.addGoal(4, new RoyalMountFollowOwnerGoal(this));
         this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.8D) {
             @Override
             public boolean canUse() {
-                return !RoyalMountEntity.this.isBaby() && !RoyalMountEntity.this.isVehicle()
+                return !RoyalMountEntity.this.isVehicle()
                         && !RoyalMountEntity.this.isOrderedToSit() && super.canUse();
             }
         });
@@ -197,25 +233,25 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this) {
             @Override
             public boolean canUse() {
-                return !RoyalMountEntity.this.isBaby() && super.canUse();
+                return super.canUse();
             }
         });
         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this) {
             @Override
             public boolean canUse() {
-                return !RoyalMountEntity.this.isBaby() && super.canUse();
+                return super.canUse();
             }
         });
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this) {
             @Override
             public boolean canUse() {
-                return !RoyalMountEntity.this.isBaby() && super.canUse();
+                return super.canUse();
             }
         });
         this.targetSelector.addGoal(3, new HurtByTargetGoal(this) {
             @Override
             public boolean canUse() {
-                return !RoyalMountEntity.this.isBaby() && super.canUse();
+                return super.canUse();
             }
         }.setAlertOthers());
     }
@@ -226,6 +262,13 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         builder.define(ANIM_STATE, ANIM_IDLE);
         builder.define(FLYING, false);
         builder.define(SADDLED, false);
+        builder.define(BEAM_ACTIVE, false);
+        builder.define(BEAM_HEAD, -1);
+        builder.define(HAS_BEAM_END, false);
+        builder.define(BEAM_END_X, 0.0F);
+        builder.define(BEAM_END_Y, 0.0F);
+        builder.define(BEAM_END_Z, 0.0F);
+        builder.define(GROWTH_PROGRESS, 0.0F);
     }
 
     @Override
@@ -233,6 +276,10 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         super.addAdditionalSaveData(tag);
         tag.putBoolean("Saddled", this.isSaddled());
         tag.putBoolean("Flying", this.isFlying());
+        tag.putInt("BeamCooldown", this.beamCooldownTicks);
+        tag.putInt("CommandCooldown", this.commandCooldownTicks);
+        tag.putInt("TimeFieldCooldown", this.timeFieldCooldownTicks);
+        tag.putFloat("GrowthProgress", this.getGrowthProgress());
     }
 
     @Override
@@ -240,10 +287,28 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         super.readAdditionalSaveData(tag);
         this.setSaddled(tag.getBoolean("Saddled"));
         this.setFlying(tag.getBoolean("Flying"));
+        this.actionTicks = 0;
+        this.actionHit = false;
+        this.spitCooldown = 0;
+        this.beamCooldownTicks = Math.max(0, tag.getInt("BeamCooldown"));
+        this.commandCooldownTicks = Math.max(0, tag.getInt("CommandCooldown"));
+        this.timeFieldCooldownTicks = Math.max(0, tag.getInt("TimeFieldCooldown"));
+        this.setGrowthProgress(tag.contains("GrowthProgress") ? tag.getFloat("GrowthProgress") : 0.0F);
     }
 
     public boolean isFlying() {
         return this.entityData.get(FLYING);
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
+        super.onSyncedDataUpdated(key);
+        if (FLYING.equals(key) && this.groundMoveControl != null) {
+            boolean flying = this.entityData.get(FLYING);
+            this.moveControl = flying ? this.flyingMoveControl : this.groundMoveControl;
+            this.navigation = flying ? this.flyingNavigation : this.groundNavigation;
+            this.setNoGravity(flying);
+        }
     }
 
     public void setFlying(boolean flying) {
@@ -274,12 +339,25 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         this.entityData.set(ANIM_STATE, state);
     }
 
-    public float getAgeScale() {
-        if (!this.isBaby()) {
-            return 1.0F;
+    public float getGrowthScale() {
+        return 1.0F + 14.0F * this.getGrowthProgress();
+    }
+
+    public float getGrowthProgress() {
+        return this.entityData.get(GROWTH_PROGRESS);
+    }
+
+    public void setGrowthProgress(float progress) {
+        float clamped = Mth.clamp(progress, 0.0F, 1.0F);
+        if (this.getGrowthProgress() != clamped) {
+            this.entityData.set(GROWTH_PROGRESS, clamped);
+            this.refreshDimensions();
         }
-        float progress = 1.0F - Mth.clamp(-this.getAge() / (float) GROW_TICKS, 0.0F, 1.0F);
-        return 0.35F + 0.65F * progress;
+    }
+
+    @Override
+    public EntityDimensions getDefaultDimensions(Pose pose) {
+        return super.getDefaultDimensions(pose).scale(this.getGrowthScale());
     }
 
     @Override
@@ -297,9 +375,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
                     stack.shrink(1);
                 }
                 this.heal(8.0F);
-                if (this.isBaby()) {
-                    this.ageUp((int) (-this.getAge() * 0.1F), true);
-                }
+                this.setGrowthProgress(this.getGrowthProgress() + (1.0F - this.getGrowthProgress()) * 0.1F);
                 if (!this.isTame() && this.random.nextInt(3) == 0) {
                     this.tame(player);
                     this.level().broadcastEntityEvent(this, (byte) 7);
@@ -337,7 +413,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
                 return InteractionResult.sidedSuccess(this.level().isClientSide);
             }
 
-            if (stack.isEmpty() && !this.isBaby() && !player.isPassenger()) {
+            if (stack.isEmpty() && !player.isPassenger()) {
                 if (!this.level().isClientSide) {
                     this.setOrderedToSit(false);
                     this.setInSittingPose(false);
@@ -365,10 +441,6 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
     public void tick() {
         super.tick();
 
-        if (this.isBaby()) {
-            this.refreshDimensions();
-        }
-
         if (this.level().isClientSide) {
             return;
         }
@@ -376,6 +448,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         if (this.spitCooldown > 0) {
             this.spitCooldown--;
         }
+        this.tickRoyalAbilities();
 
         if ((this.isFlying() || !this.onGround()) && --this.flapSoundTimer <= 0) {
             this.flapSoundTimer = 24 + this.random.nextInt(12);
@@ -403,6 +476,110 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         }
         if (this.getAnimState() == ANIM_IDLE && this.quirkTimer == 0 && this.random.nextInt(600) == 0) {
             this.quirkTimer = 80;
+        }
+    }
+
+    private void tickRoyalAbilities() {
+        if (this.beamCooldownTicks > 0) this.beamCooldownTicks--;
+        if (this.commandCooldownTicks > 0) this.commandCooldownTicks--;
+        if (this.timeFieldCooldownTicks > 0) this.timeFieldCooldownTicks--;
+        if (this.beamWindupTicks > 0) {
+            this.beamWindupTicks--;
+            if (this.beamWindupTicks == 0) {
+                this.beamController.start(this.beamShootFrom(), this.beamTargetPosition(), BEAM_DURATION_TICKS);
+                this.entityData.set(BEAM_ACTIVE, true);
+            }
+        }
+        if (this.beamController.isFiring()) {
+            this.beamController.tick(this.beamShootFrom(), this.getTarget(), this.beamSettings(), RoyalBeamTerrainMode.NONE, this::setBeamEndPosition);
+            if (!this.beamController.isFiring()) {
+                this.entityData.set(BEAM_ACTIVE, false);
+                this.entityData.set(BEAM_HEAD, -1);
+                this.beamCooldownTicks = BEAM_COOLDOWN_TICKS;
+            }
+            return;
+        }
+        if (this.isOrderedToSit()) return;
+        LivingEntity target = this.getTarget();
+        if (target == null && this.getControllingPassenger() instanceof Player) {
+            target = this.frontTarget();
+            if (target != null) this.setTarget(target);
+        }
+        if (target == null || !target.isAlive() || !this.hasLineOfSight(target)) return;
+        double targetDistance = this.distanceTo(target);
+        if (this.beamCooldownTicks <= 0 && this.beamWindupTicks <= 0 && targetDistance > 7.0D && targetDistance < 28.0D && this.tickCount % 20 == 0) {
+            this.beamHead = (this.beamHead + 1) % 3;
+            this.entityData.set(BEAM_HEAD, this.beamHead);
+            this.beamWindupTicks = BEAM_WINDUP_TICKS;
+            this.setAnimState(this.isFlying() ? ANIM_FLY_SHOOT : ANIM_SHOOT);
+            this.triggerAnim("main", this.isFlying() ? "fly_shoot" : "shoot");
+            this.playSound(this.shootSound(), 0.9F, 0.75F);
+        }
+        if (this instanceof PrinceEntity && this.commandCooldownTicks <= 0 && this.tickCount % 20 == 0) {
+            this.performPrinceCommand();
+        }
+        if (this instanceof PrincessEntity && this.timeFieldCooldownTicks <= 0 && this.tickCount % 20 == 0) {
+            this.performPrincessTimeField(target);
+        }
+    }
+
+    private void performPrinceCommand() {
+        if (!(this.level() instanceof ServerLevel level) || RoyalEffectHooks.commandedHolder() == null) return;
+        int applied = 0;
+        for (Mob mob : level.getEntitiesOfClass(Mob.class, this.getBoundingBox().inflate(16.0D), mob ->
+                mob != this && mob.isAlive() && mob instanceof Enemy && !mob.isAlliedTo(this)
+                        && !(mob instanceof RoyalBossEntity) && RoyalEffectEligibility.canApplyCommanded(mob))) {
+            if (applied >= 5) break;
+            if (mob.addEffect(new MobEffectInstance(RoyalEffectHooks.commandedHolder(), 300), this)) {
+                applied++;
+                level.sendParticles(ParticleTypes.HAPPY_VILLAGER, mob.getX(), mob.getY() + mob.getBbHeight(), mob.getZ(), 4, 0.2D, 0.2D, 0.2D, 0.02D);
+            }
+        }
+        if (applied > 0) {
+            this.commandCooldownTicks = COMMAND_COOLDOWN_TICKS;
+            this.playSound(this.shootSound(), 1.0F, 0.65F);
+        }
+    }
+
+    private void performPrincessTimeField(@Nullable LivingEntity target) {
+        if (!(this.level() instanceof ServerLevel level)) return;
+        Vec3 center = target != null && target.isAlive() ? target.position() : this.position();
+        TimeDilationApi.createField(level, center, 8.0D, 0.45D, 100, this.getUUID());
+        this.timeFieldCooldownTicks = TIME_FIELD_COOLDOWN_TICKS;
+        level.sendParticles(ParticleTypes.END_ROD, center.x, center.y + 0.5D, center.z, 28, 1.2D, 0.6D, 1.2D, 0.03D);
+    }
+
+    private RoyalBeamSettings beamSettings() {
+        float damage = this instanceof PrincessEntity ? 10.0F : 12.0F;
+        return new RoyalBeamSettings(28.0D, 0.08D, 4.0D, BEAM_DURATION_TICKS, 6, BEAM_COOLDOWN_TICKS,
+                0.35F, 0.45F, damage, 0.45F, 3, 0.0D, 0.0F, 0.0F, 0, 0.0F, 0.0F, 0.0F, false, true);
+    }
+
+    private Vec3 beamTargetPosition() {
+        LivingEntity target = this.getTarget();
+        return target != null ? target.getEyePosition() : this.getEyePosition().add(this.getLookAngle().scale(20.0D));
+    }
+
+    public Vec3 beamShootFrom() {
+        float scale = this.getGrowthScale();
+        Vec3 forward = Vec3.directionFromRotation(0.0F, this.getYRot());
+        Vec3 side = new Vec3(-forward.z, 0.0D, forward.x);
+        return this.position().add(0.0D, 1.0D * scale, 0.0D).add(forward.scale(1.05D * scale)).add(side.scale((this.getBeamHead() - 1) * 0.72D * scale));
+    }
+
+    public int getBeamHead() { return this.entityData.get(BEAM_HEAD); }
+    public boolean isFiringBeam() { return this.entityData.get(BEAM_ACTIVE); }
+    public Vec3 getBeamEndPosition() {
+        return this.entityData.get(HAS_BEAM_END) ? new Vec3(this.entityData.get(BEAM_END_X), this.entityData.get(BEAM_END_Y), this.entityData.get(BEAM_END_Z)) : null;
+    }
+    public RoyalBeamElement getBeamElement() { return RoyalBeamElement.GENERIC; }
+    public RoyalBeamController beamController() { return this.beamController; }
+    private void setBeamEndPosition(@Nullable Vec3 position) {
+        this.entityData.set(HAS_BEAM_END, position != null);
+        if (position != null) {
+            this.entityData.set(BEAM_END_X, (float) position.x);
+            this.entityData.set(BEAM_END_Y, (float) position.y);
+            this.entityData.set(BEAM_END_Z, (float) position.z);
         }
     }
 
@@ -540,6 +717,11 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
 
     public void setRiderAscend(boolean pressed) {
         this.riderAscendPressed = pressed;
+        if (pressed && !this.isFlying() && this.getControllingPassenger() != null) {
+            this.setFlying(true);
+            this.setDeltaMovement(this.getDeltaMovement().add(0.0D, 0.35D, 0.0D));
+            this.hasImpulse = true;
+        }
     }
 
     public void setRiderDescend(boolean pressed) {
@@ -566,8 +748,8 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         if (!this.hasPassenger(passenger)) {
             return;
         }
-        double yOffset = (this.isFlying() ? 1.55D : 1.35D) * this.getAgeScale();
-        Vec3 back = this.getLookAngle().scale(-0.35D * this.getAgeScale());
+        double yOffset = (this.isFlying() ? 1.55D : 1.35D) * this.getGrowthScale() - 1.0D;
+        Vec3 back = this.getLookAngle().scale(-0.35D * this.getGrowthScale());
         moveFunction.accept(passenger, this.getX() + back.x, this.getY() + yOffset, this.getZ() + back.z);
     }
 

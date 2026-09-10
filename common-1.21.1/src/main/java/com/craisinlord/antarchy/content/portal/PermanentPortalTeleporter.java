@@ -63,7 +63,7 @@ public final class PermanentPortalTeleporter {
             return active.center();
         }
 
-        Vec3 safe = findSafeArrivalPosition(entity, destination, preferredPos);
+        Vec3 safe = findSafeArrivalPosition(entity, destination, preferredPos, type);
         if (safe != null) {
             PermanentPortalShape nearbyActive = findActiveNearby(destination, BlockPos.containing(safe), type);
             if (nearbyActive != null) {
@@ -77,7 +77,11 @@ public final class PermanentPortalTeleporter {
             return createFallbackPortal(destination, BlockPos.containing(safe), type);
         }
 
-        return createFallbackPortal(destination, preferredPos, type);
+        BlockPos fallbackPos = preferredPos;
+        if (type == PermanentPortalType.ELYTHIA && destination.hasChunkAt(preferredPos)) {
+            fallbackPos = destination.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, preferredPos);
+        }
+        return createFallbackPortal(destination, fallbackPos, type);
     }
 
     @Nullable
@@ -108,14 +112,16 @@ public final class PermanentPortalTeleporter {
     }
 
     @Nullable
-    private static Vec3 findSafeArrivalPosition(Entity entity, ServerLevel destination, BlockPos preferredPos) {
-        int[] yRange = getDimensionYRange(destination);
+    private static Vec3 findSafeArrivalPosition(Entity entity, ServerLevel destination, BlockPos preferredPos, PermanentPortalType type) {
+        int[] yRange = getDimensionYRange(destination, type);
         if (yRange != null) {
             return findSafeArrivalPositionInYRange(entity, destination, preferredPos, yRange[0], yRange[1]);
         }
 
         Set<BlockPos> candidates = new LinkedHashSet<>();
-        addCandidate(candidates, preferredPos);
+        if (type != PermanentPortalType.ELYTHIA) {
+            addCandidate(candidates, preferredPos);
+        }
 
         for (int radius = 0; radius <= SEARCH_RADIUS; radius++) {
             for (int xOff = -radius; xOff <= radius; xOff++) {
@@ -137,6 +143,10 @@ public final class PermanentPortalTeleporter {
                     }
                 }
             }
+        }
+
+        if (type == PermanentPortalType.ELYTHIA) {
+            addCandidate(candidates, preferredPos);
         }
 
         for (BlockPos candidate : candidates) {
@@ -277,12 +287,12 @@ public final class PermanentPortalTeleporter {
     }
 
     @Nullable
-    private static int[] getDimensionYRange(ServerLevel destination) {
+    private static int[] getDimensionYRange(ServerLevel destination, PermanentPortalType type) {
         ResourceKey<Level> dim = destination.dimension();
         if (dim == AntarchySettings.termiteDestinationDimension()) {
             return new int[]{100, 200};
         }
-        if (dim == AntarchySettings.brownAntDestinationDimension()) {
+        if (type != PermanentPortalType.ELYTHIA && dim == AntarchySettings.brownAntDestinationDimension()) {
             return new int[]{75, 120};
         }
         return null;

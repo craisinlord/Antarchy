@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
-import com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity;
+import com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import java.util.List;
 import net.minecraft.ChatFormatting;
@@ -81,7 +81,7 @@ public class RoyalAssailantBattleAxeItem extends AxeItem {
             return InteractionResultHolder.sidedSuccess(stack, true);
         }
         if (level instanceof ServerLevel serverLevel) {
-            RoyalBlackHoleEntity blackHole = RoyalBlackHoleEntity.createAssailant(
+            RoyalAssailantBlackHoleEntity blackHole = RoyalAssailantBlackHoleEntity.create(
                     serverLevel,
                     player.position().add(player.getLookAngle().normalize().scale(2.0D)).add(0.0D, 2.0D, 0.0D),
                     player.getUUID());

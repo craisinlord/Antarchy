@@ -11,10 +11,6 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
-/**
- * Fills the low, open main-side Thoraxis basin with source ichor during chunk generation.
- * The feature works one chunk at a time so it does not depend on runtime fluid spreading.
- */
 public final class ThoraxisIchorLakeFeature extends Feature<NoneFeatureConfiguration> {
     private static final int LAKE_FLOOR_Y = 1;
     private static final int LAKE_SURFACE_Y = 8;

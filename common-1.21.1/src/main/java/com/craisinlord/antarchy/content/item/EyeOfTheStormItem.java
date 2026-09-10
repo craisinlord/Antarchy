@@ -6,9 +6,6 @@ import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
 import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
 import com.craisinlord.antarchy.content.entity.vortex.WindVortexEntity;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
@@ -46,8 +43,6 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
     private static final ResourceLocation ANIMATION_LOCATION = ResourceLocation.fromNamespaceAndPath("antarchy", "animations/eye_of_the_storm.animation.json");
     private static final String IDLE_CONTROLLER = "idle_controller";
     private static final String IDLE_ANIMATION = "spinning_idle";
-    private static final Map<UUID, Long> LAST_UPDRAFT_TICK = new ConcurrentHashMap<>();
-    private static final Map<UUID, Long> LAST_SURGE_TICK = new ConcurrentHashMap<>();
     private static final float SURGE_PROJECTILE_SPEED = 0.65F;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
@@ -67,12 +62,9 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
             return InteractionResultHolder.consume(stack);
         }
 
-        long now = level.getGameTime();
-        Long last = LAST_UPDRAFT_TICK.get(player.getUUID());
-        if (last != null && now - last < AntarchySettings.eyeOfTheStormUpdraftCooldownTicks()) {
+        if (player.getCooldowns().isOnCooldown(this)) {
             return InteractionResultHolder.fail(stack);
         }
-        LAST_UPDRAFT_TICK.put(player.getUUID(), now);
 
         ServerLevel serverLevel = (ServerLevel) level;
         WindVortexEntity vortex = WindVortexEntity.create(
@@ -92,6 +84,7 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
         player.setDeltaMovement(player.getDeltaMovement().add(0.0D, AntarchySettings.eyeOfTheStormUpdraftLaunchStrength(), 0.0D));
         player.hasImpulse = true;
         player.resetFallDistance();
+        player.getCooldowns().addCooldown(this, AntarchySettings.eyeOfTheStormUpdraftCooldownTicks());
         if (player instanceof ServerPlayer serverPlayer) {
             serverPlayer.connection.send(new ClientboundSetEntityMotionPacket(serverPlayer));
         }
@@ -109,15 +102,13 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
             return;
         }
 
-        long now = level.getGameTime();
-        Long last = LAST_SURGE_TICK.get(player.getUUID());
-        if (last != null && now - last < AntarchySettings.eyeOfTheStormSurgeCooldownTicks()) {
+        if (player.getCooldowns().isOnCooldown(this)) {
             return;
         }
-        LAST_SURGE_TICK.put(player.getUUID(), now);
 
         Vec3 look = player.getViewVector(1.0F);
         launchStormVortex(level, player.getEyePosition().add(look), look, player);
+        player.getCooldowns().addCooldown(this, AntarchySettings.eyeOfTheStormSurgeCooldownTicks());
 
         player.awardStat(Stats.ITEM_USED.get(this));
         stack.hurtAndBreak(1, player, EquipmentSlot.MAINHAND);

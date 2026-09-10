@@ -32,7 +32,7 @@ public final class TimeDilationFieldSampler {
     public static double sample(List<TimeDilationFieldEntity> fields, Entity entity) {
         double combinedRate = TimeDilationMath.NORMAL_RATE;
         for (TimeDilationFieldEntity field : fields) {
-            if (field.isOwnedBy(entity)) {
+            if (!field.affects(entity)) {
                 continue;
             }
             Vec3 center = field.position();

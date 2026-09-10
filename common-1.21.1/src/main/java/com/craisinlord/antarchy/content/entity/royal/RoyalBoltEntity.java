@@ -78,7 +78,7 @@ public class RoyalBoltEntity extends AbstractHurtingProjectile {
             case FIRE -> ParticleTypes.FLAME;
             case LIGHTNING -> ParticleTypes.ELECTRIC_SPARK;
             case ICE -> ParticleTypes.SNOWFLAKE;
-            case GENERIC -> ParticleTypes.WITCH;
+            default -> ParticleTypes.WITCH;
         };
     }
 

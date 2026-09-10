@@ -1,7 +1,12 @@
 package com.craisinlord.antarchy.content.time;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -9,33 +14,57 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import com.craisinlord.antarchy.content.effect.DilatedMobEffect;
 import com.craisinlord.antarchy.content.effect.ContractedMobEffect;
-import com.craisinlord.antarchy.content.effect.ContractedMobEffect;
-import com.craisinlord.antarchy.content.effect.ContractedMobEffect;
 import com.craisinlord.antarchy.content.effect.RoyalEffectEligibility;
 import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
 
 public final class TimeDilationManager {
+    private static final Map<ServerLevel, TrackingState> TRACKING = new WeakHashMap<>();
+
     private TimeDilationManager() {
     }
 
     public static void tickServer(MinecraftServer server) {
         for (ServerLevel level : server.getAllLevels()) {
             List<TimeDilationFieldEntity> fields = collectFields(level);
-            syncFieldSnapshots(level, fields);
-            updateEntities(level, fields);
+            TrackingState tracking = TRACKING.computeIfAbsent(level, ignored -> new TrackingState());
+            discoverFieldEntities(level, fields, tracking);
+            syncFieldSnapshots(level, fields, tracking);
+            updateEntities(level, fields, tracking);
+            if (fields.isEmpty() && tracking.entities.isEmpty()) {
+                TRACKING.remove(level);
+            }
             if (!fields.isEmpty()) {
                 TimeDilationParticles.spawnFieldBorders(level, fields.stream().filter(TimeDilationFieldEntity::isVisual).toList());
             }
         }
     }
 
-    private static void syncFieldSnapshots(ServerLevel level, List<TimeDilationFieldEntity> fields) {
+    public static void trackPotentiallyAffected(Entity entity) {
+        if (!(entity.level() instanceof ServerLevel level) || entity instanceof TimeDilationFieldEntity) {
+            return;
+        }
+        if (entity instanceof TimeDilationEntityAccess access
+                && Math.abs(access.antarchy$getTimeDilationRate() - TimeDilationMath.NORMAL_RATE) < 0.001D
+                && Math.abs(access.antarchy$getInheritedTimeDilationRate() - TimeDilationMath.NORMAL_RATE) < 0.001D
+                && (!(entity instanceof net.minecraft.world.entity.LivingEntity living)
+                || ((RoyalEffectHooks.dilatedHolder() == null || !living.hasEffect(RoyalEffectHooks.dilatedHolder()))
+                && (RoyalEffectHooks.contractedHolder() == null || !living.hasEffect(RoyalEffectHooks.contractedHolder()))))) {
+            return;
+        }
+        TRACKING.computeIfAbsent(level, ignored -> new TrackingState()).entities.add(entity);
+    }
+
+    private static void syncFieldSnapshots(ServerLevel level, List<TimeDilationFieldEntity> fields, TrackingState tracking) {
         List<TimeDilationFieldSnapshot> snapshots = fields.stream()
                 .map(field -> new TimeDilationFieldSnapshot(
                         field.getX(), field.getY(), field.getZ(), field.fieldRadius(), field.fieldRate(),
                         field.fieldAge(), field.fieldDurationTicks()))
                 .limit(128)
                 .toList();
+        if (level.getGameTime() % 4L != 0L && snapshots.size() == tracking.lastSnapshots.size()) {
+            return;
+        }
+        tracking.lastSnapshots = snapshots;
         for (ServerPlayer player : level.players()) {
             TimeDilationApi.syncFields(player, snapshots);
         }
@@ -51,8 +80,23 @@ public final class TimeDilationManager {
         return fields;
     }
 
-    private static void updateEntities(ServerLevel level, List<TimeDilationFieldEntity> fields) {
-        for (Entity entity : level.getAllEntities()) {
+    private static void discoverFieldEntities(ServerLevel level, List<TimeDilationFieldEntity> fields, TrackingState tracking) {
+        for (TimeDilationFieldEntity field : fields) {
+            double radius = field.fieldRadius();
+            var center = field.position();
+            var area = new net.minecraft.world.phys.AABB(
+                    center.x - radius, center.y - radius, center.z - radius,
+                    center.x + radius, center.y + radius, center.z + radius);
+            tracking.entities.addAll(level.getEntities(field, area,
+                    entity -> entity.isAlive() && !(entity instanceof TimeDilationFieldEntity)
+                            && entity instanceof TimeDilationEntityAccess));
+        }
+    }
+
+    private static void updateEntities(ServerLevel level, List<TimeDilationFieldEntity> fields, TrackingState tracking) {
+        var iterator = tracking.entities.iterator();
+        while (iterator.hasNext()) {
+            Entity entity = iterator.next();
             if (!(entity instanceof TimeDilationEntityAccess access) || entity instanceof TimeDilationFieldEntity) {
                 continue;
             }
@@ -62,6 +106,7 @@ public final class TimeDilationManager {
                     living.removeEffect(RoyalEffectHooks.dilatedHolder());
                 }
                 TimeDilationApi.clearRate(entity);
+                iterator.remove();
                 continue;
             }
             double previousRate = access.antarchy$getTimeDilationRate();
@@ -116,7 +161,23 @@ public final class TimeDilationManager {
             if (Math.abs(previousRate - rate) > 0.001D) {
                 TimeDilationApi.syncEntityRate(entity, rate);
             }
+
+            boolean hasDilationEffect = entity instanceof net.minecraft.world.entity.LivingEntity living
+                    && ((RoyalEffectHooks.dilatedHolder() != null && living.hasEffect(RoyalEffectHooks.dilatedHolder()))
+                    || (RoyalEffectHooks.contractedHolder() != null && living.hasEffect(RoyalEffectHooks.contractedHolder())));
+            boolean hasInheritedRate = Math.abs(access.antarchy$getInheritedTimeDilationRate() - TimeDilationMath.NORMAL_RATE) >= 0.001D;
+            boolean hasActiveRate = Math.abs(access.antarchy$getTimeDilationRate() - TimeDilationMath.NORMAL_RATE) >= 0.001D;
+            if (!hasDilationEffect && !hasInheritedRate && !hasActiveRate
+                    && Math.abs(targetRate - TimeDilationMath.NORMAL_RATE) < 0.001D) {
+                iterator.remove();
+            }
         }
+        tracking.entities.removeIf(entity -> !entity.isAlive() || entity.isRemoved());
+    }
+
+    private static final class TrackingState {
+        private final Set<Entity> entities = Collections.newSetFromMap(new IdentityHashMap<>());
+        private List<TimeDilationFieldSnapshot> lastSnapshots = List.of();
     }
 
 }

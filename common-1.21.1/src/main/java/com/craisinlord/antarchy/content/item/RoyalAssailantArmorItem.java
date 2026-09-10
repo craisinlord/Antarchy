@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.item;
 
-import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.item.royal.RoyalGearHelper;
@@ -143,18 +142,8 @@ public class RoyalAssailantArmorItem extends ArmorItem {
         }
         MobEffectInstance existing = player.getEffect(AntarchyObjects.INVERTED_EFFECT.get());
         if (existing != null && existing.isInfiniteDuration()) {
-            Antarchy.LOGGER.info(
-                    "[antarchy-gravity] royal chestplate toggling inversion off player={} uuid={} pos=({}, {}, {}) dim={} existingDuration={} gameTime={}",
-                    player.getGameProfile().getName(), player.getUUID(), player.getX(), player.getY(), player.getZ(),
-                    player.level().dimension().location(), existing.getDuration(), player.level().getGameTime()
-            );
             player.removeEffect(AntarchyObjects.INVERTED_EFFECT.get());
         } else {
-            Antarchy.LOGGER.info(
-                    "[antarchy-gravity] royal chestplate toggling inversion on player={} uuid={} pos=({}, {}, {}) dim={} existingDuration={} gameTime={}",
-                    player.getGameProfile().getName(), player.getUUID(), player.getX(), player.getY(), player.getZ(),
-                    player.level().dimension().location(), existing != null ? existing.getDuration() : -1, player.level().getGameTime()
-            );
             player.addEffect(new MobEffectInstance(AntarchyObjects.INVERTED_EFFECT.get(), -1, 0, false, false, true));
         }
     }

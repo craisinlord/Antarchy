@@ -8,6 +8,7 @@
         "location": "antarchy:kings_tree/kings_tree4",
         "processors": "antarchy:generic_processor",
         "projection": "rigid",
+        "ignore_bounds": true,
         "enhanced_terrain_adaptation": {
           "type": "integrated_api:custom",
           "carves": true,

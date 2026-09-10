@@ -393,6 +393,13 @@ public final class AntarchyNeoforgeEntites {
                     .updateInterval(2)
                     .fireImmune()
                     .build("royal_black_hole"));
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity>> ROYAL_ASSAILANT_BLACK_HOLE = ENTITY_TYPES.register("royal_assailant_black_hole",
+            () -> EntityType.Builder.<com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity>of(com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 1.0F)
+                    .clientTrackingRange(16)
+                    .updateInterval(2)
+                    .fireImmune()
+                    .build("royal_assailant_black_hole"));
     public static final DeferredHolder<EntityType<?>, EntityType<TimeDilationFieldEntity>> TIME_DILATION_FIELD = ENTITY_TYPES.register("time_dilation_field",
             () -> EntityType.Builder.<TimeDilationFieldEntity>of(TimeDilationFieldEntity::new, MobCategory.MISC)
                     .sized(0.5F, 0.5F)
@@ -497,7 +504,7 @@ public final class AntarchyNeoforgeEntites {
                     .build("lurking_terror"));
     public static final DeferredHolder<EntityType<?>, EntityType<ManticoreEntity>> MANTICORE = ENTITY_TYPES.register("manticore",
             () -> EntityType.Builder.of(ManticoreEntity::new, MobCategory.MONSTER)
-                    .sized(1.95F, 2.0F)
+                    .sized(1.95F, 2.25F)
                     .clientTrackingRange(10)
                     .fireImmune()
                     .build("manticore"));

@@ -5,7 +5,18 @@
     "minecraft:enchanted_golden_apple",
     "minecraft:golden_carrot",
     "minecraft:glistering_melon_slice",
-    "antarchy:king_scale",
-    "antarchy:queen_scale"
+    "minecraft:gold_ingot",
+    "minecraft:gold_nugget",
+    "minecraft:gold_block",
+    "minecraft:golden_sword",
+    "minecraft:golden_pickaxe",
+    "minecraft:golden_axe",
+    "minecraft:golden_shovel",
+    "minecraft:golden_hoe",
+    "minecraft:golden_helmet",
+    "minecraft:golden_chestplate",
+    "minecraft:golden_leggings",
+    "minecraft:golden_boots",
+    "minecraft:golden_horse_armor"
   ]
 }

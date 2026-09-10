@@ -337,9 +337,9 @@ public final class AntarchyForgeMisc {
 
     // Biome sources
     public static final RegistryObject<com.mojang.serialization.Codec<ElythiaBiomeSource>> ELYTHIA_BIOME_SOURCE = BIOME_SOURCES.register("elythia_biome_source",
-            () -> ElythiaBiomeSource.CODEC.codec());
+            () -> ElythiaBiomeSource.CODEC);
     public static final RegistryObject<com.mojang.serialization.Codec<ThoraxisBiomeSource>> THORAXIS_BIOME_SOURCE = BIOME_SOURCES.register("thoraxis_biome_source",
-            () -> ThoraxisBiomeSource.CODEC.codec());
+            () -> ThoraxisBiomeSource.CODEC);
 
     // Density function
     public static final RegistryObject<com.mojang.serialization.Codec<ElythiaRiverCarveFunction>> ELYTHIA_RIVER_CARVE = DENSITY_FUNCTION_TYPES.register("elythia_river_carve",

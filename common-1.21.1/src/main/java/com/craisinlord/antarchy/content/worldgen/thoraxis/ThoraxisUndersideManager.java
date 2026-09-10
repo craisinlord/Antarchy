@@ -71,6 +71,7 @@ public final class ThoraxisUndersideManager {
         int refreshedLiving = 0;
         int flippedItems = 0;
         int restoredItems = 0;
+        Set<Entity> evicted = Collections.newSetFromMap(new IdentityHashMap<>());
         for (Entity entity : tracking.entities) {
             if (!entity.isAlive() || entity.isSpectator()) {
                 continue;
@@ -82,6 +83,8 @@ public final class ThoraxisUndersideManager {
                 if (living.getY() < threshold) {
                     refreshInvertedEffect(living);
                     refreshedLiving++;
+                } else if (!hasEffect) {
+                    evicted.add(entity);
                 }
                 continue;
             }
@@ -122,9 +125,12 @@ public final class ThoraxisUndersideManager {
                     AntarchyGravityApi.setGravityDirection(entity, AntarchyGravityDirection.DOWN, false, TRANSITION);
                     restoredItems++;
                 }
+                evicted.add(entity);
             }
         }
 
+        tracking.entities.removeAll(evicted);
+        tracking.forcedItems.removeAll(evicted);
         tracking.entities.removeIf(entity -> !entity.isAlive() || entity.isRemoved());
         tracking.forcedItems.removeIf(entity -> !entity.isAlive() || entity.isRemoved());
         tracking.lastFlipTick.entrySet().removeIf(entry -> now - entry.getValue() > FLIP_COOLDOWN_TICKS * 4L);
@@ -221,5 +227,12 @@ public final class ThoraxisUndersideManager {
 
     public static boolean isAboveUndersideExit(Entity entity) {
         return isThoraxis(entity.level()) && entity.getY() >= EXIT_UNDERSIDE_Y;
+    }
+
+    /** True while an entity is in the region where the underside gravity rule applies. */
+    public static boolean shouldInvertInUnderside(Entity entity) {
+        return AntarchyGravityApi.isGravityInverted(entity)
+                && isThoraxis(entity.level())
+                && entity.getY() < GRAVITY_FLIP_Y;
     }
 }

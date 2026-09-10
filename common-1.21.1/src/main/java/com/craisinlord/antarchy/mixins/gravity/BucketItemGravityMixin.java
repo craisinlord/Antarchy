@@ -54,10 +54,6 @@ public abstract class BucketItemGravityMixin {
         }
 
         Direction face = blockHitResult.getDirection();
-        if (face.getAxis() != Direction.Axis.Y) {
-            return;
-        }
-
         BlockPos clickedPos = blockHitResult.getBlockPos();
         BlockState clickedState = level.getBlockState(clickedPos);
         Block clickedBlock = clickedState.getBlock();

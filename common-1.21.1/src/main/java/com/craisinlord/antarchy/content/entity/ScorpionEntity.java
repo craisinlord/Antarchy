@@ -351,6 +351,16 @@ public class ScorpionEntity extends Monster implements GeoEntity {
                 ScorpionEntity.this.getNavigation().stop();
                 return;
             }
+            // This goal overrides MeleeAttackGoal.tick, so the gravity mixin on the
+            // vanilla method cannot supply the inverted movement frame here.
+            LivingEntity target = ScorpionEntity.this.getTarget();
+            if (target != null && ThoraxisUndersideManager.shouldInvertInUnderside(ScorpionEntity.this)) {
+                ScorpionEntity.this.getNavigation().stop();
+                ScorpionEntity.this.getMoveControl().setWantedPosition(
+                        target.getX(), target.getY(), target.getZ(), 1.15D);
+                this.checkAndPerformAttack(target);
+                return;
+            }
             super.tick();
         }
 

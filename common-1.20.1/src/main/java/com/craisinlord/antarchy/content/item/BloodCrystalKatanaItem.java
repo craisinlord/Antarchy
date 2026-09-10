@@ -1,11 +1,15 @@
 package com.craisinlord.antarchy.content.item;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.world.level.Level;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
@@ -21,6 +25,7 @@ public class BloodCrystalKatanaItem extends SwordItem {
     }
 
     private static TrailCallback trailCallback = (player, durationTicks) -> {};
+    private static final Map<UUID, Long> DASH_UNTIL_TICK = new ConcurrentHashMap<>();
 
     private final Tier tier;
     private final int attackDamage;
@@ -56,7 +61,21 @@ public class BloodCrystalKatanaItem extends SwordItem {
         player.hasImpulse = true;
         player.hurtMarked = true;
         trailCallback.trigger(player, AntarchySettings.bloodCrystalKatanaTrailDurationTicks());
+        long now = player.level().getGameTime();
+        DASH_UNTIL_TICK.put(player.getUUID(), now + AntarchySettings.bloodCrystalKatanaTrailDurationTicks());
         return result;
+    }
+
+    public static boolean isDashing(Entity entity) {
+        if (!(entity instanceof ServerPlayer player)) {
+            return false;
+        }
+        Long until = DASH_UNTIL_TICK.get(player.getUUID());
+        if (until == null || player.level().getGameTime() >= until) {
+            DASH_UNTIL_TICK.remove(player.getUUID());
+            return false;
+        }
+        return true;
     }
 
     @Override

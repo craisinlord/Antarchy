@@ -151,6 +151,7 @@ public final class AntarchyNeoForgeClient {
         event.registerEntityRenderer(AntarchyNeoforgeEntites.WIND_VORTEX.get(), WindVortexRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.TIME_DILATION_FIELD.get(), TimeDilationFieldRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.ROYAL_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalBlackHoleRenderer::new);
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.ROYAL_ASSAILANT_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalAssailantBlackHoleRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.CRITTER_CAGE_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.WORM_HOOK_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.HUSH_PROJECTILE.get(), HushProjectileRenderer::new);
@@ -161,10 +162,10 @@ public final class AntarchyNeoForgeClient {
         event.registerEntityRenderer(AntarchyNeoforgeEntites.TORETERROR.get(), ToreterrorRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.WATER_BOMB.get(), WaterBombRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.CHEEP.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.CheepRenderer(context)));
-        event.registerEntityRenderer(AntarchyNeoforgeEntites.DORRIE.get(), context -> new com.craisinlord.antarchy.content.client.renderer.DorrieRenderer(context));
-        event.registerEntityRenderer(AntarchyNeoforgeEntites.OURANWOOD_DEER.get(), context -> new com.craisinlord.antarchy.content.client.renderer.OuranwoodDeerRenderer(context));
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.DORRIE.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.DorrieRenderer(context)));
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.OURANWOOD_DEER.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.OuranwoodDeerRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.GLIMMER.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.glimmer.GlimmerRenderer(context)));
-        event.registerEntityRenderer(AntarchyNeoforgeEntites.ELKA.get(), context -> new com.craisinlord.antarchy.content.client.renderer.ElkaRenderer(context));
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.ELKA.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.ElkaRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.ROLLY_POLLY.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.RollyPollyRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.TERMITE.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.TermiteRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.CREEPING_HORROR.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.CreepingHorrorRenderer(context)));
@@ -196,6 +197,8 @@ public final class AntarchyNeoForgeClient {
                 renderer.addLayer(new TigerEyeCamouflagePlayerLayer(renderer));
                 renderer.addLayer(new GoopedLivingLayer(renderer));
                 renderer.addLayer(new GlimmeringLivingLayer(renderer));
+                renderer.addLayer(new TemporalContractionAfterimageLayer<>(renderer));
+                renderer.addLayer(new RoyalAssailantAxeAfterimageLayer(renderer));
                 renderer.addLayer(new BrutalflyElytraLayer(renderer));
                 renderer.addLayer(new com.craisinlord.antarchy.content.client.renderer.ManticoreWingsLayer(renderer));
                 renderer.addLayer(new FallenKingCrownLayer(renderer));
@@ -235,11 +238,13 @@ public final class AntarchyNeoForgeClient {
         ((LivingEntityRenderer) livingRenderer).addLayer(new ParalyzedStoneLivingLayer<>(livingRenderer));
         ((LivingEntityRenderer) livingRenderer).addLayer(new GoopedLivingLayer<>(livingRenderer));
         ((LivingEntityRenderer) livingRenderer).addLayer(new GlimmeringLivingLayer<>(livingRenderer));
+        ((LivingEntityRenderer) livingRenderer).addLayer(new TemporalContractionAfterimageLayer<>(livingRenderer));
     }
 
     private static <T extends LivingEntity & GeoAnimatable> GeoEntityRenderer<T> withParalyzedGeoLayer(GeoEntityRenderer<T> renderer) {
         renderer.addRenderLayer(new ParalyzedStoneGeoLayer<>(renderer));
         renderer.addRenderLayer(new GoopedGeoLayer<>(renderer));
+        renderer.addRenderLayer(new TemporalContractionGeoLayer<>(renderer));
         return renderer;
     }
 

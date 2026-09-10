@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.worldgen.thoraxis;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.mojang.serialization.Codec;
+import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -34,6 +35,7 @@ public final class LucidAntiwaterPoolFeature extends Feature<ThoraxisAntiwaterPo
         int sourceCount = Math.max(2, randomBetween(random, 2, 4));
         BlockState antiwaterSourceState = config.state().getState(random, origin);
         BlockState basaltState = AntarchyObjects.ANTIMETAL.get().defaultBlockState();
+        Long2IntOpenHashMap ceilingCache = new Long2IntOpenHashMap();
 
         int floorY = findFloorY(level, origin.getX(), origin.getZ());
         if (floorY <= level.getMinBuildHeight()) {
@@ -55,7 +57,7 @@ public final class LucidAntiwaterPoolFeature extends Feature<ThoraxisAntiwaterPo
             int ventBudget = sourceCount + random.nextInt(2);
             BasinProfile profile = BasinProfile.create(random);
 
-            placedAny |= placeCeilingBasin(level, random, offsetX, floorY, offsetZ, lobeRadius, ceilingY, profile, basaltState, antiwaterSourceState);
+            placedAny |= placeCeilingBasin(level, random, offsetX, floorY, offsetZ, lobeRadius, ceilingY, profile, basaltState, antiwaterSourceState, ceilingCache);
             placedAny |= placeAntiwaterSources(level, random, offsetX, floorY, offsetZ, Math.max(2, lobeRadius - 1), ventBudget, antiwaterSourceState);
         }
 
@@ -72,7 +74,8 @@ public final class LucidAntiwaterPoolFeature extends Feature<ThoraxisAntiwaterPo
             int maxCeilingY,
             BasinProfile profile,
             BlockState basaltState,
-            BlockState antiwaterSourceState
+            BlockState antiwaterSourceState,
+            Long2IntOpenHashMap ceilingCache
     ) {
         boolean placedAny = false;
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
@@ -87,7 +90,7 @@ public final class LucidAntiwaterPoolFeature extends Feature<ThoraxisAntiwaterPo
 
                 int worldX = centerX + dx;
                 int worldZ = centerZ + dz;
-                int localCeilingY = findCeilingY(level, worldX, worldZ, floorY);
+                int localCeilingY = cachedCeilingY(level, worldX, worldZ, floorY, ceilingCache);
                 if (localCeilingY <= floorY + MIN_CAVITY_HEIGHT || localCeilingY > maxCeilingY + 3) {
                     continue;
                 }
@@ -113,7 +116,7 @@ public final class LucidAntiwaterPoolFeature extends Feature<ThoraxisAntiwaterPo
                         placedAny = true;
                     }
 
-                    placedAny |= placeOuterLip(level, random, worldX, worldZ, floorY, basinTopY, profile, dx, dz, radius, basaltState);
+                    placedAny |= placeOuterLip(level, random, worldX, worldZ, floorY, basinTopY, profile, dx, dz, radius, basaltState, ceilingCache);
                     continue;
                 }
 
@@ -145,7 +148,8 @@ public final class LucidAntiwaterPoolFeature extends Feature<ThoraxisAntiwaterPo
             int dx,
             int dz,
             int radius,
-            BlockState basaltState
+            BlockState basaltState,
+            Long2IntOpenHashMap ceilingCache
     ) {
         boolean placedAny = false;
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
@@ -166,7 +170,7 @@ public final class LucidAntiwaterPoolFeature extends Feature<ThoraxisAntiwaterPo
 
                 int x = centerX + stepX;
                 int z = centerZ + stepZ;
-                int localCeilingY = findCeilingY(level, x, z, floorY);
+                int localCeilingY = cachedCeilingY(level, x, z, floorY, ceilingCache);
                 if (localCeilingY <= floorY + MIN_CAVITY_HEIGHT) {
                     continue;
                 }
@@ -298,6 +302,23 @@ public final class LucidAntiwaterPoolFeature extends Feature<ThoraxisAntiwaterPo
         }
 
         return Integer.MIN_VALUE;
+    }
+
+    private static int cachedCeilingY(
+            WorldGenLevel level,
+            int x,
+            int z,
+            int floorY,
+            Long2IntOpenHashMap cache
+    ) {
+        long key = BlockPos.asLong(x, 0, z);
+        if (cache.containsKey(key)) {
+            return cache.get(key);
+        }
+
+        int ceilingY = findCeilingY(level, x, z, floorY);
+        cache.put(key, ceilingY);
+        return ceilingY;
     }
 
     private static boolean isSolidSurface(BlockState state) {

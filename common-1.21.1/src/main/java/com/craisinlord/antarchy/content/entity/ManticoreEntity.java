@@ -101,7 +101,7 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, AntarchySettings.manticoreHealth())
                 .add(Attributes.MOVEMENT_SPEED, 0.3D)
-                .add(Attributes.FLYING_SPEED, 0.6D)
+                .add(Attributes.FLYING_SPEED, 1.2D)
                 .add(Attributes.ATTACK_DAMAGE, AntarchySettings.manticoreAttackDamage())
                 .add(Attributes.FOLLOW_RANGE, 28.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.2D);

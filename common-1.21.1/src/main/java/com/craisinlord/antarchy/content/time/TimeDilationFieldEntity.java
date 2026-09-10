@@ -1,6 +1,10 @@
 package com.craisinlord.antarchy.content.time;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
+import com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -25,6 +29,8 @@ public class TimeDilationFieldEntity extends Entity {
     private int durationTicks = -1;
     private int age;
     private UUID ownerId;
+    private UUID anchorId;
+    private int missingAnchorTicks;
     private boolean visual = true;
 
     public TimeDilationFieldEntity(EntityType<? extends TimeDilationFieldEntity> entityType, Level level) {
@@ -56,6 +62,23 @@ public class TimeDilationFieldEntity extends Entity {
         return this.ownerId != null && entity != null && this.ownerId.equals(entity.getUUID());
     }
 
+    public void attachTo(Entity anchor) {
+        this.anchorId = anchor == null ? null : anchor.getUUID();
+        this.missingAnchorTicks = 0;
+    }
+
+    public boolean affects(Entity entity) {
+        if (entity instanceof RoyalBlackHoleEntity || this.isOwnedBy(entity)
+                || this.anchorId != null && this.anchorId.equals(entity.getUUID())) {
+            return false;
+        }
+        if (this.ownerId != null && this.level() instanceof ServerLevel level
+                && level.getEntity(this.ownerId) instanceof QueenEntity) {
+            return !entity.getType().is(AntarchyTags.Entities.QUEEN_DOES_NOT_ATTACK);
+        }
+        return true;
+    }
+
     public boolean isVisual() {
         return this.visual;
     }
@@ -71,6 +94,19 @@ public class TimeDilationFieldEntity extends Entity {
         super.tick();
         if (this.level().isClientSide) {
             return;
+        }
+        if (this.anchorId != null && this.level() instanceof ServerLevel level) {
+            Entity anchor = level.getEntity(this.anchorId);
+            if (anchor != null && anchor.isAlive()) {
+                Vec3 center = anchor instanceof RoyalBlackHoleEntity blackHole
+                        ? blackHole.effectCenter()
+                        : anchor.position();
+                this.setPos(center.x, center.y, center.z);
+                this.missingAnchorTicks = 0;
+            } else if (++this.missingAnchorTicks > 20) {
+                this.discard();
+                return;
+            }
         }
         this.age++;
         if (this.durationTicks >= 0 && this.age >= this.durationTicks) {
@@ -127,6 +163,7 @@ public class TimeDilationFieldEntity extends Entity {
         this.durationTicks = tag.contains(DURATION_KEY) ? tag.getInt(DURATION_KEY) : -1;
         this.age = tag.getInt(AGE_KEY);
         this.ownerId = tag.hasUUID("OwnerUuid") ? tag.getUUID("OwnerUuid") : null;
+        this.anchorId = tag.hasUUID("AnchorUuid") ? tag.getUUID("AnchorUuid") : null;
         this.visual = !tag.contains("Visual") || tag.getBoolean("Visual");
     }
 
@@ -138,6 +175,9 @@ public class TimeDilationFieldEntity extends Entity {
         tag.putInt(AGE_KEY, this.age);
         if (this.ownerId != null) {
             tag.putUUID("OwnerUuid", this.ownerId);
+        }
+        if (this.anchorId != null) {
+            tag.putUUID("AnchorUuid", this.anchorId);
         }
         tag.putBoolean("Visual", this.visual);
     }

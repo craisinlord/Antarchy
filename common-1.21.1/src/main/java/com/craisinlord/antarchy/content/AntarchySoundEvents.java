@@ -213,6 +213,9 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> PRINCESS_SHOOT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> PRINCESS_FLY = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> PRINCESS_STEP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_DECREE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_SUCCESS = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_JUDGEMENT = (Supplier<SoundEvent>) UNBOUND;
 
     private AntarchySoundEvents() {
     }
@@ -417,7 +420,10 @@ public final class AntarchySoundEvents {
             Supplier<SoundEvent> princessBite,
             Supplier<SoundEvent> princessShoot,
             Supplier<SoundEvent> princessFly,
-            Supplier<SoundEvent> princessStep
+            Supplier<SoundEvent> princessStep,
+            Supplier<SoundEvent> kingDecree,
+            Supplier<SoundEvent> kingSuccess,
+            Supplier<SoundEvent> kingJudgement
     ) {
         SQUIDZOOKA_FIRE = squidzookaFire;
         SHRINK_RAY_CHARGE = shrinkRayCharge;
@@ -619,6 +625,9 @@ public final class AntarchySoundEvents {
         PRINCESS_SHOOT = princessShoot;
         PRINCESS_FLY = princessFly;
         PRINCESS_STEP = princessStep;
+        KING_DECREE = kingDecree;
+        KING_SUCCESS = kingSuccess;
+        KING_JUDGEMENT = kingJudgement;
     }
 
     public static void bindDimensionalTearSounds(
