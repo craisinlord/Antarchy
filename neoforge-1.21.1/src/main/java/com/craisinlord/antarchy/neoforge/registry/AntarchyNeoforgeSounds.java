@@ -222,6 +222,9 @@ public final class AntarchyNeoforgeSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> KING_BEAM_SHOOT = registerSoundEvent("king_beam_shoot");
     public static final DeferredHolder<SoundEvent, SoundEvent> KING_FIREBALL_SHOOT = registerSoundEvent("king_fireball_shoot");
     public static final DeferredHolder<SoundEvent, SoundEvent> KING_DECREE_CAST = registerSoundEvent("king_decree_cast");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KING_DECREE = registerSoundEvent("king_decree");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KING_SUCCESS = registerSoundEvent("king_success");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KING_JUDGEMENT = registerSoundEvent("king_judgement");
 
     public static final DeferredHolder<SoundEvent, SoundEvent> QUEEN_IDLE = registerSoundEvent("queen_idle");
     public static final DeferredHolder<SoundEvent, SoundEvent> QUEEN_WALK = registerSoundEvent("queen_walk");

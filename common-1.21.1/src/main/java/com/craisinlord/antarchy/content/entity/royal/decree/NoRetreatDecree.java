@@ -6,7 +6,7 @@ public final class NoRetreatDecree implements RoyalDecree {
     private static final double ALLOWED_RANGE = 26.0D;
     public String translationKey() { return "decree.antarchy.no_retreat"; }
     public void apply(ServerLevel level, KingEntity king, LivingEntity target) {
-        if (target.distanceTo(king) > ALLOWED_RANGE) {
+        if (target.distanceToSqr(king) > ALLOWED_RANGE * ALLOWED_RANGE) {
             king.invokeJudgment(target);
         }
     }

@@ -3,7 +3,6 @@ package com.craisinlord.antarchy.content.entity.royal.attack;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Owns persistent per-tick effects started by a Royal attack. */
 public final class RoyalEffectController {
     private record Effect(Runnable tick, Runnable end, int duration, int age) {
         private Effect advance() {

@@ -5,6 +5,7 @@ import com.craisinlord.antarchy.content.entity.royal.RoyalBossEntity;
 import com.craisinlord.antarchy.content.entity.royal.KingEntity;
 import com.craisinlord.antarchy.content.entity.royal.RoyalHead;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
+import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -13,15 +14,23 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
+import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.Color;
 
 public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
-    private static final ResourceLocation QUEEN_BEAM_OUTER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_beam_outer.png");
-    private static final ResourceLocation QUEEN_BEAM_INNER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_beam_inner.png");
-    private static final ResourceLocation QUEEN_BEAM_END = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_beam_end_1.png");
+    private static final ResourceLocation QUEEN_PURPLE_BEAM_OUTER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_purple_beam_outer.png");
+    private static final ResourceLocation QUEEN_PURPLE_BEAM_INNER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_purple_beam_inner.png");
+    private static final ResourceLocation QUEEN_PURPLE_BEAM_END = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_purple_beam_end_1.png");
+    private static final ResourceLocation QUEEN_RED_BEAM_OUTER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_red_beam_outer.png");
+    private static final ResourceLocation QUEEN_RED_BEAM_INNER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_red_beam_inner.png");
+    private static final ResourceLocation QUEEN_RED_BEAM_END = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_red_beam_end_1.png");
+    private static final ResourceLocation QUEEN_BLACK_BEAM_OUTER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_black_beam_outer.png");
+    private static final ResourceLocation QUEEN_BLACK_BEAM_INNER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_black_beam_inner.png");
+    private static final ResourceLocation QUEEN_BLACK_BEAM_END = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_black_beam_end_1.png");
     private static final ResourceLocation KING_FIRE_BEAM_OUTER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/fire_beam_outer.png");
     private static final ResourceLocation KING_FIRE_BEAM_INNER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/fire_beam_inner.png");
     private static final ResourceLocation KING_FIRE_BEAM_END = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/fire_beam_end_1.png");
@@ -34,6 +43,45 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
     public RoyalBossRenderer(EntityRendererProvider.Context context) {
         super(context, new RoyalBossModel());
         this.shadowRadius = 8.0F;
+        this.addRenderLayer(new RoyalAfterimageLayer(this));
+        this.addRenderLayer(new TemporalContractionGeoLayer<>(this));
+    }
+
+    private static final class RoyalAfterimageLayer extends GeoRenderLayer<RoyalBossEntity> {
+        private RoyalAfterimageLayer(RoyalBossRenderer renderer) {
+            super(renderer);
+        }
+
+        @Override
+        public void render(PoseStack poseStack, RoyalBossEntity animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType,
+                           MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick,
+                           int packedLight, int packedOverlay) {
+            if (!animatable.isRoyalAccelerated() && (RoyalEffectHooks.contractedHolder() == null
+                    || !animatable.hasEffect(RoyalEffectHooks.contractedHolder()))) return;
+            Vec3 movement = animatable.getDeltaMovement();
+            if (movement.lengthSqr() < 1.0E-5D) return;
+            RenderType afterimageType = RenderType.entityTranslucent(this.getRenderer().getTextureLocation(animatable));
+            VertexConsumer afterimageBuffer = bufferSource.getBuffer(afterimageType);
+            int[] colors = {0x66FF5F6F, 0x4DFF4D60, 0x33FF3B52, 0x1FFF2944};
+            for (int i = colors.length - 1; i >= 0; i--) {
+                poseStack.pushPose();
+                Vec3 offset = movement.scale(-(i + 1) * 3.0D / RoyalBossEntity.MODEL_RENDER_SCALE);
+                poseStack.translate(offset.x, offset.y, offset.z);
+                this.getRenderer().reRender(
+                        bakedModel,
+                        poseStack,
+                        bufferSource,
+                        animatable,
+                        afterimageType,
+                        afterimageBuffer,
+                        partialTick,
+                        0xF000F0,
+                        OverlayTexture.NO_OVERLAY,
+                        colors[i]
+                );
+                poseStack.popPose();
+            }
+        }
     }
 
     @Override
@@ -68,18 +116,22 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
     public void render(RoyalBossEntity entity, float entityYaw, float partialTick, PoseStack poseStack,
                        MultiBufferSource bufferSource, int packedLight) {
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
-        Vec3 end = entity.getRoyalBeamEndPosition();
-        if (!entity.isFiringRoyalBeam() || end == null) {
-            return;
+        for (RoyalHead.Slot slot : RoyalHead.Slot.values()) {
+            if (entity.isFiringRoyalBeam(slot) && entity.getRoyalBeamEndPosition(slot) != null) {
+                renderBeam(entity, slot, partialTick, poseStack, bufferSource);
+            }
         }
+    }
+
+    private void renderBeam(RoyalBossEntity entity, RoyalHead.Slot beamHead, float partialTick,
+                            PoseStack poseStack, MultiBufferSource bufferSource) {
+        Vec3 end = entity.getRoyalBeamEndPosition(beamHead);
+        if (end == null) return;
         double x = Mth.lerp(partialTick, entity.xo, entity.getX());
         double y = Mth.lerp(partialTick, entity.yo, entity.getY());
         double z = Mth.lerp(partialTick, entity.zo, entity.getZ());
-        RoyalHead.Slot beamHead = entity.getRoyalBeamHeadSlot();
-        Vec3 trackedAnchor = beamHead == null
-                ? null
-                : ((RoyalBossModel) this.getGeoModel()).getTrackedBeamAnchor(beamHead);
-        Vec3 start = (trackedAnchor != null ? trackedAnchor : entity.getRoyalBeamShootFrom(partialTick))
+        Vec3 trackedAnchor = ((RoyalBossModel) this.getGeoModel()).getTrackedBeamAnchor(beamHead);
+        Vec3 start = (trackedAnchor != null ? trackedAnchor : entity.getRoyalBeamShootFrom(beamHead, partialTick))
                 .subtract(x, y, z);
         Vec3 finish = end.subtract(x, y, z);
         Vec3 axis = finish.subtract(start);
@@ -95,9 +147,9 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         side1 = side1.normalize();
         Vec3 side2 = dir.cross(side1).normalize();
 
-        ResourceLocation outer = QUEEN_BEAM_OUTER;
-        ResourceLocation inner = QUEEN_BEAM_INNER;
-        ResourceLocation endTexture = QUEEN_BEAM_END;
+        ResourceLocation outer = QUEEN_PURPLE_BEAM_OUTER;
+        ResourceLocation inner = QUEEN_PURPLE_BEAM_INNER;
+        ResourceLocation endTexture = QUEEN_PURPLE_BEAM_END;
         if (entity instanceof KingEntity) {
             switch (entity.getRoyalBeamElement()) {
                 case FIRE -> {
@@ -118,6 +170,21 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
                 case GENERIC -> {
                 }
             }
+        } else {
+            switch (entity.getRoyalBeamElement(beamHead)) {
+                case QUEEN_RED -> {
+                    outer = QUEEN_RED_BEAM_OUTER;
+                    inner = QUEEN_RED_BEAM_INNER;
+                    endTexture = QUEEN_RED_BEAM_END;
+                }
+                case QUEEN_BLACK -> {
+                    outer = QUEEN_BLACK_BEAM_OUTER;
+                    inner = QUEEN_BLACK_BEAM_INNER;
+                    endTexture = QUEEN_BLACK_BEAM_END;
+                }
+                default -> {
+                }
+            }
         }
 
         float time = entity.tickCount + partialTick;
@@ -125,19 +192,19 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         float scroll = -time * BEAM_SCROLL_SPEED;
         var pose = poseStack.last().pose();
 
-        VertexConsumer outerBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(outer));
+        VertexConsumer outerBuffer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(outer));
         drawBeamPlane(outerBuffer, pose, start, finish, side1.scale(BEAM_OUTER_RADIUS), scroll, scroll + tiles);
         drawBeamPlane(outerBuffer, pose, start, finish, side2.scale(BEAM_OUTER_RADIUS), scroll, scroll + tiles);
 
         float innerScroll = -time * BEAM_SCROLL_SPEED * 1.6F;
-        VertexConsumer innerBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(inner));
+        VertexConsumer innerBuffer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(inner));
         drawBeamPlane(innerBuffer, pose, start, finish, side1.scale(BEAM_INNER_RADIUS), innerScroll, innerScroll + tiles);
         drawBeamPlane(innerBuffer, pose, start, finish, side2.scale(BEAM_INNER_RADIUS), innerScroll, innerScroll + tiles);
 
         float impactSize = 1.1F + 0.35F * Mth.sin(time * 0.6F);
         Vec3 camLeft = new Vec3(this.entityRenderDispatcher.camera.getLeftVector());
         Vec3 camUp = new Vec3(this.entityRenderDispatcher.camera.getUpVector());
-        VertexConsumer endBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(endTexture));
+        VertexConsumer endBuffer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(endTexture));
         drawBillboard(endBuffer, pose, finish, camLeft.scale(impactSize), camUp.scale(impactSize));
     }
 

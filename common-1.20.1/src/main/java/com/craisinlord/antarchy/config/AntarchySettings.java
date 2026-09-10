@@ -468,6 +468,9 @@ public final class AntarchySettings {
     private static double molevoreBreakRange = 1.8D;
     private static double molevoreBreakVerticalRange = 2.2D;
     private static double molevoreBreakHalfWidth = 1.1D;
+    private static double jumpyBugLatchDamage = 2.0D;
+    private static double waterCannonCooldownSeconds = 4.0D;
+    private static double toreterrorRangedWaterBombChance = 0.35D;
     private static double nightmareHealth = 380.0D;
     private static double nightmareAttackDamage = 16.0D;
     private static double nightmareMovementSpeed = 0.28D;
@@ -2715,6 +2718,21 @@ public final class AntarchySettings {
     public static double molevoreAttackDamage() { return molevoreAttackDamage; }
     public static void setMolevoreAttackDamage(double value) { molevoreAttackDamage = value; }
 
+    public static double molevoreMovementSpeed() { return molevoreMovementSpeed; }
+    public static void setMolevoreMovementSpeed(double value) { molevoreMovementSpeed = value; }
+
+    public static double molevoreArmor() { return molevoreArmor; }
+    public static void setMolevoreArmor(double value) { molevoreArmor = value; }
+
+    public static double molevoreKnockbackResistance() { return molevoreKnockbackResistance; }
+    public static void setMolevoreKnockbackResistance(double value) { molevoreKnockbackResistance = value; }
+
+    public static double molevoreFollowRange() { return molevoreFollowRange; }
+    public static void setMolevoreFollowRange(double value) { molevoreFollowRange = value; }
+
+    public static int molevoreXpReward() { return molevoreXpReward; }
+    public static void setMolevoreXpReward(int value) { molevoreXpReward = value; }
+
     public static int molevoreSpinTicks() { return molevoreSpinTicks; }
     public static void setMolevoreSpinTicks(int value) { molevoreSpinTicks = value; }
 
@@ -2985,7 +3003,10 @@ public final class AntarchySettings {
     public static int bossMagicWardDurationTicks() { return bossMagicWardDurationTicks; }
     public static int bossMagicWardTriggerBreaches() { return bossMagicWardTriggerBreaches; }
     public static java.util.List<String> magicBurstDamageNamespaces() { return magicBurstDamageNamespaces; }
-    public static double jumpyBugLatchDamage() { return 2.0D; }
-    public static double waterCannonCooldownSeconds() { return 4.0D; }
-    public static double toreterrorRangedWaterBombChance() { return 0.35D; }
+    public static double jumpyBugLatchDamage() { return jumpyBugLatchDamage; }
+    public static void setJumpyBugLatchDamage(double value) { jumpyBugLatchDamage = value; }
+    public static double waterCannonCooldownSeconds() { return waterCannonCooldownSeconds; }
+    public static void setWaterCannonCooldownSeconds(double value) { waterCannonCooldownSeconds = value; }
+    public static double toreterrorRangedWaterBombChance() { return toreterrorRangedWaterBombChance; }
+    public static void setToreterrorRangedWaterBombChance(double value) { toreterrorRangedWaterBombChance = value; }
 }

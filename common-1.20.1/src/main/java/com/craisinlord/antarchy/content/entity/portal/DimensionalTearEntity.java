@@ -60,6 +60,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
     private static final double PORTAL_RADIUS = 1.35D;
     private static final double EXIT_OFFSET = 2.4D;
     private static final Map<UUID, Long> TELEPORT_COOLDOWNS = new HashMap<>();
+    private static long lastTeleportCooldownCleanupTick = Long.MIN_VALUE;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private UUID linkedTearId;
@@ -118,6 +119,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         }
 
         this.ageTicks++;
+        cleanupTeleportCooldowns(this.level().getGameTime());
         if (this.ageTicks >= this.lifetimeTicks - COLLAPSE_WARNING_TICKS) {
             this.setTearState(TearState.COLLAPSING);
         }
@@ -233,6 +235,15 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
             living.addEffect(new MobEffectInstance(AntarchyObjects.INVERTED_EFFECT.get(), AntarchySettings.dimensionalTearInvertedDurationTicks(), 0));
         }
         this.level().playSound(null, this.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 0.7F, 0.65F + this.random.nextFloat() * 0.2F);
+    }
+
+    private static void cleanupTeleportCooldowns(long gameTime) {
+        if (gameTime <= lastTeleportCooldownCleanupTick
+                || gameTime - lastTeleportCooldownCleanupTick < TELEPORT_COOLDOWN_TICKS * 4L) {
+            return;
+        }
+        lastTeleportCooldownCleanupTick = gameTime;
+        TELEPORT_COOLDOWNS.entrySet().removeIf(entry -> entry.getValue() <= gameTime);
     }
 
     private Vec3 exitPosition() {

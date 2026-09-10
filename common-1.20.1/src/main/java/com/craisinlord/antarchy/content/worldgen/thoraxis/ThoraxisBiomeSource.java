@@ -17,6 +17,12 @@ import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
 
 public final class ThoraxisBiomeSource extends BiomeSource {
+    public static final Codec<ThoraxisBiomeSource> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            MultiNoiseBiomeSource.DIRECT_CODEC.forGetter(ThoraxisBiomeSource::parameters),
+            Codec.INT.optionalFieldOf("dream_dunes_max_y", 160).forGetter(ThoraxisBiomeSource::dreamDunesMaxY),
+            Codec.INT.optionalFieldOf("umbral_hills_max_y", 160).forGetter(ThoraxisBiomeSource::umbralHillsMaxY),
+            Codec.INT.optionalFieldOf("lucid_pools_min_y", 116).forGetter(ThoraxisBiomeSource::lucidPoolsMinY)
+    ).apply(instance, ThoraxisBiomeSource::new));
     private static final int REGION_NOISE_SCALE = 96;
     private static final int REGION_DETAIL_SCALE = 41;
     private static final int VERTICAL_NOISE_SCALE = 8;

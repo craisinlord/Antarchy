@@ -45,34 +45,30 @@ public class RoyalBossModel extends GeoModel<RoyalBossEntity> {
             this.getBone(anchor).ifPresent(bone -> bone.setTrackingMatrices(true));
         }
 
-        RoyalHead.Slot slot = animatable.getRoyalBeamHeadSlot();
-        Vec3 beamEnd = animatable.getRoyalBeamEndPosition();
-        if (!animatable.isFiringRoyalBeam() || slot == null || beamEnd == null) {
-            return;
-        }
-
         float partialTick = animationState.getPartialTick();
-        Vec3 origin = animatable.getRoyalBeamShootFrom(partialTick);
-        Vec3 direction = beamEnd.subtract(origin);
-        double horizontal = Math.sqrt(direction.x * direction.x + direction.z * direction.z);
-        if (direction.lengthSqr() < 1.0E-6D || horizontal < 1.0E-4D) {
-            return;
-        }
+        for (RoyalHead.Slot slot : RoyalHead.Slot.values()) {
+            Vec3 beamEnd = animatable.getRoyalBeamEndPosition(slot);
+            if (!animatable.isFiringRoyalBeam(slot) || beamEnd == null) continue;
+            Vec3 origin = animatable.getRoyalBeamShootFrom(slot, partialTick);
+            Vec3 direction = beamEnd.subtract(origin);
+            double horizontal = Math.sqrt(direction.x * direction.x + direction.z * direction.z);
+            if (direction.lengthSqr() < 1.0E-6D || horizontal < 1.0E-4D) continue;
 
-        float desiredYaw = (float) (Mth.atan2(-direction.x, direction.z) * Mth.RAD_TO_DEG);
-        float bodyYaw = Mth.rotLerp(partialTick, animatable.yRotO, animatable.getYRot());
-        float relativeYaw = Mth.clamp(Mth.wrapDegrees(desiredYaw - bodyYaw), -55.0F, 55.0F) * Mth.DEG_TO_RAD;
-        float pitch = Mth.clamp((float) -Mth.atan2(direction.y, horizontal) * Mth.RAD_TO_DEG,
-                -45.0F, 45.0F) * Mth.DEG_TO_RAD;
+            float desiredYaw = (float) (Mth.atan2(-direction.x, direction.z) * Mth.RAD_TO_DEG);
+            float bodyYaw = Mth.rotLerp(partialTick, animatable.yRotO, animatable.getYRot());
+            float relativeYaw = Mth.clamp(Mth.wrapDegrees(desiredYaw - bodyYaw), -55.0F, 55.0F) * Mth.DEG_TO_RAD;
+            float pitch = Mth.clamp((float) -Mth.atan2(direction.y, horizontal) * Mth.RAD_TO_DEG,
+                    -45.0F, 45.0F) * Mth.DEG_TO_RAD;
 
-        String[] chain = AIM_CHAINS[slot.ordinal()];
-        float yawPerBone = relativeYaw / chain.length;
-        float pitchPerBone = pitch / chain.length;
-        for (String boneName : chain) {
-            this.getBone(boneName).ifPresent(bone -> {
-                bone.setRotY(bone.getRotY() + yawPerBone);
-                bone.setRotX(bone.getRotX() + pitchPerBone);
-            });
+            String[] chain = AIM_CHAINS[slot.ordinal()];
+            float yawPerBone = relativeYaw / chain.length;
+            float pitchPerBone = pitch / chain.length;
+            for (String boneName : chain) {
+                this.getBone(boneName).ifPresent(bone -> {
+                    bone.setRotY(bone.getRotY() + yawPerBone);
+                    bone.setRotX(bone.getRotX() + pitchPerBone);
+                });
+            }
         }
     }
 

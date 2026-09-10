@@ -13,7 +13,7 @@ public class RoyalMountSpitGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        if (this.mount.isBaby() || this.mount.isVehicle() || this.mount.isOrderedToSit()) {
+        if (this.mount.isVehicle() || this.mount.isOrderedToSit()) {
             return false;
         }
         LivingEntity target = this.mount.getTarget();

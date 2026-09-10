@@ -58,6 +58,13 @@ public abstract class LivingEntityRendererAnimationTimeDilationMixin {
         return entity == null ? amount : ClientTimeDilationTicker.dilateWalkAmount(entity, amount);
     }
 
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/WalkAnimationState;position(F)F"))
+    private float antarchy$scaleWalkPosition(net.minecraft.world.entity.WalkAnimationState state, float partialTick) {
+        LivingEntity entity = antarchy$renderingEntity.get();
+        float position = state.position(partialTick);
+        return entity == null ? position : ClientTimeDilationTicker.dilateWalkPosition(entity, position);
+    }
+
     @org.spongepowered.asm.mixin.injection.Inject(method = "getOverlayCoords", at = @At("HEAD"), cancellable = true)
     private static void antarchy$slowHurtOverlay(LivingEntity entity, float partialTick, CallbackInfoReturnable<Integer> cir) {
         if (com.craisinlord.antarchy.content.time.TimeDilationApi.getRate(entity) < 1.0D

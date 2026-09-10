@@ -17,6 +17,7 @@ public final class ClientTimeDilationTicker {
     private static ClientLevel activeLevel;
     private static final Map<ItemEntity, ItemSpinState> ITEM_SPIN_STATES = new WeakHashMap<>();
     private static final Map<LivingEntity, AttackAnimationState> ATTACK_ANIMATION_STATES = new WeakHashMap<>();
+    private static final Map<LivingEntity, AnimationClockState> WALK_ANIMATION_STATES = new WeakHashMap<>();
     private static final Map<Entity, AnimationClockState> ANIMATION_CLOCKS = new WeakHashMap<>();
 
     private ClientTimeDilationTicker() {
@@ -28,9 +29,12 @@ public final class ClientTimeDilationTicker {
             activeFields = List.of();
             ITEM_SPIN_STATES.clear();
             ATTACK_ANIMATION_STATES.clear();
+            WALK_ANIMATION_STATES.clear();
             ANIMATION_CLOCKS.clear();
+            ContractionAfterimages.clear();
             com.craisinlord.antarchy.content.time.TimeDilationApi.clearSyncedClientRates();
         }
+        ContractionAfterimages.tick(level);
     }
 
     public static float dilateAnimationTime(Entity entity, float vanillaTime) {
@@ -85,6 +89,22 @@ public final class ClientTimeDilationTicker {
     public static float dilateWalkAmount(LivingEntity entity, float amount) {
         double rate = com.craisinlord.antarchy.content.time.TimeDilationApi.getRate(entity);
         return rate >= TimeDilationMath.NORMAL_RATE ? amount : amount * (float) rate;
+    }
+
+    public static float dilateWalkPosition(LivingEntity entity, float vanillaPosition) {
+        double rate = com.craisinlord.antarchy.content.time.TimeDilationApi.getRate(entity);
+        if (Math.abs(rate - TimeDilationMath.NORMAL_RATE) < 0.001D) {
+            WALK_ANIMATION_STATES.remove(entity);
+            return vanillaPosition;
+        }
+        AnimationClockState state = WALK_ANIMATION_STATES.computeIfAbsent(entity,
+                ignored -> new AnimationClockState(vanillaPosition));
+        float delta = vanillaPosition - state.lastVanillaTime;
+        if (delta >= 0.0F) {
+            state.temporalTime += delta * (float) rate;
+        }
+        state.lastVanillaTime = vanillaPosition;
+        return state.temporalTime;
     }
 
     public static float dilateItemSpin(ItemEntity item, float vanillaSpin) {

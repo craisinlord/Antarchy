@@ -125,7 +125,9 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue ROYAL_BOSS_BITE_DAMAGE_MULTIPLIER;
     private static final ModConfigSpec.IntValue ROYAL_BOSS_BITE_COOLDOWN_TICKS;
     private static final ModConfigSpec.DoubleValue QUEEN_BEAM_DAMAGE, QUEEN_BEAM_RANGE, QUEEN_BEAM_MINIMUM_RANGE, QUEEN_BEAM_TRACKING, QUEEN_BEAM_TERRAIN_RADIUS;
-    private static final ModConfigSpec.IntValue QUEEN_BEAM_DURATION_TICKS, QUEEN_BEAM_WINDUP_TICKS, QUEEN_BEAM_TRAVEL_TICKS, QUEEN_BEAM_COOLDOWN_TICKS, QUEEN_BEAM_TERRAIN_CAP;
+    private static final ModConfigSpec.IntValue QUEEN_BEAM_DURATION_TICKS, QUEEN_BEAM_WINDUP_TICKS, QUEEN_BEAM_TRAVEL_TICKS, QUEEN_BEAM_COOLDOWN_TICKS, QUEEN_BEAM_TERRAIN_CAP,
+            QUEEN_BEAM_PHASE_ONE_CAP, QUEEN_BEAM_PHASE_TWO_CAP, QUEEN_BEAM_PHASE_THREE_CAP;
+    private static final ModConfigSpec.DoubleValue QUEEN_BEAM_PHASE_THREE_MAX_VOLLEY_CHANCE;
     private static final ModConfigSpec.DoubleValue KING_BEAM_DAMAGE, KING_BEAM_RANGE, KING_BEAM_MINIMUM_RANGE, KING_BEAM_TRACKING, KING_BEAM_TERRAIN_RADIUS;
     private static final ModConfigSpec.IntValue KING_BEAM_DURATION_TICKS, KING_BEAM_WINDUP_TICKS, KING_BEAM_TRAVEL_TICKS, KING_BEAM_COOLDOWN_TICKS, KING_BEAM_TERRAIN_CAP;
     private static final ModConfigSpec.IntValue ROYAL_DECREE_COOLDOWN_TICKS;
@@ -134,7 +136,7 @@ public final class AntarchyMobsConfig {
             KING_ROYAL_MUSTER_DURATION_TICKS, KING_ROYAL_MUSTER_CAP;
     private static final ModConfigSpec.DoubleValue QUEEN_BLACK_HOLE_RADIUS, QUEEN_BLACK_HOLE_PULL_STRENGTH,
             QUEEN_FINAL_TIME_FIELD_RADIUS, QUEEN_FINAL_TIME_FIELD_RATE;
-    private static final ModConfigSpec.IntValue QUEEN_BLACK_HOLE_ACTIVE_TICKS,
+    private static final ModConfigSpec.IntValue QUEEN_BLACK_HOLE_ACTIVE_TICKS, QUEEN_BLACK_HOLE_BLOCK_SUCTION_CAP,
             QUEEN_FINAL_TIME_FIELD_DURATION_TICKS, QUEEN_FINAL_TIME_FIELD_COOLDOWN_TICKS;
     private static final ModConfigSpec.DoubleValue ROYAL_BOSS_SOUND_VOLUME;
     private static final ModConfigSpec.DoubleValue KING_FIREBALL_DAMAGE, KING_FIREBALL_RADIUS, KING_ICEBALL_DAMAGE, KING_ICEBALL_RADIUS, KING_ICE_SPIKE_DAMAGE;
@@ -583,7 +585,7 @@ public final class AntarchyMobsConfig {
         ROYAL_BOSS_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance shared by King and Queen.").defineInRange("knockbackResistance", 1.0D, 0.0D, 1.0D);
         ROYAL_BOSS_STEP_HEIGHT = b.comment("Base step height shared by King and Queen.").defineInRange("stepHeight", 3.0D, 0.0D, 32.0D);
         ROYAL_BOSS_MAX_SINGLE_HIT_DAMAGE = b.comment("Maximum damage a single hit can deal to a Royal boss before later anti-burst systems are added.").defineInRange("maxSingleHitDamage", 250.0D, 1.0D, 32768.0D);
-        ROYAL_BOSS_BITE_REACH = b.comment("Radius around each head anchor that a King or Queen bite can hit.").defineInRange("biteReach", 10.0D, 1.0D, 64.0D);
+        ROYAL_BOSS_BITE_REACH = b.comment("Radius around each head anchor that a King or Queen bite can hit.").defineInRange("biteReach", 12.0D, 1.0D, 64.0D);
         ROYAL_BOSS_BITE_DAMAGE_MULTIPLIER = b.comment("Multiplier applied to base attack damage for King and Queen head bites.").defineInRange("biteDamageMultiplier", 1.6D, 0.0D, 32.0D);
         ROYAL_BOSS_BITE_COOLDOWN_TICKS = b.comment("Base cooldown in ticks between bites for a single King or Queen head (scaled down at later phases).").defineInRange("biteCooldownTicks", 45, 1, 1200);
         QUEEN_BEAM_DAMAGE = b.defineInRange("queenBeamDamage", 45.0D, 0.0D, 1024.0D);
@@ -596,6 +598,10 @@ public final class AntarchyMobsConfig {
         QUEEN_BEAM_TRACKING = b.defineInRange("queenBeamTracking", 0.1D, 0.0D, 1.0D);
         QUEEN_BEAM_TERRAIN_RADIUS = b.defineInRange("queenBeamTerrainRadius", 5.0D, 0.0D, 32.0D);
         QUEEN_BEAM_TERRAIN_CAP = b.defineInRange("queenBeamTerrainCap", 192, 0, 4096);
+        QUEEN_BEAM_PHASE_ONE_CAP = b.comment("Maximum simultaneous Queen beams in phase one.").defineInRange("queenBeamPhaseOneCap", 1, 1, 3);
+        QUEEN_BEAM_PHASE_TWO_CAP = b.comment("Maximum simultaneous Queen beams in phase two.").defineInRange("queenBeamPhaseTwoCap", 2, 1, 3);
+        QUEEN_BEAM_PHASE_THREE_CAP = b.comment("Maximum simultaneous Queen beams when phase three rolls a full volley.").defineInRange("queenBeamPhaseThreeCap", 3, 1, 3);
+        QUEEN_BEAM_PHASE_THREE_MAX_VOLLEY_CHANCE = b.comment("Chance that a new phase-three Queen beam volley may use its full configured cap; otherwise it is limited to two beams.").defineInRange("queenBeamPhaseThreeMaxVolleyChance", 0.2D, 0.0D, 1.0D);
         KING_BEAM_DAMAGE = b.defineInRange("kingBeamDamage", 50.0D, 0.0D, 1024.0D);
         KING_BEAM_RANGE = b.defineInRange("kingBeamRange", 100.0D, 1.0D, 256.0D);
         KING_BEAM_MINIMUM_RANGE = b.comment("Minimum distance from the King before he may begin or maintain a beam.").defineInRange("kingBeamMinimumRange", 32.0D, 0.0D, 256.0D);
@@ -613,8 +619,9 @@ public final class AntarchyMobsConfig {
         KING_ROYAL_MUSTER_RADIUS = b.comment("Radius of the King's command aura.").defineInRange("kingRoyalMusterRadius", 32.0D, 1.0D, 128.0D);
         KING_ROYAL_MUSTER_CAP = b.comment("Maximum hostile mobs affected by one command pulse.").defineInRange("kingRoyalMusterCap", 12, 1, 128);
         QUEEN_BLACK_HOLE_RADIUS = b.defineInRange("queenBlackHoleRadius", 14.0D, 1.0D, 64.0D);
-        QUEEN_BLACK_HOLE_ACTIVE_TICKS = b.defineInRange("queenBlackHoleActiveTicks", 120, 20, 1200);
+        QUEEN_BLACK_HOLE_ACTIVE_TICKS = b.comment("Active duration for Royal Assailant axe black holes. Queen black holes always follow their 20.125-second animation.").defineInRange("queenBlackHoleActiveTicks", 120, 20, 1200);
         QUEEN_BLACK_HOLE_PULL_STRENGTH = b.defineInRange("queenBlackHolePullStrength", 0.16D, 0.0D, 2.0D);
+        QUEEN_BLACK_HOLE_BLOCK_SUCTION_CAP = b.comment("Maximum terrain blocks a single Queen black hole may pull into itself.").defineInRange("queenBlackHoleBlockSuctionCap", 160, 0, 4096);
         QUEEN_FINAL_TIME_FIELD_RADIUS = b.defineInRange("queenFinalTimeFieldRadius", 20.0D, 1.0D, 64.0D);
         QUEEN_FINAL_TIME_FIELD_RATE = b.defineInRange("queenFinalTimeFieldRate", 0.05D, 0.05D, 1.0D);
         QUEEN_FINAL_TIME_FIELD_DURATION_TICKS = b.defineInRange("queenFinalTimeFieldDurationTicks", 45, 1, 1200);
@@ -1040,6 +1047,10 @@ public final class AntarchyMobsConfig {
     static double  queenBeamTracking()                      { return QUEEN_BEAM_TRACKING.get(); }
     static double  queenBeamTerrainRadius()                 { return QUEEN_BEAM_TERRAIN_RADIUS.get(); }
     static int     queenBeamTerrainCap()                    { return QUEEN_BEAM_TERRAIN_CAP.get(); }
+    static int     queenBeamPhaseOneCap()                   { return QUEEN_BEAM_PHASE_ONE_CAP.get(); }
+    static int     queenBeamPhaseTwoCap()                   { return QUEEN_BEAM_PHASE_TWO_CAP.get(); }
+    static int     queenBeamPhaseThreeCap()                 { return QUEEN_BEAM_PHASE_THREE_CAP.get(); }
+    static double  queenBeamPhaseThreeMaxVolleyChance()     { return QUEEN_BEAM_PHASE_THREE_MAX_VOLLEY_CHANCE.get(); }
     static double  kingBeamDamage()                         { return KING_BEAM_DAMAGE.get(); }
     static double  kingBeamRange()                          { return KING_BEAM_RANGE.get(); }
     static double  kingBeamMinimumRange()                   { return KING_BEAM_MINIMUM_RANGE.get(); }
@@ -1059,6 +1070,7 @@ public final class AntarchyMobsConfig {
     static double  queenBlackHoleRadius()                    { return QUEEN_BLACK_HOLE_RADIUS.get(); }
     static int     queenBlackHoleActiveTicks()               { return QUEEN_BLACK_HOLE_ACTIVE_TICKS.get(); }
     static double  queenBlackHolePullStrength()              { return QUEEN_BLACK_HOLE_PULL_STRENGTH.get(); }
+    static int     queenBlackHoleBlockSuctionCap()            { return QUEEN_BLACK_HOLE_BLOCK_SUCTION_CAP.get(); }
     static double  queenFinalTimeFieldRadius()               { return QUEEN_FINAL_TIME_FIELD_RADIUS.get(); }
     static double  queenFinalTimeFieldRate()                 { return QUEEN_FINAL_TIME_FIELD_RATE.get(); }
     static int     queenFinalTimeFieldDurationTicks()        { return QUEEN_FINAL_TIME_FIELD_DURATION_TICKS.get(); }

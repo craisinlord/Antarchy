@@ -32,6 +32,15 @@ public class PrinceEntity extends RoyalMountEntity {
     }
 
     @Override
+    public RoyalBeamElement getBeamElement() {
+        return switch (this.getBeamHead()) {
+            case 0 -> RoyalBeamElement.FIRE;
+            case 2 -> RoyalBeamElement.ICE;
+            default -> RoyalBeamElement.LIGHTNING;
+        };
+    }
+
+    @Override
     protected String geoName() {
         return "prince";
     }

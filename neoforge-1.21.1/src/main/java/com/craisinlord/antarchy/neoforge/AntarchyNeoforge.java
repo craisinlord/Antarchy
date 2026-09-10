@@ -231,7 +231,10 @@ public class AntarchyNeoforge {
                 AntarchyNeoforgeSounds.PRINCESS_BITE,
                 AntarchyNeoforgeSounds.PRINCESS_SHOOT,
                 AntarchyNeoforgeSounds.PRINCESS_FLY,
-                AntarchyNeoforgeSounds.PRINCESS_STEP
+                AntarchyNeoforgeSounds.PRINCESS_STEP,
+                AntarchyNeoforgeSounds.KING_DECREE,
+                AntarchyNeoforgeSounds.KING_SUCCESS,
+                AntarchyNeoforgeSounds.KING_JUDGEMENT
         );
         AntarchySoundEvents.bindDimensionalTearSounds(
                 AntarchyNeoforgeSounds.DIMENSIONAL_TEAR_OPEN,
@@ -430,6 +433,7 @@ public class AntarchyNeoforge {
         AntarchyObjects.setWindVortex(() -> AntarchyNeoforgeEntites.WIND_VORTEX.get());
         AntarchyObjects.setTimeDilationField(() -> AntarchyNeoforgeEntites.TIME_DILATION_FIELD.get());
         AntarchyObjects.setRoyalBlackHole(() -> AntarchyNeoforgeEntites.ROYAL_BLACK_HOLE.get());
+        AntarchyObjects.setRoyalAssailantBlackHole(() -> AntarchyNeoforgeEntites.ROYAL_ASSAILANT_BLACK_HOLE.get());
         AntarchyObjects.setVortexChargeProjectile(() -> AntarchyNeoforgeEntites.VORTEX_CHARGE_PROJECTILE.get());
         AntarchyObjects.setPrince(() -> AntarchyNeoforgeEntites.PRINCE.get());
         AntarchyObjects.setPrincess(() -> AntarchyNeoforgeEntites.PRINCESS.get());

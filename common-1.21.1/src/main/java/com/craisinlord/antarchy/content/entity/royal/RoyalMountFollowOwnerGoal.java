@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.entity.royal;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.phys.Vec3;
@@ -58,7 +59,7 @@ public class RoyalMountFollowOwnerGoal extends Goal {
 
         double distanceSqr = this.mount.distanceToSqr(this.owner);
         if (distanceSqr > TELEPORT_DISTANCE * TELEPORT_DISTANCE) {
-            this.mount.teleportTo(this.owner.getX(), this.owner.getY(), this.owner.getZ());
+            this.trySafeTeleport();
             return;
         }
 
@@ -80,5 +81,30 @@ public class RoyalMountFollowOwnerGoal extends Goal {
     @Override
     public boolean requiresUpdateEveryTick() {
         return true;
+    }
+
+    private void trySafeTeleport() {
+        Vec3 ownerPosition = this.owner.position();
+        BlockPos ownerBlock = this.owner.blockPosition();
+        for (int radius = 0; radius <= 2; radius++) {
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    for (int dy = -1; dy <= 2; dy++) {
+                        double x = ownerPosition.x + dx + 0.5D;
+                        double y = ownerBlock.getY() + dy;
+                        double z = ownerPosition.z + dz + 0.5D;
+                        BlockPos floor = BlockPos.containing(x, y - 0.1D, z);
+                        var destination = this.mount.getBoundingBox().move(x - this.mount.getX(), y - this.mount.getY(), z - this.mount.getZ());
+                        if (!this.mount.level().noCollision(this.mount, destination)) {
+                            continue;
+                        }
+                        if (this.mount.isFlying() || !this.mount.level().getBlockState(floor).getCollisionShape(this.mount.level(), floor).isEmpty()) {
+                            this.mount.teleportTo(x, y, z);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.world.entity.LivingEntity;
@@ -54,7 +55,8 @@ public abstract class CrossbowItemGravityMixin {
     }
 
     private static boolean antarchy$shouldFixProjectileSpawn(LivingEntity shooter) {
-        return !(shooter instanceof net.minecraft.world.entity.player.Player)
-                || AntarchySettings.invertProjectilesFromInvertedPlayers();
+        return ThoraxisUndersideManager.shouldInvertInUnderside(shooter)
+                && (!(shooter instanceof net.minecraft.world.entity.player.Player)
+                || AntarchySettings.invertProjectilesFromInvertedPlayers());
     }
 }

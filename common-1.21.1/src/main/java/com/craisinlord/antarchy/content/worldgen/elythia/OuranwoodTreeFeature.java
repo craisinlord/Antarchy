@@ -9,8 +9,10 @@ import com.mojang.serialization.Codec;
 import java.util.ArrayList;
 import java.util.ArrayDeque;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -33,6 +35,13 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import org.jetbrains.annotations.Nullable;
 
 public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
+    private static final ThreadLocal<TreePlacement> ACTIVE_PLACEMENT = new ThreadLocal<>();
+
+    private static final class TreePlacement {
+        private final Set<BlockPos> logPositions = new LinkedHashSet<>();
+        private final Set<BlockPos> leafPositions = new LinkedHashSet<>();
+    }
+
     public OuranwoodTreeFeature(Codec<OuranwoodTreeConfiguration> codec) {
         super(codec);
     }
@@ -44,9 +53,12 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
         OuranwoodTreeConfiguration config = context.config();
         RandomSource random = context.random();
 
-        if (!canGrowOn(level, origin.below())) {
-            return false;
-        }
+        TreePlacement placement = new TreePlacement();
+        ACTIVE_PLACEMENT.set(placement);
+        try {
+            if (!canGrowOn(level, origin.below())) {
+                return false;
+            }
 
         int height = config.height().sample(random);
         int trunkRadius = config.trunkRadius().sample(random);
@@ -86,7 +98,10 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
         this.placeVinesAndGlowBerries(level, canopyCenter, config, random, canopyRadius, canopyDepth, height);
         this.placeFlyingSquirrelNest(level, origin, config, random, trunkRadius, height);
         this.placeCaterpillarChrysalis(level, origin, config, random, canopyCenter, canopyRadius, canopyDepth);
-        return true;
+            return true;
+        } finally {
+            ACTIVE_PLACEMENT.remove();
+        }
     }
 
     protected BlockPos resolveCanopyCenter(BlockPos origin, int height, int canopyDepth) {
@@ -1044,6 +1059,28 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
     }
 
     protected void pruneExposedTopLogs(WorldGenLevel level, BlockPos origin, BlockPos canopyCenter, OuranwoodTreeConfiguration config, RandomSource random, int trunkRadius, int canopyRadius, int canopyDepth, int height) {
+        TreePlacement placement = ACTIVE_PLACEMENT.get();
+        if (placement != null) {
+            for (BlockPos pos : placement.logPositions) {
+                if (this.isWithinTrunkCore(origin, pos, trunkRadius, canopyCenter.getY())) {
+                    continue;
+                }
+                BlockState state = level.getBlockState(pos);
+                if (!state.is(BlockTags.LOGS)) {
+                    continue;
+                }
+                int leafNeighbors = this.countLeafNeighbors(level, pos);
+                int openFaces = this.countOpenFaces(level, pos);
+                boolean topExposed = level.getBlockState(pos.above()).isAir();
+                boolean lowerCanopyStray = pos.getY() <= canopyCenter.getY()
+                        && leafNeighbors >= 3
+                        && openFaces >= 2;
+                if ((topExposed && leafNeighbors >= 1) || lowerCanopyStray) {
+                    this.setLeaf(level, pos, config, random);
+                }
+            }
+            return;
+        }
         int horizontalRadius = canopyRadius + 6;
         int minY = canopyCenter.getY() - Math.max(4, canopyDepth / 2 + 1);
         int maxY = origin.getY() + height + canopyDepth + 6;
@@ -1077,6 +1114,23 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
     }
 
     protected void coverExposedBranchSides(WorldGenLevel level, BlockPos origin, BlockPos canopyCenter, OuranwoodTreeConfiguration config, RandomSource random, int trunkRadius, int canopyRadius, int canopyDepth, int height) {
+        TreePlacement placement = ACTIVE_PLACEMENT.get();
+        if (placement != null) {
+            for (BlockPos pos : placement.logPositions) {
+                if (!level.getBlockState(pos).is(BlockTags.LOGS)
+                        || this.isWithinTrunkCore(origin, pos, trunkRadius, canopyCenter.getY())
+                        || this.countLeafNeighbors(level, pos) < 1) {
+                    continue;
+                }
+                for (Direction direction : Direction.Plane.HORIZONTAL) {
+                    BlockPos sidePos = pos.relative(direction);
+                    if (level.getBlockState(sidePos).isAir() && this.canWrapBranchSide(level, pos, direction)) {
+                        this.tryPlaceLeaf(level, sidePos, config, random);
+                    }
+                }
+            }
+            return;
+        }
         int horizontalRadius = canopyRadius + 6;
         int minY = Math.max(origin.getY() + Math.max(4, height / 4), canopyCenter.getY() - canopyDepth - 3);
         int maxY = origin.getY() + height + canopyDepth + 4;
@@ -1112,6 +1166,11 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
     }
 
     protected void updateLeafDistances(WorldGenLevel level, BlockPos origin, int height, int canopyRadius, int canopyDepth) {
+        TreePlacement placement = ACTIVE_PLACEMENT.get();
+        if (placement != null) {
+            this.updateLeafDistances(level, placement.leafPositions);
+            return;
+        }
         int horizontalRadius = canopyRadius + 2;
         int minY = Math.max(level.getMinBuildHeight(), origin.getY() - 2);
         int maxY = Math.min(level.getMaxBuildHeight() - 1, origin.getY() + height + canopyDepth + 8);
@@ -1196,6 +1255,78 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
             } else {
                 updatedState = state.setValue(distanceProperty, computedDistance);
             }
+            setBlock(level, pos, updatedState);
+        }
+    }
+
+    private void updateLeafDistances(WorldGenLevel level, Set<BlockPos> leafPositions) {
+        Map<BlockPos, Integer> distances = new HashMap<>();
+        ArrayDeque<BlockPos> queue = new ArrayDeque<>();
+
+        for (BlockPos pos : leafPositions) {
+            BlockState state = level.getBlockState(pos);
+            IntegerProperty property = this.getLeafDistanceProperty(state);
+            if (property != null) {
+                distances.put(pos, this.getLeafDistanceLimit(state));
+            }
+        }
+
+        for (BlockPos pos : leafPositions) {
+            BlockState state = level.getBlockState(pos);
+            IntegerProperty property = this.getLeafDistanceProperty(state);
+            if (property == null) {
+                continue;
+            }
+            int bestDistance = this.getLeafDistanceLimit(state);
+            for (Direction direction : Direction.values()) {
+                BlockPos neighborPos = pos.relative(direction);
+                BlockState neighbor = level.getBlockState(neighborPos);
+                if (neighbor.is(BlockTags.LOGS)) {
+                    bestDistance = 1;
+                    break;
+                }
+                IntegerProperty neighborProperty = this.getLeafDistanceProperty(neighbor);
+                if (neighborProperty != null && !distances.containsKey(neighborPos)) {
+                    bestDistance = Math.min(bestDistance, neighbor.getValue(neighborProperty) + 1);
+                }
+            }
+            if (bestDistance < distances.get(pos)) {
+                distances.put(pos, bestDistance);
+                queue.add(pos);
+            }
+        }
+
+        while (!queue.isEmpty()) {
+            BlockPos pos = queue.removeFirst();
+            int distance = distances.get(pos);
+            for (Direction direction : Direction.values()) {
+                BlockPos neighborPos = pos.relative(direction);
+                Integer neighborDistance = distances.get(neighborPos);
+                if (neighborDistance == null) {
+                    continue;
+                }
+                BlockState neighborState = level.getBlockState(neighborPos);
+                int candidate = Math.min(this.getLeafDistanceLimit(neighborState), distance + 1);
+                if (candidate < neighborDistance) {
+                    distances.put(neighborPos, candidate);
+                    queue.addLast(neighborPos);
+                }
+            }
+        }
+
+        for (BlockPos pos : leafPositions) {
+            BlockState state = level.getBlockState(pos);
+            IntegerProperty property = this.getLeafDistanceProperty(state);
+            if (property == null) {
+                continue;
+            }
+            int computedDistance = distances.get(pos);
+            if (computedDistance == state.getValue(property)) {
+                continue;
+            }
+            BlockState updatedState = state.getBlock() instanceof OuranwoodLeavesBlock
+                    ? OuranwoodLeavesBlock.setOuranwoodDistanceForWorldgen(state, computedDistance)
+                    : state.setValue(property, computedDistance);
             setBlock(level, pos, updatedState);
         }
     }
@@ -1530,6 +1661,15 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
     protected void setBlock(WorldGenLevel level, BlockPos pos, BlockState state) {
         if (canWriteAt(level, pos)) {
             setBlock((LevelWriter) level, pos, state);
+            TreePlacement placement = ACTIVE_PLACEMENT.get();
+            if (placement != null) {
+                BlockPos immutablePos = pos.immutable();
+                if (state.is(BlockTags.LOGS)) {
+                    placement.logPositions.add(immutablePos);
+                } else if (state.is(BlockTags.LEAVES)) {
+                    placement.leafPositions.add(immutablePos);
+                }
+            }
         }
     }
 

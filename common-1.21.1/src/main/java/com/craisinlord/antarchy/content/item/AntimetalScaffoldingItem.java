@@ -2,15 +2,10 @@ package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.content.block.AntimetalScaffoldingBlock;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import java.util.List;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ScaffoldingBlockItem;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -21,12 +16,6 @@ public class AntimetalScaffoldingItem extends ScaffoldingBlockItem {
     public AntimetalScaffoldingItem(Block block, Item.Properties properties) {
         super(block, properties);
     }
-
-//    @Override
-//    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-//        tooltipComponents.add(Component.translatable("tooltip.antarchy.antimetal_scaffolding").withStyle(ChatFormatting.DARK_AQUA));
-//        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-//    }
 
     @Nullable
     @Override

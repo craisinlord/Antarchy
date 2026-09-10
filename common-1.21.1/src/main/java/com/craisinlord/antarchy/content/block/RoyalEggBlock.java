@@ -170,7 +170,7 @@ public abstract class RoyalEggBlock extends BaseEntityBlock {
             return;
         }
         mount.moveTo(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, level.random.nextFloat() * 360.0F, 0.0F);
-        mount.setBaby(true);
+        mount.setGrowthProgress(0.0F);
         mount.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.BREEDING, null);
         if (placer != null) {
             mount.setTame(true, true);

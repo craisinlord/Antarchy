@@ -85,6 +85,7 @@ public final class AntarchyTags {
         public static final TagKey<EntityType<?>> DIMENSIONAL_TEAR_COMMON_SPAWNS = TagKey.create(Registries.ENTITY_TYPE, id("dimensional_tear_common_spawns"));
         public static final TagKey<EntityType<?>> DIMENSIONAL_TEAR_RARE_SPAWNS = TagKey.create(Registries.ENTITY_TYPE, id("dimensional_tear_rare_spawns"));
         public static final TagKey<EntityType<?>> TIME_DILATION_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("time_dilation_immune"));
+        public static final TagKey<EntityType<?>> QUEEN_DOES_NOT_ATTACK = TagKey.create(Registries.ENTITY_TYPE, id("queen_does_not_attack"));
         public static final TagKey<EntityType<?>> COMMANDED_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, id("commanded_blacklist"));
         public static final TagKey<EntityType<?>> DILATED_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, id("dilated_blacklist"));
 

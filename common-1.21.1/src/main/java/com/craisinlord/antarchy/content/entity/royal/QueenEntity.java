@@ -7,6 +7,7 @@ import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.ManticoreEntity;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
@@ -21,23 +22,27 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamSettings;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamTerrainMode;
+import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackLane;
 import com.craisinlord.antarchy.content.entity.royal.attack.RoyalEffectController;
 import com.craisinlord.antarchy.content.entity.portal.DimensionalTearEntity;
-import com.craisinlord.antarchy.content.time.TimeDilationApi;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.Nullable;
 
 public class QueenEntity extends RoyalBossEntity {
+    static final double TIME_FIELD_RADIUS_SCALE = 3.0D;
     private static final String SUMMON_COOLDOWN_KEY = "ManticoreSummonCooldownTicks";
     private static final int FAILED_SUMMON_RETRY_TICKS = 20;
     private static final int POSITION_ATTEMPTS_PER_MANTICORE = 8;
@@ -47,7 +52,6 @@ public class QueenEntity extends RoyalBossEntity {
     private static final DustParticleOptions ACCEL_DUST = new DustParticleOptions(new org.joml.Vector3f(1.0F, 0.15F, 0.15F), 2.0F);
 
     private static final int GRAVITY_STOMP_COOLDOWN = 180;
-    private static final int TIME_FIELD_COOLDOWN = 260;
     private static final int MOMENTUM_LOCK_COOLDOWN = 420;
     private static final int MOMENTUM_LOCK_DURATION = 90;
     private static final double MOMENTUM_LOCK_RADIUS = 26.0D;
@@ -61,13 +65,12 @@ public class QueenEntity extends RoyalBossEntity {
 
     private int manticoreSummonCooldownTicks;
     private int gravityStompCooldownTicks;
-    private int timeFieldCooldownTicks;
     private int momentumLockCooldownTicks;
     private int crushingGravityCooldownTicks;
     private int accelerationCooldownTicks;
     private int blackHoleCooldownTicks;
+    private final int[] dreamFireballCooldownTicks = new int[3];
     private int idleWanderCooldownTicks;
-    private int finalTimeControlTicks;
     private final RoyalEffectController royalEffects = new RoyalEffectController();
     private final Map<UUID, Vec3> frozenVelocities = new HashMap<>();
 
@@ -87,6 +90,52 @@ public class QueenEntity extends RoyalBossEntity {
     @Override
     protected boolean isFlyingBoss() {
         return true;
+    }
+
+    @Override
+    protected double groundCombatBias() {
+        return 0.72D;
+    }
+
+    @Override
+    protected double biteApproachSpeed() {
+        return 1.55D;
+    }
+
+    protected void registerRoyalTargetGoals() {
+        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, KingEntity.class, true));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(
+                this, Mob.class, 10, true, false, this::canAttack));
+    }
+
+    @Override
+    protected int selectBeamVolleyLimit(Phase phase) {
+        return switch (phase) {
+            case ONE -> AntarchySettings.queenBeamPhaseOneCap();
+            case TWO -> AntarchySettings.queenBeamPhaseTwoCap();
+            case THREE -> this.random.nextDouble() < AntarchySettings.queenBeamPhaseThreeMaxVolleyChance()
+                    ? AntarchySettings.queenBeamPhaseThreeCap()
+                    : Math.min(2, AntarchySettings.queenBeamPhaseThreeCap());
+        };
+    }
+
+    @Override
+    protected boolean shouldDistributeHeadTargets(LivingEntity primaryTarget) {
+        return !(primaryTarget instanceof KingEntity);
+    }
+
+    public boolean canAttack(LivingEntity target) {
+        return !target.getType().is(AntarchyTags.Entities.QUEEN_DOES_NOT_ATTACK)
+                && super.canAttack(target);
+    }
+
+    public boolean canDamageWithRoyalAttack(LivingEntity target) {
+        return target != this
+                && target.isAlive()
+                && (!(target instanceof Player player) || !player.isCreative() && !player.isSpectator())
+                && !target.getType().is(AntarchyTags.Entities.QUEEN_DOES_NOT_ATTACK)
+                && !this.isAlliedTo(target);
     }
 
     @Override
@@ -145,9 +194,20 @@ public class QueenEntity extends RoyalBossEntity {
         return RoyalBeamTerrainMode.DESTROY;
     }
 
+    @Override
+    protected RoyalBeamElement royalBeamElement(@Nullable RoyalHead head) {
+        if (head == null) {
+            return RoyalBeamElement.QUEEN_BLACK;
+        }
+        return switch (head.slot()) {
+            case LEFT -> RoyalBeamElement.QUEEN_PURPLE;
+            case CENTER -> RoyalBeamElement.QUEEN_BLACK;
+            case RIGHT -> RoyalBeamElement.QUEEN_RED;
+        };
+    }
+
     public static boolean isFieldImmune(Entity entity) {
-        return entity instanceof RoyalBossEntity
-                || entity.getType().is(AntarchyTags.Entities.TIME_DILATION_IMMUNE);
+        return entity.getType().is(AntarchyTags.Entities.QUEEN_DOES_NOT_ATTACK);
     }
 
     @Override
@@ -162,8 +222,47 @@ public class QueenEntity extends RoyalBossEntity {
         }
         this.tickManticoreSummon();
         this.tickQueenAbilities();
-        this.tickFinalTimeControl();
+        this.tickDreamFireballs();
+        this.tickFinalAcceleration();
         this.royalEffects.tick();
+    }
+
+    private void tickDreamFireballs() {
+        if (!(this.level() instanceof ServerLevel level)) return;
+        LivingEntity target = this.getTarget();
+        if (target == null || !target.isAlive() || !this.canAttack(target)) return;
+        for (RoyalHead head : new RoyalHead[] {this.royalHead(RoyalHead.Slot.LEFT), this.royalHead(RoyalHead.Slot.CENTER), this.royalHead(RoyalHead.Slot.RIGHT)}) {
+            int index = head.slot().ordinal();
+            if (this.dreamFireballCooldownTicks[index] > 0) {
+                this.dreamFireballCooldownTicks[index]--;
+                continue;
+            }
+            if (!head.readyToAttack() || this.distanceTo(target) < 12.0D || this.distanceTo(target) > 52.0D) continue;
+            int cooldown = this.cooldown(180);
+            RoyalHead.Slot slot = head.slot();
+            if (!this.beginRoyalAttack("dream_fireball_" + slot.name(), this.headLane(head), cooldown, 12, 1, 5,
+                    new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                        @Override public void onStart() {
+                            head.startShoot();
+                            QueenEntity.this.triggerAnim(slot.controllerName(), "shoot");
+                            QueenEntity.this.playRoyalSound(net.minecraft.sounds.SoundEvents.FIRECHARGE_USE, 0.75F);
+                            QueenEntity.this.playRoyalSound(net.minecraft.sounds.SoundEvents.GHAST_WARN, 1.35F);
+                        }
+                        @Override public void onActive(int elapsedTicks) {
+                            Vec3 origin = QueenEntity.this.headAnchor(head);
+                            Vec3 direction = target.getEyePosition().subtract(origin).normalize();
+                            RoyalElementalProjectileEntity projectile = RoyalElementalProjectileEntity.create(
+                                    level, QueenEntity.this, RoyalBeamElement.DREAM_FIRE, origin, direction);
+                            level.addFreshEntity(projectile);
+                            QueenEntity.this.playRoyalSound(AntarchySoundEvents.QUEEN_BEAM_SHOOT.get(), 0.9F);
+                        }
+                        @Override public void onComplete() {
+                            head.stopShoot();
+                        }
+                    })) {
+                this.dreamFireballCooldownTicks[index] = cooldown;
+            }
+        }
     }
 
     private void tickIdleWander() {
@@ -239,7 +338,6 @@ public class QueenEntity extends RoyalBossEntity {
 
     private void tickQueenAbilities() {
         if (this.gravityStompCooldownTicks > 0) this.gravityStompCooldownTicks--;
-        if (this.timeFieldCooldownTicks > 0) this.timeFieldCooldownTicks--;
         if (this.momentumLockCooldownTicks > 0) this.momentumLockCooldownTicks--;
         if (this.crushingGravityCooldownTicks > 0) this.crushingGravityCooldownTicks--;
         if (this.accelerationCooldownTicks > 0) this.accelerationCooldownTicks--;
@@ -257,8 +355,8 @@ public class QueenEntity extends RoyalBossEntity {
         boolean majorBusy = this.royalEffects.active("momentum_lock") || this.royalEffects.active("crushing_gravity");
         boolean allowOverlap = phase != Phase.ONE;
         String[] candidates = phase == Phase.ONE
-                ? new String[] {"gravity_stomp", "time_field", "black_hole"}
-                : new String[] {"gravity_stomp", "time_field", "black_hole", "momentum_lock", "crushing_gravity", "acceleration"};
+                ? new String[] {"gravity_stomp", "black_hole"}
+                : new String[] {"gravity_stomp", "black_hole", "momentum_lock", "crushing_gravity", "acceleration"};
         String selected = this.attackScheduler.chooseWeighted(candidates, id -> {
             if (!this.queenAttackReady(id, phase, majorBusy, allowOverlap)) return 0;
             return switch (id) {
@@ -270,36 +368,39 @@ public class QueenEntity extends RoyalBossEntity {
         if (selected == null) return;
         int cooldown = switch (selected) {
             case "gravity_stomp" -> GRAVITY_STOMP_COOLDOWN;
-            case "time_field" -> TIME_FIELD_COOLDOWN;
             case "black_hole" -> BLACK_HOLE_COOLDOWN;
             case "momentum_lock" -> MOMENTUM_LOCK_COOLDOWN;
             case "crushing_gravity" -> CRUSHING_GRAVITY_COOLDOWN;
             default -> ACCELERATION_COOLDOWN;
         };
-        if (!this.beginRoyalAttack(selected, RoyalAttackLane.HAZARD, this.cooldown(cooldown),
+        RoyalAttackLane lane = "black_hole".equals(selected) ? RoyalAttackLane.CENTER_HEAD : RoyalAttackLane.HAZARD;
+        if (!this.beginRoyalAttack(selected, lane, this.cooldown(cooldown),
                 10, 1, 14, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
                     @Override public void onStart() {
                         if ("gravity_stomp".equals(selected)) {
                             QueenEntity.this.triggerAnim("body_action", "stomp");
-                        } else {
-                            QueenEntity.this.triggerAnim("body_action", "wing_gust");
+                        } else if ("momentum_lock".equals(selected)) {
+                            QueenEntity.this.triggerAnim("wing_action", "wing_gust");
+                        } else if ("black_hole".equals(selected)) {
+                            QueenEntity.this.royalHead(RoyalHead.Slot.CENTER).startShoot();
+                            QueenEntity.this.triggerAnim(RoyalHead.Slot.CENTER.controllerName(), "shoot");
                         }
                     }
                     @Override public void onActive(int elapsedTicks) {
-                        QueenEntity.this.performSelectedQueenAttack(selected, phase, cooldown, level, target);
+                        QueenEntity.this.performSelectedQueenAttack(selected, cooldown, level, target);
+                    }
+                    @Override public void onComplete() {
+                        if ("black_hole".equals(selected)) {
+                            QueenEntity.this.royalHead(RoyalHead.Slot.CENTER).stopShoot();
+                        }
                     }
                 })) return;
     }
 
-    private void performSelectedQueenAttack(String selected, Phase phase, int cooldown,
+    private void performSelectedQueenAttack(String selected, int cooldown,
                                             ServerLevel level, LivingEntity target) {
         switch (selected) {
             case "gravity_stomp" -> { this.gravityStompCooldownTicks = cooldown; this.performGravityStomp(level, target); }
-            case "time_field" -> {
-                this.timeFieldCooldownTicks = cooldown;
-                double fieldRate = phase == Phase.THREE ? 0.1D : 0.4D;
-                TimeDilationApi.createField(level, target.position(), 12.0D, fieldRate, 140 + phase.ordinal() * 40);
-            }
             case "black_hole" -> { this.blackHoleCooldownTicks = cooldown; this.castBlackHole(level, target); }
             case "momentum_lock" -> { this.momentumLockCooldownTicks = cooldown; this.startMomentumLock(level); }
             case "crushing_gravity" -> {
@@ -316,8 +417,9 @@ public class QueenEntity extends RoyalBossEntity {
         if (!allowOverlap && majorBusy) return false;
         return switch (id) {
             case "gravity_stomp" -> this.gravityStompCooldownTicks <= 0;
-            case "time_field" -> this.timeFieldCooldownTicks <= 0;
-            case "black_hole" -> this.blackHoleCooldownTicks <= 0;
+            case "black_hole" -> this.blackHoleCooldownTicks <= 0
+                    && this.royalHead(RoyalHead.Slot.CENTER).readyToAttack()
+                    && !this.attackScheduler.laneBusy(RoyalAttackLane.CENTER_HEAD);
             case "momentum_lock" -> !this.royalEffects.active("momentum_lock") && this.momentumLockCooldownTicks <= 0;
             case "crushing_gravity" -> phase != Phase.ONE && !this.royalEffects.active("crushing_gravity") && this.crushingGravityCooldownTicks <= 0;
             case "acceleration" -> phase == Phase.THREE && !this.royalEffects.active("acceleration") && this.accelerationCooldownTicks <= 0;
@@ -325,20 +427,12 @@ public class QueenEntity extends RoyalBossEntity {
         };
     }
 
-    private void tickFinalTimeControl() {
-        if (this.phase() != Phase.THREE || !(this.level() instanceof ServerLevel level)) {
+    private void tickFinalAcceleration() {
+        if (this.phase() != Phase.THREE) {
             return;
         }
         if (!this.royalEffects.active("acceleration") && this.accelerationCooldownTicks <= 0) {
             this.startRoyalAcceleration();
-        }
-        if (this.finalTimeControlTicks-- <= 0) {
-            this.finalTimeControlTicks = AntarchySettings.queenFinalTimeFieldCooldownTicks();
-            LivingEntity target = this.getTarget();
-            if (target != null && target.isAlive()) {
-                TimeDilationApi.createField(level, target.position(), AntarchySettings.queenFinalTimeFieldRadius(),
-                        AntarchySettings.queenFinalTimeFieldRate(), AntarchySettings.queenFinalTimeFieldDurationTicks());
-            }
         }
     }
 
@@ -347,26 +441,32 @@ public class QueenEntity extends RoyalBossEntity {
         this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.7F);
         DamageSource source = this.damageSources().mobAttack(this);
         for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class,
-                this.getBoundingBox().inflate(18.0D), entity -> entity instanceof Player && entity.isAlive())) {
+                this.getBoundingBox().inflate(18.0D), this::canDamageWithRoyalAttack)) {
             double distance = Math.max(1.0D, living.distanceTo(this));
             living.hurt(source, (float) (12.0D * Math.max(0.25D, 1.0D - distance / 24.0D)));
             Vec3 push = living.position().subtract(this.position()).normalize().scale(1.3D);
             living.setDeltaMovement(living.getDeltaMovement().add(push.x, 0.65D, push.z));
             living.hasImpulse = true;
         }
-        level.sendParticles(ParticleTypes.SONIC_BOOM, this.getX(), this.getY() + 1.0D, this.getZ(), 4, 2.0D, 0.5D, 2.0D, 0.0D);
+        level.sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY() + 1.0D, this.getZ(),
+                18, 5.0D, 0.6D, 5.0D, 0.08D);
     }
 
     private void castBlackHole(ServerLevel level, LivingEntity target) {
+        double vertical = 2.0D + this.random.nextDouble() * 2.0D;
+        if (AntarchyGravityApi.isGravityInverted(target)) {
+            vertical = -vertical;
+        }
         Vec3 anchor = target.position().add(
                 (this.random.nextDouble() - 0.5D) * 4.0D,
-                2.0D + this.random.nextDouble() * 2.0D,
+                vertical,
                 (this.random.nextDouble() - 0.5D) * 4.0D);
-        RoyalBlackHoleEntity hole = RoyalBlackHoleEntity.create(level, anchor, this.getUUID());
+        Vec3 mouth = this.beamAnchor(this.royalHead(RoyalHead.Slot.CENTER));
+        RoyalBlackHoleEntity hole = RoyalBlackHoleEntity.createProjectile(level, mouth, anchor, this.getUUID());
         level.addFreshEntity(hole);
-        this.triggerAnim("body_action", "wing_gust");
         this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 1.0F);
-        level.sendParticles(ParticleTypes.REVERSE_PORTAL, anchor.x, anchor.y, anchor.z, 60, 1.0D, 1.0D, 1.0D, 0.4D);
+        level.sendParticles(ParticleTypes.REVERSE_PORTAL, mouth.x, mouth.y, mouth.z,
+                30, 0.6D, 0.6D, 0.6D, 0.25D);
     }
 
     private void startMomentumLock(ServerLevel level) {
@@ -390,7 +490,6 @@ public class QueenEntity extends RoyalBossEntity {
             }
             this.frozenVelocities.clear();
         });
-        this.triggerAnim("body_action", "wing_gust");
         this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.5F);
     }
 
@@ -398,9 +497,11 @@ public class QueenEntity extends RoyalBossEntity {
         if (!(this.level() instanceof ServerLevel level)) {
             return;
         }
-        for (Map.Entry<UUID, Vec3> entry : this.frozenVelocities.entrySet()) {
+        for (Iterator<Map.Entry<UUID, Vec3>> iterator = this.frozenVelocities.entrySet().iterator(); iterator.hasNext();) {
+            Map.Entry<UUID, Vec3> entry = iterator.next();
             Entity entity = level.getEntity(entry.getKey());
             if (entity == null || !entity.isAlive()) {
+                iterator.remove();
                 continue;
             }
             entity.setDeltaMovement(Vec3.ZERO);
@@ -522,7 +623,6 @@ public class QueenEntity extends RoyalBossEntity {
         super.addAdditionalSaveData(tag);
         tag.putInt(SUMMON_COOLDOWN_KEY, this.manticoreSummonCooldownTicks);
         tag.putInt("GravityStompCooldownTicks", this.gravityStompCooldownTicks);
-        tag.putInt("TimeFieldCooldownTicks", this.timeFieldCooldownTicks);
         tag.putInt("AccelerationCooldownTicks", this.accelerationCooldownTicks);
         tag.putInt("BlackHoleCooldownTicks", this.blackHoleCooldownTicks);
     }
@@ -532,7 +632,6 @@ public class QueenEntity extends RoyalBossEntity {
         super.readAdditionalSaveData(tag);
         this.manticoreSummonCooldownTicks = Math.max(0, tag.getInt(SUMMON_COOLDOWN_KEY));
         this.gravityStompCooldownTicks = Math.max(0, tag.getInt("GravityStompCooldownTicks"));
-        this.timeFieldCooldownTicks = Math.max(0, tag.getInt("TimeFieldCooldownTicks"));
         this.momentumLockCooldownTicks = Math.max(0, tag.getInt("MomentumLockCooldownTicks"));
         this.crushingGravityCooldownTicks = Math.max(0, tag.getInt("CrushingGravityCooldownTicks"));
         this.accelerationCooldownTicks = Math.max(0, tag.getInt("AccelerationCooldownTicks"));

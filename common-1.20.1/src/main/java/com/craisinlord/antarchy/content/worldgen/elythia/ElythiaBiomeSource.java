@@ -16,6 +16,14 @@ import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
 
 public class ElythiaBiomeSource extends BiomeSource {
+    public static final Codec<ElythiaBiomeSource> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            MultiNoiseBiomeSource.DIRECT_CODEC.forGetter(ElythiaBiomeSource::parameters),
+            Codec.INT.optionalFieldOf("moleworm_caves_max_y", 72).forGetter(ElythiaBiomeSource::molewormCavesMaxY),
+            Codec.INT.optionalFieldOf("surface_biome_sample_y", 160).forGetter(ElythiaBiomeSource::surfaceBiomeSampleY),
+            Codec.INT.optionalFieldOf("ocean_max_y", 85).forGetter(ElythiaBiomeSource::oceanMaxY),
+            Codec.INT.optionalFieldOf("sea_level", 78).forGetter(ElythiaBiomeSource::seaLevel),
+            Codec.INT.optionalFieldOf("cloud_sea_min_y", 360).forGetter(ElythiaBiomeSource::cloudSeaMinY)
+    ).apply(instance, ElythiaBiomeSource::new));
     private static final ResourceKey<Biome> MOLEWORM_CAVES = ResourceKey.create(
             Registries.BIOME,
             new ResourceLocation(Antarchy.MODID, "moleworm_caves")

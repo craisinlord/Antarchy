@@ -97,7 +97,6 @@ public final class TimeDilationApi {
         SYNCED_CLIENT_RATES.put(entityUuid, clampedRate);
     }
 
-    /** Clears both the authoritative entity state and any client-side UUID cache. */
     public static void clearRate(Entity entity) {
         if (entity instanceof TimeDilationEntityAccess access) {
             boolean wasDilated = Math.abs(access.antarchy$getTimeDilationRate() - TimeDilationMath.NORMAL_RATE) > 0.001D;

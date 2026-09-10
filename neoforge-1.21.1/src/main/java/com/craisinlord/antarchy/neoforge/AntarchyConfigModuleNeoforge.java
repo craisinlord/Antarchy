@@ -159,6 +159,10 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setQueenBeamTracking(AntarchyMobsConfig.queenBeamTracking());
         AntarchySettings.setQueenBeamTerrainRadius(AntarchyMobsConfig.queenBeamTerrainRadius());
         AntarchySettings.setQueenBeamTerrainCap(AntarchyMobsConfig.queenBeamTerrainCap());
+        AntarchySettings.setQueenBeamPhaseOneCap(AntarchyMobsConfig.queenBeamPhaseOneCap());
+        AntarchySettings.setQueenBeamPhaseTwoCap(AntarchyMobsConfig.queenBeamPhaseTwoCap());
+        AntarchySettings.setQueenBeamPhaseThreeCap(AntarchyMobsConfig.queenBeamPhaseThreeCap());
+        AntarchySettings.setQueenBeamPhaseThreeMaxVolleyChance(AntarchyMobsConfig.queenBeamPhaseThreeMaxVolleyChance());
         AntarchySettings.setKingBeamDamage(AntarchyMobsConfig.kingBeamDamage());
         AntarchySettings.setKingBeamRange(AntarchyMobsConfig.kingBeamRange());
         AntarchySettings.setKingBeamMinimumRange(AntarchyMobsConfig.kingBeamMinimumRange());
@@ -178,6 +182,7 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setQueenBlackHoleRadius(AntarchyMobsConfig.queenBlackHoleRadius());
         AntarchySettings.setQueenBlackHoleActiveTicks(AntarchyMobsConfig.queenBlackHoleActiveTicks());
         AntarchySettings.setQueenBlackHolePullStrength(AntarchyMobsConfig.queenBlackHolePullStrength());
+        AntarchySettings.setQueenBlackHoleBlockSuctionCap(AntarchyMobsConfig.queenBlackHoleBlockSuctionCap());
         AntarchySettings.setQueenFinalTimeFieldRadius(AntarchyMobsConfig.queenFinalTimeFieldRadius());
         AntarchySettings.setQueenFinalTimeFieldRate(AntarchyMobsConfig.queenFinalTimeFieldRate());
         AntarchySettings.setQueenFinalTimeFieldDurationTicks(AntarchyMobsConfig.queenFinalTimeFieldDurationTicks());

@@ -68,8 +68,6 @@ public abstract class BehaviorUtilsGravityMixin {
     }
 
     private static boolean antarchy$shouldInvertThrownItem(LivingEntity entity) {
-        return AntarchyGravityApi.isGravityInverted(entity)
-                && ThoraxisUndersideManager.isThoraxis(entity.level())
-                && entity.getY() < ThoraxisUndersideManager.GRAVITY_FLIP_Y;
+        return ThoraxisUndersideManager.shouldInvertInUnderside(entity);
     }
 }

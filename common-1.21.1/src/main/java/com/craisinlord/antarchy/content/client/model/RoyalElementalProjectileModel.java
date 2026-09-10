@@ -14,6 +14,9 @@ public class RoyalElementalProjectileModel extends GeoModel<RoyalElementalProjec
 
     @Override
     public ResourceLocation getTextureResource(RoyalElementalProjectileEntity animatable) {
+        if (animatable.isDreamFireball()) {
+            return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/queen/dream_fire_ball.png");
+        }
         return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID,
                 "textures/entity/king/" + (animatable.isIceball() ? "ice_ball" : "fire_ball") + ".png");
     }

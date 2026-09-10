@@ -18,7 +18,6 @@ public final class TimeDilationMath {
         return Math.max(MIN_RATE, Math.min(MAX_RATE, rate));
     }
 
-    /** Moves an entity's effective rate toward a new effect/field target without a hard step. */
     public static double transitionRate(double currentRate, double targetRate) {
         double current = clampRate(currentRate);
         double target = clampRate(targetRate);

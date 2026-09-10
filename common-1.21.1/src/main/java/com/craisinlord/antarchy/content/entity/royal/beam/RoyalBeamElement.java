@@ -4,5 +4,9 @@ public enum RoyalBeamElement {
     GENERIC,
     FIRE,
     LIGHTNING,
-    ICE
+    ICE,
+    QUEEN_PURPLE,
+    QUEEN_RED,
+    QUEEN_BLACK,
+    DREAM_FIRE
 }

@@ -254,6 +254,7 @@ public final class AntarchySettings {
     private static double queenBlackHoleRadius = 14.0D;
     private static int queenBlackHoleActiveTicks = 120;
     private static double queenBlackHolePullStrength = 0.16D;
+    private static int queenBlackHoleBlockSuctionCap = 160;
     private static double queenFinalTimeFieldRadius = 20.0D;
     private static double queenFinalTimeFieldRate = 0.05D;
     private static int queenFinalTimeFieldDurationTicks = 45;
@@ -273,7 +274,7 @@ public final class AntarchySettings {
     private static double royalBossKnockbackResistance = 1.0D;
     private static double royalBossStepHeight = 3.0D;
     private static double royalBossMaxSingleHitDamage = 250.0D;
-    private static double royalBossBiteReach = 10.0D;
+    private static double royalBossBiteReach = 12.0D;
     private static double royalBossBiteDamageMultiplier = 1.6D;
     private static int royalBossBiteCooldownTicks = 45;
     private static boolean basiliskPetrifyingGazeEnabled = true;
@@ -558,6 +559,10 @@ public final class AntarchySettings {
     private static double queenBeamTracking = 0.1D;
     private static double queenBeamTerrainRadius = 5.0D;
     private static int queenBeamTerrainCap = 192;
+    private static int queenBeamPhaseOneCap = 1;
+    private static int queenBeamPhaseTwoCap = 2;
+    private static int queenBeamPhaseThreeCap = 3;
+    private static double queenBeamPhaseThreeMaxVolleyChance = 0.2D;
     private static double kingBeamDamage = 50.0D;
     private static double kingBeamRange = 100.0D;
     private static double kingBeamMinimumRange = 32.0D;
@@ -2051,6 +2056,8 @@ public final class AntarchySettings {
     public static void setQueenBlackHoleActiveTicks(int v) { queenBlackHoleActiveTicks = v; }
     public static double queenBlackHolePullStrength() { return queenBlackHolePullStrength; }
     public static void setQueenBlackHolePullStrength(double v) { queenBlackHolePullStrength = v; }
+    public static int queenBlackHoleBlockSuctionCap() { return queenBlackHoleBlockSuctionCap; }
+    public static void setQueenBlackHoleBlockSuctionCap(int v) { queenBlackHoleBlockSuctionCap = v; }
     public static double queenFinalTimeFieldRadius() { return queenFinalTimeFieldRadius; }
     public static void setQueenFinalTimeFieldRadius(double v) { queenFinalTimeFieldRadius = v; }
     public static double queenFinalTimeFieldRate() { return queenFinalTimeFieldRate; }
@@ -2910,6 +2917,14 @@ public final class AntarchySettings {
     public static void setQueenBeamTerrainRadius(double v) { queenBeamTerrainRadius = v; }
     public static int queenBeamTerrainCap() { return queenBeamTerrainCap; }
     public static void setQueenBeamTerrainCap(int v) { queenBeamTerrainCap = v; }
+    public static int queenBeamPhaseOneCap() { return queenBeamPhaseOneCap; }
+    public static void setQueenBeamPhaseOneCap(int v) { queenBeamPhaseOneCap = v; }
+    public static int queenBeamPhaseTwoCap() { return queenBeamPhaseTwoCap; }
+    public static void setQueenBeamPhaseTwoCap(int v) { queenBeamPhaseTwoCap = v; }
+    public static int queenBeamPhaseThreeCap() { return queenBeamPhaseThreeCap; }
+    public static void setQueenBeamPhaseThreeCap(int v) { queenBeamPhaseThreeCap = v; }
+    public static double queenBeamPhaseThreeMaxVolleyChance() { return queenBeamPhaseThreeMaxVolleyChance; }
+    public static void setQueenBeamPhaseThreeMaxVolleyChance(double v) { queenBeamPhaseThreeMaxVolleyChance = v; }
     public static double kingBeamDamage() { return kingBeamDamage; }
     public static void setKingBeamDamage(double v) { kingBeamDamage = v; }
     public static double kingBeamRange() { return kingBeamRange; }

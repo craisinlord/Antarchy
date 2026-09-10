@@ -101,6 +101,8 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>> ROYAL_BLACK_HOLE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity>> ROYAL_ASSAILANT_BLACK_HOLE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<Block> VORTEX_LENS = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<BlockEntityType<VortexLensBlockEntity>> VORTEX_LENS_BLOCK_ENTITY = (Supplier<BlockEntityType<VortexLensBlockEntity>>) UNBOUND;
@@ -689,6 +691,10 @@ public final class AntarchyObjects {
 
     public static void setRoyalBlackHole(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>> supplier) {
         ROYAL_BLACK_HOLE = supplier;
+    }
+
+    public static void setRoyalAssailantBlackHole(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity>> supplier) {
+        ROYAL_ASSAILANT_BLACK_HOLE = supplier;
     }
 
     public static void setVortexLens(Supplier<Block> supplier) {
