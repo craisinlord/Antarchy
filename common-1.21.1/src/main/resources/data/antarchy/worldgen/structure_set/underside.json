@@ -2,6 +2,10 @@
   "structures": [
     {
       "structure": "antarchy:underside_ruins",
+      "weight": 2
+    },
+    {
+      "structure": "antarchy:underside_castle",
       "weight": 1
     }
   ],

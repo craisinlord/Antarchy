@@ -40,8 +40,23 @@ public final class TimeDilationFieldSampler {
             double dy = center.y - entity.getY();
             double dz = center.z - entity.getZ();
             double distanceSqr = dx * dx + dy * dy + dz * dz;
-            if (distanceSqr < field.fieldRadiusSqr()) {
-                double falloff = TimeDilationMath.gaussianFalloff(Math.sqrt(distanceSqr), field.fieldRadius());
+            double distance = Math.sqrt(distanceSqr);
+            double radius = field.fieldRadius();
+            double falloff;
+            if (field.isChronosphere()) {
+                if (distance >= radius * 2.0D) {
+                    continue;
+                }
+                falloff = distance <= radius
+                        ? 1.0D
+                        : TimeDilationMath.gaussianFalloff(distance - radius, radius);
+            } else {
+                if (distanceSqr >= field.fieldRadiusSqr()) {
+                    continue;
+                }
+                falloff = TimeDilationMath.gaussianFalloff(distance, radius);
+            }
+            if (falloff > 0.0D) {
                 combinedRate *= TimeDilationMath.localFieldRate(field.effectiveFieldRate(), falloff);
             }
         }

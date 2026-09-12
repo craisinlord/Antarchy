@@ -73,6 +73,15 @@
         "projection": "rigid",
         "element_type": "integrated_api:integrated_api_single_pool_element"
       }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "antarchy:underside_ruins/underside_ruins9",
+        "processors": "antarchy:generic_processor",
+        "projection": "rigid",
+        "element_type": "integrated_api:integrated_api_single_pool_element"
+      }
     }
   ]
 }

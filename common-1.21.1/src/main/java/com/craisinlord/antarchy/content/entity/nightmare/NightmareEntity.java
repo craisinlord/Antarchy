@@ -260,6 +260,9 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     public static boolean canSpawn(EntityType<NightmareEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+        if (spawnReason == MobSpawnType.TRIAL_SPAWNER) {
+            return level.getDifficulty() != Difficulty.PEACEFUL;
+        }
         boolean posEmpty = level.isEmptyBlock(pos);
         boolean floorSpawn = level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP) && level.isEmptyBlock(pos.above());
         boolean ceilingSpawn = level.getBlockState(pos.above()).isFaceSturdy(level, pos.above(), Direction.DOWN) && level.isEmptyBlock(pos.below());

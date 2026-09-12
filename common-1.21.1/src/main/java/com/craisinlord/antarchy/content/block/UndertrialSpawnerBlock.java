@@ -64,13 +64,10 @@ public final class UndertrialSpawnerBlock extends BaseEntityBlock {
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        if (this.blockEntityType == null || blockEntityType != this.blockEntityType.get()) {
-            return null;
-        }
         if (level.isClientSide) {
-            return (BlockEntityTicker<T>) (BlockEntityTicker<UndertrialSpawnerBlockEntity>) UndertrialSpawnerBlockEntity::clientTick;
+            return createTickerHelper(blockEntityType, this.blockEntityType.get(), UndertrialSpawnerBlockEntity::clientTick);
         }
-        return (BlockEntityTicker<T>) (BlockEntityTicker<UndertrialSpawnerBlockEntity>) ((tickLevel, tickPos, tickState, blockEntity) -> {
+        return createTickerHelper(blockEntityType, this.blockEntityType.get(), (tickLevel, tickPos, tickState, blockEntity) -> {
             if (tickLevel instanceof net.minecraft.server.level.ServerLevel serverLevel) {
                 UndertrialSpawnerBlockEntity.serverTick(serverLevel, tickPos, tickState, blockEntity);
             }

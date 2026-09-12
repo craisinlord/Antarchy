@@ -13,6 +13,8 @@ import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -67,11 +69,16 @@ public final class QueenLocateCommand {
             }
             BlockPos spawn = marker.getSpawnPos();
             int distance = Mth.floor(Math.sqrt(distanceSquared(originX, originZ, site)));
-            source.sendSuccess(() -> Component.literal(
-                    "Nearest Queen spawn in antarchy:thoraxis: ["
-                            + spawn.getX() + ", " + spawn.getY() + ", " + spawn.getZ()
-                            + "] (" + distance + " blocks away)"
-            ), false);
+            String coordinates = "[" + spawn.getX() + ", " + spawn.getY() + ", " + spawn.getZ() + "]";
+            String teleportCommand = "/execute in " + THORAXIS.location() + " run tp @s "
+                    + spawn.getX() + " " + spawn.getY() + " " + spawn.getZ();
+            source.sendSuccess(() -> Component.literal("Nearest Queen spawn in " + THORAXIS.location() + ": ")
+                    .append(Component.literal(coordinates)
+                            .withStyle(Style.EMPTY
+                                    .withColor(net.minecraft.ChatFormatting.AQUA)
+                                    .withUnderlined(true)
+                                    .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, teleportCommand))))
+                    .append(Component.literal(" (" + distance + " blocks away)")), false);
             return distance;
         }
 

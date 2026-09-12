@@ -301,7 +301,7 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
         }
 
         Vec3 center = this.effectCenter();
-        Vec3 terrainOrigin = this.position();
+        Vec3 terrainOrigin = center;
         double radius = this.effectRadius();
         int pulledThisTick = 0;
         for (int attempt = 0; attempt < BLOCK_SUCTION_ATTEMPTS && pulledThisTick < BLOCKS_PER_SUCTION

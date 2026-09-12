@@ -26,7 +26,6 @@ import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync;
 import com.craisinlord.antarchy.content.entity.DorrieEntity;
 import com.craisinlord.antarchy.content.network.DorrieJumpInputPayload;
 import com.craisinlord.antarchy.content.network.SpringyBootsLaunchPayload;
-import com.craisinlord.antarchy.content.weather.ThoraxisWeatherSnapshot;
 import com.craisinlord.antarchy.fabric.AntarchyFabricContent;
 import com.craisinlord.antarchy.fabric.entity.multipart.MultipartPartEntity;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -80,7 +79,6 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playS2C().register(ScorpionWhipTetherPayload.TYPE, ScorpionWhipTetherPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(WormHookTetherPayload.TYPE, WormHookTetherPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(BrutalflyElytraAnimationPayload.TYPE, BrutalflyElytraAnimationPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(ThoraxisWeatherPayload.TYPE, ThoraxisWeatherPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(HerculesBeetleImpactShakePayload.TYPE, HerculesBeetleImpactShakePayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(ImpactShakePayload.TYPE, ImpactShakePayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(HordeIntensityPayload.TYPE, HordeIntensityPayload.STREAM_CODEC);
@@ -216,20 +214,6 @@ public final class AntarchyFabricNetworking {
             ServerPlayNetworking.send(tracking, payload);
         }
         ServerPlayNetworking.send(player, payload);
-    }
-
-    public static void syncThoraxisWeather(ServerLevel level, ThoraxisWeatherSnapshot snapshot) {
-        ThoraxisWeatherPayload payload = new ThoraxisWeatherPayload(
-                snapshot.dimension(),
-                snapshot.kind(),
-                snapshot.expiresAt(),
-                snapshot.anchor().getX(),
-                snapshot.anchor().getY(),
-                snapshot.anchor().getZ()
-        );
-        for (ServerPlayer player : level.players()) {
-            ServerPlayNetworking.send(player, payload);
-        }
     }
 
     public static void handleGravityState(Entity contextPlayer, GravityStatePayload payload) {

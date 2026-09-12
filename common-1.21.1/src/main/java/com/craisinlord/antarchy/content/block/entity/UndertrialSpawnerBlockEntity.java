@@ -5,23 +5,33 @@ import com.craisinlord.antarchy.content.block.UndertrialSpawnerBlock;
 import com.craisinlord.antarchy.Antarchy;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.trialspawner.TrialSpawner;
+import net.minecraft.world.level.block.entity.trialspawner.TrialSpawnerConfig;
 import net.minecraft.world.level.block.entity.trialspawner.TrialSpawnerState;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.random.SimpleWeightedRandomList;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -35,11 +45,16 @@ public final class UndertrialSpawnerBlockEntity extends BlockEntity implements T
     private TrialSpawnerState previousClientState;
     private double clientSpin;
     private double clientOldSpin;
+    private SimpleWeightedRandomList<ResourceKey<LootTable>> normalLootTables = SimpleWeightedRandomList.empty();
+    private SimpleWeightedRandomList<ResourceKey<LootTable>> ominousLootTables = SimpleWeightedRandomList.empty();
+    private Tag normalLootTablesTag;
+    private Tag ominousLootTablesTag;
 
     public UndertrialSpawnerBlockEntity(BlockPos pos, BlockState state, Supplier<? extends net.minecraft.world.level.block.entity.BlockEntityType<UndertrialSpawnerBlockEntity>> type) {
         super(type.get(), pos, state);
         this.trialSpawner = new TrialSpawner(this, net.minecraft.world.level.block.entity.trialspawner.PlayerDetector.INCLUDING_CREATIVE_PLAYERS,
                 net.minecraft.world.level.block.entity.trialspawner.PlayerDetector.EntitySelector.SELECT_FROM_LEVEL);
+        this.trialSpawner.overridePeacefulAndMobSpawnRule();
         this.previousClientState = state.getValue(UndertrialSpawnerBlock.STATE);
     }
 
@@ -48,7 +63,14 @@ public final class UndertrialSpawnerBlockEntity extends BlockEntity implements T
         for (Mob mob : level.getEntitiesOfClass(Mob.class, new AABB(pos).inflate(16.0D))) {
             before.add(mob.getUUID());
         }
-        blockEntity.trialSpawner.tickServer(level, pos, state.getValue(UndertrialSpawnerBlock.OMINOUS));
+        TrialSpawnerState previousState = blockEntity.getState();
+        boolean ominous = state.getValue(UndertrialSpawnerBlock.OMINOUS);
+        boolean rewardReady = previousState == TrialSpawnerState.EJECTING_REWARD
+                && blockEntity.trialSpawner.getData().isReadyToEjectItems(level, 30.0F, blockEntity.trialSpawner.getTargetCooldownLength());
+        blockEntity.trialSpawner.tickServer(level, pos, ominous);
+        if (rewardReady && blockEntity.getState() == TrialSpawnerState.EJECTING_REWARD) {
+            blockEntity.ejectReward(level, pos, ominous);
+        }
         for (Mob mob : level.getEntitiesOfClass(Mob.class, new AABB(pos).inflate(16.0D))) {
             if (!before.contains(mob.getUUID())) {
                 blockEntity.applyUndertrialEffects(mob);
@@ -102,18 +124,35 @@ public final class UndertrialSpawnerBlockEntity extends BlockEntity implements T
     @Override
     protected void loadAdditional(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        if (tag.contains(SPAWNER_TAG)) {
-            trialSpawner.codec().parse(RegistryOps.create(NbtOps.INSTANCE, registries), tag.get(SPAWNER_TAG)).result().ifPresent(decoded -> {
-                trialSpawner = decoded;
-            });
-        }
+        net.minecraft.nbt.Tag spawnerTag = tag.contains(SPAWNER_TAG) ? tag.get(SPAWNER_TAG) : tag;
+        trialSpawner.codec().parse(RegistryOps.create(NbtOps.INSTANCE, registries), spawnerTag).result().ifPresent(decoded -> {
+                captureLootTables(decoded, spawnerTag);
+                trialSpawner = createRewardlessSpawner(decoded);
+        });
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
+        CompoundTag tag = new CompoundTag();
+        saveAdditional(tag, registries);
+        return tag;
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         trialSpawner.codec().encodeStart(RegistryOps.create(NbtOps.INSTANCE, registries), trialSpawner).result()
-                .ifPresent(encoded -> tag.put(SPAWNER_TAG, encoded));
+                .ifPresent(encoded -> {
+                    if (encoded instanceof CompoundTag spawnerTag) {
+                        if (normalLootTablesTag != null) {
+                            spawnerTag.getCompound("normal_config").put("loot_tables_to_eject", normalLootTablesTag.copy());
+                        }
+                        if (ominousLootTablesTag != null) {
+                            spawnerTag.getCompound("ominous_config").put("loot_tables_to_eject", ominousLootTablesTag.copy());
+                        }
+                        tag.put(SPAWNER_TAG, spawnerTag);
+                    }
+                });
     }
 
     @Override
@@ -140,5 +179,43 @@ public final class UndertrialSpawnerBlockEntity extends BlockEntity implements T
 
     public double getClientSpin(float partialTick) {
         return this.clientOldSpin + (this.clientSpin - this.clientOldSpin) * partialTick;
+    }
+
+    private void captureLootTables(TrialSpawner source, Tag spawnerTag) {
+        normalLootTables = source.getNormalConfig().lootTablesToEject();
+        ominousLootTables = source.getOminousConfig().lootTablesToEject();
+        if (spawnerTag instanceof CompoundTag compound) {
+            CompoundTag normalConfig = compound.getCompound("normal_config");
+            CompoundTag ominousConfig = compound.getCompound("ominous_config");
+            normalLootTablesTag = normalConfig.get("loot_tables_to_eject");
+            ominousLootTablesTag = ominousConfig.get("loot_tables_to_eject");
+        }
+    }
+
+    private TrialSpawner createRewardlessSpawner(TrialSpawner source) {
+        TrialSpawner rewardless = new TrialSpawner(withoutLootTables(source.getNormalConfig()), withoutLootTables(source.getOminousConfig()),
+                source.getData(), source.getRequiredPlayerRange(), source.getTargetCooldownLength(), this,
+                source.getPlayerDetector(), source.getEntitySelector());
+        rewardless.overridePeacefulAndMobSpawnRule();
+        return rewardless;
+    }
+
+    private static TrialSpawnerConfig withoutLootTables(TrialSpawnerConfig config) {
+        return new TrialSpawnerConfig(config.spawnRange(), config.totalMobs(), config.simultaneousMobs(),
+                config.totalMobsAddedPerPlayer(), config.simultaneousMobsAddedPerPlayer(), config.ticksBetweenSpawn(),
+                config.spawnPotentialsDefinition(), SimpleWeightedRandomList.empty(), config.itemsToDropWhenOminous());
+    }
+
+    private void ejectReward(ServerLevel level, BlockPos pos, boolean ominous) {
+        SimpleWeightedRandomList<ResourceKey<LootTable>> lootTables = ominous ? ominousLootTables : normalLootTables;
+        lootTables.getRandomValue(level.getRandom()).ifPresent(key -> {
+            LootTable lootTable = level.getServer().reloadableRegistries().getLootTable(key);
+            LootParams params = new LootParams.Builder(level).create(LootContextParamSets.EMPTY);
+            for (ItemStack stack : lootTable.getRandomItems(params)) {
+                DefaultDispenseItemBehavior.spawnItem(level, stack, 2, Direction.DOWN,
+                        Vec3.atBottomCenterOf(pos).relative(Direction.DOWN, 1.2D));
+            }
+            level.levelEvent(3014, pos, 0);
+        });
     }
 }

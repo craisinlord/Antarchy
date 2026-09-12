@@ -6,12 +6,10 @@ import com.craisinlord.antarchy.content.client.HordeClientState;
 import com.craisinlord.antarchy.content.client.ScorpionWhipTetherClientState;
 import com.craisinlord.antarchy.content.client.WormHookTetherClientState;
 import com.craisinlord.antarchy.content.client.TigerEyeCamouflageClientState;
-import com.craisinlord.antarchy.content.client.ThoraxisWeatherClientState;
 import com.craisinlord.antarchy.content.entity.multipart.MultipartFramework;
 import com.craisinlord.antarchy.content.entity.multipart.network.MultipartAttackPayload;
 import com.craisinlord.antarchy.content.entity.multipart.network.MultipartInteractPayload;
 import com.craisinlord.antarchy.content.network.*;
-import com.craisinlord.antarchy.content.weather.ThoraxisWeatherKind;
 import com.craisinlord.antarchy.fabric.client.BloodCrystalKatanaTrailClientState;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.resources.ResourceLocation;
@@ -52,15 +50,6 @@ public final class AntarchyFabricClientNetworking {
                 context.client().execute(() -> WormHookTetherClientState.update(payload.playerId(), payload.hookId())));
         ClientPlayNetworking.registerGlobalReceiver(BrutalflyElytraAnimationPayload.TYPE, (payload, context) ->
                 context.client().execute(() -> BrutalflyElytraClientState.trigger(payload.entityId(), payload.durationTicks(), payload.strength())));
-        ClientPlayNetworking.registerGlobalReceiver(ThoraxisWeatherPayload.TYPE, (payload, context) ->
-                context.client().execute(() -> ThoraxisWeatherClientState.apply(
-                        ResourceLocation.parse(payload.dimensionId()),
-                        ThoraxisWeatherKind.byId(payload.weatherId()),
-                        payload.expiresAt(),
-                        payload.anchorX(),
-                        payload.anchorY(),
-                        payload.anchorZ()
-                )));
         ClientPlayNetworking.registerGlobalReceiver(HerculesBeetleImpactShakePayload.TYPE, (payload, context) ->
                 context.client().execute(() -> AntarchyFabricNetworking.triggerHerculesBeetleImpactShake(payload.durationTicks())));
         ClientPlayNetworking.registerGlobalReceiver(ImpactShakePayload.TYPE, (payload, context) ->

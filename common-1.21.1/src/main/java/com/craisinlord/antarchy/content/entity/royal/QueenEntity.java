@@ -59,6 +59,7 @@ public class QueenEntity extends RoyalBossEntity {
     private static final int MOMENTUM_LOCK_COOLDOWN = 420;
     private static final int MOMENTUM_LOCK_DURATION = 90;
     private static final double MOMENTUM_LOCK_RADIUS = 26.0D;
+    private static final float MOMENTUM_LOCK_EARLY_HEALTH_THRESHOLD = 0.80F;
     private static final int CRUSHING_GRAVITY_COOLDOWN = 360;
     private static final int CRUSHING_GRAVITY_DURATION = 120;
     private static final double CRUSHING_GRAVITY_RADIUS = 18.0D;
@@ -252,8 +253,6 @@ public class QueenEntity extends RoyalBossEntity {
                         @Override public void onStart() {
                             head.startShoot();
                             QueenEntity.this.triggerAnim(slot.controllerName(), "shoot");
-                            QueenEntity.this.playRoyalSound(net.minecraft.sounds.SoundEvents.FIRECHARGE_USE, 0.75F);
-                            QueenEntity.this.playRoyalSound(net.minecraft.sounds.SoundEvents.GHAST_WARN, 1.35F);
                         }
                         @Override public void onActive(int elapsedTicks) {
                             Vec3 origin = QueenEntity.this.headAnchor(head);
@@ -381,11 +380,21 @@ public class QueenEntity extends RoyalBossEntity {
     private int spawnManticoreTears(ServerLevel level, LivingEntity target, int count) {
         int pairs = Math.max(1, Math.min(3, (count + 1) / 2));
         int created = 0;
+        Vec3 towardTarget = target.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+        if (towardTarget.lengthSqr() < 1.0E-4D) {
+            towardTarget = this.getViewVector(1.0F).multiply(1.0D, 0.0D, 1.0D);
+        }
+        towardTarget = towardTarget.normalize();
+        Vec3 behindTarget = target.position().add(towardTarget.scale(8.0D));
+        Vec3 lateral = new Vec3(-towardTarget.z, 0.0D, towardTarget.x);
+        double vertical = AntarchyGravityApi.isGravityInverted(this) ? -2.0D : 2.0D;
         for (int i = 0; i < pairs; i++) {
             double angle = this.random.nextDouble() * Mth.TWO_PI;
             double distance = Math.max(8.0D, AntarchySettings.queenManticoreSummonRange() * 0.65D);
-            Vec3 firstPos = this.position().add(Math.cos(angle) * distance, 1.0D, Math.sin(angle) * distance);
-            Vec3 secondPos = this.position().add(Math.cos(angle + Math.PI) * distance, 1.0D, Math.sin(angle + Math.PI) * distance);
+            double spread = (i - (pairs - 1) * 0.5D) * 5.0D;
+            Vec3 pairCenter = behindTarget.add(lateral.scale(spread)).add(0.0D, vertical, 0.0D);
+            Vec3 firstPos = pairCenter.add(lateral.scale(3.0D));
+            Vec3 secondPos = pairCenter.add(lateral.scale(-3.0D));
             DimensionalTearEntity first = DimensionalTearEntity.createQueenManticoreTear(level, firstPos,
                     (float) Math.toDegrees(angle), 240, this.getUUID(), Math.min(3, count));
             DimensionalTearEntity second = DimensionalTearEntity.createQueenManticoreTear(level, secondPos,
@@ -417,7 +426,7 @@ public class QueenEntity extends RoyalBossEntity {
         Phase phase = this.phase();
         boolean majorBusy = this.royalEffects.active("momentum_lock") || this.royalEffects.active("crushing_gravity");
         boolean allowOverlap = phase != Phase.ONE;
-        String[] candidates = phase == Phase.ONE
+        String[] candidates = phase == Phase.ONE && !this.isMomentumLockAvailableEarly()
                 ? new String[] {"gravity_stomp", "black_hole"}
                 : new String[] {"gravity_stomp", "black_hole", "momentum_lock", "crushing_gravity", "acceleration"};
         String selected = this.attackScheduler.chooseWeighted(candidates, id -> {
@@ -490,6 +499,11 @@ public class QueenEntity extends RoyalBossEntity {
         };
     }
 
+    private boolean isMomentumLockAvailableEarly() {
+        return this.getMaxHealth() > 0.0F
+                && this.getHealth() / this.getMaxHealth() <= MOMENTUM_LOCK_EARLY_HEALTH_THRESHOLD;
+    }
+
     private void tickFinalAcceleration() {
         if (this.phase() != Phase.THREE) {
             return;
@@ -517,7 +531,7 @@ public class QueenEntity extends RoyalBossEntity {
 
     private void castBlackHole(ServerLevel level, LivingEntity target) {
         double vertical = 2.0D + this.random.nextDouble() * 2.0D;
-        if (AntarchyGravityApi.isGravityInverted(target)) {
+        if (AntarchyGravityApi.isGravityInverted(this)) {
             vertical = -vertical;
         }
         Vec3 anchor = target.position().add(

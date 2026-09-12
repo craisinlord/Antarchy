@@ -83,7 +83,7 @@ public final class TimeDilationManager {
 
     private static void discoverFieldEntities(ServerLevel level, List<TimeDilationFieldEntity> fields, TrackingState tracking) {
         for (TimeDilationFieldEntity field : fields) {
-            double radius = field.fieldRadius();
+            double radius = field.influenceRadius();
             var center = field.position();
             var area = new net.minecraft.world.phys.AABB(
                     center.x - radius, center.y - radius, center.z - radius,

@@ -37,7 +37,7 @@ public final class UnderVaultBlockEntity extends BlockEntity {
 
     private static VaultConfig createConfig() {
         return new VaultConfig(ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE,
-                        ResourceLocation.withDefaultNamespace("chests/trial_chambers/reward")), 4.0D, 4.0D,
+                        ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "chests/undertrial_vault")), 4.0D, 4.0D,
                 new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "undertrial_key"))),
                 Optional.empty());
     }

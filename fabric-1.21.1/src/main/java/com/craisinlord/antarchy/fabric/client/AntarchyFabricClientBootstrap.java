@@ -56,6 +56,8 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.BlockAndTintGetter;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.function.Function;
+import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 public final class AntarchyFabricClientBootstrap {
     private AntarchyFabricClientBootstrap() {
@@ -101,21 +103,21 @@ public final class AntarchyFabricClientBootstrap {
                 (BlockEntityRendererProvider) UnderVaultRenderer::new
         );
 
-        EntityRendererRegistry.register(AntarchyFabricEntities.EASTER_BUNNY.get(), EasterBunnyRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.FLYING_SQUIRREL.get(), FlyingSquirrelRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.CATERPILLAR.get(), CaterpillarRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.BUTTERFLY.get(), ButterflyRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.REVERIE.get(), ReverieRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.BRUTALFLY.get(), BrutalflyRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.RED_ANT.get(), AntRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.BROWN_ANT.get(), AntRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.RAINBOW_ANT.get(), AntRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.MOLEWORM.get(), MolewormRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.WORM.get(), WormRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.MANTIS.get(), MantisRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.ALPHA_MANTIS.get(), AlphaMantisRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.MOLEVORE.get(), MolevoreRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.FLYTRAP.get(), FlytrapRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.EASTER_BUNNY.get(), context -> withTemporalGeoLayer(new EasterBunnyRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.FLYING_SQUIRREL.get(), context -> withTemporalGeoLayer(new FlyingSquirrelRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.CATERPILLAR.get(), context -> withTemporalGeoLayer(new CaterpillarRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.BUTTERFLY.get(), context -> withTemporalGeoLayer(new ButterflyRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.REVERIE.get(), context -> withTemporalGeoLayer(new ReverieRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.BRUTALFLY.get(), context -> withTemporalGeoLayer(new BrutalflyRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.RED_ANT.get(), context -> withTemporalGeoLayer(new AntRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.BROWN_ANT.get(), context -> withTemporalGeoLayer(new AntRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.RAINBOW_ANT.get(), context -> withTemporalGeoLayer(new AntRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.MOLEWORM.get(), context -> withTemporalGeoLayer(new MolewormRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.WORM.get(), context -> withTemporalGeoLayer(new WormRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.MANTIS.get(), context -> withTemporalGeoLayer(new MantisRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.ALPHA_MANTIS.get(), context -> withTemporalGeoLayer(new AlphaMantisRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.MOLEVORE.get(), context -> withTemporalGeoLayer(new MolevoreRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.FLYTRAP.get(), context -> withTemporalGeoLayer(new FlytrapRenderer(context)));
         EntityRendererRegistry.register(AntarchyFabricEntities.OURANWOOD_BOAT_ENTITY.get(), context -> new OuranwoodBoatRenderer<>(context, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/boat/ouranwood.png"), false));
         EntityRendererRegistry.register(AntarchyFabricEntities.OURANWOOD_CHEST_BOAT_ENTITY.get(), context -> new OuranwoodBoatRenderer<>(context, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/chest_boat/ouranwood.png"), true));
         EntityRendererRegistry.register(AntarchyFabricEntities.PEACH_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/boat/peach.png"), false));
@@ -124,19 +126,19 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.NADIR_CHEST_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/chest_boat/nadir.png"), true));
         EntityRendererRegistry.register(AntarchyFabricEntities.ROYAL_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/boat/royal.png"), false));
         EntityRendererRegistry.register(AntarchyFabricEntities.ROYAL_CHEST_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/chest_boat/royal.png"), true));
-        EntityRendererRegistry.register(AntarchyFabricEntities.APPLE_COW.get(), AppleCowRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.GOLDEN_APPLE_COW.get(), AppleCowRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.ENCHANTED_GOLDEN_APPLE_COW.get(), AppleCowRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.APPLE_COW.get(), context -> withTemporalGeoLayer(new AppleCowRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.GOLDEN_APPLE_COW.get(), context -> withTemporalGeoLayer(new AppleCowRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.ENCHANTED_GOLDEN_APPLE_COW.get(), context -> withTemporalGeoLayer(new AppleCowRenderer(context)));
         EntityRendererRegistry.register(AntarchyFabricEntities.DIAMOND_MINECART.get(), DiamondMinecartRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.DR_TRAYAURUS.get(), context -> new DrTrayaurusRenderer(context, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/dr_trayaurus.png")));
-        EntityRendererRegistry.register(AntarchyFabricEntities.STRATOSHARK.get(), StratosharkRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.KRAKEN.get(), KrakenRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.STRATOSHARK.get(), context -> withTemporalGeoLayer(new StratosharkRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.KRAKEN.get(), context -> withTemporalGeoLayer(new KrakenRenderer(context)));
         EntityRendererRegistry.register(AntarchyFabricEntities.KRAKEN_PART.get(), MultipartPartRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.TENTACLE.get(), com.craisinlord.antarchy.content.client.renderer.TentacleRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.KRAKENS_GRASP_TRIDENT.get(), com.craisinlord.antarchy.content.client.renderer.KrakensGraspThrownTridentRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.MISSILE_SQUID.get(), MissileSquidRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.OCTOPUS_BOMB.get(), OctopusBombRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.NIGHTMARE.get(), NightmareRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.MISSILE_SQUID.get(), context -> withTemporalGeoLayer(new MissileSquidRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.OCTOPUS_BOMB.get(), context -> withTemporalGeoLayer(new OctopusBombRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.NIGHTMARE.get(), context -> withTemporalGeoLayer(new NightmareRenderer(context)));
         EntityRendererRegistry.register(AntarchyFabricEntities.NIGHTMARE_PORTAL.get(), NightmarePortalRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.DIMENSIONAL_TEAR.get(), DimensionalTearRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.PORTAL_GUN_PORTAL.get(), PortalGunPortalRenderer::new);
@@ -144,12 +146,12 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.PORTAL_GUN_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.PortalGunBlackHoleRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.PORTAL_GUN_PROJECTILE.get(), com.craisinlord.antarchy.content.client.renderer.PortalGunProjectileRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.NIGHTMARE_BITE.get(), NightmareBiteRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.LUCID.get(), LucidRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.VORTEX.get(), VortexRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.BED_BUG.get(), BedBugRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.WASP.get(), WaspRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.BOMBER.get(), BomberRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.BASILISK.get(), BasiliskRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.LUCID.get(), context -> withTemporalGeoLayer(new LucidRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.VORTEX.get(), context -> withTemporalGeoLayer(new VortexRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.BED_BUG.get(), context -> withTemporalGeoLayer(new BedBugRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.WASP.get(), context -> withTemporalGeoLayer(new WaspRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.BOMBER.get(), context -> withTemporalGeoLayer(new BomberRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.BASILISK.get(), context -> withTemporalGeoLayer(new BasiliskRenderer(context)));
         EntityRendererRegistry.register(AntarchyFabricEntities.SHRINK_RAY_PROJECTILE.get(), SizeRayProjectileRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.GROWTH_RAY_PROJECTILE.get(), SizeRayProjectileRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.LUCID_BOLT.get(), LucidBoltRenderer::new);
@@ -164,21 +166,21 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.HUSH_PROJECTILE.get(), HushProjectileRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.BRUTALFLY_ORB.get(), BrutalflyOrbRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.UPWARD_FALLING_BLOCK.get(), UpwardFallingBlockRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.SCORPION.get(), ScorpionRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.EMPEROR_SCORPION.get(), EmperorScorpionRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.TORETERROR.get(), ToreterrorRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.SCORPION.get(), context -> withTemporalGeoLayer(new ScorpionRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.EMPEROR_SCORPION.get(), context -> withTemporalGeoLayer(new EmperorScorpionRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.TORETERROR.get(), context -> withTemporalGeoLayer(new ToreterrorRenderer(context)));
         EntityRendererRegistry.register(AntarchyFabricEntities.WATER_BOMB.get(), WaterBombRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.CHEEP.get(), com.craisinlord.antarchy.content.client.renderer.CheepRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.DORRIE.get(), com.craisinlord.antarchy.content.client.renderer.DorrieRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.OURANWOOD_DEER.get(), com.craisinlord.antarchy.content.client.renderer.OuranwoodDeerRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.GLIMMER.get(), com.craisinlord.antarchy.content.client.renderer.glimmer.GlimmerRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.ELKA.get(), com.craisinlord.antarchy.content.client.renderer.ElkaRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.ROLLY_POLLY.get(), com.craisinlord.antarchy.content.client.renderer.RollyPollyRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.TERMITE.get(), TermiteRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.CRAWLING_BLIGHT.get(), CrawlingBlightRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.SKULKING_FRIGHT.get(), SkulkingFrightRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.MANTICORE.get(), com.craisinlord.antarchy.content.client.renderer.ManticoreRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.HERCULES_BEETLE.get(), HerculesBeetleRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.CHEEP.get(), context -> withTemporalGeoLayer(new com.craisinlord.antarchy.content.client.renderer.CheepRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.DORRIE.get(), context -> withTemporalGeoLayer(new com.craisinlord.antarchy.content.client.renderer.DorrieRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.OURANWOOD_DEER.get(), context -> withTemporalGeoLayer(new com.craisinlord.antarchy.content.client.renderer.OuranwoodDeerRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.GLIMMER.get(), context -> withTemporalGeoLayer(new com.craisinlord.antarchy.content.client.renderer.glimmer.GlimmerRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.ELKA.get(), context -> withTemporalGeoLayer(new com.craisinlord.antarchy.content.client.renderer.ElkaRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.ROLLY_POLLY.get(), context -> withTemporalGeoLayer(new com.craisinlord.antarchy.content.client.renderer.RollyPollyRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.TERMITE.get(), context -> withTemporalGeoLayer(new TermiteRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.CRAWLING_BLIGHT.get(), context -> withTemporalGeoLayer(new CrawlingBlightRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.SKULKING_FRIGHT.get(), context -> withTemporalGeoLayer(new SkulkingFrightRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.MANTICORE.get(), context -> withTemporalGeoLayer(new com.craisinlord.antarchy.content.client.renderer.ManticoreRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.HERCULES_BEETLE.get(), context -> withTemporalGeoLayer(new HerculesBeetleRenderer(context)));
         EntityRendererRegistry.register(AntarchyFabricEntities.PRINCE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalMountRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.PRINCESS.get(), com.craisinlord.antarchy.content.client.renderer.RoyalMountRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.KING.get(), com.craisinlord.antarchy.content.client.renderer.RoyalBossRenderer::new);
@@ -186,9 +188,9 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.ROYAL_BOLT.get(), com.craisinlord.antarchy.content.client.renderer.RoyalBoltRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.ROYAL_ELEMENTAL_PROJECTILE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalElementalProjectileRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.ROYAL_ICE_SPIKE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalIceSpikeRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.JERRY.get(), JerryRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.SPRINGBUG.get(), SpringbugRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.SPIT_BUG.get(), SpitBugRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.JERRY.get(), context -> withTemporalGeoLayer(new JerryRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.SPRINGBUG.get(), context -> withTemporalGeoLayer(new SpringbugRenderer(context)));
+        EntityRendererRegistry.register(AntarchyFabricEntities.SPIT_BUG.get(), context -> withTemporalGeoLayer(new SpitBugRenderer(context)));
         EntityRendererRegistry.register(AntarchyFabricEntities.SPIT_BUG_PROJECTILE.get(), SpitBugProjectileRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.STINK_BUG.get(), StinkBugRenderer::new);
 
@@ -196,6 +198,11 @@ public final class AntarchyFabricClientBootstrap {
         EntityModelLayerRegistry.registerModelLayer(OuranwoodBoatRenderer.chestBoatLayer(), ChestBoatModel::createBodyModel);
         EntityModelLayerRegistry.registerModelLayer(PeachBoatRenderer.boatLayer(), BoatModel::createBodyModel);
         EntityModelLayerRegistry.registerModelLayer(PeachBoatRenderer.chestBoatLayer(), ChestBoatModel::createBodyModel);
+    }
+
+    private static <T extends GeoAnimatable, R extends GeoEntityRenderer<T>> R withTemporalGeoLayer(R renderer) {
+        renderer.addRenderLayer(new TemporalContractionGeoLayer<>(renderer));
+        return renderer;
     }
 
     private static void registerColors() {

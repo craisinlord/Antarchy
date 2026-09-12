@@ -67,6 +67,36 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.DoubleValue  ULTIMATE_BOOTS_ARMOR_TOUGHNESS;
     private static final ModConfigSpec.DoubleValue  ULTIMATE_ARMOR_KNOCKBACK_RESISTANCE;
 
+    private static final ModConfigSpec.BooleanValue ROYAL_ARMOR_COMES_ENCHANTED;
+    private static final ModConfigSpec.IntValue ROYAL_ARMOR_PROTECTION_LEVEL;
+    private static final ModConfigSpec.IntValue ROYAL_ARMOR_ENCHANTABILITY;
+    private static final ModConfigSpec.IntValue ROYAL_ARMOR_DURABILITY_MULTIPLIER;
+    private static final ModConfigSpec.IntValue ROYAL_GUARDIAN_HELMET_ARMOR_VALUE;
+    private static final ModConfigSpec.IntValue ROYAL_GUARDIAN_CHESTPLATE_ARMOR_VALUE;
+    private static final ModConfigSpec.IntValue ROYAL_GUARDIAN_LEGGINGS_ARMOR_VALUE;
+    private static final ModConfigSpec.IntValue ROYAL_GUARDIAN_BOOTS_ARMOR_VALUE;
+    private static final ModConfigSpec.DoubleValue ROYAL_GUARDIAN_ARMOR_TOUGHNESS;
+    private static final ModConfigSpec.DoubleValue ROYAL_GUARDIAN_ARMOR_KNOCKBACK_RESISTANCE;
+    private static final ModConfigSpec.IntValue ROYAL_ASSAILANT_HELMET_ARMOR_VALUE;
+    private static final ModConfigSpec.IntValue ROYAL_ASSAILANT_CHESTPLATE_ARMOR_VALUE;
+    private static final ModConfigSpec.IntValue ROYAL_ASSAILANT_LEGGINGS_ARMOR_VALUE;
+    private static final ModConfigSpec.IntValue ROYAL_ASSAILANT_BOOTS_ARMOR_VALUE;
+    private static final ModConfigSpec.DoubleValue ROYAL_ASSAILANT_ARMOR_TOUGHNESS;
+    private static final ModConfigSpec.DoubleValue ROYAL_ASSAILANT_ARMOR_KNOCKBACK_RESISTANCE;
+    private static final ModConfigSpec.DoubleValue ROYAL_ASSAILANT_HELMET_DOUBLE_DAMAGE_CHANCE;
+    private static final ModConfigSpec.DoubleValue ROYAL_ASSAILANT_CHESTPLATE_DOUBLE_DAMAGE_CHANCE;
+    private static final ModConfigSpec.DoubleValue ROYAL_ASSAILANT_LEGGINGS_DOUBLE_DAMAGE_CHANCE;
+    private static final ModConfigSpec.DoubleValue ROYAL_ASSAILANT_BOOTS_DOUBLE_DAMAGE_CHANCE;
+    private static final ModConfigSpec.DoubleValue ROYAL_GUARDIAN_SWORD_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue ROYAL_GUARDIAN_SWORD_ATTACK_SPEED;
+    private static final ModConfigSpec.DoubleValue ROYAL_ASSAILANT_BATTLE_AXE_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue ROYAL_ASSAILANT_BATTLE_AXE_ATTACK_SPEED;
+    private static final ModConfigSpec.DoubleValue ROYAL_WEAPON_ATTACK_REACH_BONUS;
+    private static final ModConfigSpec.DoubleValue ROYAL_WEAPON_ATTACK_KNOCKBACK_BONUS;
+    private static final ModConfigSpec.IntValue ROYAL_WEAPON_DURABILITY;
+    private static final ModConfigSpec.IntValue ROYAL_WEAPON_ENCHANTABILITY;
+    private static final ModConfigSpec.IntValue ROYAL_GUARDIAN_SHIELD_DURABILITY;
+
 
     // Battle Axe
 
@@ -190,6 +220,20 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.DoubleValue  GRAVITY_GUN_BLAST_STRENGTH;
     private static final ModConfigSpec.DoubleValue  GRAVITY_GUN_COOLDOWN_SECONDS;
     private static final ModConfigSpec.DoubleValue  GRAVITY_GUN_MAX_HOLD_DISTANCE;
+    private static final ModConfigSpec.BooleanValue EYE_OF_THE_STORM_ENABLED;
+    private static final ModConfigSpec.IntValue EYE_OF_THE_STORM_UPDRAFT_COOLDOWN_TICKS;
+    private static final ModConfigSpec.DoubleValue EYE_OF_THE_STORM_UPDRAFT_LAUNCH_STRENGTH;
+    private static final ModConfigSpec.DoubleValue EYE_OF_THE_STORM_UPDRAFT_HEIGHT;
+    private static final ModConfigSpec.DoubleValue EYE_OF_THE_STORM_UPDRAFT_RADIUS;
+    private static final ModConfigSpec.IntValue EYE_OF_THE_STORM_UPDRAFT_DURATION_TICKS;
+    private static final ModConfigSpec.IntValue EYE_OF_THE_STORM_SURGE_COOLDOWN_TICKS;
+    private static final ModConfigSpec.DoubleValue EYE_OF_THE_STORM_SURGE_RANGE;
+    private static final ModConfigSpec.IntValue EYE_OF_THE_STORM_SURGE_DURATION_TICKS;
+    private static final ModConfigSpec.DoubleValue EYE_OF_THE_STORM_SURGE_RADIUS;
+    private static final ModConfigSpec.DoubleValue EYE_OF_THE_STORM_SURGE_HEIGHT;
+    private static final ModConfigSpec.DoubleValue EYE_OF_THE_STORM_SURGE_PULL_STRENGTH;
+    private static final ModConfigSpec.DoubleValue EYE_OF_THE_STORM_SURGE_RETURN_STRENGTH;
+    private static final ModConfigSpec.DoubleValue EYE_OF_THE_STORM_SURGE_DAMAGE;
 
     // Critter Cage
 
@@ -303,6 +347,38 @@ public final class AntarchyToolsConfig {
         ULTIMATE_LEGGINGS_ARMOR_TOUGHNESS    = b.comment("Armor toughness of the Ultimate Leggings.")                              .defineInRange("leggingsToughness",     3.0D, 0.0D, 100.0D);
         ULTIMATE_BOOTS_ARMOR_TOUGHNESS       = b.comment("Armor toughness of the Ultimate Boots.")                                 .defineInRange("bootsToughness",        3.0D, 0.0D, 100.0D);
         ULTIMATE_ARMOR_KNOCKBACK_RESISTANCE  = b.comment("Knockback resistance granted by each Ultimate Armor piece.")             .defineInRange("knockbackResistance",   0.1D, 0.0D, 1.0D);
+        b.pop();
+
+        b.push("royalGear");
+        ROYAL_ARMOR_COMES_ENCHANTED = b.define("comesEnchanted", true);
+        ROYAL_ARMOR_PROTECTION_LEVEL = b.defineInRange("protectionLevel", 10, 0, 100);
+        ROYAL_ARMOR_ENCHANTABILITY = b.defineInRange("enchantability", 30, 0, 100);
+        ROYAL_ARMOR_DURABILITY_MULTIPLIER = b.defineInRange("durabilityMultiplier", 93, 0, 1000);
+        ROYAL_GUARDIAN_HELMET_ARMOR_VALUE = b.defineInRange("guardianHelmetArmor", 5, 0, 100);
+        ROYAL_GUARDIAN_CHESTPLATE_ARMOR_VALUE = b.defineInRange("guardianChestplateArmor", 10, 0, 100);
+        ROYAL_GUARDIAN_LEGGINGS_ARMOR_VALUE = b.defineInRange("guardianLeggingsArmor", 8, 0, 100);
+        ROYAL_GUARDIAN_BOOTS_ARMOR_VALUE = b.defineInRange("guardianBootsArmor", 5, 0, 100);
+        ROYAL_GUARDIAN_ARMOR_TOUGHNESS = b.defineInRange("guardianArmorToughness", 4.0D, 0.0D, 100.0D);
+        ROYAL_GUARDIAN_ARMOR_KNOCKBACK_RESISTANCE = b.defineInRange("guardianArmorKnockbackResistance", 0.15D, 0.0D, 1.0D);
+        ROYAL_ASSAILANT_HELMET_ARMOR_VALUE = b.defineInRange("assailantHelmetArmor", 5, 0, 100);
+        ROYAL_ASSAILANT_CHESTPLATE_ARMOR_VALUE = b.defineInRange("assailantChestplateArmor", 10, 0, 100);
+        ROYAL_ASSAILANT_LEGGINGS_ARMOR_VALUE = b.defineInRange("assailantLeggingsArmor", 8, 0, 100);
+        ROYAL_ASSAILANT_BOOTS_ARMOR_VALUE = b.defineInRange("assailantBootsArmor", 5, 0, 100);
+        ROYAL_ASSAILANT_ARMOR_TOUGHNESS = b.defineInRange("assailantArmorToughness", 3.0D, 0.0D, 100.0D);
+        ROYAL_ASSAILANT_ARMOR_KNOCKBACK_RESISTANCE = b.defineInRange("assailantArmorKnockbackResistance", 0.15D, 0.0D, 1.0D);
+        ROYAL_ASSAILANT_HELMET_DOUBLE_DAMAGE_CHANCE = b.defineInRange("assailantHelmetDoubleDamageChance", 0.06D, 0.0D, 1.0D);
+        ROYAL_ASSAILANT_CHESTPLATE_DOUBLE_DAMAGE_CHANCE = b.defineInRange("assailantChestplateDoubleDamageChance", 0.08D, 0.0D, 1.0D);
+        ROYAL_ASSAILANT_LEGGINGS_DOUBLE_DAMAGE_CHANCE = b.defineInRange("assailantLeggingsDoubleDamageChance", 0.07D, 0.0D, 1.0D);
+        ROYAL_ASSAILANT_BOOTS_DOUBLE_DAMAGE_CHANCE = b.defineInRange("assailantBootsDoubleDamageChance", 0.05D, 0.0D, 1.0D);
+        ROYAL_GUARDIAN_SWORD_ATTACK_DAMAGE = b.defineInRange("guardianSwordAttackDamage", 111.0D, 0.0D, 4096.0D);
+        ROYAL_GUARDIAN_SWORD_ATTACK_SPEED = b.defineInRange("guardianSwordAttackSpeed", -2.5D, -10.0D, 10.0D);
+        ROYAL_ASSAILANT_BATTLE_AXE_ATTACK_DAMAGE = b.defineInRange("assailantBattleAxeAttackDamage", 151.0D, 0.0D, 4096.0D);
+        ROYAL_ASSAILANT_BATTLE_AXE_ATTACK_SPEED = b.defineInRange("assailantBattleAxeAttackSpeed", -2.9D, -10.0D, 10.0D);
+        ROYAL_WEAPON_ATTACK_REACH_BONUS = b.defineInRange("weaponAttackReachBonus", 1.0D, 0.0D, 32.0D);
+        ROYAL_WEAPON_ATTACK_KNOCKBACK_BONUS = b.defineInRange("weaponAttackKnockbackBonus", 1.0D, 0.0D, 32.0D);
+        ROYAL_WEAPON_DURABILITY = b.defineInRange("weaponDurability", 4608, 1, 100000);
+        ROYAL_WEAPON_ENCHANTABILITY = b.defineInRange("weaponEnchantability", 30, 0, 100);
+        ROYAL_GUARDIAN_SHIELD_DURABILITY = b.defineInRange("guardianShieldDurability", 1008, 1, 100000);
         b.pop();
 
 
@@ -485,6 +561,23 @@ public final class AntarchyToolsConfig {
         GRAVITY_GUN_BLAST_STRENGTH     = b.comment("Velocity multiplier for the push blast.")                                     .defineInRange("blastStrength",  1.4D, 0.1D, 10.0D);
         GRAVITY_GUN_COOLDOWN_SECONDS   = b.comment("Cooldown in seconds after any Gravity Gun action.")                           .defineInRange("cooldownSeconds", 0.35D, 0.0D, 10.0D);
         GRAVITY_GUN_MAX_HOLD_DISTANCE  = b.comment("Maximum distance a held target can be pushed from the player, in blocks.")    .defineInRange("maxHoldDistance", 10.0D, 1.5D, 64.0D);
+        b.pop();
+
+        b.push("eyeOfTheStorm");
+        EYE_OF_THE_STORM_ENABLED = b.define("enabled", true);
+        EYE_OF_THE_STORM_UPDRAFT_COOLDOWN_TICKS = b.defineInRange("updraftCooldownTicks", 40, 0, 20000);
+        EYE_OF_THE_STORM_UPDRAFT_LAUNCH_STRENGTH = b.defineInRange("updraftLaunchStrength", 1.15D, 0.0D, 16.0D);
+        EYE_OF_THE_STORM_UPDRAFT_HEIGHT = b.defineInRange("updraftHeight", 4.0D, 0.0D, 128.0D);
+        EYE_OF_THE_STORM_UPDRAFT_RADIUS = b.defineInRange("updraftRadius", 1.3D, 0.0D, 64.0D);
+        EYE_OF_THE_STORM_UPDRAFT_DURATION_TICKS = b.defineInRange("updraftDurationTicks", 32, 0, 20000);
+        EYE_OF_THE_STORM_SURGE_COOLDOWN_TICKS = b.defineInRange("surgeCooldownTicks", 70, 0, 20000);
+        EYE_OF_THE_STORM_SURGE_RANGE = b.defineInRange("surgeRange", 16.0D, 0.0D, 256.0D);
+        EYE_OF_THE_STORM_SURGE_DURATION_TICKS = b.defineInRange("surgeDurationTicks", 300, 0, 20000);
+        EYE_OF_THE_STORM_SURGE_RADIUS = b.defineInRange("surgeRadius", 4.0D, 0.0D, 128.0D);
+        EYE_OF_THE_STORM_SURGE_HEIGHT = b.defineInRange("surgeHeight", 6.0D, 0.0D, 128.0D);
+        EYE_OF_THE_STORM_SURGE_PULL_STRENGTH = b.defineInRange("surgePullStrength", 0.85D, 0.0D, 16.0D);
+        EYE_OF_THE_STORM_SURGE_RETURN_STRENGTH = b.defineInRange("surgeReturnStrength", 1.4D, 0.0D, 16.0D);
+        EYE_OF_THE_STORM_SURGE_DAMAGE = b.defineInRange("surgeDamage", 5.0F, 0.0F, 1024.0F);
         b.pop();
 
 
@@ -709,6 +802,51 @@ public final class AntarchyToolsConfig {
     static int     americanRegenerationDurationTicks()       { return AMERICAN_REGENERATION_DURATION_TICKS.get(); }
     static int     americanRegenerationAmplifier()            { return AMERICAN_REGENERATION_AMPLIFIER.get(); }
     static double  mogglesVisionRadius()                     { return MOGGLES_VISION_RADIUS.get(); }
+
+    static boolean eyeOfTheStormEnabled() { return EYE_OF_THE_STORM_ENABLED.get(); }
+    static int eyeOfTheStormUpdraftCooldownTicks() { return EYE_OF_THE_STORM_UPDRAFT_COOLDOWN_TICKS.get(); }
+    static double eyeOfTheStormUpdraftLaunchStrength() { return EYE_OF_THE_STORM_UPDRAFT_LAUNCH_STRENGTH.get(); }
+    static double eyeOfTheStormUpdraftHeight() { return EYE_OF_THE_STORM_UPDRAFT_HEIGHT.get(); }
+    static double eyeOfTheStormUpdraftRadius() { return EYE_OF_THE_STORM_UPDRAFT_RADIUS.get(); }
+    static int eyeOfTheStormUpdraftDurationTicks() { return EYE_OF_THE_STORM_UPDRAFT_DURATION_TICKS.get(); }
+    static int eyeOfTheStormSurgeCooldownTicks() { return EYE_OF_THE_STORM_SURGE_COOLDOWN_TICKS.get(); }
+    static double eyeOfTheStormSurgeRange() { return EYE_OF_THE_STORM_SURGE_RANGE.get(); }
+    static int eyeOfTheStormSurgeDurationTicks() { return EYE_OF_THE_STORM_SURGE_DURATION_TICKS.get(); }
+    static double eyeOfTheStormSurgeRadius() { return EYE_OF_THE_STORM_SURGE_RADIUS.get(); }
+    static double eyeOfTheStormSurgeHeight() { return EYE_OF_THE_STORM_SURGE_HEIGHT.get(); }
+    static double eyeOfTheStormSurgePullStrength() { return EYE_OF_THE_STORM_SURGE_PULL_STRENGTH.get(); }
+    static double eyeOfTheStormSurgeReturnStrength() { return EYE_OF_THE_STORM_SURGE_RETURN_STRENGTH.get(); }
+    static float eyeOfTheStormSurgeDamage() { return EYE_OF_THE_STORM_SURGE_DAMAGE.get().floatValue(); }
+
+    static boolean royalArmorComesEnchanted() { return ROYAL_ARMOR_COMES_ENCHANTED.get(); }
+    static int royalArmorProtectionLevel() { return ROYAL_ARMOR_PROTECTION_LEVEL.get(); }
+    static int royalArmorEnchantability() { return ROYAL_ARMOR_ENCHANTABILITY.get(); }
+    static int royalArmorDurabilityMultiplier() { return ROYAL_ARMOR_DURABILITY_MULTIPLIER.get(); }
+    static int royalGuardianHelmetArmorValue() { return ROYAL_GUARDIAN_HELMET_ARMOR_VALUE.get(); }
+    static int royalGuardianChestplateArmorValue() { return ROYAL_GUARDIAN_CHESTPLATE_ARMOR_VALUE.get(); }
+    static int royalGuardianLeggingsArmorValue() { return ROYAL_GUARDIAN_LEGGINGS_ARMOR_VALUE.get(); }
+    static int royalGuardianBootsArmorValue() { return ROYAL_GUARDIAN_BOOTS_ARMOR_VALUE.get(); }
+    static double royalGuardianArmorToughness() { return ROYAL_GUARDIAN_ARMOR_TOUGHNESS.get(); }
+    static double royalGuardianArmorKnockbackResistance() { return ROYAL_GUARDIAN_ARMOR_KNOCKBACK_RESISTANCE.get(); }
+    static int royalAssailantHelmetArmorValue() { return ROYAL_ASSAILANT_HELMET_ARMOR_VALUE.get(); }
+    static int royalAssailantChestplateArmorValue() { return ROYAL_ASSAILANT_CHESTPLATE_ARMOR_VALUE.get(); }
+    static int royalAssailantLeggingsArmorValue() { return ROYAL_ASSAILANT_LEGGINGS_ARMOR_VALUE.get(); }
+    static int royalAssailantBootsArmorValue() { return ROYAL_ASSAILANT_BOOTS_ARMOR_VALUE.get(); }
+    static double royalAssailantArmorToughness() { return ROYAL_ASSAILANT_ARMOR_TOUGHNESS.get(); }
+    static double royalAssailantArmorKnockbackResistance() { return ROYAL_ASSAILANT_ARMOR_KNOCKBACK_RESISTANCE.get(); }
+    static double royalAssailantHelmetDoubleDamageChance() { return ROYAL_ASSAILANT_HELMET_DOUBLE_DAMAGE_CHANCE.get(); }
+    static double royalAssailantChestplateDoubleDamageChance() { return ROYAL_ASSAILANT_CHESTPLATE_DOUBLE_DAMAGE_CHANCE.get(); }
+    static double royalAssailantLeggingsDoubleDamageChance() { return ROYAL_ASSAILANT_LEGGINGS_DOUBLE_DAMAGE_CHANCE.get(); }
+    static double royalAssailantBootsDoubleDamageChance() { return ROYAL_ASSAILANT_BOOTS_DOUBLE_DAMAGE_CHANCE.get(); }
+    static double royalGuardianSwordAttackDamage() { return ROYAL_GUARDIAN_SWORD_ATTACK_DAMAGE.get(); }
+    static double royalGuardianSwordAttackSpeed() { return ROYAL_GUARDIAN_SWORD_ATTACK_SPEED.get(); }
+    static double royalAssailantBattleAxeAttackDamage() { return ROYAL_ASSAILANT_BATTLE_AXE_ATTACK_DAMAGE.get(); }
+    static double royalAssailantBattleAxeAttackSpeed() { return ROYAL_ASSAILANT_BATTLE_AXE_ATTACK_SPEED.get(); }
+    static double royalWeaponAttackReachBonus() { return ROYAL_WEAPON_ATTACK_REACH_BONUS.get(); }
+    static double royalWeaponAttackKnockbackBonus() { return ROYAL_WEAPON_ATTACK_KNOCKBACK_BONUS.get(); }
+    static int royalWeaponDurability() { return ROYAL_WEAPON_DURABILITY.get(); }
+    static int royalWeaponEnchantability() { return ROYAL_WEAPON_ENCHANTABILITY.get(); }
+    static int royalGuardianShieldDurability() { return ROYAL_GUARDIAN_SHIELD_DURABILITY.get(); }
 
 
 }

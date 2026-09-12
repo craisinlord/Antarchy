@@ -5,14 +5,16 @@ import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import com.craisinlord.antarchy.content.portalgun.PortalGunCollisionHelper;
-import java.util.ArrayList;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import java.util.List;
 import java.util.TreeSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -21,7 +23,10 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -36,6 +41,8 @@ public abstract class EntityMoveMixin {
     private double antarchy$lastPlayerMoveY = 0.0;
     @Unique
     private AABB antarchy$moveStartBox;
+    @Unique
+    private Vec3 antarchy$collideWorldMovement = Vec3.ZERO;
 
     @Inject(method = "move", at = @At("HEAD"))
     private void antarchy$captureMoveStart(MoverType type, Vec3 movement, CallbackInfo ci) {
@@ -139,111 +146,153 @@ public abstract class EntityMoveMixin {
         }
     }
 
-    @Inject(method = "collide", at = @At("HEAD"), cancellable = true)
-    private void antarchy$invertedStepUp(Vec3 movement, CallbackInfoReturnable<Vec3> cir) {
-        Entity entity = (Entity) (Object) this;
-        if (!AntarchyGravityApi.isGravityInverted(entity)) {
-            return;
-        }
-
-        AABB aabb = entity.getBoundingBox();
-        List<VoxelShape> entityShapes = entity.level().getEntityCollisions(entity, aabb.expandTowards(movement));
-        Vec3 collided = movement.lengthSqr() == 0.0 ? movement : Entity.collideBoundingBox(entity, movement, aabb, entity.level(), entityShapes);
-
-        boolean movedX = movement.x != collided.x;
-        boolean movedY = movement.y != collided.y;
-        boolean movedZ = movement.z != collided.z;
-        boolean pressingIntoCeiling = movedY && movement.y > 0.0D;
-        boolean supportedByCeiling = entity.onGround()
-                || !entity.level().noCollision(entity, aabb.move(0.0D, 1.0E-5D, 0.0D));
-        float maxUpStep = entity.maxUpStep();
-
-        if (!(maxUpStep > 0.0F) || !(pressingIntoCeiling || supportedByCeiling) || !(movedX || movedZ)) {
-            cir.setReturnValue(PortalGunCollisionHelper.resolveCollision(entity, aabb, movement, collided));
-            return;
-        }
-
-        AABB steppedBox = pressingIntoCeiling ? aabb.move(0.0, collided.y, 0.0) : aabb;
-        AABB searchBox = steppedBox.expandTowards(movement.x, -(double) maxUpStep, movement.z);
-        if (!pressingIntoCeiling) {
-            searchBox = searchBox.expandTowards(0.0, 1.0E-5D, 0.0);
-        }
-
-        List<VoxelShape> stepShapes = new ArrayList<>(entityShapes);
-        entity.level().getBlockCollisions(entity, searchBox).forEach(stepShapes::add);
-
-        float currentStepY = (float) collided.y;
-        float[] candidateHeights = antarchy$collectCandidateStepDownHeights(steppedBox, stepShapes, maxUpStep, currentStepY);
-        for (float candidate : candidateHeights) {
-            Vec3 stepped = Entity.collideBoundingBox(entity, new Vec3(movement.x, -(double) candidate, movement.z), steppedBox, entity.level(), stepShapes);
-            if (stepped.horizontalDistanceSqr() > collided.horizontalDistanceSqr()) {
-                double offset = steppedBox.maxY - aabb.maxY;
-                cir.setReturnValue(PortalGunCollisionHelper.resolveCollision(entity, aabb, movement, stepped.add(0.0, offset, 0.0)));
-                return;
-            }
-        }
-
-        // Exact candidate heights can still fail for composite ceiling shapes
-        // (notably corner stairs). Mirror the older three-phase step routine:
-        // move away from the ceiling, cross the obstruction, then settle back
-        // toward the new ceiling surface.
-        Vec3 awayFromCeiling = Entity.collideBoundingBox(
-                entity,
-                new Vec3(0.0D, -(double) maxUpStep, 0.0D),
-                steppedBox,
-                entity.level(),
-                stepShapes
-        );
-        if (awayFromCeiling.y < -1.0E-7D) {
-            AABB awayBox = steppedBox.move(awayFromCeiling);
-            Vec3 acrossStep = Entity.collideBoundingBox(
-                    entity,
-                    new Vec3(movement.x, 0.0D, movement.z),
-                    awayBox,
-                    entity.level(),
-                    stepShapes
-            );
-            if (acrossStep.horizontalDistanceSqr() > collided.horizontalDistanceSqr()) {
-                AABB acrossBox = awayBox.move(acrossStep);
-                Vec3 settleToCeiling = Entity.collideBoundingBox(
-                        entity,
-                        new Vec3(0.0D, -awayFromCeiling.y, 0.0D),
-                        acrossBox,
-                        entity.level(),
-                        stepShapes
-                );
-                double initialVerticalOffset = steppedBox.maxY - aabb.maxY;
-                Vec3 stepped = acrossStep.add(
-                        0.0D,
-                        initialVerticalOffset + awayFromCeiling.y + settleToCeiling.y,
-                        0.0D
-                );
-                cir.setReturnValue(PortalGunCollisionHelper.resolveCollision(entity, aabb, movement, stepped));
-                return;
-            }
-        }
-
-        cir.setReturnValue(PortalGunCollisionHelper.resolveCollision(entity, aabb, movement, collided));
+    @Inject(method = "collide", at = @At("HEAD"))
+    private void antarchy$captureCollideWorldMovement(Vec3 movement, CallbackInfoReturnable<Vec3> cir) {
+        this.antarchy$collideWorldMovement = movement;
     }
 
-    @Unique
-    private static float[] antarchy$collectCandidateStepDownHeights(AABB box, List<VoxelShape> shapes, float maxStep, float currentY) {
+    /*
+     * Keep vanilla's step algorithm in player-local coordinates. Its Y tests,
+     * candidate heights and maxUpStep are all defined in that frame. Only the
+     * physical AABB operations and low-level shape collision belong in world
+     * coordinates.
+     */
+    @ModifyVariable(
+            method = "collide",
+            at = @At(
+                    value = "INVOKE_ASSIGN",
+                    target = "Lnet/minecraft/world/level/Level;getEntityCollisions(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;",
+                    ordinal = 0
+            ),
+            ordinal = 0
+    )
+    private Vec3 antarchy$collideWorldToPlayer(Vec3 movement) {
+        Entity entity = (Entity) (Object) this;
+        AntarchyGravityDirection direction = AntarchyGravityApi.getGravityDirection(entity);
+        if (!direction.isInverted()) {
+            return movement;
+        }
+        return AntarchyGravityRotationUtil.vecWorldToPlayer(movement, direction);
+    }
+
+    @ModifyArgs(
+            method = "collide",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/phys/AABB;expandTowards(DDD)Lnet/minecraft/world/phys/AABB;"
+            )
+    )
+    private void antarchy$expandStepSearchInWorldFrame(Args args) {
+        Entity entity = (Entity) (Object) this;
+        AntarchyGravityDirection direction = AntarchyGravityApi.getGravityDirection(entity);
+        if (!direction.isInverted()) {
+            return;
+        }
+        Vec3 world = AntarchyGravityRotationUtil.vecPlayerToWorld(
+                new Vec3(args.get(0), args.get(1), args.get(2)), direction);
+        args.set(0, world.x);
+        args.set(1, world.y);
+        args.set(2, world.z);
+    }
+
+    @ModifyArgs(
+            method = "collide",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/phys/AABB;move(DDD)Lnet/minecraft/world/phys/AABB;"
+            )
+    )
+    private void antarchy$moveStepBoxInWorldFrame(Args args) {
+        Entity entity = (Entity) (Object) this;
+        AntarchyGravityDirection direction = AntarchyGravityApi.getGravityDirection(entity);
+        if (!direction.isInverted()) {
+            return;
+        }
+        Vec3 world = AntarchyGravityRotationUtil.vecPlayerToWorld(
+                new Vec3(args.get(0), args.get(1), args.get(2)), direction);
+        args.set(0, world.x);
+        args.set(1, world.y);
+        args.set(2, world.z);
+    }
+
+    @WrapOperation(
+            method = "collide",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/entity/Entity;collideBoundingBox(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/AABB;Lnet/minecraft/world/level/Level;Ljava/util/List;)Lnet/minecraft/world/phys/Vec3;"
+            )
+    )
+    private Vec3 antarchy$collideBoundingBoxInLocalFrame(
+            Entity collisionEntity,
+            Vec3 localMovement,
+            AABB box,
+            Level level,
+            List<VoxelShape> collisions,
+            Operation<Vec3> original
+    ) {
+        AntarchyGravityDirection direction = AntarchyGravityApi.getGravityDirection(collisionEntity);
+        if (!direction.isInverted()) {
+            return original.call(collisionEntity, localMovement, box, level, collisions);
+        }
+        Vec3 worldMovement = AntarchyGravityRotationUtil.vecPlayerToWorld(localMovement, direction);
+        Vec3 worldResult = original.call(collisionEntity, worldMovement, box, level, collisions);
+        return AntarchyGravityRotationUtil.vecWorldToPlayer(worldResult, direction);
+    }
+
+    @Redirect(
+            method = "collide",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/entity/Entity;collectCandidateStepUpHeights(Lnet/minecraft/world/phys/AABB;Ljava/util/List;FF)[F"
+            )
+    )
+    private float[] antarchy$collectGravityAwareStepHeights(
+            AABB box, List<VoxelShape> shapes, float maxStep, float currentY) {
+        Entity entity = (Entity) (Object) this;
+        boolean inverted = AntarchyGravityApi.isGravityInverted(entity);
         TreeSet<Float> heights = new TreeSet<>();
         for (VoxelShape shape : shapes) {
             for (double coord : shape.getCoords(Direction.Axis.Y)) {
-                float height = (float) (box.maxY - coord);
+                float height = (float) (inverted ? box.maxY - coord : coord - box.minY);
                 if (height >= 0.0F && height != currentY && height <= maxStep) {
                     heights.add(height);
                 }
             }
         }
-
         float[] result = new float[heights.size()];
         int i = 0;
         for (float height : heights) {
             result[i++] = height;
         }
         return result;
+    }
+
+    @Redirect(
+            method = "collide",
+            at = @At(value = "FIELD", target = "Lnet/minecraft/world/phys/AABB;minY:D")
+    )
+    private double antarchy$readLocalStepBase(AABB box) {
+        Entity entity = (Entity) (Object) this;
+        if (!AntarchyGravityApi.isGravityInverted(entity)) {
+            return box.minY;
+        }
+        return -box.maxY;
+    }
+
+    @Inject(method = "collide", at = @At("RETURN"), cancellable = true)
+    private void antarchy$collidePlayerToWorld(Vec3 movement, CallbackInfoReturnable<Vec3> cir) {
+        Entity entity = (Entity) (Object) this;
+        AntarchyGravityDirection direction = AntarchyGravityApi.getGravityDirection(entity);
+        if (!direction.isInverted()) {
+            return;
+        }
+        Vec3 worldResult = AntarchyGravityRotationUtil.vecPlayerToWorld(cir.getReturnValue(), direction);
+        cir.setReturnValue(PortalGunCollisionHelper.resolveCollision(
+                entity,
+                entity.getBoundingBox(),
+                this.antarchy$collideWorldMovement,
+                worldResult
+        ));
     }
 
     @Unique
