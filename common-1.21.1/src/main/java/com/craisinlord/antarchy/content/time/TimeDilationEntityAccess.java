@@ -11,6 +11,8 @@ public interface TimeDilationEntityAccess {
 
     boolean antarchy$consumeTimeDilationTick(String timerKey, double rate);
 
+    int antarchy$consumeTimeDilationTicks(String timerKey, double rate);
+
     boolean antarchy$isInTimeDilationMove();
 
     void antarchy$setInTimeDilationMove(boolean inMove);

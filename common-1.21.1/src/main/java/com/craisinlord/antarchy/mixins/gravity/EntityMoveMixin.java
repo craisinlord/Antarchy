@@ -154,9 +154,11 @@ public abstract class EntityMoveMixin {
         boolean movedY = movement.y != collided.y;
         boolean movedZ = movement.z != collided.z;
         boolean pressingIntoCeiling = movedY && movement.y > 0.0D;
+        boolean supportedByCeiling = entity.onGround()
+                || !entity.level().noCollision(entity, aabb.move(0.0D, 1.0E-5D, 0.0D));
         float maxUpStep = entity.maxUpStep();
 
-        if (!(maxUpStep > 0.0F) || !(pressingIntoCeiling || entity.onGround()) || !(movedX || movedZ)) {
+        if (!(maxUpStep > 0.0F) || !(pressingIntoCeiling || supportedByCeiling) || !(movedX || movedZ)) {
             cir.setReturnValue(PortalGunCollisionHelper.resolveCollision(entity, aabb, movement, collided));
             return;
         }
@@ -177,6 +179,46 @@ public abstract class EntityMoveMixin {
             if (stepped.horizontalDistanceSqr() > collided.horizontalDistanceSqr()) {
                 double offset = steppedBox.maxY - aabb.maxY;
                 cir.setReturnValue(PortalGunCollisionHelper.resolveCollision(entity, aabb, movement, stepped.add(0.0, offset, 0.0)));
+                return;
+            }
+        }
+
+        // Exact candidate heights can still fail for composite ceiling shapes
+        // (notably corner stairs). Mirror the older three-phase step routine:
+        // move away from the ceiling, cross the obstruction, then settle back
+        // toward the new ceiling surface.
+        Vec3 awayFromCeiling = Entity.collideBoundingBox(
+                entity,
+                new Vec3(0.0D, -(double) maxUpStep, 0.0D),
+                steppedBox,
+                entity.level(),
+                stepShapes
+        );
+        if (awayFromCeiling.y < -1.0E-7D) {
+            AABB awayBox = steppedBox.move(awayFromCeiling);
+            Vec3 acrossStep = Entity.collideBoundingBox(
+                    entity,
+                    new Vec3(movement.x, 0.0D, movement.z),
+                    awayBox,
+                    entity.level(),
+                    stepShapes
+            );
+            if (acrossStep.horizontalDistanceSqr() > collided.horizontalDistanceSqr()) {
+                AABB acrossBox = awayBox.move(acrossStep);
+                Vec3 settleToCeiling = Entity.collideBoundingBox(
+                        entity,
+                        new Vec3(0.0D, -awayFromCeiling.y, 0.0D),
+                        acrossBox,
+                        entity.level(),
+                        stepShapes
+                );
+                double initialVerticalOffset = steppedBox.maxY - aabb.maxY;
+                Vec3 stepped = acrossStep.add(
+                        0.0D,
+                        initialVerticalOffset + awayFromCeiling.y + settleToCeiling.y,
+                        0.0D
+                );
+                cir.setReturnValue(PortalGunCollisionHelper.resolveCollision(entity, aabb, movement, stepped));
                 return;
             }
         }

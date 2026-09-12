@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "antarchy:underside_ruins",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 184736291,
+    "spacing": 24,
+    "separation": 12,
+    "type": "integrated_api:advanced_random_spread"
+  }
+}

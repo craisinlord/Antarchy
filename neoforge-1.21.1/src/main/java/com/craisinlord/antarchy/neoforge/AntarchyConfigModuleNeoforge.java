@@ -96,9 +96,9 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setBomberExplosionDamage(AntarchyMobsConfig.bomberExplosionDamage());
         AntarchySettings.setBomberExplosionRadius(AntarchyMobsConfig.bomberExplosionRadius());
 
-        AntarchySettings.setJumpyBugHealth(AntarchyMobsConfig.jumpyBugHealth());
-        AntarchySettings.setJumpyBugPounceDamage(AntarchyMobsConfig.jumpyBugPounceDamage());
-        AntarchySettings.setJumpyBugCamouflageAlpha(AntarchyMobsConfig.jumpyBugCamouflageAlpha());
+        AntarchySettings.setSpringbugHealth(AntarchyMobsConfig.springbugHealth());
+        AntarchySettings.setSpringbugPounceDamage(AntarchyMobsConfig.springbugPounceDamage());
+        AntarchySettings.setSpringbugCamouflageAlpha(AntarchyMobsConfig.springbugCamouflageAlpha());
 
         AntarchySettings.setEmperorScorpionHealth(AntarchyMobsConfig.emperorScorpionHealth());
         AntarchySettings.setEmperorScorpionAttackDamage(AntarchyMobsConfig.emperorScorpionAttackDamage());
@@ -248,10 +248,10 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setRollyPollyArmor(AntarchyMobsConfig.rollyPollyArmor());
         AntarchySettings.setRollyPollyRolledArmorBonus(AntarchyMobsConfig.rollyPollyRolledArmorBonus());
 
-        AntarchySettings.setTriffidHealth(AntarchyMobsConfig.triffidHealth());
-        AntarchySettings.setTriffidAttackDamage(AntarchyMobsConfig.triffidAttackDamage());
-        AntarchySettings.setTriffidGrabDamage(AntarchyMobsConfig.triffidGrabDamage());
-        AntarchySettings.setTriffidSweepHitCooldownTicks(AntarchyMobsConfig.triffidSweepHitCooldownTicks());
+        AntarchySettings.setFlytrapHealth(AntarchyMobsConfig.flytrapHealth());
+        AntarchySettings.setFlytrapAttackDamage(AntarchyMobsConfig.flytrapAttackDamage());
+        AntarchySettings.setFlytrapGrabDamage(AntarchyMobsConfig.flytrapGrabDamage());
+        AntarchySettings.setFlytrapSweepHitCooldownTicks(AntarchyMobsConfig.flytrapSweepHitCooldownTicks());
 
         AntarchySettings.setCaterpillarPupationTimeSeconds(AntarchyMobsConfig.caterpillarPupationTimeSeconds());
 
@@ -343,10 +343,10 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setWaterBombGravity(AntarchyMobsConfig.waterBombGravity());
         AntarchySettings.setWaterBombKnockback(AntarchyMobsConfig.waterBombKnockback());
 
-        AntarchySettings.setCreepingHorrorHealth(AntarchyMobsConfig.creepingHorrorHealth());
-        AntarchySettings.setCreepingHorrorAttackDamage(AntarchyMobsConfig.creepingHorrorAttackDamage());
-        AntarchySettings.setLurkingTerrorHealth(AntarchyMobsConfig.lurkingTerrorHealth());
-        AntarchySettings.setLurkingTerrorAttackDamage(AntarchyMobsConfig.lurkingTerrorAttackDamage());
+        AntarchySettings.setCrawlingBlightHealth(AntarchyMobsConfig.crawlingBlightHealth());
+        AntarchySettings.setCrawlingBlightAttackDamage(AntarchyMobsConfig.crawlingBlightAttackDamage());
+        AntarchySettings.setSkulkingFrightHealth(AntarchyMobsConfig.skulkingFrightHealth());
+        AntarchySettings.setSkulkingFrightAttackDamage(AntarchyMobsConfig.skulkingFrightAttackDamage());
         AntarchySettings.setManticoreHealth(AntarchyMobsConfig.manticoreHealth());
         AntarchySettings.setManticoreAttackDamage(AntarchyMobsConfig.manticoreAttackDamage());
         AntarchySettings.setManticoreStingPoisonTicks(AntarchyMobsConfig.manticoreStingPoisonTicks());

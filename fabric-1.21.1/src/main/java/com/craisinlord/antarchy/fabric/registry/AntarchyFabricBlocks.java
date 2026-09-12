@@ -14,8 +14,11 @@ import com.craisinlord.antarchy.content.block.entity.DimensionalTearMarkerBlockE
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalBaseBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalMasterBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.PotentNyxiteBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.QueenTrailSpawnMarkerBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.SeashellBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.UpperBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.UndertrialSpawnerBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.UnderVaultBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.VortexLensBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.WaspNestBlockEntity;
 import com.craisinlord.antarchy.content.fluid.BileLiquidBlock;
@@ -55,6 +58,16 @@ public final class AntarchyFabricBlocks {
 
 
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Antarchy.MODID);
+
+    public static final DeferredBlock<UndertrialSpawnerBlock> UNDERTRIAL_SPAWNER = BLOCKS.register("undertrial_spawner",
+            () -> new UndertrialSpawnerBlock(AntarchyFabricBlocks::undertrialSpawnerBlockEntityType,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.TRIAL_SPAWNER).noOcclusion().isViewBlocking((state, level, pos) -> false)));
+    public static final DeferredBlock<UnderVaultBlock> UNDERVAULT = BLOCKS.register("undervault",
+            () -> new UnderVaultBlock(AntarchyFabricBlocks::underVaultBlockEntityType,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.VAULT).noOcclusion().isViewBlocking((state, level, pos) -> false)));
+    public static final DeferredBlock<QueenTrailSpawnMarkerBlock> QUEEN_TRAIL_SPAWN_MARKER = BLOCKS.register("queen_trail_spawn_marker",
+            () -> new QueenTrailSpawnMarkerBlock(AntarchyFabricBlocks::queenTrailSpawnMarkerBlockEntityType,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.BEDROCK).noLootTable()));
 
 
     public static final DeferredBlock<DuplicatorLogBlock> DUPLICATOR_LOG = BLOCKS.register("duplicator_log",
@@ -704,8 +717,8 @@ public final class AntarchyFabricBlocks {
             () -> new RotatedPillarBlock(AntarchyObjects.shellstoneProperties()));
 
 
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.TriffidGooBlock> TRIFFID_GOO_BLOCK = BLOCKS.register("triffid_goo_block",
-            () -> new com.craisinlord.antarchy.content.block.TriffidGooBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK).noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.FlytrapGooBlock> FLYTRAP_GOO_BLOCK = BLOCKS.register("flytrap_goo_block",
+            () -> new com.craisinlord.antarchy.content.block.FlytrapGooBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SLIME_BLOCK).noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
 
 
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.CloudBlock> CLOUD_BLOCK = BLOCKS.register("cloud_block",
@@ -952,8 +965,8 @@ public final class AntarchyFabricBlocks {
                     .replaceable()));
 
 
-    public static final DeferredBlock<CreepingHorrorEggBlock> CREEPING_HORROR_EGG = BLOCKS.register("creeping_horror_egg",
-            () -> new CreepingHorrorEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
+    public static final DeferredBlock<CrawlingBlightEggBlock> CRAWLING_BLIGHT_EGG = BLOCKS.register("crawling_blight_egg",
+            () -> new CrawlingBlightEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
 
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.PrinceEggBlock> PRINCE_EGG = BLOCKS.register("prince_egg",
             () -> new com.craisinlord.antarchy.content.block.PrinceEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DRAGON_EGG).randomTicks().noOcclusion()));
@@ -961,8 +974,8 @@ public final class AntarchyFabricBlocks {
             () -> new com.craisinlord.antarchy.content.block.PrincessEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DRAGON_EGG).randomTicks().noOcclusion()));
 
 
-    public static final DeferredBlock<JumpyBugEggBlock> JUMPY_BUG_EGG = BLOCKS.register("jumpy_bug_egg",
-            () -> new JumpyBugEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
+    public static final DeferredBlock<SpringbugEggBlock> SPRINGBUG_EGG = BLOCKS.register("springbug_egg",
+            () -> new SpringbugEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
 
 
     public static final DeferredBlock<SpitBugEggBlock> SPIT_BUG_EGG = BLOCKS.register("spit_bug_egg",
@@ -973,8 +986,8 @@ public final class AntarchyFabricBlocks {
             () -> new JerryEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG).randomTicks()));
 
 
-    public static final DeferredBlock<LurkingTerrorEggBlock> LURKING_TERROR_EGG = BLOCKS.register("lurking_terror_egg",
-            () -> new LurkingTerrorEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
+    public static final DeferredBlock<SkulkingFrightEggBlock> SKULKING_FRIGHT_EGG = BLOCKS.register("skulking_fright_egg",
+            () -> new SkulkingFrightEggBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.TURTLE_EGG)));
 
 
     static {
@@ -1515,6 +1528,15 @@ public final class AntarchyFabricBlocks {
                     (pos, state) -> new DimensionalTearMarkerBlockEntity(pos, state, AntarchyFabricBlocks::dimensionalTearMarkerBlockEntityType),
                     DIMENSIONAL_TEAR_MARKER.get()
             ).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<QueenTrailSpawnMarkerBlockEntity>> QUEEN_TRAIL_SPAWN_MARKER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("queen_trail_spawn_marker",
+            () -> BlockEntityType.Builder.of(
+                    (pos, state) -> new QueenTrailSpawnMarkerBlockEntity(pos, state, AntarchyFabricBlocks::queenTrailSpawnMarkerBlockEntityType),
+                    QUEEN_TRAIL_SPAWN_MARKER.get()
+            ).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<UndertrialSpawnerBlockEntity>> UNDERTRIAL_SPAWNER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("undertrial_spawner",
+            () -> BlockEntityType.Builder.of((pos, state) -> new UndertrialSpawnerBlockEntity(pos, state, AntarchyFabricBlocks::undertrialSpawnerBlockEntityType), UNDERTRIAL_SPAWNER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<UnderVaultBlockEntity>> UNDERVAULT_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("undervault",
+            () -> BlockEntityType.Builder.of((pos, state) -> new UnderVaultBlockEntity(pos, state, AntarchyFabricBlocks::underVaultBlockEntityType), UNDERVAULT.get()).build(null));
 
 
 
@@ -1560,6 +1582,18 @@ public final class AntarchyFabricBlocks {
 
     private static BlockEntityType<DimensionalTearMarkerBlockEntity> dimensionalTearMarkerBlockEntityType() {
         return DIMENSIONAL_TEAR_MARKER_BLOCK_ENTITY.get();
+    }
+
+    private static BlockEntityType<QueenTrailSpawnMarkerBlockEntity> queenTrailSpawnMarkerBlockEntityType() {
+        return QUEEN_TRAIL_SPAWN_MARKER_BLOCK_ENTITY.get();
+    }
+
+    private static BlockEntityType<UndertrialSpawnerBlockEntity> undertrialSpawnerBlockEntityType() {
+        return UNDERTRIAL_SPAWNER_BLOCK_ENTITY.get();
+    }
+
+    private static BlockEntityType<UnderVaultBlockEntity> underVaultBlockEntityType() {
+        return UNDERVAULT_BLOCK_ENTITY.get();
     }
 
 

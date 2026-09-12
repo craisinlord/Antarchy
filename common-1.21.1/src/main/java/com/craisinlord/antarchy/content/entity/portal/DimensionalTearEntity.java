@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -78,7 +79,8 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
     private static final Map<UUID, Set<UUID>> QUEEN_TEAR_IDS = new HashMap<>();
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private boolean idleSoundStarted;
+    @Nullable
+    private TearIdleSoundInstance idleSound;
     private UUID linkedTearId;
     @Nullable
     private DimensionalTearEntity linkedTear;
@@ -453,11 +455,15 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
     }
 
     private void tickIdleSound() {
-        if (this.idleSoundStarted || this.getTearState() == TearState.OPENING) {
+        SoundManager soundManager = Minecraft.getInstance().getSoundManager();
+        if (this.getTearState() == TearState.OPENING) {
             return;
         }
-        this.idleSoundStarted = true;
-        Minecraft.getInstance().getSoundManager().play(new TearIdleSoundInstance(this));
+        if (this.idleSound != null && soundManager.isActive(this.idleSound)) {
+            return;
+        }
+        this.idleSound = new TearIdleSoundInstance(this);
+        soundManager.play(this.idleSound);
     }
 
     private void tickClientParticles() {

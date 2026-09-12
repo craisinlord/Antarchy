@@ -1,12 +1,11 @@
 package com.craisinlord.antarchy.content.item.royal;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.enchantment.AntarchyEnchantments;
 import com.craisinlord.antarchy.content.item.RoyalAssailantArmorItem;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -24,6 +23,10 @@ public final class RoyalGearHelper {
     }
 
     public static void ensureRoyalArmorEnchantments(ItemStack stack, HolderLookup.Provider registries) {
+        if (stack.getItem() instanceof RoyalAssailantArmorItem armor
+                && armor.getArmorType() == net.minecraft.world.item.ArmorItem.Type.BOOTS) {
+            AntarchyEnchantments.ensure(stack, registries, AntarchyEnchantments.FEATHER_RISING, 1);
+        }
         if (!AntarchySettings.royalArmorComesEnchanted()) {
             return;
         }
@@ -44,8 +47,4 @@ public final class RoyalGearHelper {
         }
     }
 
-    public static boolean hasUpwardFallImmunityBoots(LivingEntity entity) {
-        return entity.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof RoyalAssailantArmorItem armor
-                && armor.getArmorType() == net.minecraft.world.item.ArmorItem.Type.BOOTS;
-    }
 }

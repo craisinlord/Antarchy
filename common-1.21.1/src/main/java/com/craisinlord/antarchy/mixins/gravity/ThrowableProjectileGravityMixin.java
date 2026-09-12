@@ -35,7 +35,9 @@ public abstract class ThrowableProjectileGravityMixin {
             original.call(self);
             return;
         }
+        // Vanilla applies gravity as -getGravity(). Negate that acceleration to
+        // mirror the projectile's arc for the inverted Underside gravity.
         double gravity = self.getGravity();
-        self.setDeltaMovement(self.getDeltaMovement().add(0.0D, gravity, 0.0D));
+        self.setDeltaMovement(self.getDeltaMovement().add(0.0D, -gravity, 0.0D));
     }
 }

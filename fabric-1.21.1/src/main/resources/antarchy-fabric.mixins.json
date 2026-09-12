@@ -17,7 +17,7 @@
     "BloodglassEffectMixin",
     "BloodglassRespawnMixin",
     "DreamCampfireBlockEntityMixin",
-    "JumpyBootsFallDamageMixin",
+    "SpringyBootsFallDamageMixin",
     "entity.MultipartEntityLevelRegistryMixin",
     "WoodTypeInvoker",
     "infinity.PortalCreatorMixin",

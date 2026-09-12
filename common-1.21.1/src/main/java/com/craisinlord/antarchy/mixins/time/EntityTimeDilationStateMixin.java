@@ -28,8 +28,10 @@ public abstract class EntityTimeDilationStateMixin implements TimeDilationEntity
 
     @Override
     public void antarchy$setTimeDilationRate(double rate) {
+        double previousRate = this.antarchy$timeDilationRate;
         this.antarchy$timeDilationRate = TimeDilationMath.clampRate(rate);
-        if (this.antarchy$timeDilationRate >= TimeDilationMath.NORMAL_RATE) {
+        if (previousRate != TimeDilationMath.NORMAL_RATE
+                && this.antarchy$timeDilationRate == TimeDilationMath.NORMAL_RATE) {
             this.antarchy$timeDilationTimerProgress.clear();
         }
     }
@@ -46,20 +48,25 @@ public abstract class EntityTimeDilationStateMixin implements TimeDilationEntity
 
     @Override
     public boolean antarchy$consumeTimeDilationTick(String timerKey, double rate) {
+        return this.antarchy$consumeTimeDilationTicks(timerKey, rate) > 0;
+    }
+
+    @Override
+    public int antarchy$consumeTimeDilationTicks(String timerKey, double rate) {
         double clampedRate = TimeDilationMath.clampRate(rate);
         if (Math.abs(clampedRate - TimeDilationMath.NORMAL_RATE) < 0.001D) {
-            return true;
+            return 1;
         }
 
         double progress = this.antarchy$timeDilationTimerProgress.getOrDefault(timerKey, 0.0D) + clampedRate;
         int wholeTicks = (int) Math.floor(progress + 1.0E-9D);
         if (wholeTicks <= 0) {
             this.antarchy$timeDilationTimerProgress.put(timerKey, progress);
-            return false;
+            return 0;
         }
 
         this.antarchy$timeDilationTimerProgress.put(timerKey, progress - wholeTicks);
-        return true;
+        return wholeTicks;
     }
 
     @Override

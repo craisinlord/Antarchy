@@ -15,6 +15,7 @@ import net.minecraft.network.protocol.game.ClientboundClearTitlesPacket;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -86,9 +87,21 @@ public class KingEntity extends RoyalBossEntity {
     private static final double CHAIN_LIGHTNING_JUMP_RANGE = 9.0D;
     private static final int ICE_FREEZE_PER_TICK = 7;
     private static final int BEHAVIOR_SCORE_CAP = 12;
+    /** Keep the tree-bound patrol safely inside the authored tree footprint. */
+    private static final double TREE_ORBIT_RADIUS = 128.0D;
+    private static final double TREE_ORBIT_ANGLE_STEP = 0.014D;
+    private static final int TREE_ORBIT_PATH_SAMPLES = 16;
 
     @Nullable
     private Vec3 patrolCenter;
+    @Nullable
+    private Vec3 treePatrolCenter;
+    @Nullable
+    private Vec3 treePatrolWaypoint;
+    private double treePatrolMinimumY;
+    private double treePatrolMaximumY;
+    private double treePatrolAngle;
+    private boolean treePatrolBound;
     private int patrolCooldownTicks;
     private int decreeCooldownTicks;
     private int activeDecreeTicks;
@@ -131,6 +144,25 @@ public class KingEntity extends RoyalBossEntity {
 
     public static AttributeSupplier.Builder createAttributes() {
         return createBaseAttributes(AntarchySettings.kingHealth(), AntarchySettings.kingAttackDamage());
+    }
+
+    public void setTreePatrolHome(Vec3 center, double minimumY, double maximumY, double angle) {
+        this.treePatrolCenter = center;
+        this.treePatrolMinimumY = minimumY;
+        this.treePatrolMaximumY = maximumY;
+        this.treePatrolAngle = angle;
+        this.treePatrolWaypoint = null;
+        this.treePatrolBound = true;
+    }
+
+    public boolean isTreePatrolFor(Vec3 center) {
+        return this.treePatrolBound && this.treePatrolCenter != null
+                && this.treePatrolCenter.distanceToSqr(center) < 1.0D;
+    }
+
+    @Override
+    protected boolean shouldClearObstruction() {
+        return this.getTarget() != null;
     }
 
     @Override
@@ -351,6 +383,10 @@ public class KingEntity extends RoyalBossEntity {
         }
         this.setRoyalFlying(true);
         this.decreeRetreatPressure = false;
+        if (this.treePatrolBound && this.treePatrolCenter != null) {
+            this.tickTreePatrol();
+            return;
+        }
         if (this.patrolCenter == null || this.position().distanceToSqr(this.patrolCenter) > 64.0D * 64.0D) {
             this.patrolCenter = this.position();
         }
@@ -364,6 +400,58 @@ public class KingEntity extends RoyalBossEntity {
             double py = this.groundYBelow(px, pz) + FLYING_PREFERRED_HOVER + this.random.nextDouble() * 5.0D;
             this.getMoveControl().setWantedPosition(px, py, pz, 1.0D);
         }
+    }
+
+    private void tickTreePatrol() {
+        Vec3 center = this.treePatrolCenter;
+        if (center == null) {
+            return;
+        }
+        this.treePatrolAngle += TREE_ORBIT_ANGLE_STEP;
+        if (this.treePatrolAngle >= Math.PI * 2.0D) {
+            this.treePatrolAngle -= Math.PI * 2.0D;
+        }
+        Vec3 waypoint = this.treePatrolWaypoint;
+        if (waypoint == null || this.position().distanceToSqr(waypoint) < 36.0D) {
+            waypoint = this.findTreePatrolWaypoint(center, this.treePatrolAngle);
+            this.treePatrolWaypoint = waypoint;
+        }
+        if (waypoint != null) {
+            this.getMoveControl().setWantedPosition(waypoint.x, waypoint.y, waypoint.z, 1.0D);
+            this.getLookControl().setLookAt(center.x,
+                    (this.treePatrolMinimumY + this.treePatrolMaximumY) * 0.5D,
+                    center.z, 30.0F, 30.0F);
+        }
+    }
+
+    @Nullable
+    private Vec3 findTreePatrolWaypoint(Vec3 center, double angle) {
+        for (int attempt = 0; attempt < 10; attempt++) {
+            double candidateAngle = angle + attempt * 0.22D;
+            double x = center.x + Math.cos(candidateAngle) * TREE_ORBIT_RADIUS;
+            double z = center.z + Math.sin(candidateAngle) * TREE_ORBIT_RADIUS;
+            double vertical = 0.5D + 0.5D * Math.sin(candidateAngle);
+            double y = this.treePatrolMinimumY
+                    + (this.treePatrolMaximumY - this.treePatrolMinimumY) * vertical;
+            Vec3 candidate = new Vec3(x, y, z);
+            if (this.clearTreePatrolPath(candidate)) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    private boolean clearTreePatrolPath(Vec3 destination) {
+        Vec3 start = this.position();
+        for (int sample = 1; sample <= TREE_ORBIT_PATH_SAMPLES; sample++) {
+            double progress = sample / (double) TREE_ORBIT_PATH_SAMPLES;
+            Vec3 point = start.lerp(destination, progress);
+            AABB box = this.getBoundingBox().move(point.x - this.getX(), point.y - this.getY(), point.z - this.getZ());
+            if (!this.level().noCollision(this, box)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void tickRoyalPunishment() {
@@ -1011,6 +1099,31 @@ public class KingEntity extends RoyalBossEntity {
             }
         }
         return super.hurt(source, amount);
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putBoolean("TreePatrolBound", this.treePatrolBound);
+        if (this.treePatrolCenter != null) {
+            tag.putDouble("TreePatrolCenterX", this.treePatrolCenter.x);
+            tag.putDouble("TreePatrolCenterY", this.treePatrolCenter.y);
+            tag.putDouble("TreePatrolCenterZ", this.treePatrolCenter.z);
+            tag.putDouble("TreePatrolMinimumY", this.treePatrolMinimumY);
+            tag.putDouble("TreePatrolMaximumY", this.treePatrolMaximumY);
+            tag.putDouble("TreePatrolAngle", this.treePatrolAngle);
+        }
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        if (tag.getBoolean("TreePatrolBound") && tag.contains("TreePatrolCenterX")
+                && tag.contains("TreePatrolCenterY") && tag.contains("TreePatrolCenterZ")) {
+            this.setTreePatrolHome(
+                    new Vec3(tag.getDouble("TreePatrolCenterX"), tag.getDouble("TreePatrolCenterY"), tag.getDouble("TreePatrolCenterZ")),
+                    tag.getDouble("TreePatrolMinimumY"), tag.getDouble("TreePatrolMaximumY"), tag.getDouble("TreePatrolAngle"));
+        }
     }
 
     public static boolean blocksHealingAround(LivingEntity target) {

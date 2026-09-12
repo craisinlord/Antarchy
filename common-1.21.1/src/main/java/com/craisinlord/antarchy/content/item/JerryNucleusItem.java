@@ -1,10 +1,10 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.content.block.BedBugEggBlock;
-import com.craisinlord.antarchy.content.block.CreepingHorrorEggBlock;
+import com.craisinlord.antarchy.content.block.CrawlingBlightEggBlock;
 import com.craisinlord.antarchy.content.block.JerryEggBlock;
-import com.craisinlord.antarchy.content.block.JumpyBugEggBlock;
-import com.craisinlord.antarchy.content.block.LurkingTerrorEggBlock;
+import com.craisinlord.antarchy.content.block.SpringbugEggBlock;
+import com.craisinlord.antarchy.content.block.SkulkingFrightEggBlock;
 import com.craisinlord.antarchy.content.block.SpitBugEggBlock;
 import java.util.List;
 import net.minecraft.ChatFormatting;
@@ -34,9 +34,9 @@ public class JerryNucleusItem extends Item {
         BlockState state = context.getLevel().getBlockState(context.getClickedPos());
         Block block = state.getBlock();
         boolean handled = block instanceof BedBugEggBlock
-                || block instanceof CreepingHorrorEggBlock
-                || block instanceof LurkingTerrorEggBlock
-                || block instanceof JumpyBugEggBlock
+                || block instanceof CrawlingBlightEggBlock
+                || block instanceof SkulkingFrightEggBlock
+                || block instanceof SpringbugEggBlock
                 || block instanceof SpitBugEggBlock
                 || block instanceof JerryEggBlock
                 || block instanceof TurtleEggBlock;
@@ -51,11 +51,11 @@ public class JerryNucleusItem extends Item {
         BlockPos pos = context.getClickedPos();
         if (block instanceof BedBugEggBlock eggBlock) {
             eggBlock.hatchWithNucleus(serverLevel, pos, state);
-        } else if (block instanceof CreepingHorrorEggBlock eggBlock) {
+        } else if (block instanceof CrawlingBlightEggBlock eggBlock) {
             eggBlock.hatchWithNucleus(serverLevel, pos, state);
-        } else if (block instanceof LurkingTerrorEggBlock eggBlock) {
+        } else if (block instanceof SkulkingFrightEggBlock eggBlock) {
             eggBlock.hatchWithNucleus(serverLevel, pos, state);
-        } else if (block instanceof JumpyBugEggBlock eggBlock) {
+        } else if (block instanceof SpringbugEggBlock eggBlock) {
             eggBlock.hatchWithNucleus(serverLevel, pos);
         } else if (block instanceof SpitBugEggBlock eggBlock) {
             eggBlock.hatchWithNucleus(serverLevel, pos);

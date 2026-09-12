@@ -62,20 +62,20 @@ public final class AntarchyDamageSources {
         );
     }
 
-    public static DamageSource triffidMauling(ServerLevel level, Entity attacker) {
+    public static DamageSource flytrapMauling(ServerLevel level, Entity attacker) {
         return new DamageSource(
                 level.registryAccess()
                         .registryOrThrow(Registries.DAMAGE_TYPE)
-                        .getHolderOrThrow(AntarchyDamageTypes.TRIFFID_MAULING),
+                        .getHolderOrThrow(AntarchyDamageTypes.FLYTRAP_MAULING),
                 attacker
         );
     }
 
-    public static DamageSource triffidSwallow(ServerLevel level, Entity attacker) {
+    public static DamageSource flytrapSwallow(ServerLevel level, Entity attacker) {
         return new DamageSource(
                 level.registryAccess()
                         .registryOrThrow(Registries.DAMAGE_TYPE)
-                        .getHolderOrThrow(AntarchyDamageTypes.TRIFFID_SWALLOW),
+                        .getHolderOrThrow(AntarchyDamageTypes.FLYTRAP_SWALLOW),
                 attacker
         );
     }
@@ -125,11 +125,11 @@ public final class AntarchyDamageSources {
         );
     }
 
-    public static DamageSource jumpyBugJump(ServerLevel level, Entity attacker) {
+    public static DamageSource springbugJump(ServerLevel level, Entity attacker) {
         return new DamageSource(
                 level.registryAccess()
                         .registryOrThrow(Registries.DAMAGE_TYPE)
-                        .getHolderOrThrow(AntarchyDamageTypes.JUMPY_BUG_JUMP),
+                        .getHolderOrThrow(AntarchyDamageTypes.SPRINGBUG_JUMP),
                 attacker
         );
     }

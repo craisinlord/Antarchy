@@ -263,6 +263,10 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         return 0.35D;
     }
 
+    protected boolean shouldClearObstruction() {
+        return true;
+    }
+
     protected double biteApproachSpeed() {
         return 1.3D;
     }
@@ -397,7 +401,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     @Override
     public void tick() {
         super.tick();
-        if (!this.level().isClientSide
+        if (this.shouldClearObstruction()
+                && !this.level().isClientSide
                 && !this.isDeadOrDying()
                 && this.tickCount % OBSTRUCTION_CLEAR_INTERVAL_TICKS == 0
                 && this.isInWall()) {

@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "vault_state=inactive,under_facing=north": {"model": "antarchy:block/undervault_off"},
+    "vault_state=inactive,under_facing=south": {"model": "antarchy:block/undervault_off", "y": 180},
+    "vault_state=inactive,under_facing=east": {"model": "antarchy:block/undervault_off", "y": 90},
+    "vault_state=inactive,under_facing=west": {"model": "antarchy:block/undervault_off", "y": 270},
+    "vault_state=inactive,under_facing=up": {"model": "antarchy:block/undervault_off", "x": 270},
+    "vault_state=inactive,under_facing=down": {"model": "antarchy:block/undervault_off", "x": 90},
+    "vault_state=active,under_facing=north": {"model": "antarchy:block/undervault_on"},
+    "vault_state=active,under_facing=south": {"model": "antarchy:block/undervault_on", "y": 180},
+    "vault_state=active,under_facing=east": {"model": "antarchy:block/undervault_on", "y": 90},
+    "vault_state=active,under_facing=west": {"model": "antarchy:block/undervault_on", "y": 270},
+    "vault_state=active,under_facing=up": {"model": "antarchy:block/undervault_on", "x": 270},
+    "vault_state=active,under_facing=down": {"model": "antarchy:block/undervault_on", "x": 90},
+    "vault_state=unlocking,under_facing=north": {"model": "antarchy:block/undervault_on"},
+    "vault_state=unlocking,under_facing=south": {"model": "antarchy:block/undervault_on", "y": 180},
+    "vault_state=unlocking,under_facing=east": {"model": "antarchy:block/undervault_on", "y": 90},
+    "vault_state=unlocking,under_facing=west": {"model": "antarchy:block/undervault_on", "y": 270},
+    "vault_state=unlocking,under_facing=up": {"model": "antarchy:block/undervault_on", "x": 270},
+    "vault_state=unlocking,under_facing=down": {"model": "antarchy:block/undervault_on", "x": 90},
+    "vault_state=ejecting,under_facing=north": {"model": "antarchy:block/undervault_ejecting"},
+    "vault_state=ejecting,under_facing=south": {"model": "antarchy:block/undervault_ejecting", "y": 180},
+    "vault_state=ejecting,under_facing=east": {"model": "antarchy:block/undervault_ejecting", "y": 90},
+    "vault_state=ejecting,under_facing=west": {"model": "antarchy:block/undervault_ejecting", "y": 270},
+    "vault_state=ejecting,under_facing=up": {"model": "antarchy:block/undervault_ejecting", "x": 270},
+    "vault_state=ejecting,under_facing=down": {"model": "antarchy:block/undervault_ejecting", "x": 90}
+  }
+}

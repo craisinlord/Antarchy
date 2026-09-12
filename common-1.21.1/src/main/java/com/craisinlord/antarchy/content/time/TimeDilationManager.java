@@ -56,6 +56,7 @@ public final class TimeDilationManager {
 
     private static void syncFieldSnapshots(ServerLevel level, List<TimeDilationFieldEntity> fields, TrackingState tracking) {
         List<TimeDilationFieldSnapshot> snapshots = fields.stream()
+                .filter(field -> !field.isChronosphere())
                 .map(field -> new TimeDilationFieldSnapshot(
                         field.getX(), field.getY(), field.getZ(), field.fieldRadius(), field.fieldRate(),
                         field.fieldAge(), field.fieldDurationTicks()))

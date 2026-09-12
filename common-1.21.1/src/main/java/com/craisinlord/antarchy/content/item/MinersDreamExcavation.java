@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Vector3f;
 
 public final class MinersDreamExcavation {
-    private static final Vector3f TRIFFID_GOO_COLOR = new Vector3f(0.35F, 0.85F, 0.4F);
+    private static final Vector3f FLYTRAP_GOO_COLOR = new Vector3f(0.35F, 0.85F, 0.4F);
     private static final int SLICES_BETWEEN_RUMBLE = 4;
 
     private final UUID owner;
@@ -126,7 +126,7 @@ public final class MinersDreamExcavation {
         level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, state),
                 pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, 2, 0.25D, 0.25D, 0.25D, 0.02D);
         if (random.nextFloat() < 0.2F) {
-            level.sendParticles(new DustParticleOptions(TRIFFID_GOO_COLOR, 1.0F),
+            level.sendParticles(new DustParticleOptions(FLYTRAP_GOO_COLOR, 1.0F),
                     pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, 1, 0.2D, 0.2D, 0.2D, 0.0D);
         }
     }

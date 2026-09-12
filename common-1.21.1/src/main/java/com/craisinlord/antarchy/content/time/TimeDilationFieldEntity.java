@@ -11,6 +11,9 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import java.util.UUID;
@@ -32,6 +35,7 @@ public class TimeDilationFieldEntity extends Entity {
     private UUID anchorId;
     private int missingAnchorTicks;
     private boolean visual = true;
+    private boolean chronosphere;
 
     public TimeDilationFieldEntity(EntityType<? extends TimeDilationFieldEntity> entityType, Level level) {
         super(entityType, level);
@@ -67,9 +71,24 @@ public class TimeDilationFieldEntity extends Entity {
         this.missingAnchorTicks = 0;
     }
 
+    public void configureChronosphere(Entity owner) {
+        this.ownerId = owner.getUUID();
+        this.attachTo(owner);
+        this.durationTicks = -1;
+        this.visual = false;
+        this.chronosphere = true;
+    }
+
+    public boolean isChronosphere() {
+        return this.chronosphere;
+    }
+
     public boolean affects(Entity entity) {
         if (entity instanceof RoyalBlackHoleEntity || this.isOwnedBy(entity)
                 || this.anchorId != null && this.anchorId.equals(entity.getUUID())) {
+            return false;
+        }
+        if (this.chronosphere && !(entity instanceof LivingEntity || entity instanceof Projectile || entity instanceof ItemEntity)) {
             return false;
         }
         if (this.ownerId != null && this.level() instanceof ServerLevel level
@@ -103,6 +122,18 @@ public class TimeDilationFieldEntity extends Entity {
                         : anchor.position();
                 this.setPos(center.x, center.y, center.z);
                 this.missingAnchorTicks = 0;
+                if (this.chronosphere && this.age % 20 == 0) {
+                    if (!(anchor instanceof net.minecraft.server.level.ServerPlayer player)) {
+                        this.discard();
+                        return;
+                    }
+                    int levelValue = com.craisinlord.antarchy.content.enchantment.AntarchyEnchantments.chronosphereLevel(player);
+                    if (levelValue <= 0) {
+                        this.discard();
+                        return;
+                    }
+                    this.setFieldRadius(ChronosphereManager.radius(levelValue));
+                }
             } else if (++this.missingAnchorTicks > 20) {
                 this.discard();
                 return;
@@ -165,6 +196,7 @@ public class TimeDilationFieldEntity extends Entity {
         this.ownerId = tag.hasUUID("OwnerUuid") ? tag.getUUID("OwnerUuid") : null;
         this.anchorId = tag.hasUUID("AnchorUuid") ? tag.getUUID("AnchorUuid") : null;
         this.visual = !tag.contains("Visual") || tag.getBoolean("Visual");
+        this.chronosphere = tag.getBoolean("Chronosphere");
     }
 
     @Override
@@ -180,5 +212,6 @@ public class TimeDilationFieldEntity extends Entity {
             tag.putUUID("AnchorUuid", this.anchorId);
         }
         tag.putBoolean("Visual", this.visual);
+        tag.putBoolean("Chronosphere", this.chronosphere);
     }
 }

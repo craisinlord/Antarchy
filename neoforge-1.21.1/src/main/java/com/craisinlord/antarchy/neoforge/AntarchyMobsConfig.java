@@ -61,11 +61,11 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue BOMBER_EXPLOSION_RADIUS;
 
 
-    // Jumpy Bug
+    // Springbug
 
-    private static final ModConfigSpec.DoubleValue JUMPY_BUG_HEALTH;
-    private static final ModConfigSpec.DoubleValue JUMPY_BUG_POUNCE_DAMAGE;
-    private static final ModConfigSpec.DoubleValue JUMPY_BUG_CAMOUFLAGE_ALPHA;
+    private static final ModConfigSpec.DoubleValue SPRINGBUG_HEALTH;
+    private static final ModConfigSpec.DoubleValue SPRINGBUG_POUNCE_DAMAGE;
+    private static final ModConfigSpec.DoubleValue SPRINGBUG_CAMOUFLAGE_ALPHA;
 
 
     // Emperor Scorpion
@@ -207,12 +207,12 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_ROLLED_ARMOR_BONUS;
 
 
-    // Triffid
+    // Flytrap
 
-    private static final ModConfigSpec.DoubleValue TRIFFID_HEALTH;
-    private static final ModConfigSpec.DoubleValue TRIFFID_ATTACK_DAMAGE;
-    private static final ModConfigSpec.DoubleValue TRIFFID_GRAB_DAMAGE;
-    private static final ModConfigSpec.IntValue    TRIFFID_SWEEP_HIT_COOLDOWN_TICKS;
+    private static final ModConfigSpec.DoubleValue FLYTRAP_HEALTH;
+    private static final ModConfigSpec.DoubleValue FLYTRAP_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue FLYTRAP_GRAB_DAMAGE;
+    private static final ModConfigSpec.IntValue    FLYTRAP_SWEEP_HIT_COOLDOWN_TICKS;
 
 
     // Caterpillar
@@ -295,16 +295,16 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue  WATER_BOMB_KNOCKBACK;
 
 
-    // Creeping Horror
+    // Crawling Blight
 
-    private static final ModConfigSpec.DoubleValue CREEPING_HORROR_HEALTH;
-    private static final ModConfigSpec.DoubleValue CREEPING_HORROR_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue CRAWLING_BLIGHT_HEALTH;
+    private static final ModConfigSpec.DoubleValue CRAWLING_BLIGHT_ATTACK_DAMAGE;
 
 
-    // Lurking Terror
+    // Skulking Fright
 
-    private static final ModConfigSpec.DoubleValue LURKING_TERROR_HEALTH;
-    private static final ModConfigSpec.DoubleValue LURKING_TERROR_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue SKULKING_FRIGHT_HEALTH;
+    private static final ModConfigSpec.DoubleValue SKULKING_FRIGHT_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue MANTICORE_HEALTH;
     private static final ModConfigSpec.DoubleValue MANTICORE_ATTACK_DAMAGE;
     private static final ModConfigSpec.IntValue MANTICORE_STING_POISON_TICKS;
@@ -516,12 +516,12 @@ public final class AntarchyMobsConfig {
         b.pop();
 
 
-        // Jumpy Bug
+        // Springbug
 
-        b.push("jumpyBug");
-        JUMPY_BUG_HEALTH = b.comment("Base max health.").defineInRange("health", 100.0D, 1.0D, 32768.0D);
-        JUMPY_BUG_POUNCE_DAMAGE = b.comment("Damage dealt on a successful pounce latch.").defineInRange("pounceDamage", 2.0D, 0.0D, 1024.0D);
-        JUMPY_BUG_CAMOUFLAGE_ALPHA = b.comment("Renderer alpha while camouflaged.").defineInRange("camouflageAlpha", 0.18D, 0.01D, 1.0D);
+        b.push("springbug");
+        SPRINGBUG_HEALTH = b.comment("Base max health.").defineInRange("health", 100.0D, 1.0D, 32768.0D);
+        SPRINGBUG_POUNCE_DAMAGE = b.comment("Damage dealt on a successful pounce latch.").defineInRange("pounceDamage", 2.0D, 0.0D, 1024.0D);
+        SPRINGBUG_CAMOUFLAGE_ALPHA = b.comment("Renderer alpha while camouflaged.").defineInRange("camouflageAlpha", 0.18D, 0.01D, 1.0D);
         b.pop();
 
 
@@ -711,13 +711,13 @@ public final class AntarchyMobsConfig {
         b.pop();
 
 
-        // Triffid
+        // Flytrap
 
-        b.push("triffid");
-        TRIFFID_HEALTH        = b.comment("Base max health.")                     .defineInRange("health",       80.0D, 1.0D, 32768.0D);
-        TRIFFID_ATTACK_DAMAGE = b.comment("Damage dealt by the sweep attack.")   .defineInRange("attackDamage", 10.0D, 0.0D, 1024.0D);
-        TRIFFID_GRAB_DAMAGE   = b.comment("Damage dealt by the grab attack.")    .defineInRange("grabDamage",   15.0D, 0.0D, 1024.0D);
-        TRIFFID_SWEEP_HIT_COOLDOWN_TICKS = b
+        b.push("flytrap");
+        FLYTRAP_HEALTH        = b.comment("Base max health.")                     .defineInRange("health",       80.0D, 1.0D, 32768.0D);
+        FLYTRAP_ATTACK_DAMAGE = b.comment("Damage dealt by the sweep attack.")   .defineInRange("attackDamage", 10.0D, 0.0D, 1024.0D);
+        FLYTRAP_GRAB_DAMAGE   = b.comment("Damage dealt by the grab attack.")    .defineInRange("grabDamage",   15.0D, 0.0D, 1024.0D);
+        FLYTRAP_SWEEP_HIT_COOLDOWN_TICKS = b
                 .comment("Ticks a given entity is immune to repeat sweep-attack damage attempts after being hit once, so shields/armor absorbing a hit can't be shredded by every tick of the sweep's active window.")
                 .defineInRange("sweepHitCooldownTicks", 10, 0, 200);
         b.pop();
@@ -863,14 +863,14 @@ public final class AntarchyMobsConfig {
 
         b.pop(); // dread
 
-        b.push("creepingHorror");
-        CREEPING_HORROR_HEALTH        = b.comment("Base max health.").defineInRange("health", 15.0D, 1.0D, 32768.0D);
-        CREEPING_HORROR_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 6.0D, 0.0D, 1024.0D);
+        b.push("crawlingBlight");
+        CRAWLING_BLIGHT_HEALTH        = b.comment("Base max health.").defineInRange("health", 15.0D, 1.0D, 32768.0D);
+        CRAWLING_BLIGHT_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 6.0D, 0.0D, 1024.0D);
         b.pop();
 
-        b.push("lurkingTerror");
-        LURKING_TERROR_HEALTH        = b.comment("Base max health.").defineInRange("health", 15.0D, 1.0D, 32768.0D);
-        LURKING_TERROR_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 6.0D, 0.0D, 1024.0D);
+        b.push("skulkingFright");
+        SKULKING_FRIGHT_HEALTH        = b.comment("Base max health.").defineInRange("health", 15.0D, 1.0D, 32768.0D);
+        SKULKING_FRIGHT_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 6.0D, 0.0D, 1024.0D);
         b.pop();
 
         b.push("manticore");
@@ -984,9 +984,9 @@ public final class AntarchyMobsConfig {
     static double  bomberExplosionDamage()                  { return BOMBER_EXPLOSION_DAMAGE.get(); }
     static double  bomberExplosionRadius()                  { return BOMBER_EXPLOSION_RADIUS.get(); }
 
-    static double  jumpyBugHealth()                         { return JUMPY_BUG_HEALTH.get(); }
-    static double  jumpyBugPounceDamage()                   { return JUMPY_BUG_POUNCE_DAMAGE.get(); }
-    static double  jumpyBugCamouflageAlpha()                { return JUMPY_BUG_CAMOUFLAGE_ALPHA.get(); }
+    static double  springbugHealth()                         { return SPRINGBUG_HEALTH.get(); }
+    static double  springbugPounceDamage()                   { return SPRINGBUG_POUNCE_DAMAGE.get(); }
+    static double  springbugCamouflageAlpha()                { return SPRINGBUG_CAMOUFLAGE_ALPHA.get(); }
 
     static double  emperorScorpionHealth()                  { return EMPEROR_SCORPION_HEALTH.get(); }
     static double  emperorScorpionAttackDamage()             { return EMPEROR_SCORPION_ATTACK_DAMAGE.get(); }
@@ -1134,10 +1134,10 @@ public final class AntarchyMobsConfig {
     static double  rollyPollyArmor()                        { return ROLLY_POLLY_ARMOR.get(); }
     static double  rollyPollyRolledArmorBonus()             { return ROLLY_POLLY_ROLLED_ARMOR_BONUS.get(); }
 
-    static double  triffidHealth()                          { return TRIFFID_HEALTH.get(); }
-    static double  triffidAttackDamage()                    { return TRIFFID_ATTACK_DAMAGE.get(); }
-    static double  triffidGrabDamage()                      { return TRIFFID_GRAB_DAMAGE.get(); }
-    static int     triffidSweepHitCooldownTicks()           { return TRIFFID_SWEEP_HIT_COOLDOWN_TICKS.get(); }
+    static double  flytrapHealth()                          { return FLYTRAP_HEALTH.get(); }
+    static double  flytrapAttackDamage()                    { return FLYTRAP_ATTACK_DAMAGE.get(); }
+    static double  flytrapGrabDamage()                      { return FLYTRAP_GRAB_DAMAGE.get(); }
+    static int     flytrapSweepHitCooldownTicks()           { return FLYTRAP_SWEEP_HIT_COOLDOWN_TICKS.get(); }
 
     static double  caterpillarPupationTimeSeconds()         { return CATERPILLAR_PUPATION_TIME_SECONDS.get(); }
     static double  antDanceRadius()                         { return ANT_DANCE_RADIUS.get(); }
@@ -1230,10 +1230,10 @@ public final class AntarchyMobsConfig {
     static double  dreadHallucinationMobMinInterval()       { return DREAD_HALLUCINATION_MOB_MIN_INTERVAL.get(); }
     static double  dreadHallucinationMobMaxInterval()       { return DREAD_HALLUCINATION_MOB_MAX_INTERVAL.get(); }
 
-    static double  creepingHorrorHealth()                   { return CREEPING_HORROR_HEALTH.get(); }
-    static double  creepingHorrorAttackDamage()             { return CREEPING_HORROR_ATTACK_DAMAGE.get(); }
-    static double  lurkingTerrorHealth()                    { return LURKING_TERROR_HEALTH.get(); }
-    static double  lurkingTerrorAttackDamage()              { return LURKING_TERROR_ATTACK_DAMAGE.get(); }
+    static double  crawlingBlightHealth()                   { return CRAWLING_BLIGHT_HEALTH.get(); }
+    static double  crawlingBlightAttackDamage()             { return CRAWLING_BLIGHT_ATTACK_DAMAGE.get(); }
+    static double  skulkingFrightHealth()                    { return SKULKING_FRIGHT_HEALTH.get(); }
+    static double  skulkingFrightAttackDamage()              { return SKULKING_FRIGHT_ATTACK_DAMAGE.get(); }
     static double  manticoreHealth()                        { return MANTICORE_HEALTH.get(); }
     static double  manticoreAttackDamage()                  { return MANTICORE_ATTACK_DAMAGE.get(); }
     static int     manticoreStingPoisonTicks()              { return MANTICORE_STING_POISON_TICKS.get(); }

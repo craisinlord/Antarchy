@@ -399,6 +399,7 @@ public final class AntarchyNeoForgeEvents {
 
     static void handleTigerEyeRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            com.craisinlord.antarchy.content.time.ChronosphereManager.refresh(player);
             TigerEyeCamouflageController.deactivate(player, false);
             TigerEyeCamouflageSync.sync(player);
         }
@@ -406,12 +407,14 @@ public final class AntarchyNeoForgeEvents {
 
     static void handleTigerEyeLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            com.craisinlord.antarchy.content.time.ChronosphereManager.refresh(player);
             TigerEyeCamouflageSync.sync(player);
         }
     }
 
     static void handleTigerEyeDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            com.craisinlord.antarchy.content.time.ChronosphereManager.refresh(player);
             TigerEyeCamouflageController.deactivate(player, false);
             TigerEyeCamouflageSync.sync(player);
         }
@@ -873,8 +876,7 @@ public final class AntarchyNeoForgeEvents {
     static void handleBloodCrystalBootsFall(LivingFallEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         if (!com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.isGravityInverted(player)) return;
-        if (!(player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.FEET).getItem() instanceof BloodCrystalArmorItem)
-                && !com.craisinlord.antarchy.content.item.royal.RoyalGearHelper.hasUpwardFallImmunityBoots(player)) return;
+        if (com.craisinlord.antarchy.content.enchantment.AntarchyEnchantments.featherRisingLevel(player) <= 0) return;
         event.setCanceled(true);
     }
 
@@ -1264,8 +1266,8 @@ public final class AntarchyNeoForgeEvents {
         event.getBuilder().addMix(AntarchyNeoforgeMisc.PARALYSIS, Items.REDSTONE, AntarchyNeoforgeMisc.LONG_PARALYSIS);
         event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.MOLEWORM_ITEM.get(), AntarchyNeoforgeMisc.HASTE);
         event.getBuilder().addMix(AntarchyNeoforgeMisc.HASTE, Items.GLOWSTONE_DUST, AntarchyNeoforgeMisc.STRONG_HASTE);
-        event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.CLOUD_SHARK_FIN.get(), Potions.SLOW_FALLING);
-        event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.JUMPY_BUG_LEG.get(), Potions.LEAPING);
+        event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.STRATOSHARK_FIN.get(), Potions.SLOW_FALLING);
+        event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.SPRINGBUG_LEG.get(), Potions.LEAPING);
         event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.CORNEA_EAR.get(), Potions.NIGHT_VISION);
         event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.URANIUM_NUGGET.get(), AntarchyNeoforgeMisc.SHRINKING);
         event.getBuilder().addMix(AntarchyNeoforgeMisc.SHRINKING, Items.GLOWSTONE_DUST, AntarchyNeoforgeMisc.STRONG_SHRINKING);

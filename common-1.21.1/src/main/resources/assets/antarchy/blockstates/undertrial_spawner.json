@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "trial_spawner_state=inactive": {"model": "antarchy:block/undertrial_spawner_inactive", "x": 90},
+    "trial_spawner_state=waiting_for_players": {"model": "antarchy:block/undertrial_spawner_inactive", "x": 90},
+    "trial_spawner_state=active": {"model": "antarchy:block/undertrial_spawner_active", "x": 90},
+    "trial_spawner_state=waiting_for_reward_ejection": {"model": "antarchy:block/undertrial_spawner_active", "x": 90},
+    "trial_spawner_state=ejecting_reward": {"model": "antarchy:block/undertrial_spawner_ejecting_reward", "x": 90},
+    "trial_spawner_state=cooldown": {"model": "antarchy:block/undertrial_spawner_inactive", "x": 90}
+  }
+}
