@@ -8,5 +8,7 @@
 {"type":"minecraft:item","name":"antarchy:blood_crystal_shard","weight":9,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":1,"max":3}}]},
 {"type":"minecraft:item","name":"antarchy:blood_crystal_apple","weight":15,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":1,"max":2}}]},
 {"type":"minecraft:item","name":"minecraft:potion","weight":8,"functions":[{"function":"minecraft:set_potion","id":"antarchy:inversion"}]},
+{"type":"minecraft:item","name":"minecraft:potion","weight":6,"functions":[{"function":"minecraft:set_potion","id":"antarchy:time_contraction"}]},
+{"type":"minecraft:item","name":"minecraft:potion","weight":6,"functions":[{"function":"minecraft:set_potion","id":"antarchy:time_dilation"}]},
 {"type":"minecraft:item","name":"minecraft:book","weight":6,"functions":[{"function":"minecraft:enchant_randomly","options":["minecraft:mending","minecraft:unbreaking","minecraft:efficiency"]}]}
 ]}],"random_sequence":"antarchy:chests/underside_ruins/generic"}

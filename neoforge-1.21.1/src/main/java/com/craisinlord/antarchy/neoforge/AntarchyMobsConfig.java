@@ -92,6 +92,12 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue EMPEROR_SCORPION_DAMAGE_RANGE;
     private static final ModConfigSpec.IntValue    EMPEROR_SCORPION_MIN_DESPAWN_TICKS;
 
+    private static final ModConfigSpec.DoubleValue SCORPION_HEALTH;
+    private static final ModConfigSpec.DoubleValue SCORPION_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue SCORPION_MOVEMENT_SPEED;
+    private static final ModConfigSpec.DoubleValue SCORPION_ARMOR;
+    private static final ModConfigSpec.DoubleValue SCORPION_KNOCKBACK_RESISTANCE;
+
 
     // Kraken
 
@@ -217,7 +223,44 @@ public final class AntarchyMobsConfig {
 
     // Caterpillar
 
+    private static final ModConfigSpec.DoubleValue CATERPILLAR_HEALTH;
+    private static final ModConfigSpec.DoubleValue CATERPILLAR_MOVEMENT_SPEED;
     private static final ModConfigSpec.DoubleValue CATERPILLAR_PUPATION_TIME_SECONDS;
+
+    private static final ModConfigSpec.DoubleValue FLYING_SQUIRREL_HEALTH;
+    private static final ModConfigSpec.DoubleValue FLYING_SQUIRREL_MOVEMENT_SPEED;
+    private static final ModConfigSpec.DoubleValue BUTTERFLY_HEALTH;
+    private static final ModConfigSpec.DoubleValue BUTTERFLY_MOVEMENT_SPEED;
+    private static final ModConfigSpec.DoubleValue BUTTERFLY_FLYING_SPEED;
+    private static final ModConfigSpec.DoubleValue BED_BUG_HEALTH;
+    private static final ModConfigSpec.DoubleValue BED_BUG_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue BED_BUG_MOVEMENT_SPEED;
+    private static final ModConfigSpec.DoubleValue BED_BUG_ARMOR;
+
+    private static final ModConfigSpec.DoubleValue STRATOSHARK_HEALTH;
+    private static final ModConfigSpec.DoubleValue STRATOSHARK_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue STRATOSHARK_MOVEMENT_SPEED;
+    private static final ModConfigSpec.DoubleValue STRATOSHARK_FLYING_SPEED;
+    private static final ModConfigSpec.DoubleValue STRATOSHARK_KNOCKBACK_RESISTANCE;
+    private static final ModConfigSpec.DoubleValue MISSILE_SQUID_HEALTH;
+    private static final ModConfigSpec.DoubleValue MISSILE_SQUID_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue MISSILE_SQUID_MOVEMENT_SPEED;
+    private static final ModConfigSpec.DoubleValue MISSILE_SQUID_FLYING_SPEED;
+    private static final ModConfigSpec.DoubleValue MISSILE_SQUID_KNOCKBACK_RESISTANCE;
+    private static final ModConfigSpec.DoubleValue MOLEWORM_HEALTH;
+    private static final ModConfigSpec.DoubleValue MOLEWORM_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue MOLEWORM_MOVEMENT_SPEED;
+    private static final ModConfigSpec.DoubleValue MOLEVORE_HEALTH;
+    private static final ModConfigSpec.DoubleValue MOLEVORE_ATTACK_DAMAGE;
+    private static final ModConfigSpec.IntValue MOLEVORE_SPIN_TICKS;
+    private static final ModConfigSpec.IntValue MOLEVORE_COOLDOWN_TICKS;
+    private static final ModConfigSpec.DoubleValue MOLEVORE_CHARGE_SPEED;
+    private static final ModConfigSpec.DoubleValue MOLEVORE_BREAK_RANGE;
+    private static final ModConfigSpec.DoubleValue MOLEVORE_BREAK_VERTICAL_RANGE;
+    private static final ModConfigSpec.DoubleValue MOLEVORE_BREAK_HALF_WIDTH;
+
+    private static final ModConfigSpec.DoubleValue OCTOPUS_BOMB_HEALTH;
+    private static final ModConfigSpec.DoubleValue OCTOPUS_BOMB_ATTACK_DAMAGE;
 
 
     // Ant Dance
@@ -253,6 +296,7 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.IntValue     DIMENSIONAL_TEAR_EMERGENCE_MIN_INTERVAL_TICKS;
     private static final ModConfigSpec.IntValue     DIMENSIONAL_TEAR_EMERGENCE_MAX_INTERVAL_TICKS;
     private static final ModConfigSpec.DoubleValue  DIMENSIONAL_TEAR_LUCID_EVENT_CHANCE;
+    private static final ModConfigSpec.BooleanValue DIMENSIONAL_TEARS_SPAWN_NATURALLY;
 
 
     // Basilisk
@@ -555,6 +599,14 @@ public final class AntarchyMobsConfig {
                 .defineInRange("minDespawnTicks", 6000, 0, 1000000);
         b.pop();
 
+        b.push("scorpion");
+        SCORPION_HEALTH = b.defineInRange("health", 30.0D, 0.1D, 32768.0D);
+        SCORPION_ATTACK_DAMAGE = b.defineInRange("attackDamage", 5.0D, 0.0D, 1024.0D);
+        SCORPION_MOVEMENT_SPEED = b.defineInRange("movementSpeed", 0.29D, 0.0D, 10.0D);
+        SCORPION_ARMOR = b.defineInRange("armor", 2.0D, 0.0D, 1024.0D);
+        SCORPION_KNOCKBACK_RESISTANCE = b.defineInRange("knockbackResistance", 0.2D, 0.0D, 1.0D);
+        b.pop();
+
 
         // Kraken
 
@@ -726,9 +778,67 @@ public final class AntarchyMobsConfig {
         // Caterpillar
 
         b.push("caterpillar");
+        CATERPILLAR_HEALTH = b.defineInRange("health", 6.0D, 0.1D, 32768.0D);
+        CATERPILLAR_MOVEMENT_SPEED = b.defineInRange("movementSpeed", 0.24D, 0.0D, 10.0D);
         CATERPILLAR_PUPATION_TIME_SECONDS = b
                 .comment("Time in seconds before a caterpillar emerges from its chrysalis.")
                 .defineInRange("pupationTimeSeconds", 600.0D, 1.0D, 3600.0D);
+        b.pop();
+
+        b.push("flyingSquirrel");
+        FLYING_SQUIRREL_HEALTH = b.defineInRange("health", 10.0D, 0.1D, 32768.0D);
+        FLYING_SQUIRREL_MOVEMENT_SPEED = b.defineInRange("movementSpeed", 0.35D, 0.0D, 10.0D);
+        b.pop();
+
+        b.push("butterfly");
+        BUTTERFLY_HEALTH = b.defineInRange("health", 6.0D, 0.1D, 32768.0D);
+        BUTTERFLY_MOVEMENT_SPEED = b.defineInRange("movementSpeed", 0.3D, 0.0D, 10.0D);
+        BUTTERFLY_FLYING_SPEED = b.defineInRange("flyingSpeed", 0.55D, 0.0D, 10.0D);
+        b.pop();
+
+        b.push("bedBug");
+        BED_BUG_HEALTH = b.defineInRange("health", 18.0D, 0.1D, 32768.0D);
+        BED_BUG_ATTACK_DAMAGE = b.defineInRange("attackDamage", 4.0D, 0.0D, 1024.0D);
+        BED_BUG_MOVEMENT_SPEED = b.defineInRange("movementSpeed", 0.24D, 0.0D, 10.0D);
+        BED_BUG_ARMOR = b.defineInRange("armor", 2.0D, 0.0D, 1024.0D);
+        b.pop();
+
+        b.push("stratoshark");
+        STRATOSHARK_HEALTH = b.defineInRange("health", 40.0D, 0.1D, 32768.0D);
+        STRATOSHARK_ATTACK_DAMAGE = b.defineInRange("attackDamage", 5.0D, 0.0D, 1024.0D);
+        STRATOSHARK_MOVEMENT_SPEED = b.defineInRange("movementSpeed", 0.34D, 0.0D, 10.0D);
+        STRATOSHARK_FLYING_SPEED = b.defineInRange("flyingSpeed", 0.5D, 0.0D, 10.0D);
+        STRATOSHARK_KNOCKBACK_RESISTANCE = b.defineInRange("knockbackResistance", 0.2D, 0.0D, 1.0D);
+        b.pop();
+
+        b.push("missileSquid");
+        MISSILE_SQUID_HEALTH = b.defineInRange("health", 60.0D, 0.1D, 32768.0D);
+        MISSILE_SQUID_ATTACK_DAMAGE = b.defineInRange("attackDamage", 9.0D, 0.0D, 1024.0D);
+        MISSILE_SQUID_MOVEMENT_SPEED = b.defineInRange("movementSpeed", 0.84D, 0.0D, 10.0D);
+        MISSILE_SQUID_FLYING_SPEED = b.defineInRange("flyingSpeed", 0.84D, 0.0D, 10.0D);
+        MISSILE_SQUID_KNOCKBACK_RESISTANCE = b.defineInRange("knockbackResistance", 0.15D, 0.0D, 1.0D);
+        b.pop();
+
+        b.push("moleworm");
+        MOLEWORM_HEALTH = b.defineInRange("health", 8.0D, 0.1D, 32768.0D);
+        MOLEWORM_ATTACK_DAMAGE = b.defineInRange("attackDamage", 1.0D, 0.0D, 1024.0D);
+        MOLEWORM_MOVEMENT_SPEED = b.defineInRange("movementSpeed", 0.25D, 0.0D, 10.0D);
+        b.pop();
+
+        b.push("molevore");
+        MOLEVORE_HEALTH = b.defineInRange("health", 140.0D, 0.1D, 32768.0D);
+        MOLEVORE_ATTACK_DAMAGE = b.defineInRange("attackDamage", 10.0D, 0.0D, 1024.0D);
+        MOLEVORE_SPIN_TICKS = b.defineInRange("spinTicks", 12, 0, 400);
+        MOLEVORE_COOLDOWN_TICKS = b.defineInRange("cooldownTicks", 60, 0, 20000);
+        MOLEVORE_CHARGE_SPEED = b.defineInRange("chargeSpeed", 1.15D, 0.0D, 10.0D);
+        MOLEVORE_BREAK_RANGE = b.defineInRange("breakRange", 1.8D, 0.0D, 32.0D);
+        MOLEVORE_BREAK_VERTICAL_RANGE = b.defineInRange("breakVerticalRange", 2.2D, 0.0D, 32.0D);
+        MOLEVORE_BREAK_HALF_WIDTH = b.defineInRange("breakHalfWidth", 1.1D, 0.0D, 32.0D);
+        b.pop();
+
+        b.push("octopusBomb");
+        OCTOPUS_BOMB_HEALTH = b.defineInRange("health", 100.0D, 0.1D, 32768.0D);
+        OCTOPUS_BOMB_ATTACK_DAMAGE = b.defineInRange("attackDamage", 16.0D, 0.0D, 1024.0D);
         b.pop();
 
 
@@ -774,6 +884,7 @@ public final class AntarchyMobsConfig {
         DIMENSIONAL_TEAR_EMERGENCE_MIN_INTERVAL_TICKS = b.comment("Minimum ticks between Nightmare/Lucid emergence events per tear.").defineInRange("emergenceMinIntervalTicks", 400, 20, 240000);
         DIMENSIONAL_TEAR_EMERGENCE_MAX_INTERVAL_TICKS = b.comment("Maximum ticks between Nightmare/Lucid emergence events per tear.").defineInRange("emergenceMaxIntervalTicks", 1200, 20, 240000);
         DIMENSIONAL_TEAR_LUCID_EVENT_CHANCE = b.comment("Chance that an emergence event spawns a Lucid instead of a Nightmare.").defineInRange("lucidEventChance", 0.65D, 0.0D, 1.0D);
+        DIMENSIONAL_TEARS_SPAWN_NATURALLY = b.define("spawnNaturally", true);
         b.pop();
 
 
@@ -935,6 +1046,41 @@ public final class AntarchyMobsConfig {
         SPEC = b.build();
     }
 
+    static double caterpillarHealth() { return CATERPILLAR_HEALTH.get(); }
+    static double caterpillarMovementSpeed() { return CATERPILLAR_MOVEMENT_SPEED.get(); }
+    static double flyingSquirrelHealth() { return FLYING_SQUIRREL_HEALTH.get(); }
+    static double flyingSquirrelMovementSpeed() { return FLYING_SQUIRREL_MOVEMENT_SPEED.get(); }
+    static double butterflyHealth() { return BUTTERFLY_HEALTH.get(); }
+    static double butterflyMovementSpeed() { return BUTTERFLY_MOVEMENT_SPEED.get(); }
+    static double butterflyFlyingSpeed() { return BUTTERFLY_FLYING_SPEED.get(); }
+    static double bedBugHealth() { return BED_BUG_HEALTH.get(); }
+    static double bedBugAttackDamage() { return BED_BUG_ATTACK_DAMAGE.get(); }
+    static double bedBugMovementSpeed() { return BED_BUG_MOVEMENT_SPEED.get(); }
+    static double bedBugArmor() { return BED_BUG_ARMOR.get(); }
+    static double stratosharkHealth() { return STRATOSHARK_HEALTH.get(); }
+    static double stratosharkAttackDamage() { return STRATOSHARK_ATTACK_DAMAGE.get(); }
+    static double stratosharkMovementSpeed() { return STRATOSHARK_MOVEMENT_SPEED.get(); }
+    static double stratosharkFlyingSpeed() { return STRATOSHARK_FLYING_SPEED.get(); }
+    static double stratosharkKnockbackResistance() { return STRATOSHARK_KNOCKBACK_RESISTANCE.get(); }
+    static double missileSquidHealth() { return MISSILE_SQUID_HEALTH.get(); }
+    static double missileSquidAttackDamage() { return MISSILE_SQUID_ATTACK_DAMAGE.get(); }
+    static double missileSquidMovementSpeed() { return MISSILE_SQUID_MOVEMENT_SPEED.get(); }
+    static double missileSquidFlyingSpeed() { return MISSILE_SQUID_FLYING_SPEED.get(); }
+    static double missileSquidKnockbackResistance() { return MISSILE_SQUID_KNOCKBACK_RESISTANCE.get(); }
+    static double molewormHealth() { return MOLEWORM_HEALTH.get(); }
+    static double molewormAttackDamage() { return MOLEWORM_ATTACK_DAMAGE.get(); }
+    static double molewormMovementSpeed() { return MOLEWORM_MOVEMENT_SPEED.get(); }
+    static double molevoreHealth() { return MOLEVORE_HEALTH.get(); }
+    static double molevoreAttackDamage() { return MOLEVORE_ATTACK_DAMAGE.get(); }
+    static int molevoreSpinTicks() { return MOLEVORE_SPIN_TICKS.get(); }
+    static int molevoreCooldownTicks() { return MOLEVORE_COOLDOWN_TICKS.get(); }
+    static double molevoreChargeSpeed() { return MOLEVORE_CHARGE_SPEED.get(); }
+    static double molevoreBreakRange() { return MOLEVORE_BREAK_RANGE.get(); }
+    static double molevoreBreakVerticalRange() { return MOLEVORE_BREAK_VERTICAL_RANGE.get(); }
+    static double molevoreBreakHalfWidth() { return MOLEVORE_BREAK_HALF_WIDTH.get(); }
+    static double octopusBombHealth() { return OCTOPUS_BOMB_HEALTH.get(); }
+    static double octopusBombAttackDamage() { return OCTOPUS_BOMB_ATTACK_DAMAGE.get(); }
+
     private AntarchyMobsConfig() {}
 
     private static boolean isValidDimensionId(Object value) {
@@ -1009,6 +1155,12 @@ public final class AntarchyMobsConfig {
     static int     emperorScorpionHardenCooldownTicks()       { return EMPEROR_SCORPION_HARDEN_COOLDOWN_TICKS.get(); }
     static double  emperorScorpionDamageRange()             { return EMPEROR_SCORPION_DAMAGE_RANGE.get(); }
     static int     emperorScorpionMinDespawnTicks()         { return EMPEROR_SCORPION_MIN_DESPAWN_TICKS.get(); }
+
+    static double  scorpionHealth()                          { return SCORPION_HEALTH.get(); }
+    static double  scorpionAttackDamage()                    { return SCORPION_ATTACK_DAMAGE.get(); }
+    static double  scorpionMovementSpeed()                   { return SCORPION_MOVEMENT_SPEED.get(); }
+    static double  scorpionArmor()                           { return SCORPION_ARMOR.get(); }
+    static double  scorpionKnockbackResistance()             { return SCORPION_KNOCKBACK_RESISTANCE.get(); }
 
     static double  krakenHealth()                           { return KRAKEN_HEALTH.get(); }
     static double  krakenAttackDamage()                     { return KRAKEN_ATTACK_DAMAGE.get(); }
@@ -1162,6 +1314,7 @@ public final class AntarchyMobsConfig {
     static int     dimensionalTearEmergenceMinIntervalTicks() { return DIMENSIONAL_TEAR_EMERGENCE_MIN_INTERVAL_TICKS.get(); }
     static int     dimensionalTearEmergenceMaxIntervalTicks() { return DIMENSIONAL_TEAR_EMERGENCE_MAX_INTERVAL_TICKS.get(); }
     static float   dimensionalTearLucidEventChance()     { return DIMENSIONAL_TEAR_LUCID_EVENT_CHANCE.get().floatValue(); }
+    static boolean dimensionalTearsSpawnNaturally()       { return DIMENSIONAL_TEARS_SPAWN_NATURALLY.get(); }
     static double  nightmareMovementSpeed()             { return NIGHTMARE_MOVEMENT_SPEED.get(); }
     static int     nightmareWeaknessTicks()             { return NIGHTMARE_WEAKNESS_TICKS.get(); }
     static int     nightmareDreadTicks()                { return NIGHTMARE_DREAD_TICKS.get(); }

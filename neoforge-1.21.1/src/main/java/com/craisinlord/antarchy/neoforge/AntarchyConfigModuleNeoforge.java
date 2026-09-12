@@ -18,7 +18,7 @@ public final class AntarchyConfigModuleNeoforge {
 
     public static void init(ModContainer modContainer) {
         Path configDir = FMLPaths.CONFIGDIR.get().resolve("antarchy");
-        ConfigResetGuard.wipeIfNeeded(
+        ConfigResetGuard.migrateIfNeeded(
                 configDir,
                 configDir.resolve("antarchy_mobs.toml"),
                 configDir.resolve("antarchy_tools.toml"),
@@ -121,6 +121,12 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setEmperorScorpionHardenCooldownTicks(AntarchyMobsConfig.emperorScorpionHardenCooldownTicks());
         AntarchySettings.setEmperorScorpionDamageRange(AntarchyMobsConfig.emperorScorpionDamageRange());
         AntarchySettings.setEmperorScorpionMinDespawnTicks(AntarchyMobsConfig.emperorScorpionMinDespawnTicks());
+
+        AntarchySettings.setScorpionHealth(AntarchyMobsConfig.scorpionHealth());
+        AntarchySettings.setScorpionAttackDamage(AntarchyMobsConfig.scorpionAttackDamage());
+        AntarchySettings.setScorpionMovementSpeed(AntarchyMobsConfig.scorpionMovementSpeed());
+        AntarchySettings.setScorpionArmor(AntarchyMobsConfig.scorpionArmor());
+        AntarchySettings.setScorpionKnockbackResistance(AntarchyMobsConfig.scorpionKnockbackResistance());
 
         AntarchySettings.setKrakenHealth(AntarchyMobsConfig.krakenHealth());
         AntarchySettings.setKrakenAttackDamage(AntarchyMobsConfig.krakenAttackDamage());
@@ -253,7 +259,42 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setFlytrapGrabDamage(AntarchyMobsConfig.flytrapGrabDamage());
         AntarchySettings.setFlytrapSweepHitCooldownTicks(AntarchyMobsConfig.flytrapSweepHitCooldownTicks());
 
+        AntarchySettings.setCaterpillarHealth(AntarchyMobsConfig.caterpillarHealth());
+        AntarchySettings.setCaterpillarMovementSpeed(AntarchyMobsConfig.caterpillarMovementSpeed());
         AntarchySettings.setCaterpillarPupationTimeSeconds(AntarchyMobsConfig.caterpillarPupationTimeSeconds());
+        AntarchySettings.setFlyingSquirrelHealth(AntarchyMobsConfig.flyingSquirrelHealth());
+        AntarchySettings.setFlyingSquirrelMovementSpeed(AntarchyMobsConfig.flyingSquirrelMovementSpeed());
+        AntarchySettings.setButterflyHealth(AntarchyMobsConfig.butterflyHealth());
+        AntarchySettings.setButterflyMovementSpeed(AntarchyMobsConfig.butterflyMovementSpeed());
+        AntarchySettings.setButterflyFlyingSpeed(AntarchyMobsConfig.butterflyFlyingSpeed());
+        AntarchySettings.setBedBugHealth(AntarchyMobsConfig.bedBugHealth());
+        AntarchySettings.setBedBugAttackDamage(AntarchyMobsConfig.bedBugAttackDamage());
+        AntarchySettings.setBedBugMovementSpeed(AntarchyMobsConfig.bedBugMovementSpeed());
+        AntarchySettings.setBedBugArmor(AntarchyMobsConfig.bedBugArmor());
+
+        AntarchySettings.setStratosharkHealth(AntarchyMobsConfig.stratosharkHealth());
+        AntarchySettings.setStratosharkAttackDamage(AntarchyMobsConfig.stratosharkAttackDamage());
+        AntarchySettings.setStratosharkMovementSpeed(AntarchyMobsConfig.stratosharkMovementSpeed());
+        AntarchySettings.setStratosharkFlyingSpeed(AntarchyMobsConfig.stratosharkFlyingSpeed());
+        AntarchySettings.setStratosharkKnockbackResistance(AntarchyMobsConfig.stratosharkKnockbackResistance());
+        AntarchySettings.setMissileSquidHealth(AntarchyMobsConfig.missileSquidHealth());
+        AntarchySettings.setMissileSquidAttackDamage(AntarchyMobsConfig.missileSquidAttackDamage());
+        AntarchySettings.setMissileSquidMovementSpeed(AntarchyMobsConfig.missileSquidMovementSpeed());
+        AntarchySettings.setMissileSquidFlyingSpeed(AntarchyMobsConfig.missileSquidFlyingSpeed());
+        AntarchySettings.setMissileSquidKnockbackResistance(AntarchyMobsConfig.missileSquidKnockbackResistance());
+        AntarchySettings.setMolewormHealth(AntarchyMobsConfig.molewormHealth());
+        AntarchySettings.setMolewormAttackDamage(AntarchyMobsConfig.molewormAttackDamage());
+        AntarchySettings.setMolewormMovementSpeed(AntarchyMobsConfig.molewormMovementSpeed());
+        AntarchySettings.setMolevoreHealth(AntarchyMobsConfig.molevoreHealth());
+        AntarchySettings.setMolevoreAttackDamage(AntarchyMobsConfig.molevoreAttackDamage());
+        AntarchySettings.setMolevoreSpinTicks(AntarchyMobsConfig.molevoreSpinTicks());
+        AntarchySettings.setMolevoreCooldownTicks(AntarchyMobsConfig.molevoreCooldownTicks());
+        AntarchySettings.setMolevoreChargeSpeed(AntarchyMobsConfig.molevoreChargeSpeed());
+        AntarchySettings.setMolevoreBreakRange(AntarchyMobsConfig.molevoreBreakRange());
+        AntarchySettings.setMolevoreBreakVerticalRange(AntarchyMobsConfig.molevoreBreakVerticalRange());
+        AntarchySettings.setMolevoreBreakHalfWidth(AntarchyMobsConfig.molevoreBreakHalfWidth());
+        AntarchySettings.setOctopusBombHealth(AntarchyMobsConfig.octopusBombHealth());
+        AntarchySettings.setOctopusBombAttackDamage(AntarchyMobsConfig.octopusBombAttackDamage());
 
         AntarchySettings.setReverieHealth(AntarchyMobsConfig.reverieHealth());
         AntarchySettings.setReverieInterestRadius(AntarchyMobsConfig.reverieInterestRadius());
@@ -278,6 +319,7 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setDimensionalTearEmergenceMinIntervalTicks(AntarchyMobsConfig.dimensionalTearEmergenceMinIntervalTicks());
         AntarchySettings.setDimensionalTearEmergenceMaxIntervalTicks(AntarchyMobsConfig.dimensionalTearEmergenceMaxIntervalTicks());
         AntarchySettings.setDimensionalTearLucidEventChance(AntarchyMobsConfig.dimensionalTearLucidEventChance());
+        AntarchySettings.setDimensionalTearsSpawnNaturally(AntarchyMobsConfig.dimensionalTearsSpawnNaturally());
 
         AntarchySettings.setBasiliskPetrifyingGazeEnabled(AntarchyMobsConfig.basiliskPetrifyingGazeEnabled());
         AntarchySettings.setBasiliskSpawnMaxLightLevel(AntarchyMobsConfig.basiliskSpawnMaxLightLevel());
@@ -419,6 +461,36 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setUltimateBootsArmorToughness(AntarchyToolsConfig.ultimateBootsArmorToughness());
         AntarchySettings.setUltimateArmorKnockbackResistance(AntarchyToolsConfig.ultimateArmorKnockbackResistance());
 
+        AntarchySettings.setRoyalArmorComesEnchanted(AntarchyToolsConfig.royalArmorComesEnchanted());
+        AntarchySettings.setRoyalArmorProtectionLevel(AntarchyToolsConfig.royalArmorProtectionLevel());
+        AntarchySettings.setRoyalArmorEnchantability(AntarchyToolsConfig.royalArmorEnchantability());
+        AntarchySettings.setRoyalArmorDurabilityMultiplier(AntarchyToolsConfig.royalArmorDurabilityMultiplier());
+        AntarchySettings.setRoyalGuardianHelmetArmorValue(AntarchyToolsConfig.royalGuardianHelmetArmorValue());
+        AntarchySettings.setRoyalGuardianChestplateArmorValue(AntarchyToolsConfig.royalGuardianChestplateArmorValue());
+        AntarchySettings.setRoyalGuardianLeggingsArmorValue(AntarchyToolsConfig.royalGuardianLeggingsArmorValue());
+        AntarchySettings.setRoyalGuardianBootsArmorValue(AntarchyToolsConfig.royalGuardianBootsArmorValue());
+        AntarchySettings.setRoyalGuardianArmorToughness(AntarchyToolsConfig.royalGuardianArmorToughness());
+        AntarchySettings.setRoyalGuardianArmorKnockbackResistance(AntarchyToolsConfig.royalGuardianArmorKnockbackResistance());
+        AntarchySettings.setRoyalAssailantHelmetArmorValue(AntarchyToolsConfig.royalAssailantHelmetArmorValue());
+        AntarchySettings.setRoyalAssailantChestplateArmorValue(AntarchyToolsConfig.royalAssailantChestplateArmorValue());
+        AntarchySettings.setRoyalAssailantLeggingsArmorValue(AntarchyToolsConfig.royalAssailantLeggingsArmorValue());
+        AntarchySettings.setRoyalAssailantBootsArmorValue(AntarchyToolsConfig.royalAssailantBootsArmorValue());
+        AntarchySettings.setRoyalAssailantArmorToughness(AntarchyToolsConfig.royalAssailantArmorToughness());
+        AntarchySettings.setRoyalAssailantArmorKnockbackResistance(AntarchyToolsConfig.royalAssailantArmorKnockbackResistance());
+        AntarchySettings.setRoyalAssailantHelmetDoubleDamageChance(AntarchyToolsConfig.royalAssailantHelmetDoubleDamageChance());
+        AntarchySettings.setRoyalAssailantChestplateDoubleDamageChance(AntarchyToolsConfig.royalAssailantChestplateDoubleDamageChance());
+        AntarchySettings.setRoyalAssailantLeggingsDoubleDamageChance(AntarchyToolsConfig.royalAssailantLeggingsDoubleDamageChance());
+        AntarchySettings.setRoyalAssailantBootsDoubleDamageChance(AntarchyToolsConfig.royalAssailantBootsDoubleDamageChance());
+        AntarchySettings.setRoyalGuardianSwordAttackDamage(AntarchyToolsConfig.royalGuardianSwordAttackDamage());
+        AntarchySettings.setRoyalGuardianSwordAttackSpeed(AntarchyToolsConfig.royalGuardianSwordAttackSpeed());
+        AntarchySettings.setRoyalAssailantBattleAxeAttackDamage(AntarchyToolsConfig.royalAssailantBattleAxeAttackDamage());
+        AntarchySettings.setRoyalAssailantBattleAxeAttackSpeed(AntarchyToolsConfig.royalAssailantBattleAxeAttackSpeed());
+        AntarchySettings.setRoyalWeaponAttackReachBonus(AntarchyToolsConfig.royalWeaponAttackReachBonus());
+        AntarchySettings.setRoyalWeaponAttackKnockbackBonus(AntarchyToolsConfig.royalWeaponAttackKnockbackBonus());
+        AntarchySettings.setRoyalWeaponDurability(AntarchyToolsConfig.royalWeaponDurability());
+        AntarchySettings.setRoyalWeaponEnchantability(AntarchyToolsConfig.royalWeaponEnchantability());
+        AntarchySettings.setRoyalGuardianShieldDurability(AntarchyToolsConfig.royalGuardianShieldDurability());
+
         AntarchySettings.setBattleAxeAttackDamage(AntarchyToolsConfig.battleAxeAttackDamage());
         AntarchySettings.setBattleAxeAttackSpeed(AntarchyToolsConfig.battleAxeAttackSpeed());
 
@@ -504,6 +576,20 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setGravityGunBlastStrength(AntarchyToolsConfig.gravityGunBlastStrength());
         AntarchySettings.setGravityGunCooldownSeconds(AntarchyToolsConfig.gravityGunCooldownSeconds());
         AntarchySettings.setGravityGunMaxHoldDistance(AntarchyToolsConfig.gravityGunMaxHoldDistance());
+        AntarchySettings.setEyeOfTheStormEnabled(AntarchyToolsConfig.eyeOfTheStormEnabled());
+        AntarchySettings.setEyeOfTheStormUpdraftCooldownTicks(AntarchyToolsConfig.eyeOfTheStormUpdraftCooldownTicks());
+        AntarchySettings.setEyeOfTheStormUpdraftLaunchStrength(AntarchyToolsConfig.eyeOfTheStormUpdraftLaunchStrength());
+        AntarchySettings.setEyeOfTheStormUpdraftHeight(AntarchyToolsConfig.eyeOfTheStormUpdraftHeight());
+        AntarchySettings.setEyeOfTheStormUpdraftRadius(AntarchyToolsConfig.eyeOfTheStormUpdraftRadius());
+        AntarchySettings.setEyeOfTheStormUpdraftDurationTicks(AntarchyToolsConfig.eyeOfTheStormUpdraftDurationTicks());
+        AntarchySettings.setEyeOfTheStormSurgeCooldownTicks(AntarchyToolsConfig.eyeOfTheStormSurgeCooldownTicks());
+        AntarchySettings.setEyeOfTheStormSurgeRange(AntarchyToolsConfig.eyeOfTheStormSurgeRange());
+        AntarchySettings.setEyeOfTheStormSurgeDurationTicks(AntarchyToolsConfig.eyeOfTheStormSurgeDurationTicks());
+        AntarchySettings.setEyeOfTheStormSurgeRadius(AntarchyToolsConfig.eyeOfTheStormSurgeRadius());
+        AntarchySettings.setEyeOfTheStormSurgeHeight(AntarchyToolsConfig.eyeOfTheStormSurgeHeight());
+        AntarchySettings.setEyeOfTheStormSurgePullStrength(AntarchyToolsConfig.eyeOfTheStormSurgePullStrength());
+        AntarchySettings.setEyeOfTheStormSurgeReturnStrength(AntarchyToolsConfig.eyeOfTheStormSurgeReturnStrength());
+        AntarchySettings.setEyeOfTheStormSurgeDamage(AntarchyToolsConfig.eyeOfTheStormSurgeDamage());
         AntarchySettings.setCritterCageMaxCapturableWidth(AntarchyToolsConfig.critterCageMaxCapturableWidth());
         AntarchySettings.setCritterCageMaxCapturableHeight(AntarchyToolsConfig.critterCageMaxCapturableHeight());
 

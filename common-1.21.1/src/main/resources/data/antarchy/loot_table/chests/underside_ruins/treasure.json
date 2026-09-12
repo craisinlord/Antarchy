@@ -8,6 +8,7 @@
 {"type":"minecraft:item","name":"minecraft:diamond_pickaxe","weight":8,"functions":[{"function":"minecraft:enchant_with_levels","levels":{"type":"minecraft:uniform","min":18,"max":30},"options":"#minecraft:on_random_loot"}]},
 {"type":"minecraft:item","name":"minecraft:book","weight":10,"functions":[{"function":"minecraft:enchant_randomly","options":["minecraft:mending","minecraft:unbreaking","minecraft:efficiency","minecraft:protection","antarchy:feather_rising","antarchy:chronosphere"]}]},
 {"type":"minecraft:item","name":"minecraft:tipped_arrow","weight":7,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":4,"max":10}},{"function":"minecraft:set_potion","id":"antarchy:inversion"}]},
-{"type":"minecraft:item","name":"minecraft:potion","weight":7,"functions":[{"function":"minecraft:set_potion","id":"antarchy:inversion"}]},
+{"type":"minecraft:item","name":"minecraft:potion","weight":6,"functions":[{"function":"minecraft:set_potion","id":"antarchy:time_contraction"}]},
+{"type":"minecraft:item","name":"minecraft:potion","weight":6,"functions":[{"function":"minecraft:set_potion","id":"antarchy:time_dilation"}]},
 {"type":"minecraft:item","name":"antarchy:titanium_ingot","weight":1},{"type":"minecraft:item","name":"antarchy:uranium_ingot","weight":1}
 ]}],"random_sequence":"antarchy:chests/underside_ruins/treasure"}

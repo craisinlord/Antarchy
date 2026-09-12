@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.fabric;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.config.AntarchyConfigCatalog;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.config.ConfigResetGuard;
 import com.google.gson.Gson;
@@ -19,8 +20,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -36,7 +35,7 @@ public final class AntarchyConfigModuleFabric {
     }
 
     public static void init() {
-        ConfigResetGuard.wipeIfNeeded(
+        ConfigResetGuard.migrateIfNeeded(
                 CONFIG_DIR,
                 ConfigSection.MOBS.path,
                 ConfigSection.TOOLS.path,
@@ -134,49 +133,22 @@ public final class AntarchyConfigModuleFabric {
     }
 
     private static Map<String, SettingBinding> buildBindings() {
-        Map<String, Method> getters = new LinkedHashMap<>();
-        for (Method method : AntarchySettings.class.getMethods()) {
-            if (!isPublicStatic(method) || method.getParameterCount() != 0 || method.getReturnType() == Void.TYPE) {
-                continue;
-            }
-            getters.put(method.getName(), method);
-        }
-
-        return Arrays.stream(AntarchySettings.class.getMethods())
-                .filter(AntarchyConfigModuleFabric::isPublicStatic)
-                .filter(method -> method.getName().startsWith("set"))
-                .filter(method -> method.getParameterCount() == 1)
-                .sorted(Comparator.comparing(Method::getName))
-                .collect(LinkedHashMap::new, (bindings, setter) -> {
-                    String propertyName = decapitalize(setter.getName().substring(3));
-                    Method getter = getters.get(propertyName);
-                    if (getter == null) {
-                        return;
-                    }
-                    if (!isSupported(setter.getParameterTypes()[0], getter.getReturnType())) {
-                        return;
-                    }
-                    bindings.put(propertyName, new SettingBinding(propertyName, getter, setter, ConfigSection.forProperty(propertyName)));
-                }, Map::putAll);
+        return AntarchyConfigCatalog.definitions().stream()
+                .collect(LinkedHashMap::new, (bindings, definition) -> bindings.put(
+                        definition.name(),
+                        new SettingBinding(
+                                definition.name(),
+                                definition.getter(),
+                                definition.setter(),
+                                toConfigSection(definition.section()))), Map::putAll);
     }
 
-    private static boolean isPublicStatic(Method method) {
-        int modifiers = method.getModifiers();
-        return java.lang.reflect.Modifier.isPublic(modifiers) && java.lang.reflect.Modifier.isStatic(modifiers);
-    }
-
-    private static boolean isSupported(Class<?> setterType, Class<?> getterType) {
-        if (setterType == boolean.class || setterType == int.class || setterType == double.class || setterType == float.class) {
-            return getterType == setterType;
-        }
-        return setterType == String.class && ResourceKey.class.isAssignableFrom(getterType);
-    }
-
-    private static String decapitalize(String value) {
-        if (value.isEmpty()) {
-            return value;
-        }
-        return Character.toLowerCase(value.charAt(0)) + value.substring(1);
+    private static ConfigSection toConfigSection(AntarchyConfigCatalog.Section section) {
+        return switch (section) {
+            case MOBS -> ConfigSection.MOBS;
+            case TOOLS -> ConfigSection.TOOLS;
+            case MISC -> ConfigSection.MISC;
+        };
     }
 
     /**
@@ -194,70 +166,6 @@ public final class AntarchyConfigModuleFabric {
             this.path = CONFIG_DIR.resolve(fileName);
         }
 
-        private static ConfigSection forProperty(String name) {
-            if (isMiscSetting(name)) {
-                return MISC;
-            }
-            if (isToolSetting(name)) {
-                return TOOLS;
-            }
-            return MOBS;
-        }
-
-        private static boolean isMiscSetting(String name) {
-            return name.equals("disableInfinityBookPortalCreation")
-                    || name.equals("rainbowAntsLeadToInfinityDimensions")
-                    || name.equals("permanentPortalsEnabled")
-                    || name.equals("permanentPortalsFlintAndSteelEnabled")
-                    || name.equals("elythiaPortalEnabled")
-                    || name.equals("thoraxisPortalEnabled")
-                    || name.equals("cavarynPortalEnabled")
-                    || name.equals("hushweedSporeLifetimeSeconds")
-                    || name.equals("elythiaFireflyParticlesEnabled")
-                    || name.equals("duplicatorTreeEnabled")
-                    || name.equals("glowVinesUnderLeaves")
-                    || name.equals("swingThroughGrassEnabled")
-                    || name.equals("fabricKeybindingConflictFixEnabled")
-                    || name.equals("experimentalSettingsPopupDisabled")
-                    || name.equals("entitySpecificFireOverlayEnabled")
-                    || name.equals("dreamSandEnabled")
-                    || name.startsWith("dreamSand")
-                    || name.equals("ichorWitherEnabled")
-                    || name.startsWith("diamondMinecart")
-                    || name.startsWith("hoverboard");
-        }
-
-        private static boolean isToolSetting(String name) {
-            return name.equals("sizeChangingRaysEnabled")
-                    || name.startsWith("sizeRay")
-                    || name.equals("shrinkingPotionDelta")
-                    || name.equals("growthPotionDelta")
-                    || name.startsWith("ultimate")
-                    || name.startsWith("battleAxe")
-                    || name.startsWith("bigBertha")
-                    || name.startsWith("attitudeAdjuster")
-                    || name.startsWith("scorpionWhip")
-                    || name.startsWith("bloodCrystal")
-                    || name.startsWith("nightmareHelmet")
-                    || name.startsWith("nightmareChestplate")
-                    || name.startsWith("nightmareLeggings")
-                    || name.startsWith("nightmareBoots")
-                    || name.startsWith("nightmareArmorDreadAura")
-                    || name.startsWith("primordialArmor")
-                    || name.startsWith("nightmareSword")
-                    || name.startsWith("basiliskDagger")
-                    || name.startsWith("squidzooka")
-                    || name.equals("invertProjectilesFromInvertedPlayers")
-                    || name.startsWith("gravityGun")
-                    || name.startsWith("critterCage")
-                    || name.startsWith("minersDream")
-                    || name.equals("potentNyxiteInvertedDurationSeconds")
-                    || name.equals("corneaEarNightVisionSeconds")
-                    || name.startsWith("american")
-                    || name.startsWith("mogglesVision")
-                    || name.equals("ductTapeRepairPercentPerUse")
-                    || name.startsWith("fallenKingCrown");
-        }
     }
 
     /**

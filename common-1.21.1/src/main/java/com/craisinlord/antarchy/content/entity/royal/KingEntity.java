@@ -868,8 +868,6 @@ public class KingEntity extends RoyalBossEntity {
                     new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
                         @Override public void onStart() {
                             KingEntity.this.triggerAnim(RoyalHead.Slot.LEFT.controllerName(), "shoot");
-                            KingEntity.this.playRoyalSound(SoundEvents.FIRECHARGE_USE, 0.8F);
-                            KingEntity.this.playRoyalSound(SoundEvents.GHAST_WARN, 1.2F);
                         }
                         @Override public void onActive(int elapsedTicks) {
                             Vec3 origin = KingEntity.this.headAnchor(KingEntity.this.royalHead(RoyalHead.Slot.LEFT));

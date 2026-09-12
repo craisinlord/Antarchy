@@ -11,6 +11,7 @@ import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackLane;
 import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +27,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -586,6 +588,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         int index = head.slot().ordinal();
         head.setBeamActive(false);
         head.stopShoot();
+        this.stopTriggeredAnim(head.slot().controllerName(), null);
         this.beamControllers[index].stop();
         this.entityData.set(BEAM_ACTIVE[index], false);
         this.entityData.set(BEAM_ELEMENT[index], RoyalBeamElement.GENERIC.ordinal());
@@ -874,10 +877,12 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         double yaw = this.yBodyRot * Mth.DEG_TO_RAD;
         Vec3 forward = new Vec3(-Math.sin(yaw), 0.0D, Math.cos(yaw));
         Vec3 right = new Vec3(forward.z, 0.0D, -forward.x);
-        return new Vec3(
-                this.getX() + forward.x * spec.forwardOffset() + right.x * spec.lateralOffset(),
-                this.getY() + spec.yOffset(),
-                this.getZ() + forward.z * spec.forwardOffset() + right.z * spec.lateralOffset());
+        Vec3 localOffset = new Vec3(
+                forward.x * spec.forwardOffset() + right.x * spec.lateralOffset(),
+                spec.yOffset(),
+                forward.z * spec.forwardOffset() + right.z * spec.lateralOffset());
+        return this.position().add(AntarchyGravityRotationUtil.vecPlayerToWorld(localOffset,
+                AntarchyGravityApi.getGravityDirection(this)));
     }
 
     protected Vec3 beamAnchor(RoyalHead head) {
@@ -894,10 +899,12 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             case RIGHT -> BEAM_MUZZLE_LATERAL;
         };
         double vertical = slot == RoyalHead.Slot.CENTER ? BEAM_MUZZLE_CENTER_Y : BEAM_MUZZLE_SIDE_Y;
-        return new Vec3(
-                x + forward.x * BEAM_MUZZLE_FORWARD + right.x * lateral,
-                y + vertical,
-                z + forward.z * BEAM_MUZZLE_FORWARD + right.z * lateral);
+        Vec3 localOffset = new Vec3(
+                forward.x * BEAM_MUZZLE_FORWARD + right.x * lateral,
+                vertical,
+                forward.z * BEAM_MUZZLE_FORWARD + right.z * lateral);
+        return new Vec3(x, y, z).add(AntarchyGravityRotationUtil.vecPlayerToWorld(localOffset,
+                AntarchyGravityApi.getGravityDirection(this)));
     }
 
     protected double royalBeamMinimumRange() {
@@ -989,6 +996,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (source.is(DamageTypes.GENERIC_KILL)) {
+            return super.hurt(source, amount);
+        }
         float cappedAmount = (float) Math.min(amount, AntarchySettings.royalBossMaxSingleHitDamage());
         return super.hurt(source, cappedAmount);
     }

@@ -12,23 +12,24 @@ public final class ConfigResetGuard {
     private ConfigResetGuard() {
     }
 
-    public static void wipeIfNeeded(Path configDir, Path... configFiles) {
+    public static void migrateIfNeeded(Path configDir, Path... configFiles) {
         Path markerPath = configDir.resolve(MARKER_FILE_NAME);
         if (readGeneration(markerPath) >= RESET_GENERATION) {
             return;
         }
 
         for (Path configFile : configFiles) {
-            try {
-                if (Files.deleteIfExists(configFile)) {
-                    Antarchy.LOGGER.info("Reset config file {} to defaults (config generation {})", configFile, RESET_GENERATION);
-                }
-            } catch (IOException e) {
-                Antarchy.LOGGER.warn("Failed to delete config file {} during config reset", configFile, e);
+            if (Files.exists(configFile)) {
+                Antarchy.LOGGER.info("Preserving config file {} during config migration (config generation {})", configFile, RESET_GENERATION);
             }
         }
 
         writeGeneration(markerPath);
+    }
+
+    @Deprecated
+    public static void wipeIfNeeded(Path configDir, Path... configFiles) {
+        migrateIfNeeded(configDir, configFiles);
     }
 
     private static int readGeneration(Path markerPath) {

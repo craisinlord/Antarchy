@@ -153,6 +153,10 @@ public class TimeDilationFieldEntity extends Entity {
         return this.entityData.get(RADIUS);
     }
 
+    public double influenceRadius() {
+        return this.chronosphere ? this.fieldRadius() * 2.0D : this.fieldRadius();
+    }
+
     public double fieldRadiusSqr() {
         double radius = this.fieldRadius();
         return radius * radius;

@@ -137,6 +137,5 @@ public class AntarchyNeoforgePayloadHandlers {
                 )
         );
         MultipartNetworking.register(registrar);
-        // ThoraxisWeatherNetworking.register(registrar);
     }
 }

@@ -114,6 +114,9 @@ public class LucidEntity extends Monster implements GeoEntity {
 
     public static boolean canSpawn(EntityType<LucidEntity> entityType, ServerLevelAccessor level,
             MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+        if (spawnReason == MobSpawnType.TRIAL_SPAWNER) {
+            return level.getDifficulty() != Difficulty.PEACEFUL;
+        }
         return level.getDifficulty() != Difficulty.PEACEFUL
                 && pos.getY() <= 250
                 && level.isEmptyBlock(pos)
@@ -567,7 +570,6 @@ public class LucidEntity extends Monster implements GeoEntity {
     }
 
 }
-
 
 
 

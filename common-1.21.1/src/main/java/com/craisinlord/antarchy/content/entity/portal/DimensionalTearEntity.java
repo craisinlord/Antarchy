@@ -275,7 +275,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
             if (target != null && target.isAlive()) {
                 manticore.setTarget(target);
             }
-            manticore.setDeltaMovement(this.getViewVector(1.0F).scale(0.2D).add(0.0D, 0.08D, 0.0D));
+            manticore.setDeltaMovement(this.getViewVector(1.0F).scale(0.7D).add(0.0D, 0.18D, 0.0D));
             manticore.setNoGravity(false);
             level.addFreshEntity(manticore);
         }

@@ -6,6 +6,7 @@ import com.craisinlord.antarchy.content.entity.royal.KingEntity;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;
@@ -23,10 +24,14 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 /** Places the authored King's Tree as independently generated chunk slices on a fixed world grid. */
 public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration> {
+    private static final Map<ServerLevel, Set<Long>> CLAIMED_TREE_KINGS = new WeakHashMap<>();
     private static final int TREE_MIN_X = -191;
     private static final int TREE_MAX_X = 192;
     private static final int TREE_MIN_Z = -227;
@@ -110,31 +115,42 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
 
     private static void spawnTreeKing(WorldGenLevel level, int centerX, int centerZ, int baseY) {
         var serverLevel = level.getLevel();
-        Vec3 treeCenter = new Vec3(centerX + 0.5D, 0.0D, centerZ + 0.5D);
-        AABB searchBox = new AABB(
-                centerX - 512.0D, level.getMinBuildHeight(), centerZ - 512.0D,
-                centerX + 512.0D, level.getMaxBuildHeight(), centerZ + 512.0D);
-        List<KingEntity> treeKings = serverLevel.getEntitiesOfClass(KingEntity.class, searchBox,
-                king -> king.isAlive() && king.isTreePatrolFor(treeCenter));
-        if (!treeKings.isEmpty()) {
-            // Repair older worlds that already contain duplicate tree-bound Kings.
-            for (int index = 1; index < treeKings.size(); index++) {
-                treeKings.get(index).discard();
+        long treeKey = ((long) centerX << 32) ^ (centerZ & 0xffffffffL);
+        synchronized (serverLevel) {
+            synchronized (CLAIMED_TREE_KINGS) {
+                if (!CLAIMED_TREE_KINGS.computeIfAbsent(serverLevel, ignored -> new java.util.HashSet<>()).add(treeKey)) {
+                    return;
+                }
             }
-            return;
+            Vec3 treeCenter = new Vec3(centerX + 0.5D, 0.0D, centerZ + 0.5D);
+            AABB searchBox = new AABB(
+                    centerX - 512.0D, level.getMinBuildHeight(), centerZ - 512.0D,
+                    centerX + 512.0D, level.getMaxBuildHeight(), centerZ + 512.0D);
+            List<KingEntity> treeKings = serverLevel.getEntitiesOfClass(KingEntity.class, searchBox,
+                    king -> king.isAlive() && king.isTreePatrolFor(treeCenter));
+            if (!treeKings.isEmpty()) {
+                // Repair older worlds that already contain duplicate tree-bound Kings.
+                for (int index = 1; index < treeKings.size(); index++) {
+                    treeKings.get(index).discard();
+                }
+                return;
+            }
+            KingEntity king = AntarchyObjects.KING.get().create(serverLevel);
+            if (king == null) {
+                synchronized (CLAIMED_TREE_KINGS) {
+                    CLAIMED_TREE_KINGS.getOrDefault(serverLevel, Set.of()).remove(treeKey);
+                }
+                return;
+            }
+            double minimumY = baseY + 24.0D;
+            double maximumY = baseY + 304.0D;
+            double spawnY = (minimumY + maximumY) * 0.5D;
+            // Start just outside the central trunk, inside the tree's authored footprint.
+            king.moveTo(centerX + 48.5D, spawnY, centerZ + 0.5D, 90.0F, 0.0F);
+            king.setTreePatrolHome(treeCenter, minimumY, maximumY, 0.0D);
+            king.setPersistenceRequired();
+            serverLevel.addFreshEntity(king);
         }
-        KingEntity king = AntarchyObjects.KING.get().create(serverLevel);
-        if (king == null) {
-            return;
-        }
-        double minimumY = baseY + 24.0D;
-        double maximumY = baseY + 304.0D;
-        double spawnY = (minimumY + maximumY) * 0.5D;
-        // Start just outside the central trunk, inside the tree's authored footprint.
-        king.moveTo(centerX + 48.5D, spawnY, centerZ + 0.5D, 90.0F, 0.0F);
-        king.setTreePatrolHome(treeCenter, minimumY, maximumY, 0.0D);
-        king.setPersistenceRequired();
-        serverLevel.addFreshEntity(king);
     }
 
     private static ResourceLocation tileLocation(int tileX, int tileZ) {

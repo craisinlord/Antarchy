@@ -100,8 +100,8 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, AntarchySettings.manticoreHealth())
-                .add(Attributes.MOVEMENT_SPEED, 0.3D)
-                .add(Attributes.FLYING_SPEED, 1.2D)
+                .add(Attributes.MOVEMENT_SPEED, 0.45D)
+                .add(Attributes.FLYING_SPEED, 2.0D)
                 .add(Attributes.ATTACK_DAMAGE, AntarchySettings.manticoreAttackDamage())
                 .add(Attributes.FOLLOW_RANGE, 28.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.2D);
@@ -109,7 +109,8 @@ public class ManticoreEntity extends Monster implements GeoEntity {
 
     public static boolean canSpawn(EntityType<ManticoreEntity> type, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
         if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER
-                || spawnReason == MobSpawnType.COMMAND || spawnReason == MobSpawnType.MOB_SUMMONED) {
+                || spawnReason == MobSpawnType.TRIAL_SPAWNER || spawnReason == MobSpawnType.COMMAND
+                || spawnReason == MobSpawnType.MOB_SUMMONED) {
             return true;
         }
         if (pos.getY() >= 0) {
@@ -486,7 +487,7 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         private final ManticoreEntity manticore;
 
         ManticoreAttackGoal(ManticoreEntity manticore) {
-            super(manticore, 1.1D, true);
+            super(manticore, 1.6D, true);
             this.manticore = manticore;
         }
 

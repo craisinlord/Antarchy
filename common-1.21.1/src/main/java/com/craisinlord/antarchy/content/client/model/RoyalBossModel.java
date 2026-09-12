@@ -50,7 +50,9 @@ public class RoyalBossModel extends GeoModel<RoyalBossEntity> {
             Vec3 beamEnd = animatable.getRoyalBeamEndPosition(slot);
             if (!animatable.isFiringRoyalBeam(slot) || beamEnd == null) continue;
             Vec3 origin = animatable.getRoyalBeamShootFrom(slot, partialTick);
-            Vec3 direction = beamEnd.subtract(origin);
+            Vec3 direction = com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil.vecWorldToPlayer(
+                    beamEnd.subtract(origin),
+                    com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.getGravityDirection(animatable));
             double horizontal = Math.sqrt(direction.x * direction.x + direction.z * direction.z);
             if (direction.lengthSqr() < 1.0E-6D || horizontal < 1.0E-4D) continue;
 
@@ -65,8 +67,8 @@ public class RoyalBossModel extends GeoModel<RoyalBossEntity> {
             float pitchPerBone = pitch / chain.length;
             for (String boneName : chain) {
                 this.getBone(boneName).ifPresent(bone -> {
-                    bone.setRotY(bone.getRotY() + yawPerBone);
-                    bone.setRotX(bone.getRotX() + pitchPerBone);
+                    bone.setRotY(yawPerBone);
+                    bone.setRotX(pitchPerBone);
                 });
             }
         }

@@ -341,21 +341,18 @@ public final class ThoraxisUndersideManager {
     }
 
     /**
-     * Keeps projectile gravity positional: UP below Y=0 in Thoraxis and DOWN
-     * everywhere else. World velocity is preserved when the gravity frame changes.
+     * Projectiles perform their own movement in world coordinates, so they must
+     * not retain an inverted entity-local movement frame. Underside gravity is
+     * reversed separately when gravitational acceleration is applied.
      */
-    public static void updateProjectileGravity(Projectile projectile) {
-        boolean inUnderside = isInUnderside(projectile);
-        AntarchyGravityDirection desiredDirection = inUnderside
-                ? AntarchyGravityDirection.UP
-                : AntarchyGravityDirection.DOWN;
-        boolean stateMismatch = AntarchyGravityApi.getGravityDirection(projectile) != desiredDirection
-                || AntarchyGravityApi.isGravityForced(projectile) != inUnderside;
+    public static void normalizeProjectileGravityFrame(Projectile projectile) {
+        boolean stateMismatch = AntarchyGravityApi.getGravityDirection(projectile) != AntarchyGravityDirection.DOWN
+                || AntarchyGravityApi.isGravityForced(projectile);
         if (stateMismatch) {
             AntarchyGravityApi.setAirborneGravityDirection(
                     projectile,
-                    desiredDirection,
-                    inUnderside,
+                    AntarchyGravityDirection.DOWN,
+                    false,
                     AntarchyGravityTransition.INSTANT
             );
         }

@@ -163,7 +163,7 @@ public final class AntarchyNeoForgeClient {
         event.registerEntityRenderer(AntarchyNeoforgeEntites.UPWARD_FALLING_BLOCK.get(), com.craisinlord.antarchy.content.client.renderer.UpwardFallingBlockRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.SCORPION.get(), context -> withParalyzedGeoLayer(new ScorpionRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.EMPEROR_SCORPION.get(), context -> withParalyzedGeoLayer(new EmperorScorpionRenderer(context)));
-        event.registerEntityRenderer(AntarchyNeoforgeEntites.TORETERROR.get(), ToreterrorRenderer::new);
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.TORETERROR.get(), context -> withParalyzedGeoLayer(new ToreterrorRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.WATER_BOMB.get(), WaterBombRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.CHEEP.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.CheepRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.DORRIE.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.DorrieRenderer(context)));
@@ -174,7 +174,7 @@ public final class AntarchyNeoForgeClient {
         event.registerEntityRenderer(AntarchyNeoforgeEntites.TERMITE.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.TermiteRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.CRAWLING_BLIGHT.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.CrawlingBlightRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.SKULKING_FRIGHT.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.SkulkingFrightRenderer(context)));
-        event.registerEntityRenderer(AntarchyNeoforgeEntites.MANTICORE.get(), com.craisinlord.antarchy.content.client.renderer.ManticoreRenderer::new);
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.MANTICORE.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.ManticoreRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.HERCULES_BEETLE.get(), context -> withParalyzedGeoLayer(new com.craisinlord.antarchy.content.client.renderer.HerculesBeetleRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.PRINCE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalMountRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.PRINCESS.get(), com.craisinlord.antarchy.content.client.renderer.RoyalMountRenderer::new);
@@ -201,7 +201,6 @@ public final class AntarchyNeoForgeClient {
                 renderer.addLayer(new TigerEyeCamouflagePlayerLayer(renderer));
                 renderer.addLayer(new GoopedLivingLayer(renderer));
                 renderer.addLayer(new GlimmeringLivingLayer(renderer));
-                renderer.addLayer(new TemporalContractionAfterimageLayer<>(renderer));
                 renderer.addLayer(new RoyalAssailantAxeAfterimageLayer(renderer));
                 renderer.addLayer(new BrutalflyElytraLayer(renderer));
                 renderer.addLayer(new com.craisinlord.antarchy.content.client.renderer.ManticoreWingsLayer(renderer));
@@ -242,7 +241,6 @@ public final class AntarchyNeoForgeClient {
         ((LivingEntityRenderer) livingRenderer).addLayer(new ParalyzedStoneLivingLayer<>(livingRenderer));
         ((LivingEntityRenderer) livingRenderer).addLayer(new GoopedLivingLayer<>(livingRenderer));
         ((LivingEntityRenderer) livingRenderer).addLayer(new GlimmeringLivingLayer<>(livingRenderer));
-        ((LivingEntityRenderer) livingRenderer).addLayer(new TemporalContractionAfterimageLayer<>(livingRenderer));
     }
 
     private static <T extends LivingEntity & GeoAnimatable> GeoEntityRenderer<T> withParalyzedGeoLayer(GeoEntityRenderer<T> renderer) {
