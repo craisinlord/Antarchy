@@ -1,6 +1,8 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.entity.royal.KingEntity;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -17,7 +19,10 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSetting
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
+import java.util.List;
 import java.util.Optional;
 
 /** Places the authored King's Tree as independently generated chunk slices on a fixed world grid. */
@@ -83,6 +88,7 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
         StructureTemplateManager templates = level.getLevel().getStructureManager();
         RandomSource random = context.random();
         boolean placed = false;
+        boolean centralTilePlaced = false;
 
         for (int tileX = minTileX; tileX <= maxTileX; tileX++) {
             for (int tileZ = minTileZ; tileZ <= maxTileZ; tileZ++) {
@@ -91,10 +97,44 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
                     continue;
                 }
                 BlockPos tileOrigin = treeBottomOrigin.offset(centerX + tileX * 16, 0, centerZ + tileZ * 16);
-                placed |= template.get().placeInWorld(level, tileOrigin, tileOrigin, settings, random, 2);
+                boolean tilePlaced = template.get().placeInWorld(level, tileOrigin, tileOrigin, settings, random, 2);
+                placed |= tilePlaced;
+                centralTilePlaced |= tileX == 0 && tileZ == 0 && tilePlaced;
             }
         }
+        if (centralTilePlaced) {
+            spawnTreeKing(level, centerX, centerZ, baseY);
+        }
         return placed;
+    }
+
+    private static void spawnTreeKing(WorldGenLevel level, int centerX, int centerZ, int baseY) {
+        var serverLevel = level.getLevel();
+        Vec3 treeCenter = new Vec3(centerX + 0.5D, 0.0D, centerZ + 0.5D);
+        AABB searchBox = new AABB(
+                centerX - 512.0D, level.getMinBuildHeight(), centerZ - 512.0D,
+                centerX + 512.0D, level.getMaxBuildHeight(), centerZ + 512.0D);
+        List<KingEntity> treeKings = serverLevel.getEntitiesOfClass(KingEntity.class, searchBox,
+                king -> king.isAlive() && king.isTreePatrolFor(treeCenter));
+        if (!treeKings.isEmpty()) {
+            // Repair older worlds that already contain duplicate tree-bound Kings.
+            for (int index = 1; index < treeKings.size(); index++) {
+                treeKings.get(index).discard();
+            }
+            return;
+        }
+        KingEntity king = AntarchyObjects.KING.get().create(serverLevel);
+        if (king == null) {
+            return;
+        }
+        double minimumY = baseY + 24.0D;
+        double maximumY = baseY + 304.0D;
+        double spawnY = (minimumY + maximumY) * 0.5D;
+        // Start just outside the central trunk, inside the tree's authored footprint.
+        king.moveTo(centerX + 48.5D, spawnY, centerZ + 0.5D, 90.0F, 0.0F);
+        king.setTreePatrolHome(treeCenter, minimumY, maximumY, 0.0D);
+        king.setPersistenceRequired();
+        serverLevel.addFreshEntity(king);
     }
 
     private static ResourceLocation tileLocation(int tileX, int tileZ) {

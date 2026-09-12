@@ -77,6 +77,10 @@ public final class AntarchyGravityApi {
         access(entity).antarchy$setGravityState(direction, true, transition);
     }
 
+    public static void setAirborneGravityDirection(Entity entity, AntarchyGravityDirection direction, boolean forced, AntarchyGravityTransition transition) {
+        access(entity).antarchy$setAirborneGravityState(direction, forced, transition);
+    }
+
     public static void clearForcedGravity(Entity entity) {
         access(entity).antarchy$setGravityState(AntarchyGravityDirection.DOWN, false, AntarchyGravityTransition.INSTANT);
     }

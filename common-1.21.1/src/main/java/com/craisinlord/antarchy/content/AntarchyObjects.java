@@ -9,9 +9,9 @@ import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
 import com.craisinlord.antarchy.content.entity.HushProjectileEntity;
 import com.craisinlord.antarchy.content.entity.StinkBugEntity;
 import com.craisinlord.antarchy.content.entity.WaterBombEntity;
-import com.craisinlord.antarchy.content.entity.TriffidEntity;
-import com.craisinlord.antarchy.content.entity.CreepingHorrorEntity;
-import com.craisinlord.antarchy.content.entity.LurkingTerrorEntity;
+import com.craisinlord.antarchy.content.entity.FlytrapEntity;
+import com.craisinlord.antarchy.content.entity.CrawlingBlightEntity;
+import com.craisinlord.antarchy.content.entity.SkulkingFrightEntity;
 import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
 import com.craisinlord.antarchy.content.entity.WaspEntity;
 import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyEntity;
@@ -125,7 +125,7 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<ReverieEntity>> REVERIE = (Supplier<EntityType<ReverieEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<TriffidEntity>> TRIFFID = (Supplier<EntityType<TriffidEntity>>) UNBOUND;
+    public static Supplier<EntityType<FlytrapEntity>> FLYTRAP = (Supplier<EntityType<FlytrapEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<BrutalflyEntity>> BRUTALFLY = (Supplier<EntityType<BrutalflyEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -137,9 +137,9 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<WaterBombEntity>> WATER_BOMB = (Supplier<EntityType<WaterBombEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<CreepingHorrorEntity>> CREEPING_HORROR = (Supplier<EntityType<CreepingHorrorEntity>>) UNBOUND;
+    public static Supplier<EntityType<CrawlingBlightEntity>> CRAWLING_BLIGHT = (Supplier<EntityType<CrawlingBlightEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<LurkingTerrorEntity>> LURKING_TERROR = (Supplier<EntityType<LurkingTerrorEntity>>) UNBOUND;
+    public static Supplier<EntityType<SkulkingFrightEntity>> SKULKING_FRIGHT = (Supplier<EntityType<SkulkingFrightEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.ManticoreEntity>> MANTICORE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.ManticoreEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -262,7 +262,7 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<Block> CLOUD_BLOCK = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
-    public static Supplier<Block> TRIFFID_GOO_BLOCK = (Supplier<Block>) UNBOUND;
+    public static Supplier<Block> FLYTRAP_GOO_BLOCK = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> PALE_NYXITE = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -344,9 +344,9 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<Block> BED_BUG_EGG = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
-    public static Supplier<Block> CREEPING_HORROR_EGGS = (Supplier<Block>) UNBOUND;
+    public static Supplier<Block> CRAWLING_BLIGHT_EGGS = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
-    public static Supplier<Block> LURKING_TERROR_EGGS = (Supplier<Block>) UNBOUND;
+    public static Supplier<Block> SKULKING_FRIGHT_EGGS = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> WASP_NEST = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -441,14 +441,14 @@ public final class AntarchyObjects {
             Supplier<EntityType<CaterpillarEntity>> caterpillar,
             Supplier<EntityType<ButterflyEntity>> butterfly,
             Supplier<EntityType<ReverieEntity>> reverie,
-            Supplier<EntityType<TriffidEntity>> triffid,
+            Supplier<EntityType<FlytrapEntity>> flytrap,
             Supplier<EntityType<BrutalflyEntity>> brutalfly,
             Supplier<EntityType<BrutalflyOrbEntity>> brutalflyOrb,
             Supplier<EntityType<HushProjectileEntity>> hushProjectile,
             Supplier<EntityType<ToreterrorEntity>> toreterror,
             Supplier<EntityType<WaterBombEntity>> waterBomb,
-            Supplier<EntityType<CreepingHorrorEntity>> creepingHorror,
-            Supplier<EntityType<LurkingTerrorEntity>> lurkingTerror,
+            Supplier<EntityType<CrawlingBlightEntity>> crawlingBlight,
+            Supplier<EntityType<SkulkingFrightEntity>> skulkingFright,
             Supplier<EntityType<StinkBugEntity>> stinkBug,
             Supplier<EntityType<com.craisinlord.antarchy.content.entity.CheepEntity>> cheep,
             Supplier<EntityType<com.craisinlord.antarchy.content.entity.DorrieEntity>> dorrie,
@@ -477,7 +477,7 @@ public final class AntarchyObjects {
             Supplier<Block> shellstoneBrickSlab,
             Supplier<Block> shellstoneBrickWall,
             Supplier<Block> cloudBlock,
-            Supplier<Block> triffidGooBlock,
+            Supplier<Block> flytrapGooBlock,
             Supplier<Block> paleNyxite,
             Supplier<Block> nyxiteSpike,
             Supplier<Block> chitinBlock,
@@ -509,8 +509,8 @@ public final class AntarchyObjects {
             Supplier<Block> orangeMilkweed,
             Supplier<Block> pinkMilkweed,
             Supplier<Block> bedBugEggs,
-            Supplier<Block> creepingHorrorEggs,
-            Supplier<Block> lurkingTerrorEggs,
+            Supplier<Block> crawlingBlightEggs,
+            Supplier<Block> skulkingFrightEggs,
             Supplier<Block> waspNest,
             Supplier<Block> hushweed,
             Supplier<Block> squirrelNestBlock,
@@ -542,14 +542,14 @@ public final class AntarchyObjects {
         CATERPILLAR = caterpillar;
         BUTTERFLY = butterfly;
         REVERIE = reverie;
-        TRIFFID = triffid;
+        FLYTRAP = flytrap;
         BRUTALFLY = brutalfly;
         BRUTALFLY_ORB = brutalflyOrb;
         HUSH_PROJECTILE = hushProjectile;
         TORETERROR = toreterror;
         WATER_BOMB = waterBomb;
-        CREEPING_HORROR = creepingHorror;
-        LURKING_TERROR = lurkingTerror;
+        CRAWLING_BLIGHT = crawlingBlight;
+        SKULKING_FRIGHT = skulkingFright;
         STINK_BUG = stinkBug;
         CHEEP = cheep;
         DORRIE = dorrie;
@@ -578,7 +578,7 @@ public final class AntarchyObjects {
         SHELLSTONE_BRICK_SLAB = shellstoneBrickSlab;
         SHELLSTONE_BRICK_WALL = shellstoneBrickWall;
         CLOUD_BLOCK = cloudBlock;
-        TRIFFID_GOO_BLOCK = triffidGooBlock;
+        FLYTRAP_GOO_BLOCK = flytrapGooBlock;
         PALE_NYXITE = paleNyxite;
         NYXITE_SPIKE = nyxiteSpike;
         CHITIN_BLOCK = chitinBlock;
@@ -610,8 +610,8 @@ public final class AntarchyObjects {
         ORANGE_MILKWEED = orangeMilkweed;
         PINK_MILKWEED = pinkMilkweed;
         BED_BUG_EGG = bedBugEggs;
-        CREEPING_HORROR_EGGS = creepingHorrorEggs;
-        LURKING_TERROR_EGGS = lurkingTerrorEggs;
+        CRAWLING_BLIGHT_EGGS = crawlingBlightEggs;
+        SKULKING_FRIGHT_EGGS = skulkingFrightEggs;
         WASP_NEST = waspNest;
         HUSHWEED = hushweed;
         SQUIRREL_NEST_BLOCK = squirrelNestBlock;

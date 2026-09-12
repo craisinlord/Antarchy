@@ -1,10 +1,10 @@
 {
   "parent": "antarchy:visit_elythia",
   "criteria": {
-    "kill_cloud_shark": {
+    "kill_stratoshark": {
       "conditions": {
         "entity": {
-          "type": "antarchy:cloud_shark"
+          "type": "antarchy:stratoshark"
         }
       },
       "trigger": "minecraft:player_killed_entity"
@@ -18,7 +18,7 @@
     "frame": "task",
     "icon": {
       "count": 1,
-      "id": "antarchy:cloud_shark_fin"
+      "id": "antarchy:stratoshark_fin"
     },
     "show_toast": true,
     "title": {
@@ -27,7 +27,7 @@
   },
   "requirements": [
     [
-      "kill_cloud_shark"
+      "kill_stratoshark"
     ]
   ],
   "sends_telemetry_event": true

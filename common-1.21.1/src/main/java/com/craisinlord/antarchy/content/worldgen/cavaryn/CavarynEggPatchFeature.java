@@ -2,8 +2,8 @@ package com.craisinlord.antarchy.content.worldgen.cavaryn;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.block.CreepingHorrorEggBlock;
-import com.craisinlord.antarchy.content.block.LurkingTerrorEggBlock;
+import com.craisinlord.antarchy.content.block.CrawlingBlightEggBlock;
+import com.craisinlord.antarchy.content.block.SkulkingFrightEggBlock;
 import com.mojang.serialization.Codec;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,7 @@ public final class CavarynEggPatchFeature extends Feature<NoneFeatureConfigurati
             return false;
         }
 
-        EggType eggType = random.nextBoolean() ? EggType.CREEPING_HORROR : EggType.LURKING_TERROR;
+        EggType eggType = random.nextBoolean() ? EggType.CRAWLING_BLIGHT : EggType.SKULKING_FRIGHT;
         return carveCavityAndPlaceEggs(level, center, random, eggType, amberMossBlock);
     }
 
@@ -144,11 +144,11 @@ public final class CavarynEggPatchFeature extends Feature<NoneFeatureConfigurati
                 }
             }
 
-            BlockState eggState = eggType == EggType.CREEPING_HORROR
-                    ? AntarchyObjects.CREEPING_HORROR_EGGS.get().defaultBlockState()
-                    : AntarchyObjects.LURKING_TERROR_EGGS.get().defaultBlockState();
+            BlockState eggState = eggType == EggType.CRAWLING_BLIGHT
+                    ? AntarchyObjects.CRAWLING_BLIGHT_EGGS.get().defaultBlockState()
+                    : AntarchyObjects.SKULKING_FRIGHT_EGGS.get().defaultBlockState();
             eggState = eggState.setValue(
-                    eggType == EggType.CREEPING_HORROR ? CreepingHorrorEggBlock.EGGS : LurkingTerrorEggBlock.EGGS,
+                    eggType == EggType.CRAWLING_BLIGHT ? CrawlingBlightEggBlock.EGGS : SkulkingFrightEggBlock.EGGS,
                     1 + random.nextInt(4));
             level.setBlock(eggPos, eggState, 3);
             placedAny = true;
@@ -163,7 +163,7 @@ public final class CavarynEggPatchFeature extends Feature<NoneFeatureConfigurati
     }
 
     private enum EggType {
-        CREEPING_HORROR,
-        LURKING_TERROR
+        CRAWLING_BLIGHT,
+        SKULKING_FRIGHT
     }
 }

@@ -41,7 +41,9 @@
     "liquid": []
   },
   "features": [
-    [],
+    [
+      "antarchy:thoraxis_transition_throat"
+    ],
     [],
     [],
     [],
@@ -57,6 +59,7 @@
       "antarchy:patch_fire"
     ],
     [
+      "antarchy:queen_havoc_trail",
       "antarchy:nyxite_spikes",
       "antarchy:patch_ceiling_fire"
     ],

@@ -43,16 +43,16 @@ public final class AntarchyDamageTypes {
                     ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "emperor_scorpion_sting")
             );
 
-    public static final ResourceKey<DamageType> TRIFFID_MAULING =
+    public static final ResourceKey<DamageType> FLYTRAP_MAULING =
             ResourceKey.create(
                     Registries.DAMAGE_TYPE,
-                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "triffid_mauling")
+                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "flytrap_mauling")
             );
 
-    public static final ResourceKey<DamageType> TRIFFID_SWALLOW =
+    public static final ResourceKey<DamageType> FLYTRAP_SWALLOW =
             ResourceKey.create(
                     Registries.DAMAGE_TYPE,
-                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "triffid_swallow")
+                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "flytrap_swallow")
             );
 
     public static final ResourceKey<DamageType> CORNEA_STALK_PRICK =
@@ -91,10 +91,10 @@ public final class AntarchyDamageTypes {
                     ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "spit_bug_disrespect")
             );
 
-    public static final ResourceKey<DamageType> JUMPY_BUG_JUMP =
+    public static final ResourceKey<DamageType> SPRINGBUG_JUMP =
             ResourceKey.create(
                     Registries.DAMAGE_TYPE,
-                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "jumpy_bug_jump")
+                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "springbug_jump")
             );
 
     public static final ResourceKey<DamageType> HERCULES_BEETLE_OBLITERATION =

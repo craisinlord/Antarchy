@@ -121,11 +121,15 @@ public final class TimeDilationApi {
     }
 
     public static boolean consumeTick(Entity entity, String timerKey) {
+        return consumeTicks(entity, timerKey) > 0;
+    }
+
+    public static int consumeTicks(Entity entity, String timerKey) {
         double rate = getRate(entity);
-        if (Math.abs(rate - TimeDilationMath.NORMAL_RATE) < 0.001D || !(entity instanceof TimeDilationEntityAccess access)) {
-            return true;
+        if (entity instanceof TimeDilationEntityAccess access) {
+            return access.antarchy$consumeTimeDilationTicks(timerKey, rate);
         }
-        return access.antarchy$consumeTimeDilationTick(timerKey, rate);
+        return 1;
     }
 
     public static int scaleCooldownTicks(Entity entity, int ticks) {

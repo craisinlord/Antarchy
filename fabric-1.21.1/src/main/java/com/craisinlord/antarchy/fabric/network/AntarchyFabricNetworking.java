@@ -13,9 +13,9 @@ import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
 import com.craisinlord.antarchy.content.item.BrutalflyElytraFlightHelper;
 import com.craisinlord.antarchy.content.item.BrutalflyElytraItem;
 import com.craisinlord.antarchy.content.item.BigBerthaItem;
-import com.craisinlord.antarchy.content.item.JumpyBootsHelper;
-import com.craisinlord.antarchy.fabric.util.JumpyBootsFabricHelper;
-import com.craisinlord.antarchy.content.item.JumpyBootsItem;
+import com.craisinlord.antarchy.content.item.SpringyBootsHelper;
+import com.craisinlord.antarchy.fabric.util.SpringyBootsFabricHelper;
+import com.craisinlord.antarchy.content.item.SpringyBootsItem;
 import com.craisinlord.antarchy.content.item.EyeOfTheStormItem;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
 import com.craisinlord.antarchy.content.item.PortalGunItem;
@@ -25,7 +25,7 @@ import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync;
 import com.craisinlord.antarchy.content.entity.DorrieEntity;
 import com.craisinlord.antarchy.content.network.DorrieJumpInputPayload;
-import com.craisinlord.antarchy.content.network.JumpyBootsLaunchPayload;
+import com.craisinlord.antarchy.content.network.SpringyBootsLaunchPayload;
 import com.craisinlord.antarchy.content.weather.ThoraxisWeatherSnapshot;
 import com.craisinlord.antarchy.fabric.AntarchyFabricContent;
 import com.craisinlord.antarchy.fabric.entity.multipart.MultipartPartEntity;
@@ -97,7 +97,7 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playC2S().register(ToggleRoyalInversionPayload.TYPE, ToggleRoyalInversionPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(DiamondMinecartInputPayload.TYPE, DiamondMinecartInputPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(BrutalflyElytraFlapPayload.TYPE, BrutalflyElytraFlapPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(JumpyBootsLaunchPayload.TYPE, JumpyBootsLaunchPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(SpringyBootsLaunchPayload.TYPE, SpringyBootsLaunchPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(DorrieJumpInputPayload.TYPE, DorrieJumpInputPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(com.craisinlord.antarchy.content.network.DorrieChargeJumpPayload.TYPE, com.craisinlord.antarchy.content.network.DorrieChargeJumpPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(HerculesBeetleJumpInputPayload.TYPE, HerculesBeetleJumpInputPayload.STREAM_CODEC);
@@ -131,8 +131,8 @@ public final class AntarchyFabricNetworking {
                 context.server().execute(() -> handleDiamondMinecartInput(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(BrutalflyElytraFlapPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleBrutalflyFlap(context.player(), payload)));
-        ServerPlayNetworking.registerGlobalReceiver(JumpyBootsLaunchPayload.TYPE, (payload, context) ->
-                context.server().execute(() -> handleJumpyBootsLaunch(context.player(), payload)));
+        ServerPlayNetworking.registerGlobalReceiver(SpringyBootsLaunchPayload.TYPE, (payload, context) ->
+                context.server().execute(() -> handleSpringyBootsLaunch(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(DorrieJumpInputPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleDorrieJumpInput(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.DorrieChargeJumpPayload.TYPE, (payload, context) ->
@@ -405,25 +405,25 @@ public final class AntarchyFabricNetworking {
         owner.antarchy$interactMultipartPart(part, serverPlayer, part.position(), hand);
     }
 
-    private static void handleJumpyBootsLaunch(ServerPlayer player, JumpyBootsLaunchPayload payload) {
-        if (!JumpyBootsItem.isWearingJumpyBoots(player)) return;
+    private static void handleSpringyBootsLaunch(ServerPlayer player, SpringyBootsLaunchPayload payload) {
+        if (!SpringyBootsItem.isWearingSpringyBoots(player)) return;
         if (player.isSpectator() || player.isPassenger()) return;
 
         ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);
         if (player.getCooldowns().isOnCooldown(boots.getItem())) return;
 
-        int clampedCharge = Math.min(payload.chargeTicks(), JumpyBootsHelper.CHARGE_TICKS_MAX);
+        int clampedCharge = Math.min(payload.chargeTicks(), SpringyBootsHelper.CHARGE_TICKS_MAX);
         if (clampedCharge <= 0) return;
 
-        float verticalBoost = JumpyBootsHelper.verticalBoostFor(clampedCharge);
+        float verticalBoost = SpringyBootsHelper.verticalBoostFor(clampedCharge);
         Vec3 current = player.getDeltaMovement();
         double newX = current.x;
         double newZ = current.z;
 
         if (payload.sprinting()) {
             Vec3 look = player.getLookAngle();
-            newX += look.x * JumpyBootsHelper.SPRINT_FORWARD_BOOST;
-            newZ += look.z * JumpyBootsHelper.SPRINT_FORWARD_BOOST;
+            newX += look.x * SpringyBootsHelper.SPRINT_FORWARD_BOOST;
+            newZ += look.z * SpringyBootsHelper.SPRINT_FORWARD_BOOST;
         }
 
         player.setDeltaMovement(newX, verticalBoost, newZ);
@@ -434,12 +434,12 @@ public final class AntarchyFabricNetworking {
         player.connection.send(new ClientboundSetEntityMotionPacket(player));
 
         player.level().playSound(null, player.blockPosition(), SoundEvents.SLIME_JUMP, SoundSource.PLAYERS,
-                1.0F, 0.6F + (clampedCharge / (float) JumpyBootsHelper.CHARGE_TICKS_MAX) * 0.6F);
+                1.0F, 0.6F + (clampedCharge / (float) SpringyBootsHelper.CHARGE_TICKS_MAX) * 0.6F);
 
-        JumpyBootsFabricHelper.setProtectionUntil(player,
-                player.level().getGameTime() + JumpyBootsHelper.FALL_PROTECTION_TICKS);
+        SpringyBootsFabricHelper.setProtectionUntil(player,
+                player.level().getGameTime() + SpringyBootsHelper.FALL_PROTECTION_TICKS);
 
-        player.getCooldowns().addCooldown(boots.getItem(), JumpyBootsHelper.COOLDOWN_TICKS);
+        player.getCooldowns().addCooldown(boots.getItem(), SpringyBootsHelper.COOLDOWN_TICKS);
     }
 
     private static void handleDorrieJumpInput(ServerPlayer player, DorrieJumpInputPayload payload) {

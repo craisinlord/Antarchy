@@ -13,6 +13,8 @@ public interface AntarchyGravityAccess {
 
     void antarchy$setGravityState(AntarchyGravityDirection direction, boolean forced, AntarchyGravityTransition transition);
 
+    void antarchy$setAirborneGravityState(AntarchyGravityDirection direction, boolean forced, AntarchyGravityTransition transition);
+
     void antarchy$applySyncedGravityState(
             AntarchyGravityDirection direction,
             AntarchyGravityDirection previousDirection,

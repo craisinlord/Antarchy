@@ -14,22 +14,25 @@ import java.util.WeakHashMap;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public final class ThoraxisUndersideManager {
     public static final int GRAVITY_FLIP_Y = 0;
-    private static final ResourceLocation THORAXIS_DIMENSION = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "thoraxis");
+    private static final net.minecraft.resources.ResourceLocation THORAXIS_DIMENSION = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "thoraxis");
     private static final AntarchyGravityTransition TRANSITION = new AntarchyGravityTransition(12);
+    private static final AntarchyGravityTransition THROAT_TRANSITION = new AntarchyGravityTransition(20);
     private static final int EFFECT_DURATION_TICKS = 50;
     private static final int EFFECT_REFRESH_THRESHOLD_TICKS = 10;
     private static final int DISCOVERY_INTERVAL_TICKS = 5;
@@ -40,6 +43,9 @@ public final class ThoraxisUndersideManager {
     private static final int ENTER_UNDERSIDE_Y = GRAVITY_FLIP_Y - 4;
     private static final int EXIT_UNDERSIDE_Y = GRAVITY_FLIP_Y + 4;
     private static final int FLIP_COOLDOWN_TICKS = 40;
+    private static final int CROSSING_TIMEOUT_TICKS = 30;
+    private static final int SETTLE_TIMEOUT_TICKS = 70;
+    private static final double MIN_CROSSING_SPEED = 0.48D;
     private static final Map<ServerLevel, TrackingState> STATES = new WeakHashMap<>();
 
     private ThoraxisUndersideManager() {
@@ -59,6 +65,7 @@ public final class ThoraxisUndersideManager {
 
         long startNanos = System.nanoTime();
         long now = level.getGameTime();
+        tickPlayerTransitions(level, tracking, now);
         int discoveredLiving = 0;
         int discoveredItems = 0;
         if (now % DISCOVERY_INTERVAL_TICKS == 0L) {
@@ -78,6 +85,9 @@ public final class ThoraxisUndersideManager {
             }
 
             if (entity instanceof LivingEntity living) {
+                if (living instanceof Player) {
+                    continue;
+                }
                 boolean hasEffect = living.hasEffect(AntarchyObjects.INVERTED_EFFECT.get());
                 int threshold = hasEffect ? EXIT_UNDERSIDE_Y : ENTER_UNDERSIDE_Y;
                 if (living.getY() < threshold) {
@@ -150,6 +160,7 @@ public final class ThoraxisUndersideManager {
         private final Set<Entity> entities = Collections.newSetFromMap(new IdentityHashMap<>());
         private final Set<Entity> forcedItems = Collections.newSetFromMap(new IdentityHashMap<>());
         private final Map<UUID, Long> lastFlipTick = new java.util.HashMap<>();
+        private final Map<UUID, PlayerCrossing> playerCrossings = new java.util.HashMap<>();
         private long lastDiagnosticTick = Long.MIN_VALUE / 2L;
 
         private DiscoveryStats discover(ServerLevel level) {
@@ -178,6 +189,105 @@ public final class ThoraxisUndersideManager {
             entities.clear();
             forcedItems.clear();
             lastFlipTick.clear();
+            playerCrossings.clear();
+        }
+    }
+
+    private static void tickPlayerTransitions(ServerLevel level, TrackingState tracking, long now) {
+        tracking.playerCrossings.keySet().removeIf(uuid -> level.getPlayerByUUID(uuid) == null);
+        for (ServerPlayer player : level.players()) {
+            PlayerCrossing crossing = tracking.playerCrossings.get(player.getUUID());
+            if (crossing != null) {
+                tickPlayerCrossing(player, crossing, tracking, now);
+                continue;
+            }
+
+            if (player.isSpectator()) {
+                continue;
+            }
+
+            if (isCrossingGravityBoundary(player) && flipReady(tracking, player.getUUID(), now)) {
+                boolean toUnderside = AntarchyGravityApi.getGravityDirection(player) == AntarchyGravityDirection.DOWN;
+                if (!toUnderside) {
+                    refreshInvertedEffect(player);
+                }
+                tracking.playerCrossings.put(player.getUUID(), new PlayerCrossing(toUnderside));
+                continue;
+            }
+
+            MobEffectInstance effect = player.getEffect(AntarchyObjects.INVERTED_EFFECT.get());
+            if (player.getY() < ENTER_UNDERSIDE_Y) {
+                refreshInvertedEffect(player);
+            } else if (effect != null && isUndersideEffect(effect) && player.getY() < EXIT_UNDERSIDE_Y) {
+                refreshInvertedEffect(player);
+            }
+        }
+    }
+
+    private static void tickPlayerCrossing(ServerPlayer player, PlayerCrossing crossing, TrackingState tracking, long now) {
+        crossing.ticks++;
+        Vec3 velocity = AntarchyGravityApi.getWorldVelocity(player);
+        if (!crossing.flipped) {
+            if (!crossing.toUnderside) {
+                refreshInvertedEffect(player);
+            }
+            if (crossing.ticks > CROSSING_TIMEOUT_TICKS
+                    || (crossing.toUnderside && velocity.y > 0.08D)
+                    || (!crossing.toUnderside && velocity.y < -0.08D)) {
+                tracking.playerCrossings.remove(player.getUUID());
+                return;
+            }
+
+            AABB bounds = player.getBoundingBox();
+            boolean clear = crossing.toUnderside ? bounds.maxY < GRAVITY_FLIP_Y : bounds.minY > EXIT_UNDERSIDE_Y;
+            if (!clear) {
+                return;
+            }
+
+            AntarchyGravityDirection destination = crossing.toUnderside
+                    ? AntarchyGravityDirection.UP
+                    : AntarchyGravityDirection.DOWN;
+            AntarchyGravityApi.setAirborneGravityDirection(player, destination, crossing.toUnderside, THROAT_TRANSITION);
+            player.resetFallDistance();
+            crossing.flipped = true;
+            crossing.ticks = 0;
+            tracking.lastFlipTick.put(player.getUUID(), now);
+            if (crossing.toUnderside) {
+                refreshInvertedEffect(player);
+            } else {
+                player.removeEffect(AntarchyObjects.INVERTED_EFFECT.get());
+            }
+            return;
+        }
+
+        if (crossing.toUnderside) {
+            refreshInvertedEffect(player);
+        }
+        if (player.onGround() || crossing.ticks >= SETTLE_TIMEOUT_TICKS) {
+            tracking.playerCrossings.remove(player.getUUID());
+        }
+    }
+
+    private static boolean isCrossingGravityBoundary(ServerPlayer player) {
+        Vec3 velocity = AntarchyGravityApi.getWorldVelocity(player);
+        AABB swept = player.getBoundingBox().expandTowards(velocity.scale(-1.0D)).inflate(0.08D);
+        AntarchyGravityDirection direction = AntarchyGravityApi.getGravityDirection(player);
+        return direction == AntarchyGravityDirection.DOWN
+                ? swept.minY < GRAVITY_FLIP_Y && swept.maxY >= GRAVITY_FLIP_Y && velocity.y <= -MIN_CROSSING_SPEED
+                : swept.minY <= GRAVITY_FLIP_Y && swept.maxY > GRAVITY_FLIP_Y && velocity.y >= MIN_CROSSING_SPEED;
+    }
+
+    private static boolean isUndersideEffect(MobEffectInstance effect) {
+        return effect.isAmbient() && !effect.isVisible();
+    }
+
+    private static final class PlayerCrossing {
+        private final boolean toUnderside;
+        private int ticks;
+        private boolean flipped;
+
+        private PlayerCrossing(boolean toUnderside) {
+            this.toUnderside = toUnderside;
         }
     }
 
@@ -225,6 +335,32 @@ public final class ThoraxisUndersideManager {
         return level.dimension().location().equals(THORAXIS_DIMENSION);
     }
 
+    /** True only while an entity is physically below Thoraxis' gravity boundary. */
+    public static boolean isInUnderside(Entity entity) {
+        return isThoraxis(entity.level()) && entity.getY() < GRAVITY_FLIP_Y;
+    }
+
+    /**
+     * Keeps projectile gravity positional: UP below Y=0 in Thoraxis and DOWN
+     * everywhere else. World velocity is preserved when the gravity frame changes.
+     */
+    public static void updateProjectileGravity(Projectile projectile) {
+        boolean inUnderside = isInUnderside(projectile);
+        AntarchyGravityDirection desiredDirection = inUnderside
+                ? AntarchyGravityDirection.UP
+                : AntarchyGravityDirection.DOWN;
+        boolean stateMismatch = AntarchyGravityApi.getGravityDirection(projectile) != desiredDirection
+                || AntarchyGravityApi.isGravityForced(projectile) != inUnderside;
+        if (stateMismatch) {
+            AntarchyGravityApi.setAirborneGravityDirection(
+                    projectile,
+                    desiredDirection,
+                    inUnderside,
+                    AntarchyGravityTransition.INSTANT
+            );
+        }
+    }
+
     public static boolean isAboveUndersideExit(Entity entity) {
         return isThoraxis(entity.level()) && entity.getY() >= EXIT_UNDERSIDE_Y;
     }
@@ -232,7 +368,6 @@ public final class ThoraxisUndersideManager {
     /** True while an entity is in the region where the underside gravity rule applies. */
     public static boolean shouldInvertInUnderside(Entity entity) {
         return AntarchyGravityApi.isGravityInverted(entity)
-                && isThoraxis(entity.level())
-                && entity.getY() < GRAVITY_FLIP_Y;
+                && isInUnderside(entity);
     }
 }

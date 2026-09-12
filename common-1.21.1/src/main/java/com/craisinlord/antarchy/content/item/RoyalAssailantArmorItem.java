@@ -125,9 +125,6 @@ public class RoyalAssailantArmorItem extends ArmorItem {
         if (this.armorType == Type.CHESTPLATE) {
             tooltipComponents.add(Component.translatable("tooltip.antarchy.royal_assailant_chestplate.invert").withStyle(ChatFormatting.AQUA));
         }
-        if (this.armorType == Type.BOOTS) {
-            tooltipComponents.add(Component.translatable("tooltip.antarchy.royal_assailant_boots.fall").withStyle(ChatFormatting.AQUA));
-        }
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 

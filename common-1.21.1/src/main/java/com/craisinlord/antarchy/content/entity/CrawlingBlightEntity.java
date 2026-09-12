@@ -1,0 +1,247 @@
+package com.craisinlord.antarchy.content.entity;
+
+import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.Difficulty;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.block.state.BlockState;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
+
+public class CrawlingBlightEntity extends Monster implements GeoEntity {
+    private static final EntityDataAccessor<Boolean> CLIMBING =
+            SynchedEntityData.defineId(CrawlingBlightEntity.class, EntityDataSerializers.BOOLEAN);
+
+    private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
+    private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenLoop("attack");
+    private static final byte ATTACK_ANIM_EVENT = 4;
+
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    private int attackAnimTicks = 0;
+
+    public CrawlingBlightEntity(EntityType<? extends CrawlingBlightEntity> type, Level level) {
+        super(type, level);
+    }
+
+    @Override
+    public float maxUpStep() {
+        return 1.0F;
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(CLIMBING, false);
+    }
+
+    public static AttributeSupplier.Builder createAttributes() {
+        return Mob.createMobAttributes()
+                .add(Attributes.MAX_HEALTH, AntarchySettings.crawlingBlightHealth())
+                .add(Attributes.MOVEMENT_SPEED, 0.38D)
+                .add(Attributes.ATTACK_DAMAGE, AntarchySettings.crawlingBlightAttackDamage())
+                .add(Attributes.FOLLOW_RANGE, 16.0D);
+    }
+
+    @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty, net.minecraft.world.entity.MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.crawlingBlightHealth());
+        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
+    }
+
+    public static boolean canSpawn(EntityType<CrawlingBlightEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+        if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.COMMAND) {
+            return true;
+        }
+        BlockPos belowPos = pos.below();
+        BlockPos abovePos = pos.above();
+        BlockState belowState = level.getBlockState(belowPos);
+        BlockState aboveState = level.getBlockState(abovePos);
+        boolean floorSupport = !belowState.is(Blocks.BEDROCK)
+                && belowState.blocksMotion()
+                && belowState.isFaceSturdy(level, belowPos, Direction.UP)
+                && belowState.isCollisionShapeFullBlock(level, belowPos);
+        boolean ceilingSupport = !aboveState.is(Blocks.BEDROCK)
+                && aboveState.blocksMotion()
+                && aboveState.isFaceSturdy(level, abovePos, Direction.DOWN)
+                && aboveState.isCollisionShapeFullBlock(level, abovePos);
+
+        return level.getDifficulty() != Difficulty.PEACEFUL
+                && (floorSupport || ceilingSupport)
+                && level.isEmptyBlock(pos)
+                && (level.isEmptyBlock(pos.above()) || level.isEmptyBlock(pos.below()))
+                && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);
+    }
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, true));
+        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 0.85D));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+    }
+
+    @Override
+    public boolean onClimbable() {
+        return this.entityData.get(CLIMBING);
+    }
+
+    public boolean isWallClimbing() {
+        return this.entityData.get(CLIMBING) && !this.onGround();
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "main_controller", 3, this::mainAnimController)
+                .triggerableAnim("attack", ATTACK_ANIM));
+    }
+
+    private PlayState mainAnimController(AnimationState<CrawlingBlightEntity> state) {
+        if (attackAnimTicks > 0) {
+            return state.setAndContinue(ATTACK_ANIM);
+        }
+        if (state.isMoving()) {
+            return state.setAndContinue(WALK_ANIM);
+        }
+        return state.setAndContinue(IDLE_ANIM);
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return geoCache;
+    }
+
+    @Override
+    public boolean doHurtTarget(net.minecraft.world.entity.Entity target) {
+        boolean result = super.doHurtTarget(target);
+        if (result) {
+            this.playSound(AntarchySoundEvents.CRAWLING_BLIGHT_BITE.get(), 1.0F, 0.95F + this.random.nextFloat() * 0.1F);
+            this.setAttackAnimTicks(20);
+            this.level().broadcastEntityEvent(this, ATTACK_ANIM_EVENT);
+        }
+        return result;
+    }
+
+    private void setAttackAnimTicks(int ticks) {
+        int clamped = Math.max(0, ticks);
+        boolean wasIdle = attackAnimTicks <= 0;
+        attackAnimTicks = clamped;
+        if (wasIdle && clamped > 0) {
+            this.triggerAnim("main_controller", "attack");
+        } else if (!wasIdle && clamped <= 0) {
+            this.stopTriggeredAnim("main_controller", "attack");
+        }
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return AntarchySoundEvents.CRAWLING_BLIGHT_GROWL.get();
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(net.minecraft.world.damagesource.DamageSource source) {
+        return AntarchySoundEvents.CRAWLING_BLIGHT_HURT.get();
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return AntarchySoundEvents.CRAWLING_BLIGHT_HURT.get();
+    }
+
+    @Override
+    public void handleEntityEvent(byte id) {
+        if (id == ATTACK_ANIM_EVENT) {
+            this.setAttackAnimTicks(20);
+            return;
+        }
+        super.handleEntityEvent(id);
+    }
+
+    @Override
+    public void tick() {
+        CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
+        super.tick();
+        CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
+        if (attackAnimTicks > 0) {
+            this.setAttackAnimTicks(attackAnimTicks - 1);
+        }
+        if (this.level().isClientSide()) return;
+
+        boolean climbing = this.horizontalCollision;
+        if (this.entityData.get(CLIMBING) != climbing) {
+            this.entityData.set(CLIMBING, climbing);
+        }
+
+        if (climbing && this.getTarget() != null) {
+            LivingEntity target = this.getTarget();
+            Vec3 toTarget = this.toLocal(target.position().subtract(this.position()));
+            double hDist = Math.sqrt(toTarget.x * toTarget.x + toTarget.z * toTarget.z);
+            double speed = this.getAttributeValue(Attributes.MOVEMENT_SPEED) * 2.8D;
+            if (hDist > 0.01D) {
+                this.setDeltaMovement(this.toWorld(
+                    (toTarget.x / hDist) * speed,
+                    0.22D,
+                    (toTarget.z / hDist) * speed
+                ));
+            } else {
+                Vec3 mov = this.toLocal(this.getDeltaMovement());
+                this.setDeltaMovement(this.toWorld(mov.x, 0.22D, mov.z));
+            }
+            this.getNavigation().stop();
+        }
+    }
+
+    private AntarchyGravityDirection gravityDirection() {
+        return AntarchyGravityApi.getGravityDirection(this);
+    }
+
+    private Vec3 toLocal(Vec3 worldVector) {
+        return AntarchyGravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(double x, double y, double z) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
+    }
+
+    @Override
+    public boolean isInWall() {
+        return false;
+    }
+}

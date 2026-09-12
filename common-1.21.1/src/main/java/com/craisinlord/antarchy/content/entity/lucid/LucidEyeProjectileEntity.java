@@ -35,7 +35,9 @@ public class LucidEyeProjectileEntity extends ThrowableItemProjectile {
     
     @Override
     protected double getDefaultGravity() {
-        return -0.03;
+        // Gravity is expressed in the projectile's local frame, so the generic
+        // Underside hook mirrors this pearl's special rising arc below Y=0.
+        return -0.03D;
     }
 
     @Override

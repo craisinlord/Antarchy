@@ -196,6 +196,16 @@ public abstract class EntityGravityMixin implements AntarchyGravityAccess {
     }
 
     @Override
+    public void antarchy$setAirborneGravityState(AntarchyGravityDirection direction, boolean forced, AntarchyGravityTransition transition) {
+        Entity entity = this.antarchy$entity();
+        net.minecraft.world.phys.Vec3 worldVelocity = AntarchyGravityApi.getWorldVelocity(entity);
+        this.antarchy$setGravityState(direction, forced, transition);
+        AntarchyGravityApi.setWorldVelocity(entity, worldVelocity);
+        entity.setOnGround(false);
+        entity.resetFallDistance();
+    }
+
+    @Override
     public void antarchy$applySyncedGravityState(
             AntarchyGravityDirection direction,
             AntarchyGravityDirection previousDirection,

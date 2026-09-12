@@ -6,6 +6,9 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.ManticoreEntity;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -31,6 +34,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.AABB;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamSettings;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamTerrainMode;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
@@ -73,6 +77,9 @@ public class QueenEntity extends RoyalBossEntity {
     private int idleWanderCooldownTicks;
     private final RoyalEffectController royalEffects = new RoyalEffectController();
     private final Map<UUID, Vec3> frozenVelocities = new HashMap<>();
+    private long naturalTrailSiteId = Long.MIN_VALUE;
+    @Nullable
+    private BlockPos naturalTrailHome;
 
     public QueenEntity(EntityType<? extends QueenEntity> entityType, Level level) {
         super(entityType, level);
@@ -270,11 +277,67 @@ public class QueenEntity extends RoyalBossEntity {
             return;
         }
         this.idleWanderCooldownTicks = 80 + this.random.nextInt(80);
+        if (this.naturalTrailHome != null) {
+            double distanceSquared = this.distanceToSqr(
+                    this.naturalTrailHome.getX() + 0.5D,
+                    this.naturalTrailHome.getY() + 0.5D,
+                    this.naturalTrailHome.getZ() + 0.5D
+            );
+            if (distanceSquared > 48.0D * 48.0D) {
+                this.getMoveControl().setWantedPosition(
+                        this.naturalTrailHome.getX() + 0.5D,
+                        this.naturalTrailHome.getY() + 0.5D,
+                        this.naturalTrailHome.getZ() + 0.5D,
+                        1.0D
+                );
+                return;
+            }
+            double angle = this.random.nextDouble() * Mth.TWO_PI;
+            double radius = 6.0D + this.random.nextDouble() * 22.0D;
+            double wx = this.naturalTrailHome.getX() + 0.5D + Math.cos(angle) * radius;
+            double wz = this.naturalTrailHome.getZ() + 0.5D + Math.sin(angle) * radius;
+            double wy = this.naturalTrailHome.getY() - 2.0D - this.random.nextDouble() * 7.0D;
+            this.getMoveControl().setWantedPosition(wx, wy, wz, 0.7D);
+            return;
+        }
         double angle = this.random.nextDouble() * Mth.TWO_PI;
         double radius = 6.0D + this.random.nextDouble() * 14.0D;
         double wx = this.getX() + Math.cos(angle) * radius;
         double wz = this.getZ() + Math.sin(angle) * radius;
         this.getMoveControl().setWantedPosition(wx, this.groundYBelow(wx, wz), wz, 0.7D);
+    }
+
+    @Nullable
+    public static QueenEntity spawnFromUndersideTrail(ServerLevel level, BlockPos spawnPos, BlockPos homePos, long siteId, float yaw) {
+        if (!ThoraxisUndersideManager.isThoraxis(level) || spawnPos.getY() >= 0) {
+            return null;
+        }
+        AABB siteBounds = new AABB(homePos).inflate(160.0D);
+        java.util.List<QueenEntity> existing = level.getEntitiesOfClass(QueenEntity.class, siteBounds,
+                queen -> queen.naturalTrailSiteId == siteId && queen.isAlive());
+        if (!existing.isEmpty()) {
+            return existing.getFirst();
+        }
+        if (!level.hasChunksAt(spawnPos.offset(-16, -2, -16), spawnPos.offset(16, 18, 16))) {
+            return null;
+        }
+        QueenEntity queen = AntarchyObjects.QUEEN.get().create(level);
+        if (queen == null) {
+            return null;
+        }
+        queen.moveTo(spawnPos.getX() + 0.5D, spawnPos.getY(), spawnPos.getZ() + 0.5D, yaw, 0.0F);
+        if (!level.noCollision(queen, queen.getBoundingBox())) {
+            return null;
+        }
+        queen.finalizeSpawn(level, level.getCurrentDifficultyAt(spawnPos), MobSpawnType.CHUNK_GENERATION, null);
+        queen.naturalTrailSiteId = siteId;
+        queen.naturalTrailHome = homePos.immutable();
+        queen.setPersistenceRequired();
+        queen.setNoGravity(false);
+        ThoraxisUndersideManager.applyUndersideInversion(queen);
+        AntarchyGravityApi.setAirborneGravityDirection(queen, AntarchyGravityDirection.UP, true, new AntarchyGravityTransition(12));
+        queen.resetFallDistance();
+        return level.addFreshEntity(queen) ? queen : null;
     }
 
     private int cooldown(int base) {
@@ -625,6 +688,10 @@ public class QueenEntity extends RoyalBossEntity {
         tag.putInt("GravityStompCooldownTicks", this.gravityStompCooldownTicks);
         tag.putInt("AccelerationCooldownTicks", this.accelerationCooldownTicks);
         tag.putInt("BlackHoleCooldownTicks", this.blackHoleCooldownTicks);
+        if (this.naturalTrailHome != null) {
+            tag.putLong("NaturalTrailSiteId", this.naturalTrailSiteId);
+            tag.putLong("NaturalTrailHome", this.naturalTrailHome.asLong());
+        }
     }
 
     @Override
@@ -636,5 +703,9 @@ public class QueenEntity extends RoyalBossEntity {
         this.crushingGravityCooldownTicks = Math.max(0, tag.getInt("CrushingGravityCooldownTicks"));
         this.accelerationCooldownTicks = Math.max(0, tag.getInt("AccelerationCooldownTicks"));
         this.blackHoleCooldownTicks = Math.max(0, tag.getInt("BlackHoleCooldownTicks"));
+        if (tag.contains("NaturalTrailHome")) {
+            this.naturalTrailSiteId = tag.getLong("NaturalTrailSiteId");
+            this.naturalTrailHome = BlockPos.of(tag.getLong("NaturalTrailHome"));
+        }
     }
 }

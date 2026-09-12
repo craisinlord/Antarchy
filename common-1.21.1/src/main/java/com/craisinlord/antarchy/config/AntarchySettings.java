@@ -385,19 +385,19 @@ public final class AntarchySettings {
     private static double bedBugAttackDamage = 4.0D;
     private static double bedBugMovementSpeed = 0.24D;
     private static double bedBugArmor = 2.0D;
-    private static double jumpyBugHealth = 100.0D;
-    private static double jumpyBugPounceDamage = 12.0D;
-    private static double jumpyBugCamouflageAlpha = 0.18D;
+    private static double springbugHealth = 100.0D;
+    private static double springbugPounceDamage = 12.0D;
+    private static double springbugCamouflageAlpha = 0.18D;
     private static double brutalflyArmor = 10.0D;
     private static double brutalflyArmorToughness = 5.0D;
     private static double brutalflyKnockbackResistance = 0.7D;
     private static double brutalflyMovementSpeed = 0.34D;
     private static double brutalflyFlyingSpeed = 0.55D;
-    private static double cloudSharkHealth = 40.0D;
-    private static double cloudSharkAttackDamage = 5.0D;
-    private static double cloudSharkMovementSpeed = 0.34D;
-    private static double cloudSharkFlyingSpeed = 0.5D;
-    private static double cloudSharkKnockbackResistance = 0.2D;
+    private static double stratosharkHealth = 40.0D;
+    private static double stratosharkAttackDamage = 5.0D;
+    private static double stratosharkMovementSpeed = 0.34D;
+    private static double stratosharkFlyingSpeed = 0.5D;
+    private static double stratosharkKnockbackResistance = 0.2D;
     private static double krakenMovementSpeed = 0.24D;
     private static double krakenFlyingSpeed = 0.24D;
     private static double krakenKnockbackResistance = 0.8D;
@@ -452,10 +452,10 @@ public final class AntarchySettings {
     private static double molewormHealth = 8.0D;
     private static double molewormAttackDamage = 1.0D;
     private static double molewormMovementSpeed = 0.25D;
-    private static double triffidHealth = 160.0D;
-    private static double triffidAttackDamage = 10.0D;
-    private static double triffidGrabDamage = 15.0D;
-    private static int triffidSweepHitCooldownTicks = 10;
+    private static double flytrapHealth = 160.0D;
+    private static double flytrapAttackDamage = 10.0D;
+    private static double flytrapGrabDamage = 15.0D;
+    private static int flytrapSweepHitCooldownTicks = 10;
     private static double molevoreHealth = 140.0D;
     private static double molevoreAttackDamage = 10.0D;
     private static double molevoreMovementSpeed = 0.27D;
@@ -538,10 +538,10 @@ public final class AntarchySettings {
     private static int waterBombLifetimeTicks = 120;
     private static double waterBombGravity = 0.12D;
     private static double waterBombKnockback = 1.2D;
-    private static double creepingHorrorHealth = 15.0D;
-    private static double creepingHorrorAttackDamage = 6.0D;
-    private static double lurkingTerrorHealth = 15.0D;
-    private static double lurkingTerrorAttackDamage = 6.0D;
+    private static double crawlingBlightHealth = 15.0D;
+    private static double crawlingBlightAttackDamage = 6.0D;
+    private static double skulkingFrightHealth = 15.0D;
+    private static double skulkingFrightAttackDamage = 6.0D;
     private static double manticoreHealth = 40.0D;
     private static double manticoreAttackDamage = 7.0D;
     private static int manticoreStingPoisonTicks = 100;
@@ -597,7 +597,7 @@ public final class AntarchySettings {
     private static double glimmerHealth = 20.0D;
 
     private static double lucidArmorToughness = 2.0D;
-    private static double triffidArmorToughness = 3.0D;
+    private static double flytrapArmorToughness = 3.0D;
     private static double basiliskArmorToughness = 5.0D;
     private static double nightmareMobArmorToughness = 5.0D;
     private static double alphaMantisArmorToughness = 4.0D;
@@ -2505,14 +2505,14 @@ public final class AntarchySettings {
     public static double bedBugArmor() { return bedBugArmor; }
     public static void setBedBugArmor(double value) { bedBugArmor = value; }
 
-    public static double jumpyBugHealth() { return jumpyBugHealth; }
-    public static void setJumpyBugHealth(double value) { jumpyBugHealth = value; }
+    public static double springbugHealth() { return springbugHealth; }
+    public static void setSpringbugHealth(double value) { springbugHealth = value; }
 
-    public static double jumpyBugPounceDamage() { return jumpyBugPounceDamage; }
-    public static void setJumpyBugPounceDamage(double value) { jumpyBugPounceDamage = value; }
+    public static double springbugPounceDamage() { return springbugPounceDamage; }
+    public static void setSpringbugPounceDamage(double value) { springbugPounceDamage = value; }
 
-    public static double jumpyBugCamouflageAlpha() { return jumpyBugCamouflageAlpha; }
-    public static void setJumpyBugCamouflageAlpha(double value) { jumpyBugCamouflageAlpha = value; }
+    public static double springbugCamouflageAlpha() { return springbugCamouflageAlpha; }
+    public static void setSpringbugCamouflageAlpha(double value) { springbugCamouflageAlpha = value; }
 
     public static double brutalflyArmor() { return brutalflyArmor; }
     public static void setBrutalflyArmor(double value) { brutalflyArmor = value; }
@@ -2529,20 +2529,20 @@ public final class AntarchySettings {
     public static double brutalflyFlyingSpeed() { return brutalflyFlyingSpeed; }
     public static void setBrutalflyFlyingSpeed(double value) { brutalflyFlyingSpeed = value; }
 
-    public static double cloudSharkHealth() { return cloudSharkHealth; }
-    public static void setCloudSharkHealth(double value) { cloudSharkHealth = value; }
+    public static double stratosharkHealth() { return stratosharkHealth; }
+    public static void setStratosharkHealth(double value) { stratosharkHealth = value; }
 
-    public static double cloudSharkAttackDamage() { return cloudSharkAttackDamage; }
-    public static void setCloudSharkAttackDamage(double value) { cloudSharkAttackDamage = value; }
+    public static double stratosharkAttackDamage() { return stratosharkAttackDamage; }
+    public static void setStratosharkAttackDamage(double value) { stratosharkAttackDamage = value; }
 
-    public static double cloudSharkMovementSpeed() { return cloudSharkMovementSpeed; }
-    public static void setCloudSharkMovementSpeed(double value) { cloudSharkMovementSpeed = value; }
+    public static double stratosharkMovementSpeed() { return stratosharkMovementSpeed; }
+    public static void setStratosharkMovementSpeed(double value) { stratosharkMovementSpeed = value; }
 
-    public static double cloudSharkFlyingSpeed() { return cloudSharkFlyingSpeed; }
-    public static void setCloudSharkFlyingSpeed(double value) { cloudSharkFlyingSpeed = value; }
+    public static double stratosharkFlyingSpeed() { return stratosharkFlyingSpeed; }
+    public static void setStratosharkFlyingSpeed(double value) { stratosharkFlyingSpeed = value; }
 
-    public static double cloudSharkKnockbackResistance() { return cloudSharkKnockbackResistance; }
-    public static void setCloudSharkKnockbackResistance(double value) { cloudSharkKnockbackResistance = value; }
+    public static double stratosharkKnockbackResistance() { return stratosharkKnockbackResistance; }
+    public static void setStratosharkKnockbackResistance(double value) { stratosharkKnockbackResistance = value; }
 
     public static double krakenMovementSpeed() { return krakenMovementSpeed; }
     public static void setKrakenMovementSpeed(double value) { krakenMovementSpeed = value; }
@@ -2706,17 +2706,17 @@ public final class AntarchySettings {
     public static double molewormMovementSpeed() { return molewormMovementSpeed; }
     public static void setMolewormMovementSpeed(double value) { molewormMovementSpeed = value; }
 
-    public static double triffidHealth() { return triffidHealth; }
-    public static void setTriffidHealth(double value) { triffidHealth = value; }
+    public static double flytrapHealth() { return flytrapHealth; }
+    public static void setFlytrapHealth(double value) { flytrapHealth = value; }
 
-    public static double triffidAttackDamage() { return triffidAttackDamage; }
-    public static void setTriffidAttackDamage(double value) { triffidAttackDamage = value; }
+    public static double flytrapAttackDamage() { return flytrapAttackDamage; }
+    public static void setFlytrapAttackDamage(double value) { flytrapAttackDamage = value; }
 
-    public static double triffidGrabDamage() { return triffidGrabDamage; }
-    public static void setTriffidGrabDamage(double value) { triffidGrabDamage = value; }
+    public static double flytrapGrabDamage() { return flytrapGrabDamage; }
+    public static void setFlytrapGrabDamage(double value) { flytrapGrabDamage = value; }
 
-    public static int triffidSweepHitCooldownTicks() { return triffidSweepHitCooldownTicks; }
-    public static void setTriffidSweepHitCooldownTicks(int value) { triffidSweepHitCooldownTicks = value; }
+    public static int flytrapSweepHitCooldownTicks() { return flytrapSweepHitCooldownTicks; }
+    public static void setFlytrapSweepHitCooldownTicks(int value) { flytrapSweepHitCooldownTicks = value; }
 
     public static double molevoreHealth() { return molevoreHealth; }
     public static void setMolevoreHealth(double value) { molevoreHealth = value; }
@@ -2875,14 +2875,14 @@ public final class AntarchySettings {
     public static double waterBombKnockback() { return waterBombKnockback; }
     public static void setWaterBombKnockback(double v) { waterBombKnockback = v; }
 
-    public static double creepingHorrorHealth() { return creepingHorrorHealth; }
-    public static void setCreepingHorrorHealth(double v) { creepingHorrorHealth = v; }
-    public static double creepingHorrorAttackDamage() { return creepingHorrorAttackDamage; }
-    public static void setCreepingHorrorAttackDamage(double v) { creepingHorrorAttackDamage = v; }
-    public static double lurkingTerrorHealth() { return lurkingTerrorHealth; }
-    public static void setLurkingTerrorHealth(double v) { lurkingTerrorHealth = v; }
-    public static double lurkingTerrorAttackDamage() { return lurkingTerrorAttackDamage; }
-    public static void setLurkingTerrorAttackDamage(double v) { lurkingTerrorAttackDamage = v; }
+    public static double crawlingBlightHealth() { return crawlingBlightHealth; }
+    public static void setCrawlingBlightHealth(double v) { crawlingBlightHealth = v; }
+    public static double crawlingBlightAttackDamage() { return crawlingBlightAttackDamage; }
+    public static void setCrawlingBlightAttackDamage(double v) { crawlingBlightAttackDamage = v; }
+    public static double skulkingFrightHealth() { return skulkingFrightHealth; }
+    public static void setSkulkingFrightHealth(double v) { skulkingFrightHealth = v; }
+    public static double skulkingFrightAttackDamage() { return skulkingFrightAttackDamage; }
+    public static void setSkulkingFrightAttackDamage(double v) { skulkingFrightAttackDamage = v; }
     public static double manticoreHealth() { return manticoreHealth; }
     public static void setManticoreHealth(double v) { manticoreHealth = v; }
     public static double manticoreAttackDamage() { return manticoreAttackDamage; }
@@ -2991,7 +2991,7 @@ public final class AntarchySettings {
     public static void setGlimmerHealth(double v) { glimmerHealth = v; }
 
     public static double lucidArmorToughness() { return lucidArmorToughness; }
-    public static double triffidArmorToughness() { return triffidArmorToughness; }
+    public static double flytrapArmorToughness() { return flytrapArmorToughness; }
     public static double basiliskArmorToughness() { return basiliskArmorToughness; }
     public static double nightmareMobArmorToughness() { return nightmareMobArmorToughness; }
     public static double alphaMantisArmorToughness() { return alphaMantisArmorToughness; }

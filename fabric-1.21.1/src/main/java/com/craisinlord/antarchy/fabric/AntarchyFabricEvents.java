@@ -21,15 +21,20 @@ import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.CaterpillarCommand;
 import com.craisinlord.antarchy.content.command.DimensionalTearCommand;
 import com.craisinlord.antarchy.content.command.GravityCommand;
+import com.craisinlord.antarchy.content.command.QueenLocateCommand;
 import com.craisinlord.antarchy.content.command.RoyalCommand;
 import com.craisinlord.antarchy.content.time.TimeDilationCommand;
 import com.craisinlord.antarchy.content.time.TimeDilationManager;
+import com.craisinlord.antarchy.content.time.ChronosphereManager;
 import com.craisinlord.antarchy.content.item.MinersDreamExcavationManager;
 import com.craisinlord.antarchy.content.item.WormHookTetherManager;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.object.builder.v1.trade.TradeOfferHelper;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
@@ -67,6 +72,9 @@ public final class AntarchyFabricEvents {
     }
 
     public static void register() {
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> ChronosphereManager.refresh(handler.player));
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> ChronosphereManager.refresh(newPlayer));
+        ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, destination) -> ChronosphereManager.refresh(player));
         net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents.START_TRACKING.register((trackedEntity, player) -> {
             if (trackedEntity instanceof com.craisinlord.antarchy.content.time.TimeDilationEntityAccess access
                     && player instanceof ServerPlayer serverPlayer) {
@@ -80,6 +88,7 @@ public final class AntarchyFabricEvents {
             GravityCommand.register(dispatcher);
             CaterpillarCommand.register(dispatcher);
             DimensionalTearCommand.register(dispatcher);
+            QueenLocateCommand.register(dispatcher);
             TimeDilationCommand.register(dispatcher);
             RoyalCommand.register(dispatcher);
         });

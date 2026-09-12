@@ -23,6 +23,7 @@ import com.craisinlord.antarchy.content.worldgen.thoraxis.TyphoniteSpikeConfigur
 import com.craisinlord.antarchy.content.worldgen.thoraxis.TyphoniteSpikeFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.TyphoniteSwirlFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.PotentNyxiteFeature;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.QueenHavocTrailFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisIchorLakeFeature;
 import com.craisinlord.antarchy.fabric.content.fluid.AntiwaterFluid;
 import com.craisinlord.antarchy.content.effect.DreadMobEffect;
@@ -62,7 +63,7 @@ import com.craisinlord.antarchy.content.worldgen.elythia.OuranwoodTreeConfigurat
 import com.craisinlord.antarchy.content.worldgen.elythia.OuranwoodTreeFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.PeachTreeConfiguration;
 import com.craisinlord.antarchy.content.worldgen.elythia.PeachTreeFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.TriffidPatchFeature;
+import com.craisinlord.antarchy.content.worldgen.elythia.FlytrapPatchFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynEggPatchFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.ChitinSpikeConfiguration;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.ChitinSpikeFeature;
@@ -82,6 +83,7 @@ import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisDuneConfigurat
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisDuneFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisFissureConfiguration;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisFissureFeature;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisTransitionThroatFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBloodCrystalConfiguration;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBloodCrystalFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisAntiwaterPoolConfiguration;
@@ -373,6 +375,12 @@ public final class AntarchyFabricMisc {
             () -> simpleParticleType());
 
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> LUCID_BOLT_IMPACT_LARGE = PARTICLE_TYPES.register("lucid_bolt_impact_large",
+            () -> simpleParticleType());
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> UNDERTRIAL_SPAWNER_DETECTION = PARTICLE_TYPES.register("undertrial_spawner_detection",
+            () -> simpleParticleType());
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> UNDERTRIAL_OMEN = PARTICLE_TYPES.register("undertrial_omen",
+            () -> simpleParticleType());
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> UNDERVAULT_CONNECTION = PARTICLE_TYPES.register("undervault_connection",
             () -> simpleParticleType());
 
     public static final DeferredHolder<ParticleType<?>, ParticleType<InvertedGeyserBaseParticleOptions>> INVERTED_GEYSER_BASE = PARTICLE_TYPES.register("inverted_geyser_base",
@@ -698,8 +706,8 @@ public final class AntarchyFabricMisc {
             () -> new MolewormSurfaceMoundsFeature(NoneFeatureConfiguration.CODEC));
 
 
-    public static final DeferredHolder<Feature<?>, TriffidPatchFeature> TRIFFID_PATCH = FEATURES.register("triffid_patch",
-            () -> new TriffidPatchFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, FlytrapPatchFeature> FLYTRAP_PATCH = FEATURES.register("flytrap_patch",
+            () -> new FlytrapPatchFeature(NoneFeatureConfiguration.CODEC));
 
 
     public static final DeferredHolder<MapCodec<? extends BiomeSource>, MapCodec<ElythiaBiomeSource>> ELYTHIA_BIOME_SOURCE = BIOME_SOURCES.register("elythia_biome_source",
@@ -759,6 +767,11 @@ public final class AntarchyFabricMisc {
     public static final DeferredHolder<Feature<?>, ThoraxisFissureFeature> THORAXIS_FISSURE = FEATURES.register("thoraxis_fissure",
             () -> new ThoraxisFissureFeature(ThoraxisFissureConfiguration.CODEC));
 
+    public static final DeferredHolder<Feature<?>, ThoraxisTransitionThroatFeature> THORAXIS_TRANSITION_THROAT = FEATURES.register("thoraxis_transition_throat",
+            ThoraxisTransitionThroatFeature::new);
+    public static final DeferredHolder<Feature<?>, QueenHavocTrailFeature> QUEEN_HAVOC_TRAIL = FEATURES.register("queen_havoc_trail",
+            QueenHavocTrailFeature::new);
+
 
     public static final DeferredHolder<Feature<?>, ThoraxisRibColumnsFeature> THORAXIS_RIB_COLUMNS = FEATURES.register("thoraxis_rib_columns",
             () -> new ThoraxisRibColumnsFeature(ThoraxisRibColumnsConfiguration.CODEC));
@@ -801,8 +814,8 @@ public final class AntarchyFabricMisc {
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.cavaryn.GroundMoltingVinesFeature> GROUND_MOLTING_VINES = FEATURES.register("ground_molting_vines",
             () -> new com.craisinlord.antarchy.content.worldgen.cavaryn.GroundMoltingVinesFeature(NoneFeatureConfiguration.CODEC));
 
-    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.cavaryn.JumpyBugEggCeilingFeature> JUMPY_BUG_EGG_CEILING = FEATURES.register("jumpy_bug_egg_ceiling",
-            () -> new com.craisinlord.antarchy.content.worldgen.cavaryn.JumpyBugEggCeilingFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.cavaryn.SpringbugEggCeilingFeature> SPRINGBUG_EGG_CEILING = FEATURES.register("springbug_egg_ceiling",
+            () -> new com.craisinlord.antarchy.content.worldgen.cavaryn.SpringbugEggCeilingFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.cavaryn.SpitBugEggPatchFeature> SPIT_BUG_EGG_PATCH = FEATURES.register("spit_bug_egg_patch",
             () -> new com.craisinlord.antarchy.content.worldgen.cavaryn.SpitBugEggPatchFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.cavaryn.RollyCavesGiantCavernFeature> ROLLY_CAVES_GIANT_CAVERN = FEATURES.register("rolly_caves_giant_cavern",
@@ -878,13 +891,13 @@ public final class AntarchyFabricMisc {
             () -> ThoraxisBiomeSource.CODEC);
 
 
-    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> JUMPY_BOOTS_ARMOR_MATERIAL = ARMOR_MATERIALS.register("jumpy_boots",
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> SPRINGY_BOOTS_ARMOR_MATERIAL = ARMOR_MATERIALS.register("springy_boots",
             () -> new ArmorMaterial(
-                    createJumpyBootsDefense(),
+                    createSpringyBootsDefense(),
                     15,
                     net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_NETHERITE,
                     () -> Ingredient.of(net.minecraft.world.item.Items.NETHERITE_BOOTS),
-                    java.util.List.of(new ArmorMaterial.Layer(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "jumpy_boots"))),
+                    java.util.List.of(new ArmorMaterial.Layer(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "springy_boots"))),
                     3.0F,
                     0.1F
             ));
@@ -933,7 +946,7 @@ public final class AntarchyFabricMisc {
 
 
 
-    private static java.util.EnumMap<ArmorItem.Type, Integer> createJumpyBootsDefense() {
+    private static java.util.EnumMap<ArmorItem.Type, Integer> createSpringyBootsDefense() {
         java.util.EnumMap<ArmorItem.Type, Integer> defense = new java.util.EnumMap<>(ArmorItem.Type.class);
         defense.put(ArmorItem.Type.BOOTS, 3);
         defense.put(ArmorItem.Type.LEGGINGS, 0);

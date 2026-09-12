@@ -2,12 +2,12 @@ package com.craisinlord.antarchy.neoforge.registry;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.entity.*;
-import com.craisinlord.antarchy.content.entity.CreepingHorrorEntity;
-import com.craisinlord.antarchy.content.entity.LurkingTerrorEntity;
+import com.craisinlord.antarchy.content.entity.CrawlingBlightEntity;
+import com.craisinlord.antarchy.content.entity.SkulkingFrightEntity;
 import com.craisinlord.antarchy.content.entity.ManticoreEntity;
 import com.craisinlord.antarchy.content.entity.basilisk.BasiliskEntity;
 import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyEntity;
-import com.craisinlord.antarchy.content.entity.cloud_shark.CloudSharkEntity;
+import com.craisinlord.antarchy.content.entity.stratoshark.StratosharkEntity;
 import com.craisinlord.antarchy.content.entity.flying_squirrel.FlyingSquirrelEntity;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
 import com.craisinlord.antarchy.content.entity.kraken.TentacleEntity;
@@ -49,7 +49,7 @@ public class AntarchyNeoforgeEntityAttributes {
         ).build());
         event.put(AntarchyNeoforgeEntites.ROLLY_POLLY.get(), RollyPollyEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.DR_TRAYAURUS.get(), Villager.createAttributes().build());
-        event.put(AntarchyNeoforgeEntites.CLOUD_SHARK.get(), CloudSharkEntity.createAttributes().build());
+        event.put(AntarchyNeoforgeEntites.STRATOSHARK.get(), StratosharkEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.KRAKEN.get(), KrakenEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.MISSILE_SQUID.get(), MissileSquidEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.OCTOPUS_BOMB.get(), OctopusBombEntity.createAttributes().build());
@@ -59,19 +59,19 @@ public class AntarchyNeoforgeEntityAttributes {
         event.put(AntarchyNeoforgeEntites.STINK_BUG.get(), StinkBugEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.WASP.get(), WaspEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.BOMBER.get(), BomberEntity.createAttributes().build());
-        event.put(AntarchyNeoforgeEntites.JUMPY_BUG.get(), JumpyBugEntity.createAttributes().build());
+        event.put(AntarchyNeoforgeEntites.SPRINGBUG.get(), SpringbugEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.SPIT_BUG.get(), SpitBugEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.MANTIS.get(), MantisEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.ALPHA_MANTIS.get(), AlphaMantisEntity.createAttributes().build());
-        event.put(AntarchyNeoforgeEntites.TRIFFID.get(), TriffidEntity.createAttributes().build());
+        event.put(AntarchyNeoforgeEntites.FLYTRAP.get(), FlytrapEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.LUCID.get(), LucidEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.VORTEX.get(), com.craisinlord.antarchy.content.entity.vortex.VortexEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.SCORPION.get(), ScorpionEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.BASILISK.get(), BasiliskEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.EMPEROR_SCORPION.get(), EmperorScorpionEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.TORETERROR.get(), ToreterrorEntity.createAttributes().build());
-        event.put(AntarchyNeoforgeEntites.CREEPING_HORROR.get(), CreepingHorrorEntity.createAttributes().build());
-        event.put(AntarchyNeoforgeEntites.LURKING_TERROR.get(), LurkingTerrorEntity.createAttributes().build());
+        event.put(AntarchyNeoforgeEntites.CRAWLING_BLIGHT.get(), CrawlingBlightEntity.createAttributes().build());
+        event.put(AntarchyNeoforgeEntites.SKULKING_FRIGHT.get(), SkulkingFrightEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.MANTICORE.get(), ManticoreEntity.createAttributes().build());
         event.put(AntarchyNeoforgeEntites.JERRY.get(), JerryEntity.createAttributes().build());
 
