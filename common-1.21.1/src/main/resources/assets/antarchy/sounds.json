@@ -1483,6 +1483,39 @@
       }
     ]
   },
+  "manticore_idle": {
+    "subtitle": "subtitles.antarchy.manticore_idle",
+    "sounds": [
+      { "name": "antarchy:mob/manticore/idle1" },
+      { "name": "antarchy:mob/manticore/idle2" }
+    ]
+  },
+  "manticore_walk": {
+    "subtitle": "subtitles.antarchy.manticore_walk",
+    "sounds": [
+      { "name": "antarchy:mob/manticore/walk1" },
+      { "name": "antarchy:mob/manticore/walk2" },
+      { "name": "antarchy:mob/manticore/walk3" },
+      { "name": "antarchy:mob/manticore/walk4" },
+      { "name": "antarchy:mob/manticore/walk5" }
+    ]
+  },
+  "manticore_fly": {
+    "subtitle": "subtitles.antarchy.manticore_fly",
+    "sounds": [
+      { "name": "antarchy:mob/manticore/fly1" },
+      { "name": "antarchy:mob/manticore/fly2" },
+      { "name": "antarchy:mob/manticore/fly3" },
+      { "name": "antarchy:mob/manticore/fly4" },
+      { "name": "antarchy:mob/manticore/fly5" }
+    ]
+  },
+  "manticore_bite": {
+    "subtitle": "subtitles.antarchy.manticore_bite",
+    "sounds": [
+      { "name": "antarchy:mob/manticore/bite1" }
+    ]
+  },
   "mantis_ambient": {
     "subtitle": "subtitles.antarchy.mantis_ambient",
     "sounds": [

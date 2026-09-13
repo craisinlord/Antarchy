@@ -112,6 +112,10 @@ public final class AntarchyNeoforgeSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> MANTIS_HURT = registerSoundEvent("mantis_hurt");
     public static final DeferredHolder<SoundEvent, SoundEvent> MANTIS_ATTACK = registerSoundEvent("mantis_attack");
     public static final DeferredHolder<SoundEvent, SoundEvent> MANTIS_FLY_LOOP = registerSoundEvent("mantis_fly_loop");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MANTICORE_IDLE = registerSoundEvent("manticore_idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MANTICORE_WALK = registerSoundEvent("manticore_walk");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MANTICORE_FLY = registerSoundEvent("manticore_fly");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MANTICORE_BITE = registerSoundEvent("manticore_bite");
     public static final DeferredHolder<SoundEvent, SoundEvent> GRAVITY_GUN_PICKUP = registerSoundEvent("gravity_gun_pickup");
     public static final DeferredHolder<SoundEvent, SoundEvent> GRAVITY_GUN_DROP = registerSoundEvent("gravity_gun_drop");
     public static final DeferredHolder<SoundEvent, SoundEvent> GRAVITY_GUN_HOLD_LOOP = registerSoundEvent("gravity_gun_hold_loop");

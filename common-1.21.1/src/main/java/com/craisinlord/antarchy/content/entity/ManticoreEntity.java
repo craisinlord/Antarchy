@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
@@ -222,6 +223,9 @@ public class ManticoreEntity extends Monster implements GeoEntity {
             this.triggerAnim("controller", flying ? "fly_start" : "fly_land");
             this.wasFlyingLastTick = flying;
         }
+        if (flying && this.tickCount % 16 == 0) {
+            this.playSound(AntarchySoundEvents.MANTICORE_FLY.get(), 0.65F, 0.9F + this.random.nextFloat() * 0.2F);
+        }
 
         if (this.takeoffCooldown > 0) {
             this.takeoffCooldown--;
@@ -398,6 +402,7 @@ public class ManticoreEntity extends Monster implements GeoEntity {
 
     void performSting(LivingEntity enemy) {
         this.swing(InteractionHand.MAIN_HAND);
+        this.playSound(AntarchySoundEvents.MANTICORE_BITE.get(), 0.9F, 0.95F + this.random.nextFloat() * 0.1F);
         if (enemy.hurt(this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE))) {
             enemy.addEffect(new MobEffectInstance(MobEffects.POISON, AntarchySettings.manticoreStingPoisonTicks(), 0), this);
         }
@@ -413,9 +418,20 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     public boolean doHurtTarget(Entity target) {
         boolean hurt = super.doHurtTarget(target);
         if (hurt) {
+            this.playSound(AntarchySoundEvents.MANTICORE_BITE.get(), 0.9F, 0.95F + this.random.nextFloat() * 0.1F);
             this.triggerAnim("controller", this.onGround() ? "bite" : "fly_bite");
         }
         return hurt;
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return AntarchySoundEvents.MANTICORE_IDLE.get();
+    }
+
+    @Override
+    protected void playStepSound(BlockPos pos, BlockState state) {
+        this.playSound(AntarchySoundEvents.MANTICORE_WALK.get(), 0.55F, 0.9F + this.random.nextFloat() * 0.2F);
     }
 
     @Override
