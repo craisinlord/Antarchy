@@ -101,6 +101,10 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> MANTIS_HURT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> MANTIS_ATTACK = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> MANTIS_FLY_LOOP = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> MANTICORE_IDLE = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> MANTICORE_WALK = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> MANTICORE_FLY = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> MANTICORE_BITE = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> GRAVITY_GUN_PICKUP = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> GRAVITY_GUN_DROP = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> GRAVITY_GUN_HOLD_LOOP = (Supplier<SoundEvent>) UNBOUND;
@@ -309,6 +313,10 @@ public final class AntarchySoundEvents {
             Supplier<SoundEvent> mantisHurt,
             Supplier<SoundEvent> mantisAttack,
             Supplier<SoundEvent> mantisFlyLoop,
+            Supplier<SoundEvent> manticoreIdle,
+            Supplier<SoundEvent> manticoreWalk,
+            Supplier<SoundEvent> manticoreFly,
+            Supplier<SoundEvent> manticoreBite,
             Supplier<SoundEvent> gravityGunPickup,
             Supplier<SoundEvent> gravityGunDrop,
             Supplier<SoundEvent> gravityGunHoldLoop,
@@ -513,6 +521,10 @@ public final class AntarchySoundEvents {
         MANTIS_HURT = mantisHurt;
         MANTIS_ATTACK = mantisAttack;
         MANTIS_FLY_LOOP = mantisFlyLoop;
+        MANTICORE_IDLE = manticoreIdle;
+        MANTICORE_WALK = manticoreWalk;
+        MANTICORE_FLY = manticoreFly;
+        MANTICORE_BITE = manticoreBite;
         GRAVITY_GUN_PICKUP = gravityGunPickup;
         GRAVITY_GUN_DROP = gravityGunDrop;
         GRAVITY_GUN_HOLD_LOOP = gravityGunHoldLoop;

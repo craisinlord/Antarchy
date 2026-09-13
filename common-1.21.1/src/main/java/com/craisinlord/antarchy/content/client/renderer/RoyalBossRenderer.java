@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import com.mojang.math.Axis;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
@@ -147,13 +148,6 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
             return;
         }
         Vec3 dir = axis.scale(1.0D / length);
-        Vec3 side1 = dir.cross(new Vec3(0.0D, 1.0D, 0.0D));
-        if (side1.lengthSqr() < 1.0E-4D) {
-            side1 = dir.cross(new Vec3(1.0D, 0.0D, 0.0D));
-        }
-        side1 = side1.normalize();
-        Vec3 side2 = dir.cross(side1).normalize();
-
         ResourceLocation outer = QUEEN_PURPLE_BEAM_OUTER;
         ResourceLocation inner = QUEEN_PURPLE_BEAM_INNER;
         ResourceLocation[] endTextures = {QUEEN_PURPLE_BEAM_END_1, QUEEN_PURPLE_BEAM_END_2};
@@ -196,42 +190,50 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
 
         float time = entity.tickCount + partialTick;
         float outerV = -time * 0.25F;
-        var pose = poseStack.last().pose();
-
         float innerV = -time * 0.25F * 0.5F;
+
+        // Tremorzilla renders the beam in local +Z space. Keeping the mesh in that
+        // space is important: the beam textures are authored for these exact face
+        // coordinates and are not interchangeable with a world-space billboard.
+        float yaw = (float) Math.atan2(dir.z, dir.x);
+        float pitch = (float) Math.acos(dir.y);
+        poseStack.pushPose();
+        poseStack.translate(start.x, start.y, start.z);
+        poseStack.mulPose(Axis.YP.rotation((float) (Math.PI * 0.5D - yaw)));
+        poseStack.mulPose(Axis.XP.rotation((float) (-Math.PI * 0.5D + pitch)));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(45.0F));
+        org.joml.Matrix4f pose = poseStack.last().pose();
+
         VertexConsumer innerBuffer = bufferSource.getBuffer(RoyalBeamRenderTypes.beam(inner));
-        drawBeamTube(innerBuffer, pose, start, finish, side1, side2, BEAM_INNER_RADIUS, 4, innerV, 0.0F, 0.55F, 0.5F, 255);
-
+        drawLocalBeam(innerBuffer, pose, length, BEAM_INNER_RADIUS, 4, innerV, 0.5F);
         VertexConsumer outerBuffer = bufferSource.getBuffer(RoyalBeamRenderTypes.beam(outer));
-        // Tremorzilla's outer shell stays fully visible all the way to the impact;
-        // fading the far ring makes the beam look like a translucent cone.
-        drawBeamTube(outerBuffer, pose, start, finish, side1, side2, BEAM_OUTER_RADIUS, 8, outerV, 0.0F, 0.55F, 0.15F, 255);
+        drawLocalBeam(outerBuffer, pose, length, BEAM_OUTER_RADIUS, 8, outerV, 0.15F);
 
-        float impactSize = 1.5F + 0.35F * Mth.sin(time * 0.6F);
         ResourceLocation endTexture = endTextures[(entity.tickCount / 2) % endTextures.length];
         VertexConsumer endBuffer = bufferSource.getBuffer(RoyalBeamRenderTypes.beam(endTexture));
-        drawBeamImpact(endBuffer, pose, finish.subtract(dir.scale(1.5D)), dir, side1, side2, impactSize);
+        drawBeamImpact(endBuffer, pose, (float) length - 1.5F, BEAM_INNER_RADIUS);
+        poseStack.popPose();
     }
 
-    private static void drawBeamTube(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 start, Vec3 end,
-                                     Vec3 side1, Vec3 side2, float radius, int sections, float scroll, float phase,
-                                     float startScale, float uvLengthScale, int endAlpha) {
-        Vec3[] startRing = new Vec3[sections];
-        Vec3[] endRing = new Vec3[sections];
-        for (int i = 0; i < sections; i++) {
-            double angle = Math.PI * 2.0D * i / sections + phase;
-            Vec3 offset = side1.scale(Math.cos(angle) * radius).add(side2.scale(Math.sin(angle) * radius));
-            startRing[i] = start.add(offset.scale(startScale));
-            endRing[i] = end.add(offset);
-        }
-        float endV = scroll + (float) start.distanceTo(end) * uvLengthScale;
-        for (int i = 0; i < sections; i++) {
-            int next = (i + 1) % sections;
-            // Alex's beam renderer intentionally uses section indices for U rather
-            // than normalizing them. This is part of the authored 16x16 texture
-            // pattern and keeps the strip continuous around the tube.
-            emitBeamQuad(vertices, pose, startRing[i], endRing[i], endRing[next], startRing[next],
-                    i, scroll, next, endV, endAlpha);
+    private static void drawLocalBeam(VertexConsumer vertices, org.joml.Matrix4f pose, double length,
+                                      float radius, int sections, float scroll, float uvLengthScale) {
+        float endV = scroll + (float) length * uvLengthScale;
+        float previousX = -radius;
+        float previousY = 0.0F;
+        float previousU = 0.0F;
+        for (int i = 0; i <= sections; i++) {
+            float angle = (float) (Math.PI + Math.PI * 2.0D * i / sections);
+            float currentX = Mth.cos(angle) * radius;
+            float currentY = Mth.sin(angle) * radius;
+            Vec3 previousStart = new Vec3(previousX * 0.55D, previousY * 0.55D, 0.0D);
+            Vec3 previousEnd = new Vec3(previousX, previousY, length);
+            Vec3 currentEnd = new Vec3(currentX, currentY, length);
+            Vec3 currentStart = new Vec3(currentX * 0.55D, currentY * 0.55D, 0.0D);
+            emitBeamQuad(vertices, pose, previousStart, previousEnd, currentEnd, currentStart,
+                    previousU, scroll, i + 1.0F, endV, 255);
+            previousX = currentX;
+            previousY = currentY;
+            previousU = i + 1.0F;
         }
     }
 
@@ -244,31 +246,77 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         beamVertex(vertices, pose, d, minU, maxV, 255);
     }
 
-    private static void drawBillboard(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 center, Vec3 left, Vec3 up) {
-        emitQuad(vertices, pose,
-                center.add(left).add(up), center.subtract(left).add(up),
-                center.subtract(left).subtract(up), center.add(left).subtract(up),
-                0.0F, 0.0F, 1.0F, 1.0F);
-        emitQuad(vertices, pose,
-                center.subtract(left).add(up), center.add(left).add(up),
-                center.add(left).subtract(up), center.subtract(left).subtract(up),
-                0.0F, 0.0F, 1.0F, 1.0F);
+    private static void drawBeamImpact(VertexConsumer vertices, org.joml.Matrix4f pose, float z, float size) {
+        PoseStack endpoint = new PoseStack();
+        endpoint.last().pose().set(pose);
+        endpoint.translate(0.0D, 0.0D, z);
+        endpoint.mulPose(Axis.ZP.rotationDegrees(45.0F));
+        endpoint.mulPose(Axis.XP.rotationDegrees(90.0F));
+        endpoint.scale(size / 16.0F, size / 16.0F, size / 16.0F);
+        endpoint.translate(0.0D, 24.0D, 0.0D);
+
+        org.joml.Matrix4f modelPose = endpoint.last().pose();
+        emitQuadUv(vertices, modelPose,
+                new Vec3(-11.0D, 0.0D, -11.0D), new Vec3(11.0D, 0.0D, -11.0D),
+                new Vec3(11.0D, 0.0D, 11.0D), new Vec3(-11.0D, 0.0D, 11.0D),
+                0.0F, 0.0F, 22.0F / 128.0F, 22.0F / 128.0F);
+
+        endpoint.pushPose();
+        endpoint.translate(0.0D, 0.0D, -11.0D);
+        endpoint.mulPose(Axis.XP.rotation(0.3927F));
+        drawModelPlane(vertices, endpoint.last().pose(), -12, -24, 0, 24, 24, 3, 38);
+        endpoint.popPose();
+        endpoint.pushPose();
+        endpoint.translate(0.0D, 0.0D, -11.0D);
+        endpoint.mulPose(Axis.XP.rotation(0.7854F));
+        drawModelPlane(vertices, endpoint.last().pose(), -15, -16, 0, 30, 16, 0, 22);
+        endpoint.popPose();
+
+        endpoint.pushPose();
+        endpoint.translate(0.0D, 0.0D, 11.0D);
+        endpoint.mulPose(Axis.XP.rotation(-0.3927F));
+        drawModelPlane(vertices, endpoint.last().pose(), -12, -24, 0, 24, 24, 3, 38);
+        endpoint.popPose();
+        endpoint.pushPose();
+        endpoint.translate(0.0D, 0.0D, 11.0D);
+        endpoint.mulPose(Axis.XP.rotation(-0.7854F));
+        drawModelPlane(vertices, endpoint.last().pose(), -15, -16, 0, 30, 16, 0, 22);
+        endpoint.popPose();
+
+        endpoint.pushPose();
+        endpoint.translate(11.0D, 0.0D, 0.0D);
+        endpoint.mulPose(Axis.ZP.rotation(0.3927F));
+        drawModelPlane(vertices, endpoint.last().pose(), 0, -24, -13, 24, 24, 3, 14);
+        endpoint.popPose();
+        endpoint.pushPose();
+        endpoint.translate(11.0D, 0.0D, 0.0D);
+        endpoint.mulPose(Axis.ZP.rotation(0.7854F));
+        drawModelPlane(vertices, endpoint.last().pose(), 0, -16, -15, 16, 30, 0, -8);
+        endpoint.popPose();
+
+        endpoint.pushPose();
+        endpoint.translate(-11.0D, 0.0D, 0.0D);
+        endpoint.mulPose(Axis.ZP.rotation(-0.3927F));
+        drawModelPlane(vertices, endpoint.last().pose(), 0, -24, -12, 24, 24, 3, 14);
+        endpoint.popPose();
+        endpoint.pushPose();
+        endpoint.translate(-11.0D, 0.0D, 0.0D);
+        endpoint.mulPose(Axis.ZP.rotation(-0.7854F));
+        drawModelPlane(vertices, endpoint.last().pose(), 0, -16, -15, 16, 30, 0, -8);
+        endpoint.popPose();
     }
 
-    private static void drawBeamImpact(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 center, Vec3 direction,
-                                       Vec3 side1, Vec3 side2, float size) {
-        // The end textures are atlas textures used by Tremorzilla's crossed flame
-        // planes, not a texture meant to be repeated on eight radial billboards.
-        // Two crossed planes preserve the same readable four-point impact without
-        // stretching the atlas into the noisy starburst the old code produced.
-        drawBillboard(vertices, pose, center, side1.scale(size), side2.scale(size));
-        drawBillboard(vertices, pose, center.subtract(direction.scale(size * 0.35D)),
-                side1.scale(size * 0.82D), direction.scale(size * 0.82D));
+    private static void drawModelPlane(VertexConsumer vertices, org.joml.Matrix4f pose,
+                                       int x, int y, int z, int width, int height, int u, int v) {
+        emitQuadUv(vertices, pose,
+                new Vec3(x, y, z), new Vec3(x + width, y, z),
+                new Vec3(x + width, y + height, z), new Vec3(x, y + height, z),
+                u / 128.0F, v / 128.0F, (u + width) / 128.0F, (v + height) / 128.0F);
     }
 
-    private static void emitQuad(VertexConsumer vertices, org.joml.Matrix4f pose,
-                                 Vec3 a, Vec3 b, Vec3 c, Vec3 d,
-                                 float minU, float minV, float maxU, float maxV) {
+    private static void emitQuadUv(VertexConsumer vertices, org.joml.Matrix4f pose,
+                                   Vec3 a, Vec3 b, Vec3 c, Vec3 d,
+                                   float minU, float minV, float maxU, float maxV) {
         vertex(vertices, pose, a, minU, minV);
         vertex(vertices, pose, b, maxU, minV);
         vertex(vertices, pose, c, maxU, maxV);
