@@ -13,7 +13,7 @@ public class RoyalBeamRenderTypes extends RenderType {
     }
 
     public static RenderType beam(ResourceLocation texture) {
-        return create("royal_beam", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true,
+        return create("tremorzilla_beam", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true,
                 CompositeState.builder()
                         .setTextureState(new TextureStateShard(texture, false, false))
                         .setShaderState(RenderStateShard.RENDERTYPE_ENERGY_SWIRL_SHADER)

@@ -86,7 +86,7 @@ public class MultipartPartEntity extends PartEntity<Entity> implements OwnableEn
         Vec3 right = new Vec3(forward.z, 0.0D, -forward.x);
         Vec3 localOffset = new Vec3(
                 forward.x * this.definition.forwardOffset() + right.x * this.definition.lateralOffset(),
-                this.definition.yOffset() + (AntarchyGravityApi.isGravityInverted(parent) ? this.definition.height() : 0.0D),
+                this.definition.yOffset(),
                 forward.z * this.definition.forwardOffset() + right.z * this.definition.lateralOffset());
         Vec3 offset = AntarchyGravityRotationUtil.vecPlayerToWorld(localOffset, AntarchyGravityApi.getGravityDirection(parent));
         Vec3 position = parent.position().add(offset);

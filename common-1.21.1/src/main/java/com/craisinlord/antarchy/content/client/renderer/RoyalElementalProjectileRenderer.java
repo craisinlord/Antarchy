@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
@@ -41,8 +42,17 @@ public class RoyalElementalProjectileRenderer extends GeoEntityRenderer<RoyalEle
     @Override
     protected void applyRotations(RoyalElementalProjectileEntity entity, PoseStack poseStack, float ageInTicks,
                                   float rotationYaw, float partialTick, float nativeScale) {
-        float yaw = Mth.rotLerp(partialTick, entity.yRotO, entity.getYRot());
-        float pitch = Mth.lerp(partialTick, entity.xRotO, entity.getXRot());
+        Vec3 travel = entity.getDeltaMovement();
+        float yaw;
+        float pitch;
+        if (!entity.isIceball() && travel.lengthSqr() > 1.0E-6D) {
+            double horizontal = travel.horizontalDistance();
+            yaw = (float) (Mth.atan2(travel.z, travel.x) * Mth.RAD_TO_DEG) - 90.0F;
+            pitch = (float) (Mth.atan2(horizontal, travel.y) * Mth.RAD_TO_DEG) - 90.0F;
+        } else {
+            yaw = Mth.rotLerp(partialTick, entity.yRotO, entity.getYRot());
+            pitch = Mth.lerp(partialTick, entity.xRotO, entity.getXRot());
+        }
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - yaw));
         poseStack.mulPose(Axis.XP.rotationDegrees(-pitch));
         if (!entity.isIceball()) {

@@ -174,6 +174,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     private final PathNavigation flyingNavigation;
     private int locomotionDecisionTicks = 80;
     private boolean landingForCombat;
+    @Nullable
+    private Vec3 aerialCombatAnchor;
+    private int aerialCombatAnchorTicks;
 
     @Nullable
     private Entity[] multipartParts;
@@ -452,10 +455,12 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         }
 
         this.tickCombatLocomotionMode(primaryTarget);
-        this.getLookControl().setLookAt(primaryTarget, 30.0F, 30.0F);
+        boolean aeriallyStabilized = this.steerTowardTarget(primaryTarget);
+        if (!aeriallyStabilized) {
+            this.getLookControl().setLookAt(primaryTarget, 30.0F, 30.0F);
+        }
         this.assignHeadTargets(primaryTarget);
         this.tickRoyalBeam(primaryTarget);
-        this.steerTowardTarget(primaryTarget);
         this.tickBodyCrush();
 
         Phase phase = this.phase();
@@ -649,7 +654,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         return true;
     }
 
-    private void steerTowardTarget(LivingEntity target) {
+    private boolean steerTowardTarget(LivingEntity target) {
         double dx = target.getX() - this.getX();
         double dz = target.getZ() - this.getZ();
         double horizontalDistance = Math.sqrt(dx * dx + dz * dz);
@@ -666,13 +671,35 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         double approachSpeed = anyHeadInBiteRange ? 1.0D : this.biteApproachSpeed();
 
         if (!this.isRoyalFlying()) {
+            this.aerialCombatAnchor = null;
+            this.aerialCombatAnchorTicks = 0;
             if (atStandoff) {
                 this.getNavigation().stop();
             } else {
                 this.getMoveControl().setWantedPosition(wanted.x, target.getY(), wanted.z, approachSpeed);
             }
-            return;
+            return false;
         }
+
+        double verticalDistance = Math.abs(target.getY() + target.getBbHeight() * 0.5D
+                - (this.getY() + this.getBbHeight() * 0.5D));
+        if (!this.landingForCombat && verticalDistance > 6.0D) {
+            if (this.aerialCombatAnchor == null || this.aerialCombatAnchorTicks-- <= 0) {
+                double anchorX = this.getX();
+                double anchorZ = this.getZ();
+                if (horizontalDistance > 10.0D) {
+                    anchorX = wanted.x;
+                    anchorZ = wanted.z;
+                }
+                this.aerialCombatAnchor = new Vec3(anchorX, this.getY(), anchorZ);
+                this.aerialCombatAnchorTicks = 20;
+            }
+            Vec3 anchor = this.aerialCombatAnchor;
+            this.getMoveControl().setWantedPosition(anchor.x, anchor.y, anchor.z, Math.min(approachSpeed, 0.85D));
+            return true;
+        }
+        this.aerialCombatAnchor = null;
+        this.aerialCombatAnchorTicks = 0;
 
         boolean inverted = AntarchyGravityApi.isGravityInverted(this);
         double groundBelowTarget = this.groundYBelow(wanted.x, wanted.z);
@@ -689,6 +716,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         } else {
             this.getMoveControl().setWantedPosition(wanted.x, wantedY, wanted.z, approachSpeed);
         }
+        return false;
     }
 
     private void tickCombatLocomotionMode(LivingEntity target) {

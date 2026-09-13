@@ -27,7 +27,9 @@ import net.minecraft.world.entity.vehicle.DismountHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
@@ -254,12 +256,7 @@ public final class AntTeleportHelper {
             return safeArrivalPos;
         }
 
-        if (destination.hasChunkAt(preferredPos)) {
-            BlockPos fallbackPos = player.adjustSpawnLocation(destination, preferredPos);
-            return Vec3.atBottomCenterOf(fallbackPos);
-        }
-
-        return Vec3.atBottomCenterOf(getClampedFallbackPosition(destination, preferredPos));
+        return createEmergencyArrivalPlatform(destination, preferredPos);
     }
 
     @Nullable
@@ -413,5 +410,32 @@ public final class AntTeleportHelper {
         int minY = destination.getMinBuildHeight() + 1;
         int maxY = destination.getMaxBuildHeight() - 1;
         return new BlockPos(preferredPos.getX(), Mth.clamp(preferredPos.getY(), minY, maxY), preferredPos.getZ());
+    }
+
+    /**
+     * Last-resort landing location for custom dimensions whose generated spawn
+     * area has no valid player-sized space. The normal search always runs first;
+     * this only modifies terrain when there is no safe generated location.
+     */
+    private static Vec3 createEmergencyArrivalPlatform(ServerLevel destination, BlockPos preferredPos) {
+        BlockPos center = getClampedFallbackPosition(destination, preferredPos);
+        int minY = destination.getMinBuildHeight() + 1;
+        int maxY = destination.getMaxBuildHeight() - 2;
+        center = new BlockPos(center.getX(), Mth.clamp(center.getY(), minY, maxY), center.getZ());
+
+        destination.getChunkAt(center);
+        BlockState platformState = Blocks.STONE.defaultBlockState();
+
+        for (int xOffset = -2; xOffset <= 2; xOffset++) {
+            for (int zOffset = -2; zOffset <= 2; zOffset++) {
+                BlockPos column = center.offset(xOffset, 0, zOffset);
+                destination.setBlock(column.below(), platformState, Block.UPDATE_ALL);
+                for (int yOffset = 0; yOffset <= 3; yOffset++) {
+                    destination.removeBlock(column.above(yOffset), false);
+                }
+            }
+        }
+
+        return Vec3.atBottomCenterOf(center);
     }
 }

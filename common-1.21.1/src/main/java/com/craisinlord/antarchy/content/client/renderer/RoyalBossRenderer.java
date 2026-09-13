@@ -246,7 +246,7 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         beamVertex(vertices, pose, d, minU, maxV, 255);
     }
 
-    private static void drawBeamImpact(VertexConsumer vertices, org.joml.Matrix4f pose, float z, float size) {
+    static void drawBeamImpact(VertexConsumer vertices, org.joml.Matrix4f pose, float z, float size) {
         PoseStack endpoint = new PoseStack();
         endpoint.last().pose().set(pose);
         endpoint.translate(0.0D, 0.0D, z);
@@ -325,17 +325,17 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
 
     private static void vertex(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 pos, float u, float v) {
         vertices.addVertex(pose, (float) pos.x, (float) pos.y, (float) pos.z)
-                .setColor(255, 255, 255, 255).setUv(u, v)
+                .setColor(1.0F, 1.0F, 1.0F, 1.0F).setUv(u, v)
                 .setOverlay(net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY)
-                .setLight(0x00F000F0)
+                .setLight(240)
                 .setNormal(0.0F, 1.0F, 0.0F);
     }
 
     private static void beamVertex(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 pos, float u, float v, int alpha) {
         vertices.addVertex(pose, (float) pos.x, (float) pos.y, (float) pos.z)
-                .setColor(255, 255, 255, alpha).setUv(u, v)
+                .setColor(1.0F, 1.0F, 1.0F, alpha / 255.0F).setUv(u, v)
                 .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(0x00F000F0)
+                .setLight(240)
                 .setNormal(0.0F, -1.0F, 0.0F);
     }
 }

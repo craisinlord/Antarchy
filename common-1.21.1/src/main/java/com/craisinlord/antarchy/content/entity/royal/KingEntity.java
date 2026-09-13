@@ -89,6 +89,8 @@ public class KingEntity extends RoyalBossEntity {
     private static final int BEHAVIOR_SCORE_CAP = 12;
     /** Keep the tree-bound patrol safely inside the authored tree footprint. */
     private static final double TREE_ORBIT_RADIUS = 128.0D;
+    private static final double TREE_RETURN_RADIUS = 192.0D;
+    private static final double TREE_RETURN_RELEASE_RADIUS = 144.0D;
     private static final double TREE_ORBIT_ANGLE_STEP = 0.014D;
     private static final int TREE_ORBIT_PATH_SAMPLES = 16;
 
@@ -102,6 +104,7 @@ public class KingEntity extends RoyalBossEntity {
     private double treePatrolMaximumY;
     private double treePatrolAngle;
     private boolean treePatrolBound;
+    private boolean returningToTree;
     private int patrolCooldownTicks;
     private int decreeCooldownTicks;
     private int activeDecreeTicks;
@@ -360,6 +363,10 @@ public class KingEntity extends RoyalBossEntity {
 
     @Override
     public void tick() {
+        if (!this.level().isClientSide && this.shouldReturnToTree()) {
+            this.returningToTree = true;
+            this.setTarget(null);
+        }
         super.tick();
         if (this.level().isClientSide) {
             return;
@@ -372,6 +379,21 @@ public class KingEntity extends RoyalBossEntity {
         ServerLevel serverLevel = (ServerLevel) this.level();
         this.iceBuildup.entrySet().removeIf(entry -> serverLevel.getEntity(entry.getKey()) == null);
         if (this.iceBuildup.size() > 16) this.iceBuildup.clear();
+        if (this.returningToTree) {
+            this.setTarget(null);
+            this.decreeRetreatPressure = false;
+            if (this.treePatrolBound && this.treePatrolCenter != null) {
+                this.setRoyalFlying(true);
+                if (this.isWithinTreeReturnReleaseRadius()) {
+                    this.returningToTree = false;
+                } else {
+                    this.tickTreePatrol();
+                    return;
+                }
+            } else {
+                this.returningToTree = false;
+            }
+        }
         LivingEntity target = this.getTarget();
         if (target != null && !this.isDeadOrDying() && this.level() instanceof ServerLevel level) {
             this.trackBehavior(target);
@@ -424,6 +446,25 @@ public class KingEntity extends RoyalBossEntity {
                     (this.treePatrolMinimumY + this.treePatrolMaximumY) * 0.5D,
                     center.z, 30.0F, 30.0F);
         }
+    }
+
+    private boolean shouldReturnToTree() {
+        return this.treePatrolBound && this.treePatrolCenter != null
+                && this.horizontalDistanceToTreeSqr() > TREE_RETURN_RADIUS * TREE_RETURN_RADIUS;
+    }
+
+    private boolean isWithinTreeReturnReleaseRadius() {
+        return this.treePatrolCenter != null
+                && this.horizontalDistanceToTreeSqr() <= TREE_RETURN_RELEASE_RADIUS * TREE_RETURN_RELEASE_RADIUS;
+    }
+
+    private double horizontalDistanceToTreeSqr() {
+        if (this.treePatrolCenter == null) {
+            return 0.0D;
+        }
+        double dx = this.getX() - this.treePatrolCenter.x;
+        double dz = this.getZ() - this.treePatrolCenter.z;
+        return dx * dx + dz * dz;
     }
 
     @Nullable
