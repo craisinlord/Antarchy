@@ -26,7 +26,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "antarchy:cornea_stalk",
+          "name": "antarchy:cornea_ear",
           "weight": 8,
           "functions": [
             {

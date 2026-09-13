@@ -62,6 +62,11 @@ public final class TimeDilationApi {
         return getRate(entity) < TimeDilationMath.NORMAL_RATE;
     }
 
+    public static double getVehicleRate(Entity entity) {
+        Entity vehicle = entity.getVehicle();
+        return vehicle == null ? TimeDilationMath.NORMAL_RATE : getRate(vehicle);
+    }
+
     public static void enterRotationBypass() {
         ROTATION_BYPASS_DEPTH.set(ROTATION_BYPASS_DEPTH.get() + 1);
     }
@@ -110,6 +115,10 @@ public final class TimeDilationApi {
 
     public static void clearSyncedClientRates() {
         SYNCED_CLIENT_RATES.clear();
+    }
+
+    public static boolean hasSyncedClientRates() {
+        return !SYNCED_CLIENT_RATES.isEmpty();
     }
 
     public static void syncEntityRate(Entity entity, double rate) {

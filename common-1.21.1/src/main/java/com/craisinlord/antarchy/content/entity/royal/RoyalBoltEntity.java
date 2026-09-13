@@ -93,6 +93,10 @@ public class RoyalBoltEntity extends AbstractHurtingProjectile {
         if (target == owner || (owner != null && target == owner.getVehicle())) {
             return;
         }
+        if (owner instanceof RoyalMountEntity royal && target instanceof RoyalMountEntity other
+                && royal.isTame() && other.isTame()) {
+            return;
+        }
         float damage = (float) AntarchySettings.royalBoltDamage();
         target.hurt(this.damageSources().mobProjectile(this, owner instanceof LivingEntity le ? le : null), damage);
         if (target instanceof LivingEntity living) {

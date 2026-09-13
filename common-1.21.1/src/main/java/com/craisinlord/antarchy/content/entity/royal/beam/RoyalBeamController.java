@@ -78,6 +78,17 @@ public final class RoyalBeamController {
             RoyalBeamTerrainMode terrainMode,
             Consumer<@Nullable Vec3> syncedEndPosition
     ) {
+        this.tick(shootFrom, owner.getLookAngle(), target, settings, terrainMode, syncedEndPosition);
+    }
+
+    public void tick(
+            Vec3 shootFrom,
+            Vec3 shootDirection,
+            @Nullable LivingEntity target,
+            RoyalBeamSettings settings,
+            RoyalBeamTerrainMode terrainMode,
+            Consumer<@Nullable Vec3> syncedEndPosition
+    ) {
         if (this.beamTicks <= 0) {
             syncedEndPosition.accept(null);
             return;
@@ -100,11 +111,11 @@ public final class RoyalBeamController {
             return;
         }
 
-        Vec3 direction = this.serverTarget.subtract(shootFrom).normalize();
-        if (direction.lengthSqr() < 1.0E-7D) {
-            direction = this.owner.getLookAngle();
-        }
-        double committedDistance = Math.min(settings.range(), shootFrom.distanceTo(this.serverTarget));
+        Vec3 direction = shootDirection.lengthSqr() < 1.0E-7D
+                ? this.owner.getLookAngle().normalize()
+                : shootDirection.normalize();
+        double committedDistance = Math.min(settings.range(), Math.max(settings.pathStep(),
+                this.serverTarget.subtract(shootFrom).dot(direction)));
         double travelProgress = Mth.clamp(this.beamAgeTicks / (double) settings.travelTicks(), 0.0D, 1.0D);
         double currentRange = Math.max(settings.pathStep(), committedDistance * travelProgress);
         Vec3 clipEnd = shootFrom.add(direction.scale(currentRange));

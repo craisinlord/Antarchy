@@ -18,6 +18,8 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,6 +38,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  */
 public abstract class EntityMoveMixin {
     @Unique
+    private static final Logger ANTARCHY_STEP_LOGGER = LoggerFactory.getLogger("Antarchy/GravityStep");
+    @Unique
+    private boolean antarchy$loggedInvertedCollide;
+    @Unique
+    private boolean antarchy$loggedHorizontalBlock;
+    @Unique
+    private boolean antarchy$loggedInvertedMove;
+    @Unique
     private double antarchy$lastWorldMoveY = 0.0;
     @Unique
     private double antarchy$lastPlayerMoveY = 0.0;
@@ -49,6 +59,12 @@ public abstract class EntityMoveMixin {
         Entity entity = (Entity) (Object) this;
         this.antarchy$moveStartBox = entity.getBoundingBox();
         this.antarchy$lastPlayerMoveY = movement.y;
+        if (AntarchyGravityApi.isGravityInverted(entity) && !this.antarchy$loggedInvertedMove) {
+            this.antarchy$loggedInvertedMove = true;
+            ANTARCHY_STEP_LOGGER.warn(
+                    "Inverted move entered: entity={} movement={} noPhysics={} onGround={} box={}",
+                    entity.getClass().getSimpleName(), movement, entity.noPhysics, entity.onGround(), entity.getBoundingBox());
+        }
     }
 
     @ModifyVariable(method = "move", at = @At("HEAD"), ordinal = 0, argsOnly = true)
@@ -149,6 +165,13 @@ public abstract class EntityMoveMixin {
     @Inject(method = "collide", at = @At("HEAD"))
     private void antarchy$captureCollideWorldMovement(Vec3 movement, CallbackInfoReturnable<Vec3> cir) {
         this.antarchy$collideWorldMovement = movement;
+        Entity entity = (Entity) (Object) this;
+        if (AntarchyGravityApi.isGravityInverted(entity) && !this.antarchy$loggedInvertedCollide) {
+            this.antarchy$loggedInvertedCollide = true;
+            ANTARCHY_STEP_LOGGER.warn(
+                    "Inverted collide entered: entity={} movement={} onGround={} maxUpStep={} box={}",
+                    entity.getClass().getSimpleName(), movement, entity.onGround(), entity.maxUpStep(), entity.getBoundingBox());
+        }
     }
 
     /*
@@ -239,6 +262,36 @@ public abstract class EntityMoveMixin {
         return AntarchyGravityRotationUtil.vecWorldToPlayer(worldResult, direction);
     }
 
+    /*
+     * Vanilla uses collideWithShapes directly for each step-height candidate,
+     * bypassing collideBoundingBox. At this point collide() is operating in the
+     * gravity-local frame, so leaving this call untouched makes an inverted
+     * entity test the candidate in the opposite horizontal and vertical world
+     * directions. The candidate consequently never beats the blocked movement.
+     */
+    @WrapOperation(
+            method = "collide",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/entity/Entity;collideWithShapes(Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/AABB;Ljava/util/List;)Lnet/minecraft/world/phys/Vec3;"
+            )
+    )
+    private Vec3 antarchy$collideStepCandidateInLocalFrame(
+            Vec3 localMovement,
+            AABB box,
+            List<VoxelShape> collisions,
+            Operation<Vec3> original
+    ) {
+        Entity entity = (Entity) (Object) this;
+        AntarchyGravityDirection direction = AntarchyGravityApi.getGravityDirection(entity);
+        if (!direction.isInverted()) {
+            return original.call(localMovement, box, collisions);
+        }
+        Vec3 worldMovement = AntarchyGravityRotationUtil.vecPlayerToWorld(localMovement, direction);
+        Vec3 worldResult = original.call(worldMovement, box, collisions);
+        return AntarchyGravityRotationUtil.vecWorldToPlayer(worldResult, direction);
+    }
+
     @Redirect(
             method = "collide",
             at = @At(
@@ -287,6 +340,15 @@ public abstract class EntityMoveMixin {
             return;
         }
         Vec3 worldResult = AntarchyGravityRotationUtil.vecPlayerToWorld(cir.getReturnValue(), direction);
+        Vec3 localMovement = AntarchyGravityRotationUtil.vecWorldToPlayer(this.antarchy$collideWorldMovement, direction);
+        if (!this.antarchy$loggedHorizontalBlock
+                && (localMovement.x != cir.getReturnValue().x || localMovement.z != cir.getReturnValue().z)) {
+            this.antarchy$loggedHorizontalBlock = true;
+            ANTARCHY_STEP_LOGGER.warn(
+                    "Inverted horizontal block: localMovement={} localResult={} worldMovement={} worldResult={} onGround={} maxUpStep={} box={}",
+                    localMovement, cir.getReturnValue(), this.antarchy$collideWorldMovement, worldResult,
+                    entity.onGround(), entity.maxUpStep(), entity.getBoundingBox());
+        }
         cir.setReturnValue(PortalGunCollisionHelper.resolveCollision(
                 entity,
                 entity.getBoundingBox(),

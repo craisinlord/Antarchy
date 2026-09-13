@@ -57,8 +57,7 @@ public final class MultipartNetworking {
                 return;
             }
 
-            DamageSource source = serverPlayer.level().damageSources().playerAttack(serverPlayer);
-            owner.antarchy$hurtMultipartPart(part, source, payload.damage());
+            serverPlayer.attack(part);
         });
     }
 

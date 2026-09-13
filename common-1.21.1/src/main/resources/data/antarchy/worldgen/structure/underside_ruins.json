@@ -10,7 +10,12 @@
   "biomes": "#antarchy:has_structure/underside_ruins_biomes",
   "step": "underground_structures",
   "enhanced_terrain_adaptation": {
-    "type": "integrated_api:none"
+    "type": "integrated_api:custom",
+    "carves": true,
+    "beards": true,
+    "kernel_size": 35,
+    "kernel_distance": 35,
+    "direction": "up"
   },
   "start_height": {
     "type": "minecraft:constant",

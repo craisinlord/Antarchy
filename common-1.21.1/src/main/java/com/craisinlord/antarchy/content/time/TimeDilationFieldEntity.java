@@ -114,6 +114,7 @@ public class TimeDilationFieldEntity extends Entity {
         if (this.level().isClientSide) {
             return;
         }
+        TimeDilationManager.registerActiveField(this);
         if (this.anchorId != null && this.level() instanceof ServerLevel level) {
             Entity anchor = level.getEntity(this.anchorId);
             if (anchor != null && anchor.isAlive()) {

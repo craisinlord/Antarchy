@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.entity.ant;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompat;
+import com.craisinlord.antarchy.compat.infinity.InfinityWarpResult;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.portal.RainbowPortalIgniter;
@@ -62,7 +63,8 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
             return AntTeleportHelper.teleportPlayerToDimension(player, AntarchySettings.rainbowAntNonInfinityFallbackDimension());
         }
 
-        if (!InfinityCompat.get().requestWarp(player, dimensionId)) {
+        InfinityWarpResult result = InfinityCompat.get().requestWarp(player, dimensionId);
+        if (result == InfinityWarpResult.REJECTED) {
             player.displayClientMessage(Component.translatable("message.antarchy.rainbow_ant_failed_dimension_create"), true);
             return InteractionResult.CONSUME;
         }
@@ -356,9 +358,13 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
     }
 
     private boolean teleportToInfinity(ServerPlayer player, ResourceLocation dimensionId) {
-        if (!InfinityCompat.get().requestWarp(player, dimensionId)) {
+        InfinityWarpResult result = InfinityCompat.get().requestWarp(player, dimensionId);
+        if (result == InfinityWarpResult.FAILED_GENERATION) {
             this.deleteGeneratedArtifacts(player.server, dimensionId);
-            this.markForRerollOnNextReagent();
+            player.displayClientMessage(Component.translatable("message.antarchy.rainbow_ant_failed_dimension_create"), true);
+            return false;
+        }
+        if (result == InfinityWarpResult.REJECTED) {
             player.displayClientMessage(Component.translatable("message.antarchy.rainbow_ant_failed_dimension_create"), true);
             return false;
         }
@@ -377,9 +383,7 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
                 .resolve(dimensionId.getPath());
 
         this.deletePathRecursively(datapackPath);
-        if (dimensionPath != null) {
-            this.deletePathRecursively(dimensionPath);
-        }
+        this.deletePathRecursively(dimensionPath);
     }
 
     private void deletePathRecursively(Path path) {

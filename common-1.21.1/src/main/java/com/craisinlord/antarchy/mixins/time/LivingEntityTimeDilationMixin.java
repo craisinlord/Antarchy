@@ -2,6 +2,8 @@ package com.craisinlord.antarchy.mixins.time;
 
 import com.craisinlord.antarchy.content.time.TimeDilationApi;
 import com.craisinlord.antarchy.content.time.TimeDilationManager;
+import com.craisinlord.antarchy.content.client.ContractionAfterimages;
+import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,7 +16,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class LivingEntityTimeDilationMixin {
     @Inject(method = "tickEffects", at = @At("HEAD"))
     private void antarchy$trackTemporalEffects(CallbackInfo ci) {
-        TimeDilationManager.trackPotentiallyAffected((Entity) (Object) this);
+        Entity entity = (Entity) (Object) this;
+        TimeDilationManager.trackPotentiallyAffected(entity);
+        if (entity.level().isClientSide && RoyalEffectHooks.contractedHolder() != null) {
+            ContractionAfterimages.observe((LivingEntity) entity);
+        }
     }
 
     @Inject(method = "updateSwingTime", at = @At("HEAD"), cancellable = true)

@@ -64,7 +64,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public abstract class RoyalBossEntity extends Monster implements GeoEntity, MultipartEntityOwner {
     public static final float MODEL_RENDER_SCALE = 2.0F;
-    public static final float GAMEPLAY_WIDTH = 30.0F;
+    public static final float GAMEPLAY_WIDTH = 28.0F;
     public static final float GAMEPLAY_HEIGHT = 15.0F;
 
     public enum Phase {
@@ -515,6 +515,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                 }
                 controller.tick(
                         this.beamAnchor(head),
+                        this.beamDirection(head),
                         beamTarget,
                         this.royalBeamSettings(),
                         this.royalBeamTerrainMode(head),
@@ -535,7 +536,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             if (!head.readyToAttack() || this.attackScheduler.laneBusy(this.headLane(head))
                     || target == null || !this.canAttack(target)
                     || this.distanceTo(target) < this.royalBeamMinimumRange()
-                    || this.headWithinBiteReach(head, target)) {
+                    || this.headWithinBiteReach(head, target)
+                    || !this.targetInBeamLine(head, target)) {
                 continue;
             }
             RoyalBeamSettings beamSettings = this.royalBeamSettings();
@@ -588,7 +590,6 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         int index = head.slot().ordinal();
         head.setBeamActive(false);
         head.stopShoot();
-        this.stopTriggeredAnim(head.slot().controllerName(), null);
         this.beamControllers[index].stop();
         this.entityData.set(BEAM_ACTIVE[index], false);
         this.entityData.set(BEAM_ELEMENT[index], RoyalBeamElement.GENERIC.ordinal());
@@ -656,7 +657,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                 ? new Vec3(-dx / horizontalDistance, 0.0D, -dz / horizontalDistance)
                 : this.getViewVector(1.0F).multiply(-1.0D, 0.0D, -1.0D).normalize();
         double standoff = Math.max(this.getBbWidth() * 0.55D,
-                BEAM_MUZZLE_FORWARD - this.biteReach() * 0.65D);
+                BEAM_MUZZLE_FORWARD - this.biteReach() * 0.65D + 1.0D);
         Vec3 wanted = target.position().add(awayFromTarget.scale(standoff));
         boolean atStandoff = this.position().multiply(1.0D, 0.0D, 1.0D)
                 .distanceToSqr(wanted.multiply(1.0D, 0.0D, 1.0D)) <= 4.0D;
@@ -827,6 +828,10 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         return this.attackScheduler.start(id, lane, cooldownTicks, windupTicks, activeTicks, protectedRecovery, action);
     }
 
+    protected int animationRecovery(int animationTicks, int windupTicks, int activeTicks, int recoveryTicks) {
+        return Math.max(recoveryTicks, animationTicks - Math.max(0, windupTicks) - Math.max(1, activeTicks));
+    }
+
     private void applyBiteHit(RoyalHead head) {
         if (this.level().isClientSide) {
             return;
@@ -889,6 +894,26 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         return beamAnchor(head.slot(), this.getX(), this.getY(), this.getZ(), this.getYRot());
     }
 
+    protected Vec3 beamDirection(RoyalHead head) {
+        float yaw = this.getYRot() * Mth.DEG_TO_RAD;
+        Vec3 localDirection = new Vec3(-Math.sin(yaw), 0.0D, Math.cos(yaw));
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(localDirection,
+                AntarchyGravityApi.getGravityDirection(this)).normalize();
+    }
+
+    private boolean targetInBeamLine(RoyalHead head, LivingEntity target) {
+        Vec3 origin = this.beamAnchor(head);
+        Vec3 direction = this.beamDirection(head);
+        Vec3 toTarget = target.getEyePosition().subtract(origin);
+        double forwardDistance = toTarget.dot(direction);
+        if (forwardDistance <= 0.0D) {
+            return false;
+        }
+        Vec3 perpendicular = toTarget.subtract(direction.scale(forwardDistance));
+        double tolerance = Math.max(1.5D, target.getBbWidth() * 1.5D);
+        return perpendicular.lengthSqr() <= tolerance * tolerance;
+    }
+
     private Vec3 beamAnchor(RoyalHead.Slot slot, double x, double y, double z, float yaw) {
         double yawRadians = yaw * Mth.DEG_TO_RAD;
         Vec3 forward = new Vec3(-Math.sin(yawRadians), 0.0D, Math.cos(yawRadians));
@@ -936,6 +961,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             this.setRoyalFlying(false);
             this.getNavigation().stop();
             this.setDeltaMovement(Vec3.ZERO);
+            this.setXRot(0.0F);
+            this.setYHeadRot(this.getYRot());
+            this.yBodyRot = this.getYRot();
         }
         super.die(damageSource);
     }
@@ -967,6 +995,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     protected void tickDeath() {
         this.deathTime++;
         this.setNoGravity(false);
+        this.setXRot(0.0F);
+        this.setYHeadRot(this.getYRot());
+        this.yBodyRot = this.getYRot();
         Vec3 movement = this.getDeltaMovement();
         if (this.onGround()) {
             this.setDeltaMovement(movement.x * 0.6D, 0.0D, movement.z * 0.6D);

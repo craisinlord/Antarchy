@@ -19,14 +19,29 @@ import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
 
 public final class TimeDilationManager {
     private static final Map<ServerLevel, TrackingState> TRACKING = new WeakHashMap<>();
+    private static final Map<ServerLevel, Set<TimeDilationFieldEntity>> ACTIVE_FIELDS = new WeakHashMap<>();
 
     private TimeDilationManager() {
     }
 
     public static void tickServer(MinecraftServer server) {
         for (ServerLevel level : server.getAllLevels()) {
-            List<TimeDilationFieldEntity> fields = collectFields(level);
-            TrackingState tracking = TRACKING.computeIfAbsent(level, ignored -> new TrackingState());
+            Set<TimeDilationFieldEntity> activeFields = ACTIVE_FIELDS.get(level);
+            if (activeFields != null) {
+                activeFields.removeIf(field -> !field.isAlive() || field.isRemoved());
+                if (activeFields.isEmpty()) {
+                    ACTIVE_FIELDS.remove(level);
+                    activeFields = null;
+                }
+            }
+            TrackingState tracking = TRACKING.get(level);
+            if (activeFields == null && (tracking == null || tracking.entities.isEmpty())) {
+                continue;
+            }
+            List<TimeDilationFieldEntity> fields = activeFields == null ? List.of() : List.copyOf(activeFields);
+            if (tracking == null) {
+                tracking = TRACKING.computeIfAbsent(level, ignored -> new TrackingState());
+            }
             discoverFieldEntities(level, fields, tracking);
             syncFieldSnapshots(level, fields, tracking);
             updateEntities(level, fields, tracking);
@@ -39,6 +54,12 @@ public final class TimeDilationManager {
         }
     }
 
+    public static void registerActiveField(TimeDilationFieldEntity field) {
+        if (field.level() instanceof ServerLevel level) {
+            ACTIVE_FIELDS.computeIfAbsent(level, ignored -> Collections.newSetFromMap(new IdentityHashMap<>())).add(field);
+        }
+    }
+
     public static void trackPotentiallyAffected(Entity entity) {
         if (!(entity.level() instanceof ServerLevel level) || entity instanceof TimeDilationFieldEntity) {
             return;
@@ -46,12 +67,39 @@ public final class TimeDilationManager {
         if (entity instanceof TimeDilationEntityAccess access
                 && Math.abs(access.antarchy$getTimeDilationRate() - TimeDilationMath.NORMAL_RATE) < 0.001D
                 && Math.abs(access.antarchy$getInheritedTimeDilationRate() - TimeDilationMath.NORMAL_RATE) < 0.001D
+                && Math.abs(TimeDilationApi.getVehicleRate(entity) - TimeDilationMath.NORMAL_RATE) < 0.001D
                 && (!(entity instanceof net.minecraft.world.entity.LivingEntity living)
                 || ((RoyalEffectHooks.dilatedHolder() == null || !living.hasEffect(RoyalEffectHooks.dilatedHolder()))
                 && (RoyalEffectHooks.contractedHolder() == null || !living.hasEffect(RoyalEffectHooks.contractedHolder()))))) {
             return;
         }
         TRACKING.computeIfAbsent(level, ignored -> new TrackingState()).entities.add(entity);
+    }
+
+    public static void resyncPersistentEffects(ServerPlayer player) {
+        if (!(player instanceof TimeDilationEntityAccess access)) {
+            return;
+        }
+
+        double targetRate = TimeDilationMath.NORMAL_RATE;
+        if (RoyalEffectHooks.dilatedHolder() != null) {
+            var effect = player.getEffect(RoyalEffectHooks.dilatedHolder());
+            if (effect != null) {
+                targetRate = Math.min(targetRate, DilatedMobEffect.rateForAmplifier(effect.getAmplifier()));
+            }
+        }
+        if (RoyalEffectHooks.contractedHolder() != null) {
+            var effect = player.getEffect(RoyalEffectHooks.contractedHolder());
+            if (effect != null && targetRate >= TimeDilationMath.NORMAL_RATE) {
+                targetRate = Math.max(targetRate, ContractedMobEffect.rateForAmplifier(effect.getAmplifier()));
+            }
+        }
+
+        if (Math.abs(targetRate - TimeDilationMath.NORMAL_RATE) >= 0.001D) {
+            access.antarchy$setTimeDilationRate(targetRate);
+            TimeDilationApi.syncEntityRate(player, targetRate);
+        }
+        trackPotentiallyAffected(player);
     }
 
     private static void syncFieldSnapshots(ServerLevel level, List<TimeDilationFieldEntity> fields, TrackingState tracking) {
@@ -69,16 +117,6 @@ public final class TimeDilationManager {
         for (ServerPlayer player : level.players()) {
             TimeDilationApi.syncFields(player, snapshots);
         }
-    }
-
-    private static List<TimeDilationFieldEntity> collectFields(ServerLevel level) {
-        List<TimeDilationFieldEntity> fields = new ArrayList<>();
-        for (Entity entity : level.getAllEntities()) {
-            if (entity instanceof TimeDilationFieldEntity field && field.isAlive()) {
-                fields.add(field);
-            }
-        }
-        return fields;
     }
 
     private static void discoverFieldEntities(ServerLevel level, List<TimeDilationFieldEntity> fields, TrackingState tracking) {
@@ -128,6 +166,12 @@ public final class TimeDilationManager {
                 }
             }
             double inheritedRate = access.antarchy$getInheritedTimeDilationRate();
+            double vehicleRate = TimeDilationApi.getVehicleRate(entity);
+            if (vehicleRate < TimeDilationMath.NORMAL_RATE) {
+                inheritedRate = Math.min(inheritedRate, vehicleRate);
+            } else {
+                inheritedRate = Math.max(inheritedRate, vehicleRate);
+            }
             if (entity instanceof Projectile projectile && projectile.getOwner() != null) {
                 double ownerRate = TimeDilationApi.getRate(projectile.getOwner());
                 inheritedRate = ownerRate < TimeDilationMath.NORMAL_RATE

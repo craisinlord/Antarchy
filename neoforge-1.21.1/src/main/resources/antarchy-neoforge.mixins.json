@@ -12,6 +12,7 @@
     "infinity.AmendmentRareOresMixin",
     "infinity.ConfigGenInvocationMixin",
     "infinity.PortalCreatorMixin",
+    "infinity.WarpLogicMixin",
     "level.ClientLevelPartEntitiesAccessor",
     "level.ServerLevelPartEntitiesAccessor"
   ],

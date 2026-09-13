@@ -5,6 +5,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -16,6 +19,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.function.Supplier;
 
@@ -58,6 +62,25 @@ public final class UnderVaultBlock extends VaultBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new UnderVaultBlockEntity(pos, state, blockEntityType);
+    }
+
+    @Override
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+                                           net.minecraft.world.entity.player.Player player, InteractionHand hand,
+                                           BlockHitResult hitResult) {
+        if (stack.isEmpty() || state.getValue(STATE) != net.minecraft.world.level.block.entity.vault.VaultState.ACTIVE) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+        if (level instanceof ServerLevel serverLevel
+                && level.getBlockEntity(pos) instanceof UnderVaultBlockEntity underVault) {
+            net.minecraft.world.level.block.entity.vault.VaultBlockEntity.Server.tryInsertKey(
+                    serverLevel, pos, state, underVault.getVaultData().getConfig(),
+                    underVault.getVaultData().getServerData(), underVault.getVaultData().getSharedData(),
+                    player, stack);
+            return ItemInteractionResult.SUCCESS;
+        }
+        return level.isClientSide ? ItemInteractionResult.CONSUME
+                : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override

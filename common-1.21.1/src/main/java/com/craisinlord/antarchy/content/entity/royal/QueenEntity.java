@@ -76,6 +76,7 @@ public class QueenEntity extends RoyalBossEntity {
     private int blackHoleCooldownTicks;
     private final int[] dreamFireballCooldownTicks = new int[3];
     private int idleWanderCooldownTicks;
+    private boolean manticoreAnimationPending;
     private final RoyalEffectController royalEffects = new RoyalEffectController();
     private final Map<UUID, Vec3> frozenVelocities = new HashMap<>();
     private long naturalTrailSiteId = Long.MIN_VALUE;
@@ -229,6 +230,7 @@ public class QueenEntity extends RoyalBossEntity {
             this.tickIdleWander();
         }
         this.tickManticoreSummon();
+        this.tickPendingManticoreAnimation();
         this.tickQueenAbilities();
         this.tickDreamFireballs();
         this.tickFinalAcceleration();
@@ -370,10 +372,27 @@ public class QueenEntity extends RoyalBossEntity {
                 ? this.cooldown(Math.max(20, AntarchySettings.queenManticoreSummonCooldownTicks()))
                 : FAILED_SUMMON_RETRY_TICKS;
         if (spawned > 0) {
-            this.triggerAnim("body_action", "minion_spawn");
+            this.manticoreAnimationPending = true;
             this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.8F + this.random.nextFloat() * 0.12F);
             serverLevel.sendParticles(ParticleTypes.PORTAL, this.getX(), this.getY() + 2.0D, this.getZ(),
                     36, 3.0D, 2.0D, 3.0D, 0.15D);
+        }
+    }
+
+    private void tickPendingManticoreAnimation() {
+        if (!this.manticoreAnimationPending
+                || !this.attackScheduler.ready("manticore_summon_animation", RoyalAttackLane.BODY)) {
+            return;
+        }
+        if (this.beginRoyalAttack("manticore_summon_animation", RoyalAttackLane.BODY, 1, 0, 1,
+                this.animationRecovery(59, 0, 1, 0),
+                new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                    @Override public void onStart() {
+                        QueenEntity.this.manticoreAnimationPending = false;
+                        QueenEntity.this.triggerAnim("body_action", "minion_spawn");
+                    }
+                })) {
+            this.manticoreAnimationPending = false;
         }
     }
 
@@ -387,18 +406,26 @@ public class QueenEntity extends RoyalBossEntity {
         towardTarget = towardTarget.normalize();
         Vec3 behindTarget = target.position().add(towardTarget.scale(8.0D));
         Vec3 lateral = new Vec3(-towardTarget.z, 0.0D, towardTarget.x);
+        float tearYaw = (float) Math.toDegrees(Math.atan2(-towardTarget.x, towardTarget.z));
         double vertical = AntarchyGravityApi.isGravityInverted(this) ? -2.0D : 2.0D;
         for (int i = 0; i < pairs; i++) {
-            double angle = this.random.nextDouble() * Mth.TWO_PI;
-            double distance = Math.max(8.0D, AntarchySettings.queenManticoreSummonRange() * 0.65D);
-            double spread = (i - (pairs - 1) * 0.5D) * 5.0D;
-            Vec3 pairCenter = behindTarget.add(lateral.scale(spread)).add(0.0D, vertical, 0.0D);
-            Vec3 firstPos = pairCenter.add(lateral.scale(3.0D));
-            Vec3 secondPos = pairCenter.add(lateral.scale(-3.0D));
+            double forwardScatter = 3.0D + this.random.nextDouble() * 9.0D;
+            double lateralScatter = (this.random.nextDouble() * 2.0D - 1.0D) * 11.0D;
+            double heightScatter = (this.random.nextDouble() * 2.0D - 1.0D) * 3.0D;
+            Vec3 pairCenter = behindTarget
+                    .add(towardTarget.scale(forwardScatter))
+                    .add(lateral.scale(lateralScatter))
+                    .add(0.0D, vertical + heightScatter, 0.0D);
+            double pairAngle = this.random.nextDouble() * Mth.TWO_PI;
+            Vec3 pairDirection = towardTarget.scale(Math.cos(pairAngle))
+                    .add(lateral.scale(Math.sin(pairAngle)));
+            double pairSeparation = 3.5D + this.random.nextDouble() * 3.0D;
+            Vec3 firstPos = pairCenter.add(pairDirection.scale(pairSeparation));
+            Vec3 secondPos = pairCenter.add(pairDirection.scale(-pairSeparation));
             DimensionalTearEntity first = DimensionalTearEntity.createQueenManticoreTear(level, firstPos,
-                    (float) Math.toDegrees(angle), 240, this.getUUID(), Math.min(3, count));
+                    tearYaw, 240, this.getUUID(), Math.min(3, count));
             DimensionalTearEntity second = DimensionalTearEntity.createQueenManticoreTear(level, secondPos,
-                    (float) Math.toDegrees(angle + Math.PI), 240, this.getUUID(), Math.min(3, count));
+                    tearYaw, 240, this.getUUID(), Math.min(3, count));
             first.linkTo(second);
             second.linkTo(first);
             level.addFreshEntity(first);
@@ -446,8 +473,12 @@ public class QueenEntity extends RoyalBossEntity {
             default -> ACCELERATION_COOLDOWN;
         };
         RoyalAttackLane lane = "black_hole".equals(selected) ? RoyalAttackLane.CENTER_HEAD : RoyalAttackLane.HAZARD;
+        int actionWindup = 10;
+        int actionRecovery = "momentum_lock".equals(selected)
+                ? this.animationRecovery(55, actionWindup, 1, 14)
+                : this.animationRecovery(25, actionWindup, 1, 14);
         if (!this.beginRoyalAttack(selected, lane, this.cooldown(cooldown),
-                10, 1, 14, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                actionWindup, 1, actionRecovery, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
                     @Override public void onStart() {
                         if ("gravity_stomp".equals(selected)) {
                             QueenEntity.this.triggerAnim("body_action", "stomp");

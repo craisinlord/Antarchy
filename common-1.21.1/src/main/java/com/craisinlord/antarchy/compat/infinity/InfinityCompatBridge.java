@@ -22,8 +22,8 @@ public interface InfinityCompatBridge {
         return getRandomDimensionId(random);
     }
 
-    default boolean requestWarp(ServerPlayer player, ResourceLocation dimensionId) {
-        return false;
+    default InfinityWarpResult requestWarp(ServerPlayer player, ResourceLocation dimensionId) {
+        return InfinityWarpResult.REJECTED;
     }
 
     /**

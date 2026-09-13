@@ -143,6 +143,8 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassPlayerDeath);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassRespawn);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassLogin);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleTimeDilationLogin);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleTimeDilationRespawn);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleCavarynHordeKill);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleCavarynHordeBlockBreak);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickCavarynHordes);
@@ -213,7 +215,8 @@ public final class AntarchyNeoForgeEvents {
                         && tickEnd > 0L
                         && now - tickEnd >= SERVER_IDLE_BUSY_WARN_NANOS
                         && state != Thread.State.WAITING
-                        && state != Thread.State.TIMED_WAITING;
+                        && state != Thread.State.TIMED_WAITING
+                        && !antarchy$isServerThreadIdleWait(tickThread);
                 if (idleBusy) {
                     antarchy$dumpServerThreadWatchdog(
                             "server thread busy outside active tick",
@@ -236,6 +239,18 @@ public final class AntarchyNeoForgeEvents {
         for (StackTraceElement element : tickThread.getStackTrace()) {
             Antarchy.LOGGER.error("[antarchy-watchdog]   at {}", element);
         }
+    }
+
+    private static boolean antarchy$isServerThreadIdleWait(Thread tickThread) {
+        for (StackTraceElement element : tickThread.getStackTrace()) {
+            String method = element.getMethodName();
+            if (method.equals("waitUntilNextTick")
+                    || method.equals("waitForTasks")
+                    || method.equals("managedBlock")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     static void onVillagerTrades(VillagerTradesEvent event) {
@@ -381,6 +396,18 @@ public final class AntarchyNeoForgeEvents {
         }
         if (event.getTarget() instanceof ServerPlayer trackedPlayer && event.getEntity() instanceof ServerPlayer trackingPlayer) {
             TigerEyeCamouflageSync.syncTo(trackingPlayer, trackedPlayer);
+        }
+    }
+
+    static void handleTimeDilationLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            TimeDilationManager.resyncPersistentEffects(player);
+        }
+    }
+
+    static void handleTimeDilationRespawn(PlayerEvent.PlayerRespawnEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            TimeDilationManager.resyncPersistentEffects(player);
         }
     }
 
@@ -561,15 +588,6 @@ public final class AntarchyNeoForgeEvents {
         }
 
         if (existingInverted == null || existingInverted.getDuration() <= ANTIMETAL_INVERTED_REFRESH_THRESHOLD_TICKS) {
-            if (livingEntity instanceof Player || livingEntity.level().dimension().location().toString().equals("antarchy:thoraxis")) {
-                Antarchy.LOGGER.info(
-                        "[antarchy-gravity] overhead antimetal applying inverted effect targetType={} uuid={} pos=({}, {}, {}) dim={} existingDuration={} gameTime={}",
-                        livingEntity.getType(), livingEntity.getUUID(), livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(),
-                        livingEntity.level().dimension().location(),
-                        existingInverted != null ? existingInverted.getDuration() : -1,
-                        gameTime
-                );
-            }
             livingEntity.addEffect(new MobEffectInstance(AntarchyNeoforgeMisc.INVERTED, ANTIMETAL_INVERTED_REFRESH_TICKS, 0, false, false, false));
             spawnAntimetalInversionParticles(livingEntity);
         }

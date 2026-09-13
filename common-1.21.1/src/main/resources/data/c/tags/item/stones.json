@@ -1,7 +1,6 @@
 {
   "replace": false,
   "values": [
-    "minecraft:slime_ball",
-    "antarchy:flytrap_goo"
+    "minecraft:slime_ball"
   ]
 }

@@ -33,19 +33,18 @@ public final class ContractionAfterimages {
                 iterator.remove();
             }
         }
-        if (holder == null) {
+    }
+
+    public static void observe(LivingEntity living) {
+        Holder<MobEffect> holder = RoyalEffectHooks.contractedHolder();
+        if (holder == null || living.isInvisible() || !living.hasEffect(holder)) {
             return;
         }
-
-        for (Entity entity : level.entitiesForRendering()) {
-            if (!(entity instanceof LivingEntity living) || living.isInvisible() || !living.hasEffect(holder)) {
-                continue;
-            }
-            Deque<Sample> samples = HISTORY.computeIfAbsent(living, ignored -> new ArrayDeque<>());
-            samples.addFirst(new Sample(living, now));
-            while (samples.size() > MAX_SAMPLES) {
-                samples.removeLast();
-            }
+        int now = (int) (living.level().getGameTime() & 0x7fffffffL);
+        Deque<Sample> samples = HISTORY.computeIfAbsent(living, ignored -> new ArrayDeque<>());
+        samples.addFirst(new Sample(living, now));
+        while (samples.size() > MAX_SAMPLES) {
+            samples.removeLast();
         }
     }
 

@@ -163,4 +163,9 @@ public final class ClientTimeDilationTicker {
     public static void applyFields(List<TimeDilationFieldSnapshot> fields) {
         activeFields = List.copyOf(fields);
     }
+
+    public static boolean hasActiveDilation() {
+        return !activeFields.isEmpty()
+                || com.craisinlord.antarchy.content.time.TimeDilationApi.hasSyncedClientRates();
+    }
 }
