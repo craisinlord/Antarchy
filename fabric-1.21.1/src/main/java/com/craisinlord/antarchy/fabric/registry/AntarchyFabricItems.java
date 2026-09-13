@@ -86,6 +86,7 @@ public final class AntarchyFabricItems {
 
 
     public static final DeferredItem<Item> NIGHTMARE_SCALE = ITEMS.registerSimpleItem("nightmare_scale", new Item.Properties().rarity(Rarity.RARE).fireResistant());
+    public static final DeferredItem<Item> FLOPPY_DISK = ITEMS.register("floppy_disk", () -> new com.craisinlord.antarchy.content.item.FloppyDiskItem(new Item.Properties()));
 
     public static final DeferredItem<Item> MUSIC_DISC_UNDERSIDE = ITEMS.registerSimpleItem("music_disc_underside",
             new Item.Properties().stacksTo(1).rarity(Rarity.RARE)
@@ -99,6 +100,7 @@ public final class AntarchyFabricItems {
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DUPLICATOR_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.DUPLICATOR_LOG);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> COMPUTER_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.COMPUTER);
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.OURANWOOD_LOG);

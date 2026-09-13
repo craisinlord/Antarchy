@@ -381,6 +381,7 @@ public final class AntarchyNeoForgeEvents {
 
     static void registerReloadListeners(AddReloadListenerEvent event) {
         event.addListener(new DrTrayaurusTradeManager());
+        event.addListener(com.craisinlord.antarchy.content.guide.ComputerGuideData.instance());
     }
     static void handleStartTracking(PlayerEvent.StartTracking event) {
         if (event.getTarget().level().isClientSide()) {

@@ -102,6 +102,10 @@ public final class AntarchyFabricClientBootstrap {
                 (net.minecraft.world.level.block.entity.BlockEntityType) AntarchyFabricBlocks.UNDERVAULT_BLOCK_ENTITY.get(),
                 (BlockEntityRendererProvider) UnderVaultRenderer::new
         );
+        BlockEntityRendererRegistry.register(
+                (net.minecraft.world.level.block.entity.BlockEntityType) AntarchyFabricBlocks.COMPUTER_BLOCK_ENTITY.get(),
+                (BlockEntityRendererProvider) ComputerRenderer::new
+        );
 
         EntityRendererRegistry.register(AntarchyFabricEntities.EASTER_BUNNY.get(), context -> withTemporalGeoLayer(new EasterBunnyRenderer(context)));
         EntityRendererRegistry.register(AntarchyFabricEntities.FLYING_SQUIRREL.get(), context -> withTemporalGeoLayer(new FlyingSquirrelRenderer(context)));

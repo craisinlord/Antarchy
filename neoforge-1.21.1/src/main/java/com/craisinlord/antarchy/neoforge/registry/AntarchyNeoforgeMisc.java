@@ -86,6 +86,12 @@ public final class AntarchyNeoforgeMisc {
                             .persistent(com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant.CODEC)
                             .networkSynchronized(com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant.STREAM_CODEC)
                             .build());
+    public static final DeferredHolder<net.minecraft.core.component.DataComponentType<?>, net.minecraft.core.component.DataComponentType<net.minecraft.resources.ResourceLocation>> FLOPPY_DISK_COMPONENT =
+            DATA_COMPONENT_TYPES.register("floppy_disk",
+                    () -> net.minecraft.core.component.DataComponentType.<net.minecraft.resources.ResourceLocation>builder()
+                            .persistent(net.minecraft.resources.ResourceLocation.CODEC)
+                            .networkSynchronized(net.minecraft.resources.ResourceLocation.STREAM_CODEC)
+                            .build());
     public static final DeferredHolder<net.minecraft.core.component.DataComponentType<?>, net.minecraft.core.component.DataComponentType<net.minecraft.util.Unit>> AMERICAN =
             DATA_COMPONENT_TYPES.register("american",
                     () -> net.minecraft.core.component.DataComponentType.<net.minecraft.util.Unit>builder()

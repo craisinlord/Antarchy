@@ -545,9 +545,9 @@ public final class AntarchySettings {
     private static double manticoreHealth = 40.0D;
     private static double manticoreAttackDamage = 7.0D;
     private static int manticoreStingPoisonTicks = 100;
-    private static int queenManticoreCap = 15;
-    private static int queenManticoreSummonCooldownTicks = 600;
-    private static int queenManticoreSummonCount = 3;
+    private static int queenManticoreCap = 6;
+    private static int queenManticoreSummonCooldownTicks = 800;
+    private static int queenManticoreSummonCount = 2;
     private static double queenManticoreSummonRange = 24.0D;
     private static double queenBeamDamage = 45.0D;
     private static double queenBeamRange = 100.0D;

@@ -2,6 +2,8 @@ package com.craisinlord.antarchy.neoforge.client;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.GoopedHudRenderer;
+import com.craisinlord.antarchy.content.client.AntarchyClientHooks;
+import com.craisinlord.antarchy.content.client.screen.ComputerScreen;
 import com.craisinlord.antarchy.content.client.HordeHudRenderer;
 import com.craisinlord.antarchy.content.client.TigerEyeClientHooks;
 import com.craisinlord.antarchy.content.client.hud.BloodglassHudRenderer;
@@ -99,6 +101,7 @@ public final class AntarchyNeoForgeClient {
         event.registerBlockEntityRenderer(AntarchyNeoforgeBlocks.CRITTER_CAGE_BLOCK_ENTITY.get(), CritterCageRenderer::new);
         event.registerBlockEntityRenderer(AntarchyNeoforgeBlocks.UNDERTRIAL_SPAWNER_BLOCK_ENTITY.get(), UndertrialSpawnerRenderer::new);
         event.registerBlockEntityRenderer(AntarchyNeoforgeBlocks.UNDERVAULT_BLOCK_ENTITY.get(), UnderVaultRenderer::new);
+        event.registerBlockEntityRenderer(AntarchyNeoforgeBlocks.COMPUTER_BLOCK_ENTITY.get(), ComputerRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.EASTER_BUNNY.get(), context -> withParalyzedGeoLayer(new EasterBunnyRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.FLYING_SQUIRREL.get(), context -> withParalyzedGeoLayer(new FlyingSquirrelRenderer(context)));
         event.registerEntityRenderer(AntarchyNeoforgeEntites.CATERPILLAR.get(), context -> withParalyzedGeoLayer(new CaterpillarRenderer(context)));
@@ -595,6 +598,7 @@ public final class AntarchyNeoForgeClient {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
+            AntarchyClientHooks.setComputerOpener(pos -> Minecraft.getInstance().setScreen(new ComputerScreen(pos)));
             TigerEyeClientHooks.setCamouflageKeyTextSupplier(() -> AntarchyKeyBindings.TIGERS_EYE_CAMOUFLAGE.getTranslatedKeyMessage());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.UNDERTRIAL_SPAWNER.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.UNDERVAULT.get(), RenderType.cutout());
@@ -709,6 +713,7 @@ public final class AntarchyNeoForgeClient {
 
     @SubscribeEvent
     public static void registerClientReloadListeners(RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(com.craisinlord.antarchy.content.guide.ComputerGuideData.instance());
         event.registerReloadListener(new net.minecraft.server.packs.resources.SimplePreparableReloadListener<Void>() {
             @Override
             protected Void prepare(net.minecraft.server.packs.resources.ResourceManager resourceManager, net.minecraft.util.profiling.ProfilerFiller profiler) {

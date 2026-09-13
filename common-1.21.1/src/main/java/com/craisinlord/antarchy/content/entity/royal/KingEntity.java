@@ -93,6 +93,10 @@ public class KingEntity extends RoyalBossEntity {
     private static final double TREE_RETURN_RELEASE_RADIUS = 144.0D;
     private static final double TREE_ORBIT_ANGLE_STEP = 0.014D;
     private static final int TREE_ORBIT_PATH_SAMPLES = 16;
+    private static final double KING_FOLLOW_RANGE = 192.0D;
+    private static final double COME_NO_CLOSER_RADIUS = 16.0D;
+    private static final int COME_NO_CLOSER_PARTICLE_INTERVAL = 4;
+    private static final int COME_NO_CLOSER_PARTICLE_COUNT = 40;
 
     @Nullable
     private Vec3 patrolCenter;
@@ -147,7 +151,13 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return createBaseAttributes(AntarchySettings.kingHealth(), AntarchySettings.kingAttackDamage());
+        return createBaseAttributes(AntarchySettings.kingHealth(), AntarchySettings.kingAttackDamage())
+                .add(net.minecraft.world.entity.ai.attributes.Attributes.FOLLOW_RANGE, KING_FOLLOW_RANGE);
+    }
+
+    @Override
+    protected int maxConcurrentHeadAttacks(Phase phase) {
+        return phase.maxConcurrentHeadAttacks();
     }
 
     public void setTreePatrolHome(Vec3 center, double minimumY, double maximumY, double angle) {
@@ -371,6 +381,7 @@ public class KingEntity extends RoyalBossEntity {
         if (this.level().isClientSide) {
             return;
         }
+        this.tickComeNoCloserIndicator();
         this.tickRoyalPunishment();
         this.tickPendingExileAnimation();
         long gameTime = this.level().getGameTime();
@@ -423,6 +434,21 @@ public class KingEntity extends RoyalBossEntity {
             double pz = this.patrolCenter.z + Math.sin(angle) * radius;
             double py = this.groundYBelow(px, pz) + FLYING_PREFERRED_HOVER + this.random.nextDouble() * 5.0D;
             this.getMoveControl().setWantedPosition(px, py, pz, 1.0D);
+        }
+    }
+
+    private void tickComeNoCloserIndicator() {
+        if (!(this.activeDecree instanceof ComeNoCloserDecree)
+                || this.tickCount % COME_NO_CLOSER_PARTICLE_INTERVAL != 0
+                || !(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        for (int index = 0; index < COME_NO_CLOSER_PARTICLE_COUNT; index++) {
+            double angle = (Math.PI * 2.0D * index) / COME_NO_CLOSER_PARTICLE_COUNT;
+            double x = this.getX() + Math.cos(angle) * COME_NO_CLOSER_RADIUS;
+            double z = this.getZ() + Math.sin(angle) * COME_NO_CLOSER_RADIUS;
+            serverLevel.sendParticles(ParticleTypes.END_ROD, x, this.getY() + 0.25D, z,
+                    1, 0.0D, 0.0D, 0.0D, 0.0D);
         }
     }
 

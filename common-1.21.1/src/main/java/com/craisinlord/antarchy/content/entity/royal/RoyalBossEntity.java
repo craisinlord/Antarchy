@@ -276,6 +276,16 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         return 1.3D;
     }
 
+    /** Allows a boss to tune its head-bite concurrency without changing the other royal boss. */
+    protected int maxConcurrentHeadAttacks(Phase phase) {
+        return phase.maxConcurrentHeadAttacks();
+    }
+
+    /** Allows a boss to tune bite pacing without changing the other royal boss. */
+    protected int biteCooldownTicks(Phase phase) {
+        return Math.max(10, Mth.floor(AntarchySettings.royalBossBiteCooldownTicks() * phase.cooldownScale()));
+    }
+
     public String geoNameForRender() {
         return this.geoName();
     }
@@ -472,7 +482,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         }
 
         for (RoyalHead head : this.heads) {
-            if (activeHeadAttacks >= phase.maxConcurrentHeadAttacks()) {
+            if (activeHeadAttacks >= this.maxConcurrentHeadAttacks(phase)) {
                 break;
             }
             if (!head.readyToAttack() || this.attackScheduler.laneBusy(this.headLane(head))) {
@@ -810,7 +820,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     private void startBite(RoyalHead head, Phase phase) {
-        int cooldown = Math.max(10, Mth.floor(AntarchySettings.royalBossBiteCooldownTicks() * phase.cooldownScale()));
+        int cooldown = this.biteCooldownTicks(phase);
         if (!this.beginRoyalAttack("bite_" + head.slot().name(), headLane(head), cooldown,
                 BITE_HIT_TICK, 1, BITE_DURATION_TICKS - BITE_HIT_TICK,
                 new RoyalAttackScheduler.Action() {

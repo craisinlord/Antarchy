@@ -92,6 +92,8 @@ public final class AntarchyNeoforgeItems {
             () -> Ingredient.of(AntarchyNeoforgeItems.QUEEN_SCALE.get())
     );
 
+    public static final DeferredItem<Item> FLOPPY_DISK = ITEMS.register("floppy_disk", () -> new com.craisinlord.antarchy.content.item.FloppyDiskItem(new Item.Properties()));
+
     public static final DeferredItem<Item> NIGHTMARE_SCALE = ITEMS.registerSimpleItem("nightmare_scale", new Item.Properties().rarity(Rarity.RARE).fireResistant());
 
     public static final DeferredItem<Item> MUSIC_DISC_UNDERSIDE = ITEMS.registerSimpleItem("music_disc_underside",
@@ -204,6 +206,7 @@ public final class AntarchyNeoforgeItems {
 
     // Block items
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DUPLICATOR_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DUPLICATOR_LOG);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> COMPUTER_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.COMPUTER);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_LOG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_WOOD);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_OURANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_OURANWOOD_LOG);

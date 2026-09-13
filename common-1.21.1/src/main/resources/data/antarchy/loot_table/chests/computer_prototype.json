@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:floppy_disk",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_components",
+              "components": {
+                "antarchy:floppy_disk": "antarchy:chronosphere"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

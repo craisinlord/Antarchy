@@ -473,6 +473,10 @@ public class AntarchyNeoforge {
         AntarchyObjects.setCookedCorndog(() -> AntarchyNeoforgeItems.COOKED_CORNDOG.get());
         AntarchyObjects.setGlimmerBottle(() -> AntarchyNeoforgeItems.GLIMMER_BOTTLE.get());
         AntarchyObjects.setGlimmerVariantComponent(() -> AntarchyNeoforgeMisc.GLIMMER_VARIANT.get());
+        AntarchyObjects.setFloppyDiskComponent(() -> AntarchyNeoforgeMisc.FLOPPY_DISK_COMPONENT.get());
+        AntarchyObjects.setFloppyDisk(() -> AntarchyNeoforgeItems.FLOPPY_DISK.get());
+        AntarchyObjects.setComputer(() -> AntarchyNeoforgeBlocks.COMPUTER.get());
+        AntarchyObjects.setComputerBlockEntity(() -> AntarchyNeoforgeBlocks.COMPUTER_BLOCK_ENTITY.get());
         AntarchyObjects.setAmericanComponent(() -> AntarchyNeoforgeMisc.AMERICAN.get());
         AntarchyObjects.setLumen(() -> AntarchyNeoforgeMisc.LUMEN.get());
         AntarchyObjects.setFlowingLumen(() -> AntarchyNeoforgeMisc.FLOWING_LUMEN.get());

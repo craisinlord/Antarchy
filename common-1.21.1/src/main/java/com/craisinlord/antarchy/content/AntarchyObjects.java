@@ -206,6 +206,16 @@ public final class AntarchyObjects {
     public static Supplier<net.minecraft.core.component.DataComponentType<com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant>> GLIMMER_VARIANT_COMPONENT =
             (Supplier<net.minecraft.core.component.DataComponentType<com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant>>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.ResourceLocation>> FLOPPY_DISK_COMPONENT =
+            (Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.ResourceLocation>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Item> FLOPPY_DISK = (Supplier<Item>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> COMPUTER = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.ComputerBlockEntity>> COMPUTER_BLOCK_ENTITY =
+            (Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.ComputerBlockEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<MenuType<com.craisinlord.antarchy.content.menu.DorrieInventoryMenu>> DORRIE_INVENTORY_MENU = (Supplier<MenuType<com.craisinlord.antarchy.content.menu.DorrieInventoryMenu>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<MenuType<com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu>> ROYAL_JUDGMENT_MENU = (Supplier<MenuType<com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu>>) UNBOUND;
@@ -895,6 +905,22 @@ public final class AntarchyObjects {
 
     public static void setGlimmerVariantComponent(Supplier<net.minecraft.core.component.DataComponentType<com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant>> supplier) {
         GLIMMER_VARIANT_COMPONENT = supplier;
+    }
+
+    public static void setFloppyDiskComponent(Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.ResourceLocation>> supplier) {
+        FLOPPY_DISK_COMPONENT = supplier;
+    }
+
+    public static void setFloppyDisk(Supplier<Item> supplier) {
+        FLOPPY_DISK = supplier;
+    }
+
+    public static void setComputer(Supplier<Block> supplier) {
+        COMPUTER = supplier;
+    }
+
+    public static void setComputerBlockEntity(Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.ComputerBlockEntity>> supplier) {
+        COMPUTER_BLOCK_ENTITY = supplier;
     }
 
     public static void setDorrieInventoryMenu(Supplier<MenuType<com.craisinlord.antarchy.content.menu.DorrieInventoryMenu>> supplier) {
