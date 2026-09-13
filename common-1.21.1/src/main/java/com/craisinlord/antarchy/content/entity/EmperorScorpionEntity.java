@@ -47,6 +47,8 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -108,6 +110,8 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     private static final ResourceKey<Level> THORAXIS_KEY =
             ResourceKey.create(Registries.DIMENSION,
                     ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "thoraxis"));
+    private static final ResourceKey<net.minecraft.world.level.biome.Biome> DREAM_DUNES = ResourceKey.create(
+            Registries.BIOME, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "dream_dunes"));
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
@@ -237,11 +241,23 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         if (!level.getLevel().dimension().equals(THORAXIS_KEY)) {
             return false;
         }
-        if (ThoraxisUndersideManager.shouldSpawnInvertedOnDreamSand(level, pos)) {
-            return level.getDifficulty() != Difficulty.PEACEFUL;
+        if (level.getDifficulty() == Difficulty.PEACEFUL) {
+            return false;
         }
-        return level.getDifficulty() != Difficulty.PEACEFUL
-                && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);
+        if (ThoraxisUndersideManager.shouldSpawnInvertedOnDreamSand(level, pos)) {
+            return true;
+        }
+        // Dream Dunes can use Dream Sandstone as the ceiling surface too. Keep
+        // the Emperor restricted to a supported underside position, but do
+        // not require the surface to be the narrower Dream Sand variant.
+        if (pos.getY() < 0 && level.getBiome(pos).is(DREAM_DUNES) && level.isEmptyBlock(pos)) {
+            BlockState below = level.getBlockState(pos.below());
+            BlockState above = level.getBlockState(pos.above());
+            boolean floorSupport = !below.is(Blocks.BEDROCK) && below.isFaceSturdy(level, pos.below(), Direction.UP);
+            boolean ceilingSupport = !above.is(Blocks.BEDROCK) && above.isFaceSturdy(level, pos.above(), Direction.DOWN);
+            return floorSupport || ceilingSupport;
+        }
+        return Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);
     }
 
     @Override

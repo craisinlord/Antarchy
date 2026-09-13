@@ -83,7 +83,7 @@ public class MultipartPartEntity extends Entity implements MultipartPartAccess {
         Vec3 right = new Vec3(forward.z, 0.0D, -forward.x);
         Vec3 localOffset = new Vec3(
                 forward.x * definition.forwardOffset() + right.x * definition.lateralOffset(),
-                definition.yOffset() + (AntarchyGravityApi.isGravityInverted(parent) ? definition.height() : 0.0D),
+                definition.yOffset(),
                 forward.z * definition.forwardOffset() + right.z * definition.lateralOffset());
         Vec3 offset = AntarchyGravityRotationUtil.vecPlayerToWorld(localOffset, AntarchyGravityApi.getGravityDirection(parent));
         Vec3 position = parent.position().add(offset);

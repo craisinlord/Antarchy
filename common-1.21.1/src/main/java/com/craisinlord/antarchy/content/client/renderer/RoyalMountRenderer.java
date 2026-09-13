@@ -73,6 +73,7 @@ public class RoyalMountRenderer extends GeoEntityRenderer<RoyalMountEntity> {
         Vec3 side = dir.cross(new Vec3(0.0D, 1.0D, 0.0D));
         if (side.lengthSqr() < 1.0E-4D) side = dir.cross(new Vec3(1.0D, 0.0D, 0.0D));
         side = side.normalize();
+        Vec3 side2 = dir.cross(side).normalize();
         ResourceLocation outer = QUEEN_OUTER;
         ResourceLocation inner = QUEEN_INNER;
         ResourceLocation[] endTextures = {QUEEN_END_1, QUEEN_END_2};
@@ -85,17 +86,45 @@ public class RoyalMountRenderer extends GeoEntityRenderer<RoyalMountEntity> {
         }
         float time = entity.tickCount + partialTick;
         float outerV = -time * 0.25F;
-        org.joml.Matrix4f pose = poseStack.last().pose();
-        Vec3 side2 = dir.cross(side).normalize();
-        VertexConsumer outerBuffer = bufferSource.getBuffer(RoyalBeamRenderTypes.beam(outer));
-        drawBeamTube(outerBuffer, pose, start, finish, side, side2, 0.44F, 8, outerV, 0.0F, 0.55F, 0.15F, 0);
         float innerV = -time * 0.25F * 0.5F;
+        float yaw = (float) Math.atan2(dir.z, dir.x);
+        float pitch = (float) Math.acos(dir.y);
+        poseStack.pushPose();
+        poseStack.translate(start.x, start.y, start.z);
+        poseStack.mulPose(com.mojang.math.Axis.YP.rotation((float) (Math.PI * 0.5D - yaw)));
+        poseStack.mulPose(com.mojang.math.Axis.XP.rotation((float) (-Math.PI * 0.5D + pitch)));
+        poseStack.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(45.0F));
+        org.joml.Matrix4f pose = poseStack.last().pose();
         VertexConsumer innerBuffer = bufferSource.getBuffer(RoyalBeamRenderTypes.beam(inner));
-        drawBeamTube(innerBuffer, pose, start, finish, side, side2, 0.375F, 4, innerV, 1.0F, 0.55F, 0.5F, 255);
-        float impactSize = 0.375F + 0.09F * Mth.sin(time * 0.6F);
+        drawLocalBeam(innerBuffer, pose, length, 0.375F, 4, innerV, 0.5F);
+        VertexConsumer outerBuffer = bufferSource.getBuffer(RoyalBeamRenderTypes.beam(outer));
+        drawLocalBeam(outerBuffer, pose, length, 0.44F, 8, outerV, 0.15F);
         ResourceLocation endTexture = endTextures[(entity.tickCount / 2) % endTextures.length];
         VertexConsumer endBuffer = bufferSource.getBuffer(RoyalBeamRenderTypes.beam(endTexture));
-        drawBeamImpact(endBuffer, pose, finish.subtract(dir.scale(0.375D)), dir, side, side2, impactSize);
+        RoyalBossRenderer.drawBeamImpact(endBuffer, pose, (float) length - 1.5F, 0.375F);
+        poseStack.popPose();
+    }
+
+    private static void drawLocalBeam(VertexConsumer vertices, org.joml.Matrix4f pose, double length,
+                                      float radius, int sections, float scroll, float uvLengthScale) {
+        float endV = scroll + (float) length * uvLengthScale;
+        float previousX = -radius;
+        float previousY = 0.0F;
+        float previousU = 0.0F;
+        for (int i = 0; i <= sections; i++) {
+            float angle = (float) (Math.PI + Math.PI * 2.0D * i / sections);
+            float currentX = Mth.cos(angle) * radius;
+            float currentY = Mth.sin(angle) * radius;
+            emitBeamQuad(vertices, pose,
+                    new Vec3(previousX * 0.55D, previousY * 0.55D, 0.0D),
+                    new Vec3(previousX, previousY, length),
+                    new Vec3(currentX, currentY, length),
+                    new Vec3(currentX * 0.55D, currentY * 0.55D, 0.0D),
+                    previousU, scroll, i + 1.0F, endV, 255);
+            previousX = currentX;
+            previousY = currentY;
+            previousU = i + 1.0F;
+        }
     }
 
     private static void drawBeamTube(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 start, Vec3 end,
@@ -153,12 +182,12 @@ public class RoyalMountRenderer extends GeoEntityRenderer<RoyalMountEntity> {
     }
 
     private static void vertex(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 pos, float u, float v) {
-        vertices.addVertex(pose, (float) pos.x, (float) pos.y, (float) pos.z).setColor(255, 255, 255, 255).setUv(u, v)
-                .setOverlay(net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY).setLight(0x00F000F0).setNormal(0.0F, 1.0F, 0.0F);
+        vertices.addVertex(pose, (float) pos.x, (float) pos.y, (float) pos.z).setColor(1.0F, 1.0F, 1.0F, 1.0F).setUv(u, v)
+                .setOverlay(net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY).setLight(240).setNormal(0.0F, 1.0F, 0.0F);
     }
 
     private static void beamVertex(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 pos, float u, float v, int alpha) {
-        vertices.addVertex(pose, (float) pos.x, (float) pos.y, (float) pos.z).setColor(255, 255, 255, alpha).setUv(u, v)
-                .setOverlay(net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY).setLight(0x00F000F0).setNormal(0.0F, -1.0F, 0.0F);
+        vertices.addVertex(pose, (float) pos.x, (float) pos.y, (float) pos.z).setColor(1.0F, 1.0F, 1.0F, alpha / 255.0F).setUv(u, v)
+                .setOverlay(net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY).setLight(240).setNormal(0.0F, -1.0F, 0.0F);
     }
 }
