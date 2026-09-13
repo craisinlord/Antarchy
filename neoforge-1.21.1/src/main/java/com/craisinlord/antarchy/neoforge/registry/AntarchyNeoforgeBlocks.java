@@ -6,6 +6,7 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.*;
 import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.CritterCageBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.ComputerBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.DimensionalTearMarkerBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.DreamCampfireBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.HushweedBlockEntity;
@@ -716,6 +717,8 @@ public final class AntarchyNeoforgeBlocks {
             () -> new com.craisinlord.antarchy.content.block.AntimetalRailBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.RAIL)));
     public static final DeferredBlock<UpperBlock> UPPER = BLOCKS.register("upper",
             () -> new UpperBlock(AntarchyNeoforgeBlocks::upperBlockEntityType, BlockBehaviour.Properties.ofFullCopy(Blocks.HOPPER)));
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.ComputerBlock> COMPUTER = BLOCKS.register("computer",
+            () -> new com.craisinlord.antarchy.content.block.ComputerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion()));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.AntimetalPoweredRailBlock> ANTIMETAL_POWERED_RAIL = BLOCKS.register("antimetal_powered_rail",
             () -> new com.craisinlord.antarchy.content.block.AntimetalPoweredRailBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.POWERED_RAIL)));
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.AntimetalDetectorRailBlock> ANTIMETAL_DETECTOR_RAIL = BLOCKS.register("antimetal_detector_rail",
@@ -948,6 +951,11 @@ public final class AntarchyNeoforgeBlocks {
                     (pos, state) -> new DimensionalTearMarkerBlockEntity(pos, state, AntarchyNeoforgeBlocks::dimensionalTearMarkerBlockEntityType),
                     DIMENSIONAL_TEAR_MARKER.get()
             ).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ComputerBlockEntity>> COMPUTER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("computer",
+            () -> BlockEntityType.Builder.of(
+                    (pos, state) -> new ComputerBlockEntity(pos, state, AntarchyNeoforgeBlocks::computerBlockEntityType),
+                    COMPUTER.get()
+            ).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<QueenTrailSpawnMarkerBlockEntity>> QUEEN_TRAIL_SPAWN_MARKER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("queen_trail_spawn_marker",
             () -> BlockEntityType.Builder.of(
                     (pos, state) -> new QueenTrailSpawnMarkerBlockEntity(pos, state, AntarchyNeoforgeBlocks::queenTrailSpawnMarkerBlockEntityType),
@@ -1044,6 +1052,10 @@ public final class AntarchyNeoforgeBlocks {
 
     private static BlockEntityType<UpperBlockEntity> upperBlockEntityType() {
         return UPPER_BLOCK_ENTITY.get();
+    }
+
+    private static BlockEntityType<ComputerBlockEntity> computerBlockEntityType() {
+        return COMPUTER_BLOCK_ENTITY.get();
     }
 
     private static BlockEntityType<VortexLensBlockEntity> vortexLensBlockEntityType() {

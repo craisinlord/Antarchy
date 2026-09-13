@@ -144,7 +144,9 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
             }
             double minimumY = baseY + 24.0D;
             double maximumY = baseY + 304.0D;
-            double spawnY = (minimumY + maximumY) * 0.5D;
+            // Start near the lower trunk so players on the ground can reliably engage the King.
+            // The patrol bounds remain unchanged, allowing him to retreat upward through the tree.
+            double spawnY = minimumY + 48.0D;
             // Start just outside the central trunk, inside the tree's authored footprint.
             king.moveTo(centerX + 48.5D, spawnY, centerZ + 0.5D, 90.0F, 0.0F);
             king.setTreePatrolHome(treeCenter, minimumY, maximumY, 0.0D);

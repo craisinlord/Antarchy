@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.creative;
 
+import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
 import com.craisinlord.antarchy.content.item.GlimmerBottleItem;
 import com.craisinlord.antarchy.content.item.royal.RoyalGearHelper;
@@ -394,6 +395,8 @@ public final class CreativeTabContents {
             entry("lucid_anchor", "tools_and_utilities"),
             entry("undertrial_spawner", "tools_and_utilities"),
             entry("undervault", "tools_and_utilities"),
+            entry("computer", "functional_blocks"),
+            entry("floppy_disk", "tools_and_utilities"),
             entry("undertrial_key", "tools_and_utilities"),
             entry("reverie_bottle", "tools_and_utilities"),
             entry("glimmer_bottle", "tools_and_utilities"),
@@ -635,6 +638,11 @@ public final class CreativeTabContents {
         }
         for (String potionPath : ANTARCHY_POTION_FAMILIES) {
             acceptPotionFamily(output, potionPath);
+        }
+        for (String diskId : List.of("antarchy:introduction", "antarchy:chronosphere", "antarchy:toreterror_arena", "antarchy:high_fructose_corn_syrup")) {
+            ItemStack disk = new ItemStack(AntarchyObjects.FLOPPY_DISK.get());
+            disk.set(AntarchyObjects.FLOPPY_DISK_COMPONENT.get(), ResourceLocation.parse(diskId));
+            output.accept(disk);
         }
     }
 

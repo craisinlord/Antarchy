@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {"item": "minecraft:iron_block"},
+    {"item": "minecraft:iron_block"},
+    {"item": "minecraft:iron_block"},
+    {"item": "minecraft:comparator"},
+    {"item": "minecraft:iron_ingot"}
+  ],
+  "result": {
+    "id": "antarchy:computer",
+    "count": 1
+  }
+}

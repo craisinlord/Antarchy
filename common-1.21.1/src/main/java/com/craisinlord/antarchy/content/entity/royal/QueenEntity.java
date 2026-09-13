@@ -67,6 +67,7 @@ public class QueenEntity extends RoyalBossEntity {
     private static final int ACCELERATION_COOLDOWN = 500;
     private static final int ACCELERATION_DURATION = 140;
     private static final int BLACK_HOLE_COOLDOWN = 340;
+    private static final double QUEEN_BITE_COOLDOWN_MULTIPLIER = 1.5D;
 
     private int manticoreSummonCooldownTicks;
     private int gravityStompCooldownTicks;
@@ -109,6 +110,19 @@ public class QueenEntity extends RoyalBossEntity {
     @Override
     protected double biteApproachSpeed() {
         return 1.55D;
+    }
+
+    @Override
+    protected int maxConcurrentHeadAttacks(Phase phase) {
+        return switch (phase) {
+            case ONE, TWO -> 1;
+            case THREE -> 2;
+        };
+    }
+
+    @Override
+    protected int biteCooldownTicks(Phase phase) {
+        return Math.max(10, (int) Math.ceil(super.biteCooldownTicks(phase) * QUEEN_BITE_COOLDOWN_MULTIPLIER));
     }
 
     protected void registerRoyalTargetGoals() {

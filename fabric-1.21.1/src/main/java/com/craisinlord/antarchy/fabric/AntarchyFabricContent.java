@@ -400,6 +400,10 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setCookedCorndog(() -> AntarchyFabricItems.COOKED_CORNDOG.get());
         AntarchyObjects.setGlimmerBottle(() -> AntarchyFabricItems.GLIMMER_BOTTLE.get());
         AntarchyObjects.setGlimmerVariantComponent(() -> AntarchyFabricMisc.GLIMMER_VARIANT.get());
+        AntarchyObjects.setFloppyDiskComponent(() -> AntarchyFabricMisc.FLOPPY_DISK_COMPONENT.get());
+        AntarchyObjects.setFloppyDisk(() -> AntarchyFabricItems.FLOPPY_DISK.get());
+        AntarchyObjects.setComputer(() -> AntarchyFabricBlocks.COMPUTER.get());
+        AntarchyObjects.setComputerBlockEntity(() -> AntarchyFabricBlocks.COMPUTER_BLOCK_ENTITY.get());
         AntarchyObjects.setAmericanComponent(() -> AntarchyFabricMisc.AMERICAN.get());
         AntarchyObjects.setLumen(() -> AntarchyFabricMisc.LUMEN.get());
         AntarchyObjects.setFlowingLumen(() -> AntarchyFabricMisc.FLOWING_LUMEN.get());
