@@ -445,6 +445,11 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
             return;
         }
 
+        LivingEntity target = this.getTarget();
+        if (target != null && !this.canAttack(target)) {
+            this.setTarget(null);
+        }
+
         if (this.spitCooldown > 0) {
             this.spitCooldown--;
         }
@@ -625,9 +630,15 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         if (target == null && this.getControllingPassenger() instanceof Player) {
             target = this.frontTarget();
         }
-        if (target != null && target.distanceTo(this) < 5.0D) {
+        if (target != null && this.canAttack(target) && target.distanceTo(this) < 5.0D) {
             target.hurt(this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
         }
+    }
+
+    @Override
+    public boolean canAttack(LivingEntity target) {
+        return !(target instanceof RoyalMountEntity other && this.isTame() && other.isTame())
+                && super.canAttack(target);
     }
 
     @Nullable
@@ -638,6 +649,9 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         double bestDot = 0.3D;
         for (LivingEntity candidate : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(6.0D))) {
             if (candidate == this || candidate == this.getControllingPassenger() || candidate == this.getOwner()) {
+                continue;
+            }
+            if (!this.canAttack(candidate)) {
                 continue;
             }
             Vec3 to = candidate.getEyePosition().subtract(eye);

@@ -21,6 +21,7 @@
     "entity.MultipartEntityLevelRegistryMixin",
     "WoodTypeInvoker",
     "infinity.PortalCreatorMixin",
+    "infinity.WarpLogicMixin",
     "infinity.AmendmentRareOresMixin"
   ],
   "client": [

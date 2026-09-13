@@ -106,7 +106,6 @@ public class WindVortexEntity extends Entity {
 
     public WindVortexEntity(EntityType<? extends WindVortexEntity> entityType, Level level) {
         super(entityType, level);
-        this.noCulling = true;
     }
 
     public static WindVortexEntity create(Level level, EntityType<? extends WindVortexEntity> type, Vec3 position,
@@ -377,12 +376,6 @@ public class WindVortexEntity extends Entity {
 
         if (!(this.level() instanceof ServerLevel serverLevel)) {
             return;
-        }
-
-        for (ServerPlayer player : serverLevel.players()) {
-            if (area.intersects(player.getBoundingBox())) {
-                this.captureEntity(player, height, basis, mode);
-            }
         }
 
         Iterator<Map.Entry<UUID, Double>> iterator = this.carriedProgress.entrySet().iterator();

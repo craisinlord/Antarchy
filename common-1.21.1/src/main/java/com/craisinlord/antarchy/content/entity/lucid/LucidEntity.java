@@ -33,6 +33,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -75,6 +76,8 @@ public class LucidEntity extends Monster implements GeoEntity {
     private static final double MIN_HOVER_RANGE = 6.5D;
     private static final double CLOSE_RANGE = 4.5D;
     private static final double DEFAULT_HOVER_HEIGHT = 2.75D;
+    private static final double NATURAL_SPAWN_LIMIT_RADIUS = 64.0D;
+    private static final int NATURAL_SPAWN_LIMIT = 5;
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation FLY_ANIM = RawAnimation.begin().thenLoop("fly");
@@ -118,6 +121,7 @@ public class LucidEntity extends Monster implements GeoEntity {
             return level.getDifficulty() != Difficulty.PEACEFUL;
         }
         return level.getDifficulty() != Difficulty.PEACEFUL
+                && level.getEntitiesOfClass(LucidEntity.class, new AABB(pos).inflate(NATURAL_SPAWN_LIMIT_RADIUS), lucid -> lucid.isAlive()).size() < NATURAL_SPAWN_LIMIT
                 && pos.getY() <= 250
                 && level.isEmptyBlock(pos)
                 && level.isEmptyBlock(pos.above())
@@ -570,7 +574,4 @@ public class LucidEntity extends Monster implements GeoEntity {
     }
 
 }
-
-
-
 

@@ -717,8 +717,8 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<MantisClawItem> MANTIS_CLAW = ITEMS.register("mantis_claw",
             () -> new MantisClawItem(Tiers.IRON, new Item.Properties().stacksTo(1).durability(50).rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<Item> HERCULES_HORN = ITEMS.registerSimpleItem("hercules_horn", new Item.Properties().rarity(Rarity.UNCOMMON));
-    public static final DeferredItem<Item> KING_SCALE = ITEMS.registerSimpleItem("king_scale", new Item.Properties().rarity(Rarity.RARE));
-    public static final DeferredItem<Item> QUEEN_SCALE = ITEMS.registerSimpleItem("queen_scale", new Item.Properties().rarity(Rarity.RARE));
+    public static final DeferredItem<Item> KING_SCALE = ITEMS.registerSimpleItem("king_scale", new Item.Properties().rarity(Rarity.RARE).fireResistant());
+    public static final DeferredItem<Item> QUEEN_SCALE = ITEMS.registerSimpleItem("queen_scale", new Item.Properties().rarity(Rarity.RARE).fireResistant());
     public static final DeferredItem<Item> CHITIN = ITEMS.registerSimpleItem("chitin", new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final DeferredItem<Item> JERRY_NUCLEUS = ITEMS.register("jerry_nucleus",
             () -> new com.craisinlord.antarchy.content.item.JerryNucleusItem(new Item.Properties().rarity(Rarity.UNCOMMON)

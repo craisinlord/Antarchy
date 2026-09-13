@@ -17,7 +17,7 @@ public class RoyalMountSpitGoal extends Goal {
             return false;
         }
         LivingEntity target = this.mount.getTarget();
-        if (target == null || !target.isAlive()) {
+        if (target == null || !target.isAlive() || !this.mount.canAttack(target)) {
             return false;
         }
         double distance = this.mount.distanceTo(target);
@@ -32,7 +32,7 @@ public class RoyalMountSpitGoal extends Goal {
     @Override
     public void tick() {
         LivingEntity target = this.mount.getTarget();
-        if (target == null) {
+        if (target == null || !this.mount.canAttack(target)) {
             return;
         }
         this.mount.getLookControl().setLookAt(target, 30.0F, 30.0F);

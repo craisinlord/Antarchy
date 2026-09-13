@@ -25,22 +25,28 @@ import software.bernie.geckolib.util.Color;
 public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
     private static final ResourceLocation QUEEN_PURPLE_BEAM_OUTER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_purple_beam_outer.png");
     private static final ResourceLocation QUEEN_PURPLE_BEAM_INNER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_purple_beam_inner.png");
-    private static final ResourceLocation QUEEN_PURPLE_BEAM_END = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_purple_beam_end_1.png");
+    private static final ResourceLocation QUEEN_PURPLE_BEAM_END_1 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_purple_beam_end_1.png");
+    private static final ResourceLocation QUEEN_PURPLE_BEAM_END_2 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_purple_beam_end_2.png");
     private static final ResourceLocation QUEEN_RED_BEAM_OUTER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_red_beam_outer.png");
     private static final ResourceLocation QUEEN_RED_BEAM_INNER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_red_beam_inner.png");
-    private static final ResourceLocation QUEEN_RED_BEAM_END = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_red_beam_end_1.png");
+    private static final ResourceLocation QUEEN_RED_BEAM_END_1 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_red_beam_end_1.png");
+    private static final ResourceLocation QUEEN_RED_BEAM_END_2 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_red_beam_end_2.png");
     private static final ResourceLocation QUEEN_BLACK_BEAM_OUTER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_black_beam_outer.png");
     private static final ResourceLocation QUEEN_BLACK_BEAM_INNER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_black_beam_inner.png");
-    private static final ResourceLocation QUEEN_BLACK_BEAM_END = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_black_beam_end_1.png");
+    private static final ResourceLocation QUEEN_BLACK_BEAM_END_1 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_black_beam_end_1.png");
+    private static final ResourceLocation QUEEN_BLACK_BEAM_END_2 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_black_beam_end_2.png");
     private static final ResourceLocation KING_FIRE_BEAM_OUTER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/fire_beam_outer.png");
     private static final ResourceLocation KING_FIRE_BEAM_INNER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/fire_beam_inner.png");
-    private static final ResourceLocation KING_FIRE_BEAM_END = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/fire_beam_end_1.png");
+    private static final ResourceLocation KING_FIRE_BEAM_END_1 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/fire_beam_end_1.png");
+    private static final ResourceLocation KING_FIRE_BEAM_END_2 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/fire_beam_end_2.png");
     private static final ResourceLocation KING_LIGHTNING_BEAM_OUTER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/lightning_beam_outer.png");
     private static final ResourceLocation KING_LIGHTNING_BEAM_INNER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/lightning_beam_inner.png");
-    private static final ResourceLocation KING_LIGHTNING_BEAM_END = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/lightning_beam_end_1.png");
+    private static final ResourceLocation KING_LIGHTNING_BEAM_END_1 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/lightning_beam_end_1.png");
+    private static final ResourceLocation KING_LIGHTNING_BEAM_END_2 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/lightning_beam_end_2.png");
     private static final ResourceLocation KING_ICE_BEAM_OUTER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/ice_beam_outer.png");
     private static final ResourceLocation KING_ICE_BEAM_INNER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/ice_beam_inner.png");
-    private static final ResourceLocation KING_ICE_BEAM_END = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/ice_beam_end_1.png");
+    private static final ResourceLocation KING_ICE_BEAM_END_1 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/ice_beam_end_1.png");
+    private static final ResourceLocation KING_ICE_BEAM_END_2 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/ice_beam_end_2.png");
     public RoyalBossRenderer(EntityRendererProvider.Context context) {
         super(context, new RoyalBossModel());
         this.shadowRadius = 8.0F;
@@ -110,10 +116,8 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         this.shadowRadius = 8.0F * RoyalBossEntity.MODEL_RENDER_SCALE;
     }
 
-    private static final float BEAM_OUTER_RADIUS = 0.55F;
-    private static final float BEAM_INNER_RADIUS = 0.32F;
-    private static final float BEAM_TILE_BLOCKS = 3.0F;
-    private static final float BEAM_SCROLL_SPEED = 0.32F;
+    private static final float BEAM_OUTER_RADIUS = 1.75F;
+    private static final float BEAM_INNER_RADIUS = 1.5F;
 
     @Override
     public void render(RoyalBossEntity entity, float entityYaw, float partialTick, PoseStack poseStack,
@@ -152,23 +156,23 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
 
         ResourceLocation outer = QUEEN_PURPLE_BEAM_OUTER;
         ResourceLocation inner = QUEEN_PURPLE_BEAM_INNER;
-        ResourceLocation endTexture = QUEEN_PURPLE_BEAM_END;
+        ResourceLocation[] endTextures = {QUEEN_PURPLE_BEAM_END_1, QUEEN_PURPLE_BEAM_END_2};
         if (entity instanceof KingEntity) {
             switch (entity.getRoyalBeamElement()) {
                 case FIRE -> {
                     outer = KING_FIRE_BEAM_OUTER;
                     inner = KING_FIRE_BEAM_INNER;
-                    endTexture = KING_FIRE_BEAM_END;
+                    endTextures = new ResourceLocation[]{KING_FIRE_BEAM_END_1, KING_FIRE_BEAM_END_2};
                 }
                 case LIGHTNING -> {
                     outer = KING_LIGHTNING_BEAM_OUTER;
                     inner = KING_LIGHTNING_BEAM_INNER;
-                    endTexture = KING_LIGHTNING_BEAM_END;
+                    endTextures = new ResourceLocation[]{KING_LIGHTNING_BEAM_END_1, KING_LIGHTNING_BEAM_END_2};
                 }
                 case ICE -> {
                     outer = KING_ICE_BEAM_OUTER;
                     inner = KING_ICE_BEAM_INNER;
-                    endTexture = KING_ICE_BEAM_END;
+                    endTextures = new ResourceLocation[]{KING_ICE_BEAM_END_1, KING_ICE_BEAM_END_2};
                 }
                 case GENERIC -> {
                 }
@@ -178,12 +182,12 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
                 case QUEEN_RED -> {
                     outer = QUEEN_RED_BEAM_OUTER;
                     inner = QUEEN_RED_BEAM_INNER;
-                    endTexture = QUEEN_RED_BEAM_END;
+                    endTextures = new ResourceLocation[]{QUEEN_RED_BEAM_END_1, QUEEN_RED_BEAM_END_2};
                 }
                 case QUEEN_BLACK -> {
                     outer = QUEEN_BLACK_BEAM_OUTER;
                     inner = QUEEN_BLACK_BEAM_INNER;
-                    endTexture = QUEEN_BLACK_BEAM_END;
+                    endTextures = new ResourceLocation[]{QUEEN_BLACK_BEAM_END_1, QUEEN_BLACK_BEAM_END_2};
                 }
                 default -> {
                 }
@@ -191,34 +195,53 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         }
 
         float time = entity.tickCount + partialTick;
-        float tiles = (float) (length / BEAM_TILE_BLOCKS);
-        float scroll = -time * BEAM_SCROLL_SPEED;
+        float outerV = -time * 0.25F;
         var pose = poseStack.last().pose();
 
-        VertexConsumer outerBuffer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(outer));
-        drawBeamPlane(outerBuffer, pose, start, finish, side1.scale(BEAM_OUTER_RADIUS), scroll, scroll + tiles);
-        drawBeamPlane(outerBuffer, pose, start, finish, side2.scale(BEAM_OUTER_RADIUS), scroll, scroll + tiles);
+        float innerV = -time * 0.25F * 0.5F;
+        VertexConsumer innerBuffer = bufferSource.getBuffer(RoyalBeamRenderTypes.beam(inner));
+        drawBeamTube(innerBuffer, pose, start, finish, side1, side2, BEAM_INNER_RADIUS, 4, innerV, 0.0F, 0.55F, 0.5F, 255);
 
-        float innerScroll = -time * BEAM_SCROLL_SPEED * 1.6F;
-        VertexConsumer innerBuffer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(inner));
-        drawBeamPlane(innerBuffer, pose, start, finish, side1.scale(BEAM_INNER_RADIUS), innerScroll, innerScroll + tiles);
-        drawBeamPlane(innerBuffer, pose, start, finish, side2.scale(BEAM_INNER_RADIUS), innerScroll, innerScroll + tiles);
+        VertexConsumer outerBuffer = bufferSource.getBuffer(RoyalBeamRenderTypes.beam(outer));
+        // Tremorzilla's outer shell stays fully visible all the way to the impact;
+        // fading the far ring makes the beam look like a translucent cone.
+        drawBeamTube(outerBuffer, pose, start, finish, side1, side2, BEAM_OUTER_RADIUS, 8, outerV, 0.0F, 0.55F, 0.15F, 255);
 
-        float impactSize = 1.1F + 0.35F * Mth.sin(time * 0.6F);
-        Vec3 camLeft = new Vec3(this.entityRenderDispatcher.camera.getLeftVector());
-        Vec3 camUp = new Vec3(this.entityRenderDispatcher.camera.getUpVector());
-        VertexConsumer endBuffer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(endTexture));
-        drawBillboard(endBuffer, pose, finish, camLeft.scale(impactSize), camUp.scale(impactSize));
+        float impactSize = 1.5F + 0.35F * Mth.sin(time * 0.6F);
+        ResourceLocation endTexture = endTextures[(entity.tickCount / 2) % endTextures.length];
+        VertexConsumer endBuffer = bufferSource.getBuffer(RoyalBeamRenderTypes.beam(endTexture));
+        drawBeamImpact(endBuffer, pose, finish.subtract(dir.scale(1.5D)), dir, side1, side2, impactSize);
     }
 
-    private static void drawBeamPlane(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 start, Vec3 end, Vec3 half,
-                                      float startV, float endV) {
-        emitQuad(vertices, pose,
-                start.subtract(half), start.add(half), end.add(half), end.subtract(half),
-                0.0F, startV, 1.0F, endV);
-        emitQuad(vertices, pose,
-                start.add(half), start.subtract(half), end.subtract(half), end.add(half),
-                0.0F, startV, 1.0F, endV);
+    private static void drawBeamTube(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 start, Vec3 end,
+                                     Vec3 side1, Vec3 side2, float radius, int sections, float scroll, float phase,
+                                     float startScale, float uvLengthScale, int endAlpha) {
+        Vec3[] startRing = new Vec3[sections];
+        Vec3[] endRing = new Vec3[sections];
+        for (int i = 0; i < sections; i++) {
+            double angle = Math.PI * 2.0D * i / sections + phase;
+            Vec3 offset = side1.scale(Math.cos(angle) * radius).add(side2.scale(Math.sin(angle) * radius));
+            startRing[i] = start.add(offset.scale(startScale));
+            endRing[i] = end.add(offset);
+        }
+        float endV = scroll + (float) start.distanceTo(end) * uvLengthScale;
+        for (int i = 0; i < sections; i++) {
+            int next = (i + 1) % sections;
+            // Alex's beam renderer intentionally uses section indices for U rather
+            // than normalizing them. This is part of the authored 16x16 texture
+            // pattern and keeps the strip continuous around the tube.
+            emitBeamQuad(vertices, pose, startRing[i], endRing[i], endRing[next], startRing[next],
+                    i, scroll, next, endV, endAlpha);
+        }
+    }
+
+    private static void emitBeamQuad(VertexConsumer vertices, org.joml.Matrix4f pose,
+                                     Vec3 a, Vec3 b, Vec3 c, Vec3 d,
+                                     float minU, float minV, float maxU, float maxV, int endAlpha) {
+        beamVertex(vertices, pose, a, minU, minV, 255);
+        beamVertex(vertices, pose, b, maxU, minV, endAlpha);
+        beamVertex(vertices, pose, c, maxU, maxV, endAlpha);
+        beamVertex(vertices, pose, d, minU, maxV, 255);
     }
 
     private static void drawBillboard(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 center, Vec3 left, Vec3 up) {
@@ -230,6 +253,17 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
                 center.subtract(left).add(up), center.add(left).add(up),
                 center.add(left).subtract(up), center.subtract(left).subtract(up),
                 0.0F, 0.0F, 1.0F, 1.0F);
+    }
+
+    private static void drawBeamImpact(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 center, Vec3 direction,
+                                       Vec3 side1, Vec3 side2, float size) {
+        // The end textures are atlas textures used by Tremorzilla's crossed flame
+        // planes, not a texture meant to be repeated on eight radial billboards.
+        // Two crossed planes preserve the same readable four-point impact without
+        // stretching the atlas into the noisy starburst the old code produced.
+        drawBillboard(vertices, pose, center, side1.scale(size), side2.scale(size));
+        drawBillboard(vertices, pose, center.subtract(direction.scale(size * 0.35D)),
+                side1.scale(size * 0.82D), direction.scale(size * 0.82D));
     }
 
     private static void emitQuad(VertexConsumer vertices, org.joml.Matrix4f pose,
@@ -247,5 +281,13 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
                 .setOverlay(net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY)
                 .setLight(0x00F000F0)
                 .setNormal(0.0F, 1.0F, 0.0F);
+    }
+
+    private static void beamVertex(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 pos, float u, float v, int alpha) {
+        vertices.addVertex(pose, (float) pos.x, (float) pos.y, (float) pos.z)
+                .setColor(255, 255, 255, alpha).setUv(u, v)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(0x00F000F0)
+                .setNormal(0.0F, -1.0F, 0.0F);
     }
 }

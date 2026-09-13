@@ -19,16 +19,20 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
 public class RoyalMountRenderer extends GeoEntityRenderer<RoyalMountEntity> {
     private static final ResourceLocation QUEEN_OUTER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_purple_beam_outer.png");
     private static final ResourceLocation QUEEN_INNER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_purple_beam_inner.png");
-    private static final ResourceLocation QUEEN_END = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_purple_beam_end_1.png");
+    private static final ResourceLocation QUEEN_END_1 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_purple_beam_end_1.png");
+    private static final ResourceLocation QUEEN_END_2 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/queen/queen_purple_beam_end_2.png");
     private static final ResourceLocation KING_FIRE_OUTER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/fire_beam_outer.png");
     private static final ResourceLocation KING_FIRE_INNER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/fire_beam_inner.png");
-    private static final ResourceLocation KING_FIRE_END = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/fire_beam_end_1.png");
+    private static final ResourceLocation KING_FIRE_END_1 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/fire_beam_end_1.png");
+    private static final ResourceLocation KING_FIRE_END_2 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/fire_beam_end_2.png");
     private static final ResourceLocation KING_LIGHTNING_OUTER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/lightning_beam_outer.png");
     private static final ResourceLocation KING_LIGHTNING_INNER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/lightning_beam_inner.png");
-    private static final ResourceLocation KING_LIGHTNING_END = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/lightning_beam_end_1.png");
+    private static final ResourceLocation KING_LIGHTNING_END_1 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/lightning_beam_end_1.png");
+    private static final ResourceLocation KING_LIGHTNING_END_2 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/lightning_beam_end_2.png");
     private static final ResourceLocation KING_ICE_OUTER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/ice_beam_outer.png");
     private static final ResourceLocation KING_ICE_INNER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/ice_beam_inner.png");
-    private static final ResourceLocation KING_ICE_END = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/ice_beam_end_1.png");
+    private static final ResourceLocation KING_ICE_END_1 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/ice_beam_end_1.png");
+    private static final ResourceLocation KING_ICE_END_2 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/ice_beam_end_2.png");
     public RoyalMountRenderer(EntityRendererProvider.Context context) {
         super(context, new RoyalMountModel());
         this.shadowRadius = 1.1F;
@@ -58,7 +62,9 @@ public class RoyalMountRenderer extends GeoEntityRenderer<RoyalMountEntity> {
         double x = Mth.lerp(partialTick, entity.xo, entity.getX());
         double y = Mth.lerp(partialTick, entity.yo, entity.getY());
         double z = Mth.lerp(partialTick, entity.zo, entity.getZ());
-        Vec3 start = entity.beamShootFrom().subtract(x, y, z);
+        int beamHead = entity.getBeamHead();
+        Vec3 trackedAnchor = ((RoyalMountModel) this.getGeoModel()).getTrackedBeamAnchor(beamHead);
+        Vec3 start = (trackedAnchor != null ? trackedAnchor : entity.beamShootFrom()).subtract(x, y, z);
         Vec3 finish = end.subtract(x, y, z);
         Vec3 axis = finish.subtract(start);
         double length = axis.length();
@@ -69,39 +75,90 @@ public class RoyalMountRenderer extends GeoEntityRenderer<RoyalMountEntity> {
         side = side.normalize();
         ResourceLocation outer = QUEEN_OUTER;
         ResourceLocation inner = QUEEN_INNER;
-        ResourceLocation endTexture = QUEEN_END;
+        ResourceLocation[] endTextures = {QUEEN_END_1, QUEEN_END_2};
         if (entity instanceof PrinceEntity) {
             switch (entity.getBeamElement()) {
-                case FIRE -> { outer = KING_FIRE_OUTER; inner = KING_FIRE_INNER; endTexture = KING_FIRE_END; }
-                case ICE -> { outer = KING_ICE_OUTER; inner = KING_ICE_INNER; endTexture = KING_ICE_END; }
-                default -> { outer = KING_LIGHTNING_OUTER; inner = KING_LIGHTNING_INNER; endTexture = KING_LIGHTNING_END; }
+                case FIRE -> { outer = KING_FIRE_OUTER; inner = KING_FIRE_INNER; endTextures = new ResourceLocation[]{KING_FIRE_END_1, KING_FIRE_END_2}; }
+                case ICE -> { outer = KING_ICE_OUTER; inner = KING_ICE_INNER; endTextures = new ResourceLocation[]{KING_ICE_END_1, KING_ICE_END_2}; }
+                default -> { outer = KING_LIGHTNING_OUTER; inner = KING_LIGHTNING_INNER; endTextures = new ResourceLocation[]{KING_LIGHTNING_END_1, KING_LIGHTNING_END_2}; }
             }
         }
         float time = entity.tickCount + partialTick;
-        float tiles = (float) (length / 3.0D);
+        float outerV = -time * 0.25F;
         org.joml.Matrix4f pose = poseStack.last().pose();
-        drawBeam(bufferSource.getBuffer(RenderType.entityTranslucentEmissive(outer)), pose, start, finish, side.scale(0.24D), -time * 0.32F, -time * 0.32F + tiles);
-        drawBeam(bufferSource.getBuffer(RenderType.entityTranslucentEmissive(inner)), pose, start, finish, side.scale(0.13D), -time * 0.5F, -time * 0.5F + tiles);
-        Vec3 up = new Vec3(this.entityRenderDispatcher.camera.getUpVector()).scale(0.55D);
-        Vec3 left = new Vec3(this.entityRenderDispatcher.camera.getLeftVector()).scale(0.55D);
-        drawQuad(bufferSource.getBuffer(RenderType.entityTranslucentEmissive(endTexture)), pose, finish.add(left).add(up), finish.subtract(left).add(up), finish.subtract(left).subtract(up), finish.add(left).subtract(up));
+        Vec3 side2 = dir.cross(side).normalize();
+        VertexConsumer outerBuffer = bufferSource.getBuffer(RoyalBeamRenderTypes.beam(outer));
+        drawBeamTube(outerBuffer, pose, start, finish, side, side2, 0.44F, 8, outerV, 0.0F, 0.55F, 0.15F, 0);
+        float innerV = -time * 0.25F * 0.5F;
+        VertexConsumer innerBuffer = bufferSource.getBuffer(RoyalBeamRenderTypes.beam(inner));
+        drawBeamTube(innerBuffer, pose, start, finish, side, side2, 0.375F, 4, innerV, 1.0F, 0.55F, 0.5F, 255);
+        float impactSize = 0.375F + 0.09F * Mth.sin(time * 0.6F);
+        ResourceLocation endTexture = endTextures[(entity.tickCount / 2) % endTextures.length];
+        VertexConsumer endBuffer = bufferSource.getBuffer(RoyalBeamRenderTypes.beam(endTexture));
+        drawBeamImpact(endBuffer, pose, finish.subtract(dir.scale(0.375D)), dir, side, side2, impactSize);
     }
 
-    private static void drawBeam(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 start, Vec3 end, Vec3 half, float startV, float endV) {
-        drawQuad(vertices, pose, start.subtract(half), start.add(half), end.add(half), end.subtract(half), startV, endV);
-        drawQuad(vertices, pose, start.add(half), start.subtract(half), end.subtract(half), end.add(half), startV, endV);
+    private static void drawBeamTube(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 start, Vec3 end,
+                                     Vec3 side1, Vec3 side2, float radius, int sections, float scroll, float phase,
+                                     float startScale, float uvLengthScale, int endAlpha) {
+        Vec3[] startRing = new Vec3[sections];
+        Vec3[] endRing = new Vec3[sections];
+        for (int i = 0; i < sections; i++) {
+            double angle = Math.PI * 2.0D * i / sections + phase;
+            Vec3 offset = side1.scale(Math.cos(angle) * radius).add(side2.scale(Math.sin(angle) * radius));
+            startRing[i] = start.add(offset.scale(startScale));
+            endRing[i] = end.add(offset);
+        }
+        float endV = scroll + (float) start.distanceTo(end) * uvLengthScale;
+        for (int i = 0; i < sections; i++) {
+            int next = (i + 1) % sections;
+            emitBeamQuad(vertices, pose, startRing[i], endRing[i], endRing[next], startRing[next],
+                    i / (float) sections, scroll, next / (float) sections, endV, endAlpha);
+        }
     }
 
-    private static void drawQuad(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 a, Vec3 b, Vec3 c, Vec3 d) {
-        drawQuad(vertices, pose, a, b, c, d, 0.0F, 1.0F);
+    private static void emitBeamQuad(VertexConsumer vertices, org.joml.Matrix4f pose,
+                                     Vec3 a, Vec3 b, Vec3 c, Vec3 d,
+                                     float minU, float minV, float maxU, float maxV, int endAlpha) {
+        beamVertex(vertices, pose, a, minU, minV, 255);
+        beamVertex(vertices, pose, b, maxU, minV, endAlpha);
+        beamVertex(vertices, pose, c, maxU, maxV, endAlpha);
+        beamVertex(vertices, pose, d, minU, maxV, 255);
     }
 
-    private static void drawQuad(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 a, Vec3 b, Vec3 c, Vec3 d, float startV, float endV) {
-        vertex(vertices, pose, a, 0.0F, startV); vertex(vertices, pose, b, 1.0F, startV); vertex(vertices, pose, c, 1.0F, endV); vertex(vertices, pose, d, 0.0F, endV);
+    private static void drawBeamImpact(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 center, Vec3 direction,
+                                       Vec3 side1, Vec3 side2, float size) {
+        drawBillboard(vertices, pose, center, side1.scale(size), side2.scale(size));
+        for (int i = 0; i < 8; i++) {
+            double angle = (i + 0.5D) * Math.PI * 0.25D;
+            Vec3 radial = side1.scale(Math.cos(angle)).add(side2.scale(Math.sin(angle))).scale(size);
+            Vec3 back = direction.scale(size * (i % 2 == 0 ? 1.5D : 1.0D));
+            emitQuad(vertices, pose, center.add(radial), center.subtract(radial),
+                    center.subtract(radial).subtract(back), center.add(radial).subtract(back));
+        }
+    }
+
+    private static void drawBillboard(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 center, Vec3 left, Vec3 up) {
+        emitQuad(vertices, pose, center.add(left).add(up), center.subtract(left).add(up),
+                center.subtract(left).subtract(up), center.add(left).subtract(up));
+        emitQuad(vertices, pose, center.subtract(left).add(up), center.add(left).add(up),
+                center.add(left).subtract(up), center.subtract(left).subtract(up));
+    }
+
+    private static void emitQuad(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 a, Vec3 b, Vec3 c, Vec3 d) {
+        vertex(vertices, pose, a, 0.0F, 0.0F);
+        vertex(vertices, pose, b, 1.0F, 0.0F);
+        vertex(vertices, pose, c, 1.0F, 1.0F);
+        vertex(vertices, pose, d, 0.0F, 1.0F);
     }
 
     private static void vertex(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 pos, float u, float v) {
         vertices.addVertex(pose, (float) pos.x, (float) pos.y, (float) pos.z).setColor(255, 255, 255, 255).setUv(u, v)
                 .setOverlay(net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY).setLight(0x00F000F0).setNormal(0.0F, 1.0F, 0.0F);
+    }
+
+    private static void beamVertex(VertexConsumer vertices, org.joml.Matrix4f pose, Vec3 pos, float u, float v, int alpha) {
+        vertices.addVertex(pose, (float) pos.x, (float) pos.y, (float) pos.z).setColor(255, 255, 255, alpha).setUv(u, v)
+                .setOverlay(net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY).setLight(0x00F000F0).setNormal(0.0F, -1.0F, 0.0F);
     }
 }

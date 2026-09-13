@@ -114,6 +114,7 @@ public class KingEntity extends RoyalBossEntity {
     @Nullable
     private ServerPlayer exileTarget;
     private int exileTicks;
+    private boolean exileWingAnimationPending;
     @Nullable
     private ServerPlayer titheTarget;
     private int titheTicks;
@@ -364,6 +365,7 @@ public class KingEntity extends RoyalBossEntity {
             return;
         }
         this.tickRoyalPunishment();
+        this.tickPendingExileAnimation();
         long gameTime = this.level().getGameTime();
         this.judgmentCooldowns.entrySet().removeIf(entry -> entry.getValue() <= gameTime);
         this.lastPlayerDamageTime.entrySet().removeIf(entry -> gameTime - entry.getValue() > 600L);
@@ -489,8 +491,25 @@ public class KingEntity extends RoyalBossEntity {
             away = away.normalize();
             this.exileTarget.setDeltaMovement(away.x * 2.6D, 1.35D, away.z * 2.6D);
             this.exileTarget.hasImpulse = true;
-            this.triggerAnim("wing_action", "wing_gust");
             this.playRoyalSound(AntarchySoundEvents.KING_WING_FLAP.get(), 0.82F);
+            this.exileWingAnimationPending = true;
+        }
+    }
+
+    private void tickPendingExileAnimation() {
+        if (!this.exileWingAnimationPending
+                || !this.attackScheduler.ready("exile_wing_animation", RoyalAttackLane.BODY)) {
+            return;
+        }
+        if (this.beginRoyalAttack("exile_wing_animation", RoyalAttackLane.BODY, 1, 0, 1,
+                this.animationRecovery(55, 0, 1, 0), new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                    @Override
+                    public void onStart() {
+                        KingEntity.this.exileWingAnimationPending = false;
+                        KingEntity.this.triggerAnim("wing_action", "wing_gust");
+                    }
+                })) {
+            this.exileWingAnimationPending = false;
         }
     }
 
@@ -551,6 +570,7 @@ public class KingEntity extends RoyalBossEntity {
         }
         this.exileTarget = null;
         this.exileTicks = 0;
+        this.exileWingAnimationPending = false;
     }
 
     private void clearTithe() {
@@ -763,7 +783,7 @@ public class KingEntity extends RoyalBossEntity {
             } else if (this.attackScheduler.ready("wing_gust", RoyalAttackLane.BODY)
                     && distance <= WING_GUST_RADIUS && (forceFar || this.random.nextInt(3) == 0)
                     && this.beginRoyalAttack("wing_gust", RoyalAttackLane.BODY, WING_GUST_COOLDOWN_TICKS,
-                    WING_GUST_WINDUP_TICKS, 1, 16, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                    WING_GUST_WINDUP_TICKS, 1, this.animationRecovery(55, WING_GUST_WINDUP_TICKS, 1, 16), new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
                         @Override public void onStart() {
                             KingEntity.this.triggerAnim("wing_action", "wing_gust");
                             KingEntity.this.playRoyalSound(AntarchySoundEvents.KING_WING_FLAP.get(), 0.85F);
@@ -777,7 +797,8 @@ public class KingEntity extends RoyalBossEntity {
                     && (forceFar || this.random.nextInt(4) == 0)
                     && this.beginRoyalAttack("royal_muster", RoyalAttackLane.BODY,
                     AntarchySettings.kingRoyalMusterCooldownTicks(),
-                    AntarchySettings.kingRoyalMusterWindupTicks(), 1, 20,
+                    AntarchySettings.kingRoyalMusterWindupTicks(), 1,
+                    this.animationRecovery(59, AntarchySettings.kingRoyalMusterWindupTicks(), 1, 20),
                     new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
                         @Override public void onStart() {
                             KingEntity.this.triggerAnim("body_action", "minion_spawn");
@@ -971,6 +992,15 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     private void tickDecree(ServerLevel level, LivingEntity target) {
+        if (!(target instanceof ServerPlayer player) || !target.isAlive() || target.level() != level) {
+            if (this.activeDecree != null) {
+                this.endDecree(target);
+            }
+            this.activeDecree = null;
+            this.activeDecreeTicks = 0;
+            this.decreeRetreatPressure = false;
+            return;
+        }
         if (this.activeDecree == null) {
             if (this.decreeCooldownTicks-- > 0) {
                 return;
@@ -985,7 +1015,7 @@ public class KingEntity extends RoyalBossEntity {
             this.playRoyalSound(AntarchySoundEvents.KING_DECREE_CAST.get(), 0.9F + this.random.nextFloat() * 0.15F);
             this.playRoyalSound(AntarchySoundEvents.KING_ROAR.get(), 0.8F + this.random.nextFloat() * 0.12F);
             this.projectRoyalSound(AntarchySoundEvents.KING_DECREE.get(), 4.0F, 1.0F, target);
-            if (target instanceof ServerPlayer player) this.sendDecreeTitle(player);
+            this.sendDecreeTitle(player);
         }
         int countdown = this.activeDecree.countdownTicks(target);
         if (countdown > 0 && countdown <= 100 && this.tickCount % 20 == 0) {

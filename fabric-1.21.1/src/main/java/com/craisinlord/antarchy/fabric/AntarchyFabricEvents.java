@@ -72,8 +72,14 @@ public final class AntarchyFabricEvents {
     }
 
     public static void register() {
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> ChronosphereManager.refresh(handler.player));
-        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> ChronosphereManager.refresh(newPlayer));
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            ChronosphereManager.refresh(handler.player);
+            TimeDilationManager.resyncPersistentEffects(handler.player);
+        });
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
+            ChronosphereManager.refresh(newPlayer);
+            TimeDilationManager.resyncPersistentEffects(newPlayer);
+        });
         ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, destination) -> ChronosphereManager.refresh(player));
         net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents.START_TRACKING.register((trackedEntity, player) -> {
             if (trackedEntity instanceof com.craisinlord.antarchy.content.time.TimeDilationEntityAccess access
