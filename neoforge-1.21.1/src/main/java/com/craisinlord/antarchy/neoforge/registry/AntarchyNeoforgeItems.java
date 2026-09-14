@@ -206,7 +206,8 @@ public final class AntarchyNeoforgeItems {
 
     // Block items
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DUPLICATOR_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DUPLICATOR_LOG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> COMPUTER_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.COMPUTER);
+    public static final DeferredItem<ComputerItem> COMPUTER_ITEM = ITEMS.register("computer",
+            () -> new ComputerItem(AntarchyNeoforgeBlocks.COMPUTER.get(), new Item.Properties()));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_LOG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_WOOD);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_OURANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_OURANWOOD_LOG);

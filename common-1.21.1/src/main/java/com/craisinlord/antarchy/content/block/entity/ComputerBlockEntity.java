@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.block.entity;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.block.ComputerBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -14,6 +15,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -46,6 +48,9 @@ public final class ComputerBlockEntity extends BlockEntity implements GeoBlockEn
 
     public static void tick(Level level, BlockPos pos, BlockState state, ComputerBlockEntity computer) {
         boolean active = computer.isActive();
+        if (!level.isClientSide && state.getValue(ComputerBlock.ACTIVE) != active) {
+            level.setBlock(pos, state.setValue(ComputerBlock.ACTIVE, active), 3);
+        }
         if (active != computer.lastActive) {
             computer.lastActive = active;
             computer.triggerAnim("transitions", active ? "turn_on" : "turn_off");
@@ -80,13 +85,21 @@ public final class ComputerBlockEntity extends BlockEntity implements GeoBlockEn
     public void activate() {
         if (level != null && !level.isClientSide) {
             activeUntil = Math.max(activeUntil, level.getGameTime() + 40L);
+            if (!getBlockState().getValue(ComputerBlock.ACTIVE)) {
+                level.setBlock(worldPosition, getBlockState().setValue(ComputerBlock.ACTIVE, true), 3);
+            }
             setChanged();
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
     }
 
     public boolean isActive() {
-        return level != null && (level.hasNeighborSignal(worldPosition) || level.getGameTime() < activeUntil);
+        return level != null && (level.hasNeighborSignal(worldPosition) || level.getGameTime() < activeUntil || hasNearbyPlayer());
+    }
+
+    private boolean hasNearbyPlayer() {
+        Vec3 center = Vec3.atCenterOf(worldPosition);
+        return level.players().stream().anyMatch(player -> player.distanceToSqr(center) <= 25.0D);
     }
 
     @Override

@@ -593,6 +593,7 @@ public final class AntarchyNeoForgeClient {
         registerGeoItemExtension(event, AntarchyNeoforgeItems.BATTLE_AXE.get());
         registerGeoItemExtension(event, AntarchyNeoforgeItems.BIG_BERTHA.get());
         registerGeoItemExtension(event, AntarchyNeoforgeItems.ROYAL_GUARDIAN_SWORD.get());
+        registerGeoItemExtension(event, AntarchyNeoforgeItems.COMPUTER_ITEM.get());
     }
 
     @SubscribeEvent
