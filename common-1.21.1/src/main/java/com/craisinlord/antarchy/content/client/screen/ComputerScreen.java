@@ -6,6 +6,7 @@ import com.craisinlord.antarchy.content.guide.ComputerGuideData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
@@ -66,6 +67,7 @@ public final class ComputerScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        super.render(graphics, mouseX, mouseY, partialTick);
         int left = (this.width - WIDTH) / 2;
         int top = (this.height - HEIGHT) / 2;
         graphics.fill(0, 0, this.width, this.height, 0x99000000);
@@ -94,7 +96,9 @@ public final class ComputerScreen extends Screen {
         } else {
             renderEntry(graphics, visibleEntries.get(selectedIndex), left + 124, top + 62, accent);
         }
-        super.render(graphics, mouseX, mouseY, partialTick);
+        for (Renderable renderable : this.renderables) {
+            renderable.render(graphics, mouseX, mouseY, partialTick);
+        }
     }
 
     private void renderEntry(GuiGraphics graphics, ComputerGuideData.Entry entry, int x, int y, int accent) {

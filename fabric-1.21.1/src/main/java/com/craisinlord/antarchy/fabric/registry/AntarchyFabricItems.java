@@ -100,7 +100,8 @@ public final class AntarchyFabricItems {
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DUPLICATOR_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.DUPLICATOR_LOG);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> COMPUTER_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.COMPUTER);
+    public static final DeferredItem<ComputerItem> COMPUTER_ITEM = ITEMS.register("computer",
+            () -> new ComputerItem(AntarchyFabricBlocks.COMPUTER.get(), new Item.Properties()));
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.OURANWOOD_LOG);

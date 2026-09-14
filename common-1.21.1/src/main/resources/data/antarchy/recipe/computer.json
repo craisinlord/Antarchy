@@ -1,14 +1,29 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    {"item": "minecraft:iron_block"},
-    {"item": "minecraft:iron_block"},
-    {"item": "minecraft:iron_block"},
-    {"item": "minecraft:comparator"},
-    {"item": "minecraft:iron_ingot"}
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "minecraft:copper_ingot"
+    },
+    "C": {
+      "item": "minecraft:tinted_glass"
+    },
+    "D": {
+      "item": "minecraft:comparator"
+    },
+    "E": {
+      "item": "antarchy:bluestone_comparator"
+    }
+  },
+  "pattern": [
+    "AAC",
+    "DBE",
+    "AAA"
   ],
   "result": {
-    "id": "antarchy:computer",
-    "count": 1
+    "count": 1,
+    "id": "antarchy:computer"
   }
 }

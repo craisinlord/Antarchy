@@ -19,21 +19,30 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public final class ComputerBlock extends BaseEntityBlock {
     public static final MapCodec<ComputerBlock> CODEC = Block.simpleCodec(ComputerBlock::new);
+    public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     private static final VoxelShape SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
 
     public ComputerBlock(BlockBehaviour.Properties properties) {
-        super(properties);
+        super(properties.lightLevel(state -> state.getValue(ACTIVE) ? 7 : 0));
+        registerDefaultState(stateDefinition.any().setValue(ACTIVE, false));
     }
 
     @Override
     public MapCodec<ComputerBlock> codec() {
         return CODEC;
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(ACTIVE);
     }
 
     @Override
