@@ -60,6 +60,18 @@ public final class ComputerNetworking {
         sender.accept(new ComputerAccessPayload(pos, ComputerAccessPayload.FILE_SAVE, path + "\0" + contents));
     }
 
+    public static void deleteFile(BlockPos pos, String path) {
+        sender.accept(new ComputerAccessPayload(pos, ComputerAccessPayload.FILE_DELETE, path));
+    }
+
+    public static void moveFile(BlockPos pos, String source, String destination) {
+        sender.accept(new ComputerAccessPayload(pos, ComputerAccessPayload.FILE_MOVE, source + "\0" + destination));
+    }
+
+    public static void terminalCommand(BlockPos pos, String directory, String command) {
+        sender.accept(new ComputerAccessPayload(pos, ComputerAccessPayload.TERMINAL_COMMAND, directory + "\0" + command));
+    }
+
     public static void requestDesktopState(BlockPos pos) {
         sender.accept(new ComputerAccessPayload(pos, ComputerAccessPayload.DESKTOP_STATE));
     }

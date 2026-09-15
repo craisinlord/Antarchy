@@ -24,6 +24,7 @@ public final class AntarchySettings {
     private static boolean swingThroughGrassEnabled = true;
     private static boolean fabricKeybindingConflictFixEnabled = true;
     private static boolean experimentalSettingsPopupDisabled = true;
+    private static boolean unlockAllArchives = true;
     private static boolean sizeChangingRaysEnabled = true;
     private static double sizeRayMinScale = 0.1D;
     private static double sizeRayMaxScale = 10.0D;
@@ -696,6 +697,10 @@ public final class AntarchySettings {
         return experimentalSettingsPopupDisabled;
     }
 
+    public static boolean unlockAllArchives() {
+        return unlockAllArchives;
+    }
+
     public static boolean sizeChangingRaysEnabled() {
         return sizeChangingRaysEnabled;
     }
@@ -1313,6 +1318,10 @@ public final class AntarchySettings {
 
     public static void setExperimentalSettingsPopupDisabled(boolean value) {
         experimentalSettingsPopupDisabled = value;
+    }
+
+    public static void setUnlockAllArchives(boolean value) {
+        unlockAllArchives = value;
     }
 
     public static void setSizeChangingRaysEnabled(boolean value) {

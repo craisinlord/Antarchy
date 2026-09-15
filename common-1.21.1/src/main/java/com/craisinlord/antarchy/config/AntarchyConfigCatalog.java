@@ -144,6 +144,7 @@ public final class AntarchyConfigCatalog {
                 || name.equals("swingThroughGrassEnabled")
                 || name.equals("fabricKeybindingConflictFixEnabled")
                 || name.equals("experimentalSettingsPopupDisabled")
+                || name.equals("unlockAllArchives")
                 || name.equals("entitySpecificFireOverlayEnabled")
                 || name.equals("dreamSandEnabled")
                 || name.startsWith("dreamSand")

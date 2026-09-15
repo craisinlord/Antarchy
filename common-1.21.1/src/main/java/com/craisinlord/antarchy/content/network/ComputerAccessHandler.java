@@ -2,6 +2,9 @@ package com.craisinlord.antarchy.content.network;
 
 import com.craisinlord.antarchy.content.block.entity.ComputerBlockEntity;
 import com.craisinlord.antarchy.content.computer.ComputerFileSystem;
+import com.craisinlord.antarchy.content.computer.terminal.TerminalCommandService;
+import com.craisinlord.antarchy.content.computer.terminal.TerminalFileSystem;
+import com.craisinlord.antarchy.content.computer.terminal.TerminalResult;
 import com.craisinlord.antarchy.content.antmail.AntmailWire;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -51,6 +54,9 @@ public final class ComputerAccessHandler {
             case ComputerAccessPayload.FILE_OPEN -> fileOpen(player, computer, payload);
             case ComputerAccessPayload.FILE_CREATE -> fileCreate(player, computer, payload);
             case ComputerAccessPayload.FILE_SAVE -> fileSave(player, computer, payload);
+            case ComputerAccessPayload.FILE_DELETE -> fileDelete(player, computer, payload);
+            case ComputerAccessPayload.FILE_MOVE -> fileMove(player, computer, payload);
+            case ComputerAccessPayload.TERMINAL_COMMAND -> terminalCommand(player, computer, payload);
             case ComputerAccessPayload.DESKTOP_STATE -> desktopState(player, computer, payload);
             case ComputerAccessPayload.DESKTOP_WALLPAPER -> desktopWallpaper(player, computer, payload);
             default -> send(player, payload, ComputerAccessResultPayload.INVALID);
@@ -157,6 +163,89 @@ public final class ComputerAccessHandler {
         ComputerFileSystem.Result result = computer.fileSystem().writeTextFile(request[0], request[1]);
         if (result.successful()) computer.setChanged();
         sendFile(player, payload, result.successful(), request[0], result.error());
+    }
+
+    private static void fileDelete(ServerPlayer player, ComputerBlockEntity computer, ComputerAccessPayload payload) {
+        if (!computer.canUseFileSystem(player)) {
+            sendFile(player, payload, false, "", "unauthorized");
+            return;
+        }
+        ComputerFileSystem.Result result = computer.fileSystem().delete(payload.value());
+        if (result.successful()) computer.setChanged();
+        sendFile(player, payload, result.successful(), payload.value(), result.error());
+    }
+
+    private static void fileMove(ServerPlayer player, ComputerBlockEntity computer, ComputerAccessPayload payload) {
+        if (!computer.canUseFileSystem(player)) {
+            sendFile(player, payload, false, "", "unauthorized");
+            return;
+        }
+        String[] request = splitFileRequest(payload.value());
+        if (request == null) {
+            sendFile(player, payload, false, "", "invalid_request");
+            return;
+        }
+        ComputerFileSystem.Result result = computer.fileSystem().move(request[0], request[1]);
+        if (result.successful()) computer.setChanged();
+        sendFile(player, payload, result.successful(), request[1], result.error());
+    }
+
+    private static void terminalCommand(ServerPlayer player, ComputerBlockEntity computer, ComputerAccessPayload payload) {
+        if (!computer.canUseFileSystem(player)) {
+            send(player, payload, ComputerAccessResultPayload.INVALID);
+            return;
+        }
+        String[] request = splitFileRequest(payload.value());
+        if (request == null) {
+            sendTerminal(player, payload, TerminalResult.error("/", "ERROR: INVALID REQUEST"));
+            return;
+        }
+        TerminalResult result = new TerminalCommandService().execute(new ComputerTerminalFileSystem(computer.fileSystem()), request[0], request[1]);
+        if (result.status() != TerminalResult.Status.SUCCESS || !result.lines().isEmpty() || result.clearOutput() || result.openPath() != null) computer.setChanged();
+        sendTerminal(player, payload, result);
+    }
+
+    private static void sendTerminal(ServerPlayer player, ComputerAccessPayload payload, TerminalResult result) {
+        net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
+        tag.putString("Directory", result.workingDirectory());
+        tag.putBoolean("Clear", result.clearOutput());
+        tag.putString("Open", result.openPath() == null ? "" : result.openPath());
+        net.minecraft.nbt.ListTag lines = new net.minecraft.nbt.ListTag();
+        for (String line : result.lines()) lines.add(net.minecraft.nbt.StringTag.valueOf(line));
+        tag.put("Lines", lines);
+        resultSender.accept(player, new ComputerAccessResultPayload(payload.pos(), result.status() == TerminalResult.Status.ERROR ? ComputerAccessResultPayload.INVALID : ComputerAccessResultPayload.SUCCESS,
+                true, true, payload.action() + "\0" + AntmailWire.encodeTag(tag)));
+    }
+
+    private static final class ComputerTerminalFileSystem implements TerminalFileSystem {
+        private final ComputerFileSystem fileSystem;
+
+        private ComputerTerminalFileSystem(ComputerFileSystem fileSystem) { this.fileSystem = fileSystem; }
+
+        @Override public java.util.Optional<Entry> find(String path, String workingDirectory) {
+            ComputerFileSystem.ComputerFile file = fileSystem.get(resolve(path, workingDirectory));
+            return file == null ? java.util.Optional.empty() : java.util.Optional.of(new Entry(file.path(), file.path(), file.type() == ComputerFileSystem.ComputerFile.Type.DIRECTORY ? EntryType.DIRECTORY : EntryType.FILE));
+        }
+        @Override public java.util.List<Entry> list(String path, String workingDirectory) {
+            String directory = resolve(path, workingDirectory);
+            return fileSystem.list().stream().filter(file -> {
+                String parent = file.path().lastIndexOf('/') <= 0 ? "/" : file.path().substring(0, file.path().lastIndexOf('/'));
+                return parent.equals(directory) && !file.path().equals(directory);
+            }).map(file -> new Entry(file.path().substring(file.path().lastIndexOf('/') + 1), file.path(), file.type() == ComputerFileSystem.ComputerFile.Type.DIRECTORY ? EntryType.DIRECTORY : EntryType.FILE)).toList();
+        }
+        @Override public boolean createDirectory(String path, String workingDirectory) { return fileSystem.createDirectory(resolve(path, workingDirectory)).successful(); }
+        @Override public boolean createFile(String path, String workingDirectory) { return fileSystem.createTextFile(resolve(path, workingDirectory), "").successful(); }
+        @Override public java.util.Optional<String> readText(String path, String workingDirectory) { ComputerFileSystem.ComputerFile file = fileSystem.get(resolve(path, workingDirectory)); return file != null && file.type() == ComputerFileSystem.ComputerFile.Type.TEXT ? java.util.Optional.of(file.contents()) : java.util.Optional.empty(); }
+        @Override public boolean writeText(String path, String workingDirectory, String contents) { return fileSystem.createOrWriteTextFile(resolve(path, workingDirectory), contents).successful(); }
+        @Override public boolean deleteFile(String path, String workingDirectory) { return fileSystem.delete(resolve(path, workingDirectory)).successful(); }
+        @Override public boolean deleteEmptyDirectory(String path, String workingDirectory) { return fileSystem.delete(resolve(path, workingDirectory)).successful(); }
+        @Override public boolean move(String source, String destination, String workingDirectory) { return fileSystem.move(resolve(source, workingDirectory), resolve(destination, workingDirectory)).successful(); }
+        @Override public String normalize(String path, String workingDirectory) { return resolve(path, workingDirectory); }
+
+        private String resolve(String path, String workingDirectory) {
+            if (path == null || path.isBlank()) return ComputerFileSystem.normalize(workingDirectory);
+            return ComputerFileSystem.normalize(path.startsWith("/") ? path : ComputerFileSystem.normalize(workingDirectory) + "/" + path);
+        }
     }
 
     private static void desktopState(ServerPlayer player, ComputerBlockEntity computer, ComputerAccessPayload payload) {

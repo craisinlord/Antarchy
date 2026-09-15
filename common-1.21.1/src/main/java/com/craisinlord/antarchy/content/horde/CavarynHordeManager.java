@@ -69,6 +69,8 @@ public final class CavarynHordeManager {
 
     private static final int GROUP_RADIUS_BLOCKS = 128;
     private static final int ATTENTION_THRESHOLD = 100;
+    private static final int TIGERS_EYE_TRIGGER_LEVEL = 125;
+    private static final ResourceLocation TIGERS_EYE_BLOCK = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "tigers_eye_block");
     private static final int HOSTILE_KILL_ATTENTION = 4;
     private static final int MOB_KILL_ATTENTION = 3;
     private static final int EGG_OR_NEST_BREAK_ATTENTION = 5;
@@ -129,13 +131,35 @@ public final class CavarynHordeManager {
     }
 
     public static void recordBlockBreak(ServerPlayer player, BlockState brokenState, BlockPos pos) {
-        if (!(player.level() instanceof ServerLevel level) || !level.dimension().equals(CAVARYN) || !hordesEnabled(level)) {
+        if (!(player.level() instanceof ServerLevel level)) {
+            return;
+        }
+        triggerTigersEyeBlockBreak(player, level, brokenState);
+        if (!level.dimension().equals(CAVARYN) || !hordesEnabled(level)) {
             return;
         }
         if (!isValidHordeTarget(player) || !isHordeBiome(level, pos) || isPlayerInActiveEncounter(level, player)) {
             return;
         }
         addAttention(level, player, scaleActionAttention(level, isEggOrNest(brokenState) ? EGG_OR_NEST_BREAK_ATTENTION : BLOCK_BREAK_ATTENTION));
+    }
+
+    private static void triggerTigersEyeBlockBreak(ServerPlayer player, ServerLevel level, BlockState brokenState) {
+        if (!level.dimension().equals(CAVARYN)
+                || !hordesEnabled(level)
+                || !isValidHordeTarget(player)
+                || !BuiltInRegistries.BLOCK.getKey(brokenState.getBlock()).equals(TIGERS_EYE_BLOCK)) {
+            return;
+        }
+
+        HordeData data = get(level);
+        PlayerAttention attention = data.players.computeIfAbsent(player.getUUID(), ignored -> new PlayerAttention());
+        attention.attention = TIGERS_EYE_TRIGGER_LEVEL;
+        attention.areaKey = areaKey(player.blockPosition());
+        attention.areaTicks = 0;
+        attention.lastSeenGameTime = level.getGameTime();
+        data.setDirty();
+        HordeIntensitySync.send(player, attention.attention / (float) ATTENTION_THRESHOLD);
     }
 
     public static boolean isHordeBiome(ServerLevelAccessor level, BlockPos pos) {

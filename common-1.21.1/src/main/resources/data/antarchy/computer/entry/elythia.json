@@ -1,0 +1,8 @@
+{
+  "type": "dimension",
+  "category": "elythia",
+  "title": "guide.antarchy.entry.elythia.title",
+  "subtitle": "guide.antarchy.entry.elythia.subtitle",
+  "description": ["guide.antarchy.entry.elythia.description"],
+  "dimension": "antarchy:elythia"
+}

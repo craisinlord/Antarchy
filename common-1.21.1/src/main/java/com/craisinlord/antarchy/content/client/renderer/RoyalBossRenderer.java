@@ -309,9 +309,9 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
     private static void drawModelPlane(VertexConsumer vertices, org.joml.Matrix4f pose,
                                        int x, int y, int z, int width, int height, int u, int v) {
         emitQuadUv(vertices, pose,
-                new Vec3(x, y, z), new Vec3(x + width, y, z),
-                new Vec3(x + width, y + height, z), new Vec3(x, y + height, z),
-                u / 128.0F, v / 128.0F, (u + width) / 128.0F, (v + height) / 128.0F);
+                new Vec3(x + width, y, z), new Vec3(x, y, z),
+                new Vec3(x, y + height, z), new Vec3(x + width, y + height, z),
+                (u + width) / 128.0F, v / 128.0F, u / 128.0F, (v + height) / 128.0F);
     }
 
     private static void emitQuadUv(VertexConsumer vertices, org.joml.Matrix4f pose,
