@@ -52,6 +52,15 @@ public final class ComputerFileSystem {
         return nodes.values().stream().filter(file -> file.type() == ComputerFile.Type.TEXT).toList();
     }
 
+    public Result createDirectory(String path) {
+        String normalized = normalize(path);
+        if (normalized.isEmpty() || ROOT.equals(normalized) || isProtected(normalized) || nodes.containsKey(normalized) || nodes.size() >= MAX_NODES) return Result.failure("invalid_path");
+        int slash = normalized.lastIndexOf('/');
+        if (slash > 0 && !nodesDirectory(normalized.substring(0, slash))) return Result.failure("missing_directory");
+        nodes.put(normalized, ComputerFile.directory(normalized));
+        return Result.ok();
+    }
+
     public Result createTextFile(String path, String contents) {
         String normalized = normalize(path);
         Result validation = validateTextPath(normalized, contents);
@@ -81,6 +90,21 @@ public final class ComputerFileSystem {
 
     public Result createOrWriteTextFile(String path, String contents) {
         return nodes.containsKey(normalize(path)) ? writeTextFile(path, contents) : createTextFile(path, contents);
+    }
+
+    public Result move(String source, String destination) {
+        String from = normalize(source);
+        String to = normalize(destination);
+        if (from.isEmpty() || to.isEmpty() || ROOT.equals(from) || ROOT.equals(to) || isProtected(from) || isProtected(to)) return Result.failure("invalid_path");
+        ComputerFile file = nodes.get(from);
+        if (file == null) return Result.failure("not_found");
+        if (nodes.containsKey(to)) return Result.failure("already_exists");
+        int slash = to.lastIndexOf('/');
+        if (slash > 0 && !nodesDirectory(to.substring(0, slash))) return Result.failure("missing_directory");
+        if (file.type() == ComputerFile.Type.DIRECTORY && to.startsWith(from + "/")) return Result.failure("invalid_path");
+        nodes.remove(from);
+        nodes.put(to, file.type() == ComputerFile.Type.DIRECTORY ? ComputerFile.directory(to) : ComputerFile.text(to, file.contents()));
+        return Result.ok();
     }
 
     public Result delete(String path) {

@@ -28,15 +28,24 @@ public final class ComputerFileSystemClientState {
         State state = STATES.computeIfAbsent(payload.pos(), ignored -> new State());
         state.success = payload.result() == ComputerAccessResultPayload.SUCCESS;
         state.error = envelope[1];
-        if (action == ComputerAccessPayload.FILE_LIST && state.success) {
+        if (state.success) state.error = "";
+        if (action == ComputerAccessPayload.FILE_LIST) {
             state.files = new ArrayList<>();
-            if (!envelope[2].isEmpty()) state.files.addAll(List.of(envelope[2].split("\\n")));
-        } else if (action == ComputerAccessPayload.FILE_OPEN && state.success) {
-            String[] file = envelope[2].split("\u0000", 2);
-            if (file.length == 2) {
-                state.openedPath = file[0];
-                state.openedContents = file[1];
+            if (state.success && !envelope[2].isEmpty()) state.files.addAll(List.of(envelope[2].split("\\n")));
+        } else if (action == ComputerAccessPayload.FILE_OPEN) {
+            if (state.success) {
+                String[] file = envelope[2].split("\u0000", 2);
+                if (file.length == 2) {
+                    state.openedPath = file[0];
+                    state.openedContents = file[1];
+                }
+            } else {
+                state.openedPath = "";
+                state.openedContents = "";
             }
+        } else if ((action == ComputerAccessPayload.FILE_DELETE || action == ComputerAccessPayload.FILE_MOVE) && state.success) {
+            state.openedPath = "";
+            state.openedContents = "";
         }
     }
 

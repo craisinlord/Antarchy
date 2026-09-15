@@ -31,6 +31,10 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -108,6 +112,19 @@ public final class ComputerScreen extends Screen {
                 }
             }
         }
+        AntmailResultPayload mailResult = AntmailClientState.get(position);
+        if (session.antmailRegistrationPending && mailResult != null) {
+            String expectedAddress = session.antmailUsername + "@antmail.com";
+            if (mailResult.address().equalsIgnoreCase(expectedAddress)) {
+                session.antmailStatus = "ADDRESS REGISTERED";
+                session.antmailRegistrationPending = false;
+                AntmailNetworking.requestState(position);
+            } else if (mailResult.detail().startsWith("registration_failed:")) {
+                String reason = mailResult.detail().substring("registration_failed:".length()).trim();
+                session.antmailStatus = "ADDRESS REGISTRATION FAILED // " + (reason.isBlank() ? "SERVER REJECTED" : reason.toUpperCase());
+                session.antmailRegistrationPending = false;
+            }
+        }
         if (!loggedIn && accessResult != null && accessResult.authenticated()) {
             loggedIn = true;
             session.authenticated = true;
@@ -132,6 +149,24 @@ public final class ComputerScreen extends Screen {
                     session.wallpapers = state.unlockedWallpaperIds().stream().map(ResourceLocation::toString).toList();
                 } catch (RuntimeException ignored) {
                 }
+            }
+        }
+        if (currentResult != null && currentResult.data().startsWith("15\u0000") && !currentResult.data().equals(session.terminalResponse)) {
+            session.terminalResponse = currentResult.data();
+            try {
+                var terminal = AntmailWire.decodeTag(currentResult.data().substring(3));
+                session.terminalDirectory = terminal.getString("Directory");
+                if (terminal.getBoolean("Clear")) session.terminalOutput.clear();
+                var lines = terminal.getList("Lines", 8);
+                for (int index = 0; index < lines.size(); index++) session.terminalOutput.add(lines.getString(index));
+                String openPath = terminal.getString("Open");
+                if (!openPath.isBlank()) {
+                    ComputerNetworking.openFile(position, openPath);
+                    open(openPath.endsWith(".antpaint") ? "PAINT" : "TEXT");
+                }
+                while (session.terminalOutput.size() > 40) session.terminalOutput.remove(0);
+            } catch (RuntimeException ignored) {
+                session.terminalOutput.add("ERROR: CORRUPTED SERVER RESPONSE");
             }
         }
         antFarm.setGameInstalled(physicalDisks().stream().anyMatch(id -> id.getPath().equals("ant_farm")));
@@ -192,9 +227,11 @@ public final class ComputerScreen extends Screen {
 
     private void renderDesktop(GuiGraphics g, int l, int t, int mouseX, int mouseY) {
         session.lastUse = System.currentTimeMillis();
-        if (session.wallpaperId.endsWith("grid_ant")) {
-            for (int py = t + 36; py < t + HEIGHT - 8; py += 18) for (int px = l + 8; px < l + WIDTH - 8; px += 36) g.fill(px, py, px + 2, py + 2, 0xFF173817);
-        }
+        session.mouseX = mouseX;
+        session.mouseY = mouseY;
+        session.archiveMouseX = mouseX;
+        session.archiveMouseY = mouseY;
+        renderWallpaper(g, l, t);
         g.fill(l + 9, t + 9, l + WIDTH - 9, t + 30, BLACK);
         g.drawString(font, Component.literal("ANTINTOSH OS // v" + Antarchy.MOD_VERSION), l + 18, t + 15, GREEN, false);
         long dayTime = Minecraft.getInstance().level == null ? 0L : Minecraft.getInstance().level.getDayTime();
@@ -222,19 +259,133 @@ public final class ComputerScreen extends Screen {
         for (Window window : session.windows) if (!window.minimized) renderWindow(g, window, l, t, mouseX, mouseY);
     }
 
+    private void renderWallpaper(GuiGraphics g, int l, int t) {
+        int left = l + 9;
+        int top = t + 34;
+        int right = l + WIDTH - 9;
+        int bottom = t + HEIGHT - 8;
+        String wallpaperId = ComputerDesktopState.DEFAULT_WALLPAPER.toString();
+        int hash = wallpaperId.hashCode();
+        int green = 24 + Math.floorMod(hash, 40);
+        int blue = 12 + Math.floorMod(hash >>> 8, 24);
+        int base = 0xFF000000 | (green / 2 << 16) | (green << 8) | blue;
+        g.fill(left, top, right, bottom, base);
+        if (wallpaperId.endsWith("grid_ant")) {
+            for (int py = top + 2; py < bottom; py += 18) {
+                for (int px = left + 2; px < right; px += 36) {
+                    g.fill(px, py, px + 2, py + 2, 0xFF173817);
+                }
+            }
+            return;
+        }
+        int accent = 0xFF000000 | (Math.min(120, green + 34) << 8) | Math.min(80, blue + 34);
+        int spacing = 18 + Math.floorMod(hash, 13);
+        int offset = Math.floorMod(hash >>> 16, spacing);
+        for (int y = top - spacing; y < bottom + spacing; y += spacing) {
+            int x = left - spacing + offset;
+            while (x < right) {
+                int size = 3 + Math.floorMod(x + y + hash, 7);
+                g.fill(x, y, Math.min(right, x + size), Math.min(bottom, y + 2), accent);
+                x += spacing * 2;
+            }
+            offset = spacing - offset;
+        }
+    }
+
+    private String wallpaperName() {
+        int separator = session.wallpaperId.indexOf(':');
+        String name = separator >= 0 ? session.wallpaperId.substring(separator + 1) : session.wallpaperId;
+        return name.toUpperCase();
+    }
+
     private void icon(GuiGraphics g, String type, int x, int y) {
+        if (type.equals("ARCHIVE") || type.equals("DISK")) {
+            g.fill(x - 11, y - 2, x + 11, y + 19, BLACK);
+            g.fill(x - 8, y + 1, x + 8, y + 16, GREEN);
+            g.fill(x - 5, y + 3, x + 5, y + 8, BLACK);
+            g.fill(x - 4, y + 12, x + 4, y + 16, BLACK);
+            return;
+        }
+        if (type.equals("FILES")) {
+            g.fill(x - 12, y + 2, x + 11, y + 19, BLACK);
+            g.fill(x - 9, y, x + 1, y + 4, BLACK);
+            g.fill(x - 8, y + 3, x + 9, y + 16, GREEN);
+            g.fill(x - 9, y + 8, x + 9, y + 16, GREEN);
+            g.fill(x - 6, y + 2, x - 1, y + 4, GREEN);
+            return;
+        }
+        if (type.equals("SETTINGS")) {
+            g.fill(x - 5, y - 3, x + 5, y + 20, BLACK);
+            g.fill(x - 12, y + 5, x + 12, y + 13, BLACK);
+            g.fill(x - 9, y, x + 9, y + 18, BLACK);
+            g.fill(x - 2, y, x + 2, y + 17, GREEN);
+            g.fill(x - 9, y + 7, x + 9, y + 11, GREEN);
+            g.fill(x - 3, y + 5, x + 3, y + 13, BLACK);
+            return;
+        }
+        if (type.equals("TERMINAL")) {
+            g.fill(x - 12, y - 1, x + 12, y + 18, BLACK);
+            g.fill(x - 9, y + 2, x + 9, y + 15, GREEN);
+            g.fill(x - 6, y + 6, x - 2, y + 9, BLACK);
+            g.fill(x - 2, y + 9, x + 4, y + 12, BLACK);
+            return;
+        }
+        if (type.equals("TEXT")) {
+            g.fill(x - 9, y - 2, x + 10, y + 20, BLACK);
+            g.fill(x - 6, y + 1, x + 7, y + 17, GREEN);
+            g.fill(x + 5, y + 1, x + 7, y + 4, BLACK);
+            g.fill(x - 3, y + 5, x + 5, y + 7, BLACK);
+            g.fill(x - 3, y + 9, x + 5, y + 11, BLACK);
+            g.fill(x - 3, y + 13, x + 3, y + 15, BLACK);
+            return;
+        }
+        if (type.equals("PAINT")) {
+            // Palette with a separate brush, using a stepped silhouette to keep the icon readable at desktop scale.
+            g.fill(x - 10, y + 2, x + 8, y + 19, BLACK);
+            g.fill(x - 7, y + 4, x + 6, y + 16, GREEN);
+            g.fill(x - 4, y + 6, x - 1, y + 9, BLACK);
+            g.fill(x + 1, y + 5, x + 4, y + 8, BLACK);
+            g.fill(x + 2, y + 11, x + 5, y + 14, BLACK);
+            g.fill(x + 8, y - 3, x + 11, y + 10, BLACK);
+            g.fill(x + 5, y + 6, x + 9, y + 9, BLACK);
+            g.fill(x + 8, y - 1, x + 10, y + 7, PALE_GREEN);
+            g.fill(x + 5, y + 7, x + 8, y + 10, PALE_GREEN);
+            return;
+        }
+        if (type.equals("ANTMAIL")) {
+            g.fill(x - 12, y + 2, x + 12, y + 17, BLACK);
+            g.fill(x - 9, y + 5, x + 9, y + 14, GREEN);
+            // Sealed envelope: the stepped black V is the closed flap.
+            g.fill(x - 8, y + 5, x - 5, y + 7, BLACK);
+            g.fill(x - 6, y + 7, x - 3, y + 9, BLACK);
+            g.fill(x - 4, y + 9, x - 1, y + 11, BLACK);
+            g.fill(x - 1, y + 11, x + 2, y + 13, BLACK);
+            g.fill(x + 1, y + 9, x + 4, y + 11, BLACK);
+            g.fill(x + 3, y + 7, x + 6, y + 9, BLACK);
+            g.fill(x + 5, y + 5, x + 8, y + 7, BLACK);
+            return;
+        }
+        if (type.equals("GAMES")) {
+            g.fill(x - 12, y + 6, x + 12, y + 15, BLACK);
+            g.fill(x - 9, y + 3, x + 9, y + 18, BLACK);
+            g.fill(x - 8, y + 6, x + 8, y + 15, GREEN);
+            g.fill(x - 5, y + 8, x + 1, y + 10, BLACK);
+            g.fill(x - 3, y + 6, x - 1, y + 12, BLACK);
+            g.fill(x + 4, y + 7, x + 6, y + 9, BLACK);
+            g.fill(x + 7, y + 10, x + 9, y + 12, BLACK);
+            return;
+        }
+        if (type.equals("TRASH")) {
+            g.fill(x - 9, y + 2, x + 9, y + 5, BLACK);
+            g.fill(x - 8, y + 5, x + 8, y + 19, BLACK);
+            g.fill(x - 5, y + 7, x + 5, y + 16, GREEN);
+            g.fill(x - 6, y + 3, x + 6, y + 4, GREEN);
+            g.fill(x - 5, y - 1, x + 5, y + 2, BLACK);
+            g.fill(x - 3, y, x + 3, y + 1, GREEN);
+            return;
+        }
         g.fill(x - 10, y, x + 10, y + 18, BLACK);
         g.fill(x - 8, y + 2, x + 8, y + 16, GREEN);
-        if (type.equals("SETTINGS")) {
-            g.fill(x - 12, y + 7, x + 12, y + 11, BLACK);
-            g.fill(x - 2, y - 2, x + 2, y + 20, BLACK);
-        } else if (type.equals("TRASH")) {
-            g.fill(x - 12, y - 3, x + 12, y, GREEN);
-            g.fill(x - 7, y + 4, x + 7, y + 18, BLACK);
-        } else if (type.equals("TERMINAL")) {
-            g.fill(x - 5, y + 7, x - 1, y + 11, BLACK);
-            g.fill(x - 1, y + 11, x + 6, y + 14, BLACK);
-        }
     }
 
     private void renderWindow(GuiGraphics g, Window window, int l, int t, int mouseX, int mouseY) {
@@ -254,12 +405,12 @@ public final class ComputerScreen extends Screen {
         int cx = x + 8;
         int cy = y + 28;
         if (window.type.equals("ARCHIVE")) renderArchive(g, cx, cy, w - 16, h - 34);
-        else if (window.type.equals("FILES")) renderFileExplorer(g, cx, cy, w, h);
+        else if (window.type.equals("FILES")) renderFileExplorer(g, cx, cy, w - 16, h - 34);
         else if (window.type.equals("SETTINGS")) renderSettings(g, cx, cy, h - 34);
-        else if (window.type.equals("TERMINAL")) renderTerminal(g, cx, cy, h);
-        else if (window.type.equals("TEXT")) renderTextEditor(g, cx, cy, w, h);
-        else if (window.type.equals("PAINT")) renderPaint(g, cx, cy, w, h);
-        else if (window.type.equals("ANTMAIL")) renderAntmail(g, cx, cy, h);
+        else if (window.type.equals("TERMINAL")) renderTerminal(g, cx, cy, h - 34);
+        else if (window.type.equals("TEXT")) renderTextEditor(g, cx, cy, w - 16, h - 34);
+        else if (window.type.equals("PAINT")) renderPaint(g, cx, cy, w - 16, h - 34);
+        else if (window.type.equals("ANTMAIL")) renderAntmail(g, cx, cy, h - 34);
         else if (window.type.equals("GAMES")) renderGames(g, cx, cy);
         else renderTrash(g, cx, cy);
     }
@@ -305,17 +456,51 @@ public final class ComputerScreen extends Screen {
             return;
         }
         int row = y + 18;
-        int visible = Math.max(1, (h - 34) / 25);
-        for (int i = 0; i < entries.size() && i < visible; i++) {
+        int visible = Math.max(1, (h - 34) / 62);
+        int start = Math.max(0, Math.min(session.archiveScroll, Math.max(0, entries.size() - visible)));
+        for (int i = start; i < entries.size() && i < start + visible; i++) {
             ComputerGuideData.Entry entry = entries.get(i);
-            int rowTop = row + i * 25;
-            g.drawString(font, Component.literal(String.format("FILE_%02d", i + 1)), x + 5, rowTop, PALE_GREEN, false);
-            String title = trimToWidth(Component.translatable(entry.titleKey()).getString(), w - 64);
-            g.drawString(font, Component.literal(title), x + 57, rowTop, GREEN, false);
-            g.drawString(font, Component.literal(entry.type().toUpperCase() + " // " + entry.category().toUpperCase()), x + 57, rowTop + 11, PALE_GREEN, false);
+            int rowTop = row + (i - start) * 62;
+            boolean hover = inside(x, rowTop, w - 8, 56, session.archiveMouseX, session.archiveMouseY);
+            if (hover) g.fill(x, rowTop, x + w - 8, rowTop + 56, 0xFF173817);
+            g.fill(x + 3, rowTop + 3, x + 51, rowTop + 51, BLACK);
+            renderThumbnail(g, entry, x + 27, rowTop + 27, hover);
+            String title = trimToWidth(Component.translatable(entry.titleKey()).getString(), w - 78);
+            g.drawString(font, Component.literal(title), x + 58, rowTop + 9, GREEN, false);
+            if (!entry.subtitleKey().isBlank()) g.drawString(font, Component.literal(trimToWidth(Component.translatable(entry.subtitleKey()).getString(), w - 78)), x + 58, rowTop + 23, PALE_GREEN, false);
+            g.drawString(font, Component.literal(entry.type().toUpperCase() + " // " + entry.category().toUpperCase()), x + 58, rowTop + 39, PALE_GREEN, false);
         }
-        if (entries.size() > visible) g.drawString(font, Component.literal("SCROLLING NOT AVAILABLE // FIRST FILES SHOWN"), x, y + h - 12, PALE_GREEN, false);
-        else g.drawString(font, Component.literal("[ CLICK FILE TO OPEN ]"), x, y + h - 12, PALE_GREEN, false);
+        if (entries.size() > visible) g.drawString(font, Component.literal("SCROLL " + (start + 1) + "-" + Math.min(entries.size(), start + visible) + " / " + entries.size()), x, y + h - 12, PALE_GREEN, false);
+        else g.drawString(font, Component.literal("[ CLICK ENTRY TO OPEN ]"), x, y + h - 12, PALE_GREEN, false);
+    }
+
+    private void renderThumbnail(GuiGraphics g, ComputerGuideData.Entry entry, int centerX, int centerY, boolean hover) {
+        int background = hover ? 0xFF173817 : 0xFF102010;
+        g.fill(centerX - 18, centerY - 18, centerX + 18, centerY + 18, background);
+        if (!entry.itemId().isBlank()) {
+            try {
+                ResourceLocation itemId = ResourceLocation.parse(entry.itemId());
+                var item = BuiltInRegistries.ITEM.getOptional(itemId).orElse(null);
+                if (item != null && !item.equals(net.minecraft.world.item.Items.AIR)) {
+                    g.renderItem(new ItemStack(item), centerX - 8, centerY - 8);
+                    return;
+                }
+            } catch (RuntimeException ignored) {
+            }
+        }
+        if (!entry.entityId().isBlank() && Minecraft.getInstance().level != null) {
+            try {
+                ResourceLocation entityId = ResourceLocation.parse(entry.entityId());
+                var entityType = BuiltInRegistries.ENTITY_TYPE.getOptional(entityId).orElse(null);
+                var entity = entityType == null ? null : entityType.create(Minecraft.getInstance().level);
+                if (entity instanceof LivingEntity living && !living.isRemoved()) {
+                    InventoryScreen.renderEntityInInventoryFollowsMouse(g, centerX - 18, centerY - 18, centerX + 18, centerY + 18, 18, 0.15F, centerX, centerY, living);
+                    return;
+                }
+            } catch (RuntimeException ignored) {
+            }
+        }
+        g.drawString(font, Component.literal("ANT"), centerX - 12, centerY - 4, hover ? GREEN : PALE_GREEN, false);
     }
 
     private void renderFileExplorer(GuiGraphics g, int x, int y, int w, int h) {
@@ -327,12 +512,19 @@ public final class ComputerScreen extends Screen {
         for (String file : files) {
             String[] fields = file.split("\\t", 3);
             if (fields.length < 3 || !isDirectChild(fields[1], session.fileExplorerDirectory) || line > y + h - 20) continue;
-            g.drawString(font, Component.literal(trimToWidth(fields[0], 36)), x, line, PALE_GREEN, false);
-            g.drawString(font, Component.literal(trimToWidth(fields[1], 125)), x + 42, line, GREEN, false);
-            g.drawString(font, Component.literal(fields[2]), x + w - 28, line, PALE_GREEN, false);
+            boolean selected = fields[1].equals(session.fileExplorerSelected);
+            if (selected) g.fill(x - 3, line - 2, x + w - 3, line + 11, 0xFF173817);
+            g.drawString(font, Component.literal(fileIcon(fields[0]) + " " + trimToWidth(fields[0], 30)), x, line, PALE_GREEN, false);
+            g.drawString(font, Component.literal(trimToWidth(fields[1], 112)), x + 42, line, GREEN, false);
+            g.drawString(font, Component.literal(trimToWidth(fields[2], 28)), x + w - 28, line, PALE_GREEN, false);
             line += 14;
         }
         if (line == y + 34) g.drawString(font, Component.literal("NO FILES // OPEN TERMINAL TO CREATE ONE"), x, y + 38, PALE_GREEN, false);
+        else g.drawString(font, Component.literal(session.fileExplorerRenaming ? "RENAME: " + session.fileExplorerRename + "_" : "[ DELETE ]   [ F2 RENAME ]"), x, y + h - 16, PALE_GREEN, false);
+    }
+
+    private String fileIcon(String type) {
+        return type.equals("DIRECTORY") ? "[D]" : type.equals("TEXT") ? "[T]" : "[I]";
     }
 
     private boolean isDirectChild(String path, String directory) {
@@ -360,9 +552,8 @@ public final class ComputerScreen extends Screen {
         g.drawString(font, Component.literal("SYSTEM STATUS"), x, y, GREEN, false);
         g.drawString(font, Component.literal("CPU  " + (System.currentTimeMillis() / 100 % 87 + 12) + "%"), x, y + 18, PALE_GREEN, false);
         g.drawString(font, Component.literal("MEM  " + (System.currentTimeMillis() / 250 % 42 + 31) + "%"), x, y + 32, PALE_GREEN, false);
-        g.drawString(font, Component.literal("WALLPAPER  " + session.wallpaperId.substring(session.wallpaperId.indexOf(':') + 1).toUpperCase()), x, y + 46, PALE_GREEN, false);
-        g.drawString(font, Component.literal("[ CLICK TO CYCLE ]"), x, y + 60, GREEN, false);
-        g.drawString(font, Component.literal("PASSWORD  CHANGE IN FULL BUILD"), x, y + 70, GREEN, false);
+        g.drawString(font, Component.literal("WALLPAPER  DEFAULT // LOCKED"), x, y + 46, PALE_GREEN, false);
+        g.drawString(font, Component.literal("PASSWORD  CHANGE IN FULL BUILD"), x, y + 60, GREEN, false);
         g.drawString(font, Component.literal("PHYSICAL DISKS"), x, y + 91, GREEN, false);
         List<ResourceLocation> disks = physicalDisks();
         if (disks.isEmpty()) {
@@ -379,6 +570,21 @@ public final class ComputerScreen extends Screen {
         g.drawString(font, Component.literal("LOG OUT"), x, y + h - 17, GREEN, false);
     }
 
+    private void drawWallpaperPreview(GuiGraphics g, int x, int y, int w, int h, String id) {
+        int hash = id.hashCode();
+        int green = 24 + Math.floorMod(hash, 40);
+        int blue = 12 + Math.floorMod(hash >>> 8, 24);
+        int base = 0xFF000000 | (green / 2 << 16) | (green << 8) | blue;
+        g.fill(x - 1, y - 1, x + w + 1, y + h + 1, GREEN);
+        g.fill(x, y, x + w, y + h, base);
+        int accent = 0xFF000000 | (Math.min(120, green + 34) << 8) | Math.min(80, blue + 34);
+        for (int py = y + 4; py < y + h; py += 9) {
+            for (int px = x + 4; px < x + w; px += 12) {
+                if (Math.floorMod(px + py + hash, 3) == 0) g.fill(px, py, Math.min(x + w, px + 3), Math.min(y + h, py + 2), accent);
+            }
+        }
+    }
+
     private void renderTerminal(GuiGraphics g, int x, int y, int h) {
         var fileState = ComputerFileSystemClientState.get(position);
         g.drawString(font, Component.literal("ANTINTOSH TERMINAL [READY]"), x, y, GREEN, false);
@@ -387,8 +593,8 @@ public final class ComputerScreen extends Screen {
             line = wrap(g, output, x, line, 208, PALE_GREEN) + 1;
             if (line > y + h - 32) break;
         }
-        if (!fileState.error().isEmpty()) g.drawString(font, Component.literal("RESPONSE: " + fileState.error()), x, y + 16, PALE_GREEN, false);
-        g.drawString(font, Component.literal(session.terminalDirectory + "> " + session.terminalInput + "_"), x, y + h - 48, GREEN, false);
+        if (!fileState.error().isEmpty()) g.drawString(font, Component.literal("RESPONSE: " + fileState.error()), x, y + h - 40, PALE_GREEN, false);
+        g.drawString(font, Component.literal(session.terminalDirectory + "> " + session.terminalInput + "_"), x, y + h - 26, GREEN, false);
     }
 
     private void renderPaint(GuiGraphics g, int x, int y, int w, int h) {
@@ -402,14 +608,27 @@ public final class ComputerScreen extends Screen {
             }
         }
         g.drawString(font, Component.literal("ANTPAINT // " + session.paintName + (session.paintDirty ? " *" : "")), x, y, GREEN, false);
-        g.drawString(font, Component.literal("NEW PENCIL ERASER FILL CLEAR UNDO REDO SAVE"), x, y + 14, PALE_GREEN, false);
-        int size = Math.min((w - 16) / AntPaintCanvas.WIDTH, (h - 54) / AntPaintCanvas.HEIGHT);
+        String controls = "NEW PENCIL ERASER FILL CLEAR UNDO REDO SAVE";
+        g.drawString(font, Component.literal(trimToWidth(controls, w)), x, y + 14, PALE_GREEN, false);
+        int size = Math.max(1, Math.min((w - 16) / AntPaintCanvas.WIDTH, (h - 54) / AntPaintCanvas.HEIGHT));
         int cx = x + (w - size * AntPaintCanvas.WIDTH) / 2;
-        int cy = y + 30;
+        int cy = y + 30 + Math.max(0, (h - 54 - size * AntPaintCanvas.HEIGHT) / 2);
         g.fill(cx - 1, cy - 1, cx + size * AntPaintCanvas.WIDTH + 1, cy + size * AntPaintCanvas.HEIGHT + 1, BLACK);
         g.fill(cx, cy, cx + size * AntPaintCanvas.WIDTH, cy + size * AntPaintCanvas.HEIGHT, GREEN);
         for (int py = 0; py < AntPaintCanvas.HEIGHT; py++) for (int px = 0; px < AntPaintCanvas.WIDTH; px++) if (!session.paintCanvas.get(px, py)) g.fill(cx + px * size, cy + py * size, cx + (px + 1) * size, cy + (py + 1) * size, BLACK);
-        g.drawString(font, Component.literal("TOOL " + session.paintTool.name() + "  " + (session.paintDirty ? "MODIFIED" : "SAVED")), x, y + h - 16, PALE_GREEN, false);
+        int hoverX = (session.mouseX - cx) / size;
+        int hoverY = (session.mouseY - cy) / size;
+        if (session.mouseX >= cx && session.mouseY >= cy && hoverX >= 0 && hoverX < AntPaintCanvas.WIDTH && hoverY >= 0 && hoverY < AntPaintCanvas.HEIGHT) {
+            int pixelX = cx + hoverX * size;
+            int pixelY = cy + hoverY * size;
+            g.fill(pixelX, pixelY, pixelX + size, pixelY + 1, PALE_GREEN);
+            g.fill(pixelX, pixelY + size - 1, pixelX + size, pixelY + size, PALE_GREEN);
+            g.fill(pixelX, pixelY, pixelX + 1, pixelY + size, PALE_GREEN);
+            g.fill(pixelX + size - 1, pixelY, pixelX + size, pixelY + size, PALE_GREEN);
+        }
+        String paintStatus = "TOOL " + session.paintTool.name() + "  " + (session.paintDirty ? "MODIFIED" : "SAVED");
+        if (session.mouseX >= cx && session.mouseY >= cy && hoverX >= 0 && hoverX < AntPaintCanvas.WIDTH && hoverY >= 0 && hoverY < AntPaintCanvas.HEIGHT) paintStatus += "  PIXEL " + hoverX + "," + hoverY;
+        g.drawString(font, Component.literal(trimToWidth(paintStatus, w)), x, y + h - 16, PALE_GREEN, false);
     }
 
     private void renderTextEditor(GuiGraphics g, int x, int y, int w, int h) {
@@ -418,7 +637,7 @@ public final class ComputerScreen extends Screen {
             session.textPath = fileState.openedPath();
             session.textContent = fileState.openedContents();
         }
-        g.drawString(font, Component.literal("ANTTEXT // " + session.textPath + (session.textDirty ? " *" : "")), x, y, GREEN, false);
+        g.drawString(font, Component.literal(session.textRenaming ? "RENAME // " + session.textRename + "_" : "ANTTEXT // " + session.textPath + (session.textDirty ? " *" : "")), x, y, GREEN, false);
         g.drawString(font, Component.literal("NEW  OPEN  WRITE  SAVE"), x, y + 18, PALE_GREEN, false);
         g.fill(x + 4, y + 36, x + w - 4, y + h - 4, BLACK);
         if (session.textListing) {
@@ -434,7 +653,7 @@ public final class ComputerScreen extends Screen {
         } else {
             wrap(g, session.textContent.isEmpty() ? "TYPE HERE..." : session.textContent, x + 10, y + 46, w - 28, GREEN);
         }
-        g.drawString(font, Component.literal("[ CTRL+S ] SAVE   [ ESC ] CLOSE"), x, y + h - 50, PALE_GREEN, false);
+        g.drawString(font, Component.literal("[ CTRL+S ] SAVE   [ F2 ] RENAME   [ ESC ] CLOSE"), x, y + h - 50, PALE_GREEN, false);
     }
 
     private void renderAntmail(GuiGraphics g, int x, int y, int h) {
@@ -446,40 +665,53 @@ public final class ComputerScreen extends Screen {
             g.drawString(font, Component.literal("USERNAME // 3-16 CHARACTERS"), x, y + 40, GREEN, false);
             g.fill(x, y + 56, x + 206, y + 79, BLACK);
             box(g, x, y + 56, x + 206, y + 79, GREEN);
-            g.drawString(font, Component.literal(session.antmailUsername + "@ANTMAIL.COM"), x + 6, y + 63, GREEN, false);
+            g.drawString(font, Component.literal(trimToWidth(session.antmailUsername + "@antmail.com", 194)), x + 6, y + 63, GREEN, false);
             g.drawString(font, Component.literal("[ ENTER ] REGISTER ADDRESS"), x, y + 88, GREEN, false);
         } else {
-            g.drawString(font, Component.literal(result.address()), x, y + 20, PALE_GREEN, false);
-            g.drawString(font, Component.literal("[ INBOX ] [ SENT ] [ COMPOSE ]"), x, y + 40, GREEN, false);
+            g.drawString(font, Component.literal(trimToWidth(result.address(), 208)), x, y + 20, PALE_GREEN, false);
+            g.drawString(font, Component.literal("[ INBOX ] [ SENT ]"), x, y + 40, GREEN, false);
+            box(g, x + 122, y + 30, x + 214, y + 53, GREEN);
+            g.drawString(font, Component.literal("CREATE COMPOSE"), x + 127, y + 38, GREEN, false);
             if (session.antmailMode.equals("compose")) {
                 g.drawString(font, Component.literal("TO"), x, y + 62, GREEN, false);
-                g.drawString(font, Component.literal(session.antmailRecipient), x + 28, y + 62, PALE_GREEN, false);
+                g.drawString(font, Component.literal(trimToWidth(session.antmailRecipient, 180)), x + 28, y + 62, PALE_GREEN, false);
                 g.drawString(font, Component.literal("SUBJECT"), x, y + 78, GREEN, false);
-                g.drawString(font, Component.literal(session.antmailSubject), x + 52, y + 78, PALE_GREEN, false);
+                g.drawString(font, Component.literal(trimToWidth(session.antmailSubject, 156)), x + 52, y + 78, PALE_GREEN, false);
                 g.drawString(font, Component.literal("BODY"), x, y + 94, GREEN, false);
                 wrap(g, session.antmailBody.isEmpty() ? "TYPE MESSAGE..." : session.antmailBody, x, y + 110, 208, PALE_GREEN);
-                g.drawString(font, Component.literal("[ " + (session.antmailAttachText ? "X" : " ") + " ] TEXT FILE   [ " + (session.antmailAttachPaint ? "X" : " ") + " ] PAINTING"), x, y + 142, PALE_GREEN, false);
+                g.drawString(font, Component.literal(trimToWidth("[ " + (session.antmailAttachText ? "X" : " ") + " ] TEXT FILE   [ " + (session.antmailAttachPaint ? "X" : " ") + " ] PAINTING", 208)), x, y + 142, PALE_GREEN, false);
                 g.drawString(font, Component.literal("[ ENTER ] SEND MESSAGE"), x, y + h - 30, GREEN, false);
             } else if (session.antmailMode.equals("message")) {
                 AntmailMessage message = selectedAntmailMessage(result);
                 if (message != null) {
-                    g.drawString(font, Component.literal("< BACK // INBOX"), x, y + 40, GREEN, false);
-                    g.drawString(font, Component.literal(message.sender().fullAddress()), x, y + 62, PALE_GREEN, false);
-                    g.drawString(font, Component.literal(message.subject()), x, y + 78, GREEN, false);
-                    wrap(g, message.body(), x, y + 98, 208, PALE_GREEN);
+                    g.drawString(font, Component.literal("< BACK // " + (session.antmailSent ? "SENT" : "INBOX")), x, y + 40, GREEN, false);
+                    g.drawString(font, Component.literal(trimToWidth(session.antmailSent ? message.recipient().fullAddress() : message.sender().fullAddress(), 208)), x, y + 62, PALE_GREEN, false);
+                    g.drawString(font, Component.literal(trimToWidth(message.subject(), 208)), x, y + 78, GREEN, false);
+                    int messageLine = wrap(g, message.body(), x, y + 98, 208, PALE_GREEN) + 4;
+                    for (AntmailAttachment attachment : message.attachments()) {
+                        if (messageLine > y + h - 38) break;
+                        messageLine = wrap(g, "ATTACHMENT // " + attachment.fileName(), x, messageLine, 208, GREEN) + 2;
+                    }
                 }
             } else {
-                g.drawString(font, Component.literal("INBOX // " + mailboxMessages(result, false).size()), x, y + 62, GREEN, false);
+                List<AntmailMessage> messages = mailboxMessages(result, session.antmailSent);
+                g.drawString(font, Component.literal((session.antmailSent ? "SENT // " : "INBOX // ") + messages.size()), x, y + 62, GREEN, false);
                 int line = y + 80;
-                for (AntmailMessage message : mailboxMessages(result, false)) {
+                for (AntmailMessage message : messages) {
                     if (line > y + h - 38) break;
                     g.drawString(font, Component.literal((message.read() ? "  " : "* ") + trimToWidth(message.subject(), 28)), x, line, message.read() ? PALE_GREEN : GREEN, false);
                     line += 14;
                 }
             }
         }
-        if (!session.antmailStatus.isEmpty()) g.drawString(font, Component.literal(session.antmailStatus), x, y + h - 30, PALE_GREEN, false);
-        g.drawString(font, Component.literal(result == null ? "WAITING FOR SERVER" : result.status() == 0 ? "DELIVERY READY" : "SERVER RESPONSE: " + result.detail()), x, y + h - 16, GREEN, false);
+        String displayStatus = result != null && !result.messageId().isBlank() ? antmailStatus(result) : session.antmailStatus;
+        if (!displayStatus.isEmpty()) drawBottomWrapped(g, displayStatus, x, y, h, 208, PALE_GREEN);
+    }
+
+    private String antmailStatus(AntmailResultPayload result) {
+        if (result.status() == 0) return "DELIVERED";
+        if (result.status() == 1) return "QUEUED";
+        return "DELIVERY FAILED // " + (result.detail().isBlank() ? "SERVER REJECTED" : result.detail().toUpperCase());
     }
 
     private AntmailMailbox mailbox(AntmailResultPayload result) {
@@ -505,9 +737,11 @@ public final class ComputerScreen extends Screen {
     private void renderGames(GuiGraphics g, int x, int y) {
         g.drawString(font, Component.literal("INSTALLED GAMES"), x, y, GREEN, false);
         if (activeWindow != null && activeWindow.gameOpen) { antFarm.render(g, font, x, y + 16, 214, 155); return; }
-        g.drawString(font, Component.literal(antFarm.isGameInstalled() ? "ANT FARM  [ ENTER ]" : "ANT FARM [NOT INSTALLED]"), x, y + 22, PALE_GREEN, false);
-        g.drawString(font, Component.literal("GLIMMER MATCH"), x, y + 38, PALE_GREEN, false);
-        g.drawString(font, Component.literal("HFCS FACTORY"), x, y + 54, PALE_GREEN, false);
+        if (antFarm.isGameInstalled()) g.drawString(font, Component.literal("ANT FARM  [ ENTER ]"), x, y + 22, PALE_GREEN, false);
+        else {
+            g.drawString(font, Component.literal("NO GAMES INSTALLED"), x, y + 22, PALE_GREEN, false);
+            g.drawString(font, Component.literal("FIND GAME DISKS TO INSTALL PROGRAMS"), x, y + 40, PALE_GREEN, false);
+        }
     }
 
     private void renderTrash(GuiGraphics g, int x, int y) {
@@ -520,6 +754,15 @@ public final class ComputerScreen extends Screen {
     private int wrap(GuiGraphics g, Component text, int x, int y, int width, int color) {
         for (var line : font.split(text, width)) { g.drawString(font, line, x, y, color, false); y += 11; }
         return y;
+    }
+
+    private void drawBottomWrapped(GuiGraphics g, String text, int x, int y, int h, int width, int color) {
+        List<net.minecraft.util.FormattedCharSequence> lines = font.split(Component.literal(text), width);
+        int lineY = y + h - 16 - Math.max(0, lines.size() - 1) * 11;
+        for (var line : lines) {
+            g.drawString(font, line, x, lineY, color, false);
+            lineY += 11;
+        }
     }
 
     private void box(GuiGraphics g, int x1, int y1, int x2, int y2, int color) {
@@ -553,6 +796,14 @@ public final class ComputerScreen extends Screen {
             int h = window.maximized ? HEIGHT - 48 : window.height;
             if (inside(x, y + 20, w, h - 20, mouseX, mouseY)) {
                 activeWindow = window;
+                session.windows.remove(i);
+                session.windows.add(window);
+                if (window.type.equals("SETTINGS") && inside(x + 8, y + 105, 205, 51, mouseX, mouseY)) {
+                    List<ResourceLocation> disks = physicalDisks();
+                    int index = ((int) mouseY - (y + 105)) / 17;
+                    if (index >= 0 && index < disks.size() && index < 3) selectedDisk = disks.get(index);
+                    return true;
+                }
                 if (window.type.equals("ARCHIVE")) {
                     List<ComputerGuideData.Entry> entries = ComputerGuideData.entriesFor(computer() == null ? List.of() : computer().diskIds());
                     int archiveX = x + 8;
@@ -560,9 +811,11 @@ public final class ComputerScreen extends Screen {
                     if (session.archiveEntryId != null) {
                         if (inside(archiveX, archiveY, w - 16, 20, mouseX, mouseY)) session.archiveEntryId = null;
                     } else {
-                        int visible = Math.max(1, (h - 34) / 25);
-                        int index = ((int) mouseY - (archiveY + 16)) / 25;
-                        if (index >= 0 && index < entries.size() && index < visible && inside(archiveX, archiveY + 16 + index * 25, w - 16, 23, mouseX, mouseY)) session.archiveEntryId = entries.get(index).id();
+                        int visible = Math.max(1, (h - 34) / 62);
+                        int start = Math.max(0, Math.min(session.archiveScroll, Math.max(0, entries.size() - visible)));
+                        int index = start + ((int) mouseY - (archiveY + 16)) / 62;
+                        int rowIndex = index - start;
+                        if (rowIndex >= 0 && rowIndex < visible && index < entries.size() && inside(archiveX, archiveY + 16 + rowIndex * 62, w - 16, 56, mouseX, mouseY)) session.archiveEntryId = entries.get(index).id();
                     }
                     return true;
                 }
@@ -576,7 +829,9 @@ public final class ComputerScreen extends Screen {
                     for (String file : files) {
                         String[] fields = file.split("\\t", 3);
                         if (fields.length < 3 || !isDirectChild(fields[1], session.fileExplorerDirectory)) continue;
-                        if (row++ != ((int) mouseY - (y + 62)) / 14) continue;
+                        int rowTop = y + 34 + row++ * 14;
+                        if (!inside(x, rowTop - 2, w, 14, mouseX, mouseY)) continue;
+                        session.fileExplorerSelected = fields[1];
                         if (fields[0].equals("DIRECTORY")) session.fileExplorerDirectory = fields[1];
                         else if (fields[0].equals("TEXT")) {
                             ComputerNetworking.openFile(position, fields[1]);
@@ -624,10 +879,18 @@ public final class ComputerScreen extends Screen {
                             setupAntmail();
                             return true;
                         }
-                    } else if (mouseY < y + 72) {
-                        if (mouseX < x + 70) { session.antmailMode = "inbox"; session.antmailSent = false; session.antmailMessageIndex = -1; }
-                        else if (mouseX < x + 125) { session.antmailMode = "sent"; session.antmailSent = true; session.antmailMessageIndex = -1; }
-                        else { session.antmailMode = "compose"; session.antmailFocused = true; session.antmailField = 1; }
+                    } else if (inside(x + 8, y + 54, 54, 27, mouseX, mouseY)) {
+                        session.antmailMode = "inbox";
+                        session.antmailSent = false;
+                        session.antmailMessageIndex = -1;
+                    } else if (inside(x + 62, y + 54, 58, 27, mouseX, mouseY)) {
+                        session.antmailMode = "sent";
+                        session.antmailSent = true;
+                        session.antmailMessageIndex = -1;
+                    } else if (inside(x + 122, y + 54, 92, 27, mouseX, mouseY)) {
+                        session.antmailMode = "compose";
+                        session.antmailFocused = true;
+                        session.antmailField = 1;
                     } else if (session.antmailMode.equals("inbox") || session.antmailMode.equals("sent")) {
                         int index = ((int) mouseY - (y + 108)) / 14;
                         List<AntmailMessage> messages = mailboxMessages(result, session.antmailSent);
@@ -636,10 +899,22 @@ public final class ComputerScreen extends Screen {
                             session.antmailMode = "message";
                             AntmailNetworking.markRead(position, messages.get(index).id());
                         }
+                    } else if (session.antmailMode.equals("message")) {
+                        if (mouseY < y + 72) {
+                            session.antmailMode = session.antmailSent ? "sent" : "inbox";
+                            session.antmailMessageIndex = -1;
+                        }
                     } else if (session.antmailMode.equals("compose")) {
                         if (mouseY >= y + 160 && mouseY < y + 184) {
                             session.antmailAttachText = mouseX < x + 112;
                             session.antmailAttachPaint = mouseX >= x + 112;
+                            if (session.antmailAttachText && session.fileExplorerSelected.endsWith(".txt")) {
+                                session.textPath = session.fileExplorerSelected;
+                                ComputerNetworking.openFile(position, session.fileExplorerSelected);
+                            }
+                            if (session.antmailAttachPaint && session.fileExplorerSelected.endsWith(".antpaint")) {
+                                ComputerNetworking.openFile(position, session.fileExplorerSelected);
+                            }
                             return true;
                         }
                         if (mouseY < y + 94) {
@@ -663,17 +938,16 @@ public final class ComputerScreen extends Screen {
                     return true;
                 }
             }
-            if (window.type.equals("SETTINGS") && inside(x + 8, y + 70, 205, 25, mouseX, mouseY)) {
-                if (session.wallpapers.size() > 1) {
-                    int current = session.wallpapers.indexOf(session.wallpaperId);
-                    String next = session.wallpapers.get((current + 1 + session.wallpapers.size()) % session.wallpapers.size());
-                    session.wallpaperId = next;
-                    ComputerNetworking.selectWallpaper(position, ResourceLocation.parse(next));
-                }
-                return true;
-            }
             if (window.type.equals("SETTINGS") && inside(x + 8, y + 155, 205, 25, mouseX, mouseY)) {
                 ejectSelected();
+                return true;
+            }
+            if (window.type.equals("SETTINGS") && inside(x, y + h - 30, 90, 25, mouseX, mouseY)) {
+                ComputerNetworking.logout(position);
+                loggedIn = false;
+                session.authenticated = false;
+                session.windows.clear();
+                activeWindow = null;
                 return true;
             }
             if (inside(x, y + 20, w, h - 20, mouseX, mouseY)) return true;
@@ -742,6 +1016,15 @@ public final class ComputerScreen extends Screen {
     }
 
     @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        if (loggedIn && activeWindow != null && activeWindow.type.equals("ARCHIVE") && session.archiveEntryId == null) {
+            session.archiveScroll = Math.max(0, session.archiveScroll - (int) Math.signum(scrollY));
+            return true;
+        }
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+    }
+
+    @Override
     public boolean charTyped(char codePoint, int modifiers) {
         if (!loggedIn && codePoint >= 32) {
             if (confirmingPassword) {
@@ -749,6 +1032,14 @@ public final class ComputerScreen extends Screen {
             } else if (password.length() < 32) {
                 password += Character.toUpperCase(codePoint);
             }
+        }
+        if (loggedIn && activeWindow != null && activeWindow.type.equals("FILES") && session.fileExplorerRenaming && codePoint >= 32 && codePoint != '/' && codePoint != '\\') {
+            if (session.fileExplorerRename.length() < 48) session.fileExplorerRename += codePoint;
+            return true;
+        }
+        if (loggedIn && activeWindow != null && activeWindow.type.equals("TEXT") && session.textRenaming && codePoint >= 32 && codePoint != '/' && codePoint != '\\') {
+            if (session.textRename.length() < 48) session.textRename += codePoint;
+            return true;
         }
         if (loggedIn && activeWindow != null) {
             if (activeWindow.type.equals("TEXT") && session.textFocused && codePoint >= 32) { session.textContent += codePoint; session.textDirty = true; return true; }
@@ -780,6 +1071,29 @@ public final class ComputerScreen extends Screen {
             if (keyCode == GLFW.GLFW_KEY_ESCAPE) { activeWindow.gameOpen = false; return true; }
             if (antFarm.keyPressed(keyCode)) return true;
         }
+        if (activeWindow != null && activeWindow.type.equals("FILES")) {
+            if (session.fileExplorerRenaming) {
+                if (keyCode == GLFW.GLFW_KEY_BACKSPACE) {
+                    if (!session.fileExplorerRename.isEmpty()) session.fileExplorerRename = session.fileExplorerRename.substring(0, session.fileExplorerRename.length() - 1);
+                    return true;
+                }
+                if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+                    session.fileExplorerRenaming = false;
+                    session.fileExplorerRename = "";
+                    return true;
+                }
+                if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+                    renameSelectedFile();
+                    return true;
+                }
+            } else if (keyCode == GLFW.GLFW_KEY_F2) {
+                beginRenameSelectedFile();
+                return true;
+            } else if (keyCode == GLFW.GLFW_KEY_DELETE) {
+                deleteSelectedFile();
+                return true;
+            }
+        }
         if (activeWindow != null && activeWindow.type.equals("TERMINAL") && session.terminalFocused) {
             if (keyCode == GLFW.GLFW_KEY_BACKSPACE) { if (!session.terminalInput.isEmpty()) session.terminalInput = session.terminalInput.substring(0, session.terminalInput.length() - 1); return true; }
             if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) { executeTerminal(); return true; }
@@ -806,6 +1120,29 @@ public final class ComputerScreen extends Screen {
             if (keyCode == GLFW.GLFW_KEY_ENTER) { session.textContent += "\n"; session.textDirty = true; return true; }
             if (keyCode == GLFW.GLFW_KEY_S && hasControl(modifiers)) { saveText(); return true; }
             if (keyCode == GLFW.GLFW_KEY_ESCAPE) { session.textFocused = false; return true; }
+        }
+        if (activeWindow != null && activeWindow.type.equals("TEXT")) {
+            if (keyCode == GLFW.GLFW_KEY_F2 && !session.textPath.isBlank()) {
+                int slash = session.textPath.lastIndexOf('/');
+                session.textRename = session.textPath.substring(slash + 1);
+                session.textRenaming = true;
+                return true;
+            }
+            if (session.textRenaming) {
+                if (keyCode == GLFW.GLFW_KEY_BACKSPACE) {
+                    if (!session.textRename.isEmpty()) session.textRename = session.textRename.substring(0, session.textRename.length() - 1);
+                    return true;
+                }
+                if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+                    session.textRenaming = false;
+                    session.textRename = "";
+                    return true;
+                }
+                if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+                    renameTextFile();
+                    return true;
+                }
+            }
         }
         if (activeWindow != null && activeWindow.type.equals("ARCHIVE") && session.archiveEntryId != null && keyCode == GLFW.GLFW_KEY_ESCAPE) {
             session.archiveEntryId = null;
@@ -848,25 +1185,7 @@ public final class ComputerScreen extends Screen {
         String input = session.terminalInput.trim();
         if (input.isEmpty()) return;
         session.terminalOutput.add(session.terminalDirectory + "> " + input);
-        TerminalCommandParser.ParseResult parsed = TerminalCommandParser.parse(input);
-        if (!parsed.isSuccess()) session.terminalOutput.add(parsed.error());
-        else {
-            String command = parsed.command().name();
-            List<String> args = parsed.command().arguments();
-            if (command.equals("pwd")) session.terminalOutput.add(session.terminalDirectory);
-            else if (command.equals("clear")) session.terminalOutput.clear();
-            else if (command.equals("ls")) ComputerNetworking.listFiles(position);
-            else if (command.equals("open") && args.size() == 1) ComputerNetworking.openFile(position, args.get(0));
-            else if (command.equals("touch") && args.size() == 1) ComputerNetworking.createFile(position, args.get(0), "");
-            else if (command.equals("write") && args.size() >= 1) ComputerNetworking.saveFile(position, args.get(0), args.size() > 1 ? args.get(1) : "");
-            else if (command.equals("cd") && args.size() == 1) {
-                String path = args.get(0).startsWith("/") ? args.get(0) : session.terminalDirectory + "/" + args.get(0);
-                session.terminalDirectory = ComputerFileSystem.normalize(path);
-            }
-            else if (command.equals("help")) session.terminalOutput.add("HELP CLEAR PWD LS CD MKDIR TOUCH CAT WRITE RM RMDIR MV OPEN");
-            else session.terminalOutput.add("COMMAND NOT RECOGNIZED");
-        }
-        while (session.terminalOutput.size() > 40) session.terminalOutput.remove(0);
+        ComputerNetworking.terminalCommand(position, session.terminalDirectory, input);
         session.terminalInput = "";
     }
 
@@ -877,7 +1196,8 @@ public final class ComputerScreen extends Screen {
             return;
         }
         AntmailNetworking.setup(position, session.antmailUsername);
-        session.antmailStatus = "REGISTERING ADDRESS // WAITING";
+        session.antmailStatus = "REGISTERING ADDRESS";
+        session.antmailRegistrationPending = true;
         session.antmailFocused = false;
     }
 
@@ -890,6 +1210,14 @@ public final class ComputerScreen extends Screen {
             session.antmailStatus = "SEND ERROR // SUBJECT AND BODY REQUIRED";
             return;
         }
+        if (session.antmailAttachText && (session.textDirty || session.textPath.isBlank() || session.textPath.contains("untitled"))) {
+            session.antmailStatus = "SEND ERROR // SAVE TEXT FILE FIRST";
+            return;
+        }
+        if (session.antmailAttachPaint && (session.paintDirty || session.paintName.isBlank() || session.paintName.startsWith("UNTITLED"))) {
+            session.antmailStatus = "SEND ERROR // SAVE PAINTING FIRST";
+            return;
+        }
         List<AntmailAttachment> attachments = new ArrayList<>();
         if (session.antmailAttachText && !session.textContent.isEmpty()) attachments.add(new AntmailAttachment.TextFile(session.textPath.substring(session.textPath.lastIndexOf('/') + 1), session.textContent));
         if (session.antmailAttachPaint) {
@@ -898,7 +1226,7 @@ public final class ComputerScreen extends Screen {
             attachments.add(new AntmailAttachment.PaintImage(session.paintName, AntPaintCanvas.WIDTH, AntPaintCanvas.HEIGHT, pixels));
         }
         AntmailNetworking.send(position, session.antmailRecipient, session.antmailSubject, session.antmailBody, attachments);
-        session.antmailStatus = "TRANSMITTING MESSAGE // WAITING";
+        session.antmailStatus = "MESSAGE SENT";
         session.antmailMode = "inbox";
         session.antmailFocused = false;
         session.antmailRecipient = "";
@@ -917,13 +1245,31 @@ public final class ComputerScreen extends Screen {
     }
 
     private void writeText() {
-        ComputerNetworking.createFile(position, session.textPath, session.textContent);
+        boolean exists = ComputerFileSystemClientState.get(position).files().stream().anyMatch(entry -> entry.contains("\t" + session.textPath + "\t"));
+        if (exists) ComputerNetworking.saveFile(position, session.textPath, session.textContent);
+        else ComputerNetworking.createFile(position, session.textPath, session.textContent);
         session.textDirty = false;
+        ComputerNetworking.listFiles(position);
     }
 
     private void saveText() {
-        ComputerNetworking.saveFile(position, session.textPath, session.textContent);
+        boolean exists = ComputerFileSystemClientState.get(position).files().stream().anyMatch(entry -> entry.contains("\t" + session.textPath + "\t"));
+        if (exists) ComputerNetworking.saveFile(position, session.textPath, session.textContent);
+        else ComputerNetworking.createFile(position, session.textPath, session.textContent);
         session.textDirty = false;
+        ComputerNetworking.listFiles(position);
+    }
+
+    private void renameTextFile() {
+        if (!session.textRename.isBlank() && !session.textRename.contains("/") && !ComputerFileSystem.isProtected(session.textPath)) {
+            String parent = parentDirectory(session.textPath);
+            String destination = parent.equals("/") ? "/" + session.textRename : parent + "/" + session.textRename;
+            ComputerNetworking.moveFile(position, session.textPath, destination);
+            session.textPath = destination;
+            ComputerNetworking.listFiles(position);
+        }
+        session.textRenaming = false;
+        session.textRename = "";
     }
 
     private void savePaint() {
@@ -936,6 +1282,7 @@ public final class ComputerScreen extends Screen {
         boolean exists = ComputerFileSystemClientState.get(position).files().stream().anyMatch(entry -> entry.contains("\t" + savedPath + "\t"));
         if (exists) ComputerNetworking.saveFile(position, savedPath, encoded); else ComputerNetworking.createFile(position, savedPath, encoded);
         session.paintDirty = false;
+        ComputerNetworking.listFiles(position);
     }
 
     private void paintTool(int offset) {
@@ -981,10 +1328,43 @@ public final class ComputerScreen extends Screen {
         selectedDisk = null;
     }
 
+    private void beginRenameSelectedFile() {
+        if (session.fileExplorerSelected.isEmpty() || session.fileExplorerSelected.equals("/") || ComputerFileSystem.isProtected(session.fileExplorerSelected)) return;
+        int slash = session.fileExplorerSelected.lastIndexOf('/');
+        session.fileExplorerRename = session.fileExplorerSelected.substring(slash + 1);
+        session.fileExplorerRenaming = true;
+    }
+
+    private void renameSelectedFile() {
+        if (!session.fileExplorerRename.isBlank() && !session.fileExplorerRename.contains("/")) {
+            String parent = parentDirectory(session.fileExplorerSelected);
+            String destination = parent.equals("/") ? "/" + session.fileExplorerRename : parent + "/" + session.fileExplorerRename;
+            ComputerNetworking.moveFile(position, session.fileExplorerSelected, destination);
+            session.fileExplorerSelected = destination;
+            ComputerNetworking.listFiles(position);
+        }
+        session.fileExplorerRenaming = false;
+        session.fileExplorerRename = "";
+    }
+
+    private void deleteSelectedFile() {
+        if (session.fileExplorerSelected.isEmpty() || session.fileExplorerSelected.equals("/") || ComputerFileSystem.isProtected(session.fileExplorerSelected)) return;
+        ComputerNetworking.deleteFile(position, session.fileExplorerSelected);
+        session.fileExplorerSelected = "";
+        ComputerNetworking.listFiles(position);
+    }
+
     private void open(String type) {
-        for (Window window : session.windows) if (window.type.equals(type)) { window.minimized = false; session.windows.remove(window); session.windows.add(window); return; }
+        for (Window window : session.windows) if (window.type.equals(type)) {
+            window.minimized = false;
+            session.windows.remove(window);
+            session.windows.add(window);
+            if (type.equals("FILES")) ComputerNetworking.listFiles(position);
+            return;
+        }
         session.windows.add(new Window(type, TITLES.get(type), 112 + session.windows.size() * 12, 52 + session.windows.size() * 10));
         if (type.equals("ANTMAIL")) AntmailNetworking.requestState(position);
+        else if (type.equals("FILES")) ComputerNetworking.listFiles(position);
     }
 
     private static boolean inside(int x, int y, int w, int h, double mx, double my) { return mx >= x && mx < x + w && my >= y && my < y + h; }
@@ -1005,13 +1385,21 @@ public final class ComputerScreen extends Screen {
         private final List<String> terminalOutput = new ArrayList<>(List.of("ANTINTOSH TERMINAL [READY]", "TYPE HELP FOR COMMANDS"));
         private String terminalInput = "";
         private String terminalDirectory = "/";
+        private String terminalResponse = "";
         private boolean terminalFocused;
         private String textPath = "/documents/untitled.txt";
         private String textContent = "";
         private boolean textDirty;
         private boolean textFocused;
         private boolean textListing;
+        private boolean textRenaming;
+        private String textRename = "";
         private ResourceLocation archiveEntryId;
+        private int archiveScroll;
+        private int archiveMouseX;
+        private int archiveMouseY;
+        private int mouseX;
+        private int mouseY;
         private AntPaintCanvas paintCanvas = new AntPaintCanvas();
         private final AntPaintHistory paintHistory = new AntPaintHistory();
         private AntPaintTool paintTool = AntPaintTool.PENCIL;
@@ -1019,6 +1407,7 @@ public final class ComputerScreen extends Screen {
         private boolean paintDirty;
         private String antmailUsername = "";
         private String antmailStatus = "";
+        private boolean antmailRegistrationPending;
         private boolean antmailFocused;
         private String antmailMode = "inbox";
         private String antmailRecipient = "";
@@ -1030,6 +1419,9 @@ public final class ComputerScreen extends Screen {
         private boolean antmailAttachText;
         private boolean antmailAttachPaint;
         private String fileExplorerDirectory = "/";
+        private String fileExplorerSelected = "";
+        private String fileExplorerRename = "";
+        private boolean fileExplorerRenaming;
         private String wallpaperId = ComputerDesktopState.DEFAULT_WALLPAPER.toString();
         private List<String> wallpapers = List.of(ComputerDesktopState.DEFAULT_WALLPAPER.toString());
         private boolean desktopRequested;

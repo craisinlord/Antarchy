@@ -30,12 +30,14 @@ public final class AntmailServerHandler {
     public static void handle(ServerPlayer player, AntmailSetupPayload payload) {
         ComputerBlockEntity computer = computer(player, payload.pos());
         if (computer == null || !computer.canUseFileSystem(player)) {
-            result(player, payload.pos(), AntmailDeliveryResult.Status.FAILED.ordinal(), "", "", "unauthorized", "");
+            result(player, payload.pos(), AntmailDeliveryResult.Status.FAILED.ordinal(), "", "", "registration_failed:unauthorized", "");
             return;
         }
         AntmailServerData data = AntmailServerData.access(player.server);
         AntmailServerData.Registration registration = data.register(player.server, player.serverLevel(), payload.pos(), payload.username());
-        result(player, payload.pos(), registration.valid() ? AntmailDeliveryResult.Status.DELIVERED.ordinal() : AntmailDeliveryResult.Status.FAILED.ordinal(), registration.valid() ? registration.address().fullAddress() : "", "", registration.reason(), "");
+        String mailbox = registration.valid() ? AntmailWire.encodeTag(data.mailboxOrCreate(registration.address()).toTag()) : "";
+        String detail = registration.valid() ? "registration_success" : "registration_failed:" + registration.reason();
+        result(player, payload.pos(), registration.valid() ? AntmailDeliveryResult.Status.DELIVERED.ordinal() : AntmailDeliveryResult.Status.FAILED.ordinal(), registration.valid() ? registration.address().fullAddress() : "", "", detail, mailbox);
     }
 
     public static void handle(ServerPlayer player, AntmailStateRequestPayload payload) {
@@ -71,7 +73,7 @@ public final class AntmailServerHandler {
             List<AntmailAttachment> attachments = AntmailWire.decodeAttachments(payload.attachments());
             AntmailMessage message = AntmailMessage.create(sender, recipient, payload.subject(), payload.body(), player.serverLevel().getGameTime(), attachments);
             AntmailDeliveryResult delivery = data.deliver(player.server, message);
-            result(player, payload.pos(), delivery.status().ordinal(), recipient.fullAddress(), message.id().toString(), delivery.detail(), "");
+            result(player, payload.pos(), delivery.status().ordinal(), sender.fullAddress(), message.id().toString(), delivery.detail(), AntmailWire.encodeTag(data.mailboxOrCreate(sender).toTag()));
         } catch (RuntimeException exception) {
             result(player, payload.pos(), AntmailDeliveryResult.Status.MESSAGE_INVALID.ordinal(), "", "", "invalid_message", "");
         }
@@ -94,7 +96,7 @@ public final class AntmailServerHandler {
             AntmailMailbox mailbox = data.mailboxOrCreate(address);
             boolean changed = payload.read() ? mailbox.markRead(id) : markUnread(mailbox, id);
             if (changed) data.setDirty();
-            result(player, payload.pos(), changed ? AntmailDeliveryResult.Status.DELIVERED.ordinal() : AntmailDeliveryResult.Status.FAILED.ordinal(), address.fullAddress(), payload.messageId(), changed ? "" : "not_found", "");
+            result(player, payload.pos(), changed ? AntmailDeliveryResult.Status.DELIVERED.ordinal() : AntmailDeliveryResult.Status.FAILED.ordinal(), address.fullAddress(), payload.messageId(), changed ? "" : "not_found", AntmailWire.encodeTag(mailbox.toTag()));
         } catch (IllegalArgumentException exception) {
             result(player, payload.pos(), AntmailDeliveryResult.Status.FAILED.ordinal(), address.fullAddress(), payload.messageId(), "invalid_id", "");
         }

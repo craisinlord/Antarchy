@@ -16,6 +16,32 @@
               }
             }
           ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:floppy_disk",
+          "weight": 4,
+          "functions": [
+            {
+              "function": "minecraft:set_components",
+              "components": {
+                "antarchy:floppy_disk": "antarchy:elythia"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:floppy_disk",
+          "weight": 4,
+          "functions": [
+            {
+              "function": "minecraft:set_components",
+              "components": {
+                "antarchy:floppy_disk": "antarchy:cavaryn"
+              }
+            }
+          ]
         }
       ]
     }

@@ -1,0 +1,8 @@
+{
+  "type": "dimension",
+  "category": "thoraxis",
+  "title": "guide.antarchy.entry.thoraxis.title",
+  "subtitle": "guide.antarchy.entry.thoraxis.subtitle",
+  "description": ["guide.antarchy.entry.thoraxis.description"],
+  "dimension": "antarchy:thoraxis"
+}

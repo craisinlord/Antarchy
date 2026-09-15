@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.guide;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -38,10 +39,16 @@ public final class ComputerGuideData extends SimplePreparableReloadListener<Comp
     }
 
     public static List<Entry> entriesFor(List<ResourceLocation> diskIds) {
+        if (AntarchySettings.unlockAllArchives()) {
+            Map<ResourceLocation, Entry> result = new LinkedHashMap<>();
+            result.put(INTRODUCTION, new Entry(INTRODUCTION, "article", "general", "guide.antarchy.entry.introduction.title", "guide.antarchy.entry.introduction.subtitle", List.of("guide.antarchy.entry.introduction.description"), "", "", "", ""));
+            result.putAll(entries);
+            return result.values().stream().sorted(Comparator.comparing(entry -> entry.titleKey().toString())).toList();
+        }
         Map<ResourceLocation, Entry> result = new LinkedHashMap<>();
         for (ResourceLocation diskId : diskIds) {
             if (INTRODUCTION.equals(diskId)) {
-                result.put(INTRODUCTION, new Entry(INTRODUCTION, "article", "general", "guide.antarchy.entry.introduction.title", "guide.antarchy.entry.introduction.subtitle", List.of("guide.antarchy.entry.introduction.description"), "", "", ""));
+                result.put(INTRODUCTION, new Entry(INTRODUCTION, "article", "general", "guide.antarchy.entry.introduction.title", "guide.antarchy.entry.introduction.subtitle", List.of("guide.antarchy.entry.introduction.description"), "", "", "", ""));
                 continue;
             }
             Disk disk = disks.get(diskId);
@@ -107,9 +114,10 @@ public final class ComputerGuideData extends SimplePreparableReloadListener<Comp
         String subtitle = string(object, "subtitle", "");
         List<String> description = strings(object.get("description"));
         String item = string(object, "item", "");
+        String entity = string(object, "entity", "");
         String structure = string(object, "structure", "");
         String dimension = string(object, "dimension", "");
-        target.put(id, new Entry(id, type, category, title, subtitle, description, item, structure, dimension));
+        target.put(id, new Entry(id, type, category, title, subtitle, description, item, entity, structure, dimension));
     }
 
     private static void parseDisk(ResourceLocation id, JsonElement element, Map<ResourceLocation, Disk> target) {
@@ -131,7 +139,8 @@ public final class ComputerGuideData extends SimplePreparableReloadListener<Comp
                 }
             }
         }
-        target.put(id, new Disk(id, category, title, List.copyOf(entryIds)));
+        String wallpaper = string(object, "wallpaper", "");
+        target.put(id, new Disk(id, category, title, List.copyOf(entryIds), wallpaper));
     }
 
     private static String string(JsonObject object, String key, String fallback) {
@@ -160,10 +169,10 @@ public final class ComputerGuideData extends SimplePreparableReloadListener<Comp
     }
 
     public record Entry(ResourceLocation id, String type, String category, String titleKey, String subtitleKey,
-                         List<String> descriptionKeys, String itemId, String structureId, String dimensionId) {
+                         List<String> descriptionKeys, String itemId, String entityId, String structureId, String dimensionId) {
     }
 
-    public record Disk(ResourceLocation id, String category, String titleKey, List<ResourceLocation> entries) {
+    public record Disk(ResourceLocation id, String category, String titleKey, List<ResourceLocation> entries, String wallpaper) {
     }
 
     record LoadedData(Map<ResourceLocation, Entry> entries, Map<ResourceLocation, Disk> disks) {

@@ -144,8 +144,9 @@ public final class ComputerDesktopState {
 
     public void load(CompoundTag tag) {
         clear();
-        selectedWallpaper = parseId(tag.getString(SELECTED_WALLPAPER_TAG));
         loadIds(tag.getList(UNLOCKED_WALLPAPERS_TAG, 8), unlockedWallpaperIds, MAX_UNLOCKED_WALLPAPERS);
+        ResourceLocation storedSelection = parseId(tag.getString(SELECTED_WALLPAPER_TAG));
+        selectedWallpaper = storedSelection != null && unlockedWallpaperIds.contains(storedSelection) ? storedSelection : DEFAULT_WALLPAPER;
         loadIds(tag.getList(INSTALLED_PROGRAMS_TAG, 8), installedProgramIds, MAX_INSTALLED_PROGRAMS);
         ListTag positions = tag.getList(ICON_POSITIONS_TAG, 10);
         for (int index = 0; index < positions.size() && iconPositions.size() < MAX_ICON_POSITIONS; index++) {

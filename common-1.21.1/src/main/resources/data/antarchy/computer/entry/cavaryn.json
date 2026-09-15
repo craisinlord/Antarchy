@@ -1,0 +1,8 @@
+{
+  "type": "dimension",
+  "category": "cavaryn",
+  "title": "guide.antarchy.entry.cavaryn.title",
+  "subtitle": "guide.antarchy.entry.cavaryn.subtitle",
+  "description": ["guide.antarchy.entry.cavaryn.description"],
+  "dimension": "antarchy:cavaryn"
+}

@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.ComputerBlock;
 import com.craisinlord.antarchy.content.computer.ComputerFileSystem;
 import com.craisinlord.antarchy.content.computer.ComputerDesktopState;
+import com.craisinlord.antarchy.content.guide.ComputerGuideData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -92,6 +93,13 @@ public final class ComputerBlockEntity extends BlockEntity implements GeoBlockEn
             return true;
         }
         this.physicalDiskIds.add(diskId);
+        ComputerGuideData.Disk disk = ComputerGuideData.disk(diskId);
+        if (disk != null && !disk.wallpaper().isBlank()) {
+            try {
+                desktopState.unlockWallpaper(ResourceLocation.parse(disk.wallpaper()));
+            } catch (RuntimeException ignored) {
+            }
+        }
         stack.shrink(1);
         activate();
         setChanged();

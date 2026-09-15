@@ -290,6 +290,8 @@ public class AntarchyNeoforge {
         AntarchyNeoforgePayloadHandlers.register(modEventBus);
         com.craisinlord.antarchy.content.network.ComputerNetworking.setSender(payload ->
                 net.neoforged.neoforge.network.PacketDistributor.sendToServer(payload));
+        com.craisinlord.antarchy.content.network.AntmailNetworking.setSender(payload ->
+                net.neoforged.neoforge.network.PacketDistributor.sendToServer((net.minecraft.network.protocol.common.custom.CustomPacketPayload) payload));
         com.craisinlord.antarchy.content.network.ComputerAccessHandler.setResultSender((player, payload) ->
                 net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(player, payload));
         com.craisinlord.antarchy.content.network.AntmailServerHandler.setResultSender((player, payload) ->
