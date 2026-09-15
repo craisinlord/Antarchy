@@ -1,0 +1,10 @@
+{
+  "case": "built_in_introduction_protection",
+  "physical_disk_ids": ["antarchy:chronosphere"],
+  "built_in_modules": ["antarchy:introduction"],
+  "settings_ejection_candidates": ["antarchy:chronosphere"],
+  "expected_dropped_disk_ids": ["antarchy:chronosphere"],
+  "expected_ejectable_ids": ["antarchy:chronosphere"],
+  "expected_introduction_dropped": false,
+  "expected_introduction_ejectable": false
+}

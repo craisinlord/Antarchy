@@ -36,6 +36,11 @@ public final class AntarchyFabricClientNetworking {
     }
 
     public static void register() {
+        ClientPlayNetworking.registerGlobalReceiver(AntmailResultPayload.TYPE, (payload, context) ->
+                context.client().execute(() -> com.craisinlord.antarchy.content.client.AntmailClientState.update(payload)));
+        ClientPlayNetworking.registerGlobalReceiver(ComputerAccessResultPayload.TYPE, (payload, context) ->
+                context.client().execute(() -> com.craisinlord.antarchy.content.client.ComputerAccessClientState.update(payload)));
+        com.craisinlord.antarchy.content.network.ComputerNetworking.setSender(ServerPlayNetworking::send);
         ClientPlayNetworking.registerGlobalReceiver(GravityStatePayload.TYPE, (payload, context) ->
                 context.client().execute(() -> AntarchyFabricNetworking.handleGravityState(context.player(), payload)));
         ClientPlayNetworking.registerGlobalReceiver(BloodglassStatePayload.TYPE, (payload, context) ->

@@ -1020,9 +1020,6 @@ public final class AntarchyNeoforgeItems {
             ));
     public static final DeferredItem<EyeOfTheStormItem> EYE_OF_THE_STORM = ITEMS.register("eye_of_the_storm",
             () -> new EyeOfTheStormItem(new Item.Properties().stacksTo(1).durability(384).rarity(Rarity.EPIC)));
-    // Temporarily disabled: keeping the code but not registering the item for now.
-    // public static final DeferredItem<MinersDreamItem> MINERS_DREAM = ITEMS.register("miners_dream",
-    //         () -> new MinersDreamItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
     public static final DeferredItem<SquidzookaItem> SQUIDZOOKA = ITEMS.register("squidzooka",
             () -> new SquidzookaItem(new Item.Properties().stacksTo(1).durability(384).rarity(Rarity.RARE)));
     public static final DeferredItem<RpoLauncherItem> RPO_LAUNCHER = ITEMS.register("rpo_launcher",

@@ -216,6 +216,7 @@ public class AntarchyNeoforge {
                 AntarchyNeoforgeSounds.QUEEN_ROAR,
                 AntarchyNeoforgeSounds.KING_BEAM_SHOOT,
                 AntarchyNeoforgeSounds.KING_FIREBALL_SHOOT,
+                AntarchyNeoforgeSounds.KING_ICE_SPIKES,
                 AntarchyNeoforgeSounds.KING_DECREE_CAST,
                 AntarchyNeoforgeSounds.QUEEN_BEAM_SHOOT,
                 AntarchyNeoforgeSounds.QUEEN_BEAM_START,
@@ -287,6 +288,12 @@ public class AntarchyNeoforge {
         AntarchyNeoforgeCreativeModeTabs.register(modEventBus);
         AntarchyNeoforgeEntityAttributes.register(modEventBus);
         AntarchyNeoforgePayloadHandlers.register(modEventBus);
+        com.craisinlord.antarchy.content.network.ComputerNetworking.setSender(payload ->
+                net.neoforged.neoforge.network.PacketDistributor.sendToServer(payload));
+        com.craisinlord.antarchy.content.network.ComputerAccessHandler.setResultSender((player, payload) ->
+                net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(player, payload));
+        com.craisinlord.antarchy.content.network.AntmailServerHandler.setResultSender((player, payload) ->
+                net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(player, payload));
         Antarchy.init();
     }
 

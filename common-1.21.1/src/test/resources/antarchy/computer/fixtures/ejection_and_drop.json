@@ -1,0 +1,7 @@
+{
+  "case": "ejection_and_drop",
+  "physical_disk_ids": ["antarchy:chronosphere", "antarchy:toreterror_arena"],
+  "ejection": {"authenticated": true, "route": "settings_or_trash", "selected_disk_id": "antarchy:chronosphere", "expected_returned_item_id": "antarchy:floppy_disk", "expected_remaining_physical_disk_ids": ["antarchy:toreterror_arena"]},
+  "drop_after_break": {"expected_dropped_disk_ids": ["antarchy:toreterror_arena"], "expected_introduction_dropped": false},
+  "rejection": {"authenticated": false, "expected_ejection": false}
+}

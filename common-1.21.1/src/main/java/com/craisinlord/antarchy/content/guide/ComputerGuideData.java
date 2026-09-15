@@ -18,6 +18,7 @@ import java.util.Map;
 
 public final class ComputerGuideData extends SimplePreparableReloadListener<ComputerGuideData.LoadedData> {
     private static final ComputerGuideData INSTANCE = new ComputerGuideData();
+    private static final ResourceLocation INTRODUCTION = ResourceLocation.fromNamespaceAndPath("antarchy", "introduction");
     private static volatile Map<ResourceLocation, Entry> entries = Map.of();
     private static volatile Map<ResourceLocation, Disk> disks = Map.of();
 
@@ -39,6 +40,10 @@ public final class ComputerGuideData extends SimplePreparableReloadListener<Comp
     public static List<Entry> entriesFor(List<ResourceLocation> diskIds) {
         Map<ResourceLocation, Entry> result = new LinkedHashMap<>();
         for (ResourceLocation diskId : diskIds) {
+            if (INTRODUCTION.equals(diskId)) {
+                result.put(INTRODUCTION, new Entry(INTRODUCTION, "article", "general", "guide.antarchy.entry.introduction.title", "guide.antarchy.entry.introduction.subtitle", List.of("guide.antarchy.entry.introduction.description"), "", "", ""));
+                continue;
+            }
             Disk disk = disks.get(diskId);
             if (disk == null) {
                 continue;

@@ -321,6 +321,7 @@ public final class AntarchyFabricContent {
                 AntarchyFabricSounds.QUEEN_ROAR,
                 AntarchyFabricSounds.KING_BEAM_SHOOT,
                 AntarchyFabricSounds.KING_FIREBALL_SHOOT,
+                AntarchyFabricSounds.KING_ICE_SPIKES,
                 AntarchyFabricSounds.KING_DECREE_CAST,
                 AntarchyFabricSounds.QUEEN_BEAM_SHOOT,
                 AntarchyFabricSounds.QUEEN_BEAM_START,

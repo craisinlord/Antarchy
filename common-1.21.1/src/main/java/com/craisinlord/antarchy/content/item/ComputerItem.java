@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 
 public final class ComputerItem extends BlockItem implements GeoItem {
     private static final ResourceLocation MODEL = ResourceLocation.fromNamespaceAndPath("antarchy", "geo/computer.geo.json");
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/block/computer/computer.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/item/computer.png");
     private static final ResourceLocation ANIMATION = ResourceLocation.fromNamespaceAndPath("antarchy", "animations/computer.animation.json");
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -29,7 +29,7 @@ public final class ComputerItem extends BlockItem implements GeoItem {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "state", state -> state.setAndContinue(RawAnimation.begin().thenLoop("off_state"))));
+        controllers.add(new AnimationController<>(this, "state", state -> state.setAndContinue(RawAnimation.begin().thenLoop("on_state"))));
     }
 
     @Override

@@ -197,6 +197,7 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> QUEEN_ROAR = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> KING_BEAM_SHOOT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> KING_FIREBALL_SHOOT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> KING_ICE_SPIKES = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> KING_DECREE_CAST = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> QUEEN_BEAM_SHOOT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> QUEEN_BEAM_START = (Supplier<SoundEvent>) UNBOUND;
@@ -409,6 +410,7 @@ public final class AntarchySoundEvents {
             Supplier<SoundEvent> queenRoar,
             Supplier<SoundEvent> kingBeamShoot,
             Supplier<SoundEvent> kingFireballShoot,
+            Supplier<SoundEvent> kingIceSpikes,
             Supplier<SoundEvent> kingDecreeCast,
             Supplier<SoundEvent> queenBeamShoot,
             Supplier<SoundEvent> queenBeamStart,
@@ -617,6 +619,7 @@ public final class AntarchySoundEvents {
         QUEEN_ROAR = queenRoar;
         KING_BEAM_SHOOT = kingBeamShoot;
         KING_FIREBALL_SHOOT = kingFireballShoot;
+        KING_ICE_SPIKES = kingIceSpikes;
         KING_DECREE_CAST = kingDecreeCast;
         QUEEN_BEAM_SHOOT = queenBeamShoot;
         QUEEN_BEAM_START = queenBeamStart;

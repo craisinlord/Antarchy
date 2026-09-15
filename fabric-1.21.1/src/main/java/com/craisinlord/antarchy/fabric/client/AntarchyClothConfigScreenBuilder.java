@@ -33,11 +33,6 @@ public final class AntarchyClothConfigScreenBuilder {
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
                 .setTitle(Component.translatable("antarchy.config.title"));
-        // Entry save consumers (below) already update the live AntarchySettings fields the
-        // instant the player edits a widget, matching how the game normally behaves. This runs
-        // last, once, when the player clicks "Save" — it's what actually writes those changes
-        // back to the three JSON files, since AntarchyConfigModuleFabric only reads+writes them
-        // at startup otherwise.
         builder.setSavingRunnable(AntarchyConfigModuleFabric::persist);
 
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
@@ -74,11 +69,6 @@ public final class AntarchyClothConfigScreenBuilder {
                     .setSaveConsumer(binding::setValue)
                     .build());
         }
-        // String-typed bindings back the ResourceKey<Level> dimension fields (see
-        // AntarchyConfigModuleFabric.isSupported) and are intentionally skipped here — they're
-        // structural dimension identity, not a tuning knob, and Cloth Config has no natural
-        // widget for them. Every other supported type is exactly what's already persisted to
-        // JSON today, so nothing shown here can drift from what the JSON files contain.
     }
 
     private static String displayName(ConfigSection section) {

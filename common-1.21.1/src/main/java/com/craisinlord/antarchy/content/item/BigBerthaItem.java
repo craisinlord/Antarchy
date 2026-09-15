@@ -176,7 +176,6 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
             return;
         }
 
-        // Toreterror jump tracking
         if (isToreterrorJumping(stack) && player.getMainHandItem() == stack) {
             player.fallDistance = 0.0F; // prevent fall damage during the crash-down
             boolean launched = readInt(stack, TORETERROR_LAUNCHED_TAG) == 1;
@@ -197,7 +196,6 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
             }
         }
 
-        // Tick client shake counter
         if (level.isClientSide && clientShakeTicks > 0) {
             clientShakeTicks--;
         }
