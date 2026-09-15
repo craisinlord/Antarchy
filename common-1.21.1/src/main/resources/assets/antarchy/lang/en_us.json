@@ -1053,6 +1053,7 @@
     "subtitles.antarchy.king_death":  "The King falls",
     "subtitles.antarchy.king_beam_shoot":  "The King fires a beam",
     "subtitles.antarchy.king_fireball_shoot":  "The King breathes fire",
+    "subtitles.antarchy.king_ice_spikes":  "The King summons ice spikes",
     "subtitles.antarchy.king_decree_cast":  "The King pronounces a Decree",
     "subtitles.antarchy.king_decree":  "The King issues a Decree",
     "subtitles.antarchy.king_success":  "The King acknowledges compliance",
@@ -1444,7 +1445,7 @@
     ,"block.antarchy.computer": "Computer"
     ,"item.antarchy.computer": "Computer"
     ,"item.antarchy.floppy_disk": "Floppy Disk"
-    ,"screen.antarchy.computer": "ANTARCHY ARCHIVE"
+    ,"screen.antarchy.computer": "ANTINTOSH OS"
     ,"guide.antarchy.category.general": "GENERAL"
     ,"guide.antarchy.category.elythia": "ELYTHIA"
     ,"guide.antarchy.category.thoraxis": "THORAXIS"
@@ -1467,4 +1468,21 @@
     ,"guide.antarchy.entry.high_fructose_corn_syrup.title": "High Fructose Corn Syrup"
     ,"guide.antarchy.entry.high_fructose_corn_syrup.subtitle": "Nutritional and operational notes"
     ,"guide.antarchy.entry.high_fructose_corn_syrup.description": "A sweet substance of uncertain strategic value. Doctoral enthusiasm surrounding it is statistically suspicious."
+    ,"screen.antarchy.computer.first_use.title": "INITIAL PASSWORD SETUP"
+    ,"screen.antarchy.computer.first_use.prompt": "CREATE A PASSWORD TO CONTINUE"
+    ,"screen.antarchy.computer.first_use.confirm": "CONFIRM PASSWORD"
+    ,"screen.antarchy.computer.busy": "COMPUTER IN USE"
+    ,"screen.antarchy.computer.eject_denied": "ACCESS DENIED: SETTINGS REQUIRED"
+    ,"screen.antarchy.computer.ejected": "DISK EJECTED"
+    ,"antintosh.antarchy.desktop.archive": "ARCHIVE"
+    ,"antintosh.antarchy.desktop.settings": "SETTINGS"
+    ,"antintosh.antarchy.desktop.terminal": "TERMINAL"
+    ,"antintosh.antarchy.desktop.antpaint": "ANTPAINT"
+    ,"antintosh.antarchy.desktop.antmail": "ANTMAIL"
+    ,"antintosh.antarchy.desktop.text_editor": "TEXT EDITOR"
+    ,"antintosh.antarchy.antmail.compose": "COMPOSE MESSAGE"
+    ,"antintosh.antarchy.antmail.attach_text": "ATTACH TEXT FILE"
+    ,"antintosh.antarchy.antmail.attach_image": "ATTACH ANTPAINT IMAGE"
+    ,"antintosh.antarchy.antmail.save_attachment": "SAVE ATTACHMENT"
+    ,"antintosh.antarchy.antmail.address": "COMPUTER ADDRESS"
 }

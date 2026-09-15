@@ -1548,9 +1548,6 @@ public final class AntarchyFabricItems {
             () -> new EyeOfTheStormItem(new Item.Properties().stacksTo(1).durability(384).rarity(Rarity.EPIC)));
 
 
-    // Temporarily disabled: keeping the code but not registering the item for now.
-    // public static final DeferredItem<MinersDreamItem> MINERS_DREAM = ITEMS.register("miners_dream",
-    //         () -> new MinersDreamItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
 
 
     public static final DeferredItem<SquidzookaItem> SQUIDZOOKA = ITEMS.register("squidzooka",

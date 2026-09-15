@@ -1,7 +1,9 @@
 {
-  "variants": {
-    "": {
-      "model": "antarchy:block/computer"
+  "multipart": [
+    {
+      "apply": {
+        "model": "antarchy:block/computer"
+      }
     }
-  }
+  ]
 }

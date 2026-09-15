@@ -1,0 +1,8 @@
+{
+  "case": "duplicate_disk",
+  "initial_physical_disk_ids": ["antarchy:chronosphere"],
+  "inserted_disk_id": "antarchy:chronosphere",
+  "expected_physical_disk_ids": ["antarchy:chronosphere"],
+  "expected_item_consumed": true,
+  "expected_archive_change": false
+}

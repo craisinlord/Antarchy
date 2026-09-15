@@ -1,0 +1,8 @@
+{
+  "case": "newly_placed",
+  "physical_disk_ids": [],
+  "built_in_modules": ["antarchy:introduction"],
+  "password": {"state": "unset"},
+  "session": {"authenticated": false, "screen_occupied": false},
+  "expectations": ["introduction_visible_before_login", "first_use_password_setup_required", "introduction_not_ejectable", "introduction_not_dropped"]
+}

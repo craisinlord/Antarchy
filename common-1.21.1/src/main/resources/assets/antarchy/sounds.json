@@ -2850,6 +2850,14 @@
       }
     ]
   },
+  "king_ice_spikes": {
+    "subtitle": "subtitles.antarchy.king_ice_spikes",
+    "sounds": [
+      {
+        "name": "antarchy:mob/king/ice_spikes"
+      }
+    ]
+  },
   "king_decree_cast": {
     "subtitle": "subtitles.antarchy.king_decree_cast",
     "sounds": [

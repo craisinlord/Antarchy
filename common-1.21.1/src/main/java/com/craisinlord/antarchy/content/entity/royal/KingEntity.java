@@ -994,7 +994,7 @@ public class KingEntity extends RoyalBossEntity {
                         }
                         @Override public void onActive(int elapsedTicks) {
                             KingEntity.this.raiseIceSpikes(level, target);
-                            KingEntity.this.playRoyalSound(AntarchySoundEvents.KING_BEAM_SHOOT.get(), 0.8F);
+                            KingEntity.this.playRoyalSound(AntarchySoundEvents.KING_ICE_SPIKES.get(), 0.8F);
                         }
                     })) return;
             this.iceSpikeCooldownTicks = AntarchySettings.kingIceSpikeCooldownTicks();

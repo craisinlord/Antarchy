@@ -76,11 +76,9 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
-    // Squid-style wander
     private float wanderDx, wanderDy, wanderDz;
     private int wanderRetargetTicks;
 
-    // Combat
     private int attackCooldown;
     private int actionTicks;
     private int lastAttackState;
@@ -89,7 +87,6 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
     private float orbitDirection = 1.0F;
     private int inkSprayCooldown;
 
-    // Kraken spawn flag
     private boolean spawnedByKraken;
 
     // Explosive impact (fired from the R.P.O. Launcher)
@@ -366,10 +363,6 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
         this.hasImpulse = true;
     }
 
-    // -------------------------------------------------------------------------
-    // Squid-style wander
-    // -------------------------------------------------------------------------
-
     private void tickWanderMovement() {
         if (--this.wanderRetargetTicks <= 0) {
             this.wanderRetargetTicks = 40 + this.random.nextInt(40);
@@ -387,10 +380,6 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
 
         this.setDeltaMovement(this.getDeltaMovement().add(this.wanderDx, dy, this.wanderDz));
     }
-
-    // -------------------------------------------------------------------------
-    // Ink spray
-    // -------------------------------------------------------------------------
 
     private boolean hasHitExplosiveTarget() {
         AABB box = this.getBoundingBox();
@@ -446,10 +435,6 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
         serverLevel.sendParticles(OCTOPUS_BOMB_INK_PARTICLE, cx, cy, cz, 60, 2.0D, 1.2D, 2.0D, 0.04D);
         serverLevel.sendParticles(OCTOPUS_BOMB_INK_PARTICLE, cx, cy, cz, 30, 3.5D, 1.8D, 3.5D, 0.02D);
     }
-
-    // -------------------------------------------------------------------------
-    // Combat
-    // -------------------------------------------------------------------------
 
     private void tickPursuitMovement(LivingEntity target) {
         if (this.strafeRetargetTicks-- <= 0) {
