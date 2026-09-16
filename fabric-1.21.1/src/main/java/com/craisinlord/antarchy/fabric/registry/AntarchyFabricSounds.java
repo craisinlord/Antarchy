@@ -530,6 +530,8 @@ public final class AntarchyFabricSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> ANTIMETAL_PLACE = registerSoundEvent("antimetal_place");
     public static final DeferredHolder<SoundEvent, SoundEvent> ANTIMETAL_STEP = registerSoundEvent("antimetal_step");
     public static final DeferredHolder<SoundEvent, SoundEvent> ANTIMETAL_SCAFFOLD = registerSoundEvent("antimetal_scaffold");
+    public static final DeferredHolder<SoundEvent, SoundEvent> UNDERTRIAL_DETECT_PLAYER1 = registerSoundEvent("undertrial_detect_player1");
+    public static final DeferredHolder<SoundEvent, SoundEvent> UNDERTRIAL_DETECT_PLAYER2 = registerSoundEvent("undertrial_detect_player2");
 
     public static final DeferredHolder<SoundEvent, SoundEvent> KING_IDLE = registerSoundEvent("king_idle");
     public static final DeferredHolder<SoundEvent, SoundEvent> KING_WALK = registerSoundEvent("king_walk");

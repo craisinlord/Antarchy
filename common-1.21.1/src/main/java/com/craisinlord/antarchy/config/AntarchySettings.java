@@ -578,7 +578,7 @@ public final class AntarchySettings {
     private static double kingBeamTracking = 0.1D;
     private static double kingBeamTerrainRadius = 5.0D;
     private static int kingBeamTerrainCap = 192;
-    private static int royalDecreeCooldownTicks = 1200;
+    private static int royalDecreeCooldownTicks = 700;
     private static int kingRoyalMusterCooldownTicks = 500;
     private static int kingRoyalMusterWindupTicks = 30;
     private static int kingRoyalMusterDurationTicks = 600;

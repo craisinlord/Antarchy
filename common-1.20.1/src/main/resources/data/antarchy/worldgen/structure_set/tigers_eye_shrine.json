@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "antarchy:tigers_eye_shrine",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt": 149275031,
+    "spacing": 24,
+    "separation": 16,
+    "type": "integrated_api:advanced_random_spread"
+  }
+}

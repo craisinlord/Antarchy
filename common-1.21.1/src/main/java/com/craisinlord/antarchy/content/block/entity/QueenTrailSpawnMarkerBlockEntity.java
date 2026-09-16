@@ -68,12 +68,32 @@ public final class QueenTrailSpawnMarkerBlockEntity extends BlockEntity {
                 level.getChunk(chunkX, chunkZ);
             }
         }
-        QueenEntity queen = QueenEntity.spawnFromUndersideTrail(level, marker.spawnPos, marker.homePos, marker.siteId, marker.yaw);
-        if (queen != null) {
-            marker.consumed = true;
-            marker.queenUuid = queen.getUUID();
-            marker.setChanged();
+        marker.spawnNow(level);
+    }
+
+    @Nullable
+    public QueenEntity spawnNow(ServerLevel level) {
+        if (!this.configured) {
+            return null;
         }
+        if (this.consumed) {
+            if (this.queenUuid != null && level.getEntity(this.queenUuid) instanceof QueenEntity queen) {
+                return queen;
+            }
+            return null;
+        }
+        for (int chunkX = (this.spawnPos.getX() - 16) >> 4; chunkX <= (this.spawnPos.getX() + 16) >> 4; chunkX++) {
+            for (int chunkZ = (this.spawnPos.getZ() - 16) >> 4; chunkZ <= (this.spawnPos.getZ() + 16) >> 4; chunkZ++) {
+                level.getChunk(chunkX, chunkZ);
+            }
+        }
+        QueenEntity queen = QueenEntity.spawnFromUndersideTrail(level, this.spawnPos, this.homePos, this.siteId, this.yaw);
+        if (queen != null) {
+            this.consumed = true;
+            this.queenUuid = queen.getUUID();
+            this.setChanged();
+        }
+        return queen;
     }
 
     @Override

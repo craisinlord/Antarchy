@@ -34,6 +34,7 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.ArmorItem;
@@ -93,6 +94,16 @@ public class KingEntity extends RoyalBossEntity {
     private static final double COME_NO_CLOSER_RADIUS = 16.0D;
     private static final int COME_NO_CLOSER_PARTICLE_INTERVAL = 4;
     private static final int COME_NO_CLOSER_PARTICLE_COUNT = 40;
+    private static final double CLOSE_QUARTERS_RADIUS = 16.0D;
+    private static final int CLOSE_QUARTERS_APPROACH_TICKS = 120;
+    private static final int CLOSE_QUARTERS_EXIT_GRACE_TICKS = 40;
+    private static final int PROJECTILE_PRESSURE_MAX = 60;
+    private static final int PROJECTILE_PRESSURE_PER_HIT = 10;
+    private static final int GROUND_ASSAULT_TICKS = 200;
+    private static final int GROUND_ASSAULT_COOLDOWN_MIN = 600;
+    private static final int GROUND_ASSAULT_COOLDOWN_VARIANCE = 300;
+    private static final int COMBAT_WAYPOINT_MIN_TICKS = 45;
+    private static final int COMBAT_WAYPOINT_VARIANCE = 35;
 
     @Nullable
     private Vec3 patrolCenter;
@@ -105,6 +116,10 @@ public class KingEntity extends RoyalBossEntity {
     private double treePatrolAngle;
     private boolean treePatrolBound;
     private int patrolCooldownTicks;
+    @Nullable
+    private Vec3 treePatrolProgressPosition;
+    private int treePatrolProgressTicks;
+    private int treePatrolFailures;
     private int decreeCooldownTicks;
     private int activeDecreeTicks;
     private int stompCooldownTicks;
@@ -113,6 +128,23 @@ public class KingEntity extends RoyalBossEntity {
     private int iceballCooldownTicks = 120;
     private int iceSpikeCooldownTicks = 160;
     private boolean decreeRetreatPressure;
+    @Nullable
+    private String lastDecreeKey;
+    private boolean closeQuartersEntered;
+    private int closeQuartersOutsideTicks;
+    private int projectilePressure;
+    private int groundAssaultCooldownTicks = 400;
+    private int groundAssaultTicks;
+    private boolean kingLandingForCombat;
+    @Nullable
+    private Vec3 kingLandingWaypoint;
+    @Nullable
+    private Vec3 kingCombatWaypoint;
+    @Nullable
+    private Vec3 kingCombatProgressPosition;
+    private int kingCombatWaypointTicks;
+    private int kingCombatProgressTicks;
+    private int kingStrafeDirection = 1;
     private int royalBoundaryGraceTicks;
     @Nullable
     private ServerPlayer exileTarget;
@@ -156,12 +188,20 @@ public class KingEntity extends RoyalBossEntity {
         return phase.maxConcurrentHeadAttacks();
     }
 
+    @Override
+    protected boolean managesOwnCombatLocomotion() {
+        return true;
+    }
+
     public void setTreePatrolHome(Vec3 center, double minimumY, double maximumY, double angle) {
         this.treePatrolCenter = center;
         this.treePatrolMinimumY = minimumY;
         this.treePatrolMaximumY = maximumY;
         this.treePatrolAngle = angle;
         this.treePatrolWaypoint = null;
+        this.treePatrolProgressPosition = null;
+        this.treePatrolProgressTicks = 0;
+        this.treePatrolFailures = 0;
         this.treePatrolBound = true;
     }
 
@@ -383,11 +423,22 @@ public class KingEntity extends RoyalBossEntity {
         ServerLevel serverLevel = (ServerLevel) this.level();
         this.iceBuildup.entrySet().removeIf(entry -> serverLevel.getEntity(entry.getKey()) == null);
         if (this.iceBuildup.size() > 16) this.iceBuildup.clear();
+        if (this.tickCount % 10 == 0 && this.projectilePressure > 0) {
+            this.projectilePressure--;
+        }
+        if (this.tickCount % 40 == 0) {
+            this.bumpBehavior(Behavior.RANGED, -1);
+        }
+        if (this.tickCount % 20 == 0 && this.getArrowCount() > 6) {
+            this.setArrowCount(6);
+        }
         LivingEntity target = this.getTarget();
         if (target != null && !this.isDeadOrDying() && this.level() instanceof ServerLevel level) {
             this.trackBehavior(target);
             this.tickDecree(level, target);
             this.tickKingWholeBody(level, target);
+            this.tickKingCombatMovement(target);
+            this.stabilizeKingRotation();
             return;
         }
 
@@ -395,6 +446,7 @@ public class KingEntity extends RoyalBossEntity {
             return;
         }
         this.setRoyalFlying(true);
+        this.resetKingCombatMovement();
         this.decreeRetreatPressure = false;
         if (this.treePatrolBound && this.treePatrolCenter != null) {
             this.tickTreePatrol();
@@ -416,16 +468,20 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     private void tickComeNoCloserIndicator() {
-        if (!(this.activeDecree instanceof ComeNoCloserDecree)
+        boolean keepOut = this.activeDecree instanceof ComeNoCloserDecree;
+        boolean closeQuarters = this.activeDecree instanceof CloseQuartersDecree;
+        if ((!keepOut && !closeQuarters)
                 || this.tickCount % COME_NO_CLOSER_PARTICLE_INTERVAL != 0
                 || !(this.level() instanceof ServerLevel serverLevel)) {
             return;
         }
+        double radius = keepOut ? COME_NO_CLOSER_RADIUS : CLOSE_QUARTERS_RADIUS;
         for (int index = 0; index < COME_NO_CLOSER_PARTICLE_COUNT; index++) {
             double angle = (Math.PI * 2.0D * index) / COME_NO_CLOSER_PARTICLE_COUNT;
-            double x = this.getX() + Math.cos(angle) * COME_NO_CLOSER_RADIUS;
-            double z = this.getZ() + Math.sin(angle) * COME_NO_CLOSER_RADIUS;
-            serverLevel.sendParticles(ParticleTypes.END_ROD, x, this.getY() + 0.25D, z,
+            double x = this.getX() + Math.cos(angle) * radius;
+            double z = this.getZ() + Math.sin(angle) * radius;
+            serverLevel.sendParticles(keepOut ? ParticleTypes.END_ROD : ParticleTypes.ENCHANT,
+                    x, this.getY() + 0.25D, z,
                     1, 0.0D, 0.0D, 0.0D, 0.0D);
         }
     }
@@ -440,9 +496,25 @@ public class KingEntity extends RoyalBossEntity {
             this.treePatrolAngle -= Math.PI * 2.0D;
         }
         Vec3 waypoint = this.treePatrolWaypoint;
+        if (waypoint != null && ++this.treePatrolProgressTicks >= 40) {
+            if (this.treePatrolProgressPosition != null
+                    && this.position().distanceToSqr(this.treePatrolProgressPosition) < 1.0D
+                    && this.position().distanceToSqr(waypoint) > 36.0D) {
+                this.treePatrolWaypoint = null;
+                waypoint = null;
+                this.treePatrolFailures++;
+                this.treePatrolAngle += 0.35D;
+            } else {
+                this.treePatrolFailures = Math.max(0, this.treePatrolFailures - 1);
+            }
+            this.treePatrolProgressPosition = this.position();
+            this.treePatrolProgressTicks = 0;
+        }
         if (waypoint == null || this.position().distanceToSqr(waypoint) < 36.0D) {
             waypoint = this.findTreePatrolWaypoint(center, this.treePatrolAngle);
             this.treePatrolWaypoint = waypoint;
+            this.treePatrolProgressPosition = this.position();
+            this.treePatrolProgressTicks = 0;
         }
         if (waypoint != null) {
             this.getMoveControl().setWantedPosition(waypoint.x, waypoint.y, waypoint.z, 1.0D);
@@ -503,17 +575,39 @@ public class KingEntity extends RoyalBossEntity {
 
     @Nullable
     private Vec3 findTreePatrolWaypoint(Vec3 center, double angle) {
-        for (int attempt = 0; attempt < 10; attempt++) {
-            double candidateAngle = angle + attempt * 0.22D;
-            double x = center.x + Math.cos(candidateAngle) * TREE_ORBIT_RADIUS;
-            double z = center.z + Math.sin(candidateAngle) * TREE_ORBIT_RADIUS;
-            double vertical = 0.5D + 0.5D * Math.sin(candidateAngle);
-            double y = this.treePatrolMinimumY
-                    + (this.treePatrolMaximumY - this.treePatrolMinimumY) * vertical;
-            Vec3 candidate = new Vec3(x, y, z);
-            if (this.clearTreePatrolPath(candidate)) {
-                return candidate;
+        double currentAngle = Math.atan2(this.getZ() - center.z, this.getX() - center.x);
+        double baseAngle = Double.isFinite(currentAngle) ? currentAngle + 0.24D : angle;
+        double[] radii = {TREE_ORBIT_RADIUS, TREE_ORBIT_RADIUS + 20.0D, TREE_ORBIT_RADIUS - 20.0D};
+        double[] heightOffsets = {0.0D, 16.0D, -12.0D, 30.0D};
+        for (int angleAttempt = 0; angleAttempt < 8; angleAttempt++) {
+            double candidateAngle = baseAngle + angleAttempt * 0.16D;
+            for (double radius : radii) {
+                double x = center.x + Math.cos(candidateAngle) * radius;
+                double z = center.z + Math.sin(candidateAngle) * radius;
+                double vertical = 0.5D + 0.5D * Math.sin(candidateAngle);
+                double baseY = this.treePatrolMinimumY
+                        + (this.treePatrolMaximumY - this.treePatrolMinimumY) * vertical;
+                for (double heightOffset : heightOffsets) {
+                    double y = Mth.clamp(baseY + heightOffset,
+                            this.treePatrolMinimumY + 8.0D, this.treePatrolMaximumY - 8.0D);
+                    Vec3 candidate = new Vec3(x, y, z);
+                    if (this.clearTreePatrolPath(candidate)) {
+                        return candidate;
+                    }
+                }
             }
+        }
+        Vec3 outward = this.position().subtract(center).multiply(1.0D, 0.0D, 1.0D);
+        if (outward.lengthSqr() < 1.0E-4D) {
+            outward = new Vec3(Math.cos(angle), 0.0D, Math.sin(angle));
+        }
+        Vec3 tangent = new Vec3(-outward.z, 0.0D, outward.x).normalize();
+        Vec3 recovery = this.position().add(tangent.scale(24.0D)).add(0.0D,
+                this.treePatrolFailures >= 2 ? 18.0D : 8.0D, 0.0D);
+        recovery = new Vec3(recovery.x,
+                Mth.clamp(recovery.y, this.treePatrolMinimumY + 8.0D, this.treePatrolMaximumY - 8.0D), recovery.z);
+        if (this.clearTreePatrolPath(recovery)) {
+            return recovery;
         }
         return null;
     }
@@ -529,6 +623,179 @@ public class KingEntity extends RoyalBossEntity {
             }
         }
         return true;
+    }
+
+    private void tickKingCombatMovement(LivingEntity target) {
+        boolean closeQuarters = this.activeDecree instanceof CloseQuartersDecree;
+        if (closeQuarters && this.isRoyalFlying() && !this.kingLandingForCombat) {
+            this.beginKingLanding(target);
+        } else if (!closeQuarters && this.isRoyalFlying() && !this.kingLandingForCombat
+                && this.groundAssaultCooldownTicks-- <= 0 && target.onGround()) {
+            this.beginKingLanding(target);
+        }
+
+        if (this.kingLandingForCombat) {
+            if (!target.onGround() && !closeQuarters) {
+                this.kingLandingForCombat = false;
+                this.kingLandingWaypoint = null;
+                this.groundAssaultCooldownTicks = 160;
+                return;
+            }
+            if (this.kingLandingWaypoint == null) {
+                this.kingLandingWaypoint = this.findKingLandingPoint(target);
+            }
+            Vec3 landing = this.kingLandingWaypoint;
+            if (landing != null) {
+                this.setRoyalFlying(true);
+                this.getMoveControl().setWantedPosition(landing.x, landing.y, landing.z, 1.35D);
+                if (this.onGround() || this.getY() <= landing.y + 1.25D) {
+                    this.setRoyalFlying(false);
+                    this.kingLandingForCombat = false;
+                    this.kingLandingWaypoint = null;
+                    this.groundAssaultTicks = closeQuarters
+                            ? Math.max(GROUND_ASSAULT_TICKS, this.activeDecreeTicks + 20)
+                            : GROUND_ASSAULT_TICKS;
+                }
+            }
+            return;
+        }
+
+        if (!this.isRoyalFlying()) {
+            if (closeQuarters) {
+                this.groundAssaultTicks = Math.max(this.groundAssaultTicks, this.activeDecreeTicks + 20);
+            }
+            this.getMoveControl().setWantedPosition(target.getX(), target.getY(), target.getZ(), 1.25D);
+            if (--this.groundAssaultTicks <= 0 && !closeQuarters) {
+                this.setRoyalFlying(true);
+                this.setDeltaMovement(this.getDeltaMovement().add(0.0D, 0.42D, 0.0D));
+                this.hasImpulse = true;
+                this.groundAssaultCooldownTicks = GROUND_ASSAULT_COOLDOWN_MIN
+                        + this.random.nextInt(GROUND_ASSAULT_COOLDOWN_VARIANCE + 1);
+                this.kingCombatWaypoint = null;
+            }
+            return;
+        }
+
+        if (this.kingCombatWaypoint != null && ++this.kingCombatProgressTicks >= 40) {
+            if (this.kingCombatProgressPosition != null
+                    && this.position().distanceToSqr(this.kingCombatProgressPosition) < 1.0D
+                    && this.position().distanceToSqr(this.kingCombatWaypoint) > 16.0D) {
+                this.kingCombatWaypoint = null;
+                this.kingStrafeDirection *= -1;
+            }
+            this.kingCombatProgressPosition = this.position();
+            this.kingCombatProgressTicks = 0;
+        }
+        if (this.kingCombatWaypoint == null || --this.kingCombatWaypointTicks <= 0
+                || this.position().distanceToSqr(this.kingCombatWaypoint) < 16.0D) {
+            this.selectKingCombatWaypoint(target);
+        }
+        if (this.kingCombatWaypoint != null) {
+            double speed = this.projectilePressure >= 30 ? 1.4D : 1.15D;
+            this.getMoveControl().setWantedPosition(this.kingCombatWaypoint.x,
+                    this.kingCombatWaypoint.y, this.kingCombatWaypoint.z, speed);
+        }
+    }
+
+    private void beginKingLanding(LivingEntity target) {
+        this.kingLandingWaypoint = this.findKingLandingPoint(target);
+        if (this.kingLandingWaypoint != null) {
+            this.kingLandingForCombat = true;
+            this.kingCombatWaypoint = null;
+        } else {
+            this.groundAssaultCooldownTicks = 100;
+        }
+    }
+
+    @Nullable
+    private Vec3 findKingLandingPoint(LivingEntity target) {
+        Vec3 away = this.position().subtract(target.position()).multiply(1.0D, 0.0D, 1.0D);
+        double baseAngle = away.lengthSqr() > 1.0E-4D ? Math.atan2(away.z, away.x) : this.random.nextDouble() * Mth.TWO_PI;
+        double[] radii = {9.0D, 13.0D, 17.0D, 6.0D};
+        for (int angleIndex = 0; angleIndex < 12; angleIndex++) {
+            double angle = baseAngle + angleIndex * Mth.TWO_PI / 12.0D;
+            for (double radius : radii) {
+                double x = target.getX() + Math.cos(angle) * radius;
+                double z = target.getZ() + Math.sin(angle) * radius;
+                double y = this.groundYBelow(x, z) + 0.1D;
+                Vec3 candidate = new Vec3(x, y, z);
+                AABB box = this.getBoundingBox().move(
+                        candidate.x - this.getX(), candidate.y - this.getY(), candidate.z - this.getZ());
+                if (this.level().noCollision(this, box)) {
+                    return candidate;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void selectKingCombatWaypoint(LivingEntity target) {
+        Vec3 radial = this.position().subtract(target.position()).multiply(1.0D, 0.0D, 1.0D);
+        if (radial.lengthSqr() < 1.0E-4D) {
+            radial = new Vec3(1.0D, 0.0D, 0.0D);
+        }
+        radial = radial.normalize();
+        Vec3 tangent = new Vec3(-radial.z * this.kingStrafeDirection, 0.0D,
+                radial.x * this.kingStrafeDirection);
+        double range = this.activeDecree instanceof ComeNoCloserDecree || this.projectilePressure >= 30
+                ? 40.0D : 34.0D;
+        Vec3 horizontal = target.position().add(radial.scale(range)).add(tangent.scale(12.0D));
+        double groundY = this.groundYBelow(horizontal.x, horizontal.z);
+        double y = Mth.clamp(target.getY() + 8.0D, groundY + FLYING_MIN_HOVER,
+                groundY + FLYING_MAX_HOVER_ABOVE_GROUND);
+        this.kingCombatWaypoint = new Vec3(horizontal.x, y, horizontal.z);
+        this.kingCombatWaypointTicks = COMBAT_WAYPOINT_MIN_TICKS
+                + this.random.nextInt(COMBAT_WAYPOINT_VARIANCE + 1);
+        this.kingCombatProgressPosition = this.position();
+        this.kingCombatProgressTicks = 0;
+        if (this.random.nextInt(4) == 0) {
+            this.kingStrafeDirection *= -1;
+        }
+    }
+
+    private void stabilizeKingRotation() {
+        Vec3 movement = this.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D);
+        if (movement.lengthSqr() < 0.0025D) {
+            return;
+        }
+        float desiredYaw = (float) (Mth.atan2(movement.z, movement.x) * 180.0D / Math.PI) - 90.0F;
+        float turn = Mth.clamp(Mth.wrapDegrees(desiredYaw - this.getYRot()), -7.0F, 7.0F);
+        this.setYRot(this.getYRot() + turn);
+        this.yBodyRot = this.getYRot();
+    }
+
+    private void resetKingCombatMovement() {
+        this.kingLandingForCombat = false;
+        this.kingLandingWaypoint = null;
+        this.kingCombatWaypoint = null;
+        this.kingCombatProgressPosition = null;
+        this.kingCombatWaypointTicks = 0;
+        this.kingCombatProgressTicks = 0;
+        this.groundAssaultTicks = 0;
+        if (this.groundAssaultCooldownTicks <= 0) {
+            this.groundAssaultCooldownTicks = 400;
+        }
+    }
+
+    public void requestCloseQuartersAssault(LivingEntity target) {
+        if (target != null && target.isAlive() && this.isRoyalFlying() && !this.kingLandingForCombat) {
+            this.beginKingLanding(target);
+        }
+    }
+
+    public RoyalDecree.Evaluation evaluateCloseQuarters(LivingEntity target) {
+        double distanceSquared = target.distanceToSqr(this);
+        if (distanceSquared <= CLOSE_QUARTERS_RADIUS * CLOSE_QUARTERS_RADIUS) {
+            this.closeQuartersEntered = true;
+            this.closeQuartersOutsideTicks = 0;
+            return RoyalDecree.Evaluation.COMPLIANT;
+        }
+        if (!this.closeQuartersEntered) {
+            return 300 - this.activeDecreeTicks >= CLOSE_QUARTERS_APPROACH_TICKS
+                    ? RoyalDecree.Evaluation.VIOLATED : RoyalDecree.Evaluation.COMPLIANT;
+        }
+        return ++this.closeQuartersOutsideTicks > CLOSE_QUARTERS_EXIT_GRACE_TICKS
+                ? RoyalDecree.Evaluation.VIOLATED : RoyalDecree.Evaluation.COMPLIANT;
     }
 
     private void tickRoyalPunishment() {
@@ -742,6 +1009,8 @@ public class KingEntity extends RoyalBossEntity {
                 this.activeDecree = decree;
                 this.activeDecreeTicks = 300;
                 this.decreeCooldownTicks = 0;
+                this.closeQuartersEntered = false;
+                this.closeQuartersOutsideTicks = 0;
                 this.projectRoyalSound(AntarchySoundEvents.KING_DECREE.get(), 4.0F, 1.0F, target);
                 this.sendDecreeTitle(target);
                 return true;
@@ -1093,6 +1362,8 @@ public class KingEntity extends RoyalBossEntity {
             this.activeDecreeTicks = 300;
             this.activeDecree = this.pickDecree(target);
             this.decreeRetreatPressure = false;
+            this.closeQuartersEntered = false;
+            this.closeQuartersOutsideTicks = 0;
             this.playRoyalSound(AntarchySoundEvents.KING_DECREE_CAST.get(), 0.9F + this.random.nextFloat() * 0.15F);
             this.playRoyalSound(AntarchySoundEvents.KING_ROAR.get(), 0.8F + this.random.nextFloat() * 0.12F);
             this.projectRoyalSound(AntarchySoundEvents.KING_DECREE.get(), 4.0F, 1.0F, target);
@@ -1115,10 +1386,19 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     private RoyalDecree pickDecree(LivingEntity target) {
+        if ((this.projectilePressure >= 20 || this.behaviorScore(Behavior.RANGED) >= 6)
+                && !"decree.antarchy.close_quarters".equals(this.lastDecreeKey)) {
+            return DECREES.stream()
+                    .filter(CloseQuartersDecree.class::isInstance)
+                    .findFirst()
+                    .orElse(DECREES.get(0));
+        }
         int totalWeight = 0;
         int[] weights = new int[DECREES.size()];
         for (int i = 0; i < DECREES.size(); i++) {
-            weights[i] = Math.max(1, DECREES.get(i).contextWeight(this, target));
+            RoyalDecree decree = DECREES.get(i);
+            weights[i] = decree.translationKey().equals(this.lastDecreeKey)
+                    ? 0 : Math.max(1, decree.contextWeight(this, target));
             totalWeight += weights[i];
         }
         int roll = this.random.nextInt(totalWeight);
@@ -1145,11 +1425,14 @@ public class KingEntity extends RoyalBossEntity {
             player.connection.send(new ClientboundClearTitlesPacket(false));
         }
         if (this.activeDecree != null) {
+            this.lastDecreeKey = this.activeDecree.translationKey();
             this.activeDecree.onEnded();
         }
         this.activeDecree = null;
         this.activeDecreeTicks = 0;
         this.decreeRetreatPressure = false;
+        this.closeQuartersEntered = false;
+        this.closeQuartersOutsideTicks = 0;
         this.decreeCooldownTicks = AntarchySettings.royalDecreeCooldownTicks();
         this.startRoyalRecovery(40);
     }
@@ -1166,13 +1449,63 @@ public class KingEntity extends RoyalBossEntity {
         if (this.activeDecree == null || target == null || !target.isAlive()) {
             return;
         }
-        if (target instanceof ServerPlayer player) {
-            this.projectRoyalSound(AntarchySoundEvents.KING_JUDGEMENT.get(), 4.0F, 1.0F, target);
-            this.debugTriggerPunishment(RoyalPunishmentType.ROYAL_EXILE, player);
-        } else {
-            this.invokeJudgment(target);
-        }
+        this.attackScheduler.cancel(RoyalAttackLane.DECREE);
+        this.attackScheduler.cancel(RoyalAttackLane.HAZARD);
         this.endDecree(target);
+        this.projectRoyalSound(AntarchySoundEvents.KING_JUDGEMENT.get(), 4.0F, 1.0F, target);
+        if (target instanceof ServerPlayer player) {
+            this.sendDecreeViolationTitle(player);
+        }
+        this.startRoyalJudgmentBarrage(target);
+    }
+
+    private void sendDecreeViolationTitle(ServerPlayer player) {
+        player.connection.send(new ClientboundSetTitlesAnimationPacket(5, 45, 10));
+        player.connection.send(new ClientboundSetTitleTextPacket(Component.translatable("decree.antarchy.violated")
+                .withStyle(style -> style.withColor(ChatFormatting.DARK_PURPLE).withBold(true))));
+        player.connection.send(new ClientboundSetSubtitleTextPacket(Component.translatable("decree.antarchy.violated.subtitle")
+                .withStyle(style -> style.withColor(ChatFormatting.LIGHT_PURPLE))));
+    }
+
+    private void startRoyalJudgmentBarrage(LivingEntity target) {
+        if (!(this.level() instanceof ServerLevel level)) {
+            return;
+        }
+        this.beginRoyalAttack("royal_judgment", RoyalAttackLane.HAZARD, 80,
+                20, 9, 12, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                    @Override
+                    public void onStart() {
+                        for (RoyalHead.Slot slot : RoyalHead.Slot.values()) {
+                            KingEntity.this.triggerAnim(slot.controllerName(), "shoot");
+                        }
+                        level.sendParticles(ParticleTypes.WITCH,
+                                KingEntity.this.getX(), KingEntity.this.getY() + KingEntity.this.getBbHeight() * 0.7D,
+                                KingEntity.this.getZ(), 70, 4.0D, 3.0D, 4.0D, 0.12D);
+                    }
+
+                    @Override
+                    public void onActive(int elapsedTicks) {
+                        if (elapsedTicks % 4 == 0 && target.isAlive() && target.level() == level) {
+                            KingEntity.this.fireRoyalJudgmentWave(level, target);
+                        }
+                    }
+                });
+    }
+
+    private void fireRoyalJudgmentWave(ServerLevel level, LivingEntity target) {
+        Vec3 predicted = target.getEyePosition().add(target.getDeltaMovement().scale(4.0D));
+        for (RoyalHead.Slot slot : RoyalHead.Slot.values()) {
+            RoyalHead head = this.royalHead(slot);
+            Vec3 origin = this.headAnchor(head);
+            Vec3 direction = predicted.subtract(origin).normalize();
+            RoyalBoltEntity bolt = new RoyalBoltEntity(AntarchyObjects.ROYAL_BOLT.get(), level);
+            bolt.setOwner(this);
+            bolt.setElement(RoyalBeamElement.QUEEN_PURPLE);
+            bolt.setPos(origin.x, origin.y, origin.z);
+            bolt.shoot(direction.x, direction.y, direction.z, 1.55F, 1.0F);
+            level.addFreshEntity(bolt);
+        }
+        this.playRoyalSound(AntarchySoundEvents.KING_BEAM_SHOOT.get(), 1.15F);
     }
 
     public boolean blocksHealing() {
@@ -1200,6 +1533,17 @@ public class KingEntity extends RoyalBossEntity {
             this.lastPlayerDamageTime.put(attacker.getUUID(), this.level().getGameTime());
             boolean projectile = source.getDirectEntity() instanceof Projectile;
             this.bumpBehavior(projectile ? Behavior.RANGED : Behavior.HUGGING, 2);
+            if (projectile) {
+                this.projectilePressure = Math.min(PROJECTILE_PRESSURE_MAX,
+                        this.projectilePressure + PROJECTILE_PRESSURE_PER_HIT);
+                if (this.isRoyalFlying() && !(this.activeDecree instanceof CloseQuartersDecree)) {
+                    if (this.projectilePressure >= 40) {
+                        amount *= 0.55F;
+                    } else if (this.projectilePressure >= 20) {
+                        amount *= 0.75F;
+                    }
+                }
+            }
             if (this.activeDecree instanceof CloseQuartersDecree && projectile) {
                 this.failActiveDecree(attacker);
             } else if (this.activeDecree instanceof ComeNoCloserDecree && !projectile) {

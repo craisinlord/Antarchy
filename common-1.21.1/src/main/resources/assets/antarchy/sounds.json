@@ -17,6 +17,18 @@
       { "name": "antarchy:thoraxis_lucid_pools_additions", "type": "event" }
     ]
   },
+  "undertrial_detect_player1": {
+    "subtitle": "subtitles.antarchy.undertrial_detect_player",
+    "sounds": [
+      { "name": "antarchy:block/undertrial/undertrial_detect_player1" }
+    ]
+  },
+  "undertrial_detect_player2": {
+    "subtitle": "subtitles.antarchy.undertrial_detect_player",
+    "sounds": [
+      { "name": "antarchy:block/undertrial/undertrial_detect_player2" }
+    ]
+  },
   "squidzooka_fire": {
     "subtitle": "subtitles.antarchy.squidzooka_fire",
     "sounds": [
@@ -1105,10 +1117,6 @@
       {
         "name": "antarchy:inversion_layer",
         "type": "event",
-        "stream": true
-      },
-      {
-        "name": "antarchy:music/game/thoraxis/assimilation",
         "stream": true
       }
     ]

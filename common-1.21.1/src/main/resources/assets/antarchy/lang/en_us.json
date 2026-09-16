@@ -905,6 +905,7 @@
     "tooltip.antarchy.lucid_pearl":  "Throws an inverted-gravity projectile.",
     "tooltip.antarchy.lucid_pearl.detail":  "Teleports you to where it lands and applies Inverted.",
     "subtitles.antarchy.squidzooka_fire":  "Squidzooka fires",
+    "subtitles.antarchy.undertrial_detect_player": "Undertrial spawner detects player",
     "subtitles.antarchy.size_ray_charge":  "Size Ray charges",
     "subtitles.antarchy.size_ray_fire":  "Size Ray fires",
     "subtitles.antarchy.ant_ambient":  "Ants chirp",
@@ -1418,7 +1419,9 @@
     ,"decree.antarchy.kneel": "KNEEL"
     ,"decree.antarchy.kneel.subtitle": "Crouch within five seconds."
     ,"decree.antarchy.close_quarters": "CLOSE QUARTERS"
-    ,"decree.antarchy.close_quarters.subtitle": "Projectiles are forbidden."
+    ,"decree.antarchy.close_quarters.subtitle": "Enter the royal circle. Projectiles are forbidden."
+    ,"decree.antarchy.violated": "DECREE VIOLATED"
+    ,"decree.antarchy.violated.subtitle": "Face the King's judgment."
     ,"decree.antarchy.come_no_closer": "COME NO CLOSER"
     ,"decree.antarchy.come_no_closer.subtitle": "Keep out of the King's inner radius."
     ,"decree.antarchy.fight_me_coward": "FIGHT ME, COWARD!"

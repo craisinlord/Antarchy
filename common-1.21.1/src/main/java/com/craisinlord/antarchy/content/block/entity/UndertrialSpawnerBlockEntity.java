@@ -92,6 +92,10 @@ public final class UndertrialSpawnerBlockEntity extends BlockEntity implements T
                         pos.getZ() + 0.5D + (level.random.nextDouble() - 0.5D) * 0.7D, 0.0D, 0.01D, 0.0D);
             }
         } else if (currentState == TrialSpawnerState.WAITING_FOR_PLAYERS && blockEntity.previousClientState != currentState) {
+            ResourceLocation detectionSound = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID,
+                    level.random.nextBoolean() ? "undertrial_detect_player1" : "undertrial_detect_player2");
+            level.playSound(null, pos, BuiltInRegistries.SOUND_EVENT.get(detectionSound),
+                    net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 1.0F);
             for (int i = 0; i < 12; i++) {
                 level.addParticle(blockEntity.particle("undertrial_spawner_detection"), pos.getX() + 0.5D + (level.random.nextDouble() - 0.5D) * 1.4D,
                         pos.getY() + 0.15D + level.random.nextDouble() * 0.7D,

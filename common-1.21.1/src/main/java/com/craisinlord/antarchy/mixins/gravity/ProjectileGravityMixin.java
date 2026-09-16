@@ -57,7 +57,7 @@ public abstract class ProjectileGravityMixin {
             @Local(argsOnly = true) Entity shooter
     ) {
         Vec3 direction = new Vec3(x, y, z);
-        if (ThoraxisUndersideManager.shouldInvertInUnderside(shooter)) {
+        if (AntarchyGravityApi.isGravityInverted(shooter)) {
             direction = AntarchyGravityRotationUtil.vecPlayerToWorld(
                     direction,
                     AntarchyGravityApi.getGravityDirection(shooter)

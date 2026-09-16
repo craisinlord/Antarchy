@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.mixins.gravity;
 
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -18,8 +19,15 @@ public abstract class EntityProjectileGravityMixin {
     @Inject(method = "applyGravity", at = @At("HEAD"), cancellable = true)
     private void antarchy$applyProjectileGravityUpward(CallbackInfo ci) {
         Entity self = (Entity) (Object) this;
-        if (!(self instanceof Projectile projectile)
-                || !ThoraxisUndersideManager.isInUnderside(projectile)) {
+        if (!(self instanceof Projectile projectile)) {
+            return;
+        }
+
+        boolean inverted = AntarchyGravityApi.isGravityInverted(projectile);
+        if (!inverted && projectile.getOwner() != null) {
+            inverted = AntarchyGravityApi.isGravityInverted(projectile.getOwner());
+        }
+        if (!inverted && !ThoraxisUndersideManager.isInUnderside(projectile)) {
             return;
         }
 

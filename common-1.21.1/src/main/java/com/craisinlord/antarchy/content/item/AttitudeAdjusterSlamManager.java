@@ -23,6 +23,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -104,7 +105,7 @@ public final class AttitudeAdjusterSlamManager {
         if (player.onGround() || player.isInWaterOrBubble() || player.isInLava() || player.isFallFlying() || player.getAbilities().flying || PLAYER_SLAMS.containsKey(player.getUUID())) {
             return false;
         }
-        PLAYER_SLAMS.put(player.getUUID(), new PlayerSlamState(player.getUUID(), player.serverLevel().dimension().location().toString(), player.serverLevel().getGameTime() + SLAM_TIMEOUT_TICKS, player.fallDistance));
+        PLAYER_SLAMS.put(player.getUUID(), new PlayerSlamState(player.getUUID(), hand, player.serverLevel().dimension().location().toString(), player.serverLevel().getGameTime() + SLAM_TIMEOUT_TICKS, player.fallDistance));
         AntarchyGravityDirection gravityDirection = AntarchyGravityRotationUtil.getGravityDownDirection(player) == Direction.UP ? AntarchyGravityDirection.UP : AntarchyGravityDirection.DOWN;
         Vec3 motion = player.getDeltaMovement();
         Vec3 localMotion = AntarchyGravityRotationUtil.vecWorldToPlayer(motion, gravityDirection);
@@ -194,7 +195,8 @@ public final class AttitudeAdjusterSlamManager {
             if (AntarchySettings.attitudeAdjusterBreaksBlocks()) {
                 breakBlocks(level, player, groundPos, gravityDown);
             }
-            if (player.getMainHandItem().getItem() instanceof AttitudeAdjusterItem item) {
+            ItemStack slamStack = player.getItemInHand(state.hand);
+            if (slamStack.getItem() instanceof AttitudeAdjusterItem item) {
                 player.getCooldowns().addCooldown(item, PLAYER_SLAM_COOLDOWN_TICKS);
             }
             iterator.remove();
@@ -319,12 +321,14 @@ public final class AttitudeAdjusterSlamManager {
 
     private static final class PlayerSlamState {
         private final UUID playerId;
+        private final net.minecraft.world.InteractionHand hand;
         private final String dimensionId;
         private final long expiresAt;
         private final float startFallDistance;
 
-        private PlayerSlamState(UUID playerId, String dimensionId, long expiresAt, float startFallDistance) {
+        private PlayerSlamState(UUID playerId, net.minecraft.world.InteractionHand hand, String dimensionId, long expiresAt, float startFallDistance) {
             this.playerId = playerId;
+            this.hand = hand;
             this.dimensionId = dimensionId;
             this.expiresAt = expiresAt;
             this.startFallDistance = startFallDistance;

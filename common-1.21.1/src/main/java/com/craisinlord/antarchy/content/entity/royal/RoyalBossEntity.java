@@ -284,6 +284,11 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         return 0.35D;
     }
 
+    /** Lets a boss provide a bespoke air/ground cadence without changing the other royal encounter. */
+    protected boolean managesOwnCombatLocomotion() {
+        return false;
+    }
+
     protected boolean shouldClearObstruction() {
         return true;
     }
@@ -799,7 +804,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     private void tickCombatLocomotionMode(LivingEntity target) {
-        if (!this.isFlyingBoss()) {
+        if (!this.isFlyingBoss() || this.managesOwnCombatLocomotion()) {
             return;
         }
         boolean inverted = AntarchyGravityApi.isGravityInverted(this);

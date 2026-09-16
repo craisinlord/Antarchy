@@ -5,6 +5,9 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
 import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import net.minecraft.core.component.DataComponents;
@@ -162,15 +165,12 @@ public class SquidzookaItem extends ProjectileWeaponItem implements GeoItem {
         }
 
         float yaw = player.getYRot() + yawOffset;
-        Vec3 direction = Vec3.directionFromRotation(new Vec2(player.getXRot(), yaw));
-        projectileSquid.moveTo(
-                player.getX(),
-                player.getEyeY() - 0.2D,
-                player.getZ(),
-                yaw,
-                player.getXRot()
-        );
-        projectileSquid.launchAsProjectile(player, direction.scale(AntarchySettings.squidzookaLaunchVelocity()).add(player.getDeltaMovement()));
+        Vec3 localDirection = Vec3.directionFromRotation(new Vec2(player.getXRot(), yaw));
+        AntarchyGravityDirection gravity = AntarchyGravityApi.getGravityDirection(player);
+        Vec3 direction = AntarchyGravityRotationUtil.vecPlayerToWorld(localDirection, gravity).normalize();
+        Vec3 spawn = player.getEyePosition().add(direction.scale(0.45D));
+        projectileSquid.moveTo(spawn.x, spawn.y, spawn.z, yaw, player.getXRot());
+        projectileSquid.launchAsProjectile(player, direction.scale(AntarchySettings.squidzookaLaunchVelocity()).add(AntarchyGravityApi.deltaMovement(player)));
         level.addFreshEntity(projectileSquid);
     }
 

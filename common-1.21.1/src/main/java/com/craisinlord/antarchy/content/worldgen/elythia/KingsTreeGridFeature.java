@@ -147,12 +147,40 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
             // Start near the lower trunk so players on the ground can reliably engage the King.
             // The patrol bounds remain unchanged, allowing him to retreat upward through the tree.
             double spawnY = minimumY + 48.0D;
-            // Start just outside the central trunk, inside the tree's authored footprint.
-            king.moveTo(centerX + 48.5D, spawnY, centerZ + 0.5D, 90.0F, 0.0F);
+            Vec3 spawn = findSafeKingSpawn(serverLevel, king, centerX, centerZ, spawnY);
+            king.moveTo(spawn.x, spawn.y, spawn.z,
+                    (float) (Math.atan2(centerZ + 0.5D - spawn.z, centerX + 0.5D - spawn.x)
+                            * 180.0D / Math.PI) - 90.0F,
+                    0.0F);
             king.setTreePatrolHome(treeCenter, minimumY, maximumY, 0.0D);
             king.setPersistenceRequired();
             serverLevel.addFreshEntity(king);
         }
+    }
+
+    private static Vec3 findSafeKingSpawn(ServerLevel level, KingEntity king,
+                                          int centerX, int centerZ, double spawnY) {
+        double[] radii = {96.0D, 80.0D, 64.0D};
+        double[] heightOffsets = {0.0D, 18.0D, -12.0D, 32.0D};
+        for (double radius : radii) {
+            for (int angleIndex = 0; angleIndex < 16; angleIndex++) {
+                double angle = angleIndex * Math.PI * 2.0D / 16.0D;
+                double x = centerX + 0.5D + Math.cos(angle) * radius;
+                double z = centerZ + 0.5D + Math.sin(angle) * radius;
+                for (double heightOffset : heightOffsets) {
+                    Vec3 candidate = new Vec3(x, spawnY + heightOffset, z);
+                    BlockPos blockPos = BlockPos.containing(candidate);
+                    if (!level.hasChunksAt(blockPos.offset(-8, -8, -8), blockPos.offset(8, 16, 8))) {
+                        continue;
+                    }
+                    king.moveTo(candidate.x, candidate.y, candidate.z, 0.0F, 0.0F);
+                    if (level.noCollision(king, king.getBoundingBox())) {
+                        return candidate;
+                    }
+                }
+            }
+        }
+        return new Vec3(centerX + 64.5D, spawnY + 32.0D, centerZ + 0.5D);
     }
 
     private static ResourceLocation tileLocation(int tileX, int tileZ) {

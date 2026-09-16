@@ -6,6 +6,7 @@ import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -412,6 +413,9 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
         this.launchOwnerUuid = owner != null ? owner.getUUID() : null;
         this.setTarget(null);
         this.setNoGravity(false);
+        if (owner != null && AntarchyGravityApi.isGravityInverted(owner)) {
+            AntarchyGravityApi.setAirborneGravityDirection(this, AntarchyGravityApi.getGravityDirection(owner), true, AntarchyGravityTransition.INSTANT);
+        }
         this.setDeltaMovement(velocity);
         this.hasImpulse = true;
         this.updateAnimationState();

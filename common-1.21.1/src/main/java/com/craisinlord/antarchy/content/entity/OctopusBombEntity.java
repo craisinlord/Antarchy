@@ -357,6 +357,14 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
     public void launchAsExplosiveProjectile(net.minecraft.world.entity.Entity launcher, Vec3 velocity) {
         this.explosiveImpact = true;
         this.explosiveLauncherId = launcher != null ? launcher.getUUID() : null;
+        if (launcher != null && com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.isGravityInverted(launcher)) {
+            com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.setAirborneGravityDirection(
+                    this,
+                    com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.getGravityDirection(launcher),
+                    true,
+                    com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition.INSTANT
+            );
+        }
         this.setDeltaMovement(velocity);
         this.hasImpulse = true;
     }
