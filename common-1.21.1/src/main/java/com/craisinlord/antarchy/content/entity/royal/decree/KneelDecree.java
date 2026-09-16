@@ -10,13 +10,25 @@ public final class KneelDecree implements RoyalDecree {
     public String translationKey() { return "decree.antarchy.kneel"; }
     public void apply(ServerLevel level, KingEntity king, LivingEntity target) {
         UUID id = target.getUUID();
-        if (target.isCrouching()) { deadlines.remove(id); king.clearActiveDecree(target); return; }
-        int deadline = deadlines.computeIfAbsent(id, ignored -> target.tickCount + 100);
-        if (target.tickCount >= deadline) { king.failActiveDecree(target); }
+        deadlines.computeIfAbsent(id, ignored -> target.tickCount + 100);
+    }
+
+    @Override
+    public Evaluation evaluate(ServerLevel level, KingEntity king, LivingEntity target) {
+        if (target.isCrouching()) {
+            return Evaluation.COMPLETE;
+        }
+        int deadline = deadlines.computeIfAbsent(target.getUUID(), ignored -> target.tickCount + 100);
+        return target.tickCount >= deadline ? Evaluation.VIOLATED : Evaluation.COMPLIANT;
     }
 
     @Override
     public int countdownTicks(LivingEntity target) {
         return this.deadlines.getOrDefault(target.getUUID(), target.tickCount + 100) - target.tickCount;
+    }
+
+    @Override
+    public void onEnded() {
+        this.deadlines.clear();
     }
 }

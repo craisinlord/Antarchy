@@ -1,7 +1,7 @@
 {
   "sender": "bloxiclean@antmail.com",
-  "subject": "IS YOUR HIVE QUEEN DUSTY?",
-  "body": "Bloxiclean now offers premium royal-area cleaning. We remove ash, ichor, bloodglass dust, and other difficult stains. Queen not included. Prices may vary by dimension.",
+  "subject": "IS YOUR CARPET DIRTY?",
+  "body": "Bloxiclean now offers premium royal-area cleaning. We remove ash, ichor, bloodglass dust, and other difficult stains. Prices may vary by dimension.",
   "trigger": {
     "type": "random",
     "value": 0.01

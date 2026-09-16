@@ -1,7 +1,7 @@
 {
   "sender": "bloxiclean@antmail.com",
   "subject": "BLOXICLEAN: WE MAKE BLOCKS SPARKLE",
-  "body": "Cobwebs? Sculk? Suspicious residue? Bloxiclean removes nearly anything from nearly anywhere. Book your complimentary pressure-wash before the stains become lore.",
+  "body": "Cobwebs? Sculk? Suspicious residue? Bloxiclean removes nearly anything from nearly anywhere. Book your complimentary pressure-wash before the stains become ancient history.",
   "trigger": {
     "type": "random",
     "value": 0.01

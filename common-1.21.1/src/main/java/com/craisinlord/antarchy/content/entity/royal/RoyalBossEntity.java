@@ -15,6 +15,7 @@ import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -186,6 +187,10 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     private Vec3 aerialCombatAnchor;
     private int aerialCombatAnchorTicks;
     private int recoveryWindowTicks;
+    @Nullable
+    private Phase trackedPhase;
+    private int phaseTransitionTicks;
+    private int phaseTransitionDuration;
     private boolean multiplayerScalingInitialized;
     private final Set<UUID> encounterParticipants = new HashSet<>();
     private double royalDamageMultiplier = 1.0D;
@@ -295,6 +300,24 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
 
     protected double biteApproachSpeed() {
         return 1.3D;
+    }
+
+    /** Prevents normal head/body scheduling while a bespoke movement sequence owns the boss. */
+    protected boolean blocksRoyalAttacksForMovement() {
+        return false;
+    }
+
+    protected int royalPhaseTransitionDuration(Phase nextPhase) {
+        return 50;
+    }
+
+    protected void onRoyalPhaseTransitionStarted(Phase previousPhase, Phase nextPhase) {
+    }
+
+    protected void tickRoyalPhaseTransition(Phase nextPhase, int elapsedTicks, int remainingTicks) {
+    }
+
+    protected void onRoyalPhaseTransitionCompleted(Phase nextPhase) {
     }
 
     /** Allows a boss to tune its head-bite concurrency without changing the other royal boss. */
@@ -462,7 +485,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         if (this.level().isClientSide) {
             return;
         }
-        if (this.isRoyalFlying() && !this.isDeadOrDying() && !this.landingForCombat) {
+        if (this.isRoyalFlying() && !this.isDeadOrDying() && !this.landingForCombat
+                && !this.blocksRoyalAttacksForMovement()) {
             this.tickFlyingAltitude();
         }
 
@@ -480,6 +504,23 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             return;
         }
 
+        Phase currentPhase = this.phase();
+        if (this.trackedPhase == null) {
+            this.trackedPhase = currentPhase;
+        } else if (currentPhase != this.trackedPhase) {
+            Phase previousPhase = this.trackedPhase;
+            this.trackedPhase = currentPhase;
+            this.startRoyalPhaseTransition(previousPhase, currentPhase);
+        }
+        if (this.phaseTransitionTicks > 0) {
+            int elapsedTicks = this.phaseTransitionDuration - this.phaseTransitionTicks;
+            this.tickRoyalPhaseTransition(this.trackedPhase, elapsedTicks, this.phaseTransitionTicks);
+            if (--this.phaseTransitionTicks == 0) {
+                this.onRoyalPhaseTransitionCompleted(this.trackedPhase);
+            }
+            return;
+        }
+
         LivingEntity primaryTarget = this.getTarget();
         if (primaryTarget == null || !primaryTarget.isAlive() || !this.canAttack(primaryTarget)) {
             for (RoyalHead head : this.heads) {
@@ -491,6 +532,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         this.initializeMultiplayerScaling(primaryTarget);
 
         this.tickCombatLocomotionMode(primaryTarget);
+        if (this.blocksRoyalAttacksForMovement()) {
+            return;
+        }
         boolean aeriallyStabilized = this.steerTowardTarget(primaryTarget);
         if (!aeriallyStabilized) {
             this.getLookControl().setLookAt(primaryTarget, 30.0F, 30.0F);
@@ -640,6 +684,37 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
 
     protected void startRoyalRecovery(int ticks) {
         this.recoveryWindowTicks = Math.max(this.recoveryWindowTicks, ticks);
+    }
+
+    protected final boolean isRoyalPhaseTransitionActive() {
+        return this.phaseTransitionTicks > 0;
+    }
+
+    private void startRoyalPhaseTransition(Phase previousPhase, Phase nextPhase) {
+        this.phaseTransitionDuration = Math.max(1, this.royalPhaseTransitionDuration(nextPhase));
+        this.phaseTransitionTicks = this.phaseTransitionDuration;
+        for (RoyalAttackLane lane : RoyalAttackLane.values()) {
+            this.attackScheduler.cancel(lane);
+        }
+        for (RoyalHead head : this.heads) {
+            if (head.beamActive() || head.shooting()) {
+                this.stopRoyalBeam(head);
+            }
+        }
+        this.getNavigation().stop();
+        this.onRoyalPhaseTransitionStarted(previousPhase, nextPhase);
+    }
+
+    /** Returns the live players currently participating in the encounter. */
+    protected final List<ServerPlayer> royalEncounterPlayers(ServerLevel level) {
+        double range = Math.max(32.0D, this.getAttributeValue(Attributes.FOLLOW_RANGE));
+        LinkedHashSet<ServerPlayer> players = new LinkedHashSet<>(this.bossEvent.getPlayers());
+        players.addAll(level.getPlayers(player -> player.isAlive()
+                && !player.isSpectator()
+                && player.distanceToSqr(this) <= range * range));
+        players.removeIf(player -> !player.isAlive() || player.isSpectator() || player.level() != level
+                || player.distanceToSqr(this) > range * range);
+        return List.copyOf(players);
     }
 
     private void initializeMultiplayerScaling(LivingEntity target) {
