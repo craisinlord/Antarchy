@@ -14,7 +14,7 @@
       "item": "antarchy:molevore_nose"
     },
     "C": {
-      "item": "antarchy:jumpy_bug_leg"
+      "item": "antarchy:springbug_leg"
     },
     "D": {
       "item": "antarchy:jerry_nucleus"
@@ -29,7 +29,7 @@
       "item": "antarchy:hercules_horn"
     },
     "H": {
-      "item": "antarchy:triffid_goo"
+      "item": "antarchy:flytrap_goo"
     }
   },
   "result": {

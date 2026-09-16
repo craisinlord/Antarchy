@@ -306,7 +306,7 @@ public final class CreativeTabContents {
             entry("scorpion_whip", "combat"),
             entry("fallen_king_crown", "combat"),
             entry("brutalfly_elytra", "combat"),
-            entry("jumpy_boots", "combat"),
+            entry("springy_boots", "combat"),
             entry("raw_uranium_scrap", "ingredients"),
             entry("raw_titanium_scrap", "ingredients"),
             entry("bluestone", "redstone_blocks"),

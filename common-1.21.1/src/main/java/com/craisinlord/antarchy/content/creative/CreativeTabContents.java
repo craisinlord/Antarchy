@@ -640,7 +640,7 @@ public final class CreativeTabContents {
             acceptPotionFamily(output, potionPath);
         }
         for (String diskId : List.of("antarchy:introduction", "antarchy:chronosphere", "antarchy:toreterror_arena", "antarchy:high_fructose_corn_syrup",
-                "antarchy:elythia", "antarchy:cavaryn", "antarchy:thoraxis", "antarchy:temporal_fields", "antarchy:bloodglass", "antarchy:vortex")) {
+                "antarchy:elythia", "antarchy:flying_squirrel", "antarchy:cavaryn", "antarchy:thoraxis", "antarchy:temporal_fields", "antarchy:bloodglass", "antarchy:vortex")) {
             ItemStack disk = new ItemStack(AntarchyObjects.FLOPPY_DISK.get());
             disk.set(AntarchyObjects.FLOPPY_DISK_COMPONENT.get(), ResourceLocation.parse(diskId));
             output.accept(disk);

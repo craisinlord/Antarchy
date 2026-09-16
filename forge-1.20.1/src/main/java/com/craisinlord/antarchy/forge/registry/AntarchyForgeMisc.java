@@ -12,6 +12,8 @@ import com.craisinlord.antarchy.content.effect.ShrinkMobEffect;
 import com.craisinlord.antarchy.content.effect.StinkyMobEffect;
 import com.craisinlord.antarchy.content.effect.DilatedMobEffect;
 import com.craisinlord.antarchy.content.effect.ContractedMobEffect;
+import com.craisinlord.antarchy.content.enchantment.ChronosphereEnchantment;
+import com.craisinlord.antarchy.content.enchantment.FeatherRisingEnchantment;
 import com.craisinlord.antarchy.content.recipe.AmericanizeRecipe;
 import com.craisinlord.antarchy.content.worldgen.ants.BrownAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.RainbowAntNestFeature;
@@ -42,8 +44,10 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -67,6 +71,11 @@ public final class AntarchyForgeMisc {
     private static final DeferredRegister<com.mojang.serialization.Codec<? extends DensityFunction>> DENSITY_FUNCTION_TYPES = DeferredRegister.create(Registries.DENSITY_FUNCTION_TYPE, Antarchy.MODID);
     private static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, Antarchy.MODID);
     private static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(Registries.MENU, Antarchy.MODID);
+    private static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(Registries.ENCHANTMENT, Antarchy.MODID);
+    public static final RegistryObject<Enchantment> FEATHER_RISING = ENCHANTMENTS.register("feather_rising",
+            () -> new FeatherRisingEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.FEET));
+    public static final RegistryObject<Enchantment> CHRONOSPHERE = ENCHANTMENTS.register("chronosphere",
+            () -> new ChronosphereEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.CHEST));
     private static final DeferredRegister<net.minecraft.world.entity.animal.FrogVariant> FROG_VARIANTS =
             DeferredRegister.create(Registries.FROG_VARIANT, Antarchy.MODID);
     public static final RegistryObject<net.minecraft.world.entity.animal.FrogVariant> ELYTHIA_FROG_VARIANT = FROG_VARIANTS.register(
@@ -190,6 +199,12 @@ public final class AntarchyForgeMisc {
             AntarchyForgeMisc::simpleParticleType);
     public static final RegistryObject<SimpleParticleType> LUCID_BOLT_IMPACT_LARGE = PARTICLE_TYPES.register("lucid_bolt_impact_large",
             AntarchyForgeMisc::simpleParticleType);
+    public static final RegistryObject<SimpleParticleType> UNDERTRIAL_SPAWNER_DETECTION = PARTICLE_TYPES.register("undertrial_spawner_detection",
+            AntarchyForgeMisc::simpleParticleType);
+    public static final RegistryObject<SimpleParticleType> UNDERTRIAL_OMEN = PARTICLE_TYPES.register("undertrial_omen",
+            AntarchyForgeMisc::simpleParticleType);
+    public static final RegistryObject<SimpleParticleType> UNDERVAULT_CONNECTION = PARTICLE_TYPES.register("undervault_connection",
+            AntarchyForgeMisc::simpleParticleType);
     public static final RegistryObject<ParticleType<InvertedGeyserBaseParticleOptions>> INVERTED_GEYSER_BASE = PARTICLE_TYPES.register("inverted_geyser_base",
             () -> particleType(InvertedGeyserBaseParticleOptions.deserializer()));
     public static final RegistryObject<ParticleType<InvertedGeyserParticleOptions>> INVERTED_GEYSER_PLUME = PARTICLE_TYPES.register("inverted_geyser_plume",
@@ -253,7 +268,7 @@ public final class AntarchyForgeMisc {
             () -> new MolewormWarrensFeature(NoneFeatureConfiguration.CODEC));
     public static final RegistryObject<MolewormSurfaceMoundsFeature> ELYTHIA_MOLEWORM_SURFACE_MOUNDS = FEATURES.register("elythia_moleworm_surface_mounds",
             () -> new MolewormSurfaceMoundsFeature(NoneFeatureConfiguration.CODEC));
-    public static final RegistryObject<TriffidPatchFeature> TRIFFID_PATCH = FEATURES.register("triffid_patch",
+    public static final RegistryObject<TriffidPatchFeature> TRIFFID_PATCH = FEATURES.register("flytrap_patch",
             () -> new TriffidPatchFeature(NoneFeatureConfiguration.CODEC));
     public static final RegistryObject<ElythiaPondFeature> ELYTHIA_POND = FEATURES.register("elythia_pond",
             () -> new ElythiaPondFeature(NoneFeatureConfiguration.CODEC));
@@ -287,6 +302,10 @@ public final class AntarchyForgeMisc {
             () -> new com.craisinlord.antarchy.content.worldgen.elythia.FungalMushroomFeature(NoneFeatureConfiguration.CODEC));
     public static final RegistryObject<ThoraxisFissureFeature> THORAXIS_FISSURE = FEATURES.register("thoraxis_fissure",
             () -> new ThoraxisFissureFeature(ThoraxisFissureConfiguration.CODEC));
+    public static final RegistryObject<QueenHavocTrailFeature> QUEEN_HAVOC_TRAIL = FEATURES.register("queen_havoc_trail",
+            QueenHavocTrailFeature::new);
+    public static final RegistryObject<ThoraxisTransitionThroatFeature> THORAXIS_TRANSITION_THROAT = FEATURES.register("thoraxis_transition_throat",
+            ThoraxisTransitionThroatFeature::new);
     public static final RegistryObject<ThoraxisRibColumnsFeature> THORAXIS_RIB_COLUMNS = FEATURES.register("thoraxis_rib_columns",
             () -> new ThoraxisRibColumnsFeature(ThoraxisRibColumnsConfiguration.CODEC));
     public static final RegistryObject<ThoraxisSpikeFeature> THORAXIS_SPIKE = FEATURES.register("thoraxis_spike",
@@ -307,7 +326,7 @@ public final class AntarchyForgeMisc {
             () -> new MoltingVinesFeature(NoneFeatureConfiguration.CODEC));
     public static final RegistryObject<com.craisinlord.antarchy.content.worldgen.cavaryn.GroundMoltingVinesFeature> GROUND_MOLTING_VINES = FEATURES.register("ground_molting_vines",
             () -> new com.craisinlord.antarchy.content.worldgen.cavaryn.GroundMoltingVinesFeature(NoneFeatureConfiguration.CODEC));
-    public static final RegistryObject<com.craisinlord.antarchy.content.worldgen.cavaryn.JumpyBugEggCeilingFeature> JUMPY_BUG_EGG_CEILING = FEATURES.register("jumpy_bug_egg_ceiling",
+    public static final RegistryObject<com.craisinlord.antarchy.content.worldgen.cavaryn.JumpyBugEggCeilingFeature> JUMPY_BUG_EGG_CEILING = FEATURES.register("springbug_egg_ceiling",
             () -> new com.craisinlord.antarchy.content.worldgen.cavaryn.JumpyBugEggCeilingFeature(NoneFeatureConfiguration.CODEC));
     public static final RegistryObject<com.craisinlord.antarchy.content.worldgen.cavaryn.SpitBugEggPatchFeature> SPIT_BUG_EGG_PATCH = FEATURES.register("spit_bug_egg_patch",
             () -> new com.craisinlord.antarchy.content.worldgen.cavaryn.SpitBugEggPatchFeature(NoneFeatureConfiguration.CODEC));
@@ -371,6 +390,7 @@ public final class AntarchyForgeMisc {
         DENSITY_FUNCTION_TYPES.register(modEventBus);
         ATTRIBUTES.register(modEventBus);
         MENU_TYPES.register(modEventBus);
+        ENCHANTMENTS.register(modEventBus);
         FROG_VARIANTS.register(modEventBus);
         RECIPE_SERIALIZERS.register(modEventBus);
     }

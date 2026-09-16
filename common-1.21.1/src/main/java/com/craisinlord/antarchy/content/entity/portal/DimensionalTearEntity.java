@@ -32,6 +32,7 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -117,7 +118,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
                                                                   int lifetimeTicks, UUID queenId, int count) {
         DimensionalTearEntity tear = create(level, pos, yaw, lifetimeTicks);
         tear.queenOwnerId = queenId;
-        tear.queenManticoreCount = Math.max(1, count);
+        tear.queenManticoreCount = Math.max(0, count);
         QUEEN_TEAR_IDS.computeIfAbsent(queenId, ignored -> new HashSet<>()).add(tear.getUUID());
         return tear;
     }
@@ -470,6 +471,16 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
     @Override
     public boolean isInvulnerableTo(DamageSource damageSource) {
         return true;
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        if (this.queenOwnerId != null && source.getDirectEntity() instanceof Projectile
+                && !this.level().isClientSide) {
+            this.removeLinkedPair();
+            return true;
+        }
+        return false;
     }
 
     @Override

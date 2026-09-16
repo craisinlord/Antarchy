@@ -247,8 +247,8 @@ public final class AntarchySettings {
     private static double princessArmor = 8.0D;
     private static double princessKnockbackResistance = 0.5D;
     private static double princessFollowRange = 48.0D;
-    private static double kingHealth = 6000.0D;
-    private static double queenHealth = 6000.0D;
+    private static double kingHealth = 3400.0D;
+    private static double queenHealth = 4300.0D;
     private static double kingAttackDamage = 50.0D;
     private static double queenAttackDamage = 45.0D;
     private static double royalBossSoundVolume = 4.5D;
@@ -256,10 +256,6 @@ public final class AntarchySettings {
     private static int queenBlackHoleActiveTicks = 120;
     private static double queenBlackHolePullStrength = 0.16D;
     private static int queenBlackHoleBlockSuctionCap = 160;
-    private static double queenFinalTimeFieldRadius = 20.0D;
-    private static double queenFinalTimeFieldRate = 0.05D;
-    private static int queenFinalTimeFieldDurationTicks = 45;
-    private static int queenFinalTimeFieldCooldownTicks = 80;
     private static double kingFireballDamage = 32.0D;
     private static double kingFireballRadius = 4.5D;
     private static int kingFireballCooldownTicks = 150;
@@ -270,6 +266,7 @@ public final class AntarchySettings {
     private static int kingIceSpikeCooldownTicks = 240;
     private static int kingElementalTerrainCap = 256;
     private static double royalBossArmor = 20.0D;
+    private static double kingArmor = 30.0D;
     private static double royalBossFollowRange = 128.0D;
     private static double royalBossMovementSpeed = 0.22D;
     private static double royalBossKnockbackResistance = 1.0D;
@@ -278,6 +275,13 @@ public final class AntarchySettings {
     private static double royalBossBiteReach = 12.0D;
     private static double royalBossBiteDamageMultiplier = 1.6D;
     private static int royalBossBiteCooldownTicks = 45;
+    private static boolean royalBossMultiplayerScalingEnabled = true;
+    private static int royalBossScalingMaxPlayers = 4;
+    private static double royalBossHealthPerAdditionalPlayer = 0.35D;
+    private static double royalBossDamagePerAdditionalPlayer = 0.10D;
+    private static double royalBoundaryRadius = 192.0D;
+    private static double royalBoundaryWarningRadius = 160.0D;
+    private static int royalBoundaryGraceTicks = 60;
     private static boolean basiliskPetrifyingGazeEnabled = true;
     private static int basiliskSpawnMaxLightLevel = 5;
     private static double basiliskHealth = 320.0D;
@@ -546,7 +550,7 @@ public final class AntarchySettings {
     private static double manticoreHealth = 40.0D;
     private static double manticoreAttackDamage = 7.0D;
     private static int manticoreStingPoisonTicks = 100;
-    private static int queenManticoreCap = 6;
+    private static int queenManticoreCap = 15;
     private static int queenManticoreSummonCooldownTicks = 800;
     private static int queenManticoreSummonCount = 2;
     private static double queenManticoreSummonRange = 24.0D;
@@ -2067,14 +2071,6 @@ public final class AntarchySettings {
     public static void setQueenBlackHolePullStrength(double v) { queenBlackHolePullStrength = v; }
     public static int queenBlackHoleBlockSuctionCap() { return queenBlackHoleBlockSuctionCap; }
     public static void setQueenBlackHoleBlockSuctionCap(int v) { queenBlackHoleBlockSuctionCap = v; }
-    public static double queenFinalTimeFieldRadius() { return queenFinalTimeFieldRadius; }
-    public static void setQueenFinalTimeFieldRadius(double v) { queenFinalTimeFieldRadius = v; }
-    public static double queenFinalTimeFieldRate() { return queenFinalTimeFieldRate; }
-    public static void setQueenFinalTimeFieldRate(double v) { queenFinalTimeFieldRate = v; }
-    public static int queenFinalTimeFieldDurationTicks() { return queenFinalTimeFieldDurationTicks; }
-    public static void setQueenFinalTimeFieldDurationTicks(int v) { queenFinalTimeFieldDurationTicks = v; }
-    public static int queenFinalTimeFieldCooldownTicks() { return queenFinalTimeFieldCooldownTicks; }
-    public static void setQueenFinalTimeFieldCooldownTicks(int v) { queenFinalTimeFieldCooldownTicks = v; }
     public static double kingFireballDamage() { return kingFireballDamage; }
     public static void setKingFireballDamage(double v) { kingFireballDamage = v; }
     public static double kingFireballRadius() { return kingFireballRadius; }
@@ -2096,6 +2092,8 @@ public final class AntarchySettings {
 
     public static double royalBossArmor() { return royalBossArmor; }
     public static void setRoyalBossArmor(double v) { royalBossArmor = v; }
+    public static double kingArmor() { return kingArmor; }
+    public static void setKingArmor(double v) { kingArmor = v; }
 
     public static double royalBossFollowRange() { return royalBossFollowRange; }
     public static void setRoyalBossFollowRange(double v) { royalBossFollowRange = v; }
@@ -2120,6 +2118,20 @@ public final class AntarchySettings {
 
     public static int royalBossBiteCooldownTicks() { return royalBossBiteCooldownTicks; }
     public static void setRoyalBossBiteCooldownTicks(int v) { royalBossBiteCooldownTicks = v; }
+    public static boolean royalBossMultiplayerScalingEnabled() { return royalBossMultiplayerScalingEnabled; }
+    public static void setRoyalBossMultiplayerScalingEnabled(boolean v) { royalBossMultiplayerScalingEnabled = v; }
+    public static int royalBossScalingMaxPlayers() { return royalBossScalingMaxPlayers; }
+    public static void setRoyalBossScalingMaxPlayers(int v) { royalBossScalingMaxPlayers = v; }
+    public static double royalBossHealthPerAdditionalPlayer() { return royalBossHealthPerAdditionalPlayer; }
+    public static void setRoyalBossHealthPerAdditionalPlayer(double v) { royalBossHealthPerAdditionalPlayer = v; }
+    public static double royalBossDamagePerAdditionalPlayer() { return royalBossDamagePerAdditionalPlayer; }
+    public static void setRoyalBossDamagePerAdditionalPlayer(double v) { royalBossDamagePerAdditionalPlayer = v; }
+    public static double royalBoundaryRadius() { return royalBoundaryRadius; }
+    public static void setRoyalBoundaryRadius(double v) { royalBoundaryRadius = v; }
+    public static double royalBoundaryWarningRadius() { return royalBoundaryWarningRadius; }
+    public static void setRoyalBoundaryWarningRadius(double v) { royalBoundaryWarningRadius = v; }
+    public static int royalBoundaryGraceTicks() { return royalBoundaryGraceTicks; }
+    public static void setRoyalBoundaryGraceTicks(int v) { royalBoundaryGraceTicks = v; }
 
     public static double nightmareSwordBaseDamage() { return nightmareSwordBaseDamage; }
     public static void setNightmareSwordBaseDamage(double v) { nightmareSwordBaseDamage = v; }

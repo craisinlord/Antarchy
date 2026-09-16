@@ -20,6 +20,7 @@ import com.craisinlord.antarchy.content.portal.PermanentPortalManager;
 import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.CaterpillarCommand;
 import com.craisinlord.antarchy.content.command.GravityCommand;
+import com.craisinlord.antarchy.content.command.QueenLocateCommand;
 import com.craisinlord.antarchy.content.time.TimeDilationCommand;
 import com.craisinlord.antarchy.content.time.TimeDilationManager;
 import com.craisinlord.antarchy.content.item.MinersDreamExcavationManager;
@@ -72,6 +73,7 @@ public final class AntarchyFabricEvents {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             CavarynCommand.register(dispatcher);
             GravityCommand.register(dispatcher);
+            QueenLocateCommand.register(dispatcher);
             CaterpillarCommand.register(dispatcher);
             TimeDilationCommand.register(dispatcher);
         });

@@ -25,6 +25,12 @@
       "tick_delay": 6000,
       "block_search_extent": 8,
       "offset": 2.0
+    },
+    "music": {
+      "sound": "antarchy:music.game.elythia",
+      "min_delay": 600,
+      "max_delay": 1800,
+      "replace_current_music": true
     }
   },
   "spawn_costs": {
@@ -59,6 +65,7 @@
       "minecraft:ore_redstone",
       "minecraft:ore_redstone_lower",
       "minecraft:ore_diamond",
+      "minecraft:ore_diamond_medium",
       "minecraft:ore_diamond_large",
       "minecraft:ore_diamond_buried",
       "minecraft:ore_lapis",
@@ -78,7 +85,7 @@
       "antarchy:elythia_rainbow_ant_nests"
     ],
     [
-      "antarchy:triffid_patch"
+      "antarchy:flytrap_patch"
     ]
   ],
   "creature_spawn_probability": 0.07,

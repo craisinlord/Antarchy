@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "active=false,ominous=false": {"model": "antarchy:block/undertrial_spawner_inactive", "x": 180},
+    "active=false,ominous=true": {"model": "antarchy:block/undertrial_spawner_inactive", "x": 180},
+    "active=true,ominous=false": {"model": "antarchy:block/undertrial_spawner_active", "x": 180},
+    "active=true,ominous=true": {"model": "antarchy:block/undertrial_spawner_active", "x": 180}
+  }
+}

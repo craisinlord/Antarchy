@@ -1,0 +1,9 @@
+{
+  "sender": "dicaprios@antmail.com",
+  "subject": "A TASTE OF ITALY AWAITS",
+  "body": "DiCaprio's is now serving handmade pasta, suspiciously expensive bread, and a tiramisu that may know your secrets. Reserve a table today. Formal armor encouraged.",
+  "trigger": {
+    "type": "random",
+    "value": 0.01
+  }
+}

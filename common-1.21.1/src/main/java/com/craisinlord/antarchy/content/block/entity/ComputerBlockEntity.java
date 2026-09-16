@@ -41,6 +41,12 @@ public final class ComputerBlockEntity extends BlockEntity implements GeoBlockEn
     private static final String AUTHENTICATED_TAG = "Authenticated";
     private static final String AUTHENTICATED_UNTIL_TAG = "AuthenticatedUntil";
     private static final String DESKTOP_TAG = "Desktop";
+    private static final String BASILISK_SCORE_TAG = "BasiliskScore";
+    private static final String BASILISK_HIGH_SCORE_TAG = "BasiliskHighScore";
+    private static final String ANTMAN_SCORE_TAG = "AntmanScore";
+    private static final String ANTMAN_HIGH_SCORE_TAG = "AntmanHighScore";
+    private static final String BLOCKLE_DAY_TAG = "BlockleDay";
+    private static final String BLOCKLE_GUESSES_TAG = "BlockleGuesses";
     private static final long AUTHENTICATION_TIMEOUT = 6000L;
     private final Set<ResourceLocation> physicalDiskIds = new LinkedHashSet<>();
     private final ComputerFileSystem fileSystem = new ComputerFileSystem();
@@ -56,6 +62,12 @@ public final class ComputerBlockEntity extends BlockEntity implements GeoBlockEn
     private long authenticatedUntil;
     private java.util.UUID activeUser;
     private boolean lastActive;
+    private int basiliskScore;
+    private int basiliskHighScore;
+    private int antmanScore;
+    private int antmanHighScore;
+    private long blockleDay = -1L;
+    private final List<String> blockleGuesses = new ArrayList<>();
 
     public ComputerBlockEntity(BlockPos pos, BlockState state, Supplier<? extends BlockEntityType<ComputerBlockEntity>> type) {
         super(type.get(), pos, state);
@@ -256,6 +268,50 @@ public final class ComputerBlockEntity extends BlockEntity implements GeoBlockEn
         return desktopState;
     }
 
+    public int basiliskScore() {
+        return basiliskScore;
+    }
+
+    public int basiliskHighScore() {
+        return basiliskHighScore;
+    }
+
+    public void setBasiliskScore(int score) {
+        basiliskScore = Math.max(0, score);
+        basiliskHighScore = Math.max(basiliskHighScore, basiliskScore);
+        setChanged();
+    }
+
+    public int antmanScore() { return antmanScore; }
+    public int antmanHighScore() { return antmanHighScore; }
+    public void setAntmanScore(int score) {
+        antmanScore = Math.max(0, score);
+        antmanHighScore = Math.max(antmanHighScore, antmanScore);
+        setChanged();
+    }
+
+    public long blockleDay() {
+        return blockleDay;
+    }
+
+    public List<String> blockleGuesses() {
+        return List.copyOf(blockleGuesses);
+    }
+
+    public void resetBlockle(long day) {
+        if (blockleDay == day) return;
+        blockleDay = day;
+        blockleGuesses.clear();
+        setChanged();
+    }
+
+    public boolean addBlockleGuess(String guess) {
+        if (blockleGuesses.size() >= 6) return false;
+        blockleGuesses.add(guess);
+        setChanged();
+        return true;
+    }
+
     public boolean unlockWallpaper(ResourceLocation id) {
         return serverDesktopMutation(() -> desktopState.unlockWallpaper(id));
     }
@@ -346,6 +402,17 @@ public final class ComputerBlockEntity extends BlockEntity implements GeoBlockEn
         password = tag.getString(PASSWORD_TAG);
         fileSystem.load(tag, registries);
         desktopState.load(tag.getCompound(DESKTOP_TAG));
+        basiliskScore = tag.getInt(BASILISK_SCORE_TAG);
+        basiliskHighScore = tag.getInt(BASILISK_HIGH_SCORE_TAG);
+        antmanScore = tag.getInt(ANTMAN_SCORE_TAG);
+        antmanHighScore = tag.getInt(ANTMAN_HIGH_SCORE_TAG);
+        blockleDay = tag.contains(BLOCKLE_DAY_TAG) ? tag.getLong(BLOCKLE_DAY_TAG) : -1L;
+        blockleGuesses.clear();
+        ListTag blockle = tag.getList(BLOCKLE_GUESSES_TAG, 8);
+        for (int index = 0; index < blockle.size(); index++) {
+            String guess = blockle.getString(index);
+            if (guess.length() == 5 && !blockleGuesses.contains(guess) && blockleGuesses.size() < 6) blockleGuesses.add(guess);
+        }
         authenticated = false;
         authenticatedUntil = 0L;
         activeUser = null;
@@ -363,6 +430,14 @@ public final class ComputerBlockEntity extends BlockEntity implements GeoBlockEn
         tag.putString(PASSWORD_TAG, password);
         fileSystem.save(tag, registries);
         tag.put(DESKTOP_TAG, desktopState.save());
+        tag.putInt(BASILISK_SCORE_TAG, basiliskScore);
+        tag.putInt(BASILISK_HIGH_SCORE_TAG, basiliskHighScore);
+        tag.putInt(ANTMAN_SCORE_TAG, antmanScore);
+        tag.putInt(ANTMAN_HIGH_SCORE_TAG, antmanHighScore);
+        tag.putLong(BLOCKLE_DAY_TAG, blockleDay);
+        ListTag blockle = new ListTag();
+        for (String guess : blockleGuesses) blockle.add(StringTag.valueOf(guess));
+        tag.put(BLOCKLE_GUESSES_TAG, blockle);
     }
 
     @Override
@@ -370,6 +445,9 @@ public final class ComputerBlockEntity extends BlockEntity implements GeoBlockEn
         CompoundTag tag = new CompoundTag();
         tag.putBoolean("HasPassword", hasPassword());
         tag.putBoolean(AUTHENTICATED_TAG, isAuthenticated());
+        ListTag disks = new ListTag();
+        for (ResourceLocation diskId : physicalDiskIds) disks.add(StringTag.valueOf(diskId.toString()));
+        tag.put(DISKS_TAG, disks);
         return tag;
     }
 

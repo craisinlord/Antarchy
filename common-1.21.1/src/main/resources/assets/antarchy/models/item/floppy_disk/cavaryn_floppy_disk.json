@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "antarchy:item/floppy_disk/cavaryn_floppy_disk"
+  }
+}

@@ -8,7 +8,7 @@ public final class JumpyBootsHelper {
     public static final float MAX_VERTICAL_BOOST = 2.0F;
     public static final float SPRINT_FORWARD_BOOST = 0.3F;
     public static final long FALL_PROTECTION_TICKS = 120L;
-    public static final String FALL_PROTECTION_NBT_KEY = "antarchy:jumpy_boots_protection_until";
+    public static final String FALL_PROTECTION_NBT_KEY = "antarchy:springy_boots_protection_until";
 
     private JumpyBootsHelper() {
     }

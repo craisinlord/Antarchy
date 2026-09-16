@@ -16,6 +16,7 @@ public final class AntmailMessage {
     private static final String CREATED_TAG = "Created";
     private static final String READ_TAG = "Read";
     private static final String ATTACHMENTS_TAG = "Attachments";
+    private static final String DELIVERY_STATUS_TAG = "DeliveryStatus";
 
     private final UUID id;
     private final AntmailAddress sender;
@@ -25,6 +26,7 @@ public final class AntmailMessage {
     private final long createdAt;
     private final List<AntmailAttachment> attachments;
     private boolean read;
+    private String deliveryStatus = "DELIVERED";
 
     public AntmailMessage(UUID id, AntmailAddress sender, AntmailAddress recipient, String subject, String body, long createdAt, List<AntmailAttachment> attachments, boolean read) {
         AntmailValidation.Result result = AntmailValidation.validateMessage(sender, recipient, subject, body, attachments);
@@ -53,10 +55,16 @@ public final class AntmailMessage {
     public long createdAt() { return createdAt; }
     public List<AntmailAttachment> attachments() { return attachments; }
     public boolean read() { return read; }
+    public String deliveryStatus() { return deliveryStatus; }
+    public void setDeliveryStatus(String status) { deliveryStatus = status == null || status.isBlank() ? "DELIVERED" : status; }
     public void markRead() { read = true; }
     public void markUnread() { read = false; }
 
     public CompoundTag toTag() {
+        return toTag(true);
+    }
+
+    public CompoundTag toTag(boolean includeAttachments) {
         CompoundTag tag = new CompoundTag();
         tag.putString(ID_TAG, id.toString());
         tag.putString(FROM_TAG, sender.fullAddress());
@@ -65,9 +73,12 @@ public final class AntmailMessage {
         tag.putString(BODY_TAG, body);
         tag.putLong(CREATED_TAG, createdAt);
         tag.putBoolean(READ_TAG, read);
-        ListTag attachmentTags = new ListTag();
-        for (AntmailAttachment attachment : attachments) attachmentTags.add(attachment.toTag());
-        tag.put(ATTACHMENTS_TAG, attachmentTags);
+        tag.putString(DELIVERY_STATUS_TAG, deliveryStatus);
+        if (includeAttachments) {
+            ListTag attachmentTags = new ListTag();
+            for (AntmailAttachment attachment : attachments) attachmentTags.add(attachment.toTag());
+            tag.put(ATTACHMENTS_TAG, attachmentTags);
+        }
         return tag;
     }
 
@@ -75,6 +86,8 @@ public final class AntmailMessage {
         List<AntmailAttachment> attachments = new ArrayList<>();
         ListTag attachmentTags = tag.getList(ATTACHMENTS_TAG, 10);
         for (int index = 0; index < attachmentTags.size(); index++) attachments.add(AntmailAttachment.fromTag(attachmentTags.getCompound(index)));
-        return new AntmailMessage(UUID.fromString(tag.getString(ID_TAG)), AntmailAddress.parse(tag.getString(FROM_TAG)), AntmailAddress.parse(tag.getString(TO_TAG)), tag.getString(SUBJECT_TAG), tag.getString(BODY_TAG), tag.getLong(CREATED_TAG), attachments, tag.getBoolean(READ_TAG));
+        AntmailMessage message = new AntmailMessage(UUID.fromString(tag.getString(ID_TAG)), AntmailAddress.parse(tag.getString(FROM_TAG)), AntmailAddress.parse(tag.getString(TO_TAG)), tag.getString(SUBJECT_TAG), tag.getString(BODY_TAG), tag.getLong(CREATED_TAG), attachments, tag.getBoolean(READ_TAG));
+        message.setDeliveryStatus(tag.getString(DELIVERY_STATUS_TAG));
+        return message;
     }
 }

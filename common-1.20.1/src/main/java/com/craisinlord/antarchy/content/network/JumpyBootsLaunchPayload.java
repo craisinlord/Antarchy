@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public record JumpyBootsLaunchPayload(int chargeTicks, boolean sprinting) implements CustomPacketPayload {
     public static final Type<JumpyBootsLaunchPayload> TYPE =
-            new Type<>(new ResourceLocation(Antarchy.MODID, "jumpy_boots_launch"));
+            new Type<>(new ResourceLocation(Antarchy.MODID, "springy_boots_launch"));
     public static final StreamCodec<ByteBuf, JumpyBootsLaunchPayload> STREAM_CODEC =
             StreamCodec.composite(
                     ByteBufCodecs.VAR_INT, JumpyBootsLaunchPayload::chargeTicks,

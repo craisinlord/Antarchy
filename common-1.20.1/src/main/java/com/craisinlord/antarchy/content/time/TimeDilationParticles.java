@@ -18,7 +18,7 @@ public final class TimeDilationParticles {
             return;
         }
         for (TimeDilationFieldEntity field : fields) {
-            spawnBorder(level, field.position(), field.fieldRadius());
+            if (field.isVisual()) spawnBorder(level, field.position(), field.fieldRadius());
         }
     }
 

@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntities;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
+import com.craisinlord.antarchy.content.entity.trades.ComputerScientistTradeManager;
 import com.craisinlord.antarchy.content.item.BloodCrystalShardItem;
 import com.craisinlord.antarchy.fabric.network.AntarchyFabricNetworking;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
@@ -154,7 +155,6 @@ public final class AntarchyFabric implements ModInitializer {
         AntarchyConfigModuleFabric.init();
         AntarchyFabricContent.register();
         registerWorldgenFeatures();
-        AntarchyFabricEvents.register();
         BloodglassManager.register();
         TigerEyeFabricManager.register();
         Antarchy.init();
@@ -174,6 +174,20 @@ public final class AntarchyFabric implements ModInitializer {
                         barrier, manager, prepareProfiler, applyProfiler, prepareExecutor, applyExecutor);
             }
         });
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new IdentifiableResourceReloadListener() {
+            @Override
+            public ResourceLocation getFabricId() {
+                return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "antmail_events");
+            }
+
+            @Override
+            public CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier barrier, ResourceManager manager,
+                                                   ProfilerFiller prepareProfiler, ProfilerFiller applyProfiler,
+                                                   Executor prepareExecutor, Executor applyExecutor) {
+                return com.craisinlord.antarchy.content.antmail.AntmailEventData.instance().reload(
+                        barrier, manager, prepareProfiler, applyProfiler, prepareExecutor, applyExecutor);
+            }
+        });
     }
 
     private static void registerTradeReloadListener() {
@@ -189,6 +203,20 @@ public final class AntarchyFabric implements ModInitializer {
                                                     ProfilerFiller prepareProfiler, ProfilerFiller applyProfiler,
                                                     Executor prepareExecutor, Executor applyExecutor) {
                 return delegate.reload(barrier, manager, prepareProfiler, applyProfiler, prepareExecutor, applyExecutor);
+            }
+        });
+        ComputerScientistTradeManager computerScientistDelegate = new ComputerScientistTradeManager();
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new IdentifiableResourceReloadListener() {
+            @Override
+            public ResourceLocation getFabricId() {
+                return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "computer_scientist_trades");
+            }
+
+            @Override
+            public CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier barrier, ResourceManager manager,
+                                                    ProfilerFiller prepareProfiler, ProfilerFiller applyProfiler,
+                                                    Executor prepareExecutor, Executor applyExecutor) {
+                return computerScientistDelegate.reload(barrier, manager, prepareProfiler, applyProfiler, prepareExecutor, applyExecutor);
             }
         });
     }

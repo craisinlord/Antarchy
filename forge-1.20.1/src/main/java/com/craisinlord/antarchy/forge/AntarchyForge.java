@@ -6,6 +6,7 @@ import com.craisinlord.antarchy.compat.infinity.InfinityCompatVersion;
 import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.enchantment.AntarchyEnchantments;
 import com.craisinlord.antarchy.content.item.BloodCrystalKatanaItem;
 import com.craisinlord.antarchy.content.item.ScorpionWhipTetherSync;
 import com.craisinlord.antarchy.content.network.BloodCrystalKatanaTrailPayload;
@@ -367,6 +368,7 @@ public class AntarchyForge {
         AntarchyObjects.setSpiritApple(() -> AntarchyForgeItems.SPIRIT_APPLE.get());
         AntarchyObjects.setGlimmeringEffect(() -> AntarchyForgeMisc.mobEffectHolder(AntarchyForgeMisc.GLIMMERING));
         AntarchyObjects.setTimeDilationField(() -> AntarchyForgeEntites.TIME_DILATION_FIELD.get());
+        AntarchyEnchantments.bind(() -> AntarchyForgeMisc.FEATHER_RISING.get(), () -> AntarchyForgeMisc.CHRONOSPHERE.get());
         AntarchyObjects.setRoyalAssailantBlackHole(() -> AntarchyForgeEntites.ROYAL_ASSAILANT_BLACK_HOLE.get());
         AntarchyObjects.setDilatedEffect(() -> AntarchyForgeMisc.mobEffectHolder(AntarchyForgeMisc.DILATED));
         AntarchyObjects.setContractedEffect(() -> AntarchyForgeMisc.mobEffectHolder(AntarchyForgeMisc.CONTRACTED));

@@ -91,6 +91,8 @@ public final class AntarchyForgeClient {
         event.registerBlockEntityRenderer(AntarchyForgeBlocks.SEASHELL_BLOCK_ENTITY.get(), SeashellRenderer::new);
         event.registerBlockEntityRenderer(AntarchyForgeBlocks.LUCID_ANCHOR_BLOCK_ENTITY.get(), LucidAnchorBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(AntarchyForgeBlocks.CRITTER_CAGE_BLOCK_ENTITY.get(), CritterCageRenderer::new);
+        event.registerBlockEntityRenderer(AntarchyForgeBlocks.UNDERTRIAL_SPAWNER_BLOCK_ENTITY.get(), UndertrialSpawnerRenderer::new);
+        event.registerBlockEntityRenderer(AntarchyForgeBlocks.UNDERVAULT_BLOCK_ENTITY.get(), UnderVaultRenderer::new);
         event.registerEntityRenderer(AntarchyForgeEntites.EASTER_BUNNY.get(), context -> withParalyzedGeoLayer(new EasterBunnyRenderer(context)));
         event.registerEntityRenderer(AntarchyForgeEntites.FLYING_SQUIRREL.get(), context -> withParalyzedGeoLayer(new FlyingSquirrelRenderer(context)));
         event.registerEntityRenderer(AntarchyForgeEntites.CATERPILLAR.get(), context -> withParalyzedGeoLayer(new CaterpillarRenderer(context)));
@@ -307,6 +309,9 @@ public final class AntarchyForgeClient {
         event.registerSpriteSet(AntarchyForgeMisc.ORANGE_ASH.get(), OrangeAshParticle.Provider::new);
         event.registerSpriteSet(AntarchyForgeMisc.LUCID_BOLT_IMPACT_SMALL.get(), LucidBoltImpactParticle.SmallProvider::new);
         event.registerSpriteSet(AntarchyForgeMisc.LUCID_BOLT_IMPACT_LARGE.get(), LucidBoltImpactParticle.LargeProvider::new);
+        event.registerSpriteSet(AntarchyForgeMisc.UNDERTRIAL_SPAWNER_DETECTION.get(), UndertrialParticle.DetectionProvider::new);
+        event.registerSpriteSet(AntarchyForgeMisc.UNDERTRIAL_OMEN.get(), UndertrialParticle.OmenProvider::new);
+        event.registerSpriteSet(AntarchyForgeMisc.UNDERVAULT_CONNECTION.get(), UndertrialParticle.OmenProvider::new);
     }
 
     @SubscribeEvent
@@ -337,7 +342,7 @@ public final class AntarchyForgeClient {
         event.registerAboveAll("triffid_goo",
                 (gui, guiGraphics, partialTick, width, height) -> TriffidGooHudRenderer.render(guiGraphics)
         );
-        event.registerAboveAll("jumpy_boots",
+        event.registerAboveAll("springy_boots",
                 (gui, guiGraphics, partialTick, width, height) -> JumpyBootsHudRenderer.render(guiGraphics)
         );
         event.registerAboveAll("dorrie_jump",

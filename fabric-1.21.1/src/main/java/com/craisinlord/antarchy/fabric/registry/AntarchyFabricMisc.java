@@ -110,6 +110,8 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Items;
@@ -126,6 +128,25 @@ import net.minecraft.world.level.material.Fluid;
 import com.craisinlord.antarchy.fabric.AntarchyFabricContent;
 
 public final class AntarchyFabricMisc {
+
+    public static final DeferredRegister<PoiType> POI_TYPES = DeferredRegister.create(Registries.POINT_OF_INTEREST_TYPE, Antarchy.MODID);
+
+    public static final DeferredRegister<VillagerProfession> VILLAGER_PROFESSIONS = DeferredRegister.create(Registries.VILLAGER_PROFESSION, Antarchy.MODID);
+
+    public static final DeferredHolder<PoiType, PoiType> COMPUTER_POI = POI_TYPES.register("computer",
+            () -> new PoiType(
+                    java.util.Set.copyOf(AntarchyFabricBlocks.COMPUTER.get().getStateDefinition().getPossibleStates()),
+                    1,
+                    1));
+
+    public static final DeferredHolder<VillagerProfession, VillagerProfession> COMPUTER_SCIENTIST = VILLAGER_PROFESSIONS.register("computer_scientist",
+            () -> new VillagerProfession(
+                    "computer_scientist",
+                    holder -> holder.value() == COMPUTER_POI.get(),
+                    holder -> holder.value() == COMPUTER_POI.get(),
+                    com.google.common.collect.ImmutableSet.of(),
+                    com.google.common.collect.ImmutableSet.of(),
+                    SoundEvents.VILLAGER_WORK_LIBRARIAN));
 
     public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS = DeferredRegister.create(Registries.ARMOR_MATERIAL, Antarchy.MODID);
 
@@ -1049,6 +1070,8 @@ public final class AntarchyFabricMisc {
 
 
     public static void register() {
+        POI_TYPES.register();
+        VILLAGER_PROFESSIONS.register();
         ARMOR_MATERIALS.register();
         FLUIDS.register();
         ATTRIBUTES.register();

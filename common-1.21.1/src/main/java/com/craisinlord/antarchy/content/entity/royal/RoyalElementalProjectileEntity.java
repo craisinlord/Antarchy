@@ -136,7 +136,9 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
                 this::canDamageWithImpact)) {
             double distance = Math.max(0.5D, living.position().distanceTo(center));
             float falloff = (float) Math.max(0.25D, 1.0D - distance / 5.0D);
-            living.hurt(source, (float) (AntarchySettings.kingFireballDamage() * falloff));
+            double damage = AntarchySettings.kingFireballDamage() * falloff;
+            living.hurt(source, this.getOwner() instanceof RoyalBossEntity royalBoss
+                    ? royalBoss.scaleRoyalDamage(damage) : (float) damage);
             living.setRemainingFireTicks(Math.max(living.getRemainingFireTicks(), 120));
         }
         igniteImpact(level, center, this.isDreamFireball());
@@ -170,7 +172,9 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
         DamageSource source = this.damageSources().mobProjectile(this, this.getOwner() instanceof LivingEntity living ? living : null);
         for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, new AABB(center, center).inflate(5.0D),
                 this::canDamageWithImpact)) {
-            living.hurt(source, (float) AntarchySettings.kingIceballDamage());
+            double damage = AntarchySettings.kingIceballDamage();
+            living.hurt(source, this.getOwner() instanceof RoyalBossEntity royalBoss
+                    ? royalBoss.scaleRoyalDamage(damage) : (float) damage);
             living.setTicksFrozen(Math.min(living.getTicksRequiredToFreeze() + 80, living.getTicksFrozen() + 180));
             living.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 120, 3));
         }

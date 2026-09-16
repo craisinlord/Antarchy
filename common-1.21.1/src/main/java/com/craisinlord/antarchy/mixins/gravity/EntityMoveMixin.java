@@ -4,7 +4,7 @@ import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
-import com.craisinlord.antarchy.content.portalgun.PortalGunCollisionHelper;
+// import com.craisinlord.antarchy.content.portalgun.PortalGunCollisionHelper;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import java.util.List;
@@ -349,12 +349,9 @@ public abstract class EntityMoveMixin {
                     localMovement, cir.getReturnValue(), this.antarchy$collideWorldMovement, worldResult,
                     entity.onGround(), entity.maxUpStep(), entity.getBoundingBox());
         }
-        cir.setReturnValue(PortalGunCollisionHelper.resolveCollision(
-                entity,
-                entity.getBoundingBox(),
-                this.antarchy$collideWorldMovement,
-                worldResult
-        ));
+        // Portal-gun collision restoration is temporarily disabled. It can
+        // recurse through Sable's collision redirect and hang the server.
+        cir.setReturnValue(worldResult);
     }
 
     @Unique

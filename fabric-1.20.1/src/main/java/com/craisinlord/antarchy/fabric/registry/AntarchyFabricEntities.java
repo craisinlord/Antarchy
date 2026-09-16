@@ -163,11 +163,11 @@ public final class AntarchyFabricEntities {
                     .build("molevore"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<TriffidEntity>> TRIFFID = ENTITY_TYPES.register("triffid",
+    public static final DeferredHolder<EntityType<?>, EntityType<TriffidEntity>> TRIFFID = ENTITY_TYPES.register("flytrap",
             () -> EntityType.Builder.of(TriffidEntity::new, MobCategory.MONSTER)
                     .sized(2.0F, 5.0F)
                     .clientTrackingRange(10)
-                    .build("triffid"));
+                    .build("flytrap"));
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<BedBugEntity>> BED_BUG = ENTITY_TYPES.register("bed_bug",
@@ -198,11 +198,11 @@ public final class AntarchyFabricEntities {
                     .build("bomber"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<JumpyBugEntity>> JUMPY_BUG = ENTITY_TYPES.register("jumpy_bug",
+    public static final DeferredHolder<EntityType<?>, EntityType<JumpyBugEntity>> JUMPY_BUG = ENTITY_TYPES.register("springbug",
             () -> EntityType.Builder.of(JumpyBugEntity::new, MobCategory.MONSTER)
                     .sized(3.0F, 6.0F)
                     .clientTrackingRange(8)
-                    .build("jumpy_bug"));
+                    .build("springbug"));
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.SpitBugEntity>> SPIT_BUG = ENTITY_TYPES.register("spit_bug",
@@ -305,11 +305,11 @@ public final class AntarchyFabricEntities {
                     .build("dr_trayaurus"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<CloudSharkEntity>> CLOUD_SHARK = ENTITY_TYPES.register("cloud_shark",
+    public static final DeferredHolder<EntityType<?>, EntityType<CloudSharkEntity>> CLOUD_SHARK = ENTITY_TYPES.register("stratoshark",
             () -> EntityType.Builder.of(CloudSharkEntity::new, MobCategory.MONSTER)
                     .sized(2.4F, 0.9F)
                     .clientTrackingRange(10)
-                    .build("cloud_shark"));
+                    .build("stratoshark"));
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<KrakenEntity>> KRAKEN = ENTITY_TYPES.register("kraken",
@@ -493,18 +493,18 @@ public final class AntarchyFabricEntities {
 
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.CreepingHorrorEntity>> CREEPING_HORROR = ENTITY_TYPES.register("creeping_horror",
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.CreepingHorrorEntity>> CREEPING_HORROR = ENTITY_TYPES.register("crawling_blight",
             () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.CreepingHorrorEntity::new, MobCategory.MONSTER)
                     .sized(1.3F, 1.5F)
                     .clientTrackingRange(10)
-                    .build("creeping_horror"));
+                    .build("crawling_blight"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.LurkingTerrorEntity>> LURKING_TERROR = ENTITY_TYPES.register("lurking_terror",
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.LurkingTerrorEntity>> LURKING_TERROR = ENTITY_TYPES.register("skulking_fright",
             () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.LurkingTerrorEntity::new, MobCategory.MONSTER)
                     .sized(1.3F, 1.5F)
                     .clientTrackingRange(10)
-                    .build("lurking_terror"));
+                    .build("skulking_fright"));
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.JerryEntity>> JERRY = ENTITY_TYPES.register("jerry",

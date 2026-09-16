@@ -29,6 +29,13 @@ public final class ComputerFileSystemClientState {
         state.success = payload.result() == ComputerAccessResultPayload.SUCCESS;
         state.error = envelope[1];
         if (state.success) state.error = "";
+        if (action == ComputerAccessPayload.FILE_CREATE || action == ComputerAccessPayload.FILE_SAVE
+                || action == ComputerAccessPayload.FILE_DELETE || action == ComputerAccessPayload.FILE_MOVE) {
+            state.lastMutationAction = action;
+            state.lastMutationPath = envelope[2];
+            state.lastMutationSuccess = state.success;
+            state.lastMutationError = envelope[1];
+        }
         if (action == ComputerAccessPayload.FILE_LIST) {
             state.files = new ArrayList<>();
             if (state.success && !envelope[2].isEmpty()) state.files.addAll(List.of(envelope[2].split("\\n")));
@@ -59,11 +66,19 @@ public final class ComputerFileSystemClientState {
         private String openedContents = "";
         private String error = "";
         private boolean success;
+        private int lastMutationAction = -1;
+        private String lastMutationPath = "";
+        private boolean lastMutationSuccess;
+        private String lastMutationError = "";
 
         public List<String> files() { return List.copyOf(files); }
         public String openedPath() { return openedPath; }
         public String openedContents() { return openedContents; }
         public String error() { return error; }
         public boolean success() { return success; }
+        public int lastMutationAction() { return lastMutationAction; }
+        public String lastMutationPath() { return lastMutationPath; }
+        public boolean lastMutationSuccess() { return lastMutationSuccess; }
+        public String lastMutationError() { return lastMutationError; }
     }
 }

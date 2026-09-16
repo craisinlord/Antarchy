@@ -252,6 +252,7 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private void tickDreamFireballs() {
+        if (this.isRoyalRecoveryActive()) return;
         if (!(this.level() instanceof ServerLevel level)) return;
         LivingEntity target = this.getTarget();
         if (target == null || !target.isAlive() || !this.canAttack(target)) return;
@@ -360,6 +361,7 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private void tickManticoreSummon() {
+        if (this.isRoyalRecoveryActive()) return;
         if (this.manticoreSummonCooldownTicks > 0) {
             this.manticoreSummonCooldownTicks--;
             return;
@@ -386,6 +388,7 @@ public class QueenEntity extends RoyalBossEntity {
                 ? this.cooldown(Math.max(20, AntarchySettings.queenManticoreSummonCooldownTicks()))
                 : FAILED_SUMMON_RETRY_TICKS;
         if (spawned > 0) {
+            this.startRoyalRecovery(45);
             this.manticoreAnimationPending = true;
             this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.8F + this.random.nextFloat() * 0.12F);
             serverLevel.sendParticles(ParticleTypes.PORTAL, this.getX(), this.getY() + 2.0D, this.getZ(),
@@ -413,6 +416,7 @@ public class QueenEntity extends RoyalBossEntity {
     private int spawnManticoreTears(ServerLevel level, LivingEntity target, int count) {
         int pairs = Math.max(1, Math.min(3, (count + 1) / 2));
         int created = 0;
+        int remaining = count;
         Vec3 towardTarget = target.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
         if (towardTarget.lengthSqr() < 1.0E-4D) {
             towardTarget = this.getViewVector(1.0F).multiply(1.0D, 0.0D, 1.0D);
@@ -436,20 +440,24 @@ public class QueenEntity extends RoyalBossEntity {
             double pairSeparation = 3.5D + this.random.nextDouble() * 3.0D;
             Vec3 firstPos = pairCenter.add(pairDirection.scale(pairSeparation));
             Vec3 secondPos = pairCenter.add(pairDirection.scale(-pairSeparation));
+            int firstCount = Math.min(3, (remaining + 1) / 2);
+            int secondCount = Math.min(3, remaining / 2);
             DimensionalTearEntity first = DimensionalTearEntity.createQueenManticoreTear(level, firstPos,
-                    tearYaw, 240, this.getUUID(), Math.min(3, count));
+                    tearYaw, 240, this.getUUID(), firstCount);
             DimensionalTearEntity second = DimensionalTearEntity.createQueenManticoreTear(level, secondPos,
-                    tearYaw, 240, this.getUUID(), Math.min(3, count));
+                    tearYaw, 240, this.getUUID(), secondCount);
             first.linkTo(second);
             second.linkTo(first);
             level.addFreshEntity(first);
             level.addFreshEntity(second);
             created++;
+            remaining -= firstCount + secondCount;
         }
         return created;
     }
 
     private void tickQueenAbilities() {
+        if (this.isRoyalRecoveryActive()) return;
         if (this.gravityStompCooldownTicks > 0) this.gravityStompCooldownTicks--;
         if (this.momentumLockCooldownTicks > 0) this.momentumLockCooldownTicks--;
         if (this.crushingGravityCooldownTicks > 0) this.crushingGravityCooldownTicks--;
@@ -523,7 +531,7 @@ public class QueenEntity extends RoyalBossEntity {
             case "crushing_gravity" -> {
                 this.crushingGravityCooldownTicks = cooldown;
                 this.royalEffects.start("crushing_gravity", CRUSHING_GRAVITY_DURATION,
-                        () -> {}, this::tickCrushingGravity, () -> {});
+                        () -> {}, this::tickCrushingGravity, () -> this.startRoyalRecovery(35));
                 this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.6F);
             }
             case "acceleration" -> { this.accelerationCooldownTicks = cooldown; this.startRoyalAcceleration(); }
@@ -565,7 +573,7 @@ public class QueenEntity extends RoyalBossEntity {
         for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(18.0D), this::canDamageWithRoyalAttack)) {
             double distance = Math.max(1.0D, living.distanceTo(this));
-            living.hurt(source, (float) (12.0D * Math.max(0.25D, 1.0D - distance / 24.0D)));
+            living.hurt(source, this.scaleRoyalDamage(12.0D * Math.max(0.25D, 1.0D - distance / 24.0D)));
             Vec3 push = living.position().subtract(this.position()).normalize().scale(1.3D);
             living.setDeltaMovement(living.getDeltaMovement().add(push.x, 0.65D, push.z));
             living.hasImpulse = true;
@@ -611,6 +619,7 @@ public class QueenEntity extends RoyalBossEntity {
                 }
             }
             this.frozenVelocities.clear();
+            this.startRoyalRecovery(35);
         });
         this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.5F);
     }
@@ -669,6 +678,7 @@ public class QueenEntity extends RoyalBossEntity {
             this.setRoyalAccelerated(false);
             removeAccelModifier(this.getAttribute(Attributes.MOVEMENT_SPEED), ACCEL_SPEED_ID);
             removeAccelModifier(this.getAttribute(Attributes.FLYING_SPEED), ACCEL_FLY_ID);
+            this.startRoyalRecovery(30);
         });
     }
 

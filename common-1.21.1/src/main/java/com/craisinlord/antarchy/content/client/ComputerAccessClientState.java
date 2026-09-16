@@ -13,8 +13,17 @@ public final class ComputerAccessClientState {
     }
 
     public static void update(ComputerAccessResultPayload result) {
-        RESULTS.put(result.pos(), result);
+        if (result.data().startsWith("18\u0000") || result.data().startsWith("19\u0000")) {
+            BlockleClientState.update(result);
+        }
+        // File, terminal, desktop, and wallpaper responses carry their own operation
+        // status. They must not replace the last authoritative login state.
+        if (result.data().isBlank()) RESULTS.put(result.pos(), result);
         ComputerFileSystemClientState.update(result);
+    }
+
+    public static void clear(BlockPos pos) {
+        RESULTS.remove(pos);
     }
 
     public static ComputerAccessResultPayload get(BlockPos pos) {

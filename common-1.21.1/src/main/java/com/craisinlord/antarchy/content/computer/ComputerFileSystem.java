@@ -80,7 +80,7 @@ public final class ComputerFileSystem {
         if (!validation.successful()) return validation;
         ComputerFile current = nodes.get(normalized);
         if (current == null) return Result.failure("not_found");
-        if (current.type() != ComputerFile.Type.TEXT) return Result.failure("not_text");
+        if (current.type() != ComputerFile.Type.TEXT && current.type() != ComputerFile.Type.IMAGE) return Result.failure("not_file");
         int replacement = totalBytes - current.contents().length() + contents.length();
         if (replacement > MAX_TOTAL_SIZE) return Result.failure("storage_limit");
         nodes.put(normalized, ComputerFile.text(normalized, contents));
@@ -102,8 +102,29 @@ public final class ComputerFileSystem {
         int slash = to.lastIndexOf('/');
         if (slash > 0 && !nodesDirectory(to.substring(0, slash))) return Result.failure("missing_directory");
         if (file.type() == ComputerFile.Type.DIRECTORY && to.startsWith(from + "/")) return Result.failure("invalid_path");
-        nodes.remove(from);
-        nodes.put(to, file.type() == ComputerFile.Type.DIRECTORY ? ComputerFile.directory(to) : ComputerFile.text(to, file.contents()));
+        if (file.type() == ComputerFile.Type.DIRECTORY) {
+            List<String> descendants = nodes.keySet().stream()
+                    .filter(path -> path.startsWith(from + "/"))
+                    .toList();
+            for (String descendant : descendants) {
+                String movedPath = to + descendant.substring(from.length());
+                if (nodes.containsKey(movedPath)) return Result.failure("already_exists");
+            }
+            Map<String, ComputerFile> moved = new LinkedHashMap<>();
+            moved.put(to, ComputerFile.directory(to));
+            for (String descendant : descendants) {
+                ComputerFile child = nodes.get(descendant);
+                String movedPath = to + descendant.substring(from.length());
+                moved.put(movedPath, child.type() == ComputerFile.Type.DIRECTORY
+                        ? ComputerFile.directory(movedPath)
+                        : ComputerFile.text(movedPath, child.contents()));
+            }
+            nodes.keySet().removeIf(path -> path.equals(from) || path.startsWith(from + "/"));
+            nodes.putAll(moved);
+        } else {
+            nodes.remove(from);
+            nodes.put(to, ComputerFile.text(to, file.contents()));
+        }
         return Result.ok();
     }
 
@@ -141,7 +162,7 @@ public final class ComputerFileSystem {
             CompoundTag stored = new CompoundTag();
             stored.putString(PATH_TAG, file.path());
             stored.putString(TYPE_TAG, file.type().name());
-            if (file.type() == ComputerFile.Type.TEXT) stored.putString(CONTENTS_TAG, file.contents());
+            if (file.type() == ComputerFile.Type.TEXT || file.type() == ComputerFile.Type.IMAGE) stored.putString(CONTENTS_TAG, file.contents());
             files.add(stored);
         }
         tag.put(FILES_TAG, files);
@@ -157,10 +178,10 @@ public final class ComputerFileSystem {
             String type = stored.getString(TYPE_TAG);
             if ("DIRECTORY".equals(type)) {
                 if (nodes.size() < MAX_NODES) nodes.put(path, ComputerFile.directory(path));
-            } else if ("TEXT".equals(type)) {
+            } else if ("TEXT".equals(type) || "IMAGE".equals(type)) {
                 String contents = stored.getString(CONTENTS_TAG);
                 if (contents.length() <= MAX_FILE_SIZE && nodes.size() < MAX_NODES && totalBytes + contents.length() <= MAX_TOTAL_SIZE) {
-                    nodes.put(path, ComputerFile.text(path, contents));
+                    nodes.put(path, "IMAGE".equals(type) ? ComputerFile.image(path, contents) : ComputerFile.text(path, contents));
                     totalBytes += contents.length();
                 }
             }
@@ -192,7 +213,8 @@ public final class ComputerFileSystem {
 
     public record ComputerFile(String path, Type type, String contents) {
         public static ComputerFile directory(String path) { return new ComputerFile(path, Type.DIRECTORY, ""); }
-        public static ComputerFile text(String path, String contents) { return new ComputerFile(path, Type.TEXT, contents); }
+        public static ComputerFile text(String path, String contents) { return path.endsWith(".antpaint") ? image(path, contents) : new ComputerFile(path, Type.TEXT, contents); }
+        public static ComputerFile image(String path, String contents) { return new ComputerFile(path, Type.IMAGE, contents); }
         public enum Type { DIRECTORY, TEXT, IMAGE }
     }
 }

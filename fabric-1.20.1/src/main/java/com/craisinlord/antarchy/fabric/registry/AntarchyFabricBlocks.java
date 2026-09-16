@@ -12,6 +12,9 @@ import com.craisinlord.antarchy.content.block.entity.PotentNyxiteBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.SeashellBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.UpperBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.WaspNestBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.UndertrialSpawnerBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.UnderVaultBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.QueenTrailSpawnMarkerBlockEntity;
 import com.craisinlord.antarchy.content.fluid.BileLiquidBlock;
 import com.craisinlord.antarchy.content.fluid.LumenLiquidBlock;
 import com.craisinlord.antarchy.fabric.content.fluid.AntiwaterLiquidBlock;
@@ -488,7 +491,7 @@ public final class AntarchyFabricBlocks {
             () -> new RotatedPillarBlock(AntarchyObjects.shellstoneProperties()));
 
 
-    public static final DeferredBlock<com.craisinlord.antarchy.content.block.TriffidGooBlock> TRIFFID_GOO_BLOCK = BLOCKS.register("triffid_goo_block",
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.TriffidGooBlock> TRIFFID_GOO_BLOCK = BLOCKS.register("flytrap_goo_block",
             () -> new com.craisinlord.antarchy.content.block.TriffidGooBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK).noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
 
 
@@ -694,11 +697,11 @@ public final class AntarchyFabricBlocks {
                     .replaceable()));
 
 
-    public static final DeferredBlock<CreepingHorrorEggBlock> CREEPING_HORROR_EGG = BLOCKS.register("creeping_horror_egg",
+    public static final DeferredBlock<CreepingHorrorEggBlock> CREEPING_HORROR_EGG = BLOCKS.register("crawling_blight_egg",
             () -> new CreepingHorrorEggBlock(BlockBehaviour.Properties.copy(Blocks.TURTLE_EGG)));
 
 
-    public static final DeferredBlock<JumpyBugEggBlock> JUMPY_BUG_EGG = BLOCKS.register("jumpy_bug_egg",
+    public static final DeferredBlock<JumpyBugEggBlock> JUMPY_BUG_EGG = BLOCKS.register("springbug_egg",
             () -> new JumpyBugEggBlock(BlockBehaviour.Properties.copy(Blocks.TURTLE_EGG)));
 
 
@@ -710,7 +713,7 @@ public final class AntarchyFabricBlocks {
             () -> new JerryEggBlock(BlockBehaviour.Properties.copy(Blocks.TURTLE_EGG).randomTicks()));
 
 
-    public static final DeferredBlock<LurkingTerrorEggBlock> LURKING_TERROR_EGG = BLOCKS.register("lurking_terror_egg",
+    public static final DeferredBlock<LurkingTerrorEggBlock> LURKING_TERROR_EGG = BLOCKS.register("skulking_fright_egg",
             () -> new LurkingTerrorEggBlock(BlockBehaviour.Properties.copy(Blocks.TURTLE_EGG)));
 
 
@@ -1086,6 +1089,16 @@ public final class AntarchyFabricBlocks {
     public static final DeferredBlock<StarCoralWallFanBlock> STAR_CORAL_WALL_FAN = BLOCKS.register("star_coral_wall_fan",
             () -> new StarCoralWallFanBlock(DEAD_STAR_CORAL_WALL_FAN.get(), BlockBehaviour.Properties.copy(Blocks.TUBE_CORAL_WALL_FAN).lightLevel(state -> 8)));
 
+    public static final DeferredBlock<UndertrialSpawnerBlock> UNDERTRIAL_SPAWNER = BLOCKS.register("undertrial_spawner",
+            () -> new UndertrialSpawnerBlock(AntarchyFabricBlocks::undertrialSpawnerBlockEntityType,
+                    BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()));
+    public static final DeferredBlock<UnderVaultBlock> UNDERVAULT = BLOCKS.register("undervault",
+            () -> new UnderVaultBlock(AntarchyFabricBlocks::underVaultBlockEntityType,
+                    BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()));
+    public static final DeferredBlock<QueenTrailSpawnMarkerBlock> QUEEN_TRAIL_SPAWN_MARKER = BLOCKS.register("queen_trail_spawn_marker",
+            () -> new QueenTrailSpawnMarkerBlock(AntarchyFabricBlocks::queenTrailSpawnMarkerBlockEntityType,
+                    BlockBehaviour.Properties.of().noCollission().noOcclusion().noLootTable().strength(-1.0F)));
+
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AntNestBlockEntity>> ANT_NEST_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("ant_nest",
             () -> BlockEntityType.Builder.of(
@@ -1148,6 +1161,27 @@ public final class AntarchyFabricBlocks {
                     (pos, state) -> new UpperBlockEntity(pos, state, AntarchyFabricBlocks::upperBlockEntityType),
                     UPPER.get()
             ).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<UndertrialSpawnerBlockEntity>> UNDERTRIAL_SPAWNER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("undertrial_spawner",
+            () -> BlockEntityType.Builder.of((pos, state) -> new UndertrialSpawnerBlockEntity(pos, state, AntarchyFabricBlocks::undertrialSpawnerBlockEntityType),
+                    UNDERTRIAL_SPAWNER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<UnderVaultBlockEntity>> UNDERVAULT_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("undervault",
+            () -> BlockEntityType.Builder.of((pos, state) -> new UnderVaultBlockEntity(pos, state, AntarchyFabricBlocks::underVaultBlockEntityType),
+                    UNDERVAULT.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<QueenTrailSpawnMarkerBlockEntity>> QUEEN_TRAIL_SPAWN_MARKER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("queen_trail_spawn_marker",
+            () -> BlockEntityType.Builder.of((pos, state) -> new QueenTrailSpawnMarkerBlockEntity(pos, state, AntarchyFabricBlocks::queenTrailSpawnMarkerBlockEntityType),
+                    QUEEN_TRAIL_SPAWN_MARKER.get()).build(null));
+
+    private static BlockEntityType<UndertrialSpawnerBlockEntity> undertrialSpawnerBlockEntityType() {
+        return UNDERTRIAL_SPAWNER_BLOCK_ENTITY.get();
+    }
+
+    private static BlockEntityType<UnderVaultBlockEntity> underVaultBlockEntityType() {
+        return UNDERVAULT_BLOCK_ENTITY.get();
+    }
+
+    private static BlockEntityType<QueenTrailSpawnMarkerBlockEntity> queenTrailSpawnMarkerBlockEntityType() {
+        return QUEEN_TRAIL_SPAWN_MARKER_BLOCK_ENTITY.get();
+    }
 
 
 

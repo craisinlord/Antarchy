@@ -157,7 +157,7 @@ public final class AntarchyForgeItems {
             () -> Ingredient.of(PRIMORDIAL_SCUTE.get()), 3.0F, 0.1F, "primordial");
     private static final ArmorMaterial JUMPY_BOOTS_ARMOR_MATERIAL = armorMaterial(
             37, createJumpyBootsDefense(), 15, SoundEvents.ARMOR_EQUIP_NETHERITE,
-            () -> Ingredient.of(Items.NETHERITE_BOOTS), 3.0F, 0.1F, "jumpy_boots");
+            () -> Ingredient.of(Items.NETHERITE_BOOTS), 3.0F, 0.1F, "springy_boots");
     private static final ArmorMaterial FALLEN_KING_CROWN_ARMOR_MATERIAL = armorMaterial(
             25, createFallenKingCrownDefense(), 25, SoundEvents.ARMOR_EQUIP_GOLD,
             () -> Ingredient.of(Items.GOLD_INGOT), 0.0F, 0.0F, "fallen_king_crown");
@@ -431,7 +431,7 @@ public final class AntarchyForgeItems {
     public static final RegistryObject<net.minecraft.world.item.BlockItem> SHELLSTONE_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.SHELLSTONE_BRICK_STAIRS);
     public static final RegistryObject<net.minecraft.world.item.BlockItem> SHELLSTONE_BRICK_SLAB_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.SHELLSTONE_BRICK_SLAB);
     public static final RegistryObject<net.minecraft.world.item.BlockItem> SHELLSTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.SHELLSTONE_BRICK_WALL);
-    public static final RegistryObject<net.minecraft.world.item.BlockItem> TRIFFID_GOO_BLOCK_ITEM = ITEMS.register("triffid_goo_block",
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> TRIFFID_GOO_BLOCK_ITEM = ITEMS.register("flytrap_goo_block",
             () -> new com.craisinlord.antarchy.content.item.TriffidGooBlockItem(AntarchyForgeBlocks.TRIFFID_GOO_BLOCK.get(), new Item.Properties()));
     public static final RegistryObject<net.minecraft.world.item.BlockItem> PALE_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.PALE_NYXITE);
     public static final RegistryObject<net.minecraft.world.item.BlockItem> NYXITE_SPIKE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.NYXITE_SPIKE);
@@ -463,6 +463,9 @@ public final class AntarchyForgeItems {
     public static final RegistryObject<net.minecraft.world.item.BlockItem> HANGING_CREEPROOTS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.HANGING_CREEPROOTS);
     public static final RegistryObject<net.minecraft.world.item.BlockItem> GLOWCAP_MUSHROOM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.GLOWCAP_MUSHROOM);
     public static final RegistryObject<net.minecraft.world.item.BlockItem> GLOWCAP_MUSHROOM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.GLOWCAP_MUSHROOM_BLOCK);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> UNDERTRIAL_SPAWNER_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.UNDERTRIAL_SPAWNER);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> UNDERVAULT_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.UNDERVAULT);
+    public static final RegistryObject<Item> UNDERTRIAL_KEY = ITEMS.registerSimpleItem("undertrial_key", new Item.Properties());
     public static final RegistryObject<net.minecraft.world.item.BlockItem> MOLTING_VINES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.MOLTING_VINES);
     public static final RegistryObject<BucketItem> BILE_BUCKET = ITEMS.register("bile_bucket",
             () -> new BucketItem(AntarchyForgeMisc.BILE.get(), new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
@@ -524,8 +527,8 @@ public final class AntarchyForgeItems {
                             .saturationMod(0.1F)
                             .build())));
     public static final RegistryObject<Item> STINK_BUG = ITEMS.registerSimpleItem("stink_bug", new Item.Properties().rarity(Rarity.UNCOMMON));
-    public static final RegistryObject<Item> JUMPY_BUG_LEG = ITEMS.registerSimpleItem("jumpy_bug_leg", new Item.Properties().rarity(Rarity.UNCOMMON));
-    public static final RegistryObject<JumpyBootsItem> JUMPY_BOOTS = ITEMS.register("jumpy_boots",
+    public static final RegistryObject<Item> JUMPY_BUG_LEG = ITEMS.registerSimpleItem("springbug_leg", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final RegistryObject<JumpyBootsItem> JUMPY_BOOTS = ITEMS.register("springy_boots",
             () -> new JumpyBootsItem(JUMPY_BOOTS_ARMOR_MATERIAL, new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON).fireResistant().durability(armorDurability(ArmorItem.Type.BOOTS, 37))));
     public static final RegistryObject<Item> BRUTALFLY_WING = ITEMS.registerSimpleItem("brutalfly_wing", new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final RegistryObject<BrutalflyElytraItem> BRUTALFLY_ELYTRA = ITEMS.register("brutalfly_elytra",
@@ -631,7 +634,7 @@ public final class AntarchyForgeItems {
                             .effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 100, 0), 1.0F)
                             .alwaysEat()
                             .build())));
-    public static final RegistryObject<Item> TRIFFID_GOO = ITEMS.registerSimpleItem("triffid_goo",
+    public static final RegistryObject<Item> TRIFFID_GOO = ITEMS.registerSimpleItem("flytrap_goo",
             new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final RegistryObject<Item> VORTEX_EYE = ITEMS.register("vortex_eye",
             () -> new MobComingSoonTooltipItem(new Item.Properties().rarity(Rarity.RARE)));
@@ -662,8 +665,8 @@ public final class AntarchyForgeItems {
                             .saturationMod(0.0F)
                             .effect(() -> new MobEffectInstance(MobEffects.HUNGER, 600), 0.8F)
                             .build())));
-    public static final RegistryObject<Item> CLOUD_SHARK_FIN = ITEMS.registerSimpleItem("cloud_shark_fin", new Item.Properties().rarity(Rarity.UNCOMMON));
-    public static final RegistryObject<CloudSharkFinSoupItem> CLOUD_SHARK_FIN_SOUP = ITEMS.register("cloud_shark_fin_soup",
+    public static final RegistryObject<Item> CLOUD_SHARK_FIN = ITEMS.registerSimpleItem("stratoshark_fin", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final RegistryObject<CloudSharkFinSoupItem> CLOUD_SHARK_FIN_SOUP = ITEMS.register("stratoshark_fin_soup",
             () -> new CloudSharkFinSoupItem(new Item.Properties()
                     .stacksTo(1)
                     .craftRemainder(Items.BOWL)
@@ -886,7 +889,7 @@ public final class AntarchyForgeItems {
             () -> new ForgeSpawnEggItem(AntarchyForgeEntites.ROLLY_POLLY, 0x7284A3, 0xBCC8DB, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> MOLEVORE_SPAWN_EGG = ITEMS.register("molevore_spawn_egg",
             () -> new ForgeSpawnEggItem(AntarchyForgeEntites.MOLEVORE, 0x4A4A4A, 0x6B4A2B, new Item.Properties().rarity(Rarity.UNCOMMON)));
-    public static final RegistryObject<ForgeSpawnEggItem> TRIFFID_SPAWN_EGG = ITEMS.register("triffid_spawn_egg",
+    public static final RegistryObject<ForgeSpawnEggItem> TRIFFID_SPAWN_EGG = ITEMS.register("flytrap_spawn_egg",
             () -> new ForgeSpawnEggItem(AntarchyForgeEntites.TRIFFID, 0x4C8F3A, 0xFF2FB3, new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<ForgeSpawnEggItem> APPLE_COW_SPAWN_EGG = ITEMS.register("apple_cow_spawn_egg",
             () -> new ForgeSpawnEggItem(AntarchyForgeEntites.APPLE_COW, 0xFF1A1A, 0x32FF32, new Item.Properties()));
@@ -900,13 +903,13 @@ public final class AntarchyForgeItems {
             () -> new ForgeSpawnEggItem(AntarchyForgeEntites.WASP, 0x111111, 0xF1D800, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> BOMBER_SPAWN_EGG = ITEMS.register("bomber_spawn_egg",
             () -> new ForgeSpawnEggItem(AntarchyForgeEntites.BOMBER, 0x7A7A7A, 0xB32020, new Item.Properties()));
-    public static final RegistryObject<ForgeSpawnEggItem> JUMPY_BUG_SPAWN_EGG = ITEMS.register("jumpy_bug_spawn_egg",
+    public static final RegistryObject<ForgeSpawnEggItem> JUMPY_BUG_SPAWN_EGG = ITEMS.register("springbug_spawn_egg",
             () -> new ForgeSpawnEggItem(AntarchyForgeEntites.JUMPY_BUG, 0x0A1636, 0x8A3E00, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> SPIT_BUG_SPAWN_EGG = ITEMS.register("spit_bug_spawn_egg",
             () -> new ForgeSpawnEggItem(AntarchyForgeEntites.SPIT_BUG, 0x6B4A2B, 0x7ED957, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> STINK_BUG_SPAWN_EGG = ITEMS.register("stink_bug_spawn_egg",
             () -> new ForgeSpawnEggItem(AntarchyForgeEntites.STINK_BUG, 0x111111, 0xFF7A00, new Item.Properties()));
-    public static final RegistryObject<ForgeSpawnEggItem> CLOUD_SHARK_SPAWN_EGG = ITEMS.register("cloud_shark_spawn_egg",
+    public static final RegistryObject<ForgeSpawnEggItem> CLOUD_SHARK_SPAWN_EGG = ITEMS.register("stratoshark_spawn_egg",
             () -> new ForgeSpawnEggItem(AntarchyForgeEntites.CLOUD_SHARK, 0xDDEAF4, 0x7F96A8, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> KRAKEN_SPAWN_EGG = ITEMS.register("kraken_spawn_egg",
             () -> new ForgeSpawnEggItem(AntarchyForgeEntites.KRAKEN, 0x163C53, 0x4F8E99, new Item.Properties().rarity(Rarity.EPIC)));
@@ -948,9 +951,9 @@ public final class AntarchyForgeItems {
             () -> new PrimordialArmorItem(PRIMORDIAL_ARMOR_MATERIAL, ArmorItem.Type.LEGGINGS, new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
     public static final RegistryObject<PrimordialArmorItem> PRIMORDIAL_BOOTS = ITEMS.register("primordial_boots",
             () -> new PrimordialArmorItem(PRIMORDIAL_ARMOR_MATERIAL, ArmorItem.Type.BOOTS, new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
-    public static final RegistryObject<ForgeSpawnEggItem> CREEPING_HORROR_SPAWN_EGG = ITEMS.register("creeping_horror_spawn_egg",
+    public static final RegistryObject<ForgeSpawnEggItem> CREEPING_HORROR_SPAWN_EGG = ITEMS.register("crawling_blight_spawn_egg",
             () -> new ForgeSpawnEggItem(AntarchyForgeEntites.CREEPING_HORROR, 0x6B3A1F, 0x6B0000, new Item.Properties()));
-    public static final RegistryObject<ForgeSpawnEggItem> LURKING_TERROR_SPAWN_EGG = ITEMS.register("lurking_terror_spawn_egg",
+    public static final RegistryObject<ForgeSpawnEggItem> LURKING_TERROR_SPAWN_EGG = ITEMS.register("skulking_fright_spawn_egg",
             () -> new ForgeSpawnEggItem(AntarchyForgeEntites.LURKING_TERROR, 0x2D5A1B, 0x8B0000, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> HERCULES_BEETLE_SPAWN_EGG = ITEMS.register("hercules_beetle_spawn_egg",
             () -> new ForgeSpawnEggItem(AntarchyForgeEntites.HERCULES_BEETLE, 0x6B1F2A, 0xD4AF37, new Item.Properties().rarity(Rarity.RARE)));

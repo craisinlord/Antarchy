@@ -28,7 +28,7 @@ public final class JumpyBootsItem extends ArmorItem {
 
     @Override
     public void appendHoverText(ItemStack stack, Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.translatable("tooltip.antarchy.jumpy_boots").withStyle(ChatFormatting.DARK_RED));
+        tooltipComponents.add(Component.translatable("tooltip.antarchy.springy_boots").withStyle(ChatFormatting.DARK_RED));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

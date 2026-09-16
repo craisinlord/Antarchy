@@ -147,6 +147,7 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setKingAttackDamage(AntarchyMobsConfig.kingAttackDamage());
         AntarchySettings.setQueenAttackDamage(AntarchyMobsConfig.queenAttackDamage());
         AntarchySettings.setRoyalBossArmor(AntarchyMobsConfig.royalBossArmor());
+        AntarchySettings.setKingArmor(AntarchyMobsConfig.kingArmor());
         AntarchySettings.setRoyalBossFollowRange(AntarchyMobsConfig.royalBossFollowRange());
         AntarchySettings.setRoyalBossMovementSpeed(AntarchyMobsConfig.royalBossMovementSpeed());
         AntarchySettings.setRoyalBossKnockbackResistance(AntarchyMobsConfig.royalBossKnockbackResistance());
@@ -155,6 +156,13 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setRoyalBossBiteReach(AntarchyMobsConfig.royalBossBiteReach());
         AntarchySettings.setRoyalBossBiteDamageMultiplier(AntarchyMobsConfig.royalBossBiteDamageMultiplier());
         AntarchySettings.setRoyalBossBiteCooldownTicks(AntarchyMobsConfig.royalBossBiteCooldownTicks());
+        AntarchySettings.setRoyalBossMultiplayerScalingEnabled(AntarchyMobsConfig.royalBossMultiplayerScalingEnabled());
+        AntarchySettings.setRoyalBossScalingMaxPlayers(AntarchyMobsConfig.royalBossScalingMaxPlayers());
+        AntarchySettings.setRoyalBossHealthPerAdditionalPlayer(AntarchyMobsConfig.royalBossHealthPerAdditionalPlayer());
+        AntarchySettings.setRoyalBossDamagePerAdditionalPlayer(AntarchyMobsConfig.royalBossDamagePerAdditionalPlayer());
+        AntarchySettings.setRoyalBoundaryRadius(AntarchyMobsConfig.royalBoundaryRadius());
+        AntarchySettings.setRoyalBoundaryWarningRadius(AntarchyMobsConfig.royalBoundaryWarningRadius());
+        AntarchySettings.setRoyalBoundaryGraceTicks(AntarchyMobsConfig.royalBoundaryGraceTicks());
         AntarchySettings.setQueenBeamDamage(AntarchyMobsConfig.queenBeamDamage());
         AntarchySettings.setQueenBeamRange(AntarchyMobsConfig.queenBeamRange());
         AntarchySettings.setQueenBeamMinimumRange(AntarchyMobsConfig.queenBeamMinimumRange());
@@ -189,10 +197,6 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setQueenBlackHoleActiveTicks(AntarchyMobsConfig.queenBlackHoleActiveTicks());
         AntarchySettings.setQueenBlackHolePullStrength(AntarchyMobsConfig.queenBlackHolePullStrength());
         AntarchySettings.setQueenBlackHoleBlockSuctionCap(AntarchyMobsConfig.queenBlackHoleBlockSuctionCap());
-        AntarchySettings.setQueenFinalTimeFieldRadius(AntarchyMobsConfig.queenFinalTimeFieldRadius());
-        AntarchySettings.setQueenFinalTimeFieldRate(AntarchyMobsConfig.queenFinalTimeFieldRate());
-        AntarchySettings.setQueenFinalTimeFieldDurationTicks(AntarchyMobsConfig.queenFinalTimeFieldDurationTicks());
-        AntarchySettings.setQueenFinalTimeFieldCooldownTicks(AntarchyMobsConfig.queenFinalTimeFieldCooldownTicks());
         AntarchySettings.setKingFireballDamage(AntarchyMobsConfig.kingFireballDamage());
         AntarchySettings.setKingFireballRadius(AntarchyMobsConfig.kingFireballRadius());
         AntarchySettings.setKingFireballCooldownTicks(AntarchyMobsConfig.kingFireballCooldownTicks());

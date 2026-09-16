@@ -40,6 +40,7 @@ import java.util.function.Supplier;
 
 public final class UndertrialSpawnerBlockEntity extends BlockEntity implements TrialSpawner.StateAccessor {
     private static final String SPAWNER_TAG = "trial_spawner";
+    private static final int DEFAULT_TARGET_COOLDOWN_LENGTH = 36000;
     private static final int EFFECT_DURATION = 3600;
     private TrialSpawner trialSpawner;
     private TrialSpawnerState previousClientState;
@@ -194,10 +195,15 @@ public final class UndertrialSpawnerBlockEntity extends BlockEntity implements T
 
     private TrialSpawner createRewardlessSpawner(TrialSpawner source) {
         TrialSpawner rewardless = new TrialSpawner(withoutLootTables(source.getNormalConfig()), withoutLootTables(source.getOminousConfig()),
-                source.getData(), source.getRequiredPlayerRange(), source.getTargetCooldownLength(), this,
+                source.getData(), source.getRequiredPlayerRange(), targetCooldownLength(source), this,
                 source.getPlayerDetector(), source.getEntitySelector());
         rewardless.overridePeacefulAndMobSpawnRule();
         return rewardless;
+    }
+
+    private static int targetCooldownLength(TrialSpawner source) {
+        int targetCooldownLength = source.getTargetCooldownLength();
+        return targetCooldownLength > 0 ? targetCooldownLength : DEFAULT_TARGET_COOLDOWN_LENGTH;
     }
 
     private static TrialSpawnerConfig withoutLootTables(TrialSpawnerConfig config) {

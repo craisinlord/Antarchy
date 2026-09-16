@@ -27,6 +27,9 @@ public final class TimeDilationManager {
 
     public static void tickServer(MinecraftServer server) {
         for (ServerLevel level : server.getAllLevels()) {
+            for (ServerPlayer player : level.players()) {
+                ChronosphereManager.refresh(player);
+            }
             List<TimeDilationFieldEntity> fields = collectFields(level);
             TrackingState tracking = TRACKING.computeIfAbsent(level, ignored -> new TrackingState());
             discoverFieldEntities(level, fields, tracking);
@@ -56,6 +59,7 @@ public final class TimeDilationManager {
 
     private static void syncFieldSnapshots(ServerLevel level, List<TimeDilationFieldEntity> fields, TrackingState tracking) {
         List<TimeDilationFieldSnapshot> snapshots = fields.stream()
+                .filter(TimeDilationFieldEntity::isVisual)
                 .map(field -> new TimeDilationFieldSnapshot(field.getX(), field.getY(), field.getZ(),
                         field.fieldRadius(), field.fieldRate(), field.fieldAge(), field.fieldDurationTicks()))
                 .limit(128)
@@ -81,7 +85,7 @@ public final class TimeDilationManager {
 
     private static void discoverFieldEntities(ServerLevel level, List<TimeDilationFieldEntity> fields, TrackingState tracking) {
         for (TimeDilationFieldEntity field : fields) {
-            double radius = field.fieldRadius();
+            double radius = field.influenceRadius();
             var center = field.position();
             var area = new net.minecraft.world.phys.AABB(center.x - radius, center.y - radius, center.z - radius,
                     center.x + radius, center.y + radius, center.z + radius);

@@ -122,6 +122,7 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue KING_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue QUEEN_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue ROYAL_BOSS_ARMOR;
+    private static final ModConfigSpec.DoubleValue KING_ARMOR;
     private static final ModConfigSpec.DoubleValue ROYAL_BOSS_FOLLOW_RANGE;
     private static final ModConfigSpec.DoubleValue ROYAL_BOSS_MOVEMENT_SPEED;
     private static final ModConfigSpec.DoubleValue ROYAL_BOSS_KNOCKBACK_RESISTANCE;
@@ -130,6 +131,11 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue ROYAL_BOSS_BITE_REACH;
     private static final ModConfigSpec.DoubleValue ROYAL_BOSS_BITE_DAMAGE_MULTIPLIER;
     private static final ModConfigSpec.IntValue ROYAL_BOSS_BITE_COOLDOWN_TICKS;
+    private static final ModConfigSpec.BooleanValue ROYAL_BOSS_MULTIPLAYER_SCALING_ENABLED;
+    private static final ModConfigSpec.IntValue ROYAL_BOSS_SCALING_MAX_PLAYERS;
+    private static final ModConfigSpec.DoubleValue ROYAL_BOSS_HEALTH_PER_ADDITIONAL_PLAYER, ROYAL_BOSS_DAMAGE_PER_ADDITIONAL_PLAYER;
+    private static final ModConfigSpec.DoubleValue ROYAL_BOUNDARY_RADIUS, ROYAL_BOUNDARY_WARNING_RADIUS;
+    private static final ModConfigSpec.IntValue ROYAL_BOUNDARY_GRACE_TICKS;
     private static final ModConfigSpec.DoubleValue QUEEN_BEAM_DAMAGE, QUEEN_BEAM_RANGE, QUEEN_BEAM_MINIMUM_RANGE, QUEEN_BEAM_TRACKING, QUEEN_BEAM_TERRAIN_RADIUS;
     private static final ModConfigSpec.IntValue QUEEN_BEAM_DURATION_TICKS, QUEEN_BEAM_WINDUP_TICKS, QUEEN_BEAM_TRAVEL_TICKS, QUEEN_BEAM_COOLDOWN_TICKS, QUEEN_BEAM_TERRAIN_CAP,
             QUEEN_BEAM_PHASE_ONE_CAP, QUEEN_BEAM_PHASE_TWO_CAP, QUEEN_BEAM_PHASE_THREE_CAP;
@@ -140,10 +146,8 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue KING_ROYAL_MUSTER_RADIUS;
     private static final ModConfigSpec.IntValue KING_ROYAL_MUSTER_COOLDOWN_TICKS, KING_ROYAL_MUSTER_WINDUP_TICKS,
             KING_ROYAL_MUSTER_DURATION_TICKS, KING_ROYAL_MUSTER_CAP;
-    private static final ModConfigSpec.DoubleValue QUEEN_BLACK_HOLE_RADIUS, QUEEN_BLACK_HOLE_PULL_STRENGTH,
-            QUEEN_FINAL_TIME_FIELD_RADIUS, QUEEN_FINAL_TIME_FIELD_RATE;
-    private static final ModConfigSpec.IntValue QUEEN_BLACK_HOLE_ACTIVE_TICKS, QUEEN_BLACK_HOLE_BLOCK_SUCTION_CAP,
-            QUEEN_FINAL_TIME_FIELD_DURATION_TICKS, QUEEN_FINAL_TIME_FIELD_COOLDOWN_TICKS;
+    private static final ModConfigSpec.DoubleValue QUEEN_BLACK_HOLE_RADIUS, QUEEN_BLACK_HOLE_PULL_STRENGTH;
+    private static final ModConfigSpec.IntValue QUEEN_BLACK_HOLE_ACTIVE_TICKS, QUEEN_BLACK_HOLE_BLOCK_SUCTION_CAP;
     private static final ModConfigSpec.DoubleValue ROYAL_BOSS_SOUND_VOLUME;
     private static final ModConfigSpec.DoubleValue KING_FIREBALL_DAMAGE, KING_FIREBALL_RADIUS, KING_ICEBALL_DAMAGE, KING_ICEBALL_RADIUS, KING_ICE_SPIKE_DAMAGE;
     private static final ModConfigSpec.IntValue KING_FIREBALL_COOLDOWN_TICKS, KING_ICEBALL_COOLDOWN_TICKS, KING_ICE_SPIKE_COOLDOWN_TICKS, KING_ELEMENTAL_TERRAIN_CAP;
@@ -627,11 +631,12 @@ public final class AntarchyMobsConfig {
         b.pop();
 
         b.push("royalBosses");
-        KING_HEALTH = b.comment("Base max health for the King.").defineInRange("kingHealth", 6000.0D, 1.0D, 32768.0D);
-        QUEEN_HEALTH = b.comment("Base max health for the Queen.").defineInRange("queenHealth", 6000.0D, 1.0D, 32768.0D);
+        KING_HEALTH = b.comment("Base max health for the King.").defineInRange("kingHealth", 3400.0D, 1.0D, 32768.0D);
+        QUEEN_HEALTH = b.comment("Base max health for the Queen.").defineInRange("queenHealth", 4300.0D, 1.0D, 32768.0D);
         KING_ATTACK_DAMAGE = b.comment("Base attack damage for the King.").defineInRange("kingAttackDamage", 50.0D, 0.0D, 1024.0D);
         QUEEN_ATTACK_DAMAGE = b.comment("Base attack damage for the Queen.").defineInRange("queenAttackDamage", 45.0D, 0.0D, 1024.0D);
         ROYAL_BOSS_ARMOR = b.comment("Base armor value shared by King and Queen.").defineInRange("armor", 20.0D, 0.0D, 1024.0D);
+        KING_ARMOR = b.defineInRange("kingArmor", 30.0D, 0.0D, 1024.0D);
         ROYAL_BOSS_FOLLOW_RANGE = b.comment("Target acquisition range shared by King and Queen.").defineInRange("followRange", 128.0D, 1.0D, 256.0D);
         ROYAL_BOSS_MOVEMENT_SPEED = b.comment("Base grounded movement speed shared by King and Queen.").defineInRange("movementSpeed", 0.22D, 0.0D, 10.0D);
         ROYAL_BOSS_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance shared by King and Queen.").defineInRange("knockbackResistance", 1.0D, 0.0D, 1.0D);
@@ -640,6 +645,13 @@ public final class AntarchyMobsConfig {
         ROYAL_BOSS_BITE_REACH = b.comment("Radius around each head anchor that a King or Queen bite can hit.").defineInRange("biteReach", 12.0D, 1.0D, 64.0D);
         ROYAL_BOSS_BITE_DAMAGE_MULTIPLIER = b.comment("Multiplier applied to base attack damage for King and Queen head bites.").defineInRange("biteDamageMultiplier", 1.6D, 0.0D, 32.0D);
         ROYAL_BOSS_BITE_COOLDOWN_TICKS = b.comment("Base cooldown in ticks between bites for a single King or Queen head (scaled down at later phases).").defineInRange("biteCooldownTicks", 45, 1, 1200);
+        ROYAL_BOSS_MULTIPLAYER_SCALING_ENABLED = b.define("multiplayerScalingEnabled", true);
+        ROYAL_BOSS_SCALING_MAX_PLAYERS = b.defineInRange("scalingMaxPlayers", 4, 1, 32);
+        ROYAL_BOSS_HEALTH_PER_ADDITIONAL_PLAYER = b.defineInRange("healthPerAdditionalPlayer", 0.35D, 0.0D, 4.0D);
+        ROYAL_BOSS_DAMAGE_PER_ADDITIONAL_PLAYER = b.defineInRange("damagePerAdditionalPlayer", 0.10D, 0.0D, 2.0D);
+        ROYAL_BOUNDARY_RADIUS = b.defineInRange("royalBoundaryRadius", 192.0D, 32.0D, 1024.0D);
+        ROYAL_BOUNDARY_WARNING_RADIUS = b.defineInRange("royalBoundaryWarningRadius", 160.0D, 16.0D, 1024.0D);
+        ROYAL_BOUNDARY_GRACE_TICKS = b.defineInRange("royalBoundaryGraceTicks", 60, 0, 2400);
         QUEEN_BEAM_DAMAGE = b.defineInRange("queenBeamDamage", 45.0D, 0.0D, 1024.0D);
         QUEEN_BEAM_RANGE = b.defineInRange("queenBeamRange", 100.0D, 1.0D, 256.0D);
         QUEEN_BEAM_MINIMUM_RANGE = b.comment("Minimum distance from the Queen before she may begin or maintain a beam.").defineInRange("queenBeamMinimumRange", 22.0D, 0.0D, 256.0D);
@@ -674,10 +686,6 @@ public final class AntarchyMobsConfig {
         QUEEN_BLACK_HOLE_ACTIVE_TICKS = b.comment("Active duration for Royal Assailant axe black holes. Queen black holes always follow their 20.125-second animation.").defineInRange("queenBlackHoleActiveTicks", 120, 20, 1200);
         QUEEN_BLACK_HOLE_PULL_STRENGTH = b.defineInRange("queenBlackHolePullStrength", 0.16D, 0.0D, 2.0D);
         QUEEN_BLACK_HOLE_BLOCK_SUCTION_CAP = b.comment("Maximum terrain blocks a single Queen black hole may pull into itself.").defineInRange("queenBlackHoleBlockSuctionCap", 160, 0, 4096);
-        QUEEN_FINAL_TIME_FIELD_RADIUS = b.defineInRange("queenFinalTimeFieldRadius", 20.0D, 1.0D, 64.0D);
-        QUEEN_FINAL_TIME_FIELD_RATE = b.defineInRange("queenFinalTimeFieldRate", 0.05D, 0.05D, 1.0D);
-        QUEEN_FINAL_TIME_FIELD_DURATION_TICKS = b.defineInRange("queenFinalTimeFieldDurationTicks", 45, 1, 1200);
-        QUEEN_FINAL_TIME_FIELD_COOLDOWN_TICKS = b.defineInRange("queenFinalTimeFieldCooldownTicks", 80, 1, 2400);
         KING_FIREBALL_DAMAGE = b.defineInRange("kingFireballDamage", 32.0D, 0.0D, 1024.0D);
         KING_FIREBALL_RADIUS = b.defineInRange("kingFireballRadius", 4.5D, 0.5D, 32.0D);
         KING_FIREBALL_COOLDOWN_TICKS = b.defineInRange("kingFireballCooldownTicks", 150, 1, 2400);
@@ -1181,6 +1189,7 @@ public final class AntarchyMobsConfig {
     static double  kingAttackDamage()                       { return KING_ATTACK_DAMAGE.get(); }
     static double  queenAttackDamage()                      { return QUEEN_ATTACK_DAMAGE.get(); }
     static double  royalBossArmor()                         { return ROYAL_BOSS_ARMOR.get(); }
+    static double  kingArmor()                              { return KING_ARMOR.get(); }
     static double  royalBossFollowRange()                   { return ROYAL_BOSS_FOLLOW_RANGE.get(); }
     static double  royalBossMovementSpeed()                 { return ROYAL_BOSS_MOVEMENT_SPEED.get(); }
     static double  royalBossKnockbackResistance()           { return ROYAL_BOSS_KNOCKBACK_RESISTANCE.get(); }
@@ -1189,6 +1198,13 @@ public final class AntarchyMobsConfig {
     static double  royalBossBiteReach()                     { return ROYAL_BOSS_BITE_REACH.get(); }
     static double  royalBossBiteDamageMultiplier()          { return ROYAL_BOSS_BITE_DAMAGE_MULTIPLIER.get(); }
     static int     royalBossBiteCooldownTicks()             { return ROYAL_BOSS_BITE_COOLDOWN_TICKS.get(); }
+    static boolean royalBossMultiplayerScalingEnabled()     { return ROYAL_BOSS_MULTIPLAYER_SCALING_ENABLED.get(); }
+    static int     royalBossScalingMaxPlayers()             { return ROYAL_BOSS_SCALING_MAX_PLAYERS.get(); }
+    static double  royalBossHealthPerAdditionalPlayer()     { return ROYAL_BOSS_HEALTH_PER_ADDITIONAL_PLAYER.get(); }
+    static double  royalBossDamagePerAdditionalPlayer()     { return ROYAL_BOSS_DAMAGE_PER_ADDITIONAL_PLAYER.get(); }
+    static double  royalBoundaryRadius()                    { return ROYAL_BOUNDARY_RADIUS.get(); }
+    static double  royalBoundaryWarningRadius()             { return ROYAL_BOUNDARY_WARNING_RADIUS.get(); }
+    static int     royalBoundaryGraceTicks()                { return ROYAL_BOUNDARY_GRACE_TICKS.get(); }
     static double  queenBeamDamage()                        { return QUEEN_BEAM_DAMAGE.get(); }
     static double  queenBeamRange()                         { return QUEEN_BEAM_RANGE.get(); }
     static double  queenBeamMinimumRange()                  { return QUEEN_BEAM_MINIMUM_RANGE.get(); }
@@ -1223,10 +1239,6 @@ public final class AntarchyMobsConfig {
     static int     queenBlackHoleActiveTicks()               { return QUEEN_BLACK_HOLE_ACTIVE_TICKS.get(); }
     static double  queenBlackHolePullStrength()              { return QUEEN_BLACK_HOLE_PULL_STRENGTH.get(); }
     static int     queenBlackHoleBlockSuctionCap()            { return QUEEN_BLACK_HOLE_BLOCK_SUCTION_CAP.get(); }
-    static double  queenFinalTimeFieldRadius()               { return QUEEN_FINAL_TIME_FIELD_RADIUS.get(); }
-    static double  queenFinalTimeFieldRate()                 { return QUEEN_FINAL_TIME_FIELD_RATE.get(); }
-    static int     queenFinalTimeFieldDurationTicks()        { return QUEEN_FINAL_TIME_FIELD_DURATION_TICKS.get(); }
-    static int     queenFinalTimeFieldCooldownTicks()        { return QUEEN_FINAL_TIME_FIELD_COOLDOWN_TICKS.get(); }
     static double  kingFireballDamage()                      { return KING_FIREBALL_DAMAGE.get(); }
     static double  kingFireballRadius()                      { return KING_FIREBALL_RADIUS.get(); }
     static int     kingFireballCooldownTicks()               { return KING_FIREBALL_COOLDOWN_TICKS.get(); }

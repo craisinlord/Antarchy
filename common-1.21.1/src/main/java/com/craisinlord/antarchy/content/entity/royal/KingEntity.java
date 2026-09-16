@@ -55,10 +55,8 @@ import com.craisinlord.antarchy.content.entity.royal.decree.ComeNoCloserDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.DoNotRunDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.FightMeCowardDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.HandsOffTheCrownDecree;
-import com.craisinlord.antarchy.content.entity.royal.decree.KeepYourDistanceDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.KneelDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.NoRespiteDecree;
-import com.craisinlord.antarchy.content.entity.royal.decree.NoRetreatDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.RoyalDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.ShowNoMercyDecree;
 import com.craisinlord.antarchy.content.entity.royal.decree.SkyIsMineDecree;
@@ -89,8 +87,6 @@ public class KingEntity extends RoyalBossEntity {
     private static final int BEHAVIOR_SCORE_CAP = 12;
     /** Keep the tree-bound patrol safely inside the authored tree footprint. */
     private static final double TREE_ORBIT_RADIUS = 128.0D;
-    private static final double TREE_RETURN_RADIUS = 192.0D;
-    private static final double TREE_RETURN_RELEASE_RADIUS = 144.0D;
     private static final double TREE_ORBIT_ANGLE_STEP = 0.014D;
     private static final int TREE_ORBIT_PATH_SAMPLES = 16;
     private static final double KING_FOLLOW_RANGE = 192.0D;
@@ -108,7 +104,6 @@ public class KingEntity extends RoyalBossEntity {
     private double treePatrolMaximumY;
     private double treePatrolAngle;
     private boolean treePatrolBound;
-    private boolean returningToTree;
     private int patrolCooldownTicks;
     private int decreeCooldownTicks;
     private int activeDecreeTicks;
@@ -118,6 +113,7 @@ public class KingEntity extends RoyalBossEntity {
     private int iceballCooldownTicks = 120;
     private int iceSpikeCooldownTicks = 160;
     private boolean decreeRetreatPressure;
+    private int royalBoundaryGraceTicks;
     @Nullable
     private ServerPlayer exileTarget;
     private int exileTicks;
@@ -151,7 +147,7 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return createBaseAttributes(AntarchySettings.kingHealth(), AntarchySettings.kingAttackDamage())
+        return createBaseAttributes(AntarchySettings.kingHealth(), AntarchySettings.kingAttackDamage(), AntarchySettings.kingArmor())
                 .add(net.minecraft.world.entity.ai.attributes.Attributes.FOLLOW_RANGE, KING_FOLLOW_RANGE);
     }
 
@@ -373,14 +369,11 @@ public class KingEntity extends RoyalBossEntity {
 
     @Override
     public void tick() {
-        if (!this.level().isClientSide && this.shouldReturnToTree()) {
-            this.returningToTree = true;
-            this.setTarget(null);
-        }
         super.tick();
         if (this.level().isClientSide) {
             return;
         }
+        this.tickRoyalBoundary((ServerLevel) this.level());
         this.tickComeNoCloserIndicator();
         this.tickRoyalPunishment();
         this.tickPendingExileAnimation();
@@ -390,21 +383,6 @@ public class KingEntity extends RoyalBossEntity {
         ServerLevel serverLevel = (ServerLevel) this.level();
         this.iceBuildup.entrySet().removeIf(entry -> serverLevel.getEntity(entry.getKey()) == null);
         if (this.iceBuildup.size() > 16) this.iceBuildup.clear();
-        if (this.returningToTree) {
-            this.setTarget(null);
-            this.decreeRetreatPressure = false;
-            if (this.treePatrolBound && this.treePatrolCenter != null) {
-                this.setRoyalFlying(true);
-                if (this.isWithinTreeReturnReleaseRadius()) {
-                    this.returningToTree = false;
-                } else {
-                    this.tickTreePatrol();
-                    return;
-                }
-            } else {
-                this.returningToTree = false;
-            }
-        }
         LivingEntity target = this.getTarget();
         if (target != null && !this.isDeadOrDying() && this.level() instanceof ServerLevel level) {
             this.trackBehavior(target);
@@ -474,14 +452,44 @@ public class KingEntity extends RoyalBossEntity {
         }
     }
 
-    private boolean shouldReturnToTree() {
-        return this.treePatrolBound && this.treePatrolCenter != null
-                && this.horizontalDistanceToTreeSqr() > TREE_RETURN_RADIUS * TREE_RETURN_RADIUS;
-    }
-
-    private boolean isWithinTreeReturnReleaseRadius() {
-        return this.treePatrolCenter != null
-                && this.horizontalDistanceToTreeSqr() <= TREE_RETURN_RELEASE_RADIUS * TREE_RETURN_RELEASE_RADIUS;
+    private void tickRoyalBoundary(ServerLevel level) {
+        if (!this.treePatrolBound || this.treePatrolCenter == null) {
+            return;
+        }
+        double boundaryRadius = Math.max(32.0D, AntarchySettings.royalBoundaryRadius());
+        double distance = Math.sqrt(this.horizontalDistanceToTreeSqr());
+        if (distance > boundaryRadius) {
+            Vec3 towardCenter = this.treePatrolCenter.subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+            if (towardCenter.lengthSqr() > 0.001D) {
+                towardCenter = towardCenter.normalize();
+                this.getMoveControl().setWantedPosition(this.getX() + towardCenter.x * 12.0D,
+                        this.groundYBelow(this.getX() + towardCenter.x * 12.0D,
+                                this.getZ() + towardCenter.z * 12.0D) + FLYING_PREFERRED_HOVER,
+                        this.getZ() + towardCenter.z * 12.0D, 1.4D);
+            }
+        }
+        LivingEntity target = this.getTarget();
+        if (target == null || !target.isAlive()) {
+            this.royalBoundaryGraceTicks = 0;
+            return;
+        }
+        double warningRadius = Math.min(boundaryRadius, Math.max(16.0D, AntarchySettings.royalBoundaryWarningRadius()));
+        double targetDistance = Math.sqrt(target.position().subtract(this.treePatrolCenter).multiply(1.0D, 0.0D, 1.0D).lengthSqr());
+        if (targetDistance > warningRadius) {
+            if (this.tickCount % 5 == 0) {
+                level.sendParticles(ParticleTypes.END_ROD, target.getX(), target.getY() + 1.0D, target.getZ(),
+                        4, 0.3D, 0.5D, 0.3D, 0.02D);
+            }
+            if (targetDistance > boundaryRadius) {
+                this.royalBoundaryGraceTicks++;
+                if (this.royalBoundaryGraceTicks > Math.max(0, AntarchySettings.royalBoundaryGraceTicks())
+                        && this.tickCount % 20 == 0) {
+                    this.invokeJudgment(target);
+                }
+            }
+        } else {
+            this.royalBoundaryGraceTicks = 0;
+        }
     }
 
     private double horizontalDistanceToTreeSqr() {
@@ -824,10 +832,13 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     private void tickKingWholeBody(ServerLevel level, LivingEntity target) {
+        if (this.isRoyalRecoveryActive()) {
+            return;
+        }
         boolean skyIsMine = this.activeDecree instanceof SkyIsMineDecree;
         boolean forceFar = this.decreeRetreatPressure
                 || this.activeDecree instanceof ComeNoCloserDecree
-                || this.activeDecree instanceof KeepYourDistanceDecree;
+                ;
 
         {
             double distance = target.distanceTo(this);
@@ -1013,7 +1024,7 @@ public class KingEntity extends RoyalBossEntity {
             for (int lane = -1; lane <= 1; lane++) {
                 Vec3 point = start.add(line.scale(distance)).add(side.scale(lane * (i % 2 == 0 ? 2.0D : 0.0D)));
                 double y = this.groundYBelow(point.x, point.z) + 0.1D;
-                RoyalIceSpikeEntity spike = RoyalIceSpikeEntity.create(level, new Vec3(point.x, y, point.z));
+                RoyalIceSpikeEntity spike = RoyalIceSpikeEntity.create(level, new Vec3(point.x, y, point.z), this);
                 level.addFreshEntity(spike);
             }
         }
@@ -1053,12 +1064,15 @@ public class KingEntity extends RoyalBossEntity {
             Vec3 push = toTarget.normalize().scale(3.2D);
             living.setDeltaMovement(living.getDeltaMovement().add(push.x, 0.5D, push.z));
             living.hasImpulse = true;
-            living.hurt(this.damageSources().mobAttack(this), 6.0F);
+            living.hurt(this.damageSources().mobAttack(this), this.scaleRoyalDamage(6.0D));
         }
         level.sendParticles(ParticleTypes.SWEEP_ATTACK, this.getX() + forward.x * 6.0D, this.getY() + 4.0D, this.getZ() + forward.z * 6.0D, 12, 4.0D, 2.0D, 4.0D, 0.0D);
     }
 
     private void tickDecree(ServerLevel level, LivingEntity target) {
+        if (this.isRoyalRecoveryActive() && this.activeDecree == null) {
+            return;
+        }
         if (!(target instanceof ServerPlayer player) || !target.isAlive() || target.level() != level) {
             if (this.activeDecree != null) {
                 this.endDecree(target);
@@ -1137,6 +1151,7 @@ public class KingEntity extends RoyalBossEntity {
         this.activeDecreeTicks = 0;
         this.decreeRetreatPressure = false;
         this.decreeCooldownTicks = AntarchySettings.royalDecreeCooldownTicks();
+        this.startRoyalRecovery(40);
     }
 
     public void clearActiveDecree() {
@@ -1175,7 +1190,7 @@ public class KingEntity extends RoyalBossEntity {
         if (this.judgmentCooldowns.getOrDefault(target.getUUID(), 0L) <= now) {
             this.judgmentCooldowns.put(target.getUUID(), now + 20L);
             this.projectRoyalSound(AntarchySoundEvents.KING_JUDGEMENT.get(), 4.0F, 1.0F, target);
-            target.hurt(this.damageSources().magic(), 6.0F);
+            target.hurt(this.damageSources().magic(), this.scaleRoyalDamage(6.0D));
         }
     }
 

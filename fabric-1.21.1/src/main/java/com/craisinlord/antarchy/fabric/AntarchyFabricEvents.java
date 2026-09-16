@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.fabric;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricBlocks;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricItems;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricMisc;
 
 import com.craisinlord.antarchy.content.entity.ReverieEntity;
 import com.craisinlord.antarchy.content.entity.ant.RainbowAntEntity;
@@ -28,6 +29,7 @@ import com.craisinlord.antarchy.content.time.TimeDilationManager;
 import com.craisinlord.antarchy.content.time.ChronosphereManager;
 import com.craisinlord.antarchy.content.item.MinersDreamExcavationManager;
 import com.craisinlord.antarchy.content.item.WormHookTetherManager;
+import com.craisinlord.antarchy.content.entity.trades.ComputerScientistTradeManager;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
@@ -187,6 +189,8 @@ public final class AntarchyFabricEvents {
         });
 
         ServerTickEvents.END_SERVER_TICK.register(server -> {
+            com.craisinlord.antarchy.content.antmail.AntmailServerData.access(server).drainAvailable(server);
+            com.craisinlord.antarchy.content.antmail.AntmailEventData.onTick(server);
             Set<UUID> activeThisTick = new HashSet<>();
             for (ServerLevel level : server.getAllLevels()) {
                 CavarynHordeManager.tick(level);
@@ -208,6 +212,15 @@ public final class AntarchyFabricEvents {
     }
 
     private static void registerTrades() {
+        int[] computerScientistSlots = ComputerScientistTradeManager.slotsPerLevel();
+        for (int level = 1; level <= computerScientistSlots.length; level++) {
+            final int tradeLevel = level;
+            for (int index = 0; index < computerScientistSlots[level - 1]; index++) {
+                final int tradeIndex = index;
+                TradeOfferHelper.registerVillagerOffers(AntarchyFabricMisc.COMPUTER_SCIENTIST.get(), tradeLevel,
+                        factories -> factories.add(ComputerScientistTradeManager.listing(tradeLevel, tradeIndex)));
+            }
+        }
         TradeOfferHelper.registerVillagerOffers(VillagerProfession.FARMER, 1, factories ->
                 factories.add((trader, random) -> new MerchantOffer(
                         new ItemCost(AntarchyFabricItems.CORN.get(), 20),

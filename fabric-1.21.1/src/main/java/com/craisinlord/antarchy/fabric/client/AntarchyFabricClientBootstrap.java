@@ -515,6 +515,11 @@ public final class AntarchyFabricClientBootstrap {
                     return cage.getItemState(stack);
                 }
         );
+        ItemProperties.register(
+                AntarchyFabricItems.FLOPPY_DISK.get(),
+                ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "disk_category"),
+                (stack, level, entity, seed) -> com.craisinlord.antarchy.content.item.FloppyDiskItem.categoryModelProperty(stack)
+        );
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

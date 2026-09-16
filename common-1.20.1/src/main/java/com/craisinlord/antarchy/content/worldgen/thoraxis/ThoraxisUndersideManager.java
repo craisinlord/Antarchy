@@ -222,4 +222,9 @@ public final class ThoraxisUndersideManager {
     public static boolean isAboveUndersideExit(Entity entity) {
         return isThoraxis(entity.level()) && entity.getY() >= EXIT_UNDERSIDE_Y;
     }
+
+    /** True while an entity is inside the inverted-gravity underside volume. */
+    public static boolean isInUnderside(Entity entity) {
+        return isThoraxis(entity.level()) && entity.getY() < EXIT_UNDERSIDE_Y;
+    }
 }

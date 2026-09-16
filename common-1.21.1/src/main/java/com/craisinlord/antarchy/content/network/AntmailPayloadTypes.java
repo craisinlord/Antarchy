@@ -12,8 +12,12 @@ public final class AntmailPayloadTypes {
         return List.of(
                 AntmailSetupPayload.TYPE,
                 AntmailStateRequestPayload.TYPE,
+                AntmailMessageRequestPayload.TYPE,
                 AntmailSendPayload.TYPE,
                 AntmailReadPayload.TYPE,
+                AntmailDeletePayload.TYPE,
+                AntmailDraftPayload.TYPE,
+                AntmailRetryPayload.TYPE,
                 AntmailResultPayload.TYPE
         );
     }

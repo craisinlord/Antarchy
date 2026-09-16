@@ -659,7 +659,7 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SHELLSTONE_BRICK_WALL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.SHELLSTONE_BRICK_WALL);
 
 
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRIFFID_GOO_BLOCK_ITEM = ITEMS.register("triffid_goo_block",
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRIFFID_GOO_BLOCK_ITEM = ITEMS.register("flytrap_goo_block",
             () -> new com.craisinlord.antarchy.content.item.TriffidGooBlockItem(AntarchyFabricBlocks.TRIFFID_GOO_BLOCK.get(), new Item.Properties()));
 
 
@@ -715,6 +715,9 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> HANGING_CREEPROOTS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.HANGING_CREEPROOTS);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> GLOWCAP_MUSHROOM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.GLOWCAP_MUSHROOM);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> GLOWCAP_MUSHROOM_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.GLOWCAP_MUSHROOM_BLOCK);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> UNDERTRIAL_SPAWNER_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.UNDERTRIAL_SPAWNER);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> UNDERVAULT_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.UNDERVAULT);
+    public static final DeferredItem<Item> UNDERTRIAL_KEY = ITEMS.registerSimpleItem("undertrial_key", new Item.Properties());
     public static final DeferredItem<net.minecraft.world.item.BlockItem> MOLTING_VINES_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.MOLTING_VINES);
 
 
@@ -830,10 +833,10 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<Item> STINK_BUG_ITEM = ITEMS.registerSimpleItem("stink_bug", new Item.Properties().rarity(Rarity.UNCOMMON));
 
 
-    public static final DeferredItem<Item> JUMPY_BUG_LEG = ITEMS.registerSimpleItem("jumpy_bug_leg", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> JUMPY_BUG_LEG = ITEMS.registerSimpleItem("springbug_leg", new Item.Properties().rarity(Rarity.UNCOMMON));
 
 
-    public static final DeferredItem<com.craisinlord.antarchy.content.item.JumpyBootsItem> JUMPY_BOOTS = ITEMS.register("jumpy_boots",
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.JumpyBootsItem> JUMPY_BOOTS = ITEMS.register("springy_boots",
             () -> new com.craisinlord.antarchy.content.item.JumpyBootsItem(
                     AntarchyFabricMisc.JUMPY_BOOTS_ARMOR_MATERIAL,
                     new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON).fireResistant().durability(AntarchyFabricMisc.JUMPY_BOOTS_ARMOR_MATERIAL.getDurabilityForType(ArmorItem.Type.BOOTS))
@@ -974,7 +977,7 @@ public final class AntarchyFabricItems {
                             .build())));
 
 
-    public static final DeferredItem<Item> TRIFFID_GOO = ITEMS.registerSimpleItem("triffid_goo",
+    public static final DeferredItem<Item> TRIFFID_GOO = ITEMS.registerSimpleItem("flytrap_goo",
             new Item.Properties().rarity(Rarity.UNCOMMON));
 
 
@@ -1033,10 +1036,10 @@ public final class AntarchyFabricItems {
                             .build())));
 
 
-    public static final DeferredItem<Item> CLOUD_SHARK_FIN = ITEMS.registerSimpleItem("cloud_shark_fin", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> CLOUD_SHARK_FIN = ITEMS.registerSimpleItem("stratoshark_fin", new Item.Properties().rarity(Rarity.UNCOMMON));
 
 
-    public static final DeferredItem<CloudSharkFinSoupItem> CLOUD_SHARK_FIN_SOUP = ITEMS.register("cloud_shark_fin_soup",
+    public static final DeferredItem<CloudSharkFinSoupItem> CLOUD_SHARK_FIN_SOUP = ITEMS.register("stratoshark_fin_soup",
             () -> new CloudSharkFinSoupItem(new Item.Properties()
                     .stacksTo(1)
                     .craftRemainder(Items.BOWL)
@@ -1400,7 +1403,7 @@ public final class AntarchyFabricItems {
             () -> new DeferredSpawnEggItem(AntarchyFabricEntities.MOLEVORE, 0x4A4A4A, 0x6B4A2B, new Item.Properties().rarity(Rarity.UNCOMMON)));
 
 
-    public static final DeferredItem<DeferredSpawnEggItem> TRIFFID_SPAWN_EGG = ITEMS.register("triffid_spawn_egg",
+    public static final DeferredItem<DeferredSpawnEggItem> TRIFFID_SPAWN_EGG = ITEMS.register("flytrap_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyFabricEntities.TRIFFID, 0x4C8F3A, 0xFF2FB3, new Item.Properties().rarity(Rarity.UNCOMMON)));
 
 
@@ -1428,7 +1431,7 @@ public final class AntarchyFabricItems {
             () -> new DeferredSpawnEggItem(AntarchyFabricEntities.BOMBER, 0x7A7A7A, 0xB32020, new Item.Properties()));
 
 
-    public static final DeferredItem<DeferredSpawnEggItem> JUMPY_BUG_SPAWN_EGG = ITEMS.register("jumpy_bug_spawn_egg",
+    public static final DeferredItem<DeferredSpawnEggItem> JUMPY_BUG_SPAWN_EGG = ITEMS.register("springbug_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyFabricEntities.JUMPY_BUG, 0x0A1636, 0x8A3E00, new Item.Properties()));
 
 
@@ -1440,7 +1443,7 @@ public final class AntarchyFabricItems {
             () -> new DeferredSpawnEggItem(AntarchyFabricEntities.STINK_BUG, 0x111111, 0xFF7A00, new Item.Properties()));
 
 
-    public static final DeferredItem<DeferredSpawnEggItem> CLOUD_SHARK_SPAWN_EGG = ITEMS.register("cloud_shark_spawn_egg",
+    public static final DeferredItem<DeferredSpawnEggItem> CLOUD_SHARK_SPAWN_EGG = ITEMS.register("stratoshark_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyFabricEntities.CLOUD_SHARK, 0xDDEAF4, 0x7F96A8, new Item.Properties()));
 
 
@@ -1515,11 +1518,11 @@ public final class AntarchyFabricItems {
                     new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant().durability(AntarchyFabricMisc.PRIMORDIAL_ARMOR_MATERIAL.getDurabilityForType(ArmorItem.Type.BOOTS))));
 
 
-    public static final DeferredItem<DeferredSpawnEggItem> CREEPING_HORROR_SPAWN_EGG = ITEMS.register("creeping_horror_spawn_egg",
+    public static final DeferredItem<DeferredSpawnEggItem> CREEPING_HORROR_SPAWN_EGG = ITEMS.register("crawling_blight_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyFabricEntities.CREEPING_HORROR, 0x6B3A1F, 0x6B0000, new Item.Properties()));
 
 
-    public static final DeferredItem<DeferredSpawnEggItem> LURKING_TERROR_SPAWN_EGG = ITEMS.register("lurking_terror_spawn_egg",
+    public static final DeferredItem<DeferredSpawnEggItem> LURKING_TERROR_SPAWN_EGG = ITEMS.register("skulking_fright_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyFabricEntities.LURKING_TERROR, 0x2D5A1B, 0x8B0000, new Item.Properties()));
 
 

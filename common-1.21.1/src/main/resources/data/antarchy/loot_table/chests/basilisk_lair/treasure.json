@@ -36,6 +36,19 @@
         },
         {
           "type": "minecraft:item",
+          "name": "antarchy:floppy_disk",
+          "weight": 2,
+          "functions": [
+            {
+              "function": "minecraft:set_components",
+              "components": {
+                "antarchy:floppy_disk": "antarchy:basilisk_game"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
           "name": "minecraft:diamond",
           "weight": 8,
           "functions": [

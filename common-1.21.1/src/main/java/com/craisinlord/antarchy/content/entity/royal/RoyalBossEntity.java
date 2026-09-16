@@ -14,7 +14,11 @@ import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -37,6 +41,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -100,6 +106,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     private static final int CRUSH_MAX_BLOCKS = 24;
     private static final double CRUSH_MAX_RESISTANCE = 60.0D;
     private static final float CRUSH_DROP_CHANCE = 0.1F;
+    private static final int RECOVERY_AFTER_BEAM_TICKS = 30;
+    private static final ResourceLocation MULTIPLAYER_DAMAGE_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "royal_multiplayer_damage");
     private static final int OBSTRUCTION_CLEAR_INTERVAL_TICKS = 5;
     private static final double OBSTRUCTION_CLEAR_RADIUS = 3.5D;
     private static final int OBSTRUCTION_CLEAR_MAX_BLOCKS = 24;
@@ -177,6 +185,10 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     @Nullable
     private Vec3 aerialCombatAnchor;
     private int aerialCombatAnchorTicks;
+    private int recoveryWindowTicks;
+    private boolean multiplayerScalingInitialized;
+    private final Set<UUID> encounterParticipants = new HashSet<>();
+    private double royalDamageMultiplier = 1.0D;
 
     @Nullable
     private Entity[] multipartParts;
@@ -249,10 +261,14 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     public static AttributeSupplier.Builder createBaseAttributes(double health, double attackDamage) {
+        return createBaseAttributes(health, attackDamage, AntarchySettings.royalBossArmor());
+    }
+
+    protected static AttributeSupplier.Builder createBaseAttributes(double health, double attackDamage, double armor) {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, health)
                 .add(Attributes.ATTACK_DAMAGE, attackDamage)
-                .add(Attributes.ARMOR, AntarchySettings.royalBossArmor())
+                .add(Attributes.ARMOR, armor)
                 .add(Attributes.FOLLOW_RANGE, AntarchySettings.royalBossFollowRange())
                 .add(Attributes.MOVEMENT_SPEED, AntarchySettings.royalBossMovementSpeed())
                 .add(Attributes.FLYING_SPEED, AntarchySettings.royalBossMovementSpeed())
@@ -447,6 +463,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
 
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
         this.attackScheduler.tick();
+        if (this.recoveryWindowTicks > 0) {
+            this.recoveryWindowTicks--;
+        }
 
         if (this.isRoyalFlying() && this.tickCount % 40 == 0 && this.royalFlyLoopSound() != null) {
             this.playRoyalSound(this.royalFlyLoopSound(), 0.92F + this.random.nextFloat() * 0.12F);
@@ -464,6 +483,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             return;
         }
 
+        this.initializeMultiplayerScaling(primaryTarget);
+
         this.tickCombatLocomotionMode(primaryTarget);
         boolean aeriallyStabilized = this.steerTowardTarget(primaryTarget);
         if (!aeriallyStabilized) {
@@ -475,6 +496,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
 
         Phase phase = this.phase();
         int activeHeadAttacks = 0;
+        if (this.recoveryWindowTicks > 0) {
+            return;
+        }
         for (RoyalHead head : this.heads) {
             if (this.attackScheduler.laneBusy(this.headLane(head))) {
                 activeHeadAttacks++;
@@ -503,6 +527,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     private void tickRoyalBeam(LivingEntity primaryTarget) {
+        if (this.recoveryWindowTicks > 0) {
+            return;
+        }
         Phase phase = this.phase();
         int activeBeams = 0;
         for (RoyalHead head : this.heads) {
@@ -588,6 +615,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                         @Override
                         public void onComplete() {
                             RoyalBossEntity.this.stopRoyalBeam(head);
+                            RoyalBossEntity.this.startRoyalRecovery(RECOVERY_AFTER_BEAM_TICKS);
                         }
                     })) {
                 continue;
@@ -599,6 +627,47 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
 
     protected int selectBeamVolleyLimit(Phase phase) {
         return phase.maxConcurrentHeadAttacks();
+    }
+
+    protected boolean isRoyalRecoveryActive() {
+        return this.recoveryWindowTicks > 0;
+    }
+
+    protected void startRoyalRecovery(int ticks) {
+        this.recoveryWindowTicks = Math.max(this.recoveryWindowTicks, ticks);
+    }
+
+    private void initializeMultiplayerScaling(LivingEntity target) {
+        if (this.multiplayerScalingInitialized || !(this.level() instanceof ServerLevel level)) {
+            return;
+        }
+        this.multiplayerScalingInitialized = true;
+        if (!AntarchySettings.royalBossMultiplayerScalingEnabled()) {
+            return;
+        }
+        int maxPlayers = Math.max(1, AntarchySettings.royalBossScalingMaxPlayers());
+        List<ServerPlayer> players = level.getPlayers(player -> player.isAlive()
+                && !player.isSpectator()
+                && player.distanceToSqr(this) <= AntarchySettings.royalBossFollowRange() * AntarchySettings.royalBossFollowRange());
+        if (target instanceof ServerPlayer player && player.isAlive() && !players.contains(player)) {
+            players.add(player);
+        }
+        int participantCount = Math.min(maxPlayers, Math.max(1, players.size()));
+        for (ServerPlayer player : players) {
+            if (this.encounterParticipants.size() >= participantCount) {
+                break;
+            }
+            this.encounterParticipants.add(player.getUUID());
+        }
+        double healthMultiplier = 1.0D + Math.max(0, participantCount - 1)
+                * Math.max(0.0D, AntarchySettings.royalBossHealthPerAdditionalPlayer());
+        double baseHealth = this.getAttributeBaseValue(Attributes.MAX_HEALTH);
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(baseHealth * healthMultiplier);
+        this.setHealth(this.getMaxHealth());
+        double damageMultiplier = Math.max(0.0D, participantCount - 1)
+                * Math.max(0.0D, AntarchySettings.royalBossDamagePerAdditionalPlayer());
+        this.royalDamageMultiplier = 1.0D + damageMultiplier;
+        this.applyRoyalDamageModifier();
     }
 
     private void stopRoyalBeam(RoyalHead head) {
@@ -1211,12 +1280,38 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("RoyalFlying", this.isRoyalFlying());
+        tag.putBoolean("RoyalScalingInitialized", this.multiplayerScalingInitialized);
+        tag.putInt("RoyalScalingParticipants", this.encounterParticipants.size());
+        tag.putDouble("RoyalDamageMultiplier", this.royalDamageMultiplier);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         this.setRoyalFlying(!tag.contains("RoyalFlying") || tag.getBoolean("RoyalFlying"));
+        this.multiplayerScalingInitialized = tag.getBoolean("RoyalScalingInitialized");
+        this.royalDamageMultiplier = Math.max(1.0D, tag.getDouble("RoyalDamageMultiplier"));
+        if (tag.contains("RoyalScalingParticipants")) {
+            int count = Math.max(1, tag.getInt("RoyalScalingParticipants"));
+            for (int i = 0; i < count; i++) {
+                this.encounterParticipants.add(new UUID(0L, i + 1L));
+            }
+        }
+        this.applyRoyalDamageModifier();
+    }
+
+    public float scaleRoyalDamage(double damage) {
+        return (float) (damage * this.royalDamageMultiplier);
+    }
+
+    private void applyRoyalDamageModifier() {
+        AttributeInstance attackDamage = this.getAttribute(Attributes.ATTACK_DAMAGE);
+        if (attackDamage == null || this.royalDamageMultiplier <= 1.0D
+                || attackDamage.getModifier(MULTIPLAYER_DAMAGE_ID) != null) {
+            return;
+        }
+        attackDamage.addPermanentModifier(new AttributeModifier(MULTIPLAYER_DAMAGE_ID,
+                this.royalDamageMultiplier - 1.0D, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
     }
 
     @Override

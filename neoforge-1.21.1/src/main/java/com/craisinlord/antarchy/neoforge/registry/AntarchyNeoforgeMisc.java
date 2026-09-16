@@ -46,6 +46,8 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.biome.BiomeSource;
@@ -64,6 +66,23 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import java.util.function.Function;
 
 public final class AntarchyNeoforgeMisc {
+    private static final DeferredRegister<PoiType> POI_TYPES = DeferredRegister.create(Registries.POINT_OF_INTEREST_TYPE, Antarchy.MODID);
+    private static final DeferredRegister<VillagerProfession> VILLAGER_PROFESSIONS = DeferredRegister.create(Registries.VILLAGER_PROFESSION, Antarchy.MODID);
+
+    public static final DeferredHolder<PoiType, PoiType> COMPUTER_POI = POI_TYPES.register("computer",
+            () -> new PoiType(
+                    java.util.Set.copyOf(AntarchyNeoforgeBlocks.COMPUTER.get().getStateDefinition().getPossibleStates()),
+                    1,
+                    1));
+
+    public static final DeferredHolder<VillagerProfession, VillagerProfession> COMPUTER_SCIENTIST = VILLAGER_PROFESSIONS.register("computer_scientist",
+            () -> new VillagerProfession(
+                    "computer_scientist",
+                    holder -> holder.value() == COMPUTER_POI.get(),
+                    holder -> holder.value() == COMPUTER_POI.get(),
+                    com.google.common.collect.ImmutableSet.of(),
+                    com.google.common.collect.ImmutableSet.of(),
+                    net.minecraft.sounds.SoundEvents.VILLAGER_WORK_LIBRARIAN));
     private static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, Antarchy.MODID);
     private static final DeferredRegister<Potion> POTIONS = DeferredRegister.create(Registries.POTION, Antarchy.MODID);
     private static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, Antarchy.MODID);
@@ -431,6 +450,8 @@ public final class AntarchyNeoforgeMisc {
     private AntarchyNeoforgeMisc() {}
 
     public static void register(IEventBus modEventBus) {
+        POI_TYPES.register(modEventBus);
+        VILLAGER_PROFESSIONS.register(modEventBus);
         MOB_EFFECTS.register(modEventBus);
         POTIONS.register(modEventBus);
         FLUID_TYPES.register(modEventBus);

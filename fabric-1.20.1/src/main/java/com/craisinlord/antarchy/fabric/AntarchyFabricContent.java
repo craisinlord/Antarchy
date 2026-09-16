@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompat;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompatVersion;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.enchantment.AntarchyEnchantments;
 import com.craisinlord.antarchy.content.block.*;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.item.BloodCrystalKatanaItem;
@@ -107,6 +108,7 @@ public final class AntarchyFabricContent {
         AntarchyFabricMisc.POTIONS.register();
         AntarchyFabricItems.ITEMS.register();
         AntarchyFabricMisc.MENUS.register();
+        AntarchyFabricMisc.ENCHANTMENTS.register();
         AntarchyFabricMisc.RECIPE_SERIALIZERS.register();
         AntarchyFabricCreativeModeTabs.CREATIVE_MODE_TABS.register();
 
@@ -448,6 +450,7 @@ public final class AntarchyFabricContent {
         com.craisinlord.antarchy.content.time.TimeDilationApi.setFieldSyncDispatcher(
                 com.craisinlord.antarchy.fabric.network.AntarchyFabricTimeDilationNetworking::syncFields);
         AntarchyObjects.setTimeDilationField(() -> AntarchyFabricEntities.TIME_DILATION_FIELD.get());
+        AntarchyEnchantments.bind(() -> AntarchyFabricMisc.FEATHER_RISING.get(), () -> AntarchyFabricMisc.CHRONOSPHERE.get());
         AntarchyObjects.setRoyalAssailantBlackHole(() -> AntarchyFabricEntities.ROYAL_ASSAILANT_BLACK_HOLE.get());
         AntarchyObjects.setDilatedEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.DILATED));
         AntarchyObjects.setContractedEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.CONTRACTED));

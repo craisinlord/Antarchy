@@ -355,7 +355,9 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
             }
             double distance = Math.max(1.0D, living.position().distanceTo(center));
             float falloff = (float) Math.max(0.25D, 1.0D - distance / radius);
-            living.hurt(source, 26.0F * falloff);
+            double damage = 26.0D * falloff;
+            living.hurt(source, this.ownerEntity() instanceof RoyalBossEntity royalBoss
+                    ? royalBoss.scaleRoyalDamage(damage) : (float) damage);
             Vec3 launch = living.position().subtract(center).normalize().scale(2.6D * falloff);
             living.setDeltaMovement(launch.x, 1.1D * falloff + 0.4D, launch.z);
             living.hasImpulse = true;

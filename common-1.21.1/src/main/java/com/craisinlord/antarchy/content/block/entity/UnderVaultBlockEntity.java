@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.block.entity;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.block.UnderVaultBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -22,6 +23,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.AABB;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -44,6 +46,14 @@ public final class UnderVaultBlockEntity extends BlockEntity {
 
     public static void serverTick(ServerLevel level, BlockPos pos, BlockState state, UnderVaultBlockEntity blockEntity) {
         blockEntity.vaultData.setLevel(level);
+        // The vanilla vault detector can miss this ceiling-mounted wrapper because its
+        // block state has a separate render-facing property. Keep the state synchronized
+        // with the same four-block activation range before running vanilla's state machine.
+        if (state.getValue(UnderVaultBlock.STATE) == VaultState.INACTIVE
+                && !level.getEntitiesOfClass(Player.class, new AABB(pos).inflate(4.0D), player -> !player.isSpectator()).isEmpty()) {
+            state = state.setValue(UnderVaultBlock.STATE, VaultState.ACTIVE);
+            level.setBlockAndUpdate(pos, state);
+        }
         VaultBlockEntity.Server.tick(level, pos, state, blockEntity.vaultData.getConfig(), blockEntity.vaultData.getServerData(), blockEntity.vaultData.getSharedData());
     }
 

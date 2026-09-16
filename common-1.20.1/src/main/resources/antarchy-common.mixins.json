@@ -83,6 +83,8 @@
                    "time.EntityCrouchTimeDilationMixin",
                    "time.LivingEntityTimeDilationCleanupMixin",
                    "time.LivingEntityAttackCooldownTimeDilationMixin",
+                   "time.PlayerCooldownTimeDilationMixin",
+                   "time.LivingEntityChronosphereEquipmentMixin",
                    "time.LookControlTimeDilationMixin",
                    "time.MeleeAttackGoalTimeDilationMixin",
                    "time.MobAttackTimeDilationMixin",

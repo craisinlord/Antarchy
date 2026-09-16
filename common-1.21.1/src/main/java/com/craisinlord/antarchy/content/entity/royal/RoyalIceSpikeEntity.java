@@ -12,6 +12,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import java.util.UUID;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -26,6 +28,8 @@ public class RoyalIceSpikeEntity extends Entity implements GeoEntity {
     private static final String ANIMATION_CONTROLLER = "ice_spike";
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private boolean impacted;
+    @Nullable
+    private UUID ownerId;
 
     public RoyalIceSpikeEntity(EntityType<? extends RoyalIceSpikeEntity> type, Level level) {
         super(type, level);
@@ -36,6 +40,12 @@ public class RoyalIceSpikeEntity extends Entity implements GeoEntity {
     public static RoyalIceSpikeEntity create(ServerLevel level, Vec3 position) {
         RoyalIceSpikeEntity spike = new RoyalIceSpikeEntity(AntarchyObjects.ROYAL_ICE_SPIKE.get(), level);
         spike.setPos(position.x, position.y, position.z);
+        return spike;
+    }
+
+    public static RoyalIceSpikeEntity create(ServerLevel level, Vec3 position, LivingEntity owner) {
+        RoyalIceSpikeEntity spike = create(level, position);
+        spike.ownerId = owner.getUUID();
         return spike;
     }
 
@@ -65,7 +75,10 @@ public class RoyalIceSpikeEntity extends Entity implements GeoEntity {
         DamageSource source = this.damageSources().magic();
         for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class,
                 new AABB(this.blockPosition()).inflate(2.2D), entity -> entity.isAlive())) {
-            living.hurt(source, (float) AntarchySettings.kingIceSpikeDamage());
+            Entity owner = this.ownerId == null ? null : level.getEntity(this.ownerId);
+            living.hurt(source, owner instanceof RoyalBossEntity royalBoss
+                    ? royalBoss.scaleRoyalDamage(AntarchySettings.kingIceSpikeDamage())
+                    : (float) AntarchySettings.kingIceSpikeDamage());
             living.setTicksFrozen(Math.min(living.getTicksRequiredToFreeze() + 60, living.getTicksFrozen() + 100));
             living.setDeltaMovement(living.getDeltaMovement().add(0.0D, 0.35D, 0.0D));
             living.hasImpulse = true;
@@ -76,11 +89,17 @@ public class RoyalIceSpikeEntity extends Entity implements GeoEntity {
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
         this.impacted = tag.getBoolean("Impacted");
+        if (tag.hasUUID("Owner")) {
+            this.ownerId = tag.getUUID("Owner");
+        }
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
         tag.putBoolean("Impacted", this.impacted);
+        if (this.ownerId != null) {
+            tag.putUUID("Owner", this.ownerId);
+        }
     }
 
     @Override

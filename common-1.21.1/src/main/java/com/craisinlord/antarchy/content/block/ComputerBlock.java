@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.entity.ComputerBlockEntity;
+import com.craisinlord.antarchy.content.antmail.AntmailServerData;
 import com.craisinlord.antarchy.content.client.AntarchyClientHooks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -99,6 +100,9 @@ public final class ComputerBlock extends BaseEntityBlock {
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof ComputerBlockEntity computer) {
             computer.dropDisks(level, pos);
+            if (level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                AntmailServerData.access(serverLevel.getServer()).unregister(serverLevel.dimension().location(), pos);
+            }
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
     }

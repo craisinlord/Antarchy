@@ -38,7 +38,33 @@
             {
               "function": "minecraft:set_components",
               "components": {
+                "antarchy:floppy_disk": "antarchy:flying_squirrel"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:floppy_disk",
+          "weight": 4,
+          "functions": [
+            {
+              "function": "minecraft:set_components",
+              "components": {
                 "antarchy:floppy_disk": "antarchy:cavaryn"
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:floppy_disk",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_components",
+              "components": {
+                "antarchy:floppy_disk": "antarchy:basilisk_game"
               }
             }
           ]

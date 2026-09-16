@@ -6,6 +6,9 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.ManticoreEntity;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -41,10 +44,38 @@ public class QueenEntity extends RoyalBossEntity {
     private static final String SUMMON_COOLDOWN_KEY = "ManticoreSummonCooldownTicks";
     private static final int FAILED_SUMMON_RETRY_TICKS = 20;
     private static final int POSITION_ATTEMPTS_PER_MANTICORE = 8;
+    private long naturalTrailSiteId = Long.MIN_VALUE;
+    private BlockPos naturalTrailHome = BlockPos.ZERO;
 
     private static final ResourceLocation ACCEL_SPEED_ID = new ResourceLocation("antarchy", "queen_royal_acceleration_speed");
     private static final ResourceLocation ACCEL_FLY_ID = new ResourceLocation("antarchy", "queen_royal_acceleration_fly");
     private static final DustParticleOptions ACCEL_DUST = new DustParticleOptions(new org.joml.Vector3f(1.0F, 0.15F, 0.15F), 2.0F);
+
+    public static QueenEntity spawnFromUndersideTrail(ServerLevel level, BlockPos spawnPos, BlockPos homePos,
+                                                      long siteId, float yaw) {
+        if (!ThoraxisUndersideManager.isThoraxis(level) || spawnPos.getY() >= 0) return null;
+        java.util.List<QueenEntity> existing = level.getEntitiesOfClass(QueenEntity.class,
+                new net.minecraft.world.phys.AABB(homePos).inflate(160.0D),
+                queen -> queen.naturalTrailSiteId == siteId && queen.isAlive());
+        if (!existing.isEmpty()) return existing.get(0);
+        QueenEntity queen = AntarchyObjects.QUEEN.get().create(level);
+        if (queen == null) return null;
+        queen.moveTo(spawnPos.getX() + .5D, spawnPos.getY(), spawnPos.getZ() + .5D, yaw, 0.0F);
+        if (!level.noCollision(queen, queen.getBoundingBox())) {
+            queen.discard();
+            return null;
+        }
+        queen.finalizeSpawn(level, level.getCurrentDifficultyAt(spawnPos), MobSpawnType.CHUNK_GENERATION, null, null);
+        queen.naturalTrailSiteId = siteId;
+        queen.naturalTrailHome = homePos.immutable();
+        queen.setPersistenceRequired();
+        queen.setNoGravity(false);
+        ThoraxisUndersideManager.applyUndersideInversion(queen);
+        AntarchyGravityApi.setGravityDirection(queen, AntarchyGravityDirection.UP, true,
+                new AntarchyGravityTransition(12));
+        queen.resetFallDistance();
+        return level.addFreshEntity(queen) ? queen : null;
+    }
 
     private static final int GRAVITY_STOMP_COOLDOWN = 180;
     private static final int TIME_FIELD_COOLDOWN = 260;

@@ -6,7 +6,12 @@ import com.craisinlord.antarchy.content.computer.terminal.TerminalCommandService
 import com.craisinlord.antarchy.content.computer.terminal.TerminalFileSystem;
 import com.craisinlord.antarchy.content.computer.terminal.TerminalResult;
 import com.craisinlord.antarchy.content.antmail.AntmailWire;
+import com.craisinlord.antarchy.content.computer.blockle.BlockleAnswers;
+import com.craisinlord.antarchy.content.computer.blockle.BlockleDictionary;
+import com.craisinlord.antarchy.content.computer.blockle.BlockleGame;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -59,6 +64,10 @@ public final class ComputerAccessHandler {
             case ComputerAccessPayload.TERMINAL_COMMAND -> terminalCommand(player, computer, payload);
             case ComputerAccessPayload.DESKTOP_STATE -> desktopState(player, computer, payload);
             case ComputerAccessPayload.DESKTOP_WALLPAPER -> desktopWallpaper(player, computer, payload);
+            case ComputerAccessPayload.BASILISK_STATE -> basiliskState(player, computer, payload);
+            case ComputerAccessPayload.ANTMAN_STATE -> antmanState(player, computer, payload);
+            case ComputerAccessPayload.BLOCKLE_STATE -> blockleState(player, computer, payload, false);
+            case ComputerAccessPayload.BLOCKLE_GUESS -> blockleState(player, computer, payload, true);
             default -> send(player, payload, ComputerAccessResultPayload.INVALID);
         }
     }
@@ -91,6 +100,10 @@ public final class ComputerAccessHandler {
         if (computer.hasActiveUser() && !computer.isAuthenticatedBy(player)) {
             send(player, payload, ComputerAccessResultPayload.BUSY);
         } else if (computer.authenticate(player, payload.value())) {
+            com.craisinlord.antarchy.content.antmail.AntmailServerData data = com.craisinlord.antarchy.content.antmail.AntmailServerData.access(player.server);
+            net.minecraft.resources.ResourceLocation dimension = player.serverLevel().dimension().location();
+            com.craisinlord.antarchy.content.antmail.AntmailAddress address = data.addressAt(dimension, computer.getBlockPos());
+            if (address != null) data.setLastUsedAddress(player, address);
             send(player, payload, ComputerAccessResultPayload.SUCCESS);
         } else {
             send(player, payload, ComputerAccessResultPayload.INVALID_PASSWORD);
@@ -128,8 +141,8 @@ public final class ComputerAccessHandler {
         ComputerFileSystem.ComputerFile file = computer.fileSystem().get(payload.value());
         if (file == null) {
             sendFile(player, payload, false, "", "not_found");
-        } else if (file.type() != ComputerFileSystem.ComputerFile.Type.TEXT) {
-            sendFile(player, payload, false, "", "not_text");
+        } else if (file.type() != ComputerFileSystem.ComputerFile.Type.TEXT && file.type() != ComputerFileSystem.ComputerFile.Type.IMAGE) {
+            sendFile(player, payload, false, "", "not_file");
         } else {
             sendFile(player, payload, true, file.path() + "\0" + file.contents(), "");
         }
@@ -267,6 +280,91 @@ public final class ComputerAccessHandler {
         } catch (RuntimeException exception) {
             sendDesktop(player, payload, false, "invalid_wallpaper");
         }
+    }
+
+    private static void basiliskState(ServerPlayer player, ComputerBlockEntity computer, ComputerAccessPayload payload) {
+        if (!computer.canUseFileSystem(player)) {
+            sendFile(player, payload, false, "", "unauthorized");
+            return;
+        }
+        if (!payload.value().isBlank()) {
+            try {
+                computer.setBasiliskScore(Integer.parseInt(payload.value()));
+            } catch (NumberFormatException ignored) {
+                sendFile(player, payload, false, "", "invalid_score");
+                return;
+            }
+        }
+        sendFile(player, payload, true, computer.basiliskScore() + "\0" + computer.basiliskHighScore(), "");
+    }
+
+    private static void antmanState(ServerPlayer player, ComputerBlockEntity computer, ComputerAccessPayload payload) {
+        if (!computer.canUseFileSystem(player)) {
+            sendFile(player, payload, false, "", "unauthorized");
+            return;
+        }
+        if (!payload.value().isBlank()) {
+            try {
+                computer.setAntmanScore(Integer.parseInt(payload.value()));
+            } catch (NumberFormatException ignored) {
+                sendFile(player, payload, false, "", "invalid_score");
+                return;
+            }
+        }
+        sendFile(player, payload, true, computer.antmanScore() + "\0" + computer.antmanHighScore(), "");
+    }
+
+    private static void blockleState(ServerPlayer player, ComputerBlockEntity computer, ComputerAccessPayload payload, boolean submit) {
+        if (!computer.canUseFileSystem(player)) {
+            sendFile(player, payload, false, "", "unauthorized");
+            return;
+        }
+        ResourceLocation disk = ResourceLocation.fromNamespaceAndPath("antarchy", "blockle_game");
+        if (!computer.diskIds().contains(disk)) {
+            sendFile(player, payload, false, "", "not_installed");
+            return;
+        }
+        ServerLevel overworld = player.server.getLevel(Level.OVERWORLD);
+        if (overworld == null) {
+            sendFile(player, payload, false, "", "overworld_unavailable");
+            return;
+        }
+        long day = overworld.getDayTime() / 24000L;
+        computer.resetBlockle(day);
+        BlockleAnswers.Answer answer = BlockleAnswers.answerForDay(day);
+        if (submit) {
+            String guess = payload.value() == null ? "" : payload.value().toLowerCase(java.util.Locale.ROOT);
+            if (guess.length() != 5 || !guess.chars().allMatch(value -> value >= 'a' && value <= 'z')) {
+                sendFile(player, payload, false, "", "invalid_word");
+                return;
+            }
+            if (!BlockleDictionary.contains(guess)) {
+                sendFile(player, payload, false, "", "invalid_word");
+                return;
+            }
+            if (computer.blockleGuesses().size() >= 6 || computer.blockleGuesses().stream().anyMatch(value -> value.equals(answer.word()))) {
+                sendFile(player, payload, false, "", "game_over");
+                return;
+            }
+            computer.addBlockleGuess(guess);
+        }
+        sendFile(player, payload, true, encodeBlockle(day, answer, computer.blockleGuesses()), "");
+    }
+
+    private static String encodeBlockle(long day, BlockleAnswers.Answer answer, java.util.List<String> guesses) {
+        StringBuilder result = new StringBuilder(Long.toString(day));
+        boolean solved = false;
+        for (String guess : guesses) {
+            String colors = BlockleGame.evaluate(answer.word(), guess);
+            if (guess.equals(answer.word())) solved = true;
+            result.append('|').append(guess).append(',').append(colors);
+        }
+        if (solved || guesses.size() >= 6) {
+            result.append('|').append(solved ? "SOLVED" : "FAILED").append('|').append(answer.word()).append('|').append(answer.itemId());
+        } else {
+            result.append('|').append("PLAYING");
+        }
+        return result.toString();
     }
 
     private static void sendDesktop(ServerPlayer player, ComputerAccessPayload payload, boolean success, String data) {

@@ -18,13 +18,13 @@
     },
     "music": {
       "sound": "antarchy:music.game.elythia",
-      "min_delay": 12000,
-      "max_delay": 24000,
+      "min_delay": 600,
+      "max_delay": 1800,
       "replace_current_music": true
     }
   },
   "spawn_costs": {
-    "antarchy:cloud_shark": {
+    "antarchy:stratoshark": {
       "energy_budget": 0.15,
       "charge": 22
     }
@@ -54,7 +54,7 @@
     "ambient": [],
     "monster": [
       {
-        "type": "antarchy:cloud_shark",
+        "type": "antarchy:stratoshark",
         "weight": 10,
         "minCount": 1,
         "maxCount": 2

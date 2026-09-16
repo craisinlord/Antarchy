@@ -154,13 +154,13 @@ public final class RoyalBeamController {
         boolean pathMutates = terrainMode == RoyalBeamTerrainMode.DESTROY;
         for (double walked = settings.pathStep(); walked < Math.min(distance, settings.range()); walked += settings.pathStep()) {
             Vec3 sample = shootFrom.add(direction.scale(walked));
-            hurtEntitiesAround(sample, settings.pathDamageRadius(), settings.damage(), settings.knockback(), damageSource, settings.requireLineOfSightForDamage(), this.damagedThisTick);
+            hurtEntitiesAround(sample, settings.pathDamageRadius(), this.scaledDamage(settings.damage()), settings.knockback(), damageSource, settings.requireLineOfSightForDamage(), this.damagedThisTick);
             if (pathMutates && shouldMutateTerrain(settings, walked)) {
                 mutateTerrainAround(sample, settings.pathTerrainRadius(), settings, terrainMode);
             }
         }
 
-        hurtEntitiesAround(beamEnd, settings.impactDamageRadius(), settings.damage(), settings.knockback(), damageSource, settings.requireLineOfSightForDamage(), this.damagedThisTick);
+        hurtEntitiesAround(beamEnd, settings.impactDamageRadius(), this.scaledDamage(settings.damage()), settings.knockback(), damageSource, settings.requireLineOfSightForDamage(), this.damagedThisTick);
 
         if (!shouldMutateTerrain(settings, distance)) {
             return;
@@ -172,6 +172,10 @@ public final class RoyalBeamController {
         } else {
             mutateTerrainAround(beamEnd, settings.impactTerrainRadius(), settings, terrainMode);
         }
+    }
+
+    private float scaledDamage(float damage) {
+        return this.owner instanceof RoyalBossEntity royalBoss ? royalBoss.scaleRoyalDamage(damage) : damage;
     }
 
     private boolean shouldMutateTerrain(RoyalBeamSettings settings, double distanceFromOwner) {

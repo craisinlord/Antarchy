@@ -159,11 +159,11 @@ public final class AntarchyForgeEntites {
                     .sized(1.95F, 1.1F)
                     .clientTrackingRange(10)
                     .build("molevore"));
-    public static final RegistryObject<EntityType<TriffidEntity>> TRIFFID = ENTITY_TYPES.register("triffid",
+    public static final RegistryObject<EntityType<TriffidEntity>> TRIFFID = ENTITY_TYPES.register("flytrap",
             () -> EntityType.Builder.of(TriffidEntity::new, MobCategory.MONSTER)
                     .sized(2.0F, 5.0F)
                     .clientTrackingRange(10)
-                    .build("triffid"));
+                    .build("flytrap"));
     public static final RegistryObject<EntityType<BedBugEntity>> BED_BUG = ENTITY_TYPES.register("bed_bug",
             () -> EntityType.Builder.of(BedBugEntity::new, MobCategory.CREATURE)
                     .sized(1.15F, 0.8F)
@@ -184,11 +184,11 @@ public final class AntarchyForgeEntites {
                     .sized(0.55F, 0.75F)
                     .clientTrackingRange(8)
                     .build("bomber"));
-    public static final RegistryObject<EntityType<JumpyBugEntity>> JUMPY_BUG = ENTITY_TYPES.register("jumpy_bug",
+    public static final RegistryObject<EntityType<JumpyBugEntity>> JUMPY_BUG = ENTITY_TYPES.register("springbug",
             () -> EntityType.Builder.of(JumpyBugEntity::new, MobCategory.MONSTER)
                     .sized(3.0F, 6.0F)
                     .clientTrackingRange(8)
-                    .build("jumpy_bug"));
+                    .build("springbug"));
     public static final RegistryObject<EntityType<SpitBugEntity>> SPIT_BUG = ENTITY_TYPES.register("spit_bug",
             () -> EntityType.Builder.of(SpitBugEntity::new, MobCategory.MONSTER)
                     .sized(2.5F, 3.0F)
@@ -258,11 +258,11 @@ public final class AntarchyForgeEntites {
                     .sized(0.6F, 1.95F)
                     .clientTrackingRange(10)
                     .build("dr_trayaurus"));
-    public static final RegistryObject<EntityType<CloudSharkEntity>> CLOUD_SHARK = ENTITY_TYPES.register("cloud_shark",
+    public static final RegistryObject<EntityType<CloudSharkEntity>> CLOUD_SHARK = ENTITY_TYPES.register("stratoshark",
             () -> EntityType.Builder.of(CloudSharkEntity::new, MobCategory.MONSTER)
                     .sized(2.4F, 0.9F)
                     .clientTrackingRange(10)
-                    .build("cloud_shark"));
+                    .build("stratoshark"));
     public static final RegistryObject<EntityType<KrakenEntity>> KRAKEN = ENTITY_TYPES.register("kraken",
             () -> EntityType.Builder.of(KrakenEntity::new, MobCategory.MONSTER)
                     .sized(11.4F, 39.0F)
@@ -371,16 +371,16 @@ public final class AntarchyForgeEntites {
                     .clientTrackingRange(8)
                     .updateInterval(1)
                     .build("water_bomb"));
-    public static final RegistryObject<EntityType<CreepingHorrorEntity>> CREEPING_HORROR = ENTITY_TYPES.register("creeping_horror",
+    public static final RegistryObject<EntityType<CreepingHorrorEntity>> CREEPING_HORROR = ENTITY_TYPES.register("crawling_blight",
             () -> EntityType.Builder.of(CreepingHorrorEntity::new, MobCategory.MONSTER)
                     .sized(1.3F, 1.5F)
                     .clientTrackingRange(10)
-                    .build("creeping_horror"));
-    public static final RegistryObject<EntityType<LurkingTerrorEntity>> LURKING_TERROR = ENTITY_TYPES.register("lurking_terror",
+                    .build("crawling_blight"));
+    public static final RegistryObject<EntityType<LurkingTerrorEntity>> LURKING_TERROR = ENTITY_TYPES.register("skulking_fright",
             () -> EntityType.Builder.of(LurkingTerrorEntity::new, MobCategory.MONSTER)
                     .sized(1.3F, 1.5F)
                     .clientTrackingRange(10)
-                    .build("lurking_terror"));
+                    .build("skulking_fright"));
     public static final RegistryObject<EntityType<JerryEntity>> JERRY = ENTITY_TYPES.register("jerry",
             () -> EntityType.Builder.of(JerryEntity::new, MobCategory.MONSTER)
                     .sized(1.4F, 1.4F)

@@ -17,7 +17,9 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
 public final class JumpyBugEggCeilingFeature extends Feature<NoneFeatureConfiguration> {
-    private static final ResourceLocation JUMPY_BUG_EGG_ID = new ResourceLocation(Antarchy.MODID, "jumpy_bug_egg");
+    // The 1.20 implementation keeps its historical Java name, but the public
+    // registry id follows the 1.21 rename.
+    private static final ResourceLocation JUMPY_BUG_EGG_ID = new ResourceLocation(Antarchy.MODID, "springbug_egg");
     private static final int SEARCH_RADIUS = 8;
     private static final int VERTICAL_SCAN = 24;
     private static final int SEARCH_ATTEMPTS = 24;

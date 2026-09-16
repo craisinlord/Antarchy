@@ -79,4 +79,28 @@ public final class ComputerNetworking {
     public static void selectWallpaper(BlockPos pos, ResourceLocation id) {
         sender.accept(new ComputerAccessPayload(pos, ComputerAccessPayload.DESKTOP_WALLPAPER, id.toString()));
     }
+
+    public static void requestBasiliskState(BlockPos pos) {
+        sender.accept(new ComputerAccessPayload(pos, ComputerAccessPayload.BASILISK_STATE));
+    }
+
+    public static void saveBasiliskScore(BlockPos pos, int score) {
+        sender.accept(new ComputerAccessPayload(pos, ComputerAccessPayload.BASILISK_STATE, Integer.toString(Math.max(0, score))));
+    }
+
+    public static void requestAntmanState(BlockPos pos) {
+        sender.accept(new ComputerAccessPayload(pos, ComputerAccessPayload.ANTMAN_STATE));
+    }
+
+    public static void saveAntmanScore(BlockPos pos, int score) {
+        sender.accept(new ComputerAccessPayload(pos, ComputerAccessPayload.ANTMAN_STATE, Integer.toString(Math.max(0, score))));
+    }
+
+    public static void requestBlockleState(BlockPos pos) {
+        sender.accept(new ComputerAccessPayload(pos, ComputerAccessPayload.BLOCKLE_STATE));
+    }
+
+    public static void submitBlockleGuess(BlockPos pos, String guess) {
+        sender.accept(new ComputerAccessPayload(pos, ComputerAccessPayload.BLOCKLE_GUESS, guess));
+    }
 }

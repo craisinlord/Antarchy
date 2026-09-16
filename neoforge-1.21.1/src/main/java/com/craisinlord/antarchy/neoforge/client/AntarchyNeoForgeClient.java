@@ -593,7 +593,6 @@ public final class AntarchyNeoForgeClient {
         registerGeoItemExtension(event, AntarchyNeoforgeItems.BATTLE_AXE.get());
         registerGeoItemExtension(event, AntarchyNeoforgeItems.BIG_BERTHA.get());
         registerGeoItemExtension(event, AntarchyNeoforgeItems.ROYAL_GUARDIAN_SWORD.get());
-        registerGeoItemExtension(event, AntarchyNeoforgeItems.COMPUTER_ITEM.get());
     }
 
     @SubscribeEvent
@@ -709,6 +708,7 @@ public final class AntarchyNeoForgeClient {
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.GLOWCAP_MUSHROOM.get(), RenderType.cutout());
             registerUltimateBowProperties();
             registerUltimateCrossbowProperties();
+            registerFloppyDiskProperties();
         });
     }
 
@@ -726,6 +726,14 @@ public final class AntarchyNeoForgeClient {
                 TigerEyeCamouflageClientHandler.clearClientCaches();
             }
         });
+    }
+
+    private static void registerFloppyDiskProperties() {
+        ItemProperties.register(
+                AntarchyNeoforgeItems.FLOPPY_DISK.get(),
+                ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "disk_category"),
+                (stack, level, entity, seed) -> com.craisinlord.antarchy.content.item.FloppyDiskItem.categoryModelProperty(stack)
+        );
     }
 
     private static void registerUltimateBowProperties() {

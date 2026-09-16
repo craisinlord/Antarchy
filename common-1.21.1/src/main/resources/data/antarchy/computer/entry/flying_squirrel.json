@@ -1,0 +1,8 @@
+{
+  "type": "mob",
+  "category": "elythia",
+  "title": "guide.antarchy.entry.flying_squirrel.title",
+  "subtitle": "guide.antarchy.entry.flying_squirrel.subtitle",
+  "description": ["guide.antarchy.entry.flying_squirrel.description"],
+  "entity": "antarchy:flying_squirrel"
+}

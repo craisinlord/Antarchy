@@ -12,6 +12,9 @@ import com.craisinlord.antarchy.content.block.entity.PotentNyxiteBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.SeashellBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.UpperBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.WaspNestBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.UndertrialSpawnerBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.UnderVaultBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.QueenTrailSpawnMarkerBlockEntity;
 import com.craisinlord.antarchy.content.fluid.BileLiquidBlock;
 import com.craisinlord.antarchy.content.fluid.LumenLiquidBlock;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
@@ -272,7 +275,7 @@ public final class AntarchyForgeBlocks {
             () -> new WallBlock(AntarchyObjects.shellstoneProperties()));
     public static final RegistryObject<RotatedPillarBlock> SHELLSTONE_PILLAR = BLOCKS.register("shellstone_pillar",
             () -> new RotatedPillarBlock(AntarchyObjects.shellstoneProperties()));
-    public static final RegistryObject<com.craisinlord.antarchy.content.block.TriffidGooBlock> TRIFFID_GOO_BLOCK = BLOCKS.register("triffid_goo_block",
+    public static final RegistryObject<com.craisinlord.antarchy.content.block.TriffidGooBlock> TRIFFID_GOO_BLOCK = BLOCKS.register("flytrap_goo_block",
             () -> new com.craisinlord.antarchy.content.block.TriffidGooBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK).noOcclusion().isViewBlocking((s, l, p) -> false).isSuffocating((s, l, p) -> false)));
     public static final RegistryObject<com.craisinlord.antarchy.content.block.CloudBlock> CLOUD_BLOCK = BLOCKS.register("cloud_block",
             () -> new com.craisinlord.antarchy.content.block.CloudBlock(
@@ -382,15 +385,15 @@ public final class AntarchyForgeBlocks {
                     .noOcclusion()
                     .noCollission()
                     .replaceable()));
-    public static final RegistryObject<CreepingHorrorEggBlock> CREEPING_HORROR_EGG = BLOCKS.register("creeping_horror_egg",
+    public static final RegistryObject<CreepingHorrorEggBlock> CREEPING_HORROR_EGG = BLOCKS.register("crawling_blight_egg",
             () -> new CreepingHorrorEggBlock(BlockBehaviour.Properties.copy(Blocks.TURTLE_EGG)));
-    public static final RegistryObject<JumpyBugEggBlock> JUMPY_BUG_EGG = BLOCKS.register("jumpy_bug_egg",
+    public static final RegistryObject<JumpyBugEggBlock> JUMPY_BUG_EGG = BLOCKS.register("springbug_egg",
             () -> new JumpyBugEggBlock(BlockBehaviour.Properties.copy(Blocks.TURTLE_EGG)));
     public static final RegistryObject<SpitBugEggBlock> SPIT_BUG_EGG = BLOCKS.register("spit_bug_egg",
             () -> new SpitBugEggBlock(BlockBehaviour.Properties.copy(Blocks.TURTLE_EGG)));
     public static final RegistryObject<JerryEggBlock> JERRY_EGG = BLOCKS.register("jerry_egg",
             () -> new JerryEggBlock(BlockBehaviour.Properties.copy(Blocks.TURTLE_EGG).randomTicks()));
-    public static final RegistryObject<LurkingTerrorEggBlock> LURKING_TERROR_EGG = BLOCKS.register("lurking_terror_egg",
+    public static final RegistryObject<LurkingTerrorEggBlock> LURKING_TERROR_EGG = BLOCKS.register("skulking_fright_egg",
             () -> new LurkingTerrorEggBlock(BlockBehaviour.Properties.copy(Blocks.TURTLE_EGG)));
 
     static {
@@ -603,6 +606,16 @@ public final class AntarchyForgeBlocks {
     public static final RegistryObject<com.craisinlord.antarchy.content.block.StarCoralWallFanBlock> STAR_CORAL_WALL_FAN = BLOCKS.register("star_coral_wall_fan",
             () -> new com.craisinlord.antarchy.content.block.StarCoralWallFanBlock(DEAD_STAR_CORAL_WALL_FAN.get(), BlockBehaviour.Properties.copy(Blocks.TUBE_CORAL_WALL_FAN).lightLevel(state -> 8)));
 
+    public static final RegistryObject<UndertrialSpawnerBlock> UNDERTRIAL_SPAWNER = BLOCKS.register("undertrial_spawner",
+            () -> new UndertrialSpawnerBlock(AntarchyForgeBlocks::undertrialSpawnerBlockEntityType,
+                    BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()));
+    public static final RegistryObject<UnderVaultBlock> UNDERVAULT = BLOCKS.register("undervault",
+            () -> new UnderVaultBlock(AntarchyForgeBlocks::underVaultBlockEntityType,
+                    BlockBehaviour.Properties.copy(Blocks.OBSIDIAN).noOcclusion()));
+    public static final RegistryObject<QueenTrailSpawnMarkerBlock> QUEEN_TRAIL_SPAWN_MARKER = BLOCKS.register("queen_trail_spawn_marker",
+            () -> new QueenTrailSpawnMarkerBlock(AntarchyForgeBlocks::queenTrailSpawnMarkerBlockEntityType,
+                    BlockBehaviour.Properties.of().noCollission().noOcclusion().noLootTable().strength(-1.0F)));
+
     // Block entity types
     public static final RegistryObject<BlockEntityType<AntNestBlockEntity>> ANT_NEST_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("ant_nest",
             () -> BlockEntityType.Builder.of(
@@ -657,6 +670,27 @@ public final class AntarchyForgeBlocks {
                     (pos, state) -> new UpperBlockEntity(pos, state, AntarchyForgeBlocks::upperBlockEntityType),
                     UPPER.get()
             ).build(null));
+    public static final RegistryObject<BlockEntityType<UndertrialSpawnerBlockEntity>> UNDERTRIAL_SPAWNER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("undertrial_spawner",
+            () -> BlockEntityType.Builder.of((pos, state) -> new UndertrialSpawnerBlockEntity(pos, state, AntarchyForgeBlocks::undertrialSpawnerBlockEntityType),
+                    UNDERTRIAL_SPAWNER.get()).build(null));
+    public static final RegistryObject<BlockEntityType<UnderVaultBlockEntity>> UNDERVAULT_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("undervault",
+            () -> BlockEntityType.Builder.of((pos, state) -> new UnderVaultBlockEntity(pos, state, AntarchyForgeBlocks::underVaultBlockEntityType),
+                    UNDERVAULT.get()).build(null));
+    public static final RegistryObject<BlockEntityType<QueenTrailSpawnMarkerBlockEntity>> QUEEN_TRAIL_SPAWN_MARKER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("queen_trail_spawn_marker",
+            () -> BlockEntityType.Builder.of((pos, state) -> new QueenTrailSpawnMarkerBlockEntity(pos, state, AntarchyForgeBlocks::queenTrailSpawnMarkerBlockEntityType),
+                    QUEEN_TRAIL_SPAWN_MARKER.get()).build(null));
+
+    private static BlockEntityType<UndertrialSpawnerBlockEntity> undertrialSpawnerBlockEntityType() {
+        return UNDERTRIAL_SPAWNER_BLOCK_ENTITY.get();
+    }
+
+    private static BlockEntityType<UnderVaultBlockEntity> underVaultBlockEntityType() {
+        return UNDERVAULT_BLOCK_ENTITY.get();
+    }
+
+    private static BlockEntityType<QueenTrailSpawnMarkerBlockEntity> queenTrailSpawnMarkerBlockEntityType() {
+        return QUEEN_TRAIL_SPAWN_MARKER_BLOCK_ENTITY.get();
+    }
 
     private AntarchyForgeBlocks() {}
 

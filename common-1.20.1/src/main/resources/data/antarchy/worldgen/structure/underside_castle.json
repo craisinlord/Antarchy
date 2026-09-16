@@ -1,0 +1,32 @@
+{
+  "type": "integrated_api:ceiling_structure",
+  "start_pool": "antarchy:underside_castle/underside_castle",
+  "size": 1,
+  "y_allowance": {
+    "min_y_allowed": -256,
+    "max_y_allowed": 24
+  },
+  "valid_biome_radius_check": 1,
+  "biomes": "#antarchy:has_structure/underside_castle_biomes",
+  "step": "underground_structures",
+  "enhanced_terrain_adaptation": {
+    "type": "integrated_api:custom",
+    "carves": true,
+    "beards": true,
+    "kernel_size": 35,
+    "kernel_distance": 35,
+    "direction": "up"
+  },
+  "start_height": {
+    "type": "minecraft:constant",
+    "value": {
+      "absolute": -128
+    }
+  },
+  "max_roof_search_distance": 256,
+  "min_roof_thickness": 3,
+  "min_open_space_below": 16,
+  "ceiling_offset": 0,
+  "spawn_overrides": {},
+  "liquid_settings": "ignore_waterlogging"
+}

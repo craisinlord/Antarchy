@@ -112,8 +112,12 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playC2S().register(ComputerAccessPayload.TYPE, ComputerAccessPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(AntmailSetupPayload.TYPE, AntmailSetupPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(AntmailStateRequestPayload.TYPE, AntmailStateRequestPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(AntmailMessageRequestPayload.TYPE, AntmailMessageRequestPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(AntmailSendPayload.TYPE, AntmailSendPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(AntmailReadPayload.TYPE, AntmailReadPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(AntmailDeletePayload.TYPE, AntmailDeletePayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(AntmailDraftPayload.TYPE, AntmailDraftPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(AntmailRetryPayload.TYPE, AntmailRetryPayload.STREAM_CODEC);
     }
 
     private static void registerServerReceivers() {
@@ -123,9 +127,17 @@ public final class AntarchyFabricNetworking {
                 context.server().execute(() -> AntmailServerHandler.handle(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(AntmailStateRequestPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> AntmailServerHandler.handle(context.player(), payload)));
+        ServerPlayNetworking.registerGlobalReceiver(AntmailMessageRequestPayload.TYPE, (payload, context) ->
+                context.server().execute(() -> AntmailServerHandler.handle(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(AntmailSendPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> AntmailServerHandler.handle(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(AntmailReadPayload.TYPE, (payload, context) ->
+                context.server().execute(() -> AntmailServerHandler.handle(context.player(), payload)));
+        ServerPlayNetworking.registerGlobalReceiver(AntmailDeletePayload.TYPE, (payload, context) ->
+                context.server().execute(() -> AntmailServerHandler.handle(context.player(), payload)));
+        ServerPlayNetworking.registerGlobalReceiver(AntmailDraftPayload.TYPE, (payload, context) ->
+                context.server().execute(() -> AntmailServerHandler.handle(context.player(), payload)));
+        ServerPlayNetworking.registerGlobalReceiver(AntmailRetryPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> AntmailServerHandler.handle(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(GravityGunPrimaryPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleGravityGunPrimary(context.player(), payload)));

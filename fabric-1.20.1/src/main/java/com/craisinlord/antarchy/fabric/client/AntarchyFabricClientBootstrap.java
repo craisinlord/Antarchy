@@ -87,6 +87,14 @@ public final class AntarchyFabricClientBootstrap {
                 (net.minecraft.world.level.block.entity.BlockEntityType) AntarchyFabricBlocks.CRITTER_CAGE_BLOCK_ENTITY.get(),
                 (BlockEntityRendererProvider) CritterCageRenderer::new
         );
+        BlockEntityRendererRegistry.register(
+                (net.minecraft.world.level.block.entity.BlockEntityType) AntarchyFabricBlocks.UNDERTRIAL_SPAWNER_BLOCK_ENTITY.get(),
+                (BlockEntityRendererProvider) UndertrialSpawnerRenderer::new
+        );
+        BlockEntityRendererRegistry.register(
+                (net.minecraft.world.level.block.entity.BlockEntityType) AntarchyFabricBlocks.UNDERVAULT_BLOCK_ENTITY.get(),
+                (BlockEntityRendererProvider) UnderVaultRenderer::new
+        );
 
         EntityRendererRegistry.register(AntarchyFabricEntities.EASTER_BUNNY.get(), EasterBunnyRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.FLYING_SQUIRREL.get(), FlyingSquirrelRenderer::new);
@@ -296,6 +304,9 @@ public final class AntarchyFabricClientBootstrap {
         registry.register(AntarchyFabricMisc.ORANGE_ASH.get(), OrangeAshParticle.Provider::new);
         registry.register(AntarchyFabricMisc.LUCID_BOLT_IMPACT_SMALL.get(), LucidBoltImpactParticle.SmallProvider::new);
         registry.register(AntarchyFabricMisc.LUCID_BOLT_IMPACT_LARGE.get(), LucidBoltImpactParticle.LargeProvider::new);
+        registry.register(AntarchyFabricMisc.UNDERTRIAL_SPAWNER_DETECTION.get(), UndertrialParticle.DetectionProvider::new);
+        registry.register(AntarchyFabricMisc.UNDERTRIAL_OMEN.get(), UndertrialParticle.OmenProvider::new);
+        registry.register(AntarchyFabricMisc.UNDERVAULT_CONNECTION.get(), UndertrialParticle.OmenProvider::new);
     }
 
     private static void registerRenderLayers() {

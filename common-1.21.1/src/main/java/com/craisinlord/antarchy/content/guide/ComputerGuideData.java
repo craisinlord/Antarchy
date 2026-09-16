@@ -41,14 +41,14 @@ public final class ComputerGuideData extends SimplePreparableReloadListener<Comp
     public static List<Entry> entriesFor(List<ResourceLocation> diskIds) {
         if (AntarchySettings.unlockAllArchives()) {
             Map<ResourceLocation, Entry> result = new LinkedHashMap<>();
-            result.put(INTRODUCTION, new Entry(INTRODUCTION, "article", "general", "guide.antarchy.entry.introduction.title", "guide.antarchy.entry.introduction.subtitle", List.of("guide.antarchy.entry.introduction.description"), "", "", "", ""));
+            result.put(INTRODUCTION, new Entry(INTRODUCTION, "article", "general", "guide.antarchy.entry.introduction.title", "guide.antarchy.entry.introduction.subtitle", List.of("guide.antarchy.entry.introduction.description"), "", "", "", "", ""));
             result.putAll(entries);
             return result.values().stream().sorted(Comparator.comparing(entry -> entry.titleKey().toString())).toList();
         }
         Map<ResourceLocation, Entry> result = new LinkedHashMap<>();
         for (ResourceLocation diskId : diskIds) {
             if (INTRODUCTION.equals(diskId)) {
-                result.put(INTRODUCTION, new Entry(INTRODUCTION, "article", "general", "guide.antarchy.entry.introduction.title", "guide.antarchy.entry.introduction.subtitle", List.of("guide.antarchy.entry.introduction.description"), "", "", "", ""));
+                result.put(INTRODUCTION, new Entry(INTRODUCTION, "article", "general", "guide.antarchy.entry.introduction.title", "guide.antarchy.entry.introduction.subtitle", List.of("guide.antarchy.entry.introduction.description"), "", "", "", "", ""));
                 continue;
             }
             Disk disk = disks.get(diskId);
@@ -115,9 +115,10 @@ public final class ComputerGuideData extends SimplePreparableReloadListener<Comp
         List<String> description = strings(object.get("description"));
         String item = string(object, "item", "");
         String entity = string(object, "entity", "");
+        String recipe = string(object, "recipe", "");
         String structure = string(object, "structure", "");
         String dimension = string(object, "dimension", "");
-        target.put(id, new Entry(id, type, category, title, subtitle, description, item, entity, structure, dimension));
+        target.put(id, new Entry(id, type, category, title, subtitle, description, item, entity, recipe, structure, dimension));
     }
 
     private static void parseDisk(ResourceLocation id, JsonElement element, Map<ResourceLocation, Disk> target) {
@@ -163,13 +164,21 @@ public final class ComputerGuideData extends SimplePreparableReloadListener<Comp
         for (JsonElement value : array) {
             if (value.isJsonPrimitive()) {
                 values.add(value.getAsString());
+            } else if (value.isJsonObject()) {
+                JsonObject render = value.getAsJsonObject();
+                String item = string(render, "item", "");
+                String entity = string(render, "entity", "");
+                String recipe = string(render, "recipe", "");
+                if (!item.isBlank()) values.add("@item:" + item);
+                else if (!entity.isBlank()) values.add("@entity:" + entity);
+                else if (!recipe.isBlank()) values.add("@recipe:" + recipe);
             }
         }
         return List.copyOf(values);
     }
 
     public record Entry(ResourceLocation id, String type, String category, String titleKey, String subtitleKey,
-                         List<String> descriptionKeys, String itemId, String entityId, String structureId, String dimensionId) {
+                         List<String> descriptionKeys, String itemId, String entityId, String recipeId, String structureId, String dimensionId) {
     }
 
     public record Disk(ResourceLocation id, String category, String titleKey, List<ResourceLocation> entries, String wallpaper) {
