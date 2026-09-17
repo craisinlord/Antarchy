@@ -212,6 +212,11 @@ public final class AntarchySettings {
     private static int royalGuardianBootsArmorValue = 5;
     private static double royalGuardianArmorToughness = 4.0D;
     private static double royalGuardianArmorKnockbackResistance = 0.15D;
+    private static double royalGuardianHelmetJudgmentBonus = 0.06D;
+    private static double royalGuardianChestplateJudgmentBonus = 0.08D;
+    private static double royalGuardianLeggingsJudgmentBonus = 0.07D;
+    private static double royalGuardianBootsJudgmentBonus = 0.05D;
+    private static int royalGuardianJudgmentDurationTicks = 160;
     private static int royalAssailantHelmetArmorValue = 5;
     private static int royalAssailantChestplateArmorValue = 10;
     private static int royalAssailantLeggingsArmorValue = 8;
@@ -224,6 +229,14 @@ public final class AntarchySettings {
     private static double royalAssailantBootsDoubleDamageChance = 0.05D;
     private static double royalGuardianSwordAttackDamage = 111.0D;
     private static double royalGuardianSwordAttackSpeed = -2.5D;
+    private static int royalGuardianSwordElementalCooldownTicks = 120;
+    private static double royalGuardianSwordFirePrimaryDamage = 22.0D;
+    private static double royalGuardianSwordFireSplashDamage = 14.0D;
+    private static double royalGuardianSwordFrostSpikeDamage = 9.0D;
+    private static double royalGuardianSwordStormPrimaryDamage = 16.0D;
+    private static double royalGuardianSwordStormJumpDamage = 14.0D;
+    private static int royalGuardianSwordStormMaxJumps = 4;
+    private static double royalGuardianSwordStormJumpRange = 9.0D;
     private static double royalAssailantBattleAxeAttackDamage = 151.0D;
     private static double royalAssailantBattleAxeAttackSpeed = -2.9D;
     private static double royalWeaponAttackReachBonus = 1.0D;
@@ -231,6 +244,21 @@ public final class AntarchySettings {
     private static int royalWeaponDurability = 4608;
     private static int royalWeaponEnchantability = 30;
     private static int royalGuardianShieldDurability = 1008;
+    private static double royalGuardianMusterRange = 16.0D;
+    private static int royalGuardianMusterDurationTicks = 1200;
+    private static int royalGuardianMusterCooldownTicks = 500;
+    private static int royalGuardianMusterMobCap = 3;
+    private static double royalGuardianMusterDamageReduction = 0.40D;
+    private static double royalGuardianMusterAttackBonus = 0.50D;
+    private static double royalGuardianMusterSpeedBonus = 0.25D;
+    private static double royalGuardianMusterPassiveDamageFloor = 3.0D;
+    private static double royalGuardianBoundaryRadius = 9.0D;
+    private static int royalGuardianBoundaryDurationTicks = 120;
+    private static int royalGuardianBoundaryCooldownTicks = 700;
+    private static int royalGuardianBoundaryStrengthAmplifier = 1;
+    private static int royalGuardianBoundaryArrestTicks = 20;
+    private static int royalGuardianBoundaryDropTicks = 8;
+    private static int royalGuardianBoundaryProjectileCap = 64;
     private static double royalBoltDamage = 6.0D;
     private static int royalEggHatchChance = 3;
     private static double princeHealth = 120.0D;
@@ -1957,6 +1985,17 @@ public final class AntarchySettings {
     public static double royalGuardianArmorKnockbackResistance() { return royalGuardianArmorKnockbackResistance; }
     public static void setRoyalGuardianArmorKnockbackResistance(double v) { royalGuardianArmorKnockbackResistance = v; }
 
+    public static double royalGuardianHelmetJudgmentBonus() { return royalGuardianHelmetJudgmentBonus; }
+    public static void setRoyalGuardianHelmetJudgmentBonus(double v) { royalGuardianHelmetJudgmentBonus = v; }
+    public static double royalGuardianChestplateJudgmentBonus() { return royalGuardianChestplateJudgmentBonus; }
+    public static void setRoyalGuardianChestplateJudgmentBonus(double v) { royalGuardianChestplateJudgmentBonus = v; }
+    public static double royalGuardianLeggingsJudgmentBonus() { return royalGuardianLeggingsJudgmentBonus; }
+    public static void setRoyalGuardianLeggingsJudgmentBonus(double v) { royalGuardianLeggingsJudgmentBonus = v; }
+    public static double royalGuardianBootsJudgmentBonus() { return royalGuardianBootsJudgmentBonus; }
+    public static void setRoyalGuardianBootsJudgmentBonus(double v) { royalGuardianBootsJudgmentBonus = v; }
+    public static int royalGuardianJudgmentDurationTicks() { return royalGuardianJudgmentDurationTicks; }
+    public static void setRoyalGuardianJudgmentDurationTicks(int v) { royalGuardianJudgmentDurationTicks = v; }
+
     public static int royalAssailantHelmetArmorValue() { return royalAssailantHelmetArmorValue; }
     public static void setRoyalAssailantHelmetArmorValue(int v) { royalAssailantHelmetArmorValue = v; }
 
@@ -1993,6 +2032,23 @@ public final class AntarchySettings {
     public static double royalGuardianSwordAttackSpeed() { return royalGuardianSwordAttackSpeed; }
     public static void setRoyalGuardianSwordAttackSpeed(double v) { royalGuardianSwordAttackSpeed = v; }
 
+    public static int royalGuardianSwordElementalCooldownTicks() { return royalGuardianSwordElementalCooldownTicks; }
+    public static void setRoyalGuardianSwordElementalCooldownTicks(int v) { royalGuardianSwordElementalCooldownTicks = v; }
+    public static double royalGuardianSwordFirePrimaryDamage() { return royalGuardianSwordFirePrimaryDamage; }
+    public static void setRoyalGuardianSwordFirePrimaryDamage(double v) { royalGuardianSwordFirePrimaryDamage = v; }
+    public static double royalGuardianSwordFireSplashDamage() { return royalGuardianSwordFireSplashDamage; }
+    public static void setRoyalGuardianSwordFireSplashDamage(double v) { royalGuardianSwordFireSplashDamage = v; }
+    public static double royalGuardianSwordFrostSpikeDamage() { return royalGuardianSwordFrostSpikeDamage; }
+    public static void setRoyalGuardianSwordFrostSpikeDamage(double v) { royalGuardianSwordFrostSpikeDamage = v; }
+    public static double royalGuardianSwordStormPrimaryDamage() { return royalGuardianSwordStormPrimaryDamage; }
+    public static void setRoyalGuardianSwordStormPrimaryDamage(double v) { royalGuardianSwordStormPrimaryDamage = v; }
+    public static double royalGuardianSwordStormJumpDamage() { return royalGuardianSwordStormJumpDamage; }
+    public static void setRoyalGuardianSwordStormJumpDamage(double v) { royalGuardianSwordStormJumpDamage = v; }
+    public static int royalGuardianSwordStormMaxJumps() { return royalGuardianSwordStormMaxJumps; }
+    public static void setRoyalGuardianSwordStormMaxJumps(int v) { royalGuardianSwordStormMaxJumps = v; }
+    public static double royalGuardianSwordStormJumpRange() { return royalGuardianSwordStormJumpRange; }
+    public static void setRoyalGuardianSwordStormJumpRange(double v) { royalGuardianSwordStormJumpRange = v; }
+
     public static double royalAssailantBattleAxeAttackDamage() { return royalAssailantBattleAxeAttackDamage; }
     public static void setRoyalAssailantBattleAxeAttackDamage(double v) { royalAssailantBattleAxeAttackDamage = v; }
 
@@ -2013,6 +2069,37 @@ public final class AntarchySettings {
 
     public static int royalGuardianShieldDurability() { return royalGuardianShieldDurability; }
     public static void setRoyalGuardianShieldDurability(int v) { royalGuardianShieldDurability = v; }
+
+    public static double royalGuardianMusterRange() { return royalGuardianMusterRange; }
+    public static void setRoyalGuardianMusterRange(double v) { royalGuardianMusterRange = v; }
+    public static int royalGuardianMusterDurationTicks() { return royalGuardianMusterDurationTicks; }
+    public static void setRoyalGuardianMusterDurationTicks(int v) { royalGuardianMusterDurationTicks = v; }
+    public static int royalGuardianMusterCooldownTicks() { return royalGuardianMusterCooldownTicks; }
+    public static void setRoyalGuardianMusterCooldownTicks(int v) { royalGuardianMusterCooldownTicks = v; }
+    public static int royalGuardianMusterMobCap() { return royalGuardianMusterMobCap; }
+    public static void setRoyalGuardianMusterMobCap(int v) { royalGuardianMusterMobCap = v; }
+    public static double royalGuardianMusterDamageReduction() { return royalGuardianMusterDamageReduction; }
+    public static void setRoyalGuardianMusterDamageReduction(double v) { royalGuardianMusterDamageReduction = v; }
+    public static double royalGuardianMusterAttackBonus() { return royalGuardianMusterAttackBonus; }
+    public static void setRoyalGuardianMusterAttackBonus(double v) { royalGuardianMusterAttackBonus = v; }
+    public static double royalGuardianMusterSpeedBonus() { return royalGuardianMusterSpeedBonus; }
+    public static void setRoyalGuardianMusterSpeedBonus(double v) { royalGuardianMusterSpeedBonus = v; }
+    public static double royalGuardianMusterPassiveDamageFloor() { return royalGuardianMusterPassiveDamageFloor; }
+    public static void setRoyalGuardianMusterPassiveDamageFloor(double v) { royalGuardianMusterPassiveDamageFloor = v; }
+    public static double royalGuardianBoundaryRadius() { return royalGuardianBoundaryRadius; }
+    public static void setRoyalGuardianBoundaryRadius(double v) { royalGuardianBoundaryRadius = v; }
+    public static int royalGuardianBoundaryDurationTicks() { return royalGuardianBoundaryDurationTicks; }
+    public static void setRoyalGuardianBoundaryDurationTicks(int v) { royalGuardianBoundaryDurationTicks = v; }
+    public static int royalGuardianBoundaryCooldownTicks() { return royalGuardianBoundaryCooldownTicks; }
+    public static void setRoyalGuardianBoundaryCooldownTicks(int v) { royalGuardianBoundaryCooldownTicks = v; }
+    public static int royalGuardianBoundaryStrengthAmplifier() { return royalGuardianBoundaryStrengthAmplifier; }
+    public static void setRoyalGuardianBoundaryStrengthAmplifier(int v) { royalGuardianBoundaryStrengthAmplifier = v; }
+    public static int royalGuardianBoundaryArrestTicks() { return royalGuardianBoundaryArrestTicks; }
+    public static void setRoyalGuardianBoundaryArrestTicks(int v) { royalGuardianBoundaryArrestTicks = v; }
+    public static int royalGuardianBoundaryDropTicks() { return royalGuardianBoundaryDropTicks; }
+    public static void setRoyalGuardianBoundaryDropTicks(int v) { royalGuardianBoundaryDropTicks = v; }
+    public static int royalGuardianBoundaryProjectileCap() { return royalGuardianBoundaryProjectileCap; }
+    public static void setRoyalGuardianBoundaryProjectileCap(int v) { royalGuardianBoundaryProjectileCap = v; }
 
     public static double royalBoltDamage() { return royalBoltDamage; }
     public static void setRoyalBoltDamage(double v) { royalBoltDamage = v; }

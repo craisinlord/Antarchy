@@ -472,6 +472,7 @@ public class AntarchyNeoforge {
         AntarchyObjects.setGlimmer(AntarchyNeoforgeEntites.GLIMMER);
         AntarchyObjects.setSpiritApple(() -> AntarchyNeoforgeItems.SPIRIT_APPLE.get());
         AntarchyObjects.setGlimmeringEffect(() -> AntarchyNeoforgeMisc.GLIMMERING);
+        AntarchyObjects.setRoyalVitalityPenaltyEffect(() -> AntarchyNeoforgeMisc.ROYAL_VITALITY_PENALTY);
         AntarchyObjects.setElka(AntarchyNeoforgeEntites.ELKA);
         AntarchyObjects.setPeach(() -> AntarchyNeoforgeItems.PEACH.get());
         AntarchyObjects.setCorn(() -> AntarchyNeoforgeItems.CORN.get());

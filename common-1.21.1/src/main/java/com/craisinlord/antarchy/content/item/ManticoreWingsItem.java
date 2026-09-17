@@ -10,16 +10,22 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ElytraItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 
 public final class ManticoreWingsItem extends ElytraItem {
     private static final ResourceLocation REPAIR_MATERIAL_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "manticore_wing");
+    private static final ResourceLocation ARMOR_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "manticore_wings_armor");
+    private static final ResourceLocation TOUGHNESS_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "manticore_wings_toughness");
     private static final int DAMAGE_COOLDOWN_TICKS = 10;
     private static final double MIN_COLLISION_SPEED = 0.2D;
     private static final float COLLISION_DAMAGE_PER_BLOCK_PER_TICK = 8.0F;
@@ -60,6 +66,18 @@ public final class ManticoreWingsItem extends ElytraItem {
 
     public static boolean isWearingManticoreWings(LivingEntity entity) {
         return entity != null && entity.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof ManticoreWingsItem;
+    }
+
+    @Override
+    public ItemAttributeModifiers getDefaultAttributeModifiers() {
+        return ItemAttributeModifiers.builder()
+                .add(Attributes.ARMOR,
+                        new AttributeModifier(ARMOR_MODIFIER_ID, 5.0D, AttributeModifier.Operation.ADD_VALUE),
+                        EquipmentSlotGroup.CHEST)
+                .add(Attributes.ARMOR_TOUGHNESS,
+                        new AttributeModifier(TOUGHNESS_MODIFIER_ID, 1.0D, AttributeModifier.Operation.ADD_VALUE),
+                        EquipmentSlotGroup.CHEST)
+                .build();
     }
 
     @Override

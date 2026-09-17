@@ -5,6 +5,7 @@ import com.craisinlord.antarchy.content.computer.ComputerFileSystem;
 import com.craisinlord.antarchy.content.computer.terminal.TerminalCommandService;
 import com.craisinlord.antarchy.content.computer.terminal.TerminalFileSystem;
 import com.craisinlord.antarchy.content.computer.terminal.TerminalResult;
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.antmail.AntmailWire;
 import com.craisinlord.antarchy.content.computer.blockle.BlockleAnswers;
 import com.craisinlord.antarchy.content.computer.blockle.BlockleDictionary;
@@ -13,6 +14,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.function.BiConsumer;
@@ -68,6 +72,7 @@ public final class ComputerAccessHandler {
             case ComputerAccessPayload.ANTMAN_STATE -> antmanState(player, computer, payload);
             case ComputerAccessPayload.BLOCKLE_STATE -> blockleState(player, computer, payload, false);
             case ComputerAccessPayload.BLOCKLE_GUESS -> blockleState(player, computer, payload, true);
+            case ComputerAccessPayload.LOCATE_STRUCTURE -> locateStructure(player, computer, payload);
             default -> send(player, payload, ComputerAccessResultPayload.INVALID);
         }
     }
@@ -75,6 +80,7 @@ public final class ComputerAccessHandler {
     private static void open(ServerPlayer player, ComputerBlockEntity computer, ComputerAccessPayload payload) {
         if (computer.hasActiveUser() && !computer.isAuthenticatedBy(player)) {
             send(player, payload, ComputerAccessResultPayload.BUSY);
+            sendArchive(player, computer, payload);
             return;
         }
         if (!computer.hasPassword()) {
@@ -86,6 +92,13 @@ public final class ComputerAccessHandler {
         } else {
             send(player, payload, ComputerAccessResultPayload.READY);
         }
+        sendArchive(player, computer, payload);
+    }
+
+    private static void sendArchive(ServerPlayer player, ComputerBlockEntity computer, ComputerAccessPayload payload) {
+        resultSender.accept(player, new ComputerAccessResultPayload(payload.pos(), ComputerAccessResultPayload.SUCCESS,
+                computer.hasPassword(), computer.isAuthenticated(), ComputerAccessPayload.ARCHIVE_STATE + "\0\0"
+                + com.craisinlord.antarchy.content.guide.ComputerGuideData.encodeNetworkSnapshot()));
     }
 
     private static void setup(ServerPlayer player, ComputerBlockEntity computer, ComputerAccessPayload payload) {
@@ -204,10 +217,6 @@ public final class ComputerAccessHandler {
     }
 
     private static void terminalCommand(ServerPlayer player, ComputerBlockEntity computer, ComputerAccessPayload payload) {
-        if (!computer.canUseFileSystem(player)) {
-            send(player, payload, ComputerAccessResultPayload.INVALID);
-            return;
-        }
         String[] request = splitFileRequest(payload.value());
         if (request == null) {
             sendTerminal(player, payload, TerminalResult.error("/", "ERROR: INVALID REQUEST"));
@@ -320,7 +329,7 @@ public final class ComputerAccessHandler {
             return;
         }
         ResourceLocation disk = ResourceLocation.fromNamespaceAndPath("antarchy", "blockle_game");
-        if (!computer.diskIds().contains(disk)) {
+        if (!AntarchySettings.unlockAllArchives() && !computer.diskIds().contains(disk)) {
             sendFile(player, payload, false, "", "not_installed");
             return;
         }
@@ -332,6 +341,10 @@ public final class ComputerAccessHandler {
         long day = overworld.getDayTime() / 24000L;
         computer.resetBlockle(day);
         BlockleAnswers.Answer answer = BlockleAnswers.answerForDay(day);
+        if (answer == null) {
+            sendFile(player, payload, false, "", "answers_unavailable");
+            return;
+        }
         if (submit) {
             String guess = payload.value() == null ? "" : payload.value().toLowerCase(java.util.Locale.ROOT);
             if (guess.length() != 5 || !guess.chars().allMatch(value -> value >= 'a' && value <= 'z')) {
@@ -349,6 +362,49 @@ public final class ComputerAccessHandler {
             computer.addBlockleGuess(guess);
         }
         sendFile(player, payload, true, encodeBlockle(day, answer, computer.blockleGuesses()), "");
+    }
+
+    private static void locateStructure(ServerPlayer player, ComputerBlockEntity computer, ComputerAccessPayload payload) {
+        ResourceLocation entryId;
+        try {
+            entryId = ResourceLocation.parse(payload.value());
+        } catch (RuntimeException exception) {
+            sendFile(player, payload, false, "", "unauthorized");
+            return;
+        }
+        var entry = com.craisinlord.antarchy.content.guide.ComputerGuideData.entry(entryId);
+        boolean unlocked = com.craisinlord.antarchy.content.guide.ComputerGuideData.entriesFor(computer.diskIds()).stream()
+                .anyMatch(candidate -> candidate.id().equals(entryId));
+        if (!computer.canUseFileSystem(player) || !unlocked || entry == null || entry.structureId().isBlank()
+                || entry.structureTagId().isBlank() || entry.dimensionId().isBlank() || entry.searchRadius() <= 0) {
+            sendFile(player, payload, false, "", "unauthorized");
+            return;
+        }
+
+        ResourceLocation dimensionId;
+        ResourceLocation structureTagId;
+        try {
+            dimensionId = ResourceLocation.parse(entry.dimensionId());
+            structureTagId = ResourceLocation.parse(entry.structureTagId());
+        } catch (RuntimeException exception) {
+            sendFile(player, payload, false, "", "dimension_unavailable");
+            return;
+        }
+        ServerLevel targetLevel = player.server.getLevel(net.minecraft.resources.ResourceKey.create(Registries.DIMENSION, dimensionId));
+        if (targetLevel == null) {
+            sendFile(player, payload, false, "", "dimension_unavailable");
+            return;
+        }
+
+        TagKey<Structure> structures = TagKey.create(Registries.STRUCTURE, structureTagId);
+        net.minecraft.core.BlockPos origin = computer.getBlockPos();
+        var nearest = targetLevel.findNearestMapStructure(structures, origin, entry.searchRadius(), false);
+        if (nearest == null) {
+            sendFile(player, payload, false, "", "not_found");
+            return;
+        }
+
+        sendFile(player, payload, true, nearest.getX() + ", " + nearest.getY() + ", " + nearest.getZ(), "");
     }
 
     private static String encodeBlockle(long day, BlockleAnswers.Answer answer, java.util.List<String> guesses) {

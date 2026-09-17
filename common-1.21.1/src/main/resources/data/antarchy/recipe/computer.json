@@ -8,18 +8,18 @@
       "item": "minecraft:copper_ingot"
     },
     "C": {
-      "item": "minecraft:tinted_glass"
+      "tag": "c:glass_blocks"
     },
     "D": {
-      "item": "minecraft:comparator"
+      "item": "minecraft:repeater"
     },
     "E": {
-      "item": "antarchy:bluestone_comparator"
+      "item": "minecraft:redstone_torch"
     }
   },
   "pattern": [
     "AAC",
-    "DBE",
+    "BDE",
     "AAA"
   ],
   "result": {

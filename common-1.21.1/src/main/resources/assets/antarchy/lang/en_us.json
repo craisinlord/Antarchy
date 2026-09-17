@@ -543,6 +543,15 @@
     "item.antarchy.royal_guardian_boots":  "Royal Guardian Boots",
     "item.antarchy.royal_guardian_sword":  "Royal Guardian Sword",
     "item.antarchy.royal_guardian_shield":  "Royal Guardian Shield",
+    "tooltip.antarchy.royal_guardian_sword.mode":  "Attunement: %s",
+    "tooltip.antarchy.royal_guardian_sword.mode.fire":  "Fire",
+    "tooltip.antarchy.royal_guardian_sword.mode.frost":  "Frost",
+    "tooltip.antarchy.royal_guardian_sword.mode.storm":  "Storm",
+    "tooltip.antarchy.royal_guardian_sword.fire":  "Fully charged hits erupt in royal flame, burning the target and nearby enemies.",
+    "tooltip.antarchy.royal_guardian_sword.frost":  "Fully charged hits freeze the target and raise a fan of royal ice spikes.",
+    "tooltip.antarchy.royal_guardian_sword.storm":  "Fully charged hits call royal lightning that chains between nearby enemies.",
+    "tooltip.antarchy.royal_guardian_sword.controls":  "Sneak-use to cycle modes. Fully charged hits unleash the selected element (%s-second cooldown).",
+    "message.antarchy.royal_guardian_sword.mode":  "Royal Guardian attuned to %s",
     "item.antarchy.royal_assailant_helmet":  "Royal Assailant Helmet",
     "item.antarchy.royal_assailant_chestplate":  "Royal Assailant Chestplate",
     "item.antarchy.royal_assailant_leggings":  "Royal Assailant Leggings",
@@ -552,7 +561,12 @@
     "tooltip.antarchy.royal_assailant_staff":  "Opens paired tears that summon four allied Manticores for 30 seconds.",
     "tooltip.antarchy.royal_assailant_battleaxe.black_hole":  "Use to create a Black Hole",
     "tooltip.antarchy.royal_assailant_battleaxe.dilation":  "Hits apply Temporal Dilation",
-    "tooltip.antarchy.royal_guardian_shield.command":  "Use to command the nearest mob",
+    "tooltip.antarchy.royal_guardian_shield.command":  "Sneak-use to muster nearby mobs. Royal Investiture empowers their offense, speed, and resilience.",
+    "tooltip.antarchy.royal_guardian_helmet.judgment":  "Marked for Judgment: +%s%% damage against marked targets",
+    "tooltip.antarchy.royal_guardian_chestplate.judgment":  "Marked for Judgment: +%s%% damage against marked targets",
+    "tooltip.antarchy.royal_guardian_chestplate.boundary":  "Royal Boundary (B by default): Freezes incoming hostile projectiles and grants Strength to allies.",
+    "tooltip.antarchy.royal_guardian_leggings.judgment":  "Marked for Judgment: +%s%% damage against marked targets",
+    "tooltip.antarchy.royal_guardian_boots.judgment":  "Marked for Judgment: +%s%% damage against marked targets",
     "tooltip.antarchy.royal_assailant_chestplate.invert":  "Press the inversion key to toggle inverted gravity on and off.",
     "tooltip.antarchy.royal_assailant_boots.fall":  "Cancels fall damage while falling upward.",
     "item.antarchy.mantis_claw":  "Mantis Claw",
@@ -562,6 +576,9 @@
     "item.antarchy.jerry_nucleus":  "Jerry Nucleus",
     "tooltip.antarchy.jerry_nucleus.hatch":  "While holding, interact with any bug egg or turtle egg to hatch it instantly.",
     "key.antarchy.mount_special":  "Mount: Special / Charge",
+    "key.antarchy.royal_boundary":  "Royal Boundary",
+    "message.antarchy.royal_boundary.activated":  "Royal Boundary raised",
+    "message.antarchy.royal_boundary.recharging":  "Royal Boundary is recharging",
     "key.antarchy.mount_flight_toggle":  "Mount: Toggle Flight",
     "item.antarchy.springbug_leg":  "Springbug Leg",
     "item.antarchy.springy_boots":  "Springy Boots",
@@ -733,6 +750,7 @@
     "message.antarchy.rainbow_ant_failed_dimension_create":  "Failed to create dimension. This likely means something is wrong in your infinity config. Restart/Relog and try again.",
     "message.antarchy.rainbow_ant_infinity_missing":  "Infinity must be installed for rainbow ant dimensions to work.",
     "message.antarchy.rainbow_ant_needs_reagent":  "This rainbow ant needs a reagent before it can open a dimension.",
+    "message.antarchy.teleport_arrival_failed":  "No safe arrival spot was found. Teleportation was canceled.",
     "message.antarchy.red_ant_activated":  "The red ant is ready to open its destination.",
     "message.antarchy.red_ant_needs_reagent":  "This red ant needs a reagent before it can open its destination.",
     "message.antarchy.termite_activated":  "The termite is ready to open its destination.",
@@ -1425,7 +1443,8 @@
     ,"decree.antarchy.close_quarters": "CLOSE QUARTERS"
     ,"decree.antarchy.close_quarters.subtitle": "Enter the royal circle. Projectiles are forbidden."
     ,"decree.antarchy.violated": "DECREE VIOLATED"
-    ,"decree.antarchy.violated.subtitle": "Face the King's judgment."
+    ,"decree.antarchy.violated.subtitle": "Your hearts are halved for 30. Face the King's judgment."
+    ,"effect.antarchy.royal_vitality_penalty": "Royal Vitality Diminished"
     ,"decree.antarchy.come_no_closer": "COME NO CLOSER"
     ,"decree.antarchy.come_no_closer.subtitle": "Keep out of the King's inner radius."
     ,"decree.antarchy.fight_me_coward": "FIGHT ME, COWARD!"
@@ -1475,9 +1494,9 @@
     ,"guide.antarchy.entry.chronosphere.title": "Chronosphere"
     ,"guide.antarchy.entry.chronosphere.subtitle": "Temporal equipment record"
     ,"guide.antarchy.entry.chronosphere.description": "A record for the Chronosphere enchantment will be expanded here. Further data is pending."
-    ,"guide.antarchy.entry.toreterror_arena.title": "Toreterror Arena"
-    ,"guide.antarchy.entry.toreterror_arena.subtitle": "Structure location fragment"
-    ,"guide.antarchy.entry.toreterror_arena.description": "The nearest arena is rumored to lie beyond the current horizon. Directional analysis is pending in this prototype."
+    ,"guide.antarchy.entry.toreterror.title": "Toreterror"
+    ,"guide.antarchy.entry.toreterror_arena.subtitle": "Elythia Ocean boss"
+    ,"guide.antarchy.entry.toreterror_arena.description": "The nearest Toreterror Arena within search range is listed below. It is always placed in an Elythia Ocean."
     ,"guide.antarchy.entry.elythia.title": "Elythia"
     ,"guide.antarchy.entry.elythia.subtitle": "Dimension and portal access record"
     ,"guide.antarchy.entry.elythia.description": "Elythia is reached through an Elythia portal made with a valid frame. A sacrificed Brown Ant activates the portal. The dimension contains oceans, meadows, forests, coral spikes, and other surface biomes."
@@ -1505,6 +1524,27 @@
     ,"guide.antarchy.entry.high_fructose_corn_syrup.title": "High Fructose Corn Syrup"
     ,"guide.antarchy.entry.high_fructose_corn_syrup.subtitle": "Nutritional and operational notes"
     ,"guide.antarchy.entry.high_fructose_corn_syrup.description": "A sweet substance of uncertain strategic value. Doctoral enthusiasm surrounding it is statistically suspicious."
+    ,"guide.antarchy.entry.rainbow_ant.title": "Rainbow Ant"
+    ,"guide.antarchy.entry.rainbow_ant.subtitle": "Entity record"
+    ,"guide.antarchy.entry.rainbow_ant.description": "When given an activation reagent, a Rainbow Ant can open a portal to its assigned dimension."
+    ,"guide.antarchy.entry.easter_bunny.title": "Easter Bunny"
+    ,"guide.antarchy.entry.easter_bunny.subtitle": "Entity record"
+    ,"guide.antarchy.entry.easter_bunny.description": "Easter Bunnies periodically lay random spawn eggs."
+    ,"guide.antarchy.entry.duplicator_tree.title": "Duplicator Tree"
+    ,"guide.antarchy.entry.duplicator_tree.subtitle": "Block record"
+    ,"guide.antarchy.entry.duplicator_tree.description": "Duplicator Trees copy nearby eligible blocks into open spaces around them."
+    ,"guide.antarchy.disk.kraken.title": "KRAKEN SIGHTING NOTES"
+    ,"guide.antarchy.entry.kraken.title": "Kraken"
+    ,"guide.antarchy.entry.kraken.subtitle": "Overworld aquatic encounter"
+    ,"guide.antarchy.entry.kraken.description": "Search open Overworld waters; the Kraken can only spawn in water. Some encounters require Bad Omen."
+    ,"guide.antarchy.disk.king.title": "KING'S TREE FIELD NOTES"
+    ,"guide.antarchy.entry.king.title": "King"
+    ,"guide.antarchy.entry.king.subtitle": "Elythia royal entity record"
+    ,"guide.antarchy.entry.king.description": "Seek the massive King's Tree in Elythia. The King spawns near its center and patrols the surrounding area."
+    ,"guide.antarchy.disk.queen.title": "QUEEN HAVOC TRAIL NOTES"
+    ,"guide.antarchy.entry.queen.title": "Queen"
+    ,"guide.antarchy.entry.queen.subtitle": "Thoraxis royal entity record"
+    ,"guide.antarchy.entry.queen.description": "Follow a Queen Havoc Trail through Thoraxis's underside to its chamber; the Queen appears when you approach."
     ,"screen.antarchy.computer.first_use.title": "INITIAL PASSWORD SETUP"
     ,"screen.antarchy.computer.first_use.prompt": "CREATE A PASSWORD TO CONTINUE"
     ,"screen.antarchy.computer.first_use.confirm": "CONFIRM PASSWORD"

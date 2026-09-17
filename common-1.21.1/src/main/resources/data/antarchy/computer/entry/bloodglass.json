@@ -3,5 +3,6 @@
   "category": "thoraxis",
   "title": "guide.antarchy.entry.bloodglass.title",
   "subtitle": "guide.antarchy.entry.bloodglass.subtitle",
-  "description": ["guide.antarchy.entry.bloodglass.description"]
+  "description": ["guide.antarchy.entry.bloodglass.description"],
+  "cover_item": "antarchy:blood_crystal_shard"
 }

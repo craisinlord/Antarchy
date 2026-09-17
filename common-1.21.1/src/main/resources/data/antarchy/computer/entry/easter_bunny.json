@@ -1,0 +1,9 @@
+{
+  "type": "entity",
+  "category": "general",
+  "title": "guide.antarchy.entry.easter_bunny.title",
+  "subtitle": "guide.antarchy.entry.easter_bunny.subtitle",
+  "description": ["guide.antarchy.entry.easter_bunny.description"],
+  "entity": "antarchy:easter_bunny",
+  "cover_entity": "antarchy:easter_bunny"
+}

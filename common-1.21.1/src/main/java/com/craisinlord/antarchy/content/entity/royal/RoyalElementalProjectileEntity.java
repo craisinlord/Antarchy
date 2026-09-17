@@ -11,6 +11,8 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -143,6 +145,9 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
         }
         igniteImpact(level, center, this.isDreamFireball());
         level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, center.x, center.y, center.z, 4, 1.5D, 1.5D, 1.5D, 0.0D);
+        level.playSound(null, BlockPos.containing(center), SoundEvents.GENERIC_EXPLODE.value(),
+                SoundSource.HOSTILE, this.isDreamFireball() ? 1.15F : 1.0F,
+                this.isDreamFireball() ? 0.78F : 0.92F);
     }
 
     private void igniteImpact(ServerLevel level, Vec3 center, boolean dream) {

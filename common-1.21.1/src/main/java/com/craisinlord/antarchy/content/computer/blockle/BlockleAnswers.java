@@ -1,76 +1,98 @@
 package com.craisinlord.antarchy.content.computer.blockle;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 
-public final class BlockleAnswers {
+public final class BlockleAnswers extends SimplePreparableReloadListener<List<String>> {
     public static final int VERSION = 1;
     private static final int SALT = 0x4A17;
-    private static final List<Answer> ANSWERS = List.of(
-            new Answer("anvil", id("anvil")),
-            new Answer("apple", id("apple")),
-            new Answer("arrow", id("arrow")),
-            new Answer("bread", id("bread")),
-            new Answer("brick", id("brick")),
-            new Answer("chain", id("chain")),
-            new Answer("chest", id("chest")),
-            new Answer("clock", id("clock")),
-            new Answer("cocoa", id("cocoa")),
-            new Answer("flint", id("flint")),
-            new Answer("glass", id("glass")),
-            new Answer("melon", id("melon")),
-            new Answer("paper", id("paper")),
-            new Answer("poppy", id("poppy")),
-            new Answer("sculk", id("sculk")),
-            new Answer("stone", id("stone")),
-            new Answer("stick", id("stick")),
-            new Answer("sugar", id("sugar")),
-            new Answer("torch", id("torch")),
-            new Answer("vault", id("vault")),
-            new Answer("wheat", id("wheat")),
-            new Answer("allay", id("allay_spawn_egg")),
-            new Answer("blaze", id("blaze_spawn_egg")),
-            new Answer("camel", id("camel_spawn_egg")),
-            new Answer("drown", id("drowned_spawn_egg")),
-            new Answer("ghast", id("ghast_spawn_egg")),
-            new Answer("horse", id("horse_spawn_egg")),
-            new Answer("llama", id("llama_spawn_egg")),
-            new Answer("panda", id("panda_spawn_egg")),
-            new Answer("sheep", id("sheep_spawn_egg")),
-            new Answer("slime", id("slime_spawn_egg")),
-            new Answer("squid", id("squid_spawn_egg")),
-            new Answer("stray", id("stray_spawn_egg")),
-            new Answer("witch", id("witch_spawn_egg")),
-            new Answer("lever", id("lever")),
-            new Answer("sword", id("iron_sword")),
-            new Answer("cheep", antarchy("cheep_spawn_egg")),
-            new Answer("jerry", antarchy("jerry_spawn_egg")),
-            new Answer("lucid", antarchy("lucid_spawn_egg")),
-            new Answer("queen", antarchy("queen_spawn_egg")),
-            new Answer("ichor", antarchy("ichor")),
-            new Answer("lotus", antarchy("lotus")),
-            new Answer("mucus", antarchy("mucus")),
-            new Answer("peach", antarchy("peach"))
+    private static final ResourceLocation ANSWERS_FILE = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "blockle/answers.json");
+    private static final BlockleAnswers INSTANCE = new BlockleAnswers();
+    private static final Map<String, ResourceLocation> ANSWER_ITEMS = Map.ofEntries(
+            Map.entry("anvil", vanilla("anvil")), Map.entry("apple", vanilla("apple")),
+            Map.entry("arrow", vanilla("arrow")), Map.entry("bread", vanilla("bread")),
+            Map.entry("brick", vanilla("brick")), Map.entry("chain", vanilla("chain")),
+            Map.entry("chest", vanilla("chest")), Map.entry("clock", vanilla("clock")),
+            Map.entry("cocoa", vanilla("cocoa")), Map.entry("flint", vanilla("flint")),
+            Map.entry("glass", vanilla("glass")), Map.entry("melon", vanilla("melon")),
+            Map.entry("paper", vanilla("paper")), Map.entry("poppy", vanilla("poppy")),
+            Map.entry("sculk", vanilla("sculk")), Map.entry("stone", vanilla("stone")),
+            Map.entry("stick", vanilla("stick")), Map.entry("sugar", vanilla("sugar")),
+            Map.entry("torch", vanilla("torch")), Map.entry("vault", vanilla("vault")),
+            Map.entry("wheat", vanilla("wheat")), Map.entry("allay", vanilla("allay_spawn_egg")),
+            Map.entry("blaze", vanilla("blaze_spawn_egg")), Map.entry("camel", vanilla("camel_spawn_egg")),
+            Map.entry("drown", vanilla("drowned_spawn_egg")), Map.entry("ghast", vanilla("ghast_spawn_egg")),
+            Map.entry("horse", vanilla("horse_spawn_egg")), Map.entry("llama", vanilla("llama_spawn_egg")),
+            Map.entry("panda", vanilla("panda_spawn_egg")), Map.entry("sheep", vanilla("sheep_spawn_egg")),
+            Map.entry("slime", vanilla("slime_spawn_egg")), Map.entry("squid", vanilla("squid_spawn_egg")),
+            Map.entry("stray", vanilla("stray_spawn_egg")), Map.entry("witch", vanilla("witch_spawn_egg")),
+            Map.entry("lever", vanilla("lever")), Map.entry("sword", vanilla("iron_sword")),
+            Map.entry("cheep", antarchy("cheep_spawn_egg")), Map.entry("jerry", antarchy("jerry_spawn_egg")),
+            Map.entry("lucid", antarchy("lucid_spawn_egg")), Map.entry("queen", antarchy("queen_spawn_egg")),
+            Map.entry("ichor", antarchy("ichor")), Map.entry("lotus", antarchy("lotus")),
+            Map.entry("mucus", antarchy("mucus")), Map.entry("peach", antarchy("peach"))
     );
+    private static volatile List<String> answers = List.of();
 
     private BlockleAnswers() {
     }
 
+    public static BlockleAnswers instance() {
+        return INSTANCE;
+    }
+
     public static Answer answerForDay(long day) {
-        int index = (int) Math.floorMod(day + SALT, ANSWERS.size());
-        return ANSWERS.get(index);
+        List<String> currentAnswers = answers;
+        if (currentAnswers.isEmpty()) return null;
+        int index = (int) Math.floorMod(day + SALT, currentAnswers.size());
+        String word = currentAnswers.get(index);
+        return new Answer(word, ANSWER_ITEMS.getOrDefault(word, vanilla("book")));
     }
 
     public static int size() {
-        return ANSWERS.size();
+        return answers.size();
+    }
+
+    @Override
+    protected List<String> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
+        var resource = resourceManager.getResource(ANSWERS_FILE);
+        if (resource.isEmpty()) return List.of();
+
+        try (var reader = resource.get().openAsReader()) {
+            JsonElement json = JsonParser.parseReader(reader);
+            if (!json.isJsonArray()) return List.of();
+            LinkedHashSet<String> validAnswers = new LinkedHashSet<>();
+            json.getAsJsonArray().forEach(element -> {
+                if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isString()) {
+                    String word = element.getAsString();
+                    if (word.matches("(?i)[a-z]{5}")) validAnswers.add(word.toLowerCase(java.util.Locale.ROOT));
+                }
+            });
+            return List.copyOf(validAnswers);
+        } catch (Exception ignored) {
+            return List.of();
+        }
+    }
+
+    @Override
+    protected void apply(List<String> loadedAnswers, ResourceManager resourceManager, ProfilerFiller profiler) {
+        answers = loadedAnswers;
+        Antarchy.LOGGER.info("Loaded {} valid Blockle answers", answers.size());
     }
 
     public record Answer(String word, ResourceLocation itemId) {
     }
 
-    private static ResourceLocation id(String path) {
+    private static ResourceLocation vanilla(String path) {
         return ResourceLocation.withDefaultNamespace(path);
     }
 

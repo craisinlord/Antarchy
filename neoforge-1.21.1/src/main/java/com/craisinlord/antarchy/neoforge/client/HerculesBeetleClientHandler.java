@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.CameraShakeClientState;
 import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
 import com.craisinlord.antarchy.content.client.HordeClientState;
+import com.craisinlord.antarchy.content.client.KingJudgmentFlashClientState;
 import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
 import com.craisinlord.antarchy.content.network.HerculesBeetleFlightTogglePayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleJumpInputPayload;
@@ -31,6 +32,7 @@ public final class HerculesBeetleClientHandler {
     public static void onClientTick(ClientTickEvent.Post event) {
         CameraShakeClientState.tick();
         HerculesBeetleImpactShakeClientState.tick();
+        KingJudgmentFlashClientState.tick();
         HordeClientState.tick();
 
         Minecraft mc = Minecraft.getInstance();

@@ -3,6 +3,9 @@ package com.craisinlord.antarchy.content.entity.nightmare;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -30,6 +33,7 @@ import java.util.UUID;
 
 public class NightmareBiteEntity extends Entity implements GeoEntity {
     private static final EntityDataAccessor<Boolean> PHASE_TWO = SynchedEntityData.defineId(NightmareBiteEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> TELEGRAPH_ONLY = SynchedEntityData.defineId(NightmareBiteEntity.class, EntityDataSerializers.BOOLEAN);
     private static final RawAnimation BITE_ANIM = RawAnimation.begin().thenPlay("bite");
     private static final int LIFETIME_TICKS = 12;
     private static final int SOUND_TICK = 7;
@@ -64,9 +68,21 @@ public class NightmareBiteEntity extends Entity implements GeoEntity {
         return bite;
     }
 
+    public static NightmareBiteEntity spawnTelegraphAt(ServerLevel level, LivingEntity target, boolean phaseTwo) {
+        NightmareBiteEntity bite = new NightmareBiteEntity(AntarchyObjects.NIGHTMARE_BITE.get(), level);
+        bite.targetId = target.getUUID();
+        bite.setPhaseTwo(phaseTwo);
+        bite.setTelegraphOnly(true);
+        bite.approachSide = target.getRandom().nextBoolean() ? 1 : -1;
+        bite.updateTrackingPosition(target, 0.0D);
+        level.addFreshEntity(bite);
+        return bite;
+    }
+
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(PHASE_TWO, false);
+        builder.define(TELEGRAPH_ONLY, false);
     }
 
     @Override
@@ -106,6 +122,14 @@ public class NightmareBiteEntity extends Entity implements GeoEntity {
         this.getEntityData().set(PHASE_TWO, phaseTwo);
     }
 
+    private boolean isTelegraphOnly() {
+        return this.entityData.get(TELEGRAPH_ONLY);
+    }
+
+    private void setTelegraphOnly(boolean telegraphOnly) {
+        this.getEntityData().set(TELEGRAPH_ONLY, telegraphOnly);
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -113,7 +137,8 @@ public class NightmareBiteEntity extends Entity implements GeoEntity {
             return;
         }
         LivingEntity target = this.resolveTarget();
-        if (target == null || !target.isAlive() || !target.hasEffect(AntarchyObjects.DREAD.get())) {
+        if (target == null || !target.isAlive()
+                || !this.isTelegraphOnly() && !target.hasEffect(AntarchyObjects.DREAD.get())) {
             this.discard();
             return;
         }
@@ -126,7 +151,9 @@ public class NightmareBiteEntity extends Entity implements GeoEntity {
         }
         if (!this.biteDamageApplied && nextAge >= DAMAGE_TICK) {
             this.biteDamageApplied = true;
-            this.performBite(target);
+            if (!this.isTelegraphOnly()) {
+                this.performBite(target);
+            }
         }
         if (nextAge >= LIFETIME_TICKS) {
             this.discard();
@@ -143,6 +170,10 @@ public class NightmareBiteEntity extends Entity implements GeoEntity {
     }
 
     private void updateTrackingPosition(LivingEntity target, double progress) {
+        AntarchyGravityDirection targetGravity = AntarchyGravityApi.getGravityDirection(target);
+        if (AntarchyGravityApi.getGravityDirection(this) != targetGravity) {
+            AntarchyGravityApi.setGravityDirection(this, targetGravity);
+        }
         Vec3 forward = target.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
         if (forward.lengthSqr() < 1.0E-4D) {
             forward = this.getViewVector(1.0F).multiply(1.0D, 0.0D, 1.0D);
@@ -151,17 +182,21 @@ public class NightmareBiteEntity extends Entity implements GeoEntity {
             forward = new Vec3(0.0D, 0.0D, 1.0D);
         }
         forward = forward.normalize();
-        Vec3 right = new Vec3(-forward.z, 0.0D, forward.x);
+        Vec3 localUp = AntarchyGravityRotationUtil.vecPlayerToWorld(
+                0.0D, 1.0D, 0.0D, targetGravity);
+        Vec3 right = forward.cross(localUp).normalize();
         double sideOffset = START_SIDE_OFFSET + (END_SIDE_OFFSET - START_SIDE_OFFSET) * progress;
         double backOffset = START_BACK_OFFSET + (END_BACK_OFFSET - START_BACK_OFFSET) * progress;
-        Vec3 desiredPos = target.position()
-                .add(0.0D, target.getBbHeight() * 0.55D, 0.0D)
+        Vec3 bodyCenter = target.position().add(AntarchyGravityRotationUtil.vecPlayerToWorld(
+                0.0D, target.getBbHeight() * 0.55D, 0.0D, targetGravity));
+        Vec3 desiredPos = bodyCenter
                 .add(right.scale(this.approachSide * sideOffset))
                 .subtract(forward.scale(backOffset));
-        Vec3 toTarget = target.getEyePosition().subtract(desiredPos);
+        Vec3 toTarget = bodyCenter.subtract(desiredPos);
         this.setPos(desiredPos.x, desiredPos.y, desiredPos.z);
         if (toTarget.lengthSqr() > 1.0E-4D) {
-            float yaw = (float) Math.toDegrees(Math.atan2(toTarget.z, toTarget.x)) - 90.0F;
+            Vec3 localToTarget = AntarchyGravityRotationUtil.vecWorldToPlayer(toTarget, targetGravity);
+            float yaw = (float) Math.toDegrees(Math.atan2(localToTarget.z, localToTarget.x)) - 90.0F;
             this.setYRot(yaw);
         }
     }
@@ -177,6 +212,7 @@ public class NightmareBiteEntity extends Entity implements GeoEntity {
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         tag.putBoolean("PhaseTwo", this.isPhaseTwo());
+        tag.putBoolean("TelegraphOnly", this.isTelegraphOnly());
         tag.putInt("AgeTicks", this.ageTicks);
         tag.putInt("ApproachSide", this.approachSide);
         tag.putBoolean("BiteSoundPlayed", this.biteSoundPlayed);
@@ -189,6 +225,7 @@ public class NightmareBiteEntity extends Entity implements GeoEntity {
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         this.setPhaseTwo(tag.getBoolean("PhaseTwo"));
+        this.setTelegraphOnly(tag.getBoolean("TelegraphOnly"));
         this.ageTicks = tag.getInt("AgeTicks");
         this.approachSide = tag.getInt("ApproachSide");
         this.biteSoundPlayed = tag.getBoolean("BiteSoundPlayed");

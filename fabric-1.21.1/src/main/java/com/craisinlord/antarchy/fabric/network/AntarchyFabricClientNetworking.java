@@ -58,6 +58,8 @@ public final class AntarchyFabricClientNetworking {
                 context.client().execute(() -> BrutalflyElytraClientState.trigger(payload.entityId(), payload.durationTicks(), payload.strength())));
         ClientPlayNetworking.registerGlobalReceiver(HerculesBeetleImpactShakePayload.TYPE, (payload, context) ->
                 context.client().execute(() -> AntarchyFabricNetworking.triggerHerculesBeetleImpactShake(payload.durationTicks())));
+        ClientPlayNetworking.registerGlobalReceiver(KingJudgmentFlashPayload.TYPE, (payload, context) ->
+                context.client().execute(() -> com.craisinlord.antarchy.content.client.KingJudgmentFlashClientState.trigger(payload.durationTicks())));
         ClientPlayNetworking.registerGlobalReceiver(ImpactShakePayload.TYPE, (payload, context) ->
                 context.client().execute(() -> AntarchyFabricNetworking.triggerImpactShake(payload)));
         ClientPlayNetworking.registerGlobalReceiver(HordeIntensityPayload.TYPE, (payload, context) ->

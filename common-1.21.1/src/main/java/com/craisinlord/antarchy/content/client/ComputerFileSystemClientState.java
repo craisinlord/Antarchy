@@ -25,6 +25,16 @@ public final class ComputerFileSystemClientState {
         } catch (NumberFormatException ignored) {
             return;
         }
+        // Terminal, desktop, and game responses use the same payload envelope,
+        // but their status must not leak into the file explorer's shared state.
+        if (action != ComputerAccessPayload.FILE_LIST
+                && action != ComputerAccessPayload.FILE_OPEN
+                && action != ComputerAccessPayload.FILE_CREATE
+                && action != ComputerAccessPayload.FILE_SAVE
+                && action != ComputerAccessPayload.FILE_DELETE
+                && action != ComputerAccessPayload.FILE_MOVE) {
+            return;
+        }
         State state = STATES.computeIfAbsent(payload.pos(), ignored -> new State());
         state.success = payload.result() == ComputerAccessResultPayload.SUCCESS;
         state.error = envelope[1];

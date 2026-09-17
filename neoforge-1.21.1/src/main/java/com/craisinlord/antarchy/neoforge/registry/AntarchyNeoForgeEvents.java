@@ -396,6 +396,7 @@ public final class AntarchyNeoForgeEvents {
         event.addListener(new ComputerScientistTradeManager());
         event.addListener(com.craisinlord.antarchy.content.guide.ComputerGuideData.instance());
         event.addListener(com.craisinlord.antarchy.content.antmail.AntmailEventData.instance());
+        event.addListener(com.craisinlord.antarchy.content.computer.blockle.BlockleAnswers.instance());
     }
     static void handleStartTracking(PlayerEvent.StartTracking event) {
         if (event.getTarget().level().isClientSide()) {
@@ -985,6 +986,7 @@ public final class AntarchyNeoForgeEvents {
 
 
     static void handleNightmareArmorDoubleDamage(LivingIncomingDamageEvent event) {
+        if (com.craisinlord.antarchy.content.item.RoyalGuardianSwordAbilities.isApplyingSecondaryDamage()) return;
         net.minecraft.world.damagesource.DamageSource source = event.getSource();
         if (!(source.getEntity() instanceof net.minecraft.world.entity.LivingEntity attacker)) return;
         if (!attacker.getAttributes().hasAttribute(AntarchyNeoforgeMisc.DOUBLE_DAMAGE_CHANCE)) return;

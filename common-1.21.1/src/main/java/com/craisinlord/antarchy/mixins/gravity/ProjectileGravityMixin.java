@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.mixins.gravity;
 
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.antarchy.content.gravity.ProjectileLaunchGravity;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -58,7 +58,7 @@ public abstract class ProjectileGravityMixin {
     ) {
         Vec3 direction = new Vec3(x, y, z);
         if (AntarchyGravityApi.isGravityInverted(shooter)) {
-            direction = AntarchyGravityRotationUtil.vecPlayerToWorld(
+            direction = ProjectileLaunchGravity.toWorld(
                     direction,
                     AntarchyGravityApi.getGravityDirection(shooter)
             );

@@ -35,7 +35,7 @@ public final class ComputerScientistTradeManager extends SimpleJsonResourceReloa
     }
 
     public static int[] slotsPerLevel() {
-        return new int[] {4, 2, 2, 3, 4};
+        return new int[] {4, 2, 2, 3, 5};
     }
 
     public static VillagerTrades.ItemListing listing(int level, int index) {

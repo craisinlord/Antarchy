@@ -1,0 +1,7 @@
+The pencil, eraser, trash, undo, and redo icons are adapted from Pixelarticons
+by Gerrit Halfmann (https://github.com/halfmage/pixelarticons), version 2.4.1.
+
+The source SVG files are included in this directory. The PNGs were rasterized
+at 24x24, recolored to Antarchy green, and given a one-pixel black outline.
+
+These icons are licensed under the MIT License. See LICENSE-pixelarticons.txt.

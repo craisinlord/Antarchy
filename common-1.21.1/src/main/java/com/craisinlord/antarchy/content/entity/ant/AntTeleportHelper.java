@@ -113,6 +113,9 @@ public final class AntTeleportHelper {
         }
 
         Vec3 destinationPos = getDestinationPosition(player, destination);
+        if (destinationPos == null) {
+            return failArrival(player);
+        }
         teleportPlayerWithCompanions(player, destination, destinationPos);
         player.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
         return InteractionResult.CONSUME;
@@ -121,6 +124,9 @@ public final class AntTeleportHelper {
     public static InteractionResult teleportPlayerToReturnDestination(ServerPlayer player) {
         ServerLevel destination = resolveReturnDestinationLevel(player);
         Vec3 destinationPos = getDestinationPosition(player, destination);
+        if (destinationPos == null) {
+            return failArrival(player);
+        }
         teleportPlayerWithCompanions(player, destination, destinationPos);
         player.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
         return InteractionResult.CONSUME;
@@ -160,6 +166,9 @@ public final class AntTeleportHelper {
         }
 
         Vec3 destinationPos = getDestinationPosition(player, destination);
+        if (destinationPos == null) {
+            return failArrival(player);
+        }
         teleportPlayerWithCompanions(player, destination, destinationPos);
         player.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
         return InteractionResult.CONSUME;
@@ -245,6 +254,7 @@ public final class AntTeleportHelper {
         return player.server.overworld();
     }
 
+    @Nullable
     public static Vec3 getDestinationPosition(ServerPlayer player, ServerLevel destination) {
         BlockPos respawnPos = player.getRespawnPosition();
         BlockPos preferredPos;
@@ -255,11 +265,7 @@ public final class AntTeleportHelper {
         }
 
         Vec3 safeArrivalPos = findSafeArrivalPosition(player, destination, preferredPos);
-        if (safeArrivalPos != null) {
-            return safeArrivalPos;
-        }
-
-        return createEmergencyArrivalPlatform(destination, findEmergencyPlatformPosition(destination, preferredPos));
+        return safeArrivalPos;
     }
 
     @Nullable
@@ -310,7 +316,7 @@ public final class AntTeleportHelper {
     /**
      * Arrival validation needs neighboring chunks for collision checks. Load a
      * bounded area up front so unloaded terrain is not mistaken for an unsafe
-     * destination and sent straight to the emergency-platform path.
+     * destination and rejected prematurely.
      */
     private static void loadArrivalSearchArea(ServerLevel destination, BlockPos preferredPos) {
         ChunkPos center = new ChunkPos(preferredPos);
@@ -343,6 +349,7 @@ public final class AntTeleportHelper {
     @Nullable
     private static Vec3 findSafeArrivalPositionInYRange(ServerPlayer player, ServerLevel destination, BlockPos preferredPos, int minY, int maxY) {
         Set<BlockPos> surfaceCandidates = new LinkedHashSet<>();
+        boolean elythia = destination.dimension() == PermanentPortalType.ELYTHIA.primaryDimension();
         for (int radius = 0; radius <= ARRIVAL_SEARCH_RADIUS; radius++) {
             for (int xOff = -radius; xOff <= radius; xOff++) {
                 for (int zOff = -radius; zOff <= radius; zOff++) {
@@ -357,12 +364,19 @@ public final class AntTeleportHelper {
                     }
 
                     BlockPos surface = destination.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, column);
-                    addArrivalCandidate(surfaceCandidates, surface);
-                    addArrivalCandidate(surfaceCandidates, destination.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, column));
+                    if (elythia) {
+                        surfaceCandidates.add(surface);
+                        surfaceCandidates.add(surface.above());
+                    } else {
+                        addArrivalCandidate(surfaceCandidates, surface);
+                        addArrivalCandidate(surfaceCandidates, destination.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, column));
+                    }
 
                     for (int yOffset = 1; yOffset <= ARRIVAL_VERTICAL_SEARCH; yOffset++) {
                         surfaceCandidates.add(surface.above(yOffset));
-                        surfaceCandidates.add(surface.below(yOffset));
+                        if (!elythia) {
+                            surfaceCandidates.add(surface.below(yOffset));
+                        }
                     }
                 }
             }
@@ -381,8 +395,15 @@ public final class AntTeleportHelper {
             }
         }
 
+        // Elythia arrivals must stay on the generated surface; a vertical scan
+        // can otherwise select an underground cave floor after a surface miss.
+        if (elythia) {
+            return null;
+        }
+
         // Heightmaps can be stale or unsuitable around structures, so retain a
-        // bounded exhaustive search as a final generated-terrain attempt.
+        // bounded exhaustive search as a final generated-terrain attempt in
+        // dimensions whose configured arrival ranges intentionally allow it.
         for (int radius = 0; radius <= ARRIVAL_SEARCH_RADIUS; radius++) {
             for (int xOff = -radius; xOff <= radius; xOff++) {
                 for (int zOff = -radius; zOff <= radius; zOff++) {
@@ -442,6 +463,37 @@ public final class AntTeleportHelper {
     }
 
     private static boolean isValidArrivalPosition(ServerLevel destination, Vec3 safePos) {
+        if (destination.dimension() == PermanentPortalType.ELYTHIA.primaryDimension()) {
+            BlockPos feet = BlockPos.containing(safePos);
+            BlockPos supportPos = feet.below();
+            if (!destination.hasChunkAt(supportPos)) {
+                return false;
+            }
+            BlockState support = destination.getBlockState(supportPos);
+            if (!support.isFaceSturdy(destination, supportPos, Direction.UP)
+                    || !support.getFluidState().isEmpty()
+                    || support.is(net.minecraft.tags.BlockTags.LEAVES)) {
+                return false;
+            }
+
+            int nearbySupports = 0;
+            for (Direction direction : Direction.Plane.HORIZONTAL) {
+                for (int yOffset = -2; yOffset <= 2; yOffset++) {
+                    BlockPos nearby = supportPos.relative(direction).offset(0, yOffset, 0);
+                    BlockState nearbyState = destination.getBlockState(nearby);
+                    if (nearbyState.isFaceSturdy(destination, nearby, Direction.UP)
+                            && nearbyState.getFluidState().isEmpty()
+                            && !nearbyState.is(net.minecraft.tags.BlockTags.LEAVES)) {
+                        nearbySupports++;
+                        break;
+                    }
+                }
+            }
+            if (nearbySupports < 2) {
+                return false;
+            }
+        }
+
         if (destination.dimension() != AntarchySettings.termiteDestinationDimension()) {
             return true;
         }
@@ -469,98 +521,8 @@ public final class AntTeleportHelper {
         return true;
     }
 
-    private static BlockPos getClampedFallbackPosition(ServerLevel destination, BlockPos preferredPos) {
-        int minY = destination.getMinBuildHeight() + 1;
-        int maxY = destination.getMaxBuildHeight() - 1;
-        return new BlockPos(preferredPos.getX(), Mth.clamp(preferredPos.getY(), minY, maxY), preferredPos.getZ());
-    }
-
-    /**
-     * Keep the emergency platform grounded in generated terrain when possible.
-     * A configured/shared spawn can be an arbitrary coordinate in a custom
-     * dimension, so using its Y directly can strand the player in the sky.
-     */
-    private static BlockPos findEmergencyPlatformPosition(ServerLevel destination, BlockPos preferredPos) {
-        BlockPos best = null;
-        int bestDistance = Integer.MAX_VALUE;
-        int minY = destination.getMinBuildHeight() + 1;
-        int maxY = destination.getMaxBuildHeight() - 2;
-
-        for (int radius = 0; radius <= 8; radius++) {
-            for (int xOffset = -radius; xOffset <= radius; xOffset++) {
-                for (int zOffset = -radius; zOffset <= radius; zOffset++) {
-                    if (radius > 0 && Math.abs(xOffset) != radius && Math.abs(zOffset) != radius) {
-                        continue;
-                    }
-
-                    BlockPos searchPos = preferredPos.offset(xOffset, 0, zOffset);
-                    if (!destination.hasChunkAt(searchPos)) {
-                        continue;
-                    }
-
-                    BlockPos surface = destination.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, searchPos);
-                    if (surface.getY() < minY || surface.getY() > maxY) {
-                        continue;
-                    }
-
-                    int distance = Math.abs(xOffset) + Math.abs(zOffset);
-                    if (distance < bestDistance) {
-                        best = surface;
-                        bestDistance = distance;
-                    }
-                }
-            }
-            if (best != null) {
-                break;
-            }
-        }
-
-        return best != null ? best : getClampedFallbackPosition(destination, preferredPos);
-    }
-
-    /**
-     * Last-resort landing location for custom dimensions whose generated spawn
-     * area has no valid player-sized space. The normal search always runs first;
-     * this only modifies terrain when there is no safe generated location.
-     */
-    private static Vec3 createEmergencyArrivalPlatform(ServerLevel destination, BlockPos preferredPos) {
-        BlockPos center = getClampedFallbackPosition(destination, preferredPos);
-        int minY = destination.getMinBuildHeight() + 1;
-        int maxY = destination.getMaxBuildHeight() - 2;
-        center = new BlockPos(center.getX(), Mth.clamp(center.getY(), minY, maxY), center.getZ());
-
-        destination.getChunkAt(center);
-        BlockState platformState = emergencyPlatformState(destination);
-
-        for (int xOffset = -2; xOffset <= 2; xOffset++) {
-            for (int zOffset = -2; zOffset <= 2; zOffset++) {
-                BlockPos column = center.offset(xOffset, 0, zOffset);
-                destination.setBlock(column.below(), platformState, Block.UPDATE_ALL);
-                for (int yOffset = 0; yOffset <= 3; yOffset++) {
-                    destination.removeBlock(column.above(yOffset), false);
-                }
-            }
-        }
-
-        return Vec3.atBottomCenterOf(center);
-    }
-
-    private static BlockState emergencyPlatformState(ServerLevel destination) {
-        if (destination.dimension() == PermanentPortalType.ELYTHIA.primaryDimension()) {
-            return PermanentPortalType.ELYTHIA.platformBlock().defaultBlockState();
-        }
-        if (destination.dimension() == PermanentPortalType.THORAXIS.primaryDimension()) {
-            return PermanentPortalType.THORAXIS.platformBlock().defaultBlockState();
-        }
-        if (destination.dimension() == PermanentPortalType.CAVARYN.primaryDimension()) {
-            return PermanentPortalType.CAVARYN.platformBlock().defaultBlockState();
-        }
-        if (destination.dimension() == Level.NETHER) {
-            return Blocks.NETHERRACK.defaultBlockState();
-        }
-        if (destination.dimension() == Level.END) {
-            return Blocks.END_STONE.defaultBlockState();
-        }
-        return Blocks.DIRT.defaultBlockState();
+    private static InteractionResult failArrival(ServerPlayer player) {
+        player.displayClientMessage(Component.translatable("message.antarchy.teleport_arrival_failed"), true);
+        return InteractionResult.CONSUME;
     }
 }

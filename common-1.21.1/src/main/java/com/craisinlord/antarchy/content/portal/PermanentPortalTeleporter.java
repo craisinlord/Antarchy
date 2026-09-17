@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -46,6 +47,12 @@ public final class PermanentPortalTeleporter {
         }
 
         Vec3 arrival = findArrivalPosition(entity, destination, portalPos, type);
+        if (arrival == null) {
+            if (entity instanceof ServerPlayer player) {
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.antarchy.teleport_arrival_failed"), true);
+            }
+            return new DimensionTransition(sourceLevel, entity, DimensionTransition.DO_NOTHING);
+        }
         return new DimensionTransition(destination, arrival, Vec3.ZERO, entity.getYRot(), entity.getXRot(), DimensionTransition.PLAY_PORTAL_SOUND);
     }
 
@@ -57,17 +64,24 @@ public final class PermanentPortalTeleporter {
         return sourceLevel.getServer().getLevel(type.primaryDimension());
     }
 
+    @Nullable
     private static Vec3 findArrivalPosition(Entity entity, ServerLevel destination, BlockPos preferredPos, PermanentPortalType type) {
         PermanentPortalShape active = PermanentPortalShape.findActiveNear(destination, preferredPos, type);
         if (active != null) {
-            return active.center();
+            Vec3 safePortalPosition = tryFindSafePosition(entity, destination, BlockPos.containing(active.center()));
+            if (safePortalPosition != null) {
+                return safePortalPosition;
+            }
         }
 
         Vec3 safe = findSafeArrivalPosition(entity, destination, preferredPos, type);
         if (safe != null) {
             PermanentPortalShape nearbyActive = findActiveNearby(destination, BlockPos.containing(safe), type);
             if (nearbyActive != null) {
-                return nearbyActive.center();
+                Vec3 safePortalPosition = tryFindSafePosition(entity, destination, BlockPos.containing(nearbyActive.center()));
+                if (safePortalPosition != null) {
+                    return safePortalPosition;
+                }
             }
 
             PermanentPortalShape created = createReturnPortal(destination, safe, type);
@@ -77,11 +91,7 @@ public final class PermanentPortalTeleporter {
             return createFallbackPortal(destination, BlockPos.containing(safe), type);
         }
 
-        BlockPos fallbackPos = preferredPos;
-        if (type == PermanentPortalType.ELYTHIA && destination.hasChunkAt(preferredPos)) {
-            fallbackPos = destination.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, preferredPos);
-        }
-        return createFallbackPortal(destination, fallbackPos, type);
+        return null;
     }
 
     @Nullable
@@ -119,7 +129,8 @@ public final class PermanentPortalTeleporter {
         }
 
         Set<BlockPos> candidates = new LinkedHashSet<>();
-        if (type != PermanentPortalType.ELYTHIA) {
+        boolean elythia = destination.dimension() == PermanentPortalType.ELYTHIA.primaryDimension();
+        if (!elythia) {
             addCandidate(candidates, preferredPos);
         }
 
@@ -132,20 +143,28 @@ public final class PermanentPortalTeleporter {
 
                     BlockPos horizontalPos = preferredPos.offset(xOff, 0, zOff);
                     if (destination.hasChunkAt(horizontalPos)) {
-                        addCandidate(candidates, destination.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, horizontalPos));
-                        addCandidate(candidates, destination.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, horizontalPos));
+                        BlockPos surface = destination.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, horizontalPos);
+                        if (elythia) {
+                            candidates.add(surface);
+                            candidates.add(surface.above());
+                        } else {
+                            addCandidate(candidates, surface);
+                            addCandidate(candidates, destination.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, horizontalPos));
+                        }
                     }
-                    for (int yOff = 0; yOff <= VERTICAL_SEARCH; yOff++) {
-                        addCandidate(candidates, horizontalPos.above(yOff));
-                        if (yOff > 0) {
-                            addCandidate(candidates, horizontalPos.below(yOff));
+                    if (!elythia) {
+                        for (int yOff = 0; yOff <= VERTICAL_SEARCH; yOff++) {
+                            addCandidate(candidates, horizontalPos.above(yOff));
+                            if (yOff > 0) {
+                                addCandidate(candidates, horizontalPos.below(yOff));
+                            }
                         }
                     }
                 }
             }
         }
 
-        if (type == PermanentPortalType.ELYTHIA) {
+        if (elythia) {
             addCandidate(candidates, preferredPos);
         }
 
@@ -300,6 +319,36 @@ public final class PermanentPortalTeleporter {
 
     private static boolean isValidArrivalPosition(ServerLevel destination, Vec3 safePos) {
         BlockPos standPos = BlockPos.containing(safePos);
+        if (destination.dimension() == PermanentPortalType.ELYTHIA.primaryDimension()) {
+            BlockPos supportPos = standPos.below();
+            if (!destination.hasChunkAt(standPos) || !destination.hasChunkAt(supportPos)) {
+                return false;
+            }
+            BlockState support = destination.getBlockState(supportPos);
+            if (!support.isFaceSturdy(destination, supportPos, Direction.UP)
+                    || support.is(BlockTags.LEAVES)
+                    || !support.getFluidState().isEmpty()) {
+                return false;
+            }
+            int nearbySupports = 0;
+            for (Direction direction : Direction.Plane.HORIZONTAL) {
+                BlockPos neighbor = supportPos.relative(direction);
+                if (!destination.hasChunkAt(neighbor)) {
+                    continue;
+                }
+                for (int yOff = -2; yOff <= 2; yOff++) {
+                    BlockPos nearby = neighbor.offset(0, yOff, 0);
+                    BlockState nearbyState = destination.getBlockState(nearby);
+                    if (nearbyState.isFaceSturdy(destination, nearby, Direction.UP)
+                            && !nearbyState.is(BlockTags.LEAVES)
+                            && nearbyState.getFluidState().isEmpty()) {
+                        nearbySupports++;
+                        break;
+                    }
+                }
+            }
+            return nearbySupports >= 2;
+        }
         if (destination.dimension() == AntarchySettings.termiteDestinationDimension()
                 || destination.dimension() == AntarchySettings.redAntDestinationDimension()) {
             if (!destination.hasChunkAt(standPos) || !destination.hasChunkAt(standPos.below())) {

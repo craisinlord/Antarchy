@@ -329,6 +329,7 @@ public final class AntarchyObjects {
     public static Supplier<Holder<MobEffect>> STINKY_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Holder<MobEffect>> GLIMMERING_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
+    public static Supplier<Holder<MobEffect>> ROYAL_VITALITY_PENALTY_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Fluid> LUMEN = (Supplier<Fluid>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -821,6 +822,10 @@ public final class AntarchyObjects {
 
     public static void setGlimmeringEffect(Supplier<Holder<MobEffect>> supplier) {
         GLIMMERING_EFFECT = supplier;
+    }
+
+    public static void setRoyalVitalityPenaltyEffect(Supplier<Holder<MobEffect>> supplier) {
+        ROYAL_VITALITY_PENALTY_EFFECT = supplier;
     }
 
     public static void setElka(Supplier<EntityType<com.craisinlord.antarchy.content.entity.ElkaEntity>> supplier) {

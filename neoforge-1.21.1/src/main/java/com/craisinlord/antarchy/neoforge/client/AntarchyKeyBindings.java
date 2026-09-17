@@ -51,6 +51,13 @@ public final class AntarchyKeyBindings {
             InputConstants.KEY_V,
             CATEGORY
     );
+    public static final KeyMapping ROYAL_BOUNDARY = new KeyMapping(
+            "key.antarchy.royal_boundary",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            InputConstants.KEY_B,
+            CATEGORY
+    );
 
     private AntarchyKeyBindings() {}
 
@@ -61,6 +68,7 @@ public final class AntarchyKeyBindings {
         event.register(MOUNT_FLIGHT_TOGGLE);
         event.register(TIGERS_EYE_CAMOUFLAGE);
         event.register(ROYAL_INVERSION_TOGGLE);
+        event.register(ROYAL_BOUNDARY);
     }
 
     public static boolean isMountFlightTogglePressed() {
@@ -77,5 +85,9 @@ public final class AntarchyKeyBindings {
 
     public static boolean consumeRoyalInversionTogglePressed() {
         return ROYAL_INVERSION_TOGGLE.consumeClick();
+    }
+
+    public static boolean consumeRoyalBoundaryPressed() {
+        return ROYAL_BOUNDARY.consumeClick();
     }
 }

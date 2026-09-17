@@ -29,6 +29,8 @@ public record ComputerAccessPayload(BlockPos pos, int action, String value) impl
     public static final int ANTMAN_STATE = 17;
     public static final int BLOCKLE_STATE = 18;
     public static final int BLOCKLE_GUESS = 19;
+    public static final int ARCHIVE_STATE = 20;
+    public static final int LOCATE_STRUCTURE = 21;
     public static final Type<ComputerAccessPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "computer_access"));
     public static final StreamCodec<RegistryFriendlyByteBuf, ComputerAccessPayload> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, ComputerAccessPayload::pos,

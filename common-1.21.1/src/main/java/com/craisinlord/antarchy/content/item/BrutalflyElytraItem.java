@@ -8,13 +8,19 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ElytraItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 public final class BrutalflyElytraItem extends ElytraItem {
     private static final ResourceLocation REPAIR_MATERIAL_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "brutalfly_wing");
+    private static final ResourceLocation ARMOR_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "brutalfly_elytra_armor");
+    private static final ResourceLocation TOUGHNESS_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "brutalfly_elytra_toughness");
 
     // Set by NeoForge client setup to return the actual bound key name
     public static Supplier<Component> FLAP_KEY_NAME = () -> Component.literal("Shift");
@@ -25,6 +31,15 @@ public final class BrutalflyElytraItem extends ElytraItem {
 
     public static boolean isWearingBrutalflyElytra(LivingEntity entity) {
         return entity != null && entity.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof BrutalflyElytraItem;
+    }
+
+    @Override
+    public ItemAttributeModifiers getDefaultAttributeModifiers() {
+        return ItemAttributeModifiers.builder()
+                .add(Attributes.ARMOR,
+                        new AttributeModifier(ARMOR_MODIFIER_ID, 3.0D, AttributeModifier.Operation.ADD_VALUE),
+                        EquipmentSlotGroup.CHEST)
+                .build();
     }
 
     @Override

@@ -43,6 +43,12 @@ public final class AntarchyKeyBindings {
             GLFW.GLFW_KEY_V,
             CATEGORY
     );
+    public static final KeyMapping ROYAL_BOUNDARY = new KeyMapping(
+            "key.antarchy.royal_boundary",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_B,
+            CATEGORY
+    );
 
     private AntarchyKeyBindings() {}
 
@@ -52,6 +58,7 @@ public final class AntarchyKeyBindings {
         KeyBindingHelper.registerKeyBinding(MOUNT_FLIGHT_TOGGLE);
         KeyBindingHelper.registerKeyBinding(TIGERS_EYE_CAMOUFLAGE);
         KeyBindingHelper.registerKeyBinding(ROYAL_INVERSION_TOGGLE);
+        KeyBindingHelper.registerKeyBinding(ROYAL_BOUNDARY);
     }
 
     public static boolean isBrutalflyFlapPressed() {
@@ -72,5 +79,9 @@ public final class AntarchyKeyBindings {
 
     public static boolean consumeRoyalInversionTogglePressed() {
         return Minecraft.getInstance().screen == null && ROYAL_INVERSION_TOGGLE.consumeClick();
+    }
+
+    public static boolean consumeRoyalBoundaryPressed() {
+        return Minecraft.getInstance().screen == null && ROYAL_BOUNDARY.consumeClick();
     }
 }

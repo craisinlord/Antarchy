@@ -64,4 +64,17 @@ public abstract class HoverboardRiderPoseMixin<T extends LivingEntity, M extends
             humanoidModel.body.zRot += (float) Math.toRadians(HOVERBOARD_RIDER_TORSO_ROLL);
         }
     }
+
+    @Inject(
+            method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
+            at = @At("RETURN")
+    )
+    private void antarchy$restoreHoverboardRiderPose(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, CallbackInfo ci) {
+        if (entity.getVehicle() instanceof HoverboardEntity && this.getModel() instanceof HumanoidModel<?> humanoidModel) {
+            float correction = (float) Math.toRadians(HOVERBOARD_RIDER_RENDER_YAW);
+            humanoidModel.head.yRot -= correction;
+            humanoidModel.hat.yRot -= correction;
+            humanoidModel.body.zRot -= (float) Math.toRadians(HOVERBOARD_RIDER_TORSO_ROLL);
+        }
+    }
 }

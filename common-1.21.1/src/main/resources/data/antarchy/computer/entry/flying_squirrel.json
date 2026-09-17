@@ -4,5 +4,7 @@
   "title": "guide.antarchy.entry.flying_squirrel.title",
   "subtitle": "guide.antarchy.entry.flying_squirrel.subtitle",
   "description": ["guide.antarchy.entry.flying_squirrel.description"],
-  "entity": "antarchy:flying_squirrel"
+  "entity": "antarchy:flying_squirrel",
+  "rotation": 45,
+  "render_scale": 0.8
 }

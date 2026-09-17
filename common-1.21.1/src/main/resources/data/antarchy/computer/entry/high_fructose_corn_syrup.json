@@ -3,5 +3,6 @@
   "category": "general",
   "title": "guide.antarchy.entry.high_fructose_corn_syrup.title",
   "subtitle": "guide.antarchy.entry.high_fructose_corn_syrup.subtitle",
-  "description": ["guide.antarchy.entry.high_fructose_corn_syrup.description"]
+  "description": ["guide.antarchy.entry.high_fructose_corn_syrup.description"],
+  "cover_item": "antarchy:high_fructose_corn_syrup"
 }

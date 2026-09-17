@@ -8,5 +8,6 @@ public enum RoyalBeamElement {
     QUEEN_PURPLE,
     QUEEN_RED,
     QUEEN_BLACK,
-    DREAM_FIRE
+    DREAM_FIRE,
+    KING_GOLD
 }

@@ -13,8 +13,10 @@ import net.minecraft.world.level.saveddata.SavedData;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public final class AntmailServerData extends SavedData {
@@ -301,15 +303,20 @@ public final class AntmailServerData extends SavedData {
     public synchronized void drain(MinecraftServer server, AntmailAddress address) {
         AntmailMailbox mailbox = mailboxes.getOrCreate(address);
         final boolean[] delivered = {false};
+        Set<AntmailAddress> deliveredSenders = new LinkedHashSet<>();
         pending.removeIf(pendingMessage -> {
             if (!pendingMessage.recipient().equals(address) || mailbox.inbox().size() >= AntmailValidation.MAX_MAILBOX_MESSAGES) return false;
             if (!mailbox.addIncoming(pendingMessage.message())) return false;
             pendingMessage.message().setDeliveryStatus("DELIVERED");
             delivered[0] = true;
+            deliveredSenders.add(pendingMessage.message().sender());
             return true;
         });
-        if (delivered[0]) touchMailbox(address);
-        setDirty();
+        if (delivered[0]) {
+            touchMailbox(address);
+            for (AntmailAddress sender : deliveredSenders) touchMailbox(sender);
+            setDirty();
+        }
     }
 
     public synchronized AntmailDeliveryResult retry(MinecraftServer server, AntmailAddress sender, UUID messageId) {

@@ -92,6 +92,12 @@ public class AntarchyNeoforgePayloadHandlers {
         DorrieJumpNetworking.register(registrar);
         HerculesBeetleNetworking.register(registrar);
         registrar.playToClient(
+                com.craisinlord.antarchy.content.network.KingJudgmentFlashPayload.TYPE,
+                com.craisinlord.antarchy.content.network.KingJudgmentFlashPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() ->
+                        com.craisinlord.antarchy.content.client.KingJudgmentFlashClientState.trigger(payload.durationTicks()))
+        );
+        registrar.playToClient(
                 com.craisinlord.antarchy.content.network.BloodglassStatePayload.TYPE,
                 com.craisinlord.antarchy.content.network.BloodglassStatePayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() ->
@@ -104,6 +110,15 @@ public class AntarchyNeoforgePayloadHandlers {
                 (payload, ctx) -> ctx.enqueueWork(() ->
                         com.craisinlord.antarchy.content.client.TigerEyeCamouflageClientState.update(payload.entityId(), payload.active(), payload.blockStateId())
                 )
+        );
+        registrar.playToServer(
+                com.craisinlord.antarchy.content.network.ActivateRoyalBoundaryPayload.TYPE,
+                com.craisinlord.antarchy.content.network.ActivateRoyalBoundaryPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> {
+                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer player) {
+                        com.craisinlord.antarchy.content.effect.RoyalBoundaryManager.activate(player);
+                    }
+                })
         );
         registrar.playToServer(
                 com.craisinlord.antarchy.content.network.ToggleRoyalInversionPayload.TYPE,

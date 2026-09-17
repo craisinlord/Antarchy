@@ -1,8 +1,8 @@
 {
-  "type": "item",
+  "type": "enchantment",
   "category": "thoraxis",
   "title": "guide.antarchy.entry.chronosphere.title",
   "subtitle": "guide.antarchy.entry.chronosphere.subtitle",
   "description": ["guide.antarchy.entry.chronosphere.description"],
-  "item": "antarchy:chronosphere"
+  "enchantment": "antarchy:chronosphere"
 }

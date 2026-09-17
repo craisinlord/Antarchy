@@ -11,6 +11,7 @@ import net.minecraft.util.RandomSource;
 public final class RoyalAttackScheduler {
     public interface Action {
         default void onStart() {}
+        default void onWindup(int elapsedTicks, int remainingTicks) {}
         default void onActive(int elapsedTicks) {}
         default void onComplete() {}
     }
@@ -44,6 +45,9 @@ public final class RoyalAttackScheduler {
             running.elapsedTicks++;
             int activeStart = running.windupTicks;
             int activeEnd = activeStart + running.activeTicks;
+            if (running.elapsedTicks < activeStart) {
+                running.action.onWindup(running.elapsedTicks, activeStart - running.elapsedTicks);
+            }
             if (running.elapsedTicks >= activeStart && running.elapsedTicks < activeEnd) {
                 running.action.onActive(running.elapsedTicks - activeStart);
             }
@@ -114,6 +118,10 @@ public final class RoyalAttackScheduler {
 
     public int cooldown(String id) {
         return cooldowns.getOrDefault(id, 0);
+    }
+
+    public void resetCooldown(String id) {
+        cooldowns.remove(id);
     }
 
     public void cancel(RoyalAttackLane lane) {

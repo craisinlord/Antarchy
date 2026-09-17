@@ -1,9 +1,14 @@
 {
   "type": "structure",
   "category": "elythia",
-  "title": "guide.antarchy.entry.toreterror_arena.title",
+  "title": "guide.antarchy.entry.toreterror.title",
   "subtitle": "guide.antarchy.entry.toreterror_arena.subtitle",
   "description": ["guide.antarchy.entry.toreterror_arena.description"],
+  "entity": "antarchy:toreterror",
   "structure": "antarchy:toreterror_arena",
-  "dimension": "antarchy:elythia"
+  "structure_tag": "antarchy:toreterror_arena_locator",
+  "dimension": "antarchy:elythia",
+  "search_radius": 100,
+  "cover_entity": "antarchy:toreterror",
+  "render_scale": 0.8
 }

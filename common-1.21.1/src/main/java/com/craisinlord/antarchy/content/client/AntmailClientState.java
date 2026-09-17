@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.client;
 
 import com.craisinlord.antarchy.content.network.AntmailResultPayload;
+import com.craisinlord.antarchy.content.antmail.AntmailDebug;
 import com.craisinlord.antarchy.content.antmail.AntmailMessage;
 import net.minecraft.core.BlockPos;
 
@@ -18,9 +19,19 @@ public final class AntmailClientState {
     }
 
     public static void update(AntmailResultPayload payload) {
+        AntmailDebug.log("S2C result pos=" + payload.pos() + " status=" + payload.status() + " detail=" + payload.detail()
+                + " addressPresent=" + !payload.address().isBlank() + " dataChars=" + payload.data().length()
+                + " version=" + payload.version());
         RESULTS.put(payload.pos(), payload);
         if ("unchanged".equals(payload.detail())) {
-            VERSIONS.put(payload.pos(), payload.version());
+            if (MAILBOXES.containsKey(payload.pos())) {
+                VERSIONS.put(payload.pos(), payload.version());
+            } else {
+                // An unchanged response cannot initialize a client that has no cached snapshot.
+                // Keep the next poll unconditional instead of getting stuck on "unchanged".
+                AntmailDebug.log("received unchanged without cached mailbox at " + payload.pos() + "; forcing full snapshot on next poll");
+                VERSIONS.remove(payload.pos());
+            }
             return;
         } else if ("message_detail".equals(payload.detail()) && !payload.data().isBlank()) {
             try {

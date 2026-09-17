@@ -4,5 +4,6 @@
   "title": "guide.antarchy.entry.elythia.title",
   "subtitle": "guide.antarchy.entry.elythia.subtitle",
   "description": ["guide.antarchy.entry.elythia.description"],
+  "cover_entity": "antarchy:brown_ant",
   "dimension": "antarchy:elythia"
 }

@@ -13,6 +13,13 @@ public final class ComputerAccessClientState {
     }
 
     public static void update(ComputerAccessResultPayload result) {
+        ComputerStructureLocatorClientState.update(result);
+        if (result.data().startsWith(com.craisinlord.antarchy.content.network.ComputerAccessPayload.ARCHIVE_STATE + "\0")) {
+            String[] envelope = result.data().split("\u0000", 3);
+            if (envelope.length == 3) {
+                com.craisinlord.antarchy.content.guide.ComputerGuideData.applyNetworkSnapshot(envelope[2]);
+            }
+        }
         if (result.data().startsWith("18\u0000") || result.data().startsWith("19\u0000")) {
             BlockleClientState.update(result);
         }

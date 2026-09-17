@@ -642,6 +642,11 @@ public class NightmareEntity extends Monster implements GeoEntity {
         return this.entityData.get(ANIMATION_STATE);
     }
 
+    /** Selects the looping flight pose for the isolated computer archive preview instance. */
+    public void setArchivePreviewFlying() {
+        this.setAnimationState(ANIM_FLY);
+    }
+
     public int getActiveSpecialAnimation() {
         return this.entityData.get(ACTIVE_SPECIAL_ANIMATION);
     }

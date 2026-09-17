@@ -49,6 +49,10 @@ public final class QueenTrailSpawnMarkerBlockEntity extends BlockEntity {
         return this.configured;
     }
 
+    public boolean isConsumed() {
+        return this.consumed;
+    }
+
     public static void serverTick(ServerLevel level, QueenTrailSpawnMarkerBlockEntity marker) {
         if (!marker.configured || marker.consumed || level.getDifficulty() == Difficulty.PEACEFUL) {
             return;
@@ -88,6 +92,22 @@ public final class QueenTrailSpawnMarkerBlockEntity extends BlockEntity {
             }
         }
         QueenEntity queen = QueenEntity.spawnFromUndersideTrail(level, this.spawnPos, this.homePos, this.siteId, this.yaw);
+        if (queen == null) {
+            for (int radius = 2; radius <= 10 && queen == null; radius += 2) {
+                for (int dx = -radius; dx <= radius && queen == null; dx += radius) {
+                    for (int dz = -radius; dz <= radius && queen == null; dz += radius) {
+                        BlockPos candidate = this.spawnPos.offset(dx, 0, dz);
+                        if (candidate.equals(this.spawnPos)) {
+                            continue;
+                        }
+                        queen = QueenEntity.spawnFromUndersideTrail(level, candidate, this.homePos, this.siteId, this.yaw);
+                        if (queen != null) {
+                            this.spawnPos = candidate.immutable();
+                        }
+                    }
+                }
+            }
+        }
         if (queen != null) {
             this.consumed = true;
             this.queenUuid = queen.getUUID();

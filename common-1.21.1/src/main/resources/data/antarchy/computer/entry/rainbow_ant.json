@@ -1,0 +1,9 @@
+{
+  "type": "entity",
+  "category": "general",
+  "title": "guide.antarchy.entry.rainbow_ant.title",
+  "subtitle": "guide.antarchy.entry.rainbow_ant.subtitle",
+  "description": ["guide.antarchy.entry.rainbow_ant.description"],
+  "entity": "antarchy:rainbow_ant",
+  "cover_entity": "antarchy:rainbow_ant"
+}

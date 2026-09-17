@@ -23,7 +23,7 @@ public final class KneelDecree implements RoyalDecree {
     }
 
     @Override
-    public int countdownTicks(LivingEntity target) {
+    public int countdownTicks(KingEntity king, LivingEntity target) {
         return this.deadlines.getOrDefault(target.getUUID(), target.tickCount + 100) - target.tickCount;
     }
 

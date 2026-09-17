@@ -390,6 +390,7 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setGlimmer(AntarchyFabricEntities.GLIMMER);
         AntarchyObjects.setSpiritApple(() -> AntarchyFabricItems.SPIRIT_APPLE.get());
         AntarchyObjects.setGlimmeringEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.GLIMMERING));
+        AntarchyObjects.setRoyalVitalityPenaltyEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.ROYAL_VITALITY_PENALTY));
         AntarchyObjects.setElka(AntarchyFabricEntities.ELKA);
         AntarchyObjects.setPeach(() -> AntarchyFabricItems.PEACH.get());
         AntarchyObjects.setCorn(() -> AntarchyFabricItems.CORN.get());
@@ -546,6 +547,7 @@ public final class AntarchyFabricContent {
         ScorpionWhipTetherSync.setSink(AntarchyFabricNetworking::syncScorpionWhipTether);
         WormHookTetherSync.setSink(AntarchyFabricNetworking::syncWormHookTether);
         HerculesBeetleImpactShakeSync.setSink((player, ticks) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, new com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload(ticks)));
+        com.craisinlord.antarchy.content.network.KingJudgmentFlashSync.setSink((player, ticks) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, new com.craisinlord.antarchy.content.network.KingJudgmentFlashPayload(ticks)));
         ImpactShakeSync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
         HordeIntensitySync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
         TigerEyeCamouflageSync.setSendToPlayer((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));

@@ -12,6 +12,10 @@ public final class CloseQuartersDecree implements RoyalDecree {
         return king.evaluateCloseQuarters(target);
     }
     @Override
+    public int countdownTicks(KingEntity king, LivingEntity target) {
+        return king.closeQuartersCountdownTicks(target);
+    }
+    @Override
     public int contextWeight(KingEntity king, LivingEntity target) {
         return 4 + king.behaviorScore(KingEntity.Behavior.RANGED);
     }

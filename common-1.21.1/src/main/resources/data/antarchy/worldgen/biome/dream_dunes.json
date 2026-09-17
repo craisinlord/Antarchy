@@ -41,9 +41,7 @@
     "liquid": []
   },
   "features": [
-    [
-      "antarchy:thoraxis_transition_throat"
-    ],
+    [],
     [],
     [],
     [],
@@ -52,6 +50,7 @@
     [
       "antarchy:bluestone_ore",
       "antarchy:thoraxis_ichor_lake",
+      "antarchy:thoraxis_transition_throat",
       "antarchy:dimensional_tears"
     ],
     [],

@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.network;
 
 import com.craisinlord.antarchy.content.antmail.AntmailAddress;
+import com.craisinlord.antarchy.content.antmail.AntmailDebug;
 import com.craisinlord.antarchy.content.antmail.AntmailAttachment;
 import com.craisinlord.antarchy.content.antmail.AntmailDeliveryResult;
 import com.craisinlord.antarchy.content.antmail.AntmailDraft;
@@ -20,17 +21,22 @@ import java.util.function.BiConsumer;
 
 public final class AntmailServerHandler {
     private static BiConsumer<ServerPlayer, AntmailResultPayload> resultSender = (player, payload) -> { };
+    private static volatile boolean resultSenderConfigured;
 
     private AntmailServerHandler() {
     }
 
     public static void setResultSender(BiConsumer<ServerPlayer, AntmailResultPayload> sender) {
         resultSender = sender;
+        resultSenderConfigured = sender != null;
     }
 
     public static void handle(ServerPlayer player, AntmailSetupPayload payload) {
+        AntmailDebug.log("C2S setup received player=" + player.getGameProfile().getName() + " pos=" + payload.pos()
+                + " usernameLength=" + payload.username().length());
         ComputerBlockEntity computer = computer(player, payload.pos());
         if (computer == null || !computer.canUseFileSystem(player)) {
+            AntmailDebug.log("setup rejected: computer missing, out of reach, unauthenticated, or owned by another user");
             result(player, payload.pos(), AntmailDeliveryResult.Status.FAILED.ordinal(), "", "", "registration_failed:unauthorized", "");
             return;
         }
@@ -43,8 +49,11 @@ public final class AntmailServerHandler {
     }
 
     public static void handle(ServerPlayer player, AntmailStateRequestPayload payload) {
+        AntmailDebug.log("state request received player=" + player.getGameProfile().getName() + " pos=" + payload.pos()
+                + " folder=" + payload.folder() + " page=" + payload.page() + " knownVersion=" + payload.knownVersion());
         ComputerBlockEntity computer = authorizedComputer(player, payload.pos());
         if (computer == null) {
+            AntmailDebug.log("state request rejected: computer missing, out of reach, unauthenticated, or owned by another user");
             result(player, payload.pos(), AntmailDeliveryResult.Status.FAILED.ordinal(), "", "", "unauthorized", "");
             return;
         }
@@ -63,7 +72,13 @@ public final class AntmailServerHandler {
         int folder = payload.folder() < AntmailStateRequestPayload.INBOX || payload.folder() > AntmailStateRequestPayload.DRAFTS
                 ? AntmailStateRequestPayload.INBOX : payload.folder();
         int page = Math.max(0, Math.min(payload.page(), AntmailValidation.MAX_MAILBOX_MESSAGES / AntmailMailbox.PAGE_SIZE));
-        result(player, payload.pos(), AntmailDeliveryResult.Status.DELIVERED.ordinal(), address.fullAddress(), "", "", AntmailWire.encodeTag(mailbox.toPageTag(folder, page)));
+        try {
+            String encoded = AntmailWire.encodeTag(mailbox.toPageTag(folder, page));
+            result(player, payload.pos(), AntmailDeliveryResult.Status.DELIVERED.ordinal(), address.fullAddress(), "", "", encoded);
+        } catch (RuntimeException exception) {
+            AntmailDebug.error("Failed to encode state for " + address.fullAddress() + " at " + payload.pos(), exception);
+            result(player, payload.pos(), AntmailDeliveryResult.Status.FAILED.ordinal(), address.fullAddress(), "", "state_encode_failed", "");
+        }
     }
 
     public static void handle(ServerPlayer player, AntmailMessageRequestPayload payload) {
@@ -239,6 +254,12 @@ public final class AntmailServerHandler {
         try {
             if (!address.isBlank()) version = AntmailServerData.access(player.server).mailboxVersion(AntmailAddress.parse(address));
         } catch (IllegalArgumentException ignored) {
+        }
+        AntmailDebug.log("sending result player=" + player.getGameProfile().getName() + " pos=" + pos + " status=" + status
+                + " detail=" + detail + " addressPresent=" + !address.isBlank() + " dataChars=" + data.length() + " version=" + version);
+        if (!resultSenderConfigured) {
+            AntmailDebug.error("Result sender is not configured; dropping response at " + pos, new IllegalStateException("AntmailServerHandler.setResultSender was not called"));
+            return;
         }
         resultSender.accept(player, new AntmailResultPayload(pos, status, address, messageId, detail, data, version));
     }

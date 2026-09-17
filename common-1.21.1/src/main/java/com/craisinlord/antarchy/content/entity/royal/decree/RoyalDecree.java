@@ -18,7 +18,7 @@ public interface RoyalDecree {
         return Evaluation.COMPLIANT;
     }
 
-    default int countdownTicks(LivingEntity target) {
+    default int countdownTicks(KingEntity king, LivingEntity target) {
         return -1;
     }
 

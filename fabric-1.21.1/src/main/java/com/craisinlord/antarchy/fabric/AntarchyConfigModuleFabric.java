@@ -56,6 +56,14 @@ public final class AntarchyConfigModuleFabric {
             SettingBinding binding = entry.getValue();
             JsonObject loadedSection = loaded.get(binding.section);
             JsonElement element = loadedSection != null ? loadedSection.get(key) : null;
+            if (element == null) {
+                for (JsonObject otherSection : loaded.values()) {
+                    if (otherSection != loadedSection && otherSection.has(key)) {
+                        element = otherSection.get(key);
+                        break;
+                    }
+                }
+            }
             if (element == null && legacy != null) {
                 element = legacy.get(key);
             }

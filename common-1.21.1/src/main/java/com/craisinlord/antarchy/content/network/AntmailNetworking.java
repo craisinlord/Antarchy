@@ -1,26 +1,32 @@
 package com.craisinlord.antarchy.content.network;
 
 import com.craisinlord.antarchy.content.antmail.AntmailAttachment;
+import com.craisinlord.antarchy.content.antmail.AntmailDebug;
 import com.craisinlord.antarchy.content.antmail.AntmailDraft;
 import com.craisinlord.antarchy.content.antmail.AntmailWire;
 import net.minecraft.core.BlockPos;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public final class AntmailNetworking {
     private static Consumer<Object> sender = payload -> { };
+    private static volatile boolean senderConfigured;
+    private static final AtomicBoolean senderErrorLogged = new AtomicBoolean();
 
     private AntmailNetworking() {
     }
 
     public static void setSender(Consumer<Object> sender) {
         AntmailNetworking.sender = sender;
+        senderConfigured = sender != null;
     }
 
     public static void setup(BlockPos pos, String username) {
-        sender.accept(new AntmailSetupPayload(pos, username));
+        AntmailDebug.log("C2S setup request pos=" + pos + " usernameLength=" + username.length());
+        sendPayload(new AntmailSetupPayload(pos, username));
     }
 
     public static void requestState(BlockPos pos) {
@@ -32,38 +38,46 @@ public final class AntmailNetworking {
     }
 
     public static void requestState(BlockPos pos, int folder, int page, long knownVersion) {
-        sender.accept(new AntmailStateRequestPayload(pos, folder, page, knownVersion));
+        AntmailDebug.log("C2S state request pos=" + pos + " folder=" + folder + " page=" + page + " knownVersion=" + knownVersion);
+        sendPayload(new AntmailStateRequestPayload(pos, folder, page, knownVersion));
     }
 
     public static void requestMessage(BlockPos pos, UUID messageId) {
-        sender.accept(new AntmailMessageRequestPayload(pos, messageId.toString()));
+        sendPayload(new AntmailMessageRequestPayload(pos, messageId.toString()));
     }
 
     public static void send(BlockPos pos, String recipient, String subject, String body, List<AntmailAttachment> attachments) {
-        sender.accept(new AntmailSendPayload(pos, recipient, subject, body, AntmailWire.encodeAttachments(attachments)));
+        sendPayload(new AntmailSendPayload(pos, recipient, subject, body, AntmailWire.encodeAttachments(attachments)));
     }
 
     public static void markRead(BlockPos pos, UUID messageId) {
-        sender.accept(new AntmailReadPayload(pos, messageId.toString(), true));
+        sendPayload(new AntmailReadPayload(pos, messageId.toString(), true));
     }
 
     public static void markUnread(BlockPos pos, UUID messageId) {
-        sender.accept(new AntmailReadPayload(pos, messageId.toString(), false));
+        sendPayload(new AntmailReadPayload(pos, messageId.toString(), false));
     }
 
     public static void delete(BlockPos pos, UUID messageId, boolean sent) {
-        sender.accept(new AntmailDeletePayload(pos, messageId.toString(), sent));
+        sendPayload(new AntmailDeletePayload(pos, messageId.toString(), sent));
     }
 
     public static void saveDraft(BlockPos pos, AntmailDraft draft) {
-        sender.accept(new AntmailDraftPayload(pos, AntmailDraftPayload.SAVE, AntmailWire.encodeTag(draft.toTag())));
+        sendPayload(new AntmailDraftPayload(pos, AntmailDraftPayload.SAVE, AntmailWire.encodeTag(draft.toTag())));
     }
 
     public static void deleteDraft(BlockPos pos, UUID draftId) {
-        sender.accept(new AntmailDraftPayload(pos, AntmailDraftPayload.DELETE, draftId.toString()));
+        sendPayload(new AntmailDraftPayload(pos, AntmailDraftPayload.DELETE, draftId.toString()));
     }
 
     public static void retry(BlockPos pos, UUID messageId) {
-        sender.accept(new AntmailRetryPayload(pos, messageId.toString()));
+        sendPayload(new AntmailRetryPayload(pos, messageId.toString()));
+    }
+
+    private static void sendPayload(Object payload) {
+        if (!senderConfigured) {
+            if (senderErrorLogged.compareAndSet(false, true)) AntmailDebug.error("Network sender is not configured; dropping " + payload.getClass().getSimpleName(), new IllegalStateException("AntmailNetworking.setSender was not called"));
+        }
+        else sender.accept(payload);
     }
 }

@@ -8,6 +8,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.CameraShakeClientState;
 import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
 import com.craisinlord.antarchy.content.client.HordeClientState;
+import com.craisinlord.antarchy.content.client.KingJudgmentFlashClientState;
 import com.craisinlord.antarchy.content.client.PortalGunRollClientState;
 import com.craisinlord.antarchy.content.client.SizeRaySoundHandler;
 import com.craisinlord.antarchy.content.client.TigerEyeClientHooks;
@@ -531,6 +532,7 @@ public final class AntarchyFabricClientBootstrap {
                     registrationHelper.register(new TigerEyeCamouflagePlayerLayer(playerRenderer));
                     registrationHelper.register(new GoopedLivingLayer(playerRenderer));
                     registrationHelper.register(new GlimmeringLivingLayer(playerRenderer));
+                    registrationHelper.register(new com.craisinlord.antarchy.content.client.renderer.RoyalIndicatorLivingLayer<>(playerRenderer));
                     registrationHelper.register(new BrutalflyElytraLayer(playerRenderer));
                     registrationHelper.register(new com.craisinlord.antarchy.content.client.renderer.ManticoreWingsLayer(playerRenderer));
                     registrationHelper.register(new FallenKingCrownLayer(playerRenderer));
@@ -546,11 +548,13 @@ public final class AntarchyFabricClientBootstrap {
                         (software.bernie.geckolib.renderer.GeoEntityRenderer) (Object) renderer;
                 geoRenderer.addRenderLayer(new ParalyzedStoneGeoLayer(geoRenderer));
                 geoRenderer.addRenderLayer(new GoopedGeoLayer(geoRenderer));
+                geoRenderer.addRenderLayer(new com.craisinlord.antarchy.content.client.renderer.RoyalIndicatorGeoLayer<>(geoRenderer));
                 return;
             }
             registrationHelper.register(new ParalyzedStoneLivingLayer(renderer));
             registrationHelper.register(new GoopedLivingLayer(renderer));
             registrationHelper.register(new GlimmeringLivingLayer(renderer));
+            registrationHelper.register(new com.craisinlord.antarchy.content.client.renderer.RoyalIndicatorLivingLayer<>(renderer));
         });
     }
 
@@ -559,6 +563,7 @@ public final class AntarchyFabricClientBootstrap {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             CameraShakeClientState.tick();
             HerculesBeetleImpactShakeClientState.tick();
+            KingJudgmentFlashClientState.tick();
             HordeClientState.tick();
             PortalGunRollClientState.tick(client);
             if (client.player != null) {
@@ -571,6 +576,7 @@ public final class AntarchyFabricClientBootstrap {
             DreadClientHandler.tick();
             TigerEyeCamouflageClientHandler.tick();
             RoyalInversionClientHandler.tick();
+            RoyalBoundaryClientHandler.tick();
             BloodCrystalKatanaTrailHandler.tick();
             ScorpionWhipTetherRenderHandler.tick();
             WormHookTetherRenderHandler.tick();
@@ -605,6 +611,7 @@ public final class AntarchyFabricClientBootstrap {
             FlytrapGooHudRenderer.render(guiGraphics);
             DorrieJumpHudRenderer.render(guiGraphics);
             HerculesBeetleChargeHudRenderer.render(guiGraphics);
+            com.craisinlord.antarchy.content.client.KingJudgmentFlashHudRenderer.render(guiGraphics);
         });
 
         WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> {

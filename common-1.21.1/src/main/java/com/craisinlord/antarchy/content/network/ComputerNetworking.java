@@ -103,4 +103,8 @@ public final class ComputerNetworking {
     public static void submitBlockleGuess(BlockPos pos, String guess) {
         sender.accept(new ComputerAccessPayload(pos, ComputerAccessPayload.BLOCKLE_GUESS, guess));
     }
+
+    public static void locateStructure(BlockPos pos, ResourceLocation entryId) {
+        sender.accept(new ComputerAccessPayload(pos, ComputerAccessPayload.LOCATE_STRUCTURE, entryId.toString()));
+    }
 }

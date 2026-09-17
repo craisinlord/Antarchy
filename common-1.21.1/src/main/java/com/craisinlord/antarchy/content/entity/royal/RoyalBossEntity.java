@@ -258,6 +258,10 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         return this.royalBeamStartSound();
     }
 
+    protected float royalBeamStartSoundVolume(RoyalHead head) {
+        return (float) AntarchySettings.royalBossSoundVolume();
+    }
+
     protected void tickRoyalBeamEffects(RoyalHead head, Vec3 start, Vec3 end) {
     }
 
@@ -304,6 +308,11 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
 
     /** Prevents normal head/body scheduling while a bespoke movement sequence owns the boss. */
     protected boolean blocksRoyalAttacksForMovement() {
+        return false;
+    }
+
+    /** Prevents new beam volleys while a bespoke attack has reserved the heads. */
+    protected boolean blocksRoyalBeamScheduling() {
         return false;
     }
 
@@ -428,6 +437,10 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         this.playSound(sound, (float) AntarchySettings.royalBossSoundVolume(), pitch);
     }
 
+    protected void playRoyalSound(SoundEvent sound, float volume, float pitch) {
+        this.playSound(sound, volume, pitch);
+    }
+
     protected void projectRoyalSound(SoundEvent sound, float volume, float pitch, @Nullable LivingEntity focus) {
         if (this.level().isClientSide) {
             return;
@@ -540,7 +553,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             this.getLookControl().setLookAt(primaryTarget, 30.0F, 30.0F);
         }
         this.assignHeadTargets(primaryTarget);
-        this.tickRoyalBeam(primaryTarget);
+        if (!this.blocksRoyalBeamScheduling()) {
+            this.tickRoyalBeam(primaryTarget);
+        }
         this.tickBodyCrush();
 
         Phase phase = this.phase();
@@ -657,7 +672,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                             RoyalBossEntity.this.entityData.set(BEAM_ELEMENT[index], RoyalBossEntity.this.royalBeamElement(head).ordinal());
                             RoyalBossEntity.this.entityData.set(BEAM_ACTIVE[index], true);
                             RoyalBossEntity.this.beamLoopSoundTicks[index] = 20;
-                            RoyalBossEntity.this.playRoyalSound(RoyalBossEntity.this.royalBeamStartSound(head), 1.0F);
+                            RoyalBossEntity.this.playRoyalSound(RoyalBossEntity.this.royalBeamStartSound(head),
+                                    RoyalBossEntity.this.royalBeamStartSoundVolume(head), 1.0F);
                             RoyalBossEntity.this.playRoyalSound(RoyalBossEntity.this.royalBeamShootSound(), 1.0F);
                         }
 
@@ -684,6 +700,11 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
 
     protected void startRoyalRecovery(int ticks) {
         this.recoveryWindowTicks = Math.max(this.recoveryWindowTicks, ticks);
+    }
+
+    protected final void addGravityAwareImpulse(Entity entity, Vec3 worldImpulse) {
+        AntarchyGravityApi.setWorldVelocity(entity,
+                AntarchyGravityApi.getWorldVelocity(entity).add(worldImpulse));
     }
 
     protected final boolean isRoyalPhaseTransitionActive() {
@@ -726,9 +747,10 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             return;
         }
         int maxPlayers = Math.max(1, AntarchySettings.royalBossScalingMaxPlayers());
+        double encounterRange = Math.max(32.0D, this.getAttributeValue(Attributes.FOLLOW_RANGE));
         List<ServerPlayer> players = level.getPlayers(player -> player.isAlive()
                 && !player.isSpectator()
-                && player.distanceToSqr(this) <= AntarchySettings.royalBossFollowRange() * AntarchySettings.royalBossFollowRange());
+                && player.distanceToSqr(this) <= encounterRange * encounterRange);
         if (target instanceof ServerPlayer player && player.isAlive() && !players.contains(player)) {
             players.add(player);
         }
@@ -759,6 +781,14 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         this.entityData.set(BEAM_ELEMENT[index], RoyalBeamElement.GENERIC.ordinal());
         this.playRoyalSound(this.royalBeamEndSound(), 1.0F);
         this.setRoyalBeamEndPosition(head.slot(), null);
+    }
+
+    protected final void stopRoyalBeamsForDirectedAttack() {
+        for (RoyalHead head : this.heads) {
+            if (head.beamActive() || head.shooting()) {
+                this.stopRoyalBeam(head);
+            }
+        }
     }
 
     public Phase phase() {
@@ -1174,6 +1204,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                 -0.2D - this.random.nextDouble() * 0.15D,
                 (this.random.nextDouble() - 0.5D) * 0.12D);
         itemEntity.setDefaultPickUpDelay();
+        RoyalLootDropGlow.start(itemEntity);
         this.level().addFreshEntity(itemEntity);
         return itemEntity;
     }

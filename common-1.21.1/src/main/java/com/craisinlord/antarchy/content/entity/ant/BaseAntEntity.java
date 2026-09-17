@@ -1323,6 +1323,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         return AntTeleportHelper.resolveReturnDestinationLevel(player);
     }
 
+    @Nullable
     protected Vec3 getDestinationPosition(ServerLevel destination, ServerPlayer player) {
         return AntTeleportHelper.getDestinationPosition(player, destination);
     }

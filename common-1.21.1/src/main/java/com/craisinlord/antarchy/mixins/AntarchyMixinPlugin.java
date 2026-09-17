@@ -25,9 +25,22 @@ public final class AntarchyMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        String resourcePath = targetClassName.replace('.', '/') + ".class";
-        if (this.getClass().getClassLoader().getResource(resourcePath) == null) {
+        if (!classPresent(targetClassName)) {
             return false;
+        }
+        if (mixinClassName.startsWith("com.craisinlord.antarchy.mixins.compat.scguns.")) {
+            return classPresent("top.ribs.scguns.entity.projectile.ProjectileEntity");
+        }
+        if (mixinClassName.startsWith("com.craisinlord.antarchy.mixins.compat.irons_spellbooks.")) {
+            return classPresent("io.redspace.ironsspellbooks.entity.spells.AbstractMagicProjectile");
+        }
+        if (mixinClassName.startsWith("com.craisinlord.antarchy.mixins.compat.ars_nouveau.")) {
+            return classPresent("com.hollingsworth.arsnouveau.common.entity.EntityProjectileSpell");
+        }
+        if (mixinClassName.startsWith("com.craisinlord.antarchy.mixins.compat.alexscaves.")) {
+            // The target class was found above. Checking the target itself avoids depending on
+            // whether a loader exposes Alex's Caves' entrypoint resource to this classloader.
+            return true;
         }
         if (mixinClassName.endsWith(".VillagerTradesMixin")) {
             // Trade registration is platform-driven on every supported loader now. Keeping the
@@ -36,6 +49,16 @@ public final class AntarchyMixinPlugin implements IMixinConfigPlugin {
             return false;
         }
         return true;
+    }
+
+    private static boolean classPresent(String className) {
+        String resourcePath = className.replace('.', '/') + ".class";
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        if (contextClassLoader != null && contextClassLoader.getResource(resourcePath) != null) {
+            return true;
+        }
+        ClassLoader mixinClassLoader = AntarchyMixinPlugin.class.getClassLoader();
+        return mixinClassLoader != null && mixinClassLoader.getResource(resourcePath) != null;
     }
 
     @Override

@@ -69,6 +69,10 @@ public final class QueenLocateCommand {
                 continue;
             }
             QueenEntity queen = marker.spawnNow(thoraxis);
+            if (queen == null && !marker.isConsumed()) {
+                source.sendFailure(Component.literal("A Queen spawn site was found, but the Queen could not spawn at a clear location. The site can be retried later."));
+                return 0;
+            }
             BlockPos spawn = marker.getSpawnPos();
             if (queen != null) {
                 spawn = BlockPos.containing(queen.position());
@@ -77,7 +81,8 @@ public final class QueenLocateCommand {
             String coordinates = "[" + spawn.getX() + ", " + spawn.getY() + ", " + spawn.getZ() + "]";
             String teleportCommand = "/execute in " + THORAXIS.location() + " run tp @s "
                     + spawn.getX() + " " + spawn.getY() + " " + spawn.getZ();
-            source.sendSuccess(() -> Component.literal("Nearest Queen spawn in " + THORAXIS.location() + ": ")
+            String state = queen == null ? " (already spawned; Queen is not currently loaded)" : "";
+            source.sendSuccess(() -> Component.literal("Nearest Queen spawn in " + THORAXIS.location() + state + ": ")
                     .append(Component.literal(coordinates)
                             .withStyle(Style.EMPTY
                                     .withColor(net.minecraft.ChatFormatting.AQUA)

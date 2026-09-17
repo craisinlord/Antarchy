@@ -28,11 +28,11 @@ public final class ThoraxisTransitionThroatFeature extends Feature<NoneFeatureCo
         for (int y = undersideSurface; y <= upperSurface; y++) {
             int layerOffsetX = noise(seed, Math.floorDiv(y, 5), 17) * 2;
             int layerOffsetZ = noise(seed, Math.floorDiv(y, 5), 31) * 2;
-            double radiusX = 3.5D + noise01(seed, Math.floorDiv(y, 11), 43) * 2.0D;
-            double radiusZ = 3.5D + noise01(seed, Math.floorDiv(y, 13), 59) * 2.0D;
+            double radiusX = 5.0D + noise01(seed, Math.floorDiv(y, 11), 43) * 2.5D;
+            double radiusZ = 5.0D + noise01(seed, Math.floorDiv(y, 13), 59) * 2.5D;
 
-            for (int x = -7; x <= 7; x++) {
-                for (int z = -7; z <= 7; z++) {
+            for (int x = -9; x <= 9; x++) {
+                for (int z = -9; z <= 9; z++) {
                     double dx = x - layerOffsetX;
                     double dz = z - layerOffsetZ;
                     double distance = Math.sqrt((dx * dx) / (radiusX * radiusX) + (dz * dz) / (radiusZ * radiusZ));

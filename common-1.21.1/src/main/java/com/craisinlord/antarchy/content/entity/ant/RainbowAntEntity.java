@@ -123,6 +123,10 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
         if (this.isInInfinityDimension(serverPlayer.serverLevel())) {
             ServerLevel returnLevel = this.resolveReturnDestinationLevel(serverPlayer);
             Vec3 returnPos = this.getDestinationPosition(returnLevel, serverPlayer);
+            if (returnPos == null) {
+                serverPlayer.displayClientMessage(Component.translatable("message.antarchy.teleport_arrival_failed"), true);
+                return InteractionResult.CONSUME;
+            }
             serverPlayer.teleportTo(returnLevel, returnPos.x, returnPos.y, returnPos.z, serverPlayer.getYRot(), serverPlayer.getXRot());
             serverPlayer.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
             return InteractionResult.CONSUME;

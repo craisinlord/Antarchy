@@ -32,7 +32,7 @@ public final class ThoraxisUndersideManager {
     public static final int GRAVITY_FLIP_Y = 0;
     private static final net.minecraft.resources.ResourceLocation THORAXIS_DIMENSION = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "thoraxis");
     private static final AntarchyGravityTransition TRANSITION = new AntarchyGravityTransition(12);
-    private static final AntarchyGravityTransition THROAT_TRANSITION = new AntarchyGravityTransition(20);
+    private static final AntarchyGravityTransition THROAT_TRANSITION = new AntarchyGravityTransition(12);
     private static final int EFFECT_DURATION_TICKS = 50;
     private static final int EFFECT_REFRESH_THRESHOLD_TICKS = 10;
     private static final int DISCOVERY_INTERVAL_TICKS = 5;
@@ -43,7 +43,7 @@ public final class ThoraxisUndersideManager {
     private static final int ENTER_UNDERSIDE_Y = GRAVITY_FLIP_Y - 4;
     private static final int EXIT_UNDERSIDE_Y = GRAVITY_FLIP_Y + 4;
     private static final int FLIP_COOLDOWN_TICKS = 40;
-    private static final int CROSSING_TIMEOUT_TICKS = 30;
+    private static final int CROSSING_TIMEOUT_TICKS = 50;
     private static final int SETTLE_TIMEOUT_TICKS = 70;
     private static final double MIN_CROSSING_SPEED = 0.48D;
     private static final Map<ServerLevel, TrackingState> STATES = new WeakHashMap<>();
@@ -231,9 +231,7 @@ public final class ThoraxisUndersideManager {
             if (!crossing.toUnderside) {
                 refreshInvertedEffect(player);
             }
-            if (crossing.ticks > CROSSING_TIMEOUT_TICKS
-                    || (crossing.toUnderside && velocity.y > 0.08D)
-                    || (!crossing.toUnderside && velocity.y < -0.08D)) {
+            if (crossing.ticks > CROSSING_TIMEOUT_TICKS) {
                 tracking.playerCrossings.remove(player.getUUID());
                 return;
             }
@@ -248,6 +246,11 @@ public final class ThoraxisUndersideManager {
                     ? AntarchyGravityDirection.UP
                     : AntarchyGravityDirection.DOWN;
             AntarchyGravityApi.setAirborneGravityDirection(player, destination, crossing.toUnderside, THROAT_TRANSITION);
+            double assistedVerticalVelocity = crossing.toUnderside
+                    ? Math.min(velocity.y, -0.7D)
+                    : Math.max(velocity.y, 0.7D);
+            AntarchyGravityApi.setWorldVelocity(player,
+                    new Vec3(velocity.x, assistedVerticalVelocity, velocity.z));
             player.resetFallDistance();
             crossing.flipped = true;
             crossing.ticks = 0;

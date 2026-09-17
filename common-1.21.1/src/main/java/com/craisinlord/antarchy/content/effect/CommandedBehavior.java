@@ -1,13 +1,18 @@
 package com.craisinlord.antarchy.content.effect;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
 import java.util.UUID;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 public final class CommandedBehavior {
+    private static final ResourceLocation INVESTITURE_ATTACK = ResourceLocation.fromNamespaceAndPath("antarchy", "royal_investiture_attack");
+    private static final ResourceLocation INVESTITURE_SPEED = ResourceLocation.fromNamespaceAndPath("antarchy", "royal_investiture_speed");
     private CommandedBehavior() {
     }
 
@@ -26,6 +31,7 @@ public final class CommandedBehavior {
             clear(mob);
             return;
         }
+        syncInvestiture(mob, access.antarchy$isRoyalInvested());
         if (mob.tickCount % 10 == 0) {
             LivingEntity commandedCandidate = findCommanderTarget(mob, commander);
             if (commandedCandidate != null) {
@@ -100,6 +106,11 @@ public final class CommandedBehavior {
     }
 
     private static LivingEntity findCommanderTarget(Mob mob, Entity commander) {
+        if (mob instanceof CommandedEntityAccess access && access.antarchy$isRoyalInvested()
+                && commander instanceof net.minecraft.world.entity.player.Player player) {
+            LivingEntity marked = JudgmentMarkManager.markedTarget(player);
+            if (isValidTarget(mob, commander, marked)) return marked;
+        }
         LivingEntity target = commander instanceof Mob commanderMob ? commanderMob.getTarget() : null;
         if (isValidTarget(mob, commander, target)) {
             return target;
@@ -130,7 +141,9 @@ public final class CommandedBehavior {
         if (mob.tickCount % 20 != 0 || mob.distanceToSqr(target) > 4.0D) {
             return;
         }
-        if (target.hurt(mob.damageSources().mobAttack(mob), 1.0F)) {
+        float damage = mob instanceof CommandedEntityAccess access && access.antarchy$isRoyalInvested()
+                ? (float) AntarchySettings.royalGuardianMusterPassiveDamageFloor() : 1.0F;
+        if (target.hurt(mob.damageSources().mobAttack(mob), damage)) {
             mob.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
         }
     }
@@ -151,6 +164,28 @@ public final class CommandedBehavior {
             mob.setTarget(null);
         }
         access.antarchy$setCommandedTargetOwned(false);
+        access.antarchy$setRoyalInvested(false);
+        syncInvestiture(mob, false);
         access.antarchy$setCommanderUuid(null);
+    }
+
+    public static void syncInvestiture(Mob mob, boolean active) {
+        setModifier(mob, Attributes.ATTACK_DAMAGE, INVESTITURE_ATTACK,
+                active ? AntarchySettings.royalGuardianMusterAttackBonus() : 0.0D);
+        setModifier(mob, Attributes.MOVEMENT_SPEED, INVESTITURE_SPEED,
+                active ? AntarchySettings.royalGuardianMusterSpeedBonus() : 0.0D);
+    }
+
+    private static void setModifier(Mob mob, net.minecraft.core.Holder<net.minecraft.world.entity.ai.attributes.Attribute> attribute,
+            ResourceLocation id, double amount) {
+        var instance = mob.getAttribute(attribute);
+        if (instance == null) return;
+        if (amount > 0.0D) {
+            if (!instance.hasModifier(id)) {
+                instance.addTransientModifier(new AttributeModifier(id, amount, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+            }
+        } else {
+            instance.removeModifier(id);
+        }
     }
 }

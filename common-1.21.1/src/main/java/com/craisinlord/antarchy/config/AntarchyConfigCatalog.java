@@ -182,6 +182,10 @@ public final class AntarchyConfigCatalog {
                 || name.startsWith("american")
                 || name.startsWith("mogglesVision")
                 || name.equals("ductTapeRepairPercentPerUse")
-                || name.startsWith("fallenKingCrown");
+                || name.startsWith("fallenKingCrown")
+                || name.startsWith("royalArmor")
+                || name.startsWith("royalGuardian")
+                || name.startsWith("royalAssailant")
+                || name.startsWith("royalWeapon");
     }
 }

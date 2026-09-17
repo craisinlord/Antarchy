@@ -34,8 +34,12 @@ public class RainbowSugarItem extends Item {
         if (!level.isClientSide && livingEntity instanceof ServerPlayer serverPlayer && isInInfinityDimension(serverPlayer.serverLevel())) {
             ServerLevel returnLevel = AntTeleportHelper.resolveReturnDestinationLevel(serverPlayer);
             var returnPos = AntTeleportHelper.getDestinationPosition(serverPlayer, returnLevel);
-            serverPlayer.teleportTo(returnLevel, returnPos.x, returnPos.y, returnPos.z, serverPlayer.getYRot(), serverPlayer.getXRot());
-            serverPlayer.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            if (returnPos == null) {
+                serverPlayer.displayClientMessage(Component.translatable("message.antarchy.teleport_arrival_failed"), true);
+            } else {
+                serverPlayer.teleportTo(returnLevel, returnPos.x, returnPos.y, returnPos.z, serverPlayer.getYRot(), serverPlayer.getXRot());
+                serverPlayer.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            }
         }
 
         return result;

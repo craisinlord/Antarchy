@@ -85,6 +85,7 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playS2C().register(WormHookTetherPayload.TYPE, WormHookTetherPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(BrutalflyElytraAnimationPayload.TYPE, BrutalflyElytraAnimationPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(HerculesBeetleImpactShakePayload.TYPE, HerculesBeetleImpactShakePayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(KingJudgmentFlashPayload.TYPE, KingJudgmentFlashPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(ImpactShakePayload.TYPE, ImpactShakePayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(HordeIntensityPayload.TYPE, HordeIntensityPayload.STREAM_CODEC);
         AntarchyFabricTimeDilationNetworking.registerPayloadTypes();
@@ -98,6 +99,7 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playC2S().register(BigBerthaModeCyclePayload.TYPE, BigBerthaModeCyclePayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(ToggleTigerEyeCamouflagePayload.TYPE, ToggleTigerEyeCamouflagePayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(ToggleRoyalInversionPayload.TYPE, ToggleRoyalInversionPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(com.craisinlord.antarchy.content.network.ActivateRoyalBoundaryPayload.TYPE, com.craisinlord.antarchy.content.network.ActivateRoyalBoundaryPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(DiamondMinecartInputPayload.TYPE, DiamondMinecartInputPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(BrutalflyElytraFlapPayload.TYPE, BrutalflyElytraFlapPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(SpringyBootsLaunchPayload.TYPE, SpringyBootsLaunchPayload.STREAM_CODEC);
@@ -157,6 +159,8 @@ public final class AntarchyFabricNetworking {
                 context.server().execute(() -> handleTigerEyeCamouflageToggle(context.player())));
         ServerPlayNetworking.registerGlobalReceiver(ToggleRoyalInversionPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> com.craisinlord.antarchy.content.item.RoyalAssailantArmorItem.toggleInversion(context.player())));
+        ServerPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ActivateRoyalBoundaryPayload.TYPE, (payload, context) ->
+                context.server().execute(() -> com.craisinlord.antarchy.content.effect.RoyalBoundaryManager.activate(context.player())));
         ServerPlayNetworking.registerGlobalReceiver(DiamondMinecartInputPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleDiamondMinecartInput(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(BrutalflyElytraFlapPayload.TYPE, (payload, context) ->
