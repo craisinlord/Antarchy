@@ -23,6 +23,7 @@ public final class AntarchyTags {
     public static final class Blocks {
         public static final TagKey<Block> DUPLICATOR_TREE_BLACKLIST = TagKey.create(Registries.BLOCK, id("duplicator_tree_blacklist"));
         public static final TagKey<Block> GRAVITY_GUN_BLACKLIST = TagKey.create(Registries.BLOCK, id("gravity_gun_blacklist"));
+        public static final TagKey<Block> QUEEN_GRABBABLE_BLOCKS = TagKey.create(Registries.BLOCK, id("queen_grabbable_blocks"));
         public static final TagKey<Block> DREAM_FIRE_BASE_BLOCKS = TagKey.create(Registries.BLOCK, id("dream_fire_base_blocks"));
         public static final TagKey<Block> POTENT_NYXITE_ACTIVATION_BLOCKS = TagKey.create(Registries.BLOCK, id("potent_nyxite_activation_blocks"));
         public static final TagKey<Block> CORNEA_STALK_PLANTABLE = TagKey.create(Registries.BLOCK, id("cornea_stalk_plantable"));

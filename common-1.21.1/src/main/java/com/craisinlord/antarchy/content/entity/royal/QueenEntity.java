@@ -13,8 +13,10 @@ import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
 import com.craisinlord.antarchy.content.time.TimeDilationApi;
 import com.craisinlord.antarchy.content.time.TimeDilationFieldEntity;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
@@ -37,13 +39,16 @@ import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.AABB;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamSettings;
@@ -86,6 +91,22 @@ public class QueenEntity extends RoyalBossEntity {
     private static final int MOMENTUM_LOCK_TELEGRAPH_TICKS = 40;
     private static final int CRUSHING_GRAVITY_TELEGRAPH_TICKS = 28;
     private static final int ACCELERATION_TELEGRAPH_TICKS = 32;
+    private static final int DEBRIS_CYCLONE_COOLDOWN = 260;
+    private static final int DEBRIS_CYCLONE_TELEGRAPH_TICKS = 45;
+    private static final double DEBRIS_CYCLONE_GATHER_RADIUS = 13.0D;
+    private static final double DEBRIS_CYCLONE_ORBIT_RADIUS = 6.0D;
+    private static final int DEBRIS_CYCLONE_BLOCK_COUNT = 12;
+    private static final double DEBRIS_CYCLONE_LAUNCH_SPEED = 1.35D;
+    private static final float DEBRIS_CYCLONE_BLOCK_DAMAGE_PER_DISTANCE = 2.2F;
+    private static final int DEBRIS_CYCLONE_BLOCK_MAX_DAMAGE = 16;
+    private static final int GRAVITIC_UPHEAVAL_COOLDOWN = 420;
+    private static final int GRAVITIC_UPHEAVAL_TELEGRAPH_TICKS = 50;
+    private static final double GRAVITIC_UPHEAVAL_RADIUS = 26.0D;
+    private static final int GRAVITIC_UPHEAVAL_BLOCK_COUNT = 80;
+    private static final int GRAVITIC_UPHEAVAL_RISE_TICKS = 35;
+    private static final int GRAVITIC_UPHEAVAL_HANG_TICKS = 15;
+    private static final int GRAVITIC_UPHEAVAL_DURATION = GRAVITIC_UPHEAVAL_RISE_TICKS + GRAVITIC_UPHEAVAL_HANG_TICKS;
+    private static final double GRAVITIC_UPHEAVAL_RISE_SPEED = 0.55D;
     private static final int LANDING_TELEGRAPH_TICKS = 30;
     private static final int LANDING_IMPACT_TICKS = 18;
     private static final int GROUND_COMBAT_TICKS = 160;
@@ -112,6 +133,13 @@ public class QueenEntity extends RoyalBossEntity {
     private int crushingGravityTelegraphTicks;
     private int accelerationTelegraphTicks;
     private int queenChronosphereTelegraphTicks;
+    private int debrisCycloneCooldownTicks;
+    private int debrisCycloneTelegraphTicks;
+    private int graviticUpheavalCooldownTicks;
+    private int graviticUpheavalTelegraphTicks;
+    private int graviticUpheavalAgeTicks;
+    private final List<FallingBlockEntity> debrisCycloneBlocks = new ArrayList<>();
+    private final List<FallingBlockEntity> graviticUpheavalBlocks = new ArrayList<>();
     @Nullable
     private Vec3 pendingBlackHoleAnchor;
     private int queenLandingCooldownTicks = 300;
@@ -865,6 +893,8 @@ public class QueenEntity extends RoyalBossEntity {
         if (this.accelerationCooldownTicks > 0) this.accelerationCooldownTicks--;
         if (this.queenChronosphereCooldownTicks > 0) this.queenChronosphereCooldownTicks--;
         if (this.blackHoleCooldownTicks > 0) this.blackHoleCooldownTicks--;
+        if (this.debrisCycloneCooldownTicks > 0) this.debrisCycloneCooldownTicks--;
+        if (this.graviticUpheavalCooldownTicks > 0) this.graviticUpheavalCooldownTicks--;
 
         if (!(this.level() instanceof ServerLevel level)) {
             return;
@@ -880,11 +910,12 @@ public class QueenEntity extends RoyalBossEntity {
         Phase phase = this.phase();
         boolean majorBusy = this.royalEffects.active("momentum_lock")
                 || this.royalEffects.active("crushing_gravity")
-                || this.royalEffects.active("acceleration");
+                || this.royalEffects.active("acceleration")
+                || this.royalEffects.active("gravitic_upheaval");
         String[] candidates = switch (phase) {
             case ONE -> new String[] {"gravity_stomp", "black_hole"};
-            case TWO -> new String[] {"gravity_stomp", "black_hole", "momentum_lock", "crushing_gravity"};
-            case THREE -> new String[] {"gravity_stomp", "black_hole", "momentum_lock", "crushing_gravity", "acceleration", "queen_chronosphere"};
+            case TWO -> new String[] {"gravity_stomp", "black_hole", "momentum_lock", "crushing_gravity", "debris_cyclone", "gravitic_upheaval"};
+            case THREE -> new String[] {"gravity_stomp", "black_hole", "momentum_lock", "crushing_gravity", "acceleration", "queen_chronosphere", "debris_cyclone", "gravitic_upheaval"};
         };
         String forcedAttack = this.pendingPhaseSignature == Phase.TWO ? "momentum_lock"
                 : this.pendingPhaseSignature == Phase.THREE ? "acceleration" : null;
@@ -902,13 +933,16 @@ public class QueenEntity extends RoyalBossEntity {
             case "momentum_lock" -> MOMENTUM_LOCK_COOLDOWN;
             case "crushing_gravity" -> CRUSHING_GRAVITY_COOLDOWN;
             case "queen_chronosphere" -> QUEEN_CHRONOSPHERE_COOLDOWN;
+            case "debris_cyclone" -> DEBRIS_CYCLONE_COOLDOWN;
+            case "gravitic_upheaval" -> GRAVITIC_UPHEAVAL_COOLDOWN;
             default -> ACCELERATION_COOLDOWN;
         };
         RoyalAttackLane lane = "black_hole".equals(selected) ? RoyalAttackLane.CENTER_HEAD : RoyalAttackLane.HAZARD;
         int actionWindup = this.queenAbilityWindup(selected);
         int actionAnimationTicks = "momentum_lock".equals(selected)
                 || "crushing_gravity".equals(selected) || "acceleration".equals(selected)
-                || "queen_chronosphere".equals(selected) ? 55 : 25;
+                || "queen_chronosphere".equals(selected) || "debris_cyclone".equals(selected)
+                || "gravitic_upheaval".equals(selected) ? 55 : 25;
         int actionRecovery = this.animationRecovery(actionAnimationTicks, actionWindup, 1, 14);
         if (!this.beginRoyalAttack(selected, lane, this.cooldown(cooldown),
                 actionWindup, 1, actionRecovery, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
@@ -918,7 +952,9 @@ public class QueenEntity extends RoyalBossEntity {
                         } else if ("momentum_lock".equals(selected)
                                 || "crushing_gravity".equals(selected)
                                 || "acceleration".equals(selected)
-                                || "queen_chronosphere".equals(selected)) {
+                                || "queen_chronosphere".equals(selected)
+                                || "debris_cyclone".equals(selected)
+                                || "gravitic_upheaval".equals(selected)) {
                             QueenEntity.this.triggerAnim("wing_action", "wing_gust");
                         } else if ("black_hole".equals(selected)) {
                             QueenEntity.this.royalHead(RoyalHead.Slot.CENTER).startShoot();
@@ -988,6 +1024,15 @@ public class QueenEntity extends RoyalBossEntity {
                 field.configureQueenChronosphere(this);
                 this.startRoyalRecovery(35);
             }
+            case "debris_cyclone" -> {
+                this.debrisCycloneCooldownTicks = cooldown;
+                this.performDebrisCycloneLaunch(level, target);
+                this.startRoyalRecovery(20);
+            }
+            case "gravitic_upheaval" -> {
+                this.graviticUpheavalCooldownTicks = cooldown;
+                this.startGraviticUpheaval(level);
+            }
         }
     }
 
@@ -1022,6 +1067,9 @@ public class QueenEntity extends RoyalBossEntity {
             case "crushing_gravity" -> phase != Phase.ONE && !this.royalEffects.active("crushing_gravity") && this.crushingGravityCooldownTicks <= 0;
             case "acceleration" -> phase == Phase.THREE && !this.royalEffects.active("acceleration") && this.accelerationCooldownTicks <= 0;
             case "queen_chronosphere" -> phase == Phase.THREE && this.queenChronosphereCooldownTicks <= 0;
+            case "debris_cyclone" -> this.debrisCycloneCooldownTicks <= 0;
+            case "gravitic_upheaval" -> phase != Phase.ONE && this.graviticUpheavalCooldownTicks <= 0
+                    && !this.royalEffects.active("gravitic_upheaval");
             default -> false;
         };
     }
@@ -1031,6 +1079,8 @@ public class QueenEntity extends RoyalBossEntity {
             case ONE -> "black_hole".equals(id) ? 6 : 3;
             case TWO -> switch (id) {
                 case "momentum_lock", "crushing_gravity" -> 6;
+                case "debris_cyclone" -> 5;
+                case "gravitic_upheaval" -> 4;
                 case "gravity_stomp" -> 3;
                 case "black_hole" -> 2;
                 default -> 0;
@@ -1039,6 +1089,7 @@ public class QueenEntity extends RoyalBossEntity {
                 case "acceleration" -> 7;
                 case "queen_chronosphere" -> 6;
                 case "black_hole", "crushing_gravity" -> 5;
+                case "debris_cyclone", "gravitic_upheaval" -> 5;
                 case "gravity_stomp" -> 4;
                 case "momentum_lock" -> 2;
                 default -> 0;
@@ -1110,6 +1161,8 @@ public class QueenEntity extends RoyalBossEntity {
             case "crushing_gravity" -> CRUSHING_GRAVITY_TELEGRAPH_TICKS;
             case "acceleration" -> ACCELERATION_TELEGRAPH_TICKS;
             case "queen_chronosphere" -> 40;
+            case "debris_cyclone" -> DEBRIS_CYCLONE_TELEGRAPH_TICKS;
+            case "gravitic_upheaval" -> GRAVITIC_UPHEAVAL_TELEGRAPH_TICKS;
             default -> 10;
         };
     }
@@ -1141,6 +1194,17 @@ public class QueenEntity extends RoyalBossEntity {
                 this.queenChronosphereTelegraphTicks = 40;
                 this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.85F);
             }
+            case "debris_cyclone" -> {
+                this.debrisCycloneTelegraphTicks = DEBRIS_CYCLONE_TELEGRAPH_TICKS;
+                if (this.level() instanceof ServerLevel level) {
+                    this.gatherDebrisCycloneBlocks(level);
+                }
+                this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.9F);
+            }
+            case "gravitic_upheaval" -> {
+                this.graviticUpheavalTelegraphTicks = GRAVITIC_UPHEAVAL_TELEGRAPH_TICKS;
+                this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.5F);
+            }
         }
     }
 
@@ -1152,13 +1216,16 @@ public class QueenEntity extends RoyalBossEntity {
             case "crushing_gravity" -> this.crushingGravityTelegraphTicks = 0;
             case "acceleration" -> this.accelerationTelegraphTicks = 0;
             case "queen_chronosphere" -> this.queenChronosphereTelegraphTicks = 0;
+            case "debris_cyclone" -> this.debrisCycloneTelegraphTicks = 0;
+            case "gravitic_upheaval" -> this.graviticUpheavalTelegraphTicks = 0;
         }
     }
 
     private boolean isQueenAbilityTelegraphActive() {
         return this.gravityStompTelegraphTicks > 0 || this.blackHoleTelegraphTicks > 0
                 || this.momentumLockTelegraphTicks > 0 || this.crushingGravityTelegraphTicks > 0
-                || this.accelerationTelegraphTicks > 0 || this.queenChronosphereTelegraphTicks > 0;
+                || this.accelerationTelegraphTicks > 0 || this.queenChronosphereTelegraphTicks > 0
+                || this.debrisCycloneTelegraphTicks > 0 || this.graviticUpheavalTelegraphTicks > 0;
     }
 
     private void clearQueenAbilityTelegraphs() {
@@ -1168,7 +1235,10 @@ public class QueenEntity extends RoyalBossEntity {
         this.crushingGravityTelegraphTicks = 0;
         this.accelerationTelegraphTicks = 0;
         this.queenChronosphereTelegraphTicks = 0;
+        this.debrisCycloneTelegraphTicks = 0;
+        this.graviticUpheavalTelegraphTicks = 0;
         this.pendingBlackHoleAnchor = null;
+        this.discardDebrisCycloneBlocks();
     }
 
     private void tickQueenAbilityTelegraphs() {
@@ -1183,6 +1253,8 @@ public class QueenEntity extends RoyalBossEntity {
         this.tickCrushingGravityTelegraph(level);
         this.tickAccelerationTelegraph(level);
         this.tickQueenChronosphereTelegraph(level);
+        this.tickDebrisCycloneTelegraph(level);
+        this.tickGraviticUpheavalTelegraph(level);
     }
 
     private void tickGravityStompTelegraph(ServerLevel level) {
@@ -1278,6 +1350,164 @@ public class QueenEntity extends RoyalBossEntity {
         }
         this.playQueenTelegraphBeat(level, this.queenChronosphereTelegraphTicks, 40, 0.5F);
         this.queenChronosphereTelegraphTicks--;
+    }
+
+    private void gatherDebrisCycloneBlocks(ServerLevel level) {
+        this.discardDebrisCycloneBlocks();
+        if (!level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+            return;
+        }
+        Vec3 center = this.position();
+        double radius = DEBRIS_CYCLONE_GATHER_RADIUS;
+        int gathered = 0;
+        for (int attempt = 0; attempt < 140 && gathered < DEBRIS_CYCLONE_BLOCK_COUNT; attempt++) {
+            BlockPos pos = BlockPos.containing(
+                    center.x + (this.random.nextDouble() * 2.0D - 1.0D) * radius,
+                    center.y + (this.random.nextDouble() * 2.0D - 1.0D) * radius * 0.6D,
+                    center.z + (this.random.nextDouble() * 2.0D - 1.0D) * radius);
+            if (pos.distToCenterSqr(center.x, center.y, center.z) > radius * radius
+                    || pos.getY() < level.getMinBuildHeight() || pos.getY() >= level.getMaxBuildHeight()) {
+                continue;
+            }
+            BlockState state = level.getBlockState(pos);
+            if (!state.is(AntarchyTags.Blocks.QUEEN_GRABBABLE_BLOCKS) || level.getBlockEntity(pos) != null
+                    || state.getDestroySpeed(level, pos) < 0.0F || state.getCollisionShape(level, pos).isEmpty()) {
+                continue;
+            }
+            FallingBlockEntity block = FallingBlockEntity.fall(level, pos, state);
+            if (block == null) {
+                continue;
+            }
+            block.setNoGravity(true);
+            block.setDeltaMovement(Vec3.ZERO);
+            block.hurtMarked = true;
+            this.debrisCycloneBlocks.add(block);
+            gathered++;
+        }
+    }
+
+    private void discardDebrisCycloneBlocks() {
+        for (FallingBlockEntity block : this.debrisCycloneBlocks) {
+            if (block.isAlive()) {
+                block.discard();
+            }
+        }
+        this.debrisCycloneBlocks.clear();
+    }
+
+    private void tickDebrisCycloneTelegraph(ServerLevel level) {
+        if (this.debrisCycloneTelegraphTicks <= 0) return;
+        int elapsed = DEBRIS_CYCLONE_TELEGRAPH_TICKS - this.debrisCycloneTelegraphTicks;
+        double progress = elapsed / (double) DEBRIS_CYCLONE_TELEGRAPH_TICKS;
+        double orbitRadius = Mth.lerp(Math.min(1.0D, progress * 1.6D), 1.0D, DEBRIS_CYCLONE_ORBIT_RADIUS);
+        double spinSpeed = Mth.lerp(progress, 0.12D, 0.55D);
+        int count = this.debrisCycloneBlocks.size();
+        AntarchyGravityDirection gravity = AntarchyGravityApi.getGravityDirection(this);
+        for (int index = 0; index < count; index++) {
+            FallingBlockEntity block = this.debrisCycloneBlocks.get(index);
+            if (!block.isAlive()) continue;
+            double angle = spinSpeed * this.tickCount + Mth.TWO_PI * index / Math.max(1, count);
+            double localX = Math.cos(angle) * orbitRadius;
+            double localZ = Math.sin(angle) * orbitRadius;
+            double localY = this.getBbHeight() * 0.5D + Math.sin(this.tickCount * 0.1D + index) * 0.4D;
+            Vec3 point = this.position().add(AntarchyGravityRotationUtil.vecPlayerToWorld(localX, localY, localZ, gravity));
+            block.setPos(point.x - 0.5D, point.y - 0.5D, point.z - 0.5D);
+            block.setDeltaMovement(Vec3.ZERO);
+            if (this.tickCount % 2 == 0) {
+                level.sendParticles(ParticleTypes.CRIT, point.x, point.y, point.z, 2, 0.15D, 0.15D, 0.15D, 0.01D);
+            }
+        }
+        this.playQueenTelegraphBeat(level, this.debrisCycloneTelegraphTicks, DEBRIS_CYCLONE_TELEGRAPH_TICKS, 0.9F);
+        this.debrisCycloneTelegraphTicks--;
+    }
+
+    private void performDebrisCycloneLaunch(ServerLevel level, LivingEntity target) {
+        Vec3 aimPoint = target.position().add(0.0D, target.getBbHeight() * 0.5D, 0.0D);
+        for (FallingBlockEntity block : this.debrisCycloneBlocks) {
+            if (!block.isAlive()) continue;
+            Vec3 toTarget = aimPoint.subtract(block.position());
+            double distance = Math.max(1.0D, toTarget.length());
+            Vec3 launch = toTarget.normalize().scale(DEBRIS_CYCLONE_LAUNCH_SPEED)
+                    .add(0.0D, Math.min(0.35D, distance * 0.03D), 0.0D);
+            block.setNoGravity(false);
+            block.setDeltaMovement(launch);
+            block.setHurtsEntities(DEBRIS_CYCLONE_BLOCK_DAMAGE_PER_DISTANCE, DEBRIS_CYCLONE_BLOCK_MAX_DAMAGE);
+            block.hurtMarked = true;
+        }
+        this.debrisCycloneBlocks.clear();
+        this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 1.05F);
+        level.sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY() + this.getBbHeight() * 0.5D, this.getZ(),
+                4, 0.6D, 0.6D, 0.6D, 0.02D);
+    }
+
+    private void tickGraviticUpheavalTelegraph(ServerLevel level) {
+        if (this.graviticUpheavalTelegraphTicks <= 0) return;
+        int elapsed = GRAVITIC_UPHEAVAL_TELEGRAPH_TICKS - this.graviticUpheavalTelegraphTicks;
+        if (this.tickCount % 3 == 0) {
+            double progress = elapsed / (double) GRAVITIC_UPHEAVAL_TELEGRAPH_TICKS;
+            double radius = Mth.lerp(progress, 4.0D, GRAVITIC_UPHEAVAL_RADIUS);
+            this.spawnQueenTelegraphRing(level, this.position(), radius, 48, ParticleTypes.REVERSE_PORTAL);
+        }
+        this.playQueenTelegraphBeat(level, this.graviticUpheavalTelegraphTicks, GRAVITIC_UPHEAVAL_TELEGRAPH_TICKS, 0.5F);
+        this.graviticUpheavalTelegraphTicks--;
+    }
+
+    private void startGraviticUpheaval(ServerLevel level) {
+        this.graviticUpheavalBlocks.clear();
+        this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.75F);
+        if (level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+            Vec3 center = this.position();
+            boolean inverted = AntarchyGravityApi.isGravityInverted(this);
+            int gathered = 0;
+            for (int attempt = 0; attempt < GRAVITIC_UPHEAVAL_BLOCK_COUNT * 3
+                    && gathered < GRAVITIC_UPHEAVAL_BLOCK_COUNT; attempt++) {
+                double angle = this.random.nextDouble() * Mth.TWO_PI;
+                double radius = this.random.nextDouble() * GRAVITIC_UPHEAVAL_RADIUS;
+                double x = center.x + Math.cos(angle) * radius;
+                double z = center.z + Math.sin(angle) * radius;
+                BlockPos pos = BlockPos.containing(x, this.groundYBelow(x, z), z);
+                BlockState state = level.getBlockState(pos);
+                if (!state.is(AntarchyTags.Blocks.QUEEN_GRABBABLE_BLOCKS) || level.getBlockEntity(pos) != null
+                        || state.getDestroySpeed(level, pos) < 0.0F || state.getCollisionShape(level, pos).isEmpty()) {
+                    continue;
+                }
+                FallingBlockEntity block = FallingBlockEntity.fall(level, pos, state);
+                if (block == null) {
+                    continue;
+                }
+                block.setNoGravity(true);
+                double upward = 0.35D + this.random.nextDouble() * GRAVITIC_UPHEAVAL_RISE_SPEED;
+                block.setDeltaMovement(
+                        (this.random.nextDouble() - 0.5D) * 0.06D,
+                        inverted ? -upward : upward,
+                        (this.random.nextDouble() - 0.5D) * 0.06D);
+                block.hurtMarked = true;
+                this.graviticUpheavalBlocks.add(block);
+                gathered++;
+            }
+        }
+        this.graviticUpheavalAgeTicks = 0;
+        this.royalEffects.start("gravitic_upheaval", GRAVITIC_UPHEAVAL_DURATION,
+                () -> {}, this::tickGraviticUpheaval, this::endGraviticUpheaval);
+    }
+
+    private void tickGraviticUpheaval() {
+        this.graviticUpheavalAgeTicks++;
+        boolean shouldFall = this.graviticUpheavalAgeTicks >= GRAVITIC_UPHEAVAL_RISE_TICKS;
+        for (FallingBlockEntity block : this.graviticUpheavalBlocks) {
+            if (!block.isAlive() || !shouldFall || !block.isNoGravity()) continue;
+            block.setNoGravity(false);
+            block.setHurtsEntities(1.6F, 20);
+        }
+        if (this.level() instanceof ServerLevel level && this.tickCount % 5 == 0) {
+            level.sendParticles(ParticleTypes.REVERSE_PORTAL, this.getX(), this.getY(), this.getZ(),
+                    6, GRAVITIC_UPHEAVAL_RADIUS * 0.5D, 1.0D, GRAVITIC_UPHEAVAL_RADIUS * 0.5D, 0.01D);
+        }
+    }
+
+    private void endGraviticUpheaval() {
+        this.graviticUpheavalBlocks.clear();
+        this.startRoyalRecovery(30);
     }
 
     private void spawnQueenTelegraphSpokes(ServerLevel level, Vec3 center, double radius) {
@@ -1571,6 +1801,8 @@ public class QueenEntity extends RoyalBossEntity {
         tag.putInt("AccelerationCooldownTicks", this.accelerationCooldownTicks);
         tag.putInt("QueenChronosphereCooldownTicks", this.queenChronosphereCooldownTicks);
         tag.putInt("BlackHoleCooldownTicks", this.blackHoleCooldownTicks);
+        tag.putInt("DebrisCycloneCooldownTicks", this.debrisCycloneCooldownTicks);
+        tag.putInt("GraviticUpheavalCooldownTicks", this.graviticUpheavalCooldownTicks);
         tag.putInt("QueenLandingCooldownTicks", this.queenLandingCooldownTicks);
         tag.putString("QueuedQueenFollowUp", this.queuedQueenFollowUp.name());
         tag.putInt("QueuedQueenFollowUpTicks", this.queuedQueenFollowUpTicks);
@@ -1595,6 +1827,8 @@ public class QueenEntity extends RoyalBossEntity {
         this.accelerationCooldownTicks = Math.max(0, tag.getInt("AccelerationCooldownTicks"));
         this.queenChronosphereCooldownTicks = Math.max(0, tag.getInt("QueenChronosphereCooldownTicks"));
         this.blackHoleCooldownTicks = Math.max(0, tag.getInt("BlackHoleCooldownTicks"));
+        this.debrisCycloneCooldownTicks = Math.max(0, tag.getInt("DebrisCycloneCooldownTicks"));
+        this.graviticUpheavalCooldownTicks = Math.max(0, tag.getInt("GraviticUpheavalCooldownTicks"));
         this.queenLandingCooldownTicks = tag.contains("QueenLandingCooldownTicks")
                 ? Math.max(0, tag.getInt("QueenLandingCooldownTicks")) : 300;
         if (tag.contains("QueuedQueenFollowUp")) {

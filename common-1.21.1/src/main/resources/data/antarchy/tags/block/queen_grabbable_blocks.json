@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:grass_block",
+    "minecraft:gravel",
+    "minecraft:sand",
+    "antarchy:dream_sand",
+    "antarchy:antigravel",
+    "antarchy:nyxite"
+  ]
+}
