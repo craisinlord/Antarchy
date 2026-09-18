@@ -160,20 +160,6 @@ public final class AntarchyFabric implements ModInitializer {
         Antarchy.init();
         BloodCrystalShardItem.SYNC_BLOODGLASS = BloodglassManager::syncBloodglass;
         registerTradeReloadListener();
-        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new IdentifiableResourceReloadListener() {
-            @Override
-            public ResourceLocation getFabricId() {
-                return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "blockle_answers");
-            }
-
-            @Override
-            public CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier barrier, ResourceManager manager,
-                                                   ProfilerFiller prepareProfiler, ProfilerFiller applyProfiler,
-                                                   Executor prepareExecutor, Executor applyExecutor) {
-                return com.craisinlord.antarchy.content.computer.blockle.BlockleAnswers.instance().reload(
-                        barrier, manager, prepareProfiler, applyProfiler, prepareExecutor, applyExecutor);
-            }
-        });
     }
 
     private static void registerTradeReloadListener() {

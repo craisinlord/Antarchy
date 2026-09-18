@@ -27,7 +27,7 @@ public final class PestControlTradeManager extends SimpleJsonResourceReloadListe
     }
 
     public static int[] slotsPerLevel() {
-        return new int[] {2, 2, 2, 1, 1};
+        return new int[] {3, 4, 3, 2, 2};
     }
 
     public static VillagerTrades.ItemListing listing(int level, int index) {

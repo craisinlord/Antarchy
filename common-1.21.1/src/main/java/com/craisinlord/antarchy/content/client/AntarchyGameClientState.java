@@ -19,10 +19,6 @@ public final class AntarchyGameClientState {
                 || envelope[0].equals(Integer.toString(AntarchyGamePayload.ANTMAN_STATE))) {
             GAME_STATES.put(key(result.pos(), envelope[0]),
                     result.success() ? envelope[2] : "");
-        } else if (envelope[0].equals(Integer.toString(AntarchyGamePayload.BLOCKLE_STATE))
-                || envelope[0].equals(Integer.toString(AntarchyGamePayload.BLOCKLE_GUESS))) {
-            if (!result.success()) return;
-            BlockleClientState.update(result);
         }
     }
 

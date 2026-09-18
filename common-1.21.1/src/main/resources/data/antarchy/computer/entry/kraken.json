@@ -5,5 +5,6 @@
   "subtitle": "guide.antarchy.entry.kraken.subtitle",
   "description": ["guide.antarchy.entry.kraken.description"],
   "entity": "antarchy:kraken",
-  "cover_entity": "antarchy:kraken"
+  "cover_entity": "antarchy:kraken",
+  "render_scale": 0.5
 }

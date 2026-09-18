@@ -25,7 +25,7 @@ public final class ComputerScientistTradeManager extends SimpleJsonResourceReloa
     private static final Gson GSON = new Gson();
     private static final String DIRECTORY = "computer_scientist_trades";
     private static final List<ResourceLocation> GENERAL_DISKS = List.of(
-            id("introduction"), id("chronosphere"), id("high_fructose_corn_syrup"),
+            id("introduction"), id("high_fructose_corn_syrup"),
             id("elythia"), id("flying_squirrel"), id("cavaryn"), id("thoraxis"),
             id("temporal_fields"), id("bloodglass"), id("vortex"));
     private static volatile List<TradeEntry> loadedTrades = List.of();

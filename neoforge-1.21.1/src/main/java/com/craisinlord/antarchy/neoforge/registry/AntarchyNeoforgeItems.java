@@ -397,7 +397,7 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> ANT_TRAP_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ANT_TRAP);
 
     public static final DeferredItem<Item> BUG_SPRAY = ITEMS.register("bug_spray",
-            () -> new com.craisinlord.antarchy.content.item.BugSprayItem(new Item.Properties().stacksTo(16)));
+            () -> new com.craisinlord.antarchy.content.item.BugSprayItem(new Item.Properties().durability(128)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_ORE_ITEM = ITEMS.register("uranium_ore",
             () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.URANIUM_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DEEPSLATE_URANIUM_ORE_ITEM = ITEMS.register("deepslate_uranium_ore",

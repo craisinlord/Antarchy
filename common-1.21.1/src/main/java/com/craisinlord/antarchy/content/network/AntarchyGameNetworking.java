@@ -13,8 +13,6 @@ public final class AntarchyGameNetworking {
     public static void saveBasiliskScore(BlockPos pos, int score) { send(pos, AntarchyGamePayload.BASILISK_STATE, Integer.toString(Math.max(0, score))); }
     public static void requestAntmanState(BlockPos pos) { send(pos, AntarchyGamePayload.ANTMAN_STATE, ""); }
     public static void saveAntmanScore(BlockPos pos, int score) { send(pos, AntarchyGamePayload.ANTMAN_STATE, Integer.toString(Math.max(0, score))); }
-    public static void requestBlockleState(BlockPos pos) { send(pos, AntarchyGamePayload.BLOCKLE_STATE, ""); }
-    public static void submitBlockleGuess(BlockPos pos, String guess) { send(pos, AntarchyGamePayload.BLOCKLE_GUESS, guess); }
 
     private static void send(BlockPos pos, int action, String value) { sender.accept(new AntarchyGamePayload(pos, action, value)); }
 }

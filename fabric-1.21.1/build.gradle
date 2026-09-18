@@ -39,7 +39,7 @@ dependencies {
     modApi "net.fabricmc.fabric-api:fabric-api:${fabric_api_version_1_21_1}"
     modImplementation "software.bernie.geckolib:geckolib-fabric-1.21.1:${geckolib_version}"
     // AntOS is developed beside Antarchy as a separate local project.
-    modImplementation files("$rootDir/../AntOS/fabric-1.21.1/build/libs/antos-fabric-1.21.1-0.1.0.jar")
+    modImplementation files("$rootDir/../AntOS/fabric-1.21.1/build/libs/antos-fabric-1.21.1-1.0.1.jar")
     modCompileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_fabric}")
     modLocalRuntime("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_fabric}")
     modLocalRuntime("dev.architectury:architectury-fabric:${architectury_api_version}")

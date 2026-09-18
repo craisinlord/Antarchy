@@ -23,14 +23,6 @@ public final class AntarchyFabricClient implements ClientModInitializer {
         AntarchyFabricClientBootstrap.register();
         AntarchyComputerGames.register();
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new IdentifiableResourceReloadListener() {
-            @Override public ResourceLocation getFabricId() { return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "antos_computer_data"); }
-            @Override public CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier barrier, ResourceManager manager,
-                    ProfilerFiller prepareProfiler, ProfilerFiller applyProfiler, Executor prepareExecutor, Executor applyExecutor) {
-                return com.craisinlord.antos.content.guide.ComputerGuideData.instance().reload(
-                        barrier, manager, prepareProfiler, applyProfiler, prepareExecutor, applyExecutor);
-            }
-        });
-        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new IdentifiableResourceReloadListener() {
             @Override
             public ResourceLocation getFabricId() {
                 return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "tiger_eye_camouflage_client_cache");

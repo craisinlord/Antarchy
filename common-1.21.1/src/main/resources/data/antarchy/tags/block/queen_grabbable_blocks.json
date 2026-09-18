@@ -4,8 +4,13 @@
     "minecraft:grass_block",
     "minecraft:gravel",
     "minecraft:sand",
+    "minecraft:dirt",
+    "minecraft:mud",
+    "minecraft:coarse_dirt",
     "antarchy:dream_sand",
     "antarchy:antigravel",
-    "antarchy:nyxite"
+    "antarchy:nyxite",
+    "antarchy:verdant_nyxium",
+    "antarchy:nadir_nyxium"
   ]
 }

@@ -17,23 +17,22 @@ public final class AntarchyComputerGames {
     private AntarchyComputerGames() {}
 
     public static void register() {
-        ComputerGameRegistry.register(game("basilisk", "BASILISK", pos -> {
+        registerIfMissing(game("basilisk", "BASILISK", pos -> {
             BasiliskProgram program = new BasiliskProgram(true, 0, 0, score -> AntarchyGameNetworking.saveBasiliskScore(pos, score));
             var loaded = new java.util.concurrent.atomic.AtomicBoolean();
             AntarchyGameNetworking.requestBasiliskState(pos);
             return new GameSession(() -> { if (!loaded.get()) loaded.set(loadScores(pos, AntarchyGamePayload.BASILISK_STATE, program::setStoredScores)); program.tick(); }, program::render, key -> loaded.get() && program.keyPressed(key), ignored -> false);
         }));
-        ComputerGameRegistry.register(game("antman", "ANTMAN.EXE", pos -> {
+        registerIfMissing(game("antman", "ANTMAN.EXE", pos -> {
             AntmanProgram program = new AntmanProgram(true, 0, 0, score -> AntarchyGameNetworking.saveAntmanScore(pos, score));
             var loaded = new java.util.concurrent.atomic.AtomicBoolean();
             AntarchyGameNetworking.requestAntmanState(pos);
             return new GameSession(() -> { if (!loaded.get()) loaded.set(loadScores(pos, AntarchyGamePayload.ANTMAN_STATE, program::setStoredScores)); program.tick(); }, program::render, key -> loaded.get() && program.keyPressed(key), ignored -> false);
         }));
-        ComputerGameRegistry.register(game("blockle", "BLOCKLE", pos -> {
-            BlockleProgram program = new BlockleProgram(pos);
-            program.setInstalled(true);
-            return new GameSession(program::tick, program::render, program::keyPressed, program::charTyped);
-        }));
+    }
+
+    private static void registerIfMissing(ComputerGame game) {
+        if (ComputerGameRegistry.get(game.id()) == null) ComputerGameRegistry.register(game);
     }
 
     private static boolean loadScores(BlockPos pos, int action, java.util.function.BiConsumer<Integer, Integer> setter) {

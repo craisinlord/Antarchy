@@ -69,14 +69,6 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
     }
 
     @Override
-    public void tick() {
-        super.tick();
-        if (!this.level().isClientSide && this.isVehicle() && this.tickCount % 100 == 0) {
-            this.playSound(AntarchySoundEvents.HOVERBOARD_IDLE.get(), 0.55F, 1.0F);
-        }
-    }
-
-    @Override
     public boolean canBeAffected(MobEffectInstance effectInstance) {
         return false;
     }

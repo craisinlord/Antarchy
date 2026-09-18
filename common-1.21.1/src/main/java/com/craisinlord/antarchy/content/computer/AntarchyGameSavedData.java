@@ -26,8 +26,6 @@ public final class AntarchyGameSavedData extends SavedData {
             state.basiliskHighScore = item.getInt("BasiliskHighScore");
             state.antmanScore = item.getInt("AntmanScore");
             state.antmanHighScore = item.getInt("AntmanHighScore");
-            state.blockleDay = item.getLong("BlockleDay");
-            for (net.minecraft.nbt.Tag guess : item.getList("BlockleGuesses", net.minecraft.nbt.Tag.TAG_STRING)) state.blockleGuesses.add(guess.getAsString());
             data.games.put(item.getString("Computer"), state);
         }
         return data;
@@ -42,10 +40,6 @@ public final class AntarchyGameSavedData extends SavedData {
             item.putInt("BasiliskHighScore", state.basiliskHighScore);
             item.putInt("AntmanScore", state.antmanScore);
             item.putInt("AntmanHighScore", state.antmanHighScore);
-            item.putLong("BlockleDay", state.blockleDay);
-            ListTag guesses = new ListTag();
-            state.blockleGuesses.forEach(guess -> guesses.add(net.minecraft.nbt.StringTag.valueOf(guess)));
-            item.put("BlockleGuesses", guesses);
             list.add(item);
         });
         tag.put("Games", list);
@@ -69,7 +63,5 @@ public final class AntarchyGameSavedData extends SavedData {
 
     public static final class GameState {
         public int basiliskScore, basiliskHighScore, antmanScore, antmanHighScore;
-        public long blockleDay = Long.MIN_VALUE;
-        public final List<String> blockleGuesses = new ArrayList<>();
     }
 }

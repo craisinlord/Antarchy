@@ -4,6 +4,5 @@
   "title": "guide.antarchy.entry.nightmare.title",
   "subtitle": "guide.antarchy.entry.nightmare.subtitle",
   "description": ["guide.antarchy.entry.nightmare.description"],
-  "entity": "antarchy:nightmare",
-  "recipe": "antarchy:nightmare/nightmare_sword"
+  "entity": "antarchy:nightmare"
 }

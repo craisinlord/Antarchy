@@ -45,6 +45,7 @@ import com.craisinlord.antarchy.content.dispenser.SquidzookaDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.RpoLauncherDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.SizeRayDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.WaterCannonDispenseBehavior;
+import com.craisinlord.antarchy.content.dispenser.BugSprayDispenseBehavior;
 import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.core.BlockPos;
@@ -106,6 +107,7 @@ public final class AntarchyFabricEvents {
         DispenserBlock.registerBehavior(AntarchyFabricItems.WATER_CANNON.get(), new WaterCannonDispenseBehavior());
         DispenserBlock.registerBehavior(AntarchyFabricItems.SHRINK_RAY.get(), new SizeRayDispenseBehavior());
         DispenserBlock.registerBehavior(AntarchyFabricItems.GROWTH_RAY.get(), new SizeRayDispenseBehavior());
+        DispenserBlock.registerBehavior(AntarchyFabricItems.BUG_SPRAY.get(), new BugSprayDispenseBehavior());
         AntarchyFabricDispenserBehaviors.register();
         registerTrades();
 

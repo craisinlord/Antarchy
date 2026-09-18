@@ -38,8 +38,6 @@ public final class CreativeTabContents {
     }
 
     private static final List<CatalogEntry> CATALOG = List.of(
-            entry("bug_spray", "tools"),
-            entry("ant_trap", "building_blocks"),
             entry("ouranwood_log", "building_blocks"),
             entry("ouranwood_wood", "building_blocks"),
             entry("mossy_ouranwood_log", "building_blocks"),
@@ -386,6 +384,7 @@ public final class CreativeTabContents {
             entry("dead_star_coral_fan", "natural_blocks"),
             entry("dead_star_coral_block", "natural_blocks"),
             entry("duct_tape", "tools_and_utilities", "shears"),
+            entry("bug_spray", "tools_and_utilities"),
             entry("music_disc_underside", "tools_and_utilities"),
             entry("diamond_minecart", "tools_and_utilities", "minecart"),
             entry("bile_bucket", "tools_and_utilities"),
@@ -549,6 +548,7 @@ public final class CreativeTabContents {
             entry("hoverboard_green", "building_blocks"),
             entry("hoverboard_red", "building_blocks"),
             entry("hoverboard_black", "building_blocks"),
+            entry("ant_trap", "building_blocks"),
             entry("easter_bunny_spawn_egg", "spawn_eggs"),
             entry("flying_squirrel_spawn_egg", "spawn_eggs"),
             entry("caterpillar_spawn_egg", "spawn_eggs"),
@@ -639,7 +639,7 @@ public final class CreativeTabContents {
         for (String potionPath : ANTARCHY_POTION_FAMILIES) {
             acceptPotionFamily(output, potionPath);
         }
-        for (String diskId : List.of("antarchy:introduction", "antarchy:chronosphere", "antarchy:toreterror_arena", "antarchy:high_fructose_corn_syrup",
+        for (String diskId : List.of("antarchy:introduction", "antarchy:toreterror_arena", "antarchy:high_fructose_corn_syrup",
                 "antarchy:elythia", "antarchy:flying_squirrel", "antarchy:cavaryn", "antarchy:thoraxis", "antarchy:temporal_fields", "antarchy:bloodglass", "antarchy:vortex")) {
             ItemStack disk = new ItemStack(com.craisinlord.antos.content.AntOSObjects.FLOPPY_DISK.get());
             disk.set(com.craisinlord.antos.content.AntOSObjects.FLOPPY_DISK_COMPONENT.get(), ResourceLocation.parse(diskId));

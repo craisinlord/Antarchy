@@ -8,6 +8,7 @@ import com.craisinlord.antarchy.content.recipe.CustomBrewingRecipes;
 import com.craisinlord.antarchy.content.block.DuctTapeBlock;
 import com.craisinlord.antarchy.content.dispenser.RpoLauncherDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.SizeRayDispenseBehavior;
+import com.craisinlord.antarchy.content.dispenser.BugSprayDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.SquidzookaDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.WaterCannonDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.AntimetalMinecartDispenseBehavior;
@@ -29,6 +30,7 @@ import com.craisinlord.antarchy.content.item.*;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateGearHelper;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.mixins.PoiTypesAccessor;
 import com.craisinlord.antarchy.content.portal.PermanentPortalManager;
 import com.craisinlord.antarchy.content.time.TimeDilationManager;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController;
@@ -37,6 +39,11 @@ import com.craisinlord.antarchy.neoforge.AntarchyNeoForgeFluidTypes;
 import com.craisinlord.antarchy.neoforge.entity.multipart.MultipartPartEntity;
 import com.craisinlord.antarchy.neoforge.network.AntarchyGravityNetworking;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -63,6 +70,8 @@ import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
@@ -401,7 +410,6 @@ public final class AntarchyNeoForgeEvents {
         event.addListener(new DrTrayaurusTradeManager());
         event.addListener(new ComputerScientistTradeManager());
         event.addListener(new com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager());
-        event.addListener(com.craisinlord.antarchy.content.computer.blockle.BlockleAnswers.instance());
     }
     static void handleStartTracking(PlayerEvent.StartTracking event) {
         if (event.getTarget().level().isClientSide()) {
@@ -1414,6 +1422,14 @@ public final class AntarchyNeoForgeEvents {
     static void onCommonSetup(FMLCommonSetupEvent event) {
         BloodCrystalShardItem.SYNC_BLOODGLASS = AntarchyNeoForgeEvents::syncBloodglass;
         event.enqueueWork(() -> {
+            Holder<PoiType> computerPoi = BuiltInRegistries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(
+                    ResourceKey.create(Registries.POINT_OF_INTEREST_TYPE,
+                            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "computer")));
+            Block computerBlock = Block.byItem(com.craisinlord.antos.content.AntOSObjects.COMPUTER_ITEM.get());
+            for (BlockState state : computerBlock.getStateDefinition().getPossibleStates()) {
+                PoiTypesAccessor.antarchy$getTypeByState().put(state, computerPoi);
+            }
+
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.SHRINK_RAY.get(), new SizeRayDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.GROWTH_RAY.get(), new SizeRayDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.SQUIDZOOKA.get(), new SquidzookaDispenseBehavior());
@@ -1421,6 +1437,7 @@ public final class AntarchyNeoForgeEvents {
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.WATER_CANNON.get(), new WaterCannonDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.VORTEX_CHARGE.get(), new com.craisinlord.antarchy.content.dispenser.VortexChargeDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyNeoforgeItems.EYE_OF_THE_STORM.get(), new com.craisinlord.antarchy.content.dispenser.EyeOfTheStormDispenseBehavior());
+            DispenserBlock.registerBehavior(AntarchyNeoforgeItems.BUG_SPRAY.get(), new BugSprayDispenseBehavior());
             AntimetalMinecartDispenseBehavior antimetalMinecartDispenseBehavior = new AntimetalMinecartDispenseBehavior();
             DispenserBlock.registerBehavior(Items.MINECART, antimetalMinecartDispenseBehavior);
             DispenserBlock.registerBehavior(Items.CHEST_MINECART, antimetalMinecartDispenseBehavior);

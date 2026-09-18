@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.neoforge.client;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.GoopedHudRenderer;
+import com.craisinlord.antarchy.content.client.AntarchyArchivePreviews;
 import com.craisinlord.antarchy.content.client.game.AntarchyComputerGames;
 import com.craisinlord.antarchy.content.client.HordeHudRenderer;
 import com.craisinlord.antarchy.content.client.TigerEyeClientHooks;
@@ -95,7 +96,10 @@ public final class AntarchyNeoForgeClient {
 
     @SubscribeEvent
     public static void clientSetup(FMLClientSetupEvent event) {
-        event.enqueueWork(AntarchyComputerGames::register);
+        event.enqueueWork(() -> {
+            AntarchyArchivePreviews.register();
+            AntarchyComputerGames.register();
+        });
     }
 
     @SubscribeEvent
@@ -723,7 +727,6 @@ public final class AntarchyNeoForgeClient {
 
     @SubscribeEvent
     public static void registerClientReloadListeners(RegisterClientReloadListenersEvent event) {
-        event.registerReloadListener(com.craisinlord.antos.content.guide.ComputerGuideData.instance());
         event.registerReloadListener(new net.minecraft.server.packs.resources.SimplePreparableReloadListener<Void>() {
             @Override
             protected Void prepare(net.minecraft.server.packs.resources.ResourceManager resourceManager, net.minecraft.util.profiling.ProfilerFiller profiler) {

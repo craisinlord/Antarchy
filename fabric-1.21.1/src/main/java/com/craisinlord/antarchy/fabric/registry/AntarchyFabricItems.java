@@ -509,7 +509,7 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> ANT_TRAP_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.ANT_TRAP);
 
     public static final DeferredItem<Item> BUG_SPRAY = ITEMS.register("bug_spray",
-            () -> new com.craisinlord.antarchy.content.item.BugSprayItem(new Item.Properties().stacksTo(16)));
+            () -> new com.craisinlord.antarchy.content.item.BugSprayItem(new Item.Properties().durability(128)));
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.URANIUM_ORE, new Item.Properties().rarity(Rarity.UNCOMMON));

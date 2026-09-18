@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.neoforge.client;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.client.HoverboardSoundSystem;
 import com.craisinlord.antarchy.content.client.HoverboardTrailSystem;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -16,6 +17,7 @@ public final class HoverboardTrailHandler {
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         HoverboardTrailSystem.tick();
+        HoverboardSoundSystem.tick();
     }
 
     @SubscribeEvent

@@ -5,5 +5,7 @@
   "subtitle": "guide.antarchy.entry.king.subtitle",
   "description": ["guide.antarchy.entry.king.description"],
   "entity": "antarchy:king",
-  "cover_entity": "antarchy:king"
+  "cover_entity": "antarchy:king",
+  "rotation": 45,
+  "render_scale": 0.5
 }
