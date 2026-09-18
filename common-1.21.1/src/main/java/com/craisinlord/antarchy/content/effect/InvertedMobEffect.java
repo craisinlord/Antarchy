@@ -6,6 +6,7 @@ import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EntityType;
 
 public final class InvertedMobEffect extends MobEffect {
     private static final AntarchyGravityTransition EFFECT_TRANSITION = new AntarchyGravityTransition(12);
@@ -17,6 +18,14 @@ public final class InvertedMobEffect extends MobEffect {
     
     @Override
     public boolean applyEffectTick(LivingEntity entity, int amplifier) {
+        // Vex flight steering is authored around vanilla gravity and ground contact. Rotating its
+        // gravity frame makes the native flight controller drive it into terrain.
+        if (entity.getType() == EntityType.VEX) {
+            if (!entity.level().isClientSide()) {
+                AntarchyGravityApi.clearForcedGravity(entity);
+            }
+            return true;
+        }
         if (!entity.level().isClientSide()) {
             if (AntarchyGravityApi.getGravityDirection(entity) != AntarchyGravityDirection.UP || !AntarchyGravityApi.isGravityForced(entity)) {
                 AntarchyGravityApi.setForcedGravityDirection(entity, AntarchyGravityDirection.UP, EFFECT_TRANSITION);

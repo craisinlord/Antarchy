@@ -14,6 +14,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.protocol.game.ClientboundClearTitlesPacket;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
@@ -252,7 +254,7 @@ public class KingEntity extends RoyalBossEntity {
             return true;
         }
         LivingEntity target = this.getTarget();
-        if (target == null || this.activeDecree != null || this.royalChargeOpeningDelayTicks > 0
+        if (target == null || this.royalChargeOpeningDelayTicks > 0
                 || this.kingLandingStage != KingLandingStage.AERIAL
                 || !this.attackScheduler.ready("royal_charge", RoyalAttackLane.MOVEMENT)) {
             return false;
@@ -543,6 +545,9 @@ public class KingEntity extends RoyalBossEntity {
             return;
         }
         this.tickRoyalBoundary((ServerLevel) this.level());
+        if (this.tickCount % 10 == 0 && this.isRoyalFlying() && this.getDeltaMovement().horizontalDistanceSqr() > 0.01D) {
+            this.clearLeavesAhead((ServerLevel) this.level());
+        }
         this.tickComeNoCloserIndicator();
         this.tickRoyalPunishment();
         this.tickPendingExileAnimation();
@@ -760,6 +765,28 @@ public class KingEntity extends RoyalBossEntity {
             }
         }
         return true;
+    }
+
+    private void clearLeavesAhead(ServerLevel level) {
+        if (!level.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING)) {
+            return;
+        }
+        Vec3 movement = this.getDeltaMovement().normalize().scale(1.5D);
+        AABB forward = this.getBoundingBox().move(movement).inflate(0.2D, 0.0D, 0.2D);
+        BlockPos min = BlockPos.containing(forward.minX, forward.minY, forward.minZ);
+        BlockPos max = BlockPos.containing(forward.maxX, forward.maxY, forward.maxZ);
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (int y = min.getY(); y <= max.getY(); y++) {
+            for (int x = min.getX(); x <= max.getX(); x++) {
+                for (int z = min.getZ(); z <= max.getZ(); z++) {
+                    cursor.set(x, y, z);
+                    if (level.getBlockState(cursor).is(BlockTags.LEAVES)) {
+                        level.destroyBlock(cursor, true, this);
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     private void tickKingCombatMovement(LivingEntity target) {
@@ -1102,7 +1129,9 @@ public class KingEntity extends RoyalBossEntity {
 
     public RoyalDecree.Evaluation evaluateCloseQuarters(LivingEntity target) {
         UUID targetId = target.getUUID();
-        double distanceSquared = target.distanceToSqr(this);
+        double dx = target.getX() - this.getX();
+        double dz = target.getZ() - this.getZ();
+        double distanceSquared = dx * dx + dz * dz;
         if (distanceSquared <= CLOSE_QUARTERS_RADIUS * CLOSE_QUARTERS_RADIUS) {
             this.closeQuartersEntered.add(targetId);
             this.closeQuartersOutsideTicks.remove(targetId);
@@ -1719,8 +1748,8 @@ public class KingEntity extends RoyalBossEntity {
                         }
                         @Override public void onActive(int elapsedTicks) {
                             Vec3 origin = KingEntity.this.headAnchor(KingEntity.this.royalHead(RoyalHead.Slot.LEFT));
-                            Vec3 predicted = target.position().add(target.getDeltaMovement().scale(10.0D));
-                            Vec3 direction = predicted.add(0.0D, target.getBbHeight() * 0.5D, 0.0D).subtract(origin).normalize();
+                            Vec3 direction = RoyalElementalProjectileEntity.aimDirection(
+                                    origin, target, RoyalBeamElement.FIRE);
                             RoyalElementalProjectileEntity fireball = RoyalElementalProjectileEntity.create(level, KingEntity.this,
                                     RoyalBeamElement.FIRE, origin, direction);
                             level.addFreshEntity(fireball);
@@ -1739,7 +1768,8 @@ public class KingEntity extends RoyalBossEntity {
                         }
                         @Override public void onActive(int elapsedTicks) {
                             Vec3 origin = KingEntity.this.headAnchor(KingEntity.this.royalHead(RoyalHead.Slot.RIGHT));
-                            Vec3 direction = target.getEyePosition().subtract(origin).normalize();
+                            Vec3 direction = RoyalElementalProjectileEntity.aimDirection(
+                                    origin, target, RoyalBeamElement.ICE);
                             RoyalElementalProjectileEntity iceball = RoyalElementalProjectileEntity.create(level, KingEntity.this,
                                     RoyalBeamElement.ICE, origin, direction);
                             level.addFreshEntity(iceball);

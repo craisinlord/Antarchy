@@ -11,6 +11,8 @@ import com.craisinlord.antarchy.content.time.TimeDilationCommand;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
 
 @EventBusSubscriber(modid = Antarchy.MODID)
 public final class AntarchyNeoforgeEvents {

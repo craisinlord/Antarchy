@@ -36,6 +36,7 @@ public class TimeDilationFieldEntity extends Entity {
     private int missingAnchorTicks;
     private boolean visual = true;
     private boolean chronosphere;
+    private boolean queenChronosphere;
 
     public TimeDilationFieldEntity(EntityType<? extends TimeDilationFieldEntity> entityType, Level level) {
         super(entityType, level);
@@ -79,19 +80,25 @@ public class TimeDilationFieldEntity extends Entity {
         this.chronosphere = true;
     }
 
+    public void configureQueenChronosphere(QueenEntity owner) {
+        this.ownerId = owner.getUUID();
+        this.attachTo(owner);
+        this.queenChronosphere = true;
+    }
+
     public boolean isChronosphere() {
         return this.chronosphere;
     }
 
     public boolean affects(Entity entity) {
-        if (entity instanceof RoyalBlackHoleEntity || this.isOwnedBy(entity)
+        if (!this.queenChronosphere && entity instanceof RoyalBlackHoleEntity || this.isOwnedBy(entity)
                 || this.anchorId != null && this.anchorId.equals(entity.getUUID())) {
             return false;
         }
         if (this.chronosphere && !(entity instanceof LivingEntity || entity instanceof Projectile || entity instanceof ItemEntity)) {
             return false;
         }
-        if (this.ownerId != null && this.level() instanceof ServerLevel level
+        if (!this.queenChronosphere && this.ownerId != null && this.level() instanceof ServerLevel level
                 && level.getEntity(this.ownerId) instanceof QueenEntity) {
             return !entity.getType().is(AntarchyTags.Entities.QUEEN_DOES_NOT_ATTACK);
         }
@@ -202,6 +209,7 @@ public class TimeDilationFieldEntity extends Entity {
         this.anchorId = tag.hasUUID("AnchorUuid") ? tag.getUUID("AnchorUuid") : null;
         this.visual = !tag.contains("Visual") || tag.getBoolean("Visual");
         this.chronosphere = tag.getBoolean("Chronosphere");
+        this.queenChronosphere = tag.getBoolean("QueenChronosphere");
     }
 
     @Override
@@ -218,5 +226,6 @@ public class TimeDilationFieldEntity extends Entity {
         }
         tag.putBoolean("Visual", this.visual);
         tag.putBoolean("Chronosphere", this.chronosphere);
+        tag.putBoolean("QueenChronosphere", this.queenChronosphere);
     }
 }

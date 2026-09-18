@@ -77,11 +77,11 @@ public class RoyalGuardianSwordItem extends SwordItem implements GeoItem {
     public InteractionResultHolder<ItemStack> use(net.minecraft.world.level.Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!player.isShiftKeyDown()) return InteractionResultHolder.pass(stack);
-        cycleMode(level, player, stack);
-        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+        return InteractionResultHolder.pass(stack);
     }
 
-    private void cycleMode(net.minecraft.world.level.Level level, Player player, ItemStack stack) {
+    public boolean tryCycleModeFromInput(net.minecraft.world.level.Level level, Player player, ItemStack stack) {
+        if (player.getMainHandItem() != stack) return false;
         Mode next = getMode(stack).next();
         setMode(stack, next);
         if (!level.isClientSide) {
@@ -89,6 +89,7 @@ public class RoyalGuardianSwordItem extends SwordItem implements GeoItem {
                     Component.translatable(next.translationKey)), true);
             level.playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.8F, 0.8F + next.ordinal() * 0.2F);
         }
+        return true;
     }
 
     private static void setMode(ItemStack stack, Mode mode) {

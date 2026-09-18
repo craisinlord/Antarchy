@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
@@ -65,6 +66,14 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
         super(entityType, level);
         this.setNoGravity(true);
         this.setPersistenceRequired();
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (!this.level().isClientSide && this.isVehicle() && this.tickCount % 100 == 0) {
+            this.playSound(AntarchySoundEvents.HOVERBOARD_IDLE.get(), 0.55F, 1.0F);
+        }
     }
 
     @Override
@@ -139,10 +148,19 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
         if (!this.isVehicle() && !player.isSecondaryUseActive()) {
             if (!this.level().isClientSide) {
                 player.startRiding(this);
+                this.playSound(AntarchySoundEvents.HOVERBOARD_MOUNT.get(), 1.0F, 1.0F);
             }
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
         return super.mobInteract(player, hand);
+    }
+
+    @Override
+    protected void removePassenger(Entity passenger) {
+        super.removePassenger(passenger);
+        if (!this.level().isClientSide) {
+            this.playSound(AntarchySoundEvents.HOVERBOARD_DISMOUNT.get(), 1.0F, 1.0F);
+        }
     }
 
     @Override

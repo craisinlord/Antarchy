@@ -2,7 +2,9 @@ package com.craisinlord.antarchy.neoforge.client;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.item.BigBerthaItem;
+import com.craisinlord.antarchy.content.item.RoyalGuardianSwordItem;
 import com.craisinlord.antarchy.content.network.BigBerthaModeCyclePayload;
+import com.craisinlord.antarchy.content.network.RoyalGuardianSwordModeCyclePayload;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -25,7 +27,9 @@ public final class BigBerthaClientHandler {
             return;
         }
 
-        if (!(mc.player.getMainHandItem().getItem() instanceof BigBerthaItem)) {
+        boolean bigBertha = mc.player.getMainHandItem().getItem() instanceof BigBerthaItem;
+        boolean royalGuardianSword = mc.player.getMainHandItem().getItem() instanceof RoyalGuardianSwordItem;
+        if (!bigBertha && !royalGuardianSword) {
             lastUseDown = false;
             return;
         }
@@ -34,8 +38,9 @@ public final class BigBerthaClientHandler {
         if (useDown
                 && !lastUseDown
                 && mc.player.isShiftKeyDown()
-                && mc.player.getCooldowns().isOnCooldown(mc.player.getMainHandItem().getItem())) {
-            PacketDistributor.sendToServer(new BigBerthaModeCyclePayload());
+                ) {
+            if (bigBertha) PacketDistributor.sendToServer(new BigBerthaModeCyclePayload());
+            else PacketDistributor.sendToServer(new RoyalGuardianSwordModeCyclePayload());
         }
         lastUseDown = useDown;
     }

@@ -1,0 +1,9 @@
+{
+  "type": "entity",
+  "category": "elythia",
+  "title": "guide.antarchy.entry.prince.title",
+  "subtitle": "guide.antarchy.entry.prince.subtitle",
+  "description": ["guide.antarchy.entry.prince.description"],
+  "entity": "antarchy:prince",
+  "cover_entity": "antarchy:prince"
+}

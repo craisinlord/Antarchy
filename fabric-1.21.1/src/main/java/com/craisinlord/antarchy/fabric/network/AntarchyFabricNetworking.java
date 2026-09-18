@@ -49,9 +49,7 @@ public final class AntarchyFabricNetworking {
     public static void register() {
         registerPayloadTypes();
         registerServerReceivers();
-        com.craisinlord.antarchy.content.network.ComputerAccessHandler.setResultSender(ServerPlayNetworking::send);
-        com.craisinlord.antarchy.content.network.AntmailServerHandler.setResultSender(ServerPlayNetworking::send);
-        com.craisinlord.antarchy.content.network.ComputerNetworking.setSender(ServerPlayNetworking::send);
+        com.craisinlord.antarchy.content.network.AntarchyGameNetworkHandler.setResultSender(ServerPlayNetworking::send);
     }
 
     public static void bootstrapMultipartCommon() {
@@ -75,8 +73,7 @@ public final class AntarchyFabricNetworking {
     }
 
     private static void registerPayloadTypes() {
-        PayloadTypeRegistry.playS2C().register(ComputerAccessResultPayload.TYPE, ComputerAccessResultPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(AntmailResultPayload.TYPE, AntmailResultPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(AntarchyGameResultPayload.TYPE, AntarchyGameResultPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(GravityStatePayload.TYPE, GravityStatePayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(BloodglassStatePayload.TYPE, BloodglassStatePayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(TigerEyeCamouflageStatePayload.TYPE, TigerEyeCamouflageStatePayload.STREAM_CODEC);
@@ -97,6 +94,8 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playC2S().register(RoyalMountVerticalPayload.TYPE, RoyalMountVerticalPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(GravityGunScrollPayload.TYPE, GravityGunScrollPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(BigBerthaModeCyclePayload.TYPE, BigBerthaModeCyclePayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(com.craisinlord.antarchy.content.network.RoyalGuardianSwordModeCyclePayload.TYPE,
+                com.craisinlord.antarchy.content.network.RoyalGuardianSwordModeCyclePayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(ToggleTigerEyeCamouflagePayload.TYPE, ToggleTigerEyeCamouflagePayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(ToggleRoyalInversionPayload.TYPE, ToggleRoyalInversionPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(com.craisinlord.antarchy.content.network.ActivateRoyalBoundaryPayload.TYPE, com.craisinlord.antarchy.content.network.ActivateRoyalBoundaryPayload.STREAM_CODEC);
@@ -111,36 +110,12 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playC2S().register(HerculesBeetleMountedChargePayload.TYPE, HerculesBeetleMountedChargePayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(MultipartAttackPayload.TYPE, MultipartAttackPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(MultipartInteractPayload.TYPE, MultipartInteractPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(ComputerAccessPayload.TYPE, ComputerAccessPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(AntmailSetupPayload.TYPE, AntmailSetupPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(AntmailStateRequestPayload.TYPE, AntmailStateRequestPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(AntmailMessageRequestPayload.TYPE, AntmailMessageRequestPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(AntmailSendPayload.TYPE, AntmailSendPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(AntmailReadPayload.TYPE, AntmailReadPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(AntmailDeletePayload.TYPE, AntmailDeletePayload.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(AntmailDraftPayload.TYPE, AntmailDraftPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(AntmailRetryPayload.TYPE, AntmailRetryPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(AntarchyGamePayload.TYPE, AntarchyGamePayload.STREAM_CODEC);
     }
 
     private static void registerServerReceivers() {
-        ServerPlayNetworking.registerGlobalReceiver(ComputerAccessPayload.TYPE, (payload, context) ->
-                context.server().execute(() -> ComputerAccessHandler.handle(context.player(), payload)));
-        ServerPlayNetworking.registerGlobalReceiver(AntmailSetupPayload.TYPE, (payload, context) ->
-                context.server().execute(() -> AntmailServerHandler.handle(context.player(), payload)));
-        ServerPlayNetworking.registerGlobalReceiver(AntmailStateRequestPayload.TYPE, (payload, context) ->
-                context.server().execute(() -> AntmailServerHandler.handle(context.player(), payload)));
-        ServerPlayNetworking.registerGlobalReceiver(AntmailMessageRequestPayload.TYPE, (payload, context) ->
-                context.server().execute(() -> AntmailServerHandler.handle(context.player(), payload)));
-        ServerPlayNetworking.registerGlobalReceiver(AntmailSendPayload.TYPE, (payload, context) ->
-                context.server().execute(() -> AntmailServerHandler.handle(context.player(), payload)));
-        ServerPlayNetworking.registerGlobalReceiver(AntmailReadPayload.TYPE, (payload, context) ->
-                context.server().execute(() -> AntmailServerHandler.handle(context.player(), payload)));
-        ServerPlayNetworking.registerGlobalReceiver(AntmailDeletePayload.TYPE, (payload, context) ->
-                context.server().execute(() -> AntmailServerHandler.handle(context.player(), payload)));
-        ServerPlayNetworking.registerGlobalReceiver(AntmailDraftPayload.TYPE, (payload, context) ->
-                context.server().execute(() -> AntmailServerHandler.handle(context.player(), payload)));
-        ServerPlayNetworking.registerGlobalReceiver(AntmailRetryPayload.TYPE, (payload, context) ->
-                context.server().execute(() -> AntmailServerHandler.handle(context.player(), payload)));
+        ServerPlayNetworking.registerGlobalReceiver(AntarchyGamePayload.TYPE, (payload, context) ->
+                context.server().execute(() -> AntarchyGameNetworkHandler.handle(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(GravityGunPrimaryPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleGravityGunPrimary(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(PortalGunPrimaryPayload.TYPE, (payload, context) ->
@@ -155,6 +130,8 @@ public final class AntarchyFabricNetworking {
                 context.server().execute(() -> handleGravityGunScroll(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(BigBerthaModeCyclePayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleBigBerthaModeCycle(context.player(), payload)));
+        ServerPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.RoyalGuardianSwordModeCyclePayload.TYPE,
+                (payload, context) -> context.server().execute(() -> handleRoyalGuardianSwordModeCycle(context.player())));
         ServerPlayNetworking.registerGlobalReceiver(ToggleTigerEyeCamouflagePayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleTigerEyeCamouflageToggle(context.player())));
         ServerPlayNetworking.registerGlobalReceiver(ToggleRoyalInversionPayload.TYPE, (payload, context) ->
@@ -322,7 +299,14 @@ public final class AntarchyFabricNetworking {
         if (!(player.getMainHandItem().getItem() instanceof BigBerthaItem bigBerthaItem)) {
             return;
         }
-        bigBerthaItem.tryCycleModeWhileCoolingDown(player.serverLevel(), player, player.getMainHandItem());
+        bigBerthaItem.tryCycleModeFromInput(player.serverLevel(), player, player.getMainHandItem());
+    }
+
+    private static void handleRoyalGuardianSwordModeCycle(ServerPlayer player) {
+        if (!(player.getMainHandItem().getItem() instanceof com.craisinlord.antarchy.content.item.RoyalGuardianSwordItem sword)) {
+            return;
+        }
+        sword.tryCycleModeFromInput(player.serverLevel(), player, player.getMainHandItem());
     }
 
     private static void handleDiamondMinecartInput(ServerPlayer player, DiamondMinecartInputPayload payload) {

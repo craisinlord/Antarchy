@@ -4,12 +4,14 @@ import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /** Corrects Scorched Guns arrow-derived projectiles with custom tick gravity. */
 @Mixin(targets = "top.ribs.scguns.entity.projectile.BrassBoltEntity")
+@Pseudo
 public abstract class ScgunsArrowGravityMixin {
     @Inject(method = "tick", at = @At("TAIL"))
     private void antarchy$invertScgunsArrowGravity(CallbackInfo ci) {

@@ -38,6 +38,8 @@ public final class CreativeTabContents {
     }
 
     private static final List<CatalogEntry> CATALOG = List.of(
+            entry("bug_spray", "tools"),
+            entry("ant_trap", "building_blocks"),
             entry("ouranwood_log", "building_blocks"),
             entry("ouranwood_wood", "building_blocks"),
             entry("mossy_ouranwood_log", "building_blocks"),
@@ -395,8 +397,6 @@ public final class CreativeTabContents {
             entry("lucid_anchor", "tools_and_utilities"),
             entry("undertrial_spawner", "tools_and_utilities"),
             entry("undervault", "tools_and_utilities"),
-            entry("computer", "functional_blocks"),
-            entry("floppy_disk", "tools_and_utilities"),
             entry("undertrial_key", "tools_and_utilities"),
             entry("reverie_bottle", "tools_and_utilities"),
             entry("glimmer_bottle", "tools_and_utilities"),
@@ -641,8 +641,8 @@ public final class CreativeTabContents {
         }
         for (String diskId : List.of("antarchy:introduction", "antarchy:chronosphere", "antarchy:toreterror_arena", "antarchy:high_fructose_corn_syrup",
                 "antarchy:elythia", "antarchy:flying_squirrel", "antarchy:cavaryn", "antarchy:thoraxis", "antarchy:temporal_fields", "antarchy:bloodglass", "antarchy:vortex")) {
-            ItemStack disk = new ItemStack(AntarchyObjects.FLOPPY_DISK.get());
-            disk.set(AntarchyObjects.FLOPPY_DISK_COMPONENT.get(), ResourceLocation.parse(diskId));
+            ItemStack disk = new ItemStack(com.craisinlord.antos.content.AntOSObjects.FLOPPY_DISK.get());
+            disk.set(com.craisinlord.antos.content.AntOSObjects.FLOPPY_DISK_COMPONENT.get(), ResourceLocation.parse(diskId));
             output.accept(disk);
         }
     }

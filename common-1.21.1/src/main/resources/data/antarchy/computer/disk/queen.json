@@ -1,5 +1,5 @@
 {
-  "category": "thoraxis",
+  "category": "antarchy:thoraxis",
   "title": "guide.antarchy.disk.queen.title",
-  "entries": ["antarchy:queen"]
+  "entries": ["antarchy:queen", "antarchy:princess"]
 }

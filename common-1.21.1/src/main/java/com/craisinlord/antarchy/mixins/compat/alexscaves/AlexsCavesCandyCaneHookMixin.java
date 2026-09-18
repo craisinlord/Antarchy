@@ -8,6 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
@@ -15,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /** Handles Alex's Caves' manually-launched Candy Cane Hook. */
 @Mixin(targets = "com.github.alexmodguy.alexscaves.server.entity.item.CandyCaneHookEntity")
+@Pseudo
 public abstract class AlexsCavesCandyCaneHookMixin {
     private boolean antarchy$launchAdjusted;
 

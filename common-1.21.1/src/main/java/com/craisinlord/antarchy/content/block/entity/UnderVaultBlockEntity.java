@@ -30,6 +30,7 @@ import java.util.function.Supplier;
 
 public final class UnderVaultBlockEntity extends BlockEntity {
     private final VaultBlockEntity vaultData;
+    private boolean playerWasNearby;
 
     public UnderVaultBlockEntity(BlockPos pos, BlockState state, Supplier<? extends BlockEntityType<UnderVaultBlockEntity>> type) {
         super(type.get(), pos, state);
@@ -49,11 +50,12 @@ public final class UnderVaultBlockEntity extends BlockEntity {
         // The vanilla vault detector can miss this ceiling-mounted wrapper because its
         // block state has a separate render-facing property. Keep the state synchronized
         // with the same four-block activation range before running vanilla's state machine.
-        if (state.getValue(UnderVaultBlock.STATE) == VaultState.INACTIVE
-                && !level.getEntitiesOfClass(Player.class, new AABB(pos).inflate(4.0D), player -> !player.isSpectator()).isEmpty()) {
+        boolean playerNearby = !level.getEntitiesOfClass(Player.class, new AABB(pos).inflate(4.0D), player -> !player.isSpectator()).isEmpty();
+        if (state.getValue(UnderVaultBlock.STATE) == VaultState.INACTIVE && playerNearby && !blockEntity.playerWasNearby) {
             state = state.setValue(UnderVaultBlock.STATE, VaultState.ACTIVE);
             level.setBlockAndUpdate(pos, state);
         }
+        blockEntity.playerWasNearby = playerNearby;
         VaultBlockEntity.Server.tick(level, pos, state, blockEntity.vaultData.getConfig(), blockEntity.vaultData.getServerData(), blockEntity.vaultData.getSharedData());
     }
 

@@ -10,6 +10,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
         "top.ribs.scguns.entity.projectile.OsborneSlugProjectileEntity",
         "top.ribs.scguns.entity.projectile.ShotballProjectileEntity"
 })
+@Pseudo
 public abstract class ScgunsProjectileEntityGravityMixin {
     @Shadow @Nullable protected LivingEntity shooter;
     @Shadow protected double modifiedGravity;

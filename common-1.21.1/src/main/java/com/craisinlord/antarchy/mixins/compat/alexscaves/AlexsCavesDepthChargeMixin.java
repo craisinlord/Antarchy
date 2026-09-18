@@ -5,11 +5,13 @@ import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManag
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 /** Corrects Depth Charge's custom tick, which bypasses ThrowableProjectile.tick. */
 @Mixin(targets = "com.github.alexmodguy.alexscaves.server.entity.item.DepthChargeEntity")
+@Pseudo
 public abstract class AlexsCavesDepthChargeMixin {
     @ModifyArg(
             method = "tick",

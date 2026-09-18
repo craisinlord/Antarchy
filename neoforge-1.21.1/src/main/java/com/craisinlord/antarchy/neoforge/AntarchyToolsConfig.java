@@ -540,10 +540,10 @@ public final class AntarchyToolsConfig {
         BLOOD_CRYSTAL_LEGGINGS_DEFENSE    = b.comment("Armor defense value for Blood Crystal Leggings. Default: 5 (iron).").defineInRange("leggingsDefense", 5, 0, 30);
         BLOOD_CRYSTAL_BOOTS_DEFENSE       = b.comment("Armor defense value for Blood Crystal Boots. Default: 2 (iron).").defineInRange("bootsDefense", 2, 0, 30);
         BLOOD_CRYSTAL_ARMOR_TOUGHNESS     = b.comment("Armor toughness for all Blood Crystal armor pieces. Default: 0.0 (iron).").defineInRange("armorToughness", 0.0, 0.0, 20.0);
-        BLOOD_CRYSTAL_HELMET_DURABILITY   = b.comment("Max durability of Blood Crystal Helmet. Default: 77 (gold).").defineInRange("helmetDurability", 77, 1, 2000);
-        BLOOD_CRYSTAL_CHESTPLATE_DURABILITY = b.comment("Max durability of Blood Crystal Chestplate. Default: 112 (gold).").defineInRange("chestplateDurability", 112, 1, 2000);
-        BLOOD_CRYSTAL_LEGGINGS_DURABILITY = b.comment("Max durability of Blood Crystal Leggings. Default: 105 (gold).").defineInRange("leggingsDurability", 105, 1, 2000);
-        BLOOD_CRYSTAL_BOOTS_DURABILITY    = b.comment("Max durability of Blood Crystal Boots. Default: 91 (gold).").defineInRange("bootsDurability", 91, 1, 2000);
+        BLOOD_CRYSTAL_HELMET_DURABILITY   = b.comment("Max durability of Blood Crystal Helmet. Default: 92.").defineInRange("helmetDurability", 92, 1, 2000);
+        BLOOD_CRYSTAL_CHESTPLATE_DURABILITY = b.comment("Max durability of Blood Crystal Chestplate. Default: 134.").defineInRange("chestplateDurability", 134, 1, 2000);
+        BLOOD_CRYSTAL_LEGGINGS_DURABILITY = b.comment("Max durability of Blood Crystal Leggings. Default: 126.").defineInRange("leggingsDurability", 126, 1, 2000);
+        BLOOD_CRYSTAL_BOOTS_DURABILITY    = b.comment("Max durability of Blood Crystal Boots. Default: 109.").defineInRange("bootsDurability", 109, 1, 2000);
         b.pop();
 
 

@@ -36,13 +36,13 @@
         },
         {
           "type": "minecraft:item",
-          "name": "antarchy:floppy_disk",
+          "name": "antos:floppy_disk",
           "weight": 2,
           "functions": [
             {
               "function": "minecraft:set_components",
               "components": {
-                "antarchy:floppy_disk": "antarchy:basilisk_game"
+                "antos:floppy_disk": "antarchy:basilisk_game"
               }
             }
           ]

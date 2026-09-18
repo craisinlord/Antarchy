@@ -850,8 +850,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         Vec3 awayFromTarget = horizontalDistance > 1.0E-4D
                 ? new Vec3(-dx / horizontalDistance, 0.0D, -dz / horizontalDistance)
                 : this.getViewVector(1.0F).multiply(-1.0D, 0.0D, -1.0D).normalize();
-        double standoff = Math.max(this.getBbWidth() * 0.55D,
-                BEAM_MUZZLE_FORWARD - this.biteReach() * 0.65D + 1.0D);
+        double standoff = this.combatStandoffDistance();
         Vec3 wanted = target.position().add(awayFromTarget.scale(standoff));
         boolean atStandoff = this.position().multiply(1.0D, 0.0D, 1.0D)
                 .distanceToSqr(wanted.multiply(1.0D, 0.0D, 1.0D)) <= 4.0D;
@@ -906,6 +905,11 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             this.getMoveControl().setWantedPosition(wanted.x, wantedY, wanted.z, approachSpeed);
         }
         return false;
+    }
+
+    protected double combatStandoffDistance() {
+        return Math.max(this.getBbWidth() * 0.55D,
+                BEAM_MUZZLE_FORWARD - this.biteReach() * 0.65D + 1.0D);
     }
 
     private void tickCombatLocomotionMode(LivingEntity target) {

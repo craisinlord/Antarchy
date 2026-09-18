@@ -7,12 +7,14 @@ import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManag
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /** Handles Ars Nouveau's explicit tickNextPosition gravity adjustment. */
 @Mixin(targets = "com.hollingsworth.arsnouveau.common.entity.EntityProjectileSpell")
+@Pseudo
 public abstract class ArsNouveauProjectileGravityMixin {
     @Inject(method = "tick", at = @At("HEAD"))
     private void antarchy$prepareArsProjectile(CallbackInfo ci) {

@@ -42,6 +42,11 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
     private static final int ICEBALL = 1;
     private static final int DREAM_FIREBALL = 2;
     private static final int MAX_LIFETIME = 100;
+    private static final float FIREBALL_SPEED = 1.5F;
+    private static final float ICEBALL_SPEED = 1.2F;
+    private static final float DREAM_FIREBALL_SPEED = 1.05F;
+    private static final double PROJECTILE_INERTIA = 0.985D;
+    private static final float DREAM_FIREBALL_INERTIA = 0.96F;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     public RoyalElementalProjectileEntity(EntityType<? extends RoyalElementalProjectileEntity> type, Level level) {
@@ -57,8 +62,36 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
         projectile.setPos(position.x, position.y, position.z);
         projectile.setAttackType(element == RoyalBeamElement.ICE ? ICEBALL
                 : element == RoyalBeamElement.DREAM_FIRE ? DREAM_FIREBALL : FIREBALL);
-        projectile.shoot(direction.x, direction.y, direction.z, element == RoyalBeamElement.ICE ? 0.8F : 1.05F, 0.0F);
+        float speed = element == RoyalBeamElement.ICE ? ICEBALL_SPEED
+                : element == RoyalBeamElement.DREAM_FIRE ? DREAM_FIREBALL_SPEED : FIREBALL_SPEED;
+        projectile.shoot(direction.x, direction.y, direction.z, speed, 0.0F);
         return projectile;
+    }
+
+    /** Solves a discrete ballistic lead against the projectile's drag and gravity. */
+    public static Vec3 aimDirection(Vec3 origin, LivingEntity target, RoyalBeamElement element) {
+        double speed = element == RoyalBeamElement.ICE ? ICEBALL_SPEED : FIREBALL_SPEED;
+        double gravity = element == RoyalBeamElement.ICE ? 0.006D : 0.018D;
+        double inertia = PROJECTILE_INERTIA;
+        Vec3 bestDirection = target.getEyePosition().subtract(origin).normalize();
+        double bestError = Double.MAX_VALUE;
+
+        for (int ticks = 1; ticks < MAX_LIFETIME; ticks++) {
+            double dragDistance = (1.0D - Math.pow(inertia, ticks)) / (1.0D - inertia);
+            Vec3 predictedTarget = target.getEyePosition().add(target.getDeltaMovement().scale(ticks));
+            Vec3 displacement = predictedTarget.subtract(origin);
+            double gravityCompensation = gravity * (ticks - dragDistance) / (1.0D - inertia);
+            Vec3 initialVelocity = new Vec3(
+                    displacement.x / dragDistance,
+                    (displacement.y + gravityCompensation) / dragDistance,
+                    displacement.z / dragDistance);
+            double error = Math.abs(initialVelocity.length() - speed);
+            if (error < bestError) {
+                bestError = error;
+                bestDirection = initialVelocity.normalize();
+            }
+        }
+        return bestDirection;
     }
 
     @Override
@@ -80,11 +113,11 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
 
     @Override
     protected double getDefaultGravity() {
-        return this.isIceball() ? 0.012D : 0.018D;
+        return this.isIceball() ? 0.006D : 0.018D;
     }
 
     protected float getInertia() {
-        return this.isIceball() ? 0.985F : 0.96F;
+        return this.isDreamFireball() ? DREAM_FIREBALL_INERTIA : (float) PROJECTILE_INERTIA;
     }
 
     @Override

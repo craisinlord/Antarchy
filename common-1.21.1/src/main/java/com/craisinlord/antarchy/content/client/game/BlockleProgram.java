@@ -1,8 +1,8 @@
 package com.craisinlord.antarchy.content.client.game;
 
 import com.craisinlord.antarchy.content.client.BlockleClientState;
-import com.craisinlord.antarchy.content.network.ComputerAccessResultPayload;
-import com.craisinlord.antarchy.content.network.ComputerNetworking;
+import com.craisinlord.antarchy.content.network.AntarchyGameResultPayload;
+import com.craisinlord.antarchy.content.network.AntarchyGameNetworking;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
@@ -40,11 +40,11 @@ public final class BlockleProgram {
     }
 
     public void requestState() {
-        if (installed) ComputerNetworking.requestBlockleState(position);
+        if (installed) AntarchyGameNetworking.requestBlockleState(position);
     }
 
     public void tick() {
-        ComputerAccessResultPayload result = BlockleClientState.get(position);
+        AntarchyGameResultPayload result = BlockleClientState.get(position);
         if (result == null) return;
         if (result.data().equals(lastResponse)) return;
         lastResponse = result.data();
@@ -72,7 +72,7 @@ public final class BlockleProgram {
         if (keyCode == 257 || keyCode == 335) {
             if (!received) return true;
             if (input.length() == 5 && phase.equals("PLAYING") && !pending) {
-                ComputerNetworking.submitBlockleGuess(position, input);
+                AntarchyGameNetworking.submitBlockleGuess(position, input);
                 pending = true;
                 status = "SUBMITTING";
             }

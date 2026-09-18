@@ -10,7 +10,7 @@ import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamTerrainMode;
 import com.craisinlord.antarchy.content.effect.RoyalEffectEligibility;
 import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
 import com.craisinlord.antarchy.content.time.TimeDilationApi;
-import java.util.UUID;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -34,6 +34,7 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.control.MoveControl;
@@ -71,6 +72,7 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntity, FlyingAnimal {
+    private static final ResourceLocation GROWTH_HEALTH_MODIFIER = ResourceLocation.fromNamespaceAndPath("antarchy", "royal_mount_growth_health");
     public static final int ANIM_IDLE = 0;
     public static final int ANIM_WALK = 1;
     public static final int ANIM_FLY = 2;
@@ -309,6 +311,9 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
             this.navigation = flying ? this.flyingNavigation : this.groundNavigation;
             this.setNoGravity(flying);
         }
+        if (GROWTH_PROGRESS.equals(key)) {
+            this.refreshDimensions();
+        }
     }
 
     public void setFlying(boolean flying) {
@@ -350,9 +355,28 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
     public void setGrowthProgress(float progress) {
         float clamped = Mth.clamp(progress, 0.0F, 1.0F);
         if (this.getGrowthProgress() != clamped) {
+            float oldHealth = this.getHealth();
             this.entityData.set(GROWTH_PROGRESS, clamped);
+            var maxHealth = this.getAttribute(Attributes.MAX_HEALTH);
+            if (maxHealth != null) {
+                maxHealth.removeModifier(GROWTH_HEALTH_MODIFIER);
+                if (clamped > 0.0F) {
+                    maxHealth.addTransientModifier(new AttributeModifier(GROWTH_HEALTH_MODIFIER,
+                            this.getGrowthScale() - 1.0D, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+                }
+                this.setHealth(Math.min(oldHealth, this.getMaxHealth()));
+            }
             this.refreshDimensions();
         }
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        Entity attacker = source.getEntity();
+        if (attacker != null && this.hasPassenger(attacker)) {
+            return false;
+        }
+        return super.hurt(source, amount);
     }
 
     @Override
@@ -369,19 +393,37 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        if (this.isFood(stack)) {
+        if (stack.is(Items.GOLDEN_APPLE) && !this.isTame()) {
+            if (!this.level().isClientSide) {
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
+                }
+                this.tame(player);
+                this.heal(8.0F);
+                this.level().broadcastEntityEvent(this, (byte) 7);
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        if (stack.is(Items.ENCHANTED_GOLDEN_APPLE) && this.isTame() && this.isOwnedBy(player)) {
             if (!this.level().isClientSide) {
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);
                 }
                 this.heal(8.0F);
                 this.setGrowthProgress(this.getGrowthProgress() + (1.0F - this.getGrowthProgress()) * 0.1F);
-                if (!this.isTame() && this.random.nextInt(3) == 0) {
-                    this.tame(player);
-                    this.level().broadcastEntityEvent(this, (byte) 7);
-                } else {
-                    this.level().broadcastEntityEvent(this, (byte) 6);
+                this.level().broadcastEntityEvent(this, (byte) 6);
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        if (this.isFood(stack)) {
+            if (!this.level().isClientSide && this.isTame() && this.isOwnedBy(player) && this.getHealth() < this.getMaxHealth()) {
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
                 }
+                this.heal(8.0F);
+                this.level().broadcastEntityEvent(this, (byte) 6);
             }
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
@@ -399,12 +441,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
             }
 
             if (stack.isEmpty() && player.isSecondaryUseActive()) {
-                if (this.isSaddled()) {
-                    if (!this.level().isClientSide) {
-                        this.setSaddled(false);
-                        this.spawnAtLocation(new ItemStack(Items.SADDLE));
-                    }
-                } else if (!this.level().isClientSide) {
+                if (!this.level().isClientSide) {
                     this.setOrderedToSit(!this.isOrderedToSit());
                     this.setInSittingPose(this.isOrderedToSit());
                     this.navigation.stop();
@@ -762,8 +799,10 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         if (!this.hasPassenger(passenger)) {
             return;
         }
-        double yOffset = (this.isFlying() ? 1.55D : 1.35D) * this.getGrowthScale() - 1.0D;
-        Vec3 back = this.getLookAngle().scale(-0.35D * this.getGrowthScale());
+        // Seat near the back of the torso, outside the scaled body instead of inside its growing hitbox.
+        double yOffset = Math.max(this.getBbHeight() * 0.82D, this.getBbHeight() - passenger.getBbHeight() * 0.65D);
+        double backDistance = this.getBbWidth() * 0.5D + passenger.getBbWidth() * 0.5D + 0.15D;
+        Vec3 back = this.getLookAngle().scale(-backDistance);
         moveFunction.accept(passenger, this.getX() + back.x, this.getY() + yOffset, this.getZ() + back.z);
     }
 

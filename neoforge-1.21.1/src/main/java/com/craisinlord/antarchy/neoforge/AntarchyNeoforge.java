@@ -247,6 +247,7 @@ public class AntarchyNeoforge {
                 AntarchyNeoforgeSounds.DIMENSIONAL_TEAR_CREATURE_LEAVES,
                 AntarchyNeoforgeSounds.DIMENSIONAL_TEAR_CLOSE
         );
+        AntarchySoundEvents.bindHoverboardSounds(AntarchyNeoforgeSounds.HOVERBOARD_MOUNT, AntarchyNeoforgeSounds.HOVERBOARD_DISMOUNT, AntarchyNeoforgeSounds.HOVERBOARD_IDLE);
         bindCommonObjects();
         ScorpionWhipTetherSync.setSink((player, targetId) -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(
                 player,
@@ -288,13 +289,9 @@ public class AntarchyNeoforge {
         AntarchyNeoforgeCreativeModeTabs.register(modEventBus);
         AntarchyNeoforgeEntityAttributes.register(modEventBus);
         AntarchyNeoforgePayloadHandlers.register(modEventBus);
-        com.craisinlord.antarchy.content.network.ComputerNetworking.setSender(payload ->
+        com.craisinlord.antarchy.content.network.AntarchyGameNetworking.setSender(payload ->
                 net.neoforged.neoforge.network.PacketDistributor.sendToServer(payload));
-        com.craisinlord.antarchy.content.network.AntmailNetworking.setSender(payload ->
-                net.neoforged.neoforge.network.PacketDistributor.sendToServer((net.minecraft.network.protocol.common.custom.CustomPacketPayload) payload));
-        com.craisinlord.antarchy.content.network.ComputerAccessHandler.setResultSender((player, payload) ->
-                net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(player, payload));
-        com.craisinlord.antarchy.content.network.AntmailServerHandler.setResultSender((player, payload) ->
+        com.craisinlord.antarchy.content.network.AntarchyGameNetworkHandler.setResultSender((player, payload) ->
                 net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(player, payload));
         Antarchy.init();
     }
@@ -483,10 +480,6 @@ public class AntarchyNeoforge {
         AntarchyObjects.setCookedCorndog(() -> AntarchyNeoforgeItems.COOKED_CORNDOG.get());
         AntarchyObjects.setGlimmerBottle(() -> AntarchyNeoforgeItems.GLIMMER_BOTTLE.get());
         AntarchyObjects.setGlimmerVariantComponent(() -> AntarchyNeoforgeMisc.GLIMMER_VARIANT.get());
-        AntarchyObjects.setFloppyDiskComponent(() -> AntarchyNeoforgeMisc.FLOPPY_DISK_COMPONENT.get());
-        AntarchyObjects.setFloppyDisk(() -> AntarchyNeoforgeItems.FLOPPY_DISK.get());
-        AntarchyObjects.setComputer(() -> AntarchyNeoforgeBlocks.COMPUTER.get());
-        AntarchyObjects.setComputerBlockEntity(() -> AntarchyNeoforgeBlocks.COMPUTER_BLOCK_ENTITY.get());
         AntarchyObjects.setAmericanComponent(() -> AntarchyNeoforgeMisc.AMERICAN.get());
         AntarchyObjects.setLumen(() -> AntarchyNeoforgeMisc.LUMEN.get());
         AntarchyObjects.setFlowingLumen(() -> AntarchyNeoforgeMisc.FLOWING_LUMEN.get());
@@ -495,6 +488,7 @@ public class AntarchyNeoforge {
         AntarchyObjects.setLumenFroglight(() -> AntarchyNeoforgeBlocks.LUMEN_FROGLIGHT.get());
         AntarchyObjects.setGlimmeringReed(() -> AntarchyNeoforgeBlocks.GLIMMERING_REED.get());
         AntarchyObjects.setPeachLeavesParticle(() -> AntarchyNeoforgeMisc.PEACH_LEAVES_PARTICLE.get());
+        AntarchyObjects.setBugSprayParticle(() -> AntarchyNeoforgeMisc.BUG_SPRAY_PARTICLE.get());
         AntarchyObjects.setLotusPollen(() -> AntarchyNeoforgeMisc.LOTUS_POLLEN.get());
         AntarchyObjects.setNightmareFireFlame(() -> AntarchyNeoforgeMisc.NIGHTMARE_FIRE_FLAME.get());
         AntarchyObjects.setLucidBoltImpactSmall(() -> AntarchyNeoforgeMisc.LUCID_BOLT_IMPACT_SMALL.get());

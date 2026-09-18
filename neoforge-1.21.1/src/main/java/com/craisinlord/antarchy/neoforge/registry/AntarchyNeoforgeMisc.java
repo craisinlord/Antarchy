@@ -71,7 +71,7 @@ public final class AntarchyNeoforgeMisc {
 
     public static final DeferredHolder<PoiType, PoiType> COMPUTER_POI = POI_TYPES.register("computer",
             () -> new PoiType(
-                    java.util.Set.copyOf(AntarchyNeoforgeBlocks.COMPUTER.get().getStateDefinition().getPossibleStates()),
+                    java.util.Set.copyOf(net.minecraft.world.level.block.Block.byItem(com.craisinlord.antos.content.AntOSObjects.COMPUTER_ITEM.get()).getStateDefinition().getPossibleStates()),
                     1,
                     1));
 
@@ -83,6 +83,13 @@ public final class AntarchyNeoforgeMisc {
                     com.google.common.collect.ImmutableSet.of(),
                     com.google.common.collect.ImmutableSet.of(),
                     net.minecraft.sounds.SoundEvents.VILLAGER_WORK_LIBRARIAN));
+
+    public static final DeferredHolder<PoiType, PoiType> PEST_CONTROL_POI = POI_TYPES.register("pest_control",
+            () -> new PoiType(java.util.Set.copyOf(AntarchyNeoforgeBlocks.ANT_TRAP.get().getStateDefinition().getPossibleStates()), 1, 1));
+
+    public static final DeferredHolder<VillagerProfession, VillagerProfession> PEST_CONTROL = VILLAGER_PROFESSIONS.register("pest_control",
+            () -> new VillagerProfession("pest_control", holder -> holder.value() == PEST_CONTROL_POI.get(),
+                    holder -> holder.value() == PEST_CONTROL_POI.get(), com.google.common.collect.ImmutableSet.of(), com.google.common.collect.ImmutableSet.of(), net.minecraft.sounds.SoundEvents.VILLAGER_WORK_FLETCHER));
     private static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, Antarchy.MODID);
     private static final DeferredRegister<Potion> POTIONS = DeferredRegister.create(Registries.POTION, Antarchy.MODID);
     private static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, Antarchy.MODID);
@@ -104,12 +111,6 @@ public final class AntarchyNeoforgeMisc {
                     () -> net.minecraft.core.component.DataComponentType.<com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant>builder()
                             .persistent(com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant.CODEC)
                             .networkSynchronized(com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant.STREAM_CODEC)
-                            .build());
-    public static final DeferredHolder<net.minecraft.core.component.DataComponentType<?>, net.minecraft.core.component.DataComponentType<net.minecraft.resources.ResourceLocation>> FLOPPY_DISK_COMPONENT =
-            DATA_COMPONENT_TYPES.register("floppy_disk",
-                    () -> net.minecraft.core.component.DataComponentType.<net.minecraft.resources.ResourceLocation>builder()
-                            .persistent(net.minecraft.resources.ResourceLocation.CODEC)
-                            .networkSynchronized(net.minecraft.resources.ResourceLocation.STREAM_CODEC)
                             .build());
     public static final DeferredHolder<net.minecraft.core.component.DataComponentType<?>, net.minecraft.core.component.DataComponentType<net.minecraft.util.Unit>> AMERICAN =
             DATA_COMPONENT_TYPES.register("american",
@@ -233,6 +234,8 @@ public final class AntarchyNeoforgeMisc {
 
     // Particle types
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> DREAM_FIRE_FLAME = PARTICLE_TYPES.register("dream_fire_flame",
+            () -> new SimpleParticleType(true));
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BUG_SPRAY_PARTICLE = PARTICLE_TYPES.register("bug_spray",
             () -> new SimpleParticleType(true));
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> NIGHTMARE_FIRE_FLAME = PARTICLE_TYPES.register("nightmare_fire_flame",
             () -> new SimpleParticleType(true));

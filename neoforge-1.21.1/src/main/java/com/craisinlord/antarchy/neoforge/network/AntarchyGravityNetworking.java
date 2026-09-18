@@ -7,6 +7,7 @@ import com.craisinlord.antarchy.content.item.EyeOfTheStormItem;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
 import com.craisinlord.antarchy.content.item.PortalGunItem;
 import com.craisinlord.antarchy.content.network.BigBerthaModeCyclePayload;
+import com.craisinlord.antarchy.content.network.RoyalGuardianSwordModeCyclePayload;
 import com.craisinlord.antarchy.content.network.EyeOfStormPrimaryPayload;
 import com.craisinlord.antarchy.content.network.GravityGunPrimaryPayload;
 import com.craisinlord.antarchy.content.network.GravityGunScrollPayload;
@@ -54,6 +55,10 @@ public final class AntarchyGravityNetworking {
                 BigBerthaModeCyclePayload.TYPE,
                 BigBerthaModeCyclePayload.STREAM_CODEC,
                 AntarchyGravityNetworking::handleBigBerthaModeCycle
+        ).playToServer(
+                RoyalGuardianSwordModeCyclePayload.TYPE,
+                RoyalGuardianSwordModeCyclePayload.STREAM_CODEC,
+                AntarchyGravityNetworking::handleRoyalGuardianSwordModeCycle
         ).playToServer(
                 com.craisinlord.antarchy.content.network.DiamondMinecartInputPayload.TYPE,
                 com.craisinlord.antarchy.content.network.DiamondMinecartInputPayload.STREAM_CODEC,
@@ -149,7 +154,17 @@ public final class AntarchyGravityNetworking {
                 return;
             }
 
-            bigBerthaItem.tryCycleModeWhileCoolingDown(serverPlayer.serverLevel(), serverPlayer, serverPlayer.getMainHandItem());
+            bigBerthaItem.tryCycleModeFromInput(serverPlayer.serverLevel(), serverPlayer, serverPlayer.getMainHandItem());
+        });
+    }
+
+    private static void handleRoyalGuardianSwordModeCycle(RoyalGuardianSwordModeCyclePayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (!(context.player() instanceof ServerPlayer serverPlayer)
+                    || !(serverPlayer.getMainHandItem().getItem() instanceof com.craisinlord.antarchy.content.item.RoyalGuardianSwordItem sword)) {
+                return;
+            }
+            sword.tryCycleModeFromInput(serverPlayer.serverLevel(), serverPlayer, serverPlayer.getMainHandItem());
         });
     }
 

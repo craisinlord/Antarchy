@@ -92,7 +92,6 @@ public final class AntarchyNeoforgeItems {
             () -> Ingredient.of(AntarchyNeoforgeItems.QUEEN_SCALE.get())
     );
 
-    public static final DeferredItem<Item> FLOPPY_DISK = ITEMS.register("floppy_disk", () -> new com.craisinlord.antarchy.content.item.FloppyDiskItem(new Item.Properties()));
 
     public static final DeferredItem<Item> NIGHTMARE_SCALE = ITEMS.registerSimpleItem("nightmare_scale", new Item.Properties().rarity(Rarity.RARE).fireResistant());
 
@@ -206,8 +205,6 @@ public final class AntarchyNeoforgeItems {
 
     // Block items
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DUPLICATOR_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DUPLICATOR_LOG);
-    public static final DeferredItem<ComputerItem> COMPUTER_ITEM = ITEMS.register("computer",
-            () -> new ComputerItem(AntarchyNeoforgeBlocks.COMPUTER.get(), new Item.Properties()));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_LOG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_WOOD);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> MOSSY_OURANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MOSSY_OURANWOOD_LOG);
@@ -396,6 +393,11 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BROWN_ANT_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROWN_ANT_NEST);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> RAINBOW_ANT_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.RAINBOW_ANT_NEST);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> TERMITE_NEST_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.TERMITE_NEST);
+
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ANT_TRAP_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ANT_TRAP);
+
+    public static final DeferredItem<Item> BUG_SPRAY = ITEMS.register("bug_spray",
+            () -> new com.craisinlord.antarchy.content.item.BugSprayItem(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> URANIUM_ORE_ITEM = ITEMS.register("uranium_ore",
             () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.URANIUM_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DEEPSLATE_URANIUM_ORE_ITEM = ITEMS.register("deepslate_uranium_ore",

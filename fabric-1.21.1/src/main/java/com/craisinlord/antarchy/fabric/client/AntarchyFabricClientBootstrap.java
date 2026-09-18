@@ -103,10 +103,6 @@ public final class AntarchyFabricClientBootstrap {
                 (net.minecraft.world.level.block.entity.BlockEntityType) AntarchyFabricBlocks.UNDERVAULT_BLOCK_ENTITY.get(),
                 (BlockEntityRendererProvider) UnderVaultRenderer::new
         );
-        BlockEntityRendererRegistry.register(
-                (net.minecraft.world.level.block.entity.BlockEntityType) AntarchyFabricBlocks.COMPUTER_BLOCK_ENTITY.get(),
-                (BlockEntityRendererProvider) ComputerRenderer::new
-        );
 
         EntityRendererRegistry.register(AntarchyFabricEntities.EASTER_BUNNY.get(), context -> withTemporalGeoLayer(new EasterBunnyRenderer(context)));
         EntityRendererRegistry.register(AntarchyFabricEntities.FLYING_SQUIRREL.get(), context -> withTemporalGeoLayer(new FlyingSquirrelRenderer(context)));
@@ -205,7 +201,7 @@ public final class AntarchyFabricClientBootstrap {
         EntityModelLayerRegistry.registerModelLayer(PeachBoatRenderer.chestBoatLayer(), ChestBoatModel::createBodyModel);
     }
 
-    private static <T extends GeoAnimatable, R extends GeoEntityRenderer<T>> R withTemporalGeoLayer(R renderer) {
+    private static <T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends GeoEntityRenderer<T>> R withTemporalGeoLayer(R renderer) {
         renderer.addRenderLayer(new TemporalContractionGeoLayer<>(renderer));
         return renderer;
     }
@@ -328,6 +324,7 @@ public final class AntarchyFabricClientBootstrap {
         registry.register(AntarchyFabricMisc.STINKY_GAS.get(), HypnoticGasParticle.Provider::new);
         registry.register(AntarchyFabricMisc.STINKY_FLY.get(), FireflyParticle.Provider::new);
         registry.register(AntarchyFabricMisc.PEACH_LEAVES_PARTICLE.get(), PeachLeavesParticle.Provider::new);
+        registry.register(AntarchyFabricMisc.BUG_SPRAY_PARTICLE.get(), com.craisinlord.antarchy.content.client.particle.BugSprayParticle.Provider::new);
         registry.register(AntarchyFabricMisc.LOTUS_POLLEN.get(), com.craisinlord.antarchy.content.client.particle.LotusPollenParticle.Provider::new);
         registry.register(AntarchyFabricMisc.HYPNOTIC_GAS.get(), HypnoticGasParticle.Provider::new);
         registry.register(AntarchyFabricMisc.HYPNOTIC_GAS_DOWN.get(), sprites -> new HypnoticGasParticle.Provider(sprites, true));
@@ -515,11 +512,6 @@ public final class AntarchyFabricClientBootstrap {
                     }
                     return cage.getItemState(stack);
                 }
-        );
-        ItemProperties.register(
-                AntarchyFabricItems.FLOPPY_DISK.get(),
-                ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "disk_category"),
-                (stack, level, entity, seed) -> com.craisinlord.antarchy.content.item.FloppyDiskItem.categoryModelProperty(stack)
         );
     }
 

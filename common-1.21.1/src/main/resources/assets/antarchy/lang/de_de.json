@@ -963,5 +963,8 @@
     "advancements.antarchy.beetle_buddies.title": "Käferkumpel",
     "advancements.antarchy.beetle_buddies.description": "Zähme einen Herkuleskäfer.",
     "advancements.antarchy.herculean_task.title": "Herkulesaufgabe",
-    "advancements.antarchy.herculean_task.description": "Erschlage einen Herkuleskäfer."
+    "advancements.antarchy.herculean_task.description": "Erschlage einen Herkuleskäfer.",
+    "subtitles.antarchy.hoverboard_mount": "Hoverboard startet",
+    "subtitles.antarchy.hoverboard_dismount": "Hoverboard stoppt",
+    "subtitles.antarchy.hoverboard_idle": "Hoverboard summt"
 }

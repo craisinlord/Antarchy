@@ -10,6 +10,8 @@ import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
+import com.craisinlord.antarchy.content.time.TimeDilationApi;
+import com.craisinlord.antarchy.content.time.TimeDilationFieldEntity;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -73,6 +75,9 @@ public class QueenEntity extends RoyalBossEntity {
     private static final double CRUSHING_GRAVITY_RADIUS = 18.0D;
     private static final double CRUSHING_GRAVITY_STRENGTH = 0.12D;
     private static final int ACCELERATION_COOLDOWN = 500;
+    private static final int QUEEN_CHRONOSPHERE_COOLDOWN = 700;
+    private static final int QUEEN_CHRONOSPHERE_DURATION = 200;
+    private static final double QUEEN_CHRONOSPHERE_RADIUS = 20.0D;
     private static final int ACCELERATION_DURATION = 140;
     private static final int BLACK_HOLE_COOLDOWN = 340;
     private static final double QUEEN_BITE_COOLDOWN_MULTIPLIER = 1.5D;
@@ -83,10 +88,10 @@ public class QueenEntity extends RoyalBossEntity {
     private static final int ACCELERATION_TELEGRAPH_TICKS = 32;
     private static final int LANDING_TELEGRAPH_TICKS = 30;
     private static final int LANDING_IMPACT_TICKS = 18;
-    private static final int GROUND_COMBAT_TICKS = 140;
+    private static final int GROUND_COMBAT_TICKS = 160;
     private static final int TAKEOFF_TICKS = 30;
-    private static final int LANDING_COOLDOWN_MIN = 360;
-    private static final int LANDING_COOLDOWN_VARIANCE = 240;
+    private static final int LANDING_COOLDOWN_MIN = 300;
+    private static final int LANDING_COOLDOWN_VARIANCE = 120;
     private static final int BLACK_HOLE_FOLLOW_UP_DELAY = 22;
     private static final int CRUSHING_LANDING_DELAY = 40;
     private static final int MOMENTUM_VOLLEY_DELAY = MOMENTUM_LOCK_DURATION + 5;
@@ -99,12 +104,14 @@ public class QueenEntity extends RoyalBossEntity {
     private int momentumLockCooldownTicks;
     private int crushingGravityCooldownTicks;
     private int accelerationCooldownTicks;
+    private int queenChronosphereCooldownTicks;
     private int blackHoleCooldownTicks;
     private int gravityStompTelegraphTicks;
     private int blackHoleTelegraphTicks;
     private int momentumLockTelegraphTicks;
     private int crushingGravityTelegraphTicks;
     private int accelerationTelegraphTicks;
+    private int queenChronosphereTelegraphTicks;
     @Nullable
     private Vec3 pendingBlackHoleAnchor;
     private int queenLandingCooldownTicks = 300;
@@ -236,6 +243,11 @@ public class QueenEntity extends RoyalBossEntity {
     @Override
     protected double biteApproachSpeed() {
         return 1.55D;
+    }
+
+    @Override
+    protected double combatStandoffDistance() {
+        return Math.min(super.combatStandoffDistance(), 14.0D);
     }
 
     @Override
@@ -851,6 +863,7 @@ public class QueenEntity extends RoyalBossEntity {
         if (this.momentumLockCooldownTicks > 0) this.momentumLockCooldownTicks--;
         if (this.crushingGravityCooldownTicks > 0) this.crushingGravityCooldownTicks--;
         if (this.accelerationCooldownTicks > 0) this.accelerationCooldownTicks--;
+        if (this.queenChronosphereCooldownTicks > 0) this.queenChronosphereCooldownTicks--;
         if (this.blackHoleCooldownTicks > 0) this.blackHoleCooldownTicks--;
 
         if (!(this.level() instanceof ServerLevel level)) {
@@ -871,7 +884,7 @@ public class QueenEntity extends RoyalBossEntity {
         String[] candidates = switch (phase) {
             case ONE -> new String[] {"gravity_stomp", "black_hole"};
             case TWO -> new String[] {"gravity_stomp", "black_hole", "momentum_lock", "crushing_gravity"};
-            case THREE -> new String[] {"gravity_stomp", "black_hole", "momentum_lock", "crushing_gravity", "acceleration"};
+            case THREE -> new String[] {"gravity_stomp", "black_hole", "momentum_lock", "crushing_gravity", "acceleration", "queen_chronosphere"};
         };
         String forcedAttack = this.pendingPhaseSignature == Phase.TWO ? "momentum_lock"
                 : this.pendingPhaseSignature == Phase.THREE ? "acceleration" : null;
@@ -888,12 +901,14 @@ public class QueenEntity extends RoyalBossEntity {
             case "black_hole" -> BLACK_HOLE_COOLDOWN;
             case "momentum_lock" -> MOMENTUM_LOCK_COOLDOWN;
             case "crushing_gravity" -> CRUSHING_GRAVITY_COOLDOWN;
+            case "queen_chronosphere" -> QUEEN_CHRONOSPHERE_COOLDOWN;
             default -> ACCELERATION_COOLDOWN;
         };
         RoyalAttackLane lane = "black_hole".equals(selected) ? RoyalAttackLane.CENTER_HEAD : RoyalAttackLane.HAZARD;
         int actionWindup = this.queenAbilityWindup(selected);
         int actionAnimationTicks = "momentum_lock".equals(selected)
-                || "crushing_gravity".equals(selected) || "acceleration".equals(selected) ? 55 : 25;
+                || "crushing_gravity".equals(selected) || "acceleration".equals(selected)
+                || "queen_chronosphere".equals(selected) ? 55 : 25;
         int actionRecovery = this.animationRecovery(actionAnimationTicks, actionWindup, 1, 14);
         if (!this.beginRoyalAttack(selected, lane, this.cooldown(cooldown),
                 actionWindup, 1, actionRecovery, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
@@ -902,7 +917,8 @@ public class QueenEntity extends RoyalBossEntity {
                             QueenEntity.this.triggerAnim("body_action", "stomp");
                         } else if ("momentum_lock".equals(selected)
                                 || "crushing_gravity".equals(selected)
-                                || "acceleration".equals(selected)) {
+                                || "acceleration".equals(selected)
+                                || "queen_chronosphere".equals(selected)) {
                             QueenEntity.this.triggerAnim("wing_action", "wing_gust");
                         } else if ("black_hole".equals(selected)) {
                             QueenEntity.this.royalHead(RoyalHead.Slot.CENTER).startShoot();
@@ -965,6 +981,13 @@ public class QueenEntity extends RoyalBossEntity {
                 this.startRoyalAcceleration();
                 this.queueQueenFollowUp(QueenFollowUp.ACCELERATION_VOLLEY, ACCELERATION_VOLLEY_DELAY);
             }
+            case "queen_chronosphere" -> {
+                this.queenChronosphereCooldownTicks = cooldown;
+                TimeDilationFieldEntity field = TimeDilationApi.createField(level, this.position(),
+                        QUEEN_CHRONOSPHERE_RADIUS, 0.08D, QUEEN_CHRONOSPHERE_DURATION, this.getUUID());
+                field.configureQueenChronosphere(this);
+                this.startRoyalRecovery(35);
+            }
         }
     }
 
@@ -998,6 +1021,7 @@ public class QueenEntity extends RoyalBossEntity {
             case "momentum_lock" -> !this.royalEffects.active("momentum_lock") && this.momentumLockCooldownTicks <= 0;
             case "crushing_gravity" -> phase != Phase.ONE && !this.royalEffects.active("crushing_gravity") && this.crushingGravityCooldownTicks <= 0;
             case "acceleration" -> phase == Phase.THREE && !this.royalEffects.active("acceleration") && this.accelerationCooldownTicks <= 0;
+            case "queen_chronosphere" -> phase == Phase.THREE && this.queenChronosphereCooldownTicks <= 0;
             default -> false;
         };
     }
@@ -1013,6 +1037,7 @@ public class QueenEntity extends RoyalBossEntity {
             };
             case THREE -> switch (id) {
                 case "acceleration" -> 7;
+                case "queen_chronosphere" -> 6;
                 case "black_hole", "crushing_gravity" -> 5;
                 case "gravity_stomp" -> 4;
                 case "momentum_lock" -> 2;
@@ -1084,6 +1109,7 @@ public class QueenEntity extends RoyalBossEntity {
             case "momentum_lock" -> MOMENTUM_LOCK_TELEGRAPH_TICKS;
             case "crushing_gravity" -> CRUSHING_GRAVITY_TELEGRAPH_TICKS;
             case "acceleration" -> ACCELERATION_TELEGRAPH_TICKS;
+            case "queen_chronosphere" -> 40;
             default -> 10;
         };
     }
@@ -1111,6 +1137,10 @@ public class QueenEntity extends RoyalBossEntity {
                 this.accelerationTelegraphTicks = ACCELERATION_TELEGRAPH_TICKS;
                 this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 1.22F);
             }
+            case "queen_chronosphere" -> {
+                this.queenChronosphereTelegraphTicks = 40;
+                this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.85F);
+            }
         }
     }
 
@@ -1121,13 +1151,14 @@ public class QueenEntity extends RoyalBossEntity {
             case "momentum_lock" -> this.momentumLockTelegraphTicks = 0;
             case "crushing_gravity" -> this.crushingGravityTelegraphTicks = 0;
             case "acceleration" -> this.accelerationTelegraphTicks = 0;
+            case "queen_chronosphere" -> this.queenChronosphereTelegraphTicks = 0;
         }
     }
 
     private boolean isQueenAbilityTelegraphActive() {
         return this.gravityStompTelegraphTicks > 0 || this.blackHoleTelegraphTicks > 0
                 || this.momentumLockTelegraphTicks > 0 || this.crushingGravityTelegraphTicks > 0
-                || this.accelerationTelegraphTicks > 0;
+                || this.accelerationTelegraphTicks > 0 || this.queenChronosphereTelegraphTicks > 0;
     }
 
     private void clearQueenAbilityTelegraphs() {
@@ -1136,6 +1167,7 @@ public class QueenEntity extends RoyalBossEntity {
         this.momentumLockTelegraphTicks = 0;
         this.crushingGravityTelegraphTicks = 0;
         this.accelerationTelegraphTicks = 0;
+        this.queenChronosphereTelegraphTicks = 0;
         this.pendingBlackHoleAnchor = null;
     }
 
@@ -1150,6 +1182,7 @@ public class QueenEntity extends RoyalBossEntity {
         this.tickMomentumLockTelegraph(level);
         this.tickCrushingGravityTelegraph(level);
         this.tickAccelerationTelegraph(level);
+        this.tickQueenChronosphereTelegraph(level);
     }
 
     private void tickGravityStompTelegraph(ServerLevel level) {
@@ -1233,6 +1266,18 @@ public class QueenEntity extends RoyalBossEntity {
         this.playQueenTelegraphBeat(level, this.accelerationTelegraphTicks,
                 ACCELERATION_TELEGRAPH_TICKS, 1.0F);
         this.accelerationTelegraphTicks--;
+    }
+
+    private void tickQueenChronosphereTelegraph(ServerLevel level) {
+        if (this.queenChronosphereTelegraphTicks <= 0) return;
+        int elapsed = 40 - this.queenChronosphereTelegraphTicks;
+        Vec3 center = this.position().add(0.0D, this.getBbHeight() * 0.5D, 0.0D);
+        if (this.tickCount % 2 == 0) {
+            double radius = Mth.lerp(elapsed / 40.0D, 3.0D, QUEEN_CHRONOSPHERE_RADIUS);
+            this.spawnQueenTelegraphRing(level, center, radius, 96, ParticleTypes.REVERSE_PORTAL);
+        }
+        this.playQueenTelegraphBeat(level, this.queenChronosphereTelegraphTicks, 40, 0.5F);
+        this.queenChronosphereTelegraphTicks--;
     }
 
     private void spawnQueenTelegraphSpokes(ServerLevel level, Vec3 center, double radius) {
@@ -1524,6 +1569,7 @@ public class QueenEntity extends RoyalBossEntity {
         tag.putInt("MomentumLockCooldownTicks", this.momentumLockCooldownTicks);
         tag.putInt("CrushingGravityCooldownTicks", this.crushingGravityCooldownTicks);
         tag.putInt("AccelerationCooldownTicks", this.accelerationCooldownTicks);
+        tag.putInt("QueenChronosphereCooldownTicks", this.queenChronosphereCooldownTicks);
         tag.putInt("BlackHoleCooldownTicks", this.blackHoleCooldownTicks);
         tag.putInt("QueenLandingCooldownTicks", this.queenLandingCooldownTicks);
         tag.putString("QueuedQueenFollowUp", this.queuedQueenFollowUp.name());
@@ -1547,6 +1593,7 @@ public class QueenEntity extends RoyalBossEntity {
         this.momentumLockCooldownTicks = Math.max(0, tag.getInt("MomentumLockCooldownTicks"));
         this.crushingGravityCooldownTicks = Math.max(0, tag.getInt("CrushingGravityCooldownTicks"));
         this.accelerationCooldownTicks = Math.max(0, tag.getInt("AccelerationCooldownTicks"));
+        this.queenChronosphereCooldownTicks = Math.max(0, tag.getInt("QueenChronosphereCooldownTicks"));
         this.blackHoleCooldownTicks = Math.max(0, tag.getInt("BlackHoleCooldownTicks"));
         this.queenLandingCooldownTicks = tag.contains("QueenLandingCooldownTicks")
                 ? Math.max(0, tag.getInt("QueenLandingCooldownTicks")) : 300;

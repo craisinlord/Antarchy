@@ -1,0 +1,34 @@
+{
+  "parent": "antarchy:visit_thoraxis",
+  "criteria": {
+    "kill_queen": {
+      "conditions": {
+        "entity": {
+          "type": "antarchy:queen"
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.down_with_the_queen.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:queen_spawn_egg"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.down_with_the_queen.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_queen"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

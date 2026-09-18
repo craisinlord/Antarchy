@@ -1,21 +1,10 @@
 package com.craisinlord.antarchy.neoforge.registry;
 
 import com.craisinlord.antarchy.content.network.BloodCrystalKatanaTrailPayload;
-import com.craisinlord.antarchy.content.network.ComputerAccessHandler;
-import com.craisinlord.antarchy.content.network.ComputerAccessPayload;
-import com.craisinlord.antarchy.content.network.ComputerAccessResultPayload;
+import com.craisinlord.antarchy.content.network.AntarchyGameNetworkHandler;
+import com.craisinlord.antarchy.content.network.AntarchyGamePayload;
+import com.craisinlord.antarchy.content.network.AntarchyGameResultPayload;
 import com.craisinlord.antarchy.content.network.ToggleTigerEyeCamouflagePayload;
-import com.craisinlord.antarchy.content.network.AntmailPayloadTypes;
-import com.craisinlord.antarchy.content.network.AntmailSetupPayload;
-import com.craisinlord.antarchy.content.network.AntmailStateRequestPayload;
-import com.craisinlord.antarchy.content.network.AntmailMessageRequestPayload;
-import com.craisinlord.antarchy.content.network.AntmailSendPayload;
-import com.craisinlord.antarchy.content.network.AntmailReadPayload;
-import com.craisinlord.antarchy.content.network.AntmailDeletePayload;
-import com.craisinlord.antarchy.content.network.AntmailDraftPayload;
-import com.craisinlord.antarchy.content.network.AntmailRetryPayload;
-import com.craisinlord.antarchy.content.network.AntmailResultPayload;
-import com.craisinlord.antarchy.content.network.AntmailServerHandler;
 import com.craisinlord.antarchy.content.item.TigerEyeArmorUtil;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController;
 import com.craisinlord.antarchy.neoforge.network.AntarchyGravityNetworking;
@@ -38,52 +27,18 @@ public class AntarchyNeoforgePayloadHandlers {
     static void registerPayloadHandlers(RegisterPayloadHandlersEvent event) {
         var registrar = event.registrar("1");
         registrar.playToServer(
-                ComputerAccessPayload.TYPE,
-                ComputerAccessPayload.STREAM_CODEC,
+                AntarchyGamePayload.TYPE,
+                AntarchyGamePayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> {
                     if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer player) {
-                        ComputerAccessHandler.handle(player, payload);
+                        AntarchyGameNetworkHandler.handle(player, payload);
                     }
                 })
         );
-        registrar.playToServer(AntmailSetupPayload.TYPE, AntmailSetupPayload.STREAM_CODEC,
-                (payload, ctx) -> ctx.enqueueWork(() -> {
-                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer player) AntmailServerHandler.handle(player, payload);
-                }));
-        registrar.playToServer(AntmailStateRequestPayload.TYPE, AntmailStateRequestPayload.STREAM_CODEC,
-                (payload, ctx) -> ctx.enqueueWork(() -> {
-                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer player) AntmailServerHandler.handle(player, payload);
-                }));
-        registrar.playToServer(AntmailMessageRequestPayload.TYPE, AntmailMessageRequestPayload.STREAM_CODEC,
-                (payload, ctx) -> ctx.enqueueWork(() -> {
-                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer player) AntmailServerHandler.handle(player, payload);
-                }));
-        registrar.playToServer(AntmailSendPayload.TYPE, AntmailSendPayload.STREAM_CODEC,
-                (payload, ctx) -> ctx.enqueueWork(() -> {
-                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer player) AntmailServerHandler.handle(player, payload);
-                }));
-        registrar.playToServer(AntmailReadPayload.TYPE, AntmailReadPayload.STREAM_CODEC,
-                (payload, ctx) -> ctx.enqueueWork(() -> {
-                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer player) AntmailServerHandler.handle(player, payload);
-                }));
-        registrar.playToServer(AntmailDeletePayload.TYPE, AntmailDeletePayload.STREAM_CODEC,
-                (payload, ctx) -> ctx.enqueueWork(() -> {
-                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer player) AntmailServerHandler.handle(player, payload);
-                }));
-        registrar.playToServer(AntmailDraftPayload.TYPE, AntmailDraftPayload.STREAM_CODEC,
-                (payload, ctx) -> ctx.enqueueWork(() -> {
-                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer player) AntmailServerHandler.handle(player, payload);
-                }));
-        registrar.playToServer(AntmailRetryPayload.TYPE, AntmailRetryPayload.STREAM_CODEC,
-                (payload, ctx) -> ctx.enqueueWork(() -> {
-                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer player) AntmailServerHandler.handle(player, payload);
-                }));
-        registrar.playToClient(AntmailResultPayload.TYPE, AntmailResultPayload.STREAM_CODEC,
-                (payload, ctx) -> ctx.enqueueWork(() -> com.craisinlord.antarchy.content.client.AntmailClientState.update(payload)));
         registrar.playToClient(
-                ComputerAccessResultPayload.TYPE,
-                ComputerAccessResultPayload.STREAM_CODEC,
-                (payload, ctx) -> ctx.enqueueWork(() -> com.craisinlord.antarchy.content.client.ComputerAccessClientState.update(payload))
+                AntarchyGameResultPayload.TYPE,
+                AntarchyGameResultPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> com.craisinlord.antarchy.content.client.AntarchyGameClientState.update(payload))
         );
         AntarchyGravityNetworking.register(registrar);
         AntarchyTimeDilationNetworking.register(registrar);

@@ -144,9 +144,8 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
             }
             double minimumY = baseY + 24.0D;
             double maximumY = baseY + 304.0D;
-            // Start near the lower trunk so players on the ground can reliably engage the King.
-            // The patrol bounds remain unchanged, allowing him to retreat upward through the tree.
-            double spawnY = minimumY + 48.0D;
+            // Introduce the King high in the canopy, where his tree patrol is most visible.
+            double spawnY = minimumY + (maximumY - minimumY) * 0.65D;
             Vec3 spawn = findSafeKingSpawn(serverLevel, king, centerX, centerZ, spawnY);
             king.moveTo(spawn.x, spawn.y, spawn.z,
                     (float) (Math.atan2(centerZ + 0.5D - spawn.z, centerX + 0.5D - spawn.x)

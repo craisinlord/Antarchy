@@ -883,6 +883,10 @@
     "advancements.antarchy.water_cannon_craft.description":  "Obtain a Water Cannon.",
     "advancements.antarchy.kill_toreterror.title":  "More like Tore-Terrible Aim!",
     "advancements.antarchy.kill_toreterror.description":  "Defeat the Toreterror.",
+    "advancements.antarchy.down_with_the_king.title":  "Down with the King",
+    "advancements.antarchy.down_with_the_king.description":  "Defeat the King.",
+    "advancements.antarchy.down_with_the_queen.title":  "Down with the Queen",
+    "advancements.antarchy.down_with_the_queen.description":  "Defeat the Queen.",
     "advancements.antarchy.challenge_games.title":  "Challenge Games!",
     "advancements.antarchy.challenge_games.description":  "Enter the Ruined Arena.",
     "advancements.antarchy.bugged_out.title":  "Bugged Out",
@@ -1441,7 +1445,7 @@
     ,"decree.antarchy.kneel": "KNEEL"
     ,"decree.antarchy.kneel.subtitle": "Crouch within five seconds."
     ,"decree.antarchy.close_quarters": "CLOSE QUARTERS"
-    ,"decree.antarchy.close_quarters.subtitle": "Enter the royal circle. Projectiles are forbidden."
+    ,"decree.antarchy.close_quarters.subtitle": "Reach the King's 16-block circle within 6 seconds. Projectiles are forbidden."
     ,"decree.antarchy.violated": "DECREE VIOLATED"
     ,"decree.antarchy.violated.subtitle": "Your hearts are halved for 30. Face the King's judgment."
     ,"effect.antarchy.royal_vitality_penalty": "Royal Vitality Diminished"
@@ -1462,12 +1466,10 @@
     ,"menu.antarchy.royal_judgment": "Royal Judgment"
     ,"enchantment.antarchy.feather_rising": "Feather Rising"
     ,"enchantment.antarchy.chronosphere": "Chronosphere"
-    ,"block.antarchy.computer": "Computer"
     ,"entity.minecraft.villager.antarchy.computer_scientist": "Game Developer"
-    ,"item.antarchy.computer": "Computer"
-    ,"item.antarchy.floppy_disk": "Floppy Disk"
-    ,"item.antarchy.floppy_disk.tooltip": "Put in a computer to find out more"
-    ,"screen.antarchy.computer": "ANTINTOSH OS"
+    ,"block.antarchy.ant_trap": "Ant Trap"
+    ,"item.antarchy.bug_spray": "Bug Spray"
+    ,"entity.minecraft.villager.antarchy.pest_control": "Pest Control"
     ,"guide.antarchy.category.general": "GENERAL"
     ,"guide.antarchy.category.elythia": "ELYTHIA"
     ,"guide.antarchy.category.thoraxis": "THORAXIS"
@@ -1545,21 +1547,13 @@
     ,"guide.antarchy.entry.queen.title": "Queen"
     ,"guide.antarchy.entry.queen.subtitle": "Thoraxis royal entity record"
     ,"guide.antarchy.entry.queen.description": "Follow a Queen Havoc Trail through Thoraxis's underside to its chamber; the Queen appears when you approach."
-    ,"screen.antarchy.computer.first_use.title": "INITIAL PASSWORD SETUP"
-    ,"screen.antarchy.computer.first_use.prompt": "CREATE A PASSWORD TO CONTINUE"
-    ,"screen.antarchy.computer.first_use.confirm": "CONFIRM PASSWORD"
-    ,"screen.antarchy.computer.busy": "COMPUTER IN USE"
-    ,"screen.antarchy.computer.eject_denied": "ACCESS DENIED: SETTINGS REQUIRED"
-    ,"screen.antarchy.computer.ejected": "DISK EJECTED"
-    ,"antintosh.antarchy.desktop.archive": "ARCHIVE"
-    ,"antintosh.antarchy.desktop.settings": "SETTINGS"
-    ,"antintosh.antarchy.desktop.terminal": "TERMINAL"
-    ,"antintosh.antarchy.desktop.antpaint": "ANTPAINT"
-    ,"antintosh.antarchy.desktop.antmail": "ANTMAIL"
-    ,"antintosh.antarchy.desktop.text_editor": "TEXT EDITOR"
-    ,"antintosh.antarchy.antmail.compose": "COMPOSE MESSAGE"
-    ,"antintosh.antarchy.antmail.attach_text": "ATTACH TEXT FILE"
-    ,"antintosh.antarchy.antmail.attach_image": "ATTACH ANTPAINT IMAGE"
-    ,"antintosh.antarchy.antmail.save_attachment": "SAVE ATTACHMENT"
-    ,"antintosh.antarchy.antmail.address": "COMPUTER ADDRESS"
+    ,"guide.antarchy.entry.prince.title": "Prince"
+    ,"guide.antarchy.entry.prince.subtitle": "Royal mount record"
+    ,"guide.antarchy.entry.prince.description": "Prince Eggs hatch into small Princes that grow when fed golden items; they can be tamed, saddled to fly, fire elemental bolts, and command nearby hostile mobs."
+    ,"guide.antarchy.entry.princess.title": "Princess"
+    ,"guide.antarchy.entry.princess.subtitle": "Royal mount record"
+    ,"guide.antarchy.entry.princess.description": "Princess Eggs hatch into small Princesses that grow when fed golden items; they can be tamed, saddled to fly, fire elemental bolts, and create time-dilation fields around enemies."
+    ,"subtitles.antarchy.hoverboard_mount": "Hoverboard starts"
+    ,"subtitles.antarchy.hoverboard_dismount": "Hoverboard stops"
+    ,"subtitles.antarchy.hoverboard_idle": "Hoverboard hums"
 }

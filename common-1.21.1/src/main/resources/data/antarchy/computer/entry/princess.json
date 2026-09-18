@@ -1,0 +1,9 @@
+{
+  "type": "entity",
+  "category": "thoraxis",
+  "title": "guide.antarchy.entry.princess.title",
+  "subtitle": "guide.antarchy.entry.princess.subtitle",
+  "description": ["guide.antarchy.entry.princess.description"],
+  "entity": "antarchy:princess",
+  "cover_entity": "antarchy:princess"
+}

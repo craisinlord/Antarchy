@@ -1,6 +1,6 @@
 package com.craisinlord.antarchy.content.entity.trades;
 
-import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antos.content.AntOSObjects;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -118,8 +118,8 @@ public final class ComputerScientistTradeManager extends SimpleJsonResourceReloa
         ResourceLocation diskId = diskType.equals("random_general")
                 ? GENERAL_DISKS.get(random.nextInt(GENERAL_DISKS.size()))
                 : ResourceLocation.parse(diskType);
-        ItemStack disk = new ItemStack(AntarchyObjects.FLOPPY_DISK.get(), count);
-        disk.set(AntarchyObjects.FLOPPY_DISK_COMPONENT.get(), diskId);
+        ItemStack disk = new ItemStack(AntOSObjects.FLOPPY_DISK.get(), count);
+        disk.set(AntOSObjects.FLOPPY_DISK_COMPONENT.get(), diskId);
         return disk;
     }
 

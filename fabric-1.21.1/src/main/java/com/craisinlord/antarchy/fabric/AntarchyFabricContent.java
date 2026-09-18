@@ -229,6 +229,10 @@ public final class AntarchyFabricContent {
                 AntarchyFabricSounds.MANTIS_HURT,
                 AntarchyFabricSounds.MANTIS_ATTACK,
                 AntarchyFabricSounds.MANTIS_FLY_LOOP,
+                AntarchyFabricSounds.MANTICORE_IDLE,
+                AntarchyFabricSounds.MANTICORE_WALK,
+                AntarchyFabricSounds.MANTICORE_FLY,
+                AntarchyFabricSounds.MANTICORE_BITE,
                 AntarchyFabricSounds.GRAVITY_GUN_PICKUP,
                 AntarchyFabricSounds.GRAVITY_GUN_DROP,
                 AntarchyFabricSounds.GRAVITY_GUN_HOLD_LOOP,
@@ -352,6 +356,7 @@ public final class AntarchyFabricContent {
                 AntarchyFabricSounds.DIMENSIONAL_TEAR_CREATURE_LEAVES,
                 AntarchyFabricSounds.DIMENSIONAL_TEAR_CLOSE
         );
+        AntarchySoundEvents.bindHoverboardSounds(AntarchyFabricSounds.HOVERBOARD_MOUNT, AntarchyFabricSounds.HOVERBOARD_DISMOUNT, AntarchyFabricSounds.HOVERBOARD_IDLE);
 
         AntarchyObjects.setOctopusBomb(AntarchyFabricEntities.OCTOPUS_BOMB);
         AntarchyObjects.setTentacle(AntarchyFabricEntities.TENTACLE);
@@ -402,10 +407,6 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setCookedCorndog(() -> AntarchyFabricItems.COOKED_CORNDOG.get());
         AntarchyObjects.setGlimmerBottle(() -> AntarchyFabricItems.GLIMMER_BOTTLE.get());
         AntarchyObjects.setGlimmerVariantComponent(() -> AntarchyFabricMisc.GLIMMER_VARIANT.get());
-        AntarchyObjects.setFloppyDiskComponent(() -> AntarchyFabricMisc.FLOPPY_DISK_COMPONENT.get());
-        AntarchyObjects.setFloppyDisk(() -> AntarchyFabricItems.FLOPPY_DISK.get());
-        AntarchyObjects.setComputer(() -> AntarchyFabricBlocks.COMPUTER.get());
-        AntarchyObjects.setComputerBlockEntity(() -> AntarchyFabricBlocks.COMPUTER_BLOCK_ENTITY.get());
         AntarchyObjects.setAmericanComponent(() -> AntarchyFabricMisc.AMERICAN.get());
         AntarchyObjects.setLumen(() -> AntarchyFabricMisc.LUMEN.get());
         AntarchyObjects.setFlowingLumen(() -> AntarchyFabricMisc.FLOWING_LUMEN.get());
@@ -414,6 +415,7 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setLumenFroglight(() -> AntarchyFabricBlocks.LUMEN_FROGLIGHT.get());
         AntarchyObjects.setGlimmeringReed(() -> AntarchyFabricBlocks.GLIMMERING_REED.get());
         AntarchyObjects.setPeachLeavesParticle(() -> AntarchyFabricMisc.PEACH_LEAVES_PARTICLE.get());
+        AntarchyObjects.setBugSprayParticle(() -> AntarchyFabricMisc.BUG_SPRAY_PARTICLE.get());
         AntarchyObjects.setLotusPollen(() -> AntarchyFabricMisc.LOTUS_POLLEN.get());
         AntarchyObjects.setNightmareFireFlame(() -> AntarchyFabricMisc.NIGHTMARE_FIRE_FLAME.get());
         AntarchyObjects.setLucidBoltImpactSmall(() -> AntarchyFabricMisc.LUCID_BOLT_IMPACT_SMALL.get());

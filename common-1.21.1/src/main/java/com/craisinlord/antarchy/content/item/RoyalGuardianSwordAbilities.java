@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.effect.CommandedEntityAccess;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.royal.RoyalIceSpikeEntity;
 import java.util.HashSet;
 import java.util.Set;
@@ -126,21 +127,23 @@ public final class RoyalGuardianSwordAbilities {
         if (forward.lengthSqr() < 1.0E-5D) forward = new Vec3(0.0D, 0.0D, 1.0D);
         forward = forward.normalize();
         Vec3 side = new Vec3(-forward.z, 0.0D, forward.x);
-        for (int distanceStep = 1; distanceStep <= 4; distanceStep++) {
-            double distance = 2.5D + distanceStep * 2.7D;
+        for (int distanceStep = 1; distanceStep <= 5; distanceStep++) {
+            double distance = distanceStep * 4.0D;
             for (int lane = -1; lane <= 1; lane++) {
-                Vec3 point = primary.position().add(forward.scale(distance)).add(side.scale(lane * 1.8D));
-                BlockPos surface = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BlockPos.containing(point));
-                Vec3 spawn = new Vec3(point.x, surface.getY() + 0.1D, point.z);
+                Vec3 point = owner.position().add(forward.scale(distance))
+                        .add(side.scale(lane * (distanceStep % 2 == 0 ? 2.0D : 0.0D)));
+                int groundY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                        net.minecraft.util.Mth.floor(point.x), net.minecraft.util.Mth.floor(point.z));
+                Vec3 spawn = new Vec3(point.x, groundY + 0.1D, point.z);
                 RoyalIceSpikeEntity spike = RoyalIceSpikeEntity.create(level, spawn, owner,
-                        (float) AntarchySettings.royalGuardianSwordFrostSpikeDamage(), 1.55D, 100, 60, 1);
+                        (float) AntarchySettings.royalGuardianSwordFrostSpikeDamage(), 2.2D, 100, 0, 0);
                 level.addFreshEntity(spike);
             }
         }
         Vec3 center = primary.position().add(0.0D, 0.8D, 0.0D);
         level.sendParticles(ParticleTypes.SNOWFLAKE, center.x, center.y, center.z, 70, 1.3D, 1.1D, 1.3D, 0.1D);
         level.sendParticles(ParticleTypes.SNOWFLAKE, owner.getX(), owner.getY() + 1.0D, owner.getZ(), 18, 0.7D, 0.5D, 0.7D, 0.04D);
-        level.playSound(null, primary.blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 1.0F, 0.6F);
+        level.playSound(null, primary.blockPosition(), AntarchySoundEvents.KING_ICE_SPIKES.get(), SoundSource.PLAYERS, 0.8F, 0.95F);
     }
 
     private static void chainLightning(ServerLevel level, Player owner, LivingEntity primary) {
@@ -187,9 +190,10 @@ public final class RoyalGuardianSwordAbilities {
         double length = direction.length();
         if (length > 0.001D) {
             Vec3 step = direction.scale(1.0D / length);
-            for (double d = 0.0D; d < length; d += 1.2D) {
+            for (double d = 0.0D; d < length; d += 0.35D) {
                 Vec3 point = start.add(step.scale(d));
-                level.sendParticles(STORM_GOLD, point.x, point.y, point.z, 2, 0.08D, 0.08D, 0.08D, 0.04D);
+                level.sendParticles(ParticleTypes.ELECTRIC_SPARK, point.x, point.y, point.z, 1, 0.025D, 0.025D, 0.025D, 0.0D);
+                level.sendParticles(STORM_GOLD, point.x, point.y, point.z, 1, 0.025D, 0.025D, 0.025D, 0.0D);
             }
         }
         level.sendParticles(ParticleTypes.ELECTRIC_SPARK, end.x, end.y, end.z, 18, 0.25D, 0.4D, 0.25D, 0.08D);

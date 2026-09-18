@@ -1,6 +1,5 @@
 {
-  "category": "cavaryn",
+  "category": "antarchy:cavaryn",
   "title": "guide.antarchy.disk.cavaryn.title",
-  "entries": ["antarchy:cavaryn"],
-  "wallpaper": "antarchy:cavaryn"
+  "entries": ["antarchy:cavaryn"]
 }

@@ -9,6 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /** Handles Iron's Spellbooks' custom travel() gravity path. */
 @Mixin(targets = "io.redspace.ironsspellbooks.entity.spells.AbstractMagicProjectile")
+@Pseudo
 public abstract class IronsSpellbooksProjectileGravityMixin {
     @Shadow public abstract float getSpeed();
     @Shadow protected abstract double getDefaultGravity();

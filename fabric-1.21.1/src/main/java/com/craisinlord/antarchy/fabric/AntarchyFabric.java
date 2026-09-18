@@ -163,34 +163,6 @@ public final class AntarchyFabric implements ModInitializer {
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new IdentifiableResourceReloadListener() {
             @Override
             public ResourceLocation getFabricId() {
-                return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "computer_guide");
-            }
-
-            @Override
-            public CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier barrier, ResourceManager manager,
-                                                   ProfilerFiller prepareProfiler, ProfilerFiller applyProfiler,
-                                                   Executor prepareExecutor, Executor applyExecutor) {
-                return com.craisinlord.antarchy.content.guide.ComputerGuideData.instance().reload(
-                        barrier, manager, prepareProfiler, applyProfiler, prepareExecutor, applyExecutor);
-            }
-        });
-        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new IdentifiableResourceReloadListener() {
-            @Override
-            public ResourceLocation getFabricId() {
-                return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "antmail_events");
-            }
-
-            @Override
-            public CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier barrier, ResourceManager manager,
-                                                   ProfilerFiller prepareProfiler, ProfilerFiller applyProfiler,
-                                                   Executor prepareExecutor, Executor applyExecutor) {
-                return com.craisinlord.antarchy.content.antmail.AntmailEventData.instance().reload(
-                        barrier, manager, prepareProfiler, applyProfiler, prepareExecutor, applyExecutor);
-            }
-        });
-        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new IdentifiableResourceReloadListener() {
-            @Override
-            public ResourceLocation getFabricId() {
                 return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "blockle_answers");
             }
 
@@ -231,6 +203,20 @@ public final class AntarchyFabric implements ModInitializer {
                                                     ProfilerFiller prepareProfiler, ProfilerFiller applyProfiler,
                                                     Executor prepareExecutor, Executor applyExecutor) {
                 return computerScientistDelegate.reload(barrier, manager, prepareProfiler, applyProfiler, prepareExecutor, applyExecutor);
+            }
+        });
+        com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager pestControlDelegate = new com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager();
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new IdentifiableResourceReloadListener() {
+            @Override
+            public ResourceLocation getFabricId() {
+                return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "pest_control_trades");
+            }
+
+            @Override
+            public CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier barrier, ResourceManager manager,
+                                                    ProfilerFiller prepareProfiler, ProfilerFiller applyProfiler,
+                                                    Executor prepareExecutor, Executor applyExecutor) {
+                return pestControlDelegate.reload(barrier, manager, prepareProfiler, applyProfiler, prepareExecutor, applyExecutor);
             }
         });
     }

@@ -110,8 +110,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (player.isShiftKeyDown()) {
-            cycleMode(level, player, stack);
-            return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+            return InteractionResultHolder.pass(stack);
         }
 
         BossMode mode = getMode(stack);
@@ -390,8 +389,8 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
         }
     }
 
-    public boolean tryCycleModeWhileCoolingDown(Level level, Player player, ItemStack stack) {
-        if (player.getMainHandItem() != stack || !player.isShiftKeyDown() || !player.getCooldowns().isOnCooldown(this)) {
+    public boolean tryCycleModeFromInput(Level level, Player player, ItemStack stack) {
+        if (player.getMainHandItem() != stack) {
             return false;
         }
 

@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.mixins;
 
-import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.Antarchy;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,12 +22,14 @@ public abstract class PoiTypesMixin {
     private static void antarchy$computerPoi(BlockState state,
                                               CallbackInfoReturnable<Optional<Holder<PoiType>>> callback) {
         try {
-            if (!state.is(AntarchyObjects.COMPUTER.get())) {
+            boolean computer = state.is(BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("antos", "computer")));
+            boolean antTrap = state.is(BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "ant_trap")));
+            if (!computer && !antTrap) {
                 return;
             }
             ResourceKey<PoiType> key = ResourceKey.create(
                     Registries.POINT_OF_INTEREST_TYPE,
-                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "computer"));
+                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, computer ? "computer" : "pest_control"));
             BuiltInRegistries.POINT_OF_INTEREST_TYPE.getHolder(key)
                     .ifPresent(holder -> callback.setReturnValue(Optional.of(holder)));
         } catch (IllegalStateException ignored) {

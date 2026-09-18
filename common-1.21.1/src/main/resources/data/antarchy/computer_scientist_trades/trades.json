@@ -3,9 +3,9 @@
     {"level": 1, "index": 0, "buy": {"item": "minecraft:redstone", "min": 12, "max": 16}, "sell": {"item": "minecraft:emerald", "min": 1, "max": 2}},
     {"level": 1, "index": 1, "buy": {"item": "antarchy:bluestone", "min": 6, "max": 10}, "sell": {"item": "minecraft:emerald", "min": 1, "max": 2}},
     {"level": 1, "index": 2, "buy": {"item": "minecraft:emerald", "min": 2, "max": 4}, "sell": {"item": "antarchy:duct_tape", "min": 1, "max": 2}},
-    {"level": 1, "index": 3, "buy": {"item": "antarchy:floppy_disk", "min": 1, "max": 1}, "sell": {"item": "minecraft:emerald", "min": 4, "max": 8}},
-    {"level": 2, "index": 0, "buy": {"item": "minecraft:emerald", "min": 4, "max": 8}, "sell": {"item": "antarchy:floppy_disk", "min": 1, "max": 1}, "sell_disk": "random_general"},
-    {"level": 2, "index": 1, "buy": {"item": "antarchy:floppy_disk", "min": 12, "max": 20}, "sell": {"item": "antarchy:floppy_disk", "min": 1, "max": 1}, "sell_disk": "antarchy:toreterror_arena"},
+    {"level": 1, "index": 3, "buy": {"item": "antos:floppy_disk", "min": 1, "max": 1}, "sell": {"item": "minecraft:emerald", "min": 4, "max": 8}},
+    {"level": 2, "index": 0, "buy": {"item": "minecraft:emerald", "min": 4, "max": 8}, "sell": {"item": "antos:floppy_disk", "min": 1, "max": 1}, "sell_disk": "random_general"},
+    {"level": 2, "index": 1, "buy": {"item": "antos:floppy_disk", "min": 12, "max": 20}, "sell": {"item": "antos:floppy_disk", "min": 1, "max": 1}, "sell_disk": "antarchy:toreterror_arena"},
     {"level": 3, "index": 0, "buy": {"item": "antarchy:vortex_charge", "min": 1, "max": 1}, "sell": {"item": "minecraft:emerald", "min": 10, "max": 10}},
     {"level": 3, "index": 1, "buy": {"item": "antarchy:flytrap_goo", "min": 1, "max": 1}, "sell": {"item": "minecraft:emerald", "min": 10, "max": 10}},
     {"level": 4, "index": 0, "buy": {"item": "minecraft:emerald", "min": 8, "max": 16}, "sell": {"item": "minecraft:comparator", "min": 1, "max": 2}},
@@ -14,7 +14,7 @@
     {"level": 5, "index": 0, "buy": {"item": "minecraft:emerald", "min": 32, "max": 64}, "sell": {"item": "antarchy:uranium_nugget", "min": 1, "max": 1}},
     {"level": 5, "index": 1, "buy": {"item": "minecraft:emerald", "min": 32, "max": 64}, "sell": {"item": "antarchy:titanium_nugget", "min": 1, "max": 1}},
     {"level": 5, "index": 2, "buy": {"item": "minecraft:emerald", "min": 16, "max": 32}, "sell": {"item": "antarchy:rainbow_sugar", "min": 1, "max": 2}},
-    {"level": 5, "index": 3, "buy": {"item": "minecraft:emerald", "min": 24, "max": 40}, "sell": {"item": "antarchy:floppy_disk", "min": 1, "max": 1}, "sell_disk": "antarchy:antman_game", "max_uses": 1, "chance": 0.35},
-    {"level": 5, "index": 4, "buy": {"item": "minecraft:emerald", "min": 24, "max": 40}, "sell": {"item": "antarchy:floppy_disk", "min": 1, "max": 1}, "sell_disk": "antarchy:blockle_game", "max_uses": 1, "chance": 0.35}
+    {"level": 5, "index": 3, "buy": {"item": "minecraft:emerald", "min": 24, "max": 40}, "sell": {"item": "antos:floppy_disk", "min": 1, "max": 1}, "sell_disk": "antarchy:antman_game", "max_uses": 1, "chance": 0.35},
+    {"level": 5, "index": 4, "buy": {"item": "minecraft:emerald", "min": 24, "max": 40}, "sell": {"item": "antos:floppy_disk", "min": 1, "max": 1}, "sell_disk": "antarchy:blockle_game", "max_uses": 1, "chance": 0.35}
   ]
 }

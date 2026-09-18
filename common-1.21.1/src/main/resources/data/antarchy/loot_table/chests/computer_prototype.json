@@ -6,65 +6,65 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "antarchy:floppy_disk",
+          "name": "antos:floppy_disk",
           "weight": 1,
           "functions": [
             {
               "function": "minecraft:set_components",
               "components": {
-                "antarchy:floppy_disk": "antarchy:chronosphere"
+                "antos:floppy_disk": "antarchy:chronosphere"
               }
             }
           ]
         },
         {
           "type": "minecraft:item",
-          "name": "antarchy:floppy_disk",
+          "name": "antos:floppy_disk",
           "weight": 4,
           "functions": [
             {
               "function": "minecraft:set_components",
               "components": {
-                "antarchy:floppy_disk": "antarchy:elythia"
+                "antos:floppy_disk": "antarchy:elythia"
               }
             }
           ]
         },
         {
           "type": "minecraft:item",
-          "name": "antarchy:floppy_disk",
+          "name": "antos:floppy_disk",
           "weight": 4,
           "functions": [
             {
               "function": "minecraft:set_components",
               "components": {
-                "antarchy:floppy_disk": "antarchy:flying_squirrel"
+                "antos:floppy_disk": "antarchy:flying_squirrel"
               }
             }
           ]
         },
         {
           "type": "minecraft:item",
-          "name": "antarchy:floppy_disk",
+          "name": "antos:floppy_disk",
           "weight": 4,
           "functions": [
             {
               "function": "minecraft:set_components",
               "components": {
-                "antarchy:floppy_disk": "antarchy:cavaryn"
+                "antos:floppy_disk": "antarchy:cavaryn"
               }
             }
           ]
         },
         {
           "type": "minecraft:item",
-          "name": "antarchy:floppy_disk",
+          "name": "antos:floppy_disk",
           "weight": 1,
           "functions": [
             {
               "function": "minecraft:set_components",
               "components": {
-                "antarchy:floppy_disk": "antarchy:basilisk_game"
+                "antos:floppy_disk": "antarchy:basilisk_game"
               }
             }
           ]

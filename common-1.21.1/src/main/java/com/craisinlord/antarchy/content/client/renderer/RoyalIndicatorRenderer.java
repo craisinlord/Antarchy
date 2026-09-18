@@ -49,11 +49,20 @@ public final class RoyalIndicatorRenderer {
 
     private static void crownPoints(VertexConsumer out, PoseStack.Pose pose, float radius, float rotation,
             float r, float g, float b, float a) {
-        for (int i = 0; i < 3; i++) {
-            double angle = rotation + Math.PI * 2.0D * i / 3.0D;
-            float x = (float) Math.cos(angle) * radius;
-            float z = (float) Math.sin(angle) * radius;
-            line(out, pose, x, 0.0F, z, x * 0.68F, 0.19F, z * 0.68F, r, g, b, a);
+        final int spikes = 5;
+        float innerRadius = radius * 0.72F;
+        for (int i = 0; i < spikes; i++) {
+            double outerAngle = rotation + Math.PI * 2.0D * i / spikes;
+            double innerAngle = rotation + Math.PI * 2.0D * (i + 0.5D) / spikes;
+            float outerX = (float) Math.cos(outerAngle) * radius;
+            float outerZ = (float) Math.sin(outerAngle) * radius;
+            float innerX = (float) Math.cos(innerAngle) * innerRadius;
+            float innerZ = (float) Math.sin(innerAngle) * innerRadius;
+            float nextOuterX = (float) Math.cos(rotation + Math.PI * 2.0D * (i + 1) / spikes) * radius;
+            float nextOuterZ = (float) Math.sin(rotation + Math.PI * 2.0D * (i + 1) / spikes) * radius;
+            line(out, pose, outerX, 0.0F, outerZ, innerX, 0.34F, innerZ, r, g, b, a);
+            line(out, pose, innerX, 0.34F, innerZ, nextOuterX, 0.0F, nextOuterZ, r, g, b, a);
+            line(out, pose, outerX, 0.0F, outerZ, nextOuterX, 0.0F, nextOuterZ, r, g, b, a);
         }
     }
 

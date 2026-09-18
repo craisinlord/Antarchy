@@ -40,6 +40,28 @@ public class AntNestBlockEntity extends BlockEntity {
     }
 
     public static void serverTick(ServerLevel level, BlockPos pos, BlockState state, AntNestBlockEntity nest) {
+        if (state.getBlock() instanceof com.craisinlord.antarchy.content.block.AntTrapBlock) {
+            if (level.getGameTime() % 20L == 0L && nest.storedAnts.size() < nest.maxOccupants()) {
+                net.minecraft.world.phys.AABB searchArea = new net.minecraft.world.phys.AABB(pos).inflate(15.0D);
+                for (BaseAntEntity ant : level.getEntitiesOfClass(BaseAntEntity.class, searchArea, BaseAntEntity::isAlive)) {
+                    if (ant.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos)) > 225.0D) {
+                        continue;
+                    }
+                    if (!nest.canAccept(ant.getType())) {
+                        continue;
+                    }
+                    if (ant.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos)) <= 2.25D) {
+                        nest.tryStoreAnt(ant);
+                        if (nest.storedAnts.size() >= nest.maxOccupants()) {
+                            break;
+                        }
+                    } else {
+                        ant.getNavigation().moveTo(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, 1.05D);
+                    }
+                }
+            }
+            return;
+        }
         boolean playerNearby = level.hasNearbyAlivePlayer(
                 pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, PLAYER_ACTIVATION_RANGE);
         if (!playerNearby) {
@@ -115,12 +137,17 @@ public class AntNestBlockEntity extends BlockEntity {
     }
 
     public void releaseAll(ServerLevel level) {
-        while (!this.storedAnts.isEmpty()) {
-            this.releaseOne(level);
+        int remaining = this.storedAnts.size();
+        while (remaining-- > 0 && !this.storedAnts.isEmpty()) {
+            this.releaseOne(level, true);
         }
     }
 
     private void releaseOne(ServerLevel level) {
+        this.releaseOne(level, false);
+    }
+
+    private void releaseOne(ServerLevel level, boolean forceRelease) {
         if (this.storedAnts.isEmpty()) {
             return;
         }
@@ -132,20 +159,39 @@ public class AntNestBlockEntity extends BlockEntity {
             return;
         }
 
-        BlockPos spawnPos = this.getBlockPos().above();
-        if (!level.getBlockState(spawnPos).canBeReplaced()) {
+        BlockPos origin = this.getBlockPos();
+        java.util.List<BlockPos> candidates = new java.util.ArrayList<>();
+        for (int y = 1; y <= 3; y++) {
+            candidates.add(origin.above(y));
+            for (int radius = 1; radius <= 2; radius++) {
+                candidates.add(origin.offset(radius, y, 0));
+                candidates.add(origin.offset(-radius, y, 0));
+                candidates.add(origin.offset(0, y, radius));
+                candidates.add(origin.offset(0, y, -radius));
+            }
+        }
+        BlockPos spawnPos = null;
+        for (BlockPos candidate : candidates) {
+            antEntity.moveTo(candidate.getX() + SPAWN_OFFSET_XZ, candidate.getY() + SPAWN_OFFSET_Y, candidate.getZ() + SPAWN_OFFSET_XZ,
+                    level.random.nextFloat() * 360.0F, 0.0F);
+            if (level.noCollision(antEntity)) {
+                spawnPos = candidate;
+                break;
+            }
+        }
+        if (spawnPos == null && !forceRelease) {
             return;
         }
-
-        antEntity.moveTo(spawnPos.getX() + SPAWN_OFFSET_XZ, spawnPos.getY() + SPAWN_OFFSET_Y, spawnPos.getZ() + SPAWN_OFFSET_XZ, level.random.nextFloat() * 360.0F, 0.0F);
-        if (!level.noCollision(antEntity)) {
-            return;
+        if (spawnPos == null) {
+            antEntity.moveTo(origin.getX() + SPAWN_OFFSET_XZ, origin.getY() + SPAWN_OFFSET_Y, origin.getZ() + SPAWN_OFFSET_XZ,
+                    level.random.nextFloat() * 360.0F, 0.0F);
         }
-
-        this.storedAnts.remove(0);
-        antEntity.setNestPos(this.getBlockPos());
+        antEntity.setNestPos(origin);
         antEntity.onExitNest();
-        level.addFreshEntity(antEntity);
+        if (!level.addFreshEntity(antEntity) && !forceRelease) {
+            return;
+        }
+        this.storedAnts.remove(0);
         this.setChanged();
     }
 

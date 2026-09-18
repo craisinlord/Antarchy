@@ -1,5 +1,5 @@
 {
-  "category": "elythia",
+  "category": "antarchy:elythia",
   "title": "guide.antarchy.disk.king.title",
-  "entries": ["antarchy:king"]
+  "entries": ["antarchy:king", "antarchy:prince"]
 }

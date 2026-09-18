@@ -11,9 +11,14 @@ public final class StandYourGroundDecree implements RoyalDecree {
     private final Map<UUID, Vec3> anchors = new HashMap<>();
     public String translationKey() { return "decree.antarchy.stand_your_ground"; }
     public void apply(ServerLevel level, KingEntity king, LivingEntity target) {
-        Vec3 anchor = this.anchors.computeIfAbsent(target.getUUID(), ignored -> target.position());
+        this.anchors.computeIfAbsent(target.getUUID(), ignored -> target.position());
     }
     @Override public Evaluation evaluate(ServerLevel level, KingEntity king, LivingEntity target) {
+        if (target instanceof net.minecraft.server.level.ServerPlayer player && player.isFallFlying()) {
+            // Gliding carries unavoidable momentum; begin measuring again from the landing point.
+            this.anchors.put(target.getUUID(), target.position());
+            return Evaluation.COMPLIANT;
+        }
         Vec3 anchor = this.anchors.computeIfAbsent(target.getUUID(), ignored -> target.position());
         return target.position().distanceToSqr(anchor) > ALLOWED_DRIFT * ALLOWED_DRIFT
                 ? Evaluation.VIOLATED : Evaluation.COMPLIANT;

@@ -20,6 +20,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.trialspawner.TrialSpawner;
 import net.minecraft.world.level.block.entity.trialspawner.TrialSpawnerConfig;
@@ -182,6 +183,16 @@ public final class UndertrialSpawnerBlockEntity extends BlockEntity implements T
         return trialSpawner;
     }
 
+    public void setSpawnEntity(EntityType<?> entityType) {
+        if (this.level == null) {
+            return;
+        }
+        // Match vanilla Trial Spawner interaction: override the next mob's entity id while
+        // preserving weighted potentials, ominous settings, and the trial's reward configuration.
+        this.trialSpawner.getData().setEntityId(this.trialSpawner, this.level.random, entityType);
+        this.markUpdated();
+    }
+
     public double getClientSpin(float partialTick) {
         return this.clientOldSpin + (this.clientSpin - this.clientOldSpin) * partialTick;
     }
@@ -199,7 +210,7 @@ public final class UndertrialSpawnerBlockEntity extends BlockEntity implements T
 
     private TrialSpawner createRewardlessSpawner(TrialSpawner source) {
         TrialSpawner rewardless = new TrialSpawner(withoutLootTables(source.getNormalConfig()), withoutLootTables(source.getOminousConfig()),
-                source.getData(), source.getRequiredPlayerRange(), targetCooldownLength(source), this,
+                source.getData(), targetCooldownLength(source), source.getRequiredPlayerRange(), this,
                 source.getPlayerDetector(), source.getEntitySelector());
         rewardless.overridePeacefulAndMobSpawnRule();
         return rewardless;

@@ -3111,6 +3111,27 @@
       { "name": "antarchy:mob/princess/fly6" }
     ]
   },
+  "hoverboard_mount": {
+    "subtitle": "subtitles.antarchy.hoverboard_mount",
+    "sounds": [
+      { "name": "antarchy:hoverboard/mount1" },
+      { "name": "antarchy:hoverboard/mount2" },
+      { "name": "antarchy:hoverboard/mount3" },
+      { "name": "antarchy:hoverboard/mount4" }
+    ]
+  },
+  "hoverboard_dismount": {
+    "subtitle": "subtitles.antarchy.hoverboard_dismount",
+    "sounds": [
+      { "name": "antarchy:hoverboard/dismount1" },
+      { "name": "antarchy:hoverboard/dismount2" },
+      { "name": "antarchy:hoverboard/dismount3" }
+    ]
+  },
+  "hoverboard_idle": {
+    "subtitle": "subtitles.antarchy.hoverboard_idle",
+    "sounds": [ { "name": "antarchy:hoverboard/idle1" } ]
+  },
   "princess_step": {
     "subtitle": "subtitles.antarchy.princess_step",
     "sounds": [

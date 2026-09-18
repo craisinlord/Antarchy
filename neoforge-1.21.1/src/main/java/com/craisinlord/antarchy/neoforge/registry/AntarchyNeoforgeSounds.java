@@ -259,6 +259,9 @@ public final class AntarchyNeoforgeSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> PRINCESS_SHOOT = registerSoundEvent("princess_shoot");
     public static final DeferredHolder<SoundEvent, SoundEvent> PRINCESS_FLY = registerSoundEvent("princess_fly");
     public static final DeferredHolder<SoundEvent, SoundEvent> PRINCESS_STEP = registerSoundEvent("princess_step");
+    public static final DeferredHolder<SoundEvent, SoundEvent> HOVERBOARD_MOUNT = registerSoundEvent("hoverboard_mount");
+    public static final DeferredHolder<SoundEvent, SoundEvent> HOVERBOARD_DISMOUNT = registerSoundEvent("hoverboard_dismount");
+    public static final DeferredHolder<SoundEvent, SoundEvent> HOVERBOARD_IDLE = registerSoundEvent("hoverboard_idle");
 
     private AntarchyNeoforgeSounds() {}
 

@@ -263,6 +263,14 @@ public final class AntarchyNeoForgeEvents {
                             .add(ComputerScientistTradeManager.listing(level, index));
                 }
             }
+        } else if (event.getType() == AntarchyNeoforgeMisc.PEST_CONTROL.get()) {
+            int[] slots = com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager.slotsPerLevel();
+            for (int level = 1; level <= slots.length; level++) {
+                for (int index = 0; index < slots[level - 1]; index++) {
+                    event.getTrades().computeIfAbsent(level, ignored -> new java.util.ArrayList<>())
+                            .add(com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager.listing(level, index));
+                }
+            }
         } else if (event.getType() == VillagerProfession.FARMER) {
             event.getTrades().get(1).add(emeraldForItems(AntarchyObjects.CORN.get(), 20, 16, 2));
         } else if (event.getType() == VillagerProfession.BUTCHER) {
@@ -323,8 +331,6 @@ public final class AntarchyNeoForgeEvents {
 
 
     static void tickCavarynHordes(ServerTickEvent.Post event) {
-        com.craisinlord.antarchy.content.antmail.AntmailServerData.access(event.getServer()).drainAvailable(event.getServer());
-        com.craisinlord.antarchy.content.antmail.AntmailEventData.onTick(event.getServer());
         for (ServerLevel level : event.getServer().getAllLevels()) {
             CavarynHordeManager.tick(level);
             com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
@@ -394,8 +400,7 @@ public final class AntarchyNeoForgeEvents {
     static void registerReloadListeners(AddReloadListenerEvent event) {
         event.addListener(new DrTrayaurusTradeManager());
         event.addListener(new ComputerScientistTradeManager());
-        event.addListener(com.craisinlord.antarchy.content.guide.ComputerGuideData.instance());
-        event.addListener(com.craisinlord.antarchy.content.antmail.AntmailEventData.instance());
+        event.addListener(new com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager());
         event.addListener(com.craisinlord.antarchy.content.computer.blockle.BlockleAnswers.instance());
     }
     static void handleStartTracking(PlayerEvent.StartTracking event) {

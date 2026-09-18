@@ -221,6 +221,9 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> KING_DECREE = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> KING_SUCCESS = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> KING_JUDGEMENT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> HOVERBOARD_MOUNT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> HOVERBOARD_DISMOUNT = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> HOVERBOARD_IDLE = (Supplier<SoundEvent>) UNBOUND;
 
     private AntarchySoundEvents() {
     }
@@ -655,5 +658,11 @@ public final class AntarchySoundEvents {
         DIMENSIONAL_TEAR_IDLE = dimensionalTearIdle;
         DIMENSIONAL_TEAR_CREATURE_LEAVES = dimensionalTearCreatureLeaves;
         DIMENSIONAL_TEAR_CLOSE = dimensionalTearClose;
+    }
+
+    public static void bindHoverboardSounds(Supplier<SoundEvent> mount, Supplier<SoundEvent> dismount, Supplier<SoundEvent> idle) {
+        HOVERBOARD_MOUNT = mount;
+        HOVERBOARD_DISMOUNT = dismount;
+        HOVERBOARD_IDLE = idle;
     }
 }

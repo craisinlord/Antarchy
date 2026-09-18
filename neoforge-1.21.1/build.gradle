@@ -46,6 +46,9 @@ neoForge {
 }
 
 dependencies {
+    // AntOS is developed beside Antarchy as a separate local project.
+    compileOnly(files("$rootDir/../AntOS/neoforge-1.21.1/build/libs/antos-neoforge-1.21.1-0.1.0.jar"))
+    runtimeOnly(files("$rootDir/../AntOS/neoforge-1.21.1/build/libs/antos-neoforge-1.21.1-0.1.0.jar"))
     compileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_neoforge}")
     runtimeOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_neoforge}")
     implementation "software.bernie.geckolib:geckolib-neoforge-1.21.1:${geckolib_version}"

@@ -17,6 +17,7 @@ public final class AntarchySettings {
     private static boolean rainbowAntRequiresReagent = true;
     private static boolean rainbowAntRightClickDimension = true;
     private static boolean termiteRequiresReagent = false;
+    private static boolean termitesFearBlockLight = true;
     private static boolean termiteRightClickDimension = true;
     private static boolean antsStealFromChests = true;
     private static boolean duplicatorTreeEnabled = true;
@@ -261,14 +262,14 @@ public final class AntarchySettings {
     private static int royalGuardianBoundaryProjectileCap = 64;
     private static double royalBoltDamage = 6.0D;
     private static int royalEggHatchChance = 3;
-    private static double princeHealth = 120.0D;
+    private static double princeHealth = 360.0D;
     private static double princeAttackDamage = 14.0D;
     private static double princeMovementSpeed = 0.28D;
     private static double princeFlyingSpeed = 0.9D;
     private static double princeArmor = 10.0D;
     private static double princeKnockbackResistance = 0.6D;
     private static double princeFollowRange = 48.0D;
-    private static double princessHealth = 110.0D;
+    private static double princessHealth = 330.0D;
     private static double princessAttackDamage = 10.0D;
     private static double princessMovementSpeed = 0.28D;
     private static double princessFlyingSpeed = 0.95D;
@@ -557,10 +558,10 @@ public final class AntarchySettings {
     private static int bloodCrystalLeggingsDefense = 6;
     private static int bloodCrystalBootsDefense = 3;
     private static double bloodCrystalArmorToughness = 2.0D;
-    private static int bloodCrystalHelmetDurability = 77;
-    private static int bloodCrystalChestplateDurability = 112;
-    private static int bloodCrystalLeggingsDurability = 105;
-    private static int bloodCrystalBootsDurability = 91;
+    private static int bloodCrystalHelmetDurability = 92;
+    private static int bloodCrystalChestplateDurability = 134;
+    private static int bloodCrystalLeggingsDurability = 126;
+    private static int bloodCrystalBootsDurability = 109;
     private static double toreterrorHealth = 450.0D;
     private static double toreterrorJumpAttackDamage = 14.0D;
     private static double toreterrorJumpAttackKnockback = 2.5D;
@@ -703,6 +704,10 @@ public final class AntarchySettings {
 
     public static boolean termiteRequiresReagent() {
         return termiteRequiresReagent;
+    }
+
+    public static boolean termitesFearBlockLight() {
+        return termitesFearBlockLight;
     }
 
     public static boolean antsStealFromChests() {
@@ -1326,6 +1331,10 @@ public final class AntarchySettings {
 
     public static void setTermiteRequiresReagent(boolean value) {
         termiteRequiresReagent = value;
+    }
+
+    public static void setTermitesFearBlockLight(boolean value) {
+        termitesFearBlockLight = value;
     }
 
     public static void setAntsStealFromChests(boolean value) {

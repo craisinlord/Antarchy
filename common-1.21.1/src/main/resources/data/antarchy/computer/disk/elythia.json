@@ -1,6 +1,5 @@
 {
-  "category": "elythia",
+  "category": "antarchy:elythia",
   "title": "guide.antarchy.disk.elythia.title",
-  "entries": ["antarchy:elythia"],
-  "wallpaper": "antarchy:elythia"
+  "entries": ["antarchy:elythia"]
 }

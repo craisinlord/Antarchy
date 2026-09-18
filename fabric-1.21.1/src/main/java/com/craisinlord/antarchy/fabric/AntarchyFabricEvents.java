@@ -189,8 +189,6 @@ public final class AntarchyFabricEvents {
         });
 
         ServerTickEvents.END_SERVER_TICK.register(server -> {
-            com.craisinlord.antarchy.content.antmail.AntmailServerData.access(server).drainAvailable(server);
-            com.craisinlord.antarchy.content.antmail.AntmailEventData.onTick(server);
             Set<UUID> activeThisTick = new HashSet<>();
             for (ServerLevel level : server.getAllLevels()) {
                 CavarynHordeManager.tick(level);
@@ -219,6 +217,15 @@ public final class AntarchyFabricEvents {
                 final int tradeIndex = index;
                 TradeOfferHelper.registerVillagerOffers(AntarchyFabricMisc.COMPUTER_SCIENTIST.get(), tradeLevel,
                         factories -> factories.add(ComputerScientistTradeManager.listing(tradeLevel, tradeIndex)));
+            }
+        }
+        int[] pestControlSlots = com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager.slotsPerLevel();
+        for (int level = 1; level <= pestControlSlots.length; level++) {
+            final int tradeLevel = level;
+            for (int index = 0; index < pestControlSlots[level - 1]; index++) {
+                final int tradeIndex = index;
+                TradeOfferHelper.registerVillagerOffers(AntarchyFabricMisc.PEST_CONTROL.get(), tradeLevel,
+                        factories -> factories.add(com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager.listing(tradeLevel, tradeIndex)));
             }
         }
         TradeOfferHelper.registerVillagerOffers(VillagerProfession.FARMER, 1, factories ->

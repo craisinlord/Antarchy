@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen;
 
 import com.craisinlord.antarchy.Antarchy;
-import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.mixins.PoiTypesAccessor;
 import com.craisinlord.integrated_api.mixins.structures.StructurePoolAccessor;
 import com.google.gson.Gson;
@@ -59,7 +58,9 @@ public final class VillagePoolAdditions {
                 ResourceKey.create(Registries.POINT_OF_INTEREST_TYPE, poiId));
         Map<BlockState, Holder<net.minecraft.world.entity.ai.village.poi.PoiType>> stateMap =
                 PoiTypesAccessor.antarchy$getTypeByState();
-        for (BlockState state : AntarchyObjects.COMPUTER.get().getStateDefinition().getPossibleStates()) {
+        net.minecraft.world.level.block.Block computer = BuiltInRegistries.BLOCK.get(
+                ResourceLocation.fromNamespaceAndPath("antos", "computer"));
+        for (BlockState state : computer.getStateDefinition().getPossibleStates()) {
             stateMap.put(state, poi);
         }
     }

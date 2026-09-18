@@ -701,14 +701,14 @@ public final class AntarchyMobsConfig {
         b.push("royalMounts");
         ROYAL_EGG_HATCH_CHANCE = b.comment("Chance denominator for a royal egg advancing one hatch stage on a random tick.").defineInRange("eggHatchChance", 3, 1, 100000);
         ROYAL_BOLT_DAMAGE = b.comment("Direct damage dealt by a Prince or Princess royal bolt.").defineInRange("boltDamage", 6.0D, 0.0D, 1024.0D);
-        PRINCE_HEALTH = b.comment("Prince base max health.").defineInRange("princeHealth", 120.0D, 1.0D, 32768.0D);
+        PRINCE_HEALTH = b.comment("Prince base max health.").defineInRange("princeHealth", 360.0D, 1.0D, 32768.0D);
         PRINCE_ATTACK_DAMAGE = b.comment("Prince bite damage.").defineInRange("princeAttackDamage", 14.0D, 0.0D, 1024.0D);
         PRINCE_MOVEMENT_SPEED = b.comment("Prince grounded movement speed.").defineInRange("princeMovementSpeed", 0.28D, 0.0D, 10.0D);
         PRINCE_FLYING_SPEED = b.comment("Prince flying movement speed.").defineInRange("princeFlyingSpeed", 0.9D, 0.0D, 10.0D);
         PRINCE_ARMOR = b.comment("Prince armor value.").defineInRange("princeArmor", 10.0D, 0.0D, 1024.0D);
         PRINCE_KNOCKBACK_RESISTANCE = b.comment("Prince knockback resistance.").defineInRange("princeKnockbackResistance", 0.6D, 0.0D, 1.0D);
         PRINCE_FOLLOW_RANGE = b.comment("Prince owner and target range.").defineInRange("princeFollowRange", 48.0D, 1.0D, 256.0D);
-        PRINCESS_HEALTH = b.comment("Princess base max health.").defineInRange("princessHealth", 110.0D, 1.0D, 32768.0D);
+        PRINCESS_HEALTH = b.comment("Princess base max health.").defineInRange("princessHealth", 330.0D, 1.0D, 32768.0D);
         PRINCESS_ATTACK_DAMAGE = b.comment("Princess bite damage.").defineInRange("princessAttackDamage", 10.0D, 0.0D, 1024.0D);
         PRINCESS_MOVEMENT_SPEED = b.comment("Princess grounded movement speed.").defineInRange("princessMovementSpeed", 0.28D, 0.0D, 10.0D);
         PRINCESS_FLYING_SPEED = b.comment("Princess flying movement speed.").defineInRange("princessFlyingSpeed", 0.95D, 0.0D, 10.0D);
