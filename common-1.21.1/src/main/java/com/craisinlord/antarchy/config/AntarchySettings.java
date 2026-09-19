@@ -240,7 +240,7 @@ public final class AntarchySettings {
     private static double royalGuardianSwordStormJumpRange = 9.0D;
     private static double royalAssailantBattleAxeAttackDamage = 151.0D;
     private static double royalAssailantBattleAxeAttackSpeed = -2.9D;
-    private static double royalWeaponAttackReachBonus = 1.0D;
+    private static double royalWeaponAttackReachBonus = 3.2D;
     private static double royalWeaponAttackKnockbackBonus = 1.0D;
     private static int royalWeaponDurability = 4608;
     private static int royalWeaponEnchantability = 30;

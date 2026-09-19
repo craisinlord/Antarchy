@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.block;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.block.entity.RoyalEggBlockEntity;
 import com.craisinlord.antarchy.content.entity.royal.RoyalMountEntity;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,6 +19,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.LevelAccessor;
@@ -30,6 +32,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -39,6 +42,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class RoyalEggBlock extends BaseEntityBlock {
     public static final IntegerProperty HATCH = BlockStateProperties.HATCH;
+    public static final BooleanProperty INVERTED = BooleanProperty.create("inverted");
     private static final int MAX_HATCH = 2;
     private static final int FALL_DELAY = 2;
 
@@ -49,16 +53,23 @@ public abstract class RoyalEggBlock extends BaseEntityBlock {
             Block.box(5.0D, 14.0D, 5.0D, 11.0D, 15.0D, 11.0D),
             Block.box(6.0D, 15.0D, 6.0D, 10.0D, 16.0D, 10.0D));
 
+    private static final VoxelShape INVERTED_SHAPE = Shapes.or(
+            Block.box(3.0D, 3.0D, 3.0D, 13.0D, 16.0D, 13.0D),
+            Block.box(2.0D, 5.0D, 2.0D, 14.0D, 15.0D, 14.0D),
+            Block.box(4.0D, 2.0D, 4.0D, 12.0D, 3.0D, 12.0D),
+            Block.box(5.0D, 1.0D, 5.0D, 11.0D, 2.0D, 11.0D),
+            Block.box(6.0D, 0.0D, 6.0D, 10.0D, 1.0D, 10.0D));
+
     protected RoyalEggBlock(Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any().setValue(HATCH, 0));
+        this.registerDefaultState(this.stateDefinition.any().setValue(HATCH, 0).setValue(INVERTED, false));
     }
 
     protected abstract EntityType<? extends RoyalMountEntity> mountType();
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(HATCH);
+        builder.add(HATCH, INVERTED);
     }
 
     @Override
@@ -68,7 +79,16 @@ public abstract class RoyalEggBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        return state.getValue(INVERTED) ? INVERTED_SHAPE : SHAPE;
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return this.defaultBlockState().setValue(INVERTED, isInvertedGravityAt(context.getLevel(), context.getClickedPos()));
+    }
+
+    private static boolean isInvertedGravityAt(Level level, BlockPos pos) {
+        return ThoraxisUndersideManager.isThoraxis(level) && pos.getY() < ThoraxisUndersideManager.GRAVITY_FLIP_Y;
     }
 
     @Nullable
@@ -105,7 +125,8 @@ public abstract class RoyalEggBlock extends BaseEntityBlock {
                 UUID placer = source == null ? null : source.getPlacerUuid();
                 int hatch = state.getValue(HATCH);
                 level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
-                level.setBlock(target, state.setValue(HATCH, Math.max(0, hatch - 1)), 2);
+                level.setBlock(target, state.setValue(HATCH, Math.max(0, hatch - 1))
+                        .setValue(INVERTED, isInvertedGravityAt(level, target)), 2);
                 if (level.getBlockEntity(target) instanceof RoyalEggBlockEntity moved) {
                     moved.setPlacerUuid(placer);
                 }
@@ -129,6 +150,12 @@ public abstract class RoyalEggBlock extends BaseEntityBlock {
 
     @Override
     protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        boolean inverted = state.getValue(INVERTED);
+        if (inverted) {
+            tickInvertedFall(state, level, pos);
+            return;
+        }
+
         if (!FallingBlock.isFree(level.getBlockState(pos.below())) || pos.getY() < level.getMinBuildHeight()) {
             return;
         }
@@ -139,6 +166,26 @@ public abstract class RoyalEggBlock extends BaseEntityBlock {
         if (blockData != null && !blockData.isEmpty()) {
             falling.blockData = blockData;
         }
+    }
+
+    /**
+     * Vanilla FallingBlockEntity always falls in world-down direction, so an
+     * unsupported egg placed with inverted underside gravity is stepped
+     * upward toward its support instead of being handed to that entity.
+     */
+    private void tickInvertedFall(BlockState state, ServerLevel level, BlockPos pos) {
+        BlockPos above = pos.above();
+        if (!FallingBlock.isFree(level.getBlockState(above)) || above.getY() > level.getMaxBuildHeight()) {
+            return;
+        }
+
+        UUID placer = level.getBlockEntity(pos) instanceof RoyalEggBlockEntity egg ? egg.getPlacerUuid() : null;
+        level.removeBlock(pos, false);
+        level.setBlock(above, state, Block.UPDATE_ALL);
+        if (level.getBlockEntity(above) instanceof RoyalEggBlockEntity moved) {
+            moved.setPlacerUuid(placer);
+        }
+        level.scheduleTick(above, this, FALL_DELAY);
     }
 
     @Override

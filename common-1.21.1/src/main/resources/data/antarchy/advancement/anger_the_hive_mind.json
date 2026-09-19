@@ -4,9 +4,7 @@
     "kill_horde_common": {
       "conditions": {
         "entity": {
-          "type": {
-            "tag": "antarchy:horde_common"
-          }
+          "type": "#antarchy:horde_common"
         },
         "player": [
           {

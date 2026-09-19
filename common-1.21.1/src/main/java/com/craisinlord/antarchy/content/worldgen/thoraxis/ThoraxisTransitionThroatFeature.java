@@ -6,17 +6,22 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
-public final class ThoraxisTransitionThroatFeature extends Feature<NoneFeatureConfiguration> {
+public final class ThoraxisTransitionThroatFeature extends Feature<ThoraxisTransitionThroatConfiguration> {
     public ThoraxisTransitionThroatFeature() {
-        super(NoneFeatureConfiguration.CODEC);
+        super(ThoraxisTransitionThroatConfiguration.CODEC);
     }
 
     @Override
-    public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
+    public boolean place(FeaturePlaceContext<ThoraxisTransitionThroatConfiguration> context) {
         WorldGenLevel level = context.level();
         BlockPos origin = context.origin();
+        boolean large = context.config().large();
+        int searchRadius = large ? 18 : 9;
+        double baseRadius = large ? 10.0D : 5.0D;
+        double radiusVariance = large ? 5.0D : 2.5D;
+        double layerOffsetScale = large ? 4.0D : 2.0D;
+
         BlockPos center = new BlockPos(origin.getX(), ThoraxisUndersideManager.GRAVITY_FLIP_Y, origin.getZ());
         int upperSurface = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, center.getX(), center.getZ()) - 1;
         int undersideSurface = findUndersideSurface(level, center);
@@ -26,13 +31,13 @@ public final class ThoraxisTransitionThroatFeature extends Feature<NoneFeatureCo
 
         long seed = context.random().nextLong();
         for (int y = undersideSurface; y <= upperSurface; y++) {
-            int layerOffsetX = noise(seed, Math.floorDiv(y, 5), 17) * 2;
-            int layerOffsetZ = noise(seed, Math.floorDiv(y, 5), 31) * 2;
-            double radiusX = 5.0D + noise01(seed, Math.floorDiv(y, 11), 43) * 2.5D;
-            double radiusZ = 5.0D + noise01(seed, Math.floorDiv(y, 13), 59) * 2.5D;
+            int layerOffsetX = (int) (noise(seed, Math.floorDiv(y, 5), 17) * layerOffsetScale);
+            int layerOffsetZ = (int) (noise(seed, Math.floorDiv(y, 5), 31) * layerOffsetScale);
+            double radiusX = baseRadius + noise01(seed, Math.floorDiv(y, 11), 43) * radiusVariance;
+            double radiusZ = baseRadius + noise01(seed, Math.floorDiv(y, 13), 59) * radiusVariance;
 
-            for (int x = -9; x <= 9; x++) {
-                for (int z = -9; z <= 9; z++) {
+            for (int x = -searchRadius; x <= searchRadius; x++) {
+                for (int z = -searchRadius; z <= searchRadius; z++) {
                     double dx = x - layerOffsetX;
                     double dz = z - layerOffsetZ;
                     double distance = Math.sqrt((dx * dx) / (radiusX * radiusX) + (dz * dz) / (radiusZ * radiusZ));

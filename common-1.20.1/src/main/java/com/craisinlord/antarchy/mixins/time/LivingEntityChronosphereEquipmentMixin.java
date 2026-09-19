@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.mixins.time;
 
-import com.craisinlord.antarchy.content.enchantment.AntarchyEnchantments;
 import com.craisinlord.antarchy.content.time.ChronosphereManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -13,10 +12,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityChronosphereEquipmentMixin {
-    @Inject(method = "setItemSlot", at = @At("TAIL"))
-    private void antarchy$refreshChronosphere(EquipmentSlot slot, ItemStack stack, CallbackInfo callback) {
-        if (slot != EquipmentSlot.CHEST) return;
-        LivingEntity self = (LivingEntity) (Object) this;
-        if (self instanceof ServerPlayer player) ChronosphereManager.refresh(player);
+    @Inject(method = "onEquipItem", at = @At("TAIL"))
+    private void antarchy$refreshChronosphere(EquipmentSlot slot, ItemStack oldStack, ItemStack newStack, CallbackInfo callback) {
+        if (slot == EquipmentSlot.CHEST && (Object) this instanceof ServerPlayer player) {
+            ChronosphereManager.refresh(player);
+        }
     }
 }

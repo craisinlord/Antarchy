@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IGI",
+    " I "
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_nugget"
+    },
+    "G": {
+      "item": "antarchy:flytrap_goo"
+    }
+  },
+  "result": {
+    "id": "antarchy:bug_spray",
+    "count": 1
+  }
+}

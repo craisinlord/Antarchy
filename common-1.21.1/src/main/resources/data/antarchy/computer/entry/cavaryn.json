@@ -3,7 +3,7 @@
   "category": "cavaryn",
   "title": "guide.antarchy.entry.cavaryn.title",
   "subtitle": "guide.antarchy.entry.cavaryn.subtitle",
-  "description": ["guide.antarchy.entry.cavaryn.description"],
+  "description": ["guide.antarchy.entry.cavaryn.description", "guide.antarchy.entry.cavaryn.description2", "guide.antarchy.entry.cavaryn.description3"],
   "cover_entity": "antarchy:termite",
   "rotation": 45,
   "dimension": "antarchy:cavaryn"

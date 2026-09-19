@@ -108,7 +108,7 @@ public class RoyalGuardianSwordItem extends SwordItem implements GeoItem {
         Mode mode = getMode(stack);
         tooltipComponents.add(Component.translatable("tooltip.antarchy.royal_guardian_sword.mode",
                 Component.translatable(mode.translationKey)).withStyle(ChatFormatting.GOLD));
-        tooltipComponents.add(Component.translatable(mode.tooltipKey).withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable(mode.tooltipKey).withStyle(ChatFormatting.LIGHT_PURPLE));
         tooltipComponents.add(Component.translatable("tooltip.antarchy.royal_guardian_sword.controls",
                 AntarchySettings.royalGuardianSwordElementalCooldownTicks() / 20.0D).withStyle(ChatFormatting.DARK_GRAY));
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);

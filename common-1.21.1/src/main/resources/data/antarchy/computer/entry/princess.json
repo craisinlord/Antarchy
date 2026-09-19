@@ -3,7 +3,7 @@
   "category": "thoraxis",
   "title": "guide.antarchy.entry.princess.title",
   "subtitle": "guide.antarchy.entry.princess.subtitle",
-  "description": ["guide.antarchy.entry.princess.description"],
+  "description": ["guide.antarchy.entry.princess.description", "guide.antarchy.entry.princess.description2"],
   "entity": "antarchy:princess",
   "cover_entity": "antarchy:princess",
   "rotation": 45

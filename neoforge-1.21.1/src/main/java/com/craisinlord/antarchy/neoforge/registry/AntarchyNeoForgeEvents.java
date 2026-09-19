@@ -1425,7 +1425,7 @@ public final class AntarchyNeoForgeEvents {
             Holder<PoiType> computerPoi = BuiltInRegistries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(
                     ResourceKey.create(Registries.POINT_OF_INTEREST_TYPE,
                             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "computer")));
-            Block computerBlock = Block.byItem(com.craisinlord.antos.content.AntOSObjects.COMPUTER_ITEM.get());
+            Block computerBlock = com.craisinlord.antos.neoforge.AntOSNeoForgeContent.COMPUTER.get();
             for (BlockState state : computerBlock.getStateDefinition().getPossibleStates()) {
                 PoiTypesAccessor.antarchy$getTypeByState().put(state, computerPoi);
             }

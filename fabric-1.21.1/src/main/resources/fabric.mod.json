@@ -31,11 +31,11 @@
     "antarchy-fabric.mixins.json"
   ],
   "depends": {
+    "antos": "*",
     "fabricloader": ">=${fabric_loader_version}",
     "minecraft": "~${minecraft_version}",
     "java": ">=21",
     "fabric-api": "*",
-    "antos": "*",
     "integrated_api": "*",
     "geckolib": "*",
     "sizeable_foliage": "*"

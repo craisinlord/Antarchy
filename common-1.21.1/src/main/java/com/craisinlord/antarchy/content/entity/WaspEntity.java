@@ -97,7 +97,7 @@ public class WaspEntity extends Monster implements GeoEntity, FlyingAnimal {
     }
 
     public static boolean canSpawn(EntityType<WaspEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
-        if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.COMMAND) {
+        if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.TRIAL_SPAWNER || spawnReason == MobSpawnType.COMMAND) {
             return true;
         }
 

@@ -1,0 +1,10 @@
+{
+  "type": "mob",
+  "category": "elythia",
+  "title": "guide.antarchy.entry.glimmer.title",
+  "subtitle": "guide.antarchy.entry.glimmer.subtitle",
+  "description": ["guide.antarchy.entry.glimmer.description", "guide.antarchy.entry.glimmer.description2", "guide.antarchy.entry.glimmer.description3", "guide.antarchy.entry.glimmer.description4", "guide.antarchy.entry.glimmer.description5", "guide.antarchy.entry.glimmer.description6", "guide.antarchy.entry.glimmer.description7"],
+  "entity": "antarchy:glimmer",
+  "rotation": 45,
+  "render_scale": 0.8
+}

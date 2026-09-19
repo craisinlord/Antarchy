@@ -110,7 +110,7 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
     }
 
     public static boolean canSpawn(EntityType<RollyPollyEntity> entityType, net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.entity.MobSpawnType spawnReason, BlockPos pos, net.minecraft.util.RandomSource random) {
-        if (spawnReason == net.minecraft.world.entity.MobSpawnType.SPAWN_EGG || spawnReason == net.minecraft.world.entity.MobSpawnType.SPAWNER || spawnReason == net.minecraft.world.entity.MobSpawnType.COMMAND) {
+        if (spawnReason == net.minecraft.world.entity.MobSpawnType.SPAWN_EGG || spawnReason == net.minecraft.world.entity.MobSpawnType.SPAWNER || spawnReason == net.minecraft.world.entity.MobSpawnType.TRIAL_SPAWNER || spawnReason == net.minecraft.world.entity.MobSpawnType.COMMAND) {
             return true;
         }
 

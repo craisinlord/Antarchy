@@ -218,7 +218,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
     }
 
     public static boolean canSpawn(EntityType<HerculesBeetleEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
-        if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.COMMAND) {
+        if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.TRIAL_SPAWNER || spawnReason == MobSpawnType.COMMAND) {
             return true;
         }
         boolean floorSpawn = level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP)

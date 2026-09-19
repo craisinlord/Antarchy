@@ -159,6 +159,10 @@ public class ScorpionEntity extends Monster implements GeoEntity {
             this.attackCooldownTicks--;
         }
         if (this.attackAnimTicks > 0) {
+            if (!this.isAlive()) {
+                this.resetAttackState();
+                return;
+            }
             if (!this.level().isClientSide) {
                 this.tickAttackWindup();
             }

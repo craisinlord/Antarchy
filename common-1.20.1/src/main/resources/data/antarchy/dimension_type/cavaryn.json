@@ -1,5 +1,5 @@
 {
-  "ultrawarm": true,
+  "ultrawarm": false,
   "natural": false,
   "coordinate_scale": 64.0,
   "bed_works": false,

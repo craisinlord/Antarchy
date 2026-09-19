@@ -98,7 +98,7 @@ public class JerryEntity extends Monster implements GeoEntity {
     }
 
     public static boolean canSpawn(EntityType<JerryEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, net.minecraft.core.BlockPos pos, net.minecraft.util.RandomSource random) {
-        if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.COMMAND) {
+        if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.TRIAL_SPAWNER || spawnReason == MobSpawnType.COMMAND) {
             return true;
         }
         return level.getDifficulty() != Difficulty.PEACEFUL

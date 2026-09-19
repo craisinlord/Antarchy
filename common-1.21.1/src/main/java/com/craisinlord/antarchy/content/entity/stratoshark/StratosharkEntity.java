@@ -131,6 +131,7 @@ public class StratosharkEntity extends Monster implements GeoEntity {
             return false;
         }
         if (spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.SPAWN_EGG
+                || spawnReason == MobSpawnType.TRIAL_SPAWNER
                 || spawnReason == MobSpawnType.COMMAND || spawnReason == MobSpawnType.BUCKET) {
             return true;
         }

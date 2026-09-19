@@ -147,6 +147,7 @@ public final class AntarchyFabric implements ModInitializer {
     );
     @Override
     public void onInitialize() {
+        com.craisinlord.antos.fabric.AntOSFabricContent.register();
         AntarchyGameRules.bootstrap((name, category, defaultValue) ->
                 GameRuleRegistry.register(name, category, GameRuleFactory.createBooleanRule(defaultValue))
         );

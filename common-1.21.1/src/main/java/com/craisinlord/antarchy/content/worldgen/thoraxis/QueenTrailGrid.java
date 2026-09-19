@@ -3,7 +3,7 @@ package com.craisinlord.antarchy.content.worldgen.thoraxis;
 import net.minecraft.util.RandomSource;
 
 public final class QueenTrailGrid {
-    public static final int SPACING = 1_536;
+    public static final int SPACING = 1_500;
     private static final int JITTER_MARGIN = 256;
 
     private QueenTrailGrid() {

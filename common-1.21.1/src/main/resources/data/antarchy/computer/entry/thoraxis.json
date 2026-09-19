@@ -3,7 +3,7 @@
   "category": "thoraxis",
   "title": "guide.antarchy.entry.thoraxis.title",
   "subtitle": "guide.antarchy.entry.thoraxis.subtitle",
-  "description": ["guide.antarchy.entry.thoraxis.description"],
+  "description": ["guide.antarchy.entry.thoraxis.description", "guide.antarchy.entry.thoraxis.description2", "guide.antarchy.entry.thoraxis.description3", "guide.antarchy.entry.thoraxis.description4", "guide.antarchy.entry.thoraxis.description5"],
   "cover_entity": "antarchy:red_ant",
   "rotation": 45,
   "dimension": "antarchy:thoraxis"

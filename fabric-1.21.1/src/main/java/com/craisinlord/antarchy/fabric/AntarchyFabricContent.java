@@ -562,6 +562,8 @@ public final class AntarchyFabricContent {
         com.craisinlord.antarchy.content.time.TimeDilationApi.setFieldSyncDispatcher(
                 com.craisinlord.antarchy.fabric.network.AntarchyFabricTimeDilationNetworking::syncFields
         );
+        AntarchyFabricMisc.POI_TYPES.register();
+        AntarchyFabricMisc.VILLAGER_PROFESSIONS.register();
         AntarchyFabricEvents.register();
 
         if (isSupportedInfinityLoaded()) {

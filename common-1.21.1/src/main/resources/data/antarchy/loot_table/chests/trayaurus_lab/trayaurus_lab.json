@@ -436,6 +436,19 @@
           "type": "minecraft:item",
           "name": "antarchy:mud_pie",
           "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 4,
+          "functions": [
+            {
+              "function": "minecraft:set_components",
+              "components": {
+                "antos:floppy_disk": "antarchy:elythia"
+              }
+            }
+          ]
         }
       ],
       "rolls": {

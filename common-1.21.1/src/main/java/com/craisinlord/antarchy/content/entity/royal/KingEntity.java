@@ -119,6 +119,7 @@ public class KingEntity extends RoyalBossEntity {
     private static final int CLOSE_QUARTERS_APPROACH_TICKS = 120;
     private static final int CLOSE_QUARTERS_EXIT_GRACE_TICKS = 40;
     private static final int DECREE_RESPONSE_GRACE_TICKS = 30;
+    private static final int DECREE_ANNOUNCEMENT_TICKS = 40;
     private static final int PROJECTILE_PRESSURE_MAX = 60;
     private static final int PROJECTILE_PRESSURE_PER_HIT = 10;
     private static final int GROUND_ASSAULT_TICKS = 200;
@@ -149,6 +150,7 @@ public class KingEntity extends RoyalBossEntity {
     private int treePatrolFailures;
     private int decreeCooldownTicks;
     private int activeDecreeTicks;
+    private int decreeAnnouncementTicks;
     private int decreeResponseGraceTicks;
     private int stompCooldownTicks;
     private int wingGustCooldownTicks;
@@ -1366,6 +1368,7 @@ public class KingEntity extends RoyalBossEntity {
                 this.endDecree(this.getTarget());
                 this.activeDecree = decree;
                 this.activeDecreeTicks = 300;
+                this.decreeAnnouncementTicks = DECREE_ANNOUNCEMENT_TICKS;
                 this.decreeResponseGraceTicks = DECREE_RESPONSE_GRACE_TICKS;
                 this.decreeCooldownTicks = 0;
                 this.closeQuartersEntered.clear();
@@ -1879,6 +1882,7 @@ public class KingEntity extends RoyalBossEntity {
             }
             this.activeDecree = null;
             this.activeDecreeTicks = 0;
+            this.decreeAnnouncementTicks = 0;
             this.decreeRetreatPressure = false;
             return;
         }
@@ -1892,6 +1896,7 @@ public class KingEntity extends RoyalBossEntity {
                 return;
             }
             this.activeDecreeTicks = 300;
+            this.decreeAnnouncementTicks = DECREE_ANNOUNCEMENT_TICKS;
             this.decreeResponseGraceTicks = DECREE_RESPONSE_GRACE_TICKS;
             this.activeDecree = this.pickDecree(target);
             this.decreeRetreatPressure = false;
@@ -1905,6 +1910,10 @@ public class KingEntity extends RoyalBossEntity {
             this.broadcastActiveDecree(level);
         }
         this.broadcastActiveDecree(level);
+        if (this.decreeAnnouncementTicks > 0) {
+            this.decreeAnnouncementTicks--;
+            return;
+        }
         boolean hasCompletableParticipants = false;
         boolean everyParticipantComplete = true;
         for (ServerPlayer participant : participants) {
@@ -2024,6 +2033,7 @@ public class KingEntity extends RoyalBossEntity {
         }
         this.activeDecree = null;
         this.activeDecreeTicks = 0;
+        this.decreeAnnouncementTicks = 0;
         this.decreeResponseGraceTicks = 0;
         this.decreeRetreatPressure = false;
         this.closeQuartersEntered.clear();

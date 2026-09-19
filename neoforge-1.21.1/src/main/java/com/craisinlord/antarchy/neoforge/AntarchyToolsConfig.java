@@ -401,7 +401,7 @@ public final class AntarchyToolsConfig {
         ROYAL_GUARDIAN_SWORD_STORM_JUMP_RANGE = b.defineInRange("guardianSwordStormJumpRange", 9.0D, 0.0D, 128.0D);
         ROYAL_ASSAILANT_BATTLE_AXE_ATTACK_DAMAGE = b.defineInRange("assailantBattleAxeAttackDamage", 151.0D, 0.0D, 4096.0D);
         ROYAL_ASSAILANT_BATTLE_AXE_ATTACK_SPEED = b.defineInRange("assailantBattleAxeAttackSpeed", -2.9D, -10.0D, 10.0D);
-        ROYAL_WEAPON_ATTACK_REACH_BONUS = b.defineInRange("weaponAttackReachBonus", 1.0D, 0.0D, 32.0D);
+        ROYAL_WEAPON_ATTACK_REACH_BONUS = b.defineInRange("weaponAttackReachBonus", 3.2D, 0.0D, 32.0D);
         ROYAL_WEAPON_ATTACK_KNOCKBACK_BONUS = b.defineInRange("weaponAttackKnockbackBonus", 1.0D, 0.0D, 32.0D);
         ROYAL_WEAPON_DURABILITY = b.defineInRange("weaponDurability", 4608, 1, 100000);
         ROYAL_WEAPON_ENCHANTABILITY = b.defineInRange("weaponEnchantability", 30, 0, 100);

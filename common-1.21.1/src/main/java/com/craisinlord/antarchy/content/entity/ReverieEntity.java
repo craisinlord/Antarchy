@@ -213,7 +213,7 @@ public class ReverieEntity extends PathfinderMob implements FlyingAnimal, GeoEnt
     }
 
     public static boolean canSpawn(EntityType<ReverieEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
-        if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.COMMAND) {
+        if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.TRIAL_SPAWNER || spawnReason == MobSpawnType.COMMAND) {
             return true;
         }
 

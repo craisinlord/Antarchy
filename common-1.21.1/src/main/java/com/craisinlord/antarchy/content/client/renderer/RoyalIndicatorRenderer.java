@@ -28,11 +28,12 @@ public final class RoyalIndicatorRenderer {
             crownPoints(lines, pose, radius, spin, 1.0F, 0.80F, 0.22F, 0.95F);
         }
         if (judged) {
-            float markY = commanded ? -0.13F : 0.0F;
+            float markY = commanded ? -0.13F : 0.08F;
             poseStack.translate(0.0D, markY, 0.0D);
             pose = poseStack.last();
             brackets(lines, pose, radius * 1.18F, -spin * 1.7F);
             ring(lines, pose, radius * 0.73F, -spin * 0.7F, 1.0F, 0.91F, 0.48F, 0.85F, 24);
+            judgmentFlare(lines, pose, radius * 0.82F, spin);
         }
         poseStack.popPose();
     }
@@ -76,6 +77,18 @@ public final class RoyalIndicatorRenderer {
             line(out, pose, cx - tx * 0.13F, 0.0F, cz - tz * 0.13F,
                     cx + tx * 0.13F, 0.0F, cz + tz * 0.13F, 1.0F, 0.81F, 0.20F, 1.0F);
             line(out, pose, cx, 0.0F, cz, cx * 0.82F, 0.0F, cz * 0.82F, 1.0F, 0.91F, 0.52F, 0.9F);
+        }
+    }
+
+    private static void judgmentFlare(VertexConsumer out, PoseStack.Pose pose, float radius, float rotation) {
+        // The old mark was almost edge-on from normal gameplay camera angles. Add a vertical,
+        // unmistakable judgment sigil while keeping the rotating ring as its core.
+        for (int i = 0; i < 4; i++) {
+            double angle = rotation + Math.PI * 0.5D * i;
+            float x = (float) Math.cos(angle) * radius;
+            float z = (float) Math.sin(angle) * radius;
+            line(out, pose, x, -0.16F, z, 0.0F, 0.22F, 0.0F, 1.0F, 0.68F, 0.08F, 1.0F);
+            line(out, pose, 0.0F, 0.22F, 0.0F, -x, -0.16F, -z, 1.0F, 0.91F, 0.35F, 0.95F);
         }
     }
 

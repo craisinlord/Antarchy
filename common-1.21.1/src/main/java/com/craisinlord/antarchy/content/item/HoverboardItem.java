@@ -54,7 +54,10 @@ public class HoverboardItem extends Item {
 
         HoverboardEntity hoverboard = new HoverboardEntity(this.entityType, level);
         Vec3 spawnPos = hitResult.getLocation();
-        hoverboard.moveTo(spawnPos.x, spawnPos.y, spawnPos.z, player.getYRot(), 0.0F);
+        boolean invertedPlacement = com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager.isThoraxis(level)
+                && spawnPos.y < com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager.GRAVITY_FLIP_Y;
+        double spawnY = invertedPlacement ? spawnPos.y - hoverboard.getBbHeight() : spawnPos.y;
+        hoverboard.moveTo(spawnPos.x, spawnY, spawnPos.z, player.getYRot(), 0.0F);
         hoverboard.setColor(this.color);
         if (!level.noCollision(hoverboard, hoverboard.getBoundingBox())) {
             return InteractionResultHolder.fail(stack);

@@ -8,5 +8,9 @@
 {"type":"minecraft:item","name":"antarchy:blood_crystal_apple","weight":20,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":1,"max":3}}]},
 {"type":"minecraft:item","name":"antarchy:lucid_pearl","weight":4},{"type":"minecraft:item","name":"minecraft:golden_apple","weight":5},
 {"type":"minecraft:item","name":"minecraft:potion","weight":8,"functions":[{"function":"minecraft:set_potion","id":"antarchy:inversion"}]},{"type":"minecraft:item","name":"minecraft:tipped_arrow","weight":8,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":4,"max":12}},{"function":"minecraft:set_potion","id":"antarchy:inversion"}]},
-{"type":"minecraft:item","name":"minecraft:book","weight":10,"functions":[{"function":"minecraft:enchant_randomly","options":["minecraft:mending","minecraft:unbreaking","minecraft:protection","minecraft:efficiency"]}]}
+{"type":"minecraft:item","name":"minecraft:book","weight":10,"functions":[{"function":"minecraft:enchant_randomly","options":["minecraft:mending","minecraft:unbreaking","minecraft:protection","minecraft:efficiency"]}]},
+{"type":"minecraft:item","name":"antos:floppy_disk","weight":4,"functions":[{"function":"minecraft:set_components","components":{"antos:floppy_disk":"antarchy:thoraxis"}}]},
+{"type":"minecraft:item","name":"antos:floppy_disk","weight":3,"functions":[{"function":"minecraft:set_components","components":{"antos:floppy_disk":"antarchy:temporal_fields"}}]},
+{"type":"minecraft:item","name":"antos:floppy_disk","weight":3,"functions":[{"function":"minecraft:set_components","components":{"antos:floppy_disk":"antarchy:bloodglass"}}]},
+{"type":"minecraft:item","name":"antos:floppy_disk","weight":3,"functions":[{"function":"minecraft:set_components","components":{"antos:floppy_disk":"antarchy:vortex"}}]}
 ]}],"random_sequence":"antarchy:chests/queen_castle/generic"}

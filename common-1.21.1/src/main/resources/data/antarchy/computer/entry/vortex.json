@@ -3,7 +3,7 @@
   "category": "thoraxis",
   "title": "guide.antarchy.entry.vortex.title",
   "subtitle": "guide.antarchy.entry.vortex.subtitle",
-  "description": ["guide.antarchy.entry.vortex.description"],
+  "description": ["guide.antarchy.entry.vortex.description", "guide.antarchy.entry.vortex.description2", "guide.antarchy.entry.vortex.description3"],
   "cover_entity": "antarchy:vortex",
   "render_scale": 0.8
 }

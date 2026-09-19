@@ -163,6 +163,19 @@
           "type": "minecraft:item",
           "name": "minecraft:golden_apple",
           "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 5,
+          "functions": [
+            {
+              "function": "minecraft:set_components",
+              "components": {
+                "antos:floppy_disk": "antarchy:elythia"
+              }
+            }
+          ]
         }
       ],
       "rolls": {

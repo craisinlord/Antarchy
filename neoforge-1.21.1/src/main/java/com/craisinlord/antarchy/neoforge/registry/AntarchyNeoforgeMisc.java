@@ -71,7 +71,7 @@ public final class AntarchyNeoforgeMisc {
 
     public static final DeferredHolder<PoiType, PoiType> COMPUTER_POI = POI_TYPES.register("computer",
             () -> new PoiType(
-                    java.util.Set.copyOf(net.minecraft.world.level.block.Block.byItem(com.craisinlord.antos.content.AntOSObjects.COMPUTER_ITEM.get()).getStateDefinition().getPossibleStates()),
+                    java.util.Set.copyOf(com.craisinlord.antos.neoforge.AntOSNeoForgeContent.COMPUTER.get().getStateDefinition().getPossibleStates()),
                     1,
                     1));
 

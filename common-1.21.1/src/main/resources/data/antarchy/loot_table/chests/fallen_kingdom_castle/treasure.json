@@ -93,6 +93,19 @@
           ],
           "name": "minecraft:diamond",
           "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 6,
+          "functions": [
+            {
+              "function": "minecraft:set_components",
+              "components": {
+                "antos:floppy_disk": "antarchy:elythia"
+              }
+            }
+          ]
         }
       ],
       "rolls": {

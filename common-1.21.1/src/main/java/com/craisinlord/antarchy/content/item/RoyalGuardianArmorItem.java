@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.item;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.item.royal.RoyalGearHelper;
 import java.util.List;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -74,9 +75,10 @@ public class RoyalGuardianArmorItem extends ArmorItem {
             case BOOTS -> "boots";
         };
         tooltipComponents.add(Component.translatable("tooltip.antarchy.royal_guardian_" + slotName + ".judgment",
-                Math.round(judgmentBonus() * 100.0D)));
+                Math.round(judgmentBonus() * 100.0D)).withStyle(ChatFormatting.LIGHT_PURPLE));
         if (this.armorType == Type.CHESTPLATE) {
-            tooltipComponents.add(Component.translatable("tooltip.antarchy.royal_guardian_chestplate.boundary"));
+            tooltipComponents.add(Component.translatable("tooltip.antarchy.royal_guardian_chestplate.boundary")
+                    .withStyle(ChatFormatting.AQUA));
         }
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }

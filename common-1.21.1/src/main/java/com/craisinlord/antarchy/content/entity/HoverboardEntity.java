@@ -70,7 +70,7 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
 
     @Override
     public boolean canBeAffected(MobEffectInstance effectInstance) {
-        return false;
+        return effectInstance.getEffect().value() instanceof com.craisinlord.antarchy.content.effect.InvertedMobEffect;
     }
 
     public static AttributeSupplier.Builder createAttributes() {

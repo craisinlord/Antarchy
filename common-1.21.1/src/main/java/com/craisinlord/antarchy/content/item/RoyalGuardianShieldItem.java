@@ -54,7 +54,7 @@ public class RoyalGuardianShieldItem extends ShieldItem {
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.translatable("tooltip.antarchy.royal_guardian_shield.command")
-                .withStyle(ChatFormatting.GOLD));
+                .withStyle(ChatFormatting.AQUA));
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 

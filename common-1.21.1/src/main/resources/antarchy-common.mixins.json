@@ -116,6 +116,7 @@
                    "time.LivingEntityAttackCooldownTimeDilationMixin",
                    "time.PlayerCooldownTimeDilationMixin",
                    "time.LivingEntityFoodUseTimeDilationMixin",
+                   "time.TemporalMiningSpeedMixin",
                    "time.LivingEntityChronosphereEquipmentMixin",
                    "time.LookControlTimeDilationMixin",
                    "time.MeleeAttackGoalTimeDilationMixin",

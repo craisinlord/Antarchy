@@ -3,7 +3,7 @@
   "category": "general",
   "title": "guide.antarchy.entry.easter_bunny.title",
   "subtitle": "guide.antarchy.entry.easter_bunny.subtitle",
-  "description": ["guide.antarchy.entry.easter_bunny.description"],
+  "description": ["guide.antarchy.entry.easter_bunny.description", "guide.antarchy.entry.easter_bunny.description2"],
   "entity": "antarchy:easter_bunny",
   "cover_entity": "antarchy:easter_bunny",
   "rotation": 45

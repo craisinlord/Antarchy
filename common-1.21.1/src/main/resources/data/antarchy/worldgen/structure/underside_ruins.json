@@ -26,7 +26,7 @@
   "max_roof_search_distance": 256,
   "min_roof_thickness": 3,
   "min_open_space_below": 16,
-  "ceiling_offset": 0,
+  "ceiling_offset": -1,
   "spawn_overrides": {},
   "liquid_settings": "ignore_waterlogging"
 }

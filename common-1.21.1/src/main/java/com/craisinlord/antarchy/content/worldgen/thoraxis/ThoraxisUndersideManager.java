@@ -17,6 +17,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -43,9 +44,13 @@ public final class ThoraxisUndersideManager {
     private static final int ENTER_UNDERSIDE_Y = GRAVITY_FLIP_Y - 4;
     private static final int EXIT_UNDERSIDE_Y = GRAVITY_FLIP_Y + 4;
     private static final int FLIP_COOLDOWN_TICKS = 40;
-    private static final int CROSSING_TIMEOUT_TICKS = 50;
+    private static final int CROSSING_TIMEOUT_TICKS = 100;
     private static final int SETTLE_TIMEOUT_TICKS = 70;
     private static final double MIN_CROSSING_SPEED = 0.48D;
+    private static final int RECENT_UNDERSIDE_WINDOW_TICKS = 40;
+    private static final int UNDERSIDE_ENTRY_BORDER_Y = GRAVITY_FLIP_Y - 7;
+    private static final int FRESH_ENTRY_DELAY_TICKS = 20;
+    private static final int ENTRY_SLOW_FALL_DURATION_TICKS = 300;
     private static final Map<ServerLevel, TrackingState> STATES = new WeakHashMap<>();
 
     private ThoraxisUndersideManager() {
@@ -144,6 +149,7 @@ public final class ThoraxisUndersideManager {
         tracking.entities.removeIf(entity -> !entity.isAlive() || entity.isRemoved());
         tracking.forcedItems.removeIf(entity -> !entity.isAlive() || entity.isRemoved());
         tracking.lastFlipTick.entrySet().removeIf(entry -> now - entry.getValue() > FLIP_COOLDOWN_TICKS * 4L);
+        tracking.lastUndersideExitTick.entrySet().removeIf(entry -> now - entry.getValue() > RECENT_UNDERSIDE_WINDOW_TICKS * 4L);
 
         double elapsedMs = (System.nanoTime() - startNanos) / 1_000_000.0D;
         if (elapsedMs >= SLOW_TICK_WARN_MS && now - tracking.lastDiagnosticTick >= DIAGNOSTIC_INTERVAL_TICKS) {
@@ -161,6 +167,7 @@ public final class ThoraxisUndersideManager {
         private final Set<Entity> forcedItems = Collections.newSetFromMap(new IdentityHashMap<>());
         private final Map<UUID, Long> lastFlipTick = new java.util.HashMap<>();
         private final Map<UUID, PlayerCrossing> playerCrossings = new java.util.HashMap<>();
+        private final Map<UUID, Long> lastUndersideExitTick = new java.util.HashMap<>();
         private long lastDiagnosticTick = Long.MIN_VALUE / 2L;
 
         private DiscoveryStats discover(ServerLevel level) {
@@ -190,6 +197,7 @@ public final class ThoraxisUndersideManager {
             forcedItems.clear();
             lastFlipTick.clear();
             playerCrossings.clear();
+            lastUndersideExitTick.clear();
         }
     }
 
@@ -206,19 +214,18 @@ public final class ThoraxisUndersideManager {
                 continue;
             }
 
-            if (isCrossingGravityBoundary(player) && flipReady(tracking, player.getUUID(), now)) {
+            if (isCrossingGravityBoundary(player)) {
                 boolean toUnderside = AntarchyGravityApi.getGravityDirection(player) == AntarchyGravityDirection.DOWN;
                 if (!toUnderside) {
                     refreshInvertedEffect(player);
+                } else {
+                    player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, ENTRY_SLOW_FALL_DURATION_TICKS, 0, false, true, true));
                 }
                 tracking.playerCrossings.put(player.getUUID(), new PlayerCrossing(toUnderside));
                 continue;
             }
 
-            MobEffectInstance effect = player.getEffect(AntarchyObjects.INVERTED_EFFECT.get());
-            if (player.getY() < ENTER_UNDERSIDE_Y) {
-                refreshInvertedEffect(player);
-            } else if (effect != null && isUndersideEffect(effect) && player.getY() < EXIT_UNDERSIDE_Y) {
+            if (AntarchyGravityApi.isGravityInverted(player) && player.getY() < EXIT_UNDERSIDE_Y) {
                 refreshInvertedEffect(player);
             }
         }
@@ -237,8 +244,21 @@ public final class ThoraxisUndersideManager {
             }
 
             AABB bounds = player.getBoundingBox();
-            boolean clear = crossing.toUnderside ? bounds.maxY < GRAVITY_FLIP_Y : bounds.minY > EXIT_UNDERSIDE_Y;
+            boolean clear;
+            if (crossing.toUnderside) {
+                if (bounds.maxY >= UNDERSIDE_ENTRY_BORDER_Y) {
+                    return;
+                }
+                Long lastExit = tracking.lastUndersideExitTick.get(player.getUUID());
+                boolean recentlyUnderside = lastExit != null && now - lastExit < RECENT_UNDERSIDE_WINDOW_TICKS;
+                clear = recentlyUnderside || crossing.ticks >= FRESH_ENTRY_DELAY_TICKS;
+            } else {
+                clear = bounds.minY > EXIT_UNDERSIDE_Y;
+            }
             if (!clear) {
+                return;
+            }
+            if (!flipReady(tracking, player.getUUID(), now)) {
                 return;
             }
 
@@ -259,6 +279,7 @@ public final class ThoraxisUndersideManager {
                 refreshInvertedEffect(player);
             } else {
                 player.removeEffect(AntarchyObjects.INVERTED_EFFECT.get());
+                tracking.lastUndersideExitTick.put(player.getUUID(), now);
             }
             return;
         }
@@ -276,7 +297,7 @@ public final class ThoraxisUndersideManager {
         AABB swept = player.getBoundingBox().expandTowards(velocity.scale(-1.0D)).inflate(0.08D);
         AntarchyGravityDirection direction = AntarchyGravityApi.getGravityDirection(player);
         return direction == AntarchyGravityDirection.DOWN
-                ? swept.minY < GRAVITY_FLIP_Y && swept.maxY >= GRAVITY_FLIP_Y && velocity.y <= -MIN_CROSSING_SPEED
+                ? swept.minY < UNDERSIDE_ENTRY_BORDER_Y && swept.maxY >= UNDERSIDE_ENTRY_BORDER_Y && velocity.y <= -MIN_CROSSING_SPEED
                 : swept.minY <= GRAVITY_FLIP_Y && swept.maxY > GRAVITY_FLIP_Y && velocity.y >= MIN_CROSSING_SPEED;
     }
 
@@ -338,16 +359,10 @@ public final class ThoraxisUndersideManager {
         return level.dimension().location().equals(THORAXIS_DIMENSION);
     }
 
-    /** True only while an entity is physically below Thoraxis' gravity boundary. */
     public static boolean isInUnderside(Entity entity) {
         return isThoraxis(entity.level()) && entity.getY() < GRAVITY_FLIP_Y;
     }
 
-    /**
-     * Projectiles perform their own movement in world coordinates, so they must
-     * not retain an inverted entity-local movement frame. Underside gravity is
-     * reversed separately when gravitational acceleration is applied.
-     */
     public static void normalizeProjectileGravityFrame(Projectile projectile) {
         boolean stateMismatch = AntarchyGravityApi.getGravityDirection(projectile) != AntarchyGravityDirection.DOWN
                 || AntarchyGravityApi.isGravityForced(projectile);
@@ -365,7 +380,6 @@ public final class ThoraxisUndersideManager {
         return isThoraxis(entity.level()) && entity.getY() >= EXIT_UNDERSIDE_Y;
     }
 
-    /** True while an entity is in the region where the underside gravity rule applies. */
     public static boolean shouldInvertInUnderside(Entity entity) {
         return AntarchyGravityApi.isGravityInverted(entity)
                 && isInUnderside(entity);

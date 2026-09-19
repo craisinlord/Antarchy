@@ -40,6 +40,8 @@ public final class AntTeleportHelper {
     private static final double COMPANION_FOLLOW_RADIUS = 16.0D;
     private static final int ARRIVAL_SEARCH_RADIUS = 24;
     private static final int ARRIVAL_VERTICAL_SEARCH = 24;
+    private static final int EXPANDED_ARRIVAL_SEARCH_RADIUS = 48;
+    private static final int EXPANDED_ARRIVAL_VERTICAL_SEARCH = 48;
 
     private AntTeleportHelper() {
     }
@@ -270,10 +272,21 @@ public final class AntTeleportHelper {
 
     @Nullable
     private static Vec3 findSafeArrivalPosition(ServerPlayer player, ServerLevel destination, BlockPos preferredPos) {
-        loadArrivalSearchArea(destination, preferredPos);
+        loadArrivalSearchArea(destination, preferredPos, ARRIVAL_SEARCH_RADIUS);
         int[] yRange = getDimensionYRange(destination);
         if (yRange != null) {
-            return findSafeArrivalPositionInYRange(player, destination, preferredPos, yRange[0], yRange[1]);
+            Vec3 safePos = findSafeArrivalPositionInYRange(
+                    player, destination, preferredPos, yRange[0], yRange[1], ARRIVAL_SEARCH_RADIUS, ARRIVAL_VERTICAL_SEARCH);
+            if (safePos != null) {
+                return safePos;
+            }
+
+            // The bounded search can fail near rough or sparsely-generated terrain.
+            // Retry once with a wider radius before giving up.
+            loadArrivalSearchArea(destination, preferredPos, EXPANDED_ARRIVAL_SEARCH_RADIUS);
+            return findSafeArrivalPositionInYRange(
+                    player, destination, preferredPos, yRange[0], yRange[1],
+                    EXPANDED_ARRIVAL_SEARCH_RADIUS, EXPANDED_ARRIVAL_VERTICAL_SEARCH);
         }
 
         Set<BlockPos> candidates = new LinkedHashSet<>();
@@ -318,9 +331,9 @@ public final class AntTeleportHelper {
      * bounded area up front so unloaded terrain is not mistaken for an unsafe
      * destination and rejected prematurely.
      */
-    private static void loadArrivalSearchArea(ServerLevel destination, BlockPos preferredPos) {
+    private static void loadArrivalSearchArea(ServerLevel destination, BlockPos preferredPos, int searchRadius) {
         ChunkPos center = new ChunkPos(preferredPos);
-        int chunkRadius = (ARRIVAL_SEARCH_RADIUS >> 4) + 1;
+        int chunkRadius = (searchRadius >> 4) + 1;
         for (int chunkX = center.x - chunkRadius; chunkX <= center.x + chunkRadius; chunkX++) {
             for (int chunkZ = center.z - chunkRadius; chunkZ <= center.z + chunkRadius; chunkZ++) {
                 destination.getChunk(chunkX, chunkZ);
@@ -347,10 +360,10 @@ public final class AntTeleportHelper {
     }
 
     @Nullable
-    private static Vec3 findSafeArrivalPositionInYRange(ServerPlayer player, ServerLevel destination, BlockPos preferredPos, int minY, int maxY) {
+    private static Vec3 findSafeArrivalPositionInYRange(ServerPlayer player, ServerLevel destination, BlockPos preferredPos, int minY, int maxY, int searchRadius, int verticalSearch) {
         Set<BlockPos> surfaceCandidates = new LinkedHashSet<>();
         boolean elythia = destination.dimension() == PermanentPortalType.ELYTHIA.primaryDimension();
-        for (int radius = 0; radius <= ARRIVAL_SEARCH_RADIUS; radius++) {
+        for (int radius = 0; radius <= searchRadius; radius++) {
             for (int xOff = -radius; xOff <= radius; xOff++) {
                 for (int zOff = -radius; zOff <= radius; zOff++) {
                     if (radius > 0 && Math.abs(xOff) != radius && Math.abs(zOff) != radius) {
@@ -372,7 +385,7 @@ public final class AntTeleportHelper {
                         addArrivalCandidate(surfaceCandidates, destination.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, column));
                     }
 
-                    for (int yOffset = 1; yOffset <= ARRIVAL_VERTICAL_SEARCH; yOffset++) {
+                    for (int yOffset = 1; yOffset <= verticalSearch; yOffset++) {
                         surfaceCandidates.add(surface.above(yOffset));
                         if (!elythia) {
                             surfaceCandidates.add(surface.below(yOffset));
@@ -404,7 +417,7 @@ public final class AntTeleportHelper {
         // Heightmaps can be stale or unsuitable around structures, so retain a
         // bounded exhaustive search as a final generated-terrain attempt in
         // dimensions whose configured arrival ranges intentionally allow it.
-        for (int radius = 0; radius <= ARRIVAL_SEARCH_RADIUS; radius++) {
+        for (int radius = 0; radius <= searchRadius; radius++) {
             for (int xOff = -radius; xOff <= radius; xOff++) {
                 for (int zOff = -radius; zOff <= radius; zOff++) {
                     if (radius > 0 && Math.abs(xOff) != radius && Math.abs(zOff) != radius) {

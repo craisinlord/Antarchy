@@ -23,12 +23,6 @@ public final class AntarchyComputerGames {
             AntarchyGameNetworking.requestBasiliskState(pos);
             return new GameSession(() -> { if (!loaded.get()) loaded.set(loadScores(pos, AntarchyGamePayload.BASILISK_STATE, program::setStoredScores)); program.tick(); }, program::render, key -> loaded.get() && program.keyPressed(key), ignored -> false);
         }));
-        registerIfMissing(game("antman", "ANTMAN.EXE", pos -> {
-            AntmanProgram program = new AntmanProgram(true, 0, 0, score -> AntarchyGameNetworking.saveAntmanScore(pos, score));
-            var loaded = new java.util.concurrent.atomic.AtomicBoolean();
-            AntarchyGameNetworking.requestAntmanState(pos);
-            return new GameSession(() -> { if (!loaded.get()) loaded.set(loadScores(pos, AntarchyGamePayload.ANTMAN_STATE, program::setStoredScores)); program.tick(); }, program::render, key -> loaded.get() && program.keyPressed(key), ignored -> false);
-        }));
     }
 
     private static void registerIfMissing(ComputerGame game) {

@@ -8,5 +8,9 @@
 {"type":"minecraft:item","name":"antarchy:potent_nyxite","weight":4},{"type":"minecraft:item","name":"minecraft:enchanted_golden_apple","weight":2},
 {"type":"minecraft:item","name":"minecraft:book","weight":14,"functions":[{"function":"minecraft:enchant_randomly","options":["minecraft:mending","minecraft:unbreaking","minecraft:protection","minecraft:efficiency","minecraft:fortune"]}]},
 {"type":"minecraft:item","name":"minecraft:potion","weight":8,"functions":[{"function":"minecraft:set_potion","id":"antarchy:inversion"}]},{"type":"minecraft:item","name":"minecraft:tipped_arrow","weight":8,"functions":[{"function":"minecraft:set_count","count":{"type":"minecraft:uniform","min":6,"max":16}},{"function":"minecraft:set_potion","id":"antarchy:inversion"}]},
-{"type":"minecraft:item","name":"antarchy:titanium_ingot","weight":1},{"type":"minecraft:item","name":"antarchy:uranium_ingot","weight":1}
+{"type":"minecraft:item","name":"antarchy:titanium_ingot","weight":1},{"type":"minecraft:item","name":"antarchy:uranium_ingot","weight":1},
+{"type":"minecraft:item","name":"antos:floppy_disk","weight":3,"functions":[{"function":"minecraft:set_components","components":{"antos:floppy_disk":"antarchy:thoraxis"}}]},
+{"type":"minecraft:item","name":"antos:floppy_disk","weight":2,"functions":[{"function":"minecraft:set_components","components":{"antos:floppy_disk":"antarchy:temporal_fields"}}]},
+{"type":"minecraft:item","name":"antos:floppy_disk","weight":2,"functions":[{"function":"minecraft:set_components","components":{"antos:floppy_disk":"antarchy:bloodglass"}}]},
+{"type":"minecraft:item","name":"antos:floppy_disk","weight":2,"functions":[{"function":"minecraft:set_components","components":{"antos:floppy_disk":"antarchy:vortex"}}]}
 ]}],"random_sequence":"antarchy:chests/queen_castle/treasure"}

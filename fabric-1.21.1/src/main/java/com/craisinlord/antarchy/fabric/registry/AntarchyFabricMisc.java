@@ -135,9 +135,14 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<PoiType, PoiType> COMPUTER_POI = POI_TYPES.register("computer",
             () -> new PoiType(
-                    java.util.Set.copyOf(net.minecraft.world.level.block.Block.byItem(com.craisinlord.antos.content.AntOSObjects.COMPUTER_ITEM.get()).getStateDefinition().getPossibleStates()),
+                    java.util.Set.copyOf(computerPoiStates()),
                     1,
                     1));
+
+    private static java.util.Set<net.minecraft.world.level.block.state.BlockState> computerPoiStates() {
+        net.minecraft.world.level.block.Block block = com.craisinlord.antos.fabric.AntOSFabricContent.COMPUTER;
+        return java.util.Set.copyOf(block.getStateDefinition().getPossibleStates());
+    }
 
     public static final DeferredHolder<VillagerProfession, VillagerProfession> COMPUTER_SCIENTIST = VILLAGER_PROFESSIONS.register("computer_scientist",
             () -> new VillagerProfession(

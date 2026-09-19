@@ -1,13 +1,25 @@
 {
   "variants": {
-    "hatch=0": {
+    "hatch=0,inverted=false": {
       "model": "antarchy:block/prince_egg"
     },
-    "hatch=1": {
+    "hatch=1,inverted=false": {
       "model": "antarchy:block/prince_egg"
     },
-    "hatch=2": {
+    "hatch=2,inverted=false": {
       "model": "antarchy:block/prince_egg"
+    },
+    "hatch=0,inverted=true": {
+      "model": "antarchy:block/prince_egg",
+      "x": 180
+    },
+    "hatch=1,inverted=true": {
+      "model": "antarchy:block/prince_egg",
+      "x": 180
+    },
+    "hatch=2,inverted=true": {
+      "model": "antarchy:block/prince_egg",
+      "x": 180
     }
   }
 }
