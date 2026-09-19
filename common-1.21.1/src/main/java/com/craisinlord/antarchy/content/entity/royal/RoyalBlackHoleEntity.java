@@ -67,6 +67,8 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
     private static final double EFFECT_GROWTH_START = 0.45D;
     private static final double EFFECT_GROWTH_END = 1.6D;
     private static final double EFFECT_GROWTH_FRACTION = 0.6D;
+    private static final double QUEEN_EFFECT_GROWTH_START = EFFECT_GROWTH_START * 1.5D;
+    private static final double QUEEN_PULL_RADIUS_SCALE = 2.0D;
     private static final double MODEL_BASELINE_Y = 24.0D;
     private static final double CORE_CUBE_CENTER_Y = 146.0D;
     private static final double CORE_START_OFFSET_Y = -100.0D;
@@ -143,7 +145,11 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
         double progress = this.activeTicks <= 0
                 ? 1.0D
                 : Mth.clamp(this.age / (this.activeTicks * EFFECT_GROWTH_FRACTION), 0.0D, 1.0D);
-        return this.radius() * Mth.lerp(progress, EFFECT_GROWTH_START, EFFECT_GROWTH_END);
+        return this.radius() * Mth.lerp(progress, this.effectGrowthStart(), EFFECT_GROWTH_END);
+    }
+
+    protected double effectGrowthStart() {
+        return QUEEN_EFFECT_GROWTH_START;
     }
 
     public boolean isCollapsing() {
@@ -228,6 +234,10 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
         return true;
     }
 
+    protected double pullRadius() {
+        return this.effectRadius() * QUEEN_PULL_RADIUS_SCALE;
+    }
+
     /** Returns the center of the animated black-hole cube in world coordinates. */
     public Vec3 effectCenter() {
         double animationSeconds = Math.min(CORE_RISE_END_SECONDS, this.animationAge / 20.0D);
@@ -269,7 +279,7 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
 
     private void applyPull() {
         Vec3 center = this.effectCenter();
-        double radius = this.effectRadius();
+        double radius = this.pullRadius();
         for (Entity entity : this.level().getEntitiesOfClass(Entity.class, new AABB(center, center).inflate(radius))) {
             if (entity == this || entity instanceof TimeDilationFieldEntity || this.isImmune(entity)) {
                 continue;
@@ -302,9 +312,10 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
 
         Vec3 center = this.effectCenter();
         Vec3 terrainOrigin = center;
-        double radius = this.effectRadius();
+        double radius = this.pullRadius();
         int pulledThisTick = 0;
-        for (int attempt = 0; attempt < BLOCK_SUCTION_ATTEMPTS && pulledThisTick < BLOCKS_PER_SUCTION
+        int suctionAttempts = BLOCK_SUCTION_ATTEMPTS * 4;
+        for (int attempt = 0; attempt < suctionAttempts && pulledThisTick < BLOCKS_PER_SUCTION
                 && this.suckedBlocks < cap; attempt++) {
             BlockPos pos = BlockPos.containing(
                     terrainOrigin.x + (this.random.nextDouble() * 2.0D - 1.0D) * radius,

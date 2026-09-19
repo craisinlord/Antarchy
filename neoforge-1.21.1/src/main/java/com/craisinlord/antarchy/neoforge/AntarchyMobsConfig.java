@@ -686,7 +686,7 @@ public final class AntarchyMobsConfig {
         QUEEN_BLACK_HOLE_ACTIVE_TICKS = b.comment("Active duration for Royal Assailant axe black holes. Queen black holes always follow their 20.125-second animation.").defineInRange("queenBlackHoleActiveTicks", 120, 20, 1200);
         QUEEN_BLACK_HOLE_PULL_STRENGTH = b.defineInRange("queenBlackHolePullStrength", 0.16D, 0.0D, 2.0D);
         QUEEN_BLACK_HOLE_BLOCK_SUCTION_CAP = b.comment("Maximum terrain blocks a single Queen black hole may pull into itself.").defineInRange("queenBlackHoleBlockSuctionCap", 160, 0, 4096);
-        KING_FIREBALL_DAMAGE = b.defineInRange("kingFireballDamage", 32.0D, 0.0D, 1024.0D);
+        KING_FIREBALL_DAMAGE = b.defineInRange("kingFireballDamage", 48.0D, 0.0D, 1024.0D);
         KING_FIREBALL_RADIUS = b.defineInRange("kingFireballRadius", 4.5D, 0.5D, 32.0D);
         KING_FIREBALL_COOLDOWN_TICKS = b.defineInRange("kingFireballCooldownTicks", 150, 1, 2400);
         KING_ICEBALL_DAMAGE = b.defineInRange("kingIceballDamage", 18.0D, 0.0D, 1024.0D);

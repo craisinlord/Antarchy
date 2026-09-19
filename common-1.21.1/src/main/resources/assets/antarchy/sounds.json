@@ -1065,6 +1065,14 @@
       }
     ]
   },
+  "the_queen": {
+    "sounds": [
+      {
+        "name": "antarchy:music/game/thoraxis/the_queen",
+        "stream": true
+      }
+    ]
+  },
   "lucid_lullaby": {
     "sounds": [
       {

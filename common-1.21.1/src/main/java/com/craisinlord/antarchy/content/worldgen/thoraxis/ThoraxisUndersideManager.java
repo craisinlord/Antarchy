@@ -47,6 +47,7 @@ public final class ThoraxisUndersideManager {
     private static final int CROSSING_TIMEOUT_TICKS = 100;
     private static final int SETTLE_TIMEOUT_TICKS = 70;
     private static final double MIN_CROSSING_SPEED = 0.48D;
+    private static final double MIN_ENTRY_CROSSING_SPEED = 0.02D;
     private static final int RECENT_UNDERSIDE_WINDOW_TICKS = 40;
     private static final int UNDERSIDE_ENTRY_BORDER_Y = GRAVITY_FLIP_Y - 7;
     private static final int FRESH_ENTRY_DELAY_TICKS = 20;
@@ -225,6 +226,16 @@ public final class ThoraxisUndersideManager {
                 continue;
             }
 
+            if (AntarchyGravityApi.getGravityDirection(player) == AntarchyGravityDirection.DOWN
+                    && player.getY() < UNDERSIDE_ENTRY_BORDER_Y
+                    && flipReady(tracking, player.getUUID(), now)) {
+                AntarchyGravityApi.setAirborneGravityDirection(player, AntarchyGravityDirection.UP, true, THROAT_TRANSITION);
+                player.resetFallDistance();
+                tracking.lastFlipTick.put(player.getUUID(), now);
+                refreshInvertedEffect(player);
+                continue;
+            }
+
             if (AntarchyGravityApi.isGravityInverted(player) && player.getY() < EXIT_UNDERSIDE_Y) {
                 refreshInvertedEffect(player);
             }
@@ -297,7 +308,7 @@ public final class ThoraxisUndersideManager {
         AABB swept = player.getBoundingBox().expandTowards(velocity.scale(-1.0D)).inflate(0.08D);
         AntarchyGravityDirection direction = AntarchyGravityApi.getGravityDirection(player);
         return direction == AntarchyGravityDirection.DOWN
-                ? swept.minY < UNDERSIDE_ENTRY_BORDER_Y && swept.maxY >= UNDERSIDE_ENTRY_BORDER_Y && velocity.y <= -MIN_CROSSING_SPEED
+                ? swept.minY < UNDERSIDE_ENTRY_BORDER_Y && swept.maxY >= UNDERSIDE_ENTRY_BORDER_Y && velocity.y <= -MIN_ENTRY_CROSSING_SPEED
                 : swept.minY <= GRAVITY_FLIP_Y && swept.maxY > GRAVITY_FLIP_Y && velocity.y >= MIN_CROSSING_SPEED;
     }
 

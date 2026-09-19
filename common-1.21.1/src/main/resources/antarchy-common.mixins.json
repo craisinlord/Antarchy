@@ -30,6 +30,7 @@
                    "KingsTreeLocateCommandMixin",
                    "LivingEntityJumpingAccessor",
                    "CommandedMobMixin",
+                   "UndertrialSpawnPlacementsMixin",
                    "LivingEntityRoyalEffectsMixin",
                    "JudgmentMarkEntityMixin",
                    "RoyalJudgmentCombatMixin",

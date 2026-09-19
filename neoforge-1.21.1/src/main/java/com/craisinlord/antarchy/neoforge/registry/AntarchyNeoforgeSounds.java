@@ -205,6 +205,7 @@ public final class AntarchyNeoforgeSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> POTENT_NYXITE_GEYSER_CONTINUOUS_START = registerSoundEvent("potent_nyxite_geyser_continuous_start");
     public static final DeferredHolder<SoundEvent, SoundEvent> POTENT_NYXITE_GEYSER_CONTINUOUS_ACTIVE = registerSoundEvent("potent_nyxite_geyser_continuous_active");
     public static final DeferredHolder<SoundEvent, SoundEvent> MUSIC_DISC_UNDERSIDE = registerSoundEvent("music_disc_underside");
+    public static final DeferredHolder<SoundEvent, SoundEvent> THE_QUEEN = registerSoundEvent("the_queen");
     public static final DeferredHolder<SoundEvent, SoundEvent> WORM_HOOK_FLYING = registerSoundEvent("worm_hook_flying");
     public static final DeferredHolder<SoundEvent, SoundEvent> BLOOD_CRYSTAL_KATANA_DASH = registerSoundEvent("blood_crystal_katana_dash");
     public static final DeferredHolder<SoundEvent, SoundEvent> BLOOD_CRYSTAL_ARMOR_EQUIP = registerSoundEvent("blood_crystal_armor_equip");

@@ -252,17 +252,7 @@ public class KingEntity extends RoyalBossEntity {
 
     @Override
     protected boolean blocksRoyalBeamScheduling() {
-        if (this.royalChargeActive) {
-            return true;
-        }
-        LivingEntity target = this.getTarget();
-        if (target == null || this.royalChargeOpeningDelayTicks > 0
-                || this.kingLandingStage != KingLandingStage.AERIAL
-                || !this.attackScheduler.ready("royal_charge", RoyalAttackLane.MOVEMENT)) {
-            return false;
-        }
-        double distance = this.distanceTo(target);
-        return distance >= ROYAL_CHARGE_MIN_RANGE && distance <= ROYAL_CHARGE_MAX_RANGE;
+        return this.royalChargeActive;
     }
 
     @Override
@@ -423,7 +413,12 @@ public class KingEntity extends RoyalBossEntity {
 
     @Override
     protected double royalBeamMinimumRange() {
-        return AntarchySettings.kingBeamMinimumRange();
+        return Math.min(AntarchySettings.kingBeamMinimumRange(), 28.0D);
+    }
+
+    @Override
+    protected boolean royalBeamUsesTrackedAim() {
+        return false;
     }
 
     @Override
@@ -758,10 +753,12 @@ public class KingEntity extends RoyalBossEntity {
 
     private boolean clearTreePatrolPath(Vec3 destination) {
         Vec3 start = this.position();
-        for (int sample = 1; sample <= TREE_ORBIT_PATH_SAMPLES; sample++) {
+        AABB bounds = this.getBoundingBox();
+        for (int check = 0; check < TREE_ORBIT_PATH_SAMPLES; check++) {
+            int sample = check == 0 ? TREE_ORBIT_PATH_SAMPLES : check;
             double progress = sample / (double) TREE_ORBIT_PATH_SAMPLES;
             Vec3 point = start.lerp(destination, progress);
-            AABB box = this.getBoundingBox().move(point.x - this.getX(), point.y - this.getY(), point.z - this.getZ());
+            AABB box = bounds.move(point.x - this.getX(), point.y - this.getY(), point.z - this.getZ());
             if (!this.level().noCollision(this, box)) {
                 return false;
             }

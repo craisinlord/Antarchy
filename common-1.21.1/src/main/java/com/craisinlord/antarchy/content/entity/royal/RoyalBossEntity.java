@@ -339,6 +339,11 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         return Math.max(10, Mth.floor(AntarchySettings.royalBossBiteCooldownTicks() * phase.cooldownScale()));
     }
 
+    /** Allows either royal boss to tune bite damage without changing the other. */
+    protected double biteDamageMultiplier() {
+        return AntarchySettings.royalBossBiteDamageMultiplier();
+    }
+
     public String geoNameForRender() {
         return this.geoName();
     }
@@ -543,18 +548,20 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         }
 
         this.initializeMultiplayerScaling(primaryTarget);
+        this.assignHeadTargets(primaryTarget);
 
         this.tickCombatLocomotionMode(primaryTarget);
-        if (this.blocksRoyalAttacksForMovement()) {
+        boolean movementBlocksAttacks = this.blocksRoyalAttacksForMovement();
+        if (!movementBlocksAttacks) {
+            boolean aeriallyStabilized = this.steerTowardTarget(primaryTarget);
+            if (!aeriallyStabilized) {
+                this.getLookControl().setLookAt(primaryTarget, 30.0F, 30.0F);
+            }
+        }
+        this.tickRoyalBeam(primaryTarget,
+                !movementBlocksAttacks && !this.blocksRoyalBeamScheduling());
+        if (movementBlocksAttacks) {
             return;
-        }
-        boolean aeriallyStabilized = this.steerTowardTarget(primaryTarget);
-        if (!aeriallyStabilized) {
-            this.getLookControl().setLookAt(primaryTarget, 30.0F, 30.0F);
-        }
-        this.assignHeadTargets(primaryTarget);
-        if (!this.blocksRoyalBeamScheduling()) {
-            this.tickRoyalBeam(primaryTarget);
         }
         this.tickBodyCrush();
 
@@ -590,10 +597,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                 || super.isInvulnerableTo(source);
     }
 
-    private void tickRoyalBeam(LivingEntity primaryTarget) {
-        if (this.recoveryWindowTicks > 0) {
-            return;
-        }
+    private void tickRoyalBeam(LivingEntity primaryTarget, boolean allowScheduling) {
         Phase phase = this.phase();
         int activeBeams = 0;
         for (RoyalHead head : this.heads) {
@@ -625,7 +629,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                         beamTarget,
                         this.royalBeamSettings(),
                         this.royalBeamTerrainMode(head),
-                        end -> this.setRoyalBeamEndPosition(head.slot(), end));
+                        end -> this.setRoyalBeamEndPosition(head.slot(), end),
+                        this.royalBeamUsesTrackedAim());
                 Vec3 beamEnd = controller.beamEndPosition();
                 if (beamEnd != null) {
                     this.tickRoyalBeamEffects(head, this.beamAnchor(head), beamEnd);
@@ -635,6 +640,12 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                 }
                 continue;
             }
+        }
+        if (!allowScheduling || this.recoveryWindowTicks > 0) {
+            return;
+        }
+        for (RoyalHead head : this.heads) {
+            int index = head.slot().ordinal();
             if (activeBeams >= this.beamVolleyLimit) {
                 continue;
             }
@@ -692,6 +703,11 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
 
     protected int selectBeamVolleyLimit(Phase phase) {
         return phase.maxConcurrentHeadAttacks();
+    }
+
+    /** Uses the beam controller's smoothed target point instead of the boss body's forward axis. */
+    protected boolean royalBeamUsesTrackedAim() {
+        return false;
     }
 
     protected boolean isRoyalRecoveryActive() {
@@ -786,6 +802,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     protected final void stopRoyalBeamsForDirectedAttack() {
         for (RoyalHead head : this.heads) {
             if (head.beamActive() || head.shooting()) {
+                this.attackScheduler.cancel(this.headLane(head));
                 this.stopRoyalBeam(head);
             }
         }
@@ -1059,7 +1076,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         }
         Vec3 anchor = this.headAnchor(head);
         double reach = this.biteReach();
-        float damage = (float) (this.getAttributeValue(Attributes.ATTACK_DAMAGE) * AntarchySettings.royalBossBiteDamageMultiplier());
+        float damage = (float) (this.getAttributeValue(Attributes.ATTACK_DAMAGE) * this.biteDamageMultiplier());
         DamageSource damageSource = this.damageSources().mobAttack(this);
         AABB box = new AABB(anchor, anchor).inflate(reach);
         for (LivingEntity living : this.level().getEntitiesOfClass(LivingEntity.class, box, entity -> entity.isAlive() && entity != this)) {
@@ -1122,7 +1139,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                 AntarchyGravityApi.getGravityDirection(this)).normalize();
     }
 
-    private boolean targetInBeamLine(RoyalHead head, LivingEntity target) {
+    protected boolean targetInBeamLine(RoyalHead head, LivingEntity target) {
         Vec3 origin = this.beamAnchor(head);
         Vec3 direction = this.beamDirection(head);
         Vec3 toTarget = target.getEyePosition().subtract(origin);

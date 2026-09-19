@@ -1,0 +1,8 @@
+{
+  "sound_event": "antarchy:the_queen",
+  "description": {
+    "translate": "jukebox_song.antarchy.the_queen"
+  },
+  "length_in_seconds": 180.0,
+  "comparator_output": 13
+}

@@ -1,10 +1,10 @@
 package com.craisinlord.antarchy.content.block;
 
+import com.craisinlord.antarchy.content.entity.royal.KingEntity;
 import java.util.Optional;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -40,7 +40,8 @@ public final class CloudBlock extends Block implements BucketPickup {
     protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         if (context instanceof EntityCollisionContext ecc) {
             Entity entity = ecc.getEntity();
-            if (entity instanceof net.minecraft.world.entity.LivingEntity le && le.isShiftKeyDown()) {
+            if (entity instanceof KingEntity
+                    || entity instanceof net.minecraft.world.entity.LivingEntity le && le.isShiftKeyDown()) {
                 return EMPTY;
             }
         }
@@ -73,6 +74,9 @@ public final class CloudBlock extends Block implements BucketPickup {
     }
 
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+        if (entity instanceof KingEntity) {
+            return;
+        }
         Vec3 motion = entity.getDeltaMovement();
         double slowedY = motion.y < 0.0D ? Math.max(motion.y * 0.4D, -0.08D) : motion.y;
         entity.setDeltaMovement(motion.x * 0.92D, slowedY, motion.z * 0.92D);

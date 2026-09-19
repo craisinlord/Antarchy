@@ -285,7 +285,7 @@ public final class AntarchySettings {
     private static int queenBlackHoleActiveTicks = 120;
     private static double queenBlackHolePullStrength = 0.16D;
     private static int queenBlackHoleBlockSuctionCap = 160;
-    private static double kingFireballDamage = 32.0D;
+    private static double kingFireballDamage = 48.0D;
     private static double kingFireballRadius = 4.5D;
     private static int kingFireballCooldownTicks = 150;
     private static double kingIceballDamage = 18.0D;

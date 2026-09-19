@@ -33,6 +33,16 @@ public final class RoyalAssailantBlackHoleEntity extends RoyalBlackHoleEntity {
     }
 
     @Override
+    protected double effectGrowthStart() {
+        return 0.45D;
+    }
+
+    @Override
+    protected double pullRadius() {
+        return this.effectRadius();
+    }
+
+    @Override
     protected boolean hasVisibleTimeDilationField() {
         return false;
     }

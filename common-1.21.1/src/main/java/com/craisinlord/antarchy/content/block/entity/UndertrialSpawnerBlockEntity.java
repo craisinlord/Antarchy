@@ -69,7 +69,9 @@ public final class UndertrialSpawnerBlockEntity extends BlockEntity implements T
         boolean ominous = state.getValue(UndertrialSpawnerBlock.OMINOUS);
         boolean rewardReady = previousState == TrialSpawnerState.EJECTING_REWARD
                 && blockEntity.trialSpawner.getData().isReadyToEjectItems(level, 30.0F, blockEntity.trialSpawner.getTargetCooldownLength());
-        blockEntity.trialSpawner.tickServer(level, pos, ominous);
+        try (UndertrialSpawnContext ignored = UndertrialSpawnContext.enter()) {
+            blockEntity.trialSpawner.tickServer(level, pos, ominous);
+        }
         if (rewardReady && blockEntity.getState() == TrialSpawnerState.EJECTING_REWARD) {
             blockEntity.ejectReward(level, pos, ominous);
         }
