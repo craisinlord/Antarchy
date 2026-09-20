@@ -649,6 +649,9 @@ public final class CreativeTabContents {
 
     public static boolean populateNeoForgeVanillaTab(ResourceKey<CreativeModeTab> tabKey, HolderLookup.Provider holders,
                                                      NeoForgeVanillaTabOutput output) {
+        if (!ResourceLocation.DEFAULT_NAMESPACE.equals(tabKey.location().getNamespace())) {
+            return false;
+        }
         String tabPath = tabKey.location().getPath();
         boolean matched = false;
         for (CatalogEntry entry : CATALOG) {
