@@ -12,9 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
-import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -79,8 +76,6 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
     private static final Map<UUID, Set<UUID>> QUEEN_TEAR_IDS = new HashMap<>();
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    @Nullable
-    private TearIdleSoundInstance idleSound;
     private UUID linkedTearId;
     @Nullable
     private DimensionalTearEntity linkedTear;
@@ -147,7 +142,6 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         super.tick();
         if (this.level().isClientSide) {
             this.tickClientParticles();
-            this.tickIdleSound();
             return;
         }
 
@@ -295,12 +289,12 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
                 continue;
             }
             manticore.finalizeSpawn(level, level.getCurrentDifficultyAt(BlockPos.containing(exit)), MobSpawnType.MOB_SUMMONED, null);
-            manticore.markPlayerSummoned(player.getUUID(), 20 * 30);
+            manticore.markPlayerSummoned(player.getUUID());
             if (player.getLastHurtMob() != null && player.getLastHurtMob().isAlive()) {
                 manticore.setTarget(player.getLastHurtMob());
             }
-            manticore.setDeltaMovement(this.getViewVector(1.0F).scale(0.2D).add(0.0D, 0.08D, 0.0D));
-            manticore.setNoGravity(true);
+            manticore.setDeltaMovement(this.getViewVector(1.0F).scale(0.7D).add(0.0D, 0.18D, 0.0D));
+            manticore.setNoGravity(false);
             level.addFreshEntity(manticore);
         }
     }
@@ -439,16 +433,8 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         this.entityData.set(STATE, state.ordinal());
     }
 
-    private void tickIdleSound() {
-        SoundManager soundManager = Minecraft.getInstance().getSoundManager();
-        if (this.getTearState() == TearState.OPENING) {
-            return;
-        }
-        if (this.idleSound != null && soundManager.isActive(this.idleSound)) {
-            return;
-        }
-        this.idleSound = new TearIdleSoundInstance(this);
-        soundManager.play(this.idleSound);
+    public boolean shouldPlayIdleSound() {
+        return this.getTearState() != TearState.OPENING;
     }
 
     private void tickClientParticles() {
@@ -571,37 +557,5 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return this.geoCache;
-    }
-
-    private static final class TearIdleSoundInstance extends AbstractTickableSoundInstance {
-        private final DimensionalTearEntity tear;
-
-        private TearIdleSoundInstance(DimensionalTearEntity tear) {
-            super(AntarchySoundEvents.DIMENSIONAL_TEAR_IDLE.get(), SoundSource.HOSTILE, tear.random);
-            this.tear = tear;
-            this.looping = true;
-            this.delay = 0;
-            this.volume = 0.6F;
-            this.pitch = 1.0F;
-            this.x = tear.getX();
-            this.y = tear.getY();
-            this.z = tear.getZ();
-        }
-
-        @Override
-        public void tick() {
-            if (this.tear.isRemoved() || this.tear.getTearState() == TearState.COLLAPSING) {
-                this.stop();
-                return;
-            }
-            this.x = this.tear.getX();
-            this.y = this.tear.getY();
-            this.z = this.tear.getZ();
-        }
-
-        @Override
-        public boolean canStartSilent() {
-            return true;
-        }
     }
 }

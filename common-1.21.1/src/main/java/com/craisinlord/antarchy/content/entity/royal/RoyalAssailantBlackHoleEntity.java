@@ -17,8 +17,8 @@ public final class RoyalAssailantBlackHoleEntity extends RoyalBlackHoleEntity {
     public static RoyalAssailantBlackHoleEntity create(ServerLevel level, Vec3 center, @Nullable UUID ownerId) {
         RoyalAssailantBlackHoleEntity hole = new RoyalAssailantBlackHoleEntity(
                 AntarchyObjects.ROYAL_ASSAILANT_BLACK_HOLE.get(), level);
-        hole.configure(center, AntarchySettings.queenBlackHoleRadius(),
-                AntarchySettings.queenBlackHoleActiveTicks(), ownerId);
+        hole.configure(center, AntarchySettings.axeBlackHoleRadius(),
+                AntarchySettings.axeBlackHoleActiveTicks(), ownerId);
         return hole;
     }
 
@@ -54,6 +54,16 @@ public final class RoyalAssailantBlackHoleEntity extends RoyalBlackHoleEntity {
 
     @Override
     protected boolean pullsTerrainBlocks() {
-        return false;
+        return true;
+    }
+
+    @Override
+    protected double pullStrength() {
+        return AntarchySettings.axeBlackHolePullStrength();
+    }
+
+    @Override
+    protected int blockSuctionCap() {
+        return AntarchySettings.axeBlackHoleBlockSuctionCap();
     }
 }

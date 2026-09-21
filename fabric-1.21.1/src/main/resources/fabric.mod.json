@@ -36,6 +36,7 @@
     "minecraft": "~${minecraft_version}",
     "java": ">=21",
     "fabric-api": "*",
+    "architectury": "${architectury_api_version}",
     "integrated_api": "*",
     "geckolib": "*",
     "sizeable_foliage": "*"

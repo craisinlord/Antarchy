@@ -46,9 +46,8 @@ neoForge {
 }
 
 dependencies {
-    // AntOS is developed beside Antarchy as a separate local project.
-    compileOnly(files("$rootDir/../AntOS/neoforge-1.21.1/build/libs/antos-neoforge-1.21.1-1.0.1.jar"))
-    runtimeOnly(files("$rootDir/../AntOS/neoforge-1.21.1/build/libs/antos-neoforge-1.21.1-1.0.1.jar"))
+    compileOnly("curse.maven:antos-${antos_curseforge_id}:${antos_curseforge_file_id_neoforge}")
+    runtimeOnly("curse.maven:antos-${antos_curseforge_id}:${antos_curseforge_file_id_neoforge}")
     compileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_neoforge}")
     runtimeOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_neoforge}")
     implementation "software.bernie.geckolib:geckolib-neoforge-1.21.1:${geckolib_version}"
@@ -79,7 +78,10 @@ dependencies {
 tasks.withType(ProcessResources).configureEach {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-    var replaceProperties = [version: project.version]
+    var replaceProperties = [
+        version: project.version,
+        architectury_api_version: architectury_api_version
+    ]
     inputs.properties replaceProperties
 
     filesMatching('META-INF/neoforge.mods.toml') {

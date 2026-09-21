@@ -18,7 +18,6 @@ public final class QueenMusicHandler {
     private static final int RESTART_COOLDOWN_TICKS = 100;
     private static QueenMusicSound music;
     private static int cooldownTicks;
-    private static boolean wasInEncounter;
 
     private QueenMusicHandler() {
     }
@@ -38,21 +37,16 @@ public final class QueenMusicHandler {
         QueenEntity queen = minecraft.level.getEntitiesOfClass(
                         QueenEntity.class,
                         minecraft.player.getBoundingBox().inflate(STOP_RADIUS),
-                        QueenEntity::shouldPlayQueenMusic
+                        entity -> entity.isQueenMusicActive() || entity.shouldPlayQueenMusic()
                 ).stream()
                 .min(Comparator.comparingDouble(entity -> entity.distanceToSqr(minecraft.player)))
                 .orElse(null);
 
         if (queen == null) {
             stop(minecraft);
-            if (wasInEncounter) {
-                cooldownTicks = Math.max(cooldownTicks, RESTART_COOLDOWN_TICKS);
-            }
-            wasInEncounter = false;
             return;
         }
 
-        wasInEncounter = true;
         if (music != null && !minecraft.getSoundManager().isActive(music)) {
             music = null;
             cooldownTicks = Math.max(cooldownTicks, RESTART_COOLDOWN_TICKS);
@@ -82,7 +76,6 @@ public final class QueenMusicHandler {
     private static void reset(Minecraft minecraft) {
         stop(minecraft);
         cooldownTicks = 0;
-        wasInEncounter = false;
     }
 
     private static final class QueenMusicSound extends AbstractTickableSoundInstance {

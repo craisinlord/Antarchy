@@ -26,7 +26,14 @@ displayURL="https://www.curseforge.com/minecraft/mc-mods/antarchy"
     versionRange="[1.21.1,)"
 
 [[dependencies.antarchy]]
-    modId="antos"
+    modId="architectury"
+    type="required"
+    versionRange="[${architectury_api_version},)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.antarchy]]
+modId="antos"
     type="required"
     versionRange="*"
     ordering="AFTER"

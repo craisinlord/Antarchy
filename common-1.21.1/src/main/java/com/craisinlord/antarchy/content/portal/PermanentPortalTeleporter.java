@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.vehicle.DismountHelper;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 public final class PermanentPortalTeleporter {
     private static final int SEARCH_RADIUS = 24;
     private static final int VERTICAL_SEARCH = 24;
-    private static final int EXISTING_PORTAL_SEARCH_RADIUS = 48;
+    private static final int EXISTING_PORTAL_SEARCH_RADIUS = 128;
 
     private PermanentPortalTeleporter() {
     }
@@ -46,7 +47,7 @@ public final class PermanentPortalTeleporter {
             return new DimensionTransition(sourceLevel, entity, DimensionTransition.DO_NOTHING);
         }
 
-        Vec3 arrival = findArrivalPosition(entity, destination, portalPos, type);
+        Vec3 arrival = findArrivalPosition(sourceLevel, entity, destination, portalPos, type);
         if (arrival == null) {
             if (entity instanceof ServerPlayer player) {
                 player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.antarchy.teleport_arrival_failed"), true);
@@ -65,7 +66,9 @@ public final class PermanentPortalTeleporter {
     }
 
     @Nullable
-    private static Vec3 findArrivalPosition(Entity entity, ServerLevel destination, BlockPos preferredPos, PermanentPortalType type) {
+    private static Vec3 findArrivalPosition(ServerLevel source, Entity entity, ServerLevel destination, BlockPos preferredPos, PermanentPortalType type) {
+        double scale = DimensionType.getTeleportationScale(source.dimensionType(), destination.dimensionType());
+        preferredPos = BlockPos.containing(preferredPos.getX() * scale, preferredPos.getY(), preferredPos.getZ() * scale);
         PermanentPortalShape active = PermanentPortalShape.findActiveNear(destination, preferredPos, type);
         if (active != null) {
             Vec3 safePortalPosition = tryFindSafePosition(entity, destination, BlockPos.containing(active.center()));

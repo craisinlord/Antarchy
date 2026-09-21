@@ -51,6 +51,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
+import net.fabricmc.fabric.api.registry.StrippableBlockRegistry;
 
 public final class AntarchyFabricBlocks {
 
@@ -1757,6 +1758,19 @@ public final class AntarchyFabricBlocks {
     public static void register() {
         BLOCKS.register();
         BLOCK_ENTITY_TYPES.register();
+    }
+
+    public static void registerStripping() {
+        StrippableBlockRegistry.register(OURANWOOD_LOG.get(), STRIPPED_OURANWOOD_LOG.get());
+        StrippableBlockRegistry.register(OURANWOOD_WOOD.get(), STRIPPED_OURANWOOD_WOOD.get());
+        StrippableBlockRegistry.register(PEACH_LOG.get(), STRIPPED_PEACH_LOG.get());
+        StrippableBlockRegistry.register(PEACH_WOOD.get(), STRIPPED_PEACH_WOOD.get());
+        StrippableBlockRegistry.register(NADIR_LOG.get(), STRIPPED_NADIR_LOG.get());
+        StrippableBlockRegistry.register(NADIR_WOOD.get(), STRIPPED_NADIR_WOOD.get());
+        StrippableBlockRegistry.register(ROYAL_LOG.get(), STRIPPED_ROYAL_LOG.get());
+        StrippableBlockRegistry.register(ROYAL_WOOD.get(), STRIPPED_ROYAL_WOOD.get());
+        StrippableBlockRegistry.register(TRUFFALO_LOG.get(), STRIPPED_TRUFFALO_LOG.get());
+        StrippableBlockRegistry.register(TRUFFALO_WOOD.get(), STRIPPED_TRUFFALO_WOOD.get());
     }
 
 }

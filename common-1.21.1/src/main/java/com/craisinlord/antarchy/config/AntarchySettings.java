@@ -285,6 +285,10 @@ public final class AntarchySettings {
     private static int queenBlackHoleActiveTicks = 120;
     private static double queenBlackHolePullStrength = 0.16D;
     private static int queenBlackHoleBlockSuctionCap = 160;
+    private static double axeBlackHoleRadius = 28.0D;
+    private static int axeBlackHoleActiveTicks = 120;
+    private static double axeBlackHolePullStrength = 0.16D;
+    private static int axeBlackHoleBlockSuctionCap = 160;
     private static double kingFireballDamage = 48.0D;
     private static double kingFireballRadius = 4.5D;
     private static int kingFireballCooldownTicks = 150;
@@ -576,8 +580,8 @@ public final class AntarchySettings {
     private static double crawlingBlightAttackDamage = 6.0D;
     private static double skulkingFrightHealth = 15.0D;
     private static double skulkingFrightAttackDamage = 6.0D;
-    private static double manticoreHealth = 40.0D;
-    private static double manticoreAttackDamage = 7.0D;
+    private static double manticoreHealth = 60.0D;
+    private static double manticoreAttackDamage = 11.0D;
     private static int manticoreStingPoisonTicks = 100;
     private static int queenManticoreCap = 15;
     private static int queenManticoreSummonCooldownTicks = 800;
@@ -2167,6 +2171,14 @@ public final class AntarchySettings {
     public static void setQueenBlackHolePullStrength(double v) { queenBlackHolePullStrength = v; }
     public static int queenBlackHoleBlockSuctionCap() { return queenBlackHoleBlockSuctionCap; }
     public static void setQueenBlackHoleBlockSuctionCap(int v) { queenBlackHoleBlockSuctionCap = v; }
+    public static double axeBlackHoleRadius() { return axeBlackHoleRadius; }
+    public static void setAxeBlackHoleRadius(double v) { axeBlackHoleRadius = v; }
+    public static int axeBlackHoleActiveTicks() { return axeBlackHoleActiveTicks; }
+    public static void setAxeBlackHoleActiveTicks(int v) { axeBlackHoleActiveTicks = v; }
+    public static double axeBlackHolePullStrength() { return axeBlackHolePullStrength; }
+    public static void setAxeBlackHolePullStrength(double v) { axeBlackHolePullStrength = v; }
+    public static int axeBlackHoleBlockSuctionCap() { return axeBlackHoleBlockSuctionCap; }
+    public static void setAxeBlackHoleBlockSuctionCap(int v) { axeBlackHoleBlockSuctionCap = v; }
     public static double kingFireballDamage() { return kingFireballDamage; }
     public static void setKingFireballDamage(double v) { kingFireballDamage = v; }
     public static double kingFireballRadius() { return kingFireballRadius; }

@@ -19,7 +19,7 @@ public final class PermanentPortalShape {
     public static final int MIN_WIDTH = 2;
     public static final int MIN_HEIGHT = 3;
     public static final int MAX_SIZE = 21;
-    public static final int ACTIVE_SEARCH_RADIUS = 24;
+    public static final int ACTIVE_SEARCH_RADIUS = 128;
 
     private final TagKey<Block> frameTag;
     private final Block portalBlock;
@@ -227,10 +227,6 @@ public final class PermanentPortalShape {
         for (int y = -1; y <= 3; y++) {
             for (int x = -1; x <= 2; x++) {
                 BlockPos pos = bottomLeft.relative(widthDirection, x).above(y);
-                boolean cornerSpot = (x == -1 || x == 2) && (y == -1 || y == 3);
-                if (cornerSpot) {
-                    continue;
-                }
                 if (x == -1 || x == 2 || y == -1 || y == 3) {
                     level.setBlock(pos, frameState, Block.UPDATE_ALL);
                 } else {
@@ -250,10 +246,6 @@ public final class PermanentPortalShape {
                 BlockPos pos = bottomLeft.relative(widthDirection, x).above(y);
                 BlockState state = level.getBlockState(pos);
                 boolean frameSpot = x == -1 || x == 2 || y == -1 || y == 3;
-                boolean cornerSpot = (x == -1 || x == 2) && (y == -1 || y == 3);
-                if (cornerSpot) {
-                    continue;
-                }
                 if (frameSpot) {
                     if (y != -1 && !state.isAir() && !state.is(frameBlock) && !state.canBeReplaced()) {
                         return false;

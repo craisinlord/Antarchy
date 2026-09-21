@@ -993,8 +993,8 @@ public final class AntarchyMobsConfig {
         b.pop();
 
         b.push("manticore");
-        MANTICORE_HEALTH             = b.comment("Base max health.").defineInRange("health", 40.0D, 1.0D, 32768.0D);
-        MANTICORE_ATTACK_DAMAGE      = b.comment("Base attack damage for bites and stings.").defineInRange("attackDamage", 7.0D, 0.0D, 1024.0D);
+        MANTICORE_HEALTH             = b.comment("Base max health.").defineInRange("health", 60.0D, 1.0D, 32768.0D);
+        MANTICORE_ATTACK_DAMAGE      = b.comment("Base attack damage for bites and stings.").defineInRange("attackDamage", 11.0D, 0.0D, 1024.0D);
         MANTICORE_STING_POISON_TICKS = b.comment("Poison duration in ticks applied by a Manticore sting.").defineInRange("stingPoisonTicks", 100, 0, 12000);
         QUEEN_MANTICORE_CAP          = b.comment("Maximum number of living Manticores a single Queen may keep summoned.").defineInRange("queenSummonCap", 6, 1, 200);
         QUEEN_MANTICORE_SUMMON_COOLDOWN_TICKS = b.comment("Ticks between Queen Manticore summon attempts.").defineInRange("queenSummonCooldownTicks", 800, 20, 200000);

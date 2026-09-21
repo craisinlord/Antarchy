@@ -129,6 +129,8 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.NADIR_CHEST_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/chest_boat/nadir.png"), true));
         EntityRendererRegistry.register(AntarchyFabricEntities.ROYAL_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/boat/royal.png"), false));
         EntityRendererRegistry.register(AntarchyFabricEntities.ROYAL_CHEST_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/chest_boat/royal.png"), true));
+        EntityRendererRegistry.register(AntarchyFabricEntities.TRUFFALO_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/boat/truffalo.png"), false));
+        EntityRendererRegistry.register(AntarchyFabricEntities.TRUFFALO_CHEST_BOAT_ENTITY.get(), context -> new PeachBoatRenderer<>(context, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/chest_boat/truffalo.png"), true));
         EntityRendererRegistry.register(AntarchyFabricEntities.APPLE_COW.get(), context -> withTemporalGeoLayer(new AppleCowRenderer(context)));
         EntityRendererRegistry.register(AntarchyFabricEntities.GOLDEN_APPLE_COW.get(), context -> withTemporalGeoLayer(new AppleCowRenderer(context)));
         EntityRendererRegistry.register(AntarchyFabricEntities.ENCHANTED_GOLDEN_APPLE_COW.get(), context -> withTemporalGeoLayer(new AppleCowRenderer(context)));
@@ -590,6 +592,7 @@ public final class AntarchyFabricClientBootstrap {
 
         ElythiaFireflyManager.register();
         LucidSoundHandler.register();
+        TearIdleSoundHandler.register();
         MogglesClientRenderer.register();
         StinkySoundHandler.register();
         ReverieTrailHandler.register();

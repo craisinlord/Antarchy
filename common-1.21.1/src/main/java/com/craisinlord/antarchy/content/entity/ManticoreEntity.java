@@ -59,7 +59,6 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class ManticoreEntity extends Monster implements GeoEntity {
     private static final String SUMMONER_KEY = "QueenSummoner";
     private static final String PLAYER_SUMMONER_KEY = "PlayerSummoner";
-    private static final String PLAYER_SUMMON_LIFETIME_KEY = "PlayerSummonLifetime";
     private static final int LOST_SUMMONER_GRACE_TICKS = 200;
     private static final int TAKEOFF_COOLDOWN_TICKS = 40;
     private static final int STING_COOLDOWN_TICKS = 60;
@@ -81,8 +80,6 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     private UUID summonerId;
     @Nullable
     private UUID playerSummonerId;
-    private int playerSummonLifetime;
-    private int playerSummonAge;
     private int lostSummonerTicks;
     private int takeoffCooldown;
     private int stingCooldown;
@@ -102,8 +99,8 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, AntarchySettings.manticoreHealth())
-                .add(Attributes.MOVEMENT_SPEED, 0.45D)
-                .add(Attributes.FLYING_SPEED, 2.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.55D)
+                .add(Attributes.FLYING_SPEED, 2.6D)
                 .add(Attributes.ATTACK_DAMAGE, AntarchySettings.manticoreAttackDamage())
                 .add(Attributes.FOLLOW_RANGE, 28.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.2D);
@@ -161,11 +158,9 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         this.setPersistenceRequired();
     }
 
-    public void markPlayerSummoned(UUID playerId, int lifetimeTicks) {
+    public void markPlayerSummoned(UUID playerId) {
         this.playerSummonerId = playerId;
         this.summonerId = null;
-        this.playerSummonLifetime = lifetimeTicks;
-        this.playerSummonAge = 0;
         this.lostSummonerTicks = 0;
         this.setPersistenceRequired();
     }
@@ -202,7 +197,7 @@ public class ManticoreEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return this.summonerId == null && super.removeWhenFarAway(distanceToClosestPlayer);
+        return this.summonerId == null && this.playerSummonerId == null && super.removeWhenFarAway(distanceToClosestPlayer);
     }
 
     @Override
@@ -236,8 +231,9 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         }
 
         this.tickQueenSummonCleanup();
+        this.tickPlayerSummonCleanup();
 
-        this.tickPlayerSummon();
+        this.tickPlayerSummonTarget();
         this.tickQueenSummonTarget();
 
         LivingEntity target = this.getTarget();
@@ -252,17 +248,12 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         }
     }
 
-    private void tickPlayerSummon() {
+    private void tickPlayerSummonTarget() {
         if (this.playerSummonerId == null || !(this.level() instanceof ServerLevel serverLevel)) {
-            return;
-        }
-        if (++this.playerSummonAge >= this.playerSummonLifetime) {
-            this.discard();
             return;
         }
         Entity entity = serverLevel.getEntity(this.playerSummonerId);
         if (!(entity instanceof Player player) || !player.isAlive()) {
-            this.discard();
             return;
         }
         LivingEntity target = player.getLastHurtMob();
@@ -320,6 +311,20 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         }
         Entity summoner = serverLevel.getEntity(this.summonerId);
         if (summoner instanceof QueenEntity queen && queen.isAlive()) {
+            this.lostSummonerTicks = 0;
+            return;
+        }
+        if (++this.lostSummonerTicks > LOST_SUMMONER_GRACE_TICKS) {
+            this.discard();
+        }
+    }
+
+    private void tickPlayerSummonCleanup() {
+        if (this.playerSummonerId == null || !(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        Entity summoner = serverLevel.getEntity(this.playerSummonerId);
+        if (summoner instanceof Player player && player.isAlive()) {
             this.lostSummonerTicks = 0;
             return;
         }
@@ -461,7 +466,6 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         }
         if (this.playerSummonerId != null) {
             tag.putUUID(PLAYER_SUMMONER_KEY, this.playerSummonerId);
-            tag.putInt(PLAYER_SUMMON_LIFETIME_KEY, this.playerSummonLifetime);
         }
     }
 
@@ -470,8 +474,6 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         super.readAdditionalSaveData(tag);
         this.summonerId = tag.hasUUID(SUMMONER_KEY) ? tag.getUUID(SUMMONER_KEY) : null;
         this.playerSummonerId = tag.hasUUID(PLAYER_SUMMONER_KEY) ? tag.getUUID(PLAYER_SUMMONER_KEY) : null;
-        this.playerSummonLifetime = tag.getInt(PLAYER_SUMMON_LIFETIME_KEY);
-        this.playerSummonAge = 0;
         this.lostSummonerTicks = 0;
     }
 

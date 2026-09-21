@@ -2,8 +2,6 @@
   "type": "integrated_api:generic_structure",
   "start_pool": "antarchy:tigers_eye_shrine/tigers_eye_shrine",
   "size": 1,
-  "terrain_height_radius_check": 4,
-  "allowed_terrain_height_range": 14,
   "valid_biome_radius_check": 1,
   "biomes": "#antarchy:has_structure/tigers_eye_shrine_biomes",
   "step": "underground_structures",

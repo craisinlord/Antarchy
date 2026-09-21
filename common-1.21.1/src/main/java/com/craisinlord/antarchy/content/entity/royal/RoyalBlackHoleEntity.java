@@ -238,6 +238,14 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
         return this.effectRadius() * QUEEN_PULL_RADIUS_SCALE;
     }
 
+    protected double pullStrength() {
+        return AntarchySettings.queenBlackHolePullStrength();
+    }
+
+    protected int blockSuctionCap() {
+        return AntarchySettings.queenBlackHoleBlockSuctionCap();
+    }
+
     /** Returns the center of the animated black-hole cube in world coordinates. */
     public Vec3 effectCenter() {
         double animationSeconds = Math.min(CORE_RISE_END_SECONDS, this.animationAge / 20.0D);
@@ -295,7 +303,7 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
             if (distance > radius) {
                 continue;
             }
-            double strength = AntarchySettings.queenBlackHolePullStrength() * (1.0D - distance / radius);
+            double strength = this.pullStrength() * (1.0D - distance / radius);
             Vec3 pull = toCenter.scale(strength / distance);
             entity.setDeltaMovement(entity.getDeltaMovement().scale(0.86D).add(pull));
             entity.hasImpulse = true;
@@ -304,7 +312,7 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
     }
 
     private void pullTerrainBlocks(ServerLevel level) {
-        int cap = AntarchySettings.queenBlackHoleBlockSuctionCap();
+        int cap = this.blockSuctionCap();
         if (cap <= 0 || this.suckedBlocks >= cap
                 || !level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
             return;

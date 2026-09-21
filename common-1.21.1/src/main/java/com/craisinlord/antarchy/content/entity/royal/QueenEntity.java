@@ -24,6 +24,9 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -59,6 +62,8 @@ import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
 public class QueenEntity extends RoyalBossEntity {
+    private static final EntityDataAccessor<Boolean> QUEEN_MUSIC_ACTIVE =
+            SynchedEntityData.defineId(QueenEntity.class, EntityDataSerializers.BOOLEAN);
     static final double TIME_FIELD_RADIUS_SCALE = 3.0D;
     private static final String SUMMON_COOLDOWN_KEY = "ManticoreSummonCooldownTicks";
     private static final int FAILED_SUMMON_RETRY_TICKS = 20;
@@ -194,6 +199,12 @@ public class QueenEntity extends RoyalBossEntity {
 
     public QueenEntity(EntityType<? extends QueenEntity> entityType, Level level) {
         super(entityType, level);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(QUEEN_MUSIC_ACTIVE, false);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -348,6 +359,10 @@ public class QueenEntity extends RoyalBossEntity {
         return !this.isDeadOrDying() && target != null && target.isAlive() && this.canAttack(target);
     }
 
+    public boolean isQueenMusicActive() {
+        return this.entityData.get(QUEEN_MUSIC_ACTIVE);
+    }
+
     @Override
     protected SoundEvent royalFlyLoopSound() {
         return AntarchySoundEvents.QUEEN_FLY_LOOP.get();
@@ -442,6 +457,9 @@ public class QueenEntity extends RoyalBossEntity {
     @Override
     public void tick() {
         super.tick();
+        if (!this.level().isClientSide) {
+            this.entityData.set(QUEEN_MUSIC_ACTIVE, this.shouldPlayQueenMusic());
+        }
         if (this.level().isClientSide || this.isDeadOrDying()) {
             return;
         }

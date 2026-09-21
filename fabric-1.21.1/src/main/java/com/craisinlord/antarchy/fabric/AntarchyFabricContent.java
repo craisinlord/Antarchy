@@ -111,6 +111,7 @@ public final class AntarchyFabricContent {
         AntarchyFabricMisc.ARMOR_MATERIALS.register();
         AntarchyFabricMisc.FLUIDS.register();
         AntarchyFabricBlocks.BLOCKS.register();
+        AntarchyFabricBlocks.registerStripping();
         AntarchyFabricEntities.ENTITY_TYPES.register();
         AntarchyFabricMisc.ATTRIBUTES.register();
         AntarchyFabricEntityAttributes.register();
