@@ -13,13 +13,16 @@ import net.minecraft.util.RandomSource;
 import java.util.Comparator;
 
 public final class QueenMusicHandler {
-    private static final double START_RADIUS = 128.0D;
-    private static final double STOP_RADIUS = 160.0D;
-    private static final int RESTART_COOLDOWN_TICKS = 100;
+    private static final double START_RADIUS = 256.0D;
+    private static final double STOP_RADIUS = 320.0D;
+    private static final float MUSIC_VOLUME_SCALE = 0.7F;
     private static QueenMusicSound music;
-    private static int cooldownTicks;
 
     private QueenMusicHandler() {
+    }
+
+    public static boolean isPlaying() {
+        return music != null;
     }
 
     public static void tick(Minecraft minecraft, SoundEvent soundEvent) {
@@ -28,10 +31,6 @@ public final class QueenMusicHandler {
                 || minecraft.player.isDeadOrDying() || minecraft.screen instanceof DeathScreen) {
             reset(minecraft);
             return;
-        }
-
-        if (cooldownTicks > 0) {
-            cooldownTicks--;
         }
 
         QueenEntity queen = minecraft.level.getEntitiesOfClass(
@@ -49,10 +48,10 @@ public final class QueenMusicHandler {
 
         if (music != null && !minecraft.getSoundManager().isActive(music)) {
             music = null;
-            cooldownTicks = Math.max(cooldownTicks, RESTART_COOLDOWN_TICKS);
         }
 
-        if (music == null && cooldownTicks <= 0) {
+        if (music == null) {
+            minecraft.getMusicManager().stopPlaying();
             music = new QueenMusicSound(soundEvent);
             minecraft.getSoundManager().play(music);
         }
@@ -62,7 +61,7 @@ public final class QueenMusicHandler {
             float volume = distance <= START_RADIUS
                     ? 1.0F
                     : (float) Mth.clamp(1.0D - (distance - START_RADIUS) / (STOP_RADIUS - START_RADIUS), 0.0D, 1.0D);
-            music.setVolume(volume);
+            music.setVolume(volume * MUSIC_VOLUME_SCALE);
         }
     }
 
@@ -75,13 +74,12 @@ public final class QueenMusicHandler {
 
     private static void reset(Minecraft minecraft) {
         stop(minecraft);
-        cooldownTicks = 0;
     }
 
     private static final class QueenMusicSound extends AbstractTickableSoundInstance {
         private QueenMusicSound(SoundEvent soundEvent) {
             super(soundEvent, SoundSource.MUSIC, RandomSource.create());
-            this.looping = false;
+            this.looping = true;
             this.delay = 0;
             this.relative = true;
             this.attenuation = SoundInstance.Attenuation.NONE;

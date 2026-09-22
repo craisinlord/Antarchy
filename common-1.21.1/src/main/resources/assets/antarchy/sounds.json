@@ -1073,6 +1073,14 @@
       }
     ]
   },
+  "music_disc_verdance": {
+    "sounds": [
+      {
+        "name": "antarchy:records/verdance",
+        "stream": true
+      }
+    ]
+  },
   "lucid_lullaby": {
     "sounds": [
       {

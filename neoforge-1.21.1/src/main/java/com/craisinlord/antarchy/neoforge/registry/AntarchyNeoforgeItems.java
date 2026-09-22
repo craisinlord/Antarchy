@@ -105,6 +105,11 @@ public final class AntarchyNeoforgeItems {
                     .jukeboxPlayable(ResourceKey.create(Registries.JUKEBOX_SONG,
                             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "the_queen"))));
 
+    public static final DeferredItem<Item> MUSIC_DISC_VERDANCE = ITEMS.registerSimpleItem("music_disc_verdance",
+            new Item.Properties().stacksTo(1).rarity(Rarity.RARE)
+                    .jukeboxPlayable(ResourceKey.create(Registries.JUKEBOX_SONG,
+                            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "verdance"))));
+
     private static final DeferredHolder<ArmorMaterial, ArmorMaterial> ULTIMATE_ARMOR_MATERIAL = ARMOR_MATERIALS.register("ultimate",
             () -> new ArmorMaterial(
                     createUltimateArmorDefense(),

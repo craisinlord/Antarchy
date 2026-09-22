@@ -97,6 +97,11 @@ public final class AntarchyFabricItems {
                     .jukeboxPlayable(ResourceKey.create(Registries.JUKEBOX_SONG,
                             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "the_queen"))));
 
+    public static final DeferredItem<Item> MUSIC_DISC_VERDANCE = ITEMS.registerSimpleItem("music_disc_verdance",
+            new Item.Properties().stacksTo(1).rarity(Rarity.RARE)
+                    .jukeboxPlayable(ResourceKey.create(Registries.JUKEBOX_SONG,
+                            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "verdance"))));
+
 
     public static final DeferredItem<Item> PRIMORDIAL_SCUTE = ITEMS.registerSimpleItem("primordial_scute",
             new Item.Properties().rarity(Rarity.UNCOMMON));

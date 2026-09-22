@@ -387,6 +387,7 @@ public final class CreativeTabContents {
             entry("bug_spray", "tools_and_utilities"),
             entry("music_disc_underside", "tools_and_utilities"),
             entry("music_disc_the_queen", "tools_and_utilities"),
+            entry("music_disc_verdance", "tools_and_utilities"),
             entry("diamond_minecart", "tools_and_utilities", "minecart"),
             entry("bile_bucket", "tools_and_utilities"),
             entry("ichor_bucket", "tools_and_utilities"),

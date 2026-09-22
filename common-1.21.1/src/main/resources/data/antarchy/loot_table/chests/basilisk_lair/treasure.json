@@ -172,6 +172,11 @@
         },
         {
           "type": "minecraft:item",
+          "name": "antarchy:music_disc_verdance",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
           "name": "minecraft:book",
           "weight": 8,
           "functions": [

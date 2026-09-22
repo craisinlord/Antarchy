@@ -137,6 +137,7 @@
                    "client.EntityLightProbeMixin",
                    "client.CustomBossBarMixin",
                    "client.DimensionMusicMixin",
+                   "client.QueenMusicManagerMixin",
                    "client.CavarynSkyMixin",
                    "client.CavarynHordeFogMixin",
                    "client.CavarynHordeLightTextureMixin",
