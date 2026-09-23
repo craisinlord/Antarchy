@@ -3,7 +3,6 @@ package com.craisinlord.antarchy.content.item;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
-import com.craisinlord.antarchy.content.network.ImpactShakePayload;
 import com.craisinlord.antarchy.content.network.ImpactShakeSync;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -280,13 +279,7 @@ public final class AttitudeAdjusterSlamManager {
     }
 
     private static void shake(ServerLevel level, Vec3 pos, float intensity, int durationTicks) {
-        ImpactShakePayload payload = new ImpactShakePayload(pos.x, pos.y, pos.z, intensity, durationTicks, IMPACT_SHAKE_RADIUS);
-        double radiusSqr = IMPACT_SHAKE_RADIUS * IMPACT_SHAKE_RADIUS;
-        for (ServerPlayer player : level.players()) {
-            if (player.distanceToSqr(pos.x, pos.y, pos.z) <= radiusSqr) {
-                ImpactShakeSync.send(player, payload);
-            }
-        }
+        ImpactShakeSync.sendNearby(level, pos, intensity, durationTicks, IMPACT_SHAKE_RADIUS);
     }
 
     private static Vec3 horizontalAway(Vec3 from, Vec3 to, Vec3 fallback) {

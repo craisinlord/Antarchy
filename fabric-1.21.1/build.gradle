@@ -46,8 +46,8 @@ dependencies {
     compileOnly "mezz.jei:jei-1.21.1-fabric-api:${jei_version}"
     modLocalRuntime "mezz.jei:jei-1.21.1-fabric:${jei_version}"
 
-    compileOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.2+1.21.1-neoforge.jar"))
-    runtimeOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.2+1.21.1-fabric.jar"))
+    compileOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.3+1.21.1-neoforge.jar"))
+    runtimeOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.3+1.21.1-fabric.jar"))
     compileOnly(files("$rootDir/infinite_dimensions_jars/gravity-api-1.0.7-1.20.1.jar"))
     compileOnly(files("$rootDir/infinite_dimensions_jars/sable-neoforge-1.21.1-2.0.3.jar"))
 
@@ -121,7 +121,7 @@ tasks.named('processResources', ProcessResources).configure {
 tasks.matching { it.name in ["runClient", "runServer", "runDatagen"] }.configureEach {
     doFirst {
         def infinityConfigPrefix = "config/common/"
-        zipTree(rootProject.file("infinite_dimensions_jars/infinity-2.7.2+1.21.1-fabric.jar")).visit { details ->
+        zipTree(rootProject.file("infinite_dimensions_jars/infinity-2.7.3+1.21.1-fabric.jar")).visit { details ->
             if (!details.directory && details.relativePath.pathString.startsWith(infinityConfigPrefix)) {
                 def targetPath = details.relativePath.pathString.substring(infinityConfigPrefix.length())
                 file("run/config/infinity/${targetPath}").parentFile.mkdirs()

@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.client.NightmareSwordTooltipHelper;
 import java.util.List;
@@ -49,10 +50,18 @@ public class NightmareSwordItem extends SwordItem {
         return stack.getCount() == 1;
     }
 
+    public static Component damageLine(float damage) {
+        float rounded = Math.round(damage * 10.0F) / 10.0F;
+        String text = rounded == (int) rounded ? String.valueOf((int) rounded) : String.valueOf(rounded);
+        return Component.translatable("tooltip.antarchy.nightmare_sword_damage", text).withStyle(ChatFormatting.RED);
+    }
+
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.translatable("tooltip.antarchy.nightmare_sword").withStyle(ChatFormatting.DARK_RED));
-        tooltipComponents.add(NightmareSwordTooltipHelper.damageLine());
+        tooltipComponents.add(Antarchy.physicalClient
+                ? NightmareSwordTooltipHelper.damageLine()
+                : damageLine((float) AntarchySettings.nightmareSwordBaseDamage()));
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 }

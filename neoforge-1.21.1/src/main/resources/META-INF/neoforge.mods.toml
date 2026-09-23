@@ -63,10 +63,10 @@ modId="antos"
 [[dependencies.antarchy]]
     modId="infinity"
     type="incompatible"
-    versionRange="(,2.7.2)"
+    versionRange="(,2.7.3)"
     ordering="NONE"
     side="BOTH"
-    reason="Infinite Dimensions versions below 2.7.2 are no longer supported"
+    reason="Antarchy requires Infinite Dimensions 2.7.3 or newer"
 
 [[dependencies.antarchy]]
     modId="configured"

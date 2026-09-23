@@ -3,9 +3,9 @@ package com.craisinlord.antarchy.fabric;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompatBridge;
 import com.craisinlord.antarchy.compat.infinity.InfinityWarpResult;
-import net.lerariemann.infinity.util.InfinityMethods;
-import net.lerariemann.infinity.util.teleport.PortalCreator;
-import net.lerariemann.infinity.util.teleport.WarpLogic;
+import net.codexarchonic.infinity.util.InfinityMethods;
+import net.codexarchonic.infinity.util.teleport.PortalCreator;
+import net.codexarchonic.infinity.util.teleport.WarpLogic;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -15,8 +15,8 @@ import net.minecraft.util.RandomSource;
 public final class FabricInfinityCompat implements InfinityCompatBridge {
     public static boolean isAvailableOnClasspath() {
         try {
-            Class.forName("net.lerariemann.infinity.util.InfinityMethods");
-            Class.forName("net.lerariemann.infinity.util.teleport.WarpLogic");
+            Class.forName("net.codexarchonic.infinity.util.InfinityMethods");
+            Class.forName("net.codexarchonic.infinity.util.teleport.WarpLogic");
             return true;
         } catch (Throwable ignored) {
             return false;

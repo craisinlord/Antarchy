@@ -1,6 +1,8 @@
 package com.craisinlord.antarchy.content.item.ultimate;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.item.GiantFryingPanItem;
+import com.craisinlord.antarchy.content.item.GiantFryingPanToolHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -90,14 +92,18 @@ public final class UltimateToolHelper {
             return;
         }
 
-        if (!canBreak(toolKind, player, stack, level, origin, originState)) {
+        mineArea(toolKind, stack, level, originState, origin, player, 1);
+    }
+
+    public static void mineArea(ToolKind toolKind, ItemStack stack, Level level, BlockState originState, BlockPos origin, ServerPlayer player, int radius) {
+        if (level.isClientSide || BREAKING_EXTRA_BLOCKS.get() || !canBreak(toolKind, player, stack, level, origin, originState)) {
             return;
         }
 
         Direction face = resolveMiningFace(player, origin);
         BREAKING_EXTRA_BLOCKS.set(true);
         try {
-            for (BlockPos targetPos : getMiningPlane(origin, face)) {
+            for (BlockPos targetPos : getPlane(origin, face, radius)) {
                 if (!canBreak(toolKind, player, stack, level, targetPos, level.getBlockState(targetPos))) {
                     continue;
                 }
@@ -117,11 +123,16 @@ public final class UltimateToolHelper {
 
     
     public static void broadcastAreaMiningProgress(ServerPlayer player, ServerLevel level, BlockPos origin, int stage) {
+        ItemStack stack = player.getMainHandItem();
+        if (stack.getItem() instanceof GiantFryingPanItem) {
+            broadcastPlaneProgress(ToolKind.SHOVEL, player, level, origin, stage, GiantFryingPanToolHelper.MINING_RADIUS);
+            return;
+        }
+
         if (!AntarchySettings.ultimateToolsThreeByThreeEnabled()) {
             return;
         }
 
-        ItemStack stack = player.getMainHandItem();
         if (stack.isEmpty() || !isThreeByThreeEnabled(stack)) {
             return;
         }
@@ -131,13 +142,17 @@ public final class UltimateToolHelper {
             return;
         }
 
+        broadcastPlaneProgress(kind, player, level, origin, stage, 1);
+    }
+
+    private static void broadcastPlaneProgress(ToolKind kind, ServerPlayer player, ServerLevel level, BlockPos origin, int stage, int radius) {
         BlockState originState = level.getBlockState(origin);
         if (!matchesToolKind(kind, originState)) {
             return;
         }
 
         Direction face = resolveMiningFace(player, origin);
-        for (BlockPos targetPos : getPlane(origin, face)) {
+        for (BlockPos targetPos : getPlane(origin, face, radius)) {
             BlockState state = level.getBlockState(targetPos);
             if (state.isAir() || state.hasBlockEntity() || state.getDestroySpeed(level, targetPos) < 0.0F) {
                 continue;
@@ -174,7 +189,7 @@ public final class UltimateToolHelper {
             return;
         }
 
-        for (BlockPos targetPos : getPlane(context.getClickedPos(), context.getClickedFace())) {
+        for (BlockPos targetPos : getPlane(context.getClickedPos(), context.getClickedFace(), 1)) {
             if (!canModify(player, context.getLevel(), targetPos, context.getClickedFace(), context.getItemInHand())) {
                 continue;
             }
@@ -285,16 +300,13 @@ public final class UltimateToolHelper {
         return best;
     }
 
-    private static List<BlockPos> getMiningPlane(BlockPos center, Direction face) {
-        return getPlane(center, face);
-    }
-
-    private static List<BlockPos> getPlane(BlockPos center, Direction face) {
-        List<BlockPos> positions = new ArrayList<>(8);
+    private static List<BlockPos> getPlane(BlockPos center, Direction face, int radius) {
+        int size = radius * 2 + 1;
+        List<BlockPos> positions = new ArrayList<>(size * size - 1);
         switch (face.getAxis()) {
             case Y -> {
-                for (int x = -1; x <= 1; x++) {
-                    for (int z = -1; z <= 1; z++) {
+                for (int x = -radius; x <= radius; x++) {
+                    for (int z = -radius; z <= radius; z++) {
                         if (x == 0 && z == 0) {
                             continue;
                         }
@@ -304,8 +316,8 @@ public final class UltimateToolHelper {
                 }
             }
             case X -> {
-                for (int y = -1; y <= 1; y++) {
-                    for (int z = -1; z <= 1; z++) {
+                for (int y = -radius; y <= radius; y++) {
+                    for (int z = -radius; z <= radius; z++) {
                         if (y == 0 && z == 0) {
                             continue;
                         }
@@ -315,8 +327,8 @@ public final class UltimateToolHelper {
                 }
             }
             case Z -> {
-                for (int x = -1; x <= 1; x++) {
-                    for (int y = -1; y <= 1; y++) {
+                for (int x = -radius; x <= radius; x++) {
+                    for (int y = -radius; y <= radius; y++) {
                         if (x == 0 && y == 0) {
                             continue;
                         }

@@ -1,10 +1,8 @@
 package com.craisinlord.antarchy.neoforge.entity.multipart;
 
 import com.craisinlord.antarchy.content.entity.multipart.MultipartEntityOwner;
-import com.craisinlord.antarchy.neoforge.mixins.level.ClientLevelPartEntitiesAccessor;
 import com.craisinlord.antarchy.neoforge.mixins.level.ServerLevelPartEntitiesAccessor;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
@@ -55,8 +53,8 @@ public final class MultipartPartLevelRegistry {
             return ((ServerLevelPartEntitiesAccessor) serverLevel).antarchy$getPartEntities();
         }
 
-        if (level instanceof ClientLevel clientLevel) {
-            return ((ClientLevelPartEntitiesAccessor) clientLevel).antarchy$getPartEntities();
+        if (level.isClientSide()) {
+            return com.craisinlord.antarchy.neoforge.client.ClientPartEntityRegistry.get(level);
         }
 
         return null;

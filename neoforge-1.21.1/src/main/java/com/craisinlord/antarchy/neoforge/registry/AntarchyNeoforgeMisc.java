@@ -89,6 +89,15 @@ public final class AntarchyNeoforgeMisc {
     public static final DeferredHolder<PoiType, PoiType> PEST_CONTROL_POI = POI_TYPES.register("pest_control",
             () -> new PoiType(java.util.Set.copyOf(AntarchyNeoforgeBlocks.ANT_TRAP.get().getStateDefinition().getPossibleStates()), 1, 1));
 
+    public static final DeferredHolder<PoiType, PoiType> ELYTHIA_PORTAL_POI = POI_TYPES.register("elythia_portal",
+            () -> new PoiType(java.util.Set.copyOf(AntarchyNeoforgeBlocks.ELYTHIA_PORTAL.get().getStateDefinition().getPossibleStates()), 0, 1));
+
+    public static final DeferredHolder<PoiType, PoiType> THORAXIS_PORTAL_POI = POI_TYPES.register("thoraxis_portal",
+            () -> new PoiType(java.util.Set.copyOf(AntarchyNeoforgeBlocks.THORAXIS_PORTAL.get().getStateDefinition().getPossibleStates()), 0, 1));
+
+    public static final DeferredHolder<PoiType, PoiType> CAVARYN_PORTAL_POI = POI_TYPES.register("cavaryn_portal",
+            () -> new PoiType(java.util.Set.copyOf(AntarchyNeoforgeBlocks.CAVARYN_PORTAL.get().getStateDefinition().getPossibleStates()), 0, 1));
+
     public static final DeferredHolder<VillagerProfession, VillagerProfession> PEST_CONTROL = VILLAGER_PROFESSIONS.register("pest_control",
             () -> new VillagerProfession("pest_control", holder -> holder.value() == PEST_CONTROL_POI.get(),
                     holder -> holder.value() == PEST_CONTROL_POI.get(), com.google.common.collect.ImmutableSet.of(), com.google.common.collect.ImmutableSet.of(), net.minecraft.sounds.SoundEvents.VILLAGER_WORK_FLETCHER));

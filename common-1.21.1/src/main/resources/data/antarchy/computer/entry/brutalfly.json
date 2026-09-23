@@ -1,0 +1,11 @@
+{
+  "type": "mob",
+  "category": "elythia",
+  "title": "guide.antarchy.entry.brutalfly.title",
+  "subtitle": "guide.antarchy.entry.brutalfly.subtitle",
+  "description": ["guide.antarchy.entry.brutalfly.description", "guide.antarchy.entry.brutalfly.description2", "guide.antarchy.entry.brutalfly.description3"],
+  "entity": "antarchy:brutalfly",
+  "cover_entity": "antarchy:brutalfly",
+  "rotation": 45,
+  "render_scale": 0.6
+}

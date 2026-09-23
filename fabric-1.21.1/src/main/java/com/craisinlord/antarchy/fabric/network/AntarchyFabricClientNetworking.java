@@ -68,6 +68,9 @@ public final class AntarchyFabricClientNetworking {
                         payload.radius())));
         ClientPlayNetworking.registerGlobalReceiver(HordeIntensityPayload.TYPE, (payload, context) ->
                 context.client().execute(() -> HordeClientState.update(payload.intensity())));
-        AntarchyFabricTimeDilationNetworking.registerClientReceiver();
+        ClientPlayNetworking.registerGlobalReceiver(TimeDilationRatePayload.TYPE, (payload, context) ->
+                context.client().execute(() -> com.craisinlord.antarchy.content.time.TimeDilationApi.applySyncedRate(payload.entityUuid(), payload.rate())));
+        ClientPlayNetworking.registerGlobalReceiver(TimeDilationFieldsPayload.TYPE, (payload, context) ->
+                context.client().execute(() -> com.craisinlord.antarchy.content.client.ClientTimeDilationTicker.applyFields(payload.fields())));
     }
 }

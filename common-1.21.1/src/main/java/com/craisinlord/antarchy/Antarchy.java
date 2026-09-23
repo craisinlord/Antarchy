@@ -11,6 +11,7 @@ public class Antarchy {
     public static final String MODID = "antarchy";
     public static final String MOD_VERSION = "2.0.0";
     public static final Logger LOGGER = LogManager.getLogger();
+    public static volatile boolean physicalClient;
 
     public static void init() {
         AttributeRangeInit.apply();

@@ -1,0 +1,11 @@
+{
+  "type": "mob",
+  "category": "cavaryn",
+  "title": "guide.antarchy.entry.hercules_beetle.title",
+  "subtitle": "guide.antarchy.entry.hercules_beetle.subtitle",
+  "description": ["guide.antarchy.entry.hercules_beetle.description", "guide.antarchy.entry.hercules_beetle.description2", "guide.antarchy.entry.hercules_beetle.description3"],
+  "entity": "antarchy:hercules_beetle",
+  "cover_entity": "antarchy:hercules_beetle",
+  "rotation": 45,
+  "render_scale": 0.5
+}

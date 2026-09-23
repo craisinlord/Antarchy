@@ -6,6 +6,7 @@ import com.craisinlord.antarchy.content.network.RoyalMountActionPayload;
 import com.craisinlord.antarchy.content.network.RoyalMountVerticalPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.phys.EntityHitResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -19,6 +20,7 @@ public final class RoyalMountClientHandler {
     private static boolean wasFlightToggle;
     private static boolean wasAscend;
     private static boolean wasDescend;
+    private static boolean wasUse;
 
     private RoyalMountClientHandler() {
     }
@@ -27,10 +29,22 @@ public final class RoyalMountClientHandler {
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
-        if (player == null || mc.screen != null || !(player.getVehicle() instanceof RoyalMountEntity)) {
+        if (player == null || mc.screen != null) {
             reset();
+            wasUse = false;
             return;
         }
+        if (!(player.getVehicle() instanceof RoyalMountEntity)) {
+            reset();
+            boolean use = mc.options.keyUse.isDown();
+            if (use && !wasUse && !(mc.hitResult instanceof EntityHitResult)
+                    && RoyalMountEntity.findAssistedMountTarget(player, 1.0D) != null) {
+                PacketDistributor.sendToServer(new RoyalMountActionPayload(RoyalMountActionPayload.MOUNT));
+            }
+            wasUse = use;
+            return;
+        }
+        wasUse = mc.options.keyUse.isDown();
 
         boolean attack = mc.options.keyAttack.isDown();
         if (attack && !wasAttack) {

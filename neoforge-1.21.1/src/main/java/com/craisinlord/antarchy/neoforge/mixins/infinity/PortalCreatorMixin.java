@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.lerariemann.infinity.util.teleport.PortalCreator;
+import net.codexarchonic.infinity.util.teleport.PortalCreator;
 import net.minecraft.server.level.ServerLevel;
 
 @Mixin(value = PortalCreator.class, remap = false)

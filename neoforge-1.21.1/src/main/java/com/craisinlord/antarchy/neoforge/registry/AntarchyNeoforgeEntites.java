@@ -530,10 +530,10 @@ public final class AntarchyNeoforgeEntites {
                     .build("hercules_beetle"));
     public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.PrinceEntity>> PRINCE = ENTITY_TYPES.register("prince",
             () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.royal.PrinceEntity::new, MobCategory.CREATURE)
-                    .sized(2.2F, 2.2F).clientTrackingRange(10).updateInterval(3).fireImmune().build("prince"));
+                    .sized(2.2F, 1.5F).clientTrackingRange(10).updateInterval(3).fireImmune().build("prince"));
     public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.PrincessEntity>> PRINCESS = ENTITY_TYPES.register("princess",
             () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.royal.PrincessEntity::new, MobCategory.CREATURE)
-                    .sized(2.2F, 2.2F).clientTrackingRange(10).updateInterval(3).fireImmune().build("princess"));
+                    .sized(2.2F, 1.5F).clientTrackingRange(10).updateInterval(3).fireImmune().build("princess"));
     public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.KingEntity>> KING = ENTITY_TYPES.register("king",
             () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.royal.KingEntity::new, MobCategory.MONSTER)
                     .sized(com.craisinlord.antarchy.content.entity.royal.RoyalBossEntity.GAMEPLAY_WIDTH, com.craisinlord.antarchy.content.entity.royal.RoyalBossEntity.GAMEPLAY_HEIGHT)

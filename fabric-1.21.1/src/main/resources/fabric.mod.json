@@ -42,7 +42,7 @@
     "sizeable_foliage": "*"
   },
   "breaks": {
-    "infinity": "<2.7.2"
+    "infinity": "<2.7.3"
   },
   "suggests": {
     "modmenu": "*",

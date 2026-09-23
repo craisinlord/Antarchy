@@ -36,6 +36,8 @@ public final class VillagePoolAdditions {
 
     public static void apply(MinecraftServer server) {
         registerComputerPoiStates(server);
+        com.craisinlord.antarchy.content.portal.PermanentPortalType.registerPoiStates(
+                server.registryAccess().registryOrThrow(Registries.POINT_OF_INTEREST_TYPE));
         Registry<StructureTemplatePool> pools = server.registryAccess().registryOrThrow(Registries.TEMPLATE_POOL);
         Registry<StructureProcessorList> processors = server.registryAccess().registryOrThrow(Registries.PROCESSOR_LIST);
 

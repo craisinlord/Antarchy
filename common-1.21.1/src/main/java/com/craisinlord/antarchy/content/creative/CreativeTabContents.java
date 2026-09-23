@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.creative;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
+import com.craisinlord.antarchy.content.item.GiantFryingPanToolHelper;
 import com.craisinlord.antarchy.content.item.GlimmerBottleItem;
 import com.craisinlord.antarchy.content.item.royal.RoyalGearHelper;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateGearHelper;
@@ -645,7 +646,7 @@ public final class CreativeTabContents {
             acceptPotionFamily(output, potionPath);
         }
         for (String diskId : List.of("antarchy:introduction", "antarchy:toreterror_arena", "antarchy:high_fructose_corn_syrup",
-                "antarchy:elythia", "antarchy:flying_squirrel", "antarchy:cavaryn", "antarchy:thoraxis", "antarchy:temporal_fields", "antarchy:bloodglass", "antarchy:vortex")) {
+                "antarchy:elythia", "antarchy:flying_squirrel", "antarchy:brutalfly", "antarchy:rainbow_ant", "antarchy:cavaryn", "antarchy:hercules_beetle", "antarchy:thoraxis", "antarchy:temporal_fields", "antarchy:bloodglass", "antarchy:vortex")) {
             ItemStack disk = new ItemStack(com.craisinlord.antos.content.AntOSObjects.FLOPPY_DISK.get());
             disk.set(com.craisinlord.antos.content.AntOSObjects.FLOPPY_DISK_COMPONENT.get(), ResourceLocation.parse(diskId));
             output.accept(disk);
@@ -675,6 +676,10 @@ public final class CreativeTabContents {
                 }
                 if (isRoyalArmor(entry.path())) {
                     output.accept(RoyalGearHelper.createRoyalArmorStack(item(entry.path()), holders));
+                    continue;
+                }
+                if ("giant_frying_pan".equals(entry.path())) {
+                    output.accept(GiantFryingPanToolHelper.createStack(item(entry.path()), holders));
                     continue;
                 }
                 if ("ultimate_bow".equals(entry.path())) {

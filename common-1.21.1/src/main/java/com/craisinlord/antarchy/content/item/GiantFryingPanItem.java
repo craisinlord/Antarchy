@@ -33,7 +33,9 @@ import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.menu.GiantFryingPanMenu;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -61,6 +63,8 @@ public class GiantFryingPanItem extends SwordItem implements GeoItem {
         tooltipComponents.add(Component.translatable("tooltip.antarchy.giant_frying_pan.insert").withStyle(ChatFormatting.GRAY));
         tooltipComponents.add(Component.translatable("tooltip.antarchy.giant_frying_pan.gui").withStyle(ChatFormatting.GRAY));
         tooltipComponents.add(Component.translatable("tooltip.antarchy.giant_frying_pan.campfire").withStyle(ChatFormatting.DARK_GRAY));
+        tooltipComponents.add(Component.translatable("tooltip.antarchy.giant_frying_pan.dig").withStyle(ChatFormatting.GOLD));
+        tooltipComponents.add(Component.translatable("tooltip.antarchy.giant_frying_pan.launch").withStyle(ChatFormatting.GOLD));
     }
 
     @Override
@@ -81,27 +85,47 @@ public class GiantFryingPanItem extends SwordItem implements GeoItem {
             return hurt;
         }
 
-        Vec3 direction = target.position().subtract(attacker.position()).multiply(1.0D, 0.0D, 1.0D);
-        if (direction.lengthSqr() < 1.0E-4D) {
-            direction = attacker.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
-        }
-        if (direction.lengthSqr() >= 1.0E-4D) {
-            direction = direction.normalize();
-            Vec3 motion = target.getDeltaMovement();
-            double x = Math.max(-2.6D, Math.min(2.6D, motion.x + direction.x * 1.8D));
-            double z = Math.max(-2.6D, Math.min(2.6D, motion.z + direction.z * 1.8D));
-            target.setDeltaMovement(x, motion.y, z);
-            target.hurtMarked = true;
-        }
+        GiantFryingPanToolHelper.launch(target, attacker);
         Level level = attacker.level();
         level.playSound(null, target.blockPosition(), SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 0.8F, 1.25F);
         return hurt;
     }
 
     @Override
+    public float getDestroySpeed(ItemStack stack, BlockState state) {
+        return GiantFryingPanToolHelper.getDestroySpeed(this.tier, stack, state, super.getDestroySpeed(stack, state));
+    }
+
+    @Override
+    public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {
+        return GiantFryingPanToolHelper.isShovelBlock(state) || super.isCorrectToolForDrops(stack, state);
+    }
+
+    @Override
+    public boolean canAttackBlock(BlockState state, Level level, BlockPos pos, Player player) {
+        return true;
+    }
+
+    @Override
+    public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity miningEntity) {
+        if (!level.isClientSide && state.getDestroySpeed(level, pos) != 0.0F) {
+            stack.hurtAndBreak(1, miningEntity, EquipmentSlot.MAINHAND);
+        }
+        GiantFryingPanToolHelper.mineArea(stack, level, state, pos, miningEntity);
+        return true;
+    }
+
+    @Override
     public void inventoryTick(ItemStack stack, Level level, net.minecraft.world.entity.Entity entity, int slotId, boolean isSelected) {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
+        if (!level.isClientSide) GiantFryingPanToolHelper.ensureEnchantments(stack, level.registryAccess());
         if (entity instanceof Player player) GiantFryingPanStorage.tick(player, stack, level);
+    }
+
+    @Override
+    public void onCraftedBy(ItemStack stack, Level level, Player player) {
+        super.onCraftedBy(stack, level, player);
+        GiantFryingPanToolHelper.ensureEnchantments(stack, level.registryAccess());
     }
 
     @Override
@@ -169,7 +193,7 @@ public class GiantFryingPanItem extends SwordItem implements GeoItem {
         ItemStack food = slot.getItem();
         if (!GiantFryingPanStorage.isCampfireInput(player, food) || !slot.mayPickup(player)) return false;
         GiantFryingPanStorage storage = new GiantFryingPanStorage(pan, player);
-        boolean inserted = storage.hasSpace() && storage.insertOne(slot.safeTake(1, 1, player));
+        boolean inserted = storage.hasSpace(food) && storage.insertOne(slot.safeTake(1, 1, player));
         Antarchy.LOGGER.info("[FryingPan] cursor pan onto slot client={} food={} inserted={}", player.level().isClientSide, food.getItem(), inserted);
         if (inserted) player.playSound(SoundEvents.CAMPFIRE_CRACKLE, 0.8F, 1.0F);
         return true;

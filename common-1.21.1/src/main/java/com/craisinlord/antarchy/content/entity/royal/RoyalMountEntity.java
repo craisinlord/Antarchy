@@ -58,12 +58,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.core.particles.ParticleTypes;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.AnimationState;
@@ -101,15 +103,17 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
             SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> GROWTH_PROGRESS =
             SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Boolean> QUIRKING =
+            SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation QUIRK_ANIM = RawAnimation.begin().thenLoop("quirk");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
     private static final RawAnimation FLY_ANIM = RawAnimation.begin().thenLoop("fly");
-    private static final RawAnimation BITE_ANIM = RawAnimation.begin().thenPlay("bite");
-    private static final RawAnimation FLY_BITE_ANIM = RawAnimation.begin().thenPlay("fly_bite");
-    private static final RawAnimation SHOOT_ANIM = RawAnimation.begin().thenPlay("shoot");
-    private static final RawAnimation FLY_SHOOT_ANIM = RawAnimation.begin().thenPlay("fly_shoot");
+    private static final RawAnimation BITE_ANIM = RawAnimation.begin().then("bite", Animation.LoopType.PLAY_ONCE);
+    private static final RawAnimation FLY_BITE_ANIM = RawAnimation.begin().then("fly_bite", Animation.LoopType.PLAY_ONCE);
+    private static final RawAnimation SHOOT_ANIM = RawAnimation.begin().then("shoot", Animation.LoopType.PLAY_ONCE);
+    private static final RawAnimation FLY_SHOOT_ANIM = RawAnimation.begin().then("fly_shoot", Animation.LoopType.PLAY_ONCE);
 
     private static final int ACTION_TICKS = 12;
     private static final int BITE_HIT_TICK = 6;
@@ -271,6 +275,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         builder.define(BEAM_END_Y, 0.0F);
         builder.define(BEAM_END_Z, 0.0F);
         builder.define(GROWTH_PROGRESS, 0.0F);
+        builder.define(QUIRKING, false);
     }
 
     @Override
@@ -498,6 +503,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         }
 
         if (this.actionTicks > 0) {
+            this.entityData.set(QUIRKING, false);
             this.actionTicks--;
             if (!this.actionHit && this.actionTicks <= ACTION_TICKS - BITE_HIT_TICK
                     && (this.getAnimState() == ANIM_BITE || this.getAnimState() == ANIM_FLY_BITE)) {
@@ -519,6 +525,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         if (this.getAnimState() == ANIM_IDLE && this.quirkTimer == 0 && this.random.nextInt(600) == 0) {
             this.quirkTimer = 80;
         }
+        this.entityData.set(QUIRKING, this.quirkTimer > 0 && this.getAnimState() == ANIM_IDLE);
     }
 
     private void tickRoyalAbilities() {
@@ -783,6 +790,54 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         return this.isTame() && this.isOwnedBy(player) && this.getControllingPassenger() == player;
     }
 
+    public AABB assistedMountBox() {
+        float scale = this.getGrowthScale();
+        double half = Math.max(this.getBbWidth() * 0.5D, 2.2D * scale);
+        double height = Math.max(this.getBbHeight(), 1.4D * scale);
+        return new AABB(this.getX() - half, this.getY(), this.getZ() - half,
+                this.getX() + half, this.getY() + height, this.getZ() + half);
+    }
+
+    @Nullable
+    public static RoyalMountEntity findAssistedMountTarget(Player player, double extraReach) {
+        if (player.isPassenger() || player.isSpectator() || !player.getMainHandItem().isEmpty()) {
+            return null;
+        }
+        Vec3 eye = player.getEyePosition();
+        Vec3 end = eye.add(player.getViewVector(1.0F).scale(player.entityInteractionRange() + extraReach));
+        RoyalMountEntity best = null;
+        double bestDistance = Double.MAX_VALUE;
+        for (RoyalMountEntity mount : player.level().getEntitiesOfClass(RoyalMountEntity.class, player.getBoundingBox().inflate(80.0D),
+                mount -> mount.isAlive() && mount.isTame() && mount.isOwnedBy(player) && !mount.isVehicle())) {
+            AABB box = mount.assistedMountBox();
+            double distance;
+            if (box.contains(eye)) {
+                distance = 0.0D;
+            } else {
+                var hit = box.clip(eye, end);
+                if (hit.isEmpty()) {
+                    continue;
+                }
+                distance = hit.get().distanceToSqr(eye);
+            }
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                best = mount;
+            }
+        }
+        return best;
+    }
+
+    public static boolean tryAssistedMount(ServerPlayer player) {
+        RoyalMountEntity mount = findAssistedMountTarget(player, 2.0D);
+        if (mount == null) {
+            return false;
+        }
+        mount.setOrderedToSit(false);
+        mount.setInSittingPose(false);
+        return player.startRiding(mount);
+    }
+
     @Nullable
     @Override
     public LivingEntity getControllingPassenger() {
@@ -799,10 +854,10 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         if (!this.hasPassenger(passenger)) {
             return;
         }
-        // Seat near the back of the torso, outside the scaled body instead of inside its growing hitbox.
-        double yOffset = Math.max(this.getBbHeight() * 0.82D, this.getBbHeight() - passenger.getBbHeight() * 0.65D);
-        double backDistance = this.getBbWidth() * 0.5D + passenger.getBbWidth() * 0.5D + 0.15D;
-        Vec3 back = this.getLookAngle().scale(-backDistance);
+        float scale = this.getGrowthScale();
+        double yOffset = 1.3D * scale;
+        double backDistance = 0.35D * scale;
+        Vec3 back = Vec3.directionFromRotation(0.0F, this.getYRot()).scale(-backDistance);
         moveFunction.accept(passenger, this.getX() + back.x, this.getY() + yOffset, this.getZ() + back.z);
     }
 
@@ -884,7 +939,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         return switch (this.getAnimState()) {
             case ANIM_WALK -> state.setAndContinue(WALK_ANIM);
             case ANIM_FLY, ANIM_FLY_BITE, ANIM_FLY_SHOOT -> state.setAndContinue(FLY_ANIM);
-            default -> state.setAndContinue(this.quirkTimer > 0 ? QUIRK_ANIM : IDLE_ANIM);
+            default -> state.setAndContinue(this.entityData.get(QUIRKING) ? QUIRK_ANIM : IDLE_ANIM);
         };
     }
 

@@ -5,7 +5,6 @@ import com.craisinlord.antarchy.content.network.TimeDilationFieldsPayload;
 import com.craisinlord.antarchy.content.time.TimeDilationFieldSnapshot;
 import java.util.List;
 import com.craisinlord.antarchy.content.time.TimeDilationApi;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;

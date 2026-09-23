@@ -16,6 +16,13 @@
   },
   "result": {
     "id": "antarchy:giant_frying_pan",
-    "count": 1
+    "count": 1,
+    "components": {
+      "minecraft:enchantments": {
+        "levels": {
+          "minecraft:fire_aspect": 2
+        }
+      }
+    }
   }
 }

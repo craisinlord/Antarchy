@@ -11,6 +11,7 @@ public record RoyalMountActionPayload(int action) implements CustomPacketPayload
     public static final int FLIGHT_TOGGLE = 0;
     public static final int BITE = 1;
     public static final int SPIT = 2;
+    public static final int MOUNT = 3;
 
     public static final Type<RoyalMountActionPayload> TYPE =
             new Type<>(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "royal_mount_action"));

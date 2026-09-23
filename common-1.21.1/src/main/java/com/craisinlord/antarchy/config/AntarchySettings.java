@@ -232,6 +232,7 @@ public final class AntarchySettings {
     private static double royalAssailantBootsDoubleDamageChance = 0.05D;
     private static double royalGuardianSwordAttackDamage = 111.0D;
     private static double giantFryingPanAttackDamage = 50.0D;
+    private static int giantFryingPanCookTimeTicks = 200;
     private static double royalGuardianSwordAttackSpeed = -2.5D;
     private static int royalGuardianSwordElementalCooldownTicks = 120;
     private static double royalGuardianSwordFirePrimaryDamage = 22.0D;
@@ -2062,6 +2063,8 @@ public final class AntarchySettings {
     public static void setRoyalGuardianSwordAttackDamage(double v) { royalGuardianSwordAttackDamage = v; }
     public static double giantFryingPanAttackDamage() { return giantFryingPanAttackDamage; }
     public static void setGiantFryingPanAttackDamage(double v) { giantFryingPanAttackDamage = v; }
+    public static int giantFryingPanCookTimeTicks() { return giantFryingPanCookTimeTicks; }
+    public static void setGiantFryingPanCookTimeTicks(int v) { giantFryingPanCookTimeTicks = v; }
 
     public static double royalGuardianSwordAttackSpeed() { return royalGuardianSwordAttackSpeed; }
     public static void setRoyalGuardianSwordAttackSpeed(double v) { royalGuardianSwordAttackSpeed = v; }

@@ -88,6 +88,11 @@ public class AntarchyNeoforgePayloadHandlers {
                 com.craisinlord.antarchy.content.network.RoyalMountActionPayload.TYPE,
                 com.craisinlord.antarchy.content.network.RoyalMountActionPayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> {
+                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer mountingPlayer
+                            && payload.action() == com.craisinlord.antarchy.content.network.RoyalMountActionPayload.MOUNT) {
+                        com.craisinlord.antarchy.content.entity.royal.RoyalMountEntity.tryAssistedMount(mountingPlayer);
+                        return;
+                    }
                     if (!(ctx.player() instanceof net.minecraft.server.level.ServerPlayer player)
                             || !(player.getVehicle() instanceof com.craisinlord.antarchy.content.entity.royal.RoyalMountEntity mount)) {
                         return;

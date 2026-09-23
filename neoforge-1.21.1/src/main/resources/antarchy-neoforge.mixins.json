@@ -14,10 +14,10 @@
     "infinity.PortalCreatorMixin",
     "infinity.PortalCreatorInvoker",
     "infinity.WarpLogicMixin",
-    "level.ClientLevelPartEntitiesAccessor",
     "level.ServerLevelPartEntitiesAccessor"
   ],
   "client": [
+    "level.ClientLevelPartEntitiesAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

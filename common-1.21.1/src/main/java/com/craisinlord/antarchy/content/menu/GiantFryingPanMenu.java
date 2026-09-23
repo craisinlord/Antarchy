@@ -34,11 +34,6 @@ public final class GiantFryingPanMenu extends AbstractContainerMenu {
                 public boolean mayPlace(ItemStack stack) {
                     return GiantFryingPanStorage.isCampfireInput(player, stack);
                 }
-
-                @Override
-                public int getMaxStackSize() {
-                    return 1;
-                }
             });
         }
         for (int row = 0; row < 3; row++) {

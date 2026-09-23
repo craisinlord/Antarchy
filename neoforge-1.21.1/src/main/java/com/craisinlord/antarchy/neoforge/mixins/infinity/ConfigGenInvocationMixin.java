@@ -1,8 +1,8 @@
 package com.craisinlord.antarchy.neoforge.mixins.infinity;
 
 import com.craisinlord.antarchy.Antarchy;
-import net.lerariemann.infinity.util.config.ConfigGenInvocation;
-import net.lerariemann.infinity.util.config.ConfigGenerator;
+import net.codexarchonic.infinity.util.config.ConfigGenInvocation;
+import net.codexarchonic.infinity.util.config.ConfigGenerator;
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,7 +15,7 @@ public class ConfigGenInvocationMixin {
             method = "run",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/lerariemann/infinity/util/config/ConfigGenerator;generateAll(Lnet/minecraft/server/MinecraftServer;)V"
+                    target = "Lnet/codexarchonic/infinity/util/config/ConfigGenerator;generateAll(Lnet/minecraft/server/MinecraftServer;)V"
             ),
             remap = false
     )

@@ -51,8 +51,8 @@ dependencies {
     compileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_neoforge}")
     runtimeOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_neoforge}")
     implementation "software.bernie.geckolib:geckolib-neoforge-1.21.1:${geckolib_version}"
-    compileOnly(files(rootProject.file("infinite_dimensions_jars/infinity-2.7.2+1.21.1-neoforge.jar")))
-    runtimeOnly(files(rootProject.file("infinite_dimensions_jars/infinity-2.7.2+1.21.1-neoforge.jar")))
+    compileOnly(files(rootProject.file("infinite_dimensions_jars/infinity-2.7.3+1.21.1-neoforge.jar")))
+    runtimeOnly(files(rootProject.file("infinite_dimensions_jars/infinity-2.7.3+1.21.1-neoforge.jar")))
     runtimeOnly("dev.architectury:architectury-neoforge:${architectury_api_version}")
 
     compileOnly(files(rootProject.file("sizeable_foliage_jars/sizeable_foliage-neoforge-1.21.1-1.0.0.jar")))
@@ -92,7 +92,7 @@ tasks.withType(ProcessResources).configureEach {
 tasks.matching { it.name in ["runClient", "runServer", "runData"] }.configureEach {
     doFirst {
         def infinityConfigPrefix = "config/common/"
-        zipTree(rootProject.file("infinite_dimensions_jars/infinity-2.7.2+1.21.1-neoforge.jar")).visit { details ->
+        zipTree(rootProject.file("infinite_dimensions_jars/infinity-2.7.3+1.21.1-neoforge.jar")).visit { details ->
             if (!details.directory && details.relativePath.pathString.startsWith(infinityConfigPrefix)) {
                 def targetPath = details.relativePath.pathString.substring(infinityConfigPrefix.length())
                 file("run/config/infinity/${targetPath}").parentFile.mkdirs()

@@ -656,14 +656,14 @@ public final class AntarchyFabricEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.PrinceEntity>> PRINCE = ENTITY_TYPES.register("prince",
             () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.royal.PrinceEntity::new, MobCategory.CREATURE)
-                    .sized(2.2F, 2.2F)
+                    .sized(2.2F, 1.5F)
                     .clientTrackingRange(10)
                     .updateInterval(3)
                     .fireImmune().build("prince"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.PrincessEntity>> PRINCESS = ENTITY_TYPES.register("princess",
             () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.royal.PrincessEntity::new, MobCategory.CREATURE)
-                    .sized(2.2F, 2.2F)
+                    .sized(2.2F, 1.5F)
                     .clientTrackingRange(10)
                     .updateInterval(3)
                     .fireImmune().build("princess"));

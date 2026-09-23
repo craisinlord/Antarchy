@@ -1,9 +1,9 @@
 package com.craisinlord.antarchy.fabric.mixin.infinity;
 
 import com.craisinlord.antarchy.fabric.InfinityGenerationFailure;
-import net.lerariemann.infinity.access.MinecraftServerAccess;
-import net.lerariemann.infinity.util.teleport.PortalCreator;
-import net.lerariemann.infinity.util.teleport.WarpLogic;
+import net.codexarchonic.infinity.access.MinecraftServerAccess;
+import net.codexarchonic.infinity.util.teleport.PortalCreator;
+import net.codexarchonic.infinity.util.teleport.WarpLogic;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public interface WarpLogicMixin {
     @Redirect(
             method = "requestWarp(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/resources/ResourceLocation;Z)V",
-            at = @At(value = "INVOKE", target = "Lnet/lerariemann/infinity/util/teleport/PortalCreator;tryAddInfinityDimension(Lnet/minecraft/server/MinecraftServer;Lnet/minecraft/resources/ResourceLocation;)Z")
+            at = @At(value = "INVOKE", target = "Lnet/codexarchonic/infinity/util/teleport/PortalCreator;tryAddInfinityDimension(Lnet/minecraft/server/MinecraftServer;Lnet/minecraft/resources/ResourceLocation;)Z")
     )
     private static boolean antarchy$queuedDimensionCountsAsNew(MinecraftServer server, ResourceLocation dimensionId) throws Throwable {
         ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION, dimensionId);

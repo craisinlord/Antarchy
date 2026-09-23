@@ -325,6 +325,8 @@
     "tooltip.antarchy.giant_frying_pan.insert":  "Right-click with food in your other hand, or right-click food onto it in your inventory, to add it.",
     "tooltip.antarchy.giant_frying_pan.gui":  "Shift-right-click to open the cooking slots.",
     "tooltip.antarchy.giant_frying_pan.campfire":  "Cooks campfire recipes without fuel.",
+    "tooltip.antarchy.giant_frying_pan.dig":  "Digs shovel blocks in a 5x5 area.",
+    "tooltip.antarchy.giant_frying_pan.launch":  "Hits launch enemies into the air.",
     "item.antarchy.bluestone":  "Bluestone Dust",
     "item.antarchy.wasp_nest":  "Wasp Nest",
     "item.antarchy.stink_bug":  "Stink Bug",
@@ -1516,9 +1518,15 @@
     ,"guide.antarchy.entry.introduction.subtitle": "A machine for remembering what should have stayed forgotten."
     ,"guide.antarchy.entry.introduction.description": "Insert recovered floppy disks to expand this archive."
     ,"guide.antarchy.entry.toreterror.title": "Toreterror"
-    ,"guide.antarchy.entry.toreterror_arena.subtitle": "Elythia Ocean boss"
-    ,"guide.antarchy.entry.toreterror_arena.description": "This archive can trace the nearest Toreterror Arena for you, always somewhere in an Elythia Ocean."
-    ,"guide.antarchy.entry.toreterror_arena.description2": "Toreterror is an ancient turtle that fights with a water cannon at range and a long spinning charge up close, ricocheting off obstacles until it connects."
+    ,"guide.antarchy.entry.toreterror_arena.subtitle": "Elythia Ocean boss record"
+    ,"guide.antarchy.entry.toreterror_arena.description": "A powerful creature of the Testudines taxonomic order. It dwells in a coliseum somewhere in an Elythia Ocean; this archive can trace the nearest one for you, and its coordinates are listed below."
+    ,"guide.antarchy.entry.toreterror_arena.description2": "Extremely territorial. A cannon mounted in its shell fires water at extremely high pressure, which makes it considerably dangerous to approach."
+    ,"guide.antarchy.disk.hercules_beetle.title": "HERCULES BEETLE FIELD NOTES"
+    ,"guide.antarchy.entry.hercules_beetle.title": "Hercules Beetle"
+    ,"guide.antarchy.entry.hercules_beetle.subtitle": "Cavaryn megafauna record"
+    ,"guide.antarchy.entry.hercules_beetle.description": "An enormous insect dwelling in Cavaryn. It is capable of a very powerful charge that can, and will, displace terrain."
+    ,"guide.antarchy.entry.hercules_beetle.description2": "Aggressive on sight and omnivorous."
+    ,"guide.antarchy.entry.hercules_beetle.description3": "Once injured in combat, the beast can be pacified with Broodfruit. When pacified, it bonds with the one who fed it, almost as if it respects them after the battle."
     ,"guide.antarchy.entry.elythia.title": "Elythia"
     ,"guide.antarchy.entry.elythia.subtitle": "Dimension and portal access record"
     ,"guide.antarchy.entry.elythia.description": "Right-click a Brown Ant to teleport there directly, or sacrifice one inside a Mossy Ouranwood frame to light a permanent, reusable portal."
@@ -1577,8 +1585,17 @@
     ,"guide.antarchy.entry.high_fructose_corn_syrup.description2": "Drunk on its own, it causes four seconds of Nausea. A doctor would not recommend it."
     ,"guide.antarchy.entry.high_fructose_corn_syrup.description3": "Used on any food in a crafting grid, it Americanizes it: extra nutrition, extra saturation, and a burst of Regeneration."
     ,"guide.antarchy.entry.rainbow_ant.title": "Rainbow Ant"
-    ,"guide.antarchy.entry.rainbow_ant.subtitle": "Entity record"
-    ,"guide.antarchy.entry.rainbow_ant.description": "Feed a Rainbow Ant Rainbow Sugar to assign it a destination, then interact with it again to travel there. The destination is stored on that ant, so keep it alive."
+    ,"guide.antarchy.entry.rainbow_ant.subtitle": "Dimensional gateway record"
+    ,"guide.antarchy.entry.rainbow_ant.description": "A Rainbow Ant. It's your average dimensional ant... or so I thought at first. The Rainbow Ant doesn't lead to any dimension unless it is fed Rainbow Sugar."
+    ,"guide.antarchy.entry.rainbow_ant.description2": "I visited the dimension of the Rainbow Ant and returned, intending to note what I saw. When I went back to the ant's dimension later, I found it was a different dimension."
+    ,"guide.antarchy.entry.rainbow_ant.description3": "My previous notes on the Rainbow Ant have unfortunately been discarded, as I now know the dimension is different every time. For all I know, there could be millions of dimensions this fascinating creature acts as a gateway to."
+    ,"guide.antarchy.disk.rainbow_ant.title": "RAINBOW ANT FIELD NOTES"
+    ,"guide.antarchy.disk.brutalfly.title": "BRUTALFLY FIELD NOTES"
+    ,"guide.antarchy.entry.brutalfly.title": "Brutalfly"
+    ,"guide.antarchy.entry.brutalfly.subtitle": "Elythia hostile record"
+    ,"guide.antarchy.entry.brutalfly.description": "An oversized Elythian butterfly. Unlike its smaller counterparts, it is incredibly aggressive once out of its cocoon."
+    ,"guide.antarchy.entry.brutalfly.description2": "Like any butterfly, a Brutalfly begins in a cocoon. It is relatively safe to be near the cocoon as long as it remains undamaged."
+    ,"guide.antarchy.entry.brutalfly.description3": "If the Brutalfly is on the assault, all you can do is dispose of it."
     ,"guide.antarchy.entry.easter_bunny.title": "Easter Bunny"
     ,"guide.antarchy.entry.easter_bunny.subtitle": "Entity record"
     ,"guide.antarchy.entry.easter_bunny.description": "The Easter Bunny lays spawn eggs for all sorts of creatures! Life is like an easter egg, you never know what you're gonna get."

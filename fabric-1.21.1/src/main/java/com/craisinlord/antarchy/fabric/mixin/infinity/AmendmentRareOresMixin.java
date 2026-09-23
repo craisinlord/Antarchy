@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.fabric.mixin.infinity;
 
-import net.lerariemann.infinity.util.config.Amendment;
-import net.lerariemann.infinity.util.core.ConfigType;
+import net.codexarchonic.infinity.util.config.Amendment;
+import net.codexarchonic.infinity.util.core.ConfigType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

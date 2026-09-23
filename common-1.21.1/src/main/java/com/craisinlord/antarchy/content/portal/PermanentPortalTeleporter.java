@@ -1,7 +1,9 @@
 package com.craisinlord.antarchy.content.portal;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -11,11 +13,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.village.poi.PoiManager;
+import net.minecraft.world.entity.ai.village.poi.PoiRecord;
 import net.minecraft.world.entity.vehicle.DismountHelper;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.Vec3;
@@ -27,18 +32,6 @@ public final class PermanentPortalTeleporter {
     private static final int EXISTING_PORTAL_SEARCH_RADIUS = 128;
 
     private PermanentPortalTeleporter() {
-    }
-
-    public static void teleport(Entity entity, PermanentPortalType type) {
-        if (!(entity.level() instanceof ServerLevel sourceLevel) || !entity.isAlive()) {
-            return;
-        }
-
-        DimensionTransition transition = createTransition(sourceLevel, entity, entity.blockPosition(), type);
-        Entity movedEntity = moveEntity(entity, transition);
-        if (movedEntity != null) {
-            movedEntity.setPortalCooldown();
-        }
     }
 
     public static DimensionTransition createTransition(ServerLevel sourceLevel, Entity entity, BlockPos portalPos, PermanentPortalType type) {
@@ -69,24 +62,14 @@ public final class PermanentPortalTeleporter {
     private static Vec3 findArrivalPosition(ServerLevel source, Entity entity, ServerLevel destination, BlockPos preferredPos, PermanentPortalType type) {
         double scale = DimensionType.getTeleportationScale(source.dimensionType(), destination.dimensionType());
         preferredPos = BlockPos.containing(preferredPos.getX() * scale, preferredPos.getY(), preferredPos.getZ() * scale);
-        PermanentPortalShape active = PermanentPortalShape.findActiveNear(destination, preferredPos, type);
-        if (active != null) {
-            Vec3 safePortalPosition = tryFindSafePosition(entity, destination, BlockPos.containing(active.center()));
-            if (safePortalPosition != null) {
-                return safePortalPosition;
-            }
+        PermanentPortalShape existing = findExistingPortal(destination, preferredPos, type);
+        if (existing != null) {
+            Vec3 safePortalPosition = tryFindSafePosition(entity, destination, BlockPos.containing(existing.center()));
+            return safePortalPosition != null ? safePortalPosition : existing.center();
         }
 
         Vec3 safe = findSafeArrivalPosition(entity, destination, preferredPos, type);
         if (safe != null) {
-            PermanentPortalShape nearbyActive = findActiveNearby(destination, BlockPos.containing(safe), type);
-            if (nearbyActive != null) {
-                Vec3 safePortalPosition = tryFindSafePosition(entity, destination, BlockPos.containing(nearbyActive.center()));
-                if (safePortalPosition != null) {
-                    return safePortalPosition;
-                }
-            }
-
             PermanentPortalShape created = createReturnPortal(destination, safe, type);
             if (created != null) {
                 return created.center();
@@ -98,30 +81,34 @@ public final class PermanentPortalTeleporter {
     }
 
     @Nullable
-    private static PermanentPortalShape findActiveNearby(ServerLevel level, BlockPos center, PermanentPortalType type) {
-        for (int radius = 0; radius <= EXISTING_PORTAL_SEARCH_RADIUS; radius++) {
-            for (int xOff = -radius; xOff <= radius; xOff++) {
-                for (int yOff = -radius; yOff <= radius; yOff++) {
-                    for (int zOff = -radius; zOff <= radius; zOff++) {
-                        if (radius > 0 && Math.abs(xOff) != radius && Math.abs(yOff) != radius && Math.abs(zOff) != radius) {
-                            continue;
-                        }
-
-                        BlockPos candidate = center.offset(xOff, yOff, zOff);
-                        PermanentPortalShape xShape = PermanentPortalShape.findActive(level, candidate, type, Direction.Axis.X);
-                        if (xShape != null) {
-                            return xShape;
-                        }
-                        PermanentPortalShape zShape = PermanentPortalShape.findActive(level, candidate, type, Direction.Axis.Z);
-                        if (zShape != null) {
-                            return zShape;
-                        }
-                    }
-                }
+    private static PermanentPortalShape findExistingPortal(ServerLevel level, BlockPos center, PermanentPortalType type) {
+        PoiManager poiManager = level.getPoiManager();
+        poiManager.ensureLoadedAndValid(level, center, EXISTING_PORTAL_SEARCH_RADIUS);
+        Block portalBlock = type.portalBlock();
+        List<BlockPos> candidates = poiManager.getInSquare(
+                        holder -> holder.is(type.poiKey()), center, EXISTING_PORTAL_SEARCH_RADIUS, PoiManager.Occupancy.ANY)
+                .map(PoiRecord::getPos)
+                .filter(level.getWorldBorder()::isWithinBounds)
+                .sorted(Comparator.<BlockPos>comparingDouble(pos -> horizontalDistanceSqr(pos, center))
+                        .thenComparingInt(pos -> Math.abs(pos.getY() - center.getY())))
+                .toList();
+        for (BlockPos pos : candidates) {
+            BlockState state = level.getBlockState(pos);
+            if (!state.is(portalBlock) || !state.hasProperty(BlockStateProperties.HORIZONTAL_AXIS)) {
+                continue;
+            }
+            PermanentPortalShape shape = PermanentPortalShape.findActive(level, pos, type, state.getValue(BlockStateProperties.HORIZONTAL_AXIS));
+            if (shape != null) {
+                return shape;
             }
         }
-
         return null;
+    }
+
+    private static double horizontalDistanceSqr(BlockPos a, BlockPos b) {
+        double dx = a.getX() - b.getX();
+        double dz = a.getZ() - b.getZ();
+        return dx * dx + dz * dz;
     }
 
     @Nullable
@@ -376,22 +363,5 @@ public final class PermanentPortalTeleporter {
         }
 
         return true;
-    }
-
-    @Nullable
-    private static Entity moveEntity(Entity entity, DimensionTransition transition) {
-        ServerLevel destination = transition.newLevel();
-        Vec3 destinationPos = transition.pos();
-        if (entity instanceof ServerPlayer player) {
-            player.teleportTo(destination, destinationPos.x, destinationPos.y, destinationPos.z, player.getYRot(), player.getXRot());
-            return player;
-        }
-
-        if (entity.level() == destination) {
-            entity.teleportTo(destinationPos.x, destinationPos.y, destinationPos.z);
-            return entity;
-        }
-
-        return entity.changeDimension(transition);
     }
 }

@@ -23,6 +23,7 @@ import java.util.concurrent.Executor;
 public final class AntarchyFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        com.craisinlord.antarchy.Antarchy.physicalClient = true;
         ModelLoadingPlugin.register(plugin -> plugin.addModels(SeparateLargeItemModels.all()));
         ClientTickEvents.END_CLIENT_TICK.register(client -> QueenMusicHandler.tick(client, AntarchyFabricSounds.THE_QUEEN.get()));
         AntarchyFabricClientNetworking.register();

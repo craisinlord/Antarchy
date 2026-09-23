@@ -495,6 +495,7 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setRoyalAssailantBootsDoubleDamageChance(AntarchyToolsConfig.royalAssailantBootsDoubleDamageChance());
         AntarchySettings.setRoyalGuardianSwordAttackDamage(AntarchyToolsConfig.royalGuardianSwordAttackDamage());
         AntarchySettings.setGiantFryingPanAttackDamage(AntarchyToolsConfig.giantFryingPanAttackDamage());
+        AntarchySettings.setGiantFryingPanCookTimeTicks(AntarchyToolsConfig.giantFryingPanCookTimeTicks());
         AntarchySettings.setRoyalGuardianSwordAttackSpeed(AntarchyToolsConfig.royalGuardianSwordAttackSpeed());
         AntarchySettings.setRoyalGuardianSwordElementalCooldownTicks(AntarchyToolsConfig.royalGuardianSwordElementalCooldownTicks());
         AntarchySettings.setRoyalGuardianSwordFirePrimaryDamage(AntarchyToolsConfig.royalGuardianSwordFirePrimaryDamage());

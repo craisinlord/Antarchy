@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.effect.CommandedEntityAccess;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.royal.RoyalIceSpikeEntity;
+import com.craisinlord.antarchy.content.network.ImpactShakeSync;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -35,6 +36,9 @@ public final class RoyalGuardianSwordAbilities {
     private static final ThreadLocal<Integer> SECONDARY_DAMAGE_DEPTH = ThreadLocal.withInitial(() -> 0);
     private static final ThreadLocal<MeleeAttackContext> MELEE_ATTACK = new ThreadLocal<>();
     private static final DustParticleOptions FIRE_GOLD = new DustParticleOptions(new Vector3f(1.0F, 0.55F, 0.08F), 1.6F);
+    private static final float FIRE_SHAKE_INTENSITY = 0.3F;
+    private static final int FIRE_SHAKE_DURATION = 7;
+    private static final float FIRE_SHAKE_RADIUS = 14.0F;
     private static final DustParticleOptions STORM_GOLD = new DustParticleOptions(new Vector3f(1.0F, 0.86F, 0.25F), 1.25F);
 
     private RoyalGuardianSwordAbilities() {
@@ -107,6 +111,7 @@ public final class RoyalGuardianSwordAbilities {
         level.sendParticles(FIRE_GOLD, center.x, center.y, center.z, 28, 1.1D, 0.8D, 1.1D, 0.04D);
         level.sendParticles(ParticleTypes.EXPLOSION, center.x, center.y, center.z, 3, 0.8D, 0.6D, 0.8D, 0.0D);
         level.playSound(null, BlockPos.containing(center), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 1.0F, 1.05F);
+        ImpactShakeSync.sendNearby(level, center, FIRE_SHAKE_INTENSITY, FIRE_SHAKE_DURATION, FIRE_SHAKE_RADIUS);
     }
 
     private static void placeBoundedFire(ServerLevel level, Vec3 center, int cap) {

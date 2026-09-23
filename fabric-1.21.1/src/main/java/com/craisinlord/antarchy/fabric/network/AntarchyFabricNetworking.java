@@ -264,6 +264,10 @@ public final class AntarchyFabricNetworking {
     }
 
     private static void handleRoyalMountAction(ServerPlayer player, RoyalMountActionPayload payload) {
+        if (payload.action() == RoyalMountActionPayload.MOUNT) {
+            com.craisinlord.antarchy.content.entity.royal.RoyalMountEntity.tryAssistedMount(player);
+            return;
+        }
         if (!(player.getVehicle() instanceof com.craisinlord.antarchy.content.entity.royal.RoyalMountEntity mount)) {
             return;
         }

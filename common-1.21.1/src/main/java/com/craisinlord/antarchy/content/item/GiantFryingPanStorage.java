@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
 import java.util.Optional;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
@@ -19,7 +20,7 @@ import net.minecraft.world.level.Level;
 
 public final class GiantFryingPanStorage implements Container {
     public static final int SLOT_COUNT = 9;
-    public static final int COOK_TIME = 600;
+    public static final int MAX_STACK = 64;
     private static final String SLOTS = "antarchy.giant_frying_pan_slots";
     private static final String SLOT = "Slot";
     private static final String ITEM = "Item";
@@ -84,7 +85,7 @@ public final class GiantFryingPanStorage implements Container {
         boolean changed = false;
         for (int slot = 0; slot < SLOT_COUNT; slot++) {
             ItemStack input = storage.items.get(slot);
-            if (input.isEmpty() || now - storage.startTimes[slot] < COOK_TIME) continue;
+            if (input.isEmpty() || now - storage.startTimes[slot] < cookTime()) continue;
             Optional<RecipeHolder<CampfireCookingRecipe>> recipe = level.getRecipeManager().getRecipeFor(
                     RecipeType.CAMPFIRE_COOKING, new SingleRecipeInput(input), level);
             if (recipe.isEmpty()) continue;
@@ -112,6 +113,15 @@ public final class GiantFryingPanStorage implements Container {
         if (!isCampfireInput(this.player, food)) return false;
         this.reloadIfChanged();
         for (int slot = 0; slot < SLOT_COUNT; slot++) {
+            ItemStack existing = this.items.get(slot);
+            if (canMergeInto(existing, food)) {
+                existing.grow(1);
+                food.shrink(1);
+                this.setChanged();
+                return true;
+            }
+        }
+        for (int slot = 0; slot < SLOT_COUNT; slot++) {
             if (this.items.get(slot).isEmpty()) {
                 this.setItem(slot, food.split(1));
                 return true;
@@ -120,19 +130,28 @@ public final class GiantFryingPanStorage implements Container {
         return false;
     }
 
-    public boolean hasSpace() {
+    public boolean hasSpace(ItemStack food) {
         this.reloadIfChanged();
         for (ItemStack stack : this.items) {
-            if (stack.isEmpty()) return true;
+            if (stack.isEmpty() || canMergeInto(stack, food)) return true;
         }
         return false;
+    }
+
+    private static boolean canMergeInto(ItemStack existing, ItemStack food) {
+        return !existing.isEmpty() && ItemStack.isSameItemSameComponents(existing, food)
+                && existing.getCount() < Math.min(MAX_STACK, existing.getMaxStackSize());
+    }
+
+    public static int cookTime() {
+        return Math.max(1, AntarchySettings.giantFryingPanCookTimeTicks());
     }
 
     public float cookProgress(int slot) {
         this.reloadIfChanged();
         if (this.items.get(slot).isEmpty()) return 0.0F;
         long elapsed = this.player.level().getGameTime() - this.startTimes[slot];
-        return Math.max(0.0F, Math.min(1.0F, elapsed / (float) COOK_TIME));
+        return Math.max(0.0F, Math.min(1.0F, elapsed / (float) cookTime()));
     }
 
     private void reloadIfChanged() {
@@ -221,7 +240,7 @@ public final class GiantFryingPanStorage implements Container {
 
     @Override
     public int getMaxStackSize() {
-        return 1;
+        return MAX_STACK;
     }
 
     @Override
