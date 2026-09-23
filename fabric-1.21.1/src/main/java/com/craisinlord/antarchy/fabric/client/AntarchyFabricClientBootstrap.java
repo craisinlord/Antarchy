@@ -279,7 +279,7 @@ public final class AntarchyFabricClientBootstrap {
                         ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/ichor/ichor_still"),
                         ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/ichor/ichor_flowing"),
                         ResourceLocation.withDefaultNamespace("block/water_overlay"),
-                        0xFF3D0408
+                        0xFFFFFFFF
                 )
         );
 

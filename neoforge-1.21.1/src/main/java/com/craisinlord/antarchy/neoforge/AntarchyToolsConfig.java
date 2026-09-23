@@ -391,7 +391,7 @@ public final class AntarchyToolsConfig {
         ROYAL_ASSAILANT_LEGGINGS_DOUBLE_DAMAGE_CHANCE = b.defineInRange("assailantLeggingsDoubleDamageChance", 0.07D, 0.0D, 1.0D);
         ROYAL_ASSAILANT_BOOTS_DOUBLE_DAMAGE_CHANCE = b.defineInRange("assailantBootsDoubleDamageChance", 0.05D, 0.0D, 1.0D);
         ROYAL_GUARDIAN_SWORD_ATTACK_DAMAGE = b.defineInRange("guardianSwordAttackDamage", 111.0D, 0.0D, 4096.0D);
-        GIANT_FRYING_PAN_ATTACK_DAMAGE = b.defineInRange("giantFryingPanAttackDamage", 80.0D, 0.0D, 4096.0D);
+        GIANT_FRYING_PAN_ATTACK_DAMAGE = b.defineInRange("giantFryingPanAttackDamage", 50.0D, 0.0D, 4096.0D);
         ROYAL_GUARDIAN_SWORD_ATTACK_SPEED = b.defineInRange("guardianSwordAttackSpeed", -2.5D, -10.0D, 10.0D);
         ROYAL_GUARDIAN_SWORD_ELEMENTAL_COOLDOWN_TICKS = b.defineInRange("guardianSwordElementalCooldownTicks", 120, 0, 72000);
         ROYAL_GUARDIAN_SWORD_FIRE_PRIMARY_DAMAGE = b.defineInRange("guardianSwordFirePrimaryDamage", 22.0D, 0.0D, 4096.0D);

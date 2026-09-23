@@ -2,7 +2,6 @@ package com.craisinlord.antarchy.fabric.client;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricItems;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -11,7 +10,7 @@ import java.util.Collection;
 import java.util.Map;
 
 public final class SeparateLargeItemModels {
-    private static final Map<Item, ModelResourceLocation> GUI_MODELS = Map.ofEntries(
+    private static final Map<Item, ResourceLocation> GUI_MODELS = Map.ofEntries(
             entry(AntarchyFabricItems.ATTITUDE_ADJUSTER.get(), "attitude_adjuster_gui"),
             entry(AntarchyFabricItems.BATTLE_AXE.get(), "battle_axe_gui"),
             entry(AntarchyFabricItems.BIG_BERTHA.get(), "big_bertha_gui"),
@@ -33,17 +32,15 @@ public final class SeparateLargeItemModels {
     private SeparateLargeItemModels() {
     }
 
-    public static ModelResourceLocation modelFor(ItemStack stack) {
+    public static ResourceLocation modelFor(ItemStack stack) {
         return GUI_MODELS.get(stack.getItem());
     }
 
-    public static Collection<ModelResourceLocation> all() {
+    public static Collection<ResourceLocation> all() {
         return GUI_MODELS.values();
     }
 
-    private static Map.Entry<Item, ModelResourceLocation> entry(Item item, String modelPath) {
-        return Map.entry(item, ModelResourceLocation.inventory(
-                ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, modelPath)
-        ));
+    private static Map.Entry<Item, ResourceLocation> entry(Item item, String modelPath) {
+        return Map.entry(item, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "item/" + modelPath));
     }
 }

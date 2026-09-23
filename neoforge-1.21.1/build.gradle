@@ -5,9 +5,9 @@ plugins {
 }
 
 base {
-    archivesName = "${mod_id}-neoforge-1.21.1"
+    archivesName = mod_id
 }
-version = "${mod_version}+${project.name}"
+version = "${mod_version}+1.21.1-neoforge"
 
 java {
     toolchain { languageVersion = JavaLanguageVersion.of(21) }
@@ -113,7 +113,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             groupId = rootProject.group
-            artifactId = project.base.archivesName.get()
+            artifactId = "${mod_id}-neoforge-1.21.1"
             version = project.version
 
             artifact jar

@@ -130,6 +130,7 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handlePortalGunLeftClickBlock);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleScorpionWhipRightClickBlock);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleScorpionWhipRightClickItem);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleGiantFryingPanRightClickItem);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleParalyzedAttackEntity);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleParalyzedLeftClickBlock);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleParalyzedRightClickBlock);
@@ -1122,6 +1123,14 @@ public final class AntarchyNeoForgeEvents {
         if (ScorpionWhipTetherManager.pullAndDetach(player)) {
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.SUCCESS);
+        }
+    }
+
+    static void handleGiantFryingPanRightClickItem(PlayerInteractEvent.RightClickItem event) {
+        InteractionResult result = com.craisinlord.antarchy.content.item.GiantFryingPanItem.handleMainHandUse(event.getLevel(), event.getEntity(), event.getHand());
+        if (result != InteractionResult.PASS) {
+            event.setCanceled(true);
+            event.setCancellationResult(result);
         }
     }
 

@@ -231,7 +231,7 @@ public final class AntarchySettings {
     private static double royalAssailantLeggingsDoubleDamageChance = 0.07D;
     private static double royalAssailantBootsDoubleDamageChance = 0.05D;
     private static double royalGuardianSwordAttackDamage = 111.0D;
-    private static double giantFryingPanAttackDamage = 80.0D;
+    private static double giantFryingPanAttackDamage = 50.0D;
     private static double royalGuardianSwordAttackSpeed = -2.5D;
     private static int royalGuardianSwordElementalCooldownTicks = 120;
     private static double royalGuardianSwordFirePrimaryDamage = 22.0D;

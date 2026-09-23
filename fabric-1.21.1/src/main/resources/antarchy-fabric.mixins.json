@@ -28,6 +28,7 @@
   ],
   "client": [
     "client.SeparateLargeItemModelsMixin",
+    "client.SeparateLargeItemGuiLightingMixin",
     "client.CameraShakeMixin",
     "client.BrutalflyElytraExperienceBarMixin",
     "client.BloodglassChatOrderMixin",

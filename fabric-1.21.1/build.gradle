@@ -5,9 +5,9 @@ plugins {
 }
 
 base {
-    archivesName = "${mod_id}-fabric-1.21.1"
+    archivesName = mod_id
 }
-version = "${mod_version}+${project.name}"
+version = "${mod_version}+1.21.1-fabric"
 
 // Handle duplicates from common-1.21.1's resources
 tasks.withType(AbstractCopyTask).configureEach {
@@ -134,7 +134,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             groupId = rootProject.group
-            artifactId = project.base.archivesName.get()
+            artifactId = "${mod_id}-fabric-1.21.1"
             version = project.version
 
             artifact(project.tasks.named('remapJar'))

@@ -488,12 +488,12 @@ public final class AntarchyNeoForgeClient {
 
             @Override
             public int getTintColor() {
-                return 0xFF2A0306;
+                return 0xFFFFFFFF;
             }
 
             @Override
             public int getTintColor(FluidState state, BlockAndTintGetter getter, net.minecraft.core.BlockPos pos) {
-                return 0xFF2A0306;
+                return 0xFFFFFFFF;
             }
 
             @Override

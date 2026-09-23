@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.fabric.mixin.client;
 
 import com.craisinlord.antarchy.fabric.client.SeparateLargeItemModels;
 import com.llamalad7.mixinextras.sugar.Local;
+import net.fabricmc.fabric.api.client.model.loading.v1.FabricBakedModelManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
@@ -19,7 +20,7 @@ public abstract class SeparateLargeItemModelsMixin {
                                                @Local(argsOnly = true) ItemDisplayContext displayContext) {
         var guiModel = SeparateLargeItemModels.modelFor(stack);
         if (guiModel != null && isGuiContext(displayContext)) {
-            return Minecraft.getInstance().getModelManager().getModel(guiModel);
+            return ((FabricBakedModelManager) Minecraft.getInstance().getModelManager()).getModel(guiModel);
         }
         return original;
     }

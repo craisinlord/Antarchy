@@ -340,23 +340,6 @@
 						}
 					}
 				}
-			},
-			"particle_effects": {
-				"0.0": {
-					"effect": "particles"
-				},
-				"1.0": {
-					"effect": "particles",
-					"locator": "spike_2"
-				},
-				"2.0": {
-					"effect": "particles",
-					"locator": "spike_3"
-				},
-				"3.0": {
-					"effect": "particles",
-					"locator": "spike_4"
-				}
 			}
 		}
 	}

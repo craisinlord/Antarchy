@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:husbandry/root",
+  "criteria": {
+    "giant_frying_pan": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:giant_frying_pan"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.sizzling_dedication.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:giant_frying_pan"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.sizzling_dedication.title"
+    }
+  },
+  "requirements": [
+    [
+      "giant_frying_pan"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

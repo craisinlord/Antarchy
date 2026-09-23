@@ -41,7 +41,7 @@ public final class GiantFryingPanRenderer extends GeoItemRenderer<GiantFryingPan
             int row = slot / 3;
             int column = slot % 3;
             poseStack.pushPose();
-            poseStack.translate((column - 1) * 0.42D, 1.72D, (row - 1) * 0.42D);
+            poseStack.translate((column - 1) * 0.55D, 2.5D - (row - 1) * 0.55D, 0.03125D);
             poseStack.scale(0.24F, 0.24F, 0.24F);
             Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, packedLight, packedOverlay, poseStack, bufferSource, Minecraft.getInstance().level, 0);
             poseStack.popPose();

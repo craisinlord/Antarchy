@@ -172,6 +172,16 @@ public final class AntarchyFabricEvents {
             }
         });
 
+        net.fabricmc.fabric.api.event.player.UseItemCallback.EVENT.register((player, world, hand) -> {
+            InteractionResult result = com.craisinlord.antarchy.content.item.GiantFryingPanItem.handleMainHandUse(world, player, hand);
+            if (result == InteractionResult.PASS) {
+                return net.minecraft.world.InteractionResultHolder.pass(ItemStack.EMPTY);
+            }
+            ItemStack held = player.getItemInHand(hand);
+            return result.consumesAction()
+                    ? net.minecraft.world.InteractionResultHolder.sidedSuccess(held, world.isClientSide)
+                    : net.minecraft.world.InteractionResultHolder.fail(held);
+        });
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             if (!world.isClientSide && player.getItemInHand(hand).getItem() instanceof AttitudeAdjusterItem && player.getAttackStrengthScale(0.5F) >= 0.95F) {
                 AttitudeAdjusterSlamManager.markSpecialHit(player);

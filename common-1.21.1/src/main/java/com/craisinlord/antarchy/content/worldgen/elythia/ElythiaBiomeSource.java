@@ -16,6 +16,11 @@ import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
 
+/**
+ * Plain multi-noise biome source with one addition: everything at or above
+ * {@code cloud_sea_min_y} is the cloud sea. Below that line, biome selection is
+ * identical to {@code minecraft:multi_noise} over the same list minus the cloud sea entry.
+ */
 public final class ElythiaBiomeSource extends BiomeSource {
     private static final ResourceKey<Biome> CLOUD_SEA = ResourceKey.create(
             Registries.BIOME,
@@ -29,24 +34,25 @@ public final class ElythiaBiomeSource extends BiomeSource {
 
     private final Climate.ParameterList<Holder<Biome>> parameters;
     private final MultiNoiseBiomeSource delegate;
+    private final int cloudSeaMinY;
     private final int cloudSeaMinQuartY;
     private final Holder<Biome> cloudSeaHolder;
-    private final Holder<Biome> fallbackHolder;
 
     public ElythiaBiomeSource(Climate.ParameterList<Holder<Biome>> parameters, int cloudSeaMinY) {
         this.parameters = parameters;
-        this.delegate = MultiNoiseBiomeSource.createFromList(parameters);
+        this.cloudSeaMinY = cloudSeaMinY;
         this.cloudSeaMinQuartY = QuartPos.fromBlock(cloudSeaMinY);
         this.cloudSeaHolder = parameters.values().stream()
                 .map(Pair::getSecond)
                 .filter(holder -> holder.is(CLOUD_SEA))
                 .findFirst()
                 .orElse(null);
-        this.fallbackHolder = parameters.values().stream()
-                .map(Pair::getSecond)
-                .filter(holder -> !holder.is(CLOUD_SEA))
-                .findFirst()
-                .orElse(null);
+        // Keep the cloud sea out of the noise search so terrain biomes resolve exactly as before.
+        this.delegate = MultiNoiseBiomeSource.createFromList(new Climate.ParameterList<>(
+                parameters.values().stream()
+                        .filter(entry -> !entry.getSecond().is(CLOUD_SEA))
+                        .toList()
+        ));
     }
 
     private Climate.ParameterList<Holder<Biome>> parameters() {
@@ -54,7 +60,7 @@ public final class ElythiaBiomeSource extends BiomeSource {
     }
 
     private int cloudSeaMinY() {
-        return this.cloudSeaMinQuartY * 4;
+        return this.cloudSeaMinY;
     }
 
     @Override
@@ -64,7 +70,7 @@ public final class ElythiaBiomeSource extends BiomeSource {
 
     @Override
     protected Stream<Holder<Biome>> collectPossibleBiomes() {
-        return this.delegate.possibleBiomes().stream();
+        return this.parameters.values().stream().map(Pair::getSecond).distinct();
     }
 
     @Override
@@ -72,11 +78,6 @@ public final class ElythiaBiomeSource extends BiomeSource {
         if (this.cloudSeaHolder != null && y >= this.cloudSeaMinQuartY) {
             return this.cloudSeaHolder;
         }
-
-        Holder<Biome> biome = this.delegate.getNoiseBiome(x, y, z, sampler);
-        if (biome != null && !biome.is(CLOUD_SEA)) {
-            return biome;
-        }
-        return this.fallbackHolder != null ? this.fallbackHolder : biome;
+        return this.delegate.getNoiseBiome(x, y, z, sampler);
     }
 }

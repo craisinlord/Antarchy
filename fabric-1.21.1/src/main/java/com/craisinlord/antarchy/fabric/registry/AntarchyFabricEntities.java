@@ -620,7 +620,7 @@ public final class AntarchyFabricEntities {
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.ManticoreEntity>> MANTICORE = ENTITY_TYPES.register("manticore",
             () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.ManticoreEntity::new, MobCategory.MONSTER)
-                    .sized(1.95F, 2.0F)
+                    .sized(1.95F, 2.75F)
                     .clientTrackingRange(10)
                     .fireImmune()
                     .build("manticore"));

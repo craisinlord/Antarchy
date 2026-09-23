@@ -1,3 +1,4 @@
 {
-  "parent": "antarchy:item/attitude_adjuster_held"
+  "parent": "antarchy:item/attitude_adjuster_held",
+  "gui_light": "front"
 }

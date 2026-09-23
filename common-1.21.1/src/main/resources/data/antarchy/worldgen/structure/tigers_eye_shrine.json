@@ -8,11 +8,13 @@
   "enhanced_terrain_adaptation": {
     "type": "integrated_api:none"
   },
-  "project_start_to_heightmap": "WORLD_SURFACE_WG",
   "start_height": {
-    "type": "minecraft:constant",
-    "value": {
-      "absolute": 0
+    "type": "minecraft:uniform",
+    "min_inclusive": {
+      "absolute": 40
+    },
+    "max_inclusive": {
+      "absolute": 150
     }
   },
   "spawn_overrides": {},

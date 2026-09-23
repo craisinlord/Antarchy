@@ -504,7 +504,7 @@ public final class AntarchyNeoforgeEntites {
                     .build("skulking_fright"));
     public static final DeferredHolder<EntityType<?>, EntityType<ManticoreEntity>> MANTICORE = ENTITY_TYPES.register("manticore",
             () -> EntityType.Builder.of(ManticoreEntity::new, MobCategory.MONSTER)
-                    .sized(1.95F, 2.25F)
+                    .sized(1.95F, 2.75F)
                     .clientTrackingRange(10)
                     .fireImmune()
                     .build("manticore"));

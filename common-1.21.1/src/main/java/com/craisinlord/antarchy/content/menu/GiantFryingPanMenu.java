@@ -1,53 +1,99 @@
 package com.craisinlord.antarchy.content.menu;
 
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.item.GiantFryingPanItem;
 import com.craisinlord.antarchy.content.item.GiantFryingPanStorage;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 public final class GiantFryingPanMenu extends AbstractContainerMenu {
+    public static final int PAN_ROW_Y = 18;
+    public static final int INVENTORY_Y = 49;
+    public static final int HOTBAR_Y = 107;
     private final GiantFryingPanStorage panStorage;
+    private final int panSlot;
 
     public GiantFryingPanMenu(int containerId, Inventory inventory) {
+        this(containerId, inventory, GiantFryingPanStorage.findPanSlot(inventory.player));
+    }
+
+    public GiantFryingPanMenu(int containerId, Inventory inventory, int panSlot) {
         super(AntarchyObjects.GIANT_FRYING_PAN_MENU.get(), containerId);
-        ItemStack pan = GiantFryingPanStorage.findPan(inventory.player);
-        this.panStorage = new GiantFryingPanStorage(pan, inventory.player);
+        Player player = inventory.player;
+        this.panSlot = panSlot;
+        this.panStorage = new GiantFryingPanStorage(player, panSlot);
+        Antarchy.LOGGER.info("[FryingPan] Menu created client={} containerId={} panSlot={} pan={}",
+                player.level().isClientSide, containerId, panSlot, this.panStorage.pan());
         for (int slot = 0; slot < GiantFryingPanStorage.SLOT_COUNT; slot++) {
-            this.addSlot(new Slot(panStorage, slot, 8 + slot * 18, 18) {
+            this.addSlot(new Slot(this.panStorage, slot, 8 + slot * 18, PAN_ROW_Y) {
                 @Override
                 public boolean mayPlace(ItemStack stack) {
-                    return GiantFryingPanStorage.isCampfireInput(inventory.player, stack);
+                    return GiantFryingPanStorage.isCampfireInput(player, stack);
                 }
 
                 @Override
-                public int getMaxStackSize() { return 1; }
+                public int getMaxStackSize() {
+                    return 1;
+                }
             });
         }
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                this.addSlot(new Slot(inventory, col + row * 9 + 9, 8 + col * 18, 50 + row * 18));
+                this.addSlot(this.inventorySlot(inventory, col + row * 9 + 9, 8 + col * 18, INVENTORY_Y + row * 18));
             }
         }
-        for (int col = 0; col < 9; col++) this.addSlot(new Slot(inventory, col, 8 + col * 18, 108));
+        for (int col = 0; col < 9; col++) {
+            this.addSlot(this.inventorySlot(inventory, col, 8 + col * 18, HOTBAR_Y));
+        }
+    }
+
+    private Slot inventorySlot(Inventory inventory, int index, int x, int y) {
+        return new Slot(inventory, index, x, y) {
+            @Override
+            public boolean mayPickup(Player player) {
+                return index != GiantFryingPanMenu.this.panSlot && super.mayPickup(player);
+            }
+
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                return index != GiantFryingPanMenu.this.panSlot && super.mayPlace(stack);
+            }
+        };
+    }
+
+    public GiantFryingPanStorage storage() {
+        return this.panStorage;
     }
 
     @Override
-    public boolean stillValid(Player player) { return player.isAlive() && !panStorage.isEmpty() || GiantFryingPanStorage.findPan(player).getItem() instanceof GiantFryingPanItem; }
+    public void clicked(int slotId, int button, ClickType clickType, Player player) {
+        if (clickType == ClickType.SWAP && button == this.panSlot) return;
+        super.clicked(slotId, button, clickType, player);
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        return this.panStorage.stillValid(player);
+    }
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
-        if (index < 0 || index >= slots.size()) return ItemStack.EMPTY;
-        Slot slot = slots.get(index);
-        if (!slot.hasItem()) return ItemStack.EMPTY;
-        ItemStack original = slot.getItem().copy();
+        if (index < 0 || index >= this.slots.size()) return ItemStack.EMPTY;
+        Slot slot = this.slots.get(index);
+        if (!slot.hasItem() || !slot.mayPickup(player)) return ItemStack.EMPTY;
+        ItemStack current = slot.getItem();
+        ItemStack original = current.copy();
         if (index < GiantFryingPanStorage.SLOT_COUNT) {
-            if (!moveItemStackTo(slot.getItem(), GiantFryingPanStorage.SLOT_COUNT, slots.size(), true)) return ItemStack.EMPTY;
-        } else if (!moveItemStackTo(slot.getItem(), 0, GiantFryingPanStorage.SLOT_COUNT, false)) return ItemStack.EMPTY;
-        if (slot.getItem().isEmpty()) slot.setByPlayer(ItemStack.EMPTY);
+            if (!this.moveItemStackTo(current, GiantFryingPanStorage.SLOT_COUNT, this.slots.size(), true)) return ItemStack.EMPTY;
+        } else if (!GiantFryingPanStorage.isCampfireInput(player, current)
+                || !this.moveItemStackTo(current, 0, GiantFryingPanStorage.SLOT_COUNT, false)) {
+            return ItemStack.EMPTY;
+        }
+        if (current.isEmpty()) slot.setByPlayer(ItemStack.EMPTY);
         else slot.setChanged();
         return original;
     }

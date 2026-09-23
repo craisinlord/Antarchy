@@ -13,6 +13,8 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexSorting;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -25,6 +27,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fStack;
+import org.joml.Vector3f;
 
 public final class ThoraxisUndersideSkyRenderer {
     public static final ResourceKey<Level> THORAXIS = ResourceKey.create(
@@ -32,7 +35,6 @@ public final class ThoraxisUndersideSkyRenderer {
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "thoraxis")
     );
     private static final ResourceLocation SUN_TEXTURE = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/environment/eye_moon.png");
-    private static final ResourceLocation MOON_TEXTURE = ResourceLocation.withDefaultNamespace("textures/environment/moon_phases.png");
     private static final ResourceLocation[] EYE_STAR_TEXTURES = {
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/environment/eye_star1.png"),
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/environment/eye_star2.png"),
@@ -41,8 +43,27 @@ public final class ThoraxisUndersideSkyRenderer {
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/environment/eye_star5.png")
     };
     private static final float[] EYE_STAR_SCALES = {1.0F, 0.86F, 0.72F, 0.58F, 0.46F};
+    private static final double STAR_FOOTPRINT = Math.sqrt(2.0D);
+    private static final double STAR_GAP = 1.0D;
     private static final float SKY_RADIUS = 100.0F;
     private static final float BODY_SIZE = 32.0F;
+    private static final float SUN_RADIUS = 27.0F;
+    private static final float SUN_GLOW_RED = 1.0F;
+    private static final float SUN_GLOW_GREEN = 0x1F / 255.0F;
+    private static final float SUN_GLOW_BLUE = 0x18 / 255.0F;
+    private static final float SUN_GLOW_CENTER_ALPHA = 0.04F;
+    private static final float SUN_GLOW_PEAK_RADIUS = 15.5F;
+    private static final float SUN_GLOW_PEAK_ALPHA = 0.12F;
+    private static final float SUN_GLOW_KNEE_RADIUS = 19.0F;
+    private static final float SUN_GLOW_KNEE_ALPHA = 0.03F;
+    private static final float SUN_GLOW_RADIUS = 25.0F;
+    private static final float[][] EYE_SUNS = {
+            {259.2F, -10.0F, 245.5F},
+            {200.0F, 20.0F, 30.0F},
+            {150.0F, -35.0F, 200.0F},
+            {120.0F, 40.0F, 300.0F},
+            {215.0F, -60.0F, 120.0F}
+    };
     private static final float SKY_RED = 0.015F;
     private static final float SKY_GREEN = 0.0F;
     private static final float SKY_BLUE = 0.035F;
@@ -79,9 +100,8 @@ public final class ThoraxisUndersideSkyRenderer {
         VertexBuffer.unbind();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-        float timeOfDay = 0.72F + partialTick * 0.0F;
-        renderCelestialBodies(poseStack.last().pose(), projectionMatrix, timeOfDay);
         renderEyeStars(poseStack.last().pose(), projectionMatrix);
+        renderEyeSuns(poseStack.last().pose(), projectionMatrix);
 
         RenderSystem.depthMask(true);
     }
@@ -92,14 +112,9 @@ public final class ThoraxisUndersideSkyRenderer {
         }
 
         RenderSystem.enableBlend();
-        RenderSystem.blendFuncSeparate(
-                GlStateManager.SourceFactor.ONE,
-                GlStateManager.DestFactor.ONE,
-                GlStateManager.SourceFactor.ONE,
-                GlStateManager.DestFactor.ZERO
-        );
+        RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 0.015F, 0.02F, 1.0F);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.backupProjectionMatrix();
         RenderSystem.setProjectionMatrix(projectionMatrix, VertexSorting.DISTANCE_TO_ORIGIN);
 
@@ -116,26 +131,48 @@ public final class ThoraxisUndersideSkyRenderer {
     }
 
     private static VertexBuffer[] buildEyeStarBuffers() {
+        Vector3f[] sunDirections = new Vector3f[EYE_SUNS.length];
+        for (int sun = 0; sun < EYE_SUNS.length; sun++) {
+            sunDirections[sun] = bodyDirection(EYE_SUNS[sun][0], EYE_SUNS[sun][1]);
+        }
+        double sunLimit = Math.cos(bodyAngularRadius(SUN_RADIUS));
+        List<double[]> stars = new ArrayList<>();
+        Random random = new Random(552031L);
+        for (int i = 0; i < 1800; i++) {
+            double x = random.nextFloat() * 2.0F - 1.0F;
+            double y = random.nextFloat() * 2.0F - 1.0F;
+            double z = random.nextFloat() * 2.0F - 1.0F;
+            int textureIndex = i % EYE_STAR_TEXTURES.length;
+            double size = (0.52F + random.nextFloat() * 1.24F) * EYE_STAR_SCALES[textureIndex];
+            double rot = random.nextDouble() * Math.PI * 2.0D;
+            double lenSq = x * x + y * y + z * z;
+            if (lenSq >= 1.0D || lenSq <= 0.01D) {
+                continue;
+            }
+
+            double len = 1.0D / Math.sqrt(lenSq);
+            x *= len;
+            y *= len;
+            z *= len;
+            if (behindEyeSun(sunDirections, sunLimit, x, y, z) || crowdsExistingStar(stars, x, y, z, size)) {
+                continue;
+            }
+            stars.add(new double[]{x, y, z, size, rot, textureIndex});
+        }
+
         VertexBuffer[] buffers = new VertexBuffer[EYE_STAR_TEXTURES.length];
         for (int textureIndex = 0; textureIndex < EYE_STAR_TEXTURES.length; textureIndex++) {
-            Random random = new Random(552031L);
             BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
-            for (int i = 0; i < 1800; i++) {
-                double x = random.nextFloat() * 2.0F - 1.0F;
-                double y = random.nextFloat() * 2.0F - 1.0F;
-                double z = random.nextFloat() * 2.0F - 1.0F;
-                double size = (0.52F + random.nextFloat() * 0.36F) * EYE_STAR_SCALES[textureIndex];
-                double rot = random.nextDouble() * Math.PI * 2.0D;
-                double lenSq = x * x + y * y + z * z;
-                if (i % EYE_STAR_TEXTURES.length != textureIndex || lenSq >= 1.0D || lenSq <= 0.01D) {
+            for (double[] star : stars) {
+                if ((int) star[5] != textureIndex) {
                     continue;
                 }
-
-                double len = 1.0D / Math.sqrt(lenSq);
-                x *= len;
-                y *= len;
-                z *= len;
+                double x = star[0];
+                double y = star[1];
+                double z = star[2];
+                double size = star[3];
+                double rot = star[4];
                 double sx = x * 100.0D;
                 double sy = y * 100.0D;
                 double sz = z * 100.0D;
@@ -173,17 +210,48 @@ public final class ThoraxisUndersideSkyRenderer {
         return buffers;
     }
 
-    private static void renderCelestialBodies(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, float timeOfDay) {
-        float t = timeOfDay * 360.0F;
-        renderBodyGlow(modelViewMatrix, projectionMatrix, t, -10.0F, 0xFF1F18, 86.0F);
-        renderTexturedBody(modelViewMatrix, projectionMatrix, t, -10.0F, 42.0F, 0xFF1F18, SUN_TEXTURE, false, 0, t * 0.6F + 90.0F);
-
-        float moonOrbit = t + 180.0F;
-        renderBodyGlow(modelViewMatrix, projectionMatrix, moonOrbit, 24.0F, 0x8F30FF, 76.0F);
-        renderTexturedBody(modelViewMatrix, projectionMatrix, moonOrbit, 24.0F, 26.0F, 0x8F30FF, MOON_TEXTURE, true, 0, -t * 0.35F);
+    private static boolean behindEyeSun(Vector3f[] sunDirections, double limit, double x, double y, double z) {
+        for (Vector3f direction : sunDirections) {
+            if (x * direction.x + y * direction.y + z * direction.z > limit) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private static void renderBodyGlow(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, float orbitDegrees, float yawDegrees, int rgb, float glowRadius) {
+    private static boolean crowdsExistingStar(List<double[]> stars, double x, double y, double z, double size) {
+        for (double[] other : stars) {
+            double dx = (x - other[0]) * SKY_RADIUS;
+            double dy = (y - other[1]) * SKY_RADIUS;
+            double dz = (z - other[2]) * SKY_RADIUS;
+            double minDistance = (size + other[3]) * STAR_FOOTPRINT + STAR_GAP;
+            if (dx * dx + dy * dy + dz * dz < minDistance * minDistance) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static Vector3f bodyDirection(float orbitDegrees, float yawDegrees) {
+        return new Matrix4f()
+                .rotateX((float) Math.toRadians(orbitDegrees))
+                .rotateZ((float) Math.toRadians(yawDegrees))
+                .transformDirection(new Vector3f(0.0F, 1.0F, 0.0F))
+                .normalize();
+    }
+
+    private static double bodyAngularRadius(float radius) {
+        return Math.atan(BODY_SIZE * 0.5F * (radius / 22.0F) / SKY_RADIUS) + 0.02D;
+    }
+
+    private static void renderEyeSuns(Matrix4f modelViewMatrix, Matrix4f projectionMatrix) {
+        for (float[] sun : EYE_SUNS) {
+            renderSunGlow(modelViewMatrix, projectionMatrix, sun[0], sun[1]);
+            renderSunBody(modelViewMatrix, projectionMatrix, sun[0], sun[1], sun[2]);
+        }
+    }
+
+    private static void renderSunGlow(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, float orbitDegrees, float yawDegrees) {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableCull();
@@ -198,16 +266,9 @@ public final class ThoraxisUndersideSkyRenderer {
         modelViewStack.rotateZ((float) Math.toRadians(yawDegrees));
         RenderSystem.applyModelViewMatrix();
 
-        float red = ((rgb >> 16) & 0xFF) / 255.0F;
-        float green = ((rgb >> 8) & 0xFF) / 255.0F;
-        float blue = (rgb & 0xFF) / 255.0F;
-        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
-        buffer.addVertex(0.0F, SKY_RADIUS, 0.0F).setColor(red, green, blue, 0.55F);
-        for (int i = 0; i <= 24; i++) {
-            float angle = i * Mth.TWO_PI / 24.0F;
-            buffer.addVertex(Mth.sin(angle) * glowRadius, SKY_RADIUS, Mth.cos(angle) * glowRadius).setColor(red, green, blue, 0.0F);
-        }
-        BufferUploader.drawWithShader(buffer.buildOrThrow());
+        drawGlowBand(0.0F, SUN_GLOW_CENTER_ALPHA, SUN_GLOW_PEAK_RADIUS, SUN_GLOW_PEAK_ALPHA);
+        drawGlowBand(SUN_GLOW_PEAK_RADIUS, SUN_GLOW_PEAK_ALPHA, SUN_GLOW_KNEE_RADIUS, SUN_GLOW_KNEE_ALPHA);
+        drawGlowBand(SUN_GLOW_KNEE_RADIUS, SUN_GLOW_KNEE_ALPHA, SUN_GLOW_RADIUS, 0.0F);
 
         modelViewStack.popMatrix();
         RenderSystem.applyModelViewMatrix();
@@ -216,18 +277,19 @@ public final class ThoraxisUndersideSkyRenderer {
         RenderSystem.disableBlend();
     }
 
-    private static void renderTexturedBody(
-            Matrix4f modelViewMatrix,
-            Matrix4f projectionMatrix,
-            float orbitDegrees,
-            float yawDegrees,
-            float radius,
-            int rgb,
-            ResourceLocation texture,
-            boolean usePhaseSheet,
-            int phaseIndex,
-            float selfRotationDegrees
-    ) {
+    private static void drawGlowBand(float fromRadius, float fromAlpha, float toRadius, float toAlpha) {
+        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+        for (int i = 0; i <= 32; i++) {
+            float angle = i * Mth.TWO_PI / 32.0F;
+            float sin = Mth.sin(angle);
+            float cos = Mth.cos(angle);
+            buffer.addVertex(sin * fromRadius, SKY_RADIUS, cos * fromRadius).setColor(SUN_GLOW_RED, SUN_GLOW_GREEN, SUN_GLOW_BLUE, fromAlpha);
+            buffer.addVertex(sin * toRadius, SKY_RADIUS, cos * toRadius).setColor(SUN_GLOW_RED, SUN_GLOW_GREEN, SUN_GLOW_BLUE, toAlpha);
+        }
+        BufferUploader.drawWithShader(buffer.buildOrThrow());
+    }
+
+    private static void renderSunBody(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, float orbitDegrees, float yawDegrees, float selfRotationDegrees) {
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(
                 GlStateManager.SourceFactor.ONE,
@@ -236,9 +298,9 @@ public final class ThoraxisUndersideSkyRenderer {
                 GlStateManager.DestFactor.ZERO
         );
         RenderSystem.disableCull();
-        RenderSystem.setShaderColor(((rgb >> 16) & 0xFF) / 255.0F, ((rgb >> 8) & 0xFF) / 255.0F, (rgb & 0xFF) / 255.0F, 1.0F);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, texture);
+        RenderSystem.setShaderTexture(0, SUN_TEXTURE);
         RenderSystem.backupProjectionMatrix();
         RenderSystem.setProjectionMatrix(projectionMatrix, VertexSorting.DISTANCE_TO_ORIGIN);
 
@@ -250,31 +312,17 @@ public final class ThoraxisUndersideSkyRenderer {
         modelViewStack.rotateY((float) Math.toRadians(selfRotationDegrees));
         RenderSystem.applyModelViewMatrix();
 
-        float halfSize = BODY_SIZE * 0.5F * (radius / 22.0F);
-        float minU = 0.0F;
-        float maxU = 1.0F;
-        float minV = 0.0F;
-        float maxV = 1.0F;
-        if (usePhaseSheet) {
-            int phaseX = phaseIndex % 4;
-            int phaseY = phaseIndex / 4;
-            minU = phaseX / 4.0F;
-            maxU = (phaseX + 1) / 4.0F;
-            minV = phaseY / 2.0F;
-            maxV = (phaseY + 1) / 2.0F;
-        }
-
+        float halfSize = BODY_SIZE * 0.5F * (SUN_RADIUS / 22.0F);
         BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        buffer.addVertex(-halfSize, SKY_RADIUS, -halfSize).setUv(minU, minV);
-        buffer.addVertex(-halfSize, SKY_RADIUS, halfSize).setUv(minU, maxV);
-        buffer.addVertex(halfSize, SKY_RADIUS, halfSize).setUv(maxU, maxV);
-        buffer.addVertex(halfSize, SKY_RADIUS, -halfSize).setUv(maxU, minV);
+        buffer.addVertex(-halfSize, SKY_RADIUS, -halfSize).setUv(0.0F, 0.0F);
+        buffer.addVertex(-halfSize, SKY_RADIUS, halfSize).setUv(0.0F, 1.0F);
+        buffer.addVertex(halfSize, SKY_RADIUS, halfSize).setUv(1.0F, 1.0F);
+        buffer.addVertex(halfSize, SKY_RADIUS, -halfSize).setUv(1.0F, 0.0F);
         BufferUploader.drawWithShader(buffer.buildOrThrow());
 
         modelViewStack.popMatrix();
         RenderSystem.applyModelViewMatrix();
         RenderSystem.restoreProjectionMatrix();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableCull();
         RenderSystem.disableBlend();

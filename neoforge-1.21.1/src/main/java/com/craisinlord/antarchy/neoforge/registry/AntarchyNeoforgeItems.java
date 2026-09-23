@@ -736,7 +736,7 @@ public final class AntarchyNeoforgeItems {
             () -> new BloodGodsBladeItem(
                     ULTIMATE_TIER,
                     new Item.Properties().stacksTo(1).durability(4096).rarity(Rarity.EPIC).fireResistant(),
-                    80,
+                    24,
                     -2.4F
             ));
     public static final DeferredItem<MantisClawItem> MANTIS_CLAW = ITEMS.register("mantis_claw",
