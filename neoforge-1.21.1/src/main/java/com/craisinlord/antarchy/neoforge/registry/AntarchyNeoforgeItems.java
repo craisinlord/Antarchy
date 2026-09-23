@@ -697,6 +697,8 @@ public final class AntarchyNeoforgeItems {
             () -> new com.craisinlord.antarchy.content.item.CloudBucketItem(AntarchyNeoforgeBlocks.CLOUD_BLOCK.get(), new Item.Properties().craftRemainder(Items.BUCKET)));
     public static final DeferredItem<BloodCrystalShardItem> BLOOD_CRYSTAL_SHARD = ITEMS.register("blood_crystal_shard",
             () -> new BloodCrystalShardItem(new Item.Properties()));
+    public static final DeferredItem<TemporalTunerItem> TEMPORAL_TUNER = ITEMS.register("temporal_tuner",
+            () -> new TemporalTunerItem(new Item.Properties().rarity(Rarity.RARE).fireResistant()));
     public static final DeferredItem<Item> BLOOD_CRYSTAL_APPLE = ITEMS.register("blood_crystal_apple",
             () -> new BloodCrystalAppleItem(new Item.Properties()
                     .rarity(Rarity.RARE)
@@ -729,6 +731,13 @@ public final class AntarchyNeoforgeItems {
                     new Item.Properties().stacksTo(1).durability(1200).rarity(Rarity.RARE),
                     AntarchySettings.bloodCrystalKatanaAttackDamage(),
                     -2.2F
+            ));
+    public static final DeferredItem<BloodGodsBladeItem> BLOOD_GODS_BLADE = ITEMS.register("blood_gods_blade",
+            () -> new BloodGodsBladeItem(
+                    ULTIMATE_TIER,
+                    new Item.Properties().stacksTo(1).durability(4096).rarity(Rarity.EPIC).fireResistant(),
+                    80,
+                    -2.4F
             ));
     public static final DeferredItem<MantisClawItem> MANTIS_CLAW = ITEMS.register("mantis_claw",
             () -> new MantisClawItem(Tiers.IRON, new Item.Properties().stacksTo(1).durability(50).rarity(Rarity.UNCOMMON)));
@@ -993,6 +1002,8 @@ public final class AntarchyNeoforgeItems {
 
     public static final DeferredItem<RoyalGuardianSwordItem> ROYAL_GUARDIAN_SWORD = ITEMS.register("royal_guardian_sword",
             () -> new RoyalGuardianSwordItem(ROYAL_GUARDIAN_TIER, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
+    public static final DeferredItem<GiantFryingPanItem> GIANT_FRYING_PAN = ITEMS.register("giant_frying_pan",
+            () -> new GiantFryingPanItem(ROYAL_GUARDIAN_TIER, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
     public static final DeferredItem<RoyalAssailantBattleAxeItem> ROYAL_ASSAILANT_BATTLEAXE = ITEMS.register("royal_assailant_battleaxe",
             () -> new RoyalAssailantBattleAxeItem(ROYAL_ASSAILANT_TIER, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
     public static final DeferredItem<RoyalGuardianShieldItem> ROYAL_GUARDIAN_SHIELD = ITEMS.register("royal_guardian_shield",

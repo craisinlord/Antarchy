@@ -12,6 +12,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.player.Player;
+import com.craisinlord.antarchy.content.item.TemporalTunerItem;
 import com.craisinlord.antarchy.content.effect.DilatedMobEffect;
 import com.craisinlord.antarchy.content.effect.ContractedMobEffect;
 import com.craisinlord.antarchy.content.effect.RoyalEffectEligibility;
@@ -35,6 +37,9 @@ public final class TimeDilationManager {
                 }
             }
             TrackingState tracking = TRACKING.get(level);
+            for (ServerPlayer player : level.players()) {
+                trackPotentiallyAffected(player);
+            }
             if (activeFields == null && (tracking == null || tracking.entities.isEmpty())) {
                 continue;
             }
@@ -64,13 +69,15 @@ public final class TimeDilationManager {
         if (!(entity.level() instanceof ServerLevel level) || entity instanceof TimeDilationFieldEntity) {
             return;
         }
+        boolean hasTuner = entity instanceof Player player && TemporalTunerItem.isAvailable(player);
+        boolean hasEffect = entity instanceof net.minecraft.world.entity.LivingEntity living
+                && ((RoyalEffectHooks.dilatedHolder() != null && living.hasEffect(RoyalEffectHooks.dilatedHolder()))
+                || (RoyalEffectHooks.contractedHolder() != null && living.hasEffect(RoyalEffectHooks.contractedHolder())));
         if (entity instanceof TimeDilationEntityAccess access
                 && Math.abs(access.antarchy$getTimeDilationRate() - TimeDilationMath.NORMAL_RATE) < 0.001D
                 && Math.abs(access.antarchy$getInheritedTimeDilationRate() - TimeDilationMath.NORMAL_RATE) < 0.001D
                 && Math.abs(TimeDilationApi.getVehicleRate(entity) - TimeDilationMath.NORMAL_RATE) < 0.001D
-                && (!(entity instanceof net.minecraft.world.entity.LivingEntity living)
-                || ((RoyalEffectHooks.dilatedHolder() == null || !living.hasEffect(RoyalEffectHooks.dilatedHolder()))
-                && (RoyalEffectHooks.contractedHolder() == null || !living.hasEffect(RoyalEffectHooks.contractedHolder()))))) {
+                && !hasTuner && !hasEffect) {
             return;
         }
         TRACKING.computeIfAbsent(level, ignored -> new TrackingState()).entities.add(entity);
@@ -165,6 +172,15 @@ public final class TimeDilationManager {
                     effectRate = Math.max(effectRate, ContractedMobEffect.rateForAmplifier(effect.getAmplifier()));
                 }
             }
+            double tunerRate = TimeDilationMath.NORMAL_RATE;
+            if (entity instanceof Player player && player instanceof TemporalTunerAccess tunerAccess) {
+                if (TemporalTunerItem.isAvailable(player)) {
+                    tunerRate = TemporalTunerItem.getRate(player);
+                } else {
+                    tunerAccess.antarchy$setTemporalTunerRate(TimeDilationMath.NORMAL_RATE);
+                    TemporalTunerItem.syncTooltipRate(player, TimeDilationMath.NORMAL_RATE);
+                }
+            }
             double inheritedRate = access.antarchy$getInheritedTimeDilationRate();
             double vehicleRate = TimeDilationApi.getVehicleRate(entity);
             if (vehicleRate < TimeDilationMath.NORMAL_RATE) {
@@ -189,6 +205,11 @@ public final class TimeDilationManager {
                 slowRate = Math.min(slowRate, effectRate);
             } else {
                 fastRate = Math.max(fastRate, effectRate);
+            }
+            if (tunerRate < TimeDilationMath.NORMAL_RATE) {
+                slowRate = Math.min(slowRate, tunerRate);
+            } else {
+                fastRate = Math.max(fastRate, tunerRate);
             }
             if (inheritedRate < TimeDilationMath.NORMAL_RATE) {
                 slowRate = Math.min(slowRate, inheritedRate);

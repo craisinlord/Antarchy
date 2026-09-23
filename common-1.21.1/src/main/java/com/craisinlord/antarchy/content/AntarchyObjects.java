@@ -210,6 +210,8 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<MenuType<com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu>> ROYAL_JUDGMENT_MENU = (Supplier<MenuType<com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu>>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<MenuType<com.craisinlord.antarchy.content.menu.GiantFryingPanMenu>> GIANT_FRYING_PAN_MENU = (Supplier<MenuType<com.craisinlord.antarchy.content.menu.GiantFryingPanMenu>>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<net.minecraft.world.item.Item> CHEEP_ITEM = (Supplier<net.minecraft.world.item.Item>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> DUPLICATOR_LOG = (Supplier<Block>) UNBOUND;
@@ -320,6 +322,10 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<Holder<MobEffect>> GLIMMERING_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
     public static Supplier<Holder<MobEffect>> ROYAL_VITALITY_PENALTY_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Holder<MobEffect>> BLEEDING_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Holder<MobEffect>> BLOOD_MOON_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Fluid> LUMEN = (Supplier<Fluid>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -824,6 +830,14 @@ public final class AntarchyObjects {
         ROYAL_VITALITY_PENALTY_EFFECT = supplier;
     }
 
+    public static void setBleedingEffect(Supplier<Holder<MobEffect>> supplier) {
+        BLEEDING_EFFECT = supplier;
+    }
+
+    public static void setBloodMoonEffect(Supplier<Holder<MobEffect>> supplier) {
+        BLOOD_MOON_EFFECT = supplier;
+    }
+
     public static void setElka(Supplier<EntityType<com.craisinlord.antarchy.content.entity.ElkaEntity>> supplier) {
         ELKA = supplier;
     }
@@ -914,6 +928,10 @@ public final class AntarchyObjects {
 
     public static void setRoyalJudgmentMenu(Supplier<MenuType<com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu>> supplier) {
         ROYAL_JUDGMENT_MENU = supplier;
+    }
+
+    public static void setGiantFryingPanMenu(Supplier<MenuType<com.craisinlord.antarchy.content.menu.GiantFryingPanMenu>> supplier) {
+        GIANT_FRYING_PAN_MENU = supplier;
     }
 
     public static void setAmericanComponent(Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.util.Unit>> supplier) {

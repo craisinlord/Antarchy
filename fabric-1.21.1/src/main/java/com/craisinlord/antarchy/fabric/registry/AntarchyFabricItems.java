@@ -1044,6 +1044,9 @@ public final class AntarchyFabricItems {
                     AntarchySettings.bloodCrystalKatanaAttackDamage(),
                     -2.2F
             ));
+    public static final DeferredItem<BloodGodsBladeItem> BLOOD_GODS_BLADE = ITEMS.register("blood_gods_blade",
+            () -> new BloodGodsBladeItem(ULTIMATE_TIER,
+                    new Item.Properties().stacksTo(1).durability(4096).rarity(Rarity.EPIC).fireResistant(), 80, -2.4F));
 
 
     public static final DeferredItem<MantisClawItem> MANTIS_CLAW = ITEMS.register("mantis_claw",
@@ -1055,6 +1058,8 @@ public final class AntarchyFabricItems {
 
 
     public static final DeferredItem<Item> QUEEN_SCALE = ITEMS.registerSimpleItem("queen_scale", new Item.Properties().rarity(Rarity.RARE).fireResistant());
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.TemporalTunerItem> TEMPORAL_TUNER = ITEMS.register("temporal_tuner",
+            () -> new com.craisinlord.antarchy.content.item.TemporalTunerItem(new Item.Properties().rarity(Rarity.RARE).fireResistant()));
 
 
     public static final DeferredItem<Item> CHITIN = ITEMS.registerSimpleItem("chitin", new Item.Properties().rarity(Rarity.UNCOMMON));
@@ -1509,6 +1514,9 @@ public final class AntarchyFabricItems {
 
     public static final DeferredItem<RoyalGuardianSwordItem> ROYAL_GUARDIAN_SWORD = ITEMS.register("royal_guardian_sword",
             () -> new RoyalGuardianSwordItem(ROYAL_GUARDIAN_TIER,
+                    new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
+    public static final DeferredItem<GiantFryingPanItem> GIANT_FRYING_PAN = ITEMS.register("giant_frying_pan",
+            () -> new GiantFryingPanItem(ROYAL_GUARDIAN_TIER,
                     new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
     public static final DeferredItem<RoyalAssailantBattleAxeItem> ROYAL_ASSAILANT_BATTLEAXE = ITEMS.register("royal_assailant_battleaxe",
             () -> new RoyalAssailantBattleAxeItem(ROYAL_ASSAILANT_TIER,

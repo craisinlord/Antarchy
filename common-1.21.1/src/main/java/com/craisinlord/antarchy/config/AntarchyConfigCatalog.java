@@ -156,6 +156,7 @@ public final class AntarchyConfigCatalog {
     private static boolean isToolSetting(String name) {
         return name.equals("sizeChangingRaysEnabled")
                 || name.startsWith("sizeRay")
+                || name.startsWith("temporalTuner")
                 || name.equals("shrinkingPotionDelta")
                 || name.equals("growthPotionDelta")
                 || name.startsWith("ultimate")

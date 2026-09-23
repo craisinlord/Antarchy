@@ -18,7 +18,7 @@ public abstract class LivingEntityTimeDilationMixin {
     private void antarchy$trackTemporalEffects(CallbackInfo ci) {
         Entity entity = (Entity) (Object) this;
         TimeDilationManager.trackPotentiallyAffected(entity);
-        if (entity.level().isClientSide && RoyalEffectHooks.contractedHolder() != null) {
+        if (entity.level().isClientSide) {
             ContractionAfterimages.observe((LivingEntity) entity);
         }
     }

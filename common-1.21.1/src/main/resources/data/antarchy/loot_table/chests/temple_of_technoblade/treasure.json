@@ -126,6 +126,11 @@
         },
         {
           "type": "minecraft:item",
+          "name": "antarchy:blood_gods_blade",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
           "name": "antos:floppy_disk",
           "weight": 5,
           "functions": [

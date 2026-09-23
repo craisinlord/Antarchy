@@ -91,6 +91,7 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.DoubleValue ROYAL_ASSAILANT_LEGGINGS_DOUBLE_DAMAGE_CHANCE;
     private static final ModConfigSpec.DoubleValue ROYAL_ASSAILANT_BOOTS_DOUBLE_DAMAGE_CHANCE;
     private static final ModConfigSpec.DoubleValue ROYAL_GUARDIAN_SWORD_ATTACK_DAMAGE;
+    private static final ModConfigSpec.DoubleValue GIANT_FRYING_PAN_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue ROYAL_GUARDIAN_SWORD_ATTACK_SPEED;
     private static final ModConfigSpec.IntValue ROYAL_GUARDIAN_SWORD_ELEMENTAL_COOLDOWN_TICKS, ROYAL_GUARDIAN_SWORD_STORM_MAX_JUMPS;
     private static final ModConfigSpec.DoubleValue ROYAL_GUARDIAN_SWORD_FIRE_PRIMARY_DAMAGE, ROYAL_GUARDIAN_SWORD_FIRE_SPLASH_DAMAGE,
@@ -390,6 +391,7 @@ public final class AntarchyToolsConfig {
         ROYAL_ASSAILANT_LEGGINGS_DOUBLE_DAMAGE_CHANCE = b.defineInRange("assailantLeggingsDoubleDamageChance", 0.07D, 0.0D, 1.0D);
         ROYAL_ASSAILANT_BOOTS_DOUBLE_DAMAGE_CHANCE = b.defineInRange("assailantBootsDoubleDamageChance", 0.05D, 0.0D, 1.0D);
         ROYAL_GUARDIAN_SWORD_ATTACK_DAMAGE = b.defineInRange("guardianSwordAttackDamage", 111.0D, 0.0D, 4096.0D);
+        GIANT_FRYING_PAN_ATTACK_DAMAGE = b.defineInRange("giantFryingPanAttackDamage", 80.0D, 0.0D, 4096.0D);
         ROYAL_GUARDIAN_SWORD_ATTACK_SPEED = b.defineInRange("guardianSwordAttackSpeed", -2.5D, -10.0D, 10.0D);
         ROYAL_GUARDIAN_SWORD_ELEMENTAL_COOLDOWN_TICKS = b.defineInRange("guardianSwordElementalCooldownTicks", 120, 0, 72000);
         ROYAL_GUARDIAN_SWORD_FIRE_PRIMARY_DAMAGE = b.defineInRange("guardianSwordFirePrimaryDamage", 22.0D, 0.0D, 4096.0D);
@@ -886,6 +888,7 @@ public final class AntarchyToolsConfig {
     static double royalAssailantLeggingsDoubleDamageChance() { return ROYAL_ASSAILANT_LEGGINGS_DOUBLE_DAMAGE_CHANCE.get(); }
     static double royalAssailantBootsDoubleDamageChance() { return ROYAL_ASSAILANT_BOOTS_DOUBLE_DAMAGE_CHANCE.get(); }
     static double royalGuardianSwordAttackDamage() { return ROYAL_GUARDIAN_SWORD_ATTACK_DAMAGE.get(); }
+    static double giantFryingPanAttackDamage() { return GIANT_FRYING_PAN_ATTACK_DAMAGE.get(); }
     static double royalGuardianSwordAttackSpeed() { return ROYAL_GUARDIAN_SWORD_ATTACK_SPEED.get(); }
     static int royalGuardianSwordElementalCooldownTicks() { return ROYAL_GUARDIAN_SWORD_ELEMENTAL_COOLDOWN_TICKS.get(); }
     static double royalGuardianSwordFirePrimaryDamage() { return ROYAL_GUARDIAN_SWORD_FIRE_PRIMARY_DAMAGE.get(); }

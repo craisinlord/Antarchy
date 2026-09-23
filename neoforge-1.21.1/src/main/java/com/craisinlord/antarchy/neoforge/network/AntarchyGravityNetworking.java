@@ -11,6 +11,8 @@ import com.craisinlord.antarchy.content.network.RoyalGuardianSwordModeCyclePaylo
 import com.craisinlord.antarchy.content.network.EyeOfStormPrimaryPayload;
 import com.craisinlord.antarchy.content.network.GravityGunPrimaryPayload;
 import com.craisinlord.antarchy.content.network.GravityGunScrollPayload;
+import com.craisinlord.antarchy.content.network.TemporalTunerScrollPayload;
+import com.craisinlord.antarchy.content.item.TemporalTunerItem;
 import com.craisinlord.antarchy.content.network.GravityStatePayload;
 import com.craisinlord.antarchy.content.network.ImpactShakePayload;
 import com.craisinlord.antarchy.content.network.PortalGunPrimaryPayload;
@@ -51,6 +53,10 @@ public final class AntarchyGravityNetworking {
                 GravityGunScrollPayload.TYPE,
                 GravityGunScrollPayload.STREAM_CODEC,
                 AntarchyGravityNetworking::handleGravityGunScroll
+        ).playToServer(
+                TemporalTunerScrollPayload.TYPE,
+                TemporalTunerScrollPayload.STREAM_CODEC,
+                AntarchyGravityNetworking::handleTemporalTunerScroll
         ).playToServer(
                 BigBerthaModeCyclePayload.TYPE,
                 BigBerthaModeCyclePayload.STREAM_CODEC,
@@ -155,6 +161,15 @@ public final class AntarchyGravityNetworking {
             }
 
             bigBerthaItem.tryCycleModeFromInput(serverPlayer.serverLevel(), serverPlayer, serverPlayer.getMainHandItem());
+        });
+    }
+
+    private static void handleTemporalTunerScroll(TemporalTunerScrollPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (context.player() instanceof ServerPlayer serverPlayer
+                    && TemporalTunerItem.isAvailable(serverPlayer)) {
+                TemporalTunerItem.adjust(serverPlayer, payload.delta());
+            }
         });
     }
 

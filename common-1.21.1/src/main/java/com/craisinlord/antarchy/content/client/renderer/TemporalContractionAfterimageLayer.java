@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.ContractionAfterimages;
-import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.Deque;
@@ -30,8 +29,7 @@ public final class TemporalContractionAfterimageLayer<T extends LivingEntity, M 
     public void render(PoseStack poseStack, MultiBufferSource buffer, int packedLight, T entity,
                        float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw,
                        float headPitch) {
-        if (entity.isSpectator() || entity.isInvisible() || RoyalEffectHooks.contractedHolder() == null
-                || !entity.hasEffect(RoyalEffectHooks.contractedHolder())) {
+        if (entity.isSpectator() || !ContractionAfterimages.isActive(entity)) {
             return;
         }
         Deque<ContractionAfterimages.Sample> samples = ContractionAfterimages.samples(entity);

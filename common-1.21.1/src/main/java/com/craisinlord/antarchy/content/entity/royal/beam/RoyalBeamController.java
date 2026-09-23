@@ -14,6 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.GameRules;
@@ -28,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 public final class RoyalBeamController {
     private static final int INITIAL_TRACKING_DELAY_TICKS = 8;
-    private final Mob owner;
+    private final LivingEntity owner;
     private Vec3 serverTarget;
     private Vec3 beamEndPosition;
     private int beamTicks;
@@ -39,8 +40,12 @@ public final class RoyalBeamController {
     private static final int ICE_MUTATIONS_PER_TICK = 3;
     private static final float ICE_IMPACT_RADIUS = 2.0F;
 
-    public RoyalBeamController(Mob owner) {
+    public RoyalBeamController(LivingEntity owner) {
         this.owner = owner;
+    }
+
+    public RoyalBeamController(Mob owner) {
+        this((LivingEntity) owner);
     }
 
     public boolean isFiring() {
@@ -164,7 +169,9 @@ public final class RoyalBeamController {
     ) {
         Vec3 direction = beamEnd.subtract(shootFrom).normalize();
         double distance = shootFrom.distanceTo(beamEnd);
-        DamageSource damageSource = this.owner.damageSources().mobAttack(this.owner);
+        DamageSource damageSource = this.owner instanceof Player player
+                ? player.damageSources().playerAttack(player)
+                : this.owner.damageSources().mobAttack(this.owner);
         this.damagedThisTick.clear();
         boolean pathMutates = terrainMode == RoyalBeamTerrainMode.DESTROY;
         for (double walked = settings.pathStep(); walked < Math.min(distance, settings.range()); walked += settings.pathStep()) {
@@ -224,7 +231,7 @@ public final class RoyalBeamController {
         for (LivingEntity living : entities) {
             if (living.is(this.owner)
                     || this.owner.isAlliedTo(living)
-                    || living.getType() == this.owner.getType()
+                    || !(this.owner instanceof Player) && living.getType() == this.owner.getType()
                     || this.owner instanceof RoyalBossEntity royalBoss && !royalBoss.canDamageWithRoyalAttack(living)
                     || living.distanceToSqr(center) > radius * radius
                     || damagedThisTick.contains(living.getId())

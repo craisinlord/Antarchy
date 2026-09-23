@@ -31,8 +31,16 @@ public final class ThoraxisUndersideSkyRenderer {
             Registries.DIMENSION,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "thoraxis")
     );
-    private static final ResourceLocation SUN_TEXTURE = ResourceLocation.withDefaultNamespace("textures/environment/sun.png");
+    private static final ResourceLocation SUN_TEXTURE = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/environment/eye_moon.png");
     private static final ResourceLocation MOON_TEXTURE = ResourceLocation.withDefaultNamespace("textures/environment/moon_phases.png");
+    private static final ResourceLocation[] EYE_STAR_TEXTURES = {
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/environment/eye_star1.png"),
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/environment/eye_star2.png"),
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/environment/eye_star3.png"),
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/environment/eye_star4.png"),
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/environment/eye_star5.png")
+    };
+    private static final float[] EYE_STAR_SCALES = {1.0F, 0.86F, 0.72F, 0.58F, 0.46F};
     private static final float SKY_RADIUS = 100.0F;
     private static final float BODY_SIZE = 32.0F;
     private static final float SKY_RED = 0.015F;
@@ -40,7 +48,7 @@ public final class ThoraxisUndersideSkyRenderer {
     private static final float SKY_BLUE = 0.035F;
 
     @org.jetbrains.annotations.Nullable
-    private static VertexBuffer redStarBuffer = null;
+    private static VertexBuffer[] eyeStarBuffers = null;
 
     private ThoraxisUndersideSkyRenderer() {
     }
@@ -73,37 +81,57 @@ public final class ThoraxisUndersideSkyRenderer {
 
         float timeOfDay = 0.72F + partialTick * 0.0F;
         renderCelestialBodies(poseStack.last().pose(), projectionMatrix, timeOfDay);
-        renderRedStars(poseStack.last().pose(), projectionMatrix);
+        renderEyeStars(poseStack.last().pose(), projectionMatrix);
 
         RenderSystem.depthMask(true);
     }
 
-    private static void renderRedStars(Matrix4f modelViewMatrix, Matrix4f projectionMatrix) {
-        if (redStarBuffer == null) {
-            redStarBuffer = buildRedStarBuffer();
+    private static void renderEyeStars(Matrix4f modelViewMatrix, Matrix4f projectionMatrix) {
+        if (eyeStarBuffers == null) {
+            eyeStarBuffers = buildEyeStarBuffers();
         }
 
         RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderColor(0.95F, 0.95F, 0.95F, 0.95F);
-        redStarBuffer.bind();
-        redStarBuffer.drawWithShader(modelViewMatrix, projectionMatrix, GameRenderer.getPositionColorShader());
-        VertexBuffer.unbind();
+        RenderSystem.blendFuncSeparate(
+                GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ONE,
+                GlStateManager.SourceFactor.ONE,
+                GlStateManager.DestFactor.ZERO
+        );
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 0.015F, 0.02F, 1.0F);
+        RenderSystem.backupProjectionMatrix();
+        RenderSystem.setProjectionMatrix(projectionMatrix, VertexSorting.DISTANCE_TO_ORIGIN);
+
+        for (int i = 0; i < eyeStarBuffers.length; i++) {
+            RenderSystem.setShaderTexture(0, EYE_STAR_TEXTURES[i]);
+            eyeStarBuffers[i].bind();
+            eyeStarBuffers[i].drawWithShader(modelViewMatrix, projectionMatrix, GameRenderer.getPositionTexShader());
+            VertexBuffer.unbind();
+        }
+        RenderSystem.restoreProjectionMatrix();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.defaultBlendFunc();
         RenderSystem.disableBlend();
     }
 
-    private static VertexBuffer buildRedStarBuffer() {
-        Random random = new Random(552031L);
-        BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+    private static VertexBuffer[] buildEyeStarBuffers() {
+        VertexBuffer[] buffers = new VertexBuffer[EYE_STAR_TEXTURES.length];
+        for (int textureIndex = 0; textureIndex < EYE_STAR_TEXTURES.length; textureIndex++) {
+            Random random = new Random(552031L);
+            BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
-        for (int i = 0; i < 1800; i++) {
-            double x = random.nextFloat() * 2.0F - 1.0F;
-            double y = random.nextFloat() * 2.0F - 1.0F;
-            double z = random.nextFloat() * 2.0F - 1.0F;
-            double size = 0.13F + random.nextFloat() * 0.12F;
-            double lenSq = x * x + y * y + z * z;
-            if (lenSq < 1.0D && lenSq > 0.01D) {
+            for (int i = 0; i < 1800; i++) {
+                double x = random.nextFloat() * 2.0F - 1.0F;
+                double y = random.nextFloat() * 2.0F - 1.0F;
+                double z = random.nextFloat() * 2.0F - 1.0F;
+                double size = (0.52F + random.nextFloat() * 0.36F) * EYE_STAR_SCALES[textureIndex];
+                double rot = random.nextDouble() * Math.PI * 2.0D;
+                double lenSq = x * x + y * y + z * z;
+                if (i % EYE_STAR_TEXTURES.length != textureIndex || lenSq >= 1.0D || lenSq <= 0.01D) {
+                    continue;
+                }
+
                 double len = 1.0D / Math.sqrt(lenSq);
                 x *= len;
                 y *= len;
@@ -117,12 +145,8 @@ public final class ThoraxisUndersideSkyRenderer {
                 double pitch = Math.atan2(Math.sqrt(x * x + z * z), y);
                 double sinPitch = Math.sin(pitch);
                 double cosPitch = Math.cos(pitch);
-                double rot = random.nextDouble() * Math.PI * 2.0D;
                 double sinRot = Math.sin(rot);
                 double cosRot = Math.cos(rot);
-                float red = 0.75F + random.nextFloat() * 0.25F;
-                float green = 0.02F + random.nextFloat() * 0.05F;
-                float blue = 0.04F + random.nextFloat() * 0.08F;
 
                 for (int j = 0; j < 4; j++) {
                     double u = (j & 2) - 1;
@@ -133,24 +157,26 @@ public final class ThoraxisUndersideSkyRenderer {
                     double qy = -px * cosPitch;
                     double rx = qy * sinYaw - py * cosYaw;
                     double ry = py * sinYaw + qy * cosYaw;
+                    float quadU = (j == 0 || j == 1) ? 0.0F : 1.0F;
+                    float quadV = (j == 0 || j == 3) ? 0.0F : 1.0F;
                     builder.addVertex((float) (sx + rx * size), (float) (sy + qx * size), (float) (sz + ry * size))
-                            .setColor(red, green, blue, 1.0F);
+                            .setUv(quadU, quadV);
                 }
             }
-        }
 
-        MeshData mesh = builder.buildOrThrow();
-        VertexBuffer buffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
-        buffer.bind();
-        buffer.upload(mesh);
-        VertexBuffer.unbind();
-        return buffer;
+            MeshData mesh = builder.buildOrThrow();
+            buffers[textureIndex] = new VertexBuffer(VertexBuffer.Usage.STATIC);
+            buffers[textureIndex].bind();
+            buffers[textureIndex].upload(mesh);
+            VertexBuffer.unbind();
+        }
+        return buffers;
     }
 
     private static void renderCelestialBodies(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, float timeOfDay) {
         float t = timeOfDay * 360.0F;
         renderBodyGlow(modelViewMatrix, projectionMatrix, t, -10.0F, 0xFF1F18, 86.0F);
-        renderTexturedBody(modelViewMatrix, projectionMatrix, t, -10.0F, 42.0F, 0xFF1F18, SUN_TEXTURE, false, 0, t * 0.6F);
+        renderTexturedBody(modelViewMatrix, projectionMatrix, t, -10.0F, 42.0F, 0xFF1F18, SUN_TEXTURE, false, 0, t * 0.6F + 90.0F);
 
         float moonOrbit = t + 180.0F;
         renderBodyGlow(modelViewMatrix, projectionMatrix, moonOrbit, 24.0F, 0x8F30FF, 76.0F);

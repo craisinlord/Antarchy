@@ -3,10 +3,15 @@ package com.craisinlord.antarchy.content.client.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 
 public final class RoyalIndicatorRenderer {
+    private static final ResourceLocation COMMANDED_CROWN_TEXTURE = ResourceLocation.fromNamespaceAndPath(
+            com.craisinlord.antarchy.Antarchy.MODID, "textures/vfx/commanded_vfx_side.png");
+
     private RoyalIndicatorRenderer() {
     }
 
@@ -25,7 +30,7 @@ public final class RoyalIndicatorRenderer {
 
         if (commanded) {
             ring(lines, pose, radius, spin, 0.95F, 0.63F, 0.10F, 0.95F, 36);
-            crownPoints(lines, pose, radius, spin, 1.0F, 0.80F, 0.22F, 0.95F);
+            crownTexture(poseStack, buffers, LightTexture.FULL_BRIGHT, radius, spin);
         }
         if (judged) {
             float markY = commanded ? -0.13F : 0.08F;
@@ -48,23 +53,38 @@ public final class RoyalIndicatorRenderer {
         }
     }
 
-    private static void crownPoints(VertexConsumer out, PoseStack.Pose pose, float radius, float rotation,
-            float r, float g, float b, float a) {
-        final int spikes = 5;
-        float innerRadius = radius * 0.72F;
-        for (int i = 0; i < spikes; i++) {
-            double outerAngle = rotation + Math.PI * 2.0D * i / spikes;
-            double innerAngle = rotation + Math.PI * 2.0D * (i + 0.5D) / spikes;
-            float outerX = (float) Math.cos(outerAngle) * radius;
-            float outerZ = (float) Math.sin(outerAngle) * radius;
-            float innerX = (float) Math.cos(innerAngle) * innerRadius;
-            float innerZ = (float) Math.sin(innerAngle) * innerRadius;
-            float nextOuterX = (float) Math.cos(rotation + Math.PI * 2.0D * (i + 1) / spikes) * radius;
-            float nextOuterZ = (float) Math.sin(rotation + Math.PI * 2.0D * (i + 1) / spikes) * radius;
-            line(out, pose, outerX, 0.0F, outerZ, innerX, 0.34F, innerZ, r, g, b, a);
-            line(out, pose, innerX, 0.34F, innerZ, nextOuterX, 0.0F, nextOuterZ, r, g, b, a);
-            line(out, pose, outerX, 0.0F, outerZ, nextOuterX, 0.0F, nextOuterZ, r, g, b, a);
+    private static void crownTexture(PoseStack poseStack, MultiBufferSource buffers, int packedLight,
+            float radius, float rotation) {
+        VertexConsumer crown = buffers.getBuffer(RenderType.entityTranslucentEmissive(COMMANDED_CROWN_TEXTURE));
+        float halfWidth = radius * 0.78F;
+        float bottom = 0.02F;
+        float top = 0.40F;
+
+        poseStack.pushPose();
+        poseStack.mulPose(com.mojang.math.Axis.YP.rotation(rotation));
+        for (int side = 0; side < 4; side++) {
+            poseStack.pushPose();
+            poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(side * 90.0F));
+            PoseStack.Pose pose = poseStack.last();
+            quad(crown, pose, -halfWidth, bottom, halfWidth, top, halfWidth, packedLight);
+            poseStack.popPose();
         }
+        poseStack.popPose();
+    }
+
+    private static void quad(VertexConsumer out, PoseStack.Pose pose, float left, float bottom,
+            float right, float top, float depth, int packedLight) {
+        out.addVertex(pose, left, bottom, depth).setUv(0.0F, 1.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, 1.0F);
+        out.addVertex(pose, right, bottom, depth).setUv(1.0F, 1.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, 1.0F);
+        out.addVertex(pose, right, top, depth).setUv(1.0F, 0.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, 1.0F);
+        out.addVertex(pose, left, top, depth).setUv(0.0F, 0.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, 1.0F);
+
+        // Emit the reverse winding as well. The crown is viewed from every angle, and
+        // a single-sided quad can vanish when the renderer's culling state rejects it.
+        out.addVertex(pose, left, top, depth).setUv(0.0F, 0.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, -1.0F);
+        out.addVertex(pose, right, top, depth).setUv(1.0F, 0.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, -1.0F);
+        out.addVertex(pose, right, bottom, depth).setUv(1.0F, 1.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, -1.0F);
+        out.addVertex(pose, left, bottom, depth).setUv(0.0F, 1.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, -1.0F);
     }
 
     private static void brackets(VertexConsumer out, PoseStack.Pose pose, float radius, float rotation) {

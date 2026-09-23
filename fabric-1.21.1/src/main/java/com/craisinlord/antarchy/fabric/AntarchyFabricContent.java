@@ -397,6 +397,8 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setSpiritApple(() -> AntarchyFabricItems.SPIRIT_APPLE.get());
         AntarchyObjects.setGlimmeringEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.GLIMMERING));
         AntarchyObjects.setRoyalVitalityPenaltyEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.ROYAL_VITALITY_PENALTY));
+        AntarchyObjects.setBleedingEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.BLEEDING));
+        AntarchyObjects.setBloodMoonEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.BLOOD_MOON));
         AntarchyObjects.setElka(AntarchyFabricEntities.ELKA);
         AntarchyObjects.setPeach(() -> AntarchyFabricItems.PEACH.get());
         AntarchyObjects.setCorn(() -> AntarchyFabricItems.CORN.get());
@@ -423,6 +425,7 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setLucidBoltImpactLarge(() -> AntarchyFabricMisc.LUCID_BOLT_IMPACT_LARGE.get());
         AntarchyObjects.setDorrieInventoryMenu(AntarchyFabricMisc.DORRIE_INVENTORY_MENU);
         AntarchyObjects.setRoyalJudgmentMenu(AntarchyFabricMisc.ROYAL_JUDGMENT_MENU);
+        AntarchyObjects.setGiantFryingPanMenu(AntarchyFabricMisc.GIANT_FRYING_PAN_MENU);
         AntarchyObjects.setCritterCage(() -> AntarchyFabricItems.CRITTER_CAGE.get());
         AntarchyObjects.setCritterCageBlock(() -> AntarchyFabricBlocks.CRITTER_CAGE_BLOCK.get());
         AntarchyObjects.setLucidAnchor(() -> AntarchyFabricBlocks.LUCID_ANCHOR.get());

@@ -30,6 +30,8 @@ public final class AntarchySettings {
     private static double sizeRayMinScale = 0.1D;
     private static double sizeRayMaxScale = 10.0D;
     private static double sizeRayDeltaPerHit = 0.25D;
+    private static double temporalTunerMinRate = 0.1D;
+    private static double temporalTunerMaxRate = 3.0D;
     private static double shrinkingPotionDelta = 0.3D;
     private static double growthPotionDelta = 0.5D;
     private static double antDanceRadius = 5.0D;
@@ -229,6 +231,7 @@ public final class AntarchySettings {
     private static double royalAssailantLeggingsDoubleDamageChance = 0.07D;
     private static double royalAssailantBootsDoubleDamageChance = 0.05D;
     private static double royalGuardianSwordAttackDamage = 111.0D;
+    private static double giantFryingPanAttackDamage = 80.0D;
     private static double royalGuardianSwordAttackSpeed = -2.5D;
     private static int royalGuardianSwordElementalCooldownTicks = 120;
     private static double royalGuardianSwordFirePrimaryDamage = 22.0D;
@@ -756,6 +759,14 @@ public final class AntarchySettings {
 
     public static double sizeRayDeltaPerHit() {
         return sizeRayDeltaPerHit;
+    }
+
+    public static double temporalTunerMinRate() {
+        return temporalTunerMinRate;
+    }
+
+    public static double temporalTunerMaxRate() {
+        return temporalTunerMaxRate;
     }
 
     public static double shrinkingPotionDelta() {
@@ -1383,6 +1394,14 @@ public final class AntarchySettings {
 
     public static void setSizeRayDeltaPerHit(double value) {
         sizeRayDeltaPerHit = value;
+    }
+
+    public static void setTemporalTunerMinRate(double value) {
+        temporalTunerMinRate = value;
+    }
+
+    public static void setTemporalTunerMaxRate(double value) {
+        temporalTunerMaxRate = value;
     }
 
     public static void setShrinkingPotionDelta(double value) {
@@ -2041,6 +2060,8 @@ public final class AntarchySettings {
 
     public static double royalGuardianSwordAttackDamage() { return royalGuardianSwordAttackDamage; }
     public static void setRoyalGuardianSwordAttackDamage(double v) { royalGuardianSwordAttackDamage = v; }
+    public static double giantFryingPanAttackDamage() { return giantFryingPanAttackDamage; }
+    public static void setGiantFryingPanAttackDamage(double v) { giantFryingPanAttackDamage = v; }
 
     public static double royalGuardianSwordAttackSpeed() { return royalGuardianSwordAttackSpeed; }
     public static void setRoyalGuardianSwordAttackSpeed(double v) { royalGuardianSwordAttackSpeed = v; }

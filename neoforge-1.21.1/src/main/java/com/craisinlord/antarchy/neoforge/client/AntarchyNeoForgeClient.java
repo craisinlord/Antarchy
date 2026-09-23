@@ -93,6 +93,8 @@ public final class AntarchyNeoForgeClient {
     private static final ResourceLocation ANTIWATER_FLOW = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/antiwater_flow");
     private static final ResourceLocation BILE_STILL = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/bile/bile_still");
     private static final ResourceLocation BILE_FLOW = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/bile/bile_flowing");
+    private static final ResourceLocation ICHOR_STILL = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/ichor/ichor_still");
+    private static final ResourceLocation ICHOR_FLOW = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/ichor/ichor_flowing");
     private AntarchyNeoForgeClient() {
     }
 
@@ -360,6 +362,7 @@ public final class AntarchyNeoForgeClient {
     public static void registerMenuScreens(RegisterMenuScreensEvent event) {
         event.register(AntarchyNeoforgeMisc.DORRIE_INVENTORY_MENU.get(), com.craisinlord.antarchy.content.client.screen.DorrieInventoryScreen::new);
         event.register(AntarchyNeoforgeMisc.ROYAL_JUDGMENT_MENU.get(), com.craisinlord.antarchy.content.client.screen.RoyalJudgmentScreen::new);
+        event.register(AntarchyNeoforgeMisc.GIANT_FRYING_PAN_MENU.get(), com.craisinlord.antarchy.content.client.screen.GiantFryingPanScreen::new);
     }
 
     @SubscribeEvent
@@ -465,12 +468,12 @@ public final class AntarchyNeoForgeClient {
         event.registerFluidType(new IClientFluidTypeExtensions() {
             @Override
             public ResourceLocation getStillTexture() {
-                return ANTIWATER_STILL;
+                return ICHOR_STILL;
             }
 
             @Override
             public ResourceLocation getFlowingTexture() {
-                return ANTIWATER_FLOW;
+                return ICHOR_FLOW;
             }
 
             @Override
@@ -612,6 +615,7 @@ public final class AntarchyNeoForgeClient {
         registerGeoItemExtension(event, AntarchyNeoforgeItems.BATTLE_AXE.get());
         registerGeoItemExtension(event, AntarchyNeoforgeItems.BIG_BERTHA.get());
         registerGeoItemExtension(event, AntarchyNeoforgeItems.ROYAL_GUARDIAN_SWORD.get());
+        registerGeoItemExtension(event, AntarchyNeoforgeItems.GIANT_FRYING_PAN.get());
     }
 
     @SubscribeEvent

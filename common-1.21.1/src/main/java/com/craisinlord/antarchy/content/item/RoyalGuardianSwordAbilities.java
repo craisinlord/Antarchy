@@ -78,10 +78,15 @@ public final class RoyalGuardianSwordAbilities {
                 || !(swordStack.getItem() instanceof RoyalGuardianSwordItem)
                 || !RoyalGuardianSwordItem.isDischargeReady(swordStack, level.getGameTime())) return;
 
-        switch (RoyalGuardianSwordItem.getMode(swordStack)) {
+        RoyalGuardianSwordItem.Mode mode = RoyalGuardianSwordItem.getMode(swordStack);
+        if (mode == RoyalGuardianSwordItem.Mode.NONE) return;
+
+        switch (mode) {
             case FIRE -> fireImpact(level, owner, primary);
             case FROST -> frostFan(level, owner, primary);
             case STORM -> chainLightning(level, owner, primary);
+            case NONE -> {
+            }
         }
         RoyalGuardianSwordItem.startDischargeCooldown(swordStack, level.getGameTime());
     }

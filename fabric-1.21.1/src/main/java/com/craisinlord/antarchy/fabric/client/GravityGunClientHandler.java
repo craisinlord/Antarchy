@@ -2,8 +2,10 @@ package com.craisinlord.antarchy.fabric.client;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
+import com.craisinlord.antarchy.content.item.TemporalTunerItem;
 import com.craisinlord.antarchy.content.network.GravityGunPrimaryPayload;
 import com.craisinlord.antarchy.content.network.GravityGunScrollPayload;
+import com.craisinlord.antarchy.content.network.TemporalTunerScrollPayload;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
@@ -42,7 +44,19 @@ public final class GravityGunClientHandler {
 
     public static boolean onScroll(double verticalAmount) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.level == null || mc.screen != null || !Screen.hasControlDown() || !AntarchySettings.gravityGunEnabled()) {
+        if (mc.player == null || mc.level == null || mc.screen != null) {
+            return false;
+        }
+
+        if (Screen.hasShiftDown() && TemporalTunerItem.isAvailable(mc.player)) {
+            double scrollAmount = Mth.clamp(verticalAmount, -1.0D, 1.0D);
+            if (Math.abs(scrollAmount) >= 1.0E-4D) {
+                ClientPlayNetworking.send(new TemporalTunerScrollPayload(scrollAmount * TemporalTunerItem.STEP));
+                return true;
+            }
+        }
+
+        if (!Screen.hasControlDown() || !AntarchySettings.gravityGunEnabled()) {
             return false;
         }
 

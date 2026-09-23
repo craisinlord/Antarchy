@@ -78,6 +78,7 @@ public final class UnderVaultBlockEntity extends BlockEntity {
     @Override
     protected void loadAdditional(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
         vaultData.loadCustomOnly(tag, registries);
+        vaultData.setConfig(createConfig());
     }
 
     @Override

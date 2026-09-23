@@ -2,8 +2,6 @@ package com.craisinlord.antarchy.fabric.network;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntities;
 
 import com.craisinlord.antarchy.content.entity.DiamondMinecartEntity;
-import com.craisinlord.antarchy.content.client.CameraShakeClientState;
-import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
 import com.craisinlord.antarchy.content.entity.multipart.MultipartEntityOwner;
 import com.craisinlord.antarchy.content.entity.multipart.MultipartFramework;
 import com.craisinlord.antarchy.content.entity.multipart.network.MultipartAttackPayload;
@@ -18,6 +16,7 @@ import com.craisinlord.antarchy.fabric.util.SpringyBootsFabricHelper;
 import com.craisinlord.antarchy.content.item.SpringyBootsItem;
 import com.craisinlord.antarchy.content.item.EyeOfTheStormItem;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
+import com.craisinlord.antarchy.content.item.TemporalTunerItem;
 import com.craisinlord.antarchy.content.item.PortalGunItem;
 import com.craisinlord.antarchy.content.item.TigerEyeArmorUtil;
 import com.craisinlord.antarchy.content.network.*;
@@ -93,6 +92,7 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playC2S().register(RoyalMountActionPayload.TYPE, RoyalMountActionPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(RoyalMountVerticalPayload.TYPE, RoyalMountVerticalPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(GravityGunScrollPayload.TYPE, GravityGunScrollPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(TemporalTunerScrollPayload.TYPE, TemporalTunerScrollPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(BigBerthaModeCyclePayload.TYPE, BigBerthaModeCyclePayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(com.craisinlord.antarchy.content.network.RoyalGuardianSwordModeCyclePayload.TYPE,
                 com.craisinlord.antarchy.content.network.RoyalGuardianSwordModeCyclePayload.STREAM_CODEC);
@@ -128,6 +128,8 @@ public final class AntarchyFabricNetworking {
                 context.server().execute(() -> handleRoyalMountVertical(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(GravityGunScrollPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleGravityGunScroll(context.player(), payload)));
+        ServerPlayNetworking.registerGlobalReceiver(TemporalTunerScrollPayload.TYPE, (payload, context) ->
+                context.server().execute(() -> handleTemporalTunerScroll(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(BigBerthaModeCyclePayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleBigBerthaModeCycle(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.RoyalGuardianSwordModeCyclePayload.TYPE,
@@ -300,6 +302,12 @@ public final class AntarchyFabricNetworking {
             return;
         }
         bigBerthaItem.tryCycleModeFromInput(player.serverLevel(), player, player.getMainHandItem());
+    }
+
+    private static void handleTemporalTunerScroll(ServerPlayer player, TemporalTunerScrollPayload payload) {
+        if (TemporalTunerItem.isAvailable(player)) {
+            TemporalTunerItem.adjust(player, payload.delta());
+        }
     }
 
     private static void handleRoyalGuardianSwordModeCycle(ServerPlayer player) {
@@ -486,19 +494,6 @@ public final class AntarchyFabricNetworking {
                 beetle.releaseMountedCharge(player);
             }
         }
-    }
-
-    public static void triggerHerculesBeetleImpactShake(int durationTicks) {
-        HerculesBeetleImpactShakeClientState.trigger(durationTicks);
-    }
-
-    public static void triggerImpactShake(ImpactShakePayload payload) {
-        CameraShakeClientState.triggerImpact(
-                new Vec3(payload.x(), payload.y(), payload.z()),
-                payload.intensity(),
-                payload.durationTicks(),
-                payload.radius()
-        );
     }
 
     private static void handleTigerEyeCamouflageToggle(ServerPlayer player) {

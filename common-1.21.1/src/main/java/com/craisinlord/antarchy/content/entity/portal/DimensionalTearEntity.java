@@ -93,6 +93,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
     private UUID staffOwnerId;
     private int staffManticoreCount;
     private boolean staffManticoreSpawned;
+    private boolean gauntletVisualOnly;
 
     public DimensionalTearEntity(EntityType<? extends DimensionalTearEntity> entityType, Level level) {
         super(entityType, level);
@@ -106,6 +107,12 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         tear.moveTo(pos.x, pos.y, pos.z, yaw, 0.0F);
         tear.lifetimeTicks = lifetimeTicks;
         tear.nextEventTicks = tear.randomEventDelay();
+        return tear;
+    }
+
+    public static DimensionalTearEntity createGauntletVisual(ServerLevel level, Vec3 pos, float yaw, int lifetimeTicks) {
+        DimensionalTearEntity tear = create(level, pos, yaw, lifetimeTicks);
+        tear.gauntletVisualOnly = true;
         return tear;
     }
 
@@ -161,7 +168,15 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
             this.setTearState(TearState.NORMAL);
         }
         if (this.ageTicks >= this.lifetimeTicks) {
-            this.removeLinkedPair();
+            if (this.gauntletVisualOnly) {
+                this.discard();
+            } else {
+                this.removeLinkedPair();
+            }
+            return;
+        }
+
+        if (this.gauntletVisualOnly) {
             return;
         }
 
@@ -500,6 +515,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         tag.putInt("EventTicks", this.eventTicks);
         tag.putInt("NextEventTicks", this.nextEventTicks);
         tag.putInt("PendingEvent", this.pendingEvent.ordinal());
+        tag.putBoolean("GauntletVisualOnly", this.gauntletVisualOnly);
         if (this.linkedTearId != null) {
             tag.putUUID("LinkedTearId", this.linkedTearId);
         }
@@ -522,6 +538,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         int event = tag.getInt("PendingEvent");
         TearState[] states = TearState.values();
         this.pendingEvent = event >= 0 && event < states.length ? states[event] : TearState.NORMAL;
+        this.gauntletVisualOnly = tag.getBoolean("GauntletVisualOnly");
         if (tag.hasUUID("LinkedTearId")) {
             this.linkedTearId = tag.getUUID("LinkedTearId");
         }

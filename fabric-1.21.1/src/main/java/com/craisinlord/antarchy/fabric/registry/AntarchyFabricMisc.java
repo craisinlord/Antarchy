@@ -27,6 +27,8 @@ import com.craisinlord.antarchy.content.worldgen.thoraxis.QueenHavocTrailFeature
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisIchorLakeFeature;
 import com.craisinlord.antarchy.fabric.content.fluid.AntiwaterFluid;
 import com.craisinlord.antarchy.content.effect.DreadMobEffect;
+import com.craisinlord.antarchy.content.effect.BleedingMobEffect;
+import com.craisinlord.antarchy.content.effect.BloodMoonMobEffect;
 import com.craisinlord.antarchy.content.effect.GoopedMobEffect;
 import com.craisinlord.antarchy.content.effect.GrowthMobEffect;
 import com.craisinlord.antarchy.content.effect.InvertedMobEffect;
@@ -207,6 +209,8 @@ public final class AntarchyFabricMisc {
             MENUS.register("dorrie_inventory", () -> new net.minecraft.world.inventory.MenuType<>(com.craisinlord.antarchy.content.menu.DorrieInventoryMenu::new, FeatureFlags.DEFAULT_FLAGS));
     public static final DeferredHolder<net.minecraft.world.inventory.MenuType<?>, net.minecraft.world.inventory.MenuType<com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu>> ROYAL_JUDGMENT_MENU =
             MENUS.register("royal_judgment", () -> new net.minecraft.world.inventory.MenuType<>(com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu::new, FeatureFlags.DEFAULT_FLAGS));
+    public static final DeferredHolder<net.minecraft.world.inventory.MenuType<?>, net.minecraft.world.inventory.MenuType<com.craisinlord.antarchy.content.menu.GiantFryingPanMenu>> GIANT_FRYING_PAN_MENU =
+            MENUS.register("giant_frying_pan", () -> new net.minecraft.world.inventory.MenuType<>(com.craisinlord.antarchy.content.menu.GiantFryingPanMenu::new, FeatureFlags.DEFAULT_FLAGS));
 
 
     public static final DeferredRegister<net.minecraft.core.component.DataComponentType<?>> DATA_COMPONENT_TYPES =
@@ -435,6 +439,8 @@ public final class AntarchyFabricMisc {
 
 
     public static final DeferredHolder<MobEffect, DreadMobEffect> DREAD = MOB_EFFECTS.register("dread", DreadMobEffect::new);
+    public static final DeferredHolder<MobEffect, BleedingMobEffect> BLEEDING = MOB_EFFECTS.register("bleeding", BleedingMobEffect::new);
+    public static final DeferredHolder<MobEffect, BloodMoonMobEffect> BLOOD_MOON = MOB_EFFECTS.register("blood_moon", BloodMoonMobEffect::new);
 
 
     public static final DeferredHolder<MobEffect, ParalyzedMobEffect> PARALYZED = MOB_EFFECTS.register("paralyzed", ParalyzedMobEffect::new);

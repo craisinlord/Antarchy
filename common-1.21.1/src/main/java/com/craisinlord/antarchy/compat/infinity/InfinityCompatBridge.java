@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.RandomSource;
 
 public interface InfinityCompatBridge {
@@ -23,6 +24,10 @@ public interface InfinityCompatBridge {
     }
 
     default InfinityWarpResult requestWarp(ServerPlayer player, ResourceLocation dimensionId) {
+        return InfinityWarpResult.REJECTED;
+    }
+
+    default InfinityWarpResult requestDimensionCreation(MinecraftServer server, ResourceLocation dimensionId) {
         return InfinityWarpResult.REJECTED;
     }
 

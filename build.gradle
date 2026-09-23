@@ -10,6 +10,19 @@ allprojects {
     group = rootProject.maven_group
 
     repositories {
+        // CurseForge Maven artifacts must be resolved from CurseMaven.  The
+        // Fabric repository does not proxy these coordinates reliably and can
+        // prevent Gradle from reaching the working repository.
+        maven {
+            name = "CurseMaven"
+            url = "https://www.cursemaven.com"
+            metadataSources {
+                artifact()
+            }
+            content {
+                includeGroupByRegex "curse\\.maven"
+            }
+        }
         maven { url "https://maven.fabricmc.net/" }
         maven { url "https://maven.neoforged.net/releases" }
         maven { url "https://maven.architectury.dev/" }
@@ -36,7 +49,6 @@ allprojects {
         maven { url "https://maven.shedaniel.me" }
         maven { url "https://maven.terraformersmc.com/releases/" }
         maven { url "https://jitpack.io" }
-        maven { url "https://www.cursemaven.com" }
         maven { url "https://api.modrinth.com/maven/" }
         maven { url "https://maven.blamejared.com" }
     }

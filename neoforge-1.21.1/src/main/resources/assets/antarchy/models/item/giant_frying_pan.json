@@ -1,0 +1,25 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "textures": {
+    "layer0": "antarchy:item/giant_frying_pan/giant_frying_pan_in_hand"
+  },
+  "base": {
+    "parent": "antarchy:item/giant_frying_pan_held"
+  },
+  "texture_size": [
+    128,
+    128
+  ],
+  "perspectives": {
+    "gui": {
+      "parent": "antarchy:item/giant_frying_pan_gui"
+    },
+    "ground": {
+      "parent": "antarchy:item/giant_frying_pan_gui"
+    },
+    "fixed": {
+      "parent": "antarchy:item/giant_frying_pan_gui"
+    }
+  }
+}

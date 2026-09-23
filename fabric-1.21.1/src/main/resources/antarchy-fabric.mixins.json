@@ -27,6 +27,7 @@
     "infinity.AmendmentRareOresMixin"
   ],
   "client": [
+    "client.SeparateLargeItemModelsMixin",
     "client.CameraShakeMixin",
     "client.BrutalflyElytraExperienceBarMixin",
     "client.BloodglassChatOrderMixin",

@@ -22,6 +22,16 @@ public record RoyalBeamSettings(
         boolean terrainEnabled,
         boolean requireLineOfSightForDamage
 ) {
+    public static RoyalBeamSettings gauntletPower() {
+        return new RoyalBeamSettings(64.0D, 0.0D, 2.0D, 18, 4, 50, 0.9F, 1.8F,
+                9.0F, 0.8F, 1, 64.0D, 0.8F, 1.8F, 6, 1.0F, 1.0F, 50.0F, true, false);
+    }
+
+    public static RoyalBeamSettings gauntletInfinity() {
+        return new RoyalBeamSettings(64.0D, 0.0D, 1.5D, 24, 4, 1200, 1.25F, 2.5F,
+                28.0F, 1.8F, 1, 64.0D, 1.0F, 2.0F, 0, 0.0F, 0.0F, 0.0F, false, false);
+    }
+
     public static RoyalBeamSettings tremorzillaLike(float damage, boolean terrainEnabled) {
         return new RoyalBeamSettings(
                 100.0D,

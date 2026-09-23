@@ -1,6 +1,8 @@
 package com.craisinlord.antarchy.content.client;
 
 import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
+import com.craisinlord.antarchy.content.item.TemporalTunerItem;
+import com.craisinlord.antarchy.content.time.TimeDilationApi;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
@@ -22,22 +24,19 @@ public final class ContractionAfterimages {
     }
 
     public static void tick(ClientLevel level) {
-        Holder<MobEffect> holder = RoyalEffectHooks.contractedHolder();
         int now = (int) (level.getGameTime() & 0x7fffffffL);
 
         Iterator<Map.Entry<LivingEntity, Deque<Sample>>> iterator = HISTORY.entrySet().iterator();
         while (iterator.hasNext()) {
             LivingEntity tracked = iterator.next().getKey();
-            if (tracked == null || holder == null || tracked.isRemoved() || !tracked.isAlive()
-                    || !tracked.hasEffect(holder)) {
+            if (tracked == null || tracked.isRemoved() || !tracked.isAlive() || !isActive(tracked)) {
                 iterator.remove();
             }
         }
     }
 
     public static void observe(LivingEntity living) {
-        Holder<MobEffect> holder = RoyalEffectHooks.contractedHolder();
-        if (holder == null || living.isInvisible() || !living.hasEffect(holder)) {
+        if (!isActive(living)) {
             return;
         }
         int now = (int) (living.level().getGameTime() & 0x7fffffffL);
@@ -50,6 +49,15 @@ public final class ContractionAfterimages {
 
     public static Deque<Sample> samples(LivingEntity entity) {
         return HISTORY.get(entity);
+    }
+
+    public static boolean isActive(LivingEntity living) {
+        Holder<MobEffect> holder = RoyalEffectHooks.contractedHolder();
+        boolean contracted = holder != null && living.hasEffect(holder);
+        boolean tuned = living instanceof net.minecraft.world.entity.player.Player player
+                && TemporalTunerItem.isAvailable(player)
+                && TimeDilationApi.getRate(living) > 1.0D;
+        return !living.isInvisible() && (contracted || tuned);
     }
 
     public static float fade(Sample sample, int now) {

@@ -107,6 +107,7 @@
                    "time.EntityDeltaMovementTimeDilationMixin",
                    "time.EntityMoveTimeDilationMixin",
                    "time.EntityTimeDilationStateMixin",
+                   "time.PlayerTemporalTunerMixin",
                    "time.EntityRotationTimeDilationMixin",
                    "time.EntityCrouchTimeDilationMixin",
                    "time.LivingEntityKnockbackTimeDilationMixin",

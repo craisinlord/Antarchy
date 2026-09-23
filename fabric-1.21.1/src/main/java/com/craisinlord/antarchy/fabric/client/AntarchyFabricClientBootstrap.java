@@ -70,6 +70,7 @@ public final class AntarchyFabricClientBootstrap {
         AntarchyKeyBindings.register();
         MenuScreens.register(AntarchyFabricMisc.DORRIE_INVENTORY_MENU.get(), com.craisinlord.antarchy.content.client.screen.DorrieInventoryScreen::new);
         MenuScreens.register(AntarchyFabricMisc.ROYAL_JUDGMENT_MENU.get(), com.craisinlord.antarchy.content.client.screen.RoyalJudgmentScreen::new);
+        MenuScreens.register(AntarchyFabricMisc.GIANT_FRYING_PAN_MENU.get(), com.craisinlord.antarchy.content.client.screen.GiantFryingPanScreen::new);
         registerRenderers();
         registerEntityLayers();
         registerColors();
@@ -275,8 +276,8 @@ public final class AntarchyFabricClientBootstrap {
                 AntarchyFabricMisc.ICHOR.get(),
                 AntarchyFabricMisc.FLOWING_ICHOR.get(),
                 new SimpleFluidRenderHandler(
-                        ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/bile/bile_still"),
-                        ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/bile/bile_flowing"),
+                        ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/ichor/ichor_still"),
+                        ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/ichor/ichor_flowing"),
                         ResourceLocation.withDefaultNamespace("block/water_overlay"),
                         0xFF3D0408
                 )

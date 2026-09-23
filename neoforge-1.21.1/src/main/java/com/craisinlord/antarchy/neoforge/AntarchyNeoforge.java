@@ -470,6 +470,8 @@ public class AntarchyNeoforge {
         AntarchyObjects.setSpiritApple(() -> AntarchyNeoforgeItems.SPIRIT_APPLE.get());
         AntarchyObjects.setGlimmeringEffect(() -> AntarchyNeoforgeMisc.GLIMMERING);
         AntarchyObjects.setRoyalVitalityPenaltyEffect(() -> AntarchyNeoforgeMisc.ROYAL_VITALITY_PENALTY);
+        AntarchyObjects.setBleedingEffect(() -> AntarchyNeoforgeMisc.BLEEDING);
+        AntarchyObjects.setBloodMoonEffect(() -> AntarchyNeoforgeMisc.BLOOD_MOON);
         AntarchyObjects.setElka(AntarchyNeoforgeEntites.ELKA);
         AntarchyObjects.setPeach(() -> AntarchyNeoforgeItems.PEACH.get());
         AntarchyObjects.setCorn(() -> AntarchyNeoforgeItems.CORN.get());
@@ -495,6 +497,7 @@ public class AntarchyNeoforge {
         AntarchyObjects.setLucidBoltImpactLarge(() -> AntarchyNeoforgeMisc.LUCID_BOLT_IMPACT_LARGE.get());
         AntarchyObjects.setDorrieInventoryMenu(AntarchyNeoforgeMisc.DORRIE_INVENTORY_MENU);
         AntarchyObjects.setRoyalJudgmentMenu(AntarchyNeoforgeMisc.ROYAL_JUDGMENT_MENU);
+        AntarchyObjects.setGiantFryingPanMenu(AntarchyNeoforgeMisc.GIANT_FRYING_PAN_MENU);
         AntarchyObjects.setCritterCage(() -> AntarchyNeoforgeItems.CRITTER_CAGE.get());
         AntarchyObjects.setCritterCageBlock(() -> AntarchyNeoforgeBlocks.CRITTER_CAGE_BLOCK.get());
         AntarchyObjects.setCritterCageBlockEntity(() -> AntarchyNeoforgeBlocks.CRITTER_CAGE_BLOCK_ENTITY.get());

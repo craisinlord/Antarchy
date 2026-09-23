@@ -11,6 +11,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
+import net.lerariemann.infinity.access.MinecraftServerAccess;
+import com.craisinlord.antarchy.neoforge.mixins.infinity.PortalCreatorInvoker;
 import net.minecraft.util.RandomSource;
 
 import java.util.ArrayList;
@@ -79,6 +85,30 @@ public final class NeoForgeInfinityCompat implements InfinityCompatBridge {
             return InfinityGenerationFailure.consume(dimensionId)
                     ? InfinityWarpResult.FAILED_GENERATION
                     : InfinityWarpResult.REJECTED;
+        }
+    }
+
+    @Override
+    public InfinityWarpResult requestDimensionCreation(MinecraftServer server, ResourceLocation dimensionId) {
+        if (!isAvailable() || server == null || dimensionId == null || !"infinity".equals(dimensionId.getNamespace())) {
+            return InfinityWarpResult.REJECTED;
+        }
+        ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION, dimensionId);
+        if (server.getLevel(key) != null) {
+            return InfinityWarpResult.READY;
+        }
+        if (!(server instanceof MinecraftServerAccess access)) {
+            return InfinityWarpResult.REJECTED;
+        }
+        try {
+            if (access.infinity$hasToAdd(key)) {
+                return InfinityWarpResult.PENDING;
+            }
+            return PortalCreatorInvoker.antarchy$invokeTryAddInfinityDimension(server, dimensionId)
+                    ? InfinityWarpResult.PENDING : InfinityWarpResult.REJECTED;
+        } catch (Throwable throwable) {
+            Antarchy.LOGGER.error("[Antarchy] Failed to request creation of Infinity dimension {}", dimensionId, throwable);
+            return InfinityWarpResult.FAILED_GENERATION;
         }
     }
 

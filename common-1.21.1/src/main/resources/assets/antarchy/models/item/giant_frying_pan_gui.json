@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "gui_light": "front",
+  "textures": {
+    "layer0": "antarchy:item/giant_frying_pan/giant_frying_pan_in_hand"
+  }
+}

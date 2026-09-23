@@ -94,8 +94,8 @@ public class RoyalGuardianSwordItem extends SwordItem implements GeoItem {
 
     private static void setMode(ItemStack stack, Mode mode) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
-            if (mode == Mode.FIRE) tag.remove(MODE_TAG);
-            else tag.putInt(MODE_TAG, mode.ordinal());
+            if (mode == Mode.NONE) tag.remove(MODE_TAG);
+            else tag.putInt(MODE_TAG, mode.id);
         });
     }
 
@@ -115,8 +115,8 @@ public class RoyalGuardianSwordItem extends SwordItem implements GeoItem {
     }
 
     public static Mode getMode(ItemStack stack) {
-        int value = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getInt(MODE_TAG);
-        return Mode.values()[Math.floorMod(value, Mode.values().length)];
+        net.minecraft.nbt.CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        return tag.contains(MODE_TAG) ? Mode.fromId(tag.getInt(MODE_TAG)) : Mode.NONE;
     }
 
     public static boolean isDischargeReady(ItemStack stack, long gameTime) {
@@ -130,20 +130,37 @@ public class RoyalGuardianSwordItem extends SwordItem implements GeoItem {
     }
 
     public enum Mode {
-        FIRE("tooltip.antarchy.royal_guardian_sword.mode.fire", "tooltip.antarchy.royal_guardian_sword.fire"),
-        FROST("tooltip.antarchy.royal_guardian_sword.mode.frost", "tooltip.antarchy.royal_guardian_sword.frost"),
-        STORM("tooltip.antarchy.royal_guardian_sword.mode.storm", "tooltip.antarchy.royal_guardian_sword.storm");
+        NONE(-1, "tooltip.antarchy.royal_guardian_sword.mode.none", "tooltip.antarchy.royal_guardian_sword.none"),
+        FIRE(0, "tooltip.antarchy.royal_guardian_sword.mode.fire", "tooltip.antarchy.royal_guardian_sword.fire"),
+        FROST(1, "tooltip.antarchy.royal_guardian_sword.mode.frost", "tooltip.antarchy.royal_guardian_sword.frost"),
+        STORM(2, "tooltip.antarchy.royal_guardian_sword.mode.storm", "tooltip.antarchy.royal_guardian_sword.storm");
 
+        private final int id;
         private final String translationKey;
         private final String tooltipKey;
 
-        Mode(String translationKey, String tooltipKey) {
+        Mode(int id, String translationKey, String tooltipKey) {
+            this.id = id;
             this.translationKey = translationKey;
             this.tooltipKey = tooltipKey;
         }
 
         public Mode next() {
-            return values()[(this.ordinal() + 1) % values().length];
+            return switch (this) {
+                case NONE -> FIRE;
+                case FIRE -> FROST;
+                case FROST -> STORM;
+                case STORM -> NONE;
+            };
+        }
+
+        private static Mode fromId(int id) {
+            for (Mode mode : values()) {
+                if (mode.id == id) {
+                    return mode;
+                }
+            }
+            return NONE;
         }
     }
 

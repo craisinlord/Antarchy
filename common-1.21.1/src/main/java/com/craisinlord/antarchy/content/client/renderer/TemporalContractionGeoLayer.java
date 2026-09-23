@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.ContractionAfterimages;
-import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.Deque;
@@ -32,8 +31,7 @@ public final class TemporalContractionGeoLayer<T extends GeoAnimatable> extends 
                        MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick,
                        int packedLight, int packedOverlay) {
         if (!(animatable instanceof Entity entity) || !(entity instanceof LivingEntity living)
-                || living.isInvisible() || RoyalEffectHooks.contractedHolder() == null
-                || !living.hasEffect(RoyalEffectHooks.contractedHolder())) {
+                || !ContractionAfterimages.isActive(living)) {
             return;
         }
         Deque<ContractionAfterimages.Sample> samples = ContractionAfterimages.samples(living);
