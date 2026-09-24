@@ -205,6 +205,19 @@
               }
             }
           ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 5,
+          "functions": [
+            {
+              "function": "minecraft:set_components",
+              "components": {
+                "antos:floppy_disk": "antarchy:kraken"
+              }
+            }
+          ]
         }
       ],
       "rolls": {

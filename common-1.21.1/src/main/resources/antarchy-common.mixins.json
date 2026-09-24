@@ -95,6 +95,7 @@
                    "gravity.ServerPlayerGravityMixin",
                    "gravity.ThrowableProjectileGravityMixin",
                    "gravity.TrackedEntityAccessor",
+                   "compat.biolith.MultiNoiseBiomeSourceNullGuardMixin",
                    "compat.scguns.ScgunsProjectileEntityGravityMixin",
                    "compat.scguns.ScgunsArrowGravityMixin",
                    "compat.irons_spellbooks.IronsSpellbooksProjectileGravityMixin",

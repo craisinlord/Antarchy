@@ -1425,11 +1425,34 @@ public final class AntarchyNeoForgeEvents {
 
         if (state.is(AntarchyNeoforgeBlocks.PEACH_WOOD.get())) {
             event.setFinalState(AntarchyNeoforgeBlocks.STRIPPED_PEACH_WOOD.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)));
+            return;
+        }
+
+        if (state.is(AntarchyNeoforgeBlocks.NADIR_LOG.get())) {
+            event.setFinalState(AntarchyNeoforgeBlocks.STRIPPED_NADIR_LOG.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)));
+            return;
+        }
+
+        if (state.is(AntarchyNeoforgeBlocks.NADIR_WOOD.get())) {
+            event.setFinalState(AntarchyNeoforgeBlocks.STRIPPED_NADIR_WOOD.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)));
+            return;
+        }
+
+        if (state.is(AntarchyNeoforgeBlocks.ROYAL_LOG.get())) {
+            event.setFinalState(AntarchyNeoforgeBlocks.STRIPPED_ROYAL_LOG.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)));
+            return;
+        }
+
+        if (state.is(AntarchyNeoforgeBlocks.ROYAL_WOOD.get())) {
+            event.setFinalState(AntarchyNeoforgeBlocks.STRIPPED_ROYAL_WOOD.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)));
         }
     }
 
     static void onCommonSetup(FMLCommonSetupEvent event) {
         BloodCrystalShardItem.SYNC_BLOODGLASS = AntarchyNeoForgeEvents::syncBloodglass;
+        if (com.craisinlord.antarchy.compat.infinity.InfinityCompat.get().isAvailable()) {
+            com.craisinlord.antarchy.compat.infinity.InfinityConfigRefresh.refreshIfStale(net.neoforged.fml.loading.FMLPaths.CONFIGDIR.get());
+        }
         event.enqueueWork(() -> {
             Holder<PoiType> computerPoi = BuiltInRegistries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(
                     ResourceKey.create(Registries.POINT_OF_INTEREST_TYPE,

@@ -7,7 +7,7 @@ public final class InfinityCompatVersion {
     private static final Pattern VERSION_PARTS = Pattern.compile("(\\d+)(?:\\.(\\d+))?(?:\\.(\\d+))?");
     private static final int REQUIRED_MAJOR = 2;
     private static final int REQUIRED_MINOR = 7;
-    private static final int REQUIRED_PATCH = 2;
+    private static final int REQUIRED_PATCH = 3;
 
     private InfinityCompatVersion() {
     }

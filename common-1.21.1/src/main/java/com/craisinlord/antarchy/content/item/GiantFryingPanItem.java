@@ -31,7 +31,6 @@ import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickAction;
 import net.minecraft.world.inventory.Slot;
-import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.menu.GiantFryingPanMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -133,14 +132,11 @@ public class GiantFryingPanItem extends SwordItem implements GeoItem {
         ItemStack pan = player.getItemInHand(hand);
         InteractionHand foodHand = hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
         ItemStack food = player.getItemInHand(foodHand);
-        Antarchy.LOGGER.info("[FryingPan] use client={} hand={} shift={} pan={} otherHand={}",
-                level.isClientSide, hand, player.isShiftKeyDown(), pan, food);
         if (player.isShiftKeyDown()) {
             openMenu(level, player, hand);
             return InteractionResultHolder.sidedSuccess(pan, level.isClientSide);
         }
         if (!GiantFryingPanStorage.isCampfireInput(player, food)) {
-            Antarchy.LOGGER.info("[FryingPan] use client={} other hand item is not a campfire input", level.isClientSide);
             return InteractionResultHolder.pass(pan);
         }
         return insertFromHand(level, player, pan, food)
@@ -154,19 +150,25 @@ public class GiantFryingPanItem extends SwordItem implements GeoItem {
         ItemStack held = player.getMainHandItem();
         if (!(pan.getItem() instanceof GiantFryingPanItem) || held.getItem() instanceof GiantFryingPanItem) return InteractionResult.PASS;
         if (player.isShiftKeyDown()) {
-            Antarchy.LOGGER.info("[FryingPan] offhand pan shift-use client={} mainHand={}", level.isClientSide, held);
             openMenu(level, player, InteractionHand.OFF_HAND);
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
         if (!GiantFryingPanStorage.isCampfireInput(player, held)) return InteractionResult.PASS;
-        Antarchy.LOGGER.info("[FryingPan] offhand pan insert client={} mainHand={}", level.isClientSide, held);
         return insertFromHand(level, player, pan, held) ? InteractionResult.sidedSuccess(level.isClientSide) : InteractionResult.FAIL;
     }
 
+    public static void openHeldMenu(Player player) {
+        if (!player.isShiftKeyDown()) return;
+        if (player.getMainHandItem().getItem() instanceof GiantFryingPanItem) {
+            openMenu(player.level(), player, InteractionHand.MAIN_HAND);
+        } else if (player.getOffhandItem().getItem() instanceof GiantFryingPanItem) {
+            openMenu(player.level(), player, InteractionHand.OFF_HAND);
+        }
+    }
+
     private static void openMenu(Level level, Player player, InteractionHand hand) {
-        if (level.isClientSide) return;
+        if (level.isClientSide || player.containerMenu instanceof GiantFryingPanMenu) return;
         int panSlot = hand == InteractionHand.MAIN_HAND ? player.getInventory().selected : Inventory.SLOT_OFFHAND;
-        Antarchy.LOGGER.info("[FryingPan] opening menu for {} panSlot={}", player.getName().getString(), panSlot);
         player.openMenu(new SimpleMenuProvider(
                 (containerId, inventory, ignored) -> new GiantFryingPanMenu(containerId, inventory, panSlot),
                 Component.translatable("item.antarchy.giant_frying_pan")));
@@ -176,11 +178,9 @@ public class GiantFryingPanItem extends SwordItem implements GeoItem {
         GiantFryingPanStorage storage = new GiantFryingPanStorage(pan, player);
         ItemStack single = food.copyWithCount(1);
         if (!storage.insertOne(single)) {
-            Antarchy.LOGGER.info("[FryingPan] insert failed client={} food={} (pan full or not cookable)", level.isClientSide, food);
             return false;
         }
         if (!player.getAbilities().instabuild) food.shrink(1);
-        Antarchy.LOGGER.info("[FryingPan] inserted client={} food={}", level.isClientSide, single.getItem());
         if (!level.isClientSide) {
             level.playSound(null, player.blockPosition(), SoundEvents.CAMPFIRE_CRACKLE, SoundSource.PLAYERS, 0.8F, 1.0F);
         }
@@ -194,7 +194,6 @@ public class GiantFryingPanItem extends SwordItem implements GeoItem {
         if (!GiantFryingPanStorage.isCampfireInput(player, food) || !slot.mayPickup(player)) return false;
         GiantFryingPanStorage storage = new GiantFryingPanStorage(pan, player);
         boolean inserted = storage.hasSpace(food) && storage.insertOne(slot.safeTake(1, 1, player));
-        Antarchy.LOGGER.info("[FryingPan] cursor pan onto slot client={} food={} inserted={}", player.level().isClientSide, food.getItem(), inserted);
         if (inserted) player.playSound(SoundEvents.CAMPFIRE_CRACKLE, 0.8F, 1.0F);
         return true;
     }
@@ -210,7 +209,6 @@ public class GiantFryingPanItem extends SwordItem implements GeoItem {
             other.shrink(1);
             player.playSound(SoundEvents.CAMPFIRE_CRACKLE, 0.8F, 1.0F);
         }
-        Antarchy.LOGGER.info("[FryingPan] cursor food onto pan client={} food={} inserted={}", player.level().isClientSide, single.getItem(), inserted);
         return true;
     }
 

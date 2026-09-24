@@ -37,6 +37,10 @@ public final class AntarchyMixinPlugin implements IMixinConfigPlugin {
         if (mixinClassName.startsWith("com.craisinlord.antarchy.mixins.compat.ars_nouveau.")) {
             return classPresent("com.hollingsworth.arsnouveau.common.entity.EntityProjectileSpell");
         }
+        if (mixinClassName.startsWith("com.craisinlord.antarchy.mixins.compat.biolith.")) {
+            return classPresent("com.terraformersmc.biolith.api.biome.BiolithFittestNodes")
+                    && classPresent("com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod");
+        }
         if (mixinClassName.startsWith("com.craisinlord.antarchy.mixins.compat.alexscaves.")) {
             // The target class was found above. Checking the target itself avoids depending on
             // whether a loader exposes Alex's Caves' entrypoint resource to this classloader.

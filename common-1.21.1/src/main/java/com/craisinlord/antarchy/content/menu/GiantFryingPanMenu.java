@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.menu;
 
-import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.item.GiantFryingPanStorage;
 import net.minecraft.world.entity.player.Inventory;
@@ -26,8 +25,6 @@ public final class GiantFryingPanMenu extends AbstractContainerMenu {
         Player player = inventory.player;
         this.panSlot = panSlot;
         this.panStorage = new GiantFryingPanStorage(player, panSlot);
-        Antarchy.LOGGER.info("[FryingPan] Menu created client={} containerId={} panSlot={} pan={}",
-                player.level().isClientSide, containerId, panSlot, this.panStorage.pan());
         for (int slot = 0; slot < GiantFryingPanStorage.SLOT_COUNT; slot++) {
             this.addSlot(new Slot(this.panStorage, slot, 8 + slot * 18, PAN_ROW_Y) {
                 @Override

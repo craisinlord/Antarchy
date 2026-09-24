@@ -50,24 +50,10 @@ public final class QueenLocateCommand {
 
         int originX = Mth.floor(source.getPosition().x);
         int originZ = Mth.floor(source.getPosition().z);
-        int cellX = Math.floorDiv(originX, QueenTrailGrid.SPACING);
-        int cellZ = Math.floorDiv(originZ, QueenTrailGrid.SPACING);
-        List<QueenTrailGrid.Site> sites = new ArrayList<>();
-        for (int x = cellX - SEARCH_RADIUS_CELLS; x <= cellX + SEARCH_RADIUS_CELLS; x++) {
-            for (int z = cellZ - SEARCH_RADIUS_CELLS; z <= cellZ + SEARCH_RADIUS_CELLS; z++) {
-                sites.add(QueenTrailGrid.site(thoraxis.getSeed(), x, z));
-            }
-        }
-        sites.sort(Comparator.comparingDouble(site -> distanceSquared(originX, originZ, site)));
-
-        int checks = Math.min(MAX_SITE_CHECKS, sites.size());
-        for (int index = 0; index < checks; index++) {
-            QueenTrailGrid.Site site = sites.get(index);
-            thoraxis.getChunk(site.terminalX() >> 4, site.terminalZ() >> 4);
-            QueenTrailSpawnMarkerBlockEntity marker = findMarker(thoraxis, site);
-            if (marker == null) {
-                continue;
-            }
+        NearestSite nearest = findNearestSite(thoraxis, originX, originZ);
+        if (nearest != null) {
+            QueenTrailGrid.Site site = nearest.site();
+            QueenTrailSpawnMarkerBlockEntity marker = nearest.marker();
             QueenEntity queen = marker.spawnNow(thoraxis);
             if (queen == null && !marker.isConsumed()) {
                 source.sendFailure(Component.literal("A Queen spawn site was found, but the Queen could not spawn at a clear location. The site can be retried later."));
@@ -94,6 +80,33 @@ public final class QueenLocateCommand {
 
         source.sendFailure(Component.literal("No configured Queen spawn was found within the search area."));
         return 0;
+    }
+
+    /** Finds the nearest generated Queen spawn site without spawning her. Loads (and may generate) the checked chunks. */
+    public static NearestSite findNearestSite(ServerLevel thoraxis, int originX, int originZ) {
+        int cellX = Math.floorDiv(originX, QueenTrailGrid.SPACING);
+        int cellZ = Math.floorDiv(originZ, QueenTrailGrid.SPACING);
+        List<QueenTrailGrid.Site> sites = new ArrayList<>();
+        for (int x = cellX - SEARCH_RADIUS_CELLS; x <= cellX + SEARCH_RADIUS_CELLS; x++) {
+            for (int z = cellZ - SEARCH_RADIUS_CELLS; z <= cellZ + SEARCH_RADIUS_CELLS; z++) {
+                sites.add(QueenTrailGrid.site(thoraxis.getSeed(), x, z));
+            }
+        }
+        sites.sort(Comparator.comparingDouble(site -> distanceSquared(originX, originZ, site)));
+
+        int checks = Math.min(MAX_SITE_CHECKS, sites.size());
+        for (int index = 0; index < checks; index++) {
+            QueenTrailGrid.Site site = sites.get(index);
+            thoraxis.getChunk(site.terminalX() >> 4, site.terminalZ() >> 4);
+            QueenTrailSpawnMarkerBlockEntity marker = findMarker(thoraxis, site);
+            if (marker != null) {
+                return new NearestSite(site, marker);
+            }
+        }
+        return null;
+    }
+
+    public record NearestSite(QueenTrailGrid.Site site, QueenTrailSpawnMarkerBlockEntity marker) {
     }
 
     private static QueenTrailSpawnMarkerBlockEntity findMarker(ServerLevel level, QueenTrailGrid.Site site) {

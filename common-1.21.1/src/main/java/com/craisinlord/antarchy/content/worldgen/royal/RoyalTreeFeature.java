@@ -17,6 +17,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
@@ -105,7 +106,7 @@ public class RoyalTreeFeature extends Feature<RoyalTreeConfiguration> {
                 if (s % 2 == 0) {
                     cursor = cursor.above();
                 }
-                placeLog(level, random, config, cursor, logs);
+                placeLog(level, random, config, cursor, logs, branchDir.getAxis());
             }
             int padRadius = 2 + random.nextInt(3);
             placeCanopy(level, random, config, cursor.above(), padRadius, Math.max(2, padRadius - 1), 1, 0, leaves);
@@ -188,10 +189,18 @@ public class RoyalTreeFeature extends Feature<RoyalTreeConfiguration> {
     }
 
     private void placeLog(WorldGenLevel level, RandomSource random, RoyalTreeConfiguration config, BlockPos pos, Set<BlockPos> logs) {
+        placeLog(level, random, config, pos, logs, Direction.Axis.Y);
+    }
+
+    private void placeLog(WorldGenLevel level, RandomSource random, RoyalTreeConfiguration config, BlockPos pos, Set<BlockPos> logs, Direction.Axis axis) {
         if (!canReplace(level, pos)) {
             return;
         }
-        setBlock(level, pos, config.trunkProvider().getState(random, pos));
+        BlockState state = config.trunkProvider().getState(random, pos);
+        if (state.hasProperty(RotatedPillarBlock.AXIS)) {
+            state = state.setValue(RotatedPillarBlock.AXIS, axis);
+        }
+        setBlock(level, pos, state);
         logs.add(pos.immutable());
     }
 

@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.fabric;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompat;
+import com.craisinlord.antarchy.compat.infinity.InfinityConfigRefresh;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompatVersion;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.*;
@@ -572,6 +573,7 @@ public final class AntarchyFabricContent {
 
         if (isSupportedInfinityLoaded()) {
             InfinityCompat.bind(new FabricInfinityCompat());
+            InfinityConfigRefresh.refreshIfStale(FabricLoader.getInstance().getConfigDir());
         }
     }
 

@@ -646,7 +646,7 @@ public final class CreativeTabContents {
             acceptPotionFamily(output, potionPath);
         }
         for (String diskId : List.of("antarchy:introduction", "antarchy:toreterror_arena", "antarchy:high_fructose_corn_syrup",
-                "antarchy:elythia", "antarchy:flying_squirrel", "antarchy:brutalfly", "antarchy:rainbow_ant", "antarchy:cavaryn", "antarchy:hercules_beetle", "antarchy:thoraxis", "antarchy:temporal_fields", "antarchy:bloodglass", "antarchy:vortex")) {
+                "antarchy:elythia", "antarchy:flying_squirrel", "antarchy:brutalfly", "antarchy:rainbow_ant", "antarchy:kraken", "antarchy:cavaryn", "antarchy:hercules_beetle", "antarchy:thoraxis", "antarchy:temporal_fields", "antarchy:bloodglass", "antarchy:vortex")) {
             ItemStack disk = new ItemStack(com.craisinlord.antos.content.AntOSObjects.FLOPPY_DISK.get());
             disk.set(com.craisinlord.antos.content.AntOSObjects.FLOPPY_DISK_COMPONENT.get(), ResourceLocation.parse(diskId));
             output.accept(disk);

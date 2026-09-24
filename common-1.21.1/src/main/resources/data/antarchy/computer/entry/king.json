@@ -3,9 +3,17 @@
   "category": "elythia",
   "title": "guide.antarchy.entry.king.title",
   "subtitle": "guide.antarchy.entry.king.subtitle",
-  "description": ["guide.antarchy.entry.king.description", "guide.antarchy.entry.king.description2", "guide.antarchy.entry.king.description3"],
+  "description": [
+    "guide.antarchy.entry.king.description",
+    "guide.antarchy.entry.king.description2",
+    "guide.antarchy.entry.king.description3",
+    "guide.antarchy.entry.king.description4",
+    "guide.antarchy.entry.king.description5"
+  ],
   "entity": "antarchy:king",
   "cover_entity": "antarchy:king",
+  "locator": "antarchy:kings_tree",
+  "dimension": "antarchy:elythia",
   "rotation": 45,
   "render_scale": 0.5
 }

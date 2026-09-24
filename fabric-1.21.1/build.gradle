@@ -38,7 +38,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version_1_21_1}"
     modApi "net.fabricmc.fabric-api:fabric-api:${fabric_api_version_1_21_1}"
     modImplementation "software.bernie.geckolib:geckolib-fabric-1.21.1:${geckolib_version}"
-    modImplementation("curse.maven:antos-${antos_curseforge_id}:${antos_curseforge_file_id_fabric}")
+    modImplementation(files("$rootDir/infinite_dimensions_jars/antos-fabric-1.21.1-${antos_version}.jar"))
     modCompileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_fabric}")
     modLocalRuntime("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_fabric}")
     modLocalRuntime("dev.architectury:architectury-fabric:${architectury_api_version}")
@@ -74,7 +74,7 @@ dependencies {
     runtimeOnly(files("$rootDir/sizeable_foliage_jars/sizeable_foliage-fabric-1.21.1-1.0.0.jar"))
 
     annotationProcessor "org.spongepowered:mixin:0.8.7:processor"
-    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras}"))
+    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_1_21_1}"))
 }
 
 loom {

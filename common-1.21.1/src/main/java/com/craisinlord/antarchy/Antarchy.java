@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy;
 
+import com.craisinlord.antarchy.content.computer.AntarchyArchiveLocators;
 import com.craisinlord.antarchy.content.util.AttributeRangeInit;
 import com.craisinlord.antarchy.content.worldgen.VillagePoolAdditions;
 import com.craisinlord.integrated_api.events.lifecycle.ServerGoingToStartEvent;
@@ -15,6 +16,7 @@ public class Antarchy {
 
     public static void init() {
         AttributeRangeInit.apply();
+        AntarchyArchiveLocators.register();
         ServerGoingToStartEvent.EVENT.addListener(Antarchy::serverAboutToStart);
     }
     private static void serverAboutToStart(final ServerGoingToStartEvent event) {

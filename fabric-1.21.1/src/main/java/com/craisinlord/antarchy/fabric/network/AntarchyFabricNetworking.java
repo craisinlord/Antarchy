@@ -89,6 +89,7 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playC2S().register(GravityGunPrimaryPayload.TYPE, GravityGunPrimaryPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(PortalGunPrimaryPayload.TYPE, PortalGunPrimaryPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(EyeOfStormPrimaryPayload.TYPE, EyeOfStormPrimaryPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(OpenGiantFryingPanPayload.TYPE, OpenGiantFryingPanPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(RoyalMountActionPayload.TYPE, RoyalMountActionPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(RoyalMountVerticalPayload.TYPE, RoyalMountVerticalPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(GravityGunScrollPayload.TYPE, GravityGunScrollPayload.STREAM_CODEC);
@@ -122,6 +123,8 @@ public final class AntarchyFabricNetworking {
                 context.server().execute(() -> handlePortalGunPrimary(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(EyeOfStormPrimaryPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleEyeOfStormPrimary(context.player(), payload)));
+        ServerPlayNetworking.registerGlobalReceiver(OpenGiantFryingPanPayload.TYPE, (payload, context) ->
+                context.server().execute(() -> com.craisinlord.antarchy.content.item.GiantFryingPanItem.openHeldMenu(context.player())));
         ServerPlayNetworking.registerGlobalReceiver(RoyalMountActionPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleRoyalMountAction(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(RoyalMountVerticalPayload.TYPE, (payload, context) ->

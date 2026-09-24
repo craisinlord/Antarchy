@@ -4,7 +4,7 @@
     "trunk_provider": {
       "type": "minecraft:simple_state_provider",
       "state": {
-        "Name": "antarchy:royal_wood",
+        "Name": "antarchy:royal_log",
         "Properties": {
           "axis": "y"
         }

@@ -85,6 +85,15 @@ public class AntarchyNeoforgePayloadHandlers {
                 })
         );
         registrar.playToServer(
+                com.craisinlord.antarchy.content.network.OpenGiantFryingPanPayload.TYPE,
+                com.craisinlord.antarchy.content.network.OpenGiantFryingPanPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> {
+                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer player) {
+                        com.craisinlord.antarchy.content.item.GiantFryingPanItem.openHeldMenu(player);
+                    }
+                })
+        );
+        registrar.playToServer(
                 com.craisinlord.antarchy.content.network.RoyalMountActionPayload.TYPE,
                 com.craisinlord.antarchy.content.network.RoyalMountActionPayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> {

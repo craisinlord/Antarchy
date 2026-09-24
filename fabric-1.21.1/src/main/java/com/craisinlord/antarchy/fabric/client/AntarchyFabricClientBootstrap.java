@@ -580,6 +580,7 @@ public final class AntarchyFabricClientBootstrap {
             DorrieJumpClientHandler.tick();
             HerculesBeetleClientHandler.tick();
             RoyalMountClientHandler.tick();
+            GiantFryingPanClientHandler.tick();
             SizeRaySoundHandler.tick(client);
             if (client.level != null) {
                 com.craisinlord.antarchy.content.client.ClientTimeDilationTicker.tick(client.level);
