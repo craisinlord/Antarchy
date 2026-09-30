@@ -58,6 +58,27 @@ public final class AntarchyKeyBindings {
             InputConstants.KEY_B,
             CATEGORY
     );
+    public static final KeyMapping PORTAL_GUN_ZOOM = new KeyMapping(
+            "key.antarchy.portal_gun_zoom",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.MOUSE,
+            InputConstants.MOUSE_BUTTON_MIDDLE,
+            CATEGORY
+    );
+    public static final KeyMapping PORTAL_GUN_GRAB = new KeyMapping(
+            "key.antarchy.portal_gun_grab",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            InputConstants.KEY_G,
+            CATEGORY
+    );
+    public static final KeyMapping PORTAL_GUN_RESET = new KeyMapping(
+            "key.antarchy.portal_gun_reset",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            InputConstants.KEY_R,
+            CATEGORY
+    );
 
     private AntarchyKeyBindings() {}
 
@@ -69,6 +90,9 @@ public final class AntarchyKeyBindings {
         event.register(TIGERS_EYE_CAMOUFLAGE);
         event.register(ROYAL_INVERSION_TOGGLE);
         event.register(ROYAL_BOUNDARY);
+        event.register(PORTAL_GUN_ZOOM);
+        event.register(PORTAL_GUN_GRAB);
+        event.register(PORTAL_GUN_RESET);
     }
 
     public static boolean isMountFlightTogglePressed() {
@@ -89,5 +113,21 @@ public final class AntarchyKeyBindings {
 
     public static boolean consumeRoyalBoundaryPressed() {
         return ROYAL_BOUNDARY.consumeClick();
+    }
+
+    public static boolean consumePortalGunZoomPressed() {
+        return PORTAL_GUN_ZOOM.consumeClick();
+    }
+
+    public static boolean consumePortalGunGrabPressed() {
+        return PORTAL_GUN_GRAB.consumeClick();
+    }
+
+    public static boolean consumePortalGunResetPressed() {
+        return PORTAL_GUN_RESET.consumeClick();
+    }
+
+    public static boolean isPortalGunResetDown() {
+        return PORTAL_GUN_RESET.isDown() || PORTAL_GUN_RESET.consumeClick();
     }
 }

@@ -211,7 +211,6 @@ public final class AntarchyConfigModuleFabric {
                     || name.equals("invertProjectilesFromInvertedPlayers")
                     || name.startsWith("gravityGun")
                     || name.startsWith("critterCage")
-                    || name.startsWith("minersDream")
                     || name.equals("potentNyxiteInvertedDurationSeconds")
                     || name.equals("corneaEarNightVisionSeconds")
                     || name.startsWith("american")

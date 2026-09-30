@@ -163,11 +163,6 @@ public final class AntarchySettings {
     private static double gravityGunMaxHoldDistance = 10.0D;
     private static double critterCageMaxCapturableWidth = 1.65D;
     private static double critterCageMaxCapturableHeight = 1.65D;
-    private static boolean minersDreamEnabled = true;
-    private static int minersDreamMinimumRange = 48;
-    private static int minersDreamMaximumRange = 96;
-    private static int minersDreamTorchSpacing = 10;
-    private static int minersDreamBlocksPerTick = 150;
     private static double lucidAttackRange = 9.0D;
     private static double lucidPearlInvertedDurationSeconds = 6.0D;
     private static int corneaEarNightVisionSeconds = 15;
@@ -1189,26 +1184,6 @@ public final class AntarchySettings {
         return critterCageMaxCapturableHeight;
     }
 
-    public static boolean minersDreamEnabled() {
-        return minersDreamEnabled;
-    }
-
-    public static int minersDreamMinimumRange() {
-        return minersDreamMinimumRange;
-    }
-
-    public static int minersDreamMaximumRange() {
-        return minersDreamMaximumRange;
-    }
-
-    public static int minersDreamTorchSpacing() {
-        return minersDreamTorchSpacing;
-    }
-
-    public static int minersDreamBlocksPerTick() {
-        return minersDreamBlocksPerTick;
-    }
-
     public static void setDisableInfinityBookPortalCreation(boolean value) {
         disableInfinityBookPortalCreation = value;
     }
@@ -1729,26 +1704,6 @@ public final class AntarchySettings {
 
     public static void setCritterCageMaxCapturableHeight(double value) {
         critterCageMaxCapturableHeight = value;
-    }
-
-    public static void setMinersDreamEnabled(boolean value) {
-        minersDreamEnabled = value;
-    }
-
-    public static void setMinersDreamMinimumRange(int value) {
-        minersDreamMinimumRange = value;
-    }
-
-    public static void setMinersDreamMaximumRange(int value) {
-        minersDreamMaximumRange = value;
-    }
-
-    public static void setMinersDreamTorchSpacing(int value) {
-        minersDreamTorchSpacing = value;
-    }
-
-    public static void setMinersDreamBlocksPerTick(int value) {
-        minersDreamBlocksPerTick = value;
     }
 
     public static double lucidAttackRange() {

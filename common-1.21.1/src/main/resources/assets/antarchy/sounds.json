@@ -1738,13 +1738,13 @@
     "subtitle": "subtitles.antarchy.portal_gun_fire_blue",
     "sounds": [
       {
-        "name": "antarchy:item/portalgun/wpn_portal_gun_fire_blue_01"
+        "name": "antarchy:portal_aperture/portal_gun_fire_primary_1"
       },
       {
-        "name": "antarchy:item/portalgun/wpn_portal_gun_fire_blue_02"
+        "name": "antarchy:portal_aperture/portal_gun_fire_primary_2"
       },
       {
-        "name": "antarchy:item/portalgun/wpn_portal_gun_fire_blue_03"
+        "name": "antarchy:portal_aperture/portal_gun_fire_primary_3"
       }
     ]
   },
@@ -1752,13 +1752,13 @@
     "subtitle": "subtitles.antarchy.portal_gun_fire_orange",
     "sounds": [
       {
-        "name": "antarchy:item/portalgun/wpn_portal_gun_fire_red_01"
+        "name": "antarchy:portal_aperture/portal_gun_fire_secondary_1"
       },
       {
-        "name": "antarchy:item/portalgun/wpn_portal_gun_fire_red_02"
+        "name": "antarchy:portal_aperture/portal_gun_fire_secondary_2"
       },
       {
-        "name": "antarchy:item/portalgun/wpn_portal_gun_fire_red_03"
+        "name": "antarchy:portal_aperture/portal_gun_fire_secondary_3"
       }
     ]
   },
@@ -1766,19 +1766,16 @@
     "subtitle": "subtitles.antarchy.portal_gun_invalid_surface",
     "sounds": [
       {
-        "name": "antarchy:item/portalgun/portal_invalid_surface_swt_01"
+        "name": "antarchy:portal_aperture/portal_invalid_surface_1"
       },
       {
-        "name": "antarchy:portal/portal_invalid_surface_01"
+        "name": "antarchy:portal_aperture/portal_invalid_surface_2"
       },
       {
-        "name": "antarchy:portal/portal_invalid_surface_02"
+        "name": "antarchy:portal_aperture/portal_invalid_surface_3"
       },
       {
-        "name": "antarchy:portal/portal_invalid_surface_03"
-      },
-      {
-        "name": "antarchy:portal/portal_invalid_surface_04"
+        "name": "antarchy:portal_aperture/portal_invalid_surface_4"
       }
     ]
   },
@@ -1786,7 +1783,7 @@
     "subtitle": "subtitles.antarchy.portal_open_blue",
     "sounds": [
       {
-        "name": "antarchy:portal/portal_open_blue_01"
+        "name": "antarchy:portal_aperture/portal_open_primary_1"
       }
     ]
   },
@@ -1794,7 +1791,10 @@
     "subtitle": "subtitles.antarchy.portal_open_orange",
     "sounds": [
       {
-        "name": "antarchy:portal/portal_open_red_01"
+        "name": "antarchy:portal_aperture/portal_open_secondary_1"
+      },
+      {
+        "name": "antarchy:portal_aperture/portal_open_secondary_2"
       }
     ]
   },
@@ -1802,10 +1802,10 @@
     "subtitle": "subtitles.antarchy.portal_fizzle",
     "sounds": [
       {
-        "name": "antarchy:portal/portal_fizzle_01"
+        "name": "antarchy:portal_aperture/portal_fizzle_1"
       },
       {
-        "name": "antarchy:portal/portal_fizzle_02"
+        "name": "antarchy:portal_aperture/portal_fizzle_2"
       }
     ]
   },
@@ -1813,13 +1813,13 @@
     "subtitle": "subtitles.antarchy.portal_enter",
     "sounds": [
       {
-        "name": "antarchy:portal/portal_enter_01"
+        "name": "antarchy:portal_aperture/portal_enter_1"
       },
       {
-        "name": "antarchy:portal/portal_enter_02"
+        "name": "antarchy:portal_aperture/portal_enter_2"
       },
       {
-        "name": "antarchy:portal/portal_enter_03"
+        "name": "antarchy:portal_aperture/portal_enter_3"
       }
     ]
   },
@@ -1827,10 +1827,13 @@
     "subtitle": "subtitles.antarchy.portal_exit",
     "sounds": [
       {
-        "name": "antarchy:portal/portal_exit_01"
+        "name": "antarchy:portal_aperture/portal_enter_1"
       },
       {
-        "name": "antarchy:portal/portal_exit_02"
+        "name": "antarchy:portal_aperture/portal_enter_2"
+      },
+      {
+        "name": "antarchy:portal_aperture/portal_enter_3"
       }
     ]
   },
@@ -1838,7 +1841,7 @@
     "subtitle": "subtitles.antarchy.portal_ambient",
     "sounds": [
       {
-        "name": "antarchy:portal/wpn_portal_ambient_lp_01"
+        "name": "antarchy:portal_aperture/portal_ambient"
       }
     ]
   },

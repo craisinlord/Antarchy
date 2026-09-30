@@ -22,6 +22,9 @@ public abstract class EntityProjectileGravityMixin {
         if (!(self instanceof Projectile projectile)) {
             return;
         }
+        if (projectile.isNoGravity()) {
+            return;
+        }
 
         boolean inverted = AntarchyGravityApi.isGravityInverted(projectile);
         if (!inverted && projectile.getOwner() != null) {

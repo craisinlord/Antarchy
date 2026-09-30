@@ -95,6 +95,12 @@ public class TimeDilationFieldEntity extends Entity {
                 || this.anchorId != null && this.anchorId.equals(entity.getUUID())) {
             return false;
         }
+        if (this.ownerId != null && this.level() instanceof ServerLevel level
+                && level.getEntity(this.ownerId) instanceof QueenEntity
+                && entity instanceof LivingEntity living
+                && !com.craisinlord.antarchy.content.effect.RoyalEffectEligibility.canApplyDilated(living)) {
+            return false;
+        }
         if (this.chronosphere && !(entity instanceof LivingEntity || entity instanceof Projectile || entity instanceof ItemEntity)) {
             return false;
         }

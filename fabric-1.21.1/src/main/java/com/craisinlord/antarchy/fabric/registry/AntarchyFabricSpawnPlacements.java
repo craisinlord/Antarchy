@@ -67,7 +67,7 @@ public final class AntarchyFabricSpawnPlacements {
         SpawnPlacements.register(AntarchyFabricEntities.VORTEX.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, com.craisinlord.antarchy.content.entity.vortex.VortexEntity::canSpawn);
         SpawnPlacements.register(AntarchyFabricEntities.SCORPION.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ScorpionEntity::canSpawn);
         SpawnPlacements.register(AntarchyFabricEntities.BASILISK.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BasiliskEntity::canSpawn);
-        SpawnPlacements.register(AntarchyFabricEntities.EMPEROR_SCORPION.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EmperorScorpionEntity::canSpawn);
+        SpawnPlacements.register(AntarchyFabricEntities.EMPEROR_SCORPION.get(), SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EmperorScorpionEntity::canSpawn);
         SpawnPlacements.register(AntarchyFabricEntities.TORETERROR.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ToreterrorEntity::canSpawn);
         SpawnPlacements.register(AntarchyFabricEntities.CRAWLING_BLIGHT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, com.craisinlord.antarchy.content.entity.CrawlingBlightEntity::canSpawn);
         SpawnPlacements.register(AntarchyFabricEntities.SKULKING_FRIGHT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, com.craisinlord.antarchy.content.entity.SkulkingFrightEntity::canSpawn);

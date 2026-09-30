@@ -411,11 +411,6 @@
     "tooltip.antarchy.reverie_bottle.capture": "Faites un clic droit sur une Reverie avec une fiole en verre pour la capturer.",
     "tooltip.antarchy.reverie_bottle.release": "Clic droit pour libérer la Reverie.",
     "item.antarchy.gravity_gun": "Canon à gravité",
-    "item.antarchy.miners_dream": "Rêve du mineur",
-    "tooltip.antarchy.miners_dream.line1": "Clic droit pour creuser une grotte sinueuse.",
-    "tooltip.antarchy.miners_dream.line2": "Laisse les blocs précieux intacts.",
-    "message.antarchy.miners_dream_disabled": "Le Rêve du mineur est désactivé.",
-    "message.antarchy.miners_dream_busy": "Votre rêve précédent est encore en train de se déployer.",
     "item.antarchy.diamond_minecart": "Le wagonnet de diamant",
     "item.antarchy.cogwheel_pet": "Familier engrenage",
     "item.antarchy.fire_dragon_pet": "Familier dragon de feu",
@@ -964,4 +959,6 @@
     "advancements.antarchy.beetle_buddies.description": "Apprivoisez un scarabée Hercule.",
     "advancements.antarchy.herculean_task.title": "Travail herculéen",
     "advancements.antarchy.herculean_task.description": "Terrassez un scarabée Hercule."
+,
+    "entity.antarchy.portal_gun_portal": "Portail du pistolet à portails"
 }

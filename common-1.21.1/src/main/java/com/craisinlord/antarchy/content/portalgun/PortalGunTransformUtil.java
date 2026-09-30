@@ -14,19 +14,19 @@ public final class PortalGunTransformUtil {
     }
 
     public static Quaternionf createTransform(PortalGunPortalEntity sourcePortal, PortalGunPortalEntity destinationPortal) {
-        return createTransform(sourcePortal.getWidthVec(), sourcePortal.getUpVec(), sourcePortal.getNormalVec().scale(-1.0D), destinationPortal.getWidthVec(), destinationPortal.getUpVec(), destinationPortal.getNormalVec());
+        return createTransform(sourcePortal.getWidthVec(), sourcePortal.getUpVec(), sourcePortal.getNormalVec().scale(-1.0D), destinationPortal.getWidthVec().scale(-1.0D), destinationPortal.getUpVec(), destinationPortal.getNormalVec());
     }
 
     public static Quaternionf createTransform(Vec3 sourceWidth, Vec3 sourceUp, Vec3 sourceForward, Vec3 destinationWidth, Vec3 destinationUp, Vec3 destinationForward) {
         Matrix3f sourceBasis = new Matrix3f(
-                (float) sourceWidth.x, (float) sourceUp.x, (float) sourceForward.x,
-                (float) sourceWidth.y, (float) sourceUp.y, (float) sourceForward.y,
-                (float) sourceWidth.z, (float) sourceUp.z, (float) sourceForward.z
+                (float) sourceWidth.x, (float) sourceWidth.y, (float) sourceWidth.z,
+                (float) sourceUp.x, (float) sourceUp.y, (float) sourceUp.z,
+                (float) sourceForward.x, (float) sourceForward.y, (float) sourceForward.z
         );
         Matrix3f destinationBasis = new Matrix3f(
-                (float) destinationWidth.x, (float) destinationUp.x, (float) destinationForward.x,
-                (float) destinationWidth.y, (float) destinationUp.y, (float) destinationForward.y,
-                (float) destinationWidth.z, (float) destinationUp.z, (float) destinationForward.z
+                (float) destinationWidth.x, (float) destinationWidth.y, (float) destinationWidth.z,
+                (float) destinationUp.x, (float) destinationUp.y, (float) destinationUp.z,
+                (float) destinationForward.x, (float) destinationForward.y, (float) destinationForward.z
         );
         Matrix3f transform = destinationBasis.mul(sourceBasis.transpose(new Matrix3f()), new Matrix3f());
         return transform.getNormalizedRotation(new Quaternionf());
@@ -48,9 +48,9 @@ public final class PortalGunTransformUtil {
         Vec3 destinationWidth = destinationPortal.getWidthVec().normalize();
         Vec3 destinationUp = destinationPortal.getUpVec().normalize();
         Vec3 destinationNormal = destinationPortal.getNormalVec().normalize();
-        return destinationWidth.scale(relativePosition.dot(sourceWidth))
+        return destinationWidth.scale(-relativePosition.dot(sourceWidth))
                 .add(destinationUp.scale(relativePosition.dot(sourceUp)))
-                .add(destinationNormal.scale(relativePosition.dot(sourceNormal)));
+                .add(destinationNormal.scale(-relativePosition.dot(sourceNormal)));
     }
 
     public static Vec3 transformVector(PortalGunPortalEntity sourcePortal, PortalGunPortalEntity destinationPortal, Vec3 vector) {
@@ -60,7 +60,7 @@ public final class PortalGunTransformUtil {
         Vec3 destinationWidth = destinationPortal.getWidthVec().normalize();
         Vec3 destinationUp = destinationPortal.getUpVec().normalize();
         Vec3 destinationOut = destinationPortal.getNormalVec().normalize();
-        return destinationWidth.scale(vector.dot(sourceWidth))
+        return destinationWidth.scale(-vector.dot(sourceWidth))
                 .add(destinationUp.scale(vector.dot(sourceUp)))
                 .add(destinationOut.scale(vector.dot(sourceInto)));
     }
@@ -102,11 +102,11 @@ public final class PortalGunTransformUtil {
     public static Quaternionf orientationQuaternion(Vec3 look, Vec3 up) {
         Vec3 forward = look.normalize();
         Vec3 correctedUp = up.subtract(forward.scale(up.dot(forward))).normalize();
-        Vec3 right = correctedUp.cross(forward).normalize();
+        Vec3 right = forward.cross(correctedUp).normalize();
         Matrix3f basis = new Matrix3f(
-                (float) right.x, (float) correctedUp.x, (float) (-forward.x),
-                (float) right.y, (float) correctedUp.y, (float) (-forward.y),
-                (float) right.z, (float) correctedUp.z, (float) (-forward.z)
+                (float) right.x, (float) right.y, (float) right.z,
+                (float) correctedUp.x, (float) correctedUp.y, (float) correctedUp.z,
+                (float) -forward.x, (float) -forward.y, (float) -forward.z
         );
         return basis.getNormalizedRotation(new Quaternionf());
     }

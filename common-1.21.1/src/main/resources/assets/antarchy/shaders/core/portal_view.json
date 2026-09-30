@@ -1,0 +1,14 @@
+{
+  "vertex": "antarchy:portal_view",
+  "fragment": "antarchy:portal_view",
+  "samplers": [
+    { "name": "Sampler0" }
+  ],
+  "attributes": [
+    "Position",
+    "UV0"
+  ],
+  "uniforms": [
+    { "name": "ColorModulator", "type": "float", "count": 4, "values": [ 1.0, 1.0, 1.0, 1.0 ] }
+  ]
+}

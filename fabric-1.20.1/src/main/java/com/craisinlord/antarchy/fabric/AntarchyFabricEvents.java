@@ -23,7 +23,6 @@ import com.craisinlord.antarchy.content.command.GravityCommand;
 import com.craisinlord.antarchy.content.command.QueenLocateCommand;
 import com.craisinlord.antarchy.content.time.TimeDilationCommand;
 import com.craisinlord.antarchy.content.time.TimeDilationManager;
-import com.craisinlord.antarchy.content.item.MinersDreamExcavationManager;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -164,7 +163,6 @@ public final class AntarchyFabricEvents {
                 tickIchorPlayers(level);
                 tickBloodglassRecharge(level);
                 AttitudeAdjusterSlamManager.tick(level);
-                MinersDreamExcavationManager.tick(level);
             }
             TimeDilationManager.tickServer(server);
             invertedPlayers.retainAll(activeThisTick);

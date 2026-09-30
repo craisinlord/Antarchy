@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.neoforge.client;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.GoopedHudRenderer;
+import com.craisinlord.antarchy.content.client.PortalGunCrosshairRenderer;
 import com.craisinlord.antarchy.content.client.AntarchyArchivePreviews;
 import com.craisinlord.antarchy.content.client.game.AntarchyComputerGames;
 import com.craisinlord.antarchy.content.client.HordeHudRenderer;
@@ -16,6 +17,7 @@ import com.craisinlord.antarchy.neoforge.registry.AntarchyNeoforgeItems;
 import com.craisinlord.antarchy.neoforge.registry.AntarchyNeoforgeMisc;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.BoatModel;
 import net.minecraft.client.model.ArmorStandModel;
@@ -38,6 +40,7 @@ import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.blockentity.CampfireRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -56,6 +59,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
@@ -96,6 +100,19 @@ public final class AntarchyNeoForgeClient {
     private static final ResourceLocation ICHOR_STILL = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/ichor/ichor_still");
     private static final ResourceLocation ICHOR_FLOW = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "block/ichor/ichor_flowing");
     private AntarchyNeoForgeClient() {
+    }
+
+    @SubscribeEvent
+    public static void registerPortalViewShader(RegisterShadersEvent event) {
+        PortalGunPortalViewRenderer.clearPortalViewShader();
+        try {
+            event.registerShader(
+                    new ShaderInstance(event.getResourceProvider(), ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "portal_view"), DefaultVertexFormat.POSITION_TEX),
+                    PortalGunPortalViewRenderer::setPortalViewShader
+            );
+        } catch (java.io.IOException | RuntimeException exception) {
+            Antarchy.LOGGER.error("Failed to register portal view shader", exception);
+        }
     }
 
     @SubscribeEvent
@@ -368,6 +385,11 @@ public final class AntarchyNeoForgeClient {
 
     @SubscribeEvent
     public static void registerGuiLayers(RegisterGuiLayersEvent event) {
+        event.registerAbove(
+                VanillaGuiLayers.CROSSHAIR,
+                ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "portal_gun_crosshair"),
+                (guiGraphics, partialTick) -> PortalGunCrosshairRenderer.render(guiGraphics)
+        );
         event.registerAboveAll(
                 ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "dread_darkness"),
                 (guiGraphics, partialTick) -> DreadHudRenderer.render(guiGraphics)

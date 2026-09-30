@@ -70,7 +70,6 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
-import com.craisinlord.antarchy.content.item.MinersDreamExcavationManager;
 import net.minecraftforge.fluids.FluidInteractionRegistry;
 import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
 import com.craisinlord.antarchy.content.time.TimeDilationManager;
@@ -106,7 +105,7 @@ public final class AntarchyForgeEvents {
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickDreadAndIchor);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickScorpionWhips);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickDreamSandLowGravity);
-        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickMinersDreamExcavations);
+        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickAttitudeAdjusterSlams);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickTimeDilation);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleAntiwaterDamage);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleAntiwaterFall);
@@ -1007,11 +1006,10 @@ public final class AntarchyForgeEvents {
         }
     }
 
-    static void tickMinersDreamExcavations(TickEvent.ServerTickEvent event) {
+    static void tickAttitudeAdjusterSlams(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         for (ServerLevel level : event.getServer().getAllLevels()) {
             AttitudeAdjusterSlamManager.tick(level);
-            MinersDreamExcavationManager.tick(level);
         }
     }
 

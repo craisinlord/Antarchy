@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
 import com.craisinlord.antarchy.content.item.GiantFryingPanToolHelper;
 import com.craisinlord.antarchy.content.item.GlimmerBottleItem;
+import com.craisinlord.antarchy.content.item.PortalGunItem;
 import com.craisinlord.antarchy.content.item.royal.RoyalGearHelper;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateGearHelper;
 import java.util.HashMap;
@@ -425,7 +426,7 @@ public final class CreativeTabContents {
             entry("shrink_ray", "combat"),
             entry("growth_ray", "combat"),
             entry("gravity_gun", "combat"),
-            // entry("portal_gun", "combat"), // deferred — out of scope for 2.0
+            entry("portal_gun", "combat"),
             entry("eye_of_the_storm", "combat"),
             entry("water_cannon", "combat"),
             entry("attitude_adjuster", "combat"),
@@ -640,6 +641,14 @@ public final class CreativeTabContents {
                 }
                 continue;
             }
+            if ("portal_gun".equals(entry.path())) {
+                Item portalGun = item(entry.path());
+                output.accept(portalGun);
+                output.accept(PortalGunItem.createGlobalVariant(portalGun, "Chell"));
+                output.accept(PortalGunItem.createGlobalVariant(portalGun, "Atlas"));
+                output.accept(PortalGunItem.createGlobalVariant(portalGun, "P-body"));
+                continue;
+            }
             output.accept(item(entry.path()));
         }
         for (String potionPath : ANTARCHY_POTION_FAMILIES) {
@@ -667,6 +676,14 @@ public final class CreativeTabContents {
             matched = true;
             if (entry.insertAfterPath() != null) {
                 output.insertAfter(vanillaItem(entry.insertAfterPath()), item(entry.path()));
+                continue;
+            }
+            if ("portal_gun".equals(entry.path())) {
+                Item portalGun = item(entry.path());
+                output.accept(portalGun);
+                output.accept(PortalGunItem.createGlobalVariant(portalGun, "Chell"));
+                output.accept(PortalGunItem.createGlobalVariant(portalGun, "Atlas"));
+                output.accept(PortalGunItem.createGlobalVariant(portalGun, "P-body"));
                 continue;
             }
             if ("combat".equals(tabPath)) {

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.UUID;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -73,7 +72,7 @@ public class PortalGunBlackHoleEntity extends Entity implements GeoEntity {
         }
         this.pullNearby(serverLevel);
         if (this.ageTicks % 10 == 0) {
-            serverLevel.playSound(null, this.blockPosition(), SoundEvents.PORTAL_AMBIENT, SoundSource.HOSTILE, 0.5F, 0.6F);
+            serverLevel.playSound(null, this.blockPosition(), PortalGunPortalEntity.sound("portal_ambient"), SoundSource.HOSTILE, 0.5F, 0.6F);
         }
     }
 

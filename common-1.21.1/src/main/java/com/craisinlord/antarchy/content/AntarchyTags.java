@@ -41,7 +41,6 @@ public final class AntarchyTags {
         public static final TagKey<Block> CAVARYN_PORTAL_FRAMES = TagKey.create(Registries.BLOCK, id("cavaryn_portal_frames"));
         public static final TagKey<Block> RAINBOW_PORTAL_FRAMES = TagKey.create(Registries.BLOCK, id("rainbow_portal_frames"));
         public static final TagKey<Block> ROLLY_CAVERN_CARVEABLE = TagKey.create(Registries.BLOCK, id("rolly_cavern_carveable"));
-        public static final TagKey<Block> MINERS_DREAM_CARVABLE = TagKey.create(Registries.BLOCK, id("miners_dream_carvable"));
         public static final TagKey<Block> BLUESTONE_COMPONENTS = TagKey.create(Registries.BLOCK, id("bluestone_components"));
         public static final TagKey<Block> BLUESTONE_CONNECTABLE = TagKey.create(Registries.BLOCK, id("bluestone_connectable"));
         public static final TagKey<Block> ANTIMETAL_INVERSION_BLOCKS = TagKey.create(Registries.BLOCK, id("antimetal_inversion_blocks"));

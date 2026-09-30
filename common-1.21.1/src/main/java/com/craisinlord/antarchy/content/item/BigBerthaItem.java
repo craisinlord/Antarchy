@@ -59,6 +59,8 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
     private static final ResourceLocation TEXTURE_LOCATION = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/item/big_bertha/big_bertha.png");
     private static final ResourceLocation ANIMATION_LOCATION = ResourceLocation.fromNamespaceAndPath("antarchy", "animations/static_item.animation.json");
     private static final String MODE_TAG = "antarchy.big_bertha_mode";
+    public static final int MODE_TREMORSAURUS = 8;
+    public static final int MODE_FORSAKEN = 9;
     private static final String SPIN_TICKS_TAG = "antarchy.big_bertha_spin_ticks";
     private static final String SPIN_DIRECTION_X_TAG = "antarchy.big_bertha_spin_direction_x";
     private static final String SPIN_DIRECTION_Z_TAG = "antarchy.big_bertha_spin_direction_z";
@@ -161,7 +163,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
             case NIGHTMARE -> applyNightmareHit(player, target, serverLevel);
             case KRAKEN -> applyKrakenHit(player, target, serverLevel);
             case HERCULES -> applyHerculesHit(player, target, serverLevel);
-            case MOLEVORE, TORETERROR -> {
+            case MOLEVORE, TORETERROR, TREMORSAURUS, FORSAKEN -> {
             }
         }
 
@@ -387,6 +389,10 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
                     true
             );
         }
+    }
+
+    public static int getModeId(ItemStack stack) {
+        return getMode(stack).id;
     }
 
     public boolean tryCycleModeFromInput(Level level, Player player, ItemStack stack) {
@@ -650,6 +656,8 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
         MOLEVORE(3, "tooltip.antarchy.big_bertha.mode.molevore", "message.antarchy.big_bertha.mode.molevore"),
         LUCID(4, "tooltip.antarchy.big_bertha.mode.lucid", "message.antarchy.big_bertha.mode.lucid"),
         TORETERROR(5, "tooltip.antarchy.big_bertha.mode.toreterror", "message.antarchy.big_bertha.mode.toreterror"),
+        TREMORSAURUS(MODE_TREMORSAURUS, "tooltip.antarchy.big_bertha.mode.tremorsaurus", "message.antarchy.big_bertha.mode.tremorsaurus"),
+        FORSAKEN(MODE_FORSAKEN, "tooltip.antarchy.big_bertha.mode.forsaken", "message.antarchy.big_bertha.mode.forsaken"),
         HERCULES(6, "tooltip.antarchy.big_bertha.mode.hercules", "message.antarchy.big_bertha.mode.hercules");
 
         private final int id;
@@ -671,7 +679,9 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
                 case KRAKEN -> HERCULES;
                 case HERCULES -> MOLEVORE;
                 case MOLEVORE -> TORETERROR;
-                case TORETERROR -> NONE;
+                case TORETERROR -> TREMORSAURUS;
+                case TREMORSAURUS -> FORSAKEN;
+                case FORSAKEN -> NONE;
             };
         }
 

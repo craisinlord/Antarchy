@@ -11,6 +11,7 @@ import com.craisinlord.antarchy.content.time.TimeDilationCommand;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 
@@ -28,5 +29,10 @@ public final class AntarchyNeoforgeEvents {
         QueenLocateCommand.register(event.getDispatcher());
         TimeDilationCommand.register(event.getDispatcher());
         RoyalCommand.register(event.getDispatcher());
+    }
+
+    @SubscribeEvent
+    public static void onServerStopping(ServerStoppingEvent event) {
+        com.craisinlord.antarchy.content.portalgun.PortalGunProjectileEntity.releaseAllProjectileTickets();
     }
 }

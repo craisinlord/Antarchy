@@ -146,8 +146,7 @@ public final class TimeDilationManager {
             if (!(entity instanceof TimeDilationEntityAccess access) || entity instanceof TimeDilationFieldEntity) {
                 continue;
             }
-            if (entity.getType().is(com.craisinlord.antarchy.content.AntarchyTags.Entities.TIME_DILATION_IMMUNE)
-                    || (entity instanceof net.minecraft.world.entity.LivingEntity living && !RoyalEffectEligibility.canApplyDilated(living))) {
+            if (entity.getType().is(com.craisinlord.antarchy.content.AntarchyTags.Entities.TIME_DILATION_IMMUNE)) {
                 if (RoyalEffectHooks.dilatedHolder() != null && entity instanceof net.minecraft.world.entity.LivingEntity living) {
                     living.removeEffect(RoyalEffectHooks.dilatedHolder());
                 }

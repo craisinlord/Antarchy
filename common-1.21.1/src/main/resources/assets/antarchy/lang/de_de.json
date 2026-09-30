@@ -411,11 +411,6 @@
     "tooltip.antarchy.reverie_bottle.capture": "Rechtsklicke mit einer Glasflasche auf eine Reverie, um sie einzufangen.",
     "tooltip.antarchy.reverie_bottle.release": "Rechtsklick, um die Reverie freizulassen.",
     "item.antarchy.gravity_gun": "Gravitationskanone",
-    "item.antarchy.miners_dream": "Traum des Bergmanns",
-    "tooltip.antarchy.miners_dream.line1": "Rechtsklick, um eine gewundene Höhle zu graben.",
-    "tooltip.antarchy.miners_dream.line2": "Lässt wertvolle Blöcke unberührt.",
-    "message.antarchy.miners_dream_disabled": "Der Traum des Bergmanns ist deaktiviert.",
-    "message.antarchy.miners_dream_busy": "Dein vorheriger Traum entfaltet sich noch.",
     "item.antarchy.diamond_minecart": "Die Diamantlore",
     "item.antarchy.cogwheel_pet": "Zahnrad-Haustier",
     "item.antarchy.fire_dragon_pet": "Feuerdrachen-Haustier",
@@ -967,4 +962,6 @@
     "subtitles.antarchy.hoverboard_mount": "Hoverboard startet",
     "subtitles.antarchy.hoverboard_dismount": "Hoverboard stoppt",
     "subtitles.antarchy.hoverboard_idle": "Hoverboard summt"
+,
+    "entity.antarchy.portal_gun_portal": "Portalgun-Portal"
 }

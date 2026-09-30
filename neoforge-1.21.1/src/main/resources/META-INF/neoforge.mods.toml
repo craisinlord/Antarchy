@@ -18,6 +18,9 @@ displayURL="https://www.curseforge.com/minecraft/mc-mods/antarchy"
     config = "antarchy-common.mixins.json"
 
 [[mixins]]
+    config = "antarchy-sodium.mixins.json"
+
+[[mixins]]
     config = "antarchy-neoforge.mixins.json"
 
 [[dependencies.antarchy]]
@@ -67,6 +70,22 @@ modId="antos"
     ordering="NONE"
     side="BOTH"
     reason="Antarchy requires Infinite Dimensions 2.7.3 or newer"
+
+[[dependencies.antarchy]]
+    modId="apple_cows"
+    type="incompatible"
+    versionRange="*"
+    ordering="NONE"
+    side="BOTH"
+    reason="Antarchy already includes Apple Cows. Remove the standalone Apple Cows mod."
+
+[[dependencies.antarchy]]
+    modId="hoverboards"
+    type="incompatible"
+    versionRange="*"
+    ordering="NONE"
+    side="BOTH"
+    reason="Antarchy already includes Hoverboards. Remove the standalone Hoverboards mod."
 
 [[dependencies.antarchy]]
     modId="configured"

@@ -22,6 +22,15 @@ displayTest="MATCH_VERSION"
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
+# Antarchy already includes Apple Cows. Forge 1.20.1 has no "incompatible" dependency type,
+# so this optional dependency uses a version range no release can satisfy: if the standalone
+# Apple Cows mod is installed, Forge refuses to load instead of running both copies.
+[[dependencies.${mod_id}]]
+    modId="apple_cows"
+    mandatory=false
+    versionRange="(,0)"
+    ordering="NONE"
+    side="BOTH"
 
 [[mixins]]
     config="antarchy-common.mixins.json"

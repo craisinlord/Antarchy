@@ -167,11 +167,6 @@ public final class AntarchySettings {
     private static double gravityGunMaxHoldDistance = 10.0D;
     private static double critterCageMaxCapturableWidth = 1.65D;
     private static double critterCageMaxCapturableHeight = 1.65D;
-    private static boolean minersDreamEnabled = true;
-    private static int minersDreamMinimumRange = 48;
-    private static int minersDreamMaximumRange = 96;
-    private static int minersDreamTorchSpacing = 10;
-    private static int minersDreamBlocksPerTick = 150;
     private static double lucidAttackRange = 9.0D;
     private static double lucidPearlInvertedDurationSeconds = 6.0D;
     private static int corneaEarNightVisionSeconds = 15;
@@ -554,6 +549,15 @@ public final class AntarchySettings {
     private static boolean elythiaPortalEnabled = true;
     private static boolean thoraxisPortalEnabled = true;
     private static boolean cavarynPortalEnabled = true;
+    private static boolean portalGunCanFireThroughGlass = false;
+    private static boolean portalGunCanFireThroughLiquid = false;
+    private static boolean portalGunCanPortalsResizeWhenCreated = true;
+    private static boolean portalGunCanPortalProjectilesChunkload = true;
+    private static boolean portalGunSeeThroughPortals = true;
+    private static boolean portalGunFancyPortals = true;
+    private static int portalGunIndicatorSize = 30;
+    private static int portalGunMaxShootDistance = 10000;
+    private static int portalGunEntityGrabWeightBase = 100;
     private static boolean elythiaFireflyParticlesEnabled = true;
     private static int bloodCrystalArmorShieldRechargeTicks = 600;
     private static int bloodCrystalAppleShieldCount = 2;
@@ -1251,26 +1255,6 @@ public final class AntarchySettings {
         return critterCageMaxCapturableHeight;
     }
 
-    public static boolean minersDreamEnabled() {
-        return minersDreamEnabled;
-    }
-
-    public static int minersDreamMinimumRange() {
-        return minersDreamMinimumRange;
-    }
-
-    public static int minersDreamMaximumRange() {
-        return minersDreamMaximumRange;
-    }
-
-    public static int minersDreamTorchSpacing() {
-        return minersDreamTorchSpacing;
-    }
-
-    public static int minersDreamBlocksPerTick() {
-        return minersDreamBlocksPerTick;
-    }
-
     public static void setDisableInfinityBookPortalCreation(boolean value) {
         disableInfinityBookPortalCreation = value;
     }
@@ -1327,11 +1311,56 @@ public final class AntarchySettings {
         cavarynPortalEnabled = value;
     }
 
+    public static void setPortalGunCanFireThroughGlass(boolean value) {
+        portalGunCanFireThroughGlass = value;
+    }
+
+    public static void setPortalGunCanFireThroughLiquid(boolean value) {
+        portalGunCanFireThroughLiquid = value;
+    }
+
+    public static void setPortalGunCanPortalsResizeWhenCreated(boolean value) {
+        portalGunCanPortalsResizeWhenCreated = value;
+    }
+
+    public static void setPortalGunCanPortalProjectilesChunkload(boolean value) {
+        portalGunCanPortalProjectilesChunkload = value;
+    }
+
+    public static void setPortalGunSeeThroughPortals(boolean value) {
+        portalGunSeeThroughPortals = value;
+    }
+
+    public static void setPortalGunFancyPortals(boolean value) {
+        portalGunFancyPortals = value;
+    }
+
+    public static void setPortalGunIndicatorSize(int value) {
+        portalGunIndicatorSize = Math.max(0, Math.min(100, value));
+    }
+
+    public static void setPortalGunMaxShootDistance(int value) {
+        portalGunMaxShootDistance = Math.max(1, value);
+    }
+
+    public static void setPortalGunEntityGrabWeightBase(int value) {
+        portalGunEntityGrabWeightBase = Math.max(0, value);
+    }
+
     public static boolean permanentPortalsEnabled() { return permanentPortalsEnabled; }
     public static boolean permanentPortalsFlintAndSteelEnabled() { return permanentPortalsFlintAndSteelEnabled; }
     public static boolean elythiaPortalEnabled() { return elythiaPortalEnabled; }
     public static boolean thoraxisPortalEnabled() { return thoraxisPortalEnabled; }
     public static boolean cavarynPortalEnabled() { return cavarynPortalEnabled; }
+    public static boolean portalGunCanFireThroughGlass() { return portalGunCanFireThroughGlass; }
+    public static boolean portalGunCanFireThroughLiquid() { return portalGunCanFireThroughLiquid; }
+    public static boolean portalGunCanPortalsResizeWhenCreated() { return portalGunCanPortalsResizeWhenCreated; }
+    public static boolean portalGunCanPortalProjectilesChunkload() { return portalGunCanPortalProjectilesChunkload; }
+    public static boolean portalGunSeeThroughPortals() { return portalGunSeeThroughPortals; }
+    public static boolean portalGunFancyPortals() { return portalGunFancyPortals; }
+    public static int portalGunIndicatorSize() { return portalGunIndicatorSize; }
+    public static int portalGunMaxShootDistance() { return portalGunMaxShootDistance; }
+    public static int portalGunEntityGrabWeightBase() { return portalGunEntityGrabWeightBase; }
 
     public static void setBrownAntRequiresReagent(boolean value) {
         brownAntRequiresReagent = value;
@@ -1807,26 +1836,6 @@ public final class AntarchySettings {
 
     public static void setCritterCageMaxCapturableHeight(double value) {
         critterCageMaxCapturableHeight = value;
-    }
-
-    public static void setMinersDreamEnabled(boolean value) {
-        minersDreamEnabled = value;
-    }
-
-    public static void setMinersDreamMinimumRange(int value) {
-        minersDreamMinimumRange = value;
-    }
-
-    public static void setMinersDreamMaximumRange(int value) {
-        minersDreamMaximumRange = value;
-    }
-
-    public static void setMinersDreamTorchSpacing(int value) {
-        minersDreamTorchSpacing = value;
-    }
-
-    public static void setMinersDreamBlocksPerTick(int value) {
-        minersDreamBlocksPerTick = value;
     }
 
     public static double lucidAttackRange() {

@@ -187,11 +187,6 @@ public final class AntarchyToolsConfig {
 
     // Miner's Dream
 
-    private static final ForgeConfigSpec.BooleanValue MINERS_DREAM_ENABLED;
-    private static final ForgeConfigSpec.IntValue      MINERS_DREAM_MINIMUM_RANGE;
-    private static final ForgeConfigSpec.IntValue      MINERS_DREAM_MAXIMUM_RANGE;
-    private static final ForgeConfigSpec.IntValue      MINERS_DREAM_TORCH_SPACING;
-    private static final ForgeConfigSpec.IntValue      MINERS_DREAM_BLOCKS_PER_TICK;
 
 
     // Miscellaneous items / consumables
@@ -472,16 +467,6 @@ public final class AntarchyToolsConfig {
         b.pop();
 
 
-        // Miner's Dream
-
-        b.push("minersDream");
-        MINERS_DREAM_ENABLED         = b.comment("Master toggle. If false, the item remains craftable but cannot be used.").define("enabled", true);
-        MINERS_DREAM_MINIMUM_RANGE   = b.comment("Minimum cave length in blocks. Clamped to [8, 256].")                    .defineInRange("minimumRange", 48, 8, 256);
-        MINERS_DREAM_MAXIMUM_RANGE   = b.comment("Maximum cave length in blocks. Clamped to [8, 256].")                    .defineInRange("maximumRange", 96, 8, 256);
-        MINERS_DREAM_TORCH_SPACING   = b.comment("Approximate blocks between torch placements along the cave.")           .defineInRange("torchSpacing", 10, 4, 64);
-        MINERS_DREAM_BLOCKS_PER_TICK = b.comment("Maximum blocks removed per server tick while excavating.")              .defineInRange("blocksPerTick", 150, 1, 2000);
-        b.pop();
-
 
         // Miscellaneous items / consumables
 
@@ -662,11 +647,6 @@ public final class AntarchyToolsConfig {
     static double  critterCageMaxCapturableWidth()           { return CRITTER_CAGE_MAX_CAPTURABLE_WIDTH.get(); }
     static double  critterCageMaxCapturableHeight()          { return CRITTER_CAGE_MAX_CAPTURABLE_HEIGHT.get(); }
 
-    static boolean minersDreamEnabled()                      { return MINERS_DREAM_ENABLED.get(); }
-    static int     minersDreamMinimumRange()                 { return MINERS_DREAM_MINIMUM_RANGE.get(); }
-    static int     minersDreamMaximumRange()                 { return MINERS_DREAM_MAXIMUM_RANGE.get(); }
-    static int     minersDreamTorchSpacing()                 { return MINERS_DREAM_TORCH_SPACING.get(); }
-    static int     minersDreamBlocksPerTick()                { return MINERS_DREAM_BLOCKS_PER_TICK.get(); }
 
     static double  ductTapeRepairPercentPerUse()             { return DUCT_TAPE_REPAIR_PERCENT_PER_USE.get(); }
     static double  potentNyxiteInvertedDurationSeconds()     { return POTENT_NYXITE_INVERTED_DURATION_SECONDS.get(); }

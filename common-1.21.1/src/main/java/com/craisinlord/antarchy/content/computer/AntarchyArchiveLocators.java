@@ -2,11 +2,13 @@ package com.craisinlord.antarchy.content.computer;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.command.QueenLocateCommand;
+import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyEntity;
 import com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGrid;
 import com.craisinlord.antos.api.archive.ArchiveLocatorRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.AABB;
 
 /** Archive coordinate lookups for royals that live on grids rather than in vanilla structures. */
 public final class AntarchyArchiveLocators {
@@ -23,6 +25,14 @@ public final class AntarchyArchiveLocators {
             int surfaceY = level.getChunkSource().getGenerator().getBaseHeight(center.getX(), center.getZ(),
                     Heightmap.Types.WORLD_SURFACE_WG, level, level.getChunkSource().randomState());
             return new BlockPos(center.getX(), surfaceY, center.getZ());
+        });
+        ArchiveLocatorRegistry.register(id("brutalfly"), (level, origin) -> {
+            AABB searchArea = AABB.ofSize(origin.getCenter(), 1_024.0D, 1_024.0D, 1_024.0D);
+            return level.getEntitiesOfClass(BrutalflyEntity.class, searchArea, BrutalflyEntity::isAlive)
+                    .stream()
+                    .min(java.util.Comparator.comparingDouble(entity -> entity.distanceToSqr(origin.getCenter())))
+                    .map(entity -> entity.blockPosition())
+                    .orElse(null);
         });
     }
 

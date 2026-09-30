@@ -411,11 +411,6 @@
     "tooltip.antarchy.reverie_bottle.capture": "手持玻璃瓶右鍵雷弗裡即可將其收納。",
     "tooltip.antarchy.reverie_bottle.release": "右鍵釋放雷弗裡。",
     "item.antarchy.gravity_gun": "重力槍",
-    "item.antarchy.miners_dream": "礦工之夢",
-    "tooltip.antarchy.miners_dream.line1": "右鍵挖出一條蜿蜒洞穴。",
-    "tooltip.antarchy.miners_dream.line2": "不會破壞貴重方塊。",
-    "message.antarchy.miners_dream_disabled": "礦工之夢已禁用。",
-    "message.antarchy.miners_dream_busy": "你之前的夢仍在展開。",
     "item.antarchy.diamond_minecart": "鑽石礦車",
     "item.antarchy.cogwheel_pet": "齒輪寵物",
     "item.antarchy.fire_dragon_pet": "火龍寵物",
@@ -964,4 +959,6 @@
     "advancements.antarchy.beetle_buddies.description": "馴服一隻赫拉克勒斯甲蟲。",
     "advancements.antarchy.herculean_task.title": "赫拉克勒斯之業",
     "advancements.antarchy.herculean_task.description": "斬殺一隻赫拉克勒斯甲蟲。"
+,
+    "entity.antarchy.portal_gun_portal": "傳送門槍傳送門"
 }

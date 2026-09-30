@@ -49,6 +49,24 @@ public final class AntarchyKeyBindings {
             GLFW.GLFW_KEY_B,
             CATEGORY
     );
+    public static final KeyMapping PORTAL_GUN_ZOOM = new KeyMapping(
+            "key.antarchy.portal_gun_zoom",
+            InputConstants.Type.MOUSE,
+            GLFW.GLFW_MOUSE_BUTTON_MIDDLE,
+            CATEGORY
+    );
+    public static final KeyMapping PORTAL_GUN_GRAB = new KeyMapping(
+            "key.antarchy.portal_gun_grab",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_G,
+            CATEGORY
+    );
+    public static final KeyMapping PORTAL_GUN_RESET = new KeyMapping(
+            "key.antarchy.portal_gun_reset",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_R,
+            CATEGORY
+    );
 
     private AntarchyKeyBindings() {}
 
@@ -59,6 +77,9 @@ public final class AntarchyKeyBindings {
         KeyBindingHelper.registerKeyBinding(TIGERS_EYE_CAMOUFLAGE);
         KeyBindingHelper.registerKeyBinding(ROYAL_INVERSION_TOGGLE);
         KeyBindingHelper.registerKeyBinding(ROYAL_BOUNDARY);
+        KeyBindingHelper.registerKeyBinding(PORTAL_GUN_ZOOM);
+        KeyBindingHelper.registerKeyBinding(PORTAL_GUN_GRAB);
+        KeyBindingHelper.registerKeyBinding(PORTAL_GUN_RESET);
     }
 
     public static boolean isBrutalflyFlapPressed() {
@@ -83,5 +104,21 @@ public final class AntarchyKeyBindings {
 
     public static boolean consumeRoyalBoundaryPressed() {
         return Minecraft.getInstance().screen == null && ROYAL_BOUNDARY.consumeClick();
+    }
+
+    public static boolean consumePortalGunZoomPressed() {
+        return Minecraft.getInstance().screen == null && PORTAL_GUN_ZOOM.consumeClick();
+    }
+
+    public static boolean consumePortalGunGrabPressed() {
+        return Minecraft.getInstance().screen == null && PORTAL_GUN_GRAB.consumeClick();
+    }
+
+    public static boolean consumePortalGunResetPressed() {
+        return Minecraft.getInstance().screen == null && PORTAL_GUN_RESET.consumeClick();
+    }
+
+    public static boolean isPortalGunResetDown() {
+        return Minecraft.getInstance().screen == null && (PORTAL_GUN_RESET.isDown() || PORTAL_GUN_RESET.consumeClick());
     }
 }

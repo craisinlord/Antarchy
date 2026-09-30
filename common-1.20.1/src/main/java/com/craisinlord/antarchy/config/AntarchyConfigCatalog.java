@@ -110,7 +110,7 @@ public final class AntarchyConfigCatalog {
                 || name.startsWith("nightmareSword") || name.startsWith("basiliskDagger")
                 || name.startsWith("squidzooka") || name.equals("invertProjectilesFromInvertedPlayers")
                 || name.startsWith("gravityGun") || name.startsWith("critterCage")
-                || name.startsWith("minersDream") || name.equals("potentNyxiteInvertedDurationSeconds")
+                || name.equals("potentNyxiteInvertedDurationSeconds")
                 || name.equals("corneaEarNightVisionSeconds") || name.startsWith("american")
                 || name.startsWith("mogglesVision") || name.equals("ductTapeRepairPercentPerUse")
                 || name.startsWith("fallenKingCrown");

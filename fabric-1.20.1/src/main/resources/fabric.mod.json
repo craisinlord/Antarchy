@@ -32,5 +32,8 @@
     "minecraft": "~${minecraft_version}",
     "java": ">=17",
     "fabric-api": "*"
+  },
+  "breaks": {
+    "apple_cows": "*"
   }
 }

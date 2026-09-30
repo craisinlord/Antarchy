@@ -630,11 +630,6 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setCritterCageMaxCapturableWidth(AntarchyToolsConfig.critterCageMaxCapturableWidth());
         AntarchySettings.setCritterCageMaxCapturableHeight(AntarchyToolsConfig.critterCageMaxCapturableHeight());
 
-        AntarchySettings.setMinersDreamEnabled(AntarchyToolsConfig.minersDreamEnabled());
-        AntarchySettings.setMinersDreamMinimumRange(AntarchyToolsConfig.minersDreamMinimumRange());
-        AntarchySettings.setMinersDreamMaximumRange(AntarchyToolsConfig.minersDreamMaximumRange());
-        AntarchySettings.setMinersDreamTorchSpacing(AntarchyToolsConfig.minersDreamTorchSpacing());
-        AntarchySettings.setMinersDreamBlocksPerTick(AntarchyToolsConfig.minersDreamBlocksPerTick());
 
         AntarchySettings.setDuctTapeRepairPercentPerUse(AntarchyToolsConfig.ductTapeRepairPercentPerUse());
         AntarchySettings.setPotentNyxiteInvertedDurationSeconds(AntarchyToolsConfig.potentNyxiteInvertedDurationSeconds());
@@ -669,6 +664,15 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setElythiaPortalEnabled(AntarchyMiscConfig.elythiaPortalEnabled());
         AntarchySettings.setThoraxisPortalEnabled(AntarchyMiscConfig.thoraxisPortalEnabled());
         AntarchySettings.setCavarynPortalEnabled(AntarchyMiscConfig.cavarynPortalEnabled());
+        AntarchySettings.setPortalGunCanFireThroughGlass(AntarchyMiscConfig.portalGunCanFireThroughGlass());
+        AntarchySettings.setPortalGunCanFireThroughLiquid(AntarchyMiscConfig.portalGunCanFireThroughLiquid());
+        AntarchySettings.setPortalGunCanPortalsResizeWhenCreated(AntarchyMiscConfig.portalGunCanPortalsResizeWhenCreated());
+        AntarchySettings.setPortalGunCanPortalProjectilesChunkload(AntarchyMiscConfig.portalGunCanPortalProjectilesChunkload());
+        AntarchySettings.setPortalGunSeeThroughPortals(AntarchyMiscConfig.portalGunSeeThroughPortals());
+        AntarchySettings.setPortalGunFancyPortals(AntarchyMiscConfig.portalGunFancyPortals());
+        AntarchySettings.setPortalGunMaxShootDistance(AntarchyMiscConfig.portalGunMaxShootDistance());
+        AntarchySettings.setPortalGunEntityGrabWeightBase(AntarchyMiscConfig.portalGunEntityGrabWeightBase());
+        AntarchySettings.setPortalGunIndicatorSize(AntarchyMiscConfig.portalGunIndicatorSize());
 
 
         // Misc

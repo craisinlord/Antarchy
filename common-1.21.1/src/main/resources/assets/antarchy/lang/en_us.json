@@ -671,11 +671,6 @@
     "tooltip.antarchy.reverie_bottle.release":  "Right click to release the Reverie.",
     "item.antarchy.gravity_gun":  "Gravity Gun",
     "item.antarchy.portal_gun":  "Portal Gun",
-    "item.antarchy.miners_dream":  "Miner's Dream",
-    "tooltip.antarchy.miners_dream.line1":  "Use to carve a winding cave.",
-    "tooltip.antarchy.miners_dream.line2":  "Leaves valuable blocks untouched.",
-    "message.antarchy.miners_dream_disabled":  "The Miner's Dream is disabled.",
-    "message.antarchy.miners_dream_busy":  "Your previous dream is still unfolding.",
     "item.antarchy.diamond_minecart":  "The Diamond Minecart",
     "item.antarchy.cogwheel_pet":  "Cogwheel Pet",
     "item.antarchy.fire_dragon_pet":  "Fire Dragon Pet",
@@ -844,7 +839,11 @@
     "tooltip.antarchy.gravity_gun.blacklist":  "Does not affect blacklisted blocks or entities.",
     "tooltip.antarchy.portal_gun.primary":  "Attack: fire a blue portal.",
     "tooltip.antarchy.portal_gun.secondary":  "Use: fire an orange portal.",
+    "tooltip.antarchy.portal_gun.channel":  "Channel: %s",
+    "tooltip.antarchy.portal_gun.owner":  "Owner: %s",
     "tooltip.antarchy.portal_gun.reset":  "Sneak + use: fizzle your active portals.",
+    "tooltip.antarchy.portal_gun.size":  "Portal size: %1$s x %2$s",
+    "tooltip.antarchy.portal_gun.grab_strength":  "Grab strength: %s/4",
     "tooltip.antarchy.antimetal_inversion":  "Inverts entites directly below it",
     "tooltip.antarchy.diamond_minecart.forward":  "Will be implemented later.",
     "tooltip.antarchy.diamond_minecart.rails":  " ",
@@ -1247,6 +1246,9 @@
     "advancements.antarchy.duct_tape.title":  "I sawed this boat in half!",
     "advancements.antarchy.duct_tape.description":  "and fixed it with the power of duct tape!",
     "key.categories.antarchy":  "Antarchy",
+    "key.antarchy.portal_gun_zoom":  "Portal Gun Zoom",
+    "key.antarchy.portal_gun_grab":  "Portal Gun Grab",
+    "key.antarchy.portal_gun_reset": "Portal Gun Reset",
     "key.antarchy.brutalfly_flap":  "Brutalfly Elytra: Flap",
     "advancements.antarchy.shrink_ray_craft.title":  "Honey, I Shrunk the Mobs",
     "advancements.antarchy.shrink_ray_craft.description":  "Craft a Shrink Ray.",
@@ -1596,6 +1598,7 @@
     ,"guide.antarchy.entry.brutalfly.description": "An oversized Elythian butterfly. Unlike its smaller counterparts, it is incredibly aggressive once out of its cocoon."
     ,"guide.antarchy.entry.brutalfly.description2": "Like any butterfly, a Brutalfly begins in a cocoon. It is relatively safe to be near the cocoon as long as it remains undamaged."
     ,"guide.antarchy.entry.brutalfly.description3": "If the Brutalfly is on the assault, all you can do is dispose of it."
+    ,"guide.antarchy.entry.brutalfly.description4": "Brutaflies are found in Elythia's wooded areas. Look for their cocoons hanging beneath the canopy."
     ,"guide.antarchy.entry.easter_bunny.title": "Easter Bunny"
     ,"guide.antarchy.entry.easter_bunny.subtitle": "Entity record"
     ,"guide.antarchy.entry.easter_bunny.description": "The Easter Bunny lays spawn eggs for all sorts of creatures! Life is like an easter egg, you never know what you're gonna get."
@@ -1639,4 +1642,6 @@
     ,"subtitles.antarchy.hoverboard_mount": "Hoverboard starts"
     ,"subtitles.antarchy.hoverboard_dismount": "Hoverboard stops"
     ,"subtitles.antarchy.hoverboard_idle": "Hoverboard hums"
+,
+    "entity.antarchy.portal_gun_portal": "Portal Gun Portal"
 }

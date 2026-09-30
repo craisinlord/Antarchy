@@ -447,11 +447,6 @@ public final class AntarchyConfigModuleForge {
         AntarchySettings.setCritterCageMaxCapturableWidth(AntarchyToolsConfig.critterCageMaxCapturableWidth());
         AntarchySettings.setCritterCageMaxCapturableHeight(AntarchyToolsConfig.critterCageMaxCapturableHeight());
 
-        AntarchySettings.setMinersDreamEnabled(AntarchyToolsConfig.minersDreamEnabled());
-        AntarchySettings.setMinersDreamMinimumRange(AntarchyToolsConfig.minersDreamMinimumRange());
-        AntarchySettings.setMinersDreamMaximumRange(AntarchyToolsConfig.minersDreamMaximumRange());
-        AntarchySettings.setMinersDreamTorchSpacing(AntarchyToolsConfig.minersDreamTorchSpacing());
-        AntarchySettings.setMinersDreamBlocksPerTick(AntarchyToolsConfig.minersDreamBlocksPerTick());
 
         AntarchySettings.setDuctTapeRepairPercentPerUse(AntarchyToolsConfig.ductTapeRepairPercentPerUse());
         AntarchySettings.setPotentNyxiteInvertedDurationSeconds(AntarchyToolsConfig.potentNyxiteInvertedDurationSeconds());

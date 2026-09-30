@@ -88,29 +88,18 @@ import net.neoforged.neoforge.event.village.VillagerTradesEvent;
 import net.neoforged.neoforge.event.village.WandererTradesEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
-import com.craisinlord.antarchy.content.item.MinersDreamExcavationManager;
 import net.neoforged.neoforge.fluids.FluidInteractionRegistry;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public final class AntarchyNeoForgeEvents {
-    private static final long SERVER_HANG_WARN_NANOS = 5_000_000_000L;
-    private static final long SERVER_IDLE_BUSY_WARN_NANOS = 30_000_000_000L;
-    private static final long SERVER_HANG_REPEAT_NANOS = 30_000_000_000L;
     private static final double OVERHEAD_INVERSION_WARN_MS = 10.0D;
     private static final long OVERHEAD_INVERSION_WARN_INTERVAL_TICKS = 100L;
-    private static volatile boolean serverHangWatchdogStarted;
-    private static volatile long serverTickStartNanos;
-    private static volatile long serverTickEndNanos;
-    private static volatile long serverHangLastDumpNanos;
-    private static volatile Thread serverTickThread;
     private static long lastOverheadInversionWarnTick = Long.MIN_VALUE / 2L;
 
     private AntarchyNeoForgeEvents() {}
 
     public static void register(IEventBus modEventBus) {
         modEventBus.addListener(AntarchyNeoForgeEvents::onCommonSetup);
-        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::beginServerTickWatchdog);
-        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::endServerTickWatchdog);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onMissileSquidDeath);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onPermanentPortalSacrifice);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onLivingBreathe);
@@ -126,6 +115,7 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBossMagicBurstMitigation);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleScorpionWhipAttackEntity);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleAttitudeAdjusterAttackEntity);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handlePortalGunAttackEntity);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleScorpionWhipLeftClickBlock);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handlePortalGunLeftClickBlock);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleScorpionWhipRightClickBlock);
@@ -140,7 +130,7 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickDreadAndIchor);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickScorpionWhips);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickWormHooks);
-        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickMinersDreamExcavations);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickAttitudeAdjusterSlams);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleAntiwaterDamage);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleAntiwaterFall);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodCrystalBootsFall);
@@ -176,92 +166,6 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::registerReloadListeners);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onVillagerTrades);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onWandererTrades);
-    }
-
-    static void beginServerTickWatchdog(ServerTickEvent.Pre event) {
-        ensureServerHangWatchdogStarted();
-        serverTickThread = Thread.currentThread();
-        serverTickStartNanos = System.nanoTime();
-    }
-
-    static void endServerTickWatchdog(ServerTickEvent.Post event) {
-        serverTickEndNanos = System.nanoTime();
-        serverTickStartNanos = 0L;
-    }
-
-    private static synchronized void ensureServerHangWatchdogStarted() {
-        if (serverHangWatchdogStarted) {
-            return;
-        }
-        serverHangWatchdogStarted = true;
-        Thread watchdog = new Thread(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(2_000L);
-                } catch (InterruptedException ignored) {
-                    Thread.currentThread().interrupt();
-                    return;
-                }
-
-                long tickStart = serverTickStartNanos;
-                long tickEnd = serverTickEndNanos;
-                Thread tickThread = serverTickThread;
-                long now = System.nanoTime();
-                if (tickThread == null || now - serverHangLastDumpNanos < SERVER_HANG_REPEAT_NANOS) {
-                    continue;
-                }
-
-                if (tickStart > 0L && now - tickStart >= SERVER_HANG_WARN_NANOS) {
-                    antarchy$dumpServerThreadWatchdog(
-                            "server thread appears hung",
-                            (now - tickStart) / 1_000_000.0D,
-                            tickThread
-                    );
-                    serverHangLastDumpNanos = now;
-                    continue;
-                }
-
-                Thread.State state = tickThread.getState();
-                boolean idleBusy = tickStart <= 0L
-                        && tickEnd > 0L
-                        && now - tickEnd >= SERVER_IDLE_BUSY_WARN_NANOS
-                        && state != Thread.State.WAITING
-                        && state != Thread.State.TIMED_WAITING
-                        && !antarchy$isServerThreadIdleWait(tickThread);
-                if (idleBusy) {
-                    antarchy$dumpServerThreadWatchdog(
-                            "server thread busy outside active tick",
-                            (now - tickEnd) / 1_000_000.0D,
-                            tickThread
-                    );
-                    serverHangLastDumpNanos = now;
-                }
-            }
-        }, "Antarchy Server Hang Watchdog");
-        watchdog.setDaemon(true);
-        watchdog.start();
-    }
-
-    private static void antarchy$dumpServerThreadWatchdog(String message, double elapsedMs, Thread tickThread) {
-        Antarchy.LOGGER.error(
-                "[antarchy-watchdog] {} elapsedMs={} thread={} state={}",
-                message, elapsedMs, tickThread.getName(), tickThread.getState()
-        );
-        for (StackTraceElement element : tickThread.getStackTrace()) {
-            Antarchy.LOGGER.error("[antarchy-watchdog]   at {}", element);
-        }
-    }
-
-    private static boolean antarchy$isServerThreadIdleWait(Thread tickThread) {
-        for (StackTraceElement element : tickThread.getStackTrace()) {
-            String method = element.getMethodName();
-            if (method.equals("waitUntilNextTick")
-                    || method.equals("waitForTasks")
-                    || method.equals("managedBlock")) {
-                return true;
-            }
-        }
-        return false;
     }
 
     static void onVillagerTrades(VillagerTradesEvent event) {
@@ -1093,6 +997,13 @@ public final class AntarchyNeoForgeEvents {
         AttitudeAdjusterSlamManager.markSpecialHit(player);
     }
 
+    static void handlePortalGunAttackEntity(AttackEntityEvent event) {
+        if (event.getEntity().getMainHandItem().getItem() instanceof com.craisinlord.antarchy.content.item.PortalGunItem
+                || event.getEntity().getOffhandItem().getItem() instanceof com.craisinlord.antarchy.content.item.PortalGunItem) {
+            event.setCanceled(true);
+        }
+    }
+
     static void handleScorpionWhipLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
@@ -1216,10 +1127,9 @@ public final class AntarchyNeoForgeEvents {
         }
     }
 
-    static void tickMinersDreamExcavations(ServerTickEvent.Post event) {
+    static void tickAttitudeAdjusterSlams(ServerTickEvent.Post event) {
         for (ServerLevel level : event.getServer().getAllLevels()) {
             AttitudeAdjusterSlamManager.tick(level);
-            MinersDreamExcavationManager.tick(level);
         }
     }
 

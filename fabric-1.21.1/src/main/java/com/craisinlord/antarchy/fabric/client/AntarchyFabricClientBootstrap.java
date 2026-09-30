@@ -5,6 +5,7 @@ import com.craisinlord.antarchy.fabric.registry.AntarchyFabricItems;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricMisc;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.client.PortalGunCrosshairRenderer;
 import com.craisinlord.antarchy.content.client.CameraShakeClientState;
 import com.craisinlord.antarchy.content.client.AntarchyArchivePreviews;
 import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
@@ -28,6 +29,7 @@ import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.CoreShaderRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -37,6 +39,7 @@ import net.minecraft.client.model.ChestBoatModel;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.CampfireRenderer;
@@ -66,6 +69,18 @@ public final class AntarchyFabricClientBootstrap {
     }
 
     public static void register() {
+        CoreShaderRegistrationCallback.EVENT.register(context -> {
+            PortalGunPortalViewRenderer.clearPortalViewShader();
+            try {
+                context.register(
+                        ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "portal_view"),
+                        DefaultVertexFormat.POSITION_TEX,
+                        PortalGunPortalViewRenderer::setPortalViewShader
+                );
+            } catch (java.io.IOException | RuntimeException exception) {
+                Antarchy.LOGGER.error("Failed to register portal view shader", exception);
+            }
+        });
         AntarchyArchivePreviews.register();
         AntarchyKeyBindings.register();
         MenuScreens.register(AntarchyFabricMisc.DORRIE_INVENTORY_MENU.get(), com.craisinlord.antarchy.content.client.screen.DorrieInventoryScreen::new);
@@ -611,14 +626,15 @@ public final class AntarchyFabricClientBootstrap {
             DorrieJumpHudRenderer.render(guiGraphics);
             HerculesBeetleChargeHudRenderer.render(guiGraphics);
             com.craisinlord.antarchy.content.client.KingJudgmentFlashHudRenderer.render(guiGraphics);
+            PortalGunCrosshairRenderer.render(guiGraphics);
         });
 
-        WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> {
+        WorldRenderEvents.LAST.register(context -> {
             BloodCrystalKatanaTrailHandler.render(context);
             ScorpionWhipTetherRenderHandler.render(context);
             WormHookTetherRenderHandler.render(context);
             if (context.matrixStack() != null && com.craisinlord.antarchy.content.client.renderer.PortalGunPortalViewRenderer.isEnabled()) {
-                com.craisinlord.antarchy.content.client.renderer.PortalGunPortalViewRenderer.render(context.camera(), context.matrixStack().last().pose(), context.tickCounter());
+                com.craisinlord.antarchy.content.client.renderer.PortalGunPortalViewRenderer.render(context.camera(), context.matrixStack().last().pose(), context.projectionMatrix(), context.tickCounter());
             }
         });
     }

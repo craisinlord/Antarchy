@@ -18,6 +18,8 @@ import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
 import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.craisinlord.antarchy.content.portal.PermanentPortalManager;
+import com.craisinlord.antarchy.content.portalgun.PortalGunProjectileEntity;
+import com.craisinlord.antarchy.content.portalgun.PortalGunGrabManager;
 import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.CaterpillarCommand;
 import com.craisinlord.antarchy.content.command.DimensionalTearCommand;
@@ -27,7 +29,6 @@ import com.craisinlord.antarchy.content.command.RoyalCommand;
 import com.craisinlord.antarchy.content.time.TimeDilationCommand;
 import com.craisinlord.antarchy.content.time.TimeDilationManager;
 import com.craisinlord.antarchy.content.time.ChronosphereManager;
-import com.craisinlord.antarchy.content.item.MinersDreamExcavationManager;
 import com.craisinlord.antarchy.content.item.WormHookTetherManager;
 import com.craisinlord.antarchy.content.entity.trades.ComputerScientistTradeManager;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
@@ -36,6 +37,7 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.object.builder.v1.trade.TradeOfferHelper;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
@@ -75,6 +77,9 @@ public final class AntarchyFabricEvents {
     }
 
     public static void register() {
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> PortalGunProjectileEntity.releaseAllProjectileTickets());
+        ServerLifecycleEvents.SERVER_STOPPING.register(PortalGunGrabManager::clear);
+        ServerLifecycleEvents.SERVER_STOPPING.register(com.craisinlord.antarchy.content.portalgun.PortalGunResetManager::clear);
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             ChronosphereManager.refresh(handler.player);
             TimeDilationManager.resyncPersistentEffects(handler.player);
@@ -183,13 +188,16 @@ public final class AntarchyFabricEvents {
                     : net.minecraft.world.InteractionResultHolder.fail(held);
         });
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+            if (player.getItemInHand(hand).getItem() instanceof com.craisinlord.antarchy.content.item.PortalGunItem) {
+                return InteractionResult.FAIL;
+            }
             if (!world.isClientSide && player.getItemInHand(hand).getItem() instanceof AttitudeAdjusterItem && player.getAttackStrengthScale(0.5F) >= 0.95F) {
                 AttitudeAdjusterSlamManager.markSpecialHit(player);
             }
             return InteractionResult.PASS;
         });
         net.fabricmc.fabric.api.event.player.AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> {
-            if (player.getMainHandItem().getItem() instanceof com.craisinlord.antarchy.content.item.PortalGunItem) {
+            if (player.getItemInHand(hand).getItem() instanceof com.craisinlord.antarchy.content.item.PortalGunItem) {
                 return InteractionResult.FAIL;
             }
             return InteractionResult.PASS;
@@ -201,6 +209,7 @@ public final class AntarchyFabricEvents {
         });
 
         ServerTickEvents.END_SERVER_TICK.register(server -> {
+            PortalGunGrabManager.tick(server);
             Set<UUID> activeThisTick = new HashSet<>();
             for (ServerLevel level : server.getAllLevels()) {
                 CavarynHordeManager.tick(level);
@@ -211,7 +220,6 @@ public final class AntarchyFabricEvents {
                 tickIchorPlayers(level);
                 tickBloodglassRecharge(level);
                 AttitudeAdjusterSlamManager.tick(level);
-                MinersDreamExcavationManager.tick(level);
                 for (ServerPlayer player : level.players()) {
                     WormHookTetherManager.tick(player);
                 }

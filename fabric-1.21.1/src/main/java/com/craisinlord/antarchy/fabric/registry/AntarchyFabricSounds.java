@@ -344,6 +344,9 @@ public final class AntarchyFabricSounds {
 
 
     public static final DeferredHolder<SoundEvent, SoundEvent> PORTAL_FIZZLE = registerSoundEvent("portal_fizzle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PORTAL_ENTER = registerSoundEvent("portal_enter");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PORTAL_EXIT = registerSoundEvent("portal_exit");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PORTAL_AMBIENT = registerSoundEvent("portal_ambient");
 
 
     public static final DeferredHolder<SoundEvent, SoundEvent> BED_BUG_AMBIENT = registerSoundEvent("bed_bug_ambient");

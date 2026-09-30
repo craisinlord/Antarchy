@@ -2,16 +2,21 @@ package com.craisinlord.antarchy.content.portalgun;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalBaseBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.PortalGunPortalCellAccess;
+import com.craisinlord.antarchy.content.block.entity.PortalGunPortalFaceRecord;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalMasterBlockEntity;
 import com.craisinlord.antarchy.mixins.AbstractArrowAccessor;
+import com.craisinlord.antarchy.mixins.FallingBlockEntityAccessor;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import java.awt.Color;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -19,14 +24,15 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -34,6 +40,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -55,32 +62,35 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
     }
 
     private static final EntityDataAccessor<Integer> SIDE = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Optional<UUID>> OWNER_ID = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+    private static final EntityDataAccessor<Optional<UUID>> GUN_ID = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+    private static final EntityDataAccessor<String> CHANNEL_NAME = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> FACING = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> UP_AXIS = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> CLOSING = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Optional<UUID>> LINKED_PORTAL = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+    private static final EntityDataAccessor<Integer> LINKED_PORTAL_ENTITY_ID = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> CHANNEL_RED = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> CHANNEL_GREEN = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> CHANNEL_BLUE = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> PORTAL_WIDTH = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> PORTAL_HEIGHT = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> OPENING_ANIMATION_ID = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.INT);
     private static final RawAnimation OPEN_ANIM = RawAnimation.begin().thenPlay("open");
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
-    private static final RawAnimation CLOSE_ANIM = RawAnimation.begin().thenPlay("close");
-    private static final int OPEN_TICKS = 10;
-    private static final int CLOSE_TICKS = 10;
-    private static final int MAX_LIFETIME_TICKS = 20 * 60 * 20;
-    private static final int TELEPORT_COOLDOWN_TICKS = 40;
-    private static final double PLAYER_PORTAL_INSIDE_SHIFT = 0.05D;
-    private static final double HALF_WIDTH = 0.5D;
-    private static final double HALF_HEIGHT = 1.0D;
+    private static final int OPEN_TICKS = 5;
+    public static final int TELEPORT_COOLDOWN_TICKS = 3;
+    private static final double PORTAL_INSIDE_SHIFT = 0.05D;
+    private static final Set<String> LOGGED_CROSSING_PATHS = new HashSet<>();
     private static final double HALF_DEPTH = 0.35D;
-    private static final double MIN_EXIT_MOMENTUM = 0.42D;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private final Map<UUID, Integer> teleportCooldowns = new HashMap<>();
-    private final Map<UUID, Integer> portalEntityDepths = new HashMap<>();
-    private Set<UUID> lastScanEntities = new HashSet<>();
     private UUID ownerId;
+    private String ownerIdentity;
+    private UUID gunId;
+    private String channelName;
     private UUID linkedPortalId;
     private int ageTicks;
+    private int lastOpeningAnimationId;
     private int pairTime;
     private BlockPos supportOrigin = BlockPos.ZERO;
     private BlockPos masterPos = BlockPos.ZERO;
@@ -98,40 +108,56 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(SIDE, PortalSide.BLUE.ordinal());
+        builder.define(OWNER_ID, Optional.empty());
+        builder.define(GUN_ID, Optional.empty());
+        builder.define(CHANNEL_NAME, "");
         builder.define(FACING, Direction.NORTH.get3DDataValue());
         builder.define(UP_AXIS, Direction.UP.get3DDataValue());
-        builder.define(CLOSING, false);
         builder.define(LINKED_PORTAL, Optional.empty());
+        builder.define(LINKED_PORTAL_ENTITY_ID, -1);
         builder.define(CHANNEL_RED, 58);
         builder.define(CHANNEL_GREEN, 166);
         builder.define(CHANNEL_BLUE, 255);
+        builder.define(PORTAL_WIDTH, 1);
+        builder.define(PORTAL_HEIGHT, 2);
+        builder.define(OPENING_ANIMATION_ID, 0);
     }
 
-    public void configure(UUID ownerId, PortalSide side, PortalGunPlacement placement) {
+    public void configure(UUID ownerId, UUID gunId, String ownerIdentity, String channelName, PortalSide side, PortalGunPlacement placement) {
         this.ownerId = ownerId;
+        this.ownerIdentity = ownerIdentity;
+        this.gunId = gunId;
+        this.channelName = channelName;
+        this.entityData.set(OWNER_ID, Optional.ofNullable(ownerId));
+        this.entityData.set(GUN_ID, Optional.ofNullable(gunId));
+        this.entityData.set(CHANNEL_NAME, channelName == null ? "" : channelName);
         this.entityData.set(SIDE, side.ordinal());
         this.entityData.set(FACING, placement.facing().get3DDataValue());
         this.entityData.set(UP_AXIS, placement.upAxis().get3DDataValue());
-        int[] channelColor = generateChannelColor(ownerId, side);
+        this.entityData.set(PORTAL_WIDTH, placement.width());
+        this.entityData.set(PORTAL_HEIGHT, placement.height());
+        int[] channelColor = generateChannelColor(ownerIdentity, channelName, side);
         this.entityData.set(CHANNEL_RED, channelColor[0]);
         this.entityData.set(CHANNEL_GREEN, channelColor[1]);
         this.entityData.set(CHANNEL_BLUE, channelColor[2]);
         this.supportOrigin = placement.supportOrigin().immutable();
         this.masterPos = placement.masterPos().immutable();
         this.basePos = placement.basePos().immutable();
-        this.portalSpots = new BlockPos[] {placement.portalSpots()[0].immutable(), placement.portalSpots()[1].immutable()};
+        this.portalSpots = java.util.Arrays.stream(placement.portalSpots()).map(BlockPos::immutable).toArray(BlockPos[]::new);
         this.compensatedSpots = Set.copyOf(placement.compensatedSpots());
     }
 
     public void linkTo(PortalGunPortalEntity other) {
         this.linkedPortalId = other.getUUID();
         this.entityData.set(LINKED_PORTAL, Optional.of(other.getUUID()));
+        this.entityData.set(LINKED_PORTAL_ENTITY_ID, other.getId());
         this.pairTime = (int) this.level().getGameTime();
     }
 
     public void restorePair(UUID linkedPortalId, int pairTime) {
         this.linkedPortalId = linkedPortalId;
         this.entityData.set(LINKED_PORTAL, Optional.ofNullable(linkedPortalId));
+        this.entityData.set(LINKED_PORTAL_ENTITY_ID, -1);
         this.pairTime = pairTime;
     }
 
@@ -157,7 +183,45 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
     }
 
     public UUID getOwnerId() {
-        return this.ownerId;
+        return this.entityData.get(OWNER_ID).orElse(this.ownerId);
+    }
+
+    public UUID getGunId() {
+        return this.entityData.get(GUN_ID).orElse(this.gunId);
+    }
+
+    public String getChannelName() {
+        String synchronizedName = this.entityData.get(CHANNEL_NAME);
+        return synchronizedName.isEmpty() ? this.channelName : synchronizedName;
+    }
+
+    public void adoptChannelIdentity(UUID gunId, String channelName) {
+        if (this.gunId == null && gunId != null) {
+            this.gunId = gunId;
+            this.entityData.set(GUN_ID, Optional.of(gunId));
+        }
+        if (channelName != null && !channelName.isEmpty() && !channelName.equals(this.channelName)) {
+            this.channelName = channelName;
+            this.entityData.set(CHANNEL_NAME, channelName);
+        }
+        if (this.level() instanceof ServerLevel serverLevel && serverLevel.hasChunkAt(this.masterPos)
+                && serverLevel.getBlockEntity(this.masterPos) instanceof PortalGunPortalMasterBlockEntity master
+                && this.getUUID().equals(master.getPortalId())) {
+            master.adoptChannelIdentity(gunId, channelName);
+        }
+    }
+
+    public void adoptGunId(UUID gunId) {
+        if (this.gunId != null || gunId == null) {
+            return;
+        }
+        this.gunId = gunId;
+        this.entityData.set(GUN_ID, Optional.of(gunId));
+        if (this.level() instanceof ServerLevel serverLevel && serverLevel.hasChunkAt(this.masterPos)
+                && serverLevel.getBlockEntity(this.masterPos) instanceof com.craisinlord.antarchy.content.block.entity.PortalGunPortalMasterBlockEntity master
+                && this.getUUID().equals(master.getPortalId())) {
+            master.adoptGunId(gunId);
+        }
     }
 
     public int getChannelRed() {
@@ -177,7 +241,27 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
     }
 
     public BlockPos[] getPortalSpots() {
-        return new BlockPos[] {this.portalSpots[0], this.portalSpots[1]};
+        return this.portalSpots.clone();
+    }
+
+    public boolean containsPortalSpot(BlockPos pos) {
+        for (BlockPos portalSpot : this.portalSpots) {
+            if (portalSpot.equals(pos)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int getPortalWidth() { return this.entityData.get(PORTAL_WIDTH); }
+
+    public int getPortalHeight() { return this.entityData.get(PORTAL_HEIGHT); }
+
+    public void restartOpeningAnimation() {
+        int animationId = this.entityData.get(OPENING_ANIMATION_ID) + 1;
+        this.entityData.set(OPENING_ANIMATION_ID, animationId);
+        this.lastOpeningAnimationId = animationId;
+        this.ageTicks = 0;
     }
 
     public Set<BlockPos> getCompensatedSpots() {
@@ -193,12 +277,17 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
         if (linkedId == null) {
             return null;
         }
-        List<Entity> entities = this.level().getEntities(this, new AABB(-3.0E7D, -3.0E7D, -3.0E7D, 3.0E7D, 3.0E7D, 3.0E7D), entity -> linkedId.equals(entity.getUUID()));
-        if (entities.isEmpty()) {
-            return null;
+        Entity linkedEntity;
+        if (this.level() instanceof ServerLevel serverLevel) {
+            linkedEntity = serverLevel.getEntity(linkedId);
+        } else {
+            int linkedEntityId = this.entityData.get(LINKED_PORTAL_ENTITY_ID);
+            if (linkedEntityId < 0) {
+                return null;
+            }
+            linkedEntity = this.level().getEntity(linkedEntityId);
         }
-        Entity entity = entities.getFirst();
-        return entity instanceof PortalGunPortalEntity portal ? portal : null;
+        return linkedEntity instanceof PortalGunPortalEntity portal && !portal.isRemoved() ? portal : null;
     }
 
     public Vec3 getNormalVec() {
@@ -214,7 +303,7 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
     }
 
     public PortalGunWorldPortalShape getWorldPortalShape() {
-        return new PortalGunWorldPortalShape(this.position(), this.getNormalVec().normalize(), this.getUpVec().normalize(), this.getWidthVec().normalize(), HALF_WIDTH, HALF_HEIGHT, HALF_DEPTH);
+        return new PortalGunWorldPortalShape(this.position(), this.getNormalVec().normalize(), this.getUpVec().normalize(), this.getWidthVec().normalize(), this.getPortalWidth() / 2.0D, this.getPortalHeight() / 2.0D, HALF_DEPTH);
     }
 
     public AABB getPlane() {
@@ -234,10 +323,7 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
     }
 
     public AABB getPortalInsides(Entity entity) {
-        if (!(entity instanceof Player)) {
-            return this.getPortalInsides();
-        }
-        double shiftAmount = Math.min(PLAYER_PORTAL_INSIDE_SHIFT, Math.abs(this.getWorldPortalShape().localCoords(entity.position()).depth()));
+        double shiftAmount = Math.min(PORTAL_INSIDE_SHIFT, Math.abs(this.getWorldPortalShape().localCoords(entity.position()).depth()));
         return this.getPortalInsides().move(this.getNormalVec().normalize().scale(shiftAmount));
     }
 
@@ -252,43 +338,100 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
     }
 
     public Vec3 teleportProbePosition(Entity entity) {
-        if (entity instanceof Player player) {
-            return player.getEyePosition();
-        }
-        if (entity instanceof LivingEntity living) {
-            return entity.position().add(0.0D, living.getBbHeight() * 0.5D, 0.0D);
-        }
-        return entity.position();
+        return entity.position().add(0.0D, this.getTeleportProbeHeight(entity), 0.0D);
     }
 
-    public Vec3 previousTeleportProbePosition(Entity entity) {
-        double prevX = entity.xo;
-        double prevY = entity.yo;
-        double prevZ = entity.zo;
-        if (entity instanceof Player player) {
-            return new Vec3(prevX, prevY + player.getEyeHeight(player.getPose()), prevZ);
+    public Vec3 teleportProbePosition(Entity entity, AABB bounds) {
+        double x = (bounds.minX + bounds.maxX) * 0.5D;
+        double y = bounds.minY;
+        double z = (bounds.minZ + bounds.maxZ) * 0.5D;
+        y += this.getTeleportProbeHeight(entity);
+        return new Vec3(x, y, z);
+    }
+
+    private double getTeleportProbeHeight(Entity entity) {
+        return entity instanceof LivingEntity living ? living.getEyeHeight(living.getPose()) : entity.getEyeHeight();
+    }
+
+    public PortalCrossing resolveCrossing(Entity entity, AABB previousBox, AABB currentBox) {
+        Vec3 previousProbe = this.teleportProbePosition(entity, previousBox);
+        Vec3 currentProbe = this.teleportProbePosition(entity, currentBox);
+        Vec3 normal = this.getNormalVec().normalize();
+        if (entity instanceof Player && Math.abs(normal.y) < 0.5D) {
+            double offset = Math.min(0.05D, Math.abs(this.position().subtract(entity.position()).dot(normal)));
+            Vec3 shift = normal.scale(offset);
+            if (this.getScanRange().move(shift).contains(currentProbe)
+                    || !this.getPortalInsides().move(shift).contains(currentProbe)) {
+                return null;
+            }
+            PortalGunWorldPortalShape shape = this.getWorldPortalShape();
+            AABB flatPlane = shape.getFlatPlane();
+            boolean aligned;
+            if (Math.abs(normal.y) > 0.5D) {
+                aligned = currentBox.minX >= flatPlane.minX && currentBox.maxX <= flatPlane.maxX
+                        && currentBox.minZ >= flatPlane.minZ && currentBox.maxZ <= flatPlane.maxZ;
+            } else {
+                aligned = currentBox.minY >= flatPlane.minY && currentBox.maxY <= flatPlane.maxY;
+            }
+            return aligned ? new PortalCrossing(currentProbe, offset) : null;
         }
-        if (entity instanceof LivingEntity living) {
-            return new Vec3(prevX, prevY + living.getBbHeight() * 0.5D, prevZ);
-        }
-        return new Vec3(prevX, prevY, prevZ);
+        return this.crossesPortal(previousProbe, currentProbe) ? new PortalCrossing(currentProbe, 0.0D) : null;
     }
 
     public Vec3 resolveCrossingProbe(Entity entity) {
         AABB currentBox = entity.getBoundingBox();
         AABB previousBox = currentBox.move(entity.xo - entity.getX(), entity.yo - entity.getY(), entity.zo - entity.getZ());
-        for (Vec3 currentSample : portalSamples(entity, currentBox, false)) {
-            Vec3 previousSample = matchPreviousSample(currentSample, currentBox, previousBox);
-            if (this.crossesPortal(previousSample, currentSample)) {
-                return currentSample;
+        PortalCrossing crossing = this.resolveCrossing(entity, previousBox, currentBox);
+        return crossing == null ? null : crossing.probe();
+    }
+
+    public PortalTransitTransform previewTransit(Entity entity, PortalGunPortalEntity destination, PortalCrossing crossing, Vec3 movement) {
+        Vec3 sourcePlaneCenter = this.position().add(this.getNormalVec().normalize().scale(crossing.normalOffset()));
+        Vec3 destinationPlaneCenter = destination.position().add(destination.getNormalVec().normalize().scale(crossing.normalOffset()));
+        Vec3 relativeProbe = crossing.probe().subtract(sourcePlaneCenter);
+        Vec3 transformedProbe = PortalGunTransformUtil.transformPosition(this, destination, relativeProbe);
+        Vec3 entityOffset = PortalGunTransformUtil.transformVector(this, destination, entity.position().subtract(crossing.probe()));
+        Vec3 requestedPosition = destinationPlaneCenter.add(transformedProbe).add(entityOffset);
+        Vec3 transformedMovement = PortalGunTransformUtil.transformVector(this, destination, movement);
+        Vec3 exitPosition = putEntityWithinExitBounds(entity, requestedPosition, legacyExitBounds(destination, entity, destination.getNormalVec().normalize()));
+        return new PortalTransitTransform(requestedPosition, exitPosition, transformedMovement);
+    }
+
+    public static void teleportEntityAfterMovement(Entity entity, AABB previousBox, Vec3 resolvedMovement) {
+        if (entity.level().isClientSide || !entity.isAlive() || entity.isPassenger() || entity instanceof PortalGunPortalEntity) {
+            return;
+        }
+        AABB currentBox = entity.getBoundingBox();
+        if (previousBox.getCenter().distanceToSqr(currentBox.getCenter()) <= 1.0E-10D) {
+            return;
+        }
+        AABB sweptBounds = previousBox.minmax(currentBox).inflate(1.0D);
+        for (PortalGunPortalEntity portal : findPortalsNearBounds(entity.level(), sweptBounds)) {
+            if (!(portal.level() instanceof ServerLevel serverLevel) || !portal.canTeleportEntity(entity)) {
+                continue;
+            }
+            PortalGunPortalEntity linked = portal.findLinkedPortal(serverLevel);
+            if (linked == null || !linked.isAlive()) {
+                continue;
+            }
+            PortalCrossing crossing = portal.resolveCrossing(entity, previousBox, currentBox);
+            if (crossing != null) {
+                logCrossingPath(entity, "movement");
+                portal.teleportEntity(entity, linked, crossing.probe(), resolvedMovement, crossing.normalOffset());
+                return;
             }
         }
-        Vec3 previousProbe = this.previousTeleportProbePosition(entity);
-        Vec3 currentProbe = this.teleportProbePosition(entity);
-        if (this.crossesPortal(previousProbe, currentProbe)) {
-            return currentProbe;
+    }
+
+    public static List<PortalGunPortalEntity> findPortalsNearBounds(Level level, AABB bounds) {
+        List<PortalGunPortalEntity> portals = new java.util.ArrayList<>();
+        AABB searchBounds = bounds.inflate(10.0D);
+        for (PortalGunPortalEntity portal : level.getEntitiesOfClass(PortalGunPortalEntity.class, searchBounds, PortalGunPortalEntity::isAlive)) {
+            if (portal.getWorldPortalShape().getBoundsForCulling().intersects(bounds)) {
+                portals.add(portal);
+            }
         }
-        return this.overlapsPortalVolume(entity) ? this.portalVolumeProbe(entity) : null;
+        return portals;
     }
 
     public boolean containsPoint(Vec3 position) {
@@ -322,10 +465,20 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
         return this.getWorldPortalShape().shouldRenderFront(cameraPos);
     }
 
+    public float getPortalVisualScale(float partialTick) {
+        return Mth.clamp((this.ageTicks - 1.0F + partialTick) / OPEN_TICKS, 0.0F, 1.0F);
+    }
+
     @Override
     public void tick() {
         super.tick();
-        this.ageTicks++;
+        int openingAnimationId = this.entityData.get(OPENING_ANIMATION_ID);
+        if (openingAnimationId != this.lastOpeningAnimationId) {
+            this.lastOpeningAnimationId = openingAnimationId;
+            this.ageTicks = 0;
+        } else {
+            this.ageTicks++;
+        }
         this.yRotO = this.getYRot();
         this.xRotO = this.getXRot();
         if (this.level().isClientSide) {
@@ -333,6 +486,14 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
         }
         if (!(this.level() instanceof ServerLevel serverLevel)) {
             return;
+        }
+        if (this.ownerId != null) {
+            PortalGunSavedData.getChannelNameForPortal(serverLevel.getServer(), this.ownerId, serverLevel.dimension().location(), this.getUUID())
+                    .ifPresent(channelName -> this.adoptChannelIdentity(this.gunId, channelName));
+            if (this.gunId == null) {
+                PortalGunSavedData.getGunIdForPortal(serverLevel.getServer(), this.ownerId, serverLevel.dimension().location(), this.getUUID())
+                        .ifPresent(gunId -> this.adoptChannelIdentity(gunId, this.channelName));
+            }
         }
         this.tickTeleportCooldowns();
         if (this.ownerId == null || !this.isStillRegistered(serverLevel)) {
@@ -343,32 +504,28 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
             this.discard();
             return;
         }
-        if (this.ageTicks >= MAX_LIFETIME_TICKS - CLOSE_TICKS) {
-            this.entityData.set(CLOSING, true);
-        }
-        if (this.ageTicks >= MAX_LIFETIME_TICKS) {
-            this.discard();
-            return;
-        }
         PortalGunPortalEntity linked = this.findLinkedPortal(serverLevel);
         if (linked == null || !linked.isAlive()) {
             if (this.ageTicks % 100 == 0) {
-                Antarchy.LOGGER.info("Portal gun portal has no loaded linked portal portal={} owner={} side={} linked={}", this.getUUID(), this.ownerId, this.getPortalSide(), this.linkedPortalId);
+                Antarchy.LOGGER.debug("Portal gun portal has no loaded linked portal portal={} owner={} side={} linked={}", this.getUUID(), this.ownerId, this.getPortalSide(), this.linkedPortalId);
             }
             return;
         }
         if (this.ageTicks % 80 == 0) {
-            this.level().playSound(null, this.blockPosition(), sound("portal_ambient", SoundEvents.PORTAL_AMBIENT), SoundSource.BLOCKS, 0.18F, this.getPortalSide() == PortalSide.BLUE ? 1.05F : 0.92F);
+            this.level().playSound(null, this.blockPosition(), sound("portal_ambient"), SoundSource.BLOCKS, 0.18F, this.getPortalSide() == PortalSide.BLUE ? 1.05F : 0.92F);
         }
         this.tickTeleport(linked);
     }
 
     private boolean isStillRegistered(ServerLevel level) {
-        return this.ownerId != null && PortalGunSavedData.isRegistered(level.getServer(), this.ownerId, this.getPortalSide(), this.getUUID());
+        return this.ownerId != null && PortalGunSavedData.isRegistered(level, this.ownerId, this.gunId, this.channelName, this.getPortalSide(), this.getUUID());
     }
 
     private boolean hasValidSurface() {
         Direction facing = this.getFacingDirection();
+        if (!PortalGunPlacement.isRectangularFootprint(this.portalSpots, this.getFacingDirection(), this.getUpAxis(), this.getPortalWidth(), this.getPortalHeight())) {
+            return false;
+        }
         for (int i = 0; i < this.portalSpots.length; i++) {
             BlockPos portalSpot = this.portalSpots[i];
             BlockPos supportPos = portalSpot.relative(facing.getOpposite());
@@ -377,263 +534,173 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
                 return false;
             }
             BlockEntity blockEntity = this.level().getBlockEntity(portalSpot);
-            if (i == 0) {
-                if (!(blockEntity instanceof PortalGunPortalMasterBlockEntity master) || !master.matches(this.ownerId, this.getUUID(), this.getPortalSide())) {
-                    return false;
-                }
-            } else {
-                if (!(blockEntity instanceof PortalGunPortalBaseBlockEntity base) || !base.matches(this.ownerId, this.getUUID(), this.getPortalSide())) {
-                    return false;
-                }
-            }
+              if (!(blockEntity instanceof PortalGunPortalCellAccess cell)) {
+                  return false;
+              }
+              PortalGunPortalFaceRecord record = cell.portalGun$getFaceRecord(facing, this.getUUID());
+              if (record != null) {
+                  if (!this.ownerId.equals(record.ownerId()) || record.side() != this.getPortalSide() || record.master() != (i == 0)) {
+                      return false;
+                  }
+              } else if (i == 0) {
+                  if (!(blockEntity instanceof PortalGunPortalMasterBlockEntity master) || !master.matches(this.ownerId, this.getUUID(), this.getPortalSide())) {
+                      return false;
+                  }
+              } else if (!(blockEntity instanceof PortalGunPortalBaseBlockEntity base) || !base.matches(this.ownerId, this.getUUID(), this.getPortalSide())) {
+                  return false;
+              }
         }
         return true;
     }
 
     private void tickTeleport(PortalGunPortalEntity linked) {
         List<Entity> entities = this.level().getEntities(this, this.getScanRange(), this::canTeleportEntity);
-        this.updatePortalEntityScan(linked, entities);
-        if (!entities.isEmpty() && this.ageTicks % 20 == 0) {
-            Antarchy.LOGGER.info("Portal gun teleport scan portal={} side={} linked={} count={} scan={}", this.getUUID(), this.getPortalSide(), linked.getUUID(), entities.size(), this.getScanRange());
-        }
         for (Entity entity : entities) {
-            Vec3 crossingProbe = this.resolveCrossingProbe(entity);
-            if (crossingProbe == null) {
-                if (this.ageTicks % 40 == 0) {
-                    PortalGunWorldPortalShape.PortalLocalCoords coords = this.getWorldPortalShape().localCoords(this.teleportProbePosition(entity));
-                    PortalBounds bounds = this.portalBounds(entity.getBoundingBox());
-                    Antarchy.LOGGER.info("Portal gun entity in scan did not cross portal={} entity={} entityType={} depth={} horizontal={} vertical={} boxDepthMin={} boxDepthMax={} boxHorizontalMin={} boxHorizontalMax={} boxVerticalMin={} boxVerticalMax={} movement={}", this.getUUID(), entity.getUUID(), EntityType.getKey(entity.getType()), coords.depth(), coords.horizontal(), coords.vertical(), bounds.minDepth(), bounds.maxDepth(), bounds.minHorizontal(), bounds.maxHorizontal(), bounds.minVertical(), bounds.maxVertical(), entity.getDeltaMovement());
-                }
+            AABB currentBox = entity.getBoundingBox();
+            AABB previousBox = currentBox.move(entity.xo - entity.getX(), entity.yo - entity.getY(), entity.zo - entity.getZ());
+            PortalCrossing crossing = this.resolveCrossing(entity, previousBox, currentBox);
+            if (crossing == null) {
                 continue;
             }
-            Antarchy.LOGGER.info("Portal gun teleport crossing portal={} side={} linked={} entity={} entityType={} probe={}", this.getUUID(), this.getPortalSide(), linked.getUUID(), entity.getUUID(), EntityType.getKey(entity.getType()), crossingProbe);
-            this.teleportEntity(entity, linked, crossingProbe);
+            logCrossingPath(entity, "portal_tick");
+            Vec3 resolvedMovement = entity.position().subtract(entity.xo, entity.yo, entity.zo);
+            this.teleportEntity(entity, linked, crossing.probe(), resolvedMovement, crossing.normalOffset());
         }
     }
 
-    private void updatePortalEntityScan(PortalGunPortalEntity linked, List<Entity> entities) {
-        Set<UUID> currentScan = new HashSet<>();
-        for (Entity entity : entities) {
-            UUID entityId = entity.getUUID();
-            currentScan.add(entityId);
-            PortalBounds bounds = this.portalBounds(entity.getBoundingBox());
-            int depthBucket = (int) Math.round(bounds.minDepth() * 1000.0D);
-            this.portalEntityDepths.put(entityId, depthBucket);
-            if (!this.lastScanEntities.contains(entityId)) {
-                Antarchy.LOGGER.info("Portal gun entity entered scan portal={} linked={} entity={} entityType={} minDepth={} maxDepth={} minHorizontal={} maxHorizontal={} minVertical={} maxVertical={} motion={}", this.getUUID(), linked.getUUID(), entityId, EntityType.getKey(entity.getType()), bounds.minDepth(), bounds.maxDepth(), bounds.minHorizontal(), bounds.maxHorizontal(), bounds.minVertical(), bounds.maxVertical(), entity.getDeltaMovement());
-            }
+    private static void logCrossingPath(Entity entity, String path) {
+        String entityType = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).toString();
+        if (LOGGED_CROSSING_PATHS.add(entityType + ":" + path)) {
+            Antarchy.LOGGER.info("Portal gun entity crossing path entityType={} path={}", entityType, path);
         }
-        for (UUID previous : this.lastScanEntities) {
-            if (!currentScan.contains(previous)) {
-                Integer depth = this.portalEntityDepths.remove(previous);
-                Antarchy.LOGGER.info("Portal gun entity left scan portal={} linked={} entity={} lastDepth={}", this.getUUID(), linked.getUUID(), previous, depth);
-            }
-        }
-        this.lastScanEntities = currentScan;
     }
 
     private boolean canTeleportEntity(Entity entity) {
-        if (!entity.isAlive() || entity instanceof PortalGunPortalEntity || entity.isPassenger() || entity.isVehicle()) {
+        if (!entity.isAlive() || entity instanceof PortalGunPortalEntity || entity.isPassenger()) {
             return false;
         }
-        return !this.teleportCooldowns.containsKey(entity.getUUID());
+        return !this.isTeleportCoolingDown(entity);
     }
 
-    private boolean isInsidePortal(Vec3 position) {
-        return this.getWorldPortalShape().contains(position, 0.0D);
+    public boolean isTeleportCoolingDown(Entity entity) {
+        return this.teleportCooldowns.containsKey(entity.getUUID()) || entity.getPortalCooldown() > 0;
     }
 
-    private PortalLocalCoords localCoords(Vec3 position) {
-        PortalGunWorldPortalShape.PortalLocalCoords coords = this.getWorldPortalShape().localCoords(position);
-        return new PortalLocalCoords(coords.horizontal(), coords.vertical(), coords.depth());
+    private static Vec3 clampPortalMotion(Vec3 motion) {
+        return new Vec3(clampPortalMotionComponent(motion.x), clampPortalMotionComponent(motion.y), clampPortalMotionComponent(motion.z));
     }
 
-    private boolean overlapsPortalVolume(Entity entity) {
-        PortalBounds bounds = this.portalBounds(entity.getBoundingBox());
-        double edgePadding = entity instanceof Player ? 0.22D : 0.14D;
-        double frontDepth = entity instanceof Player ? 0.5D : 0.36D;
-        double backDepth = entity instanceof Player ? 0.28D : 0.22D;
-        double normalVelocity = entity.getDeltaMovement().dot(this.getNormalVec().normalize());
-        boolean movingIntoPortal = normalVelocity < -0.01D;
-        boolean straddlingPlane = bounds.minDepth() <= 0.03D && bounds.maxDepth() >= -0.03D;
-        boolean inFrame = bounds.maxHorizontal() >= -HALF_WIDTH - edgePadding
-                && bounds.minHorizontal() <= HALF_WIDTH + edgePadding
-                && bounds.maxVertical() >= -HALF_HEIGHT - edgePadding
-                && bounds.minVertical() <= HALF_HEIGHT + edgePadding
-                && bounds.maxDepth() >= -backDepth
-                && bounds.minDepth() <= frontDepth;
-        return inFrame && (movingIntoPortal || straddlingPlane);
+    private static double clampPortalMotionComponent(double motion) {
+        return Math.abs(motion) > 0.99D ? motion / (Math.abs(motion) + 0.001D) : motion;
     }
 
-    private Vec3 portalVolumeProbe(Entity entity) {
-        Vec3 probe = this.teleportProbePosition(entity);
-        PortalGunWorldPortalShape shape = this.getWorldPortalShape();
-        PortalGunWorldPortalShape.PortalLocalCoords coords = shape.localCoords(probe);
-        double horizontal = clamp(coords.horizontal(), -HALF_WIDTH + 0.05D, HALF_WIDTH - 0.05D);
-        double vertical = clamp(coords.vertical(), -HALF_HEIGHT + 0.05D, HALF_HEIGHT - 0.05D);
-        return shape.center()
-                .add(shape.right().scale(horizontal))
-                .add(shape.up().scale(vertical))
-                .subtract(shape.normal().scale(0.01D));
-    }
-
-    private PortalBounds portalBounds(AABB bounds) {
-        PortalGunWorldPortalShape shape = this.getWorldPortalShape();
-        double minHorizontal = Double.POSITIVE_INFINITY;
-        double maxHorizontal = Double.NEGATIVE_INFINITY;
-        double minVertical = Double.POSITIVE_INFINITY;
-        double maxVertical = Double.NEGATIVE_INFINITY;
-        double minDepth = Double.POSITIVE_INFINITY;
-        double maxDepth = Double.NEGATIVE_INFINITY;
-        for (Vec3 corner : boxCorners(bounds)) {
-            PortalGunWorldPortalShape.PortalLocalCoords coords = shape.localCoords(corner);
-            minHorizontal = Math.min(minHorizontal, coords.horizontal());
-            maxHorizontal = Math.max(maxHorizontal, coords.horizontal());
-            minVertical = Math.min(minVertical, coords.vertical());
-            maxVertical = Math.max(maxVertical, coords.vertical());
-            minDepth = Math.min(minDepth, coords.depth());
-            maxDepth = Math.max(maxDepth, coords.depth());
+    private void teleportEntity(Entity entity, PortalGunPortalEntity destination, Vec3 currentProbe, Vec3 entryMotion, double normalOffset) {
+        List<EntityTeleportState> group = new java.util.ArrayList<>();
+        collectTeleportGroup(entity, null, group);
+        Vec3 rootOriginalPosition = entity.position();
+        PortalTransitTransform transitTransform = this.previewTransit(entity, destination, new PortalCrossing(currentProbe, normalOffset), entryMotion);
+        Vec3 exitNormal = destination.getNormalVec().normalize();
+        Vec3 requestedExitPos = transitTransform.requestedPosition();
+        Vec3 exitPos = transitTransform.exitPosition();
+        Vec3 transformedMotion = transitTransform.movement();
+        this.level().playSound(null, this.getX(), this.getY(), this.getZ(), sound("portal_enter"), SoundSource.PLAYERS, 0.7F, 0.96F + this.random.nextFloat() * 0.08F);
+        for (EntityTeleportState state : group) {
+            Entity member = state.entity();
+            member.stopRiding();
         }
-        return new PortalBounds(minHorizontal, maxHorizontal, minVertical, maxVertical, minDepth, maxDepth);
-    }
-
-    private static Vec3[] boxCorners(AABB bounds) {
-        return new Vec3[] {
-                new Vec3(bounds.minX, bounds.minY, bounds.minZ),
-                new Vec3(bounds.minX, bounds.minY, bounds.maxZ),
-                new Vec3(bounds.minX, bounds.maxY, bounds.minZ),
-                new Vec3(bounds.minX, bounds.maxY, bounds.maxZ),
-                new Vec3(bounds.maxX, bounds.minY, bounds.minZ),
-                new Vec3(bounds.maxX, bounds.minY, bounds.maxZ),
-                new Vec3(bounds.maxX, bounds.maxY, bounds.minZ),
-                new Vec3(bounds.maxX, bounds.maxY, bounds.maxZ)
-        };
-    }
-
-    private static double clamp(double value, double min, double max) {
-        return Math.max(min, Math.min(max, value));
-    }
-
-    private List<Vec3> portalSamples(Entity entity, AABB box, boolean previous) {
-        Vec3 center = new Vec3((box.minX + box.maxX) * 0.5D, (box.minY + box.maxY) * 0.5D, (box.minZ + box.maxZ) * 0.5D);
-        Vec3 topCenter = new Vec3(center.x, box.maxY, center.z);
-        Vec3 bottomCenter = new Vec3(center.x, box.minY, center.z);
-        if (entity instanceof Player player) {
-            Vec3 eye = previous ? this.previousTeleportProbePosition(player) : this.teleportProbePosition(player);
-            return List.of(center, eye, topCenter, bottomCenter);
+        for (EntityTeleportState state : group) {
+            Entity member = state.entity();
+            Vec3 memberOffset = PortalGunTransformUtil.transformVector(this, destination, state.position().subtract(rootOriginalPosition));
+            Vec3 memberExitPos = putEntityWithinExitBounds(member, requestedExitPos.add(memberOffset), legacyExitBounds(destination, member, exitNormal));
+            Vec3 memberLook = PortalGunTransformUtil.transformVector(this, destination, state.look()).normalize();
+            Vec3 memberMotion = member == entity
+                    ? transformedMotion
+                    : PortalGunTransformUtil.transformVector(this, destination, state.motion());
+            memberMotion = clampPortalMotion(memberMotion);
+            float yaw = PortalGunTransformUtil.yawFromLook(memberLook);
+            float pitch = PortalGunTransformUtil.pitchFromLook(memberLook);
+            if (member instanceof ServerPlayer player && destination.level() instanceof ServerLevel destinationLevel) {
+                player.teleportTo(destinationLevel, memberExitPos.x, memberExitPos.y, memberExitPos.z, yaw, pitch);
+            } else {
+                member.teleportTo(memberExitPos.x, memberExitPos.y, memberExitPos.z);
+                member.setYRot(yaw);
+                member.setXRot(pitch);
+                member.setYHeadRot(yaw);
+                member.setYBodyRot(yaw);
+            }
+            member.setDeltaMovement(memberMotion);
+            member.hasImpulse = true;
+            member.hurtMarked = true;
+            if (member instanceof ServerPlayer player) {
+                player.connection.send(new ClientboundSetEntityMotionPacket(player));
+            }
+            member.xo = member.getX();
+            member.yo = member.getY();
+            member.zo = member.getZ();
+            member.yRotO = yaw;
+            member.xRotO = pitch;
+            member.setOnGround(false);
+            member.horizontalCollision = false;
+            member.verticalCollision = false;
+            member.verticalCollisionBelow = false;
+            float verticalMotion = (float) memberMotion.y;
+            member.fallDistance = 0.1F * (verticalMotion / -0.1F * verticalMotion / -0.1F);
+            this.applyTeleportCooldown(member, destination);
+            this.handleSpecialEntityPostTeleport(member);
         }
-        if (entity instanceof LivingEntity) {
-            return List.of(center, topCenter, bottomCenter);
-        }
-        return List.of(center);
-    }
-
-    private Vec3 matchPreviousSample(Vec3 currentSample, AABB currentBox, AABB previousBox) {
-        double xLerp = axisRatio(currentSample.x, currentBox.minX, currentBox.maxX);
-        double yLerp = axisRatio(currentSample.y, currentBox.minY, currentBox.maxY);
-        double zLerp = axisRatio(currentSample.z, currentBox.minZ, currentBox.maxZ);
-        return new Vec3(
-                lerp(previousBox.minX, previousBox.maxX, xLerp),
-                lerp(previousBox.minY, previousBox.maxY, yLerp),
-                lerp(previousBox.minZ, previousBox.maxZ, zLerp)
-        );
-    }
-
-    private static double axisRatio(double value, double min, double max) {
-        double size = max - min;
-        if (Math.abs(size) < 1.0E-6D) {
-            return 0.5D;
-        }
-        return (value - min) / size;
-    }
-
-    private static double lerp(double min, double max, double delta) {
-        return min + (max - min) * delta;
-    }
-
-    private void teleportEntity(Entity entity, PortalGunPortalEntity destination, Vec3 currentProbe) {
-        Vec3 relativeProbe = currentProbe.subtract(this.position());
-        Vec3 transformedProbe = PortalGunTransformUtil.transformPosition(this, destination, relativeProbe);
-        Vec3 entityOffsetFromProbe = entity.position().subtract(currentProbe);
-        Vec3 transformedEntityOffset = PortalGunTransformUtil.transformVector(this, destination, entityOffsetFromProbe);
-        Vec3 transformedLook = PortalGunTransformUtil.transformVector(this, destination, entity.getLookAngle()).normalize();
-        Vec3 entryMotion = this.portalEntryMomentum(entity, currentProbe);
-        Vec3 transformedMotion = this.exitMomentum(entity, destination, PortalGunTransformUtil.transformVector(this, destination, entryMotion));
-        double exitClearance = Math.max(0.35D, entity.getBbWidth() * 0.5D + 0.16D);
-        Vec3 exitProbe = destination.position().add(transformedProbe).add(destination.getNormalVec().normalize().scale(exitClearance - transformedProbe.dot(destination.getNormalVec().normalize())));
-        Vec3 requestedExitPos = exitProbe.add(transformedEntityOffset);
-        Vec3 exitPos = this.resolveSafeExitPosition(entity, destination, requestedExitPos);
-        float yaw = PortalGunTransformUtil.yawFromLook(transformedLook);
-        float pitch = PortalGunTransformUtil.pitchFromLook(transformedLook);
-        this.applyTeleportCooldown(entity, destination);
-        this.level().playSound(null, this.getX(), this.getY(), this.getZ(), sound("portal_enter", SoundEvents.PORTAL_TRAVEL), SoundSource.PLAYERS, 0.7F, 0.96F + this.random.nextFloat() * 0.08F);
-        if (entity instanceof ServerPlayer player && destination.level() instanceof ServerLevel destinationLevel) {
-            player.teleportTo(destinationLevel, exitPos.x, exitPos.y, exitPos.z, yaw, pitch);
-        } else {
-            entity.teleportTo(exitPos.x, exitPos.y, exitPos.z);
-            entity.setYRot(yaw);
-            entity.setXRot(pitch);
-            entity.setYHeadRot(yaw);
-            entity.setYBodyRot(yaw);
-        }
-        entity.setDeltaMovement(transformedMotion);
-        entity.hasImpulse = true;
-        entity.hurtMarked = true;
-        if (entity instanceof ServerPlayer player) {
-            player.connection.send(new ClientboundSetEntityMotionPacket(player));
-        }
-        entity.fallDistance = 0.0F;
-        destination.level().playSound(null, exitPos.x, exitPos.y, exitPos.z, sound("portal_exit", SoundEvents.PORTAL_TRAVEL), SoundSource.PLAYERS, 0.7F, 0.96F + this.random.nextFloat() * 0.08F);
-        this.handleSpecialEntityPostTeleport(entity);
-        Antarchy.LOGGER.info("Portal gun teleported entity source={} destination={} entity={} entityType={} requestedExit={} exit={} inputVelocity={} outputVelocity={} yaw={} pitch={} sourceFacing={} sourceUp={} destinationFacing={} destinationUp={}", this.getUUID(), destination.getUUID(), entity.getUUID(), EntityType.getKey(entity.getType()), requestedExitPos, exitPos, entryMotion, transformedMotion, yaw, pitch, this.getFacingDirection(), this.getUpAxis(), destination.getFacingDirection(), destination.getUpAxis());
-    }
-
-    private Vec3 portalEntryMomentum(Entity entity, Vec3 currentProbe) {
-        Vec3 velocity = entity.getDeltaMovement();
-        Vec3 probeVelocity = currentProbe.subtract(this.previousTeleportProbePosition(entity));
-        Vec3 positionVelocity = entity.position().subtract(entity.xo, entity.yo, entity.zo);
-        Vec3 selected = velocity;
-        if (probeVelocity.lengthSqr() > selected.lengthSqr()) {
-            selected = probeVelocity;
-        }
-        if (positionVelocity.lengthSqr() > selected.lengthSqr()) {
-            selected = positionVelocity;
-        }
-        return selected;
-    }
-
-    private Vec3 exitMomentum(Entity entity, PortalGunPortalEntity destination, Vec3 transformedMotion) {
-        Vec3 normal = destination.getNormalVec().normalize();
-        double outward = transformedMotion.dot(normal);
-        if (outward >= MIN_EXIT_MOMENTUM) {
-            return transformedMotion;
-        }
-        if (entity.getDeltaMovement().lengthSqr() <= 1.0E-5D && transformedMotion.lengthSqr() <= 1.0E-5D) {
-            return normal.scale(MIN_EXIT_MOMENTUM);
-        }
-        return transformedMotion.add(normal.scale(MIN_EXIT_MOMENTUM - outward));
-    }
-
-    private Vec3 resolveSafeExitPosition(Entity entity, PortalGunPortalEntity destination, Vec3 requestedExitPos) {
-        Vec3 normal = destination.getNormalVec().normalize();
-        if (this.canPlaceEntityAt(entity, requestedExitPos)) {
-            return requestedExitPos;
-        }
-        for (int i = 1; i <= 24; i++) {
-            Vec3 candidate = requestedExitPos.add(normal.scale(i * 0.125D));
-            if (this.canPlaceEntityAt(entity, candidate)) {
-                Antarchy.LOGGER.info("Portal gun adjusted blocked exit entity={} destination={} requested={} adjusted={} distance={}", entity.getUUID(), destination.getUUID(), requestedExitPos, candidate, i * 0.125D);
-                return candidate;
+        for (EntityTeleportState state : group) {
+            if (state.vehicle() != null && state.entity().isAlive()) {
+                state.entity().startRiding(state.vehicle(), true);
             }
         }
-        Vec3 fallback = destination.position().add(normal.scale(Math.max(1.0D, entity.getBbWidth() + 0.5D)));
-        Antarchy.LOGGER.info("Portal gun could not find clear exit entity={} destination={} requested={} fallback={}", entity.getUUID(), destination.getUUID(), requestedExitPos, fallback);
-        return fallback;
+        if (destination.level() instanceof ServerLevel destinationLevel) {
+            for (EntityTeleportState state : group) {
+                Entity member = state.entity();
+                if (!(member instanceof ServerPlayer)) {
+                    destinationLevel.getChunkSource().broadcastAndSend(member, new ClientboundTeleportEntityPacket(member));
+                    destinationLevel.getChunkSource().broadcastAndSend(member, new ClientboundSetEntityMotionPacket(member));
+                }
+            }
+        }
+        destination.level().playSound(null, exitPos.x, exitPos.y, exitPos.z, sound("portal_exit"), SoundSource.PLAYERS, 0.7F, 0.96F + this.random.nextFloat() * 0.08F);
     }
 
-    private boolean canPlaceEntityAt(Entity entity, Vec3 position) {
-        AABB movedBounds = entity.getBoundingBox().move(position.x - entity.getX(), position.y - entity.getY(), position.z - entity.getZ());
-        return this.level().noCollision(entity, movedBounds);
+    private void collectTeleportGroup(Entity entity, Entity vehicle, List<EntityTeleportState> group) {
+        group.add(new EntityTeleportState(entity, vehicle, entity.position(), entity.getLookAngle(), entity.getDeltaMovement()));
+        for (Entity passenger : entity.getPassengers()) {
+            collectTeleportGroup(passenger, entity, group);
+        }
+    }
+
+    private static Vec3 putEntityWithinExitBounds(Entity entity, Vec3 position, AABB exitBounds) {
+        AABB entityBounds = entity.getBoundingBox().move(position.x - entity.getX(), position.y - entity.getY(), position.z - entity.getZ());
+        double x = position.x;
+        double y = position.y;
+        double z = position.z;
+        if (entityBounds.maxX > exitBounds.maxX) {
+            x += exitBounds.maxX - entityBounds.maxX;
+        }
+        if (entityBounds.minX < exitBounds.minX) {
+            x += exitBounds.minX - entityBounds.minX;
+        }
+        if (y + entity.getEyeHeight() > exitBounds.maxY) {
+            y += exitBounds.maxY - y - entity.getEyeHeight();
+        }
+        if (y < exitBounds.minY) {
+            y += exitBounds.minY - y + 0.001D;
+        }
+        if (entityBounds.maxZ > exitBounds.maxZ) {
+            z += exitBounds.maxZ - entityBounds.maxZ;
+        }
+        if (entityBounds.minZ < exitBounds.minZ) {
+            z += exitBounds.minZ - entityBounds.minZ;
+        }
+        return new Vec3(x, y, z);
+    }
+
+    private static AABB legacyExitBounds(PortalGunPortalEntity destination, Entity entity, Vec3 exitNormal) {
+        double maxDimension = Math.max(entity.getBbWidth(), entity.getBbHeight());
+        return destination.getScanRange().expandTowards(exitNormal.scale(-maxDimension));
     }
 
     private void tickTeleportCooldowns() {
@@ -653,9 +720,13 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
         UUID entityId = entity.getUUID();
         this.teleportCooldowns.put(entityId, TELEPORT_COOLDOWN_TICKS);
         destination.teleportCooldowns.put(entityId, TELEPORT_COOLDOWN_TICKS);
+        entity.setPortalCooldown(TELEPORT_COOLDOWN_TICKS);
     }
 
     private void handleSpecialEntityPostTeleport(Entity entity) {
+        if (entity instanceof FallingBlockEntity) {
+            ((FallingBlockEntityAccessor) entity).antarchy$setTime(2);
+        }
         if (entity instanceof AbstractArrow arrow) {
             ((AbstractArrowAccessor) arrow).antarchy$setInGround(false);
             ((AbstractArrowAccessor) arrow).antarchy$setInGroundTime(0);
@@ -687,6 +758,15 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
         if (this.ownerId != null) {
             tag.putUUID("OwnerId", this.ownerId);
         }
+        if (this.ownerIdentity != null) {
+            tag.putString("OwnerIdentity", this.ownerIdentity);
+        }
+        if (this.gunId != null) {
+            tag.putUUID("GunId", this.gunId);
+        }
+        if (this.channelName != null) {
+            tag.putString("ChannelName", this.channelName);
+        }
         if (this.linkedPortalId != null) {
             tag.putUUID("LinkedPortalId", this.linkedPortalId);
         }
@@ -698,6 +778,8 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
         tag.putInt("ChannelRed", this.getChannelRed());
         tag.putInt("ChannelGreen", this.getChannelGreen());
         tag.putInt("ChannelBlue", this.getChannelBlue());
+        tag.putInt("PortalWidth", this.getPortalWidth());
+        tag.putInt("PortalHeight", this.getPortalHeight());
         tag.putInt("SupportX", this.supportOrigin.getX());
         tag.putInt("SupportY", this.supportOrigin.getY());
         tag.putInt("SupportZ", this.supportOrigin.getZ());
@@ -732,6 +814,12 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
         if (tag.hasUUID("OwnerId")) {
             this.ownerId = tag.getUUID("OwnerId");
         }
+        this.ownerIdentity = tag.contains("OwnerIdentity") ? tag.getString("OwnerIdentity") : String.valueOf(this.ownerId);
+        this.gunId = tag.hasUUID("GunId") ? tag.getUUID("GunId") : null;
+        this.channelName = tag.contains("ChannelName") ? tag.getString("ChannelName") : this.gunId == null ? "" : "Random Channel #" + this.gunId.hashCode();
+        this.entityData.set(OWNER_ID, Optional.ofNullable(this.ownerId));
+        this.entityData.set(GUN_ID, Optional.ofNullable(this.gunId));
+        this.entityData.set(CHANNEL_NAME, this.channelName);
         if (tag.hasUUID("LinkedPortalId")) {
             this.linkedPortalId = tag.getUUID("LinkedPortalId");
             this.entityData.set(LINKED_PORTAL, Optional.of(this.linkedPortalId));
@@ -741,24 +829,29 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
         this.entityData.set(SIDE, tag.getInt("Side"));
         this.entityData.set(FACING, tag.getInt("Facing"));
         this.entityData.set(UP_AXIS, tag.getInt("UpAxis"));
-        if (tag.contains("ChannelRed")) {
-            this.entityData.set(CHANNEL_RED, tag.getInt("ChannelRed"));
-            this.entityData.set(CHANNEL_GREEN, tag.getInt("ChannelGreen"));
-            this.entityData.set(CHANNEL_BLUE, tag.getInt("ChannelBlue"));
-        } else if (this.ownerId != null) {
-            int[] channelColor = generateChannelColor(this.ownerId, this.getPortalSide());
+        if (this.ownerId != null && ("Global".equals(this.ownerIdentity) || !tag.contains("ChannelRed"))) {
+            int[] channelColor = generateChannelColor(this.ownerIdentity, this.channelName, this.getPortalSide());
             this.entityData.set(CHANNEL_RED, channelColor[0]);
             this.entityData.set(CHANNEL_GREEN, channelColor[1]);
             this.entityData.set(CHANNEL_BLUE, channelColor[2]);
+        } else if (tag.contains("ChannelRed")) {
+            this.entityData.set(CHANNEL_RED, tag.getInt("ChannelRed"));
+            this.entityData.set(CHANNEL_GREEN, tag.getInt("ChannelGreen"));
+            this.entityData.set(CHANNEL_BLUE, tag.getInt("ChannelBlue"));
         }
         this.supportOrigin = new BlockPos(tag.getInt("SupportX"), tag.getInt("SupportY"), tag.getInt("SupportZ"));
         this.masterPos = new BlockPos(tag.getInt("MasterX"), tag.getInt("MasterY"), tag.getInt("MasterZ"));
         this.basePos = new BlockPos(tag.getInt("BaseX"), tag.getInt("BaseY"), tag.getInt("BaseZ"));
         ListTag spots = tag.getList("PortalSpots", Tag.TAG_COMPOUND);
-        for (int i = 0; i < Math.min(2, spots.size()); i++) {
+        if (!spots.isEmpty()) {
+            this.portalSpots = new BlockPos[spots.size()];
+        }
+        for (int i = 0; i < spots.size(); i++) {
             CompoundTag spot = spots.getCompound(i);
             this.portalSpots[i] = new BlockPos(spot.getInt("X"), spot.getInt("Y"), spot.getInt("Z"));
         }
+        this.entityData.set(PORTAL_WIDTH, Mth.clamp(tag.getInt("PortalWidth"), 1, 16));
+        this.entityData.set(PORTAL_HEIGHT, Mth.clamp(tag.getInt("PortalHeight"), 2, 16));
         ListTag compensated = tag.getList("CompensatedSpots", Tag.TAG_COMPOUND);
         Set<BlockPos> compensatedSpots = new HashSet<>();
         for (int i = 0; i < compensated.size(); i++) {
@@ -772,21 +865,30 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
     public void remove(Entity.RemovalReason reason) {
         Level level = this.level();
         UUID ownerId = this.ownerId;
+        boolean destroyPortal = reason.shouldDestroy();
+        if (destroyPortal && !level.isClientSide && ownerId != null && level instanceof ServerLevel serverLevel) {
+            PortalGunSavedData.clearPortal(serverLevel.getServer(), ownerId, this.gunId, this.channelName, this.getPortalSide(), this.getUUID(), serverLevel.dimension().location());
+        }
         super.remove(reason);
-        if (!level.isClientSide && ownerId != null && level instanceof ServerLevel serverLevel) {
-            PortalGunSavedData.clearPortal(serverLevel.getServer(), ownerId, this.getPortalSide(), this.getUUID());
+        if (destroyPortal && !level.isClientSide && ownerId != null && level instanceof ServerLevel serverLevel) {
             this.clearPortalBlocks(serverLevel);
         }
     }
 
     private void clearPortalBlocks(ServerLevel level) {
         for (BlockPos portalSpot : this.portalSpots) {
-            if (level.getBlockEntity(portalSpot) instanceof PortalGunPortalMasterBlockEntity master && this.getUUID().equals(master.getPortalId())) {
-                level.removeBlock(portalSpot, false);
-                continue;
-            }
-            if (level.getBlockEntity(portalSpot) instanceof PortalGunPortalBaseBlockEntity base && this.getUUID().equals(base.getPortalId())) {
-                level.removeBlock(portalSpot, false);
+            if (level.getBlockEntity(portalSpot) instanceof PortalGunPortalCellAccess cell) {
+                PortalGunPortalFaceRecord removed = cell.portalGun$removeFaceRecord(this.getFacingDirection(), this.getUUID());
+                if (!cell.portalGun$getFaceRecords().isEmpty()) {
+                    continue;
+                }
+                if (cell instanceof PortalGunPortalMasterBlockEntity master && this.getUUID().equals(master.getPortalId())) {
+                    level.removeBlock(portalSpot, false);
+                } else if (cell instanceof PortalGunPortalBaseBlockEntity base && this.getUUID().equals(base.getPortalId())) {
+                    level.removeBlock(portalSpot, false);
+                } else if (removed != null) {
+                    level.removeBlock(portalSpot, false);
+                }
             }
         }
     }
@@ -826,10 +928,7 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
     }
 
     private PlayState portalController(AnimationState<PortalGunPortalEntity> state) {
-        state.getController().setAnimationSpeed(this.entityData.get(CLOSING) || this.ageTicks < OPEN_TICKS ? 4.0D : 1.0D);
-        if (this.entityData.get(CLOSING)) {
-            return state.setAndContinue(CLOSE_ANIM);
-        }
+        state.getController().setAnimationSpeed(this.ageTicks < OPEN_TICKS ? 4.0D : 1.0D);
         if (this.ageTicks < OPEN_TICKS) {
             return state.setAndContinue(OPEN_ANIM);
         }
@@ -841,24 +940,48 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
         return this.geoCache;
     }
 
-    public static SoundEvent sound(String path, SoundEvent fallback) {
-        return BuiltInRegistries.SOUND_EVENT.getOptional(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, path)).orElse(fallback);
+    public static SoundEvent sound(String path) {
+        ResourceLocation soundId = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, path);
+        return BuiltInRegistries.SOUND_EVENT.getOptional(soundId)
+                .orElseThrow(() -> new IllegalStateException("Missing portal gun sound event: " + soundId));
     }
 
-    private static int[] generateChannelColor(UUID ownerId, PortalSide side) {
-        int seed = ownerId == null ? side.ordinal() : ownerId.hashCode() ^ side.ordinal() * 0x45d9f3b;
-        int wobbleA = Math.floorMod(seed, 54);
-        int wobbleB = Math.floorMod(seed >> 8, 46);
-        int wobbleC = Math.floorMod(seed >> 16, 38);
-        if (side == PortalSide.BLUE) {
-            return new int[] {42 + wobbleC, 128 + wobbleB, 218 + wobbleA / 3};
+    private static int[] generateChannelColor(String ownerIdentity, String channelName, PortalSide side) {
+        if ("Global".equals(ownerIdentity)) {
+            int[] globalColors = switch (channelName) {
+                case "Chell" -> new int[] {361215, 16756742};
+                case "Atlas" -> new int[] {5482192, 4064209};
+                case "P-body" -> new int[] {16373344, 8394260};
+                default -> null;
+            };
+            if (globalColors != null) {
+                int color = globalColors[side == PortalSide.BLUE ? 0 : 1];
+                return new int[] {color >> 16 & 0xFF, color >> 8 & 0xFF, color & 0xFF};
+            }
         }
-        return new int[] {230 + wobbleA / 5, 108 + wobbleB, 28 + wobbleC};
+        String owner = String.valueOf(ownerIdentity);
+        String identity = owner + "_" + String.valueOf(channelName);
+        Random random = new Random();
+        random.setSeed((long) Math.abs(identity.hashCode() * owner.hashCode()));
+        int firstColor = Math.round(1.6777215E7F * random.nextFloat());
+        float[] hsb = Color.RGBtoHSB(firstColor >> 16 & 0xFF, firstColor >> 8 & 0xFF, firstColor & 0xFF, null);
+        hsb[2] = 0.65F + 0.25F * hsb[2];
+        int portalAColor = Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
+        float oppositeHue = hsb[0] + 0.5F;
+        if (oppositeHue > 1.0F) {
+            oppositeHue -= 1.0F;
+        }
+        int portalBColor = Color.HSBtoRGB(oppositeHue, hsb[1], hsb[2]);
+        int color = side == PortalSide.BLUE ? portalAColor : portalBColor;
+        return new int[] {color >> 16 & 0xFF, color >> 8 & 0xFF, color & 0xFF};
     }
 
-    private record PortalLocalCoords(double horizontal, double vertical, double depth) {
+    public record PortalCrossing(Vec3 probe, double normalOffset) {
     }
 
-    private record PortalBounds(double minHorizontal, double maxHorizontal, double minVertical, double maxVertical, double minDepth, double maxDepth) {
+    public record PortalTransitTransform(Vec3 requestedPosition, Vec3 exitPosition, Vec3 movement) {
+    }
+
+    private record EntityTeleportState(Entity entity, Entity vehicle, Vec3 position, Vec3 look, Vec3 motion) {
     }
 }

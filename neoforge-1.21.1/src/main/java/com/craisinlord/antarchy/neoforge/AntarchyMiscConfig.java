@@ -32,6 +32,15 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.BooleanValue ELYTHIA_PORTAL_ENABLED;
     private static final ModConfigSpec.BooleanValue THORAXIS_PORTAL_ENABLED;
     private static final ModConfigSpec.BooleanValue CAVARYN_PORTAL_ENABLED;
+    private static final ModConfigSpec.BooleanValue PORTAL_GUN_CAN_FIRE_THROUGH_GLASS;
+    private static final ModConfigSpec.BooleanValue PORTAL_GUN_CAN_FIRE_THROUGH_LIQUID;
+    private static final ModConfigSpec.BooleanValue PORTAL_GUN_CAN_PORTALS_RESIZE_WHEN_CREATED;
+    private static final ModConfigSpec.BooleanValue PORTAL_GUN_CAN_PORTAL_PROJECTILES_CHUNKLOAD;
+    private static final ModConfigSpec.BooleanValue PORTAL_GUN_SEE_THROUGH_PORTALS;
+    private static final ModConfigSpec.BooleanValue PORTAL_GUN_FANCY_PORTALS;
+    private static final ModConfigSpec.IntValue PORTAL_GUN_MAX_SHOOT_DISTANCE;
+    private static final ModConfigSpec.IntValue PORTAL_GUN_ENTITY_GRAB_WEIGHT_BASE;
+    private static final ModConfigSpec.IntValue PORTAL_GUN_INDICATOR_SIZE;
 
     // Diamond Minecart
     private static final ModConfigSpec.BooleanValue DIAMOND_MINECART_ENABLED;
@@ -129,6 +138,18 @@ public final class AntarchyMiscConfig {
         CAVARYN_PORTAL_ENABLED = b.comment("Whether Myrmite portals to Cavaryn can activate and function.").define("cavarynPortalEnabled", true);
         b.pop();
 
+        b.push("portalGun");
+        PORTAL_GUN_CAN_FIRE_THROUGH_GLASS = b.define("canFireThroughGlass", false);
+        PORTAL_GUN_CAN_FIRE_THROUGH_LIQUID = b.define("canFireThroughLiquid", false);
+        PORTAL_GUN_CAN_PORTALS_RESIZE_WHEN_CREATED = b.define("canPortalsResizeWhenCreated", true);
+        PORTAL_GUN_CAN_PORTAL_PROJECTILES_CHUNKLOAD = b.define("canPortalProjectilesChunkload", true);
+        PORTAL_GUN_SEE_THROUGH_PORTALS = b.define("seeThroughPortals", true);
+        PORTAL_GUN_FANCY_PORTALS = b.define("fancyPortals", true);
+        PORTAL_GUN_MAX_SHOOT_DISTANCE = b.defineInRange("maxShootDistance", 10000, 1, Integer.MAX_VALUE);
+        PORTAL_GUN_ENTITY_GRAB_WEIGHT_BASE = b.defineInRange("entityGrabWeightBase", 100, 0, 1000);
+        PORTAL_GUN_INDICATOR_SIZE = b.defineInRange("indicatorSize", 30, 0, 100);
+        b.pop();
+
 
         // Diamond Minecart
 
@@ -196,6 +217,15 @@ public final class AntarchyMiscConfig {
     public static boolean elythiaPortalEnabled()         { return ELYTHIA_PORTAL_ENABLED.get(); }
     public static boolean thoraxisPortalEnabled()        { return THORAXIS_PORTAL_ENABLED.get(); }
     public static boolean cavarynPortalEnabled()         { return CAVARYN_PORTAL_ENABLED.get(); }
+    public static boolean portalGunCanFireThroughGlass() { return PORTAL_GUN_CAN_FIRE_THROUGH_GLASS.get(); }
+    public static boolean portalGunCanFireThroughLiquid() { return PORTAL_GUN_CAN_FIRE_THROUGH_LIQUID.get(); }
+    public static boolean portalGunCanPortalsResizeWhenCreated() { return PORTAL_GUN_CAN_PORTALS_RESIZE_WHEN_CREATED.get(); }
+    public static boolean portalGunCanPortalProjectilesChunkload() { return PORTAL_GUN_CAN_PORTAL_PROJECTILES_CHUNKLOAD.get(); }
+    public static boolean portalGunSeeThroughPortals() { return PORTAL_GUN_SEE_THROUGH_PORTALS.get(); }
+    public static boolean portalGunFancyPortals() { return PORTAL_GUN_FANCY_PORTALS.get(); }
+    public static int portalGunMaxShootDistance() { return PORTAL_GUN_MAX_SHOOT_DISTANCE.get(); }
+    public static int portalGunEntityGrabWeightBase() { return PORTAL_GUN_ENTITY_GRAB_WEIGHT_BASE.get(); }
+    public static int portalGunIndicatorSize() { return PORTAL_GUN_INDICATOR_SIZE.get(); }
 
     static boolean diamondMinecartEnabled()              { return DIAMOND_MINECART_ENABLED.get(); }
     static boolean diamondMinecartPlacesRails()          { return DIAMOND_MINECART_PLACES_RAILS.get(); }

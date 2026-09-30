@@ -28,6 +28,7 @@
   },
   "mixins": [
     "antarchy-common.mixins.json",
+    "antarchy-sodium.mixins.json",
     "antarchy-fabric.mixins.json"
   ],
   "depends": {
@@ -42,7 +43,9 @@
     "sizeable_foliage": "*"
   },
   "breaks": {
-    "infinity": "<2.7.3"
+    "infinity": "<2.7.3",
+    "apple_cows": "*",
+    "hoverboards": "*"
   },
   "suggests": {
     "modmenu": "*",

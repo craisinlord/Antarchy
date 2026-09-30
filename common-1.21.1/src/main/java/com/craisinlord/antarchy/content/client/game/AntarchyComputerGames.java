@@ -2,12 +2,8 @@ package com.craisinlord.antarchy.content.client.game;
 
 import com.craisinlord.antos.api.client.game.ComputerGame;
 import com.craisinlord.antos.api.client.game.ComputerGameRegistry;
-import com.craisinlord.antarchy.content.network.AntarchyGameNetworking;
-import com.craisinlord.antarchy.content.network.AntarchyGamePayload;
-import com.craisinlord.antarchy.content.client.AntarchyGameClientState;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
@@ -17,28 +13,16 @@ public final class AntarchyComputerGames {
     private AntarchyComputerGames() {}
 
     public static void register() {
-        registerIfMissing(game("basilisk", "BASILISK", pos -> {
-            BasiliskProgram program = new BasiliskProgram(true, 0, 0, score -> AntarchyGameNetworking.saveBasiliskScore(pos, score));
-            var loaded = new java.util.concurrent.atomic.AtomicBoolean();
-            AntarchyGameNetworking.requestBasiliskState(pos);
-            return new GameSession(() -> { if (!loaded.get()) loaded.set(loadScores(pos, AntarchyGamePayload.BASILISK_STATE, program::setStoredScores)); program.tick(); }, program::render, key -> loaded.get() && program.keyPressed(key), ignored -> false);
+        registerIfMissing(game("basilisk", "BASILISK", () -> {
+            // AntOS 1.2.1 creates game sessions without passing the computer position.
+            // Keep Basilisk playable without a position-bound score callback.
+            BasiliskProgram program = new BasiliskProgram(true, 0, 0, score -> {});
+            return new GameSession(program::tick, program::render, program::keyPressed, ignored -> false);
         }));
     }
 
     private static void registerIfMissing(ComputerGame game) {
         if (ComputerGameRegistry.get(game.id()) == null) ComputerGameRegistry.register(game);
-    }
-
-    private static boolean loadScores(BlockPos pos, int action, java.util.function.BiConsumer<Integer, Integer> setter) {
-        String response = AntarchyGameClientState.getGameState(pos, action);
-        if (response == null) return false;
-        if (response.isBlank()) { AntarchyGameClientState.clearGameState(pos, action); return true; }
-        String[] scores = response.split("\0", 2);
-        if (scores.length != 2) return false;
-        try { setter.accept(Integer.parseInt(scores[0]), Integer.parseInt(scores[1])); }
-        catch (NumberFormatException ignored) { return false; }
-        AntarchyGameClientState.clearGameState(pos, action);
-        return true;
     }
 
     private static ComputerGame game(String path, String title, ProgramFactory factory) {
@@ -48,12 +32,12 @@ public final class AntarchyComputerGames {
             @Override public ResourceLocation id() { return id; }
             @Override public ResourceLocation diskId() { return disk; }
             @Override public String title() { return title; }
-            @Override public Session create(BlockPos position) { return factory.create(position); }
+            @Override public Session create() { return factory.create(); }
         };
     }
 
     @FunctionalInterface
-    private interface ProgramFactory { ComputerGame.Session create(BlockPos position); }
+    private interface ProgramFactory { ComputerGame.Session create(); }
 
     @FunctionalInterface private interface GameRenderer { void render(GuiGraphics graphics, Font font, int x, int y, int width, int height); }
     private static final class GameSession implements ComputerGame.Session {

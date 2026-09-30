@@ -19,6 +19,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.HopperMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
@@ -118,6 +119,10 @@ public class UpperBlockEntity extends RandomizableContainerBlockEntity {
     }
 
     private static Container getContainerAt(ServerLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        if (state.getBlock() instanceof ChestBlock chestBlock) {
+            return ChestBlock.getContainer(chestBlock, state, level, pos, false);
+        }
         BlockEntity blockEntity = level.getBlockEntity(pos);
         return blockEntity instanceof Container container ? container : null;
     }

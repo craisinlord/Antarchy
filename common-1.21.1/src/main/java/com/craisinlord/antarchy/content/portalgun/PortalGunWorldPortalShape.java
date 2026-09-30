@@ -35,6 +35,11 @@ public record PortalGunWorldPortalShape(
         return this.createPlaneAround(offset, this.halfDepth);
     }
 
+    public PortalGunWorldPortalShape scaleAperture(double scale) {
+        double safeScale = Math.max(0.0D, scale);
+        return new PortalGunWorldPortalShape(this.center, this.normal, this.up, this.right, this.halfWidth * safeScale, this.halfHeight * safeScale, this.halfDepth);
+    }
+
     public Vec3[] getCorners(double normalOffset) {
         Vec3 center = this.center.add(this.normal.scale(normalOffset));
         Vec3 width = this.right.scale(this.halfWidth);
@@ -76,13 +81,7 @@ public record PortalGunWorldPortalShape(
     }
 
     public boolean shouldRenderFront(Vec3 cameraPos) {
-        PortalLocalCoords coords = this.localCoords(cameraPos);
-        if (coords.depth() <= -0.25D) {
-            return false;
-        }
-        double depthScale = Math.min(DEFAULT_SCAN_DISTANCE, Math.max(0.0D, coords.depth()));
-        return Math.abs(coords.horizontal()) <= this.halfWidth + depthScale
-                && Math.abs(coords.vertical()) <= this.halfHeight + depthScale;
+        return this.localCoords(cameraPos).depth() > 0.0D;
     }
 
     public boolean intersectsFront(AABB box, double tolerance) {
@@ -128,8 +127,8 @@ public record PortalGunWorldPortalShape(
         double horizontalOuter = this.halfWidth + borderThickness;
         double verticalOuter = this.halfHeight + borderThickness;
         return List.of(
-                this.createLocalBox(-horizontalOuter, this.halfWidth, -verticalOuter, verticalOuter, -this.halfDepth, this.halfDepth),
-                this.createLocalBox(-this.halfWidth, horizontalOuter, -verticalOuter, verticalOuter, -this.halfDepth, this.halfDepth),
+                this.createLocalBox(-horizontalOuter, -this.halfWidth, -verticalOuter, verticalOuter, -this.halfDepth, this.halfDepth),
+                this.createLocalBox(this.halfWidth, horizontalOuter, -verticalOuter, verticalOuter, -this.halfDepth, this.halfDepth),
                 this.createLocalBox(-this.halfWidth, this.halfWidth, -verticalOuter, -this.halfHeight, -this.halfDepth, this.halfDepth),
                 this.createLocalBox(-this.halfWidth, this.halfWidth, this.halfHeight, verticalOuter, -this.halfDepth, this.halfDepth)
         );

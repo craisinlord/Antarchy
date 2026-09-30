@@ -2,9 +2,11 @@ package com.craisinlord.antarchy.content.worldgen.thoraxis;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap;
+import java.util.List;
 import java.util.stream.Stream;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -56,7 +58,8 @@ public final class ThoraxisBiomeSource extends BiomeSource {
             Codec.INT.optionalFieldOf("dream_dunes_max_y", 160).forGetter(ThoraxisBiomeSource::dreamDunesMaxY),
             Codec.INT.optionalFieldOf("umbral_hills_max_y", 160).forGetter(ThoraxisBiomeSource::umbralHillsMaxY),
             Codec.INT.optionalFieldOf("lucid_pools_min_y", 116).forGetter(ThoraxisBiomeSource::lucidPoolsMinY),
-            Codec.INT.optionalFieldOf("nadir_forest_min_y", 128).forGetter(ThoraxisBiomeSource::nadirForestMinY)
+            Codec.INT.optionalFieldOf("nadir_forest_min_y", 128).forGetter(ThoraxisBiomeSource::nadirForestMinY),
+            RegionalBiomeOverlay.CODEC.listOf().optionalFieldOf("regional_overlays", List.of()).forGetter(ThoraxisBiomeSource::regionalOverlays)
     ).apply(instance, ThoraxisBiomeSource::new));
 
     private final Climate.ParameterList<Holder<Biome>> parameters;
@@ -65,6 +68,7 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     private final int umbralHillsMaxY;
     private final int lucidPoolsMinY;
     private final int nadirForestMinY;
+    private final List<RegionalBiomeOverlay> regionalOverlays;
     private final int dreamDunesMaxQuartY;
     private final int umbralHillsMaxQuartY;
     private final int lucidPoolsMinQuartY;
@@ -76,19 +80,21 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     private Holder<Biome> umbralHillsBiome;
     private Holder<Biome> lucidPoolsBiome;
     private Holder<Biome> nadirForestBiome;
+    private List<ResolvedRegionalBiomeOverlay> resolvedRegionalOverlays = List.of();
 
     private static final ThreadLocal<Long2DoubleOpenHashMap> REGION_CACHE =
             ThreadLocal.withInitial(() -> new Long2DoubleOpenHashMap(512));
     private static final ThreadLocal<Long2DoubleOpenHashMap> VERTICAL_CACHE =
             ThreadLocal.withInitial(() -> new Long2DoubleOpenHashMap(64));
 
-    public ThoraxisBiomeSource(Climate.ParameterList<Holder<Biome>> parameters, int dreamDunesMaxY, int umbralHillsMaxY, int lucidPoolsMinY, int nadirForestMinY) {
+    public ThoraxisBiomeSource(Climate.ParameterList<Holder<Biome>> parameters, int dreamDunesMaxY, int umbralHillsMaxY, int lucidPoolsMinY, int nadirForestMinY, List<RegionalBiomeOverlay> regionalOverlays) {
         this.parameters = parameters;
         this.delegate = MultiNoiseBiomeSource.createFromList(parameters);
         this.dreamDunesMaxY = dreamDunesMaxY;
         this.umbralHillsMaxY = umbralHillsMaxY;
         this.lucidPoolsMinY = lucidPoolsMinY;
         this.nadirForestMinY = nadirForestMinY;
+        this.regionalOverlays = regionalOverlays;
         this.dreamDunesMaxQuartY = QuartPos.fromBlock(dreamDunesMaxY);
         this.umbralHillsMaxQuartY = QuartPos.fromBlock(umbralHillsMaxY);
         this.lucidPoolsMinQuartY = QuartPos.fromBlock(lucidPoolsMinY);
@@ -109,6 +115,7 @@ public final class ThoraxisBiomeSource extends BiomeSource {
             this.umbralHillsBiome = this.findBiome(UMBRAL_HILLS);
             this.lucidPoolsBiome = this.findBiome(LUCID_POOLS);
             this.nadirForestBiome = this.findBiome(NADIR_FOREST);
+            this.resolvedRegionalOverlays = this.resolveRegionalOverlays();
             this.biomesResolved = true;
         }
     }
@@ -131,6 +138,10 @@ public final class ThoraxisBiomeSource extends BiomeSource {
 
     private int umbralHillsMaxY() {
         return this.umbralHillsMaxY;
+    }
+
+    private List<RegionalBiomeOverlay> regionalOverlays() {
+        return this.regionalOverlays;
     }
 
     @Override
@@ -179,6 +190,12 @@ public final class ThoraxisBiomeSource extends BiomeSource {
             return this.umbralHillsBiome;
         }
 
+        for (ResolvedRegionalBiomeOverlay overlay : this.resolvedRegionalOverlays) {
+            if (region >= overlay.minNoise() && region < overlay.maxNoise()) {
+                return overlay.biome();
+            }
+        }
+
         Holder<Biome> delegateBiome = this.delegate.getNoiseBiome(x, y, z, sampler);
         return this.nightmareWastesBiome != null ? this.nightmareWastesBiome : delegateBiome;
     }
@@ -196,6 +213,37 @@ public final class ThoraxisBiomeSource extends BiomeSource {
                 .filter(holder -> holder.is(key))
                 .findFirst()
                 .orElse(null);
+    }
+
+    private Holder<Biome> findBiome(ResourceLocation location) {
+        ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, location);
+        return this.findBiome(key);
+    }
+
+    private List<ResolvedRegionalBiomeOverlay> resolveRegionalOverlays() {
+        return this.regionalOverlays.stream().map(overlay -> {
+            Holder<Biome> biome = this.findBiome(overlay.biome());
+            if (biome == null) {
+                throw new IllegalStateException("Thoraxis regional overlay biome " + overlay.biome() + " must be listed in the biome source parameters");
+            }
+            return new ResolvedRegionalBiomeOverlay(biome, overlay.minNoise(), overlay.maxNoise());
+        }).toList();
+    }
+
+    private record RegionalBiomeOverlay(ResourceLocation biome, double minNoise, double maxNoise) {
+        private static final Codec<RegionalBiomeOverlay> CODEC = RecordCodecBuilder.<RegionalBiomeOverlay>create(instance -> instance.group(
+                ResourceLocation.CODEC.fieldOf("biome").forGetter(RegionalBiomeOverlay::biome),
+                Codec.DOUBLE.fieldOf("min_noise").forGetter(RegionalBiomeOverlay::minNoise),
+                Codec.DOUBLE.fieldOf("max_noise").forGetter(RegionalBiomeOverlay::maxNoise)
+        ).apply(instance, RegionalBiomeOverlay::new)).flatXmap(
+                overlay -> overlay.minNoise() >= 0.0D && overlay.maxNoise() <= 1.0D && overlay.minNoise() < overlay.maxNoise()
+                        ? DataResult.success(overlay)
+                        : DataResult.error(() -> "Regional biome overlay noise bounds must satisfy 0 <= min_noise < max_noise <= 1"),
+                DataResult::success
+        );
+    }
+
+    private record ResolvedRegionalBiomeOverlay(Holder<Biome> biome, double minNoise, double maxNoise) {
     }
 
     private double cachedRegionNoise(int quartX, int quartZ) {

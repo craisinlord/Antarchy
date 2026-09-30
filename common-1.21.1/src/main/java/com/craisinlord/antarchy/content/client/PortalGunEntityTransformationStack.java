@@ -27,30 +27,43 @@ public final class PortalGunEntityTransformationStack {
     }
 
     public Vec3 moveEntity(PortalGunPortalEntity sourcePortal, PortalGunPortalEntity destinationPortal, float partialTick) {
-        Vec3 interpolated = new Vec3(
+        double eyeHeight = this.entity.getEyeHeight();
+        Vec3 interpolatedEye = new Vec3(
                 net.minecraft.util.Mth.lerp(partialTick, this.entity.xo, this.entity.getX()),
-                net.minecraft.util.Mth.lerp(partialTick, this.entity.yo, this.entity.getY()),
+                net.minecraft.util.Mth.lerp(partialTick, this.entity.yo, this.entity.getY()) + eyeHeight,
                 net.minecraft.util.Mth.lerp(partialTick, this.entity.zo, this.entity.getZ())
         );
-        Vec3 previous = new Vec3(this.entity.xo, this.entity.yo, this.entity.zo);
-        Vec3 transformed = destinationPortal.position().add(PortalGunTransformUtil.transformPosition(sourcePortal, destinationPortal, interpolated.subtract(sourcePortal.position())));
-        Vec3 transformedPrevious = destinationPortal.position().add(PortalGunTransformUtil.transformPosition(sourcePortal, destinationPortal, previous.subtract(sourcePortal.position())));
+        Vec3 previousEye = new Vec3(this.entity.xo, this.entity.yo + eyeHeight, this.entity.zo);
+        Vec3 transformedEye = destinationPortal.position().add(PortalGunTransformUtil.transformPosition(sourcePortal, destinationPortal, interpolatedEye.subtract(sourcePortal.position())));
+        Vec3 transformedPreviousEye = destinationPortal.position().add(PortalGunTransformUtil.transformPosition(sourcePortal, destinationPortal, previousEye.subtract(sourcePortal.position())));
+        Vec3 transformed = transformedEye.subtract(0.0D, eyeHeight, 0.0D);
+        Vec3 transformedPrevious = transformedPreviousEye.subtract(0.0D, eyeHeight, 0.0D);
         Vec3 look = PortalGunTransformUtil.transformVector(sourcePortal, destinationPortal, this.entity.getLookAngle()).normalize();
+        Vec3 previousLook = PortalGunTransformUtil.transformVector(
+                sourcePortal,
+                destinationPortal,
+                Vec3.directionFromRotation(this.entity.xRotO, this.entity.yRotO)
+        ).normalize();
         Vec3 velocity = PortalGunTransformUtil.transformVector(sourcePortal, destinationPortal, this.entity.getDeltaMovement());
         float yaw = PortalGunTransformUtil.yawFromLook(look);
         float pitch = PortalGunTransformUtil.pitchFromLook(look);
+        float previousYaw = PortalGunTransformUtil.yawFromLook(previousLook);
+        float previousPitch = PortalGunTransformUtil.pitchFromLook(previousLook);
+        float yawDelta = net.minecraft.util.Mth.wrapDegrees(yaw - this.entity.getYRot());
         this.entity.setPos(transformed.x, transformed.y, transformed.z);
         this.entity.xo = transformedPrevious.x;
         this.entity.yo = transformedPrevious.y;
         this.entity.zo = transformedPrevious.z;
         this.entity.setYRot(yaw);
         this.entity.setXRot(pitch);
-        this.entity.yRotO = yaw;
-        this.entity.xRotO = pitch;
+        this.entity.yRotO = previousYaw;
+        this.entity.xRotO = previousPitch;
         this.entity.setDeltaMovement(velocity);
         if (this.entity instanceof LivingEntity living) {
-            living.setYHeadRot(yaw);
-            living.setYBodyRot(yaw);
+            living.setYHeadRot(living.getYHeadRot() + yawDelta);
+            living.setYBodyRot(living.yBodyRot + yawDelta);
+            living.yHeadRotO += yawDelta;
+            living.yBodyRotO += yawDelta;
         }
         return transformed;
     }
@@ -73,13 +86,17 @@ public final class PortalGunEntityTransformationStack {
             float yRotO,
             float xRotO,
             float yHeadRot,
+            float yHeadRotO,
             float yBodyRot,
+            float yBodyRotO,
             Vec3 deltaMovement
     ) {
         private static EntityTransformation capture(Entity entity) {
             float yHeadRot = entity instanceof LivingEntity living ? living.getYHeadRot() : entity.getYRot();
+            float yHeadRotO = entity instanceof LivingEntity living ? living.yHeadRotO : entity.yRotO;
             float yBodyRot = entity instanceof LivingEntity living ? living.yBodyRot : entity.getYRot();
-            return new EntityTransformation(entity.getX(), entity.getY(), entity.getZ(), entity.xo, entity.yo, entity.zo, entity.getYRot(), entity.getXRot(), entity.yRotO, entity.xRotO, yHeadRot, yBodyRot, entity.getDeltaMovement());
+            float yBodyRotO = entity instanceof LivingEntity living ? living.yBodyRotO : entity.yRotO;
+            return new EntityTransformation(entity.getX(), entity.getY(), entity.getZ(), entity.xo, entity.yo, entity.zo, entity.getYRot(), entity.getXRot(), entity.yRotO, entity.xRotO, yHeadRot, yHeadRotO, yBodyRot, yBodyRotO, entity.getDeltaMovement());
         }
 
         private void restore(Entity entity) {
@@ -94,7 +111,9 @@ public final class PortalGunEntityTransformationStack {
             entity.setDeltaMovement(this.deltaMovement);
             if (entity instanceof LivingEntity living) {
                 living.setYHeadRot(this.yHeadRot);
+                living.yHeadRotO = this.yHeadRotO;
                 living.setYBodyRot(this.yBodyRot);
+                living.yBodyRotO = this.yBodyRotO;
             }
         }
     }

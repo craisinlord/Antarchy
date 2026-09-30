@@ -46,6 +46,9 @@ neoForge {
 }
 
 dependencies {
+    if (providers.gradleProperty('antarchySodiumCompatTest').orNull == 'true') {
+        runtimeOnly(files(rootProject.file("infinite_dimensions_jars/sodium-neoforge-0.8.13+mc1.21.1.jar")))
+    }
     compileOnly(files(rootProject.file("infinite_dimensions_jars/antos-neoforge-1.21.1-${antos_version}.jar")))
     runtimeOnly(files(rootProject.file("infinite_dimensions_jars/antos-neoforge-1.21.1-${antos_version}.jar")))
     compileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_neoforge}")

@@ -387,11 +387,6 @@
     "tooltip.antarchy.reverie_bottle.capture":  "Нажмите ПКМ стеклянной бутылочкой по грёзе, чтобы поймать её.",
     "tooltip.antarchy.reverie_bottle.release":  "Нажмите ПКМ, чтобы выпустить грёзу.",
     "item.antarchy.gravity_gun":  "Гравитационная пушка",
-    "item.antarchy.miners_dream":  "Мечта шахтёра",
-    "tooltip.antarchy.miners_dream.line1":  "Нажмите ПКМ, чтобы вырезать извилистую пещеру.",
-    "tooltip.antarchy.miners_dream.line2":  "Оставляет ценные блоки нетронутыми.",
-    "message.antarchy.miners_dream_disabled":  "Мечта шахтёра отключена.",
-    "message.antarchy.miners_dream_busy":  "Ваша предыдущая мечта всё ещё воплощается.",
     "item.antarchy.diamond_minecart":  "Алмазная вагонетка",
     "item.antarchy.cogwheel_pet":  "Шестерёнка-питомец",
     "item.antarchy.fire_dragon_pet":  "Огненный дракон-питомец",
@@ -842,4 +837,6 @@
     "advancements.antarchy.squidzooka_craft.description":  "Создайте сквидзуку.",
     "advancements.antarchy.gravity_gun_craft.title":  "Мастер притяжения",
     "advancements.antarchy.gravity_gun_craft.description":  "Создайте гравитационную пушку."
+,
+    "entity.antarchy.portal_gun_portal": "Портал портальной пушки"
 }

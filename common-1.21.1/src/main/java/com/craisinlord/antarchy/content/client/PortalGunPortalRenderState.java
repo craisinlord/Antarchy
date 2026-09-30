@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.client;
 import com.craisinlord.antarchy.content.portalgun.PortalGunWorldPortalShape;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.UUID;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
@@ -133,7 +134,8 @@ public final class PortalGunPortalRenderState {
             Matrix4f viewMatrix,
             Matrix4f projectionMatrix,
             int renderLevel,
-            boolean renderAll
+            boolean renderAll,
+            UUID destinationId
     ) {
     }
 }
