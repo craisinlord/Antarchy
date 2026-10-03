@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
+import com.craisinlord.antarchy.Antarchy;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import java.util.Collections;
@@ -9,16 +10,25 @@ import java.util.Objects;
 import java.util.Set;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
-import com.mojang.blaze3d.pipeline.TextureTarget;
 
 public final class PortalStencilTarget {
     private static final Map<RenderTarget, Attachment> ATTACHMENTS = Collections.synchronizedMap(new IdentityHashMap<>());
+    private static final Map<RenderTarget, Attachment> MAIN_STENCIL_ATTACHMENTS = Collections.synchronizedMap(new IdentityHashMap<>());
+    private static final Map<RenderTarget, Integer> UNSUPPORTED_MAIN_TARGETS = Collections.synchronizedMap(new IdentityHashMap<>());
     private static final Set<RenderTarget> DIRECT_TARGETS = Collections.newSetFromMap(new IdentityHashMap<>());
 
     private PortalStencilTarget() {
     }
 
     public static void prepareMainTarget(RenderTarget target) {
+        target.bindWrite(true);
+        if (stencilBits() > 0) {
+            UNSUPPORTED_MAIN_TARGETS.remove(target);
+            return;
+        }
+        if (Objects.equals(UNSUPPORTED_MAIN_TARGETS.get(target), target.frameBufferId)) {
+            return;
+        }
         try {
             java.lang.reflect.Method enabled = target.getClass().getMethod("isStencilEnabled");
             if (!Boolean.TRUE.equals(enabled.invoke(target))) {
@@ -27,14 +37,26 @@ public final class PortalStencilTarget {
         } catch (ReflectiveOperationException ignored) {
         }
         target.bindWrite(true);
+        if (stencilBits() <= 0) {
+            try {
+                ensureMainStencilAttachment(target);
+            } catch (IllegalStateException exception) {
+                UNSUPPORTED_MAIN_TARGETS.put(target, target.frameBufferId);
+                Antarchy.LOGGER.warn("Portal gun direct stencil is unavailable; using offscreen portal rendering", exception);
+            }
+        }
     }
 
-    public static Scope beginDirect(RenderTarget target, TextureTarget depthBackup, Runnable drawApertureMask) {
+    public static boolean supportsDirect(RenderTarget target) {
         target.bindWrite(true);
-        if (GL11.glGetInteger(GL11.GL_STENCIL_BITS) <= 0) {
+        return stencilBits() > 0;
+    }
+
+    public static Scope beginDirect(RenderTarget target, Runnable drawApertureMask, Runnable clearApertureDepth, Runnable restoreApertureDepth) {
+        target.bindWrite(true);
+        if (stencilBits() <= 0) {
             throw new IllegalStateException("Main render target has no stencil attachment");
         }
-        depthBackup.copyDepthFrom(target);
         DIRECT_TARGETS.add(target);
         target.bindWrite(true);
         RenderSystem.disableScissor();
@@ -45,14 +67,32 @@ public final class PortalStencilTarget {
         RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
         RenderSystem.colorMask(false, false, false, false);
         RenderSystem.depthMask(false);
-        RenderSystem.disableDepthTest();
+        RenderSystem.enableDepthTest();
         GL11.glEnable(GL11.GL_STENCIL_TEST);
         try {
             Objects.requireNonNull(drawApertureMask).run();
+            RenderSystem.colorMask(false, false, false, false);
+            RenderSystem.depthMask(true);
+            RenderSystem.stencilMask(0x00);
+            RenderSystem.stencilFunc(GL11.GL_EQUAL, 1, 0xFF);
+            RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+            Objects.requireNonNull(clearApertureDepth).run();
         } catch (RuntimeException | Error exception) {
-            resetState();
-            target.copyDepthFrom(depthBackup);
-            DIRECT_TARGETS.remove(target);
+            try {
+                target.bindWrite(true);
+                GL11.glEnable(GL11.GL_STENCIL_TEST);
+                RenderSystem.stencilMask(0x00);
+                RenderSystem.stencilFunc(GL11.GL_EQUAL, 1, 0xFF);
+                RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+                RenderSystem.colorMask(false, false, false, false);
+                RenderSystem.depthMask(true);
+                restoreApertureDepth.run();
+            } catch (RuntimeException | Error restoreFailure) {
+                exception.addSuppressed(restoreFailure);
+            } finally {
+                DIRECT_TARGETS.remove(target);
+                resetState();
+            }
             throw exception;
         }
         RenderSystem.colorMask(true, true, true, true);
@@ -60,9 +100,8 @@ public final class PortalStencilTarget {
         RenderSystem.stencilMask(0x00);
         RenderSystem.stencilFunc(GL11.GL_EQUAL, 1, 0xFF);
         RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
-        GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         RenderSystem.enableDepthTest();
-        return new Scope(target, depthBackup);
+        return new Scope(target, restoreApertureDepth);
     }
 
     public static Scope begin(RenderTarget target, Runnable drawApertureMask) {
@@ -107,9 +146,14 @@ public final class PortalStencilTarget {
 
     public static void release(RenderTarget target) {
         DIRECT_TARGETS.remove(target);
+        UNSUPPORTED_MAIN_TARGETS.remove(target);
         Attachment attachment = ATTACHMENTS.remove(target);
         if (attachment != null) {
             GL30.glDeleteRenderbuffers(attachment.renderbuffer());
+        }
+        Attachment mainAttachment = MAIN_STENCIL_ATTACHMENTS.remove(target);
+        if (mainAttachment != null) {
+            GL30.glDeleteRenderbuffers(mainAttachment.renderbuffer());
         }
     }
 
@@ -118,7 +162,45 @@ public final class PortalStencilTarget {
             GL30.glDeleteRenderbuffers(attachment.renderbuffer());
         }
         ATTACHMENTS.clear();
+        for (Attachment attachment : MAIN_STENCIL_ATTACHMENTS.values()) {
+            GL30.glDeleteRenderbuffers(attachment.renderbuffer());
+        }
+        MAIN_STENCIL_ATTACHMENTS.clear();
+        UNSUPPORTED_MAIN_TARGETS.clear();
         DIRECT_TARGETS.clear();
+    }
+
+    private static void ensureMainStencilAttachment(RenderTarget target) {
+        Attachment attachment = MAIN_STENCIL_ATTACHMENTS.get(target);
+        if (attachment != null
+                && attachment.framebuffer() == target.frameBufferId
+                && attachment.width() == target.width
+                && attachment.height() == target.height) {
+            throw new IllegalStateException("Main render target stencil attachment has no stencil bits");
+        }
+        if (attachment != null) {
+            GL30.glDeleteRenderbuffers(attachment.renderbuffer());
+            MAIN_STENCIL_ATTACHMENTS.remove(target);
+        }
+        int previousRenderbuffer = GL11.glGetInteger(GL30.GL_RENDERBUFFER_BINDING);
+        int renderbuffer = GL30.glGenRenderbuffers();
+        try {
+            GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, renderbuffer);
+            GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL30.GL_STENCIL_INDEX8, target.width, target.height);
+            GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_STENCIL_ATTACHMENT, GL30.GL_RENDERBUFFER, renderbuffer);
+            int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
+            if (status != GL30.GL_FRAMEBUFFER_COMPLETE) {
+                GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_STENCIL_ATTACHMENT, GL30.GL_RENDERBUFFER, 0);
+                throw new IllegalStateException("Main render target is incomplete with stencil attachment: 0x" + Integer.toHexString(status));
+            }
+            MAIN_STENCIL_ATTACHMENTS.put(target, new Attachment(target.frameBufferId, renderbuffer, target.width, target.height));
+            PortalSceneRenderTrace.event("main-target", "stencil-attached", "framebuffer=" + target.frameBufferId + " size=" + target.width + "x" + target.height);
+        } catch (RuntimeException | Error exception) {
+            GL30.glDeleteRenderbuffers(renderbuffer);
+            throw exception;
+        } finally {
+            GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, previousRenderbuffer);
+        }
     }
 
     private static void ensureAttachment(RenderTarget target) {
@@ -162,21 +244,28 @@ public final class PortalStencilTarget {
         RenderSystem.enableDepthTest();
     }
 
+    private static int stencilBits() {
+        int type = GL30.glGetFramebufferAttachmentParameteri(GL30.GL_FRAMEBUFFER, GL30.GL_STENCIL_ATTACHMENT,
+                GL30.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE);
+        return type == GL11.GL_NONE ? 0 : GL30.glGetFramebufferAttachmentParameteri(GL30.GL_FRAMEBUFFER,
+                GL30.GL_STENCIL_ATTACHMENT, GL30.GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE);
+    }
+
     private record Attachment(int framebuffer, int renderbuffer, int width, int height) {
     }
 
     public static final class Scope implements AutoCloseable {
         private boolean closed;
         private final RenderTarget target;
-        private final TextureTarget depthBackup;
+        private final Runnable restoreApertureDepth;
 
         private Scope(RenderTarget target) {
             this(target, null);
         }
 
-        private Scope(RenderTarget target, TextureTarget depthBackup) {
+        private Scope(RenderTarget target, Runnable restoreApertureDepth) {
             this.target = Objects.requireNonNull(target);
-            this.depthBackup = depthBackup;
+            this.restoreApertureDepth = restoreApertureDepth;
         }
 
         @Override
@@ -185,12 +274,23 @@ public final class PortalStencilTarget {
                 return;
             }
             closed = true;
-            if (this.depthBackup != null) {
-                this.target.copyDepthFrom(this.depthBackup);
-                this.target.bindWrite(true);
-                DIRECT_TARGETS.remove(this.target);
+            try {
+                if (this.restoreApertureDepth != null) {
+                    this.target.bindWrite(true);
+                    GL11.glEnable(GL11.GL_STENCIL_TEST);
+                    RenderSystem.stencilMask(0x00);
+                    RenderSystem.stencilFunc(GL11.GL_EQUAL, 1, 0xFF);
+                    RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+                    RenderSystem.colorMask(false, false, false, false);
+                    RenderSystem.depthMask(true);
+                    this.restoreApertureDepth.run();
+                }
+            } finally {
+                if (this.restoreApertureDepth != null) {
+                    DIRECT_TARGETS.remove(this.target);
+                }
+                resetState();
             }
-            resetState();
         }
     }
 }

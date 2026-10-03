@@ -22,6 +22,7 @@ import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexSorting;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -43,7 +44,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
+import org.joml.Matrix4fStack;
 import org.joml.Vector4f;
+import org.lwjgl.opengl.GL11;
 import org.joml.Quaternionf;
 
 public final class PortalGunPortalViewRenderer {
@@ -58,7 +61,6 @@ public final class PortalGunPortalViewRenderer {
     private static final ResourceLocation BLUE_OVERLAY = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/vfx/portal_gun_portal_blue.png");
     private static final ResourceLocation ORANGE_OVERLAY = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/vfx/portal_gun_portal_orange.png");
     private static final TextureTarget[] PORTAL_TARGETS = new TextureTarget[MAX_RECURSION_DEPTH + 1];
-    private static TextureTarget depthBackup;
     private static ShaderInstance portalViewShader;
     private static boolean renderingPortalView;
     private static boolean loggedRendererActivation;
@@ -87,6 +89,7 @@ public final class PortalGunPortalViewRenderer {
 
     public static void releaseTargets() {
         PortalSceneRenderTrace.reset();
+        PortalGunPortalVisibilityQueries.clear();
         for (int i = 0; i < PORTAL_TARGETS.length; i++) {
             TextureTarget target = PORTAL_TARGETS[i];
             if (target != null) {
@@ -96,10 +99,6 @@ public final class PortalGunPortalViewRenderer {
             }
         }
         java.util.Arrays.fill(TARGET_ALLOCATION_FAILURES, null);
-        if (depthBackup != null) {
-            depthBackup.destroyBuffers();
-            depthBackup = null;
-        }
     }
 
     public static void render(Camera camera, Matrix4f poseMatrix, Matrix4f projectionMatrix, DeltaTracker tickCounter) {
@@ -125,7 +124,7 @@ public final class PortalGunPortalViewRenderer {
         Vec3 cameraPos = camera.getPosition();
         Vec3 rootLook = new Vec3(camera.getLookVector()).normalize();
         Vec3 rootUp = new Vec3(camera.getUpVector()).normalize();
-        Matrix4f rootViewMatrix = new Matrix4f().rotation(PortalGunTransformUtil.orientationQuaternion(rootLook, rootUp).conjugate(new Quaternionf()));
+        Matrix4f rootViewMatrix = new Matrix4f(poseMatrix);
         List<PortalGunPortalEntity> portals = collectVisiblePortals(minecraft, cameraPos);
         if (portals.isEmpty()) {
             return;
@@ -134,10 +133,6 @@ public final class PortalGunPortalViewRenderer {
             if (!loggedMissingPortalViewShader) {
                 loggedMissingPortalViewShader = true;
                 Antarchy.LOGGER.error("Portal gun destination view shader is unavailable; skipping destination render");
-            }
-            minecraft.getMainRenderTarget().bindWrite(true);
-            for (PortalGunPortalEntity portal : portals) {
-                drawPortalOverlay(minecraft, cameraPos, rootViewMatrix, portal);
             }
             return;
         }
@@ -168,16 +163,8 @@ public final class PortalGunPortalViewRenderer {
                     return linked != null && linked.isAlive();
                 })
                 .sorted((left, right) -> Integer.compare(rootScreenClips.get(right).area(), rootScreenClips.get(left).area()))
+                .limit(MAX_PORTAL_VIEWS_PER_FRAME)
                 .toList();
-        Set<PortalGunPortalEntity> selectedPortalSet = Collections.newSetFromMap(new IdentityHashMap<>());
-        selectedPortalSet.addAll(selectedPortals);
-        List<PortalGunPortalEntity> renderOrder = new ArrayList<>(portals.size());
-        renderOrder.addAll(selectedPortals);
-        for (PortalGunPortalEntity portal : portals) {
-            if (!selectedPortalSet.contains(portal)) {
-                renderOrder.add(portal);
-            }
-        }
         long linkedPortalCount = renderablePortals.stream()
                 .filter(portal -> portal.getLinkedPortal() != null && portal.getLinkedPortal().isAlive())
                 .count();
@@ -210,47 +197,43 @@ public final class PortalGunPortalViewRenderer {
             );
         }
         if (selectedPortals.isEmpty()) {
-            minecraft.getMainRenderTarget().bindWrite(true);
-            for (PortalGunPortalEntity portal : portals) {
-                drawPortalOverlay(minecraft, cameraPos, rootViewMatrix, portal);
-            }
             return;
         }
         RenderContext rootContext = new RenderContext(effectiveCameraPos, rootLook, rootUp, rootViewMatrix);
-        PortalViewBudget viewBudget = new PortalViewBudget(MAX_PORTAL_VIEWS_PER_FRAME);
+        boolean directStencil = PortalStencilTarget.supportsDirect(minecraft.getMainRenderTarget());
+        PortalViewBudget fallbackBudget = directStencil ? null : new PortalViewBudget(MAX_PORTAL_VIEWS_PER_FRAME);
         renderingPortalView = true;
         boolean projectionBackedUp = false;
         try {
             RenderSystem.backupProjectionMatrix();
             projectionBackedUp = true;
-            for (PortalGunPortalEntity portal : renderOrder) {
-                if (!selectedPortalSet.contains(portal)) {
-                    minecraft.getMainRenderTarget().bindWrite(true);
-                    drawPortalOverlay(minecraft, cameraPos, rootViewMatrix, portal);
-                    continue;
-                }
+            for (PortalGunPortalEntity portal : selectedPortals) {
                 PortalGunPortalEntity linkedPortal = portal.getLinkedPortal();
                 if (linkedPortal == null || !linkedPortal.isAlive()) {
-                    minecraft.getMainRenderTarget().bindWrite(true);
-                    drawPortalOverlay(minecraft, cameraPos, rootViewMatrix, portal);
                     continue;
                 }
                 boolean rendered;
                 try {
-                    rendered = renderPortalSurfaceDirect(minecraft, cameraEntity, tickCounter, rootContext, rootProjectionMatrix, portal, linkedPortal, rootScreenClips.get(portal));
+                    if (directStencil) {
+                        rendered = renderPortalSurfaceDirect(minecraft, cameraEntity, tickCounter, rootContext, rootProjectionMatrix, portal, linkedPortal, rootScreenClips.get(portal));
+                    } else {
+                        int textureId = renderPortalSurface(minecraft, cameraEntity, tickCounter, fallbackBudget, rootContext,
+                                rootProjectionMatrix, portal, linkedPortal, 0, rootScreenClips.get(portal));
+                        minecraft.gameRenderer.resetProjectionMatrix(rootProjectionMatrix);
+                        minecraft.getMainRenderTarget().bindWrite(true);
+                        rendered = textureId >= 0 && drawPortalQuad(cameraPos, rootViewMatrix, rootProjectionMatrix,
+                                minecraft.getMainRenderTarget().width, minecraft.getMainRenderTarget().height,
+                                portal, partialTick, textureId, rootScreenClips.get(portal));
+                    }
                 } catch (RuntimeException exception) {
                     logRenderFailure(minecraft, exception);
                     RenderSystem.restoreProjectionMatrix();
                     projectionBackedUp = false;
                     RenderSystem.backupProjectionMatrix();
                     projectionBackedUp = true;
-                    minecraft.getMainRenderTarget().bindWrite(true);
-                    drawPortalOverlay(minecraft, cameraPos, rootViewMatrix, portal);
                     continue;
                 }
                 if (!rendered) {
-                    minecraft.getMainRenderTarget().bindWrite(true);
-                    drawPortalOverlay(minecraft, cameraPos, rootViewMatrix, portal);
                     continue;
                 }
                 RenderSystem.restoreProjectionMatrix();
@@ -258,14 +241,8 @@ public final class PortalGunPortalViewRenderer {
                 RenderSystem.backupProjectionMatrix();
                 projectionBackedUp = true;
                 minecraft.getMainRenderTarget().bindWrite(true);
-                ScreenClip clip = rootScreenClips.get(portal);
                 String portalPairKey = portal.getUUID() + "->" + linkedPortal.getUUID();
-                boolean composited;
-                try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(portalPairKey, "direct-framebuffer", "target=" + targetWidth + "x" + targetHeight)) {
-                    composited = true;
-                    drawAnimatedPortalOverlay(minecraft, cameraPos, rootViewMatrix, portal);
-                }
-                if (composited && loggedPortalViewComposites.add(portalPairKey)) {
+                if (loggedPortalViewComposites.add(portalPairKey)) {
                     Antarchy.LOGGER.info("Portal gun destination view rendered directly source={} destination={} target={}x{}", portal.getId(), linkedPortal.getId(), targetWidth, targetHeight);
                 }
             }
@@ -386,14 +363,10 @@ public final class PortalGunPortalViewRenderer {
         }
         int width = target.width;
         int height = target.height;
-        if (depthBackup == null) {
-            depthBackup = new TextureTarget(width, height, true, Minecraft.ON_OSX);
-        } else if (depthBackup.width != width || depthBackup.height != height) {
-            depthBackup.resize(width, height, Minecraft.ON_OSX);
-        }
         RenderContext transformedContext = transformContext(currentContext, sourcePortal, destinationPortal);
         float partialTick = tickCounter.getGameTimeDeltaPartialTick(true);
         Matrix4f clippedProjection = applyPortalClipPlane(baseProjectionMatrix, transformedContext, destinationPortal);
+        Matrix4f apertureCullProjection = cropProjectionToScreenClip(clippedProjection, clip, width, height);
         PortalCamera portalCamera = new PortalCamera();
         portalCamera.setup(minecraft.level, cameraEntity, partialTick, transformedContext.cameraPos(), transformedContext.look(), transformedContext.up());
         String portalPairKey = sourcePortal.getUUID() + "->" + destinationPortal.getUUID();
@@ -407,6 +380,8 @@ public final class PortalGunPortalViewRenderer {
         RenderTarget previousTransparencyTarget = transparencyTarget == null ? null : transparencyTarget.antarchy$getScreenTarget();
         PortalStencilTarget.Scope stencilScope = null;
         boolean contextPushed = false;
+        boolean renderDestination = PortalGunPortalVisibilityQueries.shouldRender(sourcePortal.getUUID(), destinationPortal.getUUID());
+        PortalSceneRenderTrace.event(portalPairKey, "destination-render-decision", "render=" + renderDestination + " clip=" + clip.width() + "x" + clip.height());
         try {
             if (entityEffectTarget != null) {
                 entityEffectTarget.antarchy$setScreenTarget(target);
@@ -417,22 +392,33 @@ public final class PortalGunPortalViewRenderer {
             minecraft.gameRenderer.resetProjectionMatrix(clippedProjection);
             int maskTexture = minecraft.getTextureManager().getTexture(BLUE_OVERLAY).getId();
             try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(portalPairKey, "direct-stencil-mask", "clip=" + clip.width() + "x" + clip.height())) {
-                stencilScope = PortalStencilTarget.beginDirect(target, depthBackup,
-                        () -> drawPortalQuad(currentContext.cameraPos(), currentContext.viewMatrix(), baseProjectionMatrix, width, height, sourcePortal, partialTick, maskTexture, clip));
+                stencilScope = PortalStencilTarget.beginDirect(target, () -> {
+                    boolean queryStarted = PortalGunPortalVisibilityQueries.begin(sourcePortal.getUUID(), destinationPortal.getUUID());
+                    try {
+                        drawPortalQuad(currentContext.cameraPos(), currentContext.viewMatrix(), baseProjectionMatrix, width, height, sourcePortal, partialTick, maskTexture, clip);
+                    } finally {
+                        PortalGunPortalVisibilityQueries.end(sourcePortal.getUUID(), destinationPortal.getUUID(), queryStarted);
+                    }
+                },
+                        () -> clearDepthInPortalStencil(minecraft),
+                        () -> restorePortalApertureDepth(minecraft, currentContext.cameraPos(), currentContext.viewMatrix(), baseProjectionMatrix, sourcePortal, partialTick));
+            }
+            if (!renderDestination) {
+                return false;
             }
             RenderSystem.enableScissor(clip.x(), clip.y(), clip.width(), clip.height());
             PortalGunPortalRenderState.pushPortalView(new PortalGunPortalRenderState.PortalRenderContext(
                     sourcePortal.getWorldPortalShape(), destinationPortal.getWorldPortalShape(), transformedContext.cameraPos(),
                     transformedContext.look(), transformedContext.up(), transformedContext.viewMatrix(), clippedProjection,
-                    0, true, destinationPortal.getUUID()));
+                    0, false, destinationPortal.getUUID()));
             contextPushed = true;
-            proxyRenderer.prepareCullFrustum(portalCamera.getPosition(), transformedContext.viewMatrix(), clippedProjection);
+            proxyRenderer.prepareCullFrustum(portalCamera.getPosition(), transformedContext.viewMatrix(), apertureCullProjection);
             PortalGunPortalViewAreaManager.Scope areaScope = PortalGunPortalViewAreaManager.enter(
                     minecraft, proxyRenderer, destinationPortal.getUUID(), transformedContext.cameraPos(), portalCamera);
             try {
                 try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(portalPairKey, "direct-manual-scene", "target=" + width + "x" + height)) {
                     PortalGunProxySceneRenderer.render(minecraft, proxyRenderer, portalCamera, partialTick,
-                            transformedContext.viewMatrix(), clippedProjection, portalPairKey);
+                            transformedContext.viewMatrix(), clippedProjection, apertureCullProjection, portalPairKey);
                 }
             } finally {
                 areaScope.close();
@@ -448,7 +434,7 @@ public final class PortalGunPortalViewRenderer {
                     stencilScope.close();
                 }
                 if (contextPushed) {
-                    PortalGunPortalRenderState.popPortalView(true);
+                    PortalGunPortalRenderState.popPortalView(false);
                 }
             } finally {
                 if (transparencyTarget != null) {
@@ -495,6 +481,7 @@ public final class PortalGunPortalViewRenderer {
             return -1;
         }
         Matrix4f clippedProjectionMatrix = applyPortalClipPlane(baseProjectionMatrix, transformedContext, destinationPortal);
+        Matrix4f apertureCullProjection = cropProjectionToScreenClip(clippedProjectionMatrix, clip, target.width, target.height);
         boolean renderAll = true;
         PortalCamera portalCamera = new PortalCamera();
         portalCamera.setup(minecraft.level, cameraEntity, tickCounter.getGameTimeDeltaPartialTick(true), transformedContext.cameraPos(), transformedContext.look(), transformedContext.up());
@@ -550,14 +537,14 @@ public final class PortalGunPortalViewRenderer {
             PortalGunPortalRenderState.pushPortalView(portalRenderContext);
             portalRenderStatePushed = true;
             try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(portalPairKey, "prepare-portal-view", "camera=" + transformedContext.cameraPos())) {
-                proxyRenderer.prepareCullFrustum(portalCamera.getPosition(), transformedContext.viewMatrix(), clippedProjectionMatrix);
+            proxyRenderer.prepareCullFrustum(portalCamera.getPosition(), transformedContext.viewMatrix(), apertureCullProjection);
             }
             try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(portalPairKey, "activate-view-area", "destination=" + destinationPortal.getUUID())) {
                 PortalGunPortalViewAreaManager.Scope scope = PortalGunPortalViewAreaManager.enter(minecraft, proxyRenderer, destinationPortal.getUUID(), transformedContext.cameraPos(), portalCamera);
                 ignored.close();
                 try {
                     try (PortalSceneRenderTrace.Phase sceneTrace = PortalSceneRenderTrace.begin(portalPairKey, "manual-scene-subpass", "target=" + target.width + "x" + target.height)) {
-                        PortalGunProxySceneRenderer.render(minecraft, proxyRenderer, portalCamera, partialTick, transformedContext.viewMatrix(), clippedProjectionMatrix, portalPairKey);
+                        PortalGunProxySceneRenderer.render(minecraft, proxyRenderer, portalCamera, partialTick, transformedContext.viewMatrix(), clippedProjectionMatrix, apertureCullProjection, portalPairKey);
                     }
                 } finally {
                     try (PortalSceneRenderTrace.Phase releaseTrace = PortalSceneRenderTrace.begin(portalPairKey, "release-view-area", "destination=" + destinationPortal.getUUID())) {
@@ -749,6 +736,20 @@ public final class PortalGunPortalViewRenderer {
         return new ScreenClip(scissorX, scissorY, scissorWidth, scissorHeight);
     }
 
+    private static Matrix4f cropProjectionToScreenClip(Matrix4f projectionMatrix, ScreenClip clip, int width, int height) {
+        float left = (float) (clip.x() * 2.0D / width - 1.0D);
+        float right = (float) ((clip.x() + clip.width()) * 2.0D / width - 1.0D);
+        float bottom = (float) (clip.y() * 2.0D / height - 1.0D);
+        float top = (float) ((clip.y() + clip.height()) * 2.0D / height - 1.0D);
+        float widthNdc = Math.max(1.0E-5F, right - left);
+        float heightNdc = Math.max(1.0E-5F, top - bottom);
+        float scaleX = 2.0F / widthNdc;
+        float scaleY = 2.0F / heightNdc;
+        float offsetX = -(right + left) / widthNdc;
+        float offsetY = -(top + bottom) / heightNdc;
+        return new Matrix4f().translate(offsetX, offsetY, 0.0F).scale(scaleX, scaleY, 1.0F).mul(projectionMatrix);
+    }
+
     private static List<Vector4f> clipPolygon(List<Vector4f> vertices, boolean nearPlane) {
         if (vertices.isEmpty()) {
             return vertices;
@@ -793,18 +794,9 @@ public final class PortalGunPortalViewRenderer {
         if (clip == null || width <= 0 || height <= 0) {
             return false;
         }
-        PortalGunWorldPortalShape shape = portal.getWorldPortalShape().scaleAperture(portal.getPortalVisualScale(partialTick));
+        PortalGunWorldPortalShape shape = portal.getWorldPortalShape().scaleAperture(portal.getPortalVisualScale(partialTick) * PORTAL_APERTURE_SCALE);
         Matrix4f combined = new Matrix4f(projectionMatrix).mul(viewMatrix);
-        double apertureInset = (1.0D - PORTAL_APERTURE_SCALE) * 0.5D;
-        double apertureStart = apertureInset;
-        double apertureEnd = 1.0D - apertureInset;
-        List<Vector4f> polygon = new ArrayList<>(4);
-        polygon.add(projectPortalVertex(combined, cameraPos, shape, apertureStart, apertureStart));
-        polygon.add(projectPortalVertex(combined, cameraPos, shape, apertureEnd, apertureStart));
-        polygon.add(projectPortalVertex(combined, cameraPos, shape, apertureEnd, apertureEnd));
-        polygon.add(projectPortalVertex(combined, cameraPos, shape, apertureStart, apertureEnd));
-        polygon = clipPolygon(polygon, false);
-        polygon = clipPolygon(polygon, true);
+        List<Vector4f> polygon = projectPortalPolygon(combined, cameraPos, shape);
         if (polygon.size() < 3) {
             return false;
         }
@@ -818,29 +810,133 @@ public final class PortalGunPortalViewRenderer {
         if (mesh == null) {
             return false;
         }
+        Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
+        Matrix4f previousProjection = new Matrix4f(RenderSystem.getProjectionMatrix());
+        VertexSorting previousSorting = RenderSystem.getVertexSorting();
+        modelViewStack.pushMatrix();
         try {
             RenderSystem.disableBlend();
             RenderSystem.depthMask(false);
             RenderSystem.enableDepthTest();
             RenderSystem.disableCull();
+            modelViewStack.identity();
+            RenderSystem.applyModelViewMatrix();
+            RenderSystem.setProjectionMatrix(new Matrix4f(), previousSorting);
             portalViewShader.setSampler("Sampler0", textureId);
             RenderSystem.setShader(() -> portalViewShader);
             RenderSystem.setShaderTexture(0, textureId);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
             BufferUploader.drawWithShader(mesh);
         } finally {
+            RenderSystem.setProjectionMatrix(previousProjection, previousSorting);
+            modelViewStack.popMatrix();
+            RenderSystem.applyModelViewMatrix();
             restorePortalDrawState();
         }
         return true;
     }
 
-    private static Vector4f projectPortalVertex(Matrix4f combined, Vec3 cameraPos, PortalGunWorldPortalShape shape, double u, double v) {
-        Vec3 worldPosition = shape.center()
-                .add(shape.right().scale((u * 2.0D - 1.0D) * shape.halfWidth()))
-                .add(shape.up().scale((v * 2.0D - 1.0D) * shape.halfHeight()))
-                .add(shape.normal().scale(SURFACE_OFFSET));
-        Vec3 relative = worldPosition.subtract(cameraPos);
-        return new Vector4f((float) relative.x, (float) relative.y, (float) relative.z, 1.0F).mul(combined);
+    private static void clearDepthInPortalStencil(Minecraft minecraft) {
+        int previousDepthFunction = GL11.glGetInteger(GL11.GL_DEPTH_FUNC);
+        RenderSystem.enableDepthTest();
+        RenderSystem.depthMask(true);
+        RenderSystem.colorMask(false, false, false, false);
+        GL11.glDepthFunc(GL11.GL_ALWAYS);
+        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION);
+        buffer.addVertex(-1.0F, -1.0F, 1.0F);
+        buffer.addVertex(3.0F, -1.0F, 1.0F);
+        buffer.addVertex(-1.0F, 3.0F, 1.0F);
+        MeshData mesh = buffer.build();
+        try {
+            drawClipSpaceMesh(minecraft, mesh);
+        } finally {
+            GL11.glDepthFunc(previousDepthFunction);
+            RenderSystem.colorMask(true, true, true, true);
+            RenderSystem.depthMask(true);
+            RenderSystem.enableDepthTest();
+        }
+    }
+
+    private static void restorePortalApertureDepth(Minecraft minecraft, Vec3 cameraPos, Matrix4f viewMatrix, Matrix4f projectionMatrix,
+                                                   PortalGunPortalEntity portal, float partialTick) {
+        PortalGunWorldPortalShape shape = portal.getWorldPortalShape().scaleAperture(portal.getPortalVisualScale(partialTick) * PORTAL_APERTURE_SCALE);
+        Matrix4f combined = new Matrix4f(projectionMatrix).mul(viewMatrix);
+        List<Vector4f> polygon = projectPortalPolygon(combined, cameraPos, shape);
+        if (polygon.size() < 3) {
+            return;
+        }
+        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION);
+        for (int index = 1; index + 1 < polygon.size(); index++) {
+            addDepthVertex(buffer, polygon.get(0));
+            addDepthVertex(buffer, polygon.get(index));
+            addDepthVertex(buffer, polygon.get(index + 1));
+        }
+        MeshData mesh = buffer.build();
+        int previousDepthFunction = GL11.glGetInteger(GL11.GL_DEPTH_FUNC);
+        RenderSystem.enableDepthTest();
+        RenderSystem.depthMask(true);
+        RenderSystem.colorMask(false, false, false, false);
+        GL11.glDepthFunc(GL11.GL_ALWAYS);
+        try {
+            drawClipSpaceMesh(minecraft, mesh);
+        } finally {
+            GL11.glDepthFunc(previousDepthFunction);
+            RenderSystem.colorMask(true, true, true, true);
+            RenderSystem.depthMask(true);
+            RenderSystem.enableDepthTest();
+        }
+    }
+
+    private static void addDepthVertex(BufferBuilder buffer, Vector4f clipPosition) {
+        float inverseW = 1.0F / clipPosition.w();
+        buffer.addVertex(clipPosition.x() * inverseW, clipPosition.y() * inverseW, clipPosition.z() * inverseW);
+    }
+
+    private static void drawClipSpaceMesh(Minecraft minecraft, MeshData mesh) {
+        if (mesh == null) {
+            return;
+        }
+        Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
+        boolean cullEnabled = GL11.glIsEnabled(GL11.GL_CULL_FACE);
+        boolean blendEnabled = GL11.glIsEnabled(GL11.GL_BLEND);
+        Matrix4f previousProjection = new Matrix4f(RenderSystem.getProjectionMatrix());
+        VertexSorting previousSorting = RenderSystem.getVertexSorting();
+        modelViewStack.pushMatrix();
+        try {
+            RenderSystem.disableCull();
+            RenderSystem.disableBlend();
+            modelViewStack.identity();
+            RenderSystem.applyModelViewMatrix();
+            RenderSystem.setProjectionMatrix(new Matrix4f(), previousSorting);
+            RenderSystem.setShader(GameRenderer::getPositionShader);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            BufferUploader.drawWithShader(mesh);
+        } finally {
+            RenderSystem.setProjectionMatrix(previousProjection, previousSorting);
+            modelViewStack.popMatrix();
+            RenderSystem.applyModelViewMatrix();
+            if (cullEnabled) {
+                RenderSystem.enableCull();
+            } else {
+                RenderSystem.disableCull();
+            }
+            if (blendEnabled) {
+                RenderSystem.enableBlend();
+            } else {
+                RenderSystem.disableBlend();
+            }
+        }
+    }
+
+    private static List<Vector4f> projectPortalPolygon(Matrix4f combined, Vec3 cameraPos, PortalGunWorldPortalShape shape) {
+        Vec3[] corners = shape.getCorners(SURFACE_OFFSET);
+        List<Vector4f> polygon = new ArrayList<>(corners.length);
+        for (Vec3 corner : corners) {
+            Vec3 relative = corner.subtract(cameraPos);
+            polygon.add(new Vector4f((float) relative.x, (float) relative.y, (float) relative.z, 1.0F).mul(combined));
+        }
+        polygon = clipPolygon(polygon, false);
+        return clipPolygon(polygon, true);
     }
 
     private static void addPortalViewVertex(BufferBuilder buffer, Vector4f clipPosition) {
@@ -852,10 +948,10 @@ public final class PortalGunPortalViewRenderer {
     }
 
     private static void renderPortalTransitionEntities(Minecraft minecraft, Vec3 cameraPos, float partialTick, PortalGunPortalEntity sourcePortal, PortalGunPortalEntity destinationPortal) {
-        if (minecraft.level == null || minecraft.getEntityRenderDispatcher() == null || minecraft.renderBuffers() == null) {
+        if (minecraft.level == null || minecraft.getEntityRenderDispatcher() == null) {
             return;
         }
-        MultiBufferSource.BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
+        MultiBufferSource.BufferSource bufferSource = PortalGunPortalRendererPool.bufferSource();
         PoseStack poseStack = new PoseStack();
         AABB transitionBounds = sourcePortal.getWorldPortalShape().getBoundsForCulling();
         List<Entity> renderEntities = minecraft.level.getEntities(

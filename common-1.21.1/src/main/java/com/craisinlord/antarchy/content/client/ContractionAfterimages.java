@@ -8,6 +8,10 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import net.minecraft.core.Holder;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.effect.MobEffect;
@@ -17,6 +21,9 @@ import net.minecraft.world.entity.LivingEntity;
 public final class ContractionAfterimages {
     public static final int MAX_SAMPLES = 10;
     public static final int SAMPLE_LIFETIME_TICKS = 13;
+    public static final int DEFAULT_COLOR = 0xFFD35A;
+    private static final List<Predicate<LivingEntity>> ACTIVATORS = new CopyOnWriteArrayList<>();
+    private static final List<Function<LivingEntity, Integer>> COLOR_PROVIDERS = new CopyOnWriteArrayList<>();
 
     private static final Map<LivingEntity, Deque<Sample>> HISTORY = new WeakHashMap<>();
 
@@ -51,13 +58,45 @@ public final class ContractionAfterimages {
         return HISTORY.get(entity);
     }
 
+    public static void addActivator(Predicate<LivingEntity> activator) {
+        ACTIVATORS.add(activator);
+    }
+
+    public static void addColorProvider(Function<LivingEntity, Integer> provider) {
+        COLOR_PROVIDERS.add(provider);
+    }
+
+    public static int colorFor(Entity entity) {
+        if (!(entity instanceof LivingEntity living)) {
+            return DEFAULT_COLOR;
+        }
+        for (Function<LivingEntity, Integer> provider : COLOR_PROVIDERS) {
+            Integer color = provider.apply(living);
+            if (color != null) {
+                return color & 0xFFFFFF;
+            }
+        }
+        return DEFAULT_COLOR;
+    }
+
     public static boolean isActive(LivingEntity living) {
         Holder<MobEffect> holder = RoyalEffectHooks.contractedHolder();
         boolean contracted = holder != null && living.hasEffect(holder);
         boolean tuned = living instanceof net.minecraft.world.entity.player.Player player
                 && TemporalTunerItem.isAvailable(player)
                 && TimeDilationApi.getRate(living) > 1.0D;
-        return !living.isInvisible() && (contracted || tuned);
+        if (living.isInvisible()) {
+            return false;
+        }
+        if (contracted || tuned) {
+            return true;
+        }
+        for (Predicate<LivingEntity> activator : ACTIVATORS) {
+            if (activator.test(living)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static float fade(Sample sample, int now) {

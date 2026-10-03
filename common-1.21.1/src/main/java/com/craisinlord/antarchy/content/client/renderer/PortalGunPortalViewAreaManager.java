@@ -35,6 +35,9 @@ public final class PortalGunPortalViewAreaManager {
     }
 
     public static Scope enter(Minecraft minecraft, LevelRenderer renderer, UUID destinationId, Vec3 cameraPos, net.minecraft.client.Camera portalCamera) {
+        if (SodiumCompat.isLoaded()) {
+            return new SodiumScope(SodiumCompat.beginPortalView());
+        }
         LevelRendererPortalViewAreaAccessor accessor = (LevelRendererPortalViewAreaAccessor) renderer;
         int viewDistance = minecraft.options.getEffectiveRenderDistance();
         if (ownerLevel != minecraft.level || ownerViewDistance != viewDistance) {
@@ -42,7 +45,6 @@ public final class PortalGunPortalViewAreaManager {
             ownerLevel = minecraft.level;
             ownerViewDistance = viewDistance;
         }
-        Scope sodiumScope = SodiumCompat.isLoaded() ? new SodiumScope(SodiumCompat.beginPortalView(portalCamera)) : null;
         ViewKey viewKey = new ViewKey(renderer, destinationId);
         ViewState state = VIEW_AREAS.get(viewKey);
         if (state == null) {
@@ -80,7 +82,7 @@ public final class PortalGunPortalViewAreaManager {
         accessor.antarchy$setLastCameraSectionX(sectionX);
         accessor.antarchy$setLastCameraSectionY(sectionY);
         accessor.antarchy$setLastCameraSectionZ(sectionZ);
-        return sodiumScope == null ? scope : new CombinedScope(scope, sodiumScope);
+        return scope;
     }
 
     public static boolean routeSectionCompiled(SectionRenderDispatcher.RenderSection section) {
@@ -229,25 +231,6 @@ public final class PortalGunPortalViewAreaManager {
     public interface Scope extends AutoCloseable {
         @Override
         void close();
-    }
-
-    private static final class CombinedScope implements Scope {
-        private final Scope viewAreaScope;
-        private final Scope sodiumScope;
-
-        private CombinedScope(Scope viewAreaScope, Scope sodiumScope) {
-            this.viewAreaScope = viewAreaScope;
-            this.sodiumScope = sodiumScope;
-        }
-
-        @Override
-        public void close() {
-            try {
-                viewAreaScope.close();
-            } finally {
-                sodiumScope.close();
-            }
-        }
     }
 
     private static final class SodiumScope implements Scope {

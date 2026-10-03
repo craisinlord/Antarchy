@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.content.client.PortalGunPortalRenderState;
 import com.craisinlord.antarchy.content.client.renderer.PortalGunPortalViewAreaManager;
 import com.craisinlord.antarchy.content.client.renderer.PortalGunPortalRendererPool;
 import com.craisinlord.antarchy.content.client.renderer.PortalGunPortalViewRenderer;
+import com.craisinlord.antarchy.content.client.renderer.PortalGunPortalVisibilityQueries;
 import com.craisinlord.antarchy.content.client.renderer.PortalStencilTarget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -17,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class LevelRendererPortalLifecycleMixin {
     @Inject(method = "renderLevel", at = @At("HEAD"))
     private void antarchy$preparePortalStencil(CallbackInfo ci) {
-        if (!PortalGunPortalRendererPool.isProxy((LevelRenderer) (Object) this)) {
+        if (PortalGunPortalViewRenderer.isEnabled() && !PortalGunPortalRendererPool.isProxy((LevelRenderer) (Object) this)) {
             PortalStencilTarget.prepareMainTarget(Minecraft.getInstance().getMainRenderTarget());
         }
     }
@@ -29,6 +30,7 @@ public abstract class LevelRendererPortalLifecycleMixin {
         }
         PortalGunPortalRendererPool.clear();
         PortalGunPortalViewAreaManager.clear();
+        PortalGunPortalVisibilityQueries.clear();
     }
 
     @Inject(method = "close", at = @At("HEAD"))

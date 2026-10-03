@@ -77,6 +77,7 @@ public final class TimeDilationManager {
                 && Math.abs(access.antarchy$getTimeDilationRate() - TimeDilationMath.NORMAL_RATE) < 0.001D
                 && Math.abs(access.antarchy$getInheritedTimeDilationRate() - TimeDilationMath.NORMAL_RATE) < 0.001D
                 && Math.abs(TimeDilationApi.getVehicleRate(entity) - TimeDilationMath.NORMAL_RATE) < 0.001D
+                && !TimeDilationApi.hasPersonalRates(entity)
                 && !hasTuner && !hasEffect) {
             return;
         }
@@ -215,8 +216,16 @@ public final class TimeDilationManager {
             } else {
                 fastRate = Math.max(fastRate, inheritedRate);
             }
-            double targetRate = slowRate < TimeDilationMath.NORMAL_RATE ? slowRate : fastRate;
-            double rate = TimeDilationMath.transitionRate(previousRate, targetRate);
+            for (double personalRate : access.antarchy$getPersonalTimeDilationRates().values()) {
+                if (personalRate < TimeDilationMath.NORMAL_RATE) {
+                    slowRate = Math.min(slowRate, personalRate);
+                } else {
+                    fastRate = Math.max(fastRate, personalRate);
+                }
+            }
+            double ceiling = access.antarchy$getTimeDilationCeiling();
+            double targetRate = TimeDilationMath.clampRate(slowRate < TimeDilationMath.NORMAL_RATE ? slowRate : fastRate, ceiling);
+            double rate = TimeDilationMath.transitionRate(previousRate, targetRate, ceiling);
             if (Math.abs(targetRate - TimeDilationMath.NORMAL_RATE) < 0.001D
                     && Math.abs(rate - TimeDilationMath.NORMAL_RATE) < 0.001D) {
                 TimeDilationApi.clearRate(entity);

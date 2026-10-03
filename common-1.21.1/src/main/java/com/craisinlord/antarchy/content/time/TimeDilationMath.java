@@ -4,6 +4,7 @@ public final class TimeDilationMath {
     public static final double MIN_RATE = 0.05D;
     public static final double NORMAL_RATE = 1.0D;
     public static final double MAX_RATE = 3.0D;
+    public static final double ABSOLUTE_MAX_RATE = 20.0D;
     public static final int FIELD_TRANSITION_TICKS = 20;
     public static final int EFFECT_TRANSITION_TICKS = 20;
     private static final double GAUSSIAN_EDGE_EXPONENT = -4.5D;
@@ -18,12 +19,31 @@ public final class TimeDilationMath {
         return Math.max(MIN_RATE, Math.min(MAX_RATE, rate));
     }
 
+    public static double clampCeiling(double ceiling) {
+        if (Double.isNaN(ceiling) || Double.isInfinite(ceiling)) {
+            return MAX_RATE;
+        }
+        return Math.max(NORMAL_RATE, Math.min(ABSOLUTE_MAX_RATE, ceiling));
+    }
+
+    public static double clampRate(double rate, double ceiling) {
+        if (Double.isNaN(rate) || Double.isInfinite(rate)) {
+            return NORMAL_RATE;
+        }
+        return Math.max(MIN_RATE, Math.min(clampCeiling(ceiling), rate));
+    }
+
     public static double transitionRate(double currentRate, double targetRate) {
-        double current = clampRate(currentRate);
-        double target = clampRate(targetRate);
-        double maximumStep = (MAX_RATE - MIN_RATE) / EFFECT_TRANSITION_TICKS;
+        return transitionRate(currentRate, targetRate, MAX_RATE);
+    }
+
+    public static double transitionRate(double currentRate, double targetRate, double ceiling) {
+        double maximum = clampCeiling(ceiling);
+        double current = clampRate(currentRate, maximum);
+        double target = clampRate(targetRate, maximum);
+        double maximumStep = (maximum - MIN_RATE) / EFFECT_TRANSITION_TICKS;
         double delta = Math.max(-maximumStep, Math.min(maximumStep, target - current));
-        return clampRate(current + delta);
+        return clampRate(current + delta, maximum);
     }
 
     public static double gaussianFalloff(double distance, double radius) {

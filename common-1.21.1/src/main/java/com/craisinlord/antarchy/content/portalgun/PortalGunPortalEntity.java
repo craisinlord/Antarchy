@@ -79,6 +79,7 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final int OPEN_TICKS = 5;
     public static final int TELEPORT_COOLDOWN_TICKS = 3;
+    private static final String DEBUG_TRAVERSAL_PROPERTY = "antarchy.portalGun.debugTraversal";
     private static final double PORTAL_INSIDE_SHIFT = 0.05D;
     private static final Set<String> LOGGED_CROSSING_PATHS = new HashSet<>();
     private static final double HALF_DEPTH = 0.35D;
@@ -358,22 +359,26 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
         Vec3 currentProbe = this.teleportProbePosition(entity, currentBox);
         Vec3 normal = this.getNormalVec().normalize();
         if (entity instanceof Player && Math.abs(normal.y) < 0.5D) {
-            double offset = Math.min(0.05D, Math.abs(this.position().subtract(entity.position()).dot(normal)));
-            Vec3 shift = normal.scale(offset);
-            if (this.getScanRange().move(shift).contains(currentProbe)
-                    || !this.getPortalInsides().move(shift).contains(currentProbe)) {
+            PortalGunWorldPortalShape shape = this.getWorldPortalShape();
+            double previousDepth = shape.localCoords(previousProbe).depth();
+            double currentDepth = shape.localCoords(currentProbe).depth();
+            double halfBodyDepth = entity.getBbWidth() * 0.5D;
+            if (previousDepth <= 0.0D || currentDepth >= previousDepth - 1.0E-6D
+                    || currentDepth - halfBodyDepth > 0.02D || currentDepth < -shape.halfDepth()) {
                 return null;
             }
-            PortalGunWorldPortalShape shape = this.getWorldPortalShape();
-            AABB flatPlane = shape.getFlatPlane();
-            boolean aligned;
-            if (Math.abs(normal.y) > 0.5D) {
-                aligned = currentBox.minX >= flatPlane.minX && currentBox.maxX <= flatPlane.maxX
-                        && currentBox.minZ >= flatPlane.minZ && currentBox.maxZ <= flatPlane.maxZ;
-            } else {
-                aligned = currentBox.minY >= flatPlane.minY && currentBox.maxY <= flatPlane.maxY;
+            Vec3 center = currentBox.getCenter();
+            PortalGunWorldPortalShape.PortalLocalCoords localCenter = shape.localCoords(center);
+            double halfX = (currentBox.maxX - currentBox.minX) * 0.5D;
+            double halfY = (currentBox.maxY - currentBox.minY) * 0.5D;
+            double halfZ = (currentBox.maxZ - currentBox.minZ) * 0.5D;
+            double widthExtent = halfX * Math.abs(shape.right().x) + halfY * Math.abs(shape.right().y) + halfZ * Math.abs(shape.right().z);
+            double heightExtent = halfX * Math.abs(shape.up().x) + halfY * Math.abs(shape.up().y) + halfZ * Math.abs(shape.up().z);
+            if (Math.abs(localCenter.horizontal()) + widthExtent > shape.halfWidth() + 1.0E-3D
+                    || Math.abs(localCenter.vertical()) + heightExtent > shape.halfHeight() + 1.0E-3D) {
+                return null;
             }
-            return aligned ? new PortalCrossing(currentProbe, offset) : null;
+            return new PortalCrossing(currentProbe, Math.max(0.05D, currentDepth + 0.05D));
         }
         return this.crossesPortal(previousProbe, currentProbe) ? new PortalCrossing(currentProbe, 0.0D) : null;
     }
@@ -416,6 +421,10 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
             }
             PortalCrossing crossing = portal.resolveCrossing(entity, previousBox, currentBox);
             if (crossing != null) {
+                if (entity instanceof Player && Boolean.getBoolean(DEBUG_TRAVERSAL_PROPERTY)) {
+                    Antarchy.LOGGER.info("Portal gun traversal accepted path=movement portal={} player={} probe={} offset={} linked={}",
+                            portal.getUUID(), entity.getUUID(), crossing.probe(), crossing.normalOffset(), linked.getUUID());
+                }
                 logCrossingPath(entity, "movement");
                 portal.teleportEntity(entity, linked, crossing.probe(), resolvedMovement, crossing.normalOffset());
                 return;
@@ -506,6 +515,10 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
         }
         PortalGunPortalEntity linked = this.findLinkedPortal(serverLevel);
         if (linked == null || !linked.isAlive()) {
+            if (Boolean.getBoolean(DEBUG_TRAVERSAL_PROPERTY) && this.ageTicks % 40 == 0) {
+                Antarchy.LOGGER.info("Portal gun traversal unavailable portal={} side={} linked={} loaded={}",
+                        this.getUUID(), this.getPortalSide(), this.linkedPortalId, linked != null);
+            }
             if (this.ageTicks % 100 == 0) {
                 Antarchy.LOGGER.debug("Portal gun portal has no loaded linked portal portal={} owner={} side={} linked={}", this.getUUID(), this.ownerId, this.getPortalSide(), this.linkedPortalId);
             }
@@ -560,7 +573,19 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
             AABB previousBox = currentBox.move(entity.xo - entity.getX(), entity.yo - entity.getY(), entity.zo - entity.getZ());
             PortalCrossing crossing = this.resolveCrossing(entity, previousBox, currentBox);
             if (crossing == null) {
+                if (entity instanceof Player && Boolean.getBoolean(DEBUG_TRAVERSAL_PROPERTY) && this.ageTicks % 20 == 0) {
+                    Vec3 probe = this.teleportProbePosition(entity, currentBox);
+                    double depth = this.getWorldPortalShape().localCoords(probe).depth();
+                    if (depth < 1.5D) {
+                        Antarchy.LOGGER.info("Portal gun traversal waiting portal={} player={} depth={} position={} linked={}",
+                                this.getUUID(), entity.getUUID(), depth, entity.position(), linked.getUUID());
+                    }
+                }
                 continue;
+            }
+            if (entity instanceof Player && Boolean.getBoolean(DEBUG_TRAVERSAL_PROPERTY)) {
+                Antarchy.LOGGER.info("Portal gun traversal accepted portal={} player={} probe={} offset={} linked={}",
+                        this.getUUID(), entity.getUUID(), crossing.probe(), crossing.normalOffset(), linked.getUUID());
             }
             logCrossingPath(entity, "portal_tick");
             Vec3 resolvedMovement = entity.position().subtract(entity.xo, entity.yo, entity.zo);

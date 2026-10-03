@@ -20,6 +20,25 @@ public abstract class EntityTimeDilationStateMixin implements TimeDilationEntity
     private boolean antarchy$inTimeDilationMove;
     @Unique
     private boolean antarchy$applyingExternalImpulse;
+    @Unique
+    private double antarchy$timeDilationCeiling = TimeDilationMath.MAX_RATE;
+    @Unique
+    private final Map<String, Double> antarchy$personalTimeDilationRates = new HashMap<>();
+
+    @Override
+    public double antarchy$getTimeDilationCeiling() {
+        return this.antarchy$timeDilationCeiling;
+    }
+
+    @Override
+    public void antarchy$setTimeDilationCeiling(double ceiling) {
+        this.antarchy$timeDilationCeiling = TimeDilationMath.clampCeiling(ceiling);
+    }
+
+    @Override
+    public Map<String, Double> antarchy$getPersonalTimeDilationRates() {
+        return this.antarchy$personalTimeDilationRates;
+    }
 
     @Override
     public double antarchy$getTimeDilationRate() {
@@ -29,7 +48,7 @@ public abstract class EntityTimeDilationStateMixin implements TimeDilationEntity
     @Override
     public void antarchy$setTimeDilationRate(double rate) {
         double previousRate = this.antarchy$timeDilationRate;
-        this.antarchy$timeDilationRate = TimeDilationMath.clampRate(rate);
+        this.antarchy$timeDilationRate = TimeDilationMath.clampRate(rate, TimeDilationMath.ABSOLUTE_MAX_RATE);
         if (previousRate != TimeDilationMath.NORMAL_RATE
                 && this.antarchy$timeDilationRate == TimeDilationMath.NORMAL_RATE) {
             this.antarchy$timeDilationTimerProgress.clear();
@@ -53,7 +72,7 @@ public abstract class EntityTimeDilationStateMixin implements TimeDilationEntity
 
     @Override
     public int antarchy$consumeTimeDilationTicks(String timerKey, double rate) {
-        double clampedRate = TimeDilationMath.clampRate(rate);
+        double clampedRate = TimeDilationMath.clampRate(rate, TimeDilationMath.ABSOLUTE_MAX_RATE);
         if (Math.abs(clampedRate - TimeDilationMath.NORMAL_RATE) < 0.001D) {
             return 1;
         }

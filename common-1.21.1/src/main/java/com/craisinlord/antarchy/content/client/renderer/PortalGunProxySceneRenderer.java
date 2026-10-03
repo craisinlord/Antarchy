@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.mixins.client.LevelRendererPortalSceneInvoker;
 import com.craisinlord.antarchy.mixins.client.LevelRendererPortalViewAreaAccessor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.CloudStatus;
@@ -13,7 +14,6 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.chunk.SectionRenderDispatcher;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -30,12 +30,21 @@ public final class PortalGunProxySceneRenderer {
     private PortalGunProxySceneRenderer() {
     }
 
-    public static void render(Minecraft minecraft, LevelRenderer renderer, Camera camera, float partialTick, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, String tracePair) {
+    public static void render(Minecraft minecraft, LevelRenderer renderer, Camera camera, float partialTick, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, Matrix4f cullProjectionMatrix, String tracePair) {
+        Matrix4fStack outerModelViewStack = RenderSystem.getModelViewStack();
+        float previousFogStart = RenderSystem.getShaderFogStart();
+        float previousFogEnd = RenderSystem.getShaderFogEnd();
+        float[] previousFogColor = RenderSystem.getShaderFogColor().clone();
+        FogShape previousFogShape = RenderSystem.getShaderFogShape();
+        outerModelViewStack.pushMatrix();
+        outerModelViewStack.identity();
+        RenderSystem.applyModelViewMatrix();
+        try {
         Vec3 cameraPosition = camera.getPosition();
         double cameraX = cameraPosition.x;
         double cameraY = cameraPosition.y;
         double cameraZ = cameraPosition.z;
-        Frustum frustum = new Frustum(modelViewMatrix, projectionMatrix);
+        Frustum frustum = new Frustum(modelViewMatrix, cullProjectionMatrix);
         frustum.prepare(cameraX, cameraY, cameraZ);
         LevelRendererPortalSceneInvoker scene = (LevelRendererPortalSceneInvoker) renderer;
         float renderDistance = minecraft.gameRenderer.getRenderDistance();
@@ -55,29 +64,33 @@ public final class PortalGunProxySceneRenderer {
                     () -> FogRenderer.setupFog(camera, FogRenderer.FogMode.FOG_SKY, renderDistance, foggy, partialTick));
         }
 
-        try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(tracePair, "frustum-and-visibility", "renderDistance=" + rendererAccessDistance(renderer))) {
+        boolean sodium = SodiumCompat.isLoaded();
+        try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(tracePair, "frustum-and-visibility", "renderDistance=" + (sodium ? minecraft.options.getEffectiveRenderDistance() : rendererAccessDistance(renderer)))) {
             FogRenderer.setupFog(camera, FogRenderer.FogMode.FOG_TERRAIN, Math.max(renderDistance, 32.0F), foggy, partialTick);
             scene.antarchy$setupPortalScene(camera, frustum, false, minecraft.player != null && minecraft.player.isSpectator());
         }
-        LevelRendererPortalViewAreaAccessor viewAreaAccessor = (LevelRendererPortalViewAreaAccessor) renderer;
-        ObjectArrayList<SectionRenderDispatcher.RenderSection> fullVisibleSections = viewAreaAccessor.antarchy$getVisibleSections();
-        ObjectArrayList<SectionRenderDispatcher.RenderSection> budgetedVisibleSections = new ObjectArrayList<>();
-        PortalGunPortalRendererPool.beginSceneBudget();
-        int scannedVisibleSections = 0;
-        while (scannedVisibleSections < fullVisibleSections.size() && PortalGunPortalRendererPool.remainingSectionBudgetNanos() > 0L) {
-            budgetedVisibleSections.add(fullVisibleSections.get(scannedVisibleSections++));
-        }
-        try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(tracePair, "compile-visible-sections", "visibleTotal=" + fullVisibleSections.size() + " visibleScanned=" + scannedVisibleSections + " rebuildBudgetNanos=" + PortalGunPortalRendererPool.remainingSectionBudgetNanos())) {
-            viewAreaAccessor.antarchy$setVisibleSections(budgetedVisibleSections);
-            try {
-                scene.antarchy$compilePortalSections(camera);
-            } finally {
-                viewAreaAccessor.antarchy$setVisibleSections(fullVisibleSections);
+        LevelRendererPortalViewAreaAccessor viewAreaAccessor = sodium ? null : (LevelRendererPortalViewAreaAccessor) renderer;
+        int visibleSectionCount = 0;
+        if (viewAreaAccessor != null) {
+            ObjectArrayList<SectionRenderDispatcher.RenderSection> fullVisibleSections = viewAreaAccessor.antarchy$getVisibleSections();
+            ObjectArrayList<SectionRenderDispatcher.RenderSection> budgetedVisibleSections = new ObjectArrayList<>();
+            int scannedVisibleSections = 0;
+            while (scannedVisibleSections < fullVisibleSections.size() && PortalGunPortalRendererPool.remainingSectionBudgetNanos() > 0L) {
+                budgetedVisibleSections.add(fullVisibleSections.get(scannedVisibleSections++));
             }
+            try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(tracePair, "compile-visible-sections", "visibleTotal=" + fullVisibleSections.size() + " visibleScanned=" + scannedVisibleSections + " rebuildBudgetNanos=" + PortalGunPortalRendererPool.remainingSectionBudgetNanos())) {
+                viewAreaAccessor.antarchy$setVisibleSections(budgetedVisibleSections);
+                try {
+                    scene.antarchy$compilePortalSections(camera);
+                } finally {
+                    viewAreaAccessor.antarchy$setVisibleSections(fullVisibleSections);
+                }
+            }
+            visibleSectionCount = fullVisibleSections.size();
         }
-        PortalSceneRenderTrace.event(tracePair, "visible-sections-ready", "count=" + viewAreaAccessor.antarchy$getVisibleSections().size() + " scheduledRebuilds=" + PortalGunPortalRendererPool.scheduledSectionRebuilds());
+        PortalSceneRenderTrace.event(tracePair, "visible-sections-ready", "renderer=" + (sodium ? "sodium" : "vanilla") + " count=" + visibleSectionCount + " scheduledRebuilds=" + PortalGunPortalRendererPool.scheduledSectionRebuilds());
 
-        try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(tracePair, "opaque-terrain-layers", "sections=" + viewAreaAccessor.antarchy$getVisibleSections().size())) {
+        try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(tracePair, "opaque-terrain-layers", "sections=" + visibleSectionCount)) {
             RenderSystem.enableDepthTest();
             RenderSystem.depthMask(true);
             scene.antarchy$renderPortalSectionLayer(RenderType.solid(), cameraX, cameraY, cameraZ, modelViewMatrix, projectionMatrix);
@@ -98,7 +111,7 @@ public final class PortalGunProxySceneRenderer {
             RenderSystem.applyModelViewMatrix();
         }
         PoseStack poseStack = new PoseStack();
-        MultiBufferSource.BufferSource buffers = minecraft.renderBuffers().bufferSource();
+        MultiBufferSource.BufferSource buffers = PortalGunPortalRendererPool.bufferSource();
         try {
             int entityCount = 0;
             try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(tracePair, "entities", "dispatch-start")) {
@@ -122,18 +135,27 @@ public final class PortalGunProxySceneRenderer {
             PortalSceneRenderTrace.event(tracePair, "entities-dispatched", "count=" + entityCount);
 
             int blockEntityCount = 0;
-            try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(tracePair, "block-entities", "visibleSections=" + viewAreaAccessor.antarchy$getVisibleSections().size())) {
-                for (var section : viewAreaAccessor.antarchy$getVisibleSections()) {
-                    for (BlockEntity blockEntity : section.getCompiled().getRenderableBlockEntities()) {
+            try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(tracePair, "block-entities", "visibleSections=" + visibleSectionCount)) {
+                if (sodium) {
+                    int[] count = {0};
+                    SodiumCompat.forEachVisibleBlockEntity(blockEntity -> {
                         renderBlockEntity(minecraft, blockEntity, cameraX, cameraY, cameraZ, partialTick, poseStack, buffers);
-                        blockEntityCount++;
-                    }
-                }
-                synchronized (viewAreaAccessor.antarchy$getGlobalBlockEntities()) {
-                    for (BlockEntity blockEntity : viewAreaAccessor.antarchy$getGlobalBlockEntities()) {
-                        if (frustum.isVisible(new AABB(blockEntity.getBlockPos()).inflate(1.0D))) {
+                        count[0]++;
+                    });
+                    blockEntityCount = count[0];
+                } else {
+                    for (var section : viewAreaAccessor.antarchy$getVisibleSections()) {
+                        for (BlockEntity blockEntity : section.getCompiled().getRenderableBlockEntities()) {
                             renderBlockEntity(minecraft, blockEntity, cameraX, cameraY, cameraZ, partialTick, poseStack, buffers);
                             blockEntityCount++;
+                        }
+                    }
+                    synchronized (viewAreaAccessor.antarchy$getGlobalBlockEntities()) {
+                        for (BlockEntity blockEntity : viewAreaAccessor.antarchy$getGlobalBlockEntities()) {
+                            if (frustum.isVisible(new AABB(blockEntity.getBlockPos()).inflate(1.0D))) {
+                                renderBlockEntity(minecraft, blockEntity, cameraX, cameraY, cameraZ, partialTick, poseStack, buffers);
+                                blockEntityCount++;
+                            }
                         }
                     }
                 }
@@ -142,12 +164,11 @@ public final class PortalGunProxySceneRenderer {
             PortalSceneRenderTrace.event(tracePair, "block-entities-dispatched", "count=" + blockEntityCount);
 
             try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(tracePair, "translucent-and-particles", "rendering")) {
-                minecraft.particleEngine.render(minecraft.gameRenderer.lightTexture(), camera, partialTick, frustum, type -> !type.isTranslucent());
                 scene.antarchy$renderPortalSectionLayer(RenderType.translucent(), cameraX, cameraY, cameraZ, modelViewMatrix, projectionMatrix);
                 buffers.endBatch(RenderType.lines());
                 buffers.endBatch();
                 scene.antarchy$renderPortalSectionLayer(RenderType.tripwire(), cameraX, cameraY, cameraZ, modelViewMatrix, projectionMatrix);
-                minecraft.particleEngine.render(minecraft.gameRenderer.lightTexture(), camera, partialTick, frustum, ParticleRenderType::isTranslucent);
+                minecraft.particleEngine.render(minecraft.gameRenderer.lightTexture(), camera, partialTick);
             }
 
             try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(tracePair, "clouds", minecraft.options.getCloudsType().toString())) {
@@ -173,6 +194,14 @@ public final class PortalGunProxySceneRenderer {
                 RenderSystem.disableBlend();
             }
         }
+        } finally {
+            outerModelViewStack.popMatrix();
+            RenderSystem.applyModelViewMatrix();
+            RenderSystem.setShaderFogStart(previousFogStart);
+            RenderSystem.setShaderFogEnd(previousFogEnd);
+            RenderSystem.setShaderFogColor(previousFogColor[0], previousFogColor[1], previousFogColor[2], previousFogColor[3]);
+            RenderSystem.setShaderFogShape(previousFogShape);
+        }
     }
 
     private static int rendererAccessDistance(LevelRenderer renderer) {
@@ -186,8 +215,11 @@ public final class PortalGunProxySceneRenderer {
         }
         BlockPos pos = blockEntity.getBlockPos();
         poseStack.pushPose();
-        poseStack.translate(pos.getX() - cameraX, pos.getY() - cameraY, pos.getZ() - cameraZ);
-        minecraft.getBlockEntityRenderDispatcher().render(blockEntity, partialTick, poseStack, buffers);
-        poseStack.popPose();
+        try {
+            poseStack.translate(pos.getX() - cameraX, pos.getY() - cameraY, pos.getZ() - cameraZ);
+            minecraft.getBlockEntityRenderDispatcher().render(blockEntity, partialTick, poseStack, buffers);
+        } finally {
+            poseStack.popPose();
+        }
     }
 }

@@ -17,7 +17,7 @@ public final class PortalGunPortalViewRenderHandler {
         if (!PortalGunPortalViewRenderer.isEnabled()) {
             return;
         }
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_LEVEL) {
             return;
         }
         PortalGunPortalViewRenderer.render(event.getCamera(), event.getModelViewMatrix(), event.getProjectionMatrix(), event.getPartialTick());

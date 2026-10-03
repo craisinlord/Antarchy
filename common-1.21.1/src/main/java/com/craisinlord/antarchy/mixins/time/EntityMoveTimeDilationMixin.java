@@ -39,6 +39,9 @@ public abstract class EntityMoveTimeDilationMixin {
         if (Math.abs(rate - TimeDilationMath.NORMAL_RATE) < 0.001D) {
             return movement;
         }
+        if (rate > TimeDilationMath.NORMAL_RATE && TimeDilationApi.isHorizontalOnlyMovement(entity)) {
+            return movement.multiply(rate, 1.0D, rate);
+        }
         return movement.scale(rate);
     }
 }

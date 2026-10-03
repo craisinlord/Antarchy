@@ -10,12 +10,14 @@ import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.renderer.chunk.RenderRegionCache;
 import net.minecraft.client.renderer.chunk.SectionRenderDispatcher;
 
 public final class PortalGunPortalRendererPool {
     private static final int MAX_RENDERERS = 8;
     private static final long PORTAL_SECTION_BUDGET_NANOS = 4_166_666L;
+    private static final RenderBuffers PORTAL_RENDER_BUFFERS = new RenderBuffers(2);
     private static final LinkedHashMap<UUID, PortalRenderer> RENDERERS = new LinkedHashMap<>(8, 0.75F, true);
     private static final Set<LevelRenderer> PROXY_RENDERERS = java.util.Collections.newSetFromMap(new IdentityHashMap<>());
     private static final ThreadLocal<Long> SECTION_BUDGET_DEADLINE = ThreadLocal.withInitial(() -> 0L);
@@ -37,7 +39,7 @@ public final class PortalGunPortalRendererPool {
                     minecraft,
                     minecraft.getEntityRenderDispatcher(),
                     minecraft.getBlockEntityRenderDispatcher(),
-                    minecraft.renderBuffers()
+                    PORTAL_RENDER_BUFFERS
             );
             PROXY_RENDERERS.add(renderer);
             renderer.setLevel(minecraft.level);
@@ -56,13 +58,11 @@ public final class PortalGunPortalRendererPool {
         return PROXY_RENDERERS.contains(renderer);
     }
 
-    public static void beginFrame() {
-        SECTION_BUDGET_DEADLINE.set(System.nanoTime() + PORTAL_SECTION_BUDGET_NANOS);
-        SCHEDULED_SECTION_REBUILDS.set(0);
-        SKIP_SET_NOT_DIRTY.set(false);
+    public static net.minecraft.client.renderer.MultiBufferSource.BufferSource bufferSource() {
+        return PORTAL_RENDER_BUFFERS.bufferSource();
     }
 
-    public static void beginSceneBudget() {
+    public static void beginFrame() {
         SECTION_BUDGET_DEADLINE.set(System.nanoTime() + PORTAL_SECTION_BUDGET_NANOS);
         SCHEDULED_SECTION_REBUILDS.set(0);
         SKIP_SET_NOT_DIRTY.set(false);

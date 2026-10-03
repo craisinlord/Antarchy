@@ -5,7 +5,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class PortalSceneRenderTrace {
+    private static final String DEBUG_PROPERTY = "antarchy.portalGun.debugRender";
     private static final Set<String> LOGGED_PHASES = new HashSet<>();
+    private static final Phase NOOP_PHASE = new Phase(0L, "", "", false, 0L);
     private static long generation;
     private static String armedKey = "";
 
@@ -27,6 +29,9 @@ public final class PortalSceneRenderTrace {
     }
 
     public static Phase begin(String pair, String phase, String detail) {
+        if (!Boolean.getBoolean(DEBUG_PROPERTY)) {
+            return NOOP_PHASE;
+        }
         long currentGeneration;
         boolean shouldLog;
         synchronized (PortalSceneRenderTrace.class) {
@@ -40,6 +45,9 @@ public final class PortalSceneRenderTrace {
     }
 
     public static void event(String pair, String event, String detail) {
+        if (!Boolean.getBoolean(DEBUG_PROPERTY)) {
+            return;
+        }
         long currentGeneration;
         boolean shouldLog;
         synchronized (PortalSceneRenderTrace.class) {

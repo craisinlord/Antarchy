@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -17,6 +19,7 @@ public final class TimeDilationApi {
     };
     private static final Map<UUID, Double> SYNCED_CLIENT_RATES = new ConcurrentHashMap<>();
     private static final ThreadLocal<Integer> ROTATION_BYPASS_DEPTH = ThreadLocal.withInitial(() -> 0);
+    private static final List<Predicate<Entity>> HORIZONTAL_ONLY_MOVEMENT = new CopyOnWriteArrayList<>();
 
     private TimeDilationApi() {
     }
@@ -98,7 +101,7 @@ public final class TimeDilationApi {
     }
 
     public static void applySyncedRate(UUID entityUuid, double rate) {
-        double clampedRate = TimeDilationMath.clampRate(rate);
+        double clampedRate = TimeDilationMath.clampRate(rate, TimeDilationMath.ABSOLUTE_MAX_RATE);
         SYNCED_CLIENT_RATES.put(entityUuid, clampedRate);
     }
 
@@ -122,7 +125,75 @@ public final class TimeDilationApi {
     }
 
     public static void syncEntityRate(Entity entity, double rate) {
-        syncDispatcher.accept(entity, TimeDilationMath.clampRate(rate));
+        syncDispatcher.accept(entity, TimeDilationMath.clampRate(rate, TimeDilationMath.ABSOLUTE_MAX_RATE));
+    }
+
+    public static void addHorizontalOnlyMovement(Predicate<Entity> predicate) {
+        HORIZONTAL_ONLY_MOVEMENT.add(predicate);
+    }
+
+    public static boolean isHorizontalOnlyMovement(Entity entity) {
+        for (Predicate<Entity> predicate : HORIZONTAL_ONLY_MOVEMENT) {
+            if (predicate.test(entity)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static double getRateCeiling(Entity entity) {
+        if (entity instanceof TimeDilationEntityAccess access) {
+            return access.antarchy$getTimeDilationCeiling();
+        }
+        return TimeDilationMath.MAX_RATE;
+    }
+
+    public static void setRateCeiling(Entity entity, double ceiling) {
+        if (entity instanceof TimeDilationEntityAccess access) {
+            access.antarchy$setTimeDilationCeiling(ceiling);
+            TimeDilationManager.trackPotentiallyAffected(entity);
+        }
+    }
+
+    public static void clearRateCeiling(Entity entity) {
+        setRateCeiling(entity, TimeDilationMath.MAX_RATE);
+    }
+
+    public static void setPersonalRate(Entity entity, String sourceId, double rate) {
+        if (entity instanceof TimeDilationEntityAccess access) {
+            double clampedRate = TimeDilationMath.clampRate(rate, TimeDilationMath.ABSOLUTE_MAX_RATE);
+            if (Math.abs(clampedRate - TimeDilationMath.NORMAL_RATE) < 0.001D) {
+                access.antarchy$getPersonalTimeDilationRates().remove(sourceId);
+            } else {
+                access.antarchy$getPersonalTimeDilationRates().put(sourceId, clampedRate);
+            }
+            TimeDilationManager.trackPotentiallyAffected(entity);
+        }
+    }
+
+    public static void clearPersonalRate(Entity entity, String sourceId) {
+        if (entity instanceof TimeDilationEntityAccess access
+                && access.antarchy$getPersonalTimeDilationRates().remove(sourceId) != null) {
+            TimeDilationManager.trackPotentiallyAffected(entity);
+        }
+    }
+
+    public static double getPersonalRate(Entity entity, String sourceId) {
+        if (entity instanceof TimeDilationEntityAccess access) {
+            return access.antarchy$getPersonalTimeDilationRates().getOrDefault(sourceId, TimeDilationMath.NORMAL_RATE);
+        }
+        return TimeDilationMath.NORMAL_RATE;
+    }
+
+    public static boolean hasPersonalRates(Entity entity) {
+        return entity instanceof TimeDilationEntityAccess access && !access.antarchy$getPersonalTimeDilationRates().isEmpty();
+    }
+
+    public static TimeDilationFieldEntity createAttachedField(ServerLevel level, Entity owner, double radius, double rate, int durationTicks) {
+        TimeDilationFieldEntity field = TimeDilationFieldEntity.create(level, owner.position(), radius, rate, durationTicks, owner.getUUID(), true);
+        field.attachTo(owner);
+        level.addFreshEntity(field);
+        return field;
     }
 
     public static void syncFields(ServerPlayer player, List<TimeDilationFieldSnapshot> fields) {

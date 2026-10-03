@@ -5,7 +5,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.function.Consumer;
 import net.minecraft.client.Camera;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 public final class SodiumCompat {
     private static final String SODIUM_RENDERER_CLASS = "net.caffeinemc.mods.sodium.client.render.SodiumWorldRenderer";
@@ -29,13 +31,10 @@ public final class SodiumCompat {
         RENDER_STATE.get().activeSetup = new TerrainSetup(camera, viewport, spectator, updateChunks);
     }
 
-    public static TerrainScope beginPortalView(Camera portalCamera) {
+    public static TerrainScope beginPortalView() {
         RenderState state = RENDER_STATE.get();
         TerrainSetup previousSetup = state.activeSetup;
         state.previousSetups.push(new PreviousSetup(previousSetup));
-        if (previousSetup != null) {
-            restoreTerrainSetup(previousSetup.withCamera(portalCamera), state);
-        }
         return () -> {
             PreviousSetup previous = state.previousSetups.pop();
             if (previous.setup() == null) {
@@ -48,6 +47,20 @@ public final class SodiumCompat {
 
     public static void clear() {
         RENDER_STATE.remove();
+    }
+
+    public static void forEachVisibleBlockEntity(Consumer<BlockEntity> consumer) {
+        try {
+            ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
+            Class<?> rendererClass = Class.forName(SODIUM_RENDERER_CLASS, false,
+                    contextLoader == null ? SodiumCompat.class.getClassLoader() : contextLoader);
+            Object renderer = rendererClass.getMethod("instanceNullable").invoke(null);
+            if (renderer != null) {
+                rendererClass.getMethod("iterateVisibleBlockEntities", Consumer.class).invoke(renderer, consumer);
+            }
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | LinkageError exception) {
+            logRestoreFailure("Could not iterate Sodium block entities for a portal view", exception);
+        }
     }
 
     private static void restoreTerrainSetup(TerrainSetup setup, RenderState state) {
@@ -77,7 +90,14 @@ public final class SodiumCompat {
                 state.activeSetup = setup;
                 return;
             }
-            terrainSetup.invoke(renderer, setup.camera(), setup.viewport(), setup.spectator(), setup.updateChunks());
+            Class<?> deviceClass = Class.forName("net.caffeinemc.mods.sodium.client.gl.device.RenderDevice", false,
+                    contextLoader == null ? SodiumCompat.class.getClassLoader() : contextLoader);
+            deviceClass.getMethod("enterManagedCode").invoke(null);
+            try {
+                terrainSetup.invoke(renderer, setup.camera(), setup.viewport(), setup.spectator(), setup.updateChunks());
+            } finally {
+                deviceClass.getMethod("exitManagedCode").invoke(null);
+            }
         } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | LinkageError exception) {
             logRestoreFailure("Could not restore Sodium terrain after a portal view", exception);
             state.activeSetup = setup;
@@ -110,8 +130,5 @@ public final class SodiumCompat {
     }
 
     private record TerrainSetup(Camera camera, Object viewport, boolean spectator, boolean updateChunks) {
-        private TerrainSetup withCamera(Camera camera) {
-            return new TerrainSetup(camera, this.viewport, this.spectator, this.updateChunks);
-        }
     }
 }

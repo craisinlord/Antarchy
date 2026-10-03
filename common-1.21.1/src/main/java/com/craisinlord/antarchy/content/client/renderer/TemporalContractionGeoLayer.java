@@ -18,7 +18,6 @@ import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 public final class TemporalContractionGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> {
-    private static final int RGB = 0xFFD35A;
     private static final float BASE_ALPHA = 0.42F;
     private static final int SAMPLE_STRIDE = 2;
 
@@ -66,7 +65,7 @@ public final class TemporalContractionGeoLayer<T extends GeoAnimatable> extends 
 
             Vector3f local = inverse.transformDirection(new Vector3f((float) dx, (float) dy, (float) dz));
             int alpha = (int) (BASE_ALPHA * fade * 255.0F) & 0xFF;
-            int color = alpha << 24 | RGB;
+            int color = alpha << 24 | ContractionAfterimages.colorFor(entity);
 
             poseStack.pushPose();
             poseStack.translate(local.x, local.y, local.z);

@@ -1,6 +1,14 @@
 package com.craisinlord.antarchy.content.time;
 
+import java.util.Map;
+
 public interface TimeDilationEntityAccess {
+    double antarchy$getTimeDilationCeiling();
+
+    void antarchy$setTimeDilationCeiling(double ceiling);
+
+    Map<String, Double> antarchy$getPersonalTimeDilationRates();
+
     double antarchy$getTimeDilationRate();
 
     void antarchy$setTimeDilationRate(double rate);
