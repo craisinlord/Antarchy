@@ -65,6 +65,16 @@ public final class PortalGunTransformUtil {
                 .add(destinationOut.scale(vector.dot(sourceInto)));
     }
 
+    public static Vec3 transformPosition(PortalGunWorldPortalShape source, PortalGunWorldPortalShape destination, Vec3 relativePosition) {
+        return transformVector(source, destination, relativePosition);
+    }
+
+    public static Vec3 transformVector(PortalGunWorldPortalShape source, PortalGunWorldPortalShape destination, Vec3 vector) {
+        return destination.right().scale(-vector.dot(source.right()))
+                .add(destination.up().scale(vector.dot(source.up())))
+                .add(destination.normal().scale(-vector.dot(source.normal())));
+    }
+
     public static float yawFromLook(Vec3 look) {
         return (float) Math.toDegrees(Math.atan2(-look.x, look.z));
     }

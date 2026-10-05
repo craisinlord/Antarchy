@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
+import com.craisinlord.antarchy.content.client.PortalGunPortalRenderState;
 import com.craisinlord.antarchy.mixins.client.LevelRendererPortalSceneInvoker;
 import com.craisinlord.antarchy.mixins.client.LevelRendererPortalViewAreaAccessor;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -39,6 +40,7 @@ public final class PortalGunProxySceneRenderer {
         outerModelViewStack.pushMatrix();
         outerModelViewStack.identity();
         RenderSystem.applyModelViewMatrix();
+        ObjectArrayList<SectionRenderDispatcher.RenderSection> originalVisibleSections = null;
         try {
         Vec3 cameraPosition = camera.getPosition();
         double cameraX = cameraPosition.x;
@@ -71,8 +73,20 @@ public final class PortalGunProxySceneRenderer {
         }
         LevelRendererPortalViewAreaAccessor viewAreaAccessor = sodium ? null : (LevelRendererPortalViewAreaAccessor) renderer;
         int visibleSectionCount = 0;
+        int candidateSectionCount = 0;
         if (viewAreaAccessor != null) {
-            ObjectArrayList<SectionRenderDispatcher.RenderSection> fullVisibleSections = viewAreaAccessor.antarchy$getVisibleSections();
+            originalVisibleSections = viewAreaAccessor.antarchy$getVisibleSections();
+            candidateSectionCount = originalVisibleSections.size();
+            ObjectArrayList<SectionRenderDispatcher.RenderSection> apertureSections = new ObjectArrayList<>();
+            try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(tracePair, "aperture-section-cull", "candidateSections=" + candidateSectionCount)) {
+                for (SectionRenderDispatcher.RenderSection section : originalVisibleSections) {
+                    if (PortalGunPortalRenderState.shouldRenderBounds(section.getBoundingBox())) {
+                        apertureSections.add(section);
+                    }
+                }
+            }
+            viewAreaAccessor.antarchy$setVisibleSections(apertureSections);
+            ObjectArrayList<SectionRenderDispatcher.RenderSection> fullVisibleSections = apertureSections;
             ObjectArrayList<SectionRenderDispatcher.RenderSection> budgetedVisibleSections = new ObjectArrayList<>();
             int scannedVisibleSections = 0;
             while (scannedVisibleSections < fullVisibleSections.size() && PortalGunPortalRendererPool.remainingSectionBudgetNanos() > 0L) {
@@ -88,7 +102,11 @@ public final class PortalGunProxySceneRenderer {
             }
             visibleSectionCount = fullVisibleSections.size();
         }
-        PortalSceneRenderTrace.event(tracePair, "visible-sections-ready", "renderer=" + (sodium ? "sodium" : "vanilla") + " count=" + visibleSectionCount + " scheduledRebuilds=" + PortalGunPortalRendererPool.scheduledSectionRebuilds());
+        PortalSceneRenderTrace.event(tracePair, "visible-sections-ready", "renderer=" + (sodium ? "sodium" : "vanilla")
+                + " count=" + visibleSectionCount + " candidates=" + candidateSectionCount
+                + " scheduledRebuilds=" + PortalGunPortalRendererPool.scheduledSectionRebuilds()
+                + " uploaded=" + PortalGunPortalRendererPool.uploadedThisFrame()
+                + " pendingUploads=" + (sodium ? "sodium-managed" : viewAreaAccessor.antarchy$getSectionRenderDispatcher().getToUpload()));
 
         try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(tracePair, "opaque-terrain-layers", "sections=" + visibleSectionCount)) {
             RenderSystem.enableDepthTest();
@@ -195,6 +213,9 @@ public final class PortalGunProxySceneRenderer {
             }
         }
         } finally {
+            if (originalVisibleSections != null) {
+                ((LevelRendererPortalViewAreaAccessor) renderer).antarchy$setVisibleSections(originalVisibleSections);
+            }
             outerModelViewStack.popMatrix();
             RenderSystem.applyModelViewMatrix();
             RenderSystem.setShaderFogStart(previousFogStart);

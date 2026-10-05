@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.client;
 
 import com.craisinlord.antarchy.content.portalgun.PortalGunWorldPortalShape;
+import com.craisinlord.antarchy.content.portalgun.PortalGunApertureCuller;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.UUID;
@@ -12,6 +13,7 @@ public final class PortalGunPortalRenderState {
     private static final ThreadLocal<Deque<PortalGunWorldPortalShape>> ACTIVE_DESTINATION_SHAPES = ThreadLocal.withInitial(ArrayDeque::new);
     private static final ThreadLocal<Deque<PortalGunWorldPortalShape>> ACTIVE_SOURCE_SHAPES = ThreadLocal.withInitial(ArrayDeque::new);
     private static final ThreadLocal<Deque<PortalRenderContext>> ACTIVE_CONTEXTS = ThreadLocal.withInitial(ArrayDeque::new);
+    private static final ThreadLocal<Deque<PortalGunApertureCuller>> ACTIVE_CULLERS = ThreadLocal.withInitial(ArrayDeque::new);
     private static final ThreadLocal<Integer> RENDER_ALL_DEPTH = ThreadLocal.withInitial(() -> 0);
 
     private PortalGunPortalRenderState() {
@@ -27,6 +29,7 @@ public final class PortalGunPortalRenderState {
 
     public static void pushPortalView(PortalRenderContext context) {
         ACTIVE_CONTEXTS.get().push(context);
+        ACTIVE_CULLERS.get().push(PortalGunApertureCuller.create(context.destinationShape(), context.cameraPos()));
         pushPortalView(context.sourceShape(), context.destinationShape(), context.renderAll());
     }
 
@@ -59,6 +62,13 @@ public final class PortalGunPortalRenderState {
         }
         if (contexts.isEmpty()) {
             ACTIVE_CONTEXTS.remove();
+        }
+        Deque<PortalGunApertureCuller> cullers = ACTIVE_CULLERS.get();
+        if (!cullers.isEmpty()) {
+            cullers.pop();
+        }
+        if (cullers.isEmpty()) {
+            ACTIVE_CULLERS.remove();
         }
     }
 
@@ -109,7 +119,11 @@ public final class PortalGunPortalRenderState {
             PortalGunWorldPortalShape sourceShape = getSourceShape();
             return destinationShape == null || shouldRenderBounds(bounds, sourceShape, destinationShape, false);
         }
-        return shouldRenderBounds(bounds, context.sourceShape(), context.destinationShape(), context.renderAll());
+        if (!context.destinationShape().intersectsFront(bounds, 0.125D)) {
+            return false;
+        }
+        Deque<PortalGunApertureCuller> cullers = ACTIVE_CULLERS.get();
+        return cullers.isEmpty() || cullers.peek().intersects(bounds);
     }
 
     private static boolean shouldRenderBounds(AABB bounds, PortalGunWorldPortalShape sourceShape, PortalGunWorldPortalShape destinationShape, boolean renderAll) {
@@ -119,10 +133,7 @@ public final class PortalGunPortalRenderState {
         if (!destinationShape.intersectsFront(bounds, 0.125D)) {
             return false;
         }
-        if (!destinationShape.intersectsPortalColumn(bounds, 1.5D, 1.5D, destinationShape.halfDepth() + 96.0D)) {
-            return false;
-        }
-        return sourceShape == null || !sourceShape.intersectsFront(bounds, -0.02D);
+        return true;
     }
 
     public record PortalRenderContext(

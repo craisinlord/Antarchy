@@ -13,6 +13,14 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(LevelRenderer.class)
 public abstract class LevelRendererPortalChunkBudgetMixin {
     @Redirect(
+            method = "compileSections",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/chunk/SectionRenderDispatcher;uploadAllPendingUploads()V")
+    )
+    private void antarchy$budgetPortalUploads(SectionRenderDispatcher dispatcher) {
+        PortalGunPortalRendererPool.uploadPending((LevelRenderer) (Object) this, dispatcher);
+    }
+
+    @Redirect(
             method = "renderLevel",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;pollLightUpdates()V")
     )

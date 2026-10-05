@@ -33,6 +33,7 @@ public final class AntarchyMixinPlugin implements IMixinConfigPlugin {
                 && (mixinClassName.endsWith(".LevelRendererPortalViewAreaAccessor")
                 || mixinClassName.endsWith(".LevelRendererPortalViewAreaMixin")
                 || mixinClassName.endsWith(".LevelRendererPortalChunkBudgetMixin")
+                || mixinClassName.endsWith(".SectionRenderDispatcherPortalUploadsAccessor")
                 || mixinClassName.endsWith(".PortalViewChunkCacheMixin")
                 || mixinClassName.endsWith(".PortalViewSectionSortingMixin"))) {
             return false;

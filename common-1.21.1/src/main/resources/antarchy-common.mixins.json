@@ -143,6 +143,7 @@
                    "client.LevelRendererPortalViewAreaAccessor",
                    "client.LevelRendererPortalViewAreaMixin",
                    "client.LevelRendererPortalChunkBudgetMixin",
+                   "client.SectionRenderDispatcherPortalUploadsAccessor",
                    "client.LevelRendererPortalLifecycleMixin",
                    "client.PortalViewChunkCacheMixin",
                    "client.PortalViewSectionSortingMixin",

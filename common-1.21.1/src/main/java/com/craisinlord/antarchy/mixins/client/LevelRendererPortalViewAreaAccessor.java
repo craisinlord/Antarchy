@@ -16,6 +16,9 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(LevelRenderer.class)
 public interface LevelRendererPortalViewAreaAccessor {
+    @Accessor("sectionRenderDispatcher")
+    SectionRenderDispatcher antarchy$getSectionRenderDispatcher();
+
     @Accessor("viewArea")
     ViewArea antarchy$getViewArea();
 
