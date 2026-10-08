@@ -1,10 +1,6 @@
 package com.craisinlord.antarchy.mixins.client;
 
-import com.craisinlord.antarchy.content.client.PortalGunPortalRenderState;
-import com.craisinlord.antarchy.content.client.renderer.PortalGunPortalViewAreaManager;
-import com.craisinlord.antarchy.content.client.renderer.PortalGunPortalRendererPool;
 import com.craisinlord.antarchy.content.client.renderer.PortalGunPortalViewRenderer;
-import com.craisinlord.antarchy.content.client.renderer.PortalGunPortalVisibilityQueries;
 import com.craisinlord.antarchy.content.client.renderer.PortalStencilTarget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -18,40 +14,24 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class LevelRendererPortalLifecycleMixin {
     @Inject(method = "renderLevel", at = @At("HEAD"))
     private void antarchy$preparePortalStencil(CallbackInfo ci) {
-        if (PortalGunPortalViewRenderer.isEnabled() && !PortalGunPortalRendererPool.isProxy((LevelRenderer) (Object) this)) {
+        if (PortalGunPortalViewRenderer.isEnabled()) {
             PortalStencilTarget.prepareMainTarget(Minecraft.getInstance().getMainRenderTarget());
         }
     }
 
     @Inject(method = "setLevel", at = @At("HEAD"))
     private void antarchy$clearPortalViewsOnLevelChange(ClientLevel level, CallbackInfo ci) {
-        if (PortalGunPortalRendererPool.isProxy((LevelRenderer) (Object) this)) {
-            return;
-        }
-        PortalGunPortalRendererPool.clear();
-        PortalGunPortalViewAreaManager.clear();
-        PortalGunPortalVisibilityQueries.clear();
+        PortalGunPortalViewRenderer.releaseTargets();
     }
 
     @Inject(method = "close", at = @At("HEAD"))
     private void antarchy$clearPortalViewsOnClose(CallbackInfo ci) {
-        if (PortalGunPortalRendererPool.isProxy((LevelRenderer) (Object) this)) {
-            return;
-        }
-        PortalGunPortalRendererPool.clear();
-        PortalGunPortalViewAreaManager.clear();
         PortalGunPortalViewRenderer.releaseTargets();
+        PortalStencilTarget.clear();
     }
 
     @Inject(method = "allChanged", at = @At("TAIL"))
     private void antarchy$clearPortalViewsOnRendererRebuild(CallbackInfo ci) {
-        if (PortalGunPortalRendererPool.isProxy((LevelRenderer) (Object) this)) {
-            return;
-        }
-        if (PortalGunPortalRenderState.getContext() == null) {
-            PortalGunPortalRendererPool.clear();
-            PortalGunPortalViewAreaManager.clear();
-            PortalGunPortalViewRenderer.releaseTargets();
-        }
+        PortalGunPortalViewRenderer.releaseTargets();
     }
 }

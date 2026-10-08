@@ -1,6 +1,6 @@
 package com.craisinlord.antarchy.mixins.client;
 
-import com.craisinlord.antarchy.content.client.renderer.PortalGunPortalViewAreaManager;
+import com.craisinlord.antarchy.content.client.renderer.PortalGunPortalSectionViews;
 import net.minecraft.client.multiplayer.ClientChunkCache;
 import net.minecraft.world.level.ChunkPos;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,6 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class PortalViewChunkCacheMixin {
     @Inject(method = "drop", at = @At("TAIL"))
     private void antarchy$invalidatePortalChunk(ChunkPos pos, CallbackInfo ci) {
-        PortalGunPortalViewAreaManager.onChunkDropped(pos);
+        PortalGunPortalSectionViews.onChunkDropped(pos);
     }
 }

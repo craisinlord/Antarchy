@@ -357,28 +357,27 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
     public PortalCrossing resolveCrossing(Entity entity, AABB previousBox, AABB currentBox) {
         Vec3 previousProbe = this.teleportProbePosition(entity, previousBox);
         Vec3 currentProbe = this.teleportProbePosition(entity, currentBox);
-        Vec3 normal = this.getNormalVec().normalize();
-        if (entity instanceof Player && Math.abs(normal.y) < 0.5D) {
+        if (entity instanceof Player) {
             PortalGunWorldPortalShape shape = this.getWorldPortalShape();
-            double previousDepth = shape.localCoords(previousProbe).depth();
-            double currentDepth = shape.localCoords(currentProbe).depth();
-            double halfBodyDepth = entity.getBbWidth() * 0.5D;
-            if (previousDepth <= 0.0D || currentDepth >= previousDepth - 1.0E-6D
-                    || currentDepth - halfBodyDepth > 0.02D || currentDepth < -shape.halfDepth()) {
-                return null;
-            }
             Vec3 center = currentBox.getCenter();
             PortalGunWorldPortalShape.PortalLocalCoords localCenter = shape.localCoords(center);
+            double previousDepth = shape.localCoords(previousBox.getCenter()).depth();
+            double currentDepth = localCenter.depth();
             double halfX = (currentBox.maxX - currentBox.minX) * 0.5D;
             double halfY = (currentBox.maxY - currentBox.minY) * 0.5D;
             double halfZ = (currentBox.maxZ - currentBox.minZ) * 0.5D;
+            double depthExtent = halfX * Math.abs(shape.normal().x) + halfY * Math.abs(shape.normal().y) + halfZ * Math.abs(shape.normal().z);
+            if (previousDepth <= 0.0D || currentDepth >= previousDepth - 1.0E-6D
+                    || currentDepth - depthExtent > 0.02D || currentDepth < -shape.halfDepth()) {
+                return null;
+            }
             double widthExtent = halfX * Math.abs(shape.right().x) + halfY * Math.abs(shape.right().y) + halfZ * Math.abs(shape.right().z);
             double heightExtent = halfX * Math.abs(shape.up().x) + halfY * Math.abs(shape.up().y) + halfZ * Math.abs(shape.up().z);
             if (Math.abs(localCenter.horizontal()) + widthExtent > shape.halfWidth() + 1.0E-3D
                     || Math.abs(localCenter.vertical()) + heightExtent > shape.halfHeight() + 1.0E-3D) {
                 return null;
             }
-            return new PortalCrossing(currentProbe, Math.max(0.05D, currentDepth + 0.05D));
+            return new PortalCrossing(currentProbe, Math.max(0.05D, shape.localCoords(currentProbe).depth() + 0.05D));
         }
         return this.crossesPortal(previousProbe, currentProbe) ? new PortalCrossing(currentProbe, 0.0D) : null;
     }
@@ -403,10 +402,20 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
     }
 
     public static void teleportEntityAfterMovement(Entity entity, AABB previousBox, Vec3 resolvedMovement) {
+        if (entity instanceof ServerPlayer) {
+            return;
+        }
+        teleportAfterMovement(entity, previousBox, entity.getBoundingBox(), resolvedMovement);
+    }
+
+    public static void teleportPlayerAfterMovementPacket(ServerPlayer player, AABB previousBox, Vec3 claimedMovement) {
+        teleportAfterMovement(player, previousBox, previousBox.move(claimedMovement), claimedMovement);
+    }
+
+    private static void teleportAfterMovement(Entity entity, AABB previousBox, AABB currentBox, Vec3 resolvedMovement) {
         if (entity.level().isClientSide || !entity.isAlive() || entity.isPassenger() || entity instanceof PortalGunPortalEntity) {
             return;
         }
-        AABB currentBox = entity.getBoundingBox();
         if (previousBox.getCenter().distanceToSqr(currentBox.getCenter()) <= 1.0E-10D) {
             return;
         }

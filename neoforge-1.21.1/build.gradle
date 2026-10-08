@@ -49,6 +49,11 @@ dependencies {
     if (providers.gradleProperty('antarchySodiumCompatTest').orNull == 'true') {
         runtimeOnly(files(rootProject.file("infinite_dimensions_jars/sodium-neoforge-0.8.13+mc1.21.1.jar")))
     }
+    // Sodium — compile-only, for portal live views drawn through Sodium's renderer
+    // (content/client/renderer/sodium, mixins/compat/sodium). Never bundled; that code only
+    // loads when Sodium is installed. The published jar nests the mod jar, so compile against it.
+    compileOnly(files(zipTree(rootProject.file("infinite_dimensions_jars/sodium-neoforge-0.8.13+mc1.21.1.jar"))
+            .matching { include "META-INF/jarjar/net.caffeinemc.sodium-neoforge-*-mod.jar" }))
     compileOnly(files(rootProject.file("infinite_dimensions_jars/antos-neoforge-1.21.1-${antos_version}.jar")))
     runtimeOnly(files(rootProject.file("infinite_dimensions_jars/antos-neoforge-1.21.1-${antos_version}.jar")))
     compileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_neoforge}")

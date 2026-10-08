@@ -4,7 +4,9 @@
   "plugin": "com.craisinlord.antarchy.mixins.AntarchyMixinPlugin",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "client.SodiumWorldRendererMixin"
+    "compat.sodium.SodiumWorldRendererAccessor",
+    "compat.sodium.RenderSectionManagerAccessor",
+    "compat.sodium.RenderSectionManagerPortalTasksMixin"
   ],
   "injectors": {
     "defaultRequire": 1

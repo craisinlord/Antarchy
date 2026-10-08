@@ -6,13 +6,15 @@ import org.joml.Vector4f;
 
 /** Applies the destination portal plane as the near plane of a camera projection. */
 public final class PortalGunProjectionUtil {
+    public static final double MIN_EYE_PLANE_DISTANCE = 0.01D;
+
     private PortalGunProjectionUtil() {
     }
 
     public static Matrix4f clipAtExit(Matrix4f projection, Vec3 eye, Vec3 look, Vec3 up,
                                       Vec3 planePoint, Vec3 planeNormal) {
         Vector4f clipPlane = planeInCameraSpace(eye, look, up, planePoint, planeNormal);
-        if (clipPlane.lengthSquared() <= 1.0E-6F) {
+        if (clipPlane.w() > -MIN_EYE_PLANE_DISTANCE) {
             return projection;
         }
         Vector4f q = new Vector4f(signNonZero(clipPlane.x()), signNonZero(clipPlane.y()), 1.0F, 1.0F)
@@ -42,15 +44,13 @@ public final class PortalGunProjectionUtil {
                 (float) -relativePoint.dot(forward),
                 1.0F
         );
+        Vec3 unitNormal = planeNormal.normalize();
         Vector4f normal = new Vector4f(
-                (float) planeNormal.dot(right),
-                (float) planeNormal.dot(correctedUp),
-                (float) -planeNormal.dot(forward),
+                (float) unitNormal.dot(right),
+                (float) unitNormal.dot(correctedUp),
+                (float) -unitNormal.dot(forward),
                 0.0F
         );
-        if (normal.z() > 0.0F) {
-            normal.mul(-1.0F);
-        }
         return new Vector4f(normal.x(), normal.y(), normal.z(), -normal.dot(point));
     }
 

@@ -43,6 +43,11 @@ dependencies {
     if (providers.gradleProperty('antarchySodiumCompatTest').orNull == 'true') {
         modLocalRuntime(files("$rootDir/infinite_dimensions_jars/sodium-fabric-0.8.13+mc1.21.1.jar"))
     }
+    // Sodium — compile-only, for portal live views drawn through Sodium's renderer. Compiled
+    // against the NeoForge build (official Mojang mappings, matching this module's compile
+    // space; Sodium's own classes are identical across loaders). Never bundled.
+    compileOnly(files(zipTree("$rootDir/infinite_dimensions_jars/sodium-neoforge-0.8.13+mc1.21.1.jar")
+            .matching { include "META-INF/jarjar/net.caffeinemc.sodium-neoforge-*-mod.jar" }))
     modCompileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_fabric}")
     modLocalRuntime("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_fabric}")
     modLocalRuntime("dev.architectury:architectury-fabric:${architectury_api_version}")

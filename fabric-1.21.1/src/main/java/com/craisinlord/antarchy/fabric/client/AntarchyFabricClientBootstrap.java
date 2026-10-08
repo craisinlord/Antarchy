@@ -5,7 +5,6 @@ import com.craisinlord.antarchy.fabric.registry.AntarchyFabricItems;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricMisc;
 
 import com.craisinlord.antarchy.Antarchy;
-import com.craisinlord.antarchy.content.client.PortalGunCrosshairRenderer;
 import com.craisinlord.antarchy.content.client.CameraShakeClientState;
 import com.craisinlord.antarchy.content.client.AntarchyArchivePreviews;
 import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
@@ -626,7 +625,6 @@ public final class AntarchyFabricClientBootstrap {
             DorrieJumpHudRenderer.render(guiGraphics);
             HerculesBeetleChargeHudRenderer.render(guiGraphics);
             com.craisinlord.antarchy.content.client.KingJudgmentFlashHudRenderer.render(guiGraphics);
-            PortalGunCrosshairRenderer.render(guiGraphics);
         });
 
         WorldRenderEvents.LAST.register(context -> {

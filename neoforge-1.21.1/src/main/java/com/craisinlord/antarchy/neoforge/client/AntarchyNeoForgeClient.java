@@ -2,7 +2,6 @@ package com.craisinlord.antarchy.neoforge.client;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.GoopedHudRenderer;
-import com.craisinlord.antarchy.content.client.PortalGunCrosshairRenderer;
 import com.craisinlord.antarchy.content.client.AntarchyArchivePreviews;
 import com.craisinlord.antarchy.content.client.game.AntarchyComputerGames;
 import com.craisinlord.antarchy.content.client.HordeHudRenderer;
@@ -385,11 +384,6 @@ public final class AntarchyNeoForgeClient {
 
     @SubscribeEvent
     public static void registerGuiLayers(RegisterGuiLayersEvent event) {
-        event.registerAbove(
-                VanillaGuiLayers.CROSSHAIR,
-                ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "portal_gun_crosshair"),
-                (guiGraphics, partialTick) -> PortalGunCrosshairRenderer.render(guiGraphics)
-        );
         event.registerAboveAll(
                 ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "dread_darkness"),
                 (guiGraphics, partialTick) -> DreadHudRenderer.render(guiGraphics)

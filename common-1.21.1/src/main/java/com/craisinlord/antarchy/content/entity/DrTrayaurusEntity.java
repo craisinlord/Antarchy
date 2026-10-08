@@ -102,7 +102,7 @@ public class DrTrayaurusEntity extends AbstractVillager {
     protected void updateTrades() {
         MerchantOffers offers = this.getOffers();
         offers.clear();
-        offers.addAll(DrTrayaurusTradeManager.createOffers());
+        offers.addAll(DrTrayaurusTradeManager.createOffers(this.registryAccess()));
         this.overrideXp(1);
         this.tradesInitialized = true;
     }

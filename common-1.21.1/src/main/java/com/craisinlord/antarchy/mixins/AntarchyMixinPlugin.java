@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.mixins;
 
-import com.craisinlord.antarchy.content.client.renderer.SodiumCompat;
 import java.util.List;
 import java.util.Set;
 import org.objectweb.asm.tree.ClassNode;
@@ -28,18 +27,6 @@ public final class AntarchyMixinPlugin implements IMixinConfigPlugin {
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         if (!classPresent(targetClassName)) {
             return false;
-        }
-        if (SodiumCompat.isLoaded()
-                && (mixinClassName.endsWith(".LevelRendererPortalViewAreaAccessor")
-                || mixinClassName.endsWith(".LevelRendererPortalViewAreaMixin")
-                || mixinClassName.endsWith(".LevelRendererPortalChunkBudgetMixin")
-                || mixinClassName.endsWith(".SectionRenderDispatcherPortalUploadsAccessor")
-                || mixinClassName.endsWith(".PortalViewChunkCacheMixin")
-                || mixinClassName.endsWith(".PortalViewSectionSortingMixin"))) {
-            return false;
-        }
-        if (mixinClassName.endsWith(".SodiumWorldRendererMixin")) {
-            return SodiumCompat.isLoaded();
         }
         if (mixinClassName.startsWith("com.craisinlord.antarchy.mixins.compat.scguns.")) {
             return classPresent("top.ribs.scguns.entity.projectile.ProjectileEntity");
