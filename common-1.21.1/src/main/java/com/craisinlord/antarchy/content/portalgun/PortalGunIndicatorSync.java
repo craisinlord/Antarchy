@@ -27,20 +27,15 @@ public final class PortalGunIndicatorSync {
         if (stack.isEmpty()) {
             return;
         }
-        UUID ownerId = PortalGunItem.getPortalOwnerId(stack, player.getUUID());
         boolean blue = PortalGunSavedData.getPortalId(
                 player.serverLevel().getServer(),
-                ownerId,
                 request.gunId(),
-                PortalGunItem.getChannelName(stack),
                 PortalGunPortalEntity.PortalSide.BLUE,
                 player.serverLevel().dimension().location()
         ).isPresent();
         boolean orange = PortalGunSavedData.getPortalId(
                 player.serverLevel().getServer(),
-                ownerId,
                 request.gunId(),
-                PortalGunItem.getChannelName(stack),
                 PortalGunPortalEntity.PortalSide.ORANGE,
                 player.serverLevel().dimension().location()
         ).isPresent();

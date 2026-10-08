@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
 import com.craisinlord.antarchy.content.portalgun.PortalGunPlacement;
 import com.craisinlord.antarchy.content.portalgun.PortalGunSavedData;
+import com.craisinlord.antarchy.content.portalgun.PortalGunVariant;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -35,9 +36,8 @@ import net.minecraft.world.phys.Vec3;
 public class PortalGunPortalMasterBlockEntity extends BlockEntity implements PortalGunPortalCellAccess {
     private final Map<Direction, PortalGunPortalFaceRecord> faceRecords = new EnumMap<>(Direction.class);
     private UUID ownerId;
-    private String ownerIdentity;
     private UUID gunId;
-    private String channelName;
+    private PortalGunVariant variant = PortalGunVariant.DEFAULT;
     private UUID portalId;
     private PortalGunPortalEntity.PortalSide side = PortalGunPortalEntity.PortalSide.BLUE;
     private Direction facing = Direction.NORTH;
@@ -57,8 +57,7 @@ public class PortalGunPortalMasterBlockEntity extends BlockEntity implements Por
     public void configure(
             UUID ownerId,
             UUID gunId,
-            String ownerIdentity,
-            String channelName,
+            PortalGunVariant variant,
             UUID portalId,
             PortalGunPortalEntity.PortalSide side,
             Direction facing,
@@ -71,9 +70,8 @@ public class PortalGunPortalMasterBlockEntity extends BlockEntity implements Por
             int portalHeight
     ) {
         this.ownerId = ownerId;
-        this.ownerIdentity = ownerIdentity;
         this.gunId = gunId;
-        this.channelName = channelName;
+        this.variant = variant == null ? PortalGunVariant.DEFAULT : variant;
         this.portalId = portalId;
         this.side = side;
         this.facing = facing;
@@ -84,7 +82,7 @@ public class PortalGunPortalMasterBlockEntity extends BlockEntity implements Por
         this.portalHeight = portalHeight;
         this.compensatedSpots = new HashSet<>(compensatedSpots);
         this.pairTime = pairTime;
-        this.portalGun$putFaceRecord(new PortalGunPortalFaceRecord(ownerId, ownerIdentity, gunId, channelName, portalId, this.linkedPortalId, side, facing, upAxis, this.worldPosition, this.basePos, List.of(this.portalSpots), this.compensatedSpots, pairTime, portalWidth, portalHeight, true));
+        this.portalGun$putFaceRecord(new PortalGunPortalFaceRecord(ownerId, gunId, this.variant, portalId, this.linkedPortalId, side, facing, upAxis, this.worldPosition, this.basePos, List.of(this.portalSpots), this.compensatedSpots, pairTime, portalWidth, portalHeight, true));
         this.setChanged();
     }
 
@@ -105,30 +103,8 @@ public class PortalGunPortalMasterBlockEntity extends BlockEntity implements Por
         return this.gunId;
     }
 
-    public String getChannelName() {
-        return this.channelName;
-    }
-
-    public void adoptGunId(UUID gunId) {
-        if (this.gunId == null && gunId != null) {
-            this.gunId = gunId;
-            this.setChanged();
-        }
-    }
-
-    public void adoptChannelIdentity(UUID gunId, String channelName) {
-        boolean changed = false;
-        if (this.gunId == null && gunId != null) {
-            this.gunId = gunId;
-            changed = true;
-        }
-        if (channelName != null && !channelName.isEmpty() && !channelName.equals(this.channelName)) {
-            this.channelName = channelName;
-            changed = true;
-        }
-        if (changed) {
-            this.setChanged();
-        }
+    public PortalGunVariant getVariant() {
+        return this.variant;
     }
 
     public PortalGunPortalEntity.PortalSide getSide() {
@@ -228,12 +204,6 @@ public class PortalGunPortalMasterBlockEntity extends BlockEntity implements Por
             level.removeBlock(pos, false);
             return;
         }
-        if (blockEntity.gunId == null && portal.getGunId() != null) {
-            blockEntity.adoptGunId(portal.getGunId());
-        } else if (portal.getGunId() == null && blockEntity.gunId != null) {
-            portal.adoptGunId(blockEntity.gunId);
-        }
-        blockEntity.adoptChannelIdentity(portal.getGunId(), portal.getChannelName());
         blockEntity.ensureLinkedPortal(level, portal);
         UUID linkedPortalId = portal.getLinkedPortalId();
         if ((linkedPortalId == null && blockEntity.linkedPortalId != null)
@@ -282,7 +252,7 @@ public class PortalGunPortalMasterBlockEntity extends BlockEntity implements Por
         if (this.portalId == null || this.ownerId == null) {
             return null;
         }
-        if (!PortalGunSavedData.isRegistered(level, this.ownerId, this.gunId, this.channelName, this.side, this.portalId)) {
+        if (!PortalGunSavedData.isRegistered(level, this.gunId, this.side, this.portalId)) {
             return null;
         }
         if (level.getEntity(this.portalId) instanceof PortalGunPortalEntity portal && !portal.isRemoved()) {
@@ -300,18 +270,18 @@ public class PortalGunPortalMasterBlockEntity extends BlockEntity implements Por
         @SuppressWarnings("unchecked")
         PortalGunPortalEntity restored = new PortalGunPortalEntity((EntityType<? extends PortalGunPortalEntity>) rawType, level);
         restored.setUUID(this.portalId);
-        restored.configure(this.ownerId, this.gunId, this.ownerIdentity == null ? String.valueOf(this.ownerId) : this.ownerIdentity, this.channelName == null ? String.valueOf(this.gunId) : this.channelName, this.side, placement);
+        restored.configure(this.ownerId, this.gunId, this.variant, this.side, placement);
         restored.restorePair(this.linkedPortalId, this.pairTime);
         Vec3 center = placement.center();
         restored.moveTo(center.x, center.y, center.z, placement.yaw(), 0.0F);
         level.addFreshEntity(restored);
-        PortalGunSavedData.setPortal(level, this.ownerId, this.gunId, this.channelName, this.side, restored.getUUID());
+        PortalGunSavedData.setPortal(level, this.gunId, this.side, restored.getUUID());
         return restored;
     }
 
     public static PortalGunPortalEntity restorePortalEntity(ServerLevel level, PortalGunPortalFaceRecord record) {
         if (record.ownerId() == null || record.portalId() == null
-                || !PortalGunSavedData.isRegistered(level, record.ownerId(), record.gunId(), record.channelName(), record.side(), record.portalId())) {
+                || !PortalGunSavedData.isRegistered(level, record.gunId(), record.side(), record.portalId())) {
             return null;
         }
         if (level.getEntity(record.portalId()) instanceof PortalGunPortalEntity portal && !portal.isRemoved()) {
@@ -325,13 +295,13 @@ public class PortalGunPortalMasterBlockEntity extends BlockEntity implements Por
         @SuppressWarnings("unchecked")
         PortalGunPortalEntity restored = new PortalGunPortalEntity((EntityType<? extends PortalGunPortalEntity>) rawType, level);
         restored.setUUID(record.portalId());
-        restored.configure(record.ownerId(), record.gunId(), record.ownerIdentity(), record.channelName(), record.side(), placement);
+        restored.configure(record.ownerId(), record.gunId(), record.variant(), record.side(), placement);
         restored.restorePair(record.linkedPortalId(), record.pairTime());
         Vec3 center = placement.center();
         restored.moveTo(center.x, center.y, center.z, placement.yaw(), 0.0F);
         level.addFreshEntity(restored);
-        PortalGunSavedData.setPortal(level, record.ownerId(), record.gunId(), record.channelName(), record.side(), restored.getUUID());
-        PortalGunPortalEntity linked = PortalGunSavedData.findLoadedPortal(level, record.ownerId(), record.gunId(), record.channelName(), record.side() == PortalGunPortalEntity.PortalSide.BLUE ? PortalGunPortalEntity.PortalSide.ORANGE : PortalGunPortalEntity.PortalSide.BLUE);
+        PortalGunSavedData.setPortal(level, record.gunId(), record.side(), restored.getUUID());
+        PortalGunPortalEntity linked = PortalGunSavedData.findLoadedPortal(level, record.gunId(), record.side() == PortalGunPortalEntity.PortalSide.BLUE ? PortalGunPortalEntity.PortalSide.ORANGE : PortalGunPortalEntity.PortalSide.BLUE);
         if (linked != null && linked != restored && !linked.isRemoved()) {
             restored.linkTo(linked);
             linked.linkTo(restored);
@@ -345,9 +315,7 @@ public class PortalGunPortalMasterBlockEntity extends BlockEntity implements Por
         }
         PortalGunPortalEntity counterpart = PortalGunSavedData.findLoadedPortal(
                 level,
-                this.ownerId,
                 this.gunId,
-                this.channelName,
                 this.side == PortalGunPortalEntity.PortalSide.BLUE ? PortalGunPortalEntity.PortalSide.ORANGE : PortalGunPortalEntity.PortalSide.BLUE
         );
         if (counterpart == null || counterpart == portal || counterpart.isRemoved()) {
@@ -365,15 +333,10 @@ public class PortalGunPortalMasterBlockEntity extends BlockEntity implements Por
         if (this.ownerId != null) {
             tag.putUUID("OwnerId", this.ownerId);
         }
-        if (this.ownerIdentity != null) {
-            tag.putString("OwnerIdentity", this.ownerIdentity);
-        }
         if (this.gunId != null) {
             tag.putUUID("GunId", this.gunId);
         }
-        if (this.channelName != null) {
-            tag.putString("ChannelName", this.channelName);
-        }
+        tag.putInt("Variant", this.variant.id());
         if (this.portalId != null) {
             tag.putUUID("PortalId", this.portalId);
         }
@@ -414,9 +377,8 @@ public class PortalGunPortalMasterBlockEntity extends BlockEntity implements Por
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         this.ownerId = tag.hasUUID("OwnerId") ? tag.getUUID("OwnerId") : null;
-        this.ownerIdentity = tag.contains("OwnerIdentity") ? tag.getString("OwnerIdentity") : String.valueOf(this.ownerId);
         this.gunId = tag.hasUUID("GunId") ? tag.getUUID("GunId") : null;
-        this.channelName = tag.contains("ChannelName") ? tag.getString("ChannelName") : this.gunId == null ? "" : "Random Channel #" + this.gunId.hashCode();
+        this.variant = PortalGunVariant.byId(tag.getInt("Variant"));
         this.portalId = tag.hasUUID("PortalId") ? tag.getUUID("PortalId") : null;
         this.linkedPortalId = tag.hasUUID("LinkedPortalId") ? tag.getUUID("LinkedPortalId") : null;
         this.side = tag.getInt("Side") == PortalGunPortalEntity.PortalSide.ORANGE.ordinal() ? PortalGunPortalEntity.PortalSide.ORANGE : PortalGunPortalEntity.PortalSide.BLUE;
@@ -443,7 +405,7 @@ public class PortalGunPortalMasterBlockEntity extends BlockEntity implements Por
         this.compensatedSpots = compensatedSpots;
         this.portalGun$loadFaceRecords(tag);
         if (this.faceRecords.isEmpty() && this.ownerId != null && this.portalId != null && this.portalSpots.length > 0) {
-            this.portalGun$putFaceRecord(new PortalGunPortalFaceRecord(this.ownerId, this.ownerIdentity, this.gunId, this.channelName, this.portalId, this.linkedPortalId, this.side, this.facing, this.upAxis, this.worldPosition, this.basePos, List.of(this.portalSpots), this.compensatedSpots, this.pairTime, this.portalWidth, this.portalHeight, true));
+            this.portalGun$putFaceRecord(new PortalGunPortalFaceRecord(this.ownerId, this.gunId, this.variant, this.portalId, this.linkedPortalId, this.side, this.facing, this.upAxis, this.worldPosition, this.basePos, List.of(this.portalSpots), this.compensatedSpots, this.pairTime, this.portalWidth, this.portalHeight, true));
         }
     }
 

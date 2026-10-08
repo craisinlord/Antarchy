@@ -5,7 +5,6 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.recipe.CustomBrewingRecipes;
-import com.craisinlord.antarchy.content.block.DuctTapeBlock;
 import com.craisinlord.antarchy.content.dispenser.RpoLauncherDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.SizeRayDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.BugSprayDispenseBehavior;
@@ -152,7 +151,6 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickThoraxisUnderside);
         modEventBus.addListener(AntarchyNeoForgeEvents::modifyEntityAttributes);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickOverheadInversion);
-        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickDuctTapeStickiness);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleDreadDeath);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleFallenKingCrownKill);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleDreadBedSleep);
@@ -248,6 +246,7 @@ public final class AntarchyNeoForgeEvents {
         for (ServerLevel level : event.getServer().getAllLevels()) {
             CavarynHordeManager.tick(level);
             com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
+            com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature.tickPendingSpawns(level);
         }
     }
 
@@ -446,12 +445,6 @@ public final class AntarchyNeoForgeEvents {
         easterBunny.finalizeSpawn(level, level.getCurrentDifficultyAt(event.getEntity().blockPosition()), MobSpawnType.NATURAL, null);
         level.addFreshEntity(easterBunny);
         event.setResult(MobSpawnEvent.PositionCheck.Result.FAIL);
-    }
-
-    static void tickDuctTapeStickiness(EntityTickEvent.Post event) {
-        if (DuctTapeBlock.shouldTickStuckEntity(event.getEntity())) {
-            DuctTapeBlock.tickStuckEntity(event.getEntity());
-        }
     }
 
     static void handleDreadDeath(LivingDeathEvent event) {

@@ -22,7 +22,6 @@ public final class PortalGunPortalVisibilityQueries {
             state.visible = GL15.glGetQueryObjecti(state.query, GL15.GL_QUERY_RESULT) != 0;
             state.hasResult = true;
             state.inFlight = false;
-            PortalSceneRenderTrace.event(source + "->" + destination, "visibility-query-result", "visible=" + state.visible);
         }
         return !state.hasResult || state.visible;
     }

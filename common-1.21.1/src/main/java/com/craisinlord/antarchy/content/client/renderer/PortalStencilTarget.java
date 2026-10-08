@@ -41,7 +41,7 @@ public final class PortalStencilTarget {
                 ensureMainStencilAttachment(target);
             } catch (IllegalStateException exception) {
                 UNSUPPORTED_MAIN_TARGETS.put(target, target.frameBufferId);
-                Antarchy.LOGGER.warn("Portal gun direct stencil is unavailable; using offscreen portal rendering", exception);
+                Antarchy.LOGGER.debug("Portal gun direct stencil is unavailable ({}); using offscreen portal rendering", exception.getMessage());
             }
         }
     }
@@ -150,7 +150,6 @@ public final class PortalStencilTarget {
                 throw new IllegalStateException("Main render target is incomplete with stencil attachment: 0x" + Integer.toHexString(status));
             }
             MAIN_STENCIL_ATTACHMENTS.put(target, new Attachment(target.frameBufferId, renderbuffer, target.width, target.height));
-            PortalSceneRenderTrace.event("main-target", "stencil-attached", "framebuffer=" + target.frameBufferId + " size=" + target.width + "x" + target.height);
         } catch (RuntimeException | Error exception) {
             GL30.glDeleteRenderbuffers(renderbuffer);
             throw exception;

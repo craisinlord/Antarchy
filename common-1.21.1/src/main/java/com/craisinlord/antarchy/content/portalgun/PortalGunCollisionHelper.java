@@ -43,9 +43,6 @@ public final class PortalGunCollisionHelper {
             return collided;
         }
         PortalGunWorldPortalShape shape = portal.getWorldPortalShape();
-        if (canWalkIntoFloorPortal(startBox, movement, portal, shape)) {
-            return movement;
-        }
         Vec3 normal = portal.getNormalVec().normalize();
         double desiredNormal = movement.dot(normal);
         double collidedNormal = collided.dot(normal);
@@ -58,29 +55,6 @@ public final class PortalGunCollisionHelper {
         double restoreAmount = desiredNormal - collidedNormal;
         Vec3 adjusted = collided.add(normal.scale(restoreAmount));
         return applyBorderCollision(entity, startBox, adjusted, portal);
-    }
-
-    private static boolean canWalkIntoFloorPortal(AABB startBox, Vec3 movement, PortalGunPortalEntity portal, PortalGunWorldPortalShape shape) {
-        Vec3 normal = portal.getNormalVec().normalize();
-        if (Math.abs(normal.y) < 0.9D) {
-            return false;
-        }
-        AABB endBox = startBox.move(movement);
-        return overlapsPortalOpeningFromSurface(startBox, shape) || overlapsPortalOpeningFromSurface(endBox, shape);
-    }
-
-    private static boolean overlapsPortalOpeningFromSurface(AABB box, PortalGunWorldPortalShape shape) {
-        if (!shape.intersectsPortalColumn(box, EDGE_PADDING, EDGE_PADDING, PLANE_TOLERANCE)) {
-            return false;
-        }
-        double minDepth = Double.POSITIVE_INFINITY;
-        double maxDepth = Double.NEGATIVE_INFINITY;
-        for (Vec3 corner : corners(box)) {
-            double depth = shape.localCoords(corner).depth();
-            minDepth = Math.min(minDepth, depth);
-            maxDepth = Math.max(maxDepth, depth);
-        }
-        return maxDepth > 0.0D && minDepth >= -PLANE_TOLERANCE;
     }
 
     private static boolean canUsePortalPassThrough(Entity entity, AABB startBox, Vec3 movement, PortalGunPortalEntity portal, PortalGunWorldPortalShape shape) {

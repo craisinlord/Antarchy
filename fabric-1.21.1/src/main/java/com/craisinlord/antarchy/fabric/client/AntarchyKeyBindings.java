@@ -51,14 +51,8 @@ public final class AntarchyKeyBindings {
     );
     public static final KeyMapping PORTAL_GUN_ZOOM = new KeyMapping(
             "key.antarchy.portal_gun_zoom",
-            InputConstants.Type.MOUSE,
-            GLFW.GLFW_MOUSE_BUTTON_MIDDLE,
-            CATEGORY
-    );
-    public static final KeyMapping PORTAL_GUN_GRAB = new KeyMapping(
-            "key.antarchy.portal_gun_grab",
             InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_G,
+            GLFW.GLFW_KEY_Z,
             CATEGORY
     );
     public static final KeyMapping PORTAL_GUN_RESET = new KeyMapping(
@@ -78,7 +72,6 @@ public final class AntarchyKeyBindings {
         KeyBindingHelper.registerKeyBinding(ROYAL_INVERSION_TOGGLE);
         KeyBindingHelper.registerKeyBinding(ROYAL_BOUNDARY);
         KeyBindingHelper.registerKeyBinding(PORTAL_GUN_ZOOM);
-        KeyBindingHelper.registerKeyBinding(PORTAL_GUN_GRAB);
         KeyBindingHelper.registerKeyBinding(PORTAL_GUN_RESET);
     }
 
@@ -108,10 +101,6 @@ public final class AntarchyKeyBindings {
 
     public static boolean consumePortalGunZoomPressed() {
         return Minecraft.getInstance().screen == null && PORTAL_GUN_ZOOM.consumeClick();
-    }
-
-    public static boolean consumePortalGunGrabPressed() {
-        return Minecraft.getInstance().screen == null && PORTAL_GUN_GRAB.consumeClick();
     }
 
     public static boolean consumePortalGunResetPressed() {

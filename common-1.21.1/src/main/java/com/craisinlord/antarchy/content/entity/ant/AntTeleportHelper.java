@@ -284,9 +284,10 @@ public final class AntTeleportHelper {
             // The bounded search can fail near rough or sparsely-generated terrain.
             // Retry once with a wider radius before giving up.
             loadArrivalSearchArea(destination, preferredPos, EXPANDED_ARRIVAL_SEARCH_RADIUS);
-            return findSafeArrivalPositionInYRange(
+            Vec3 expandedSafePos = findSafeArrivalPositionInYRange(
                     player, destination, preferredPos, yRange[0], yRange[1],
                     EXPANDED_ARRIVAL_SEARCH_RADIUS, EXPANDED_ARRIVAL_VERTICAL_SEARCH);
+            return expandedSafePos != null ? expandedSafePos : createEmergencyArrivalPlatform(destination, preferredPos, yRange[0], yRange[1]);
         }
 
         Set<BlockPos> candidates = new LinkedHashSet<>();
@@ -323,6 +324,46 @@ public final class AntTeleportHelper {
             }
         }
 
+        return createEmergencyArrivalPlatform(destination, preferredPos, destination.getMinBuildHeight() + 1, destination.getMaxBuildHeight() - 3);
+    }
+
+    @Nullable
+    private static Vec3 createEmergencyArrivalPlatform(ServerLevel destination, BlockPos preferredPos, int minY, int maxY) {
+        int y = Math.clamp(preferredPos.getY(), minY, maxY);
+        int centerX = preferredPos.getX();
+        int centerZ = preferredPos.getZ();
+        for (int radius = 0; radius <= EXPANDED_ARRIVAL_SEARCH_RADIUS; radius++) {
+            for (int xOff = -radius; xOff <= radius; xOff++) {
+                for (int zOff = -radius; zOff <= radius; zOff++) {
+                    if (radius > 0 && Math.abs(xOff) != radius && Math.abs(zOff) != radius) continue;
+                    int x = centerX + xOff;
+                    int z = centerZ + zOff;
+                    BlockPos floor = new BlockPos(x, y - 1, z);
+                    boolean withinBorder = true;
+                    for (int dx = -2; dx <= 2 && withinBorder; dx++) {
+                        for (int dz = -2; dz <= 2; dz++) {
+                            BlockPos check = floor.offset(dx, 0, dz);
+                            if (!destination.getWorldBorder().isWithinBounds(check) || !destination.hasChunkAt(check.above(3))) {
+                                withinBorder = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (!withinBorder) continue;
+                    for (int dx = -2; dx <= 2; dx++) {
+                        for (int dz = -2; dz <= 2; dz++) {
+                            BlockPos pad = floor.offset(dx, 0, dz);
+                            destination.setBlock(pad, Blocks.COBBLESTONE.defaultBlockState(), Block.UPDATE_ALL);
+                            for (int dy = 1; dy <= 3; dy++) {
+                                destination.setBlock(pad.above(dy), Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+                            }
+                        }
+                    }
+                    Vec3 safePos = new Vec3(x + 0.5D, y, z + 0.5D);
+                    if (isValidArrivalPosition(destination, safePos)) return safePos;
+                }
+            }
+        }
         return null;
     }
 

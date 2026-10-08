@@ -29,7 +29,6 @@ public final class WaspSoundHandler {
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
-        // Ambient buzzing now comes from the wasp entity itself.
     }
 
     private static void refreshNearbyWasps(Minecraft mc) {

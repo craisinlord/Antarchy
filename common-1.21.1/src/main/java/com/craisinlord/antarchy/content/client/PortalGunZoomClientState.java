@@ -6,6 +6,7 @@ import net.minecraft.client.Options;
 import net.minecraft.world.item.ItemStack;
 
 public final class PortalGunZoomClientState {
+    private static final int MAX_PROGRESS = 5;
     private static int progress;
     private static boolean zooming;
     private static Double originalSensitivity;
@@ -34,7 +35,7 @@ public final class PortalGunZoomClientState {
             zooming = false;
         }
 
-        progress = Math.max(0, Math.min(5, progress + (zooming ? 1 : -1)));
+        progress = Math.max(0, Math.min(MAX_PROGRESS, progress + (zooming ? 1 : -1)));
         if (originalSensitivity != null) {
             if (progress == 0) {
                 restoreSensitivity(minecraft.options);
@@ -47,7 +48,13 @@ public final class PortalGunZoomClientState {
             restoreSensitivity(options);
             return fov;
         }
-        double easedProgress = zooming ? progress - 1.0D + partialTick : progress + 1.0D - partialTick;
+        double tickProgress = Math.max(0.0D, Math.min(1.0D, partialTick));
+        double easedProgress = progress == MAX_PROGRESS
+                ? MAX_PROGRESS
+                : zooming
+                        ? progress - 1.0D + tickProgress
+                        : progress + 1.0D - tickProgress;
+        easedProgress = Math.max(0.0D, Math.min(MAX_PROGRESS, easedProgress));
         double zoomFactor = zoomFactor(easedProgress);
         if (originalSensitivity != null) {
             options.sensitivity().set(originalSensitivity * zoomFactor);
@@ -56,7 +63,8 @@ public final class PortalGunZoomClientState {
     }
 
     private static double zoomFactor(double progress) {
-        return 0.1D + 0.9D * (1.0D - Math.sin(Math.toRadians(90.0D * Math.max(0.0D, Math.min(1.0D, progress / 5.0D)))));
+        double normalizedProgress = Math.max(0.0D, Math.min(1.0D, progress / MAX_PROGRESS));
+        return 0.1D + 0.9D * (1.0D - Math.sin(Math.toRadians(90.0D * normalizedProgress)));
     }
 
     private static double zoomFactor(int progress) {

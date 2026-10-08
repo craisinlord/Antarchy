@@ -94,13 +94,13 @@
       },
       {
         "type": "antarchy:apple_cow",
-        "weight": 24,
+        "weight": 20,
         "minCount": 1,
         "maxCount": 3
       },
       {
         "type": "antarchy:golden_apple_cow",
-        "weight": 20,
+        "weight": 16,
         "minCount": 1,
         "maxCount": 3
       },

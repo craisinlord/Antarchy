@@ -26,8 +26,7 @@ public interface PortalGunPortalCellAccess {
     default boolean portalGun$putFaceRecord(PortalGunPortalFaceRecord record) {
         PortalGunPortalFaceRecord existing = this.portalGun$getFaceRecord(record.face());
         if (existing != null
-                && (!existing.ownerId().equals(record.ownerId())
-                || !java.util.Objects.equals(existing.channelName(), record.channelName())
+                && (!java.util.Objects.equals(existing.gunId(), record.gunId())
                 || existing.side() != record.side())) {
             return false;
         }
@@ -63,7 +62,7 @@ public interface PortalGunPortalCellAccess {
             if (record.ownerId() == null || record.portalId() == null) {
                 continue;
             }
-            if (!PortalGunSavedData.isRegistered(level, record.ownerId(), record.gunId(), record.channelName(), record.side(), record.portalId())) {
+            if (!PortalGunSavedData.isRegistered(level, record.gunId(), record.side(), record.portalId())) {
                 this.portalGun$removeFaceRecord(record.face(), record.portalId());
                 continue;
             }

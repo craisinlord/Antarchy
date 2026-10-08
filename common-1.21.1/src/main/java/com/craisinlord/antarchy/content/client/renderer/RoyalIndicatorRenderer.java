@@ -101,8 +101,6 @@ public final class RoyalIndicatorRenderer {
     }
 
     private static void judgmentFlare(VertexConsumer out, PoseStack.Pose pose, float radius, float rotation) {
-        // The old mark was almost edge-on from normal gameplay camera angles. Add a vertical,
-        // unmistakable judgment sigil while keeping the rotating ring as its core.
         for (int i = 0; i < 4; i++) {
             double angle = rotation + Math.PI * 0.5D * i;
             float x = (float) Math.cos(angle) * radius;

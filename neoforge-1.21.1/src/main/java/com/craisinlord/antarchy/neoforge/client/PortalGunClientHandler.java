@@ -4,7 +4,6 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.item.PortalGunItem;
 import com.craisinlord.antarchy.content.client.PortalGunZoomClientState;
 import com.craisinlord.antarchy.content.network.PortalGunPrimaryPayload;
-import com.craisinlord.antarchy.content.network.PortalGunGrabPayload;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -23,7 +22,6 @@ public final class PortalGunClientHandler {
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) {
-            com.craisinlord.antarchy.content.client.PortalGunGrabClientState.clear();
             com.craisinlord.antarchy.content.client.PortalGunResetClientState.clear();
         }
         com.craisinlord.antarchy.content.client.PortalGunIndicatorClientState.setRequestSender(net.neoforged.neoforge.network.PacketDistributor::sendToServer);
@@ -38,9 +36,6 @@ public final class PortalGunClientHandler {
                 AntarchyKeyBindings.isPortalGunResetDown(),
                 net.neoforged.neoforge.network.PacketDistributor::sendToServer
         );
-        if (held && AntarchyKeyBindings.consumePortalGunGrabPressed()) {
-            PacketDistributor.sendToServer(new PortalGunGrabPayload());
-        }
         if (mc.player == null || mc.level == null || mc.screen != null) {
             lastAttackDown = false;
             return;

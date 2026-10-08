@@ -384,6 +384,11 @@ public final class AntarchyNeoForgeClient {
 
     @SubscribeEvent
     public static void registerGuiLayers(RegisterGuiLayersEvent event) {
+        event.registerAbove(
+                VanillaGuiLayers.CROSSHAIR,
+                ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "portal_gun_crosshair"),
+                (guiGraphics, partialTick) -> com.craisinlord.antarchy.content.client.PortalGunCrosshairRenderer.render(guiGraphics)
+        );
         event.registerAboveAll(
                 ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "dread_darkness"),
                 (guiGraphics, partialTick) -> DreadHudRenderer.render(guiGraphics)
@@ -626,6 +631,8 @@ public final class AntarchyNeoForgeClient {
         registerGeoItemExtensionSizeRay(event, AntarchyNeoforgeItems.GROWTH_RAY.get());
         registerGeoItemExtension(event, AntarchyNeoforgeItems.GRAVITY_GUN.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
         registerGeoItemExtension(event, AntarchyNeoforgeItems.PORTAL_GUN.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
+        registerGeoItemExtension(event, AntarchyNeoforgeItems.PORTAL_GUN_ATLAS.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
+        registerGeoItemExtension(event, AntarchyNeoforgeItems.PORTAL_GUN_P_BODY.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
         registerGeoItemExtension(event, AntarchyNeoforgeItems.SQUIDZOOKA.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
         registerGeoItemExtension(event, AntarchyNeoforgeItems.RPO_LAUNCHER.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
         registerGeoItemExtension(event, AntarchyNeoforgeItems.WATER_CANNON.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);

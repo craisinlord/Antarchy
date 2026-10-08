@@ -15,7 +15,7 @@ public abstract class PortalGunEntityInWallMixin {
         if (entity.level() == null) {
             return;
         }
-        for (PortalGunPortalEntity portal : entity.level().getEntitiesOfClass(PortalGunPortalEntity.class, entity.getBoundingBox().inflate(2.0D), PortalGunPortalEntity::isAlive)) {
+        for (PortalGunPortalEntity portal : com.craisinlord.antarchy.content.portalgun.PortalGunPortalRegistry.near(entity.level(), entity.getBoundingBox().inflate(2.0D))) {
             if (portal.intersectsEntityBounds(entity) || portal.getCollisionRemovalAabbForEntity(entity).intersects(entity.getBoundingBox())) {
                 cir.setReturnValue(false);
                 return;

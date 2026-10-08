@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.mixins.client;
 
-import com.craisinlord.antarchy.content.entity.DorrieEntity;
 import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
 import net.minecraft.client.Camera;
 import net.minecraft.world.entity.Entity;
@@ -40,10 +39,5 @@ public abstract class MountedVehicleCameraMixin {
             return;
         }
 
-//        if (vehicle instanceof DorrieEntity) {
-//            args.set(0, (Float) args.get(0) * 0.25F);
-//            args.set(1, (Float) args.get(1) + 0.1F);
-//            args.set(2, (Float) args.get(2) + 0.55F);
-//        }
     }
 }

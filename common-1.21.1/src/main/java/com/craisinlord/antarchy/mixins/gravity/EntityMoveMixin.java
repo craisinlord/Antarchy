@@ -4,7 +4,6 @@ import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
-// import com.craisinlord.antarchy.content.portalgun.PortalGunCollisionHelper;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import java.util.List;

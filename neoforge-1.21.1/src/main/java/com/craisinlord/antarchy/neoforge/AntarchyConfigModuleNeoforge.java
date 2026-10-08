@@ -671,8 +671,9 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setPortalGunSeeThroughPortals(AntarchyMiscConfig.portalGunSeeThroughPortals());
         AntarchySettings.setPortalGunFancyPortals(AntarchyMiscConfig.portalGunFancyPortals());
         AntarchySettings.setPortalGunMaxShootDistance(AntarchyMiscConfig.portalGunMaxShootDistance());
-        AntarchySettings.setPortalGunEntityGrabWeightBase(AntarchyMiscConfig.portalGunEntityGrabWeightBase());
-        AntarchySettings.setPortalGunIndicatorSize(AntarchyMiscConfig.portalGunIndicatorSize());
+        AntarchySettings.setPortalGunMinFloorExitSpeed(AntarchyMiscConfig.portalGunMinFloorExitSpeed());
+        AntarchySettings.setPortalGunMaxLiveViews(AntarchyMiscConfig.portalGunMaxLiveViews());
+        AntarchySettings.setPortalGunMaxExitSpeed(AntarchyMiscConfig.portalGunMaxExitSpeed());
 
 
         // Misc

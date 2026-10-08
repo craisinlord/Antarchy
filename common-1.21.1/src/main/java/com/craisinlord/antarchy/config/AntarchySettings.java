@@ -555,9 +555,10 @@ public final class AntarchySettings {
     private static boolean portalGunCanPortalProjectilesChunkload = true;
     private static boolean portalGunSeeThroughPortals = true;
     private static boolean portalGunFancyPortals = true;
-    private static int portalGunIndicatorSize = 30;
     private static int portalGunMaxShootDistance = 10000;
-    private static int portalGunEntityGrabWeightBase = 100;
+    private static double portalGunMinFloorExitSpeed = 0.6D;
+    private static int portalGunMaxLiveViews = 8;
+    private static double portalGunMaxExitSpeed = 0.0D;
     private static boolean elythiaFireflyParticlesEnabled = true;
     private static int bloodCrystalArmorShieldRechargeTicks = 600;
     private static int bloodCrystalAppleShieldCount = 2;
@@ -1335,16 +1336,20 @@ public final class AntarchySettings {
         portalGunFancyPortals = value;
     }
 
-    public static void setPortalGunIndicatorSize(int value) {
-        portalGunIndicatorSize = Math.max(0, Math.min(100, value));
-    }
-
     public static void setPortalGunMaxShootDistance(int value) {
         portalGunMaxShootDistance = Math.max(1, value);
     }
 
-    public static void setPortalGunEntityGrabWeightBase(int value) {
-        portalGunEntityGrabWeightBase = Math.max(0, value);
+    public static void setPortalGunMaxLiveViews(int value) {
+        portalGunMaxLiveViews = Math.max(0, Math.min(32, value));
+    }
+
+    public static void setPortalGunMinFloorExitSpeed(double value) {
+        portalGunMinFloorExitSpeed = Math.max(0.0D, Math.min(4.0D, value));
+    }
+
+    public static void setPortalGunMaxExitSpeed(double value) {
+        portalGunMaxExitSpeed = Math.max(0.0D, Math.min(100.0D, value));
     }
 
     public static boolean permanentPortalsEnabled() { return permanentPortalsEnabled; }
@@ -1358,9 +1363,10 @@ public final class AntarchySettings {
     public static boolean portalGunCanPortalProjectilesChunkload() { return portalGunCanPortalProjectilesChunkload; }
     public static boolean portalGunSeeThroughPortals() { return portalGunSeeThroughPortals; }
     public static boolean portalGunFancyPortals() { return portalGunFancyPortals; }
-    public static int portalGunIndicatorSize() { return portalGunIndicatorSize; }
     public static int portalGunMaxShootDistance() { return portalGunMaxShootDistance; }
-    public static int portalGunEntityGrabWeightBase() { return portalGunEntityGrabWeightBase; }
+    public static double portalGunMinFloorExitSpeed() { return portalGunMinFloorExitSpeed; }
+    public static int portalGunMaxLiveViews() { return portalGunMaxLiveViews; }
+    public static double portalGunMaxExitSpeed() { return portalGunMaxExitSpeed; }
 
     public static void setBrownAntRequiresReagent(boolean value) {
         brownAntRequiresReagent = value;

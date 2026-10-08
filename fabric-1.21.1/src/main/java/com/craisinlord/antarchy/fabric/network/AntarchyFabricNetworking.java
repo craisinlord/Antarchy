@@ -50,7 +50,6 @@ public final class AntarchyFabricNetworking {
         registerServerReceivers();
         com.craisinlord.antarchy.content.network.AntarchyGameNetworkHandler.setResultSender(ServerPlayNetworking::send);
         com.craisinlord.antarchy.content.portalgun.PortalGunIndicatorSync.setSender(ServerPlayNetworking::send);
-        com.craisinlord.antarchy.content.portalgun.PortalGunGrabManager.setStateSender(ServerPlayNetworking::send);
     }
 
     public static void bootstrapMultipartCommon() {
@@ -76,7 +75,6 @@ public final class AntarchyFabricNetworking {
     private static void registerPayloadTypes() {
         PayloadTypeRegistry.playS2C().register(AntarchyGameResultPayload.TYPE, AntarchyGameResultPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(PortalGunIndicatorPayload.TYPE, PortalGunIndicatorPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(PortalGunGrabStatePayload.TYPE, PortalGunGrabStatePayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(GravityStatePayload.TYPE, GravityStatePayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(BloodglassStatePayload.TYPE, BloodglassStatePayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(TigerEyeCamouflageStatePayload.TYPE, TigerEyeCamouflageStatePayload.STREAM_CODEC);
@@ -92,8 +90,8 @@ public final class AntarchyFabricNetworking {
 
         PayloadTypeRegistry.playC2S().register(GravityGunPrimaryPayload.TYPE, GravityGunPrimaryPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(PortalGunPrimaryPayload.TYPE, PortalGunPrimaryPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(com.craisinlord.antarchy.content.network.PortalGunTransitPayload.TYPE, com.craisinlord.antarchy.content.network.PortalGunTransitPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(PortalGunIndicatorRequestPayload.TYPE, PortalGunIndicatorRequestPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(PortalGunGrabPayload.TYPE, PortalGunGrabPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(PortalGunResetPayload.TYPE, PortalGunResetPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(EyeOfStormPrimaryPayload.TYPE, EyeOfStormPrimaryPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(OpenGiantFryingPanPayload.TYPE, OpenGiantFryingPanPayload.STREAM_CODEC);
@@ -128,10 +126,15 @@ public final class AntarchyFabricNetworking {
                 context.server().execute(() -> handleGravityGunPrimary(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(PortalGunPrimaryPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handlePortalGunPrimary(context.player(), payload)));
+        ServerPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.PortalGunTransitPayload.TYPE, (payload, context) -> {
+            if (context.server().isSameThread()) {
+                com.craisinlord.antarchy.content.portalgun.PortalGunTransitHandler.handle(context.player(), payload);
+            } else {
+                context.server().execute(() -> com.craisinlord.antarchy.content.portalgun.PortalGunTransitHandler.handle(context.player(), payload));
+            }
+        });
         ServerPlayNetworking.registerGlobalReceiver(PortalGunIndicatorRequestPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> com.craisinlord.antarchy.content.portalgun.PortalGunIndicatorSync.handleRequest(context.player(), payload)));
-        ServerPlayNetworking.registerGlobalReceiver(PortalGunGrabPayload.TYPE, (payload, context) ->
-                context.server().execute(() -> com.craisinlord.antarchy.content.portalgun.PortalGunGrabManager.toggle(context.player())));
         ServerPlayNetworking.registerGlobalReceiver(PortalGunResetPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> com.craisinlord.antarchy.content.portalgun.PortalGunResetManager.handleInput(context.player(), payload.action())));
         ServerPlayNetworking.registerGlobalReceiver(EyeOfStormPrimaryPayload.TYPE, (payload, context) ->

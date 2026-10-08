@@ -167,7 +167,7 @@ public class MantisEntity extends Monster implements GeoEntity {
                 MantisEntity.class,
                 new AABB(pos).inflate(64.0D),
                 Entity::isAlive
-        ).size() < 3;
+        ).size() < 4;
     }
 
     @Override

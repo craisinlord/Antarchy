@@ -27,12 +27,12 @@
     "infinity.AmendmentRareOresMixin"
   ],
   "client": [
+    "client.RenderTargetDepthStencilMixin",
     "client.SeparateLargeItemModelsMixin",
     "client.SeparateLargeItemGuiLightingMixin",
     "client.CameraShakeMixin",
     "client.BrutalflyElytraExperienceBarMixin",
     "client.BloodglassChatOrderMixin",
-    "client.DuctTapeInputMixin",
     "client.LiquidFogMixin",
     "client.GravityGunMouseScrollMixin",
     "client.KeybindingConflictFixMixin",

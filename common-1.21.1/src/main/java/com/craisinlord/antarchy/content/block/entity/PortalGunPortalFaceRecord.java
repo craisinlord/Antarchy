@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.block.entity;
 
 import com.craisinlord.antarchy.content.portalgun.PortalGunPlacement;
 import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
+import com.craisinlord.antarchy.content.portalgun.PortalGunVariant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,9 +15,8 @@ import net.minecraft.nbt.Tag;
 
 public record PortalGunPortalFaceRecord(
         UUID ownerId,
-        String ownerIdentity,
         UUID gunId,
-        String channelName,
+        PortalGunVariant variant,
         UUID portalId,
         UUID linkedPortalId,
         PortalGunPortalEntity.PortalSide side,
@@ -43,21 +43,20 @@ public record PortalGunPortalFaceRecord(
     }
 
     public PortalGunPortalFaceRecord withPair(UUID linkedPortalId, int pairTime) {
-        return new PortalGunPortalFaceRecord(this.ownerId, this.ownerIdentity, this.gunId, this.channelName, this.portalId, linkedPortalId, this.side, this.face, this.upAxis, this.masterPos, this.basePos, this.portalSpots, this.compensatedSpots, pairTime, this.portalWidth, this.portalHeight, this.master);
+        return new PortalGunPortalFaceRecord(this.ownerId, this.gunId, this.variant, this.portalId, linkedPortalId, this.side, this.face, this.upAxis, this.masterPos, this.basePos, this.portalSpots, this.compensatedSpots, pairTime, this.portalWidth, this.portalHeight, this.master);
     }
 
     public PortalGunPortalFaceRecord withMaster(boolean master) {
-        return new PortalGunPortalFaceRecord(this.ownerId, this.ownerIdentity, this.gunId, this.channelName, this.portalId, this.linkedPortalId, this.side, this.face, this.upAxis, this.masterPos, this.basePos, this.portalSpots, this.compensatedSpots, this.pairTime, this.portalWidth, this.portalHeight, master);
+        return new PortalGunPortalFaceRecord(this.ownerId, this.gunId, this.variant, this.portalId, this.linkedPortalId, this.side, this.face, this.upAxis, this.masterPos, this.basePos, this.portalSpots, this.compensatedSpots, this.pairTime, this.portalWidth, this.portalHeight, master);
     }
 
     public CompoundTag save() {
         CompoundTag tag = new CompoundTag();
         tag.putUUID("OwnerId", this.ownerId);
-        tag.putString("OwnerIdentity", this.ownerIdentity == null ? "" : this.ownerIdentity);
         if (this.gunId != null) {
             tag.putUUID("GunId", this.gunId);
         }
-        tag.putString("ChannelName", this.channelName == null ? "" : this.channelName);
+        tag.putInt("Variant", this.variant.id());
         tag.putUUID("PortalId", this.portalId);
         if (this.linkedPortalId != null) {
             tag.putUUID("LinkedPortalId", this.linkedPortalId);
@@ -105,9 +104,8 @@ public record PortalGunPortalFaceRecord(
         int height = net.minecraft.util.Mth.clamp(tag.getInt("PortalHeight"), 2, 16);
         return new PortalGunPortalFaceRecord(
                 tag.getUUID("OwnerId"),
-                tag.getString("OwnerIdentity"),
                 tag.hasUUID("GunId") ? tag.getUUID("GunId") : null,
-                tag.getString("ChannelName"),
+                PortalGunVariant.byId(tag.getInt("Variant")),
                 tag.getUUID("PortalId"),
                 tag.hasUUID("LinkedPortalId") ? tag.getUUID("LinkedPortalId") : null,
                 side,

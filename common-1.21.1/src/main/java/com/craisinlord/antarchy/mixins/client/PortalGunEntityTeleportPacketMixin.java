@@ -54,7 +54,7 @@ public abstract class PortalGunEntityTeleportPacketMixin {
         double edgeAllowance = entityExtent * 0.5D;
         AABB search = entity.getBoundingBox().move(offset).inflate(entityExtent + PortalGunWorldPortalShape.DEFAULT_SCAN_DISTANCE);
         Vec3 probe = destination.add(0.0D, entity.getEyeHeight(), 0.0D);
-        for (PortalGunPortalEntity portal : entity.level().getEntitiesOfClass(PortalGunPortalEntity.class, search, Entity::isAlive)) {
+        for (PortalGunPortalEntity portal : com.craisinlord.antarchy.content.portalgun.PortalGunPortalRegistry.near(entity.level(), search)) {
             PortalGunWorldPortalShape.PortalLocalCoords coords = portal.getWorldPortalShape().localCoords(probe);
             if (coords.depth() >= -entityExtent - 0.5D
                     && coords.depth() <= PortalGunWorldPortalShape.DEFAULT_SCAN_DISTANCE + 0.5D

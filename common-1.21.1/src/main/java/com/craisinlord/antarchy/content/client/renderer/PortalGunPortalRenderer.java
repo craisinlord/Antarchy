@@ -41,25 +41,25 @@ public class PortalGunPortalRenderer extends GeoEntityRenderer<PortalGunPortalEn
             putAnimatedPortalVertex(consumer, pose, entity, portalScale, frameV, halfWidth, halfHeight, 1.0F, 0.0F);
             putAnimatedPortalVertex(consumer, pose, entity, portalScale, frameV, halfWidth, -halfHeight, 1.0F, 1.0F);
         } else {
-            putPortalVertex(consumer, pose, entity, portalScale, -halfWidth, -halfHeight, 0.0F, 1.0F, false);
-            putPortalVertex(consumer, pose, entity, portalScale, -halfWidth, halfHeight, 0.0F, 0.0F, false);
-            putPortalVertex(consumer, pose, entity, portalScale, halfWidth, halfHeight, 1.0F, 0.0F, false);
-            putPortalVertex(consumer, pose, entity, portalScale, halfWidth, -halfHeight, 1.0F, 1.0F, false);
+            putPortalVertex(consumer, pose, entity, portalScale, -halfWidth, -halfHeight, 0.0F, 1.0F, true);
+            putPortalVertex(consumer, pose, entity, portalScale, -halfWidth, halfHeight, 0.0F, 0.0F, true);
+            putPortalVertex(consumer, pose, entity, portalScale, halfWidth, halfHeight, 1.0F, 0.0F, true);
+            putPortalVertex(consumer, pose, entity, portalScale, halfWidth, -halfHeight, 1.0F, 1.0F, true);
         }
-        VertexConsumer edge = bufferSource.getBuffer(RenderType.entityTranslucent(this.getTextureLocation(entity)));
-        putPortalVertex(edge, pose, entity, portalScale, -halfWidth - 0.06F, -halfHeight - 0.07F, 0.0F, 1.0F, true);
-        putPortalVertex(edge, pose, entity, portalScale, -halfWidth - 0.06F, halfHeight + 0.07F, 0.0F, 0.0F, true);
-        putPortalVertex(edge, pose, entity, portalScale, halfWidth + 0.06F, halfHeight + 0.07F, 1.0F, 0.0F, true);
-        putPortalVertex(edge, pose, entity, portalScale, halfWidth + 0.06F, -halfHeight - 0.07F, 1.0F, 1.0F, true);
+        VertexConsumer edge = bufferSource.getBuffer(RenderType.entityTranslucent(PortalGunPortalRim.texture(entity)));
+        float rimWidth = halfWidth + PortalGunPortalRim.EXTRA_WIDTH;
+        float rimHeight = halfHeight + PortalGunPortalRim.EXTRA_HEIGHT;
+        putPortalVertex(edge, pose, entity, portalScale, -rimWidth, -rimHeight, 0.0F, 1.0F, true);
+        putPortalVertex(edge, pose, entity, portalScale, -rimWidth, rimHeight, 0.0F, 0.0F, true);
+        putPortalVertex(edge, pose, entity, portalScale, rimWidth, rimHeight, 1.0F, 0.0F, true);
+        putPortalVertex(edge, pose, entity, portalScale, rimWidth, -rimHeight, 1.0F, 1.0F, true);
         poseStack.popPose();
     }
 
     private static ResourceLocation portalTexture(PortalGunPortalEntity entity) {
-        String color = entity.getPortalSide() == PortalGunPortalEntity.PortalSide.BLUE ? "blue" : "orange";
-        String path = isFancyPortalsEnabled()
-                ? "textures/entity/portal_gun/portal_" + color + "_vortex.png"
-                : "textures/vfx/portal_gun_portal_" + color + ".png";
-        return ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, path);
+        return isFancyPortalsEnabled()
+                ? entity.getVariant().vortexTexture(entity.getPortalSide())
+                : PortalGunPortalRim.texture(entity);
     }
 
     private static boolean isFancyPortalsEnabled() {
@@ -84,10 +84,11 @@ public class PortalGunPortalRenderer extends GeoEntityRenderer<PortalGunPortalEn
         Vec3 position = entity.getWidthVec().normalize().scale(horizontal * portalScale)
                 .add(entity.getUpVec().normalize().scale(vertical * portalScale))
                 .add(entity.getNormalVec().normalize().scale(0.03125D));
-        int red = channelTint ? entity.getChannelRed() : 255;
-        int green = channelTint ? entity.getChannelGreen() : 255;
-        int blue = channelTint ? entity.getChannelBlue() : 255;
-        int alpha = channelTint ? 150 : 210;
+        int color = entity.getPortalColor();
+        int red = channelTint ? color >> 16 & 0xFF : 255;
+        int green = channelTint ? color >> 8 & 0xFF : 255;
+        int blue = channelTint ? color & 0xFF : 255;
+        int alpha = channelTint ? PortalGunPortalRim.ENTITY_ALPHA : 210;
         consumer.addVertex(pose, (float) position.x, (float) position.y, (float) position.z)
                 .setColor(red, green, blue, alpha)
                 .setUv(u, v)

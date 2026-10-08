@@ -625,15 +625,14 @@ public final class AntarchyFabricClientBootstrap {
             DorrieJumpHudRenderer.render(guiGraphics);
             HerculesBeetleChargeHudRenderer.render(guiGraphics);
             com.craisinlord.antarchy.content.client.KingJudgmentFlashHudRenderer.render(guiGraphics);
+            com.craisinlord.antarchy.content.client.PortalGunCrosshairRenderer.render(guiGraphics);
         });
 
         WorldRenderEvents.LAST.register(context -> {
             BloodCrystalKatanaTrailHandler.render(context);
             ScorpionWhipTetherRenderHandler.render(context);
             WormHookTetherRenderHandler.render(context);
-            if (com.craisinlord.antarchy.content.client.renderer.PortalGunPortalViewRenderer.isEnabled()) {
-                com.craisinlord.antarchy.content.client.renderer.PortalGunPortalViewRenderer.render(context.camera(), context.positionMatrix(), context.projectionMatrix(), context.tickCounter());
-            }
+            com.craisinlord.antarchy.content.client.renderer.PortalGunPortalViewRenderer.render(context.camera(), context.positionMatrix(), context.projectionMatrix(), context.tickCounter());
         });
     }
 

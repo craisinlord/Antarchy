@@ -31,7 +31,6 @@ public final class AntarchyGravityNetworking {
 
     public static void register(PayloadRegistrar registrar) {
         com.craisinlord.antarchy.content.portalgun.PortalGunIndicatorSync.setSender(PacketDistributor::sendToPlayer);
-        com.craisinlord.antarchy.content.portalgun.PortalGunGrabManager.setStateSender(PacketDistributor::sendToPlayer);
         registrar.playToClient(
                 com.craisinlord.antarchy.content.network.PortalGunIndicatorPayload.TYPE,
                 com.craisinlord.antarchy.content.network.PortalGunIndicatorPayload.STREAM_CODEC,
@@ -40,10 +39,6 @@ public final class AntarchyGravityNetworking {
                 com.craisinlord.antarchy.content.network.PortalGunIndicatorRequestPayload.TYPE,
                 com.craisinlord.antarchy.content.network.PortalGunIndicatorRequestPayload.STREAM_CODEC,
                 AntarchyGravityNetworking::handlePortalGunIndicatorRequest
-        ).playToClient(
-                com.craisinlord.antarchy.content.network.PortalGunGrabStatePayload.TYPE,
-                com.craisinlord.antarchy.content.network.PortalGunGrabStatePayload.STREAM_CODEC,
-                (payload, context) -> context.enqueueWork(() -> com.craisinlord.antarchy.content.client.PortalGunGrabClientState.update(payload.active()))
         ).playToClient(
                 GravityStatePayload.TYPE,
                 GravityStatePayload.STREAM_CODEC,
@@ -61,9 +56,19 @@ public final class AntarchyGravityNetworking {
                 PortalGunPrimaryPayload.STREAM_CODEC,
                 AntarchyGravityNetworking::handlePortalGunPrimary
         ).playToServer(
-                com.craisinlord.antarchy.content.network.PortalGunGrabPayload.TYPE,
-                com.craisinlord.antarchy.content.network.PortalGunGrabPayload.STREAM_CODEC,
-                AntarchyGravityNetworking::handlePortalGunGrab
+                com.craisinlord.antarchy.content.network.PortalGunTransitPayload.TYPE,
+                com.craisinlord.antarchy.content.network.PortalGunTransitPayload.STREAM_CODEC,
+                (payload, context) -> {
+                    if (context.player() instanceof ServerPlayer serverPlayer && serverPlayer.getServer() != null && serverPlayer.getServer().isSameThread()) {
+                        com.craisinlord.antarchy.content.portalgun.PortalGunTransitHandler.handle(serverPlayer, payload);
+                        return;
+                    }
+                    context.enqueueWork(() -> {
+                        if (context.player() instanceof ServerPlayer serverPlayer) {
+                            com.craisinlord.antarchy.content.portalgun.PortalGunTransitHandler.handle(serverPlayer, payload);
+                        }
+                    });
+                }
         ).playToServer(
                 com.craisinlord.antarchy.content.network.PortalGunResetPayload.TYPE,
                 com.craisinlord.antarchy.content.network.PortalGunResetPayload.STREAM_CODEC,
@@ -239,13 +244,6 @@ public final class AntarchyGravityNetworking {
         });
     }
 
-    private static void handlePortalGunGrab(com.craisinlord.antarchy.content.network.PortalGunGrabPayload payload, IPayloadContext context) {
-        context.enqueueWork(() -> {
-            if (context.player() instanceof ServerPlayer serverPlayer) {
-                com.craisinlord.antarchy.content.portalgun.PortalGunGrabManager.toggle(serverPlayer);
-            }
-        });
-    }
 
     private static void handlePortalGunIndicatorRequest(com.craisinlord.antarchy.content.network.PortalGunIndicatorRequestPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {

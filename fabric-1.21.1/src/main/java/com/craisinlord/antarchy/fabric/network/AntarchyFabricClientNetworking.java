@@ -45,8 +45,6 @@ public final class AntarchyFabricClientNetworking {
         com.craisinlord.antarchy.content.client.PortalGunIndicatorClientState.setRequestSender(ClientPlayNetworking::send);
         ClientPlayNetworking.registerGlobalReceiver(PortalGunIndicatorPayload.TYPE, (payload, context) ->
                 context.client().execute(() -> com.craisinlord.antarchy.content.client.PortalGunIndicatorClientState.update(payload)));
-        ClientPlayNetworking.registerGlobalReceiver(PortalGunGrabStatePayload.TYPE, (payload, context) ->
-                context.client().execute(() -> com.craisinlord.antarchy.content.client.PortalGunGrabClientState.update(payload.active())));
         ClientPlayNetworking.registerGlobalReceiver(GravityStatePayload.TYPE, (payload, context) ->
                 context.client().execute(() -> AntarchyFabricNetworking.handleGravityState(context.player(), payload)));
         ClientPlayNetworking.registerGlobalReceiver(BloodglassStatePayload.TYPE, (payload, context) ->

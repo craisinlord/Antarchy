@@ -39,8 +39,8 @@
   ],
   "placement": {
     "salt": 659843583,
-    "spacing": 42,
-    "separation": 35,
+    "spacing": 37,
+    "separation": 30,
     "type": "integrated_api:advanced_random_spread"
   }
 }

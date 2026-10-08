@@ -39,8 +39,9 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.BooleanValue PORTAL_GUN_SEE_THROUGH_PORTALS;
     private static final ModConfigSpec.BooleanValue PORTAL_GUN_FANCY_PORTALS;
     private static final ModConfigSpec.IntValue PORTAL_GUN_MAX_SHOOT_DISTANCE;
-    private static final ModConfigSpec.IntValue PORTAL_GUN_ENTITY_GRAB_WEIGHT_BASE;
-    private static final ModConfigSpec.IntValue PORTAL_GUN_INDICATOR_SIZE;
+    private static final ModConfigSpec.DoubleValue PORTAL_GUN_MIN_FLOOR_EXIT_SPEED;
+    private static final ModConfigSpec.IntValue PORTAL_GUN_MAX_LIVE_VIEWS;
+    private static final ModConfigSpec.DoubleValue PORTAL_GUN_MAX_EXIT_SPEED;
 
     // Diamond Minecart
     private static final ModConfigSpec.BooleanValue DIAMOND_MINECART_ENABLED;
@@ -146,8 +147,9 @@ public final class AntarchyMiscConfig {
         PORTAL_GUN_SEE_THROUGH_PORTALS = b.define("seeThroughPortals", true);
         PORTAL_GUN_FANCY_PORTALS = b.define("fancyPortals", true);
         PORTAL_GUN_MAX_SHOOT_DISTANCE = b.defineInRange("maxShootDistance", 10000, 1, Integer.MAX_VALUE);
-        PORTAL_GUN_ENTITY_GRAB_WEIGHT_BASE = b.defineInRange("entityGrabWeightBase", 100, 0, 1000);
-        PORTAL_GUN_INDICATOR_SIZE = b.defineInRange("indicatorSize", 30, 0, 100);
+        PORTAL_GUN_MAX_LIVE_VIEWS = b.comment("How many portals can show a live see-through view at once. Each one re-renders the world, so higher values cost frame rate. 0 shows only the animated surface.").defineInRange("maxLiveViews", 8, 0, 32);
+        PORTAL_GUN_MIN_FLOOR_EXIT_SPEED = b.comment("Minimum speed in blocks/tick when leaving an upward-facing portal, so the traveller clears it. 0 disables.").defineInRange("minFloorExitSpeed", 0.6D, 0.0D, 4.0D);
+        PORTAL_GUN_MAX_EXIT_SPEED = b.comment("Maximum speed in blocks/tick when leaving a portal. 0 keeps momentum uncapped.").defineInRange("maxExitSpeed", 0.0D, 0.0D, 100.0D);
         b.pop();
 
 
@@ -224,8 +226,9 @@ public final class AntarchyMiscConfig {
     public static boolean portalGunSeeThroughPortals() { return PORTAL_GUN_SEE_THROUGH_PORTALS.get(); }
     public static boolean portalGunFancyPortals() { return PORTAL_GUN_FANCY_PORTALS.get(); }
     public static int portalGunMaxShootDistance() { return PORTAL_GUN_MAX_SHOOT_DISTANCE.get(); }
-    public static int portalGunEntityGrabWeightBase() { return PORTAL_GUN_ENTITY_GRAB_WEIGHT_BASE.get(); }
-    public static int portalGunIndicatorSize() { return PORTAL_GUN_INDICATOR_SIZE.get(); }
+    public static double portalGunMinFloorExitSpeed() { return PORTAL_GUN_MIN_FLOOR_EXIT_SPEED.get(); }
+    public static int portalGunMaxLiveViews() { return PORTAL_GUN_MAX_LIVE_VIEWS.get(); }
+    public static double portalGunMaxExitSpeed() { return PORTAL_GUN_MAX_EXIT_SPEED.get(); }
 
     static boolean diamondMinecartEnabled()              { return DIAMOND_MINECART_ENABLED.get(); }
     static boolean diamondMinecartPlacesRails()          { return DIAMOND_MINECART_PLACES_RAILS.get(); }

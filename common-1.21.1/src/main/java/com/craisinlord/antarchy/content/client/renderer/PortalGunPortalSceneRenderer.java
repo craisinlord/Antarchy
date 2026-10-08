@@ -53,7 +53,7 @@ public final class PortalGunPortalSceneRenderer {
 
     public static void render(Minecraft minecraft, Camera camera, float partialTick, Matrix4f viewMatrix,
                               Matrix4f projection, Matrix4f skyProjection, Frustum frustum,
-                              PortalTerrain terrain, Consumer<PoseStack> crossingEntities, String tracePair) {
+                              PortalTerrain terrain, Consumer<PoseStack> crossingEntities) {
         LevelRenderer renderer = minecraft.levelRenderer;
         LevelRendererPortalViewAreaAccessor state = (LevelRendererPortalViewAreaAccessor) renderer;
         LevelRendererPortalSceneInvoker scene = (LevelRendererPortalSceneInvoker) renderer;
@@ -82,7 +82,7 @@ public final class PortalGunPortalSceneRenderer {
             boolean foggy = minecraft.level.effects().isFoggyAt(cameraBlockPos.getX(), cameraBlockPos.getY())
                     || minecraft.gui.getBossOverlay().shouldCreateWorldFog();
 
-            try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(tracePair, "background-and-sky", "sections=" + terrain.sectionCount())) {
+            {
                 RenderSystem.setShaderGameTime(minecraft.level.getGameTime(), partialTick);
                 minecraft.getBlockEntityRenderDispatcher().prepare(minecraft.level, camera, minecraft.hitResult);
                 minecraft.getEntityRenderDispatcher().prepare(minecraft.level, camera, minecraft.crosshairPickEntity);
@@ -99,7 +99,7 @@ public final class PortalGunPortalSceneRenderer {
 
             RenderSystem.setProjectionMatrix(projection, VertexSorting.DISTANCE_TO_ORIGIN);
             FogRenderer.setupFog(camera, FogRenderer.FogMode.FOG_TERRAIN, Math.max(renderDistance, 32.0F), foggy, partialTick);
-            try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(tracePair, "opaque-terrain", "sections=" + terrain.sectionCount())) {
+            {
                 RenderSystem.enableDepthTest();
                 RenderSystem.depthMask(true);
                 terrain.drawLayer(minecraft, RenderType.solid(), cameraPosition, viewMatrix, projection);
@@ -118,7 +118,7 @@ public final class PortalGunPortalSceneRenderer {
             PoseStack poseStack = new PoseStack();
             MultiBufferSource.BufferSource buffers = bufferSource();
             try {
-                try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(tracePair, "entities", "rendering")) {
+                {
                     for (Entity entity : minecraft.level.entitiesForRendering()) {
                         if (!minecraft.getEntityRenderDispatcher().shouldRender(entity, frustum, cameraX, cameraY, cameraZ)
                                 && !entity.hasIndirectPassenger(minecraft.player)) {
@@ -138,20 +138,20 @@ public final class PortalGunPortalSceneRenderer {
                 }
                 buffers.endBatch();
 
-                try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(tracePair, "block-entities", "rendering")) {
+                {
                     terrain.forEachBlockEntity(minecraft, frustum, blockEntity ->
                             renderBlockEntity(minecraft, blockEntity, cameraX, cameraY, cameraZ, partialTick, poseStack, buffers));
                 }
                 buffers.endBatch();
 
-                try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(tracePair, "translucent-and-particles", "rendering")) {
+                {
                     terrain.drawLayer(minecraft, RenderType.translucent(), cameraPosition, viewMatrix, projection);
                     buffers.endBatch();
                     terrain.drawLayer(minecraft, RenderType.tripwire(), cameraPosition, viewMatrix, projection);
                     minecraft.particleEngine.render(minecraft.gameRenderer.lightTexture(), camera, partialTick);
                 }
 
-                try (PortalSceneRenderTrace.Phase ignored = PortalSceneRenderTrace.begin(tracePair, "weather-and-border", "rendering")) {
+                {
                     RenderSystem.depthMask(false);
                     scene.antarchy$renderPortalWeather(minecraft.gameRenderer.lightTexture(), partialTick, cameraX, cameraY, cameraZ);
                     scene.antarchy$renderPortalWorldBorder(camera);

@@ -1,6 +1,9 @@
 package com.craisinlord.antarchy.content.portalgun;
 
 import com.craisinlord.antarchy.content.item.PortalGunItem;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -61,6 +64,10 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
     private static final EntityDataAccessor<Float> PROJECTILE_SPEED = SynchedEntityData.defineId(PortalGunProjectileEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Boolean> PASS_THROUGH_GLASS = SynchedEntityData.defineId(PortalGunProjectileEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> PASS_THROUGH_LIQUID = SynchedEntityData.defineId(PortalGunProjectileEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final int TRAIL_PARTICLES_PER_TICK = 4;
+    private static final float TRAIL_DUST_SCALE = 0.45F;
+    private static final float IMPACT_DUST_SCALE = 0.8F;
+    private static final int IMPACT_PARTICLES = 14;
     public static final double MIN_LAUNCH_SPEED = 4.98D;
     public static final double LAUNCH_SPEED_VARIANCE = 0.02D;
     public static final double MAX_TRAVEL_DISTANCE = 10000.0D;
@@ -109,6 +116,7 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
     }
 
     public void configure(PortalGunPortalEntity.PortalSide side, UUID gunId, ItemStack gunStack) {
+        AntarchyGravityApi.setAirborneGravityDirection(this, AntarchyGravityDirection.DOWN, false, AntarchyGravityTransition.INSTANT);
         this.entityData.set(SIDE, side.ordinal());
         this.gunId = gunId;
         this.setItem(gunStack.copyWithCount(1));
@@ -132,6 +140,10 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
 
     public double getProjectileSpeed() {
         return this.entityData.get(PROJECTILE_SPEED);
+    }
+
+    public PortalGunVariant getVariant() {
+        return this.getItem().getItem() instanceof PortalGunItem portalGun ? portalGun.getVariant() : PortalGunVariant.DEFAULT;
     }
 
     public PortalGunPortalEntity.PortalSide getPortalSide() {
@@ -265,14 +277,12 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
                 );
             }
         }
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide && this.tickCount > 1) {
+            net.minecraft.core.particles.DustParticleOptions dust = this.trailDust(TRAIL_DUST_SCALE);
             Vec3 point = this.position();
-            if (this.getPortalSide() == PortalGunPortalEntity.PortalSide.BLUE) {
-                this.level().addParticle(net.minecraft.core.particles.ParticleTypes.SOUL_FIRE_FLAME, point.x, point.y, point.z, 0.0D, 0.0D, 0.0D);
-                this.level().addParticle(net.minecraft.core.particles.ParticleTypes.END_ROD, point.x, point.y, point.z, 0.0D, 0.0D, 0.0D);
-            } else {
-                this.level().addParticle(net.minecraft.core.particles.ParticleTypes.FLAME, point.x, point.y, point.z, 0.0D, 0.0D, 0.0D);
-                this.level().addParticle(net.minecraft.core.particles.ParticleTypes.CRIT, point.x, point.y, point.z, 0.0D, 0.0D, 0.0D);
+            for (int i = 0; i < TRAIL_PARTICLES_PER_TICK; i++) {
+                Vec3 trailPoint = point.subtract(motion.scale((double) i / TRAIL_PARTICLES_PER_TICK));
+                this.level().addParticle(dust, trailPoint.x, trailPoint.y, trailPoint.z, 0.0D, 0.0D, 0.0D);
             }
         }
     }
@@ -368,13 +378,13 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
     }
 
     private void spawnImpactParticles(ServerLevel level, Vec3 impactPos) {
-        if (this.getPortalSide() == PortalGunPortalEntity.PortalSide.BLUE) {
-            level.sendParticles(net.minecraft.core.particles.ParticleTypes.SOUL_FIRE_FLAME, impactPos.x, impactPos.y, impactPos.z, 10, 0.08D, 0.08D, 0.08D, 0.01D);
-            level.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD, impactPos.x, impactPos.y, impactPos.z, 6, 0.04D, 0.04D, 0.04D, 0.01D);
-            return;
-        }
-        level.sendParticles(net.minecraft.core.particles.ParticleTypes.FLAME, impactPos.x, impactPos.y, impactPos.z, 10, 0.08D, 0.08D, 0.08D, 0.01D);
-        level.sendParticles(net.minecraft.core.particles.ParticleTypes.CRIT, impactPos.x, impactPos.y, impactPos.z, 6, 0.04D, 0.04D, 0.04D, 0.01D);
+        level.sendParticles(this.trailDust(IMPACT_DUST_SCALE), impactPos.x, impactPos.y, impactPos.z, IMPACT_PARTICLES, 0.12D, 0.12D, 0.12D, 0.02D);
+    }
+
+    private net.minecraft.core.particles.DustParticleOptions trailDust(float scale) {
+        int color = this.getVariant().color(this.getPortalSide());
+        return new net.minecraft.core.particles.DustParticleOptions(
+                new org.joml.Vector3f((color >> 16 & 0xFF) / 255.0F, (color >> 8 & 0xFF) / 255.0F, (color & 0xFF) / 255.0F), scale);
     }
 
     private void syncSpawnPosition(Vec3 pos) {

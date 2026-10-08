@@ -7,7 +7,6 @@ import com.craisinlord.antarchy.content.entity.ReverieEntity;
 import com.craisinlord.antarchy.content.entity.ant.RainbowAntEntity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.block.DuctTapeBlock;
 import com.craisinlord.antarchy.content.item.AttitudeAdjusterItem;
 import com.craisinlord.antarchy.content.item.AttitudeAdjusterSlamManager;
 import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
@@ -19,7 +18,6 @@ import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
 import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.craisinlord.antarchy.content.portal.PermanentPortalManager;
 import com.craisinlord.antarchy.content.portalgun.PortalGunProjectileEntity;
-import com.craisinlord.antarchy.content.portalgun.PortalGunGrabManager;
 import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.CaterpillarCommand;
 import com.craisinlord.antarchy.content.command.DimensionalTearCommand;
@@ -78,7 +76,6 @@ public final class AntarchyFabricEvents {
 
     public static void register() {
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> PortalGunProjectileEntity.releaseAllProjectileTickets());
-        ServerLifecycleEvents.SERVER_STOPPING.register(PortalGunGrabManager::clear);
         ServerLifecycleEvents.SERVER_STOPPING.register(com.craisinlord.antarchy.content.portalgun.PortalGunResetManager::clear);
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             ChronosphereManager.refresh(handler.player);
@@ -209,14 +206,13 @@ public final class AntarchyFabricEvents {
         });
 
         ServerTickEvents.END_SERVER_TICK.register(server -> {
-            PortalGunGrabManager.tick(server);
             Set<UUID> activeThisTick = new HashSet<>();
             for (ServerLevel level : server.getAllLevels()) {
                 CavarynHordeManager.tick(level);
                 com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
                 ThoraxisUndersideManager.tick(level);
+                com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature.tickPendingSpawns(level);
                 tickInvertedPlayers(level, activeThisTick);
-                tickDuctTapePlayers(level);
                 tickIchorPlayers(level);
                 tickBloodglassRecharge(level);
                 AttitudeAdjusterSlamManager.tick(level);
@@ -335,14 +331,6 @@ public final class AntarchyFabricEvents {
                 player.getBoundingBox().inflate(48.0D)
         )) {
             reverie.syncFocusInversionState();
-        }
-    }
-
-    private static void tickDuctTapePlayers(ServerLevel level) {
-        for (Player player : level.players()) {
-            if (DuctTapeBlock.shouldTickStuckEntity(player)) {
-                DuctTapeBlock.tickStuckEntity(player);
-            }
         }
     }
 

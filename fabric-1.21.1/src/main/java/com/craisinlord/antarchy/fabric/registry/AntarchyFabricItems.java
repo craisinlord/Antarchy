@@ -1561,7 +1561,28 @@ public final class AntarchyFabricItems {
                     AntarchyFabricEntities.PORTAL_GUN_BLACK_HOLE,
                     AntarchyFabricEntities.PORTAL_GUN_PROJECTILE,
                     AntarchyFabricBlocks.PORTAL_GUN_PORTAL_MASTER,
-                    AntarchyFabricBlocks.PORTAL_GUN_PORTAL_BASE
+                    AntarchyFabricBlocks.PORTAL_GUN_PORTAL_BASE,
+                    com.craisinlord.antarchy.content.portalgun.PortalGunVariant.DEFAULT
+            ));
+    public static final DeferredItem<PortalGunItem> PORTAL_GUN_ATLAS = ITEMS.register("portal_gun_atlas",
+            () -> new PortalGunItem(
+                    new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
+                    AntarchyFabricEntities.PORTAL_GUN_PORTAL,
+                    AntarchyFabricEntities.PORTAL_GUN_BLACK_HOLE,
+                    AntarchyFabricEntities.PORTAL_GUN_PROJECTILE,
+                    AntarchyFabricBlocks.PORTAL_GUN_PORTAL_MASTER,
+                    AntarchyFabricBlocks.PORTAL_GUN_PORTAL_BASE,
+                    com.craisinlord.antarchy.content.portalgun.PortalGunVariant.ATLAS
+            ));
+    public static final DeferredItem<PortalGunItem> PORTAL_GUN_P_BODY = ITEMS.register("portal_gun_p_body",
+            () -> new PortalGunItem(
+                    new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
+                    AntarchyFabricEntities.PORTAL_GUN_PORTAL,
+                    AntarchyFabricEntities.PORTAL_GUN_BLACK_HOLE,
+                    AntarchyFabricEntities.PORTAL_GUN_PROJECTILE,
+                    AntarchyFabricBlocks.PORTAL_GUN_PORTAL_MASTER,
+                    AntarchyFabricBlocks.PORTAL_GUN_PORTAL_BASE,
+                    com.craisinlord.antarchy.content.portalgun.PortalGunVariant.P_BODY
             ));
 
     public static final DeferredItem<EyeOfTheStormItem> EYE_OF_THE_STORM = ITEMS.register("eye_of_the_storm",

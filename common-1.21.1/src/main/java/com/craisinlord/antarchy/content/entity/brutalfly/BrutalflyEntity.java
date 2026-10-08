@@ -277,12 +277,10 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
             this.cocoonHitCooldownTicks--;
         }
 
-        // Pin position to hang from anchor
         if (this.anchorPos != null) {
             this.setPos(this.anchorPos.getX() + 0.5, this.anchorPos.getY() - 1.5, this.anchorPos.getZ() + 0.5);
             this.setDeltaMovement(Vec3.ZERO);
 
-            // Hatch immediately if anchor log was broken
             if (!this.isHatching && !this.level().getBlockState(this.anchorPos).is(BlockTags.LOGS)) {
                 this.startHatching();
                 return;
@@ -303,7 +301,6 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
             return;
         }
 
-        // Count down hit animation
         if (this.cocoonAnimTicks > 0) {
             this.cocoonAnimTicks--;
             if (this.cocoonAnimTicks <= 0) {
@@ -312,7 +309,6 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
             return;
         }
 
-        // Occasionally play idle animation
         if (this.getAnimationState() == ANIM_COCOON_IDLE) {
             // Will be reset to COCOON after idle ticks counted down
         } else if (this.tickCount % 200 == 17 && this.random.nextFloat() < 0.4F) {

@@ -7,12 +7,14 @@ import com.craisinlord.antarchy.content.block.entity.PortalGunPortalFaceRecord;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalCellAccess;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
 import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.network.PortalGunPrimaryPayload;
 import com.craisinlord.antarchy.content.portalgun.PortalGunBlackHoleEntity;
 import com.craisinlord.antarchy.content.portalgun.PortalGunPlacement;
 import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
 import com.craisinlord.antarchy.content.portalgun.PortalGunProjectileEntity;
 import com.craisinlord.antarchy.content.portalgun.PortalGunSavedData;
+import com.craisinlord.antarchy.content.portalgun.PortalGunVariant;
 import com.craisinlord.antarchy.content.portalgun.PortalGunResetManager;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import java.util.HashSet;
@@ -20,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
@@ -73,23 +74,19 @@ public class PortalGunItem extends Item implements GeoItem {
     private static final String LAST_SIDE_TAG = "antarchy.portal_gun_last_side";
     private static final String MOON_SIDE_TAG = "antarchy.portal_gun_moon_side";
     public static final String GUN_ID_TAG = "antarchy.portal_gun_id";
-    public static final String CHANNEL_NAME_TAG = "antarchy.portal_gun_channel";
     public static final String OWNER_ID_TAG = "antarchy.portal_gun_owner";
-    public static final String OWNER_NAME_TAG = "antarchy.portal_gun_owner_name";
-    public static final UUID GLOBAL_OWNER_ID = UUID.nameUUIDFromBytes("Global".getBytes(StandardCharsets.UTF_8));
     public static final String PORTAL_WIDTH_TAG = "width";
     public static final String PORTAL_HEIGHT_TAG = "height";
-    public static final String GRAB_STRENGTH_TAG = "grabStrength";
     private static final int MAX_PORTAL_WIDTH = 16;
     private static final int MAX_PORTAL_HEIGHT = 16;
     private static final ResourceLocation MODEL_LOCATION = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "geo/portal_gun.geo.json");
-    private static final ResourceLocation TEXTURE_LOCATION = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/models/item/portal_gun.png");
     private static final ResourceLocation ANIMATION_LOCATION = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "animations/portal_gun.animation.json");
     private final Supplier<? extends EntityType<? extends PortalGunPortalEntity>> portalType;
     private final Supplier<? extends EntityType<? extends PortalGunBlackHoleEntity>> blackHoleType;
     private final Supplier<? extends EntityType<? extends PortalGunProjectileEntity>> projectileType;
     private final Supplier<? extends Block> portalMasterBlock;
     private final Supplier<? extends Block> portalBaseBlock;
+    private final PortalGunVariant variant;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     public PortalGunItem(
@@ -98,15 +95,21 @@ public class PortalGunItem extends Item implements GeoItem {
             Supplier<? extends EntityType<? extends PortalGunBlackHoleEntity>> blackHoleType,
             Supplier<? extends EntityType<? extends PortalGunProjectileEntity>> projectileType,
             Supplier<? extends Block> portalMasterBlock,
-            Supplier<? extends Block> portalBaseBlock
+            Supplier<? extends Block> portalBaseBlock,
+            PortalGunVariant variant
     ) {
         super(properties);
+        this.variant = variant;
         this.portalType = portalType;
         this.blackHoleType = blackHoleType;
         this.projectileType = projectileType;
         this.portalMasterBlock = portalMasterBlock;
         this.portalBaseBlock = portalBaseBlock;
         GeoItem.registerSyncedAnimatable(this);
+    }
+
+    public PortalGunVariant getVariant() {
+        return this.variant;
     }
 
     @Override
@@ -134,23 +137,21 @@ public class PortalGunItem extends Item implements GeoItem {
     }
 
     public void resetPortals(ServerPlayer player, ItemStack stack) {
-        UUID gunId = this.ensureGunId(stack, player.getUUID(), player.getGameProfile().getName());
-        UUID ownerId = getPortalOwnerId(stack, player.getUUID());
-        PortalGunSavedData.clearAllPortals(player.serverLevel(), ownerId, gunId, getChannelName(stack));
+        UUID gunId = this.ensureGunId(stack, player.getUUID());
+        PortalGunSavedData.clearAllPortals(player.serverLevel(), gunId);
         this.setLastSide(stack, null);
         this.setMoonSide(stack, null);
         player.serverLevel().playSound(null, player.getX(), player.getY(), player.getZ(), PortalGunPortalEntity.sound("portal_fizzle"), SoundSource.PLAYERS, 0.6F, 1.0F);
     }
 
     public void resetPortalSide(ServerPlayer player, ItemStack stack, PortalGunPortalEntity.PortalSide side) {
-        UUID gunId = this.ensureGunId(stack, player.getUUID(), player.getGameProfile().getName());
-        UUID ownerId = getPortalOwnerId(stack, player.getUUID());
-        PortalGunSavedData.clearPortalSide(player.serverLevel(), ownerId, gunId, getChannelName(stack), side);
+        UUID gunId = this.ensureGunId(stack, player.getUUID());
+        PortalGunSavedData.clearPortalSide(player.serverLevel(), gunId, side);
         player.serverLevel().playSound(null, player.getX(), player.getY(), player.getZ(), PortalGunPortalEntity.sound("portal_fizzle"), SoundSource.PLAYERS, 0.6F, 1.0F);
     }
 
     public void fireMobPortal(ServerLevel level, LivingEntity shooter, ItemStack stack, PortalGunPortalEntity.PortalSide side) {
-        this.ensureGunId(stack, shooter.getUUID(), shooter.getName().getString());
+        this.ensureGunId(stack, shooter.getUUID());
         String firePath = side == PortalGunPortalEntity.PortalSide.BLUE ? "portal_gun_fire_blue" : "portal_gun_fire_orange";
         level.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), PortalGunPortalEntity.sound(firePath), shooter.getSoundSource(), 0.65F, side == PortalGunPortalEntity.PortalSide.BLUE ? 1.15F : 0.88F);
         this.spawnProjectile(level, shooter, stack, side);
@@ -163,7 +164,7 @@ public class PortalGunItem extends Item implements GeoItem {
             }
         }
         this.triggerFireAnimation(level, player, stack);
-        this.ensureGunId(stack, player.getUUID(), player.getGameProfile().getName());
+        this.ensureGunId(stack, player.getUUID());
         stack.hurtAndBreak(1, player, offhand ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND);
         player.awardStat(Stats.ITEM_USED.get(this));
         player.getCooldowns().addCooldown(this, 6);
@@ -175,10 +176,8 @@ public class PortalGunItem extends Item implements GeoItem {
 
     public void handlePortalImpact(ServerLevel level, LivingEntity shooter, ItemStack stack, UUID gunId, PortalGunPortalEntity.PortalSide side, BlockHitResult hitResult, Vec3 impactPos, int portalWidth, int portalHeight) {
         UUID portalOwnerId = getPortalOwnerId(stack, shooter.getUUID());
-        String portalOwnerIdentity = getPortalOwnerIdentity(stack, shooter.getUUID());
-        String channelName = getChannelName(stack);
-        PortalGunPortalEntity existing = this.findPlacedPortal(level, portalOwnerId, gunId, channelName, side);
-        PortalGunPlacement placement = this.findPlacement(level, shooter, portalOwnerId, channelName, side, hitResult, existing, portalWidth, portalHeight);
+        PortalGunPortalEntity existing = this.findPlacedPortal(level, gunId, side);
+        PortalGunPlacement placement = this.findPlacement(level, shooter, gunId, side, hitResult, existing, portalWidth, portalHeight);
         if (placement == null) {
             Antarchy.LOGGER.debug("Portal gun placement failed owner={} side={} hitBlock={} hitFace={} hitLocation={}", shooter.getUUID(), side, hitResult.getBlockPos(), hitResult.getDirection(), hitResult.getLocation());
             level.playSound(null, impactPos.x, impactPos.y, impactPos.z, PortalGunPortalEntity.sound("portal_gun_invalid_surface"), SoundSource.PLAYERS, 0.55F, 1.0F);
@@ -204,16 +203,16 @@ public class PortalGunItem extends Item implements GeoItem {
             return;
         }
         PortalGunPortalEntity portal = new PortalGunPortalEntity(this.portalType.get(), level);
-        portal.configure(portalOwnerId, gunId, portalOwnerIdentity, channelName, side, placement);
+        portal.configure(portalOwnerId, gunId, this.variant, side, placement);
         portal.moveTo(placement.center().x, placement.center().y, placement.center().z, placement.yaw(), 0.0F);
-        if (!this.placePortalBlocks(level, portalOwnerId, gunId, portalOwnerIdentity, channelName, side, portal, placement)) {
+        if (!this.placePortalBlocks(level, portalOwnerId, gunId, side, portal, placement)) {
             Antarchy.LOGGER.debug("Portal gun block placement failed owner={} side={} portal={} center={} facing={} up={} master={} base={}", shooter.getUUID(), side, portal.getUUID(), placement.center(), placement.facing(), placement.upAxis(), placement.masterPos(), placement.basePos());
             level.playSound(null, impactPos.x, impactPos.y, impactPos.z, PortalGunPortalEntity.sound("portal_gun_invalid_surface"), SoundSource.PLAYERS, 0.55F, 1.0F);
             return;
         }
         level.addFreshEntity(portal);
-        PortalGunSavedData.setPortal(level, portalOwnerId, gunId, channelName, side, portal.getUUID());
-        PortalGunPortalEntity other = this.findCounterpart(level, portalOwnerId, gunId, channelName, side);
+        PortalGunSavedData.setPortal(level, gunId, side, portal.getUUID());
+        PortalGunPortalEntity other = this.findCounterpart(level, gunId, side);
         if (other != null) {
             portal.linkTo(other);
             other.linkTo(portal);
@@ -261,8 +260,7 @@ public class PortalGunItem extends Item implements GeoItem {
         if (!level.dimensionType().hasSkyLight() || !level.isNight() || player.getXRot() > -40.0F) {
             return false;
         }
-        UUID ownerId = getPortalOwnerId(stack, player.getUUID());
-        PortalGunPortalEntity existing = this.findPlacedPortal(level, ownerId, this.ensureGunId(stack, player.getUUID(), player.getGameProfile().getName()), getChannelName(stack), side);
+        PortalGunPortalEntity existing = this.findPlacedPortal(level, this.ensureGunId(stack, player.getUUID()), side);
         if (existing != null) {
             existing.discard();
         }
@@ -273,7 +271,7 @@ public class PortalGunItem extends Item implements GeoItem {
         player.awardStat(Stats.ITEM_USED.get(this));
         player.getCooldowns().addCooldown(this, 6);
         level.playSound(null, player.getX(), player.getY(), player.getZ(), PortalGunPortalEntity.sound(side == PortalGunPortalEntity.PortalSide.BLUE ? "portal_gun_fire_blue" : "portal_gun_fire_orange"), SoundSource.PLAYERS, 0.65F, side == PortalGunPortalEntity.PortalSide.BLUE ? 1.15F : 0.88F);
-        this.spawnShotTrail(level, player, player.getEyePosition().add(player.getLookAngle().scale(64.0D)), side);
+        this.spawnShotTrail(level, player, player.getEyePosition().add(this.worldLook(player).scale(64.0D)), side);
         return true;
     }
 
@@ -301,10 +299,10 @@ public class PortalGunItem extends Item implements GeoItem {
     }
 
     private void spawnProjectile(ServerLevel level, LivingEntity shooter, ItemStack stack, PortalGunPortalEntity.PortalSide side) {
-        UUID gunId = this.ensureGunId(stack, shooter.getUUID(), shooter.getName().getString());
+        UUID gunId = this.ensureGunId(stack, shooter.getUUID());
         PortalGunProjectileEntity projectile = new PortalGunProjectileEntity(this.projectileType.get(), shooter, level);
         projectile.configure(side, gunId, stack);
-        Vec3 look = shooter.getLookAngle();
+        Vec3 look = this.worldLook(shooter);
         Vec3 start = shooter.getEyePosition();
         double launchSpeed = PortalGunProjectileEntity.MIN_LAUNCH_SPEED + level.getRandom().nextDouble() * PortalGunProjectileEntity.LAUNCH_SPEED_VARIANCE;
         projectile.setProjectileSpeed(launchSpeed);
@@ -324,14 +322,9 @@ public class PortalGunItem extends Item implements GeoItem {
         return Mth.clamp(data == null || !data.copyTag().contains(PORTAL_HEIGHT_TAG) ? 2 : data.copyTag().getInt(PORTAL_HEIGHT_TAG), 2, MAX_PORTAL_HEIGHT);
     }
 
-    public static int getGrabStrength(ItemStack stack) {
-        net.minecraft.world.item.component.CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-        return Mth.clamp(data == null || !data.copyTag().contains(GRAB_STRENGTH_TAG) ? 4 : data.copyTag().getInt(GRAB_STRENGTH_TAG), 1, 4);
-    }
-
-    private PortalGunPortalEntity findCounterpart(ServerLevel level, UUID owner, UUID gunId, String channelName, PortalGunPortalEntity.PortalSide side) {
+    private PortalGunPortalEntity findCounterpart(ServerLevel level, UUID gunId, PortalGunPortalEntity.PortalSide side) {
         PortalGunPortalEntity.PortalSide otherSide = side == PortalGunPortalEntity.PortalSide.BLUE ? PortalGunPortalEntity.PortalSide.ORANGE : PortalGunPortalEntity.PortalSide.BLUE;
-        Optional<UUID> otherId = PortalGunSavedData.getPortalId(level.getServer(), owner, gunId, channelName, otherSide, level.dimension().location());
+        Optional<UUID> otherId = PortalGunSavedData.getPortalId(level.getServer(), gunId, otherSide, level.dimension().location());
         if (otherId.isEmpty()) {
             return null;
         }
@@ -339,8 +332,8 @@ public class PortalGunItem extends Item implements GeoItem {
         return entity instanceof PortalGunPortalEntity portal ? portal : null;
     }
 
-    private PortalGunPortalEntity findPlacedPortal(ServerLevel level, UUID owner, UUID gunId, String channelName, PortalGunPortalEntity.PortalSide side) {
-        Optional<UUID> portalId = PortalGunSavedData.getPortalId(level.getServer(), owner, gunId, channelName, side, level.dimension().location());
+    private PortalGunPortalEntity findPlacedPortal(ServerLevel level, UUID gunId, PortalGunPortalEntity.PortalSide side) {
+        Optional<UUID> portalId = PortalGunSavedData.getPortalId(level.getServer(), gunId, side, level.dimension().location());
         if (portalId.isEmpty()) {
             return null;
         }
@@ -354,11 +347,19 @@ public class PortalGunItem extends Item implements GeoItem {
 
     private BlockHitResult raycast(Level level, Player player) {
         Vec3 start = player.getEyePosition();
-        Vec3 end = start.add(player.getLookAngle().scale(64.0D));
+        Vec3 end = start.add(this.worldLook(player).scale(64.0D));
         return level.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
     }
 
-    private PortalGunPlacement findPlacement(Level level, LivingEntity shooter, UUID ownerId, String channelName, PortalGunPortalEntity.PortalSide side, BlockHitResult hitResult, PortalGunPortalEntity replacingPortal, int requestedWidth, int requestedHeight) {
+    private Vec3 worldLook(LivingEntity entity) {
+        Vec3 look = entity.getLookAngle();
+        return AntarchyGravityApi.isGravityInverted(entity)
+                ? com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil.vecPlayerToWorld(
+                        look, AntarchyGravityApi.getGravityDirection(entity))
+                : look;
+    }
+
+    private PortalGunPlacement findPlacement(Level level, LivingEntity shooter, UUID gunId, PortalGunPortalEntity.PortalSide side, BlockHitResult hitResult, PortalGunPortalEntity replacingPortal, int requestedWidth, int requestedHeight) {
         int maxWidth = Mth.clamp(requestedWidth, 1, 16);
         int maxHeight = Mth.clamp(requestedHeight, 2, 16);
         boolean canResize = AntarchySettings.portalGunCanPortalsResizeWhenCreated();
@@ -367,7 +368,7 @@ public class PortalGunItem extends Item implements GeoItem {
                 if (!canResize && (width != maxWidth || height != maxHeight)) {
                     continue;
                 }
-                PortalGunPlacement placement = this.findPlacementForSize(level, shooter, ownerId, channelName, side, hitResult, replacingPortal, width, height);
+                PortalGunPlacement placement = this.findPlacementForSize(level, shooter, gunId, side, hitResult, replacingPortal, width, height);
                 if (placement != null) {
                     return placement;
                 }
@@ -376,7 +377,7 @@ public class PortalGunItem extends Item implements GeoItem {
         return null;
     }
 
-    private PortalGunPlacement findPlacementForSize(Level level, LivingEntity shooter, UUID ownerId, String channelName, PortalGunPortalEntity.PortalSide side, BlockHitResult hitResult, PortalGunPortalEntity replacingPortal, int width, int height) {
+    private PortalGunPlacement findPlacementForSize(Level level, LivingEntity shooter, UUID gunId, PortalGunPortalEntity.PortalSide side, BlockHitResult hitResult, PortalGunPortalEntity replacingPortal, int width, int height) {
         Direction facing = hitResult.getDirection();
         Direction heightAxis = this.resolveUpAxis(shooter, facing);
         Direction widthAxis = PortalGunPlacement.widthAxis(facing, heightAxis);
@@ -410,7 +411,7 @@ public class PortalGunItem extends Item implements GeoItem {
                         BlockState supportState = level.getBlockState(supportPos);
                         BlockState portalState = level.getBlockState(portalPos);
                         if (!supportState.isFaceSturdy(level, supportPos, facing)
-                                || !this.isPortalSpaceAvailable(level, portalPos, portalState, ownerId, channelName, side, facing)) {
+                                || !this.isPortalSpaceAvailable(level, portalPos, portalState, gunId, side, facing)) {
                             valid = false;
                             break;
                         }
@@ -505,13 +506,13 @@ public class PortalGunItem extends Item implements GeoItem {
         return horizontal;
     }
 
-    private boolean isPortalSpaceAvailable(Level level, BlockPos pos, BlockState state, UUID ownerId, String channelName, PortalGunPortalEntity.PortalSide side, Direction face) {
+    private boolean isPortalSpaceAvailable(Level level, BlockPos pos, BlockState state, UUID gunId, PortalGunPortalEntity.PortalSide side, Direction face) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof PortalGunPortalCellAccess portalCell) {
             PortalGunPortalFaceRecord record = portalCell.portalGun$getFaceRecord(face);
             if (record == null) {
                 if (blockEntity instanceof PortalGunPortalMasterBlockEntity master && master.getPortalId() != null && master.getFacing() == face) {
-                    return ownerId != null && ownerId.equals(master.getOwnerId()) && channelName.equals(master.getChannelName()) && master.getSide() == side;
+                    return gunId != null && gunId.equals(master.getGunId()) && master.getSide() == side;
                 }
                 if (blockEntity instanceof PortalGunPortalBaseBlockEntity base && base.getPortalId() != null) {
                     BlockEntity masterEntity = level.getBlockEntity(base.getMasterPos());
@@ -519,23 +520,21 @@ public class PortalGunItem extends Item implements GeoItem {
                         return false;
                     }
                     return master.getFacing() != face
-                            || (ownerId != null
-                            && ownerId.equals(base.getOwnerId())
-                            && channelName.equals(master.getChannelName())
+                            || (gunId != null
+                            && gunId.equals(master.getGunId())
                             && base.getSide() == side
                             && master.getSide() == side);
                 }
                 return true;
             }
-            return ownerId != null
-                    && ownerId.equals(record.ownerId())
-                    && channelName.equals(record.channelName())
+            return gunId != null
+                    && gunId.equals(record.gunId())
                     && record.side() == side;
         }
         return state.getCollisionShape(level, pos).isEmpty();
     }
 
-    private boolean placePortalBlocks(ServerLevel level, UUID ownerId, UUID gunId, String ownerIdentity, String channelName, PortalGunPortalEntity.PortalSide side, PortalGunPortalEntity portal, PortalGunPlacement placement) {
+    private boolean placePortalBlocks(ServerLevel level, UUID ownerId, UUID gunId, PortalGunPortalEntity.PortalSide side, PortalGunPortalEntity portal, PortalGunPlacement placement) {
         int pairTime = level.getServer().getTickCount();
         for (int i = 0; i < placement.portalSpots().length; i++) {
             BlockPos spot = placement.portalSpots()[i];
@@ -557,9 +556,8 @@ public class PortalGunItem extends Item implements GeoItem {
             if (!(existing instanceof PortalGunPortalCellAccess cell)
                     || !cell.portalGun$putFaceRecord(new PortalGunPortalFaceRecord(
                     ownerId,
-                    ownerIdentity,
                     gunId,
-                    channelName,
+                    this.variant,
                     portal.getUUID(),
                     portal.getLinkedPortalId(),
                     side,
@@ -578,7 +576,7 @@ public class PortalGunItem extends Item implements GeoItem {
             }
             if (masterRole && existing instanceof PortalGunPortalMasterBlockEntity master
                     && (master.getPortalId() == null || master.getPortalId().equals(portal.getUUID()))) {
-                master.configure(ownerId, gunId, ownerIdentity, channelName, portal.getUUID(), side, placement.facing(), placement.upAxis(), placement.basePos(), placement.portalSpots(), placement.compensatedSpots(), pairTime, placement.width(), placement.height());
+                master.configure(ownerId, gunId, this.variant, portal.getUUID(), side, placement.facing(), placement.upAxis(), placement.basePos(), placement.portalSpots(), placement.compensatedSpots(), pairTime, placement.width(), placement.height());
             } else if (!masterRole && existing instanceof PortalGunPortalBaseBlockEntity base
                     && (base.getPortalId() == null || base.getPortalId().equals(portal.getUUID()))) {
                 base.configure(ownerId, portal.getUUID(), side, placement.masterPos());
@@ -656,12 +654,8 @@ public class PortalGunItem extends Item implements GeoItem {
         } else {
             gunId = UUID.randomUUID();
         }
-        String channelName = "Random Channel #" + gunId.hashCode();
         net.minecraft.world.item.component.CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
             tag.putUUID(GUN_ID_TAG, gunId);
-            if (!tag.contains(CHANNEL_NAME_TAG)) {
-                tag.putString(CHANNEL_NAME_TAG, channelName);
-            }
             if (!tag.contains(LAST_SIDE_TAG)) {
                 tag.putString(LAST_SIDE_TAG, PortalGunPortalEntity.PortalSide.BLUE.name());
             }
@@ -669,28 +663,14 @@ public class PortalGunItem extends Item implements GeoItem {
         return gunId;
     }
 
-    private UUID ensureGunId(ItemStack stack, UUID ownerId, String ownerName) {
+    private UUID ensureGunId(ItemStack stack, UUID ownerId) {
         UUID gunId = this.ensureGunId(stack);
         net.minecraft.world.item.component.CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
             if (!tag.contains(OWNER_ID_TAG)) {
                 tag.putString(OWNER_ID_TAG, ownerId.toString());
-                tag.putString(OWNER_NAME_TAG, ownerName);
             }
         });
         return gunId;
-    }
-
-    public static String getChannelName(ItemStack stack) {
-        net.minecraft.world.item.component.CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-        if (customData == null) {
-            return "";
-        }
-        return customData.copyTag().getString(CHANNEL_NAME_TAG);
-    }
-
-    public static String getPortalOwnerName(ItemStack stack) {
-        net.minecraft.world.item.component.CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-        return customData == null ? "" : customData.copyTag().getString(OWNER_NAME_TAG);
     }
 
     public static UUID ensureGunIdentity(ItemStack stack) {
@@ -704,7 +684,7 @@ public class PortalGunItem extends Item implements GeoItem {
         if (stack.isEmpty() || !(stack.getItem() instanceof PortalGunItem item)) {
             return null;
         }
-        return item.ensureGunId(stack, owner.getUUID(), owner.getGameProfile().getName());
+        return item.ensureGunId(stack, owner.getUUID());
     }
 
     public static UUID getPortalOwnerId(ItemStack stack, UUID fallback) {
@@ -713,40 +693,11 @@ public class PortalGunItem extends Item implements GeoItem {
             return fallback;
         }
         String owner = customData.copyTag().getString(OWNER_ID_TAG);
-        if ("Global".equals(owner)) {
-            return GLOBAL_OWNER_ID;
-        }
         try {
             return owner.isEmpty() ? fallback : UUID.fromString(owner);
         } catch (IllegalArgumentException ignored) {
             return fallback;
         }
-    }
-
-    public static String getPortalOwnerIdentity(ItemStack stack, UUID fallback) {
-        net.minecraft.world.item.component.CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
-        if (customData == null) {
-            return String.valueOf(fallback);
-        }
-        String owner = customData.copyTag().getString(OWNER_ID_TAG);
-        return owner.isEmpty() ? String.valueOf(fallback) : owner;
-    }
-
-    public static ItemStack createGlobalVariant(Item item, String channelName) {
-        ItemStack stack = new ItemStack(item);
-        UUID gunId = UUID.nameUUIDFromBytes(("Global\u0000" + channelName).getBytes(StandardCharsets.UTF_8));
-        net.minecraft.world.item.component.CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
-            tag.putUUID(GUN_ID_TAG, gunId);
-            tag.putString(OWNER_ID_TAG, "Global");
-            tag.putString(OWNER_NAME_TAG, "Global");
-            tag.putString(CHANNEL_NAME_TAG, channelName);
-            tag.putInt(PORTAL_WIDTH_TAG, 1);
-            tag.putInt(PORTAL_HEIGHT_TAG, 2);
-            tag.putInt(GRAB_STRENGTH_TAG, 4);
-            tag.putString(LAST_SIDE_TAG, PortalGunPortalEntity.PortalSide.BLUE.name());
-            tag.putBoolean("lastFired", true);
-        });
-        return stack;
     }
 
     private boolean matchesGunId(ItemStack stack, UUID gunId) {
@@ -767,21 +718,16 @@ public class PortalGunItem extends Item implements GeoItem {
         return UseAnim.NONE;
     }
 
+    private Component portalColorName(PortalGunPortalEntity.PortalSide side) {
+        return Component.translatable(this.variant.colorTranslationKey(side))
+                .withStyle(style -> style.withColor(net.minecraft.network.chat.TextColor.fromRgb(this.variant.color(side))));
+    }
+
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.translatable("tooltip.antarchy.portal_gun.primary").withStyle(ChatFormatting.GRAY));
-        tooltipComponents.add(Component.translatable("tooltip.antarchy.portal_gun.secondary").withStyle(ChatFormatting.GRAY));
-        String ownerName = getPortalOwnerName(stack);
-        if (!ownerName.isEmpty()) {
-            tooltipComponents.add(Component.translatable("tooltip.antarchy.portal_gun.owner", ownerName).withStyle(ChatFormatting.GRAY));
-        }
-        String channelName = getChannelName(stack);
-        if (!channelName.isEmpty()) {
-            tooltipComponents.add(Component.translatable("tooltip.antarchy.portal_gun.channel", channelName).withStyle(ChatFormatting.GRAY));
-        }
+        tooltipComponents.add(Component.translatable("tooltip.antarchy.portal_gun.primary", this.portalColorName(PortalGunPortalEntity.PortalSide.BLUE)).withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("tooltip.antarchy.portal_gun.secondary", this.portalColorName(PortalGunPortalEntity.PortalSide.ORANGE)).withStyle(ChatFormatting.GRAY));
         tooltipComponents.add(Component.translatable("tooltip.antarchy.portal_gun.reset").withStyle(ChatFormatting.DARK_GRAY));
-        tooltipComponents.add(Component.translatable("tooltip.antarchy.portal_gun.size", getPortalWidth(stack), getPortalHeight(stack)).withStyle(ChatFormatting.GRAY));
-        tooltipComponents.add(Component.translatable("tooltip.antarchy.portal_gun.grab_strength", getGrabStrength(stack)).withStyle(ChatFormatting.GRAY));
     }
 
     @Override
@@ -809,7 +755,7 @@ public class PortalGunItem extends Item implements GeoItem {
             @Override
             public net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
                 if (this.renderer == null) {
-                    this.renderer = new AnimatedHeldItemRenderer<>(new ResourceBackedGeoItemModel<>(MODEL_LOCATION, TEXTURE_LOCATION, ANIMATION_LOCATION));
+                    this.renderer = new AnimatedHeldItemRenderer<>(new ResourceBackedGeoItemModel<>(MODEL_LOCATION, PortalGunItem.this.variant.modelTexture(), ANIMATION_LOCATION));
                 }
                 return this.renderer;
             }

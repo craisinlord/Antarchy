@@ -27,14 +27,12 @@ public final class DorrieJumpClientHandler {
             return;
         }
 
-        // Space bar → upward movement.
         boolean pressingJump = mc.options.keyJump.isDown();
         if (pressingJump != wasPressingJump) {
             ClientPlayNetworking.send(new DorrieJumpInputPayload(pressingJump));
             wasPressingJump = pressingJump;
         }
 
-        // Left ctrl → charge jump.
         boolean pressingCharge = AntarchyKeyBindings.isMountSpecialPressed();
         if (pressingCharge != wasPressingCharge) {
             ClientPlayNetworking.send(new DorrieChargeJumpPayload(pressingCharge));

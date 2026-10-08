@@ -141,9 +141,9 @@ public class BasiliskEntity extends Monster implements GeoEntity {
         }
 
         return level.getDifficulty() != Difficulty.PEACEFUL
-                && pos.getY() >= 60 && pos.getY() <= 90
+                && pos.getY() >= 60 && pos.getY() <= 100
                 && level.getMaxLocalRawBrightness(pos) <= AntarchySettings.basiliskSpawnMaxLightLevel()
-                && level.getEntitiesOfClass(BasiliskEntity.class, new AABB(pos).inflate(40.0D), Entity::isAlive).isEmpty()
+                && level.getEntitiesOfClass(BasiliskEntity.class, new AABB(pos).inflate(36.0D), Entity::isAlive).isEmpty()
                 && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);
     }
 

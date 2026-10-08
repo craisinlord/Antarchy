@@ -15,8 +15,6 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
 
 public final class GlimmeringLivingLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
-    // High-alpha, luminance-preserving tint drawn straight over the skin (no scale-up) so it
-    // reads as the body itself recolored spirit-blue rather than a separate ghost shell.
     private static final int GLIMMERING_TINT = 0x4266CCFF;
 
     public GlimmeringLivingLayer(RenderLayerParent<T, M> renderer) {

@@ -52,6 +52,19 @@ public record PortalGunWorldPortalShape(
         };
     }
 
+    public Vec3[] getOutline(double normalOffset, int segments, double radiusHorizontal, double radiusVertical) {
+        int count = Math.max(3, segments);
+        Vec3 center = this.center.add(this.normal.scale(normalOffset));
+        Vec3[] outline = new Vec3[count];
+        for (int index = 0; index < count; index++) {
+            double angle = Math.PI * 2.0D * index / count;
+            outline[index] = center
+                    .add(this.right.scale(Math.cos(angle) * radiusHorizontal))
+                    .add(this.up.scale(Math.sin(angle) * radiusVertical));
+        }
+        return outline;
+    }
+
     public PortalLocalCoords localCoords(Vec3 position) {
         Vec3 relative = position.subtract(this.center);
         return new PortalLocalCoords(relative.dot(this.right), relative.dot(this.up), relative.dot(this.normal));
