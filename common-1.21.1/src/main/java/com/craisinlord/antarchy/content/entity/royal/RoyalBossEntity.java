@@ -118,6 +118,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     private static final double BEAM_MUZZLE_CENTER_Y = 11.5D;
     private static final double BEAM_MUZZLE_SIDE_Y = 10.25D;
     private static final double BEAM_MUZZLE_LATERAL = 2.625D;
+    private static final int HEAVY_BLOCK_CHECK_INTERVAL_TICKS = 4;
 
     protected static final double FLYING_MIN_HOVER = 2.5D;
     protected static final double FLYING_PREFERRED_HOVER = 6.0D;
@@ -462,6 +463,36 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                     volume, pitch,
                     this.random.nextLong()));
         }
+    }
+
+    private final java.util.Map<net.minecraft.tags.TagKey<net.minecraft.world.level.material.Fluid>, CachedFluidCheck> cachedFluidChecks = new java.util.HashMap<>(2);
+
+    public boolean shouldRunHeavyBlockChecks() {
+        return (this.tickCount + this.getId()) % HEAVY_BLOCK_CHECK_INTERVAL_TICKS == 0;
+    }
+
+    @Override
+    protected void tryCheckInsideBlocks() {
+        if (this.shouldRunHeavyBlockChecks()) {
+            super.tryCheckInsideBlocks();
+        }
+    }
+
+    @Override
+    public boolean updateFluidHeightAndDoFluidPushing(net.minecraft.tags.TagKey<net.minecraft.world.level.material.Fluid> fluidTag, double motionScale) {
+        CachedFluidCheck cached = this.cachedFluidChecks.get(fluidTag);
+        if (cached == null || this.shouldRunHeavyBlockChecks()) {
+            boolean inFluid = super.updateFluidHeightAndDoFluidPushing(fluidTag, motionScale);
+            this.cachedFluidChecks.put(fluidTag, new CachedFluidCheck(inFluid, this.getFluidHeight(fluidTag)));
+            return inFluid;
+        }
+        if (cached.height() > 0.0D) {
+            this.fluidHeight.put(fluidTag, cached.height());
+        }
+        return cached.inFluid();
+    }
+
+    private record CachedFluidCheck(boolean inFluid, double height) {
     }
 
     @Override

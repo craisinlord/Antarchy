@@ -140,6 +140,7 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassWardExpired);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickBloodglassRecharge);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickTimeDilation);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickAntArrivals);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassPlayerDeath);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassRespawn);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassLogin);
@@ -258,6 +259,10 @@ public final class AntarchyNeoForgeEvents {
 
     static void tickTimeDilation(ServerTickEvent.Post event) {
         TimeDilationManager.tickServer(event.getServer());
+    }
+
+    static void tickAntArrivals(ServerTickEvent.Post event) {
+        com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.tick(event.getServer());
     }
 
     private static int badOmenLevel(Player player) {

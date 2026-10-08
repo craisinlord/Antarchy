@@ -633,6 +633,7 @@ public final class AntarchyNeoForgeClient {
         registerGeoItemExtension(event, AntarchyNeoforgeItems.PORTAL_GUN.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
         registerGeoItemExtension(event, AntarchyNeoforgeItems.PORTAL_GUN_ATLAS.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
         registerGeoItemExtension(event, AntarchyNeoforgeItems.PORTAL_GUN_P_BODY.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
+        registerGeoItemExtension(event, AntarchyNeoforgeItems.PORTAL_GUN_CRAISIN.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
         registerGeoItemExtension(event, AntarchyNeoforgeItems.SQUIDZOOKA.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
         registerGeoItemExtension(event, AntarchyNeoforgeItems.RPO_LAUNCHER.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
         registerGeoItemExtension(event, AntarchyNeoforgeItems.WATER_CANNON.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);

@@ -150,6 +150,24 @@ public class PortalGunItem extends Item implements GeoItem {
         player.serverLevel().playSound(null, player.getX(), player.getY(), player.getZ(), PortalGunPortalEntity.sound("portal_fizzle"), SoundSource.PLAYERS, 0.6F, 1.0F);
     }
 
+    private boolean damageGun(ServerLevel level, Player player, ItemStack stack, boolean offhand) {
+        UUID gunId = getGunId(stack);
+        EquipmentSlot slot = offhand ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
+        boolean[] broke = {false};
+        stack.hurtAndBreak(1, level, player instanceof ServerPlayer serverPlayer ? serverPlayer : null, item -> {
+            broke[0] = true;
+            player.onEquippedItemBroken(item, slot);
+            PortalGunSavedData.clearAllPortals(level, gunId);
+        });
+        return broke[0];
+    }
+
+    public static void clearPortalsOf(ServerLevel level, ItemStack stack) {
+        if (stack.getItem() instanceof PortalGunItem) {
+            PortalGunSavedData.clearAllPortals(level, getGunId(stack));
+        }
+    }
+
     public void fireMobPortal(ServerLevel level, LivingEntity shooter, ItemStack stack, PortalGunPortalEntity.PortalSide side) {
         this.ensureGunId(stack, shooter.getUUID());
         String firePath = side == PortalGunPortalEntity.PortalSide.BLUE ? "portal_gun_fire_blue" : "portal_gun_fire_orange";
@@ -165,7 +183,9 @@ public class PortalGunItem extends Item implements GeoItem {
         }
         this.triggerFireAnimation(level, player, stack);
         this.ensureGunId(stack, player.getUUID());
-        stack.hurtAndBreak(1, player, offhand ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND);
+        if (this.damageGun(level, player, stack, offhand)) {
+            return true;
+        }
         player.awardStat(Stats.ITEM_USED.get(this));
         player.getCooldowns().addCooldown(this, 6);
         String firePath = side == PortalGunPortalEntity.PortalSide.BLUE ? "portal_gun_fire_blue" : "portal_gun_fire_orange";
@@ -211,7 +231,7 @@ public class PortalGunItem extends Item implements GeoItem {
             return;
         }
         level.addFreshEntity(portal);
-        PortalGunSavedData.setPortal(level, gunId, side, portal.getUUID());
+        PortalGunSavedData.setPortal(level, gunId, portalOwnerId, side, portal.getUUID());
         PortalGunPortalEntity other = this.findCounterpart(level, gunId, side);
         if (other != null) {
             portal.linkTo(other);
@@ -267,7 +287,9 @@ public class PortalGunItem extends Item implements GeoItem {
         this.setMoonSide(stack, side);
         this.setLastSide(stack, side);
         this.triggerFireAnimation(level, player, stack);
-        stack.hurtAndBreak(1, player, offhand ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND);
+        if (this.damageGun(level, player, stack, offhand)) {
+            return true;
+        }
         player.awardStat(Stats.ITEM_USED.get(this));
         player.getCooldowns().addCooldown(this, 6);
         level.playSound(null, player.getX(), player.getY(), player.getZ(), PortalGunPortalEntity.sound(side == PortalGunPortalEntity.PortalSide.BLUE ? "portal_gun_fire_blue" : "portal_gun_fire_orange"), SoundSource.PLAYERS, 0.65F, side == PortalGunPortalEntity.PortalSide.BLUE ? 1.15F : 0.88F);

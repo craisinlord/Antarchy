@@ -13,5 +13,6 @@ public final class PortalGunServerEvents {
     @SubscribeEvent
     public static void onServerStopping(ServerStoppingEvent event) {
         com.craisinlord.antarchy.content.portalgun.PortalGunResetManager.clear(event.getServer());
+        com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.clear();
     }
 }

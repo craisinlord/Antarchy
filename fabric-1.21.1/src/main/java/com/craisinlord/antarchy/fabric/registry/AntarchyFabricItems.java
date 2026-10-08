@@ -1584,6 +1584,16 @@ public final class AntarchyFabricItems {
                     AntarchyFabricBlocks.PORTAL_GUN_PORTAL_BASE,
                     com.craisinlord.antarchy.content.portalgun.PortalGunVariant.P_BODY
             ));
+    public static final DeferredItem<PortalGunItem> PORTAL_GUN_CRAISIN = ITEMS.register("portal_gun_craisin",
+            () -> new PortalGunItem(
+                    new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
+                    AntarchyFabricEntities.PORTAL_GUN_PORTAL,
+                    AntarchyFabricEntities.PORTAL_GUN_BLACK_HOLE,
+                    AntarchyFabricEntities.PORTAL_GUN_PROJECTILE,
+                    AntarchyFabricBlocks.PORTAL_GUN_PORTAL_MASTER,
+                    AntarchyFabricBlocks.PORTAL_GUN_PORTAL_BASE,
+                    com.craisinlord.antarchy.content.portalgun.PortalGunVariant.CRAISIN
+            ));
 
     public static final DeferredItem<EyeOfTheStormItem> EYE_OF_THE_STORM = ITEMS.register("eye_of_the_storm",
             () -> new EyeOfTheStormItem(new Item.Properties().stacksTo(1).durability(384).rarity(Rarity.EPIC)));

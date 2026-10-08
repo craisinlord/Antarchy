@@ -77,6 +77,7 @@ public final class AntarchyFabricEvents {
     public static void register() {
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> PortalGunProjectileEntity.releaseAllProjectileTickets());
         ServerLifecycleEvents.SERVER_STOPPING.register(com.craisinlord.antarchy.content.portalgun.PortalGunResetManager::clear);
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.clear());
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             ChronosphereManager.refresh(handler.player);
             TimeDilationManager.resyncPersistentEffects(handler.player);
@@ -102,6 +103,7 @@ public final class AntarchyFabricEvents {
             QueenLocateCommand.register(dispatcher);
             TimeDilationCommand.register(dispatcher);
             RoyalCommand.register(dispatcher);
+            com.craisinlord.antarchy.content.command.PortalGunCommand.register(dispatcher);
         });
 
         DispenserBlock.registerBehavior(AntarchyFabricItems.SQUIDZOOKA.get(), new SquidzookaDispenseBehavior());
@@ -221,6 +223,7 @@ public final class AntarchyFabricEvents {
                 }
             }
             TimeDilationManager.tickServer(server);
+            com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.tick(server);
             invertedPlayers.retainAll(activeThisTick);
         });
     }

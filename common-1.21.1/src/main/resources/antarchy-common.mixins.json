@@ -10,6 +10,8 @@
                    "PortalGunEntityInWallMixin",
                    "PortalGunPlayerMovePacketMixin",
                    "PortalGunProjectileHitMixin",
+                   "PortalGunItemEntityRemovalMixin",
+                   "RoyalBossMoveScanMixin",
                    "ServerGamePacketListenerTeleportAccessor",
                    "PortalGunZombieMixin",
                    "FallingBlockEntityAccessor",

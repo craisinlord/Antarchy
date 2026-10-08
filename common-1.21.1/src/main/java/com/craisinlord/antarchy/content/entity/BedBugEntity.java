@@ -129,6 +129,11 @@ public class BedBugEntity extends Animal implements GeoEntity {
     }
 
     @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return true;
+    }
+
+    @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new TemptGoal(this, 1.0D, Ingredient.of(Items.ROTTEN_FLESH), false));

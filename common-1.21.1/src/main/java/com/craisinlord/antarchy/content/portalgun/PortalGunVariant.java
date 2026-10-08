@@ -6,7 +6,8 @@ import net.minecraft.resources.ResourceLocation;
 public enum PortalGunVariant {
     DEFAULT("", 0x40A0FF, 0xFF961E, "blue", "orange"),
     ATLAS("atlas", 0x53A6D0, 0x6A2BE0, "blue", "purple"),
-    P_BODY("p_body", 0xF9D660, 0xC0282A, "yellow", "red");
+    P_BODY("p_body", 0xF9D660, 0xC0282A, "yellow", "red"),
+    CRAISIN("craisin", 0x6A2BE0, 0xF9D660, "purple", "gold");
 
     private final String key;
     private final int blueColor;

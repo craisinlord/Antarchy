@@ -6,14 +6,14 @@
       "item": "antarchy:portal_gun"
     },
     {
-      "item": "minecraft:light_blue_dye"
+      "item": "minecraft:purple_dye"
     },
     {
-      "item": "minecraft:purple_dye"
+      "item": "minecraft:gold_ingot"
     }
   ],
   "result": {
-    "id": "antarchy:portal_gun_atlas",
+    "id": "antarchy:portal_gun_craisin",
     "count": 1
   }
 }

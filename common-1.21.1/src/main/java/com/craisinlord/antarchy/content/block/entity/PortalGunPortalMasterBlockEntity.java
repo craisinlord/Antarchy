@@ -275,7 +275,7 @@ public class PortalGunPortalMasterBlockEntity extends BlockEntity implements Por
         Vec3 center = placement.center();
         restored.moveTo(center.x, center.y, center.z, placement.yaw(), 0.0F);
         level.addFreshEntity(restored);
-        PortalGunSavedData.setPortal(level, this.gunId, this.side, restored.getUUID());
+        PortalGunSavedData.setPortal(level, this.gunId, this.ownerId, this.side, restored.getUUID());
         return restored;
     }
 
@@ -300,7 +300,7 @@ public class PortalGunPortalMasterBlockEntity extends BlockEntity implements Por
         Vec3 center = placement.center();
         restored.moveTo(center.x, center.y, center.z, placement.yaw(), 0.0F);
         level.addFreshEntity(restored);
-        PortalGunSavedData.setPortal(level, record.gunId(), record.side(), restored.getUUID());
+        PortalGunSavedData.setPortal(level, record.gunId(), record.ownerId(), record.side(), restored.getUUID());
         PortalGunPortalEntity linked = PortalGunSavedData.findLoadedPortal(level, record.gunId(), record.side() == PortalGunPortalEntity.PortalSide.BLUE ? PortalGunPortalEntity.PortalSide.ORANGE : PortalGunPortalEntity.PortalSide.BLUE);
         if (linked != null && linked != restored && !linked.isRemoved()) {
             restored.linkTo(linked);

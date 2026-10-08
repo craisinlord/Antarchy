@@ -29,6 +29,7 @@ public final class AntarchyNeoforgeEvents {
         QueenLocateCommand.register(event.getDispatcher());
         TimeDilationCommand.register(event.getDispatcher());
         RoyalCommand.register(event.getDispatcher());
+        com.craisinlord.antarchy.content.command.PortalGunCommand.register(event.getDispatcher());
     }
 
     @SubscribeEvent

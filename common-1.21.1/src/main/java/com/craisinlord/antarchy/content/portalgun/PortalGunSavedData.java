@@ -22,6 +22,7 @@ public final class PortalGunSavedData extends SavedData {
     private static final String GUN_KEY = "Gun";
     private static final String BLUE_KEY = "Blue";
     private static final String ORANGE_KEY = "Orange";
+    private static final String OWNER_KEY = "Owner";
     private final Map<PairKey, PairRecord> pairs = new HashMap<>();
 
     public static PortalGunSavedData create() {
@@ -38,7 +39,8 @@ public final class PortalGunSavedData extends SavedData {
             }
             UUID blue = entryTag.hasUUID(BLUE_KEY) ? entryTag.getUUID(BLUE_KEY) : null;
             UUID orange = entryTag.hasUUID(ORANGE_KEY) ? entryTag.getUUID(ORANGE_KEY) : null;
-            data.pairs.put(new PairKey(dimension, entryTag.getUUID(GUN_KEY)), new PairRecord(blue, orange));
+            UUID owner = entryTag.hasUUID(OWNER_KEY) ? entryTag.getUUID(OWNER_KEY) : null;
+            data.pairs.put(new PairKey(dimension, entryTag.getUUID(GUN_KEY)), new PairRecord(blue, orange, owner));
         }
         return data;
     }
@@ -55,6 +57,9 @@ public final class PortalGunSavedData extends SavedData {
             }
             if (entry.getValue().orangePortalId() != null) {
                 entryTag.putUUID(ORANGE_KEY, entry.getValue().orangePortalId());
+            }
+            if (entry.getValue().ownerId() != null) {
+                entryTag.putUUID(OWNER_KEY, entry.getValue().ownerId());
             }
             entries.add(entryTag);
         }
@@ -84,16 +89,17 @@ public final class PortalGunSavedData extends SavedData {
         return portalId != null && getPortalId(level.getServer(), gunId, side, level.dimension().location()).map(portalId::equals).orElse(false);
     }
 
-    public static void setPortal(ServerLevel level, UUID gunId, PortalGunPortalEntity.PortalSide side, UUID portalId) {
+    public static void setPortal(ServerLevel level, UUID gunId, UUID ownerId, PortalGunPortalEntity.PortalSide side, UUID portalId) {
         if (gunId == null) {
             return;
         }
         PortalGunSavedData data = get(level.getServer());
         PairKey key = new PairKey(level.dimension().location(), gunId);
-        PairRecord current = data.pairs.getOrDefault(key, new PairRecord(null, null));
+        PairRecord current = data.pairs.getOrDefault(key, new PairRecord(null, null, null));
+        UUID owner = ownerId != null ? ownerId : current.ownerId();
         data.put(key, side == PortalGunPortalEntity.PortalSide.BLUE
-                ? new PairRecord(portalId, current.orangePortalId())
-                : new PairRecord(current.bluePortalId(), portalId));
+                ? new PairRecord(portalId, current.orangePortalId(), owner)
+                : new PairRecord(current.bluePortalId(), portalId, owner));
     }
 
     public static void clearPortal(MinecraftServer server, UUID gunId, PortalGunPortalEntity.PortalSide side, UUID portalId, ResourceLocation dimension) {
@@ -108,7 +114,7 @@ public final class PortalGunSavedData extends SavedData {
         }
         UUID blue = side == PortalGunPortalEntity.PortalSide.BLUE && portalId.equals(current.bluePortalId()) ? null : current.bluePortalId();
         UUID orange = side == PortalGunPortalEntity.PortalSide.ORANGE && portalId.equals(current.orangePortalId()) ? null : current.orangePortalId();
-        data.put(key, new PairRecord(blue, orange));
+        data.put(key, new PairRecord(blue, orange, current.ownerId()));
     }
 
     public static void clearAllPortals(ServerLevel level, UUID gunId) {
@@ -149,12 +155,39 @@ public final class PortalGunSavedData extends SavedData {
             }
             portalIds.add(removed);
             data.put(entry.getKey(), side == PortalGunPortalEntity.PortalSide.BLUE
-                    ? new PairRecord(null, pair.orangePortalId())
-                    : new PairRecord(pair.bluePortalId(), null));
+                    ? new PairRecord(null, pair.orangePortalId(), pair.ownerId())
+                    : new PairRecord(pair.bluePortalId(), null, pair.ownerId()));
         }
         for (UUID portalId : portalIds) {
             discardIfLoaded(server, portalId);
         }
+    }
+
+    public static int clearOwnedBy(MinecraftServer server, Set<UUID> ownerIds) {
+        return clearMatching(server, record -> record.ownerId() != null && ownerIds.contains(record.ownerId()));
+    }
+
+    public static int clearEverything(MinecraftServer server) {
+        return clearMatching(server, record -> true);
+    }
+
+    private static int clearMatching(MinecraftServer server, java.util.function.Predicate<PairRecord> filter) {
+        PortalGunSavedData data = get(server);
+        Set<UUID> portalIds = new HashSet<>();
+        boolean removed = data.pairs.values().removeIf(record -> {
+            if (!filter.test(record)) {
+                return false;
+            }
+            addPortalIds(portalIds, record);
+            return true;
+        });
+        if (removed) {
+            data.setDirty();
+        }
+        for (UUID portalId : portalIds) {
+            discardIfLoaded(server, portalId);
+        }
+        return portalIds.size();
     }
 
     public static PortalGunPortalEntity findLoadedPortal(ServerLevel level, UUID gunId, PortalGunPortalEntity.PortalSide side) {
@@ -196,6 +229,6 @@ public final class PortalGunSavedData extends SavedData {
     private record PairKey(ResourceLocation dimension, UUID gunId) {
     }
 
-    private record PairRecord(UUID bluePortalId, UUID orangePortalId) {
+    private record PairRecord(UUID bluePortalId, UUID orangePortalId, UUID ownerId) {
     }
 }

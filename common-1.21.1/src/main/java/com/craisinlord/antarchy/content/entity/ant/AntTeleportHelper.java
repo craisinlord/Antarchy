@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -114,23 +115,13 @@ public final class AntTeleportHelper {
             return InteractionResult.PASS;
         }
 
-        Vec3 destinationPos = getDestinationPosition(player, destination);
-        if (destinationPos == null) {
-            return failArrival(player);
-        }
-        teleportPlayerWithCompanions(player, destination, destinationPos);
-        player.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        arriveWithCompanions(player, destination);
         return InteractionResult.CONSUME;
     }
 
     public static InteractionResult teleportPlayerToReturnDestination(ServerPlayer player) {
         ServerLevel destination = resolveReturnDestinationLevel(player);
-        Vec3 destinationPos = getDestinationPosition(player, destination);
-        if (destinationPos == null) {
-            return failArrival(player);
-        }
-        teleportPlayerWithCompanions(player, destination, destinationPos);
-        player.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        arriveWithCompanions(player, destination);
         return InteractionResult.CONSUME;
     }
 
@@ -167,12 +158,7 @@ public final class AntTeleportHelper {
             return InteractionResult.PASS;
         }
 
-        Vec3 destinationPos = getDestinationPosition(player, destination);
-        if (destinationPos == null) {
-            return failArrival(player);
-        }
-        teleportPlayerWithCompanions(player, destination, destinationPos);
-        player.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        arriveWithCompanions(player, destination);
         return InteractionResult.CONSUME;
     }
 
@@ -246,6 +232,42 @@ public final class AntTeleportHelper {
         return InteractionResult.CONSUME;
     }
 
+    private static void arriveWithCompanions(ServerPlayer player, ServerLevel destination) {
+        prepareArrival(player, destination, destinationPos -> {
+            if (destinationPos == null) {
+                failArrival(player);
+                return;
+            }
+            teleportPlayerWithCompanions(player, destination, destinationPos);
+            player.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
+        });
+    }
+
+    public static void prepareArrival(ServerPlayer player, ServerLevel destination, Consumer<Vec3> onArrival) {
+        BlockPos preferredPos = preferredArrivalPos(player, destination);
+        AntArrivalScheduler.request(player, destination, preferredPos, ARRIVAL_SEARCH_RADIUS, () -> {
+            int[] yRange = getDimensionYRange(destination);
+            if (yRange == null) {
+                onArrival.accept(findSafeArrivalPositionAnywhere(player, destination, preferredPos));
+                return;
+            }
+            Vec3 safePos = findSafeArrivalPositionInYRange(
+                    player, destination, preferredPos, yRange[0], yRange[1], ARRIVAL_SEARCH_RADIUS, ARRIVAL_VERTICAL_SEARCH);
+            if (safePos != null) {
+                onArrival.accept(safePos);
+                return;
+            }
+            AntArrivalScheduler.request(player, destination, preferredPos, EXPANDED_ARRIVAL_SEARCH_RADIUS, () -> {
+                Vec3 expandedSafePos = findSafeArrivalPositionInYRange(
+                        player, destination, preferredPos, yRange[0], yRange[1],
+                        EXPANDED_ARRIVAL_SEARCH_RADIUS, EXPANDED_ARRIVAL_VERTICAL_SEARCH);
+                onArrival.accept(expandedSafePos != null
+                        ? expandedSafePos
+                        : createEmergencyArrivalPlatform(destination, preferredPos, yRange[0], yRange[1]));
+            });
+        });
+    }
+
     public static ServerLevel resolveReturnDestinationLevel(ServerPlayer player) {
         ResourceKey<Level> respawnDimension = player.getRespawnDimension();
         ServerLevel destination = player.server.getLevel(respawnDimension);
@@ -258,16 +280,15 @@ public final class AntTeleportHelper {
 
     @Nullable
     public static Vec3 getDestinationPosition(ServerPlayer player, ServerLevel destination) {
-        BlockPos respawnPos = player.getRespawnPosition();
-        BlockPos preferredPos;
-        if (respawnPos != null && destination.dimension() == player.getRespawnDimension()) {
-            preferredPos = respawnPos;
-        } else {
-            preferredPos = destination.dimension() == Level.END ? ServerLevel.END_SPAWN_POINT : destination.getSharedSpawnPos();
-        }
+        return findSafeArrivalPosition(player, destination, preferredArrivalPos(player, destination));
+    }
 
-        Vec3 safeArrivalPos = findSafeArrivalPosition(player, destination, preferredPos);
-        return safeArrivalPos;
+    private static BlockPos preferredArrivalPos(ServerPlayer player, ServerLevel destination) {
+        BlockPos respawnPos = player.getRespawnPosition();
+        if (respawnPos != null && destination.dimension() == player.getRespawnDimension()) {
+            return respawnPos;
+        }
+        return destination.dimension() == Level.END ? ServerLevel.END_SPAWN_POINT : destination.getSharedSpawnPos();
     }
 
     @Nullable
@@ -290,6 +311,11 @@ public final class AntTeleportHelper {
             return expandedSafePos != null ? expandedSafePos : createEmergencyArrivalPlatform(destination, preferredPos, yRange[0], yRange[1]);
         }
 
+        return findSafeArrivalPositionAnywhere(player, destination, preferredPos);
+    }
+
+    @Nullable
+    private static Vec3 findSafeArrivalPositionAnywhere(ServerPlayer player, ServerLevel destination, BlockPos preferredPos) {
         Set<BlockPos> candidates = new LinkedHashSet<>();
         BlockPos adjustedPreferredPos = player.adjustSpawnLocation(destination, preferredPos);
         addArrivalCandidate(candidates, preferredPos);
