@@ -620,14 +620,6 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
         return this.teleportCooldowns.containsKey(entity.getUUID()) || entity.getPortalCooldown() > 0;
     }
 
-    private static Vec3 clampPortalMotion(Vec3 motion) {
-        return new Vec3(clampPortalMotionComponent(motion.x), clampPortalMotionComponent(motion.y), clampPortalMotionComponent(motion.z));
-    }
-
-    private static double clampPortalMotionComponent(double motion) {
-        return Math.abs(motion) > 0.99D ? motion / (Math.abs(motion) + 0.001D) : motion;
-    }
-
     private void teleportEntity(Entity entity, PortalGunPortalEntity destination, Vec3 currentProbe, Vec3 entryMotion, double normalOffset) {
         List<EntityTeleportState> group = new java.util.ArrayList<>();
         collectTeleportGroup(entity, null, group);
@@ -650,7 +642,6 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
             Vec3 memberMotion = member == entity
                     ? transformedMotion
                     : PortalGunTransformUtil.transformVector(this, destination, state.motion());
-            memberMotion = clampPortalMotion(memberMotion);
             float yaw = PortalGunTransformUtil.yawFromLook(memberLook);
             float pitch = PortalGunTransformUtil.pitchFromLook(memberLook);
             if (member instanceof ServerPlayer player && destination.level() instanceof ServerLevel destinationLevel) {
