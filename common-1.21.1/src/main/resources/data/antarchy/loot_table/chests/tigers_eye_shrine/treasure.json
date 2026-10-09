@@ -157,6 +157,11 @@
         },
         {
           "type": "minecraft:item",
+          "name": "antarchy:music_disc_grotesque",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
           "name": "antos:floppy_disk",
           "weight": 4,
           "functions": [

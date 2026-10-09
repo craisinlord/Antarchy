@@ -1,0 +1,8 @@
+{
+  "sound_event": "antarchy:music_disc_grotesque",
+  "description": {
+    "translate": "jukebox_song.antarchy.grotesque"
+  },
+  "length_in_seconds": 206.86,
+  "comparator_output": 13
+}

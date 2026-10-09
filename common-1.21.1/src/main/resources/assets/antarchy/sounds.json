@@ -1081,6 +1081,14 @@
       }
     ]
   },
+  "music_disc_grotesque": {
+    "sounds": [
+      {
+        "name": "antarchy:records/grotesque",
+        "stream": true
+      }
+    ]
+  },
   "lucid_lullaby": {
     "sounds": [
       {
@@ -1113,6 +1121,14 @@
       }
     ]
   },
+  "inverted_inferno": {
+    "sounds": [
+      {
+        "name": "antarchy:music/game/thoraxis/inverted_inferno",
+        "stream": true
+      }
+    ]
+  },
   "music.game.thoraxis": {
     "sounds": [
       {
@@ -1132,6 +1148,11 @@
       },
       {
         "name": "antarchy:inversion_layer",
+        "type": "event",
+        "stream": true
+      },
+      {
+        "name": "antarchy:inverted_inferno",
         "type": "event",
         "stream": true
       }
