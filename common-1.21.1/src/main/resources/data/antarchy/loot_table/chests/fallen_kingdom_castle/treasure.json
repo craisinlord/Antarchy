@@ -171,6 +171,17 @@
         }
       ],
       "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        { "type": "minecraft:item", "name": "antarchy:portal_gun_atlas" },
+        { "type": "minecraft:item", "name": "antarchy:portal_gun_p_body" },
+        { "type": "minecraft:item", "name": "antarchy:portal_gun_craisin" }
+      ],
+      "conditions": [
+        { "condition": "minecraft:random_chance", "chance": 0.02 }
+      ]
     }
   ],
   "random_sequence": "antarchy:chests/fallen_kingdom/treasure"

@@ -467,6 +467,17 @@
           ]
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        { "type": "minecraft:item", "name": "antarchy:portal_gun_atlas" },
+        { "type": "minecraft:item", "name": "antarchy:portal_gun_p_body" },
+        { "type": "minecraft:item", "name": "antarchy:portal_gun_craisin" }
+      ],
+      "conditions": [
+        { "condition": "minecraft:random_chance", "chance": 0.03 }
+      ]
     }
   ],
   "random_sequence": "antarchy:chests/magical_castle/generic"
