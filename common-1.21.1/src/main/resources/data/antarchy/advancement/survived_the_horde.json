@@ -1,0 +1,14 @@
+{
+  "parent": "antarchy:hive_awakened",
+  "criteria": { "completed": { "conditions": { "phase": "completed" }, "trigger": "antarchy:horde_phase_changed" } },
+  "display": {
+    "announce_to_chat": true,
+    "description": { "translate": "advancements.antarchy.survived_the_horde.description" },
+    "frame": "challenge",
+    "icon": { "count": 1, "id": "antarchy:hercules_horn" },
+    "show_toast": true,
+    "title": { "translate": "advancements.antarchy.survived_the_horde.title" }
+  },
+  "requirements": [["completed"]],
+  "sends_telemetry_event": true
+}

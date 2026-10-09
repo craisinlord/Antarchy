@@ -1,0 +1,19 @@
+{
+  "parent": "antarchy:visit_thoraxis",
+  "criteria": {
+    "crossed_downward": {
+      "conditions": { "direction": "down" },
+      "trigger": "antarchy:crossed_gravity_throat"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": { "translate": "advancements.antarchy.through_the_throat.description" },
+    "frame": "goal",
+    "icon": { "count": 1, "id": "antarchy:dream_sand" },
+    "show_toast": true,
+    "title": { "translate": "advancements.antarchy.through_the_throat.title" }
+  },
+  "requirements": [["crossed_downward"]],
+  "sends_telemetry_event": true
+}

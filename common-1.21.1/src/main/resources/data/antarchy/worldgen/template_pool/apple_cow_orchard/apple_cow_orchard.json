@@ -1,0 +1,15 @@
+{
+  "name": "antarchy:apple_cow_orchard/apple_cow_orchard",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "antarchy:apple_cow_orchard/apple_cow_orchard",
+        "processors": "antarchy:generic_processor",
+        "projection": "rigid",
+        "element_type": "integrated_api:integrated_api_single_pool_element"
+      }
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.entity.JerryEntity;
 import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakeSync;
 import com.craisinlord.antarchy.content.network.HordeIntensitySync;
@@ -340,6 +341,11 @@ public final class CavarynHordeManager {
                 data.setDirty();
             }
             if (encounter.phase == Phase.HERCULES && herculesCleared(level, encounter, gameTime)) {
+                if (herculesDefeated(level, encounter)) {
+                    for (ServerPlayer player : targetsFor(level, encounter)) {
+                        AntarchyAdvancementTriggers.hordePhaseChanged(player, "completed");
+                    }
+                }
                 encounter.phase = Phase.RECOVERY;
                 encounter.recoveryEndsAt = gameTime + RECOVERY_TICKS;
                 data.setDirty();
@@ -377,6 +383,19 @@ public final class CavarynHordeManager {
     private static boolean herculesCleared(ServerLevel level, Encounter encounter, long gameTime) {
         if (encounter.herculesIds.isEmpty() || gameTime >= encounter.herculesTimeoutAt) {
             return true;
+        }
+        for (UUID uuid : encounter.herculesIds) {
+            Entity entity = level.getEntity(uuid);
+            if (entity instanceof LivingEntity living && living.isAlive() && !living.isRemoved()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean herculesDefeated(ServerLevel level, Encounter encounter) {
+        if (encounter.herculesIds.isEmpty()) {
+            return false;
         }
         for (UUID uuid : encounter.herculesIds) {
             Entity entity = level.getEntity(uuid);
@@ -429,6 +448,9 @@ public final class CavarynHordeManager {
         }
         data.encounters.add(encounter);
         data.setDirty();
+        for (ServerPlayer player : targetsFor(level, encounter)) {
+            AntarchyAdvancementTriggers.hordePhaseChanged(player, "awakening");
+        }
     }
 
     private static List<TargetedSpawnChoice> buildTargetedSpawnList(ServerLevel level, ResourceLocation horde, List<ServerPlayer> targets, int players, boolean highAttention) {

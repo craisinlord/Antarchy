@@ -35,6 +35,14 @@
     {
       "structure": "antarchy:toreterror_arena",
       "weight": 6
+    },
+    {
+      "structure": "antarchy:greenhouse",
+      "weight": 4
+    },
+    {
+      "structure": "antarchy:magical_castle",
+      "weight": 4
     }
   ],
   "placement": {

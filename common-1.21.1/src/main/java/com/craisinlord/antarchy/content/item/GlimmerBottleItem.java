@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerCompanionSavedData;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity;
@@ -99,6 +100,7 @@ public class GlimmerBottleItem extends Item {
 
         if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
             AntarchyAdvancements.award(serverPlayer, variant.tameAdvancementId());
+            AntarchyAdvancementTriggers.tamedGlimmer(serverPlayer, variant.name().toLowerCase(java.util.Locale.ROOT));
         }
 
         ItemStack result = ItemUtils.createFilledResult(stack, player, new ItemStack(Items.GLASS_BOTTLE));

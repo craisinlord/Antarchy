@@ -1,0 +1,20 @@
+{
+  "parent": "antarchy:visit_elythia",
+  "criteria": {
+    "apple_of_my_eye": { "conditions": { "variant": "apple_cow" }, "trigger": "antarchy:tamed_glimmer" },
+    "deerly_beloved": { "conditions": { "variant": "ouranwood_deer" }, "trigger": "antarchy:tamed_glimmer" },
+    "elkcellent_choice": { "conditions": { "variant": "elka" }, "trigger": "antarchy:tamed_glimmer" },
+    "hoppy_together": { "conditions": { "variant": "frog" }, "trigger": "antarchy:tamed_glimmer" },
+    "spirant_animal": { "conditions": { "variant": "ant" }, "trigger": "antarchy:tamed_glimmer" }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": { "translate": "advancements.antarchy.glimmer_keeper.description" },
+    "frame": "challenge",
+    "icon": { "count": 1, "id": "antarchy:spirit_apple" },
+    "show_toast": true,
+    "title": { "translate": "advancements.antarchy.glimmer_keeper.title" }
+  },
+  "requirements": [["apple_of_my_eye"], ["deerly_beloved"], ["elkcellent_choice"], ["hoppy_together"], ["spirant_animal"]],
+  "sends_telemetry_event": true
+}

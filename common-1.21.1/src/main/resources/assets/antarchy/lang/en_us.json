@@ -1652,5 +1652,15 @@
     ,"subtitles.antarchy.hoverboard_dismount": "Hoverboard stops"
     ,"subtitles.antarchy.hoverboard_idle": "Hoverboard hums"
 ,
+    "advancements.antarchy.through_the_throat.title": "Mind the Gap",
+    "advancements.antarchy.through_the_throat.description": "Fall through a gravity throat into the Underside.",
+    "advancements.antarchy.underside_castle.title": "Castle Upside Down",
+    "advancements.antarchy.underside_castle.description": "Find the castle hanging in the Underside.",
+    "advancements.antarchy.hive_awakened.title": "Rude Awakening",
+    "advancements.antarchy.hive_awakened.description": "Wake a Cavaryn horde.",
+    "advancements.antarchy.survived_the_horde.title": "The Hive Remembers",
+    "advancements.antarchy.survived_the_horde.description": "Survive a Cavaryn horde to its final wave and break it.",
+    "advancements.antarchy.glimmer_keeper.title": "Glimmer Keeper",
+    "advancements.antarchy.glimmer_keeper.description": "Tame every kind of Glimmer.",
     "entity.antarchy.portal_gun_portal": "Portal Gun Portal"
 }

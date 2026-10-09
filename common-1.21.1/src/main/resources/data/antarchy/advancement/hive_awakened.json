@@ -1,0 +1,14 @@
+{
+  "parent": "antarchy:anger_the_hive_mind",
+  "criteria": { "awakening": { "conditions": { "phase": "awakening" }, "trigger": "antarchy:horde_phase_changed" } },
+  "display": {
+    "announce_to_chat": true,
+    "description": { "translate": "advancements.antarchy.hive_awakened.description" },
+    "frame": "task",
+    "icon": { "count": 1, "id": "antarchy:tigers_eye_block" },
+    "show_toast": true,
+    "title": { "translate": "advancements.antarchy.hive_awakened.title" }
+  },
+  "requirements": [["awakening"]],
+  "sends_telemetry_event": true
+}

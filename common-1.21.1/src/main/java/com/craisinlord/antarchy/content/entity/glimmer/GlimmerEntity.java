@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.entity.glimmer;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
 import com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil;
 import com.craisinlord.antarchy.Antarchy;
@@ -435,6 +436,7 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
 
         if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
             AntarchyAdvancements.award(serverPlayer, this.getVariant().tameAdvancementId());
+            AntarchyAdvancementTriggers.tamedGlimmer(serverPlayer, this.getVariant().name().toLowerCase(java.util.Locale.ROOT));
         }
 
         return InteractionResult.SUCCESS;

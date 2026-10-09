@@ -3,6 +3,7 @@ import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntities;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyGameRules;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
 import com.craisinlord.antarchy.content.entity.trades.ComputerScientistTradeManager;
 import com.craisinlord.antarchy.content.item.BloodCrystalShardItem;
@@ -158,6 +159,7 @@ public final class AntarchyFabric implements ModInitializer {
         registerWorldgenFeatures();
         BloodglassManager.register();
         TigerEyeFabricManager.register();
+        AntarchyAdvancementTriggers.register();
         Antarchy.init();
         BloodCrystalShardItem.SYNC_BLOODGLASS = BloodglassManager::syncBloodglass;
         registerTradeReloadListener();

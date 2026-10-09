@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.worldgen.thoraxis;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.block.DreamSandBlock;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
@@ -288,6 +289,7 @@ public final class ThoraxisUndersideManager {
             tracking.lastFlipTick.put(player.getUUID(), now);
             if (crossing.toUnderside) {
                 refreshInvertedEffect(player);
+                AntarchyAdvancementTriggers.crossedGravityThroat(player, "down");
             } else {
                 player.removeEffect(AntarchyObjects.INVERTED_EFFECT.get());
                 tracking.lastUndersideExitTick.put(player.getUUID(), now);

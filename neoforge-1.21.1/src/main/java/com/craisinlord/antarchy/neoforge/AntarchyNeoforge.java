@@ -6,6 +6,7 @@ import com.craisinlord.antarchy.compat.infinity.InfinityCompatVersion;
 import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.item.BloodCrystalKatanaItem;
 import com.craisinlord.antarchy.content.item.ScorpionWhipTetherSync;
 import com.craisinlord.antarchy.content.network.BloodCrystalKatanaTrailPayload;
@@ -17,7 +18,9 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.registries.RegisterEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraft.core.registries.Registries;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,6 +32,7 @@ public class AntarchyNeoforge {
 
     public AntarchyNeoforge(IEventBus modEventBus, ModContainer modContainer) {
         modEventBusTempHolder = modEventBus;
+        modEventBus.addListener(AntarchyNeoforge::registerAdvancementTriggers);
         bootstrapGameRules();
         AntarchyConfigModuleNeoforge.init(modContainer);
         AntarchySoundEvents.bind(
@@ -294,6 +298,13 @@ public class AntarchyNeoforge {
         com.craisinlord.antarchy.content.network.AntarchyGameNetworkHandler.setResultSender((player, payload) ->
                 net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(player, payload));
         Antarchy.init();
+    }
+
+    private static void registerAdvancementTriggers(RegisterEvent event) {
+        if (event.getRegistryKey().equals(Registries.TRIGGER_TYPE)) {
+            AntarchyAdvancementTriggers.register((id, trigger) ->
+                    event.register(Registries.TRIGGER_TYPE, id, () -> trigger));
+        }
     }
 
     @SuppressWarnings("unchecked")

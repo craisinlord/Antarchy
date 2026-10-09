@@ -18,6 +18,7 @@ import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
 import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.craisinlord.antarchy.content.portal.PermanentPortalManager;
 import com.craisinlord.antarchy.content.portalgun.PortalGunProjectileEntity;
+import com.craisinlord.antarchy.content.portalgun.PortalGunSavedData;
 import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.CaterpillarCommand;
 import com.craisinlord.antarchy.content.command.DimensionalTearCommand;
@@ -81,6 +82,7 @@ public final class AntarchyFabricEvents {
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             ChronosphereManager.refresh(handler.player);
             TimeDilationManager.resyncPersistentEffects(handler.player);
+            PortalGunSavedData.clearMissingGuns(handler.player);
         });
         ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
             ChronosphereManager.refresh(newPlayer);

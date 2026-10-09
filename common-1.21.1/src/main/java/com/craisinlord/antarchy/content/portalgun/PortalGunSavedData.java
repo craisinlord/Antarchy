@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.portalgun;
 
+import com.craisinlord.antarchy.content.item.PortalGunItem;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,7 +13,9 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.SavedData;
 
 public final class PortalGunSavedData extends SavedData {
@@ -165,6 +168,50 @@ public final class PortalGunSavedData extends SavedData {
 
     public static int clearOwnedBy(MinecraftServer server, Set<UUID> ownerIds) {
         return clearMatching(server, record -> record.ownerId() != null && ownerIds.contains(record.ownerId()));
+    }
+
+    /** Clears portal pairs for guns that an owner no longer has in their player inventory. */
+    public static int clearMissingGuns(ServerPlayer player) {
+        PortalGunSavedData data = get(player.serverLevel().getServer());
+        if (data.pairs.isEmpty()) {
+            return 0;
+        }
+
+        Set<UUID> heldGunIds = new HashSet<>();
+        collectGunIds(player.getInventory().items, heldGunIds);
+        collectGunIds(player.getInventory().armor, heldGunIds);
+        collectGunIds(player.getInventory().offhand, heldGunIds);
+
+        UUID ownerId = player.getUUID();
+        Set<UUID> removedPortalIds = new HashSet<>();
+        Set<UUID> missingGunIds = new HashSet<>();
+        boolean removed = data.pairs.entrySet().removeIf(entry -> {
+            PairRecord record = entry.getValue();
+            if (!ownerId.equals(record.ownerId()) || heldGunIds.contains(entry.getKey().gunId())) {
+                return false;
+            }
+            missingGunIds.add(entry.getKey().gunId());
+            addPortalIds(removedPortalIds, record);
+            return true;
+        });
+        if (removed) {
+            data.setDirty();
+        }
+        for (UUID portalId : removedPortalIds) {
+            discardIfLoaded(player.serverLevel().getServer(), portalId);
+        }
+        return missingGunIds.size();
+    }
+
+    private static void collectGunIds(Iterable<ItemStack> stacks, Set<UUID> gunIds) {
+        for (ItemStack stack : stacks) {
+            if (stack.getItem() instanceof PortalGunItem) {
+                UUID gunId = PortalGunItem.getGunId(stack);
+                if (gunId != null) {
+                    gunIds.add(gunId);
+                }
+            }
+        }
     }
 
     public static int clearEverything(MinecraftServer server) {

@@ -1,0 +1,42 @@
+{
+  "name": "antarchy:royal_shrine/royal_shrine",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "antarchy:royal_shrine/king_shrine1",
+        "processors": "antarchy:generic_processor",
+        "projection": "rigid",
+        "element_type": "integrated_api:integrated_api_single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "antarchy:royal_shrine/king_shrine2",
+        "processors": "antarchy:generic_processor",
+        "projection": "rigid",
+        "element_type": "integrated_api:integrated_api_single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "antarchy:royal_shrine/queen_shrine1",
+        "processors": "antarchy:generic_processor",
+        "projection": "rigid",
+        "element_type": "integrated_api:integrated_api_single_pool_element"
+      }
+    },
+    {
+      "weight": 1,
+      "element": {
+        "location": "antarchy:royal_shrine/queen_shrine2",
+        "processors": "antarchy:generic_processor",
+        "projection": "rigid",
+        "element_type": "integrated_api:integrated_api_single_pool_element"
+      }
+    }
+  ]
+}
