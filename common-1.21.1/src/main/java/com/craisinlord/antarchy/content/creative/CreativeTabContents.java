@@ -429,6 +429,7 @@ public final class CreativeTabContents {
             entry("portal_gun_atlas", "combat"),
             entry("portal_gun_p_body", "combat"),
             entry("portal_gun_craisin", "combat"),
+            entry("portal_gun_laynce", "combat"),
             entry("eye_of_the_storm", "combat"),
             entry("water_cannon", "combat"),
             entry("attitude_adjuster", "combat"),

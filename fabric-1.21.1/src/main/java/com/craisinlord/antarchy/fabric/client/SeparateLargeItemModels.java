@@ -23,6 +23,7 @@ public final class SeparateLargeItemModels {
             entry(AntarchyFabricItems.PORTAL_GUN_ATLAS.get(), "portal_gun_atlas_gui"),
             entry(AntarchyFabricItems.PORTAL_GUN_P_BODY.get(), "portal_gun_p_body_gui"),
             entry(AntarchyFabricItems.PORTAL_GUN_CRAISIN.get(), "portal_gun_craisin_gui"),
+            entry(AntarchyFabricItems.PORTAL_GUN_LAYNCE.get(), "portal_gun_laynce_gui"),
             entry(AntarchyFabricItems.ROYAL_ASSAILANT_BATTLEAXE.get(), "royal_assailant_battleaxe_gui"),
             entry(AntarchyFabricItems.ROYAL_ASSAILANT_STAFF.get(), "royal_assailant_staff_gui"),
             entry(AntarchyFabricItems.ROYAL_GUARDIAN_SWORD.get(), "royal_guardian_sword_gui"),

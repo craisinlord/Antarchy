@@ -1072,6 +1072,16 @@ public final class AntarchyNeoforgeItems {
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_BASE,
                     com.craisinlord.antarchy.content.portalgun.PortalGunVariant.CRAISIN
             ));
+    public static final DeferredItem<PortalGunItem> PORTAL_GUN_LAYNCE = ITEMS.register("portal_gun_laynce",
+            () -> new PortalGunItem(
+                    new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
+                    AntarchyNeoforgeEntites.PORTAL_GUN_PORTAL,
+                    AntarchyNeoforgeEntites.PORTAL_GUN_BLACK_HOLE,
+                    AntarchyNeoforgeEntites.PORTAL_GUN_PROJECTILE,
+                    AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_MASTER,
+                    AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_BASE,
+                    com.craisinlord.antarchy.content.portalgun.PortalGunVariant.LAYNCE
+            ));
     public static final DeferredItem<EyeOfTheStormItem> EYE_OF_THE_STORM = ITEMS.register("eye_of_the_storm",
             () -> new EyeOfTheStormItem(new Item.Properties().stacksTo(1).durability(384).rarity(Rarity.EPIC)));
     public static final DeferredItem<SquidzookaItem> SQUIDZOOKA = ITEMS.register("squidzooka",

@@ -129,6 +129,33 @@
           "weight": 3
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:portal_gun_atlas"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:portal_gun_p_body"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:portal_gun_craisin"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:portal_gun_laynce"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.08
+        }
+      ]
     }
   ],
   "random_sequence": "antarchy:chests/undertrial_vault"

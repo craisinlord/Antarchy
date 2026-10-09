@@ -1,0 +1,19 @@
+{
+  "type": "antarchy:portal_gun_variant",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "antarchy:portal_gun"
+    },
+    {
+      "item": "minecraft:orange_dye"
+    },
+    {
+      "item": "minecraft:green_dye"
+    }
+  ],
+  "result": {
+    "id": "antarchy:portal_gun_laynce",
+    "count": 1
+  }
+}
