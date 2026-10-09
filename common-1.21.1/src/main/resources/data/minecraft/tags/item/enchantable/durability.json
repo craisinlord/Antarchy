@@ -50,6 +50,11 @@
     "antarchy:royal_guardian_sword",
     "antarchy:royal_assailant_battleaxe",
     "antarchy:royal_guardian_shield",
-    "antarchy:royal_assailant_staff"
+    "antarchy:royal_assailant_staff",
+    "antarchy:portal_gun",
+    "antarchy:portal_gun_atlas",
+    "antarchy:portal_gun_p_body",
+    "antarchy:portal_gun_craisin",
+    "antarchy:portal_gun_laynce"
   ]
 }
