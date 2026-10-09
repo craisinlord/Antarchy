@@ -75,6 +75,7 @@ public final class PortalGunPortalSceneRenderer {
         modelViewStack.identity();
         RenderSystem.applyModelViewMatrix();
         renderingScene = true;
+        boolean irisPipelineInstalled = IrisPortalSceneCompat.begin(renderer);
         terrain.begin(minecraft);
         try {
             float renderDistance = minecraft.gameRenderer.getRenderDistance();
@@ -166,6 +167,7 @@ public final class PortalGunPortalSceneRenderer {
             }
         } finally {
             renderingScene = false;
+            IrisPortalSceneCompat.end(renderer, irisPipelineInstalled);
             terrain.end(minecraft);
             state.antarchy$setRainSoundTime(previousRainSoundTime);
             modelViewStack.popMatrix();

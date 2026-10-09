@@ -1041,7 +1041,6 @@ public final class AntarchyNeoforgeItems {
             () -> new PortalGunItem(
                     new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
                     AntarchyNeoforgeEntites.PORTAL_GUN_PORTAL,
-                    AntarchyNeoforgeEntites.PORTAL_GUN_BLACK_HOLE,
                     AntarchyNeoforgeEntites.PORTAL_GUN_PROJECTILE,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_BASE,
@@ -1051,7 +1050,6 @@ public final class AntarchyNeoforgeItems {
             () -> new PortalGunItem(
                     new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
                     AntarchyNeoforgeEntites.PORTAL_GUN_PORTAL,
-                    AntarchyNeoforgeEntites.PORTAL_GUN_BLACK_HOLE,
                     AntarchyNeoforgeEntites.PORTAL_GUN_PROJECTILE,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_BASE,
@@ -1061,7 +1059,6 @@ public final class AntarchyNeoforgeItems {
             () -> new PortalGunItem(
                     new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
                     AntarchyNeoforgeEntites.PORTAL_GUN_PORTAL,
-                    AntarchyNeoforgeEntites.PORTAL_GUN_BLACK_HOLE,
                     AntarchyNeoforgeEntites.PORTAL_GUN_PROJECTILE,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_BASE,
@@ -1071,7 +1068,6 @@ public final class AntarchyNeoforgeItems {
             () -> new PortalGunItem(
                     new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
                     AntarchyNeoforgeEntites.PORTAL_GUN_PORTAL,
-                    AntarchyNeoforgeEntites.PORTAL_GUN_BLACK_HOLE,
                     AntarchyNeoforgeEntites.PORTAL_GUN_PROJECTILE,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_BASE,
@@ -1081,7 +1077,6 @@ public final class AntarchyNeoforgeItems {
             () -> new PortalGunItem(
                     new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
                     AntarchyNeoforgeEntites.PORTAL_GUN_PORTAL,
-                    AntarchyNeoforgeEntites.PORTAL_GUN_BLACK_HOLE,
                     AntarchyNeoforgeEntites.PORTAL_GUN_PROJECTILE,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyNeoforgeBlocks.PORTAL_GUN_PORTAL_BASE,

@@ -172,7 +172,6 @@ public final class AntarchyNeoForgeClient {
         event.registerEntityRenderer(AntarchyNeoforgeEntites.NIGHTMARE_PORTAL.get(), NightmarePortalRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.DIMENSIONAL_TEAR.get(), DimensionalTearRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.PORTAL_GUN_PORTAL.get(), PortalGunPortalRenderer::new);
-        event.registerEntityRenderer(AntarchyNeoforgeEntites.PORTAL_GUN_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.PortalGunBlackHoleRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.PORTAL_GUN_PROJECTILE.get(), com.craisinlord.antarchy.content.client.renderer.PortalGunProjectileRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.NIGHTMARE_BITE.get(), NightmareBiteRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.LUCID.get(), context -> withParalyzedGeoLayer(new LucidRenderer(context)));

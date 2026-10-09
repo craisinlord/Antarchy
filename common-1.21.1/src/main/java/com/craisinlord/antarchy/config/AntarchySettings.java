@@ -559,6 +559,9 @@ public final class AntarchySettings {
     private static double portalGunMinFloorExitSpeed = 0.6D;
     private static int portalGunMaxLiveViews = 8;
     private static double portalGunMaxExitSpeed = 0.0D;
+    private static boolean portalGunMoonPullsBlocks = true;
+    private static int portalGunMoonPortalSeconds = 10;
+    private static int portalGunMoonBlockCap = 500;
     private static boolean elythiaFireflyParticlesEnabled = true;
     private static int bloodCrystalArmorShieldRechargeTicks = 600;
     private static int bloodCrystalAppleShieldCount = 2;
@@ -1348,6 +1351,18 @@ public final class AntarchySettings {
         portalGunMinFloorExitSpeed = Math.max(0.0D, Math.min(4.0D, value));
     }
 
+    public static void setPortalGunMoonPullsBlocks(boolean value) {
+        portalGunMoonPullsBlocks = value;
+    }
+
+    public static void setPortalGunMoonPortalSeconds(int value) {
+        portalGunMoonPortalSeconds = Math.max(1, Math.min(120, value));
+    }
+
+    public static void setPortalGunMoonBlockCap(int value) {
+        portalGunMoonBlockCap = Math.max(0, Math.min(2000, value));
+    }
+
     public static void setPortalGunMaxExitSpeed(double value) {
         portalGunMaxExitSpeed = Math.max(0.0D, Math.min(100.0D, value));
     }
@@ -1367,6 +1382,9 @@ public final class AntarchySettings {
     public static double portalGunMinFloorExitSpeed() { return portalGunMinFloorExitSpeed; }
     public static int portalGunMaxLiveViews() { return portalGunMaxLiveViews; }
     public static double portalGunMaxExitSpeed() { return portalGunMaxExitSpeed; }
+    public static boolean portalGunMoonPullsBlocks() { return portalGunMoonPullsBlocks; }
+    public static int portalGunMoonPortalSeconds() { return portalGunMoonPortalSeconds; }
+    public static int portalGunMoonBlockCap() { return portalGunMoonBlockCap; }
 
     public static void setBrownAntRequiresReagent(boolean value) {
         brownAntRequiresReagent = value;

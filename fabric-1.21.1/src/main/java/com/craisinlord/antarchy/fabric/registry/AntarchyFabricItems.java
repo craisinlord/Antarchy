@@ -1563,7 +1563,6 @@ public final class AntarchyFabricItems {
             () -> new PortalGunItem(
                     new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
                     AntarchyFabricEntities.PORTAL_GUN_PORTAL,
-                    AntarchyFabricEntities.PORTAL_GUN_BLACK_HOLE,
                     AntarchyFabricEntities.PORTAL_GUN_PROJECTILE,
                     AntarchyFabricBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyFabricBlocks.PORTAL_GUN_PORTAL_BASE,
@@ -1573,7 +1572,6 @@ public final class AntarchyFabricItems {
             () -> new PortalGunItem(
                     new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
                     AntarchyFabricEntities.PORTAL_GUN_PORTAL,
-                    AntarchyFabricEntities.PORTAL_GUN_BLACK_HOLE,
                     AntarchyFabricEntities.PORTAL_GUN_PROJECTILE,
                     AntarchyFabricBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyFabricBlocks.PORTAL_GUN_PORTAL_BASE,
@@ -1583,7 +1581,6 @@ public final class AntarchyFabricItems {
             () -> new PortalGunItem(
                     new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
                     AntarchyFabricEntities.PORTAL_GUN_PORTAL,
-                    AntarchyFabricEntities.PORTAL_GUN_BLACK_HOLE,
                     AntarchyFabricEntities.PORTAL_GUN_PROJECTILE,
                     AntarchyFabricBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyFabricBlocks.PORTAL_GUN_PORTAL_BASE,
@@ -1593,7 +1590,6 @@ public final class AntarchyFabricItems {
             () -> new PortalGunItem(
                     new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
                     AntarchyFabricEntities.PORTAL_GUN_PORTAL,
-                    AntarchyFabricEntities.PORTAL_GUN_BLACK_HOLE,
                     AntarchyFabricEntities.PORTAL_GUN_PROJECTILE,
                     AntarchyFabricBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyFabricBlocks.PORTAL_GUN_PORTAL_BASE,
@@ -1603,7 +1599,6 @@ public final class AntarchyFabricItems {
             () -> new PortalGunItem(
                     new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
                     AntarchyFabricEntities.PORTAL_GUN_PORTAL,
-                    AntarchyFabricEntities.PORTAL_GUN_BLACK_HOLE,
                     AntarchyFabricEntities.PORTAL_GUN_PROJECTILE,
                     AntarchyFabricBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyFabricBlocks.PORTAL_GUN_PORTAL_BASE,

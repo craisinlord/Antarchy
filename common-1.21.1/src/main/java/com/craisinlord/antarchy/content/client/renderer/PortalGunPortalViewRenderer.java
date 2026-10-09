@@ -130,8 +130,9 @@ public final class PortalGunPortalViewRenderer {
         }
         List<RootCandidate> candidates = new ArrayList<>();
         for (PortalGunPortalEntity portal : portals) {
-            PortalGunPortalEntity linked = portal.getLinkedPortal();
-            if (linked == null || !linked.isAlive() || !portal.shouldRenderFront(cameraPos)) {
+            boolean moon = portal.isMoonPortal();
+            PortalGunPortalEntity linked = moon ? null : portal.getLinkedPortal();
+            if (!moon && (linked == null || !linked.isAlive()) || !portal.shouldRenderFront(cameraPos)) {
                 continue;
             }
             ScreenClip clip = computeScreenClip(cameraPos, rootViewMatrix, rootProjection, portal, partialTick, width, height);
@@ -173,7 +174,13 @@ public final class PortalGunPortalViewRenderer {
                     break;
                 }
                 try {
-                    if (directStencil) {
+                    if (candidate.linked() == null) {
+                        if (directStencil) {
+                            renderMoonViewDirect(minecraft, partialTick, rootContext, rootProjection, candidate.portal(), candidate.clip());
+                        } else {
+                            renderMoonViewOffscreen(minecraft, partialTick, rootContext, rootProjection, candidate.portal(), candidate.clip());
+                        }
+                    } else if (directStencil) {
                         renderViewDirect(minecraft, cameraEntity, partialTick, rootContext, rootProjection, rootProjection,
                                 candidate.portal(), candidate.linked(), 0, candidate.clip(), null, budget);
                     } else {
@@ -257,6 +264,48 @@ public final class PortalGunPortalViewRenderer {
                 RenderSystem.enableScissor(parentClip.x(), parentClip.y(), parentClip.width(), parentClip.height());
             }
         }
+    }
+
+    private static void renderMoonViewDirect(Minecraft minecraft, float partialTick, RenderContext context,
+                                             Matrix4f rootProjection, PortalGunPortalEntity source, ScreenClip clip) {
+        PortalStencilTarget.pushAperture(0, () -> drawPortalMask(context.cameraPos(), context.viewMatrix(), rootProjection, source, partialTick));
+        try {
+            RenderSystem.enableScissor(clip.x(), clip.y(), clip.width(), clip.height());
+            PortalGunMoonViewRenderer.render(minecraft, source.getWorldPortalShape(), context.cameraPos(), context.look(), context.up(),
+                    rootProjection, partialTick);
+        } finally {
+            try {
+                PortalStencilTarget.drawInside(1);
+                PortalGunPortalRim.drawOverView(source, context.cameraPos(), context.viewMatrix(), rootProjection, partialTick);
+            } finally {
+                PortalStencilTarget.popAperture(0,
+                        () -> restorePortalApertureDepth(context.cameraPos(), context.viewMatrix(), rootProjection, source, partialTick));
+                RenderSystem.disableScissor();
+            }
+        }
+    }
+
+    private static void renderMoonViewOffscreen(Minecraft minecraft, float partialTick, RenderContext context,
+                                                Matrix4f rootProjection, PortalGunPortalEntity source, ScreenClip clip) {
+        RenderTarget mainTarget = minecraft.getMainRenderTarget();
+        TextureTarget target = ensureOffscreenTarget(mainTarget.width, mainTarget.height);
+        MinecraftMainRenderTargetAccessor targetAccessor = (MinecraftMainRenderTargetAccessor) minecraft;
+        targetAccessor.antarchy$setMainRenderTarget(target);
+        try {
+            target.bindWrite(true);
+            RenderSystem.disableScissor();
+            target.clear(Minecraft.ON_OSX);
+            target.bindWrite(true);
+            RenderSystem.enableScissor(clip.x(), clip.y(), clip.width(), clip.height());
+            PortalGunMoonViewRenderer.render(minecraft, source.getWorldPortalShape(), context.cameraPos(), context.look(), context.up(),
+                    rootProjection, partialTick);
+        } finally {
+            RenderSystem.disableScissor();
+            targetAccessor.antarchy$setMainRenderTarget(mainTarget);
+            mainTarget.bindWrite(true);
+        }
+        RenderSystem.setProjectionMatrix(rootProjection, VertexSorting.DISTANCE_TO_ORIGIN);
+        drawPortalComposite(context.cameraPos(), context.viewMatrix(), rootProjection, source, partialTick, target.getColorTextureId());
     }
 
     private static void renderNestedViews(Minecraft minecraft, Entity cameraEntity, float partialTick, RenderContext viewContext,

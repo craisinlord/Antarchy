@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.time.TimeDilationApi;
 import com.craisinlord.antarchy.content.time.TimeDilationFieldEntity;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.entity.BlockSuction;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -337,23 +338,10 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
             }
 
             BlockState state = level.getBlockState(pos);
-            if (state.isAir() || level.getBlockEntity(pos) != null
-                    || state.getDestroySpeed(level, pos) < 0.0F
-                    || state.getBlock().getExplosionResistance() > 30.0F
-                    || state.getCollisionShape(level, pos).isEmpty()) {
+            if (!BlockSuction.canLift(level, pos, state)
+                    || BlockSuction.lift(level, pos, state, center, 0.28D) == null) {
                 continue;
             }
-
-            FallingBlockEntity falling = FallingBlockEntity.fall(level, pos, state);
-            if (falling == null) {
-                continue;
-            }
-            Vec3 towardCenter = center.subtract(falling.position());
-            if (towardCenter.lengthSqr() > 0.001D) {
-                falling.setDeltaMovement(towardCenter.normalize().scale(0.28D));
-            }
-            falling.hasImpulse = true;
-            falling.hurtMarked = true;
             pulledThisTick++;
             this.suckedBlocks++;
         }

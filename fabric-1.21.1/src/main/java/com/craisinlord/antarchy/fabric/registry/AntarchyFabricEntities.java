@@ -427,12 +427,6 @@ public final class AntarchyFabricEntities {
                     .updateInterval(1)
                     .build("portal_gun_portal"));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.portalgun.PortalGunBlackHoleEntity>> PORTAL_GUN_BLACK_HOLE = ENTITY_TYPES.register("portal_gun_black_hole",
-            () -> EntityType.Builder.of(com.craisinlord.antarchy.content.portalgun.PortalGunBlackHoleEntity::new, MobCategory.MISC)
-                    .sized(1.2F, 1.2F)
-                    .clientTrackingRange(10)
-                    .updateInterval(1)
-                    .build("portal_gun_black_hole"));
     public static final DeferredHolder<EntityType<?>, EntityType<PortalGunProjectileEntity>> PORTAL_GUN_PROJECTILE = ENTITY_TYPES.register("portal_gun_projectile",
             () -> EntityType.Builder.<PortalGunProjectileEntity>of(PortalGunProjectileEntity::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F)

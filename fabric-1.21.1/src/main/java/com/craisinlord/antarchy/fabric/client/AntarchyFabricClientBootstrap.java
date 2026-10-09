@@ -163,7 +163,6 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.DIMENSIONAL_TEAR.get(), DimensionalTearRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.PORTAL_GUN_PORTAL.get(), PortalGunPortalRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.HOVERBOARD.get(), com.craisinlord.antarchy.content.client.renderer.HoverboardRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.PORTAL_GUN_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.PortalGunBlackHoleRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.PORTAL_GUN_PROJECTILE.get(), com.craisinlord.antarchy.content.client.renderer.PortalGunProjectileRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.NIGHTMARE_BITE.get(), NightmareBiteRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.LUCID.get(), context -> withTemporalGeoLayer(new LucidRenderer(context)));

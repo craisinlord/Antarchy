@@ -927,6 +927,8 @@
     "advancements.antarchy.bugged_out.description":  "Defeat the Alpha Mantis.",
     "death.attack.bed_bug_bite":  "%1$s got bit by the bed bugs",
     "death.attack.bed_bug_bite.player":  "%1$s got bit by the bed bugs while fighting %2$s",
+    "death.attack.moon_vacuum":  "%1$s was pulled into the vacuum of space",
+    "death.attack.moon_vacuum.player":  "%1$s was pulled into the vacuum of space by %2$s",
     "message.antarchy.dread_too_scared_to_sleep":  "You are too scared to sleep.",
     "death.attack.kraken_mauling":  "%1$s was dragged under by the Kraken",
     "death.attack.kraken_mauling.player":  "%1$s was dragged under by the Kraken while fighting %2$s",

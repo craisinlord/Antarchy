@@ -146,6 +146,7 @@ public final class AntarchyConfigCatalog {
                 || name.equals("portalGunMinFloorExitSpeed")
                 || name.equals("portalGunMaxLiveViews")
                 || name.equals("portalGunMaxExitSpeed")
+                || name.startsWith("portalGunMoon")
                 || name.equals("hushweedSporeLifetimeSeconds")
                 || name.equals("elythiaFireflyParticlesEnabled")
                 || name.equals("duplicatorTreeEnabled")

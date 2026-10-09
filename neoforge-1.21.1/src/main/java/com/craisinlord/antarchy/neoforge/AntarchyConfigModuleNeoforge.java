@@ -674,6 +674,9 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setPortalGunMinFloorExitSpeed(AntarchyMiscConfig.portalGunMinFloorExitSpeed());
         AntarchySettings.setPortalGunMaxLiveViews(AntarchyMiscConfig.portalGunMaxLiveViews());
         AntarchySettings.setPortalGunMaxExitSpeed(AntarchyMiscConfig.portalGunMaxExitSpeed());
+        AntarchySettings.setPortalGunMoonPullsBlocks(AntarchyMiscConfig.portalGunMoonPullsBlocks());
+        AntarchySettings.setPortalGunMoonPortalSeconds(AntarchyMiscConfig.portalGunMoonPortalSeconds());
+        AntarchySettings.setPortalGunMoonBlockCap(AntarchyMiscConfig.portalGunMoonBlockCap());
 
 
         // Misc

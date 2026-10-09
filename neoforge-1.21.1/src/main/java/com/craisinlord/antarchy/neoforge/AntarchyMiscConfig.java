@@ -42,6 +42,9 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.DoubleValue PORTAL_GUN_MIN_FLOOR_EXIT_SPEED;
     private static final ModConfigSpec.IntValue PORTAL_GUN_MAX_LIVE_VIEWS;
     private static final ModConfigSpec.DoubleValue PORTAL_GUN_MAX_EXIT_SPEED;
+    private static final ModConfigSpec.BooleanValue PORTAL_GUN_MOON_PULLS_BLOCKS;
+    private static final ModConfigSpec.IntValue PORTAL_GUN_MOON_PORTAL_SECONDS;
+    private static final ModConfigSpec.IntValue PORTAL_GUN_MOON_BLOCK_CAP;
 
     // Diamond Minecart
     private static final ModConfigSpec.BooleanValue DIAMOND_MINECART_ENABLED;
@@ -150,6 +153,9 @@ public final class AntarchyMiscConfig {
         PORTAL_GUN_MAX_LIVE_VIEWS = b.comment("How many portals can show a live see-through view at once. Each one re-renders the world, so higher values cost frame rate. 0 shows only the animated surface.").defineInRange("maxLiveViews", 8, 0, 32);
         PORTAL_GUN_MIN_FLOOR_EXIT_SPEED = b.comment("Minimum speed in blocks/tick when leaving an upward-facing portal, so the traveller clears it. 0 disables.").defineInRange("minFloorExitSpeed", 0.6D, 0.0D, 4.0D);
         PORTAL_GUN_MAX_EXIT_SPEED = b.comment("Maximum speed in blocks/tick when leaving a portal. 0 keeps momentum uncapped.").defineInRange("maxExitSpeed", 0.0D, 0.0D, 100.0D);
+        PORTAL_GUN_MOON_PULLS_BLOCKS = b.comment("Whether a portal opened by shooting the moon rips blocks loose and pulls them into space.").define("moonPullsBlocks", true);
+        PORTAL_GUN_MOON_PORTAL_SECONDS = b.comment("How long a moon portal stays open, in seconds.").defineInRange("moonPortalSeconds", 10, 1, 120);
+        PORTAL_GUN_MOON_BLOCK_CAP = b.comment("Maximum number of blocks a single moon portal can pull in.").defineInRange("moonBlockCap", 500, 0, 2000);
         b.pop();
 
 
@@ -229,6 +235,9 @@ public final class AntarchyMiscConfig {
     public static double portalGunMinFloorExitSpeed() { return PORTAL_GUN_MIN_FLOOR_EXIT_SPEED.get(); }
     public static int portalGunMaxLiveViews() { return PORTAL_GUN_MAX_LIVE_VIEWS.get(); }
     public static double portalGunMaxExitSpeed() { return PORTAL_GUN_MAX_EXIT_SPEED.get(); }
+    public static boolean portalGunMoonPullsBlocks() { return PORTAL_GUN_MOON_PULLS_BLOCKS.get(); }
+    public static int portalGunMoonPortalSeconds() { return PORTAL_GUN_MOON_PORTAL_SECONDS.get(); }
+    public static int portalGunMoonBlockCap() { return PORTAL_GUN_MOON_BLOCK_CAP.get(); }
 
     static boolean diamondMinecartEnabled()              { return DIAMOND_MINECART_ENABLED.get(); }
     static boolean diamondMinecartPlacesRails()          { return DIAMOND_MINECART_PLACES_RAILS.get(); }

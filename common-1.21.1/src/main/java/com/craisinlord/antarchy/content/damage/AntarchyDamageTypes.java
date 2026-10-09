@@ -103,6 +103,12 @@ public final class AntarchyDamageTypes {
                     ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "hercules_beetle_obliteration")
             );
 
+    public static final ResourceKey<DamageType> MOON_VACUUM =
+            ResourceKey.create(
+                    Registries.DAMAGE_TYPE,
+                    ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "moon_vacuum")
+            );
+
     private AntarchyDamageTypes() {
     }
 }

@@ -153,6 +153,16 @@ public final class AntarchyDamageSources {
         );
     }
 
+    public static DamageSource moonVacuum(ServerLevel level, @Nullable Entity causingEntity) {
+        return new DamageSource(
+                level.registryAccess()
+                        .registryOrThrow(Registries.DAMAGE_TYPE)
+                        .getHolderOrThrow(AntarchyDamageTypes.MOON_VACUUM),
+                null,
+                causingEntity
+        );
+    }
+
     private AntarchyDamageSources() {
     }
 }

@@ -9,8 +9,8 @@ import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
 import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.network.PortalGunPrimaryPayload;
-import com.craisinlord.antarchy.content.portalgun.PortalGunBlackHoleEntity;
 import com.craisinlord.antarchy.content.portalgun.PortalGunPlacement;
+import com.craisinlord.antarchy.content.portalgun.PortalGunMoonMath;
 import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
 import com.craisinlord.antarchy.content.portalgun.PortalGunProjectileEntity;
 import com.craisinlord.antarchy.content.portalgun.PortalGunSavedData;
@@ -82,7 +82,6 @@ public class PortalGunItem extends Item implements GeoItem {
     private static final ResourceLocation MODEL_LOCATION = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "geo/portal_gun.geo.json");
     private static final ResourceLocation ANIMATION_LOCATION = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "animations/portal_gun.animation.json");
     private final Supplier<? extends EntityType<? extends PortalGunPortalEntity>> portalType;
-    private final Supplier<? extends EntityType<? extends PortalGunBlackHoleEntity>> blackHoleType;
     private final Supplier<? extends EntityType<? extends PortalGunProjectileEntity>> projectileType;
     private final Supplier<? extends Block> portalMasterBlock;
     private final Supplier<? extends Block> portalBaseBlock;
@@ -92,7 +91,6 @@ public class PortalGunItem extends Item implements GeoItem {
     public PortalGunItem(
             Item.Properties properties,
             Supplier<? extends EntityType<? extends PortalGunPortalEntity>> portalType,
-            Supplier<? extends EntityType<? extends PortalGunBlackHoleEntity>> blackHoleType,
             Supplier<? extends EntityType<? extends PortalGunProjectileEntity>> projectileType,
             Supplier<? extends Block> portalMasterBlock,
             Supplier<? extends Block> portalBaseBlock,
@@ -101,7 +99,6 @@ public class PortalGunItem extends Item implements GeoItem {
         super(properties);
         this.variant = variant;
         this.portalType = portalType;
-        this.blackHoleType = blackHoleType;
         this.projectileType = projectileType;
         this.portalMasterBlock = portalMasterBlock;
         this.portalBaseBlock = portalBaseBlock;
@@ -218,9 +215,9 @@ public class PortalGunItem extends Item implements GeoItem {
         if (this.isMoonSideArmed(stack, side)) {
             this.setMoonSide(stack, null);
         }
-        if (shooter instanceof Player player && this.isMoonSideArmed(stack, this.otherSide(side))) {
-            this.spawnBlackHole(level, player, stack, side, placement.center());
-            return;
+        boolean moon = shooter instanceof Player && this.isMoonSideArmed(stack, this.otherSide(side));
+        if (moon) {
+            this.setMoonSide(stack, null);
         }
         PortalGunPortalEntity portal = new PortalGunPortalEntity(this.portalType.get(), level);
         portal.configure(portalOwnerId, gunId, this.variant, side, placement);
@@ -230,9 +227,16 @@ public class PortalGunItem extends Item implements GeoItem {
             level.playSound(null, impactPos.x, impactPos.y, impactPos.z, PortalGunPortalEntity.sound("portal_gun_invalid_surface"), SoundSource.PLAYERS, 0.55F, 1.0F);
             return;
         }
+        if (moon) {
+            portal.openToMoon();
+        }
         level.addFreshEntity(portal);
         PortalGunSavedData.setPortal(level, gunId, portalOwnerId, side, portal.getUUID());
         PortalGunPortalEntity other = this.findCounterpart(level, gunId, side);
+        if (other != null && (moon || other.isMoonPortal())) {
+            other.discard();
+            other = null;
+        }
         if (other != null) {
             portal.linkTo(other);
             other.linkTo(portal);
@@ -277,14 +281,21 @@ public class PortalGunItem extends Item implements GeoItem {
     }
 
     private boolean tryArmMoonShot(ServerLevel level, Player player, ItemStack stack, PortalGunPortalEntity.PortalSide side, boolean offhand) {
-        if (!level.dimensionType().hasSkyLight() || !level.isNight() || player.getXRot() > -40.0F) {
+        if (!this.isAimingAtMoon(level, player)) {
             return false;
         }
-        PortalGunPortalEntity existing = this.findPlacedPortal(level, this.ensureGunId(stack, player.getUUID()), side);
+        UUID gunId = this.ensureGunId(stack, player.getUUID());
+        PortalGunPortalEntity existing = this.findPlacedPortal(level, gunId, side);
         if (existing != null) {
             existing.discard();
         }
-        this.setMoonSide(stack, side);
+        PortalGunPortalEntity counterpart = this.findPlacedPortal(level, gunId, this.otherSide(side));
+        if (counterpart != null && counterpart.isAlive() && !counterpart.isMoonPortal()) {
+            counterpart.openToMoon();
+            this.setMoonSide(stack, null);
+        } else {
+            this.setMoonSide(stack, side);
+        }
         this.setLastSide(stack, side);
         this.triggerFireAnimation(level, player, stack);
         if (this.damageGun(level, player, stack, offhand)) {
@@ -297,14 +308,11 @@ public class PortalGunItem extends Item implements GeoItem {
         return true;
     }
 
-    private boolean spawnBlackHole(ServerLevel level, Player player, ItemStack stack, PortalGunPortalEntity.PortalSide side, Vec3 spawnPos) {
-        this.setMoonSide(stack, null);
-        PortalGunBlackHoleEntity blackHole = new PortalGunBlackHoleEntity(this.blackHoleType.get(), level);
-        blackHole.configure(player.getUUID());
-        blackHole.moveTo(spawnPos.x, spawnPos.y, spawnPos.z, 0.0F, 0.0F);
-        level.addFreshEntity(blackHole);
-        level.playSound(null, spawnPos.x, spawnPos.y, spawnPos.z, PortalGunPortalEntity.sound("portal_open_orange"), SoundSource.PLAYERS, 0.6F, 0.6F);
-        return true;
+    private boolean isAimingAtMoon(ServerLevel level, Player player) {
+        if (!level.dimensionType().hasSkyLight() || level.dimensionType().hasCeiling()) {
+            return false;
+        }
+        return PortalGunMoonMath.isAimedAtMoon(this.worldLook(player), level.getTimeOfDay(1.0F));
     }
 
     private void spawnShotTrail(ServerLevel level, Player player, Vec3 endPos, PortalGunPortalEntity.PortalSide side) {
@@ -652,12 +660,21 @@ public class PortalGunItem extends Item implements GeoItem {
     }
 
     private boolean isMoonSideArmed(ItemStack stack, PortalGunPortalEntity.PortalSide side) {
+        return side == getMoonSide(stack);
+    }
+
+    public static PortalGunPortalEntity.PortalSide getMoonSide(ItemStack stack) {
         net.minecraft.world.item.component.CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
         if (customData == null) {
-            return false;
+            return null;
         }
         String sideName = customData.copyTag().getString(MOON_SIDE_TAG);
-        return side.name().equals(sideName);
+        for (PortalGunPortalEntity.PortalSide side : PortalGunPortalEntity.PortalSide.values()) {
+            if (side.name().equals(sideName)) {
+                return side;
+            }
+        }
+        return null;
     }
 
     public static UUID getGunId(ItemStack stack) {
