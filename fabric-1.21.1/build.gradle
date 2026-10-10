@@ -7,7 +7,10 @@ plugins {
 base {
     archivesName = mod_id
 }
-version = "${mod_version}+1.21.1-fabric"
+jar {
+    archiveAppendix = "1.21.1-fabric"
+}
+version = "${mod_version}"
 
 // Handle duplicates from common-1.21.1's resources
 tasks.withType(AbstractCopyTask).configureEach {
