@@ -12,6 +12,11 @@ pluginManagement {
     }
 }
 
+/// ensure the existence of a 'test-suite' folder, as since Gradle 9, subprojects are required to have dedicated folders
+if (!file("test-suite").exists()) {
+    mkdir("test-suite")
+}
+
 include("common-1.21.1")
 include("fabric-1.21.1")
 include("neoforge-1.21.1")
