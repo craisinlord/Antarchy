@@ -17,11 +17,6 @@ tasks.withType(AbstractCopyTask).configureEach {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-java {
-    toolchain { languageVersion = JavaLanguageVersion.of(21) }
-    withSourcesJar()
-}
-
 // Add common-1.21.1's sources directly — this module compiles them itself.
 sourceSets {
     main {
