@@ -34,10 +34,6 @@
     }
   },
   "spawn_costs": {
-    "antarchy:glimmer": {
-      "energy_budget": 0.1,
-      "charge": 9
-    }
   },
   "carvers": {
     "air": [],

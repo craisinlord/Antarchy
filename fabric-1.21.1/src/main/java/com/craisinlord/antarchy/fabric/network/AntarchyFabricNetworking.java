@@ -93,6 +93,7 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playC2S().register(com.craisinlord.antarchy.content.network.PortalGunTransitPayload.TYPE, com.craisinlord.antarchy.content.network.PortalGunTransitPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(PortalGunIndicatorRequestPayload.TYPE, PortalGunIndicatorRequestPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(PortalGunResetPayload.TYPE, PortalGunResetPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playC2S().register(com.craisinlord.antarchy.content.network.PortalGunMoonAimPayload.TYPE, com.craisinlord.antarchy.content.network.PortalGunMoonAimPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(EyeOfStormPrimaryPayload.TYPE, EyeOfStormPrimaryPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(OpenGiantFryingPanPayload.TYPE, OpenGiantFryingPanPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(RoyalMountActionPayload.TYPE, RoyalMountActionPayload.STREAM_CODEC);
@@ -135,6 +136,8 @@ public final class AntarchyFabricNetworking {
         });
         ServerPlayNetworking.registerGlobalReceiver(PortalGunIndicatorRequestPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> com.craisinlord.antarchy.content.portalgun.PortalGunIndicatorSync.handleRequest(context.player(), payload)));
+        ServerPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.PortalGunMoonAimPayload.TYPE, (payload, context) ->
+                context.server().execute(() -> com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.handle(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(PortalGunResetPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> com.craisinlord.antarchy.content.portalgun.PortalGunResetManager.handleInput(context.player(), payload.action())));
         ServerPlayNetworking.registerGlobalReceiver(EyeOfStormPrimaryPayload.TYPE, (payload, context) ->

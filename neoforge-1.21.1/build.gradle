@@ -60,6 +60,7 @@ dependencies {
     runtimeOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_neoforge}")
     implementation "software.bernie.geckolib:geckolib-neoforge-1.21.1:${geckolib_version}"
     compileOnly(files(rootProject.file("infinite_dimensions_jars/infinity-2.7.3+1.21.1-neoforge.jar")))
+    compileOnly(files(rootProject.file("infinite_dimensions_jars/stellarview-1.21.1-0.5.3-neoforge.jar")))
     runtimeOnly(files(rootProject.file("infinite_dimensions_jars/infinity-2.7.3+1.21.1-neoforge.jar")))
     runtimeOnly("dev.architectury:architectury-neoforge:${architectury_api_version}")
 

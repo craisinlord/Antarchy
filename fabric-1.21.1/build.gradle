@@ -59,6 +59,7 @@ dependencies {
     compileOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.3+1.21.1-neoforge.jar"))
     compileOnly(files("$rootDir/infinite_dimensions_jars/gravity-api-1.0.7-1.20.1.jar"))
     compileOnly(files("$rootDir/infinite_dimensions_jars/sable-neoforge-1.21.1-2.0.3.jar"))
+    compileOnly(files("$rootDir/infinite_dimensions_jars/stellarview-1.21.1-0.5.3-neoforge.jar"))
 
     // Cloth Config — optional, powers the in-game settings screen (AntarchyClothConfigScreenBuilder)
     // via the Mod Menu integration below. compileOnly + modLocalRuntime only: never bundled or

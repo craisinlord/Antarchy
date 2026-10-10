@@ -74,7 +74,7 @@
             "humidity": [0.84, 1.0],
             "continentalness": [0.25, 0.72],
             "erosion": [-0.5, 0.55],
-            "weirdness": [-0.55, 0.62],
+            "weirdness": [-0.35, 0.62],
             "depth": [0.0, 1.0],
             "offset": 0.0
           }
@@ -94,11 +94,11 @@
         {
           "biome": "antarchy:glimmering_pools",
           "parameters": {
-            "temperature": [0.58, 0.76],
-            "humidity": [0.88, 1.0],
+            "temperature": [0.52, 0.78],
+            "humidity": [0.84, 1.0],
             "continentalness": [0.3, 0.65],
-            "erosion": [-0.05, 0.45],
-            "weirdness": [-0.7, -0.25],
+            "erosion": [-0.3, 0.45],
+            "weirdness": [-0.8, -0.35],
             "depth": [0.0, 0.25],
             "offset": 0.0
           }

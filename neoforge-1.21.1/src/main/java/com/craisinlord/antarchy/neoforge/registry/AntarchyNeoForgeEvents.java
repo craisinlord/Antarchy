@@ -247,6 +247,7 @@ public final class AntarchyNeoForgeEvents {
         for (ServerLevel level : event.getServer().getAllLevels()) {
             CavarynHordeManager.tick(level);
             com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
+            com.craisinlord.antarchy.content.entity.glimmer.GlimmerNightSpawner.tick(level);
             com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature.tickPendingSpawns(level);
         }
     }

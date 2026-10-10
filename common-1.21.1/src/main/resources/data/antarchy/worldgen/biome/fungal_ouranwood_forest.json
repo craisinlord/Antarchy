@@ -37,10 +37,6 @@
     "antarchy:basilisk": {
       "energy_budget": 0.1,
       "charge": 14.0
-    },
-    "antarchy:glimmer": {
-      "energy_budget": 0.1,
-      "charge": 9
     }
   },
   "carvers": {

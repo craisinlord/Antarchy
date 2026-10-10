@@ -30,6 +30,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
@@ -99,7 +100,7 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
     private static final double MAX_CLIENT_TRANSIT_MOVEMENT_SQR = 100.0D;
     private static final double PROJECTILE_PLANE_TOLERANCE = 0.1D;
     private static final double MOON_RANGE = 14.0D;
-    private static final double MOON_SPREAD = 0.9D;
+    private static final double MOON_RAY_MIN_OUTWARD = -0.2D;
     private static final double MOON_PULL_STRENGTH = 0.15D;
     private static final double MOON_MAX_SPEED = 1.8D;
     private static final double MOON_MOUTH_DEPTH = 0.9D;
@@ -112,6 +113,8 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
     private static final int MOON_VACUUM_INTERVAL = 10;
     private static final float MOON_VACUUM_DAMAGE = 2.0F;
     private static final int MOON_WIND_INTERVAL = 40;
+    private static final int MOON_BLOCK_MAX_FLIGHT_TICKS = 80;
+    private static final double MOON_BLOCK_SWALLOW_RADIUS = 2.0D;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private final Map<UUID, Integer> teleportCooldowns = new HashMap<>();
     private UUID ownerId;
@@ -122,6 +125,7 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
     private int pairTime;
     private int moonTicks;
     private int moonSuckedBlocks;
+    private final Map<UUID, Integer> moonLiftedBlocks = new HashMap<>();
     private BlockPos supportOrigin = BlockPos.ZERO;
     private BlockPos masterPos = BlockPos.ZERO;
     private BlockPos basePos = BlockPos.ZERO;
@@ -663,26 +667,23 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
         PortalGunWorldPortalShape shape = this.getWorldPortalShape();
         Player owner = this.getOwnerId() == null ? null : level.getPlayerByUUID(this.getOwnerId());
         this.pullMoonEntities(level, shape, owner);
+        this.tickMoonLiftedBlocks(level, shape);
         if (AntarchySettings.portalGunMoonPullsBlocks() && this.moonTicks % MOON_BLOCK_INTERVAL == 0) {
             this.pullMoonBlocks(level, shape, owner);
         }
     }
 
-    private static double moonLateralLimit(PortalGunWorldPortalShape shape, double depth) {
-        return Math.max(shape.halfWidth(), shape.halfHeight()) + 0.5D + Math.max(0.0D, depth) * MOON_SPREAD;
-    }
-
     private void pullMoonEntities(ServerLevel level, PortalGunWorldPortalShape shape, Player owner) {
         Vec3 center = shape.center();
-        AABB area = new AABB(center, center.add(shape.normal().scale(MOON_RANGE))).inflate(moonLateralLimit(shape, MOON_RANGE));
+        AABB area = new AABB(center, center).inflate(MOON_RANGE);
         Vec3 target = center.add(shape.normal().scale(0.3D));
         boolean vacuumTick = this.moonTicks % MOON_VACUUM_INTERVAL == 0;
         for (Entity entity : level.getEntities(this, area, this::canMoonAffect)) {
             Vec3 position = entity.getBoundingBox().getCenter();
             PortalGunWorldPortalShape.PortalLocalCoords local = shape.localCoords(position);
             double depth = local.depth();
-            double lateral = Math.sqrt(local.horizontal() * local.horizontal() + local.vertical() * local.vertical());
-            if (depth < -0.5D || depth > MOON_RANGE || lateral > moonLateralLimit(shape, depth)) {
+            double distance = position.distanceTo(center);
+            if (depth < -0.5D || distance > MOON_RANGE) {
                 continue;
             }
             boolean atMouth = depth <= MOON_MOUTH_DEPTH + entity.getBbWidth() * 0.5D
@@ -694,7 +695,7 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
                 }
                 continue;
             }
-            double falloff = 1.0D - depth / MOON_RANGE;
+            double falloff = 1.0D - distance / MOON_RANGE;
             double strength = MOON_PULL_STRENGTH * (0.35D + falloff * falloff * 1.6D);
             Vec3 worldMotion = PortalGunTransitMath.entityVelocityToWorld(entity, entity.getDeltaMovement())
                     .scale(0.92D)
@@ -752,20 +753,20 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
         int cap = AntarchySettings.portalGunMoonBlockCap();
         int pulled = 0;
         for (int ray = 0; ray < MOON_BLOCK_RAYS && pulled < MOON_BLOCKS_PER_PULL && this.moonSuckedBlocks < cap; ray++) {
-            double limit = moonLateralLimit(shape, MOON_RANGE);
-            double horizontal = (this.random.nextDouble() * 2.0D - 1.0D) * limit;
-            double vertical = (this.random.nextDouble() * 2.0D - 1.0D) * limit;
-            if (horizontal * horizontal + vertical * vertical > limit * limit) {
+            Vec3 direction = new Vec3(this.random.nextGaussian(), this.random.nextGaussian(), this.random.nextGaussian());
+            if (direction.lengthSqr() < 1.0E-6D) {
                 continue;
+            }
+            direction = direction.normalize();
+            double outward = direction.dot(shape.normal());
+            if (outward < MOON_RAY_MIN_OUTWARD) {
+                direction = direction.subtract(shape.normal().scale(outward - MOON_RAY_MIN_OUTWARD - this.random.nextDouble() * 0.3D)).normalize();
             }
             Vec3 start = shape.center()
                     .add(shape.right().scale((this.random.nextDouble() * 2.0D - 1.0D) * shape.halfWidth()))
                     .add(shape.up().scale((this.random.nextDouble() * 2.0D - 1.0D) * shape.halfHeight()))
-                    .add(shape.normal().scale(0.5D));
-            Vec3 end = shape.center()
-                    .add(shape.right().scale(horizontal))
-                    .add(shape.up().scale(vertical))
-                    .add(shape.normal().scale(MOON_RANGE));
+                    .add(shape.normal().scale(0.3D));
+            Vec3 end = start.add(direction.scale(MOON_RANGE));
             BlockPos hit = this.firstBlockAlong(level, shape, start, end);
             if (hit == null) {
                 continue;
@@ -775,14 +776,42 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
                     || owner != null && !level.mayInteract(owner, hit)) {
                 continue;
             }
-            FallingBlockEntity falling = BlockSuction.lift(level, hit, state, shape.center(), MOON_BLOCK_SPEED);
+            FallingBlockEntity falling = BlockSuction.lift(level, hit, state, shape.center().add(shape.normal().scale(1.2D)), MOON_BLOCK_SPEED);
             if (falling == null) {
                 continue;
             }
             falling.setNoGravity(true);
+            this.moonLiftedBlocks.put(falling.getUUID(), this.moonTicks);
             pulled++;
             this.moonSuckedBlocks++;
         }
+    }
+
+    private void tickMoonLiftedBlocks(ServerLevel level, PortalGunWorldPortalShape shape) {
+        Iterator<Map.Entry<UUID, Integer>> iterator = this.moonLiftedBlocks.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<UUID, Integer> entry = iterator.next();
+            if (!(level.getEntity(entry.getKey()) instanceof FallingBlockEntity falling) || !falling.isAlive()) {
+                iterator.remove();
+                continue;
+            }
+            if (this.moonTicks - entry.getValue() > MOON_BLOCK_MAX_FLIGHT_TICKS
+                    || falling.getBoundingBox().getCenter().distanceTo(shape.center()) <= MOON_BLOCK_SWALLOW_RADIUS) {
+                falling.discard();
+                iterator.remove();
+            }
+        }
+    }
+
+    private void releaseMoonLiftedBlocks(ServerLevel level) {
+        for (UUID id : this.moonLiftedBlocks.keySet()) {
+            if (level.getEntity(id) instanceof FallingBlockEntity falling && falling.isAlive()) {
+                falling.setNoGravity(false);
+                falling.setDeltaMovement(falling.getDeltaMovement().scale(0.2D));
+                falling.hurtMarked = true;
+            }
+        }
+        this.moonLiftedBlocks.clear();
     }
 
     private BlockPos firstBlockAlong(ServerLevel level, PortalGunWorldPortalShape shape, Vec3 start, Vec3 end) {
@@ -795,9 +824,6 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
                 continue;
             }
             previous = pos;
-            if (shape.localCoords(Vec3.atCenterOf(pos)).depth() < 0.5D) {
-                continue;
-            }
             if (!level.isInWorldBounds(pos) || !level.getWorldBorder().isWithinBounds(pos)) {
                 return null;
             }
@@ -805,9 +831,19 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
             if (state == null) {
                 return null;
             }
-            if (!state.isAir()) {
-                return pos;
+            if (state.isAir() || this.containsPortalSpot(pos)) {
+                continue;
             }
+            PortalGunWorldPortalShape.PortalLocalCoords local = shape.localCoords(Vec3.atCenterOf(pos));
+            if (local.depth() < -1.0D) {
+                return null;
+            }
+            if (local.depth() < 0.5D
+                    && Math.abs(local.horizontal()) <= shape.halfWidth() + 1.0D
+                    && Math.abs(local.vertical()) <= shape.halfHeight() + 1.0D) {
+                return null;
+            }
+            return pos;
         }
         return null;
     }
@@ -821,13 +857,16 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
     private void spawnMoonParticles() {
         PortalGunWorldPortalShape shape = this.getWorldPortalShape();
         Vec3 center = shape.center();
-        for (int i = 0; i < 4; i++) {
-            double depth = 1.0D + this.random.nextDouble() * MOON_RANGE * 0.6D;
-            double limit = moonLateralLimit(shape, depth);
-            Vec3 start = center
-                    .add(shape.right().scale((this.random.nextDouble() * 2.0D - 1.0D) * limit))
-                    .add(shape.up().scale((this.random.nextDouble() * 2.0D - 1.0D) * limit))
-                    .add(shape.normal().scale(depth));
+        for (int i = 0; i < 6; i++) {
+            Vec3 direction = new Vec3(this.random.nextGaussian(), this.random.nextGaussian(), this.random.nextGaussian());
+            if (direction.lengthSqr() < 1.0E-6D) {
+                continue;
+            }
+            direction = direction.normalize();
+            if (direction.dot(shape.normal()) < 0.1D) {
+                direction = direction.add(shape.normal().scale(0.1D - direction.dot(shape.normal()))).normalize();
+            }
+            Vec3 start = center.add(direction.scale(1.5D + this.random.nextDouble() * MOON_RANGE * 0.6D));
             Vec3 velocity = center.subtract(start).normalize().scale(0.35D + this.random.nextDouble() * 0.3D);
             this.level().addParticle(ParticleTypes.CLOUD, start.x, start.y, start.z, velocity.x, velocity.y, velocity.z);
         }
@@ -1072,6 +1111,11 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
             tag.putBoolean("Moon", true);
             tag.putInt("MoonTicks", this.moonTicks);
             tag.putInt("MoonSuckedBlocks", this.moonSuckedBlocks);
+            ListTag lifted = new ListTag();
+            for (UUID id : this.moonLiftedBlocks.keySet()) {
+                lifted.add(NbtUtils.createUUID(id));
+            }
+            tag.put("MoonLiftedBlocks", lifted);
         }
         tag.putInt("Side", this.getPortalSide().ordinal());
         tag.putInt("Facing", this.getFacingDirection().get3DDataValue());
@@ -1125,6 +1169,10 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
         this.entityData.set(MOON, tag.getBoolean("Moon"));
         this.moonTicks = tag.getInt("MoonTicks");
         this.moonSuckedBlocks = tag.getInt("MoonSuckedBlocks");
+        this.moonLiftedBlocks.clear();
+        for (Tag lifted : tag.getList("MoonLiftedBlocks", Tag.TAG_INT_ARRAY)) {
+            this.moonLiftedBlocks.put(NbtUtils.loadUUID(lifted), this.moonTicks);
+        }
         this.entityData.set(SIDE, tag.getInt("Side"));
         this.entityData.set(FACING, tag.getInt("Facing"));
         this.entityData.set(UP_AXIS, tag.getInt("UpAxis"));
@@ -1153,6 +1201,9 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
 
     @Override
     public void remove(Entity.RemovalReason reason) {
+        if (this.isMoonPortal() && this.level() instanceof ServerLevel moonLevel) {
+            this.releaseMoonLiftedBlocks(moonLevel);
+        }
         Level level = this.level();
         UUID ownerId = this.ownerId;
         boolean destroyPortal = reason.shouldDestroy();

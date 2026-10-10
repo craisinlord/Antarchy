@@ -79,6 +79,7 @@ public final class AntarchyFabricEvents {
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> PortalGunProjectileEntity.releaseAllProjectileTickets());
         ServerLifecycleEvents.SERVER_STOPPING.register(com.craisinlord.antarchy.content.portalgun.PortalGunResetManager::clear);
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.clear());
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.clear());
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             ChronosphereManager.refresh(handler.player);
             TimeDilationManager.resyncPersistentEffects(handler.player);
@@ -214,6 +215,7 @@ public final class AntarchyFabricEvents {
             for (ServerLevel level : server.getAllLevels()) {
                 CavarynHordeManager.tick(level);
                 com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
+                com.craisinlord.antarchy.content.entity.glimmer.GlimmerNightSpawner.tick(level);
                 ThoraxisUndersideManager.tick(level);
                 com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature.tickPendingSpawns(level);
                 tickInvertedPlayers(level, activeThisTick);

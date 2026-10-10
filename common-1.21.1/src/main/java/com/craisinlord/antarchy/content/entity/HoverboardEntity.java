@@ -222,33 +222,18 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
     private double resolveVerticalMotion(boolean holdingJump) {
         AntarchyGravityDirection gravityDirection = AntarchyGravityApi.getGravityDirection(this);
         double supportHeight = this.findSupportHeight(gravityDirection);
-        if (!gravityDirection.isInverted()) {
-            double maxY = supportHeight + MAX_HOVER_HEIGHT;
-            if (holdingJump) {
-                return this.getY() >= maxY ? 0.0D : ASCEND_SPEED;
-            }
-            if (this.getY() <= supportHeight) {
-                return 0.0D;
-            }
-            double heightAboveBand = this.getY() - maxY;
-            if (heightAboveBand > 0.0D) {
-                return -Mth.clamp(SETTLE_DESCEND_SPEED + heightAboveBand * FAST_DESCEND_RAMP, SETTLE_DESCEND_SPEED, FAST_DESCEND_SPEED);
-            }
-            return -SETTLE_DESCEND_SPEED;
-        }
-
-        double minY = supportHeight - MAX_HOVER_HEIGHT;
+        double height = gravityDirection.isInverted() ? supportHeight - this.getY() : this.getY() - supportHeight;
         if (holdingJump) {
-            return this.getY() <= minY ? 0.0D : -ASCEND_SPEED;
+            return height >= MAX_HOVER_HEIGHT ? 0.0D : ASCEND_SPEED;
         }
-        if (this.getY() >= supportHeight) {
+        if (height <= 0.0D) {
             return 0.0D;
         }
-        double depthBelowBand = minY - this.getY();
-        if (depthBelowBand > 0.0D) {
-            return Mth.clamp(SETTLE_DESCEND_SPEED + depthBelowBand * FAST_DESCEND_RAMP, SETTLE_DESCEND_SPEED, FAST_DESCEND_SPEED);
+        double heightAboveBand = height - MAX_HOVER_HEIGHT;
+        if (heightAboveBand > 0.0D) {
+            return -Mth.clamp(SETTLE_DESCEND_SPEED + heightAboveBand * FAST_DESCEND_RAMP, SETTLE_DESCEND_SPEED, FAST_DESCEND_SPEED);
         }
-        return SETTLE_DESCEND_SPEED;
+        return -SETTLE_DESCEND_SPEED;
     }
 
     private double findSupportHeight(AntarchyGravityDirection gravityDirection) {

@@ -46,6 +46,7 @@ public final class PortalGunClientHandler {
 
         boolean attackDown = mc.options.keyAttack.isDown();
         if (attackDown && !lastAttackDown && !resetActive) {
+            com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.reportFromClient();
             ClientPlayNetworking.send(new PortalGunPrimaryPayload(offhand));
         }
         lastAttackDown = attackDown;

@@ -147,6 +147,7 @@
                ],
     "client":  [
                    "client.CameraBasisAccessor",
+                   "compat.stellarview.StellarViewLunaDirectionMixin",
                    "client.LevelRendererPortalViewAreaAccessor",
                    "client.LevelRendererPortalViewAreaMixin",
                    "client.LevelRendererPortalLifecycleMixin",

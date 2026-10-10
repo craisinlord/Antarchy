@@ -113,6 +113,9 @@ public class PortalGunItem extends Item implements GeoItem {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
         ItemStack stack = player.getItemInHand(usedHand);
         if (level.isClientSide) {
+            if (!player.isShiftKeyDown()) {
+                com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.reportFromClient();
+            }
             return InteractionResultHolder.consume(stack);
         }
         ServerLevel serverLevel = (ServerLevel) level;
@@ -311,6 +314,10 @@ public class PortalGunItem extends Item implements GeoItem {
     private boolean isAimingAtMoon(ServerLevel level, Player player) {
         if (!level.dimensionType().hasSkyLight() || level.dimensionType().hasCeiling()) {
             return false;
+        }
+        Boolean clientAim = player instanceof ServerPlayer serverPlayer ? com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.clientAim(serverPlayer) : null;
+        if (clientAim != null) {
+            return clientAim;
         }
         return PortalGunMoonMath.isAimedAtMoon(this.worldLook(player), level.getTimeOfDay(1.0F));
     }

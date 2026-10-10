@@ -5,11 +5,14 @@ import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
 import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -49,6 +52,7 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
     private static final TagKey<Block> GLASS_PANES = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("c", "glass_panes"));
     private static final int MAX_TICKETED_PROJECTILES = 20;
     private static final int PROJECTILE_TICKET_LEVEL = 31;
+    private static final int MAX_CHUNK_WAIT_TICKS = 200;
     private static final TicketType<UUID> PROJECTILE_TICKET = TicketType.create("antarchy_portal_projectile", Comparator.comparing(UUID::toString));
     private static final LinkedHashMap<UUID, ProjectileTicket> PROJECTILE_TICKETS = new LinkedHashMap<>();
     private static final EntityDataAccessor<Integer> SIDE = SynchedEntityData.defineId(PortalGunProjectileEntity.class, EntityDataSerializers.INT);
@@ -74,6 +78,7 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
     private UUID gunId;
     private boolean spawnSynced;
     private boolean ticketRegistered;
+    private int chunkWaitTicks;
     public int portalWidth = 1;
     public int portalHeight = 2;
 
@@ -207,8 +212,8 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
             this.setDeltaMovement(this.getSyncedVelocity());
             this.spawnSynced = true;
         }
-        if (!this.level().isClientSide && !this.isRemoved()) {
-            this.updateProjectileTicket();
+        if (this.level() instanceof ServerLevel serverLevel && !this.isRemoved() && !this.prepareServerStep(serverLevel)) {
+            return;
         }
         this.baseTick();
         if (this.isRemoved()) {
@@ -260,9 +265,6 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
         if (this.isRemoved()) {
             return;
         }
-        if (!this.level().isClientSide && !this.isRemoved()) {
-            this.updateProjectileTicket();
-        }
         if (this.isInWater()) {
             for (int i = 0; i < 4; i++) {
                 float backtrack = 0.25F;
@@ -293,32 +295,76 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
         super.remove(reason);
     }
 
-    private void updateProjectileTicket() {
-        if (!(this.level() instanceof ServerLevel serverLevel)) {
-            return;
+    private boolean prepareServerStep(ServerLevel level) {
+        Vec3 position = this.position();
+        Vec3 motion = this.getDeltaMovement();
+        if (position.y > level.getMaxBuildHeight() + 2.0D && motion.y >= 0.0D
+                || position.y < level.getMinBuildHeight() - 2.0D && motion.y <= 0.0D) {
+            this.discard();
+            return false;
         }
-        if (!AntarchySettings.portalGunCanPortalProjectilesChunkload()) {
+        List<ChunkPos> path = chunksAlong(position, position.add(motion));
+        boolean chunkload = AntarchySettings.portalGunCanPortalProjectilesChunkload();
+        if (chunkload) {
+            this.updateProjectileTicket(level, path);
+        } else {
             this.releaseProjectileTicket();
-            return;
         }
-        ChunkPos chunkPos = this.chunkPosition();
+        for (ChunkPos chunk : path) {
+            if (level.getChunkSource().getChunkNow(chunk.x, chunk.z) == null) {
+                if (!chunkload || ++this.chunkWaitTicks > MAX_CHUNK_WAIT_TICKS) {
+                    this.discard();
+                }
+                return false;
+            }
+        }
+        this.chunkWaitTicks = 0;
+        return true;
+    }
+
+    private static List<ChunkPos> chunksAlong(Vec3 start, Vec3 end) {
+        int minX = SectionPos.blockToSectionCoord(Math.min(start.x, end.x));
+        int maxX = SectionPos.blockToSectionCoord(Math.max(start.x, end.x));
+        int minZ = SectionPos.blockToSectionCoord(Math.min(start.z, end.z));
+        int maxZ = SectionPos.blockToSectionCoord(Math.max(start.z, end.z));
+        if (maxX - minX > 1 || maxZ - minZ > 1) {
+            return List.of(new ChunkPos(minX, minZ), new ChunkPos(maxX, maxZ));
+        }
+        List<ChunkPos> chunks = new ArrayList<>(4);
+        for (int x = minX; x <= maxX; x++) {
+            for (int z = minZ; z <= maxZ; z++) {
+                chunks.add(new ChunkPos(x, z));
+            }
+        }
+        return chunks;
+    }
+
+    private void updateProjectileTicket(ServerLevel serverLevel, List<ChunkPos> chunks) {
         UUID ticketId = this.getUUID();
         ProjectileTicket current = PROJECTILE_TICKETS.get(ticketId);
-        if (current != null && current.level == serverLevel && current.chunkPos.equals(chunkPos)) {
+        if (current != null && current.level == serverLevel && current.chunks.equals(chunks)) {
             return;
         }
         if (current != null) {
-            current.level.getChunkSource().removeRegionTicket(PROJECTILE_TICKET, current.chunkPos, PROJECTILE_TICKET_LEVEL, ticketId);
+            removeTicket(ticketId, current);
             PROJECTILE_TICKETS.remove(ticketId);
         }
         while (PROJECTILE_TICKETS.size() >= MAX_TICKETED_PROJECTILES) {
             Map.Entry<UUID, ProjectileTicket> oldest = PROJECTILE_TICKETS.entrySet().iterator().next();
-            oldest.getValue().level.getChunkSource().removeRegionTicket(PROJECTILE_TICKET, oldest.getValue().chunkPos, PROJECTILE_TICKET_LEVEL, oldest.getKey());
+            removeTicket(oldest.getKey(), oldest.getValue());
             PROJECTILE_TICKETS.remove(oldest.getKey());
         }
-        serverLevel.getChunkSource().addRegionTicket(PROJECTILE_TICKET, chunkPos, PROJECTILE_TICKET_LEVEL, ticketId);
-        PROJECTILE_TICKETS.put(ticketId, new ProjectileTicket(serverLevel, chunkPos));
+        for (ChunkPos chunk : chunks) {
+            serverLevel.getChunkSource().addRegionTicket(PROJECTILE_TICKET, chunk, PROJECTILE_TICKET_LEVEL, ticketId);
+        }
+        PROJECTILE_TICKETS.put(ticketId, new ProjectileTicket(serverLevel, List.copyOf(chunks)));
         this.ticketRegistered = true;
+    }
+
+    private static void removeTicket(UUID ticketId, ProjectileTicket ticket) {
+        for (ChunkPos chunk : ticket.chunks()) {
+            ticket.level().getChunkSource().removeRegionTicket(PROJECTILE_TICKET, chunk, PROJECTILE_TICKET_LEVEL, ticketId);
+        }
     }
 
     private void releaseProjectileTicket() {
@@ -328,20 +374,19 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
         UUID ticketId = this.getUUID();
         ProjectileTicket ticket = PROJECTILE_TICKETS.remove(ticketId);
         if (ticket != null) {
-            ticket.level.getChunkSource().removeRegionTicket(PROJECTILE_TICKET, ticket.chunkPos, PROJECTILE_TICKET_LEVEL, ticketId);
+            removeTicket(ticketId, ticket);
         }
         this.ticketRegistered = false;
     }
 
     public static void releaseAllProjectileTickets() {
         for (Map.Entry<UUID, ProjectileTicket> entry : PROJECTILE_TICKETS.entrySet()) {
-            ProjectileTicket ticket = entry.getValue();
-            ticket.level.getChunkSource().removeRegionTicket(PROJECTILE_TICKET, ticket.chunkPos, PROJECTILE_TICKET_LEVEL, entry.getKey());
+            removeTicket(entry.getKey(), entry.getValue());
         }
         PROJECTILE_TICKETS.clear();
     }
 
-    private record ProjectileTicket(ServerLevel level, ChunkPos chunkPos) {
+    private record ProjectileTicket(ServerLevel level, List<ChunkPos> chunks) {
     }
 
     @Override

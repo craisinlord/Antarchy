@@ -70,6 +70,14 @@ public final class AntarchyGravityNetworking {
                     });
                 }
         ).playToServer(
+                com.craisinlord.antarchy.content.network.PortalGunMoonAimPayload.TYPE,
+                com.craisinlord.antarchy.content.network.PortalGunMoonAimPayload.STREAM_CODEC,
+                (payload, context) -> context.enqueueWork(() -> {
+                    if (context.player() instanceof ServerPlayer serverPlayer) {
+                        com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.handle(serverPlayer, payload);
+                    }
+                })
+        ).playToServer(
                 com.craisinlord.antarchy.content.network.PortalGunResetPayload.TYPE,
                 com.craisinlord.antarchy.content.network.PortalGunResetPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
