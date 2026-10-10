@@ -29,57 +29,38 @@ sourceSets {
     }
 }
 
+ExternalModuleDependency infinityDep;
 dependencies {
-    minecraft "com.mojang:minecraft:1.21.1"
+    minecraft "com.mojang:minecraft:${rootProject.minecraft_version_1_21_1}"
     mappings loom.officialMojangMappings()
 
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version_1_21_1}"
     modApi "net.fabricmc.fabric-api:fabric-api:${fabric_api_version_1_21_1}"
     modLocalRuntime "maven.modrinth:midnightlib:${midnightlib}"
-    modImplementation "software.bernie.geckolib:geckolib-fabric-1.21.1:${geckolib_version}"
-    modImplementation(files("$rootDir/infinite_dimensions_jars/antos-fabric-1.21.1-${antos_version}.jar"))
+    modImplementation "software.bernie.geckolib:geckolib-fabric-${rootProject.minecraft_version_1_21_1}:${geckolib_version}"
+    modImplementation "maven.modrinth:antos:${project.antos_version}"
     if (providers.gradleProperty('antarchySodiumCompatTest').orNull == 'true') {
-        modLocalRuntime(files("$rootDir/infinite_dimensions_jars/sodium-fabric-0.8.13+mc1.21.1.jar"))
+        modLocalRuntime "net.caffeinemc:sodium-fabric:${project.sodium_version}"
     }
-    // Sodium — compile-only, for portal live views drawn through Sodium's renderer. Compiled
-    // against the NeoForge build (official Mojang mappings, matching this module's compile
-    // space; Sodium's own classes are identical across loaders). Never bundled.
-    compileOnly(files(zipTree("$rootDir/infinite_dimensions_jars/sodium-neoforge-0.8.13+mc1.21.1.jar")
-            .matching { include "META-INF/jarjar/net.caffeinemc.sodium-neoforge-*-mod.jar" }))
+    compileOnly "net.caffeinemc:sodium-fabric:${project.sodium_version}"
     modCompileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_fabric}")
     modLocalRuntime("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_fabric}")
     modLocalRuntime("dev.architectury:architectury-fabric:${architectury_api_version}")
-    compileOnly "mezz.jei:jei-1.21.1-common-api:${jei_version}"
-    compileOnly "mezz.jei:jei-1.21.1-fabric-api:${jei_version}"
-    modLocalRuntime "mezz.jei:jei-1.21.1-fabric:${jei_version}"
+    compileOnly "mezz.jei:jei-${rootProject.minecraft_version_1_21_1}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${rootProject.minecraft_version_1_21_1}-fabric-api:${jei_version}"
+    modLocalRuntime "mezz.jei:jei-${rootProject.minecraft_version_1_21_1}-fabric:${jei_version}"
 
-    modLocalRuntime(files("$rootDir/infinite_dimensions_jars/infinity-2.7.3+1.21.1-fabric.jar"))
-    compileOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.3+1.21.1-neoforge.jar"))
-    compileOnly(files("$rootDir/infinite_dimensions_jars/gravity-api-1.0.7-1.20.1.jar"))
-    compileOnly(files("$rootDir/infinite_dimensions_jars/sable-neoforge-1.21.1-2.0.3.jar"))
-    compileOnly(files("$rootDir/infinite_dimensions_jars/stellarview-1.21.1-0.5.3-neoforge.jar"))
+    infinityDep = modImplementation "maven.modrinth:infinite-dimensions:${project.infinite_dimensions_version}"
+    modImplementation "maven.modrinth:gravity-changer-unofficial-port:${project.gravity_api_version}"
+    modCompileOnly "maven.modrinth:sable:${project.sable_version}"
+    modCompileOnly "maven.modrinth:stellarview:${project.stellarview_version}"
 
-    // Cloth Config — optional, powers the in-game settings screen (AntarchyClothConfigScreenBuilder)
-    // via the Mod Menu integration below. compileOnly + modLocalRuntime only: never bundled or
-    // required at runtime in the shipped jar. Guarded by FabricLoader.isModLoaded("cloth-config")
-    // in AntarchyModMenuIntegration before any Cloth Config class is touched. Reuses the
-    // clothconfig_curseforge_id/clothconfig_curseforge_file_id pin already in gradle.properties.
-    modCompileOnly("curse.maven:cloth-config-${clothconfig_curseforge_id}:${clothconfig_curseforge_file_id}")
-    modLocalRuntime("curse.maven:cloth-config-${clothconfig_curseforge_id}:${clothconfig_curseforge_file_id}")
+    modImplementation("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
 
-    // Mod Menu — optional, provides the "modmenu" fabric.mod.json entrypoint
-    // (AntarchyModMenuIntegration). Same soft-dependency treatment as Cloth Config above; Fabric
-    // Loader only ever resolves the "modmenu" entrypoint if Mod Menu itself is installed and asks
-    // for it, so nothing here is touched when it's absent. Reuses the mod_menu version already
-    // pinned in gradle.properties.
-    modCompileOnly "com.terraformersmc:modmenu:${mod_menu}"
-    modLocalRuntime "com.terraformersmc:modmenu:${mod_menu}"
-
-    // Compile against the NeoForge jar (official Mojang mappings, matches this module's compile
-    // space) but load the real Fabric jar at runtime — sizeable_foliage's Fabric jar ships
-    // intermediary-mapped, which this compileOnly classpath can't resolve directly.
-    compileOnly(files("$rootDir/sizeable_foliage_jars/sizeable_foliage-neoforge-1.21.1-1.0.0.jar"))
-    modLocalRuntime(files("$rootDir/sizeable_foliage_jars/sizeable_foliage-fabric-1.21.1-1.0.0.jar"))
+    modImplementation "com.terraformersmc:modmenu:${mod_menu}"
+    modImplementation "maven.modrinth:sizeable-foliage:${project.sizeable_foliage_version}"
 
     annotationProcessor "org.spongepowered:mixin:0.8.7:processor"
     implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_1_21_1}"))
@@ -92,10 +73,10 @@ loom {
     }
 }
 
-tasks.named('processResources', ProcessResources).configure {
+processResources {
     var replaceProperties = [
         version              : project.version,
-        minecraft_version    : "1.21.1",
+        minecraft_version    : "${rootProject.minecraft_version_1_21_1}",
         fabric_loader_version: fabric_loader_version_1_21_1,
         architectury_api_version: architectury_api_version,
         mod_id               : mod_id,
@@ -131,7 +112,7 @@ tasks.named('processResources', ProcessResources).configure {
 tasks.matching { it.name in ["runClient", "runServer", "runDatagen"] }.configureEach {
     doFirst {
         def infinityConfigPrefix = "config/common/"
-        zipTree(rootProject.file("infinite_dimensions_jars/infinity-2.7.3+1.21.1-fabric.jar")).visit { details ->
+        zipTree(rootProject.file("infinite_dimensions_jars/infinity-2.7.3+${rootProject.minecraft_version_1_21_1}-fabric.jar")).visit { details ->
             if (!details.directory && details.relativePath.pathString.startsWith(infinityConfigPrefix)) {
                 def targetPath = details.relativePath.pathString.substring(infinityConfigPrefix.length())
                 file("run/config/infinity/${targetPath}").parentFile.mkdirs()
@@ -144,7 +125,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             groupId = rootProject.group
-            artifactId = "${mod_id}-fabric-1.21.1"
+            artifactId = "${mod_id}-fabric-${rootProject.minecraft_version_1_21_1}"
             version = project.version
 
             artifact(project.tasks.named('remapJar'))
@@ -153,7 +134,7 @@ publishing {
             }
 
             pom {
-                name = "${mod_name} (Fabric 1.21.1)"
+                name = "${mod_name} (Fabric ${rootProject.minecraft_version_1_21_1})"
                 description = mod_description
             }
         }
