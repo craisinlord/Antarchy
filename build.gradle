@@ -16,6 +16,7 @@ subprojects {
         // CurseForge Maven artifacts must be resolved from CurseMaven.  The
         // Fabric repository does not proxy these coordinates reliably and can
         // prevent Gradle from reaching the working repository.
+        // [note: the Fabric repository does not proxy these AT ALL, and it is not its responsibility anyway]
         maven {
             name = "CurseMaven"
             url = "https://www.cursemaven.com"
