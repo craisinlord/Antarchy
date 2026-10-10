@@ -112,6 +112,7 @@ tasks.named('processResources', ProcessResources).configure {
 tasks.matching { it.name in ["runClient", "runServer", "runDatagen"] }.configureEach {
     doFirst {
         def infinityConfigPrefix = "config/common/"
+        //TODO fetch jar from infinityDep variable somehow, to replace the following mess
         zipTree(rootProject.file("infinite_dimensions_jars/infinity-2.7.3+${rootProject.minecraft_version_1_21_1}-fabric.jar")).visit { details ->
             if (!details.directory && details.relativePath.pathString.startsWith(infinityConfigPrefix)) {
                 def targetPath = details.relativePath.pathString.substring(infinityConfigPrefix.length())
