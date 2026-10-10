@@ -18,10 +18,10 @@ tasks.named('jar').configure {
 
 dependencies {
     compileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_neoforge}")
-    compileOnly(files("$rootDir/infinite_dimensions_jars/infinity-2.7.3+1.21.1-neoforge.jar"))
-    compileOnly(files("$rootDir/infinite_dimensions_jars/gravity-api-1.0.7-1.20.1.jar"))
-    compileOnly(files("$rootDir/infinite_dimensions_jars/sable-neoforge-1.21.1-2.0.3.jar"))
-    compileOnly(files("$rootDir/sizeable_foliage_jars/sizeable_foliage-neoforge-1.21.1-1.0.0.jar"))
+    compileOnly "maven.modrinth:infinite-dimensions:${project.infinite_dimensions_version}"
+    compileOnly "maven.modrinth:gravity-changer-unofficial-port:${project.gravity_api_version}"
+    compileOnly "maven.modrinth:sable:${project.sable_version}"
+    compileOnly "maven.modrinth:sizeable-foliage:${project.sizeable_foliage_version}"
     compileOnly("software.bernie.geckolib:geckolib-neoforge-1.21.1:${geckolib_version}")
     compileOnly("mezz.jei:jei-1.21.1-common-api:${jei_version}")
 }

@@ -3,7 +3,10 @@ plugins {
     id "maven-publish"
 }
 
-allprojects {
+def targetJavaVersion = 21
+def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+
+subprojects {
     apply plugin: "java-library"
     apply plugin: "maven-publish"
 
@@ -13,6 +16,7 @@ allprojects {
         // CurseForge Maven artifacts must be resolved from CurseMaven.  The
         // Fabric repository does not proxy these coordinates reliably and can
         // prevent Gradle from reaching the working repository.
+        // [note: the Fabric repository does not proxy these AT ALL, and it is not its responsibility anyway]
         maven {
             name = "CurseMaven"
             url = "https://www.cursemaven.com"
@@ -21,6 +25,17 @@ allprojects {
             }
             content {
                 includeGroupByRegex "curse\\.maven"
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "Modrinth"
+                    url = "https://api.modrinth.com/maven"
+                }
+            }
+            filter {
+                includeGroup "maven.modrinth"
             }
         }
         maven { url "https://maven.fabricmc.net/" }
@@ -51,13 +66,22 @@ allprojects {
         maven { url "https://jitpack.io" }
         maven { url "https://api.modrinth.com/maven/" }
         maven { url "https://maven.blamejared.com" }
+        maven {
+            // required for clean sodium dependency
+            name = "CaffeineMC"
+            url = "https://maven.caffeinemc.net/releases"
+        }
     }
 
     tasks.withType(JavaCompile) {
-        options.encoding = "UTF-8"
+        it.options.encoding = "UTF-8"
+        it.options.release.set(targetJavaVersion)
     }
 
     java {
+        if (JavaVersion.current() < javaVersion) {
+            toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+        }
         withSourcesJar()
     }
 

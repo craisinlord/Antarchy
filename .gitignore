@@ -1,0 +1,16 @@
+# MacOS stuff, if anyone actually uses one
+.DS_Store
+# exclude gradle local directories
+**/.gradle/
+# exclude build dirs but not "build" folders in sources
+**/build/
+!**/src/**/build/
+# JetBrains stuff
+out/
+.idea
+*.iml
+# JVM crash logs
+hs_err_pid*
+# runtime directories, but not "run" folders in sources
+**/run/
+!**/src/**/run/
