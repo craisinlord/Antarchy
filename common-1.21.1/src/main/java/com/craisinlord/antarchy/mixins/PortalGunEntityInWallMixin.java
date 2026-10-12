@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.mixins;
 
 import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
+import com.craisinlord.antarchy.content.portalgun.PortalGunPortalRegistry;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,10 +13,10 @@ public abstract class PortalGunEntityInWallMixin {
     @Inject(method = "isInWall", at = @At("HEAD"), cancellable = true)
     private void antarchy$ignorePortalInWall(CallbackInfoReturnable<Boolean> cir) {
         Entity entity = (Entity) (Object) this;
-        if (entity.level() == null) {
+        if (entity.level() == null || !PortalGunPortalRegistry.hasAny(entity.level())) {
             return;
         }
-        for (PortalGunPortalEntity portal : com.craisinlord.antarchy.content.portalgun.PortalGunPortalRegistry.near(entity.level(), entity.getBoundingBox().inflate(2.0D))) {
+        for (PortalGunPortalEntity portal : PortalGunPortalRegistry.near(entity.level(), entity.getBoundingBox().inflate(2.0D))) {
             if (portal.intersectsEntityBounds(entity) || portal.getCollisionRemovalAabbForEntity(entity).intersects(entity.getBoundingBox())) {
                 cir.setReturnValue(false);
                 return;

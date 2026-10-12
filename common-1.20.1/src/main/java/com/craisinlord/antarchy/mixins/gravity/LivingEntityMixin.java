@@ -39,6 +39,15 @@ public abstract class LivingEntityMixin {
         return AntarchyGravityRotationUtil.vecWorldToPlayer(entity.position(), direction).y;
     }
 
+    @WrapOperation(method = "travel",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getLookAngle()Lnet/minecraft/world/phys/Vec3;"))
+    private Vec3 antarchy$fixTravelLookAngle(LivingEntity entity, Operation<Vec3> original) {
+        Vec3 look = original.call(entity);
+        AntarchyGravityDirection direction = AntarchyGravityApi.getGravityDirection(entity);
+        if (!direction.isInverted() || !entity.isFallFlying()) return look;
+        return AntarchyGravityRotationUtil.vecWorldToPlayer(look, direction);
+    }
+
     @ModifyVariable(method = "checkFallDamage", at = @At("HEAD"), ordinal = 0, argsOnly = true)
     private double antarchy$invertLivingFallDamageY(double worldY) {
         LivingEntity entity = (LivingEntity) (Object) this;

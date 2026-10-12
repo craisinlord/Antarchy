@@ -14,6 +14,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexSorting;
+import java.util.UUID;
 import java.util.function.Consumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -53,7 +54,8 @@ public final class PortalGunPortalSceneRenderer {
 
     public static void render(Minecraft minecraft, Camera camera, float partialTick, Matrix4f viewMatrix,
                               Matrix4f projection, Matrix4f skyProjection, Frustum frustum,
-                              PortalTerrain terrain, Consumer<PoseStack> crossingEntities) {
+                              PortalTerrain terrain, Consumer<PoseStack> crossingEntities,
+                              UUID sourceId, UUID destinationId, int viewLevel) {
         LevelRenderer renderer = minecraft.levelRenderer;
         LevelRendererPortalViewAreaAccessor state = (LevelRendererPortalViewAreaAccessor) renderer;
         LevelRendererPortalSceneInvoker scene = (LevelRendererPortalSceneInvoker) renderer;
@@ -94,8 +96,10 @@ public final class PortalGunPortalSceneRenderer {
                 RenderSystem.setProjectionMatrix(skyProjection, VertexSorting.DISTANCE_TO_ORIGIN);
                 FogRenderer.setupFog(camera, FogRenderer.FogMode.FOG_SKY, renderDistance, foggy, partialTick);
                 RenderSystem.setShader(GameRenderer::getPositionShader);
-                renderer.renderSky(viewMatrix, skyProjection, partialTick, camera, foggy,
-                        () -> FogRenderer.setupFog(camera, FogRenderer.FogMode.FOG_SKY, renderDistance, foggy, partialTick));
+                if (irisPipelineInstalled || PortalGunPortalSkyQueries.shouldRenderSky(sourceId, destinationId, viewLevel)) {
+                    renderer.renderSky(viewMatrix, skyProjection, partialTick, camera, foggy,
+                            () -> FogRenderer.setupFog(camera, FogRenderer.FogMode.FOG_SKY, renderDistance, foggy, partialTick));
+                }
             }
 
             RenderSystem.setProjectionMatrix(projection, VertexSorting.DISTANCE_TO_ORIGIN);
@@ -144,6 +148,9 @@ public final class PortalGunPortalSceneRenderer {
                             renderBlockEntity(minecraft, blockEntity, cameraX, cameraY, cameraZ, partialTick, poseStack, buffers));
                 }
                 buffers.endBatch();
+                if (!irisPipelineInstalled) {
+                    PortalGunPortalSkyQueries.querySkyVisibility(sourceId, destinationId, viewLevel);
+                }
 
                 {
                     terrain.drawLayer(minecraft, RenderType.translucent(), cameraPosition, viewMatrix, projection);

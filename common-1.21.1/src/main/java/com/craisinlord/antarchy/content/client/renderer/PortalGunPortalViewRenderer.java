@@ -75,6 +75,7 @@ public final class PortalGunPortalViewRenderer {
 
     public static void releaseTargets() {
         PortalGunPortalVisibilityQueries.clear();
+        PortalGunPortalSkyQueries.clear();
         PortalGunPortalSectionViews.clear();
         if (offscreenTarget != null) {
             offscreenTarget.destroyBuffers();
@@ -86,10 +87,10 @@ public final class PortalGunPortalViewRenderer {
         if (renderingPortalView) {
             return;
         }
+        renderHiddenOutlines(camera, poseMatrix, projectionMatrix, tickCounter);
         if (isEnabled()) {
             renderViews(camera, poseMatrix, projectionMatrix, tickCounter);
         }
-        renderHiddenOutlines(camera, poseMatrix, projectionMatrix, tickCounter);
     }
 
     private static void renderHiddenOutlines(Camera camera, Matrix4f poseMatrix, Matrix4f projectionMatrix, DeltaTracker tickCounter) {
@@ -244,6 +245,8 @@ public final class PortalGunPortalViewRenderer {
             RenderSystem.enableScissor(clip.x(), clip.y(), clip.width(), clip.height());
             renderScene(minecraft, cameraEntity, partialTick, transformed, rootProjection, clippedProjection,
                     source, destination, clip, target.width, target.height, parentLevel + 1);
+            PortalGunPortalRim.drawHiddenOutlines(minecraft, transformed.cameraPos(), transformed.viewMatrix(), clippedProjection,
+                    partialTick, destination);
             if (parentLevel + 1 < MAX_VIEW_LEVELS) {
                 renderNestedViews(minecraft, cameraEntity, partialTick, transformed, rootProjection, clippedProjection,
                         destination, parentLevel + 1, clip, budget, target.width, target.height);
@@ -353,6 +356,8 @@ public final class PortalGunPortalViewRenderer {
             RenderSystem.enableScissor(clip.x(), clip.y(), clip.width(), clip.height());
             renderScene(minecraft, cameraEntity, partialTick, transformed, rootProjection, clippedProjection,
                     source, destination, clip, target.width, target.height, 1);
+            PortalGunPortalRim.drawHiddenOutlines(minecraft, transformed.cameraPos(), transformed.viewMatrix(), clippedProjection,
+                    partialTick, destination);
         } finally {
             RenderSystem.disableScissor();
             targetAccessor.antarchy$setMainRenderTarget(mainTarget);
@@ -378,7 +383,8 @@ public final class PortalGunPortalViewRenderer {
             PortalTerrain terrain = PortalTerrain.prepare(minecraft, destination.getUUID(), exit.center(), exit.normal(), frustum);
             PortalGunPortalSceneRenderer.render(minecraft, portalCamera, partialTick, transformed.viewMatrix(), clippedProjection,
                     rootProjection, frustum, terrain,
-                    poseStack -> renderCrossingEntities(minecraft, transformed.cameraPos(), partialTick, source, destination, poseStack));
+                    poseStack -> renderCrossingEntities(minecraft, transformed.cameraPos(), partialTick, source, destination, poseStack),
+                    source.getUUID(), destination.getUUID(), level);
         } finally {
             PortalGunPortalRenderState.popPortalView(false);
         }

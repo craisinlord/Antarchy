@@ -53,10 +53,18 @@ public final class PortalGunPortalRim {
     }
 
     static void drawHiddenOutlines(Minecraft minecraft, Vec3 cameraPos, Matrix4f viewMatrix, Matrix4f projectionMatrix, float partialTick) {
+        drawHiddenOutlines(minecraft, cameraPos, viewMatrix, projectionMatrix, partialTick, null);
+    }
+
+    static void drawHiddenOutlines(Minecraft minecraft, Vec3 cameraPos, Matrix4f viewMatrix, Matrix4f projectionMatrix, float partialTick,
+                                   PortalGunPortalEntity excluded) {
         if (minecraft.level == null || minecraft.player == null) {
             return;
         }
         List<PortalGunPortalEntity> ownedPortals = collectOwnedPortals(minecraft);
+        if (excluded != null) {
+            ownedPortals.remove(excluded);
+        }
         if (ownedPortals.isEmpty()) {
             return;
         }

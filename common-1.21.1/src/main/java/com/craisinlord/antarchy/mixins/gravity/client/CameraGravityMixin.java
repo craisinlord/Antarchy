@@ -17,12 +17,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Camera.class)
-/*
- * Fixes camera pos/rot for inverted gravity and the flip anim.
- * Rotation is applied before move() so third-person pull-back uses the
- * correct gravity-adjusted forward direction. First-person falls through
- * to the TAIL inject since setup never calls move() in that case.
- */
 public abstract class CameraGravityMixin {
     @Shadow
     private Entity entity;
@@ -37,18 +31,13 @@ public abstract class CameraGravityMixin {
     private float eyeHeightOld;
 
     private float antarchy$storedTickDelta;
-    private boolean antarchy$gravityApplied;
 
     @Shadow
     protected abstract void setPosition(double x, double y, double z);
 
-    @Shadow
-    protected abstract void move(float forward, float up, float left);
-
     @Inject(method = "setup", at = @At("HEAD"))
     private void antarchy$storeTickDelta(BlockGetter level, Entity entity, boolean detached, boolean mirrored, float partialTick, CallbackInfo ci) {
         this.antarchy$storedTickDelta = partialTick;
-        this.antarchy$gravityApplied = false;
     }
 
     @Redirect(
@@ -88,53 +77,17 @@ public abstract class CameraGravityMixin {
         );
     }
 
-    /*
-     * Intercept the move() call inside setup so the pull-back direction
-     * already has gravity rotation applied. This covers detached (third-person)
-     * and sleeping cameras. Sets a flag so the TAIL inject doesn't double-apply.
-     */
-    @Redirect(
-            method = "setup",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;move(FFF)V")
+    @Inject(
+            method = "setRotation",
+            at = @At(value = "INVOKE", target = "Lorg/joml/Quaternionf;rotationYXZ(FFF)Lorg/joml/Quaternionf;", shift = At.Shift.AFTER)
     )
-    private void antarchy$moveWithGravity(
-            Camera camera,
-            float forward,
-            float up,
-            float left,
-            BlockGetter level,
-            Entity entity,
-            boolean detached,
-            boolean mirrored,
-            float partialTick
-    ) {
-        antarchy$applyGravityRotationOnce();
-        this.move(forward, up, left);
-    }
-
-    /*
-     * First-person fallthrough: setup never calls move(), so gravity rotation
-     * hasn't been applied yet when we reach the end of the method.
-     */
-    @Inject(method = "setup", at = @At("TAIL"))
-    private void antarchy$applyGravityAtTail(BlockGetter level, Entity entity, boolean detached, boolean mirrored, float partialTick, CallbackInfo ci) {
-        antarchy$applyGravityRotationOnce();
-    }
-
-    private void antarchy$applyGravityRotationOnce() {
-        if (this.antarchy$gravityApplied) {
-            return;
-        }
+    private void antarchy$applyGravityRotation(CallbackInfo ci) {
         if (this.entity == null) {
             return;
         }
-        if (!AntarchyGravityApi.isGravityInverted(this.entity) && AntarchyGravityApi.getGravityFlipProgress(this.entity, this.antarchy$storedTickDelta) <= 0.0F) {
-            this.rotation.premul(new Quaternionf().fromAxisAngleDeg(0.0F, 0.0F, -1.0F, PortalGunRollClientState.getRollDegrees(this.antarchy$storedTickDelta)));
-            this.antarchy$gravityApplied = true;
-            return;
+        if (AntarchyGravityApi.isGravityInverted(this.entity) || AntarchyGravityApi.getGravityFlipProgress(this.entity, this.antarchy$storedTickDelta) > 0.0F) {
+            this.rotation.premul(AntarchyGravityRotationUtil.getCameraRotationQuaternion(this.entity, this.antarchy$storedTickDelta));
         }
-        this.rotation.premul(AntarchyGravityRotationUtil.getCameraRotationQuaternion(this.entity, this.antarchy$storedTickDelta));
         this.rotation.premul(new Quaternionf().fromAxisAngleDeg(0.0F, 0.0F, -1.0F, PortalGunRollClientState.getRollDegrees(this.antarchy$storedTickDelta)));
-        this.antarchy$gravityApplied = true;
     }
 }

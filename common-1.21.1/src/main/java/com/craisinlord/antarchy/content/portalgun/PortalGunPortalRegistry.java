@@ -8,11 +8,13 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 public final class PortalGunPortalRegistry {
     private static final Map<Level, Map<UUID, PortalGunPortalEntity>> LEVELS = Collections.synchronizedMap(new WeakHashMap<>());
+    private static final AtomicInteger TRACKED = new AtomicInteger();
 
     private PortalGunPortalRegistry() {
     }
@@ -26,17 +28,30 @@ public final class PortalGunPortalRegistry {
         synchronized (LEVELS) {
             portals = LEVELS.computeIfAbsent(level, ignored -> new ConcurrentHashMap<>());
         }
-        portals.put(portal.getUUID(), portal);
+        if (portals.put(portal.getUUID(), portal) == null) {
+            TRACKED.incrementAndGet();
+        }
     }
 
     static void untrack(PortalGunPortalEntity portal) {
         Map<UUID, PortalGunPortalEntity> portals = portalsIn(portal.level());
-        if (portals != null) {
-            portals.remove(portal.getUUID(), portal);
+        if (portals != null && portals.remove(portal.getUUID(), portal)) {
+            TRACKED.decrementAndGet();
         }
     }
 
+    public static boolean hasAny(Level level) {
+        if (TRACKED.get() <= 0) {
+            return false;
+        }
+        Map<UUID, PortalGunPortalEntity> portals = portalsIn(level);
+        return portals != null && !portals.isEmpty();
+    }
+
     public static Collection<PortalGunPortalEntity> all(Level level) {
+        if (TRACKED.get() <= 0) {
+            return List.of();
+        }
         Map<UUID, PortalGunPortalEntity> portals = portalsIn(level);
         return portals == null ? List.of() : portals.values();
     }
@@ -54,6 +69,9 @@ public final class PortalGunPortalRegistry {
     }
 
     public static List<PortalGunPortalEntity> near(Level level, AABB bounds) {
+        if (TRACKED.get() <= 0) {
+            return List.of();
+        }
         Map<UUID, PortalGunPortalEntity> portals = portalsIn(level);
         if (portals == null || portals.isEmpty()) {
             return List.of();

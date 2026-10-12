@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.mixins;
 
 import com.craisinlord.antarchy.content.portalgun.PortalGunCollisionHelper;
 import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
+import com.craisinlord.antarchy.content.portalgun.PortalGunPortalRegistry;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.phys.AABB;
@@ -24,12 +25,21 @@ public abstract class PortalGunEntityCollisionMixin {
 
     @Inject(method = "move", at = @At("HEAD"))
     private void antarchy$capturePortalGunMovementStart(MoverType type, Vec3 movement, CallbackInfo ci) {
-        this.antarchy$portalGunMoveStartBox = ((Entity) (Object) this).getBoundingBox();
-        this.antarchy$portalGunMoveStartVelocity = ((Entity) (Object) this).getDeltaMovement();
+        Entity entity = (Entity) (Object) this;
+        if (!PortalGunPortalRegistry.hasAny(entity.level())) {
+            this.antarchy$portalGunMoveStartBox = null;
+            this.antarchy$portalGunMoveStartVelocity = null;
+            return;
+        }
+        this.antarchy$portalGunMoveStartBox = entity.getBoundingBox();
+        this.antarchy$portalGunMoveStartVelocity = entity.getDeltaMovement();
     }
 
     @Inject(method = "move", at = @At("RETURN"))
     private void antarchy$teleportMobOnPortalCrossing(MoverType type, Vec3 movement, CallbackInfo ci) {
+        if (this.antarchy$portalGunMoveStartBox == null) {
+            return;
+        }
         AABB startBox = this.antarchy$portalGunMoveStartBox;
         Vec3 startVelocity = this.antarchy$portalGunMoveStartVelocity;
         this.antarchy$portalGunMoveStartBox = null;
@@ -41,15 +51,16 @@ public abstract class PortalGunEntityCollisionMixin {
 
     @Inject(method = "collide", at = @At("HEAD"))
     private void antarchy$capturePortalGunStartBox(Vec3 movement, CallbackInfoReturnable<Vec3> cir) {
-        this.antarchy$portalGunStartBox = ((Entity) (Object) this).getBoundingBox();
+        Entity entity = (Entity) (Object) this;
+        this.antarchy$portalGunStartBox = PortalGunPortalRegistry.hasAny(entity.level()) ? entity.getBoundingBox() : null;
     }
 
     @Inject(method = "collide", at = @At("RETURN"), cancellable = true)
     private void antarchy$restorePortalCrossingMotion(Vec3 movement, CallbackInfoReturnable<Vec3> cir) {
-        Entity entity = (Entity) (Object) this;
         if (this.antarchy$portalGunStartBox == null) {
             return;
         }
+        Entity entity = (Entity) (Object) this;
         Vec3 collided = cir.getReturnValue();
         Vec3 adjusted = PortalGunCollisionHelper.resolveCollision(entity, this.antarchy$portalGunStartBox, movement, collided);
         if (adjusted != collided) {

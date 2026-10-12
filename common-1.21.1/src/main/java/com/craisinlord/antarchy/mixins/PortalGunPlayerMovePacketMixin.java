@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.mixins;
 
 import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
+import com.craisinlord.antarchy.content.portalgun.PortalGunPortalRegistry;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -29,7 +30,7 @@ public abstract class PortalGunPlayerMovePacketMixin {
         }
         this.antarchy$portalGunMoveStartBox = null;
         this.antarchy$portalGunMoveStartPosition = null;
-        if (!packet.hasPosition() || ((ServerGamePacketListenerTeleportAccessor) this).antarchy$getAwaitingPositionFromClient() != null) {
+        if (!packet.hasPosition() || !PortalGunPortalRegistry.hasAny(player.level()) || ((ServerGamePacketListenerTeleportAccessor) this).antarchy$getAwaitingPositionFromClient() != null) {
             return;
         }
         this.antarchy$portalGunMoveStartBox = player.getBoundingBox();

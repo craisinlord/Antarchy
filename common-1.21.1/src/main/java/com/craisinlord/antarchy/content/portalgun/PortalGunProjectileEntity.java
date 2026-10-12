@@ -7,10 +7,12 @@ import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.component.DataComponents;
@@ -38,6 +40,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.block.StainedGlassBlock;
 import net.minecraft.world.level.block.StainedGlassPaneBlock;
 import net.minecraft.world.level.block.TintedGlassBlock;
@@ -53,6 +56,7 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
     private static final int MAX_TICKETED_PROJECTILES = 20;
     private static final int PROJECTILE_TICKET_LEVEL = 31;
     private static final int MAX_CHUNK_WAIT_TICKS = 200;
+    private static final int GENERATED_CHECK_RADIUS = 3;
     private static final TicketType<UUID> PROJECTILE_TICKET = TicketType.create("antarchy_portal_projectile", Comparator.comparing(UUID::toString));
     private static final LinkedHashMap<UUID, ProjectileTicket> PROJECTILE_TICKETS = new LinkedHashMap<>();
     private static final EntityDataAccessor<Integer> SIDE = SynchedEntityData.defineId(PortalGunProjectileEntity.class, EntityDataSerializers.INT);
@@ -79,6 +83,7 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
     private boolean spawnSynced;
     private boolean ticketRegistered;
     private int chunkWaitTicks;
+    private final Map<Long, CompletableFuture<Boolean>> generatedChecks = new HashMap<>();
     public int portalWidth = 1;
     public int portalHeight = 2;
 
@@ -304,22 +309,67 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
             return false;
         }
         List<ChunkPos> path = chunksAlong(position, position.add(motion));
-        boolean chunkload = AntarchySettings.portalGunCanPortalProjectilesChunkload();
-        if (chunkload) {
-            this.updateProjectileTicket(level, path);
-        } else {
+        boolean playerArea = true;
+        for (ChunkPos chunk : path) {
+            if (!level.isPositionEntityTicking(chunk.getMiddleBlockPosition(0))) {
+                playerArea = false;
+                break;
+            }
+        }
+        if (playerArea) {
             this.releaseProjectileTicket();
+            this.chunkWaitTicks = 0;
+            return true;
+        }
+        if (!AntarchySettings.portalGunCanPortalProjectilesChunkload()) {
+            this.releaseProjectileTicket();
+            this.discard();
+            return false;
         }
         for (ChunkPos chunk : path) {
-            if (level.getChunkSource().getChunkNow(chunk.x, chunk.z) == null) {
-                if (!chunkload || ++this.chunkWaitTicks > MAX_CHUNK_WAIT_TICKS) {
-                    this.discard();
+            for (int dx = -GENERATED_CHECK_RADIUS; dx <= GENERATED_CHECK_RADIUS; dx++) {
+                for (int dz = -GENERATED_CHECK_RADIUS; dz <= GENERATED_CHECK_RADIUS; dz++) {
+                    ChunkPos around = new ChunkPos(chunk.x + dx, chunk.z + dz);
+                    if (level.getChunkSource().getChunkNow(around.x, around.z) != null) {
+                        continue;
+                    }
+                    Boolean generated = this.isGenerated(level, around);
+                    if (generated == null) {
+                        return this.waitForChunks();
+                    }
+                    if (!generated) {
+                        this.discard();
+                        return false;
+                    }
                 }
-                return false;
+            }
+        }
+        this.updateProjectileTicket(level, path);
+        for (ChunkPos chunk : path) {
+            if (!level.isPositionEntityTicking(chunk.getMiddleBlockPosition(0))) {
+                return this.waitForChunks();
             }
         }
         this.chunkWaitTicks = 0;
         return true;
+    }
+
+    private boolean waitForChunks() {
+        if (++this.chunkWaitTicks > MAX_CHUNK_WAIT_TICKS) {
+            this.discard();
+        }
+        return false;
+    }
+
+    private Boolean isGenerated(ServerLevel level, ChunkPos chunk) {
+        CompletableFuture<Boolean> check = this.generatedChecks.computeIfAbsent(chunk.toLong(), key -> level.getChunkSource().chunkMap.read(chunk)
+                .thenApply(tag -> tag.map(PortalGunProjectileEntity::isFullChunk).orElse(false))
+                .exceptionally(error -> false));
+        return check.isDone() ? check.join() : null;
+    }
+
+    private static boolean isFullChunk(CompoundTag tag) {
+        return ChunkStatus.byName(tag.getString("Status")).isOrAfter(ChunkStatus.FULL);
     }
 
     private static List<ChunkPos> chunksAlong(Vec3 start, Vec3 end) {

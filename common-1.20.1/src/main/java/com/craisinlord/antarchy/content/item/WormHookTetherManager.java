@@ -2,6 +2,8 @@ package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.WormHookProjectileEntity;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
 import com.craisinlord.antarchy.content.util.WormHookRope;
 import java.util.Map;
 import java.util.UUID;
@@ -139,9 +141,9 @@ public final class WormHookTetherManager {
         // the max length (which alone has no effect until the rope goes taut).
         if (reeling && dist > MIN_LEN) {
             Vec3 pull = towardPivot.scale(-REEL_PULL_STRENGTH);
-            Vec3 reelMotion = player.getDeltaMovement().add(pull);
+            Vec3 reelMotion = getWorldMotion(player).add(pull);
             reelMotion = new Vec3(reelMotion.x, Mth.clamp(reelMotion.y, -0.6D, 0.6D), reelMotion.z);
-            player.setDeltaMovement(reelMotion);
+            setWorldMotion(player, reelMotion);
             player.hurtMarked = true;
             player.fallDistance = 0;
         }
@@ -158,7 +160,7 @@ public final class WormHookTetherManager {
             return;
         }
 
-        Vec3 motion = player.getDeltaMovement();
+        Vec3 motion = getWorldMotion(player);
         double outward = motion.dot(towardPivot);
         if (outward > 0) {
             motion = motion.subtract(towardPivot.scale(outward));
@@ -167,9 +169,17 @@ public final class WormHookTetherManager {
         Vec3 correction = towardPivot.scale(-overshoot * PULL_CORRECTION);
         Vec3 newMotion = motion.add(correction);
         newMotion = new Vec3(newMotion.x, Mth.clamp(newMotion.y, -1.0D, 1.0D), newMotion.z);
-        player.setDeltaMovement(newMotion);
+        setWorldMotion(player, newMotion);
         player.hurtMarked = true;
         player.fallDistance = 0;
+    }
+
+    private static Vec3 getWorldMotion(ServerPlayer player) {
+        return AntarchyGravityRotationUtil.vecPlayerToWorld(player.getDeltaMovement(), AntarchyGravityApi.getGravityDirection(player));
+    }
+
+    private static void setWorldMotion(ServerPlayer player, Vec3 worldMotion) {
+        player.setDeltaMovement(AntarchyGravityRotationUtil.vecWorldToPlayer(worldMotion, AntarchyGravityApi.getGravityDirection(player)));
     }
 
     private static void tickFlyingSound(ServerPlayer player, TetherState state) {
