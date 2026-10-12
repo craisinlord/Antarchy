@@ -2,7 +2,7 @@ package com.craisinlord.antarchy.content.portalgun;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalBaseBlockEntity;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalCellAccess;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalFaceRecord;
@@ -388,7 +388,7 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
     }
 
     public PortalTransit computeTransit(Entity entity, PortalGunPortalEntity destination, AABB box, Vec3 velocity, Vec3 look) {
-        if (!AntarchyGravityApi.isGravityInverted(entity)) {
+        if (!GravityApi.isGravityInverted(entity)) {
             return computeTransit(destination, box, velocity, look);
         }
         PortalGunWorldPortalShape source = this.getWorldPortalShape();
@@ -951,7 +951,7 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
             Vec3 memberLook;
             if (root) {
                 memberLook = transit.look();
-            } else if (AntarchyGravityApi.isGravityInverted(member)) {
+            } else if (GravityApi.isGravityInverted(member)) {
                 Vec3 worldLook = PortalGunTransitMath.entityVelocityToWorld(member, state.look());
                 memberLook = PortalGunTransitMath.entityVelocityFromWorld(member,
                         PortalGunTransformUtil.transformVector(this, destination, worldLook).normalize());
@@ -961,7 +961,7 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
             Vec3 memberMotion;
             if (root) {
                 memberMotion = transit.velocity();
-            } else if (AntarchyGravityApi.isGravityInverted(member)) {
+            } else if (GravityApi.isGravityInverted(member)) {
                 Vec3 worldMotion = PortalGunTransitMath.entityVelocityToWorld(member, state.motion());
                 memberMotion = PortalGunTransitMath.entityVelocityFromWorld(member,
                         PortalGunTransformUtil.transformVector(this, destination, worldMotion));
@@ -971,7 +971,7 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
             float yaw = PortalGunTransformUtil.yawFromLook(memberLook);
             float pitch = PortalGunTransformUtil.pitchFromLook(memberLook);
             float fallDistance = PortalGunTransitMath.exitFallDistance(member.fallDistance,
-                    AntarchyGravityApi.isGravityInverted(member) ? PortalGunTransitMath.entityVelocityToWorld(member, memberMotion) : memberMotion,
+                    GravityApi.isGravityInverted(member) ? PortalGunTransitMath.entityVelocityToWorld(member, memberMotion) : memberMotion,
                     member);
             if (member instanceof ServerPlayer player && root && clientAuthoritative) {
                 player.moveTo(memberExitPos.x, memberExitPos.y, memberExitPos.z, yaw, pitch);

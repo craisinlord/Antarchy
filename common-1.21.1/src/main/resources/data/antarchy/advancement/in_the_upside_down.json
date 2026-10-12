@@ -4,7 +4,7 @@
     "become_inverted": {
       "conditions": {
         "effects": {
-          "antarchy:inverted": {}
+          "anthology:inverted": {}
         }
       },
       "trigger": "minecraft:effects_changed"

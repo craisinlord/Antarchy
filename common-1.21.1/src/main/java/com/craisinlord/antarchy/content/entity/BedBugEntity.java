@@ -5,9 +5,9 @@ import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.BedBugEggBlock;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -394,15 +394,15 @@ public class BedBugEntity extends Animal implements GeoEntity {
     }
 
     private void commitLunge(LivingEntity target, double horizontalSpeed, double verticalSpeed) {
-        AntarchyGravityDirection direction = AntarchyGravityApi.getGravityDirection(this);
-        Vec3 localLunge = AntarchyGravityRotationUtil.vecWorldToPlayer(target.position().subtract(this.position()), direction);
+        GravityDirection direction = GravityApi.getGravityDirection(this);
+        Vec3 localLunge = GravityRotationUtil.vecWorldToPlayer(target.position().subtract(this.position()), direction);
         Vec3 horizontal = new Vec3(localLunge.x, 0.0D, localLunge.z);
         if (horizontal.lengthSqr() < 1.0E-4D) {
             return;
         }
         horizontal = horizontal.normalize().scale(horizontalSpeed);
         Vec3 localImpulse = new Vec3(horizontal.x, verticalSpeed, horizontal.z);
-        Vec3 worldImpulse = AntarchyGravityRotationUtil.vecPlayerToWorld(localImpulse, direction);
+        Vec3 worldImpulse = GravityRotationUtil.vecPlayerToWorld(localImpulse, direction);
         this.setDeltaMovement(this.getDeltaMovement().add(worldImpulse.x, worldImpulse.y, worldImpulse.z));
         this.hasImpulse = true;
     }

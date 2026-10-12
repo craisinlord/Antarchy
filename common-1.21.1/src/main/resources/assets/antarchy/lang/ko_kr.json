@@ -526,8 +526,6 @@
     "effect.antarchy.dread.description": "시각 및 청각 환각을 일으킵니다.",
     "effect.antarchy.paralyzed": "마비",
     "effect.antarchy.paralyzed.description": "대상이 움직이지 못하게 합니다.",
-    "effect.antarchy.inverted": "반전",
-    "effect.antarchy.inverted.description": "대상의 중력을 반전시킵니다.",
     "effect.antarchy.commanded.description": "명령한 플레이어를 위해 싸웁니다.",
     "effect.antarchy.dilated.description": "영향받은 개체의 시간 흐름을 늦춥니다.",
     "effect.antarchy.stinky": "악취",

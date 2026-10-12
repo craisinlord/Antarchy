@@ -3,9 +3,9 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -235,12 +235,12 @@ public class SpitBugEntity extends Monster implements GeoEntity {
         this.playSound(AntarchySoundEvents.SPIT_BUG_SPIT.get(), 1.0F, 0.85F + this.random.nextFloat() * 0.15F);
     }
 
-    private AntarchyGravityDirection gravityDirection() {
-        return AntarchyGravityApi.getGravityDirection(this);
+    private GravityDirection gravityDirection() {
+        return GravityApi.getGravityDirection(this);
     }
 
     private Vec3 toWorld(double x, double y, double z) {
-        return AntarchyGravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
+        return GravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
     }
 
     private final class SpitAttackGoal extends Goal {

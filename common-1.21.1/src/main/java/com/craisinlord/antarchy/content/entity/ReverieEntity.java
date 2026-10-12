@@ -7,9 +7,9 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.antarchy.content.movement.DreamSandLowGravityAccess;
 import java.util.EnumSet;
 import java.util.List;
@@ -663,8 +663,8 @@ public class ReverieEntity extends PathfinderMob implements FlyingAnimal, GeoEnt
             return false;
         }
 
-        AntarchyGravityDirection gravityDirection = AntarchyGravityApi.getGravityDirection(focus);
-        Vec3 localMotion = AntarchyGravityRotationUtil.vecWorldToPlayer(focus.getDeltaMovement(), gravityDirection);
+        GravityDirection gravityDirection = GravityApi.getGravityDirection(focus);
+        Vec3 localMotion = GravityRotationUtil.vecWorldToPlayer(focus.getDeltaMovement(), gravityDirection);
         double descentThreshold = Math.max(0.02D, this.cfgDangerousFallSpeed);
         boolean invertedGravity = gravityDirection.isInverted();
         if (invertedGravity ? localMotion.y < descentThreshold : localMotion.y > -descentThreshold) {
@@ -1008,7 +1008,7 @@ public class ReverieEntity extends PathfinderMob implements FlyingAnimal, GeoEnt
     }
 
     private int getGravitySupportDistance(Player focus, int maxDistanceBlocks) {
-        Direction gravityDown = AntarchyGravityRotationUtil.getGravityDownDirection(focus);
+        Direction gravityDown = GravityRotationUtil.getGravityDownDirection(focus);
         Direction supportFace = gravityDown.getOpposite();
         BlockPos cursor = focus.blockPosition();
         for (int distance = 1; distance <= maxDistanceBlocks; distance++) {
@@ -1047,7 +1047,7 @@ public class ReverieEntity extends PathfinderMob implements FlyingAnimal, GeoEnt
         double radius = Mth.lerp(1.0D - orbitBlend, desiredMin * 0.35D, desiredMax * 0.85D);
         Vec3 tetherAnchor = focus.position().add(focus.getDeltaMovement().scale(0.75D));
         double angle = orbitTime * (this.getId() % 2 == 0 ? 1.0D : -1.0D);
-        double verticalOffset = AntarchyGravityApi.isGravityInverted(focus) ? -2.15D : 1.15D;
+        double verticalOffset = GravityApi.isGravityInverted(focus) ? -2.15D : 1.15D;
         double y = tetherAnchor.y + verticalOffset + Math.sin(orbitTime * 0.8D) * 0.2D;
         return new Vec3(
                 tetherAnchor.x + Math.cos(angle) * radius,
@@ -1057,7 +1057,7 @@ public class ReverieEntity extends PathfinderMob implements FlyingAnimal, GeoEnt
     }
 
     private Vec3 getPurpleProtectTarget(Player focus) {
-        double verticalOffset = AntarchyGravityApi.isGravityInverted(focus) ? -0.95D : 0.95D;
+        double verticalOffset = GravityApi.isGravityInverted(focus) ? -0.95D : 0.95D;
         Vec3 tetherAnchor = focus.position().add(focus.getDeltaMovement().scale(0.85D));
         Vec3 sideOffset = Vec3.directionFromRotation(0.0F, focus.getYRot() + 90.0F).scale(0.45D);
         return new Vec3(

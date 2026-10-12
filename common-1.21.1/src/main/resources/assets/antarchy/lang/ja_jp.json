@@ -526,8 +526,6 @@
     "effect.antarchy.dread.description": "視覚と聴覚の幻覚を引き起こします。",
     "effect.antarchy.paralyzed": "麻痺",
     "effect.antarchy.paralyzed.description": "対象が動けなくなります。",
-    "effect.antarchy.inverted": "重力反転",
-    "effect.antarchy.inverted.description": "対象の重力を反転させます。",
     "effect.antarchy.commanded.description": "命令したプレイヤーのために戦います。",
     "effect.antarchy.dilated.description": "影響を受けたエンティティの時間の流れを遅くします。",
     "effect.antarchy.stinky": "悪臭",

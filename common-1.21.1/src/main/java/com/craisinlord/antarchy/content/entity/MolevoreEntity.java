@@ -4,9 +4,9 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -687,20 +687,20 @@ public class MolevoreEntity extends Monster implements GeoEntity {
         return forward.normalize().dot(toTarget.normalize()) >= minimumDot;
     }
 
-    private AntarchyGravityDirection gravityDirection() {
-        return AntarchyGravityApi.getGravityDirection(this);
+    private GravityDirection gravityDirection() {
+        return GravityApi.getGravityDirection(this);
     }
 
     private Vec3 toWorld(double x, double y, double z) {
-        return AntarchyGravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
+        return GravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
     }
 
     private Vec3 toWorld(Vec3 localVector) {
-        return AntarchyGravityRotationUtil.vecPlayerToWorld(localVector, this.gravityDirection());
+        return GravityRotationUtil.vecPlayerToWorld(localVector, this.gravityDirection());
     }
 
     private Vec3 toLocalPlane(Vec3 worldVector) {
-        Vec3 local = AntarchyGravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+        Vec3 local = GravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
         return new Vec3(local.x, 0.0D, local.z);
     }
 

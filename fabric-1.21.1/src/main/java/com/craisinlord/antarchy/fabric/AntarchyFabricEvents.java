@@ -12,9 +12,9 @@ import com.craisinlord.antarchy.content.item.AttitudeAdjusterSlamManager;
 import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityTransition;
 import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.craisinlord.antarchy.content.portal.PermanentPortalManager;
 import com.craisinlord.antarchy.content.portalgun.PortalGunProjectileEntity;
@@ -22,7 +22,6 @@ import com.craisinlord.antarchy.content.portalgun.PortalGunSavedData;
 import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.CaterpillarCommand;
 import com.craisinlord.antarchy.content.command.DimensionalTearCommand;
-import com.craisinlord.antarchy.content.command.GravityCommand;
 import com.craisinlord.antarchy.content.command.QueenLocateCommand;
 import com.craisinlord.antarchy.content.command.RoyalCommand;
 import com.craisinlord.antarchy.content.time.TimeDilationCommand;
@@ -69,7 +68,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public final class AntarchyFabricEvents {
-    private static final AntarchyGravityTransition INVERTED_CLEAR_TRANSITION = new AntarchyGravityTransition(12);
+    private static final GravityTransition INVERTED_CLEAR_TRANSITION = new GravityTransition(12);
     private static final Set<UUID> invertedPlayers = new HashSet<>();
 
     private AntarchyFabricEvents() {
@@ -100,7 +99,6 @@ public final class AntarchyFabricEvents {
         });
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             CavarynCommand.register(dispatcher);
-            GravityCommand.register(dispatcher);
             CaterpillarCommand.register(dispatcher);
             DimensionalTearCommand.register(dispatcher);
             QueenLocateCommand.register(dispatcher);
@@ -324,9 +322,9 @@ public final class AntarchyFabricEvents {
                 continue;
             }
 
-            if (AntarchyGravityApi.getGravityDirection(player) == AntarchyGravityDirection.UP
-                    || AntarchyGravityApi.isGravityForced(player)) {
-                AntarchyGravityApi.setGravityDirection(player, AntarchyGravityDirection.DOWN, INVERTED_CLEAR_TRANSITION);
+            if (GravityApi.getGravityDirection(player) == GravityDirection.UP
+                    || GravityApi.isGravityForced(player)) {
+                GravityApi.setGravityDirection(player, GravityDirection.DOWN, INVERTED_CLEAR_TRANSITION);
             }
             notifyNearbyReveriesOfInversionChange(player);
         }

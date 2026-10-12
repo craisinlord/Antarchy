@@ -24,6 +24,7 @@ public final class AntarchyFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         com.craisinlord.antarchy.Antarchy.physicalClient = true;
+        com.craisinlord.antarchy.content.movement.AntarchyGravityHooks.registerClient();
         ModelLoadingPlugin.register(plugin -> plugin.addModels(SeparateLargeItemModels.all()));
         ClientTickEvents.END_CLIENT_TICK.register(client -> QueenMusicHandler.tick(client, AntarchyFabricSounds.THE_QUEEN.get()));
         AntarchyFabricClientNetworking.register();

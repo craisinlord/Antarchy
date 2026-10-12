@@ -2,8 +2,8 @@ package com.craisinlord.antarchy.content.entity.vortex;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyTags;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -508,7 +508,7 @@ public class WindVortexEntity extends Entity {
                 .add(tangent.scale(spin))
                 .add(basis.axis.scale(axialSpeed))
                 .scale(ENTITY_FORCE_SPEED_SCALE);
-        Vec3 current = AntarchyGravityApi.getWorldVelocity(entity);
+        Vec3 current = GravityApi.getWorldVelocity(entity);
         Vec3 updatedMovement = current.lerp(wanted, 0.72D);
         if (this.travelling) {
             updatedMovement = updatedMovement.add(this.travelVelocity.scale(0.8D * ENTITY_FORCE_SPEED_SCALE));
@@ -516,12 +516,12 @@ public class WindVortexEntity extends Entity {
         if (mode == VortexMode.UPWARD && entity.onGround()) {
             double minRise = (entity instanceof Player ? 0.38D : 0.3D) * ENTITY_FORCE_SPEED_SCALE;
             Vec3 gravityUp = Vec3.atLowerCornerOf(
-                    AntarchyGravityRotationUtil.getGravityDownDirection(entity).getOpposite().getNormal());
+                    GravityRotationUtil.getGravityDownDirection(entity).getOpposite().getNormal());
             double minimumAxialSpeed = Math.max(updatedMovement.dot(gravityUp), minRise);
             updatedMovement = updatedMovement.add(gravityUp.scale(minimumAxialSpeed - updatedMovement.dot(gravityUp)));
             entity.setOnGround(false);
         }
-        AntarchyGravityApi.setWorldVelocity(entity, updatedMovement);
+        GravityApi.setWorldVelocity(entity, updatedMovement);
         if (entity instanceof Player) {
             entity.setOnGround(false);
         }
@@ -572,7 +572,7 @@ public class WindVortexEntity extends Entity {
         double arc = Mth.clamp(distance * 0.06D, 0.25D, 1.1D) * ENTITY_FORCE_SPEED_SCALE;
         double power = this.launchStrength * Mth.clamp(distance / 6.0D, 0.6D, 2.0D) * ENTITY_FORCE_SPEED_SCALE;
         Vec3 gravityUp = Vec3.atLowerCornerOf(
-                AntarchyGravityRotationUtil.getGravityDownDirection(entity).getOpposite().getNormal());
+                GravityRotationUtil.getGravityDownDirection(entity).getOpposite().getNormal());
         this.setWorldVelocity(entity, direction.scale(power).add(gravityUp.scale(arc)));
         entity.fallDistance = 0.0F;
         entity.hasImpulse = true;
@@ -592,7 +592,7 @@ public class WindVortexEntity extends Entity {
     }
 
     private void setWorldVelocity(Entity entity, Vec3 velocity) {
-        AntarchyGravityApi.setWorldVelocity(entity, velocity);
+        GravityApi.setWorldVelocity(entity, velocity);
     }
 
     private DamageSource damageSource() {

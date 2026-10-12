@@ -6,7 +6,6 @@ import com.craisinlord.antarchy.content.entity.multipart.MultipartEntityOwner;
 import com.craisinlord.antarchy.content.entity.multipart.MultipartFramework;
 import com.craisinlord.antarchy.content.entity.multipart.network.MultipartAttackPayload;
 import com.craisinlord.antarchy.content.entity.multipart.network.MultipartInteractPayload;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
 import com.craisinlord.antarchy.content.item.BrutalflyElytraFlightHelper;
 import com.craisinlord.antarchy.content.item.BrutalflyElytraItem;
@@ -75,7 +74,6 @@ public final class AntarchyFabricNetworking {
     private static void registerPayloadTypes() {
         PayloadTypeRegistry.playS2C().register(AntarchyGameResultPayload.TYPE, AntarchyGameResultPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(PortalGunIndicatorPayload.TYPE, PortalGunIndicatorPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(GravityStatePayload.TYPE, GravityStatePayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(BloodglassStatePayload.TYPE, BloodglassStatePayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(TigerEyeCamouflageStatePayload.TYPE, TigerEyeCamouflageStatePayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(BloodCrystalKatanaTrailPayload.TYPE, BloodCrystalKatanaTrailPayload.STREAM_CODEC);
@@ -186,35 +184,6 @@ public final class AntarchyFabricNetworking {
                 context.server().execute(() -> handleMultipartInteract(context.player(), payload)));
     }
 
-    public static void syncGravityToPlayer(ServerPlayer target, Entity entity) {
-        ServerPlayNetworking.send(target, new GravityStatePayload(
-                entity.getId(),
-                AntarchyGravityApi.getGravityDirection(entity),
-                AntarchyGravityApi.getPrevGravityDirection(entity),
-                AntarchyGravityApi.isGravityForced(entity),
-                AntarchyGravityApi.getTransitionDuration(entity),
-                AntarchyGravityApi.getTransitionRemaining(entity)
-        ));
-    }
-
-    public static void syncGravityEntity(Entity entity) {
-        GravityStatePayload payload = new GravityStatePayload(
-                entity.getId(),
-                AntarchyGravityApi.getGravityDirection(entity),
-                AntarchyGravityApi.getPrevGravityDirection(entity),
-                AntarchyGravityApi.isGravityForced(entity),
-                AntarchyGravityApi.getTransitionDuration(entity),
-                AntarchyGravityApi.getTransitionRemaining(entity)
-        );
-
-        for (ServerPlayer player : PlayerLookup.tracking(entity)) {
-            ServerPlayNetworking.send(player, payload);
-        }
-        if (entity instanceof ServerPlayer player) {
-            ServerPlayNetworking.send(player, payload);
-        }
-    }
-
     public static void syncBloodglass(ServerPlayer player, int shieldsActive, int shieldsMax) {
         ServerPlayNetworking.send(player, new BloodglassStatePayload(shieldsActive, shieldsMax));
     }
@@ -251,24 +220,6 @@ public final class AntarchyFabricNetworking {
             ServerPlayNetworking.send(tracking, payload);
         }
         ServerPlayNetworking.send(player, payload);
-    }
-
-    public static void handleGravityState(Entity contextPlayer, GravityStatePayload payload) {
-        Entity entity = contextPlayer.level().getEntity(payload.entityId());
-        if (entity == null && contextPlayer.getId() == payload.entityId()) {
-            entity = contextPlayer;
-        }
-        if (entity == null) {
-            return;
-        }
-        AntarchyGravityApi.applySyncedState(
-                entity,
-                payload.direction(),
-                payload.previousDirection(),
-                payload.forced(),
-                payload.transitionDuration(),
-                payload.transitionRemaining()
-        );
     }
 
     private static void handleGravityGunPrimary(ServerPlayer player, GravityGunPrimaryPayload payload) {

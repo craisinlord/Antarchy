@@ -3,9 +3,9 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import java.util.EnumSet;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -245,12 +245,12 @@ public class OuranwoodDeerEntity extends Animal implements GeoEntity {
         return MIN_QUIRK_COOLDOWN + this.random.nextInt(MAX_QUIRK_COOLDOWN - MIN_QUIRK_COOLDOWN + 1);
     }
 
-    private AntarchyGravityDirection gravityDirection() {
-        return AntarchyGravityApi.getGravityDirection(this);
+    private GravityDirection gravityDirection() {
+        return GravityApi.getGravityDirection(this);
     }
 
     private Vec3 toLocal(Vec3 worldVector) {
-        return AntarchyGravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+        return GravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
     }
 
     @Override

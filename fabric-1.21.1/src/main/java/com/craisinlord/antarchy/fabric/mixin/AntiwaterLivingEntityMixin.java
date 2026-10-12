@@ -1,9 +1,9 @@
 package com.craisinlord.antarchy.fabric.mixin;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.antarchy.fabric.util.CustomFluidPhysicsChecks;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
@@ -38,9 +38,9 @@ public abstract class AntiwaterLivingEntityMixin {
             motion = new Vec3(motion.x, 0.2D, motion.z);
         }
 
-        AntarchyGravityDirection gravityDirection = antarchy$getEffectiveGravityDirection(entity);
+        GravityDirection gravityDirection = antarchy$getEffectiveGravityDirection(entity);
         Vec3 worldMotion = gravityDirection.isInverted()
-                ? AntarchyGravityRotationUtil.vecPlayerToWorld(motion, gravityDirection)
+                ? GravityRotationUtil.vecPlayerToWorld(motion, gravityDirection)
                 : motion;
 
         double drag = entity.isSwimming() ? 0.9D : 0.8D;
@@ -56,7 +56,7 @@ public abstract class AntiwaterLivingEntityMixin {
 
         entity.setDeltaMovement(
                 gravityDirection.isInverted()
-                        ? AntarchyGravityRotationUtil.vecWorldToPlayer(worldMotion, gravityDirection)
+                        ? GravityRotationUtil.vecWorldToPlayer(worldMotion, gravityDirection)
                         : worldMotion
         );
 
@@ -68,7 +68,7 @@ public abstract class AntiwaterLivingEntityMixin {
             Vec3 boostedWorldMotion = new Vec3(worldMotion.x, 0.3D, worldMotion.z);
             entity.setDeltaMovement(
                     gravityDirection.isInverted()
-                            ? AntarchyGravityRotationUtil.vecWorldToPlayer(boostedWorldMotion, gravityDirection)
+                            ? GravityRotationUtil.vecWorldToPlayer(boostedWorldMotion, gravityDirection)
                             : boostedWorldMotion
             );
         }
@@ -76,12 +76,12 @@ public abstract class AntiwaterLivingEntityMixin {
         ci.cancel();
     }
 
-    private AntarchyGravityDirection antarchy$getEffectiveGravityDirection(LivingEntity entity) {
-        AntarchyGravityDirection gravityDirection = AntarchyGravityApi.getGravityDirection(entity);
+    private GravityDirection antarchy$getEffectiveGravityDirection(LivingEntity entity) {
+        GravityDirection gravityDirection = GravityApi.getGravityDirection(entity);
         if (gravityDirection.isInverted() || !entity.hasEffect(AntarchyObjects.INVERTED_EFFECT.get())) {
             return gravityDirection;
         }
 
-        return AntarchyGravityDirection.UP;
+        return GravityDirection.UP;
     }
 }

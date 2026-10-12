@@ -5,8 +5,8 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.effect.RoyalEffectEligibility;
 import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.antarchy.content.network.KingJudgmentFlashSync;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -821,8 +821,8 @@ public class KingEntity extends RoyalBossEntity {
                 this.setRoyalFlying(true);
                 this.getMoveControl().setWantedPosition(landing.x, landing.y, landing.z, 1.35D);
                 this.tickKingLandingIndicator();
-                Vec3 localLandingDelta = AntarchyGravityRotationUtil.vecWorldToPlayer(
-                        this.position().subtract(landing), AntarchyGravityApi.getGravityDirection(this));
+                Vec3 localLandingDelta = GravityRotationUtil.vecWorldToPlayer(
+                        this.position().subtract(landing), GravityApi.getGravityDirection(this));
                 double horizontalDistanceSquared = this.position().subtract(landing)
                         .multiply(1.0D, 0.0D, 1.0D).lengthSqr();
                 boolean reachedLanding = this.onGround()
@@ -928,8 +928,8 @@ public class KingEntity extends RoyalBossEntity {
             this.performWingGust(level, target);
         }
         this.setRoyalFlying(true);
-        this.addGravityAwareImpulse(this, AntarchyGravityRotationUtil.vecPlayerToWorld(
-                0.0D, 0.42D, 0.0D, AntarchyGravityApi.getGravityDirection(this)));
+        this.addGravityAwareImpulse(this, GravityRotationUtil.vecPlayerToWorld(
+                0.0D, 0.42D, 0.0D, GravityApi.getGravityDirection(this)));
         this.hasImpulse = true;
     }
 
@@ -943,8 +943,8 @@ public class KingEntity extends RoyalBossEntity {
         double radius = Mth.lerp(progress, 4.0D, STOMP_RADIUS);
         for (int index = 0; index < 36; index++) {
             double angle = Mth.TWO_PI * index / 36.0D;
-            Vec3 indicator = this.kingLandingWaypoint.add(AntarchyGravityRotationUtil.vecPlayerToWorld(
-                    0.0D, 0.2D, 0.0D, AntarchyGravityApi.getGravityDirection(this)));
+            Vec3 indicator = this.kingLandingWaypoint.add(GravityRotationUtil.vecPlayerToWorld(
+                    0.0D, 0.2D, 0.0D, GravityApi.getGravityDirection(this)));
             level.sendParticles(ParticleTypes.ELECTRIC_SPARK,
                     this.kingLandingWaypoint.x + Math.cos(angle) * radius,
                     indicator.y,
@@ -963,7 +963,7 @@ public class KingEntity extends RoyalBossEntity {
             for (double radius : radii) {
                 double x = target.getX() + Math.cos(angle) * radius;
                 double z = target.getZ() + Math.sin(angle) * radius;
-                double y = AntarchyGravityApi.isGravityInverted(this)
+                double y = GravityApi.isGravityInverted(this)
                         ? target.position().y - 0.1D
                         : this.groundYBelow(x, z) + 0.1D;
                 Vec3 candidate = new Vec3(x, y, z);
@@ -974,7 +974,7 @@ public class KingEntity extends RoyalBossEntity {
                 }
             }
         }
-        double fallbackY = AntarchyGravityApi.isGravityInverted(this)
+        double fallbackY = GravityApi.isGravityInverted(this)
                 ? target.position().y - 0.1D
                 : this.groundYBelow(target.getX(), target.getZ()) + 0.1D;
         Vec3 fallback = new Vec3(target.getX(), fallbackY, target.getZ());
@@ -986,7 +986,7 @@ public class KingEntity extends RoyalBossEntity {
         // Last resort: land directly beneath the King if the target ring is obstructed.
         // This still gives Close Quarters a committed ground sequence instead of silently
         // remaining airborne over difficult tree geometry.
-        double directY = AntarchyGravityApi.isGravityInverted(this)
+        double directY = GravityApi.isGravityInverted(this)
                 ? this.position().y - 0.1D
                 : this.groundYBelow(this.getX(), this.getZ()) + 0.1D;
         Vec3 direct = new Vec3(this.getX(), directY, this.getZ());
@@ -1632,8 +1632,8 @@ public class KingEntity extends RoyalBossEntity {
                 continue;
             }
             living.hurt(this.damageSources().mobAttack(this), this.scaleRoyalDamage(12.0D));
-            Vec3 lift = AntarchyGravityRotationUtil.vecPlayerToWorld(
-                    0.0D, 0.45D, 0.0D, AntarchyGravityApi.getGravityDirection(living));
+            Vec3 lift = GravityRotationUtil.vecPlayerToWorld(
+                    0.0D, 0.45D, 0.0D, GravityApi.getGravityDirection(living));
             this.addGravityAwareImpulse(living, this.royalChargeDirection.scale(2.1D).add(lift));
             living.hasImpulse = true;
             level.sendParticles(ParticleTypes.END_ROD, living.getX(), living.getY() + living.getBbHeight() * 0.5D,
@@ -1821,8 +1821,8 @@ public class KingEntity extends RoyalBossEntity {
             float falloff = (float) Math.max(0.2D, 1.0D - distance / (STOMP_RADIUS + 6.0D));
             living.hurt(source, base * falloff);
             Vec3 push = living.position().subtract(this.position()).normalize().scale(2.4D * falloff);
-            Vec3 vertical = AntarchyGravityRotationUtil.vecPlayerToWorld(
-                    0.0D, 0.85D, 0.0D, AntarchyGravityApi.getGravityDirection(living));
+            Vec3 vertical = GravityRotationUtil.vecPlayerToWorld(
+                    0.0D, 0.85D, 0.0D, GravityApi.getGravityDirection(living));
             this.addGravityAwareImpulse(living, new Vec3(push.x, 0.0D, push.z).add(vertical));
             living.hasImpulse = true;
         }
@@ -2125,8 +2125,8 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     private void sendRoyalJudgmentTelegraph(ServerLevel level, LivingEntity target, int elapsedTicks) {
-        Vec3 targetPoint = target.position().add(AntarchyGravityRotationUtil.vecPlayerToWorld(
-                0.0D, 0.35D, 0.0D, AntarchyGravityApi.getGravityDirection(target)));
+        Vec3 targetPoint = target.position().add(GravityRotationUtil.vecPlayerToWorld(
+                0.0D, 0.35D, 0.0D, GravityApi.getGravityDirection(target)));
         double pulse = 0.8D + Math.min(1.0D, elapsedTicks / 20.0D) * 0.5D;
         for (RoyalHead.Slot slot : RoyalHead.Slot.values()) {
             RoyalHead head = this.royalHead(slot);

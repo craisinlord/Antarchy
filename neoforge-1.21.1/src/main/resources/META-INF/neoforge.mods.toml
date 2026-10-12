@@ -36,6 +36,13 @@ displayURL="https://www.curseforge.com/minecraft/mc-mods/antarchy"
     side="BOTH"
 
 [[dependencies.antarchy]]
+    modId="anthology"
+    type="required"
+    versionRange="[1.0.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.antarchy]]
 modId="antos"
     type="required"
     versionRange="[1.2.1,)"

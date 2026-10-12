@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.content.client;
 
 import com.craisinlord.antarchy.content.network.PortalGunTransitPayload;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
 import com.craisinlord.antarchy.content.portalgun.PortalGunTransformUtil;
 import com.craisinlord.antarchy.content.portalgun.PortalGunTransitMath;
@@ -34,7 +34,7 @@ public final class PortalGunClientTransit {
         if (connection == null) {
             return;
         }
-        Vec3 crossingVelocity = AntarchyGravityApi.isGravityInverted(player)
+        Vec3 crossingVelocity = GravityApi.isGravityInverted(player)
                 ? PortalGunTransitMath.entityVelocityToWorld(player, velocity)
                 : velocity;
         for (PortalGunPortalEntity portal : PortalGunPortalEntity.findPortalsNearBounds(player.level(), startBox.minmax(currentBox).expandTowards(crossingVelocity).inflate(1.0D))) {
@@ -49,7 +49,7 @@ public final class PortalGunClientTransit {
             connection.send(new ServerboundCustomPayloadPacket(new PortalGunTransitPayload(
                     portal.getId(), PortalGunTransitMath.entityPosition(startBox, player), player.position(), velocity)));
             PortalGunPortalEntity.PortalTransit transit = portal.computeTransit(player, linked, currentBox, velocity, look);
-            Vec3 rollLook = AntarchyGravityApi.isGravityInverted(player)
+            Vec3 rollLook = GravityApi.isGravityInverted(player)
                     ? PortalGunTransitMath.entityVelocityToWorld(player, look)
                     : look;
             PortalGunRollClientState.onTransit(portal, linked, rollLook);

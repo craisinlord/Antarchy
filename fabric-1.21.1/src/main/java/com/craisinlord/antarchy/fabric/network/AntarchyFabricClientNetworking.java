@@ -47,8 +47,6 @@ public final class AntarchyFabricClientNetworking {
         com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.setClientReporter(com.craisinlord.antarchy.content.client.MoonSkyTracker::report);
         ClientPlayNetworking.registerGlobalReceiver(PortalGunIndicatorPayload.TYPE, (payload, context) ->
                 context.client().execute(() -> com.craisinlord.antarchy.content.client.PortalGunIndicatorClientState.update(payload)));
-        ClientPlayNetworking.registerGlobalReceiver(GravityStatePayload.TYPE, (payload, context) ->
-                context.client().execute(() -> AntarchyFabricNetworking.handleGravityState(context.player(), payload)));
         ClientPlayNetworking.registerGlobalReceiver(BloodglassStatePayload.TYPE, (payload, context) ->
                 context.client().execute(() -> BloodglassClientState.update(payload.shieldsActive(), payload.shieldsMax())));
         ClientPlayNetworking.registerGlobalReceiver(TigerEyeCamouflageStatePayload.TYPE, (payload, context) ->

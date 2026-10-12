@@ -1,6 +1,6 @@
 package com.craisinlord.antarchy.mixins.gravity;
 
-import com.craisinlord.antarchy.content.gravity.AntarchyMountedGravityHelper;
+import com.craisinlord.anthology.gravity.MountedGravityHelper;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -17,7 +17,7 @@ public abstract class EntityMountedGravityMixin {
     @Inject(method = "startRiding(Lnet/minecraft/world/entity/Entity;Z)Z", at = @At("RETURN"))
     private void antarchy$syncMountedStack(Entity vehicle, boolean force, CallbackInfoReturnable<Boolean> cir) {
         if (cir.getReturnValueZ()) {
-            AntarchyMountedGravityHelper.syncConnectedStack((Entity) (Object) this);
+            MountedGravityHelper.syncConnectedStack((Entity) (Object) this);
         }
     }
 
@@ -28,7 +28,7 @@ public abstract class EntityMountedGravityMixin {
 
     @Inject(method = "stopRiding", at = @At("TAIL"))
     private void antarchy$syncDismountedStacks(CallbackInfo ci) {
-        AntarchyMountedGravityHelper.syncSeparatedStacks(this.antarchy$previousVehicle, (Entity) (Object) this);
+        MountedGravityHelper.syncSeparatedStacks(this.antarchy$previousVehicle, (Entity) (Object) this);
         this.antarchy$previousVehicle = null;
     }
 }

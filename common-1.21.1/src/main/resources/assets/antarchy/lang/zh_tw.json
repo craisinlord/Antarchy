@@ -526,8 +526,6 @@
     "effect.antarchy.dread.description": "會產生視覺與聽覺幻覺。",
     "effect.antarchy.paralyzed": "麻痺",
     "effect.antarchy.paralyzed.description": "阻止目標移動。",
-    "effect.antarchy.inverted": "反轉",
-    "effect.antarchy.inverted.description": "反轉目標的重力。",
     "effect.antarchy.commanded.description": "為命令它的玩家而戰。",
     "effect.antarchy.dilated.description": "減緩受影響生物的時間流逝。",
     "effect.antarchy.stinky": "臭氣",

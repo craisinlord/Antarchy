@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.neoforge;
 
+import com.craisinlord.anthology.effect.AnthologyEffects;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompat;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompatVersion;
@@ -13,7 +14,6 @@ import com.craisinlord.antarchy.content.network.BloodCrystalKatanaTrailPayload;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
 import com.craisinlord.antarchy.neoforge.registry.*;
-import com.craisinlord.antarchy.neoforge.network.AntarchyGravityNetworking;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
@@ -272,7 +272,6 @@ public class AntarchyNeoforge {
                 player,
                 TigerEyeCamouflageSync.payload(player)
         ));
-        com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.setSyncDispatcher(AntarchyGravityNetworking::syncEntity);
         com.craisinlord.antarchy.content.time.TimeDilationApi.setSyncDispatcher(
                 com.craisinlord.antarchy.neoforge.network.AntarchyTimeDilationNetworking::syncRate
         );
@@ -411,7 +410,7 @@ public class AntarchyNeoforge {
                 () -> AntarchyNeoforgeItems.STINK_BUG.get(),
                 () -> AntarchyNeoforgeMisc.DREAD,
                 () -> AntarchyNeoforgeMisc.PARALYZED,
-                () -> AntarchyNeoforgeMisc.INVERTED,
+                AnthologyEffects::inverted,
                 () -> AntarchyNeoforgeMisc.STINKY,
                 () -> AntarchyNeoforgeBlocks.OURANWOOD_ACORN_BLOCK.get(),
                 () -> AntarchyNeoforgeBlocks.MOSSY_OURANWOOD_LOG.get(),

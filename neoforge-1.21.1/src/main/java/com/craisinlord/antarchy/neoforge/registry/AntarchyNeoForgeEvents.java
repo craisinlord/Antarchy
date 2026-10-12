@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.neoforge.registry;
 
+import com.craisinlord.anthology.effect.AnthologyEffects;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
@@ -36,7 +37,6 @@ import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync;
 import com.craisinlord.antarchy.neoforge.AntarchyNeoForgeFluidTypes;
 import com.craisinlord.antarchy.neoforge.entity.multipart.MultipartPartEntity;
-import com.craisinlord.antarchy.neoforge.network.AntarchyGravityNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -326,7 +326,6 @@ public final class AntarchyNeoForgeEvents {
             return;
         }
 
-        AntarchyGravityNetworking.syncEntity(event.getTarget());
         if (event.getTarget() instanceof com.craisinlord.antarchy.content.time.TimeDilationEntityAccess access
                 && event.getEntity() instanceof ServerPlayer trackingPlayer) {
             com.craisinlord.antarchy.neoforge.network.AntarchyTimeDilationNetworking.syncRateToPlayer(
@@ -495,7 +494,7 @@ public final class AntarchyNeoForgeEvents {
             return;
         }
 
-        MobEffectInstance existingInverted = livingEntity.getEffect(AntarchyNeoforgeMisc.INVERTED);
+        MobEffectInstance existingInverted = livingEntity.getEffect(AnthologyEffects.inverted());
         long gameTime = livingEntity.level().getGameTime();
         if (!shouldScanOverheadAntimetal(livingEntity, existingInverted, gameTime)) {
             return;
@@ -511,8 +510,8 @@ public final class AntarchyNeoForgeEvents {
                     "[antarchy-gravity] slow overhead antimetal scan targetType={} uuid={} pos=({}, {}, {}) dim={} elapsedMs={} inverted={} forced={} gameTime={}",
                     livingEntity.getType(), livingEntity.getUUID(), livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(),
                     livingEntity.level().dimension().location(), elapsedMs,
-                    com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.isGravityInverted(livingEntity),
-                    com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.isGravityForced(livingEntity),
+                    com.craisinlord.anthology.gravity.GravityApi.isGravityInverted(livingEntity),
+                    com.craisinlord.anthology.gravity.GravityApi.isGravityForced(livingEntity),
                     gameTime
             );
         }
@@ -521,7 +520,7 @@ public final class AntarchyNeoForgeEvents {
         }
 
         if (existingInverted == null || existingInverted.getDuration() <= ANTIMETAL_INVERTED_REFRESH_THRESHOLD_TICKS) {
-            livingEntity.addEffect(new MobEffectInstance(AntarchyNeoforgeMisc.INVERTED, ANTIMETAL_INVERTED_REFRESH_TICKS, 0, false, false, false));
+            livingEntity.addEffect(new MobEffectInstance(AnthologyEffects.inverted(), ANTIMETAL_INVERTED_REFRESH_TICKS, 0, false, false, false));
             spawnAntimetalInversionParticles(livingEntity);
         }
     }
@@ -826,7 +825,7 @@ public final class AntarchyNeoForgeEvents {
 
     static void handleBloodCrystalBootsFall(LivingFallEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
-        if (!com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.isGravityInverted(player)) return;
+        if (!com.craisinlord.anthology.gravity.GravityApi.isGravityInverted(player)) return;
         if (com.craisinlord.antarchy.content.enchantment.AntarchyEnchantments.featherRisingLevel(player) <= 0) return;
         event.setCanceled(true);
     }
@@ -1160,10 +1159,10 @@ public final class AntarchyNeoForgeEvents {
 
     static void onInvertedEffectExpired(MobEffectEvent.Expired event) {
         if (event.getEffectInstance() == null) return;
-        if (!event.getEffectInstance().is(AntarchyNeoforgeMisc.INVERTED)) return;
+        if (!event.getEffectInstance().is(AnthologyEffects.inverted())) return;
         LivingEntity entity = event.getEntity();
         if (!entity.level().isClientSide()) {
-            com.craisinlord.antarchy.content.gravity.AntarchyMountedGravityHelper.syncConnectedStackIgnoring(entity, entity);
+            com.craisinlord.anthology.gravity.MountedGravityHelper.syncConnectedStackIgnoring(entity, entity);
             if (entity instanceof Player player) {
                 notifyNearbyReveriesOfInversionChange(player);
             }
@@ -1261,7 +1260,7 @@ public final class AntarchyNeoForgeEvents {
         }
 
         if (event.getEntity().getType().is(AntarchyTags.Entities.INVERTED_IMMUNE)
-                && event.getEffectInstance().is(AntarchyNeoforgeMisc.INVERTED)) {
+                && event.getEffectInstance().is(AnthologyEffects.inverted())) {
             event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
             return;
         }
@@ -1279,18 +1278,18 @@ public final class AntarchyNeoForgeEvents {
         }
 
         if (event.getEntity() instanceof Player player
-                && event.getEffectInstance().is(AntarchyNeoforgeMisc.INVERTED)
-                && !player.hasEffect(AntarchyNeoforgeMisc.INVERTED)) {
+                && event.getEffectInstance().is(AnthologyEffects.inverted())
+                && !player.hasEffect(AnthologyEffects.inverted())) {
             notifyNearbyReveriesOfInversionChange(player);
         }
     }
 
 
     static void onInvertedEffectRemoved(MobEffectEvent.Remove event) {
-        if (!event.getEffect().is(AntarchyNeoforgeMisc.INVERTED)) return;
+        if (!event.getEffect().is(AnthologyEffects.inverted())) return;
         LivingEntity entity = event.getEntity();
         if (!entity.level().isClientSide()) {
-            com.craisinlord.antarchy.content.gravity.AntarchyMountedGravityHelper.syncConnectedStackIgnoring(entity, entity);
+            com.craisinlord.anthology.gravity.MountedGravityHelper.syncConnectedStackIgnoring(entity, entity);
             if (entity instanceof Player player) {
                 notifyNearbyReveriesOfInversionChange(player);
             }
@@ -1387,7 +1386,7 @@ public final class AntarchyNeoForgeEvents {
             DispenserBlock.registerBehavior(Items.HOPPER_MINECART, antimetalMinecartDispenseBehavior);
             DispenserBlock.registerBehavior(Items.COMMAND_BLOCK_MINECART, antimetalMinecartDispenseBehavior);
             LucidEyeProjectileEntity.defaultItemSupplier = () -> AntarchyNeoforgeItems.LUCID_PEARL.get();
-            LucidEntity.invertedEffectSupplier = () -> AntarchyNeoforgeMisc.INVERTED;
+            LucidEntity.invertedEffectSupplier = AnthologyEffects::inverted;
             FluidInteractionRegistry.addInteraction(
                     AntarchyNeoForgeFluidTypes.ANTIWATER_TYPE.get(),
                     new FluidInteractionRegistry.InteractionInformation(
@@ -1398,8 +1397,8 @@ public final class AntarchyNeoForgeEvents {
                     )
             );
             LucidEntity.boltEntityTypeSupplier = () -> AntarchyNeoforgeEntites.LUCID_BOLT.get();
-            LucidBoltEntity.invertedEffectSupplier = () -> AntarchyNeoforgeMisc.INVERTED;
-            LucidEyeProjectileEntity.invertedEffectSupplier = () -> AntarchyNeoforgeMisc.INVERTED;
+            LucidBoltEntity.invertedEffectSupplier = AnthologyEffects::inverted;
+            LucidEyeProjectileEntity.invertedEffectSupplier = AnthologyEffects::inverted;
             VortexEntity.windVortexTypeSupplier = () -> AntarchyNeoforgeEntites.WIND_VORTEX.get();
             VortexChargeProjectileEntity.defaultItemSupplier = () -> AntarchyNeoforgeItems.VORTEX_CHARGE.get();
             VortexChargeProjectileEntity.projectileTypeSupplier = () -> AntarchyNeoforgeEntites.VORTEX_CHARGE_PROJECTILE.get();

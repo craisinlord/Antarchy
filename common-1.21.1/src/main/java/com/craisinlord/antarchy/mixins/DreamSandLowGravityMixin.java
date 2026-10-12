@@ -2,8 +2,8 @@ package com.craisinlord.antarchy.mixins;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.block.DreamSandBlock;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.antarchy.content.movement.DreamSandLowGravityAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -116,7 +116,7 @@ public abstract class DreamSandLowGravityMixin implements DreamSandLowGravityAcc
 
     @Unique
     private boolean antarchy$isSupportedByDreamSand(LivingEntity entity) {
-        AntarchyGravityDirection gravityDirection = AntarchyGravityApi.getGravityDirection(entity);
+        GravityDirection gravityDirection = GravityApi.getGravityDirection(entity);
         AABB box = entity.getBoundingBox();
         BlockPos supportPos = gravityDirection.isInverted()
                 ? BlockPos.containing(entity.getX(), box.maxY + 0.05D, entity.getZ())

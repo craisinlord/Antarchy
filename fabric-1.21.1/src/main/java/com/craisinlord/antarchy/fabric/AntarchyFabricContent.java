@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.fabric;
 
+import com.craisinlord.anthology.effect.AnthologyEffects;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompat;
 import com.craisinlord.antarchy.compat.infinity.InfinityConfigRefresh;
@@ -508,7 +509,7 @@ public final class AntarchyFabricContent {
                 () -> AntarchyFabricItems.STINK_BUG_ITEM.get(),
                 () -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.DREAD),
                 () -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.PARALYZED),
-                () -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.INVERTED),
+                AnthologyEffects::inverted,
                 () -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.STINKY),
                 () -> AntarchyFabricBlocks.OURANWOOD_ACORN_BLOCK.get(),
                 () -> AntarchyFabricBlocks.MOSSY_OURANWOOD_LOG.get(),
@@ -542,10 +543,10 @@ public final class AntarchyFabricContent {
         );
 
         LucidEyeProjectileEntity.defaultItemSupplier = () -> AntarchyFabricItems.LUCID_PEARL.get();
-        LucidEntity.invertedEffectSupplier = () -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.INVERTED);
+        LucidEntity.invertedEffectSupplier = AnthologyEffects::inverted;
         LucidEntity.boltEntityTypeSupplier = () -> AntarchyFabricEntities.LUCID_BOLT.get();
-        LucidBoltEntity.invertedEffectSupplier = () -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.INVERTED);
-        LucidEyeProjectileEntity.invertedEffectSupplier = () -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.INVERTED);
+        LucidBoltEntity.invertedEffectSupplier = AnthologyEffects::inverted;
+        LucidEyeProjectileEntity.invertedEffectSupplier = AnthologyEffects::inverted;
         VortexEntity.windVortexTypeSupplier = () -> AntarchyFabricEntities.WIND_VORTEX.get();
         VortexChargeProjectileEntity.defaultItemSupplier = () -> AntarchyFabricItems.VORTEX_CHARGE.get();
         VortexChargeProjectileEntity.projectileTypeSupplier = () -> AntarchyFabricEntities.VORTEX_CHARGE_PROJECTILE.get();
@@ -560,7 +561,6 @@ public final class AntarchyFabricContent {
         TigerEyeCamouflageSync.setSendToPlayer((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
         TigerEyeCamouflageSync.setSyncSelfAndTracking(AntarchyFabricNetworking::syncTigerEyeCamouflage);
         BloodCrystalKatanaItem.setTrailCallback(AntarchyFabricNetworking::syncKatanaTrail);
-        com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.setSyncDispatcher(AntarchyFabricNetworking::syncGravityEntity);
         com.craisinlord.antarchy.content.time.TimeDilationApi.setSyncDispatcher(
                 com.craisinlord.antarchy.fabric.network.AntarchyFabricTimeDilationNetworking::syncRate
         );

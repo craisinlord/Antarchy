@@ -3,9 +3,9 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.antarchy.mixins.LivingEntityJumpingAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -70,7 +70,7 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
 
     @Override
     public boolean canBeAffected(MobEffectInstance effectInstance) {
-        return effectInstance.getEffect().value() instanceof com.craisinlord.antarchy.content.effect.InvertedMobEffect;
+        return effectInstance.getEffect().value() instanceof com.craisinlord.anthology.effect.InvertedMobEffect;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -172,11 +172,11 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
         if (!this.hasPassenger(passenger)) {
             return;
         }
-        Vec3 riderOffset = AntarchyGravityRotationUtil.vecPlayerToWorld(
+        Vec3 riderOffset = GravityRotationUtil.vecPlayerToWorld(
                 0.0D,
                 RIDER_Y_OFFSET,
                 0.0D,
-                AntarchyGravityApi.getGravityDirection(this)
+                GravityApi.getGravityDirection(this)
         );
         moveFunction.accept(passenger, this.getX() + riderOffset.x, this.getY() + riderOffset.y, this.getZ() + riderOffset.z);
     }
@@ -220,7 +220,7 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
     }
 
     private double resolveVerticalMotion(boolean holdingJump) {
-        AntarchyGravityDirection gravityDirection = AntarchyGravityApi.getGravityDirection(this);
+        GravityDirection gravityDirection = GravityApi.getGravityDirection(this);
         double supportHeight = this.findSupportHeight(gravityDirection);
         double height = gravityDirection.isInverted() ? supportHeight - this.getY() : this.getY() - supportHeight;
         if (holdingJump) {
@@ -236,7 +236,7 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
         return -SETTLE_DESCEND_SPEED;
     }
 
-    private double findSupportHeight(AntarchyGravityDirection gravityDirection) {
+    private double findSupportHeight(GravityDirection gravityDirection) {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(Mth.floor(this.getX()), Mth.floor(this.getY()), Mth.floor(this.getZ()));
         if (!gravityDirection.isInverted()) {
             int minY = this.level().getMinBuildHeight();

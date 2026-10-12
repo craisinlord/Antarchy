@@ -800,8 +800,6 @@
     "effect.antarchy.dread.description":  "Gives visual and audio hallucinations.",
     "effect.antarchy.paralyzed":  "Paralyzed",
     "effect.antarchy.paralyzed.description":  "Prevents targets from moving.",
-    "effect.antarchy.inverted":  "Inverted",
-    "effect.antarchy.inverted.description":  "Inverts the target's gravity.",
     "effect.antarchy.commanded":  "Commanded",
     "effect.antarchy.commanded.description":  "Fights for the player who commanded it.",
     "effect.antarchy.dilated":  "Temporal Dilation",

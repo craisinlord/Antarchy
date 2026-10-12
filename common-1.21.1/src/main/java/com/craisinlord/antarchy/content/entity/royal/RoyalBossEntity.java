@@ -10,8 +10,8 @@ import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamTerrainMode;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackLane;
 import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -526,7 +526,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         if (this.isFlyingBoss()) {
             this.moveControl = this.isRoyalFlying() ? this.flyingMoveControl : this.groundMoveControl;
             this.navigation = this.isRoyalFlying() ? this.flyingNavigation : this.groundNavigation;
-            this.setNoGravity(!AntarchyGravityApi.isGravityInverted(this));
+            this.setNoGravity(!GravityApi.isGravityInverted(this));
             if (!this.isRoyalFlying()) {
                 this.setNoGravity(false);
             }
@@ -750,8 +750,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     protected final void addGravityAwareImpulse(Entity entity, Vec3 worldImpulse) {
-        AntarchyGravityApi.setWorldVelocity(entity,
-                AntarchyGravityApi.getWorldVelocity(entity).add(worldImpulse));
+        GravityApi.setWorldVelocity(entity,
+                GravityApi.getWorldVelocity(entity).add(worldImpulse));
     }
 
     protected final boolean isRoyalPhaseTransitionActive() {
@@ -937,7 +937,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         this.aerialCombatAnchor = null;
         this.aerialCombatAnchorTicks = 0;
 
-        boolean inverted = AntarchyGravityApi.isGravityInverted(this);
+        boolean inverted = GravityApi.isGravityInverted(this);
         double groundBelowTarget = this.groundYBelow(wanted.x, wanted.z);
         double wantedY = this.landingForCombat
                 ? (inverted ? target.getY() + target.getBbHeight() - this.getBbHeight() : groundBelowTarget)
@@ -964,7 +964,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         if (!this.isFlyingBoss() || this.managesOwnCombatLocomotion()) {
             return;
         }
-        boolean inverted = AntarchyGravityApi.isGravityInverted(this);
+        boolean inverted = GravityApi.isGravityInverted(this);
         double groundY = this.groundYBelow(this.getX(), this.getZ());
         if (this.landingForCombat) {
             if (!target.onGround()) {
@@ -1007,7 +1007,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         this.entityData.set(ROYAL_FLYING, flying);
         this.moveControl = flying ? this.flyingMoveControl : this.groundMoveControl;
         this.navigation = flying ? this.flyingNavigation : this.groundNavigation;
-        this.setNoGravity(flying && !AntarchyGravityApi.isGravityInverted(this));
+        this.setNoGravity(flying && !GravityApi.isGravityInverted(this));
     }
 
     protected double groundYBelow(double x, double z) {
@@ -1016,7 +1016,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     private void tickFlyingAltitude() {
-        if (AntarchyGravityApi.isGravityInverted(this)) {
+        if (GravityApi.isGravityInverted(this)) {
             return;
         }
         if (this.onGround()) {
@@ -1155,8 +1155,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                 forward.x * spec.forwardOffset() + right.x * spec.lateralOffset(),
                 spec.yOffset(),
                 forward.z * spec.forwardOffset() + right.z * spec.lateralOffset());
-        return this.position().add(AntarchyGravityRotationUtil.vecPlayerToWorld(localOffset,
-                AntarchyGravityApi.getGravityDirection(this)));
+        return this.position().add(GravityRotationUtil.vecPlayerToWorld(localOffset,
+                GravityApi.getGravityDirection(this)));
     }
 
     protected Vec3 beamAnchor(RoyalHead head) {
@@ -1166,8 +1166,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     protected Vec3 beamDirection(RoyalHead head) {
         float yaw = this.getYRot() * Mth.DEG_TO_RAD;
         Vec3 localDirection = new Vec3(-Math.sin(yaw), 0.0D, Math.cos(yaw));
-        return AntarchyGravityRotationUtil.vecPlayerToWorld(localDirection,
-                AntarchyGravityApi.getGravityDirection(this)).normalize();
+        return GravityRotationUtil.vecPlayerToWorld(localDirection,
+                GravityApi.getGravityDirection(this)).normalize();
     }
 
     protected boolean targetInBeamLine(RoyalHead head, LivingEntity target) {
@@ -1197,8 +1197,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                 forward.x * BEAM_MUZZLE_FORWARD + right.x * lateral,
                 vertical,
                 forward.z * BEAM_MUZZLE_FORWARD + right.z * lateral);
-        return new Vec3(x, y, z).add(AntarchyGravityRotationUtil.vecPlayerToWorld(localOffset,
-                AntarchyGravityApi.getGravityDirection(this)));
+        return new Vec3(x, y, z).add(GravityRotationUtil.vecPlayerToWorld(localOffset,
+                GravityApi.getGravityDirection(this)));
     }
 
     protected double royalBeamMinimumRange() {

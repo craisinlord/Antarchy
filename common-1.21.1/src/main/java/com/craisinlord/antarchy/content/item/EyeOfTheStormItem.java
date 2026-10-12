@@ -5,7 +5,7 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
 import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
 import com.craisinlord.antarchy.content.entity.vortex.WindVortexEntity;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.anthology.gravity.GravityApi;
 import java.util.List;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
@@ -77,15 +77,15 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
                 false
         );
         vortex.setMode(WindVortexEntity.VortexMode.UPWARD);
-        vortex.setAxis(AntarchyGravityApi.isGravityInverted(player) ? Direction.DOWN : Direction.UP);
+        vortex.setAxis(GravityApi.isGravityInverted(player) ? Direction.DOWN : Direction.UP);
         vortex.setVortexSize((float) AntarchySettings.eyeOfTheStormUpdraftHeight(), (float) AntarchySettings.eyeOfTheStormUpdraftRadius());
         vortex.setVortexDurationTicks(AntarchySettings.eyeOfTheStormUpdraftDurationTicks());
         serverLevel.addFreshEntity(vortex);
 
         Vec3 gravityUp = Vec3.atLowerCornerOf(
-                (AntarchyGravityApi.isGravityInverted(player) ? Direction.DOWN : Direction.UP).getNormal());
-        AntarchyGravityApi.setWorldVelocity(player,
-                AntarchyGravityApi.getWorldVelocity(player).add(gravityUp.scale(AntarchySettings.eyeOfTheStormUpdraftLaunchStrength())));
+                (GravityApi.isGravityInverted(player) ? Direction.DOWN : Direction.UP).getNormal());
+        GravityApi.setWorldVelocity(player,
+                GravityApi.getWorldVelocity(player).add(gravityUp.scale(AntarchySettings.eyeOfTheStormUpdraftLaunchStrength())));
         player.hasImpulse = true;
         player.resetFallDistance();
         player.getCooldowns().addCooldown(this, AntarchySettings.eyeOfTheStormUpdraftCooldownTicks());
@@ -133,7 +133,7 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
                 true
         );
         vortex.setMode(WindVortexEntity.VortexMode.UPWARD);
-        vortex.setAxis(owner != null && AntarchyGravityApi.isGravityInverted(owner) ? Direction.DOWN : Direction.UP);
+        vortex.setAxis(owner != null && GravityApi.isGravityInverted(owner) ? Direction.DOWN : Direction.UP);
         vortex.setVortexSize((float) AntarchySettings.eyeOfTheStormSurgeHeight(), (float) AntarchySettings.eyeOfTheStormSurgeRadius());
         vortex.setVortexDurationTicks(AntarchySettings.eyeOfTheStormSurgeDurationTicks());
         vortex.setVortexStrengths(AntarchySettings.eyeOfTheStormSurgePullStrength(), AntarchySettings.eyeOfTheStormSurgeReturnStrength());

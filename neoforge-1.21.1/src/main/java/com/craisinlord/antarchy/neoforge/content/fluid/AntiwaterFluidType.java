@@ -1,8 +1,8 @@
 package com.craisinlord.antarchy.neoforge.content.fluid;
 
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -31,9 +31,9 @@ public class AntiwaterFluidType extends FluidType {
             motion = new Vec3(motion.x, 0.2, motion.z);
         }
 
-        AntarchyGravityDirection gravityDirection = AntarchyGravityApi.getGravityDirection(entity);
+        GravityDirection gravityDirection = GravityApi.getGravityDirection(entity);
         Vec3 worldMotion = gravityDirection.isInverted()
-                ? AntarchyGravityRotationUtil.vecPlayerToWorld(motion, gravityDirection)
+                ? GravityRotationUtil.vecPlayerToWorld(motion, gravityDirection)
                 : motion;
 
         double drag = entity.isSwimming() ? 0.9 : 0.8;
@@ -45,7 +45,7 @@ public class AntiwaterFluidType extends FluidType {
 
         entity.setDeltaMovement(
                 gravityDirection.isInverted()
-                        ? AntarchyGravityRotationUtil.vecWorldToPlayer(worldMotion, gravityDirection)
+                        ? GravityRotationUtil.vecWorldToPlayer(worldMotion, gravityDirection)
                         : worldMotion
         );
         if (entity.horizontalCollision && entity.isFree(
@@ -55,7 +55,7 @@ public class AntiwaterFluidType extends FluidType {
             Vec3 boostedWorldMotion = new Vec3(worldMotion.x, 0.3D, worldMotion.z);
             entity.setDeltaMovement(
                     gravityDirection.isInverted()
-                            ? AntarchyGravityRotationUtil.vecWorldToPlayer(boostedWorldMotion, gravityDirection)
+                            ? GravityRotationUtil.vecWorldToPlayer(boostedWorldMotion, gravityDirection)
                             : boostedWorldMotion
             );
         }

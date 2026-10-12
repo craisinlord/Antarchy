@@ -4,8 +4,8 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import java.util.EnumSet;
 import java.util.Objects;
 import net.minecraft.core.BlockPos;
@@ -566,7 +566,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
 
     private boolean shouldSwipe(LivingEntity target, FightPhase phase) {
         double horizontalDistanceSqr = new Vec3(target.getX() - this.getX(), 0.0D, target.getZ() - this.getZ()).lengthSqr();
-        Vec3 localDelta = AntarchyGravityRotationUtil.vecWorldToPlayer(target.position().subtract(this.position()), AntarchyGravityApi.getGravityDirection(this));
+        Vec3 localDelta = GravityRotationUtil.vecWorldToPlayer(target.position().subtract(this.position()), GravityApi.getGravityDirection(this));
         horizontalDistanceSqr = new Vec3(localDelta.x, 0.0D, localDelta.z).lengthSqr();
         boolean beneathBoss = horizontalDistanceSqr <= 16.0D && localDelta.y <= 2.0D;
         return beneathBoss || this.distanceToSqr(target) <= phase.swipeRangeSqr;
@@ -579,7 +579,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
     }
 
     private void tickSwipe(LivingEntity target) {
-        Vec3 divePoint = target.position().add(AntarchyGravityRotationUtil.vecPlayerToWorld(0.0D, 1.0D, 0.0D, AntarchyGravityApi.getGravityDirection(this)));
+        Vec3 divePoint = target.position().add(GravityRotationUtil.vecPlayerToWorld(0.0D, 1.0D, 0.0D, GravityApi.getGravityDirection(this)));
         this.getMoveControl().setWantedPosition(divePoint.x, divePoint.y, divePoint.z, 1.45D);
 
         if (this.animationTicks == 8) {
@@ -608,7 +608,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
                 dz = this.random.nextDouble() - 0.5D;
             }
             target.knockback(SWIPE_KNOCKBACK, -dx, -dz);
-            target.setDeltaMovement(target.getDeltaMovement().add(AntarchyGravityRotationUtil.vecPlayerToWorld(0.0D, 0.3D, 0.0D, AntarchyGravityApi.getGravityDirection(this))));
+            target.setDeltaMovement(target.getDeltaMovement().add(GravityRotationUtil.vecPlayerToWorld(0.0D, 0.3D, 0.0D, GravityApi.getGravityDirection(this))));
         }
     }
 

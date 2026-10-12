@@ -1,8 +1,8 @@
 package com.craisinlord.antarchy.content.portalgun;
 
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -70,7 +70,7 @@ public final class PortalGunTransitMath {
     }
 
     public static Vec3 entityPosition(AABB box, Entity entity) {
-        return entityPosition(box, AntarchyGravityApi.isGravityInverted(entity));
+        return entityPosition(box, GravityApi.isGravityInverted(entity));
     }
 
     public static Vec3 entityPosition(AABB box, boolean inverted) {
@@ -81,25 +81,25 @@ public final class PortalGunTransitMath {
     }
 
     public static Vec3 entityVelocityToWorld(Entity entity, Vec3 velocity) {
-        return entityVelocityToWorld(velocity, AntarchyGravityApi.isGravityInverted(entity));
+        return entityVelocityToWorld(velocity, GravityApi.isGravityInverted(entity));
     }
 
     public static Vec3 entityVelocityToWorld(Vec3 velocity, boolean inverted) {
         if (!inverted) {
             return velocity;
         }
-        return AntarchyGravityRotationUtil.vecPlayerToWorld(velocity, AntarchyGravityDirection.UP);
+        return GravityRotationUtil.vecPlayerToWorld(velocity, GravityDirection.UP);
     }
 
     public static Vec3 entityVelocityFromWorld(Entity entity, Vec3 velocity) {
-        return entityVelocityFromWorld(velocity, AntarchyGravityApi.isGravityInverted(entity));
+        return entityVelocityFromWorld(velocity, GravityApi.isGravityInverted(entity));
     }
 
     public static Vec3 entityVelocityFromWorld(Vec3 velocity, boolean inverted) {
         if (!inverted) {
             return velocity;
         }
-        return AntarchyGravityRotationUtil.vecWorldToPlayer(velocity, AntarchyGravityDirection.UP);
+        return GravityRotationUtil.vecWorldToPlayer(velocity, GravityDirection.UP);
     }
 
     public static Vec3 exitVelocity(PortalGunWorldPortalShape source, PortalGunWorldPortalShape destination, Vec3 velocity, double minUpwardExitSpeed, double maxExitSpeed) {
@@ -122,7 +122,7 @@ public final class PortalGunTransitMath {
     }
 
     public static float exitFallDistance(float fallDistance, Vec3 exitVelocity, Entity entity) {
-        if (!AntarchyGravityApi.isGravityInverted(entity)) {
+        if (!GravityApi.isGravityInverted(entity)) {
             return exitFallDistance(fallDistance, exitVelocity);
         }
         return exitVelocity.y > 0.0D ? fallDistance : 0.0F;

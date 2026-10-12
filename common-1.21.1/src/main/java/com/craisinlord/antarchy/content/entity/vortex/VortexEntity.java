@@ -2,8 +2,8 @@ package com.craisinlord.antarchy.content.entity.vortex;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -203,7 +203,7 @@ public class VortexEntity extends Monster implements GeoEntity {
     private void tickCombatMovement(LivingEntity target) {
         this.faceTowards(target.position().add(0.0D, target.getBbHeight() * 0.5D, 0.0D), 12.0F, 8.0F);
         Vec3 gravityUp = Vec3.atLowerCornerOf(
-                AntarchyGravityRotationUtil.getGravityDownDirection(this).getOpposite().getNormal());
+                GravityRotationUtil.getGravityDownDirection(this).getOpposite().getNormal());
         Vec3 hoverPosition = target.position().add(gravityUp.scale(2.5D));
         this.getMoveControl().setWantedPosition(hoverPosition.x, hoverPosition.y, hoverPosition.z, 0.38D);
 
@@ -256,7 +256,7 @@ public class VortexEntity extends Monster implements GeoEntity {
         double distance = direction.length();
         Vec3 drift = distance > 1.0E-6D ? direction.scale(0.24D / distance) : this.getViewVector(1.0F).scale(0.24D);
         WindVortexEntity vortex = WindVortexEntity.create(serverLevel, windVortexTypeSupplier.get(), origin, Vec3.ZERO, this, true);
-        vortex.setAxis(AntarchyGravityRotationUtil.getGravityDownDirection(this).getOpposite());
+        vortex.setAxis(GravityRotationUtil.getGravityDownDirection(this).getOpposite());
         vortex.setTravel(drift);
         vortex.setTravelDuration(Mth.clamp((int) Math.ceil(distance / drift.length()), 8, 36));
         vortex.setHoming(false);

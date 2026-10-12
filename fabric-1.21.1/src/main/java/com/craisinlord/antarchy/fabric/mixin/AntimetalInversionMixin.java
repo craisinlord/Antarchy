@@ -2,9 +2,9 @@ package com.craisinlord.antarchy.fabric.mixin;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityTransition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
@@ -65,7 +65,7 @@ public abstract class AntimetalInversionMixin {
         LivingEntity entity = (LivingEntity) (Object) this;
         if (entity.level().isClientSide()) return;
         if (!effectInstance.is(AntarchyObjects.INVERTED_EFFECT.get())) return;
-        AntarchyGravityApi.setGravityDirection(entity, AntarchyGravityDirection.DOWN, new AntarchyGravityTransition(12));
+        GravityApi.setGravityDirection(entity, GravityDirection.DOWN, new GravityTransition(12));
     }
 
     private static void antarchy$spawnInversionParticles(LivingEntity entity) {

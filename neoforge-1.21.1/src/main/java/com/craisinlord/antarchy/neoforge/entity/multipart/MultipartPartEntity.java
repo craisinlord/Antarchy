@@ -4,8 +4,8 @@ import com.craisinlord.antarchy.content.entity.multipart.MultipartEntityOwner;
 import com.craisinlord.antarchy.content.entity.multipart.MultipartFramework;
 import com.craisinlord.antarchy.content.entity.multipart.MultipartPartAccess;
 import com.craisinlord.antarchy.content.entity.multipart.MultipartPartDefinition;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -69,13 +69,13 @@ public class MultipartPartEntity extends PartEntity<Entity> implements OwnableEn
             return;
         }
 
-        AntarchyGravityApi.applySyncedState(
+        GravityApi.applySyncedState(
                 this,
-                AntarchyGravityApi.getGravityDirection(parent),
-                AntarchyGravityApi.getPrevGravityDirection(parent),
-                AntarchyGravityApi.isGravityForced(parent),
-                AntarchyGravityApi.getTransitionDuration(parent),
-                AntarchyGravityApi.getTransitionRemaining(parent)
+                GravityApi.getGravityDirection(parent),
+                GravityApi.getPrevGravityDirection(parent),
+                GravityApi.isGravityForced(parent),
+                GravityApi.getTransitionDuration(parent),
+                GravityApi.getTransitionRemaining(parent)
         );
 
         double oldX = this.getX();
@@ -88,7 +88,7 @@ public class MultipartPartEntity extends PartEntity<Entity> implements OwnableEn
                 forward.x * this.definition.forwardOffset() + right.x * this.definition.lateralOffset(),
                 this.definition.yOffset(),
                 forward.z * this.definition.forwardOffset() + right.z * this.definition.lateralOffset());
-        Vec3 offset = AntarchyGravityRotationUtil.vecPlayerToWorld(localOffset, AntarchyGravityApi.getGravityDirection(parent));
+        Vec3 offset = GravityRotationUtil.vecPlayerToWorld(localOffset, GravityApi.getGravityDirection(parent));
         Vec3 position = parent.position().add(offset);
         this.setPos(position.x, position.y, position.z);
         this.setRot(parent.getYRot(), parent.getXRot());

@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.neoforge.registry;
 
+import com.craisinlord.anthology.effect.AnthologyEffects;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.particle.InvertedGeyserBaseParticleOptions;
 import com.craisinlord.antarchy.content.client.particle.InvertedGeyserParticleOptions;
@@ -8,7 +9,6 @@ import com.craisinlord.antarchy.content.effect.BleedingMobEffect;
 import com.craisinlord.antarchy.content.effect.BloodMoonMobEffect;
 import com.craisinlord.antarchy.content.effect.GoopedMobEffect;
 import com.craisinlord.antarchy.content.effect.GrowthMobEffect;
-import com.craisinlord.antarchy.content.effect.InvertedMobEffect;
 import com.craisinlord.antarchy.content.effect.CommandedMobEffect;
 import com.craisinlord.antarchy.content.effect.DilatedMobEffect;
 import com.craisinlord.antarchy.content.effect.ContractedMobEffect;
@@ -178,7 +178,6 @@ public final class AntarchyNeoforgeMisc {
     public static final DeferredHolder<MobEffect, BleedingMobEffect> BLEEDING = MOB_EFFECTS.register("bleeding", BleedingMobEffect::new);
     public static final DeferredHolder<MobEffect, BloodMoonMobEffect> BLOOD_MOON = MOB_EFFECTS.register("blood_moon", BloodMoonMobEffect::new);
     public static final DeferredHolder<MobEffect, ParalyzedMobEffect> PARALYZED = MOB_EFFECTS.register("paralyzed", ParalyzedMobEffect::new);
-    public static final DeferredHolder<MobEffect, InvertedMobEffect> INVERTED = MOB_EFFECTS.register("inverted", InvertedMobEffect::new);
     public static final DeferredHolder<MobEffect, CommandedMobEffect> COMMANDED = MOB_EFFECTS.register("commanded", CommandedMobEffect::new);
     public static final DeferredHolder<MobEffect, DilatedMobEffect> DILATED = MOB_EFFECTS.register("dilated", DilatedMobEffect::new);
     public static final DeferredHolder<MobEffect, ContractedMobEffect> CONTRACTED = MOB_EFFECTS.register("contracted", ContractedMobEffect::new);
@@ -193,9 +192,9 @@ public final class AntarchyNeoforgeMisc {
 
     // Potions
     public static final DeferredHolder<Potion, Potion> INVERSION = POTIONS.register("inversion",
-            () -> new Potion(new MobEffectInstance(INVERTED, 600)));
+            () -> new Potion(new MobEffectInstance(AnthologyEffects.inverted(), 600)));
     public static final DeferredHolder<Potion, Potion> LONG_INVERSION = POTIONS.register("long_inversion",
-            () -> new Potion("inversion", new MobEffectInstance(INVERTED, 2400)));
+            () -> new Potion("inversion", new MobEffectInstance(AnthologyEffects.inverted(), 2400)));
     public static final DeferredHolder<Potion, Potion> COMMAND = POTIONS.register("command",
             () -> new Potion(new MobEffectInstance(COMMANDED, 600)));
     public static final DeferredHolder<Potion, Potion> LONG_COMMAND = POTIONS.register("long_command",

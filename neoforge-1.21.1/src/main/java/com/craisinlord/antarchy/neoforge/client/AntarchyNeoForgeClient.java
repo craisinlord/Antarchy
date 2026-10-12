@@ -117,6 +117,7 @@ public final class AntarchyNeoForgeClient {
     @SubscribeEvent
     public static void clientSetup(FMLClientSetupEvent event) {
         Antarchy.physicalClient = true;
+        com.craisinlord.antarchy.content.movement.AntarchyGravityHooks.registerClient();
         event.enqueueWork(() -> {
             AntarchyArchivePreviews.register();
             AntarchyComputerGames.register();

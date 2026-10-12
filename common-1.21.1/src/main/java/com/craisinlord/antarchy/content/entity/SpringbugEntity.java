@@ -3,9 +3,9 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -412,7 +412,7 @@ public class SpringbugEntity extends Monster implements GeoEntity {
         this.getNavigation().stop();
         this.setDeltaMovement(Vec3.ZERO);
         this.move(MoverType.SELF, Vec3.ZERO);
-        this.setPos(this.getX(), AntarchyGravityApi.isGravityInverted(this) ? clingPos.getY() + 1.01D : clingPos.getY() - this.getBbHeight() - 0.01D, this.getZ());
+        this.setPos(this.getX(), GravityApi.isGravityInverted(this) ? clingPos.getY() + 1.01D : clingPos.getY() - this.getBbHeight() - 0.01D, this.getZ());
     }
 
     private void tickPouncing() {
@@ -544,7 +544,7 @@ public class SpringbugEntity extends Monster implements GeoEntity {
             return false;
         }
         double x = pos.getX() + 0.5D;
-        double y = AntarchyGravityApi.isGravityInverted(this)
+        double y = GravityApi.isGravityInverted(this)
                 ? pos.getY() + 1.01D
                 : pos.getY() - this.getBbHeight() - 0.01D;
         double z = pos.getZ() + 0.5D;
@@ -952,8 +952,8 @@ public class SpringbugEntity extends Monster implements GeoEntity {
         }
     }
 
-    private AntarchyGravityDirection gravityDirection() {
-        return AntarchyGravityApi.getGravityDirection(this);
+    private GravityDirection gravityDirection() {
+        return GravityApi.getGravityDirection(this);
     }
 
     private Direction gravityDownDirection() {
@@ -961,11 +961,11 @@ public class SpringbugEntity extends Monster implements GeoEntity {
     }
 
     private Vec3 toLocal(Vec3 worldVector) {
-        return AntarchyGravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+        return GravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
     }
 
     private Vec3 toWorld(double x, double y, double z) {
-        return AntarchyGravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
+        return GravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
     }
 
     private Vec3 toLocalPlane(Vec3 worldVector) {

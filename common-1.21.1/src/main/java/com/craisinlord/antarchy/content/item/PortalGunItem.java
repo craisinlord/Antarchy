@@ -7,7 +7,7 @@ import com.craisinlord.antarchy.content.block.entity.PortalGunPortalFaceRecord;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalCellAccess;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
 import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.antarchy.content.network.PortalGunPrimaryPayload;
 import com.craisinlord.antarchy.content.portalgun.PortalGunPlacement;
 import com.craisinlord.antarchy.content.portalgun.PortalGunMoonMath;
@@ -390,9 +390,9 @@ public class PortalGunItem extends Item implements GeoItem {
 
     private Vec3 worldLook(LivingEntity entity) {
         Vec3 look = entity.getLookAngle();
-        return AntarchyGravityApi.isGravityInverted(entity)
-                ? com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil.vecPlayerToWorld(
-                        look, AntarchyGravityApi.getGravityDirection(entity))
+        return GravityApi.isGravityInverted(entity)
+                ? com.craisinlord.anthology.gravity.GravityRotationUtil.vecPlayerToWorld(
+                        look, GravityApi.getGravityDirection(entity))
                 : look;
     }
 

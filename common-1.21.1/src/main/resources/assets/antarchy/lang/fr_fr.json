@@ -526,8 +526,6 @@
     "effect.antarchy.dread.description": "Provoque des hallucinations visuelles et sonores.",
     "effect.antarchy.paralyzed": "Paralysé",
     "effect.antarchy.paralyzed.description": "Empêche les cibles de se déplacer.",
-    "effect.antarchy.inverted": "Inversé",
-    "effect.antarchy.inverted.description": "Inverse la gravité de la cible.",
     "effect.antarchy.commanded.description": "Combat pour le joueur qui l’a commandé.",
     "effect.antarchy.dilated.description": "Ralentit le passage du temps pour l’entité affectée.",
     "effect.antarchy.stinky": "Puant",
