@@ -5,19 +5,16 @@ import com.craisinlord.antarchy.fabric.registry.AntarchyFabricItems;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricMisc;
 
 import com.craisinlord.antarchy.Antarchy;
-import com.craisinlord.antarchy.content.client.CameraShakeClientState;
 import com.craisinlord.antarchy.content.client.AntarchyArchivePreviews;
 import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
 import com.craisinlord.antarchy.content.client.HordeClientState;
 import com.craisinlord.antarchy.content.client.KingJudgmentFlashClientState;
-import com.craisinlord.antarchy.content.client.PortalGunRollClientState;
 import com.craisinlord.antarchy.content.client.SizeRaySoundHandler;
 import com.craisinlord.antarchy.content.client.TigerEyeClientHooks;
 import com.craisinlord.antarchy.content.client.renderer.*;
 import com.craisinlord.antarchy.content.client.particle.*;
 import com.craisinlord.antarchy.content.client.renderer.AntiwaterFluidRenderer;
 import com.craisinlord.antarchy.fabric.AntarchyFabricContent;
-import com.craisinlord.antarchy.fabric.client.renderer.MultipartPartRenderer;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.client.renderer.blockentity.VaultRenderer;
@@ -28,7 +25,6 @@ import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.CoreShaderRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -38,7 +34,6 @@ import net.minecraft.client.model.ChestBoatModel;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.CampfireRenderer;
@@ -68,18 +63,6 @@ public final class AntarchyFabricClientBootstrap {
     }
 
     public static void register() {
-        CoreShaderRegistrationCallback.EVENT.register(context -> {
-            PortalGunPortalViewRenderer.clearPortalViewShader();
-            try {
-                context.register(
-                        ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "portal_view"),
-                        DefaultVertexFormat.POSITION_TEX,
-                        PortalGunPortalViewRenderer::setPortalViewShader
-                );
-            } catch (java.io.IOException | RuntimeException exception) {
-                Antarchy.LOGGER.error("Failed to register portal view shader", exception);
-            }
-        });
         AntarchyArchivePreviews.register();
         AntarchyKeyBindings.register();
         MenuScreens.register(AntarchyFabricMisc.DORRIE_INVENTORY_MENU.get(), com.craisinlord.antarchy.content.client.screen.DorrieInventoryScreen::new);
@@ -153,7 +136,6 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.DR_TRAYAURUS.get(), context -> new DrTrayaurusRenderer(context, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/dr_trayaurus.png")));
         EntityRendererRegistry.register(AntarchyFabricEntities.STRATOSHARK.get(), context -> withTemporalGeoLayer(new StratosharkRenderer(context)));
         EntityRendererRegistry.register(AntarchyFabricEntities.KRAKEN.get(), context -> withTemporalGeoLayer(new KrakenRenderer(context)));
-        EntityRendererRegistry.register(AntarchyFabricEntities.KRAKEN_PART.get(), MultipartPartRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.TENTACLE.get(), com.craisinlord.antarchy.content.client.renderer.TentacleRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.KRAKENS_GRASP_TRIDENT.get(), com.craisinlord.antarchy.content.client.renderer.KrakensGraspThrownTridentRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.MISSILE_SQUID.get(), context -> withTemporalGeoLayer(new MissileSquidRenderer(context)));
@@ -177,7 +159,6 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.LUCID_PEARL_PROJECTILE.get(), ThrownItemRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.VORTEX_CHARGE_PROJECTILE.get(), ThrownItemRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.WIND_VORTEX.get(), WindVortexRenderer::new);
-        EntityRendererRegistry.register(AntarchyFabricEntities.TIME_DILATION_FIELD.get(), TimeDilationFieldRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.ROYAL_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalBlackHoleRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.ROYAL_ASSAILANT_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalAssailantBlackHoleRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.CRITTER_CAGE_PROJECTILE.get(), ThrownItemRenderer::new);
@@ -571,11 +552,9 @@ public final class AntarchyFabricClientBootstrap {
     private static void registerClientCallbacks() {
         TigerEyeClientHooks.setCamouflageKeyTextSupplier(() -> AntarchyKeyBindings.TIGERS_EYE_CAMOUFLAGE.getTranslatedKeyMessage());
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            CameraShakeClientState.tick();
             HerculesBeetleImpactShakeClientState.tick();
             KingJudgmentFlashClientState.tick();
             HordeClientState.tick();
-            PortalGunRollClientState.tick(client);
             if (client.player != null) {
                 ParalyzedClientHandler.clampPlayerInput(client.player);
             }
@@ -595,9 +574,6 @@ public final class AntarchyFabricClientBootstrap {
             RoyalMountClientHandler.tick();
             GiantFryingPanClientHandler.tick();
             SizeRaySoundHandler.tick(client);
-            if (client.level != null) {
-                com.craisinlord.antarchy.content.client.ClientTimeDilationTicker.tick(client.level);
-            }
         });
 
         BigBerthaClientHandler.register();
@@ -631,7 +607,6 @@ public final class AntarchyFabricClientBootstrap {
             BloodCrystalKatanaTrailHandler.render(context);
             ScorpionWhipTetherRenderHandler.render(context);
             WormHookTetherRenderHandler.render(context);
-            com.craisinlord.antarchy.content.client.renderer.PortalGunPortalViewRenderer.render(context.camera(), context.positionMatrix(), context.projectionMatrix(), context.tickCounter());
         });
     }
 

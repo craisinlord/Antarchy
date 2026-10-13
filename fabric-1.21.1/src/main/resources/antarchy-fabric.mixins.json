@@ -19,7 +19,6 @@
     "DreamCampfireBlockEntityMixin",
     "SpringyBootsFallDamageMixin",
     "ThoraxisWaterBucketMixin",
-    "entity.MultipartEntityLevelRegistryMixin",
     "entity.ParalyzedMobFreezeMixin",
     "WoodTypeInvoker",
     "infinity.PortalCreatorMixin",
@@ -27,18 +26,14 @@
     "infinity.AmendmentRareOresMixin"
   ],
   "client": [
-    "client.RenderTargetDepthStencilMixin",
     "client.SeparateLargeItemModelsMixin",
     "client.SeparateLargeItemGuiLightingMixin",
-    "client.CameraShakeMixin",
     "client.BrutalflyElytraExperienceBarMixin",
     "client.BloodglassChatOrderMixin",
     "client.LiquidFogMixin",
     "client.GravityGunMouseScrollMixin",
     "client.KeybindingConflictFixMixin",
-    "client.CrossbowArmPoseMixin",
-    "client.MultipartClientSpawnMixin",
-    "client.MultipartEntityLevelRegistryMixin"
+    "client.CrossbowArmPoseMixin"
   ],
   "injectors": {
     "defaultRequire": 1

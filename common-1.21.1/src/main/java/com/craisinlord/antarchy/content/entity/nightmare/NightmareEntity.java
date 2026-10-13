@@ -6,9 +6,9 @@ import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -348,10 +348,10 @@ public class NightmareEntity extends Monster implements GeoEntity {
             this.tickClientParticles();
             this.updateFlightRotation();
             if (this.isRoaring()) {
-                com.craisinlord.antarchy.content.client.CameraShakeClientState.register(
+                com.craisinlord.anthology.shake.client.CameraShake.register(
                         this,
-                        com.craisinlord.antarchy.content.client.CameraShakeClientState.NIGHTMARE_RANGE,
-                        com.craisinlord.antarchy.content.client.CameraShakeClientState.NIGHTMARE_STRENGTH,
+                        32.0D,
+                        1.35F,
                         this::isRoaring
                 );
             }
@@ -746,14 +746,14 @@ public class NightmareEntity extends Monster implements GeoEntity {
                 : target.getEyePosition();
         Vec3 lunge = lungeTarget.subtract(this.getEyePosition());
         if (lunge.lengthSqr() > 1.0E-4D) {
-            AntarchyGravityDirection direction = this.gravityDirection();
-            Vec3 normalized = AntarchyGravityRotationUtil.vecWorldToPlayer(lunge, direction).normalize();
+            GravityDirection direction = this.gravityDirection();
+            Vec3 normalized = GravityRotationUtil.vecWorldToPlayer(lunge, direction).normalize();
             double verticalBoost = this.shouldUseFlyingLocomotion() ? 0.34D : 0.18D;
-            Vec3 current = AntarchyGravityRotationUtil.vecWorldToPlayer(this.getDeltaMovement(), direction);
+            Vec3 current = GravityRotationUtil.vecWorldToPlayer(this.getDeltaMovement(), direction);
             double upward = this.shouldUseFlyingLocomotion()
                     ? Math.max(normalized.y * verticalBoost, -0.08D)
                     : normalized.y * verticalBoost;
-            this.setDeltaMovement(AntarchyGravityRotationUtil.vecPlayerToWorld(
+            this.setDeltaMovement(GravityRotationUtil.vecPlayerToWorld(
                     normalized.x * 0.85D,
                     current.y * 0.18D + upward,
                     normalized.z * 0.85D,
@@ -1106,26 +1106,26 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private void knockAway(LivingEntity target, double horizontalStrength, double verticalStrength) {
-        AntarchyGravityDirection direction = this.gravityDirection();
+        GravityDirection direction = this.gravityDirection();
         Vec3 localDirection = this.toLocalPlane(target.position().subtract(this.position()));
         if (localDirection.lengthSqr() < 1.0E-4D) localDirection = this.toLocalPlane(this.getViewVector(1.0F));
         if (localDirection.lengthSqr() < 1.0E-4D) localDirection = new Vec3(1.0D, 0.0D, 0.0D);
         Vec3 localPush = localDirection.normalize().scale(horizontalStrength);
-        Vec3 worldPush = AntarchyGravityRotationUtil.vecPlayerToWorld(localPush.x, verticalStrength, localPush.z, direction);
+        Vec3 worldPush = GravityRotationUtil.vecPlayerToWorld(localPush.x, verticalStrength, localPush.z, direction);
         target.push(worldPush.x, worldPush.y, worldPush.z);
         target.hurtMarked = true;
     }
 
-    private AntarchyGravityDirection gravityDirection() {
-        return AntarchyGravityApi.getGravityDirection(this);
+    private GravityDirection gravityDirection() {
+        return GravityApi.getGravityDirection(this);
     }
 
     private Vec3 toLocal(Vec3 worldVector) {
-        return AntarchyGravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+        return GravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
     }
 
     private Vec3 toWorld(Vec3 localVector) {
-        return AntarchyGravityRotationUtil.vecPlayerToWorld(localVector, this.gravityDirection());
+        return GravityRotationUtil.vecPlayerToWorld(localVector, this.gravityDirection());
     }
 
     private Vec3 toLocalPlane(Vec3 worldVector) {
@@ -1174,7 +1174,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private boolean tryBreakBlocksToTarget(LivingEntity target) {
-        Direction gravityDown = AntarchyGravityRotationUtil.getGravityDownDirection(this);
+        Direction gravityDown = GravityRotationUtil.getGravityDownDirection(this);
         BlockPos.MutableBlockPos cursor = this.blockPosition().mutable();
         for (int i = 0; i <= 16; i++) {
             if (this.level().getBlockState(cursor).is(AntarchyTags.Blocks.NIGHTMARE_BREAKABLE)) {
@@ -1336,7 +1336,7 @@ public class NightmareEntity extends Monster implements GeoEntity {
     }
 
     private boolean isTooCloseToCeiling() {
-        Direction gravityUp = AntarchyGravityRotationUtil.getGravityDownDirection(this).getOpposite();
+        Direction gravityUp = GravityRotationUtil.getGravityDownDirection(this).getOpposite();
         BlockPos current = this.blockPosition();
         for (int i = 1; i <= FLIGHT_CEILING_CLEARANCE_BLOCKS; i++) {
             if (!this.level().isEmptyBlock(current.relative(gravityUp, i))) return true;

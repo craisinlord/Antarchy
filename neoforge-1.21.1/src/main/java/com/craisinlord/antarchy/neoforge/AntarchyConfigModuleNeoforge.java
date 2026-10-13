@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.neoforge;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.network.ImpactShakeSync;
 import com.craisinlord.antarchy.config.ConfigResetGuard;
 import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakeSync;
@@ -31,7 +30,6 @@ public final class AntarchyConfigModuleNeoforge {
         modContainer.registerConfig(ModConfig.Type.COMMON, AntarchyMiscConfig.SPEC,  "antarchy/antarchy_misc.toml");
         HerculesBeetleImpactShakeSync.setSink((player, ticks) -> PacketDistributor.sendToPlayer(player, new HerculesBeetleImpactShakePayload(ticks)));
         KingJudgmentFlashSync.setSink((player, ticks) -> PacketDistributor.sendToPlayer(player, new KingJudgmentFlashPayload(ticks)));
-        ImpactShakeSync.setSink(PacketDistributor::sendToPlayer);
         HordeIntensitySync.setSink(PacketDistributor::sendToPlayer);
         AntarchyNeoforge.modEventBusTempHolder.addListener(AntarchyConfigModuleNeoforge::onConfigChange);
     }
@@ -683,11 +681,7 @@ public final class AntarchyConfigModuleNeoforge {
 
         AntarchySettings.setElythiaFireflyParticlesEnabled(AntarchyMiscConfig.elythiaFireflyParticlesEnabled());
 
-        AntarchySettings.setDreamSandEnabled(AntarchyMiscConfig.dreamSandEnabled());
-        AntarchySettings.setDreamSandJumpVelocityMultiplier(AntarchyMiscConfig.dreamSandJumpVelocityMultiplier());
-        AntarchySettings.setDreamSandGravityMultiplier(AntarchyMiscConfig.dreamSandGravityMultiplier());
         AntarchySettings.setDreamSandFallingBlockGravityMultiplier(AntarchyMiscConfig.dreamSandFallingBlockGravityMultiplier());
-        AntarchySettings.setDreamSandEffectDurationSeconds(AntarchyMiscConfig.dreamSandEffectDurationSeconds());
 
         AntarchySettings.setIchorWitherEnabled(AntarchyMiscConfig.ichorWitherEnabled());
 

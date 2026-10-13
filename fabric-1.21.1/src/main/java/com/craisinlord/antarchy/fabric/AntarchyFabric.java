@@ -153,7 +153,6 @@ public final class AntarchyFabric implements ModInitializer {
                 GameRuleRegistry.register(name, category, GameRuleFactory.createBooleanRule(defaultValue))
         );
         AntarchyFabricNetworking.register();
-        AntarchyFabricNetworking.bootstrapMultipartCommon();
         AntarchyConfigModuleFabric.init();
         AntarchyFabricContent.register();
         registerWorldgenFeatures();

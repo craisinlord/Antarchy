@@ -6,9 +6,9 @@ import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -428,9 +428,9 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
                 }
             }
             case ACTIVE -> {
-                AntarchyGravityDirection direction = AntarchyGravityApi.getGravityDirection(this);
-                Vec3 motion = AntarchyGravityRotationUtil.vecWorldToPlayer(this.getDeltaMovement(), direction);
-                this.setDeltaMovement(AntarchyGravityRotationUtil.vecPlayerToWorld(0.0D, motion.y, 0.0D, direction));
+                GravityDirection direction = GravityApi.getGravityDirection(this);
+                Vec3 motion = GravityRotationUtil.vecWorldToPlayer(this.getDeltaMovement(), direction);
+                this.setDeltaMovement(GravityRotationUtil.vecPlayerToWorld(0.0D, motion.y, 0.0D, direction));
                 if (--this.hardenDurationTicks <= 0) {
                     this.beginHardeningEnd();
                     return;
@@ -441,9 +441,9 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
                 }
             }
             case END -> {
-                AntarchyGravityDirection direction = AntarchyGravityApi.getGravityDirection(this);
-                Vec3 motion = AntarchyGravityRotationUtil.vecWorldToPlayer(this.getDeltaMovement(), direction);
-                this.setDeltaMovement(AntarchyGravityRotationUtil.vecPlayerToWorld(0.0D, motion.y, 0.0D, direction));
+                GravityDirection direction = GravityApi.getGravityDirection(this);
+                Vec3 motion = GravityRotationUtil.vecWorldToPlayer(this.getDeltaMovement(), direction);
+                this.setDeltaMovement(GravityRotationUtil.vecPlayerToWorld(0.0D, motion.y, 0.0D, direction));
                 if (--this.hardenStateTicks <= 0) {
                     this.setHardenPhase(HardenPhase.NONE);
                     this.hardenCooldownTicks = Math.max(1, AntarchySettings.emperorScorpionHardenCooldownTicks());
@@ -504,10 +504,10 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         }
 
         Vec3 anchor = this.getTarget() != null ? this.getTarget().position() : this.position();
-        AntarchyGravityDirection direction = AntarchyGravityApi.getGravityDirection(this);
+        GravityDirection direction = GravityApi.getGravityDirection(this);
         Vec3 localRing = Vec3.directionFromRotation(0.0F, this.random.nextFloat() * 360.0F)
                 .scale(2.75D + this.random.nextDouble() * 1.75D);
-        Vec3 worldRing = AntarchyGravityRotationUtil.vecPlayerToWorld(localRing, direction);
+        Vec3 worldRing = GravityRotationUtil.vecPlayerToWorld(localRing, direction);
         BlockPos spawnPos = this.findSummonSpawnPos(anchor.add(worldRing));
         Vec3 spawnCenter = Vec3.atCenterOf(spawnPos);
         scorpion.moveTo(spawnCenter.x, spawnCenter.y, spawnCenter.z, this.random.nextFloat() * 360.0F, 0.0F);
@@ -522,22 +522,22 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     }
 
     private void commitLunge(LivingEntity target, double horizontalSpeed, double verticalSpeed) {
-        AntarchyGravityDirection direction = AntarchyGravityApi.getGravityDirection(this);
-        Vec3 localLunge = AntarchyGravityRotationUtil.vecWorldToPlayer(target.position().subtract(this.position()), direction);
+        GravityDirection direction = GravityApi.getGravityDirection(this);
+        Vec3 localLunge = GravityRotationUtil.vecWorldToPlayer(target.position().subtract(this.position()), direction);
         Vec3 horizontal = new Vec3(localLunge.x, 0.0D, localLunge.z);
         if (horizontal.lengthSqr() < 1.0E-4D) {
             return;
         }
         horizontal = horizontal.normalize().scale(horizontalSpeed);
         Vec3 localImpulse = new Vec3(horizontal.x, verticalSpeed, horizontal.z);
-        Vec3 worldImpulse = AntarchyGravityRotationUtil.vecPlayerToWorld(localImpulse, direction);
+        Vec3 worldImpulse = GravityRotationUtil.vecPlayerToWorld(localImpulse, direction);
         this.setDeltaMovement(this.getDeltaMovement().add(worldImpulse.x, worldImpulse.y, worldImpulse.z));
         this.hasImpulse = true;
     }
 
     private BlockPos findSummonSpawnPos(Vec3 center) {
         BlockPos base = BlockPos.containing(center);
-        Direction gravityDown = AntarchyGravityRotationUtil.getGravityDownDirection(this);
+        Direction gravityDown = GravityRotationUtil.getGravityDownDirection(this);
         Direction gravityUp = gravityDown.getOpposite();
         BlockPos fallback = base;
         for (int step = -2; step <= 2; step++) {
@@ -1001,10 +1001,10 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
 
             if (EmperorScorpionEntity.this.isWithinMeleeAttackRange(target) && EmperorScorpionEntity.this.hasLineOfSight(target)) {
                 EmperorScorpionEntity.this.getNavigation().stop();
-                AntarchyGravityDirection direction = AntarchyGravityApi.getGravityDirection(EmperorScorpionEntity.this);
-                Vec3 localMotion = AntarchyGravityRotationUtil.vecWorldToPlayer(EmperorScorpionEntity.this.getDeltaMovement(), direction);
+                GravityDirection direction = GravityApi.getGravityDirection(EmperorScorpionEntity.this);
+                Vec3 localMotion = GravityRotationUtil.vecWorldToPlayer(EmperorScorpionEntity.this.getDeltaMovement(), direction);
                 Vec3 localStopped = new Vec3(0.0D, localMotion.y, 0.0D);
-                Vec3 worldStopped = AntarchyGravityRotationUtil.vecPlayerToWorld(localStopped, direction);
+                Vec3 worldStopped = GravityRotationUtil.vecPlayerToWorld(localStopped, direction);
                 EmperorScorpionEntity.this.setDeltaMovement(worldStopped);
                 AttackType attackType = EmperorScorpionEntity.this.selectAttack(target);
                 if (attackType != AttackType.NONE) {
@@ -1024,8 +1024,8 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         }
 
         private void approachDirectly(LivingEntity target) {
-            AntarchyGravityDirection direction = AntarchyGravityApi.getGravityDirection(EmperorScorpionEntity.this);
-            Vec3 localDelta = AntarchyGravityRotationUtil.vecWorldToPlayer(target.position().subtract(EmperorScorpionEntity.this.position()), direction);
+            GravityDirection direction = GravityApi.getGravityDirection(EmperorScorpionEntity.this);
+            Vec3 localDelta = GravityRotationUtil.vecWorldToPlayer(target.position().subtract(EmperorScorpionEntity.this.position()), direction);
             double dx = localDelta.x;
             double dz = localDelta.z;
             if (dx * dx + dz * dz < 1.0E-4D) {
@@ -1039,15 +1039,15 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
             EmperorScorpionEntity.this.yBodyRot = newYaw;
             EmperorScorpionEntity.this.yBodyRotO = newYaw;
 
-            Vec3 currentMotion = AntarchyGravityRotationUtil.vecWorldToPlayer(EmperorScorpionEntity.this.getDeltaMovement(), direction);
+            Vec3 currentMotion = GravityRotationUtil.vecWorldToPlayer(EmperorScorpionEntity.this.getDeltaMovement(), direction);
             float headingError = Math.abs(Mth.wrapDegrees(targetYaw - currentYaw));
             if (headingError <= DIRECT_APPROACH_ALIGN_THRESHOLD) {
                 double speed = EmperorScorpionEntity.this.getAttributeValue(Attributes.MOVEMENT_SPEED) * CHASE_SPEED;
                 Vec3 forward = Vec3.directionFromRotation(0.0F, newYaw).scale(speed);
-                Vec3 worldForward = AntarchyGravityRotationUtil.vecPlayerToWorld(forward.x, currentMotion.y, forward.z, direction);
+                Vec3 worldForward = GravityRotationUtil.vecPlayerToWorld(forward.x, currentMotion.y, forward.z, direction);
                 EmperorScorpionEntity.this.setDeltaMovement(worldForward);
             } else {
-                EmperorScorpionEntity.this.setDeltaMovement(AntarchyGravityRotationUtil.vecPlayerToWorld(0.0D, currentMotion.y, 0.0D, direction));
+                EmperorScorpionEntity.this.setDeltaMovement(GravityRotationUtil.vecPlayerToWorld(0.0D, currentMotion.y, 0.0D, direction));
             }
         }
 

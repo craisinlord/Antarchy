@@ -175,11 +175,7 @@ public final class AntarchySettings {
     private static double americanBonusSaturation = 1.0D;
     private static int americanRegenerationDurationTicks = 60;
     private static int americanRegenerationAmplifier = 0;
-    private static boolean dreamSandEnabled = true;
     private static boolean entitySpecificFireOverlayEnabled = true;
-    private static double dreamSandJumpVelocityMultiplier = 1.3D;
-    private static double dreamSandGravityMultiplier = 0.45D;
-    private static double dreamSandEffectDurationSeconds = 7.0D;
     private static double dreamSandFallingBlockGravityMultiplier = 0.4D;
     private static boolean ichorWitherEnabled = true;
     private static int nightmareHelmetArmorValue = 4;
@@ -1926,44 +1922,12 @@ public final class AntarchySettings {
         americanRegenerationAmplifier = value;
     }
 
-    public static boolean dreamSandEnabled() {
-        return dreamSandEnabled;
-    }
-
     public static boolean entitySpecificFireOverlayEnabled() {
         return entitySpecificFireOverlayEnabled;
     }
 
-    public static void setDreamSandEnabled(boolean value) {
-        dreamSandEnabled = value;
-    }
-
     public static void setEntitySpecificFireOverlayEnabled(boolean value) {
         entitySpecificFireOverlayEnabled = value;
-    }
-
-    public static double dreamSandJumpVelocityMultiplier() {
-        return dreamSandJumpVelocityMultiplier;
-    }
-
-    public static void setDreamSandJumpVelocityMultiplier(double value) {
-        dreamSandJumpVelocityMultiplier = value;
-    }
-
-    public static double dreamSandGravityMultiplier() {
-        return dreamSandGravityMultiplier;
-    }
-
-    public static void setDreamSandGravityMultiplier(double value) {
-        dreamSandGravityMultiplier = value;
-    }
-
-    public static double dreamSandEffectDurationSeconds() {
-        return dreamSandEffectDurationSeconds;
-    }
-
-    public static void setDreamSandEffectDurationSeconds(double value) {
-        dreamSandEffectDurationSeconds = value;
     }
 
     public static double dreamSandFallingBlockGravityMultiplier() {

@@ -16,7 +16,6 @@ import com.craisinlord.antarchy.neoforge.registry.AntarchyNeoforgeItems;
 import com.craisinlord.antarchy.neoforge.registry.AntarchyNeoforgeMisc;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.BoatModel;
 import net.minecraft.client.model.ArmorStandModel;
@@ -39,7 +38,6 @@ import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.blockentity.CampfireRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -58,7 +56,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
-import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
@@ -102,21 +99,9 @@ public final class AntarchyNeoForgeClient {
     }
 
     @SubscribeEvent
-    public static void registerPortalViewShader(RegisterShadersEvent event) {
-        PortalGunPortalViewRenderer.clearPortalViewShader();
-        try {
-            event.registerShader(
-                    new ShaderInstance(event.getResourceProvider(), ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "portal_view"), DefaultVertexFormat.POSITION_TEX),
-                    PortalGunPortalViewRenderer::setPortalViewShader
-            );
-        } catch (java.io.IOException | RuntimeException exception) {
-            Antarchy.LOGGER.error("Failed to register portal view shader", exception);
-        }
-    }
-
-    @SubscribeEvent
     public static void clientSetup(FMLClientSetupEvent event) {
         Antarchy.physicalClient = true;
+        com.craisinlord.antarchy.content.AntarchyAnthologyHooks.registerClient();
         event.enqueueWork(() -> {
             AntarchyArchivePreviews.register();
             AntarchyComputerGames.register();
@@ -186,7 +171,6 @@ public final class AntarchyNeoForgeClient {
         event.registerEntityRenderer(AntarchyNeoforgeEntites.LUCID_PEARL_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.VORTEX_CHARGE_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.WIND_VORTEX.get(), WindVortexRenderer::new);
-        event.registerEntityRenderer(AntarchyNeoforgeEntites.TIME_DILATION_FIELD.get(), TimeDilationFieldRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.ROYAL_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalBlackHoleRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.ROYAL_ASSAILANT_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalAssailantBlackHoleRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.CRITTER_CAGE_PROJECTILE.get(), ThrownItemRenderer::new);

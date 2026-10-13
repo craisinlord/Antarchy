@@ -5,8 +5,8 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -184,7 +184,7 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity {
         FlyingPathNavigation navigation = new FlyingPathNavigation(this, level) {
             @Override
             public boolean isStableDestination(BlockPos pos) {
-                BlockPos support = AntarchyGravityApi.isGravityInverted(ButterflyEntity.this) ? pos.above() : pos.below();
+                BlockPos support = GravityApi.isGravityInverted(ButterflyEntity.this) ? pos.above() : pos.below();
                 return !this.level.getBlockState(support).isAir();
             }
 
@@ -432,7 +432,7 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity {
 
     @Override
     protected void jumpInLiquid(net.minecraft.tags.TagKey<Fluid> fluidTag) {
-        this.setDeltaMovement(this.getDeltaMovement().add(AntarchyGravityRotationUtil.vecPlayerToWorld(0.0D, 0.01D, 0.0D, AntarchyGravityApi.getGravityDirection(this))));
+        this.setDeltaMovement(this.getDeltaMovement().add(GravityRotationUtil.vecPlayerToWorld(0.0D, 0.01D, 0.0D, GravityApi.getGravityDirection(this))));
     }
 
     @Override

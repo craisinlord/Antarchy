@@ -1,9 +1,9 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import java.util.EnumSet;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -768,20 +768,20 @@ public class DorrieEntity extends Animal implements GeoEntity {
                 || this.getNavigation().isInProgress();
     }
 
-    private AntarchyGravityDirection gravityDirection() {
-        return AntarchyGravityApi.getGravityDirection(this);
+    private GravityDirection gravityDirection() {
+        return GravityApi.getGravityDirection(this);
     }
 
     private Vec3 toLocal(Vec3 worldVector) {
-        return AntarchyGravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+        return GravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
     }
 
     private Vec3 toWorld(Vec3 localVector) {
-        return AntarchyGravityRotationUtil.vecPlayerToWorld(localVector, this.gravityDirection());
+        return GravityRotationUtil.vecPlayerToWorld(localVector, this.gravityDirection());
     }
 
     private Vec3 toWorld(double x, double y, double z) {
-        return AntarchyGravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
+        return GravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
     }
 
     private Vec3 toLocalPlane(Vec3 worldVector) {

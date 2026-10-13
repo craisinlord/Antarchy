@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.content.entity.royal;
 
-import com.craisinlord.antarchy.content.entity.multipart.MultipartLayout;
-import com.craisinlord.antarchy.content.entity.multipart.MultipartPartDefinition;
+import com.craisinlord.anthology.multipart.MultipartLayout;
+import com.craisinlord.anthology.multipart.MultipartPartDefinition;
 
 public final class RoyalBossMultipartLayout implements MultipartLayout {
     public static final RoyalBossMultipartLayout INSTANCE = new RoyalBossMultipartLayout();

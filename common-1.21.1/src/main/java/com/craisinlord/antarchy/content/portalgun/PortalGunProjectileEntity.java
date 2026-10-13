@@ -1,9 +1,9 @@
 package com.craisinlord.antarchy.content.portalgun;
 
 import com.craisinlord.antarchy.content.item.PortalGunItem;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityTransition;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -126,7 +126,7 @@ public class PortalGunProjectileEntity extends ThrowableItemProjectile {
     }
 
     public void configure(PortalGunPortalEntity.PortalSide side, UUID gunId, ItemStack gunStack) {
-        AntarchyGravityApi.setAirborneGravityDirection(this, AntarchyGravityDirection.DOWN, false, AntarchyGravityTransition.INSTANT);
+        GravityApi.setAirborneGravityDirection(this, GravityDirection.DOWN, false, GravityTransition.INSTANT);
         this.entityData.set(SIDE, side.ordinal());
         this.gunId = gunId;
         this.setItem(gunStack.copyWithCount(1));

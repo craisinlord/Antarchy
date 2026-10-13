@@ -156,7 +156,6 @@ public final class AntarchyConfigCatalog {
                 || name.equals("experimentalSettingsPopupDisabled")
                 || name.equals("unlockAllArchives")
                 || name.equals("entitySpecificFireOverlayEnabled")
-                || name.equals("dreamSandEnabled")
                 || name.startsWith("dreamSand")
                 || name.equals("ichorWitherEnabled")
                 || name.startsWith("diamondMinecart")

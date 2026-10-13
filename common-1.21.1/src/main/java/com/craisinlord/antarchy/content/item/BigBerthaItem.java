@@ -5,7 +5,7 @@ import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
 import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import java.util.List;
 import java.util.function.Consumer;
@@ -292,7 +292,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
         Vec3 impactPos = new Vec3(target.getX(), target.getY(0.8D), target.getZ());
         LucidBoltEntity.spawnImpactParticles(level, impactPos);
         level.sendParticles(ParticleTypes.PORTAL, impactPos.x, impactPos.y, impactPos.z, 12, 0.25D, 0.25D, 0.25D, 0.08D);
-        if (!AntarchyGravityApi.isGravityInverted(player)) {
+        if (!GravityApi.isGravityInverted(player)) {
             return;
         }
 

@@ -3,9 +3,9 @@ package com.craisinlord.antarchy.content.entity.nightmare;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -170,9 +170,9 @@ public class NightmareBiteEntity extends Entity implements GeoEntity {
     }
 
     private void updateTrackingPosition(LivingEntity target, double progress) {
-        AntarchyGravityDirection targetGravity = AntarchyGravityApi.getGravityDirection(target);
-        if (AntarchyGravityApi.getGravityDirection(this) != targetGravity) {
-            AntarchyGravityApi.setGravityDirection(this, targetGravity);
+        GravityDirection targetGravity = GravityApi.getGravityDirection(target);
+        if (GravityApi.getGravityDirection(this) != targetGravity) {
+            GravityApi.setGravityDirection(this, targetGravity);
         }
         Vec3 forward = target.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
         if (forward.lengthSqr() < 1.0E-4D) {
@@ -182,12 +182,12 @@ public class NightmareBiteEntity extends Entity implements GeoEntity {
             forward = new Vec3(0.0D, 0.0D, 1.0D);
         }
         forward = forward.normalize();
-        Vec3 localUp = AntarchyGravityRotationUtil.vecPlayerToWorld(
+        Vec3 localUp = GravityRotationUtil.vecPlayerToWorld(
                 0.0D, 1.0D, 0.0D, targetGravity);
         Vec3 right = forward.cross(localUp).normalize();
         double sideOffset = START_SIDE_OFFSET + (END_SIDE_OFFSET - START_SIDE_OFFSET) * progress;
         double backOffset = START_BACK_OFFSET + (END_BACK_OFFSET - START_BACK_OFFSET) * progress;
-        Vec3 bodyCenter = target.position().add(AntarchyGravityRotationUtil.vecPlayerToWorld(
+        Vec3 bodyCenter = target.position().add(GravityRotationUtil.vecPlayerToWorld(
                 0.0D, target.getBbHeight() * 0.55D, 0.0D, targetGravity));
         Vec3 desiredPos = bodyCenter
                 .add(right.scale(this.approachSide * sideOffset))
@@ -195,7 +195,7 @@ public class NightmareBiteEntity extends Entity implements GeoEntity {
         Vec3 toTarget = bodyCenter.subtract(desiredPos);
         this.setPos(desiredPos.x, desiredPos.y, desiredPos.z);
         if (toTarget.lengthSqr() > 1.0E-4D) {
-            Vec3 localToTarget = AntarchyGravityRotationUtil.vecWorldToPlayer(toTarget, targetGravity);
+            Vec3 localToTarget = GravityRotationUtil.vecWorldToPlayer(toTarget, targetGravity);
             float yaw = (float) Math.toDegrees(Math.atan2(localToTarget.z, localToTarget.x)) - 90.0F;
             this.setYRot(yaw);
         }

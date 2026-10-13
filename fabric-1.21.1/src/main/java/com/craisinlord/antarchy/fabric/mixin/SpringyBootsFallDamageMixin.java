@@ -1,6 +1,6 @@
 package com.craisinlord.antarchy.fabric.mixin;
 
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.antarchy.content.enchantment.AntarchyEnchantments;
 import com.craisinlord.antarchy.content.item.SpringyBootsItem;
 import com.craisinlord.antarchy.fabric.util.SpringyBootsFabricHelper;
@@ -21,7 +21,7 @@ public abstract class SpringyBootsFallDamageMixin {
         if (!(self instanceof Player player)) {
             return;
         }
-        if (!AntarchyGravityApi.isGravityInverted(player)) {
+        if (!GravityApi.isGravityInverted(player)) {
             return;
         }
         if (AntarchyEnchantments.featherRisingLevel(player) <= 0) {

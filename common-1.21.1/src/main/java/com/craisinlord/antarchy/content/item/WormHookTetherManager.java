@@ -2,8 +2,8 @@ package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.WormHookProjectileEntity;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.antarchy.content.util.WormHookRope;
 import java.util.Map;
 import java.util.UUID;
@@ -161,11 +161,11 @@ public final class WormHookTetherManager {
     }
 
     private static Vec3 getWorldMotion(ServerPlayer player) {
-        return AntarchyGravityRotationUtil.vecPlayerToWorld(player.getDeltaMovement(), AntarchyGravityApi.getGravityDirection(player));
+        return GravityRotationUtil.vecPlayerToWorld(player.getDeltaMovement(), GravityApi.getGravityDirection(player));
     }
 
     private static void setWorldMotion(ServerPlayer player, Vec3 worldMotion) {
-        player.setDeltaMovement(AntarchyGravityRotationUtil.vecWorldToPlayer(worldMotion, AntarchyGravityApi.getGravityDirection(player)));
+        player.setDeltaMovement(GravityRotationUtil.vecWorldToPlayer(worldMotion, GravityApi.getGravityDirection(player)));
     }
 
     private static void tickFlyingSound(ServerPlayer player, TetherState state) {

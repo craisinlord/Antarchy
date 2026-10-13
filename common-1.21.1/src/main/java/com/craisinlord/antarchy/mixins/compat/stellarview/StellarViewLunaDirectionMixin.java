@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.mixins.compat.stellarview;
 
 import com.craisinlord.antarchy.content.client.MoonSkyTracker;
-import com.craisinlord.antarchy.content.client.renderer.PortalGunPortalSceneRenderer;
+import com.craisinlord.anthology.portal.client.PortalSceneRenderer;
 import com.mojang.blaze3d.vertex.Tesselator;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -21,7 +21,7 @@ public abstract class StellarViewLunaDirectionMixin {
     private void antarchy$recordMoonDirection(ViewCenter viewCenter, ClientLevel level, Camera camera, Tesselator tesselator,
                                               Matrix4f lastMatrix, SphericalCoords sphericalCoords, long ticks, double distance,
                                               float partialTicks, CallbackInfo ci) {
-        if (PortalGunPortalSceneRenderer.isRenderingScene() || sphericalCoords == null || camera == null || lastMatrix == null) {
+        if (PortalSceneRenderer.isRenderingScene() || sphericalCoords == null || camera == null || lastMatrix == null) {
             return;
         }
         MoonSkyTracker.recordSphericalMoon(level, camera, lastMatrix, sphericalCoords.theta, sphericalCoords.phi);

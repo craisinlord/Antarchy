@@ -39,6 +39,7 @@ dependencies {
     modApi "net.fabricmc.fabric-api:fabric-api:${fabric_api_version_1_21_1}"
     modLocalRuntime "maven.modrinth:midnightlib:${midnightlib}"
     modImplementation "software.bernie.geckolib:geckolib-fabric-1.21.1:${geckolib_version}"
+    modImplementation(files("$rootDir/anthology_jars/anthology-${anthology_version}+1.21.1-fabric.jar"))
     modImplementation(files("$rootDir/infinite_dimensions_jars/antos-fabric-1.21.1-${antos_version}.jar"))
     if (providers.gradleProperty('antarchySodiumCompatTest').orNull == 'true') {
         modLocalRuntime(files("$rootDir/infinite_dimensions_jars/sodium-fabric-0.8.13+mc1.21.1.jar"))
@@ -121,7 +122,7 @@ tasks.named('processResources', ProcessResources).configure {
 // does — inject the refmap key into fabric's own copy of the shared file after copying.
 tasks.named('processResources', ProcessResources).configure {
     doLast {
-        ['antarchy-common.mixins.json', 'antarchy-sodium.mixins.json'].each { configName ->
+        ['antarchy-common.mixins.json'].each { configName ->
             var mixinConfig = new File(destinationDir, configName)
             var json = new groovy.json.JsonSlurper().parse(mixinConfig)
             json.put('refmap', 'antarchy.mixins.refmap.json')

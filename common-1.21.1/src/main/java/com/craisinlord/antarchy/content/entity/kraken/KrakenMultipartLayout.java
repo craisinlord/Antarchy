@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.content.entity.kraken;
 
-import com.craisinlord.antarchy.content.entity.multipart.MultipartLayout;
-import com.craisinlord.antarchy.content.entity.multipart.MultipartPartDefinition;
+import com.craisinlord.anthology.multipart.MultipartLayout;
+import com.craisinlord.anthology.multipart.MultipartPartDefinition;
 
 public final class KrakenMultipartLayout implements MultipartLayout {
     public static final KrakenMultipartLayout INSTANCE = new KrakenMultipartLayout();

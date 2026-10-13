@@ -6,12 +6,12 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.ManticoreEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareBiteEntity;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
-import com.craisinlord.antarchy.content.time.TimeDilationApi;
-import com.craisinlord.antarchy.content.time.TimeDilationFieldEntity;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityTransition;
+import com.craisinlord.anthology.time.TimeDilationApi;
+import com.craisinlord.anthology.time.TimeDilationFieldEntity;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,8 +51,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.AABB;
-import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamSettings;
-import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamTerrainMode;
+import com.craisinlord.anthology.beam.BeamSettings;
+import com.craisinlord.anthology.beam.BeamTerrainMode;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackLane;
 import com.craisinlord.antarchy.content.entity.royal.attack.RoyalEffectController;
@@ -406,8 +406,8 @@ public class QueenEntity extends RoyalBossEntity {
     protected SoundEvent royalBeamEndSound() { return AntarchySoundEvents.QUEEN_BEAM_END.get(); }
 
     @Override
-    protected RoyalBeamSettings royalBeamSettings() {
-        return new RoyalBeamSettings(AntarchySettings.queenBeamRange(), AntarchySettings.queenBeamTracking(), 7.5D,
+    protected BeamSettings royalBeamSettings() {
+        return new BeamSettings(AntarchySettings.queenBeamRange(), AntarchySettings.queenBeamTracking(), 7.5D,
                 AntarchySettings.queenBeamDurationTicks(), AntarchySettings.queenBeamTravelTicks(), AntarchySettings.queenBeamCooldownTicks(), 6.0F, 6.0F,
                 (float) AntarchySettings.queenBeamDamage(), 1.0F, 3, 100.0D,
                 (float) AntarchySettings.queenBeamTerrainRadius(), 4.0F, AntarchySettings.queenBeamTerrainCap(),
@@ -415,8 +415,8 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     @Override
-    protected RoyalBeamTerrainMode royalBeamTerrainMode() {
-        return RoyalBeamTerrainMode.DESTROY;
+    protected BeamTerrainMode royalBeamTerrainMode() {
+        return BeamTerrainMode.DESTROY;
     }
 
     @Override
@@ -576,7 +576,7 @@ public class QueenEntity extends RoyalBossEntity {
         Vec3 away = this.position().subtract(target.position()).multiply(1.0D, 0.0D, 1.0D);
         double baseAngle = away.lengthSqr() > 1.0E-4D
                 ? Math.atan2(away.z, away.x) : this.random.nextDouble() * Mth.TWO_PI;
-        boolean inverted = AntarchyGravityApi.isGravityInverted(this);
+        boolean inverted = GravityApi.isGravityInverted(this);
         double[] radii = {10.0D, 14.0D, 18.0D, 7.0D};
         for (int angleIndex = 0; angleIndex < 12; angleIndex++) {
             double angle = baseAngle + angleIndex * Mth.TWO_PI / 12.0D;
@@ -614,8 +614,8 @@ public class QueenEntity extends RoyalBossEntity {
         double progress = this.queenLandingStage == QueenLandingStage.TELEGRAPH
                 ? 1.0D - this.queenLandingStageTicks / (double) LANDING_TELEGRAPH_TICKS : 1.0D;
         double radius = Mth.lerp(progress, 4.0D, 18.0D);
-        Vec3 indicator = this.queenLandingWaypoint.add(AntarchyGravityRotationUtil.vecPlayerToWorld(
-                0.0D, 0.2D, 0.0D, AntarchyGravityApi.getGravityDirection(this)));
+        Vec3 indicator = this.queenLandingWaypoint.add(GravityRotationUtil.vecPlayerToWorld(
+                0.0D, 0.2D, 0.0D, GravityApi.getGravityDirection(this)));
         for (int index = 0; index < 40; index++) {
             double angle = Mth.TWO_PI * index / 40.0D;
             level.sendParticles(ParticleTypes.REVERSE_PORTAL,
@@ -639,8 +639,8 @@ public class QueenEntity extends RoyalBossEntity {
                     60, 7.0D, 1.0D, 7.0D, 0.12D);
         }
         this.setRoyalFlying(true);
-        this.addGravityAwareImpulse(this, AntarchyGravityRotationUtil.vecPlayerToWorld(
-                0.0D, 0.42D, 0.0D, AntarchyGravityApi.getGravityDirection(this)));
+        this.addGravityAwareImpulse(this, GravityRotationUtil.vecPlayerToWorld(
+                0.0D, 0.42D, 0.0D, GravityApi.getGravityDirection(this)));
         this.hasImpulse = true;
     }
 
@@ -905,7 +905,7 @@ public class QueenEntity extends RoyalBossEntity {
         queen.setPersistenceRequired();
         queen.setNoGravity(false);
         ThoraxisUndersideManager.applyUndersideInversion(queen);
-        AntarchyGravityApi.setAirborneGravityDirection(queen, AntarchyGravityDirection.UP, true, new AntarchyGravityTransition(12));
+        GravityApi.setAirborneGravityDirection(queen, GravityDirection.UP, true, new GravityTransition(12));
         queen.resetFallDistance();
         return level.addFreshEntity(queen) ? queen : null;
     }
@@ -979,7 +979,7 @@ public class QueenEntity extends RoyalBossEntity {
         Vec3 behindTarget = target.position().add(towardTarget.scale(8.0D));
         Vec3 lateral = new Vec3(-towardTarget.z, 0.0D, towardTarget.x);
         float tearYaw = (float) Math.toDegrees(Math.atan2(-towardTarget.x, towardTarget.z));
-        double vertical = AntarchyGravityApi.isGravityInverted(this) ? -2.0D : 2.0D;
+        double vertical = GravityApi.isGravityInverted(this) ? -2.0D : 2.0D;
         for (int i = 0; i < pairs; i++) {
             double forwardScatter = 3.0D + this.random.nextDouble() * 9.0D;
             double lateralScatter = (this.random.nextDouble() * 2.0D - 1.0D) * 11.0D;
@@ -1157,7 +1157,7 @@ public class QueenEntity extends RoyalBossEntity {
                 TimeDilationFieldEntity field = TimeDilationApi.createField(level, this.position(),
                         QUEEN_CHRONOSPHERE_RADIUS, QUEEN_CHRONOSPHERE_RATE,
                         QUEEN_CHRONOSPHERE_DURATION, this.getUUID());
-                field.configureQueenChronosphere(this);
+                field.configureOwnerAnchored(this);
                 this.startRoyalRecovery(35);
             }
             case "debris_cyclone" -> {
@@ -1173,7 +1173,7 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private void spawnQueenWingPressure(ServerLevel level) {
-        AntarchyGravityDirection gravity = AntarchyGravityApi.getGravityDirection(this);
+        GravityDirection gravity = GravityApi.getGravityDirection(this);
         for (int ring = 1; ring <= 3; ring++) {
             double radius = ring * 3.2D;
             int samples = 14 + ring * 4;
@@ -1181,9 +1181,9 @@ public class QueenEntity extends RoyalBossEntity {
                 double angle = Mth.TWO_PI * sample / samples;
                 double localX = Math.cos(angle) * radius;
                 double localZ = Math.sin(angle) * radius;
-                Vec3 point = this.position().add(AntarchyGravityRotationUtil.vecPlayerToWorld(
+                Vec3 point = this.position().add(GravityRotationUtil.vecPlayerToWorld(
                         localX, this.getBbHeight() * 0.45D, localZ, gravity));
-                Vec3 velocity = AntarchyGravityRotationUtil.vecPlayerToWorld(
+                Vec3 velocity = GravityRotationUtil.vecPlayerToWorld(
                         Math.cos(angle) * 0.2D, 0.025D, Math.sin(angle) * 0.2D, gravity);
                 level.sendParticles(ACCEL_DUST, point.x, point.y, point.z,
                         0, velocity.x, velocity.y, velocity.z, 1.0D);
@@ -1258,8 +1258,8 @@ public class QueenEntity extends RoyalBossEntity {
             double distance = Math.max(1.0D, living.distanceTo(this));
             living.hurt(source, this.scaleRoyalDamage(12.0D * Math.max(0.25D, 1.0D - distance / 24.0D)));
             Vec3 push = living.position().subtract(this.position()).normalize().scale(1.3D);
-            Vec3 vertical = AntarchyGravityRotationUtil.vecPlayerToWorld(
-                    0.0D, 0.65D, 0.0D, AntarchyGravityApi.getGravityDirection(living));
+            Vec3 vertical = GravityRotationUtil.vecPlayerToWorld(
+                    0.0D, 0.65D, 0.0D, GravityApi.getGravityDirection(living));
             this.addGravityAwareImpulse(living, new Vec3(push.x, 0.0D, push.z).add(vertical));
             living.hasImpulse = true;
         }
@@ -1281,7 +1281,7 @@ public class QueenEntity extends RoyalBossEntity {
 
     private Vec3 selectBlackHoleAnchor(LivingEntity target) {
         double vertical = 2.0D + this.random.nextDouble() * 2.0D;
-        if (AntarchyGravityApi.isGravityInverted(this)) {
+        if (GravityApi.isGravityInverted(this)) {
             vertical = -vertical;
         }
         return target.position().add(
@@ -1399,8 +1399,8 @@ public class QueenEntity extends RoyalBossEntity {
         int elapsed = GRAVITY_STOMP_TELEGRAPH_TICKS - this.gravityStompTelegraphTicks;
         if (this.tickCount % 2 == 0) {
             double radius = Mth.lerp(elapsed / (double) GRAVITY_STOMP_TELEGRAPH_TICKS, 3.0D, 18.0D);
-            Vec3 surfaceCenter = this.position().add(AntarchyGravityRotationUtil.vecPlayerToWorld(
-                    0.0D, 0.2D, 0.0D, AntarchyGravityApi.getGravityDirection(this)));
+            Vec3 surfaceCenter = this.position().add(GravityRotationUtil.vecPlayerToWorld(
+                    0.0D, 0.2D, 0.0D, GravityApi.getGravityDirection(this)));
             this.spawnQueenTelegraphSpokes(level, surfaceCenter, radius);
         }
         this.playQueenTelegraphBeat(level, this.gravityStompTelegraphTicks,
@@ -1460,7 +1460,7 @@ public class QueenEntity extends RoyalBossEntity {
                     this.queenEffectBounds(CRUSHING_GRAVITY_RADIUS),
                     living -> this.canDamageWithRoyalAttack(living)
                             && this.withinQueenEffectRange(living, CRUSHING_GRAVITY_RADIUS))) {
-                double downSign = AntarchyGravityApi.isGravityInverted(living) ? 1.0D : -1.0D;
+                double downSign = GravityApi.isGravityInverted(living) ? 1.0D : -1.0D;
                 this.spawnCrushingGravityArrow(level, living, downSign, progress);
             }
         }
@@ -1543,7 +1543,7 @@ public class QueenEntity extends RoyalBossEntity {
         double orbitRadius = Mth.lerp(Math.min(1.0D, progress * 1.6D), 1.0D, DEBRIS_CYCLONE_ORBIT_RADIUS);
         double spinSpeed = Mth.lerp(progress, 0.12D, 0.55D);
         int count = this.debrisCycloneBlocks.size();
-        AntarchyGravityDirection gravity = AntarchyGravityApi.getGravityDirection(this);
+        GravityDirection gravity = GravityApi.getGravityDirection(this);
         for (int index = 0; index < count; index++) {
             FallingBlockEntity block = this.debrisCycloneBlocks.get(index);
             if (!block.isAlive()) continue;
@@ -1551,7 +1551,7 @@ public class QueenEntity extends RoyalBossEntity {
             double localX = Math.cos(angle) * orbitRadius;
             double localZ = Math.sin(angle) * orbitRadius;
             double localY = this.getBbHeight() * 0.5D + Math.sin(this.tickCount * 0.1D + index) * 0.4D;
-            Vec3 point = this.position().add(AntarchyGravityRotationUtil.vecPlayerToWorld(localX, localY, localZ, gravity));
+            Vec3 point = this.position().add(GravityRotationUtil.vecPlayerToWorld(localX, localY, localZ, gravity));
             block.setPos(point.x - 0.5D, point.y - 0.5D, point.z - 0.5D);
             block.setDeltaMovement(Vec3.ZERO);
             if (this.tickCount % 2 == 0) {
@@ -1598,7 +1598,7 @@ public class QueenEntity extends RoyalBossEntity {
         this.playRoyalSound(AntarchySoundEvents.QUEEN_ROAR.get(), 0.75F);
         if (level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
             Vec3 center = this.position();
-            boolean inverted = AntarchyGravityApi.isGravityInverted(this);
+            boolean inverted = GravityApi.isGravityInverted(this);
             int gathered = 0;
             for (int attempt = 0; attempt < GRAVITIC_UPHEAVAL_BLOCK_COUNT * 3
                     && gathered < GRAVITIC_UPHEAVAL_BLOCK_COUNT; attempt++) {
@@ -1670,14 +1670,14 @@ public class QueenEntity extends RoyalBossEntity {
 
     private void spawnBlackHoleFunnel(ServerLevel level, Vec3 center, double fieldRadius, double progress) {
         double rotation = this.tickCount * 0.35D;
-        AntarchyGravityDirection gravity = AntarchyGravityApi.getGravityDirection(this);
+        GravityDirection gravity = GravityApi.getGravityDirection(this);
         for (int tier = 0; tier < 4; tier++) {
             double tierProgress = tier / 3.0D;
             double radius = Mth.lerp(progress, fieldRadius * (0.25D + tierProgress * 0.5D), 0.7D);
             double localY = -1.5D + tierProgress * 4.5D;
             for (int point = 0; point < 10; point++) {
                 double angle = rotation + tier * 0.65D + Mth.TWO_PI * point / 10.0D;
-                Vec3 particlePos = center.add(AntarchyGravityRotationUtil.vecPlayerToWorld(
+                Vec3 particlePos = center.add(GravityRotationUtil.vecPlayerToWorld(
                         Math.cos(angle) * radius, localY, Math.sin(angle) * radius, gravity));
                 level.sendParticles(ParticleTypes.REVERSE_PORTAL,
                         particlePos.x, particlePos.y, particlePos.z,
@@ -1742,13 +1742,13 @@ public class QueenEntity extends RoyalBossEntity {
     private void spawnAccelerationHelix(ServerLevel level, double progress) {
         double rotation = this.tickCount * Mth.lerp(progress, 0.24D, 0.62D);
         double radius = Mth.lerp(progress, 2.8D, 0.75D);
-        AntarchyGravityDirection gravity = AntarchyGravityApi.getGravityDirection(this);
+        GravityDirection gravity = GravityApi.getGravityDirection(this);
         for (int strand = 0; strand < 2; strand++) {
             for (int segment = 0; segment < 9; segment++) {
                 double heightProgress = segment / 8.0D;
                 double angle = rotation + strand * Math.PI + heightProgress * Mth.TWO_PI * 1.5D;
                 double localY = 0.4D + heightProgress * (this.getBbHeight() + 2.0D);
-                Vec3 particlePos = this.position().add(AntarchyGravityRotationUtil.vecPlayerToWorld(
+                Vec3 particlePos = this.position().add(GravityRotationUtil.vecPlayerToWorld(
                         Math.cos(angle) * radius, localY, Math.sin(angle) * radius, gravity));
                 level.sendParticles(AntarchyObjects.LUCID_BOLT_IMPACT_SMALL.get(),
                         particlePos.x, particlePos.y, particlePos.z,
@@ -1849,7 +1849,7 @@ public class QueenEntity extends RoyalBossEntity {
             if (entity == this || isFieldImmune(entity) || entity instanceof Player player && player.isCreative()) {
                 continue;
             }
-            double downSign = AntarchyGravityApi.isGravityInverted(entity) ? 1.0D : -1.0D;
+            double downSign = GravityApi.isGravityInverted(entity) ? 1.0D : -1.0D;
             entity.setDeltaMovement(entity.getDeltaMovement().add(0.0D, downSign * CRUSHING_GRAVITY_STRENGTH, 0.0D));
             entity.hasImpulse = true;
             if (entity instanceof LivingEntity living && this.tickCount % 8 == 0) {

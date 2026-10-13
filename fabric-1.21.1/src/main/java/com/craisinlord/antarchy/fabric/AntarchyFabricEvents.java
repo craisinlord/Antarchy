@@ -12,9 +12,9 @@ import com.craisinlord.antarchy.content.item.AttitudeAdjusterSlamManager;
 import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityTransition;
 import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.craisinlord.antarchy.content.portal.PermanentPortalManager;
 import com.craisinlord.antarchy.content.portalgun.PortalGunProjectileEntity;
@@ -22,19 +22,13 @@ import com.craisinlord.antarchy.content.portalgun.PortalGunSavedData;
 import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.CaterpillarCommand;
 import com.craisinlord.antarchy.content.command.DimensionalTearCommand;
-import com.craisinlord.antarchy.content.command.GravityCommand;
 import com.craisinlord.antarchy.content.command.QueenLocateCommand;
 import com.craisinlord.antarchy.content.command.RoyalCommand;
-import com.craisinlord.antarchy.content.time.TimeDilationCommand;
-import com.craisinlord.antarchy.content.time.TimeDilationManager;
-import com.craisinlord.antarchy.content.time.ChronosphereManager;
 import com.craisinlord.antarchy.content.item.WormHookTetherManager;
 import com.craisinlord.antarchy.content.entity.trades.ComputerScientistTradeManager;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
-import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
-import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -69,7 +63,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public final class AntarchyFabricEvents {
-    private static final AntarchyGravityTransition INVERTED_CLEAR_TRANSITION = new AntarchyGravityTransition(12);
+    private static final GravityTransition INVERTED_CLEAR_TRANSITION = new GravityTransition(12);
     private static final Set<UUID> invertedPlayers = new HashSet<>();
 
     private AntarchyFabricEvents() {
@@ -81,30 +75,13 @@ public final class AntarchyFabricEvents {
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.clear());
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.clear());
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            ChronosphereManager.refresh(handler.player);
-            TimeDilationManager.resyncPersistentEffects(handler.player);
             PortalGunSavedData.clearMissingGuns(handler.player);
-        });
-        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
-            ChronosphereManager.refresh(newPlayer);
-            TimeDilationManager.resyncPersistentEffects(newPlayer);
-        });
-        ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, destination) -> ChronosphereManager.refresh(player));
-        net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents.START_TRACKING.register((trackedEntity, player) -> {
-            if (trackedEntity instanceof com.craisinlord.antarchy.content.time.TimeDilationEntityAccess access
-                    && player instanceof ServerPlayer serverPlayer) {
-                com.craisinlord.antarchy.fabric.network.AntarchyFabricTimeDilationNetworking.syncRateToPlayer(
-                        serverPlayer, trackedEntity, access.antarchy$getTimeDilationRate()
-                );
-            }
         });
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             CavarynCommand.register(dispatcher);
-            GravityCommand.register(dispatcher);
             CaterpillarCommand.register(dispatcher);
             DimensionalTearCommand.register(dispatcher);
             QueenLocateCommand.register(dispatcher);
-            TimeDilationCommand.register(dispatcher);
             RoyalCommand.register(dispatcher);
             com.craisinlord.antarchy.content.command.PortalGunCommand.register(dispatcher);
         });
@@ -226,7 +203,6 @@ public final class AntarchyFabricEvents {
                     WormHookTetherManager.tick(player);
                 }
             }
-            TimeDilationManager.tickServer(server);
             com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.tick(server);
             invertedPlayers.retainAll(activeThisTick);
         });
@@ -324,9 +300,9 @@ public final class AntarchyFabricEvents {
                 continue;
             }
 
-            if (AntarchyGravityApi.getGravityDirection(player) == AntarchyGravityDirection.UP
-                    || AntarchyGravityApi.isGravityForced(player)) {
-                AntarchyGravityApi.setGravityDirection(player, AntarchyGravityDirection.DOWN, INVERTED_CLEAR_TRANSITION);
+            if (GravityApi.getGravityDirection(player) == GravityDirection.UP
+                    || GravityApi.isGravityForced(player)) {
+                GravityApi.setGravityDirection(player, GravityDirection.DOWN, INVERTED_CLEAR_TRANSITION);
             }
             notifyNearbyReveriesOfInversionChange(player);
         }

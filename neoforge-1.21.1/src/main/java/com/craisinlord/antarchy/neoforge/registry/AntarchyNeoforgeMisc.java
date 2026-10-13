@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.neoforge.registry;
 
+import com.craisinlord.anthology.effect.AnthologyEffects;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.particle.InvertedGeyserBaseParticleOptions;
 import com.craisinlord.antarchy.content.client.particle.InvertedGeyserParticleOptions;
@@ -8,10 +9,7 @@ import com.craisinlord.antarchy.content.effect.BleedingMobEffect;
 import com.craisinlord.antarchy.content.effect.BloodMoonMobEffect;
 import com.craisinlord.antarchy.content.effect.GoopedMobEffect;
 import com.craisinlord.antarchy.content.effect.GrowthMobEffect;
-import com.craisinlord.antarchy.content.effect.InvertedMobEffect;
 import com.craisinlord.antarchy.content.effect.CommandedMobEffect;
-import com.craisinlord.antarchy.content.effect.DilatedMobEffect;
-import com.craisinlord.antarchy.content.effect.ContractedMobEffect;
 import com.craisinlord.antarchy.content.effect.ParalyzedMobEffect;
 import com.craisinlord.antarchy.content.effect.ShrinkMobEffect;
 import com.craisinlord.antarchy.content.effect.StinkyMobEffect;
@@ -178,10 +176,7 @@ public final class AntarchyNeoforgeMisc {
     public static final DeferredHolder<MobEffect, BleedingMobEffect> BLEEDING = MOB_EFFECTS.register("bleeding", BleedingMobEffect::new);
     public static final DeferredHolder<MobEffect, BloodMoonMobEffect> BLOOD_MOON = MOB_EFFECTS.register("blood_moon", BloodMoonMobEffect::new);
     public static final DeferredHolder<MobEffect, ParalyzedMobEffect> PARALYZED = MOB_EFFECTS.register("paralyzed", ParalyzedMobEffect::new);
-    public static final DeferredHolder<MobEffect, InvertedMobEffect> INVERTED = MOB_EFFECTS.register("inverted", InvertedMobEffect::new);
     public static final DeferredHolder<MobEffect, CommandedMobEffect> COMMANDED = MOB_EFFECTS.register("commanded", CommandedMobEffect::new);
-    public static final DeferredHolder<MobEffect, DilatedMobEffect> DILATED = MOB_EFFECTS.register("dilated", DilatedMobEffect::new);
-    public static final DeferredHolder<MobEffect, ContractedMobEffect> CONTRACTED = MOB_EFFECTS.register("contracted", ContractedMobEffect::new);
     public static final DeferredHolder<MobEffect, StinkyMobEffect> STINKY = MOB_EFFECTS.register("stinky", StinkyMobEffect::new);
     public static final DeferredHolder<MobEffect, GoopedMobEffect> GOOPED = MOB_EFFECTS.register("gooped", GoopedMobEffect::new);
     public static final DeferredHolder<MobEffect, com.craisinlord.antarchy.content.effect.BloodglassWardEffect> BLOODGLASS_WARD = MOB_EFFECTS.register("bloodglass_ward", com.craisinlord.antarchy.content.effect.BloodglassWardEffect::new);
@@ -193,21 +188,21 @@ public final class AntarchyNeoforgeMisc {
 
     // Potions
     public static final DeferredHolder<Potion, Potion> INVERSION = POTIONS.register("inversion",
-            () -> new Potion(new MobEffectInstance(INVERTED, 600)));
+            () -> new Potion(new MobEffectInstance(AnthologyEffects.inverted(), 600)));
     public static final DeferredHolder<Potion, Potion> LONG_INVERSION = POTIONS.register("long_inversion",
-            () -> new Potion("inversion", new MobEffectInstance(INVERTED, 2400)));
+            () -> new Potion("inversion", new MobEffectInstance(AnthologyEffects.inverted(), 2400)));
     public static final DeferredHolder<Potion, Potion> COMMAND = POTIONS.register("command",
             () -> new Potion(new MobEffectInstance(COMMANDED, 600)));
     public static final DeferredHolder<Potion, Potion> LONG_COMMAND = POTIONS.register("long_command",
             () -> new Potion("command", new MobEffectInstance(COMMANDED, 1200)));
     public static final DeferredHolder<Potion, Potion> TIME_DILATION = POTIONS.register("time_dilation",
-            () -> new Potion(new MobEffectInstance(DILATED, 1200)));
+            () -> new Potion(new MobEffectInstance(AnthologyEffects.dilated(), 1200)));
     public static final DeferredHolder<Potion, Potion> LONG_TIME_DILATION = POTIONS.register("long_time_dilation",
-            () -> new Potion("time_dilation", new MobEffectInstance(DILATED, 1200, 1)));
+            () -> new Potion("time_dilation", new MobEffectInstance(AnthologyEffects.dilated(), 1200, 1)));
     public static final DeferredHolder<Potion, Potion> TIME_CONTRACTION = POTIONS.register("time_contraction",
-            () -> new Potion(new MobEffectInstance(CONTRACTED, 1200)));
+            () -> new Potion(new MobEffectInstance(AnthologyEffects.contracted(), 1200)));
     public static final DeferredHolder<Potion, Potion> LONG_TIME_CONTRACTION = POTIONS.register("long_time_contraction",
-            () -> new Potion("time_contraction", new MobEffectInstance(CONTRACTED, 1200, 1)));
+            () -> new Potion("time_contraction", new MobEffectInstance(AnthologyEffects.contracted(), 1200, 1)));
     public static final DeferredHolder<Potion, Potion> STINKY_POTION = POTIONS.register("stinky",
             () -> new Potion(new MobEffectInstance(STINKY, 1200)));
     public static final DeferredHolder<Potion, Potion> LONG_STINKY = POTIONS.register("long_stinky",

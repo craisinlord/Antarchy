@@ -18,9 +18,6 @@ displayURL="https://www.curseforge.com/minecraft/mc-mods/antarchy"
     config = "antarchy-common.mixins.json"
 
 [[mixins]]
-    config = "antarchy-sodium.mixins.json"
-
-[[mixins]]
     config = "antarchy-neoforge.mixins.json"
 
 [[dependencies.antarchy]]
@@ -32,6 +29,13 @@ displayURL="https://www.curseforge.com/minecraft/mc-mods/antarchy"
     modId="architectury"
     type="required"
     versionRange="[${architectury_api_version},)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.antarchy]]
+    modId="anthology"
+    type="required"
+    versionRange="[1.0.0,)"
     ordering="AFTER"
     side="BOTH"
 

@@ -4,8 +4,8 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import java.util.List;
 import java.util.UUID;
@@ -385,7 +385,7 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     }
 
     private static Vec3 oppositeGravity(Entity entity) {
-        return AntarchyGravityApi.isGravityInverted(entity) ? new Vec3(0.0D, -1.0D, 0.0D) : new Vec3(0.0D, 1.0D, 0.0D);
+        return GravityApi.isGravityInverted(entity) ? new Vec3(0.0D, -1.0D, 0.0D) : new Vec3(0.0D, 1.0D, 0.0D);
     }
 
     private void tickQueenSummonInversionRule() {
@@ -395,8 +395,8 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         if (this.hasEffect(AntarchyObjects.INVERTED_EFFECT.get())) {
             this.removeEffect(AntarchyObjects.INVERTED_EFFECT.get());
         }
-        if (AntarchyGravityApi.isGravityInverted(this) && AntarchyGravityApi.isGravityForced(this)) {
-            AntarchyGravityApi.setGravityDirection(this, AntarchyGravityDirection.DOWN, false);
+        if (GravityApi.isGravityInverted(this) && GravityApi.isGravityForced(this)) {
+            GravityApi.setGravityDirection(this, GravityDirection.DOWN, false);
         }
         this.setNoGravity(false);
     }
