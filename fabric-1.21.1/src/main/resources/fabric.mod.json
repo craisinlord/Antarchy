@@ -28,7 +28,6 @@
   },
   "mixins": [
     "antarchy-common.mixins.json",
-    "antarchy-sodium.mixins.json",
     "antarchy-fabric.mixins.json"
   ],
   "depends": {

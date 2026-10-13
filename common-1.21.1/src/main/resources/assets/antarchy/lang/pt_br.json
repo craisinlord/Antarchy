@@ -527,7 +527,6 @@
     "effect.antarchy.paralyzed": "Paralisado",
     "effect.antarchy.paralyzed.description": "Impede que os alvos se movam.",
     "effect.antarchy.commanded.description": "Luta pelo jogador que o comandou.",
-    "effect.antarchy.dilated.description": "Diminui a passagem do tempo para a entidade afetada.",
     "effect.antarchy.stinky": "Fedido",
     "effect.antarchy.stinky.description": "Afasta mobs passivos e neutros e atrai artrópodes.",
     "effect.antarchy.gooped.description": "Reduz a velocidade de movimento e de ataque.",

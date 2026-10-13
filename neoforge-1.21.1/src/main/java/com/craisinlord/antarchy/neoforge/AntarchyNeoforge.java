@@ -272,12 +272,6 @@ public class AntarchyNeoforge {
                 player,
                 TigerEyeCamouflageSync.payload(player)
         ));
-        com.craisinlord.antarchy.content.time.TimeDilationApi.setSyncDispatcher(
-                com.craisinlord.antarchy.neoforge.network.AntarchyTimeDilationNetworking::syncRate
-        );
-        com.craisinlord.antarchy.content.time.TimeDilationApi.setFieldSyncDispatcher(
-                com.craisinlord.antarchy.neoforge.network.AntarchyTimeDilationNetworking::syncFields
-        );
         if (isSupportedInfinityLoaded()) {
             InfinityCompat.bind(new NeoForgeInfinityCompat());
         }
@@ -451,7 +445,6 @@ public class AntarchyNeoforge {
         AntarchyObjects.setLucid(AntarchyNeoforgeEntites.LUCID);
         AntarchyObjects.setVortex(AntarchyNeoforgeEntites.VORTEX);
         AntarchyObjects.setWindVortex(() -> AntarchyNeoforgeEntites.WIND_VORTEX.get());
-        AntarchyObjects.setTimeDilationField(() -> AntarchyNeoforgeEntites.TIME_DILATION_FIELD.get());
         AntarchyObjects.setRoyalBlackHole(() -> AntarchyNeoforgeEntites.ROYAL_BLACK_HOLE.get());
         AntarchyObjects.setRoyalAssailantBlackHole(() -> AntarchyNeoforgeEntites.ROYAL_ASSAILANT_BLACK_HOLE.get());
         AntarchyObjects.setVortexChargeProjectile(() -> AntarchyNeoforgeEntites.VORTEX_CHARGE_PROJECTILE.get());

@@ -4,8 +4,8 @@
     "become_contradictory": {
       "conditions": {
         "effects": {
-          "antarchy:contracted": {},
-          "antarchy:dilated": {}
+          "anthology:contracted": {},
+          "anthology:dilated": {}
         }
       },
       "trigger": "minecraft:effects_changed"

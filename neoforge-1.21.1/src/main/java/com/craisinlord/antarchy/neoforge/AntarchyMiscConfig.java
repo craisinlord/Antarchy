@@ -9,10 +9,6 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.BooleanValue ELYTHIA_FIREFLY_PARTICLES_ENABLED;
 
     // Dream Sand
-    private static final ModConfigSpec.BooleanValue DREAM_SAND_ENABLED;
-    private static final ModConfigSpec.DoubleValue  DREAM_SAND_JUMP_VELOCITY_MULTIPLIER;
-    private static final ModConfigSpec.DoubleValue  DREAM_SAND_GRAVITY_MULTIPLIER;
-    private static final ModConfigSpec.DoubleValue  DREAM_SAND_EFFECT_DURATION_SECONDS;
     private static final ModConfigSpec.DoubleValue  DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER;
 
     // Ichor
@@ -85,11 +81,7 @@ public final class AntarchyMiscConfig {
         // Dream Sand
 
         b.push("dreamSand");
-        DREAM_SAND_ENABLED                   = b.comment("If true, jumping from dream sand applies temporary low gravity until solid ground is touched.").define("enabled", true);
-        DREAM_SAND_JUMP_VELOCITY_MULTIPLIER  = b.comment("Multiplier applied to upward jump velocity when leaving dream sand.")                          .defineInRange("jumpVelocityMultiplier",  1.3D, 0.0D, 16.0D);
-        DREAM_SAND_GRAVITY_MULTIPLIER        = b.comment("Multiplier applied to downward velocity while low gravity is active.")                         .defineInRange("gravityMultiplier",       0.45D, 0.0D, 1.0D);
-        DREAM_SAND_EFFECT_DURATION_SECONDS   = b.comment("Seconds the low-gravity effect remains active after leaving dream sand.")                      .defineInRange("effectDurationSeconds",   7.0D, 0.0D, 60.0D);
-        DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER = b.comment("Multiplier applied to dream sand's own falling-block gravity (how slowly it falls as a block, distinct from the player low-gravity effect).").defineInRange("fallingBlockGravityMultiplier", 0.4D, 0.0D, 16.0D);
+        DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER = b.comment("Multiplier applied to dream sand's falling-block gravity, i.e. how slowly it falls as a block.").defineInRange("fallingBlockGravityMultiplier", 0.4D, 0.0D, 16.0D);
         b.pop();
 
 
@@ -200,10 +192,6 @@ public final class AntarchyMiscConfig {
 
     static boolean elythiaFireflyParticlesEnabled()      { return ELYTHIA_FIREFLY_PARTICLES_ENABLED.get(); }
 
-    static boolean dreamSandEnabled()                    { return DREAM_SAND_ENABLED.get(); }
-    static double  dreamSandJumpVelocityMultiplier()     { return DREAM_SAND_JUMP_VELOCITY_MULTIPLIER.get(); }
-    static double  dreamSandGravityMultiplier()          { return DREAM_SAND_GRAVITY_MULTIPLIER.get(); }
-    static double  dreamSandEffectDurationSeconds()      { return DREAM_SAND_EFFECT_DURATION_SECONDS.get(); }
     static double  dreamSandFallingBlockGravityMultiplier() { return DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER.get(); }
 
     static boolean ichorWitherEnabled()                  { return ICHOR_WITHER_ENABLED.get(); }

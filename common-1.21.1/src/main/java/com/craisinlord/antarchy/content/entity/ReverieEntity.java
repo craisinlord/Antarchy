@@ -10,7 +10,6 @@ import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
-import com.craisinlord.antarchy.content.movement.DreamSandLowGravityAccess;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
@@ -657,9 +656,6 @@ public class ReverieEntity extends PathfinderMob implements FlyingAnimal, GeoEnt
             return false;
         }
         if (this.isPlayerInsideAntiwater(focus)) {
-            return false;
-        }
-        if (focus instanceof DreamSandLowGravityAccess access && access.antarchy$getDreamSandLandingGraceTicks() > 0) {
             return false;
         }
 

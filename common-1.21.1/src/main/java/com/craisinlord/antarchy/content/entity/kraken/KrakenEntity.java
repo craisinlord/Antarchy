@@ -8,8 +8,8 @@ import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
 import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
-import com.craisinlord.antarchy.content.entity.multipart.MultipartEntityOwner;
-import com.craisinlord.antarchy.content.entity.multipart.MultipartLayout;
+import com.craisinlord.anthology.multipart.MultipartEntityOwner;
+import com.craisinlord.anthology.multipart.MultipartLayout;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageTypes;
 
 import java.util.List;
@@ -162,18 +162,18 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
     }
 
     @Override
-    public MultipartLayout antarchy$getMultipartLayout() {
+    public MultipartLayout anthology$getMultipartLayout() {
         return KrakenMultipartLayout.INSTANCE;
     }
 
     @Override
     @Nullable
-    public Entity[] antarchy$getMultipartParts() {
+    public Entity[] anthology$getMultipartParts() {
         return this.multipartParts;
     }
 
     @Override
-    public void antarchy$setMultipartParts(@Nullable Entity[] parts) {
+    public void anthology$setMultipartParts(@Nullable Entity[] parts) {
         this.multipartParts = parts;
     }
 

@@ -79,8 +79,8 @@ public final class PortalGunCrosshairRenderer {
         long gameTime = level.getGameTime();
         if (cachedLevel != level || cachedGameTime != gameTime || !gunId.equals(cachedGunId)) {
             Set<PortalGunPortalEntity.PortalSide> portals = EnumSet.noneOf(PortalGunPortalEntity.PortalSide.class);
-            for (PortalGunPortalEntity portal : com.craisinlord.antarchy.content.portalgun.PortalGunPortalRegistry.all(level)) {
-                if (portal.isAlive() && gunId.equals(portal.getGunId())) {
+            for (com.craisinlord.anthology.portal.PortalEntity entry : com.craisinlord.anthology.portal.PortalRegistry.all(level)) {
+                if (entry instanceof PortalGunPortalEntity portal && portal.isAlive() && gunId.equals(portal.getGunId())) {
                     portals.add(portal.getPortalSide());
                 }
             }

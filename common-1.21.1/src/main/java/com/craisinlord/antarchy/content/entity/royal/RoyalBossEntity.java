@@ -1,12 +1,13 @@
 package com.craisinlord.antarchy.content.entity.royal;
 
+import com.craisinlord.anthology.beam.BeamOwner;
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.entity.multipart.MultipartEntityOwner;
-import com.craisinlord.antarchy.content.entity.multipart.MultipartLayout;
-import com.craisinlord.antarchy.content.entity.multipart.MultipartPartDefinition;
-import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamController;
-import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamSettings;
-import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamTerrainMode;
+import com.craisinlord.anthology.multipart.MultipartEntityOwner;
+import com.craisinlord.anthology.multipart.MultipartLayout;
+import com.craisinlord.anthology.multipart.MultipartPartDefinition;
+import com.craisinlord.anthology.beam.BeamController;
+import com.craisinlord.anthology.beam.BeamSettings;
+import com.craisinlord.anthology.beam.BeamTerrainMode;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackLane;
 import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler;
@@ -69,7 +70,7 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public abstract class RoyalBossEntity extends Monster implements GeoEntity, MultipartEntityOwner {
+public abstract class RoyalBossEntity extends Monster implements GeoEntity, MultipartEntityOwner, BeamOwner {
     public static final float MODEL_RENDER_SCALE = 2.0F;
     public static final float GAMEPLAY_WIDTH = 28.0F;
     public static final float GAMEPLAY_HEIGHT = 15.0F;
@@ -165,7 +166,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     private static final RawAnimation DEATH_ANIM = RawAnimation.begin().thenPlayAndHold("death");
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    protected final RoyalBeamController[] beamControllers = new RoyalBeamController[3];
+    protected final BeamController[] beamControllers = new BeamController[3];
     protected final RoyalAttackScheduler attackScheduler = new RoyalAttackScheduler();
     private final ServerBossEvent bossEvent;
     private final RoyalHead[] heads = {
@@ -202,7 +203,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     protected RoyalBossEntity(EntityType<? extends RoyalBossEntity> entityType, Level level) {
         super(entityType, level);
         for (int i = 0; i < this.beamControllers.length; i++) {
-            this.beamControllers[i] = new RoyalBeamController(this);
+            this.beamControllers[i] = new BeamController(this);
         }
         this.xpReward = 500;
         this.groundMoveControl = new MoveControl(this);
@@ -247,9 +248,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
 
     protected abstract SoundEvent royalBeamEndSound();
 
-    protected abstract RoyalBeamSettings royalBeamSettings();
+    protected abstract BeamSettings royalBeamSettings();
 
-    protected abstract RoyalBeamTerrainMode royalBeamTerrainMode();
+    protected abstract BeamTerrainMode royalBeamTerrainMode();
 
     protected RoyalBeamElement royalBeamElement(@Nullable RoyalHead head) {
         return RoyalBeamElement.GENERIC;
@@ -266,7 +267,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     protected void tickRoyalBeamEffects(RoyalHead head, Vec3 start, Vec3 end) {
     }
 
-    protected RoyalBeamTerrainMode royalBeamTerrainMode(@Nullable RoyalHead head) {
+    protected BeamTerrainMode royalBeamTerrainMode(@Nullable RoyalHead head) {
         return this.royalBeamTerrainMode();
     }
 
@@ -350,18 +351,18 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     @Override
-    public MultipartLayout antarchy$getMultipartLayout() {
+    public MultipartLayout anthology$getMultipartLayout() {
         return RoyalBossMultipartLayout.INSTANCE;
     }
 
     @Override
     @Nullable
-    public Entity[] antarchy$getMultipartParts() {
+    public Entity[] anthology$getMultipartParts() {
         return this.multipartParts;
     }
 
     @Override
-    public void antarchy$setMultipartParts(@Nullable Entity[] parts) {
+    public void anthology$setMultipartParts(@Nullable Entity[] parts) {
         this.multipartParts = parts;
     }
 
@@ -642,7 +643,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         }
         for (RoyalHead head : this.heads) {
             int index = head.slot().ordinal();
-            RoyalBeamController controller = this.beamControllers[index];
+            BeamController controller = this.beamControllers[index];
             if (controller.isFiring()) {
                 LivingEntity beamTarget = head.target(this.level());
                 if (!head.shooting() || beamTarget == null || !beamTarget.isAlive()
@@ -688,7 +689,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                     || !this.targetInBeamLine(head, target)) {
                 continue;
             }
-            RoyalBeamSettings beamSettings = this.royalBeamSettings();
+            BeamSettings beamSettings = this.royalBeamSettings();
             int duration = Math.max(1, beamSettings.durationTicks());
             int cooldown = Math.max(1, Mth.floor(beamSettings.cooldownTicks() * phase.cooldownScale()));
             int windup = Math.max(0, AntarchySettings.queenBeamWindupTicks());
@@ -1220,7 +1221,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             for (RoyalHead head : this.heads) {
                 head.reset();
             }
-            for (RoyalBeamController controller : this.beamControllers) {
+            for (BeamController controller : this.beamControllers) {
                 controller.stop();
             }
             this.setFiringRoyalBeam(false);
@@ -1330,7 +1331,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     public void setFiringRoyalBeam(boolean firing) {
     }
 
-    public RoyalBeamController beamController() {
+    public BeamController beamController() {
         return this.beamControllers[0];
     }
 
@@ -1461,6 +1462,16 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             }
         }
         this.applyRoyalDamageModifier();
+    }
+
+    @Override
+    public float scaleBeamDamage(float damage) {
+        return this.scaleRoyalDamage(damage);
+    }
+
+    @Override
+    public boolean canBeamDamage(LivingEntity target) {
+        return this.canDamageWithRoyalAttack(target);
     }
 
     public float scaleRoyalDamage(double damage) {

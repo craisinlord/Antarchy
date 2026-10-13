@@ -1,8 +1,9 @@
 package com.craisinlord.antarchy.content.entity.royal;
 
+import com.craisinlord.anthology.time.TimeDilationAnchor;
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.time.TimeDilationApi;
-import com.craisinlord.antarchy.content.time.TimeDilationFieldEntity;
+import com.craisinlord.anthology.time.TimeDilationApi;
+import com.craisinlord.anthology.time.TimeDilationFieldEntity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.entity.BlockSuction;
 import java.util.UUID;
@@ -36,7 +37,7 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
+public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilationAnchor {
     private static final EntityDataAccessor<Float> RADIUS =
             SynchedEntityData.defineId(RoyalBlackHoleEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Boolean> COLLAPSING =
@@ -248,6 +249,11 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity {
     }
 
     /** Returns the center of the animated black-hole cube in world coordinates. */
+    @Override
+    public Vec3 timeDilationCenter() {
+        return this.effectCenter();
+    }
+
     public Vec3 effectCenter() {
         double animationSeconds = Math.min(CORE_RISE_END_SECONDS, this.animationAge / 20.0D);
         double riseProgress = animationSeconds / CORE_RISE_END_SECONDS;

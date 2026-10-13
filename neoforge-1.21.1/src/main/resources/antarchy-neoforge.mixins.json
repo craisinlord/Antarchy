@@ -6,18 +6,14 @@
   "mixins": [
     "compat.SablePhysicsColliderBlockGetterMixin",
     "item.BucketItemThoraxisWaterMixin",
-    "entity.MultipartEntityBridgeMixin",
-    "entity.MultipartEntityLevelRegistryMixin",
     "entity.ParalyzedMobFreezeMixin",
     "infinity.AmendmentRareOresMixin",
     "infinity.ConfigGenInvocationMixin",
     "infinity.PortalCreatorMixin",
     "infinity.PortalCreatorInvoker",
-    "infinity.WarpLogicMixin",
-    "level.ServerLevelPartEntitiesAccessor"
+    "infinity.WarpLogicMixin"
   ],
   "client": [
-    "level.ClientLevelPartEntitiesAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

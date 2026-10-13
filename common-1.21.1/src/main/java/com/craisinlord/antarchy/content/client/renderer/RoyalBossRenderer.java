@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
+import com.craisinlord.anthology.beam.client.BeamRenderTypes;
 import com.craisinlord.antarchy.content.client.model.RoyalBossModel;
 import com.craisinlord.antarchy.content.entity.royal.RoyalBossEntity;
 import com.craisinlord.antarchy.content.entity.royal.KingEntity;
@@ -204,13 +205,13 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         poseStack.mulPose(Axis.ZP.rotationDegrees(45.0F));
         org.joml.Matrix4f pose = poseStack.last().pose();
 
-        VertexConsumer innerBuffer = bufferSource.getBuffer(RoyalBeamRenderTypes.beam(inner));
+        VertexConsumer innerBuffer = bufferSource.getBuffer(BeamRenderTypes.beam(inner));
         drawLocalBeam(innerBuffer, pose, length, BEAM_INNER_RADIUS, 4, innerV, 0.5F);
-        VertexConsumer outerBuffer = bufferSource.getBuffer(RoyalBeamRenderTypes.beam(outer));
+        VertexConsumer outerBuffer = bufferSource.getBuffer(BeamRenderTypes.beam(outer));
         drawLocalBeam(outerBuffer, pose, length, BEAM_OUTER_RADIUS, 8, outerV, 0.15F);
 
         ResourceLocation endTexture = endTextures[(entity.tickCount / 2) % endTextures.length];
-        VertexConsumer endBuffer = bufferSource.getBuffer(RoyalBeamRenderTypes.beam(endTexture));
+        VertexConsumer endBuffer = bufferSource.getBuffer(BeamRenderTypes.beam(endTexture));
         drawBeamImpact(endBuffer, pose, (float) length - 1.5F, BEAM_INNER_RADIUS);
         poseStack.popPose();
     }

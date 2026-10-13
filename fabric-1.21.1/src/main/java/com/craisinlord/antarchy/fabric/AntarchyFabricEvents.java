@@ -24,16 +24,11 @@ import com.craisinlord.antarchy.content.command.CaterpillarCommand;
 import com.craisinlord.antarchy.content.command.DimensionalTearCommand;
 import com.craisinlord.antarchy.content.command.QueenLocateCommand;
 import com.craisinlord.antarchy.content.command.RoyalCommand;
-import com.craisinlord.antarchy.content.time.TimeDilationCommand;
-import com.craisinlord.antarchy.content.time.TimeDilationManager;
-import com.craisinlord.antarchy.content.time.ChronosphereManager;
 import com.craisinlord.antarchy.content.item.WormHookTetherManager;
 import com.craisinlord.antarchy.content.entity.trades.ComputerScientistTradeManager;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
-import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
-import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -80,29 +75,13 @@ public final class AntarchyFabricEvents {
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.clear());
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.clear());
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            ChronosphereManager.refresh(handler.player);
-            TimeDilationManager.resyncPersistentEffects(handler.player);
             PortalGunSavedData.clearMissingGuns(handler.player);
-        });
-        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
-            ChronosphereManager.refresh(newPlayer);
-            TimeDilationManager.resyncPersistentEffects(newPlayer);
-        });
-        ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, destination) -> ChronosphereManager.refresh(player));
-        net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents.START_TRACKING.register((trackedEntity, player) -> {
-            if (trackedEntity instanceof com.craisinlord.antarchy.content.time.TimeDilationEntityAccess access
-                    && player instanceof ServerPlayer serverPlayer) {
-                com.craisinlord.antarchy.fabric.network.AntarchyFabricTimeDilationNetworking.syncRateToPlayer(
-                        serverPlayer, trackedEntity, access.antarchy$getTimeDilationRate()
-                );
-            }
         });
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             CavarynCommand.register(dispatcher);
             CaterpillarCommand.register(dispatcher);
             DimensionalTearCommand.register(dispatcher);
             QueenLocateCommand.register(dispatcher);
-            TimeDilationCommand.register(dispatcher);
             RoyalCommand.register(dispatcher);
             com.craisinlord.antarchy.content.command.PortalGunCommand.register(dispatcher);
         });
@@ -224,7 +203,6 @@ public final class AntarchyFabricEvents {
                     WormHookTetherManager.tick(player);
                 }
             }
-            TimeDilationManager.tickServer(server);
             com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.tick(server);
             invertedPlayers.retainAll(activeThisTick);
         });

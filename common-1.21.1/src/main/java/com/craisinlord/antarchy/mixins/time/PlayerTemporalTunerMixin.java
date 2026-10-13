@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.mixins.time;
 
-import com.craisinlord.antarchy.content.time.TimeDilationMath;
-import com.craisinlord.antarchy.content.time.TemporalTunerAccess;
+import com.craisinlord.anthology.time.TimeDilationMath;
+import com.craisinlord.antarchy.content.item.TemporalTunerAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;

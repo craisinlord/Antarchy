@@ -2,40 +2,18 @@ package com.craisinlord.antarchy.fabric.network;
 
 import com.craisinlord.antarchy.content.client.BloodglassClientState;
 import com.craisinlord.antarchy.content.client.BrutalflyElytraClientState;
-import com.craisinlord.antarchy.content.client.CameraShakeClientState;
 import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
 import com.craisinlord.antarchy.content.client.HordeClientState;
 import com.craisinlord.antarchy.content.client.ScorpionWhipTetherClientState;
 import com.craisinlord.antarchy.content.client.WormHookTetherClientState;
 import com.craisinlord.antarchy.content.client.TigerEyeCamouflageClientState;
-import com.craisinlord.antarchy.content.entity.multipart.MultipartFramework;
-import com.craisinlord.antarchy.content.entity.multipart.network.MultipartAttackPayload;
-import com.craisinlord.antarchy.content.entity.multipart.network.MultipartInteractPayload;
 import com.craisinlord.antarchy.content.network.*;
 import com.craisinlord.antarchy.fabric.client.BloodCrystalKatanaTrailClientState;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.phys.Vec3;
 
 public final class AntarchyFabricClientNetworking {
     private AntarchyFabricClientNetworking() {
-    }
-
-    public static void bootstrapMultipartClient() {
-        MultipartFramework.bootstrap(
-                AntarchyFabricNetworking::createMultipartPart,
-                new MultipartFramework.NetworkBridge() {
-                    @Override
-                    public void sendAttack(java.util.UUID parentId, int partIndex, float damage) {
-                        ClientPlayNetworking.send(new MultipartAttackPayload(parentId, partIndex, damage));
-                    }
-
-                    @Override
-                    public void sendInteract(java.util.UUID parentId, int partIndex, int handId) {
-                        ClientPlayNetworking.send(new MultipartInteractPayload(parentId, partIndex, handId));
-                    }
-                }
-        );
     }
 
     public static void register() {
@@ -63,17 +41,7 @@ public final class AntarchyFabricClientNetworking {
                 context.client().execute(() -> HerculesBeetleImpactShakeClientState.trigger(payload.durationTicks())));
         ClientPlayNetworking.registerGlobalReceiver(KingJudgmentFlashPayload.TYPE, (payload, context) ->
                 context.client().execute(() -> com.craisinlord.antarchy.content.client.KingJudgmentFlashClientState.trigger(payload.durationTicks())));
-        ClientPlayNetworking.registerGlobalReceiver(ImpactShakePayload.TYPE, (payload, context) ->
-                context.client().execute(() -> CameraShakeClientState.triggerImpact(
-                        new Vec3(payload.x(), payload.y(), payload.z()),
-                        payload.intensity(),
-                        payload.durationTicks(),
-                        payload.radius())));
         ClientPlayNetworking.registerGlobalReceiver(HordeIntensityPayload.TYPE, (payload, context) ->
                 context.client().execute(() -> HordeClientState.update(payload.intensity())));
-        ClientPlayNetworking.registerGlobalReceiver(TimeDilationRatePayload.TYPE, (payload, context) ->
-                context.client().execute(() -> com.craisinlord.antarchy.content.time.TimeDilationApi.applySyncedRate(payload.entityUuid(), payload.rate())));
-        ClientPlayNetworking.registerGlobalReceiver(TimeDilationFieldsPayload.TYPE, (payload, context) ->
-                context.client().execute(() -> com.craisinlord.antarchy.content.client.ClientTimeDilationTicker.applyFields(payload.fields())));
     }
 }

@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.content.block.entity;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.UndertrialSpawnerBlock;
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.anthology.effect.AnthologyEffects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.Direction;
@@ -116,7 +117,7 @@ public final class UndertrialSpawnerBlockEntity extends BlockEntity implements T
         mob.addEffect(new MobEffectInstance(AntarchyObjects.INVERTED_EFFECT.get(), EFFECT_DURATION, 0, false, true, true));
         int roll = mob.getRandom().nextInt(100);
         if (roll < 30) {
-            mob.addEffect(new MobEffectInstance(effect("contracted"), EFFECT_DURATION, 0, false, true, true));
+            mob.addEffect(new MobEffectInstance(AnthologyEffects.contracted(), EFFECT_DURATION, 0, false, true, true));
         } else if (roll < 50) {
             mob.addEffect(new MobEffectInstance(effect("shrinking"), EFFECT_DURATION, 0, false, true, true));
         } else if (roll < 65) {

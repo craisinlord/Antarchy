@@ -2,10 +2,6 @@ package com.craisinlord.antarchy.fabric.network;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntities;
 
 import com.craisinlord.antarchy.content.entity.DiamondMinecartEntity;
-import com.craisinlord.antarchy.content.entity.multipart.MultipartEntityOwner;
-import com.craisinlord.antarchy.content.entity.multipart.MultipartFramework;
-import com.craisinlord.antarchy.content.entity.multipart.network.MultipartAttackPayload;
-import com.craisinlord.antarchy.content.entity.multipart.network.MultipartInteractPayload;
 import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
 import com.craisinlord.antarchy.content.item.BrutalflyElytraFlightHelper;
 import com.craisinlord.antarchy.content.item.BrutalflyElytraItem;
@@ -25,7 +21,6 @@ import com.craisinlord.antarchy.content.entity.DorrieEntity;
 import com.craisinlord.antarchy.content.network.DorrieJumpInputPayload;
 import com.craisinlord.antarchy.content.network.SpringyBootsLaunchPayload;
 import com.craisinlord.antarchy.fabric.AntarchyFabricContent;
-import com.craisinlord.antarchy.fabric.entity.multipart.MultipartPartEntity;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -34,7 +29,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -51,26 +45,6 @@ public final class AntarchyFabricNetworking {
         com.craisinlord.antarchy.content.portalgun.PortalGunIndicatorSync.setSender(ServerPlayNetworking::send);
     }
 
-    public static void bootstrapMultipartCommon() {
-        MultipartFramework.bootstrap(
-                AntarchyFabricNetworking::createMultipartPart,
-                new MultipartFramework.NetworkBridge() {
-                    @Override
-                    public void sendAttack(java.util.UUID parentId, int partIndex, float damage) {
-                    }
-
-                    @Override
-                    public void sendInteract(java.util.UUID parentId, int partIndex, int handId) {
-                    }
-                }
-        );
-    }
-
-    public static MultipartPartEntity createMultipartPart(MultipartEntityOwner owner, int partIndex, com.craisinlord.antarchy.content.entity.multipart.MultipartPartDefinition spec) {
-        return new MultipartPartEntity(AntarchyFabricEntities.KRAKEN_PART.get(), ((Entity) owner).level())
-                .antarchy$configure(owner, partIndex, spec);
-    }
-
     private static void registerPayloadTypes() {
         PayloadTypeRegistry.playS2C().register(AntarchyGameResultPayload.TYPE, AntarchyGameResultPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(PortalGunIndicatorPayload.TYPE, PortalGunIndicatorPayload.STREAM_CODEC);
@@ -82,13 +56,10 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playS2C().register(BrutalflyElytraAnimationPayload.TYPE, BrutalflyElytraAnimationPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(HerculesBeetleImpactShakePayload.TYPE, HerculesBeetleImpactShakePayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(KingJudgmentFlashPayload.TYPE, KingJudgmentFlashPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(ImpactShakePayload.TYPE, ImpactShakePayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(HordeIntensityPayload.TYPE, HordeIntensityPayload.STREAM_CODEC);
-        AntarchyFabricTimeDilationNetworking.registerPayloadTypes();
 
         PayloadTypeRegistry.playC2S().register(GravityGunPrimaryPayload.TYPE, GravityGunPrimaryPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(PortalGunPrimaryPayload.TYPE, PortalGunPrimaryPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(com.craisinlord.antarchy.content.network.PortalGunTransitPayload.TYPE, com.craisinlord.antarchy.content.network.PortalGunTransitPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(PortalGunIndicatorRequestPayload.TYPE, PortalGunIndicatorRequestPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(PortalGunResetPayload.TYPE, PortalGunResetPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(com.craisinlord.antarchy.content.network.PortalGunMoonAimPayload.TYPE, com.craisinlord.antarchy.content.network.PortalGunMoonAimPayload.STREAM_CODEC);
@@ -113,8 +84,6 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playC2S().register(HerculesBeetleFlightTogglePayload.TYPE, HerculesBeetleFlightTogglePayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(HerculesBeetleMountedAttackPayload.TYPE, HerculesBeetleMountedAttackPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(HerculesBeetleMountedChargePayload.TYPE, HerculesBeetleMountedChargePayload.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(MultipartAttackPayload.TYPE, MultipartAttackPayload.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(MultipartInteractPayload.TYPE, MultipartInteractPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(AntarchyGamePayload.TYPE, AntarchyGamePayload.STREAM_CODEC);
     }
 
@@ -125,13 +94,6 @@ public final class AntarchyFabricNetworking {
                 context.server().execute(() -> handleGravityGunPrimary(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(PortalGunPrimaryPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handlePortalGunPrimary(context.player(), payload)));
-        ServerPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.PortalGunTransitPayload.TYPE, (payload, context) -> {
-            if (context.server().isSameThread()) {
-                com.craisinlord.antarchy.content.portalgun.PortalGunTransitHandler.handle(context.player(), payload);
-            } else {
-                context.server().execute(() -> com.craisinlord.antarchy.content.portalgun.PortalGunTransitHandler.handle(context.player(), payload));
-            }
-        });
         ServerPlayNetworking.registerGlobalReceiver(PortalGunIndicatorRequestPayload.TYPE, (payload, context) ->
                 context.server().execute(() -> com.craisinlord.antarchy.content.portalgun.PortalGunIndicatorSync.handleRequest(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.PortalGunMoonAimPayload.TYPE, (payload, context) ->
@@ -178,10 +140,6 @@ public final class AntarchyFabricNetworking {
                 context.server().execute(() -> handleHerculesBeetleMountedAttack(context.player(), payload)));
         ServerPlayNetworking.registerGlobalReceiver(HerculesBeetleMountedChargePayload.TYPE, (payload, context) ->
                 context.server().execute(() -> handleHerculesBeetleMountedCharge(context.player(), payload)));
-        ServerPlayNetworking.registerGlobalReceiver(MultipartAttackPayload.TYPE, (payload, context) ->
-                context.server().execute(() -> handleMultipartAttack(context.player(), payload)));
-        ServerPlayNetworking.registerGlobalReceiver(MultipartInteractPayload.TYPE, (payload, context) ->
-                context.server().execute(() -> handleMultipartInteract(context.player(), payload)));
     }
 
     public static void syncBloodglass(ServerPlayer player, int shieldsActive, int shieldsMax) {
@@ -341,58 +299,6 @@ public final class AntarchyFabricNetworking {
             ServerPlayNetworking.send(tracking, animationPayload);
         }
         ServerPlayNetworking.send(player, animationPayload);
-    }
-
-    private static void handleMultipartAttack(ServerPlayer serverPlayer, MultipartAttackPayload payload) {
-        Entity entity = serverPlayer.serverLevel().getEntity(payload.parentId());
-        if (!(entity instanceof MultipartEntityOwner owner)) {
-            return;
-        }
-
-        Entity[] parts = owner.antarchy$getMultipartParts();
-        if (parts == null) {
-            parts = owner.antarchy$createMultipartParts();
-            owner.antarchy$setMultipartParts(parts);
-            owner.antarchy$syncMultipartParts();
-        }
-        if (payload.partIndex() < 0 || payload.partIndex() >= parts.length) {
-            return;
-        }
-
-        Entity part = parts[payload.partIndex()];
-        if (part == null || part.isRemoved()) {
-            return;
-        }
-        if (serverPlayer.distanceToSqr(part) > 10000.0D) {
-            return;
-        }
-
-        serverPlayer.attack(part);
-    }
-
-    private static void handleMultipartInteract(ServerPlayer serverPlayer, MultipartInteractPayload payload) {
-        Entity entity = serverPlayer.serverLevel().getEntity(payload.parentId());
-        if (!(entity instanceof MultipartEntityOwner owner)) {
-            return;
-        }
-
-        Entity[] parts = owner.antarchy$getMultipartParts();
-        if (parts == null) {
-            parts = owner.antarchy$createMultipartParts();
-            owner.antarchy$setMultipartParts(parts);
-            owner.antarchy$syncMultipartParts();
-        }
-        if (payload.partIndex() < 0 || payload.partIndex() >= parts.length) {
-            return;
-        }
-
-        Entity part = parts[payload.partIndex()];
-        if (part == null || part.isRemoved()) {
-            return;
-        }
-
-        InteractionHand hand = payload.handId() == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
-        owner.antarchy$interactMultipartPart(part, serverPlayer, part.position(), hand);
     }
 
     private static void handleSpringyBootsLaunch(ServerPlayer player, SpringyBootsLaunchPayload payload) {

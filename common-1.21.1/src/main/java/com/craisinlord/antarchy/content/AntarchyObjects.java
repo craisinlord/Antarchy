@@ -32,7 +32,6 @@ import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.vortex.VortexChargeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
 import com.craisinlord.antarchy.content.entity.vortex.WindVortexEntity;
-import com.craisinlord.antarchy.content.time.TimeDilationFieldEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareBiteEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmarePortalEntity;
@@ -96,8 +95,6 @@ public final class AntarchyObjects {
     public static Supplier<EntityType<WindVortexEntity>> WIND_VORTEX = (Supplier<EntityType<WindVortexEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<VortexChargeProjectileEntity>> VORTEX_CHARGE_PROJECTILE = (Supplier<EntityType<VortexChargeProjectileEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<TimeDilationFieldEntity>> TIME_DILATION_FIELD = (Supplier<EntityType<TimeDilationFieldEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>> ROYAL_BLACK_HOLE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -696,10 +693,6 @@ public final class AntarchyObjects {
 
     public static void setVortexChargeProjectile(Supplier<EntityType<VortexChargeProjectileEntity>> supplier) {
         VORTEX_CHARGE_PROJECTILE = supplier;
-    }
-
-    public static void setTimeDilationField(Supplier<EntityType<TimeDilationFieldEntity>> supplier) {
-        TIME_DILATION_FIELD = supplier;
     }
 
     public static void setRoyalBlackHole(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>> supplier) {

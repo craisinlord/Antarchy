@@ -1,4 +1,4 @@
-package com.craisinlord.antarchy.content.time;
+package com.craisinlord.antarchy.content.item;
 
 public interface TemporalTunerAccess {
     double antarchy$getTemporalTunerRate();

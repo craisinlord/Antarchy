@@ -18,7 +18,6 @@ import com.craisinlord.antarchy.content.entity.vortex.VortexChargeProjectileEnti
 import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
 import com.craisinlord.antarchy.content.item.ScorpionWhipTetherSync;
 import com.craisinlord.antarchy.content.item.WormHookTetherSync;
-import com.craisinlord.antarchy.content.network.ImpactShakeSync;
 import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakeSync;
 import com.craisinlord.antarchy.content.network.HordeIntensitySync;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync;
@@ -370,7 +369,6 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setLucid(AntarchyFabricEntities.LUCID);
         AntarchyObjects.setVortex(AntarchyFabricEntities.VORTEX);
         AntarchyObjects.setWindVortex(() -> AntarchyFabricEntities.WIND_VORTEX.get());
-        AntarchyObjects.setTimeDilationField(() -> AntarchyFabricEntities.TIME_DILATION_FIELD.get());
         AntarchyObjects.setRoyalBlackHole(() -> AntarchyFabricEntities.ROYAL_BLACK_HOLE.get());
         AntarchyObjects.setRoyalAssailantBlackHole(() -> AntarchyFabricEntities.ROYAL_ASSAILANT_BLACK_HOLE.get());
         AntarchyObjects.setVortexChargeProjectile(() -> AntarchyFabricEntities.VORTEX_CHARGE_PROJECTILE.get());
@@ -556,17 +554,10 @@ public final class AntarchyFabricContent {
         WormHookTetherSync.setSink(AntarchyFabricNetworking::syncWormHookTether);
         HerculesBeetleImpactShakeSync.setSink((player, ticks) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, new com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload(ticks)));
         com.craisinlord.antarchy.content.network.KingJudgmentFlashSync.setSink((player, ticks) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, new com.craisinlord.antarchy.content.network.KingJudgmentFlashPayload(ticks)));
-        ImpactShakeSync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
         HordeIntensitySync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
         TigerEyeCamouflageSync.setSendToPlayer((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
         TigerEyeCamouflageSync.setSyncSelfAndTracking(AntarchyFabricNetworking::syncTigerEyeCamouflage);
         BloodCrystalKatanaItem.setTrailCallback(AntarchyFabricNetworking::syncKatanaTrail);
-        com.craisinlord.antarchy.content.time.TimeDilationApi.setSyncDispatcher(
-                com.craisinlord.antarchy.fabric.network.AntarchyFabricTimeDilationNetworking::syncRate
-        );
-        com.craisinlord.antarchy.content.time.TimeDilationApi.setFieldSyncDispatcher(
-                com.craisinlord.antarchy.fabric.network.AntarchyFabricTimeDilationNetworking::syncFields
-        );
         AntarchyFabricMisc.POI_TYPES.register();
         AntarchyFabricMisc.VILLAGER_PROFESSIONS.register();
         AntarchyFabricEvents.register();

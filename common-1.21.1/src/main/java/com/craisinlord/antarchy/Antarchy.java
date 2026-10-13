@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy;
 
 import com.craisinlord.antarchy.content.computer.AntarchyArchiveLocators;
-import com.craisinlord.antarchy.content.movement.AntarchyGravityHooks;
+import com.craisinlord.antarchy.content.AntarchyAnthologyHooks;
 import com.craisinlord.antarchy.content.util.AttributeRangeInit;
 import com.craisinlord.antarchy.content.worldgen.VillagePoolAdditions;
 import com.craisinlord.integrated_api.events.lifecycle.ServerGoingToStartEvent;
@@ -18,7 +18,7 @@ public class Antarchy {
     public static void init() {
         AttributeRangeInit.apply();
         AntarchyArchiveLocators.register();
-        AntarchyGravityHooks.register();
+        AntarchyAnthologyHooks.register();
         ServerGoingToStartEvent.EVENT.addListener(Antarchy::serverAboutToStart);
     }
     private static void serverAboutToStart(final ServerGoingToStartEvent event) {

@@ -1,10 +1,10 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.anthology.shake.CameraShakeSync;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.effect.CommandedEntityAccess;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.royal.RoyalIceSpikeEntity;
-import com.craisinlord.antarchy.content.network.ImpactShakeSync;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -111,7 +111,7 @@ public final class RoyalGuardianSwordAbilities {
         level.sendParticles(FIRE_GOLD, center.x, center.y, center.z, 28, 1.1D, 0.8D, 1.1D, 0.04D);
         level.sendParticles(ParticleTypes.EXPLOSION, center.x, center.y, center.z, 3, 0.8D, 0.6D, 0.8D, 0.0D);
         level.playSound(null, BlockPos.containing(center), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 1.0F, 1.05F);
-        ImpactShakeSync.sendNearby(level, center, FIRE_SHAKE_INTENSITY, FIRE_SHAKE_DURATION, FIRE_SHAKE_RADIUS);
+        CameraShakeSync.sendNearby(level, center, FIRE_SHAKE_INTENSITY, FIRE_SHAKE_DURATION, FIRE_SHAKE_RADIUS);
     }
 
     private static void placeBoundedFire(ServerLevel level, Vec3 center, int cap) {

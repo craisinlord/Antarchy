@@ -1,6 +1,6 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
-import com.craisinlord.antarchy.content.client.ContractionAfterimages;
+import com.craisinlord.anthology.time.client.ContractionAfterimages;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.Deque;

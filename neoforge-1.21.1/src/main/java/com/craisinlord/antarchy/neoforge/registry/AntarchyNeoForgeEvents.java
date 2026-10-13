@@ -20,7 +20,6 @@ import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
-import com.craisinlord.antarchy.content.entity.multipart.MultipartFramework;
 import com.craisinlord.antarchy.content.entity.vortex.VortexChargeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
 import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
@@ -32,11 +31,9 @@ import com.craisinlord.antarchy.content.item.ultimate.UltimateGearHelper;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.mixins.PoiTypesAccessor;
 import com.craisinlord.antarchy.content.portal.PermanentPortalManager;
-import com.craisinlord.antarchy.content.time.TimeDilationManager;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync;
 import com.craisinlord.antarchy.neoforge.AntarchyNeoForgeFluidTypes;
-import com.craisinlord.antarchy.neoforge.entity.multipart.MultipartPartEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -139,13 +136,10 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassWardRemoved);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassWardExpired);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickBloodglassRecharge);
-        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickTimeDilation);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickAntArrivals);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassPlayerDeath);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassRespawn);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBloodglassLogin);
-        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleTimeDilationLogin);
-        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleTimeDilationRespawn);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleCavarynHordeKill);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleCavarynHordeBlockBreak);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::tickCavarynHordes);
@@ -258,10 +252,6 @@ public final class AntarchyNeoForgeEvents {
         }
     }
 
-    static void tickTimeDilation(ServerTickEvent.Post event) {
-        TimeDilationManager.tickServer(event.getServer());
-    }
-
     static void tickAntArrivals(ServerTickEvent.Post event) {
         com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.tick(event.getServer());
     }
@@ -326,26 +316,8 @@ public final class AntarchyNeoForgeEvents {
             return;
         }
 
-        if (event.getTarget() instanceof com.craisinlord.antarchy.content.time.TimeDilationEntityAccess access
-                && event.getEntity() instanceof ServerPlayer trackingPlayer) {
-            com.craisinlord.antarchy.neoforge.network.AntarchyTimeDilationNetworking.syncRateToPlayer(
-                    trackingPlayer, event.getTarget(), access.antarchy$getTimeDilationRate()
-            );
-        }
         if (event.getTarget() instanceof ServerPlayer trackedPlayer && event.getEntity() instanceof ServerPlayer trackingPlayer) {
             TigerEyeCamouflageSync.syncTo(trackingPlayer, trackedPlayer);
-        }
-    }
-
-    static void handleTimeDilationLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            TimeDilationManager.resyncPersistentEffects(player);
-        }
-    }
-
-    static void handleTimeDilationRespawn(PlayerEvent.PlayerRespawnEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            TimeDilationManager.resyncPersistentEffects(player);
         }
     }
 
@@ -364,7 +336,6 @@ public final class AntarchyNeoForgeEvents {
 
     static void handleTigerEyeRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            com.craisinlord.antarchy.content.time.ChronosphereManager.refresh(player);
             TigerEyeCamouflageController.deactivate(player, false);
             TigerEyeCamouflageSync.sync(player);
         }
@@ -372,14 +343,12 @@ public final class AntarchyNeoForgeEvents {
 
     static void handleTigerEyeLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            com.craisinlord.antarchy.content.time.ChronosphereManager.refresh(player);
             TigerEyeCamouflageSync.sync(player);
         }
     }
 
     static void handleTigerEyeDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            com.craisinlord.antarchy.content.time.ChronosphereManager.refresh(player);
             TigerEyeCamouflageController.deactivate(player, false);
             TigerEyeCamouflageSync.sync(player);
         }
@@ -1403,24 +1372,6 @@ public final class AntarchyNeoForgeEvents {
             VortexChargeProjectileEntity.defaultItemSupplier = () -> AntarchyNeoforgeItems.VORTEX_CHARGE.get();
             VortexChargeProjectileEntity.projectileTypeSupplier = () -> AntarchyNeoforgeEntites.VORTEX_CHARGE_PROJECTILE.get();
             VortexChargeProjectileEntity.windVortexTypeSupplier = () -> AntarchyNeoforgeEntites.WIND_VORTEX.get();
-            MultipartFramework.bootstrap(
-                    (owner, partIndex, spec) -> new MultipartPartEntity((Entity) owner, owner, partIndex, spec),
-                    new MultipartFramework.NetworkBridge() {
-                        @Override
-                        public void sendAttack(java.util.UUID parentId, int partIndex, float damage) {
-                            net.neoforged.neoforge.network.PacketDistributor.sendToServer(
-                                    new com.craisinlord.antarchy.content.entity.multipart.network.MultipartAttackPayload(parentId, partIndex, damage)
-                            );
-                        }
-
-                        @Override
-                        public void sendInteract(java.util.UUID parentId, int partIndex, int handId) {
-                            net.neoforged.neoforge.network.PacketDistributor.sendToServer(
-                                    new com.craisinlord.antarchy.content.entity.multipart.network.MultipartInteractPayload(parentId, partIndex, handId)
-                            );
-                        }
-                    }
-            );
             ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeBlocks.UMBRAL_MOSS_BLOCK.get().asItem(), 0.65f);
             ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeBlocks.UMBRAL_MOSS_CARPET.get().asItem(), 0.3f);
             ComposterBlock.COMPOSTABLES.put(AntarchyNeoforgeBlocks.BLUSH_MOSS_BLOCK.get().asItem(), 0.65f);

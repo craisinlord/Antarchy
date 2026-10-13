@@ -122,7 +122,7 @@ tasks.named('processResources', ProcessResources).configure {
 // does — inject the refmap key into fabric's own copy of the shared file after copying.
 tasks.named('processResources', ProcessResources).configure {
     doLast {
-        ['antarchy-common.mixins.json', 'antarchy-sodium.mixins.json'].each { configName ->
+        ['antarchy-common.mixins.json'].each { configName ->
             var mixinConfig = new File(destinationDir, configName)
             var json = new groovy.json.JsonSlurper().parse(mixinConfig)
             json.put('refmap', 'antarchy.mixins.refmap.json')

@@ -35,7 +35,7 @@ public class LucidEyeProjectileEntity extends ThrowableItemProjectile {
     
     @Override
     protected double getDefaultGravity() {
-        return 0.03D;
+        return -0.03D;
     }
 
     @Override

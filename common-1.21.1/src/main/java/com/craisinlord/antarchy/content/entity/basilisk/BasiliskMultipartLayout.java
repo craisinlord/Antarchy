@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.content.entity.basilisk;
 
-import com.craisinlord.antarchy.content.entity.multipart.MultipartLayout;
-import com.craisinlord.antarchy.content.entity.multipart.MultipartPartDefinition;
+import com.craisinlord.anthology.multipart.MultipartLayout;
+import com.craisinlord.anthology.multipart.MultipartPartDefinition;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 

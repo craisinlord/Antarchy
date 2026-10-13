@@ -53,8 +53,8 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
-import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamSettings;
-import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamTerrainMode;
+import com.craisinlord.anthology.beam.BeamSettings;
+import com.craisinlord.anthology.beam.BeamTerrainMode;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu;
 import com.craisinlord.antarchy.content.menu.RoyalJudgmentState;
@@ -398,8 +398,8 @@ public class KingEntity extends RoyalBossEntity {
     protected SoundEvent royalBeamEndSound() { return AntarchySoundEvents.KING_BEAM_SHOOT.get(); }
 
     @Override
-    protected RoyalBeamSettings royalBeamSettings() {
-        return new RoyalBeamSettings(AntarchySettings.kingBeamRange(), AntarchySettings.kingBeamTracking(), 7.5D,
+    protected BeamSettings royalBeamSettings() {
+        return new BeamSettings(AntarchySettings.kingBeamRange(), AntarchySettings.kingBeamTracking(), 7.5D,
                 AntarchySettings.kingBeamDurationTicks(), AntarchySettings.kingBeamTravelTicks(), AntarchySettings.kingBeamCooldownTicks(), 6.0F, 6.0F,
                 (float) AntarchySettings.kingBeamDamage(), 1.0F, 3, 100.0D,
                 (float) AntarchySettings.kingBeamTerrainRadius(), 4.0F, AntarchySettings.kingBeamTerrainCap(),
@@ -407,8 +407,8 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     @Override
-    protected RoyalBeamTerrainMode royalBeamTerrainMode() {
-        return RoyalBeamTerrainMode.BUILD_ICE;
+    protected BeamTerrainMode royalBeamTerrainMode() {
+        return BeamTerrainMode.BUILD_ICE;
     }
 
     @Override
@@ -422,8 +422,8 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     @Override
-    protected RoyalBeamTerrainMode royalBeamTerrainMode(@Nullable RoyalHead head) {
-        return head != null && head.slot() == RoyalHead.Slot.RIGHT ? RoyalBeamTerrainMode.BUILD_ICE : RoyalBeamTerrainMode.NONE;
+    protected BeamTerrainMode royalBeamTerrainMode(@Nullable RoyalHead head) {
+        return head != null && head.slot() == RoyalHead.Slot.RIGHT ? BeamTerrainMode.BUILD_ICE : BeamTerrainMode.NONE;
     }
 
     @Override

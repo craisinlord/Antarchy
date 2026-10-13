@@ -12,8 +12,6 @@ import com.craisinlord.antarchy.neoforge.network.BrutalflyElytraNetworking;
 import com.craisinlord.antarchy.neoforge.network.DorrieJumpNetworking;
 import com.craisinlord.antarchy.neoforge.network.HerculesBeetleNetworking;
 import com.craisinlord.antarchy.neoforge.network.SpringyBootsNetworking;
-import com.craisinlord.antarchy.neoforge.network.MultipartNetworking;
-import com.craisinlord.antarchy.neoforge.network.AntarchyTimeDilationNetworking;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
@@ -41,7 +39,6 @@ public class AntarchyNeoforgePayloadHandlers {
                 (payload, ctx) -> ctx.enqueueWork(() -> com.craisinlord.antarchy.content.client.AntarchyGameClientState.update(payload))
         );
         AntarchyGravityNetworking.register(registrar);
-        AntarchyTimeDilationNetworking.register(registrar);
         BrutalflyElytraNetworking.register(registrar);
         SpringyBootsNetworking.register(registrar);
         DorrieJumpNetworking.register(registrar);
@@ -182,6 +179,5 @@ public class AntarchyNeoforgePayloadHandlers {
                         com.craisinlord.antarchy.content.client.HordeClientState.update(payload.intensity())
                 )
         );
-        MultipartNetworking.register(registrar);
     }
 }

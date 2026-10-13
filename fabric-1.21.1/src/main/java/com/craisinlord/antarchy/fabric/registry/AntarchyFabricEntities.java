@@ -22,7 +22,6 @@ import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.vortex.VortexChargeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
 import com.craisinlord.antarchy.content.entity.vortex.WindVortexEntity;
-import com.craisinlord.antarchy.content.time.TimeDilationFieldEntity;
 import com.craisinlord.antarchy.content.entity.HushProjectileEntity;
 import com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity;
 import com.craisinlord.antarchy.content.entity.WormHookProjectileEntity;
@@ -375,16 +374,6 @@ public final class AntarchyFabricEntities {
                     .build("kraken"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.fabric.entity.multipart.MultipartPartEntity>> KRAKEN_PART = ENTITY_TYPES.register("kraken_part",
-            () -> EntityType.Builder.<com.craisinlord.antarchy.fabric.entity.multipart.MultipartPartEntity>of(
-                            com.craisinlord.antarchy.fabric.entity.multipart.MultipartPartEntity::new,
-                            MobCategory.MISC
-                    )
-                    .sized(1.0F, 1.0F)
-                    .clientTrackingRange(12)
-                    .updateInterval(1)
-                    .build("kraken_part"));
-
 
     public static final DeferredHolder<EntityType<?>, EntityType<MissileSquidEntity>> MISSILE_SQUID = ENTITY_TYPES.register("missile_squid",
             () -> EntityType.Builder.of(MissileSquidEntity::new, MobCategory.MONSTER)
@@ -463,13 +452,6 @@ public final class AntarchyFabricEntities {
                     .fireImmune()
                     .build("wind_vortex"));
 
-    public static final DeferredHolder<EntityType<?>, EntityType<TimeDilationFieldEntity>> TIME_DILATION_FIELD = ENTITY_TYPES.register("time_dilation_field",
-            () -> EntityType.Builder.<TimeDilationFieldEntity>of(TimeDilationFieldEntity::new, MobCategory.MISC)
-                    .sized(0.5F, 0.5F)
-                    .clientTrackingRange(16)
-                    .updateInterval(20)
-                    .fireImmune()
-                    .build("time_dilation_field"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>> ROYAL_BLACK_HOLE = ENTITY_TYPES.register("royal_black_hole",
             () -> EntityType.Builder.<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>of(com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity::new, MobCategory.MISC)

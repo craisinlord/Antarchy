@@ -10,8 +10,8 @@ import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.anthology.gravity.GravityTransition;
-import com.craisinlord.antarchy.content.time.TimeDilationApi;
-import com.craisinlord.antarchy.content.time.TimeDilationFieldEntity;
+import com.craisinlord.anthology.time.TimeDilationApi;
+import com.craisinlord.anthology.time.TimeDilationFieldEntity;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,8 +51,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.AABB;
-import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamSettings;
-import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamTerrainMode;
+import com.craisinlord.anthology.beam.BeamSettings;
+import com.craisinlord.anthology.beam.BeamTerrainMode;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackLane;
 import com.craisinlord.antarchy.content.entity.royal.attack.RoyalEffectController;
@@ -406,8 +406,8 @@ public class QueenEntity extends RoyalBossEntity {
     protected SoundEvent royalBeamEndSound() { return AntarchySoundEvents.QUEEN_BEAM_END.get(); }
 
     @Override
-    protected RoyalBeamSettings royalBeamSettings() {
-        return new RoyalBeamSettings(AntarchySettings.queenBeamRange(), AntarchySettings.queenBeamTracking(), 7.5D,
+    protected BeamSettings royalBeamSettings() {
+        return new BeamSettings(AntarchySettings.queenBeamRange(), AntarchySettings.queenBeamTracking(), 7.5D,
                 AntarchySettings.queenBeamDurationTicks(), AntarchySettings.queenBeamTravelTicks(), AntarchySettings.queenBeamCooldownTicks(), 6.0F, 6.0F,
                 (float) AntarchySettings.queenBeamDamage(), 1.0F, 3, 100.0D,
                 (float) AntarchySettings.queenBeamTerrainRadius(), 4.0F, AntarchySettings.queenBeamTerrainCap(),
@@ -415,8 +415,8 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     @Override
-    protected RoyalBeamTerrainMode royalBeamTerrainMode() {
-        return RoyalBeamTerrainMode.DESTROY;
+    protected BeamTerrainMode royalBeamTerrainMode() {
+        return BeamTerrainMode.DESTROY;
     }
 
     @Override
@@ -1157,7 +1157,7 @@ public class QueenEntity extends RoyalBossEntity {
                 TimeDilationFieldEntity field = TimeDilationApi.createField(level, this.position(),
                         QUEEN_CHRONOSPHERE_RADIUS, QUEEN_CHRONOSPHERE_RATE,
                         QUEEN_CHRONOSPHERE_DURATION, this.getUUID());
-                field.configureQueenChronosphere(this);
+                field.configureOwnerAnchored(this);
                 this.startRoyalRecovery(35);
             }
             case "debris_cyclone" -> {

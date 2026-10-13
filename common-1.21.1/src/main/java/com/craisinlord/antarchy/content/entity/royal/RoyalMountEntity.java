@@ -4,12 +4,12 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
-import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamController;
-import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamSettings;
-import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamTerrainMode;
+import com.craisinlord.anthology.beam.BeamController;
+import com.craisinlord.anthology.beam.BeamSettings;
+import com.craisinlord.anthology.beam.BeamTerrainMode;
 import com.craisinlord.antarchy.content.effect.RoyalEffectEligibility;
 import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
-import com.craisinlord.antarchy.content.time.TimeDilationApi;
+import com.craisinlord.anthology.time.TimeDilationApi;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -136,7 +136,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
     private int flapSoundTimer;
     private boolean riderAscendPressed;
     private boolean riderDescendPressed;
-    private final RoyalBeamController beamController = new RoyalBeamController(this);
+    private final BeamController beamController = new BeamController(this);
     private int beamWindupTicks;
     private int beamCooldownTicks;
     private int beamHead;
@@ -540,7 +540,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
             }
         }
         if (this.beamController.isFiring()) {
-            this.beamController.tick(this.beamShootFrom(), this.getTarget(), this.beamSettings(), RoyalBeamTerrainMode.NONE, this::setBeamEndPosition);
+            this.beamController.tick(this.beamShootFrom(), this.getTarget(), this.beamSettings(), BeamTerrainMode.NONE, this::setBeamEndPosition);
             if (!this.beamController.isFiring()) {
                 this.entityData.set(BEAM_ACTIVE, false);
                 this.entityData.set(BEAM_HEAD, -1);
@@ -598,9 +598,9 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         level.sendParticles(ParticleTypes.END_ROD, center.x, center.y + 0.5D, center.z, 28, 1.2D, 0.6D, 1.2D, 0.03D);
     }
 
-    private RoyalBeamSettings beamSettings() {
+    private BeamSettings beamSettings() {
         float damage = this instanceof PrincessEntity ? 10.0F : 12.0F;
-        return new RoyalBeamSettings(28.0D, 0.08D, 4.0D, BEAM_DURATION_TICKS, 6, BEAM_COOLDOWN_TICKS,
+        return new BeamSettings(28.0D, 0.08D, 4.0D, BEAM_DURATION_TICKS, 6, BEAM_COOLDOWN_TICKS,
                 0.35F, 0.45F, damage, 0.45F, 3, 0.0D, 0.0F, 0.0F, 0, 0.0F, 0.0F, 0.0F, false, true);
     }
 
@@ -622,7 +622,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         return this.entityData.get(HAS_BEAM_END) ? new Vec3(this.entityData.get(BEAM_END_X), this.entityData.get(BEAM_END_Y), this.entityData.get(BEAM_END_Z)) : null;
     }
     public RoyalBeamElement getBeamElement() { return RoyalBeamElement.GENERIC; }
-    public RoyalBeamController beamController() { return this.beamController; }
+    public BeamController beamController() { return this.beamController; }
     private void setBeamEndPosition(@Nullable Vec3 position) {
         this.entityData.set(HAS_BEAM_END, position != null);
         if (position != null) {

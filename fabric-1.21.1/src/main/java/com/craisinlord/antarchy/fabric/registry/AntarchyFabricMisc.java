@@ -33,8 +33,6 @@ import com.craisinlord.antarchy.content.effect.BloodMoonMobEffect;
 import com.craisinlord.antarchy.content.effect.GoopedMobEffect;
 import com.craisinlord.antarchy.content.effect.GrowthMobEffect;
 import com.craisinlord.antarchy.content.effect.CommandedMobEffect;
-import com.craisinlord.antarchy.content.effect.DilatedMobEffect;
-import com.craisinlord.antarchy.content.effect.ContractedMobEffect;
 import com.craisinlord.antarchy.content.effect.ParalyzedMobEffect;
 import com.craisinlord.antarchy.content.effect.ShrinkMobEffect;
 import com.craisinlord.antarchy.content.effect.StinkyMobEffect;
@@ -458,7 +456,6 @@ public final class AntarchyFabricMisc {
 
 
     public static final DeferredHolder<MobEffect, CommandedMobEffect> COMMANDED = MOB_EFFECTS.register("commanded", CommandedMobEffect::new);
-    public static final DeferredHolder<MobEffect, DilatedMobEffect> DILATED = MOB_EFFECTS.register("dilated", DilatedMobEffect::new);
 
 
     public static final DeferredHolder<MobEffect, StinkyMobEffect> STINKY = MOB_EFFECTS.register("stinky", StinkyMobEffect::new);
@@ -499,14 +496,13 @@ public final class AntarchyFabricMisc {
     public static final DeferredHolder<Potion, Potion> LONG_COMMAND = POTIONS.register("long_command",
             () -> new Potion("command", new MobEffectInstance(mobEffectHolder(COMMANDED), 1200)));
     public static final DeferredHolder<Potion, Potion> TIME_DILATION = POTIONS.register("time_dilation",
-            () -> new Potion(new MobEffectInstance(mobEffectHolder(DILATED), 1200)));
+            () -> new Potion(new MobEffectInstance(AnthologyEffects.dilated(), 1200)));
     public static final DeferredHolder<Potion, Potion> LONG_TIME_DILATION = POTIONS.register("long_time_dilation",
-            () -> new Potion("time_dilation", new MobEffectInstance(mobEffectHolder(DILATED), 1200, 1)));
-    public static final DeferredHolder<MobEffect, ContractedMobEffect> CONTRACTED = MOB_EFFECTS.register("contracted", ContractedMobEffect::new);
+            () -> new Potion("time_dilation", new MobEffectInstance(AnthologyEffects.dilated(), 1200, 1)));
     public static final DeferredHolder<Potion, Potion> TIME_CONTRACTION = POTIONS.register("time_contraction",
-            () -> new Potion(new MobEffectInstance(mobEffectHolder(CONTRACTED), 1200)));
+            () -> new Potion(new MobEffectInstance(AnthologyEffects.contracted(), 1200)));
     public static final DeferredHolder<Potion, Potion> LONG_TIME_CONTRACTION = POTIONS.register("long_time_contraction",
-            () -> new Potion("time_contraction", new MobEffectInstance(mobEffectHolder(CONTRACTED), 1200, 1)));
+            () -> new Potion("time_contraction", new MobEffectInstance(AnthologyEffects.contracted(), 1200, 1)));
 
 
     public static final DeferredHolder<Potion, Potion> STINKY_POTION = POTIONS.register("stinky",

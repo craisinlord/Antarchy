@@ -1,8 +1,8 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.Antarchy;
-import com.craisinlord.antarchy.content.portalgun.PortalGunTransformUtil;
-import com.craisinlord.antarchy.content.portalgun.PortalGunWorldPortalShape;
+import com.craisinlord.anthology.portal.PortalTransforms;
+import com.craisinlord.anthology.portal.PortalShape;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -37,13 +37,13 @@ public final class PortalGunMoonViewRenderer {
     private PortalGunMoonViewRenderer() {
     }
 
-    public static void render(Minecraft minecraft, PortalGunWorldPortalShape source, Vec3 cameraPos, Vec3 look, Vec3 up,
+    public static void render(Minecraft minecraft, PortalShape source, Vec3 cameraPos, Vec3 look, Vec3 up,
                               Matrix4f rootProjection, float partialTick) {
-        PortalGunWorldPortalShape exit = new PortalGunWorldPortalShape(Vec3.ZERO, EXIT_NORMAL, EXIT_UP, EXIT_NORMAL.cross(EXIT_UP),
+        PortalShape exit = new PortalShape(Vec3.ZERO, EXIT_NORMAL, EXIT_UP, EXIT_NORMAL.cross(EXIT_UP),
                 source.halfWidth(), source.halfHeight(), source.halfDepth());
-        Vec3 moonLook = PortalGunTransformUtil.transformVector(source, exit, look).normalize();
-        Vec3 moonUp = PortalGunTransformUtil.transformVector(source, exit, up).normalize();
-        Matrix4f view = new Matrix4f().rotation(PortalGunTransformUtil.orientationQuaternion(moonLook, moonUp).conjugate(new Quaternionf()));
+        Vec3 moonLook = PortalTransforms.transformVector(source, exit, look).normalize();
+        Vec3 moonUp = PortalTransforms.transformVector(source, exit, up).normalize();
+        Matrix4f view = new Matrix4f().rotation(PortalTransforms.orientationQuaternion(moonLook, moonUp).conjugate(new Quaternionf()));
         Vec3 earthDirection = new Vec3(0.0D, Math.sin(EARTH_ELEVATION), Math.cos(EARTH_ELEVATION));
 
         Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();

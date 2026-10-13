@@ -18,9 +18,6 @@ displayURL="https://www.curseforge.com/minecraft/mc-mods/antarchy"
     config = "antarchy-common.mixins.json"
 
 [[mixins]]
-    config = "antarchy-sodium.mixins.json"
-
-[[mixins]]
     config = "antarchy-neoforge.mixins.json"
 
 [[dependencies.antarchy]]

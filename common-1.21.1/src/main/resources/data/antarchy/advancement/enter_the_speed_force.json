@@ -4,7 +4,7 @@
     "become_contracted": {
       "conditions": {
         "effects": {
-          "antarchy:contracted": {}
+          "anthology:contracted": {}
         }
       },
       "trigger": "minecraft:effects_changed"

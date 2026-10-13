@@ -12,12 +12,9 @@ import com.craisinlord.antarchy.content.network.GravityGunPrimaryPayload;
 import com.craisinlord.antarchy.content.network.GravityGunScrollPayload;
 import com.craisinlord.antarchy.content.network.TemporalTunerScrollPayload;
 import com.craisinlord.antarchy.content.item.TemporalTunerItem;
-import com.craisinlord.antarchy.content.network.ImpactShakePayload;
 import com.craisinlord.antarchy.content.network.PortalGunPrimaryPayload;
-import com.craisinlord.antarchy.content.client.CameraShakeClientState;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -36,10 +33,6 @@ public final class AntarchyGravityNetworking {
                 com.craisinlord.antarchy.content.network.PortalGunIndicatorRequestPayload.TYPE,
                 com.craisinlord.antarchy.content.network.PortalGunIndicatorRequestPayload.STREAM_CODEC,
                 AntarchyGravityNetworking::handlePortalGunIndicatorRequest
-        ).playToClient(
-                ImpactShakePayload.TYPE,
-                ImpactShakePayload.STREAM_CODEC,
-                AntarchyGravityNetworking::handleImpactShake
         ).playToServer(
                 GravityGunPrimaryPayload.TYPE,
                 GravityGunPrimaryPayload.STREAM_CODEC,
@@ -48,20 +41,6 @@ public final class AntarchyGravityNetworking {
                 PortalGunPrimaryPayload.TYPE,
                 PortalGunPrimaryPayload.STREAM_CODEC,
                 AntarchyGravityNetworking::handlePortalGunPrimary
-        ).playToServer(
-                com.craisinlord.antarchy.content.network.PortalGunTransitPayload.TYPE,
-                com.craisinlord.antarchy.content.network.PortalGunTransitPayload.STREAM_CODEC,
-                (payload, context) -> {
-                    if (context.player() instanceof ServerPlayer serverPlayer && serverPlayer.getServer() != null && serverPlayer.getServer().isSameThread()) {
-                        com.craisinlord.antarchy.content.portalgun.PortalGunTransitHandler.handle(serverPlayer, payload);
-                        return;
-                    }
-                    context.enqueueWork(() -> {
-                        if (context.player() instanceof ServerPlayer serverPlayer) {
-                            com.craisinlord.antarchy.content.portalgun.PortalGunTransitHandler.handle(serverPlayer, payload);
-                        }
-                    });
-                }
         ).playToServer(
                 com.craisinlord.antarchy.content.network.PortalGunMoonAimPayload.TYPE,
                 com.craisinlord.antarchy.content.network.PortalGunMoonAimPayload.STREAM_CODEC,
@@ -103,15 +82,6 @@ public final class AntarchyGravityNetworking {
                 com.craisinlord.antarchy.content.network.DiamondMinecartInputPayload.STREAM_CODEC,
                 AntarchyGravityNetworking::handleDiamondMinecartInput
         );
-    }
-
-    private static void handleImpactShake(ImpactShakePayload payload, IPayloadContext context) {
-        context.enqueueWork(() -> CameraShakeClientState.triggerImpact(
-                new Vec3(payload.x(), payload.y(), payload.z()),
-                payload.intensity(),
-                payload.durationTicks(),
-                payload.radius()
-        ));
     }
 
     private static void handleGravityGunScroll(GravityGunScrollPayload payload, IPayloadContext context) {

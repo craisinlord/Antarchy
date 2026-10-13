@@ -4,7 +4,7 @@
     "become_dilated": {
       "conditions": {
         "effects": {
-          "antarchy:dilated": {}
+          "anthology:dilated": {}
         }
       },
       "trigger": "minecraft:effects_changed"
