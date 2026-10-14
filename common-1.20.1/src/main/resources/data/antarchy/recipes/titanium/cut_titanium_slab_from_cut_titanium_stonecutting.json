@@ -3,8 +3,6 @@
   "ingredient": {
     "item": "antarchy:cut_titanium"
   },
-  "result": {
-    "count": 2,
-    "item": "antarchy:cut_titanium_slab"
-  }
+  "result": "antarchy:cut_titanium_slab",
+  "count": 2
 }

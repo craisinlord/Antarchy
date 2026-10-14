@@ -4,7 +4,7 @@
   "size": 1,
   "valid_biome_radius_check": 1,
   "biomes": "#antarchy:has_structure/tigers_eye_shrine_biomes",
-  "step": "surface_structures",
+  "step": "underground_structures",
   "enhanced_terrain_adaptation": {
     "type": "integrated_api:none"
   },
@@ -17,6 +17,5 @@
       "absolute": 150
     }
   },
-  "spawn_overrides": {},
-  "liquid_settings": "ignore_waterlogging"
+  "spawn_overrides": {}
 }

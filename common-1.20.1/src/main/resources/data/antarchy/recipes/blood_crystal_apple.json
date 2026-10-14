@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
+  "category": "food",
   "pattern": [
     "###",
     "#A#",
@@ -15,7 +15,6 @@
     }
   },
   "result": {
-    "item": "antarchy:blood_crystal_apple",
-    "count": 1
+    "item": "antarchy:blood_crystal_apple"
   }
 }

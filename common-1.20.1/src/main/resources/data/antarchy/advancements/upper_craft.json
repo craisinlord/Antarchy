@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "items": "antarchy:upper"
+            "items": [
+              "antarchy:upper"
+            ]
           }
         ]
       },
@@ -19,7 +21,6 @@
     },
     "frame": "task",
     "icon": {
-      "count": 1,
       "item": "antarchy:upper"
     },
     "show_toast": true,

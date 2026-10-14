@@ -71,9 +71,8 @@ public final class ElythiaSkyRenderer {
         float blue = (float) skyColor.z;
         float rainLevel = level.getRainLevel(partialTick);
         float starBrightness = level.getStarBrightness(partialTick) * (1.0F - rainLevel);
-        float timeOfDay = level.getTimeOfDay(partialTick);
+        double timeDegrees = (level.getDayTime() + partialTick) * (360.0D / 24000.0D);
 
-        // Blend in a dark purple when it's night (starBrightness > 0)
         float nightPurpleR = 0.055F;
         float nightPurpleG = 0.010F;
         float nightPurpleB = 0.120F;
@@ -89,7 +88,7 @@ public final class ElythiaSkyRenderer {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         renderSunrise(poseStack, projectionMatrix, level, partialTick, rainLevel);
-        renderCelestialBodies(poseStack.last().pose(), projectionMatrix, timeOfDay, rainLevel);
+        renderCelestialBodies(poseStack.last().pose(), projectionMatrix, timeDegrees, rainLevel);
 
         if (starBrightness > 0.1F) {
             if (coloredStarBuffer == null) {
@@ -169,10 +168,10 @@ public final class ElythiaSkyRenderer {
 
     private static float[] pickStarColor(Random random) {
         float roll = random.nextFloat();
-        if (roll < 0.80F) return new float[]{1.0F, 1.0F, 1.0F};        // white
-        if (roll < 0.87F) return new float[]{0.85F, 0.60F, 1.00F};     // light purple
-        if (roll < 0.94F) return new float[]{1.00F, 0.95F, 0.50F};     // yellow
-        return new float[]{1.0F, 0.45F, 0.45F};                         // red
+        if (roll < 0.80F) return new float[]{1.0F, 1.0F, 1.0F};
+        if (roll < 0.87F) return new float[]{0.85F, 0.60F, 1.00F};
+        if (roll < 0.94F) return new float[]{1.00F, 0.95F, 0.50F};
+        return new float[]{1.0F, 0.45F, 0.45F};
     }
 
     private static void renderSunrise(PoseStack poseStack, Matrix4f projectionMatrix, ClientLevel level, float partialTick, float rainLevel) {
@@ -211,28 +210,27 @@ public final class ElythiaSkyRenderer {
         RenderSystem.disableBlend();
     }
 
-    private static void renderCelestialBodies(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, float timeOfDay, float rainLevel) {
-        float t = timeOfDay * 360.0F;
+    private static void renderCelestialBodies(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, double timeDegrees, float rainLevel) {
 
-        // Purple sun
-        float sun1Orbit = t;
+        float sun1Orbit = orbitAngle(timeDegrees, 1.0D, 0.0D);
         renderBodyGlow(modelViewMatrix, projectionMatrix, sun1Orbit, 0.0F, 0xD06BFF, rainLevel, 70.0F);
-        renderTexturedBody(modelViewMatrix, projectionMatrix, sun1Orbit, 0.0F, 38.0F, 0xD06BFF, 1.0F, SUN_TEXTURE, false, 0, t * 0.8F);
+        renderTexturedBody(modelViewMatrix, projectionMatrix, sun1Orbit, 0.0F, 38.0F, 0xD06BFF, 1.0F, SUN_TEXTURE, false, 0, orbitAngle(timeDegrees, 0.8D, 0.0D));
 
-        // Orange sub
-        float sun2Orbit = t * 0.73F + 54.0F;
+        float sun2Orbit = orbitAngle(timeDegrees, 0.73D, 54.0D);
         renderBodyGlow(modelViewMatrix, projectionMatrix, sun2Orbit, -14.0F, 0xFF9A33, rainLevel, 70.0F);
-        renderTexturedBody(modelViewMatrix, projectionMatrix, sun2Orbit, -14.0F, 16.0F, 0xFF9A33, 1.0F, SUN_TEXTURE, false, 0, -t * 0.5F);
+        renderTexturedBody(modelViewMatrix, projectionMatrix, sun2Orbit, -14.0F, 16.0F, 0xFF9A33, 1.0F, SUN_TEXTURE, false, 0, orbitAngle(timeDegrees, -0.5D, 0.0D));
 
-        // Dark green moon
-        float moon2Orbit = t * 1.27F + 228.0F;
+        float moon2Orbit = orbitAngle(timeDegrees, 1.27D, 228.0D);
         renderBodyGlow(modelViewMatrix, projectionMatrix, moon2Orbit, 36.0F, 0x4FD84D, rainLevel, 78.0F);
-        renderTexturedBody(modelViewMatrix, projectionMatrix, moon2Orbit, 36.0F, 14.0F, 0x4FD84D, 1.0F, MOON_TEXTURE, true, 1, t * 0.3F);
+        renderTexturedBody(modelViewMatrix, projectionMatrix, moon2Orbit, 36.0F, 14.0F, 0x4FD84D, 1.0F, MOON_TEXTURE, true, 1, orbitAngle(timeDegrees, 0.3D, 0.0D));
 
-        // Light green moon
-        float moon3Orbit = t * 0.38F + 122.0F;
+        float moon3Orbit = orbitAngle(timeDegrees, 0.38D, 122.0D);
         renderBodyGlow(modelViewMatrix, projectionMatrix, moon3Orbit, -34.0F, 0xA3FF8F, rainLevel, 78.0F);
-        renderTexturedBody(modelViewMatrix, projectionMatrix, moon3Orbit, -34.0F, 12.0F, 0xA3FF8F, 1.0F, MOON_TEXTURE, true, 2, -t * 0.6F);
+        renderTexturedBody(modelViewMatrix, projectionMatrix, moon3Orbit, -34.0F, 12.0F, 0xA3FF8F, 1.0F, MOON_TEXTURE, true, 2, orbitAngle(timeDegrees, -0.6D, 0.0D));
+    }
+
+    private static float orbitAngle(double timeDegrees, double speed, double offset) {
+        return (float) ((timeDegrees * speed + offset) % 360.0D);
     }
 
     private static void renderBodyGlow(

@@ -6,7 +6,5 @@
   "ingredient": {
     "item": "antarchy:raw_venison"
   },
-  "result": {
-    "item": "antarchy:cooked_venison"
-  }
+  "result": "antarchy:cooked_venison"
 }

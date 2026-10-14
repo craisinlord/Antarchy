@@ -3,7 +3,6 @@
   "ingredient": {
     "item": "antarchy:broodstone"
   },
-  "result": {
-    "item": "antarchy:broodstone_stairs"
-  }
+  "result": "antarchy:broodstone_stairs",
+  "count": 1
 }

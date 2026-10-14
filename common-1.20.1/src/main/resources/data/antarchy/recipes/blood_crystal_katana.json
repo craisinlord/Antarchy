@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "equipment",
+  "category": "combat",
   "pattern": [
     "  B",
     " B ",
@@ -15,7 +15,6 @@
     }
   },
   "result": {
-    "item": "antarchy:blood_crystal_katana",
-    "count": 1
+    "item": "antarchy:blood_crystal_katana"
   }
 }

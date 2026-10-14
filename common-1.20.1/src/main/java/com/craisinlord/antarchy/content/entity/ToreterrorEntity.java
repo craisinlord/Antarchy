@@ -154,6 +154,13 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
                 .add(Attributes.ARMOR_TOUGHNESS, 4.0D);
     }
 
+    @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
+            MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData, @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag dataTag) {
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.toreterrorHealth());
+        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData, dataTag);
+    }
+
     public static boolean canSpawn(EntityType<ToreterrorEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, net.minecraft.util.RandomSource random) {
         boolean sturdy = level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP);
         return level.getDifficulty() != Difficulty.PEACEFUL && sturdy;
@@ -219,10 +226,10 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         super.tick();
         if (this.level().isClientSide) {
             if (this.isJumpShaking()) {
-                com.craisinlord.antarchy.content.client.CameraShakeClientState.register(
+                com.craisinlord.anthology.shake.client.CameraShake.register(
                         this,
-                        com.craisinlord.antarchy.content.client.CameraShakeClientState.TORETERROR_RANGE,
-                        com.craisinlord.antarchy.content.client.CameraShakeClientState.TORETERROR_STRENGTH,
+                        48.0D,
+                        1.0F,
                         this::isJumpShaking
                 );
             }
@@ -263,6 +270,9 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (BossCombatUtil.isMagicWarded(this) && BossCombatUtil.isMagicBurstSource(source)) {
+            amount *= (1.0F - (float) AntarchySettings.bossMagicWardReductionFraction());
+        }
         if (source.is(net.minecraft.world.damagesource.DamageTypes.DROWN)) return false;
         if (source.is(DamageTypeTags.IS_PROJECTILE)) {
             amount *= (float) AntarchySettings.toreterrorProjectileDamageMultiplier();
@@ -455,7 +465,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         }
         this.shootAnimTicks--;
         if (this.shootAnimTicks <= 0) {
-            this.shootCooldown = (int) (AntarchySettings.waterCannonCooldownSeconds() * 20.0D) + this.random.nextInt(60);
+            this.shootCooldown = 100 + this.random.nextInt(60);
         }
     }
 
@@ -764,11 +774,9 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         double dh = Math.sqrt(diff.x * diff.x + diff.z * diff.z);
         double dy = diff.y;
         double gravity = AntarchySettings.waterBombGravity();
-        // Choose travel time based on horizontal distance at minSpeed, minimum 8 ticks
         double t = Math.max(8.0, dh / minSpeed);
         double vx = diff.x / t;
         double vz = diff.z / t;
-        // Compensate for gravity accumulating over t ticks
         double vy = dy / t + 0.5 * gravity * t;
         return new Vec3(vx, vy, vz);
     }
@@ -880,7 +888,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
             ToreterrorEntity.this.shootBomberFiredSecond = false;
             ToreterrorEntity.this.rapidFireNextTick = 0;
             float roll = ToreterrorEntity.this.random.nextFloat();
-            if (roll < (float) AntarchySettings.toreterrorRangedWaterBombChance()) ToreterrorEntity.this.shootAttackType = ATTACK_RAPID_FIRE;
+            if (roll < 0.5F) ToreterrorEntity.this.shootAttackType = ATTACK_RAPID_FIRE;
             else ToreterrorEntity.this.shootAttackType = ATTACK_BOMBERS;
         }
 

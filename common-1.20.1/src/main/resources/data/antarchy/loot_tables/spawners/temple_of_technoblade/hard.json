@@ -105,7 +105,7 @@
                 "min": 20.0,
                 "max": 30.0
               },
-              "options": "#minecraft:on_random_loot"
+              "treasure": false
             }
           ]
         },

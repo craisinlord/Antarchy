@@ -31,8 +31,8 @@ public class FallenOuranwoodFeature extends Feature<NoneFeatureConfiguration> {
         BlockPos origin = context.origin();
 
         Direction.Axis axis = random.nextBoolean() ? Direction.Axis.X : Direction.Axis.Z;
-        int length = 36 + random.nextInt(44);  // 36–79 blocks long
-        int outerRadius = 1 + random.nextInt(3); // 1–3 (cross-section up to 7-wide)
+        int length = 36 + random.nextInt(44);
+        int outerRadius = 1 + random.nextInt(3);
         boolean hollow = outerRadius >= 2;
 
         Block ouranwoodLog = BuiltInRegistries.BLOCK.getOptional(
@@ -46,7 +46,6 @@ public class FallenOuranwoodFeature extends Feature<NoneFeatureConfiguration> {
         BlockState woodState = AntarchyObjects.MOSSY_OURANWOOD_WOOD.get().defaultBlockState()
                 .setValue(RotatedPillarBlock.AXIS, Direction.Axis.Y);
 
-        // Pre-generate a smoothed damage profile along the length (0=solid, 1=gap)
         float[] damage = new float[length];
         for (int i = 0; i < length; i++) damage[i] = random.nextFloat();
         for (int pass = 0; pass < 4; pass++) {
@@ -54,7 +53,6 @@ public class FallenOuranwoodFeature extends Feature<NoneFeatureConfiguration> {
                 damage[i] = (damage[i - 1] + damage[i] * 2 + damage[i + 1]) / 4f;
             }
         }
-        // Bias upward so more sections are heavily damaged
         for (int i = 0; i < length; i++) damage[i] = damage[i] * damage[i];
 
         int anchorY = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, origin.getX(), origin.getZ());

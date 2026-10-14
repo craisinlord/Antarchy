@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
+  "category": "food",
   "key": {
     "C": {
       "item": "antarchy:corn"
@@ -21,7 +21,6 @@
     "WWW"
   ],
   "result": {
-    "count": 1,
     "item": "antarchy:cornbread"
   }
 }

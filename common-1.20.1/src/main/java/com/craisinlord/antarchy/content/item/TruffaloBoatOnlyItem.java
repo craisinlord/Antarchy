@@ -10,9 +10,13 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class TruffaloBoatOnlyItem extends OuranwoodBoatItem {
-    private final EntityType<TruffaloBoatEntity> entityType;
+    private final java.util.function.Supplier<? extends EntityType<TruffaloBoatEntity>> entityType;
 
     public TruffaloBoatOnlyItem(EntityType<TruffaloBoatEntity> entityType, Properties properties) {
+        this(() -> entityType, properties);
+    }
+
+    public TruffaloBoatOnlyItem(java.util.function.Supplier<? extends EntityType<TruffaloBoatEntity>> entityType, Properties properties) {
         super(properties);
         this.entityType = entityType;
     }
@@ -20,7 +24,7 @@ public class TruffaloBoatOnlyItem extends OuranwoodBoatItem {
     @Override
     protected Boat createBoat(Level level, HitResult hitResult, ItemStack stack, Player player) {
         Vec3 pos = hitResult.getLocation();
-        TruffaloBoatEntity boat = new TruffaloBoatEntity(this.entityType, level);
+        TruffaloBoatEntity boat = new TruffaloBoatEntity(this.entityType.get(), level);
         boat.setPos(pos.x, pos.y, pos.z);
         boat.xo = pos.x;
         boat.yo = pos.y;

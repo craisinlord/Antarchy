@@ -16,7 +16,6 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
-/** Places the complete natural-grown shape so every segment gets the body state. */
 public final class NaturalDirectionalVineFeature extends Feature<NoneFeatureConfiguration> {
     private final ResourceLocation blockId;
     private final Direction direction;

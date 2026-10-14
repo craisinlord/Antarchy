@@ -1,19 +1,28 @@
 package com.craisinlord.antarchy.content.portal;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.village.poi.PoiManager;
+import net.minecraft.world.entity.ai.village.poi.PoiRecord;
 import net.minecraft.world.entity.vehicle.DismountHelper;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -21,12 +30,15 @@ import org.jetbrains.annotations.Nullable;
 public final class PermanentPortalTeleporter {
     private static final int SEARCH_RADIUS = 24;
     private static final int VERTICAL_SEARCH = 24;
-    private static final int EXISTING_PORTAL_SEARCH_RADIUS = 48;
+    private static final int EXISTING_PORTAL_SEARCH_RADIUS = 128;
 
     private PermanentPortalTeleporter() {
     }
 
-    public record Transition(ServerLevel newLevel, Vec3 pos, float yRot, float xRot) {
+    public record Transition(ServerLevel newLevel, Vec3 pos, float yRot, float xRot, boolean playPortalSound) {
+        private static Transition doNothing(ServerLevel level) {
+            return new Transition(level, Vec3.atBottomCenterOf(level.getSharedSpawnPos()), 0.0F, 0.0F, false);
+        }
     }
 
     public static void teleport(Entity entity, PermanentPortalType type) {
@@ -34,21 +46,31 @@ public final class PermanentPortalTeleporter {
             return;
         }
 
+        entity.setPortalCooldown();
         Transition transition = createTransition(sourceLevel, entity, entity.blockPosition(), type);
         Entity movedEntity = moveEntity(entity, transition);
         if (movedEntity != null) {
             movedEntity.setPortalCooldown();
+            if (transition.playPortalSound() && movedEntity instanceof ServerPlayer player) {
+                player.connection.send(new ClientboundLevelEventPacket(LevelEvent.SOUND_PORTAL_TRAVEL, BlockPos.ZERO, 0, false));
+            }
         }
     }
 
     public static Transition createTransition(ServerLevel sourceLevel, Entity entity, BlockPos portalPos, PermanentPortalType type) {
         ServerLevel destination = resolveDestination(sourceLevel, type);
         if (destination == null) {
-            return new Transition(sourceLevel, entity.position(), entity.getYRot(), entity.getXRot());
+            return Transition.doNothing(sourceLevel);
         }
 
-        Vec3 arrival = findArrivalPosition(entity, destination, portalPos, type);
-        return new Transition(destination, arrival, entity.getYRot(), entity.getXRot());
+        Vec3 arrival = findArrivalPosition(sourceLevel, entity, destination, portalPos, type);
+        if (arrival == null) {
+            if (entity instanceof ServerPlayer player) {
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.antarchy.teleport_arrival_failed"), true);
+            }
+            return Transition.doNothing(sourceLevel);
+        }
+        return new Transition(destination, arrival, entity.getYRot(), entity.getXRot(), true);
     }
 
     @Nullable
@@ -59,19 +81,18 @@ public final class PermanentPortalTeleporter {
         return sourceLevel.getServer().getLevel(type.primaryDimension());
     }
 
-    private static Vec3 findArrivalPosition(Entity entity, ServerLevel destination, BlockPos preferredPos, PermanentPortalType type) {
-        PermanentPortalShape active = PermanentPortalShape.findActiveNear(destination, preferredPos, type);
-        if (active != null) {
-            return active.center();
+    @Nullable
+    private static Vec3 findArrivalPosition(ServerLevel source, Entity entity, ServerLevel destination, BlockPos preferredPos, PermanentPortalType type) {
+        double scale = DimensionType.getTeleportationScale(source.dimensionType(), destination.dimensionType());
+        preferredPos = BlockPos.containing(preferredPos.getX() * scale, preferredPos.getY(), preferredPos.getZ() * scale);
+        PermanentPortalShape existing = findExistingPortal(destination, preferredPos, type);
+        if (existing != null) {
+            Vec3 safePortalPosition = tryFindSafePosition(entity, destination, BlockPos.containing(existing.center()));
+            return safePortalPosition != null ? safePortalPosition : existing.center();
         }
 
-        Vec3 safe = findSafeArrivalPosition(entity, destination, preferredPos);
+        Vec3 safe = findSafeArrivalPosition(entity, destination, preferredPos, type);
         if (safe != null) {
-            PermanentPortalShape nearbyActive = findActiveNearby(destination, BlockPos.containing(safe), type);
-            if (nearbyActive != null) {
-                return nearbyActive.center();
-            }
-
             PermanentPortalShape created = createReturnPortal(destination, safe, type);
             if (created != null) {
                 return created.center();
@@ -79,45 +100,52 @@ public final class PermanentPortalTeleporter {
             return createFallbackPortal(destination, BlockPos.containing(safe), type);
         }
 
-        return createFallbackPortal(destination, preferredPos, type);
-    }
-
-    @Nullable
-    private static PermanentPortalShape findActiveNearby(ServerLevel level, BlockPos center, PermanentPortalType type) {
-        for (int radius = 0; radius <= EXISTING_PORTAL_SEARCH_RADIUS; radius++) {
-            for (int xOff = -radius; xOff <= radius; xOff++) {
-                for (int yOff = -radius; yOff <= radius; yOff++) {
-                    for (int zOff = -radius; zOff <= radius; zOff++) {
-                        if (radius > 0 && Math.abs(xOff) != radius && Math.abs(yOff) != radius && Math.abs(zOff) != radius) {
-                            continue;
-                        }
-
-                        BlockPos candidate = center.offset(xOff, yOff, zOff);
-                        PermanentPortalShape xShape = PermanentPortalShape.findActive(level, candidate, type, Direction.Axis.X);
-                        if (xShape != null) {
-                            return xShape;
-                        }
-                        PermanentPortalShape zShape = PermanentPortalShape.findActive(level, candidate, type, Direction.Axis.Z);
-                        if (zShape != null) {
-                            return zShape;
-                        }
-                    }
-                }
-            }
-        }
-
         return null;
     }
 
     @Nullable
-    private static Vec3 findSafeArrivalPosition(Entity entity, ServerLevel destination, BlockPos preferredPos) {
-        int[] yRange = getDimensionYRange(destination);
+    private static PermanentPortalShape findExistingPortal(ServerLevel level, BlockPos center, PermanentPortalType type) {
+        PoiManager poiManager = level.getPoiManager();
+        poiManager.ensureLoadedAndValid(level, center, EXISTING_PORTAL_SEARCH_RADIUS);
+        Block portalBlock = type.portalBlock();
+        List<BlockPos> candidates = poiManager.getInSquare(
+                        holder -> holder.is(type.poiKey()), center, EXISTING_PORTAL_SEARCH_RADIUS, PoiManager.Occupancy.ANY)
+                .map(PoiRecord::getPos)
+                .filter(level.getWorldBorder()::isWithinBounds)
+                .sorted(Comparator.<BlockPos>comparingDouble(pos -> horizontalDistanceSqr(pos, center))
+                        .thenComparingInt(pos -> Math.abs(pos.getY() - center.getY())))
+                .toList();
+        for (BlockPos pos : candidates) {
+            BlockState state = level.getBlockState(pos);
+            if (!state.is(portalBlock) || !state.hasProperty(BlockStateProperties.HORIZONTAL_AXIS)) {
+                continue;
+            }
+            PermanentPortalShape shape = PermanentPortalShape.findActive(level, pos, type, state.getValue(BlockStateProperties.HORIZONTAL_AXIS));
+            if (shape != null) {
+                return shape;
+            }
+        }
+        return null;
+    }
+
+    private static double horizontalDistanceSqr(BlockPos a, BlockPos b) {
+        double dx = a.getX() - b.getX();
+        double dz = a.getZ() - b.getZ();
+        return dx * dx + dz * dz;
+    }
+
+    @Nullable
+    private static Vec3 findSafeArrivalPosition(Entity entity, ServerLevel destination, BlockPos preferredPos, PermanentPortalType type) {
+        int[] yRange = getDimensionYRange(destination, type);
         if (yRange != null) {
             return findSafeArrivalPositionInYRange(entity, destination, preferredPos, yRange[0], yRange[1]);
         }
 
         Set<BlockPos> candidates = new LinkedHashSet<>();
-        addCandidate(candidates, preferredPos);
+        boolean elythia = destination.dimension() == PermanentPortalType.ELYTHIA.primaryDimension();
+        if (!elythia) {
+            addCandidate(candidates, preferredPos);
+        }
 
         for (int radius = 0; radius <= SEARCH_RADIUS; radius++) {
             for (int xOff = -radius; xOff <= radius; xOff++) {
@@ -128,17 +156,29 @@ public final class PermanentPortalTeleporter {
 
                     BlockPos horizontalPos = preferredPos.offset(xOff, 0, zOff);
                     if (destination.hasChunkAt(horizontalPos)) {
-                        addCandidate(candidates, destination.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, horizontalPos));
-                        addCandidate(candidates, destination.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, horizontalPos));
+                        BlockPos surface = destination.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, horizontalPos);
+                        if (elythia) {
+                            candidates.add(surface);
+                            candidates.add(surface.above());
+                        } else {
+                            addCandidate(candidates, surface);
+                            addCandidate(candidates, destination.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, horizontalPos));
+                        }
                     }
-                    for (int yOff = 0; yOff <= VERTICAL_SEARCH; yOff++) {
-                        addCandidate(candidates, horizontalPos.above(yOff));
-                        if (yOff > 0) {
-                            addCandidate(candidates, horizontalPos.below(yOff));
+                    if (!elythia) {
+                        for (int yOff = 0; yOff <= VERTICAL_SEARCH; yOff++) {
+                            addCandidate(candidates, horizontalPos.above(yOff));
+                            if (yOff > 0) {
+                                addCandidate(candidates, horizontalPos.below(yOff));
+                            }
                         }
                     }
                 }
             }
+        }
+
+        if (elythia) {
+            addCandidate(candidates, preferredPos);
         }
 
         for (BlockPos candidate : candidates) {
@@ -279,12 +319,12 @@ public final class PermanentPortalTeleporter {
     }
 
     @Nullable
-    private static int[] getDimensionYRange(ServerLevel destination) {
+    private static int[] getDimensionYRange(ServerLevel destination, PermanentPortalType type) {
         ResourceKey<Level> dim = destination.dimension();
         if (dim == AntarchySettings.termiteDestinationDimension()) {
             return new int[]{100, 200};
         }
-        if (dim == AntarchySettings.brownAntDestinationDimension()) {
+        if (type != PermanentPortalType.ELYTHIA && dim == AntarchySettings.brownAntDestinationDimension()) {
             return new int[]{75, 120};
         }
         return null;
@@ -292,6 +332,36 @@ public final class PermanentPortalTeleporter {
 
     private static boolean isValidArrivalPosition(ServerLevel destination, Vec3 safePos) {
         BlockPos standPos = BlockPos.containing(safePos);
+        if (destination.dimension() == PermanentPortalType.ELYTHIA.primaryDimension()) {
+            BlockPos supportPos = standPos.below();
+            if (!destination.hasChunkAt(standPos) || !destination.hasChunkAt(supportPos)) {
+                return false;
+            }
+            BlockState support = destination.getBlockState(supportPos);
+            if (!support.isFaceSturdy(destination, supportPos, Direction.UP)
+                    || support.is(BlockTags.LEAVES)
+                    || !support.getFluidState().isEmpty()) {
+                return false;
+            }
+            int nearbySupports = 0;
+            for (Direction direction : Direction.Plane.HORIZONTAL) {
+                BlockPos neighbor = supportPos.relative(direction);
+                if (!destination.hasChunkAt(neighbor)) {
+                    continue;
+                }
+                for (int yOff = -2; yOff <= 2; yOff++) {
+                    BlockPos nearby = neighbor.offset(0, yOff, 0);
+                    BlockState nearbyState = destination.getBlockState(nearby);
+                    if (nearbyState.isFaceSturdy(destination, nearby, Direction.UP)
+                            && !nearbyState.is(BlockTags.LEAVES)
+                            && nearbyState.getFluidState().isEmpty()) {
+                        nearbySupports++;
+                        break;
+                    }
+                }
+            }
+            return nearbySupports >= 2;
+        }
         if (destination.dimension() == AntarchySettings.termiteDestinationDimension()
                 || destination.dimension() == AntarchySettings.redAntDestinationDimension()) {
             if (!destination.hasChunkAt(standPos) || !destination.hasChunkAt(standPos.below())) {

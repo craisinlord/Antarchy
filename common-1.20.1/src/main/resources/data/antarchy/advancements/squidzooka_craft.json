@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "items": "antarchy:squidzooka"
+            "items": [
+              "antarchy:squidzooka"
+            ]
           }
         ]
       },
@@ -19,7 +21,6 @@
     },
     "frame": "task",
     "icon": {
-      "count": 1,
       "item": "antarchy:squidzooka"
     },
     "show_toast": true,

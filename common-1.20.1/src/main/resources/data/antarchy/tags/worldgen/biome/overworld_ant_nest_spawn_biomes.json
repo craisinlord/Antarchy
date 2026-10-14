@@ -14,7 +14,6 @@
       "id": "#c:forest",
       "required": false
     },
-
     {
       "id": "biomesoplenty:redwood_forest",
       "required": false
@@ -199,7 +198,6 @@
       "id": "wythers:thermal_taiga",
       "required": false
     },
-
     {
       "id": "terralith:brushland",
       "required": false
@@ -210,6 +208,10 @@
     },
     {
       "id": "#c:plains",
+      "required": false
+    },
+    {
+      "id": "#forge:is_plains",
       "required": false
     },
     {

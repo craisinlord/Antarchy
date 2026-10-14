@@ -30,7 +30,51 @@
                 "min": 12.0,
                 "max": 25.0
               },
-              "options": "#minecraft:on_random_loot"
+              "treasure": false
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 2,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{AntOSFloppyDisk:\"antarchy:basilisk_game\"}"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 3,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{AntOSFloppyDisk:\"antarchy:elythia\"}"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 3,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{AntOSFloppyDisk:\"antarchy:kraken\"}"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 3,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{AntOSFloppyDisk:\"antarchy:glimmer\"}"
             }
           ]
         },
@@ -106,7 +150,7 @@
                 "min": 10.0,
                 "max": 24.0
               },
-              "options": "#minecraft:on_random_loot"
+              "treasure": false
             }
           ]
         },
@@ -122,7 +166,7 @@
                 "min": 12.0,
                 "max": 24.0
               },
-              "options": "#minecraft:on_random_loot"
+              "treasure": false
             }
           ]
         },
@@ -130,6 +174,11 @@
           "type": "minecraft:item",
           "name": "minecraft:golden_apple",
           "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:music_disc_verdance",
+          "weight": 2
         },
         {
           "type": "minecraft:item",
@@ -143,7 +192,7 @@
                 "min": 15.0,
                 "max": 30.0
               },
-              "options": "#minecraft:on_random_loot"
+              "treasure": false
             }
           ]
         }

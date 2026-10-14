@@ -26,14 +26,16 @@ import org.joml.Vector3f;
 import java.util.function.Consumer;
 
 public final class AntarchyForgeFluidTypes {
-    private static final ResourceLocation WATER_STILL = ResourceLocation.withDefaultNamespace("block/water_still");
-    private static final ResourceLocation WATER_FLOW = ResourceLocation.withDefaultNamespace("block/water_flow");
-    private static final ResourceLocation WATER_OVERLAY = ResourceLocation.withDefaultNamespace("block/water_overlay");
-    private static final ResourceLocation UNDERWATER_OVERLAY = ResourceLocation.withDefaultNamespace("textures/misc/underwater.png");
+    private static final ResourceLocation WATER_STILL = new ResourceLocation("block/water_still");
+    private static final ResourceLocation WATER_FLOW = new ResourceLocation("block/water_flow");
+    private static final ResourceLocation WATER_OVERLAY = new ResourceLocation("block/water_overlay");
+    private static final ResourceLocation UNDERWATER_OVERLAY = new ResourceLocation("textures/misc/underwater.png");
     private static final ResourceLocation ANTIWATER_STILL = new ResourceLocation(Antarchy.MODID, "block/antiwater_still");
     private static final ResourceLocation ANTIWATER_FLOW = new ResourceLocation(Antarchy.MODID, "block/antiwater_flow");
     private static final ResourceLocation BILE_STILL = new ResourceLocation(Antarchy.MODID, "block/bile/bile_still");
     private static final ResourceLocation BILE_FLOW = new ResourceLocation(Antarchy.MODID, "block/bile/bile_flowing");
+    private static final ResourceLocation ICHOR_STILL = new ResourceLocation(Antarchy.MODID, "block/ichor/ichor_still");
+    private static final ResourceLocation ICHOR_FLOW = new ResourceLocation(Antarchy.MODID, "block/ichor/ichor_flowing");
 
     private static final DeferredRegister<FluidType> FLUID_TYPES =
             DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, Antarchy.MODID);
@@ -167,12 +169,12 @@ public final class AntarchyForgeFluidTypes {
                     consumer.accept(new IClientFluidTypeExtensions() {
                         @Override
                         public ResourceLocation getStillTexture() {
-                            return ANTIWATER_STILL;
+                            return ICHOR_STILL;
                         }
 
                         @Override
                         public ResourceLocation getFlowingTexture() {
-                            return ANTIWATER_FLOW;
+                            return ICHOR_FLOW;
                         }
 
                         @Override
@@ -187,12 +189,12 @@ public final class AntarchyForgeFluidTypes {
 
                         @Override
                         public int getTintColor() {
-                            return 0xFF2A0306;
+                            return 0xFFFFFFFF;
                         }
 
                         @Override
                         public int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos) {
-                            return 0xFF2A0306;
+                            return 0xFFFFFFFF;
                         }
 
                         @Override

@@ -526,10 +526,7 @@
     "effect.antarchy.dread.description": "Provoca alucinaciones visuales y auditivas.",
     "effect.antarchy.paralyzed": "Paralizado",
     "effect.antarchy.paralyzed.description": "Impide que los objetivos se muevan.",
-    "effect.antarchy.inverted": "Invertido",
-    "effect.antarchy.inverted.description": "Invierte la gravedad del objetivo.",
     "effect.antarchy.commanded.description": "Lucha por el jugador que lo comandó.",
-    "effect.antarchy.dilated.description": "Ralentiza el paso del tiempo para la criatura afectada.",
     "effect.antarchy.stinky": "Apestoso",
     "effect.antarchy.stinky.description": "Ahuyenta a las criaturas pasivas y neutrales, y atrae a los artrópodos.",
     "effect.antarchy.gooped.description": "Reduce la velocidad de movimiento y de ataque.",
@@ -959,4 +956,7 @@
     "advancements.antarchy.beetle_buddies.description": "Domestica un escarabajo hércules.",
     "advancements.antarchy.herculean_task.title": "Tarea hercúlea",
     "advancements.antarchy.herculean_task.description": "Abate a un escarabajo hércules."
+,
+    "entity.antarchy.portal_gun_portal": "Portal del arma de portales",
+    "attribute.antarchy.entity_interaction_range": "Rango de interacción con entidades"
 }

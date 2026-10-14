@@ -3,7 +3,6 @@
   "ingredient": {
     "item": "antarchy:polished_nyxite"
   },
-  "result": {
-    "item": "antarchy:nyxite_bricks"
-  }
+  "result": "antarchy:nyxite_bricks",
+  "count": 1
 }

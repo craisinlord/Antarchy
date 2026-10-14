@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "W ",
+    " L"
+  ],
+  "key": {
+    "W": {
+      "item": "antarchy:worm_tooth"
+    },
+    "L": {
+      "item": "minecraft:lead"
+    }
+  },
+  "result": {
+    "item": "antarchy:worm_hook"
+  }
+}

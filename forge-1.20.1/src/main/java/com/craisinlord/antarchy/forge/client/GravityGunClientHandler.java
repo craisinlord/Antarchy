@@ -1,17 +1,18 @@
 package com.craisinlord.antarchy.forge.client;
 
-import net.minecraftforge.fml.common.Mod;
-
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
 import com.craisinlord.antarchy.content.network.GravityGunPrimaryPayload;
 import com.craisinlord.antarchy.content.network.GravityGunScrollPayload;
+import com.craisinlord.antarchy.content.network.TemporalTunerScrollPayload;
+import com.craisinlord.antarchy.content.item.TemporalTunerItem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.client.event.InputEvent;
 import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
@@ -48,7 +49,20 @@ public final class GravityGunClientHandler {
     @SubscribeEvent
     public static void onMouseScroll(InputEvent.MouseScrollingEvent event) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.level == null || mc.screen != null || !Screen.hasControlDown() || !AntarchySettings.gravityGunEnabled()) {
+        if (mc.player == null || mc.level == null || mc.screen != null) {
+            return;
+        }
+
+        if (Screen.hasShiftDown() && TemporalTunerItem.isAvailable(mc.player)) {
+            double scrollAmount = Mth.clamp(event.getScrollDelta(), -1.0D, 1.0D);
+            if (Math.abs(scrollAmount) >= 1.0E-4D) {
+                AntarchyForgeNetworkCore.sendToServer(new TemporalTunerScrollPayload(scrollAmount * TemporalTunerItem.STEP));
+                event.setCanceled(true);
+                return;
+            }
+        }
+
+        if (!Screen.hasControlDown() || !AntarchySettings.gravityGunEnabled()) {
             return;
         }
 

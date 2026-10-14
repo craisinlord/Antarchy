@@ -110,7 +110,7 @@
                 "min": 18.0,
                 "max": 30.0
               },
-              "options": "#minecraft:on_random_loot"
+              "treasure": false
             }
           ]
         },
@@ -118,6 +118,38 @@
           "type": "minecraft:item",
           "name": "antarchy:fallen_king_crown",
           "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:music_disc_verdance",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:blood_gods_blade",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 5,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{AntOSFloppyDisk:\"antarchy:elythia\"}"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 5,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{AntOSFloppyDisk:\"antarchy:kraken\"}"
+            }
+          ]
         }
       ],
       "rolls": {
@@ -164,6 +196,29 @@
         }
       ],
       "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:portal_gun_atlas"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:portal_gun_p_body"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:portal_gun_craisin"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.02
+        }
+      ]
     }
   ],
   "random_sequence": "antarchy:chests/temple_of_technoblade/treasure"

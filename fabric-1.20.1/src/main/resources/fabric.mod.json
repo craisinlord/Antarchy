@@ -21,6 +21,9 @@
     ],
     "client": [
       "com.craisinlord.antarchy.fabric.client.AntarchyFabricClient"
+    ],
+    "modmenu": [
+      "com.craisinlord.antarchy.fabric.client.AntarchyModMenuIntegration"
     ]
   },
   "mixins": [
@@ -28,12 +31,23 @@
     "antarchy-fabric.mixins.json"
   ],
   "depends": {
+    "anthology": ">=1.0.0",
     "fabricloader": ">=${fabric_loader_version}",
     "minecraft": "~${minecraft_version}",
     "java": ">=17",
-    "fabric-api": "*"
+    "fabric-api": "*",
+    "integrated_api": ">=1.8.1",
+    "geckolib": "*",
+    "sizeable_foliage": "*",
+    "pehkui": "*"
   },
   "breaks": {
-    "apple_cows": "*"
+    "infinity": "<2.7.2",
+    "apple_cows": "*",
+    "hoverboards": "*"
+  },
+  "suggests": {
+    "modmenu": "*",
+    "cloth-config": "*"
   }
 }

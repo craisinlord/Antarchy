@@ -1,21 +1,17 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "building",
+  "category": "equipment",
+  "pattern": [
+    "SSS",
+    "S S",
+    "S S"
+  ],
   "key": {
-    "D": {
-      "tag": "c:deepslates"
-    },
-    "B": {
-      "item": "antarchy:broodfruit"
+    "S": {
+      "item": "antarchy:blood_crystal_shard"
     }
   },
-  "pattern": [
-    "DDD",
-    "DBD",
-    "DDD"
-  ],
   "result": {
-    "count": 8,
-    "item": "antarchy:bloodstone"
+    "item": "antarchy:blood_crystal_leggings"
   }
 }

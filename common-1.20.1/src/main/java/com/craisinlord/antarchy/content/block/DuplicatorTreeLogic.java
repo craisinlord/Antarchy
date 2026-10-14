@@ -25,7 +25,6 @@ public final class DuplicatorTreeLogic {
     private static final int LOG_SEARCH_BELOW = 5;
     private static final int LOG_SEARCH_ABOVE = 1;
 
-    // Cache center log pos per chunk. WeakHashMap lets levels be GC'd when unloaded.
     private static final WeakHashMap<ServerLevel, HashMap<Long, BlockPos>> CENTER_LOG_CACHE = new WeakHashMap<>();
 
     private DuplicatorTreeLogic() {

@@ -3,7 +3,6 @@
   "ingredient": {
     "item": "antarchy:antimetal"
   },
-  "result": {
-    "item": "antarchy:antimetal_stairs"
-  }
+  "result": "antarchy:antimetal_stairs",
+  "count": 1
 }

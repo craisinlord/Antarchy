@@ -9,6 +9,8 @@ public final class AntarchyWoodTypes {
     public static final WoodType OURANWOOD = register("ouranwood");
     public static final WoodType PEACH = register("peach");
     public static final WoodType NADIR = register("nadir");
+    public static final WoodType ROYAL = register("royal");
+    public static final WoodType TRUFFALO = register("truffalo");
 
     private AntarchyWoodTypes() {
     }

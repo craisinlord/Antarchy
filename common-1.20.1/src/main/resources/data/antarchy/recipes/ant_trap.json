@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GS",
+    "QQ"
+  ],
+  "key": {
+    "G": {
+      "item": "antarchy:flytrap_goo"
+    },
+    "S": {
+      "item": "minecraft:sugar"
+    },
+    "Q": {
+      "item": "minecraft:quartz"
+    }
+  },
+  "result": {
+    "item": "antarchy:ant_trap"
+  }
+}

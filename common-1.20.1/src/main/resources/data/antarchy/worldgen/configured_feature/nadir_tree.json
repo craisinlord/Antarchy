@@ -18,28 +18,38 @@
     },
     "height": {
       "type": "minecraft:uniform",
-      "min_inclusive": 10,
-      "max_inclusive": 16
+      "value": {
+        "min_inclusive": 10,
+        "max_inclusive": 16
+      }
     },
     "bottom_radius": {
       "type": "minecraft:uniform",
-      "min_inclusive": 2,
-      "max_inclusive": 4
+      "value": {
+        "min_inclusive": 2,
+        "max_inclusive": 4
+      }
     },
     "branch_count": {
       "type": "minecraft:uniform",
-      "min_inclusive": 4,
-      "max_inclusive": 7
+      "value": {
+        "min_inclusive": 4,
+        "max_inclusive": 7
+      }
     },
     "branch_length": {
       "type": "minecraft:uniform",
-      "min_inclusive": 4,
-      "max_inclusive": 7
+      "value": {
+        "min_inclusive": 4,
+        "max_inclusive": 7
+      }
     },
     "veil_radius": {
       "type": "minecraft:uniform",
-      "min_inclusive": 2,
-      "max_inclusive": 3
+      "value": {
+        "min_inclusive": 2,
+        "max_inclusive": 3
+      }
     }
   }
 }

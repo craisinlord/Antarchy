@@ -24,9 +24,9 @@
       "offset": 2.0
     },
     "music": {
-      "sound": "antarchy:lucid_lullaby",
-      "min_delay": 12000,
-      "max_delay": 24000,
+      "sound": "antarchy:music.game.thoraxis",
+      "min_delay": 600,
+      "max_delay": 1800,
       "replace_current_music": true
     }
   },
@@ -46,13 +46,15 @@
     [],
     [],
     [
-      "antarchy:bluestone_ore"
+      "antarchy:bluestone_ore",
+      "antarchy:thoraxis_ichor_lake"
     ],
     [
       "antarchy:thoraxis_floor_rib_columns",
       "antarchy:thoraxis_roof_rib_columns",
       "antarchy:thoraxis_floor_spikes",
-      "antarchy:thoraxis_roof_spikes"
+      "antarchy:thoraxis_roof_spikes",
+      "antarchy:dimensional_tears"
     ],
     [],
     [],
@@ -63,8 +65,7 @@
       "antarchy:bed_bug_nest",
       "antarchy:nyxite_spikes",
       "antarchy:patch_fire_sparse",
-      "antarchy:patch_ceiling_fire",
-      "antarchy:patch_ceiling_antigravel"
+      "antarchy:patch_ceiling_fire"
     ],
     [
       "antarchy:cornea_stalk_patch",
@@ -77,7 +78,7 @@
     "monster": [
       {
         "type": "antarchy:nightmare",
-        "weight": 6,
+        "weight": 1,
         "minCount": 1,
         "maxCount": 1
       }

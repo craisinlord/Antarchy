@@ -43,16 +43,16 @@ public final class AntarchyDamageTypes {
                     new ResourceLocation(Antarchy.MODID, "emperor_scorpion_sting")
             );
 
-    public static final ResourceKey<DamageType> TRIFFID_MAULING =
+    public static final ResourceKey<DamageType> FLYTRAP_MAULING =
             ResourceKey.create(
                     Registries.DAMAGE_TYPE,
-                    new ResourceLocation(Antarchy.MODID, "triffid_mauling")
+                    new ResourceLocation(Antarchy.MODID, "flytrap_mauling")
             );
 
-    public static final ResourceKey<DamageType> TRIFFID_SWALLOW =
+    public static final ResourceKey<DamageType> FLYTRAP_SWALLOW =
             ResourceKey.create(
                     Registries.DAMAGE_TYPE,
-                    new ResourceLocation(Antarchy.MODID, "triffid_swallow")
+                    new ResourceLocation(Antarchy.MODID, "flytrap_swallow")
             );
 
     public static final ResourceKey<DamageType> CORNEA_STALK_PRICK =
@@ -91,16 +91,22 @@ public final class AntarchyDamageTypes {
                     new ResourceLocation(Antarchy.MODID, "spit_bug_disrespect")
             );
 
-    public static final ResourceKey<DamageType> JUMPY_BUG_JUMP =
+    public static final ResourceKey<DamageType> SPRINGBUG_JUMP =
             ResourceKey.create(
                     Registries.DAMAGE_TYPE,
-                    new ResourceLocation(Antarchy.MODID, "jumpy_bug_jump")
+                    new ResourceLocation(Antarchy.MODID, "springbug_jump")
             );
 
     public static final ResourceKey<DamageType> HERCULES_BEETLE_OBLITERATION =
             ResourceKey.create(
                     Registries.DAMAGE_TYPE,
                     new ResourceLocation(Antarchy.MODID, "hercules_beetle_obliteration")
+            );
+
+    public static final ResourceKey<DamageType> MOON_VACUUM =
+            ResourceKey.create(
+                    Registries.DAMAGE_TYPE,
+                    new ResourceLocation(Antarchy.MODID, "moon_vacuum")
             );
 
     private AntarchyDamageTypes() {

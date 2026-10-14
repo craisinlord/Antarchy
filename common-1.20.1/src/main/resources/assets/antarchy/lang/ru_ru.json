@@ -497,10 +497,7 @@
     "effect.antarchy.dread.description":  "Вызывает зрительные и звуковые галлюцинации.",
     "effect.antarchy.paralyzed":  "Паралич",
     "effect.antarchy.paralyzed.description":  "Не дает целям двигаться.",
-    "effect.antarchy.inverted":  "Инверсия",
-    "effect.antarchy.inverted.description":  "Инвертирует гравитацию цели.",
     "effect.antarchy.commanded.description":  "Сражается за игрока, который им командует.",
-    "effect.antarchy.dilated.description":  "Замедляет течение времени для существа под действием эффекта.",
     "effect.antarchy.stinky":  "Вонючесть",
     "effect.antarchy.stinky.description":  "Отпугивает мирных и нейтральных мобов, но притягивает членистоногих.",
     "effect.antarchy.gooped.description":  "Замедляет движение и скорость атаки.",
@@ -837,4 +834,7 @@
     "advancements.antarchy.squidzooka_craft.description":  "Создайте сквидзуку.",
     "advancements.antarchy.gravity_gun_craft.title":  "Мастер притяжения",
     "advancements.antarchy.gravity_gun_craft.description":  "Создайте гравитационную пушку."
+,
+    "entity.antarchy.portal_gun_portal": "Портал портальной пушки",
+    "attribute.antarchy.entity_interaction_range": "Дальность взаимодействия с сущностями"
 }

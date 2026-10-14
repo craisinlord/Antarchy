@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:polished_myrmite"
+  },
+  "result": "antarchy:chiseled_myrmite",
+  "count": 1
+}

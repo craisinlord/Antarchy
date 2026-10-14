@@ -167,7 +167,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
             MobSpawnType spawnReason, @Nullable net.minecraft.world.entity.SpawnGroupData spawnData) {
         ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.emperorScorpionHealth());
-        if (ThoraxisUndersideManager.shouldSpawnInvertedOnDreamSand(level, this.blockPosition())) {
+        if (ThoraxisUndersideManager.isUndersideCeilingSpot(level, this.blockPosition(), this.getType())) {
             ThoraxisUndersideManager.applyUndersideInversion(this);
         }
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
@@ -245,18 +245,12 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         if (level.getDifficulty() == Difficulty.PEACEFUL) {
             return false;
         }
-        if (ThoraxisUndersideManager.shouldSpawnInvertedOnDreamSand(level, pos)) {
+        if (ThoraxisUndersideManager.isUndersideCeilingSpawn(entityType, level, pos)) {
             return true;
         }
-        // Dream Dunes can use Dream Sandstone as the ceiling surface too. Keep
-        // the Emperor restricted to a supported underside position, but do
-        // not require the surface to be the narrower Dream Sand variant.
         if (pos.getY() < 0 && level.getBiome(pos).is(DREAM_DUNES) && level.isEmptyBlock(pos)) {
             BlockState below = level.getBlockState(pos.below());
-            BlockState above = level.getBlockState(pos.above());
-            boolean floorSupport = !below.is(Blocks.BEDROCK) && below.isFaceSturdy(level, pos.below(), Direction.UP);
-            boolean ceilingSupport = !above.is(Blocks.BEDROCK) && above.isFaceSturdy(level, pos.above(), Direction.DOWN);
-            return floorSupport || ceilingSupport;
+            return !below.is(Blocks.BEDROCK) && below.isFaceSturdy(level, pos.below(), Direction.UP);
         }
         return Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);
     }

@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:typhonite_bricks"
+  },
+  "result": "antarchy:typhonite_brick_wall",
+  "count": 1
+}

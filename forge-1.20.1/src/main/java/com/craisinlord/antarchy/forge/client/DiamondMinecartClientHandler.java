@@ -1,7 +1,5 @@
 package com.craisinlord.antarchy.forge.client;
 
-import net.minecraftforge.fml.common.Mod;
-
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.entity.DiamondMinecartEntity;
@@ -9,6 +7,7 @@ import com.craisinlord.antarchy.content.network.DiamondMinecartInputPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.event.TickEvent;
 import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
 

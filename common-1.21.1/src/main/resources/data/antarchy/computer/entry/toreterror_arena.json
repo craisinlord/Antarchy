@@ -10,5 +10,11 @@
   "dimension": "antarchy:elythia",
   "search_radius": 100,
   "cover_entity": "antarchy:toreterror",
-  "render_scale": 0.8
+  "render_scale": 0.8,
+  "green_tint": false,
+  "gallery_title": "guide.antarchy.gallery.drops",
+  "gallery": [
+    {"item": "antarchy:primordial_scute"},
+    {"item": "antarchy:water_cannon"}
+  ]
 }

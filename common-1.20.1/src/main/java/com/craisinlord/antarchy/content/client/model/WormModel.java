@@ -6,22 +6,40 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
 
 public class WormModel extends GeoModel<WormEntity> {
-    private static final ResourceLocation MODEL = new ResourceLocation(Antarchy.MODID, "geo/worm_large.geo.json");
-    private static final ResourceLocation TEXTURE = new ResourceLocation(Antarchy.MODID, "textures/entity/worm/worm_large.png");
-    private static final ResourceLocation ANIMATION = new ResourceLocation(Antarchy.MODID, "animations/worm_large.animation.json");
+    private static final ResourceLocation SMALL_MODEL = new ResourceLocation(Antarchy.MODID, "geo/worm_small.geo.json");
+    private static final ResourceLocation MEDIUM_MODEL = new ResourceLocation(Antarchy.MODID, "geo/worm_medium.geo.json");
+    private static final ResourceLocation LARGE_MODEL = new ResourceLocation(Antarchy.MODID, "geo/worm_large.geo.json");
+    private static final ResourceLocation SMALL_TEXTURE = new ResourceLocation(Antarchy.MODID, "textures/entity/worm/worm_small.png");
+    private static final ResourceLocation MEDIUM_TEXTURE = new ResourceLocation(Antarchy.MODID, "textures/entity/worm/worm_medium.png");
+    private static final ResourceLocation LARGE_TEXTURE = new ResourceLocation(Antarchy.MODID, "textures/entity/worm/worm_large.png");
+    private static final ResourceLocation SMALL_ANIMATION = new ResourceLocation(Antarchy.MODID, "animations/worm_small.animation.json");
+    private static final ResourceLocation MEDIUM_ANIMATION = new ResourceLocation(Antarchy.MODID, "animations/worm_medium.animation.json");
+    private static final ResourceLocation LARGE_ANIMATION = new ResourceLocation(Antarchy.MODID, "animations/worm_large.animation.json");
 
     @Override
     public ResourceLocation getModelResource(WormEntity animatable) {
-        return MODEL;
+        return switch (animatable.getGrowthStage()) {
+            case SMALL -> SMALL_MODEL;
+            case MEDIUM -> MEDIUM_MODEL;
+            case LARGE -> LARGE_MODEL;
+        };
     }
 
     @Override
     public ResourceLocation getTextureResource(WormEntity animatable) {
-        return TEXTURE;
+        return switch (animatable.getGrowthStage()) {
+            case SMALL -> SMALL_TEXTURE;
+            case MEDIUM -> MEDIUM_TEXTURE;
+            case LARGE -> LARGE_TEXTURE;
+        };
     }
 
     @Override
     public ResourceLocation getAnimationResource(WormEntity animatable) {
-        return ANIMATION;
+        return switch (animatable.getGrowthStage()) {
+            case SMALL -> SMALL_ANIMATION;
+            case MEDIUM -> MEDIUM_ANIMATION;
+            case LARGE -> LARGE_ANIMATION;
+        };
     }
 }

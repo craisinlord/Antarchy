@@ -15,6 +15,12 @@
       "tick_delay": 8000,
       "block_search_extent": 8,
       "offset": 2.0
+    },
+    "music": {
+      "sound": "antarchy:music.game.elythia",
+      "min_delay": 600,
+      "max_delay": 1800,
+      "replace_current_music": true
     }
   },
   "spawn_costs": {
@@ -25,10 +31,6 @@
     "antarchy:mantis": {
       "energy_budget": 0.1,
       "charge": 15.0
-    },
-    "antarchy:glimmer": {
-      "energy_budget": 0.1,
-      "charge": 9
     }
   },
   "carvers": {
@@ -87,19 +89,19 @@
       },
       {
         "type": "antarchy:apple_cow",
-        "weight": 24,
-        "minCount": 1,
-        "maxCount": 3
-      },
-      {
-        "type": "antarchy:golden_apple_cow",
         "weight": 20,
         "minCount": 1,
         "maxCount": 3
       },
       {
+        "type": "antarchy:golden_apple_cow",
+        "weight": 16,
+        "minCount": 1,
+        "maxCount": 3
+      },
+      {
         "type": "antarchy:enchanted_golden_apple_cow",
-        "weight": 2,
+        "weight": 1,
         "minCount": 1,
         "maxCount": 1
       },

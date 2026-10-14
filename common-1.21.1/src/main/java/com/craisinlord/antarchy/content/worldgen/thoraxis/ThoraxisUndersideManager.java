@@ -2,8 +2,8 @@ package com.craisinlord.antarchy.content.worldgen.thoraxis;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
-import com.craisinlord.antarchy.content.block.DreamSandBlock;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityTransition;
@@ -20,11 +20,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -52,6 +54,8 @@ public final class ThoraxisUndersideManager {
     private static final int UNDERSIDE_ENTRY_BORDER_Y = GRAVITY_FLIP_Y - 7;
     private static final int FRESH_ENTRY_DELAY_TICKS = 20;
     private static final int ENTRY_SLOW_FALL_DURATION_TICKS = 300;
+    private static final double CEILING_SPAWN_GAP = 1.75D;
+    private static final double SHORT_CEILING_SPAWN_GAP = 1.25D;
     private static final Map<ServerLevel, TrackingState> STATES = new WeakHashMap<>();
 
     private ThoraxisUndersideManager() {
@@ -346,25 +350,38 @@ public final class ThoraxisUndersideManager {
         }
     }
 
-    public static boolean shouldSpawnInvertedOnDreamSand(ServerLevelAccessor level, BlockPos pos) {
+    public static boolean isUndersideCeilingSpawn(EntityType<?> type, ServerLevelAccessor level, BlockPos pos) {
+        return type.is(AntarchyTags.Entities.UNDERSIDE_CEILING_SPAWNERS) && isUndersideCeilingSpot(level, pos, type);
+    }
+
+    public static boolean isUndersideCeilingSpot(ServerLevelAccessor level, BlockPos pos, EntityType<?> type) {
         if (!isThoraxis(level.getLevel()) || pos.getY() >= GRAVITY_FLIP_Y) {
             return false;
         }
 
         BlockState bodyState = level.getBlockState(pos);
-        if (!bodyState.isAir() && !bodyState.getCollisionShape(level, pos).isEmpty()) {
+        BlockPos belowPos = pos.below();
+        BlockState belowState = level.getBlockState(belowPos);
+        if (!NaturalSpawner.isValidEmptySpawnBlock(level, pos, bodyState, bodyState.getFluidState(), type)
+                || !NaturalSpawner.isValidEmptySpawnBlock(level, belowPos, belowState, belowState.getFluidState(), type)
+                || belowState.isFaceSturdy(level, belowPos, Direction.UP)) {
             return false;
         }
 
-        BlockPos supportPos = pos.above();
-        BlockState supportState = level.getBlockState(supportPos);
-        if (!(supportState.getBlock() instanceof DreamSandBlock)) {
-            return false;
-        }
+        BlockPos ceilingPos = pos.above();
+        BlockState ceilingState = level.getBlockState(ceilingPos);
+        return ceilingState.isFaceSturdy(level, ceilingPos, Direction.DOWN)
+                && ceilingState.isValidSpawn(level, ceilingPos, type);
+    }
 
-        return supportState.isFaceSturdy(level, supportPos, Direction.DOWN)
-                && level.getFluidState(pos).isEmpty()
-                && level.isEmptyBlock(pos.below());
+    public static double ceilingSpawnFeetY(EntityType<?> type, BlockPos pos, double height) {
+        double gap = type.is(AntarchyTags.Entities.UNDERSIDE_CEILING_SHORT_GAP) ? SHORT_CEILING_SPAWN_GAP : CEILING_SPAWN_GAP;
+        return pos.getY() + 1.0D - gap - height;
+    }
+
+    public static AABB ceilingSpawnBounds(EntityType<?> type, BlockPos pos) {
+        double feetY = ceilingSpawnFeetY(type, pos, type.getHeight());
+        return type.getSpawnAABB(pos.getX() + 0.5D, feetY, pos.getZ() + 0.5D).setMaxY(pos.getY() + 1.0D);
     }
 
     public static boolean isThoraxis(Level level) {

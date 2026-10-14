@@ -44,8 +44,7 @@ import java.util.function.Consumer;
 public class SizeRayItem extends ProjectileWeaponItem implements GeoItem, com.craisinlord.antarchy.content.client.AntarchyGeoItem {
     private static final String FIRE_CONTROLLER = "fire_controller";
     private static final int CHARGE_TICKS_PER_LEVEL = 5;
-    public static final int LOOP_SOUND_START_TICKS = CHARGE_TICKS_PER_LEVEL * 3;
-    private static final int CHARGE_SOUND_INTERVAL_TICKS = 12;
+    public static final int LOOP_SOUND_START_TICKS = 140;
     private static final int MAX_USE_DURATION = 72000;
     private static final Predicate<ItemStack> NO_PROJECTILES = stack -> false;
     private final Supplier<? extends EntityType<? extends SizeRayProjectileEntity>> projectileType;
@@ -115,38 +114,16 @@ public class SizeRayItem extends ProjectileWeaponItem implements GeoItem, com.cr
                     player.getX(),
                     player.getY(),
                     player.getZ(),
-                    this.getFireSound(),
+                    getFireSound(chargeLevel),
                     SoundSource.PLAYERS,
                     1.0F,
-                    0.95F + 0.12F * (chargeLevel - 1) + 1.0F / (level.getRandom().nextFloat() * 0.4F + 1.2F)
+                    0.96F + 0.04F * (chargeLevel - 1) + level.getRandom().nextFloat() * 0.08F
             );
             player.awardStat(Stats.ITEM_USED.get(this));
             double cooldownSeconds = AntarchySettings.sizeRayCooldownSeconds();
             if (cooldownSeconds > 0) {
                 player.getCooldowns().addCooldown(this, (int) (cooldownSeconds * 20));
             }
-        }
-    }
-
-    @Override
-    public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int remainingUseDuration) {
-        super.onUseTick(level, livingEntity, stack, remainingUseDuration);
-        if (level.isClientSide() || !AntarchySettings.sizeChangingRaysEnabled()) {
-            return;
-        }
-
-        int useTicks = this.getUseDuration(stack) - remainingUseDuration;
-        if (useTicks == 1 || useTicks % CHARGE_SOUND_INTERVAL_TICKS == 0) {
-            level.playSound(
-                    null,
-                    livingEntity.getX(),
-                    livingEntity.getY(),
-                    livingEntity.getZ(),
-                    AntarchySoundEvents.SIZE_RAY_CHARGE.get(),
-                    SoundSource.PLAYERS,
-                    0.15F,
-                    0.95F + level.getRandom().nextFloat() * 0.08F
-            );
         }
     }
 
@@ -244,20 +221,28 @@ public class SizeRayItem extends ProjectileWeaponItem implements GeoItem, com.cr
     }
 
     public SoundEvent getChargeSound() {
-        return AntarchySoundEvents.SIZE_RAY_CHARGE.get();
+        return this.rayType == SizeRayProjectileEntity.SizeRayType.SHRINK
+                ? AntarchySoundEvents.SHRINK_RAY_CHARGE.get()
+                : AntarchySoundEvents.GROWTH_RAY_CHARGE.get();
     }
 
     public SoundEvent getLoopSound() {
-        return AntarchySoundEvents.SIZE_RAY_CHARGE.get();
-    }
-
-    private SoundEvent getFireSound() {
         return this.rayType == SizeRayProjectileEntity.SizeRayType.SHRINK
-                ? AntarchySoundEvents.SHRINK_RAY_SOUND.get()
-                : AntarchySoundEvents.GROWTH_RAY_SOUND.get();
+                ? AntarchySoundEvents.SHRINK_RAY_LOOP.get()
+                : AntarchySoundEvents.GROWTH_RAY_LOOP.get();
     }
 
-    private static int getChargeLevel(int useTicks) {
+    public static int getChargeLevel(int useTicks) {
         return Math.max(1, 1 + useTicks / CHARGE_TICKS_PER_LEVEL);
+    }
+
+    private static SoundEvent getFireSound(int chargeLevel) {
+        if (chargeLevel >= 3) {
+            return AntarchySoundEvents.SIZE_RAY_CRITSHOT.get();
+        }
+        if (chargeLevel == 2) {
+            return AntarchySoundEvents.SIZE_RAY_MEDIUMSHOT.get();
+        }
+        return AntarchySoundEvents.SIZE_RAY_WEAKSHOT.get();
     }
 }

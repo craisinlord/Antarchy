@@ -1,7 +1,5 @@
 package com.craisinlord.antarchy.forge.client;
 
-import net.minecraftforge.fml.common.Mod;
-
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
@@ -9,9 +7,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.event.TickEvent;
 
-@Mod.EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT)
 public final class StinkySoundHandler {
     private static final int FIRST_SOUND_DELAY = 20;
     private static final int MIN_INTERVAL = 60;

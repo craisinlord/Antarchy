@@ -82,12 +82,6 @@
         "maxCount": 5
       },
       {
-        "type": "antarchy:emperor_scorpion",
-        "weight": 3,
-        "minCount": 1,
-        "maxCount": 1
-      },
-      {
         "type": "antarchy:vortex",
         "weight": 1,
         "minCount": 1,

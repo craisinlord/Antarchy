@@ -1,5 +1,5 @@
 {
-  "type": "neoforge:add_spawns",
+  "type": "forge:add_spawns",
   "biomes": "#antarchy:golden_apple_cow_spawn_biomes",
   "spawners": [
     {

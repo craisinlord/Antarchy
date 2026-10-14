@@ -23,11 +23,15 @@ import org.jetbrains.annotations.Nullable;
 public class HoverboardItem extends Item {
     private static final Predicate<Entity> ENTITY_PREDICATE = EntitySelector.NO_SPECTATORS.and(Entity::isPickable);
 
-    private final EntityType<? extends HoverboardEntity> entityType;
+    private final java.util.function.Supplier<? extends EntityType<? extends HoverboardEntity>> entityType;
     @Nullable
     private final DyeColor color;
 
     public HoverboardItem(EntityType<? extends HoverboardEntity> entityType, @Nullable DyeColor color, Properties properties) {
+        this(() -> entityType, color, properties);
+    }
+
+    public HoverboardItem(java.util.function.Supplier<? extends EntityType<? extends HoverboardEntity>> entityType, @Nullable DyeColor color, Properties properties) {
         super(properties);
         this.entityType = entityType;
         this.color = color;
@@ -52,9 +56,12 @@ public class HoverboardItem extends Item {
             return InteractionResultHolder.pass(stack);
         }
 
-        HoverboardEntity hoverboard = new HoverboardEntity(this.entityType, level);
+        HoverboardEntity hoverboard = new HoverboardEntity(this.entityType.get(), level);
         Vec3 spawnPos = hitResult.getLocation();
-        hoverboard.moveTo(spawnPos.x, spawnPos.y, spawnPos.z, player.getYRot(), 0.0F);
+        boolean invertedPlacement = com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager.isThoraxis(level)
+                && spawnPos.y < com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager.GRAVITY_FLIP_Y;
+        double spawnY = invertedPlacement ? spawnPos.y - hoverboard.getBbHeight() : spawnPos.y;
+        hoverboard.moveTo(spawnPos.x, spawnY, spawnPos.z, player.getYRot(), 0.0F);
         hoverboard.setColor(this.color);
         if (!level.noCollision(hoverboard, hoverboard.getBoundingBox())) {
             return InteractionResultHolder.fail(stack);

@@ -1,7 +1,5 @@
 package com.craisinlord.antarchy.forge.client;
 
-import net.minecraftforge.fml.common.Mod;
-
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.DorrieEntity;
 import com.craisinlord.antarchy.content.network.DorrieChargeJumpPayload;
@@ -10,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.event.TickEvent;
 import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
 
@@ -42,7 +41,7 @@ public final class DorrieJumpClientHandler {
             wasPressingJump = pressingJump;
         }
 
-        boolean pressingCharge = AntarchyKeyBindings.DORRIE_CHARGE_JUMP.isDown();
+        boolean pressingCharge = AntarchyKeyBindings.MOUNT_SPECIAL.isDown();
         if (pressingCharge != wasPressingCharge) {
             AntarchyForgeNetworkCore.sendToServer(new DorrieChargeJumpPayload(pressingCharge));
             if (!pressingCharge && player.getVehicle() instanceof DorrieEntity dorrie) {

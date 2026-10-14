@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:adventure/root",
+  "parent": "antarchy:visit_thoraxis",
   "criteria": {
     "kill_lucid": {
       "conditions": {
@@ -17,7 +17,6 @@
     },
     "frame": "task",
     "icon": {
-      "count": 1,
       "item": "antarchy:lucid_eye"
     },
     "show_toast": true,

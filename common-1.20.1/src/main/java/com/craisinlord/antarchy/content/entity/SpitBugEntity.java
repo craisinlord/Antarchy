@@ -3,6 +3,9 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -24,7 +27,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
@@ -59,7 +61,6 @@ public class SpitBugEntity extends Monster implements GeoEntity {
     private static final double ATTACK_DAMAGE = 5.0D;
     private static final double FOLLOW_RANGE = 24.0D;
     private static final double SPIT_RANGE_SQR = 14.0D * 14.0D;
-    private static final double MELEE_RANGE_SQR = 3.5D * 3.5D;
     private static final int SPIT_COOLDOWN_TICKS = 55;
     private static final int SPIT_ANIMATION_TICKS = 18;
     private static final int SPIT_RELEASE_TICKS = 8;
@@ -91,7 +92,7 @@ public class SpitBugEntity extends Monster implements GeoEntity {
         }
         return level.getDifficulty() != Difficulty.PEACEFUL
                 && level.isEmptyBlock(pos)
-                && level.isEmptyBlock(pos.above())
+                && (level.isEmptyBlock(pos.above()) || level.isEmptyBlock(pos.below()))
                 && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);
     }
 
@@ -105,10 +106,9 @@ public class SpitBugEntity extends Monster implements GeoEntity {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new SpitAttackGoal());
-        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, false));
-        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 0.9D));
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 12.0F));
-        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 0.9D));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 12.0F));
+        this.goalSelector.addGoal(4, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
@@ -193,8 +193,7 @@ public class SpitBugEntity extends Monster implements GeoEntity {
         return this.spitCooldownTicks <= 0
                 && this.spitAnimationTicks <= 0
                 && this.hasLineOfSight(target)
-                && this.distanceToSqr(target) <= SPIT_RANGE_SQR
-                && this.distanceToSqr(target) > MELEE_RANGE_SQR;
+                && this.distanceToSqr(target) <= SPIT_RANGE_SQR;
     }
 
     private void startSpitAttack() {
@@ -225,7 +224,7 @@ public class SpitBugEntity extends Monster implements GeoEntity {
 
         SpitBugProjectileEntity projectile = new SpitBugProjectileEntity(projectileType, this, serverLevel);
         Vec3 origin = this.position()
-                .add(0.0D, this.getBbHeight() * 0.55D, 0.0D)
+                .add(this.toWorld(0.0D, this.getBbHeight() * 0.55D, 0.0D))
                 .add(this.getViewVector(0.0F).scale(1.35D));
         Vec3 aimPoint = target.getEyePosition().add(target.getDeltaMovement().scale(0.45D));
         Vec3 direction = aimPoint.subtract(origin).normalize();
@@ -234,6 +233,14 @@ public class SpitBugEntity extends Monster implements GeoEntity {
         projectile.shoot(direction.x, direction.y, direction.z, 1.05F, 0.0F);
         serverLevel.addFreshEntity(projectile);
         this.playSound(AntarchySoundEvents.SPIT_BUG_SPIT.get(), 1.0F, 0.85F + this.random.nextFloat() * 0.15F);
+    }
+
+    private GravityDirection gravityDirection() {
+        return GravityApi.getGravityDirection(this);
+    }
+
+    private Vec3 toWorld(double x, double y, double z) {
+        return GravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
     }
 
     private final class SpitAttackGoal extends Goal {
@@ -260,6 +267,11 @@ public class SpitBugEntity extends Monster implements GeoEntity {
             }
 
             SpitBugEntity.this.getLookControl().setLookAt(target, 30.0F, 30.0F);
+
+            if (SpitBugEntity.this.spitAnimationTicks > 0) {
+                SpitBugEntity.this.getNavigation().stop();
+                return;
+            }
 
             if (SpitBugEntity.this.canSpitAt(target)) {
                 SpitBugEntity.this.getNavigation().stop();

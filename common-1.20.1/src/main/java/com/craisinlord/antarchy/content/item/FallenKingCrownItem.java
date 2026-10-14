@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.compat.item.ArmorDurability;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.google.common.collect.ImmutableMultimap;
 import java.util.List;
@@ -21,7 +22,7 @@ import net.minecraft.world.item.TooltipFlag;
 public final class FallenKingCrownItem extends ArmorItem {
 
     public FallenKingCrownItem(ArmorMaterial material, Properties properties) {
-        super(material, Type.HELMET, properties.stacksTo(1).durability(77));
+        super(material, Type.HELMET, properties.durability(ArmorDurability.forType(Type.HELMET, 7)));
     }
 
     @Override

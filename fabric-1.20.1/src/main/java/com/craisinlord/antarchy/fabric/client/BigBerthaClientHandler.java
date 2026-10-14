@@ -1,9 +1,10 @@
 package com.craisinlord.antarchy.fabric.client;
 
 import com.craisinlord.antarchy.content.item.BigBerthaItem;
+import com.craisinlord.antarchy.content.item.RoyalGuardianSwordItem;
 import com.craisinlord.antarchy.content.network.BigBerthaModeCyclePayload;
+import com.craisinlord.antarchy.content.network.RoyalGuardianSwordModeCyclePayload;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 
 public final class BigBerthaClientHandler {
@@ -22,7 +23,9 @@ public final class BigBerthaClientHandler {
             return;
         }
 
-        if (!(mc.player.getMainHandItem().getItem() instanceof BigBerthaItem)) {
+        boolean bigBertha = mc.player.getMainHandItem().getItem() instanceof BigBerthaItem;
+        boolean royalGuardianSword = mc.player.getMainHandItem().getItem() instanceof RoyalGuardianSwordItem;
+        if (!bigBertha && !royalGuardianSword) {
             lastUseDown = false;
             return;
         }
@@ -31,8 +34,9 @@ public final class BigBerthaClientHandler {
         if (useDown
                 && !lastUseDown
                 && mc.player.isShiftKeyDown()
-                && mc.player.getCooldowns().isOnCooldown(mc.player.getMainHandItem().getItem())) {
-            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.sendToServer(new BigBerthaModeCyclePayload(), BigBerthaModeCyclePayload.STREAM_CODEC, BigBerthaModeCyclePayload.TYPE);
+                ) {
+            if (bigBertha) com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.send(new BigBerthaModeCyclePayload());
+            else com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.send(new RoyalGuardianSwordModeCyclePayload());
         }
         lastUseDown = useDown;
     }

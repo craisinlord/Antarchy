@@ -9,6 +9,7 @@
     "entity.ParalyzedMobFreezeMixin",
     "infinity.AmendmentRareOresMixin",
     "infinity.ConfigGenInvocationMixin",
+    "infinity.ConfigGeneratorMixin",
     "infinity.PortalCreatorMixin",
     "infinity.PortalCreatorInvoker",
     "infinity.WarpLogicMixin"

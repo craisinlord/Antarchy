@@ -2,10 +2,8 @@ package com.craisinlord.antarchy.compat.item;
 
 import java.util.function.Function;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-/** NBT-backed stand-in for the 1.20.1 port of Minecraft's 1.20.5+ item components. */
 public final class AntarchyItemComponent<T> {
     private final String key;
     private final Function<CompoundTag, T> reader;
@@ -22,14 +20,22 @@ public final class AntarchyItemComponent<T> {
     }
 
     public T get(ItemStack stack) {
+        if (!this.has(stack)) {
+            return null;
+        }
         return this.reader.apply(stack.getTag());
     }
 
     public T getOrDefault(ItemStack stack, T fallback) {
-        return this.has(stack) ? this.get(stack) : fallback;
+        T value = this.get(stack);
+        return value != null ? value : fallback;
     }
 
     public void set(ItemStack stack, T value) {
+        if (value == null) {
+            this.remove(stack);
+            return;
+        }
         Object encoded = this.writer.apply(value);
         CompoundTag tag = stack.getOrCreateTag();
         if (encoded instanceof Integer integer) tag.putInt(this.key, integer);
@@ -49,7 +55,7 @@ public final class AntarchyItemComponent<T> {
         return new AntarchyItemComponent<>(key, tag -> tag.getInt(key), value -> value);
     }
 
-    public static <T> AntarchyItemComponent<T> marker(String key) {
-        return new AntarchyItemComponent<>(key, tag -> null, value -> true);
+    public static AntarchyItemComponent<net.minecraft.util.Unit> marker(String key) {
+        return new AntarchyItemComponent<>(key, tag -> net.minecraft.util.Unit.INSTANCE, value -> true);
     }
 }

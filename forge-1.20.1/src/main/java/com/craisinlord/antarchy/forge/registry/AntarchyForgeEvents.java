@@ -1,13 +1,14 @@
 package com.craisinlord.antarchy.forge.registry;
 
+import com.craisinlord.anthology.effect.AnthologyEffects;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.recipe.CustomBrewingRecipes;
-import com.craisinlord.antarchy.content.block.DuctTapeBlock;
 import com.craisinlord.antarchy.content.dispenser.RpoLauncherDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.SizeRayDispenseBehavior;
+import com.craisinlord.antarchy.content.dispenser.BugSprayDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.SquidzookaDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.WaterCannonDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.AntimetalMinecartDispenseBehavior;
@@ -19,18 +20,25 @@ import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
-import com.craisinlord.antarchy.content.entity.multipart.MultipartFramework;
+import com.craisinlord.antarchy.content.entity.vortex.VortexChargeProjectileEntity;
+import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
 import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
 import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.craisinlord.antarchy.content.item.*;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateGearHelper;
-import com.craisinlord.antarchy.content.movement.DreamSandLowGravityAccess;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.mixins.PoiTypesAccessor;
 import com.craisinlord.antarchy.content.portal.PermanentPortalManager;
+import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController;
+import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync;
 import com.craisinlord.antarchy.forge.AntarchyForgeFluidTypes;
-import com.craisinlord.antarchy.forge.entity.multipart.MultipartPartEntity;
-import com.craisinlord.antarchy.forge.network.AntarchyGravityNetworking;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -57,6 +65,8 @@ import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -67,14 +77,17 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fluids.FluidInteractionRegistry;
 import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
-import com.craisinlord.antarchy.content.time.TimeDilationManager;
 
 public final class AntarchyForgeEvents {
+    private static final double OVERHEAD_INVERSION_WARN_MS = 10.0D;
+    private static final long OVERHEAD_INVERSION_WARN_INTERVAL_TICKS = 100L;
+    private static long lastOverheadInversionWarnTick = Long.MIN_VALUE / 2L;
+
     private AntarchyForgeEvents() {}
 
     public static void register(IEventBus modEventBus) {
@@ -90,26 +103,27 @@ public final class AntarchyForgeEvents {
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleUltimateBowDamage);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleUltimateCrossbowDamage);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleNightmareArmorDoubleDamage);
+        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleBossMagicBurstMitigation);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleScorpionWhipAttackEntity);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleAttitudeAdjusterAttackEntity);
+        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handlePortalGunAttackEntity);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleScorpionWhipLeftClickBlock);
+        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handlePortalGunLeftClickBlock);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleScorpionWhipRightClickBlock);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleScorpionWhipRightClickItem);
+        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleGiantFryingPanRightClickItem);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleParalyzedAttackEntity);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleParalyzedLeftClickBlock);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleParalyzedRightClickBlock);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleParalyzedRightClickItem);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleParalyzedEntityInteract);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleParalyzedEntityInteractSpecific);
-        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleDreamSandJump);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickDreadAndIchor);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickScorpionWhips);
-        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickDreamSandLowGravity);
+        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickWormHooks);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickAttitudeAdjusterSlams);
-        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickTimeDilation);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleAntiwaterDamage);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleAntiwaterFall);
-        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleDreamSandFall);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleBloodCrystalBootsFall);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleBloodglassShield);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleBloodCrystalArmorEquip);
@@ -117,24 +131,24 @@ public final class AntarchyForgeEvents {
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleBloodglassWardRemoved);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleBloodglassWardExpired);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickBloodglassRecharge);
+        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickAntArrivals);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleBloodglassPlayerDeath);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleBloodglassRespawn);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleBloodglassLogin);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleCavarynHordeKill);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleCavarynHordeBlockBreak);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickCavarynHordes);
+        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickThoraxisUnderside);
         modEventBus.addListener(AntarchyForgeEvents::modifyEntityAttributes);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickOverheadInversion);
-        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickDuctTapeStickiness);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleDreadDeath);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleFallenKingCrownKill);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleDreadBedSleep);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleStartTracking);
-        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleDreamSandLogout);
-        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleTigerEyeLogin);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleTigerEyeLogout);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleTigerEyeDeath);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleTigerEyeRespawn);
+        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleTigerEyeLogin);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleTigerEyeDimensionChange);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::tickTigerEyeCamouflage);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::registerReloadListeners);
@@ -143,7 +157,23 @@ public final class AntarchyForgeEvents {
     }
 
     static void onVillagerTrades(VillagerTradesEvent event) {
-        if (event.getType() == VillagerProfession.FARMER) {
+        if (event.getType() == AntarchyForgeMisc.COMPUTER_SCIENTIST.get()) {
+            int[] slots = com.craisinlord.antarchy.content.entity.trades.ComputerScientistTradeManager.slotsPerLevel();
+            for (int level = 1; level <= slots.length; level++) {
+                for (int index = 0; index < slots[level - 1]; index++) {
+                    event.getTrades().computeIfAbsent(level, ignored -> new java.util.ArrayList<>())
+                            .add(com.craisinlord.antarchy.content.entity.trades.ComputerScientistTradeManager.listing(level, index));
+                }
+            }
+        } else if (event.getType() == AntarchyForgeMisc.PEST_CONTROL.get()) {
+            int[] slots = com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager.slotsPerLevel();
+            for (int level = 1; level <= slots.length; level++) {
+                for (int index = 0; index < slots[level - 1]; index++) {
+                    event.getTrades().computeIfAbsent(level, ignored -> new java.util.ArrayList<>())
+                            .add(com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager.listing(level, index));
+                }
+            }
+        } else if (event.getType() == VillagerProfession.FARMER) {
             event.getTrades().get(1).add(emeraldForItems(AntarchyObjects.CORN.get(), 20, 16, 2));
         } else if (event.getType() == VillagerProfession.BUTCHER) {
             event.getTrades().get(1).add(emeraldForItems(AntarchyObjects.COOKED_CORNDOG.get(), 5, 16, 2));
@@ -206,14 +236,21 @@ public final class AntarchyForgeEvents {
         for (ServerLevel level : event.getServer().getAllLevels()) {
             CavarynHordeManager.tick(level);
             com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
+            com.craisinlord.antarchy.content.entity.glimmer.GlimmerNightSpawner.tick(level);
+            com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature.tickPendingSpawns(level);
         }
     }
 
-    @net.minecraftforge.eventbus.api.SubscribeEvent
-    static void tickTimeDilation(TickEvent.ServerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            TimeDilationManager.tickServer(event.getServer());
+    static void tickThoraxisUnderside(TickEvent.ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        for (ServerLevel level : event.getServer().getAllLevels()) {
+            ThoraxisUndersideManager.tick(level);
         }
+    }
+
+    static void tickAntArrivals(TickEvent.ServerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.tick(event.getServer());
     }
 
     private static int badOmenLevel(Player player) {
@@ -268,75 +305,56 @@ public final class AntarchyForgeEvents {
 
     static void registerReloadListeners(AddReloadListenerEvent event) {
         event.addListener(new DrTrayaurusTradeManager());
+        event.addListener(new com.craisinlord.antarchy.content.entity.trades.ComputerScientistTradeManager());
+        event.addListener(new com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager());
     }
-    static void handleDreamSandLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-        clearDreamSandLowGravity(event.getEntity());
-    }
-    private static void clearDreamSandLowGravity(LivingEntity livingEntity) {
-        DreamSandLowGravityAccess access = dreamSandAccess(livingEntity);
-        access.antarchy$setDreamSandLowGravityActive(false);
-        access.antarchy$setDreamSandLowGravityTicksRemaining(0);
-        access.antarchy$setDreamSandLandingGraceTicks(0);
-    }
-    private static DreamSandLowGravityAccess dreamSandAccess(LivingEntity livingEntity) {
-        return (DreamSandLowGravityAccess) livingEntity;
-    }
-
     static void handleStartTracking(PlayerEvent.StartTracking event) {
         if (event.getTarget().level().isClientSide()) {
             return;
         }
 
-        AntarchyGravityNetworking.syncEntity(event.getTarget());
-        if (event.getTarget() instanceof com.craisinlord.antarchy.content.time.TimeDilationEntityAccess access
-                && event.getEntity() instanceof ServerPlayer trackingPlayer) {
-            com.craisinlord.antarchy.forge.network.AntarchyTimeDilationNetworking.syncRateToPlayer(
-                    trackingPlayer, event.getTarget(), access.antarchy$getTimeDilationRate()
-            );
-        }
         if (event.getTarget() instanceof ServerPlayer trackedPlayer && event.getEntity() instanceof ServerPlayer trackingPlayer) {
-            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.syncTo(trackingPlayer, trackedPlayer);
-        }
-    }
-
-    static void handleTigerEyeLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
-            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.sync(player);
+            TigerEyeCamouflageSync.syncTo(trackingPlayer, trackedPlayer);
         }
     }
 
     static void handleTigerEyeLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController.deactivate(player, false);
+            TigerEyeCamouflageController.deactivate(player, false);
         }
     }
 
     static void handleTigerEyeDeath(LivingDeathEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController.deactivate(player, false);
-            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.sync(player);
+            TigerEyeCamouflageController.deactivate(player, false);
+            TigerEyeCamouflageSync.sync(player);
         }
     }
 
     static void handleTigerEyeRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController.deactivate(player, false);
-            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.sync(player);
+            TigerEyeCamouflageController.deactivate(player, false);
+            TigerEyeCamouflageSync.sync(player);
+        }
+    }
+
+    static void handleTigerEyeLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            TigerEyeCamouflageSync.sync(player);
         }
     }
 
     static void handleTigerEyeDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController.deactivate(player, false);
-            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.sync(player);
+            TigerEyeCamouflageController.deactivate(player, false);
+            TigerEyeCamouflageSync.sync(player);
         }
     }
 
     static void tickTigerEyeCamouflage(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
-        if (event.player instanceof ServerPlayer player
-                && com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController.validateOrDeactivate(player)) {
-            com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync.sync(player);
+        if (event.player instanceof ServerPlayer player && TigerEyeCamouflageController.validateOrDeactivate(player)) {
+            TigerEyeCamouflageSync.sync(player);
         }
     }
 
@@ -346,11 +364,13 @@ public final class AntarchyForgeEvents {
         if (!event.getEntity().hasEffect(AntarchyForgeMisc.DREAD.get())) {
             return;
         }
-        Player player = event.getEntity();
-        player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.antarchy.dread_too_scared_to_sleep"), true);
+        event.getEntity().displayClientMessage(net.minecraft.network.chat.Component.translatable("message.antarchy.dread_too_scared_to_sleep"), true);
         event.setResult(net.minecraft.world.entity.player.Player.BedSleepingProblem.OTHER_PROBLEM);
 
-        if (!(player.level() instanceof net.minecraft.server.level.ServerLevel level)) return;
+        if (!(event.getEntity().level() instanceof net.minecraft.server.level.ServerLevel level)) {
+            return;
+        }
+        Player player = event.getEntity();
         long gameTime = level.getGameTime();
         long nextSpawnTime = player.getPersistentData().getLong(DREAD_BED_BUG_NEXT_SPAWN_KEY);
         if (nextSpawnTime > gameTime) {
@@ -399,15 +419,8 @@ public final class AntarchyForgeEvents {
         event.setResult(net.minecraftforge.eventbus.api.Event.Result.DENY);
     }
 
-    static void tickDuctTapeStickiness(LivingEvent.LivingTickEvent event) {
-        if (DuctTapeBlock.shouldTickStuckEntity(event.getEntity())) {
-            DuctTapeBlock.tickStuckEntity(event.getEntity());
-        }
-    }
-
     static void handleDreadDeath(LivingDeathEvent event) {
         LivingEntity entity = event.getEntity();
-        clearDreamSandLowGravity(entity);
         if (!entity.hasEffect(AntarchyForgeMisc.DREAD.get())) {
             return;
         }
@@ -433,6 +446,9 @@ public final class AntarchyForgeEvents {
     }
 
     private static final int ANTIMETAL_INVERTED_REFRESH_TICKS = 20;
+    private static final int ANTIMETAL_INVERTED_REFRESH_THRESHOLD_TICKS = 12;
+    private static final int ANTIMETAL_PLAYER_SCAN_INTERVAL_TICKS = 2;
+    private static final int ANTIMETAL_MOB_SCAN_INTERVAL_TICKS = 10;
 
     static void tickOverheadInversion(LivingEvent.LivingTickEvent event) {
         LivingEntity livingEntity = event.getEntity();
@@ -442,15 +458,45 @@ public final class AntarchyForgeEvents {
         if (livingEntity instanceof Player player && player.isSpectator()) {
             return;
         }
-        if (!isDirectlyBelowAntimetal(livingEntity)) {
+
+        MobEffectInstance existingInverted = livingEntity.getEffect(AnthologyEffects.inverted());
+        long gameTime = livingEntity.level().getGameTime();
+        if (!shouldScanOverheadAntimetal(livingEntity, existingInverted, gameTime)) {
             return;
         }
 
-        MobEffectInstance existingInverted = livingEntity.getEffect(AntarchyForgeMisc.INVERTED.get());
-        if (existingInverted == null || existingInverted.getDuration() <= 5) {
-            livingEntity.addEffect(new MobEffectInstance(AntarchyForgeMisc.INVERTED.get(), ANTIMETAL_INVERTED_REFRESH_TICKS, 0, false, false, false));
+        long startNanos = System.nanoTime();
+        boolean directlyBelowAntimetal = isDirectlyBelowAntimetal(livingEntity);
+        double elapsedMs = (System.nanoTime() - startNanos) / 1_000_000.0D;
+        if (elapsedMs >= OVERHEAD_INVERSION_WARN_MS
+                && gameTime - lastOverheadInversionWarnTick >= OVERHEAD_INVERSION_WARN_INTERVAL_TICKS) {
+            lastOverheadInversionWarnTick = gameTime;
+            Antarchy.LOGGER.warn(
+                    "[antarchy-gravity] slow overhead antimetal scan targetType={} uuid={} pos=({}, {}, {}) dim={} elapsedMs={} inverted={} forced={} gameTime={}",
+                    livingEntity.getType(), livingEntity.getUUID(), livingEntity.getX(), livingEntity.getY(), livingEntity.getZ(),
+                    livingEntity.level().dimension().location(), elapsedMs,
+                    com.craisinlord.anthology.gravity.GravityApi.isGravityInverted(livingEntity),
+                    com.craisinlord.anthology.gravity.GravityApi.isGravityForced(livingEntity),
+                    gameTime
+            );
+        }
+        if (!directlyBelowAntimetal) {
+            return;
+        }
+
+        if (existingInverted == null || existingInverted.getDuration() <= ANTIMETAL_INVERTED_REFRESH_THRESHOLD_TICKS) {
+            livingEntity.addEffect(new MobEffectInstance(AnthologyEffects.inverted(), ANTIMETAL_INVERTED_REFRESH_TICKS, 0, false, false, false));
             spawnAntimetalInversionParticles(livingEntity);
         }
+    }
+
+    private static boolean shouldScanOverheadAntimetal(LivingEntity entity, MobEffectInstance existingInverted, long gameTime) {
+        if (existingInverted != null && existingInverted.getDuration() <= ANTIMETAL_INVERTED_REFRESH_THRESHOLD_TICKS) {
+            return true;
+        }
+        int interval = entity instanceof Player ? ANTIMETAL_PLAYER_SCAN_INTERVAL_TICKS : ANTIMETAL_MOB_SCAN_INTERVAL_TICKS;
+        long phase = (long) entity.getUUID().hashCode() + gameTime;
+        return Math.floorMod(phase, interval) == 0L;
     }
 
     private static boolean isInOrBelowAntimetalScaffolding(LivingEntity entity) {
@@ -485,18 +531,16 @@ public final class AntarchyForgeEvents {
 
         int minX = net.minecraft.util.Mth.floor(bounds.minX);
         int maxX = net.minecraft.util.Mth.floor(bounds.maxX);
-        int minY = net.minecraft.util.Mth.floor(bounds.minY);
         int maxY = net.minecraft.util.Mth.floor(bounds.maxY);
         int minZ = net.minecraft.util.Mth.floor(bounds.minZ);
         int maxZ = net.minecraft.util.Mth.floor(bounds.maxZ);
 
+        net.minecraft.core.BlockPos.MutableBlockPos crystalPos = new net.minecraft.core.BlockPos.MutableBlockPos();
         for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; y <= maxY; y++) {
-                for (int z = minZ; z <= maxZ; z++) {
-                    net.minecraft.core.BlockPos crystalPos = new net.minecraft.core.BlockPos(x, y + 1, z);
-                    if (entity.level().getBlockState(crystalPos).is(AntarchyTags.Blocks.ANTIMETAL_INVERSION_BLOCKS)) {
-                        return true;
-                    }
+            for (int z = minZ; z <= maxZ; z++) {
+                crystalPos.set(x, maxY + 1, z);
+                if (entity.level().getBlockState(crystalPos).is(com.craisinlord.antarchy.content.AntarchyTags.Blocks.ANTIMETAL_INVERSION_BLOCKS)) {
+                    return true;
                 }
             }
         }
@@ -600,9 +644,7 @@ public final class AntarchyForgeEvents {
                         - access.antarchy$getArmorShieldsActive() - access.antarchy$getArmorShieldLostCount())
         );
         int currentCap = access.antarchy$getAppleShieldsActive() + access.antarchy$getAppleShieldLostCount();
-        // Only grant newly-added capacity (e.g. first application, or a higher amplifier).
-        // A mere duration refresh of an already-active ward must not reset shields that are
-        // already lost, nor restart their recharge timer.
+
         if (targetCap > currentCap) {
             access.antarchy$setAppleShieldsActive(access.antarchy$getAppleShieldsActive() + (targetCap - currentCap));
             syncBloodglass((ServerPlayer) player);
@@ -681,8 +723,8 @@ public final class AntarchyForgeEvents {
         if (changed && player instanceof ServerPlayer sp) {
             syncBloodglass(sp);
             sp.playNotifySound(
-                    net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_CHIME,
-                    net.minecraft.sounds.SoundSource.PLAYERS, 0.6f, 1.6f);
+                    AntarchySoundEvents.BLOODGLASS_WARD_HEART_REGEN.get(),
+                    net.minecraft.sounds.SoundSource.PLAYERS, 1.0f, 1.0f);
         }
     }
     static void handleBloodCrystalArmorEquip(LivingEquipmentChangeEvent event) {
@@ -701,7 +743,7 @@ public final class AntarchyForgeEvents {
         BloodglassAccess access = (BloodglassAccess) player;
 
         if (fromIsBC && !toIsBC) {
-            // Unequipped BC armor, remove one shield slot
+
             if (access.antarchy$getArmorShieldsActive() > 0) {
                 access.antarchy$setArmorShieldsActive(access.antarchy$getArmorShieldsActive() - 1);
             } else if (access.antarchy$getArmorShieldLostCount() > 0) {
@@ -711,7 +753,7 @@ public final class AntarchyForgeEvents {
                 }
             }
         } else if (!fromIsBC && toIsBC) {
-            // Newly equipped BC armor,only add if not already accounted for (by respawn init)
+
             int bcPieces = countBCArmorPieces(player);
             int currentTotal = access.antarchy$getArmorShieldsActive() + access.antarchy$getArmorShieldLostCount();
             if (currentTotal < bcPieces) {
@@ -719,8 +761,7 @@ public final class AntarchyForgeEvents {
                 access.antarchy$setArmorRechargeTimer(AntarchySettings.bloodCrystalArmorShieldRechargeTicks());
             }
         } else if (fromIsBC) {
-            // BC armor replaced with another BC armor (or same after re-equip sequence)
-            // Remove old shield, start recharging new one and reset timer
+
             if (access.antarchy$getArmorShieldsActive() > 0) {
                 access.antarchy$setArmorShieldsActive(access.antarchy$getArmorShieldsActive() - 1);
             } else if (access.antarchy$getArmorShieldLostCount() > 0) {
@@ -747,12 +788,12 @@ public final class AntarchyForgeEvents {
 
     static void handleBloodCrystalBootsFall(LivingFallEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
-        if (!com.craisinlord.antarchy.content.gravity.AntarchyGravityApi.isGravityInverted(player)) return;
-        if (!(player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.FEET).getItem() instanceof BloodCrystalArmorItem)) return;
+        if (!com.craisinlord.anthology.gravity.GravityApi.isGravityInverted(player)) return;
+        if (com.craisinlord.antarchy.content.enchantment.AntarchyEnchantments.featherRisingLevel(player) <= 0) return;
         event.setCanceled(true);
     }
 
-    static void handleBloodglassShield(LivingHurtEvent event) {
+    static void handleBloodglassShield(LivingAttackEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
         if (player.level().isClientSide()) return;
 
@@ -764,7 +805,6 @@ public final class AntarchyForgeEvents {
         int totalActive = access.antarchy$getTotalShieldsActive();
         if (totalActive <= 0) return;
 
-        // Consume apple shields first, then armor shields
         if (access.antarchy$getAppleShieldsActive() > 0) {
             access.antarchy$setAppleShieldsActive(access.antarchy$getAppleShieldsActive() - 1);
             access.antarchy$setAppleShieldLostCount(access.antarchy$getAppleShieldLostCount() + 1);
@@ -786,7 +826,7 @@ public final class AntarchyForgeEvents {
         serverLevel.broadcastEntityEvent(player, (byte) 2);
 
         serverLevel.playSound(null, player.blockPosition(),
-                net.minecraft.sounds.SoundEvents.GLASS_BREAK,
+                AntarchySoundEvents.BLOODGLASS_WARD_HEART_BREAK.get(),
                 net.minecraft.sounds.SoundSource.PLAYERS, 1.0f, 1.0f);
 
         serverLevel.sendParticles(
@@ -811,8 +851,6 @@ public final class AntarchyForgeEvents {
             return;
         }
 
-        // Shared item code now scales arrow base damage directly so attribute and projectile
-        // modifiers stay in the damage pipeline. Leave non-player hits untouched here.
     }
 
     static void handleUltimateCrossbowDamage(LivingHurtEvent event) {
@@ -821,9 +859,8 @@ public final class AntarchyForgeEvents {
         }
     }
 
-
-
     static void handleNightmareArmorDoubleDamage(LivingHurtEvent event) {
+        if (com.craisinlord.antarchy.content.item.RoyalGuardianSwordAbilities.isApplyingSecondaryDamage()) return;
         net.minecraft.world.damagesource.DamageSource source = event.getSource();
         if (!(source.getEntity() instanceof net.minecraft.world.entity.LivingEntity attacker)) return;
         if (!attacker.getAttributes().hasAttribute(AntarchyForgeMisc.DOUBLE_DAMAGE_CHANCE.get())) return;
@@ -844,7 +881,39 @@ public final class AntarchyForgeEvents {
         }
     }
 
-    static void handleAntiwaterDamage(LivingHurtEvent event) {
+    static void handleBossMagicBurstMitigation(LivingHurtEvent event) {
+        LivingEntity boss = event.getEntity();
+        if (!boss.getType().is(AntarchyTags.Entities.SPELL_RESISTANT_BOSS)) return;
+        if (!com.craisinlord.antarchy.content.boss.BossCombatUtil.isMagicBurstSource(event.getSource())) return;
+
+        float maxHealth = boss.getMaxHealth();
+        float amount = event.getAmount();
+
+        float perHitCap = maxHealth * (float) AntarchySettings.bossMagicPerHitCapFraction();
+        if (amount > perHitCap) {
+            amount = perHitCap;
+        }
+
+        float windowCap = maxHealth * (float) AntarchySettings.bossMagicWindowCapFraction();
+        float remainingBudget = com.craisinlord.antarchy.content.boss.BossCombatUtil.remainingWindowBudget(boss, windowCap);
+        boolean breachedWindow = amount > remainingBudget;
+        if (breachedWindow) {
+            amount = Math.max(0.0F, remainingBudget);
+        }
+
+        com.craisinlord.antarchy.content.boss.BossCombatUtil.trackMagicBurstWindow(boss, amount, AntarchySettings.bossMagicWindowTicks());
+
+        if (breachedWindow) {
+            int breaches = com.craisinlord.antarchy.content.boss.BossCombatUtil.recordMagicWindowBreach(boss);
+            if (breaches >= AntarchySettings.bossMagicWardTriggerBreaches()) {
+                com.craisinlord.antarchy.content.boss.BossCombatUtil.triggerMagicWard(boss, AntarchySettings.bossMagicWardDurationTicks());
+            }
+        }
+
+        event.setAmount(amount);
+    }
+
+    static void handleAntiwaterDamage(LivingAttackEvent event) {
         if (!event.getSource().is(DamageTypes.FALL)) {
             return;
         }
@@ -884,11 +953,25 @@ public final class AntarchyForgeEvents {
         AttitudeAdjusterSlamManager.markSpecialHit(player);
     }
 
+    static void handlePortalGunAttackEntity(AttackEntityEvent event) {
+        if (event.getEntity().getMainHandItem().getItem() instanceof com.craisinlord.antarchy.content.item.PortalGunItem
+                || event.getEntity().getOffhandItem().getItem() instanceof com.craisinlord.antarchy.content.item.PortalGunItem) {
+            event.setCanceled(true);
+        }
+    }
+
     static void handleScorpionWhipLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
         if (!(player.getMainHandItem().getItem() instanceof ScorpionWhipItem) || !ScorpionWhipTetherManager.hasTether(player)) {
+            return;
+        }
+        event.setCanceled(true);
+    }
+
+    static void handlePortalGunLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+        if (!(event.getEntity().getMainHandItem().getItem() instanceof com.craisinlord.antarchy.content.item.PortalGunItem)) {
             return;
         }
         event.setCanceled(true);
@@ -907,6 +990,14 @@ public final class AntarchyForgeEvents {
         if (ScorpionWhipTetherManager.pullAndDetach(player)) {
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.SUCCESS);
+        }
+    }
+
+    static void handleGiantFryingPanRightClickItem(PlayerInteractEvent.RightClickItem event) {
+        InteractionResult result = com.craisinlord.antarchy.content.item.GiantFryingPanItem.handleMainHandUse(event.getLevel(), event.getEntity(), event.getHand());
+        if (result != InteractionResult.PASS) {
+            event.setCanceled(true);
+            event.setCancellationResult(result);
         }
     }
 
@@ -970,24 +1061,6 @@ public final class AntarchyForgeEvents {
         return player.hasEffect(AntarchyForgeMisc.PARALYZED.get());
     }
 
-    static void handleDreamSandJump(LivingEvent.LivingJumpEvent event) {
-        LivingEntity livingEntity = event.getEntity();
-        if (!AntarchySettings.dreamSandEnabled() || isDreamSandLowGravityBlacklisted(livingEntity)) {
-            clearDreamSandLowGravity(livingEntity);
-        } else if (isStandingOnDreamSand(livingEntity)) {
-            livingEntity.setDeltaMovement(
-                    livingEntity.getDeltaMovement().x,
-                    livingEntity.getDeltaMovement().y * AntarchySettings.dreamSandJumpVelocityMultiplier(),
-                    livingEntity.getDeltaMovement().z
-            );
-            DreamSandLowGravityAccess access = dreamSandAccess(livingEntity);
-            access.antarchy$setDreamSandLowGravityActive(true);
-            access.antarchy$setDreamSandLowGravityTicksRemaining((int) Math.max(1L, Math.round(AntarchySettings.dreamSandEffectDurationSeconds() * 20.0D)));
-            access.antarchy$setDreamSandLandingGraceTicks(0);
-        }
-
-    }
-
     static void tickDreadAndIchor(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         Player player = event.player;
@@ -1006,54 +1079,18 @@ public final class AntarchyForgeEvents {
         }
     }
 
+    static void tickWormHooks(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        if (event.player instanceof ServerPlayer player) {
+            com.craisinlord.antarchy.content.item.WormHookTetherManager.tick(player);
+        }
+    }
+
     static void tickAttitudeAdjusterSlams(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         for (ServerLevel level : event.getServer().getAllLevels()) {
             AttitudeAdjusterSlamManager.tick(level);
         }
-    }
-
-    static void tickDreamSandLowGravity(LivingEvent.LivingTickEvent event) {
-        LivingEntity livingEntity = event.getEntity();
-
-        DreamSandLowGravityAccess access = dreamSandAccess(livingEntity);
-        int landingGraceTicks = access.antarchy$getDreamSandLandingGraceTicks();
-        if (landingGraceTicks > 0) {
-            access.antarchy$setDreamSandLandingGraceTicks(landingGraceTicks - 1);
-        }
-
-        if (!AntarchySettings.dreamSandEnabled() || isDreamSandLowGravityBlacklisted(livingEntity) || !access.antarchy$isDreamSandLowGravityActive()) {
-            return;
-        }
-
-        int remainingTicks = access.antarchy$getDreamSandLowGravityTicksRemaining();
-        if (remainingTicks > 0) {
-            access.antarchy$setDreamSandLowGravityTicksRemaining(remainingTicks - 1);
-        }
-        if (access.antarchy$getDreamSandLowGravityTicksRemaining() <= 0) {
-            clearDreamSandLowGravity(livingEntity);
-            return;
-        }
-
-        if (isOnSolidGround(livingEntity)) {
-            access.antarchy$setDreamSandLowGravityActive(false);
-            access.antarchy$setDreamSandLowGravityTicksRemaining(0);
-            access.antarchy$setDreamSandLandingGraceTicks(2);
-        } else if (!livingEntity.onGround() && livingEntity.getDeltaMovement().y < 0.0D) {
-            livingEntity.setDeltaMovement(
-                    livingEntity.getDeltaMovement().x,
-                    livingEntity.getDeltaMovement().y * AntarchySettings.dreamSandGravityMultiplier(),
-                    livingEntity.getDeltaMovement().z
-            );
-        }
-    }
-
-    private static boolean isOnSolidGround(LivingEntity livingEntity) {
-        return livingEntity.onGround() && livingEntity.getBlockStateOn().blocksMotion();
-    }
-
-    private static boolean isStandingOnDreamSand(LivingEntity livingEntity) {
-        return livingEntity.level().getBlockState(livingEntity.getOnPosLegacy()).is(AntarchyForgeBlocks.DREAM_SAND.get());
     }
 
     static void handleAntiwaterFall(LivingFallEvent event) {
@@ -1062,23 +1099,6 @@ public final class AntarchyForgeEvents {
             event.setCanceled(true);
         }
     }
-
-    static void handleDreamSandFall(LivingFallEvent event) {
-        LivingEntity livingEntity = event.getEntity();
-        DreamSandLowGravityAccess access = dreamSandAccess(livingEntity);
-        if (!AntarchySettings.dreamSandEnabled()
-                || isDreamSandLowGravityBlacklisted(livingEntity)
-                || (!access.antarchy$isDreamSandLowGravityActive() && access.antarchy$getDreamSandLandingGraceTicks() <= 0)) {
-            return;
-        }
-
-        event.setCanceled(true);
-    }
-
-    private static boolean isDreamSandLowGravityBlacklisted(LivingEntity livingEntity) {
-        return livingEntity.getType().is(AntarchyTags.Entities.DREAM_SAND_LOW_GRAVITY_BLACKLIST);
-    }
-
 
     private static boolean intersectsAntiwater(Entity entity, AABB box) {
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
@@ -1100,10 +1120,10 @@ public final class AntarchyForgeEvents {
 
     static void onInvertedEffectExpired(MobEffectEvent.Expired event) {
         if (event.getEffectInstance() == null) return;
-        if (event.getEffectInstance().getEffect() != AntarchyForgeMisc.INVERTED.get()) return;
+        if (event.getEffectInstance().getEffect() != AnthologyEffects.inverted()) return;
         LivingEntity entity = event.getEntity();
         if (!entity.level().isClientSide()) {
-            com.craisinlord.antarchy.content.gravity.AntarchyMountedGravityHelper.syncConnectedStackIgnoring(entity, entity);
+            com.craisinlord.anthology.gravity.MountedGravityHelper.syncConnectedStackIgnoring(entity, entity);
             if (entity instanceof Player player) {
                 notifyNearbyReveriesOfInversionChange(player);
             }
@@ -1120,22 +1140,7 @@ public final class AntarchyForgeEvents {
     }
 
     private static void addPotionMix(net.minecraft.world.item.alchemy.Potion input, Item ingredient, net.minecraft.world.item.alchemy.Potion output) {
-        net.minecraftforge.common.brewing.BrewingRecipeRegistry.addRecipe(new net.minecraftforge.common.brewing.IBrewingRecipe() {
-            @Override
-            public boolean isInput(ItemStack stack) {
-                return stack.is(Items.POTION) && net.minecraft.world.item.alchemy.PotionUtils.getPotion(stack) == input;
-            }
-
-            @Override
-            public boolean isIngredient(ItemStack stack) {
-                return stack.is(ingredient);
-            }
-
-            @Override
-            public ItemStack getOutput(ItemStack input1, ItemStack ingredient1) {
-                return net.minecraft.world.item.alchemy.PotionUtils.setPotion(new ItemStack(input1.getItem()), output);
-            }
-        });
+        com.craisinlord.antarchy.mixins.PotionBrewingInvoker.antarchy$addMix(input, ingredient, output);
     }
 
     static void registerBrewingRecipes() {
@@ -1191,8 +1196,8 @@ public final class AntarchyForgeEvents {
         addPotionMix(AntarchyForgeMisc.PARALYSIS.get(), Items.REDSTONE, AntarchyForgeMisc.LONG_PARALYSIS.get());
         addPotionMix(Potions.AWKWARD, AntarchyForgeItems.MOLEWORM_ITEM.get(), AntarchyForgeMisc.HASTE.get());
         addPotionMix(AntarchyForgeMisc.HASTE.get(), Items.GLOWSTONE_DUST, AntarchyForgeMisc.STRONG_HASTE.get());
-        addPotionMix(Potions.AWKWARD, AntarchyForgeItems.CLOUD_SHARK_FIN.get(), Potions.SLOW_FALLING);
-        addPotionMix(Potions.AWKWARD, AntarchyForgeItems.JUMPY_BUG_LEG.get(), Potions.LEAPING);
+        addPotionMix(Potions.AWKWARD, AntarchyForgeItems.STRATOSHARK_FIN.get(), Potions.SLOW_FALLING);
+        addPotionMix(Potions.AWKWARD, AntarchyForgeItems.SPRINGBUG_LEG.get(), Potions.LEAPING);
         addPotionMix(Potions.AWKWARD, AntarchyForgeItems.CORNEA_EAR.get(), Potions.NIGHT_VISION);
         addPotionMix(Potions.AWKWARD, AntarchyForgeItems.URANIUM_NUGGET.get(), AntarchyForgeMisc.SHRINKING.get());
         addPotionMix(AntarchyForgeMisc.SHRINKING.get(), Items.GLOWSTONE_DUST, AntarchyForgeMisc.STRONG_SHRINKING.get());
@@ -1200,8 +1205,13 @@ public final class AntarchyForgeEvents {
         addPotionMix(Potions.AWKWARD, AntarchyForgeItems.TITANIUM_NUGGET.get(), AntarchyForgeMisc.GROWING.get());
         addPotionMix(AntarchyForgeMisc.GROWING.get(), Items.GLOWSTONE_DUST, AntarchyForgeMisc.STRONG_GROWING.get());
         addPotionMix(AntarchyForgeMisc.STRONG_GROWING.get(), Items.GLOWSTONE_DUST, AntarchyForgeMisc.EXTREME_GROWING.get());
+        addPotionMix(Potions.AWKWARD, AntarchyForgeItems.KING_SCALE.get(), AntarchyForgeMisc.COMMAND.get());
+        addPotionMix(AntarchyForgeMisc.COMMAND.get(), Items.REDSTONE, AntarchyForgeMisc.LONG_COMMAND.get());
         addPotionMix(Potions.AWKWARD, AntarchyForgeItems.QUEEN_SCALE.get(), AntarchyForgeMisc.TIME_DILATION.get());
         addPotionMix(AntarchyForgeMisc.TIME_DILATION.get(), Items.GLOWSTONE_DUST, AntarchyForgeMisc.LONG_TIME_DILATION.get());
+        addPotionMix(AntarchyForgeMisc.TIME_DILATION.get(), Items.FERMENTED_SPIDER_EYE, AntarchyForgeMisc.TIME_CONTRACTION.get());
+        addPotionMix(AntarchyForgeMisc.TIME_CONTRACTION.get(), Items.GLOWSTONE_DUST, AntarchyForgeMisc.LONG_TIME_CONTRACTION.get());
+
     }
 
     static void onMobEffectApplicable(MobEffectEvent.Applicable event) {
@@ -1215,7 +1225,7 @@ public final class AntarchyForgeEvents {
         }
 
         if (event.getEntity().getType().is(AntarchyTags.Entities.INVERTED_IMMUNE)
-                && event.getEffectInstance().getEffect() == AntarchyForgeMisc.INVERTED.get()) {
+                && event.getEffectInstance().getEffect() == AnthologyEffects.inverted()) {
             event.setResult(net.minecraftforge.eventbus.api.Event.Result.DENY);
             return;
         }
@@ -1233,18 +1243,17 @@ public final class AntarchyForgeEvents {
         }
 
         if (event.getEntity() instanceof Player player
-                && event.getEffectInstance().getEffect() == AntarchyForgeMisc.INVERTED.get()
-                && !player.hasEffect(AntarchyForgeMisc.INVERTED.get())) {
+                && event.getEffectInstance().getEffect() == AnthologyEffects.inverted()
+                && !player.hasEffect(AnthologyEffects.inverted())) {
             notifyNearbyReveriesOfInversionChange(player);
         }
     }
 
-
     static void onInvertedEffectRemoved(MobEffectEvent.Remove event) {
-        if (event.getEffect() != AntarchyForgeMisc.INVERTED.get()) return;
+        if (event.getEffect() != AnthologyEffects.inverted()) return;
         LivingEntity entity = event.getEntity();
         if (!entity.level().isClientSide()) {
-            com.craisinlord.antarchy.content.gravity.AntarchyMountedGravityHelper.syncConnectedStackIgnoring(entity, entity);
+            com.craisinlord.anthology.gravity.MountedGravityHelper.syncConnectedStackIgnoring(entity, entity);
             if (entity instanceof Player player) {
                 notifyNearbyReveriesOfInversionChange(player);
             }
@@ -1252,7 +1261,7 @@ public final class AntarchyForgeEvents {
     }
 
     static void handleBlockToolModification(BlockEvent.BlockToolModificationEvent event) {
-        if (event.getToolAction() != net.minecraftforge.common.ToolActions.AXE_STRIP) {
+        if (event.getToolAction() != ToolActions.AXE_STRIP) {
             return;
         }
 
@@ -1288,18 +1297,52 @@ public final class AntarchyForgeEvents {
 
         if (state.is(AntarchyForgeBlocks.PEACH_WOOD.get())) {
             event.setFinalState(AntarchyForgeBlocks.STRIPPED_PEACH_WOOD.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)));
+            return;
+        }
+
+        if (state.is(AntarchyForgeBlocks.NADIR_LOG.get())) {
+            event.setFinalState(AntarchyForgeBlocks.STRIPPED_NADIR_LOG.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)));
+            return;
+        }
+
+        if (state.is(AntarchyForgeBlocks.NADIR_WOOD.get())) {
+            event.setFinalState(AntarchyForgeBlocks.STRIPPED_NADIR_WOOD.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)));
+            return;
+        }
+
+        if (state.is(AntarchyForgeBlocks.ROYAL_LOG.get())) {
+            event.setFinalState(AntarchyForgeBlocks.STRIPPED_ROYAL_LOG.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)));
+            return;
+        }
+
+        if (state.is(AntarchyForgeBlocks.ROYAL_WOOD.get())) {
+            event.setFinalState(AntarchyForgeBlocks.STRIPPED_ROYAL_WOOD.get().defaultBlockState().setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS)));
         }
     }
 
     static void onCommonSetup(FMLCommonSetupEvent event) {
         BloodCrystalShardItem.SYNC_BLOODGLASS = AntarchyForgeEvents::syncBloodglass;
+        if (com.craisinlord.antarchy.compat.infinity.InfinityCompat.get().isAvailable()) {
+            com.craisinlord.antarchy.compat.infinity.InfinityConfigRefresh.refreshIfStale(net.minecraftforge.fml.loading.FMLPaths.CONFIGDIR.get());
+        }
         event.enqueueWork(() -> {
+            Holder<net.minecraft.world.entity.ai.village.poi.PoiType> computerPoi = BuiltInRegistries.POINT_OF_INTEREST_TYPE.getHolderOrThrow(
+                    net.minecraft.resources.ResourceKey.create(Registries.POINT_OF_INTEREST_TYPE,
+                            new net.minecraft.resources.ResourceLocation(Antarchy.MODID, "computer")));
+            net.minecraft.world.level.block.Block computerBlock = com.craisinlord.antos.forge.AntOSForgeContent.COMPUTER.get();
+            for (net.minecraft.world.level.block.state.BlockState state : computerBlock.getStateDefinition().getPossibleStates()) {
+                PoiTypesAccessor.antarchy$getTypeByState().put(state, computerPoi);
+            }
+
             registerBrewingRecipes();
             DispenserBlock.registerBehavior(AntarchyForgeItems.SHRINK_RAY.get(), new SizeRayDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyForgeItems.GROWTH_RAY.get(), new SizeRayDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyForgeItems.SQUIDZOOKA.get(), new SquidzookaDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyForgeItems.RPO_LAUNCHER.get(), new RpoLauncherDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyForgeItems.WATER_CANNON.get(), new WaterCannonDispenseBehavior());
+            DispenserBlock.registerBehavior(AntarchyForgeItems.VORTEX_CHARGE.get(), new com.craisinlord.antarchy.content.dispenser.VortexChargeDispenseBehavior());
+            DispenserBlock.registerBehavior(AntarchyForgeItems.EYE_OF_THE_STORM.get(), new com.craisinlord.antarchy.content.dispenser.EyeOfTheStormDispenseBehavior());
+            DispenserBlock.registerBehavior(AntarchyForgeItems.BUG_SPRAY.get(), new BugSprayDispenseBehavior());
             AntimetalMinecartDispenseBehavior antimetalMinecartDispenseBehavior = new AntimetalMinecartDispenseBehavior();
             DispenserBlock.registerBehavior(Items.MINECART, antimetalMinecartDispenseBehavior);
             DispenserBlock.registerBehavior(Items.CHEST_MINECART, antimetalMinecartDispenseBehavior);
@@ -1308,7 +1351,7 @@ public final class AntarchyForgeEvents {
             DispenserBlock.registerBehavior(Items.HOPPER_MINECART, antimetalMinecartDispenseBehavior);
             DispenserBlock.registerBehavior(Items.COMMAND_BLOCK_MINECART, antimetalMinecartDispenseBehavior);
             LucidEyeProjectileEntity.defaultItemSupplier = () -> AntarchyForgeItems.LUCID_PEARL.get();
-            LucidEntity.invertedEffectSupplier = () -> AntarchyForgeMisc.INVERTED.get();
+            LucidEntity.invertedEffectSupplier = AnthologyEffects::inverted;
             FluidInteractionRegistry.addInteraction(
                     AntarchyForgeFluidTypes.ANTIWATER_TYPE.get(),
                     new FluidInteractionRegistry.InteractionInformation(
@@ -1319,26 +1362,12 @@ public final class AntarchyForgeEvents {
                     )
             );
             LucidEntity.boltEntityTypeSupplier = () -> AntarchyForgeEntites.LUCID_BOLT.get();
-            LucidBoltEntity.invertedEffectSupplier = () -> AntarchyForgeMisc.INVERTED.get();
-            LucidEyeProjectileEntity.invertedEffectSupplier = () -> AntarchyForgeMisc.INVERTED.get();
-            MultipartFramework.bootstrap(
-                    (owner, partIndex, spec) -> new MultipartPartEntity((Entity) owner, owner, partIndex, spec),
-                    new MultipartFramework.NetworkBridge() {
-                        @Override
-                        public void sendAttack(java.util.UUID parentId, int partIndex, float damage) {
-                            AntarchyForgeNetworkCore.sendToServer(
-                                    new com.craisinlord.antarchy.content.entity.multipart.network.MultipartAttackPayload(parentId, partIndex, damage)
-                            );
-                        }
-
-                        @Override
-                        public void sendInteract(java.util.UUID parentId, int partIndex, int handId) {
-                            AntarchyForgeNetworkCore.sendToServer(
-                                    new com.craisinlord.antarchy.content.entity.multipart.network.MultipartInteractPayload(parentId, partIndex, handId)
-                            );
-                        }
-                    }
-            );
+            LucidBoltEntity.invertedEffectSupplier = AnthologyEffects::inverted;
+            LucidEyeProjectileEntity.invertedEffectSupplier = AnthologyEffects::inverted;
+            VortexEntity.windVortexTypeSupplier = () -> AntarchyForgeEntites.WIND_VORTEX.get();
+            VortexChargeProjectileEntity.defaultItemSupplier = () -> AntarchyForgeItems.VORTEX_CHARGE.get();
+            VortexChargeProjectileEntity.projectileTypeSupplier = () -> AntarchyForgeEntites.VORTEX_CHARGE_PROJECTILE.get();
+            VortexChargeProjectileEntity.windVortexTypeSupplier = () -> AntarchyForgeEntites.WIND_VORTEX.get();
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeBlocks.UMBRAL_MOSS_BLOCK.get().asItem(), 0.65f);
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeBlocks.UMBRAL_MOSS_CARPET.get().asItem(), 0.3f);
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeBlocks.BLUSH_MOSS_BLOCK.get().asItem(), 0.65f);
@@ -1348,6 +1377,11 @@ public final class AntarchyForgeEvents {
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeBlocks.PEACH_LEAVES.get().asItem(), 0.3f);
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeItems.PEACH_SAPLING_ITEM.get(), 0.3f);
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeItems.NADIR_SAPLING_ITEM.get(), 0.3f);
+            ComposterBlock.COMPOSTABLES.put(AntarchyForgeItems.NADIR_FERN_ITEM.get(), 0.3f);
+            ComposterBlock.COMPOSTABLES.put(AntarchyForgeItems.LARGE_NADIR_FERN_ITEM.get(), 0.5f);
+            ComposterBlock.COMPOSTABLES.put(AntarchyForgeItems.DUSKBELL_ITEM.get(), 0.65f);
+            ComposterBlock.COMPOSTABLES.put(AntarchyForgeItems.WHIRLFLOWER_ITEM.get(), 0.65f);
+            ComposterBlock.COMPOSTABLES.put(AntarchyForgeItems.GOREVINE_ITEM.get(), 0.5f);
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeItems.CORN.get(), 0.65f);
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeItems.CORN_SEEDS.get(), 0.3f);
             ComposterBlock.COMPOSTABLES.put(AntarchyForgeItems.PEACH.get(), 0.65f);

@@ -51,11 +51,6 @@ public final class AntarchyFluidChecks {
         return BILE_VEIN_ID.equals(blockId);
     }
 
-    /**
-     * Bile always wins: worldgen foliage must not anchor on or near bile fluid or its solid
-     * bile_vein shell, since cyst/vein features can carve into a neighboring chunk after this
-     * chunk's vegetation has already been placed.
-     */
     public static boolean hasBileNearby(LevelAccessor level, BlockPos center, int radius) {
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
         for (int dx = -radius; dx <= radius; dx++) {

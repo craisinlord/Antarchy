@@ -21,15 +21,6 @@ import net.minecraft.world.phys.AABB;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Tops up stink bug / rolly polly populations near players in Cavaryn.
- *
- * Vanilla's NaturalSpawner picks a spawn Y uniformly at random between the dimension's min_y
- * and a column's heightmap top. In Cavaryn that range spans the full 208-block dimension height,
- * but any given column's actual floor only occupies a sliver of that, so the vanilla algorithm
- * almost never lands on real ground even though floor itself is common. This scans a column
- * directly for a real floor spot instead.
- */
 public final class CavarynCreatureSpawner {
     private static final ResourceKey<Level> CAVARYN = ResourceKey.create(
             net.minecraft.core.registries.Registries.DIMENSION,

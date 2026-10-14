@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.fabric;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompatBridge;
+import com.craisinlord.antarchy.compat.infinity.InfinityWarpResult;
 import net.lerariemann.infinity.util.InfinityMethods;
 import net.lerariemann.infinity.util.teleport.PortalCreator;
 import net.lerariemann.infinity.util.teleport.WarpLogic;
@@ -38,13 +39,15 @@ public final class FabricInfinityCompat implements InfinityCompatBridge {
     }
 
     @Override
-    public boolean requestWarp(ServerPlayer player, ResourceLocation dimensionId) {
+    public InfinityWarpResult requestWarp(ServerPlayer player, ResourceLocation dimensionId) {
         try {
             WarpLogic.requestWarp(player, dimensionId, false);
-            return true;
+            return InfinityWarpResult.PENDING;
         } catch (Throwable throwable) {
             Antarchy.LOGGER.error("[Antarchy] Failed to request an Infinity warp to {}", dimensionId, throwable);
-            return false;
+            return InfinityGenerationFailure.consume(dimensionId)
+                    ? InfinityWarpResult.FAILED_GENERATION
+                    : InfinityWarpResult.REJECTED;
         }
     }
 

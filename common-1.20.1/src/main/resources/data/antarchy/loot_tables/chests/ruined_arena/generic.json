@@ -15,7 +15,7 @@
                 "min": 6.0,
                 "max": 20.0
               },
-              "options": "#minecraft:on_random_loot"
+              "treasure": false
             }
           ]
         },
@@ -159,7 +159,7 @@
                 "min": 10.0,
                 "max": 24.0
               },
-              "options": "#minecraft:on_random_loot"
+              "treasure": false
             }
           ]
         },
@@ -212,6 +212,39 @@
               }
             }
           ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 5,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{AntOSFloppyDisk:\"antarchy:elythia\"}"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 5,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{AntOSFloppyDisk:\"antarchy:kraken\"}"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 5,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{AntOSFloppyDisk:\"antarchy:brutalfly\"}"
+            }
+          ]
         }
       ],
       "rolls": {
@@ -249,7 +282,7 @@
                 "min": 18.0,
                 "max": 30.0
               },
-              "options": "#minecraft:on_random_loot"
+              "treasure": false
             }
           ]
         },
@@ -265,7 +298,7 @@
                 "min": 18.0,
                 "max": 30.0
               },
-              "options": "#minecraft:on_random_loot"
+              "treasure": false
             }
           ]
         },
@@ -281,7 +314,7 @@
                 "min": 20.0,
                 "max": 30.0
               },
-              "options": "#minecraft:on_random_loot"
+              "treasure": false
             }
           ]
         }

@@ -24,9 +24,9 @@
       "offset": 2.0
     },
     "music": {
-      "sound": "antarchy:lucid_lullaby",
-      "min_delay": 12000,
-      "max_delay": 24000,
+      "sound": "antarchy:music.game.thoraxis",
+      "min_delay": 600,
+      "max_delay": 1800,
       "replace_current_music": true
     }
   },
@@ -36,8 +36,8 @@
   },
   "spawn_costs": {
     "antarchy:lucid": {
-      "energy_budget": 0.10,
-      "charge": 15.0
+      "energy_budget": 0.1,
+      "charge": 17.0
     }
   },
   "features": [
@@ -46,12 +46,14 @@
     [],
     [],
     [
-      "antarchy:bluestone_ore"
+      "antarchy:bluestone_ore",
+      "antarchy:thoraxis_ichor_lake"
     ],
     [
       "antarchy:lucid_blood_crystal_spires",
       "antarchy:lucid_medium_blood_crystal_spires",
-      "antarchy:lucid_large_blood_crystal_spires"
+      "antarchy:lucid_large_blood_crystal_spires",
+      "antarchy:dimensional_tears"
     ],
     [],
     [
@@ -61,13 +63,13 @@
       "antarchy:red_ant_nest_magma",
       "antarchy:nyxite_spikes",
       "antarchy:patch_fire_sparse",
-      "antarchy:patch_ceiling_fire",
-      "antarchy:patch_ceiling_antigravel"
+      "antarchy:patch_ceiling_fire"
     ],
     [],
     [
       "antarchy:cornea_stalk_patch",
       "antarchy:patch_ceiling_cornea_stalk",
+      "antarchy:gorevines",
       "antarchy:bed_bug_nest"
     ],
     []
@@ -77,7 +79,7 @@
     "monster": [
       {
         "type": "antarchy:lucid",
-        "weight": 7,
+        "weight": 1,
         "minCount": 1,
         "maxCount": 1
       }

@@ -2,41 +2,40 @@ package com.craisinlord.antarchy.fabric.network;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntities;
 
 import com.craisinlord.antarchy.content.entity.DiamondMinecartEntity;
-import com.craisinlord.antarchy.content.client.CameraShakeClientState;
-import com.craisinlord.antarchy.content.client.HerculesBeetleImpactShakeClientState;
-import com.craisinlord.antarchy.content.entity.multipart.MultipartEntityOwner;
-import com.craisinlord.antarchy.content.entity.multipart.MultipartFramework;
-import com.craisinlord.antarchy.content.entity.multipart.network.MultipartAttackPayload;
-import com.craisinlord.antarchy.content.entity.multipart.network.MultipartInteractPayload;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
 import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
 import com.craisinlord.antarchy.content.item.BrutalflyElytraFlightHelper;
 import com.craisinlord.antarchy.content.item.BrutalflyElytraItem;
 import com.craisinlord.antarchy.content.item.BigBerthaItem;
-import com.craisinlord.antarchy.content.item.JumpyBootsHelper;
-import com.craisinlord.antarchy.fabric.util.JumpyBootsFabricHelper;
-import com.craisinlord.antarchy.content.item.JumpyBootsItem;
+import com.craisinlord.antarchy.content.item.SpringyBootsHelper;
+import com.craisinlord.antarchy.fabric.util.SpringyBootsFabricHelper;
+import com.craisinlord.antarchy.content.item.SpringyBootsItem;
+import com.craisinlord.antarchy.content.item.EyeOfTheStormItem;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
+import com.craisinlord.antarchy.content.item.TemporalTunerItem;
+import com.craisinlord.antarchy.content.item.PortalGunItem;
 import com.craisinlord.antarchy.content.item.TigerEyeArmorUtil;
+import com.craisinlord.antarchy.content.network.*;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageController;
 import com.craisinlord.antarchy.content.tigereye.TigerEyeCamouflageSync;
-import com.craisinlord.antarchy.content.network.*;
 import com.craisinlord.antarchy.content.entity.DorrieEntity;
 import com.craisinlord.antarchy.content.network.DorrieJumpInputPayload;
-import com.craisinlord.antarchy.content.network.JumpyBootsLaunchPayload;
-import com.craisinlord.antarchy.content.weather.ThoraxisWeatherSnapshot;
+import com.craisinlord.antarchy.content.network.SpringyBootsLaunchPayload;
 import com.craisinlord.antarchy.fabric.AntarchyFabricContent;
-import com.craisinlord.antarchy.fabric.entity.multipart.MultipartPartEntity;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import com.craisinlord.anthology.network.AnthologyNetwork;
+import com.craisinlord.anthology.network.CustomPacketPayload;
+import com.craisinlord.anthology.network.StreamCodec;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -47,178 +46,147 @@ public final class AntarchyFabricNetworking {
     }
 
     public static void register() {
+        registerPayloadTypes();
         registerServerReceivers();
+        com.craisinlord.antarchy.content.portalgun.PortalGunIndicatorSync.setSender(AntarchyFabricNetworking::send);
     }
 
-    public static <T extends com.craisinlord.antarchy.compat.network.CustomPacketPayload> void sendToPlayer(
-            ServerPlayer player,
-            T payload,
-            com.craisinlord.antarchy.compat.network.StreamCodec<io.netty.buffer.ByteBuf, T> streamCodec,
-            com.craisinlord.antarchy.compat.network.CustomPacketPayload.Type<T> type
-    ) {
-        FriendlyByteBuf buf = PacketByteBufs.create();
-        streamCodec.encode(buf, payload);
-        ServerPlayNetworking.send(player, type.id(), buf);
-    }
+    private static final Map<ResourceLocation, Consumer<CustomPacketPayload>> CLIENT_HANDLERS = new ConcurrentHashMap<>();
 
-    private static <T extends com.craisinlord.antarchy.compat.network.CustomPacketPayload> void registerC2SReceiver(
-            com.craisinlord.antarchy.compat.network.CustomPacketPayload.Type<T> type,
-            com.craisinlord.antarchy.compat.network.StreamCodec<io.netty.buffer.ByteBuf, T> streamCodec,
-            java.util.function.BiConsumer<ServerPlayer, T> handler
-    ) {
-        ServerPlayNetworking.registerGlobalReceiver(type.id(), (server, player, handlerConn, buf, sender) -> {
-            T payload = streamCodec.decode(buf);
-            server.execute(() -> handler.accept(player, payload));
+    private static <T extends CustomPacketPayload> void registerS2C(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> codec) {
+        AnthologyNetwork.registerClientbound(type, codec, (payload, player) -> {
+            Consumer<CustomPacketPayload> handler = CLIENT_HANDLERS.get(type.id());
+            if (handler != null) {
+                handler.accept(payload);
+            }
         });
     }
 
-    public static void bootstrapMultipartCommon() {
-        MultipartFramework.bootstrap(
-                AntarchyFabricNetworking::createMultipartPart,
-                new MultipartFramework.NetworkBridge() {
-                    @Override
-                    public void sendAttack(java.util.UUID parentId, int partIndex, float damage) {
-                    }
-
-                    @Override
-                    public void sendInteract(java.util.UUID parentId, int partIndex, int handId) {
-                    }
-                }
-        );
+    private static <T extends CustomPacketPayload> void registerC2S(CustomPacketPayload.Type<T> type, StreamCodec<? super FriendlyByteBuf, T> codec) {
+        SERVER_CODECS.put(type.id(), codec);
     }
 
-    public static MultipartPartEntity createMultipartPart(MultipartEntityOwner owner, int partIndex, com.craisinlord.antarchy.content.entity.multipart.MultipartPartDefinition spec) {
-        return new MultipartPartEntity(AntarchyFabricEntities.KRAKEN_PART.get(), ((Entity) owner).level())
-                .antarchy$configure(owner, partIndex, spec);
+    private static final Map<ResourceLocation, StreamCodec<? super FriendlyByteBuf, ?>> SERVER_CODECS = new ConcurrentHashMap<>();
+
+    @SuppressWarnings("unchecked")
+    private static <T extends CustomPacketPayload> void registerGlobalReceiver(CustomPacketPayload.Type<T> type, BiConsumer<T, ServerPlayer> handler) {
+        StreamCodec<? super FriendlyByteBuf, T> codec = (StreamCodec<? super FriendlyByteBuf, T>) SERVER_CODECS.get(type.id());
+        AnthologyNetwork.registerServerbound(type, codec, handler);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends CustomPacketPayload> void setClientHandler(CustomPacketPayload.Type<T> type, Consumer<T> handler) {
+        CLIENT_HANDLERS.put(type.id(), payload -> handler.accept((T) payload));
+    }
+
+    public static void send(ServerPlayer player, CustomPacketPayload payload) {
+        AnthologyNetwork.sendToPlayer(player, payload);
+    }
+
+    private static void registerPayloadTypes() {
+        registerS2C(PortalGunIndicatorPayload.TYPE, PortalGunIndicatorPayload.STREAM_CODEC);
+        registerS2C(BloodglassStatePayload.TYPE, BloodglassStatePayload.STREAM_CODEC);
+        registerS2C(TigerEyeCamouflageStatePayload.TYPE, TigerEyeCamouflageStatePayload.STREAM_CODEC);
+        registerS2C(BloodCrystalKatanaTrailPayload.TYPE, BloodCrystalKatanaTrailPayload.STREAM_CODEC);
+        registerS2C(ScorpionWhipTetherPayload.TYPE, ScorpionWhipTetherPayload.STREAM_CODEC);
+        registerS2C(WormHookTetherPayload.TYPE, WormHookTetherPayload.STREAM_CODEC);
+        registerS2C(BrutalflyElytraAnimationPayload.TYPE, BrutalflyElytraAnimationPayload.STREAM_CODEC);
+        registerS2C(HerculesBeetleImpactShakePayload.TYPE, HerculesBeetleImpactShakePayload.STREAM_CODEC);
+        registerS2C(KingJudgmentFlashPayload.TYPE, KingJudgmentFlashPayload.STREAM_CODEC);
+        registerS2C(HordeIntensityPayload.TYPE, HordeIntensityPayload.STREAM_CODEC);
+
+        registerC2S(GravityGunPrimaryPayload.TYPE, GravityGunPrimaryPayload.STREAM_CODEC);
+        registerC2S(PortalGunPrimaryPayload.TYPE, PortalGunPrimaryPayload.STREAM_CODEC);
+        registerC2S(PortalGunIndicatorRequestPayload.TYPE, PortalGunIndicatorRequestPayload.STREAM_CODEC);
+        registerC2S(PortalGunResetPayload.TYPE, PortalGunResetPayload.STREAM_CODEC);
+        registerC2S(com.craisinlord.antarchy.content.network.PortalGunMoonAimPayload.TYPE, com.craisinlord.antarchy.content.network.PortalGunMoonAimPayload.STREAM_CODEC);
+        registerC2S(EyeOfStormPrimaryPayload.TYPE, EyeOfStormPrimaryPayload.STREAM_CODEC);
+        registerC2S(OpenGiantFryingPanPayload.TYPE, OpenGiantFryingPanPayload.STREAM_CODEC);
+        registerC2S(RoyalMountActionPayload.TYPE, RoyalMountActionPayload.STREAM_CODEC);
+        registerC2S(RoyalMountVerticalPayload.TYPE, RoyalMountVerticalPayload.STREAM_CODEC);
+        registerC2S(GravityGunScrollPayload.TYPE, GravityGunScrollPayload.STREAM_CODEC);
+        registerC2S(TemporalTunerScrollPayload.TYPE, TemporalTunerScrollPayload.STREAM_CODEC);
+        registerC2S(BigBerthaModeCyclePayload.TYPE, BigBerthaModeCyclePayload.STREAM_CODEC);
+        registerC2S(com.craisinlord.antarchy.content.network.RoyalGuardianSwordModeCyclePayload.TYPE,
+                com.craisinlord.antarchy.content.network.RoyalGuardianSwordModeCyclePayload.STREAM_CODEC);
+        registerC2S(ToggleTigerEyeCamouflagePayload.TYPE, ToggleTigerEyeCamouflagePayload.STREAM_CODEC);
+        registerC2S(ToggleRoyalInversionPayload.TYPE, ToggleRoyalInversionPayload.STREAM_CODEC);
+        registerC2S(com.craisinlord.antarchy.content.network.ActivateRoyalBoundaryPayload.TYPE, com.craisinlord.antarchy.content.network.ActivateRoyalBoundaryPayload.STREAM_CODEC);
+        registerC2S(DiamondMinecartInputPayload.TYPE, DiamondMinecartInputPayload.STREAM_CODEC);
+        registerC2S(BrutalflyElytraFlapPayload.TYPE, BrutalflyElytraFlapPayload.STREAM_CODEC);
+        registerC2S(SpringyBootsLaunchPayload.TYPE, SpringyBootsLaunchPayload.STREAM_CODEC);
+        registerC2S(DorrieJumpInputPayload.TYPE, DorrieJumpInputPayload.STREAM_CODEC);
+        registerC2S(com.craisinlord.antarchy.content.network.DorrieChargeJumpPayload.TYPE, com.craisinlord.antarchy.content.network.DorrieChargeJumpPayload.STREAM_CODEC);
+        registerC2S(HerculesBeetleJumpInputPayload.TYPE, HerculesBeetleJumpInputPayload.STREAM_CODEC);
+        registerC2S(HerculesBeetleFlightTogglePayload.TYPE, HerculesBeetleFlightTogglePayload.STREAM_CODEC);
+        registerC2S(HerculesBeetleMountedAttackPayload.TYPE, HerculesBeetleMountedAttackPayload.STREAM_CODEC);
+        registerC2S(HerculesBeetleMountedChargePayload.TYPE, HerculesBeetleMountedChargePayload.STREAM_CODEC);
     }
 
     private static void registerServerReceivers() {
-        registerC2SReceiver(GravityGunPrimaryPayload.TYPE, GravityGunPrimaryPayload.STREAM_CODEC, AntarchyFabricNetworking::handleGravityGunPrimary);
-        registerC2SReceiver(GravityGunScrollPayload.TYPE, GravityGunScrollPayload.STREAM_CODEC, AntarchyFabricNetworking::handleGravityGunScroll);
-        registerC2SReceiver(BigBerthaModeCyclePayload.TYPE, BigBerthaModeCyclePayload.STREAM_CODEC, AntarchyFabricNetworking::handleBigBerthaModeCycle);
-        registerC2SReceiver(DiamondMinecartInputPayload.TYPE, DiamondMinecartInputPayload.STREAM_CODEC, AntarchyFabricNetworking::handleDiamondMinecartInput);
-        registerC2SReceiver(BrutalflyElytraFlapPayload.TYPE, BrutalflyElytraFlapPayload.STREAM_CODEC, AntarchyFabricNetworking::handleBrutalflyFlap);
-        registerC2SReceiver(JumpyBootsLaunchPayload.TYPE, JumpyBootsLaunchPayload.STREAM_CODEC, AntarchyFabricNetworking::handleJumpyBootsLaunch);
-        registerC2SReceiver(DorrieJumpInputPayload.TYPE, DorrieJumpInputPayload.STREAM_CODEC, AntarchyFabricNetworking::handleDorrieJumpInput);
-        registerC2SReceiver(com.craisinlord.antarchy.content.network.DorrieChargeJumpPayload.TYPE, com.craisinlord.antarchy.content.network.DorrieChargeJumpPayload.STREAM_CODEC, AntarchyFabricNetworking::handleDorrieChargeJumpInput);
-        registerC2SReceiver(HerculesBeetleJumpInputPayload.TYPE, HerculesBeetleJumpInputPayload.STREAM_CODEC, AntarchyFabricNetworking::handleHerculesBeetleJumpInput);
-        registerC2SReceiver(HerculesBeetleFlightTogglePayload.TYPE, HerculesBeetleFlightTogglePayload.STREAM_CODEC, AntarchyFabricNetworking::handleHerculesBeetleFlightToggle);
-        registerC2SReceiver(HerculesBeetleMountedAttackPayload.TYPE, HerculesBeetleMountedAttackPayload.STREAM_CODEC, AntarchyFabricNetworking::handleHerculesBeetleMountedAttack);
-        registerC2SReceiver(HerculesBeetleMountedChargePayload.TYPE, HerculesBeetleMountedChargePayload.STREAM_CODEC, AntarchyFabricNetworking::handleHerculesBeetleMountedCharge);
-        registerC2SReceiver(MultipartAttackPayload.TYPE, MultipartAttackPayload.STREAM_CODEC, AntarchyFabricNetworking::handleMultipartAttack);
-        registerC2SReceiver(MultipartInteractPayload.TYPE, MultipartInteractPayload.STREAM_CODEC, AntarchyFabricNetworking::handleMultipartInteract);
-        registerC2SReceiver(ToggleTigerEyeCamouflagePayload.TYPE, ToggleTigerEyeCamouflagePayload.STREAM_CODEC, (player, payload) -> handleTigerEyeCamouflageToggle(player));
+        registerGlobalReceiver(GravityGunPrimaryPayload.TYPE, (payload, player) -> handleGravityGunPrimary(player, payload));
+        registerGlobalReceiver(PortalGunPrimaryPayload.TYPE, (payload, player) -> handlePortalGunPrimary(player, payload));
+        registerGlobalReceiver(PortalGunIndicatorRequestPayload.TYPE, (payload, player) -> com.craisinlord.antarchy.content.portalgun.PortalGunIndicatorSync.handleRequest(player, payload));
+        registerGlobalReceiver(com.craisinlord.antarchy.content.network.PortalGunMoonAimPayload.TYPE, (payload, player) -> com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.handle(player, payload));
+        registerGlobalReceiver(PortalGunResetPayload.TYPE, (payload, player) -> com.craisinlord.antarchy.content.portalgun.PortalGunResetManager.handleInput(player, payload.action()));
+        registerGlobalReceiver(EyeOfStormPrimaryPayload.TYPE, (payload, player) -> handleEyeOfStormPrimary(player, payload));
+        registerGlobalReceiver(OpenGiantFryingPanPayload.TYPE, (payload, player) -> com.craisinlord.antarchy.content.item.GiantFryingPanItem.openHeldMenu(player));
+        registerGlobalReceiver(RoyalMountActionPayload.TYPE, (payload, player) -> handleRoyalMountAction(player, payload));
+        registerGlobalReceiver(RoyalMountVerticalPayload.TYPE, (payload, player) -> handleRoyalMountVertical(player, payload));
+        registerGlobalReceiver(GravityGunScrollPayload.TYPE, (payload, player) -> handleGravityGunScroll(player, payload));
+        registerGlobalReceiver(TemporalTunerScrollPayload.TYPE, (payload, player) -> handleTemporalTunerScroll(player, payload));
+        registerGlobalReceiver(BigBerthaModeCyclePayload.TYPE, (payload, player) -> handleBigBerthaModeCycle(player, payload));
+        registerGlobalReceiver(com.craisinlord.antarchy.content.network.RoyalGuardianSwordModeCyclePayload.TYPE, (payload, player) -> handleRoyalGuardianSwordModeCycle(player));
+        registerGlobalReceiver(ToggleTigerEyeCamouflagePayload.TYPE, (payload, player) -> handleTigerEyeCamouflageToggle(player));
+        registerGlobalReceiver(ToggleRoyalInversionPayload.TYPE, (payload, player) -> com.craisinlord.antarchy.content.item.RoyalAssailantArmorItem.toggleInversion(player));
+        registerGlobalReceiver(com.craisinlord.antarchy.content.network.ActivateRoyalBoundaryPayload.TYPE, (payload, player) -> com.craisinlord.antarchy.content.effect.RoyalBoundaryManager.activate(player));
+        registerGlobalReceiver(DiamondMinecartInputPayload.TYPE, (payload, player) -> handleDiamondMinecartInput(player, payload));
+        registerGlobalReceiver(BrutalflyElytraFlapPayload.TYPE, (payload, player) -> handleBrutalflyFlap(player, payload));
+        registerGlobalReceiver(SpringyBootsLaunchPayload.TYPE, (payload, player) -> handleSpringyBootsLaunch(player, payload));
+        registerGlobalReceiver(DorrieJumpInputPayload.TYPE, (payload, player) -> handleDorrieJumpInput(player, payload));
+        registerGlobalReceiver(com.craisinlord.antarchy.content.network.DorrieChargeJumpPayload.TYPE, (payload, player) -> handleDorrieChargeJumpInput(player, payload));
+        registerGlobalReceiver(HerculesBeetleJumpInputPayload.TYPE, (payload, player) -> handleHerculesBeetleJumpInput(player, payload));
+        registerGlobalReceiver(HerculesBeetleFlightTogglePayload.TYPE, (payload, player) -> handleHerculesBeetleFlightToggle(player, payload));
+        registerGlobalReceiver(HerculesBeetleMountedAttackPayload.TYPE, (payload, player) -> handleHerculesBeetleMountedAttack(player, payload));
+        registerGlobalReceiver(HerculesBeetleMountedChargePayload.TYPE, (payload, player) -> handleHerculesBeetleMountedCharge(player, payload));
+    }
+
+    public static void syncBloodglass(ServerPlayer player, int shieldsActive, int shieldsMax) {
+        send(player, new BloodglassStatePayload(shieldsActive, shieldsMax));
     }
 
     public static void syncTigerEyeCamouflage(ServerPlayer player) {
         TigerEyeCamouflageStatePayload payload = TigerEyeCamouflageSync.payload(player);
         for (ServerPlayer tracking : PlayerLookup.tracking(player)) {
-            sendToPlayer(tracking, payload, TigerEyeCamouflageStatePayload.STREAM_CODEC, TigerEyeCamouflageStatePayload.TYPE);
+            send(tracking, payload);
         }
-        sendToPlayer(player, payload, TigerEyeCamouflageStatePayload.STREAM_CODEC, TigerEyeCamouflageStatePayload.TYPE);
-    }
-
-    private static void handleTigerEyeCamouflageToggle(ServerPlayer player) {
-        TigerEyeCamouflageController.ToggleResult result = TigerEyeCamouflageController.toggle(player);
-        if (result != TigerEyeCamouflageController.ToggleResult.NO_CHANGE) {
-            syncTigerEyeCamouflage(player);
-        }
-        String messageKey = switch (result) {
-            case ACTIVATED -> "message.antarchy.tiger_eye_camouflage.activated";
-            case DEACTIVATED -> "message.antarchy.tiger_eye_camouflage.disabled";
-            case FULL_SET_REQUIRED -> TigerEyeArmorUtil.countEquippedPieces(player) > 0
-                    ? "message.antarchy.tiger_eye_camouflage.full_set_required"
-                    : null;
-            case INVALID_BLOCK -> "message.antarchy.tiger_eye_camouflage.invalid_block";
-            case NO_CHANGE -> null;
-        };
-        if (messageKey != null) {
-            player.displayClientMessage(net.minecraft.network.chat.Component.translatable(messageKey), true);
-        }
-    }
-
-    public static void syncGravityToPlayer(ServerPlayer target, Entity entity) {
-        GravityStatePayload payload = new GravityStatePayload(
-                entity.getId(),
-                AntarchyGravityApi.getGravityDirection(entity),
-                AntarchyGravityApi.getPrevGravityDirection(entity),
-                AntarchyGravityApi.isGravityForced(entity),
-                AntarchyGravityApi.getTransitionDuration(entity),
-                AntarchyGravityApi.getTransitionRemaining(entity)
-        );
-        sendToPlayer(target, payload, GravityStatePayload.STREAM_CODEC, GravityStatePayload.TYPE);
-    }
-
-    public static void syncGravityEntity(Entity entity) {
-        GravityStatePayload payload = new GravityStatePayload(
-                entity.getId(),
-                AntarchyGravityApi.getGravityDirection(entity),
-                AntarchyGravityApi.getPrevGravityDirection(entity),
-                AntarchyGravityApi.isGravityForced(entity),
-                AntarchyGravityApi.getTransitionDuration(entity),
-                AntarchyGravityApi.getTransitionRemaining(entity)
-        );
-
-        for (ServerPlayer player : PlayerLookup.tracking(entity)) {
-            sendToPlayer(player, payload, GravityStatePayload.STREAM_CODEC, GravityStatePayload.TYPE);
-        }
-        if (entity instanceof ServerPlayer player) {
-            sendToPlayer(player, payload, GravityStatePayload.STREAM_CODEC, GravityStatePayload.TYPE);
-        }
-    }
-
-    public static void syncBloodglass(ServerPlayer player, int shieldsActive, int shieldsMax) {
-        sendToPlayer(player, new BloodglassStatePayload(shieldsActive, shieldsMax), BloodglassStatePayload.STREAM_CODEC, BloodglassStatePayload.TYPE);
+        send(player, payload);
     }
 
     public static void syncKatanaTrail(Entity entity, int durationTicks) {
         BloodCrystalKatanaTrailPayload payload = new BloodCrystalKatanaTrailPayload(entity.getId(), durationTicks);
         for (ServerPlayer player : PlayerLookup.tracking(entity)) {
-            sendToPlayer(player, payload, BloodCrystalKatanaTrailPayload.STREAM_CODEC, BloodCrystalKatanaTrailPayload.TYPE);
+            send(player, payload);
         }
         if (entity instanceof ServerPlayer serverPlayer) {
-            sendToPlayer(serverPlayer, payload, BloodCrystalKatanaTrailPayload.STREAM_CODEC, BloodCrystalKatanaTrailPayload.TYPE);
+            send(serverPlayer, payload);
         }
     }
 
     public static void syncScorpionWhipTether(ServerPlayer player, int targetId) {
         ScorpionWhipTetherPayload payload = new ScorpionWhipTetherPayload(player.getId(), targetId);
         for (ServerPlayer tracking : PlayerLookup.tracking(player)) {
-            sendToPlayer(tracking, payload, ScorpionWhipTetherPayload.STREAM_CODEC, ScorpionWhipTetherPayload.TYPE);
+            send(tracking, payload);
         }
-        sendToPlayer(player, payload, ScorpionWhipTetherPayload.STREAM_CODEC, ScorpionWhipTetherPayload.TYPE);
+        send(player, payload);
     }
 
-    public static void syncThoraxisWeather(ServerLevel level, ThoraxisWeatherSnapshot snapshot) {
-        ThoraxisWeatherPayload payload = new ThoraxisWeatherPayload(
-                snapshot.dimension(),
-                snapshot.kind(),
-                snapshot.expiresAt(),
-                snapshot.anchor().getX(),
-                snapshot.anchor().getY(),
-                snapshot.anchor().getZ()
-        );
-        for (ServerPlayer player : level.players()) {
-            sendToPlayer(player, payload, ThoraxisWeatherPayload.STREAM_CODEC, ThoraxisWeatherPayload.TYPE);
+    public static void syncWormHookTether(ServerPlayer player, int hookId) {
+        WormHookTetherPayload payload = new WormHookTetherPayload(player.getId(), hookId);
+        for (ServerPlayer tracking : PlayerLookup.tracking(player)) {
+            send(tracking, payload);
         }
-    }
-
-    public static void handleGravityState(Entity contextPlayer, GravityStatePayload payload) {
-        Entity entity = contextPlayer.level().getEntity(payload.entityId());
-        if (entity == null && contextPlayer.getId() == payload.entityId()) {
-            entity = contextPlayer;
-        }
-        if (entity == null) {
-            return;
-        }
-        AntarchyGravityApi.applySyncedState(
-                entity,
-                payload.direction(),
-                payload.previousDirection(),
-                payload.forced(),
-                payload.transitionDuration(),
-                payload.transitionRemaining()
-        );
+        send(player, payload);
     }
 
     private static void handleGravityGunPrimary(ServerPlayer player, GravityGunPrimaryPayload payload) {
@@ -226,6 +194,45 @@ public final class AntarchyFabricNetworking {
             return;
         }
         gravityGunItem.firePrimary(player.serverLevel(), player, player.getMainHandItem());
+    }
+
+    private static void handlePortalGunPrimary(ServerPlayer player, PortalGunPrimaryPayload payload) {
+        ItemStack stack = payload.offhand() ? player.getOffhandItem() : player.getMainHandItem();
+        if (!(stack.getItem() instanceof PortalGunItem portalGunItem)) {
+            return;
+        }
+        portalGunItem.firePrimary(player.serverLevel(), player, stack, payload.offhand());
+    }
+
+    private static void handleRoyalMountAction(ServerPlayer player, RoyalMountActionPayload payload) {
+        if (payload.action() == RoyalMountActionPayload.MOUNT) {
+            com.craisinlord.antarchy.content.entity.royal.RoyalMountEntity.tryAssistedMount(player);
+            return;
+        }
+        if (!(player.getVehicle() instanceof com.craisinlord.antarchy.content.entity.royal.RoyalMountEntity mount)) {
+            return;
+        }
+        switch (payload.action()) {
+            case RoyalMountActionPayload.FLIGHT_TOGGLE -> mount.toggleMountedFlight(player);
+            case RoyalMountActionPayload.BITE -> mount.handleMountedBite(player);
+            case RoyalMountActionPayload.SPIT -> mount.handleMountedSpit(player);
+            default -> {
+            }
+        }
+    }
+
+    private static void handleRoyalMountVertical(ServerPlayer player, RoyalMountVerticalPayload payload) {
+        if (player.getVehicle() instanceof com.craisinlord.antarchy.content.entity.royal.RoyalMountEntity mount) {
+            mount.setRiderAscend(payload.ascend());
+            mount.setRiderDescend(payload.descend());
+        }
+    }
+
+    private static void handleEyeOfStormPrimary(ServerPlayer player, EyeOfStormPrimaryPayload payload) {
+        if (!(player.getMainHandItem().getItem() instanceof EyeOfTheStormItem eyeOfTheStormItem)) {
+            return;
+        }
+        eyeOfTheStormItem.firePrimary(player.serverLevel(), player, player.getMainHandItem());
     }
 
     private static void handleGravityGunScroll(ServerPlayer player, GravityGunScrollPayload payload) {
@@ -239,7 +246,20 @@ public final class AntarchyFabricNetworking {
         if (!(player.getMainHandItem().getItem() instanceof BigBerthaItem bigBerthaItem)) {
             return;
         }
-        bigBerthaItem.tryCycleModeWhileCoolingDown(player.serverLevel(), player, player.getMainHandItem());
+        bigBerthaItem.tryCycleModeFromInput(player.serverLevel(), player, player.getMainHandItem());
+    }
+
+    private static void handleTemporalTunerScroll(ServerPlayer player, TemporalTunerScrollPayload payload) {
+        if (TemporalTunerItem.isAvailable(player)) {
+            TemporalTunerItem.adjust(player, payload.delta());
+        }
+    }
+
+    private static void handleRoyalGuardianSwordModeCycle(ServerPlayer player) {
+        if (!(player.getMainHandItem().getItem() instanceof com.craisinlord.antarchy.content.item.RoyalGuardianSwordItem sword)) {
+            return;
+        }
+        sword.tryCycleModeFromInput(player.serverLevel(), player, player.getMainHandItem());
     }
 
     private static void handleDiamondMinecartInput(ServerPlayer player, DiamondMinecartInputPayload payload) {
@@ -274,7 +294,7 @@ public final class AntarchyFabricNetworking {
         player.hurtMarked = true;
         player.resetFallDistance();
         player.connection.send(new ClientboundSetEntityMotionPacket(player));
-        chestStack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(EquipmentSlot.CHEST));
+        chestStack.hurtAndBreak(1, player, entity -> entity.broadcastBreakEvent(EquipmentSlot.CHEST));
         player.getCooldowns().addCooldown(chestStack.getItem(), BrutalflyElytraFlightHelper.FLAP_COOLDOWN_TICKS);
         player.level().playSound(null, player.blockPosition(), SoundEvents.PHANTOM_FLAP, SoundSource.PLAYERS, 0.9F,
                 tier == BrutalflyElytraFlightHelper.FlapTier.PERFECT ? 0.8F : tier == BrutalflyElytraFlightHelper.FlapTier.GOOD ? 0.95F : 1.1F);
@@ -285,82 +305,30 @@ public final class AntarchyFabricNetworking {
                 lift
         );
         for (ServerPlayer tracking : PlayerLookup.tracking(player)) {
-            sendToPlayer(tracking, animationPayload, BrutalflyElytraAnimationPayload.STREAM_CODEC, BrutalflyElytraAnimationPayload.TYPE);
+            send(tracking, animationPayload);
         }
-        sendToPlayer(player, animationPayload, BrutalflyElytraAnimationPayload.STREAM_CODEC, BrutalflyElytraAnimationPayload.TYPE);
+        send(player, animationPayload);
     }
 
-    private static void handleMultipartAttack(ServerPlayer serverPlayer, MultipartAttackPayload payload) {
-        Entity entity = serverPlayer.serverLevel().getEntity(payload.parentId());
-        if (!(entity instanceof MultipartEntityOwner owner)) {
-            return;
-        }
-
-        Entity[] parts = owner.antarchy$getMultipartParts();
-        if (parts == null) {
-            parts = owner.antarchy$createMultipartParts();
-            owner.antarchy$setMultipartParts(parts);
-            owner.antarchy$syncMultipartParts();
-        }
-        if (payload.partIndex() < 0 || payload.partIndex() >= parts.length) {
-            return;
-        }
-
-        Entity part = parts[payload.partIndex()];
-        if (part == null || part.isRemoved()) {
-            return;
-        }
-        if (serverPlayer.distanceToSqr(part) > 10000.0D) {
-            return;
-        }
-
-        serverPlayer.attack(part);
-    }
-
-    private static void handleMultipartInteract(ServerPlayer serverPlayer, MultipartInteractPayload payload) {
-        Entity entity = serverPlayer.serverLevel().getEntity(payload.parentId());
-        if (!(entity instanceof MultipartEntityOwner owner)) {
-            return;
-        }
-
-        Entity[] parts = owner.antarchy$getMultipartParts();
-        if (parts == null) {
-            parts = owner.antarchy$createMultipartParts();
-            owner.antarchy$setMultipartParts(parts);
-            owner.antarchy$syncMultipartParts();
-        }
-        if (payload.partIndex() < 0 || payload.partIndex() >= parts.length) {
-            return;
-        }
-
-        Entity part = parts[payload.partIndex()];
-        if (part == null || part.isRemoved()) {
-            return;
-        }
-
-        InteractionHand hand = payload.handId() == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
-        owner.antarchy$interactMultipartPart(part, serverPlayer, part.position(), hand);
-    }
-
-    private static void handleJumpyBootsLaunch(ServerPlayer player, JumpyBootsLaunchPayload payload) {
-        if (!JumpyBootsItem.isWearingJumpyBoots(player)) return;
+    private static void handleSpringyBootsLaunch(ServerPlayer player, SpringyBootsLaunchPayload payload) {
+        if (!SpringyBootsItem.isWearingSpringyBoots(player)) return;
         if (player.isSpectator() || player.isPassenger()) return;
 
         ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);
         if (player.getCooldowns().isOnCooldown(boots.getItem())) return;
 
-        int clampedCharge = Math.min(payload.chargeTicks(), JumpyBootsHelper.CHARGE_TICKS_MAX);
+        int clampedCharge = Math.min(payload.chargeTicks(), SpringyBootsHelper.CHARGE_TICKS_MAX);
         if (clampedCharge <= 0) return;
 
-        float verticalBoost = JumpyBootsHelper.verticalBoostFor(clampedCharge);
+        float verticalBoost = SpringyBootsHelper.verticalBoostFor(clampedCharge);
         Vec3 current = player.getDeltaMovement();
         double newX = current.x;
         double newZ = current.z;
 
         if (payload.sprinting()) {
             Vec3 look = player.getLookAngle();
-            newX += look.x * JumpyBootsHelper.SPRINT_FORWARD_BOOST;
-            newZ += look.z * JumpyBootsHelper.SPRINT_FORWARD_BOOST;
+            newX += look.x * SpringyBootsHelper.SPRINT_FORWARD_BOOST;
+            newZ += look.z * SpringyBootsHelper.SPRINT_FORWARD_BOOST;
         }
 
         player.setDeltaMovement(newX, verticalBoost, newZ);
@@ -371,12 +339,12 @@ public final class AntarchyFabricNetworking {
         player.connection.send(new ClientboundSetEntityMotionPacket(player));
 
         player.level().playSound(null, player.blockPosition(), SoundEvents.SLIME_JUMP, SoundSource.PLAYERS,
-                1.0F, 0.6F + (clampedCharge / (float) JumpyBootsHelper.CHARGE_TICKS_MAX) * 0.6F);
+                1.0F, 0.6F + (clampedCharge / (float) SpringyBootsHelper.CHARGE_TICKS_MAX) * 0.6F);
 
-        JumpyBootsFabricHelper.setProtectionUntil(player,
-                player.level().getGameTime() + JumpyBootsHelper.FALL_PROTECTION_TICKS);
+        SpringyBootsFabricHelper.setProtectionUntil(player,
+                player.level().getGameTime() + SpringyBootsHelper.FALL_PROTECTION_TICKS);
 
-        player.getCooldowns().addCooldown(boots.getItem(), JumpyBootsHelper.COOLDOWN_TICKS);
+        player.getCooldowns().addCooldown(boots.getItem(), SpringyBootsHelper.COOLDOWN_TICKS);
     }
 
     private static void handleDorrieJumpInput(ServerPlayer player, DorrieJumpInputPayload payload) {
@@ -421,16 +389,23 @@ public final class AntarchyFabricNetworking {
         }
     }
 
-    public static void triggerHerculesBeetleImpactShake(int durationTicks) {
-        HerculesBeetleImpactShakeClientState.trigger(durationTicks);
-    }
+    private static void handleTigerEyeCamouflageToggle(ServerPlayer player) {
+        TigerEyeCamouflageController.ToggleResult result = TigerEyeCamouflageController.toggle(player);
+        if (result != TigerEyeCamouflageController.ToggleResult.NO_CHANGE) {
+            syncTigerEyeCamouflage(player);
+        }
 
-    public static void triggerImpactShake(ImpactShakePayload payload) {
-        CameraShakeClientState.triggerImpact(
-                new Vec3(payload.x(), payload.y(), payload.z()),
-                payload.intensity(),
-                payload.durationTicks(),
-                payload.radius()
-        );
+        String messageKey = switch (result) {
+            case ACTIVATED -> "message.antarchy.tiger_eye_camouflage.activated";
+            case DEACTIVATED -> "message.antarchy.tiger_eye_camouflage.disabled";
+            case FULL_SET_REQUIRED -> TigerEyeArmorUtil.countEquippedPieces(player) > 0
+                    ? "message.antarchy.tiger_eye_camouflage.full_set_required"
+                    : null;
+            case INVALID_BLOCK -> "message.antarchy.tiger_eye_camouflage.invalid_block";
+            case NO_CHANGE -> null;
+        };
+        if (messageKey != null) {
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable(messageKey), true);
+        }
     }
 }

@@ -24,11 +24,25 @@ import net.minecraft.world.level.Level;
 public class RoyalAssailantBattleAxeItem extends AxeItem {
     private static final int BLACK_HOLE_COOLDOWN_TICKS = 20 * 20;
     private static final int DILATED_DURATION_TICKS = 100;
+    private static final net.minecraft.resources.ResourceLocation REACH_MODIFIER_ID = new net.minecraft.resources.ResourceLocation("antarchy", "royal_assailant_battleaxe_reach");
+    private static final net.minecraft.resources.ResourceLocation KNOCKBACK_MODIFIER_ID = new net.minecraft.resources.ResourceLocation("antarchy", "royal_assailant_battleaxe_knockback");
     private final Tier tier;
 
     public RoyalAssailantBattleAxeItem(Tier tier, Item.Properties properties) {
         super(tier, (float) AntarchySettings.royalAssailantBattleAxeAttackDamage(), (float) AntarchySettings.royalAssailantBattleAxeAttackSpeed(), properties);
         this.tier = tier;
+    }
+
+    @Override
+    public com.google.common.collect.Multimap<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> getDefaultAttributeModifiers(net.minecraft.world.entity.EquipmentSlot slot) {
+        if (slot != net.minecraft.world.entity.EquipmentSlot.MAINHAND) {
+            return super.getDefaultAttributeModifiers(slot);
+        }
+        com.google.common.collect.ImmutableMultimap.Builder<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> builder =
+                com.craisinlord.antarchy.compat.item.WeaponAttributes.base(this.tier, (float) AntarchySettings.royalAssailantBattleAxeAttackDamage(), (float) AntarchySettings.royalAssailantBattleAxeAttackSpeed());
+        com.craisinlord.antarchy.compat.entity.EntityReach.addModifier(builder, REACH_MODIFIER_ID, AntarchySettings.royalWeaponAttackReachBonus());
+        com.craisinlord.antarchy.compat.item.WeaponAttributes.add(builder, net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_KNOCKBACK, KNOCKBACK_MODIFIER_ID, AntarchySettings.royalWeaponAttackKnockbackBonus() + 1.0D);
+        return builder.build();
     }
 
     @Override
@@ -62,7 +76,7 @@ public class RoyalAssailantBattleAxeItem extends AxeItem {
         if (level instanceof ServerLevel serverLevel) {
             RoyalAssailantBlackHoleEntity blackHole = RoyalAssailantBlackHoleEntity.create(
                     serverLevel,
-                    player.position().add(player.getLookAngle().normalize().scale(2.0D)),
+                    player.position().add(player.getLookAngle().normalize().scale(2.0D)).add(0.0D, 2.0D, 0.0D),
                     player.getUUID());
             serverLevel.addFreshEntity(blackHole);
             player.getCooldowns().addCooldown(this, BLACK_HOLE_COOLDOWN_TICKS);

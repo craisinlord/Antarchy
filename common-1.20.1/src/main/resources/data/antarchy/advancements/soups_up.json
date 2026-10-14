@@ -1,11 +1,11 @@
 {
-  "parent": "minecraft:adventure/root",
+  "parent": "antarchy:shark_weak",
   "criteria": {
     "eat_soup": {
       "conditions": {
         "item": {
           "items": [
-            "antarchy:cloud_shark_fin_soup"
+            "antarchy:stratoshark_fin_soup"
           ]
         }
       },
@@ -19,8 +19,7 @@
     },
     "frame": "task",
     "icon": {
-      "count": 1,
-      "item": "antarchy:cloud_shark_fin_soup"
+      "item": "antarchy:stratoshark_fin_soup"
     },
     "show_toast": true,
     "title": {

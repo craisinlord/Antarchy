@@ -117,7 +117,7 @@ public class ScorpionEntity extends Monster implements GeoEntity {
         if (pos.getY() >= 0 && level.getBiome(pos).is(DREAM_DUNES) && random.nextBoolean()) {
             return false;
         }
-        if (ThoraxisUndersideManager.shouldSpawnInvertedOnDreamSand(level, pos)) {
+        if (ThoraxisUndersideManager.isUndersideCeilingSpawn(entityType, level, pos)) {
             return level.getDifficulty() != Difficulty.PEACEFUL;
         }
         return level.getDifficulty() != Difficulty.PEACEFUL
@@ -146,7 +146,7 @@ public class ScorpionEntity extends Monster implements GeoEntity {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         this.assignRandomTextureVariant();
         ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.scorpionHealth());
-        if (ThoraxisUndersideManager.shouldSpawnInvertedOnDreamSand(level, this.blockPosition())) {
+        if (ThoraxisUndersideManager.isUndersideCeilingSpot(level, this.blockPosition(), this.getType())) {
             ThoraxisUndersideManager.applyUndersideInversion(this);
         }
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);

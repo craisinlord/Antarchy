@@ -2,8 +2,8 @@ package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.WormHookProjectileEntity;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.antarchy.content.util.WormHookRope;
 import java.util.Map;
 import java.util.UUID;
@@ -15,15 +15,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
-/**
- * Server-authoritative swing physics for the worm hook: pulls the holding player taut against
- * a rope anchored to a stuck {@link WormHookProjectileEntity}, wrapping the rope around block
- * corners via {@link WormHookRope} so the swing radius shortens realistically when the player
- * swings around an obstacle.
- *
- * A tether entry is created the moment the hook is thrown (so the rope can be rendered following
- * the flying projectile) and only gains real swing physics once the hook sticks into a block.
- */
 public final class WormHookTetherManager {
     private static final double MIN_LEN = 2.0D;
     private static final double REEL_SPEED = 0.12D;
@@ -53,14 +44,12 @@ public final class WormHookTetherManager {
         return hook instanceof WormHookProjectileEntity wormHook ? wormHook : null;
     }
 
-    /** Registers the hook the moment it's thrown, purely so the rope can be rendered following it. */
     public static void launch(ServerPlayer player, WormHookProjectileEntity hook) {
         clear(player);
         TETHERS.put(player.getUUID(), new TetherState(hook.getId()));
         WormHookTetherSync.send(player, hook.getId());
     }
 
-    /** Called once the hook sticks into a block; turns the cosmetic tether into real swing physics. */
     public static boolean attach(ServerPlayer player, WormHookProjectileEntity hook) {
         TetherState state = TETHERS.get(player.getUUID());
         if (state == null || state.hookEntityId != hook.getId()) {
@@ -110,7 +99,6 @@ public final class WormHookTetherManager {
         }
 
         if (state.rope == null) {
-            // Hook is still flying; nothing to simulate yet, just tracking it for the render sync.
             return;
         }
 
@@ -137,8 +125,6 @@ public final class WormHookTetherManager {
 
         Vec3 towardPivot = toPlayer.scale(1.0D / dist);
 
-        // Sneaking actively winds the player in toward the anchor, not just shortening
-        // the max length (which alone has no effect until the rope goes taut).
         if (reeling && dist > MIN_LEN) {
             Vec3 pull = towardPivot.scale(-REEL_PULL_STRENGTH);
             Vec3 reelMotion = getWorldMotion(player).add(pull);
@@ -175,11 +161,11 @@ public final class WormHookTetherManager {
     }
 
     private static Vec3 getWorldMotion(ServerPlayer player) {
-        return AntarchyGravityRotationUtil.vecPlayerToWorld(player.getDeltaMovement(), AntarchyGravityApi.getGravityDirection(player));
+        return GravityRotationUtil.vecPlayerToWorld(player.getDeltaMovement(), GravityApi.getGravityDirection(player));
     }
 
     private static void setWorldMotion(ServerPlayer player, Vec3 worldMotion) {
-        player.setDeltaMovement(AntarchyGravityRotationUtil.vecWorldToPlayer(worldMotion, AntarchyGravityApi.getGravityDirection(player)));
+        player.setDeltaMovement(GravityRotationUtil.vecWorldToPlayer(worldMotion, GravityApi.getGravityDirection(player)));
     }
 
     private static void tickFlyingSound(ServerPlayer player, TetherState state) {

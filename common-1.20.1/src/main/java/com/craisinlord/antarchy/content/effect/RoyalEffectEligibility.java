@@ -22,6 +22,10 @@ public final class RoyalEffectEligibility {
         return RoyalEffectHooks.dilatedHolder() != null && instance.getEffect() == RoyalEffectHooks.dilatedHolder();
     }
 
+    public static boolean isContracted(MobEffectInstance instance) {
+        return RoyalEffectHooks.contractedHolder() != null && instance.getEffect() == RoyalEffectHooks.contractedHolder();
+    }
+
     public static boolean canApplyCommanded(LivingEntity entity) {
         return entity instanceof Mob mob
                 && !(entity instanceof Player)

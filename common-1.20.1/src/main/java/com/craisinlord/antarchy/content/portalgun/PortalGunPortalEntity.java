@@ -1,87 +1,101 @@
 package com.craisinlord.antarchy.content.portalgun;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalBaseBlockEntity;
+import com.craisinlord.antarchy.content.block.entity.PortalGunPortalCellAccess;
+import com.craisinlord.antarchy.content.block.entity.PortalGunPortalFaceRecord;
 import com.craisinlord.antarchy.content.block.entity.PortalGunPortalMasterBlockEntity;
-import com.craisinlord.antarchy.mixins.AbstractArrowAccessor;
+import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
+import com.craisinlord.antarchy.content.entity.BlockSuction;
+import com.craisinlord.anthology.portal.PortalAppearance;
+import com.craisinlord.anthology.portal.PortalEntity;
+import com.craisinlord.anthology.portal.PortalShape;
+import com.craisinlord.anthology.portal.PortalSounds;
+import com.craisinlord.anthology.portal.PortalTransitMath;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.SectionPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.object.PlayState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class PortalGunPortalEntity extends Entity implements GeoEntity {
+public class PortalGunPortalEntity extends PortalEntity {
     public enum PortalSide {
         BLUE,
         ORANGE
     }
 
     private static final EntityDataAccessor<Integer> SIDE = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> FACING = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> UP_AXIS = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> CLOSING = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Optional<UUID>> LINKED_PORTAL = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.OPTIONAL_UUID);
-    private static final EntityDataAccessor<Integer> CHANNEL_RED = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> CHANNEL_GREEN = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Integer> CHANNEL_BLUE = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.INT);
-    private static final RawAnimation OPEN_ANIM = RawAnimation.begin().thenPlay("open");
-    private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
-    private static final RawAnimation CLOSE_ANIM = RawAnimation.begin().thenPlay("close");
-    private static final int OPEN_TICKS = 10;
-    private static final int CLOSE_TICKS = 10;
-    private static final int MAX_LIFETIME_TICKS = 20 * 60 * 20;
-    private static final int TELEPORT_COOLDOWN_TICKS = 40;
-    private static final double PLAYER_PORTAL_INSIDE_SHIFT = 0.05D;
-    private static final double HALF_WIDTH = 0.5D;
-    private static final double HALF_HEIGHT = 1.0D;
-    private static final double HALF_DEPTH = 0.35D;
-    private static final double MIN_EXIT_MOMENTUM = 0.42D;
-    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-    private final Map<UUID, Integer> teleportCooldowns = new HashMap<>();
-    private final Map<UUID, Integer> portalEntityDepths = new HashMap<>();
-    private Set<UUID> lastScanEntities = new HashSet<>();
+    private static final EntityDataAccessor<Optional<UUID>> OWNER_ID = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+    private static final EntityDataAccessor<Optional<UUID>> GUN_ID = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+    private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> MOON = SynchedEntityData.defineId(PortalGunPortalEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final ResourceLocation BLUE_RIM_TEXTURE = new ResourceLocation(Antarchy.MODID, "textures/vfx/portal_gun_portal_blue.png");
+    private static final ResourceLocation ORANGE_RIM_TEXTURE = new ResourceLocation(Antarchy.MODID, "textures/vfx/portal_gun_portal_orange.png");
+    private static final PortalSounds SOUNDS = new PortalSounds(
+            () -> sound("portal_enter"),
+            () -> sound("portal_exit"),
+            () -> sound("portal_ambient"),
+            80,
+            0.18F
+    );
+    private static final double MOON_RANGE = 14.0D;
+    private static final double MOON_RAY_MIN_OUTWARD = -0.2D;
+    private static final double MOON_PULL_STRENGTH = 0.15D;
+    private static final double MOON_MAX_SPEED = 1.8D;
+    private static final double MOON_MOUTH_DEPTH = 0.9D;
+    private static final double MOON_HOLD_DEPTH = 0.65D;
+    private static final int MOON_BLOCK_INTERVAL = 1;
+    private static final int MOON_BLOCKS_PER_PULL = 4;
+    private static final int MOON_BLOCK_RAYS = 16;
+    private static final double MOON_RAY_STEP = 0.4D;
+    private static final double MOON_BLOCK_SPEED = 0.6D;
+    private static final int MOON_VACUUM_INTERVAL = 10;
+    private static final float MOON_VACUUM_DAMAGE = 2.0F;
+    private static final int MOON_WIND_INTERVAL = 40;
+    private static final int MOON_BLOCK_MAX_FLIGHT_TICKS = 80;
+    private static final double MOON_BLOCK_SWALLOW_RADIUS = 2.0D;
+    private final PortalAppearance appearance = new GunAppearance();
     private UUID ownerId;
-    private UUID linkedPortalId;
-    private int ageTicks;
-    private int pairTime;
+    private UUID gunId;
+    private int moonTicks;
+    private int moonSuckedBlocks;
+    private final Map<UUID, Integer> moonLiftedBlocks = new HashMap<>();
     private BlockPos supportOrigin = BlockPos.ZERO;
     private BlockPos masterPos = BlockPos.ZERO;
     private BlockPos basePos = BlockPos.ZERO;
@@ -90,49 +104,42 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
 
     public PortalGunPortalEntity(EntityType<? extends PortalGunPortalEntity> entityType, Level level) {
         super(entityType, level);
-        this.setInvulnerable(true);
-        this.noPhysics = true;
-        this.noCulling = true;
     }
 
     @Override
     protected void defineSynchedData() {
+        super.defineSynchedData();
         this.entityData.define(SIDE, PortalSide.BLUE.ordinal());
-        this.entityData.define(FACING, Direction.NORTH.get3DDataValue());
-        this.entityData.define(UP_AXIS, Direction.UP.get3DDataValue());
-        this.entityData.define(CLOSING, false);
-        this.entityData.define(LINKED_PORTAL, Optional.empty());
-        this.entityData.define(CHANNEL_RED, 58);
-        this.entityData.define(CHANNEL_GREEN, 166);
-        this.entityData.define(CHANNEL_BLUE, 255);
+        this.entityData.define(OWNER_ID, Optional.empty());
+        this.entityData.define(GUN_ID, Optional.empty());
+        this.entityData.define(VARIANT, PortalGunVariant.DEFAULT.id());
+        this.entityData.define(MOON, false);
     }
 
-    public void configure(UUID ownerId, PortalSide side, PortalGunPlacement placement) {
+    public void configure(UUID ownerId, UUID gunId, PortalGunVariant variant, PortalSide side, PortalGunPlacement placement) {
         this.ownerId = ownerId;
+        this.gunId = gunId;
+        this.entityData.set(OWNER_ID, Optional.ofNullable(ownerId));
+        this.entityData.set(GUN_ID, Optional.ofNullable(gunId));
+        this.entityData.set(VARIANT, (variant == null ? PortalGunVariant.DEFAULT : variant).id());
         this.entityData.set(SIDE, side.ordinal());
-        this.entityData.set(FACING, placement.facing().get3DDataValue());
-        this.entityData.set(UP_AXIS, placement.upAxis().get3DDataValue());
-        int[] channelColor = generateChannelColor(ownerId, side);
-        this.entityData.set(CHANNEL_RED, channelColor[0]);
-        this.entityData.set(CHANNEL_GREEN, channelColor[1]);
-        this.entityData.set(CHANNEL_BLUE, channelColor[2]);
+        this.setGeometry(placement.facing(), placement.upAxis(), placement.width(), placement.height());
         this.supportOrigin = placement.supportOrigin().immutable();
         this.masterPos = placement.masterPos().immutable();
         this.basePos = placement.basePos().immutable();
-        this.portalSpots = new BlockPos[] {placement.portalSpots()[0].immutable(), placement.portalSpots()[1].immutable()};
+        this.portalSpots = java.util.Arrays.stream(placement.portalSpots()).map(BlockPos::immutable).toArray(BlockPos[]::new);
         this.compensatedSpots = Set.copyOf(placement.compensatedSpots());
     }
 
-    public void linkTo(PortalGunPortalEntity other) {
-        this.linkedPortalId = other.getUUID();
-        this.entityData.set(LINKED_PORTAL, Optional.of(other.getUUID()));
-        this.pairTime = (int) this.level().getGameTime();
+    public void openToMoon() {
+        this.clearLink();
+        this.entityData.set(MOON, true);
+        this.moonTicks = 0;
+        this.moonSuckedBlocks = 0;
     }
 
-    public void restorePair(UUID linkedPortalId, int pairTime) {
-        this.linkedPortalId = linkedPortalId;
-        this.entityData.set(LINKED_PORTAL, Optional.ofNullable(linkedPortalId));
-        this.pairTime = pairTime;
+    public boolean isMoonPortal() {
+        return this.entityData.get(MOON);
     }
 
     public PortalSide getPortalSide() {
@@ -140,36 +147,28 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
         return ordinal == PortalSide.ORANGE.ordinal() ? PortalSide.ORANGE : PortalSide.BLUE;
     }
 
-    public Direction getFacingDirection() {
-        return Direction.from3DDataValue(this.entityData.get(FACING));
-    }
-
-    public Direction getUpAxis() {
-        return Direction.from3DDataValue(this.entityData.get(UP_AXIS));
-    }
-
-    public UUID getLinkedPortalId() {
-        return this.entityData.get(LINKED_PORTAL).orElse(this.linkedPortalId);
-    }
-
     public BlockPos getMasterPos() {
         return this.masterPos;
     }
 
     public UUID getOwnerId() {
-        return this.ownerId;
+        return this.entityData.get(OWNER_ID).orElse(this.ownerId);
     }
 
-    public int getChannelRed() {
-        return this.entityData.get(CHANNEL_RED);
+    public UUID getGunId() {
+        return this.entityData.get(GUN_ID).orElse(this.gunId);
     }
 
-    public int getChannelGreen() {
-        return this.entityData.get(CHANNEL_GREEN);
+    public PortalGunVariant getVariant() {
+        return PortalGunVariant.byId(this.entityData.get(VARIANT));
     }
 
-    public int getChannelBlue() {
-        return this.entityData.get(CHANNEL_BLUE);
+    public int getPortalColor() {
+        return this.getVariant().color(this.getPortalSide());
+    }
+
+    public ResourceLocation getRimTexture() {
+        return this.getPortalSide() == PortalSide.BLUE ? BLUE_RIM_TEXTURE : ORANGE_RIM_TEXTURE;
     }
 
     public BlockPos getBasePos() {
@@ -177,198 +176,290 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
     }
 
     public BlockPos[] getPortalSpots() {
-        return new BlockPos[] {this.portalSpots[0], this.portalSpots[1]};
+        return this.portalSpots.clone();
+    }
+
+    public boolean containsPortalSpot(BlockPos pos) {
+        for (BlockPos portalSpot : this.portalSpots) {
+            if (portalSpot.equals(pos)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Set<BlockPos> getCompensatedSpots() {
         return Set.copyOf(this.compensatedSpots);
     }
 
-    public int getPairTime() {
-        return this.pairTime;
-    }
-
-    public PortalGunPortalEntity getLinkedPortal() {
-        UUID linkedId = this.getLinkedPortalId();
-        if (linkedId == null) {
-            return null;
-        }
-        List<Entity> entities = this.level().getEntities(this, new AABB(-3.0E7D, -3.0E7D, -3.0E7D, 3.0E7D, 3.0E7D, 3.0E7D), entity -> linkedId.equals(entity.getUUID()));
-        if (entities.isEmpty()) {
-            return null;
-        }
-        Entity entity = entities.get(0);
-        return entity instanceof PortalGunPortalEntity portal ? portal : null;
-    }
-
-    public Vec3 getNormalVec() {
-        return Vec3.atLowerCornerOf(this.getFacingDirection().getNormal());
-    }
-
-    public Vec3 getUpVec() {
-        return Vec3.atLowerCornerOf(this.getUpAxis().getNormal());
-    }
-
-    public Vec3 getWidthVec() {
-        return this.getNormalVec().cross(this.getUpVec()).normalize();
-    }
-
-    public PortalGunWorldPortalShape getWorldPortalShape() {
-        return new PortalGunWorldPortalShape(this.position(), this.getNormalVec().normalize(), this.getUpVec().normalize(), this.getWidthVec().normalize(), HALF_WIDTH, HALF_HEIGHT, HALF_DEPTH);
-    }
-
-    public AABB getPlane() {
-        return this.getWorldPortalShape().getPlane();
-    }
-
-    public AABB getFlatPlane() {
-        return this.getWorldPortalShape().getFlatPlane();
-    }
-
-    public AABB getScanRange() {
-        return this.getWorldPortalShape().getScanRange();
-    }
-
-    public AABB getPortalInsides() {
-        return this.getWorldPortalShape().getPortalInsides();
-    }
-
-    public AABB getPortalInsides(Entity entity) {
-        if (!(entity instanceof Player)) {
-            return this.getPortalInsides();
-        }
-        double shiftAmount = Math.min(PLAYER_PORTAL_INSIDE_SHIFT, Math.abs(this.getWorldPortalShape().localCoords(entity.position()).depth()));
-        return this.getPortalInsides().move(this.getNormalVec().normalize().scale(shiftAmount));
-    }
-
-    public AABB getTeleportPlane(double offset) {
-        return this.getWorldPortalShape().getTeleportPlane(offset);
-    }
-
-    public AABB getCollisionRemovalAabbForEntity(Entity entity) {
-        double speed = entity.getDeltaMovement().length();
-        double extent = Math.max(1.0D, Math.max(entity.getBbWidth(), entity.getBbHeight()) + speed);
-        return this.getFlatPlane().expandTowards(this.getNormalVec().normalize().scale(extent));
-    }
-
-    public Vec3 teleportProbePosition(Entity entity) {
-        if (entity instanceof Player player) {
-            return player.getEyePosition();
-        }
-        if (entity instanceof LivingEntity living) {
-            return entity.position().add(0.0D, living.getBbHeight() * 0.5D, 0.0D);
-        }
-        return entity.position();
-    }
-
-    public Vec3 previousTeleportProbePosition(Entity entity) {
-        double prevX = entity.xo;
-        double prevY = entity.yo;
-        double prevZ = entity.zo;
-        if (entity instanceof Player player) {
-            return new Vec3(prevX, prevY + player.getEyeHeight(player.getPose()), prevZ);
-        }
-        if (entity instanceof LivingEntity living) {
-            return new Vec3(prevX, prevY + living.getBbHeight() * 0.5D, prevZ);
-        }
-        return new Vec3(prevX, prevY, prevZ);
-    }
-
-    public Vec3 resolveCrossingProbe(Entity entity) {
-        AABB currentBox = entity.getBoundingBox();
-        AABB previousBox = currentBox.move(entity.xo - entity.getX(), entity.yo - entity.getY(), entity.zo - entity.getZ());
-        for (Vec3 currentSample : portalSamples(entity, currentBox, false)) {
-            Vec3 previousSample = matchPreviousSample(currentSample, currentBox, previousBox);
-            if (this.crossesPortal(previousSample, currentSample)) {
-                return currentSample;
-            }
-        }
-        Vec3 previousProbe = this.previousTeleportProbePosition(entity);
-        Vec3 currentProbe = this.teleportProbePosition(entity);
-        if (this.crossesPortal(previousProbe, currentProbe)) {
-            return currentProbe;
-        }
-        return this.overlapsPortalVolume(entity) ? this.portalVolumeProbe(entity) : null;
-    }
-
-    public boolean containsPoint(Vec3 position) {
-        return this.getWorldPortalShape().contains(position, 0.0D);
-    }
-
-    public boolean intersectsEntityBounds(Entity entity) {
-        AABB bounds = entity.getBoundingBox();
-        for (Vec3 corner : new Vec3[] {
-                new Vec3(bounds.minX, bounds.minY, bounds.minZ),
-                new Vec3(bounds.minX, bounds.minY, bounds.maxZ),
-                new Vec3(bounds.minX, bounds.maxY, bounds.minZ),
-                new Vec3(bounds.minX, bounds.maxY, bounds.maxZ),
-                new Vec3(bounds.maxX, bounds.minY, bounds.minZ),
-                new Vec3(bounds.maxX, bounds.minY, bounds.maxZ),
-                new Vec3(bounds.maxX, bounds.maxY, bounds.minZ),
-                new Vec3(bounds.maxX, bounds.maxY, bounds.maxZ)
-        }) {
-            if (this.getWorldPortalShape().contains(corner, 0.08D)) {
-                return true;
-            }
-        }
-        return this.getPortalInsides(entity).intersects(bounds);
-    }
-
-    public boolean crossesPortal(Vec3 previousProbePosition, Vec3 currentProbePosition) {
-        return this.getWorldPortalShape().crosses(previousProbePosition, currentProbePosition);
-    }
-
-    public boolean shouldRenderFront(Vec3 cameraPos) {
-        return this.getWorldPortalShape().shouldRenderFront(cameraPos);
+    @Override
+    public PortalAppearance appearance() {
+        return this.appearance;
     }
 
     @Override
-    public void tick() {
-        super.tick();
-        this.ageTicks++;
-        this.yRotO = this.getYRot();
-        this.xRotO = this.getXRot();
-        if (this.level().isClientSide) {
-            return;
+    public boolean hasCustomView() {
+        return this.isMoonPortal();
+    }
+
+    @Override
+    protected PortalSounds sounds() {
+        return SOUNDS;
+    }
+
+    @Override
+    protected float ambientPitch() {
+        return this.getPortalSide() == PortalSide.BLUE ? 1.05F : 0.92F;
+    }
+
+    @Override
+    protected void clientTick() {
+        if (this.isMoonPortal()) {
+            this.spawnMoonParticles();
         }
-        if (!(this.level() instanceof ServerLevel serverLevel)) {
-            return;
+    }
+
+    @Override
+    protected boolean isStillValid(ServerLevel level) {
+        return this.gunId != null && this.isStillRegistered(level) && this.hasValidSurface();
+    }
+
+    @Override
+    protected boolean tickBeforeTransit(ServerLevel level) {
+        if (this.isMoonPortal()) {
+            this.tickMoon(level);
+            return true;
         }
-        this.tickTeleportCooldowns();
-        if (this.ownerId == null || !this.isStillRegistered(serverLevel)) {
+        return false;
+    }
+
+    private void tickMoon(ServerLevel level) {
+        this.moonTicks++;
+        if (this.moonTicks >= AntarchySettings.portalGunMoonPortalSeconds() * 20) {
+            level.playSound(null, this.getX(), this.getY(), this.getZ(), sound("portal_fizzle"), SoundSource.BLOCKS, 1.0F, 0.6F);
             this.discard();
             return;
         }
-        if (!this.hasValidSurface()) {
-            this.discard();
-            return;
+        if (this.moonTicks % MOON_WIND_INTERVAL == 1) {
+            level.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.ELYTRA_FLYING, SoundSource.BLOCKS, 1.4F, 0.55F);
         }
-        if (this.ageTicks >= MAX_LIFETIME_TICKS - CLOSE_TICKS) {
-            this.entityData.set(CLOSING, true);
+        PortalShape shape = this.getWorldPortalShape();
+        Player owner = this.getOwnerId() == null ? null : level.getPlayerByUUID(this.getOwnerId());
+        this.pullMoonEntities(level, shape, owner);
+        this.tickMoonLiftedBlocks(level, shape);
+        if (AntarchySettings.portalGunMoonPullsBlocks() && this.moonTicks % MOON_BLOCK_INTERVAL == 0) {
+            this.pullMoonBlocks(level, shape, owner);
         }
-        if (this.ageTicks >= MAX_LIFETIME_TICKS) {
-            this.discard();
-            return;
-        }
-        PortalGunPortalEntity linked = this.findLinkedPortal(serverLevel);
-        if (linked == null || !linked.isAlive()) {
-            if (this.ageTicks % 100 == 0) {
-                Antarchy.LOGGER.info("Portal gun portal has no loaded linked portal portal={} owner={} side={} linked={}", this.getUUID(), this.ownerId, this.getPortalSide(), this.linkedPortalId);
+    }
+
+    private void pullMoonEntities(ServerLevel level, PortalShape shape, Player owner) {
+        Vec3 center = shape.center();
+        AABB area = new AABB(center, center).inflate(MOON_RANGE);
+        Vec3 target = center.add(shape.normal().scale(0.3D));
+        boolean vacuumTick = this.moonTicks % MOON_VACUUM_INTERVAL == 0;
+        for (Entity entity : level.getEntities(this, area, this::canMoonAffect)) {
+            Vec3 position = entity.getBoundingBox().getCenter();
+            PortalShape.PortalLocalCoords local = shape.localCoords(position);
+            double depth = local.depth();
+            double distance = position.distanceTo(center);
+            if (depth < -0.5D || distance > MOON_RANGE) {
+                continue;
             }
-            return;
+            boolean atMouth = depth <= MOON_MOUTH_DEPTH + entity.getBbWidth() * 0.5D
+                    && Math.abs(local.horizontal()) <= shape.halfWidth() + 0.25D
+                    && Math.abs(local.vertical()) <= shape.halfHeight() + 0.25D;
+            if (atMouth) {
+                if (!this.swallowIntoSpace(level, entity, owner)) {
+                    this.holdInVacuum(level, entity, shape, owner, vacuumTick);
+                }
+                continue;
+            }
+            double falloff = 1.0D - distance / MOON_RANGE;
+            double strength = MOON_PULL_STRENGTH * (0.35D + falloff * falloff * 1.6D);
+            Vec3 worldMotion = PortalTransitMath.entityVelocityToWorld(entity, entity.getDeltaMovement())
+                    .scale(0.92D)
+                    .add(target.subtract(position).normalize().scale(strength));
+            if (worldMotion.length() > MOON_MAX_SPEED) {
+                worldMotion = worldMotion.normalize().scale(MOON_MAX_SPEED);
+            }
+            applyMoonMotion(entity, worldMotion);
         }
-        if (this.ageTicks % 80 == 0) {
-            this.level().playSound(null, this.blockPosition(), sound("portal_ambient", SoundEvents.PORTAL_AMBIENT), SoundSource.BLOCKS, 0.18F, this.getPortalSide() == PortalSide.BLUE ? 1.05F : 0.92F);
+    }
+
+    private boolean canMoonAffect(Entity entity) {
+        if (!entity.isAlive() || entity.isPassenger() || entity.isSpectator()
+                || entity instanceof PortalEntity || entity instanceof PortalGunProjectileEntity) {
+            return false;
         }
-        this.tickTeleport(linked);
+        if (entity instanceof Player player && player.isCreative()) {
+            return false;
+        }
+        return entity instanceof LivingEntity || entity instanceof ItemEntity || entity instanceof ExperienceOrb
+                || entity instanceof FallingBlockEntity || entity instanceof Projectile
+                || entity instanceof AbstractMinecart || entity instanceof Boat || entity instanceof PrimedTnt;
+    }
+
+    private boolean swallowIntoSpace(ServerLevel level, Entity entity, Player owner) {
+        if (entity instanceof Player || entity instanceof AbstractMinecart || entity instanceof Boat) {
+            return false;
+        }
+        if (entity instanceof LivingEntity living) {
+            living.hurt(AntarchyDamageSources.moonVacuum(level, owner), Float.MAX_VALUE);
+            return !living.isAlive();
+        }
+        entity.discard();
+        return true;
+    }
+
+    private void holdInVacuum(ServerLevel level, Entity entity, PortalShape shape, Player owner, boolean vacuumTick) {
+        Vec3 hold = shape.center().add(shape.normal().scale(MOON_HOLD_DEPTH + entity.getBbWidth() * 0.5D));
+        applyMoonMotion(entity, hold.subtract(entity.getBoundingBox().getCenter()).scale(0.45D));
+        if (vacuumTick && entity instanceof LivingEntity living) {
+            living.hurt(AntarchyDamageSources.moonVacuum(level, owner == entity ? null : owner), MOON_VACUUM_DAMAGE);
+        }
+    }
+
+    private static void applyMoonMotion(Entity entity, Vec3 worldMotion) {
+        entity.setDeltaMovement(PortalTransitMath.entityVelocityFromWorld(entity, worldMotion));
+        entity.hasImpulse = true;
+        entity.fallDistance = 0.0F;
+        if (entity instanceof LivingEntity) {
+            entity.hurtMarked = true;
+        }
+    }
+
+    private void pullMoonBlocks(ServerLevel level, PortalShape shape, Player owner) {
+        int cap = AntarchySettings.portalGunMoonBlockCap();
+        int pulled = 0;
+        for (int ray = 0; ray < MOON_BLOCK_RAYS && pulled < MOON_BLOCKS_PER_PULL && this.moonSuckedBlocks < cap; ray++) {
+            Vec3 direction = new Vec3(this.random.nextGaussian(), this.random.nextGaussian(), this.random.nextGaussian());
+            if (direction.lengthSqr() < 1.0E-6D) {
+                continue;
+            }
+            direction = direction.normalize();
+            double outward = direction.dot(shape.normal());
+            if (outward < MOON_RAY_MIN_OUTWARD) {
+                direction = direction.subtract(shape.normal().scale(outward - MOON_RAY_MIN_OUTWARD - this.random.nextDouble() * 0.3D)).normalize();
+            }
+            Vec3 start = shape.center()
+                    .add(shape.right().scale((this.random.nextDouble() * 2.0D - 1.0D) * shape.halfWidth()))
+                    .add(shape.up().scale((this.random.nextDouble() * 2.0D - 1.0D) * shape.halfHeight()))
+                    .add(shape.normal().scale(0.3D));
+            Vec3 end = start.add(direction.scale(MOON_RANGE));
+            BlockPos hit = this.firstBlockAlong(level, shape, start, end);
+            if (hit == null) {
+                continue;
+            }
+            BlockState state = loadedState(level, hit);
+            if (state == null || !BlockSuction.canLift(level, hit, state, true)
+                    || owner != null && !level.mayInteract(owner, hit)) {
+                continue;
+            }
+            FallingBlockEntity falling = BlockSuction.lift(level, hit, state, shape.center().add(shape.normal().scale(1.2D)), MOON_BLOCK_SPEED);
+            if (falling == null) {
+                continue;
+            }
+            falling.setNoGravity(true);
+            this.moonLiftedBlocks.put(falling.getUUID(), this.moonTicks);
+            pulled++;
+            this.moonSuckedBlocks++;
+        }
+    }
+
+    private void tickMoonLiftedBlocks(ServerLevel level, PortalShape shape) {
+        Iterator<Map.Entry<UUID, Integer>> iterator = this.moonLiftedBlocks.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<UUID, Integer> entry = iterator.next();
+            if (!(level.getEntity(entry.getKey()) instanceof FallingBlockEntity falling) || !falling.isAlive()) {
+                iterator.remove();
+                continue;
+            }
+            if (this.moonTicks - entry.getValue() > MOON_BLOCK_MAX_FLIGHT_TICKS
+                    || falling.getBoundingBox().getCenter().distanceTo(shape.center()) <= MOON_BLOCK_SWALLOW_RADIUS) {
+                falling.discard();
+                iterator.remove();
+            }
+        }
+    }
+
+    private void releaseMoonLiftedBlocks(ServerLevel level) {
+        for (UUID id : this.moonLiftedBlocks.keySet()) {
+            if (level.getEntity(id) instanceof FallingBlockEntity falling && falling.isAlive()) {
+                falling.setNoGravity(false);
+                falling.setDeltaMovement(falling.getDeltaMovement().scale(0.2D));
+                falling.hurtMarked = true;
+            }
+        }
+        this.moonLiftedBlocks.clear();
+    }
+
+    private BlockPos firstBlockAlong(ServerLevel level, PortalShape shape, Vec3 start, Vec3 end) {
+        Vec3 delta = end.subtract(start);
+        int steps = Math.max(1, (int) Math.ceil(delta.length() / MOON_RAY_STEP));
+        BlockPos previous = null;
+        for (int step = 0; step <= steps; step++) {
+            BlockPos pos = BlockPos.containing(start.add(delta.scale((double) step / steps)));
+            if (pos.equals(previous)) {
+                continue;
+            }
+            previous = pos;
+            if (!level.isInWorldBounds(pos) || !level.getWorldBorder().isWithinBounds(pos)) {
+                return null;
+            }
+            BlockState state = loadedState(level, pos);
+            if (state == null) {
+                return null;
+            }
+            if (state.isAir() || this.containsPortalSpot(pos)) {
+                continue;
+            }
+            PortalShape.PortalLocalCoords local = shape.localCoords(Vec3.atCenterOf(pos));
+            if (local.depth() < -1.0D) {
+                return null;
+            }
+            if (local.depth() < 0.5D
+                    && Math.abs(local.horizontal()) <= shape.halfWidth() + 1.0D
+                    && Math.abs(local.vertical()) <= shape.halfHeight() + 1.0D) {
+                return null;
+            }
+            return pos;
+        }
+        return null;
+    }
+
+    private static BlockState loadedState(ServerLevel level, BlockPos pos) {
+        net.minecraft.world.level.chunk.LevelChunk chunk = level.getChunkSource()
+                .getChunkNow(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()));
+        return chunk == null ? null : chunk.getBlockState(pos);
+    }
+
+    private void spawnMoonParticles() {
+        PortalShape shape = this.getWorldPortalShape();
+        Vec3 center = shape.center();
+        for (int i = 0; i < 6; i++) {
+            Vec3 direction = new Vec3(this.random.nextGaussian(), this.random.nextGaussian(), this.random.nextGaussian());
+            if (direction.lengthSqr() < 1.0E-6D) {
+                continue;
+            }
+            direction = direction.normalize();
+            if (direction.dot(shape.normal()) < 0.1D) {
+                direction = direction.add(shape.normal().scale(0.1D - direction.dot(shape.normal()))).normalize();
+            }
+            Vec3 start = center.add(direction.scale(1.5D + this.random.nextDouble() * MOON_RANGE * 0.6D));
+            Vec3 velocity = center.subtract(start).normalize().scale(0.35D + this.random.nextDouble() * 0.3D);
+            this.level().addParticle(ParticleTypes.CLOUD, start.x, start.y, start.z, velocity.x, velocity.y, velocity.z);
+        }
     }
 
     private boolean isStillRegistered(ServerLevel level) {
-        return this.ownerId != null && PortalGunSavedData.isRegistered(level.getServer(), this.ownerId, this.getPortalSide(), this.getUUID());
+        return PortalGunSavedData.isRegistered(level, this.gunId, this.getPortalSide(), this.getUUID());
     }
 
     private boolean hasValidSurface() {
         Direction facing = this.getFacingDirection();
+        if (!PortalGunPlacement.isRectangularFootprint(this.portalSpots, this.getFacingDirection(), this.getUpAxis(), this.getPortalWidth(), this.getPortalHeight())) {
+            return false;
+        }
         for (int i = 0; i < this.portalSpots.length; i++) {
             BlockPos portalSpot = this.portalSpots[i];
             BlockPos supportPos = portalSpot.relative(facing.getOpposite());
@@ -377,327 +468,45 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
                 return false;
             }
             BlockEntity blockEntity = this.level().getBlockEntity(portalSpot);
-            if (i == 0) {
-                if (!(blockEntity instanceof PortalGunPortalMasterBlockEntity master) || !master.matches(this.ownerId, this.getUUID(), this.getPortalSide())) {
-                    return false;
-                }
-            } else {
-                if (!(blockEntity instanceof PortalGunPortalBaseBlockEntity base) || !base.matches(this.ownerId, this.getUUID(), this.getPortalSide())) {
-                    return false;
-                }
-            }
+              if (!(blockEntity instanceof PortalGunPortalCellAccess cell)) {
+                  return false;
+              }
+              PortalGunPortalFaceRecord record = cell.portalGun$getFaceRecord(facing, this.getUUID());
+              if (record != null) {
+                  if ((this.ownerId == null || !this.ownerId.equals(record.ownerId())) || record.side() != this.getPortalSide() || record.master() != (i == 0)) {
+                      return false;
+                  }
+              } else if (i == 0) {
+                  if (!(blockEntity instanceof PortalGunPortalMasterBlockEntity master) || !master.matches(this.ownerId, this.getUUID(), this.getPortalSide())) {
+                      return false;
+                  }
+              } else if (!(blockEntity instanceof PortalGunPortalBaseBlockEntity base) || !base.matches(this.ownerId, this.getUUID(), this.getPortalSide())) {
+                  return false;
+              }
         }
         return true;
     }
 
-    private void tickTeleport(PortalGunPortalEntity linked) {
-        List<Entity> entities = this.level().getEntities(this, this.getScanRange(), this::canTeleportEntity);
-        this.updatePortalEntityScan(linked, entities);
-        if (!entities.isEmpty() && this.ageTicks % 20 == 0) {
-            Antarchy.LOGGER.info("Portal gun teleport scan portal={} side={} linked={} count={} scan={}", this.getUUID(), this.getPortalSide(), linked.getUUID(), entities.size(), this.getScanRange());
-        }
-        for (Entity entity : entities) {
-            Vec3 crossingProbe = this.resolveCrossingProbe(entity);
-            if (crossingProbe == null) {
-                if (this.ageTicks % 40 == 0) {
-                    PortalGunWorldPortalShape.PortalLocalCoords coords = this.getWorldPortalShape().localCoords(this.teleportProbePosition(entity));
-                    PortalBounds bounds = this.portalBounds(entity.getBoundingBox());
-                    Antarchy.LOGGER.info("Portal gun entity in scan did not cross portal={} entity={} entityType={} depth={} horizontal={} vertical={} boxDepthMin={} boxDepthMax={} boxHorizontalMin={} boxHorizontalMax={} boxVerticalMin={} boxVerticalMax={} movement={}", this.getUUID(), entity.getUUID(), EntityType.getKey(entity.getType()), coords.depth(), coords.horizontal(), coords.vertical(), bounds.minDepth(), bounds.maxDepth(), bounds.minHorizontal(), bounds.maxHorizontal(), bounds.minVertical(), bounds.maxVertical(), entity.getDeltaMovement());
-                }
-                continue;
-            }
-            Antarchy.LOGGER.info("Portal gun teleport crossing portal={} side={} linked={} entity={} entityType={} probe={}", this.getUUID(), this.getPortalSide(), linked.getUUID(), entity.getUUID(), EntityType.getKey(entity.getType()), crossingProbe);
-            this.teleportEntity(entity, linked, crossingProbe);
-        }
-    }
-
-    private void updatePortalEntityScan(PortalGunPortalEntity linked, List<Entity> entities) {
-        Set<UUID> currentScan = new HashSet<>();
-        for (Entity entity : entities) {
-            UUID entityId = entity.getUUID();
-            currentScan.add(entityId);
-            PortalBounds bounds = this.portalBounds(entity.getBoundingBox());
-            int depthBucket = (int) Math.round(bounds.minDepth() * 1000.0D);
-            this.portalEntityDepths.put(entityId, depthBucket);
-            if (!this.lastScanEntities.contains(entityId)) {
-                Antarchy.LOGGER.info("Portal gun entity entered scan portal={} linked={} entity={} entityType={} minDepth={} maxDepth={} minHorizontal={} maxHorizontal={} minVertical={} maxVertical={} motion={}", this.getUUID(), linked.getUUID(), entityId, EntityType.getKey(entity.getType()), bounds.minDepth(), bounds.maxDepth(), bounds.minHorizontal(), bounds.maxHorizontal(), bounds.minVertical(), bounds.maxVertical(), entity.getDeltaMovement());
-            }
-        }
-        for (UUID previous : this.lastScanEntities) {
-            if (!currentScan.contains(previous)) {
-                Integer depth = this.portalEntityDepths.remove(previous);
-                Antarchy.LOGGER.info("Portal gun entity left scan portal={} linked={} entity={} lastDepth={}", this.getUUID(), linked.getUUID(), previous, depth);
-            }
-        }
-        this.lastScanEntities = currentScan;
-    }
-
-    private boolean canTeleportEntity(Entity entity) {
-        if (!entity.isAlive() || entity instanceof PortalGunPortalEntity || entity.isPassenger() || entity.isVehicle()) {
-            return false;
-        }
-        return !this.teleportCooldowns.containsKey(entity.getUUID());
-    }
-
-    private boolean isInsidePortal(Vec3 position) {
-        return this.getWorldPortalShape().contains(position, 0.0D);
-    }
-
-    private PortalLocalCoords localCoords(Vec3 position) {
-        PortalGunWorldPortalShape.PortalLocalCoords coords = this.getWorldPortalShape().localCoords(position);
-        return new PortalLocalCoords(coords.horizontal(), coords.vertical(), coords.depth());
-    }
-
-    private boolean overlapsPortalVolume(Entity entity) {
-        PortalBounds bounds = this.portalBounds(entity.getBoundingBox());
-        double edgePadding = entity instanceof Player ? 0.22D : 0.14D;
-        double frontDepth = entity instanceof Player ? 0.5D : 0.36D;
-        double backDepth = entity instanceof Player ? 0.28D : 0.22D;
-        double normalVelocity = entity.getDeltaMovement().dot(this.getNormalVec().normalize());
-        boolean movingIntoPortal = normalVelocity < -0.01D;
-        boolean straddlingPlane = bounds.minDepth() <= 0.03D && bounds.maxDepth() >= -0.03D;
-        boolean inFrame = bounds.maxHorizontal() >= -HALF_WIDTH - edgePadding
-                && bounds.minHorizontal() <= HALF_WIDTH + edgePadding
-                && bounds.maxVertical() >= -HALF_HEIGHT - edgePadding
-                && bounds.minVertical() <= HALF_HEIGHT + edgePadding
-                && bounds.maxDepth() >= -backDepth
-                && bounds.minDepth() <= frontDepth;
-        return inFrame && (movingIntoPortal || straddlingPlane);
-    }
-
-    private Vec3 portalVolumeProbe(Entity entity) {
-        Vec3 probe = this.teleportProbePosition(entity);
-        PortalGunWorldPortalShape shape = this.getWorldPortalShape();
-        PortalGunWorldPortalShape.PortalLocalCoords coords = shape.localCoords(probe);
-        double horizontal = clamp(coords.horizontal(), -HALF_WIDTH + 0.05D, HALF_WIDTH - 0.05D);
-        double vertical = clamp(coords.vertical(), -HALF_HEIGHT + 0.05D, HALF_HEIGHT - 0.05D);
-        return shape.center()
-                .add(shape.right().scale(horizontal))
-                .add(shape.up().scale(vertical))
-                .subtract(shape.normal().scale(0.01D));
-    }
-
-    private PortalBounds portalBounds(AABB bounds) {
-        PortalGunWorldPortalShape shape = this.getWorldPortalShape();
-        double minHorizontal = Double.POSITIVE_INFINITY;
-        double maxHorizontal = Double.NEGATIVE_INFINITY;
-        double minVertical = Double.POSITIVE_INFINITY;
-        double maxVertical = Double.NEGATIVE_INFINITY;
-        double minDepth = Double.POSITIVE_INFINITY;
-        double maxDepth = Double.NEGATIVE_INFINITY;
-        for (Vec3 corner : boxCorners(bounds)) {
-            PortalGunWorldPortalShape.PortalLocalCoords coords = shape.localCoords(corner);
-            minHorizontal = Math.min(minHorizontal, coords.horizontal());
-            maxHorizontal = Math.max(maxHorizontal, coords.horizontal());
-            minVertical = Math.min(minVertical, coords.vertical());
-            maxVertical = Math.max(maxVertical, coords.vertical());
-            minDepth = Math.min(minDepth, coords.depth());
-            maxDepth = Math.max(maxDepth, coords.depth());
-        }
-        return new PortalBounds(minHorizontal, maxHorizontal, minVertical, maxVertical, minDepth, maxDepth);
-    }
-
-    private static Vec3[] boxCorners(AABB bounds) {
-        return new Vec3[] {
-                new Vec3(bounds.minX, bounds.minY, bounds.minZ),
-                new Vec3(bounds.minX, bounds.minY, bounds.maxZ),
-                new Vec3(bounds.minX, bounds.maxY, bounds.minZ),
-                new Vec3(bounds.minX, bounds.maxY, bounds.maxZ),
-                new Vec3(bounds.maxX, bounds.minY, bounds.minZ),
-                new Vec3(bounds.maxX, bounds.minY, bounds.maxZ),
-                new Vec3(bounds.maxX, bounds.maxY, bounds.minZ),
-                new Vec3(bounds.maxX, bounds.maxY, bounds.maxZ)
-        };
-    }
-
-    private static double clamp(double value, double min, double max) {
-        return Math.max(min, Math.min(max, value));
-    }
-
-    private List<Vec3> portalSamples(Entity entity, AABB box, boolean previous) {
-        Vec3 center = new Vec3((box.minX + box.maxX) * 0.5D, (box.minY + box.maxY) * 0.5D, (box.minZ + box.maxZ) * 0.5D);
-        Vec3 topCenter = new Vec3(center.x, box.maxY, center.z);
-        Vec3 bottomCenter = new Vec3(center.x, box.minY, center.z);
-        if (entity instanceof Player player) {
-            Vec3 eye = previous ? this.previousTeleportProbePosition(player) : this.teleportProbePosition(player);
-            return List.of(center, eye, topCenter, bottomCenter);
-        }
-        if (entity instanceof LivingEntity) {
-            return List.of(center, topCenter, bottomCenter);
-        }
-        return List.of(center);
-    }
-
-    private Vec3 matchPreviousSample(Vec3 currentSample, AABB currentBox, AABB previousBox) {
-        double xLerp = axisRatio(currentSample.x, currentBox.minX, currentBox.maxX);
-        double yLerp = axisRatio(currentSample.y, currentBox.minY, currentBox.maxY);
-        double zLerp = axisRatio(currentSample.z, currentBox.minZ, currentBox.maxZ);
-        return new Vec3(
-                lerp(previousBox.minX, previousBox.maxX, xLerp),
-                lerp(previousBox.minY, previousBox.maxY, yLerp),
-                lerp(previousBox.minZ, previousBox.maxZ, zLerp)
-        );
-    }
-
-    private static double axisRatio(double value, double min, double max) {
-        double size = max - min;
-        if (Math.abs(size) < 1.0E-6D) {
-            return 0.5D;
-        }
-        return (value - min) / size;
-    }
-
-    private static double lerp(double min, double max, double delta) {
-        return min + (max - min) * delta;
-    }
-
-    private void teleportEntity(Entity entity, PortalGunPortalEntity destination, Vec3 currentProbe) {
-        Vec3 relativeProbe = currentProbe.subtract(this.position());
-        Vec3 transformedProbe = PortalGunTransformUtil.transformPosition(this, destination, relativeProbe);
-        Vec3 entityOffsetFromProbe = entity.position().subtract(currentProbe);
-        Vec3 transformedEntityOffset = PortalGunTransformUtil.transformVector(this, destination, entityOffsetFromProbe);
-        Vec3 transformedLook = PortalGunTransformUtil.transformVector(this, destination, entity.getLookAngle()).normalize();
-        Vec3 entryMotion = this.portalEntryMomentum(entity, currentProbe);
-        Vec3 transformedMotion = this.exitMomentum(entity, destination, PortalGunTransformUtil.transformVector(this, destination, entryMotion));
-        double exitClearance = Math.max(0.35D, entity.getBbWidth() * 0.5D + 0.16D);
-        Vec3 exitProbe = destination.position().add(transformedProbe).add(destination.getNormalVec().normalize().scale(exitClearance - transformedProbe.dot(destination.getNormalVec().normalize())));
-        Vec3 requestedExitPos = exitProbe.add(transformedEntityOffset);
-        Vec3 exitPos = this.resolveSafeExitPosition(entity, destination, requestedExitPos);
-        float yaw = PortalGunTransformUtil.yawFromLook(transformedLook);
-        float pitch = PortalGunTransformUtil.pitchFromLook(transformedLook);
-        this.applyTeleportCooldown(entity, destination);
-        this.level().playSound(null, this.getX(), this.getY(), this.getZ(), sound("portal_enter", SoundEvents.PORTAL_TRAVEL), SoundSource.PLAYERS, 0.7F, 0.96F + this.random.nextFloat() * 0.08F);
-        if (entity instanceof ServerPlayer player && destination.level() instanceof ServerLevel destinationLevel) {
-            player.teleportTo(destinationLevel, exitPos.x, exitPos.y, exitPos.z, yaw, pitch);
-        } else {
-            entity.teleportTo(exitPos.x, exitPos.y, exitPos.z);
-            entity.setYRot(yaw);
-            entity.setXRot(pitch);
-            entity.setYHeadRot(yaw);
-            entity.setYBodyRot(yaw);
-        }
-        entity.setDeltaMovement(transformedMotion);
-        entity.hasImpulse = true;
-        entity.hurtMarked = true;
-        if (entity instanceof ServerPlayer player) {
-            player.connection.send(new ClientboundSetEntityMotionPacket(player));
-        }
-        entity.fallDistance = 0.0F;
-        destination.level().playSound(null, exitPos.x, exitPos.y, exitPos.z, sound("portal_exit", SoundEvents.PORTAL_TRAVEL), SoundSource.PLAYERS, 0.7F, 0.96F + this.random.nextFloat() * 0.08F);
-        this.handleSpecialEntityPostTeleport(entity);
-        Antarchy.LOGGER.info("Portal gun teleported entity source={} destination={} entity={} entityType={} requestedExit={} exit={} inputVelocity={} outputVelocity={} yaw={} pitch={} sourceFacing={} sourceUp={} destinationFacing={} destinationUp={}", this.getUUID(), destination.getUUID(), entity.getUUID(), EntityType.getKey(entity.getType()), requestedExitPos, exitPos, entryMotion, transformedMotion, yaw, pitch, this.getFacingDirection(), this.getUpAxis(), destination.getFacingDirection(), destination.getUpAxis());
-    }
-
-    private Vec3 portalEntryMomentum(Entity entity, Vec3 currentProbe) {
-        Vec3 velocity = entity.getDeltaMovement();
-        Vec3 probeVelocity = currentProbe.subtract(this.previousTeleportProbePosition(entity));
-        Vec3 positionVelocity = entity.position().subtract(entity.xo, entity.yo, entity.zo);
-        Vec3 selected = velocity;
-        if (probeVelocity.lengthSqr() > selected.lengthSqr()) {
-            selected = probeVelocity;
-        }
-        if (positionVelocity.lengthSqr() > selected.lengthSqr()) {
-            selected = positionVelocity;
-        }
-        return selected;
-    }
-
-    private Vec3 exitMomentum(Entity entity, PortalGunPortalEntity destination, Vec3 transformedMotion) {
-        Vec3 normal = destination.getNormalVec().normalize();
-        double outward = transformedMotion.dot(normal);
-        if (outward >= MIN_EXIT_MOMENTUM) {
-            return transformedMotion;
-        }
-        if (entity.getDeltaMovement().lengthSqr() <= 1.0E-5D && transformedMotion.lengthSqr() <= 1.0E-5D) {
-            return normal.scale(MIN_EXIT_MOMENTUM);
-        }
-        return transformedMotion.add(normal.scale(MIN_EXIT_MOMENTUM - outward));
-    }
-
-    private Vec3 resolveSafeExitPosition(Entity entity, PortalGunPortalEntity destination, Vec3 requestedExitPos) {
-        Vec3 normal = destination.getNormalVec().normalize();
-        if (this.canPlaceEntityAt(entity, requestedExitPos)) {
-            return requestedExitPos;
-        }
-        for (int i = 1; i <= 24; i++) {
-            Vec3 candidate = requestedExitPos.add(normal.scale(i * 0.125D));
-            if (this.canPlaceEntityAt(entity, candidate)) {
-                Antarchy.LOGGER.info("Portal gun adjusted blocked exit entity={} destination={} requested={} adjusted={} distance={}", entity.getUUID(), destination.getUUID(), requestedExitPos, candidate, i * 0.125D);
-                return candidate;
-            }
-        }
-        Vec3 fallback = destination.position().add(normal.scale(Math.max(1.0D, entity.getBbWidth() + 0.5D)));
-        Antarchy.LOGGER.info("Portal gun could not find clear exit entity={} destination={} requested={} fallback={}", entity.getUUID(), destination.getUUID(), requestedExitPos, fallback);
-        return fallback;
-    }
-
-    private boolean canPlaceEntityAt(Entity entity, Vec3 position) {
-        AABB movedBounds = entity.getBoundingBox().move(position.x - entity.getX(), position.y - entity.getY(), position.z - entity.getZ());
-        return this.level().noCollision(entity, movedBounds);
-    }
-
-    private void tickTeleportCooldowns() {
-        Iterator<Map.Entry<UUID, Integer>> iterator = this.teleportCooldowns.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<UUID, Integer> entry = iterator.next();
-            int cooldown = entry.getValue() - 1;
-            if (cooldown < 0) {
-                iterator.remove();
-            } else {
-                entry.setValue(cooldown);
-            }
-        }
-    }
-
-    private void applyTeleportCooldown(Entity entity, PortalGunPortalEntity destination) {
-        UUID entityId = entity.getUUID();
-        this.teleportCooldowns.put(entityId, TELEPORT_COOLDOWN_TICKS);
-        destination.teleportCooldowns.put(entityId, TELEPORT_COOLDOWN_TICKS);
-    }
-
-    private void handleSpecialEntityPostTeleport(Entity entity) {
-        if (entity instanceof AbstractArrow arrow) {
-            ((AbstractArrowAccessor) arrow).antarchy$setInGround(false);
-            ((AbstractArrowAccessor) arrow).antarchy$setInGroundTime(0);
-            ((AbstractArrowAccessor) arrow).antarchy$setShakeTime(0);
-            arrow.setNoPhysics(false);
-        }
-    }
-
-    private PortalGunPortalEntity findLinkedPortal(ServerLevel level) {
-        if (this.linkedPortalId == null) {
-            return null;
-        }
-        Entity entity = level.getEntity(this.linkedPortalId);
-        return entity instanceof PortalGunPortalEntity portal ? portal : null;
-    }
-
     @Override
-    public AABB getBoundingBoxForCulling() {
-        return this.getWorldPortalShape().getBoundsForCulling();
-    }
-
-    @Override
-    protected AABB makeBoundingBox() {
-        return this.getPortalInsides();
-    }
-
-    @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
+    protected void saveExtra(CompoundTag tag) {
         if (this.ownerId != null) {
             tag.putUUID("OwnerId", this.ownerId);
         }
-        if (this.linkedPortalId != null) {
-            tag.putUUID("LinkedPortalId", this.linkedPortalId);
+        if (this.gunId != null) {
+            tag.putUUID("GunId", this.gunId);
         }
-        tag.putInt("AgeTicks", this.ageTicks);
-        tag.putInt("PairTime", this.pairTime);
+        if (this.isMoonPortal()) {
+            tag.putBoolean("Moon", true);
+            tag.putInt("MoonTicks", this.moonTicks);
+            tag.putInt("MoonSuckedBlocks", this.moonSuckedBlocks);
+            ListTag lifted = new ListTag();
+            for (UUID id : this.moonLiftedBlocks.keySet()) {
+                lifted.add(NbtUtils.createUUID(id));
+            }
+            tag.put("MoonLiftedBlocks", lifted);
+        }
         tag.putInt("Side", this.getPortalSide().ordinal());
-        tag.putInt("Facing", this.getFacingDirection().get3DDataValue());
-        tag.putInt("UpAxis", this.getUpAxis().get3DDataValue());
-        tag.putInt("ChannelRed", this.getChannelRed());
-        tag.putInt("ChannelGreen", this.getChannelGreen());
-        tag.putInt("ChannelBlue", this.getChannelBlue());
+        tag.putInt("Variant", this.getVariant().id());
         tag.putInt("SupportX", this.supportOrigin.getX());
         tag.putInt("SupportY", this.supportOrigin.getY());
         tag.putInt("SupportZ", this.supportOrigin.getZ());
@@ -707,158 +516,115 @@ public class PortalGunPortalEntity extends Entity implements GeoEntity {
         tag.putInt("BaseX", this.basePos.getX());
         tag.putInt("BaseY", this.basePos.getY());
         tag.putInt("BaseZ", this.basePos.getZ());
-        ListTag spots = new ListTag();
-        for (BlockPos portalSpot : this.portalSpots) {
-            CompoundTag spot = new CompoundTag();
-            spot.putInt("X", portalSpot.getX());
-            spot.putInt("Y", portalSpot.getY());
-            spot.putInt("Z", portalSpot.getZ());
-            spots.add(spot);
-        }
-        tag.put("PortalSpots", spots);
-        ListTag compensated = new ListTag();
-        for (BlockPos compensatedSpot : this.compensatedSpots) {
-            CompoundTag spot = new CompoundTag();
-            spot.putInt("X", compensatedSpot.getX());
-            spot.putInt("Y", compensatedSpot.getY());
-            spot.putInt("Z", compensatedSpot.getZ());
-            compensated.add(spot);
-        }
-        tag.put("CompensatedSpots", compensated);
+        tag.put("PortalSpots", writeSpots(java.util.Arrays.asList(this.portalSpots)));
+        tag.put("CompensatedSpots", writeSpots(this.compensatedSpots));
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
+    protected void loadExtra(CompoundTag tag) {
         if (tag.hasUUID("OwnerId")) {
             this.ownerId = tag.getUUID("OwnerId");
         }
-        if (tag.hasUUID("LinkedPortalId")) {
-            this.linkedPortalId = tag.getUUID("LinkedPortalId");
-            this.entityData.set(LINKED_PORTAL, Optional.of(this.linkedPortalId));
+        this.gunId = tag.hasUUID("GunId") ? tag.getUUID("GunId") : null;
+        this.entityData.set(OWNER_ID, Optional.ofNullable(this.ownerId));
+        this.entityData.set(GUN_ID, Optional.ofNullable(this.gunId));
+        this.entityData.set(MOON, tag.getBoolean("Moon"));
+        this.moonTicks = tag.getInt("MoonTicks");
+        this.moonSuckedBlocks = tag.getInt("MoonSuckedBlocks");
+        this.moonLiftedBlocks.clear();
+        for (Tag lifted : tag.getList("MoonLiftedBlocks", Tag.TAG_INT_ARRAY)) {
+            this.moonLiftedBlocks.put(NbtUtils.loadUUID(lifted), this.moonTicks);
         }
-        this.ageTicks = tag.getInt("AgeTicks");
-        this.pairTime = tag.getInt("PairTime");
         this.entityData.set(SIDE, tag.getInt("Side"));
-        this.entityData.set(FACING, tag.getInt("Facing"));
-        this.entityData.set(UP_AXIS, tag.getInt("UpAxis"));
-        if (tag.contains("ChannelRed")) {
-            this.entityData.set(CHANNEL_RED, tag.getInt("ChannelRed"));
-            this.entityData.set(CHANNEL_GREEN, tag.getInt("ChannelGreen"));
-            this.entityData.set(CHANNEL_BLUE, tag.getInt("ChannelBlue"));
-        } else if (this.ownerId != null) {
-            int[] channelColor = generateChannelColor(this.ownerId, this.getPortalSide());
-            this.entityData.set(CHANNEL_RED, channelColor[0]);
-            this.entityData.set(CHANNEL_GREEN, channelColor[1]);
-            this.entityData.set(CHANNEL_BLUE, channelColor[2]);
-        }
+        this.entityData.set(VARIANT, PortalGunVariant.byId(tag.getInt("Variant")).id());
         this.supportOrigin = new BlockPos(tag.getInt("SupportX"), tag.getInt("SupportY"), tag.getInt("SupportZ"));
         this.masterPos = new BlockPos(tag.getInt("MasterX"), tag.getInt("MasterY"), tag.getInt("MasterZ"));
         this.basePos = new BlockPos(tag.getInt("BaseX"), tag.getInt("BaseY"), tag.getInt("BaseZ"));
-        ListTag spots = tag.getList("PortalSpots", Tag.TAG_COMPOUND);
-        for (int i = 0; i < Math.min(2, spots.size()); i++) {
-            CompoundTag spot = spots.getCompound(i);
-            this.portalSpots[i] = new BlockPos(spot.getInt("X"), spot.getInt("Y"), spot.getInt("Z"));
+        BlockPos[] spots = readSpotList(tag.getList("PortalSpots", Tag.TAG_COMPOUND));
+        if (spots.length > 0) {
+            this.portalSpots = spots;
         }
-        ListTag compensated = tag.getList("CompensatedSpots", Tag.TAG_COMPOUND);
-        Set<BlockPos> compensatedSpots = new HashSet<>();
-        for (int i = 0; i < compensated.size(); i++) {
-            CompoundTag spot = compensated.getCompound(i);
-            compensatedSpots.add(new BlockPos(spot.getInt("X"), spot.getInt("Y"), spot.getInt("Z")));
+        this.compensatedSpots = new HashSet<>(java.util.Arrays.asList(readSpotList(tag.getList("CompensatedSpots", Tag.TAG_COMPOUND))));
+    }
+
+    private static ListTag writeSpots(Iterable<BlockPos> positions) {
+        ListTag list = new ListTag();
+        for (BlockPos position : positions) {
+            CompoundTag spot = new CompoundTag();
+            spot.putInt("X", position.getX());
+            spot.putInt("Y", position.getY());
+            spot.putInt("Z", position.getZ());
+            list.add(spot);
         }
-        this.compensatedSpots = compensatedSpots;
+        return list;
+    }
+
+    private static BlockPos[] readSpotList(ListTag list) {
+        BlockPos[] positions = new BlockPos[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            CompoundTag spot = list.getCompound(i);
+            positions[i] = new BlockPos(spot.getInt("X"), spot.getInt("Y"), spot.getInt("Z"));
+        }
+        return positions;
     }
 
     @Override
     public void remove(Entity.RemovalReason reason) {
+        if (this.isMoonPortal() && this.level() instanceof ServerLevel moonLevel) {
+            this.releaseMoonLiftedBlocks(moonLevel);
+        }
         Level level = this.level();
         UUID ownerId = this.ownerId;
+        boolean destroyPortal = reason.shouldDestroy();
+        if (destroyPortal && !level.isClientSide && ownerId != null && level instanceof ServerLevel serverLevel) {
+            PortalGunSavedData.clearPortal(serverLevel.getServer(), this.gunId, this.getPortalSide(), this.getUUID(), serverLevel.dimension().location());
+        }
         super.remove(reason);
-        if (!level.isClientSide && ownerId != null && level instanceof ServerLevel serverLevel) {
-            PortalGunSavedData.clearPortal(serverLevel.getServer(), ownerId, this.getPortalSide(), this.getUUID());
+        if (destroyPortal && !level.isClientSide && ownerId != null && level instanceof ServerLevel serverLevel) {
             this.clearPortalBlocks(serverLevel);
         }
     }
 
     private void clearPortalBlocks(ServerLevel level) {
         for (BlockPos portalSpot : this.portalSpots) {
-            if (level.getBlockEntity(portalSpot) instanceof PortalGunPortalMasterBlockEntity master && this.getUUID().equals(master.getPortalId())) {
-                level.removeBlock(portalSpot, false);
-                continue;
+            if (level.getBlockEntity(portalSpot) instanceof PortalGunPortalCellAccess cell) {
+                PortalGunPortalFaceRecord removed = cell.portalGun$removeFaceRecord(this.getFacingDirection(), this.getUUID());
+                if (!cell.portalGun$getFaceRecords().isEmpty()) {
+                    continue;
+                }
+                if (cell instanceof PortalGunPortalMasterBlockEntity master && this.getUUID().equals(master.getPortalId())) {
+                    level.removeBlock(portalSpot, false);
+                } else if (cell instanceof PortalGunPortalBaseBlockEntity base && this.getUUID().equals(base.getPortalId())) {
+                    level.removeBlock(portalSpot, false);
+                } else if (removed != null) {
+                    level.removeBlock(portalSpot, false);
+                }
             }
-            if (level.getBlockEntity(portalSpot) instanceof PortalGunPortalBaseBlockEntity base && this.getUUID().equals(base.getPortalId())) {
-                level.removeBlock(portalSpot, false);
-            }
         }
     }
 
-    @Override
-    public boolean isInvulnerableTo(DamageSource damageSource) {
-        return true;
+    public static SoundEvent sound(String path) {
+        ResourceLocation soundId = new ResourceLocation(Antarchy.MODID, path);
+        return BuiltInRegistries.SOUND_EVENT.getOptional(soundId)
+                .orElseThrow(() -> new IllegalStateException("Missing portal gun sound event: " + soundId));
     }
 
-    @Override
-    public boolean fireImmune() {
-        return true;
-    }
-
-    @Override
-    public void lavaHurt() {
-    }
-
-    @Override
-    public boolean isPushable() {
-        return false;
-    }
-
-    @Override
-    public boolean canBeCollidedWith() {
-        return false;
-    }
-
-    @Override
-    public boolean isPickable() {
-        return false;
-    }
-
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "portal_controller", 0, this::portalController));
-    }
-
-    private PlayState portalController(AnimationState<PortalGunPortalEntity> state) {
-        state.getController().setAnimationSpeed(this.entityData.get(CLOSING) || this.ageTicks < OPEN_TICKS ? 4.0D : 1.0D);
-        if (this.entityData.get(CLOSING)) {
-            return state.setAndContinue(CLOSE_ANIM);
+    private final class GunAppearance implements PortalAppearance {
+        @Override
+        public int color() {
+            return PortalGunPortalEntity.this.getPortalColor();
         }
-        if (this.ageTicks < OPEN_TICKS) {
-            return state.setAndContinue(OPEN_ANIM);
+
+        @Override
+        public ResourceLocation rimTexture() {
+            return PortalGunPortalEntity.this.getRimTexture();
         }
-        return state.setAndContinue(IDLE_ANIM);
-    }
 
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return this.geoCache;
-    }
-
-    public static SoundEvent sound(String path, SoundEvent fallback) {
-        return BuiltInRegistries.SOUND_EVENT.getOptional(new ResourceLocation(Antarchy.MODID, path)).orElse(fallback);
-    }
-
-    private static int[] generateChannelColor(UUID ownerId, PortalSide side) {
-        int seed = ownerId == null ? side.ordinal() : ownerId.hashCode() ^ side.ordinal() * 0x45d9f3b;
-        int wobbleA = Math.floorMod(seed, 54);
-        int wobbleB = Math.floorMod(seed >> 8, 46);
-        int wobbleC = Math.floorMod(seed >> 16, 38);
-        if (side == PortalSide.BLUE) {
-            return new int[] {42 + wobbleC, 128 + wobbleB, 218 + wobbleA / 3};
+        @Override
+        public ResourceLocation surfaceTexture(boolean fancy) {
+            return fancy
+                    ? PortalGunPortalEntity.this.getVariant().vortexTexture(PortalGunPortalEntity.this.getPortalSide())
+                    : PortalGunPortalEntity.this.getRimTexture();
         }
-        return new int[] {230 + wobbleA / 5, 108 + wobbleB, 28 + wobbleC};
-    }
-
-    private record PortalLocalCoords(double horizontal, double vertical, double depth) {
-    }
-
-    private record PortalBounds(double minHorizontal, double maxHorizontal, double minVertical, double maxVertical, double minDepth, double maxDepth) {
     }
 }

@@ -2,6 +2,9 @@
   "replace": false,
   "values": [
     "antarchy:ouranwood_button",
-    "antarchy:peach_button"
+    "antarchy:peach_button",
+    "antarchy:nadir_button",
+    "antarchy:royal_button",
+    "antarchy:truffalo_button"
   ]
 }

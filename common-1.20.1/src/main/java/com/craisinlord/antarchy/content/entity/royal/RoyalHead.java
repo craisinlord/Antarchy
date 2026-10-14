@@ -6,9 +6,9 @@ import org.jetbrains.annotations.Nullable;
 
 public final class RoyalHead {
     public enum Slot {
-        LEFT(1, "head_left", "bite_1", "shoot_1"),
-        CENTER(2, "head_center", "bite_2", "shoot_2"),
-        RIGHT(3, "head_right", "bite_3", "shoot_3");
+        LEFT(1, "head_left", "bite_3", "shoot_3"),
+        CENTER(2, "head_center", "bite_1", "shoot_1"),
+        RIGHT(3, "head_right", "bite_2", "shoot_2");
 
         private final int partIndex;
         private final String controllerName;

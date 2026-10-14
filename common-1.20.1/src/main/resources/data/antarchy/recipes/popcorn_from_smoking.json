@@ -6,7 +6,5 @@
   "ingredient": {
     "item": "antarchy:corn_seeds"
   },
-  "result": {
-    "item": "antarchy:popcorn"
-  }
+  "result": "antarchy:popcorn"
 }

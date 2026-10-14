@@ -4,7 +4,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.entity.AppleCowEntityVariants.AppleCow;
 import com.craisinlord.antarchy.content.entity.AppleCowEntityVariants.EnchantedGoldenAppleCow;
 import com.craisinlord.antarchy.content.entity.AppleCowEntityVariants.GoldenAppleCow;
-import com.craisinlord.antarchy.content.entity.cloud_shark.CloudSharkEntity;
+import com.craisinlord.antarchy.content.entity.stratoshark.StratosharkEntity;
 import com.craisinlord.antarchy.content.entity.BedBugEntity;
 import com.craisinlord.antarchy.content.entity.ButterflyEntity;
 import com.craisinlord.antarchy.content.entity.CaterpillarEntity;
@@ -19,16 +19,23 @@ import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
 import com.craisinlord.antarchy.content.entity.lucid.LucidEyeProjectileEntity;
+import com.craisinlord.antarchy.content.entity.vortex.VortexChargeProjectileEntity;
+import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
+import com.craisinlord.antarchy.content.entity.vortex.WindVortexEntity;
 import com.craisinlord.antarchy.content.entity.HushProjectileEntity;
 import com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity;
-import com.craisinlord.antarchy.content.entity.JumpyBugEntity;
+import com.craisinlord.antarchy.content.entity.WormHookProjectileEntity;
+import com.craisinlord.antarchy.content.entity.SpringbugEntity;
 import com.craisinlord.antarchy.content.entity.StinkBugEntity;
-import com.craisinlord.antarchy.content.entity.NadirBoatEntity;
-import com.craisinlord.antarchy.content.entity.NadirChestBoatEntity;
+import com.craisinlord.antarchy.content.entity.HoverboardEntity;
 import com.craisinlord.antarchy.content.entity.OuranwoodBoatEntity;
 import com.craisinlord.antarchy.content.entity.OuranwoodChestBoatEntity;
-import com.craisinlord.antarchy.content.entity.portal.DimensionalTearEntity;
-import com.craisinlord.antarchy.content.time.TimeDilationFieldEntity;
+import com.craisinlord.antarchy.content.entity.NadirBoatEntity;
+import com.craisinlord.antarchy.content.entity.NadirChestBoatEntity;
+import com.craisinlord.antarchy.content.entity.RoyalBoatEntity;
+import com.craisinlord.antarchy.content.entity.RoyalChestBoatEntity;
+import com.craisinlord.antarchy.content.entity.TruffaloBoatEntity;
+import com.craisinlord.antarchy.content.entity.TruffaloChestBoatEntity;
 import com.craisinlord.antarchy.content.entity.AlphaMantisEntity;
 import com.craisinlord.antarchy.content.entity.MantisEntity;
 import com.craisinlord.antarchy.content.entity.RollyPollyEntity;
@@ -36,8 +43,11 @@ import com.craisinlord.antarchy.content.entity.basilisk.BasiliskEntity;
 import com.craisinlord.antarchy.content.entity.EmperorScorpionEntity;
 import com.craisinlord.antarchy.content.entity.ScorpionEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
-import com.craisinlord.antarchy.content.entity.nightmare.NightmareBiteEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmarePortalEntity;
+import com.craisinlord.antarchy.content.entity.nightmare.NightmareBiteEntity;
+import com.craisinlord.antarchy.content.entity.portal.DimensionalTearEntity;
+import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
+import com.craisinlord.antarchy.content.portalgun.PortalGunProjectileEntity;
 import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
 import com.craisinlord.antarchy.content.entity.WaterBombEntity;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
@@ -46,9 +56,10 @@ import com.craisinlord.antarchy.content.entity.kraken.TentacleEntity;
 import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
 import com.craisinlord.antarchy.content.entity.MolevoreEntity;
 import com.craisinlord.antarchy.content.entity.MolewormEntity;
+import com.craisinlord.antarchy.content.entity.WormEntity;
 import com.craisinlord.antarchy.content.entity.BomberEntity;
 import com.craisinlord.antarchy.content.entity.SizeRayProjectileEntity;
-import com.craisinlord.antarchy.content.entity.TriffidEntity;
+import com.craisinlord.antarchy.content.entity.FlytrapEntity;
 import com.craisinlord.antarchy.content.entity.WaspEntity;
 import com.craisinlord.antarchy.content.entity.ant.BaseAntEntity;
 import com.craisinlord.antarchy.content.entity.ant.BrownAntEntity;
@@ -87,11 +98,23 @@ public final class AntarchyFabricEntities {
                     .build("rolly_polly"));
 
 
+    public static final DeferredHolder<EntityType<?>, EntityType<HoverboardEntity>> HOVERBOARD = ENTITY_TYPES.register("hoverboard",
+            () -> EntityType.Builder.<HoverboardEntity>of(HoverboardEntity::new, MobCategory.MISC)
+                    .sized(1.5F, 0.6875F)
+                    .clientTrackingRange(10)
+                    .build("hoverboard"));
+
+
     public static final DeferredHolder<EntityType<?>, EntityType<MolewormEntity>> MOLEWORM = ENTITY_TYPES.register("moleworm",
             () -> EntityType.Builder.of(MolewormEntity::new, MobCategory.MONSTER)
                     .sized(0.4F, 0.3F)
                     .clientTrackingRange(8)
                     .build("moleworm"));
+    public static final DeferredHolder<EntityType<?>, EntityType<WormEntity>> WORM = ENTITY_TYPES.register("worm",
+            () -> EntityType.Builder.of(WormEntity::new, MobCategory.MONSTER)
+                    .sized(1.35F, 2.75F)
+                    .clientTrackingRange(10)
+                    .build("worm"));
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<MantisEntity>> MANTIS = ENTITY_TYPES.register("mantis",
@@ -156,6 +179,38 @@ public final class AntarchyFabricEntities {
                     .build("nadir_chest_boat"));
 
 
+    public static final DeferredHolder<EntityType<?>, EntityType<RoyalBoatEntity>> ROYAL_BOAT_ENTITY = ENTITY_TYPES.register("royal_boat",
+            () -> EntityType.Builder.<RoyalBoatEntity>of(RoyalBoatEntity::new, MobCategory.MISC)
+                    .sized(1.375F, 0.5625F)
+                    .clientTrackingRange(10)
+                    .updateInterval(10)
+                    .build("royal_boat"));
+
+
+    public static final DeferredHolder<EntityType<?>, EntityType<RoyalChestBoatEntity>> ROYAL_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("royal_chest_boat",
+            () -> EntityType.Builder.<RoyalChestBoatEntity>of(RoyalChestBoatEntity::new, MobCategory.MISC)
+                    .sized(1.375F, 0.5625F)
+                    .clientTrackingRange(10)
+                    .updateInterval(10)
+                    .build("royal_chest_boat"));
+
+
+    public static final DeferredHolder<EntityType<?>, EntityType<TruffaloBoatEntity>> TRUFFALO_BOAT_ENTITY = ENTITY_TYPES.register("truffalo_boat",
+            () -> EntityType.Builder.<TruffaloBoatEntity>of(TruffaloBoatEntity::new, MobCategory.MISC)
+                    .sized(1.375F, 0.5625F)
+                    .clientTrackingRange(10)
+                    .updateInterval(10)
+                    .build("truffalo_boat"));
+
+
+    public static final DeferredHolder<EntityType<?>, EntityType<TruffaloChestBoatEntity>> TRUFFALO_CHEST_BOAT_ENTITY = ENTITY_TYPES.register("truffalo_chest_boat",
+            () -> EntityType.Builder.<TruffaloChestBoatEntity>of(TruffaloChestBoatEntity::new, MobCategory.MISC)
+                    .sized(1.375F, 0.5625F)
+                    .clientTrackingRange(10)
+                    .updateInterval(10)
+                    .build("truffalo_chest_boat"));
+
+
     public static final DeferredHolder<EntityType<?>, EntityType<MolevoreEntity>> MOLEVORE = ENTITY_TYPES.register("molevore",
             () -> EntityType.Builder.of(MolevoreEntity::new, MobCategory.MONSTER)
                     .sized(1.95F, 1.1F)
@@ -163,8 +218,8 @@ public final class AntarchyFabricEntities {
                     .build("molevore"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<TriffidEntity>> TRIFFID = ENTITY_TYPES.register("flytrap",
-            () -> EntityType.Builder.of(TriffidEntity::new, MobCategory.MONSTER)
+    public static final DeferredHolder<EntityType<?>, EntityType<FlytrapEntity>> FLYTRAP = ENTITY_TYPES.register("flytrap",
+            () -> EntityType.Builder.of(FlytrapEntity::new, MobCategory.MONSTER)
                     .sized(2.0F, 5.0F)
                     .clientTrackingRange(10)
                     .build("flytrap"));
@@ -198,8 +253,8 @@ public final class AntarchyFabricEntities {
                     .build("bomber"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<JumpyBugEntity>> JUMPY_BUG = ENTITY_TYPES.register("springbug",
-            () -> EntityType.Builder.of(JumpyBugEntity::new, MobCategory.MONSTER)
+    public static final DeferredHolder<EntityType<?>, EntityType<SpringbugEntity>> SPRINGBUG = ENTITY_TYPES.register("springbug",
+            () -> EntityType.Builder.of(SpringbugEntity::new, MobCategory.MONSTER)
                     .sized(3.0F, 6.0F)
                     .clientTrackingRange(8)
                     .build("springbug"));
@@ -305,8 +360,8 @@ public final class AntarchyFabricEntities {
                     .build("dr_trayaurus"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<CloudSharkEntity>> CLOUD_SHARK = ENTITY_TYPES.register("stratoshark",
-            () -> EntityType.Builder.of(CloudSharkEntity::new, MobCategory.MONSTER)
+    public static final DeferredHolder<EntityType<?>, EntityType<StratosharkEntity>> STRATOSHARK = ENTITY_TYPES.register("stratoshark",
+            () -> EntityType.Builder.of(StratosharkEntity::new, MobCategory.MONSTER)
                     .sized(2.4F, 0.9F)
                     .clientTrackingRange(10)
                     .build("stratoshark"));
@@ -318,16 +373,6 @@ public final class AntarchyFabricEntities {
                     .clientTrackingRange(12)
                     .build("kraken"));
 
-
-    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.fabric.entity.multipart.MultipartPartEntity>> KRAKEN_PART = ENTITY_TYPES.register("kraken_part",
-            () -> EntityType.Builder.<com.craisinlord.antarchy.fabric.entity.multipart.MultipartPartEntity>of(
-                            com.craisinlord.antarchy.fabric.entity.multipart.MultipartPartEntity::new,
-                            MobCategory.MISC
-                    )
-                    .sized(1.0F, 1.0F)
-                    .clientTrackingRange(12)
-                    .updateInterval(1)
-                    .build("kraken_part"));
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<MissileSquidEntity>> MISSILE_SQUID = ENTITY_TYPES.register("missile_squid",
@@ -357,6 +402,27 @@ public final class AntarchyFabricEntities {
                     .updateInterval(1)
                     .build("nightmare_portal"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<DimensionalTearEntity>> DIMENSIONAL_TEAR = ENTITY_TYPES.register("dimensional_tear",
+            () -> EntityType.Builder.of(DimensionalTearEntity::new, MobCategory.MISC)
+                    .sized(2.8F, 3.2F)
+                    .clientTrackingRange(12)
+                    .updateInterval(1)
+                    .build("dimensional_tear"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<PortalGunPortalEntity>> PORTAL_GUN_PORTAL = ENTITY_TYPES.register("portal_gun_portal",
+            () -> EntityType.Builder.of(PortalGunPortalEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 2.0F)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .build("portal_gun_portal"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<PortalGunProjectileEntity>> PORTAL_GUN_PROJECTILE = ENTITY_TYPES.register("portal_gun_projectile",
+            () -> EntityType.Builder.<PortalGunProjectileEntity>of(PortalGunProjectileEntity::new, MobCategory.MISC)
+                    .sized(0.25F, 0.25F)
+                    .clientTrackingRange(8)
+                    .updateInterval(1)
+                    .build("portal_gun_projectile"));
+
     public static final DeferredHolder<EntityType<?>, EntityType<NightmareBiteEntity>> NIGHTMARE_BITE = ENTITY_TYPES.register("nightmare_bite",
             () -> EntityType.Builder.of(NightmareBiteEntity::new, MobCategory.MISC)
                     .sized(2.5F, 2.0F)
@@ -370,6 +436,37 @@ public final class AntarchyFabricEntities {
                     .sized(2.0F, 2.0F)
                     .clientTrackingRange(10)
                     .build("lucid"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<VortexEntity>> VORTEX = ENTITY_TYPES.register("vortex",
+            () -> EntityType.Builder.of(VortexEntity::new, MobCategory.MONSTER)
+                    .sized(2.0F, 2.0F)
+                    .clientTrackingRange(10)
+                    .fireImmune()
+                    .build("vortex"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<WindVortexEntity>> WIND_VORTEX = ENTITY_TYPES.register("wind_vortex",
+            () -> EntityType.Builder.<WindVortexEntity>of(WindVortexEntity::new, MobCategory.MISC)
+                    .sized(3.0F, 5.0F)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .build("wind_vortex"));
+
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>> ROYAL_BLACK_HOLE = ENTITY_TYPES.register("royal_black_hole",
+            () -> EntityType.Builder.<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>of(com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 1.0F)
+                    .clientTrackingRange(16)
+                    .updateInterval(2)
+                    .fireImmune()
+                    .build("royal_black_hole"));
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity>> ROYAL_ASSAILANT_BLACK_HOLE = ENTITY_TYPES.register("royal_assailant_black_hole",
+            () -> EntityType.Builder.<com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity>of(com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 1.0F)
+                    .clientTrackingRange(16)
+                    .updateInterval(2)
+                    .fireImmune()
+                    .build("royal_assailant_black_hole"));
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<LucidBoltEntity>> LUCID_BOLT = ENTITY_TYPES.register("lucid_bolt",
@@ -398,6 +495,7 @@ public final class AntarchyFabricEntities {
             () -> EntityType.Builder.of(ScorpionEntity::new, MobCategory.MONSTER)
                     .sized(1.5F, 1.0F)
                     .clientTrackingRange(8)
+                    .fireImmune()
                     .build("scorpion"));
 
 
@@ -412,6 +510,7 @@ public final class AntarchyFabricEntities {
             () -> EntityType.Builder.of(EmperorScorpionEntity::new, MobCategory.MONSTER)
                     .sized(6.0F, 3.0F)
                     .clientTrackingRange(12)
+                    .fireImmune()
                     .build("emperor_scorpion"));
 
 
@@ -421,12 +520,24 @@ public final class AntarchyFabricEntities {
                     .clientTrackingRange(8)
                     .updateInterval(1)
                     .build("lucid_pearl_projectile"));
+    public static final DeferredHolder<EntityType<?>, EntityType<VortexChargeProjectileEntity>> VORTEX_CHARGE_PROJECTILE = ENTITY_TYPES.register("vortex_charge_projectile",
+            () -> EntityType.Builder.<VortexChargeProjectileEntity>of(VortexChargeProjectileEntity::new, MobCategory.MISC)
+                    .sized(0.25F, 0.25F)
+                    .clientTrackingRange(8)
+                    .updateInterval(1)
+                    .build("vortex_charge_projectile"));
     public static final DeferredHolder<EntityType<?>, EntityType<CritterCageProjectileEntity>> CRITTER_CAGE_PROJECTILE = ENTITY_TYPES.register("critter_cage_projectile",
             () -> EntityType.Builder.<CritterCageProjectileEntity>of(CritterCageProjectileEntity::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F)
                     .clientTrackingRange(8)
                     .updateInterval(1)
                     .build("critter_cage_projectile"));
+    public static final DeferredHolder<EntityType<?>, EntityType<WormHookProjectileEntity>> WORM_HOOK_PROJECTILE = ENTITY_TYPES.register("worm_hook_projectile",
+            () -> EntityType.Builder.<WormHookProjectileEntity>of(WormHookProjectileEntity::new, MobCategory.MISC)
+                    .sized(0.25F, 0.25F)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .build("worm_hook_projectile"));
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<HushProjectileEntity>> HUSH_PROJECTILE = ENTITY_TYPES.register("hush_projectile",
@@ -454,29 +565,6 @@ public final class AntarchyFabricEntities {
                     .build("upward_falling_block"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<DimensionalTearEntity>> DIMENSIONAL_TEAR = ENTITY_TYPES.register("dimensional_tear",
-            () -> EntityType.Builder.<DimensionalTearEntity>of(DimensionalTearEntity::new, MobCategory.MISC)
-                    .sized(1.0F, 2.75F)
-                    .clientTrackingRange(12)
-                    .updateInterval(2)
-                    .build("dimensional_tear"));
-
-    public static final DeferredHolder<EntityType<?>, EntityType<TimeDilationFieldEntity>> TIME_DILATION_FIELD = ENTITY_TYPES.register("time_dilation_field",
-            () -> EntityType.Builder.<TimeDilationFieldEntity>of(TimeDilationFieldEntity::new, MobCategory.MISC)
-                    .sized(0.5F, 0.5F)
-                    .clientTrackingRange(16)
-                    .updateInterval(20)
-                    .build("time_dilation_field"));
-
-    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity>> ROYAL_ASSAILANT_BLACK_HOLE = ENTITY_TYPES.register("royal_assailant_black_hole",
-            () -> EntityType.Builder.<com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity>of(com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity::new, MobCategory.MISC)
-                    .sized(1.0F, 1.0F)
-                    .clientTrackingRange(16)
-                    .updateInterval(2)
-                    .fireImmune()
-                    .build("royal_assailant_black_hole"));
-
-
     public static final DeferredHolder<EntityType<?>, EntityType<ToreterrorEntity>> TORETERROR = ENTITY_TYPES.register("toreterror",
             () -> EntityType.Builder.of(ToreterrorEntity::new, MobCategory.MONSTER)
                     .sized(2.0F, 3.0F)
@@ -493,18 +581,25 @@ public final class AntarchyFabricEntities {
 
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.CreepingHorrorEntity>> CREEPING_HORROR = ENTITY_TYPES.register("crawling_blight",
-            () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.CreepingHorrorEntity::new, MobCategory.MONSTER)
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.CrawlingBlightEntity>> CRAWLING_BLIGHT = ENTITY_TYPES.register("crawling_blight",
+            () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.CrawlingBlightEntity::new, MobCategory.MONSTER)
                     .sized(1.3F, 1.5F)
                     .clientTrackingRange(10)
                     .build("crawling_blight"));
 
 
-    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.LurkingTerrorEntity>> LURKING_TERROR = ENTITY_TYPES.register("skulking_fright",
-            () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.LurkingTerrorEntity::new, MobCategory.MONSTER)
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.SkulkingFrightEntity>> SKULKING_FRIGHT = ENTITY_TYPES.register("skulking_fright",
+            () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.SkulkingFrightEntity::new, MobCategory.MONSTER)
                     .sized(1.3F, 1.5F)
                     .clientTrackingRange(10)
                     .build("skulking_fright"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.ManticoreEntity>> MANTICORE = ENTITY_TYPES.register("manticore",
+            () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.ManticoreEntity::new, MobCategory.MONSTER)
+                    .sized(1.95F, 2.75F)
+                    .clientTrackingRange(10)
+                    .fireImmune()
+                    .build("manticore"));
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.JerryEntity>> JERRY = ENTITY_TYPES.register("jerry",
@@ -534,6 +629,53 @@ public final class AntarchyFabricEntities {
                     .sized(3.0F, 4.0F)
                     .clientTrackingRange(12)
                     .build("hercules_beetle"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.PrinceEntity>> PRINCE = ENTITY_TYPES.register("prince",
+            () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.royal.PrinceEntity::new, MobCategory.CREATURE)
+                    .sized(2.2F, 1.5F)
+                    .clientTrackingRange(10)
+                    .updateInterval(3)
+                    .fireImmune().build("prince"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.PrincessEntity>> PRINCESS = ENTITY_TYPES.register("princess",
+            () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.royal.PrincessEntity::new, MobCategory.CREATURE)
+                    .sized(2.2F, 1.5F)
+                    .clientTrackingRange(10)
+                    .updateInterval(3)
+                    .fireImmune().build("princess"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.KingEntity>> KING = ENTITY_TYPES.register("king",
+            () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.royal.KingEntity::new, MobCategory.MONSTER)
+                    .sized(com.craisinlord.antarchy.content.entity.royal.RoyalBossEntity.GAMEPLAY_WIDTH, com.craisinlord.antarchy.content.entity.royal.RoyalBossEntity.GAMEPLAY_HEIGHT)
+                    .clientTrackingRange(16)
+                    .updateInterval(3)
+                    .fireImmune().build("king"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.QueenEntity>> QUEEN = ENTITY_TYPES.register("queen",
+            () -> EntityType.Builder.of(com.craisinlord.antarchy.content.entity.royal.QueenEntity::new, MobCategory.MONSTER)
+                    .sized(com.craisinlord.antarchy.content.entity.royal.RoyalBossEntity.GAMEPLAY_WIDTH, com.craisinlord.antarchy.content.entity.royal.RoyalBossEntity.GAMEPLAY_HEIGHT)
+                    .clientTrackingRange(16)
+                    .updateInterval(3)
+                    .fireImmune().build("queen"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBoltEntity>> ROYAL_BOLT = ENTITY_TYPES.register("royal_bolt",
+            () -> EntityType.Builder.<com.craisinlord.antarchy.content.entity.royal.RoyalBoltEntity>of(com.craisinlord.antarchy.content.entity.royal.RoyalBoltEntity::new, MobCategory.MISC)
+                    .sized(0.4F, 0.4F)
+                    .clientTrackingRange(8)
+                    .updateInterval(1)
+                    .fireImmune().build("royal_bolt"));
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalElementalProjectileEntity>> ROYAL_ELEMENTAL_PROJECTILE = ENTITY_TYPES.register("royal_elemental_projectile",
+            () -> EntityType.Builder.<com.craisinlord.antarchy.content.entity.royal.RoyalElementalProjectileEntity>of(com.craisinlord.antarchy.content.entity.royal.RoyalElementalProjectileEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 1.0F)
+                    .clientTrackingRange(16)
+                    .updateInterval(1)
+                    .fireImmune().build("royal_elemental_projectile"));
+    public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalIceSpikeEntity>> ROYAL_ICE_SPIKE = ENTITY_TYPES.register("royal_ice_spike",
+            () -> EntityType.Builder.<com.craisinlord.antarchy.content.entity.royal.RoyalIceSpikeEntity>of(com.craisinlord.antarchy.content.entity.royal.RoyalIceSpikeEntity::new, MobCategory.MISC)
+                    .sized(2.0F, 4.0F)
+                    .clientTrackingRange(16)
+                    .updateInterval(1)
+                    .fireImmune().build("royal_ice_spike"));
 
 
     public static final DeferredHolder<EntityType<?>, EntityType<com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity>> OURANWOOD_DEER = ENTITY_TYPES.register("ouranwood_deer",

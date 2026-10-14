@@ -4,9 +4,7 @@
   "ingredient": {
     "item": "antarchy:raw_uranium"
   },
-  "result": {
-    "item": "antarchy:uranium_ingot"
-  },
+  "result": "antarchy:uranium_ingot",
   "experience": 2.0,
   "cookingtime": 200
 }

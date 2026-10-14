@@ -5,10 +5,13 @@
   "subtitle": "guide.antarchy.entry.rainbow_ant.subtitle",
   "description": [
     "guide.antarchy.entry.rainbow_ant.description",
-    "guide.antarchy.entry.rainbow_ant.description2",
-    "guide.antarchy.entry.rainbow_ant.description3"
+    "guide.antarchy.entry.rainbow_ant.description2"
   ],
   "entity": "antarchy:rainbow_ant",
   "cover_entity": "antarchy:rainbow_ant",
-  "rotation": 45
+  "rotation": 45,
+  "green_tint": false,
+  "gallery": [
+    {"item": "antarchy:rainbow_sugar"}
+  ]
 }

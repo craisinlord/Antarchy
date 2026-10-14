@@ -223,7 +223,7 @@ public class CritterCageItem extends Item {
     }
 
     private boolean releaseAtLookTarget(ServerLevel level, Player player, InteractionHand hand, ItemStack stack) {
-        HitResult hitResult = player.pick(5.0D, 0.0F, false);
+        HitResult hitResult = player.pick(com.craisinlord.antarchy.compat.entity.EntityReach.blockInteractionRange(player), 0.0F, false);
         Vec3 target = hitResult.getType() == HitResult.Type.BLOCK && hitResult instanceof BlockHitResult blockHitResult
                 ? blockHitResult.getLocation().add(Vec3.atLowerCornerOf(blockHitResult.getDirection().getNormal()).scale(0.5D))
                 : player.getEyePosition().add(player.getLookAngle().scale(2.0D));

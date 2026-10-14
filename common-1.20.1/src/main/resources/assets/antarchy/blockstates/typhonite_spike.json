@@ -2,40 +2,35 @@
   "variants": {
     "thickness=base,vertical_direction=down": {
       "model": "antarchy:block/typhonite_spike_down_base",
-      "x": 180,
-      "uvlock": true
+      "x": 180
     },
     "thickness=base,vertical_direction=up": {
       "model": "antarchy:block/typhonite_spike_up_base"
     },
     "thickness=frustum,vertical_direction=down": {
       "model": "antarchy:block/typhonite_spike_down_frustum",
-      "x": 180,
-      "uvlock": true
+      "x": 180
     },
     "thickness=frustum,vertical_direction=up": {
       "model": "antarchy:block/typhonite_spike_up_frustum"
     },
     "thickness=middle,vertical_direction=down": {
       "model": "antarchy:block/typhonite_spike_down_middle",
-      "x": 180,
-      "uvlock": true
+      "x": 180
     },
     "thickness=middle,vertical_direction=up": {
       "model": "antarchy:block/typhonite_spike_up_middle"
     },
     "thickness=tip,vertical_direction=down": {
       "model": "antarchy:block/typhonite_spike_down_tip",
-      "x": 180,
-      "uvlock": true
+      "x": 180
     },
     "thickness=tip,vertical_direction=up": {
       "model": "antarchy:block/typhonite_spike_up_tip"
     },
     "thickness=tip_merge,vertical_direction=down": {
       "model": "antarchy:block/typhonite_spike_down_tip_merge",
-      "x": 180,
-      "uvlock": true
+      "x": 180
     },
     "thickness=tip_merge,vertical_direction=up": {
       "model": "antarchy:block/typhonite_spike_up_tip_merge"

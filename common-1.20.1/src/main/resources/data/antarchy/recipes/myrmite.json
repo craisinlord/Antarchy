@@ -3,7 +3,7 @@
   "category": "building",
   "key": {
     "S": {
-      "tag": "c:stones"
+      "item": "minecraft:stone"
     },
     "C": {
       "item": "antarchy:chitin"
@@ -15,7 +15,7 @@
     "SSS"
   ],
   "result": {
-    "count": 8,
-    "item": "antarchy:myrmite"
+    "item": "antarchy:myrmite",
+    "count": 8
   }
 }

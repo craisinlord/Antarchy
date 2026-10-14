@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.entity.ant;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompat;
+import com.craisinlord.antarchy.compat.infinity.InfinityWarpResult;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.portal.RainbowPortalIgniter;
@@ -62,7 +63,8 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
             return AntTeleportHelper.teleportPlayerToDimension(player, AntarchySettings.rainbowAntNonInfinityFallbackDimension());
         }
 
-        if (!InfinityCompat.get().requestWarp(player, dimensionId)) {
+        InfinityWarpResult result = InfinityCompat.get().requestWarp(player, dimensionId);
+        if (result == InfinityWarpResult.REJECTED) {
             player.displayClientMessage(Component.translatable("message.antarchy.rainbow_ant_failed_dimension_create"), true);
             return InteractionResult.CONSUME;
         }
@@ -76,11 +78,6 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
         return this.hasActiveInfinityDestination() || super.requiresCustomPersistence();
     }
 
-    /**
-     * Called on death. If this ant has already been activated (fed its reagent) and Infinity integration is
-     * enabled, looks for a nearby unlit obsidian Nether-portal frame and, if found, ignites it as a permanent
-     * physical Infinity Dimensions portal to this ant's assigned dimension.
-     */
     public boolean tryIgniteInfinityPortalOnDeath() {
         if (!this.infinityActivated) {
             return false;
@@ -120,9 +117,14 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
 
         if (this.isInInfinityDimension(serverPlayer.serverLevel())) {
             ServerLevel returnLevel = this.resolveReturnDestinationLevel(serverPlayer);
-            Vec3 returnPos = this.getDestinationPosition(returnLevel, serverPlayer);
-            serverPlayer.teleportTo(returnLevel, returnPos.x, returnPos.y, returnPos.z, serverPlayer.getYRot(), serverPlayer.getXRot());
-            serverPlayer.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            AntTeleportHelper.prepareArrival(serverPlayer, returnLevel, returnPos -> {
+                if (returnPos == null) {
+                    serverPlayer.displayClientMessage(Component.translatable("message.antarchy.teleport_arrival_failed"), true);
+                    return;
+                }
+                serverPlayer.teleportTo(returnLevel, returnPos.x, returnPos.y, returnPos.z, serverPlayer.getYRot(), serverPlayer.getXRot());
+                serverPlayer.playSound(SoundEvents.ENDERMAN_TELEPORT, 1.0F, 1.0F);
+            });
             return InteractionResult.CONSUME;
         }
 
@@ -351,9 +353,13 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
     }
 
     private boolean teleportToInfinity(ServerPlayer player, ResourceLocation dimensionId) {
-        if (!InfinityCompat.get().requestWarp(player, dimensionId)) {
+        InfinityWarpResult result = InfinityCompat.get().requestWarp(player, dimensionId);
+        if (result == InfinityWarpResult.FAILED_GENERATION) {
             this.deleteGeneratedArtifacts(player.server, dimensionId);
-            this.markForRerollOnNextReagent();
+            player.displayClientMessage(Component.translatable("message.antarchy.rainbow_ant_failed_dimension_create"), true);
+            return false;
+        }
+        if (result == InfinityWarpResult.REJECTED) {
             player.displayClientMessage(Component.translatable("message.antarchy.rainbow_ant_failed_dimension_create"), true);
             return false;
         }
@@ -372,9 +378,7 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
                 .resolve(dimensionId.getPath());
 
         this.deletePathRecursively(datapackPath);
-        if (dimensionPath != null) {
-            this.deletePathRecursively(dimensionPath);
-        }
+        this.deletePathRecursively(dimensionPath);
     }
 
     private void deletePathRecursively(Path path) {

@@ -85,7 +85,7 @@ public final class AntDimensionPortalBlock extends Block {
         if (level.isClientSide() || !entity.isAlive() || !entity.canChangeDimensions() || entity.isOnPortalCooldown()) {
             return;
         }
-        if (!(level instanceof ServerLevel serverLevel)) {
+        if (!(level instanceof ServerLevel)) {
             return;
         }
 

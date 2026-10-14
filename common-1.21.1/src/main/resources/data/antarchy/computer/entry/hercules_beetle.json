@@ -7,5 +7,10 @@
   "entity": "antarchy:hercules_beetle",
   "cover_entity": "antarchy:hercules_beetle",
   "rotation": 45,
-  "render_scale": 0.5
+  "render_scale": 0.5,
+  "green_tint": false,
+  "gallery": [
+    {"item": "antarchy:hercules_horn"},
+    {"item": "antarchy:broodfruit"}
+  ]
 }

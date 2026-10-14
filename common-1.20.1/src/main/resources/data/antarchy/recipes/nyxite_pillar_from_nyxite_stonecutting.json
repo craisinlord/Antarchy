@@ -3,7 +3,6 @@
   "ingredient": {
     "item": "antarchy:nyxite"
   },
-  "result": {
-    "item": "antarchy:nyxite_pillar"
-  }
+  "result": "antarchy:nyxite_pillar",
+  "count": 1
 }

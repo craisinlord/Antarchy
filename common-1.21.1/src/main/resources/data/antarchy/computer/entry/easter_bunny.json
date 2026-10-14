@@ -6,5 +6,6 @@
   "description": ["guide.antarchy.entry.easter_bunny.description", "guide.antarchy.entry.easter_bunny.description2"],
   "entity": "antarchy:easter_bunny",
   "cover_entity": "antarchy:easter_bunny",
-  "rotation": 45
+  "rotation": 45,
+  "green_tint": false
 }

@@ -4,5 +4,6 @@
   "title": "guide.antarchy.entry.temporal_fields.title",
   "subtitle": "guide.antarchy.entry.temporal_fields.subtitle",
   "description": ["guide.antarchy.entry.temporal_fields.description", "guide.antarchy.entry.temporal_fields.description2", "guide.antarchy.entry.temporal_fields.description3"],
-  "cover_potion": "antarchy:time_dilation"
+  "cover_potion": "antarchy:time_dilation",
+  "green_tint": false
 }

@@ -3,7 +3,6 @@
   "ingredient": {
     "item": "antarchy:mossy_shellstone_bricks"
   },
-  "result": {
-    "item": "antarchy:mossy_shellstone_brick_stairs"
-  }
+  "result": "antarchy:mossy_shellstone_brick_stairs",
+  "count": 1
 }

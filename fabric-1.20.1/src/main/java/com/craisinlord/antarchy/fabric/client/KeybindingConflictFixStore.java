@@ -9,13 +9,14 @@ import net.minecraft.client.KeyMapping;
 
 public final class KeybindingConflictFixStore {
     private static final String ANTARCHY_KEY_PREFIX = "key.antarchy.";
+    private static final String SPRINT_KEY = "key.sprint";
     private static final Map<InputConstants.Key, List<KeyMapping>> MAPPINGS = new HashMap<>();
 
     private KeybindingConflictFixStore() {
     }
 
     public static void add(InputConstants.Key key, KeyMapping mapping) {
-        if (!mapping.getName().startsWith(ANTARCHY_KEY_PREFIX)) {
+        if (!isTracked(mapping)) {
             return;
         }
         List<KeyMapping> mappings = MAPPINGS.computeIfAbsent(key, ignored -> new ArrayList<>());
@@ -40,5 +41,13 @@ public final class KeybindingConflictFixStore {
             }
         }
         return others;
+    }
+
+    public static boolean isSprint(KeyMapping mapping) {
+        return SPRINT_KEY.equals(mapping.getName());
+    }
+
+    private static boolean isTracked(KeyMapping mapping) {
+        return mapping.getName().startsWith(ANTARCHY_KEY_PREFIX) || isSprint(mapping);
     }
 }

@@ -9,7 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
 public final class DorrieJumpHudRenderer {
-    private static final ResourceLocation GUI_ICONS_LOCATION = ResourceLocation.withDefaultNamespace("textures/gui/icons.png");
+    private static final ResourceLocation GUI_ICONS_LOCATION = new ResourceLocation("textures/gui/icons.png");
     private static final int BAR_WIDTH = 182;
     private static final int BAR_HEIGHT = 5;
 

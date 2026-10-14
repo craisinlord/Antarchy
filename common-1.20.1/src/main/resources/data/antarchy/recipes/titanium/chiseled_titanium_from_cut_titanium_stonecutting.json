@@ -3,7 +3,6 @@
   "ingredient": {
     "item": "antarchy:cut_titanium"
   },
-  "result": {
-    "item": "antarchy:chiseled_titanium"
-  }
+  "result": "antarchy:chiseled_titanium",
+  "count": 1
 }

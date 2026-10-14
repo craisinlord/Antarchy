@@ -19,7 +19,6 @@ public final class PermanentPortalShape {
     public static final int MIN_WIDTH = 2;
     public static final int MIN_HEIGHT = 3;
     public static final int MAX_SIZE = 21;
-    public static final int ACTIVE_SEARCH_RADIUS = 24;
 
     private final TagKey<Block> frameTag;
     private final Block portalBlock;
@@ -76,26 +75,6 @@ public final class PermanentPortalShape {
     public static PermanentPortalShape findActive(BlockGetter level, BlockPos interiorPos, PermanentPortalType type, Direction.Axis axis) {
         Block portalBlock = type.portalBlock();
         return find(level, interiorPos, type.frameTag(), portalBlock, axis, state -> state.is(portalBlock));
-    }
-
-    @Nullable
-    public static PermanentPortalShape findActiveNear(BlockGetter level, BlockPos center, PermanentPortalType type) {
-        for (int x = center.getX() - ACTIVE_SEARCH_RADIUS; x <= center.getX() + ACTIVE_SEARCH_RADIUS; x++) {
-            for (int y = center.getY() - ACTIVE_SEARCH_RADIUS; y <= center.getY() + ACTIVE_SEARCH_RADIUS; y++) {
-                for (int z = center.getZ() - ACTIVE_SEARCH_RADIUS; z <= center.getZ() + ACTIVE_SEARCH_RADIUS; z++) {
-                    BlockPos candidate = new BlockPos(x, y, z);
-                    PermanentPortalShape xShape = findActive(level, candidate, type, Direction.Axis.X);
-                    if (xShape != null) {
-                        return xShape;
-                    }
-                    PermanentPortalShape zShape = findActive(level, candidate, type, Direction.Axis.Z);
-                    if (zShape != null) {
-                        return zShape;
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     @Nullable
@@ -227,10 +206,6 @@ public final class PermanentPortalShape {
         for (int y = -1; y <= 3; y++) {
             for (int x = -1; x <= 2; x++) {
                 BlockPos pos = bottomLeft.relative(widthDirection, x).above(y);
-                boolean cornerSpot = (x == -1 || x == 2) && (y == -1 || y == 3);
-                if (cornerSpot) {
-                    continue;
-                }
                 if (x == -1 || x == 2 || y == -1 || y == 3) {
                     level.setBlock(pos, frameState, Block.UPDATE_ALL);
                 } else {
@@ -250,10 +225,6 @@ public final class PermanentPortalShape {
                 BlockPos pos = bottomLeft.relative(widthDirection, x).above(y);
                 BlockState state = level.getBlockState(pos);
                 boolean frameSpot = x == -1 || x == 2 || y == -1 || y == 3;
-                boolean cornerSpot = (x == -1 || x == 2) && (y == -1 || y == 3);
-                if (cornerSpot) {
-                    continue;
-                }
                 if (frameSpot) {
                     if (y != -1 && !state.isAir() && !state.is(frameBlock) && !state.canBeReplaced()) {
                         return false;

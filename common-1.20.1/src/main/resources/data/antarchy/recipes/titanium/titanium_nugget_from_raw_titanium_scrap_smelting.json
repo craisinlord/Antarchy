@@ -4,9 +4,7 @@
   "ingredient": {
     "item": "antarchy:raw_titanium_scrap"
   },
-  "result": {
-    "item": "antarchy:titanium_nugget"
-  },
+  "result": "antarchy:titanium_nugget",
   "experience": 2.0,
   "cookingtime": 200
 }

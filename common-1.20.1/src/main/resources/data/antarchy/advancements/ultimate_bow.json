@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "items": "antarchy:ultimate_bow"
+            "items": [
+              "antarchy:ultimate_bow"
+            ]
           }
         ]
       },
@@ -19,7 +21,6 @@
     },
     "frame": "goal",
     "icon": {
-      "count": 1,
       "item": "antarchy:ultimate_bow"
     },
     "show_toast": true,

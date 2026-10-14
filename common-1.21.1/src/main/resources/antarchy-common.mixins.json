@@ -33,6 +33,7 @@
                    "LivingEntityJumpingAccessor",
                    "CommandedMobMixin",
                    "UndertrialSpawnPlacementsMixin",
+                   "ThoraxisCeilingSpawnMixin",
                    "LivingEntityRoyalEffectsMixin",
                    "JudgmentMarkEntityMixin",
                    "RoyalJudgmentCombatMixin",

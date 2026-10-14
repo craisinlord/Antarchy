@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:typhonite"
+  },
+  "result": "antarchy:typhonite_pillar",
+  "count": 1
+}

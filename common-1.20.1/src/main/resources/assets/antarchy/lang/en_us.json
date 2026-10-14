@@ -321,6 +321,12 @@
     "subtitles.antarchy.mantis_attack":  "Mantis snaps",
     "subtitles.antarchy.mantis_fly_loop":  "Mantis wings buzz",
     "item.antarchy.big_bertha":  "Big Bertha",
+    "item.antarchy.giant_frying_pan":  "Giant Frying Pan",
+    "tooltip.antarchy.giant_frying_pan.insert":  "Right-click with food in your other hand, or right-click food onto it in your inventory, to add it.",
+    "tooltip.antarchy.giant_frying_pan.gui":  "Shift-right-click to open the cooking slots.",
+    "tooltip.antarchy.giant_frying_pan.campfire":  "Cooks campfire recipes without fuel.",
+    "tooltip.antarchy.giant_frying_pan.dig":  "Digs shovel blocks in a 5x5 area.",
+    "tooltip.antarchy.giant_frying_pan.launch":  "Hits launch enemies into the air.",
     "item.antarchy.bluestone":  "Bluestone Dust",
     "item.antarchy.wasp_nest":  "Wasp Nest",
     "item.antarchy.stink_bug":  "Stink Bug",
@@ -388,6 +394,12 @@
     "item.antarchy.nightmare_scale":  "Nightmare Scale",
     "item.antarchy.music_disc_underside": "Music Disc",
     "jukebox_song.antarchy.underside": "docshrekbot - underside",
+    "item.antarchy.music_disc_the_queen": "Music Disc",
+    "jukebox_song.antarchy.the_queen": "Karlljp - The Queen",
+    "item.antarchy.music_disc_verdance": "Music Disc",
+    "jukebox_song.antarchy.verdance": "Hewo - Verdance",
+    "item.antarchy.music_disc_grotesque": "Music Disc",
+    "jukebox_song.antarchy.grotesque": "DocShrekBot - Grotesque",
     "item.antarchy.nightmare_helmet":  "Nightmare Helmet",
     "item.antarchy.nightmare_chestplate":  "Nightmare Chestplate",
     "item.antarchy.nightmare_leggings":  "Nightmare Leggings",
@@ -524,6 +536,11 @@
     "item.antarchy.blood_crystal_shard":  "Blood Crystal Shard",
     "item.antarchy.blood_crystal_apple":  "Blood Crystal Apple",
     "item.antarchy.blood_crystal_katana":  "Blood Crystal Katana",
+    "item.antarchy.blood_gods_blade": "Blood God’s Blade",
+    "tooltip.antarchy.blood_gods_blade.bleeding": "Hits inflict Bleeding",
+    "tooltip.antarchy.blood_gods_blade.blood_moon": "Right-click: Summon Blood Moon",
+    "effect.antarchy.bleeding": "Bleeding",
+    "effect.antarchy.blood_moon": "Blood Moon",
     "item.antarchy.blood_crystal_helmet":  "Blood Crystal Helmet",
     "item.antarchy.blood_crystal_chestplate":  "Blood Crystal Chestplate",
     "item.antarchy.blood_crystal_leggings":  "Blood Crystal Leggings",
@@ -543,6 +560,17 @@
     "item.antarchy.royal_guardian_boots":  "Royal Guardian Boots",
     "item.antarchy.royal_guardian_sword":  "Royal Guardian Sword",
     "item.antarchy.royal_guardian_shield":  "Royal Guardian Shield",
+    "tooltip.antarchy.royal_guardian_sword.mode":  "Mode: %s",
+    "tooltip.antarchy.royal_guardian_sword.mode.none":  "None",
+    "tooltip.antarchy.royal_guardian_sword.mode.fire":  "Fire",
+    "tooltip.antarchy.royal_guardian_sword.mode.frost":  "Frost",
+    "tooltip.antarchy.royal_guardian_sword.mode.storm":  "Storm",
+    "tooltip.antarchy.royal_guardian_sword.none":  "Fully charged hits use the sword's normal damage without an elemental discharge.",
+    "tooltip.antarchy.royal_guardian_sword.fire":  "Fully charged hits erupt in royal flame, burning the target and nearby enemies.",
+    "tooltip.antarchy.royal_guardian_sword.frost":  "Fully charged hits freeze the target and raise a fan of royal ice spikes.",
+    "tooltip.antarchy.royal_guardian_sword.storm":  "Fully charged hits call royal lightning that chains between nearby enemies.",
+    "tooltip.antarchy.royal_guardian_sword.controls":  "Sneak-use to cycle modes. Fully charged hits unleash the selected element (%s-second cooldown).",
+    "message.antarchy.royal_guardian_sword.mode":  "Royal Guardian Mode: %s",
     "item.antarchy.royal_assailant_helmet":  "Royal Assailant Helmet",
     "item.antarchy.royal_assailant_chestplate":  "Royal Assailant Chestplate",
     "item.antarchy.royal_assailant_leggings":  "Royal Assailant Leggings",
@@ -552,16 +580,29 @@
     "tooltip.antarchy.royal_assailant_staff":  "Opens paired tears that summon four allied Manticores for 30 seconds.",
     "tooltip.antarchy.royal_assailant_battleaxe.black_hole":  "Use to create a Black Hole",
     "tooltip.antarchy.royal_assailant_battleaxe.dilation":  "Hits apply Temporal Dilation",
-    "tooltip.antarchy.royal_guardian_shield.command":  "Use to command the nearest mob",
+    "tooltip.antarchy.royal_guardian_shield.command":  "Sneak-use to command nearby mobs to fight for you, empowering their offense, speed, and resilience.",
+    "tooltip.antarchy.royal_guardian_helmet.judgment":  "Marked for Judgment: +%s%% damage against marked targets",
+    "tooltip.antarchy.royal_guardian_chestplate.judgment":  "Marked for Judgment: +%s%% damage against marked targets",
+    "tooltip.antarchy.royal_guardian_chestplate.boundary":  "Royal Boundary Key: Freezes incoming hostile projectiles and grants Strength to allies.",
+    "tooltip.antarchy.royal_guardian_leggings.judgment":  "Marked for Judgment: +%s%% damage against marked targets",
+    "tooltip.antarchy.royal_guardian_boots.judgment":  "Marked for Judgment: +%s%% damage against marked targets",
     "tooltip.antarchy.royal_assailant_chestplate.invert":  "Press the inversion key to toggle inverted gravity on and off.",
     "tooltip.antarchy.royal_assailant_boots.fall":  "Cancels fall damage while falling upward.",
     "item.antarchy.mantis_claw":  "Mantis Claw",
     "tooltip.antarchy.mantis_claw.wall_cling": "Dual wield to cling to walls and jump upward.",
     "item.antarchy.king_scale":  "King Scale",
     "item.antarchy.queen_scale":  "Queen Scale",
+    "item.antarchy.temporal_tuner":  "Temporal Tuner",
+    "tooltip.antarchy.temporal_tuner.description":  "Adjusts your personal time dilation.",
+    "tooltip.antarchy.temporal_tuner.speed":  "Current speed: %s%%",
+    "tooltip.antarchy.temporal_tuner.controls":  "Shift + scroll: %s%% to %s%% speed",
+    "tooltip.antarchy.temporal_tuner.availability":  "Resets when removed from your hotbar and offhand.",
     "item.antarchy.jerry_nucleus":  "Jerry Nucleus",
     "tooltip.antarchy.jerry_nucleus.hatch":  "While holding, interact with any bug egg or turtle egg to hatch it instantly.",
     "key.antarchy.mount_special":  "Mount: Special / Charge",
+    "key.antarchy.royal_boundary":  "Royal Boundary",
+    "message.antarchy.royal_boundary.activated":  "Royal Boundary raised",
+    "message.antarchy.royal_boundary.recharging":  "Royal Boundary is recharging",
     "key.antarchy.mount_flight_toggle":  "Mount: Toggle Flight",
     "item.antarchy.springbug_leg":  "Springbug Leg",
     "item.antarchy.springy_boots":  "Springy Boots",
@@ -632,6 +673,10 @@
     "tooltip.antarchy.reverie_bottle.release":  "Right click to release the Reverie.",
     "item.antarchy.gravity_gun":  "Gravity Gun",
     "item.antarchy.portal_gun":  "Portal Gun",
+    "item.antarchy.portal_gun_atlas":  "Atlas Portal Gun",
+    "item.antarchy.portal_gun_p_body":  "P-body Portal Gun",
+    "item.antarchy.portal_gun_craisin":  "Craisin Portal Gun",
+    "item.antarchy.portal_gun_laynce":  "Laynce Portal Gun",
     "item.antarchy.diamond_minecart":  "The Diamond Minecart",
     "item.antarchy.cogwheel_pet":  "Cogwheel Pet",
     "item.antarchy.fire_dragon_pet":  "Fire Dragon Pet",
@@ -728,6 +773,7 @@
     "message.antarchy.rainbow_ant_failed_dimension_create":  "Failed to create dimension. This likely means something is wrong in your infinity config. Restart/Relog and try again.",
     "message.antarchy.rainbow_ant_infinity_missing":  "Infinity must be installed for rainbow ant dimensions to work.",
     "message.antarchy.rainbow_ant_needs_reagent":  "This rainbow ant needs a reagent before it can open a dimension.",
+    "message.antarchy.teleport_arrival_failed":  "No safe arrival spot was found. Teleportation was canceled.",
     "message.antarchy.red_ant_activated":  "The red ant is ready to open its destination.",
     "message.antarchy.red_ant_needs_reagent":  "This red ant needs a reagent before it can open its destination.",
     "message.antarchy.termite_activated":  "The termite is ready to open its destination.",
@@ -754,14 +800,8 @@
     "effect.antarchy.dread.description":  "Gives visual and audio hallucinations.",
     "effect.antarchy.paralyzed":  "Paralyzed",
     "effect.antarchy.paralyzed.description":  "Prevents targets from moving.",
-    "effect.antarchy.inverted":  "Inverted",
-    "effect.antarchy.inverted.description":  "Inverts the target's gravity.",
     "effect.antarchy.commanded":  "Commanded",
     "effect.antarchy.commanded.description":  "Fights for the player who commanded it.",
-    "effect.antarchy.dilated":  "Temporal Dilation",
-    "effect.antarchy.dilated.description":  "Slows the passage of time for the affected entity.",
-    "effect.antarchy.contracted":  "Temporal Contraction",
-    "effect.antarchy.contracted.description":  "Speeds the passage of time for the affected entity.",
     "effect.antarchy.stinky":  "Stinky",
     "effect.antarchy.stinky.description":  "Repels passive and neutral mobs, attracts arthropods.",
     "effect.antarchy.gooped":  "Gooped",
@@ -797,8 +837,17 @@
     "tooltip.antarchy.gravity_gun.secondary":  "Usage: pull in an entity or a valid block.",
     "tooltip.antarchy.gravity_gun.scroll":  "Hold Ctrl and scroll to move the held target closer or farther away.",
     "tooltip.antarchy.gravity_gun.blacklist":  "Does not affect blacklisted blocks or entities.",
-    "tooltip.antarchy.portal_gun.primary":  "Attack: fire a blue portal.",
-    "tooltip.antarchy.portal_gun.secondary":  "Use: fire an orange portal.",
+    "tooltip.antarchy.portal_gun.primary":  "Attack: fire a %s portal.",
+    "tooltip.antarchy.portal_gun.secondary":  "Use: fire a %s portal.",
+    "commands.antarchy.portalgun.clear.all": "Cleared %s portal gun portals",
+    "commands.antarchy.portalgun.clear.owners": "Cleared %s portal gun portals owned by %s players",
+    "tooltip.antarchy.portal_gun.color.blue":  "blue",
+    "tooltip.antarchy.portal_gun.color.orange":  "orange",
+    "tooltip.antarchy.portal_gun.color.purple":  "purple",
+    "tooltip.antarchy.portal_gun.color.yellow":  "yellow",
+    "tooltip.antarchy.portal_gun.color.red":  "red",
+    "tooltip.antarchy.portal_gun.color.gold":  "gold",
+    "tooltip.antarchy.portal_gun.color.green":  "green",
     "tooltip.antarchy.portal_gun.reset":  "Sneak + use: fizzle your active portals.",
     "tooltip.antarchy.antimetal_inversion":  "Inverts entites directly below it",
     "tooltip.antarchy.diamond_minecart.forward":  "Will be implemented later.",
@@ -848,6 +897,8 @@
     "advancements.antarchy.ultimate_armor.description":  "Collect the full set of Ultimate Armor.",
     "advancements.antarchy.ultimate_bow.title":  "Bowhemian Rhapsody",
     "advancements.antarchy.ultimate_bow.description":  "Obtain an Ultimate Bow.",
+    "advancements.antarchy.sizzling_dedication.title":  "Sizzling Dedication",
+    "advancements.antarchy.sizzling_dedication.description":  "Obtain a Giant Frying Pan.",
     "advancements.antarchy.brutalfly.title":  "Float Like a Brutalfly, Sting Like a Bee",
     "advancements.antarchy.brutalfly.description":  "Obtain a Brutalfly Elytra.",
     "advancements.antarchy.royal_assailant_staff.title":  "Fly my pretties!",
@@ -860,12 +911,18 @@
     "advancements.antarchy.water_cannon_craft.description":  "Obtain a Water Cannon.",
     "advancements.antarchy.kill_toreterror.title":  "More like Tore-Terrible Aim!",
     "advancements.antarchy.kill_toreterror.description":  "Defeat the Toreterror.",
+    "advancements.antarchy.down_with_the_king.title":  "Down with the King",
+    "advancements.antarchy.down_with_the_king.description":  "Defeat the King.",
+    "advancements.antarchy.down_with_the_queen.title":  "Down with the Queen",
+    "advancements.antarchy.down_with_the_queen.description":  "Defeat the Queen.",
     "advancements.antarchy.challenge_games.title":  "Challenge Games!",
     "advancements.antarchy.challenge_games.description":  "Enter the Ruined Arena.",
     "advancements.antarchy.bugged_out.title":  "Bugged Out",
     "advancements.antarchy.bugged_out.description":  "Defeat the Alpha Mantis.",
     "death.attack.bed_bug_bite":  "%1$s got bit by the bed bugs",
     "death.attack.bed_bug_bite.player":  "%1$s got bit by the bed bugs while fighting %2$s",
+    "death.attack.moon_vacuum":  "%1$s was pulled into the vacuum of space",
+    "death.attack.moon_vacuum.player":  "%1$s was pulled into the vacuum of space by %2$s",
     "message.antarchy.dread_too_scared_to_sleep":  "You are too scared to sleep.",
     "death.attack.kraken_mauling":  "%1$s was dragged under by the Kraken",
     "death.attack.kraken_mauling.player":  "%1$s was dragged under by the Kraken while fighting %2$s",
@@ -900,6 +957,7 @@
     "tooltip.antarchy.lucid_pearl":  "Throws an inverted-gravity projectile.",
     "tooltip.antarchy.lucid_pearl.detail":  "Teleports you to where it lands and applies Inverted.",
     "subtitles.antarchy.squidzooka_fire":  "Squidzooka fires",
+    "subtitles.antarchy.undertrial_detect_player": "Undertrial spawner detects player",
     "subtitles.antarchy.size_ray_charge":  "Size Ray charges",
     "subtitles.antarchy.size_ray_fire":  "Size Ray fires",
     "subtitles.antarchy.ant_ambient":  "Ants chirp",
@@ -976,6 +1034,9 @@
     "subtitles.antarchy.portal_open_blue":  "Blue portal opens",
     "subtitles.antarchy.portal_open_orange":  "Orange portal opens",
     "subtitles.antarchy.portal_fizzle":  "Portal fizzles",
+    "subtitles.antarchy.portal_ambient":  "Portal hums",
+    "subtitles.antarchy.portal_enter":  "Entity enters a portal",
+    "subtitles.antarchy.portal_exit":  "Entity exits a portal",
     "subtitles.antarchy.bed_bug_ambient":  "Bed Bug chirps",
     "subtitles.antarchy.bed_bug_hurt":  "Bed Bug hurts",
     "subtitles.antarchy.bed_bug_attack":  "Bed Bug bites",
@@ -1195,6 +1256,8 @@
     "advancements.antarchy.duct_tape.title":  "I sawed this boat in half!",
     "advancements.antarchy.duct_tape.description":  "and fixed it with the power of duct tape!",
     "key.categories.antarchy":  "Antarchy",
+    "key.antarchy.portal_gun_zoom":  "Portal Gun Zoom",
+    "key.antarchy.portal_gun_reset": "Portal Gun Reset",
     "key.antarchy.brutalfly_flap":  "Brutalfly Elytra: Flap",
     "advancements.antarchy.shrink_ray_craft.title":  "Honey, I Shrunk the Mobs",
     "advancements.antarchy.shrink_ray_craft.description":  "Craft a Shrink Ray.",
@@ -1239,6 +1302,10 @@
     "entity.antarchy.princess":  "Princess",
     "entity.antarchy.king":  "The King",
     "entity.antarchy.queen":  "The Queen",
+    "boss.antarchy.king.phase_two": "THE LAW TIGHTENS",
+    "boss.antarchy.king.phase_three": "ROYAL JUDGMENT",
+    "boss.antarchy.queen.phase_two": "GRAVITY DOMINION",
+    "boss.antarchy.queen.phase_three": "TEMPORAL COLLAPSE",
     "entity.antarchy.manticore":  "Manticore",
     "entity.antarchy.royal_black_hole":  "Singularity",
     "entity.antarchy.royal_bolt":  "Royal Bolt",
@@ -1413,103 +1480,194 @@
     ,"decree.antarchy.kneel": "KNEEL"
     ,"decree.antarchy.kneel.subtitle": "Crouch within five seconds."
     ,"decree.antarchy.close_quarters": "CLOSE QUARTERS"
-    ,"decree.antarchy.close_quarters.subtitle": "Projectiles are forbidden."
+    ,"decree.antarchy.close_quarters.subtitle": "Reach the King's 16-block circle within 6 seconds. Projectiles are forbidden."
+    ,"decree.antarchy.violated": "DECREE VIOLATED"
+    ,"decree.antarchy.violated.subtitle": "Your hearts are halved for 30. Face the King's judgment."
+    ,"effect.antarchy.royal_vitality_penalty": "Royal Vitality Diminished"
     ,"decree.antarchy.come_no_closer": "COME NO CLOSER"
     ,"decree.antarchy.come_no_closer.subtitle": "Keep out of the King's inner radius."
     ,"decree.antarchy.fight_me_coward": "FIGHT ME, COWARD!"
     ,"decree.antarchy.fight_me_coward.subtitle": "Approach the King."
     ,"decree.antarchy.no_respite": "NO RESPITE"
     ,"decree.antarchy.no_respite.subtitle": "Healing is sealed."
-    ,"decree.antarchy.no_retreat": "NO RETREAT"
-    ,"decree.antarchy.no_retreat.subtitle": "Do not flee the King's presence."
-    ,"decree.antarchy.keep_your_distance": "KEEP YOUR DISTANCE"
-    ,"decree.antarchy.keep_your_distance.subtitle": "Stay out of the King's reach."
     ,"decree.antarchy.stand_tall": "STAND TALL"
     ,"decree.antarchy.stand_tall.subtitle": "Do not crouch before the King."
     ,"decree.antarchy.stand_your_ground": "STAND YOUR GROUND"
     ,"decree.antarchy.stand_your_ground.subtitle": "Do not stray from where you stand."
     ,"decree.antarchy.hands_off_the_crown": "HANDS OFF THE CROWN"
     ,"decree.antarchy.hands_off_the_crown.subtitle": "Strike the King and be judged."
-    ,"decree.antarchy.advance": "ADVANCE"
-    ,"decree.antarchy.advance.subtitle": "Close on the King or be judged."
     ,"decree.antarchy.show_no_mercy": "SHOW NO MERCY"
     ,"decree.antarchy.show_no_mercy.subtitle": "Keep dealing damage."
     ,"menu.antarchy.royal_judgment": "Royal Judgment"
     ,"enchantment.antarchy.feather_rising": "Feather Rising"
     ,"enchantment.antarchy.chronosphere": "Chronosphere"
-    ,"block.antarchy.computer": "Computer"
-    ,"item.antarchy.computer": "Computer"
-    ,"item.antarchy.floppy_disk": "Floppy Disk"
-    ,"item.antarchy.floppy_disk.tooltip": "Put in a computer to find out more"
-    ,"screen.antarchy.computer": "ANTINTOSH OS"
+    ,"entity.minecraft.villager.antarchy.computer_scientist": "Game Developer"
+    ,"entity.minecraft.villager.computer_scientist": "Game Developer"
+    ,"block.antarchy.ant_trap": "Ant Trap"
+    ,"item.antarchy.bug_spray": "Bug Spray"
+    ,"entity.minecraft.villager.antarchy.pest_control": "Pest Control"
+    ,"entity.minecraft.villager.pest_control": "Pest Control"
     ,"guide.antarchy.category.general": "GENERAL"
     ,"guide.antarchy.category.elythia": "ELYTHIA"
     ,"guide.antarchy.category.thoraxis": "THORAXIS"
     ,"guide.antarchy.category.cavaryn": "CAVARYN"
     ,"guide.antarchy.missing_title": "CORRUPTED FILE"
     ,"guide.antarchy.missing_disk_title": "UNREADABLE DISK"
-    ,"guide.antarchy.disk.introduction.title": "INITIAL BOOT NOTES"
-    ,"guide.antarchy.disk.chronosphere.title": "CHRONOSPHERE DATA"
     ,"guide.antarchy.disk.toreterror_arena.title": "TORETERROR ARENA DATA"
     ,"guide.antarchy.disk.high_fructose_corn_syrup.title": "CORN SYRUP DATA"
     ,"guide.antarchy.disk.elythia.title": "ELYTHIA ACCESS RECORD"
     ,"guide.antarchy.disk.flying_squirrel.title": "FLYING SQUIRREL FIELD NOTES"
+    ,"guide.antarchy.disk.basilisk_game.title": "BASILISK.EXE"
+    ,"guide.antarchy.disk.antman_game.title": "ANTMAN.EXE"
     ,"guide.antarchy.disk.cavaryn.title": "CAVARYN ACCESS RECORD"
     ,"guide.antarchy.disk.thoraxis.title": "THORAXIS ACCESS RECORD"
-    ,"guide.antarchy.disk.temporal_fields.title": "TEMPORAL FIELDS MANUAL"
+    ,"guide.antarchy.disk.temporal_fields.title": "TEMPORAL MANIPULATION"
     ,"guide.antarchy.disk.bloodglass.title": "BLOODGLASS SURVIVAL NOTES"
-    ,"guide.antarchy.disk.vortex.title": "VORTEX CONTROL NOTES"
-    ,"guide.antarchy.entry.introduction.title": "SYSTEM INITIALIZED"
-    ,"guide.antarchy.entry.introduction.subtitle": "A machine for remembering what should have stayed forgotten."
-    ,"guide.antarchy.entry.introduction.description": "Insert recovered floppy disks to expand this archive. The machine remembers. The machine does not forgive."
-    ,"guide.antarchy.entry.chronosphere.title": "Chronosphere"
-    ,"guide.antarchy.entry.chronosphere.subtitle": "Temporal equipment record"
-    ,"guide.antarchy.entry.chronosphere.description": "A record for the Chronosphere enchantment will be expanded here. Further data is pending."
-    ,"guide.antarchy.entry.toreterror_arena.title": "Toreterror Arena"
-    ,"guide.antarchy.entry.toreterror_arena.subtitle": "Structure location fragment"
-    ,"guide.antarchy.entry.toreterror_arena.description": "The nearest arena is rumored to lie beyond the current horizon. Directional analysis is pending in this prototype."
-    ,"guide.antarchy.entry.elythia.title": "Elythia"
-    ,"guide.antarchy.entry.elythia.subtitle": "Dimension and portal access record"
-    ,"guide.antarchy.entry.elythia.description": "Elythia is reached through an Elythia portal made with a valid frame. A sacrificed Brown Ant activates the portal. The dimension contains oceans, meadows, forests, coral spikes, and other surface biomes."
+    ,"guide.antarchy.disk.vortex.title": "VORTEX"
+    ,"guide.antarchy.entry.toreterror.title": "Toreterror"
+    ,"guide.antarchy.entry.toreterror_arena.subtitle": "Elythia Ocean boss record"
+    ,"guide.antarchy.entry.toreterror_arena.description": "A powerful creature of the Testudines taxonomic order. It dwells in a coliseum somewhere in an Elythia Ocean; this archive can trace the nearest one for you, and its coordinates are listed below."
+    ,"guide.antarchy.entry.toreterror_arena.description2": "Extremely territorial. A cannon mounted in its shell fires water at extremely high pressure, which makes it considerably dangerous to approach."
+    ,"guide.antarchy.disk.hercules_beetle.title": "HERCULES BEETLE FIELD NOTES"
+    ,"guide.antarchy.entry.hercules_beetle.title": "Hercules Beetle"
+    ,"guide.antarchy.entry.hercules_beetle.subtitle": "Cavaryn megafauna record"
+    ,"guide.antarchy.entry.hercules_beetle.description": "An enormous insect dwelling in Cavaryn. It is capable of a very powerful charge that can, and will, displace terrain."
+    ,"guide.antarchy.entry.hercules_beetle.description2": "Aggressive on sight and omnivorous."
+    ,"guide.antarchy.entry.hercules_beetle.description3": "Once injured in combat, the beast can be pacified with Broodfruit. When pacified, it bonds with the one who fed it, almost as if it respects them after the battle."
+    ,"guide.antarchy.entry.brown_ant.title": "Brown Ant"
+    ,"guide.antarchy.entry.brown_ant.subtitle": "The way to Elythia"
+    ,"guide.antarchy.entry.brown_ant.description": "Right-click a Brown Ant and it carries you to Elythia. Sacrifice one inside a Mossy Ouranwood frame and you get a portal that stays lit for good."
+    ,"guide.antarchy.entry.brown_ant.description2": "Their nests turn up in Overworld forests, taigas and plains, and in Elythia. Brown Ants are harmless, and they breed with sugar."
+    ,"guide.antarchy.entry.brown_ant.description3": "Cloud Sea only forms high in the sky, and only in about one region in five. Toreterror Arenas are out in the Elythia Ocean."
+    ,"guide.antarchy.entry.termite.title": "Termite"
+    ,"guide.antarchy.entry.termite.subtitle": "The way to Cavaryn"
+    ,"guide.antarchy.entry.termite.description": "Right-click a Termite to travel to Cavaryn, or sacrifice one inside a Myrmite frame to light a permanent portal."
+    ,"guide.antarchy.entry.termite.description2": "Termites nest in Overworld forests, taigas and plains, and in Cavaryn itself. They strip and eat wood near them, so keep them away from wooden builds. They back away from torchlight and breed with wood."
+    ,"guide.antarchy.entry.termite.description3": "In Cavaryn, staying in one spot, killing hostiles or breaking eggs draws attention. Push it far enough and a swarm finds you. Moving on lets the area cool down."
+    ,"guide.antarchy.entry.termite.description4": "Glowcap, Biowart, Moleworm, Wormy and Brooding Tunnel regions escalate differently. In most of them the last wave of a swarm brings a Hercules Beetle."
+    ,"guide.antarchy.entry.red_ant.title": "Red Ant"
+    ,"guide.antarchy.entry.red_ant.subtitle": "The way to Thoraxis"
+    ,"guide.antarchy.entry.red_ant.description": "Right-click a Red Ant to travel to Thoraxis, or sacrifice one inside a Nyxite frame to light a permanent portal. They nest in the Nether and attack on sight. Fire doesn't hurt them, and they can walk across lava."
+    ,"guide.antarchy.entry.red_ant.description2": "Thoraxis doesn't follow Nether rules. Beds fail but respawn anchors work, the sky never lightens, and gravity flips once you go far enough below the middle."
+    ,"guide.antarchy.entry.red_ant.description3": "Bluestone is wired like Redstone but reacts the opposite way. Antimetal blocks reverse gravity nearby and have their own rails."
+    ,"guide.antarchy.entry.red_ant.description4": "Lower down, the land tends to run Dream Dunes, Umbral Hills, Lucid Pools, then Nadir Forest. It's a tendency, not a fixed order."
+    ,"guide.antarchy.entry.red_ant.description5": "Dimensional tears come in linked pairs. Step into one and you come out of its twin with your gravity flipped for a while."
+    ,"guide.antarchy.gallery.elythia": "Seen in Elythia"
+    ,"guide.antarchy.gallery.cavaryn": "Seen in Cavaryn"
+    ,"guide.antarchy.gallery.thoraxis": "Seen in Thoraxis"
+    ,"guide.antarchy.gallery.drops": "Drops"
     ,"guide.antarchy.entry.flying_squirrel.title": "Flying Squirrel"
     ,"guide.antarchy.entry.flying_squirrel.subtitle": "Elythia companion record"
-    ,"guide.antarchy.entry.flying_squirrel.description": "You wanna get nuts? Let’s get nuts. Flying squirrels like nuts, trees, and making a dramatic exit. Feed one to befriend it, then give it plenty of canopy to climb through. If you tell it to, it will perch on top of your head. If it falls, do not panic. It may be gliding. If you fall, you have my permission to panic."
-    ,"guide.antarchy.entry.cavaryn.title": "Cavaryn"
-    ,"guide.antarchy.entry.cavaryn.subtitle": "Dimension and portal access record"
-    ,"guide.antarchy.entry.cavaryn.description": "Cavaryn is reached through a Cavaryn portal made with a valid frame. A sacrificed Termite activates the portal. The dimension is a deep network of caves, including Glowcap, Biowart, Moleworm, Wormy, and Brooding Tunnel regions."
-    ,"guide.antarchy.entry.thoraxis.title": "Thoraxis"
-    ,"guide.antarchy.entry.thoraxis.subtitle": "Dimension and portal access record"
-    ,"guide.antarchy.entry.thoraxis.description": "Thoraxis is reached through a Thoraxis portal made with a valid frame. A sacrificed Red Ant activates the portal. Its vertical progression includes Dream Dunes, Umbral Hills, Lucid Pools, and Nadir Forest."
-    ,"guide.antarchy.entry.temporal_fields.title": "Temporal Fields"
-    ,"guide.antarchy.entry.temporal_fields.subtitle": "Time dilation and Chronosphere reference"
-    ,"guide.antarchy.entry.temporal_fields.description": "Time Dilation and Time Contraction alter the rate of affected entities. Chronosphere armor creates a player-centered field at 35 percent rate; higher levels expand its radius."
+    ,"guide.antarchy.entry.flying_squirrel.description": "You wanna get nuts? Let’s get nuts."
+    ,"guide.antarchy.entry.flying_squirrel.description2": "Flying squirrels like nuts, trees, and dramatic exits. Feed one to befriend it, then give it plenty of canopy to climb through."
+    ,"guide.antarchy.entry.flying_squirrel.description3": "It may perch on top of your head. This is adorable, but it does make looking upward needlessly complicated."
+    ,"guide.antarchy.entry.flying_squirrel.description4": "If it falls, do not panic. It may be gliding. If you fall, you have my permission to panic."
+    ,"guide.antarchy.disk.glimmer.title": "GLIMMER FIELD GUIDE"
+    ,"guide.antarchy.entry.glimmer.title": "Glimmer"
+    ,"guide.antarchy.entry.glimmer.subtitle": "Bottled companion and variant record"
+    ,"guide.antarchy.entry.glimmer.description": "Glimmers are common around Elythia's Glimmering Pools, and rarely appear after dark in Ouranwood Forest, the Elythia Meadow, and the Peach Forest. A wild one caught in daylight away from a pool fades out."
+    ,"guide.antarchy.entry.glimmer.description2": "Feed a wild Glimmer a Spirit Apple to tame it. An empty-handed right-click cycles it between following, wandering, and sitting."
+    ,"guide.antarchy.entry.glimmer.description3": "A tamed Glimmer can be bottled: right-click it with an empty glass bottle to capture it, cooldowns and all. Right-click the bottle again anywhere to release it."
+    ,"guide.antarchy.entry.glimmer.description4": "Variant depends on where it was born. Glimmering Pools produce Frogs, Ouranwood Deer, and Apple Cows. Ouranwood Forest produces Frogs and Deer. The Elythia Meadow produces Apple Cows, and the Peach Forest produces Elkas. The Ant variant is not tied to any habitat; it only appears on a random roll."
+    ,"guide.antarchy.entry.glimmer.description5": "Apple Cow: hunger drains 25 percent slower, and it grants a burst of Saturation and Regeneration when your food runs low. Ouranwood Deer: Speed I, and it knocks back hostile mobs you sprint into."
+    ,"guide.antarchy.entry.glimmer.description6": "Frog: Jump Boost I, and it can devour a nearby hostile mob, growing bigger and stronger for a while. Ant: slightly longer attack reach, and a solid hit on something large grants a burst of Strength II."
+    ,"guide.antarchy.entry.glimmer.description7": "Elka: Bloodglass Ward II. When one of those ward hearts breaks, it shatters into a shockwave around you."
+    ,"guide.antarchy.entry.temporal_fields.title": "Temporal Manipulation"
+    ,"guide.antarchy.entry.temporal_fields.subtitle": "Time dilation, contraction, and Chronosphere reference"
+    ,"guide.antarchy.entry.temporal_fields.description": "Time Dilation and Time Contraction change how fast affected entities experience the world."
+    ,"guide.antarchy.entry.temporal_fields.description2": "A worn Chronosphere creates a permanent field around you at 35 percent speed. Field radius is 1.5 blocks at level 1, 2.5 at level 2, and 3.5 at level 3+; entities are affected out to twice that radius."
+    ,"guide.antarchy.entry.temporal_fields.description3": "The effect reaches living entities, projectiles, and dropped items, and anything fired from inside a field keeps that field's speed. Overlapping fields do not stack; the slower or faster rule wins. Kings and Queens are immune to it."
     ,"guide.antarchy.entry.bloodglass.title": "Bloodglass"
     ,"guide.antarchy.entry.bloodglass.subtitle": "Reactive protection system"
-    ,"guide.antarchy.entry.bloodglass.description": "Blood Crystal armor grants Bloodglass Hearts that block an incoming hit, shatter, and recharge. Blood Crystal Apples grant temporary Bloodglass Ward, and the Katana provides launch, dash, and crimson-trail mobility."
-    ,"guide.antarchy.entry.vortex.title": "Vortex Systems"
+    ,"guide.antarchy.entry.bloodglass.description": "Blood Crystal armor grants Bloodglass Hearts that absorb one hit, shatter, and recharge."
+    ,"guide.antarchy.entry.bloodglass.description2": "Each equipped piece adds one heart, and every heart recharges on its own 30-second timer. A Blood Crystal Apple grants two temporary charges lasting 2 minutes, on top of the armor's hearts."
+    ,"guide.antarchy.entry.bloodglass.description3": "The Katana has a longer reach than it looks, a brief hit-immunity window right after each dash, and a short cooldown before it can dash again."
+    ,"guide.antarchy.entry.vortex.title": "Vortex"
     ,"guide.antarchy.entry.vortex.subtitle": "Vortex Lens and Eye of the Storm reference"
-      ,"guide.antarchy.entry.vortex.description": "Redstone power pulls entities into a Vortex Lens beam while Bluestone power blasts them away. The Eye of the Storm launches an updraft and can hurl a homing tornado that carries foes."
+      ,"guide.antarchy.entry.vortex.description": "The Vortex Lens pulls or pushes depending on signal: Redstone pulls, Bluestone pushes."
+      ,"guide.antarchy.entry.vortex.description2": "Signal strength scales its size: a 1.5 to 10-block pull radius, with height from 3 to 20 blocks. It deals no damage on its own."
+      ,"guide.antarchy.entry.vortex.description3": "The Eye of the Storm launches an updraft and a homing tornado on its own trigger, unlike the Lens's signal-controlled field."
       ,"guide.antarchy.entry.nightmare.title": "Nightmare"
       ,"guide.antarchy.entry.nightmare.subtitle": "Thoraxis hostile entity record"
-      ,"guide.antarchy.entry.nightmare.description": "A hostile entity recorded in the deepest Thoraxis regions. The recovered model is presented in monochrome archive mode."
+      ,"guide.antarchy.entry.nightmare.description": "Recorded in the deepest Thoraxis regions."
+      ,"guide.antarchy.entry.nightmare.description2": "Its attacks hit harder the lower your health is, so a bad fight gets worse fast."
+      ,"guide.antarchy.entry.nightmare.description3": "Past half health it takes to the air and opens a pair of portals, stepping through one to teleport behind you and strike. Watch both portals, not just the one it disappears into."
     ,"guide.antarchy.entry.high_fructose_corn_syrup.title": "High Fructose Corn Syrup"
-    ,"guide.antarchy.entry.high_fructose_corn_syrup.subtitle": "Nutritional and operational notes"
-    ,"guide.antarchy.entry.high_fructose_corn_syrup.description": "A sweet substance of uncertain strategic value. Doctoral enthusiasm surrounding it is statistically suspicious."
-    ,"screen.antarchy.computer.first_use.title": "INITIAL PASSWORD SETUP"
-    ,"screen.antarchy.computer.first_use.prompt": "CREATE A PASSWORD TO CONTINUE"
-    ,"screen.antarchy.computer.first_use.confirm": "CONFIRM PASSWORD"
-    ,"screen.antarchy.computer.busy": "COMPUTER IN USE"
-    ,"screen.antarchy.computer.eject_denied": "ACCESS DENIED: SETTINGS REQUIRED"
-    ,"screen.antarchy.computer.ejected": "DISK EJECTED"
-    ,"antintosh.antarchy.desktop.archive": "ARCHIVE"
-    ,"antintosh.antarchy.desktop.settings": "SETTINGS"
-    ,"antintosh.antarchy.desktop.terminal": "TERMINAL"
-    ,"antintosh.antarchy.desktop.antpaint": "ANTPAINT"
-    ,"antintosh.antarchy.desktop.antmail": "ANTMAIL"
-    ,"antintosh.antarchy.desktop.text_editor": "TEXT EDITOR"
-    ,"antintosh.antarchy.antmail.compose": "COMPOSE MESSAGE"
-    ,"antintosh.antarchy.antmail.attach_text": "ATTACH TEXT FILE"
-    ,"antintosh.antarchy.antmail.attach_image": "ATTACH ANTPAINT IMAGE"
-    ,"antintosh.antarchy.antmail.save_attachment": "SAVE ATTACHMENT"
-    ,"antintosh.antarchy.antmail.address": "COMPUTER ADDRESS"
+    ,"guide.antarchy.entry.high_fructose_corn_syrup.subtitle": "Field notes on a suspiciously popular bottle"
+    ,"guide.antarchy.entry.high_fructose_corn_syrup.description": "Brew it by adding Corn, found wild or grown as a crop, to a Water Bottle."
+    ,"guide.antarchy.entry.high_fructose_corn_syrup.description2": "Drunk on its own, it causes four seconds of Nausea. A doctor would not recommend it."
+    ,"guide.antarchy.entry.high_fructose_corn_syrup.description3": "Used on any food in a crafting grid, it Americanizes it: extra nutrition, extra saturation, and a burst of Regeneration."
+    ,"guide.antarchy.entry.rainbow_ant.title": "Rainbow Ant"
+    ,"guide.antarchy.entry.rainbow_ant.subtitle": "Dimensional gateway record"
+    ,"guide.antarchy.entry.rainbow_ant.description": "A Rainbow Ant. It's your average dimensional ant... or so I thought at first. The Rainbow Ant doesn't lead to any dimension unless it is fed Rainbow Sugar."
+    ,"guide.antarchy.entry.rainbow_ant.description2": "I visited the dimension of the Rainbow Ant and returned, intending to note what I saw. When I went back to the ant's dimension later, I found it was a different dimension."
+    ,"guide.antarchy.entry.rainbow_ant.description3": "My previous notes on the Rainbow Ant have unfortunately been discarded, as I now know the dimension is different every time. For all I know, there could be millions of dimensions this fascinating creature acts as a gateway to."
+    ,"guide.antarchy.disk.rainbow_ant.title": "RAINBOW ANT FIELD NOTES"
+    ,"guide.antarchy.disk.brutalfly.title": "BRUTALFLY FIELD NOTES"
+    ,"guide.antarchy.entry.brutalfly.title": "Brutalfly"
+    ,"guide.antarchy.entry.brutalfly.subtitle": "Elythia hostile record"
+    ,"guide.antarchy.entry.brutalfly.description": "An oversized Elythian butterfly. Unlike its smaller counterparts, it is incredibly aggressive once out of its cocoon."
+    ,"guide.antarchy.entry.brutalfly.description2": "Like any butterfly, a Brutalfly begins in a cocoon. It is relatively safe to be near the cocoon as long as it remains undamaged."
+    ,"guide.antarchy.entry.brutalfly.description3": "If the Brutalfly is on the assault, all you can do is dispose of it."
+    ,"guide.antarchy.entry.brutalfly.description4": "Brutaflies are found in Elythia's wooded areas. Look for their cocoons hanging beneath the canopy."
+    ,"guide.antarchy.entry.easter_bunny.title": "Easter Bunny"
+    ,"guide.antarchy.entry.easter_bunny.subtitle": "Entity record"
+    ,"guide.antarchy.entry.easter_bunny.description": "The Easter Bunny lays spawn eggs for all sorts of creatures! Life is like an easter egg, you never know what you're gonna get."
+    ,"guide.antarchy.entry.easter_bunny.description2": "Feed them carrots, golden carrots, or dandelions."
+    ,"guide.antarchy.entry.duplicator_tree.title": "Duplicator Tree"
+    ,"guide.antarchy.entry.duplicator_tree.subtitle": "Block record"
+    ,"guide.antarchy.entry.duplicator_tree.description": "A mature Duplicator Tree copies a nearby solid block into an empty, supported space next to it."
+    ,"guide.antarchy.entry.duplicator_tree.description2": "Fluids, block entities, and other Duplicator Tree blocks will not copy, and duplication happens occasionally, not on a fixed timer."
+    ,"guide.antarchy.disk.kraken.title": "KRAKEN SIGHTING NOTES"
+    ,"guide.antarchy.entry.kraken.title": "Kraken"
+    ,"guide.antarchy.entry.kraken.subtitle": "Guardian of the sea record"
+    ,"guide.antarchy.entry.kraken.description": "An absurdly huge squid acting as a guardian of the sea. It holds almost complete control over the weather and the sea, and commands other cephalopods with great ease."
+    ,"guide.antarchy.entry.kraken.description2": "If you're feeling unlucky, whatever you do, do not attack its younger cousins. Killing a Squid while under Bad Omen may summon a Kraken where it died. Each level of Bad Omen raises the odds, about one percent per level."
+    ,"guide.antarchy.entry.kraken.description3": "It rises from nearby water, so pick your fight at sea. On very rare occasions, a single slain Squid calls ten of them at once."
+    ,"guide.antarchy.entry.kraken.description4": "A creature of mass destruction that will stop at NOTHING to finish off those who aggravated it."
+    ,"guide.antarchy.disk.king.title": "KING'S TREE FIELD NOTES"
+    ,"guide.antarchy.entry.king.title": "King"
+    ,"guide.antarchy.entry.king.subtitle": "Elythia royal record"
+    ,"guide.antarchy.entry.king.description": "The King once ruled Elythia alongside his other half, until one day he struck her down and banished her. Since that day he has remained alone at their royal tree, found at the coordinates below."
+    ,"guide.antarchy.entry.king.description2": "Rule and order are all he has left, and he clings to them. He has grown dull and bitter, and the only thing that brings him any semblance of joy is the torment of others. He's aggressive, he's egotistical, he's sadistic, and he's powerful."
+    ,"guide.antarchy.entry.king.description3": "He will attack you on sight, and he will toy with you. Mid-battle he issues Decrees: KNEEL, DO NOT RUN, COME NO CLOSER, SHOW NO MERCY. His word is law, and he expects it obeyed at once."
+    ,"guide.antarchy.entry.king.description4": "Break a Decree and your hearts are halved for thirty seconds while you face his judgment. He harnesses the elements of thunder, frost, and flame to deliver it."
+    ,"guide.antarchy.entry.king.description5": "He is not as powerful as his other half, but if you aren't properly prepared for him, he will tear you apart."
+    ,"guide.antarchy.disk.queen.title": "QUEEN HAVOC TRAIL NOTES"
+    ,"guide.antarchy.entry.queen.title": "Queen"
+    ,"guide.antarchy.entry.queen.subtitle": "Thoraxis royal record"
+    ,"guide.antarchy.entry.queen.description": "No longer seen by the side of her other half, she has grown bitter and angry. She was thrown from Elythia, and her trip through the dimensions seems to have imbued her with dimensional capabilities."
+    ,"guide.antarchy.entry.queen.description2": "She's powerful and aggressive. Do not approach her unless you're absolutely sure. The Queen holds no grudge against any human, but if you're in her way, she will wipe you from this life."
+    ,"guide.antarchy.entry.queen.description3": "Once the Queen is through with you, she will let her loyal Manticores have the rest."
+    ,"guide.antarchy.entry.queen.description4": "She can be found in the underside of Thoraxis, at the coordinates below. Good luck."
+    ,"guide.antarchy.entry.queen.description5": "She fights with gravity: a ground stomp with an expanding shockwave, black holes that pull you toward their center, and a crushing field that pins you along the current gravity direction."
+    ,"guide.antarchy.entry.queen.description6": "In her final phase she also casts her own time dilation field, slowing anyone caught inside it."
+    ,"guide.antarchy.entry.prince.title": "Prince"
+    ,"guide.antarchy.entry.prince.subtitle": "Royal mount record"
+    ,"guide.antarchy.entry.prince.description": "Prince Eggs hatch into small Princes that grow when fed golden items."
+    ,"guide.antarchy.entry.prince.description2": "A grown Prince can be tamed and saddled for flight, fires elemental bolts at your enemies, and can command nearby hostile mobs. Feed responsibly; you are raising a small flying warlord."
+    ,"guide.antarchy.entry.princess.title": "Princess"
+    ,"guide.antarchy.entry.princess.subtitle": "Royal mount record"
+    ,"guide.antarchy.entry.princess.description": "Princess Eggs hatch into small Princesses that grow when fed golden items."
+    ,"guide.antarchy.entry.princess.description2": "A grown Princess can be tamed and saddled for flight, fires elemental bolts, and creates time-dilation fields around enemies."
+    ,"subtitles.antarchy.hoverboard_mount": "Hoverboard starts"
+    ,"subtitles.antarchy.hoverboard_dismount": "Hoverboard stops"
+    ,"subtitles.antarchy.hoverboard_idle": "Hoverboard hums"
+,
+    "advancements.antarchy.through_the_throat.title": "Mind the Gap",
+    "advancements.antarchy.through_the_throat.description": "Fall through a gravity throat into the Underside.",
+    "advancements.antarchy.underside_castle.title": "Castle Upside Down",
+    "advancements.antarchy.underside_castle.description": "Find the castle hanging in the Underside.",
+    "advancements.antarchy.hive_awakened.title": "Rude Awakening",
+    "advancements.antarchy.hive_awakened.description": "Wake a Cavaryn horde.",
+    "advancements.antarchy.survived_the_horde.title": "The Hive Remembers",
+    "advancements.antarchy.survived_the_horde.description": "Survive a Cavaryn horde to its final wave and break it.",
+    "advancements.antarchy.glimmer_keeper.title": "Glimmer Keeper",
+    "advancements.antarchy.glimmer_keeper.description": "Tame every kind of Glimmer.",
+    "entity.antarchy.portal_gun_portal": "Portal Gun Portal",
+    "item.antarchy.music_disc_underside.desc": "docshrekbot - underside",
+    "item.antarchy.music_disc_the_queen.desc": "Karlljp - The Queen",
+    "item.antarchy.music_disc_verdance.desc": "Hewo - Verdance",
+    "item.antarchy.music_disc_grotesque.desc": "DocShrekBot - Grotesque",
+    "attribute.antarchy.entity_interaction_range": "Entity Interaction Range"
 }

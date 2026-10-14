@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "items": "antarchy:mucus"
+            "items": [
+              "antarchy:mucus"
+            ]
           }
         ]
       },
@@ -19,7 +21,6 @@
     },
     "frame": "task",
     "icon": {
-      "count": 1,
       "item": "antarchy:mucus"
     },
     "show_toast": true,

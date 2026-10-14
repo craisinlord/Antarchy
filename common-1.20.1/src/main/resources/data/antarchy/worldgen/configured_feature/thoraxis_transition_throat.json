@@ -1,4 +1,6 @@
 {
   "type": "antarchy:thoraxis_transition_throat",
-  "config": {}
+  "config": {
+    "large": false
+  }
 }

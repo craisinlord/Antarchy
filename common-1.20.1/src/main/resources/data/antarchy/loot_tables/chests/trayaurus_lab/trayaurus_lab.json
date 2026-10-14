@@ -181,7 +181,7 @@
                 "min": 15.0,
                 "max": 30.0
               },
-              "options": "#minecraft:on_random_loot"
+              "treasure": false
             }
           ],
           "name": "minecraft:book",
@@ -192,7 +192,7 @@
           "functions": [
             {
               "function": "minecraft:enchant_randomly",
-              "options": [
+              "enchantments": [
                 "minecraft:mending",
                 "minecraft:swift_sneak",
                 "minecraft:frost_walker",
@@ -428,6 +428,28 @@
           "type": "minecraft:item",
           "name": "antarchy:mud_pie",
           "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 4,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{AntOSFloppyDisk:\"antarchy:elythia\"}"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 4,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{AntOSFloppyDisk:\"antarchy:kraken\"}"
+            }
+          ]
         }
       ],
       "rolls": {

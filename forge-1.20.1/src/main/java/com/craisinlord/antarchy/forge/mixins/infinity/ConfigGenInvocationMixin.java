@@ -9,11 +9,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(value = ConfigGenInvocation.class, remap = false)
-/*
- * Guards against a NPE in Infinite Dimensions' SurfaceRuleScanner when another mod
- * registers a surface rule with a missing "biome_is" field. Without this, the crash
- * propagates up through PlayerList.placeNewPlayer and kicks the player on login
- */
 public class ConfigGenInvocationMixin {
 
     @Redirect(

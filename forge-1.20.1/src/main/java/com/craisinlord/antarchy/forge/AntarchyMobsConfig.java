@@ -5,9 +5,6 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public final class AntarchyMobsConfig {
     public static final ForgeConfigSpec SPEC;
 
-
-    // Ants
-
     private static final ForgeConfigSpec.BooleanValue ANTS_STEAL_FROM_CHESTS;
 
     private static final ForgeConfigSpec.BooleanValue BROWN_ANT_REQUIRES_REAGENT;
@@ -38,44 +35,27 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue  TERMITE_ATTACK_DAMAGE;
     private static final ForgeConfigSpec.ConfigValue<String> TERMITE_DESTINATION_DIMENSION;
 
-
-
-    // Easter Bunny
-
     private static final ForgeConfigSpec.BooleanValue EASTER_BUNNY_ENABLED;
     private static final ForgeConfigSpec.IntValue     EASTER_BUNNY_NATURAL_SPAWN_CHANCE_PERCENT;
-
-
-    // Wasp
 
     private static final ForgeConfigSpec.DoubleValue WASP_HEALTH;
     private static final ForgeConfigSpec.DoubleValue WASP_ATTACK_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue WASP_MOVEMENT_SPEED;
-
-
-    // Bomber
 
     private static final ForgeConfigSpec.DoubleValue BOMBER_HEALTH;
     private static final ForgeConfigSpec.DoubleValue BOMBER_ATTACK_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue BOMBER_EXPLOSION_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue BOMBER_EXPLOSION_RADIUS;
 
-
-    // Jumpy Bug
-
-    private static final ForgeConfigSpec.DoubleValue JUMPY_BUG_HEALTH;
-    private static final ForgeConfigSpec.DoubleValue JUMPY_BUG_POUNCE_DAMAGE;
-    private static final ForgeConfigSpec.DoubleValue JUMPY_BUG_LATCH_DAMAGE;
-    private static final ForgeConfigSpec.DoubleValue JUMPY_BUG_CAMOUFLAGE_ALPHA;
-
-
-    // Emperor Scorpion
+    private static final ForgeConfigSpec.DoubleValue SPRINGBUG_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue SPRINGBUG_POUNCE_DAMAGE;
+    private static final ForgeConfigSpec.DoubleValue SPRINGBUG_CAMOUFLAGE_ALPHA;
 
     private static final ForgeConfigSpec.DoubleValue EMPEROR_SCORPION_HEALTH;
     private static final ForgeConfigSpec.DoubleValue EMPEROR_SCORPION_ATTACK_DAMAGE;
+    private static final ForgeConfigSpec.DoubleValue EMPEROR_SCORPION_MOVEMENT_SPEED;
     private static final ForgeConfigSpec.DoubleValue EMPEROR_SCORPION_ARMOR;
     private static final ForgeConfigSpec.DoubleValue EMPEROR_SCORPION_KNOCKBACK_RESISTANCE;
-    private static final ForgeConfigSpec.DoubleValue EMPEROR_SCORPION_MOVEMENT_SPEED;
     private static final ForgeConfigSpec.DoubleValue EMPEROR_SCORPION_FOLLOW_RANGE;
     private static final ForgeConfigSpec.IntValue    EMPEROR_SCORPION_XP_REWARD;
     private static final ForgeConfigSpec.IntValue    EMPEROR_SCORPION_CLAW_ANIM_TICKS;
@@ -86,32 +66,84 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.IntValue    EMPEROR_SCORPION_STING_COOLDOWN_TICKS;
     private static final ForgeConfigSpec.IntValue    EMPEROR_SCORPION_POISON_TICKS;
     private static final ForgeConfigSpec.IntValue    EMPEROR_SCORPION_WEAKNESS_TICKS;
-    private static final ForgeConfigSpec.IntValue    EMPEROR_SCORPION_HARDEN_COOLDOWN_TICKS;
     private static final ForgeConfigSpec.IntValue    EMPEROR_SCORPION_SUMMON_INTERVAL_TICKS;
     private static final ForgeConfigSpec.IntValue    EMPEROR_SCORPION_MAX_SUMMONED_SCORPIONS;
     private static final ForgeConfigSpec.IntValue    EMPEROR_SCORPION_MAX_NEARBY_SCORPIONS;
+    private static final ForgeConfigSpec.IntValue    EMPEROR_SCORPION_HARDEN_COOLDOWN_TICKS;
     private static final ForgeConfigSpec.DoubleValue EMPEROR_SCORPION_DAMAGE_RANGE;
     private static final ForgeConfigSpec.IntValue    EMPEROR_SCORPION_MIN_DESPAWN_TICKS;
 
-
-    // Kraken
+    private static final ForgeConfigSpec.DoubleValue SCORPION_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue SCORPION_ATTACK_DAMAGE;
+    private static final ForgeConfigSpec.DoubleValue SCORPION_MOVEMENT_SPEED;
+    private static final ForgeConfigSpec.DoubleValue SCORPION_ARMOR;
+    private static final ForgeConfigSpec.DoubleValue SCORPION_KNOCKBACK_RESISTANCE;
 
     private static final ForgeConfigSpec.DoubleValue  KRAKEN_HEALTH;
     private static final ForgeConfigSpec.DoubleValue  KRAKEN_ATTACK_DAMAGE;
+    private static final ForgeConfigSpec.BooleanValue KRAKEN_SQUID_SPAWN_ENABLED;
+    private static final ForgeConfigSpec.BooleanValue KRAKEN_MASS_SPAWN_ENABLED;
+    private static final ForgeConfigSpec.BooleanValue KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON;
+    private static final ForgeConfigSpec.DoubleValue  KRAKEN_FOLLOW_RANGE;
+    private static final ForgeConfigSpec.DoubleValue  KRAKEN_DAMAGE_RANGE;
     private static final ForgeConfigSpec.DoubleValue  KRAKEN_ARMOR;
     private static final ForgeConfigSpec.DoubleValue  KRAKEN_KNOCKBACK_RESISTANCE;
     private static final ForgeConfigSpec.DoubleValue  KRAKEN_MOVEMENT_SPEED;
     private static final ForgeConfigSpec.DoubleValue  KRAKEN_FLYING_SPEED;
     private static final ForgeConfigSpec.DoubleValue  KRAKEN_BOSS_BAR_RANGE;
     private static final ForgeConfigSpec.DoubleValue  KRAKEN_LIGHTNING_DAMAGE_PHASE_ONE;
-    private static final ForgeConfigSpec.BooleanValue KRAKEN_SQUID_SPAWN_ENABLED;
-    private static final ForgeConfigSpec.BooleanValue KRAKEN_MASS_SPAWN_ENABLED;
-    private static final ForgeConfigSpec.BooleanValue KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON;
-    private static final ForgeConfigSpec.DoubleValue  KRAKEN_FOLLOW_RANGE;
-    private static final ForgeConfigSpec.DoubleValue  KRAKEN_DAMAGE_RANGE;
 
+    private static final ForgeConfigSpec.DoubleValue KING_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue QUEEN_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue KING_ATTACK_DAMAGE;
+    private static final ForgeConfigSpec.DoubleValue QUEEN_ATTACK_DAMAGE;
+    private static final ForgeConfigSpec.DoubleValue ROYAL_BOSS_ARMOR;
+    private static final ForgeConfigSpec.DoubleValue KING_ARMOR;
+    private static final ForgeConfigSpec.DoubleValue ROYAL_BOSS_FOLLOW_RANGE;
+    private static final ForgeConfigSpec.DoubleValue ROYAL_BOSS_MOVEMENT_SPEED;
+    private static final ForgeConfigSpec.DoubleValue ROYAL_BOSS_KNOCKBACK_RESISTANCE;
+    private static final ForgeConfigSpec.DoubleValue ROYAL_BOSS_STEP_HEIGHT;
+    private static final ForgeConfigSpec.DoubleValue ROYAL_BOSS_MAX_SINGLE_HIT_DAMAGE;
+    private static final ForgeConfigSpec.DoubleValue ROYAL_BOSS_BITE_REACH;
+    private static final ForgeConfigSpec.DoubleValue ROYAL_BOSS_BITE_DAMAGE_MULTIPLIER;
+    private static final ForgeConfigSpec.IntValue ROYAL_BOSS_BITE_COOLDOWN_TICKS;
+    private static final ForgeConfigSpec.BooleanValue ROYAL_BOSS_MULTIPLAYER_SCALING_ENABLED;
+    private static final ForgeConfigSpec.IntValue ROYAL_BOSS_SCALING_MAX_PLAYERS;
+    private static final ForgeConfigSpec.DoubleValue ROYAL_BOSS_HEALTH_PER_ADDITIONAL_PLAYER, ROYAL_BOSS_DAMAGE_PER_ADDITIONAL_PLAYER;
+    private static final ForgeConfigSpec.DoubleValue ROYAL_BOUNDARY_RADIUS, ROYAL_BOUNDARY_WARNING_RADIUS;
+    private static final ForgeConfigSpec.IntValue ROYAL_BOUNDARY_GRACE_TICKS;
+    private static final ForgeConfigSpec.DoubleValue QUEEN_BEAM_DAMAGE, QUEEN_BEAM_RANGE, QUEEN_BEAM_MINIMUM_RANGE, QUEEN_BEAM_TRACKING, QUEEN_BEAM_TERRAIN_RADIUS;
+    private static final ForgeConfigSpec.IntValue QUEEN_BEAM_DURATION_TICKS, QUEEN_BEAM_WINDUP_TICKS, QUEEN_BEAM_TRAVEL_TICKS, QUEEN_BEAM_COOLDOWN_TICKS, QUEEN_BEAM_TERRAIN_CAP,
+            QUEEN_BEAM_PHASE_ONE_CAP, QUEEN_BEAM_PHASE_TWO_CAP, QUEEN_BEAM_PHASE_THREE_CAP;
+    private static final ForgeConfigSpec.DoubleValue QUEEN_BEAM_PHASE_THREE_MAX_VOLLEY_CHANCE;
+    private static final ForgeConfigSpec.DoubleValue KING_BEAM_DAMAGE, KING_BEAM_RANGE, KING_BEAM_MINIMUM_RANGE, KING_BEAM_TRACKING, KING_BEAM_TERRAIN_RADIUS;
+    private static final ForgeConfigSpec.IntValue KING_BEAM_DURATION_TICKS, KING_BEAM_WINDUP_TICKS, KING_BEAM_TRAVEL_TICKS, KING_BEAM_COOLDOWN_TICKS, KING_BEAM_TERRAIN_CAP;
+    private static final ForgeConfigSpec.IntValue ROYAL_DECREE_COOLDOWN_TICKS;
+    private static final ForgeConfigSpec.DoubleValue KING_ROYAL_MUSTER_RADIUS;
+    private static final ForgeConfigSpec.IntValue KING_ROYAL_MUSTER_COOLDOWN_TICKS, KING_ROYAL_MUSTER_WINDUP_TICKS,
+            KING_ROYAL_MUSTER_DURATION_TICKS, KING_ROYAL_MUSTER_CAP;
+    private static final ForgeConfigSpec.DoubleValue QUEEN_BLACK_HOLE_RADIUS, QUEEN_BLACK_HOLE_PULL_STRENGTH;
+    private static final ForgeConfigSpec.IntValue QUEEN_BLACK_HOLE_ACTIVE_TICKS, QUEEN_BLACK_HOLE_BLOCK_SUCTION_CAP;
+    private static final ForgeConfigSpec.DoubleValue ROYAL_BOSS_SOUND_VOLUME;
+    private static final ForgeConfigSpec.DoubleValue KING_FIREBALL_DAMAGE, KING_FIREBALL_RADIUS, KING_ICEBALL_DAMAGE, KING_ICEBALL_RADIUS, KING_ICE_SPIKE_DAMAGE;
+    private static final ForgeConfigSpec.IntValue KING_FIREBALL_COOLDOWN_TICKS, KING_ICEBALL_COOLDOWN_TICKS, KING_ICE_SPIKE_COOLDOWN_TICKS, KING_ELEMENTAL_TERRAIN_CAP;
 
-    // Brutalfly
+    private static final ForgeConfigSpec.IntValue ROYAL_EGG_HATCH_CHANCE;
+    private static final ForgeConfigSpec.DoubleValue ROYAL_BOLT_DAMAGE;
+    private static final ForgeConfigSpec.DoubleValue PRINCE_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue PRINCE_ATTACK_DAMAGE;
+    private static final ForgeConfigSpec.DoubleValue PRINCE_MOVEMENT_SPEED;
+    private static final ForgeConfigSpec.DoubleValue PRINCE_FLYING_SPEED;
+    private static final ForgeConfigSpec.DoubleValue PRINCE_ARMOR;
+    private static final ForgeConfigSpec.DoubleValue PRINCE_KNOCKBACK_RESISTANCE;
+    private static final ForgeConfigSpec.DoubleValue PRINCE_FOLLOW_RANGE;
+    private static final ForgeConfigSpec.DoubleValue PRINCESS_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue PRINCESS_ATTACK_DAMAGE;
+    private static final ForgeConfigSpec.DoubleValue PRINCESS_MOVEMENT_SPEED;
+    private static final ForgeConfigSpec.DoubleValue PRINCESS_FLYING_SPEED;
+    private static final ForgeConfigSpec.DoubleValue PRINCESS_ARMOR;
+    private static final ForgeConfigSpec.DoubleValue PRINCESS_KNOCKBACK_RESISTANCE;
+    private static final ForgeConfigSpec.DoubleValue PRINCESS_FOLLOW_RANGE;
 
     private static final ForgeConfigSpec.DoubleValue BRUTALFLY_HEALTH;
     private static final ForgeConfigSpec.DoubleValue BRUTALFLY_SWIPE_DAMAGE;
@@ -119,21 +151,15 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue BRUTALFLY_DAMAGE_RANGE;
     private static final ForgeConfigSpec.DoubleValue BRUTALFLY_ARMOR;
     private static final ForgeConfigSpec.DoubleValue BRUTALFLY_ARMOR_TOUGHNESS;
+    private static final ForgeConfigSpec.DoubleValue BRUTALFLY_KNOCKBACK_RESISTANCE;
     private static final ForgeConfigSpec.DoubleValue BRUTALFLY_MOVEMENT_SPEED;
     private static final ForgeConfigSpec.DoubleValue BRUTALFLY_FLYING_SPEED;
-    private static final ForgeConfigSpec.DoubleValue BRUTALFLY_KNOCKBACK_RESISTANCE;
-
-
-    // Mantis
 
     private static final ForgeConfigSpec.DoubleValue  MANTIS_HEALTH;
     private static final ForgeConfigSpec.DoubleValue  MANTIS_ATTACK_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue  MANTIS_MOVEMENT_SPEED;
     private static final ForgeConfigSpec.DoubleValue  MANTIS_FLYING_SPEED;
     private static final ForgeConfigSpec.BooleanValue MANTIS_IGNORE_LIGHT_LEVEL;
-
-
-    // Alpha Mantis
 
     private static final ForgeConfigSpec.DoubleValue ALPHA_MANTIS_HEALTH;
     private static final ForgeConfigSpec.DoubleValue ALPHA_MANTIS_ATTACK_DAMAGE;
@@ -142,9 +168,6 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.IntValue    ALPHA_MANTIS_SUMMON_INTERVAL_TICKS;
     private static final ForgeConfigSpec.IntValue    ALPHA_MANTIS_MAX_MINIONS;
     private static final ForgeConfigSpec.DoubleValue ALPHA_MANTIS_DAMAGE_RANGE;
-
-
-    // Rolly Polly
 
     private static final ForgeConfigSpec.DoubleValue ROLLY_POLLY_HEALTH;
     private static final ForgeConfigSpec.DoubleValue ROLLY_POLLY_MOVEMENT_SPEED;
@@ -155,25 +178,51 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue ROLLY_POLLY_ARMOR;
     private static final ForgeConfigSpec.DoubleValue ROLLY_POLLY_ROLLED_ARMOR_BONUS;
 
+    private static final ForgeConfigSpec.DoubleValue FLYTRAP_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue FLYTRAP_ATTACK_DAMAGE;
+    private static final ForgeConfigSpec.DoubleValue FLYTRAP_GRAB_DAMAGE;
+    private static final ForgeConfigSpec.IntValue    FLYTRAP_SWEEP_HIT_COOLDOWN_TICKS;
 
-    // Triffid
-
-    private static final ForgeConfigSpec.DoubleValue TRIFFID_HEALTH;
-    private static final ForgeConfigSpec.DoubleValue TRIFFID_ATTACK_DAMAGE;
-    private static final ForgeConfigSpec.DoubleValue TRIFFID_GRAB_DAMAGE;
-
-
-    // Caterpillar
-
+    private static final ForgeConfigSpec.DoubleValue CATERPILLAR_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue CATERPILLAR_MOVEMENT_SPEED;
     private static final ForgeConfigSpec.DoubleValue CATERPILLAR_PUPATION_TIME_SECONDS;
 
+    private static final ForgeConfigSpec.DoubleValue FLYING_SQUIRREL_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue FLYING_SQUIRREL_MOVEMENT_SPEED;
+    private static final ForgeConfigSpec.DoubleValue BUTTERFLY_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue BUTTERFLY_MOVEMENT_SPEED;
+    private static final ForgeConfigSpec.DoubleValue BUTTERFLY_FLYING_SPEED;
+    private static final ForgeConfigSpec.DoubleValue BED_BUG_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue BED_BUG_ATTACK_DAMAGE;
+    private static final ForgeConfigSpec.DoubleValue BED_BUG_MOVEMENT_SPEED;
+    private static final ForgeConfigSpec.DoubleValue BED_BUG_ARMOR;
 
-    // Ant Dance
+    private static final ForgeConfigSpec.DoubleValue STRATOSHARK_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue STRATOSHARK_ATTACK_DAMAGE;
+    private static final ForgeConfigSpec.DoubleValue STRATOSHARK_MOVEMENT_SPEED;
+    private static final ForgeConfigSpec.DoubleValue STRATOSHARK_FLYING_SPEED;
+    private static final ForgeConfigSpec.DoubleValue STRATOSHARK_KNOCKBACK_RESISTANCE;
+    private static final ForgeConfigSpec.DoubleValue MISSILE_SQUID_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue MISSILE_SQUID_ATTACK_DAMAGE;
+    private static final ForgeConfigSpec.DoubleValue MISSILE_SQUID_MOVEMENT_SPEED;
+    private static final ForgeConfigSpec.DoubleValue MISSILE_SQUID_FLYING_SPEED;
+    private static final ForgeConfigSpec.DoubleValue MISSILE_SQUID_KNOCKBACK_RESISTANCE;
+    private static final ForgeConfigSpec.DoubleValue MOLEWORM_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue MOLEWORM_ATTACK_DAMAGE;
+    private static final ForgeConfigSpec.DoubleValue MOLEWORM_MOVEMENT_SPEED;
+    private static final ForgeConfigSpec.DoubleValue MOLEVORE_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue MOLEVORE_ATTACK_DAMAGE;
+    private static final ForgeConfigSpec.IntValue MOLEVORE_SPIN_TICKS;
+    private static final ForgeConfigSpec.IntValue MOLEVORE_COOLDOWN_TICKS;
+    private static final ForgeConfigSpec.DoubleValue MOLEVORE_CHARGE_SPEED;
+    private static final ForgeConfigSpec.DoubleValue MOLEVORE_BREAK_RANGE;
+    private static final ForgeConfigSpec.DoubleValue MOLEVORE_BREAK_VERTICAL_RANGE;
+    private static final ForgeConfigSpec.DoubleValue MOLEVORE_BREAK_HALF_WIDTH;
+
+    private static final ForgeConfigSpec.DoubleValue OCTOPUS_BOMB_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue OCTOPUS_BOMB_ATTACK_DAMAGE;
 
     private static final ForgeConfigSpec.DoubleValue ANT_DANCE_RADIUS;
-
-
-    // Reverie
 
     private static final ForgeConfigSpec.DoubleValue  REVERIE_HEALTH;
     private static final ForgeConfigSpec.DoubleValue  REVERIE_INTEREST_RADIUS;
@@ -188,17 +237,17 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue  REVERIE_WARNING_THREAT_VERTICAL_RANGE;
     private static final ForgeConfigSpec.IntValue     REVERIE_DUPLICATION_COOLDOWN_TICKS;
 
-
-    // Nightmare
-
     private static final ForgeConfigSpec.DoubleValue  NIGHTMARE_HEALTH;
     private static final ForgeConfigSpec.DoubleValue  NIGHTMARE_ATTACK_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue  NIGHTMARE_MOVEMENT_SPEED;
     private static final ForgeConfigSpec.IntValue     NIGHTMARE_WEAKNESS_TICKS;
     private static final ForgeConfigSpec.IntValue     NIGHTMARE_DREAD_TICKS;
-
-
-    // Basilisk
+    private static final ForgeConfigSpec.IntValue     DIMENSIONAL_TEAR_LIFETIME_TICKS;
+    private static final ForgeConfigSpec.IntValue     DIMENSIONAL_TEAR_INVERTED_DURATION_TICKS;
+    private static final ForgeConfigSpec.IntValue     DIMENSIONAL_TEAR_EMERGENCE_MIN_INTERVAL_TICKS;
+    private static final ForgeConfigSpec.IntValue     DIMENSIONAL_TEAR_EMERGENCE_MAX_INTERVAL_TICKS;
+    private static final ForgeConfigSpec.DoubleValue  DIMENSIONAL_TEAR_LUCID_EVENT_CHANCE;
+    private static final ForgeConfigSpec.BooleanValue DIMENSIONAL_TEARS_SPAWN_NATURALLY;
 
     private static final ForgeConfigSpec.BooleanValue BASILISK_PETRIFYING_GAZE_ENABLED;
     private static final ForgeConfigSpec.IntValue     BASILISK_SPAWN_MAX_LIGHT_LEVEL;
@@ -222,9 +271,6 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue  BASILISK_PREY_PETRIFY_RANGE;
     private static final ForgeConfigSpec.IntValue     BASILISK_PREY_PETRIFY_TICKS;
 
-
-    // Toreterror
-
     private static final ForgeConfigSpec.DoubleValue  TORETERROR_HEALTH;
     private static final ForgeConfigSpec.DoubleValue  TORETERROR_DAMAGE_RANGE;
     private static final ForgeConfigSpec.DoubleValue  TORETERROR_JUMP_ATTACK_DAMAGE;
@@ -232,26 +278,23 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue  TORETERROR_SPIN_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue  TORETERROR_SPIN_KNOCKBACK;
     private static final ForgeConfigSpec.DoubleValue  TORETERROR_PROJECTILE_DAMAGE_MULTIPLIER;
-    private static final ForgeConfigSpec.DoubleValue  TORETERROR_RANGED_WATER_BOMB_CHANCE;
-    private static final ForgeConfigSpec.DoubleValue  WATER_CANNON_COOLDOWN_SECONDS;
     private static final ForgeConfigSpec.DoubleValue  WATER_BOMB_DAMAGE;
     private static final ForgeConfigSpec.IntValue     WATER_BOMB_LIFETIME_TICKS;
     private static final ForgeConfigSpec.DoubleValue  WATER_BOMB_GRAVITY;
     private static final ForgeConfigSpec.DoubleValue  WATER_BOMB_KNOCKBACK;
 
+    private static final ForgeConfigSpec.DoubleValue CRAWLING_BLIGHT_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue CRAWLING_BLIGHT_ATTACK_DAMAGE;
 
-    // Creeping Horror
-
-    private static final ForgeConfigSpec.DoubleValue CREEPING_HORROR_HEALTH;
-    private static final ForgeConfigSpec.DoubleValue CREEPING_HORROR_ATTACK_DAMAGE;
-
-
-    // Lurking Terror
-
-    private static final ForgeConfigSpec.DoubleValue LURKING_TERROR_HEALTH;
-    private static final ForgeConfigSpec.DoubleValue LURKING_TERROR_ATTACK_DAMAGE;
-
-    // Jerry
+    private static final ForgeConfigSpec.DoubleValue SKULKING_FRIGHT_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue SKULKING_FRIGHT_ATTACK_DAMAGE;
+    private static final ForgeConfigSpec.DoubleValue MANTICORE_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue MANTICORE_ATTACK_DAMAGE;
+    private static final ForgeConfigSpec.IntValue MANTICORE_STING_POISON_TICKS;
+    private static final ForgeConfigSpec.IntValue QUEEN_MANTICORE_CAP;
+    private static final ForgeConfigSpec.IntValue QUEEN_MANTICORE_SUMMON_COOLDOWN_TICKS;
+    private static final ForgeConfigSpec.IntValue QUEEN_MANTICORE_SUMMON_COUNT;
+    private static final ForgeConfigSpec.DoubleValue QUEEN_MANTICORE_SUMMON_RANGE;
 
     private static final ForgeConfigSpec.DoubleValue JERRY_INFANT_HEALTH;
     private static final ForgeConfigSpec.DoubleValue JERRY_INFANT_ATTACK_DAMAGE;
@@ -262,37 +305,19 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue JERRY_GAMMA_HEALTH;
     private static final ForgeConfigSpec.DoubleValue JERRY_GAMMA_ATTACK_DAMAGE;
 
-
-    // Cheep
-
     private static final ForgeConfigSpec.DoubleValue CHEEP_HEALTH;
     private static final ForgeConfigSpec.DoubleValue CHEEP_ATTACK_DAMAGE;
 
-
-    // Dorrie
-
     private static final ForgeConfigSpec.DoubleValue DORRIE_HEALTH;
-
-
-    // Ouranwood Deer
 
     private static final ForgeConfigSpec.DoubleValue OURANWOOD_DEER_HEALTH;
 
-
-    // Glimmer
-
     private static final ForgeConfigSpec.DoubleValue GLIMMER_HEALTH;
-
-
-    // Hercules Beetle
 
     private static final ForgeConfigSpec.DoubleValue HERCULES_BEETLE_HEALTH;
     private static final ForgeConfigSpec.DoubleValue HERCULES_BEETLE_ATTACK_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue HERCULES_BEETLE_CHARGE_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue HERCULES_BEETLE_DAMAGE_RANGE;
-
-
-    // Lucid
 
     private static final ForgeConfigSpec.DoubleValue LUCID_ATTACK_RANGE;
     private static final ForgeConfigSpec.DoubleValue LUCID_PEARL_INVERTED_DURATION_SECONDS;
@@ -302,86 +327,21 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue LUCID_FLYING_SPEED;
     private static final ForgeConfigSpec.DoubleValue LUCID_KNOCKBACK_RESISTANCE;
 
-
-    // Missile Squid
-
-    private static final ForgeConfigSpec.DoubleValue MISSILE_SQUID_HEALTH;
-    private static final ForgeConfigSpec.DoubleValue MISSILE_SQUID_ATTACK_DAMAGE;
-    private static final ForgeConfigSpec.DoubleValue MISSILE_SQUID_MOVEMENT_SPEED;
-    private static final ForgeConfigSpec.DoubleValue MISSILE_SQUID_FLYING_SPEED;
-    private static final ForgeConfigSpec.DoubleValue MISSILE_SQUID_KNOCKBACK_RESISTANCE;
-
-
-    // Octopus Bomb
-
-    private static final ForgeConfigSpec.DoubleValue OCTOPUS_BOMB_HEALTH;
-    private static final ForgeConfigSpec.DoubleValue OCTOPUS_BOMB_ATTACK_DAMAGE;
-
-
-    // Bed Bug
-
-    private static final ForgeConfigSpec.DoubleValue BED_BUG_HEALTH;
-    private static final ForgeConfigSpec.DoubleValue BED_BUG_ATTACK_DAMAGE;
-    private static final ForgeConfigSpec.DoubleValue BED_BUG_MOVEMENT_SPEED;
-    private static final ForgeConfigSpec.DoubleValue BED_BUG_ARMOR;
-
-
-    // Cloud Shark
-
-    private static final ForgeConfigSpec.DoubleValue CLOUD_SHARK_HEALTH;
-    private static final ForgeConfigSpec.DoubleValue CLOUD_SHARK_ATTACK_DAMAGE;
-    private static final ForgeConfigSpec.DoubleValue CLOUD_SHARK_MOVEMENT_SPEED;
-    private static final ForgeConfigSpec.DoubleValue CLOUD_SHARK_FLYING_SPEED;
-    private static final ForgeConfigSpec.DoubleValue CLOUD_SHARK_KNOCKBACK_RESISTANCE;
-
-
-    // Flying Squirrel
-
-    private static final ForgeConfigSpec.DoubleValue FLYING_SQUIRREL_HEALTH;
-    private static final ForgeConfigSpec.DoubleValue FLYING_SQUIRREL_MOVEMENT_SPEED;
-
-
-    // Molevore
-
-    private static final ForgeConfigSpec.DoubleValue MOLEVORE_HEALTH;
-    private static final ForgeConfigSpec.DoubleValue MOLEVORE_ATTACK_DAMAGE;
-    private static final ForgeConfigSpec.DoubleValue MOLEVORE_MOVEMENT_SPEED;
-    private static final ForgeConfigSpec.DoubleValue MOLEVORE_ARMOR;
-    private static final ForgeConfigSpec.DoubleValue MOLEVORE_KNOCKBACK_RESISTANCE;
-    private static final ForgeConfigSpec.DoubleValue MOLEVORE_FOLLOW_RANGE;
-    private static final ForgeConfigSpec.IntValue    MOLEVORE_XP_REWARD;
-    private static final ForgeConfigSpec.IntValue    MOLEVORE_SPIN_TICKS;
-    private static final ForgeConfigSpec.IntValue    MOLEVORE_COOLDOWN_TICKS;
-    private static final ForgeConfigSpec.DoubleValue MOLEVORE_CHARGE_SPEED;
-    private static final ForgeConfigSpec.DoubleValue MOLEVORE_BREAK_RANGE;
-    private static final ForgeConfigSpec.DoubleValue MOLEVORE_BREAK_VERTICAL_RANGE;
-    private static final ForgeConfigSpec.DoubleValue MOLEVORE_BREAK_HALF_WIDTH;
-
-
-    // Moleworm
-
-    private static final ForgeConfigSpec.DoubleValue MOLEWORM_HEALTH;
-    private static final ForgeConfigSpec.DoubleValue MOLEWORM_ATTACK_DAMAGE;
-    private static final ForgeConfigSpec.DoubleValue MOLEWORM_MOVEMENT_SPEED;
-
-
-    // Scorpion
-
-    private static final ForgeConfigSpec.DoubleValue SCORPION_HEALTH;
-    private static final ForgeConfigSpec.DoubleValue SCORPION_ATTACK_DAMAGE;
-    private static final ForgeConfigSpec.DoubleValue SCORPION_MOVEMENT_SPEED;
-    private static final ForgeConfigSpec.DoubleValue SCORPION_ARMOR;
-    private static final ForgeConfigSpec.DoubleValue SCORPION_KNOCKBACK_RESISTANCE;
-
-
-    // Butterfly
-
-    private static final ForgeConfigSpec.DoubleValue BUTTERFLY_HEALTH;
-    private static final ForgeConfigSpec.DoubleValue BUTTERFLY_MOVEMENT_SPEED;
-    private static final ForgeConfigSpec.DoubleValue BUTTERFLY_FLYING_SPEED;
-
-
-    // Dread effect
+    private static final ForgeConfigSpec.DoubleValue VORTEX_HEALTH;
+    private static final ForgeConfigSpec.DoubleValue VORTEX_ATTACK_DAMAGE;
+    private static final ForgeConfigSpec.DoubleValue VORTEX_MOVEMENT_SPEED;
+    private static final ForgeConfigSpec.DoubleValue VORTEX_FLYING_SPEED;
+    private static final ForgeConfigSpec.IntValue VORTEX_MAX_ACTIVE_VORTEXES;
+    private static final ForgeConfigSpec.IntValue WIND_VORTEX_DURATION_TICKS;
+    private static final ForgeConfigSpec.DoubleValue WIND_VORTEX_PULL_STRENGTH;
+    private static final ForgeConfigSpec.DoubleValue WIND_VORTEX_LAUNCH_STRENGTH;
+    private static final ForgeConfigSpec.DoubleValue VORTEX_LENS_MIN_RADIUS;
+    private static final ForgeConfigSpec.DoubleValue VORTEX_LENS_MAX_RADIUS;
+    private static final ForgeConfigSpec.DoubleValue VORTEX_LENS_MIN_HEIGHT;
+    private static final ForgeConfigSpec.DoubleValue VORTEX_LENS_MAX_HEIGHT;
+    private static final ForgeConfigSpec.DoubleValue VORTEX_LENS_PULL_STRENGTH;
+    private static final ForgeConfigSpec.DoubleValue VORTEX_LENS_PUSH_STRENGTH;
+    private static final ForgeConfigSpec.DoubleValue VORTEX_LENS_LAUNCH_STRENGTH;
 
     private static final ForgeConfigSpec.BooleanValue DREAD_HALLUCINATION_SOUNDS_ENABLED;
     private static final ForgeConfigSpec.DoubleValue  DREAD_HALLUCINATION_SOUND_MIN_INTERVAL;
@@ -392,9 +352,6 @@ public final class AntarchyMobsConfig {
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
-
-
-        // Ants (shared)
 
         ANTS_STEAL_FROM_CHESTS = b
                 .comment("Whether ants will steal edible items from nearby chest inventories.")
@@ -476,9 +433,6 @@ public final class AntarchyMobsConfig {
                 .define("destinationDimension", "antarchy:cavaryn", AntarchyMobsConfig::isValidDimensionId);
         b.pop();
 
-
-        // Easter Bunny
-
         b.push("easterBunny");
         EASTER_BUNNY_ENABLED = b
                 .comment(
@@ -494,17 +448,11 @@ public final class AntarchyMobsConfig {
                 .defineInRange("naturalSpawnChancePercent", 1, 0, 100);
         b.pop();
 
-
-        // Wasp
-
         b.push("wasp");
         WASP_HEALTH         = b.comment("Base max health.")                            .defineInRange("health",       16.0D, 1.0D, 32768.0D);
         WASP_ATTACK_DAMAGE  = b.comment("Base attack damage.")                         .defineInRange("attackDamage", 4.0D,  0.0D, 1024.0D);
         WASP_MOVEMENT_SPEED = b.comment("Base wasp speed used for both flying and movement. Vanilla bee default is 0.3, so 0.39 is 30% faster.").defineInRange("movementSpeed", 0.39D, 0.0D, 10.0D);
         b.pop();
-
-
-        // Bomber
 
         b.push("bomber");
         BOMBER_HEALTH           = b.comment("Base max health.")                                        .defineInRange("health",          10.0D, 1.0D, 32768.0D);
@@ -513,83 +461,162 @@ public final class AntarchyMobsConfig {
         BOMBER_EXPLOSION_RADIUS = b.comment("Explosion radius when a bomber detonates. TNT uses 4.0.").defineInRange("explosionRadius",  4.0D,  0.0D, 128.0D);
         b.pop();
 
-
-        // Jumpy Bug
-
-        b.push("jumpyBug");
-        JUMPY_BUG_HEALTH = b.comment("Base max health.").defineInRange("health", 100.0D, 1.0D, 32768.0D);
-        JUMPY_BUG_POUNCE_DAMAGE = b.comment("Damage dealt on a successful pounce latch.").defineInRange("pounceDamage", 2.0D, 0.0D, 1024.0D);
-        JUMPY_BUG_LATCH_DAMAGE = b.comment("Damage dealt while latched onto a target.").defineInRange("latchDamage", 2.0D, 0.0D, 1024.0D);
-        JUMPY_BUG_CAMOUFLAGE_ALPHA = b.comment("Renderer alpha while camouflaged.").defineInRange("camouflageAlpha", 0.18D, 0.01D, 1.0D);
+        b.push("springbug");
+        SPRINGBUG_HEALTH = b.comment("Base max health.").defineInRange("health", 100.0D, 1.0D, 32768.0D);
+        SPRINGBUG_POUNCE_DAMAGE = b.comment("Damage dealt on a successful pounce latch.").defineInRange("pounceDamage", 2.0D, 0.0D, 1024.0D);
+        SPRINGBUG_CAMOUFLAGE_ALPHA = b.comment("Renderer alpha while camouflaged.").defineInRange("camouflageAlpha", 0.18D, 0.01D, 1.0D);
         b.pop();
 
-
-        // Emperor Scorpion
-
         b.push("emperorScorpion");
-        EMPEROR_SCORPION_HEALTH               = b.comment("Base max health.")                                    .defineInRange("health",               300.0D, 1.0D, 32768.0D);
-        EMPEROR_SCORPION_ATTACK_DAMAGE        = b.comment("Base attack damage.")                                 .defineInRange("attackDamage",          28.0D, 0.0D, 1024.0D);
-        EMPEROR_SCORPION_ARMOR                = b.comment("Base armor value.")                                   .defineInRange("armor",                 22.0D, 0.0D, 1024.0D);
-        EMPEROR_SCORPION_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance.")                          .defineInRange("knockbackResistance",   0.8D, 0.0D, 1.0D);
-        EMPEROR_SCORPION_MOVEMENT_SPEED       = b.comment("Base movement speed.")                                .defineInRange("movementSpeed",         0.384D, 0.0D, 10.0D);
-        EMPEROR_SCORPION_FOLLOW_RANGE         = b.comment("Base follow range.")                                  .defineInRange("followRange",           80.0D, 1.0D, 256.0D);
-        EMPEROR_SCORPION_XP_REWARD            = b.comment("Base experience reward.")                             .defineInRange("xpReward",                25, 0, 100000);
-        EMPEROR_SCORPION_CLAW_ANIM_TICKS      = b.comment("Ticks for the claw attack animation window.")         .defineInRange("clawAnimTicks",           23, 1, 400);
-        EMPEROR_SCORPION_CLAW_HIT_TICK        = b.comment("Tick during the claw animation when damage is applied.").defineInRange("clawHitTick",           12, 0, 400);
-        EMPEROR_SCORPION_CLAW_COOLDOWN_TICKS  = b.comment("Cooldown between claw attacks.")                       .defineInRange("clawCooldownTicks",       28, 0, 20000);
-        EMPEROR_SCORPION_STING_ANIM_TICKS     = b.comment("Ticks for the sting attack animation window.")        .defineInRange("stingAnimTicks",          25, 1, 400);
-        EMPEROR_SCORPION_STING_HIT_TICK       = b.comment("Tick during the sting animation when damage is applied.").defineInRange("stingHitTick",         13, 0, 400);
-        EMPEROR_SCORPION_STING_COOLDOWN_TICKS = b.comment("Cooldown between sting attacks.")                      .defineInRange("stingCooldownTicks",      60, 0, 20000);
-        EMPEROR_SCORPION_POISON_TICKS         = b.comment("Poison duration applied by the sting attack.")         .defineInRange("poisonTicks",            300, 0, 20000);
-        EMPEROR_SCORPION_WEAKNESS_TICKS       = b.comment("Weakness duration applied by the sting attack.")       .defineInRange("weaknessTicks",          120, 0, 20000);
-        EMPEROR_SCORPION_SUMMON_INTERVAL_TICKS = b.comment("Ticks between minion scorpion summons while in combat.").defineInRange("summonIntervalTicks",  140, 20, 72000);
-        EMPEROR_SCORPION_MAX_SUMMONED_SCORPIONS = b.comment("Maximum scorpions summoned by the Emperor Scorpion at once.").defineInRange("maxSummonedScorpions", 4, 0, 32);
-        EMPEROR_SCORPION_MAX_NEARBY_SCORPIONS = b.comment("Maximum nearby scorpions allowed before summoning stops.").defineInRange("maxNearbyScorpions",     3, 0, 32);
-        EMPEROR_SCORPION_HARDEN_COOLDOWN_TICKS = b.comment("Cooldown before the Emperor Scorpion can harden its shell again.").defineInRange("hardenCooldownTicks", 2400, 0, 72000);
+        EMPEROR_SCORPION_HEALTH = b.comment("Base max health.").defineInRange("health", 300.0D, 1.0D, 32768.0D);
+        EMPEROR_SCORPION_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 28.0D, 0.0D, 1024.0D);
+        EMPEROR_SCORPION_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.384D, 0.0D, 10.0D);
+        EMPEROR_SCORPION_ARMOR = b.comment("Base armor value.").defineInRange("armor", 22.0D, 0.0D, 1024.0D);
+        EMPEROR_SCORPION_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance.").defineInRange("knockbackResistance", 0.8D, 0.0D, 1.0D);
+        EMPEROR_SCORPION_FOLLOW_RANGE = b.comment("Base follow range.").defineInRange("followRange", 80.0D, 1.0D, 256.0D);
+        EMPEROR_SCORPION_XP_REWARD = b.comment("Base experience reward.").defineInRange("xpReward", 25, 0, 100000);
+        EMPEROR_SCORPION_CLAW_ANIM_TICKS = b.comment("Ticks for the claw attack animation window.").defineInRange("clawAnimTicks", 23, 1, 400);
+        EMPEROR_SCORPION_CLAW_HIT_TICK = b.comment("Tick during the claw animation when damage is applied.").defineInRange("clawHitTick", 12, 0, 400);
+        EMPEROR_SCORPION_CLAW_COOLDOWN_TICKS = b.comment("Ticks between claw attacks.").defineInRange("clawCooldownTicks", 28, 0, 2000);
+        EMPEROR_SCORPION_STING_ANIM_TICKS = b.comment("Ticks for the sting attack animation window.").defineInRange("stingAnimTicks", 25, 1, 400);
+        EMPEROR_SCORPION_STING_HIT_TICK = b.comment("Tick during the sting animation when damage is applied.").defineInRange("stingHitTick", 13, 0, 400);
+        EMPEROR_SCORPION_STING_COOLDOWN_TICKS = b.comment("Ticks between sting attacks.").defineInRange("stingCooldownTicks", 60, 0, 2000);
+        EMPEROR_SCORPION_POISON_TICKS = b.comment("Ticks the Poison effect from a sting lasts.").defineInRange("poisonTicks", 300, 0, 20000);
+        EMPEROR_SCORPION_WEAKNESS_TICKS = b.comment("Ticks the Weakness effect from a sting lasts.").defineInRange("weaknessTicks", 120, 0, 20000);
+        EMPEROR_SCORPION_SUMMON_INTERVAL_TICKS = b.comment("Ticks between minion scorpion summons while hardened.").defineInRange("summonIntervalTicks", 140, 20, 72000);
+        EMPEROR_SCORPION_MAX_SUMMONED_SCORPIONS = b.comment("Maximum scorpions summoned per hardening cast.").defineInRange("maxSummonedScorpions", 4, 0, 32);
+        EMPEROR_SCORPION_MAX_NEARBY_SCORPIONS = b.comment("Maximum owned scorpion minions allowed near this scorpion at once.").defineInRange("maxNearbyScorpions", 4, 0, 32);
+        EMPEROR_SCORPION_HARDEN_COOLDOWN_TICKS = b.comment("Cooldown in ticks before the Emperor Scorpion can harden and summon again.").defineInRange("hardenCooldownTicks", 2400, 0, 200000);
         EMPEROR_SCORPION_DAMAGE_RANGE = b
                 .comment("Range in blocks a player must be within for the Emperor Scorpion to be able to take damage. Prevents cheesing it from outside its aggro range.")
-                .defineInRange("damageRange", 80.0D, 1.0D, 256.0D);
+                .defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
         EMPEROR_SCORPION_MIN_DESPAWN_TICKS = b
                 .comment("Minimum ticks after spawning before the Emperor Scorpion can despawn from being far away. It also never despawns once it has taken damage. 6000 ticks = 5 minutes.")
                 .defineInRange("minDespawnTicks", 6000, 0, 1000000);
         b.pop();
 
-
-        // Kraken
+        b.push("scorpion");
+        SCORPION_HEALTH = b.defineInRange("health", 30.0D, 0.1D, 32768.0D);
+        SCORPION_ATTACK_DAMAGE = b.defineInRange("attackDamage", 5.0D, 0.0D, 1024.0D);
+        SCORPION_MOVEMENT_SPEED = b.defineInRange("movementSpeed", 0.29D, 0.0D, 10.0D);
+        SCORPION_ARMOR = b.defineInRange("armor", 2.0D, 0.0D, 1024.0D);
+        SCORPION_KNOCKBACK_RESISTANCE = b.defineInRange("knockbackResistance", 0.2D, 0.0D, 1.0D);
+        b.pop();
 
         b.push("kraken");
         KRAKEN_HEALTH                            = b.comment("Base max health.")                                                                                            .defineInRange("health",                          1500.0D, 1.0D, 32768.0D);
         KRAKEN_ATTACK_DAMAGE                     = b.comment("Base attack damage.")                                                                                         .defineInRange("attackDamage",                     45.0D,  0.0D, 1024.0D);
-        KRAKEN_ARMOR                             = b.comment("Base armor value.")                                                                                           .defineInRange("armor",                             8.0D,  0.0D, 1024.0D);
-        KRAKEN_KNOCKBACK_RESISTANCE              = b.comment("Base knockback resistance.")                                                                                  .defineInRange("knockbackResistance",               0.8D,  0.0D, 1.0D);
-        KRAKEN_MOVEMENT_SPEED                    = b.comment("Base movement speed.")                                                                                        .defineInRange("movementSpeed",                    0.24D,  0.0D, 10.0D);
-        KRAKEN_FLYING_SPEED                      = b.comment("Base flying speed.")                                                                                          .defineInRange("flyingSpeed",                      0.24D,  0.0D, 10.0D);
-        KRAKEN_BOSS_BAR_RANGE                    = b.comment("Range in blocks players see the Kraken's boss bar.")                                                         .defineInRange("bossBarRange",                     40.0D,  1.0D, 256.0D);
-        KRAKEN_LIGHTNING_DAMAGE_PHASE_ONE        = b.comment("Lightning strike damage dealt during phase one.")                                                            .defineInRange("lightningDamagePhaseOne",           6.0D,  0.0D, 1024.0D);
         KRAKEN_SQUID_SPAWN_ENABLED               = b.comment("If true, a player killing a Missile Squid has a 1/100 chance to spawn a single Kraken nearby.")                       .define("squidSpawnEnabled",  true);
         KRAKEN_MASS_SPAWN_ENABLED                = b.comment("If true, a player killing a Missile Squid has a 1/500 chance to spawn 10 Krakens. Independent from the single spawn.").define("massSpawnEnabled",  true);
         KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON        = b.comment("If true, the killer must have Bad Omen to summon a single Kraken; chance scales with Bad Omen level. Mass spawn is unaffected by level but still requires Bad Omen when this is on.").define("requireBadOmenToSummon",  true);
         KRAKEN_FOLLOW_RANGE                      = b.comment("How far the Kraken can see/target players.").defineInRange("followRange", 96.0D, 1.0D, 256.0D);
-        KRAKEN_DAMAGE_RANGE                      = b.comment("Range in blocks a player must be within for the Kraken to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 96.0D, 1.0D, 256.0D);
+        KRAKEN_DAMAGE_RANGE                      = b.comment("Range in blocks a player must be within for the Kraken to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 35.0D, 1.0D, 256.0D);
+        KRAKEN_ARMOR                              = b.comment("Base armor value.").defineInRange("armor", 8.0D, 0.0D, 1024.0D);
+        KRAKEN_KNOCKBACK_RESISTANCE               = b.comment("Base knockback resistance.").defineInRange("knockbackResistance", 0.8D, 0.0D, 1.0D);
+        KRAKEN_MOVEMENT_SPEED                     = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.24D, 0.0D, 10.0D);
+        KRAKEN_FLYING_SPEED                       = b.comment("Base flying speed.").defineInRange("flyingSpeed", 0.24D, 0.0D, 10.0D);
+        KRAKEN_BOSS_BAR_RANGE                     = b.comment("Range in blocks within which the Kraken's boss bar is shown to players.").defineInRange("bossBarRange", 40.0D, 1.0D, 256.0D);
+        KRAKEN_LIGHTNING_DAMAGE_PHASE_ONE         = b.comment("Lightning strike damage during phase one.").defineInRange("lightningDamagePhaseOne", 6.0D, 0.0D, 1024.0D);
         b.pop();
 
+        b.push("royalBosses");
+        KING_HEALTH = b.comment("Base max health for the King.").defineInRange("kingHealth", 3400.0D, 1.0D, 32768.0D);
+        QUEEN_HEALTH = b.comment("Base max health for the Queen.").defineInRange("queenHealth", 4300.0D, 1.0D, 32768.0D);
+        KING_ATTACK_DAMAGE = b.comment("Base attack damage for the King.").defineInRange("kingAttackDamage", 50.0D, 0.0D, 1024.0D);
+        QUEEN_ATTACK_DAMAGE = b.comment("Base attack damage for the Queen.").defineInRange("queenAttackDamage", 45.0D, 0.0D, 1024.0D);
+        ROYAL_BOSS_ARMOR = b.comment("Base armor value shared by King and Queen.").defineInRange("armor", 20.0D, 0.0D, 1024.0D);
+        KING_ARMOR = b.defineInRange("kingArmor", 30.0D, 0.0D, 1024.0D);
+        ROYAL_BOSS_FOLLOW_RANGE = b.comment("Target acquisition range shared by King and Queen.").defineInRange("followRange", 128.0D, 1.0D, 256.0D);
+        ROYAL_BOSS_MOVEMENT_SPEED = b.comment("Base grounded movement speed shared by King and Queen.").defineInRange("movementSpeed", 0.22D, 0.0D, 10.0D);
+        ROYAL_BOSS_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance shared by King and Queen.").defineInRange("knockbackResistance", 1.0D, 0.0D, 1.0D);
+        ROYAL_BOSS_STEP_HEIGHT = b.comment("Base step height shared by King and Queen.").defineInRange("stepHeight", 3.0D, 0.0D, 32.0D);
+        ROYAL_BOSS_MAX_SINGLE_HIT_DAMAGE = b.comment("Maximum damage a single hit can deal to a Royal boss before later anti-burst systems are added.").defineInRange("maxSingleHitDamage", 250.0D, 1.0D, 32768.0D);
+        ROYAL_BOSS_BITE_REACH = b.comment("Radius around each head anchor that a King or Queen bite can hit.").defineInRange("biteReach", 12.0D, 1.0D, 64.0D);
+        ROYAL_BOSS_BITE_DAMAGE_MULTIPLIER = b.comment("Multiplier applied to base attack damage for King and Queen head bites.").defineInRange("biteDamageMultiplier", 1.6D, 0.0D, 32.0D);
+        ROYAL_BOSS_BITE_COOLDOWN_TICKS = b.comment("Base cooldown in ticks between bites for a single King or Queen head (scaled down at later phases).").defineInRange("biteCooldownTicks", 45, 1, 1200);
+        ROYAL_BOSS_MULTIPLAYER_SCALING_ENABLED = b.define("multiplayerScalingEnabled", true);
+        ROYAL_BOSS_SCALING_MAX_PLAYERS = b.defineInRange("scalingMaxPlayers", 4, 1, 32);
+        ROYAL_BOSS_HEALTH_PER_ADDITIONAL_PLAYER = b.defineInRange("healthPerAdditionalPlayer", 0.35D, 0.0D, 4.0D);
+        ROYAL_BOSS_DAMAGE_PER_ADDITIONAL_PLAYER = b.defineInRange("damagePerAdditionalPlayer", 0.10D, 0.0D, 2.0D);
+        ROYAL_BOUNDARY_RADIUS = b.defineInRange("royalBoundaryRadius", 192.0D, 32.0D, 1024.0D);
+        ROYAL_BOUNDARY_WARNING_RADIUS = b.defineInRange("royalBoundaryWarningRadius", 160.0D, 16.0D, 1024.0D);
+        ROYAL_BOUNDARY_GRACE_TICKS = b.defineInRange("royalBoundaryGraceTicks", 60, 0, 2400);
+        QUEEN_BEAM_DAMAGE = b.defineInRange("queenBeamDamage", 45.0D, 0.0D, 1024.0D);
+        QUEEN_BEAM_RANGE = b.defineInRange("queenBeamRange", 100.0D, 1.0D, 256.0D);
+        QUEEN_BEAM_MINIMUM_RANGE = b.comment("Minimum distance from the Queen before she may begin or maintain a beam.").defineInRange("queenBeamMinimumRange", 22.0D, 0.0D, 256.0D);
+        QUEEN_BEAM_DURATION_TICKS = b.defineInRange("queenBeamDurationTicks", 30, 1, 1200);
+        QUEEN_BEAM_WINDUP_TICKS = b.comment("Charge time before the Queen beam actually fires.").defineInRange("queenBeamWindupTicks", 20, 0, 1200);
+        QUEEN_BEAM_TRAVEL_TICKS = b.comment("Time for the Queen beam to extend from its head to its committed range.").defineInRange("queenBeamTravelTicks", 12, 1, 1200);
+        QUEEN_BEAM_COOLDOWN_TICKS = b.defineInRange("queenBeamCooldownTicks", 90, 1, 2400);
+        QUEEN_BEAM_TRACKING = b.defineInRange("queenBeamTracking", 0.1D, 0.0D, 1.0D);
+        QUEEN_BEAM_TERRAIN_RADIUS = b.defineInRange("queenBeamTerrainRadius", 5.0D, 0.0D, 32.0D);
+        QUEEN_BEAM_TERRAIN_CAP = b.defineInRange("queenBeamTerrainCap", 192, 0, 4096);
+        QUEEN_BEAM_PHASE_ONE_CAP = b.comment("Maximum simultaneous Queen beams in phase one.").defineInRange("queenBeamPhaseOneCap", 1, 1, 3);
+        QUEEN_BEAM_PHASE_TWO_CAP = b.comment("Maximum simultaneous Queen beams in phase two.").defineInRange("queenBeamPhaseTwoCap", 2, 1, 3);
+        QUEEN_BEAM_PHASE_THREE_CAP = b.comment("Maximum simultaneous Queen beams when phase three rolls a full volley.").defineInRange("queenBeamPhaseThreeCap", 3, 1, 3);
+        QUEEN_BEAM_PHASE_THREE_MAX_VOLLEY_CHANCE = b.comment("Chance that a new phase-three Queen beam volley may use its full configured cap; otherwise it is limited to two beams.").defineInRange("queenBeamPhaseThreeMaxVolleyChance", 0.2D, 0.0D, 1.0D);
+        KING_BEAM_DAMAGE = b.defineInRange("kingBeamDamage", 50.0D, 0.0D, 1024.0D);
+        KING_BEAM_RANGE = b.defineInRange("kingBeamRange", 100.0D, 1.0D, 256.0D);
+        KING_BEAM_MINIMUM_RANGE = b.comment("Minimum distance from the King before he may begin or maintain a beam.").defineInRange("kingBeamMinimumRange", 32.0D, 0.0D, 256.0D);
+        KING_BEAM_DURATION_TICKS = b.defineInRange("kingBeamDurationTicks", 30, 1, 1200);
+        KING_BEAM_WINDUP_TICKS = b.comment("Charge time before the King beam actually fires.").defineInRange("kingBeamWindupTicks", 20, 0, 1200);
+        KING_BEAM_TRAVEL_TICKS = b.comment("Time for the King beam to extend from its head to its committed range.").defineInRange("kingBeamTravelTicks", 12, 1, 1200);
+        KING_BEAM_COOLDOWN_TICKS = b.defineInRange("kingBeamCooldownTicks", 90, 1, 2400);
+        KING_BEAM_TRACKING = b.defineInRange("kingBeamTracking", 0.1D, 0.0D, 1.0D);
+        KING_BEAM_TERRAIN_RADIUS = b.defineInRange("kingBeamTerrainRadius", 5.0D, 0.0D, 32.0D);
+        KING_BEAM_TERRAIN_CAP = b.defineInRange("kingBeamTerrainCap", 192, 0, 4096);
+        ROYAL_DECREE_COOLDOWN_TICKS = b.comment("Cooldown in ticks between the end of one King decree and the next.").defineInRange("royalDecreeCooldownTicks", 700, 1, 72000);
+        KING_ROYAL_MUSTER_COOLDOWN_TICKS = b.comment("Cooldown in ticks between King's command pulses.").defineInRange("kingRoyalMusterCooldownTicks", 500, 1, 72000);
+        KING_ROYAL_MUSTER_WINDUP_TICKS = b.comment("Warning time before the King commands nearby hostile mobs.").defineInRange("kingRoyalMusterWindupTicks", 30, 0, 1200);
+        KING_ROYAL_MUSTER_DURATION_TICKS = b.comment("Duration of Commanded applied by the King's muster.").defineInRange("kingRoyalMusterDurationTicks", 600, 1, 72000);
+        KING_ROYAL_MUSTER_RADIUS = b.comment("Radius of the King's command aura.").defineInRange("kingRoyalMusterRadius", 32.0D, 1.0D, 128.0D);
+        KING_ROYAL_MUSTER_CAP = b.comment("Maximum hostile mobs affected by one command pulse.").defineInRange("kingRoyalMusterCap", 12, 1, 128);
+        QUEEN_BLACK_HOLE_RADIUS = b.defineInRange("queenBlackHoleRadius", 14.0D, 1.0D, 64.0D);
+        QUEEN_BLACK_HOLE_ACTIVE_TICKS = b.comment("Active duration for Royal Assailant axe black holes. Queen black holes always follow their 20.125-second animation.").defineInRange("queenBlackHoleActiveTicks", 120, 20, 1200);
+        QUEEN_BLACK_HOLE_PULL_STRENGTH = b.defineInRange("queenBlackHolePullStrength", 0.16D, 0.0D, 2.0D);
+        QUEEN_BLACK_HOLE_BLOCK_SUCTION_CAP = b.comment("Maximum terrain blocks a single Queen black hole may pull into itself.").defineInRange("queenBlackHoleBlockSuctionCap", 160, 0, 4096);
+        KING_FIREBALL_DAMAGE = b.defineInRange("kingFireballDamage", 48.0D, 0.0D, 1024.0D);
+        KING_FIREBALL_RADIUS = b.defineInRange("kingFireballRadius", 4.5D, 0.5D, 32.0D);
+        KING_FIREBALL_COOLDOWN_TICKS = b.defineInRange("kingFireballCooldownTicks", 150, 1, 2400);
+        KING_ICEBALL_DAMAGE = b.defineInRange("kingIceballDamage", 18.0D, 0.0D, 1024.0D);
+        KING_ICEBALL_RADIUS = b.defineInRange("kingIceballRadius", 5.0D, 0.5D, 32.0D);
+        KING_ICEBALL_COOLDOWN_TICKS = b.defineInRange("kingIceballCooldownTicks", 190, 1, 2400);
+        KING_ICE_SPIKE_DAMAGE = b.defineInRange("kingIceSpikeDamage", 24.0D, 0.0D, 1024.0D);
+        KING_ICE_SPIKE_COOLDOWN_TICKS = b.defineInRange("kingIceSpikeCooldownTicks", 240, 1, 2400);
+        KING_ELEMENTAL_TERRAIN_CAP = b.defineInRange("kingElementalTerrainCap", 256, 0, 4096);
+        ROYAL_BOSS_SOUND_VOLUME = b.comment("Volume multiplier for large King and Queen presence, movement, and attack sounds.").defineInRange("royalBossSoundVolume", 4.5D, 0.5D, 16.0D);
+        b.pop();
 
-        // Brutalfly
+        b.push("royalMounts");
+        ROYAL_EGG_HATCH_CHANCE = b.comment("Chance denominator for a royal egg advancing one hatch stage on a random tick.").defineInRange("eggHatchChance", 3, 1, 100000);
+        ROYAL_BOLT_DAMAGE = b.comment("Direct damage dealt by a Prince or Princess royal bolt.").defineInRange("boltDamage", 6.0D, 0.0D, 1024.0D);
+        PRINCE_HEALTH = b.comment("Prince base max health.").defineInRange("princeHealth", 360.0D, 1.0D, 32768.0D);
+        PRINCE_ATTACK_DAMAGE = b.comment("Prince bite damage.").defineInRange("princeAttackDamage", 14.0D, 0.0D, 1024.0D);
+        PRINCE_MOVEMENT_SPEED = b.comment("Prince grounded movement speed.").defineInRange("princeMovementSpeed", 0.28D, 0.0D, 10.0D);
+        PRINCE_FLYING_SPEED = b.comment("Prince flying movement speed.").defineInRange("princeFlyingSpeed", 0.9D, 0.0D, 10.0D);
+        PRINCE_ARMOR = b.comment("Prince armor value.").defineInRange("princeArmor", 10.0D, 0.0D, 1024.0D);
+        PRINCE_KNOCKBACK_RESISTANCE = b.comment("Prince knockback resistance.").defineInRange("princeKnockbackResistance", 0.6D, 0.0D, 1.0D);
+        PRINCE_FOLLOW_RANGE = b.comment("Prince owner and target range.").defineInRange("princeFollowRange", 48.0D, 1.0D, 256.0D);
+        PRINCESS_HEALTH = b.comment("Princess base max health.").defineInRange("princessHealth", 330.0D, 1.0D, 32768.0D);
+        PRINCESS_ATTACK_DAMAGE = b.comment("Princess bite damage.").defineInRange("princessAttackDamage", 10.0D, 0.0D, 1024.0D);
+        PRINCESS_MOVEMENT_SPEED = b.comment("Princess grounded movement speed.").defineInRange("princessMovementSpeed", 0.28D, 0.0D, 10.0D);
+        PRINCESS_FLYING_SPEED = b.comment("Princess flying movement speed.").defineInRange("princessFlyingSpeed", 0.95D, 0.0D, 10.0D);
+        PRINCESS_ARMOR = b.comment("Princess armor value.").defineInRange("princessArmor", 8.0D, 0.0D, 1024.0D);
+        PRINCESS_KNOCKBACK_RESISTANCE = b.comment("Princess knockback resistance.").defineInRange("princessKnockbackResistance", 0.5D, 0.0D, 1.0D);
+        PRINCESS_FOLLOW_RANGE = b.comment("Princess owner and target range.").defineInRange("princessFollowRange", 48.0D, 1.0D, 256.0D);
+        b.pop();
 
         b.push("brutalfly");
         BRUTALFLY_HEALTH      = b.comment("Base max health.")                                          .defineInRange("health",      200.0D, 1.0D, 32768.0D);
         BRUTALFLY_SWIPE_DAMAGE = b.comment("Damage dealt by a claw swipe.")                           .defineInRange("swipeDamage",  15.0D, 0.0D, 1024.0D);
         BRUTALFLY_SPIT_DAMAGE  = b.comment("Direct hit damage from a spit orb before lingering effect.").defineInRange("spitDamage",   5.0D, 0.0D, 1024.0D);
-        BRUTALFLY_DAMAGE_RANGE = b.comment("Range in blocks a player must be within for the Brutalfly to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 48.0D, 1.0D, 256.0D);
+        BRUTALFLY_DAMAGE_RANGE = b.comment("Range in blocks a player must be within for the Brutalfly to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
         BRUTALFLY_ARMOR = b.comment("Base armor value.").defineInRange("armor", 10.0D, 0.0D, 1024.0D);
         BRUTALFLY_ARMOR_TOUGHNESS = b.comment("Base armor toughness.").defineInRange("armorToughness", 4.0D, 0.0D, 100.0D);
+        BRUTALFLY_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance.").defineInRange("knockbackResistance", 0.7D, 0.0D, 1.0D);
         BRUTALFLY_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.34D, 0.0D, 10.0D);
         BRUTALFLY_FLYING_SPEED = b.comment("Base flying speed.").defineInRange("flyingSpeed", 0.55D, 0.0D, 10.0D);
-        BRUTALFLY_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance.").defineInRange("knockbackResistance", 0.7D, 0.0D, 1.0D);
         b.pop();
-
-
-        // Mantis
 
         b.push("mantis");
         MANTIS_HEALTH             = b.comment("Base max health.")                                                                                                 .defineInRange("health",            50.0D, 1.0D, 32768.0D);
@@ -599,9 +626,6 @@ public final class AntarchyMobsConfig {
         MANTIS_IGNORE_LIGHT_LEVEL = b.comment("If false, mantises only spawn naturally in darkness (standard monster rules). If true, light level is ignored.").define("ignoreLightLevel", false);
         b.pop();
 
-
-        // Alpha Mantis
-
         b.push("alphaMantis");
         ALPHA_MANTIS_HEALTH                = b.comment("Base max health.")                                              .defineInRange("health",             250.0D, 1.0D, 32768.0D);
         ALPHA_MANTIS_ATTACK_DAMAGE         = b.comment("Base attack damage.")                                           .defineInRange("attackDamage",        18.0D, 0.0D, 1024.0D);
@@ -609,11 +633,8 @@ public final class AntarchyMobsConfig {
         ALPHA_MANTIS_FLYING_SPEED          = b.comment("Base flying speed.")                                            .defineInRange("flyingSpeed",         0.77D, 0.0D, 10.0D);
         ALPHA_MANTIS_SUMMON_INTERVAL_TICKS = b.comment("Ticks between mantis minion summons while in combat.")          .defineInRange("summonIntervalTicks",   300, 20, 72000);
         ALPHA_MANTIS_MAX_MINIONS           = b.comment("Maximum summoned mantises alive near the alpha at once.")       .defineInRange("maxMinions",              4, 0, 32);
-        ALPHA_MANTIS_DAMAGE_RANGE          = b.comment("Range in blocks a player must be within for the Alpha Mantis to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 48.0D, 1.0D, 256.0D);
+        ALPHA_MANTIS_DAMAGE_RANGE          = b.comment("Range in blocks a player must be within for the Alpha Mantis to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
         b.pop();
-
-
-        // Rolly Polly
 
         b.push("rollyPolly");
         ROLLY_POLLY_HEALTH                = b.comment("Base max health.")                                                          .defineInRange("health",              25.0D, 1.0D, 32768.0D);
@@ -626,35 +647,84 @@ public final class AntarchyMobsConfig {
         ROLLY_POLLY_ROLLED_ARMOR_BONUS    = b.comment("Additional armor gained while rolled up.")                                  .defineInRange("rolledArmorBonus",    16.0D, 0.0D, 100.0D);
         b.pop();
 
-
-        // Triffid
-
-        b.push("triffid");
-        TRIFFID_HEALTH        = b.comment("Base max health.")                     .defineInRange("health",       80.0D, 1.0D, 32768.0D);
-        TRIFFID_ATTACK_DAMAGE = b.comment("Damage dealt by the sweep attack.")   .defineInRange("attackDamage", 10.0D, 0.0D, 1024.0D);
-        TRIFFID_GRAB_DAMAGE   = b.comment("Damage dealt by the grab attack.")    .defineInRange("grabDamage",   15.0D, 0.0D, 1024.0D);
+        b.push("flytrap");
+        FLYTRAP_HEALTH        = b.comment("Base max health.")                     .defineInRange("health",       80.0D, 1.0D, 32768.0D);
+        FLYTRAP_ATTACK_DAMAGE = b.comment("Damage dealt by the sweep attack.")   .defineInRange("attackDamage", 10.0D, 0.0D, 1024.0D);
+        FLYTRAP_GRAB_DAMAGE   = b.comment("Damage dealt by the grab attack.")    .defineInRange("grabDamage",   15.0D, 0.0D, 1024.0D);
+        FLYTRAP_SWEEP_HIT_COOLDOWN_TICKS = b
+                .comment("Ticks a given entity is immune to repeat sweep-attack damage attempts after being hit once, so shields/armor absorbing a hit can't be shredded by every tick of the sweep's active window.")
+                .defineInRange("sweepHitCooldownTicks", 10, 0, 200);
         b.pop();
 
-
-        // Caterpillar
-
         b.push("caterpillar");
+        CATERPILLAR_HEALTH = b.defineInRange("health", 6.0D, 0.1D, 32768.0D);
+        CATERPILLAR_MOVEMENT_SPEED = b.defineInRange("movementSpeed", 0.24D, 0.0D, 10.0D);
         CATERPILLAR_PUPATION_TIME_SECONDS = b
                 .comment("Time in seconds before a caterpillar emerges from its chrysalis.")
                 .defineInRange("pupationTimeSeconds", 600.0D, 1.0D, 3600.0D);
         b.pop();
 
+        b.push("flyingSquirrel");
+        FLYING_SQUIRREL_HEALTH = b.defineInRange("health", 10.0D, 0.1D, 32768.0D);
+        FLYING_SQUIRREL_MOVEMENT_SPEED = b.defineInRange("movementSpeed", 0.35D, 0.0D, 10.0D);
+        b.pop();
 
-        // Ant Dance
+        b.push("butterfly");
+        BUTTERFLY_HEALTH = b.defineInRange("health", 6.0D, 0.1D, 32768.0D);
+        BUTTERFLY_MOVEMENT_SPEED = b.defineInRange("movementSpeed", 0.3D, 0.0D, 10.0D);
+        BUTTERFLY_FLYING_SPEED = b.defineInRange("flyingSpeed", 0.55D, 0.0D, 10.0D);
+        b.pop();
+
+        b.push("bedBug");
+        BED_BUG_HEALTH = b.defineInRange("health", 18.0D, 0.1D, 32768.0D);
+        BED_BUG_ATTACK_DAMAGE = b.defineInRange("attackDamage", 4.0D, 0.0D, 1024.0D);
+        BED_BUG_MOVEMENT_SPEED = b.defineInRange("movementSpeed", 0.24D, 0.0D, 10.0D);
+        BED_BUG_ARMOR = b.defineInRange("armor", 2.0D, 0.0D, 1024.0D);
+        b.pop();
+
+        b.push("stratoshark");
+        STRATOSHARK_HEALTH = b.defineInRange("health", 40.0D, 0.1D, 32768.0D);
+        STRATOSHARK_ATTACK_DAMAGE = b.defineInRange("attackDamage", 5.0D, 0.0D, 1024.0D);
+        STRATOSHARK_MOVEMENT_SPEED = b.defineInRange("movementSpeed", 0.34D, 0.0D, 10.0D);
+        STRATOSHARK_FLYING_SPEED = b.defineInRange("flyingSpeed", 0.5D, 0.0D, 10.0D);
+        STRATOSHARK_KNOCKBACK_RESISTANCE = b.defineInRange("knockbackResistance", 0.2D, 0.0D, 1.0D);
+        b.pop();
+
+        b.push("missileSquid");
+        MISSILE_SQUID_HEALTH = b.defineInRange("health", 60.0D, 0.1D, 32768.0D);
+        MISSILE_SQUID_ATTACK_DAMAGE = b.defineInRange("attackDamage", 9.0D, 0.0D, 1024.0D);
+        MISSILE_SQUID_MOVEMENT_SPEED = b.defineInRange("movementSpeed", 0.84D, 0.0D, 10.0D);
+        MISSILE_SQUID_FLYING_SPEED = b.defineInRange("flyingSpeed", 0.84D, 0.0D, 10.0D);
+        MISSILE_SQUID_KNOCKBACK_RESISTANCE = b.defineInRange("knockbackResistance", 0.15D, 0.0D, 1.0D);
+        b.pop();
+
+        b.push("moleworm");
+        MOLEWORM_HEALTH = b.defineInRange("health", 8.0D, 0.1D, 32768.0D);
+        MOLEWORM_ATTACK_DAMAGE = b.defineInRange("attackDamage", 1.0D, 0.0D, 1024.0D);
+        MOLEWORM_MOVEMENT_SPEED = b.defineInRange("movementSpeed", 0.25D, 0.0D, 10.0D);
+        b.pop();
+
+        b.push("molevore");
+        MOLEVORE_HEALTH = b.defineInRange("health", 140.0D, 0.1D, 32768.0D);
+        MOLEVORE_ATTACK_DAMAGE = b.defineInRange("attackDamage", 10.0D, 0.0D, 1024.0D);
+        MOLEVORE_SPIN_TICKS = b.defineInRange("spinTicks", 12, 0, 400);
+        MOLEVORE_COOLDOWN_TICKS = b.defineInRange("cooldownTicks", 60, 0, 20000);
+        MOLEVORE_CHARGE_SPEED = b.defineInRange("chargeSpeed", 1.15D, 0.0D, 10.0D);
+        MOLEVORE_BREAK_RANGE = b.defineInRange("breakRange", 1.8D, 0.0D, 32.0D);
+        MOLEVORE_BREAK_VERTICAL_RANGE = b.defineInRange("breakVerticalRange", 2.2D, 0.0D, 32.0D);
+        MOLEVORE_BREAK_HALF_WIDTH = b.defineInRange("breakHalfWidth", 1.1D, 0.0D, 32.0D);
+        b.pop();
+
+        b.push("octopusBomb");
+        OCTOPUS_BOMB_HEALTH = b.defineInRange("health", 100.0D, 0.1D, 32768.0D);
+        OCTOPUS_BOMB_ATTACK_DAMAGE = b.defineInRange("attackDamage", 16.0D, 0.0D, 1024.0D);
+        b.pop();
 
         b.push("antDance");
         ANT_DANCE_RADIUS = b
                 .comment("Radius in blocks where ants will dance around a playing jukebox.")
                 .defineInRange("radius", 5.0D, 1.0D, 32.0D);
         b.pop();
-
-
-        // Reverie
 
         b.push("reverie");
         REVERIE_HEALTH                         = b.comment("Base max health.")                                                                                         .defineInRange("health",                    20.0D, 1.0D, 1024.0D);
@@ -671,18 +741,22 @@ public final class AntarchyMobsConfig {
         REVERIE_DUPLICATION_COOLDOWN_TICKS     = b.comment("Cooldown in ticks before Blood Crystal can duplicate the Reverie again.")                                   .defineInRange("duplicationCooldownTicks",    6000, 20, 24000);
         b.pop();
 
-        // Nightmare
-
         b.push("nightmare");
         NIGHTMARE_HEALTH = b.comment("Base max health.").defineInRange("health", 180.0D, 1.0D, 32768.0D);
         NIGHTMARE_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 16.0D, 0.0D, 1024.0D);
         NIGHTMARE_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.28D, 0.0D, 10.0D);
-        NIGHTMARE_WEAKNESS_TICKS = b.comment("Weakness duration applied on hit.").defineInRange("weaknessTicks", 100, 0, 20000);
-        NIGHTMARE_DREAD_TICKS = b.comment("Dread duration applied on hit.").defineInRange("dreadTicks", 160, 0, 20000);
+        NIGHTMARE_WEAKNESS_TICKS = b.comment("Ticks the Weakness effect from Big Bertha's Nightmare-mode hit lasts.").defineInRange("weaknessTicks", 100, 0, 20000);
+        NIGHTMARE_DREAD_TICKS = b.comment("Ticks the Dread effect from Big Bertha's Nightmare-mode hit lasts.").defineInRange("dreadTicks", 160, 0, 20000);
         b.pop();
 
-
-        // Basilisk
+        b.push("dimensionalTear");
+        DIMENSIONAL_TEAR_LIFETIME_TICKS = b.comment("Ticks before naturally generated linked Dimensional Tears collapse.").defineInRange("lifetimeTicks", 24000, 1200, 240000);
+        DIMENSIONAL_TEAR_INVERTED_DURATION_TICKS = b.comment("Ticks of Inverted applied to living entities exiting a Dimensional Tear.").defineInRange("invertedDurationTicks", 2400, 0, 240000);
+        DIMENSIONAL_TEAR_EMERGENCE_MIN_INTERVAL_TICKS = b.comment("Minimum ticks between Nightmare/Lucid emergence events per tear.").defineInRange("emergenceMinIntervalTicks", 400, 20, 240000);
+        DIMENSIONAL_TEAR_EMERGENCE_MAX_INTERVAL_TICKS = b.comment("Maximum ticks between Nightmare/Lucid emergence events per tear.").defineInRange("emergenceMaxIntervalTicks", 1200, 20, 240000);
+        DIMENSIONAL_TEAR_LUCID_EVENT_CHANCE = b.comment("Chance that an emergence event spawns a Lucid instead of a Nightmare.").defineInRange("lucidEventChance", 0.65D, 0.0D, 1.0D);
+        DIMENSIONAL_TEARS_SPAWN_NATURALLY = b.define("spawnNaturally", true);
+        b.pop();
 
         b.push("basilisk");
         BASILISK_PETRIFYING_GAZE_ENABLED = b
@@ -712,9 +786,6 @@ public final class AntarchyMobsConfig {
         BASILISK_PREY_PETRIFY_TICKS = b.comment("Ticks the prey petrify effect lasts.").defineInRange("preyPetrifyTicks", 200, 0, 20000);
         b.pop();
 
-
-        // Lucid
-
         b.push("lucid");
         LUCID_ATTACK_RANGE = b
                 .comment("Attack range in blocks. The Lucid fires its gravity blast when a target enters this radius.")
@@ -729,104 +800,23 @@ public final class AntarchyMobsConfig {
         LUCID_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance.").defineInRange("knockbackResistance", 0.5D, 0.0D, 1.0D);
         b.pop();
 
-
-        // Missile Squid
-
-        b.push("missileSquid");
-        MISSILE_SQUID_HEALTH = b.comment("Base max health.").defineInRange("health", 50.0D, 1.0D, 32768.0D);
-        MISSILE_SQUID_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 6.0D, 0.0D, 1024.0D);
-        MISSILE_SQUID_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.84D, 0.0D, 10.0D);
-        MISSILE_SQUID_FLYING_SPEED = b.comment("Base flying speed.").defineInRange("flyingSpeed", 0.84D, 0.0D, 10.0D);
-        MISSILE_SQUID_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance.").defineInRange("knockbackResistance", 0.15D, 0.0D, 1.0D);
+        b.push("vortex");
+        VORTEX_HEALTH = b.comment("Base max health.").defineInRange("health", 70.0D, 1.0D, 32768.0D);
+        VORTEX_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 4.0D, 0.0D, 1024.0D);
+        VORTEX_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.22D, 0.0D, 10.0D);
+        VORTEX_FLYING_SPEED = b.comment("Base flying speed.").defineInRange("flyingSpeed", 0.35D, 0.0D, 10.0D);
+        VORTEX_MAX_ACTIVE_VORTEXES = b.comment("Maximum damaging wind vortexes one Vortex mob can maintain at once.").defineInRange("maxActiveVortexes", 3, 0, 32);
+        WIND_VORTEX_DURATION_TICKS = b.comment("Lifetime in ticks for wind vortexes spawned by Vortex charges or Vortex mobs.").defineInRange("windVortexDurationTicks", 240, 1, 1200);
+        WIND_VORTEX_PULL_STRENGTH = b.comment("How strongly wind vortexes pull entities toward their spiral path.").defineInRange("windVortexPullStrength", 0.32D, 0.0D, 4.0D);
+        WIND_VORTEX_LAUNCH_STRENGTH = b.comment("Launch velocity multiplier applied when entities exit the top of a wind vortex.").defineInRange("windVortexLaunchStrength", 1.0D, 0.0D, 4.0D);
+        VORTEX_LENS_MIN_RADIUS = b.comment("Top radius at signal strength 1 for Vortex Lens wind vortexes.").defineInRange("vortexLensMinRadius", 1.5D, 0.1D, 64.0D);
+        VORTEX_LENS_MAX_RADIUS = b.comment("Top radius at signal strength 15 for Vortex Lens wind vortexes.").defineInRange("vortexLensMaxRadius", 10.0D, 0.1D, 128.0D);
+        VORTEX_LENS_MIN_HEIGHT = b.comment("Length at signal strength 1 for Vortex Lens wind vortexes.").defineInRange("vortexLensMinHeight", 3.0D, 0.5D, 128.0D);
+        VORTEX_LENS_MAX_HEIGHT = b.comment("Length at signal strength 15 for Vortex Lens wind vortexes.").defineInRange("vortexLensMaxHeight", 20.0D, 0.5D, 256.0D);
+        VORTEX_LENS_PULL_STRENGTH = b.comment("How strongly redstone-powered Vortex Lens vortexes pull entities inward toward the lens.").defineInRange("vortexLensPullStrength", 0.42D, 0.0D, 8.0D);
+        VORTEX_LENS_PUSH_STRENGTH = b.comment("How strongly bluestone-powered Vortex Lens vortexes push entities outward from the lens.").defineInRange("vortexLensPushStrength", 0.38D, 0.0D, 8.0D);
+        VORTEX_LENS_LAUNCH_STRENGTH = b.comment("Launch velocity multiplier applied at the end of bluestone-powered Vortex Lens vortexes.").defineInRange("vortexLensLaunchStrength", 1.15D, 0.0D, 8.0D);
         b.pop();
-
-
-        // Octopus Bomb
-
-        b.push("octopusBomb");
-        OCTOPUS_BOMB_HEALTH = b.comment("Base max health.").defineInRange("health", 100.0D, 1.0D, 32768.0D);
-        OCTOPUS_BOMB_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 16.0D, 0.0D, 1024.0D);
-        b.pop();
-
-
-        // Bed Bug
-
-        b.push("bedBug");
-        BED_BUG_HEALTH = b.comment("Base max health.").defineInRange("health", 18.0D, 1.0D, 32768.0D);
-        BED_BUG_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 4.0D, 0.0D, 1024.0D);
-        BED_BUG_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.24D, 0.0D, 10.0D);
-        BED_BUG_ARMOR = b.comment("Base armor value.").defineInRange("armor", 2.0D, 0.0D, 1024.0D);
-        b.pop();
-
-
-        // Cloud Shark
-
-        b.push("cloudShark");
-        CLOUD_SHARK_HEALTH = b.comment("Base max health.").defineInRange("health", 40.0D, 1.0D, 32768.0D);
-        CLOUD_SHARK_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 5.0D, 0.0D, 1024.0D);
-        CLOUD_SHARK_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.34D, 0.0D, 10.0D);
-        CLOUD_SHARK_FLYING_SPEED = b.comment("Base flying speed.").defineInRange("flyingSpeed", 0.5D, 0.0D, 10.0D);
-        CLOUD_SHARK_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance.").defineInRange("knockbackResistance", 0.2D, 0.0D, 1.0D);
-        b.pop();
-
-
-        // Flying Squirrel
-
-        b.push("flyingSquirrel");
-        FLYING_SQUIRREL_HEALTH = b.comment("Base max health.").defineInRange("health", 10.0D, 1.0D, 32768.0D);
-        FLYING_SQUIRREL_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.35D, 0.0D, 10.0D);
-        b.pop();
-
-
-        // Molevore
-
-        b.push("molevore");
-        MOLEVORE_HEALTH = b.comment("Base max health.").defineInRange("health", 60.0D, 1.0D, 32768.0D);
-        MOLEVORE_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 10.0D, 0.0D, 1024.0D);
-        MOLEVORE_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.27D, 0.0D, 10.0D);
-        MOLEVORE_ARMOR = b.comment("Base armor value.").defineInRange("armor", 6.0D, 0.0D, 1024.0D);
-        MOLEVORE_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance.").defineInRange("knockbackResistance", 0.65D, 0.0D, 1.0D);
-        MOLEVORE_FOLLOW_RANGE = b.comment("Base follow range.").defineInRange("followRange", 28.0D, 1.0D, 256.0D);
-        MOLEVORE_XP_REWARD = b.comment("Base experience reward.").defineInRange("xpReward", 20, 0, 100000);
-        MOLEVORE_SPIN_TICKS = b.comment("Ticks the Molevore spins before charging.").defineInRange("spinTicks", 12, 0, 400);
-        MOLEVORE_COOLDOWN_TICKS = b.comment("Cooldown between charge attacks.").defineInRange("cooldownTicks", 60, 0, 20000);
-        MOLEVORE_CHARGE_SPEED = b.comment("Speed multiplier while charging.").defineInRange("chargeSpeed", 1.15D, 0.0D, 20.0D);
-        MOLEVORE_BREAK_RANGE = b.comment("Forward range in blocks for breaking blocks while charging.").defineInRange("breakRange", 1.8D, 0.0D, 32.0D);
-        MOLEVORE_BREAK_VERTICAL_RANGE = b.comment("Vertical range in blocks for breaking blocks while charging.").defineInRange("breakVerticalRange", 2.2D, 0.0D, 32.0D);
-        MOLEVORE_BREAK_HALF_WIDTH = b.comment("Half-width in blocks for breaking blocks while charging.").defineInRange("breakHalfWidth", 1.1D, 0.0D, 16.0D);
-        b.pop();
-
-
-        // Moleworm
-
-        b.push("moleworm");
-        MOLEWORM_HEALTH = b.comment("Base max health.").defineInRange("health", 8.0D, 1.0D, 32768.0D);
-        MOLEWORM_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 1.0D, 0.0D, 1024.0D);
-        MOLEWORM_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.25D, 0.0D, 10.0D);
-        b.pop();
-
-
-        // Scorpion
-
-        b.push("scorpion");
-        SCORPION_HEALTH = b.comment("Base max health.").defineInRange("health", 30.0D, 1.0D, 32768.0D);
-        SCORPION_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 5.0D, 0.0D, 1024.0D);
-        SCORPION_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.29D, 0.0D, 10.0D);
-        SCORPION_ARMOR = b.comment("Base armor value.").defineInRange("armor", 2.0D, 0.0D, 1024.0D);
-        SCORPION_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance.").defineInRange("knockbackResistance", 0.2D, 0.0D, 1.0D);
-        b.pop();
-
-
-        // Butterfly
-
-        b.push("butterfly");
-        BUTTERFLY_HEALTH = b.comment("Base max health.").defineInRange("health", 6.0D, 1.0D, 32768.0D);
-        BUTTERFLY_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.3D, 0.0D, 10.0D);
-        BUTTERFLY_FLYING_SPEED = b.comment("Base flying speed.").defineInRange("flyingSpeed", 0.55D, 0.0D, 10.0D);
-        b.pop();
-
-
-        // Dread effect
 
         b.push("dread");
 
@@ -842,16 +832,26 @@ public final class AntarchyMobsConfig {
         DREAD_HALLUCINATION_MOB_MAX_INTERVAL = b.comment("Maximum seconds between apparition spawns.").defineInRange("maxIntervalSeconds", 16.0D, 0.1D, 300.0D);
         b.pop();
 
-        b.pop(); // dread
-
-        b.push("creepingHorror");
-        CREEPING_HORROR_HEALTH        = b.comment("Base max health.").defineInRange("health", 15.0D, 1.0D, 32768.0D);
-        CREEPING_HORROR_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 6.0D, 0.0D, 1024.0D);
         b.pop();
 
-        b.push("lurkingTerror");
-        LURKING_TERROR_HEALTH        = b.comment("Base max health.").defineInRange("health", 15.0D, 1.0D, 32768.0D);
-        LURKING_TERROR_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 6.0D, 0.0D, 1024.0D);
+        b.push("crawlingBlight");
+        CRAWLING_BLIGHT_HEALTH        = b.comment("Base max health.").defineInRange("health", 15.0D, 1.0D, 32768.0D);
+        CRAWLING_BLIGHT_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 6.0D, 0.0D, 1024.0D);
+        b.pop();
+
+        b.push("skulkingFright");
+        SKULKING_FRIGHT_HEALTH        = b.comment("Base max health.").defineInRange("health", 15.0D, 1.0D, 32768.0D);
+        SKULKING_FRIGHT_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 6.0D, 0.0D, 1024.0D);
+        b.pop();
+
+        b.push("manticore");
+        MANTICORE_HEALTH             = b.comment("Base max health.").defineInRange("health", 60.0D, 1.0D, 32768.0D);
+        MANTICORE_ATTACK_DAMAGE      = b.comment("Base attack damage for bites and stings.").defineInRange("attackDamage", 11.0D, 0.0D, 1024.0D);
+        MANTICORE_STING_POISON_TICKS = b.comment("Poison duration in ticks applied by a Manticore sting.").defineInRange("stingPoisonTicks", 100, 0, 12000);
+        QUEEN_MANTICORE_CAP          = b.comment("Maximum number of living Manticores a single Queen may keep summoned.").defineInRange("queenSummonCap", 6, 1, 200);
+        QUEEN_MANTICORE_SUMMON_COOLDOWN_TICKS = b.comment("Ticks between Queen Manticore summon attempts.").defineInRange("queenSummonCooldownTicks", 800, 20, 200000);
+        QUEEN_MANTICORE_SUMMON_COUNT = b.comment("Maximum Manticores created by one Queen summon attempt.").defineInRange("queenSummonCount", 2, 1, 32);
+        QUEEN_MANTICORE_SUMMON_RANGE = b.comment("Maximum horizontal distance from the Queen used for Manticore spawn positions.").defineInRange("queenSummonRange", 24.0D, 4.0D, 128.0D);
         b.pop();
 
         b.push("jerry");
@@ -886,19 +886,17 @@ public final class AntarchyMobsConfig {
         HERCULES_BEETLE_HEALTH = b.comment("Base max health.").defineInRange("health", 500.0D, 1.0D, 32768.0D);
         HERCULES_BEETLE_ATTACK_DAMAGE = b.comment("Base melee damage for ground and flying attacks.").defineInRange("attackDamage", 30.0D, 0.0D, 1024.0D);
         HERCULES_BEETLE_CHARGE_DAMAGE = b.comment("AOE impact damage dealt when a charge collides.").defineInRange("chargeDamage", 40.0D, 0.0D, 1024.0D);
-        HERCULES_BEETLE_DAMAGE_RANGE = b.comment("Range in blocks a player must be within for the Hercules Beetle to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 48.0D, 1.0D, 256.0D);
+        HERCULES_BEETLE_DAMAGE_RANGE = b.comment("Range in blocks a player must be within for the Hercules Beetle to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
         b.pop();
 
         b.push("toreterror");
         TORETERROR_HEALTH                  = b.comment("Base max health.").defineInRange("health", 300.0D, 1.0D, 32768.0D);
-        TORETERROR_DAMAGE_RANGE            = b.comment("Range in blocks a player must be within for the Toreterror to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 48.0D, 1.0D, 256.0D);
+        TORETERROR_DAMAGE_RANGE            = b.comment("Range in blocks a player must be within for the Toreterror to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
         TORETERROR_JUMP_ATTACK_DAMAGE      = b.comment("Damage dealt by the jump shockwave.").defineInRange("jumpAttackDamage", 14.0D, 0.0D, 1024.0D);
         TORETERROR_JUMP_ATTACK_KNOCKBACK   = b.comment("Knockback strength of the jump shockwave.").defineInRange("jumpAttackKnockback", 2.5D, 0.0D, 10.0D);
         TORETERROR_SPIN_DAMAGE             = b.comment("Damage per spin-attack tick.").defineInRange("spinDamage", 8.0D, 0.0D, 1024.0D);
         TORETERROR_SPIN_KNOCKBACK          = b.comment("Knockback strength of the spin attack.").defineInRange("spinKnockback", 1.5D, 0.0D, 10.0D);
         TORETERROR_PROJECTILE_DAMAGE_MULTIPLIER = b.comment("Damage multiplier applied to projectile hits on the Toreterror (0.5 = half damage).").defineInRange("projectileDamageMultiplier", 0.5D, 0.0D, 1.0D);
-        TORETERROR_RANGED_WATER_BOMB_CHANCE = b.comment("Chance each ranged attack cycle launches a water bomb.").defineInRange("rangedWaterBombChance", 0.35D, 0.0D, 1.0D);
-        WATER_CANNON_COOLDOWN_SECONDS      = b.comment("Cooldown between water cannon uses, in seconds.").defineInRange("waterCannonCooldownSeconds", 1.5D, 0.0D, 60.0D);
         WATER_BOMB_DAMAGE                  = b.comment("Damage dealt by a Water Bomb hit.").defineInRange("waterBombDamage", 6.0D, 0.0D, 1024.0D);
         WATER_BOMB_LIFETIME_TICKS          = b.comment("Ticks before a Water Bomb despawns.").defineInRange("waterBombLifetimeTicks", 120, 1, 6000);
         WATER_BOMB_GRAVITY                 = b.comment("Gravity applied to Water Bombs (higher = steeper arc).").defineInRange("waterBombGravity", 0.12D, 0.0D, 2.0D);
@@ -907,6 +905,41 @@ public final class AntarchyMobsConfig {
 
         SPEC = b.build();
     }
+
+    static double caterpillarHealth() { return CATERPILLAR_HEALTH.get(); }
+    static double caterpillarMovementSpeed() { return CATERPILLAR_MOVEMENT_SPEED.get(); }
+    static double flyingSquirrelHealth() { return FLYING_SQUIRREL_HEALTH.get(); }
+    static double flyingSquirrelMovementSpeed() { return FLYING_SQUIRREL_MOVEMENT_SPEED.get(); }
+    static double butterflyHealth() { return BUTTERFLY_HEALTH.get(); }
+    static double butterflyMovementSpeed() { return BUTTERFLY_MOVEMENT_SPEED.get(); }
+    static double butterflyFlyingSpeed() { return BUTTERFLY_FLYING_SPEED.get(); }
+    static double bedBugHealth() { return BED_BUG_HEALTH.get(); }
+    static double bedBugAttackDamage() { return BED_BUG_ATTACK_DAMAGE.get(); }
+    static double bedBugMovementSpeed() { return BED_BUG_MOVEMENT_SPEED.get(); }
+    static double bedBugArmor() { return BED_BUG_ARMOR.get(); }
+    static double stratosharkHealth() { return STRATOSHARK_HEALTH.get(); }
+    static double stratosharkAttackDamage() { return STRATOSHARK_ATTACK_DAMAGE.get(); }
+    static double stratosharkMovementSpeed() { return STRATOSHARK_MOVEMENT_SPEED.get(); }
+    static double stratosharkFlyingSpeed() { return STRATOSHARK_FLYING_SPEED.get(); }
+    static double stratosharkKnockbackResistance() { return STRATOSHARK_KNOCKBACK_RESISTANCE.get(); }
+    static double missileSquidHealth() { return MISSILE_SQUID_HEALTH.get(); }
+    static double missileSquidAttackDamage() { return MISSILE_SQUID_ATTACK_DAMAGE.get(); }
+    static double missileSquidMovementSpeed() { return MISSILE_SQUID_MOVEMENT_SPEED.get(); }
+    static double missileSquidFlyingSpeed() { return MISSILE_SQUID_FLYING_SPEED.get(); }
+    static double missileSquidKnockbackResistance() { return MISSILE_SQUID_KNOCKBACK_RESISTANCE.get(); }
+    static double molewormHealth() { return MOLEWORM_HEALTH.get(); }
+    static double molewormAttackDamage() { return MOLEWORM_ATTACK_DAMAGE.get(); }
+    static double molewormMovementSpeed() { return MOLEWORM_MOVEMENT_SPEED.get(); }
+    static double molevoreHealth() { return MOLEVORE_HEALTH.get(); }
+    static double molevoreAttackDamage() { return MOLEVORE_ATTACK_DAMAGE.get(); }
+    static int molevoreSpinTicks() { return MOLEVORE_SPIN_TICKS.get(); }
+    static int molevoreCooldownTicks() { return MOLEVORE_COOLDOWN_TICKS.get(); }
+    static double molevoreChargeSpeed() { return MOLEVORE_CHARGE_SPEED.get(); }
+    static double molevoreBreakRange() { return MOLEVORE_BREAK_RANGE.get(); }
+    static double molevoreBreakVerticalRange() { return MOLEVORE_BREAK_VERTICAL_RANGE.get(); }
+    static double molevoreBreakHalfWidth() { return MOLEVORE_BREAK_HALF_WIDTH.get(); }
+    static double octopusBombHealth() { return OCTOPUS_BOMB_HEALTH.get(); }
+    static double octopusBombAttackDamage() { return OCTOPUS_BOMB_ATTACK_DAMAGE.get(); }
 
     private AntarchyMobsConfig() {}
 
@@ -944,7 +977,6 @@ public final class AntarchyMobsConfig {
     static double  termiteAttackDamage()                    { return TERMITE_ATTACK_DAMAGE.get(); }
     static String  termiteDestinationDimension()            { return TERMITE_DESTINATION_DIMENSION.get(); }
 
-
     static boolean easterBunnyEnabled()                     { return EASTER_BUNNY_ENABLED.get(); }
     static int     easterBunnyNaturalSpawnChancePercent()   { return EASTER_BUNNY_NATURAL_SPAWN_CHANCE_PERCENT.get(); }
 
@@ -957,46 +989,134 @@ public final class AntarchyMobsConfig {
     static double  bomberExplosionDamage()                  { return BOMBER_EXPLOSION_DAMAGE.get(); }
     static double  bomberExplosionRadius()                  { return BOMBER_EXPLOSION_RADIUS.get(); }
 
-    static double  jumpyBugHealth()                         { return JUMPY_BUG_HEALTH.get(); }
-    static double  jumpyBugPounceDamage()                   { return JUMPY_BUG_POUNCE_DAMAGE.get(); }
-    static double  jumpyBugLatchDamage()                    { return JUMPY_BUG_LATCH_DAMAGE.get(); }
-    static double  jumpyBugCamouflageAlpha()                { return JUMPY_BUG_CAMOUFLAGE_ALPHA.get(); }
+    static double  springbugHealth()                         { return SPRINGBUG_HEALTH.get(); }
+    static double  springbugPounceDamage()                   { return SPRINGBUG_POUNCE_DAMAGE.get(); }
+    static double  springbugCamouflageAlpha()                { return SPRINGBUG_CAMOUFLAGE_ALPHA.get(); }
 
     static double  emperorScorpionHealth()                  { return EMPEROR_SCORPION_HEALTH.get(); }
-    static double  emperorScorpionAttackDamage()            { return EMPEROR_SCORPION_ATTACK_DAMAGE.get(); }
-    static double  emperorScorpionArmor()                   { return EMPEROR_SCORPION_ARMOR.get(); }
-    static double  emperorScorpionKnockbackResistance()     { return EMPEROR_SCORPION_KNOCKBACK_RESISTANCE.get(); }
-    static double  emperorScorpionMovementSpeed()           { return EMPEROR_SCORPION_MOVEMENT_SPEED.get(); }
-    static double  emperorScorpionFollowRange()             { return EMPEROR_SCORPION_FOLLOW_RANGE.get(); }
-    static int     emperorScorpionXpReward()                { return EMPEROR_SCORPION_XP_REWARD.get(); }
-    static int     emperorScorpionClawAnimTicks()           { return EMPEROR_SCORPION_CLAW_ANIM_TICKS.get(); }
-    static int     emperorScorpionClawHitTick()             { return EMPEROR_SCORPION_CLAW_HIT_TICK.get(); }
-    static int     emperorScorpionClawCooldownTicks()       { return EMPEROR_SCORPION_CLAW_COOLDOWN_TICKS.get(); }
-    static int     emperorScorpionStingAnimTicks()          { return EMPEROR_SCORPION_STING_ANIM_TICKS.get(); }
-    static int     emperorScorpionStingHitTick()            { return EMPEROR_SCORPION_STING_HIT_TICK.get(); }
-    static int     emperorScorpionStingCooldownTicks()      { return EMPEROR_SCORPION_STING_COOLDOWN_TICKS.get(); }
-    static int     emperorScorpionPoisonTicks()             { return EMPEROR_SCORPION_POISON_TICKS.get(); }
-    static int     emperorScorpionWeaknessTicks()           { return EMPEROR_SCORPION_WEAKNESS_TICKS.get(); }
-    static int     emperorScorpionSummonIntervalTicks()     { return EMPEROR_SCORPION_SUMMON_INTERVAL_TICKS.get(); }
-    static int     emperorScorpionMaxSummonedScorpions()    { return EMPEROR_SCORPION_MAX_SUMMONED_SCORPIONS.get(); }
-    static int     emperorScorpionMaxNearbyScorpions()      { return EMPEROR_SCORPION_MAX_NEARBY_SCORPIONS.get(); }
-    static int     emperorScorpionHardenCooldownTicks()     { return EMPEROR_SCORPION_HARDEN_COOLDOWN_TICKS.get(); }
+    static double  emperorScorpionAttackDamage()             { return EMPEROR_SCORPION_ATTACK_DAMAGE.get(); }
+    static double  emperorScorpionMovementSpeed()            { return EMPEROR_SCORPION_MOVEMENT_SPEED.get(); }
+    static double  emperorScorpionArmor()                    { return EMPEROR_SCORPION_ARMOR.get(); }
+    static double  emperorScorpionKnockbackResistance()      { return EMPEROR_SCORPION_KNOCKBACK_RESISTANCE.get(); }
+    static double  emperorScorpionFollowRange()               { return EMPEROR_SCORPION_FOLLOW_RANGE.get(); }
+    static int     emperorScorpionXpReward()                 { return EMPEROR_SCORPION_XP_REWARD.get(); }
+    static int     emperorScorpionClawAnimTicks()             { return EMPEROR_SCORPION_CLAW_ANIM_TICKS.get(); }
+    static int     emperorScorpionClawHitTick()               { return EMPEROR_SCORPION_CLAW_HIT_TICK.get(); }
+    static int     emperorScorpionClawCooldownTicks()         { return EMPEROR_SCORPION_CLAW_COOLDOWN_TICKS.get(); }
+    static int     emperorScorpionStingAnimTicks()            { return EMPEROR_SCORPION_STING_ANIM_TICKS.get(); }
+    static int     emperorScorpionStingHitTick()              { return EMPEROR_SCORPION_STING_HIT_TICK.get(); }
+    static int     emperorScorpionStingCooldownTicks()        { return EMPEROR_SCORPION_STING_COOLDOWN_TICKS.get(); }
+    static int     emperorScorpionPoisonTicks()               { return EMPEROR_SCORPION_POISON_TICKS.get(); }
+    static int     emperorScorpionWeaknessTicks()             { return EMPEROR_SCORPION_WEAKNESS_TICKS.get(); }
+    static int     emperorScorpionSummonIntervalTicks()       { return EMPEROR_SCORPION_SUMMON_INTERVAL_TICKS.get(); }
+    static int     emperorScorpionMaxSummonedScorpions()      { return EMPEROR_SCORPION_MAX_SUMMONED_SCORPIONS.get(); }
+    static int     emperorScorpionMaxNearbyScorpions()        { return EMPEROR_SCORPION_MAX_NEARBY_SCORPIONS.get(); }
+    static int     emperorScorpionHardenCooldownTicks()       { return EMPEROR_SCORPION_HARDEN_COOLDOWN_TICKS.get(); }
     static double  emperorScorpionDamageRange()             { return EMPEROR_SCORPION_DAMAGE_RANGE.get(); }
     static int     emperorScorpionMinDespawnTicks()         { return EMPEROR_SCORPION_MIN_DESPAWN_TICKS.get(); }
 
+    static double  scorpionHealth()                          { return SCORPION_HEALTH.get(); }
+    static double  scorpionAttackDamage()                    { return SCORPION_ATTACK_DAMAGE.get(); }
+    static double  scorpionMovementSpeed()                   { return SCORPION_MOVEMENT_SPEED.get(); }
+    static double  scorpionArmor()                           { return SCORPION_ARMOR.get(); }
+    static double  scorpionKnockbackResistance()             { return SCORPION_KNOCKBACK_RESISTANCE.get(); }
+
     static double  krakenHealth()                           { return KRAKEN_HEALTH.get(); }
     static double  krakenAttackDamage()                     { return KRAKEN_ATTACK_DAMAGE.get(); }
-    static double  krakenArmor()                            { return KRAKEN_ARMOR.get(); }
-    static double  krakenKnockbackResistance()              { return KRAKEN_KNOCKBACK_RESISTANCE.get(); }
-    static double  krakenMovementSpeed()                    { return KRAKEN_MOVEMENT_SPEED.get(); }
-    static double  krakenFlyingSpeed()                      { return KRAKEN_FLYING_SPEED.get(); }
-    static double  krakenBossBarRange()                     { return KRAKEN_BOSS_BAR_RANGE.get(); }
-    static double  krakenLightningDamagePhaseOne()          { return KRAKEN_LIGHTNING_DAMAGE_PHASE_ONE.get(); }
     static boolean krakenSquidSpawnEnabled()                { return KRAKEN_SQUID_SPAWN_ENABLED.get(); }
     static boolean krakenMassSpawnEnabled()                 { return KRAKEN_MASS_SPAWN_ENABLED.get(); }
     static boolean krakenRequireBadOmenToSummon()           { return KRAKEN_REQUIRE_BAD_OMEN_TO_SUMMON.get(); }
     static double  krakenFollowRange()                      { return KRAKEN_FOLLOW_RANGE.get(); }
     static double  krakenDamageRange()                      { return KRAKEN_DAMAGE_RANGE.get(); }
+    static double  krakenArmor()                            { return KRAKEN_ARMOR.get(); }
+    static double  krakenKnockbackResistance()              { return KRAKEN_KNOCKBACK_RESISTANCE.get(); }
+    static double  krakenMovementSpeed()                    { return KRAKEN_MOVEMENT_SPEED.get(); }
+    static double  krakenFlyingSpeed()                      { return KRAKEN_FLYING_SPEED.get(); }
+    static double  krakenBossBarRange()                     { return KRAKEN_BOSS_BAR_RANGE.get(); }
+    static float   krakenLightningDamagePhaseOne()          { return KRAKEN_LIGHTNING_DAMAGE_PHASE_ONE.get().floatValue(); }
+
+    static double  kingHealth()                             { return KING_HEALTH.get(); }
+    static double  queenHealth()                            { return QUEEN_HEALTH.get(); }
+    static double  kingAttackDamage()                       { return KING_ATTACK_DAMAGE.get(); }
+    static double  queenAttackDamage()                      { return QUEEN_ATTACK_DAMAGE.get(); }
+    static double  royalBossArmor()                         { return ROYAL_BOSS_ARMOR.get(); }
+    static double  kingArmor()                              { return KING_ARMOR.get(); }
+    static double  royalBossFollowRange()                   { return ROYAL_BOSS_FOLLOW_RANGE.get(); }
+    static double  royalBossMovementSpeed()                 { return ROYAL_BOSS_MOVEMENT_SPEED.get(); }
+    static double  royalBossKnockbackResistance()           { return ROYAL_BOSS_KNOCKBACK_RESISTANCE.get(); }
+    static double  royalBossStepHeight()                    { return ROYAL_BOSS_STEP_HEIGHT.get(); }
+    static double  royalBossMaxSingleHitDamage()            { return ROYAL_BOSS_MAX_SINGLE_HIT_DAMAGE.get(); }
+    static double  royalBossBiteReach()                     { return ROYAL_BOSS_BITE_REACH.get(); }
+    static double  royalBossBiteDamageMultiplier()          { return ROYAL_BOSS_BITE_DAMAGE_MULTIPLIER.get(); }
+    static int     royalBossBiteCooldownTicks()             { return ROYAL_BOSS_BITE_COOLDOWN_TICKS.get(); }
+    static boolean royalBossMultiplayerScalingEnabled()     { return ROYAL_BOSS_MULTIPLAYER_SCALING_ENABLED.get(); }
+    static int     royalBossScalingMaxPlayers()             { return ROYAL_BOSS_SCALING_MAX_PLAYERS.get(); }
+    static double  royalBossHealthPerAdditionalPlayer()     { return ROYAL_BOSS_HEALTH_PER_ADDITIONAL_PLAYER.get(); }
+    static double  royalBossDamagePerAdditionalPlayer()     { return ROYAL_BOSS_DAMAGE_PER_ADDITIONAL_PLAYER.get(); }
+    static double  royalBoundaryRadius()                    { return ROYAL_BOUNDARY_RADIUS.get(); }
+    static double  royalBoundaryWarningRadius()             { return ROYAL_BOUNDARY_WARNING_RADIUS.get(); }
+    static int     royalBoundaryGraceTicks()                { return ROYAL_BOUNDARY_GRACE_TICKS.get(); }
+    static double  queenBeamDamage()                        { return QUEEN_BEAM_DAMAGE.get(); }
+    static double  queenBeamRange()                         { return QUEEN_BEAM_RANGE.get(); }
+    static double  queenBeamMinimumRange()                  { return QUEEN_BEAM_MINIMUM_RANGE.get(); }
+    static int     queenBeamDurationTicks()                 { return QUEEN_BEAM_DURATION_TICKS.get(); }
+    static int     queenBeamWindupTicks()                   { return QUEEN_BEAM_WINDUP_TICKS.get(); }
+    static int     queenBeamTravelTicks()                   { return QUEEN_BEAM_TRAVEL_TICKS.get(); }
+    static int     queenBeamCooldownTicks()                 { return QUEEN_BEAM_COOLDOWN_TICKS.get(); }
+    static double  queenBeamTracking()                      { return QUEEN_BEAM_TRACKING.get(); }
+    static double  queenBeamTerrainRadius()                 { return QUEEN_BEAM_TERRAIN_RADIUS.get(); }
+    static int     queenBeamTerrainCap()                    { return QUEEN_BEAM_TERRAIN_CAP.get(); }
+    static int     queenBeamPhaseOneCap()                   { return QUEEN_BEAM_PHASE_ONE_CAP.get(); }
+    static int     queenBeamPhaseTwoCap()                   { return QUEEN_BEAM_PHASE_TWO_CAP.get(); }
+    static int     queenBeamPhaseThreeCap()                 { return QUEEN_BEAM_PHASE_THREE_CAP.get(); }
+    static double  queenBeamPhaseThreeMaxVolleyChance()     { return QUEEN_BEAM_PHASE_THREE_MAX_VOLLEY_CHANCE.get(); }
+    static double  kingBeamDamage()                         { return KING_BEAM_DAMAGE.get(); }
+    static double  kingBeamRange()                          { return KING_BEAM_RANGE.get(); }
+    static double  kingBeamMinimumRange()                   { return KING_BEAM_MINIMUM_RANGE.get(); }
+    static int     kingBeamDurationTicks()                  { return KING_BEAM_DURATION_TICKS.get(); }
+    static int     kingBeamWindupTicks()                    { return KING_BEAM_WINDUP_TICKS.get(); }
+    static int     kingBeamTravelTicks()                    { return KING_BEAM_TRAVEL_TICKS.get(); }
+    static int     kingBeamCooldownTicks()                  { return KING_BEAM_COOLDOWN_TICKS.get(); }
+    static double  kingBeamTracking()                       { return KING_BEAM_TRACKING.get(); }
+    static double  kingBeamTerrainRadius()                  { return KING_BEAM_TERRAIN_RADIUS.get(); }
+    static int     kingBeamTerrainCap()                     { return KING_BEAM_TERRAIN_CAP.get(); }
+    static int     royalDecreeCooldownTicks()                { return ROYAL_DECREE_COOLDOWN_TICKS.get(); }
+    static int     kingRoyalMusterCooldownTicks()             { return KING_ROYAL_MUSTER_COOLDOWN_TICKS.get(); }
+    static int     kingRoyalMusterWindupTicks()                { return KING_ROYAL_MUSTER_WINDUP_TICKS.get(); }
+    static int     kingRoyalMusterDurationTicks()              { return KING_ROYAL_MUSTER_DURATION_TICKS.get(); }
+    static double  kingRoyalMusterRadius()                     { return KING_ROYAL_MUSTER_RADIUS.get(); }
+    static int     kingRoyalMusterCap()                        { return KING_ROYAL_MUSTER_CAP.get(); }
+    static double  queenBlackHoleRadius()                    { return QUEEN_BLACK_HOLE_RADIUS.get(); }
+    static int     queenBlackHoleActiveTicks()               { return QUEEN_BLACK_HOLE_ACTIVE_TICKS.get(); }
+    static double  queenBlackHolePullStrength()              { return QUEEN_BLACK_HOLE_PULL_STRENGTH.get(); }
+    static int     queenBlackHoleBlockSuctionCap()            { return QUEEN_BLACK_HOLE_BLOCK_SUCTION_CAP.get(); }
+    static double  kingFireballDamage()                      { return KING_FIREBALL_DAMAGE.get(); }
+    static double  kingFireballRadius()                      { return KING_FIREBALL_RADIUS.get(); }
+    static int     kingFireballCooldownTicks()               { return KING_FIREBALL_COOLDOWN_TICKS.get(); }
+    static double  kingIceballDamage()                       { return KING_ICEBALL_DAMAGE.get(); }
+    static double  kingIceballRadius()                       { return KING_ICEBALL_RADIUS.get(); }
+    static int     kingIceballCooldownTicks()                { return KING_ICEBALL_COOLDOWN_TICKS.get(); }
+    static double  kingIceSpikeDamage()                      { return KING_ICE_SPIKE_DAMAGE.get(); }
+    static int     kingIceSpikeCooldownTicks()               { return KING_ICE_SPIKE_COOLDOWN_TICKS.get(); }
+    static int     kingElementalTerrainCap()                 { return KING_ELEMENTAL_TERRAIN_CAP.get(); }
+    static double  royalBossSoundVolume()                    { return ROYAL_BOSS_SOUND_VOLUME.get(); }
+
+    static int     royalEggHatchChance()                      { return ROYAL_EGG_HATCH_CHANCE.get(); }
+    static double  royalBoltDamage()                          { return ROYAL_BOLT_DAMAGE.get(); }
+    static double  princeHealth()                             { return PRINCE_HEALTH.get(); }
+    static double  princeAttackDamage()                       { return PRINCE_ATTACK_DAMAGE.get(); }
+    static double  princeMovementSpeed()                     { return PRINCE_MOVEMENT_SPEED.get(); }
+    static double  princeFlyingSpeed()                       { return PRINCE_FLYING_SPEED.get(); }
+    static double  princeArmor()                             { return PRINCE_ARMOR.get(); }
+    static double  princeKnockbackResistance()               { return PRINCE_KNOCKBACK_RESISTANCE.get(); }
+    static double  princeFollowRange()                       { return PRINCE_FOLLOW_RANGE.get(); }
+    static double  princessHealth()                          { return PRINCESS_HEALTH.get(); }
+    static double  princessAttackDamage()                    { return PRINCESS_ATTACK_DAMAGE.get(); }
+    static double  princessMovementSpeed()                  { return PRINCESS_MOVEMENT_SPEED.get(); }
+    static double  princessFlyingSpeed()                    { return PRINCESS_FLYING_SPEED.get(); }
+    static double  princessArmor()                          { return PRINCESS_ARMOR.get(); }
+    static double  princessKnockbackResistance()             { return PRINCESS_KNOCKBACK_RESISTANCE.get(); }
+    static double  princessFollowRange()                    { return PRINCESS_FOLLOW_RANGE.get(); }
 
     static double  brutalflyHealth()                        { return BRUTALFLY_HEALTH.get(); }
     static double  brutalflySwipeDamage()                   { return BRUTALFLY_SWIPE_DAMAGE.get(); }
@@ -1004,9 +1124,9 @@ public final class AntarchyMobsConfig {
     static double  brutalflyDamageRange()                   { return BRUTALFLY_DAMAGE_RANGE.get(); }
     static double  brutalflyArmor()                         { return BRUTALFLY_ARMOR.get(); }
     static double  brutalflyArmorToughness()                { return BRUTALFLY_ARMOR_TOUGHNESS.get(); }
+    static double  brutalflyKnockbackResistance()           { return BRUTALFLY_KNOCKBACK_RESISTANCE.get(); }
     static double  brutalflyMovementSpeed()                 { return BRUTALFLY_MOVEMENT_SPEED.get(); }
     static double  brutalflyFlyingSpeed()                   { return BRUTALFLY_FLYING_SPEED.get(); }
-    static double  brutalflyKnockbackResistance()           { return BRUTALFLY_KNOCKBACK_RESISTANCE.get(); }
 
     static double  mantisHealth()                           { return MANTIS_HEALTH.get(); }
     static double  mantisAttackDamage()                     { return MANTIS_ATTACK_DAMAGE.get(); }
@@ -1029,9 +1149,10 @@ public final class AntarchyMobsConfig {
     static double  rollyPollyArmor()                        { return ROLLY_POLLY_ARMOR.get(); }
     static double  rollyPollyRolledArmorBonus()             { return ROLLY_POLLY_ROLLED_ARMOR_BONUS.get(); }
 
-    static double  triffidHealth()                          { return TRIFFID_HEALTH.get(); }
-    static double  triffidAttackDamage()                    { return TRIFFID_ATTACK_DAMAGE.get(); }
-    static double  triffidGrabDamage()                      { return TRIFFID_GRAB_DAMAGE.get(); }
+    static double  flytrapHealth()                          { return FLYTRAP_HEALTH.get(); }
+    static double  flytrapAttackDamage()                    { return FLYTRAP_ATTACK_DAMAGE.get(); }
+    static double  flytrapGrabDamage()                      { return FLYTRAP_GRAB_DAMAGE.get(); }
+    static int     flytrapSweepHitCooldownTicks()           { return FLYTRAP_SWEEP_HIT_COOLDOWN_TICKS.get(); }
 
     static double  caterpillarPupationTimeSeconds()         { return CATERPILLAR_PUPATION_TIME_SECONDS.get(); }
     static double  antDanceRadius()                         { return ANT_DANCE_RADIUS.get(); }
@@ -1051,6 +1172,12 @@ public final class AntarchyMobsConfig {
 
     static double  nightmareHealth()                    { return NIGHTMARE_HEALTH.get(); }
     static double  nightmareAttackDamage()              { return NIGHTMARE_ATTACK_DAMAGE.get(); }
+    static int     dimensionalTearLifetimeTicks()        { return DIMENSIONAL_TEAR_LIFETIME_TICKS.get(); }
+    static int     dimensionalTearInvertedDurationTicks(){ return DIMENSIONAL_TEAR_INVERTED_DURATION_TICKS.get(); }
+    static int     dimensionalTearEmergenceMinIntervalTicks() { return DIMENSIONAL_TEAR_EMERGENCE_MIN_INTERVAL_TICKS.get(); }
+    static int     dimensionalTearEmergenceMaxIntervalTicks() { return DIMENSIONAL_TEAR_EMERGENCE_MAX_INTERVAL_TICKS.get(); }
+    static float   dimensionalTearLucidEventChance()     { return DIMENSIONAL_TEAR_LUCID_EVENT_CHANCE.get().floatValue(); }
+    static boolean dimensionalTearsSpawnNaturally()       { return DIMENSIONAL_TEARS_SPAWN_NATURALLY.get(); }
     static double  nightmareMovementSpeed()             { return NIGHTMARE_MOVEMENT_SPEED.get(); }
     static int     nightmareWeaknessTicks()             { return NIGHTMARE_WEAKNESS_TICKS.get(); }
     static int     nightmareDreadTicks()                { return NIGHTMARE_DREAD_TICKS.get(); }
@@ -1084,57 +1211,21 @@ public final class AntarchyMobsConfig {
     static double  lucidMovementSpeed()                     { return LUCID_MOVEMENT_SPEED.get(); }
     static double  lucidFlyingSpeed()                       { return LUCID_FLYING_SPEED.get(); }
     static double  lucidKnockbackResistance()               { return LUCID_KNOCKBACK_RESISTANCE.get(); }
-
-    static double  missileSquidHealth()                     { return MISSILE_SQUID_HEALTH.get(); }
-    static double  missileSquidAttackDamage()               { return MISSILE_SQUID_ATTACK_DAMAGE.get(); }
-    static double  missileSquidMovementSpeed()               { return MISSILE_SQUID_MOVEMENT_SPEED.get(); }
-    static double  missileSquidFlyingSpeed()                { return MISSILE_SQUID_FLYING_SPEED.get(); }
-    static double  missileSquidKnockbackResistance()        { return MISSILE_SQUID_KNOCKBACK_RESISTANCE.get(); }
-
-    static double  octopusBombHealth()                      { return OCTOPUS_BOMB_HEALTH.get(); }
-    static double  octopusBombAttackDamage()                { return OCTOPUS_BOMB_ATTACK_DAMAGE.get(); }
-
-    static double  bedBugHealth()                           { return BED_BUG_HEALTH.get(); }
-    static double  bedBugAttackDamage()                     { return BED_BUG_ATTACK_DAMAGE.get(); }
-    static double  bedBugMovementSpeed()                    { return BED_BUG_MOVEMENT_SPEED.get(); }
-    static double  bedBugArmor()                            { return BED_BUG_ARMOR.get(); }
-
-    static double  cloudSharkHealth()                       { return CLOUD_SHARK_HEALTH.get(); }
-    static double  cloudSharkAttackDamage()                 { return CLOUD_SHARK_ATTACK_DAMAGE.get(); }
-    static double  cloudSharkMovementSpeed()                { return CLOUD_SHARK_MOVEMENT_SPEED.get(); }
-    static double  cloudSharkFlyingSpeed()                  { return CLOUD_SHARK_FLYING_SPEED.get(); }
-    static double  cloudSharkKnockbackResistance()          { return CLOUD_SHARK_KNOCKBACK_RESISTANCE.get(); }
-
-    static double  flyingSquirrelHealth()                   { return FLYING_SQUIRREL_HEALTH.get(); }
-    static double  flyingSquirrelMovementSpeed()            { return FLYING_SQUIRREL_MOVEMENT_SPEED.get(); }
-
-    static double  molevoreHealth()                         { return MOLEVORE_HEALTH.get(); }
-    static double  molevoreAttackDamage()                   { return MOLEVORE_ATTACK_DAMAGE.get(); }
-    static double  molevoreMovementSpeed()                  { return MOLEVORE_MOVEMENT_SPEED.get(); }
-    static double  molevoreArmor()                          { return MOLEVORE_ARMOR.get(); }
-    static double  molevoreKnockbackResistance()            { return MOLEVORE_KNOCKBACK_RESISTANCE.get(); }
-    static double  molevoreFollowRange()                    { return MOLEVORE_FOLLOW_RANGE.get(); }
-    static int     molevoreXpReward()                       { return MOLEVORE_XP_REWARD.get(); }
-    static int     molevoreSpinTicks()                      { return MOLEVORE_SPIN_TICKS.get(); }
-    static int     molevoreCooldownTicks()                  { return MOLEVORE_COOLDOWN_TICKS.get(); }
-    static double  molevoreChargeSpeed()                    { return MOLEVORE_CHARGE_SPEED.get(); }
-    static double  molevoreBreakRange()                     { return MOLEVORE_BREAK_RANGE.get(); }
-    static double  molevoreBreakVerticalRange()             { return MOLEVORE_BREAK_VERTICAL_RANGE.get(); }
-    static double  molevoreBreakHalfWidth()                 { return MOLEVORE_BREAK_HALF_WIDTH.get(); }
-
-    static double  molewormHealth()                         { return MOLEWORM_HEALTH.get(); }
-    static double  molewormAttackDamage()                   { return MOLEWORM_ATTACK_DAMAGE.get(); }
-    static double  molewormMovementSpeed()                  { return MOLEWORM_MOVEMENT_SPEED.get(); }
-
-    static double  scorpionHealth()                         { return SCORPION_HEALTH.get(); }
-    static double  scorpionAttackDamage()                   { return SCORPION_ATTACK_DAMAGE.get(); }
-    static double  scorpionMovementSpeed()                  { return SCORPION_MOVEMENT_SPEED.get(); }
-    static double  scorpionArmor()                          { return SCORPION_ARMOR.get(); }
-    static double  scorpionKnockbackResistance()            { return SCORPION_KNOCKBACK_RESISTANCE.get(); }
-
-    static double  butterflyHealth()                        { return BUTTERFLY_HEALTH.get(); }
-    static double  butterflyMovementSpeed()                 { return BUTTERFLY_MOVEMENT_SPEED.get(); }
-    static double  butterflyFlyingSpeed()                   { return BUTTERFLY_FLYING_SPEED.get(); }
+    static double  vortexHealth()                           { return VORTEX_HEALTH.get(); }
+    static double  vortexAttackDamage()                     { return VORTEX_ATTACK_DAMAGE.get(); }
+    static double  vortexMovementSpeed()                    { return VORTEX_MOVEMENT_SPEED.get(); }
+    static double  vortexFlyingSpeed()                      { return VORTEX_FLYING_SPEED.get(); }
+    static int     vortexMaxActiveVortexes()                { return VORTEX_MAX_ACTIVE_VORTEXES.get(); }
+    static int     windVortexDurationTicks()                { return WIND_VORTEX_DURATION_TICKS.get(); }
+    static double  windVortexPullStrength()                 { return WIND_VORTEX_PULL_STRENGTH.get(); }
+    static double  windVortexLaunchStrength()               { return WIND_VORTEX_LAUNCH_STRENGTH.get(); }
+    static double  vortexLensMinRadius()                    { return VORTEX_LENS_MIN_RADIUS.get(); }
+    static double  vortexLensMaxRadius()                    { return VORTEX_LENS_MAX_RADIUS.get(); }
+    static double  vortexLensMinHeight()                    { return VORTEX_LENS_MIN_HEIGHT.get(); }
+    static double  vortexLensMaxHeight()                    { return VORTEX_LENS_MAX_HEIGHT.get(); }
+    static double  vortexLensPullStrength()                 { return VORTEX_LENS_PULL_STRENGTH.get(); }
+    static double  vortexLensPushStrength()                 { return VORTEX_LENS_PUSH_STRENGTH.get(); }
+    static double  vortexLensLaunchStrength()               { return VORTEX_LENS_LAUNCH_STRENGTH.get(); }
 
     static double  toreterrorHealth()                       { return TORETERROR_HEALTH.get(); }
     static double  toreterrorDamageRange()                  { return TORETERROR_DAMAGE_RANGE.get(); }
@@ -1143,8 +1234,6 @@ public final class AntarchyMobsConfig {
     static double  toreterrorSpinDamage()                   { return TORETERROR_SPIN_DAMAGE.get(); }
     static double  toreterrorSpinKnockback()                { return TORETERROR_SPIN_KNOCKBACK.get(); }
     static double  toreterrorProjectileDamageMultiplier()   { return TORETERROR_PROJECTILE_DAMAGE_MULTIPLIER.get(); }
-    static double  toreterrorRangedWaterBombChance()        { return TORETERROR_RANGED_WATER_BOMB_CHANCE.get(); }
-    static double  waterCannonCooldownSeconds()             { return WATER_CANNON_COOLDOWN_SECONDS.get(); }
     static double  waterBombDamage()                        { return WATER_BOMB_DAMAGE.get(); }
     static int     waterBombLifetimeTicks()                 { return WATER_BOMB_LIFETIME_TICKS.get(); }
     static double  waterBombGravity()                       { return WATER_BOMB_GRAVITY.get(); }
@@ -1157,10 +1246,17 @@ public final class AntarchyMobsConfig {
     static double  dreadHallucinationMobMinInterval()       { return DREAD_HALLUCINATION_MOB_MIN_INTERVAL.get(); }
     static double  dreadHallucinationMobMaxInterval()       { return DREAD_HALLUCINATION_MOB_MAX_INTERVAL.get(); }
 
-    static double  creepingHorrorHealth()                   { return CREEPING_HORROR_HEALTH.get(); }
-    static double  creepingHorrorAttackDamage()             { return CREEPING_HORROR_ATTACK_DAMAGE.get(); }
-    static double  lurkingTerrorHealth()                    { return LURKING_TERROR_HEALTH.get(); }
-    static double  lurkingTerrorAttackDamage()              { return LURKING_TERROR_ATTACK_DAMAGE.get(); }
+    static double  crawlingBlightHealth()                   { return CRAWLING_BLIGHT_HEALTH.get(); }
+    static double  crawlingBlightAttackDamage()             { return CRAWLING_BLIGHT_ATTACK_DAMAGE.get(); }
+    static double  skulkingFrightHealth()                    { return SKULKING_FRIGHT_HEALTH.get(); }
+    static double  skulkingFrightAttackDamage()              { return SKULKING_FRIGHT_ATTACK_DAMAGE.get(); }
+    static double  manticoreHealth()                        { return MANTICORE_HEALTH.get(); }
+    static double  manticoreAttackDamage()                  { return MANTICORE_ATTACK_DAMAGE.get(); }
+    static int     manticoreStingPoisonTicks()              { return MANTICORE_STING_POISON_TICKS.get(); }
+    static int     queenManticoreCap()                      { return QUEEN_MANTICORE_CAP.get(); }
+    static int     queenManticoreSummonCooldownTicks()      { return QUEEN_MANTICORE_SUMMON_COOLDOWN_TICKS.get(); }
+    static int     queenManticoreSummonCount()              { return QUEEN_MANTICORE_SUMMON_COUNT.get(); }
+    static double  queenManticoreSummonRange()               { return QUEEN_MANTICORE_SUMMON_RANGE.get(); }
     static double  jerryInfantHealth()                      { return JERRY_INFANT_HEALTH.get(); }
     static double  jerryInfantAttackDamage()                { return JERRY_INFANT_ATTACK_DAMAGE.get(); }
     static double  jerryMatureHealth()                      { return JERRY_MATURE_HEALTH.get(); }

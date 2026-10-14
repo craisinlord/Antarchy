@@ -1,5 +1,5 @@
 {
-  "type": "neoforge:remove_features",
+  "type": "forge:remove_features",
   "biomes": "#antarchy:is_cavaryn",
   "features": [
     "minecraft:glow_lichen"

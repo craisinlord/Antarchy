@@ -17,19 +17,17 @@ java {
 repositories {
     mavenCentral()
     maven { url = 'https://maven.minecraftforge.net' }
+    maven { url = 'https://maven.architectury.dev/' }
     maven { url = 'https://maven.parchmentmc.org' }
     maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
     maven { url = 'https://www.cursemaven.com' }
     maven { url = 'https://maven.blamejared.com' }
     maven { url = 'https://jitpack.io' }
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = "GeckoLib"
-                url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/"
-            }
-        }
-        filter {
+    flatDir { dirs file('../anthology_jars'), file('../infinite_dimensions_jars'), file('../integrated_api_jars') }
+    maven {
+        name = "GeckoLib"
+        url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/"
+        content {
             includeGroup("software.bernie.geckolib")
             includeGroup("com.eliotlash.mclib")
         }
@@ -71,6 +69,10 @@ minecraft {
         }
 
         server {
+            jvmArgs(
+                "-Dmixin.env.remapRefMap=true",
+                "-Dmixin.env.refMapRemappingFile=${projectDir}/build/createSrgToMcp/output.srg"
+            )
             args '--nogui'
         }
     }
@@ -93,27 +95,34 @@ sourceSets {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    implementation "software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}"
+    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
+
+    implementation fg.deobf("com.craisinlord:anthology:${anthology_version}+1.20.1-forge")
 
     compileOnly("curse.maven:sizeable_foliage-${sizeable_foliage_curseforge_id}:${sizeable_foliage_curseforge_file_id_forge}")
-    runtimeOnly("curse.maven:sizeable_foliage-${sizeable_foliage_curseforge_id}:${sizeable_foliage_curseforge_file_id_forge}")
+    runtimeOnly fg.deobf("curse.maven:sizeable_foliage-${sizeable_foliage_curseforge_id}:${sizeable_foliage_curseforge_file_id_forge}")
 
-    compileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_forge}")
-    runtimeOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_forge}")
+    compileOnly fg.deobf("blank:antos-forge-1.20.1:1.4.0")
+    runtimeOnly fg.deobf("blank:antos-forge-1.20.1:1.4.0")
+
+    compileOnly fg.deobf("blank:integrated_api-forge-1.20.1:1.9.1")
+    runtimeOnly(files("$rootDir/../integrated_api_jars/integrated_api-forge-1.20.1-1.9.1-dev-shadow.jar"))
 
     compileOnly("curse.maven:pehkui-${pehkui_curseforge_id}:${pehkui_curseforge_file_id_forge}")
-    runtimeOnly("curse.maven:pehkui-${pehkui_curseforge_id}:${pehkui_curseforge_file_id_forge}")
+    runtimeOnly fg.deobf("curse.maven:pehkui-${pehkui_curseforge_id}:${pehkui_curseforge_file_id_forge}")
 
     compileOnly(files("$rootDir/../infinite_dimensions_jars/infinity-2.7.2+1.20.1-forge.jar"))
-    runtimeOnly(files("$rootDir/../infinite_dimensions_jars/infinity-2.7.2+1.20.1-forge.jar"))
+    runtimeOnly fg.deobf("blank:infinity:2.7.2+1.20.1-forge")
+    runtimeOnly fg.deobf("dev.architectury:architectury-forge:9.2.14")
 
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     compileOnly "mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"
-    runtimeOnly "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
+    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras}"))
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras}"))
+    implementation "io.github.llamalad7:mixinextras-forge:${mixin_extras}"
 }
 
 mixin {

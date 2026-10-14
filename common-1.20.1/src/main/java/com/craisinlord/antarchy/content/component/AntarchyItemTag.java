@@ -9,7 +9,11 @@ public final class AntarchyItemTag {
     }
 
     public static void update(ItemStack stack, Consumer<CompoundTag> updater) {
-        updater.accept(stack.getOrCreateTag());
+        CompoundTag tag = stack.getOrCreateTag();
+        updater.accept(tag);
+        if (tag.isEmpty()) {
+            stack.setTag(null);
+        }
     }
 
     public static CompoundTag getOrEmpty(ItemStack stack) {

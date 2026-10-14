@@ -1,5 +1,5 @@
 {
-  "parent": "neoforge:item/bucket",
-  "loader": "neoforge:fluid_container",
+  "parent": "forge:item/bucket",
+  "loader": "forge:fluid_container",
   "fluid": "antarchy:lumen"
 }

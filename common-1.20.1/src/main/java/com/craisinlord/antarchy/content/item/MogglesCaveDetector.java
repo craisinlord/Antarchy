@@ -11,20 +11,10 @@ import java.util.HashSet;
 import java.util.Queue;
 import java.util.Set;
 
-/**
- * Client-side cave finder for Moggles.
- *
- * <p>Every {@link #SCAN_INTERVAL} ticks, BFS-maps the player's current connected
- * air space, then scans outward to find the nearest underground air pocket that
- * is NOT part of that space. The result is stored in {@link #caveTarget} and
- * read each tick by the particle renderer.
- */
 public final class MogglesCaveDetector {
 
     private static final int SCAN_INTERVAL = 40;
-    /** How far to flood-fill the player's own air pocket before stopping. */
     private static final int PLAYER_SPACE_LIMIT = 8;
-    /** Minimum number of air neighbors a candidate block must have (filters tiny cracks). */
     private static final int MIN_AIR_NEIGHBORS = 2;
 
     private static volatile BlockPos caveTarget = null;
@@ -36,7 +26,6 @@ public final class MogglesCaveDetector {
         return caveTarget;
     }
 
-    /** Call once per client tick while Moggles are equipped. */
     public static void tick(Player player, Level level) {
         if (--cooldown > 0) return;
         cooldown = SCAN_INTERVAL;
@@ -51,11 +40,10 @@ public final class MogglesCaveDetector {
     private static BlockPos scan(Player player, Level level) {
         BlockPos origin = player.blockPosition();
 
-        // BFS through air from the player's feet to map their current open space.
         Set<Long> playerSpace = new HashSet<>();
         Queue<BlockPos> queue = new ArrayDeque<>();
 
-        BlockPos eyePos = origin.above(); // also include the eye block
+        BlockPos eyePos = origin.above();
         for (BlockPos seed : new BlockPos[]{origin, eyePos}) {
             if (level.isLoaded(seed) && level.getBlockState(seed).isAir()) {
                 long key = seed.asLong();
@@ -77,7 +65,6 @@ public final class MogglesCaveDetector {
             }
         }
 
-        // Scan the wider radius for underground air NOT in the player's space.
         BlockPos nearest = null;
         double nearestDistSq = Double.MAX_VALUE;
         int r = (int) AntarchySettings.mogglesVisionRadius();
@@ -91,7 +78,7 @@ public final class MogglesCaveDetector {
                     if (playerSpace.contains(key)) continue;
                     if (!level.isLoaded(pos)) continue;
                     if (!level.getBlockState(pos).isAir()) continue;
-                    if (level.canSeeSky(pos)) continue; // ignore surface air
+                    if (level.canSeeSky(pos)) continue;
 
                     int airNeighbors = 0;
                     for (Direction dir : Direction.values()) {

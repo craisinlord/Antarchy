@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:adventure/root",
+  "parent": "antarchy:visit_thoraxis",
   "criteria": {
     "kill_nightmare": {
       "conditions": {
@@ -18,7 +18,7 @@
     "frame": "task",
     "icon": {
       "item": "minecraft:potion",
-      "nbt": "{Potion:\"antarchy:dread\"}"
+      "nbt": "{\"Potion\":\"antarchy:dread\"}"
     },
     "show_toast": true,
     "title": {

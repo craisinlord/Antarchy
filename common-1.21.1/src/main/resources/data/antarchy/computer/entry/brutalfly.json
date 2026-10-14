@@ -9,5 +9,10 @@
   "locator": "antarchy:brutalfly",
   "dimension": "antarchy:elythia",
   "rotation": 45,
-  "render_scale": 0.6
+  "render_scale": 0.6,
+  "green_tint": false,
+  "gallery_title": "guide.antarchy.gallery.drops",
+  "gallery": [
+    {"item": "antarchy:brutalfly_wing"}
+  ]
 }

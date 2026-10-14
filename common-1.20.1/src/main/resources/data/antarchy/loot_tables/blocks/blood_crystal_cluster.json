@@ -12,16 +12,14 @@
                 {
                   "condition": "minecraft:match_tool",
                   "predicate": {
-                    "predicates": {
-                      "minecraft:enchantments": [
-                        {
-                          "enchantments": "minecraft:silk_touch",
-                          "levels": {
-                            "min": 1
-                          }
+                    "enchantments": [
+                      {
+                        "enchantment": "minecraft:silk_touch",
+                        "levels": {
+                          "min": 1
                         }
-                      ]
-                    }
+                      }
+                    ]
                   }
                 }
               ],
@@ -36,7 +34,7 @@
                     {
                       "condition": "minecraft:match_tool",
                       "predicate": {
-                        "items": "#minecraft:cluster_max_harvestables"
+                        "tag": "minecraft:cluster_max_harvestables"
                       }
                     }
                   ],
@@ -76,4 +74,3 @@
   ],
   "random_sequence": "minecraft:blocks/amethyst_cluster"
 }
-

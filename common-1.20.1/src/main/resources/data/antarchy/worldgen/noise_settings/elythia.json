@@ -515,12 +515,6 @@
                           "Name": "minecraft:sand"
                         }
                       }
-                    },
-                    {
-                      "type": "minecraft:block",
-                      "result_state": {
-                        "Name": "minecraft:sand"
-                      }
                     }
                   ]
                 }
@@ -537,7 +531,7 @@
                 "then_run": {
                   "type": "minecraft:block",
                   "result_state": {
-                    "Name": "antarchy:shellstone"
+                    "Name": "minecraft:gravel"
                   }
                 }
               },

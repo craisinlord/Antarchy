@@ -3,7 +3,6 @@
   "ingredient": {
     "item": "antarchy:dream_sandstone"
   },
-  "result": {
-    "item": "antarchy:chiseled_dream_sandstone"
-  }
+  "result": "antarchy:chiseled_dream_sandstone",
+  "count": 1
 }

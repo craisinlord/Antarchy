@@ -1,8 +1,35 @@
 {
   "replace": false,
   "values": [
-    "#c:is_plains",
-    "#c:is_forest",
-    "#c:is_taiga"
+    {
+      "id": "#c:is_plains",
+      "required": false
+    },
+    {
+      "id": "#c:plains",
+      "required": false
+    },
+    {
+      "id": "#forge:is_plains",
+      "required": false
+    },
+    {
+      "id": "#c:is_forest",
+      "required": false
+    },
+    "#minecraft:is_forest",
+    {
+      "id": "#c:forest",
+      "required": false
+    },
+    {
+      "id": "#c:is_taiga",
+      "required": false
+    },
+    "#minecraft:is_taiga",
+    {
+      "id": "#c:taiga",
+      "required": false
+    }
   ]
 }

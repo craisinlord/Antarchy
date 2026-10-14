@@ -20,6 +20,12 @@
       "options": {
         "type": "minecraft:spore_blossom_air"
       }
+    },
+    "music": {
+      "sound": "antarchy:music.game.cavaryn",
+      "min_delay": 600,
+      "max_delay": 1800,
+      "replace_current_music": true
     }
   },
   "spawn_costs": {},

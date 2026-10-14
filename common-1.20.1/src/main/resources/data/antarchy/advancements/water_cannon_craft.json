@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "items": "antarchy:water_cannon"
+            "items": [
+              "antarchy:water_cannon"
+            ]
           }
         ]
       },
@@ -19,7 +21,6 @@
     },
     "frame": "task",
     "icon": {
-      "count": 1,
       "item": "antarchy:water_cannon"
     },
     "show_toast": true,

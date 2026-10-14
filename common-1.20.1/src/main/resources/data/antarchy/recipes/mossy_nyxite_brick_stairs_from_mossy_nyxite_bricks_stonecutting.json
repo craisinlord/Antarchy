@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:mossy_nyxite_bricks"
+  },
+  "result": "antarchy:mossy_nyxite_brick_stairs",
+  "count": 1
+}

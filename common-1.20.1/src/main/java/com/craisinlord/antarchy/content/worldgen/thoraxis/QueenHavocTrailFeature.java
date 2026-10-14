@@ -15,7 +15,6 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
-/** Generates the deterministic underside Queen trail and its one-shot spawn marker. */
 public final class QueenHavocTrailFeature extends Feature<NoneFeatureConfiguration> {
     private static final ResourceLocation DREAM_SAND = id("dream_sand");
     private static final ResourceLocation DREAM_SANDSTONE = id("dream_sandstone");

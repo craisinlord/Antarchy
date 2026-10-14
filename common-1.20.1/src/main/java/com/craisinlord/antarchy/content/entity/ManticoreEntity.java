@@ -2,9 +2,10 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import java.util.List;
 import java.util.UUID;
@@ -12,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
@@ -57,7 +59,6 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class ManticoreEntity extends Monster implements GeoEntity {
     private static final String SUMMONER_KEY = "QueenSummoner";
     private static final String PLAYER_SUMMONER_KEY = "PlayerSummoner";
-    private static final String PLAYER_SUMMON_LIFETIME_KEY = "PlayerSummonLifetime";
     private static final int LOST_SUMMONER_GRACE_TICKS = 200;
     private static final int TAKEOFF_COOLDOWN_TICKS = 40;
     private static final int STING_COOLDOWN_TICKS = 60;
@@ -79,8 +80,6 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     private UUID summonerId;
     @Nullable
     private UUID playerSummonerId;
-    private int playerSummonLifetime;
-    private int playerSummonAge;
     private int lostSummonerTicks;
     private int takeoffCooldown;
     private int stingCooldown;
@@ -100,27 +99,27 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, AntarchySettings.manticoreHealth())
-                .add(Attributes.MOVEMENT_SPEED, 0.3D)
-                .add(Attributes.FLYING_SPEED, 0.6D)
+                .add(Attributes.MOVEMENT_SPEED, 0.55D)
+                .add(Attributes.FLYING_SPEED, 2.6D)
                 .add(Attributes.ATTACK_DAMAGE, AntarchySettings.manticoreAttackDamage())
                 .add(Attributes.FOLLOW_RANGE, 28.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.2D);
     }
 
     public static boolean canSpawn(EntityType<ManticoreEntity> type, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
-        if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER
-                || spawnReason == MobSpawnType.COMMAND || spawnReason == MobSpawnType.MOB_SUMMONED) {
+        if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.COMMAND
+                || spawnReason == MobSpawnType.MOB_SUMMONED) {
             return true;
         }
-        if (pos.getY() >= 0) {
+        if (pos.getY() >= 0 || level.getDifficulty() == Difficulty.PEACEFUL) {
             return false;
         }
+        if (ThoraxisUndersideManager.isUndersideCeilingSpawn(type, level, pos)) {
+            return true;
+        }
         BlockState below = level.getBlockState(pos.below());
-        BlockState above = level.getBlockState(pos.above());
         boolean floorSupport = !below.is(Blocks.BEDROCK) && below.isFaceSturdy(level, pos.below(), Direction.UP);
-        boolean ceilingSupport = !above.is(Blocks.BEDROCK) && above.isFaceSturdy(level, pos.above(), Direction.DOWN);
-        return level.getDifficulty() != Difficulty.PEACEFUL
-                && (floorSupport || ceilingSupport)
+        return floorSupport
                 && level.isEmptyBlock(pos)
                 && Monster.checkMonsterSpawnRules(type, level, spawnReason, pos, random);
     }
@@ -158,11 +157,9 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         this.setPersistenceRequired();
     }
 
-    public void markPlayerSummoned(UUID playerId, int lifetimeTicks) {
+    public void markPlayerSummoned(UUID playerId) {
         this.playerSummonerId = playerId;
         this.summonerId = null;
-        this.playerSummonLifetime = lifetimeTicks;
-        this.playerSummonAge = 0;
         this.lostSummonerTicks = 0;
         this.setPersistenceRequired();
     }
@@ -199,7 +196,7 @@ public class ManticoreEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return this.summonerId == null && super.removeWhenFarAway(distanceToClosestPlayer);
+        return this.summonerId == null && this.playerSummonerId == null && super.removeWhenFarAway(distanceToClosestPlayer);
     }
 
     @Override
@@ -221,6 +218,9 @@ public class ManticoreEntity extends Monster implements GeoEntity {
             this.triggerAnim("controller", flying ? "fly_start" : "fly_land");
             this.wasFlyingLastTick = flying;
         }
+        if (flying && this.tickCount % 16 == 0) {
+            this.playSound(AntarchySoundEvents.MANTICORE_FLY.get(), 0.65F, 0.9F + this.random.nextFloat() * 0.2F);
+        }
 
         if (this.takeoffCooldown > 0) {
             this.takeoffCooldown--;
@@ -230,8 +230,9 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         }
 
         this.tickQueenSummonCleanup();
+        this.tickPlayerSummonCleanup();
 
-        this.tickPlayerSummon();
+        this.tickPlayerSummonTarget();
         this.tickQueenSummonTarget();
 
         LivingEntity target = this.getTarget();
@@ -246,17 +247,12 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         }
     }
 
-    private void tickPlayerSummon() {
+    private void tickPlayerSummonTarget() {
         if (this.playerSummonerId == null || !(this.level() instanceof ServerLevel serverLevel)) {
-            return;
-        }
-        if (++this.playerSummonAge >= this.playerSummonLifetime) {
-            this.discard();
             return;
         }
         Entity entity = serverLevel.getEntity(this.playerSummonerId);
         if (!(entity instanceof Player player) || !player.isAlive()) {
-            this.discard();
             return;
         }
         LivingEntity target = player.getLastHurtMob();
@@ -322,6 +318,20 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         }
     }
 
+    private void tickPlayerSummonCleanup() {
+        if (this.playerSummonerId == null || !(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        Entity summoner = serverLevel.getEntity(this.playerSummonerId);
+        if (summoner instanceof Player player && player.isAlive()) {
+            this.lostSummonerTicks = 0;
+            return;
+        }
+        if (++this.lostSummonerTicks > LOST_SUMMONER_GRACE_TICKS) {
+            this.discard();
+        }
+    }
+
     private void takeoff() {
         this.takeoffCooldown = TAKEOFF_COOLDOWN_TICKS;
         this.setDeltaMovement(this.getDeltaMovement().add(0.0D, 0.55D, 0.0D));
@@ -374,7 +384,7 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     }
 
     private static Vec3 oppositeGravity(Entity entity) {
-        return AntarchyGravityApi.isGravityInverted(entity) ? new Vec3(0.0D, -1.0D, 0.0D) : new Vec3(0.0D, 1.0D, 0.0D);
+        return GravityApi.isGravityInverted(entity) ? new Vec3(0.0D, -1.0D, 0.0D) : new Vec3(0.0D, 1.0D, 0.0D);
     }
 
     private void tickQueenSummonInversionRule() {
@@ -384,8 +394,8 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         if (this.hasEffect(AntarchyObjects.INVERTED_EFFECT.get())) {
             this.removeEffect(AntarchyObjects.INVERTED_EFFECT.get());
         }
-        if (AntarchyGravityApi.isGravityInverted(this) && AntarchyGravityApi.isGravityForced(this)) {
-            AntarchyGravityApi.setGravityDirection(this, AntarchyGravityDirection.DOWN, false);
+        if (GravityApi.isGravityInverted(this) && GravityApi.isGravityForced(this)) {
+            GravityApi.setGravityDirection(this, GravityDirection.DOWN, false);
         }
         this.setNoGravity(false);
     }
@@ -397,6 +407,7 @@ public class ManticoreEntity extends Monster implements GeoEntity {
 
     void performSting(LivingEntity enemy) {
         this.swing(InteractionHand.MAIN_HAND);
+        this.playSound(AntarchySoundEvents.MANTICORE_BITE.get(), 0.9F, 0.95F + this.random.nextFloat() * 0.1F);
         if (enemy.hurt(this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE))) {
             enemy.addEffect(new MobEffectInstance(MobEffects.POISON, AntarchySettings.manticoreStingPoisonTicks(), 0), this);
         }
@@ -412,9 +423,20 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     public boolean doHurtTarget(Entity target) {
         boolean hurt = super.doHurtTarget(target);
         if (hurt) {
+            this.playSound(AntarchySoundEvents.MANTICORE_BITE.get(), 0.9F, 0.95F + this.random.nextFloat() * 0.1F);
             this.triggerAnim("controller", this.onGround() ? "bite" : "fly_bite");
         }
         return hurt;
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return AntarchySoundEvents.MANTICORE_IDLE.get();
+    }
+
+    @Override
+    protected void playStepSound(BlockPos pos, BlockState state) {
+        this.playSound(AntarchySoundEvents.MANTICORE_WALK.get(), 0.55F, 0.9F + this.random.nextFloat() * 0.2F);
     }
 
     @Override
@@ -443,7 +465,6 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         }
         if (this.playerSummonerId != null) {
             tag.putUUID(PLAYER_SUMMONER_KEY, this.playerSummonerId);
-            tag.putInt(PLAYER_SUMMON_LIFETIME_KEY, this.playerSummonLifetime);
         }
     }
 
@@ -452,8 +473,6 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         super.readAdditionalSaveData(tag);
         this.summonerId = tag.hasUUID(SUMMONER_KEY) ? tag.getUUID(SUMMONER_KEY) : null;
         this.playerSummonerId = tag.hasUUID(PLAYER_SUMMONER_KEY) ? tag.getUUID(PLAYER_SUMMONER_KEY) : null;
-        this.playerSummonLifetime = tag.getInt(PLAYER_SUMMON_LIFETIME_KEY);
-        this.playerSummonAge = 0;
         this.lostSummonerTicks = 0;
     }
 
@@ -486,7 +505,7 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         private final ManticoreEntity manticore;
 
         ManticoreAttackGoal(ManticoreEntity manticore) {
-            super(manticore, 1.1D, true);
+            super(manticore, 1.6D, true);
             this.manticore = manticore;
         }
 

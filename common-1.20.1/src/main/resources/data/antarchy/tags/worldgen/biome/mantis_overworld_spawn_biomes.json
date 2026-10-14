@@ -1,9 +1,44 @@
 {
   "replace": false,
   "values": [
-    "#c:is_forest",
-    "#c:is_jungle",
-    "#c:is_savanna",
-    "#c:is_plains"
+    {
+      "id": "#c:is_forest",
+      "required": false
+    },
+    "#minecraft:is_forest",
+    {
+      "id": "#c:forest",
+      "required": false
+    },
+    {
+      "id": "#c:is_jungle",
+      "required": false
+    },
+    "#minecraft:is_jungle",
+    {
+      "id": "#c:jungle",
+      "required": false
+    },
+    {
+      "id": "#c:is_savanna",
+      "required": false
+    },
+    "#minecraft:is_savanna",
+    {
+      "id": "#c:savanna",
+      "required": false
+    },
+    {
+      "id": "#c:is_plains",
+      "required": false
+    },
+    {
+      "id": "#c:plains",
+      "required": false
+    },
+    {
+      "id": "#forge:is_plains",
+      "required": false
+    }
   ]
 }

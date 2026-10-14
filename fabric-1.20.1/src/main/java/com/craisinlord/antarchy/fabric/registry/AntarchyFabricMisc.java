@@ -1,10 +1,9 @@
 package com.craisinlord.antarchy.fabric.registry;
 
+import com.craisinlord.anthology.effect.AnthologyEffects;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.recipe.AmericanizeRecipe;
-import com.craisinlord.antarchy.content.enchantment.ChronosphereEnchantment;
-import com.craisinlord.antarchy.content.enchantment.FeatherRisingEnchantment;
 import com.craisinlord.antarchy.content.worldgen.ants.BrownAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.RainbowAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.RedAntNestFeature;
@@ -20,21 +19,23 @@ import com.craisinlord.antarchy.content.worldgen.overworld.CornPatchFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.NyxiteSpikeConfiguration;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.AntiwaterSpringsConfiguration;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.AntiwaterSpringsFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.DimensionalTearFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.NyxiteSpikeFeature;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.TyphoniteSpikeConfiguration;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.TyphoniteSpikeFeature;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.TyphoniteSwirlFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.PotentNyxiteFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisTransitionThroatFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.QueenHavocTrailFeature;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisIchorLakeFeature;
 import com.craisinlord.antarchy.fabric.content.fluid.AntiwaterFluid;
 import com.craisinlord.antarchy.content.effect.DreadMobEffect;
+import com.craisinlord.antarchy.content.effect.BleedingMobEffect;
+import com.craisinlord.antarchy.content.effect.BloodMoonMobEffect;
 import com.craisinlord.antarchy.content.effect.GoopedMobEffect;
 import com.craisinlord.antarchy.content.effect.GrowthMobEffect;
-import com.craisinlord.antarchy.content.effect.InvertedMobEffect;
+import com.craisinlord.antarchy.content.effect.CommandedMobEffect;
 import com.craisinlord.antarchy.content.effect.ParalyzedMobEffect;
 import com.craisinlord.antarchy.content.effect.ShrinkMobEffect;
 import com.craisinlord.antarchy.content.effect.StinkyMobEffect;
-import com.craisinlord.antarchy.content.effect.DilatedMobEffect;
-import com.craisinlord.antarchy.content.effect.ContractedMobEffect;
 import com.craisinlord.antarchy.content.worldgen.elythia.CoralSpikeFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaBiomeSource;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverCarveFunction;
@@ -62,23 +63,30 @@ import com.craisinlord.antarchy.content.worldgen.elythia.OuranwoodTreeConfigurat
 import com.craisinlord.antarchy.content.worldgen.elythia.OuranwoodTreeFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.PeachTreeConfiguration;
 import com.craisinlord.antarchy.content.worldgen.elythia.PeachTreeFeature;
-import com.craisinlord.antarchy.content.worldgen.elythia.TriffidPatchFeature;
+import com.craisinlord.antarchy.content.worldgen.elythia.FlytrapPatchFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynEggPatchFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.ChitinSpikeConfiguration;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.ChitinSpikeFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.BedBugNestFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.BedBugSurfaceClusterFeature;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.DimensionalTearFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaCloudFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.LucidAntiwaterPoolFeature;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.NadirTreeConfiguration;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.NadirTreeFeature;
+import com.craisinlord.antarchy.content.worldgen.truffalo.TruffaloTreeConfiguration;
+import com.craisinlord.antarchy.content.worldgen.truffalo.TruffaloTreeFeature;
+import com.craisinlord.antarchy.content.worldgen.royal.RoyalTreeConfiguration;
+import com.craisinlord.antarchy.content.worldgen.royal.RoyalTreeFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBiomeSource;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisDuneConfiguration;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisDuneFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisFissureConfiguration;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisFissureFeature;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisTransitionThroatFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBloodCrystalConfiguration;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBloodCrystalFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisAntiwaterPoolConfiguration;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisAntiwaterPoolFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisRibColumnsConfiguration;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisRibColumnsFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisSpikeConfiguration;
@@ -88,22 +96,24 @@ import com.craisinlord.antarchy.content.client.particle.InvertedGeyserParticleOp
 
 import java.util.List;
 
-import com.mojang.serialization.MapCodec;
-import net.minecraft.advancements.critereon.EntitySubPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.effect.MobEffect;
+import com.craisinlord.antarchy.content.enchantment.ChronosphereEnchantment;
+import com.craisinlord.antarchy.content.enchantment.FeatherRisingEnchantment;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Items;
@@ -121,6 +131,26 @@ import com.craisinlord.antarchy.fabric.AntarchyFabricContent;
 
 public final class AntarchyFabricMisc {
 
+    public static final DeferredRegister<PoiType> POI_TYPES = DeferredRegister.create(Registries.POINT_OF_INTEREST_TYPE, Antarchy.MODID);
+
+    public static final DeferredRegister<VillagerProfession> VILLAGER_PROFESSIONS = DeferredRegister.create(Registries.VILLAGER_PROFESSION, Antarchy.MODID);
+
+    public static final DeferredHolder<PoiType, PoiType> PEST_CONTROL_POI = POI_TYPES.register("pest_control",
+            () -> new PoiType(java.util.Set.copyOf(AntarchyFabricBlocks.ANT_TRAP.get().getStateDefinition().getPossibleStates()), 1, 1));
+
+    public static final DeferredHolder<PoiType, PoiType> ELYTHIA_PORTAL_POI = POI_TYPES.register("elythia_portal",
+            () -> new PoiType(java.util.Set.copyOf(AntarchyFabricBlocks.ELYTHIA_PORTAL.get().getStateDefinition().getPossibleStates()), 0, 1));
+
+    public static final DeferredHolder<PoiType, PoiType> THORAXIS_PORTAL_POI = POI_TYPES.register("thoraxis_portal",
+            () -> new PoiType(java.util.Set.copyOf(AntarchyFabricBlocks.THORAXIS_PORTAL.get().getStateDefinition().getPossibleStates()), 0, 1));
+
+    public static final DeferredHolder<PoiType, PoiType> CAVARYN_PORTAL_POI = POI_TYPES.register("cavaryn_portal",
+            () -> new PoiType(java.util.Set.copyOf(AntarchyFabricBlocks.CAVARYN_PORTAL.get().getStateDefinition().getPossibleStates()), 0, 1));
+
+    public static final DeferredHolder<VillagerProfession, VillagerProfession> PEST_CONTROL = VILLAGER_PROFESSIONS.register("pest_control",
+            () -> new VillagerProfession("pest_control", holder -> holder.value() == PEST_CONTROL_POI.get(),
+                    holder -> holder.value() == PEST_CONTROL_POI.get(), com.google.common.collect.ImmutableSet.of(), com.google.common.collect.ImmutableSet.of(), SoundEvents.VILLAGER_WORK_FLETCHER));
+
     private static final java.util.Map<ArmorItem.Type, Integer> BASE_DURABILITY = java.util.Map.of(
             ArmorItem.Type.BOOTS, 13,
             ArmorItem.Type.LEGGINGS, 15,
@@ -132,7 +162,7 @@ public final class AntarchyFabricMisc {
             int durabilityMultiplier,
             java.util.Map<ArmorItem.Type, Integer> defense,
             int enchantmentValue,
-            net.minecraft.sounds.SoundEvent equipSound,
+            java.util.function.Supplier<net.minecraft.sounds.SoundEvent> equipSound,
             java.util.function.Supplier<Ingredient> repairIngredient,
             float toughness,
             float knockbackResistance,
@@ -156,7 +186,7 @@ public final class AntarchyFabricMisc {
 
             @Override
             public net.minecraft.sounds.SoundEvent getEquipSound() {
-                return equipSound;
+                return equipSound.get();
             }
 
             @Override
@@ -201,9 +231,9 @@ public final class AntarchyFabricMisc {
             TagKey.create(net.minecraft.core.registries.Registries.DAMAGE_TYPE, new ResourceLocation("antarchy", "bypasses_bloodglass"));
 
 
-    public static final DeferredHolder<Attribute, Attribute> SCALE = ATTRIBUTES.register(
-            "scale",
-            () -> new net.minecraft.world.entity.ai.attributes.RangedAttribute("attribute.antarchy.scale", 1.0, 0.0625, 16.0).setSyncable(true)
+    public static final DeferredHolder<Attribute, Attribute> ENTITY_INTERACTION_RANGE = ATTRIBUTES.register(
+            "entity_interaction_range",
+            () -> new net.minecraft.world.entity.ai.attributes.RangedAttribute("attribute.antarchy.entity_interaction_range", 3.0, 0.0, 64.0).setSyncable(true)
     );
 
 
@@ -225,9 +255,9 @@ public final class AntarchyFabricMisc {
     public static final DeferredRegister<net.minecraft.world.inventory.MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, Antarchy.MODID);
     public static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(Registries.ENCHANTMENT, Antarchy.MODID);
     public static final DeferredHolder<Enchantment, Enchantment> FEATHER_RISING = ENCHANTMENTS.register("feather_rising",
-            () -> new FeatherRisingEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.FEET));
+            () -> new FeatherRisingEnchantment());
     public static final DeferredHolder<Enchantment, Enchantment> CHRONOSPHERE = ENCHANTMENTS.register("chronosphere",
-            () -> new ChronosphereEnchantment(Enchantment.Rarity.RARE, EquipmentSlot.CHEST));
+            () -> new ChronosphereEnchantment());
 
 
     public static final DeferredRegister<net.minecraft.world.entity.animal.FrogVariant> FROG_VARIANTS = DeferredRegister.create(Registries.FROG_VARIANT, Antarchy.MODID);
@@ -241,6 +271,10 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<net.minecraft.world.inventory.MenuType<?>, net.minecraft.world.inventory.MenuType<com.craisinlord.antarchy.content.menu.DorrieInventoryMenu>> DORRIE_INVENTORY_MENU =
             MENUS.register("dorrie_inventory", () -> new net.minecraft.world.inventory.MenuType<>(com.craisinlord.antarchy.content.menu.DorrieInventoryMenu::new, FeatureFlags.DEFAULT_FLAGS));
+    public static final DeferredHolder<net.minecraft.world.inventory.MenuType<?>, net.minecraft.world.inventory.MenuType<com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu>> ROYAL_JUDGMENT_MENU =
+            MENUS.register("royal_judgment", () -> new net.minecraft.world.inventory.MenuType<>(com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu::new, FeatureFlags.DEFAULT_FLAGS));
+    public static final DeferredHolder<net.minecraft.world.inventory.MenuType<?>, net.minecraft.world.inventory.MenuType<com.craisinlord.antarchy.content.menu.GiantFryingPanMenu>> GIANT_FRYING_PAN_MENU =
+            MENUS.register("giant_frying_pan", () -> new net.minecraft.world.inventory.MenuType<>(com.craisinlord.antarchy.content.menu.GiantFryingPanMenu::new, FeatureFlags.DEFAULT_FLAGS));
 
 
     public static final DeferredRegister<net.minecraft.world.item.crafting.RecipeSerializer<?>> RECIPE_SERIALIZERS =
@@ -249,46 +283,56 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<net.minecraft.world.item.crafting.RecipeSerializer<?>, net.minecraft.world.item.crafting.RecipeSerializer<AmericanizeRecipe>> AMERICANIZE_SERIALIZER =
             RECIPE_SERIALIZERS.register("americanize", () -> AmericanizeRecipe.SERIALIZER);
+    public static final DeferredHolder<net.minecraft.world.item.crafting.RecipeSerializer<?>, net.minecraft.world.item.crafting.RecipeSerializer<com.craisinlord.antarchy.content.recipe.PortalGunVariantRecipe>> PORTAL_GUN_VARIANT_SERIALIZER =
+            RECIPE_SERIALIZERS.register("portal_gun_variant", () -> com.craisinlord.antarchy.content.recipe.PortalGunVariantRecipe.SERIALIZER);
 
 
     public static final ArmorMaterial ULTIMATE_ARMOR_MATERIAL = armorMaterial(
-            40, createUltimateArmorDefense(), 10, SoundEvents.ARMOR_EQUIP_DIAMOND,
-            AntarchyFabricItems::ultimateRepairIngredient, 2.0F,
-            (float) AntarchySettings.ultimateArmorKnockbackResistance(), "ultimate_armor");
+            62, createUltimateArmorDefense(), 10, () -> SoundEvents.ARMOR_EQUIP_DIAMOND,
+            AntarchyFabricItems::ultimateRepairIngredient, 2.0F, (float) AntarchySettings.ultimateArmorKnockbackResistance(), "ultimate_armor");
 
 
     public static final ArmorMaterial NIGHTMARE_ARMOR_MATERIAL = armorMaterial(
-            37, createNightmareArmorDefense(), 10, SoundEvents.ARMOR_EQUIP_NETHERITE,
-            () -> Ingredient.of(AntarchyFabricItems.NIGHTMARE_SCALE.get()), 3.0F,
-            (float) AntarchySettings.nightmareArmorKnockbackResistance(), "nightmare_armor");
+            41, createNightmareArmorDefense(), 10, () -> SoundEvents.ARMOR_EQUIP_NETHERITE,
+            () -> Ingredient.of(AntarchyFabricItems.NIGHTMARE_SCALE.get()), 3.0F, (float) AntarchySettings.nightmareArmorKnockbackResistance(), "nightmare_armor");
 
 
     public static final ArmorMaterial PRIMORDIAL_ARMOR_MATERIAL = armorMaterial(
-            33, createPrimordialArmorDefense(), 15, SoundEvents.ARMOR_EQUIP_NETHERITE,
-            () -> Ingredient.of(AntarchyFabricItems.PRIMORDIAL_SCUTE.get()), 3.0F, 0.1F, "primordial");
+            37, createPrimordialArmorDefense(), 15, () -> SoundEvents.ARMOR_EQUIP_NETHERITE,
+            () -> Ingredient.of(AntarchyFabricItems.PRIMORDIAL_SCUTE.get()), 3.5F, 0.1F, "primordial");
 
 
     public static final ArmorMaterial BLOOD_CRYSTAL_ARMOR_MATERIAL = armorMaterial(
-            33, createBloodCrystalArmorDefense(), 30, SoundEvents.ARMOR_EQUIP_DIAMOND,
+            33, createBloodCrystalArmorDefense(), 30, AntarchyFabricSounds.BLOOD_CRYSTAL_ARMOR_EQUIP,
             AntarchyFabricItems::bloodCrystalRepairIngredient, 0.0F, 0.0F, "blood_crystal");
+    public static final ArmorMaterial TIGERS_EYE_ARMOR_MATERIAL = armorMaterial(
+            18, createDiamondArmorDefense(), 18, () -> SoundEvents.ARMOR_EQUIP_GOLD,
+            () -> Ingredient.of(AntarchyFabricItems.TIGERS_EYE.get()), 2.0F, 0.0F, "tigers_eye");
 
 
     public static final ArmorMaterial MOGGLES_ARMOR_MATERIAL = armorMaterial(
-            25, createMogglesArmorDefense(), 12, SoundEvents.ARMOR_EQUIP_GOLD,
+            0, createMogglesArmorDefense(), 12, () -> SoundEvents.ARMOR_EQUIP_GOLD,
             () -> Ingredient.of(Items.GOLD_INGOT), 0.0F, 0.0F, "moggles");
 
 
     public static final ArmorMaterial FALLEN_KING_CROWN_ARMOR_MATERIAL = armorMaterial(
-            25, createFallenKingCrownDefense(), 25, SoundEvents.ARMOR_EQUIP_GOLD,
+            7, createFallenKingCrownDefense(), 25, () -> SoundEvents.ARMOR_EQUIP_GOLD,
             () -> Ingredient.of(Items.GOLD_INGOT), 0.0F, 0.0F, "fallen_king_crown");
 
 
-    public static final ArmorMaterial TIGERS_EYE_ARMOR_MATERIAL = armorMaterial(
-            18, createDiamondArmorDefense(), 18, SoundEvents.ARMOR_EQUIP_GOLD,
-            () -> Ingredient.of(AntarchyFabricItems.TIGERS_EYE.get()), 2.0F, 0.0F, "tigers_eye");
+    public static final ArmorMaterial ROYAL_GUARDIAN_ARMOR_MATERIAL = armorMaterial(
+            37, new java.util.EnumMap<>(ArmorItem.Type.class), AntarchySettings.royalArmorEnchantability(), () -> SoundEvents.ARMOR_EQUIP_NETHERITE,
+            () -> Ingredient.of(AntarchyFabricItems.KING_SCALE.get()), 0.0F, 0.0F, "royal_guardian");
+
+
+    public static final ArmorMaterial ROYAL_ASSAILANT_ARMOR_MATERIAL = armorMaterial(
+            37, new java.util.EnumMap<>(ArmorItem.Type.class), AntarchySettings.royalArmorEnchantability(), () -> SoundEvents.ARMOR_EQUIP_NETHERITE,
+            () -> Ingredient.of(AntarchyFabricItems.QUEEN_SCALE.get()), 0.0F, 0.0F, "royal_assailant");
 
 
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> DREAM_FIRE_FLAME = PARTICLE_TYPES.register("dream_fire_flame",
+            () -> simpleParticleType());
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BUG_SPRAY_PARTICLE = PARTICLE_TYPES.register("bug_spray",
             () -> simpleParticleType());
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> NIGHTMARE_FIRE_FLAME = PARTICLE_TYPES.register("nightmare_fire_flame",
             () -> simpleParticleType());
@@ -343,7 +387,6 @@ public final class AntarchyFabricMisc {
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> UNDERVAULT_CONNECTION = PARTICLE_TYPES.register("undervault_connection",
             () -> simpleParticleType());
 
-
     public static final DeferredHolder<ParticleType<?>, ParticleType<InvertedGeyserBaseParticleOptions>> INVERTED_GEYSER_BASE = PARTICLE_TYPES.register("inverted_geyser_base",
             () -> particleType(InvertedGeyserBaseParticleOptions.deserializer()));
 
@@ -361,15 +404,14 @@ public final class AntarchyFabricMisc {
 
 
     public static final DeferredHolder<MobEffect, DreadMobEffect> DREAD = MOB_EFFECTS.register("dread", DreadMobEffect::new);
+    public static final DeferredHolder<MobEffect, BleedingMobEffect> BLEEDING = MOB_EFFECTS.register("bleeding", BleedingMobEffect::new);
+    public static final DeferredHolder<MobEffect, BloodMoonMobEffect> BLOOD_MOON = MOB_EFFECTS.register("blood_moon", BloodMoonMobEffect::new);
 
 
     public static final DeferredHolder<MobEffect, ParalyzedMobEffect> PARALYZED = MOB_EFFECTS.register("paralyzed", ParalyzedMobEffect::new);
 
 
-    public static final DeferredHolder<MobEffect, InvertedMobEffect> INVERTED = MOB_EFFECTS.register("inverted", InvertedMobEffect::new);
-
-    public static final DeferredHolder<MobEffect, DilatedMobEffect> DILATED = MOB_EFFECTS.register("dilated", DilatedMobEffect::new);
-    public static final DeferredHolder<MobEffect, ContractedMobEffect> CONTRACTED = MOB_EFFECTS.register("contracted", ContractedMobEffect::new);
+    public static final DeferredHolder<MobEffect, CommandedMobEffect> COMMANDED = MOB_EFFECTS.register("commanded", CommandedMobEffect::new);
 
 
     public static final DeferredHolder<MobEffect, StinkyMobEffect> STINKY = MOB_EFFECTS.register("stinky", StinkyMobEffect::new);
@@ -379,6 +421,10 @@ public final class AntarchyFabricMisc {
 
 
     public static final DeferredHolder<MobEffect, com.craisinlord.antarchy.content.effect.BloodglassWardEffect> BLOODGLASS_WARD = MOB_EFFECTS.register("bloodglass_ward", com.craisinlord.antarchy.content.effect.BloodglassWardEffect::new);
+
+
+    public static final DeferredHolder<MobEffect, com.craisinlord.antarchy.content.effect.GlimmeringMobEffect> GLIMMERING = MOB_EFFECTS.register("glimmering", com.craisinlord.antarchy.content.effect.GlimmeringMobEffect::new);
+    public static final DeferredHolder<MobEffect, com.craisinlord.antarchy.content.effect.RoyalVitalityPenaltyEffect> ROYAL_VITALITY_PENALTY = MOB_EFFECTS.register("royal_vitality_penalty", com.craisinlord.antarchy.content.effect.RoyalVitalityPenaltyEffect::new);
 
 
     public static final DeferredHolder<Attribute, Attribute> BLOODGLASS_MAX_HEARTS = ATTRIBUTES.register(
@@ -396,17 +442,23 @@ public final class AntarchyFabricMisc {
 
 
     public static final DeferredHolder<Potion, Potion> INVERSION = POTIONS.register("inversion",
-            () -> new Potion(new MobEffectInstance(mobEffectHolder(INVERTED), 600)));
+            () -> new Potion(new MobEffectInstance(AnthologyEffects.inverted(), 600)));
 
 
     public static final DeferredHolder<Potion, Potion> LONG_INVERSION = POTIONS.register("long_inversion",
-            () -> new Potion("inversion", new MobEffectInstance(mobEffectHolder(INVERTED), 2400)));
-
+            () -> new Potion("inversion", new MobEffectInstance(AnthologyEffects.inverted(), 2400)));
+    public static final DeferredHolder<Potion, Potion> COMMAND = POTIONS.register("command",
+            () -> new Potion(new MobEffectInstance(mobEffectHolder(COMMANDED), 600)));
+    public static final DeferredHolder<Potion, Potion> LONG_COMMAND = POTIONS.register("long_command",
+            () -> new Potion("command", new MobEffectInstance(mobEffectHolder(COMMANDED), 1200)));
     public static final DeferredHolder<Potion, Potion> TIME_DILATION = POTIONS.register("time_dilation",
-            () -> new Potion(new MobEffectInstance(mobEffectHolder(DILATED), 1200)));
-
+            () -> new Potion(new MobEffectInstance(AnthologyEffects.dilated(), 1200)));
     public static final DeferredHolder<Potion, Potion> LONG_TIME_DILATION = POTIONS.register("long_time_dilation",
-            () -> new Potion("time_dilation", new MobEffectInstance(mobEffectHolder(DILATED), 1200, 1)));
+            () -> new Potion("time_dilation", new MobEffectInstance(AnthologyEffects.dilated(), 1200, 1)));
+    public static final DeferredHolder<Potion, Potion> TIME_CONTRACTION = POTIONS.register("time_contraction",
+            () -> new Potion(new MobEffectInstance(AnthologyEffects.contracted(), 1200)));
+    public static final DeferredHolder<Potion, Potion> LONG_TIME_CONTRACTION = POTIONS.register("long_time_contraction",
+            () -> new Potion("time_contraction", new MobEffectInstance(AnthologyEffects.contracted(), 1200, 1)));
 
 
     public static final DeferredHolder<Potion, Potion> STINKY_POTION = POTIONS.register("stinky",
@@ -421,7 +473,6 @@ public final class AntarchyFabricMisc {
 
 
     public static final DeferredHolder<MobEffect, GrowthMobEffect> GROWTH_EFFECT = MOB_EFFECTS.register("growth", GrowthMobEffect::new);
-    public static final DeferredHolder<MobEffect, com.craisinlord.antarchy.content.effect.GlimmeringMobEffect> GLIMMERING = MOB_EFFECTS.register("glimmering", com.craisinlord.antarchy.content.effect.GlimmeringMobEffect::new);
 
 
     public static final DeferredHolder<Potion, Potion> PARALYSIS = POTIONS.register("paralysis",
@@ -586,11 +637,23 @@ public final class AntarchyFabricMisc {
             () -> new PeachTreeFeature(PeachTreeConfiguration.CODEC));
 
 
-    public static final DeferredHolder<Feature<?>, ElythiaFloraFeature> ELYTHIA_FOREST_FLORA = FEATURES.register("elythia_forest_flora",
-            () -> new ElythiaFloraFeature(NoneFeatureConfiguration.CODEC, ElythiaFloraFeature.Variant.FOREST));
+    public static final DeferredHolder<Feature<?>, NadirTreeFeature> NADIR_TREE_FEATURE = FEATURES.register("nadir_tree",
+            () -> new NadirTreeFeature(NadirTreeConfiguration.CODEC));
+
+
+    public static final DeferredHolder<Feature<?>, TruffaloTreeFeature> TRUFFALO_TREE_FEATURE = FEATURES.register("truffalo_tree",
+            () -> new TruffaloTreeFeature(TruffaloTreeConfiguration.CODEC));
+
+
+    public static final DeferredHolder<Feature<?>, RoyalTreeFeature> ROYAL_TREE_FEATURE = FEATURES.register("royal_tree",
+            () -> new RoyalTreeFeature(RoyalTreeConfiguration.CODEC));
 
     public static final DeferredHolder<Feature<?>, KingsTreeGridFeature> KINGS_TREE_GRID = FEATURES.register("kings_tree_grid",
             () -> new KingsTreeGridFeature(NoneFeatureConfiguration.CODEC));
+
+
+    public static final DeferredHolder<Feature<?>, ElythiaFloraFeature> ELYTHIA_FOREST_FLORA = FEATURES.register("elythia_forest_flora",
+            () -> new ElythiaFloraFeature(NoneFeatureConfiguration.CODEC, ElythiaFloraFeature.Variant.FOREST));
 
 
     public static final DeferredHolder<Feature<?>, ElythiaFloraFeature> ELYTHIA_MEADOW_FLORA = FEATURES.register("elythia_meadow_flora",
@@ -647,16 +710,16 @@ public final class AntarchyFabricMisc {
             () -> new MolewormSurfaceMoundsFeature(NoneFeatureConfiguration.CODEC));
 
 
-    public static final DeferredHolder<Feature<?>, TriffidPatchFeature> TRIFFID_PATCH = FEATURES.register("flytrap_patch",
-            () -> new TriffidPatchFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, FlytrapPatchFeature> FLYTRAP_PATCH = FEATURES.register("flytrap_patch",
+            () -> new FlytrapPatchFeature(NoneFeatureConfiguration.CODEC));
 
 
     public static final DeferredHolder<com.mojang.serialization.Codec<? extends BiomeSource>, com.mojang.serialization.Codec<? extends BiomeSource>> ELYTHIA_BIOME_SOURCE = BIOME_SOURCES.register("elythia_biome_source",
-            () -> (com.mojang.serialization.Codec<? extends net.minecraft.world.level.biome.BiomeSource>) (com.mojang.serialization.Codec<?>) ElythiaBiomeSource.CODEC);
+            () -> ElythiaBiomeSource.CODEC);
 
 
     public static final DeferredHolder<com.mojang.serialization.Codec<? extends DensityFunction>, com.mojang.serialization.Codec<? extends DensityFunction>> ELYTHIA_RIVER_CARVE = DENSITY_FUNCTION_TYPES.register("elythia_river_carve",
-            () -> (com.mojang.serialization.Codec<? extends net.minecraft.world.level.levelgen.DensityFunction>) (com.mojang.serialization.Codec<?>) ElythiaRiverCarveFunction.KEY_CODEC.codec());
+            () -> ElythiaRiverCarveFunction.KEY_CODEC.codec());
 
 
     public static final DeferredHolder<Feature<?>, ElythiaPondFeature> ELYTHIA_POND = FEATURES.register("elythia_pond",
@@ -669,6 +732,12 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<Feature<?>, LumenLilyPadFeature> LUMEN_LILY_PADS = FEATURES.register("lumen_lily_pads",
             () -> new LumenLilyPadFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.GlimmeringReedFeature> GLIMMERING_REEDS = FEATURES.register("glimmering_reeds",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.GlimmeringReedFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.thoraxis.NaturalDirectionalVineFeature> SPIRALING_VINES = FEATURES.register("spiraling_vines",
+            () -> new com.craisinlord.antarchy.content.worldgen.thoraxis.NaturalDirectionalVineFeature(NoneFeatureConfiguration.CODEC, "spiraling_vines", net.minecraft.core.Direction.UP, 4, 12));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.thoraxis.NaturalDirectionalVineFeature> GOREVINE = FEATURES.register("gorevine",
+            () -> new com.craisinlord.antarchy.content.worldgen.thoraxis.NaturalDirectionalVineFeature(NoneFeatureConfiguration.CODEC, "gorevine", net.minecraft.core.Direction.DOWN, 8, 16));
 
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.GiantLilyPadPatchFeature> GIANT_LILY_PAD_PATCH = FEATURES.register("giant_lily_pad_patch",
             () -> new com.craisinlord.antarchy.content.worldgen.elythia.GiantLilyPadPatchFeature(NoneFeatureConfiguration.CODEC));
@@ -701,10 +770,11 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<Feature<?>, ThoraxisFissureFeature> THORAXIS_FISSURE = FEATURES.register("thoraxis_fissure",
             () -> new ThoraxisFissureFeature(ThoraxisFissureConfiguration.CODEC));
-    public static final DeferredHolder<Feature<?>, QueenHavocTrailFeature> QUEEN_HAVOC_TRAIL = FEATURES.register("queen_havoc_trail",
-            QueenHavocTrailFeature::new);
+
     public static final DeferredHolder<Feature<?>, ThoraxisTransitionThroatFeature> THORAXIS_TRANSITION_THROAT = FEATURES.register("thoraxis_transition_throat",
             ThoraxisTransitionThroatFeature::new);
+    public static final DeferredHolder<Feature<?>, QueenHavocTrailFeature> QUEEN_HAVOC_TRAIL = FEATURES.register("queen_havoc_trail",
+            QueenHavocTrailFeature::new);
 
 
     public static final DeferredHolder<Feature<?>, ThoraxisRibColumnsFeature> THORAXIS_RIB_COLUMNS = FEATURES.register("thoraxis_rib_columns",
@@ -717,6 +787,10 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<Feature<?>, NyxiteSpikeFeature> NYXITE_SPIKES = FEATURES.register("nyxite_spikes",
             () -> new NyxiteSpikeFeature(NyxiteSpikeConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, TyphoniteSpikeFeature> TYPHONITE_SPIKES = FEATURES.register("typhonite_spikes",
+            () -> new TyphoniteSpikeFeature(TyphoniteSpikeConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, TyphoniteSwirlFeature> TYPHONITE_SWIRLS = FEATURES.register("typhonite_swirls",
+            () -> new TyphoniteSwirlFeature(NoneFeatureConfiguration.CODEC));
 
 
     public static final DeferredHolder<Feature<?>, ChitinSpikeFeature> CAVARYN_CHITIN_SPIKES = FEATURES.register("cavaryn_chitin_spikes",
@@ -744,8 +818,8 @@ public final class AntarchyFabricMisc {
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.cavaryn.GroundMoltingVinesFeature> GROUND_MOLTING_VINES = FEATURES.register("ground_molting_vines",
             () -> new com.craisinlord.antarchy.content.worldgen.cavaryn.GroundMoltingVinesFeature(NoneFeatureConfiguration.CODEC));
 
-    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.cavaryn.JumpyBugEggCeilingFeature> JUMPY_BUG_EGG_CEILING = FEATURES.register("springbug_egg_ceiling",
-            () -> new com.craisinlord.antarchy.content.worldgen.cavaryn.JumpyBugEggCeilingFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.cavaryn.SpringbugEggCeilingFeature> SPRINGBUG_EGG_CEILING = FEATURES.register("springbug_egg_ceiling",
+            () -> new com.craisinlord.antarchy.content.worldgen.cavaryn.SpringbugEggCeilingFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.cavaryn.SpitBugEggPatchFeature> SPIT_BUG_EGG_PATCH = FEATURES.register("spit_bug_egg_patch",
             () -> new com.craisinlord.antarchy.content.worldgen.cavaryn.SpitBugEggPatchFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.cavaryn.RollyCavesGiantCavernFeature> ROLLY_CAVES_GIANT_CAVERN = FEATURES.register("rolly_caves_giant_cavern",
@@ -790,9 +864,6 @@ public final class AntarchyFabricMisc {
             () -> new com.craisinlord.antarchy.content.worldgen.mushroom.GlowcapHugeMushroomWorldgenFeature(NoneFeatureConfiguration.CODEC));
 
 
-    public static final DeferredHolder<Feature<?>, ThoraxisAntiwaterPoolFeature> THORAXIS_ANTIWATER_POOL = FEATURES.register("thoraxis_antiwater_pool",
-            () -> new ThoraxisAntiwaterPoolFeature(ThoraxisAntiwaterPoolConfiguration.CODEC));
-
 
     public static final DeferredHolder<Feature<?>, LucidAntiwaterPoolFeature> LUCID_ANTIWATER_POOL = FEATURES.register("lucid_antiwater_pool",
             () -> new LucidAntiwaterPoolFeature(ThoraxisAntiwaterPoolConfiguration.CODEC));
@@ -801,13 +872,15 @@ public final class AntarchyFabricMisc {
     public static final DeferredHolder<Feature<?>, ThoraxisDuneFeature> THORAXIS_DUNE = FEATURES.register("thoraxis_dune",
             () -> new ThoraxisDuneFeature(ThoraxisDuneConfiguration.CODEC));
 
+    public static final DeferredHolder<Feature<?>, DimensionalTearFeature> DIMENSIONAL_TEAR = FEATURES.register("dimensional_tear",
+            () -> new DimensionalTearFeature(NoneFeatureConfiguration.CODEC));
+
+    public static final DeferredHolder<Feature<?>, ThoraxisIchorLakeFeature> THORAXIS_ICHOR_LAKE = FEATURES.register("thoraxis_ichor_lake",
+            () -> new ThoraxisIchorLakeFeature(NoneFeatureConfiguration.CODEC));
+
 
     public static final DeferredHolder<Feature<?>, CoralSpikeFeature> ELYTHIA_CORAL_SPIKE = FEATURES.register("elythia_coral_spike",
             () -> new CoralSpikeFeature(NoneFeatureConfiguration.CODEC));
-
-
-    public static final DeferredHolder<Feature<?>, DimensionalTearFeature> DIMENSIONAL_TEAR = FEATURES.register("dimensional_tear",
-            () -> new DimensionalTearFeature(NoneFeatureConfiguration.CODEC));
 
 
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.FallenOuranwoodFeature> FALLEN_OURANWOOD_TREE = FEATURES.register("fallen_ouranwood_tree",
@@ -819,11 +892,11 @@ public final class AntarchyFabricMisc {
 
 
     public static final DeferredHolder<com.mojang.serialization.Codec<? extends BiomeSource>, com.mojang.serialization.Codec<? extends BiomeSource>> THORAXIS_BIOME_SOURCE = BIOME_SOURCES.register("thoraxis_biome_source",
-            () -> (com.mojang.serialization.Codec<? extends net.minecraft.world.level.biome.BiomeSource>) (com.mojang.serialization.Codec<?>) ThoraxisBiomeSource.CODEC);
+            () -> ThoraxisBiomeSource.CODEC);
 
 
-    public static final ArmorMaterial JUMPY_BOOTS_ARMOR_MATERIAL = armorMaterial(
-            37, createJumpyBootsDefense(), 15, net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_NETHERITE,
+    public static final ArmorMaterial SPRINGY_BOOTS_ARMOR_MATERIAL = armorMaterial(
+            37, createSpringyBootsDefense(), 15, () -> net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_NETHERITE,
             () -> Ingredient.of(net.minecraft.world.item.Items.NETHERITE_BOOTS), 3.0F, 0.1F, "springy_boots");
 
 
@@ -837,9 +910,6 @@ public final class AntarchyFabricMisc {
     public static Holder<Attribute> attributeHolder(DeferredHolder<Attribute, ? extends Attribute> attribute) {
         return BuiltInRegistries.ATTRIBUTE.wrapAsHolder(attribute.get());
     }
-
-
-
 
 
 
@@ -865,23 +935,12 @@ public final class AntarchyFabricMisc {
 
 
 
-    private static java.util.EnumMap<ArmorItem.Type, Integer> createJumpyBootsDefense() {
+    private static java.util.EnumMap<ArmorItem.Type, Integer> createSpringyBootsDefense() {
         java.util.EnumMap<ArmorItem.Type, Integer> defense = new java.util.EnumMap<>(ArmorItem.Type.class);
         defense.put(ArmorItem.Type.BOOTS, 3);
         defense.put(ArmorItem.Type.LEGGINGS, 0);
         defense.put(ArmorItem.Type.CHESTPLATE, 0);
         defense.put(ArmorItem.Type.HELMET, 0);
-        return defense;
-    }
-
-
-
-    private static java.util.EnumMap<ArmorItem.Type, Integer> createDiamondArmorDefense() {
-        java.util.EnumMap<ArmorItem.Type, Integer> defense = new java.util.EnumMap<>(ArmorItem.Type.class);
-        defense.put(ArmorItem.Type.BOOTS, 3);
-        defense.put(ArmorItem.Type.LEGGINGS, 6);
-        defense.put(ArmorItem.Type.CHESTPLATE, 8);
-        defense.put(ArmorItem.Type.HELMET, 3);
         return defense;
     }
 
@@ -893,6 +952,15 @@ public final class AntarchyFabricMisc {
         defense.put(ArmorItem.Type.LEGGINGS, 5);
         defense.put(ArmorItem.Type.CHESTPLATE, 6);
         defense.put(ArmorItem.Type.HELMET, 2);
+        return defense;
+    }
+
+    private static java.util.EnumMap<ArmorItem.Type, Integer> createDiamondArmorDefense() {
+        java.util.EnumMap<ArmorItem.Type, Integer> defense = new java.util.EnumMap<>(ArmorItem.Type.class);
+        defense.put(ArmorItem.Type.BOOTS, 3);
+        defense.put(ArmorItem.Type.LEGGINGS, 6);
+        defense.put(ArmorItem.Type.CHESTPLATE, 8);
+        defense.put(ArmorItem.Type.HELMET, 3);
         return defense;
     }
 
@@ -951,6 +1019,8 @@ public final class AntarchyFabricMisc {
 
 
     public static void register() {
+        POI_TYPES.register();
+        VILLAGER_PROFESSIONS.register();
         FLUIDS.register();
         ATTRIBUTES.register();
         PARTICLE_TYPES.register();
@@ -960,6 +1030,7 @@ public final class AntarchyFabricMisc {
         MOB_EFFECTS.register();
         POTIONS.register();
         MENUS.register();
+        ENCHANTMENTS.register();
         FROG_VARIANTS.register();
         RECIPE_SERIALIZERS.register();
     }

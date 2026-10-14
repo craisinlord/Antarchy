@@ -6,7 +6,5 @@
   "ingredient": {
     "item": "antarchy:kraken_tentacle"
   },
-  "result": {
-    "item": "antarchy:kraken_kalamari"
-  }
+  "result": "antarchy:kraken_kalamari"
 }

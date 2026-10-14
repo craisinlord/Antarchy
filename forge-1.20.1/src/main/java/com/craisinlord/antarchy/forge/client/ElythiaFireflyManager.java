@@ -1,7 +1,5 @@
 package com.craisinlord.antarchy.forge.client;
 
-import net.minecraftforge.fml.common.Mod;
-
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyTags;
@@ -15,6 +13,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.event.TickEvent;
 
 @Mod.EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT)

@@ -76,6 +76,8 @@ public final class AntarchyTags {
         public static final TagKey<EntityType<?>> SIZE_CHANGING_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("size_changing_immune"));
         public static final TagKey<EntityType<?>> CRITTER_CAGE_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, id("critter_cage_blacklist"));
         public static final TagKey<EntityType<?>> PARALYSIS_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("paralysis_immune"));
+        public static final TagKey<EntityType<?>> UNDERSIDE_CEILING_SPAWNERS = TagKey.create(Registries.ENTITY_TYPE, id("underside_ceiling_spawners"));
+        public static final TagKey<EntityType<?>> UNDERSIDE_CEILING_SHORT_GAP = TagKey.create(Registries.ENTITY_TYPE, id("underside_ceiling_short_gap"));
         public static final TagKey<EntityType<?>> HUSHWEED_TARGETS = TagKey.create(Registries.ENTITY_TYPE, id("hushweed_targets"));
         public static final TagKey<EntityType<?>> FLYTRAP_PREY = TagKey.create(Registries.ENTITY_TYPE, id("flytrap_prey"));
         public static final TagKey<EntityType<?>> STINKY_REPELLED_HOSTILES = TagKey.create(Registries.ENTITY_TYPE, id("stinky_repelled_hostiles"));

@@ -18,11 +18,8 @@ public final class TigerEyeCamouflageClientHandler {
         }
 
         while (AntarchyKeyBindings.consumeTigerEyeCamouflagePressed()) {
-            AntarchyFabricClientNetworking.sendToServer(
-                    new ToggleTigerEyeCamouflagePayload(),
-                    ToggleTigerEyeCamouflagePayload.STREAM_CODEC,
-                    ToggleTigerEyeCamouflagePayload.TYPE
-            );
+            AntarchyFabricClientNetworking.send(
+                    new ToggleTigerEyeCamouflagePayload());
         }
     }
 

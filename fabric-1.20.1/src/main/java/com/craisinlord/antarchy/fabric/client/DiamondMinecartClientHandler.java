@@ -3,7 +3,6 @@ package com.craisinlord.antarchy.fabric.client;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.entity.DiamondMinecartEntity;
 import com.craisinlord.antarchy.content.network.DiamondMinecartInputPayload;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 
 public final class DiamondMinecartClientHandler {
@@ -22,7 +21,7 @@ public final class DiamondMinecartClientHandler {
         if (!(mc.player.getVehicle() instanceof DiamondMinecartEntity)) return;
         if (mc.screen != null) {
             if (lastFlags != 0) {
-                com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.sendToServer(new DiamondMinecartInputPayload((byte) 0), DiamondMinecartInputPayload.STREAM_CODEC, DiamondMinecartInputPayload.TYPE);
+                com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.send(new DiamondMinecartInputPayload((byte) 0));
                 lastFlags = 0;
             }
             return;
@@ -35,7 +34,7 @@ public final class DiamondMinecartClientHandler {
         if (mc.options.keyRight.isDown()) flags |= DiamondMinecartInputPayload.FLAG_RIGHT;
 
         if (flags != lastFlags) {
-            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.sendToServer(new DiamondMinecartInputPayload(flags), DiamondMinecartInputPayload.STREAM_CODEC, DiamondMinecartInputPayload.TYPE);
+            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.send(new DiamondMinecartInputPayload(flags));
             lastFlags = flags;
         }
     }

@@ -115,7 +115,7 @@
                 "min": 6.0,
                 "max": 18.0
               },
-              "options": "#minecraft:on_random_loot"
+              "treasure": false
             }
           ]
         },
@@ -146,6 +146,50 @@
                 "min": 2.0,
                 "max": 8.0
               }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 4,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{AntOSFloppyDisk:\"antarchy:elythia\"}"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 4,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{AntOSFloppyDisk:\"antarchy:kraken\"}"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 4,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{AntOSFloppyDisk:\"antarchy:glimmer\"}"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 4,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{AntOSFloppyDisk:\"antarchy:brutalfly\"}"
             }
           ]
         }

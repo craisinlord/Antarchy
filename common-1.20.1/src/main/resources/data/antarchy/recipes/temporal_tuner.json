@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "QSQ",
+    "QCQ",
+    "QQQ"
+  ],
+  "key": {
+    "S": {
+      "item": "antarchy:blood_crystal_shard"
+    },
+    "Q": {
+      "item": "antarchy:queen_scale"
+    },
+    "C": {
+      "item": "minecraft:compass"
+    }
+  },
+  "result": {
+    "item": "antarchy:temporal_tuner"
+  }
+}

@@ -12,8 +12,10 @@
     },
     "height": {
       "type": "minecraft:uniform",
-      "min_inclusive": 8,
-      "max_inclusive": 18
+      "value": {
+        "min_inclusive": 8,
+        "max_inclusive": 18
+      }
     },
     "tuft_radius": 2,
     "tuft_height": 5

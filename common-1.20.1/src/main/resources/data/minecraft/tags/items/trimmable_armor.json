@@ -1,9 +1,18 @@
 {
   "replace": true,
   "values": [
-    "#minecraft:chest_armor",
-    "#minecraft:leg_armor",
-    "#minecraft:foot_armor",
+    {
+      "id": "#minecraft:chest_armor",
+      "required": false
+    },
+    {
+      "id": "#minecraft:leg_armor",
+      "required": false
+    },
+    {
+      "id": "#minecraft:foot_armor",
+      "required": false
+    },
     "minecraft:leather_helmet",
     "minecraft:chainmail_helmet",
     "minecraft:golden_helmet",
@@ -15,6 +24,12 @@
     "antarchy:nightmare_helmet",
     "antarchy:primordial_helmet",
     "antarchy:blood_crystal_helmet",
-    "antarchy:springy_boots"
+    "antarchy:springy_boots",
+    "antarchy:tigers_eye_helmet",
+    "antarchy:tigers_eye_chestplate",
+    "antarchy:tigers_eye_leggings",
+    "antarchy:tigers_eye_boots",
+    "antarchy:royal_guardian_helmet",
+    "antarchy:royal_assailant_helmet"
   ]
 }

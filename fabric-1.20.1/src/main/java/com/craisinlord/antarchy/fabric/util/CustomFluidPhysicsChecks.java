@@ -2,45 +2,45 @@ package com.craisinlord.antarchy.fabric.util;
 
 import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.function.Predicate;
 
 public final class CustomFluidPhysicsChecks {
     private CustomFluidPhysicsChecks() {
     }
 
     public static boolean isTouchingAntiwater(Entity entity) {
-        AABB box = entity.getBoundingBox().inflate(0.05D);
-        BlockPos min = BlockPos.containing(box.minX, box.minY, box.minZ);
-        BlockPos max = BlockPos.containing(box.maxX, box.maxY, box.maxZ);
-        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
-        for (int x = min.getX(); x <= max.getX(); x++) {
-            for (int y = min.getY(); y <= max.getY(); y++) {
-                for (int z = min.getZ(); z <= max.getZ(); z++) {
-                    cursor.set(x, y, z);
-                    FluidState fluidState = entity.level().getFluidState(cursor);
-                    if (AntarchyFluidChecks.isAntiwater(fluidState)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return isTouching(entity, AntarchyFluidChecks::isAntiwater);
     }
 
     public static boolean isTouchingWaterlikeFluid(Entity entity) {
-        AABB box = entity.getBoundingBox().inflate(0.05D);
-        BlockPos min = BlockPos.containing(box.minX, box.minY, box.minZ);
-        BlockPos max = BlockPos.containing(box.maxX, box.maxY, box.maxZ);
+        return isTouching(entity, AntarchyFluidChecks::usesWaterLikePhysics);
+    }
+
+    public static Vec3 getAntiwaterFlow(Entity entity) {
+        return getAverageFlow(entity, AntarchyFluidChecks::isAntiwater);
+    }
+
+    public static Vec3 getWaterlikeFlow(Entity entity) {
+        return getAverageFlow(entity, AntarchyFluidChecks::usesWaterLikePhysics);
+    }
+
+    private static boolean isTouching(Entity entity, Predicate<FluidState> matches) {
+        AABB box = entity.getBoundingBox().deflate(0.001D);
+        Level level = entity.level();
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
-        for (int x = min.getX(); x <= max.getX(); x++) {
-            for (int y = min.getY(); y <= max.getY(); y++) {
-                for (int z = min.getZ(); z <= max.getZ(); z++) {
+        for (int x = Mth.floor(box.minX); x < Mth.ceil(box.maxX); x++) {
+            for (int y = Mth.floor(box.minY); y < Mth.ceil(box.maxY); y++) {
+                for (int z = Mth.floor(box.minZ); z < Mth.ceil(box.maxZ); z++) {
                     cursor.set(x, y, z);
-                    FluidState fluidState = entity.level().getFluidState(cursor);
-                    if (AntarchyFluidChecks.usesWaterLikePhysics(fluidState)) {
+                    FluidState fluidState = level.getFluidState(cursor);
+                    if (matches.test(fluidState) && y + fluidState.getHeight(level, cursor) >= box.minY) {
                         return true;
                     }
                 }
@@ -49,43 +49,31 @@ public final class CustomFluidPhysicsChecks {
         return false;
     }
 
-    public static Vec3 getAntiwaterFlow(Entity entity) {
-        return getAverageFlow(entity, true);
-    }
-
-    public static Vec3 getWaterlikeFlow(Entity entity) {
-        return getAverageFlow(entity, false);
-    }
-
-    private static Vec3 getAverageFlow(Entity entity, boolean antiwater) {
-        AABB box = entity.getBoundingBox().inflate(0.05D);
-        BlockPos min = BlockPos.containing(box.minX, box.minY, box.minZ);
-        BlockPos max = BlockPos.containing(box.maxX, box.maxY, box.maxZ);
+    private static Vec3 getAverageFlow(Entity entity, Predicate<FluidState> matches) {
+        AABB box = entity.getBoundingBox().deflate(0.001D);
+        Level level = entity.level();
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         Vec3 totalFlow = Vec3.ZERO;
-        int matches = 0;
-        for (int x = min.getX(); x <= max.getX(); x++) {
-            for (int y = min.getY(); y <= max.getY(); y++) {
-                for (int z = min.getZ(); z <= max.getZ(); z++) {
+        int count = 0;
+        for (int x = Mth.floor(box.minX); x < Mth.ceil(box.maxX); x++) {
+            for (int y = Mth.floor(box.minY); y < Mth.ceil(box.maxY); y++) {
+                for (int z = Mth.floor(box.minZ); z < Mth.ceil(box.maxZ); z++) {
                     cursor.set(x, y, z);
-                    FluidState fluidState = entity.level().getFluidState(cursor);
-                    boolean matchesFluid = antiwater
-                            ? AntarchyFluidChecks.isAntiwater(fluidState)
-                            : AntarchyFluidChecks.usesWaterLikePhysics(fluidState);
-                    if (!matchesFluid) {
+                    FluidState fluidState = level.getFluidState(cursor);
+                    if (!matches.test(fluidState) || y + fluidState.getHeight(level, cursor) < box.minY) {
                         continue;
                     }
 
-                    totalFlow = totalFlow.add(fluidState.getFlow(entity.level(), cursor));
-                    matches++;
+                    totalFlow = totalFlow.add(fluidState.getFlow(level, cursor));
+                    count++;
                 }
             }
         }
 
-        if (matches == 0 || totalFlow.lengthSqr() < 1.0E-6D) {
+        if (count == 0 || totalFlow.lengthSqr() < 1.0E-6D) {
             return Vec3.ZERO;
         }
 
-        return totalFlow.scale(1.0D / matches);
+        return totalFlow.scale(1.0D / count);
     }
 }

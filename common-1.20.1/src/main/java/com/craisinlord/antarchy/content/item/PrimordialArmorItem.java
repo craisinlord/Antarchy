@@ -4,9 +4,9 @@ import com.google.common.collect.ImmutableMultimap;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import com.craisinlord.antarchy.compat.item.ArmorDurability;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -22,12 +22,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 public class PrimordialArmorItem extends ArmorItem {
+    private static final int BASE_DURABILITY_MULTIPLIER = 33;
     private final Type armorType;
 
     public PrimordialArmorItem(ArmorMaterial material, Type type, Properties properties) {
-        super(material, type, properties.stacksTo(1).durability(resolveDurability(type)));
+        super(material, type, properties.durability(resolveDurability(type)));
         this.armorType = type;
     }
 
@@ -110,7 +112,7 @@ public class PrimordialArmorItem extends ArmorItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (this.armorType == Type.HELMET) {
             tooltipComponents.add(Component.translatable("tooltip.antarchy.primordial_helmet_water_breathing").withStyle(ChatFormatting.AQUA));
         }
@@ -148,10 +150,10 @@ public class PrimordialArmorItem extends ArmorItem {
 
     private static int resolveDurability(Type armorType) {
         return switch (armorType) {
-            case HELMET -> 407;
-            case CHESTPLATE -> 592;
-            case LEGGINGS -> 555;
-            case BOOTS -> 481;
+            case HELMET -> ArmorDurability.forType(Type.HELMET, BASE_DURABILITY_MULTIPLIER);
+            case CHESTPLATE -> ArmorDurability.forType(Type.CHESTPLATE, BASE_DURABILITY_MULTIPLIER);
+            case LEGGINGS -> ArmorDurability.forType(Type.LEGGINGS, BASE_DURABILITY_MULTIPLIER);
+            case BOOTS -> ArmorDurability.forType(Type.BOOTS, BASE_DURABILITY_MULTIPLIER);
         };
     }
 }

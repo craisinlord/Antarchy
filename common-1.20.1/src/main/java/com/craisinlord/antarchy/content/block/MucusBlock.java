@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.block;
 
+import com.craisinlord.antarchy.content.entity.WormEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
@@ -16,9 +17,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class MucusBlock extends GlowLichenBlock {
     private static final VoxelShape DOWN_COLLISION_SHAPE = Shapes.box(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D);
-    private static final double SLIDE_ACCELERATION = 0.025D;
-    private static final double SLIDE_MAX_SPEED = 0.6D;
-    private static final double SLIDE_MIN_SPEED = 0.02D;
+    private static final double SLIDE_ACCELERATION = 0.045D;
+    private static final double SLIDE_MAX_SPEED = 1.2D;
+    private static final double SLIDE_MIN_SPEED = 0.01D;
 
     public MucusBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -30,9 +31,12 @@ public class MucusBlock extends GlowLichenBlock {
     }
 
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        super.entityInside(state, level, pos, entity);
-        if (level.isClientSide || !state.getValue(MultifaceBlock.getFaceProperty(Direction.DOWN))) {
+    public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
+        super.stepOn(level, pos, state, entity);
+        if (level.isClientSide
+                || entity instanceof WormEntity
+                || entity.isShiftKeyDown()
+                || !state.getValue(MultifaceBlock.getFaceProperty(Direction.DOWN))) {
             return;
         }
 

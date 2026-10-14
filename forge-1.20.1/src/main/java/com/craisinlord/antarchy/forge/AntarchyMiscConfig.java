@@ -5,35 +5,37 @@ import net.minecraftforge.common.ForgeConfigSpec;
 public final class AntarchyMiscConfig {
     public static final ForgeConfigSpec SPEC;
 
-    // Elythia
     private static final ForgeConfigSpec.BooleanValue ELYTHIA_FIREFLY_PARTICLES_ENABLED;
 
-    // Dream Sand
-    private static final ForgeConfigSpec.BooleanValue DREAM_SAND_ENABLED;
-    private static final ForgeConfigSpec.DoubleValue  DREAM_SAND_JUMP_VELOCITY_MULTIPLIER;
-    private static final ForgeConfigSpec.DoubleValue  DREAM_SAND_GRAVITY_MULTIPLIER;
-    private static final ForgeConfigSpec.DoubleValue  DREAM_SAND_EFFECT_DURATION_SECONDS;
     private static final ForgeConfigSpec.DoubleValue  DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER;
 
-    // Ichor
     private static final ForgeConfigSpec.BooleanValue ICHOR_WITHER_ENABLED;
 
-    // Hushweed
     private static final ForgeConfigSpec.DoubleValue HUSHWEED_SPORE_LIFETIME_SECONDS;
 
-    // Infinite Dimensions
     private static final ForgeConfigSpec.BooleanValue DISABLE_INFINITY_BOOK_PORTAL_CREATION;
     private static final ForgeConfigSpec.BooleanValue RAINBOW_ANTS_LEAD_TO_INFINITY_DIMENSIONS;
     private static final ForgeConfigSpec.DoubleValue RAINBOW_ANT_INFINITY_EASTER_EGG_CHANCE;
 
-    // Permanent portals
     private static final ForgeConfigSpec.BooleanValue PERMANENT_PORTALS_ENABLED;
     private static final ForgeConfigSpec.BooleanValue PERMANENT_PORTALS_FLINT_AND_STEEL_ENABLED;
     private static final ForgeConfigSpec.BooleanValue ELYTHIA_PORTAL_ENABLED;
     private static final ForgeConfigSpec.BooleanValue THORAXIS_PORTAL_ENABLED;
     private static final ForgeConfigSpec.BooleanValue CAVARYN_PORTAL_ENABLED;
+    private static final ForgeConfigSpec.BooleanValue PORTAL_GUN_CAN_FIRE_THROUGH_GLASS;
+    private static final ForgeConfigSpec.BooleanValue PORTAL_GUN_CAN_FIRE_THROUGH_LIQUID;
+    private static final ForgeConfigSpec.BooleanValue PORTAL_GUN_CAN_PORTALS_RESIZE_WHEN_CREATED;
+    private static final ForgeConfigSpec.BooleanValue PORTAL_GUN_CAN_PORTAL_PROJECTILES_CHUNKLOAD;
+    private static final ForgeConfigSpec.BooleanValue PORTAL_GUN_SEE_THROUGH_PORTALS;
+    private static final ForgeConfigSpec.BooleanValue PORTAL_GUN_FANCY_PORTALS;
+    private static final ForgeConfigSpec.IntValue PORTAL_GUN_MAX_SHOOT_DISTANCE;
+    private static final ForgeConfigSpec.DoubleValue PORTAL_GUN_MIN_FLOOR_EXIT_SPEED;
+    private static final ForgeConfigSpec.IntValue PORTAL_GUN_MAX_LIVE_VIEWS;
+    private static final ForgeConfigSpec.DoubleValue PORTAL_GUN_MAX_EXIT_SPEED;
+    private static final ForgeConfigSpec.BooleanValue PORTAL_GUN_MOON_PULLS_BLOCKS;
+    private static final ForgeConfigSpec.IntValue PORTAL_GUN_MOON_PORTAL_SECONDS;
+    private static final ForgeConfigSpec.IntValue PORTAL_GUN_MOON_BLOCK_CAP;
 
-    // Diamond Minecart
     private static final ForgeConfigSpec.BooleanValue DIAMOND_MINECART_ENABLED;
     private static final ForgeConfigSpec.BooleanValue DIAMOND_MINECART_PLACES_RAILS;
     private static final ForgeConfigSpec.DoubleValue  DIAMOND_MINECART_CRUISE_SPEED;
@@ -44,7 +46,9 @@ public final class AntarchyMiscConfig {
     private static final ForgeConfigSpec.BooleanValue DIAMOND_MINECART_MOB_DAMAGE_ENABLED;
     private static final ForgeConfigSpec.DoubleValue  DIAMOND_MINECART_MAX_MOB_DAMAGE;
 
-    // World / misc toggles
+    private static final ForgeConfigSpec.DoubleValue HOVERBOARD_MAX_SPEED;
+    private static final ForgeConfigSpec.DoubleValue HOVERBOARD_ACCELERATION;
+
     private static final ForgeConfigSpec.BooleanValue DUPLICATOR_TREE_ENABLED;
     private static final ForgeConfigSpec.BooleanValue GLOW_VINES_UNDER_LEAVES;
     private static final ForgeConfigSpec.BooleanValue SWING_THROUGH_GRASS_ENABLED;
@@ -55,28 +59,15 @@ public final class AntarchyMiscConfig {
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
 
-
-        // Elythia
-
         b.push("elythia");
         ELYTHIA_FIREFLY_PARTICLES_ENABLED = b
                 .comment("Whether firefly ambient particles appear at night in the Elythia dimension.")
                 .define("fireflyParticlesEnabled", true);
         b.pop();
 
-
-        // Dream Sand
-
         b.push("dreamSand");
-        DREAM_SAND_ENABLED                   = b.comment("If true, jumping from dream sand applies temporary low gravity until solid ground is touched.").define("enabled", true);
-        DREAM_SAND_JUMP_VELOCITY_MULTIPLIER  = b.comment("Multiplier applied to upward jump velocity when leaving dream sand.")                          .defineInRange("jumpVelocityMultiplier",  1.3D, 0.0D, 16.0D);
-        DREAM_SAND_GRAVITY_MULTIPLIER        = b.comment("Multiplier applied to downward velocity while low gravity is active.")                         .defineInRange("gravityMultiplier",       0.45D, 0.0D, 1.0D);
-        DREAM_SAND_EFFECT_DURATION_SECONDS   = b.comment("Seconds the low-gravity effect remains active after leaving dream sand.")                      .defineInRange("effectDurationSeconds",   7.0D, 0.0D, 60.0D);
-        DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER = b.comment("Multiplier applied to dream sand's own falling-block gravity (how slowly it falls as a block, distinct from the player low-gravity effect).").defineInRange("fallingBlockGravityMultiplier", 0.4D, 0.0D, 16.0D);
+        DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER = b.comment("Multiplier applied to dream sand's falling-block gravity, i.e. how slowly it falls as a block.").defineInRange("fallingBlockGravityMultiplier", 0.4D, 0.0D, 16.0D);
         b.pop();
-
-
-        // Ichor
 
         b.push("ichor");
         ICHOR_WITHER_ENABLED = b
@@ -84,17 +75,11 @@ public final class AntarchyMiscConfig {
                 .define("witherEnabled", true);
         b.pop();
 
-
-        // Hushweed
-
         b.push("hushweed");
         HUSHWEED_SPORE_LIFETIME_SECONDS = b
                 .comment("How long (in seconds) a Hushweed spore projectile stays alive before disappearing.")
                 .defineInRange("sporeLifetimeSeconds", 5.0D, 0.1D, 120.0D);
         b.pop();
-
-
-        // Infinity Dimensions
 
         b.push("infinityDimensions");
         DISABLE_INFINITY_BOOK_PORTAL_CREATION = b
@@ -114,9 +99,6 @@ public final class AntarchyMiscConfig {
                 .defineInRange("rainbowAntInfinityEasterEggChance", 0.01D, 0.0D, 1.0D);
         b.pop();
 
-
-        // Permanent Portals
-
         b.push("permanentPortals");
         PERMANENT_PORTALS_ENABLED = b.comment("Master toggle for sacrifice-activated permanent portals.").define("permanentPortalsEnabled", true);
         PERMANENT_PORTALS_FLINT_AND_STEEL_ENABLED = b.comment("Whether flint and steel can ignite permanent portal frames.").define("permanentPortalsFlintAndSteelEnabled", false);
@@ -125,8 +107,21 @@ public final class AntarchyMiscConfig {
         CAVARYN_PORTAL_ENABLED = b.comment("Whether Myrmite portals to Cavaryn can activate and function.").define("cavarynPortalEnabled", true);
         b.pop();
 
-
-        // Diamond Minecart
+        b.push("portalGun");
+        PORTAL_GUN_CAN_FIRE_THROUGH_GLASS = b.define("canFireThroughGlass", false);
+        PORTAL_GUN_CAN_FIRE_THROUGH_LIQUID = b.define("canFireThroughLiquid", false);
+        PORTAL_GUN_CAN_PORTALS_RESIZE_WHEN_CREATED = b.define("canPortalsResizeWhenCreated", true);
+        PORTAL_GUN_CAN_PORTAL_PROJECTILES_CHUNKLOAD = b.define("canPortalProjectilesChunkload", true);
+        PORTAL_GUN_SEE_THROUGH_PORTALS = b.define("seeThroughPortals", true);
+        PORTAL_GUN_FANCY_PORTALS = b.define("fancyPortals", true);
+        PORTAL_GUN_MAX_SHOOT_DISTANCE = b.defineInRange("maxShootDistance", 10000, 1, Integer.MAX_VALUE);
+        PORTAL_GUN_MAX_LIVE_VIEWS = b.comment("How many portals can show a live see-through view at once. Each one re-renders the world, so higher values cost frame rate. 0 shows only the animated surface.").defineInRange("maxLiveViews", 8, 0, 32);
+        PORTAL_GUN_MIN_FLOOR_EXIT_SPEED = b.comment("Minimum speed in blocks/tick when leaving an upward-facing portal, so the traveller clears it. 0 disables.").defineInRange("minFloorExitSpeed", 0.6D, 0.0D, 4.0D);
+        PORTAL_GUN_MAX_EXIT_SPEED = b.comment("Maximum speed in blocks/tick when leaving a portal. 0 keeps momentum uncapped.").defineInRange("maxExitSpeed", 0.0D, 0.0D, 100.0D);
+        PORTAL_GUN_MOON_PULLS_BLOCKS = b.comment("Whether a portal opened by shooting the moon rips blocks loose and pulls them into space.").define("moonPullsBlocks", true);
+        PORTAL_GUN_MOON_PORTAL_SECONDS = b.comment("How long a moon portal stays open, in seconds.").defineInRange("moonPortalSeconds", 10, 1, 120);
+        PORTAL_GUN_MOON_BLOCK_CAP = b.comment("Maximum number of blocks a single moon portal can pull in.").defineInRange("moonBlockCap", 500, 0, 2000);
+        b.pop();
 
         b.push("diamondMinecart");
         DIAMOND_MINECART_ENABLED            = b.comment("Master toggle for the diamond minecart's custom propulsion and rail-laying behavior.") .define("enabled",           true);
@@ -140,8 +135,10 @@ public final class AntarchyMiscConfig {
         DIAMOND_MINECART_MAX_MOB_DAMAGE     = b.comment("Maximum collision damage dealt at full speed if mob damage is enabled.")               .defineInRange("maxMobDamage",        4.0D,  0.0D, 200.0D);
         b.pop();
 
-
-        // World / visual toggles
+        b.push("hoverboard");
+        HOVERBOARD_MAX_SPEED    = b.comment("Maximum hoverboard speed in blocks/tick while moving forward.").defineInRange("maxSpeed", 6.0D, 0.05D, 12.0D);
+        HOVERBOARD_ACCELERATION = b.comment("Hoverboard speed gained per tick while moving forward. Lower values take longer to reach top speed.").defineInRange("acceleration", 0.05D, 0.001D, 1.0D);
+        b.pop();
 
         b.push("world");
         DUPLICATOR_TREE_ENABLED              = b.comment("If false, duplicator trees do not generate and duplicator saplings produce nothing.").define("duplicatorTreeEnabled",           true);
@@ -159,10 +156,6 @@ public final class AntarchyMiscConfig {
 
     static boolean elythiaFireflyParticlesEnabled()      { return ELYTHIA_FIREFLY_PARTICLES_ENABLED.get(); }
 
-    static boolean dreamSandEnabled()                    { return DREAM_SAND_ENABLED.get(); }
-    static double  dreamSandJumpVelocityMultiplier()     { return DREAM_SAND_JUMP_VELOCITY_MULTIPLIER.get(); }
-    static double  dreamSandGravityMultiplier()          { return DREAM_SAND_GRAVITY_MULTIPLIER.get(); }
-    static double  dreamSandEffectDurationSeconds()      { return DREAM_SAND_EFFECT_DURATION_SECONDS.get(); }
     static double  dreamSandFallingBlockGravityMultiplier() { return DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER.get(); }
 
     static boolean ichorWitherEnabled()                  { return ICHOR_WITHER_ENABLED.get(); }
@@ -184,6 +177,19 @@ public final class AntarchyMiscConfig {
     public static boolean elythiaPortalEnabled()         { return ELYTHIA_PORTAL_ENABLED.get(); }
     public static boolean thoraxisPortalEnabled()        { return THORAXIS_PORTAL_ENABLED.get(); }
     public static boolean cavarynPortalEnabled()         { return CAVARYN_PORTAL_ENABLED.get(); }
+    public static boolean portalGunCanFireThroughGlass() { return PORTAL_GUN_CAN_FIRE_THROUGH_GLASS.get(); }
+    public static boolean portalGunCanFireThroughLiquid() { return PORTAL_GUN_CAN_FIRE_THROUGH_LIQUID.get(); }
+    public static boolean portalGunCanPortalsResizeWhenCreated() { return PORTAL_GUN_CAN_PORTALS_RESIZE_WHEN_CREATED.get(); }
+    public static boolean portalGunCanPortalProjectilesChunkload() { return PORTAL_GUN_CAN_PORTAL_PROJECTILES_CHUNKLOAD.get(); }
+    public static boolean portalGunSeeThroughPortals() { return PORTAL_GUN_SEE_THROUGH_PORTALS.get(); }
+    public static boolean portalGunFancyPortals() { return PORTAL_GUN_FANCY_PORTALS.get(); }
+    public static int portalGunMaxShootDistance() { return PORTAL_GUN_MAX_SHOOT_DISTANCE.get(); }
+    public static double portalGunMinFloorExitSpeed() { return PORTAL_GUN_MIN_FLOOR_EXIT_SPEED.get(); }
+    public static int portalGunMaxLiveViews() { return PORTAL_GUN_MAX_LIVE_VIEWS.get(); }
+    public static double portalGunMaxExitSpeed() { return PORTAL_GUN_MAX_EXIT_SPEED.get(); }
+    public static boolean portalGunMoonPullsBlocks() { return PORTAL_GUN_MOON_PULLS_BLOCKS.get(); }
+    public static int portalGunMoonPortalSeconds() { return PORTAL_GUN_MOON_PORTAL_SECONDS.get(); }
+    public static int portalGunMoonBlockCap() { return PORTAL_GUN_MOON_BLOCK_CAP.get(); }
 
     static boolean diamondMinecartEnabled()              { return DIAMOND_MINECART_ENABLED.get(); }
     static boolean diamondMinecartPlacesRails()          { return DIAMOND_MINECART_PLACES_RAILS.get(); }
@@ -194,4 +200,6 @@ public final class AntarchyMiscConfig {
     static double  diamondMinecartCoastDeceleration()    { return DIAMOND_MINECART_COAST_DECELERATION.get(); }
     static boolean diamondMinecartMobDamageEnabled()     { return DIAMOND_MINECART_MOB_DAMAGE_ENABLED.get(); }
     static double  diamondMinecartMaxMobDamage()         { return DIAMOND_MINECART_MAX_MOB_DAMAGE.get(); }
+    static double  hoverboardMaxSpeed()                  { return HOVERBOARD_MAX_SPEED.get(); }
+    static double  hoverboardAcceleration()              { return HOVERBOARD_ACCELERATION.get(); }
 }

@@ -1,0 +1,18 @@
+{
+  "type": "antarchy:portal_gun_variant",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "antarchy:portal_gun"
+    },
+    {
+      "item": "minecraft:light_blue_dye"
+    },
+    {
+      "item": "minecraft:purple_dye"
+    }
+  ],
+  "result": {
+    "item": "antarchy:portal_gun_atlas"
+  }
+}

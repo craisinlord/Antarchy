@@ -8,11 +8,6 @@ import net.minecraft.client.model.FrogModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.Mth;
 
-/**
- * Reuses vanilla Frog geometry ({@link FrogModel}/{@code ModelLayers.FROG}) for the Frog
- * Glimmer variant instead of an ill-fitting GeckoLib placeholder mesh, with a simplified
- * walk/idle animation (GlimmerEntity has no Frog-specific jump/tongue state).
- */
 public class GlimmerFrogModel extends EntityModel<GlimmerEntity> {
     private final ModelPart root;
     private final ModelPart head;

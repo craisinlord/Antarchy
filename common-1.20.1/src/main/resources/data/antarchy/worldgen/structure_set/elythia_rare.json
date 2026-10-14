@@ -2,29 +2,53 @@
   "structures": [
     {
       "structure": "antarchy:trayaurus_lab",
-      "weight": 1
+      "weight": 2
     },
     {
       "structure": "antarchy:fallen_kingdom_castle",
-      "weight": 2
+      "weight": 3
     },
     {
       "structure": "antarchy:ruined_prison",
-      "weight": 2
+      "weight": 3
+    },
+    {
+      "structure": "antarchy:sign",
+      "weight": 4
+    },
+    {
+      "structure": "antarchy:stampys_house",
+      "weight": 4
+    },
+    {
+      "structure": "antarchy:temple_of_technoblade",
+      "weight": 1
+    },
+    {
+      "structure": "antarchy:basilisk_lair",
+      "weight": 4
     },
     {
       "structure": "antarchy:ruined_arena",
-      "weight": 3
+      "weight": 4
     },
     {
       "structure": "antarchy:toreterror_arena",
-      "weight": 3
+      "weight": 6
+    },
+    {
+      "structure": "antarchy:greenhouse",
+      "weight": 4
+    },
+    {
+      "structure": "antarchy:magical_castle",
+      "weight": 4
     }
   ],
   "placement": {
     "salt": 659843583,
-    "spacing": 75,
-    "separation": 68,
+    "spacing": 37,
+    "separation": 30,
     "type": "integrated_api:advanced_random_spread"
   }
 }

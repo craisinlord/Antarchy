@@ -4,9 +4,9 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.effect.StinkyBehavior;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
@@ -29,6 +29,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.Difficulty;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -72,8 +73,17 @@ public class StinkBugEntity extends Animal implements GeoEntity {
         if (spawnReason == MobSpawnType.SPAWN_EGG || spawnReason == MobSpawnType.SPAWNER || spawnReason == MobSpawnType.COMMAND) {
             return true;
         }
-        return level.getDifficulty() != Difficulty.PEACEFUL
-                && Mob.checkMobSpawnRules(entityType, level, spawnReason, pos, random);
+        BlockPos belowPos = pos.below();
+        BlockPos abovePos = pos.above();
+        if (level.getDifficulty() == Difficulty.PEACEFUL) {
+            return false;
+        }
+        return level.getBlockState(pos).isAir()
+                && (level.getBlockState(pos.above()).isAir() || level.getBlockState(pos.below()).isAir())
+                && level.getFluidState(pos).isEmpty()
+                && (level.getFluidState(pos.above()).isEmpty() || level.getFluidState(pos.below()).isEmpty())
+                && (level.getBlockState(belowPos).isFaceSturdy(level, belowPos, Direction.UP)
+                || level.getBlockState(abovePos).isFaceSturdy(level, abovePos, Direction.DOWN));
     }
 
     @Override

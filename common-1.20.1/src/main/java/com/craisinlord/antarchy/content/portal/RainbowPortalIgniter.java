@@ -13,12 +13,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Converts an unlit obsidian frame near a killed rainbow ant into a real, permanent Infinite Dimensions
- * portal to that ant's assigned dimension. Lights the frame as a normal vanilla Nether portal first, then
- * hands it to Infinity's own portal-creation pipeline (the same one used when a book is thrown into a lit
- * portal), so the result behaves exactly like any other physical Infinity portal from then on.
- */
 public final class RainbowPortalIgniter {
     private static final int SEARCH_RADIUS = 2;
 

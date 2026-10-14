@@ -67,13 +67,13 @@ public class CoralSpikeFeature extends Feature<NoneFeatureConfiguration> {
         CoralSet[] coralSets = coralSets();
         CoralSet coral = coralSets[random.nextInt(coralSets.length)];
 
-        int baseRadius = 2 + random.nextInt(2);           // 2-3 wide at base
-        int totalHeight = 20 + random.nextInt(15);         // 20-34 blocks tall
+        int baseRadius = 2 + random.nextInt(2);
+        int totalHeight = 20 + random.nextInt(15);
 
         double curveAngle = random.nextDouble() * Math.PI * 2;
         double curveDX = Math.cos(curveAngle);
         double curveDZ = Math.sin(curveAngle);
-        double maxCurve = 4.0 + random.nextDouble() * 5.0; // 4-9 block lean at tip
+        double maxCurve = 4.0 + random.nextDouble() * 5.0;
 
         boolean placed = false;
 
@@ -81,12 +81,10 @@ public class CoralSpikeFeature extends Feature<NoneFeatureConfiguration> {
             int blockY = floorY + dy;
             double progress = (double) dy / totalHeight;
 
-            // Quadratic lean -- slow at base, bending hard near tip
             double curveOffset = maxCurve * progress * progress;
             double centerX = origin.getX() + curveDX * curveOffset;
             double centerZ = origin.getZ() + curveDZ * curveOffset;
 
-            // Taper: full width for bottom 25%, then narrows sharply to a point
             double taperT = Math.max(0.0, (progress - 0.25) / 0.75);
             int radius = (int) Math.max(0, baseRadius * (1.0 - taperT * taperT * 1.3));
 
@@ -147,7 +145,6 @@ public class CoralSpikeFeature extends Feature<NoneFeatureConfiguration> {
             }
         }
 
-        // Floor scatter: coral plants, fans, and sea pickles around the base
         int decorCount = 10 + random.nextInt(12);
         for (int i = 0; i < decorCount; i++) {
             int fx = origin.getX() + random.nextInt(13) - 6;
@@ -192,7 +189,6 @@ public class CoralSpikeFeature extends Feature<NoneFeatureConfiguration> {
                     }
                 }
             } else if (decorInWater) {
-                // Sea pickle cluster -- only underwater
                 BlockState pickle = Blocks.SEA_PICKLE.defaultBlockState()
                         .setValue(SeaPickleBlock.PICKLES, 1 + random.nextInt(4));
                 if (pickle.canSurvive(level, decorPos)) {

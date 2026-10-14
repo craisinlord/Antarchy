@@ -1,11 +1,13 @@
 {
-  "parent": "minecraft:adventure/root",
+  "parent": "antarchy:visit_thoraxis",
   "criteria": {
     "craft_gravity_gun": {
       "conditions": {
         "items": [
           {
-            "items": "antarchy:gravity_gun"
+            "items": [
+              "antarchy:gravity_gun"
+            ]
           }
         ]
       },
@@ -19,7 +21,6 @@
     },
     "frame": "task",
     "icon": {
-      "count": 1,
       "item": "antarchy:gravity_gun"
     },
     "show_toast": true,

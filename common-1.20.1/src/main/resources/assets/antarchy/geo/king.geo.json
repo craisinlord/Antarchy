@@ -494,6 +494,21 @@
 						{"origin": [19, 0, 13], "size": [5, 6, 7], "uv": [466, 173], "mirror": true},
 						{"origin": [24, 0, 9], "size": [6, 10, 13], "inflate": 0.01, "uv": [38, 249], "mirror": true}
 					]
+				},
+				{
+					"name": "beam_anchor_center",
+					"parent": "head",
+					"pivot": [0, 91.5, -219]
+				},
+				{
+					"name": "beam_anchor_left",
+					"parent": "L_head",
+					"pivot": [21, 82.5, -219]
+				},
+				{
+					"name": "beam_anchor_right",
+					"parent": "R_head",
+					"pivot": [-21, 82.5, -219]
 				}
 			]
 		}

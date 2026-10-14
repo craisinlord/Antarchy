@@ -2,11 +2,12 @@ package com.craisinlord.antarchy.forge.registry;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.entity.*;
-import com.craisinlord.antarchy.content.entity.CreepingHorrorEntity;
-import com.craisinlord.antarchy.content.entity.LurkingTerrorEntity;
+import com.craisinlord.antarchy.content.entity.CrawlingBlightEntity;
+import com.craisinlord.antarchy.content.entity.SkulkingFrightEntity;
+import com.craisinlord.antarchy.content.entity.ManticoreEntity;
 import com.craisinlord.antarchy.content.entity.basilisk.BasiliskEntity;
 import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyEntity;
-import com.craisinlord.antarchy.content.entity.cloud_shark.CloudSharkEntity;
+import com.craisinlord.antarchy.content.entity.stratoshark.StratosharkEntity;
 import com.craisinlord.antarchy.content.entity.flying_squirrel.FlyingSquirrelEntity;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
 import com.craisinlord.antarchy.content.entity.kraken.TentacleEntity;
@@ -48,7 +49,7 @@ public class AntarchyForgeEntityAttributes {
         ).build());
         event.put(AntarchyForgeEntites.ROLLY_POLLY.get(), RollyPollyEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.DR_TRAYAURUS.get(), Villager.createAttributes().build());
-        event.put(AntarchyForgeEntites.CLOUD_SHARK.get(), CloudSharkEntity.createAttributes().build());
+        event.put(AntarchyForgeEntites.STRATOSHARK.get(), StratosharkEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.KRAKEN.get(), KrakenEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.MISSILE_SQUID.get(), MissileSquidEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.OCTOPUS_BOMB.get(), OctopusBombEntity.createAttributes().build());
@@ -58,18 +59,20 @@ public class AntarchyForgeEntityAttributes {
         event.put(AntarchyForgeEntites.STINK_BUG.get(), StinkBugEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.WASP.get(), WaspEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.BOMBER.get(), BomberEntity.createAttributes().build());
-        event.put(AntarchyForgeEntites.JUMPY_BUG.get(), JumpyBugEntity.createAttributes().build());
+        event.put(AntarchyForgeEntites.SPRINGBUG.get(), SpringbugEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.SPIT_BUG.get(), SpitBugEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.MANTIS.get(), MantisEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.ALPHA_MANTIS.get(), AlphaMantisEntity.createAttributes().build());
-        event.put(AntarchyForgeEntites.TRIFFID.get(), TriffidEntity.createAttributes().build());
+        event.put(AntarchyForgeEntites.FLYTRAP.get(), FlytrapEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.LUCID.get(), LucidEntity.createAttributes().build());
+        event.put(AntarchyForgeEntites.VORTEX.get(), com.craisinlord.antarchy.content.entity.vortex.VortexEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.SCORPION.get(), ScorpionEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.BASILISK.get(), BasiliskEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.EMPEROR_SCORPION.get(), EmperorScorpionEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.TORETERROR.get(), ToreterrorEntity.createAttributes().build());
-        event.put(AntarchyForgeEntites.CREEPING_HORROR.get(), CreepingHorrorEntity.createAttributes().build());
-        event.put(AntarchyForgeEntites.LURKING_TERROR.get(), LurkingTerrorEntity.createAttributes().build());
+        event.put(AntarchyForgeEntites.CRAWLING_BLIGHT.get(), CrawlingBlightEntity.createAttributes().build());
+        event.put(AntarchyForgeEntites.SKULKING_FRIGHT.get(), SkulkingFrightEntity.createAttributes().build());
+        event.put(AntarchyForgeEntites.MANTICORE.get(), ManticoreEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.JERRY.get(), JerryEntity.createAttributes().build());
 
         AttributeSupplier redAntAttributes = buildAntAttributes(AntarchySettings.redAntHealth(), AntarchySettings.redAntMovementSpeed(), AntarchySettings.redAntAttackDamage()).build();
@@ -79,13 +82,19 @@ public class AntarchyForgeEntityAttributes {
         event.put(AntarchyForgeEntites.BROWN_ANT.get(), brownAntAttributes);
         event.put(AntarchyForgeEntites.RAINBOW_ANT.get(), rainbowAntAttributes);
         event.put(AntarchyForgeEntites.MOLEWORM.get(), MolewormEntity.createAttributes().build());
+        event.put(AntarchyForgeEntites.WORM.get(), WormEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.MOLEVORE.get(), MolevoreEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.CHEEP.get(), com.craisinlord.antarchy.content.entity.CheepEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.DORRIE.get(), com.craisinlord.antarchy.content.entity.DorrieEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.HERCULES_BEETLE.get(), com.craisinlord.antarchy.content.entity.HerculesBeetleEntity.createAttributes().build());
+        event.put(AntarchyForgeEntites.PRINCE.get(), com.craisinlord.antarchy.content.entity.royal.PrinceEntity.createAttributes().build());
+        event.put(AntarchyForgeEntites.PRINCESS.get(), com.craisinlord.antarchy.content.entity.royal.PrincessEntity.createAttributes().build());
+        event.put(AntarchyForgeEntites.KING.get(), com.craisinlord.antarchy.content.entity.royal.KingEntity.createAttributes().build());
+        event.put(AntarchyForgeEntites.QUEEN.get(), com.craisinlord.antarchy.content.entity.royal.QueenEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.OURANWOOD_DEER.get(), com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.GLIMMER.get(), com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity.createAttributes().build());
         event.put(AntarchyForgeEntites.ELKA.get(), ElkaEntity.createAttributes().build());
+        event.put(AntarchyForgeEntites.HOVERBOARD.get(), com.craisinlord.antarchy.content.entity.HoverboardEntity.createAttributes().build());
     }
 
     private static AttributeSupplier.Builder buildAntAttributes(double health, double speed, double attackDamage) {

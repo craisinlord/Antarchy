@@ -112,15 +112,15 @@ public class ManticoreEntity extends Monster implements GeoEntity {
                 || spawnReason == MobSpawnType.MOB_SUMMONED) {
             return true;
         }
-        if (pos.getY() >= 0) {
+        if (pos.getY() >= 0 || level.getDifficulty() == Difficulty.PEACEFUL) {
             return false;
         }
+        if (ThoraxisUndersideManager.isUndersideCeilingSpawn(type, level, pos)) {
+            return true;
+        }
         BlockState below = level.getBlockState(pos.below());
-        BlockState above = level.getBlockState(pos.above());
         boolean floorSupport = !below.is(Blocks.BEDROCK) && below.isFaceSturdy(level, pos.below(), Direction.UP);
-        boolean ceilingSupport = !above.is(Blocks.BEDROCK) && above.isFaceSturdy(level, pos.above(), Direction.DOWN);
-        return level.getDifficulty() != Difficulty.PEACEFUL
-                && (floorSupport || ceilingSupport)
+        return floorSupport
                 && level.isEmptyBlock(pos)
                 && Monster.checkMonsterSpawnRules(type, level, spawnReason, pos, random);
     }

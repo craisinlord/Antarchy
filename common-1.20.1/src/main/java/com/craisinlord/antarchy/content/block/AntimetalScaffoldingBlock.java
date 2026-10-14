@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.content.block;
 
 import com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.anthology.gravity.GravityApi;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -64,7 +64,7 @@ public class AntimetalScaffoldingBlock extends ScaffoldingBlock {
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockPos pos = context.getClickedPos();
         Level level = context.getLevel();
-        boolean inverted = context.getPlayer() != null && AntarchyGravityApi.isGravityInverted(context.getPlayer());
+        boolean inverted = context.getPlayer() != null && GravityApi.isGravityInverted(context.getPlayer());
         int distance = getDistance(level, pos, inverted);
         if (inverted && distance >= 7) {
             return null;

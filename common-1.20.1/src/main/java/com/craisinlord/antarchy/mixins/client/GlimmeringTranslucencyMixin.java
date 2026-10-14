@@ -17,8 +17,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntityRenderer.class)
 public abstract class GlimmeringTranslucencyMixin<T extends LivingEntity> {
-    // Vertex-color alpha applied to the base skin render while glimmering, on top of the recolor
-    // overlay, so the body itself reads as see-through rather than just tinted.
     private static final float GLIMMERING_ALPHA = 0x26 / 255.0F;
 
     @Unique
@@ -55,8 +53,6 @@ public abstract class GlimmeringTranslucencyMixin<T extends LivingEntity> {
     @Shadow
     protected abstract RenderType getRenderType(T entity, boolean bodyVisible, boolean translucent, boolean glowingEffect);
 
-    // 1.20.1's EntityModel#renderToBuffer takes separate red/green/blue/alpha floats instead of a
-    // packed color int (1.21.1), so only the alpha argument (index 7) needs modifying here.
     @ModifyArg(
             method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
             at = @At(

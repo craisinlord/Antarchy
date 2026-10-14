@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "hoverboard",
+  "ingredients": [
+    {
+      "tag": "antarchy:hoverboards"
+    },
+    {
+      "item": "minecraft:purple_dye"
+    }
+  ],
+  "result": {
+    "item": "antarchy:hoverboard_purple"
+  }
+}

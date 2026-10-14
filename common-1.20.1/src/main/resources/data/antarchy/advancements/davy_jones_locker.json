@@ -17,7 +17,6 @@
     },
     "frame": "task",
     "icon": {
-      "count": 1,
       "item": "antarchy:kraken_tooth"
     },
     "show_toast": true,

@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:adventure/root",
+  "parent": "antarchy:visit_thoraxis",
   "criteria": {
     "kill_bed_bug": {
       "conditions": {
@@ -17,7 +17,6 @@
     },
     "frame": "task",
     "icon": {
-      "count": 1,
       "item": "antarchy:bed_bug_egg"
     },
     "show_toast": true,

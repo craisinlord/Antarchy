@@ -5,7 +5,6 @@ import com.craisinlord.antarchy.content.network.HerculesBeetleFlightTogglePayloa
 import com.craisinlord.antarchy.content.network.HerculesBeetleJumpInputPayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleMountedAttackPayload;
 import com.craisinlord.antarchy.content.network.HerculesBeetleMountedChargePayload;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 
@@ -33,32 +32,32 @@ public final class HerculesBeetleClientHandler {
 
         boolean pressingJump = mc.options.keyJump.isDown();
         if (pressingJump != wasPressingJump) {
-            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.sendToServer(new HerculesBeetleJumpInputPayload(pressingJump), HerculesBeetleJumpInputPayload.STREAM_CODEC, HerculesBeetleJumpInputPayload.TYPE);
+            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.send(new HerculesBeetleJumpInputPayload(pressingJump));
             wasPressingJump = pressingJump;
         }
 
         boolean pressingAttack = mc.options.keyAttack.isDown();
         if (pressingAttack && !wasPressingAttack) {
-            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.sendToServer(new HerculesBeetleMountedAttackPayload(), HerculesBeetleMountedAttackPayload.STREAM_CODEC, HerculesBeetleMountedAttackPayload.TYPE);
+            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.send(new HerculesBeetleMountedAttackPayload());
         }
         wasPressingAttack = pressingAttack;
 
-        boolean charging = AntarchyKeyBindings.isHerculesBeetleChargePressed();
+        boolean charging = AntarchyKeyBindings.isMountSpecialPressed();
         if (charging != wasCharging) {
-            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.sendToServer(new HerculesBeetleMountedChargePayload(charging), HerculesBeetleMountedChargePayload.STREAM_CODEC, HerculesBeetleMountedChargePayload.TYPE);
+            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.send(new HerculesBeetleMountedChargePayload(charging));
         }
         wasCharging = charging;
 
-        boolean pressingFlightToggle = AntarchyKeyBindings.isHerculesBeetleFlightTogglePressed();
+        boolean pressingFlightToggle = AntarchyKeyBindings.isMountFlightTogglePressed();
         if (pressingFlightToggle && !wasPressingFlightToggle) {
-            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.sendToServer(new HerculesBeetleFlightTogglePayload(), HerculesBeetleFlightTogglePayload.STREAM_CODEC, HerculesBeetleFlightTogglePayload.TYPE);
+            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.send(new HerculesBeetleFlightTogglePayload());
         }
         wasPressingFlightToggle = pressingFlightToggle;
     }
 
     private static void resetAll() {
         if (wasPressingJump) {
-            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.sendToServer(new HerculesBeetleJumpInputPayload(false), HerculesBeetleJumpInputPayload.STREAM_CODEC, HerculesBeetleJumpInputPayload.TYPE);
+            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.send(new HerculesBeetleJumpInputPayload(false));
             wasPressingJump = false;
         }
         wasPressingAttack = false;
