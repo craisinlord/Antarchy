@@ -2,10 +2,15 @@ package com.craisinlord.antarchy.content.entity.portal;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.entity.ManticoreEntity;
+import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -24,6 +29,7 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -47,29 +53,47 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         NORMAL,
         UNSTABLE,
         LUCID,
-        COLLAPSING
+        COLLAPSING,
+        OPENING
     }
 
     private static final EntityDataAccessor<Integer> STATE =
             SynchedEntityData.defineId(DimensionalTearEntity.class, EntityDataSerializers.INT);
-    private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation ACTIVE_IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation CALM_IDLE_ANIM = RawAnimation.begin().thenLoop("idle2");
+    private static final RawAnimation OPENING_ANIM = RawAnimation.begin().thenPlay("opening").thenLoop("idle2");
+    private static final RawAnimation CLOSING_ANIM = RawAnimation.begin().thenPlayAndHold("closing");
     private static final int DEFAULT_LIFETIME_TICKS = 20 * 60 * 20;
-    private static final int COLLAPSE_WARNING_TICKS = 20 * 20;
+    private static final int OPENING_ANIMATION_TICKS = 20;
+    private static final int MANTICORE_EMERGENCE_TICKS = OPENING_ANIMATION_TICKS + 20;
+    private static final int CLOSING_ANIMATION_TICKS = 10;
     private static final int EVENT_WARNING_TICKS = 80;
     private static final int TELEPORT_COOLDOWN_TICKS = 60;
     private static final double PORTAL_RADIUS = 1.35D;
     private static final double EXIT_OFFSET = 2.4D;
     private static final Map<UUID, Long> TELEPORT_COOLDOWNS = new HashMap<>();
     private static long lastTeleportCooldownCleanupTick = Long.MIN_VALUE;
+    private static final Map<UUID, Set<UUID>> QUEEN_TEAR_IDS = new HashMap<>();
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private UUID linkedTearId;
+    @Nullable
+    private DimensionalTearEntity linkedTear;
     private Vec3 linkedFallbackPos = Vec3.ZERO;
     private int ageTicks;
     private int lifetimeTicks = DEFAULT_LIFETIME_TICKS;
     private int eventTicks;
     private int nextEventTicks;
     private TearState pendingEvent = TearState.NORMAL;
+    @Nullable
+    private UUID queenOwnerId;
+    private int queenManticoreCount;
+    private boolean queenManticoreSpawned;
+    @Nullable
+    private UUID staffOwnerId;
+    private int staffManticoreCount;
+    private boolean staffManticoreSpawned;
+    private boolean gauntletVisualOnly;
 
     public DimensionalTearEntity(EntityType<? extends DimensionalTearEntity> entityType, Level level) {
         super(entityType, level);
@@ -86,23 +110,33 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         return tear;
     }
 
-    public static DimensionalTearEntity createQueenManticoreTear(ServerLevel level, Vec3 pos, float yaw,
-                                                                  int lifetimeTicks, UUID queenId, int count) {
-        return create(level, pos, yaw, lifetimeTicks);
+    public static DimensionalTearEntity createGauntletVisual(ServerLevel level, Vec3 pos, float yaw, int lifetimeTicks) {
+        DimensionalTearEntity tear = create(level, pos, yaw, lifetimeTicks);
+        tear.gauntletVisualOnly = true;
+        return tear;
     }
 
-    public static void discardQueenOwnedTears(ServerLevel level, UUID queenId) {
-        // The 1.20 compatibility entity does not yet persist the queen-owner index.
+    public static DimensionalTearEntity createQueenManticoreTear(ServerLevel level, Vec3 pos, float yaw,
+                                                                  int lifetimeTicks, UUID queenId, int count) {
+        DimensionalTearEntity tear = create(level, pos, yaw, lifetimeTicks);
+        tear.queenOwnerId = queenId;
+        tear.queenManticoreCount = Math.max(0, count);
+        QUEEN_TEAR_IDS.computeIfAbsent(queenId, ignored -> new HashSet<>()).add(tear.getUUID());
+        return tear;
     }
 
     public static DimensionalTearEntity createStaffSummonTear(ServerLevel level, Vec3 pos, float yaw,
                                                                int lifetimeTicks, UUID playerId, int count) {
-        return create(level, pos, yaw, lifetimeTicks);
+        DimensionalTearEntity tear = create(level, pos, yaw, lifetimeTicks);
+        tear.staffOwnerId = playerId;
+        tear.staffManticoreCount = Math.max(1, count);
+        return tear;
     }
 
     public void linkTo(DimensionalTearEntity other) {
         this.linkedTearId = other.getUUID();
         this.linkedFallbackPos = other.position();
+        this.linkedTear = other;
     }
 
     @Override
@@ -120,12 +154,38 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
 
         this.ageTicks++;
         cleanupTeleportCooldowns(this.level().getGameTime());
-        if (this.ageTicks >= this.lifetimeTicks - COLLAPSE_WARNING_TICKS) {
+        if (this.ageTicks == 1) {
+            this.level().playSound(null, this.blockPosition(), AntarchySoundEvents.DIMENSIONAL_TEAR_OPEN.get(), SoundSource.HOSTILE, 1.0F, 1.0F);
+        }
+        if (this.ageTicks < OPENING_ANIMATION_TICKS) {
+            this.setTearState(TearState.OPENING);
+        } else if (this.ageTicks >= this.lifetimeTicks - CLOSING_ANIMATION_TICKS) {
+            if (this.ageTicks == this.lifetimeTicks - CLOSING_ANIMATION_TICKS) {
+                this.level().playSound(null, this.blockPosition(), AntarchySoundEvents.DIMENSIONAL_TEAR_CLOSE.get(), SoundSource.HOSTILE, 1.0F, 1.0F);
+            }
             this.setTearState(TearState.COLLAPSING);
+        } else if (this.getTearState() == TearState.OPENING || this.getTearState() == TearState.COLLAPSING) {
+            this.setTearState(TearState.NORMAL);
         }
         if (this.ageTicks >= this.lifetimeTicks) {
-            this.removeLinkedPair();
+            if (this.gauntletVisualOnly) {
+                this.discard();
+            } else {
+                this.removeLinkedPair();
+            }
             return;
+        }
+
+        if (this.gauntletVisualOnly) {
+            return;
+        }
+
+        if (this.queenOwnerId != null && this.ageTicks == MANTICORE_EMERGENCE_TICKS) {
+            this.spawnQueenManticores((ServerLevel) this.level());
+        }
+
+        if (this.staffOwnerId != null && this.ageTicks == MANTICORE_EMERGENCE_TICKS) {
+            this.spawnStaffManticores((ServerLevel) this.level());
         }
 
         DimensionalTearEntity linked = this.findLinkedTear();
@@ -134,12 +194,15 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
             return;
         }
 
-        this.tickMobEvent((ServerLevel) this.level());
-        this.tickTeleport(linked);
+        if (this.staffOwnerId == null && this.ageTicks >= OPENING_ANIMATION_TICKS) {
+            this.tickMobEvent((ServerLevel) this.level());
+            this.tickTeleport(linked);
+        }
     }
 
     private void tickMobEvent(ServerLevel level) {
-        if (this.getTearState() == TearState.COLLAPSING || level.getDifficulty() == Difficulty.PEACEFUL) {
+        TearState state = this.getTearState();
+        if (state == TearState.OPENING || state == TearState.COLLAPSING || level.getDifficulty() == Difficulty.PEACEFUL) {
             return;
         }
 
@@ -182,7 +245,86 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         mob.setDeltaMovement(this.getViewVector(1.0F).scale(0.35D).add(0.0D, 0.08D, 0.0D));
         mob.setNoGravity(true);
         level.addFreshEntity(mob);
-        level.playSound(null, this.blockPosition(), eventState == TearState.LUCID ? SoundEvents.AMETHYST_BLOCK_CHIME : SoundEvents.ENDERMAN_SCREAM, SoundSource.HOSTILE, 0.75F, eventState == TearState.LUCID ? 1.45F : 0.85F);
+        level.playSound(null, this.blockPosition(), AntarchySoundEvents.DIMENSIONAL_TEAR_CREATURE_LEAVES.get(), SoundSource.HOSTILE, 0.75F, eventState == TearState.LUCID ? 1.15F : 0.9F);
+    }
+
+    private void spawnQueenManticores(ServerLevel level) {
+        if (this.queenManticoreSpawned) {
+            return;
+        }
+        this.queenManticoreSpawned = true;
+        Entity owner = level.getEntity(this.queenOwnerId);
+        if (!(owner instanceof QueenEntity queen) || !queen.isAlive()) {
+            return;
+        }
+        LivingEntity target = queen.getTarget();
+        for (int i = 0; i < this.queenManticoreCount; i++) {
+            if (ManticoreEntity.countSummonedBy(level, queen.getUUID()) >= com.craisinlord.antarchy.config.AntarchySettings.queenManticoreCap()) {
+                break;
+            }
+            ManticoreEntity manticore = AntarchyObjects.MANTICORE.get().create(level);
+            if (manticore == null) {
+                break;
+            }
+            Vec3 exit = this.exitPosition().add(0.0D, 0.8D + i * 0.35D, 0.0D);
+            manticore.moveTo(exit.x, exit.y, exit.z, this.getYRot(), 0.0F);
+            if (!level.noCollision(manticore)) {
+                manticore.discard();
+                continue;
+            }
+            manticore.finalizeSpawn(level, level.getCurrentDifficultyAt(BlockPos.containing(exit)), MobSpawnType.MOB_SUMMONED, null, null);
+            manticore.markQueenSummoned(queen.getUUID());
+            if (target != null && target.isAlive()) {
+                manticore.setTarget(target);
+            }
+            manticore.setDeltaMovement(this.getViewVector(1.0F).scale(0.7D).add(0.0D, 0.18D, 0.0D));
+            manticore.setNoGravity(false);
+            level.addFreshEntity(manticore);
+        }
+    }
+
+    private void spawnStaffManticores(ServerLevel level) {
+        if (this.staffManticoreSpawned) {
+            return;
+        }
+        this.staffManticoreSpawned = true;
+        Entity owner = level.getEntity(this.staffOwnerId);
+        if (!(owner instanceof net.minecraft.world.entity.player.Player player) || !player.isAlive()) {
+            return;
+        }
+        for (int i = 0; i < this.staffManticoreCount; i++) {
+            ManticoreEntity manticore = AntarchyObjects.MANTICORE.get().create(level);
+            if (manticore == null) {
+                continue;
+            }
+            Vec3 exit = this.exitPosition().add(0.0D, 0.8D + i * 0.35D, 0.0D);
+            manticore.moveTo(exit.x, exit.y, exit.z, this.getYRot(), 0.0F);
+            if (!level.noCollision(manticore)) {
+                manticore.discard();
+                continue;
+            }
+            manticore.finalizeSpawn(level, level.getCurrentDifficultyAt(BlockPos.containing(exit)), MobSpawnType.MOB_SUMMONED, null, null);
+            manticore.markPlayerSummoned(player.getUUID());
+            if (player.getLastHurtMob() != null && player.getLastHurtMob().isAlive()) {
+                manticore.setTarget(player.getLastHurtMob());
+            }
+            manticore.setDeltaMovement(this.getViewVector(1.0F).scale(0.7D).add(0.0D, 0.18D, 0.0D));
+            manticore.setNoGravity(false);
+            level.addFreshEntity(manticore);
+        }
+    }
+
+    public static void discardQueenOwnedTears(ServerLevel level, UUID queenId) {
+        Set<UUID> tearIds = QUEEN_TEAR_IDS.remove(queenId);
+        if (tearIds == null) {
+            return;
+        }
+        for (UUID tearId : tearIds) {
+            Entity entity = level.getEntity(tearId);
+            if (entity instanceof DimensionalTearEntity tear) {
+                tear.discard();
+            }
+        }
     }
 
     @Nullable
@@ -232,7 +374,8 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         entity.setDeltaMovement(motion);
         entity.hasImpulse = true;
         if (entity instanceof LivingEntity living) {
-            living.addEffect(new MobEffectInstance(AntarchyObjects.INVERTED_EFFECT.get(), AntarchySettings.dimensionalTearInvertedDurationTicks(), 0));
+            int invertedDuration = AntarchySettings.dimensionalTearInvertedDurationTicks();
+            living.addEffect(new MobEffectInstance(AntarchyObjects.INVERTED_EFFECT.get(), invertedDuration, 0));
         }
         this.level().playSound(null, this.blockPosition(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 0.7F, 0.65F + this.random.nextFloat() * 0.2F);
     }
@@ -256,11 +399,15 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
 
     @Nullable
     private DimensionalTearEntity findLinkedTear() {
+        if (this.linkedTear != null && this.linkedTear.isAlive()) {
+            return this.linkedTear;
+        }
         if (!(this.level() instanceof ServerLevel serverLevel) || this.linkedTearId == null) {
             return null;
         }
         Entity entity = serverLevel.getEntity(this.linkedTearId);
-        return entity instanceof DimensionalTearEntity tear ? tear : null;
+        this.linkedTear = entity instanceof DimensionalTearEntity tear ? tear : null;
+        return this.linkedTear;
     }
 
     private void removeLinkedPair() {
@@ -269,6 +416,20 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
             linked.discard();
         }
         this.discard();
+    }
+
+    @Override
+    public void remove(RemovalReason reason) {
+        if (this.queenOwnerId != null) {
+            Set<UUID> tearIds = QUEEN_TEAR_IDS.get(this.queenOwnerId);
+            if (tearIds != null) {
+                tearIds.remove(this.getUUID());
+                if (tearIds.isEmpty()) {
+                    QUEEN_TEAR_IDS.remove(this.queenOwnerId);
+                }
+            }
+        }
+        super.remove(reason);
     }
 
     private int randomEventDelay() {
@@ -285,6 +446,10 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
 
     private void setTearState(TearState state) {
         this.entityData.set(STATE, state.ordinal());
+    }
+
+    public boolean shouldPlayIdleSound() {
+        return this.getTearState() != TearState.OPENING;
     }
 
     private void tickClientParticles() {
@@ -307,6 +472,16 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
     @Override
     public boolean isInvulnerableTo(DamageSource damageSource) {
         return true;
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        if (this.queenOwnerId != null && source.getDirectEntity() instanceof Projectile
+                && !this.level().isClientSide) {
+            this.removeLinkedPair();
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -340,12 +515,18 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         tag.putInt("EventTicks", this.eventTicks);
         tag.putInt("NextEventTicks", this.nextEventTicks);
         tag.putInt("PendingEvent", this.pendingEvent.ordinal());
+        tag.putBoolean("GauntletVisualOnly", this.gauntletVisualOnly);
         if (this.linkedTearId != null) {
             tag.putUUID("LinkedTearId", this.linkedTearId);
         }
         tag.putDouble("LinkedX", this.linkedFallbackPos.x);
         tag.putDouble("LinkedY", this.linkedFallbackPos.y);
         tag.putDouble("LinkedZ", this.linkedFallbackPos.z);
+        if (this.queenOwnerId != null) {
+            tag.putUUID("QueenOwner", this.queenOwnerId);
+            tag.putInt("QueenManticoreCount", this.queenManticoreCount);
+            tag.putBoolean("QueenManticoreSpawned", this.queenManticoreSpawned);
+        }
     }
 
     @Override
@@ -357,10 +538,16 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         int event = tag.getInt("PendingEvent");
         TearState[] states = TearState.values();
         this.pendingEvent = event >= 0 && event < states.length ? states[event] : TearState.NORMAL;
+        this.gauntletVisualOnly = tag.getBoolean("GauntletVisualOnly");
         if (tag.hasUUID("LinkedTearId")) {
             this.linkedTearId = tag.getUUID("LinkedTearId");
         }
         this.linkedFallbackPos = new Vec3(tag.getDouble("LinkedX"), tag.getDouble("LinkedY"), tag.getDouble("LinkedZ"));
+        if (tag.hasUUID("QueenOwner")) {
+            this.queenOwnerId = tag.getUUID("QueenOwner");
+            this.queenManticoreCount = tag.getInt("QueenManticoreCount");
+            this.queenManticoreSpawned = tag.getBoolean("QueenManticoreSpawned");
+        }
     }
 
     @Override
@@ -369,13 +556,19 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
     }
 
     private PlayState tearController(AnimationState<DimensionalTearEntity> state) {
-        double speed = switch (this.getTearState()) {
-            case UNSTABLE, COLLAPSING -> 1.8D;
+        TearState tearState = this.getTearState();
+        double speed = switch (tearState) {
+            case UNSTABLE -> 1.8D;
             case LUCID -> 0.65D;
             default -> 1.0D;
         };
         state.getController().setAnimationSpeed(speed);
-        return state.setAndContinue(IDLE_ANIM);
+        return switch (tearState) {
+            case OPENING -> state.setAndContinue(OPENING_ANIM);
+            case COLLAPSING -> state.setAndContinue(CLOSING_ANIM);
+            case LUCID, UNSTABLE -> state.setAndContinue(ACTIVE_IDLE_ANIM);
+            default -> state.setAndContinue(CALM_IDLE_ANIM);
+        };
     }
 
     @Override

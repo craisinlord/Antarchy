@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "ingredient": {
-    "item": "antarchy:cut_titanium"
-  },
-  "result": {
-    "id": "antarchy:cut_titanium_stairs"
-  }
-}

@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:adventure/root",
+  "parent": "antarchy:visit_elythia",
   "criteria": {
     "impossible": {
       "trigger": "minecraft:impossible"
@@ -12,7 +12,6 @@
     },
     "frame": "task",
     "icon": {
-      "count": 1,
       "item": "antarchy:glimmer_bottle"
     },
     "show_toast": true,

@@ -15,10 +15,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
-/**
- * Thrown out by the worm hook item. Sticks into the first block it hits and stays there,
- * anchoring a swing rope back to the thrower until the player detaches.
- */
 public class WormHookProjectileEntity extends ThrowableItemProjectile {
     private boolean stuck = false;
 

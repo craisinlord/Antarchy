@@ -4,6 +4,8 @@ import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.mixins.AccessorFireBlock;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -15,6 +17,21 @@ public class DreamFireBlock extends FireBlock {
     public DreamFireBlock(BlockBehaviour.Properties properties) {
         super(properties);
         this.copyVanillaFlammability();
+    }
+
+    @Override
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (level.getBlockState(pos.below()).is(AntarchyTags.Blocks.DREAM_FIRE_BASE_BLOCKS)) {
+            if (!this.canSurvive(state, level, pos)) {
+                level.removeBlock(pos, false);
+                return;
+            }
+
+            level.scheduleTick(pos, this, 30 + random.nextInt(10));
+            return;
+        }
+
+        super.tick(state, level, pos, random);
     }
 
     @Override

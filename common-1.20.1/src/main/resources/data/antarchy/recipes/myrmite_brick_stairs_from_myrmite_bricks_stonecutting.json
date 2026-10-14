@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:myrmite_bricks"
+  },
+  "result": "antarchy:myrmite_brick_stairs",
+  "count": 1
+}

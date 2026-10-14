@@ -6,8 +6,12 @@ import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
-import com.craisinlord.antarchy.content.entity.ScorpionEntity;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -16,8 +20,10 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.Difficulty;
@@ -33,17 +39,16 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -56,6 +61,9 @@ import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 public class EmperorScorpionEntity extends Monster implements GeoEntity {
     private static final byte CLAW_ATTACK_EVENT = 4;
@@ -78,18 +86,32 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     private static final double CLAW_LUNGE_LIFT = 0.02D;
     private static final double STING_LUNGE_SPEED = 0.08D;
     private static final double STING_LUNGE_LIFT = 0.01D;
-    private static final double CLAW_RANGE = 5.25D;
-    private static final double STING_RANGE = 5.75D;
+    private static final double CLAW_REACH = 5.0D;
+    private static final double STING_REACH = 6.0D;
+    private static final double CLAW_HIT_REACH = 6.25D;
+    private static final double STING_HIT_REACH = 7.5D;
+    private static final double DIRECT_APPROACH_RANGE = 12.0D;
+    private static final float DIRECT_APPROACH_TURN_RATE = 10.0F;
+    private static final float DIRECT_APPROACH_ALIGN_THRESHOLD = 45.0F;
     private static final int HARDEN_START_TICKS = 11;
     private static final int HARDEN_END_TICKS = 20;
     private static final int HARDEN_HEAL_INTERVAL_TICKS = 20;
     private static final float HARDEN_HEAL_AMOUNT = 2.0F;
     private static final int HARDEN_MIN_DURATION_TICKS = 100;
     private static final int HARDEN_MAX_DURATION_TICKS = 200;
+    private static final double ENCOUNTER_HOME_RADIUS = 72.0D;
+    private static final double ENCOUNTER_LEASH_RADIUS = 96.0D;
+    private static final double HOME_REACHED_RADIUS = 9.0D;
+    private static final double FORCED_RETURN_RADIUS = 144.0D;
+    private static final int RESET_DELAY_TICKS = 240;
+    private static final double HOME_RETURN_SPEED = 1.0D;
+    private static final double NEARBY_SCORPION_CHECK_RADIUS = 32.0D;
 
     private static final ResourceKey<Level> THORAXIS_KEY =
             ResourceKey.create(Registries.DIMENSION,
                     new ResourceLocation(Antarchy.MODID, "thoraxis"));
+    private static final ResourceKey<net.minecraft.world.level.biome.Biome> DREAM_DUNES = ResourceKey.create(
+            Registries.BIOME, new ResourceLocation(Antarchy.MODID, "dream_dunes"));
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
@@ -114,12 +136,14 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     private int hardenDurationTicks;
     private int hardenHealTicks;
     private int hardenSummonedScorpions;
-    private float hardenLockedYaw;
-    private float hardenLockedPitch;
+    private int disengageTicks;
     private boolean attackDamageApplied;
     private AttackType currentAttack = AttackType.NONE;
     private HardenPhase hardenPhase = HardenPhase.NONE;
+    private AttackType previousAttack = AttackType.NONE;
+    @Nullable private BlockPos encounterHome;
     @Nullable private LivingEntity attackTarget;
+    private final Set<UUID> summonedScorpionIds = new HashSet<>();
     private boolean hasTakenDamage;
 
     public EmperorScorpionEntity(EntityType<? extends EmperorScorpionEntity> entityType, Level level) {
@@ -140,6 +164,17 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     }
 
     @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
+            MobSpawnType spawnReason, @Nullable net.minecraft.world.entity.SpawnGroupData spawnData,
+            @Nullable net.minecraft.nbt.CompoundTag dataTag) {
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.emperorScorpionHealth());
+        if (ThoraxisUndersideManager.isUndersideCeilingSpot(level, this.blockPosition(), this.getType())) {
+            ThoraxisUndersideManager.applyUndersideInversion(this);
+        }
+        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData, dataTag);
+    }
+
+    @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(ANIMATION_STATE, ANIM_IDLE);
@@ -151,8 +186,6 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new EmperorScorpionCombatGoal());
         this.goalSelector.addGoal(5, new RandomStrollGoal(this, 0.8D));
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 12.0F));
-        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
@@ -164,13 +197,17 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (BossCombatUtil.isMagicWarded(this) && BossCombatUtil.isMagicBurstSource(source)) {
+            amount *= (1.0F - (float) AntarchySettings.bossMagicWardReductionFraction());
+        }
         if (this.isHardenedStateActive()) {
             return false;
         }
-        amount = BossCombatUtil.capSingleHitAtHalfHealth(this, amount);
+        float preHealth = this.getHealth();
         boolean hurt = super.hurt(source, amount);
         if (hurt) {
             this.hasTakenDamage = true;
+            BossCombatUtil.clampHalfHealthCrossing(this, preHealth);
         }
         return hurt;
     }
@@ -205,8 +242,17 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         if (!level.getLevel().dimension().equals(THORAXIS_KEY)) {
             return false;
         }
-        return level.getDifficulty() != Difficulty.PEACEFUL
-                && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);
+        if (level.getDifficulty() == Difficulty.PEACEFUL) {
+            return false;
+        }
+        if (ThoraxisUndersideManager.isUndersideCeilingSpawn(entityType, level, pos)) {
+            return true;
+        }
+        if (pos.getY() < 0 && level.getBiome(pos).is(DREAM_DUNES) && level.isEmptyBlock(pos)) {
+            BlockState below = level.getBlockState(pos.below());
+            return !below.is(Blocks.BEDROCK) && below.isFaceSturdy(level, pos.below(), Direction.UP);
+        }
+        return Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);
     }
 
     @Override
@@ -215,14 +261,13 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     }
 
     @Override
-    public int getMaxHeadYRot() {
-        return 40;
-    }
-
-    @Override
     public void tick() {
         super.tick();
+        if (!this.level().isClientSide) {
+            this.tickEncounterState();
+        }
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+        this.bossEvent.setVisible(this.shouldShowBossBar());
 
         if (this.clawCooldownTicks > 0) {
             this.clawCooldownTicks--;
@@ -289,6 +334,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         }
         this.attackTarget = target;
         this.currentAttack = attackType;
+        this.previousAttack = attackType;
         this.attackAnimTicks = attackType.animTicks();
         this.attackDamageApplied = false;
         this.getNavigation().stop();
@@ -309,7 +355,6 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
             return;
         }
 
-        this.getLookControl().setLookAt(this.attackTarget, 30.0F, 30.0F);
         if (!this.attackDamageApplied
                 && this.attackAnimTicks == this.currentAttack.hitTick()
                 && this.canHitAttackTarget(this.attackTarget, this.currentAttack)) {
@@ -323,8 +368,11 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     }
 
     private boolean canHitAttackTarget(LivingEntity target, AttackType attackType) {
-        double range = attackType == AttackType.STING ? STING_RANGE : CLAW_RANGE;
-        return this.distanceToSqr(target) <= range * range && this.hasLineOfSight(target);
+        if (!target.isAlive() || !this.hasLineOfSight(target)) {
+            return false;
+        }
+        double reach = attackType == AttackType.STING ? STING_HIT_REACH : CLAW_HIT_REACH;
+        return this.distanceToSqr(target) <= reach * reach;
     }
 
     private void resetAttackState() {
@@ -332,6 +380,12 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         this.attackDamageApplied = false;
         this.currentAttack = AttackType.NONE;
         this.attackTarget = null;
+    }
+
+    private float approachYaw(float current, float target, float maxDeltaPerTick) {
+        float delta = Mth.wrapDegrees(target - current);
+        delta = Math.max(-maxDeltaPerTick, Math.min(maxDeltaPerTick, delta));
+        return current + delta;
     }
 
     private void tickHardenState() {
@@ -350,7 +404,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
             case CASTING -> {
                 if (this.hardenCastTicks % this.hardenCastSpawnTicks == 0
                         && this.hardenSummonedScorpions < AntarchySettings.emperorScorpionMaxSummonedScorpions()
-                        && this.countNearbyScorpionMinions() < AntarchySettings.emperorScorpionMaxNearbyScorpions()) {
+                        && this.countOwnedNearbyScorpionMinions() < AntarchySettings.emperorScorpionMaxNearbyScorpions()) {
                     this.summonScorpionMinion();
                     this.hardenSummonedScorpions++;
                     if (this.hardenSummonedScorpions >= AntarchySettings.emperorScorpionMaxSummonedScorpions()) {
@@ -363,15 +417,14 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
                 }
             }
             case START -> {
-                this.lockHardenRotation();
                 if (--this.hardenStateTicks <= 0) {
                     this.beginHardened();
                 }
             }
             case ACTIVE -> {
-                this.lockHardenRotation();
-                Vec3 motion = this.getDeltaMovement();
-                this.setDeltaMovement(0.0D, motion.y, 0.0D);
+                GravityDirection direction = GravityApi.getGravityDirection(this);
+                Vec3 motion = GravityRotationUtil.vecWorldToPlayer(this.getDeltaMovement(), direction);
+                this.setDeltaMovement(GravityRotationUtil.vecPlayerToWorld(0.0D, motion.y, 0.0D, direction));
                 if (--this.hardenDurationTicks <= 0) {
                     this.beginHardeningEnd();
                     return;
@@ -382,12 +435,12 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
                 }
             }
             case END -> {
-                this.lockHardenRotation();
-                Vec3 motion = this.getDeltaMovement();
-                this.setDeltaMovement(0.0D, motion.y, 0.0D);
+                GravityDirection direction = GravityApi.getGravityDirection(this);
+                Vec3 motion = GravityRotationUtil.vecWorldToPlayer(this.getDeltaMovement(), direction);
+                this.setDeltaMovement(GravityRotationUtil.vecPlayerToWorld(0.0D, motion.y, 0.0D, direction));
                 if (--this.hardenStateTicks <= 0) {
                     this.setHardenPhase(HardenPhase.NONE);
-                    this.hardenCooldownTicks = Math.max(1, AntarchySettings.emperorScorpionSummonIntervalTicks());
+                    this.hardenCooldownTicks = Math.max(1, AntarchySettings.emperorScorpionHardenCooldownTicks());
                 }
             }
         }
@@ -402,14 +455,13 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         this.hardenHealTicks = 0;
         this.hardenSummonedScorpions = 0;
         this.resetAttackState();
+        this.previousAttack = AttackType.NONE;
         this.getNavigation().stop();
     }
 
     private void beginHardening() {
         this.setHardenPhase(HardenPhase.START);
         this.hardenStateTicks = HARDEN_START_TICKS;
-        this.hardenLockedYaw = this.getYRot();
-        this.hardenLockedPitch = this.getXRot();
         this.playSound(AntarchySoundEvents.EMPEROR_SCORPION_ROAR.get(), 1.0F, 0.95F + this.random.nextFloat() * 0.05F);
         this.setAggressive(false);
     }
@@ -426,13 +478,12 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         this.setAggressive(false);
     }
 
-    private static final double NEARBY_SCORPION_CHECK_RADIUS = 24.0D;
-
-    private int countNearbyScorpionMinions() {
+    private int countOwnedNearbyScorpionMinions() {
+        UUID ownerId = this.getUUID();
         return this.level().getEntitiesOfClass(
                 ScorpionEntity.class,
                 this.getBoundingBox().inflate(NEARBY_SCORPION_CHECK_RADIUS),
-                Entity::isAlive
+                scorpion -> scorpion.isAlive() && scorpion.isSummonedFor(ownerId)
         ).size();
     }
 
@@ -446,28 +497,54 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
             return;
         }
 
-        Vec3 ring = Vec3.directionFromRotation(0.0F, this.random.nextFloat() * 360.0F)
+        Vec3 anchor = this.getTarget() != null ? this.getTarget().position() : this.position();
+        GravityDirection direction = GravityApi.getGravityDirection(this);
+        Vec3 localRing = Vec3.directionFromRotation(0.0F, this.random.nextFloat() * 360.0F)
                 .scale(2.75D + this.random.nextDouble() * 1.75D);
-        BlockPos spawnPos = BlockPos.containing(this.getX() + ring.x, this.getY(), this.getZ() + ring.z);
-        scorpion.moveTo(spawnPos.getX() + 0.5D, spawnPos.getY(), spawnPos.getZ() + 0.5D, this.random.nextFloat() * 360.0F, 0.0F);
+        Vec3 worldRing = GravityRotationUtil.vecPlayerToWorld(localRing, direction);
+        BlockPos spawnPos = this.findSummonSpawnPos(anchor.add(worldRing));
+        Vec3 spawnCenter = Vec3.atCenterOf(spawnPos);
+        scorpion.moveTo(spawnCenter.x, spawnCenter.y, spawnCenter.z, this.random.nextFloat() * 360.0F, 0.0F);
         scorpion.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(spawnPos), MobSpawnType.MOB_SUMMONED, null, null);
         scorpion.setPersistenceRequired();
+        scorpion.setSummonOwner(this.getUUID());
         LivingEntity target = this.getTarget();
         if (target != null) {
             scorpion.setTarget(target);
         }
         serverLevel.addFreshEntity(scorpion);
+        this.summonedScorpionIds.add(scorpion.getUUID());
     }
 
     private void commitLunge(LivingEntity target, double horizontalSpeed, double verticalSpeed) {
-        Vec3 lunge = target.position().subtract(this.position());
-        Vec3 horizontal = new Vec3(lunge.x, 0.0D, lunge.z);
+        GravityDirection direction = GravityApi.getGravityDirection(this);
+        Vec3 localLunge = GravityRotationUtil.vecWorldToPlayer(target.position().subtract(this.position()), direction);
+        Vec3 horizontal = new Vec3(localLunge.x, 0.0D, localLunge.z);
         if (horizontal.lengthSqr() < 1.0E-4D) {
             return;
         }
         horizontal = horizontal.normalize().scale(horizontalSpeed);
-        this.setDeltaMovement(this.getDeltaMovement().add(horizontal.x, verticalSpeed, horizontal.z));
+        Vec3 localImpulse = new Vec3(horizontal.x, verticalSpeed, horizontal.z);
+        Vec3 worldImpulse = GravityRotationUtil.vecPlayerToWorld(localImpulse, direction);
+        this.setDeltaMovement(this.getDeltaMovement().add(worldImpulse.x, worldImpulse.y, worldImpulse.z));
         this.hasImpulse = true;
+    }
+
+    private BlockPos findSummonSpawnPos(Vec3 center) {
+        BlockPos base = BlockPos.containing(center);
+        Direction gravityDown = GravityRotationUtil.getGravityDownDirection(this);
+        Direction gravityUp = gravityDown.getOpposite();
+        BlockPos fallback = base;
+        for (int step = -2; step <= 2; step++) {
+            BlockPos candidate = base.relative(gravityUp, step);
+            BlockPos support = candidate.relative(gravityDown);
+            if (this.level().isEmptyBlock(candidate)
+                    && this.level().isEmptyBlock(candidate.relative(gravityUp))
+                    && this.level().getBlockState(support).isFaceSturdy(this.level(), support, gravityUp)) {
+                return candidate;
+            }
+        }
+        return fallback;
     }
 
     @Override
@@ -544,19 +621,6 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     private void setHardenPhase(HardenPhase phase) {
         this.hardenPhase = phase;
         this.entityData.set(HARDEN_PHASE, phase.ordinal());
-    }
-
-    private void lockHardenRotation() {
-        if (!this.isHardenSequenceActive()) {
-            return;
-        }
-        this.setYRot(this.hardenLockedYaw);
-        this.setYHeadRot(this.hardenLockedYaw);
-        this.yBodyRot = this.hardenLockedYaw;
-        this.yBodyRotO = this.hardenLockedYaw;
-        this.yHeadRotO = this.hardenLockedYaw;
-        this.setXRot(this.hardenLockedPitch);
-        this.xRotO = this.hardenLockedPitch;
     }
 
     private void updateAnimationState() {
@@ -638,6 +702,11 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         tag.putInt("HardenHealTicks", this.hardenHealTicks);
         tag.putInt("HardenSummonedScorpions", this.hardenSummonedScorpions);
         tag.putBoolean("HasTakenDamage", this.hasTakenDamage);
+        if (this.encounterHome != null) {
+            tag.putInt("EncounterHomeX", this.encounterHome.getX());
+            tag.putInt("EncounterHomeY", this.encounterHome.getY());
+            tag.putInt("EncounterHomeZ", this.encounterHome.getZ());
+        }
     }
 
     @Override
@@ -672,6 +741,15 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         if (tag.contains("HasTakenDamage")) {
             this.hasTakenDamage = tag.getBoolean("HasTakenDamage");
         }
+        if (tag.contains("EncounterHomeX") && tag.contains("EncounterHomeY") && tag.contains("EncounterHomeZ")) {
+            this.encounterHome = new BlockPos(tag.getInt("EncounterHomeX"), tag.getInt("EncounterHomeY"), tag.getInt("EncounterHomeZ"));
+        }
+        this.resetAttackState();
+        if (this.getHardenPhase() == HardenPhase.CASTING) {
+            this.setHardenPhase(HardenPhase.NONE);
+        }
+        this.disengageTicks = 0;
+        this.summonedScorpionIds.clear();
     }
 
     @Override
@@ -694,12 +772,157 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
 
     @Override
     public void remove(RemovalReason reason) {
+        if (!this.level().isClientSide) {
+            this.discardOwnedScorpions();
+        }
         super.remove(reason);
         this.bossEvent.removeAllPlayers();
     }
 
     private boolean isAttackLocked() {
         return this.attackAnimTicks > 0;
+    }
+
+    private void tickEncounterState() {
+        if (this.encounterHome == null) {
+            this.encounterHome = this.blockPosition();
+        }
+
+        LivingEntity target = this.getTarget();
+        if (!this.isValidEncounterTarget(target)) {
+            if (target != null) {
+                this.setTarget(null);
+            }
+            target = null;
+        }
+
+        if (target != null) {
+            this.disengageTicks = 0;
+            if (this.isOutsideLeashRadius()) {
+                this.resetEncounter(true);
+            }
+            return;
+        }
+
+        if (this.isAttackLocked() || this.isHardenSequenceActive()) {
+            return;
+        }
+
+        if (this.hasOwnedScorpionsNearby()) {
+            this.disengageTicks = 0;
+            return;
+        }
+
+        if (!this.isAtEncounterHome()) {
+            this.disengageTicks++;
+            if (this.disengageTicks >= RESET_DELAY_TICKS) {
+                this.resetEncounter(true);
+            } else {
+                this.navigateHome();
+            }
+            return;
+        }
+
+        this.disengageTicks = 0;
+    }
+
+    private boolean isValidEncounterTarget(@Nullable LivingEntity target) {
+        if (target == null || !target.isAlive() || !target.level().equals(this.level())) {
+            return false;
+        }
+        if (target instanceof Player player && (player.isCreative() || player.isSpectator())) {
+            return false;
+        }
+        if (this.encounterHome == null) {
+            return true;
+        }
+        return target.distanceToSqr(Vec3.atCenterOf(this.encounterHome)) <= ENCOUNTER_LEASH_RADIUS * ENCOUNTER_LEASH_RADIUS;
+    }
+
+    private boolean shouldShowBossBar() {
+        return this.getTarget() != null
+                || this.isAttackLocked()
+                || this.isHardenSequenceActive()
+                || this.hasOwnedScorpionsNearby()
+                || !this.isAtEncounterHome();
+    }
+
+    private boolean isAtEncounterHome() {
+        if (this.encounterHome == null) {
+            return true;
+        }
+        return this.distanceToSqr(Vec3.atCenterOf(this.encounterHome)) <= HOME_REACHED_RADIUS;
+    }
+
+    private boolean isOutsideLeashRadius() {
+        if (this.encounterHome == null) {
+            return false;
+        }
+        return this.distanceToSqr(Vec3.atCenterOf(this.encounterHome)) > ENCOUNTER_LEASH_RADIUS * ENCOUNTER_LEASH_RADIUS;
+    }
+
+    private boolean hasOwnedScorpionsNearby() {
+        return this.countOwnedNearbyScorpionMinions() > 0;
+    }
+
+    private void navigateHome() {
+        if (this.encounterHome == null) {
+            return;
+        }
+        Vec3 homeCenter = Vec3.atCenterOf(this.encounterHome);
+        if (this.distanceToSqr(homeCenter) > FORCED_RETURN_RADIUS * FORCED_RETURN_RADIUS) {
+            this.moveTo(homeCenter.x, homeCenter.y, homeCenter.z, this.getYRot(), this.getXRot());
+            this.setDeltaMovement(Vec3.ZERO);
+            this.hasImpulse = true;
+            return;
+        }
+        this.getNavigation().moveTo(homeCenter.x, homeCenter.y, homeCenter.z, HOME_RETURN_SPEED);
+    }
+
+    private void resetEncounter(boolean restoreHealth) {
+        this.resetAttackState();
+        this.getNavigation().stop();
+        this.setTarget(null);
+        this.setAggressive(false);
+        this.setHardenPhase(HardenPhase.NONE);
+        this.hardenCastTicks = 0;
+        this.hardenCastSpawnTicks = 0;
+        this.hardenStateTicks = 0;
+        this.hardenDurationTicks = 0;
+        this.hardenHealTicks = 0;
+        this.hardenSummonedScorpions = 0;
+        this.hardenCooldownTicks = Math.max(1, AntarchySettings.emperorScorpionHardenCooldownTicks());
+        this.disengageTicks = 0;
+        this.previousAttack = AttackType.NONE;
+        if (restoreHealth) {
+            this.setHealth(this.getMaxHealth());
+        }
+        this.discardOwnedScorpions();
+        if (this.encounterHome != null) {
+            Vec3 homeCenter = Vec3.atCenterOf(this.encounterHome);
+            this.moveTo(homeCenter.x, homeCenter.y, homeCenter.z, this.getYRot(), this.getXRot());
+            this.setDeltaMovement(Vec3.ZERO);
+        }
+    }
+
+    private void discardOwnedScorpions() {
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            this.summonedScorpionIds.clear();
+            return;
+        }
+        UUID ownerId = this.getUUID();
+        for (UUID scorpionId : Set.copyOf(this.summonedScorpionIds)) {
+            Entity entity = serverLevel.getEntity(scorpionId);
+            if (entity instanceof ScorpionEntity scorpion && scorpion.isAlive() && scorpion.isSummonedFor(ownerId)) {
+                scorpion.remove(RemovalReason.DISCARDED);
+            }
+        }
+        this.level().getEntitiesOfClass(
+                ScorpionEntity.class,
+                this.getBoundingBox().inflate(NEARBY_SCORPION_CHECK_RADIUS * 2.0D),
+                scorpion -> scorpion.isAlive() && scorpion.isSummonedFor(ownerId)
+        ).forEach(scorpion -> scorpion.remove(RemovalReason.DISCARDED));
+        this.summonedScorpionIds.clear();
     }
 
     public boolean isHardenSequenceActive() {
@@ -724,7 +947,12 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     }
 
     private final class EmperorScorpionCombatGoal extends Goal {
-        private static final double CHASE_SPEED = 1.1D;
+        private static final double CHASE_SPEED = 1.15D;
+
+        private int repathCooldownTicks;
+        private double repathTargetX;
+        private double repathTargetY;
+        private double repathTargetZ;
 
         private EmperorScorpionCombatGoal() {
             this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
@@ -739,12 +967,14 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         @Override
         public boolean canContinueToUse() {
             LivingEntity target = EmperorScorpionEntity.this.getTarget();
-            return (target != null && target.isAlive()) || EmperorScorpionEntity.this.isAttackLocked();
+            return EmperorScorpionEntity.this.isAttackLocked()
+                    || (target != null && target.isAlive() && !EmperorScorpionEntity.this.isHardenSequenceActive());
         }
 
         @Override
         public void start() {
             EmperorScorpionEntity.this.setAggressive(true);
+            this.repathCooldownTicks = 0;
         }
 
         @Override
@@ -755,69 +985,99 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
 
         @Override
         public void tick() {
+            if (EmperorScorpionEntity.this.isAttackLocked() || EmperorScorpionEntity.this.isHardenSequenceActive()) {
+                return;
+            }
+
             LivingEntity target = EmperorScorpionEntity.this.getTarget();
             if (target == null) {
+                return;
+            }
+
+            if (EmperorScorpionEntity.this.isWithinMeleeAttackRange(target) && EmperorScorpionEntity.this.hasLineOfSight(target)) {
                 EmperorScorpionEntity.this.getNavigation().stop();
+                GravityDirection direction = GravityApi.getGravityDirection(EmperorScorpionEntity.this);
+                Vec3 localMotion = GravityRotationUtil.vecWorldToPlayer(EmperorScorpionEntity.this.getDeltaMovement(), direction);
+                Vec3 localStopped = new Vec3(0.0D, localMotion.y, 0.0D);
+                Vec3 worldStopped = GravityRotationUtil.vecPlayerToWorld(localStopped, direction);
+                EmperorScorpionEntity.this.setDeltaMovement(worldStopped);
+                AttackType attackType = EmperorScorpionEntity.this.selectAttack(target);
+                if (attackType != AttackType.NONE) {
+                    EmperorScorpionEntity.this.beginAttack(target, attackType);
+                }
                 return;
             }
 
-            if (EmperorScorpionEntity.this.isHardenSequenceActive()) {
-                this.stopMovement();
+            if (EmperorScorpionEntity.this.distanceToSqr(target) <= DIRECT_APPROACH_RANGE * DIRECT_APPROACH_RANGE
+                    && EmperorScorpionEntity.this.hasLineOfSight(target)) {
+                EmperorScorpionEntity.this.getNavigation().stop();
+                this.approachDirectly(target);
                 return;
             }
 
-            EmperorScorpionEntity.this.getLookControl().setLookAt(target, 30.0F, 30.0F);
-
-            if (EmperorScorpionEntity.this.isAttackLocked()) {
-                this.stopMovement();
-                return;
-            }
-
-            if (!EmperorScorpionEntity.this.hasLineOfSight(target)) {
-                EmperorScorpionEntity.this.getNavigation().moveTo(target, CHASE_SPEED);
-                return;
-            }
-
-            if (!EmperorScorpionEntity.this.isWithinMeleeAttackRange(target)) {
-                EmperorScorpionEntity.this.getNavigation().moveTo(target, CHASE_SPEED);
-                return;
-            }
-
-            this.stopMovement();
-            AttackType attackType = EmperorScorpionEntity.this.selectAttack(target);
-            if (attackType == AttackType.NONE) {
-                EmperorScorpionEntity.this.getNavigation().moveTo(target, CHASE_SPEED);
-                return;
-            }
-
-            EmperorScorpionEntity.this.beginAttack(target, attackType);
+            this.tryRepath(target);
         }
 
-        private void stopMovement() {
-            EmperorScorpionEntity.this.getNavigation().stop();
-            EmperorScorpionEntity.this.setSpeed(0.0F);
-            EmperorScorpionEntity.this.setZza(0.0F);
+        private void approachDirectly(LivingEntity target) {
+            GravityDirection direction = GravityApi.getGravityDirection(EmperorScorpionEntity.this);
+            Vec3 localDelta = GravityRotationUtil.vecWorldToPlayer(target.position().subtract(EmperorScorpionEntity.this.position()), direction);
+            double dx = localDelta.x;
+            double dz = localDelta.z;
+            if (dx * dx + dz * dz < 1.0E-4D) {
+                return;
+            }
+            float targetYaw = (float) (Mth.atan2(dz, dx) * (180.0D / Math.PI)) - 90.0F;
+            float currentYaw = EmperorScorpionEntity.this.getYRot();
+            float newYaw = EmperorScorpionEntity.this.approachYaw(currentYaw, targetYaw, DIRECT_APPROACH_TURN_RATE);
+            EmperorScorpionEntity.this.setYRot(newYaw);
+            EmperorScorpionEntity.this.setYHeadRot(newYaw);
+            EmperorScorpionEntity.this.yBodyRot = newYaw;
+            EmperorScorpionEntity.this.yBodyRotO = newYaw;
+
+            Vec3 currentMotion = GravityRotationUtil.vecWorldToPlayer(EmperorScorpionEntity.this.getDeltaMovement(), direction);
+            float headingError = Math.abs(Mth.wrapDegrees(targetYaw - currentYaw));
+            if (headingError <= DIRECT_APPROACH_ALIGN_THRESHOLD) {
+                double speed = EmperorScorpionEntity.this.getAttributeValue(Attributes.MOVEMENT_SPEED) * CHASE_SPEED;
+                Vec3 forward = Vec3.directionFromRotation(0.0F, newYaw).scale(speed);
+                Vec3 worldForward = GravityRotationUtil.vecPlayerToWorld(forward.x, currentMotion.y, forward.z, direction);
+                EmperorScorpionEntity.this.setDeltaMovement(worldForward);
+            } else {
+                EmperorScorpionEntity.this.setDeltaMovement(GravityRotationUtil.vecPlayerToWorld(0.0D, currentMotion.y, 0.0D, direction));
+            }
+        }
+
+        private void tryRepath(LivingEntity target) {
+            if (--this.repathCooldownTicks > 0
+                    && target.distanceToSqr(this.repathTargetX, this.repathTargetY, this.repathTargetZ) < 1.0D) {
+                return;
+            }
+            this.repathTargetX = target.getX();
+            this.repathTargetY = target.getY();
+            this.repathTargetZ = target.getZ();
+            this.repathCooldownTicks = 4 + EmperorScorpionEntity.this.random.nextInt(7);
+            if (!EmperorScorpionEntity.this.getNavigation().moveTo(target, CHASE_SPEED)) {
+                this.repathCooldownTicks += 15;
+            }
         }
     }
 
     @Override
     public boolean isWithinMeleeAttackRange(LivingEntity target) {
-        return this.distanceToSqr(target) <= STING_RANGE * STING_RANGE;
+        return this.distanceToSqr(target) <= CLAW_REACH * CLAW_REACH;
     }
 
     private AttackType selectAttack(LivingEntity target) {
-        boolean inClawRange = this.clawCooldownTicks <= 0 && this.distanceToSqr(target) <= CLAW_RANGE * CLAW_RANGE;
-        boolean inStingRange = this.stingCooldownTicks <= 0 && this.distanceToSqr(target) <= STING_RANGE * STING_RANGE;
-        boolean canClaw = inClawRange && this.hasLineOfSight(target);
-        boolean canSting = inStingRange && this.hasLineOfSight(target);
-        if (canSting && (!canClaw || this.random.nextFloat() < 0.3F)) {
+        double distSqr = this.distanceToSqr(target);
+        boolean canClaw = this.clawCooldownTicks <= 0 && distSqr <= CLAW_REACH * CLAW_REACH && this.hasLineOfSight(target);
+        boolean canSting = this.stingCooldownTicks <= 0 && distSqr <= STING_REACH * STING_REACH && this.hasLineOfSight(target);
+        if (canClaw && canSting) {
+            return this.previousAttack == AttackType.CLAW && this.random.nextFloat() < 0.55F ? AttackType.STING : AttackType.CLAW;
+        }
+        if (canSting) {
             return AttackType.STING;
         }
         if (canClaw) {
             return AttackType.CLAW;
-        }
-        if (canSting) {
-            return AttackType.STING;
         }
         return AttackType.NONE;
     }

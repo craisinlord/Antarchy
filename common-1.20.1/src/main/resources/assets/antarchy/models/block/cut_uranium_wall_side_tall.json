@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/wall_side_tall",
-  "textures": {
-    "wall": "antarchy:block/uranium/uranium_block"
-  }
-}

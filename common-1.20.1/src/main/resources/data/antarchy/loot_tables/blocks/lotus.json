@@ -4,7 +4,9 @@
     {
       "rolls": 1.0,
       "conditions": [
-        { "condition": "minecraft:survives_explosion" }
+        {
+          "condition": "minecraft:survives_explosion"
+        }
       ],
       "entries": [
         {

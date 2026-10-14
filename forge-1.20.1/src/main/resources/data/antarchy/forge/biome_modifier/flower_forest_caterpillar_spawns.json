@@ -1,5 +1,5 @@
 {
-  "type": "neoforge:add_spawns",
+  "type": "forge:add_spawns",
   "biomes": "#antarchy:flower_forest_caterpillar_spawn_biomes",
   "spawners": [
     {

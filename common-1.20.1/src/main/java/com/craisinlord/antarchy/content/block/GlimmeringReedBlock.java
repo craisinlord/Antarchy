@@ -19,7 +19,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.phys.BlockHitResult;
 
-/** A two-block-tall, light-emitting reed found around Lumen pools. */
 public final class GlimmeringReedBlock extends DoublePlantBlock implements BonemealableBlock {
 
     public GlimmeringReedBlock(BlockBehaviour.Properties properties) {

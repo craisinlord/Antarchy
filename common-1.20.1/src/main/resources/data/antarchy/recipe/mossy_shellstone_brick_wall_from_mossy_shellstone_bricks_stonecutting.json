@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "ingredient": {
-    "item": "antarchy:mossy_shellstone_bricks"
-  },
-  "result": {
-    "id": "antarchy:mossy_shellstone_brick_wall"
-  }
-}

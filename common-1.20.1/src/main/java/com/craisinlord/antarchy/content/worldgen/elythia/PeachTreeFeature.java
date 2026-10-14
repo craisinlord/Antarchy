@@ -47,6 +47,15 @@ public class PeachTreeFeature extends Feature<PeachTreeConfiguration> {
         }
 
         List<BlockPos> trunkPath = buildTrunkPath(origin, height, random);
+        for (BlockPos trunkPos : trunkPath) {
+            for (int dx = 0; dx < trunkWidth; dx++) {
+                for (int dz = 0; dz < trunkWidth; dz++) {
+                    if (!canReplace(level, trunkPos.offset(dx, 0, dz))) {
+                        return false;
+                    }
+                }
+            }
+        }
         Set<BlockPos> logPositions = new LinkedHashSet<>();
         Set<BlockPos> leafPositions = new LinkedHashSet<>();
 
@@ -431,7 +440,7 @@ public class PeachTreeFeature extends Feature<PeachTreeConfiguration> {
 
     private static boolean canReplace(WorldGenLevel level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
-        return state.isAir() || state.canBeReplaced() || state.getBlock() instanceof LeavesBlock;
+        return state.isAir() || state.getBlock() instanceof LeavesBlock;
     }
 
     private static Direction.Axis axisForSegment(BlockPos from, BlockPos to) {

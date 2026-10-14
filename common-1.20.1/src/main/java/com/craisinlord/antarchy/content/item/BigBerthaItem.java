@@ -5,7 +5,7 @@ import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
 import com.craisinlord.antarchy.content.entity.lucid.LucidBoltEntity;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
+import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import java.util.List;
 import java.util.function.Consumer;
@@ -54,6 +54,8 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
     private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation("antarchy", "textures/item/big_bertha/big_bertha.png");
     private static final ResourceLocation ANIMATION_LOCATION = new ResourceLocation("antarchy", "animations/static_item.animation.json");
     private static final String MODE_TAG = "antarchy.big_bertha_mode";
+    public static final int MODE_TREMORSAURUS = 8;
+    public static final int MODE_FORSAKEN = 9;
     private static final String SPIN_TICKS_TAG = "antarchy.big_bertha_spin_ticks";
     private static final String SPIN_DIRECTION_X_TAG = "antarchy.big_bertha_spin_direction_x";
     private static final String SPIN_DIRECTION_Z_TAG = "antarchy.big_bertha_spin_direction_z";
@@ -63,8 +65,8 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
     private static final int TORETERROR_COOLDOWN_TICKS = 200;
     private static final int TORETERROR_SHAKE_TICKS = 25;
 
-    /** Client-side only: how many ticks of camera shake remain from a Toreterror landing. */
     public static int clientShakeTicks = 0;
+    private static final ResourceLocation ATTACK_RANGE_MODIFIER_ID = new ResourceLocation("antarchy", "big_bertha_attack_range");
     private final Tier tier;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
@@ -72,6 +74,17 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
         super(tier, (int) Math.round(AntarchySettings.bigBerthaAttackDamage()), (float) AntarchySettings.bigBerthaAttackSpeed(), properties);
         this.tier = tier;
         GeoItem.registerSyncedAnimatable(this);
+    }
+
+    @Override
+    public com.google.common.collect.Multimap<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> getDefaultAttributeModifiers(net.minecraft.world.entity.EquipmentSlot slot) {
+        if (slot != net.minecraft.world.entity.EquipmentSlot.MAINHAND) {
+            return super.getDefaultAttributeModifiers(slot);
+        }
+        com.google.common.collect.ImmutableMultimap.Builder<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> builder =
+                com.craisinlord.antarchy.compat.item.WeaponAttributes.base(this.tier, (int) Math.round(AntarchySettings.bigBerthaAttackDamage()), (float) AntarchySettings.bigBerthaAttackSpeed());
+        com.craisinlord.antarchy.compat.entity.EntityReach.addModifier(builder, ATTACK_RANGE_MODIFIER_ID, AntarchySettings.bigBerthaReachBonus());
+        return builder.build();
     }
 
     @Override
@@ -91,8 +104,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (player.isShiftKeyDown()) {
-            cycleMode(level, player, stack);
-            return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+            return InteractionResultHolder.pass(stack);
         }
 
         BossMode mode = getMode(stack);
@@ -143,7 +155,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
             case NIGHTMARE -> applyNightmareHit(player, target, serverLevel);
             case KRAKEN -> applyKrakenHit(player, target, serverLevel);
             case HERCULES -> applyHerculesHit(player, target, serverLevel);
-            case MOLEVORE, TORETERROR -> {
+            case MOLEVORE, TORETERROR, TREMORSAURUS, FORSAKEN -> {
             }
         }
 
@@ -158,7 +170,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
         }
 
         if (isToreterrorJumping(stack) && player.getMainHandItem() == stack) {
-            player.fallDistance = 0.0F; // prevent fall damage during the crash-down
+            player.fallDistance = 0.0F;
             boolean launched = readInt(stack, TORETERROR_LAUNCHED_TAG) == 1;
             if (!launched && !player.onGround()) {
                 com.craisinlord.antarchy.content.component.AntarchyItemTag.update(stack, tag -> tag.putInt(TORETERROR_LAUNCHED_TAG, 1));
@@ -201,7 +213,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
 
     private void applyBasiliskRightClick(Level level, Player player, ItemStack stack) {
         if (!level.isClientSide) {
-            double range = 3.0 + AntarchySettings.bigBerthaReachBonus() + 1.0;
+            double range = com.craisinlord.antarchy.compat.entity.EntityReach.entityInteractionRange(player) + 1.0;
             Vec3 eyePos = player.getEyePosition();
             Vec3 lookDir = player.getLookAngle();
             Vec3 endPos = eyePos.add(lookDir.scale(range));
@@ -253,8 +265,10 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
                     true));
         }
 
-        level.sendParticles(ParticleTypes.PORTAL, target.getX(), target.getY(0.8D), target.getZ(), 12, 0.25D, 0.25D, 0.25D, 0.08D);
-        if (!AntarchyGravityApi.isGravityInverted(player)) {
+        Vec3 impactPos = new Vec3(target.getX(), target.getY(0.8D), target.getZ());
+        LucidBoltEntity.spawnImpactParticles(level, impactPos);
+        level.sendParticles(ParticleTypes.PORTAL, impactPos.x, impactPos.y, impactPos.z, 12, 0.25D, 0.25D, 0.25D, 0.08D);
+        if (!GravityApi.isGravityInverted(player)) {
             return;
         }
 
@@ -333,7 +347,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
     }
 
     private void applyHerculesHit(Player attacker, LivingEntity target, ServerLevel level) {
-        float bonusDamage = (float) (attacker.getAttributeValue(Attributes.ATTACK_DAMAGE) * 0.5D);
+        float bonusDamage = (float) (attacker.getAttributeValue(Attributes.ATTACK_DAMAGE) * 0.6D);
         Vec3 push = target.position().subtract(attacker.position()).multiply(1.0D, 0.0D, 1.0D);
         if (push.lengthSqr() < 1.0E-4D) {
             push = attacker.getLookAngle().multiply(1.0D, 0.0D, 1.0D);
@@ -369,8 +383,12 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
         }
     }
 
-    public boolean tryCycleModeWhileCoolingDown(Level level, Player player, ItemStack stack) {
-        if (player.getMainHandItem() != stack || !player.isShiftKeyDown() || !player.getCooldowns().isOnCooldown(this)) {
+    public static int getModeId(ItemStack stack) {
+        return getMode(stack).id;
+    }
+
+    public boolean tryCycleModeFromInput(Level level, Player player, ItemStack stack) {
+        if (player.getMainHandItem() != stack) {
             return false;
         }
 
@@ -640,6 +658,8 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
         MOLEVORE(3, "tooltip.antarchy.big_bertha.mode.molevore", "message.antarchy.big_bertha.mode.molevore"),
         LUCID(4, "tooltip.antarchy.big_bertha.mode.lucid", "message.antarchy.big_bertha.mode.lucid"),
         TORETERROR(5, "tooltip.antarchy.big_bertha.mode.toreterror", "message.antarchy.big_bertha.mode.toreterror"),
+        TREMORSAURUS(MODE_TREMORSAURUS, "tooltip.antarchy.big_bertha.mode.tremorsaurus", "message.antarchy.big_bertha.mode.tremorsaurus"),
+        FORSAKEN(MODE_FORSAKEN, "tooltip.antarchy.big_bertha.mode.forsaken", "message.antarchy.big_bertha.mode.forsaken"),
         HERCULES(6, "tooltip.antarchy.big_bertha.mode.hercules", "message.antarchy.big_bertha.mode.hercules");
 
         private final int id;
@@ -661,7 +681,9 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
                 case KRAKEN -> HERCULES;
                 case HERCULES -> MOLEVORE;
                 case MOLEVORE -> TORETERROR;
-                case TORETERROR -> NONE;
+                case TORETERROR -> TREMORSAURUS;
+                case TREMORSAURUS -> FORSAKEN;
+                case FORSAKEN -> NONE;
             };
         }
 

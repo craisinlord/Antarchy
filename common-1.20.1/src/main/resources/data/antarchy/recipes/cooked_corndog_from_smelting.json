@@ -6,7 +6,5 @@
   "ingredient": {
     "item": "antarchy:raw_corndog"
   },
-  "result": {
-    "item": "antarchy:cooked_corndog"
-  }
+  "result": "antarchy:cooked_corndog"
 }

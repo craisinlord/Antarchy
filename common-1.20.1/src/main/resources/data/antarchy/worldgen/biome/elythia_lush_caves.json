@@ -21,6 +21,12 @@
       "tick_delay": 60000,
       "block_search_extent": 8,
       "offset": 2.0
+    },
+    "music": {
+      "sound": "antarchy:music.game.elythia",
+      "min_delay": 600,
+      "max_delay": 1800,
+      "replace_current_music": true
     }
   },
   "spawn_costs": {},

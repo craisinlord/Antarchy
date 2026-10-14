@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "equipment",
+  "category": "combat",
   "key": {
     "F": {
       "item": "antarchy:basilisk_fang"
@@ -14,7 +14,6 @@
     "S"
   ],
   "result": {
-    "item": "antarchy:basilisk_dagger",
-    "count": 1
+    "item": "antarchy:basilisk_dagger"
   }
 }

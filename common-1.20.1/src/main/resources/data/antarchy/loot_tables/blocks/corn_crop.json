@@ -3,19 +3,38 @@
   "pools": [
     {
       "rolls": 1.0,
-      "conditions": [
-        {
-          "condition": "minecraft:block_state_property",
-          "block": "antarchy:corn_crop",
-          "properties": {
-            "half": "lower"
-          }
-        }
-      ],
       "entries": [
         {
-          "type": "minecraft:item",
-          "name": "antarchy:corn"
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "name": "antarchy:corn",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "antarchy:corn_crop",
+                  "properties": {
+                    "half": "lower",
+                    "age": "3"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "minecraft:item",
+              "name": "antarchy:corn_seeds",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "antarchy:corn_crop",
+                  "properties": {
+                    "half": "lower"
+                  }
+                }
+              ]
+            }
+          ]
         }
       ]
     },

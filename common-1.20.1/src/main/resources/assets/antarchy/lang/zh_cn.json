@@ -526,10 +526,7 @@
     "effect.antarchy.dread.description": "会产生视觉和听觉幻觉。",
     "effect.antarchy.paralyzed": "麻痹",
     "effect.antarchy.paralyzed.description": "阻止目标移动。",
-    "effect.antarchy.inverted": "反转",
-    "effect.antarchy.inverted.description": "反转目标的重力。",
     "effect.antarchy.commanded.description": "为命令它的玩家而战。",
-    "effect.antarchy.dilated.description": "减缓受影响生物的时间流逝。",
     "effect.antarchy.stinky": "臭气",
     "effect.antarchy.stinky.description": "驱赶被动和中立生物，吸引节肢生物。",
     "effect.antarchy.gooped.description": "减缓移动速度和攻击速度。",
@@ -959,4 +956,7 @@
     "advancements.antarchy.beetle_buddies.description": "驯服一只赫拉克勒斯甲虫。",
     "advancements.antarchy.herculean_task.title": "赫拉克勒斯之业",
     "advancements.antarchy.herculean_task.description": "斩杀一只赫拉克勒斯甲虫。"
+,
+    "entity.antarchy.portal_gun_portal": "传送门枪传送门",
+    "attribute.antarchy.entity_interaction_range": "实体交互距离"
 }

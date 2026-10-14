@@ -2,6 +2,10 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -34,6 +38,9 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -44,11 +51,18 @@ import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
 public class ScorpionEntity extends Monster implements GeoEntity {
+    private static final ResourceKey<net.minecraft.world.level.biome.Biome> DREAM_DUNES = ResourceKey.create(
+            Registries.BIOME,
+            new ResourceLocation("antarchy", "dream_dunes")
+    );
     private static final byte ATTACK_ANIM_EVENT = 4;
     private static final EntityDataAccessor<Integer> TEXTURE_VARIANT =
             SynchedEntityData.defineId(ScorpionEntity.class, EntityDataSerializers.INT);
     private static final String TEXTURE_VARIANT_KEY = "TextureVariant";
+    private static final String SUMMON_OWNER_KEY = "SummonOwner";
     public static final int BLUE_VARIANT = 0;
     public static final int GREEN_VARIANT = 1;
 
@@ -67,10 +81,16 @@ public class ScorpionEntity extends Monster implements GeoEntity {
     private int attackCooldownTicks = 0;
     private boolean attackDamageApplied = false;
     @Nullable private LivingEntity attackTarget;
+    @Nullable private UUID summonOwner;
 
     public ScorpionEntity(EntityType<? extends ScorpionEntity> entityType, Level level) {
         super(entityType, level);
         this.xpReward = 5;
+    }
+
+    @Override
+    public boolean fireImmune() {
+        return true;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -89,6 +109,12 @@ public class ScorpionEntity extends Monster implements GeoEntity {
                 || spawnReason == MobSpawnType.SPAWNER
                 || spawnReason == MobSpawnType.COMMAND) {
             return true;
+        }
+        if (pos.getY() >= 0 && level.getBiome(pos).is(DREAM_DUNES) && random.nextBoolean()) {
+            return false;
+        }
+        if (ThoraxisUndersideManager.isUndersideCeilingSpawn(entityType, level, pos)) {
+            return level.getDifficulty() != Difficulty.PEACEFUL;
         }
         return level.getDifficulty() != Difficulty.PEACEFUL
                 && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);
@@ -115,6 +141,10 @@ public class ScorpionEntity extends Monster implements GeoEntity {
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData, @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag dataTag) {
         this.assignRandomTextureVariant();
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.scorpionHealth());
+        if (ThoraxisUndersideManager.isUndersideCeilingSpot(level, this.blockPosition(), this.getType())) {
+            ThoraxisUndersideManager.applyUndersideInversion(this);
+        }
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData, dataTag);
     }
 
@@ -125,6 +155,10 @@ public class ScorpionEntity extends Monster implements GeoEntity {
             this.attackCooldownTicks--;
         }
         if (this.attackAnimTicks > 0) {
+            if (!this.isAlive()) {
+                this.resetAttackState();
+                return;
+            }
             if (!this.level().isClientSide) {
                 this.tickAttackWindup();
             }
@@ -167,7 +201,8 @@ public class ScorpionEntity extends Monster implements GeoEntity {
 
         this.getLookControl().setLookAt(this.attackTarget, 30.0F, 30.0F);
         if (!this.attackDamageApplied
-                && this.attackAnimTicks == ATTACK_HIT_TICK
+                && this.attackAnimTicks > 0
+                && this.attackAnimTicks <= ATTACK_HIT_TICK
                 && this.distanceToSqr(this.attackTarget) <= this.getAttackReachSqr(this.attackTarget)) {
             this.attackDamageApplied = true;
             this.doHurtTarget(this.attackTarget);
@@ -190,13 +225,16 @@ public class ScorpionEntity extends Monster implements GeoEntity {
     }
 
     private void commitLunge(LivingEntity target, double horizontalSpeed, double verticalSpeed) {
-        Vec3 lunge = target.position().subtract(this.position());
-        Vec3 horizontal = new Vec3(lunge.x, 0.0D, lunge.z);
+        GravityDirection direction = GravityApi.getGravityDirection(this);
+        Vec3 localLunge = GravityRotationUtil.vecWorldToPlayer(target.position().subtract(this.position()), direction);
+        Vec3 horizontal = new Vec3(localLunge.x, 0.0D, localLunge.z);
         if (horizontal.lengthSqr() < 1.0E-4D) {
             return;
         }
         horizontal = horizontal.normalize().scale(horizontalSpeed);
-        this.setDeltaMovement(this.getDeltaMovement().add(horizontal.x, verticalSpeed, horizontal.z));
+        Vec3 localImpulse = new Vec3(horizontal.x, verticalSpeed, horizontal.z);
+        Vec3 worldImpulse = GravityRotationUtil.vecPlayerToWorld(localImpulse, direction);
+        this.setDeltaMovement(this.getDeltaMovement().add(worldImpulse.x, worldImpulse.y, worldImpulse.z));
         this.hasImpulse = true;
     }
 
@@ -239,6 +277,9 @@ public class ScorpionEntity extends Monster implements GeoEntity {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt(TEXTURE_VARIANT_KEY, this.getTextureVariant());
+        if (this.summonOwner != null) {
+            tag.putUUID(SUMMON_OWNER_KEY, this.summonOwner);
+        }
     }
 
     @Override
@@ -249,6 +290,7 @@ public class ScorpionEntity extends Monster implements GeoEntity {
         } else {
             this.assignRandomTextureVariant();
         }
+        this.summonOwner = tag.hasUUID(SUMMON_OWNER_KEY) ? tag.getUUID(SUMMON_OWNER_KEY) : null;
     }
 
     @Override
@@ -279,6 +321,19 @@ public class ScorpionEntity extends Monster implements GeoEntity {
         this.entityData.set(TEXTURE_VARIANT, variant == GREEN_VARIANT ? GREEN_VARIANT : BLUE_VARIANT);
     }
 
+    public void setSummonOwner(@Nullable UUID summonOwner) {
+        this.summonOwner = summonOwner;
+    }
+
+    @Nullable
+    public UUID getSummonOwner() {
+        return this.summonOwner;
+    }
+
+    public boolean isSummonedFor(UUID ownerId) {
+        return ownerId.equals(this.summonOwner);
+    }
+
     private void assignRandomTextureVariant() {
         this.setTextureVariant(this.random.nextBoolean() ? BLUE_VARIANT : GREEN_VARIANT);
     }
@@ -293,6 +348,18 @@ public class ScorpionEntity extends Monster implements GeoEntity {
             if (ScorpionEntity.this.attackTarget != null) {
                 ScorpionEntity.this.getLookControl().setLookAt(ScorpionEntity.this.attackTarget, 30.0F, 30.0F);
             }
+            if (ScorpionEntity.this.isAttackLocked()) {
+                ScorpionEntity.this.getNavigation().stop();
+                return;
+            }
+            LivingEntity target = ScorpionEntity.this.getTarget();
+            if (target != null && ThoraxisUndersideManager.shouldInvertInUnderside(ScorpionEntity.this)) {
+                ScorpionEntity.this.getNavigation().stop();
+                ScorpionEntity.this.getMoveControl().setWantedPosition(
+                        target.getX(), target.getY(), target.getZ(), 1.15D);
+                this.checkAndPerformAttack(target, ScorpionEntity.this.distanceToSqr(target));
+                return;
+            }
             super.tick();
         }
 
@@ -306,8 +373,9 @@ public class ScorpionEntity extends Monster implements GeoEntity {
             if (ScorpionEntity.this.isAttackLocked()) {
                 return;
             }
-            if (distToEnemySqr <= this.getAttackReachSqr(enemy) && this.isTimeToAttack() && ScorpionEntity.this.attackCooldownTicks <= 0) {
-                this.resetAttackCooldown();
+            if (this.isTimeToAttack() && distToEnemySqr <= this.getAttackReachSqr(enemy)
+                    && ScorpionEntity.this.getSensing().hasLineOfSight(enemy)
+                    && ScorpionEntity.this.attackCooldownTicks <= 0) {
                 ScorpionEntity.this.beginAttack(enemy);
                 return;
             }

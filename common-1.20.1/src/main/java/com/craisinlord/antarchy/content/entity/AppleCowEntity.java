@@ -1,5 +1,8 @@
 package com.craisinlord.antarchy.content.entity;
 
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -293,7 +296,7 @@ public abstract class AppleCowEntity extends Cow implements GeoEntity, Shearable
     }
 
     private boolean isMovingForAnimation() {
-        return this.getDeltaMovement().horizontalDistanceSqr() > 1.0E-4D || this.getNavigation().isInProgress();
+        return this.toLocal(this.getDeltaMovement()).horizontalDistanceSqr() > 1.0E-4D || this.getNavigation().isInProgress();
     }
 
     private void startSleeping(int sleepTicks) {
@@ -321,13 +324,25 @@ public abstract class AppleCowEntity extends Cow implements GeoEntity, Shearable
     }
 
     private void applySleepStillness() {
-        Vec3 motion = this.getDeltaMovement();
+        Vec3 motion = this.toLocal(this.getDeltaMovement());
         this.getNavigation().stop();
         this.setJumping(false);
         this.setSprinting(false);
         this.zza = 0.0F;
         this.xxa = 0.0F;
-        this.setDeltaMovement(0.0D, motion.y < 0.0D ? motion.y : 0.0D, 0.0D);
+        this.setDeltaMovement(this.toWorld(0.0D, motion.y < 0.0D ? motion.y : 0.0D, 0.0D));
+    }
+
+    private GravityDirection gravityDirection() {
+        return GravityApi.getGravityDirection(this);
+    }
+
+    private Vec3 toLocal(Vec3 worldVector) {
+        return GravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(double x, double y, double z) {
+        return GravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
     }
 
     private int randomNapCooldown() {

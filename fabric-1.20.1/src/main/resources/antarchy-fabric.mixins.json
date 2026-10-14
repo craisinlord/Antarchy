@@ -4,10 +4,38 @@
   "refmap": "antarchy.mixins.refmap.json",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AntiwaterLivingEntityMixin",
+    "AntiwaterItemEntityMixin",
+    "LivingEntityJumpingAccessor",
+    "WaterlikeFluidLivingEntityMixin",
+    "WaterlikeFluidItemEntityMixin",
+    "AntimetalInversionMixin",
+    "BrewingStandCustomIngredientMixin",
+    "ElytraStartFlyingMixin",
+    "ElytraFallFlyingMixin",
+    "BloodglassEquipMixin",
+    "BloodglassEffectMixin",
+    "BloodglassRespawnMixin",
+    "DreamCampfireBlockEntityMixin",
+    "SpringyBootsFallDamageMixin",
+    "ThoraxisWaterBucketMixin",
+    "entity.ParalyzedMobFreezeMixin",
+    "WoodTypeInvoker",
+    "infinity.PortalCreatorMixin",
+    "infinity.WarpLogicMixin",
     "infinity.AmendmentRareOresMixin",
-    "BrewingStandCustomIngredientMixin"
+    "EntityReachInteractMixin"
   ],
   "client": [
+    "client.SeparateLargeItemModelsMixin",
+    "client.SeparateLargeItemGuiLightingMixin",
+    "client.BrutalflyElytraExperienceBarMixin",
+    "client.BloodglassChatOrderMixin",
+    "client.LiquidFogMixin",
+    "client.GravityGunMouseScrollMixin",
+    "client.KeybindingConflictFixMixin",
+    "client.CrossbowArmPoseMixin",
+    "client.EntityReachPickMixin"
   ],
   "injectors": {
     "defaultRequire": 1

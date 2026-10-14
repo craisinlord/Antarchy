@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "minecraft:elytra",
-    "antarchy:brutalfly_elytra"
+    "antarchy:brutalfly_elytra",
+    "antarchy:manticore_wings"
   ]
 }

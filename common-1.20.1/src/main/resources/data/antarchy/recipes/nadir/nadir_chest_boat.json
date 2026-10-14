@@ -10,8 +10,6 @@
     }
   ],
   "result": {
-    "count": 1,
-    "id": "antarchy:nadir_chest_boat"
+    "item": "antarchy:nadir_chest_boat"
   }
 }
-

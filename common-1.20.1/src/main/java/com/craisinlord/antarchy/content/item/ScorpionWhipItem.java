@@ -32,6 +32,17 @@ public final class ScorpionWhipItem extends SwordItem {
     }
 
     @Override
+    public com.google.common.collect.Multimap<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> getDefaultAttributeModifiers(net.minecraft.world.entity.EquipmentSlot slot) {
+        if (slot != net.minecraft.world.entity.EquipmentSlot.MAINHAND) {
+            return super.getDefaultAttributeModifiers(slot);
+        }
+        com.google.common.collect.ImmutableMultimap.Builder<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> builder =
+                com.craisinlord.antarchy.compat.item.WeaponAttributes.base(this.tier, (int) Math.round(AntarchySettings.scorpionWhipBaseDamage()), -2.6F);
+        com.craisinlord.antarchy.compat.entity.EntityReach.addModifier(builder, ATTACK_RANGE_MODIFIER_ID, AntarchySettings.scorpionWhipReachBonus());
+        return builder.build();
+    }
+
+    @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!(player instanceof ServerPlayer serverPlayer)) {

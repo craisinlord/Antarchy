@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "items": "antarchy:ultimate_helmet"
+            "items": [
+              "antarchy:ultimate_helmet"
+            ]
           }
         ]
       },
@@ -15,7 +17,9 @@
       "conditions": {
         "items": [
           {
-            "items": "antarchy:ultimate_chestplate"
+            "items": [
+              "antarchy:ultimate_chestplate"
+            ]
           }
         ]
       },
@@ -25,7 +29,9 @@
       "conditions": {
         "items": [
           {
-            "items": "antarchy:ultimate_leggings"
+            "items": [
+              "antarchy:ultimate_leggings"
+            ]
           }
         ]
       },
@@ -35,7 +41,9 @@
       "conditions": {
         "items": [
           {
-            "items": "antarchy:ultimate_boots"
+            "items": [
+              "antarchy:ultimate_boots"
+            ]
           }
         ]
       },
@@ -49,7 +57,6 @@
     },
     "frame": "goal",
     "icon": {
-      "count": 1,
       "item": "antarchy:ultimate_chestplate"
     },
     "show_toast": true,

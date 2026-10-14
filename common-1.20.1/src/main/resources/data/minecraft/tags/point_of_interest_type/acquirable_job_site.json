@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:pest_control",
+    {
+      "id": "antarchy:computer",
+      "required": false
+    }
+  ]
+}

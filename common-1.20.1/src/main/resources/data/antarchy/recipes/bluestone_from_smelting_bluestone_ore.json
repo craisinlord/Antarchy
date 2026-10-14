@@ -6,7 +6,5 @@
   "ingredient": {
     "item": "antarchy:bluestone_ore"
   },
-  "result": {
-    "item": "antarchy:bluestone"
-  }
+  "result": "antarchy:bluestone"
 }

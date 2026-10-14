@@ -4,7 +4,7 @@
   "pattern": [
     "AC ",
     "DBG",
-    " EF"
+    "HEF"
   ],
   "key": {
     "A": {
@@ -14,23 +14,25 @@
       "item": "antarchy:molevore_nose"
     },
     "C": {
-      "item": "antarchy:jumpy_bug_leg"
+      "item": "antarchy:springbug_leg"
     },
     "D": {
       "item": "antarchy:jerry_nucleus"
     },
     "E": {
-      "item": "antarchy:rainbow_sugar"
+      "item": "antarchy:primordial_scute"
     },
     "F": {
-      "item": "antarchy:primordial_scute"
+      "item": "antarchy:worm_tooth"
     },
     "G": {
       "item": "antarchy:hercules_horn"
+    },
+    "H": {
+      "item": "antarchy:flytrap_goo"
     }
   },
   "result": {
-    "item": "antarchy:big_bertha_hilt",
-    "count": 1
+    "item": "antarchy:big_bertha_hilt"
   }
 }

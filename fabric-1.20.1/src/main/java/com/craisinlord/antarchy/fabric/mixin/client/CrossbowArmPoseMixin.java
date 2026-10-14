@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.fabric.mixin.client;
 
 import com.craisinlord.antarchy.content.item.GravityGunItem;
+import com.craisinlord.antarchy.content.item.PortalGunItem;
 import com.craisinlord.antarchy.content.item.RpoLauncherItem;
 import com.craisinlord.antarchy.content.item.SizeRayItem;
 import com.craisinlord.antarchy.content.item.SquidzookaItem;
@@ -26,7 +27,7 @@ public class CrossbowArmPoseMixin {
         ItemStack stack = player.getItemInHand(hand);
         Item item = stack.getItem();
 
-        if (item instanceof GravityGunItem || item instanceof SquidzookaItem || item instanceof RpoLauncherItem || item instanceof WaterCannonItem) {
+        if (item instanceof GravityGunItem || item instanceof PortalGunItem || item instanceof SquidzookaItem || item instanceof RpoLauncherItem || item instanceof WaterCannonItem) {
             cir.setReturnValue(HumanoidModel.ArmPose.CROSSBOW_HOLD);
         } else if (item instanceof SizeRayItem) {
             if (player.isUsingItem() && player.getUsedItemHand() == hand) {

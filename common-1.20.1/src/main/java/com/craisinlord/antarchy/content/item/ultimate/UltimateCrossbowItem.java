@@ -2,36 +2,48 @@ package com.craisinlord.antarchy.content.item.ultimate;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UltimateCrossbowItem extends CrossbowItem {
     private static final int MAX_ARROWS = 16;
-    private static final int FIRE_COOLDOWN_TICKS = 5; // 4 shots/sec
+    private static final int FIRE_COOLDOWN_TICKS = 5;
     private static final float SHOOTING_POWER = 3.15F;
     private static final double VANILLA_CROSSBOW_ARROW_DAMAGE = 7.0D;
-    private static final String LOADED_PROJECTILES_TAG = "UltimateCrossbowProjectiles";
+    private static final String RESERVE_PROJECTILES_TAG = "UltimateCrossbowProjectiles";
+    private static final String CHARGED_PROJECTILES_TAG = "ChargedProjectiles";
     private static final String PROJECTILE_ITEM_TAG = "Item";
 
     public UltimateCrossbowItem(Item.Properties properties) {
@@ -44,7 +56,7 @@ public class UltimateCrossbowItem extends CrossbowItem {
 
         if (CrossbowItem.isCharged(stack)) {
             if (!level.isClientSide) {
-                fireOneShot(level, player, stack);
+                fireOneShot(level, player, hand, stack);
             }
             player.getCooldowns().addCooldown(this, FIRE_COOLDOWN_TICKS);
             return InteractionResultHolder.consume(stack);
@@ -75,67 +87,108 @@ public class UltimateCrossbowItem extends CrossbowItem {
         ItemStack ammoType = player.getProjectile(stack);
         if (ammoType.isEmpty()) return;
 
-        int available = player.getAbilities().instabuild ? MAX_ARROWS : countMatchingArrows(player, ammoType);
+        int available = player.isCreative() ? MAX_ARROWS : countMatchingArrows(player, ammoType);
         int toLoad = Math.min(arrowsToLoad, available);
         if (toLoad == 0) return;
 
-        if (!player.getAbilities().instabuild) {
+        if (!player.isCreative()) {
             consumeArrows(player, ammoType, toLoad);
         }
 
-        List<ItemStack> projectiles = getLoadedProjectiles(stack);
-        for (int i = 0; i < toLoad && projectiles.size() < MAX_ARROWS; i++) {
+        List<ItemStack> projectiles = new ArrayList<>(toLoad);
+        for (int i = 0; i < toLoad; i++) {
             projectiles.add(ammoType.copyWithCount(1));
         }
         saveLoadedProjectiles(stack, projectiles);
-        CrossbowItem.setCharged(stack, true);
 
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.CROSSBOW_LOADING_END, SoundSource.PLAYERS, 1.0F, 1.0F);
     }
 
-    private void fireOneShot(Level level, Player player, ItemStack stack) {
-        List<ItemStack> loaded = getLoadedProjectiles(stack);
-        if (loaded.isEmpty()) {
-            CrossbowItem.setCharged(stack, false);
-            return;
-        }
+    private void fireOneShot(Level level, Player player, InteractionHand hand, ItemStack stack) {
+        List<ItemStack> all = getLoadedProjectiles(stack);
+        if (all.isEmpty()) return;
 
-        ItemStack arrowStack = loaded.remove(0);
+        ItemStack arrow = all.remove(0);
         List<ItemStack> toFire = new ArrayList<>();
         if (hasMultishot(stack)) {
-            toFire.add(arrowStack);
-            toFire.add(arrowStack.copy());
-            toFire.add(arrowStack.copy());
+            toFire.add(arrow);
+            toFire.add(arrow.copy());
+            toFire.add(arrow.copy());
         } else {
-            toFire.add(arrowStack);
+            toFire.add(arrow);
         }
 
-        float[] angles = toFire.size() == 3 ? new float[]{-10.0F, 0.0F, 10.0F} : new float[]{0.0F};
-        for (int i = 0; i < toFire.size(); i++) {
-            shootArrow(level, player, toFire.get(i), angles[i], i > 0);
-        }
+        saveLoadedProjectiles(stack, List.of());
+        this.performShooting(level, player, hand, stack, toFire, SHOOTING_POWER, 1.0F);
 
-        level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.CROSSBOW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F);
-
-        saveLoadedProjectiles(stack, loaded);
-        CrossbowItem.setCharged(stack, !loaded.isEmpty());
+        saveLoadedProjectiles(stack, all);
     }
 
-    private void shootArrow(Level level, Player player, ItemStack arrowStack, float angleOffset, boolean disallowPickup) {
-        if (!(arrowStack.getItem() instanceof ArrowItem arrowItem)) {
-            return;
+    private void performShooting(Level level, Player player, InteractionHand hand, ItemStack weapon,
+                                 List<ItemStack> projectiles, float velocity, float inaccuracy) {
+        float spread = projectiles.size() == 1 ? 0.0F : 20.0F / (float) (projectiles.size() - 1);
+        float baseAngle = (float) ((projectiles.size() - 1) % 2) * spread / 2.0F;
+        float direction = 1.0F;
+        for (int i = 0; i < projectiles.size(); i++) {
+            ItemStack ammo = projectiles.get(i);
+            if (ammo.isEmpty()) {
+                continue;
+            }
+            float angle = baseAngle + direction * (float) ((i + 1) / 2) * spread;
+            direction = -direction;
+            Projectile projectile = createProjectile(level, player, weapon, ammo);
+            shootProjectile(player, projectile, i, velocity, inaccuracy, angle);
+            weapon.hurtAndBreak(ammo.is(Items.FIREWORK_ROCKET) ? 3 : 1, player, entity -> entity.broadcastBreakEvent(hand));
+            level.addFreshEntity(projectile);
+            float pitch = i == 0 ? 1.0F : getRandomShotPitch((i & 1) == 1, player.getRandom());
+            level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.CROSSBOW_SHOOT, player.getSoundSource(), 1.0F, pitch);
+            if (weapon.isEmpty()) {
+                break;
+            }
         }
 
-        AbstractArrow arrow = arrowItem.createArrow(level, arrowStack, player);
-        arrow.shootFromRotation(player, player.getXRot(), player.getYRot() + angleOffset, 0.0F, SHOOTING_POWER, 1.0F);
-        scaleArrowDamage(arrow);
-        if (disallowPickup) {
-            arrow.pickup = AbstractArrow.Pickup.DISALLOWED;
+        if (player instanceof ServerPlayer serverPlayer) {
+            CriteriaTriggers.SHOT_CROSSBOW.trigger(serverPlayer, weapon);
+            serverPlayer.awardStat(Stats.ITEM_USED.get(weapon.getItem()));
         }
-        UltimateGearHelper.tagUltimateCrossbowProjectile(arrow);
-        level.addFreshEntity(arrow);
+    }
+
+    private static Projectile createProjectile(Level level, Player shooter, ItemStack weapon, ItemStack ammo) {
+        if (ammo.is(Items.FIREWORK_ROCKET)) {
+            return new FireworkRocketEntity(level, ammo, shooter, shooter.getX(), shooter.getEyeY() - 0.15F, shooter.getZ(), true);
+        }
+        ArrowItem arrowItem = (ArrowItem) (ammo.getItem() instanceof ArrowItem ? ammo.getItem() : Items.ARROW);
+        AbstractArrow arrow = arrowItem.createArrow(level, ammo, shooter);
+        arrow.setCritArrow(true);
+        arrow.setSoundEvent(SoundEvents.CROSSBOW_HIT);
+        arrow.setShotFromCrossbow(true);
+        int piercing = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.PIERCING, weapon);
+        if (piercing > 0) {
+            arrow.setPierceLevel((byte) piercing);
+        }
+        return arrow;
+    }
+
+    private void shootProjectile(LivingEntity shooter, Projectile projectile, int projectileIndex,
+                                 float velocity, float inaccuracy, float angle) {
+        Vec3 upVector = shooter.getUpVector(1.0F);
+        Quaternionf rotation = new Quaternionf().setAngleAxis(angle * ((float) Math.PI / 180.0F), upVector.x, upVector.y, upVector.z);
+        Vector3f direction = shooter.getViewVector(1.0F).toVector3f().rotate(rotation);
+        projectile.shoot(direction.x(), direction.y(), direction.z(), velocity, inaccuracy);
+        if (projectile instanceof AbstractArrow arrow) {
+            scaleArrowDamage(arrow);
+            if (projectileIndex > 0) {
+                arrow.pickup = AbstractArrow.Pickup.DISALLOWED;
+            }
+            UltimateGearHelper.tagUltimateCrossbowProjectile(arrow);
+        }
+    }
+
+    private static float getRandomShotPitch(boolean highPitch, RandomSource random) {
+        float base = highPitch ? 0.63F : 0.43F;
+        return 1.0F / (random.nextFloat() * 0.5F + 1.8F) + base;
     }
 
     private static void scaleArrowDamage(AbstractArrow arrow) {
@@ -149,7 +202,7 @@ public class UltimateCrossbowItem extends CrossbowItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         List<ItemStack> loadedProjectiles = getLoadedProjectiles(stack);
         if (!loadedProjectiles.isEmpty()) {
             int count = loadedProjectiles.size();
@@ -226,10 +279,21 @@ public class UltimateCrossbowItem extends CrossbowItem {
 
     private static List<ItemStack> getLoadedProjectiles(ItemStack crossbow) {
         List<ItemStack> projectiles = new ArrayList<>();
-        CompoundTag tag = crossbow.hasTag() ? crossbow.getTag() : new CompoundTag();
-        ListTag loaded = tag.getList(LOADED_PROJECTILES_TAG, Tag.TAG_COMPOUND);
-        for (int i = 0; i < loaded.size() && projectiles.size() < MAX_ARROWS; i++) {
-            ItemStack projectile = ItemStack.of(loaded.getCompound(i).getCompound(PROJECTILE_ITEM_TAG));
+        CompoundTag tag = crossbow.getTag();
+        if (tag == null) {
+            return projectiles;
+        }
+        ListTag charged = tag.getList(CHARGED_PROJECTILES_TAG, Tag.TAG_COMPOUND);
+        for (int i = 0; i < charged.size(); i++) {
+            ItemStack projectile = ItemStack.of(charged.getCompound(i));
+            if (!projectile.isEmpty() && projectiles.size() < MAX_ARROWS) {
+                projectiles.add(projectile.copyWithCount(1));
+            }
+        }
+
+        ListTag reserve = tag.getList(RESERVE_PROJECTILES_TAG, Tag.TAG_COMPOUND);
+        for (int i = 0; i < reserve.size() && projectiles.size() < MAX_ARROWS; i++) {
+            ItemStack projectile = ItemStack.of(reserve.getCompound(i).getCompound(PROJECTILE_ITEM_TAG));
             if (!projectile.isEmpty()) {
                 projectiles.add(projectile.copyWithCount(1));
             }
@@ -245,19 +309,37 @@ public class UltimateCrossbowItem extends CrossbowItem {
                 .toList();
 
         if (sanitizedProjectiles.isEmpty()) {
-            if (crossbow.hasTag()) {
-                crossbow.getTag().remove(LOADED_PROJECTILES_TAG);
+            CompoundTag tag = crossbow.getTag();
+            if (tag != null) {
+                tag.remove(CHARGED_PROJECTILES_TAG);
             }
+            CrossbowItem.setCharged(crossbow, false);
+            clearReserveProjectiles(crossbow);
             return;
         }
 
-        ListTag loaded = new ListTag();
-        for (ItemStack projectile : sanitizedProjectiles) {
+        ListTag charged = new ListTag();
+        charged.add(sanitizedProjectiles.get(0).save(new CompoundTag()));
+        crossbow.getOrCreateTag().put(CHARGED_PROJECTILES_TAG, charged);
+        CrossbowItem.setCharged(crossbow, true);
+        ListTag reserve = new ListTag();
+        for (int i = 1; i < sanitizedProjectiles.size(); i++) {
             CompoundTag entry = new CompoundTag();
-            entry.put(PROJECTILE_ITEM_TAG, projectile.save(new CompoundTag()));
-            loaded.add(entry);
+            entry.put(PROJECTILE_ITEM_TAG, sanitizedProjectiles.get(i).save(new CompoundTag()));
+            reserve.add(entry);
         }
 
-        crossbow.getOrCreateTag().put(LOADED_PROJECTILES_TAG, loaded);
+        if (reserve.isEmpty()) {
+            crossbow.getOrCreateTag().remove(RESERVE_PROJECTILES_TAG);
+        } else {
+            crossbow.getOrCreateTag().put(RESERVE_PROJECTILES_TAG, reserve);
+        }
+    }
+
+    private static void clearReserveProjectiles(ItemStack crossbow) {
+        CompoundTag tag = crossbow.getTag();
+        if (tag != null) {
+            tag.remove(RESERVE_PROJECTILES_TAG);
+        }
     }
 }

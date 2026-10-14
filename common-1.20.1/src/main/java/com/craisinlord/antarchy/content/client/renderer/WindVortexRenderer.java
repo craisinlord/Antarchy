@@ -94,9 +94,6 @@ public class WindVortexRenderer extends EntityRenderer<WindVortexEntity> {
         addVertex(consumer, pose, end.x + offset.x, end.y + offset.y, end.z + offset.z, red, green, blue, alpha);
         addVertex(consumer, pose, start.x + offset.x, start.y + offset.y, start.z + offset.z, red, green, blue, alpha);
 
-        // The lightning render type can cull one winding from some camera
-        // angles. Emit the opposite winding as well so every ribbon is
-        // visible from both sides.
         addVertex(consumer, pose, start.x + offset.x, start.y + offset.y, start.z + offset.z, red, green, blue, alpha);
         addVertex(consumer, pose, end.x + offset.x, end.y + offset.y, end.z + offset.z, red, green, blue, alpha);
         addVertex(consumer, pose, end.x - offset.x, end.y - offset.y, end.z - offset.z, red, green, blue, alpha);

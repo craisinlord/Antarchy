@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.mixins;
 
 import com.craisinlord.antarchy.content.item.InnateEnchantmentHelper;
+import com.craisinlord.antarchy.content.item.GiantFryingPanItem;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.GrindstoneMenu;
 import net.minecraft.world.item.ItemStack;
@@ -31,6 +32,11 @@ public abstract class GrindstoneMenuMixin {
     private void antarchy$blockInnateOnlyNoOp(CallbackInfo ci) {
         ItemStack firstInput = this.repairSlots.getItem(0);
         ItemStack secondInput = this.repairSlots.getItem(1);
+        if (firstInput.getItem() instanceof GiantFryingPanItem || secondInput.getItem() instanceof GiantFryingPanItem) {
+            this.resultSlots.setItem(0, ItemStack.EMPTY);
+            return;
+        }
+
         if (!firstInput.isEmpty() && secondInput.isEmpty()
                 && InnateEnchantmentHelper.hasInnateNonCurseEnchantments(firstInput)
                 && !InnateEnchantmentHelper.hasRemovableNonCurseEnchantments(firstInput)) {

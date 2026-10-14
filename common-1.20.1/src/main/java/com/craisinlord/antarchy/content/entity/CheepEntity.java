@@ -2,6 +2,8 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
@@ -24,6 +26,7 @@ import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class CheepEntity extends AbstractFish implements GeoEntity {
+    private static final ResourceLocation CHEEP_BUCKET_ID = new ResourceLocation("antarchy", "cheep_bucket");
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation SWIM_ANIM = RawAnimation.begin().thenLoop("swim");
     private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenLoop("attack");
@@ -49,8 +52,14 @@ public class CheepEntity extends AbstractFish implements GeoEntity {
     }
 
     @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty, net.minecraft.world.entity.MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData, @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag dataTag) {
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.cheepHealth());
+        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData, dataTag);
+    }
+
+    @Override
     public ItemStack getBucketItemStack() {
-        return new ItemStack(Items.WATER_BUCKET);
+        return new ItemStack(BuiltInRegistries.ITEM.getOptional(CHEEP_BUCKET_ID).orElse(Items.WATER_BUCKET));
     }
 
     @Override

@@ -10,11 +10,7 @@
   "terrain_adaptation": "beard_thin",
   "project_start_to_heightmap": "WORLD_SURFACE_WG",
   "start_height": {
-    "type": "minecraft:constant",
-    "value": {
-      "absolute": 0
-    }
+    "absolute": 0
   },
-  "spawn_overrides": {},
-  "liquid_settings": "ignore_waterlogging"
+  "spawn_overrides": {}
 }

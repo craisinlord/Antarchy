@@ -3,6 +3,10 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityTransition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -68,6 +72,7 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
     private static final double PATROL_SPEED = 0.28D;
     private static final double ATTACH_RANGE_SQR = 2.25D;
     private static final int LATCH_DAMAGE_INTERVAL = 15;
+    private static final float LATCH_DAMAGE = 2.0F;
     private static final int ANIM_IDLE = 0;
     private static final int ANIM_SWIM = 1;
     private static final int ANIM_ATTACK = 2;
@@ -106,6 +111,13 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
                 .add(Attributes.FLYING_SPEED, AntarchySettings.missileSquidFlyingSpeed())
                 .add(Attributes.FOLLOW_RANGE, 20.0D)
                 .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.missileSquidKnockbackResistance());
+    }
+
+    @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
+            MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData, @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag dataTag) {
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.missileSquidHealth());
+        return super.finalizeSpawn(level, difficulty, spawnReason, spawnData, dataTag);
     }
 
     public static boolean canSpawn(EntityType<MissileSquidEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
@@ -401,6 +413,9 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
         this.launchOwnerUuid = owner != null ? owner.getUUID() : null;
         this.setTarget(null);
         this.setNoGravity(false);
+        if (owner != null && GravityApi.isGravityInverted(owner)) {
+            GravityApi.setAirborneGravityDirection(this, GravityApi.getGravityDirection(owner), true, GravityTransition.INSTANT);
+        }
         this.setDeltaMovement(velocity);
         this.hasImpulse = true;
         this.updateAnimationState();
@@ -438,7 +453,7 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
         this.move(MoverType.SELF, velocity);
         Vec3 movedVelocity = this.getDeltaMovement();
         if (!this.isNoGravity()) {
-            movedVelocity = movedVelocity.add(0.0D, -0.08D, 0.0D);
+            movedVelocity = movedVelocity.add(this.toWorld(0.0D, -0.08D, 0.0D));
         }
 
         this.setDeltaMovement(movedVelocity.scale(this.isInWater() ? 0.9D : 0.98D));
@@ -505,9 +520,9 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
     }
 
     private void tickGroundAggroMovement(LivingEntity target) {
-        Vec3 horizontal = target.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+        Vec3 horizontal = this.toLocalPlane(target.position().subtract(this.position()));
         if (horizontal.lengthSqr() > 1.0E-4D && this.onGround()) {
-            Vec3 lunge = horizontal.normalize().scale(0.16D).add(0.0D, 0.24D, 0.0D);
+            Vec3 lunge = this.toWorld(horizontal.normalize().scale(0.16D).add(new Vec3(0.0D, 0.24D, 0.0D)));
             this.setDeltaMovement(this.getDeltaMovement().add(lunge));
             this.hasImpulse = true;
         }
@@ -532,7 +547,7 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
     }
 
     private void updateSwimRotation() {
-        Vec3 velocity = this.getDeltaMovement();
+        Vec3 velocity = this.toLocal(this.getDeltaMovement());
         if (velocity.horizontalDistanceSqr() > 1.0E-4D) {
             float targetYaw = (float) (Mth.atan2(velocity.z, velocity.x) * (180.0D / Math.PI)) - 90.0F;
             this.setYRot(Mth.approachDegrees(this.getYRot(), targetYaw, 10.0F));
@@ -572,7 +587,6 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
     public boolean canAttack(LivingEntity target) {
         return this.canTargetEntity(target) && super.canAttack(target);
     }
-
 
     @Nullable
     private LivingEntity getAttachedTarget() {
@@ -634,7 +648,7 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
 
         if (this.biteCooldown <= 0) {
             Vec3 previousMovement = target.getDeltaMovement();
-            boolean hurt = target.hurt(this.damageSources().mobAttack(this), (float) AntarchySettings.jumpyBugLatchDamage());
+            boolean hurt = target.hurt(this.damageSources().mobAttack(this), LATCH_DAMAGE);
             target.setDeltaMovement(previousMovement);
             if (hurt) {
                 this.playActionAnimation(ANIM_ATTACK, ATTACK_ANIM_TICKS);
@@ -650,15 +664,11 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
     }
 
     private Vec3 createLatchAnchor(LivingEntity target) {
-        return target.position().add(
-                0.0D,
-                target.getBbHeight() + 0.15D,
-                0.0D
-        );
+        return target.position().add(this.toWorld(0.0D, target.getBbHeight() + 0.15D, 0.0D));
     }
 
     private void updateAttachedRotation(LivingEntity target) {
-        Vec3 direction = target.position().subtract(this.position());
+        Vec3 direction = this.toLocal(target.position().subtract(this.position()));
         if (direction.horizontalDistanceSqr() > 1.0E-4D) {
             float targetYaw = (float)(Mth.atan2(direction.z, direction.x) * (180.0D / Math.PI)) - 90.0F;
             this.setYRot(targetYaw);
@@ -713,11 +723,32 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
         if (this.launchedFromSquidzooka
                 || this.getTarget() != null
                 || velocity.lengthSqr() > 1.0E-3D
-                || (this.isInWater() && velocity.horizontalDistanceSqr() > 1.0E-4D)) {
+                || (this.isInWater() && this.toLocal(velocity).horizontalDistanceSqr() > 1.0E-4D)) {
             this.setAnimationState(ANIM_SWIM);
             return;
         }
 
         this.setAnimationState(ANIM_IDLE);
+    }
+
+    private GravityDirection gravityDirection() {
+        return GravityApi.getGravityDirection(this);
+    }
+
+    private Vec3 toLocal(Vec3 worldVector) {
+        return GravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(double x, double y, double z) {
+        return GravityRotationUtil.vecPlayerToWorld(x, y, z, this.gravityDirection());
+    }
+
+    private Vec3 toWorld(Vec3 localVector) {
+        return GravityRotationUtil.vecPlayerToWorld(localVector, this.gravityDirection());
+    }
+
+    private Vec3 toLocalPlane(Vec3 worldVector) {
+        Vec3 local = this.toLocal(worldVector);
+        return new Vec3(local.x, 0.0D, local.z);
     }
 }

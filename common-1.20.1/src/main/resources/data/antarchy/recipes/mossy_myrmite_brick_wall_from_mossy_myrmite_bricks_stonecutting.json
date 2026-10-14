@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:mossy_myrmite_bricks"
+  },
+  "result": "antarchy:mossy_myrmite_brick_wall",
+  "count": 1
+}

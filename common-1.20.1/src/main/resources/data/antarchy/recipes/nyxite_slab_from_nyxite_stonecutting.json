@@ -3,8 +3,6 @@
   "ingredient": {
     "item": "antarchy:nyxite"
   },
-  "result": {
-    "count": 2,
-    "item": "antarchy:nyxite_slab"
-  }
+  "result": "antarchy:nyxite_slab",
+  "count": 2
 }

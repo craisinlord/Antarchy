@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "D": {
+      "item": "minecraft:deepslate"
+    },
+    "B": {
+      "item": "antarchy:broodfruit"
+    }
+  },
+  "pattern": [
+    "DDD",
+    "DBD",
+    "DDD"
+  ],
+  "result": {
+    "item": "antarchy:broodstone",
+    "count": 8
+  }
+}

@@ -526,10 +526,7 @@
     "effect.antarchy.dread.description": "Provoca alucinações visuais e auditivas.",
     "effect.antarchy.paralyzed": "Paralisado",
     "effect.antarchy.paralyzed.description": "Impede que os alvos se movam.",
-    "effect.antarchy.inverted": "Invertido",
-    "effect.antarchy.inverted.description": "Inverte a gravidade do alvo.",
     "effect.antarchy.commanded.description": "Luta pelo jogador que o comandou.",
-    "effect.antarchy.dilated.description": "Diminui a passagem do tempo para a entidade afetada.",
     "effect.antarchy.stinky": "Fedido",
     "effect.antarchy.stinky.description": "Afasta mobs passivos e neutros e atrai artrópodes.",
     "effect.antarchy.gooped.description": "Reduz a velocidade de movimento e de ataque.",
@@ -959,4 +956,7 @@
     "advancements.antarchy.beetle_buddies.description": "Domestique um besouro-hércules.",
     "advancements.antarchy.herculean_task.title": "Tarefa Hercúlea",
     "advancements.antarchy.herculean_task.description": "Abata um besouro-hércules."
+,
+    "entity.antarchy.portal_gun_portal": "Portal da arma de portais",
+    "attribute.antarchy.entity_interaction_range": "Alcance de Interação com Entidades"
 }

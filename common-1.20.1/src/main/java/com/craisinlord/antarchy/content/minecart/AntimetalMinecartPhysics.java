@@ -17,17 +17,6 @@ import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * A direct mirror of {@code AbstractMinecart.moveAlongTrack}/{@code getPos}/{@code getPosOffs},
- * adapted for ceiling-mounted track. The world-Y meaning of "ascending"/"descending" does not
- * need to be sign-flipped anywhere here — lower world Y is lower world Y whether a rail rests on
- * a floor or hangs from a ceiling. What actually differs from vanilla is: the rail sits near the
- * top of its cell instead of near the bottom (see {@link AntimetalRailHelper#attachY}), support
- * is required above instead of below, and the "which cell owns this position" disambiguation
- * checks the cell above instead of the cell below. Everything else — the exit-projection math,
- * the slope acceleration constant, the player-push nudge, using real collision-checked
- * {@code Entity.move} rather than a hand-rolled collision test — is a straight port.
- */
 public final class AntimetalMinecartPhysics {
     private static final double SLOPE_ACCEL = 0.0078125D;
     private static final double MAX_RAIL_SPEED = 0.4D;

@@ -1,6 +1,6 @@
 package com.craisinlord.antarchy.mixins.client;
 
-import com.craisinlord.antarchy.content.time.TimeDilationApi;
+import com.craisinlord.anthology.time.TimeDilationApi;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

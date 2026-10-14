@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 public abstract class GlimmeringDamageImmunityMixin {
-    // Magic damage (potions, spells) is tagged bypasses_armor, so it's excluded
     @Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
     private void antarchy$glimmeringIgnoresAttacks(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         LivingEntity self = (LivingEntity) (Object) this;

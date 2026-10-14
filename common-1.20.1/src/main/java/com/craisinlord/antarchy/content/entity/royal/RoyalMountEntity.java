@@ -4,7 +4,13 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
-import java.util.UUID;
+import com.craisinlord.anthology.beam.BeamController;
+import com.craisinlord.anthology.beam.BeamSettings;
+import com.craisinlord.anthology.beam.BeamTerrainMode;
+import com.craisinlord.antarchy.content.effect.RoyalEffectEligibility;
+import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
+import com.craisinlord.anthology.time.TimeDilationApi;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -20,12 +26,15 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.control.MoveControl;
@@ -40,17 +49,24 @@ import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.core.particles.ParticleTypes;
+import java.util.UUID;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
@@ -59,6 +75,8 @@ import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntity, FlyingAnimal {
+    private static final ResourceLocation GROWTH_HEALTH_MODIFIER = new ResourceLocation("antarchy", "royal_mount_growth_health");
+    private static final UUID GROWTH_HEALTH_MODIFIER_UUID = UUID.nameUUIDFromBytes(GROWTH_HEALTH_MODIFIER.toString().getBytes());
     public static final int ANIM_IDLE = 0;
     public static final int ANIM_WALK = 1;
     public static final int ANIM_FLY = 2;
@@ -73,19 +91,39 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
             SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> SADDLED =
             SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> BEAM_ACTIVE =
+            SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> BEAM_HEAD =
+            SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> HAS_BEAM_END =
+            SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Float> BEAM_END_X =
+            SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> BEAM_END_Y =
+            SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> BEAM_END_Z =
+            SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> GROWTH_PROGRESS =
+            SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Boolean> QUIRKING =
+            SynchedEntityData.defineId(RoyalMountEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation QUIRK_ANIM = RawAnimation.begin().thenLoop("quirk");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
     private static final RawAnimation FLY_ANIM = RawAnimation.begin().thenLoop("fly");
-    private static final RawAnimation BITE_ANIM = RawAnimation.begin().thenPlay("bite");
-    private static final RawAnimation FLY_BITE_ANIM = RawAnimation.begin().thenPlay("fly_bite");
-    private static final RawAnimation SHOOT_ANIM = RawAnimation.begin().thenPlay("shoot");
-    private static final RawAnimation FLY_SHOOT_ANIM = RawAnimation.begin().thenPlay("fly_shoot");
+    private static final RawAnimation BITE_ANIM = RawAnimation.begin().then("bite", Animation.LoopType.PLAY_ONCE);
+    private static final RawAnimation FLY_BITE_ANIM = RawAnimation.begin().then("fly_bite", Animation.LoopType.PLAY_ONCE);
+    private static final RawAnimation SHOOT_ANIM = RawAnimation.begin().then("shoot", Animation.LoopType.PLAY_ONCE);
+    private static final RawAnimation FLY_SHOOT_ANIM = RawAnimation.begin().then("fly_shoot", Animation.LoopType.PLAY_ONCE);
 
     private static final int ACTION_TICKS = 12;
     private static final int BITE_HIT_TICK = 6;
-    private static final int GROW_TICKS = 24000;
+    private static final int BEAM_WINDUP_TICKS = 24;
+    private static final int BEAM_COOLDOWN_TICKS = 240;
+    private static final int BEAM_DURATION_TICKS = 12;
+    private static final int COMMAND_COOLDOWN_TICKS = 360;
+    private static final int TIME_FIELD_COOLDOWN_TICKS = 260;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private final MoveControl groundMoveControl;
@@ -100,6 +138,12 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
     private int flapSoundTimer;
     private boolean riderAscendPressed;
     private boolean riderDescendPressed;
+    private final BeamController beamController = new BeamController(this);
+    private int beamWindupTicks;
+    private int beamCooldownTicks;
+    private int beamHead;
+    private int commandCooldownTicks;
+    private int timeFieldCooldownTicks;
 
     protected RoyalMountEntity(EntityType<? extends RoyalMountEntity> entityType, Level level) {
         super(entityType, level);
@@ -166,14 +210,15 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         this.goalSelector.addGoal(1, new SitWhenOrderedToGoal(this) {
             @Override
             public boolean canUse() {
-                return !RoyalMountEntity.this.isBaby() && super.canUse();
+                return super.canUse();
             }
         });
         this.goalSelector.addGoal(2, new RoyalMountSpitGoal(this));
         this.goalSelector.addGoal(3, new net.minecraft.world.entity.ai.goal.MeleeAttackGoal(this, 1.2D, true) {
             @Override
             protected void checkAndPerformAttack(LivingEntity target, double distance) {
-                if (this.isTimeToAttack()) {
+                if (this.isTimeToAttack() && distance <= this.getAttackReachSqr(target)
+                        && this.mob.getSensing().hasLineOfSight(target)) {
                     this.resetAttackCooldown();
                     RoyalMountEntity.this.startBite();
                 }
@@ -181,14 +226,14 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
 
             @Override
             public boolean canUse() {
-                return !RoyalMountEntity.this.isBaby() && !RoyalMountEntity.this.isVehicle() && super.canUse();
+                return !RoyalMountEntity.this.isVehicle() && super.canUse();
             }
         });
         this.goalSelector.addGoal(4, new RoyalMountFollowOwnerGoal(this));
         this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.8D) {
             @Override
             public boolean canUse() {
-                return !RoyalMountEntity.this.isBaby() && !RoyalMountEntity.this.isVehicle()
+                return !RoyalMountEntity.this.isVehicle()
                         && !RoyalMountEntity.this.isOrderedToSit() && super.canUse();
             }
         });
@@ -196,25 +241,25 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this) {
             @Override
             public boolean canUse() {
-                return !RoyalMountEntity.this.isBaby() && super.canUse();
+                return super.canUse();
             }
         });
         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this) {
             @Override
             public boolean canUse() {
-                return !RoyalMountEntity.this.isBaby() && super.canUse();
+                return super.canUse();
             }
         });
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this) {
             @Override
             public boolean canUse() {
-                return !RoyalMountEntity.this.isBaby() && super.canUse();
+                return super.canUse();
             }
         });
         this.targetSelector.addGoal(3, new HurtByTargetGoal(this) {
             @Override
             public boolean canUse() {
-                return !RoyalMountEntity.this.isBaby() && super.canUse();
+                return super.canUse();
             }
         }.setAlertOthers());
     }
@@ -225,6 +270,14 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         this.entityData.define(ANIM_STATE, ANIM_IDLE);
         this.entityData.define(FLYING, false);
         this.entityData.define(SADDLED, false);
+        this.entityData.define(BEAM_ACTIVE, false);
+        this.entityData.define(BEAM_HEAD, -1);
+        this.entityData.define(HAS_BEAM_END, false);
+        this.entityData.define(BEAM_END_X, 0.0F);
+        this.entityData.define(BEAM_END_Y, 0.0F);
+        this.entityData.define(BEAM_END_Z, 0.0F);
+        this.entityData.define(GROWTH_PROGRESS, 0.0F);
+        this.entityData.define(QUIRKING, false);
     }
 
     @Override
@@ -232,6 +285,10 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         super.addAdditionalSaveData(tag);
         tag.putBoolean("Saddled", this.isSaddled());
         tag.putBoolean("Flying", this.isFlying());
+        tag.putInt("BeamCooldown", this.beamCooldownTicks);
+        tag.putInt("CommandCooldown", this.commandCooldownTicks);
+        tag.putInt("TimeFieldCooldown", this.timeFieldCooldownTicks);
+        tag.putFloat("GrowthProgress", this.getGrowthProgress());
     }
 
     @Override
@@ -239,10 +296,31 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         super.readAdditionalSaveData(tag);
         this.setSaddled(tag.getBoolean("Saddled"));
         this.setFlying(tag.getBoolean("Flying"));
+        this.actionTicks = 0;
+        this.actionHit = false;
+        this.spitCooldown = 0;
+        this.beamCooldownTicks = Math.max(0, tag.getInt("BeamCooldown"));
+        this.commandCooldownTicks = Math.max(0, tag.getInt("CommandCooldown"));
+        this.timeFieldCooldownTicks = Math.max(0, tag.getInt("TimeFieldCooldown"));
+        this.setGrowthProgress(tag.contains("GrowthProgress") ? tag.getFloat("GrowthProgress") : 0.0F);
     }
 
     public boolean isFlying() {
         return this.entityData.get(FLYING);
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
+        super.onSyncedDataUpdated(key);
+        if (FLYING.equals(key) && this.groundMoveControl != null) {
+            boolean flying = this.entityData.get(FLYING);
+            this.moveControl = flying ? this.flyingMoveControl : this.groundMoveControl;
+            this.navigation = flying ? this.flyingNavigation : this.groundNavigation;
+            this.setNoGravity(flying);
+        }
+        if (GROWTH_PROGRESS.equals(key)) {
+            this.refreshDimensions();
+        }
     }
 
     public void setFlying(boolean flying) {
@@ -273,12 +351,44 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         this.entityData.set(ANIM_STATE, state);
     }
 
-    public float getAgeScale() {
-        if (!this.isBaby()) {
-            return 1.0F;
+    public float getGrowthScale() {
+        return 1.0F + 14.0F * this.getGrowthProgress();
+    }
+
+    public float getGrowthProgress() {
+        return this.entityData.get(GROWTH_PROGRESS);
+    }
+
+    public void setGrowthProgress(float progress) {
+        float clamped = Mth.clamp(progress, 0.0F, 1.0F);
+        if (this.getGrowthProgress() != clamped) {
+            float oldHealth = this.getHealth();
+            this.entityData.set(GROWTH_PROGRESS, clamped);
+            var maxHealth = this.getAttribute(Attributes.MAX_HEALTH);
+            if (maxHealth != null) {
+                maxHealth.removeModifier(GROWTH_HEALTH_MODIFIER_UUID);
+                if (clamped > 0.0F) {
+                    maxHealth.addTransientModifier(new AttributeModifier(GROWTH_HEALTH_MODIFIER_UUID, GROWTH_HEALTH_MODIFIER.toString(),
+                            this.getGrowthScale() - 1.0D, AttributeModifier.Operation.MULTIPLY_BASE));
+                }
+                this.setHealth(Math.min(oldHealth, this.getMaxHealth()));
+            }
+            this.refreshDimensions();
         }
-        float progress = 1.0F - Mth.clamp(-this.getAge() / (float) GROW_TICKS, 0.0F, 1.0F);
-        return 0.35F + 0.65F * progress;
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        Entity attacker = source.getEntity();
+        if (attacker != null && this.hasPassenger(attacker)) {
+            return false;
+        }
+        return super.hurt(source, amount);
+    }
+
+    @Override
+    public EntityDimensions getDimensions(Pose pose) {
+        return super.getDimensions(pose).scale(this.getGrowthScale());
     }
 
     @Override
@@ -290,21 +400,37 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        if (this.isFood(stack)) {
+        if (stack.is(Items.GOLDEN_APPLE) && !this.isTame()) {
+            if (!this.level().isClientSide) {
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
+                }
+                this.tame(player);
+                this.heal(8.0F);
+                this.level().broadcastEntityEvent(this, (byte) 7);
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        if (stack.is(Items.ENCHANTED_GOLDEN_APPLE) && this.isTame() && this.isOwnedBy(player)) {
             if (!this.level().isClientSide) {
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);
                 }
                 this.heal(8.0F);
-                if (this.isBaby()) {
-                    this.ageUp((int) (-this.getAge() * 0.1F), true);
+                this.setGrowthProgress(this.getGrowthProgress() + (1.0F - this.getGrowthProgress()) * 0.1F);
+                this.level().broadcastEntityEvent(this, (byte) 6);
+            }
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
+
+        if (this.isFood(stack)) {
+            if (!this.level().isClientSide && this.isTame() && this.isOwnedBy(player) && this.getHealth() < this.getMaxHealth()) {
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
                 }
-                if (!this.isTame() && this.random.nextInt(3) == 0) {
-                    this.tame(player);
-                    this.level().broadcastEntityEvent(this, (byte) 7);
-                } else {
-                    this.level().broadcastEntityEvent(this, (byte) 6);
-                }
+                this.heal(8.0F);
+                this.level().broadcastEntityEvent(this, (byte) 6);
             }
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
@@ -322,12 +448,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
             }
 
             if (stack.isEmpty() && player.isSecondaryUseActive()) {
-                if (this.isSaddled()) {
-                    if (!this.level().isClientSide) {
-                        this.setSaddled(false);
-                        this.spawnAtLocation(new ItemStack(Items.SADDLE));
-                    }
-                } else if (!this.level().isClientSide) {
+                if (!this.level().isClientSide) {
                     this.setOrderedToSit(!this.isOrderedToSit());
                     this.setInSittingPose(this.isOrderedToSit());
                     this.navigation.stop();
@@ -336,7 +457,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
                 return InteractionResult.sidedSuccess(this.level().isClientSide);
             }
 
-            if (stack.isEmpty() && !this.isBaby() && !player.isPassenger()) {
+            if (stack.isEmpty() && !player.isPassenger()) {
                 if (!this.level().isClientSide) {
                     this.setOrderedToSit(false);
                     this.setInSittingPose(false);
@@ -364,17 +485,19 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
     public void tick() {
         super.tick();
 
-        if (this.isBaby()) {
-            this.refreshDimensions();
-        }
-
         if (this.level().isClientSide) {
             return;
+        }
+
+        LivingEntity target = this.getTarget();
+        if (target != null && !this.canAttack(target)) {
+            this.setTarget(null);
         }
 
         if (this.spitCooldown > 0) {
             this.spitCooldown--;
         }
+        this.tickRoyalAbilities();
 
         if ((this.isFlying() || !this.onGround()) && --this.flapSoundTimer <= 0) {
             this.flapSoundTimer = 24 + this.random.nextInt(12);
@@ -382,6 +505,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         }
 
         if (this.actionTicks > 0) {
+            this.entityData.set(QUIRKING, false);
             this.actionTicks--;
             if (!this.actionHit && this.actionTicks <= ACTION_TICKS - BITE_HIT_TICK
                     && (this.getAnimState() == ANIM_BITE || this.getAnimState() == ANIM_FLY_BITE)) {
@@ -402,6 +526,111 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         }
         if (this.getAnimState() == ANIM_IDLE && this.quirkTimer == 0 && this.random.nextInt(600) == 0) {
             this.quirkTimer = 80;
+        }
+        this.entityData.set(QUIRKING, this.quirkTimer > 0 && this.getAnimState() == ANIM_IDLE);
+    }
+
+    private void tickRoyalAbilities() {
+        if (this.beamCooldownTicks > 0) this.beamCooldownTicks--;
+        if (this.commandCooldownTicks > 0) this.commandCooldownTicks--;
+        if (this.timeFieldCooldownTicks > 0) this.timeFieldCooldownTicks--;
+        if (this.beamWindupTicks > 0) {
+            this.beamWindupTicks--;
+            if (this.beamWindupTicks == 0) {
+                this.beamController.start(this.beamShootFrom(), this.beamTargetPosition(), BEAM_DURATION_TICKS);
+                this.entityData.set(BEAM_ACTIVE, true);
+            }
+        }
+        if (this.beamController.isFiring()) {
+            this.beamController.tick(this.beamShootFrom(), this.getTarget(), this.beamSettings(), BeamTerrainMode.NONE, this::setBeamEndPosition);
+            if (!this.beamController.isFiring()) {
+                this.entityData.set(BEAM_ACTIVE, false);
+                this.entityData.set(BEAM_HEAD, -1);
+                this.beamCooldownTicks = BEAM_COOLDOWN_TICKS;
+            }
+            return;
+        }
+        if (this.isOrderedToSit()) return;
+        LivingEntity target = this.getTarget();
+        if (target == null && this.getControllingPassenger() instanceof Player) {
+            target = this.frontTarget();
+            if (target != null) this.setTarget(target);
+        }
+        if (target == null || !target.isAlive() || !this.hasLineOfSight(target)) return;
+        double targetDistance = this.distanceTo(target);
+        if (this.beamCooldownTicks <= 0 && this.beamWindupTicks <= 0 && targetDistance > 7.0D && targetDistance < 28.0D && this.tickCount % 20 == 0) {
+            this.beamHead = (this.beamHead + 1) % 3;
+            this.entityData.set(BEAM_HEAD, this.beamHead);
+            this.beamWindupTicks = BEAM_WINDUP_TICKS;
+            this.setAnimState(this.isFlying() ? ANIM_FLY_SHOOT : ANIM_SHOOT);
+            this.triggerAnim("main", this.isFlying() ? "fly_shoot" : "shoot");
+            this.playSound(this.shootSound(), 0.9F, 0.75F);
+        }
+        if (this instanceof PrinceEntity && this.commandCooldownTicks <= 0 && this.tickCount % 20 == 0) {
+            this.performPrinceCommand();
+        }
+        if (this instanceof PrincessEntity && this.timeFieldCooldownTicks <= 0 && this.tickCount % 20 == 0) {
+            this.performPrincessTimeField(target);
+        }
+    }
+
+    private void performPrinceCommand() {
+        if (!(this.level() instanceof ServerLevel level) || RoyalEffectHooks.commandedHolder() == null) return;
+        int applied = 0;
+        for (Mob mob : level.getEntitiesOfClass(Mob.class, this.getBoundingBox().inflate(16.0D), mob ->
+                mob != this && mob.isAlive() && mob instanceof Enemy && !mob.isAlliedTo(this)
+                        && !(mob instanceof RoyalBossEntity) && RoyalEffectEligibility.canApplyCommanded(mob))) {
+            if (applied >= 5) break;
+            if (mob.addEffect(new MobEffectInstance(RoyalEffectHooks.commandedHolder(), 300), this)) {
+                applied++;
+                level.sendParticles(ParticleTypes.HAPPY_VILLAGER, mob.getX(), mob.getY() + mob.getBbHeight(), mob.getZ(), 4, 0.2D, 0.2D, 0.2D, 0.02D);
+            }
+        }
+        if (applied > 0) {
+            this.commandCooldownTicks = COMMAND_COOLDOWN_TICKS;
+            this.playSound(this.shootSound(), 1.0F, 0.65F);
+        }
+    }
+
+    private void performPrincessTimeField(@Nullable LivingEntity target) {
+        if (!(this.level() instanceof ServerLevel level)) return;
+        Vec3 center = target != null && target.isAlive() ? target.position() : this.position();
+        TimeDilationApi.createField(level, center, 8.0D, 0.45D, 100, this.getUUID());
+        this.timeFieldCooldownTicks = TIME_FIELD_COOLDOWN_TICKS;
+        level.sendParticles(ParticleTypes.END_ROD, center.x, center.y + 0.5D, center.z, 28, 1.2D, 0.6D, 1.2D, 0.03D);
+    }
+
+    private BeamSettings beamSettings() {
+        float damage = this instanceof PrincessEntity ? 10.0F : 12.0F;
+        return new BeamSettings(28.0D, 0.08D, 4.0D, BEAM_DURATION_TICKS, 6, BEAM_COOLDOWN_TICKS,
+                0.35F, 0.45F, damage, 0.45F, 3, 0.0D, 0.0F, 0.0F, 0, 0.0F, 0.0F, 0.0F, false, true);
+    }
+
+    private Vec3 beamTargetPosition() {
+        LivingEntity target = this.getTarget();
+        return target != null ? target.getEyePosition() : this.getEyePosition().add(this.getLookAngle().scale(20.0D));
+    }
+
+    public Vec3 beamShootFrom() {
+        float scale = this.getGrowthScale();
+        Vec3 forward = Vec3.directionFromRotation(0.0F, this.getYRot());
+        Vec3 side = new Vec3(-forward.z, 0.0D, forward.x);
+        return this.position().add(0.0D, 1.0D * scale, 0.0D).add(forward.scale(1.05D * scale)).add(side.scale((this.getBeamHead() - 1) * 0.72D * scale));
+    }
+
+    public int getBeamHead() { return this.entityData.get(BEAM_HEAD); }
+    public boolean isFiringBeam() { return this.entityData.get(BEAM_ACTIVE); }
+    public Vec3 getBeamEndPosition() {
+        return this.entityData.get(HAS_BEAM_END) ? new Vec3(this.entityData.get(BEAM_END_X), this.entityData.get(BEAM_END_Y), this.entityData.get(BEAM_END_Z)) : null;
+    }
+    public RoyalBeamElement getBeamElement() { return RoyalBeamElement.GENERIC; }
+    public BeamController beamController() { return this.beamController; }
+    private void setBeamEndPosition(@Nullable Vec3 position) {
+        this.entityData.set(HAS_BEAM_END, position != null);
+        if (position != null) {
+            this.entityData.set(BEAM_END_X, (float) position.x);
+            this.entityData.set(BEAM_END_Y, (float) position.y);
+            this.entityData.set(BEAM_END_Z, (float) position.z);
         }
     }
 
@@ -447,9 +676,15 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         if (target == null && this.getControllingPassenger() instanceof Player) {
             target = this.frontTarget();
         }
-        if (target != null && target.distanceTo(this) < 5.0D) {
+        if (target != null && this.canAttack(target) && target.distanceTo(this) < 5.0D) {
             target.hurt(this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE));
         }
+    }
+
+    @Override
+    public boolean canAttack(LivingEntity target) {
+        return !(target instanceof RoyalMountEntity other && this.isTame() && other.isTame())
+                && super.canAttack(target);
     }
 
     @Nullable
@@ -460,6 +695,9 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         double bestDot = 0.3D;
         for (LivingEntity candidate : this.level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox().inflate(6.0D))) {
             if (candidate == this || candidate == this.getControllingPassenger() || candidate == this.getOwner()) {
+                continue;
+            }
+            if (!this.canAttack(candidate)) {
                 continue;
             }
             Vec3 to = candidate.getEyePosition().subtract(eye);
@@ -539,6 +777,11 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
 
     public void setRiderAscend(boolean pressed) {
         this.riderAscendPressed = pressed;
+        if (pressed && !this.isFlying() && this.getControllingPassenger() != null) {
+            this.setFlying(true);
+            this.setDeltaMovement(this.getDeltaMovement().add(0.0D, 0.35D, 0.0D));
+            this.hasImpulse = true;
+        }
     }
 
     public void setRiderDescend(boolean pressed) {
@@ -547,6 +790,54 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
 
     private boolean canControl(ServerPlayer player) {
         return this.isTame() && this.isOwnedBy(player) && this.getControllingPassenger() == player;
+    }
+
+    public AABB assistedMountBox() {
+        float scale = this.getGrowthScale();
+        double half = Math.max(this.getBbWidth() * 0.5D, 2.2D * scale);
+        double height = Math.max(this.getBbHeight(), 1.4D * scale);
+        return new AABB(this.getX() - half, this.getY(), this.getZ() - half,
+                this.getX() + half, this.getY() + height, this.getZ() + half);
+    }
+
+    @Nullable
+    public static RoyalMountEntity findAssistedMountTarget(Player player, double extraReach) {
+        if (player.isPassenger() || player.isSpectator() || !player.getMainHandItem().isEmpty()) {
+            return null;
+        }
+        Vec3 eye = player.getEyePosition();
+        Vec3 end = eye.add(player.getViewVector(1.0F).scale(com.craisinlord.antarchy.compat.entity.EntityReach.entityInteractionRange(player) + extraReach));
+        RoyalMountEntity best = null;
+        double bestDistance = Double.MAX_VALUE;
+        for (RoyalMountEntity mount : player.level().getEntitiesOfClass(RoyalMountEntity.class, player.getBoundingBox().inflate(80.0D),
+                mount -> mount.isAlive() && mount.isTame() && mount.isOwnedBy(player) && !mount.isVehicle())) {
+            AABB box = mount.assistedMountBox();
+            double distance;
+            if (box.contains(eye)) {
+                distance = 0.0D;
+            } else {
+                var hit = box.clip(eye, end);
+                if (hit.isEmpty()) {
+                    continue;
+                }
+                distance = hit.get().distanceToSqr(eye);
+            }
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                best = mount;
+            }
+        }
+        return best;
+    }
+
+    public static boolean tryAssistedMount(ServerPlayer player) {
+        RoyalMountEntity mount = findAssistedMountTarget(player, 2.0D);
+        if (mount == null) {
+            return false;
+        }
+        mount.setOrderedToSit(false);
+        mount.setInSittingPose(false);
+        return player.startRiding(mount);
     }
 
     @Nullable
@@ -565,8 +856,10 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         if (!this.hasPassenger(passenger)) {
             return;
         }
-        double yOffset = (this.isFlying() ? 1.55D : 1.35D) * this.getAgeScale();
-        Vec3 back = this.getLookAngle().scale(-0.35D * this.getAgeScale());
+        float scale = this.getGrowthScale();
+        double yOffset = 1.3D * scale;
+        double backDistance = 0.35D * scale;
+        Vec3 back = Vec3.directionFromRotation(0.0F, this.getYRot()).scale(-backDistance);
         moveFunction.accept(passenger, this.getX() + back.x, this.getY() + yOffset, this.getZ() + back.z);
     }
 
@@ -648,7 +941,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
         return switch (this.getAnimState()) {
             case ANIM_WALK -> state.setAndContinue(WALK_ANIM);
             case ANIM_FLY, ANIM_FLY_BITE, ANIM_FLY_SHOOT -> state.setAndContinue(FLY_ANIM);
-            default -> state.setAndContinue(this.quirkTimer > 0 ? QUIRK_ANIM : IDLE_ANIM);
+            default -> state.setAndContinue(this.entityData.get(QUIRKING) ? QUIRK_ANIM : IDLE_ANIM);
         };
     }
 

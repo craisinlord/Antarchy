@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:mossy_broodstone_bricks"
+  },
+  "result": "antarchy:mossy_broodstone_brick_slab",
+  "count": 1
+}

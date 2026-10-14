@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:vortex",
+    {
+      "id": "minecraft:breeze",
+      "required": false
+    },
+    "antarchy:king",
+    "antarchy:queen"
+  ]
+}

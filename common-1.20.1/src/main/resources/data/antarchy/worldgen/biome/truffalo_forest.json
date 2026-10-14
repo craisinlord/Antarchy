@@ -31,10 +31,6 @@
     "antarchy:mantis": {
       "energy_budget": 0.1,
       "charge": 15.0
-    },
-    "antarchy:glimmer": {
-      "energy_budget": 0.1,
-      "charge": 9
     }
   },
   "carvers": {
@@ -59,7 +55,6 @@
       "minecraft:ore_redstone",
       "minecraft:ore_redstone_lower",
       "minecraft:ore_diamond",
-      "minecraft:ore_diamond_medium",
       "minecraft:ore_diamond_large",
       "minecraft:ore_diamond_buried",
       "minecraft:ore_lapis",
@@ -96,13 +91,13 @@
       },
       {
         "type": "antarchy:apple_cow",
-        "weight": 24,
+        "weight": 20,
         "minCount": 1,
         "maxCount": 3
       },
       {
         "type": "antarchy:golden_apple_cow",
-        "weight": 20,
+        "weight": 16,
         "minCount": 1,
         "maxCount": 3
       },

@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -19,8 +20,11 @@ import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import org.joml.Vector3f;
 
 public class RoyalBoltEntity extends AbstractHurtingProjectile {
+    private static final DustParticleOptions KING_GOLD_TRAIL =
+            new DustParticleOptions(new Vector3f(1.0F, 0.72F, 0.12F), 1.35F);
     private static final EntityDataAccessor<Integer> ELEMENT =
             SynchedEntityData.defineId(RoyalBoltEntity.class, EntityDataSerializers.INT);
 
@@ -77,7 +81,8 @@ public class RoyalBoltEntity extends AbstractHurtingProjectile {
             case FIRE -> ParticleTypes.FLAME;
             case LIGHTNING -> ParticleTypes.ELECTRIC_SPARK;
             case ICE -> ParticleTypes.SNOWFLAKE;
-            case GENERIC -> ParticleTypes.WITCH;
+            case KING_GOLD -> KING_GOLD_TRAIL;
+            default -> ParticleTypes.WITCH;
         };
     }
 
@@ -90,6 +95,10 @@ public class RoyalBoltEntity extends AbstractHurtingProjectile {
         Entity target = result.getEntity();
         Entity owner = this.getOwner();
         if (target == owner || (owner != null && target == owner.getVehicle())) {
+            return;
+        }
+        if (owner instanceof RoyalMountEntity royal && target instanceof RoyalMountEntity other
+                && royal.isTame() && other.isTame()) {
             return;
         }
         float damage = (float) AntarchySettings.royalBoltDamage();

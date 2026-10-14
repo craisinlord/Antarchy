@@ -6,9 +6,9 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.PotentNyxiteBlock;
 import com.craisinlord.antarchy.content.block.state.PotentNyxiteState;
 import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.antarchy.content.client.particle.InvertedGeyserParticleOptions;
 import java.util.List;
 import java.util.function.Predicate;
@@ -333,9 +333,9 @@ public class PotentNyxiteBlockEntity extends BlockEntity {
                 continue;
             }
 
-            AntarchyGravityDirection gravityDirection = AntarchyGravityApi.getGravityDirection(entity);
+            GravityDirection gravityDirection = GravityApi.getGravityDirection(entity);
             Vec3 currentWorldVelocity = gravityDirection.isInverted()
-                    ? AntarchyGravityRotationUtil.vecPlayerToWorld(entity.getDeltaMovement(), gravityDirection)
+                    ? GravityRotationUtil.vecPlayerToWorld(entity.getDeltaMovement(), gravityDirection)
                     : entity.getDeltaMovement();
 
             double axisVelocity = currentWorldVelocity.y * eruptionDirection.getStepY();
@@ -343,7 +343,7 @@ public class PotentNyxiteBlockEntity extends BlockEntity {
                 Vec3 nextWorldVelocity = currentWorldVelocity.add(worldPush);
                 entity.setDeltaMovement(
                         gravityDirection.isInverted()
-                                ? AntarchyGravityRotationUtil.vecWorldToPlayer(nextWorldVelocity, gravityDirection)
+                                ? GravityRotationUtil.vecWorldToPlayer(nextWorldVelocity, gravityDirection)
                                 : nextWorldVelocity
                 );
                 entity.hurtMarked = true;

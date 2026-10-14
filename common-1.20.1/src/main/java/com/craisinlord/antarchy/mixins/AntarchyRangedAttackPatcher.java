@@ -14,7 +14,7 @@ final class AntarchyRangedAttackPatcher {
     private static final String LIVING_D_DESC = "(Lnet/minecraft/world/entity/LivingEntity;D)D";
     private static final String D_LIVING_DESC = "(DLnet/minecraft/world/entity/LivingEntity;)D";
     private static final String DELTA_MOVEMENT_DESC = "(Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/phys/Vec3;";
-    private static final String API_OWNER = "com/craisinlord/antarchy/content/gravity/AntarchyGravityApi";
+    private static final String API_OWNER = "com/craisinlord/antarchy/content/gravity/GravityApi";
 
     private enum AimMode {
         BODY,

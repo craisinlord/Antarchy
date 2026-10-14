@@ -3,8 +3,6 @@
   "ingredient": {
     "item": "antarchy:uranium_block"
   },
-  "result": {
-    "count": 4,
-    "item": "antarchy:cut_uranium"
-  }
+  "result": "antarchy:cut_uranium",
+  "count": 4
 }

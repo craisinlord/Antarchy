@@ -1,3 +1,4 @@
 {
-  "parent": "antarchy:item/krakens_grasp_held"
+  "parent": "antarchy:item/krakens_grasp_held",
+  "gui_light": "front"
 }

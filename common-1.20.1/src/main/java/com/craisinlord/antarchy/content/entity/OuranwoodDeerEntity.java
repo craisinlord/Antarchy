@@ -3,6 +3,9 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import java.util.EnumSet;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -160,6 +163,7 @@ public class OuranwoodDeerEntity extends Animal implements GeoEntity {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnGroupData, @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag dataTag) {
         DeerSpawnData deerSpawnData = spawnGroupData instanceof DeerSpawnData data ? data : new DeerSpawnData();
         SpawnGroupData result = super.finalizeSpawn(level, difficulty, spawnReason, spawnGroupData, dataTag);
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.ouranwoodDeerHealth());
 
         if (spawnReason == MobSpawnType.NATURAL || spawnReason == MobSpawnType.CHUNK_GENERATION || spawnReason == MobSpawnType.SPAWN_EGG) {
             this.setVariant(Variant.values()[this.random.nextInt(Variant.values().length)]);
@@ -221,7 +225,7 @@ public class OuranwoodDeerEntity extends Animal implements GeoEntity {
     }
 
     private PlayState mainAnimController(AnimationState<OuranwoodDeerEntity> state) {
-        double speedSqr = this.getDeltaMovement().horizontalDistanceSqr();
+        double speedSqr = this.toLocal(this.getDeltaMovement()).horizontalDistanceSqr();
         if (this.hurtTime > 0 || speedSqr > RUN_SPEED_THRESHOLD_SQR) {
             return state.setAndContinue(RUN_ANIM);
         }
@@ -239,6 +243,14 @@ public class OuranwoodDeerEntity extends Animal implements GeoEntity {
 
     private int createQuirkCooldown() {
         return MIN_QUIRK_COOLDOWN + this.random.nextInt(MAX_QUIRK_COOLDOWN - MIN_QUIRK_COOLDOWN + 1);
+    }
+
+    private GravityDirection gravityDirection() {
+        return GravityApi.getGravityDirection(this);
+    }
+
+    private Vec3 toLocal(Vec3 worldVector) {
+        return GravityRotationUtil.vecWorldToPlayer(worldVector, this.gravityDirection());
     }
 
     @Override

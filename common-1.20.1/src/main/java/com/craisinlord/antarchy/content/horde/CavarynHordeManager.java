@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.entity.JerryEntity;
 import com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakeSync;
 import com.craisinlord.antarchy.content.network.HordeIntensitySync;
@@ -55,6 +56,10 @@ public final class CavarynHordeManager {
             Registries.BIOME,
             new ResourceLocation(Antarchy.MODID, "biowart_caves")
     );
+    private static final ResourceKey<Biome> CAVARYN_MOLEWORM_CAVES = ResourceKey.create(
+            Registries.BIOME,
+            new ResourceLocation(Antarchy.MODID, "cavaryn_moleworm_caves")
+    );
     private static final ResourceLocation DORMANT_HORDE = hordeId("dormant");
     private static final ResourceLocation AWAKENING_HORDE = hordeId("awakening");
     private static final ResourceLocation WAVE_ONE_HORDE = hordeId("wave_1");
@@ -65,6 +70,8 @@ public final class CavarynHordeManager {
 
     private static final int GROUP_RADIUS_BLOCKS = 128;
     private static final int ATTENTION_THRESHOLD = 100;
+    private static final int TIGERS_EYE_TRIGGER_LEVEL = 125;
+    private static final ResourceLocation TIGERS_EYE_BLOCK = new ResourceLocation(Antarchy.MODID, "tigers_eye_block");
     private static final int HOSTILE_KILL_ATTENTION = 4;
     private static final int MOB_KILL_ATTENTION = 3;
     private static final int EGG_OR_NEST_BREAK_ATTENTION = 5;
@@ -125,13 +132,35 @@ public final class CavarynHordeManager {
     }
 
     public static void recordBlockBreak(ServerPlayer player, BlockState brokenState, BlockPos pos) {
-        if (!(player.level() instanceof ServerLevel level) || !level.dimension().equals(CAVARYN) || !hordesEnabled(level)) {
+        if (!(player.level() instanceof ServerLevel level)) {
+            return;
+        }
+        triggerTigersEyeBlockBreak(player, level, brokenState);
+        if (!level.dimension().equals(CAVARYN) || !hordesEnabled(level)) {
             return;
         }
         if (!isValidHordeTarget(player) || !isHordeBiome(level, pos) || isPlayerInActiveEncounter(level, player)) {
             return;
         }
         addAttention(level, player, scaleActionAttention(level, isEggOrNest(brokenState) ? EGG_OR_NEST_BREAK_ATTENTION : BLOCK_BREAK_ATTENTION));
+    }
+
+    private static void triggerTigersEyeBlockBreak(ServerPlayer player, ServerLevel level, BlockState brokenState) {
+        if (!level.dimension().equals(CAVARYN)
+                || !hordesEnabled(level)
+                || !isValidHordeTarget(player)
+                || !BuiltInRegistries.BLOCK.getKey(brokenState.getBlock()).equals(TIGERS_EYE_BLOCK)) {
+            return;
+        }
+
+        HordeData data = get(level);
+        PlayerAttention attention = data.players.computeIfAbsent(player.getUUID(), ignored -> new PlayerAttention());
+        attention.attention = TIGERS_EYE_TRIGGER_LEVEL;
+        attention.areaKey = areaKey(player.blockPosition());
+        attention.areaTicks = 0;
+        attention.lastSeenGameTime = level.getGameTime();
+        data.setDirty();
+        HordeIntensitySync.send(player, attention.attention / (float) ATTENTION_THRESHOLD);
     }
 
     public static boolean isHordeBiome(ServerLevelAccessor level, BlockPos pos) {
@@ -312,6 +341,11 @@ public final class CavarynHordeManager {
                 data.setDirty();
             }
             if (encounter.phase == Phase.HERCULES && herculesCleared(level, encounter, gameTime)) {
+                if (herculesDefeated(level, encounter)) {
+                    for (ServerPlayer player : targetsFor(level, encounter)) {
+                        AntarchyAdvancementTriggers.hordePhaseChanged(player, "completed");
+                    }
+                }
                 encounter.phase = Phase.RECOVERY;
                 encounter.recoveryEndsAt = gameTime + RECOVERY_TICKS;
                 data.setDirty();
@@ -349,6 +383,19 @@ public final class CavarynHordeManager {
     private static boolean herculesCleared(ServerLevel level, Encounter encounter, long gameTime) {
         if (encounter.herculesIds.isEmpty() || gameTime >= encounter.herculesTimeoutAt) {
             return true;
+        }
+        for (UUID uuid : encounter.herculesIds) {
+            Entity entity = level.getEntity(uuid);
+            if (entity instanceof LivingEntity living && living.isAlive() && !living.isRemoved()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean herculesDefeated(ServerLevel level, Encounter encounter) {
+        if (encounter.herculesIds.isEmpty()) {
+            return false;
         }
         for (UUID uuid : encounter.herculesIds) {
             Entity entity = level.getEntity(uuid);
@@ -401,6 +448,9 @@ public final class CavarynHordeManager {
         }
         data.encounters.add(encounter);
         data.setDirty();
+        for (ServerPlayer player : targetsFor(level, encounter)) {
+            AntarchyAdvancementTriggers.hordePhaseChanged(player, "awakening");
+        }
     }
 
     private static List<TargetedSpawnChoice> buildTargetedSpawnList(ServerLevel level, ResourceLocation horde, List<ServerPlayer> targets, int players, boolean highAttention) {
@@ -541,6 +591,9 @@ public final class CavarynHordeManager {
     private static ResourceLocation hordeForPosition(ServerLevel level, BlockPos pos, ResourceLocation horde) {
         if (level.getBiome(pos).is(BIOWART_CAVES)) {
             return new ResourceLocation(horde.getNamespace(), "biowart_caves/" + horde.getPath());
+        }
+        if (level.getBiome(pos).is(CAVARYN_MOLEWORM_CAVES)) {
+            return new ResourceLocation(horde.getNamespace(), "cavaryn_moleworm_caves/" + horde.getPath());
         }
         return horde;
     }

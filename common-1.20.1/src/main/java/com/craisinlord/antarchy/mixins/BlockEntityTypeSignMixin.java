@@ -30,18 +30,48 @@ public abstract class BlockEntityTypeSignMixin {
     private static Block antarchy$peachHangingSign;
     @Unique
     private static Block antarchy$peachWallHangingSign;
+    @Unique
+    private static Block antarchy$nadirSign;
+    @Unique
+    private static Block antarchy$nadirWallSign;
+    @Unique
+    private static Block antarchy$nadirHangingSign;
+    @Unique
+    private static Block antarchy$nadirWallHangingSign;
+    @Unique
+    private static Block antarchy$royalSign;
+    @Unique
+    private static Block antarchy$royalWallSign;
+    @Unique
+    private static Block antarchy$royalHangingSign;
+    @Unique
+    private static Block antarchy$royalWallHangingSign;
+    @Unique
+    private static Block antarchy$truffaloSign;
+    @Unique
+    private static Block antarchy$truffaloWallSign;
+    @Unique
+    private static Block antarchy$truffaloHangingSign;
+    @Unique
+    private static Block antarchy$truffaloWallHangingSign;
 
     @Inject(method = "isValid", at = @At("HEAD"), cancellable = true)
     private void antarchy$allowOuranwoodSigns(BlockState state, CallbackInfoReturnable<Boolean> cir) {
         Object self = this;
         if (self == BlockEntityType.SIGN) {
             if (state.is(antarchy$sign()) || state.is(antarchy$wallSign())
-                    || state.is(antarchy$peachSign()) || state.is(antarchy$peachWallSign())) {
+                    || state.is(antarchy$peachSign()) || state.is(antarchy$peachWallSign())
+                    || state.is(antarchy$nadirSign()) || state.is(antarchy$nadirWallSign())
+                    || state.is(antarchy$royalSign()) || state.is(antarchy$royalWallSign())
+                    || state.is(antarchy$truffaloSign()) || state.is(antarchy$truffaloWallSign())) {
                 cir.setReturnValue(true);
             }
         } else if (self == BlockEntityType.HANGING_SIGN) {
             if (state.is(antarchy$hangingSign()) || state.is(antarchy$wallHangingSign())
-                    || state.is(antarchy$peachHangingSign()) || state.is(antarchy$peachWallHangingSign())) {
+                    || state.is(antarchy$peachHangingSign()) || state.is(antarchy$peachWallHangingSign())
+                    || state.is(antarchy$nadirHangingSign()) || state.is(antarchy$nadirWallHangingSign())
+                    || state.is(antarchy$royalHangingSign()) || state.is(antarchy$royalWallHangingSign())
+                    || state.is(antarchy$truffaloHangingSign()) || state.is(antarchy$truffaloWallHangingSign())) {
                 cir.setReturnValue(true);
             }
         }
@@ -109,6 +139,102 @@ public abstract class BlockEntityTypeSignMixin {
             antarchy$peachWallHangingSign = antarchy$resolve("peach_wall_hanging_sign");
         }
         return antarchy$peachWallHangingSign;
+    }
+
+    @Unique
+    private static Block antarchy$nadirSign() {
+        if (antarchy$nadirSign == null) {
+            antarchy$nadirSign = antarchy$resolve("nadir_sign");
+        }
+        return antarchy$nadirSign;
+    }
+
+    @Unique
+    private static Block antarchy$nadirWallSign() {
+        if (antarchy$nadirWallSign == null) {
+            antarchy$nadirWallSign = antarchy$resolve("nadir_wall_sign");
+        }
+        return antarchy$nadirWallSign;
+    }
+
+    @Unique
+    private static Block antarchy$nadirHangingSign() {
+        if (antarchy$nadirHangingSign == null) {
+            antarchy$nadirHangingSign = antarchy$resolve("nadir_hanging_sign");
+        }
+        return antarchy$nadirHangingSign;
+    }
+
+    @Unique
+    private static Block antarchy$nadirWallHangingSign() {
+        if (antarchy$nadirWallHangingSign == null) {
+            antarchy$nadirWallHangingSign = antarchy$resolve("nadir_wall_hanging_sign");
+        }
+        return antarchy$nadirWallHangingSign;
+    }
+
+    @Unique
+    private static Block antarchy$royalSign() {
+        if (antarchy$royalSign == null) {
+            antarchy$royalSign = antarchy$resolve("royal_sign");
+        }
+        return antarchy$royalSign;
+    }
+
+    @Unique
+    private static Block antarchy$royalWallSign() {
+        if (antarchy$royalWallSign == null) {
+            antarchy$royalWallSign = antarchy$resolve("royal_wall_sign");
+        }
+        return antarchy$royalWallSign;
+    }
+
+    @Unique
+    private static Block antarchy$royalHangingSign() {
+        if (antarchy$royalHangingSign == null) {
+            antarchy$royalHangingSign = antarchy$resolve("royal_hanging_sign");
+        }
+        return antarchy$royalHangingSign;
+    }
+
+    @Unique
+    private static Block antarchy$royalWallHangingSign() {
+        if (antarchy$royalWallHangingSign == null) {
+            antarchy$royalWallHangingSign = antarchy$resolve("royal_wall_hanging_sign");
+        }
+        return antarchy$royalWallHangingSign;
+    }
+
+    @Unique
+    private static Block antarchy$truffaloSign() {
+        if (antarchy$truffaloSign == null) {
+            antarchy$truffaloSign = antarchy$resolve("truffalo_sign");
+        }
+        return antarchy$truffaloSign;
+    }
+
+    @Unique
+    private static Block antarchy$truffaloWallSign() {
+        if (antarchy$truffaloWallSign == null) {
+            antarchy$truffaloWallSign = antarchy$resolve("truffalo_wall_sign");
+        }
+        return antarchy$truffaloWallSign;
+    }
+
+    @Unique
+    private static Block antarchy$truffaloHangingSign() {
+        if (antarchy$truffaloHangingSign == null) {
+            antarchy$truffaloHangingSign = antarchy$resolve("truffalo_hanging_sign");
+        }
+        return antarchy$truffaloHangingSign;
+    }
+
+    @Unique
+    private static Block antarchy$truffaloWallHangingSign() {
+        if (antarchy$truffaloWallHangingSign == null) {
+            antarchy$truffaloWallHangingSign = antarchy$resolve("truffalo_wall_hanging_sign");
+        }
+        return antarchy$truffaloWallHangingSign;
     }
 
     @Unique

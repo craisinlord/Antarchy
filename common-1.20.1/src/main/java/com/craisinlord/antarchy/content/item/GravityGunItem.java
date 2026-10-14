@@ -4,8 +4,8 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import it.unimi.dsi.fastutil.longs.Long2BooleanMap;
 import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2IntMap;
@@ -386,8 +386,6 @@ public class GravityGunItem extends Item implements GeoItem, com.craisinlord.ant
         Vec2 holdRotation = getHoldRotation(player);
         heldTarget.setNoGravity(true);
 
-        // Snap back only when the held entity has drifted badly; otherwise drive it with
-        // velocity so the client can interpolate the motion smoothly between server updates.
         if (movement.lengthSqr() > 16.0D) {
             heldTarget.moveTo(holdPosition.x, holdPosition.y, holdPosition.z, holdRotation.x, holdRotation.y);
             heldTarget.setDeltaMovement(Vec3.ZERO);
@@ -536,11 +534,11 @@ public class GravityGunItem extends Item implements GeoItem, com.craisinlord.ant
 
     private static Vec3 getHoldVector(Player player) {
         Vec3 look = getRawLookVector(player);
-        if (!AntarchyGravityApi.isGravityInverted(player)) {
+        if (!GravityApi.isGravityInverted(player)) {
             return look;
         }
 
-        return AntarchyGravityRotationUtil.vecWorldToPlayer(look, AntarchyGravityApi.getGravityDirection(player));
+        return GravityRotationUtil.vecWorldToPlayer(look, GravityApi.getGravityDirection(player));
     }
 
     private static Vec3 getRawLookVector(Player player) {
@@ -549,14 +547,14 @@ public class GravityGunItem extends Item implements GeoItem, com.craisinlord.ant
     }
 
     private static Vec2 getHoldRotation(Player player) {
-        if (!AntarchyGravityApi.isGravityInverted(player)) {
+        if (!GravityApi.isGravityInverted(player)) {
             return new Vec2(player.getYRot(), player.getXRot());
         }
 
-        return AntarchyGravityRotationUtil.rotWorldToPlayer(
+        return GravityRotationUtil.rotWorldToPlayer(
                 player.getYRot(),
                 player.getXRot(),
-                AntarchyGravityApi.getGravityDirection(player)
+                GravityApi.getGravityDirection(player)
         );
     }
 

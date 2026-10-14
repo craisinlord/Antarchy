@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "planks",
+  "ingredients": [
+    {
+      "item": "antarchy:truffalo_log"
+    }
+  ],
+  "result": {
+    "item": "antarchy:truffalo_planks",
+    "count": 2
+  }
+}

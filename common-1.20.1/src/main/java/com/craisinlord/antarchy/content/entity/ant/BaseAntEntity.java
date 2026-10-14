@@ -94,6 +94,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     private static final int NEST_SEARCH_INTERVAL_TICKS = 80;
     private static final int FOOD_NEST_SEARCH_INTERVAL_TICKS = 20;
     private static final int CHEST_SEARCH_INTERVAL_TICKS = 20;
+    private static final int CHEST_VALIDATION_INTERVAL_TICKS = 10;
     private static final int SHARED_CHEST_MEMORY_TICKS = 120;
     private static final double FOOD_CHEST_SEARCH_RADIUS = 20.0D;
     private static final int GROUND_FOOD_CACHE_INTERVAL_TICKS = 20;
@@ -134,6 +135,10 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     @Nullable
     private BlockPos targetFoodChestPos;
     private int nextFoodChestSearchTick;
+    @Nullable
+    private BlockPos cachedFoodChestValidationPos;
+    private boolean cachedFoodChestValidationResult;
+    private int nextFoodChestValidationTick;
     @Nullable
     private BlockPos recentFoodChestPos;
     private int recentFoodChestExpireTick;
@@ -741,17 +746,36 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
             }
         }
 
+        if (bestPos != null) {
+            this.cachedFoodChestValidationPos = bestPos;
+            this.cachedFoodChestValidationResult = true;
+            this.nextFoodChestValidationTick = this.tickCount + CHEST_VALIDATION_INTERVAL_TICKS;
+        }
         return bestPos;
     }
 
     private boolean isValidFoodChest(BlockPos chestPos) {
+        if (this.cachedFoodChestValidationPos != null
+                && this.cachedFoodChestValidationPos.equals(chestPos)
+                && this.tickCount < this.nextFoodChestValidationTick) {
+            return this.cachedFoodChestValidationResult;
+        }
+
         BlockEntity blockEntity = this.level().getBlockEntity(chestPos);
-        return blockEntity instanceof ChestBlockEntity chestBlockEntity && this.findStealableFoodSlot(chestBlockEntity) >= 0;
+        boolean valid = blockEntity instanceof ChestBlockEntity chestBlockEntity
+                && this.findStealableFoodSlot(chestBlockEntity) >= 0;
+        this.cachedFoodChestValidationPos = chestPos.immutable();
+        this.cachedFoodChestValidationResult = valid;
+        this.nextFoodChestValidationTick = this.tickCount + CHEST_VALIDATION_INTERVAL_TICKS;
+        return valid;
     }
 
     private void clearFoodChestTarget() {
         this.targetFoodChestPos = null;
         this.nextFoodChestSearchTick = 0;
+        this.cachedFoodChestValidationPos = null;
+        this.cachedFoodChestValidationResult = false;
+        this.nextFoodChestValidationTick = 0;
     }
 
     private boolean stealFoodFromChest(BlockPos chestPos) {
@@ -1291,6 +1315,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         return AntTeleportHelper.resolveReturnDestinationLevel(player);
     }
 
+    @Nullable
     protected Vec3 getDestinationPosition(ServerLevel destination, ServerPlayer player) {
         return AntTeleportHelper.getDestinationPosition(player, destination);
     }
@@ -1382,13 +1407,16 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
             return null;
         }
 
-        if (leader.targetFoodChestPos != null && this.isValidFoodChest(leader.targetFoodChestPos)) {
+        if (leader.targetFoodChestPos != null
+                && leader.cachedFoodChestValidationPos != null
+                && leader.cachedFoodChestValidationPos.equals(leader.targetFoodChestPos)
+                && leader.cachedFoodChestValidationResult
+                && leader.tickCount < leader.nextFoodChestValidationTick) {
             return leader.targetFoodChestPos;
         }
 
         if (leader.recentFoodChestPos != null
-                && leader.tickCount <= leader.recentFoodChestExpireTick
-                && this.isValidFoodChest(leader.recentFoodChestPos)) {
+                && leader.tickCount <= leader.recentFoodChestExpireTick) {
             return leader.recentFoodChestPos;
         }
 

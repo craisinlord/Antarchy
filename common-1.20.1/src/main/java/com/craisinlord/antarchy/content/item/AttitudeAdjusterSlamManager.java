@@ -1,10 +1,9 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
-import com.craisinlord.antarchy.content.network.ImpactShakePayload;
-import com.craisinlord.antarchy.content.network.ImpactShakeSync;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
+import com.craisinlord.anthology.shake.CameraShakeSync;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -105,10 +104,10 @@ public final class AttitudeAdjusterSlamManager {
             return false;
         }
         PLAYER_SLAMS.put(player.getUUID(), new PlayerSlamState(player.getUUID(), player.serverLevel().dimension().location().toString(), player.serverLevel().getGameTime() + SLAM_TIMEOUT_TICKS, player.fallDistance));
-        AntarchyGravityDirection gravityDirection = AntarchyGravityRotationUtil.getGravityDownDirection(player) == Direction.UP ? AntarchyGravityDirection.UP : AntarchyGravityDirection.DOWN;
+        GravityDirection gravityDirection = GravityRotationUtil.getGravityDownDirection(player) == Direction.UP ? GravityDirection.UP : GravityDirection.DOWN;
         Vec3 motion = player.getDeltaMovement();
-        Vec3 localMotion = AntarchyGravityRotationUtil.vecWorldToPlayer(motion, gravityDirection);
-        player.setDeltaMovement(AntarchyGravityRotationUtil.vecPlayerToWorld(new Vec3(localMotion.x * 0.25D, PLAYER_SLAM_START_VELOCITY, localMotion.z * 0.25D), gravityDirection));
+        Vec3 localMotion = GravityRotationUtil.vecWorldToPlayer(motion, gravityDirection);
+        player.setDeltaMovement(GravityRotationUtil.vecPlayerToWorld(new Vec3(localMotion.x * 0.25D, PLAYER_SLAM_START_VELOCITY, localMotion.z * 0.25D), gravityDirection));
         player.hurtMarked = true;
         player.fallDistance = 0.0F;
         player.swing(hand, true);
@@ -168,10 +167,10 @@ public final class AttitudeAdjusterSlamManager {
             if (!player.onGround()) {
                 continue;
             }
-            Direction gravityDown = AntarchyGravityRotationUtil.getGravityDownDirection(player);
+            Direction gravityDown = GravityRotationUtil.getGravityDownDirection(player);
             Vec3 impactPos = player.position();
             BlockPos groundPos = getSlamSurfacePos(player, gravityDown);
-            double localVerticalSpeed = AntarchyGravityRotationUtil.vecWorldToPlayer(player.getDeltaMovement(), gravityDown == Direction.UP ? AntarchyGravityDirection.UP : AntarchyGravityDirection.DOWN).y;
+            double localVerticalSpeed = GravityRotationUtil.vecWorldToPlayer(player.getDeltaMovement(), gravityDown == Direction.UP ? GravityDirection.UP : GravityDirection.DOWN).y;
             double impactStrength = Math.max(Math.abs(Math.min(localVerticalSpeed, PLAYER_SLAM_START_VELOCITY)), Math.max(state.startFallDistance, player.fallDistance) * 0.15D);
             float damage = (float) Mth.clamp(PLAYER_SLAM_BASE_DAMAGE + impactStrength * PLAYER_SLAM_DAMAGE_SCALE * 10.0D, PLAYER_SLAM_BASE_DAMAGE, PLAYER_SLAM_MAX_DAMAGE);
             AABB area = new AABB(impactPos.x - PLAYER_SLAM_RADIUS, impactPos.y - 1.5D, impactPos.z - PLAYER_SLAM_RADIUS, impactPos.x + PLAYER_SLAM_RADIUS, impactPos.y + 2.5D, impactPos.z + PLAYER_SLAM_RADIUS);
@@ -278,13 +277,7 @@ public final class AttitudeAdjusterSlamManager {
     }
 
     private static void shake(ServerLevel level, Vec3 pos, float intensity, int durationTicks) {
-        ImpactShakePayload payload = new ImpactShakePayload(pos.x, pos.y, pos.z, intensity, durationTicks, IMPACT_SHAKE_RADIUS);
-        double radiusSqr = IMPACT_SHAKE_RADIUS * IMPACT_SHAKE_RADIUS;
-        for (ServerPlayer player : level.players()) {
-            if (player.distanceToSqr(pos.x, pos.y, pos.z) <= radiusSqr) {
-                ImpactShakeSync.send(player, payload);
-            }
-        }
+        CameraShakeSync.sendNearby(level, pos, intensity, durationTicks, IMPACT_SHAKE_RADIUS);
     }
 
     private static Vec3 horizontalAway(Vec3 from, Vec3 to, Vec3 fallback) {

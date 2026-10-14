@@ -3,7 +3,6 @@
   "ingredient": {
     "item": "antarchy:shellstone"
   },
-  "result": {
-    "item": "antarchy:polished_shellstone"
-  }
+  "result": "antarchy:polished_shellstone",
+  "count": 1
 }

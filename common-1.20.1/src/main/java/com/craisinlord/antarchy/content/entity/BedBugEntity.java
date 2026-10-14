@@ -5,6 +5,9 @@ import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.BedBugEggBlock;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
@@ -95,6 +98,8 @@ public class BedBugEntity extends Animal implements GeoEntity {
     @Nullable
     private ItemEntity cachedRottenFlesh;
     private int nextFoodSearchTick;
+    private int ignoredRottenFleshId = -1;
+    private int ignoredRottenFleshUntilTick;
     private int guardNestCooldown;
 
     public BedBugEntity(EntityType<? extends BedBugEntity> entityType, Level level) {
@@ -120,6 +125,11 @@ public class BedBugEntity extends Animal implements GeoEntity {
                 && level.getFluidState(pos).isEmpty()
                 && level.getFluidState(pos.above()).isEmpty()
                 && Animal.checkAnimalSpawnRules(entityType, level, spawnReason, pos, random);
+    }
+
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return true;
     }
 
     @Override
@@ -382,13 +392,16 @@ public class BedBugEntity extends Animal implements GeoEntity {
     }
 
     private void commitLunge(LivingEntity target, double horizontalSpeed, double verticalSpeed) {
-        Vec3 lunge = target.position().subtract(this.position());
-        Vec3 horizontal = new Vec3(lunge.x, 0.0D, lunge.z);
+        GravityDirection direction = GravityApi.getGravityDirection(this);
+        Vec3 localLunge = GravityRotationUtil.vecWorldToPlayer(target.position().subtract(this.position()), direction);
+        Vec3 horizontal = new Vec3(localLunge.x, 0.0D, localLunge.z);
         if (horizontal.lengthSqr() < 1.0E-4D) {
             return;
         }
         horizontal = horizontal.normalize().scale(horizontalSpeed);
-        this.setDeltaMovement(this.getDeltaMovement().add(horizontal.x, verticalSpeed, horizontal.z));
+        Vec3 localImpulse = new Vec3(horizontal.x, verticalSpeed, horizontal.z);
+        Vec3 worldImpulse = GravityRotationUtil.vecPlayerToWorld(localImpulse, direction);
+        this.setDeltaMovement(this.getDeltaMovement().add(worldImpulse.x, worldImpulse.y, worldImpulse.z));
         this.hasImpulse = true;
     }
 
@@ -443,6 +456,24 @@ public class BedBugEntity extends Animal implements GeoEntity {
         this.nextFoodSearchTick = 0;
     }
 
+    private void temporarilyIgnoreRottenFlesh(ItemEntity itemEntity) {
+        this.ignoredRottenFleshId = itemEntity.getId();
+        this.ignoredRottenFleshUntilTick = this.tickCount + 100;
+        this.invalidateFoodCache();
+    }
+
+    private boolean isTemporarilyIgnoredFood(ItemEntity itemEntity) {
+        if (itemEntity.getId() != this.ignoredRottenFleshId) {
+            return false;
+        }
+        if (this.tickCount >= this.ignoredRottenFleshUntilTick) {
+            this.ignoredRottenFleshId = -1;
+            this.ignoredRottenFleshUntilTick = 0;
+            return false;
+        }
+        return true;
+    }
+
     @Nullable
     private ItemEntity findNearestRottenFlesh() {
         return this.level().getEntitiesOfClass(
@@ -450,7 +481,8 @@ public class BedBugEntity extends Animal implements GeoEntity {
                         this.getBoundingBox().inflate(FOOD_SEARCH_RADIUS, 2.0D, FOOD_SEARCH_RADIUS),
                         itemEntity -> itemEntity.isAlive()
                                 && !itemEntity.getItem().isEmpty()
-                                && itemEntity.getItem().is(Items.ROTTEN_FLESH))
+                                && itemEntity.getItem().is(Items.ROTTEN_FLESH)
+                                && !this.isTemporarilyIgnoredFood(itemEntity))
                 .stream()
                 .min(Comparator.comparingDouble(this::distanceToSqr))
                 .orElse(null);
@@ -574,6 +606,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
         private ItemEntity targetFood;
         private double lastDistanceSqr;
         private int stuckTicks;
+        private int pathRefreshCooldown;
 
         private SeekRottenFleshGoal() {
             this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
@@ -607,6 +640,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
             BedBugEntity.this.setTarget(null);
             this.lastDistanceSqr = Double.MAX_VALUE;
             this.stuckTicks = 0;
+            this.pathRefreshCooldown = 0;
         }
 
         @Override
@@ -615,6 +649,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
             this.targetFood = null;
             this.lastDistanceSqr = Double.MAX_VALUE;
             this.stuckTicks = 0;
+            this.pathRefreshCooldown = 0;
         }
 
         @Override
@@ -624,7 +659,14 @@ public class BedBugEntity extends Animal implements GeoEntity {
             }
 
             BedBugEntity.this.getLookControl().setLookAt(this.targetFood, 30.0F, 30.0F);
-            BedBugEntity.this.getNavigation().moveTo(this.targetFood, 1.0D);
+            if (this.pathRefreshCooldown-- <= 0) {
+                if (!BedBugEntity.this.getNavigation().moveTo(this.targetFood, 1.0D)) {
+                    BedBugEntity.this.temporarilyIgnoreRottenFlesh(this.targetFood);
+                    this.targetFood = null;
+                    return;
+                }
+                this.pathRefreshCooldown = 10;
+            }
             double distanceSqr = BedBugEntity.this.distanceToSqr(this.targetFood);
 
             if (distanceSqr < this.lastDistanceSqr - 0.2D) {
@@ -632,7 +674,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
                 this.stuckTicks = 0;
             } else if (BedBugEntity.this.getNavigation().isDone() && distanceSqr > 4.0D) {
                 if (++this.stuckTicks >= 20) {
-                    BedBugEntity.this.invalidateFoodCache();
+                    BedBugEntity.this.temporarilyIgnoreRottenFlesh(this.targetFood);
                     this.targetFood = null;
                     return;
                 }

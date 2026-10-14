@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "items": "antarchy:fallen_king_crown"
+            "items": [
+              "antarchy:fallen_king_crown"
+            ]
           }
         ]
       },
@@ -19,7 +21,6 @@
     },
     "frame": "goal",
     "icon": {
-      "count": 1,
       "item": "antarchy:fallen_king_crown"
     },
     "show_toast": true,

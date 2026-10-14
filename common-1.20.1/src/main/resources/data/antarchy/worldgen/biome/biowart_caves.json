@@ -21,6 +21,12 @@
       "options": {
         "type": "antarchy:orange_ash"
       }
+    },
+    "music": {
+      "sound": "antarchy:music.game.cavaryn",
+      "min_delay": 600,
+      "max_delay": 1800,
+      "replace_current_music": true
     }
   },
   "spawn_costs": {
@@ -54,10 +60,9 @@
       "antarchy:biowart_patch",
       "antarchy:cavaryn_creepvine",
       "antarchy:cavaryn_hanging_creeproots"
-    ],
-    []
+    ]
   ],
-  "creature_spawn_probability": 0.08,
+  "creature_spawn_probability": 0.98,
   "spawners": {
     "monster": [
       {
@@ -70,15 +75,15 @@
     "creature": [
       {
         "type": "antarchy:rolly_polly",
-        "weight": 25,
-        "minCount": 1,
-        "maxCount": 3
+        "weight": 320,
+        "minCount": 4,
+        "maxCount": 8
       },
       {
         "type": "antarchy:stink_bug",
-        "weight": 35,
-        "minCount": 2,
-        "maxCount": 4
+        "weight": 420,
+        "minCount": 4,
+        "maxCount": 8
       }
     ],
     "ambient": [],

@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.fabric;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.bloodglass.BloodglassAccess;
 import com.craisinlord.antarchy.content.item.BloodCrystalArmorItem;
 import com.craisinlord.antarchy.fabric.network.AntarchyFabricNetworking;
@@ -10,7 +11,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
@@ -55,7 +55,7 @@ public final class BloodglassManager {
 
             ServerLevel serverLevel = (ServerLevel) player.level();
             serverLevel.broadcastEntityEvent(player, (byte) 2);
-            serverLevel.playSound(null, player.blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 1.0f, 1.0f);
+            serverLevel.playSound(null, player.blockPosition(), AntarchySoundEvents.BLOODGLASS_WARD_HEART_BREAK.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
             serverLevel.sendParticles(
                     new DustParticleOptions(new Vector3f(0.85f, 0.18f, 0.38f), 1.2f),
                     player.getX(), player.getEyeY(), player.getZ(),
@@ -97,9 +97,7 @@ public final class BloodglassManager {
                 }
             }
         } else if (!fromIsBC) {
-            // Count BC pieces: explicitly include the new piece (to) since getItemBySlot(slot)
-            // may not reflect the new item yet when onEquipItem fires on Fabric.
-            int bcPieces = 1; // the piece being equipped now
+            int bcPieces = 1;
             for (EquipmentSlot s : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
                 if (s == slot) continue;
                 if (player.getItemBySlot(s).getItem() instanceof BloodCrystalArmorItem) bcPieces++;
@@ -110,7 +108,6 @@ public final class BloodglassManager {
                 access.antarchy$setArmorRechargeTimer(AntarchySettings.bloodCrystalArmorShieldRechargeTicks());
             }
         } else {
-            // BC → BC swap: remove old slot, queue new one
             if (access.antarchy$getArmorShieldsActive() > 0) {
                 access.antarchy$setArmorShieldsActive(access.antarchy$getArmorShieldsActive() - 1);
             } else if (access.antarchy$getArmorShieldLostCount() > 0) {
@@ -131,9 +128,6 @@ public final class BloodglassManager {
                 - access.antarchy$getArmorShieldLostCount());
         int targetCap = Math.min(amplifier + 1, cap);
         int currentCap = access.antarchy$getAppleShieldsActive() + access.antarchy$getAppleShieldLostCount();
-        // Only grant newly-added capacity (e.g. first application, or a higher amplifier).
-        // A mere duration refresh of an already-active ward must not reset shields that are
-        // already lost, nor restart their recharge timer.
         if (targetCap > currentCap) {
             access.antarchy$setAppleShieldsActive(access.antarchy$getAppleShieldsActive() + (targetCap - currentCap));
             if (player instanceof ServerPlayer sp) syncBloodglass(sp);
@@ -186,7 +180,7 @@ public final class BloodglassManager {
 
         if (changed) {
             syncBloodglass(player);
-            player.playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.6f, 1.6f);
+            player.playNotifySound(AntarchySoundEvents.BLOODGLASS_WARD_HEART_REGEN.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
         }
     }
 

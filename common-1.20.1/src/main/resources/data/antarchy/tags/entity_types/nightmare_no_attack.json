@@ -2,6 +2,11 @@
   "replace": false,
   "values": [
     "antarchy:lucid",
-    "antarchy:reverie"
+    "antarchy:reverie",
+    "antarchy:scorpion",
+    "antarchy:bed_bug",
+    "antarchy:queen",
+    "antarchy:princess",
+    "antarchy:manticore"
   ]
 }

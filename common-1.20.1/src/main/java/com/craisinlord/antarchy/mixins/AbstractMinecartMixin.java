@@ -12,6 +12,8 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.WanderingTrader;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,6 +34,7 @@ public abstract class AbstractMinecartMixin implements AntimetalMinecartAccess {
     private static final EntityDataAccessor<Boolean> ANTARCHY$ON_ANTIMETAL_RAIL =
             SynchedEntityData.defineId(AbstractMinecart.class, EntityDataSerializers.BOOLEAN);
     private static final int ANTARCHY$INVERTED_REFRESH_TICKS = 20;
+    @Unique
     private static final double ANTARCHY$STANDING_PASSENGER_OFFSET = 0.1875D;
 
     @Unique

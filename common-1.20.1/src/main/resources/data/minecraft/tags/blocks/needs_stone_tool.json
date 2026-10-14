@@ -19,7 +19,6 @@
     "antarchy:shellstone_brick_stairs",
     "antarchy:shellstone_brick_slab",
     "antarchy:shellstone_brick_wall",
-    "antarchy:myrmite_coal_ore",
     "antarchy:chitin_block",
     "antarchy:broodstone",
     "antarchy:polished_broodstone",
@@ -34,11 +33,19 @@
     "antarchy:broodstone_brick_stairs",
     "antarchy:broodstone_brick_slab",
     "antarchy:broodstone_brick_wall",
-    "antarchy:shellstone_pillar",
-    "antarchy:broodstone_pillar",
     "antarchy:biomite",
     "antarchy:biomite_turf",
     "antarchy:bluestone_ore",
-    "antarchy:bluestone_block"
+    "antarchy:bluestone_block",
+    "antarchy:shellstone_pillar",
+    "antarchy:broodstone_pillar",
+    "antarchy:mossy_broodstone_bricks",
+    "antarchy:mossy_broodstone_brick_stairs",
+    "antarchy:mossy_broodstone_brick_slab",
+    "antarchy:mossy_broodstone_brick_wall",
+    "antarchy:mossy_nyxite_bricks",
+    "antarchy:mossy_nyxite_brick_stairs",
+    "antarchy:mossy_nyxite_brick_slab",
+    "antarchy:mossy_nyxite_brick_wall"
   ]
 }

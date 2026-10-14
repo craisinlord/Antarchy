@@ -15,7 +15,7 @@
                 "min": 8.0,
                 "max": 20.0
               },
-              "options": "#minecraft:on_random_loot"
+              "treasure": false
             }
           ]
         },
@@ -31,7 +31,7 @@
                 "min": 10.0,
                 "max": 22.0
               },
-              "options": "#minecraft:on_random_loot"
+              "treasure": false
             }
           ]
         },
@@ -91,12 +91,8 @@
           "weight": 8,
           "functions": [
             {
-              "function": "minecraft:set_components",
-              "components": {
-                "minecraft:potion_contents": {
-                  "potion": "minecraft:strength"
-                }
-              }
+              "function": "minecraft:set_potion",
+              "id": "minecraft:strength"
             }
           ]
         },
@@ -106,12 +102,8 @@
           "weight": 8,
           "functions": [
             {
-              "function": "minecraft:set_components",
-              "components": {
-                "minecraft:potion_contents": {
-                  "potion": "minecraft:healing"
-                }
-              }
+              "function": "minecraft:set_potion",
+              "id": "minecraft:healing"
             }
           ]
         },
@@ -211,7 +203,7 @@
                 "min": 20.0,
                 "max": 30.0
               },
-              "options": "#minecraft:on_random_loot"
+              "treasure": false
             }
           ]
         },
@@ -227,7 +219,7 @@
                 "min": 20.0,
                 "max": 30.0
               },
-              "options": "#minecraft:on_random_loot"
+              "treasure": false
             }
           ]
         },

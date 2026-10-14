@@ -2,7 +2,9 @@ package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
+import com.craisinlord.antarchy.content.component.AntarchyItemTag;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerCompanionSavedData;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
@@ -24,20 +26,32 @@ import org.jetbrains.annotations.Nullable;
 
 public class GlimmerBottleItem extends Item {
     private static final String ABILITY_COOLDOWN_TAG = "AbilityCooldown";
+    private static final String SHEAR_COOLDOWN_TAG = "ShearCooldown";
 
     public GlimmerBottleItem() {
         super(new Item.Properties().stacksTo(1));
     }
 
     public static ItemStack create(GlimmerVariant variant) {
-        return create(variant, 0);
+        return create(variant, 0, 0);
     }
 
     public static ItemStack create(GlimmerVariant variant, int abilityCooldown) {
+        return create(variant, abilityCooldown, 0);
+    }
+
+    public static ItemStack create(GlimmerVariant variant, int abilityCooldown, int shearCooldown) {
         ItemStack stack = new ItemStack(AntarchyObjects.GLIMMER_BOTTLE.get());
         AntarchyObjects.GLIMMER_VARIANT_COMPONENT.set(stack, variant);
-        if (abilityCooldown > 0) {
-            com.craisinlord.antarchy.content.component.AntarchyItemTag.update(stack, tag -> tag.putInt(ABILITY_COOLDOWN_TAG, abilityCooldown));
+        if (abilityCooldown > 0 || shearCooldown > 0) {
+            AntarchyItemTag.update(stack, tag -> {
+                if (abilityCooldown > 0) {
+                    tag.putInt(ABILITY_COOLDOWN_TAG, abilityCooldown);
+                }
+                if (shearCooldown > 0) {
+                    tag.putInt(SHEAR_COOLDOWN_TAG, shearCooldown);
+                }
+            });
         }
         return stack;
     }
@@ -48,7 +62,11 @@ public class GlimmerBottleItem extends Item {
     }
 
     public static int getStoredAbilityCooldown(ItemStack stack) {
-        return com.craisinlord.antarchy.content.component.AntarchyItemTag.getOrEmpty(stack).getInt(ABILITY_COOLDOWN_TAG);
+        return AntarchyItemTag.getOrEmpty(stack).getInt(ABILITY_COOLDOWN_TAG);
+    }
+
+    public static int getStoredShearCooldown(ItemStack stack) {
+        return AntarchyItemTag.getOrEmpty(stack).getInt(SHEAR_COOLDOWN_TAG);
     }
 
     @Override
@@ -73,6 +91,7 @@ public class GlimmerBottleItem extends Item {
         glimmer.tame(player);
         glimmer.setOrderedToSit(false);
         glimmer.setAbilityCooldown(getStoredAbilityCooldown(stack));
+        glimmer.startShearCooldown(getStoredShearCooldown(stack));
         level.addFreshEntity(glimmer);
         GlimmerCompanionSavedData.replaceCompanion(((ServerLevel) level).getServer(), player.getUUID(), glimmer.getUUID());
         GlimmerParticles.tickBurst(glimmer);
@@ -80,6 +99,7 @@ public class GlimmerBottleItem extends Item {
 
         if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
             AntarchyAdvancements.award(serverPlayer, variant.tameAdvancementId());
+            AntarchyAdvancementTriggers.tamedGlimmer(serverPlayer, variant.name().toLowerCase(java.util.Locale.ROOT));
         }
 
         ItemStack result = ItemUtils.createFilledResult(stack, player, new ItemStack(Items.GLASS_BOTTLE));
@@ -87,7 +107,7 @@ public class GlimmerBottleItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, level, tooltip, flag);
         GlimmerVariant variant = getVariant(stack);
         if (variant != null) {

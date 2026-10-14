@@ -12,7 +12,6 @@
     },
     "frame": "task",
     "icon": {
-      "count": 1,
       "item": "antarchy:caterpillar_spawn_egg"
     },
     "show_toast": true,

@@ -526,10 +526,7 @@
     "effect.antarchy.dread.description": "Provoca allucinazioni visive e sonore.",
     "effect.antarchy.paralyzed": "Paralizzato",
     "effect.antarchy.paralyzed.description": "Impedisce ai bersagli di muoversi.",
-    "effect.antarchy.inverted": "Invertito",
-    "effect.antarchy.inverted.description": "Inverte la gravità del bersaglio.",
     "effect.antarchy.commanded.description": "Combatte per il giocatore che lo ha comandato.",
-    "effect.antarchy.dilated.description": "Rallenta il passare del tempo per l’entità colpita.",
     "effect.antarchy.stinky": "Puzzolente",
     "effect.antarchy.stinky.description": "Respinge le creature passive e neutrali e attira gli artropodi.",
     "effect.antarchy.gooped.description": "Riduce la velocità di movimento e di attacco.",
@@ -959,4 +956,7 @@
     "advancements.antarchy.beetle_buddies.description": "Addomestica uno Scarabeo Ercole.",
     "advancements.antarchy.herculean_task.title": "Impresa erculea",
     "advancements.antarchy.herculean_task.description": "Uccidi uno Scarabeo Ercole."
+,
+    "entity.antarchy.portal_gun_portal": "Portale della Portal Gun",
+    "attribute.antarchy.entity_interaction_range": "Raggio d'interazione con le entità"
 }

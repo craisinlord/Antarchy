@@ -10,9 +10,13 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class RoyalChestBoatItem extends OuranwoodBoatItem {
-    private final EntityType<RoyalChestBoatEntity> entityType;
+    private final java.util.function.Supplier<? extends EntityType<RoyalChestBoatEntity>> entityType;
 
     public RoyalChestBoatItem(EntityType<RoyalChestBoatEntity> entityType, Properties properties) {
+        this(() -> entityType, properties);
+    }
+
+    public RoyalChestBoatItem(java.util.function.Supplier<? extends EntityType<RoyalChestBoatEntity>> entityType, Properties properties) {
         super(properties);
         this.entityType = entityType;
     }
@@ -20,7 +24,7 @@ public class RoyalChestBoatItem extends OuranwoodBoatItem {
     @Override
     protected Boat createBoat(Level level, HitResult hitResult, ItemStack stack, Player player) {
         Vec3 pos = hitResult.getLocation();
-        RoyalChestBoatEntity boat = new RoyalChestBoatEntity(this.entityType, level);
+        RoyalChestBoatEntity boat = new RoyalChestBoatEntity(this.entityType.get(), level);
         boat.setPos(pos.x, pos.y, pos.z);
         boat.xo = pos.x;
         boat.yo = pos.y;

@@ -12,67 +12,83 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import com.craisinlord.antarchy.forge.network.AntarchyForgeNetworkCore;
+import com.craisinlord.antarchy.forge.network.AntarchyPayloadContext;
+import com.craisinlord.antarchy.forge.network.AntarchyForgePayloadRegistrar;
 
 public final class BrutalflyElytraNetworking {
     private BrutalflyElytraNetworking() {
     }
 
-    public static void register() {
-        AntarchyForgeNetworkCore.registerC2S(BrutalflyElytraFlapPayload.class, BrutalflyElytraFlapPayload.STREAM_CODEC, BrutalflyElytraNetworking::handleFlap);
-        AntarchyForgeNetworkCore.registerS2C(BrutalflyElytraAnimationPayload.class, BrutalflyElytraAnimationPayload.STREAM_CODEC, BrutalflyElytraNetworking::handleAnimation);
-    }
-
-    private static void handleFlap(ServerPlayer serverPlayer, BrutalflyElytraFlapPayload payload) {
-        ItemStack chestStack = serverPlayer.getItemBySlot(EquipmentSlot.CHEST);
-        if (!(chestStack.getItem() instanceof BrutalflyElytraItem)) {
-            return;
-        }
-        if (serverPlayer.isSpectator() || !serverPlayer.isFallFlying() || serverPlayer.isPassenger()) {
-            return;
-        }
-        if (serverPlayer.getCooldowns().isOnCooldown(chestStack.getItem())) {
-            return;
-        }
-
-        BrutalflyElytraFlightHelper.FlapTier tier = BrutalflyElytraFlightHelper.resolveFlapTier(payload.chargeTicks());
-        if (tier == BrutalflyElytraFlightHelper.FlapTier.FAIL) {
-            return;
-        }
-
-        float lift = BrutalflyElytraFlightHelper.liftFor(tier);
-        float forwardBoost = BrutalflyElytraFlightHelper.forwardBoostFor(tier);
-        Vec3 look = serverPlayer.getLookAngle();
-        Vec3 boost = new Vec3(look.x * forwardBoost, lift, look.z * forwardBoost);
-        serverPlayer.setDeltaMovement(serverPlayer.getDeltaMovement().add(boost));
-        serverPlayer.hasImpulse = true;
-        serverPlayer.hurtMarked = true;
-        serverPlayer.resetFallDistance();
-        serverPlayer.connection.send(new ClientboundSetEntityMotionPacket(serverPlayer));
-        chestStack.hurtAndBreak(1, serverPlayer, p -> p.broadcastBreakEvent(EquipmentSlot.CHEST));
-        serverPlayer.getCooldowns().addCooldown(chestStack.getItem(), BrutalflyElytraFlightHelper.FLAP_COOLDOWN_TICKS);
-        serverPlayer.level().playSound(
-                null,
-                serverPlayer.blockPosition(),
-                SoundEvents.PHANTOM_FLAP,
-                SoundSource.PLAYERS,
-                0.9F,
-                tier == BrutalflyElytraFlightHelper.FlapTier.PERFECT ? 0.8F : tier == BrutalflyElytraFlightHelper.FlapTier.GOOD ? 0.95F : 1.1F
-        );
-        AntarchyForgeNetworkCore.sendToTrackingEntity(
-                serverPlayer,
-                new BrutalflyElytraAnimationPayload(
-                        serverPlayer.getId(),
-                        BrutalflyElytraFlightHelper.animationTicksFor(tier),
-                        lift
-                )
+    public static void register(AntarchyForgePayloadRegistrar registrar) {
+        registrar.playToServer(
+                BrutalflyElytraFlapPayload.TYPE,
+                BrutalflyElytraFlapPayload.STREAM_CODEC,
+                BrutalflyElytraNetworking::handleFlap
+        ).playToClient(
+                BrutalflyElytraAnimationPayload.TYPE,
+                BrutalflyElytraAnimationPayload.STREAM_CODEC,
+                BrutalflyElytraNetworking::handleAnimation
         );
     }
 
-    private static void handleAnimation(BrutalflyElytraAnimationPayload payload) {
-        BrutalflyElytraClientState.trigger(
+    private static void handleFlap(com.craisinlord.antarchy.content.network.BrutalflyElytraFlapPayload payload, AntarchyPayloadContext context) {
+        context.enqueueWork(() -> {
+            if (!(context.player() instanceof ServerPlayer serverPlayer)) {
+                return;
+            }
+
+            ItemStack chestStack = serverPlayer.getItemBySlot(EquipmentSlot.CHEST);
+            if (!(chestStack.getItem() instanceof BrutalflyElytraItem)) {
+                return;
+            }
+            if (serverPlayer.isSpectator() || !serverPlayer.isFallFlying() || serverPlayer.isPassenger()) {
+                return;
+            }
+            if (serverPlayer.getCooldowns().isOnCooldown(chestStack.getItem())) {
+                return;
+            }
+
+            BrutalflyElytraFlightHelper.FlapTier tier = BrutalflyElytraFlightHelper.resolveFlapTier(payload.chargeTicks());
+            if (tier == BrutalflyElytraFlightHelper.FlapTier.FAIL) {
+                return;
+            }
+
+            float lift = BrutalflyElytraFlightHelper.liftFor(tier);
+            float forwardBoost = BrutalflyElytraFlightHelper.forwardBoostFor(tier);
+            Vec3 look = serverPlayer.getLookAngle();
+            Vec3 boost = new Vec3(look.x * forwardBoost, lift, look.z * forwardBoost);
+            serverPlayer.setDeltaMovement(serverPlayer.getDeltaMovement().add(boost));
+            serverPlayer.hasImpulse = true;
+            serverPlayer.hurtMarked = true;
+            serverPlayer.resetFallDistance();
+            serverPlayer.connection.send(new ClientboundSetEntityMotionPacket(serverPlayer));
+            chestStack.hurtAndBreak(1, serverPlayer, player -> player.broadcastBreakEvent(EquipmentSlot.CHEST));
+            serverPlayer.getCooldowns().addCooldown(chestStack.getItem(), BrutalflyElytraFlightHelper.FLAP_COOLDOWN_TICKS);
+            serverPlayer.level().playSound(
+                    null,
+                    serverPlayer.blockPosition(),
+                    SoundEvents.PHANTOM_FLAP,
+                    SoundSource.PLAYERS,
+                    0.9F,
+                    tier == BrutalflyElytraFlightHelper.FlapTier.PERFECT ? 0.8F : tier == BrutalflyElytraFlightHelper.FlapTier.GOOD ? 0.95F : 1.1F
+            );
+            AntarchyForgeNetworkCore.sendToTrackingEntity(
+                    serverPlayer,
+                    new BrutalflyElytraAnimationPayload(
+                            serverPlayer.getId(),
+                            BrutalflyElytraFlightHelper.animationTicksFor(tier),
+                            lift
+                    )
+            );
+        });
+    }
+
+    private static void handleAnimation(BrutalflyElytraAnimationPayload payload, AntarchyPayloadContext context) {
+        context.enqueueWork(() -> BrutalflyElytraClientState.trigger(
                 payload.entityId(),
                 payload.durationTicks(),
                 payload.strength()
-        );
+        ));
     }
 }

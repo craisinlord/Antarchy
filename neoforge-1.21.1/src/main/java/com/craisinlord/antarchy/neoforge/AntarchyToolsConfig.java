@@ -264,7 +264,6 @@ public final class AntarchyToolsConfig {
 
     private static final ModConfigSpec.DoubleValue  DUCT_TAPE_REPAIR_PERCENT_PER_USE;
     private static final ModConfigSpec.DoubleValue  POTENT_NYXITE_INVERTED_DURATION_SECONDS;
-    private static final ModConfigSpec.BooleanValue INVERT_PROJECTILES_FROM_INVERTED_PLAYERS;
     private static final ModConfigSpec.IntValue     CORNEA_EAR_NIGHT_VISION_SECONDS;
     private static final ModConfigSpec.BooleanValue AMERICAN_ENABLED;
     private static final ModConfigSpec.IntValue     AMERICAN_BONUS_NUTRITION;
@@ -579,18 +578,6 @@ public final class AntarchyToolsConfig {
         b.pop();
 
 
-        // Gravity
-
-        b.push("gravity");
-        INVERT_PROJECTILES_FROM_INVERTED_PLAYERS = b
-                .comment(
-                    "If true, projectiles fired by inverted players keep their inverted launch and gravity.",
-                    "Affects bows, crossbows, throwables, and firework boosts."
-                )
-                .define("invertProjectilesFromInvertedPlayers", false);
-        b.pop();
-
-
         // Gravity Gun
 
         b.push("gravityGun");
@@ -804,7 +791,6 @@ public final class AntarchyToolsConfig {
     static double  shrinkingPotionDelta()                    { return SHRINKING_POTION_DELTA.get(); }
     static double  growthPotionDelta()                       { return GROWTH_POTION_DELTA.get(); }
 
-    static boolean invertProjectilesFromInvertedPlayers()    { return INVERT_PROJECTILES_FROM_INVERTED_PLAYERS.get(); }
 
     static boolean gravityGunEnabled()                       { return GRAVITY_GUN_ENABLED.get(); }
     static boolean gravityGunBlocksEnabled()                 { return GRAVITY_GUN_BLOCKS_ENABLED.get(); }

@@ -11,10 +11,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.saveddata.SavedData;
 
-/**
- * Tracks each player's current Glimmer companion so taming a new one despawns the old,
- * even if the old companion is in a different loaded dimension.
- */
 public class GlimmerCompanionSavedData extends SavedData {
     private static final String ID = "antarchy_glimmer_companions";
     private static final String ENTRIES_KEY = "Entries";
@@ -57,11 +53,6 @@ public class GlimmerCompanionSavedData extends SavedData {
         );
     }
 
-    /**
-     * Records {@code newCompanion} as {@code owner}'s current Glimmer. Any previous
-     * companion found in a currently loaded dimension isn't removed - it just loses
-     * its owner and becomes a wild, re-tameable Glimmer again.
-     */
     public static void replaceCompanion(MinecraftServer server, UUID owner, UUID newCompanion) {
         GlimmerCompanionSavedData data = get(server);
         UUID previous = data.companionByOwner.put(owner, newCompanion);
@@ -81,10 +72,6 @@ public class GlimmerCompanionSavedData extends SavedData {
         }
     }
 
-    /**
-     * Removes {@code owner}'s companion record if it currently points at {@code companion},
-     * used when that Glimmer is captured into a bottle rather than replaced by a new one.
-     */
     public static void clearCompanion(MinecraftServer server, UUID owner, UUID companion) {
         GlimmerCompanionSavedData data = get(server);
         if (companion.equals(data.companionByOwner.get(owner))) {

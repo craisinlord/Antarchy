@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content;
 
+import com.craisinlord.anthology.time.TimeDilationTags;
 import com.craisinlord.antarchy.Antarchy;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -23,6 +24,7 @@ public final class AntarchyTags {
     public static final class Blocks {
         public static final TagKey<Block> DUPLICATOR_TREE_BLACKLIST = TagKey.create(Registries.BLOCK, id("duplicator_tree_blacklist"));
         public static final TagKey<Block> GRAVITY_GUN_BLACKLIST = TagKey.create(Registries.BLOCK, id("gravity_gun_blacklist"));
+        public static final TagKey<Block> QUEEN_GRABBABLE_BLOCKS = TagKey.create(Registries.BLOCK, id("queen_grabbable_blocks"));
         public static final TagKey<Block> DREAM_FIRE_BASE_BLOCKS = TagKey.create(Registries.BLOCK, id("dream_fire_base_blocks"));
         public static final TagKey<Block> POTENT_NYXITE_ACTIVATION_BLOCKS = TagKey.create(Registries.BLOCK, id("potent_nyxite_activation_blocks"));
         public static final TagKey<Block> CORNEA_STALK_PLANTABLE = TagKey.create(Registries.BLOCK, id("cornea_stalk_plantable"));
@@ -43,8 +45,8 @@ public final class AntarchyTags {
         public static final TagKey<Block> BLUESTONE_COMPONENTS = TagKey.create(Registries.BLOCK, id("bluestone_components"));
         public static final TagKey<Block> BLUESTONE_CONNECTABLE = TagKey.create(Registries.BLOCK, id("bluestone_connectable"));
         public static final TagKey<Block> ANTIMETAL_INVERSION_BLOCKS = TagKey.create(Registries.BLOCK, id("antimetal_inversion_blocks"));
-        public static final TagKey<Block> LUCID_ANCHOR_BASE_BLOCKS = TagKey.create(Registries.BLOCK, id("lucid_anchor_base_blocks"));
         public static final TagKey<Block> TIGER_EYE_CAMOUFLAGE_BLACKLIST = TagKey.create(Registries.BLOCK, id("tiger_eye_camouflage_blacklist"));
+        public static final TagKey<Block> LUCID_ANCHOR_BASE_BLOCKS = TagKey.create(Registries.BLOCK, id("lucid_anchor_base_blocks"));
         public static final TagKey<Block> NYXIUM = TagKey.create(Registries.BLOCK, id("nyxium"));
 
         private Blocks() {
@@ -54,6 +56,8 @@ public final class AntarchyTags {
     public static final class DamageType {
         public static final TagKey<net.minecraft.world.damagesource.DamageType> BYPASSES_BLOODGLASS =
                 TagKey.create(net.minecraft.core.registries.Registries.DAMAGE_TYPE, new ResourceLocation("antarchy", "bypasses_bloodglass"));
+        public static final TagKey<net.minecraft.world.damagesource.DamageType> ANTARCHY_MAGIC_BURST =
+                TagKey.create(net.minecraft.core.registries.Registries.DAMAGE_TYPE, new ResourceLocation("antarchy", "antarchy_magic_burst"));
 
         private DamageType() {
         }
@@ -61,28 +65,32 @@ public final class AntarchyTags {
 
     public static final class Entities {
         public static final TagKey<EntityType<?>> BASILISK_PREY = TagKey.create(Registries.ENTITY_TYPE, id("basilisk_prey"));
+        public static final TagKey<EntityType<?>> SPELL_RESISTANT_BOSS = TagKey.create(Registries.ENTITY_TYPE, id("spell_resistant_boss"));
         public static final TagKey<EntityType<?>> DREAM_SAND_LOW_GRAVITY_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, id("dream_sand_low_gravity_blacklist"));
         public static final TagKey<EntityType<?>> GRAVITY_GUN_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, id("gravity_gun_blacklist"));
         public static final TagKey<EntityType<?>> INVERTED_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("inverted_immune"));
         public static final TagKey<EntityType<?>> LUCID_BOLT_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("lucid_bolt_immune"));
+        public static final TagKey<EntityType<?>> WIND_VORTEX_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("wind_vortex_immune"));
         public static final TagKey<EntityType<?>> DUCT_TAPE_STICK_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, id("duct_tape_stick_blacklist"));
         public static final TagKey<EntityType<?>> NIGHTMARE_NO_ATTACK = TagKey.create(Registries.ENTITY_TYPE, id("nightmare_no_attack"));
         public static final TagKey<EntityType<?>> SIZE_CHANGING_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("size_changing_immune"));
         public static final TagKey<EntityType<?>> CRITTER_CAGE_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, id("critter_cage_blacklist"));
         public static final TagKey<EntityType<?>> PARALYSIS_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("paralysis_immune"));
+        public static final TagKey<EntityType<?>> UNDERSIDE_CEILING_SPAWNERS = TagKey.create(Registries.ENTITY_TYPE, id("underside_ceiling_spawners"));
+        public static final TagKey<EntityType<?>> UNDERSIDE_CEILING_SHORT_GAP = TagKey.create(Registries.ENTITY_TYPE, id("underside_ceiling_short_gap"));
         public static final TagKey<EntityType<?>> HUSHWEED_TARGETS = TagKey.create(Registries.ENTITY_TYPE, id("hushweed_targets"));
-        public static final TagKey<EntityType<?>> TRIFFID_PREY = TagKey.create(Registries.ENTITY_TYPE, id("triffid_prey"));
+        public static final TagKey<EntityType<?>> FLYTRAP_PREY = TagKey.create(Registries.ENTITY_TYPE, id("flytrap_prey"));
         public static final TagKey<EntityType<?>> STINKY_REPELLED_HOSTILES = TagKey.create(Registries.ENTITY_TYPE, id("stinky_repelled_hostiles"));
         public static final TagKey<EntityType<?>> SCORPION_WHIP_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("scorpion_whip_immune"));
         public static final TagKey<EntityType<?>> SCORPION_WHIP_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, id("scorpion_whip_blacklist"));
-        public static final TagKey<EntityType<?>> LUCID_ANCHOR_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("lucid_anchor_immune"));
         public static final TagKey<EntityType<?>> TIGER_EYE_DETECTION_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("tiger_eye_detection_immune"));
+        public static final TagKey<EntityType<?>> LUCID_ANCHOR_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("lucid_anchor_immune"));
         public static final TagKey<EntityType<?>> DIMENSIONAL_TEAR_COMMON_SPAWNS = TagKey.create(Registries.ENTITY_TYPE, id("dimensional_tear_common_spawns"));
         public static final TagKey<EntityType<?>> DIMENSIONAL_TEAR_RARE_SPAWNS = TagKey.create(Registries.ENTITY_TYPE, id("dimensional_tear_rare_spawns"));
-        public static final TagKey<EntityType<?>> TIME_DILATION_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("time_dilation_immune"));
+        public static final TagKey<EntityType<?>> TIME_DILATION_IMMUNE = TimeDilationTags.TIME_DILATION_IMMUNE;
+        public static final TagKey<EntityType<?>> QUEEN_DOES_NOT_ATTACK = TagKey.create(Registries.ENTITY_TYPE, id("queen_does_not_attack"));
         public static final TagKey<EntityType<?>> COMMANDED_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, id("commanded_blacklist"));
         public static final TagKey<EntityType<?>> DILATED_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, id("dilated_blacklist"));
-        public static final TagKey<EntityType<?>> WIND_VORTEX_IMMUNE = TagKey.create(Registries.ENTITY_TYPE, id("wind_vortex_immune"));
 
         private Entities() {
         }
@@ -124,6 +132,7 @@ public final class AntarchyTags {
         public static final TagKey<Item> GLIMMER_AUGMENT_ELKA = TagKey.create(Registries.ITEM, id("glimmer_augment_elka"));
         public static final TagKey<Item> HFCS_CANNOT_AMERICANIZE = TagKey.create(Registries.ITEM, id("hfcs_cannot_americanize"));
         public static final TagKey<Item> TIGER_EYE_ARMOR = TagKey.create(Registries.ITEM, id("tigers_eye_armor"));
+        public static final TagKey<Item> BIG_BERTHA_INGREDIENT = TagKey.create(Registries.ITEM, id("big_bertha_ingredient"));
 
         private Items() {
         }

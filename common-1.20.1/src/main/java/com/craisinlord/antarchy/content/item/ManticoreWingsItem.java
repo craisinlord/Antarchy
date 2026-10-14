@@ -1,6 +1,8 @@
 package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.content.entity.ManticoreEntity;
+import com.google.common.collect.ImmutableMultimap;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -11,15 +13,21 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ElytraItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 public final class ManticoreWingsItem extends ElytraItem {
     private static final ResourceLocation REPAIR_MATERIAL_ID = new ResourceLocation("antarchy", "manticore_wing");
+    private static final ResourceLocation ARMOR_MODIFIER_ID = new ResourceLocation("antarchy", "manticore_wings_armor");
+    private static final ResourceLocation TOUGHNESS_MODIFIER_ID = new ResourceLocation("antarchy", "manticore_wings_toughness");
     private static final int DAMAGE_COOLDOWN_TICKS = 10;
     private static final double MIN_COLLISION_SPEED = 0.2D;
     private static final float COLLISION_DAMAGE_PER_BLOCK_PER_TICK = 8.0F;
@@ -63,7 +71,24 @@ public final class ManticoreWingsItem extends ElytraItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public com.google.common.collect.Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+        if (slot != EquipmentSlot.CHEST) {
+            return super.getDefaultAttributeModifiers(slot);
+        }
+        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+        builder.put(Attributes.ARMOR,
+                new AttributeModifier(modifierUuid(ARMOR_MODIFIER_ID), ARMOR_MODIFIER_ID.toString(), 5.0D, AttributeModifier.Operation.ADDITION));
+        builder.put(Attributes.ARMOR_TOUGHNESS,
+                new AttributeModifier(modifierUuid(TOUGHNESS_MODIFIER_ID), TOUGHNESS_MODIFIER_ID.toString(), 1.0D, AttributeModifier.Operation.ADDITION));
+        return builder.build();
+    }
+
+    private static UUID modifierUuid(ResourceLocation id) {
+        return UUID.nameUUIDFromBytes(id.toString().getBytes(StandardCharsets.UTF_8));
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.translatable("tooltip.antarchy.manticore_wings").withStyle(ChatFormatting.GRAY));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }

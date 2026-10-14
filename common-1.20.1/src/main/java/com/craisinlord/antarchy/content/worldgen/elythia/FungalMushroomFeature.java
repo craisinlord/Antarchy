@@ -39,7 +39,7 @@ public class FungalMushroomFeature extends Feature<NoneFeatureConfiguration> {
         double maxLean = 2.0 + random.nextDouble() * 3.5;
 
         int baseY = origin.getY();
-        int stemOffset = stemSize == 2 ? 0 : -1; // center 3x3 on origin
+        int stemOffset = stemSize == 2 ? 0 : -1;
 
         BlockState stemPore = Blocks.MUSHROOM_STEM.defaultBlockState()
                 .setValue(HugeMushroomBlock.NORTH, false)
@@ -98,7 +98,6 @@ public class FungalMushroomFeature extends Feature<NoneFeatureConfiguration> {
             double nomRadius = baseCapRadius - cl;
             if (nomRadius < 0) break;
 
-            // The cap center also shifts slightly with lean for a drooping overhang feel
             double layerCapX = capCenterX + leanDX * cl * 0.3;
             double layerCapZ = capCenterZ + leanDZ * cl * 0.3;
 

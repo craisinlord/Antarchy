@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.forge;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompatBridge;
+import com.craisinlord.antarchy.compat.infinity.InfinityWarpResult;
 import net.lerariemann.infinity.InfinityMod;
 import net.lerariemann.infinity.util.InfinityMethods;
 import net.lerariemann.infinity.util.teleport.PortalCreator;
@@ -10,6 +11,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
+import net.lerariemann.infinity.access.MinecraftServerAccess;
+import net.lerariemann.infinity.access.ServerPlayerEntityAccess;
 import net.minecraft.util.RandomSource;
 
 import java.util.ArrayList;
@@ -69,13 +76,71 @@ public final class ForgeInfinityCompat implements InfinityCompatBridge {
     }
 
     @Override
-    public boolean requestWarp(ServerPlayer player, ResourceLocation dimensionId) {
+    public InfinityWarpResult requestWarp(ServerPlayer player, ResourceLocation dimensionId) {
         try {
-            WarpLogic.requestWarp(player, dimensionId, false);
-            return true;
+            requestWarpCountingQueuedAsNew(player, dimensionId);
+            return InfinityWarpResult.PENDING;
         } catch (Throwable throwable) {
             Antarchy.LOGGER.error("[Antarchy] Failed to request an Infinity warp to {}", dimensionId, throwable);
-            return false;
+            return InfinityGenerationFailure.consume(dimensionId)
+                    ? InfinityWarpResult.FAILED_GENERATION
+                    : InfinityWarpResult.REJECTED;
+        }
+    }
+
+    private static void requestWarpCountingQueuedAsNew(ServerPlayer player, ResourceLocation dimensionId) {
+        if (player == null) {
+            return;
+        }
+        MinecraftServer server = player.getServer();
+        if (server == null) {
+            return;
+        }
+        if (((MinecraftServerAccess) server).infinity$needsInvocation()) {
+            PortalCreator.onInvocationNeedDetected(player);
+            return;
+        }
+        if (queuedDimensionCountsAsNew(server, dimensionId)) {
+            ((ServerPlayerEntityAccess) player).infinity$setWarpTimer(2L, dimensionId);
+        } else {
+            WarpLogic.performWarp(player, dimensionId);
+        }
+    }
+
+    private static boolean queuedDimensionCountsAsNew(MinecraftServer server, ResourceLocation dimensionId) {
+        ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION, dimensionId);
+        if (server instanceof MinecraftServerAccess access && access.infinity$hasToAdd(key)) {
+            return true;
+        }
+        try {
+            return PortalCreator.tryAddInfinityDimension(server, dimensionId);
+        } catch (Throwable throwable) {
+            InfinityGenerationFailure.mark(dimensionId);
+            throw throwable;
+        }
+    }
+
+    @Override
+    public InfinityWarpResult requestDimensionCreation(MinecraftServer server, ResourceLocation dimensionId) {
+        if (!isAvailable() || server == null || dimensionId == null || !"infinity".equals(dimensionId.getNamespace())) {
+            return InfinityWarpResult.REJECTED;
+        }
+        ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION, dimensionId);
+        if (server.getLevel(key) != null) {
+            return InfinityWarpResult.READY;
+        }
+        if (!(server instanceof MinecraftServerAccess access)) {
+            return InfinityWarpResult.REJECTED;
+        }
+        try {
+            if (access.infinity$hasToAdd(key)) {
+                return InfinityWarpResult.PENDING;
+            }
+            return PortalCreator.tryAddInfinityDimension(server, dimensionId)
+                    ? InfinityWarpResult.PENDING : InfinityWarpResult.REJECTED;
+        } catch (Throwable throwable) {
+            Antarchy.LOGGER.error("[Antarchy] Failed to request creation of Infinity dimension {}", dimensionId, throwable);
+            return InfinityWarpResult.FAILED_GENERATION;
         }
     }
 

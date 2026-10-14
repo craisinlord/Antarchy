@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.compat.item.ArmorDurability;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.google.common.collect.ImmutableMultimap;
@@ -23,10 +24,11 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
 public class NightmareArmorItem extends ArmorItem {
+    private static final int BASE_DURABILITY_MULTIPLIER = 33;
     private final Type armorType;
 
     public NightmareArmorItem(ArmorMaterial material, Type type, Properties properties) {
-        super(material, type, properties);
+        super(material, type, properties.durability(resolveDurability(type)));
         this.armorType = type;
     }
 
@@ -150,5 +152,14 @@ public class NightmareArmorItem extends ArmorItem {
             }
         }
         return true;
+    }
+
+    private static int resolveDurability(Type armorType) {
+        return switch (armorType) {
+            case HELMET -> ArmorDurability.forType(Type.HELMET, BASE_DURABILITY_MULTIPLIER);
+            case CHESTPLATE -> ArmorDurability.forType(Type.CHESTPLATE, BASE_DURABILITY_MULTIPLIER);
+            case LEGGINGS -> ArmorDurability.forType(Type.LEGGINGS, BASE_DURABILITY_MULTIPLIER);
+            case BOOTS -> ArmorDurability.forType(Type.BOOTS, BASE_DURABILITY_MULTIPLIER);
+        };
     }
 }

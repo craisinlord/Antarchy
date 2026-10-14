@@ -17,22 +17,15 @@ public final class AntarchyKeyBindings {
             CATEGORY
     );
 
-    public static final KeyMapping DORRIE_CHARGE_JUMP = new KeyMapping(
-            "key.antarchy.dorrie_charge_jump",
+    public static final KeyMapping MOUNT_SPECIAL = new KeyMapping(
+            "key.antarchy.mount_special",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_LEFT_CONTROL,
             CATEGORY
     );
 
-    public static final KeyMapping HERCULES_BEETLE_CHARGE = new KeyMapping(
-            "key.antarchy.hercules_beetle_charge",
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_LEFT_CONTROL,
-            CATEGORY
-    );
-
-    public static final KeyMapping HERCULES_BEETLE_FLIGHT_TOGGLE = new KeyMapping(
-            "key.antarchy.hercules_beetle_flight_toggle",
+    public static final KeyMapping MOUNT_FLIGHT_TOGGLE = new KeyMapping(
+            "key.antarchy.mount_flight_toggle",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_R,
             CATEGORY
@@ -44,33 +37,77 @@ public final class AntarchyKeyBindings {
             CATEGORY
     );
 
+    public static final KeyMapping ROYAL_INVERSION_TOGGLE = new KeyMapping(
+            "key.antarchy.royal_inversion_toggle",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_V,
+            CATEGORY
+    );
+    public static final KeyMapping ROYAL_BOUNDARY = new KeyMapping(
+            "key.antarchy.royal_boundary",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_B,
+            CATEGORY
+    );
+    public static final KeyMapping PORTAL_GUN_ZOOM = new KeyMapping(
+            "key.antarchy.portal_gun_zoom",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_Z,
+            CATEGORY
+    );
+    public static final KeyMapping PORTAL_GUN_RESET = new KeyMapping(
+            "key.antarchy.portal_gun_reset",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_R,
+            CATEGORY
+    );
+
     private AntarchyKeyBindings() {}
 
     public static void register() {
         KeyBindingHelper.registerKeyBinding(BRUTALFLY_FLAP);
-        KeyBindingHelper.registerKeyBinding(DORRIE_CHARGE_JUMP);
-        KeyBindingHelper.registerKeyBinding(HERCULES_BEETLE_CHARGE);
-        KeyBindingHelper.registerKeyBinding(HERCULES_BEETLE_FLIGHT_TOGGLE);
+        KeyBindingHelper.registerKeyBinding(MOUNT_SPECIAL);
+        KeyBindingHelper.registerKeyBinding(MOUNT_FLIGHT_TOGGLE);
         KeyBindingHelper.registerKeyBinding(TIGERS_EYE_CAMOUFLAGE);
+        KeyBindingHelper.registerKeyBinding(ROYAL_INVERSION_TOGGLE);
+        KeyBindingHelper.registerKeyBinding(ROYAL_BOUNDARY);
+        KeyBindingHelper.registerKeyBinding(PORTAL_GUN_ZOOM);
+        KeyBindingHelper.registerKeyBinding(PORTAL_GUN_RESET);
     }
 
     public static boolean isBrutalflyFlapPressed() {
         return Minecraft.getInstance().screen == null && BRUTALFLY_FLAP.isDown();
     }
 
-    public static boolean isDorrieChargeJumpPressed() {
-        return Minecraft.getInstance().screen == null && DORRIE_CHARGE_JUMP.isDown();
+    public static boolean isMountSpecialPressed() {
+        return Minecraft.getInstance().screen == null && MOUNT_SPECIAL.isDown();
     }
 
-    public static boolean isHerculesBeetleChargePressed() {
-        return Minecraft.getInstance().screen == null && HERCULES_BEETLE_CHARGE.isDown();
-    }
-
-    public static boolean isHerculesBeetleFlightTogglePressed() {
-        return Minecraft.getInstance().screen == null && HERCULES_BEETLE_FLIGHT_TOGGLE.isDown();
+    public static boolean isMountFlightTogglePressed() {
+        return Minecraft.getInstance().screen == null && MOUNT_FLIGHT_TOGGLE.isDown();
     }
 
     public static boolean consumeTigerEyeCamouflagePressed() {
         return Minecraft.getInstance().screen == null && TIGERS_EYE_CAMOUFLAGE.consumeClick();
+    }
+
+    public static boolean consumeRoyalInversionTogglePressed() {
+        return Minecraft.getInstance().screen == null && ROYAL_INVERSION_TOGGLE.consumeClick();
+    }
+
+    public static boolean consumeRoyalBoundaryPressed() {
+        return Minecraft.getInstance().screen == null && ROYAL_BOUNDARY.consumeClick();
+    }
+
+    public static boolean consumePortalGunZoomPressed() {
+        return Minecraft.getInstance().screen == null && PORTAL_GUN_ZOOM.consumeClick();
+    }
+
+    public static boolean consumePortalGunResetPressed() {
+        return Minecraft.getInstance().screen == null && PORTAL_GUN_RESET.consumeClick();
+    }
+
+    public static boolean isPortalGunResetDown() {
+        return Minecraft.getInstance().screen == null && (PORTAL_GUN_RESET.isDown() || PORTAL_GUN_RESET.consumeClick());
     }
 }

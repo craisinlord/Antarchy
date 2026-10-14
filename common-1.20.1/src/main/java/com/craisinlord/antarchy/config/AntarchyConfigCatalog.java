@@ -9,17 +9,35 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** Shared reflection metadata for presenting the Antarchy settings consistently. */
 public final class AntarchyConfigCatalog {
-    public enum Section { MOBS, TOOLS, MISC }
-    public enum ValueType { BOOLEAN, INTEGER, DOUBLE, FLOAT, STRING }
+    public enum Section {
+        MOBS,
+        TOOLS,
+        MISC
+    }
 
-    public record Definition(String name, Section section, ValueType valueType,
-                             Class<?> setterType, Method getter, Method setter) {}
+    public enum ValueType {
+        BOOLEAN,
+        INTEGER,
+        DOUBLE,
+        FLOAT,
+        STRING
+    }
+
+    public record Definition(
+            String name,
+            Section section,
+            ValueType valueType,
+            Class<?> setterType,
+            Method getter,
+            Method setter
+    ) {
+    }
 
     private static final List<Definition> DEFINITIONS = buildDefinitions();
 
-    private AntarchyConfigCatalog() {}
+    private AntarchyConfigCatalog() {
+    }
 
     public static List<Definition> definitions() {
         return DEFINITIONS;
@@ -38,8 +56,11 @@ public final class AntarchyConfigCatalog {
                 .filter(AntarchyConfigCatalog::isPublicStatic)
                 .filter(method -> method.getParameterCount() == 0)
                 .filter(method -> method.getReturnType() != Void.TYPE)
-                .collect(java.util.stream.Collectors.toMap(Method::getName, method -> method,
-                        (first, ignored) -> first, LinkedHashMap::new));
+                .collect(java.util.stream.Collectors.toMap(
+                        Method::getName,
+                        method -> method,
+                        (first, ignored) -> first,
+                        LinkedHashMap::new));
 
         return Arrays.stream(AntarchySettings.class.getMethods())
                 .filter(AntarchyConfigCatalog::isPublicStatic)
@@ -54,18 +75,35 @@ public final class AntarchyConfigCatalog {
     private static Definition definitionFor(Method setter, Map<String, Method> getters) {
         String name = decapitalize(setter.getName().substring(3));
         Method getter = getters.get(name);
-        if (getter == null) return null;
+        if (getter == null) {
+            return null;
+        }
+
         Class<?> setterType = setter.getParameterTypes()[0];
         ValueType valueType = valueTypeFor(setterType, getter.getReturnType());
-        return valueType == null ? null : new Definition(name, sectionFor(name), valueType, setterType, getter, setter);
+        if (valueType == null) {
+            return null;
+        }
+
+        return new Definition(name, sectionFor(name), valueType, setterType, getter, setter);
     }
 
     private static ValueType valueTypeFor(Class<?> setterType, Class<?> getterType) {
-        if (setterType == boolean.class && getterType == boolean.class) return ValueType.BOOLEAN;
-        if (setterType == int.class && getterType == int.class) return ValueType.INTEGER;
-        if (setterType == double.class && getterType == double.class) return ValueType.DOUBLE;
-        if (setterType == float.class && getterType == float.class) return ValueType.FLOAT;
-        if (setterType == String.class && ResourceKey.class.isAssignableFrom(getterType)) return ValueType.STRING;
+        if (setterType == boolean.class && getterType == boolean.class) {
+            return ValueType.BOOLEAN;
+        }
+        if (setterType == int.class && getterType == int.class) {
+            return ValueType.INTEGER;
+        }
+        if (setterType == double.class && getterType == double.class) {
+            return ValueType.DOUBLE;
+        }
+        if (setterType == float.class && getterType == float.class) {
+            return ValueType.FLOAT;
+        }
+        if (setterType == String.class && ResourceKey.class.isAssignableFrom(getterType)) {
+            return ValueType.STRING;
+        }
         return null;
     }
 
@@ -75,11 +113,20 @@ public final class AntarchyConfigCatalog {
     }
 
     private static String decapitalize(String value) {
-        return value.isEmpty() ? value : Character.toLowerCase(value.charAt(0)) + value.substring(1);
+        if (value.isEmpty()) {
+            return value;
+        }
+        return Character.toLowerCase(value.charAt(0)) + value.substring(1);
     }
 
     private static Section sectionFor(String name) {
-        return isMiscSetting(name) ? Section.MISC : isToolSetting(name) ? Section.TOOLS : Section.MOBS;
+        if (isMiscSetting(name)) {
+            return Section.MISC;
+        }
+        if (isToolSetting(name)) {
+            return Section.TOOLS;
+        }
+        return Section.MOBS;
     }
 
     private static boolean isMiscSetting(String name) {
@@ -87,32 +134,66 @@ public final class AntarchyConfigCatalog {
                 || name.equals("rainbowAntsLeadToInfinityDimensions")
                 || name.equals("permanentPortalsEnabled")
                 || name.equals("permanentPortalsFlintAndSteelEnabled")
-                || name.equals("elythiaPortalEnabled") || name.equals("thoraxisPortalEnabled")
-                || name.equals("cavarynPortalEnabled") || name.equals("hushweedSporeLifetimeSeconds")
-                || name.equals("elythiaFireflyParticlesEnabled") || name.equals("duplicatorTreeEnabled")
-                || name.equals("glowVinesUnderLeaves") || name.equals("swingThroughGrassEnabled")
+                || name.equals("elythiaPortalEnabled")
+                || name.equals("thoraxisPortalEnabled")
+                || name.equals("cavarynPortalEnabled")
+                || name.startsWith("portalGunCanFireThrough")
+                || name.startsWith("portalGunSeeThrough")
+                || name.startsWith("portalGunFancy")
+                || name.equals("portalGunCanPortalsResizeWhenCreated")
+                || name.equals("portalGunCanPortalProjectilesChunkload")
+                || name.equals("portalGunMaxShootDistance")
+                || name.equals("portalGunMinFloorExitSpeed")
+                || name.equals("portalGunMaxLiveViews")
+                || name.equals("portalGunMaxExitSpeed")
+                || name.startsWith("portalGunMoon")
+                || name.equals("hushweedSporeLifetimeSeconds")
+                || name.equals("elythiaFireflyParticlesEnabled")
+                || name.equals("duplicatorTreeEnabled")
+                || name.equals("glowVinesUnderLeaves")
+                || name.equals("swingThroughGrassEnabled")
                 || name.equals("fabricKeybindingConflictFixEnabled")
-                || name.equals("experimentalSettingsPopupDisabled") || name.equals("unlockAllArchives")
-                || name.equals("entitySpecificFireOverlayEnabled") || name.equals("dreamSandEnabled")
-                || name.startsWith("dreamSand") || name.equals("ichorWitherEnabled")
-                || name.startsWith("diamondMinecart") || name.startsWith("hoverboard");
+                || name.equals("experimentalSettingsPopupDisabled")
+                || name.equals("unlockAllArchives")
+                || name.equals("entitySpecificFireOverlayEnabled")
+                || name.startsWith("dreamSand")
+                || name.equals("ichorWitherEnabled")
+                || name.startsWith("diamondMinecart")
+                || name.startsWith("hoverboard");
     }
 
     private static boolean isToolSetting(String name) {
-        return name.equals("sizeChangingRaysEnabled") || name.startsWith("sizeRay")
-                || name.equals("shrinkingPotionDelta") || name.equals("growthPotionDelta")
-                || name.startsWith("ultimate") || name.startsWith("battleAxe")
-                || name.startsWith("bigBertha") || name.startsWith("attitudeAdjuster")
-                || name.startsWith("scorpionWhip") || name.startsWith("bloodCrystal")
-                || name.startsWith("nightmareHelmet") || name.startsWith("nightmareChestplate")
-                || name.startsWith("nightmareLeggings") || name.startsWith("nightmareBoots")
-                || name.startsWith("nightmareArmorDreadAura") || name.startsWith("primordialArmor")
-                || name.startsWith("nightmareSword") || name.startsWith("basiliskDagger")
-                || name.startsWith("squidzooka") || name.equals("invertProjectilesFromInvertedPlayers")
-                || name.startsWith("gravityGun") || name.startsWith("critterCage")
+        return name.equals("sizeChangingRaysEnabled")
+                || name.startsWith("sizeRay")
+                || name.startsWith("temporalTuner")
+                || name.equals("shrinkingPotionDelta")
+                || name.equals("growthPotionDelta")
+                || name.startsWith("ultimate")
+                || name.startsWith("battleAxe")
+                || name.startsWith("bigBertha")
+                || name.startsWith("attitudeAdjuster")
+                || name.startsWith("scorpionWhip")
+                || name.startsWith("bloodCrystal")
+                || name.startsWith("nightmareHelmet")
+                || name.startsWith("nightmareChestplate")
+                || name.startsWith("nightmareLeggings")
+                || name.startsWith("nightmareBoots")
+                || name.startsWith("nightmareArmorDreadAura")
+                || name.startsWith("primordialArmor")
+                || name.startsWith("nightmareSword")
+                || name.startsWith("basiliskDagger")
+                || name.startsWith("squidzooka")
+                || name.startsWith("gravityGun")
+                || name.startsWith("critterCage")
                 || name.equals("potentNyxiteInvertedDurationSeconds")
-                || name.equals("corneaEarNightVisionSeconds") || name.startsWith("american")
-                || name.startsWith("mogglesVision") || name.equals("ductTapeRepairPercentPerUse")
-                || name.startsWith("fallenKingCrown");
+                || name.equals("corneaEarNightVisionSeconds")
+                || name.startsWith("american")
+                || name.startsWith("mogglesVision")
+                || name.equals("ductTapeRepairPercentPerUse")
+                || name.startsWith("fallenKingCrown")
+                || name.startsWith("royalArmor")
+                || name.startsWith("royalGuardian")
+                || name.startsWith("royalAssailant")
+                || name.startsWith("royalWeapon");
     }
 }

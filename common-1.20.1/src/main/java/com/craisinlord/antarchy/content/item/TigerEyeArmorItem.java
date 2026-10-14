@@ -14,7 +14,7 @@ public final class TigerEyeArmorItem extends ArmorItem {
     private static final int BASE_DURABILITY_MULTIPLIER = 33;
 
     public TigerEyeArmorItem(ArmorMaterial material, Type type, Properties properties) {
-        super(material, type, properties.stacksTo(1).durability(resolveDurability(type)));
+        super(material, type, properties.durability(resolveDurability(type)));
     }
 
     @Override

@@ -1,117 +1,64 @@
 package com.craisinlord.antarchy.mixins.client;
 
+import com.craisinlord.antarchy.compat.entity.EntityReach;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GameRenderer.class)
 public abstract class GameRendererSwingThroughGrassMixin {
     @Shadow
+    @Final
     private Minecraft minecraft;
 
-    @Shadow
-    private static HitResult filterHitResult(HitResult hitResult, Vec3 eyePosition, double range) {
-        throw new AssertionError();
-    }
-
-    @Unique
-    private Double antarchy$swingThroughReachSq;
-
-    @Inject(
-            method = "pick(Lnet/minecraft/world/entity/Entity;DDF)Lnet/minecraft/world/phys/HitResult;",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/world/phys/HitResult;getLocation()Lnet/minecraft/world/phys/Vec3;"
-            ),
-            locals = LocalCapture.CAPTURE_FAILHARD
-    )
-    private void antarchy$cacheSwingThroughReach(
-            Entity entity,
-            double blockInteractionRange,
-            double entityInteractionRange,
-            float partialTick,
-            CallbackInfoReturnable<HitResult> cir,
-            double maxRange,
-            double maxRangeSq,
-            Vec3 eyePosition,
-            HitResult hitResult
-    ) {
-        this.antarchy$swingThroughReachSq = null;
+    @Inject(method = "pick(F)V", at = @At("TAIL"))
+    private void antarchy$preferAttackableEntityBehindGrass(float partialTick, CallbackInfo ci) {
         if (!AntarchySettings.swingThroughGrassEnabled()) {
             return;
         }
-
-        if (!(hitResult instanceof BlockHitResult blockHitResult) || hitResult.getType() != HitResult.Type.BLOCK) {
-            return;
-        }
-
+        Entity cameraEntity = this.minecraft.getCameraEntity();
         ClientLevel level = this.minecraft.level;
-        if (level == null) {
+        if (cameraEntity == null || level == null || this.minecraft.gameMode == null) {
+            return;
+        }
+        if (!(this.minecraft.hitResult instanceof BlockHitResult blockHitResult) || blockHitResult.getType() != HitResult.Type.BLOCK) {
+            return;
+        }
+        BlockPos blockPos = blockHitResult.getBlockPos();
+        if (!level.getBlockState(blockPos).getCollisionShape(level, blockPos).isEmpty()) {
             return;
         }
 
-        BlockPos blockPos = blockHitResult.getBlockPos();
-        if (level.getBlockState(blockPos).getCollisionShape(level, blockPos).isEmpty()) {
-            this.antarchy$swingThroughReachSq = maxRangeSq;
-        }
-    }
-
-    @ModifyArg(
-            method = "pick(Lnet/minecraft/world/entity/Entity;DDF)Lnet/minecraft/world/phys/HitResult;",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/world/entity/projectile/ProjectileUtil;getEntityHitResult(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;D)Lnet/minecraft/world/phys/EntityHitResult;"
-            ),
-            index = 5
-    )
-    private double antarchy$useOriginalReachForEntityRaycast(double rangeSq) {
-        return this.antarchy$swingThroughReachSq == null ? rangeSq : this.antarchy$swingThroughReachSq;
-    }
-
-    @Inject(
-            method = "pick(Lnet/minecraft/world/entity/Entity;DDF)Lnet/minecraft/world/phys/HitResult;",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/world/phys/EntityHitResult;getLocation()Lnet/minecraft/world/phys/Vec3;"
-            ),
-            cancellable = true,
-            locals = LocalCapture.CAPTURE_FAILHARD
-    )
-    private void antarchy$preferAttackableEntityBehindGrass(
-            Entity entity,
-            double blockInteractionRange,
-            double entityInteractionRange,
-            float partialTick,
-            CallbackInfoReturnable<HitResult> cir,
-            double maxRange,
-            double maxRangeSq,
-            Vec3 eyePosition,
-            HitResult blockHitResult,
-            double blockHitDistanceSq,
-            Vec3 viewVector,
-            Vec3 reachEnd,
-            float unused,
-            AABB aabb,
-            EntityHitResult entityHitResult
-    ) {
-        if (this.antarchy$swingThroughReachSq == null || entityHitResult == null) {
+        double blockInteractionRange = this.minecraft.gameMode.getPickRange();
+        double entityInteractionRange = antarchy$entityInteractionRange(cameraEntity);
+        double maxRange = Math.max(blockInteractionRange, entityInteractionRange);
+        double maxRangeSq = maxRange * maxRange;
+        Vec3 eyePosition = cameraEntity.getEyePosition(partialTick);
+        Vec3 viewVector = cameraEntity.getViewVector(1.0F);
+        Vec3 reachEnd = eyePosition.add(viewVector.x * maxRange, viewVector.y * maxRange, viewVector.z * maxRange);
+        AABB searchBox = cameraEntity.getBoundingBox().expandTowards(viewVector.scale(maxRange)).inflate(1.0D, 1.0D, 1.0D);
+        EntityHitResult entityHitResult = ProjectileUtil.getEntityHitResult(cameraEntity, eyePosition, reachEnd, searchBox,
+                candidate -> !candidate.isSpectator() && candidate.isPickable(), maxRangeSq);
+        if (entityHitResult == null) {
             return;
         }
 
@@ -124,8 +71,27 @@ public abstract class GameRendererSwingThroughGrassMixin {
             return;
         }
 
-        if (eyePosition.distanceToSqr(hitEntity.position()) < this.antarchy$swingThroughReachSq) {
-            cir.setReturnValue(filterHitResult(entityHitResult, eyePosition, entityInteractionRange));
+        if (eyePosition.distanceToSqr(hitEntity.position()) < maxRangeSq) {
+            Vec3 location = entityHitResult.getLocation();
+            if (!location.closerThan(eyePosition, entityInteractionRange)) {
+                Vec3 direction = location.subtract(eyePosition);
+                this.minecraft.hitResult = BlockHitResult.miss(location, Direction.getNearest(direction.x, direction.y, direction.z), BlockPos.containing(location));
+                this.minecraft.crosshairPickEntity = null;
+            } else {
+                this.minecraft.hitResult = entityHitResult;
+                this.minecraft.crosshairPickEntity = hitEntity;
+            }
         }
+    }
+
+    @Unique
+    private double antarchy$entityInteractionRange(Entity cameraEntity) {
+        if (this.minecraft.gameMode != null && this.minecraft.gameMode.hasFarPickRange()) {
+            return 6.0D;
+        }
+        if (cameraEntity instanceof Player player) {
+            return EntityReach.entityInteractionRange(player);
+        }
+        return EntityReach.DEFAULT_ENTITY_INTERACTION_RANGE;
     }
 }

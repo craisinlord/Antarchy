@@ -15,5 +15,11 @@
   "locator": "antarchy:kings_tree",
   "dimension": "antarchy:elythia",
   "rotation": 45,
-  "render_scale": 0.5
+  "render_scale": 0.5,
+  "green_tint": false,
+  "gallery": [
+    "antarchy:prince",
+    {"item": "antarchy:king_scale"},
+    {"item": "antarchy:prince_egg"}
+  ]
 }

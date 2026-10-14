@@ -6,5 +6,6 @@
   "description": ["guide.antarchy.entry.princess.description", "guide.antarchy.entry.princess.description2"],
   "entity": "antarchy:princess",
   "cover_entity": "antarchy:princess",
-  "rotation": 45
+  "rotation": 45,
+  "green_tint": false
 }

@@ -4,11 +4,20 @@ license="${mod_license}"
 
 [[mods]]
 modId="${mod_id}"
+logoFile="../assets/antarchy/antarchy_logo.png"
+    logoBlur=false
 version="${version}"
 displayName="${mod_name}"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/antarchy"
 authors="${mod_authors}"
 description='''${mod_description}'''
 displayTest="MATCH_VERSION"
+
+[[mixins]]
+    config="antarchy-common.mixins.json"
+
+[[mixins]]
+    config="antarchy-forge.mixins.json"
 
 [[dependencies.${mod_id}]]
     modId="forge"
@@ -16,15 +25,56 @@ displayTest="MATCH_VERSION"
     versionRange="${forge_version_range}"
     ordering="NONE"
     side="BOTH"
+
 [[dependencies.${mod_id}]]
     modId="minecraft"
     mandatory=true
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
-# Antarchy already includes Apple Cows. Forge 1.20.1 has no "incompatible" dependency type,
-# so this optional dependency uses a version range no release can satisfy: if the standalone
-# Apple Cows mod is installed, Forge refuses to load instead of running both copies.
+
+[[dependencies.${mod_id}]]
+    modId="anthology"
+    mandatory=true
+    versionRange="[1.0.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="antos"
+    mandatory=true
+    versionRange="[1.4.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="integrated_api"
+    mandatory=true
+    versionRange="[1.8.1,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="geckolib"
+    mandatory=true
+    versionRange="*"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="sizeable_foliage"
+    mandatory=true
+    versionRange="*"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="pehkui"
+    mandatory=true
+    versionRange="*"
+    ordering="AFTER"
+    side="BOTH"
+
 [[dependencies.${mod_id}]]
     modId="apple_cows"
     mandatory=false
@@ -32,8 +82,9 @@ displayTest="MATCH_VERSION"
     ordering="NONE"
     side="BOTH"
 
-[[mixins]]
-    config="antarchy-common.mixins.json"
-
-[[mixins]]
-    config="antarchy-forge.mixins.json"
+[[dependencies.${mod_id}]]
+    modId="hoverboards"
+    mandatory=false
+    versionRange="(,0)"
+    ordering="NONE"
+    side="BOTH"

@@ -2,6 +2,9 @@
   "replace": false,
   "values": [
     "antarchy:ouranwood_acorn",
-    "antarchy:peach_sapling"
+    "antarchy:peach_sapling",
+    "antarchy:nadir_sapling",
+    "antarchy:royal_sapling",
+    "antarchy:truffalo_sapling"
   ]
 }

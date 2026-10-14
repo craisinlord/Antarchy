@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
+  "category": "food",
   "ingredients": [
     {
       "item": "minecraft:mud"
@@ -10,7 +10,6 @@
     }
   ],
   "result": {
-    "count": 1,
     "item": "antarchy:mud_pie"
   }
 }

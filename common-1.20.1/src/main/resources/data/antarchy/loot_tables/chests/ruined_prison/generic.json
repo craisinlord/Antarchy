@@ -159,12 +159,8 @@
           "weight": 6,
           "functions": [
             {
-              "function": "minecraft:set_components",
-              "components": {
-                "minecraft:potion_contents": {
-                  "potion": "minecraft:healing"
-                }
-              }
+              "function": "minecraft:set_potion",
+              "id": "minecraft:healing"
             }
           ]
         },
@@ -225,6 +221,28 @@
                 "min": 1.0,
                 "max": 3.0
               }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 5,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{AntOSFloppyDisk:\"antarchy:elythia\"}"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "weight": 5,
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{AntOSFloppyDisk:\"antarchy:kraken\"}"
             }
           ]
         }

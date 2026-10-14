@@ -17,6 +17,18 @@
       { "name": "antarchy:thoraxis_lucid_pools_additions", "type": "event" }
     ]
   },
+  "undertrial_detect_player1": {
+    "subtitle": "subtitles.antarchy.undertrial_detect_player",
+    "sounds": [
+      { "name": "antarchy:block/undertrial/undertrial_detect_player1" }
+    ]
+  },
+  "undertrial_detect_player2": {
+    "subtitle": "subtitles.antarchy.undertrial_detect_player",
+    "sounds": [
+      { "name": "antarchy:block/undertrial/undertrial_detect_player2" }
+    ]
+  },
   "squidzooka_fire": {
     "subtitle": "subtitles.antarchy.squidzooka_fire",
     "sounds": [
@@ -1053,6 +1065,30 @@
       }
     ]
   },
+  "the_queen": {
+    "sounds": [
+      {
+        "name": "antarchy:music/game/thoraxis/the_queen",
+        "stream": true
+      }
+    ]
+  },
+  "music_disc_verdance": {
+    "sounds": [
+      {
+        "name": "antarchy:records/verdance",
+        "stream": true
+      }
+    ]
+  },
+  "music_disc_grotesque": {
+    "sounds": [
+      {
+        "name": "antarchy:records/grotesque",
+        "stream": true
+      }
+    ]
+  },
   "lucid_lullaby": {
     "sounds": [
       {
@@ -1085,6 +1121,14 @@
       }
     ]
   },
+  "inverted_inferno": {
+    "sounds": [
+      {
+        "name": "antarchy:music/game/thoraxis/inverted_inferno",
+        "stream": true
+      }
+    ]
+  },
   "music.game.thoraxis": {
     "sounds": [
       {
@@ -1108,7 +1152,8 @@
         "stream": true
       },
       {
-        "name": "antarchy:music/game/thoraxis/assimilation",
+        "name": "antarchy:inverted_inferno",
+        "type": "event",
         "stream": true
       }
     ]
@@ -1714,13 +1759,13 @@
     "subtitle": "subtitles.antarchy.portal_gun_fire_blue",
     "sounds": [
       {
-        "name": "antarchy:item/portalgun/wpn_portal_gun_fire_blue_01"
+        "name": "antarchy:portal_aperture/portal_gun_fire_primary_1"
       },
       {
-        "name": "antarchy:item/portalgun/wpn_portal_gun_fire_blue_02"
+        "name": "antarchy:portal_aperture/portal_gun_fire_primary_2"
       },
       {
-        "name": "antarchy:item/portalgun/wpn_portal_gun_fire_blue_03"
+        "name": "antarchy:portal_aperture/portal_gun_fire_primary_3"
       }
     ]
   },
@@ -1728,13 +1773,13 @@
     "subtitle": "subtitles.antarchy.portal_gun_fire_orange",
     "sounds": [
       {
-        "name": "antarchy:item/portalgun/wpn_portal_gun_fire_red_01"
+        "name": "antarchy:portal_aperture/portal_gun_fire_secondary_1"
       },
       {
-        "name": "antarchy:item/portalgun/wpn_portal_gun_fire_red_02"
+        "name": "antarchy:portal_aperture/portal_gun_fire_secondary_2"
       },
       {
-        "name": "antarchy:item/portalgun/wpn_portal_gun_fire_red_03"
+        "name": "antarchy:portal_aperture/portal_gun_fire_secondary_3"
       }
     ]
   },
@@ -1742,19 +1787,16 @@
     "subtitle": "subtitles.antarchy.portal_gun_invalid_surface",
     "sounds": [
       {
-        "name": "antarchy:item/portalgun/portal_invalid_surface_swt_01"
+        "name": "antarchy:portal_aperture/portal_invalid_surface_1"
       },
       {
-        "name": "antarchy:portal/portal_invalid_surface_01"
+        "name": "antarchy:portal_aperture/portal_invalid_surface_2"
       },
       {
-        "name": "antarchy:portal/portal_invalid_surface_02"
+        "name": "antarchy:portal_aperture/portal_invalid_surface_3"
       },
       {
-        "name": "antarchy:portal/portal_invalid_surface_03"
-      },
-      {
-        "name": "antarchy:portal/portal_invalid_surface_04"
+        "name": "antarchy:portal_aperture/portal_invalid_surface_4"
       }
     ]
   },
@@ -1762,7 +1804,7 @@
     "subtitle": "subtitles.antarchy.portal_open_blue",
     "sounds": [
       {
-        "name": "antarchy:portal/portal_open_blue_01"
+        "name": "antarchy:portal_aperture/portal_open_primary_1"
       }
     ]
   },
@@ -1770,7 +1812,10 @@
     "subtitle": "subtitles.antarchy.portal_open_orange",
     "sounds": [
       {
-        "name": "antarchy:portal/portal_open_red_01"
+        "name": "antarchy:portal_aperture/portal_open_secondary_1"
+      },
+      {
+        "name": "antarchy:portal_aperture/portal_open_secondary_2"
       }
     ]
   },
@@ -1778,10 +1823,10 @@
     "subtitle": "subtitles.antarchy.portal_fizzle",
     "sounds": [
       {
-        "name": "antarchy:portal/portal_fizzle_01"
+        "name": "antarchy:portal_aperture/portal_fizzle_1"
       },
       {
-        "name": "antarchy:portal/portal_fizzle_02"
+        "name": "antarchy:portal_aperture/portal_fizzle_2"
       }
     ]
   },
@@ -1789,13 +1834,13 @@
     "subtitle": "subtitles.antarchy.portal_enter",
     "sounds": [
       {
-        "name": "antarchy:portal/portal_enter_01"
+        "name": "antarchy:portal_aperture/portal_enter_1"
       },
       {
-        "name": "antarchy:portal/portal_enter_02"
+        "name": "antarchy:portal_aperture/portal_enter_2"
       },
       {
-        "name": "antarchy:portal/portal_enter_03"
+        "name": "antarchy:portal_aperture/portal_enter_3"
       }
     ]
   },
@@ -1803,10 +1848,13 @@
     "subtitle": "subtitles.antarchy.portal_exit",
     "sounds": [
       {
-        "name": "antarchy:portal/portal_exit_01"
+        "name": "antarchy:portal_aperture/portal_enter_1"
       },
       {
-        "name": "antarchy:portal/portal_exit_02"
+        "name": "antarchy:portal_aperture/portal_enter_2"
+      },
+      {
+        "name": "antarchy:portal_aperture/portal_enter_3"
       }
     ]
   },
@@ -1814,7 +1862,7 @@
     "subtitle": "subtitles.antarchy.portal_ambient",
     "sounds": [
       {
-        "name": "antarchy:portal/wpn_portal_ambient_lp_01"
+        "name": "antarchy:portal_aperture/portal_ambient"
       }
     ]
   },
@@ -3102,6 +3150,27 @@
       { "name": "antarchy:mob/princess/fly5" },
       { "name": "antarchy:mob/princess/fly6" }
     ]
+  },
+  "hoverboard_mount": {
+    "subtitle": "subtitles.antarchy.hoverboard_mount",
+    "sounds": [
+      { "name": "antarchy:hoverboard/mount1" },
+      { "name": "antarchy:hoverboard/mount2" },
+      { "name": "antarchy:hoverboard/mount3" },
+      { "name": "antarchy:hoverboard/mount4" }
+    ]
+  },
+  "hoverboard_dismount": {
+    "subtitle": "subtitles.antarchy.hoverboard_dismount",
+    "sounds": [
+      { "name": "antarchy:hoverboard/dismount1" },
+      { "name": "antarchy:hoverboard/dismount2" },
+      { "name": "antarchy:hoverboard/dismount3" }
+    ]
+  },
+  "hoverboard_idle": {
+    "subtitle": "subtitles.antarchy.hoverboard_idle",
+    "sounds": [ { "name": "antarchy:hoverboard/idle1" } ]
   },
   "princess_step": {
     "subtitle": "subtitles.antarchy.princess_step",

@@ -5,6 +5,7 @@ import com.craisinlord.antarchy.content.entity.portal.DimensionalTearEntity;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -12,6 +13,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -139,14 +141,21 @@ public class DimensionalTearMarkerBlockEntity extends BlockEntity {
         if (pos.getY() < minY || pos.getY() > maxY) {
             return false;
         }
+        BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos();
+        LevelChunk chunk = null;
         for (int dx = -2; dx <= 2; dx++) {
-            for (int dy = -2; dy <= 3; dy++) {
-                for (int dz = -4; dz <= 4; dz++) {
-                    BlockPos checkPos = pos.offset(dx, dy, dz);
-                    if (!level.isLoaded(checkPos)) {
+            for (int dz = -4; dz <= 4; dz++) {
+                int chunkX = SectionPos.blockToSectionCoord(pos.getX() + dx);
+                int chunkZ = SectionPos.blockToSectionCoord(pos.getZ() + dz);
+                if (chunk == null || chunk.getPos().x != chunkX || chunk.getPos().z != chunkZ) {
+                    chunk = level.getChunkSource().getChunkNow(chunkX, chunkZ);
+                    if (chunk == null) {
                         return false;
                     }
-                    if (!level.getBlockState(checkPos).getCollisionShape(level, checkPos).isEmpty()) {
+                }
+                for (int dy = -2; dy <= 3; dy++) {
+                    checkPos.set(pos.getX() + dx, pos.getY() + dy, pos.getZ() + dz);
+                    if (!chunk.getBlockState(checkPos).getCollisionShape(level, checkPos).isEmpty()) {
                         return false;
                     }
                 }

@@ -3,8 +3,6 @@
   "ingredient": {
     "item": "antarchy:broodstone"
   },
-  "result": {
-    "count": 2,
-    "item": "antarchy:broodstone_slab"
-  }
+  "result": "antarchy:broodstone_slab",
+  "count": 2
 }

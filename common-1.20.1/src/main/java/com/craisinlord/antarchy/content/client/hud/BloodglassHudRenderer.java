@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Player;
 
 public final class BloodglassHudRenderer {
     private static final ResourceLocation HEART_CONTAINER =
-            new ResourceLocation("textures/gui/sprites/hud/heart/container.png");
+            new ResourceLocation("textures/gui/icons.png");
     private static final ResourceLocation HEART_FULL =
             new ResourceLocation(Antarchy.MODID, "textures/gui/sprites/hud/bloodglass_heart.png");
     private static final ResourceLocation HEART_CRACKED =
@@ -50,7 +50,7 @@ public final class BloodglassHudRenderer {
             int x = left + col * HEART_PITCH;
             int y = baseTop - row * 10;
             ResourceLocation tex = (i < active) ? HEART_FULL : HEART_CRACKED;
-            gui.blit(HEART_CONTAINER, x, y, 0, 0, HEART_SIZE, HEART_SIZE, HEART_SIZE, HEART_SIZE);
+            gui.blit(HEART_CONTAINER, x, y, 16, 0, HEART_SIZE, HEART_SIZE, 256, 256);
             gui.blit(tex, x, y, 0, 0, HEART_SIZE, HEART_SIZE, HEART_SIZE, HEART_SIZE);
         }
     }

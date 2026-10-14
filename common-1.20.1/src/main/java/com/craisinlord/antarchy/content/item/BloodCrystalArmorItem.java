@@ -2,28 +2,31 @@ package com.craisinlord.antarchy.content.item;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.enchantment.AntarchyEnchantments;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import java.util.List;
 import java.util.UUID;
-import net.minecraft.world.level.Level;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 public class BloodCrystalArmorItem extends ArmorItem {
     private final Type armorType;
 
     public BloodCrystalArmorItem(ArmorMaterial material, Type type, Properties properties) {
-        super(material, type, properties.stacksTo(1).durability(resolveDurability(type)));
+        super(material, type, properties.durability(resolveDurability(type)));
         this.armorType = type;
     }
 
@@ -52,7 +55,7 @@ public class BloodCrystalArmorItem extends ArmorItem {
     }
 
     @Override
-    public com.google.common.collect.Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
         if (slot != this.armorType.getSlot()) {
             return super.getDefaultAttributeModifiers(slot);
         }
@@ -90,11 +93,24 @@ public class BloodCrystalArmorItem extends ArmorItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.translatable("item.antarchy.blood_crystal_armor.tooltip").withStyle(ChatFormatting.RED));
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, slotId, isSelected);
         if (this.armorType == Type.BOOTS) {
-            tooltipComponents.add(Component.translatable("item.antarchy.blood_crystal_boots.tooltip2").withStyle(ChatFormatting.DARK_RED));
+            AntarchyEnchantments.ensure(stack, AntarchyEnchantments.featherRising(), 1);
         }
+    }
+
+    @Override
+    public void onCraftedBy(ItemStack stack, Level level, Player player) {
+        super.onCraftedBy(stack, level, player);
+        if (this.armorType == Type.BOOTS) {
+            AntarchyEnchantments.ensure(stack, AntarchyEnchantments.featherRising(), 1);
+        }
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.translatable("item.antarchy.blood_crystal_armor.tooltip").withStyle(ChatFormatting.RED));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }
 }

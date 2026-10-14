@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "WWW",
+    "WLW",
+    "WWW"
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:wheat"
+    },
+    "L": {
+      "item": "antarchy:loam"
+    }
+  },
+  "result": {
+    "item": "antarchy:packed_loam"
+  }
+}

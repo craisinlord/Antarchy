@@ -3,6 +3,7 @@ import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntities;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyGameRules;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
 import com.craisinlord.antarchy.content.item.BloodCrystalShardItem;
 import com.craisinlord.antarchy.fabric.network.AntarchyFabricNetworking;
@@ -150,12 +151,12 @@ public final class AntarchyFabric implements ModInitializer {
                 GameRuleRegistry.register(name, category, GameRuleFactory.createBooleanRule(defaultValue))
         );
         AntarchyFabricNetworking.register();
-        AntarchyFabricNetworking.bootstrapMultipartCommon();
         AntarchyConfigModuleFabric.init();
         AntarchyFabricContent.register();
         registerWorldgenFeatures();
-        AntarchyFabricEvents.register();
         BloodglassManager.register();
+        TigerEyeFabricManager.register();
+        AntarchyAdvancementTriggers.register();
         Antarchy.init();
         BloodCrystalShardItem.SYNC_BLOODGLASS = BloodglassManager::syncBloodglass;
         registerTradeReloadListener();
@@ -174,6 +175,20 @@ public final class AntarchyFabric implements ModInitializer {
                                                     ProfilerFiller prepareProfiler, ProfilerFiller applyProfiler,
                                                     Executor prepareExecutor, Executor applyExecutor) {
                 return delegate.reload(barrier, manager, prepareProfiler, applyProfiler, prepareExecutor, applyExecutor);
+            }
+        });
+        com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager pestControlDelegate = new com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager();
+        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new IdentifiableResourceReloadListener() {
+            @Override
+            public ResourceLocation getFabricId() {
+                return new ResourceLocation(Antarchy.MODID, "pest_control_trades");
+            }
+
+            @Override
+            public CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier barrier, ResourceManager manager,
+                                                    ProfilerFiller prepareProfiler, ProfilerFiller applyProfiler,
+                                                    Executor prepareExecutor, Executor applyExecutor) {
+                return pestControlDelegate.reload(barrier, manager, prepareProfiler, applyProfiler, prepareExecutor, applyExecutor);
             }
         });
     }

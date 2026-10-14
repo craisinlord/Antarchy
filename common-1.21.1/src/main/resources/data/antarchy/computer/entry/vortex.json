@@ -5,5 +5,11 @@
   "subtitle": "guide.antarchy.entry.vortex.subtitle",
   "description": ["guide.antarchy.entry.vortex.description", "guide.antarchy.entry.vortex.description2", "guide.antarchy.entry.vortex.description3"],
   "cover_entity": "antarchy:vortex",
-  "render_scale": 0.8
+  "render_scale": 0.8,
+  "green_tint": false,
+  "gallery": [
+    {"item": "antarchy:vortex_lens"},
+    {"item": "antarchy:eye_of_the_storm"},
+    {"item": "antarchy:bluestone"}
+  ]
 }

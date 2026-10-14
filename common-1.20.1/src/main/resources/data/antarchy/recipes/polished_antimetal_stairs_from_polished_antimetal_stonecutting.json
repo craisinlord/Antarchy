@@ -3,7 +3,6 @@
   "ingredient": {
     "item": "antarchy:polished_antimetal"
   },
-  "result": {
-    "item": "antarchy:polished_antimetal_stairs"
-  }
+  "result": "antarchy:polished_antimetal_stairs",
+  "count": 1
 }

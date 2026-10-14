@@ -3,7 +3,6 @@
   "ingredient": {
     "item": "antarchy:smooth_dream_sandstone"
   },
-  "result": {
-    "item": "antarchy:smooth_dream_sandstone_stairs"
-  }
+  "result": "antarchy:smooth_dream_sandstone_stairs",
+  "count": 1
 }

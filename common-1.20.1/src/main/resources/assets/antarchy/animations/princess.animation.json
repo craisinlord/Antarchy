@@ -3344,7 +3344,6 @@
 			}
 		},
 		"bite": {
-			"loop": true,
 			"animation_length": 0.5,
 			"bones": {
 				"torso": {
@@ -4538,7 +4537,6 @@
 			}
 		},
 		"fly_bite": {
-			"loop": true,
 			"animation_length": 0.7917,
 			"bones": {
 				"neck": {
@@ -5280,7 +5278,6 @@
 			}
 		},
 		"fly_shoot": {
-			"loop": true,
 			"animation_length": 0.7917,
 			"bones": {
 				"neck": {

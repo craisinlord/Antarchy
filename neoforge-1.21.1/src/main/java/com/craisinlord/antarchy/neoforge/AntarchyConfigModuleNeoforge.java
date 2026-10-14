@@ -601,7 +601,6 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setShrinkingPotionDelta(AntarchyToolsConfig.shrinkingPotionDelta());
         AntarchySettings.setGrowthPotionDelta(AntarchyToolsConfig.growthPotionDelta());
 
-        AntarchySettings.setInvertProjectilesFromInvertedPlayers(AntarchyToolsConfig.invertProjectilesFromInvertedPlayers());
 
         AntarchySettings.setGravityGunEnabled(AntarchyToolsConfig.gravityGunEnabled());
         AntarchySettings.setGravityGunBlocksEnabled(AntarchyToolsConfig.gravityGunBlocksEnabled());

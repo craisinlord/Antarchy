@@ -1,6 +1,8 @@
 package com.craisinlord.antarchy.content.block.entity;
 
 import com.craisinlord.antarchy.content.portalgun.PortalGunPortalEntity;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
@@ -14,7 +16,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class PortalGunPortalBaseBlockEntity extends BlockEntity {
+public class PortalGunPortalBaseBlockEntity extends BlockEntity implements PortalGunPortalCellAccess {
+    private final Map<net.minecraft.core.Direction, PortalGunPortalFaceRecord> faceRecords = new EnumMap<>(net.minecraft.core.Direction.class);
     private UUID ownerId;
     private UUID portalId;
     private PortalGunPortalEntity.PortalSide side = PortalGunPortalEntity.PortalSide.BLUE;
@@ -24,6 +27,11 @@ public class PortalGunPortalBaseBlockEntity extends BlockEntity {
 
     public PortalGunPortalBaseBlockEntity(BlockPos pos, BlockState state, Supplier<? extends BlockEntityType<PortalGunPortalBaseBlockEntity>> typeSupplier) {
         super(typeSupplier.get(), pos, state);
+    }
+
+    @Override
+    public Map<net.minecraft.core.Direction, PortalGunPortalFaceRecord> portalGun$getFaceRecords() {
+        return this.faceRecords;
     }
 
     public void configure(UUID ownerId, UUID portalId, PortalGunPortalEntity.PortalSide side, BlockPos masterPos) {
@@ -61,6 +69,11 @@ public class PortalGunPortalBaseBlockEntity extends BlockEntity {
     public void updatePair(UUID linkedPortalId, int pairTime) {
         this.linkedPortalId = linkedPortalId;
         this.pairTime = pairTime;
+        for (PortalGunPortalFaceRecord record : java.util.List.copyOf(this.faceRecords.values())) {
+            if (record.portalId().equals(this.portalId)) {
+                this.portalGun$putFaceRecord(record.withPair(linkedPortalId, pairTime));
+            }
+        }
         this.setChanged();
     }
 
@@ -69,11 +82,20 @@ public class PortalGunPortalBaseBlockEntity extends BlockEntity {
     }
 
     public void onBroken() {
-        if (!(this.level instanceof ServerLevel serverLevel) || this.portalId == null) {
+        if (!(this.level instanceof ServerLevel serverLevel)) {
             return;
         }
-        if (serverLevel.getEntity(this.portalId) instanceof PortalGunPortalEntity portal && !portal.isRemoved()) {
-            portal.discard();
+        java.util.Set<UUID> portalIds = new java.util.HashSet<>();
+        if (this.portalId != null) {
+            portalIds.add(this.portalId);
+        }
+        for (PortalGunPortalFaceRecord record : this.faceRecords.values()) {
+            portalIds.add(record.portalId());
+        }
+        for (UUID id : portalIds) {
+            if (serverLevel.getEntity(id) instanceof PortalGunPortalEntity portal && !portal.isRemoved()) {
+                portal.discard();
+            }
         }
     }
 
@@ -81,15 +103,28 @@ public class PortalGunPortalBaseBlockEntity extends BlockEntity {
         if (((level.getGameTime() + pos.asLong()) & 15L) != 0L) {
             return;
         }
+        if (level.getBlockEntity(blockEntity.masterPos) instanceof PortalGunPortalMasterBlockEntity master
+                && master.matches(blockEntity.ownerId, blockEntity.portalId, blockEntity.side)) {
+            PortalGunPortalFaceRecord masterRecord = master.portalGun$getFaceRecord(master.getFacing(), blockEntity.portalId);
+            if (masterRecord != null && blockEntity.portalGun$getFaceRecord(masterRecord.face(), masterRecord.portalId()) == null) {
+                blockEntity.portalGun$putFaceRecord(masterRecord.withMaster(false));
+            }
+        }
+        blockEntity.portalGun$restoreMasterFaces(level, pos);
+        if (blockEntity.portalId != null
+                && !(level.getEntity(blockEntity.portalId) instanceof PortalGunPortalEntity)
+                && blockEntity.faceRecords.values().stream().anyMatch(record -> !record.portalId().equals(blockEntity.portalId))) {
+            return;
+        }
         if (!(level.getBlockEntity(blockEntity.masterPos) instanceof PortalGunPortalMasterBlockEntity master)
                 || !master.matches(blockEntity.ownerId, blockEntity.portalId, blockEntity.side)
-                || !pos.equals(master.getBasePos())) {
+                || !master.containsPortalSpot(pos)) {
             level.removeBlock(pos, false);
             return;
         }
         if (!(level.getEntity(blockEntity.portalId) instanceof PortalGunPortalEntity portal)
                 || portal.isRemoved()
-                || !pos.equals(portal.getBasePos())
+                || !portal.containsPortalSpot(pos)
                 || blockEntity.ownerId == null
                 || !blockEntity.ownerId.equals(portal.getOwnerId())
                 || blockEntity.side != portal.getPortalSide()) {
@@ -123,6 +158,7 @@ public class PortalGunPortalBaseBlockEntity extends BlockEntity {
         tag.putInt("MasterY", this.masterPos.getY());
         tag.putInt("MasterZ", this.masterPos.getZ());
         tag.putInt("PairTime", this.pairTime);
+        this.portalGun$saveFaceRecords(tag);
     }
 
     @Override
@@ -134,6 +170,7 @@ public class PortalGunPortalBaseBlockEntity extends BlockEntity {
         this.side = tag.getInt("Side") == PortalGunPortalEntity.PortalSide.ORANGE.ordinal() ? PortalGunPortalEntity.PortalSide.ORANGE : PortalGunPortalEntity.PortalSide.BLUE;
         this.masterPos = new BlockPos(tag.getInt("MasterX"), tag.getInt("MasterY"), tag.getInt("MasterZ"));
         this.pairTime = tag.getInt("PairTime");
+        this.portalGun$loadFaceRecords(tag);
     }
 
     @Override

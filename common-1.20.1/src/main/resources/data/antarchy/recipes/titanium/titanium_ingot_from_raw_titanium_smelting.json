@@ -4,9 +4,7 @@
   "ingredient": {
     "item": "antarchy:raw_titanium"
   },
-  "result": {
-    "item": "antarchy:titanium_ingot"
-  },
+  "result": "antarchy:titanium_ingot",
   "experience": 2.0,
   "cookingtime": 200
 }

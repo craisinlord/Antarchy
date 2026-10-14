@@ -3,7 +3,6 @@
   "ingredient": {
     "item": "antarchy:broodstone"
   },
-  "result": {
-    "item": "antarchy:broodstone_pillar"
-  }
+  "result": "antarchy:broodstone_pillar",
+  "count": 1
 }

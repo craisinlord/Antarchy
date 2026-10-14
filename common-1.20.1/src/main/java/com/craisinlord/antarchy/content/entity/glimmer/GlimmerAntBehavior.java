@@ -21,8 +21,8 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 
 public class GlimmerAntBehavior implements GlimmerVariantBehavior {
-    private static final java.util.UUID REACH_BOOST_ID =
-            java.util.UUID.nameUUIDFromBytes((Antarchy.MODID + ":glimmer_ant_reach_boost").getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    private static final ResourceLocation REACH_BOOST_ID =
+            new ResourceLocation(Antarchy.MODID, "glimmer_ant_reach_boost");
     private static final double REACH_BOOST_AMOUNT = 1.5D;
     private static final float LARGE_ENEMY_MIN_HEALTH = 40.0F;
     private static final int ABILITY_COOLDOWN_TICKS = 20 * 120;
@@ -77,16 +77,26 @@ public class GlimmerAntBehavior implements GlimmerVariantBehavior {
 
     @Override
     public EntityDimensions adultDimensions() {
-        // Matches the real ant's hitbox.
         return EntityDimensions.scalable(0.6375F, 0.2125F);
     }
 
     @Override
     public void tickPassiveEveryTick(GlimmerEntity entity, Player owner) {
+        AttributeInstance instance = com.craisinlord.antarchy.compat.entity.EntityReach.instance(owner);
+        if (instance == null) {
+            return;
+        }
+        if (instance.getModifier(com.craisinlord.antarchy.compat.entity.EntityReach.modifierId(REACH_BOOST_ID)) == null) {
+            instance.addTransientModifier(com.craisinlord.antarchy.compat.entity.EntityReach.modifier(REACH_BOOST_ID, REACH_BOOST_AMOUNT, AttributeModifier.Operation.ADDITION));
+        }
     }
 
     @Override
     public void clearPassive(GlimmerEntity entity, Player owner) {
+        AttributeInstance instance = com.craisinlord.antarchy.compat.entity.EntityReach.instance(owner);
+        if (instance != null) {
+            instance.removeModifier(com.craisinlord.antarchy.compat.entity.EntityReach.modifierId(REACH_BOOST_ID));
+        }
     }
 
     @Override

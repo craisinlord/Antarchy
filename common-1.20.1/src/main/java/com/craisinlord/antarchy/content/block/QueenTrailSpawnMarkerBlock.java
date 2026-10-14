@@ -14,7 +14,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 
-/** Invisible worldgen marker which activates the Queen at a generated trail terminus. */
 public final class QueenTrailSpawnMarkerBlock extends BaseEntityBlock {
     private final Supplier<? extends BlockEntityType<QueenTrailSpawnMarkerBlockEntity>> type;
 

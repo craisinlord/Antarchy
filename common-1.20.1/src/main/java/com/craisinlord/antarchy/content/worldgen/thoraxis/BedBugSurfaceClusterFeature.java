@@ -24,7 +24,7 @@ public final class BedBugSurfaceClusterFeature extends Feature<NoneFeatureConfig
     private static final int SURFACE_SAMPLE_ATTEMPTS = 24;
     private static final int FLOOR_SCAN_RANGE = 12;
     private static final int MIN_BUGS_PER_FEATURE = 1;
-    private static final int MAX_BUGS_PER_FEATURE = 4;
+    private static final int MAX_BUGS_PER_FEATURE = 3;
 
     public BedBugSurfaceClusterFeature(Codec<NoneFeatureConfiguration> codec) {
         super(codec);

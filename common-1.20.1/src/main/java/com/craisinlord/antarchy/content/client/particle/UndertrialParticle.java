@@ -8,7 +8,6 @@ import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.core.particles.SimpleParticleType;
 
-/** Lightweight 1.20 equivalent of the Undertrial's detection/omen particles. */
 public final class UndertrialParticle extends TextureSheetParticle {
     private final SpriteSet sprites;
     private final boolean animated;
@@ -18,6 +17,9 @@ public final class UndertrialParticle extends TextureSheetParticle {
         super(level, x, y, z, xd, yd, zd);
         this.sprites = sprites;
         this.animated = animated;
+        this.xd = xd;
+        this.yd = yd;
+        this.zd = zd;
         this.gravity = 0.0F;
         this.friction = 0.96F;
         this.hasPhysics = false;
@@ -44,7 +46,9 @@ public final class UndertrialParticle extends TextureSheetParticle {
     public static final class DetectionProvider implements ParticleProvider<SimpleParticleType> {
         private final SpriteSet sprites;
 
-        public DetectionProvider(SpriteSet sprites) { this.sprites = sprites; }
+        public DetectionProvider(SpriteSet sprites) {
+            this.sprites = sprites;
+        }
 
         @Override
         public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z,
@@ -56,7 +60,9 @@ public final class UndertrialParticle extends TextureSheetParticle {
     public static final class OmenProvider implements ParticleProvider<SimpleParticleType> {
         private final SpriteSet sprites;
 
-        public OmenProvider(SpriteSet sprites) { this.sprites = sprites; }
+        public OmenProvider(SpriteSet sprites) {
+            this.sprites = sprites;
+        }
 
         @Override
         public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z,

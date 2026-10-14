@@ -6,7 +6,13 @@ import com.google.gson.JsonParseException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mojang.logging.LogUtils;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -19,8 +25,10 @@ import net.minecraft.world.item.trading.MerchantOffers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
 
 public final class DrTrayaurusTradeManager extends SimpleJsonResourceReloadListener {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final Gson GSON = new Gson();
     private static final String DIRECTORY = "trayaurus_trades";
     private static final Codec<TradeFile> TRADE_FILE_CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -46,10 +54,10 @@ public final class DrTrayaurusTradeManager extends SimpleJsonResourceReloadListe
         loadedTrades = parsedTrades.isEmpty() ? defaultTrades() : List.copyOf(parsedTrades);
     }
 
-    public static MerchantOffers createOffers() {
+    public static MerchantOffers createOffers(HolderLookup.Provider registries) {
         MerchantOffers offers = new MerchantOffers();
         for (TradeEntry trade : loadedTrades) {
-            trade.toOffer().ifPresent(offers::add);
+            trade.toOffer(registries).ifPresent(offers::add);
         }
         return offers;
     }
@@ -77,25 +85,25 @@ public final class DrTrayaurusTradeManager extends SimpleJsonResourceReloadListe
                 Codec.FLOAT.optionalFieldOf("price_multiplier", 0.05F).forGetter(TradeEntry::priceMultiplier)
         ).apply(instance, TradeEntry::new));
 
-        private Optional<MerchantOffer> toOffer() {
+        private Optional<MerchantOffer> toOffer(HolderLookup.Provider registries) {
             if (this.maxUses < 1 || this.villagerXp < 1 || this.villagerXp > 99) {
                 return Optional.empty();
             }
 
-            ItemStack buyStack = this.buy.toStack();
-            if (buyStack.isEmpty()) {
+            Optional<ItemStack> buyCost = this.buy.toCost(registries);
+            if (buyCost.isEmpty()) {
                 return Optional.empty();
             }
 
-            ItemStack secondBuyStack = this.secondBuy.map(StackEntry::toStack).orElse(ItemStack.EMPTY);
-            ItemStack sellStack = this.sell.toStack();
+            Optional<ItemStack> secondBuyCost = this.secondBuy.flatMap(entry -> entry.toCost(registries));
+            ItemStack sellStack = this.sell.toStack(registries);
             if (sellStack.isEmpty()) {
                 return Optional.empty();
             }
 
             return Optional.of(new MerchantOffer(
-                    buyStack,
-                    secondBuyStack,
+                    buyCost.get(),
+                    secondBuyCost.orElse(ItemStack.EMPTY),
                     sellStack,
                     this.maxUses,
                     this.villagerXp,
@@ -104,22 +112,60 @@ public final class DrTrayaurusTradeManager extends SimpleJsonResourceReloadListe
         }
     }
 
-    private record StackEntry(ResourceLocation itemId, int count) {
+    private record StackEntry(ResourceLocation itemId, int count, Optional<JsonElement> components) {
         private static final Codec<StackEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 ResourceLocation.CODEC.fieldOf("item").forGetter(StackEntry::itemId),
-                Codec.INT.optionalFieldOf("count", 1).forGetter(StackEntry::count)
+                Codec.INT.optionalFieldOf("count", 1).forGetter(StackEntry::count),
+                ExtraCodecs.JSON.optionalFieldOf("components").forGetter(StackEntry::components)
         ).apply(instance, StackEntry::new));
+
+        private StackEntry(ResourceLocation itemId, int count) {
+            this(itemId, count, Optional.empty());
+        }
 
         private Optional<Item> item() {
             return BuiltInRegistries.ITEM.getOptional(this.itemId)
                     .filter(item -> item != net.minecraft.world.item.Items.AIR);
         }
 
-        private ItemStack toStack() {
-            return this.item()
-                    .filter(item -> this.count > 0)
-                    .map(item -> new ItemStack(item, this.count))
-                    .orElse(ItemStack.EMPTY);
+        private ItemStack toStack(HolderLookup.Provider registries) {
+            Optional<Item> item = this.item().filter(found -> this.count > 0);
+            if (item.isEmpty()) {
+                return ItemStack.EMPTY;
+            }
+            ItemStack stack = new ItemStack(item.get(), this.count);
+            if (this.components.isPresent()) {
+                Optional<CompoundTag> patch = this.parseComponents();
+                if (patch.isEmpty()) {
+                    return ItemStack.EMPTY;
+                }
+                stack.getOrCreateTag().merge(patch.get());
+            }
+            return stack;
+        }
+
+        private Optional<ItemStack> toCost(HolderLookup.Provider registries) {
+            Optional<Item> item = this.item().filter(found -> this.count > 0);
+            if (item.isEmpty()) {
+                return Optional.empty();
+            }
+            if (this.components.isEmpty()) {
+                return Optional.of(new ItemStack(item.get(), this.count));
+            }
+            return this.parseComponents().map(predicate -> {
+                ItemStack stack = new ItemStack(item.get(), this.count);
+                stack.setTag(predicate.copy());
+                return stack;
+            });
+        }
+
+        private Optional<CompoundTag> parseComponents() {
+            Tag tag = JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, this.components.get());
+            if (tag instanceof CompoundTag compound) {
+                return Optional.of(compound);
+            }
+            LOGGER.error("Dr. Trayaurus trade {}: bad components: expected an object", this.itemId);
+            return Optional.empty();
         }
     }
 }

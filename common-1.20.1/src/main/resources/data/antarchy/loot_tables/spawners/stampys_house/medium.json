@@ -114,12 +114,8 @@
           "weight": 6,
           "functions": [
             {
-              "function": "minecraft:set_components",
-              "components": {
-                "minecraft:potion_contents": {
-                  "potion": "antarchy:shrinking"
-                }
-              }
+              "function": "minecraft:set_potion",
+              "id": "antarchy:shrinking"
             }
           ]
         },
@@ -129,12 +125,8 @@
           "weight": 6,
           "functions": [
             {
-              "function": "minecraft:set_components",
-              "components": {
-                "minecraft:potion_contents": {
-                  "potion": "antarchy:growing"
-                }
-              }
+              "function": "minecraft:set_potion",
+              "id": "antarchy:growing"
             }
           ]
         },
@@ -244,7 +236,7 @@
                 "min": 10.0,
                 "max": 25.0
               },
-              "options": "#minecraft:on_random_loot"
+              "treasure": false
             }
           ]
         }

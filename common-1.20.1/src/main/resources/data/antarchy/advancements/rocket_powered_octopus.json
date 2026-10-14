@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "items": "antarchy:rpo_launcher"
+            "items": [
+              "antarchy:rpo_launcher"
+            ]
           }
         ]
       },
@@ -19,7 +21,6 @@
     },
     "frame": "task",
     "icon": {
-      "count": 1,
       "item": "antarchy:rpo_launcher"
     },
     "show_toast": true,

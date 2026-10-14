@@ -3,7 +3,6 @@ package com.craisinlord.antarchy.fabric.client;
 import com.craisinlord.antarchy.content.entity.DorrieEntity;
 import com.craisinlord.antarchy.content.network.DorrieChargeJumpPayload;
 import com.craisinlord.antarchy.content.network.DorrieJumpInputPayload;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 
@@ -27,17 +26,15 @@ public final class DorrieJumpClientHandler {
             return;
         }
 
-        // Space bar → upward movement.
         boolean pressingJump = mc.options.keyJump.isDown();
         if (pressingJump != wasPressingJump) {
-            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.sendToServer(new DorrieJumpInputPayload(pressingJump), DorrieJumpInputPayload.STREAM_CODEC, DorrieJumpInputPayload.TYPE);
+            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.send(new DorrieJumpInputPayload(pressingJump));
             wasPressingJump = pressingJump;
         }
 
-        // Left ctrl → charge jump.
-        boolean pressingCharge = AntarchyKeyBindings.isDorrieChargeJumpPressed();
+        boolean pressingCharge = AntarchyKeyBindings.isMountSpecialPressed();
         if (pressingCharge != wasPressingCharge) {
-            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.sendToServer(new DorrieChargeJumpPayload(pressingCharge), DorrieChargeJumpPayload.STREAM_CODEC, DorrieChargeJumpPayload.TYPE);
+            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.send(new DorrieChargeJumpPayload(pressingCharge));
             if (!pressingCharge && player.getVehicle() instanceof DorrieEntity dorrie) {
                 dorrie.applyJumpImpulseClient();
             }
@@ -47,11 +44,11 @@ public final class DorrieJumpClientHandler {
 
     private static void resetAll() {
         if (wasPressingJump) {
-            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.sendToServer(new DorrieJumpInputPayload(false), DorrieJumpInputPayload.STREAM_CODEC, DorrieJumpInputPayload.TYPE);
+            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.send(new DorrieJumpInputPayload(false));
             wasPressingJump = false;
         }
         if (wasPressingCharge) {
-            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.sendToServer(new DorrieChargeJumpPayload(false), DorrieChargeJumpPayload.STREAM_CODEC, DorrieChargeJumpPayload.TYPE);
+            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.send(new DorrieChargeJumpPayload(false));
             wasPressingCharge = false;
         }
     }

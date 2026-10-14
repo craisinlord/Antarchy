@@ -8,8 +8,8 @@ import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
 import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
-import com.craisinlord.antarchy.content.entity.multipart.MultipartEntityOwner;
-import com.craisinlord.antarchy.content.entity.multipart.MultipartLayout;
+import com.craisinlord.anthology.multipart.MultipartEntityOwner;
+import com.craisinlord.anthology.multipart.MultipartLayout;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageTypes;
 
 import java.util.List;
@@ -85,7 +85,6 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
     private static final int ATTACK_SWING_RIGHT = 3;
     private static final int ATTACK_SLAM = 4;
 
-    // Synced animation state values
     private static final int ANIM_NONE = 0;
     private static final int ANIM_CRY = 1;
     private static final int ANIM_GRAB = 2;
@@ -153,7 +152,8 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
                 .add(Attributes.FLYING_SPEED, AntarchySettings.krakenFlyingSpeed())
                 .add(Attributes.FOLLOW_RANGE, AntarchySettings.krakenFollowRange())
                 .add(Attributes.KNOCKBACK_RESISTANCE, AntarchySettings.krakenKnockbackResistance())
-                .add(Attributes.ARMOR, AntarchySettings.krakenArmor());
+                .add(Attributes.ARMOR, AntarchySettings.krakenArmor())
+                .add(Attributes.ARMOR_TOUGHNESS, AntarchySettings.krakenArmorToughness());
     }
 
     public static boolean canSpawn(EntityType<KrakenEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
@@ -161,18 +161,18 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
     }
 
     @Override
-    public MultipartLayout antarchy$getMultipartLayout() {
+    public MultipartLayout anthology$getMultipartLayout() {
         return KrakenMultipartLayout.INSTANCE;
     }
 
     @Override
     @Nullable
-    public Entity[] antarchy$getMultipartParts() {
+    public Entity[] anthology$getMultipartParts() {
         return this.multipartParts;
     }
 
     @Override
-    public void antarchy$setMultipartParts(@Nullable Entity[] parts) {
+    public void anthology$setMultipartParts(@Nullable Entity[] parts) {
         this.multipartParts = parts;
     }
 
@@ -198,7 +198,6 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        // idle_controller always loops idle; action_controller layers on top when active
         controllers.add(new AnimationController<>(this, "idle_controller", 0, state -> {
             if (this.getAnimationState() == ANIM_DEATH) {
                 return PlayState.STOP;
@@ -365,6 +364,9 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (BossCombatUtil.isMagicWarded(this) && BossCombatUtil.isMagicBurstSource(source)) {
+            amount *= (1.0F - (float) AntarchySettings.bossMagicWardReductionFraction());
+        }
         if (source.is(DamageTypeTags.IS_FIRE)
                 || source.is(DamageTypes.IN_WALL)
                 || source.is(DamageTypes.LIGHTNING_BOLT)
@@ -374,7 +376,12 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
             return false;
         }
 
-        return super.hurt(source, BossCombatUtil.capSingleHitAtHalfHealth(this, amount));
+        float preHealth = this.getHealth();
+        boolean hurt = super.hurt(source, amount);
+        if (hurt) {
+            BossCombatUtil.clampHalfHealthCrossing(this, preHealth);
+        }
+        return hurt;
     }
 
     @Override
@@ -637,7 +644,6 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
         }
     }
 
-    // swingRight=true means ATTACK_SWING_RIGHT, which knocks players to the Kraken's LEFT
     private void tickSwingAttack(boolean swingRight) {
         if (this.actionTicks == 10) {
             this.performSwing(swingRight);
@@ -740,9 +746,6 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
         return attackState == ATTACK_SLAM;
     }
 
-    // Determines left vs right based on which side the target is on relative to the Kraken.
-    // Kraken's right vector is forward x world-up. If target is on the Kraken's right side,
-    // use swing_right (which knocks them left). If on the left, use swing_left (knocks them right).
     private int resolveSwingDirection(LivingEntity target) {
         Vec3 forward = this.getViewVector(1.0F);
         Vec3 right = forward.cross(new Vec3(0, 1, 0)).normalize();
@@ -756,7 +759,6 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
         float damage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
 
         Vec3 forward = this.getViewVector(1.0F);
-        // swingRight knocks to Kraken's left (-right), swingLeft knocks to Kraken's right (+right)
         Vec3 right = forward.cross(new Vec3(0, 1, 0)).normalize();
         Vec3 knockDir = swingRight ? right.scale(-1) : right;
 
@@ -1103,17 +1105,17 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
 
     private void applyPhaseTwoBuffs() {
         AttributeInstance movementSpeed = this.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (movementSpeed != null && !(movementSpeed.getModifier(PHASE_TWO_SPEED_ID) != null)) {
+        if (movementSpeed != null && movementSpeed.getModifier(PHASE_TWO_SPEED_ID) == null) {
             movementSpeed.addPermanentModifier(PHASE_TWO_SPEED);
         }
 
         AttributeInstance flyingSpeed = this.getAttribute(Attributes.FLYING_SPEED);
-        if (flyingSpeed != null && !(flyingSpeed.getModifier(PHASE_TWO_FLYING_SPEED_ID) != null)) {
+        if (flyingSpeed != null && flyingSpeed.getModifier(PHASE_TWO_FLYING_SPEED_ID) == null) {
             flyingSpeed.addPermanentModifier(PHASE_TWO_FLYING_SPEED);
         }
 
         AttributeInstance attackDamage = this.getAttribute(Attributes.ATTACK_DAMAGE);
-        if (attackDamage != null && !(attackDamage.getModifier(PHASE_TWO_DAMAGE_ID) != null)) {
+        if (attackDamage != null && attackDamage.getModifier(PHASE_TWO_DAMAGE_ID) == null) {
             attackDamage.addPermanentModifier(PHASE_TWO_DAMAGE);
         }
     }

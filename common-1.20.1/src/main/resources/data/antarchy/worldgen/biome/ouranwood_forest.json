@@ -37,10 +37,6 @@
     "antarchy:basilisk": {
       "energy_budget": 0.1,
       "charge": 14.0
-    },
-    "antarchy:glimmer": {
-      "energy_budget": 0.1,
-      "charge": 9
     }
   },
   "carvers": {
@@ -65,7 +61,6 @@
       "minecraft:ore_redstone",
       "minecraft:ore_redstone_lower",
       "minecraft:ore_diamond",
-      "minecraft:ore_diamond_medium",
       "minecraft:ore_diamond_large",
       "minecraft:ore_diamond_buried",
       "minecraft:ore_lapis",
@@ -93,7 +88,7 @@
     "monster": [
       {
         "type": "antarchy:basilisk",
-        "weight": 20,
+        "weight": 24,
         "minCount": 1,
         "maxCount": 1
       }

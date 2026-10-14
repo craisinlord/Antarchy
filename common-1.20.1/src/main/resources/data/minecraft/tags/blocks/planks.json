@@ -2,6 +2,9 @@
   "replace": false,
   "values": [
     "antarchy:ouranwood_planks",
-    "antarchy:peach_planks"
+    "antarchy:peach_planks",
+    "antarchy:nadir_planks",
+    "antarchy:royal_planks",
+    "antarchy:truffalo_planks"
   ]
 }

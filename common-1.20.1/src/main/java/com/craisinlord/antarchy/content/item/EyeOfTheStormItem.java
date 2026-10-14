@@ -5,10 +5,8 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
 import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
 import com.craisinlord.antarchy.content.entity.vortex.WindVortexEntity;
+import com.craisinlord.anthology.gravity.GravityApi;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
@@ -46,7 +44,6 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
     private static final ResourceLocation ANIMATION_LOCATION = new ResourceLocation("antarchy", "animations/eye_of_the_storm.animation.json");
     private static final String IDLE_CONTROLLER = "idle_controller";
     private static final String IDLE_ANIMATION = "spinning_idle";
-    private static final Map<UUID, Long> LAST_UPDRAFT_TICK = new ConcurrentHashMap<>();
     private static final float SURGE_PROJECTILE_SPEED = 0.65F;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
@@ -66,12 +63,9 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
             return InteractionResultHolder.consume(stack);
         }
 
-        long now = level.getGameTime();
-        Long last = LAST_UPDRAFT_TICK.get(player.getUUID());
-        if (last != null && now - last < AntarchySettings.eyeOfTheStormUpdraftCooldownTicks()) {
+        if (player.getCooldowns().isOnCooldown(this)) {
             return InteractionResultHolder.fail(stack);
         }
-        LAST_UPDRAFT_TICK.put(player.getUUID(), now);
 
         ServerLevel serverLevel = (ServerLevel) level;
         WindVortexEntity vortex = WindVortexEntity.create(
@@ -83,14 +77,18 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
                 false
         );
         vortex.setMode(WindVortexEntity.VortexMode.UPWARD);
-        vortex.setAxis(Direction.UP);
+        vortex.setAxis(GravityApi.isGravityInverted(player) ? Direction.DOWN : Direction.UP);
         vortex.setVortexSize((float) AntarchySettings.eyeOfTheStormUpdraftHeight(), (float) AntarchySettings.eyeOfTheStormUpdraftRadius());
         vortex.setVortexDurationTicks(AntarchySettings.eyeOfTheStormUpdraftDurationTicks());
         serverLevel.addFreshEntity(vortex);
 
-        player.setDeltaMovement(player.getDeltaMovement().add(0.0D, AntarchySettings.eyeOfTheStormUpdraftLaunchStrength(), 0.0D));
+        Vec3 gravityUp = Vec3.atLowerCornerOf(
+                (GravityApi.isGravityInverted(player) ? Direction.DOWN : Direction.UP).getNormal());
+        GravityApi.setWorldVelocity(player,
+                GravityApi.getWorldVelocity(player).add(gravityUp.scale(AntarchySettings.eyeOfTheStormUpdraftLaunchStrength())));
         player.hasImpulse = true;
         player.resetFallDistance();
+        player.getCooldowns().addCooldown(this, AntarchySettings.eyeOfTheStormUpdraftCooldownTicks());
         if (player instanceof ServerPlayer serverPlayer) {
             serverPlayer.connection.send(new ClientboundSetEntityMotionPacket(serverPlayer));
         }
@@ -108,8 +106,13 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
             return;
         }
 
+        if (player.getCooldowns().isOnCooldown(this)) {
+            return;
+        }
+
         Vec3 look = player.getViewVector(1.0F);
         launchStormVortex(level, player.getEyePosition().add(look), look, player);
+        player.getCooldowns().addCooldown(this, AntarchySettings.eyeOfTheStormSurgeCooldownTicks());
 
         player.awardStat(Stats.ITEM_USED.get(this));
         stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(EquipmentSlot.MAINHAND));
@@ -130,7 +133,7 @@ public class EyeOfTheStormItem extends Item implements GeoItem {
                 true
         );
         vortex.setMode(WindVortexEntity.VortexMode.UPWARD);
-        vortex.setAxis(Direction.UP);
+        vortex.setAxis(owner != null && GravityApi.isGravityInverted(owner) ? Direction.DOWN : Direction.UP);
         vortex.setVortexSize((float) AntarchySettings.eyeOfTheStormSurgeHeight(), (float) AntarchySettings.eyeOfTheStormSurgeRadius());
         vortex.setVortexDurationTicks(AntarchySettings.eyeOfTheStormSurgeDurationTicks());
         vortex.setVortexStrengths(AntarchySettings.eyeOfTheStormSurgePullStrength(), AntarchySettings.eyeOfTheStormSurgeReturnStrength());

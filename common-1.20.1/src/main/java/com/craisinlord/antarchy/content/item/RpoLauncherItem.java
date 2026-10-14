@@ -6,6 +6,9 @@ import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
 import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
 import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import net.minecraft.core.particles.ParticleTypes;
@@ -164,15 +167,12 @@ public class RpoLauncherItem extends ProjectileWeaponItem implements GeoItem, co
         }
 
         float yaw = player.getYRot() + yawOffset;
-        Vec3 direction = Vec3.directionFromRotation(new Vec2(player.getXRot(), yaw));
-        projectileBomb.moveTo(
-                player.getX(),
-                player.getEyeY() + 0.15D,
-                player.getZ(),
-                yaw,
-                player.getXRot()
-        );
-        projectileBomb.launchAsExplosiveProjectile(player, direction.scale(AntarchySettings.rpoLauncherLaunchVelocity()).add(player.getDeltaMovement()));
+        Vec3 localDirection = Vec3.directionFromRotation(new Vec2(player.getXRot(), yaw));
+        GravityDirection gravity = GravityApi.getGravityDirection(player);
+        Vec3 direction = GravityRotationUtil.vecPlayerToWorld(localDirection, gravity).normalize();
+        Vec3 spawn = player.getEyePosition().add(direction.scale(0.55D));
+        projectileBomb.moveTo(spawn.x, spawn.y, spawn.z, yaw, player.getXRot());
+        projectileBomb.launchAsExplosiveProjectile(player, direction.scale(AntarchySettings.rpoLauncherLaunchVelocity()).add(GravityApi.deltaMovement(player)));
         level.addFreshEntity(projectileBomb);
     }
 

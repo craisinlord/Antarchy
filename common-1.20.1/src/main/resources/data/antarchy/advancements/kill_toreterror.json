@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:adventure/root",
+  "parent": "antarchy:visit_elythia",
   "criteria": {
     "kill_toreterror": {
       "conditions": {
@@ -17,7 +17,6 @@
     },
     "frame": "challenge",
     "icon": {
-      "count": 1,
       "item": "antarchy:toreterror_spawn_egg"
     },
     "show_toast": true,

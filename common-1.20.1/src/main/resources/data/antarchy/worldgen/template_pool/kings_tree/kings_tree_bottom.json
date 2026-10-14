@@ -8,10 +8,11 @@
         "location": "antarchy:kings_tree/kings_tree_bottom",
         "processors": "antarchy:generic_processor",
         "projection": "rigid",
+        "ignore_bounds": true,
         "enhanced_terrain_adaptation": {
           "type": "integrated_api:custom",
-          "carves": true,
-          "beards": true,
+          "carves": false,
+          "beards": false,
           "kernel_size": 35,
           "kernel_distance": 35
         },

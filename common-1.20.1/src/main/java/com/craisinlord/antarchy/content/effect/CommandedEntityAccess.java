@@ -7,4 +7,6 @@ public interface CommandedEntityAccess {
     void antarchy$setCommanderUuid(UUID uuid);
     boolean antarchy$isCommandedTargetOwned();
     void antarchy$setCommandedTargetOwned(boolean owned);
+    boolean antarchy$isRoyalInvested();
+    void antarchy$setRoyalInvested(boolean invested);
 }

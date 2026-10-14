@@ -5,7 +5,9 @@
       "conditions": {
         "items": [
           {
-            "items": "antarchy:shrink_ray"
+            "items": [
+              "antarchy:shrink_ray"
+            ]
           }
         ]
       },
@@ -19,7 +21,6 @@
     },
     "frame": "task",
     "icon": {
-      "count": 1,
       "item": "antarchy:shrink_ray"
     },
     "show_toast": true,

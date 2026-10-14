@@ -17,6 +17,5 @@
       "absolute": 0
     }
   },
-  "spawn_overrides": {},
-  "liquid_settings": "ignore_waterlogging"
+  "spawn_overrides": {}
 }

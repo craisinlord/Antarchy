@@ -2,10 +2,11 @@ package com.craisinlord.antarchy.fabric.client;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.item.GravityGunItem;
+import com.craisinlord.antarchy.content.item.TemporalTunerItem;
 import com.craisinlord.antarchy.content.network.GravityGunPrimaryPayload;
 import com.craisinlord.antarchy.content.network.GravityGunScrollPayload;
+import com.craisinlord.antarchy.content.network.TemporalTunerScrollPayload;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Mth;
@@ -35,14 +36,26 @@ public final class GravityGunClientHandler {
 
         boolean attackDown = mc.options.keyAttack.isDown();
         if (attackDown && !lastAttackDown) {
-            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.sendToServer(new GravityGunPrimaryPayload(), GravityGunPrimaryPayload.STREAM_CODEC, GravityGunPrimaryPayload.TYPE);
+            com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.send(new GravityGunPrimaryPayload());
         }
         lastAttackDown = attackDown;
     }
 
     public static boolean onScroll(double verticalAmount) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.level == null || mc.screen != null || !Screen.hasControlDown() || !AntarchySettings.gravityGunEnabled()) {
+        if (mc.player == null || mc.level == null || mc.screen != null) {
+            return false;
+        }
+
+        if (Screen.hasShiftDown() && TemporalTunerItem.isAvailable(mc.player)) {
+            double scrollAmount = Mth.clamp(verticalAmount, -1.0D, 1.0D);
+            if (Math.abs(scrollAmount) >= 1.0E-4D) {
+                com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.send(new TemporalTunerScrollPayload(scrollAmount * TemporalTunerItem.STEP));
+                return true;
+            }
+        }
+
+        if (!Screen.hasControlDown() || !AntarchySettings.gravityGunEnabled()) {
             return false;
         }
 
@@ -55,7 +68,7 @@ public final class GravityGunClientHandler {
             return false;
         }
 
-        com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.sendToServer(new GravityGunScrollPayload(scrollAmount * SCROLL_STEP_DISTANCE), GravityGunScrollPayload.STREAM_CODEC, GravityGunScrollPayload.TYPE);
+        com.craisinlord.antarchy.fabric.network.AntarchyFabricClientNetworking.send(new GravityGunScrollPayload(scrollAmount * SCROLL_STEP_DISTANCE));
         return true;
     }
 }

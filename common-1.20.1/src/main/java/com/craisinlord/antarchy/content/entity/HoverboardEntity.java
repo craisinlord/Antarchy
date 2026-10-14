@@ -2,9 +2,10 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityRotationUtil;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.antarchy.mixins.LivingEntityJumpingAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,6 +26,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -64,6 +66,11 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
         super(entityType, level);
         this.setNoGravity(true);
         this.setPersistenceRequired();
+    }
+
+    @Override
+    public boolean canBeAffected(MobEffectInstance effectInstance) {
+        return effectInstance.getEffect() instanceof com.craisinlord.anthology.effect.InvertedMobEffect;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -133,10 +140,19 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
         if (!this.isVehicle() && !player.isSecondaryUseActive()) {
             if (!this.level().isClientSide) {
                 player.startRiding(this);
+                this.playSound(AntarchySoundEvents.HOVERBOARD_MOUNT.get(), 1.0F, 1.0F);
             }
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
         return super.mobInteract(player, hand);
+    }
+
+    @Override
+    protected void removePassenger(Entity passenger) {
+        super.removePassenger(passenger);
+        if (!this.level().isClientSide) {
+            this.playSound(AntarchySoundEvents.HOVERBOARD_DISMOUNT.get(), 1.0F, 1.0F);
+        }
     }
 
     @Override
@@ -156,11 +172,11 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
         if (!this.hasPassenger(passenger)) {
             return;
         }
-        Vec3 riderOffset = AntarchyGravityRotationUtil.vecPlayerToWorld(
+        Vec3 riderOffset = GravityRotationUtil.vecPlayerToWorld(
                 0.0D,
                 RIDER_Y_OFFSET,
                 0.0D,
-                AntarchyGravityApi.getGravityDirection(this)
+                GravityApi.getGravityDirection(this)
         );
         moveFunction.accept(passenger, this.getX() + riderOffset.x, this.getY() + riderOffset.y, this.getZ() + riderOffset.z);
     }
@@ -204,38 +220,23 @@ public class HoverboardEntity extends PathfinderMob implements GeoEntity {
     }
 
     private double resolveVerticalMotion(boolean holdingJump) {
-        AntarchyGravityDirection gravityDirection = AntarchyGravityApi.getGravityDirection(this);
+        GravityDirection gravityDirection = GravityApi.getGravityDirection(this);
         double supportHeight = this.findSupportHeight(gravityDirection);
-        if (!gravityDirection.isInverted()) {
-            double maxY = supportHeight + MAX_HOVER_HEIGHT;
-            if (holdingJump) {
-                return this.getY() >= maxY ? 0.0D : ASCEND_SPEED;
-            }
-            if (this.getY() <= supportHeight) {
-                return 0.0D;
-            }
-            double heightAboveBand = this.getY() - maxY;
-            if (heightAboveBand > 0.0D) {
-                return -Mth.clamp(SETTLE_DESCEND_SPEED + heightAboveBand * FAST_DESCEND_RAMP, SETTLE_DESCEND_SPEED, FAST_DESCEND_SPEED);
-            }
-            return -SETTLE_DESCEND_SPEED;
-        }
-
-        double minY = supportHeight - MAX_HOVER_HEIGHT;
+        double height = gravityDirection.isInverted() ? supportHeight - this.getY() : this.getY() - supportHeight;
         if (holdingJump) {
-            return this.getY() <= minY ? 0.0D : -ASCEND_SPEED;
+            return height >= MAX_HOVER_HEIGHT ? 0.0D : ASCEND_SPEED;
         }
-        if (this.getY() >= supportHeight) {
+        if (height <= 0.0D) {
             return 0.0D;
         }
-        double depthBelowBand = minY - this.getY();
-        if (depthBelowBand > 0.0D) {
-            return Mth.clamp(SETTLE_DESCEND_SPEED + depthBelowBand * FAST_DESCEND_RAMP, SETTLE_DESCEND_SPEED, FAST_DESCEND_SPEED);
+        double heightAboveBand = height - MAX_HOVER_HEIGHT;
+        if (heightAboveBand > 0.0D) {
+            return -Mth.clamp(SETTLE_DESCEND_SPEED + heightAboveBand * FAST_DESCEND_RAMP, SETTLE_DESCEND_SPEED, FAST_DESCEND_SPEED);
         }
-        return SETTLE_DESCEND_SPEED;
+        return -SETTLE_DESCEND_SPEED;
     }
 
-    private double findSupportHeight(AntarchyGravityDirection gravityDirection) {
+    private double findSupportHeight(GravityDirection gravityDirection) {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(Mth.floor(this.getX()), Mth.floor(this.getY()), Mth.floor(this.getZ()));
         if (!gravityDirection.isInverted()) {
             int minY = this.level().getMinBuildHeight();

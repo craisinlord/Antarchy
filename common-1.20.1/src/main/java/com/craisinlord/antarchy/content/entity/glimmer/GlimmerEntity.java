@@ -3,7 +3,9 @@ package com.craisinlord.antarchy.content.entity.glimmer;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
+import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
+import com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil;
 import com.craisinlord.antarchy.Antarchy;
 import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.CompoundTag;
@@ -145,7 +147,6 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
 
     @Override
     public void push(Entity entity) {
-        // no-op: Glimmers pass through other entities
     }
 
     @Override
@@ -177,10 +178,6 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(ABILITY_ANIM_TICKS, ticks);
     }
 
-    /**
-     * Ticks remaining in the daytime despawn fade-out, or 0 if not currently fading.
-     * Used client-side to fade the render alpha to nothing before the entity is removed.
-     */
     public int getFadeTicks() {
         return this.entityData.get(FADE_TICKS);
     }
@@ -338,7 +335,7 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         GlimmerVariantBehavior behavior = this.getVariant().getBehavior();
         EntityDimensions base = this.isBaby() ? behavior.babyDimensions() : behavior.adultDimensions();
         float growth = this.getGrowthScale();
-        return growth == 1.0F ? base : base.scale(growth);
+        return (growth == 1.0F ? base : base.scale(growth)).scale(this.getScale());
     }
 
     @Override
@@ -434,6 +431,7 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
 
         if (player instanceof net.minecraft.server.level.ServerPlayer serverPlayer) {
             AntarchyAdvancements.award(serverPlayer, this.getVariant().tameAdvancementId());
+            AntarchyAdvancementTriggers.tamedGlimmer(serverPlayer, this.getVariant().name().toLowerCase(java.util.Locale.ROOT));
         }
 
         return InteractionResult.SUCCESS;
@@ -444,7 +442,8 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
             return InteractionResult.CONSUME;
         }
 
-        ItemStack filled = com.craisinlord.antarchy.content.item.GlimmerBottleItem.create(this.getVariant(), this.entityData.get(ABILITY_COOLDOWN));
+        ItemStack filled = com.craisinlord.antarchy.content.item.GlimmerBottleItem.create(
+                this.getVariant(), this.entityData.get(ABILITY_COOLDOWN), this.entityData.get(SHEAR_COOLDOWN));
         ItemStack result = net.minecraft.world.item.ItemUtils.createFilledResult(stack, player, filled);
         player.setItemInHand(hand, result);
         this.playSound(net.minecraft.sounds.SoundEvents.BOTTLE_FILL, 1.0F, 1.0F);
@@ -461,6 +460,7 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnGroupData, @org.jetbrains.annotations.Nullable net.minecraft.nbt.CompoundTag dataTag) {
         SpawnGroupData result = super.finalizeSpawn(level, difficulty, spawnReason, spawnGroupData, dataTag);
+        com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.glimmerHealth());
         if (!this.variantLocked) {
             this.setVariant(selectNaturalVariant(level, this.blockPosition()));
             this.variantLocked = true;
@@ -494,10 +494,6 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         return GlimmerVariant.random(this.random);
     }
 
-    /**
-     * Wild Glimmers are common in Glimmering Pools, but only rarely (and only at night)
-     * turn up in Ouranwood Forest, the Elythia Meadow, and the Peach Forest.
-     */
     public static boolean checkGlimmerSpawnRules(EntityType<GlimmerEntity> type, ServerLevelAccessor level,
                                                    MobSpawnType spawnType, BlockPos pos, net.minecraft.util.RandomSource random) {
         if (!net.minecraft.world.entity.animal.Animal.checkAnimalSpawnRules(type, level, spawnType, pos, random)) {
@@ -596,12 +592,6 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         }
     }
 
-    /**
-     * With {@code noPhysics} true, Glimmers never travel through vanilla's normal movement path,
-     * so the usual body-follows-head catch-up never runs and a stationary Glimmer looking around
-     * (LookAtPlayerGoal/RandomLookAroundGoal only move the head) ends up with its head rendered
-     * far past the model's body — this keeps the body snapped within {@link #getMaxHeadYRot()} of it.
-     */
     private void clampBodyToHeadRotation() {
         float maxYaw = this.getMaxHeadYRot();
         float delta = Mth.wrapDegrees(this.yHeadRot - this.yBodyRot);

@@ -1,15 +1,11 @@
 package com.craisinlord.antarchy.content.portal;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -17,9 +13,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 public final class PermanentPortalManager {
-    private static final int TELEPORT_DELAY_TICKS = 20;
     private static final int ACTIVATION_SEARCH_RADIUS = 2;
-    private static final Map<UUID, PortalWarmup> WARMUPS = new HashMap<>();
 
     private PermanentPortalManager() {
     }
@@ -48,37 +42,6 @@ public final class PermanentPortalManager {
             activatePortal(serverLevel, type, shape, SoundEvents.FLINTANDSTEEL_USE, 0.9F, 1.0F);
         }
         return true;
-    }
-
-    public static void handleEntityInsidePortal(Entity entity, PermanentPortalType type) {
-        if (!(entity.level() instanceof ServerLevel serverLevel) || !type.isEnabled() || entity.isPassenger() || entity.isVehicle()) {
-            return;
-        }
-        if (entity.isOnPortalCooldown()) {
-            WARMUPS.remove(entity.getUUID());
-            return;
-        }
-
-        long gameTime = serverLevel.getGameTime();
-        PortalWarmup warmup = WARMUPS.computeIfAbsent(entity.getUUID(), ignored -> new PortalWarmup());
-        if (warmup.type != type || warmup.lastSeenTick < gameTime - 1) {
-            warmup.ticks = 0;
-        }
-        warmup.type = type;
-        if (warmup.lastSeenTick != gameTime) {
-            warmup.ticks++;
-            warmup.lastSeenTick = gameTime;
-        }
-
-        if (warmup.ticks < TELEPORT_DELAY_TICKS) {
-            return;
-        }
-
-        WARMUPS.remove(entity.getUUID());
-        PermanentPortalTeleporter.teleport(entity, type);
-        if (entity.level() instanceof ServerLevel currentLevel) {
-            currentLevel.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.PORTAL_TRAVEL, SoundSource.PLAYERS, 0.8F, 1.0F);
-        }
     }
 
     public static boolean isPortalStillValid(ServerLevel level, BlockPos pos, PermanentPortalType type, Direction.Axis axis) {
@@ -136,11 +99,5 @@ public final class PermanentPortalManager {
         Vec3 center = shape.center();
         level.playSound(null, center.x, center.y, center.z, sound, SoundSource.BLOCKS, volume, pitch);
         spawnActivationParticles(level, type, center);
-    }
-
-    private static final class PortalWarmup {
-        private PermanentPortalType type;
-        private long lastSeenTick;
-        private int ticks;
     }
 }

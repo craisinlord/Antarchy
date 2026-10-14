@@ -3,8 +3,6 @@
   "ingredient": {
     "item": "antarchy:titanium_block"
   },
-  "result": {
-    "count": 4,
-    "item": "antarchy:cut_titanium"
-  }
+  "result": "antarchy:cut_titanium",
+  "count": 4
 }

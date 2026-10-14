@@ -1,0 +1,33 @@
+{
+  "type": "article",
+  "category": "thoraxis",
+  "title": "guide.antarchy.entry.bloodglass.title",
+  "subtitle": "guide.antarchy.entry.bloodglass.subtitle",
+  "description": [
+    "guide.antarchy.entry.bloodglass.description",
+    "guide.antarchy.entry.bloodglass.description2",
+    "guide.antarchy.entry.bloodglass.description3"
+  ],
+  "cover_item": "antarchy:blood_crystal_shard",
+  "green_tint": false,
+  "gallery": [
+    {
+      "item": "antarchy:blood_crystal_helmet"
+    },
+    {
+      "item": "antarchy:blood_crystal_chestplate"
+    },
+    {
+      "item": "antarchy:blood_crystal_leggings"
+    },
+    {
+      "item": "antarchy:blood_crystal_boots"
+    },
+    {
+      "item": "antarchy:blood_crystal_katana"
+    },
+    {
+      "item": "antarchy:blood_crystal_apple"
+    }
+  ]
+}

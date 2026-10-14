@@ -156,7 +156,6 @@ public final class AntarchySettings {
     private static double rpoLauncherExplosionDamage = 34.0D;
     private static double rpoLauncherExplosionRadius = 14.0D;
     private static double sizeRayCooldownSeconds = 1.0D;
-    private static boolean invertProjectilesFromInvertedPlayers = false;
     private static boolean gravityGunEnabled = true;
     private static boolean gravityGunBlocksEnabled = true;
     private static boolean gravityGunEntitiesEnabled = true;
@@ -1211,10 +1210,6 @@ public final class AntarchySettings {
         return sizeRayCooldownSeconds;
     }
 
-    public static boolean invertProjectilesFromInvertedPlayers() {
-        return invertProjectilesFromInvertedPlayers;
-    }
-
     public static boolean gravityGunEnabled() {
         return gravityGunEnabled;
     }
@@ -1812,10 +1807,6 @@ public final class AntarchySettings {
 
     public static void setSizeRayCooldownSeconds(double value) {
         sizeRayCooldownSeconds = value;
-    }
-
-    public static void setInvertProjectilesFromInvertedPlayers(boolean value) {
-        invertProjectilesFromInvertedPlayers = value;
     }
 
     public static void setGravityGunEnabled(boolean value) {

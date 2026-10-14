@@ -30,9 +30,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(FallingBlockEntity.class)
-/*
- * Preserves full block data on carried falling blocks.
- */
 public abstract class FallingBlockEntityBlockDataMixin {
     @Shadow public CompoundTag blockData;
     @Shadow public abstract BlockState getBlockState();

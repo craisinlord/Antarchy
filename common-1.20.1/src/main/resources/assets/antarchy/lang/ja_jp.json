@@ -526,10 +526,7 @@
     "effect.antarchy.dread.description": "視覚と聴覚の幻覚を引き起こします。",
     "effect.antarchy.paralyzed": "麻痺",
     "effect.antarchy.paralyzed.description": "対象が動けなくなります。",
-    "effect.antarchy.inverted": "重力反転",
-    "effect.antarchy.inverted.description": "対象の重力を反転させます。",
     "effect.antarchy.commanded.description": "命令したプレイヤーのために戦います。",
-    "effect.antarchy.dilated.description": "影響を受けたエンティティの時間の流れを遅くします。",
     "effect.antarchy.stinky": "悪臭",
     "effect.antarchy.stinky.description": "友好的および中立のMobを遠ざけ、節足動物を引き寄せます。",
     "effect.antarchy.gooped.description": "移動速度と攻撃速度を低下させます。",
@@ -959,4 +956,7 @@
     "advancements.antarchy.beetle_buddies.description": "ヘラクレスオオカブトを手懐ける。",
     "advancements.antarchy.herculean_task.title": "ヘラクレス級の難題",
     "advancements.antarchy.herculean_task.description": "ヘラクレスオオカブトを討伐する。"
+,
+    "entity.antarchy.portal_gun_portal": "ポータルガンのポータル",
+    "attribute.antarchy.entity_interaction_range": "エンティティ操作範囲"
 }

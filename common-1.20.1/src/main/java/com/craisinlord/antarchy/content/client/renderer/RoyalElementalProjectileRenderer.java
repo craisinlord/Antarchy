@@ -6,8 +6,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
@@ -18,20 +22,41 @@ public class RoyalElementalProjectileRenderer extends GeoEntityRenderer<RoyalEle
     }
 
     @Override
+    public RenderType getRenderType(RoyalElementalProjectileEntity animatable, ResourceLocation texture,
+                                    @Nullable MultiBufferSource bufferSource, float partialTick) {
+        return animatable.isIceball()
+                ? RenderType.entityCutoutNoCull(texture)
+                : RenderType.entityTranslucentEmissive(texture);
+    }
+
+    @Override
     public void preRender(PoseStack poseStack, RoyalElementalProjectileEntity animatable, BakedGeoModel model,
                           MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender,
                           float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick,
                 packedLight, packedOverlay, red, green, blue, alpha);
-        float scale = animatable.isIceball() ? 0.75F : 0.36F;
+        float scale = animatable.isIceball() ? 0.75F : 0.72F;
         poseStack.scale(scale, scale, scale);
     }
 
+    @Override
     protected void applyRotations(RoyalElementalProjectileEntity entity, PoseStack poseStack, float ageInTicks,
-                                  float rotationYaw, float partialTick, float nativeScale) {
-        float yaw = Mth.rotLerp(partialTick, entity.yRotO, entity.getYRot());
-        float pitch = Mth.lerp(partialTick, entity.xRotO, entity.getXRot());
+                                  float rotationYaw, float partialTick) {
+        Vec3 travel = entity.getDeltaMovement();
+        float yaw;
+        float pitch;
+        if (!entity.isIceball() && travel.lengthSqr() > 1.0E-6D) {
+            double horizontal = travel.horizontalDistance();
+            yaw = (float) (Mth.atan2(travel.z, travel.x) * Mth.RAD_TO_DEG) - 90.0F;
+            pitch = (float) (Mth.atan2(horizontal, travel.y) * Mth.RAD_TO_DEG) - 90.0F;
+        } else {
+            yaw = Mth.rotLerp(partialTick, entity.yRotO, entity.getYRot());
+            pitch = Mth.lerp(partialTick, entity.xRotO, entity.getXRot());
+        }
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - yaw));
         poseStack.mulPose(Axis.XP.rotationDegrees(-pitch));
+        if (!entity.isIceball()) {
+            poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+        }
     }
 }

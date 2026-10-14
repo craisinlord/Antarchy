@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:myrmite"
+  },
+  "result": "antarchy:myrmite_slab",
+  "count": 2
+}

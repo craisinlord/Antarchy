@@ -3,7 +3,6 @@
   "ingredient": {
     "item": "antarchy:shellstone_bricks"
   },
-  "result": {
-    "item": "antarchy:shellstone_brick_stairs"
-  }
+  "result": "antarchy:shellstone_brick_stairs",
+  "count": 1
 }

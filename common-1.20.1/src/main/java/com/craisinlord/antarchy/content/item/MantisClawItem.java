@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.content.item;
 
 import java.util.List;
-import net.minecraft.world.level.Level;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
@@ -10,6 +9,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 
 public class MantisClawItem extends SwordItem {
     public static final double WALL_CLING_FALL_SPEED = -0.02D;
@@ -30,7 +31,7 @@ public class MantisClawItem extends SwordItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.translatable("tooltip.antarchy.mantis_claw.wall_cling").withStyle(ChatFormatting.GRAY));
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
     }

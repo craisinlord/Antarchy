@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:adventure/root",
+  "parent": "antarchy:visit_elythia",
   "criteria": {
     "kill_basilisk": {
       "conditions": {
@@ -17,7 +17,6 @@
     },
     "frame": "task",
     "icon": {
-      "count": 1,
       "item": "antarchy:basilisk_fang"
     },
     "show_toast": true,

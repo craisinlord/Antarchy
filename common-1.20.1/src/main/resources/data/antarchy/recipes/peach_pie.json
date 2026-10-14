@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
+  "category": "food",
   "ingredients": [
     {
       "item": "antarchy:peach"
@@ -13,7 +13,6 @@
     }
   ],
   "result": {
-    "count": 1,
     "item": "antarchy:peach_pie"
   }
 }

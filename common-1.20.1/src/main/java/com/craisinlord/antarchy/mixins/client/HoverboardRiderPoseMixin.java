@@ -24,11 +24,10 @@ public abstract class HoverboardRiderPoseMixin<T extends LivingEntity, M extends
     public abstract M getModel();
 
     @Inject(
-            method = "setupRotations(Lnet/minecraft/world/entity/LivingEntity;Lcom/mojang/blaze3d/vertex/PoseStack;FFFF)V",
-            at = @At(value = "TAIL", remap = false),
-            remap = false
+            method = "setupRotations(Lnet/minecraft/world/entity/LivingEntity;Lcom/mojang/blaze3d/vertex/PoseStack;FFF)V",
+            at = @At("TAIL")
     )
-    private void antarchy$rotateHoverboardRider(T entity, PoseStack poseStack, float ageInTicks, float rotationYaw, float partialTick, float scale, CallbackInfo ci) {
+    private void antarchy$rotateHoverboardRider(T entity, PoseStack poseStack, float ageInTicks, float rotationYaw, float partialTick, CallbackInfo ci) {
         if (entity.getVehicle() instanceof HoverboardEntity) {
             poseStack.mulPose(Axis.YP.rotationDegrees(HOVERBOARD_RIDER_RENDER_YAW));
         }
@@ -63,6 +62,19 @@ public abstract class HoverboardRiderPoseMixin<T extends LivingEntity, M extends
             humanoidModel.head.yRot += correction;
             humanoidModel.hat.yRot += correction;
             humanoidModel.body.zRot += (float) Math.toRadians(HOVERBOARD_RIDER_TORSO_ROLL);
+        }
+    }
+
+    @Inject(
+            method = "render(Lnet/minecraft/world/entity/LivingEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
+            at = @At("RETURN")
+    )
+    private void antarchy$restoreHoverboardRiderPose(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, CallbackInfo ci) {
+        if (entity.getVehicle() instanceof HoverboardEntity && this.getModel() instanceof HumanoidModel<?> humanoidModel) {
+            float correction = (float) Math.toRadians(HOVERBOARD_RIDER_RENDER_YAW);
+            humanoidModel.head.yRot -= correction;
+            humanoidModel.hat.yRot -= correction;
+            humanoidModel.body.zRot -= (float) Math.toRadians(HOVERBOARD_RIDER_TORSO_ROLL);
         }
     }
 }

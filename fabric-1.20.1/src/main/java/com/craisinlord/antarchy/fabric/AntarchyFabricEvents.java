@@ -1,31 +1,36 @@
 package com.craisinlord.antarchy.fabric;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricBlocks;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricItems;
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricMisc;
 
 import com.craisinlord.antarchy.content.entity.ReverieEntity;
 import com.craisinlord.antarchy.content.entity.ant.RainbowAntEntity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.block.DuctTapeBlock;
 import com.craisinlord.antarchy.content.item.AttitudeAdjusterItem;
 import com.craisinlord.antarchy.content.item.AttitudeAdjusterSlamManager;
 import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityApi;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityDirection;
-import com.craisinlord.antarchy.content.gravity.AntarchyGravityTransition;
+import com.craisinlord.anthology.gravity.GravityApi;
+import com.craisinlord.anthology.gravity.GravityDirection;
+import com.craisinlord.anthology.gravity.GravityTransition;
 import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.craisinlord.antarchy.content.portal.PermanentPortalManager;
+import com.craisinlord.antarchy.content.portalgun.PortalGunProjectileEntity;
+import com.craisinlord.antarchy.content.portalgun.PortalGunSavedData;
 import com.craisinlord.antarchy.content.command.CavarynCommand;
 import com.craisinlord.antarchy.content.command.CaterpillarCommand;
-import com.craisinlord.antarchy.content.command.GravityCommand;
+import com.craisinlord.antarchy.content.command.DimensionalTearCommand;
 import com.craisinlord.antarchy.content.command.QueenLocateCommand;
-import com.craisinlord.antarchy.content.time.TimeDilationCommand;
-import com.craisinlord.antarchy.content.time.TimeDilationManager;
+import com.craisinlord.antarchy.content.command.RoyalCommand;
+import com.craisinlord.antarchy.content.item.WormHookTetherManager;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.object.builder.v1.trade.TradeOfferHelper;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
@@ -34,6 +39,7 @@ import com.craisinlord.antarchy.content.dispenser.SquidzookaDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.RpoLauncherDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.SizeRayDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.WaterCannonDispenseBehavior;
+import com.craisinlord.antarchy.content.dispenser.BugSprayDispenseBehavior;
 import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.core.BlockPos;
@@ -55,26 +61,27 @@ import java.util.Set;
 import java.util.UUID;
 
 public final class AntarchyFabricEvents {
-    private static final AntarchyGravityTransition INVERTED_CLEAR_TRANSITION = new AntarchyGravityTransition(12);
+    private static final GravityTransition INVERTED_CLEAR_TRANSITION = new GravityTransition(12);
     private static final Set<UUID> invertedPlayers = new HashSet<>();
 
     private AntarchyFabricEvents() {
     }
 
     public static void register() {
-        net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents.START_TRACKING.register((trackedEntity, player) -> {
-            if (trackedEntity instanceof com.craisinlord.antarchy.content.time.TimeDilationEntityAccess access) {
-                com.craisinlord.antarchy.fabric.network.AntarchyFabricTimeDilationNetworking.syncRateToPlayer(
-                        player, trackedEntity, access.antarchy$getTimeDilationRate()
-                );
-            }
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> PortalGunProjectileEntity.releaseAllProjectileTickets());
+        ServerLifecycleEvents.SERVER_STOPPING.register(com.craisinlord.antarchy.content.portalgun.PortalGunResetManager::clear);
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.clear());
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.clear());
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            PortalGunSavedData.clearMissingGuns(handler.player);
         });
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             CavarynCommand.register(dispatcher);
-            GravityCommand.register(dispatcher);
-            QueenLocateCommand.register(dispatcher);
             CaterpillarCommand.register(dispatcher);
-            TimeDilationCommand.register(dispatcher);
+            DimensionalTearCommand.register(dispatcher);
+            QueenLocateCommand.register(dispatcher);
+            RoyalCommand.register(dispatcher);
+            com.craisinlord.antarchy.content.command.PortalGunCommand.register(dispatcher);
         });
 
         DispenserBlock.registerBehavior(AntarchyFabricItems.SQUIDZOOKA.get(), new SquidzookaDispenseBehavior());
@@ -82,6 +89,7 @@ public final class AntarchyFabricEvents {
         DispenserBlock.registerBehavior(AntarchyFabricItems.WATER_CANNON.get(), new WaterCannonDispenseBehavior());
         DispenserBlock.registerBehavior(AntarchyFabricItems.SHRINK_RAY.get(), new SizeRayDispenseBehavior());
         DispenserBlock.registerBehavior(AntarchyFabricItems.GROWTH_RAY.get(), new SizeRayDispenseBehavior());
+        DispenserBlock.registerBehavior(AntarchyFabricItems.BUG_SPRAY.get(), new BugSprayDispenseBehavior());
         AntarchyFabricDispenserBehaviors.register();
         registerTrades();
 
@@ -94,6 +102,11 @@ public final class AntarchyFabricEvents {
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.PEACH_LEAVES.get().asItem(), 0.3f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.PEACH_SAPLING_ITEM.get(), 0.3f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.NADIR_SAPLING_ITEM.get(), 0.3f);
+        ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.NADIR_FERN_ITEM.get(), 0.3f);
+        ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.LARGE_NADIR_FERN_ITEM.get(), 0.5f);
+        ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.DUSKBELL_ITEM.get(), 0.65f);
+        ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.WHIRLFLOWER_ITEM.get(), 0.65f);
+        ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.GOREVINE_ITEM.get(), 0.5f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.CORN.get(), 0.65f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.CORN_SEEDS.get(), 0.3f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.PEACH.get(), 0.65f);
@@ -141,9 +154,28 @@ public final class AntarchyFabricEvents {
             }
         });
 
+        net.fabricmc.fabric.api.event.player.UseItemCallback.EVENT.register((player, world, hand) -> {
+            InteractionResult result = com.craisinlord.antarchy.content.item.GiantFryingPanItem.handleMainHandUse(world, player, hand);
+            if (result == InteractionResult.PASS) {
+                return net.minecraft.world.InteractionResultHolder.pass(ItemStack.EMPTY);
+            }
+            ItemStack held = player.getItemInHand(hand);
+            return result.consumesAction()
+                    ? net.minecraft.world.InteractionResultHolder.sidedSuccess(held, world.isClientSide)
+                    : net.minecraft.world.InteractionResultHolder.fail(held);
+        });
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+            if (player.getItemInHand(hand).getItem() instanceof com.craisinlord.antarchy.content.item.PortalGunItem) {
+                return InteractionResult.FAIL;
+            }
             if (!world.isClientSide && player.getItemInHand(hand).getItem() instanceof AttitudeAdjusterItem && player.getAttackStrengthScale(0.5F) >= 0.95F) {
                 AttitudeAdjusterSlamManager.markSpecialHit(player);
+            }
+            return InteractionResult.PASS;
+        });
+        net.fabricmc.fabric.api.event.player.AttackBlockCallback.EVENT.register((player, world, hand, pos, direction) -> {
+            if (player.getItemInHand(hand).getItem() instanceof com.craisinlord.antarchy.content.item.PortalGunItem) {
+                return InteractionResult.FAIL;
             }
             return InteractionResult.PASS;
         });
@@ -158,18 +190,32 @@ public final class AntarchyFabricEvents {
             for (ServerLevel level : server.getAllLevels()) {
                 CavarynHordeManager.tick(level);
                 com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
+                com.craisinlord.antarchy.content.entity.glimmer.GlimmerNightSpawner.tick(level);
+                ThoraxisUndersideManager.tick(level);
+                com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature.tickPendingSpawns(level);
                 tickInvertedPlayers(level, activeThisTick);
-                tickDuctTapePlayers(level);
                 tickIchorPlayers(level);
                 tickBloodglassRecharge(level);
                 AttitudeAdjusterSlamManager.tick(level);
+                for (ServerPlayer player : level.players()) {
+                    WormHookTetherManager.tick(player);
+                }
             }
-            TimeDilationManager.tickServer(server);
+            com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.tick(server);
             invertedPlayers.retainAll(activeThisTick);
         });
     }
 
     private static void registerTrades() {
+        int[] pestControlSlots = com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager.slotsPerLevel();
+        for (int level = 1; level <= pestControlSlots.length; level++) {
+            final int tradeLevel = level;
+            for (int index = 0; index < pestControlSlots[level - 1]; index++) {
+                final int tradeIndex = index;
+                TradeOfferHelper.registerVillagerOffers(AntarchyFabricMisc.PEST_CONTROL.get(), tradeLevel,
+                        factories -> factories.add(com.craisinlord.antarchy.content.entity.trades.PestControlTradeManager.listing(tradeLevel, tradeIndex)));
+            }
+        }
         TradeOfferHelper.registerVillagerOffers(VillagerProfession.FARMER, 1, factories ->
                 factories.add((trader, random) -> new MerchantOffer(
                         new ItemStack(AntarchyFabricItems.CORN.get(), 20),
@@ -243,9 +289,9 @@ public final class AntarchyFabricEvents {
                 continue;
             }
 
-            if (AntarchyGravityApi.getGravityDirection(player) == AntarchyGravityDirection.UP
-                    || AntarchyGravityApi.isGravityForced(player)) {
-                AntarchyGravityApi.setGravityDirection(player, AntarchyGravityDirection.DOWN, INVERTED_CLEAR_TRANSITION);
+            if (GravityApi.getGravityDirection(player) == GravityDirection.UP
+                    || GravityApi.isGravityForced(player)) {
+                GravityApi.setGravityDirection(player, GravityDirection.DOWN, INVERTED_CLEAR_TRANSITION);
             }
             notifyNearbyReveriesOfInversionChange(player);
         }
@@ -257,14 +303,6 @@ public final class AntarchyFabricEvents {
                 player.getBoundingBox().inflate(48.0D)
         )) {
             reverie.syncFocusInversionState();
-        }
-    }
-
-    private static void tickDuctTapePlayers(ServerLevel level) {
-        for (Player player : level.players()) {
-            if (DuctTapeBlock.shouldTickStuckEntity(player)) {
-                DuctTapeBlock.tickStuckEntity(player);
-            }
         }
     }
 

@@ -10,9 +10,9 @@ import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
 import com.craisinlord.antarchy.content.entity.HushProjectileEntity;
 import com.craisinlord.antarchy.content.entity.StinkBugEntity;
 import com.craisinlord.antarchy.content.entity.WaterBombEntity;
-import com.craisinlord.antarchy.content.entity.TriffidEntity;
-import com.craisinlord.antarchy.content.entity.CreepingHorrorEntity;
-import com.craisinlord.antarchy.content.entity.LurkingTerrorEntity;
+import com.craisinlord.antarchy.content.entity.FlytrapEntity;
+import com.craisinlord.antarchy.content.entity.CrawlingBlightEntity;
+import com.craisinlord.antarchy.content.entity.SkulkingFrightEntity;
 import com.craisinlord.antarchy.content.entity.ToreterrorEntity;
 import com.craisinlord.antarchy.content.entity.WaspEntity;
 import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyEntity;
@@ -33,7 +33,6 @@ import com.craisinlord.antarchy.content.entity.lucid.LucidEntity;
 import com.craisinlord.antarchy.content.entity.vortex.VortexChargeProjectileEntity;
 import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
 import com.craisinlord.antarchy.content.entity.vortex.WindVortexEntity;
-import com.craisinlord.antarchy.content.time.TimeDilationFieldEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmareBiteEntity;
 import com.craisinlord.antarchy.content.entity.nightmare.NightmarePortalEntity;
@@ -99,8 +98,6 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<VortexChargeProjectileEntity>> VORTEX_CHARGE_PROJECTILE = (Supplier<EntityType<VortexChargeProjectileEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<TimeDilationFieldEntity>> TIME_DILATION_FIELD = (Supplier<EntityType<TimeDilationFieldEntity>>) UNBOUND;
-    @SuppressWarnings("unchecked")
     public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>> ROYAL_BLACK_HOLE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity>> ROYAL_ASSAILANT_BLACK_HOLE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalAssailantBlackHoleEntity>>) UNBOUND;
@@ -127,7 +124,7 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<ReverieEntity>> REVERIE = (Supplier<EntityType<ReverieEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<TriffidEntity>> TRIFFID = (Supplier<EntityType<TriffidEntity>>) UNBOUND;
+    public static Supplier<EntityType<FlytrapEntity>> FLYTRAP = (Supplier<EntityType<FlytrapEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<BrutalflyEntity>> BRUTALFLY = (Supplier<EntityType<BrutalflyEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -139,9 +136,9 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<WaterBombEntity>> WATER_BOMB = (Supplier<EntityType<WaterBombEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<CreepingHorrorEntity>> CREEPING_HORROR = (Supplier<EntityType<CreepingHorrorEntity>>) UNBOUND;
+    public static Supplier<EntityType<CrawlingBlightEntity>> CRAWLING_BLIGHT = (Supplier<EntityType<CrawlingBlightEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
-    public static Supplier<EntityType<LurkingTerrorEntity>> LURKING_TERROR = (Supplier<EntityType<LurkingTerrorEntity>>) UNBOUND;
+    public static Supplier<EntityType<SkulkingFrightEntity>> SKULKING_FRIGHT = (Supplier<EntityType<SkulkingFrightEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.ManticoreEntity>> MANTICORE = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.ManticoreEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -215,6 +212,8 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<MenuType<com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu>> ROYAL_JUDGMENT_MENU = (Supplier<MenuType<com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu>>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<MenuType<com.craisinlord.antarchy.content.menu.GiantFryingPanMenu>> GIANT_FRYING_PAN_MENU = (Supplier<MenuType<com.craisinlord.antarchy.content.menu.GiantFryingPanMenu>>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<net.minecraft.world.item.Item> CHEEP_ITEM = (Supplier<net.minecraft.world.item.Item>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> DUPLICATOR_LOG = (Supplier<Block>) UNBOUND;
@@ -267,7 +266,7 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<Block> CLOUD_BLOCK = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
-    public static Supplier<Block> TRIFFID_GOO_BLOCK = (Supplier<Block>) UNBOUND;
+    public static Supplier<Block> FLYTRAP_GOO_BLOCK = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> PALE_NYXITE = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -314,6 +313,7 @@ public final class AntarchyObjects {
     public static Supplier<Holder<Attribute>> DOUBLE_DAMAGE_CHANCE = (Supplier<Holder<Attribute>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Holder<Attribute>> BLOODGLASS_MAX_HEARTS = (Supplier<Holder<Attribute>>) UNBOUND;
+    public static Supplier<Attribute> ENTITY_REACH = () -> null;
     @SuppressWarnings("unchecked")
     public static Supplier<MobEffect> BLOODGLASS_WARD = (Supplier<MobEffect>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -324,9 +324,11 @@ public final class AntarchyObjects {
     public static Supplier<MobEffect> STINKY_EFFECT = (Supplier<MobEffect>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<MobEffect> GLIMMERING_EFFECT = (Supplier<MobEffect>) UNBOUND;
-    public static Supplier<MobEffect> DILATED_EFFECT = (Supplier<MobEffect>) UNBOUND;
+    public static Supplier<MobEffect> ROYAL_VITALITY_PENALTY_EFFECT = (Supplier<MobEffect>) UNBOUND;
     @SuppressWarnings("unchecked")
-    public static Supplier<MobEffect> CONTRACTED_EFFECT = (Supplier<MobEffect>) UNBOUND;
+    public static Supplier<MobEffect> BLEEDING_EFFECT = (Supplier<MobEffect>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<MobEffect> BLOOD_MOON_EFFECT = (Supplier<MobEffect>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Fluid> LUMEN = (Supplier<Fluid>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -352,9 +354,9 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<Block> BED_BUG_EGG = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
-    public static Supplier<Block> CREEPING_HORROR_EGGS = (Supplier<Block>) UNBOUND;
+    public static Supplier<Block> CRAWLING_BLIGHT_EGGS = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
-    public static Supplier<Block> LURKING_TERROR_EGGS = (Supplier<Block>) UNBOUND;
+    public static Supplier<Block> SKULKING_FRIGHT_EGGS = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Block> WASP_NEST = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -400,6 +402,8 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<SimpleParticleType> STINKY_GAS = (Supplier<SimpleParticleType>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<SimpleParticleType> BUG_SPRAY_PARTICLE = (Supplier<SimpleParticleType>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<SimpleParticleType> NIGHTMARE_FIRE_FLAME = (Supplier<SimpleParticleType>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<SimpleParticleType> STINKY_FLY = (Supplier<SimpleParticleType>) UNBOUND;
@@ -432,11 +436,6 @@ public final class AntarchyObjects {
     private AntarchyObjects() {
     }
 
-    /** Compatibility entry point for loader registries that bind the expanded 1.21 object set. */
-    public static void bind(Supplier<?>... ignored) {
-        // Loader-specific registrations populate the fields through the explicit setters below.
-    }
-
     public static void bind(
             Supplier<EntityType<EasterBunnyEntity>> easterBunny,
             Supplier<EntityType<FlyingSquirrelEntity>> flyingSquirrel,
@@ -451,14 +450,14 @@ public final class AntarchyObjects {
             Supplier<EntityType<CaterpillarEntity>> caterpillar,
             Supplier<EntityType<ButterflyEntity>> butterfly,
             Supplier<EntityType<ReverieEntity>> reverie,
-            Supplier<EntityType<TriffidEntity>> triffid,
+            Supplier<EntityType<FlytrapEntity>> flytrap,
             Supplier<EntityType<BrutalflyEntity>> brutalfly,
             Supplier<EntityType<BrutalflyOrbEntity>> brutalflyOrb,
             Supplier<EntityType<HushProjectileEntity>> hushProjectile,
             Supplier<EntityType<ToreterrorEntity>> toreterror,
             Supplier<EntityType<WaterBombEntity>> waterBomb,
-            Supplier<EntityType<CreepingHorrorEntity>> creepingHorror,
-            Supplier<EntityType<LurkingTerrorEntity>> lurkingTerror,
+            Supplier<EntityType<CrawlingBlightEntity>> crawlingBlight,
+            Supplier<EntityType<SkulkingFrightEntity>> skulkingFright,
             Supplier<EntityType<StinkBugEntity>> stinkBug,
             Supplier<EntityType<com.craisinlord.antarchy.content.entity.CheepEntity>> cheep,
             Supplier<EntityType<com.craisinlord.antarchy.content.entity.DorrieEntity>> dorrie,
@@ -487,7 +486,7 @@ public final class AntarchyObjects {
             Supplier<Block> shellstoneBrickSlab,
             Supplier<Block> shellstoneBrickWall,
             Supplier<Block> cloudBlock,
-            Supplier<Block> triffidGooBlock,
+            Supplier<Block> flytrapGooBlock,
             Supplier<Block> paleNyxite,
             Supplier<Block> nyxiteSpike,
             Supplier<Block> chitinBlock,
@@ -519,8 +518,8 @@ public final class AntarchyObjects {
             Supplier<Block> orangeMilkweed,
             Supplier<Block> pinkMilkweed,
             Supplier<Block> bedBugEggs,
-            Supplier<Block> creepingHorrorEggs,
-            Supplier<Block> lurkingTerrorEggs,
+            Supplier<Block> crawlingBlightEggs,
+            Supplier<Block> skulkingFrightEggs,
             Supplier<Block> waspNest,
             Supplier<Block> hushweed,
             Supplier<Block> squirrelNestBlock,
@@ -552,14 +551,14 @@ public final class AntarchyObjects {
         CATERPILLAR = caterpillar;
         BUTTERFLY = butterfly;
         REVERIE = reverie;
-        TRIFFID = triffid;
+        FLYTRAP = flytrap;
         BRUTALFLY = brutalfly;
         BRUTALFLY_ORB = brutalflyOrb;
         HUSH_PROJECTILE = hushProjectile;
         TORETERROR = toreterror;
         WATER_BOMB = waterBomb;
-        CREEPING_HORROR = creepingHorror;
-        LURKING_TERROR = lurkingTerror;
+        CRAWLING_BLIGHT = crawlingBlight;
+        SKULKING_FRIGHT = skulkingFright;
         STINK_BUG = stinkBug;
         CHEEP = cheep;
         DORRIE = dorrie;
@@ -588,7 +587,7 @@ public final class AntarchyObjects {
         SHELLSTONE_BRICK_SLAB = shellstoneBrickSlab;
         SHELLSTONE_BRICK_WALL = shellstoneBrickWall;
         CLOUD_BLOCK = cloudBlock;
-        TRIFFID_GOO_BLOCK = triffidGooBlock;
+        FLYTRAP_GOO_BLOCK = flytrapGooBlock;
         PALE_NYXITE = paleNyxite;
         NYXITE_SPIKE = nyxiteSpike;
         CHITIN_BLOCK = chitinBlock;
@@ -620,8 +619,8 @@ public final class AntarchyObjects {
         ORANGE_MILKWEED = orangeMilkweed;
         PINK_MILKWEED = pinkMilkweed;
         BED_BUG_EGG = bedBugEggs;
-        CREEPING_HORROR_EGGS = creepingHorrorEggs;
-        LURKING_TERROR_EGGS = lurkingTerrorEggs;
+        CRAWLING_BLIGHT_EGGS = crawlingBlightEggs;
+        SKULKING_FRIGHT_EGGS = skulkingFrightEggs;
         WASP_NEST = waspNest;
         HUSHWEED = hushweed;
         SQUIRREL_NEST_BLOCK = squirrelNestBlock;
@@ -647,6 +646,10 @@ public final class AntarchyObjects {
 
     public static void setOctopusBomb(Supplier<EntityType<OctopusBombEntity>> supplier) {
         OCTOPUS_BOMB = supplier;
+    }
+
+    public static void setBugSprayParticle(Supplier<SimpleParticleType> supplier) {
+        BUG_SPRAY_PARTICLE = supplier;
     }
 
     public static void setTentacle(Supplier<EntityType<TentacleEntity>> supplier) {
@@ -693,10 +696,6 @@ public final class AntarchyObjects {
 
     public static void setVortexChargeProjectile(Supplier<EntityType<VortexChargeProjectileEntity>> supplier) {
         VORTEX_CHARGE_PROJECTILE = supplier;
-    }
-
-    public static void setTimeDilationField(Supplier<EntityType<TimeDilationFieldEntity>> supplier) {
-        TIME_DILATION_FIELD = supplier;
     }
 
     public static void setRoyalBlackHole(Supplier<EntityType<com.craisinlord.antarchy.content.entity.royal.RoyalBlackHoleEntity>> supplier) {
@@ -823,12 +822,16 @@ public final class AntarchyObjects {
         GLIMMERING_EFFECT = supplier;
     }
 
-    public static void setDilatedEffect(Supplier<MobEffect> supplier) {
-        DILATED_EFFECT = supplier;
+    public static void setRoyalVitalityPenaltyEffect(Supplier<MobEffect> supplier) {
+        ROYAL_VITALITY_PENALTY_EFFECT = supplier;
     }
 
-    public static void setContractedEffect(Supplier<MobEffect> supplier) {
-        CONTRACTED_EFFECT = supplier;
+    public static void setBleedingEffect(Supplier<MobEffect> supplier) {
+        BLEEDING_EFFECT = supplier;
+    }
+
+    public static void setBloodMoonEffect(Supplier<MobEffect> supplier) {
+        BLOOD_MOON_EFFECT = supplier;
     }
 
     public static void setElka(Supplier<EntityType<com.craisinlord.antarchy.content.entity.ElkaEntity>> supplier) {
@@ -907,6 +910,10 @@ public final class AntarchyObjects {
         LUCID_BOLT_IMPACT_LARGE = supplier;
     }
 
+    public static void setEntityReach(Supplier<Attribute> supplier) {
+        ENTITY_REACH = supplier;
+    }
+
     public static void setPeachLeavesParticle(Supplier<SimpleParticleType> supplier) {
         PEACH_LEAVES_PARTICLE = supplier;
     }
@@ -921,6 +928,10 @@ public final class AntarchyObjects {
 
     public static void setRoyalJudgmentMenu(Supplier<MenuType<com.craisinlord.antarchy.content.menu.RoyalJudgmentMenu>> supplier) {
         ROYAL_JUDGMENT_MENU = supplier;
+    }
+
+    public static void setGiantFryingPanMenu(Supplier<MenuType<com.craisinlord.antarchy.content.menu.GiantFryingPanMenu>> supplier) {
+        GIANT_FRYING_PAN_MENU = supplier;
     }
 
     public static void setAmericanComponent(Supplier<AntarchyItemComponent<net.minecraft.util.Unit>> supplier) {

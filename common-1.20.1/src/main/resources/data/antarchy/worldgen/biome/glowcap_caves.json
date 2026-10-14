@@ -21,6 +21,12 @@
       "options": {
         "type": "antarchy:orange_ash"
       }
+    },
+    "music": {
+      "sound": "antarchy:music.game.cavaryn",
+      "min_delay": 600,
+      "max_delay": 1800,
+      "replace_current_music": true
     }
   },
   "spawn_costs": {},
@@ -47,25 +53,24 @@
     ],
     []
   ],
-  "creature_spawn_probability": 0.09,
+  "creature_spawn_probability": 0.98,
   "spawners": {
-    "monster": [
-    ],
+    "monster": [],
     "creature": [
       {
         "type": "antarchy:rolly_polly",
-        "weight": 25,
-        "minCount": 1,
-        "maxCount": 3
+        "weight": 280,
+        "minCount": 4,
+        "maxCount": 8
       },
       {
         "type": "antarchy:stink_bug",
-        "weight": 40,
-        "minCount": 2,
-        "maxCount": 4
-      }],
-    "ambient": [
+        "weight": 380,
+        "minCount": 4,
+        "maxCount": 8
+      }
     ],
+    "ambient": [],
     "axolotls": [],
     "underground_water_creature": [],
     "water_creature": [],

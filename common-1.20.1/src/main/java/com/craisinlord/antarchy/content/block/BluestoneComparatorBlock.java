@@ -31,7 +31,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.ticks.TickPriority;
 import org.joml.Vector3f;
 
-public class BluestoneComparatorBlock extends ComparatorBlock {
+public class BluestoneComparatorBlock extends ComparatorBlock implements BluestoneSignalSource {
     private static final VoxelShape SHAPE = Block.box(0.0D, 14.0D, 0.0D, 16.0D, 16.0D, 16.0D);
     private static final DustParticleOptions BLUESTONE_PARTICLE = new DustParticleOptions(new Vector3f(0.18F, 0.54F, 1.0F), 1.0F);
     private final Supplier<? extends BlockEntityType<BluestoneComparatorBlockEntity>> blockEntityTypeSupplier;
@@ -125,6 +125,11 @@ public class BluestoneComparatorBlock extends ComparatorBlock {
     @Override
     public boolean isSignalSource(BlockState state) {
         return true;
+    }
+
+    @Override
+    public int getBluestoneSignal(LevelReader level, BlockPos pos, BlockState state, Direction direction) {
+        return level == null ? 0 : state.getSignal(level, pos, direction);
     }
 
     @Override

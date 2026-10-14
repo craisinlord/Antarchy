@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:adventure/root",
+  "parent": "antarchy:anger_the_hive_mind",
   "criteria": {
     "kill_molevore": {
       "conditions": {
@@ -17,7 +17,6 @@
     },
     "frame": "task",
     "icon": {
-      "count": 1,
       "item": "antarchy:molevore_nose"
     },
     "show_toast": true,
