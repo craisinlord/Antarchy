@@ -23,7 +23,7 @@ repositories {
     maven { url = 'https://www.cursemaven.com' }
     maven { url = 'https://maven.blamejared.com' }
     maven { url = 'https://jitpack.io' }
-    flatDir { dirs file('../anthology_jars'), file('../infinite_dimensions_jars'), file('../integrated_api_jars') }
+    flatDir { dirs file('libs'), file('../anthology_jars'), file('../infinite_dimensions_jars'), file('../integrated_api_jars') }
     maven {
         name = "GeckoLib"
         url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/"
@@ -98,6 +98,10 @@ dependencies {
     implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
 
     implementation fg.deobf("com.craisinlord:anthology:${anthology_version}+1.20.1-forge")
+
+    runtimeOnly fg.deobf("local.compat:Apotheosis-1.20.1:7.4.8")
+    runtimeOnly fg.deobf("local.compat:Placebo-1.20.1:8.6.3")
+    runtimeOnly fg.deobf("local.compat:ApothicAttributes-1.20.1:1.3.7")
 
     compileOnly("curse.maven:sizeable_foliage-${sizeable_foliage_curseforge_id}:${sizeable_foliage_curseforge_file_id_forge}")
     runtimeOnly fg.deobf("curse.maven:sizeable_foliage-${sizeable_foliage_curseforge_id}:${sizeable_foliage_curseforge_file_id_forge}")
