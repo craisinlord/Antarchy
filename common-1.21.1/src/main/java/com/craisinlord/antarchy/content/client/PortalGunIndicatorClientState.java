@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.client;
 
 import com.craisinlord.antarchy.content.network.PortalGunIndicatorPayload;
 import com.craisinlord.antarchy.content.network.PortalGunIndicatorRequestPayload;
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -11,7 +12,8 @@ import net.minecraft.client.multiplayer.ClientLevel;
 
 public final class PortalGunIndicatorClientState {
     private static final Map<UUID, PortalGunIndicatorPayload> STATES = new HashMap<>();
-    private static ClientLevel level;
+    // Weak so a dimension change or logout doesn't pin the old client world in memory.
+    private static WeakReference<ClientLevel> level = new WeakReference<>(null);
     private static long lastRequestTick = Long.MIN_VALUE;
     private static UUID lastRequestedGun;
     private static Consumer<PortalGunIndicatorRequestPayload> requestSender = payload -> {};
@@ -28,8 +30,8 @@ public final class PortalGunIndicatorClientState {
         if (currentLevel == null || gunId == null || minecraft.player == null) {
             return;
         }
-        if (level != currentLevel) {
-            level = currentLevel;
+        if (level.get() != currentLevel) {
+            level = new WeakReference<>(currentLevel);
             STATES.clear();
             lastRequestedGun = null;
             lastRequestTick = Long.MIN_VALUE;
@@ -52,7 +54,7 @@ public final class PortalGunIndicatorClientState {
 
     public static void clear() {
         STATES.clear();
-        level = null;
+        level = new WeakReference<>(null);
         lastRequestedGun = null;
         lastRequestTick = Long.MIN_VALUE;
     }

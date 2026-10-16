@@ -22,9 +22,9 @@ public class ConfigGenInvocationMixin {
     private void antarchy$safeGenerateAll(MinecraftServer server) {
         try {
             ConfigGenerator.generateAll(server);
-        } catch (Exception e) {
+        } catch (Exception | LinkageError e) {
             Antarchy.LOGGER.error(
-                    "[Antarchy] Infinite Dimensions surface rule scan crashed — likely a mod has a malformed surface rule (null 'biome_is' entry). Player login will continue.",
+                    "[Antarchy] Infinite Dimensions config generation crashed — likely a mod with a malformed surface rule or a mismatched dependency. Player login will continue.",
                     e
             );
         }
