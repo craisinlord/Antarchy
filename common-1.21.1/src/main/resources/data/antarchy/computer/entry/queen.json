@@ -1,6 +1,8 @@
 {
   "type": "entity",
   "category": "thoraxis",
+  "folder": "antarchy:thoraxis",
+  "sort_order": 60,
   "title": "guide.antarchy.entry.queen.title",
   "subtitle": "guide.antarchy.entry.queen.subtitle",
   "description": [

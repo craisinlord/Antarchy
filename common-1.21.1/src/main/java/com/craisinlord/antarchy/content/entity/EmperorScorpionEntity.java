@@ -105,6 +105,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     private static final double FORCED_RETURN_RADIUS = 144.0D;
     private static final int RESET_DELAY_TICKS = 240;
     private static final double HOME_RETURN_SPEED = 1.0D;
+    private static final int HOME_REPATH_INTERVAL_TICKS = 20;
     private static final double NEARBY_SCORPION_CHECK_RADIUS = 32.0D;
 
     private static final ResourceKey<Level> THORAXIS_KEY =
@@ -137,6 +138,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     private int hardenHealTicks;
     private int hardenSummonedScorpions;
     private int disengageTicks;
+    private int homeRepathCooldown;
     private boolean attackDamageApplied;
     private AttackType currentAttack = AttackType.NONE;
     private HardenPhase hardenPhase = HardenPhase.NONE;
@@ -797,6 +799,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
 
         if (target != null) {
             this.disengageTicks = 0;
+            this.homeRepathCooldown = 0;
             if (this.isOutsideLeashRadius()) {
                 this.resetEncounter(true);
             }
@@ -869,6 +872,11 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
             return;
         }
         Vec3 homeCenter = Vec3.atCenterOf(this.encounterHome);
+        if (this.homeRepathCooldown > 0) {
+            this.homeRepathCooldown--;
+            return;
+        }
+        this.homeRepathCooldown = HOME_REPATH_INTERVAL_TICKS;
         if (this.distanceToSqr(homeCenter) > FORCED_RETURN_RADIUS * FORCED_RETURN_RADIUS) {
             this.moveTo(homeCenter.x, homeCenter.y, homeCenter.z, this.getYRot(), this.getXRot());
             this.setDeltaMovement(Vec3.ZERO);

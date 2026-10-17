@@ -1,6 +1,8 @@
 {
   "type": "structure",
   "category": "elythia",
+  "folder": "antarchy:elythia",
+  "sort_order": 60,
   "title": "guide.antarchy.entry.toreterror.title",
   "subtitle": "guide.antarchy.entry.toreterror_arena.subtitle",
   "description": [

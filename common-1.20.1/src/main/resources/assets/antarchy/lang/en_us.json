@@ -1669,5 +1669,9 @@
     "item.antarchy.music_disc_the_queen.desc": "Karlljp - The Queen",
     "item.antarchy.music_disc_verdance.desc": "Hewo - Verdance",
     "item.antarchy.music_disc_grotesque.desc": "DocShrekBot - Grotesque",
-    "attribute.antarchy.entity_interaction_range": "Entity Interaction Range"
+    "attribute.antarchy.entity_interaction_range": "Entity Interaction Range",
+    "guide.antarchy.archive_folder.antlas": "Antlas",
+    "guide.antarchy.archive_folder.elythia": "Elythia",
+    "guide.antarchy.archive_folder.cavaryn": "Cavaryn",
+    "guide.antarchy.archive_folder.thoraxis": "Thoraxis"
 }

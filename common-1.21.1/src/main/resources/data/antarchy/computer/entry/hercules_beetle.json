@@ -1,6 +1,8 @@
 {
   "type": "mob",
   "category": "cavaryn",
+  "folder": "antarchy:cavaryn",
+  "sort_order": 10,
   "title": "guide.antarchy.entry.hercules_beetle.title",
   "subtitle": "guide.antarchy.entry.hercules_beetle.subtitle",
   "description": ["guide.antarchy.entry.hercules_beetle.description", "guide.antarchy.entry.hercules_beetle.description2", "guide.antarchy.entry.hercules_beetle.description3"],

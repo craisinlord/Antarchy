@@ -1,0 +1,7 @@
+{
+  "title": "guide.antarchy.archive_folder.cavaryn",
+  "icon_item": "antarchy:termite_spawn_egg",
+  "parent": "antarchy:antlas",
+  "sort_order": 20,
+  "green_tint": false
+}

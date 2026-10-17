@@ -1,6 +1,8 @@
 {
   "type": "mob",
   "category": "elythia",
+  "folder": "antarchy:elythia",
+  "sort_order": 10,
   "title": "guide.antarchy.entry.flying_squirrel.title",
   "subtitle": "guide.antarchy.entry.flying_squirrel.subtitle",
   "description": ["guide.antarchy.entry.flying_squirrel.description", "guide.antarchy.entry.flying_squirrel.description2", "guide.antarchy.entry.flying_squirrel.description3", "guide.antarchy.entry.flying_squirrel.description4"],

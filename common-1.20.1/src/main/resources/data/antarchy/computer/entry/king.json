@@ -1,6 +1,8 @@
 {
   "type": "entity",
   "category": "elythia",
+  "folder": "antarchy:elythia",
+  "sort_order": 50,
   "title": "guide.antarchy.entry.king.title",
   "subtitle": "guide.antarchy.entry.king.subtitle",
   "description": [

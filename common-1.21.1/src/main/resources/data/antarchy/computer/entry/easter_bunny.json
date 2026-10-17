@@ -1,6 +1,8 @@
 {
   "type": "entity",
   "category": "general",
+  "folder": "antarchy:antlas",
+  "sort_order": 30,
   "title": "guide.antarchy.entry.easter_bunny.title",
   "subtitle": "guide.antarchy.entry.easter_bunny.subtitle",
   "description": ["guide.antarchy.entry.easter_bunny.description", "guide.antarchy.entry.easter_bunny.description2"],

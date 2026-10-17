@@ -1662,5 +1662,9 @@
     "advancements.antarchy.survived_the_horde.description": "Survive a Cavaryn horde to its final wave and break it.",
     "advancements.antarchy.glimmer_keeper.title": "Glimmer Keeper",
     "advancements.antarchy.glimmer_keeper.description": "Tame every kind of Glimmer.",
-    "entity.antarchy.portal_gun_portal": "Portal Gun Portal"
+    "entity.antarchy.portal_gun_portal": "Portal Gun Portal",
+    "guide.antarchy.archive_folder.antlas": "Antlas",
+    "guide.antarchy.archive_folder.elythia": "Elythia",
+    "guide.antarchy.archive_folder.cavaryn": "Cavaryn",
+    "guide.antarchy.archive_folder.thoraxis": "Thoraxis"
 }

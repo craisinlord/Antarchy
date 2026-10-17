@@ -1,6 +1,8 @@
 {
   "type": "mob",
   "category": "elythia",
+  "folder": "antarchy:elythia",
+  "sort_order": 20,
   "title": "guide.antarchy.entry.glimmer.title",
   "subtitle": "guide.antarchy.entry.glimmer.subtitle",
   "description": [

@@ -46,6 +46,7 @@ public class AlphaMantisEntity extends MantisEntity {
     private static final double FORCED_RETURN_RADIUS = 144.0D;
     private static final int RESET_DELAY_TICKS = 300;
     private static final double HOME_RETURN_SPEED = 1.05D;
+    private static final int HOME_REPATH_INTERVAL_TICKS = 20;
 
     private final ServerBossEvent bossEvent =
             new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this.getUUID(), Component.translatable("entity.antarchy.alpha_mantis"), BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.PROGRESS);
@@ -53,6 +54,7 @@ public class AlphaMantisEntity extends MantisEntity {
     private int summonCooldownTicks;
     private int phaseTransitionTicks;
     private int disengageTicks;
+    private int homeRepathCooldown;
     private boolean halfHealthTransitionComplete;
     @Nullable
     private BlockPos encounterHome;
@@ -385,6 +387,7 @@ public class AlphaMantisEntity extends MantisEntity {
 
         if (target != null) {
             this.disengageTicks = 0;
+            this.homeRepathCooldown = 0;
             if (this.isOutsideLeashRadius()) {
                 this.resetEncounter(true);
             }
@@ -447,6 +450,11 @@ public class AlphaMantisEntity extends MantisEntity {
             return;
         }
         Vec3 homeCenter = Vec3.atCenterOf(this.encounterHome);
+        if (this.homeRepathCooldown > 0) {
+            this.homeRepathCooldown--;
+            return;
+        }
+        this.homeRepathCooldown = HOME_REPATH_INTERVAL_TICKS;
         if (this.distanceToSqr(homeCenter) > FORCED_RETURN_RADIUS * FORCED_RETURN_RADIUS) {
             this.moveTo(homeCenter.x, this.encounterHome.getY(), homeCenter.z, this.getYRot(), this.getXRot());
             this.setDeltaMovement(Vec3.ZERO);

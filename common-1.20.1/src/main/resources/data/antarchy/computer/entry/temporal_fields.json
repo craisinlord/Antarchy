@@ -1,6 +1,8 @@
 {
   "type": "article",
   "category": "thoraxis",
+  "folder": "antarchy:thoraxis",
+  "sort_order": 30,
   "title": "guide.antarchy.entry.temporal_fields.title",
   "subtitle": "guide.antarchy.entry.temporal_fields.subtitle",
   "description": [

@@ -1,6 +1,8 @@
 {
   "type": "mob",
   "category": "thoraxis",
+  "folder": "antarchy:thoraxis",
+  "sort_order": 10,
   "title": "guide.antarchy.entry.nightmare.title",
   "subtitle": "guide.antarchy.entry.nightmare.subtitle",
   "description": [

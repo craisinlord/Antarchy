@@ -1,0 +1,7 @@
+{
+  "title": "guide.antarchy.archive_folder.thoraxis",
+  "icon_item": "antarchy:red_ant_spawn_egg",
+  "parent": "antarchy:antlas",
+  "sort_order": 30,
+  "green_tint": false
+}
