@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.client;
 
 import com.craisinlord.antarchy.content.network.PortalGunMoonAimPayload;
 import com.craisinlord.antarchy.content.portalgun.PortalGunMoonMath;
+import java.lang.ref.WeakReference;
 import java.util.function.Consumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -16,7 +17,8 @@ public final class MoonSkyTracker {
     private static final long MAX_AGE_MILLIS = 1500L;
     private static final double AIM_COSINE = Math.cos(Math.toRadians(PortalGunMoonMath.AIM_TOLERANCE_DEGREES));
     private static Vec3 direction;
-    private static ClientLevel level;
+    // Weak so a dimension change or logout doesn't pin the old client world in memory.
+    private static WeakReference<ClientLevel> level = new WeakReference<>(null);
     private static long recordedAt;
     private static Consumer<PortalGunMoonAimPayload> sender = payload -> {};
 
@@ -35,7 +37,7 @@ public final class MoonSkyTracker {
         }
         Vector3f world = camera.rotation().transform(view.normalize());
         direction = new Vec3(world.x, world.y, world.z).normalize();
-        level = renderedLevel;
+        level = new WeakReference<>(renderedLevel);
         recordedAt = System.currentTimeMillis();
     }
 
@@ -44,7 +46,7 @@ public final class MoonSkyTracker {
         if (minecraft.player == null) {
             return;
         }
-        boolean tracked = direction != null && level == minecraft.level && System.currentTimeMillis() - recordedAt <= MAX_AGE_MILLIS;
+        boolean tracked = direction != null && level.get() == minecraft.level && System.currentTimeMillis() - recordedAt <= MAX_AGE_MILLIS;
         boolean aiming = tracked && minecraft.gameRenderer.getMainCamera().getLookVector().dot(
                 new Vector3f((float) direction.x, (float) direction.y, (float) direction.z)) >= AIM_COSINE;
         sender.accept(new PortalGunMoonAimPayload(tracked, aiming));

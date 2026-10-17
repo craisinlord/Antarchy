@@ -20,7 +20,7 @@ public interface ConfigGeneratorMixin {
             remap = false,
             require = 0
     )
-    static void antarchy$skipBrokenBlockEntityFactories(
+    private static void antarchy$skipBrokenBlockEntityFactories(
             Set<ResourceKey<BlockEntityType<?>>> entries,
             Consumer<ResourceKey<BlockEntityType<?>>> scan) {
         InfinityBlockEntityScanGuard.forEach(entries, scan, (entry, error) ->

@@ -1,6 +1,8 @@
 {
   "type": "mob",
   "category": "elythia",
+  "folder": "antarchy:elythia",
+  "sort_order": 30,
   "title": "guide.antarchy.entry.brutalfly.title",
   "subtitle": "guide.antarchy.entry.brutalfly.subtitle",
   "description": [

@@ -1,6 +1,8 @@
 {
   "type": "entity",
   "category": "cavaryn",
+  "folder": "antarchy:cavaryn",
+  "sort_order": 0,
   "title": "guide.antarchy.entry.termite.title",
   "subtitle": "guide.antarchy.entry.termite.subtitle",
   "description": ["guide.antarchy.entry.termite.description", "guide.antarchy.entry.termite.description2", "guide.antarchy.entry.termite.description3", "guide.antarchy.entry.termite.description4"],

@@ -25,6 +25,9 @@ public final class AntarchyMixinPlugin implements IMixinConfigPlugin {
         if (!classPresent(targetClassName)) {
             return false;
         }
+        if (mixinClassName.equals("com.craisinlord.antarchy.mixins.EnchantmentTableApplicabilityMixin")) {
+            return !classPresent("net.minecraftforge.common.extensions.IForgeEnchantment");
+        }
         if (mixinClassName.startsWith("com.craisinlord.antarchy.mixins.compat.scguns.")) {
             return classPresent("top.ribs.scguns.entity.projectile.ProjectileEntity");
         }

@@ -43,7 +43,7 @@ import net.minecraft.tags.TagKey;
 
 public class CritterCageItem extends Item {
     public static final String ENTITY_DATA_TAG = "EntityData";
-    private static final TagKey<EntityType<?>> BOSS_TAG = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.withDefaultNamespace("bosses"));
+    private static final TagKey<EntityType<?>> BOSS_TAG = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("c", "bosses"));
     private static final int EMPTY_STATE = 0;
     private static final int FILLED_PLAIN_STATE = 1;
     private static final int FILLED_COLORED_STATE = 2;
