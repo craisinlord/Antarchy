@@ -11,6 +11,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 
 import java.util.Comparator;
+import java.util.function.Supplier;
 
 public final class QueenMusicHandler {
     private static final double START_RADIUS = 256.0D;
@@ -25,7 +26,7 @@ public final class QueenMusicHandler {
         return music != null;
     }
 
-    public static void tick(Minecraft minecraft, SoundEvent soundEvent) {
+    public static void tick(Minecraft minecraft, Supplier<SoundEvent> soundEventSupplier) {
         if (minecraft.level == null || minecraft.player == null || minecraft.isPaused()
                 || !minecraft.player.isAlive() || minecraft.player.isRemoved()
                 || minecraft.player.isDeadOrDying() || minecraft.screen instanceof DeathScreen) {
@@ -51,6 +52,15 @@ public final class QueenMusicHandler {
         }
 
         if (music == null) {
+            SoundEvent soundEvent;
+            try {
+                soundEvent = soundEventSupplier.get();
+            } catch (RuntimeException exception) {
+                return;
+            }
+            if (soundEvent == null) {
+                return;
+            }
             minecraft.getMusicManager().stopPlaying();
             music = new QueenMusicSound(soundEvent);
             minecraft.getSoundManager().play(music);

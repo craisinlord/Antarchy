@@ -40,6 +40,8 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.Level;
@@ -85,7 +87,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
     private static final int SPIT_WINDUP_TICKS = 16;
     private static final int SWIPE_TICKS = 18;
     private static final float SWIPE_KNOCKBACK = 2.8F;
-    private static final int COCOON_HIT_THRESHOLD = 3;
+    private static final int COCOON_HIT_THRESHOLD = 5;
     private static final int COCOON_HIT_COOLDOWN_TICKS = 60;
     private static final int COCOON_HIT_ANIM_TICKS = 30;
     private static final int COCOON_HATCH_ANIM_TICKS = 40;
@@ -339,6 +341,12 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
         if (nearbyPlayer != null && !nearbyPlayer.isCreative() && !nearbyPlayer.isSpectator()) {
             this.setTarget(nearbyPlayer);
         }
+        this.spitCooldown = 0;
+    }
+
+    public float getDamageScale() {
+        double base = AntarchySettings.brutalflySwipeDamage();
+        return base <= 0.0D ? 1.0F : (float) (this.getAttributeValue(Attributes.ATTACK_DAMAGE) / base);
     }
 
     public boolean isCocooned() {
@@ -516,6 +524,11 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
         this.playSound(AntarchySoundEvents.BRUTALFLY_SPIT.get(), 1.0F, 0.9F + this.random.nextFloat() * 0.2F);
         switch (this.getFightPhase()) {
             case PHASE_THREE -> {
+                this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.POISON, -14.0F);
+                this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.STICKY, 0.0F);
+                this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.POISON, 14.0F);
+            }
+            case PHASE_TWO -> {
                 this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.POISON, -8.0F);
                 this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.STICKY, 8.0F);
             }
@@ -588,7 +601,8 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
     }
 
     private void performSwipeHit() {
-        float swipeDamage = (float) AntarchySettings.brutalflySwipeDamage();
+        float swipeDamage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
+        boolean finalPhase = this.getFightPhase() == FightPhase.PHASE_THREE;
         AABB attackBox = this.getBoundingBox().inflate(4.8D, 2.4D, 4.8D).expandTowards(0.0D, -2.5D, 0.0D);
         for (LivingEntity target : this.level().getEntitiesOfClass(
                 LivingEntity.class,
@@ -600,6 +614,9 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
             }
 
             target.hurt(this.damageSources().mobAttack(this), swipeDamage);
+            if (finalPhase) {
+                target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1, false, true));
+            }
 
             double dx = target.getX() - this.getX();
             double dz = target.getZ() - this.getZ();

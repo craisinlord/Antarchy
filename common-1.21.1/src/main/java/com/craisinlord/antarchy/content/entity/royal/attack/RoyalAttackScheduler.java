@@ -100,7 +100,8 @@ public final class RoyalAttackScheduler {
         int total = 0;
         int[] weights = new int[ids.length];
         for (int i = 0; i < ids.length; i++) {
-            weights[i] = Math.max(0, weightFunction.applyAsInt(ids[i]) - repetitionPenalty(ids[i]));
+            int baseWeight = weightFunction.applyAsInt(ids[i]);
+            weights[i] = baseWeight > 0 ? Math.max(1, baseWeight - repetitionPenalty(ids[i])) : 0;
             total += weights[i];
         }
         if (total <= 0) {

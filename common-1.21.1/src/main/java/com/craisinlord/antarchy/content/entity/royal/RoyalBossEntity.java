@@ -57,8 +57,13 @@ import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -111,6 +116,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     private static final int RECOVERY_AFTER_BEAM_TICKS = 30;
     private static final ResourceLocation MULTIPLAYER_DAMAGE_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "royal_multiplayer_damage");
     private static final int OBSTRUCTION_CLEAR_INTERVAL_TICKS = 5;
+    private static final int RIVAL_OBSTRUCTION_CLEAR_INTERVAL_TICKS = 10;
+    private static final int BODY_CRUSH_INTERVAL_TICKS = 10;
+    private static final int RIVAL_BODY_CRUSH_INTERVAL_TICKS = 20;
     private static final double OBSTRUCTION_CLEAR_RADIUS = 3.5D;
     private static final int OBSTRUCTION_CLEAR_MAX_BLOCKS = 24;
     private static final double OBSTRUCTION_CLEAR_MAX_RESISTANCE = 60.0D;
@@ -120,6 +128,36 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     private static final double BEAM_MUZZLE_SIDE_Y = 10.25D;
     private static final double BEAM_MUZZLE_LATERAL = 2.625D;
     private static final int HEAVY_BLOCK_CHECK_INTERVAL_TICKS = 4;
+    private static final String WING_BUFFET_ID = "royal_wing_buffet";
+    private static final int WING_BUFFET_WINDUP_TICKS = 16;
+    private static final double WING_BUFFET_EXTRA_RADIUS = 5.0D;
+    private static final double WING_BUFFET_BELOW = 14.0D;
+    private static final double WING_BUFFET_ABOVE = 6.0D;
+    private static final double WING_BUFFET_DAMAGE_SCALE = 0.85D;
+    private static final double WING_BUFFET_PUSH = 2.6D;
+    private static final double WING_BUFFET_LIFT = 0.75D;
+    private static final String EXCAVATION_ID = "royal_excavation";
+    private static final int EXCAVATION_TRIGGER_TICKS = 100;
+    private static final int EXCAVATION_WINDUP_TICKS = 24;
+    private static final int EXCAVATION_COOLDOWN_TICKS = 200;
+    private static final double EXCAVATION_RANGE = 72.0D;
+    private static final double EXCAVATION_RADIUS = 2.5D;
+    private static final double EXCAVATION_DEPTH = 10.0D;
+    private static final int EXCAVATION_MAX_BLOCKS = 20;
+    private static final double EXCAVATION_CONCEALED_DAMAGE = 5.0D;
+    private static final int STUCK_SAMPLE_TICKS = 40;
+    private static final double STUCK_MIN_PROGRESS_SQR = 1.0D;
+    private static final double STUCK_MIN_WANTED_DISTANCE_SQR = 36.0D;
+    private static final int STUCK_TAKEOFF_STRIKES = 2;
+    private static final int STUCK_TELEPORT_STRIKES = 4;
+    private static final int STUCK_TELEPORT_COOLDOWN_TICKS = 600;
+    private static final int STUCK_TELEPORT_ATTEMPTS = 16;
+    private static final int LANDING_FOR_COMBAT_TIMEOUT_TICKS = 120;
+    private static final int GROUND_SCAN_DEPTH = 48;
+    private static final int GROUND_SCAN_RISE = 24;
+    private static final double MAX_BEAM_PITCH = Math.toRadians(55.0D);
+    private static final int ELEVATED_TARGET_HEIGHT = 10;
+    private static final float FACING_TURN_RATE = 6.0F;
 
     protected static final double FLYING_MIN_HOVER = 2.5D;
     protected static final double FLYING_PREFERRED_HOVER = 6.0D;
@@ -196,6 +234,16 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     private boolean multiplayerScalingInitialized;
     private final Set<UUID> encounterParticipants = new HashSet<>();
     private double royalDamageMultiplier = 1.0D;
+    private int landingForCombatTicks;
+    private int royalDeadZoneTicks;
+    private int royalConcealedTicks;
+    private int royalElevatedTargetTicks;
+    private int royalLastMoveRequestTick = Integer.MIN_VALUE;
+    @Nullable
+    private Vec3 royalStuckSamplePosition;
+    private int royalStuckSampleTicks;
+    private int royalStuckStrikes;
+    private int royalTeleportCooldownTicks;
 
     @Nullable
     private Entity[] multipartParts;
@@ -206,8 +254,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             this.beamControllers[i] = new BeamController(this);
         }
         this.xpReward = 500;
-        this.groundMoveControl = new MoveControl(this);
-        this.flyingMoveControl = new FlyingMoveControl(this, 20, true);
+        this.groundMoveControl = new RoyalGroundMoveControl(this);
+        this.flyingMoveControl = new RoyalFlyingMoveControl(this, 20);
         this.groundNavigation = new GroundPathNavigation(this, level);
         FlyingPathNavigation flyingNavigation = new FlyingPathNavigation(this, level);
         flyingNavigation.setCanFloat(true);
@@ -216,6 +264,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             this.moveControl = this.flyingMoveControl;
             this.navigation = this.flyingNavigation;
         } else {
+            this.moveControl = this.groundMoveControl;
             this.navigation = this.groundNavigation;
         }
         this.bossEvent = new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(
@@ -386,8 +435,42 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     protected void registerRoyalTargetGoals() {
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setUnseenMemoryTicks(ROYAL_UNSEEN_MEMORY_TICKS));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true)
+                .setUnseenMemoryTicks(ROYAL_UNSEEN_MEMORY_TICKS));
+    }
+
+    protected static final int ROYAL_UNSEEN_MEMORY_TICKS = 400;
+
+    protected SoundEvent royalWingBuffetSound() {
+        return this.royalBiteSound();
+    }
+
+    protected int royalWingBuffetCooldownTicks(Phase phase) {
+        return switch (phase) {
+            case ONE -> 110;
+            case TWO -> 90;
+            case THREE -> 70;
+        };
+    }
+
+    protected int royalDeadZoneTriggerTicks(Phase phase) {
+        return switch (phase) {
+            case ONE -> 40;
+            case TWO -> 32;
+            case THREE -> 24;
+        };
+    }
+
+    protected boolean royalShouldFaceTarget(LivingEntity target) {
+        return true;
+    }
+
+    protected void onRoyalStuck(LivingEntity target) {
+    }
+
+    protected final int royalElevatedTargetTicks() {
+        return this.royalElevatedTargetTicks;
     }
 
     public boolean canDamageWithRoyalAttack(LivingEntity target) {
@@ -513,7 +596,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         if (this.shouldClearObstruction()
                 && !this.level().isClientSide
                 && !this.isDeadOrDying()
-                && this.tickCount % OBSTRUCTION_CLEAR_INTERVAL_TICKS == 0
+                && this.tickCount % (this.isFightingRoyalRival() ? RIVAL_OBSTRUCTION_CLEAR_INTERVAL_TICKS : OBSTRUCTION_CLEAR_INTERVAL_TICKS) == 0
                 && this.isInWall()) {
             RoyalBlockDestruction.destroySphere(
                     (ServerLevel) this.level(),
@@ -576,13 +659,16 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             for (RoyalHead head : this.heads) {
                 head.setTarget(null);
             }
+            this.resetRoyalCombatTracking();
             return;
         }
 
         this.initializeMultiplayerScaling(primaryTarget);
         this.assignHeadTargets(primaryTarget);
+        this.tickRoyalTargetElevation(primaryTarget);
 
         this.tickCombatLocomotionMode(primaryTarget);
+        this.tickRoyalStuckRecovery(primaryTarget);
         boolean movementBlocksAttacks = this.blocksRoyalAttacksForMovement();
         if (!movementBlocksAttacks) {
             boolean aeriallyStabilized = this.steerTowardTarget(primaryTarget);
@@ -596,6 +682,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             return;
         }
         this.tickBodyCrush();
+        this.tickRoyalCloseRangeAnswer(primaryTarget);
+        this.tickRoyalConcealedTarget(primaryTarget);
 
         Phase phase = this.phase();
         int activeHeadAttacks = 0;
@@ -920,15 +1008,18 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
 
         double verticalDistance = Math.abs(target.getY() + target.getBbHeight() * 0.5D
                 - (this.getY() + this.getBbHeight() * 0.5D));
+        boolean inverted = GravityApi.isGravityInverted(this);
+        double groundBelowTarget = this.groundYBelow(wanted.x, wanted.z, target.getY() + 1.0D);
+        double wantedY = this.landingForCombat
+                ? (inverted ? target.getY() + target.getBbHeight() - this.getBbHeight() : groundBelowTarget)
+                : inverted
+                ? target.getY() - 3.0D
+                : Mth.clamp(target.getY() + 3.0D,
+                groundBelowTarget + FLYING_MIN_HOVER,
+                Math.max(groundBelowTarget + FLYING_MAX_HOVER_ABOVE_GROUND, target.getY() + 4.0D));
         if (!this.landingForCombat && verticalDistance > 6.0D) {
             if (this.aerialCombatAnchor == null || this.aerialCombatAnchorTicks-- <= 0) {
-                double anchorX = this.getX();
-                double anchorZ = this.getZ();
-                if (horizontalDistance > 10.0D) {
-                    anchorX = wanted.x;
-                    anchorZ = wanted.z;
-                }
-                this.aerialCombatAnchor = new Vec3(anchorX, this.getY(), anchorZ);
+                this.aerialCombatAnchor = new Vec3(wanted.x, wantedY, wanted.z);
                 this.aerialCombatAnchorTicks = 20;
             }
             Vec3 anchor = this.aerialCombatAnchor;
@@ -938,15 +1029,6 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         this.aerialCombatAnchor = null;
         this.aerialCombatAnchorTicks = 0;
 
-        boolean inverted = GravityApi.isGravityInverted(this);
-        double groundBelowTarget = this.groundYBelow(wanted.x, wanted.z);
-        double wantedY = this.landingForCombat
-                ? (inverted ? target.getY() + target.getBbHeight() - this.getBbHeight() : groundBelowTarget)
-                : inverted
-                ? target.getY() - 3.0D
-                : Mth.clamp(target.getY() + 3.0D,
-                groundBelowTarget + FLYING_MIN_HOVER,
-                groundBelowTarget + FLYING_MAX_HOVER_ABOVE_GROUND);
         boolean closeVertically = Math.abs(wantedY - this.getY()) <= 2.5D;
         if (atStandoff && closeVertically) {
             this.getNavigation().stop();
@@ -954,6 +1036,536 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             this.getMoveControl().setWantedPosition(wanted.x, wantedY, wanted.z, approachSpeed);
         }
         return false;
+    }
+
+    private void resetRoyalCombatTracking() {
+        this.royalDeadZoneTicks = 0;
+        this.royalConcealedTicks = 0;
+        this.royalElevatedTargetTicks = 0;
+        this.royalStuckSamplePosition = null;
+        this.royalStuckSampleTicks = 0;
+        this.royalStuckStrikes = 0;
+    }
+
+    private void tickRoyalTargetElevation(LivingEntity target) {
+        Vec3 local = GravityRotationUtil.vecWorldToPlayer(target.position().subtract(this.position()),
+                GravityApi.getGravityDirection(this));
+        if (local.y > ELEVATED_TARGET_HEIGHT) {
+            this.royalElevatedTargetTicks++;
+        } else {
+            this.royalElevatedTargetTicks = 0;
+        }
+    }
+
+    final void markRoyalMoveRequested() {
+        this.royalLastMoveRequestTick = this.tickCount;
+    }
+
+    private void tickRoyalStuckRecovery(LivingEntity target) {
+        if (this.royalTeleportCooldownTicks > 0) {
+            this.royalTeleportCooldownTicks--;
+        }
+        MoveControl control = this.getMoveControl();
+        boolean requested = (long) this.tickCount - (long) this.royalLastMoveRequestTick <= 2L
+                && this.distanceToSqr(control.getWantedX(), control.getWantedY(), control.getWantedZ())
+                > STUCK_MIN_WANTED_DISTANCE_SQR;
+        if (!requested) {
+            this.royalStuckSamplePosition = null;
+            this.royalStuckSampleTicks = 0;
+            this.royalStuckStrikes = 0;
+            return;
+        }
+        if (this.royalStuckSamplePosition == null) {
+            this.royalStuckSamplePosition = this.position();
+            this.royalStuckSampleTicks = 0;
+            return;
+        }
+        if (++this.royalStuckSampleTicks < STUCK_SAMPLE_TICKS) {
+            return;
+        }
+        boolean progressed = this.position().distanceToSqr(this.royalStuckSamplePosition) >= STUCK_MIN_PROGRESS_SQR;
+        this.royalStuckSamplePosition = this.position();
+        this.royalStuckSampleTicks = 0;
+        if (progressed) {
+            this.royalStuckStrikes = 0;
+            return;
+        }
+        this.royalStuckStrikes++;
+        this.onRoyalMovementObstructed(target);
+    }
+
+    private void onRoyalMovementObstructed(LivingEntity target) {
+        if (this.level() instanceof ServerLevel serverLevel) {
+            this.clearRoyalPathTowardWanted(serverLevel);
+        }
+        if (this.royalStuckStrikes >= STUCK_TAKEOFF_STRIKES) {
+            this.onRoyalStuck(target);
+            if (this.isFlyingBoss()) {
+                this.addGravityAwareImpulse(this, GravityRotationUtil.vecPlayerToWorld(
+                        0.0D, 0.6D, 0.0D, GravityApi.getGravityDirection(this)));
+                this.hasImpulse = true;
+            }
+        }
+        if (this.royalStuckStrikes >= STUCK_TELEPORT_STRIKES && this.royalTeleportCooldownTicks <= 0
+                && this.tryRoyalRecoveryTeleport(target)) {
+            this.royalStuckStrikes = 0;
+            this.royalStuckSamplePosition = null;
+            this.royalTeleportCooldownTicks = STUCK_TELEPORT_COOLDOWN_TICKS;
+        }
+    }
+
+    private void clearRoyalPathTowardWanted(ServerLevel level) {
+        MoveControl control = this.getMoveControl();
+        Vec3 toWanted = new Vec3(control.getWantedX() - this.getX(), control.getWantedY() - this.getY(),
+                control.getWantedZ() - this.getZ());
+        Vec3 horizontal = toWanted.multiply(1.0D, 0.0D, 1.0D);
+        Vec3 direction;
+        if (horizontal.lengthSqr() > 1.0E-4D) {
+            direction = horizontal.normalize();
+        } else {
+            double yaw = this.yBodyRot * Mth.DEG_TO_RAD;
+            direction = new Vec3(-Math.sin(yaw), 0.0D, Math.cos(yaw));
+        }
+        Vec3 side = new Vec3(-direction.z, 0.0D, direction.x);
+        var gravity = GravityApi.getGravityDirection(this);
+        double reach = this.getBbWidth() * 0.5D + 1.0D;
+        double[] heights = {1.5D, this.getBbHeight() * 0.4D, this.getBbHeight() * 0.75D};
+        double[] laterals = {-this.getBbWidth() * 0.3D, 0.0D, this.getBbWidth() * 0.3D};
+        for (double height : heights) {
+            for (double lateral : laterals) {
+                Vec3 center = this.position().add(direction.scale(reach)).add(side.scale(lateral))
+                        .add(GravityRotationUtil.vecPlayerToWorld(0.0D, height, 0.0D, gravity));
+                RoyalBlockDestruction.destroySphere(level, this, center, OBSTRUCTION_CLEAR_RADIUS,
+                        OBSTRUCTION_CLEAR_MAX_BLOCKS, OBSTRUCTION_CLEAR_MAX_RESISTANCE, OBSTRUCTION_CLEAR_DROP_CHANCE);
+            }
+        }
+        if (toWanted.y > 3.0D) {
+            RoyalBlockDestruction.destroySphere(level, this,
+                    this.position().add(GravityRotationUtil.vecPlayerToWorld(0.0D, this.getBbHeight() + 1.0D, 0.0D, gravity)),
+                    OBSTRUCTION_CLEAR_RADIUS, OBSTRUCTION_CLEAR_MAX_BLOCKS, OBSTRUCTION_CLEAR_MAX_RESISTANCE,
+                    OBSTRUCTION_CLEAR_DROP_CHANCE);
+        }
+    }
+
+    private boolean tryRoyalRecoveryTeleport(LivingEntity target) {
+        if (!(this.level() instanceof ServerLevel level)) {
+            return false;
+        }
+        boolean inverted = GravityApi.isGravityInverted(this);
+        for (int attempt = 0; attempt < STUCK_TELEPORT_ATTEMPTS; attempt++) {
+            double angle = this.random.nextDouble() * Mth.TWO_PI;
+            double radius = 22.0D + this.random.nextDouble() * 14.0D;
+            double x = target.getX() + Math.cos(angle) * radius;
+            double z = target.getZ() + Math.sin(angle) * radius;
+            double y = inverted
+                    ? target.getY() + target.getBbHeight() - this.getBbHeight()
+                    : this.groundYBelow(x, z, target.getY() + 1.0D)
+                    + (this.isRoyalFlying() ? FLYING_PREFERRED_HOVER : 0.1D);
+            AABB box = this.getBoundingBox().move(x - this.getX(), y - this.getY(), z - this.getZ());
+            if (!level.noCollision(this, box) || level.containsAnyLiquid(box)) {
+                continue;
+            }
+            this.sendRoyalRelocationBurst(level);
+            this.getNavigation().stop();
+            this.teleportTo(x, y, z);
+            this.setDeltaMovement(Vec3.ZERO);
+            this.sendRoyalRelocationBurst(level);
+            level.playSound(null, x, y, z, SoundEvents.ENDERMAN_TELEPORT, SoundSource.HOSTILE, 3.0F, 0.55F);
+            return true;
+        }
+        return false;
+    }
+
+    private void sendRoyalRelocationBurst(ServerLevel level) {
+        level.sendParticles(ParticleTypes.REVERSE_PORTAL,
+                this.getX(), this.getY() + this.getBbHeight() * 0.5D, this.getZ(),
+                80, this.getBbWidth() * 0.3D, this.getBbHeight() * 0.3D, this.getBbWidth() * 0.3D, 0.2D);
+    }
+
+    private double royalDeadZoneRadius() {
+        return this.getBbWidth() * 0.5D + WING_BUFFET_EXTRA_RADIUS;
+    }
+
+    private boolean isInRoyalDeadZone(LivingEntity living) {
+        Vec3 local = GravityRotationUtil.vecWorldToPlayer(living.position().subtract(this.position()),
+                GravityApi.getGravityDirection(this));
+        double radius = this.royalDeadZoneRadius();
+        if (local.x * local.x + local.z * local.z > radius * radius
+                || local.y < -WING_BUFFET_BELOW
+                || local.y > this.getBbHeight() + WING_BUFFET_ABOVE) {
+            return false;
+        }
+        for (RoyalHead head : this.heads) {
+            if (this.headWithinBiteReach(head, living)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean hasRoyalDeadZoneIntruder(ServerLevel level, LivingEntity primaryTarget) {
+        if (!(primaryTarget instanceof Player) && this.isInRoyalDeadZone(primaryTarget)) {
+            return true;
+        }
+        AABB area = this.getBoundingBox().inflate(WING_BUFFET_EXTRA_RADIUS + 1.0D, WING_BUFFET_BELOW,
+                WING_BUFFET_EXTRA_RADIUS + 1.0D);
+        for (Player player : level.getEntitiesOfClass(Player.class, area,
+                candidate -> candidate.isAlive() && !candidate.isSpectator() && !candidate.isCreative())) {
+            if (this.canDamageWithRoyalAttack(player) && this.isInRoyalDeadZone(player)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void tickRoyalCloseRangeAnswer(LivingEntity primaryTarget) {
+        if (!(this.level() instanceof ServerLevel level)) {
+            return;
+        }
+        boolean intruder = this.hasRoyalDeadZoneIntruder(level, primaryTarget);
+        this.royalDeadZoneTicks = intruder ? this.royalDeadZoneTicks + 1 : Math.max(0, this.royalDeadZoneTicks - 2);
+        Phase phase = this.phase();
+        if (this.royalDeadZoneTicks < this.royalDeadZoneTriggerTicks(phase)
+                || this.recoveryWindowTicks > 0
+                || !this.attackScheduler.ready(WING_BUFFET_ID, RoyalAttackLane.BODY)) {
+            return;
+        }
+        if (this.beginRoyalAttack(WING_BUFFET_ID, RoyalAttackLane.BODY, this.royalWingBuffetCooldownTicks(phase),
+                WING_BUFFET_WINDUP_TICKS, 1, this.animationRecovery(55, WING_BUFFET_WINDUP_TICKS, 1, 12),
+                new RoyalAttackScheduler.Action() {
+                    @Override
+                    public void onStart() {
+                        RoyalBossEntity.this.triggerAnim("wing_action", "wing_gust");
+                        RoyalBossEntity.this.playRoyalSound(RoyalBossEntity.this.royalWingBuffetSound(), 0.75F);
+                    }
+
+                    @Override
+                    public void onWindup(int elapsedTicks, int remainingTicks) {
+                        RoyalBossEntity.this.sendRoyalWingBuffetTelegraph(level, elapsedTicks);
+                    }
+
+                    @Override
+                    public void onActive(int elapsedTicks) {
+                        RoyalBossEntity.this.performRoyalWingBuffet(level);
+                    }
+                })) {
+            this.royalDeadZoneTicks = 0;
+        }
+    }
+
+    private void sendRoyalWingBuffetTelegraph(ServerLevel level, int elapsedTicks) {
+        if (elapsedTicks % 2 != 0) {
+            return;
+        }
+        double progress = Math.min(1.0D, elapsedTicks / (double) WING_BUFFET_WINDUP_TICKS);
+        double radius = Mth.lerp(progress, this.getBbWidth() * 0.3D, this.royalDeadZoneRadius());
+        var gravity = GravityApi.getGravityDirection(this);
+        for (int index = 0; index < 40; index++) {
+            double angle = Mth.TWO_PI * index / 40.0D;
+            Vec3 point = this.position().add(GravityRotationUtil.vecPlayerToWorld(
+                    Math.cos(angle) * radius, 0.3D, Math.sin(angle) * radius, gravity));
+            level.sendParticles(ParticleTypes.CLOUD, point.x, point.y, point.z, 1, 0.0D, 0.02D, 0.0D, 0.0D);
+        }
+    }
+
+    private void performRoyalWingBuffet(ServerLevel level) {
+        float damage = (float) (this.getAttributeValue(Attributes.ATTACK_DAMAGE) * WING_BUFFET_DAMAGE_SCALE);
+        DamageSource source = this.damageSources().mobAttack(this);
+        var gravity = GravityApi.getGravityDirection(this);
+        double radius = this.royalDeadZoneRadius() + 2.0D;
+        AABB area = this.getBoundingBox().inflate(WING_BUFFET_EXTRA_RADIUS + 3.0D, WING_BUFFET_BELOW + 2.0D,
+                WING_BUFFET_EXTRA_RADIUS + 3.0D);
+        for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, area,
+                entity -> entity.isAlive() && entity != this && this.canDamageWithRoyalAttack(entity))) {
+            if (living instanceof Player player && (player.isCreative() || player.isSpectator())) {
+                continue;
+            }
+            Vec3 local = GravityRotationUtil.vecWorldToPlayer(living.position().subtract(this.position()), gravity);
+            double horizontalSqr = local.x * local.x + local.z * local.z;
+            if (horizontalSqr > radius * radius
+                    || local.y < -WING_BUFFET_BELOW - 2.0D
+                    || local.y > this.getBbHeight() + WING_BUFFET_ABOVE + 2.0D) {
+                continue;
+            }
+            living.hurt(source, damage);
+            if (living instanceof RoyalBossEntity) {
+                continue;
+            }
+            Vec3 outwardLocal = horizontalSqr > 1.0E-4D
+                    ? new Vec3(local.x, 0.0D, local.z).normalize()
+                    : new Vec3(1.0D, 0.0D, 0.0D);
+            Vec3 outward = GravityRotationUtil.vecPlayerToWorld(outwardLocal, gravity);
+            Vec3 lift = GravityRotationUtil.vecPlayerToWorld(0.0D, WING_BUFFET_LIFT, 0.0D,
+                    GravityApi.getGravityDirection(living));
+            this.addGravityAwareImpulse(living, outward.scale(WING_BUFFET_PUSH).add(lift));
+            living.hasImpulse = true;
+            living.hurtMarked = true;
+        }
+        for (int ring = 1; ring <= 3; ring++) {
+            double ringRadius = this.getBbWidth() * 0.22D * ring;
+            int samples = 16 + ring * 8;
+            for (int sample = 0; sample < samples; sample++) {
+                double angle = Mth.TWO_PI * sample / samples;
+                Vec3 point = this.position().add(GravityRotationUtil.vecPlayerToWorld(
+                        Math.cos(angle) * ringRadius, 1.0D, Math.sin(angle) * ringRadius, gravity));
+                Vec3 velocity = GravityRotationUtil.vecPlayerToWorld(
+                        Math.cos(angle) * 0.45D, 0.04D, Math.sin(angle) * 0.45D, gravity);
+                level.sendParticles(ParticleTypes.CLOUD, point.x, point.y, point.z,
+                        0, velocity.x, velocity.y, velocity.z, 1.0D);
+            }
+        }
+        level.sendParticles(ParticleTypes.SWEEP_ATTACK, this.getX(), this.getY() + 2.0D, this.getZ(),
+                16, this.getBbWidth() * 0.3D, 1.0D, this.getBbWidth() * 0.3D, 0.0D);
+        this.playRoyalSound(this.royalWingBuffetSound(), 0.6F);
+    }
+
+    private void tickRoyalConcealedTarget(LivingEntity target) {
+        if (!(this.level() instanceof ServerLevel level) || this.tickCount % 10 != 0) {
+            return;
+        }
+        if (this.distanceToSqr(target) > EXCAVATION_RANGE * EXCAVATION_RANGE || this.royalCanSeeTarget(target)) {
+            this.royalConcealedTicks = 0;
+            return;
+        }
+        this.royalConcealedTicks += 10;
+        if (this.royalConcealedTicks < EXCAVATION_TRIGGER_TICKS
+                || this.recoveryWindowTicks > 0
+                || !this.attackScheduler.ready(EXCAVATION_ID, RoyalAttackLane.SUMMON)) {
+            return;
+        }
+        RoyalHead head = this.heads[RoyalHead.Slot.CENTER.ordinal()];
+        LivingEntity committedTarget = target;
+        if (this.beginRoyalAttack(EXCAVATION_ID, RoyalAttackLane.SUMMON, EXCAVATION_COOLDOWN_TICKS,
+                EXCAVATION_WINDUP_TICKS, 1, 10, new RoyalAttackScheduler.Action() {
+                    @Override
+                    public void onStart() {
+                        if (head.readyToAttack()) {
+                            RoyalBossEntity.this.triggerAnim(head.slot().controllerName(), "shoot");
+                        }
+                        RoyalBossEntity.this.playRoyalSound(RoyalBossEntity.this.royalBeamStartSound(head), 0.8F);
+                    }
+
+                    @Override
+                    public void onWindup(int elapsedTicks, int remainingTicks) {
+                        if (committedTarget.isAlive() && committedTarget.level() == level && elapsedTicks % 2 == 0) {
+                            RoyalBossEntity.this.sendRoyalExcavationTelegraph(level, committedTarget);
+                        }
+                    }
+
+                    @Override
+                    public void onActive(int elapsedTicks) {
+                        RoyalBossEntity.this.performRoyalExcavation(level, committedTarget);
+                    }
+                })) {
+            this.royalConcealedTicks = 0;
+        }
+    }
+
+    private boolean royalCanSeeTarget(LivingEntity target) {
+        Vec3 targetEye = target.getEyePosition();
+        if (this.clearRoyalSightLine(this.getEyePosition(), targetEye)) {
+            return true;
+        }
+        for (RoyalHead head : this.heads) {
+            if (this.clearRoyalSightLine(this.headAnchor(head), targetEye)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean clearRoyalSightLine(Vec3 from, Vec3 to) {
+        return this.level().clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this))
+                .getType() == HitResult.Type.MISS;
+    }
+
+    private void sendRoyalExcavationTelegraph(ServerLevel level, LivingEntity target) {
+        Vec3 origin = this.headAnchor(this.heads[RoyalHead.Slot.CENTER.ordinal()]);
+        Vec3 targetCenter = target.position().add(0.0D, target.getBbHeight() * 0.5D, 0.0D);
+        Vec3 line = targetCenter.subtract(origin);
+        double length = line.length();
+        if (length > 1.0E-3D) {
+            Vec3 direction = line.scale(1.0D / length);
+            for (double walked = 0.0D; walked <= length; walked += 2.0D) {
+                Vec3 point = origin.add(direction.scale(walked));
+                level.sendParticles(ParticleTypes.ELECTRIC_SPARK, point.x, point.y, point.z, 1, 0.05D, 0.05D, 0.05D, 0.0D);
+            }
+        }
+        for (int index = 0; index < 20; index++) {
+            double angle = Mth.TWO_PI * index / 20.0D;
+            level.sendParticles(ParticleTypes.END_ROD,
+                    targetCenter.x + Math.cos(angle) * EXCAVATION_RADIUS, targetCenter.y,
+                    targetCenter.z + Math.sin(angle) * EXCAVATION_RADIUS,
+                    1, 0.0D, 0.0D, 0.0D, 0.0D);
+        }
+    }
+
+    private void performRoyalExcavation(ServerLevel level, LivingEntity target) {
+        if (!target.isAlive() || target.level() != level) {
+            return;
+        }
+        Vec3 targetCenter = target.position().add(0.0D, target.getBbHeight() * 0.5D, 0.0D);
+        Vec3 origin = this.headAnchor(this.heads[RoyalHead.Slot.CENTER.ordinal()]);
+        Vec3 toward = origin.subtract(targetCenter);
+        double length = toward.length();
+        Vec3 direction = length > 1.0E-4D ? toward.scale(1.0D / length) : Vec3.ZERO;
+        double depth = Math.min(length, EXCAVATION_DEPTH);
+        for (double step = 1.5D; step <= depth; step += EXCAVATION_RADIUS) {
+            Vec3 center = targetCenter.add(direction.scale(step));
+            RoyalBlockDestruction.destroySphere(level, this, center, EXCAVATION_RADIUS, EXCAVATION_MAX_BLOCKS,
+                    OBSTRUCTION_CLEAR_MAX_RESISTANCE, OBSTRUCTION_CLEAR_DROP_CHANCE);
+            level.sendParticles(ParticleTypes.EXPLOSION, center.x, center.y, center.z, 1, 0.4D, 0.4D, 0.4D, 0.0D);
+        }
+        level.playSound(null, targetCenter.x, targetCenter.y, targetCenter.z,
+                SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0F, 0.7F);
+        if (!this.royalCanSeeTarget(target)) {
+            target.hurt(this.damageSources().indirectMagic(this, this),
+                    this.scaleRoyalDamage(EXCAVATION_CONCEALED_DAMAGE));
+        }
+    }
+
+    @Nullable
+    final Vec3 royalFacingPoint() {
+        if (this.level().isClientSide || this.isDeadOrDying() || this.phaseTransitionTicks > 0
+                || GravityApi.isGravityInverted(this)) {
+            return null;
+        }
+        LivingEntity target = this.getTarget();
+        if (target == null || !target.isAlive() || !this.canAttack(target) || !this.royalShouldFaceTarget(target)) {
+            return null;
+        }
+        return target.position();
+    }
+
+    final void turnRoyalBodyToward(Vec3 point) {
+        double dx = point.x - this.getX();
+        double dz = point.z - this.getZ();
+        if (dx * dx + dz * dz < 1.0E-4D) {
+            return;
+        }
+        float desiredYaw = (float) (Mth.atan2(dz, dx) * Mth.RAD_TO_DEG) - 90.0F;
+        float turn = Mth.clamp(Mth.wrapDegrees(desiredYaw - this.getYRot()), -FACING_TURN_RATE, FACING_TURN_RATE);
+        this.setYRot(this.getYRot() + turn);
+        this.yBodyRot = this.getYRot();
+    }
+
+    private static void applyRelativeInput(Mob mob, double dx, double dz, float speed) {
+        double length = Math.sqrt(dx * dx + dz * dz);
+        double yaw = mob.getYRot() * Mth.DEG_TO_RAD;
+        double nx = dx / length;
+        double nz = dz / length;
+        float forward = (float) (-nx * Math.sin(yaw) + nz * Math.cos(yaw));
+        float strafe = (float) (nx * Math.cos(yaw) + nz * Math.sin(yaw));
+        mob.setSpeed(speed);
+        mob.setZza(forward * speed);
+        mob.setXxa(strafe * speed);
+    }
+
+    private static final class RoyalGroundMoveControl extends MoveControl {
+        private final RoyalBossEntity boss;
+
+        private RoyalGroundMoveControl(RoyalBossEntity boss) {
+            super(boss);
+            this.boss = boss;
+        }
+
+        @Override
+        public void setWantedPosition(double x, double y, double z, double speed) {
+            super.setWantedPosition(x, y, z, speed);
+            this.boss.markRoyalMoveRequested();
+        }
+
+        @Override
+        public void tick() {
+            Vec3 facing = this.boss.royalFacingPoint();
+            if (facing == null) {
+                super.tick();
+                return;
+            }
+            if (this.operation != Operation.MOVE_TO) {
+                boolean waiting = this.operation == Operation.WAIT;
+                super.tick();
+                if (waiting) {
+                    this.mob.setXxa(0.0F);
+                }
+                this.boss.turnRoyalBodyToward(facing);
+                return;
+            }
+            this.operation = Operation.WAIT;
+            double dx = this.wantedX - this.mob.getX();
+            double dy = this.wantedY - this.mob.getY();
+            double dz = this.wantedZ - this.mob.getZ();
+            double horizontalSqr = dx * dx + dz * dz;
+            this.boss.turnRoyalBodyToward(facing);
+            if (horizontalSqr < 2.5E-7D) {
+                this.mob.setZza(0.0F);
+                this.mob.setXxa(0.0F);
+                return;
+            }
+            float speed = (float) (this.speedModifier * this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED));
+            applyRelativeInput(this.mob, dx, dz, speed);
+            if (dy > this.mob.maxUpStep() && horizontalSqr < Math.max(1.0F, this.mob.getBbWidth())) {
+                this.mob.getJumpControl().jump();
+                this.operation = Operation.JUMPING;
+            }
+        }
+    }
+
+    private static final class RoyalFlyingMoveControl extends FlyingMoveControl {
+        private final RoyalBossEntity boss;
+        private final int maxPitchTurn;
+
+        private RoyalFlyingMoveControl(RoyalBossEntity boss, int maxTurn) {
+            super(boss, maxTurn, true);
+            this.boss = boss;
+            this.maxPitchTurn = maxTurn;
+        }
+
+        @Override
+        public void setWantedPosition(double x, double y, double z, double speed) {
+            super.setWantedPosition(x, y, z, speed);
+            this.boss.markRoyalMoveRequested();
+        }
+
+        @Override
+        public void tick() {
+            Vec3 facing = this.boss.royalFacingPoint();
+            if (facing == null) {
+                super.tick();
+                return;
+            }
+            if (this.operation != Operation.MOVE_TO) {
+                super.tick();
+                this.mob.setXxa(0.0F);
+                this.boss.turnRoyalBodyToward(facing);
+                return;
+            }
+            this.operation = Operation.WAIT;
+            this.mob.setNoGravity(true);
+            double dx = this.wantedX - this.mob.getX();
+            double dy = this.wantedY - this.mob.getY();
+            double dz = this.wantedZ - this.mob.getZ();
+            this.boss.turnRoyalBodyToward(facing);
+            if (dx * dx + dy * dy + dz * dz < 2.5E-7D) {
+                this.mob.setYya(0.0F);
+                this.mob.setZza(0.0F);
+                this.mob.setXxa(0.0F);
+                return;
+            }
+            float speed = (float) (this.speedModifier * this.mob.getAttributeValue(
+                    this.mob.onGround() ? Attributes.MOVEMENT_SPEED : Attributes.FLYING_SPEED));
+            double horizontal = Math.sqrt(dx * dx + dz * dz);
+            if (horizontal > 1.0E-5D) {
+                applyRelativeInput(this.mob, dx, dz, speed);
+            } else {
+                this.mob.setSpeed(speed);
+                this.mob.setZza(0.0F);
+                this.mob.setXxa(0.0F);
+            }
+            float pitch = (float) (-(Mth.atan2(dy, horizontal) * Mth.RAD_TO_DEG));
+            this.mob.setXRot(this.rotlerp(this.mob.getXRot(), pitch, this.maxPitchTurn));
+            this.mob.setYya(dy > 0.0D ? speed : -speed);
+        }
     }
 
     protected double combatStandoffDistance() {
@@ -968,8 +1580,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         boolean inverted = GravityApi.isGravityInverted(this);
         double groundY = this.groundYBelow(this.getX(), this.getZ());
         if (this.landingForCombat) {
-            if (!target.onGround()) {
+            if (!target.onGround() || ++this.landingForCombatTicks > LANDING_FOR_COMBAT_TIMEOUT_TICKS) {
                 this.landingForCombat = false;
+                this.landingForCombatTicks = 0;
                 this.locomotionDecisionTicks = 60;
             } else if (this.onGround() || !inverted && this.getY() <= groundY + 1.0D) {
                 this.landingForCombat = false;
@@ -986,6 +1599,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             this.locomotionDecisionTicks = 60 + this.random.nextInt(80);
             if (target.onGround() && this.random.nextDouble() < this.groundCombatBias()) {
                 this.landingForCombat = true;
+                this.landingForCombatTicks = 0;
             }
         } else if (!target.onGround() || this.random.nextDouble() >= this.groundCombatBias()) {
             this.setRoyalFlying(true);
@@ -1012,8 +1626,61 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     protected double groundYBelow(double x, double z) {
-        return this.level().getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                Mth.floor(x), Mth.floor(z));
+        return this.groundYBelow(x, z, this.getY() + 1.0D);
+    }
+
+    protected double groundYBelow(double x, double z, double referenceY) {
+        Level level = this.level();
+        int blockX = Mth.floor(x);
+        int blockZ = Mth.floor(z);
+        int surface = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                blockX, blockZ);
+        int startY = Mth.floor(referenceY);
+        if (startY >= surface) {
+            return surface;
+        }
+        net.minecraft.core.BlockPos.MutableBlockPos cursor = new net.minecraft.core.BlockPos.MutableBlockPos(blockX, startY, blockZ);
+        if (this.isRoyalGroundBlock(level, cursor)) {
+            int top = Math.min(surface, startY + GROUND_SCAN_RISE);
+            for (int y = startY + 1; y <= top; y++) {
+                cursor.setY(y);
+                if (!this.isRoyalGroundBlock(level, cursor)) {
+                    return y;
+                }
+            }
+            return surface;
+        }
+        int bottom = Math.max(level.getMinBuildHeight(), startY - GROUND_SCAN_DEPTH);
+        for (int y = startY - 1; y >= bottom; y--) {
+            cursor.setY(y);
+            if (this.isRoyalGroundBlock(level, cursor)) {
+                return y + 1;
+            }
+        }
+        return bottom;
+    }
+
+    protected double ceilingYAbove(double x, double z, double referenceY) {
+        Level level = this.level();
+        net.minecraft.core.BlockPos.MutableBlockPos cursor = new net.minecraft.core.BlockPos.MutableBlockPos(
+                Mth.floor(x), Mth.floor(referenceY), Mth.floor(z));
+        int startY = cursor.getY();
+        int top = Math.min(level.getMaxBuildHeight() - 1, startY + GROUND_SCAN_DEPTH);
+        for (int y = startY; y <= top; y++) {
+            cursor.setY(y);
+            if (this.isRoyalGroundBlock(level, cursor)) {
+                return y;
+            }
+        }
+        return top;
+    }
+
+    private boolean isRoyalGroundBlock(Level level, net.minecraft.core.BlockPos pos) {
+        net.minecraft.world.level.block.state.BlockState state = level.getBlockState(pos);
+        if (state.isAir() || state.is(net.minecraft.tags.BlockTags.LEAVES)) {
+            return false;
+        }
+        return !state.getFluidState().isEmpty() || !state.getCollisionShape(level, pos).isEmpty();
     }
 
     private void tickFlyingAltitude() {
@@ -1025,6 +1692,10 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         }
         double groundY = this.groundYBelow(this.getX(), this.getZ());
         double ceiling = groundY + FLYING_MAX_HOVER_ABOVE_GROUND;
+        LivingEntity target = this.getTarget();
+        if (target != null && target.isAlive()) {
+            ceiling = Math.max(ceiling, target.getY() + 8.0D);
+        }
         if (this.getY() > ceiling) {
             double desiredY = groundY + FLYING_PREFERRED_HOVER;
             this.getMoveControl().setWantedPosition(this.getX(), desiredY, this.getZ(), 1.0D);
@@ -1035,15 +1706,33 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         }
     }
 
+    private boolean isFightingRoyalRival() {
+        return this.getTarget() instanceof RoyalBossEntity;
+    }
+
     private void tickBodyCrush() {
-        if (!(this.level() instanceof ServerLevel serverLevel) || this.tickCount % 10 != 0) {
+        if (!(this.level() instanceof ServerLevel serverLevel)
+                || this.tickCount % (this.isFightingRoyalRival() ? RIVAL_BODY_CRUSH_INTERVAL_TICKS : BODY_CRUSH_INTERVAL_TICKS) != 0) {
             return;
         }
-        if (this.getDeltaMovement().horizontalDistanceSqr() < 0.0016D) {
+        Vec3 horizontalMovement = this.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D);
+        boolean moving = horizontalMovement.lengthSqr() >= 0.0016D;
+        if (!moving && !this.horizontalCollision) {
             return;
         }
-        double yaw = this.yBodyRot * Mth.DEG_TO_RAD;
-        Vec3 forward = new Vec3(-Math.sin(yaw), 0.0D, Math.cos(yaw));
+        Vec3 forward;
+        if (moving) {
+            forward = horizontalMovement.normalize();
+        } else {
+            Vec3 toWanted = new Vec3(this.getMoveControl().getWantedX() - this.getX(), 0.0D,
+                    this.getMoveControl().getWantedZ() - this.getZ());
+            if (toWanted.lengthSqr() > 1.0E-4D) {
+                forward = toWanted.normalize();
+            } else {
+                double yaw = this.yBodyRot * Mth.DEG_TO_RAD;
+                forward = new Vec3(-Math.sin(yaw), 0.0D, Math.cos(yaw));
+            }
+        }
         Vec3 center = new Vec3(
                 this.getX() + forward.x * (this.getBbWidth() * 0.45D),
                 this.getY() + (this.isRoyalFlying() ? 0.0D : 1.0D),
@@ -1166,9 +1855,28 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
 
     protected Vec3 beamDirection(RoyalHead head) {
         float yaw = this.getYRot() * Mth.DEG_TO_RAD;
-        Vec3 localDirection = new Vec3(-Math.sin(yaw), 0.0D, Math.cos(yaw));
+        double pitch = this.royalBeamPitch(head);
+        double horizontal = Math.cos(pitch);
+        Vec3 localDirection = new Vec3(-Math.sin(yaw) * horizontal, Math.sin(pitch), Math.cos(yaw) * horizontal);
         return GravityRotationUtil.vecPlayerToWorld(localDirection,
                 GravityApi.getGravityDirection(this)).normalize();
+    }
+
+    private double royalBeamPitch(RoyalHead head) {
+        if (this.level().isClientSide) {
+            return 0.0D;
+        }
+        LivingEntity target = head.target(this.level());
+        if (target == null) {
+            return 0.0D;
+        }
+        Vec3 local = GravityRotationUtil.vecWorldToPlayer(target.getEyePosition().subtract(this.beamAnchor(head)),
+                GravityApi.getGravityDirection(this));
+        double horizontal = Math.sqrt(local.x * local.x + local.z * local.z);
+        if (horizontal < 1.0E-3D) {
+            return 0.0D;
+        }
+        return Mth.clamp(Math.atan2(local.y, horizontal), -MAX_BEAM_PITCH, MAX_BEAM_PITCH);
     }
 
     protected boolean targetInBeamLine(RoyalHead head, LivingEntity target) {

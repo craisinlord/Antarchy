@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.portal;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.entity.ant.AntTeleportHelper;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -13,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.ai.village.poi.PoiRecord;
 import net.minecraft.world.entity.vehicle.DismountHelper;
@@ -47,7 +49,20 @@ public final class PermanentPortalTeleporter {
             }
             return new DimensionTransition(sourceLevel, entity, DimensionTransition.DO_NOTHING);
         }
-        return new DimensionTransition(destination, arrival, Vec3.ZERO, entity.getYRot(), entity.getXRot(), DimensionTransition.PLAY_PORTAL_SOUND);
+        DimensionTransition.PostDimensionTransition postTransition = DimensionTransition.PLAY_PORTAL_SOUND;
+        if (entity instanceof ServerPlayer player) {
+            List<Mob> companions = AntTeleportHelper.collectCompanions(player);
+            if (!companions.isEmpty()) {
+                postTransition = postTransition.then(moved -> {
+                    for (Mob companion : companions) {
+                        if (companion.isAlive()) {
+                            AntTeleportHelper.moveCompanion(companion, destination, arrival);
+                        }
+                    }
+                });
+            }
+        }
+        return new DimensionTransition(destination, arrival, Vec3.ZERO, entity.getYRot(), entity.getXRot(), postTransition);
     }
 
     @Nullable
@@ -68,6 +83,7 @@ public final class PermanentPortalTeleporter {
             return safePortalPosition != null ? safePortalPosition : existing.center();
         }
 
+        AntTeleportHelper.loadArrivalSearchArea(destination, preferredPos, SEARCH_RADIUS);
         Vec3 safe = findSafeArrivalPosition(entity, destination, preferredPos, type);
         if (safe != null) {
             PermanentPortalShape created = createReturnPortal(destination, safe, type);
@@ -77,7 +93,19 @@ public final class PermanentPortalTeleporter {
             return createFallbackPortal(destination, BlockPos.containing(safe), type);
         }
 
-        return null;
+        return createFallbackPortal(destination, fallbackArrivalPos(destination, preferredPos, type), type);
+    }
+
+    private static BlockPos fallbackArrivalPos(ServerLevel destination, BlockPos preferredPos, PermanentPortalType type) {
+        int[] yRange = getDimensionYRange(destination, type);
+        if (yRange != null) {
+            return new BlockPos(preferredPos.getX(), Mth.clamp(preferredPos.getY(), yRange[0] + 1, yRange[1] - 4), preferredPos.getZ());
+        }
+        BlockPos surface = destination.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, preferredPos);
+        if (surface.getY() > destination.getMinBuildHeight() + 1) {
+            return surface;
+        }
+        return preferredPos;
     }
 
     @Nullable

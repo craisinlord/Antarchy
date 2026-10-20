@@ -63,7 +63,7 @@ public final class AntTeleportHelper {
         }
     }
 
-    private static List<Mob> collectCompanions(ServerPlayer player) {
+    public static List<Mob> collectCompanions(ServerPlayer player) {
         List<Mob> companions = new ArrayList<>();
         if (player.getVehicle() instanceof Mob vehicle) {
             companions.add(vehicle);
@@ -95,7 +95,7 @@ public final class AntTeleportHelper {
     }
 
     @Nullable
-    private static Mob moveCompanion(Mob companion, ServerLevel destination, Vec3 destinationPos) {
+    public static Mob moveCompanion(Mob companion, ServerLevel destination, Vec3 destinationPos) {
         companion.stopRiding();
         companion.ejectPassengers();
         companion.getNavigation().stop();
@@ -400,7 +400,7 @@ public final class AntTeleportHelper {
         return null;
     }
 
-    private static void loadArrivalSearchArea(ServerLevel destination, BlockPos preferredPos, int searchRadius) {
+    public static void loadArrivalSearchArea(ServerLevel destination, BlockPos preferredPos, int searchRadius) {
         ChunkPos center = new ChunkPos(preferredPos);
         int chunkRadius = (searchRadius >> 4) + 1;
         for (int chunkX = center.x - chunkRadius; chunkX <= center.x + chunkRadius; chunkX++) {

@@ -4,11 +4,11 @@
   "pattern": [
     "  B",
     " B ",
-    "N  "
+    "I  "
   ],
   "key": {
-    "N": {
-      "item": "minecraft:netherite_ingot"
+    "I": {
+      "item": "minecraft:iron_ingot"
     },
     "B": {
       "item": "antarchy:blood_crystal_shard"

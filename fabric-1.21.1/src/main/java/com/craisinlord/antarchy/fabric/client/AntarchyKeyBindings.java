@@ -30,6 +30,19 @@ public final class AntarchyKeyBindings {
             GLFW.GLFW_KEY_R,
             CATEGORY
     );
+    public static final KeyMapping MOUNT_BEAM = new KeyMapping(
+            "key.antarchy.mount_beam",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_H,
+            CATEGORY
+    );
+
+    public static final KeyMapping MOUNT_SIGNATURE = new KeyMapping(
+            "key.antarchy.mount_signature",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_J,
+            CATEGORY
+    );
     public static final KeyMapping TIGERS_EYE_CAMOUFLAGE = new KeyMapping(
             "key.antarchy.tigers_eye_camouflage",
             InputConstants.Type.KEYSYM,
@@ -68,6 +81,8 @@ public final class AntarchyKeyBindings {
         KeyBindingHelper.registerKeyBinding(BRUTALFLY_FLAP);
         KeyBindingHelper.registerKeyBinding(MOUNT_SPECIAL);
         KeyBindingHelper.registerKeyBinding(MOUNT_FLIGHT_TOGGLE);
+        KeyBindingHelper.registerKeyBinding(MOUNT_BEAM);
+        KeyBindingHelper.registerKeyBinding(MOUNT_SIGNATURE);
         KeyBindingHelper.registerKeyBinding(TIGERS_EYE_CAMOUFLAGE);
         KeyBindingHelper.registerKeyBinding(ROYAL_INVERSION_TOGGLE);
         KeyBindingHelper.registerKeyBinding(ROYAL_BOUNDARY);
@@ -85,6 +100,14 @@ public final class AntarchyKeyBindings {
 
     public static boolean isMountFlightTogglePressed() {
         return Minecraft.getInstance().screen == null && MOUNT_FLIGHT_TOGGLE.isDown();
+    }
+
+    public static boolean isMountBeamPressed() {
+        return Minecraft.getInstance().screen == null && MOUNT_BEAM.isDown();
+    }
+
+    public static boolean isMountSignaturePressed() {
+        return Minecraft.getInstance().screen == null && MOUNT_SIGNATURE.isDown();
     }
 
     public static boolean consumeTigerEyeCamouflagePressed() {

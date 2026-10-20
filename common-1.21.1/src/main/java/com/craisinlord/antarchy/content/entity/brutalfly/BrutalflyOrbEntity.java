@@ -162,6 +162,9 @@ public class BrutalflyOrbEntity extends ThrowableItemProjectile {
         if (!this.level().isClientSide && result.getEntity() instanceof LivingEntity livingTarget) {
             float directHitDamage = (float) AntarchySettings.brutalflySpitDamage();
             Entity owner = this.getOwner();
+            if (owner instanceof BrutalflyEntity brutalfly) {
+                directHitDamage *= brutalfly.getDamageScale();
+            }
             if (owner instanceof LivingEntity livingOwner) {
                 livingTarget.hurt(this.damageSources().mobProjectile(this, livingOwner), directHitDamage);
             } else {

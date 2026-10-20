@@ -604,6 +604,16 @@
     "message.antarchy.royal_boundary.activated":  "Royal Boundary raised",
     "message.antarchy.royal_boundary.recharging":  "Royal Boundary is recharging",
     "key.antarchy.mount_flight_toggle":  "Mount: Toggle Flight",
+    "key.antarchy.mount_beam":  "Royal Mount: Beam",
+    "key.antarchy.mount_signature":  "Royal Mount: Command / Time Field",
+    "entity.antarchy.royal_mount.stage.hatchling":  "Hatchling",
+    "entity.antarchy.royal_mount.stage.juvenile":  "Juvenile",
+    "entity.antarchy.royal_mount.stage.adult":  "Adult",
+    "message.antarchy.royal_mount.stage_up":  "%s has reached the %s stage!",
+    "message.antarchy.royal_mount.growth":  "%s: %s, %s%% grown",
+    "message.antarchy.royal_mount.too_young_ride":  "%s must reach the %s stage before it can be ridden",
+    "message.antarchy.royal_mount.too_young_fly":  "%s must reach the %s stage before it can fly",
+    "message.antarchy.royal_mount.too_young_ability":  "%s must reach the %s stage to use that",
     "item.antarchy.springbug_leg":  "Springbug Leg",
     "item.antarchy.springy_boots":  "Springy Boots",
     "tooltip.antarchy.springy_boots":  "Sneak to charge, then jump to spring upward.",
@@ -1642,12 +1652,12 @@
     ,"guide.antarchy.entry.queen.description6": "In her final phase she also casts her own time dilation field, slowing anyone caught inside it."
     ,"guide.antarchy.entry.prince.title": "Prince"
     ,"guide.antarchy.entry.prince.subtitle": "Royal mount record"
-    ,"guide.antarchy.entry.prince.description": "Prince Eggs hatch into small Princes that grow when fed golden items."
-    ,"guide.antarchy.entry.prince.description2": "A grown Prince can be tamed and saddled for flight, fires elemental bolts at your enemies, and can command nearby hostile mobs. Feed responsibly; you are raising a small flying warlord."
+    ,"guide.antarchy.entry.prince.description": "Prince Eggs hatch into Hatchlings bonded to whoever placed the egg. Golden apples grow them a little and enchanted golden apples grow them a lot: Juveniles can be ridden and spit bolts, and Adults can fly, fire beams, and use their signature ability."
+    ,"guide.antarchy.entry.prince.description2": "The Prince is a ground brawler: he closes in to bite with all three heads, spits fire, ice, and lightning, and as an Adult commands nearby hostile mobs to fight for him. Feed responsibly; you are raising a small flying warlord."
     ,"guide.antarchy.entry.princess.title": "Princess"
     ,"guide.antarchy.entry.princess.subtitle": "Royal mount record"
-    ,"guide.antarchy.entry.princess.description": "Princess Eggs hatch into small Princesses that grow when fed golden items."
-    ,"guide.antarchy.entry.princess.description2": "A grown Princess can be tamed and saddled for flight, fires elemental bolts, and creates time-dilation fields around enemies."
+    ,"guide.antarchy.entry.princess.description": "Princess Eggs hatch into Hatchlings bonded to whoever placed the egg. Golden apples grow them a little and enchanted golden apples grow them a lot: Juveniles can be ridden and spit bolts, and Adults can fly, fire beams, and use their signature ability."
+    ,"guide.antarchy.entry.princess.description2": "The Princess fights at range: she keeps her distance, fires slowing bolts from her orbs, and as an Adult hovers above her foes and traps them in time-dilation fields."
     ,"subtitles.antarchy.hoverboard_mount": "Hoverboard starts"
     ,"subtitles.antarchy.hoverboard_dismount": "Hoverboard stops"
     ,"subtitles.antarchy.hoverboard_idle": "Hoverboard hums"

@@ -17,6 +17,6 @@ public final class QueenMusicClientHandler {
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
-        QueenMusicHandler.tick(minecraft, AntarchyNeoforgeSounds.THE_QUEEN.get());
+        QueenMusicHandler.tick(minecraft, AntarchyNeoforgeSounds.THE_QUEEN);
     }
 }

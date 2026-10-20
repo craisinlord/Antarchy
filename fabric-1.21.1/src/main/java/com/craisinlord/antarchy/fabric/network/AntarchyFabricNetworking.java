@@ -207,6 +207,8 @@ public final class AntarchyFabricNetworking {
             case RoyalMountActionPayload.FLIGHT_TOGGLE -> mount.toggleMountedFlight(player);
             case RoyalMountActionPayload.BITE -> mount.handleMountedBite(player);
             case RoyalMountActionPayload.SPIT -> mount.handleMountedSpit(player);
+            case RoyalMountActionPayload.BEAM -> mount.handleMountedBeam(player);
+            case RoyalMountActionPayload.SIGNATURE -> mount.handleMountedSignature(player);
             default -> {
             }
         }

@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class InfinityConfigRefresh {
     private static final Map<String, Registry<?>> CHECKED_FILES = Map.of(
@@ -22,6 +23,7 @@ public final class InfinityConfigRefresh {
             "items.json", BuiltInRegistries.ITEM,
             "effects.json", BuiltInRegistries.MOB_EFFECT
     );
+    private static final Set<String> DISABLED_IDS = Set.of("antarchy:paralyzed");
 
     private InfinityConfigRefresh() {
     }
@@ -43,7 +45,7 @@ public final class InfinityConfigRefresh {
         try {
             Files.delete(invocationLock);
             Antarchy.LOGGER.info(
-                    "[Antarchy] Infinite Dimensions config lists unregistered Antarchy content {}; its config will regenerate on next world join",
+                    "[Antarchy] Infinite Dimensions config lists unregistered or disabled Antarchy content {}; its config will regenerate on next world join",
                     staleIds
             );
         } catch (Exception exception) {
@@ -72,6 +74,8 @@ public final class InfinityConfigRefresh {
                 String key = entry.get("key").getAsString();
                 ResourceLocation id = ResourceLocation.tryParse(key);
                 if (id != null && Antarchy.MODID.equals(id.getNamespace()) && !registry.containsKey(id)) {
+                    staleIds.add(key);
+                } else if (DISABLED_IDS.contains(key) && (!entry.has("weight") || entry.get("weight").getAsDouble() > 0.0D)) {
                     staleIds.add(key);
                 }
             }
