@@ -134,6 +134,25 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
     }
 
     @Override
+    protected boolean canHitEntity(Entity target) {
+        Entity owner = this.getOwner();
+        if (owner != null && target == owner) {
+            return false;
+        }
+        if (owner instanceof com.craisinlord.anthology.multipart.MultipartEntityOwner multipart) {
+            Entity[] parts = multipart.anthology$getMultipartParts();
+            if (parts != null) {
+                for (Entity part : parts) {
+                    if (part == target) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return super.canHitEntity(target);
+    }
+
+    @Override
     protected void onHitEntity(EntityHitResult result) {
         if (!this.level().isClientSide && this.level() instanceof ServerLevel level) {
             this.impact(level, result.getLocation());

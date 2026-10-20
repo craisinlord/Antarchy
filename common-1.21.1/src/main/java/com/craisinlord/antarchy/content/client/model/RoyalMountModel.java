@@ -11,6 +11,12 @@ import software.bernie.geckolib.model.GeoModel;
 
 public class RoyalMountModel extends GeoModel<RoyalMountEntity> {
     private static final String[] HEADS = {"head_left", "head", "head_right"};
+    private static final String[] RIDDEN_NECK_CHAIN = {
+            "neck", "neck2", "neck3", "head",
+            "neck_left", "neck_left2", "neck_left3", "head_left",
+            "neck_right", "neck_right2", "neck_right3", "head_right"
+    };
+    private static final float RIDDEN_NECK_RAISE = 0.35F;
 
     @Override
     public ResourceLocation getModelResource(RoyalMountEntity animatable) {
@@ -31,6 +37,11 @@ public class RoyalMountModel extends GeoModel<RoyalMountEntity> {
     public void setCustomAnimations(RoyalMountEntity animatable, long instanceId,
                                     AnimationState<RoyalMountEntity> animationState) {
         super.setCustomAnimations(animatable, instanceId, animationState);
+        if (animatable.isVehicle()) {
+            for (String name : RIDDEN_NECK_CHAIN) {
+                this.getBone(name).ifPresent(bone -> bone.setRotX(bone.getRotX() * RIDDEN_NECK_RAISE));
+            }
+        }
         for (String head : HEADS) {
             this.getBone(head).ifPresent(bone -> bone.setTrackingMatrices(true));
         }

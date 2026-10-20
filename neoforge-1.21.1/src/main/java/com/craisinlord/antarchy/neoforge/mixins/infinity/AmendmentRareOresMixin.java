@@ -29,5 +29,11 @@ public class AmendmentRareOresMixin {
                 new Amendment.MatchingBlockTagSelector("antarchy:infinity_dimension_rare_ores"),
                 new Amendment.SetValue(0.02)
         ));
+        data.computeIfAbsent(ConfigType.EFFECTS, k -> new ArrayList<>()).add(new Amendment(
+                ConfigType.EFFECTS,
+                new Amendment.MatchingModSelector("antarchy"),
+                new Amendment.MatchingSelector("antarchy:paralyzed"),
+                new Amendment.SetValue(0.0)
+        ));
     }
 }

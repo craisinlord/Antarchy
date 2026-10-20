@@ -44,7 +44,10 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ambient.AmbientCreature;
+import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
@@ -128,6 +131,12 @@ public class QueenEntity extends RoyalBossEntity {
     private static final int ACCELERATION_VOLLEY_DELAY = 18;
     private static final int ACCELERATION_LANDING_DELAY = 55;
     private static final int DIRECTED_LANDING_RETRY_TICKS = 60;
+    private static final int LANDING_TIMEOUT_COOLDOWN_TICKS = 160;
+    private static final double GROUND_CHARGE_MIN_DISTANCE = 16.0D;
+    private static final double GROUND_CHARGE_HIT_INFLATE = 1.5D;
+    private static final double GROUND_CHARGE_DAMAGE_SCALE = 1.1D;
+    private static final double GROUND_CHARGE_KNOCKBACK = 2.2D;
+    private static final int ELEVATED_TARGET_TAKEOFF_TICKS = 40;
 
     private int manticoreSummonCooldownTicks;
     private int gravityStompCooldownTicks;
@@ -161,6 +170,7 @@ public class QueenEntity extends RoyalBossEntity {
     private Vec3 queenLandingWaypoint;
     @Nullable
     private Vec3 queenGroundChargeDirection;
+    private final java.util.Set<UUID> queenGroundChargeHits = new java.util.HashSet<>();
     @Nullable
     private Phase pendingPhaseSignature;
     private boolean pendingPhaseTwoCrushingGravity;
@@ -295,9 +305,32 @@ public class QueenEntity extends RoyalBossEntity {
     @Override
     protected double combatStandoffDistance() {
         if (this.queenLandingStage == QueenLandingStage.GROUND_COMBAT && !this.isRoyalFlying()) {
-            return 0.0D;
+            return super.combatStandoffDistance();
         }
         return Math.max(super.combatStandoffDistance(), AntarchySettings.queenBeamMinimumRange() + 6.0D);
+    }
+
+    @Override
+    protected SoundEvent royalWingBuffetSound() {
+        return AntarchySoundEvents.QUEEN_FLY_LOOP.get();
+    }
+
+    @Override
+    protected boolean royalShouldFaceTarget(LivingEntity target) {
+        return this.queenGroundChargeWindupTicks <= 0 && this.queenGroundChargeTicks <= 0;
+    }
+
+    @Override
+    protected void onRoyalStuck(LivingEntity target) {
+        switch (this.queenLandingStage) {
+            case GROUND_COMBAT -> this.beginQueenTakeoff();
+            case TELEGRAPH, DESCENT -> {
+                this.resetQueenLandingSequence();
+                this.queenLandingCooldownTicks = LANDING_TIMEOUT_COOLDOWN_TICKS;
+            }
+            default -> {
+            }
+        }
     }
 
     @Override
@@ -320,9 +353,13 @@ public class QueenEntity extends RoyalBossEntity {
 
     protected void registerRoyalTargetGoals() {
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, KingEntity.class, true));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(
-                this, Mob.class, 10, true, false, this::canAttack));
+        this.targetSelector.addGoal(2, new HurtByTargetGoal(this).setUnseenMemoryTicks(ROYAL_UNSEEN_MEMORY_TICKS));
+        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, true)
+                .setUnseenMemoryTicks(ROYAL_UNSEEN_MEMORY_TICKS));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(
+                this, Mob.class, 10, true, false,
+                living -> !(living instanceof AmbientCreature) && !(living instanceof WaterAnimal)
+                        && this.canAttack(living)));
     }
 
     @Override
@@ -495,6 +532,9 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private void tickQueenLandingSequence(LivingEntity target) {
+        if (this.queenLandingStage == QueenLandingStage.AERIAL && !this.isRoyalFlying()) {
+            this.setRoyalFlying(true);
+        }
         if (this.queenLandingStage == QueenLandingStage.AERIAL && this.isRoyalFlying()
                 && !this.isQueenAbilityTelegraphActive()
                 && this.queenLandingCooldownTicks-- <= 0) {
@@ -529,7 +569,7 @@ public class QueenEntity extends RoyalBossEntity {
                     this.performGravityStomp((ServerLevel) this.level(), target);
                 } else if (--this.queenLandingStageTicks <= 0) {
                     this.resetQueenLandingSequence();
-                    this.queenLandingCooldownTicks = 40;
+                    this.queenLandingCooldownTicks = LANDING_TIMEOUT_COOLDOWN_TICKS;
                 }
             }
             case IMPACT -> {
@@ -544,7 +584,8 @@ public class QueenEntity extends RoyalBossEntity {
             }
             case GROUND_COMBAT -> {
                 this.tickQueenGroundCharge(target);
-                if (--this.queenLandingStageTicks <= 0) {
+                if (--this.queenLandingStageTicks <= 0
+                        || this.royalElevatedTargetTicks() >= ELEVATED_TARGET_TAKEOFF_TICKS) {
                     this.beginQueenTakeoff();
                 }
             }
@@ -577,7 +618,7 @@ public class QueenEntity extends RoyalBossEntity {
         double baseAngle = away.lengthSqr() > 1.0E-4D
                 ? Math.atan2(away.z, away.x) : this.random.nextDouble() * Mth.TWO_PI;
         boolean inverted = GravityApi.isGravityInverted(this);
-        double[] radii = {10.0D, 14.0D, 18.0D, 7.0D};
+        double[] radii = {20.0D, 23.0D, 17.0D, 14.0D, 10.0D};
         for (int angleIndex = 0; angleIndex < 12; angleIndex++) {
             double angle = baseAngle + angleIndex * Mth.TWO_PI / 12.0D;
             for (double radius : radii) {
@@ -585,7 +626,7 @@ public class QueenEntity extends RoyalBossEntity {
                 double z = target.getZ() + Math.sin(angle) * radius;
                 double y = inverted
                         ? target.position().y - 0.1D
-                        : this.groundYBelow(x, z) + 0.1D;
+                        : this.groundYBelow(x, z, target.getY() + 1.0D) + 0.1D;
                 Vec3 candidate = new Vec3(x, y, z);
                 AABB box = this.getBoundingBox().move(
                         candidate.x - this.getX(), candidate.y - this.getY(), candidate.z - this.getZ());
@@ -596,7 +637,7 @@ public class QueenEntity extends RoyalBossEntity {
         }
         double fallbackY = inverted
                 ? target.position().y - 0.1D
-                : this.groundYBelow(target.getX(), target.getZ()) + 0.1D;
+                : this.groundYBelow(target.getX(), target.getZ(), target.getY() + 1.0D) + 0.1D;
         Vec3 fallback = new Vec3(target.getX(), fallbackY, target.getZ());
         AABB fallbackBox = this.getBoundingBox().move(
                 fallback.x - this.getX(), fallback.y - this.getY(), fallback.z - this.getZ());
@@ -667,6 +708,7 @@ public class QueenEntity extends RoyalBossEntity {
                 if (direction.lengthSqr() > 1.0E-4D) {
                     this.queenGroundChargeDirection = direction.normalize();
                     this.queenGroundChargeTicks = GROUND_CHARGE_DURATION_TICKS;
+                    this.queenGroundChargeHits.clear();
                 } else {
                     this.finishQueenGroundCharge();
                 }
@@ -681,6 +723,9 @@ public class QueenEntity extends RoyalBossEntity {
             this.setYRot((float) (Mth.atan2(-direction.x, direction.z) * Mth.RAD_TO_DEG));
             this.yBodyRot = this.getYRot();
             this.hasImpulse = true;
+            if (this.level() instanceof ServerLevel level) {
+                this.applyQueenGroundChargeHits(level, direction);
+            }
             if (--this.queenGroundChargeTicks <= 0) {
                 this.finishQueenGroundCharge();
             }
@@ -688,7 +733,8 @@ public class QueenEntity extends RoyalBossEntity {
         }
         if (this.queenGroundChargeCooldownTicks-- > 0
                 || target.position().multiply(1.0D, 0.0D, 1.0D)
-                .distanceToSqr(this.position().multiply(1.0D, 0.0D, 1.0D)) < 36.0D) {
+                .distanceToSqr(this.position().multiply(1.0D, 0.0D, 1.0D))
+                < GROUND_CHARGE_MIN_DISTANCE * GROUND_CHARGE_MIN_DISTANCE) {
             return;
         }
         this.queenGroundChargeDirection = target.position().subtract(this.position())
@@ -701,6 +747,34 @@ public class QueenEntity extends RoyalBossEntity {
         }
     }
 
+    private void applyQueenGroundChargeHits(ServerLevel level, Vec3 direction) {
+        float damage = (float) (this.getAttributeValue(Attributes.ATTACK_DAMAGE) * GROUND_CHARGE_DAMAGE_SCALE);
+        DamageSource source = this.damageSources().mobAttack(this);
+        AABB hitBox = this.getBoundingBox().inflate(GROUND_CHARGE_HIT_INFLATE);
+        for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, hitBox,
+                entity -> entity.isAlive() && entity != this && this.canDamageWithRoyalAttack(entity))) {
+            Vec3 offset = living.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+            if (offset.dot(direction) < -this.getBbWidth() * 0.15D
+                    || !this.queenGroundChargeHits.add(living.getUUID())) {
+                continue;
+            }
+            living.hurt(source, damage);
+            if (!(living instanceof RoyalBossEntity)) {
+                Vec3 lift = GravityRotationUtil.vecPlayerToWorld(
+                        0.0D, 0.55D, 0.0D, GravityApi.getGravityDirection(living));
+                this.addGravityAwareImpulse(living, direction.scale(GROUND_CHARGE_KNOCKBACK).add(lift));
+                living.hasImpulse = true;
+                living.hurtMarked = true;
+            }
+            level.sendParticles(ParticleTypes.CRIT, living.getX(), living.getY() + living.getBbHeight() * 0.5D,
+                    living.getZ(), 16, 0.5D, 0.6D, 0.5D, 0.1D);
+        }
+        if (this.queenGroundChargeTicks % 4 == 0) {
+            Vec3 front = this.position().add(direction.scale(this.getBbWidth() * 0.5D + 1.0D));
+            RoyalBlockDestruction.destroySphere(level, this, front.add(0.0D, 2.0D, 0.0D), 3.5D, 24, 60.0D, 0.1F);
+        }
+    }
+
     private void finishQueenGroundCharge() {
         this.queenGroundChargeTicks = 0;
         this.queenGroundChargeWindupTicks = 0;
@@ -710,6 +784,7 @@ public class QueenEntity extends RoyalBossEntity {
     }
 
     private void clearQueenGroundCharge() {
+        this.queenGroundChargeHits.clear();
         this.queenGroundChargeCooldownTicks = 0;
         this.queenGroundChargeWindupTicks = 0;
         this.queenGroundChargeTicks = 0;
@@ -1048,14 +1123,21 @@ public class QueenEntity extends RoyalBossEntity {
                 : this.pendingPhaseSignature == Phase.THREE ? "acceleration"
                 : phase == Phase.TWO && this.pendingPhaseTwoCrushingGravity ? "crushing_gravity"
                 : phase == Phase.THREE && this.pendingPhaseThreeChronosphere ? "queen_chronosphere" : null;
-        String selected = forcedAttack != null
+        String chosen = forcedAttack != null
                 && this.queenAttackReady(forcedAttack, phase, majorBusy)
                 ? forcedAttack : this.attackScheduler.chooseWeighted(candidates, id -> {
                     if (!this.queenAttackReady(id, phase, majorBusy)
                             || id.equals(this.lastQueenMajorAttack)) return 0;
                     return this.queenAttackWeight(id, phase);
                 }, this.random);
-        if (selected == null) return;
+        if (chosen == null && this.lastQueenMajorAttack != null
+                && this.queenAttackReady(this.lastQueenMajorAttack, phase, majorBusy)
+                && java.util.Arrays.asList(candidates).contains(this.lastQueenMajorAttack)
+                && this.queenAttackWeight(this.lastQueenMajorAttack, phase) > 0) {
+            chosen = this.lastQueenMajorAttack;
+        }
+        if (chosen == null) return;
+        final String selected = chosen;
         int cooldown = switch (selected) {
             case "gravity_stomp" -> GRAVITY_STOMP_COOLDOWN;
             case "black_hole" -> BLACK_HOLE_COOLDOWN;
@@ -1606,7 +1688,9 @@ public class QueenEntity extends RoyalBossEntity {
                 double radius = this.random.nextDouble() * GRAVITIC_UPHEAVAL_RADIUS;
                 double x = center.x + Math.cos(angle) * radius;
                 double z = center.z + Math.sin(angle) * radius;
-                BlockPos pos = BlockPos.containing(x, this.groundYBelow(x, z), z);
+                BlockPos pos = inverted
+                        ? BlockPos.containing(x, this.ceilingYAbove(x, z, this.getBoundingBox().minY + 0.5D) + 0.5D, z)
+                        : BlockPos.containing(x, this.groundYBelow(x, z) - 0.5D, z);
                 BlockState state = level.getBlockState(pos);
                 if (!state.is(AntarchyTags.Blocks.QUEEN_GRABBABLE_BLOCKS) || level.getBlockEntity(pos) != null
                         || state.getDestroySpeed(level, pos) < 0.0F || state.getCollisionShape(level, pos).isEmpty()) {

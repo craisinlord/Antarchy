@@ -18,6 +18,6 @@ public final class QueenMusicClientHandler {
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         Minecraft minecraft = Minecraft.getInstance();
-        QueenMusicHandler.tick(minecraft, AntarchyForgeSounds.THE_QUEEN.get());
+        QueenMusicHandler.tick(minecraft, AntarchyForgeSounds.THE_QUEEN);
     }
 }

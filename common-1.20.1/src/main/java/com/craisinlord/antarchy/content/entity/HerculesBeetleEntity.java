@@ -759,10 +759,6 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         }
     }
 
-    private boolean isMountedFlightPoseActive() {
-        return this.isFlying() && (!this.onGround() || this.toLocal(this.getDeltaMovement()).y > 0.08D);
-    }
-
     private void startMountedFlight() {
         this.pendingChargeStart = false;
         this.setFlying(true);
@@ -1170,6 +1166,19 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
     }
 
     @Override
+    public boolean isControlledByLocalInstance() {
+        if (this.level().isClientSide && this.isChargeAnimationActive()) {
+            return false;
+        }
+        return super.isControlledByLocalInstance();
+    }
+
+    private boolean isChargeAnimationActive() {
+        int state = this.getAnimationState();
+        return state == ANIM_CHARGE_START || state == ANIM_CHARGE;
+    }
+
+    @Override
     @Nullable
     public LivingEntity getControllingPassenger() {
         if (!this.isTame() || !this.hasSaddle()) {
@@ -1184,7 +1193,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         if (this.hasPassenger(passenger)) {
             Vec3 localForward = this.toLocalPlane(this.getLookAngle());
             Vec3 forward = localForward.lengthSqr() > 1.0E-4D ? this.toWorld(localForward.normalize()) : this.toWorld(0.0D, 0.0D, 1.0D);
-            boolean mountedFlightPose = this.isMountedFlightPoseActive();
+            boolean mountedFlightPose = this.isFlying();
             double yOffset = mountedFlightPose ? 5.3D : 3.0D;
             double forwardOffset = mountedFlightPose ? 2.2D : 1.25D;
             if (!this.isFlying()) {

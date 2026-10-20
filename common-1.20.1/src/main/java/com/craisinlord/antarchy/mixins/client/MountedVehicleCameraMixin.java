@@ -3,11 +3,14 @@ package com.craisinlord.antarchy.mixins.client;
 import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
 import net.minecraft.client.Camera;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Camera.class)
 public abstract class MountedVehicleCameraMixin {
@@ -17,31 +20,31 @@ public abstract class MountedVehicleCameraMixin {
     @Shadow
     private boolean detached;
 
-    @ModifyArg(
-            method = "setup",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;move(DDD)V"),
-            index = 0
-    )
-    private double antarchy$adjustMountedCameraX(double value) {
-        return this.antarchy$ridingHerculesBeetle() ? value * 1.45D : value;
-    }
+    @Shadow
+    protected abstract void setPosition(Vec3 position);
 
-    @ModifyArg(
-            method = "setup",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;move(DDD)V"),
-            index = 1
-    )
-    private double antarchy$adjustMountedCameraY(double value) {
-        return this.antarchy$ridingHerculesBeetle() ? value + 0.2D : value;
-    }
+    @Inject(method = "setup", at = @At("RETURN"))
+    private void antarchy$adjustMountedCamera(
+            BlockGetter level,
+            Entity entity,
+            boolean detached,
+            boolean thirdPersonReverse,
+            float partialTick,
+            CallbackInfo ci
+    ) {
+        if (!this.antarchy$ridingHerculesBeetle()) {
+            return;
+        }
 
-    @ModifyArg(
-            method = "setup",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;move(DDD)V"),
-            index = 2
-    )
-    private double antarchy$adjustMountedCameraZ(double value) {
-        return this.antarchy$ridingHerculesBeetle() ? value + 0.45D : value;
+        Camera camera = (Camera) (Object) this;
+        Vec3 look = new Vec3(camera.getLookVector());
+        Vec3 cameraOffset = camera.getPosition().subtract(entity.getEyePosition(partialTick));
+        double zoomOffset = cameraOffset.dot(look) * 0.45D;
+
+        Vec3 adjustment = look.scale(zoomOffset)
+                .add(new Vec3(camera.getUpVector()).scale(0.2D))
+                .add(new Vec3(camera.getLeftVector()).scale(0.45D));
+        this.setPosition(camera.getPosition().add(adjustment));
     }
 
     @Unique

@@ -131,7 +131,13 @@ public class KingEntity extends RoyalBossEntity {
     private static final int COMBAT_WAYPOINT_VARIANCE = 35;
     private static final int GROUND_COMBAT_WAYPOINT_MIN_TICKS = 18;
     private static final int GROUND_COMBAT_WAYPOINT_VARIANCE = 12;
-
+    private static final int LANDING_DESCENT_TIMEOUT_TICKS = 120;
+    private static final int LANDING_RETRY_TICKS = 40;
+    private static final int LANDING_ROUTE_SAMPLES = 6;
+    private static final int LANDING_ROUTE_CHECK_LIMIT = 4;
+    private static final double GROUND_COMBAT_BITE_DISTANCE = 19.0D;
+    private static final double GROUND_COMBAT_BITE_VARIANCE = 4.0D;
+    private static final int ELEVATED_TARGET_TAKEOFF_TICKS = 40;
     @Nullable
     private Vec3 patrolCenter;
     @Nullable
@@ -182,6 +188,7 @@ public class KingEntity extends RoyalBossEntity {
     @Nullable
     private Vec3 kingGroundCombatWaypoint;
     private int kingStrafeDirection = 1;
+    private int kingLandingRetryTicks;
     private int royalBoundaryGraceTicks;
     @Nullable
     private ServerPlayer exileTarget;
@@ -252,6 +259,35 @@ public class KingEntity extends RoyalBossEntity {
     @Override
     protected boolean blocksRoyalBeamScheduling() {
         return this.royalChargeActive;
+    }
+
+    @Override
+    protected SoundEvent royalWingBuffetSound() {
+        return AntarchySoundEvents.KING_WING_FLAP.get();
+    }
+
+    @Override
+    protected boolean royalShouldFaceTarget(LivingEntity target) {
+        return !this.royalChargeActive;
+    }
+
+    @Override
+    protected void onRoyalStuck(LivingEntity target) {
+        switch (this.kingLandingStage) {
+            case GROUND_COMBAT -> this.beginKingTakeoff(target);
+            case TELEGRAPH, DESCENT -> {
+                this.resetKingCombatMovement();
+                this.kingLandingRetryTicks = LANDING_RETRY_TICKS;
+                this.groundAssaultCooldownTicks = Math.max(this.groundAssaultCooldownTicks, 160);
+                this.setRoyalFlying(true);
+            }
+            case AERIAL -> {
+                this.kingCombatWaypoint = null;
+                this.kingStrafeDirection *= -1;
+            }
+            default -> {
+            }
+        }
     }
 
     @Override
@@ -476,6 +512,14 @@ public class KingEntity extends RoyalBossEntity {
         }
     }
 
+    @Override
+    public boolean canDamageWithRoyalAttack(LivingEntity target) {
+        if (target instanceof QueenEntity) {
+            return target.isAlive() && !this.isAlliedTo(target);
+        }
+        return super.canDamageWithRoyalAttack(target);
+    }
+
     private void chainLightning(ServerLevel level, Vec3 origin) {
         java.util.Set<UUID> struck = new java.util.HashSet<>();
         Vec3 from = origin;
@@ -485,7 +529,7 @@ public class KingEntity extends RoyalBossEntity {
             double bestScore = Double.MAX_VALUE;
             for (LivingEntity candidate : level.getEntitiesOfClass(LivingEntity.class,
                     new AABB(from, from).inflate(CHAIN_LIGHTNING_JUMP_RANGE),
-                    e -> e.isAlive() && !(e instanceof RoyalBossEntity) && e.getType() != this.getType())) {
+                    e -> e.isAlive() && (e instanceof QueenEntity || !(e instanceof RoyalBossEntity)) && e.getType() != this.getType())) {
                 if (struck.contains(candidate.getUUID())) {
                     continue;
                 }
@@ -565,17 +609,26 @@ public class KingEntity extends RoyalBossEntity {
         if (this.royalChargeOpeningDelayTicks > 0) {
             this.royalChargeOpeningDelayTicks--;
         }
+        if (this.kingLandingRetryTicks > 0) {
+            this.kingLandingRetryTicks--;
+        }
+        if (!this.isDeadOrDying()) {
+            if (this.fireballCooldownTicks > 0) this.fireballCooldownTicks--;
+            if (this.iceballCooldownTicks > 0) this.iceballCooldownTicks--;
+            if (this.iceSpikeCooldownTicks > 0) this.iceSpikeCooldownTicks--;
+        }
         if (this.isRoyalPhaseTransitionActive()) {
             return;
         }
         LivingEntity target = this.getTarget();
-        if (target != null && !this.isDeadOrDying() && this.level() instanceof ServerLevel level) {
+        if (target != null && target.isAlive() && !this.isDeadOrDying() && this.level() instanceof ServerLevel level) {
             this.trackBehavior(target);
             this.tickDecree(level, target);
             this.tickKingCombatMovement(target);
             if (!this.blocksRoyalAttacksForMovement()) {
                 this.tickKingWholeBody(level, target);
             }
+            this.applyRoyalBoundaryPull();
             this.stabilizeKingRotation();
             return;
         }
@@ -583,11 +636,15 @@ public class KingEntity extends RoyalBossEntity {
         if (this.isDeadOrDying() || !(this.level() instanceof ServerLevel)) {
             return;
         }
+        if (this.activeDecree != null) {
+            this.endDecree(null);
+        }
         this.setRoyalFlying(true);
         this.resetKingCombatMovement();
         this.decreeRetreatPressure = false;
         if (this.treePatrolBound && this.treePatrolCenter != null) {
             this.tickTreePatrol();
+            this.applyRoyalBoundaryPull();
             return;
         }
         if (this.patrolCenter == null || this.position().distanceToSqr(this.patrolCenter) > 64.0D * 64.0D) {
@@ -667,17 +724,6 @@ public class KingEntity extends RoyalBossEntity {
             return;
         }
         double boundaryRadius = Math.max(32.0D, AntarchySettings.royalBoundaryRadius());
-        double distance = Math.sqrt(this.horizontalDistanceToTreeSqr());
-        if (distance > boundaryRadius) {
-            Vec3 towardCenter = this.treePatrolCenter.subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
-            if (towardCenter.lengthSqr() > 0.001D) {
-                towardCenter = towardCenter.normalize();
-                this.getMoveControl().setWantedPosition(this.getX() + towardCenter.x * 12.0D,
-                        this.groundYBelow(this.getX() + towardCenter.x * 12.0D,
-                                this.getZ() + towardCenter.z * 12.0D) + FLYING_PREFERRED_HOVER,
-                        this.getZ() + towardCenter.z * 12.0D, 1.4D);
-            }
-        }
         LivingEntity target = this.getTarget();
         if (target == null || !target.isAlive()) {
             this.royalBoundaryGraceTicks = 0;
@@ -700,6 +746,25 @@ public class KingEntity extends RoyalBossEntity {
         } else {
             this.royalBoundaryGraceTicks = 0;
         }
+    }
+
+    private void applyRoyalBoundaryPull() {
+        if (!this.treePatrolBound || this.treePatrolCenter == null || this.royalChargeActive
+                || this.kingLandingStage != KingLandingStage.AERIAL) {
+            return;
+        }
+        double boundaryRadius = Math.max(32.0D, AntarchySettings.royalBoundaryRadius());
+        if (this.horizontalDistanceToTreeSqr() <= boundaryRadius * boundaryRadius) {
+            return;
+        }
+        Vec3 towardCenter = this.treePatrolCenter.subtract(this.position()).multiply(1.0D, 0.0D, 1.0D);
+        if (towardCenter.lengthSqr() <= 0.001D) {
+            return;
+        }
+        towardCenter = towardCenter.normalize();
+        double x = this.getX() + towardCenter.x * 12.0D;
+        double z = this.getZ() + towardCenter.z * 12.0D;
+        this.getMoveControl().setWantedPosition(x, this.groundYBelow(x, z) + FLYING_PREFERRED_HOVER, z, 1.4D);
     }
 
     private double horizontalDistanceToTreeSqr() {
@@ -793,9 +858,14 @@ public class KingEntity extends RoyalBossEntity {
             return;
         }
         boolean closeQuarters = this.activeDecree instanceof CloseQuartersDecree;
-        if (closeQuarters && this.isRoyalFlying() && this.kingLandingStage == KingLandingStage.AERIAL) {
+        if (!this.isRoyalFlying() && this.kingLandingStage == KingLandingStage.AERIAL) {
+            this.setRoyalFlying(true);
+        }
+        if (closeQuarters && this.isRoyalFlying() && this.kingLandingStage == KingLandingStage.AERIAL
+                && this.kingLandingRetryTicks <= 0) {
             this.beginKingLanding(target);
         } else if (!closeQuarters && this.isRoyalFlying() && this.kingLandingStage == KingLandingStage.AERIAL
+                && this.kingLandingRetryTicks <= 0
                 && this.groundAssaultCooldownTicks-- <= 0 && target.onGround()) {
             this.beginKingLanding(target);
         }
@@ -807,6 +877,7 @@ public class KingEntity extends RoyalBossEntity {
                 this.tickKingLandingIndicator();
                 if (--this.kingLandingStageTicks <= 0) {
                     this.kingLandingStage = KingLandingStage.DESCENT;
+                    this.kingLandingStageTicks = LANDING_DESCENT_TIMEOUT_TICKS;
                     this.playRoyalSound(AntarchySoundEvents.KING_WING_FLAP.get(), 0.72F);
                 }
                 return;
@@ -829,7 +900,10 @@ public class KingEntity extends RoyalBossEntity {
                         || Math.abs(localLandingDelta.y) <= 1.25D && horizontalDistanceSquared <= 4.0D;
                 if (reachedLanding) {
                     this.setRoyalFlying(false);
-                    this.setPos(this.getX(), landing.y, this.getZ());
+                    AABB snapped = this.getBoundingBox().move(0.0D, landing.y - this.getY(), 0.0D);
+                    if (Math.abs(landing.y - this.getY()) > 1.0E-3D && this.level().noCollision(this, snapped)) {
+                        this.setPos(this.getX(), landing.y, this.getZ());
+                    }
                     this.kingLandingStage = KingLandingStage.IMPACT;
                     this.kingLandingStageTicks = LANDING_IMPACT_TICKS;
                     this.triggerAnim("body_action", "stomp");
@@ -837,6 +911,10 @@ public class KingEntity extends RoyalBossEntity {
                     if (this.level() instanceof ServerLevel level) {
                         this.performStomp(level, target);
                     }
+                } else if (--this.kingLandingStageTicks <= 0) {
+                    this.resetKingCombatMovement();
+                    this.kingLandingRetryTicks = LANDING_RETRY_TICKS;
+                    this.groundAssaultCooldownTicks = Math.max(this.groundAssaultCooldownTicks, 160);
                 }
                 return;
             }
@@ -864,8 +942,12 @@ public class KingEntity extends RoyalBossEntity {
                     this.getMoveControl().setWantedPosition(this.kingGroundCombatWaypoint.x,
                             this.kingGroundCombatWaypoint.y, this.kingGroundCombatWaypoint.z, 1.25D);
                 }
-                if (--this.kingLandingStageTicks <= 0 && !closeQuarters) {
+                boolean targetOutOfReach = this.royalElevatedTargetTicks() >= ELEVATED_TARGET_TAKEOFF_TICKS;
+                if (--this.kingLandingStageTicks <= 0 && !closeQuarters || targetOutOfReach) {
                     this.beginKingTakeoff(target);
+                    if (targetOutOfReach) {
+                        this.kingLandingRetryTicks = 100;
+                    }
                 }
                 return;
             }
@@ -913,6 +995,7 @@ public class KingEntity extends RoyalBossEntity {
         } else {
             this.kingLandingWaypoint = null;
             this.groundAssaultCooldownTicks = 100;
+            this.kingLandingRetryTicks = LANDING_RETRY_TICKS;
         }
     }
 
@@ -954,7 +1037,9 @@ public class KingEntity extends RoyalBossEntity {
     private Vec3 findKingLandingPoint(LivingEntity target) {
         Vec3 away = this.position().subtract(target.position()).multiply(1.0D, 0.0D, 1.0D);
         double baseAngle = away.lengthSqr() > 1.0E-4D ? Math.atan2(away.z, away.x) : this.random.nextDouble() * Mth.TWO_PI;
-        double[] radii = {9.0D, 13.0D, 17.0D, 6.0D, 4.0D, 2.0D, 0.0D};
+        double[] radii = {20.0D, 23.0D, 17.0D, 13.0D, 9.0D, 6.0D, 0.0D};
+        int routeChecks = 0;
+        Vec3 unroutedCandidate = null;
         for (int angleIndex = 0; angleIndex < 16; angleIndex++) {
             double angle = baseAngle + angleIndex * Mth.TWO_PI / 16.0D;
             for (double radius : radii) {
@@ -962,18 +1047,27 @@ public class KingEntity extends RoyalBossEntity {
                 double z = target.getZ() + Math.sin(angle) * radius;
                 double y = GravityApi.isGravityInverted(this)
                         ? target.position().y - 0.1D
-                        : this.groundYBelow(x, z) + 0.1D;
+                        : this.groundYBelow(x, z, target.getY() + 1.0D) + 0.1D;
                 Vec3 candidate = new Vec3(x, y, z);
                 AABB box = this.getBoundingBox().move(
                         candidate.x - this.getX(), candidate.y - this.getY(), candidate.z - this.getZ());
-                if (this.level().noCollision(this, box)) {
-                    return candidate;
+                if (!this.level().noCollision(this, box)) {
+                    continue;
+                }
+                if (unroutedCandidate == null) {
+                    unroutedCandidate = candidate;
+                }
+                if (this.clearKingLandingRoute(candidate) || ++routeChecks >= LANDING_ROUTE_CHECK_LIMIT) {
+                    return routeChecks >= LANDING_ROUTE_CHECK_LIMIT ? unroutedCandidate : candidate;
                 }
             }
         }
+        if (unroutedCandidate != null) {
+            return unroutedCandidate;
+        }
         double fallbackY = GravityApi.isGravityInverted(this)
                 ? target.position().y - 0.1D
-                : this.groundYBelow(target.getX(), target.getZ()) + 0.1D;
+                : this.groundYBelow(target.getX(), target.getZ(), target.getY() + 1.0D) + 0.1D;
         Vec3 fallback = new Vec3(target.getX(), fallbackY, target.getZ());
         AABB fallbackBox = this.getBoundingBox().move(
                 fallback.x - this.getX(), fallback.y - this.getY(), fallback.z - this.getZ());
@@ -987,6 +1081,26 @@ public class KingEntity extends RoyalBossEntity {
         AABB directBox = this.getBoundingBox().move(
                 direct.x - this.getX(), direct.y - this.getY(), direct.z - this.getZ());
         return this.level().noCollision(this, directBox) ? direct : null;
+    }
+
+    private boolean clearKingLandingRoute(Vec3 destination) {
+        Vec3 start = this.position();
+        AABB bounds = this.getBoundingBox();
+        for (int sample = 1; sample < LANDING_ROUTE_SAMPLES; sample++) {
+            Vec3 point = start.lerp(destination, sample / (double) LANDING_ROUTE_SAMPLES);
+            AABB box = bounds.move(point.x - this.getX(), point.y - this.getY(), point.z - this.getZ());
+            if (!this.level().noCollision(this, box)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private double kingAerialWaypointY(double x, double z, LivingEntity target, double hoverOffset) {
+        double groundY = this.groundYBelow(x, z, target.getY() + 1.0D);
+        double desired = target.getY() + hoverOffset;
+        return Mth.clamp(desired, groundY + FLYING_MIN_HOVER,
+                Math.max(groundY + FLYING_MAX_HOVER_ABOVE_GROUND, desired));
     }
 
     private void selectKingCombatWaypoint(LivingEntity target) {
@@ -1009,9 +1123,7 @@ public class KingEntity extends RoyalBossEntity {
             double candidateRange = range + (angleAttempt % 2 == 0 ? 0.0D : -6.0D);
             double x = target.getX() + Math.cos(angle) * candidateRange;
             double z = target.getZ() + Math.sin(angle) * candidateRange;
-            double groundY = this.groundYBelow(x, z);
-            double y = Mth.clamp(target.getY() + hoverOffset,
-                    groundY + FLYING_MIN_HOVER, groundY + FLYING_MAX_HOVER_ABOVE_GROUND);
+            double y = this.kingAerialWaypointY(x, z, target, hoverOffset);
             Vec3 candidate = new Vec3(x, y, z);
             if (treeBoundCombat) {
                 double dx = x - this.treePatrolCenter.x;
@@ -1029,9 +1141,7 @@ public class KingEntity extends RoyalBossEntity {
             double angle = currentAngle + this.kingStrafeDirection * COMBAT_ORBIT_ANGLE_STEP;
             double x = target.getX() + Math.cos(angle) * range;
             double z = target.getZ() + Math.sin(angle) * range;
-            double groundY = this.groundYBelow(x, z);
-            double y = Mth.clamp(target.getY() + hoverOffset,
-                    groundY + FLYING_MIN_HOVER, groundY + FLYING_MAX_HOVER_ABOVE_GROUND);
+            double y = this.kingAerialWaypointY(x, z, target, hoverOffset);
             Vec3 candidate = new Vec3(x, y, z);
             double dx = candidate.x - this.treePatrolCenter.x;
             double dz = candidate.z - this.treePatrolCenter.z;
@@ -1044,9 +1154,7 @@ public class KingEntity extends RoyalBossEntity {
             double angle = currentAngle + this.kingStrafeDirection * COMBAT_ORBIT_ANGLE_STEP;
             double x = target.getX() + Math.cos(angle) * range;
             double z = target.getZ() + Math.sin(angle) * range;
-            double groundY = this.groundYBelow(x, z);
-            double y = Mth.clamp(target.getY() + hoverOffset,
-                    groundY + FLYING_MIN_HOVER, groundY + FLYING_MAX_HOVER_ABOVE_GROUND);
+            double y = this.kingAerialWaypointY(x, z, target, hoverOffset);
             orbitWaypoint = new Vec3(x, y, z);
             if (treeBoundCombat) {
                 orbitWaypoint = this.findTreePatrolWaypoint(this.treePatrolCenter, this.treePatrolAngle);
@@ -1060,6 +1168,9 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     private void stabilizeKingRotation() {
+        if (this.royalFacingPoint() != null) {
+            return;
+        }
         Vec3 movement = this.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D);
         if (movement.lengthSqr() < 0.0025D) {
             return;
@@ -1093,21 +1204,28 @@ public class KingEntity extends RoyalBossEntity {
         radial = radial.normalize();
         Vec3 tangent = new Vec3(-radial.z * this.kingStrafeDirection, 0.0D,
                 radial.x * this.kingStrafeDirection);
-        double distance = 4.0D + this.random.nextDouble() * 3.0D;
-        Vec3 candidate = target.position().add(radial.scale(distance)).add(tangent.scale(2.5D));
-        Vec3 waypoint = new Vec3(candidate.x, target.getY(), candidate.z);
+        double distance = GROUND_COMBAT_BITE_DISTANCE + this.random.nextDouble() * GROUND_COMBAT_BITE_VARIANCE;
+        Vec3 candidate = target.position().add(radial.scale(distance)).add(tangent.scale(4.0D));
+        Vec3 waypoint = this.kingGroundPoint(candidate.x, candidate.z, target);
         AABB box = this.getBoundingBox().move(waypoint.x - this.getX(), waypoint.y - this.getY(), waypoint.z - this.getZ());
         if (!this.level().noCollision(this, box)) {
-            waypoint = target.position().add(radial.scale(distance));
-            waypoint = new Vec3(waypoint.x, target.getY(), waypoint.z);
+            Vec3 radialOnly = target.position().add(radial.scale(distance));
+            waypoint = this.kingGroundPoint(radialOnly.x, radialOnly.z, target);
             box = this.getBoundingBox().move(waypoint.x - this.getX(), waypoint.y - this.getY(), waypoint.z - this.getZ());
         }
-        this.kingGroundCombatWaypoint = this.level().noCollision(this, box) ? waypoint : target.position();
+        this.kingGroundCombatWaypoint = this.level().noCollision(this, box) ? waypoint : this.position();
         this.kingGroundCombatWaypointTicks = GROUND_COMBAT_WAYPOINT_MIN_TICKS
                 + this.random.nextInt(GROUND_COMBAT_WAYPOINT_VARIANCE + 1);
         if (this.random.nextInt(4) == 0) {
             this.kingStrafeDirection *= -1;
         }
+    }
+
+    private Vec3 kingGroundPoint(double x, double z, LivingEntity target) {
+        double y = GravityApi.isGravityInverted(this)
+                ? target.getY()
+                : this.groundYBelow(x, z, Math.max(this.getY(), target.getY()) + 1.0D);
+        return new Vec3(x, y, z);
     }
 
     public void requestCloseQuartersAssault(LivingEntity target) {
@@ -1433,10 +1551,8 @@ public class KingEntity extends RoyalBossEntity {
         this.bumpBehavior(Behavior.SPRINTING, target.isSprinting() ? 1 : -1);
         this.bumpBehavior(Behavior.HUGGING, distance <= 10.0D ? 1 : -1);
         this.bumpBehavior(Behavior.KEEPING_FAR, distance >= 22.0D ? 1 : -1);
-        if (this.patrolCenter != null) {
-            this.bumpBehavior(Behavior.RETREATING, distance > 20.0D && target.getDeltaMovement().horizontalDistanceSqr() > 0.02D
-                    && target.position().subtract(this.position()).dot(target.getDeltaMovement()) > 0.0D ? 1 : -1);
-        }
+        this.bumpBehavior(Behavior.RETREATING, distance > 20.0D && target.getDeltaMovement().horizontalDistanceSqr() > 0.02D
+                && target.position().subtract(this.position()).dot(target.getDeltaMovement()) > 0.0D ? 1 : -1);
     }
 
     private void bumpBehavior(Behavior behavior, int delta) {
@@ -1708,10 +1824,6 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     private void tickKingElementalProjectiles(ServerLevel level, LivingEntity target) {
-        if (this.fireballCooldownTicks > 0) this.fireballCooldownTicks--;
-        if (this.iceballCooldownTicks > 0) this.iceballCooldownTicks--;
-        if (this.iceSpikeCooldownTicks > 0) this.iceSpikeCooldownTicks--;
-
         double distance = this.distanceTo(target);
         String[] candidates = {"fireball", "iceball", "ice_spikes"};
         String selected = this.attackScheduler.chooseWeighted(candidates, id -> {
@@ -1789,14 +1901,25 @@ public class KingEntity extends RoyalBossEntity {
         Vec3 start = this.position();
         Vec3 end = target.position();
         Vec3 line = end.subtract(start).multiply(1.0D, 0.0D, 1.0D);
-        if (line.lengthSqr() < 1.0E-4D) return;
-        line = line.normalize();
+        double reach = line.length();
+        if (reach < 6.0D) {
+            for (int index = 0; index < 8; index++) {
+                double angle = Mth.TWO_PI * index / 8.0D;
+                double x = end.x + Math.cos(angle) * 2.5D;
+                double z = end.z + Math.sin(angle) * 2.5D;
+                double y = this.groundYBelow(x, z, end.y + 1.0D) + 0.1D;
+                level.addFreshEntity(RoyalIceSpikeEntity.create(level, new Vec3(x, y, z), this));
+            }
+            return;
+        }
+        line = line.scale(1.0D / reach);
         Vec3 side = new Vec3(-line.z, 0.0D, line.x);
-        for (int i = 1; i <= 5; i++) {
-            double distance = i * 4.0D;
+        double firstDistance = Math.max(4.0D, reach - 16.0D);
+        for (int i = 0; i < 5; i++) {
+            double distance = firstDistance + i * 4.0D;
             for (int lane = -1; lane <= 1; lane++) {
-                Vec3 point = start.add(line.scale(distance)).add(side.scale(lane * (i % 2 == 0 ? 2.0D : 0.0D)));
-                double y = this.groundYBelow(point.x, point.z) + 0.1D;
+                Vec3 point = start.add(line.scale(distance)).add(side.scale(lane * (i % 2 == 1 ? 2.0D : 0.0D)));
+                double y = this.groundYBelow(point.x, point.z, end.y + 1.0D) + 0.1D;
                 RoyalIceSpikeEntity spike = RoyalIceSpikeEntity.create(level, new Vec3(point.x, y, point.z), this);
                 level.addFreshEntity(spike);
             }
