@@ -107,6 +107,9 @@ public final class AntarchySettings {
     private static int ultimateCrossbowEnchantability = 20;
     private static int ultimateMaceEnchantability = 20;
     private static boolean ultimateToolsThreeByThreeEnabled = true;
+    private static boolean ultimateToolsVeinMiningEnabled = true;
+    private static int ultimateToolsVeinMiningMaxBlocks = 64;
+    private static int ultimateToolsTreeFellingMaxLogs = 128;
     private static boolean ultimateArmorComesEnchanted = true;
     private static int ultimateHelmetArmorValue = 6;
     private static int ultimateChestplateArmorValue = 11;
@@ -975,6 +978,18 @@ public final class AntarchySettings {
         return ultimateToolsThreeByThreeEnabled;
     }
 
+    public static boolean ultimateToolsVeinMiningEnabled() {
+        return ultimateToolsVeinMiningEnabled;
+    }
+
+    public static int ultimateToolsVeinMiningMaxBlocks() {
+        return ultimateToolsVeinMiningMaxBlocks;
+    }
+
+    public static int ultimateToolsTreeFellingMaxLogs() {
+        return ultimateToolsTreeFellingMaxLogs;
+    }
+
     public static boolean ultimateArmorComesEnchanted() {
         return ultimateArmorComesEnchanted;
     }
@@ -1623,6 +1638,18 @@ public final class AntarchySettings {
 
     public static void setUltimateToolsThreeByThreeEnabled(boolean value) {
         ultimateToolsThreeByThreeEnabled = value;
+    }
+
+    public static void setUltimateToolsVeinMiningEnabled(boolean value) {
+        ultimateToolsVeinMiningEnabled = value;
+    }
+
+    public static void setUltimateToolsVeinMiningMaxBlocks(int value) {
+        ultimateToolsVeinMiningMaxBlocks = value;
+    }
+
+    public static void setUltimateToolsTreeFellingMaxLogs(int value) {
+        ultimateToolsTreeFellingMaxLogs = value;
     }
 
     public static void setUltimateArmorComesEnchanted(boolean value) {

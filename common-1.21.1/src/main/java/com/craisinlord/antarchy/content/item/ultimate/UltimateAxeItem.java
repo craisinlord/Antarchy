@@ -40,7 +40,7 @@ public class UltimateAxeItem extends AxeItem {
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        UltimateToolHelper.appendThreeByThreeTooltip(tooltipComponents);
+        UltimateToolHelper.appendModeTooltip(UltimateToolHelper.ToolKind.AXE, tooltipComponents);
     }
 
     @Override

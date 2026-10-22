@@ -439,6 +439,9 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setUltimateHoeAttackSpeed(AntarchyToolsConfig.ultimateHoeAttackSpeed());
         AntarchySettings.setUltimateToolEnchantability(AntarchyToolsConfig.ultimateToolEnchantability());
         AntarchySettings.setUltimateToolsThreeByThreeEnabled(AntarchyToolsConfig.ultimateToolsThreeByThreeEnabled());
+        AntarchySettings.setUltimateToolsVeinMiningEnabled(AntarchyToolsConfig.ultimateToolsVeinMiningEnabled());
+        AntarchySettings.setUltimateToolsVeinMiningMaxBlocks(AntarchyToolsConfig.ultimateToolsVeinMiningMaxBlocks());
+        AntarchySettings.setUltimateToolsTreeFellingMaxLogs(AntarchyToolsConfig.ultimateToolsTreeFellingMaxLogs());
 
         AntarchySettings.setUltimateBowAttackDamage(AntarchyToolsConfig.ultimateBowAttackDamage());
         AntarchySettings.setUltimateBowPlayerHeal(AntarchyToolsConfig.ultimateBowPlayerHeal());
