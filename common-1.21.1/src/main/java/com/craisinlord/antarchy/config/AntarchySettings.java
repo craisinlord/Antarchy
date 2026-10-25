@@ -302,6 +302,7 @@ public final class AntarchySettings {
     private static double royalBossKnockbackResistance = 1.0D;
     private static double royalBossStepHeight = 3.0D;
     private static double royalBossMaxSingleHitDamage = 250.0D;
+    private static double royalBossHitOverflowRate = 0.25D;
     private static double royalBossBiteReach = 12.0D;
     private static double royalBossBiteDamageMultiplier = 1.6D;
     private static int royalBossBiteCooldownTicks = 45;
@@ -2256,6 +2257,9 @@ public final class AntarchySettings {
 
     public static double royalBossMaxSingleHitDamage() { return royalBossMaxSingleHitDamage; }
     public static void setRoyalBossMaxSingleHitDamage(double v) { royalBossMaxSingleHitDamage = v; }
+
+    public static double royalBossHitOverflowRate() { return royalBossHitOverflowRate; }
+    public static void setRoyalBossHitOverflowRate(double v) { royalBossHitOverflowRate = v; }
 
     public static double royalBossBiteReach() { return royalBossBiteReach; }
     public static void setRoyalBossBiteReach(double v) { royalBossBiteReach = v; }

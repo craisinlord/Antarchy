@@ -22,6 +22,9 @@ public final class AntarchyToolsConfig {
     private static final ForgeConfigSpec.DoubleValue  ULTIMATE_HOE_ATTACK_SPEED;
     private static final ForgeConfigSpec.IntValue     ULTIMATE_TOOL_ENCHANTABILITY;
     private static final ForgeConfigSpec.BooleanValue ULTIMATE_TOOLS_THREE_BY_THREE_ENABLED;
+    private static final ForgeConfigSpec.BooleanValue ULTIMATE_TOOLS_VEIN_MINING_ENABLED;
+    private static final ForgeConfigSpec.IntValue     ULTIMATE_TOOLS_VEIN_MINING_MAX_BLOCKS;
+    private static final ForgeConfigSpec.IntValue     ULTIMATE_TOOLS_TREE_FELLING_MAX_LOGS;
 
     private static final ForgeConfigSpec.DoubleValue  ULTIMATE_BOW_ATTACK_DAMAGE;
     private static final ForgeConfigSpec.DoubleValue  ULTIMATE_BOW_PLAYER_HEAL;
@@ -248,6 +251,11 @@ public final class AntarchyToolsConfig {
         ULTIMATE_TOOLS_THREE_BY_THREE_ENABLED = b
                 .comment("If false, Ultimate pickaxe, axe, shovel, and hoe lose their 3x3 mining mode and tooltip.")
                 .define("threeByThreeEnabled", true);
+        ULTIMATE_TOOLS_VEIN_MINING_ENABLED = b
+                .comment("If false, the Ultimate Pickaxe and Axe lose Vein Mining and the Battle Axe stops felling trees.")
+                .define("veinMiningEnabled", true);
+        ULTIMATE_TOOLS_VEIN_MINING_MAX_BLOCKS  = b.comment("Most extra blocks the Ultimate Pickaxe or Axe breaks in one Vein Mining swing. Logs use treeFellingMaxLogs instead.").defineInRange("veinMiningMaxBlocks", 64, 1, 1024);
+        ULTIMATE_TOOLS_TREE_FELLING_MAX_LOGS = b.comment("Most extra logs broken at once by Vein Mining on logs or by the Battle Axe.")          .defineInRange("treeFellingMaxLogs", 128, 1, 1024);
         b.pop();
 
         b.push("ultimateBow");
@@ -574,6 +582,9 @@ public final class AntarchyToolsConfig {
     static double  ultimateHoeAttackSpeed()                  { return ULTIMATE_HOE_ATTACK_SPEED.get(); }
     static int     ultimateToolEnchantability()              { return ULTIMATE_TOOL_ENCHANTABILITY.get(); }
     static boolean ultimateToolsThreeByThreeEnabled()        { return ULTIMATE_TOOLS_THREE_BY_THREE_ENABLED.get(); }
+    static boolean ultimateToolsVeinMiningEnabled()          { return ULTIMATE_TOOLS_VEIN_MINING_ENABLED.get(); }
+    static int     ultimateToolsVeinMiningMaxBlocks()          { return ULTIMATE_TOOLS_VEIN_MINING_MAX_BLOCKS.get(); }
+    static int     ultimateToolsTreeFellingMaxLogs()         { return ULTIMATE_TOOLS_TREE_FELLING_MAX_LOGS.get(); }
 
     static double  ultimateBowAttackDamage()                 { return ULTIMATE_BOW_ATTACK_DAMAGE.get(); }
     static double  ultimateBowPlayerHeal()                   { return ULTIMATE_BOW_PLAYER_HEAL.get(); }

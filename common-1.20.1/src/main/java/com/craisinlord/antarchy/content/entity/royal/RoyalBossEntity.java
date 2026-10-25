@@ -2006,7 +2006,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         if (source.is(DamageTypes.GENERIC_KILL)) {
             return super.hurt(source, amount);
         }
-        float cappedAmount = (float) Math.min(amount, AntarchySettings.royalBossMaxSingleHitDamage());
+        float cap = (float) AntarchySettings.royalBossMaxSingleHitDamage();
+        float cappedAmount = amount <= cap ? amount : cap + (amount - cap) * (float) AntarchySettings.royalBossHitOverflowRate();
         return super.hurt(source, cappedAmount);
     }
 

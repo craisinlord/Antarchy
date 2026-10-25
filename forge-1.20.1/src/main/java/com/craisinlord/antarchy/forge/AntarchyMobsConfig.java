@@ -104,6 +104,7 @@ public final class AntarchyMobsConfig {
     private static final ForgeConfigSpec.DoubleValue ROYAL_BOSS_KNOCKBACK_RESISTANCE;
     private static final ForgeConfigSpec.DoubleValue ROYAL_BOSS_STEP_HEIGHT;
     private static final ForgeConfigSpec.DoubleValue ROYAL_BOSS_MAX_SINGLE_HIT_DAMAGE;
+    private static final ForgeConfigSpec.DoubleValue ROYAL_BOSS_HIT_OVERFLOW_RATE;
     private static final ForgeConfigSpec.DoubleValue ROYAL_BOSS_BITE_REACH;
     private static final ForgeConfigSpec.DoubleValue ROYAL_BOSS_BITE_DAMAGE_MULTIPLIER;
     private static final ForgeConfigSpec.IntValue ROYAL_BOSS_BITE_COOLDOWN_TICKS;
@@ -531,6 +532,7 @@ public final class AntarchyMobsConfig {
         ROYAL_BOSS_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance shared by King and Queen.").defineInRange("knockbackResistance", 1.0D, 0.0D, 1.0D);
         ROYAL_BOSS_STEP_HEIGHT = b.comment("Base step height shared by King and Queen.").defineInRange("stepHeight", 3.0D, 0.0D, 32.0D);
         ROYAL_BOSS_MAX_SINGLE_HIT_DAMAGE = b.comment("Maximum damage a single hit can deal to a Royal boss before later anti-burst systems are added.").defineInRange("maxSingleHitDamage", 250.0D, 1.0D, 32768.0D);
+        ROYAL_BOSS_HIT_OVERFLOW_RATE = b.comment("Share of damage above maxSingleHitDamage that still lands. 0 makes the cap a hard limit.").defineInRange("hitOverflowRate", 0.25D, 0.0D, 1.0D);
         ROYAL_BOSS_BITE_REACH = b.comment("Radius around each head anchor that a King or Queen bite can hit.").defineInRange("biteReach", 12.0D, 1.0D, 64.0D);
         ROYAL_BOSS_BITE_DAMAGE_MULTIPLIER = b.comment("Multiplier applied to base attack damage for King and Queen head bites.").defineInRange("biteDamageMultiplier", 1.6D, 0.0D, 32.0D);
         ROYAL_BOSS_BITE_COOLDOWN_TICKS = b.comment("Base cooldown in ticks between bites for a single King or Queen head (scaled down at later phases).").defineInRange("biteCooldownTicks", 45, 1, 1200);
@@ -1046,6 +1048,7 @@ public final class AntarchyMobsConfig {
     static double  royalBossKnockbackResistance()           { return ROYAL_BOSS_KNOCKBACK_RESISTANCE.get(); }
     static double  royalBossStepHeight()                    { return ROYAL_BOSS_STEP_HEIGHT.get(); }
     static double  royalBossMaxSingleHitDamage()            { return ROYAL_BOSS_MAX_SINGLE_HIT_DAMAGE.get(); }
+    static double  royalBossHitOverflowRate()               { return ROYAL_BOSS_HIT_OVERFLOW_RATE.get(); }
     static double  royalBossBiteReach()                     { return ROYAL_BOSS_BITE_REACH.get(); }
     static double  royalBossBiteDamageMultiplier()          { return ROYAL_BOSS_BITE_DAMAGE_MULTIPLIER.get(); }
     static int     royalBossBiteCooldownTicks()             { return ROYAL_BOSS_BITE_COOLDOWN_TICKS.get(); }

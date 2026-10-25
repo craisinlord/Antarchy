@@ -18,6 +18,8 @@ public final class RoyalMountClientHandler {
     private static boolean wasAttack;
     private static boolean wasSpecial;
     private static boolean wasFlightToggle;
+    private static boolean wasBeam;
+    private static boolean wasSignature;
     private static boolean wasAscend;
     private static boolean wasDescend;
     private static boolean wasUse;
@@ -65,6 +67,18 @@ public final class RoyalMountClientHandler {
         }
         wasFlightToggle = flightToggle;
 
+        boolean beam = AntarchyKeyBindings.isMountBeamPressed();
+        if (beam && !wasBeam) {
+            AntarchyForgeNetworkCore.sendToServer(new RoyalMountActionPayload(RoyalMountActionPayload.BEAM));
+        }
+        wasBeam = beam;
+
+        boolean signature = AntarchyKeyBindings.isMountSignaturePressed();
+        if (signature && !wasSignature) {
+            AntarchyForgeNetworkCore.sendToServer(new RoyalMountActionPayload(RoyalMountActionPayload.SIGNATURE));
+        }
+        wasSignature = signature;
+
         boolean ascend = mc.options.keyJump.isDown();
         boolean descend = mc.options.keyShift.isDown();
         if (ascend != wasAscend || descend != wasDescend) {
@@ -81,6 +95,8 @@ public final class RoyalMountClientHandler {
         wasAttack = false;
         wasSpecial = false;
         wasFlightToggle = false;
+        wasBeam = false;
+        wasSignature = false;
         wasAscend = false;
         wasDescend = false;
     }

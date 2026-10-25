@@ -3,12 +3,16 @@ package com.craisinlord.antarchy.content.item.ultimate;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.item.GiantFryingPanItem;
 import com.craisinlord.antarchy.content.item.GiantFryingPanToolHelper;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,12 +27,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 public final class UltimateToolHelper {
     private static final String THREE_BY_THREE_TAG = "antarchy.ultimate_three_by_three";
+    private static final String MINING_MODE_TAG = "antarchy.ultimate_mining_mode";
     private static final ThreadLocal<Boolean> BREAKING_EXTRA_BLOCKS = ThreadLocal.withInitial(() -> false);
     private static final float GENERAL_MINING_MULTIPLIER = 1.1F;
     private static final float ULTIMATE_SHOVEL_MINING_SPEED = 24.0F;
@@ -38,26 +46,43 @@ public final class UltimateToolHelper {
 
     public static InteractionResultHolder<ItemStack> handleToggleUse(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (!AntarchySettings.ultimateToolsThreeByThreeEnabled() || !player.isShiftKeyDown()) {
+        if (!player.isShiftKeyDown() || availableModes(toolKindOf(stack.getItem())).size() < 2) {
             return InteractionResultHolder.pass(stack);
         }
 
-        toggleThreeByThree(level, player, stack);
+        cycleMiningMode(level, player, stack);
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }
 
     public static InteractionResult handleToggleUseOn(UseOnContext context) {
         Player player = context.getPlayer();
-        if (!AntarchySettings.ultimateToolsThreeByThreeEnabled() || player == null || !player.isShiftKeyDown()) {
+        if (player == null || !player.isShiftKeyDown() || availableModes(toolKindOf(context.getItemInHand().getItem())).size() < 2) {
             return InteractionResult.PASS;
         }
 
-        toggleThreeByThree(context.getLevel(), player, context.getItemInHand());
+        cycleMiningMode(context.getLevel(), player, context.getItemInHand());
         return InteractionResult.sidedSuccess(context.getLevel().isClientSide);
     }
 
     public static boolean isThreeByThreeEnabled(ItemStack stack) {
-        return stack.hasTag() && stack.getTag().getBoolean(THREE_BY_THREE_TAG);
+        return getMiningMode(stack) == MiningMode.THREE_BY_THREE;
+    }
+
+    public static boolean isVeinEnabled(ItemStack stack) {
+        return getMiningMode(stack) == MiningMode.VEIN;
+    }
+
+    public static MiningMode getMiningMode(ItemStack stack) {
+        CompoundTag tag = stack.getTag();
+        if (tag == null) {
+            return MiningMode.DEFAULT;
+        }
+        if (tag.contains(MINING_MODE_TAG)) {
+            int index = tag.getByte(MINING_MODE_TAG);
+            MiningMode[] modes = MiningMode.values();
+            return index >= 0 && index < modes.length ? modes[index] : MiningMode.DEFAULT;
+        }
+        return tag.getBoolean(THREE_BY_THREE_TAG) ? MiningMode.THREE_BY_THREE : MiningMode.DEFAULT;
     }
 
     public static float getDestroySpeed(ToolKind toolKind, Tier tier, ItemStack stack, BlockState state, float defaultSpeed) {
@@ -74,23 +99,127 @@ public final class UltimateToolHelper {
         return defaultSpeed * GENERAL_MINING_MULTIPLIER;
     }
 
-    public static void appendThreeByThreeTooltip(List<Component> tooltip) {
-        if (!AntarchySettings.ultimateToolsThreeByThreeEnabled()) {
+    public static void appendModeTooltip(ToolKind toolKind, List<Component> tooltip) {
+        List<MiningMode> modes = availableModes(toolKind);
+        boolean area = modes.contains(MiningMode.THREE_BY_THREE);
+        boolean vein = modes.contains(MiningMode.VEIN);
+        String key;
+        if (area && vein) {
+            key = "tooltip.antarchy.ultimate_tools_3x3_vein";
+        } else if (area) {
+            key = "tooltip.antarchy.ultimate_tools_3x3";
+        } else if (vein) {
+            key = "tooltip.antarchy.ultimate_tools_vein";
+        } else {
             return;
         }
-        tooltip.add(Component.translatable("tooltip.antarchy.ultimate_tools_3x3").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable(key).withStyle(ChatFormatting.GRAY));
     }
 
     public static void handleAreaMining(ToolKind toolKind, ItemStack stack, Level level, BlockState originState, BlockPos origin, LivingEntity entity) {
-        if (!AntarchySettings.ultimateToolsThreeByThreeEnabled()
-                || level.isClientSide
+        if (level.isClientSide
                 || BREAKING_EXTRA_BLOCKS.get()
-                || !isThreeByThreeEnabled(stack)
                 || !(entity instanceof ServerPlayer player)) {
             return;
         }
 
-        mineArea(toolKind, stack, level, originState, origin, player, 1);
+        MiningMode mode = getMiningMode(stack);
+        if (mode == MiningMode.DEFAULT || !availableModes(toolKind).contains(mode)) {
+            return;
+        }
+        if (mode == MiningMode.THREE_BY_THREE) {
+            mineArea(toolKind, stack, level, originState, origin, player, 1);
+        } else {
+            mineVein(toolKind, stack, level, originState, origin, player, veinLimit(originState));
+        }
+    }
+
+    public static int veinLimit(BlockState state) {
+        return state.is(BlockTags.LOGS)
+                ? AntarchySettings.ultimateToolsTreeFellingMaxLogs()
+                : AntarchySettings.ultimateToolsVeinMiningMaxBlocks();
+    }
+
+    public static void mineVein(ToolKind toolKind, ItemStack stack, Level level, BlockState originState, BlockPos origin, ServerPlayer player, int maxBlocks) {
+        if (level.isClientSide || BREAKING_EXTRA_BLOCKS.get() || maxBlocks <= 0 || !matchesToolKind(toolKind, originState)) {
+            return;
+        }
+
+        breakAll(toolKind, stack, level, player, collectConnected(level, origin, originState.getBlock(), maxBlocks, false));
+    }
+
+    public static void mineTree(ItemStack stack, Level level, BlockState originState, BlockPos origin, ServerPlayer player, int maxBlocks) {
+        if (level.isClientSide || BREAKING_EXTRA_BLOCKS.get() || maxBlocks <= 0 || !originState.is(BlockTags.LOGS)) {
+            return;
+        }
+
+        breakAll(ToolKind.AXE, stack, level, player, collectConnected(level, origin, originState.getBlock(), maxBlocks, true));
+    }
+
+    private static void breakAll(ToolKind toolKind, ItemStack stack, Level level, ServerPlayer player, List<BlockPos> targets) {
+        if (targets.isEmpty()) {
+            return;
+        }
+
+        BREAKING_EXTRA_BLOCKS.set(true);
+        try {
+            for (BlockPos targetPos : targets) {
+                if (!canBreak(toolKind, player, stack, level, targetPos, level.getBlockState(targetPos))) {
+                    continue;
+                }
+
+                player.gameMode.destroyBlock(targetPos);
+                if (stack.isEmpty()) {
+                    break;
+                }
+            }
+        } finally {
+            BREAKING_EXTRA_BLOCKS.set(false);
+        }
+    }
+
+    private static List<BlockPos> collectConnected(Level level, BlockPos origin, Block block, int maxBlocks, boolean requireFoliage) {
+        List<BlockPos> found = new ArrayList<>();
+        Set<BlockPos> visited = new HashSet<>();
+        ArrayDeque<BlockPos> queue = new ArrayDeque<>();
+        visited.add(origin);
+        queue.add(origin);
+        boolean foliage = false;
+
+        while (!queue.isEmpty() && found.size() < maxBlocks) {
+            BlockPos current = queue.poll();
+            for (int dx = -1; dx <= 1 && found.size() < maxBlocks; dx++) {
+                for (int dy = -1; dy <= 1 && found.size() < maxBlocks; dy++) {
+                    for (int dz = -1; dz <= 1 && found.size() < maxBlocks; dz++) {
+                        if (dx == 0 && dy == 0 && dz == 0) {
+                            continue;
+                        }
+
+                        BlockPos next = current.offset(dx, dy, dz);
+                        if (!visited.add(next) || !level.isLoaded(next)) {
+                            continue;
+                        }
+
+                        BlockState state = level.getBlockState(next);
+                        if (state.is(block)) {
+                            found.add(next);
+                            queue.add(next);
+                        } else if (requireFoliage && !foliage && isNaturalFoliage(state)) {
+                            foliage = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return requireFoliage && !foliage ? List.of() : found;
+    }
+
+    private static boolean isNaturalFoliage(BlockState state) {
+        if (state.is(BlockTags.LEAVES)) {
+            return !state.hasProperty(BlockStateProperties.PERSISTENT) || !state.getValue(BlockStateProperties.PERSISTENT);
+        }
+        return state.is(BlockTags.WART_BLOCKS) || state.is(Blocks.SHROOMLIGHT);
     }
 
     public static void mineArea(ToolKind toolKind, ItemStack stack, Level level, BlockState originState, BlockPos origin, ServerPlayer player, int radius) {
@@ -211,23 +340,50 @@ public final class UltimateToolHelper {
         HOE
     }
 
-    private static void toggleThreeByThree(Level level, Player player, ItemStack stack) {
-        boolean enabled = !isThreeByThreeEnabled(stack);
-        if (enabled) {
-            stack.getOrCreateTag().putBoolean(THREE_BY_THREE_TAG, true);
-        } else if (stack.hasTag()) {
-            stack.getTag().remove(THREE_BY_THREE_TAG);
+    public enum MiningMode {
+        DEFAULT,
+        THREE_BY_THREE,
+        VEIN
+    }
+
+    private static List<MiningMode> availableModes(ToolKind toolKind) {
+        List<MiningMode> modes = new ArrayList<>(3);
+        if (toolKind == null) {
+            return modes;
+        }
+        modes.add(MiningMode.DEFAULT);
+        if (AntarchySettings.ultimateToolsThreeByThreeEnabled()) {
+            modes.add(MiningMode.THREE_BY_THREE);
+        }
+        if (AntarchySettings.ultimateToolsVeinMiningEnabled() && (toolKind == ToolKind.PICKAXE || toolKind == ToolKind.AXE)) {
+            modes.add(MiningMode.VEIN);
+        }
+        return modes;
+    }
+
+    private static void cycleMiningMode(Level level, Player player, ItemStack stack) {
+        List<MiningMode> modes = availableModes(toolKindOf(stack.getItem()));
+        int current = modes.indexOf(getMiningMode(stack));
+        MiningMode next = modes.get((current + 1) % modes.size());
+        if (next == MiningMode.DEFAULT) {
+            CompoundTag tag = stack.getTag();
+            if (tag != null) {
+                tag.remove(THREE_BY_THREE_TAG);
+                tag.remove(MINING_MODE_TAG);
+            }
+        } else {
+            CompoundTag tag = stack.getOrCreateTag();
+            tag.remove(THREE_BY_THREE_TAG);
+            tag.putByte(MINING_MODE_TAG, (byte) next.ordinal());
         }
 
         if (!level.isClientSide) {
-            player.displayClientMessage(
-                    Component.translatable(
-                            enabled
-                                    ? "message.antarchy.ultimate_tool.mode_3x3"
-                                    : "message.antarchy.ultimate_tool.mode_default"
-                    ),
-                    true
-            );
+            String key = switch (next) {
+                case DEFAULT -> "message.antarchy.ultimate_tool.mode_default";
+                case THREE_BY_THREE -> "message.antarchy.ultimate_tool.mode_3x3";
+                case VEIN -> "message.antarchy.ultimate_tool.mode_vein";
+            };
+            player.displayClientMessage(Component.translatable(key), true);
         }
     }
 

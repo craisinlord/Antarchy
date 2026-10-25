@@ -102,6 +102,8 @@ public class AntarchyForgePayloadHandlers {
                         case com.craisinlord.antarchy.content.network.RoyalMountActionPayload.FLIGHT_TOGGLE -> mount.toggleMountedFlight(player);
                         case com.craisinlord.antarchy.content.network.RoyalMountActionPayload.BITE -> mount.handleMountedBite(player);
                         case com.craisinlord.antarchy.content.network.RoyalMountActionPayload.SPIT -> mount.handleMountedSpit(player);
+                        case com.craisinlord.antarchy.content.network.RoyalMountActionPayload.BEAM -> mount.handleMountedBeam(player);
+                        case com.craisinlord.antarchy.content.network.RoyalMountActionPayload.SIGNATURE -> mount.handleMountedSignature(player);
                         default -> {
                         }
                     }

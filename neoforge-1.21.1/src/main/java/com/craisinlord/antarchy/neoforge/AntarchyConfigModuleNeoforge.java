@@ -154,6 +154,7 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setRoyalBossKnockbackResistance(AntarchyMobsConfig.royalBossKnockbackResistance());
         AntarchySettings.setRoyalBossStepHeight(AntarchyMobsConfig.royalBossStepHeight());
         AntarchySettings.setRoyalBossMaxSingleHitDamage(AntarchyMobsConfig.royalBossMaxSingleHitDamage());
+        AntarchySettings.setRoyalBossHitOverflowRate(AntarchyMobsConfig.royalBossHitOverflowRate());
         AntarchySettings.setRoyalBossBiteReach(AntarchyMobsConfig.royalBossBiteReach());
         AntarchySettings.setRoyalBossBiteDamageMultiplier(AntarchyMobsConfig.royalBossBiteDamageMultiplier());
         AntarchySettings.setRoyalBossBiteCooldownTicks(AntarchyMobsConfig.royalBossBiteCooldownTicks());

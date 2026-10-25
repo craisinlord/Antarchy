@@ -21,7 +21,7 @@ public final class BloodglassWardEffect extends MobEffect {
     public void addAttributeModifiers(AttributeMap attributeMap, int amplifier) {
         AttributeInstance instance = attributeMap.getInstance(AntarchyObjects.BLOODGLASS_MAX_HEARTS.get());
         if (instance == null) return;
-        instance.addTransientModifier(
+        instance.addOrUpdateTransientModifier(
                 new AttributeModifier(MODIFIER_ID, amplifier + 1, AttributeModifier.Operation.ADD_VALUE)
         );
     }

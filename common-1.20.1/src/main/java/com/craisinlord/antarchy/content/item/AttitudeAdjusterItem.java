@@ -30,6 +30,14 @@ public class AttitudeAdjusterItem extends SwordItem {
     }
 
     @Override
+    public com.google.common.collect.Multimap<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> getDefaultAttributeModifiers(net.minecraft.world.entity.EquipmentSlot slot) {
+        if (slot != net.minecraft.world.entity.EquipmentSlot.MAINHAND) {
+            return super.getDefaultAttributeModifiers(slot);
+        }
+        return com.craisinlord.antarchy.compat.item.WeaponAttributes.base(this.tier, (float) Math.round(AntarchySettings.attitudeAdjusterBaseDamage()), ATTACK_SPEED).build();
+    }
+
+    @Override
     public void appendHoverText(ItemStack stack, Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.translatable("tooltip.antarchy.attitude_adjuster.grounded").withStyle(ChatFormatting.DARK_GRAY));
         tooltipComponents.add(Component.translatable("tooltip.antarchy.attitude_adjuster.slam").withStyle(ChatFormatting.YELLOW));

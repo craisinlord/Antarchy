@@ -22,6 +22,14 @@ public class BasiliskDaggerItem extends SwordItem {
     }
 
     @Override
+    public com.google.common.collect.Multimap<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> getDefaultAttributeModifiers(net.minecraft.world.entity.EquipmentSlot slot) {
+        if (slot != net.minecraft.world.entity.EquipmentSlot.MAINHAND) {
+            return super.getDefaultAttributeModifiers(slot);
+        }
+        return com.craisinlord.antarchy.compat.item.WeaponAttributes.base(this.tier, (float) Math.round(AntarchySettings.basiliskDaggerAttackDamage()), (float) AntarchySettings.basiliskDaggerAttackSpeed()).build();
+    }
+
+    @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         boolean didHurt = super.hurtEnemy(stack, target, attacker);
         if (didHurt && !target.level().isClientSide()) {

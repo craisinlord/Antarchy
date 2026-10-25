@@ -21,6 +21,7 @@ public final class BloodglassWardEffect extends MobEffect {
     public void addAttributeModifiers(net.minecraft.world.entity.LivingEntity livingEntity, AttributeMap attributeMap, int amplifier) {
         AttributeInstance instance = attributeMap.getInstance(AntarchyObjects.BLOODGLASS_MAX_HEARTS.get());
         if (instance == null) return;
+        instance.removeModifier(MODIFIER_ID);
         instance.addTransientModifier(
                 new AttributeModifier(MODIFIER_ID, "bloodglass_ward_hearts", amplifier + 1, AttributeModifier.Operation.ADDITION)
         );
