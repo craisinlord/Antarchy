@@ -648,9 +648,6 @@ public final class AntarchyNeoForgeEvents {
                         - access.antarchy$getArmorShieldsActive() - access.antarchy$getArmorShieldLostCount())
         );
         int currentCap = access.antarchy$getAppleShieldsActive() + access.antarchy$getAppleShieldLostCount();
-        // Only grant newly-added capacity (e.g. first application, or a higher amplifier).
-        // A mere duration refresh of an already-active ward must not reset shields that are
-        // already lost, nor restart their recharge timer.
         if (targetCap > currentCap) {
             access.antarchy$setAppleShieldsActive(access.antarchy$getAppleShieldsActive() + (targetCap - currentCap));
             syncBloodglass((ServerPlayer) player);
@@ -748,7 +745,6 @@ public final class AntarchyNeoForgeEvents {
         BloodglassAccess access = (BloodglassAccess) player;
 
         if (fromIsBC && !toIsBC) {
-            // Unequipped BC armor, remove one shield slot
             if (access.antarchy$getArmorShieldsActive() > 0) {
                 access.antarchy$setArmorShieldsActive(access.antarchy$getArmorShieldsActive() - 1);
             } else if (access.antarchy$getArmorShieldLostCount() > 0) {
@@ -758,7 +754,6 @@ public final class AntarchyNeoForgeEvents {
                 }
             }
         } else if (!fromIsBC && toIsBC) {
-            // Newly equipped BC armor,only add if not already accounted for (by respawn init)
             int bcPieces = countBCArmorPieces(player);
             int currentTotal = access.antarchy$getArmorShieldsActive() + access.antarchy$getArmorShieldLostCount();
             if (currentTotal < bcPieces) {
@@ -766,8 +761,6 @@ public final class AntarchyNeoForgeEvents {
                 access.antarchy$setArmorRechargeTimer(AntarchySettings.bloodCrystalArmorShieldRechargeTicks());
             }
         } else if (fromIsBC) {
-            // BC armor replaced with another BC armor (or same after re-equip sequence)
-            // Remove old shield, start recharging new one and reset timer
             if (access.antarchy$getArmorShieldsActive() > 0) {
                 access.antarchy$setArmorShieldsActive(access.antarchy$getArmorShieldsActive() - 1);
             } else if (access.antarchy$getArmorShieldLostCount() > 0) {
@@ -811,7 +804,6 @@ public final class AntarchyNeoForgeEvents {
         int totalActive = access.antarchy$getTotalShieldsActive();
         if (totalActive <= 0) return;
 
-        // Consume apple shields first, then armor shields
         if (access.antarchy$getAppleShieldsActive() > 0) {
             access.antarchy$setAppleShieldsActive(access.antarchy$getAppleShieldsActive() - 1);
             access.antarchy$setAppleShieldLostCount(access.antarchy$getAppleShieldLostCount() + 1);
@@ -858,8 +850,6 @@ public final class AntarchyNeoForgeEvents {
             return;
         }
 
-        // Shared item code now scales arrow base damage directly so attribute and projectile
-        // modifiers stay in the damage pipeline. Leave non-player hits untouched here.
     }
 
     static void handleUltimateCrossbowDamage(LivingIncomingDamageEvent event) {

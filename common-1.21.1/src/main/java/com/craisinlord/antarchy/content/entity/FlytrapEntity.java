@@ -408,10 +408,6 @@ public class FlytrapEntity extends Monster implements GeoEntity {
                 continue;
             }
 
-            // Put the entity on cooldown before hurting it, regardless of hurt()'s result: a
-            // shield or armor effect can absorb the damage and make hurt() return false without
-            // granting the vanilla invulnerability window, which would otherwise let this attack
-            // re-attempt damage on the same entity every single tick of the active window.
             this.sweepHitCooldowns.put(candidate.getUUID(), AntarchySettings.flytrapSweepHitCooldownTicks());
             candidate.hurt(AntarchyDamageSources.flytrapMauling(serverLevel, this), (float) AntarchySettings.flytrapAttackDamage());
         }

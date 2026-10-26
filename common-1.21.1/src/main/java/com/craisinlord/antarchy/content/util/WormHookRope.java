@@ -12,16 +12,6 @@ import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Tracks the path of a taut rope from a fixed anchor point to a moving end point (the
- * player's eyes), bending around block corners when the straight-line path would otherwise
- * clip through terrain. The anchor never moves (the worm hook is stuck in a block), so this
- * only needs to add/remove bends on the player's side of the rope.
- *
- * Ported from the corner-wrapping algorithm in Yyon's GrappleMod (GPL-3.0), adapted from a
- * custom vector class to vanilla Vec3 and from a moving-hook/moving-player pair to a fixed
- * anchor.
- */
 public final class WormHookRope {
     private static final double BEND_OFFSET = 0.05D;
     private static final double INTO_BLOCK = 0.05D;
@@ -44,7 +34,6 @@ public final class WormHookRope {
         this.prevEnd = end;
     }
 
-    /** Recomputes the bend list for the current anchor/end positions. Anchor must stay constant. */
     public void update(Entity context, Vec3 anchor, Vec3 end, double ropeLength) {
         this.ropeLength = ropeLength;
         Level level = context.level();
@@ -52,7 +41,6 @@ public final class WormHookRope {
         points.set(0, anchor);
         points.set(points.size() - 1, end);
 
-        // Unwind bends the rope has swung clear of.
         while (points.size() > 2) {
             int index = points.size() - 2;
             Vec3 closest = points.get(index);
@@ -153,12 +141,10 @@ public final class WormHookRope {
         topSides.remove(index);
     }
 
-    /** The pivot point closest to the moving end: either the anchor, or the last bend before it. */
     public Vec3 getPivot() {
         return points.get(points.size() - 2);
     }
 
-    /** Rope length used up getting from the anchor to the pivot (0 if the rope has no bends). */
     public double getConsumedLength() {
         double dist = 0;
         for (int i = 0; i < points.size() - 2; i++) {

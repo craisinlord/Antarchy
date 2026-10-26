@@ -17,7 +17,6 @@ public final class MoonSkyTracker {
     private static final long MAX_AGE_MILLIS = 1500L;
     private static final double AIM_COSINE = Math.cos(Math.toRadians(PortalGunMoonMath.AIM_TOLERANCE_DEGREES));
     private static Vec3 direction;
-    // Weak so a dimension change or logout doesn't pin the old client world in memory.
     private static WeakReference<ClientLevel> level = new WeakReference<>(null);
     private static long recordedAt;
     private static Consumer<PortalGunMoonAimPayload> sender = payload -> {};

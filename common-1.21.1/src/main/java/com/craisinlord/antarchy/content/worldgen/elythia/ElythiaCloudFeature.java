@@ -10,10 +10,6 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
-/**
- * Scatters solid puffs of {@link AntarchyObjects#CLOUD_BLOCK} sized and shaped
- * anywhere from thin wispy veils to large, dense masses, with a softly feathered edge.
- */
 public final class ElythiaCloudFeature extends Feature<NoneFeatureConfiguration> {
     public ElythiaCloudFeature(Codec<NoneFeatureConfiguration> codec) {
         super(codec);
@@ -76,9 +72,6 @@ public final class ElythiaCloudFeature extends Feature<NoneFeatureConfiguration>
         int yRange = Math.max(1, radiusY);
         int zRange = Math.max(1, radiusZ);
         BlockState cloud = AntarchyObjects.CLOUD_BLOCK.get().defaultBlockState();
-        // Clouds are solid puffs, not hollow shells — only the outer rind is feathered for a
-        // soft, ragged edge. Wispy clouds get a lower edge-fill chance so they read as thin
-        // and sparse without turning the whole body into visible holes.
         float edgeFillChance = size == CloudSize.WISPY ? 0.55F : 0.85F;
         double edgeStart = 0.7D;
 

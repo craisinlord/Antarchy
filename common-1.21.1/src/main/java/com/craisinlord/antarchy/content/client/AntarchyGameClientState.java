@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.core.BlockPos;
 
-/** Client state for Antarchy-owned games hosted by AntOS. */
 public final class AntarchyGameClientState {
     private static final Map<String, String> GAME_STATES = new ConcurrentHashMap<>();
 

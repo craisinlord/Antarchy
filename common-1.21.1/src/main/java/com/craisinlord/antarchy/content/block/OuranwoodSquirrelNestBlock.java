@@ -13,12 +13,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
-/**
- * Invisible world-gen-only marker placed inside a flying squirrel hollow.
- * Schedules itself to replace with COARSE_DIRT and spawn squirrels shortly
- * after the chunk loads, so entity creation never blocks the gen thread.
- * No BlockItem is registered, so this block never appears in creative or JEI.
- */
 public class OuranwoodSquirrelNestBlock extends Block {
     public static final IntegerProperty SQUIRREL_COUNT = IntegerProperty.create("squirrels", 1, 3);
 

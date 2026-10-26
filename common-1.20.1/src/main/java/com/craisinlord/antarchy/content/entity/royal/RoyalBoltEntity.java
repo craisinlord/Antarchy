@@ -87,6 +87,14 @@ public class RoyalBoltEntity extends AbstractHurtingProjectile {
     }
 
     @Override
+    protected boolean canHitEntity(Entity target) {
+        if (this.getOwner() instanceof RoyalMountEntity mount && mount.isFriendlyTo(target)) {
+            return false;
+        }
+        return super.canHitEntity(target);
+    }
+
+    @Override
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
         if (this.level().isClientSide) {
@@ -101,7 +109,13 @@ public class RoyalBoltEntity extends AbstractHurtingProjectile {
                 && royal.isTame() && other.isTame()) {
             return;
         }
+        if (owner instanceof RoyalMountEntity mount && mount.isFriendlyTo(target)) {
+            return;
+        }
         float damage = (float) AntarchySettings.royalBoltDamage();
+        if (owner instanceof RoyalMountEntity mount) {
+            damage *= mount.projectileDamageMultiplier();
+        }
         target.hurt(this.damageSources().mobProjectile(this, owner instanceof LivingEntity le ? le : null), damage);
         if (target instanceof LivingEntity living) {
             living.knockback(0.35D, this.getX() - target.getX(), this.getZ() - target.getZ());
@@ -125,6 +139,9 @@ public class RoyalBoltEntity extends AbstractHurtingProjectile {
                     }
                 }
                 case GENERIC -> {
+                    if (owner instanceof PrincessEntity) {
+                        living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1), owner);
+                    }
                 }
             }
         }

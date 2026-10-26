@@ -391,6 +391,9 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         if (this.isKnockedDown()) {
             this.tickKnockedDown();
         } else if (this.isLeashed()) {
+            if (this.chargeTicksRemaining > 0 || this.isChargeAnimationActive()) {
+                this.endChargeState();
+            }
             this.getNavigation().stop();
             this.setTarget(null);
             this.updateAmbientAnimation();
@@ -483,6 +486,10 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
     }
 
     private void tickCharge() {
+        if (this.chargeTicksRemaining <= 0) {
+            this.endChargeState();
+            return;
+        }
         if (this.getAnimationState() != ANIM_CHARGE) {
             this.setAnimationState(ANIM_CHARGE);
         }
@@ -909,6 +916,9 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         if (!this.isFlying() && !mountedCharge) {
             this.pendingChargeStart = true;
             this.requestFlightStart();
+            if (this.getAnimationState() != ANIM_OPEN_WINGS) {
+                this.pendingChargeStart = false;
+            }
             return;
         }
         this.beginChargeStart(this.chargeDirection, this.pendingChargeDuration, mountedCharge);
@@ -978,11 +988,21 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         serverLevel.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY() + 0.8D, this.getZ(), 20, 2.0D, 0.6D, 2.0D, 0.08D);
         this.broadcastImpactShake(serverLevel);
 
-        if (this.onGround()) {
+        this.endChargeState();
+    }
+
+    private void endChargeState() {
+        this.chargeTicksRemaining = 0;
+        this.groundedMountedCharge = false;
+        this.noPhysics = false;
+        this.setAnimationState(this.isFlying() ? ANIM_FLY : ANIM_IDLE);
+        if (!this.isVehicle() && this.isFlying() && this.hasGroundBelow()) {
             this.requestFlightStop();
-        } else {
-            this.updateAmbientAnimation();
         }
+    }
+
+    private boolean hasGroundBelow() {
+        return !this.level().noCollision(this, this.getBoundingBox().move(this.toWorld(0.0D, -0.2D, 0.0D)));
     }
 
     private void breakBlocksForChargeImpact(ServerLevel level) {
@@ -1423,6 +1443,9 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
         this.chargeCooldown = tag.getInt("ChargeCooldown");
         this.attackCooldown = tag.getInt("AttackCooldown");
         this.combatCryDone = tag.getBoolean("CombatCryDone");
+        if (this.isChargeAnimationActive()) {
+            this.setAnimationState(this.isFlying() ? ANIM_FLY : ANIM_IDLE);
+        }
         if (this.isKnockedDown() && this.getAnimationState() != ANIM_KNOCKED_DOWN_IDLE) {
             this.setAnimationState(ANIM_KNOCKED_DOWN_IDLE);
         }

@@ -7,9 +7,6 @@ import org.spongepowered.asm.mixin.Mixins;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
-/*
- * Mixin plugin for compat-gated mixins and optional deps.
- */
 public final class AntarchyMixinPlugin implements IMixinConfigPlugin {
     private static final AntarchyRangedAttackPatcher RANGED_ATTACK_PATCHER = new AntarchyRangedAttackPatcher();
 
@@ -42,14 +39,9 @@ public final class AntarchyMixinPlugin implements IMixinConfigPlugin {
                     && classPresent("com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod");
         }
         if (mixinClassName.startsWith("com.craisinlord.antarchy.mixins.compat.alexscaves.")) {
-            // The target class was found above. Checking the target itself avoids depending on
-            // whether a loader exposes Alex's Caves' entrypoint resource to this classloader.
             return true;
         }
         if (mixinClassName.endsWith(".VillagerTradesMixin")) {
-            // Trade registration is platform-driven on every supported loader now. Keeping the
-            // static VillagerTrades class-init mixin around risks touching AntarchyObjects before
-            // registration is finished on Fabric and duplicates trades on event-driven loaders.
             return false;
         }
         return true;

@@ -23,7 +23,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
-/** Server-authoritative Royal Guardian chestplate field and temporary projectile arrest state. */
 public final class RoyalBoundaryManager {
     private static final int ALLY_REFRESH_INTERVAL = 10;
     private static final DustParticleOptions ROYAL_GOLD = new DustParticleOptions(new Vector3f(1.0F, 0.72F, 0.12F), 1.15F);
@@ -51,7 +50,6 @@ public final class RoyalBoundaryManager {
         return true;
     }
 
-    /** Called from ServerPlayer.tick; ends fields immediately when their owner can no longer sustain them. */
     public static void tickOwner(ServerPlayer owner) {
         if (!(owner.level() instanceof ServerLevel level)) return;
         UUID ownerId = owner.getUUID();
@@ -92,7 +90,6 @@ public final class RoyalBoundaryManager {
         }
     }
 
-    /** Predicts this tick's movement so a fast projectile is arrested before its own collision pass. */
     public static void prepareProjectile(Projectile projectile) {
         if (!(projectile.level() instanceof ServerLevel level) || projectile.isRemoved()) return;
         Map<UUID, ArrestedProjectile> arrested = ARRESTED.get(level);
@@ -111,7 +108,6 @@ public final class RoyalBoundaryManager {
         }
     }
 
-    /** Swept fallback for unusual projectiles and arrest-state progression. */
     public static void tickProjectile(Projectile projectile) {
         if (!(projectile.level() instanceof ServerLevel level)) return;
         Map<UUID, ArrestedProjectile> arrested = ARRESTED.get(level);

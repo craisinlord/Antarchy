@@ -82,7 +82,6 @@ public final class QueenLocateCommand {
         return 0;
     }
 
-    /** Finds the nearest generated Queen spawn site without spawning her. Loads (and may generate) the checked chunks. */
     public static NearestSite findNearestSite(ServerLevel thoraxis, int originX, int originZ) {
         int cellX = Math.floorDiv(originX, QueenTrailGrid.SPACING);
         int cellZ = Math.floorDiv(originZ, QueenTrailGrid.SPACING);

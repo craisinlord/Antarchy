@@ -46,10 +46,6 @@ public class UpwardFallingBlockEntity extends Entity {
 
     public UpwardFallingBlockEntity(EntityType<UpwardFallingBlockEntity> type, Level level) {
         super(type, level);
-        // This entity has its own simple upward-flight and landing checks below.  Do not
-        // send it through the normal entity collision solver: Thoraxis can create many of
-        // these at once while chunks are loading, and swept entity collision is needlessly
-        // expensive for a block that only collides with the block directly above it.
         this.noPhysics = true;
     }
 
@@ -148,8 +144,6 @@ public class UpwardFallingBlockEntity extends Entity {
         BlockPos headPos  = BlockPos.containing(getX(), getBoundingBox().maxY, getZ());
         BlockState above  = level().getBlockState(headPos);
 
-        // Leaves block the entity but can't hold scaffolding — drop as item, unless this
-        // instance is allowed to land on leaves like a normal falling block would
         if (above.is(BlockTags.LEAVES) && this.breaksOnLeaves) {
             dropAndRemove(blockState);
             return;

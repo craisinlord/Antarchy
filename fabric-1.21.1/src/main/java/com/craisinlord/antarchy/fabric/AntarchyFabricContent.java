@@ -102,10 +102,6 @@ public final class AntarchyFabricContent {
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.STRATOSHARK_FIN.get()), net.minecraft.world.item.alchemy.Potions.SLOW_FALLING);
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.SPRINGBUG_LEG.get()), Potions.LEAPING);
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.CORNEA_EAR.get()), net.minecraft.world.item.alchemy.Potions.NIGHT_VISION);
-            // Corn/syrup/root-beer are plain items, not Potion holders, so vanilla's Builder#expectPotion
-            // rejects them via registerItemRecipe/registerPotionRecipe. The actual output logic comes from
-            // PotionBrewingMixin -> CustomBrewingRecipes; brewing-stand slot validity for these custom items
-            // is handled by BrewingStandCustomIngredientMixin (Fabric doesn't expose Builder#addContainer).
         });
 
         AntarchyFabricSounds.SOUND_EVENTS.register();

@@ -78,11 +78,6 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
         return this.hasActiveInfinityDestination() || super.requiresCustomPersistence();
     }
 
-    /**
-     * Called on death. If this ant has already been activated (fed its reagent) and Infinity integration is
-     * enabled, looks for a nearby unlit obsidian Nether-portal frame and, if found, ignites it as a permanent
-     * physical Infinity Dimensions portal to this ant's assigned dimension.
-     */
     public boolean tryIgniteInfinityPortalOnDeath() {
         if (!this.infinityActivated) {
             return false;

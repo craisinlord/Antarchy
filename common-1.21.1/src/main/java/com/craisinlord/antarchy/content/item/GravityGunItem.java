@@ -377,8 +377,6 @@ public class GravityGunItem extends Item implements GeoItem {
         Vec2 holdRotation = getHoldRotation(player);
         heldTarget.setNoGravity(true);
 
-        // Snap back only when the held entity has drifted badly; otherwise drive it with
-        // velocity so the client can interpolate the motion smoothly between server updates.
         if (movement.lengthSqr() > 16.0D) {
             heldTarget.moveTo(holdPosition.x, holdPosition.y, holdPosition.z, holdRotation.x, holdRotation.y);
             heldTarget.setDeltaMovement(Vec3.ZERO);

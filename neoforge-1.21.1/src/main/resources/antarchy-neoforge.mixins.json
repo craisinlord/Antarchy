@@ -15,6 +15,7 @@
     "infinity.WarpLogicMixin"
   ],
   "client": [
+    "infinity.ShaderPayloadRepeatSkipMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -34,7 +34,7 @@ public class TermiteNestFeature extends SurfaceAntNestFeature {
     protected BlockPos resolveNestPos(WorldGenLevel level, BlockPos origin) {
         int x = origin.getX();
         int z = origin.getZ();
-        int startY = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z) - 1;
+        int startY = Math.min(origin.getY(), level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z) - 1);
         int minY = level.getMinBuildHeight() + 1;
 
         for (int y = startY; y >= minY; y--) {

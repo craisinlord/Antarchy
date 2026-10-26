@@ -8,9 +8,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Mob.class)
-/*
- * Stops mob AI movement while paralyzed.
- */
 public abstract class ParalyzedMobFreezeMixin {
     @Inject(method = "serverAiStep", at = @At("HEAD"))
     private void antarchy$freezeAiWhileParalyzed(CallbackInfo ci) {

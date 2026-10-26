@@ -113,13 +113,6 @@ public final class DrTrayaurusTradeManager extends SimpleJsonResourceReloadListe
         }
     }
 
-    /**
-     * One side of a trade. {@code components} is optional: on {@code sell} it is a data component
-     * patch applied to the result (enchantments, custom name, ...); on {@code buy}/{@code second_buy}
-     * it is a component predicate the offered stack must match exactly for each listed component.
-     * It is kept as raw JSON and parsed per offer because components such as enchantments need
-     * registry access, which the reload listener does not have.
-     */
     private record StackEntry(ResourceLocation itemId, int count, Optional<JsonElement> components) {
         private static final Codec<StackEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 ResourceLocation.CODEC.fieldOf("item").forGetter(StackEntry::itemId),
@@ -162,7 +155,6 @@ public final class DrTrayaurusTradeManager extends SimpleJsonResourceReloadListe
             if (this.components.isEmpty()) {
                 return Optional.of(new ItemCost(item.get(), this.count));
             }
-            // A predicate that fails to parse drops the trade rather than accepting any stack.
             return DataComponentPredicate.CODEC
                     .parse(RegistryOps.create(JsonOps.INSTANCE, registries), this.components.get())
                     .resultOrPartial(message -> LOGGER.error("Dr. Trayaurus trade {}: bad components: {}", this.itemId, message))

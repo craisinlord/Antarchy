@@ -115,58 +115,6 @@ public abstract class AntiwaterFluid extends BaseFlowingFluid {
         return net.minecraft.world.level.material.Fluids.EMPTY.defaultFluidState();
     }
 
-    /*
-    @Override
-    protected void spread(Level level, BlockPos pos, FluidState state) {
-        if (state.isEmpty()) {
-            return;
-        }
-        if (!state.isSource() && !this.isFlowingStateValid(level, pos, state)) {
-            level.setBlockAndUpdate(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
-            this.scheduleCleanup(level, pos);
-            return;
-        }
-
-        BlockState blockState = level.getBlockState(pos);
-        int nextAmount = state.getAmount() - 1;
-
-        BlockPos abovePos = pos.above();
-        BlockState aboveState = level.getBlockState(abovePos);
-        FluidState aboveFluid = level.getFluidState(abovePos);
-
-        if (!aboveState.isSolid() && !aboveFluid.getType().isSame(this)) {
-            FluidState upwardState = this.getFlowing(8, false);
-            if (this.canSpreadTo(level, pos, blockState, Direction.UP, abovePos, aboveState, aboveFluid, upwardState.getType())) {
-                this.spreadTo(level, abovePos, aboveState, Direction.UP, upwardState);
-            }
-        }
-
-        if (!this.canHangAt(level, pos)) {
-            return;
-        }
-
-        if (nextAmount <= 0) {
-            return;
-        }
-
-        for (Direction direction : Direction.Plane.HORIZONTAL) {
-            BlockPos targetPos = pos.relative(direction);
-            BlockState targetState = level.getBlockState(targetPos);
-            FluidState targetFluid = targetState.getFluidState();
-            if (!this.canSpreadHorizontallyInto(level, targetPos)) {
-                continue;
-            }
-
-            FluidState horizontalState = this.getFlowing(Math.min(nextAmount, MAX_HORIZONTAL_SPREAD_AMOUNT), false);
-            if (!this.canSpreadTo(level, pos, blockState, direction, targetPos, targetState, targetFluid, horizontalState.getType())) {
-                continue;
-            }
-
-            this.spreadTo(level, targetPos, targetState, direction, horizontalState);
-        }
-    }
-    */
-
     @Override
     protected void spread(Level level, BlockPos pos, FluidState state) {
         if (state.isEmpty()) {
@@ -317,7 +265,6 @@ public abstract class AntiwaterFluid extends BaseFlowingFluid {
         BlockState aboveState = level.getBlockState(abovePos);
         FluidState aboveFluid = level.getFluidState(abovePos);
 
-        // Antiwater flowing into water solidifies rather than displacing it
         if (aboveFluid.getFluidType() == NeoForgeMod.WATER_TYPE.value()) {
             BlockState result = state.isSource()
                 ? AntarchyNeoforgeBlocks.ANTIMETAL.get().defaultBlockState()

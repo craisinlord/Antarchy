@@ -79,8 +79,6 @@ public final class RoyalIndicatorRenderer {
         out.addVertex(pose, right, top, depth).setUv(1.0F, 0.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, 1.0F);
         out.addVertex(pose, left, top, depth).setUv(0.0F, 0.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, 1.0F);
 
-        // Emit the reverse winding as well. The crown is viewed from every angle, and
-        // a single-sided quad can vanish when the renderer's culling state rejects it.
         out.addVertex(pose, left, top, depth).setUv(0.0F, 0.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, -1.0F);
         out.addVertex(pose, right, top, depth).setUv(1.0F, 0.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, -1.0F);
         out.addVertex(pose, right, bottom, depth).setUv(1.0F, 1.0F).setOverlay(0).setLight(packedLight).setNormal(pose, 0.0F, 0.0F, -1.0F);

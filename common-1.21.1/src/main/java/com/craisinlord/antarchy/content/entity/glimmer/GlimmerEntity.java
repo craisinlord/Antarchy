@@ -147,7 +147,6 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
 
     @Override
     public void push(Entity entity) {
-        // no-op: Glimmers pass through other entities
     }
 
     @Override
@@ -179,10 +178,6 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         this.entityData.set(ABILITY_ANIM_TICKS, ticks);
     }
 
-    /**
-     * Ticks remaining in the daytime despawn fade-out, or 0 if not currently fading.
-     * Used client-side to fade the render alpha to nothing before the entity is removed.
-     */
     public int getFadeTicks() {
         return this.entityData.get(FADE_TICKS);
     }
@@ -499,10 +494,6 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         return GlimmerVariant.random(this.random);
     }
 
-    /**
-     * Wild Glimmers are common in Glimmering Pools, but only rarely (and only at night)
-     * turn up in Ouranwood Forest, the Elythia Meadow, and the Peach Forest.
-     */
     public static boolean checkGlimmerSpawnRules(EntityType<GlimmerEntity> type, ServerLevelAccessor level,
                                                    MobSpawnType spawnType, BlockPos pos, net.minecraft.util.RandomSource random) {
         if (!net.minecraft.world.entity.animal.Animal.checkAnimalSpawnRules(type, level, spawnType, pos, random)) {
@@ -601,12 +592,6 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         }
     }
 
-    /**
-     * With {@code noPhysics} true, Glimmers never travel through vanilla's normal movement path,
-     * so the usual body-follows-head catch-up never runs and a stationary Glimmer looking around
-     * (LookAtPlayerGoal/RandomLookAroundGoal only move the head) ends up with its head rendered
-     * far past the model's body — this keeps the body snapped within {@link #getMaxHeadYRot()} of it.
-     */
     private void clampBodyToHeadRotation() {
         float maxYaw = this.getMaxHeadYRot();
         float delta = Mth.wrapDegrees(this.yHeadRot - this.yBodyRot);

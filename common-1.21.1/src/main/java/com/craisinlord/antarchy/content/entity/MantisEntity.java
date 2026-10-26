@@ -149,12 +149,10 @@ public class MantisEntity extends Monster implements GeoEntity {
 
         boolean ignoreLightLevel = AntarchySettings.mantisIgnoreLightLevel();
 
-        // Daytime overworld spawns can't pass the vanilla darkness check, so no light gate here
         if (level.getLevel().isDay() && level.getBiome(pos).is(AntarchyTags.Biomes.MANTIS_OVERWORLD_SPAWN_BIOMES)) {
             return atSurface && level.canSeeSky(pos);
         }
 
-        // Elythia meadow (and any future mantis_spawn_biomes): nighttime, no sky-access requirement
         if (level.getLevel().isNight() && level.getBiome(pos).is(AntarchyTags.Biomes.MANTIS_SPAWN_BIOMES)) {
             return atSurface && (ignoreLightLevel || Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random));
         }
@@ -184,7 +182,6 @@ public class MantisEntity extends Monster implements GeoEntity {
 
         HurtByTargetGoal hurtByTargetGoal = new HurtByTargetGoal(this);
         this.targetSelector.addGoal(1, hurtByTargetGoal);
-        // randomInterval lowered from default 10 to 5 for faster re-acquisition
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 5, true, false, null));
     }
 

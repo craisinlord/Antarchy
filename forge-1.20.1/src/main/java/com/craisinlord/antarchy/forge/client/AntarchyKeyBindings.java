@@ -36,6 +36,21 @@ public final class AntarchyKeyBindings {
             InputConstants.KEY_R,
             CATEGORY
     );
+    public static final KeyMapping MOUNT_BEAM = new KeyMapping(
+            "key.antarchy.mount_beam",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            InputConstants.KEY_H,
+            CATEGORY
+    );
+
+    public static final KeyMapping MOUNT_SIGNATURE = new KeyMapping(
+            "key.antarchy.mount_signature",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            InputConstants.KEY_J,
+            CATEGORY
+    );
     public static final KeyMapping TIGERS_EYE_CAMOUFLAGE = new KeyMapping(
             "key.antarchy.tigers_eye_camouflage",
             KeyConflictContext.IN_GAME,
@@ -80,6 +95,8 @@ public final class AntarchyKeyBindings {
         event.register(BRUTALFLY_FLAP);
         event.register(MOUNT_SPECIAL);
         event.register(MOUNT_FLIGHT_TOGGLE);
+        event.register(MOUNT_BEAM);
+        event.register(MOUNT_SIGNATURE);
         event.register(TIGERS_EYE_CAMOUFLAGE);
         event.register(ROYAL_INVERSION_TOGGLE);
         event.register(ROYAL_BOUNDARY);
@@ -89,6 +106,14 @@ public final class AntarchyKeyBindings {
 
     public static boolean isMountFlightTogglePressed() {
         return MOUNT_FLIGHT_TOGGLE.isDown();
+    }
+
+    public static boolean isMountBeamPressed() {
+        return MOUNT_BEAM.isDown();
+    }
+
+    public static boolean isMountSignaturePressed() {
+        return MOUNT_SIGNATURE.isDown();
     }
 
     public static boolean isMountSpecialPressed() {

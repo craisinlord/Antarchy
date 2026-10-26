@@ -23,7 +23,7 @@ public final class GrowthMobEffect extends MobEffect {
         AttributeInstance instance = attributeMap.getInstance(Attributes.SCALE);
         if (instance == null) return;
         double amount = AntarchySettings.growthPotionDelta() * (amplifier + 1);
-        instance.addTransientModifier(
+        instance.addOrUpdateTransientModifier(
                 new AttributeModifier(MODIFIER_ID, amount, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
         );
     }

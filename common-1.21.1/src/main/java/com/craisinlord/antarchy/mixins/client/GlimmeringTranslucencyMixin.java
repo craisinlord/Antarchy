@@ -18,8 +18,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntityRenderer.class)
 public abstract class GlimmeringTranslucencyMixin<T extends LivingEntity> {
-    // Vertex-color alpha applied to the base skin render while glimmering, on top of the recolor
-    // overlay, so the body itself reads as see-through rather than just tinted.
     private static final int GLIMMERING_ALPHA = 0x40;
 
     @Unique

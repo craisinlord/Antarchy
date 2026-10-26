@@ -47,9 +47,6 @@ public final class UnderVaultBlockEntity extends BlockEntity {
 
     public static void serverTick(ServerLevel level, BlockPos pos, BlockState state, UnderVaultBlockEntity blockEntity) {
         blockEntity.vaultData.setLevel(level);
-        // The vanilla vault detector can miss this ceiling-mounted wrapper because its
-        // block state has a separate render-facing property. Keep the state synchronized
-        // with the same four-block activation range before running vanilla's state machine.
         boolean playerNearby = !level.getEntitiesOfClass(Player.class, new AABB(pos).inflate(4.0D), player -> !player.isSpectator()).isEmpty();
         if (state.getValue(UnderVaultBlock.STATE) == VaultState.INACTIVE && playerNearby && !blockEntity.playerWasNearby) {
             state = state.setValue(UnderVaultBlock.STATE, VaultState.ACTIVE);

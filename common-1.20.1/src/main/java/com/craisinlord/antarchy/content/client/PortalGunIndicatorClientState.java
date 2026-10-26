@@ -12,7 +12,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 
 public final class PortalGunIndicatorClientState {
     private static final Map<UUID, PortalGunIndicatorPayload> STATES = new HashMap<>();
-    // Weak so a dimension change or logout doesn't pin the old client world in memory.
     private static WeakReference<ClientLevel> level = new WeakReference<>(null);
     private static long lastRequestTick = Long.MIN_VALUE;
     private static UUID lastRequestedGun;

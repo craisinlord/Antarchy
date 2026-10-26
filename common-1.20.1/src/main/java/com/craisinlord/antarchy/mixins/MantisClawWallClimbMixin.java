@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.mixins;
 
+import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.item.MantisClawItem;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -91,6 +92,7 @@ public abstract class MantisClawWallClimbMixin extends LivingEntity {
         Player player = (Player) (Object) this;
         return MantisClawItem.isDualWielding(player)
                 && this.horizontalCollision
+                && !this.level().dimensionTypeRegistration().is(AntarchyTags.DimensionTypes.NO_MANTIS_CLIMB)
                 && !this.onGround()
                 && !this.isInWaterOrBubble()
                 && !this.isPassenger()

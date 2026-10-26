@@ -10,9 +10,6 @@ allprojects {
     group = rootProject.maven_group
 
     repositories {
-        // CurseForge Maven artifacts must be resolved from CurseMaven.  The
-        // Fabric repository does not proxy these coordinates reliably and can
-        // prevent Gradle from reaching the working repository.
         maven {
             name = "CurseMaven"
             url = "https://www.cursemaven.com"
@@ -63,13 +60,10 @@ allprojects {
 
 }
 
-// Don't build the root project itself.
 tasks.named('jar') {
     enabled = false
 }
 
-// Delegate forge-1.20.1 tasks to its own Gradle 8.8 wrapper. ForgeGradle 6 can't run
-// on Gradle 9 and includeBuild can't mix Gradle versions, so we shell out instead.
 def forge1201Dir = file('forge-1.20.1')
 def forge1201Wrapper = providers.systemProperty('os.name').get().toLowerCase().contains('win')
         ? new File(forge1201Dir, 'gradlew.bat')
@@ -84,10 +78,6 @@ def forge1201Wrapper = providers.systemProperty('os.name').get().toLowerCase().c
     }
 }
 
-// Delegate fabric-1.20.1 tasks to its own standalone Gradle wrapper. Fabric Loom's
-// build-wide tinyRemapperService isn't classloader-safe across two loom projects
-// targeting different Minecraft versions in the same Gradle invocation, so
-// fabric-1.20.1 can't be a normal included subproject alongside fabric-1.21.1.
 def fabric120Dir = file('fabric-1.20.1')
 def fabric120Wrapper = providers.systemProperty('os.name').get().toLowerCase().contains('win')
         ? new File(fabric120Dir, 'gradlew.bat')

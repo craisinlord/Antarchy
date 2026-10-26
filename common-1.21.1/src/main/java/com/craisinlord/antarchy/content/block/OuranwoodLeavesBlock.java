@@ -25,12 +25,6 @@ import net.minecraft.world.level.material.Fluids;
 public class OuranwoodLeavesBlock extends LeavesBlock implements BonemealableBlock {
     public static final MapCodec<OuranwoodLeavesBlock> CODEC = Block.simpleCodec(OuranwoodLeavesBlock::new);
 
-    /*
-     * We still include vanilla LeavesBlock.DISTANCE in the state definition because
-     * LeavesBlock's constructor sets it.
-     *
-     * This is the real Ouranwood decay distance.
-     */
     public static final IntegerProperty OURANWOOD_DISTANCE = IntegerProperty.create("ouranwood_distance", 1, 17);
 
     public static final BooleanProperty PERSISTENT = LeavesBlock.PERSISTENT;

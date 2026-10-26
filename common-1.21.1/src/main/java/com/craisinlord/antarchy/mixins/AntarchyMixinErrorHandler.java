@@ -4,9 +4,6 @@ import org.spongepowered.asm.mixin.extensibility.IMixinConfig;
 import org.spongepowered.asm.mixin.extensibility.IMixinErrorHandler;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
-/*
- * Keeps bad mixins from hard-crashing startup.
- */
 public final class AntarchyMixinErrorHandler implements IMixinErrorHandler {
     private static final String BROKEN_MARVEL_STELLARIS_MIXIN =
             "net.tintankgames.marvel.mixin.integration.stellaris.DimensionOxygenManagerMixin";

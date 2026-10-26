@@ -31,7 +31,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
-/** Player-safe kernels for the Royal Guardian Sword's King-derived elemental modes. */
 public final class RoyalGuardianSwordAbilities {
     private static final ThreadLocal<Integer> SECONDARY_DAMAGE_DEPTH = ThreadLocal.withInitial(() -> 0);
     private static final ThreadLocal<MeleeAttackContext> MELEE_ATTACK = new ThreadLocal<>();

@@ -14,9 +14,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayerGameMode.class)
-/*
- * Keeps custom sapling stage updates synced like vanilla.
- */
 public abstract class ServerPlayerGameModeMixin {
     @Shadow protected ServerLevel level;
     @Shadow @Final protected ServerPlayer player;

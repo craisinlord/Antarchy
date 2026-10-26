@@ -88,7 +88,6 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
 
     private boolean spawnedByKraken;
 
-    // Explosive impact (fired from the R.P.O. Launcher)
     private boolean explosiveImpact;
     private java.util.UUID explosiveLauncherId;
     private int explosiveArmTicks;
@@ -140,9 +139,7 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 20.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
 
-        // Only retaliate when hit — neutral otherwise
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        // When spawned by Kraken and flying, target nearest player
         this.targetSelector.addGoal(2, new KrakenSummonTargetGoal(this));
     }
 
@@ -215,7 +212,6 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
         if (this.attackCooldown > 0) this.attackCooldown--;
         if (this.inkSprayCooldown > 0) this.inkSprayCooldown--;
 
-        // Ink spray — always active regardless of aggro state
         this.tickInkSpray();
 
         LivingEntity target = this.getTarget();
@@ -375,10 +371,9 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
             float angle = this.random.nextFloat() * (float) (Math.PI * 2);
             this.wanderDx = Mth.cos(angle) * 0.015f;
             this.wanderDz = Mth.sin(angle) * 0.015f;
-            this.wanderDy = -0.01f + this.random.nextFloat() * 0.01f; // slight downward bias
+            this.wanderDy = -0.01f + this.random.nextFloat() * 0.01f;
         }
 
-        // Surface avoidance: if the block above is not water, push down
         float dy = this.wanderDy;
         if (!this.level().getFluidState(this.blockPosition().above()).is(net.minecraft.tags.FluidTags.WATER)) {
             dy = -0.03f;
@@ -662,10 +657,6 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
             this.dropExperience(this);
         }
     }
-
-    // -------------------------------------------------------------------------
-    // Inner goal: only target players when spawned by Kraken in fly mode
-    // -------------------------------------------------------------------------
 
     private static final class KrakenSummonTargetGoal extends NearestAttackableTargetGoal<Player> {
         private final OctopusBombEntity octopus;

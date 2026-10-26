@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** Protects virtual position calls made before the drone constructor has finished. */
 @Pseudo
 @Mixin(targets = "me.desht.pneumaticcraft.common.util.fakeplayer.DroneFakePlayer", remap = false)
 public abstract class DroneFakePlayerConstructionMixin extends FakePlayer {
@@ -29,8 +28,6 @@ public abstract class DroneFakePlayerConstructionMixin extends FakePlayer {
         antarchy$droneConstructionComplete = true;
     }
 
-    // Explicit Mojmap/SRG selectors: the optional target is unavailable to the
-    // annotation processor, but its Minecraft overrides are reobfuscated by Forge.
     @Inject(method = {"position()Lnet/minecraft/world/phys/Vec3;", "m_20182_()Lnet/minecraft/world/phys/Vec3;"},
             at = @At("HEAD"), cancellable = true, remap = false, require = 0)
     private void antarchy$positionDuringConstruction(CallbackInfoReturnable<Vec3> cir) {

@@ -107,6 +107,9 @@ public final class AntarchySettings {
     private static int ultimateCrossbowEnchantability = 20;
     private static int ultimateMaceEnchantability = 20;
     private static boolean ultimateToolsThreeByThreeEnabled = true;
+    private static boolean ultimateToolsVeinMiningEnabled = true;
+    private static int ultimateToolsVeinMiningMaxBlocks = 64;
+    private static int ultimateToolsTreeFellingMaxLogs = 128;
     private static boolean ultimateArmorComesEnchanted = true;
     private static int ultimateHelmetArmorValue = 6;
     private static int ultimateChestplateArmorValue = 11;
@@ -299,6 +302,7 @@ public final class AntarchySettings {
     private static double royalBossKnockbackResistance = 1.0D;
     private static double royalBossStepHeight = 3.0D;
     private static double royalBossMaxSingleHitDamage = 250.0D;
+    private static double royalBossHitOverflowRate = 0.25D;
     private static double royalBossBiteReach = 12.0D;
     private static double royalBossBiteDamageMultiplier = 1.6D;
     private static int royalBossBiteCooldownTicks = 45;
@@ -563,7 +567,6 @@ public final class AntarchySettings {
     private static int bloodCrystalAppleDurationTicks = 2400;
     private static int bloodCrystalAppleShieldRechargeTicks = 600;
     private static int bloodCrystalHardMaxShields = 10;
-    // Armor stats (iron defense, gold durability, 0 toughness by default)
     private static int bloodCrystalHelmetDefense = 3;
     private static int bloodCrystalChestplateDefense = 7;
     private static int bloodCrystalLeggingsDefense = 6;
@@ -973,6 +976,18 @@ public final class AntarchySettings {
 
     public static boolean ultimateToolsThreeByThreeEnabled() {
         return ultimateToolsThreeByThreeEnabled;
+    }
+
+    public static boolean ultimateToolsVeinMiningEnabled() {
+        return ultimateToolsVeinMiningEnabled;
+    }
+
+    public static int ultimateToolsVeinMiningMaxBlocks() {
+        return ultimateToolsVeinMiningMaxBlocks;
+    }
+
+    public static int ultimateToolsTreeFellingMaxLogs() {
+        return ultimateToolsTreeFellingMaxLogs;
     }
 
     public static boolean ultimateArmorComesEnchanted() {
@@ -1625,6 +1640,18 @@ public final class AntarchySettings {
         ultimateToolsThreeByThreeEnabled = value;
     }
 
+    public static void setUltimateToolsVeinMiningEnabled(boolean value) {
+        ultimateToolsVeinMiningEnabled = value;
+    }
+
+    public static void setUltimateToolsVeinMiningMaxBlocks(int value) {
+        ultimateToolsVeinMiningMaxBlocks = value;
+    }
+
+    public static void setUltimateToolsTreeFellingMaxLogs(int value) {
+        ultimateToolsTreeFellingMaxLogs = value;
+    }
+
     public static void setUltimateArmorComesEnchanted(boolean value) {
         ultimateArmorComesEnchanted = value;
     }
@@ -2230,6 +2257,9 @@ public final class AntarchySettings {
     public static double royalBossMaxSingleHitDamage() { return royalBossMaxSingleHitDamage; }
     public static void setRoyalBossMaxSingleHitDamage(double v) { royalBossMaxSingleHitDamage = v; }
 
+    public static double royalBossHitOverflowRate() { return royalBossHitOverflowRate; }
+    public static void setRoyalBossHitOverflowRate(double v) { royalBossHitOverflowRate = v; }
+
     public static double royalBossBiteReach() { return royalBossBiteReach; }
     public static void setRoyalBossBiteReach(double v) { royalBossBiteReach = v; }
 
@@ -2499,7 +2529,6 @@ public final class AntarchySettings {
     public static int     reverieDuplicationCooldownTicks()        { return reverieDuplicationCooldownTicks; }
     public static void    setReverieDuplicationCooldownTicks(int v){ reverieDuplicationCooldownTicks = v; }
 
-    // Hardcoded AI tuning — getters only, no config wiring
     public static double  reveriePreferredFollowMinDistance()    { return reveriePreferredFollowMinDistance; }
     public static double  reveriePreferredFollowMaxDistance()    { return reveriePreferredFollowMaxDistance; }
     public static double  reverieCatchUpDistance()               { return reverieCatchUpDistance; }

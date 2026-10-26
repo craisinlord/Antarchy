@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/** Applies Antarchy-owned additions to existing vanilla jigsaw pools without replacing them. */
 public final class VillagePoolAdditions {
     private static final Gson GSON = new Gson();
     private static final String DIRECTORY = "structure_pool_additions";
@@ -101,8 +100,6 @@ public final class VillagePoolAdditions {
         templates.add(Pair.of(poolElement, weight));
         accessor.integratedapi_setRawTemplates(templates);
 
-        // StructureTemplatePool caches its weighted list in addition to the raw entries.
-        // Keep both views synchronized so the new house is immediately eligible.
         ObjectArrayList<StructurePoolElement> expandedTemplates = new ObjectArrayList<>(accessor.integratedapi_getTemplates());
         for (int i = 0; i < weight; i++) {
             expandedTemplates.add(poolElement);

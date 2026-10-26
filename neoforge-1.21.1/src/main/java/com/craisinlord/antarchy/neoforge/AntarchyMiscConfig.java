@@ -5,24 +5,18 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public final class AntarchyMiscConfig {
     public static final ModConfigSpec SPEC;
 
-    // Elythia
     private static final ModConfigSpec.BooleanValue ELYTHIA_FIREFLY_PARTICLES_ENABLED;
 
-    // Dream Sand
     private static final ModConfigSpec.DoubleValue  DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER;
 
-    // Ichor
     private static final ModConfigSpec.BooleanValue ICHOR_WITHER_ENABLED;
 
-    // Hushweed
     private static final ModConfigSpec.DoubleValue HUSHWEED_SPORE_LIFETIME_SECONDS;
 
-    // Infinite Dimensions
     private static final ModConfigSpec.BooleanValue DISABLE_INFINITY_BOOK_PORTAL_CREATION;
     private static final ModConfigSpec.BooleanValue RAINBOW_ANTS_LEAD_TO_INFINITY_DIMENSIONS;
     private static final ModConfigSpec.DoubleValue RAINBOW_ANT_INFINITY_EASTER_EGG_CHANCE;
 
-    // Permanent portals
     private static final ModConfigSpec.BooleanValue PERMANENT_PORTALS_ENABLED;
     private static final ModConfigSpec.BooleanValue PERMANENT_PORTALS_FLINT_AND_STEEL_ENABLED;
     private static final ModConfigSpec.BooleanValue ELYTHIA_PORTAL_ENABLED;
@@ -42,7 +36,6 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.IntValue PORTAL_GUN_MOON_PORTAL_SECONDS;
     private static final ModConfigSpec.IntValue PORTAL_GUN_MOON_BLOCK_CAP;
 
-    // Diamond Minecart
     private static final ModConfigSpec.BooleanValue DIAMOND_MINECART_ENABLED;
     private static final ModConfigSpec.BooleanValue DIAMOND_MINECART_PLACES_RAILS;
     private static final ModConfigSpec.DoubleValue  DIAMOND_MINECART_CRUISE_SPEED;
@@ -53,11 +46,9 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.BooleanValue DIAMOND_MINECART_MOB_DAMAGE_ENABLED;
     private static final ModConfigSpec.DoubleValue  DIAMOND_MINECART_MAX_MOB_DAMAGE;
 
-    // Hoverboard
     private static final ModConfigSpec.DoubleValue HOVERBOARD_MAX_SPEED;
     private static final ModConfigSpec.DoubleValue HOVERBOARD_ACCELERATION;
 
-    // World / misc toggles
     private static final ModConfigSpec.BooleanValue DUPLICATOR_TREE_ENABLED;
     private static final ModConfigSpec.BooleanValue GLOW_VINES_UNDER_LEAVES;
     private static final ModConfigSpec.BooleanValue SWING_THROUGH_GRASS_ENABLED;
@@ -69,8 +60,6 @@ public final class AntarchyMiscConfig {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
 
 
-        // Elythia
-
         b.push("elythia");
         ELYTHIA_FIREFLY_PARTICLES_ENABLED = b
                 .comment("Whether firefly ambient particles appear at night in the Elythia dimension.")
@@ -78,14 +67,10 @@ public final class AntarchyMiscConfig {
         b.pop();
 
 
-        // Dream Sand
-
         b.push("dreamSand");
         DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER = b.comment("Multiplier applied to dream sand's falling-block gravity, i.e. how slowly it falls as a block.").defineInRange("fallingBlockGravityMultiplier", 0.4D, 0.0D, 16.0D);
         b.pop();
 
-
-        // Ichor
 
         b.push("ichor");
         ICHOR_WITHER_ENABLED = b
@@ -94,16 +79,12 @@ public final class AntarchyMiscConfig {
         b.pop();
 
 
-        // Hushweed
-
         b.push("hushweed");
         HUSHWEED_SPORE_LIFETIME_SECONDS = b
                 .comment("How long (in seconds) a Hushweed spore projectile stays alive before disappearing.")
                 .defineInRange("sporeLifetimeSeconds", 5.0D, 0.1D, 120.0D);
         b.pop();
 
-
-        // Infinity Dimensions
 
         b.push("infinityDimensions");
         DISABLE_INFINITY_BOOK_PORTAL_CREATION = b
@@ -123,8 +104,6 @@ public final class AntarchyMiscConfig {
                 .defineInRange("rainbowAntInfinityEasterEggChance", 0.01D, 0.0D, 1.0D);
         b.pop();
 
-
-        // Permanent Portals
 
         b.push("permanentPortals");
         PERMANENT_PORTALS_ENABLED = b.comment("Master toggle for sacrifice-activated permanent portals.").define("permanentPortalsEnabled", true);
@@ -151,8 +130,6 @@ public final class AntarchyMiscConfig {
         b.pop();
 
 
-        // Diamond Minecart
-
         b.push("diamondMinecart");
         DIAMOND_MINECART_ENABLED            = b.comment("Master toggle for the diamond minecart's custom propulsion and rail-laying behavior.") .define("enabled",           true);
         DIAMOND_MINECART_PLACES_RAILS       = b.comment("Whether the cart automatically places normal rails from the rider's inventory.")       .define("placesRails",       true);
@@ -166,15 +143,11 @@ public final class AntarchyMiscConfig {
         b.pop();
 
 
-        // Hoverboard
-
         b.push("hoverboard");
         HOVERBOARD_MAX_SPEED    = b.comment("Maximum hoverboard speed in blocks/tick while moving forward.").defineInRange("maxSpeed", 6.0D, 0.05D, 12.0D);
         HOVERBOARD_ACCELERATION = b.comment("Hoverboard speed gained per tick while moving forward. Lower values take longer to reach top speed.").defineInRange("acceleration", 0.05D, 0.001D, 1.0D);
         b.pop();
 
-
-        // World / visual toggles
 
         b.push("world");
         DUPLICATOR_TREE_ENABLED              = b.comment("If false, duplicator trees do not generate and duplicator saplings produce nothing.").define("duplicatorTreeEnabled",           true);

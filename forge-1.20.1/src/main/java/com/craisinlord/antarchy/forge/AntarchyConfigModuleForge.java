@@ -154,6 +154,7 @@ public final class AntarchyConfigModuleForge {
         AntarchySettings.setRoyalBossKnockbackResistance(AntarchyMobsConfig.royalBossKnockbackResistance());
         AntarchySettings.setRoyalBossStepHeight(AntarchyMobsConfig.royalBossStepHeight());
         AntarchySettings.setRoyalBossMaxSingleHitDamage(AntarchyMobsConfig.royalBossMaxSingleHitDamage());
+        AntarchySettings.setRoyalBossHitOverflowRate(AntarchyMobsConfig.royalBossHitOverflowRate());
         AntarchySettings.setRoyalBossBiteReach(AntarchyMobsConfig.royalBossBiteReach());
         AntarchySettings.setRoyalBossBiteDamageMultiplier(AntarchyMobsConfig.royalBossBiteDamageMultiplier());
         AntarchySettings.setRoyalBossBiteCooldownTicks(AntarchyMobsConfig.royalBossBiteCooldownTicks());
@@ -439,6 +440,9 @@ public final class AntarchyConfigModuleForge {
         AntarchySettings.setUltimateHoeAttackSpeed(AntarchyToolsConfig.ultimateHoeAttackSpeed());
         AntarchySettings.setUltimateToolEnchantability(AntarchyToolsConfig.ultimateToolEnchantability());
         AntarchySettings.setUltimateToolsThreeByThreeEnabled(AntarchyToolsConfig.ultimateToolsThreeByThreeEnabled());
+        AntarchySettings.setUltimateToolsVeinMiningEnabled(AntarchyToolsConfig.ultimateToolsVeinMiningEnabled());
+        AntarchySettings.setUltimateToolsVeinMiningMaxBlocks(AntarchyToolsConfig.ultimateToolsVeinMiningMaxBlocks());
+        AntarchySettings.setUltimateToolsTreeFellingMaxLogs(AntarchyToolsConfig.ultimateToolsTreeFellingMaxLogs());
 
         AntarchySettings.setUltimateBowAttackDamage(AntarchyToolsConfig.ultimateBowAttackDamage());
         AntarchySettings.setUltimateBowPlayerHeal(AntarchyToolsConfig.ultimateBowPlayerHeal());

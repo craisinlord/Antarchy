@@ -77,7 +77,6 @@ public class GlimmerAntBehavior implements GlimmerVariantBehavior {
 
     @Override
     public EntityDimensions adultDimensions() {
-        // Matches the real ant's hitbox.
         return EntityDimensions.scalable(0.6375F, 0.2125F);
     }
 

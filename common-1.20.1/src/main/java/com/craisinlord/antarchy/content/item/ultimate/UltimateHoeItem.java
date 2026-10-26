@@ -32,9 +32,17 @@ public class UltimateHoeItem extends HoeItem {
     }
 
     @Override
+    public com.google.common.collect.Multimap<net.minecraft.world.entity.ai.attributes.Attribute, net.minecraft.world.entity.ai.attributes.AttributeModifier> getDefaultAttributeModifiers(net.minecraft.world.entity.EquipmentSlot slot) {
+        if (slot != net.minecraft.world.entity.EquipmentSlot.MAINHAND) {
+            return super.getDefaultAttributeModifiers(slot);
+        }
+        return com.craisinlord.antarchy.compat.item.WeaponAttributes.base(this.tier, (float) Math.round(this.attackDamage.getAsDouble()), (float) AntarchySettings.ultimateHoeAttackSpeed()).build();
+    }
+
+    @Override
     public void appendHoverText(ItemStack stack, Level level, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, level, tooltipComponents, tooltipFlag);
-        UltimateToolHelper.appendThreeByThreeTooltip(tooltipComponents);
+        UltimateToolHelper.appendModeTooltip(UltimateToolHelper.ToolKind.HOE, tooltipComponents);
     }
 
     @Override

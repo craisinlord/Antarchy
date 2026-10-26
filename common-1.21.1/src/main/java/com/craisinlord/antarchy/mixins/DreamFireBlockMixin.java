@@ -15,9 +15,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BaseFireBlock.class)
-/*
- * Lets dream fire pick the floor or ceiling variant from the same support tag.
- */
 public abstract class DreamFireBlockMixin {
     private static final ResourceLocation DREAM_FIRE_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "dream_fire");
     private static final ResourceLocation DREAM_CEILING_FIRE_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "dream_fire_ceiling");

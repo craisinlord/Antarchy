@@ -260,7 +260,6 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
                     }
                     continue;
                 }
-                // North/South faces (dz = ±r)
                 for (int dx = -r; dx <= r; dx++) {
                     candidate.set(ox + dx, oy + dy, oz - r);
                     if (this.isValidWoodTarget(candidate)) {
@@ -273,7 +272,6 @@ public class TermiteEntity extends BaseAntEntity implements GeoEntity {
                         if (d < bestDistSq) { bestDistSq = d; bestPos = candidate.immutable(); }
                     }
                 }
-                // East/West faces (dx = ±r, corners already covered above)
                 for (int dz = -r + 1; dz <= r - 1; dz++) {
                     candidate.set(ox - r, oy + dy, oz + dz);
                     if (this.isValidWoodTarget(candidate)) {

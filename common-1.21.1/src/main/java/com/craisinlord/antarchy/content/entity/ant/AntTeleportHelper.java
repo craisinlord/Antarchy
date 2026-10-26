@@ -302,8 +302,6 @@ public final class AntTeleportHelper {
                 return safePos;
             }
 
-            // The bounded search can fail near rough or sparsely-generated terrain.
-            // Retry once with a wider radius before giving up.
             loadArrivalSearchArea(destination, preferredPos, EXPANDED_ARRIVAL_SEARCH_RADIUS);
             Vec3 expandedSafePos = findSafeArrivalPositionInYRange(
                     player, destination, preferredPos, yRange[0], yRange[1],
@@ -393,11 +391,6 @@ public final class AntTeleportHelper {
         return null;
     }
 
-    /**
-     * Arrival validation needs neighboring chunks for collision checks. Load a
-     * bounded area up front so unloaded terrain is not mistaken for an unsafe
-     * destination and rejected prematurely.
-     */
     public static void loadArrivalSearchArea(ServerLevel destination, BlockPos preferredPos, int searchRadius) {
         ChunkPos center = new ChunkPos(preferredPos);
         int chunkRadius = (searchRadius >> 4) + 1;
@@ -462,9 +455,6 @@ public final class AntTeleportHelper {
             }
         }
 
-        // Prefer actual generated surfaces. This is especially important in
-        // Elythia, where the configured spawn height is not necessarily the
-        // playable surface.
         for (BlockPos candidate : surfaceCandidates) {
             if (candidate.getY() < minY || candidate.getY() > maxY) {
                 continue;
@@ -475,15 +465,10 @@ public final class AntTeleportHelper {
             }
         }
 
-        // Elythia arrivals must stay on the generated surface; a vertical scan
-        // can otherwise select an underground cave floor after a surface miss.
         if (elythia) {
             return null;
         }
 
-        // Heightmaps can be stale or unsuitable around structures, so retain a
-        // bounded exhaustive search as a final generated-terrain attempt in
-        // dimensions whose configured arrival ranges intentionally allow it.
         for (int radius = 0; radius <= searchRadius; radius++) {
             for (int xOff = -radius; xOff <= radius; xOff++) {
                 for (int zOff = -radius; zOff <= radius; zOff++) {

@@ -248,7 +248,6 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilat
         return AntarchySettings.queenBlackHoleBlockSuctionCap();
     }
 
-    /** Returns the center of the animated black-hole cube in world coordinates. */
     @Override
     public Vec3 timeDilationCenter() {
         return this.effectCenter();

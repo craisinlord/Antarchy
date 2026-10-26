@@ -12,19 +12,6 @@ import net.minecraft.network.chat.Component;
 import java.util.EnumMap;
 import java.util.Map;
 
-/**
- * Builds a Cloth Config screen directly from {@link AntarchyConfigModuleFabric}'s existing
- * reflection-based binding map, so the screen and the on-disk JSON files stay in sync
- * automatically — no separate hand-authored list of 350+ entries.
- *
- * <p>Only ever reached from {@link AntarchyModMenuIntegration#getModConfigScreenFactory()} after
- * it has already confirmed Cloth Config is present, so every Cloth Config class referenced here
- * is safe to touch.
- *
- * <p>Phase 1 scope (see the implementation plan): raw field names as labels, no min/max bounds,
- * no tooltips, and fields backed by {@code ResourceKey<Level>} (the four dimension-identity
- * settings) are skipped entirely rather than exposed with a widget that doesn't fit them.
- */
 public final class AntarchyClothConfigScreenBuilder {
     private AntarchyClothConfigScreenBuilder() {
     }

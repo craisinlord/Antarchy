@@ -8,14 +8,11 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 
-/** Registers Antarchy's native games with the AntOS Games app. */
 public final class AntarchyComputerGames {
     private AntarchyComputerGames() {}
 
     public static void register() {
         registerIfMissing(game("basilisk", "BASILISK", () -> {
-            // AntOS 1.2.1 creates game sessions without passing the computer position.
-            // Keep Basilisk playable without a position-bound score callback.
             BasiliskProgram program = new BasiliskProgram(true, 0, 0, score -> {});
             return new GameSession(program::tick, program::render, program::keyPressed, ignored -> false);
         }));

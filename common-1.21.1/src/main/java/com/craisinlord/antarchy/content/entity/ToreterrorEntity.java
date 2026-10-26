@@ -774,11 +774,9 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         double dh = Math.sqrt(diff.x * diff.x + diff.z * diff.z);
         double dy = diff.y;
         double gravity = AntarchySettings.waterBombGravity();
-        // Choose travel time based on horizontal distance at minSpeed, minimum 8 ticks
         double t = Math.max(8.0, dh / minSpeed);
         double vx = diff.x / t;
         double vz = diff.z / t;
-        // Compensate for gravity accumulating over t ticks
         double vy = dy / t + 0.5 * gravity * t;
         return new Vec3(vx, vy, vz);
     }

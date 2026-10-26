@@ -80,7 +80,6 @@ public class GlimmerAppleCowBehavior implements GlimmerVariantBehavior {
 
     @Override
     public EntityDimensions adultDimensions() {
-        // Matches the real Apple Cow's hitbox (extends vanilla Cow).
         return EntityDimensions.scalable(0.9F, 1.4F);
     }
 

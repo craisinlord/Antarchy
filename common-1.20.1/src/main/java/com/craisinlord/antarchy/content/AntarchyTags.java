@@ -11,6 +11,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.material.Fluid;
 
 public final class AntarchyTags {
@@ -155,6 +156,13 @@ public final class AntarchyTags {
         public static final TagKey<Biome> USES_HORDE_SYSTEM = TagKey.create(Registries.BIOME, id("uses_horde_system"));
 
         private Biomes() {
+        }
+    }
+
+    public static final class DimensionTypes {
+        public static final TagKey<DimensionType> NO_MANTIS_CLIMB = TagKey.create(Registries.DIMENSION_TYPE, id("no_mantis_climb"));
+
+        private DimensionTypes() {
         }
     }
 }

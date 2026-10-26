@@ -111,7 +111,6 @@ public class GlimmerFrogBehavior implements GlimmerVariantBehavior {
 
     @Override
     public EntityDimensions adultDimensions() {
-        // Matches vanilla Frog's real hitbox.
         return EntityDimensions.scalable(0.5F, 0.5F);
     }
 
@@ -155,7 +154,6 @@ public class GlimmerFrogBehavior implements GlimmerVariantBehavior {
 
         pending.ticksRemaining--;
         if (pending.ticksRemaining == TONGUE_ANIM_TICKS - TONGUE_GRAB_TICK) {
-            // The tongue "catches" the target partway through the animation and reels it in.
             entity.playSound(SoundEvents.FROG_TONGUE, 1.0F, 1.0F);
         }
         if (pending.ticksRemaining <= TONGUE_ANIM_TICKS - TONGUE_GRAB_TICK) {

@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.mixins.client;
 
 import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
+import com.craisinlord.antarchy.content.entity.royal.RoyalMountEntity;
 import net.minecraft.client.Camera;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
@@ -10,6 +11,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Camera.class)
@@ -23,6 +25,18 @@ public abstract class MountedVehicleCameraMixin {
     @Shadow
     protected abstract void setPosition(Vec3 position);
 
+    @ModifyArg(
+            method = "setup",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;getMaxZoom(D)D"),
+            index = 0
+    )
+    private double antarchy$extendRoyalMountZoom(double distance) {
+        if (this.entity != null && this.entity.getVehicle() instanceof RoyalMountEntity mount) {
+            return distance + mount.thirdPersonCameraBonus();
+        }
+        return distance;
+    }
+
     @Inject(method = "setup", at = @At("RETURN"))
     private void antarchy$adjustMountedCamera(
             BlockGetter level,
@@ -32,6 +46,11 @@ public abstract class MountedVehicleCameraMixin {
             float partialTick,
             CallbackInfo ci
     ) {
+        if (this.detached && this.entity != null && this.entity.getVehicle() instanceof RoyalMountEntity mount) {
+            Camera camera = (Camera) (Object) this;
+            this.setPosition(camera.getPosition().add(new Vec3(camera.getUpVector()).scale(mount.thirdPersonCameraLift())));
+            return;
+        }
         if (!this.antarchy$ridingHerculesBeetle()) {
             return;
         }

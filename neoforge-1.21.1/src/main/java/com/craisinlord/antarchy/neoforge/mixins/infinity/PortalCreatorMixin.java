@@ -14,9 +14,6 @@ import net.codexarchonic.infinity.util.teleport.PortalCreator;
 import net.minecraft.server.level.ServerLevel;
 
 @Mixin(value = PortalCreator.class, remap = false)
-/*
- * Blocks Infinity portal creation when the config says no
- */
 public interface PortalCreatorMixin {
     @Inject(
             method = "tryCreatePortalFromItem(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/item/ItemEntity;)V",

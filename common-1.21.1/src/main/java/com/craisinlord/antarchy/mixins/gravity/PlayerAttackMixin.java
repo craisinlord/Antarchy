@@ -17,9 +17,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Player.class)
-/*
- * Fixes player attack checks under inverted gravity.
- */
 public abstract class PlayerAttackMixin {
     @Inject(method = "attack", at = @At("HEAD"), cancellable = true)
     private void antarchy$blockGravityGunMelee(Entity target, CallbackInfo ci) {
@@ -34,9 +31,6 @@ public abstract class PlayerAttackMixin {
         }
     }
 
-    /*
-     * Primordial's full set bonus makes player melee knockback ignore the target's knockback resistance.
-     */
     @WrapOperation(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V"))
     private void antarchy$ignorePrimordialKnockbackResistance(LivingEntity target, double strength, double x, double z, Operation<Void> original) {
         Player player = (Player) (Object) this;

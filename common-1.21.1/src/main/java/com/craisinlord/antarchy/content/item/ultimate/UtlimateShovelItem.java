@@ -44,7 +44,7 @@ public class UtlimateShovelItem extends ShovelItem {
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        UltimateToolHelper.appendThreeByThreeTooltip(tooltipComponents);
+        UltimateToolHelper.appendModeTooltip(UltimateToolHelper.ToolKind.SHOVEL, tooltipComponents);
     }
 
     @Override
