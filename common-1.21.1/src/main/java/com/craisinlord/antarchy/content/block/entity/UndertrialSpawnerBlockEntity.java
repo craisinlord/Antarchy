@@ -190,8 +190,6 @@ public final class UndertrialSpawnerBlockEntity extends BlockEntity implements T
         if (this.level == null) {
             return;
         }
-        // Match vanilla Trial Spawner interaction: override the next mob's entity id while
-        // preserving weighted potentials, ominous settings, and the trial's reward configuration.
         this.trialSpawner.getData().setEntityId(this.trialSpawner, this.level.random, entityType);
         this.markUpdated();
     }

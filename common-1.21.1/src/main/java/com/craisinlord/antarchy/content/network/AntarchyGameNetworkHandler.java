@@ -8,7 +8,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 
-/** Handles Antarchy-specific game progress sent by AntOS game extensions. */
 public final class AntarchyGameNetworkHandler {
     private static BiConsumer<ServerPlayer, AntarchyGameResultPayload> resultSender = (player, result) -> { };
 

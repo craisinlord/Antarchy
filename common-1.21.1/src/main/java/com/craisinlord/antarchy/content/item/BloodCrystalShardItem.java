@@ -38,7 +38,6 @@ public class BloodCrystalShardItem extends Item {
             return InteractionResultHolder.fail(stack);
         }
 
-        // Restore armor shields first, then apple shields
         if (armorLost > 0) {
             access.antarchy$setArmorShieldsActive(access.antarchy$getArmorShieldsActive() + 1);
             access.antarchy$setArmorShieldLostCount(armorLost - 1);

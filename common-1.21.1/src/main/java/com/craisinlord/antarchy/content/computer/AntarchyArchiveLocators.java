@@ -10,7 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 
-/** Archive coordinate lookups for royals that live on grids rather than in vanilla structures. */
 public final class AntarchyArchiveLocators {
     private AntarchyArchiveLocators() {
     }

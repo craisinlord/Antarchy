@@ -573,8 +573,6 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
             return;
         }
 
-        // The tick is scheduled here on the WorldGenLevel because onPlace() is never
-        // called during world generation, so the block cannot self-schedule.
         int squirrelCount = 1 + random.nextInt(3);
         BlockPos markerPos = floorBlocks.get(0);
         setBlock(level, markerPos, AntarchyObjects.SQUIRREL_NEST_BLOCK.get().defaultBlockState()
@@ -687,13 +685,8 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
     }
 
     protected void placeCaterpillarChrysalis(WorldGenLevel level, BlockPos origin, OuranwoodTreeConfiguration config, RandomSource random, BlockPos canopyCenter, int canopyRadius, int canopyDepth) {
-        // Tree-grown chrysalis placement is intentionally disabled for now.
     }
 
-    /**
-     * Finds a log or leaf block in the canopy that has sufficient clear space beneath it.
-     * {@code clearBelow} is the vertical depth to check; {@code clearRadius} is the XZ half-width (0 = 1x1, 1 = 3x3).
-     */
     protected @Nullable BlockPos findCanopyAnchor(WorldGenLevel level, RandomSource random, BlockPos canopyCenter, int canopyRadius, int canopyDepth, int clearBelow, int clearRadius, int attempts) {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         int r = Math.max(1, canopyRadius - 1);
@@ -831,7 +824,6 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
                 int worldX = origin.getX() + x;
                 int worldZ = origin.getZ() + z;
 
-                // Raise soil to form a mound around the base (from adaptTerrain)
                 int currentTopY = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, worldX, worldZ) - 1;
                 int falloff = (int) Math.floor(Math.sqrt(distanceSq) / 2.1D);
                 int desiredTopY = baseY - falloff + (distanceSq <= trunkRadiusSq ? 0 : random.nextInt(2));

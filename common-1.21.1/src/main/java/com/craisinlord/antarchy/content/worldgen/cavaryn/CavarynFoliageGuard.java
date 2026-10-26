@@ -8,12 +8,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.VineBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-/**
- * Bile always wins on placement, but once a vine/creeproots/molting-vine column already exists,
- * bile carving and oozing must not eat the block it's anchored to — otherwise a later-generated
- * neighboring chunk's bile cyst/vein can undermine foliage placed earlier and leave it floating
- * or pop it as a dropped item.
- */
 public final class CavarynFoliageGuard {
     private CavarynFoliageGuard() {
     }

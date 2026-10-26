@@ -193,9 +193,6 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         float outerV = -time * 0.25F;
         float innerV = -time * 0.25F * 0.5F;
 
-        // Tremorzilla renders the beam in local +Z space. Keeping the mesh in that
-        // space is important: the beam textures are authored for these exact face
-        // coordinates and are not interchangeable with a world-space billboard.
         float yaw = (float) Math.atan2(dir.z, dir.x);
         float pitch = (float) Math.acos(dir.y);
         poseStack.pushPose();

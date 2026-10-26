@@ -170,7 +170,6 @@ public final class PortalGunSavedData extends SavedData {
         return clearMatching(server, record -> record.ownerId() != null && ownerIds.contains(record.ownerId()));
     }
 
-    /** Clears portal pairs for guns that an owner no longer has in their player inventory. */
     public static int clearMissingGuns(ServerPlayer player) {
         PortalGunSavedData data = get(player.serverLevel().getServer());
         if (data.pairs.isEmpty()) {

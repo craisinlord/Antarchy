@@ -30,13 +30,11 @@ public final class MogglesClientRenderer {
             return;
         }
 
-        // Run cave BFS (internally rate-limited to every 40 ticks).
         MogglesCaveDetector.tick(player, level);
 
         BlockPos target = MogglesCaveDetector.getCaveTarget();
         if (target == null) return;
 
-        // Spawn particle trail toward the cave every 2 ticks.
         if (level.getGameTime() % 2 != 0) return;
 
         Vec3 eye = player.getEyePosition();

@@ -34,7 +34,6 @@ public class TermiteNestFeature extends SurfaceAntNestFeature {
     protected BlockPos resolveNestPos(WorldGenLevel level, BlockPos origin) {
         int x = origin.getX();
         int z = origin.getZ();
-        // Start from the placement height so roofed dimensions like Cavaryn get nests on every cave layer, not just the top one.
         int startY = Math.min(origin.getY(), level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z) - 1);
         int minY = level.getMinBuildHeight() + 1;
 

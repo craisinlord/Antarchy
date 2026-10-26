@@ -31,7 +31,7 @@ import java.util.List;
 
 public class UltimateCrossbowItem extends CrossbowItem {
     private static final int MAX_ARROWS = 16;
-    private static final int FIRE_COOLDOWN_TICKS = 5; // 4 shots/sec
+    private static final int FIRE_COOLDOWN_TICKS = 5;
     private static final float SHOOTING_POWER = 3.15F;
     private static final double VANILLA_CROSSBOW_ARROW_DAMAGE = 7.0D;
     private static final String RESERVE_PROJECTILES_TAG = "UltimateCrossbowProjectiles";
@@ -110,11 +110,9 @@ public class UltimateCrossbowItem extends CrossbowItem {
             toFire.add(arrow);
         }
 
-        // Temporarily set only the arrows for this shot so performShooting fires exactly them
         stack.set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.of(toFire));
         this.performShooting(level, player, hand, stack, SHOOTING_POWER, 1.0F, null);
 
-        // performShooting clears CHARGED_PROJECTILES; restore remaining valid arrows if any
         saveLoadedProjectiles(stack, player.registryAccess(), all);
     }
 

@@ -122,6 +122,6 @@ public class RoyalGuardianShieldItem extends ShieldItem {
 
     private static boolean isInCommandLookCone(Player player, Mob mob) {
         var direction = mob.getBoundingBox().getCenter().subtract(player.getEyePosition()).normalize();
-        return player.getViewVector(1.0F).dot(direction) >= 0.9063078D; // 25-degree half-angle
+        return player.getViewVector(1.0F).dot(direction) >= 0.9063078D;
     }
 }

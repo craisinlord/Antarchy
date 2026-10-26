@@ -105,7 +105,6 @@ public class KingEntity extends RoyalBossEntity {
     private static final double CHAIN_LIGHTNING_JUMP_RANGE = 9.0D;
     private static final int ICE_FREEZE_PER_TICK = 7;
     private static final int BEHAVIOR_SCORE_CAP = 12;
-    /** Keep the tree-bound patrol safely inside the authored tree footprint. */
     private static final double TREE_ORBIT_RADIUS = 128.0D;
     private static final double TREE_ORBIT_ANGLE_STEP = 0.014D;
     private static final int TREE_ORBIT_PATH_SAMPLES = 16;
@@ -994,8 +993,6 @@ public class KingEntity extends RoyalBossEntity {
             this.kingCombatWaypoint = null;
             this.playRoyalSound(AntarchySoundEvents.KING_ROAR.get(), 1.12F);
         } else {
-            // Keep Close Quarters from silently dissolving when the first ring is obstructed.
-            // The next aerial tick will retry the expanded landing search.
             this.kingLandingWaypoint = null;
             this.groundAssaultCooldownTicks = 100;
             this.kingLandingRetryTicks = LANDING_RETRY_TICKS;
@@ -1077,9 +1074,6 @@ public class KingEntity extends RoyalBossEntity {
         if (this.level().noCollision(this, fallbackBox)) {
             return fallback;
         }
-        // Last resort: land directly beneath the King if the target ring is obstructed.
-        // This still gives Close Quarters a committed ground sequence instead of silently
-        // remaining airborne over difficult tree geometry.
         double directY = GravityApi.isGravityInverted(this)
                 ? this.position().y - 0.1D
                 : this.groundYBelow(this.getX(), this.getZ()) + 0.1D;
@@ -1143,8 +1137,6 @@ public class KingEntity extends RoyalBossEntity {
             }
         }
         if (orbitWaypoint == null && treeBoundCombat) {
-            // If the tree blocks the next orbital lane, turn away and try the opposite side
-            // before falling back to a clear target-relative position.
             this.kingStrafeDirection *= -1;
             double angle = currentAngle + this.kingStrafeDirection * COMBAT_ORBIT_ANGLE_STEP;
             double x = target.getX() + Math.cos(angle) * range;
@@ -1173,7 +1165,6 @@ public class KingEntity extends RoyalBossEntity {
                 + this.random.nextInt(COMBAT_WAYPOINT_VARIANCE + 1);
         this.kingCombatProgressPosition = this.position();
         this.kingCombatProgressTicks = 0;
-        // Keep a consistent orbit direction for several passes so movement reads as circling.
     }
 
     private void stabilizeKingRotation() {

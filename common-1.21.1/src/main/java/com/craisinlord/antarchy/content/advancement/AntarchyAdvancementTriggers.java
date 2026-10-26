@@ -30,11 +30,6 @@ public final class AntarchyAdvancementTriggers {
         register((id, trigger) -> CriteriaTriggers.register(id.toString(), trigger));
     }
 
-    /**
-     * Registers these triggers through the active loader's lifecycle hook.
-     * NeoForge calls this from its trigger-type RegisterEvent; Fabric can call
-     * the no-argument overload during its initializer.
-     */
     public static void register(BiConsumer<ResourceLocation, CriterionTrigger<?>> registrar) {
         registrar.accept(ResourceLocation.fromNamespaceAndPath("antarchy", "crossed_gravity_throat"), CROSSING);
         registrar.accept(ResourceLocation.fromNamespaceAndPath("antarchy", "horde_phase_changed"), HORDE_PHASE);

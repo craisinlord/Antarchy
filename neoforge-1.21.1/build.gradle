@@ -14,7 +14,6 @@ java {
     withSourcesJar()
 }
 
-// Add common-1.21.1's sources directly — this module compiles them itself.
 sourceSets {
     main {
         java {
@@ -49,9 +48,6 @@ dependencies {
     if (providers.gradleProperty('antarchySodiumCompatTest').orNull == 'true') {
         runtimeOnly(files(rootProject.file("infinite_dimensions_jars/sodium-neoforge-0.8.13+mc1.21.1.jar")))
     }
-    // Sodium — compile-only, for portal live views drawn through Sodium's renderer
-    // (content/client/renderer/sodium, mixins/compat/sodium). Never bundled; that code only
-    // loads when Sodium is installed. The published jar nests the mod jar, so compile against it.
     compileOnly(files(zipTree(rootProject.file("infinite_dimensions_jars/sodium-neoforge-0.8.13+mc1.21.1.jar"))
             .matching { include "META-INF/jarjar/net.caffeinemc.sodium-neoforge-*-mod.jar" }))
     compileOnly(files(rootProject.file("infinite_dimensions_jars/antos-neoforge-1.21.1-${antos_version}.jar")))
@@ -76,11 +72,6 @@ dependencies {
     compileOnly "mezz.jei:jei-1.21.1-neoforge-api:${jei_version}"
     runtimeOnly "mezz.jei:jei-1.21.1-neoforge:${jei_version}"
 
-    // Configured — optional, gives players an in-game config screen for Antarchy's
-    // ModConfigSpec-based settings (AntarchyMobsConfig/AntarchyToolsConfig/AntarchyMiscConfig)
-    // with zero Java code on this side: NeoForge's own config system is auto-discovered.
-    // No compileOnly needed since nothing here references Configured's classes directly.
-    // Has no Modrinth release, hence cursemaven (repo already declared in the root build.gradle).
     runtimeOnly("curse.maven:configured-${configured_curseforge_id}:${configured_curseforge_file_id_neoforge}")
 
     implementation(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_1_21_1}"))

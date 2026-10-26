@@ -48,7 +48,6 @@ public final class AntarchyNeoforgeItems {
     static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Antarchy.MODID);
     private static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS = DeferredRegister.create(Registries.ARMOR_MATERIAL, Antarchy.MODID);
 
-    // Tier constants
     public static final Tier ULTIMATE_TIER = new SimpleToolTier(
             3072,
             10.5F,
@@ -218,7 +217,6 @@ public final class AntarchyNeoforgeItems {
                     0.0F
             ));
 
-    // Block items
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DUPLICATOR_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DUPLICATOR_LOG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_LOG);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> OURANWOOD_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.OURANWOOD_WOOD);
@@ -1124,7 +1122,6 @@ public final class AntarchyNeoforgeItems {
             () -> new KrakensGraspItem(
                     new Item.Properties().stacksTo(1).durability(250).rarity(Rarity.EPIC).fireResistant()));
 
-    // Spawn eggs
     public static final DeferredItem<DeferredSpawnEggItem> EASTER_BUNNY_SPAWN_EGG = ITEMS.register("easter_bunny_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.EASTER_BUNNY, 0xFFF2B2, 0xFF85B5, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> DORRIE_SPAWN_EGG = ITEMS.register("dorrie_spawn_egg",

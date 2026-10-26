@@ -65,8 +65,6 @@ public final class QueenTrailSpawnMarkerBlockEntity extends BlockEntity {
         if (!nearbyPlayer) {
             return;
         }
-        // The Queen is large enough to span several chunks. Ensure the area around
-        // the arrival point is available before checking its collision box.
         for (int chunkX = (marker.spawnPos.getX() - 16) >> 4; chunkX <= (marker.spawnPos.getX() + 16) >> 4; chunkX++) {
             for (int chunkZ = (marker.spawnPos.getZ() - 16) >> 4; chunkZ <= (marker.spawnPos.getZ() + 16) >> 4; chunkZ++) {
                 level.getChunk(chunkX, chunkZ);

@@ -16,11 +16,6 @@ import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
 
-/**
- * Plain multi-noise biome source with one addition: everything at or above
- * {@code cloud_sea_min_y} is the cloud sea. Below that line, biome selection is
- * identical to {@code minecraft:multi_noise} over the same list minus the cloud sea entry.
- */
 public final class ElythiaBiomeSource extends BiomeSource {
     private static final ResourceKey<Biome> CLOUD_SEA = ResourceKey.create(
             Registries.BIOME,
@@ -47,7 +42,6 @@ public final class ElythiaBiomeSource extends BiomeSource {
                 .filter(holder -> holder.is(CLOUD_SEA))
                 .findFirst()
                 .orElse(null);
-        // Keep the cloud sea out of the noise search so terrain biomes resolve exactly as before.
         this.delegate = MultiNoiseBiomeSource.createFromList(new Climate.ParameterList<>(
                 parameters.values().stream()
                         .filter(entry -> !entry.getSecond().is(CLOUD_SEA))

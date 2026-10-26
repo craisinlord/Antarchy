@@ -1,10 +1,5 @@
 package com.craisinlord.antarchy.content.block.entity;
 
-/**
- * Identifies spawn-rule checks made by an Undertrial spawner's vanilla
- * TrialSpawner tick. The context is scoped to the current server-thread call
- * so ordinary trial spawners and all other spawn paths retain vanilla rules.
- */
 public final class UndertrialSpawnContext implements AutoCloseable {
     private static final ThreadLocal<Integer> DEPTH = ThreadLocal.withInitial(() -> 0);
 

@@ -669,13 +669,11 @@ public class BasiliskEntity extends Monster implements GeoEntity {
         this.stopActiveMovement();
     }
 
-    /** Scales turn rate by intended movement speed so the long body pivots tighter when slow and wider when fast. */
     private static final class BasiliskMoveControl extends MoveControl {
         private BasiliskMoveControl(Mob mob) {
             super(mob);
         }
 
-        /** Call this to prevent the move control from reapplying speed this tick. */
         public void halt() {
             this.operation = MoveControl.Operation.WAIT;
         }
@@ -735,7 +733,6 @@ public class BasiliskEntity extends Monster implements GeoEntity {
                 BasiliskEntity.this.getLookControl().setLookAt(target, 30.0F, 30.0F);
             }
 
-            // super handles path recalc and cooldown timer
             super.tick();
 
             if (target != null && BasiliskEntity.this.isWithinMeleeAttackRange(target)) {

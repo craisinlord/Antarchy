@@ -31,11 +31,6 @@ public interface InfinityCompatBridge {
         return InfinityWarpResult.REJECTED;
     }
 
-    /**
-     * Converts an already-ignited vanilla Nether portal frame at {@code anyPortalBlockPos} into a real, permanent
-     * Infinite Dimensions portal to {@code dimensionId}, generating the dimension first if it doesn't exist yet.
-     * Mirrors what Infinity itself does when a written book is thrown into a lit portal.
-     */
     default boolean createPhysicalPortal(ServerLevel level, BlockPos anyPortalBlockPos, ResourceLocation dimensionId) {
         return false;
     }

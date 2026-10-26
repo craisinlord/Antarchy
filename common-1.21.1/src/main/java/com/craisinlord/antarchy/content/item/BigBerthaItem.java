@@ -70,7 +70,6 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
     private static final int TORETERROR_COOLDOWN_TICKS = 200;
     private static final int TORETERROR_SHAKE_TICKS = 25;
 
-    /** Client-side only: how many ticks of camera shake remain from a Toreterror landing. */
     public static int clientShakeTicks = 0;
     private static final ResourceLocation ATTACK_RANGE_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "big_bertha_attack_range");
     private final Tier tier;
@@ -178,7 +177,7 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
         }
 
         if (isToreterrorJumping(stack) && player.getMainHandItem() == stack) {
-            player.fallDistance = 0.0F; // prevent fall damage during the crash-down
+            player.fallDistance = 0.0F;
             boolean launched = readInt(stack, TORETERROR_LAUNCHED_TAG) == 1;
             if (!launched && !player.onGround()) {
                 CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt(TORETERROR_LAUNCHED_TAG, 1));

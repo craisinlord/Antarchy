@@ -567,7 +567,6 @@ public final class AntarchySettings {
     private static int bloodCrystalAppleDurationTicks = 2400;
     private static int bloodCrystalAppleShieldRechargeTicks = 600;
     private static int bloodCrystalHardMaxShields = 10;
-    // Armor stats (iron defense, gold durability, 0 toughness by default)
     private static int bloodCrystalHelmetDefense = 3;
     private static int bloodCrystalChestplateDefense = 7;
     private static int bloodCrystalLeggingsDefense = 6;
@@ -2530,7 +2529,6 @@ public final class AntarchySettings {
     public static int     reverieDuplicationCooldownTicks()        { return reverieDuplicationCooldownTicks; }
     public static void    setReverieDuplicationCooldownTicks(int v){ reverieDuplicationCooldownTicks = v; }
 
-    // Hardcoded AI tuning — getters only, no config wiring
     public static double  reveriePreferredFollowMinDistance()    { return reveriePreferredFollowMinDistance; }
     public static double  reveriePreferredFollowMaxDistance()    { return reveriePreferredFollowMaxDistance; }
     public static double  reverieCatchUpDistance()               { return reverieCatchUpDistance; }

@@ -6,8 +6,6 @@ public final class AntarchyMobsConfig {
     public static final ModConfigSpec SPEC;
 
 
-    // Ants
-
     private static final ModConfigSpec.BooleanValue ANTS_STEAL_FROM_CHESTS;
 
     private static final ModConfigSpec.BooleanValue BROWN_ANT_REQUIRES_REAGENT;
@@ -40,20 +38,14 @@ public final class AntarchyMobsConfig {
 
 
 
-    // Easter Bunny
-
     private static final ModConfigSpec.BooleanValue EASTER_BUNNY_ENABLED;
     private static final ModConfigSpec.IntValue     EASTER_BUNNY_NATURAL_SPAWN_CHANCE_PERCENT;
 
-
-    // Wasp
 
     private static final ModConfigSpec.DoubleValue WASP_HEALTH;
     private static final ModConfigSpec.DoubleValue WASP_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue WASP_MOVEMENT_SPEED;
 
-
-    // Bomber
 
     private static final ModConfigSpec.DoubleValue BOMBER_HEALTH;
     private static final ModConfigSpec.DoubleValue BOMBER_ATTACK_DAMAGE;
@@ -61,14 +53,10 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue BOMBER_EXPLOSION_RADIUS;
 
 
-    // Springbug
-
     private static final ModConfigSpec.DoubleValue SPRINGBUG_HEALTH;
     private static final ModConfigSpec.DoubleValue SPRINGBUG_POUNCE_DAMAGE;
     private static final ModConfigSpec.DoubleValue SPRINGBUG_CAMOUFLAGE_ALPHA;
 
-
-    // Emperor Scorpion
 
     private static final ModConfigSpec.DoubleValue EMPEROR_SCORPION_HEALTH;
     private static final ModConfigSpec.DoubleValue EMPEROR_SCORPION_ATTACK_DAMAGE;
@@ -99,8 +87,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue SCORPION_KNOCKBACK_RESISTANCE;
 
 
-    // Kraken
-
     private static final ModConfigSpec.DoubleValue  KRAKEN_HEALTH;
     private static final ModConfigSpec.DoubleValue  KRAKEN_ATTACK_DAMAGE;
     private static final ModConfigSpec.BooleanValue KRAKEN_SQUID_SPAWN_ENABLED;
@@ -114,8 +100,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue  KRAKEN_FLYING_SPEED;
     private static final ModConfigSpec.DoubleValue  KRAKEN_BOSS_BAR_RANGE;
     private static final ModConfigSpec.DoubleValue  KRAKEN_LIGHTNING_DAMAGE_PHASE_ONE;
-
-    // Royal Bosses
 
     private static final ModConfigSpec.DoubleValue KING_HEALTH;
     private static final ModConfigSpec.DoubleValue QUEEN_HEALTH;
@@ -153,8 +137,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue KING_FIREBALL_DAMAGE, KING_FIREBALL_RADIUS, KING_ICEBALL_DAMAGE, KING_ICEBALL_RADIUS, KING_ICE_SPIKE_DAMAGE;
     private static final ModConfigSpec.IntValue KING_FIREBALL_COOLDOWN_TICKS, KING_ICEBALL_COOLDOWN_TICKS, KING_ICE_SPIKE_COOLDOWN_TICKS, KING_ELEMENTAL_TERRAIN_CAP;
 
-    // Royal mounts
-
     private static final ModConfigSpec.IntValue ROYAL_EGG_HATCH_CHANCE;
     private static final ModConfigSpec.DoubleValue ROYAL_BOLT_DAMAGE;
     private static final ModConfigSpec.DoubleValue PRINCE_HEALTH;
@@ -173,8 +155,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue PRINCESS_FOLLOW_RANGE;
 
 
-    // Brutalfly
-
     private static final ModConfigSpec.DoubleValue BRUTALFLY_HEALTH;
     private static final ModConfigSpec.DoubleValue BRUTALFLY_SWIPE_DAMAGE;
     private static final ModConfigSpec.DoubleValue BRUTALFLY_SPIT_DAMAGE;
@@ -186,16 +166,12 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue BRUTALFLY_FLYING_SPEED;
 
 
-    // Mantis
-
     private static final ModConfigSpec.DoubleValue  MANTIS_HEALTH;
     private static final ModConfigSpec.DoubleValue  MANTIS_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue  MANTIS_MOVEMENT_SPEED;
     private static final ModConfigSpec.DoubleValue  MANTIS_FLYING_SPEED;
     private static final ModConfigSpec.BooleanValue MANTIS_IGNORE_LIGHT_LEVEL;
 
-
-    // Alpha Mantis
 
     private static final ModConfigSpec.DoubleValue ALPHA_MANTIS_HEALTH;
     private static final ModConfigSpec.DoubleValue ALPHA_MANTIS_ATTACK_DAMAGE;
@@ -205,8 +181,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.IntValue    ALPHA_MANTIS_MAX_MINIONS;
     private static final ModConfigSpec.DoubleValue ALPHA_MANTIS_DAMAGE_RANGE;
 
-
-    // Rolly Polly
 
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_HEALTH;
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_MOVEMENT_SPEED;
@@ -218,15 +192,11 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_ROLLED_ARMOR_BONUS;
 
 
-    // Flytrap
-
     private static final ModConfigSpec.DoubleValue FLYTRAP_HEALTH;
     private static final ModConfigSpec.DoubleValue FLYTRAP_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue FLYTRAP_GRAB_DAMAGE;
     private static final ModConfigSpec.IntValue    FLYTRAP_SWEEP_HIT_COOLDOWN_TICKS;
 
-
-    // Caterpillar
 
     private static final ModConfigSpec.DoubleValue CATERPILLAR_HEALTH;
     private static final ModConfigSpec.DoubleValue CATERPILLAR_MOVEMENT_SPEED;
@@ -268,12 +238,8 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue OCTOPUS_BOMB_ATTACK_DAMAGE;
 
 
-    // Ant Dance
-
     private static final ModConfigSpec.DoubleValue ANT_DANCE_RADIUS;
 
-
-    // Reverie
 
     private static final ModConfigSpec.DoubleValue  REVERIE_HEALTH;
     private static final ModConfigSpec.DoubleValue  REVERIE_INTEREST_RADIUS;
@@ -289,8 +255,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.IntValue     REVERIE_DUPLICATION_COOLDOWN_TICKS;
 
 
-    // Nightmare
-
     private static final ModConfigSpec.DoubleValue  NIGHTMARE_HEALTH;
     private static final ModConfigSpec.DoubleValue  NIGHTMARE_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue  NIGHTMARE_MOVEMENT_SPEED;
@@ -303,8 +267,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue  DIMENSIONAL_TEAR_LUCID_EVENT_CHANCE;
     private static final ModConfigSpec.BooleanValue DIMENSIONAL_TEARS_SPAWN_NATURALLY;
 
-
-    // Basilisk
 
     private static final ModConfigSpec.BooleanValue BASILISK_PETRIFYING_GAZE_ENABLED;
     private static final ModConfigSpec.IntValue     BASILISK_SPAWN_MAX_LIGHT_LEVEL;
@@ -329,8 +291,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.IntValue     BASILISK_PREY_PETRIFY_TICKS;
 
 
-    // Toreterror
-
     private static final ModConfigSpec.DoubleValue  TORETERROR_HEALTH;
     private static final ModConfigSpec.DoubleValue  TORETERROR_DAMAGE_RANGE;
     private static final ModConfigSpec.DoubleValue  TORETERROR_JUMP_ATTACK_DAMAGE;
@@ -344,13 +304,9 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue  WATER_BOMB_KNOCKBACK;
 
 
-    // Crawling Blight
-
     private static final ModConfigSpec.DoubleValue CRAWLING_BLIGHT_HEALTH;
     private static final ModConfigSpec.DoubleValue CRAWLING_BLIGHT_ATTACK_DAMAGE;
 
-
-    // Skulking Fright
 
     private static final ModConfigSpec.DoubleValue SKULKING_FRIGHT_HEALTH;
     private static final ModConfigSpec.DoubleValue SKULKING_FRIGHT_ATTACK_DAMAGE;
@@ -362,8 +318,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.IntValue QUEEN_MANTICORE_SUMMON_COUNT;
     private static final ModConfigSpec.DoubleValue QUEEN_MANTICORE_SUMMON_RANGE;
 
-    // Jerry
-
     private static final ModConfigSpec.DoubleValue JERRY_INFANT_HEALTH;
     private static final ModConfigSpec.DoubleValue JERRY_INFANT_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue JERRY_MATURE_HEALTH;
@@ -374,36 +328,24 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue JERRY_GAMMA_ATTACK_DAMAGE;
 
 
-    // Cheep
-
     private static final ModConfigSpec.DoubleValue CHEEP_HEALTH;
     private static final ModConfigSpec.DoubleValue CHEEP_ATTACK_DAMAGE;
 
 
-    // Dorrie
-
     private static final ModConfigSpec.DoubleValue DORRIE_HEALTH;
 
-
-    // Ouranwood Deer
 
     private static final ModConfigSpec.DoubleValue OURANWOOD_DEER_HEALTH;
 
 
-    // Glimmer
-
     private static final ModConfigSpec.DoubleValue GLIMMER_HEALTH;
 
-
-    // Hercules Beetle
 
     private static final ModConfigSpec.DoubleValue HERCULES_BEETLE_HEALTH;
     private static final ModConfigSpec.DoubleValue HERCULES_BEETLE_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue HERCULES_BEETLE_CHARGE_DAMAGE;
     private static final ModConfigSpec.DoubleValue HERCULES_BEETLE_DAMAGE_RANGE;
 
-
-    // Lucid
 
     private static final ModConfigSpec.DoubleValue LUCID_ATTACK_RANGE;
     private static final ModConfigSpec.DoubleValue LUCID_PEARL_INVERTED_DURATION_SECONDS;
@@ -412,8 +354,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue LUCID_MOVEMENT_SPEED;
     private static final ModConfigSpec.DoubleValue LUCID_FLYING_SPEED;
     private static final ModConfigSpec.DoubleValue LUCID_KNOCKBACK_RESISTANCE;
-
-    // Vortex
 
     private static final ModConfigSpec.DoubleValue VORTEX_HEALTH;
     private static final ModConfigSpec.DoubleValue VORTEX_ATTACK_DAMAGE;
@@ -432,8 +372,6 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue VORTEX_LENS_LAUNCH_STRENGTH;
 
 
-    // Dread effect
-
     private static final ModConfigSpec.BooleanValue DREAD_HALLUCINATION_SOUNDS_ENABLED;
     private static final ModConfigSpec.DoubleValue  DREAD_HALLUCINATION_SOUND_MIN_INTERVAL;
     private static final ModConfigSpec.DoubleValue  DREAD_HALLUCINATION_SOUND_MAX_INTERVAL;
@@ -444,8 +382,6 @@ public final class AntarchyMobsConfig {
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
 
-
-        // Ants (shared)
 
         ANTS_STEAL_FROM_CHESTS = b
                 .comment("Whether ants will steal edible items from nearby chest inventories.")
@@ -528,8 +464,6 @@ public final class AntarchyMobsConfig {
         b.pop();
 
 
-        // Easter Bunny
-
         b.push("easterBunny");
         EASTER_BUNNY_ENABLED = b
                 .comment(
@@ -546,16 +480,12 @@ public final class AntarchyMobsConfig {
         b.pop();
 
 
-        // Wasp
-
         b.push("wasp");
         WASP_HEALTH         = b.comment("Base max health.")                            .defineInRange("health",       16.0D, 1.0D, 32768.0D);
         WASP_ATTACK_DAMAGE  = b.comment("Base attack damage.")                         .defineInRange("attackDamage", 4.0D,  0.0D, 1024.0D);
         WASP_MOVEMENT_SPEED = b.comment("Base wasp speed used for both flying and movement. Vanilla bee default is 0.3, so 0.39 is 30% faster.").defineInRange("movementSpeed", 0.39D, 0.0D, 10.0D);
         b.pop();
 
-
-        // Bomber
 
         b.push("bomber");
         BOMBER_HEALTH           = b.comment("Base max health.")                                        .defineInRange("health",          10.0D, 1.0D, 32768.0D);
@@ -565,16 +495,12 @@ public final class AntarchyMobsConfig {
         b.pop();
 
 
-        // Springbug
-
         b.push("springbug");
         SPRINGBUG_HEALTH = b.comment("Base max health.").defineInRange("health", 100.0D, 1.0D, 32768.0D);
         SPRINGBUG_POUNCE_DAMAGE = b.comment("Damage dealt on a successful pounce latch.").defineInRange("pounceDamage", 2.0D, 0.0D, 1024.0D);
         SPRINGBUG_CAMOUFLAGE_ALPHA = b.comment("Renderer alpha while camouflaged.").defineInRange("camouflageAlpha", 0.18D, 0.01D, 1.0D);
         b.pop();
 
-
-        // Emperor Scorpion
 
         b.push("emperorScorpion");
         EMPEROR_SCORPION_HEALTH = b.comment("Base max health.").defineInRange("health", 300.0D, 1.0D, 32768.0D);
@@ -612,8 +538,6 @@ public final class AntarchyMobsConfig {
         SCORPION_KNOCKBACK_RESISTANCE = b.defineInRange("knockbackResistance", 0.2D, 0.0D, 1.0D);
         b.pop();
 
-
-        // Kraken
 
         b.push("kraken");
         KRAKEN_HEALTH                            = b.comment("Base max health.")                                                                                            .defineInRange("health",                          1500.0D, 1.0D, 32768.0D);
@@ -720,8 +644,6 @@ public final class AntarchyMobsConfig {
         b.pop();
 
 
-        // Brutalfly
-
         b.push("brutalfly");
         BRUTALFLY_HEALTH      = b.comment("Base max health.")                                          .defineInRange("health",      200.0D, 1.0D, 32768.0D);
         BRUTALFLY_SWIPE_DAMAGE = b.comment("Damage dealt by a claw swipe.")                           .defineInRange("swipeDamage",  15.0D, 0.0D, 1024.0D);
@@ -735,8 +657,6 @@ public final class AntarchyMobsConfig {
         b.pop();
 
 
-        // Mantis
-
         b.push("mantis");
         MANTIS_HEALTH             = b.comment("Base max health.")                                                                                                 .defineInRange("health",            50.0D, 1.0D, 32768.0D);
         MANTIS_ATTACK_DAMAGE      = b.comment("Base attack damage.")                                                                                              .defineInRange("attackDamage",       9.0D, 0.0D, 1024.0D);
@@ -745,8 +665,6 @@ public final class AntarchyMobsConfig {
         MANTIS_IGNORE_LIGHT_LEVEL = b.comment("If false, mantises only spawn naturally in darkness (standard monster rules). If true, light level is ignored.").define("ignoreLightLevel", false);
         b.pop();
 
-
-        // Alpha Mantis
 
         b.push("alphaMantis");
         ALPHA_MANTIS_HEALTH                = b.comment("Base max health.")                                              .defineInRange("health",             250.0D, 1.0D, 32768.0D);
@@ -758,8 +676,6 @@ public final class AntarchyMobsConfig {
         ALPHA_MANTIS_DAMAGE_RANGE          = b.comment("Range in blocks a player must be within for the Alpha Mantis to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
         b.pop();
 
-
-        // Rolly Polly
 
         b.push("rollyPolly");
         ROLLY_POLLY_HEALTH                = b.comment("Base max health.")                                                          .defineInRange("health",              25.0D, 1.0D, 32768.0D);
@@ -773,8 +689,6 @@ public final class AntarchyMobsConfig {
         b.pop();
 
 
-        // Flytrap
-
         b.push("flytrap");
         FLYTRAP_HEALTH        = b.comment("Base max health.")                     .defineInRange("health",       80.0D, 1.0D, 32768.0D);
         FLYTRAP_ATTACK_DAMAGE = b.comment("Damage dealt by the sweep attack.")   .defineInRange("attackDamage", 10.0D, 0.0D, 1024.0D);
@@ -784,8 +698,6 @@ public final class AntarchyMobsConfig {
                 .defineInRange("sweepHitCooldownTicks", 10, 0, 200);
         b.pop();
 
-
-        // Caterpillar
 
         b.push("caterpillar");
         CATERPILLAR_HEALTH = b.defineInRange("health", 6.0D, 0.1D, 32768.0D);
@@ -852,16 +764,12 @@ public final class AntarchyMobsConfig {
         b.pop();
 
 
-        // Ant Dance
-
         b.push("antDance");
         ANT_DANCE_RADIUS = b
                 .comment("Radius in blocks where ants will dance around a playing jukebox.")
                 .defineInRange("radius", 5.0D, 1.0D, 32.0D);
         b.pop();
 
-
-        // Reverie
 
         b.push("reverie");
         REVERIE_HEALTH                         = b.comment("Base max health.")                                                                                         .defineInRange("health",                    20.0D, 1.0D, 1024.0D);
@@ -877,8 +785,6 @@ public final class AntarchyMobsConfig {
         REVERIE_WARNING_THREAT_VERTICAL_RANGE  = b.comment("Vertical scan range for hostiles that trigger red warning mode.")                                           .defineInRange("warningThreatVerticalRange",  5.0D, 1.0D, 32.0D);
         REVERIE_DUPLICATION_COOLDOWN_TICKS     = b.comment("Cooldown in ticks before Blood Crystal can duplicate the Reverie again.")                                   .defineInRange("duplicationCooldownTicks",    6000, 20, 24000);
         b.pop();
-
-        // Nightmare
 
         b.push("nightmare");
         NIGHTMARE_HEALTH = b.comment("Base max health.").defineInRange("health", 180.0D, 1.0D, 32768.0D);
@@ -897,8 +803,6 @@ public final class AntarchyMobsConfig {
         DIMENSIONAL_TEARS_SPAWN_NATURALLY = b.define("spawnNaturally", true);
         b.pop();
 
-
-        // Basilisk
 
         b.push("basilisk");
         BASILISK_PETRIFYING_GAZE_ENABLED = b
@@ -929,8 +833,6 @@ public final class AntarchyMobsConfig {
         b.pop();
 
 
-        // Lucid
-
         b.push("lucid");
         LUCID_ATTACK_RANGE = b
                 .comment("Attack range in blocks. The Lucid fires its gravity blast when a target enters this radius.")
@@ -944,8 +846,6 @@ public final class AntarchyMobsConfig {
         LUCID_FLYING_SPEED = b.comment("Base flying speed.").defineInRange("flyingSpeed", 0.35D, 0.0D, 10.0D);
         LUCID_KNOCKBACK_RESISTANCE = b.comment("Base knockback resistance.").defineInRange("knockbackResistance", 0.5D, 0.0D, 1.0D);
         b.pop();
-
-        // Vortex
 
         b.push("vortex");
         VORTEX_HEALTH = b.comment("Base max health.").defineInRange("health", 70.0D, 1.0D, 32768.0D);
@@ -966,8 +866,6 @@ public final class AntarchyMobsConfig {
         b.pop();
 
 
-        // Dread effect
-
         b.push("dread");
 
         b.push("hallucinationSounds");
@@ -982,7 +880,7 @@ public final class AntarchyMobsConfig {
         DREAD_HALLUCINATION_MOB_MAX_INTERVAL = b.comment("Maximum seconds between apparition spawns.").defineInRange("maxIntervalSeconds", 16.0D, 0.1D, 300.0D);
         b.pop();
 
-        b.pop(); // dread
+        b.pop();
 
         b.push("crawlingBlight");
         CRAWLING_BLIGHT_HEALTH        = b.comment("Base max health.").defineInRange("health", 15.0D, 1.0D, 32768.0D);

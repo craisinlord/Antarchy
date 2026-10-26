@@ -68,7 +68,6 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
         return projectile;
     }
 
-    /** Solves a discrete ballistic lead against the projectile's drag and gravity. */
     public static Vec3 aimDirection(Vec3 origin, LivingEntity target, RoyalBeamElement element) {
         double speed = element == RoyalBeamElement.ICE ? ICEBALL_SPEED : FIREBALL_SPEED;
         double gravity = element == RoyalBeamElement.ICE ? 0.006D : 0.018D;

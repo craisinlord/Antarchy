@@ -113,7 +113,6 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
     private double currentStrafeAngleOffset = this.random.nextDouble() * (Math.PI * 2.0D);
     private boolean spawnedDeathButterflies;
 
-    // Cocoon state (server-side)
     @Nullable
     BlockPos anchorPos;
     private int cocoonHits;
@@ -312,7 +311,6 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
         }
 
         if (this.getAnimationState() == ANIM_COCOON_IDLE) {
-            // Will be reset to COCOON after idle ticks counted down
         } else if (this.tickCount % 200 == 17 && this.random.nextFloat() < 0.4F) {
             this.setAnimationState(ANIM_COCOON_IDLE);
             this.cocoonAnimTicks = COCOON_IDLE_ANIM_TICKS;

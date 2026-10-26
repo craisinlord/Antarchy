@@ -6,15 +6,11 @@ public final class AntarchyToolsConfig {
     public static final ModConfigSpec SPEC;
 
 
-    // Basilisk Dagger
-
     private static final ModConfigSpec.DoubleValue BASILISK_DAGGER_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue BASILISK_DAGGER_ATTACK_SPEED;
     private static final ModConfigSpec.IntValue    BASILISK_DAGGER_POISON_DURATION_TICKS;
     private static final ModConfigSpec.IntValue    BASILISK_DAGGER_POISON_AMPLIFIER;
 
-
-    // Ultimate Tools
 
     private static final ModConfigSpec.DoubleValue  ULTIMATE_SWORD_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue  ULTIMATE_SWORD_ATTACK_SPEED;
@@ -33,8 +29,6 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.IntValue     ULTIMATE_TOOLS_TREE_FELLING_MAX_LOGS;
 
 
-    // Ultimate Bow
-
     private static final ModConfigSpec.DoubleValue  ULTIMATE_BOW_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue  ULTIMATE_BOW_PLAYER_HEAL;
     private static final ModConfigSpec.DoubleValue  ULTIMATE_BOW_DRAW_SPEED_MULTIPLIER;
@@ -42,21 +36,15 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.IntValue     ULTIMATE_BOW_ENCHANTABILITY;
 
 
-    // Ultimate Crossbow
-
     private static final ModConfigSpec.DoubleValue ULTIMATE_CROSSBOW_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue ULTIMATE_CROSSBOW_CHARGE_SPEED_MULTIPLIER;
     private static final ModConfigSpec.IntValue    ULTIMATE_CROSSBOW_ENCHANTABILITY;
 
 
-    // Ultimate Mace
-
     private static final ModConfigSpec.DoubleValue ULTIMATE_MACE_DAMAGE_MULTIPLIER;
     private static final ModConfigSpec.DoubleValue ULTIMATE_MACE_ATTACK_SPEED;
     private static final ModConfigSpec.IntValue    ULTIMATE_MACE_ENCHANTABILITY;
 
-
-    // Ultimate Armor
 
     private static final ModConfigSpec.BooleanValue ULTIMATE_ARMOR_COMES_ENCHANTED;
     private static final ModConfigSpec.IntValue     ULTIMATE_ARMOR_ENCHANTABILITY;
@@ -117,13 +105,9 @@ public final class AntarchyToolsConfig {
             ROYAL_GUARDIAN_BOUNDARY_DROP_TICKS, ROYAL_GUARDIAN_BOUNDARY_PROJECTILE_CAP;
 
 
-    // Battle Axe
-
     private static final ModConfigSpec.DoubleValue BATTLE_AXE_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue BATTLE_AXE_ATTACK_SPEED;
 
-
-    // Big Bertha
 
     private static final ModConfigSpec.DoubleValue BIG_BERTHA_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue BIG_BERTHA_REACH_BONUS;
@@ -163,8 +147,6 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_KATANA_DASH_COOLDOWN_TICKS;
 
 
-    // Nightmare Gear
-
     private static final ModConfigSpec.IntValue    NIGHTMARE_HELMET_ARMOR_VALUE;
     private static final ModConfigSpec.IntValue    NIGHTMARE_CHESTPLATE_ARMOR_VALUE;
     private static final ModConfigSpec.IntValue    NIGHTMARE_LEGGINGS_ARMOR_VALUE;
@@ -184,13 +166,9 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.DoubleValue NIGHTMARE_SWORD_SCALING_FACTOR;
 
 
-    // Fallen King's Crown
-
     private static final ModConfigSpec.IntValue    FALLEN_KING_CROWN_ARMOR_VALUE;
     private static final ModConfigSpec.DoubleValue FALLEN_KING_CROWN_ARMOR_TOUGHNESS;
 
-
-    // Blood Crystal Armor
 
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_ARMOR_SHIELD_RECHARGE_TICKS;
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_APPLE_SHIELD_COUNT;
@@ -208,8 +186,6 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.IntValue    BLOOD_CRYSTAL_BOOTS_DURABILITY;
 
 
-    // Squidzooka
-
     private static final ModConfigSpec.DoubleValue SQUIDZOOKA_COOLDOWN_SECONDS;
     private static final ModConfigSpec.DoubleValue SQUIDZOOKA_LAUNCH_VELOCITY;
     private static final ModConfigSpec.DoubleValue RPO_LAUNCHER_COOLDOWN_SECONDS;
@@ -217,8 +193,6 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.DoubleValue RPO_LAUNCHER_EXPLOSION_DAMAGE;
     private static final ModConfigSpec.DoubleValue RPO_LAUNCHER_EXPLOSION_RADIUS;
 
-
-    // Size Rays
 
     private static final ModConfigSpec.BooleanValue SIZE_CHANGING_RAYS_ENABLED;
     private static final ModConfigSpec.DoubleValue  SIZE_RAY_COOLDOWN_SECONDS;
@@ -228,8 +202,6 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.DoubleValue  SHRINKING_POTION_DELTA;
     private static final ModConfigSpec.DoubleValue  GROWTH_POTION_DELTA;
 
-
-    // Gravity Gun
 
     private static final ModConfigSpec.BooleanValue GRAVITY_GUN_ENABLED;
     private static final ModConfigSpec.BooleanValue GRAVITY_GUN_BLOCKS_ENABLED;
@@ -254,16 +226,8 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.DoubleValue EYE_OF_THE_STORM_SURGE_RETURN_STRENGTH;
     private static final ModConfigSpec.DoubleValue EYE_OF_THE_STORM_SURGE_DAMAGE;
 
-    // Critter Cage
-
     private static final ModConfigSpec.DoubleValue  CRITTER_CAGE_MAX_CAPTURABLE_WIDTH;
     private static final ModConfigSpec.DoubleValue  CRITTER_CAGE_MAX_CAPTURABLE_HEIGHT;
-
-    // Miner's Dream
-
-
-
-    // Miscellaneous items / consumables
 
     private static final ModConfigSpec.DoubleValue  DUCT_TAPE_REPAIR_PERCENT_PER_USE;
     private static final ModConfigSpec.DoubleValue  POTENT_NYXITE_INVERTED_DURATION_SECONDS;
@@ -274,15 +238,12 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.IntValue     AMERICAN_REGENERATION_DURATION_TICKS;
     private static final ModConfigSpec.IntValue     AMERICAN_REGENERATION_AMPLIFIER;
 
-    // Moggles
     private static final ModConfigSpec.DoubleValue MOGGLES_VISION_RADIUS;
 
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
 
-
-        // Basilisk Dagger
 
         b.push("basiliskDagger");
         BASILISK_DAGGER_ATTACK_DAMAGE         = b.comment("Attack damage.")                        .defineInRange("attackDamage",         6.0D, 0.0D, 1024.0D);
@@ -291,8 +252,6 @@ public final class AntarchyToolsConfig {
         BASILISK_DAGGER_POISON_AMPLIFIER      = b.comment("Poison level applied on hit (0 = I).")  .defineInRange("poisonAmplifier",         2, 0, 10);
         b.pop();
 
-
-        // Ultimate Tools
 
         b.push("ultimateTools");
         ULTIMATE_SWORD_ATTACK_DAMAGE   = b.comment("Attack damage of the Ultimate Sword.")                                          .defineInRange("swordAttackDamage",    30.0D,          0.0D, 1024.0D);
@@ -317,8 +276,6 @@ public final class AntarchyToolsConfig {
         b.pop();
 
 
-        // Ultimate Bow
-
         b.push("ultimateBow");
         ULTIMATE_BOW_ATTACK_DAMAGE              = b.comment("Damage dealt to non-player targets.")                                        .defineInRange("attackDamage",            18.0D, 0.0D, 1024.0D);
         ULTIMATE_BOW_PLAYER_HEAL                = b.comment("Health restored to players hit by arrows from this bow.")                    .defineInRange("playerHeal",               8.0D, 0.0D, 1024.0D);
@@ -327,8 +284,6 @@ public final class AntarchyToolsConfig {
         ULTIMATE_BOW_ENCHANTABILITY             = b.comment("Enchantability of the Ultimate Bow.")                                        .defineInRange("enchantability",             20, 0, 100);
         b.pop();
 
-
-        // Ultimate Crossbow
 
         b.push("ultimateCrossbow");
         ULTIMATE_CROSSBOW_ATTACK_DAMAGE           = b.comment("Damage dealt by projectiles fired from the Ultimate Crossbow.").defineInRange("attackDamage",           8.0D, 0.0D, 1024.0D);
@@ -342,16 +297,12 @@ public final class AntarchyToolsConfig {
         b.pop();
 
 
-        // Ultimate Mace
-
         b.push("ultimateMace");
         ULTIMATE_MACE_DAMAGE_MULTIPLIER = b.comment("Multiplier on both base damage and smash bonus. 1.5 = 50% stronger than a normal mace.").defineInRange("damageMultiplier", 1.5D, 0.1D, 16.0D);
         ULTIMATE_MACE_ATTACK_SPEED      = b.comment("Attack speed of the Ultimate Mace.")                                         .defineInRange("attackSpeed",       -3.4D, -10.0D, 10.0D);
         ULTIMATE_MACE_ENCHANTABILITY    = b.comment("Enchantability of the Ultimate Mace.")                                       .defineInRange("enchantability",       20, 0, 100);
         b.pop();
 
-
-        // Ultimate Armor
 
         b.push("ultimateArmor");
         ULTIMATE_ARMOR_COMES_ENCHANTED       = b.comment("If true, newly crafted Ultimate Armor has Protection, Fire Protection, Projectile Protection, and Blast Protection.").define("comesEnchanted", true);
@@ -430,15 +381,11 @@ public final class AntarchyToolsConfig {
         b.pop();
 
 
-        // Battle Axe
-
         b.push("battleAxe");
         BATTLE_AXE_ATTACK_DAMAGE = b.comment("Attack damage of the Battle Axe.").defineInRange("attackDamage", 46.0D, 0.0D, 4096.0D);
         BATTLE_AXE_ATTACK_SPEED  = b.comment("Attack speed of the Battle Axe.") .defineInRange("attackSpeed",  -3.1D, -10.0D, 10.0D);
         b.pop();
 
-
-        // Big Bertha
 
         b.push("bigBertha");
         BIG_BERTHA_ATTACK_DAMAGE                     = b.comment("Attack damage of Big Bertha.")                                            .defineInRange("attackDamage",                   55.0D, 0.0D, 4096.0D);
@@ -492,8 +439,6 @@ public final class AntarchyToolsConfig {
         b.pop();
 
 
-        // Nightmare Gear
-
         b.push("nightmareArmor");
         NIGHTMARE_HELMET_ARMOR_VALUE              = b.comment("Armor points of the Nightmare Helmet. (Netherite default: 3)")               .defineInRange("helmetArmor",           3, 0, 100);
         NIGHTMARE_CHESTPLATE_ARMOR_VALUE          = b.comment("Armor points of the Nightmare Chestplate. (Netherite default: 8)")           .defineInRange("chestplateArmor",       8, 0, 100);
@@ -533,8 +478,6 @@ public final class AntarchyToolsConfig {
         b.pop();
 
 
-        // Blood Crystal Armor
-
         b.push("bloodCrystalArmor");
         BLOOD_CRYSTAL_ARMOR_SHIELD_RECHARGE_TICKS = b.comment("Ticks (20/s) for each armor Bloodglass Shield to recharge after shattering. Default: 600 (30s).").defineInRange("armorShieldRechargeTicks", 600, 1, 72000);
         BLOOD_CRYSTAL_APPLE_SHIELD_COUNT          = b.comment("Number of Bloodglass Shields granted by a Blood Crystal Apple (Bloodglass Ward level). Default: 2.").defineInRange("appleShieldCount", 2, 1, 8);
@@ -553,8 +496,6 @@ public final class AntarchyToolsConfig {
         b.pop();
 
 
-        // Squidzooka
-
         b.push("squidzooka");
         SQUIDZOOKA_COOLDOWN_SECONDS  = b.comment("Cooldown in seconds after firing. Set to 0 to disable.").defineInRange("cooldownSeconds", 1.0D, 0.0D, 3600.0D);
         SQUIDZOOKA_LAUNCH_VELOCITY   = b.comment("Initial launch velocity applied to the Missile Squid.")  .defineInRange("launchVelocity",  2.1D, 0.1D, 20.0D);
@@ -567,8 +508,6 @@ public final class AntarchyToolsConfig {
         RPO_LAUNCHER_EXPLOSION_RADIUS = b.comment("Radius in blocks of the ink explosion.")                 .defineInRange("explosionRadius", 4.0D, 0.5D, 32.0D);
         b.pop();
 
-
-        // Size Rays
 
         b.push("sizeRays");
         SIZE_CHANGING_RAYS_ENABLED = b
@@ -585,8 +524,6 @@ public final class AntarchyToolsConfig {
         GROWTH_POTION_DELTA        = b.comment("Scale delta per level of Growth Potion. Level II applies double this value.")                  .defineInRange("growthPotionDelta",    0.5D, 0.001D, 64.0D);
         b.pop();
 
-
-        // Gravity Gun
 
         b.push("gravityGun");
         GRAVITY_GUN_ENABLED            = b.comment("Master toggle for the Gravity Gun.")                                          .define("enabled",             true);
@@ -617,16 +554,12 @@ public final class AntarchyToolsConfig {
         b.pop();
 
 
-        // Critter Cage
-
         b.push("critterCage");
         CRITTER_CAGE_MAX_CAPTURABLE_WIDTH = b.comment("Maximum capturable entity width/depth based on the live hitbox, in blocks.").defineInRange("maxCapturableWidth", 1.65D, 0.1D, 64.0D);
         CRITTER_CAGE_MAX_CAPTURABLE_HEIGHT = b.comment("Maximum capturable entity height based on the live hitbox, in blocks.").defineInRange("maxCapturableHeight", 1.65D, 0.1D, 64.0D);
         b.pop();
 
 
-
-        // Miscellaneous items / consumables
 
         b.push("ductTape");
         DUCT_TAPE_REPAIR_PERCENT_PER_USE = b

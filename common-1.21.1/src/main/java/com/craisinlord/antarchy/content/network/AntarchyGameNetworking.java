@@ -3,7 +3,6 @@ package com.craisinlord.antarchy.content.network;
 import net.minecraft.core.BlockPos;
 import java.util.function.Consumer;
 
-/** Small Antarchy game-progress bridge over the AntOS computer session. */
 public final class AntarchyGameNetworking {
     private static Consumer<AntarchyGamePayload> sender = payload -> { };
     private AntarchyGameNetworking() { }

@@ -84,7 +84,6 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
     private static final int ANIM_ROLL_UP = 2;
     private static final int ANIM_UNROLL = 4;
 
-    // wheel_mode is 0.75s, normal_mode is ~0.42s
     private static final int ROLL_UP_TICKS = 15;
     private static final int UNROLL_TICKS = 9;
     private static final int DEFENSIVE_CURL_TICKS = 100;
@@ -156,7 +155,6 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         this.goalSelector.addGoal(1, new PanicGoal(this, 1.4D) {
             @Override
             public boolean canUse() {
-                // Curled-up or tamed rolly pollies stand their ground
                 return !RollyPollyEntity.this.isRolled() && !RollyPollyEntity.this.isTame() && super.canUse();
             }
         });
@@ -318,7 +316,6 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
             amount *= 0.25F;
         }
         boolean hurt = super.hurt(source, amount);
-        // Wild rolly pollies curl up defensively when attacked
         if (hurt && !this.level().isClientSide && !this.isTame() && this.isAlive()
                 && !this.isRolled() && this.rollTransitionTicks <= 0) {
             this.defensiveCurlTicks = DEFENSIVE_CURL_TICKS;

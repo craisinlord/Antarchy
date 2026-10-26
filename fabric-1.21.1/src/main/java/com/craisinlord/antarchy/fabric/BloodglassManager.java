@@ -97,9 +97,7 @@ public final class BloodglassManager {
                 }
             }
         } else if (!fromIsBC) {
-            // Count BC pieces: explicitly include the new piece (to) since getItemBySlot(slot)
-            // may not reflect the new item yet when onEquipItem fires on Fabric.
-            int bcPieces = 1; // the piece being equipped now
+            int bcPieces = 1;
             for (EquipmentSlot s : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
                 if (s == slot) continue;
                 if (player.getItemBySlot(s).getItem() instanceof BloodCrystalArmorItem) bcPieces++;
@@ -110,7 +108,6 @@ public final class BloodglassManager {
                 access.antarchy$setArmorRechargeTimer(AntarchySettings.bloodCrystalArmorShieldRechargeTicks());
             }
         } else {
-            // BC → BC swap: remove old slot, queue new one
             if (access.antarchy$getArmorShieldsActive() > 0) {
                 access.antarchy$setArmorShieldsActive(access.antarchy$getArmorShieldsActive() - 1);
             } else if (access.antarchy$getArmorShieldLostCount() > 0) {
@@ -131,9 +128,6 @@ public final class BloodglassManager {
                 - access.antarchy$getArmorShieldLostCount());
         int targetCap = Math.min(amplifier + 1, cap);
         int currentCap = access.antarchy$getAppleShieldsActive() + access.antarchy$getAppleShieldLostCount();
-        // Only grant newly-added capacity (e.g. first application, or a higher amplifier).
-        // A mere duration refresh of an already-active ward must not reset shields that are
-        // already lost, nor restart their recharge timer.
         if (targetCap > currentCap) {
             access.antarchy$setAppleShieldsActive(access.antarchy$getAppleShieldsActive() + (targetCap - currentCap));
             if (player instanceof ServerPlayer sp) syncBloodglass(sp);

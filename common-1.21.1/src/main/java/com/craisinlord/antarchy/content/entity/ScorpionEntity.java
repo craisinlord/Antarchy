@@ -111,9 +111,6 @@ public class ScorpionEntity extends Monster implements GeoEntity {
                 || spawnReason == MobSpawnType.COMMAND) {
             return true;
         }
-        // The Dream Dunes biome is the entire underside below Y=0. Its higher
-        // spawn weight is therefore targeted there without doubling the small
-        // surface-side Dream Dunes band as well.
         if (pos.getY() >= 0 && level.getBiome(pos).is(DREAM_DUNES) && random.nextBoolean()) {
             return false;
         }
@@ -356,8 +353,6 @@ public class ScorpionEntity extends Monster implements GeoEntity {
                 ScorpionEntity.this.getNavigation().stop();
                 return;
             }
-            // This goal overrides MeleeAttackGoal.tick, so the gravity mixin on the
-            // vanilla method cannot supply the inverted movement frame here.
             LivingEntity target = ScorpionEntity.this.getTarget();
             if (target != null && ThoraxisUndersideManager.shouldInvertInUnderside(ScorpionEntity.this)) {
                 ScorpionEntity.this.getNavigation().stop();
@@ -379,9 +374,6 @@ public class ScorpionEntity extends Monster implements GeoEntity {
             if (ScorpionEntity.this.isAttackLocked()) {
                 return;
             }
-            // Inverted melee tick handling replaces vanilla MeleeAttackGoal.tick,
-            // so vanilla's internal attack timer is not advanced. The Scorpion's
-            // own cooldown already covers its wind-up and hit timing.
             if (this.canPerformAttack(enemy) && ScorpionEntity.this.attackCooldownTicks <= 0) {
                 ScorpionEntity.this.beginAttack(enemy);
                 return;

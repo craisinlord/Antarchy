@@ -9,7 +9,6 @@ base {
 }
 version = "${mod_version}+1.21.1-fabric"
 
-// Handle duplicates from common-1.21.1's resources
 tasks.withType(AbstractCopyTask).configureEach {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
@@ -19,7 +18,6 @@ java {
     withSourcesJar()
 }
 
-// Add common-1.21.1's sources directly — this module compiles them itself.
 sourceSets {
     main {
         java {
@@ -44,9 +42,6 @@ dependencies {
     if (providers.gradleProperty('antarchySodiumCompatTest').orNull == 'true') {
         modLocalRuntime(files("$rootDir/infinite_dimensions_jars/sodium-fabric-0.8.13+mc1.21.1.jar"))
     }
-    // Sodium — compile-only, for portal live views drawn through Sodium's renderer. Compiled
-    // against the NeoForge build (official Mojang mappings, matching this module's compile
-    // space; Sodium's own classes are identical across loaders). Never bundled.
     compileOnly(files(zipTree("$rootDir/infinite_dimensions_jars/sodium-neoforge-0.8.13+mc1.21.1.jar")
             .matching { include "META-INF/jarjar/net.caffeinemc.sodium-neoforge-*-mod.jar" }))
     modCompileOnly("curse.maven:intapi-${intapi_curseforge_id}:${intapi_curseforge_file_id_fabric}")
@@ -62,25 +57,12 @@ dependencies {
     compileOnly(files("$rootDir/infinite_dimensions_jars/sable-neoforge-1.21.1-2.0.3.jar"))
     compileOnly(files("$rootDir/infinite_dimensions_jars/stellarview-1.21.1-0.5.3-neoforge.jar"))
 
-    // Cloth Config — optional, powers the in-game settings screen (AntarchyClothConfigScreenBuilder)
-    // via the Mod Menu integration below. compileOnly + modLocalRuntime only: never bundled or
-    // required at runtime in the shipped jar. Guarded by FabricLoader.isModLoaded("cloth-config")
-    // in AntarchyModMenuIntegration before any Cloth Config class is touched. Reuses the
-    // clothconfig_curseforge_id/clothconfig_curseforge_file_id pin already in gradle.properties.
     modCompileOnly("curse.maven:cloth-config-${clothconfig_curseforge_id}:${clothconfig_curseforge_file_id}")
     modLocalRuntime("curse.maven:cloth-config-${clothconfig_curseforge_id}:${clothconfig_curseforge_file_id}")
 
-    // Mod Menu — optional, provides the "modmenu" fabric.mod.json entrypoint
-    // (AntarchyModMenuIntegration). Same soft-dependency treatment as Cloth Config above; Fabric
-    // Loader only ever resolves the "modmenu" entrypoint if Mod Menu itself is installed and asks
-    // for it, so nothing here is touched when it's absent. Reuses the mod_menu version already
-    // pinned in gradle.properties.
     modCompileOnly "com.terraformersmc:modmenu:${mod_menu}"
     modLocalRuntime "com.terraformersmc:modmenu:${mod_menu}"
 
-    // Compile against the NeoForge jar (official Mojang mappings, matches this module's compile
-    // space) but load the real Fabric jar at runtime — sizeable_foliage's Fabric jar ships
-    // intermediary-mapped, which this compileOnly classpath can't resolve directly.
     compileOnly(files("$rootDir/sizeable_foliage_jars/sizeable_foliage-neoforge-1.21.1-1.0.0.jar"))
     modLocalRuntime(files("$rootDir/sizeable_foliage_jars/sizeable_foliage-fabric-1.21.1-1.0.0.jar"))
 
@@ -118,8 +100,6 @@ tasks.named('processResources', ProcessResources).configure {
     }
 }
 
-// common-1.21.1's mixins.json ships refmap-free (NeoForge needs no refmap), but Fabric
-// does — inject the refmap key into fabric's own copy of the shared file after copying.
 tasks.named('processResources', ProcessResources).configure {
     doLast {
         ['antarchy-common.mixins.json'].each { configName ->

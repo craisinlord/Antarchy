@@ -10,7 +10,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.saveddata.SavedData;
 
-/** Persistent Antarchy game progress keyed by AntOS computer location. */
 public final class AntarchyGameSavedData extends SavedData {
     private static final String ID = "antarchy_computer_games";
     private final Map<String, GameState> games = new HashMap<>();

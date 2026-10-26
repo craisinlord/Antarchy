@@ -22,9 +22,6 @@ import net.minecraft.world.level.block.state.BlockState;
 public final class TigerEyeCamouflageTextureResolver {
     public record ResolvedTexture(ResourceLocation texture, int argbTint) {}
 
-    // PlayerModel's skin layout is always laid out on a 64x64 canvas, regardless of the
-    // block texture's actual size, so the generated overlay texture must match that grid
-    // for every body part to sample the block texture at the same pixel density.
     private static final int SKIN_SIZE = 64;
     private static final Map<Integer, ResolvedTexture> CACHE = new ConcurrentHashMap<>();
     private static final ResourceLocation FALLBACK_TEXTURE = ResourceLocation.withDefaultNamespace("textures/block/stone.png");
@@ -102,7 +99,6 @@ public final class TigerEyeCamouflageTextureResolver {
 
             try (NativeImage sourceImage = NativeImage.read(stream)) {
                 int tileWidth = sourceImage.getWidth();
-                // Animated block textures stack frames vertically below a square first frame.
                 int tileHeight = tileWidth <= sourceImage.getHeight() ? tileWidth : sourceImage.getHeight();
 
                 NativeImage canvas = new NativeImage(SKIN_SIZE, SKIN_SIZE, false);

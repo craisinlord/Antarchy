@@ -171,7 +171,6 @@ public final class AntarchyNeoforgeMisc {
             () -> new MenuType<>(com.craisinlord.antarchy.content.menu.GiantFryingPanMenu::new, FeatureFlags.DEFAULT_FLAGS)
     );
 
-    // Mob effects
     public static final DeferredHolder<MobEffect, DreadMobEffect> DREAD = MOB_EFFECTS.register("dread", DreadMobEffect::new);
     public static final DeferredHolder<MobEffect, BleedingMobEffect> BLEEDING = MOB_EFFECTS.register("bleeding", BleedingMobEffect::new);
     public static final DeferredHolder<MobEffect, BloodMoonMobEffect> BLOOD_MOON = MOB_EFFECTS.register("blood_moon", BloodMoonMobEffect::new);
@@ -186,7 +185,6 @@ public final class AntarchyNeoforgeMisc {
     public static final DeferredHolder<MobEffect, ShrinkMobEffect> SHRINKING_EFFECT = MOB_EFFECTS.register("shrinking", ShrinkMobEffect::new);
     public static final DeferredHolder<MobEffect, GrowthMobEffect> GROWTH_EFFECT = MOB_EFFECTS.register("growth", GrowthMobEffect::new);
 
-    // Potions
     public static final DeferredHolder<Potion, Potion> INVERSION = POTIONS.register("inversion",
             () -> new Potion(new MobEffectInstance(AnthologyEffects.inverted(), 600)));
     public static final DeferredHolder<Potion, Potion> LONG_INVERSION = POTIONS.register("long_inversion",
@@ -228,7 +226,6 @@ public final class AntarchyNeoforgeMisc {
     public static final DeferredHolder<Potion, Potion> EXTREME_GROWING = POTIONS.register("extreme_growing",
             () -> new Potion("growing", new MobEffectInstance(GROWTH_EFFECT, 600, 2)));
 
-    // Fluids
     public static final DeferredHolder<Fluid, Fluid> BILE = FLUIDS.register("bile",
             () -> new BaseFlowingFluid.Source(bileProperties()));
     public static final DeferredHolder<Fluid, Fluid> FLOWING_BILE = FLUIDS.register("flowing_bile",
@@ -246,7 +243,6 @@ public final class AntarchyNeoforgeMisc {
     public static final DeferredHolder<Fluid, Fluid> FLOWING_LUMEN = FLUIDS.register("flowing_lumen",
             () -> new BaseFlowingFluid.Flowing(lumenProperties()));
 
-    // Particle types
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> DREAM_FIRE_FLAME = PARTICLE_TYPES.register("dream_fire_flame",
             () -> new SimpleParticleType(true));
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BUG_SPRAY_PARTICLE = PARTICLE_TYPES.register("bug_spray",
@@ -292,7 +288,6 @@ public final class AntarchyNeoforgeMisc {
     public static final DeferredHolder<ParticleType<?>, ParticleType<InvertedGeyserParticleOptions>> INVERTED_GEYSER_ERUPTION = PARTICLE_TYPES.register("inverted_geyser_eruption",
             () -> particleType(InvertedGeyserParticleOptions::codec, InvertedGeyserParticleOptions::streamCodec));
 
-    // Features
     public static final DeferredHolder<Feature<?>, RedAntNestFeature> RED_ANT_NEST_FEATURE = FEATURES.register("red_ant_nest",
             () -> new RedAntNestFeature(SimpleBlockConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, BrownAntNestFeature> BROWN_ANT_NEST_FEATURE = FEATURES.register("brown_ant_nest",
@@ -455,13 +450,11 @@ public final class AntarchyNeoforgeMisc {
     public static final DeferredHolder<Feature<?>, ThoraxisIchorLakeFeature> THORAXIS_ICHOR_LAKE = FEATURES.register("thoraxis_ichor_lake",
             () -> new ThoraxisIchorLakeFeature(NoneFeatureConfiguration.CODEC));
 
-    // Biome sources
     public static final DeferredHolder<MapCodec<? extends BiomeSource>, MapCodec<ElythiaBiomeSource>> ELYTHIA_BIOME_SOURCE = BIOME_SOURCES.register("elythia_biome_source",
             () -> ElythiaBiomeSource.CODEC);
     public static final DeferredHolder<MapCodec<? extends BiomeSource>, MapCodec<ThoraxisBiomeSource>> THORAXIS_BIOME_SOURCE = BIOME_SOURCES.register("thoraxis_biome_source",
             () -> ThoraxisBiomeSource.CODEC);
 
-    // Density function
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaRiverCarveFunction>> ELYTHIA_RIVER_CARVE = DENSITY_FUNCTION_TYPES.register("elythia_river_carve",
             () -> ElythiaRiverCarveFunction.CODEC);
 

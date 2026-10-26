@@ -35,7 +35,6 @@ repositories {
     }
 }
 
-// Handle duplicates from common-1.20.1's resources
 tasks.withType(AbstractCopyTask).configureEach {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
@@ -45,9 +44,6 @@ java {
     withSourcesJar()
 }
 
-// Add common-1.20.1's sources directly. Path is relative because fabric-1.20.1 is its
-// own standalone Gradle build (Fabric Loom can't configure two different-Minecraft-version
-// loom projects in the same Gradle invocation) — there is no `:common-1.20.1` project here.
 sourceSets {
     main {
         java {
@@ -132,8 +128,6 @@ tasks.named('processResources', ProcessResources).configure {
     }
 }
 
-// common-1.20.1's mixins.json ships refmap-free — inject the refmap key into fabric's
-// own copy after copying (matches the fabric-1.21.1 / neoforge-1.21.1 convention).
 tasks.named('processResources', ProcessResources).configure {
     doLast {
         var commonMixinConfig = new File(destinationDir, 'antarchy-common.mixins.json')

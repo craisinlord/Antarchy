@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/** Loads Computer Scientist offers from data/computer_scientist_trades/*.json. */
 public final class ComputerScientistTradeManager extends SimpleJsonResourceReloadListener {
     private static final Gson GSON = new Gson();
     private static final String DIRECTORY = "computer_scientist_trades";

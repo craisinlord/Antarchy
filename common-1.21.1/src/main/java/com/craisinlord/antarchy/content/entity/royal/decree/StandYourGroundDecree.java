@@ -15,7 +15,6 @@ public final class StandYourGroundDecree implements RoyalDecree {
     }
     @Override public Evaluation evaluate(ServerLevel level, KingEntity king, LivingEntity target) {
         if (target instanceof net.minecraft.server.level.ServerPlayer player && player.isFallFlying()) {
-            // Gliding carries unavoidable momentum; begin measuring again from the landing point.
             this.anchors.put(target.getUUID(), target.position());
             return Evaluation.COMPLIANT;
         }

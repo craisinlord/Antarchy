@@ -168,11 +168,6 @@ public abstract class RoyalEggBlock extends BaseEntityBlock {
         }
     }
 
-    /**
-     * Vanilla FallingBlockEntity always falls in world-down direction, so an
-     * unsupported egg placed with inverted underside gravity is stepped
-     * upward toward its support instead of being handed to that entity.
-     */
     private void tickInvertedFall(BlockState state, ServerLevel level, BlockPos pos) {
         BlockPos above = pos.above();
         if (!FallingBlock.isFree(level.getBlockState(above)) || above.getY() > level.getMaxBuildHeight()) {

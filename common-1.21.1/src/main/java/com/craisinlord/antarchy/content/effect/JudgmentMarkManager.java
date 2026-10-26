@@ -14,14 +14,12 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
-/** Server-owned, player-specific Judgment marks. The visible bit is synchronized by vanilla entity data. */
 public final class JudgmentMarkManager {
     private static final Map<ServerLevel, MarkBook> MARKS = new WeakHashMap<>();
 
     private JudgmentMarkManager() {
     }
 
-    /** Returns true when this owner had already marked this target before the current hit. */
     public static boolean recordSuccessfulHit(Player owner, LivingEntity target) {
         if (!(owner instanceof ServerPlayer serverPlayer) || !(target.level() instanceof ServerLevel level)
                 || owner.level() != target.level() || !hasGuardianArmor(owner) || !target.isAlive()) {
@@ -66,7 +64,6 @@ public final class JudgmentMarkManager {
         return entity instanceof LivingEntity living && living.isAlive() ? living : null;
     }
 
-    /** Prunes marks from this target and updates the vanilla-synchronized render bit. */
     public static void tickTarget(LivingEntity target) {
         if (!(target.level() instanceof ServerLevel level)) {
             return;

@@ -22,7 +22,6 @@ public final class BrutalflyElytraItem extends ElytraItem {
     private static final ResourceLocation ARMOR_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "brutalfly_elytra_armor");
     private static final ResourceLocation TOUGHNESS_MODIFIER_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "brutalfly_elytra_toughness");
 
-    // Set by NeoForge client setup to return the actual bound key name
     public static Supplier<Component> FLAP_KEY_NAME = () -> Component.literal("Shift");
 
     public BrutalflyElytraItem(Properties properties) {

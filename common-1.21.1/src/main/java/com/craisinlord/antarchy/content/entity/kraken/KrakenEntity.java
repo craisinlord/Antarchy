@@ -85,7 +85,6 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
     private static final int ATTACK_SWING_RIGHT = 3;
     private static final int ATTACK_SLAM = 4;
 
-    // Synced animation state values
     private static final int ANIM_NONE = 0;
     private static final int ANIM_CRY = 1;
     private static final int ANIM_GRAB = 2;
@@ -199,7 +198,6 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        // idle_controller always loops idle; action_controller layers on top when active
         controllers.add(new AnimationController<>(this, "idle_controller", 0, state -> {
             if (this.getAnimationState() == ANIM_DEATH) {
                 return PlayState.STOP;
@@ -646,7 +644,6 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
         }
     }
 
-    // swingRight=true means ATTACK_SWING_RIGHT, which knocks players to the Kraken's LEFT
     private void tickSwingAttack(boolean swingRight) {
         if (this.actionTicks == 10) {
             this.performSwing(swingRight);
@@ -749,9 +746,6 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
         return attackState == ATTACK_SLAM;
     }
 
-    // Determines left vs right based on which side the target is on relative to the Kraken.
-    // Kraken's right vector is forward x world-up. If target is on the Kraken's right side,
-    // use swing_right (which knocks them left). If on the left, use swing_left (knocks them right).
     private int resolveSwingDirection(LivingEntity target) {
         Vec3 forward = this.getViewVector(1.0F);
         Vec3 right = forward.cross(new Vec3(0, 1, 0)).normalize();
@@ -765,7 +759,6 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
         float damage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
 
         Vec3 forward = this.getViewVector(1.0F);
-        // swingRight knocks to Kraken's left (-right), swingLeft knocks to Kraken's right (+right)
         Vec3 right = forward.cross(new Vec3(0, 1, 0)).normalize();
         Vec3 knockDir = swingRight ? right.scale(-1) : right;
 

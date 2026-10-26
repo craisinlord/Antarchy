@@ -680,8 +680,6 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setPortalGunMoonBlockCap(AntarchyMiscConfig.portalGunMoonBlockCap());
 
 
-        // Misc
-
         AntarchySettings.setElythiaFireflyParticlesEnabled(AntarchyMiscConfig.elythiaFireflyParticlesEnabled());
 
         AntarchySettings.setDreamSandFallingBlockGravityMultiplier(AntarchyMiscConfig.dreamSandFallingBlockGravityMultiplier());

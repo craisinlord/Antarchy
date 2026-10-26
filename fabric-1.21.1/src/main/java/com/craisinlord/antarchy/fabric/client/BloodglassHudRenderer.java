@@ -26,7 +26,6 @@ public final class BloodglassHudRenderer {
         if (mc.options.hideGui) return;
         Player player = mc.player;
         if (player == null || player.isDeadOrDying()) return;
-        // Don't show in creative or spectator — no health bar visible there
         if (player.isCreative() || player.isSpectator()) return;
 
         int total = BloodglassClientState.getShieldsMax();
@@ -36,21 +35,16 @@ public final class BloodglassHudRenderer {
         int w = mc.getWindow().getGuiScaledWidth();
         int h = mc.getWindow().getGuiScaledHeight();
 
-        // Vanilla health bar bottom row is at y = h - 39; each extra row (absorption, extra hearts) is 10px above.
-        // The armor protection icons sit one row above the bottom health row (h - 49).
-        // We place bloodglass hearts above both health+absorption stack AND the armor row.
         int maxHealth = Mth.ceil(player.getMaxHealth());
         int absorption = Mth.ceil(player.getAbsorptionAmount());
         int healthHearts = Mth.ceil(maxHealth / 2.0f);
         int absorptionHearts = Mth.ceil(absorption / 2.0f);
         int totalVanillaRows = Mth.ceil((healthHearts + absorptionHearts) / 10.0f);
         boolean hasArmor = player.getArmorValue() > 0;
-        // +1 to clear the armor icon row only when armor is actually equipped
         int baseTop = h - 39 - (totalVanillaRows * 10) - (hasArmor ? 10 : 0);
 
         int left = w / 2 - 91;
 
-        // Wrap across multiple rows if more than 10 bloodglass hearts
         for (int i = 0; i < total; i++) {
             int row = i / 10;
             int col = i % 10;

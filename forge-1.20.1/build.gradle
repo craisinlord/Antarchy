@@ -38,7 +38,6 @@ base {
     archivesName = "${mod_id}-forge-1.20.1"
 }
 
-// Handle duplicates from common-1.20.1 in all copy tasks
 tasks.withType(AbstractCopyTask).configureEach {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
@@ -78,9 +77,6 @@ minecraft {
     }
 }
 
-// Add common-1.20.1's sources directly. Path is relative because forge-1.20.1 is its
-// own Gradle build (ForgeGradle 6 can't run on the root's Gradle 9) — there is no
-// `:common-1.20.1` project here.
 sourceSets {
     main {
         java {

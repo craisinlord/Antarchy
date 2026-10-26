@@ -11,9 +11,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(LivingEntity.class)
 public abstract class ElytraFallFlyingMixin {
 
-    /**
-     * Redirect to allow any ElytraItem subclass to sustain fall flying.
-     */
     @Redirect(
             method = "updateFallFlying",
             at = @At(

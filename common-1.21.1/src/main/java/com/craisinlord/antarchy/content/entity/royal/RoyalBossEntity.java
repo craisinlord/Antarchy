@@ -344,7 +344,6 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         return 0.35D;
     }
 
-    /** Lets a boss provide a bespoke air/ground cadence without changing the other royal encounter. */
     protected boolean managesOwnCombatLocomotion() {
         return false;
     }
@@ -357,12 +356,10 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         return 1.3D;
     }
 
-    /** Prevents normal head/body scheduling while a bespoke movement sequence owns the boss. */
     protected boolean blocksRoyalAttacksForMovement() {
         return false;
     }
 
-    /** Prevents new beam volleys while a bespoke attack has reserved the heads. */
     protected boolean blocksRoyalBeamScheduling() {
         return false;
     }
@@ -380,17 +377,14 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     protected void onRoyalPhaseTransitionCompleted(Phase nextPhase) {
     }
 
-    /** Allows a boss to tune its head-bite concurrency without changing the other royal boss. */
     protected int maxConcurrentHeadAttacks(Phase phase) {
         return phase.maxConcurrentHeadAttacks();
     }
 
-    /** Allows a boss to tune bite pacing without changing the other royal boss. */
     protected int biteCooldownTicks(Phase phase) {
         return Math.max(10, Mth.floor(AntarchySettings.royalBossBiteCooldownTicks() * phase.cooldownScale()));
     }
 
-    /** Allows either royal boss to tune bite damage without changing the other. */
     protected double biteDamageMultiplier() {
         return AntarchySettings.royalBossBiteDamageMultiplier();
     }
@@ -825,7 +819,6 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         return phase.maxConcurrentHeadAttacks();
     }
 
-    /** Uses the beam controller's smoothed target point instead of the boss body's forward axis. */
     protected boolean royalBeamUsesTrackedAim() {
         return false;
     }
@@ -862,7 +855,6 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         this.onRoyalPhaseTransitionStarted(previousPhase, nextPhase);
     }
 
-    /** Returns the live players currently participating in the encounter. */
     protected final List<ServerPlayer> royalEncounterPlayers(ServerLevel level) {
         double range = Math.max(32.0D, this.getAttributeValue(Attributes.FOLLOW_RANGE));
         LinkedHashSet<ServerPlayer> players = new LinkedHashSet<>(this.bossEvent.getPlayers());

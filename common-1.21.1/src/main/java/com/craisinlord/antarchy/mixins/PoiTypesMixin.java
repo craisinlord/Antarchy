@@ -33,7 +33,6 @@ public abstract class PoiTypesMixin {
             BuiltInRegistries.POINT_OF_INTEREST_TYPE.getHolder(key)
                     .ifPresent(holder -> callback.setReturnValue(Optional.of(holder)));
         } catch (IllegalStateException ignored) {
-            // Registration can be queried during bootstrap before loader bindings finish.
         }
     }
 }

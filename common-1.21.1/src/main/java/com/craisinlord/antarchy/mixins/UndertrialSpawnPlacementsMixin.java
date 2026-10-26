@@ -8,11 +8,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/**
- * Lets the Undertrial's vanilla TrialSpawner path spawn entities whose normal
- * placement predicate assumes floor support. TrialSpawner already performs
- * its own no-collision and obstruction checks before this method is reached.
- */
 @Mixin(SpawnPlacements.class)
 public abstract class UndertrialSpawnPlacementsMixin {
     @Inject(method = "checkSpawnRules", at = @At("RETURN"), cancellable = true)

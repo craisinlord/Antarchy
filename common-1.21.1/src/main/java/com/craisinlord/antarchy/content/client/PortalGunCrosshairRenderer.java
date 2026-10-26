@@ -20,7 +20,6 @@ public final class PortalGunCrosshairRenderer {
     private static final int HALF_WIDTH = 17;
     private static final float MISSING_BRIGHTNESS = 0.3F;
     private static final float MISSING_ALPHA = 0.75F;
-    // Weak so a dimension change or logout doesn't pin the old client world in memory.
     private static WeakReference<ClientLevel> cachedLevel = new WeakReference<>(null);
     private static long cachedGameTime = Long.MIN_VALUE;
     private static UUID cachedGunId;
