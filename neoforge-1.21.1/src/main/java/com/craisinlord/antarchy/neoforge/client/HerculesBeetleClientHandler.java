@@ -34,7 +34,7 @@ public final class HerculesBeetleClientHandler {
         HordeClientState.tick();
         com.craisinlord.antarchy.content.client.ThrowbackClientState.tick();
         com.craisinlord.antarchy.content.client.ElythiaEchoes.tick();
-        com.craisinlord.antarchy.content.client.AntDescentClientState.tick();
+        com.craisinlord.antarchy.content.client.AntTransitClientState.tick();
 
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;

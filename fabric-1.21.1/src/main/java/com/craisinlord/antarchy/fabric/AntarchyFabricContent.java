@@ -554,7 +554,7 @@ public final class AntarchyFabricContent {
         com.craisinlord.antarchy.content.network.KingJudgmentFlashSync.setSink((player, ticks) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, new com.craisinlord.antarchy.content.network.KingJudgmentFlashPayload(ticks)));
         HordeIntensitySync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
         com.craisinlord.antarchy.content.network.ThrowbackZoneSync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
-        com.craisinlord.antarchy.content.network.AntDescentSync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
+        com.craisinlord.antarchy.content.network.AntTransitSync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
         com.craisinlord.antarchy.content.network.ElythiaEchoTestSync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
         TigerEyeCamouflageSync.setSendToPlayer((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
         TigerEyeCamouflageSync.setSyncSelfAndTracking(AntarchyFabricNetworking::syncTigerEyeCamouflage);

@@ -34,9 +34,9 @@ public final class ElythiaEchoes {
     private static final int MIN_COOLDOWN_TICKS = 3600;
     private static final int MAX_COOLDOWN_TICKS = 7200;
     private static final int RETRY_TICKS = 200;
-    private static final int PICK_ATTEMPTS = 6;
-    private static final double MIN_DISTANCE = 14.0D;
-    private static final double MAX_DISTANCE = 48.0D;
+    private static final int PICK_STRIDE = 5;
+    private static final double MIN_DISTANCE = 10.0D;
+    private static final double MAX_DISTANCE = 64.0D;
     private static final double MAX_HEIGHT_DIFFERENCE = 24.0D;
     private static final double VANISH_DISTANCE = 8.0D;
     private static final float FADE_TICKS = 30.0F;
@@ -44,6 +44,12 @@ public final class ElythiaEchoes {
     private static final float BASE_ALPHA = 0.3F;
     private static final int TINT = 0xE6DCFF;
     private static final float PLAYER_SCALE = 0.9375F;
+
+    private static final int REASONS = 4;
+    private static final int REASON_CHECKED = 0;
+    private static final int REASON_DISTANCE = 1;
+    private static final int REASON_STILL = 2;
+    private static final int REASON_INVALID = 3;
 
     private static final List<Sample> SAMPLES = new ArrayList<>();
     private static final RandomSource RANDOM = RandomSource.create();
@@ -79,7 +85,7 @@ public final class ElythiaEchoes {
         if (replay != null) {
             tickReplay(player);
         } else if (--cooldown <= 0) {
-            replay = pick(player);
+            replay = pick(player, new int[REASONS]);
             cooldown = replay == null ? RETRY_TICKS : MIN_COOLDOWN_TICKS + RANDOM.nextInt(MAX_COOLDOWN_TICKS - MIN_COOLDOWN_TICKS);
         }
     }
@@ -102,19 +108,26 @@ public final class ElythiaEchoes {
         }
         float seconds = SAMPLES.size() * SAMPLE_INTERVAL / 20.0F;
         if (!immediate) {
-            replay = pick(player);
+            int[] reasons = new int[REASONS];
+            replay = pick(player, reasons);
             cooldown = replay == null ? RETRY_TICKS : MIN_COOLDOWN_TICKS + RANDOM.nextInt(MAX_COOLDOWN_TICKS - MIN_COOLDOWN_TICKS);
-            return replay != null
-                    ? "An echo is replaying now."
-                    : String.format("No suitable stretch yet (%.0fs recorded). It needs 15s of walking from 2 to 4 minutes ago, 14 to 48 blocks away.", seconds);
+            if (replay != null) {
+                return "An echo is replaying now.";
+            }
+            float needed = (MIN_LAG_SAMPLES + REPLAY_SAMPLES) * SAMPLE_INTERVAL / 20.0F;
+            if (seconds < needed) {
+                return String.format("No echo yet: %.0fs of path recorded, %.0fs needed. Keep moving around Elythia.", seconds, needed);
+            }
+            return String.format("No echo: of %d stretches from 2 to 4 minutes ago, %d were too close or too far (needs %.0f to %.0f blocks away), %d had too little walking, %d were while riding or sleeping.",
+                    reasons[REASON_CHECKED], reasons[REASON_DISTANCE], MIN_DISTANCE, MAX_DISTANCE, reasons[REASON_STILL], reasons[REASON_INVALID]);
         }
         for (int start = SAMPLES.size() - 1 - REPLAY_SAMPLES; start >= 0; start--) {
-            if (suitable(player, start, false)) {
+            if (suitable(player, start, false, null)) {
                 replay = new Replay(start, true);
                 return "Replaying your most recent walk as an echo.";
             }
         }
-        return String.format("Walk around for at least 15 seconds first (%.0fs recorded, flying and swimming don't count).", seconds);
+        return String.format("Walk around for at least 15 seconds first (%.0fs recorded).", seconds);
     }
 
     public static void render(PoseStack poseStack, MultiBufferSource.BufferSource buffers, Camera camera, float partialTick) {
@@ -171,8 +184,7 @@ public final class ElythiaEchoes {
 
     private static void record(LocalPlayer player) {
         Sample previous = SAMPLES.isEmpty() ? null : SAMPLES.get(SAMPLES.size() - 1);
-        boolean valid = !player.isPassenger() && !player.isFallFlying() && !player.isSwimming()
-                && !player.isSleeping() && !player.isSpectator() && !player.getAbilities().flying;
+        boolean valid = !player.isPassenger() && !player.isSleeping() && !player.isSpectator();
         double travelled = previous == null ? 0.0D : Math.sqrt(Mth.square(player.getX() - previous.x) + Mth.square(player.getZ() - previous.z));
         float limbSpeed = Math.min(1.0F, (float) travelled);
         float limbPos = previous == null ? 0.0F : previous.limbPos + (float) travelled * 4.0F;
@@ -190,43 +202,49 @@ public final class ElythiaEchoes {
         }
     }
 
-    private static Replay pick(LocalPlayer player) {
-        int newest = SAMPLES.size() - 1 - MIN_LAG_SAMPLES;
-        if (newest - REPLAY_SAMPLES < 0) {
-            return null;
-        }
-        for (int attempt = 0; attempt < PICK_ATTEMPTS; attempt++) {
-            int lag = MIN_LAG_SAMPLES + RANDOM.nextInt(MAX_LAG_SAMPLES - MIN_LAG_SAMPLES);
-            int start = SAMPLES.size() - 1 - lag;
-            if (start < 0 || start + REPLAY_SAMPLES >= SAMPLES.size()) {
-                continue;
-            }
-            if (suitable(player, start, true)) {
-                return new Replay(start, false);
+    private static Replay pick(LocalPlayer player, int[] reasons) {
+        int earliest = Math.max(0, SAMPLES.size() - 1 - MAX_LAG_SAMPLES);
+        int latest = SAMPLES.size() - 1 - MIN_LAG_SAMPLES;
+        List<Integer> candidates = new ArrayList<>();
+        for (int start = earliest; start <= latest && start + REPLAY_SAMPLES < SAMPLES.size(); start += PICK_STRIDE) {
+            reasons[REASON_CHECKED]++;
+            if (suitable(player, start, true, reasons)) {
+                candidates.add(start);
             }
         }
-        return null;
+        return candidates.isEmpty() ? null : new Replay(candidates.get(RANDOM.nextInt(candidates.size())), false);
     }
 
-    private static boolean suitable(LocalPlayer player, int start, boolean checkDistance) {
+    private static boolean suitable(LocalPlayer player, int start, boolean checkDistance, int[] reasons) {
         boolean moved = false;
         Sample first = SAMPLES.get(start);
         for (int i = start; i <= start + REPLAY_SAMPLES; i++) {
             Sample sample = SAMPLES.get(i);
             if (!sample.valid) {
+                count(reasons, REASON_INVALID);
                 return false;
             }
             double dx = sample.x - player.getX();
             double dz = sample.z - player.getZ();
             double distance = Math.sqrt(dx * dx + dz * dz);
             if (checkDistance && (distance < MIN_DISTANCE || distance > MAX_DISTANCE || Math.abs(sample.y - player.getY()) > MAX_HEIGHT_DIFFERENCE)) {
+                count(reasons, REASON_DISTANCE);
                 return false;
             }
             if (!moved && Mth.square(sample.x - first.x) + Mth.square(sample.z - first.z) > 16.0D) {
                 moved = true;
             }
         }
+        if (!moved) {
+            count(reasons, REASON_STILL);
+        }
         return moved;
+    }
+
+    private static void count(int[] reasons, int reason) {
+        if (reasons != null) {
+            reasons[reason]++;
+        }
     }
 
     private static void tickReplay(LocalPlayer player) {

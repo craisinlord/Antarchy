@@ -32,7 +32,7 @@ public final class AntarchyConfigModuleNeoforge {
         KingJudgmentFlashSync.setSink((player, ticks) -> PacketDistributor.sendToPlayer(player, new KingJudgmentFlashPayload(ticks)));
         HordeIntensitySync.setSink(PacketDistributor::sendToPlayer);
         com.craisinlord.antarchy.content.network.ThrowbackZoneSync.setSink(PacketDistributor::sendToPlayer);
-        com.craisinlord.antarchy.content.network.AntDescentSync.setSink(PacketDistributor::sendToPlayer);
+        com.craisinlord.antarchy.content.network.AntTransitSync.setSink(PacketDistributor::sendToPlayer);
         com.craisinlord.antarchy.content.network.ElythiaEchoTestSync.setSink(PacketDistributor::sendToPlayer);
         AntarchyNeoforge.modEventBusTempHolder.addListener(AntarchyConfigModuleNeoforge::onConfigChange);
     }
@@ -691,6 +691,9 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setElythiaAlreadyDreaming(AntarchyMiscConfig.elythiaAlreadyDreaming());
         AntarchySettings.setElythiaClearWater(AntarchyMiscConfig.elythiaClearWater());
         AntarchySettings.setBrownAntDescent(AntarchyMiscConfig.brownAntDescent());
+        AntarchySettings.setRedAntFlip(AntarchyMiscConfig.redAntFlip());
+        AntarchySettings.setTermiteBurrow(AntarchyMiscConfig.termiteBurrow());
+        AntarchySettings.setRainbowAntPrism(AntarchyMiscConfig.rainbowAntPrism());
         AntarchySettings.setElythiaPurpleRain(AntarchyMiscConfig.elythiaPurpleRain());
         AntarchySettings.setElythiaEchoes(AntarchyMiscConfig.elythiaEchoes());
         AntarchySettings.setThrowbackZonesEnabled(AntarchyMiscConfig.throwbackZonesEnabled());

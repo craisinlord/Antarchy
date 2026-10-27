@@ -189,10 +189,10 @@ public class AntarchyNeoforgePayloadHandlers {
                 )
         );
         registrar.playToClient(
-                com.craisinlord.antarchy.content.network.AntDescentPayload.TYPE,
-                com.craisinlord.antarchy.content.network.AntDescentPayload.STREAM_CODEC,
+                com.craisinlord.antarchy.content.network.AntTransitPayload.TYPE,
+                com.craisinlord.antarchy.content.network.AntTransitPayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() ->
-                        com.craisinlord.antarchy.content.client.AntDescentClientState.handle(payload)
+                        com.craisinlord.antarchy.content.client.AntTransitClientState.handle(payload)
                 )
         );
         registrar.playToClient(

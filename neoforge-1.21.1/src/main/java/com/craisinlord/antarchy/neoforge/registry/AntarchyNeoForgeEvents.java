@@ -255,7 +255,7 @@ public final class AntarchyNeoForgeEvents {
 
     static void tickAntArrivals(ServerTickEvent.Post event) {
         com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.tick(event.getServer());
-        com.craisinlord.antarchy.content.elythia.AntDescent.tick(event.getServer());
+        com.craisinlord.antarchy.content.transit.AntTransit.tick(event.getServer());
     }
 
     private static int badOmenLevel(Player player) {

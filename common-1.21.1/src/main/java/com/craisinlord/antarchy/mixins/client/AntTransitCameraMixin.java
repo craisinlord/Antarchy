@@ -1,6 +1,6 @@
 package com.craisinlord.antarchy.mixins.client;
 
-import com.craisinlord.antarchy.content.client.AntDescentClientState;
+import com.craisinlord.antarchy.content.client.AntTransitClientState;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Camera.class)
-public abstract class AntDescentCameraMixin {
+public abstract class AntTransitCameraMixin {
     @Shadow
     public abstract Vec3 getPosition();
 
@@ -25,7 +25,7 @@ public abstract class AntDescentCameraMixin {
         if (entity != Minecraft.getInstance().player) {
             return;
         }
-        float sink = AntDescentClientState.sink(partialTick);
+        float sink = AntTransitClientState.sink(partialTick);
         if (sink > 0.0F) {
             this.setPosition(this.getPosition().subtract(0.0D, sink, 0.0D));
         }

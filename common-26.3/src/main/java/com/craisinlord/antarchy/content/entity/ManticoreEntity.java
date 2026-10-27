@@ -1,6 +1,9 @@
 package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
@@ -67,6 +70,7 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     private static final int STING_COOLDOWN_TICKS = 60;
     private static final float STING_CHANCE = 0.35F;
     private static final int SWARM_RETARGET_INTERVAL = 40;
+    private static final EntityDataAccessor<Boolean> FLYING = SynchedEntityData.defineId(ManticoreEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
@@ -209,6 +213,12 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     }
 
     @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(FLYING, false);
+    }
+
+    @Override
     public void tick() {
         super.tick();
         if (this.level().isClientSide()) {
@@ -222,6 +232,7 @@ public class ManticoreEntity extends Monster implements GeoEntity {
             this.triggerAnim("controller", flying ? "fly_start" : "fly_land");
             this.wasFlyingLastTick = flying;
         }
+        this.entityData.set(FLYING, flying);
         if (flying && this.tickCount % 16 == 0) {
             this.playSound(AntarchySoundEvents.MANTICORE_FLY.get(), 0.65F, 0.9F + this.random.nextFloat() * 0.2F);
         }
@@ -479,6 +490,7 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<ManticoreEntity>("controller", 3, this::locomotionPredicate)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("bite", BITE_ANIM)
                 .triggerableAnim("fly_bite", FLY_BITE_ANIM)
                 .triggerableAnim("sting", STING_ANIM)
@@ -487,7 +499,10 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     }
 
     private PlayState locomotionPredicate(AnimationTest<ManticoreEntity> state) {
-        if (!this.onGround()) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
+        if (this.entityData.get(FLYING)) {
             return state.setAndContinue(FLY_ANIM);
         }
         if (state.isMoving()) {

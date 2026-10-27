@@ -73,7 +73,7 @@ public final class AntarchyFabricEvents {
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> PortalGunProjectileEntity.releaseAllProjectileTickets());
         ServerLifecycleEvents.SERVER_STOPPING.register(com.craisinlord.antarchy.content.portalgun.PortalGunResetManager::clear);
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.clear());
-        ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.elythia.AntDescent.clear());
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.transit.AntTransit.clear());
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.clear());
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             PortalGunSavedData.clearMissingGuns(handler.player);
@@ -207,7 +207,7 @@ public final class AntarchyFabricEvents {
                 }
             }
             com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.tick(server);
-            com.craisinlord.antarchy.content.elythia.AntDescent.tick(server);
+            com.craisinlord.antarchy.content.transit.AntTransit.tick(server);
             invertedPlayers.retainAll(activeThisTick);
         });
     }

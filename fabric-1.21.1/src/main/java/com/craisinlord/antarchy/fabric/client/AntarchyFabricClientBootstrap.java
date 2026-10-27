@@ -558,7 +558,7 @@ public final class AntarchyFabricClientBootstrap {
             HordeClientState.tick();
             com.craisinlord.antarchy.content.client.ThrowbackClientState.tick();
             com.craisinlord.antarchy.content.client.ElythiaEchoes.tick();
-            com.craisinlord.antarchy.content.client.AntDescentClientState.tick();
+            com.craisinlord.antarchy.content.client.AntTransitClientState.tick();
             if (client.player != null) {
                 ParalyzedClientHandler.clampPlayerInput(client.player);
             }

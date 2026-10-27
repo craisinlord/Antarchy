@@ -13,6 +13,9 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.BooleanValue ELYTHIA_ALREADY_DREAMING;
     private static final ModConfigSpec.BooleanValue ELYTHIA_CLEAR_WATER;
     private static final ModConfigSpec.BooleanValue BROWN_ANT_DESCENT;
+    private static final ModConfigSpec.BooleanValue RED_ANT_FLIP;
+    private static final ModConfigSpec.BooleanValue TERMITE_BURROW;
+    private static final ModConfigSpec.BooleanValue RAINBOW_ANT_PRISM;
     private static final ModConfigSpec.BooleanValue ELYTHIA_PURPLE_RAIN;
     private static final ModConfigSpec.BooleanValue ELYTHIA_ECHOES;
     private static final ModConfigSpec.BooleanValue THROWBACK_ZONES_ENABLED;
@@ -105,6 +108,15 @@ public final class AntarchyMiscConfig {
         BROWN_ANT_DESCENT = b
                 .comment("Whether brown ant trips to Elythia play the Descent, sinking into a void and gliding down from the sky, and trips home play the Waking.")
                 .define("brownAntDescent", true);
+        RED_ANT_FLIP = b
+                .comment("Whether red ant trips to and from Thoraxis play the Flip, where you fall upward as the world rolls over.")
+                .define("redAntFlip", true);
+        TERMITE_BURROW = b
+                .comment("Whether termite trips to and from Cavaryn play the Burrow, crumbling through the ground or bursting back out.")
+                .define("termiteBurrow", true);
+        RAINBOW_ANT_PRISM = b
+                .comment("Whether rainbow ant trips to and from Infinity dimensions play the Prism, splitting the world into color.")
+                .define("rainbowAntPrism", true);
         ELYTHIA_PURPLE_RAIN = b
                 .comment("Whether rain in Elythia is purple and falls slowly. Client-side visual only.")
                 .define("purpleRain", true);
@@ -253,6 +265,9 @@ public final class AntarchyMiscConfig {
     static boolean elythiaAlreadyDreaming()             { return ELYTHIA_ALREADY_DREAMING.get(); }
     static boolean elythiaClearWater()                  { return ELYTHIA_CLEAR_WATER.get(); }
     static boolean brownAntDescent()                     { return BROWN_ANT_DESCENT.get(); }
+    static boolean redAntFlip()                          { return RED_ANT_FLIP.get(); }
+    static boolean termiteBurrow()                       { return TERMITE_BURROW.get(); }
+    static boolean rainbowAntPrism()                     { return RAINBOW_ANT_PRISM.get(); }
     static boolean elythiaPurpleRain()                  { return ELYTHIA_PURPLE_RAIN.get(); }
     static boolean elythiaEchoes()                      { return ELYTHIA_ECHOES.get(); }
     static boolean throwbackZonesEnabled()               { return THROWBACK_ZONES_ENABLED.get(); }

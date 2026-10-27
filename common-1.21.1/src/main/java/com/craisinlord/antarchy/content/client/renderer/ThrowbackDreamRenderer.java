@@ -2,7 +2,7 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
-import com.craisinlord.antarchy.content.client.AntDescentClientState;
+import com.craisinlord.antarchy.content.client.AntTransitClientState;
 import com.craisinlord.antarchy.content.client.ThrowbackClientState;
 import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
 import com.mojang.blaze3d.pipeline.RenderTarget;
@@ -40,18 +40,22 @@ public final class ThrowbackDreamRenderer {
         boolean elythia = AntarchySettings.throwbackDreamHaze() && minecraft.level.dimension().equals(ThrowbackZones.ELYTHIA);
         float baseline = elythia ? ThrowbackClientState.baseline(partialTick) : 0.0F;
         float zone = elythia ? ThrowbackClientState.zone(partialTick) * dreamStrength() : 0.0F;
-        float wake = AntDescentClientState.saturation(partialTick);
-        boolean waking = wake < 1.0F - ACTIVE_THRESHOLD;
-        if ((baseline < ACTIVE_THRESHOLD && zone < ACTIVE_THRESHOLD && !waking) || shaderPackActive()) {
+        float wake = AntTransitClientState.saturation(partialTick);
+        float prism = AntTransitClientState.prism(partialTick);
+        boolean transit = Math.abs(wake - 1.0F) > ACTIVE_THRESHOLD || prism > ACTIVE_THRESHOLD;
+        if ((baseline < ACTIVE_THRESHOLD && zone < ACTIVE_THRESHOLD && !transit) || shaderPackActive()) {
             return;
         }
-        boolean dreaming = zone >= ACTIVE_THRESHOLD;
+        boolean dreaming = zone >= ACTIVE_THRESHOLD && prism <= ACTIVE_THRESHOLD;
         PostChain postChain = (dreaming ? DREAM : TINT).get(minecraft);
         if (postChain == null) {
             return;
         }
         postChain.setUniform("Baseline", baseline);
         postChain.setUniform("Wake", wake);
+        if (!dreaming) {
+            postChain.setUniform("Prism", prism);
+        }
         if (dreaming) {
             float distortion = minecraft.options.screenEffectScale().get().floatValue();
             float time = ((minecraft.level.getGameTime() % TIME_WRAP_TICKS) + partialTick) / 20.0F;

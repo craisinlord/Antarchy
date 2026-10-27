@@ -45,8 +45,8 @@ public final class AntarchyFabricClientNetworking {
                 context.client().execute(() -> HordeClientState.update(payload.intensity())));
         ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ThrowbackZonePayload.TYPE, (payload, context) ->
                 context.client().execute(() -> com.craisinlord.antarchy.content.client.ThrowbackClientState.update(payload.strength())));
-        ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.AntDescentPayload.TYPE, (payload, context) ->
-                context.client().execute(() -> com.craisinlord.antarchy.content.client.AntDescentClientState.handle(payload)));
+        ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.AntTransitPayload.TYPE, (payload, context) ->
+                context.client().execute(() -> com.craisinlord.antarchy.content.client.AntTransitClientState.handle(payload)));
         ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload.TYPE, (payload, context) ->
                 context.client().execute(() -> com.craisinlord.antarchy.content.client.ElythiaEchoes.handleTest(payload.immediate())));
     }

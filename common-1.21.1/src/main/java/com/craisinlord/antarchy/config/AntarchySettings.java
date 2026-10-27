@@ -569,6 +569,9 @@ public final class AntarchySettings {
     private static boolean elythiaAlreadyDreaming = true;
     private static boolean elythiaClearWater = true;
     private static boolean brownAntDescent = true;
+    private static boolean redAntFlip = true;
+    private static boolean termiteBurrow = true;
+    private static boolean rainbowAntPrism = true;
     private static boolean elythiaPurpleRain = true;
     private static boolean elythiaEchoes = true;
     private static boolean throwbackZonesEnabled = true;
@@ -3025,6 +3028,12 @@ public final class AntarchySettings {
     public static void setElythiaClearWater(boolean value) { elythiaClearWater = value; }
     public static boolean brownAntDescent() { return brownAntDescent; }
     public static void setBrownAntDescent(boolean value) { brownAntDescent = value; }
+    public static boolean redAntFlip() { return redAntFlip; }
+    public static void setRedAntFlip(boolean value) { redAntFlip = value; }
+    public static boolean termiteBurrow() { return termiteBurrow; }
+    public static void setTermiteBurrow(boolean value) { termiteBurrow = value; }
+    public static boolean rainbowAntPrism() { return rainbowAntPrism; }
+    public static void setRainbowAntPrism(boolean value) { rainbowAntPrism = value; }
     public static boolean elythiaPurpleRain() { return elythiaPurpleRain; }
     public static void setElythiaPurpleRain(boolean value) { elythiaPurpleRain = value; }
     public static boolean elythiaEchoes() { return elythiaEchoes; }

@@ -58,7 +58,7 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playS2C().register(KingJudgmentFlashPayload.TYPE, KingJudgmentFlashPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(HordeIntensityPayload.TYPE, HordeIntensityPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(com.craisinlord.antarchy.content.network.ThrowbackZonePayload.TYPE, com.craisinlord.antarchy.content.network.ThrowbackZonePayload.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(com.craisinlord.antarchy.content.network.AntDescentPayload.TYPE, com.craisinlord.antarchy.content.network.AntDescentPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(com.craisinlord.antarchy.content.network.AntTransitPayload.TYPE, com.craisinlord.antarchy.content.network.AntTransitPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload.TYPE, com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload.STREAM_CODEC);
 
         PayloadTypeRegistry.playC2S().register(GravityGunPrimaryPayload.TYPE, GravityGunPrimaryPayload.STREAM_CODEC);

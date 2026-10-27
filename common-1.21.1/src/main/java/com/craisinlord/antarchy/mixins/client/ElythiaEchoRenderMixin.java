@@ -1,7 +1,7 @@
 package com.craisinlord.antarchy.mixins.client;
 
 import com.craisinlord.antarchy.content.client.ElythiaEchoes;
-import com.craisinlord.antarchy.content.client.renderer.AntDescentDiscRenderer;
+import com.craisinlord.antarchy.content.client.renderer.AntTransitGroundRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
@@ -31,6 +31,6 @@ public abstract class ElythiaEchoRenderMixin {
                                        LightTexture lightTexture, Matrix4f frustumMatrix, Matrix4f projectionMatrix, CallbackInfo ci) {
         float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
         ElythiaEchoes.render(new PoseStack(), this.renderBuffers.bufferSource(), camera, partialTick);
-        AntDescentDiscRenderer.render(new PoseStack(), this.renderBuffers.bufferSource(), camera, partialTick);
+        AntTransitGroundRenderer.render(new PoseStack(), this.renderBuffers.bufferSource(), camera, partialTick);
     }
 }
