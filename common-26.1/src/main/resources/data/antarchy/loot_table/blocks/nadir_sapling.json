@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:nadir_sapling"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "antarchy:blocks/nadir_sapling"
+}

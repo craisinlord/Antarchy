@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=double": {
+      "model": "antarchy:block/antimetal"
+    },
+    "type=bottom": {
+      "model": "antarchy:block/antimetal_slab"
+    },
+    "type=top": {
+      "model": "antarchy:block/antimetal_slab_top"
+    }
+  }
+}

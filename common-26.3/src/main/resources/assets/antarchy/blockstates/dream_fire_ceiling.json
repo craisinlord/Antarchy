@@ -1,0 +1,108 @@
+{
+  "multipart": [
+    {
+      "apply": [
+        {
+          "model": "antarchy:block/dream_fire_floor0",
+          "x": 180
+        },
+        {
+          "model": "antarchy:block/dream_fire_floor1",
+          "x": 180
+        }
+      ]
+    },
+    {
+      "apply": [
+        {
+          "model": "antarchy:block/dream_fire_side0",
+          "x": 180
+        },
+        {
+          "model": "antarchy:block/dream_fire_side1",
+          "x": 180
+        },
+        {
+          "model": "antarchy:block/dream_fire_side_alt0",
+          "x": 180
+        },
+        {
+          "model": "antarchy:block/dream_fire_side_alt1",
+          "x": 180
+        }
+      ]
+    },
+    {
+      "apply": [
+        {
+          "model": "antarchy:block/dream_fire_side0",
+          "x": 180,
+          "y": 90
+        },
+        {
+          "model": "antarchy:block/dream_fire_side1",
+          "x": 180,
+          "y": 90
+        },
+        {
+          "model": "antarchy:block/dream_fire_side_alt0",
+          "x": 180,
+          "y": 90
+        },
+        {
+          "model": "antarchy:block/dream_fire_side_alt1",
+          "x": 180,
+          "y": 90
+        }
+      ]
+    },
+    {
+      "apply": [
+        {
+          "model": "antarchy:block/dream_fire_side0",
+          "x": 180,
+          "y": 180
+        },
+        {
+          "model": "antarchy:block/dream_fire_side1",
+          "x": 180,
+          "y": 180
+        },
+        {
+          "model": "antarchy:block/dream_fire_side_alt0",
+          "x": 180,
+          "y": 180
+        },
+        {
+          "model": "antarchy:block/dream_fire_side_alt1",
+          "x": 180,
+          "y": 180
+        }
+      ]
+    },
+    {
+      "apply": [
+        {
+          "model": "antarchy:block/dream_fire_side0",
+          "x": 180,
+          "y": 270
+        },
+        {
+          "model": "antarchy:block/dream_fire_side1",
+          "x": 180,
+          "y": 270
+        },
+        {
+          "model": "antarchy:block/dream_fire_side_alt0",
+          "x": 180,
+          "y": 270
+        },
+        {
+          "model": "antarchy:block/dream_fire_side_alt1",
+          "x": 180,
+          "y": 270
+        }
+      ]
+    }
+  ]
+}

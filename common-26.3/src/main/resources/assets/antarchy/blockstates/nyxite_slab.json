@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=double": {
+      "model": "antarchy:block/nyxite"
+    },
+    "type=bottom": {
+      "model": "antarchy:block/nyxite_slab"
+    },
+    "type=top": {
+      "model": "antarchy:block/nyxite_slab_top"
+    }
+  }
+}

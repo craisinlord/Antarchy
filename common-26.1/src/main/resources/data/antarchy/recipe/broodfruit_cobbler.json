@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "food",
+  "pattern": [
+    "BSB",
+    "WEW",
+    "WWW"
+  ],
+  "key": {
+    "B": "antarchy:broodfruit",
+    "S": "minecraft:sugar",
+    "W": "minecraft:wheat",
+    "E": "minecraft:egg"
+  },
+  "result": {
+    "id": "antarchy:broodfruit_cobbler"
+  }
+}

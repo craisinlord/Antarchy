@@ -1,0 +1,85 @@
+{
+  "has_precipitation": false,
+  "temperature": 1.6,
+  "downfall": 0.0,
+  "attributes": {
+    "minecraft:audio/ambient_sounds": {
+      "mood": {
+        "sound": "antarchy:thoraxis_nightmare_wastes_mood",
+        "tick_delay": 8572,
+        "block_search_extent": 8,
+        "offset": 2.0
+      },
+      "additions": {
+        "sound": "antarchy:thoraxis_nightmare_wastes_biome_additions",
+        "tick_chance": 0.0005
+      }
+    },
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.thoraxis",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.08,
+    "minecraft:gameplay/natural_mob_spawns": {
+      "argument": {
+        "spawn_costs": {},
+        "spawns_by_category": {
+          "creature": [
+            {
+              "type": "antarchy:bed_bug",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 5,
+                "min_inclusive": 2
+              },
+              "weight": 18
+            }
+          ]
+        }
+      },
+      "modifier": "overlay"
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "minecraft:warped_spore"
+        },
+        "probability": 0.006
+      }
+    ],
+    "minecraft:visual/fog_color": "#141414",
+    "minecraft:visual/sky_color": "#000000",
+    "minecraft:visual/water_fog_color": "#000000"
+  },
+  "effects": {
+    "water_color": "#1f076a"
+  },
+  "carvers": [],
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:bluestone_ore",
+      "antarchy:thoraxis_ichor_lake",
+      "antarchy:dimensional_tears"
+    ],
+    [],
+    [],
+    [
+      "antarchy:nadir_forest_ceiling_trees",
+      "antarchy:nadir_forest_ceiling_saplings",
+      "antarchy:nadir_ferns",
+      "antarchy:duskbells",
+      "antarchy:nadir_roots_patch"
+    ],
+    []
+  ]
+}

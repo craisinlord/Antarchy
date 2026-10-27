@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "F": "antarchy:basilisk_fang",
+    "S": "minecraft:stick"
+  },
+  "pattern": [
+    "F",
+    "S"
+  ],
+  "result": {
+    "id": "antarchy:basilisk_dagger"
+  }
+}

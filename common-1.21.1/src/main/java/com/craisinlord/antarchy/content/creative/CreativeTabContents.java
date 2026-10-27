@@ -609,7 +609,7 @@ public final class CreativeTabContents {
     );
 
     private static final List<String> ANTARCHY_POTION_FAMILIES = List.of(
-            "dread", "long_dread", "inversion", "long_inversion", "stinky", "long_stinky",
+            "inversion", "long_inversion", "stinky", "long_stinky",
             "paralysis", "long_paralysis", "haste", "strong_haste", "shrinking",
             "strong_shrinking", "extreme_shrinking", "growing", "strong_growing", "extreme_growing",
             "command", "long_command", "time_dilation", "long_time_dilation", "time_contraction", "long_time_contraction"

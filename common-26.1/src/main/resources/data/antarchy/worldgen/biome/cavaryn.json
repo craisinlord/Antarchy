@@ -1,0 +1,96 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.45,
+  "downfall": 0.0,
+  "attributes": {
+    "minecraft:audio/ambient_sounds": {
+      "mood": {
+        "sound": "minecraft:ambient.cave",
+        "tick_delay": 1200000,
+        "block_search_extent": 8,
+        "offset": 2.0
+      }
+    },
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.cavaryn",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "antarchy:orange_ash"
+        },
+        "probability": 0.002
+      }
+    ],
+    "minecraft:visual/fog_color": "#010000",
+    "minecraft:visual/sky_color": "#000000",
+    "minecraft:visual/water_fog_color": "#000000"
+  },
+  "effects": {
+    "water_color": "#050000",
+    "foliage_color": "#40423e",
+    "grass_color": "#40423e"
+  },
+  "spawn_costs": {
+    "antarchy:hercules_beetle": {
+      "energy_budget": 0.2,
+      "charge": 15
+    }
+  },
+  "carvers": [],
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:myrmite_coal_ore",
+      "antarchy:broodstone_uranium_ore",
+      "antarchy:broodstone_titanium_ore"
+    ],
+    [],
+    [
+      "antarchy:cavaryn_bile_veins",
+      "antarchy:cavaryn_bile_cysts",
+      "antarchy:cavaryn_chitin_spikes",
+      "antarchy:cavaryn_terror_egg_patch",
+      "antarchy:termite_nest_cavaryn"
+    ],
+    [
+      "antarchy:cavaryn_wall_amber_moss",
+      "antarchy:cavaryn_creepvine",
+      "antarchy:cavaryn_hanging_creeproots"
+    ]
+  ],
+  "creature_spawn_probability": 0.98,
+  "spawners": {
+    "monster": [],
+    "creature": [
+      {
+        "type": "antarchy:rolly_polly",
+        "weight": 320,
+        "minCount": 4,
+        "maxCount": 8
+      },
+      {
+        "type": "antarchy:stink_bug",
+        "weight": 420,
+        "minCount": 4,
+        "maxCount": 8
+      }
+    ],
+    "ambient": [],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  }
+}

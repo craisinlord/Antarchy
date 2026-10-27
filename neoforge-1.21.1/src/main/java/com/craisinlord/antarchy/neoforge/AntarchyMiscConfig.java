@@ -6,6 +6,26 @@ public final class AntarchyMiscConfig {
     public static final ModConfigSpec SPEC;
 
     private static final ModConfigSpec.BooleanValue ELYTHIA_FIREFLY_PARTICLES_ENABLED;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_FOG_ENABLED;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_GROUND_MIST_ENABLED;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_DREAM_SHADOWS_ENABLED;
+    private static final ModConfigSpec.DoubleValue  ELYTHIA_DREAM_SHADOWS_STRENGTH;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_ALREADY_DREAMING;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_CLEAR_WATER;
+    private static final ModConfigSpec.BooleanValue BROWN_ANT_DESCENT;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_PURPLE_RAIN;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_ECHOES;
+    private static final ModConfigSpec.BooleanValue THROWBACK_ZONES_ENABLED;
+    private static final ModConfigSpec.IntValue     THROWBACK_STRUCTURE_ZONE_RADIUS;
+    private static final ModConfigSpec.DoubleValue  THROWBACK_WILD_ZONE_CHANCE;
+    private static final ModConfigSpec.BooleanValue THROWBACK_NO_ATTACK_COOLDOWN;
+    private static final ModConfigSpec.BooleanValue THROWBACK_CLASSIC_HURT_SOUND;
+    private static final ModConfigSpec.BooleanValue THROWBACK_CLASSIC_FOOD;
+    private static final ModConfigSpec.BooleanValue THROWBACK_CLASSIC_MUSIC;
+    private static final ModConfigSpec.BooleanValue THROWBACK_DENSE_FOG;
+    private static final ModConfigSpec.BooleanValue THROWBACK_DREAM_HAZE;
+    private static final ModConfigSpec.DoubleValue  THROWBACK_DREAM_STRENGTH;
+    private static final ModConfigSpec.BooleanValue THROWBACK_AFTERIMAGES;
 
     private static final ModConfigSpec.DoubleValue  DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER;
 
@@ -64,6 +84,68 @@ public final class AntarchyMiscConfig {
         ELYTHIA_FIREFLY_PARTICLES_ENABLED = b
                 .comment("Whether firefly ambient particles appear at night in the Elythia dimension.")
                 .define("fireflyParticlesEnabled", true);
+        ELYTHIA_FOG_ENABLED = b
+                .comment("Whether Elythia uses its denser atmospheric fog. Client-side visual only.")
+                .define("fogEnabled", true);
+        ELYTHIA_GROUND_MIST_ENABLED = b
+                .comment("Whether low ground mist drifts over Elythia meadows in the mornings. Client-side visual only.")
+                .define("groundMistEnabled", true);
+        ELYTHIA_DREAM_SHADOWS_ENABLED = b
+                .comment("Whether shadows, caves, and nights in Elythia are tinted lavender instead of fading to black. Client-side visual only.")
+                .define("dreamShadowsEnabled", true);
+        ELYTHIA_DREAM_SHADOWS_STRENGTH = b
+                .comment("Strength of the Elythia lavender shadow tint, from 0.0 to 1.0.")
+                .defineInRange("dreamShadowsStrength", 1.0D, 0.0D, 1.0D);
+        ELYTHIA_ALREADY_DREAMING = b
+                .comment("Whether beds in Elythia set your spawn and let you lie down at any time, but never skip the night.")
+                .define("alreadyDreaming", true);
+        ELYTHIA_CLEAR_WATER = b
+                .comment("Whether water in Elythia is clearer and tinted turquoise. Client-side visual only.")
+                .define("clearWater", true);
+        BROWN_ANT_DESCENT = b
+                .comment("Whether brown ant trips to Elythia play the Descent, sinking into a void and gliding down from the sky, and trips home play the Waking.")
+                .define("brownAntDescent", true);
+        ELYTHIA_PURPLE_RAIN = b
+                .comment("Whether rain in Elythia is purple and falls slowly. Client-side visual only.")
+                .define("purpleRain", true);
+        ELYTHIA_ECHOES = b
+                .comment("Whether a faint echo of yourself sometimes replays where you walked a few minutes earlier. Client-side visual only.")
+                .define("echoes", true);
+        b.push("throwbackZones");
+        THROWBACK_ZONES_ENABLED = b
+                .comment("Whether Throwback Zones appear around nostalgic structures and in the wild in Elythia.")
+                .define("enabled", true);
+        THROWBACK_STRUCTURE_ZONE_RADIUS = b
+                .comment("How many blocks a Throwback Zone extends beyond a nostalgic structure.")
+                .defineInRange("structureZoneRadius", 10, 1, 128);
+        THROWBACK_WILD_ZONE_CHANCE = b
+                .comment("Chance that each 320x320 block region of Elythia contains a free-standing Throwback Zone.")
+                .defineInRange("wildZoneChance", 0.35D, 0.0D, 1.0D);
+        THROWBACK_NO_ATTACK_COOLDOWN = b
+                .comment("Whether players inside a Throwback Zone have no attack cooldown.")
+                .define("noAttackCooldown", true);
+        THROWBACK_CLASSIC_HURT_SOUND = b
+                .comment("Whether players inside a Throwback Zone use the classic hurt sound.")
+                .define("classicHurtSound", true);
+        THROWBACK_CLASSIC_FOOD = b
+                .comment("Whether hunger is hidden and paused inside a Throwback Zone, with food healing hearts directly like pre-Beta 1.8.")
+                .define("classicFood", true);
+        THROWBACK_CLASSIC_MUSIC = b
+                .comment("Whether classic music plays inside a Throwback Zone.")
+                .define("classicMusic", true);
+        THROWBACK_DENSE_FOG = b
+                .comment("Whether fog closes in inside a Throwback Zone.")
+                .define("denseFog", true);
+        THROWBACK_DREAM_HAZE = b
+                .comment("Whether the dream post effect and Elythia color grade are rendered.")
+                .define("dreamHaze", true);
+        THROWBACK_DREAM_STRENGTH = b
+                .comment("Strength of the dream post effect inside Throwback Zones, from 0.0 to 1.0.")
+                .defineInRange("dreamStrength", 1.0D, 0.0D, 1.0D);
+        THROWBACK_AFTERIMAGES = b
+                .comment("Whether the very faint afterimage part of the dream effect is rendered.")
+                .define("afterimages", true);
+        b.pop();
         b.pop();
 
 
@@ -164,6 +246,26 @@ public final class AntarchyMiscConfig {
     private AntarchyMiscConfig() {}
 
     static boolean elythiaFireflyParticlesEnabled()      { return ELYTHIA_FIREFLY_PARTICLES_ENABLED.get(); }
+    static boolean elythiaFogEnabled()                   { return ELYTHIA_FOG_ENABLED.get(); }
+    static boolean elythiaGroundMistEnabled()            { return ELYTHIA_GROUND_MIST_ENABLED.get(); }
+    static boolean elythiaDreamShadowsEnabled()          { return ELYTHIA_DREAM_SHADOWS_ENABLED.get(); }
+    static double  elythiaDreamShadowsStrength()         { return ELYTHIA_DREAM_SHADOWS_STRENGTH.get(); }
+    static boolean elythiaAlreadyDreaming()             { return ELYTHIA_ALREADY_DREAMING.get(); }
+    static boolean elythiaClearWater()                  { return ELYTHIA_CLEAR_WATER.get(); }
+    static boolean brownAntDescent()                     { return BROWN_ANT_DESCENT.get(); }
+    static boolean elythiaPurpleRain()                  { return ELYTHIA_PURPLE_RAIN.get(); }
+    static boolean elythiaEchoes()                      { return ELYTHIA_ECHOES.get(); }
+    static boolean throwbackZonesEnabled()               { return THROWBACK_ZONES_ENABLED.get(); }
+    static int     throwbackStructureZoneRadius()        { return THROWBACK_STRUCTURE_ZONE_RADIUS.get(); }
+    static double  throwbackWildZoneChance()             { return THROWBACK_WILD_ZONE_CHANCE.get(); }
+    static boolean throwbackNoAttackCooldown()           { return THROWBACK_NO_ATTACK_COOLDOWN.get(); }
+    static boolean throwbackClassicHurtSound()           { return THROWBACK_CLASSIC_HURT_SOUND.get(); }
+    static boolean throwbackClassicFood()                { return THROWBACK_CLASSIC_FOOD.get(); }
+    static boolean throwbackClassicMusic()               { return THROWBACK_CLASSIC_MUSIC.get(); }
+    static boolean throwbackDenseFog()                   { return THROWBACK_DENSE_FOG.get(); }
+    static boolean throwbackDreamHaze()                  { return THROWBACK_DREAM_HAZE.get(); }
+    static double  throwbackDreamStrength()              { return THROWBACK_DREAM_STRENGTH.get(); }
+    static boolean throwbackAfterimages()                { return THROWBACK_AFTERIMAGES.get(); }
 
     static double  dreamSandFallingBlockGravityMultiplier() { return DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER.get(); }
 

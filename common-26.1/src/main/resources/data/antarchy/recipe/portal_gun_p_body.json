@@ -1,0 +1,12 @@
+{
+  "type": "antarchy:portal_gun_variant",
+  "category": "equipment",
+  "ingredients": [
+    "antarchy:portal_gun",
+    "minecraft:yellow_dye",
+    "minecraft:red_dye"
+  ],
+  "result": {
+    "id": "antarchy:portal_gun_p_body"
+  }
+}

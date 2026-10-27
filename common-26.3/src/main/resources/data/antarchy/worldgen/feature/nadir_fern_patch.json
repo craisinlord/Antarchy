@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:simple_block",
+  "to_place": {
+    "id": "antarchy:nadir_fern",
+    "properties": {
+      "vertical_direction": "down"
+    }
+  }
+}

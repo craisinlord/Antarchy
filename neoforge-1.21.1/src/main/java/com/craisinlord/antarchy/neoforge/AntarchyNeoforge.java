@@ -252,6 +252,7 @@ public class AntarchyNeoforge {
                 AntarchyNeoforgeSounds.DIMENSIONAL_TEAR_CLOSE
         );
         AntarchySoundEvents.bindHoverboardSounds(AntarchyNeoforgeSounds.HOVERBOARD_MOUNT, AntarchyNeoforgeSounds.HOVERBOARD_DISMOUNT, AntarchyNeoforgeSounds.HOVERBOARD_IDLE);
+        AntarchySoundEvents.bindThrowbackSounds(AntarchyNeoforgeSounds.MUSIC_THROWBACK, AntarchyNeoforgeSounds.PLAYER_HURT_CLASSIC);
         bindCommonObjects();
         ScorpionWhipTetherSync.setSink((player, targetId) -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(
                 player,
@@ -472,6 +473,7 @@ public class AntarchyNeoforge {
         AntarchyObjects.setGlimmer(AntarchyNeoforgeEntites.GLIMMER);
         AntarchyObjects.setSpiritApple(() -> AntarchyNeoforgeItems.SPIRIT_APPLE.get());
         AntarchyObjects.setGlimmeringEffect(() -> AntarchyNeoforgeMisc.GLIMMERING);
+        AntarchyObjects.setRemembranceEffect(() -> AntarchyNeoforgeMisc.REMEMBRANCE);
         AntarchyObjects.setRoyalVitalityPenaltyEffect(() -> AntarchyNeoforgeMisc.ROYAL_VITALITY_PENALTY);
         AntarchyObjects.setBleedingEffect(() -> AntarchyNeoforgeMisc.BLEEDING);
         AntarchyObjects.setBloodMoonEffect(() -> AntarchyNeoforgeMisc.BLOOD_MOON);

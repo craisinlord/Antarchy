@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "UTS",
+    "U S",
+    "UTS"
+  ],
+  "key": {
+    "U": "antarchy:uranium_ingot",
+    "T": "antarchy:titanium_ingot",
+    "S": "minecraft:string"
+  },
+  "result": {
+    "id": "antarchy:ultimate_bow"
+  }
+}

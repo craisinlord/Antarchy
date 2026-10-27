@@ -1,0 +1,20 @@
+{
+  "type": "mob",
+  "category": "elythia",
+  "folder": "antarchy:elythia",
+  "sort_order": 30,
+  "title": "guide.antarchy.entry.brutalfly.title",
+  "subtitle": "guide.antarchy.entry.brutalfly.subtitle",
+  "description": ["guide.antarchy.entry.brutalfly.description", "guide.antarchy.entry.brutalfly.description2", "guide.antarchy.entry.brutalfly.description3", "guide.antarchy.entry.brutalfly.description4"],
+  "entity": "antarchy:brutalfly",
+  "cover_entity": "antarchy:brutalfly",
+  "locator": "antarchy:brutalfly",
+  "dimension": "antarchy:elythia",
+  "rotation": 45,
+  "render_scale": 0.6,
+  "green_tint": false,
+  "gallery_title": "guide.antarchy.gallery.drops",
+  "gallery": [
+    {"item": "antarchy:brutalfly_wing"}
+  ]
+}

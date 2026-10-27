@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "food",
+  "pattern": [
+    "###",
+    "#A#",
+    "###"
+  ],
+  "key": {
+    "#": "antarchy:blood_crystal_shard",
+    "A": "minecraft:apple"
+  },
+  "result": {
+    "id": "antarchy:blood_crystal_apple"
+  }
+}

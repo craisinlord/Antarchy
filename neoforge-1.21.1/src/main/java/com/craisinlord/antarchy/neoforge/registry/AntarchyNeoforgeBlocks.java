@@ -789,6 +789,8 @@ public final class AntarchyNeoforgeBlocks {
             () -> new AntigravelBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GRAVEL)));
     public static final DeferredBlock<Block> LOAM = BLOCKS.register("loam",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.MUD)));
+    public static final DeferredBlock<Block> PRIMORDIAL_MOSS = BLOCKS.register("primordial_moss",
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_BLOCK)));
     public static final DeferredBlock<Block> PACKED_LOAM = BLOCKS.register("packed_loam",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.PACKED_MUD)));
     public static final DeferredBlock<Block> LOAM_BRICKS = BLOCKS.register("loam_bricks",

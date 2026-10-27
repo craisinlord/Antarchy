@@ -1,0 +1,9 @@
+{
+  "type": "antarchy:red_ant_nest",
+  "to_place": {
+    "id": "antarchy:red_ant_nest",
+    "properties": {
+      "facing": "north"
+    }
+  }
+}

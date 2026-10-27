@@ -1,0 +1,14 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "minecraft:using_item",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "antarchy:item/bug_spray"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "antarchy:item/bug_spray_spraying"
+    }
+  }
+}

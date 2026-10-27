@@ -1,0 +1,28 @@
+{
+  "type": "entity",
+  "category": "cavaryn",
+  "folder": "antarchy:cavaryn",
+  "sort_order": 0,
+  "title": "guide.antarchy.entry.termite.title",
+  "subtitle": "guide.antarchy.entry.termite.subtitle",
+  "description": ["guide.antarchy.entry.termite.description", "guide.antarchy.entry.termite.description2", "guide.antarchy.entry.termite.description3", "guide.antarchy.entry.termite.description4"],
+  "entity": "antarchy:termite",
+  "cover_entity": "antarchy:termite",
+  "dimension": "antarchy:cavaryn",
+  "rotation": 45,
+  "green_tint": false,
+  "gallery_title": "guide.antarchy.gallery.cavaryn",
+  "gallery": [
+    "antarchy:hercules_beetle",
+    "antarchy:jerry",
+    "antarchy:crawling_blight",
+    "antarchy:skulking_fright",
+    "antarchy:springbug",
+    "antarchy:spit_bug",
+    "antarchy:moleworm",
+    "antarchy:molevore",
+    "antarchy:worm",
+    "antarchy:rolly_polly",
+    "antarchy:stink_bug"
+  ]
+}

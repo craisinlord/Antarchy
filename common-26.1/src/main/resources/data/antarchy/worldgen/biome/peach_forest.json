@@ -1,0 +1,111 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.69,
+  "downfall": 0.97,
+  "attributes": {
+    "minecraft:audio/ambient_sounds": {
+      "mood": {
+        "sound": "minecraft:ambient.crimson_forest.mood",
+        "tick_delay": 6000,
+        "block_search_extent": 8,
+        "offset": 2.0
+      }
+    },
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.elythia",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:visual/fog_color": "#7b5cff",
+    "minecraft:visual/sky_color": "#7b5cff",
+    "minecraft:visual/water_fog_color": "#263042"
+  },
+  "effects": {
+    "water_color": "#4c9ef8",
+    "foliage_color": "#2bc12d",
+    "grass_color": "#ff90c1",
+    "grass_color_modifier": "none"
+  },
+  "spawn_costs": {},
+  "carvers": [],
+  "features": [
+    [],
+    [
+      "antarchy:peach_forest_ponds_large",
+      "antarchy:peach_forest_ponds_medium",
+      "antarchy:peach_forest_ponds_small"
+    ],
+    [],
+    [],
+    [],
+    [],
+    [
+      "minecraft:ore_coal_upper",
+      "minecraft:ore_coal_lower",
+      "minecraft:ore_iron_upper",
+      "minecraft:ore_iron_middle",
+      "minecraft:ore_iron_small",
+      "minecraft:ore_gold",
+      "minecraft:ore_gold_lower",
+      "minecraft:ore_redstone",
+      "minecraft:ore_redstone_lower",
+      "minecraft:ore_diamond",
+      "minecraft:ore_diamond_medium",
+      "minecraft:ore_diamond_large",
+      "minecraft:ore_diamond_buried",
+      "minecraft:ore_lapis",
+      "minecraft:ore_lapis_buried",
+      "minecraft:ore_copper"
+    ],
+    [
+      "antarchy:elythia_underground",
+      "minecraft:large_dripstone",
+      "minecraft:pointed_dripstone"
+    ],
+    [],
+    [
+      "antarchy:peach_forest_mossy_boulders",
+      "antarchy:blush_moss_patch",
+      "antarchy:peach_forest_petals",
+      "antarchy:peach_large_tree",
+      "antarchy:peach_tree",
+      "antarchy:peach_forest_flora",
+      "antarchy:elythia_rainbow_ant_nests",
+      "antarchy:giant_lily_pad_patch_peach_forest"
+    ],
+    []
+  ],
+  "creature_spawn_probability": 0.28,
+  "spawners": {
+    "monster": [],
+    "creature": [
+      {
+        "type": "antarchy:elka",
+        "weight": 22,
+        "minCount": 1,
+        "maxCount": 3
+      },
+      {
+        "type": "minecraft:frog",
+        "weight": 25,
+        "minCount": 3,
+        "maxCount": 6
+      },
+      {
+        "type": "antarchy:glimmer",
+        "weight": 2,
+        "minCount": 1,
+        "maxCount": 1
+      }
+    ],
+    "ambient": [],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  }
+}

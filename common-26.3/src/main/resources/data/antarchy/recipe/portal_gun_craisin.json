@@ -1,0 +1,12 @@
+{
+  "type": "antarchy:portal_gun_variant",
+  "category": "equipment",
+  "ingredients": [
+    "antarchy:portal_gun",
+    "minecraft:purple_dye",
+    "minecraft:gold_ingot"
+  ],
+  "result": {
+    "id": "antarchy:portal_gun_craisin"
+  }
+}

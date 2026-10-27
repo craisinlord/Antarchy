@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    "minecraft:coarse_dirt",
+    "antarchy:moleworm"
+  ],
+  "result": {
+    "id": "antarchy:infested_coarse_dirt"
+  }
+}

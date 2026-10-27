@@ -1,0 +1,56 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": [
+            {
+              "type": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 5,
+                "max": 10
+              }
+            },
+            {
+              "type": "minecraft:enchanted_count_increase",
+              "enchantment": "minecraft:looting",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 0.0,
+                "max": 1.0
+              }
+            }
+          ],
+          "name": "antarchy:primordial_scute"
+        }
+      ],
+      "rolls": 1,
+      "condition": {
+        "type": "minecraft:killed_by_player"
+      }
+    },
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:constant",
+              "value": 1
+            }
+          },
+          "name": "antarchy:water_cannon"
+        }
+      ],
+      "condition": {
+        "type": "minecraft:killed_by_player"
+      },
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "antarchy:entities/toreterror"
+}

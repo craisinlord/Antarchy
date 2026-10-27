@@ -1,0 +1,33 @@
+{
+  "type": "entity",
+  "category": "elythia",
+  "folder": "antarchy:elythia",
+  "sort_order": 0,
+  "title": "guide.antarchy.entry.brown_ant.title",
+  "subtitle": "guide.antarchy.entry.brown_ant.subtitle",
+  "description": ["guide.antarchy.entry.brown_ant.description", "guide.antarchy.entry.brown_ant.description2", "guide.antarchy.entry.brown_ant.description3"],
+  "entity": "antarchy:brown_ant",
+  "cover_entity": "antarchy:brown_ant",
+  "dimension": "antarchy:elythia",
+  "rotation": 45,
+  "green_tint": false,
+  "gallery_title": "guide.antarchy.gallery.elythia",
+  "gallery": [
+    "antarchy:king",
+    "antarchy:toreterror",
+    "antarchy:brutalfly",
+    "antarchy:basilisk",
+    "antarchy:glimmer",
+    "antarchy:flying_squirrel",
+    "antarchy:ouranwood_deer",
+    "antarchy:elka",
+    "antarchy:mantis",
+    "antarchy:alpha_mantis",
+    "antarchy:apple_cow",
+    "antarchy:stratoshark",
+    "antarchy:missile_squid",
+    "antarchy:octopus_bomb",
+    "antarchy:dorrie",
+    "antarchy:butterfly"
+  ]
+}

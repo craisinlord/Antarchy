@@ -1,0 +1,9 @@
+{
+  "type": "antarchy:termite_nest",
+  "to_place": {
+    "id": "antarchy:termite_nest",
+    "properties": {
+      "facing": "north"
+    }
+  }
+}

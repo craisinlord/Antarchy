@@ -1,0 +1,754 @@
+package com.craisinlord.antarchy.content.creative;
+
+import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
+import com.craisinlord.antarchy.content.item.GiantFryingPanToolHelper;
+import com.craisinlord.antarchy.content.item.GlimmerBottleItem;
+import com.craisinlord.antarchy.content.item.royal.RoyalGearHelper;
+import com.craisinlord.antarchy.content.item.ultimate.UltimateGearHelper;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.level.ItemLike;
+
+public final class CreativeTabContents {
+    private static final String MODID = "antarchy";
+
+    private CreativeTabContents() {}
+
+    private record CatalogEntry(String path, String neoTabPath, String insertAfterPath) {}
+
+    public interface AntarchyTabOutput {
+        void accept(ItemLike item);
+        void accept(ItemStack stack);
+    }
+
+    public interface NeoForgeVanillaTabOutput extends AntarchyTabOutput {
+        void insertAfter(ItemLike anchor, ItemLike item);
+    }
+
+    private static final List<CatalogEntry> CATALOG = List.of(
+            entry("ouranwood_log", "building_blocks"),
+            entry("ouranwood_wood", "building_blocks"),
+            entry("mossy_ouranwood_log", "building_blocks"),
+            entry("mossy_ouranwood_wood", "building_blocks"),
+            entry("stripped_ouranwood_log", "building_blocks"),
+            entry("stripped_ouranwood_wood", "building_blocks"),
+            entry("ouranwood_planks", "building_blocks"),
+            entry("ouranwood_stairs", "building_blocks"),
+            entry("ouranwood_slab", "building_blocks"),
+            entry("ouranwood_fence", "building_blocks"),
+            entry("ouranwood_fence_gate", "building_blocks"),
+            entry("ouranwood_boat", "building_blocks"),
+            entry("ouranwood_chest_boat", "building_blocks"),
+            entry("ouranwood_door", "building_blocks"),
+            entry("ouranwood_trapdoor", "building_blocks"),
+            entry("ouranwood_pressure_plate", "building_blocks"),
+            entry("ouranwood_button", "building_blocks"),
+            entry("ouranwood_sign", "building_blocks"),
+            entry("ouranwood_hanging_sign", "building_blocks"),
+            entry("peach_log", "building_blocks"),
+            entry("peach_wood", "building_blocks"),
+            entry("stripped_peach_log", "building_blocks"),
+            entry("stripped_peach_wood", "building_blocks"),
+            entry("peach_planks", "building_blocks"),
+            entry("peach_stairs", "building_blocks"),
+            entry("peach_slab", "building_blocks"),
+            entry("peach_fence", "building_blocks"),
+            entry("peach_fence_gate", "building_blocks"),
+            entry("peach_boat", "building_blocks"),
+            entry("peach_chest_boat", "building_blocks"),
+            entry("peach_door", "building_blocks"),
+            entry("peach_trapdoor", "building_blocks"),
+            entry("peach_pressure_plate", "building_blocks"),
+            entry("peach_button", "building_blocks"),
+            entry("peach_sign", "building_blocks"),
+            entry("peach_hanging_sign", "building_blocks"),
+            entry("truffalo_log", "building_blocks"),
+            entry("truffalo_wood", "building_blocks"),
+            entry("stripped_truffalo_log", "building_blocks"),
+            entry("stripped_truffalo_wood", "building_blocks"),
+            entry("truffalo_planks", "building_blocks"),
+            entry("truffalo_stairs", "building_blocks"),
+            entry("truffalo_slab", "building_blocks"),
+            entry("truffalo_fence", "building_blocks"),
+            entry("truffalo_fence_gate", "building_blocks"),
+            entry("truffalo_boat", "building_blocks"),
+            entry("truffalo_chest_boat", "building_blocks"),
+            entry("truffalo_door", "building_blocks"),
+            entry("truffalo_trapdoor", "building_blocks"),
+            entry("truffalo_pressure_plate", "building_blocks"),
+            entry("truffalo_button", "building_blocks"),
+            entry("truffalo_sign", "building_blocks"),
+            entry("truffalo_hanging_sign", "building_blocks"),
+            entry("royal_log", "building_blocks"),
+            entry("royal_wood", "building_blocks"),
+            entry("stripped_royal_log", "building_blocks"),
+            entry("stripped_royal_wood", "building_blocks"),
+            entry("royal_planks", "building_blocks"),
+            entry("royal_stairs", "building_blocks"),
+            entry("royal_slab", "building_blocks"),
+            entry("royal_fence", "building_blocks"),
+            entry("royal_fence_gate", "building_blocks"),
+            entry("royal_boat", "building_blocks"),
+            entry("royal_chest_boat", "building_blocks"),
+            entry("royal_door", "building_blocks"),
+            entry("royal_trapdoor", "building_blocks"),
+            entry("royal_pressure_plate", "building_blocks"),
+            entry("royal_button", "building_blocks"),
+            entry("royal_sign", "building_blocks"),
+            entry("royal_hanging_sign", "building_blocks"),
+            entry("shellstone", "building_blocks"),
+            entry("shellstone_stairs", "building_blocks"),
+            entry("shellstone_slab", "building_blocks"),
+            entry("shellstone_wall", "building_blocks"),
+            entry("polished_shellstone", "building_blocks"),
+            entry("polished_shellstone_stairs", "building_blocks"),
+            entry("polished_shellstone_slab", "building_blocks"),
+            entry("polished_shellstone_wall", "building_blocks"),
+            entry("shellstone_bricks", "building_blocks"),
+            entry("shellstone_brick_stairs", "building_blocks"),
+            entry("shellstone_brick_slab", "building_blocks"),
+            entry("shellstone_brick_wall", "building_blocks"),
+            entry("chiseled_shellstone", "building_blocks"),
+            entry("mossy_shellstone_bricks", "building_blocks"),
+            entry("mossy_shellstone_brick_stairs", "building_blocks"),
+            entry("mossy_shellstone_brick_slab", "building_blocks"),
+            entry("mossy_shellstone_brick_wall", "building_blocks"),
+            entry("cracked_shellstone_bricks", "building_blocks"),
+            entry("shellstone_pillar", "building_blocks"),
+            entry("blush_moss_block", "building_blocks"),
+            entry("blush_moss_carpet", "building_blocks"),
+            entry("lumen_froglight", "natural_blocks"),
+            entry("roseate_froglight", "natural_blocks"),
+            entry("nadir_log", "building_blocks"),
+            entry("nadir_wood", "building_blocks"),
+            entry("stripped_nadir_log", "building_blocks"),
+            entry("stripped_nadir_wood", "building_blocks"),
+            entry("nadir_planks", "building_blocks"),
+            entry("nadir_stairs", "building_blocks"),
+            entry("nadir_slab", "building_blocks"),
+            entry("nadir_fence", "building_blocks"),
+            entry("nadir_fence_gate", "building_blocks"),
+            entry("nadir_boat", "building_blocks"),
+            entry("nadir_chest_boat", "building_blocks"),
+            entry("nadir_door", "building_blocks"),
+            entry("nadir_trapdoor", "building_blocks"),
+            entry("nadir_pressure_plate", "building_blocks"),
+            entry("nadir_button", "building_blocks"),
+            entry("nadir_sign", "building_blocks"),
+            entry("nadir_hanging_sign", "building_blocks"),
+            entry("nyxite", "building_blocks"),
+            entry("nyxite_stairs", "building_blocks"),
+            entry("nyxite_slab", "building_blocks"),
+            entry("nyxite_wall", "building_blocks"),
+            entry("polished_nyxite", "building_blocks"),
+            entry("polished_nyxite_stairs", "building_blocks"),
+            entry("polished_nyxite_slab", "building_blocks"),
+            entry("polished_nyxite_wall", "building_blocks"),
+            entry("polished_nyxite_pressure_plate", "building_blocks"),
+            entry("polished_nyxite_button", "building_blocks"),
+            entry("nyxite_bricks", "building_blocks"),
+            entry("nyxite_brick_stairs", "building_blocks"),
+            entry("nyxite_brick_slab", "building_blocks"),
+            entry("nyxite_brick_wall", "building_blocks"),
+            entry("mossy_nyxite_bricks", "building_blocks"),
+            entry("mossy_nyxite_brick_stairs", "building_blocks"),
+            entry("mossy_nyxite_brick_slab", "building_blocks"),
+            entry("mossy_nyxite_brick_wall", "building_blocks"),
+            entry("chiseled_nyxite", "building_blocks"),
+            entry("nyxite_pillar", "building_blocks"),
+            entry("pale_nyxite", "building_blocks"),
+            entry("nyxite_spike", "building_blocks"),
+            entry("potent_nyxite", "building_blocks"),
+            entry("antimetal", "building_blocks"),
+            entry("antimetal_stairs", "building_blocks"),
+            entry("antimetal_slab", "building_blocks"),
+            entry("polished_antimetal", "building_blocks"),
+            entry("polished_antimetal_stairs", "building_blocks"),
+            entry("polished_antimetal_slab", "building_blocks"),
+            entry("antimetal_scaffolding", "building_blocks"),
+            entry("antimetal_rail", "redstone_blocks"),
+            entry("antimetal_powered_rail", "redstone_blocks"),
+            entry("antimetal_detector_rail", "redstone_blocks"),
+            entry("antimetal_activator_rail", "redstone_blocks"),
+            entry("upper", "redstone_blocks"),
+            entry("umbral_moss_block", "building_blocks"),
+            entry("umbral_moss_carpet", "building_blocks"),
+            entry("dream_torch", "building_blocks"),
+            entry("dream_lantern", "building_blocks"),
+            entry("dream_campfire", "building_blocks"),
+            entry("dream_sand", "building_blocks"),
+            entry("dream_sandstone", "building_blocks"),
+            entry("chiseled_dream_sandstone", "building_blocks"),
+            entry("cut_dream_sandstone", "building_blocks"),
+            entry("smooth_dream_sandstone", "building_blocks"),
+            entry("dream_sandstone_stairs", "building_blocks"),
+            entry("dream_sandstone_slab", "building_blocks"),
+            entry("dream_sandstone_wall", "building_blocks"),
+            entry("smooth_dream_sandstone_stairs", "building_blocks"),
+            entry("smooth_dream_sandstone_slab", "building_blocks"),
+            entry("cut_dream_sandstone_slab", "building_blocks"),
+            entry("typhonite", "building_blocks"),
+            entry("typhonite_bricks", "building_blocks"),
+            entry("chiseled_typhonite", "building_blocks"),
+            entry("polished_typhonite", "building_blocks"),
+            entry("veined_typhonite", "building_blocks"),
+            entry("typhonite_spike", "building_blocks"),
+            entry("typhonite_stairs", "building_blocks"),
+            entry("typhonite_slab", "building_blocks"),
+            entry("typhonite_wall", "building_blocks"),
+            entry("typhonite_brick_stairs", "building_blocks"),
+            entry("typhonite_brick_slab", "building_blocks"),
+            entry("typhonite_brick_wall", "building_blocks"),
+            entry("polished_typhonite_stairs", "building_blocks"),
+            entry("polished_typhonite_slab", "building_blocks"),
+            entry("polished_typhonite_wall", "building_blocks"),
+            entry("verdant_nyxium", "natural_blocks"),
+            entry("spiraling_vines", "natural_blocks"),
+            entry("gorevine", "natural_blocks"),
+            entry("whirlflower", "natural_blocks"),
+            entry("nadir_nyxium", "natural_blocks"),
+            entry("nadir_fern", "natural_blocks"),
+            entry("large_nadir_fern", "natural_blocks"),
+            entry("duskbell", "natural_blocks"),
+            entry("nadir_roots", "natural_blocks"),
+            entry("verdant_roots", "natural_blocks"),
+            entry("typhonite_pillar", "building_blocks"),
+            entry("antigravel", "natural_blocks"),
+            entry("budding_blood_crystal", "building_blocks"),
+            entry("blood_crystal_block", "building_blocks"),
+            entry("blood_crystal_cluster", "building_blocks"),
+            entry("small_blood_crystal_bud", "building_blocks"),
+            entry("medium_blood_crystal_bud", "building_blocks"),
+            entry("large_blood_crystal_bud", "building_blocks"),
+            entry("myrmite", "building_blocks"),
+            entry("myrmite_stairs", "building_blocks"),
+            entry("myrmite_slab", "building_blocks"),
+            entry("myrmite_wall", "building_blocks"),
+            entry("polished_myrmite", "building_blocks"),
+            entry("polished_myrmite_stairs", "building_blocks"),
+            entry("polished_myrmite_slab", "building_blocks"),
+            entry("polished_myrmite_wall", "building_blocks"),
+            entry("chiseled_myrmite", "building_blocks"),
+            entry("myrmite_bricks", "building_blocks"),
+            entry("myrmite_brick_stairs", "building_blocks"),
+            entry("myrmite_brick_slab", "building_blocks"),
+            entry("myrmite_brick_wall", "building_blocks"),
+            entry("mossy_myrmite_bricks", "building_blocks"),
+            entry("mossy_myrmite_brick_stairs", "building_blocks"),
+            entry("mossy_myrmite_brick_slab", "building_blocks"),
+            entry("mossy_myrmite_brick_wall", "building_blocks"),
+            entry("myrmite_pillar", "building_blocks"),
+            entry("biomite", "building_blocks"),
+            entry("biomite_turf", "building_blocks"),
+            entry("biowart", "building_blocks"),
+            entry("biowart_tendrils", "building_blocks"),
+            entry("loam", "building_blocks"),
+            entry("packed_loam", "building_blocks"),
+            entry("loam_bricks", "building_blocks"),
+            entry("loam_brick_stairs", "building_blocks"),
+            entry("loam_brick_slab", "building_blocks"),
+            entry("loam_brick_wall", "building_blocks"),
+            entry("chiseled_loam_bricks", "building_blocks"),
+            entry("broodstone", "building_blocks"),
+            entry("polished_broodstone", "building_blocks"),
+            entry("chiseled_broodstone", "building_blocks"),
+            entry("broodstone_bricks", "building_blocks"),
+            entry("mossy_broodstone_bricks", "building_blocks"),
+            entry("broodstone_stairs", "building_blocks"),
+            entry("broodstone_slab", "building_blocks"),
+            entry("broodstone_wall", "building_blocks"),
+            entry("polished_broodstone_stairs", "building_blocks"),
+            entry("polished_broodstone_slab", "building_blocks"),
+            entry("polished_broodstone_wall", "building_blocks"),
+            entry("broodstone_brick_stairs", "building_blocks"),
+            entry("broodstone_brick_slab", "building_blocks"),
+            entry("broodstone_brick_wall", "building_blocks"),
+            entry("mossy_broodstone_brick_stairs", "building_blocks"),
+            entry("mossy_broodstone_brick_slab", "building_blocks"),
+            entry("mossy_broodstone_brick_wall", "building_blocks"),
+            entry("broodstone_pillar", "building_blocks"),
+            entry("myrmite_coal_ore", "building_blocks"),
+            entry("broodstone_uranium_ore", "building_blocks"),
+            entry("broodstone_titanium_ore", "building_blocks"),
+            entry("bile_vein", "building_blocks"),
+            entry("chitin_block", "building_blocks"),
+            entry("chitin_spike", "building_blocks"),
+            entry("amber_moss_block", "building_blocks"),
+            entry("amber_moss_carpet", "building_blocks"),
+            entry("uranium_block", "building_blocks"),
+            entry("raw_uranium_block", "building_blocks"),
+            entry("cut_uranium", "building_blocks"),
+            entry("cut_uranium_stairs", "building_blocks"),
+            entry("cut_uranium_slab", "building_blocks"),
+            entry("chiseled_uranium", "building_blocks"),
+            entry("uranium_door", "building_blocks"),
+            entry("uranium_trapdoor", "building_blocks"),
+            entry("uranium_bars", "building_blocks"),
+            entry("uranium_bulb", "building_blocks"),
+            entry("bluestone_block", "redstone_blocks"),
+            entry("vortex_lens", "redstone_blocks"),
+            entry("bluestone_repeater", "redstone_blocks"),
+            entry("bluestone_comparator", "redstone_blocks"),
+            entry("bluestone_torch", "redstone_blocks"),
+            entry("bluestone_lamp", "redstone_blocks"),
+            entry("titanium_block", "building_blocks"),
+            entry("raw_titanium_block", "building_blocks"),
+            entry("cut_titanium", "building_blocks"),
+            entry("cut_titanium_stairs", "building_blocks"),
+            entry("cut_titanium_slab", "building_blocks"),
+            entry("chiseled_titanium", "building_blocks"),
+            entry("titanium_door", "building_blocks"),
+            entry("titanium_trapdoor", "building_blocks"),
+            entry("titanium_bars", "building_blocks"),
+            entry("titanium_bulb", "building_blocks"),
+            entry("ouranwood_leaves", "natural_blocks"),
+            entry("ouranwood_acorn", "natural_blocks"),
+            entry("peach_leaves", "natural_blocks"),
+            entry("peach_sapling", "natural_blocks"),
+            entry("truffalo_sapling", "natural_blocks"),
+            entry("royal_leaves", "natural_blocks"),
+            entry("royal_flowering_leaves", "natural_blocks"),
+            entry("royal_sapling", "natural_blocks"),
+            entry("nadir_veil", "natural_blocks"),
+            entry("nadir_sapling", "natural_blocks"),
+            entry("white_truffalo_tuft", "natural_blocks"),
+            entry("orange_truffalo_tuft", "natural_blocks"),
+            entry("magenta_truffalo_tuft", "natural_blocks"),
+            entry("light_blue_truffalo_tuft", "natural_blocks"),
+            entry("yellow_truffalo_tuft", "natural_blocks"),
+            entry("lime_truffalo_tuft", "natural_blocks"),
+            entry("pink_truffalo_tuft", "natural_blocks"),
+            entry("gray_truffalo_tuft", "natural_blocks"),
+            entry("light_gray_truffalo_tuft", "natural_blocks"),
+            entry("cyan_truffalo_tuft", "natural_blocks"),
+            entry("purple_truffalo_tuft", "natural_blocks"),
+            entry("blue_truffalo_tuft", "natural_blocks"),
+            entry("brown_truffalo_tuft", "natural_blocks"),
+            entry("green_truffalo_tuft", "natural_blocks"),
+            entry("red_truffalo_tuft", "natural_blocks"),
+            entry("black_truffalo_tuft", "natural_blocks"),
+            entry("duplicator_log", "natural_blocks"),
+            entry("duplicator_sapling", "natural_blocks"),
+            entry("orange_milkweed", "natural_blocks"),
+            entry("pink_milkweed", "natural_blocks"),
+            entry("glimmering_reed", "natural_blocks"),
+            entry("camellia", "natural_blocks"),
+            entry("spider_lily", "natural_blocks"),
+            entry("lotus", "natural_blocks"),
+            entry("giant_lily_pad", "natural_blocks"),
+            entry("seashell", "natural_blocks"),
+            entry("hushweed", "natural_blocks"),
+            entry("amber_lichen", "natural_blocks"),
+            entry("mucus", "natural_blocks"),
+            entry("creepvine", "natural_blocks"),
+            entry("hanging_creeproots", "natural_blocks"),
+            entry("molting_vines", "natural_blocks"),
+            entry("glowcap_mushroom", "natural_blocks"),
+            entry("glowcap_mushroom_block", "natural_blocks"),
+            entry("infested_rooted_dirt", "natural_blocks"),
+            entry("infested_coarse_dirt", "natural_blocks"),
+            entry("flytrap_goo_block", "natural_blocks"),
+            entry("bed_bug_egg", "natural_blocks"),
+            entry("crawling_blight_egg", "natural_blocks"),
+            entry("skulking_fright_egg", "natural_blocks"),
+            entry("springbug_egg", "natural_blocks"),
+            entry("spit_bug_egg", "natural_blocks"),
+            entry("jerry_egg", "natural_blocks"),
+            entry("wasp_nest", "natural_blocks"),
+            entry("red_ant_nest", "natural_blocks"),
+            entry("brown_ant_nest", "natural_blocks"),
+            entry("rainbow_ant_nest", "natural_blocks"),
+            entry("termite_nest", "natural_blocks"),
+            entry("uranium_ore", "natural_blocks"),
+            entry("deepslate_uranium_ore", "natural_blocks"),
+            entry("titanium_ore", "natural_blocks"),
+            entry("deepslate_titanium_ore", "natural_blocks"),
+            entry("bluestone_ore", "redstone_blocks"),
+            entry("corn_seeds", "natural_blocks"),
+            entry("star_coral", "natural_blocks"),
+            entry("star_coral_fan", "natural_blocks"),
+            entry("star_coral_block", "natural_blocks"),
+            entry("dead_star_coral", "natural_blocks"),
+            entry("dead_star_coral_fan", "natural_blocks"),
+            entry("dead_star_coral_block", "natural_blocks"),
+            entry("duct_tape", "tools_and_utilities", "shears"),
+            entry("bug_spray", "tools_and_utilities"),
+            entry("music_disc_underside", "tools_and_utilities"),
+            entry("music_disc_the_queen", "tools_and_utilities"),
+            entry("music_disc_verdance", "tools_and_utilities"),
+            entry("music_disc_grotesque", "tools_and_utilities"),
+            entry("diamond_minecart", "tools_and_utilities", "minecart"),
+            entry("bile_bucket", "tools_and_utilities"),
+            entry("ichor_bucket", "tools_and_utilities"),
+            entry("antiwater_bucket", "tools_and_utilities"),
+            entry("lumen_bucket", "tools_and_utilities"),
+            entry("cloud_bucket", "tools_and_utilities"),
+            entry("cheep_bucket", "tools_and_utilities"),
+            entry("lucid_anchor", "tools_and_utilities"),
+            entry("undertrial_spawner", "tools_and_utilities"),
+            entry("undervault", "tools_and_utilities"),
+            entry("undertrial_key", "tools_and_utilities"),
+            entry("reverie_bottle", "tools_and_utilities"),
+            entry("glimmer_bottle", "tools_and_utilities"),
+            entry("critter_cage", "tools_and_utilities"),
+            entry("worm_hook", "tools_and_utilities"),
+            entry("ultimate_pickaxe", "tools_and_utilities"),
+            entry("ultimate_axe", "tools_and_utilities"),
+            entry("ultimate_shovel", "tools_and_utilities"),
+            entry("ultimate_hoe", "tools_and_utilities"),
+            entry("battle_axe", "combat"),
+            entry("big_bertha", "combat"),
+            entry("giant_frying_pan", "combat"),
+            entry("basilisk_dagger", "combat"),
+            entry("ultimate_helmet", "combat"),
+            entry("ultimate_chestplate", "combat"),
+            entry("ultimate_leggings", "combat"),
+            entry("ultimate_boots", "combat"),
+            entry("ultimate_sword", "combat"),
+            entry("ultimate_bow", "combat"),
+            entry("ultimate_crossbow", "combat"),
+            entry("squidzooka", "combat"),
+            entry("rpo_launcher", "combat"),
+            entry("krakens_grasp", "combat"),
+            entry("shrink_ray", "combat"),
+            entry("growth_ray", "combat"),
+            entry("gravity_gun", "combat"),
+            entry("portal_gun", "combat"),
+            entry("portal_gun_atlas", "combat"),
+            entry("portal_gun_p_body", "combat"),
+            entry("portal_gun_craisin", "combat"),
+            entry("portal_gun_laynce", "combat"),
+            entry("eye_of_the_storm", "combat"),
+            entry("water_cannon", "combat"),
+            entry("attitude_adjuster", "combat"),
+            entry("lucid_pearl", "combat"),
+            entry("primordial_helmet", "combat"),
+            entry("primordial_chestplate", "combat"),
+            entry("primordial_leggings", "combat"),
+            entry("primordial_boots", "combat"),
+            entry("nightmare_helmet", "combat"),
+            entry("nightmare_chestplate", "combat"),
+            entry("nightmare_leggings", "combat"),
+            entry("nightmare_boots", "combat"),
+            entry("nightmare_sword", "combat"),
+            entry("blood_gods_blade", "combat"),
+            entry("blood_crystal_katana", "combat"),
+            entry("blood_crystal_helmet", "combat"),
+            entry("blood_crystal_chestplate", "combat"),
+            entry("blood_crystal_leggings", "combat"),
+            entry("blood_crystal_boots", "combat"),
+            entry("royal_guardian_sword", "combat"),
+            entry("royal_guardian_helmet", "combat"),
+            entry("royal_guardian_chestplate", "combat"),
+            entry("royal_guardian_leggings", "combat"),
+            entry("royal_guardian_boots", "combat"),
+            entry("royal_guardian_shield", "combat"),
+            entry("royal_assailant_battleaxe", "combat"),
+            entry("royal_assailant_staff", "combat"),
+            entry("temporal_tuner", "combat"),
+            entry("royal_assailant_helmet", "combat"),
+            entry("royal_assailant_chestplate", "combat"),
+            entry("royal_assailant_leggings", "combat"),
+            entry("royal_assailant_boots", "combat"),
+            entry("prince_egg", "functional_blocks"),
+            entry("princess_egg", "functional_blocks"),
+            entry("tigers_eye_helmet", "combat"),
+            entry("tigers_eye_chestplate", "combat"),
+            entry("tigers_eye_leggings", "combat"),
+            entry("tigers_eye_boots", "combat"),
+            entry("moggles", "combat"),
+            entry("scorpion_whip", "combat"),
+            entry("fallen_king_crown", "combat"),
+            entry("brutalfly_elytra", "combat"),
+            entry("manticore_wings", "combat"),
+            entry("springy_boots", "combat"),
+            entry("raw_uranium_scrap", "ingredients"),
+            entry("raw_titanium_scrap", "ingredients"),
+            entry("bluestone", "redstone_blocks"),
+            entry("raw_uranium", "ingredients"),
+            entry("raw_titanium", "ingredients"),
+            entry("uranium_nugget", "ingredients"),
+            entry("titanium_nugget", "ingredients"),
+            entry("uranium_ingot", "ingredients"),
+            entry("titanium_ingot", "ingredients"),
+            entry("stratoshark_fin", "ingredients"),
+            entry("stratoshark_fin_soup", "ingredients"),
+            entry("basilisk_fang", "ingredients"),
+            entry("nightmare_scale", "ingredients"),
+            entry("molevore_nose", "ingredients"),
+            entry("moleworm", "ingredients"),
+            entry("worm_tooth", "ingredients"),
+            entry("mud_pie", "ingredients"),
+            entry("lucid_eye", "ingredients"),
+            entry("blood_crystal_shard", "ingredients"),
+            entry("tigers_eye", "ingredients"),
+            entry("tigers_eye_block", "building_blocks"),
+            entry("blood_crystal_apple", "ingredients"),
+            entry("spirit_apple", "ingredients"),
+            entry("mantis_claw", "combat"),
+            entry("hercules_horn", "ingredients"),
+            entry("king_scale", "ingredients"),
+            entry("queen_scale", "ingredients"),
+            entry("chitin", "ingredients"),
+            entry("jerry_nucleus", "ingredients"),
+            entry("stink_bug", "ingredients"),
+            entry("brutalfly_wing", "ingredients"),
+            entry("manticore_wing", "ingredients"),
+            entry("primordial_scute", "ingredients"),
+            entry("flytrap_goo", "ingredients"),
+            entry("vortex_charge", "ingredients"),
+            entry("emperor_scorpion_stinger", "ingredients"),
+            entry("kraken_tooth", "ingredients"),
+            entry("kraken_tentacle", "ingredients"),
+            entry("kraken_kalamari", "ingredients"),
+            entry("springbug_leg", "ingredients"),
+            entry("cornea_ear", "ingredients"),
+            entry("corn", "ingredients"),
+            entry("high_fructose_corn_syrup", "ingredients"),
+            entry("peach", "ingredients"),
+            entry("peach_pie", "ingredients"),
+            entry("cornbread", "ingredients"),
+            entry("popcorn", "ingredients"),
+            entry("raw_corndog", "ingredients"),
+            entry("cooked_corndog", "ingredients"),
+            entry("raw_venison", "ingredients"),
+            entry("cooked_venison", "ingredients"),
+            entry("raw_bug_meat", "ingredients"),
+            entry("cooked_bug_meat", "ingredients"),
+            entry("broodfruit", "ingredients"),
+            entry("broodfruit_cobbler", "ingredients"),
+            entry("cheep", "ingredients"),
+            entry("cooked_cheep", "ingredients"),
+            entry("root_beer", "ingredients"),
+            entry("rainbow_sugar", "ingredients"),
+            entry("big_bertha_blade", "ingredients"),
+            entry("big_bertha_handle", "ingredients"),
+            entry("big_bertha_hilt", "ingredients"),
+            entry("hoverboard", "building_blocks"),
+            entry("hoverboard_white", "building_blocks"),
+            entry("hoverboard_orange", "building_blocks"),
+            entry("hoverboard_magenta", "building_blocks"),
+            entry("hoverboard_light_blue", "building_blocks"),
+            entry("hoverboard_yellow", "building_blocks"),
+            entry("hoverboard_lime", "building_blocks"),
+            entry("hoverboard_pink", "building_blocks"),
+            entry("hoverboard_gray", "building_blocks"),
+            entry("hoverboard_light_gray", "building_blocks"),
+            entry("hoverboard_cyan", "building_blocks"),
+            entry("hoverboard_purple", "building_blocks"),
+            entry("hoverboard_blue", "building_blocks"),
+            entry("hoverboard_brown", "building_blocks"),
+            entry("hoverboard_green", "building_blocks"),
+            entry("hoverboard_red", "building_blocks"),
+            entry("hoverboard_black", "building_blocks"),
+            entry("ant_trap", "building_blocks"),
+            entry("king_spawn_egg", "spawn_eggs"),
+            entry("queen_spawn_egg", "spawn_eggs"),
+            entry("manticore_spawn_egg", "spawn_eggs"),
+            entry("prince_spawn_egg", "spawn_eggs"),
+            entry("princess_spawn_egg", "spawn_eggs"),
+            entry("easter_bunny_spawn_egg", "spawn_eggs"),
+            entry("flying_squirrel_spawn_egg", "spawn_eggs"),
+            entry("caterpillar_spawn_egg", "spawn_eggs"),
+            entry("butterfly_spawn_egg", "spawn_eggs"),
+            entry("reverie_spawn_egg", "spawn_eggs"),
+            entry("brutalfly_spawn_egg", "spawn_eggs"),
+            entry("red_ant_spawn_egg", "spawn_eggs"),
+            entry("brown_ant_spawn_egg", "spawn_eggs"),
+            entry("rainbow_ant_spawn_egg", "spawn_eggs"),
+            entry("termite_spawn_egg", "spawn_eggs"),
+            entry("moleworm_spawn_egg", "spawn_eggs"),
+            entry("worm_spawn_egg", "spawn_eggs"),
+            entry("mantis_spawn_egg", "spawn_eggs"),
+            entry("alpha_mantis_spawn_egg", "spawn_eggs"),
+            entry("rolly_polly_spawn_egg", "spawn_eggs"),
+            entry("molevore_spawn_egg", "spawn_eggs"),
+            entry("flytrap_spawn_egg", "spawn_eggs"),
+            entry("apple_cow_spawn_egg", "spawn_eggs"),
+            entry("golden_apple_cow_spawn_egg", "spawn_eggs"),
+            entry("enchanted_golden_apple_cow_spawn_egg", "spawn_eggs"),
+            entry("dr_trayaurus_spawn_egg", "spawn_eggs"),
+            entry("wasp_spawn_egg", "spawn_eggs"),
+            entry("bomber_spawn_egg", "spawn_eggs"),
+            entry("springbug_spawn_egg", "spawn_eggs"),
+            entry("spit_bug_spawn_egg", "spawn_eggs"),
+            entry("stink_bug_spawn_egg", "spawn_eggs"),
+            entry("stratoshark_spawn_egg", "spawn_eggs"),
+            entry("kraken_spawn_egg", "spawn_eggs"),
+            entry("missile_squid_spawn_egg", "spawn_eggs"),
+            entry("octopus_bomb_spawn_egg", "spawn_eggs"),
+            entry("nightmare_spawn_egg", "spawn_eggs"),
+            entry("bed_bug_spawn_egg", "spawn_eggs"),
+            entry("lucid_spawn_egg", "spawn_eggs"),
+            entry("vortex_spawn_egg", "spawn_eggs"),
+            entry("scorpion_spawn_egg", "spawn_eggs"),
+            entry("basilisk_spawn_egg", "spawn_eggs"),
+            entry("emperor_scorpion_spawn_egg", "spawn_eggs"),
+            entry("toreterror_spawn_egg", "spawn_eggs"),
+            entry("crawling_blight_spawn_egg", "spawn_eggs"),
+            entry("skulking_fright_spawn_egg", "spawn_eggs"),
+            entry("hercules_beetle_spawn_egg", "spawn_eggs"),
+            entry("jerry_spawn_egg", "spawn_eggs"),
+            entry("dorrie_spawn_egg", "spawn_eggs"),
+            entry("ouranwood_deer_spawn_egg", "spawn_eggs"),
+            entry("glimmer_spawn_egg", "spawn_eggs"),
+            entry("elka_spawn_egg", "spawn_eggs")
+    );
+
+    private static final List<String> ANTARCHY_POTION_FAMILIES = List.of(
+            "inversion", "long_inversion", "stinky", "long_stinky",
+            "paralysis", "long_paralysis", "haste", "strong_haste", "shrinking",
+            "strong_shrinking", "extreme_shrinking", "growing", "strong_growing", "extreme_growing",
+            "command", "long_command", "time_dilation", "long_time_dilation", "time_contraction", "long_time_contraction"
+    );
+
+    private static final Map<String, Integer> ORDER_INDEX = createOrderIndex();
+
+    private static CatalogEntry entry(String path, String neoTabPath) {
+        return new CatalogEntry(path, neoTabPath, null);
+    }
+
+    private static CatalogEntry entry(String path, String neoTabPath, String insertAfterPath) {
+        return new CatalogEntry(path, neoTabPath, insertAfterPath);
+    }
+
+    private static Map<String, Integer> createOrderIndex() {
+        HashMap<String, Integer> index = new HashMap<>();
+        for (int i = 0; i < CATALOG.size(); i++) {
+            index.put(CATALOG.get(i).path(), i);
+        }
+        return index;
+    }
+
+    public static int orderIndex(Item item) {
+        return ORDER_INDEX.getOrDefault(path(item), Integer.MAX_VALUE);
+    }
+
+    public static void populateAntarchyTab(AntarchyTabOutput output) {
+        for (CatalogEntry entry : CATALOG) {
+            if ("glimmer_bottle".equals(entry.path())) {
+                for (GlimmerVariant variant : GlimmerVariant.values()) {
+                    output.accept(GlimmerBottleItem.create(variant));
+                }
+                continue;
+            }
+            output.accept(item(entry.path()));
+        }
+        for (String potionPath : ANTARCHY_POTION_FAMILIES) {
+            acceptPotionFamily(output, potionPath);
+        }
+        for (String diskId : List.of("antarchy:toreterror_arena", "antarchy:high_fructose_corn_syrup",
+                "antarchy:elythia", "antarchy:flying_squirrel", "antarchy:brutalfly", "antarchy:rainbow_ant", "antarchy:kraken", "antarchy:cavaryn", "antarchy:hercules_beetle", "antarchy:thoraxis", "antarchy:temporal_fields", "antarchy:bloodglass", "antarchy:vortex")) {
+            ItemStack disk = new ItemStack(com.craisinlord.antos.content.AntOSObjects.FLOPPY_DISK.get());
+            disk.set(com.craisinlord.antos.content.AntOSObjects.FLOPPY_DISK_COMPONENT.get(), Identifier.parse(diskId));
+            output.accept(disk);
+        }
+    }
+
+    public static boolean populateNeoForgeVanillaTab(ResourceKey<CreativeModeTab> tabKey, HolderLookup.Provider holders,
+                                                     NeoForgeVanillaTabOutput output) {
+        if (!Identifier.DEFAULT_NAMESPACE.equals(tabKey.identifier().getNamespace())) {
+            return false;
+        }
+        String tabPath = tabKey.identifier().getPath();
+        boolean matched = false;
+        for (CatalogEntry entry : CATALOG) {
+            if (!tabPath.equals(entry.neoTabPath())) {
+                continue;
+            }
+            matched = true;
+            if (entry.insertAfterPath() != null) {
+                output.insertAfter(vanillaItem(entry.insertAfterPath()), item(entry.path()));
+                continue;
+            }
+            if ("combat".equals(tabPath)) {
+                if (isUltimateArmor(entry.path())) {
+                    output.accept(UltimateGearHelper.createUltimateArmorStack(item(entry.path()), holders));
+                    continue;
+                }
+                if (isRoyalArmor(entry.path())) {
+                    output.accept(RoyalGearHelper.createRoyalArmorStack(item(entry.path()), holders));
+                    continue;
+                }
+                if ("giant_frying_pan".equals(entry.path())) {
+                    output.accept(GiantFryingPanToolHelper.createStack(item(entry.path()), holders));
+                    continue;
+                }
+                if ("ultimate_bow".equals(entry.path())) {
+                    output.accept(UltimateGearHelper.createUltimateBowStack(item(entry.path()), holders));
+                    continue;
+                }
+            }
+            output.accept(item(entry.path()));
+        }
+        if ("combat".equals(tabPath)) {
+            for (String potionPath : ANTARCHY_POTION_FAMILIES) {
+                Holder<Potion> potion = potion(potionPath);
+                if (potion != null) {
+                    output.accept(PotionContents.createItemStack(Items.POTION, potion));
+                }
+            }
+            matched = true;
+        }
+        return matched;
+    }
+
+    private static boolean isUltimateArmor(String path) {
+        return "ultimate_helmet".equals(path)
+                || "ultimate_chestplate".equals(path)
+                || "ultimate_leggings".equals(path)
+                || "ultimate_boots".equals(path);
+    }
+
+    private static boolean isRoyalArmor(String path) {
+        return "royal_guardian_helmet".equals(path)
+                || "royal_guardian_chestplate".equals(path)
+                || "royal_guardian_leggings".equals(path)
+                || "royal_guardian_boots".equals(path)
+                || "royal_assailant_helmet".equals(path)
+                || "royal_assailant_chestplate".equals(path)
+                || "royal_assailant_leggings".equals(path)
+                || "royal_assailant_boots".equals(path);
+    }
+
+    private static void acceptPotionFamily(AntarchyTabOutput output, String path) {
+        Holder<Potion> potion = potion(path);
+        if (potion == null) {
+            return;
+        }
+        output.accept(PotionContents.createItemStack(Items.POTION, potion));
+        output.accept(PotionContents.createItemStack(Items.SPLASH_POTION, potion));
+        output.accept(PotionContents.createItemStack(Items.LINGERING_POTION, potion));
+        output.accept(PotionContents.createItemStack(Items.TIPPED_ARROW, potion));
+    }
+
+    private static String path(Item item) {
+        return BuiltInRegistries.ITEM.getKey(item).getPath();
+    }
+
+    private static Item item(String path) {
+        return BuiltInRegistries.ITEM.getValue(Identifier.fromNamespaceAndPath(MODID, path));
+    }
+
+    private static Item vanillaItem(String path) {
+        return BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace(path));
+    }
+
+    private static Holder<Potion> potion(String path) {
+        Potion potion = BuiltInRegistries.POTION.getValue(Identifier.fromNamespaceAndPath(MODID, path));
+        return potion == null ? null : BuiltInRegistries.POTION.wrapAsHolder(potion);
+    }
+}

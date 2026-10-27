@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:raw_venison",
+    "antarchy:cooked_venison",
+    "antarchy:raw_bug_meat",
+    "antarchy:cooked_bug_meat"
+  ]
+}

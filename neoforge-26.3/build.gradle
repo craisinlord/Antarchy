@@ -1,0 +1,112 @@
+plugins {
+    id 'net.neoforged.moddev' version '2.0.148'
+}
+
+base {
+    archivesName = mod_id
+}
+version = "${mod_version}+26.3-neoforge"
+
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(25) }
+    withSourcesJar()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ['-Xmaxerrs', '100000']
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs project(':common-26.3').sourceSets.main.java.srcDirs
+        }
+        resources {
+            srcDir project(':common-26.3').sourceSets.main.resources.srcDirs
+        }
+    }
+}
+
+neoForge {
+    version = neoforge_version_26_3
+    mods {
+        create(mod_id) {
+            sourceSet sourceSets.main
+        }
+    }
+    runs {
+        client { client() }
+        server { server() }
+        gameTestServer {
+            type = 'gameTestServer'
+        }
+    }
+    interfaceInjectionData {
+        from(file('geckolib_interface_injections.json'))
+    }
+}
+
+configurations {
+    sodiumRuntime
+}
+
+dependencies {
+    implementation "maven.modrinth:geckolib:${geckolib_modrinth_version_neoforge_26_3}"
+
+    implementation files(rootProject.file("jars_26/anthology-${anthology_version_26}+26.3-neoforge.jar"))
+    implementation files(rootProject.file("jars_26/antos-neoforge-26.3-${antos_version_26}.jar"))
+    implementation files(rootProject.file("jars_26/integrated_api-neoforge-26.3-${intapi_version_26}.jar"))
+    implementation files(rootProject.file("jars_26/sizeable_foliage-neoforge-26.3-${sizeable_foliage_version_26}.jar"))
+    compileOnly files(rootProject.file("jars_26/sodium-neoforge-${sodium_version_26_3}.jar"))
+    if (providers.gradleProperty('antarchySodiumCompatTest').orNull == 'true') {
+        sodiumRuntime files(rootProject.file("jars_26/sodium-neoforge-${sodium_version_26_3}.jar"))
+    }
+
+    compileOnly "mezz.jei:jei-26.3-common-api:${jei_version_26_3}"
+    compileOnly "mezz.jei:jei-26.3-neoforge-api:${jei_version_26_3}"
+}
+
+neoForge.runs.named('client') {
+    additionalRuntimeClasspathConfiguration.extendsFrom(configurations.sodiumRuntime)
+}
+
+tasks.withType(ProcessResources).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    var replaceProperties = [
+        version      : project.version,
+        antos_version: antos_version_26,
+        intapi_version: intapi_version_26
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand replaceProperties
+    }
+}
+
+tasks.withType(Copy).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.withType(Jar).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = rootProject.group
+            artifactId = "${mod_id}-neoforge-26.3"
+            version = project.version
+
+            artifact jar
+            artifact sourcesJar
+
+            pom {
+                name = "${mod_name} (NeoForge 26.3)"
+                description = mod_description
+            }
+        }
+    }
+}

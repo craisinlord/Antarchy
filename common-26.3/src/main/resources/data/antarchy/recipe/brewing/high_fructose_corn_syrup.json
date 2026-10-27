@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:brewing",
+  "input": {
+    "item": "minecraft:potion",
+    "potion_contents": {
+      "potions": "minecraft:water"
+    }
+  },
+  "output": {
+    "id": "antarchy:high_fructose_corn_syrup"
+  },
+  "reagent": {
+    "item": "antarchy:corn"
+  }
+}

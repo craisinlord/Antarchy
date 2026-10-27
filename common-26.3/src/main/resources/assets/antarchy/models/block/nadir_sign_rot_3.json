@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_sign_rot_3",
+  "textures": {
+    "all": "antarchy:block/nadir_sign",
+    "particle": "antarchy:item/nadir_sign"
+  }
+}

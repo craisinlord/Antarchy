@@ -1,0 +1,11 @@
+{
+  "type": "article",
+  "category": "general",
+  "folder": "antarchy:antlas",
+  "sort_order": 20,
+  "title": "guide.antarchy.entry.high_fructose_corn_syrup.title",
+  "subtitle": "guide.antarchy.entry.high_fructose_corn_syrup.subtitle",
+  "description": ["guide.antarchy.entry.high_fructose_corn_syrup.description", "guide.antarchy.entry.high_fructose_corn_syrup.description2", "guide.antarchy.entry.high_fructose_corn_syrup.description3"],
+  "cover_item": "antarchy:high_fructose_corn_syrup",
+  "green_tint": false
+}

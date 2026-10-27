@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "antarchy:royal_assailant"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "antarchy:royal_assailant"
+      }
+    ]
+  }
+}

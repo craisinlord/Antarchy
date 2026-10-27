@@ -31,6 +31,9 @@ public final class AntarchyConfigModuleNeoforge {
         HerculesBeetleImpactShakeSync.setSink((player, ticks) -> PacketDistributor.sendToPlayer(player, new HerculesBeetleImpactShakePayload(ticks)));
         KingJudgmentFlashSync.setSink((player, ticks) -> PacketDistributor.sendToPlayer(player, new KingJudgmentFlashPayload(ticks)));
         HordeIntensitySync.setSink(PacketDistributor::sendToPlayer);
+        com.craisinlord.antarchy.content.network.ThrowbackZoneSync.setSink(PacketDistributor::sendToPlayer);
+        com.craisinlord.antarchy.content.network.AntDescentSync.setSink(PacketDistributor::sendToPlayer);
+        com.craisinlord.antarchy.content.network.ElythiaEchoTestSync.setSink(PacketDistributor::sendToPlayer);
         AntarchyNeoforge.modEventBusTempHolder.addListener(AntarchyConfigModuleNeoforge::onConfigChange);
     }
 
@@ -681,6 +684,26 @@ public final class AntarchyConfigModuleNeoforge {
 
 
         AntarchySettings.setElythiaFireflyParticlesEnabled(AntarchyMiscConfig.elythiaFireflyParticlesEnabled());
+        AntarchySettings.setElythiaFogEnabled(AntarchyMiscConfig.elythiaFogEnabled());
+        AntarchySettings.setElythiaGroundMistEnabled(AntarchyMiscConfig.elythiaGroundMistEnabled());
+        AntarchySettings.setElythiaDreamShadowsEnabled(AntarchyMiscConfig.elythiaDreamShadowsEnabled());
+        AntarchySettings.setElythiaDreamShadowsStrength(AntarchyMiscConfig.elythiaDreamShadowsStrength());
+        AntarchySettings.setElythiaAlreadyDreaming(AntarchyMiscConfig.elythiaAlreadyDreaming());
+        AntarchySettings.setElythiaClearWater(AntarchyMiscConfig.elythiaClearWater());
+        AntarchySettings.setBrownAntDescent(AntarchyMiscConfig.brownAntDescent());
+        AntarchySettings.setElythiaPurpleRain(AntarchyMiscConfig.elythiaPurpleRain());
+        AntarchySettings.setElythiaEchoes(AntarchyMiscConfig.elythiaEchoes());
+        AntarchySettings.setThrowbackZonesEnabled(AntarchyMiscConfig.throwbackZonesEnabled());
+        AntarchySettings.setThrowbackStructureZoneRadius(AntarchyMiscConfig.throwbackStructureZoneRadius());
+        AntarchySettings.setThrowbackWildZoneChance(AntarchyMiscConfig.throwbackWildZoneChance());
+        AntarchySettings.setThrowbackNoAttackCooldown(AntarchyMiscConfig.throwbackNoAttackCooldown());
+        AntarchySettings.setThrowbackClassicHurtSound(AntarchyMiscConfig.throwbackClassicHurtSound());
+        AntarchySettings.setThrowbackClassicFood(AntarchyMiscConfig.throwbackClassicFood());
+        AntarchySettings.setThrowbackClassicMusic(AntarchyMiscConfig.throwbackClassicMusic());
+        AntarchySettings.setThrowbackDenseFog(AntarchyMiscConfig.throwbackDenseFog());
+        AntarchySettings.setThrowbackDreamHaze(AntarchyMiscConfig.throwbackDreamHaze());
+        AntarchySettings.setThrowbackDreamStrength(AntarchyMiscConfig.throwbackDreamStrength());
+        AntarchySettings.setThrowbackAfterimages(AntarchyMiscConfig.throwbackAfterimages());
 
         AntarchySettings.setDreamSandFallingBlockGravityMultiplier(AntarchyMiscConfig.dreamSandFallingBlockGravityMultiplier());
 

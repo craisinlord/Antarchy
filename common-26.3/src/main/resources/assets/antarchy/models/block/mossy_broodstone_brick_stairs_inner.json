@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "antarchy:block/broodstone/mossy_broodstone_bricks",
+    "side": "antarchy:block/broodstone/mossy_broodstone_bricks",
+    "top": "antarchy:block/broodstone/mossy_broodstone_bricks"
+  }
+}
+

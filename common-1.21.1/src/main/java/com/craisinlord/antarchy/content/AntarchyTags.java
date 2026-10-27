@@ -152,6 +152,7 @@ public final class AntarchyTags {
         public static final TagKey<Biome> MANTIS_SPAWN_BIOMES = TagKey.create(Registries.BIOME, id("mantis_spawn_biomes"));
         public static final TagKey<Biome> MANTIS_OVERWORLD_SPAWN_BIOMES = TagKey.create(Registries.BIOME, id("mantis_overworld_spawn_biomes"));
         public static final TagKey<Biome> ELYTHIA_FIREFLY_PARTICLE_BIOMES = TagKey.create(Registries.BIOME, id("elythia_firefly_particle_biomes"));
+        public static final TagKey<Biome> ELYTHIA_GROUND_MIST_BIOMES = TagKey.create(Registries.BIOME, id("elythia_ground_mist_biomes"));
         public static final TagKey<Biome> WILD_CORN_SPAWN_BIOMES = TagKey.create(Registries.BIOME, id("wild_corn_spawn_biomes"));
         public static final TagKey<Biome> USES_HORDE_SYSTEM = TagKey.create(Registries.BIOME, id("uses_horde_system"));
 

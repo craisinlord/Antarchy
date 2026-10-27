@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "food",
+  "key": {
+    "#": "#antarchy:corndog_meats",
+    "C": "antarchy:corn",
+    "S": "minecraft:stick"
+  },
+  "pattern": [
+    " C ",
+    "C#C",
+    " S "
+  ],
+  "result": {
+    "id": "antarchy:raw_corndog"
+  }
+}

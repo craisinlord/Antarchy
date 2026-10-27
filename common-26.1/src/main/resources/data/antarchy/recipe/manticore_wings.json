@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "BMB",
+    "BEB"
+  ],
+  "key": {
+    "B": "antarchy:manticore_wing",
+    "M": "antarchy:duct_tape",
+    "E": "minecraft:elytra"
+  },
+  "result": {
+    "id": "antarchy:manticore_wings"
+  }
+}

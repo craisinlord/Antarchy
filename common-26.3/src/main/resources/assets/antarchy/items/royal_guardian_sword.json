@@ -1,0 +1,26 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "cases": [
+      {
+        "when": [
+          "gui",
+          "ground",
+          "fixed"
+        ],
+        "model": {
+          "type": "minecraft:model",
+          "model": "antarchy:item/royal_guardian_sword_gui"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:special",
+      "base": "antarchy:item/royal_guardian_sword_held",
+      "model": {
+        "type": "geckolib:geckolib"
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "antarchy:item/big_bertha_held",
+  "textures": {
+    "particle": "antarchy:item/royal_guardian/royal_guardian_sword_item"
+  }
+}

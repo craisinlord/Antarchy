@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "  B",
+    " B ",
+    "I  "
+  ],
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "B": "antarchy:blood_crystal_shard"
+  },
+  "result": {
+    "id": "antarchy:blood_crystal_katana"
+  }
+}

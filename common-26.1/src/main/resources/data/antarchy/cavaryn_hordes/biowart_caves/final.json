@@ -1,0 +1,20 @@
+{
+  "entries": [
+    {
+      "entity_tag": "antarchy:horde_bosses",
+      "base_count": 1,
+      "per_players": 3,
+      "per_players_count": 1,
+      "max_count": 3,
+      "warning": true,
+      "track_completion": true,
+      "heavy_arrival_effect": true
+    },
+    {
+      "entity_tag": "antarchy:horde_jerry",
+      "jerry_stage": "random",
+      "base_count": 8,
+      "per_player_count": 2
+    }
+  ]
+}

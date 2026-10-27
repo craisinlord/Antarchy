@@ -1,0 +1,81 @@
+{
+  "trades": [
+    {
+      "buy": {
+        "item": "minecraft:emerald",
+        "count": 7
+      },
+      "sell": {
+        "item": "antarchy:root_beer",
+        "count": 1
+      },
+      "max_uses": 16,
+      "villager_xp": 1,
+      "price_multiplier": 0.05
+    },
+    {
+      "buy": {
+        "item": "antarchy:cooked_corndog",
+        "count": 3
+      },
+      "sell": {
+        "item": "antarchy:duct_tape",
+        "count": 1
+      },
+      "max_uses": 12,
+      "villager_xp": 5,
+      "price_multiplier": 0.05
+    },
+    {
+      "buy": {
+        "item": "antarchy:uranium_ingot",
+        "count": 8
+      },
+      "second_buy": {
+        "item": "antarchy:kraken_tooth",
+        "count": 1
+      },
+      "sell": {
+        "item": "antarchy:duplicator_sapling",
+        "count": 1
+      },
+      "max_uses": 6,
+      "villager_xp": 10,
+      "price_multiplier": 0.1
+    },
+    {
+      "buy": {
+        "item": "antarchy:titanium_ingot",
+        "count": 10
+      },
+      "second_buy": {
+        "item": "antarchy:emperor_scorpion_stinger",
+        "count": 1
+      },
+      "sell": {
+        "item": "antarchy:easter_bunny_spawn_egg",
+        "count": 1
+      },
+      "max_uses": 3,
+      "villager_xp": 5,
+      "price_multiplier": 0.05
+    },
+    {
+      "buy": {
+        "item": "antarchy:uranium_ingot",
+        "count": 1
+      },
+      "second_buy": {
+        "item": "antarchy:titanium_ingot",
+        "count": 1
+      },
+      "sell": {
+        "item": "antarchy:spirit_apple",
+        "count": 1
+      },
+      "max_uses": 2,
+      "villager_xp": 20,
+      "price_multiplier": 0.2
+    }
+  ]
+}

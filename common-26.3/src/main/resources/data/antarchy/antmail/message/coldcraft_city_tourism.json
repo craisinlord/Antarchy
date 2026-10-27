@@ -1,0 +1,9 @@
+{
+  "sender": "coldcraft@antmail.com",
+  "subject": "COLDCRAFT CITY: YOUR NEXT DESTINATION",
+  "body": "Visit ColdCraft City! See Big Ben, go shopping, and ride the Ferris wheel. Bring a coat, some spending money, and a plan for getting home.",
+  "trigger": {
+    "type": "random",
+    "value": 0.01
+  }
+}

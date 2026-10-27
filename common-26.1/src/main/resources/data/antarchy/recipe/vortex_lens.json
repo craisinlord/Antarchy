@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    "TTT",
+    "TVT",
+    "SRS"
+  ],
+  "key": {
+    "T": "minecraft:tinted_glass",
+    "V": "antarchy:vortex_charge",
+    "S": "minecraft:stone",
+    "R": "minecraft:redstone"
+  },
+  "result": {
+    "id": "antarchy:vortex_lens"
+  }
+}

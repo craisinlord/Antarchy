@@ -355,6 +355,7 @@ public final class AntarchyFabricContent {
                 AntarchyFabricSounds.DIMENSIONAL_TEAR_CLOSE
         );
         AntarchySoundEvents.bindHoverboardSounds(AntarchyFabricSounds.HOVERBOARD_MOUNT, AntarchyFabricSounds.HOVERBOARD_DISMOUNT, AntarchyFabricSounds.HOVERBOARD_IDLE);
+        AntarchySoundEvents.bindThrowbackSounds(AntarchyFabricSounds.MUSIC_THROWBACK, AntarchyFabricSounds.PLAYER_HURT_CLASSIC);
 
         AntarchyObjects.setOctopusBomb(AntarchyFabricEntities.OCTOPUS_BOMB);
         AntarchyObjects.setTentacle(AntarchyFabricEntities.TENTACLE);
@@ -392,6 +393,7 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setGlimmer(AntarchyFabricEntities.GLIMMER);
         AntarchyObjects.setSpiritApple(() -> AntarchyFabricItems.SPIRIT_APPLE.get());
         AntarchyObjects.setGlimmeringEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.GLIMMERING));
+        AntarchyObjects.setRemembranceEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.REMEMBRANCE));
         AntarchyObjects.setRoyalVitalityPenaltyEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.ROYAL_VITALITY_PENALTY));
         AntarchyObjects.setBleedingEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.BLEEDING));
         AntarchyObjects.setBloodMoonEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.BLOOD_MOON));
@@ -551,6 +553,9 @@ public final class AntarchyFabricContent {
         HerculesBeetleImpactShakeSync.setSink((player, ticks) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, new com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload(ticks)));
         com.craisinlord.antarchy.content.network.KingJudgmentFlashSync.setSink((player, ticks) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, new com.craisinlord.antarchy.content.network.KingJudgmentFlashPayload(ticks)));
         HordeIntensitySync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
+        com.craisinlord.antarchy.content.network.ThrowbackZoneSync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
+        com.craisinlord.antarchy.content.network.AntDescentSync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
+        com.craisinlord.antarchy.content.network.ElythiaEchoTestSync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
         TigerEyeCamouflageSync.setSendToPlayer((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
         TigerEyeCamouflageSync.setSyncSelfAndTracking(AntarchyFabricNetworking::syncTigerEyeCamouflage);
         BloodCrystalKatanaItem.setTrailCallback(AntarchyFabricNetworking::syncKatanaTrail);

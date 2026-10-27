@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/redstone_dust_side_alt0",
+  "textures": {
+    "line": "antarchy:block/bluestone/bluestone_dust_line0"
+  }
+}

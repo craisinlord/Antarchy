@@ -562,6 +562,26 @@ public final class AntarchySettings {
     private static int portalGunMoonPortalSeconds = 10;
     private static int portalGunMoonBlockCap = 500;
     private static boolean elythiaFireflyParticlesEnabled = true;
+    private static boolean elythiaFogEnabled = true;
+    private static boolean elythiaGroundMistEnabled = true;
+    private static boolean elythiaDreamShadowsEnabled = true;
+    private static double elythiaDreamShadowsStrength = 1.0D;
+    private static boolean elythiaAlreadyDreaming = true;
+    private static boolean elythiaClearWater = true;
+    private static boolean brownAntDescent = true;
+    private static boolean elythiaPurpleRain = true;
+    private static boolean elythiaEchoes = true;
+    private static boolean throwbackZonesEnabled = true;
+    private static int throwbackStructureZoneRadius = 10;
+    private static double throwbackWildZoneChance = 0.35D;
+    private static boolean throwbackNoAttackCooldown = true;
+    private static boolean throwbackClassicHurtSound = true;
+    private static boolean throwbackClassicFood = true;
+    private static boolean throwbackClassicMusic = true;
+    private static boolean throwbackDenseFog = true;
+    private static boolean throwbackDreamHaze = true;
+    private static double throwbackDreamStrength = 1.0D;
+    private static boolean throwbackAfterimages = true;
     private static int bloodCrystalArmorShieldRechargeTicks = 600;
     private static int bloodCrystalAppleShieldCount = 2;
     private static int bloodCrystalAppleDurationTicks = 2400;
@@ -2989,6 +3009,49 @@ public final class AntarchySettings {
 
     public static boolean elythiaFireflyParticlesEnabled() { return elythiaFireflyParticlesEnabled; }
     public static void setElythiaFireflyParticlesEnabled(boolean value) { elythiaFireflyParticlesEnabled = value; }
+
+    public static boolean elythiaFogEnabled() { return elythiaFogEnabled; }
+    public static void setElythiaFogEnabled(boolean value) { elythiaFogEnabled = value; }
+
+    public static boolean elythiaGroundMistEnabled() { return elythiaGroundMistEnabled; }
+    public static void setElythiaGroundMistEnabled(boolean value) { elythiaGroundMistEnabled = value; }
+    public static boolean elythiaDreamShadowsEnabled() { return elythiaDreamShadowsEnabled; }
+    public static void setElythiaDreamShadowsEnabled(boolean value) { elythiaDreamShadowsEnabled = value; }
+    public static double elythiaDreamShadowsStrength() { return elythiaDreamShadowsStrength; }
+    public static void setElythiaDreamShadowsStrength(double value) { elythiaDreamShadowsStrength = value; }
+    public static boolean elythiaAlreadyDreaming() { return elythiaAlreadyDreaming; }
+    public static void setElythiaAlreadyDreaming(boolean value) { elythiaAlreadyDreaming = value; }
+    public static boolean elythiaClearWater() { return elythiaClearWater; }
+    public static void setElythiaClearWater(boolean value) { elythiaClearWater = value; }
+    public static boolean brownAntDescent() { return brownAntDescent; }
+    public static void setBrownAntDescent(boolean value) { brownAntDescent = value; }
+    public static boolean elythiaPurpleRain() { return elythiaPurpleRain; }
+    public static void setElythiaPurpleRain(boolean value) { elythiaPurpleRain = value; }
+    public static boolean elythiaEchoes() { return elythiaEchoes; }
+    public static void setElythiaEchoes(boolean value) { elythiaEchoes = value; }
+
+    public static boolean throwbackZonesEnabled() { return throwbackZonesEnabled; }
+    public static void setThrowbackZonesEnabled(boolean value) { throwbackZonesEnabled = value; }
+    public static int throwbackStructureZoneRadius() { return throwbackStructureZoneRadius; }
+    public static void setThrowbackStructureZoneRadius(int value) { throwbackStructureZoneRadius = value; }
+    public static double throwbackWildZoneChance() { return throwbackWildZoneChance; }
+    public static void setThrowbackWildZoneChance(double value) { throwbackWildZoneChance = value; }
+    public static boolean throwbackNoAttackCooldown() { return throwbackNoAttackCooldown; }
+    public static void setThrowbackNoAttackCooldown(boolean value) { throwbackNoAttackCooldown = value; }
+    public static boolean throwbackClassicHurtSound() { return throwbackClassicHurtSound; }
+    public static void setThrowbackClassicHurtSound(boolean value) { throwbackClassicHurtSound = value; }
+    public static boolean throwbackClassicFood() { return throwbackClassicFood; }
+    public static void setThrowbackClassicFood(boolean value) { throwbackClassicFood = value; }
+    public static boolean throwbackClassicMusic() { return throwbackClassicMusic; }
+    public static void setThrowbackClassicMusic(boolean value) { throwbackClassicMusic = value; }
+    public static boolean throwbackDenseFog() { return throwbackDenseFog; }
+    public static void setThrowbackDenseFog(boolean value) { throwbackDenseFog = value; }
+    public static boolean throwbackDreamHaze() { return throwbackDreamHaze; }
+    public static void setThrowbackDreamHaze(boolean value) { throwbackDreamHaze = value; }
+    public static double throwbackDreamStrength() { return throwbackDreamStrength; }
+    public static void setThrowbackDreamStrength(double value) { throwbackDreamStrength = value; }
+    public static boolean throwbackAfterimages() { return throwbackAfterimages; }
+    public static void setThrowbackAfterimages(boolean value) { throwbackAfterimages = value; }
 
     public static int bloodCrystalArmorShieldRechargeTicks() { return bloodCrystalArmorShieldRechargeTicks; }
     public static void setBloodCrystalArmorShieldRechargeTicks(int v) { bloodCrystalArmorShieldRechargeTicks = v; }

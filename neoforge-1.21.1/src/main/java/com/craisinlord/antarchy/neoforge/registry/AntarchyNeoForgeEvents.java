@@ -240,6 +240,7 @@ public final class AntarchyNeoForgeEvents {
     static void tickCavarynHordes(ServerTickEvent.Post event) {
         for (ServerLevel level : event.getServer().getAllLevels()) {
             CavarynHordeManager.tick(level);
+            com.craisinlord.antarchy.content.throwback.ThrowbackZoneTracker.tick(level);
             com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
             com.craisinlord.antarchy.content.entity.glimmer.GlimmerNightSpawner.tick(level);
             com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature.tickPendingSpawns(level);
@@ -254,6 +255,7 @@ public final class AntarchyNeoForgeEvents {
 
     static void tickAntArrivals(ServerTickEvent.Post event) {
         com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.tick(event.getServer());
+        com.craisinlord.antarchy.content.elythia.AntDescent.tick(event.getServer());
     }
 
     private static int badOmenLevel(Player player) {

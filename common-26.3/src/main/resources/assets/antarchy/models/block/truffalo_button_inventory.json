@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/jungle_button_inventory",
+  "textures": {
+    "texture": "antarchy:block/truffalo/truffalo_planks"
+  }
+}
+

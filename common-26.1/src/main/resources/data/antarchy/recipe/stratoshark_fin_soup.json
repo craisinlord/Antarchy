@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "food",
+  "ingredients": [
+    "antarchy:stratoshark_fin",
+    "minecraft:bowl"
+  ],
+  "result": {
+    "id": "antarchy:stratoshark_fin_soup"
+  }
+}

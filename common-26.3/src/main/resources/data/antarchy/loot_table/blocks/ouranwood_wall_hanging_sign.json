@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:ouranwood_hanging_sign"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "antarchy:blocks/ouranwood_wall_hanging_sign"
+}

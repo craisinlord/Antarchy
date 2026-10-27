@@ -1,0 +1,17 @@
+{
+  "max_active": 8,
+  "entries": [
+    {
+      "entity_tag": "antarchy:horde_jerry",
+      "jerry_stage": "infant",
+      "base_count": 1,
+      "high_attention_base_count": 2
+    },
+    {
+      "entity_tag": "antarchy:horde_jerry",
+      "jerry_stage": "mature",
+      "base_count": 0,
+      "high_attention_base_count": 1
+    }
+  ]
+}

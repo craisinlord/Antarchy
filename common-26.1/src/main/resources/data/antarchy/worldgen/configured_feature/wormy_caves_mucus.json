@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:multiface_growth",
+  "config": {
+    "block": "antarchy:mucus",
+    "search_range": 16,
+    "can_place_on_floor": true,
+    "can_place_on_ceiling": true,
+    "can_place_on_wall": true,
+    "chance_of_spreading": 0.72,
+    "can_be_placed_on": [
+      "antarchy:loam",
+      "minecraft:mud",
+      "antarchy:myrmite"
+    ]
+  }
+}

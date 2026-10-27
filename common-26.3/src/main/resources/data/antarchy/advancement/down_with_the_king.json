@@ -1,0 +1,37 @@
+{
+  "parent": "antarchy:visit_elythia",
+  "criteria": {
+    "kill_king": {
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "antarchy:king"
+          }
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.down_with_the_king.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "id": "antarchy:king_spawn_egg"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.down_with_the_king.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_king"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

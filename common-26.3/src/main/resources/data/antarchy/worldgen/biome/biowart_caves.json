@@ -1,0 +1,109 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.58,
+  "downfall": 0.25,
+  "attributes": {
+    "minecraft:audio/ambient_sounds": {
+      "mood": {
+        "sound": "minecraft:ambient.cave",
+        "tick_delay": 60000,
+        "block_search_extent": 8,
+        "offset": 2.0
+      }
+    },
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.cavaryn",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.98,
+    "minecraft:gameplay/natural_mob_spawns": {
+      "argument": {
+        "spawn_costs": {
+          "antarchy:jerry": {
+            "energy_budget": 0.8,
+            "charge": 4
+          }
+        },
+        "spawns_by_category": {
+          "monster": [
+            {
+              "type": "antarchy:jerry",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 2,
+                "min_inclusive": 1
+              },
+              "weight": 65
+            }
+          ],
+          "creature": [
+            {
+              "type": "antarchy:rolly_polly",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 8,
+                "min_inclusive": 4
+              },
+              "weight": 320
+            },
+            {
+              "type": "antarchy:stink_bug",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 8,
+                "min_inclusive": 4
+              },
+              "weight": 420
+            }
+          ]
+        }
+      },
+      "modifier": "overlay"
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "antarchy:orange_ash"
+        },
+        "probability": 0.004
+      }
+    ],
+    "minecraft:visual/fog_color": "#070904",
+    "minecraft:visual/sky_color": "#000000",
+    "minecraft:visual/water_fog_color": "#561b1a"
+  },
+  "effects": {
+    "water_color": "#903f10",
+    "foliage_color": "#5bd752",
+    "grass_color": "#45b911",
+    "grass_color_modifier": "none"
+  },
+  "carvers": [],
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:cavaryn_bile_veins",
+      "antarchy:cavaryn_bile_cysts",
+      "antarchy:termite_nest"
+    ],
+    [
+      "antarchy:jerry_egg_patch"
+    ],
+    [
+      "antarchy:biowart_patch",
+      "antarchy:cavaryn_creepvine",
+      "antarchy:cavaryn_hanging_creeproots"
+    ]
+  ]
+}

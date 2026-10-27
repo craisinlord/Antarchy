@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "antarchy:block/myrmite/polished_myrmite",
+    "side": "antarchy:block/myrmite/polished_myrmite",
+    "top": "antarchy:block/myrmite/polished_myrmite"
+  }
+}
+

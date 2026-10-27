@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "GGG",
+    "GLG",
+    "GGG"
+  ],
+  "key": {
+    "G": "minecraft:gravel",
+    "L": "antarchy:lucid_eye"
+  },
+  "result": {
+    "id": "antarchy:antigravel",
+    "count": 8
+  }
+}

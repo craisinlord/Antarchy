@@ -1,0 +1,8 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#antarchy:milkweed_spawn_biomes",
+  "features": [
+    "antarchy:flower_forest_milkweed"
+  ],
+  "step": "vegetal_decoration"
+}

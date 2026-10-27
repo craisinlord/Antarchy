@@ -64,6 +64,22 @@ tasks.named('jar') {
     enabled = false
 }
 
+['26.1': '261', '26.3': '263'].each { version, suffix ->
+    ['fabric', 'neoforge'].each { loader ->
+        def projectPath = "${loader}-${version}"
+        if (findProject(":${projectPath}") == null) {
+            return
+        }
+        ['build', 'assemble', 'clean', 'runClient', 'runServer'].each { taskName ->
+            tasks.register("${loader}${suffix}${taskName.capitalize()}") {
+                group = projectPath
+                description = "Runs ':${projectPath}:${taskName}' from the Antarchy root project"
+                dependsOn(":${projectPath}:${taskName}")
+            }
+        }
+    }
+}
+
 def forge1201Dir = file('forge-1.20.1')
 def forge1201Wrapper = providers.systemProperty('os.name').get().toLowerCase().contains('win')
         ? new File(forge1201Dir, 'gradlew.bat')

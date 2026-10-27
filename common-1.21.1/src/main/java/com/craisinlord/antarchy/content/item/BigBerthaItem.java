@@ -9,6 +9,7 @@ import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import java.util.List;
 import java.util.function.Consumer;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -380,6 +381,9 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
 
     private void cycleMode(Level level, Player player, ItemStack stack) {
         BossMode nextMode = getMode(stack).next();
+        while (!nextMode.isAvailable()) {
+            nextMode = nextMode.next();
+        }
         setMode(stack, nextMode);
         clearSpinState(stack);
         if (!level.isClientSide) {
@@ -682,6 +686,18 @@ public class BigBerthaItem extends SwordItem implements GeoItem {
                 case TREMORSAURUS -> FORSAKEN;
                 case FORSAKEN -> NONE;
             };
+        }
+
+        private boolean isAvailable() {
+            return switch (this) {
+                case TREMORSAURUS -> alexsCavesEntityPresent("tremorsaurus");
+                case FORSAKEN -> alexsCavesEntityPresent("forsaken");
+                default -> true;
+            };
+        }
+
+        private static boolean alexsCavesEntityPresent(String path) {
+            return BuiltInRegistries.ENTITY_TYPE.containsKey(ResourceLocation.fromNamespaceAndPath("alexscaves", path));
         }
 
         private static BossMode fromId(int id) {

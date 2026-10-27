@@ -1,0 +1,111 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.77,
+  "downfall": 0.96,
+  "attributes": {
+    "minecraft:audio/ambient_sounds": {},
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.cavaryn",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "minecraft:ash"
+        },
+        "probability": 0.009
+      }
+    ],
+    "minecraft:visual/fog_color": "#070617",
+    "minecraft:visual/sky_color": "#000000",
+    "minecraft:visual/water_fog_color": "#263042"
+  },
+  "effects": {
+    "water_color": "#4c9ef8",
+    "foliage_color": "#2bc12d",
+    "grass_color": "#45ae25",
+    "grass_color_modifier": "none"
+  },
+  "spawn_costs": {
+    "antarchy:molevore": {
+      "energy_budget": 0.9,
+      "charge": 2.2
+    }
+  },
+  "carvers": [],
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:myrmite_coal_ore",
+      "antarchy:broodstone_uranium_ore",
+      "antarchy:broodstone_titanium_ore"
+    ],
+    [
+      "minecraft:large_dripstone",
+      "minecraft:pointed_dripstone"
+    ],
+    [
+      "antarchy:cavaryn_bile_veins",
+      "antarchy:cavaryn_bile_cysts"
+    ],
+    [
+      "antarchy:moleworm_caves_creepvine",
+      "antarchy:moleworm_caves_hanging_creeproots",
+      "antarchy:termite_nest"
+    ],
+    []
+  ],
+  "creature_spawn_probability": 0.9,
+  "spawners": {
+    "monster": [
+      {
+        "type": "antarchy:molevore",
+        "weight": 28,
+        "minCount": 1,
+        "maxCount": 2
+      },
+      {
+        "type": "antarchy:moleworm",
+        "weight": 20,
+        "minCount": 2,
+        "maxCount": 4
+      }
+    ],
+    "creature": [
+      {
+        "type": "antarchy:rolly_polly",
+        "weight": 220,
+        "minCount": 3,
+        "maxCount": 7
+      },
+      {
+        "type": "antarchy:stink_bug",
+        "weight": 300,
+        "minCount": 4,
+        "maxCount": 8
+      }
+    ],
+    "ambient": [
+      {
+        "type": "minecraft:bat",
+        "weight": 1,
+        "minCount": 1,
+        "maxCount": 2
+      }
+    ],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  }
+}

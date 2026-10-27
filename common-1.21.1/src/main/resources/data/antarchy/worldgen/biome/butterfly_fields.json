@@ -1,9 +1,9 @@
 {
-  "has_precipitation": false,
+  "has_precipitation": true,
   "temperature": 0.83,
   "downfall": 1.0,
   "effects": {
-    "fog_color": 8084735,
+    "fog_color": 10849791,
     "water_color": 5021432,
     "water_fog_color": 2502722,
     "sky_color": 8084735,
@@ -65,7 +65,8 @@
       "antarchy:butterfly_fields_flora",
       "antarchy:elythia_brown_ant_nests",
       "antarchy:elythia_rainbow_ant_nests",
-      "antarchy:ouranwood_cocoon_trees"
+      "antarchy:ouranwood_cocoon_trees",
+      "antarchy:throwback_nerd_pole"
     ],
     []
   ],

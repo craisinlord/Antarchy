@@ -1,0 +1,85 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.68,
+  "downfall": 0.35,
+  "attributes": {
+    "minecraft:audio/ambient_sounds": {
+      "mood": {
+        "sound": "minecraft:ambient.cave",
+        "tick_delay": 40000,
+        "block_search_extent": 8,
+        "offset": 2.0
+      }
+    },
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.cavaryn",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "antarchy:orange_ash"
+        },
+        "probability": 0.004
+      }
+    ],
+    "minecraft:visual/fog_color": "#0b0a0e",
+    "minecraft:visual/sky_color": "#000000",
+    "minecraft:visual/water_fog_color": "#561b1a"
+  },
+  "effects": {
+    "water_color": "#903f10",
+    "foliage_color": "#ff2b00",
+    "grass_color": "#ff7f00",
+    "grass_color_modifier": "none"
+  },
+  "spawn_costs": {},
+  "carvers": [],
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:glowcap_caves_floor_patch",
+      "antarchy:glowcap_caves_huge_glowcap_mushroom",
+      "antarchy:glowcap_caves_molting_vines",
+      "antarchy:glowcap_caves_wall_amber_moss",
+      "antarchy:termite_nest"
+    ],
+    []
+  ],
+  "creature_spawn_probability": 0.98,
+  "spawners": {
+    "monster": [],
+    "creature": [
+      {
+        "type": "antarchy:rolly_polly",
+        "weight": 280,
+        "minCount": 4,
+        "maxCount": 8
+      },
+      {
+        "type": "antarchy:stink_bug",
+        "weight": 380,
+        "minCount": 4,
+        "maxCount": 8
+      }
+    ],
+    "ambient": [],
+    "axolotls": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  }
+}

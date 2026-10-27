@@ -1,0 +1,17 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "portal": "antarchy:block/thoraxis_portal",
+    "particle": "antarchy:block/thoraxis_portal"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 7.5],
+      "to": [16, 16, 8.5],
+      "faces": {
+        "north": { "texture": "#portal" },
+        "south": { "texture": "#portal" }
+      }
+    }
+  ]
+}

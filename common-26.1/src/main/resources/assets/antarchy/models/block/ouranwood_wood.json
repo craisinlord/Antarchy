@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/jungle_wood",
+  "textures": {
+    "end": "antarchy:block/ouranwood/ouranwood_log",
+    "side": "antarchy:block/ouranwood/ouranwood_log"
+  }
+}

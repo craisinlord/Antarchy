@@ -1,0 +1,74 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.vortex",
+				"texture_width": 256,
+				"texture_height": 128,
+				"visible_bounds_width": 6,
+				"visible_bounds_height": 4.5,
+				"visible_bounds_offset": [0, 1.75, 0]
+			},
+			"bones": [
+				{
+					"name": "root",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "head",
+					"parent": "root",
+					"pivot": [0, 26.30769, 0.35392],
+					"cubes": [
+						{"origin": [0, 19, -11.975], "size": [16, 16, 16], "pivot": [0, 19, -11.975], "rotation": [0, -45, 0], "uv": [64, 0], "mirror": true},
+						{"origin": [-26, 22, -12], "size": [26, 16, 0], "pivot": [0, 20, -12], "rotation": [0, 45, 0], "uv": [2, 4]},
+						{"origin": [0, 22, -12], "size": [26, 16, 0], "pivot": [0, 20, -12], "rotation": [0, -45, 0], "uv": [2, 4], "mirror": true}
+					]
+				},
+				{
+					"name": "right_wing_bottom",
+					"parent": "head",
+					"pivot": [-12, 13, 3.025],
+					"cubes": [
+						{"origin": [-38, 2, 3.025], "size": [26, 22, 0], "uv": [0, 44]}
+					]
+				},
+				{
+					"name": "left_wing_bottom",
+					"parent": "head",
+					"pivot": [12, 13, 3.025],
+					"cubes": [
+						{"origin": [12, 2, 3.025], "size": [26, 22, 0], "uv": [0, 44], "mirror": true}
+					]
+				},
+				{
+					"name": "clouds",
+					"parent": "head",
+					"pivot": [0, 27, -0.31815],
+					"cubes": [
+						{"origin": [-8, 18, -13.975], "size": [24, 18, 0], "pivot": [0, 19, -5.975], "rotation": [0, -45, 0], "uv": [89, 57], "mirror": true},
+						{"origin": [-8, 18, -13.975], "size": [0, 18, 24], "pivot": [0, 19, -5.975], "rotation": [0, -45, 0], "uv": [89, 33], "mirror": true},
+						{"origin": [-8, 18, 10.025], "size": [24, 18, 0], "pivot": [0, 19, -5.975], "rotation": [0, -45, 0], "uv": [89, 57], "mirror": true},
+						{"origin": [16, 18, -13.975], "size": [0, 18, 24], "pivot": [0, 19, -5.975], "rotation": [0, -45, 0], "uv": [89, 33], "mirror": true}
+					]
+				},
+				{
+					"name": "right_wing",
+					"parent": "head",
+					"pivot": [-12, 40, 3.025],
+					"cubes": [
+						{"origin": [-38, 29, 3.025], "size": [26, 22, 0], "uv": [0, 22]}
+					]
+				},
+				{
+					"name": "left_wing",
+					"parent": "head",
+					"pivot": [12, 40, 3.025],
+					"cubes": [
+						{"origin": [12, 29, 3.025], "size": [26, 22, 0], "uv": [0, 22], "mirror": true}
+					]
+				}
+			]
+		}
+	]
+}

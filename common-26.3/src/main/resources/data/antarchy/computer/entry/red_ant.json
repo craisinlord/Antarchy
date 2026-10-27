@@ -1,0 +1,31 @@
+{
+  "type": "entity",
+  "category": "thoraxis",
+  "folder": "antarchy:thoraxis",
+  "sort_order": 0,
+  "title": "guide.antarchy.entry.red_ant.title",
+  "subtitle": "guide.antarchy.entry.red_ant.subtitle",
+  "description": [
+    "guide.antarchy.entry.red_ant.description",
+    "guide.antarchy.entry.red_ant.description2",
+    "guide.antarchy.entry.red_ant.description3",
+    "guide.antarchy.entry.red_ant.description4"
+  ],
+  "entity": "antarchy:red_ant",
+  "cover_entity": "antarchy:red_ant",
+  "dimension": "antarchy:thoraxis",
+  "rotation": 45,
+  "green_tint": false,
+  "gallery_title": "guide.antarchy.gallery.thoraxis",
+  "gallery": [
+    "antarchy:queen",
+    "antarchy:nightmare",
+    "antarchy:reverie",
+    "antarchy:lucid",
+    "antarchy:vortex",
+    "antarchy:manticore",
+    "antarchy:emperor_scorpion",
+    "antarchy:scorpion",
+    "antarchy:bed_bug"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "antarchy:titanium_block",
+  "result": {
+    "count": 4,
+    "id": "antarchy:cut_titanium"
+  }
+}

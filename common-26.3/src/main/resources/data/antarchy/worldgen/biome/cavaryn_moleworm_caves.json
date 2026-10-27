@@ -1,0 +1,126 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.77,
+  "downfall": 0.96,
+  "attributes": {
+    "minecraft:audio/ambient_sounds": {},
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.cavaryn",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.9,
+    "minecraft:gameplay/natural_mob_spawns": {
+      "argument": {
+        "spawn_costs": {
+          "antarchy:molevore": {
+            "energy_budget": 0.9,
+            "charge": 2.2
+          }
+        },
+        "spawns_by_category": {
+          "monster": [
+            {
+              "type": "antarchy:molevore",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 2,
+                "min_inclusive": 1
+              },
+              "weight": 28
+            },
+            {
+              "type": "antarchy:moleworm",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 4,
+                "min_inclusive": 2
+              },
+              "weight": 20
+            }
+          ],
+          "creature": [
+            {
+              "type": "antarchy:rolly_polly",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 7,
+                "min_inclusive": 3
+              },
+              "weight": 220
+            },
+            {
+              "type": "antarchy:stink_bug",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 8,
+                "min_inclusive": 4
+              },
+              "weight": 300
+            }
+          ],
+          "ambient": [
+            {
+              "type": "minecraft:bat",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 2,
+                "min_inclusive": 1
+              },
+              "weight": 1
+            }
+          ]
+        }
+      },
+      "modifier": "overlay"
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "minecraft:ash"
+        },
+        "probability": 0.009
+      }
+    ],
+    "minecraft:visual/fog_color": "#070617",
+    "minecraft:visual/sky_color": "#000000",
+    "minecraft:visual/water_fog_color": "#263042"
+  },
+  "effects": {
+    "water_color": "#4c9ef8",
+    "foliage_color": "#2bc12d",
+    "grass_color": "#45ae25",
+    "grass_color_modifier": "none"
+  },
+  "carvers": [],
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:myrmite_coal_ore",
+      "antarchy:broodstone_uranium_ore",
+      "antarchy:broodstone_titanium_ore"
+    ],
+    [
+      "minecraft:large_dripstone",
+      "minecraft:pointed_dripstone"
+    ],
+    [
+      "antarchy:cavaryn_bile_veins",
+      "antarchy:cavaryn_bile_cysts"
+    ],
+    [
+      "antarchy:moleworm_caves_creepvine",
+      "antarchy:moleworm_caves_hanging_creeproots",
+      "antarchy:termite_nest"
+    ],
+    []
+  ]
+}

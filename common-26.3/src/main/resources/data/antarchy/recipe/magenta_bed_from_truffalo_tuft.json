@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "###",
+    "PPP"
+  ],
+  "key": {
+    "#": "antarchy:magenta_truffalo_tuft",
+    "P": "#minecraft:planks"
+  },
+  "result": {
+    "id": "minecraft:magenta_bed"
+  }
+}

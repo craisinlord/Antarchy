@@ -1,0 +1,14 @@
+{
+  "variants": {
+    "type=double": {
+      "model": "antarchy:block/mossy_myrmite_bricks"
+    },
+    "type=bottom": {
+      "model": "antarchy:block/mossy_myrmite_brick_slab"
+    },
+    "type=top": {
+      "model": "antarchy:block/mossy_myrmite_brick_slab_top"
+    }
+  }
+}
+

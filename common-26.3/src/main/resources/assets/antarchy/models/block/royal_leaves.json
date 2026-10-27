@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/leaves",
+  "ambientocclusion": false,
+  "textures": {
+    "all": "antarchy:block/royal/royal_leaves"
+  }
+}

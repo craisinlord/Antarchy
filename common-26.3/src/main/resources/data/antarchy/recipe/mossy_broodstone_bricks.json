@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    "antarchy:broodstone_bricks",
+    "antarchy:amber_moss_block"
+  ],
+  "result": {
+    "id": "antarchy:mossy_broodstone_bricks"
+  }
+}

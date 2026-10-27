@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "antarchy:block/glimming_reed/glimmering_reed_top"
+  }
+}

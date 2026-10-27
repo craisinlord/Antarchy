@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "hanging=false,stage=0": {
+      "model": "antarchy:block/ouranwood_sapling_0"
+    },
+    "hanging=true,stage=0": {
+      "model": "antarchy:block/ouranwood_acorn_hanging"
+    },
+    "hanging=false,stage=1": {
+      "model": "antarchy:block/ouranwood_sapling_1"
+    },
+    "hanging=true,stage=1": {
+      "model": "antarchy:block/ouranwood_acorn_hanging"
+    },
+    "hanging=false,stage=2": {
+      "model": "antarchy:block/ouranwood_sapling_2"
+    },
+    "hanging=true,stage=2": {
+      "model": "antarchy:block/ouranwood_acorn_hanging"
+    }
+  }
+}

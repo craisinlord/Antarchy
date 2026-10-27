@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/wall_inventory",
+  "textures": {
+    "wall": "antarchy:block/myrmite/mossy_myrmite_bricks"
+  }
+}
+

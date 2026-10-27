@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "antarchy:broodstone",
+  "result": {
+    "id": "antarchy:polished_broodstone"
+  }
+}

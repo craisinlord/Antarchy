@@ -1,0 +1,17 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "portal": "antarchy:block/cavaryn_portal",
+    "particle": "antarchy:block/cavaryn_portal"
+  },
+  "elements": [
+    {
+      "from": [7.5, 0, 0],
+      "to": [8.5, 16, 16],
+      "faces": {
+        "west": { "texture": "#portal" },
+        "east": { "texture": "#portal" }
+      }
+    }
+  ]
+}

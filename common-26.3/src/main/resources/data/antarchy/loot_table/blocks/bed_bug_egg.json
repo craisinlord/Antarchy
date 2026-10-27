@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:bed_bug_egg",
+          "modifier": {
+            "type": "minecraft:explosion_decay"
+          }
+        }
+      ]
+    }
+  ],
+  "random_sequence": "minecraft:blocks/turtle_egg"
+}

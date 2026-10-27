@@ -1,9 +1,9 @@
 {
-  "has_precipitation": false,
+  "has_precipitation": true,
   "temperature": 0.82,
   "downfall": 1.0,
   "effects": {
-    "fog_color": 8084735,
+    "fog_color": 10849791,
     "water_color": 5021432,
     "water_fog_color": 736368,
     "sky_color": 8084735,
@@ -77,7 +77,8 @@
       "antarchy:elythia_brown_ant_nests",
       "antarchy:elythia_rainbow_ant_nests",
       "minecraft:patch_sugar_cane",
-      "antarchy:giant_lily_pad_patch_meadow"
+      "antarchy:giant_lily_pad_patch_meadow",
+      "antarchy:throwback_nerd_pole"
     ],
     []
   ],

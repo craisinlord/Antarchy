@@ -1,0 +1,94 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.82,
+  "downfall": 1.0,
+  "attributes": {
+    "minecraft:audio/ambient_sounds": {},
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.cavaryn",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.65,
+    "minecraft:gameplay/natural_mob_spawns": {
+      "argument": {
+        "spawn_costs": {
+          "antarchy:worm": {
+            "energy_budget": 0.55,
+            "charge": 0.32
+          }
+        },
+        "spawns_by_category": {
+          "monster": [
+            {
+              "type": "antarchy:worm",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 2,
+                "min_inclusive": 1
+              },
+              "weight": 35
+            }
+          ],
+          "ambient": [
+            {
+              "type": "minecraft:bat",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 2,
+                "min_inclusive": 1
+              },
+              "weight": 1
+            }
+          ]
+        }
+      },
+      "modifier": "overlay"
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "minecraft:spore_blossom_air"
+        },
+        "probability": 0.012
+      }
+    ],
+    "minecraft:visual/fog_color": "#050905",
+    "minecraft:visual/sky_color": "#000000",
+    "minecraft:visual/water_fog_color": "#1f6a20"
+  },
+  "effects": {
+    "water_color": "#3f76e4",
+    "foliage_color": "#303313",
+    "grass_color": "#4b704c",
+    "grass_color_modifier": "none"
+  },
+  "carvers": [],
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:myrmite_coal_ore",
+      "antarchy:broodstone_uranium_ore",
+      "antarchy:broodstone_titanium_ore"
+    ],
+    [],
+    [],
+    [
+      "antarchy:wormy_caves_mucus",
+      "antarchy:wormy_caves_creepvine",
+      "antarchy:wormy_caves_hanging_creeproots",
+      "antarchy:wormy_caves_molting_vines",
+      "antarchy:wormy_caves_ground_molting_vines",
+      "antarchy:termite_nest"
+    ],
+    []
+  ]
+}

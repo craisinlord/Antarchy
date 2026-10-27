@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.client.ElythiaFog;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -37,6 +38,10 @@ public final class ElythiaSkyRenderer {
     private static final ResourceLocation MOON_TEXTURE = ResourceLocation.withDefaultNamespace("textures/environment/moon_phases.png");
     private static final float SKY_RADIUS = 100.0F;
     private static final float BODY_SIZE = 32.0F;
+    private static final float[] HORIZON_FOG_ELEVATIONS = {
+            -60.0F, 0.0F, 1.0F, 2.0F, 3.5F, 5.0F, 7.0F, 9.5F, 12.5F, 16.0F, 20.0F, 25.0F, 31.0F, 38.0F, 46.0F, 55.0F, 65.0F, 78.0F
+    };
+    private static final float SKY_FOG_CEILING = 24.0F;
 
     @org.jetbrains.annotations.Nullable
     private static VertexBuffer coloredStarBuffer = null;
@@ -88,6 +93,9 @@ public final class ElythiaSkyRenderer {
         VertexBuffer.unbind();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
+        float renderDistance = Math.max(minecraft.gameRenderer.getRenderDistance(), 32.0F);
+        renderHorizonFog(poseStack.last().pose(), projectionMatrix,
+                ElythiaFog.start(level, renderDistance, partialTick), ElythiaFog.end(level, renderDistance, partialTick));
         renderSunrise(poseStack, projectionMatrix, level, partialTick, rainLevel);
         renderCelestialBodies(poseStack.last().pose(), projectionMatrix, timeDegrees, rainLevel);
 
@@ -105,6 +113,8 @@ public final class ElythiaSkyRenderer {
             RenderSystem.disableBlend();
         }
 
+        ElythiaNightSkyRenderer.render(level, poseStack.last().pose(), projectionMatrix, partialTick, starBrightness);
+
         if (camera.getEntity() != null) {
             double horizon = camera.getEntity().getEyePosition(partialTick).y - level.getLevelData().getHorizonHeight(level);
             if (horizon < 0.0D) {
@@ -118,6 +128,69 @@ public final class ElythiaSkyRenderer {
         }
 
         RenderSystem.depthMask(true);
+    }
+
+    private static float skyFogAlpha(float elevationDegrees, float fogStart, float fogEnd) {
+        if (elevationDegrees <= 0.0F) {
+            return 1.0F;
+        }
+        float tangent = (float) Math.tan(Math.toRadians(elevationDegrees));
+        float distance = Math.max(SKY_FOG_CEILING / tangent, SKY_FOG_CEILING);
+        return Mth.clamp((distance - fogStart) / Math.max(1.0F, fogEnd - fogStart), 0.0F, 1.0F);
+    }
+
+    private static void renderHorizonFog(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, float fogStart, float fogEnd) {
+        float[] fogColor = RenderSystem.getShaderFogColor();
+        float r = fogColor[0];
+        float g = fogColor[1];
+        float b = fogColor[2];
+
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableCull();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.backupProjectionMatrix();
+        RenderSystem.setProjectionMatrix(projectionMatrix, VertexSorting.DISTANCE_TO_ORIGIN);
+
+        Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
+        modelViewStack.pushMatrix();
+        modelViewStack.set(modelViewMatrix);
+        RenderSystem.applyModelViewMatrix();
+
+        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        int segments = 48;
+        for (int ring = 0; ring < HORIZON_FOG_ELEVATIONS.length - 1; ring++) {
+            float lowElevation = (float) Math.toRadians(HORIZON_FOG_ELEVATIONS[ring]);
+            float highElevation = (float) Math.toRadians(HORIZON_FOG_ELEVATIONS[ring + 1]);
+            float lowAlpha = skyFogAlpha(HORIZON_FOG_ELEVATIONS[ring], fogStart, fogEnd);
+            float highAlpha = skyFogAlpha(HORIZON_FOG_ELEVATIONS[ring + 1], fogStart, fogEnd);
+            if (lowAlpha <= 0.0F && highAlpha <= 0.0F) {
+                continue;
+            }
+            float lowRadius = Mth.cos(lowElevation) * SKY_RADIUS;
+            float highRadius = Mth.cos(highElevation) * SKY_RADIUS;
+            float lowY = Mth.sin(lowElevation) * SKY_RADIUS;
+            float highY = Mth.sin(highElevation) * SKY_RADIUS;
+            for (int i = 0; i < segments; i++) {
+                float a0 = i * Mth.TWO_PI / segments;
+                float a1 = (i + 1) * Mth.TWO_PI / segments;
+                float c0 = Mth.cos(a0);
+                float s0 = Mth.sin(a0);
+                float c1 = Mth.cos(a1);
+                float s1 = Mth.sin(a1);
+                buffer.addVertex(c0 * lowRadius, lowY, s0 * lowRadius).setColor(r, g, b, lowAlpha);
+                buffer.addVertex(c1 * lowRadius, lowY, s1 * lowRadius).setColor(r, g, b, lowAlpha);
+                buffer.addVertex(c1 * highRadius, highY, s1 * highRadius).setColor(r, g, b, highAlpha);
+                buffer.addVertex(c0 * highRadius, highY, s0 * highRadius).setColor(r, g, b, highAlpha);
+            }
+        }
+        BufferUploader.drawWithShader(buffer.buildOrThrow());
+
+        modelViewStack.popMatrix();
+        RenderSystem.applyModelViewMatrix();
+        RenderSystem.restoreProjectionMatrix();
+        RenderSystem.enableCull();
+        RenderSystem.disableBlend();
     }
 
     private static VertexBuffer buildColoredStarBuffer() {
@@ -168,10 +241,11 @@ public final class ElythiaSkyRenderer {
 
     private static float[] pickStarColor(Random random) {
         float roll = random.nextFloat();
-        if (roll < 0.80F) return new float[]{1.0F, 1.0F, 1.0F};
-        if (roll < 0.87F) return new float[]{0.85F, 0.60F, 1.00F};
-        if (roll < 0.94F) return new float[]{1.00F, 0.95F, 0.50F};
-        return new float[]{1.0F, 0.45F, 0.45F};
+        if (roll < 0.72F) return new float[]{1.0F, 0.97F, 1.0F};
+        if (roll < 0.82F) return new float[]{0.82F, 0.62F, 1.0F};
+        if (roll < 0.89F) return new float[]{1.0F, 0.74F, 0.45F};
+        if (roll < 0.96F) return new float[]{0.72F, 1.0F, 0.7F};
+        return new float[]{1.0F, 0.56F, 0.62F};
     }
 
     private static void renderSunrise(PoseStack poseStack, Matrix4f projectionMatrix, ClientLevel level, float partialTick, float rainLevel) {

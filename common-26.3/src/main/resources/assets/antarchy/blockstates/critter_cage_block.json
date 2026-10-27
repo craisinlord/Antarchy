@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "antarchy:block/critter_cage_block"
+    }
+  }
+}

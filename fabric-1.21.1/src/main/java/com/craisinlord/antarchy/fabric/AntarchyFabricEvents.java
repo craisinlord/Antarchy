@@ -73,6 +73,7 @@ public final class AntarchyFabricEvents {
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> PortalGunProjectileEntity.releaseAllProjectileTickets());
         ServerLifecycleEvents.SERVER_STOPPING.register(com.craisinlord.antarchy.content.portalgun.PortalGunResetManager::clear);
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.clear());
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.elythia.AntDescent.clear());
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.clear());
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             PortalGunSavedData.clearMissingGuns(handler.player);
@@ -84,6 +85,7 @@ public final class AntarchyFabricEvents {
             QueenLocateCommand.register(dispatcher);
             RoyalCommand.register(dispatcher);
             com.craisinlord.antarchy.content.command.PortalGunCommand.register(dispatcher);
+            com.craisinlord.antarchy.content.command.ElythiaCommand.register(dispatcher);
         });
 
         DispenserBlock.registerBehavior(AntarchyFabricItems.SQUIDZOOKA.get(), new SquidzookaDispenseBehavior());
@@ -191,6 +193,7 @@ public final class AntarchyFabricEvents {
             Set<UUID> activeThisTick = new HashSet<>();
             for (ServerLevel level : server.getAllLevels()) {
                 CavarynHordeManager.tick(level);
+                com.craisinlord.antarchy.content.throwback.ThrowbackZoneTracker.tick(level);
                 com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
                 com.craisinlord.antarchy.content.entity.glimmer.GlimmerNightSpawner.tick(level);
                 ThoraxisUndersideManager.tick(level);
@@ -204,6 +207,7 @@ public final class AntarchyFabricEvents {
                 }
             }
             com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.tick(server);
+            com.craisinlord.antarchy.content.elythia.AntDescent.tick(server);
             invertedPlayers.retainAll(activeThisTick);
         });
     }

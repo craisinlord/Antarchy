@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "half=lower": {
+      "model": "antarchy:block/camellia_bottom"
+    },
+    "half=upper": {
+      "model": "antarchy:block/camellia_top"
+    }
+  }
+}

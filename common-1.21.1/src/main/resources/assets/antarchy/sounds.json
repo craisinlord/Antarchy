@@ -1213,13 +1213,99 @@
         "name": "antarchy:wistful_wanderings",
         "type": "event",
         "stream": true,
-        "weight": 3
+        "weight": 18
       },
       {
-        "name": "minecraft:music.game",
-        "type": "event",
-        "stream": true,
-        "weight": 2
+        "name": "minecraft:music/game/minecraft",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/clark",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/sweden",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/subwoofer_lullaby",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/living_mice",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/haggstrom",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/danny",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/key",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/oxygene",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/dry_hands",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/wet_hands",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/mice_on_venus",
+        "stream": true
+      }
+    ]
+  },
+  "music.throwback": {
+    "sounds": [
+      {
+        "name": "minecraft:music/game/minecraft",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/clark",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/sweden",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/living_mice",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/haggstrom",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/danny",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/wet_hands",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/mice_on_venus",
+        "stream": true
+      }
+    ]
+  },
+  "entity.player.hurt_classic": {
+    "subtitle": "subtitles.entity.player.hurt",
+    "sounds": [
+      {
+        "name": "minecraft:random/classic_hurt"
       }
     ]
   },

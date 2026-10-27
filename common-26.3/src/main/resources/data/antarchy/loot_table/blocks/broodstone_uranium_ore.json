@@ -1,0 +1,46 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "name": "antarchy:broodstone_uranium_ore",
+              "condition": {
+                "type": "minecraft:match_tool",
+                "predicate": {
+                  "components": {
+                    "minecraft:enchantments": {
+                      "minecraft:silk_touch": 1
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "minecraft:item",
+              "name": "antarchy:raw_uranium_scrap",
+              "modifier": [
+                {
+                  "type": "minecraft:apply_bonus",
+                  "enchantment": "minecraft:fortune",
+                  "formula": "minecraft:ore_drops"
+                },
+                {
+                  "type": "minecraft:explosion_decay"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

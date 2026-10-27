@@ -1,0 +1,24 @@
+{
+  "feature": "antarchy:thoraxis_rib_columns",
+  "placement": [
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 72
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "min_inclusive": {
+          "absolute": 176
+        },
+        "max_inclusive": {
+          "absolute": 248
+        }
+      }
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

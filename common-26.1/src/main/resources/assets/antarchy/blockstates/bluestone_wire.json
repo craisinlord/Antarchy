@@ -1,0 +1,116 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "antarchy:block/bluestone_wire_dot",
+        "x": 180
+      },
+      "when": {
+        "OR": [
+          {
+            "east": "none",
+            "north": "none",
+            "south": "none",
+            "west": "none"
+          },
+          {
+            "east": "side|down",
+            "north": "side|down"
+          },
+          {
+            "east": "side|down",
+            "south": "side|down"
+          },
+          {
+            "south": "side|down",
+            "west": "side|down"
+          },
+          {
+            "north": "side|down",
+            "west": "side|down"
+          }
+        ]
+      }
+    },
+    {
+      "when": {
+        "north": "side|down"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_wire_side0",
+        "x": 180,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "south": "side|down"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_wire_side_alt0",
+        "x": 180,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "east": "side|down"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_wire_side_alt1",
+        "x": 180,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "west": "side|down"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_wire_side1",
+        "x": 180,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "north": "down"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_wire_down",
+        "x": 180,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "east": "down"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_wire_down",
+        "x": 180,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "south": "down"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_wire_down",
+        "x": 180,
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "west": "down"
+      },
+      "apply": {
+        "model": "antarchy:block/bluestone_wire_down",
+        "x": 180,
+        "y": 90
+      }
+    }
+  ]
+}

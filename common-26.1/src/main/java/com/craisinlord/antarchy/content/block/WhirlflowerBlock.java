@@ -1,0 +1,89 @@
+package com.craisinlord.antarchy.content.block;
+
+import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.AntarchyTags;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.VegetationBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+public class WhirlflowerBlock extends VegetationBlock {
+    public static final MapCodec<WhirlflowerBlock> CODEC = Block.simpleCodec(WhirlflowerBlock::new);
+    public static final EnumProperty<Direction> VERTICAL_DIRECTION = BlockStateProperties.VERTICAL_DIRECTION;
+    private static final VoxelShape UP_SHAPE = Block.box(3.0D, 0.0D, 3.0D, 13.0D, 13.0D, 13.0D);
+    private static final VoxelShape DOWN_SHAPE = Block.box(3.0D, 3.0D, 3.0D, 13.0D, 16.0D, 13.0D);
+    private static final Identifier VEINED_TYPHONITE_ID = Identifier.fromNamespaceAndPath(Antarchy.MODID, "veined_typhonite");
+
+    public WhirlflowerBlock(BlockBehaviour.Properties properties) {
+        super(properties);
+        this.registerDefaultState(this.stateDefinition.any().setValue(VERTICAL_DIRECTION, Direction.UP));
+    }
+
+    @Override
+    public MapCodec<WhirlflowerBlock> codec() {
+        return CODEC;
+    }
+
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return state.getValue(VERTICAL_DIRECTION) == Direction.DOWN ? DOWN_SHAPE : UP_SHAPE;
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return this.defaultBlockState().setValue(
+                VERTICAL_DIRECTION,
+                context.getClickedFace() == Direction.DOWN ? Direction.DOWN : Direction.UP
+        );
+    }
+
+    @Override
+    protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
+        return state.is(AntarchyTags.Blocks.NYXIUM)
+                || BuiltInRegistries.BLOCK.getKey(state.getBlock()).equals(VEINED_TYPHONITE_ID);
+    }
+
+    @Override
+    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        Direction growthDirection = state.getValue(VERTICAL_DIRECTION);
+        BlockPos supportPos = pos.relative(growthDirection.getOpposite());
+        return this.mayPlaceOn(level.getBlockState(supportPos), level, supportPos);
+    }
+
+    @Override
+    protected BlockState updateShape(
+            BlockState state,
+            LevelReader level,
+            ScheduledTickAccess tickAccess,
+            BlockPos pos,
+            Direction direction,
+            BlockPos neighborPos,
+            BlockState neighborState,
+            RandomSource random
+    ) {
+        return state.canSurvive(level, pos)
+                ? super.updateShape(state, level, tickAccess, pos, direction, neighborPos, neighborState, random)
+                : Blocks.AIR.defaultBlockState();
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(VERTICAL_DIRECTION);
+    }
+}

@@ -1,0 +1,44 @@
+{
+  "ambient_light": 0.015,
+  "attributes": {
+    "minecraft:audio/background_music": {
+      "default": {
+        "max_delay": 24000,
+        "min_delay": 12000,
+        "sound": "minecraft:music.game"
+      }
+    },
+    "minecraft:gameplay/bed_rule": {
+      "can_set_spawn": "never",
+      "can_sleep": "never",
+      "explodes": true
+    },
+    "minecraft:gameplay/can_start_raid": false,
+    "minecraft:gameplay/respawn_anchor_works": false,
+    "minecraft:gameplay/sky_light_level": 4.0,
+    "minecraft:visual/ambient_light_color": "#0a0a0a",
+    "minecraft:visual/cloud_color": "#cc191926",
+    "minecraft:visual/cloud_height": 192.33,
+    "minecraft:visual/sky_color": "#000000",
+    "minecraft:visual/sky_light_color": "#7a7aff",
+    "minecraft:visual/sky_light_factor": 0.24,
+    "minecraft:visual/star_angle": 180.0,
+    "minecraft:visual/star_brightness": 0.5,
+    "minecraft:visual/sun_angle": 180.0
+  },
+  "coordinate_scale": 64.0,
+  "has_ceiling": true,
+  "has_ender_dragon_fight": false,
+  "has_fixed_time": true,
+  "has_skylight": false,
+  "height": 208,
+  "infiniburn": "#minecraft:infiniburn_overworld",
+  "logical_height": 192,
+  "min_y": 0,
+  "monster_spawn_block_light_limit": 0,
+  "monster_spawn_light_level": 0,
+  "timelines": [
+    "minecraft:moon",
+    "minecraft:villager_schedule"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "antarchy:polished_nyxite",
+  "result": {
+    "id": "antarchy:nyxite_bricks"
+  }
+}

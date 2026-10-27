@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "condition": {
+            "type": "minecraft:match_block",
+            "blocks": "antarchy:umbral_moss_carpet",
+            "state": {
+              "bottom": "true"
+            }
+          },
+          "modifier": {
+            "type": "minecraft:explosion_decay"
+          },
+          "name": "antarchy:umbral_moss_carpet"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "minecraft:blocks/moss_carpet"
+}

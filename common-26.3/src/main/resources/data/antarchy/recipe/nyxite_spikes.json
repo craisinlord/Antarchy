@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "N"
+  ],
+  "key": {
+    "N": "antarchy:nyxite"
+  },
+  "result": {
+    "id": "antarchy:nyxite_spike",
+    "count": 4
+  }
+}

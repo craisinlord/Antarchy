@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:ore",
+  "size": 12,
+  "discard_chance_on_air_exposure": 0.0,
+  "targets": [
+    {
+      "target": {
+        "predicate_type": "minecraft:block_match",
+        "block": "antarchy:myrmite"
+      },
+      "state": "antarchy:myrmite_coal_ore"
+    }
+  ]
+}

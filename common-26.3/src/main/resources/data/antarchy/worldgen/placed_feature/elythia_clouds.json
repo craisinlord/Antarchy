@@ -1,0 +1,31 @@
+{
+  "feature": "antarchy:elythia_clouds",
+  "placement": [
+    {
+      "type": "minecraft:rarity_filter",
+      "chance": 16
+    },
+    {
+      "type": "minecraft:count",
+      "count": 1
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:uniform",
+        "min_inclusive": {
+          "absolute": 380
+        },
+        "max_inclusive": {
+          "absolute": 430
+        }
+      }
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/stairs",
+  "textures": {
+    "bottom": "antarchy:block/myrmite/myrmite",
+    "side": "antarchy:block/myrmite/myrmite",
+    "top": "antarchy:block/myrmite/myrmite"
+  }
+}
+

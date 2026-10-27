@@ -1,0 +1,22 @@
+{
+  "loot_tables_to_eject": [
+    {
+      "data": "antarchy:spawners/basilisk_lair/hard",
+      "weight": 1
+    }
+  ],
+  "simultaneous_mobs": 1.0,
+  "simultaneous_mobs_added_per_player": 0.0,
+  "spawn_potentials": [
+    {
+      "data": {
+        "entity": {
+          "id": "antarchy:basilisk"
+        }
+      },
+      "weight": 1
+    }
+  ],
+  "ticks_between_spawn": 60,
+  "total_mobs": 8.0
+}

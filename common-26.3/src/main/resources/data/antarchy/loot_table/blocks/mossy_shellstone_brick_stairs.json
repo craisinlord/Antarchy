@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:mossy_shellstone_brick_stairs"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "antarchy:blocks/mossy_shellstone_brick_stairs"
+}

@@ -39,6 +39,8 @@ public final class ElythiaFireflyManager {
         if (mc.isPaused()) return;
         if (!ElythiaSkyRenderer.shouldRender(level)) return;
 
+        com.craisinlord.antarchy.content.client.ElythiaGroundMist.tick(mc, level, AntarchyNeoforgeMisc.GROUND_MIST.get());
+
         long dayTime = level.getDayTime() % 24000L;
         if (dayTime < NIGHT_START || dayTime > NIGHT_END) return;
 

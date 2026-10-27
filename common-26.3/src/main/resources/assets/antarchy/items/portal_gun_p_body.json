@@ -1,0 +1,26 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "cases": [
+      {
+        "when": [
+          "gui",
+          "ground",
+          "fixed"
+        ],
+        "model": {
+          "type": "minecraft:model",
+          "model": "antarchy:item/portal_gun_p_body_gui"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:special",
+      "base": "antarchy:item/portal_gun_held_geo",
+      "model": {
+        "type": "geckolib:geckolib"
+      }
+    }
+  }
+}

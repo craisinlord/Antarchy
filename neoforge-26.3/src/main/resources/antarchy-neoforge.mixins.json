@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "com.craisinlord.antarchy.neoforge.mixins",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "compat.SablePhysicsColliderBlockGetterMixin",
+    "item.BucketItemThoraxisWaterMixin",
+    "entity.ParalyzedMobFreezeMixin"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/template_turtle_egg",
+  "textures": {
+    "all": "antarchy:block/crawling_blight_egg/crawling_blight_egg_very_cracked"
+  }
+}

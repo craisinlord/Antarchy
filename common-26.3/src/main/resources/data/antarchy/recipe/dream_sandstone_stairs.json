@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "#": [
+      "antarchy:dream_sandstone",
+      "antarchy:chiseled_dream_sandstone",
+      "antarchy:cut_dream_sandstone"
+    ]
+  },
+  "pattern": [
+    "#  ",
+    "## ",
+    "###"
+  ],
+  "result": {
+    "count": 4,
+    "id": "antarchy:dream_sandstone_stairs"
+  }
+}

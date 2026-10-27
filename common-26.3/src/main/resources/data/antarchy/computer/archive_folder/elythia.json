@@ -1,0 +1,7 @@
+{
+  "title": "guide.antarchy.archive_folder.elythia",
+  "icon_item": "antarchy:brown_ant_spawn_egg",
+  "parent": "antarchy:antlas",
+  "sort_order": 10,
+  "green_tint": false
+}

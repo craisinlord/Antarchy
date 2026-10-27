@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "food",
+  "key": {
+    "C": "antarchy:corn",
+    "G": "minecraft:egg",
+    "H": "minecraft:honey_bottle",
+    "W": "minecraft:wheat"
+  },
+  "pattern": [
+    " H ",
+    "CGC",
+    "WWW"
+  ],
+  "result": {
+    "id": "antarchy:cornbread"
+  }
+}

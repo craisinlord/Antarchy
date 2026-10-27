@@ -1,0 +1,244 @@
+{
+  "sea_level": 60,
+  "disable_mob_generation": false,
+  "legacy_random_source": false,
+  "default_block": "minecraft:stone",
+  "default_fluid": {
+    "id": "minecraft:water",
+    "properties": {
+      "level": "0"
+    }
+  },
+  "noise": {
+    "min_y": -64,
+    "height": 512
+  },
+  "noise_router": {
+    "temperature": {
+      "type": "minecraft:noise",
+      "noise": "minecraft:temperature",
+      "shift_x": "minecraft:shift_x",
+      "shift_z": "minecraft:shift_z",
+      "xz_scale": 0.25,
+      "y_scale": 0.0
+    },
+    "vegetation": {
+      "type": "minecraft:noise",
+      "noise": "minecraft:vegetation",
+      "shift_x": "minecraft:shift_x",
+      "shift_z": "minecraft:shift_z",
+      "xz_scale": 0.25,
+      "y_scale": 0.0
+    },
+    "continents": "minecraft:overworld/continents",
+    "erosion": "minecraft:overworld/erosion",
+    "depth": "minecraft:overworld/depth",
+    "ridges": "minecraft:overworld/ridges",
+    "chunk_surface_level": {
+      "type": "minecraft:interpolated",
+      "cell_size_xz": 16,
+      "cell_size_y": 1,
+      "input": "antarchy:elythia_preliminary_surface_level"
+    },
+    "final_density": {
+      "type": "minecraft:add",
+      "left": {
+        "type": "minecraft:squeeze",
+        "input": {
+          "type": "minecraft:mul",
+          "left": 0.64,
+          "right": {
+            "type": "minecraft:interpolated",
+            "cell_size_xz": 4,
+            "cell_size_y": 8,
+            "input": {
+              "type": "minecraft:blend_density",
+              "input": {
+                "type": "minecraft:add",
+                "left": 0.1171875,
+                "right": {
+                  "type": "minecraft:mul",
+                  "left": {
+                    "type": "minecraft:gradient",
+                    "axis": "y",
+                    "from_coordinate": -64,
+                    "from_value": 0.0,
+                    "to_coordinate": -40,
+                    "to_value": 1.0
+                  },
+                  "right": {
+                    "type": "minecraft:add",
+                    "left": -0.1171875,
+                    "right": {
+                      "type": "minecraft:add",
+                      "left": -0.078125,
+                      "right": {
+                        "type": "minecraft:mul",
+                        "left": {
+                          "type": "minecraft:gradient",
+                          "axis": "y",
+                          "from_coordinate": 240,
+                          "from_value": 1.0,
+                          "to_coordinate": 256,
+                          "to_value": 0.0
+                        },
+                        "right": {
+                          "type": "minecraft:add",
+                          "left": 0.078125,
+                          "right": {
+                            "type": "minecraft:range_choice",
+                            "input": "antarchy:elythia_surface",
+                            "max_exclusive": 1.5625,
+                            "min_inclusive": -1000000.0,
+                            "when_in_range": "antarchy:elythia_surface",
+                            "when_out_of_range": {
+                              "type": "minecraft:max",
+                              "left": {
+                                "type": "minecraft:add",
+                                "left": {
+                                  "type": "minecraft:mul",
+                                  "left": 4.0,
+                                  "right": {
+                                    "type": "minecraft:square",
+                                    "input": {
+                                      "type": "minecraft:noise",
+                                      "noise": "minecraft:cave_layer",
+                                      "xz_scale": 1.0,
+                                      "y_scale": 8.0
+                                    }
+                                  }
+                                },
+                                "right": {
+                                  "type": "minecraft:add",
+                                  "left": {
+                                    "type": "minecraft:clamp",
+                                    "input": {
+                                      "type": "minecraft:add",
+                                      "left": 0.27,
+                                      "right": {
+                                        "type": "minecraft:noise",
+                                        "noise": "minecraft:cave_cheese",
+                                        "xz_scale": 1.0,
+                                        "y_scale": 0.6666666666666666
+                                      }
+                                    },
+                                    "max": 1.0,
+                                    "min": -1.0
+                                  },
+                                  "right": {
+                                    "type": "minecraft:clamp",
+                                    "input": {
+                                      "type": "minecraft:add",
+                                      "left": 1.5,
+                                      "right": {
+                                        "type": "minecraft:mul",
+                                        "left": -0.64,
+                                        "right": "antarchy:elythia_surface"
+                                      }
+                                    },
+                                    "max": 0.5,
+                                    "min": 0.0
+                                  }
+                                }
+                              },
+                              "right": {
+                                "type": "minecraft:range_choice",
+                                "input": "minecraft:overworld/caves/pillars",
+                                "max_exclusive": 0.03,
+                                "min_inclusive": -1000000.0,
+                                "when_in_range": -1000000.0,
+                                "when_out_of_range": "minecraft:overworld/caves/pillars"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "right": {
+        "type": "minecraft:beardifier"
+      }
+    }
+  },
+  "aquifers": {
+    "barrier": {
+      "type": "minecraft:noise",
+      "noise": "minecraft:aquifer_barrier",
+      "xz_scale": 1.0,
+      "y_scale": 0.5
+    },
+    "exclusion": {
+      "type": "minecraft:min",
+      "left": {
+        "type": "minecraft:sub",
+        "left": -0.225,
+        "right": "minecraft:overworld/erosion"
+      },
+      "right": {
+        "type": "minecraft:max",
+        "left": {
+          "type": "minecraft:sub",
+          "left": "minecraft:overworld/depth",
+          "right": 0.9
+        },
+        "right": 0.0
+      }
+    },
+    "fluid_level_floodedness": {
+      "type": "minecraft:noise",
+      "noise": "minecraft:aquifer_fluid_level_floodedness",
+      "xz_scale": 1.0,
+      "y_scale": 0.67
+    },
+    "fluid_level_spread": {
+      "type": "minecraft:noise",
+      "noise": "minecraft:aquifer_fluid_level_spread",
+      "xz_scale": 1.0,
+      "y_scale": 0.7142857142857143
+    },
+    "lava": {
+      "type": "minecraft:noise",
+      "noise": "minecraft:aquifer_lava",
+      "xz_scale": 1.0,
+      "y_scale": 1.0
+    },
+    "surface_level": "antarchy:elythia_preliminary_surface_level"
+  },
+  "material_rule": "antarchy:elythia",
+  "spawn_target": [
+    {
+      "minecraft:overworld/continents": [
+        -0.11,
+        1.0
+      ],
+      "minecraft:overworld/erosion": [
+        -1.0,
+        1.0
+      ],
+      "minecraft:overworld/ridges": [
+        -1.0,
+        -0.16
+      ]
+    },
+    {
+      "minecraft:overworld/continents": [
+        -0.11,
+        1.0
+      ],
+      "minecraft:overworld/erosion": [
+        -1.0,
+        1.0
+      ],
+      "minecraft:overworld/ridges": [
+        0.16,
+        1.0
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "sound_event": "antarchy:music_disc_underside",
+  "description": {
+    "translate": "jukebox_song.antarchy.underside"
+  },
+  "length_in_seconds": 225.0,
+  "comparator_output": 13
+}

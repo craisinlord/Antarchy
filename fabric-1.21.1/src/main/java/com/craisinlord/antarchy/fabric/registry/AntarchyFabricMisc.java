@@ -414,6 +414,8 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> FIREFLY = PARTICLE_TYPES.register("firefly",
             () -> simpleParticleType());
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> GROUND_MIST = PARTICLE_TYPES.register("ground_mist",
+            () -> simpleParticleType());
 
 
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> ORANGE_ASH = PARTICLE_TYPES.register("orange_ash",
@@ -468,6 +470,7 @@ public final class AntarchyFabricMisc {
 
 
     public static final DeferredHolder<MobEffect, com.craisinlord.antarchy.content.effect.GlimmeringMobEffect> GLIMMERING = MOB_EFFECTS.register("glimmering", com.craisinlord.antarchy.content.effect.GlimmeringMobEffect::new);
+    public static final DeferredHolder<MobEffect, com.craisinlord.antarchy.content.effect.RemembranceMobEffect> REMEMBRANCE = MOB_EFFECTS.register("remembrance", com.craisinlord.antarchy.content.effect.RemembranceMobEffect::new);
     public static final DeferredHolder<MobEffect, com.craisinlord.antarchy.content.effect.RoyalVitalityPenaltyEffect> ROYAL_VITALITY_PENALTY = MOB_EFFECTS.register("royal_vitality_penalty", com.craisinlord.antarchy.content.effect.RoyalVitalityPenaltyEffect::new);
 
 
@@ -475,14 +478,6 @@ public final class AntarchyFabricMisc {
             "bloodglass_max_hearts",
             () -> new net.minecraft.world.entity.ai.attributes.RangedAttribute("attribute.antarchy.bloodglass_max_hearts", 0.0, 0.0, 8.0).setSyncable(true)
     );
-
-
-    public static final DeferredHolder<Potion, Potion> DREAD_POTION = POTIONS.register("dread",
-            () -> new Potion(new MobEffectInstance(mobEffectHolder(DREAD), 600)));
-
-
-    public static final DeferredHolder<Potion, Potion> LONG_DREAD = POTIONS.register("long_dread",
-            () -> new Potion("dread", new MobEffectInstance(mobEffectHolder(DREAD), 2400)));
 
 
     public static final DeferredHolder<Potion, Potion> INVERSION = POTIONS.register("inversion",
@@ -728,6 +723,8 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<Feature<?>, ElythiaSurfaceCoverFeature> ELYTHIA_SURFACE_COVER = FEATURES.register("elythia_surface_cover",
             () -> new ElythiaSurfaceCoverFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.ThrowbackNerdPoleFeature> THROWBACK_NERD_POLE = FEATURES.register("throwback_nerd_pole",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.ThrowbackNerdPoleFeature(NoneFeatureConfiguration.CODEC));
 
 
     public static final DeferredHolder<Feature<?>, ElythiaUndergroundFeature> ELYTHIA_UNDERGROUND = FEATURES.register("elythia_underground",

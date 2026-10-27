@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:simple_block",
+  "to_place": {
+    "type": "minecraft:weighted",
+    "entries": [
+      {
+        "data": {
+          "id": "antarchy:umbral_moss_carpet",
+          "properties": {
+            "bottom": "true",
+            "east": "none",
+            "north": "none",
+            "south": "none",
+            "west": "none"
+          }
+        },
+        "weight": 25
+      },
+      {
+        "data": "antarchy:hushweed",
+        "weight": 1
+      }
+    ]
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "parent": "antarchy:visit_thoraxis",
+  "criteria": {
+    "kill_nightmare": {
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "antarchy:nightmare"
+          }
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.sweater_dreams.description"
+    },
+    "frame": "task",
+    "icon": {
+      "id": "antarchy:nightmare_scale"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.sweater_dreams.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_nightmare"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

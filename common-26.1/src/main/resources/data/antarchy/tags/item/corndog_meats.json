@@ -1,0 +1,19 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:chicken",
+    "minecraft:porkchop",
+    {
+      "id": "c:foods/raw_meat",
+      "required": false
+    },
+    {
+      "id": "c:foods/raw_chicken",
+      "required": false
+    },
+    {
+      "id": "c:foods/raw_pork",
+      "required": false
+    }
+  ]
+}

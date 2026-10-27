@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:moleworm",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 1
+          }
+        }
+      ]
+    }
+  ]
+}

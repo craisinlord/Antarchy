@@ -1,0 +1,15 @@
+{
+  "name": "antarchy:fallen_kingdom_castle/fallen_kingdom_castle_banner",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "antarchy:fallen_kingdom_castle/fallen_kingdom_castle_banner",
+        "processors": "antarchy:fallen_kingdom_castle_processor",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "I": "antarchy:polished_antimetal",
+    "C": "minecraft:chest"
+  },
+  "pattern": [
+    " I ",
+    "ICI",
+    "I I"
+  ],
+  "result": {
+    "id": "antarchy:upper"
+  }
+}

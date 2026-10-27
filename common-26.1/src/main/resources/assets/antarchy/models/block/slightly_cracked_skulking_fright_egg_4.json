@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_four_turtle_eggs",
+  "textures": {
+    "all": "antarchy:block/skulking_fright_egg/skulking_fright_egg_slightly_cracked",
+    "particle": "antarchy:block/skulking_fright_egg/skulking_fright_egg_slightly_cracked"
+  }
+}

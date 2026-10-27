@@ -1,0 +1,12 @@
+{
+  "type": "antarchy:thoraxis_spike",
+  "config": {
+    "orientation": "DOWN",
+    "min_length": 48,
+    "max_length": 88,
+    "base_radius": 4,
+    "tip_radius": 1,
+    "sway": 9,
+    "branch_chance": 0.22
+  }
+}

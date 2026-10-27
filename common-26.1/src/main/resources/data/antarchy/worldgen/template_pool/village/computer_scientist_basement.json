@@ -1,0 +1,15 @@
+{
+  "name": "antarchy:village/computer_scientist_basement",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "antarchy:village/computer_scientist_basement",
+        "processors": "antarchy:generic_processor",
+        "projection": "rigid",
+        "element_type": "integrated_api:integrated_api_single_pool_element"
+      }
+    }
+  ]
+}

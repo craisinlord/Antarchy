@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:lucid_eye"
+        }
+      ],
+      "condition": {
+        "type": "minecraft:killed_by_player"
+      }
+    }
+  ]
+}

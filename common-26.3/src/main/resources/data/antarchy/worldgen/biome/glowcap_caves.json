@@ -1,0 +1,89 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.68,
+  "downfall": 0.35,
+  "attributes": {
+    "minecraft:audio/ambient_sounds": {
+      "mood": {
+        "sound": "minecraft:ambient.cave",
+        "tick_delay": 40000,
+        "block_search_extent": 8,
+        "offset": 2.0
+      }
+    },
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.cavaryn",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.98,
+    "minecraft:gameplay/natural_mob_spawns": {
+      "argument": {
+        "spawn_costs": {},
+        "spawns_by_category": {
+          "creature": [
+            {
+              "type": "antarchy:rolly_polly",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 8,
+                "min_inclusive": 4
+              },
+              "weight": 280
+            },
+            {
+              "type": "antarchy:stink_bug",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 8,
+                "min_inclusive": 4
+              },
+              "weight": 380
+            }
+          ]
+        }
+      },
+      "modifier": "overlay"
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "antarchy:orange_ash"
+        },
+        "probability": 0.004
+      }
+    ],
+    "minecraft:visual/fog_color": "#0b0a0e",
+    "minecraft:visual/sky_color": "#000000",
+    "minecraft:visual/water_fog_color": "#561b1a"
+  },
+  "effects": {
+    "water_color": "#903f10",
+    "foliage_color": "#ff2b00",
+    "grass_color": "#ff7f00",
+    "grass_color_modifier": "none"
+  },
+  "carvers": [],
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:glowcap_caves_floor_patch",
+      "antarchy:glowcap_caves_huge_glowcap_mushroom",
+      "antarchy:glowcap_caves_molting_vines",
+      "antarchy:glowcap_caves_wall_amber_moss",
+      "antarchy:termite_nest"
+    ],
+    []
+  ]
+}

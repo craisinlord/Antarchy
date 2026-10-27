@@ -1,0 +1,138 @@
+{
+  "type": "minecraft:cache",
+  "input": {
+    "type": "minecraft:clamp",
+    "min": -10.0,
+    "max": 10.0,
+    "input": {
+      "type": "minecraft:add",
+      "left": {
+        "type": "minecraft:gradient",
+        "axis": "y",
+        "from_coordinate": -64,
+        "from_value": 2.2,
+        "to_coordinate": 220,
+        "to_value": -1.9
+      },
+      "right": {
+        "type": "minecraft:add",
+        "left": {
+          "type": "minecraft:add",
+          "left": {
+            "type": "minecraft:add",
+            "left": {
+              "type": "minecraft:mul",
+              "left": 0.565,
+              "right": {
+                "type": "minecraft:noise",
+                "noise": "antarchy:elythia_surface",
+                "xz_scale": 0.65,
+                "y_scale": 0
+              }
+            },
+            "right": {
+              "type": "minecraft:add",
+              "left": {
+                "type": "minecraft:mul",
+                "left": 0.01,
+                "right": {
+                  "type": "minecraft:noise",
+                  "noise": "antarchy:elythia_surface_detail",
+                  "xz_scale": 1.8,
+                  "y_scale": 0
+                }
+              },
+              "right": {
+                "type": "minecraft:mul",
+                "left": 0.002,
+                "right": {
+                  "type": "minecraft:noise",
+                  "noise": "antarchy:elythia_surface_edge",
+                  "xz_scale": 4.2,
+                  "y_scale": 0
+                }
+              }
+            }
+          },
+          "right": {
+            "type": "minecraft:add",
+            "left": {
+              "type": "minecraft:mul",
+              "left": 0.17,
+              "right": "minecraft:overworld/depth"
+            },
+            "right": {
+              "type": "minecraft:add",
+              "left": {
+                "type": "minecraft:mul",
+                "left": 0.003,
+                "right": "minecraft:overworld/ridges"
+              },
+              "right": {
+                "type": "minecraft:add",
+                "left": {
+                  "type": "antarchy:elythia_river_carve",
+                  "erosion": "minecraft:overworld/erosion",
+                  "ridges": "minecraft:overworld/ridges"
+                },
+                "right": {
+                  "type": "minecraft:mul",
+                  "left": 0.58,
+                  "right": "minecraft:overworld/continents"
+                }
+              }
+            }
+          }
+        },
+        "right": {
+          "type": "minecraft:add",
+          "left": {
+            "type": "minecraft:range_choice",
+            "input": "minecraft:overworld/continents",
+            "min_inclusive": -1.0,
+            "max_exclusive": -0.93,
+            "when_in_range": {
+              "type": "minecraft:add",
+              "left": -0.85,
+              "right": {
+                "type": "minecraft:mul",
+                "left": 0.05,
+                "right": {
+                  "type": "minecraft:noise",
+                  "noise": "antarchy:elythia_terrain_roughness",
+                  "xz_scale": 0.55,
+                  "y_scale": 0
+                }
+              }
+            },
+            "when_out_of_range": 0.0
+          },
+          "right": {
+            "type": "minecraft:range_choice",
+            "input": "minecraft:overworld/depth",
+            "min_inclusive": 0.35,
+            "max_exclusive": 0.52,
+            "when_in_range": {
+              "type": "minecraft:range_choice",
+              "input": "minecraft:overworld/ridges",
+              "min_inclusive": -0.8,
+              "max_exclusive": -0.3,
+              "when_in_range": {
+                "type": "minecraft:mul",
+                "left": 0.07,
+                "right": {
+                  "type": "minecraft:noise",
+                  "noise": "antarchy:elythia_terrain_roughness",
+                  "xz_scale": 0.75,
+                  "y_scale": 0
+                }
+              },
+              "when_out_of_range": 0.0
+            },
+            "when_out_of_range": 0.0
+          }
+        }
+      }
+    }
+  }
+}

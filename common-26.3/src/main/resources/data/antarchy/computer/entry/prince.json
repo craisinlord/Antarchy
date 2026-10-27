@@ -1,0 +1,13 @@
+{
+  "type": "entity",
+  "category": "elythia",
+  "folder": "antarchy:elythia",
+  "sort_order": 40,
+  "title": "guide.antarchy.entry.prince.title",
+  "subtitle": "guide.antarchy.entry.prince.subtitle",
+  "description": ["guide.antarchy.entry.prince.description", "guide.antarchy.entry.prince.description2"],
+  "entity": "antarchy:prince",
+  "cover_entity": "antarchy:prince",
+  "rotation": 45,
+  "green_tint": false
+}

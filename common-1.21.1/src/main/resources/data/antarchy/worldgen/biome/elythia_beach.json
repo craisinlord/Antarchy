@@ -1,9 +1,9 @@
 {
-  "has_precipitation": false,
+  "has_precipitation": true,
   "temperature": 0.68,
   "downfall": 0.96,
   "effects": {
-    "fog_color": 8084735,
+    "fog_color": 10849791,
     "water_color": 5021432,
     "water_fog_color": 736368,
     "sky_color": 8084735,
@@ -58,7 +58,8 @@
     ],
     [],
     [
-      "minecraft:patch_sugar_cane"
+      "minecraft:patch_sugar_cane",
+      "antarchy:throwback_nerd_pole"
     ],
     []
   ],

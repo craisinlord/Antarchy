@@ -1,0 +1,246 @@
+package com.craisinlord.antarchy.content.item;
+
+import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.client.model.ResourceBackedGeoItemModel;
+import com.craisinlord.antarchy.content.entity.SizeRayProjectileEntity;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.level.Level;
+import com.geckolib.animatable.GeoItem;
+import com.geckolib.animatable.client.GeoRenderProvider;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.object.LoopType;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.RawAnimation;
+import com.craisinlord.antarchy.content.client.renderer.AnimatedHeldItemRenderer;
+import com.geckolib.renderer.GeoItemRenderer;
+import com.geckolib.util.GeckoLibUtil;
+
+import java.util.function.Consumer;
+import org.jspecify.annotations.Nullable;
+
+public class SizeRayItem extends ProjectileWeaponItem implements GeoItem {
+    private static final String FIRE_CONTROLLER = "fire_controller";
+    private static final int CHARGE_TICKS_PER_LEVEL = 5;
+    public static final int LOOP_SOUND_START_TICKS = 140;
+    private static final int MAX_USE_DURATION = 72000;
+    private static final Predicate<ItemStack> NO_PROJECTILES = stack -> false;
+    private final Supplier<? extends EntityType<? extends SizeRayProjectileEntity>> projectileType;
+    private final SizeRayProjectileEntity.SizeRayType rayType;
+    private final Identifier geoModelLocation;
+    private final Identifier geoTextureLocation;
+    private final Identifier geoAnimationLocation;
+    private final String fireAnimationName;
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+
+    public SizeRayItem(
+            Item.Properties properties,
+            Supplier<? extends EntityType<? extends SizeRayProjectileEntity>> projectileType,
+            SizeRayProjectileEntity.SizeRayType rayType,
+            Identifier geoModelLocation,
+            Identifier geoTextureLocation,
+            Identifier geoAnimationLocation,
+            String fireAnimationName
+    ) {
+        super(properties);
+        this.projectileType = projectileType;
+        this.rayType = rayType;
+        this.geoModelLocation = geoModelLocation;
+        this.geoTextureLocation = geoTextureLocation;
+        this.geoAnimationLocation = geoAnimationLocation;
+        this.fireAnimationName = fireAnimationName;
+        GeoItem.registerSyncedAnimatable(this);
+    }
+
+    @Override
+    public InteractionResult use(Level level, Player player, InteractionHand usedHand) {
+        ItemStack itemStack = player.getItemInHand(usedHand);
+        if (!AntarchySettings.sizeChangingRaysEnabled()) {
+            return InteractionResult.FAIL;
+        }
+        if (player.getCooldowns().isOnCooldown(itemStack)) {
+            return InteractionResult.FAIL;
+        }
+
+        player.startUsingItem(usedHand);
+        return InteractionResult.CONSUME;
+    }
+
+    @Override
+    public boolean releaseUsing(ItemStack stack, Level level, LivingEntity livingEntity, int timeLeft) {
+        if (!(livingEntity instanceof Player player)) {
+            return false;
+        }
+
+        if (!AntarchySettings.sizeChangingRaysEnabled() || player.getCooldowns().isOnCooldown(stack)) {
+            return false;
+        }
+
+        int useTicks = this.getUseDuration(stack, livingEntity) - timeLeft;
+        int chargeLevel = getChargeLevel(useTicks);
+
+        if (!level.isClientSide()) {
+            SizeRayProjectileEntity projectile = this.createProjectile(level, player, stack, chargeLevel);
+            projectile.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 3.0F, 0.0F);
+            level.addFreshEntity(projectile);
+            stack.hurtAndBreak(1, player, player.getUsedItemHand() == InteractionHand.MAIN_HAND
+                    ? EquipmentSlot.MAINHAND
+                    : EquipmentSlot.OFFHAND);
+            triggerFireAnimation((ServerLevel) level, player, stack);
+            level.playSound(
+                    null,
+                    player.getX(),
+                    player.getY(),
+                    player.getZ(),
+                    getFireSound(chargeLevel),
+                    SoundSource.PLAYERS,
+                    1.0F,
+                    0.96F + 0.04F * (chargeLevel - 1) + level.getRandom().nextFloat() * 0.08F
+            );
+            player.awardStat(Stats.ITEM_USED.get(this));
+            double cooldownSeconds = AntarchySettings.sizeRayCooldownSeconds();
+            if (cooldownSeconds > 0) {
+                player.getCooldowns().addCooldown(stack, (int) (cooldownSeconds * 20));
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public ItemUseAnimation getUseAnimation(ItemStack stack) {
+        return ItemUseAnimation.NONE;
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack, LivingEntity livingEntity) {
+        return MAX_USE_DURATION;
+    }
+
+    @Override
+    public Predicate<ItemStack> getSupportedHeldProjectiles() {
+        return NO_PROJECTILES;
+    }
+
+    @Override
+    public Predicate<ItemStack> getAllSupportedProjectiles() {
+        return NO_PROJECTILES;
+    }
+
+    @Override
+    public int getDefaultProjectileRange() {
+        return 0;
+    }
+
+    @Override
+    protected void shootProjectile(LivingEntity livingEntity, Projectile projectile, int i, float velocity, float inaccuracy, float angle, @Nullable LivingEntity target) {
+        projectile.shootFromRotation(livingEntity, livingEntity.getXRot(), livingEntity.getYRot(), angle, velocity, inaccuracy);
+    }
+
+    public SizeRayProjectileEntity createProjectile(Level level, LivingEntity livingEntity, ItemStack weaponStack) {
+        return this.createProjectile(level, livingEntity, weaponStack, 1);
+    }
+
+    public SizeRayProjectileEntity createProjectile(Level level, LivingEntity livingEntity, ItemStack weaponStack, int chargeLevel) {
+        SizeRayProjectileEntity projectile = new SizeRayProjectileEntity(this.projectileType.get(), livingEntity, level, weaponStack.copy(), this.rayType);
+        projectile.setChargeLevel(chargeLevel);
+        return projectile;
+    }
+
+    public SizeRayProjectileEntity createProjectile(Level level, ItemStack weaponStack) {
+        SizeRayProjectileEntity projectile = new SizeRayProjectileEntity(this.projectileType.get(), level, this.rayType);
+        projectile.setChargeLevel(1);
+        return projectile;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display, Consumer<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, display, tooltipComponents, tooltipFlag);
+        String tooltipKey = this.rayType == SizeRayProjectileEntity.SizeRayType.SHRINK
+                ? "tooltip.antarchy.shrink_ray"
+                : "tooltip.antarchy.growth_ray";
+        tooltipComponents.accept(Component.translatable(tooltipKey).withStyle(ChatFormatting.GRAY));
+        tooltipComponents.accept(Component.translatable("tooltip.antarchy.size_ray_milk_reset").withStyle(ChatFormatting.GRAY));
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<SizeRayItem>(FIRE_CONTROLLER, state -> PlayState.STOP)
+                .triggerableAnim(this.fireAnimationName, RawAnimation.begin().then(this.fireAnimationName, LoopType.PLAY_ONCE)));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.geoCache;
+    }
+
+    @Override
+    public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
+        consumer.accept(new GeoRenderProvider() {
+            private AnimatedHeldItemRenderer<SizeRayItem> renderer;
+
+            @Override
+            public GeoItemRenderer<?> getGeoItemRenderer() {
+                if (this.renderer == null) {
+                    this.renderer = new AnimatedHeldItemRenderer<>(new ResourceBackedGeoItemModel<>(geoModelLocation, geoTextureLocation, geoAnimationLocation));
+                }
+
+                return this.renderer;
+            }
+        });
+    }
+
+    private void triggerFireAnimation(ServerLevel level, LivingEntity livingEntity, ItemStack stack) {
+        long animatableId = GeoItem.getOrAssignId(stack, level);
+        triggerAnim(livingEntity, animatableId, FIRE_CONTROLLER, this.fireAnimationName);
+    }
+
+    public SoundEvent getChargeSound() {
+        return this.rayType == SizeRayProjectileEntity.SizeRayType.SHRINK
+                ? AntarchySoundEvents.SHRINK_RAY_CHARGE.get()
+                : AntarchySoundEvents.GROWTH_RAY_CHARGE.get();
+    }
+
+    public SoundEvent getLoopSound() {
+        return this.rayType == SizeRayProjectileEntity.SizeRayType.SHRINK
+                ? AntarchySoundEvents.SHRINK_RAY_LOOP.get()
+                : AntarchySoundEvents.GROWTH_RAY_LOOP.get();
+    }
+
+    public static int getChargeLevel(int useTicks) {
+        return Math.max(1, 1 + useTicks / CHARGE_TICKS_PER_LEVEL);
+    }
+
+    private static SoundEvent getFireSound(int chargeLevel) {
+        if (chargeLevel >= 3) {
+            return AntarchySoundEvents.SIZE_RAY_CRITSHOT.get();
+        }
+        if (chargeLevel == 2) {
+            return AntarchySoundEvents.SIZE_RAY_MEDIUMSHOT.get();
+        }
+        return AntarchySoundEvents.SIZE_RAY_WEAKSHOT.get();
+    }
+}

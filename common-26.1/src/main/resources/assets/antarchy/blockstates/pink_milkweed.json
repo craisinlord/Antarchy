@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "half=lower": {
+      "model": "antarchy:block/pink_milkweed_bottom"
+    },
+    "half=upper": {
+      "model": "antarchy:block/pink_milkweed_top"
+    }
+  }
+}

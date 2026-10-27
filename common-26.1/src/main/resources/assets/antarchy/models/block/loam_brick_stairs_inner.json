@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "antarchy:block/loam/loam_bricks",
+    "side": "antarchy:block/loam/loam_bricks",
+    "top": "antarchy:block/loam/loam_bricks"
+  }
+}
+

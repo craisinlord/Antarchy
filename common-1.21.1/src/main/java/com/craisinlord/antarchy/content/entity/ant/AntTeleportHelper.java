@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.entity.ant;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.elythia.AntDescent;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -135,7 +136,7 @@ public final class AntTeleportHelper {
         }
 
         if (entityTypeId.equals(ResourceLocation.fromNamespaceAndPath("antarchy", "brown_ant"))) {
-            return teleportToOrFromConfiguredDimension(player, AntarchySettings.brownAntDestinationDimension());
+            return teleportToOrFromConfiguredDimension(player, AntarchySettings.brownAntDestinationDimension(), true);
         }
         if (entityTypeId.equals(ResourceLocation.fromNamespaceAndPath("antarchy", "red_ant"))) {
             return teleportToOrFromConfiguredDimension(player, AntarchySettings.redAntDestinationDimension());
@@ -151,6 +152,10 @@ public final class AntTeleportHelper {
     }
 
     private static InteractionResult teleportToOrFromConfiguredDimension(ServerPlayer player, ResourceKey<Level> configuredDimensionKey) {
+        return teleportToOrFromConfiguredDimension(player, configuredDimensionKey, false);
+    }
+
+    private static InteractionResult teleportToOrFromConfiguredDimension(ServerPlayer player, ResourceKey<Level> configuredDimensionKey, boolean brownAnt) {
         ServerLevel destination = player.serverLevel().dimension() == configuredDimensionKey
                 ? resolveReturnDestinationLevel(player)
                 : player.server.getLevel(configuredDimensionKey);
@@ -158,6 +163,9 @@ public final class AntTeleportHelper {
             return InteractionResult.PASS;
         }
 
+        if (brownAnt && AntDescent.start(player, destination)) {
+            return InteractionResult.CONSUME;
+        }
         arriveWithCompanions(player, destination);
         return InteractionResult.CONSUME;
     }
@@ -192,7 +200,7 @@ public final class AntTeleportHelper {
             return InteractionResult.SUCCESS;
         }
 
-        return teleportToOrFromConfiguredDimension(serverPlayer, ant.destinationDimension());
+        return teleportToOrFromConfiguredDimension(serverPlayer, ant.destinationDimension(), ant instanceof BrownAntEntity);
     }
 
     static boolean isRightClickDimensionEnabled(BaseAntEntity ant) {
@@ -586,7 +594,7 @@ public final class AntTeleportHelper {
         return true;
     }
 
-    private static InteractionResult failArrival(ServerPlayer player) {
+    public static InteractionResult failArrival(ServerPlayer player) {
         player.displayClientMessage(Component.translatable("message.antarchy.teleport_arrival_failed"), true);
         return InteractionResult.CONSUME;
     }

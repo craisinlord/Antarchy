@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": "minecraft:stick",
+    "X": "#antarchy:truffalo_tufts"
+  },
+  "result": {
+    "id": "minecraft:painting"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "antarchy:block/ouranwood_wall_hanging_sign",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "antarchy:block/ouranwood_wall_hanging_sign",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "antarchy:block/ouranwood_wall_hanging_sign"
+    },
+    "facing=west": {
+      "model": "antarchy:block/ouranwood_wall_hanging_sign",
+      "y": 90
+    }
+  }
+}

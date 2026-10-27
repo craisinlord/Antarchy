@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:antimetal",
+    "antarchy:polished_antimetal",
+    "antarchy:antimetal_stairs",
+    "antarchy:antimetal_slab",
+    "antarchy:polished_antimetal_stairs",
+    "antarchy:polished_antimetal_slab"
+  ]
+}

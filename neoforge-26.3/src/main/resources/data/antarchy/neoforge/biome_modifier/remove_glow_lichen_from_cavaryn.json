@@ -1,0 +1,8 @@
+{
+  "type": "neoforge:remove_features",
+  "biomes": "#antarchy:is_cavaryn",
+  "features": [
+    "minecraft:glow_lichen"
+  ],
+  "step": "vegetal_decoration"
+}

@@ -1,0 +1,37 @@
+{
+  "parent": "antarchy:visit_elythia",
+  "criteria": {
+    "kill_stratoshark": {
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "antarchy:stratoshark"
+          }
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.shark_weak.description"
+    },
+    "frame": "task",
+    "icon": {
+      "id": "antarchy:stratoshark_fin"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.shark_weak.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_stratoshark"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "AAN",
+    "ASN",
+    " N "
+  ],
+  "key": {
+    "A": "antarchy:ultimate_axe",
+    "S": "antarchy:ultimate_sword",
+    "N": "minecraft:netherite_ingot"
+  },
+  "result": {
+    "id": "antarchy:battle_axe"
+  }
+}

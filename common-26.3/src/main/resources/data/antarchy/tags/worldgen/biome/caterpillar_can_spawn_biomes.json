@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "#antarchy:caterpillar_spawn_biomes",
+    "#antarchy:flower_forest_caterpillar_spawn_biomes"
+  ]
+}

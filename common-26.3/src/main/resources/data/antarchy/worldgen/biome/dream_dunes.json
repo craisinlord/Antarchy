@@ -1,0 +1,120 @@
+{
+  "has_precipitation": false,
+  "temperature": 2.0,
+  "downfall": 0.0,
+  "attributes": {
+    "minecraft:audio/ambient_sounds": {
+      "mood": {
+        "sound": "antarchy:thoraxis_dream_dunes_mood",
+        "tick_delay": 8572,
+        "block_search_extent": 8,
+        "offset": 2.0
+      },
+      "additions": {
+        "sound": "antarchy:thoraxis_dream_dunes_biome_additions",
+        "tick_chance": 0.0005
+      }
+    },
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.thoraxis",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.03,
+    "minecraft:gameplay/natural_mob_spawns": {
+      "argument": {
+        "spawn_costs": {
+          "antarchy:emperor_scorpion": {
+            "energy_budget": 0.18,
+            "charge": 1.4
+          }
+        },
+        "spawns_by_category": {
+          "monster": [
+            {
+              "type": "antarchy:scorpion",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 5,
+                "min_inclusive": 2
+              },
+              "weight": 40
+            },
+            {
+              "type": "antarchy:emperor_scorpion",
+              "count": 1,
+              "weight": 3
+            },
+            {
+              "type": "antarchy:manticore",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 2,
+                "min_inclusive": 1
+              },
+              "weight": 12
+            }
+          ],
+          "creature": [
+            {
+              "type": "antarchy:bed_bug",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 4,
+                "min_inclusive": 2
+              },
+              "weight": 15
+            }
+          ]
+        }
+      },
+      "modifier": "overlay"
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "minecraft:ash"
+        },
+        "probability": 0.004
+      }
+    ],
+    "minecraft:visual/fog_color": "#0f0000",
+    "minecraft:visual/sky_color": "#000000",
+    "minecraft:visual/water_fog_color": "#000000"
+  },
+  "effects": {
+    "water_color": "#050000"
+  },
+  "carvers": [],
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:bluestone_ore",
+      "antarchy:thoraxis_ichor_lake",
+      "antarchy:thoraxis_transition_throat",
+      "antarchy:thoraxis_transition_throat_large",
+      "antarchy:dimensional_tears"
+    ],
+    [],
+    [
+      "antarchy:patch_fire"
+    ],
+    [
+      "antarchy:queen_havoc_trail",
+      "antarchy:nyxite_spikes",
+      "antarchy:patch_ceiling_fire"
+    ],
+    [
+      "antarchy:cornea_stalk_patch",
+      "antarchy:patch_ceiling_cornea_stalk"
+    ]
+  ]
+}

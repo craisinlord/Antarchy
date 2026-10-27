@@ -1,0 +1,8 @@
+{
+  "multipart": [
+    { "when": { "bottom": "false", "inverted": "false" }, "apply": { "model": "antarchy:block/antimetal_scaffolding_stable" } },
+    { "when": { "bottom": "true",  "inverted": "false" }, "apply": { "model": "antarchy:block/antimetal_scaffolding_unstable" } },
+    { "when": { "bottom": "false", "inverted": "true"  }, "apply": { "model": "antarchy:block/antimetal_scaffolding_stable", "x": 180 } },
+    { "when": { "bottom": "true",  "inverted": "true"  }, "apply": { "model": "antarchy:block/antimetal_scaffolding_unstable", "x": 180 } }
+  ]
+}

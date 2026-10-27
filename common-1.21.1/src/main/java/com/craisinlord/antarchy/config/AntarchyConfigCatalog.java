@@ -149,6 +149,8 @@ public final class AntarchyConfigCatalog {
                 || name.startsWith("portalGunMoon")
                 || name.equals("hushweedSporeLifetimeSeconds")
                 || name.equals("elythiaFireflyParticlesEnabled")
+                || name.equals("elythiaFogEnabled")
+                || name.equals("elythiaGroundMistEnabled")
                 || name.equals("duplicatorTreeEnabled")
                 || name.equals("glowVinesUnderLeaves")
                 || name.equals("swingThroughGrassEnabled")

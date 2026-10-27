@@ -1,0 +1,394 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "tile_position": "top_left",
+        "rotation": "0"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/top_left"
+      }
+    },
+    {
+      "when": {
+        "tile_position": "top_middle",
+        "rotation": "0"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/top_middle"
+      }
+    },
+    {
+      "when": {
+        "tile_position": "top_right",
+        "rotation": "0"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/top_right"
+      }
+    },
+    {
+      "when": {
+        "tile_position": "middle_left",
+        "rotation": "0"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/middle_left"
+      }
+    },
+    {
+      "when": {
+        "tile_position": "center",
+        "rotation": "0"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/center"
+      }
+    },
+    {
+      "when": {
+        "tile_position": "middle_right",
+        "rotation": "0"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/middle_right"
+      }
+    },
+    {
+      "when": {
+        "tile_position": "bottom_left",
+        "rotation": "0"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/bottom_left"
+      }
+    },
+    {
+      "when": {
+        "tile_position": "bottom_middle",
+        "rotation": "0"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/bottom_middle"
+      }
+    },
+    {
+      "when": {
+        "tile_position": "bottom_right",
+        "rotation": "0"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/bottom_right"
+      }
+    },
+    {
+      "when": {
+        "tile_position": "top_left",
+        "rotation": "90"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/bottom_left",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "tile_position": "top_middle",
+        "rotation": "90"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/middle_left",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "tile_position": "top_right",
+        "rotation": "90"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/top_left",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "tile_position": "middle_left",
+        "rotation": "90"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/bottom_middle",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "tile_position": "center",
+        "rotation": "90"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/center",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "tile_position": "middle_right",
+        "rotation": "90"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/top_middle",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "tile_position": "bottom_left",
+        "rotation": "90"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/bottom_right",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "tile_position": "bottom_middle",
+        "rotation": "90"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/middle_right",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "tile_position": "bottom_right",
+        "rotation": "90"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/top_right",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "tile_position": "top_left",
+        "rotation": "180"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/bottom_right",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "tile_position": "top_middle",
+        "rotation": "180"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/bottom_middle",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "tile_position": "top_right",
+        "rotation": "180"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/bottom_left",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "tile_position": "middle_left",
+        "rotation": "180"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/middle_right",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "tile_position": "center",
+        "rotation": "180"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/center",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "tile_position": "middle_right",
+        "rotation": "180"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/middle_left",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "tile_position": "bottom_left",
+        "rotation": "180"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/top_right",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "tile_position": "bottom_middle",
+        "rotation": "180"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/top_middle",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "tile_position": "bottom_right",
+        "rotation": "180"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/top_left",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "tile_position": "top_left",
+        "rotation": "270"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/top_right",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "tile_position": "top_middle",
+        "rotation": "270"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/middle_right",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "tile_position": "top_right",
+        "rotation": "270"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/bottom_right",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "tile_position": "middle_left",
+        "rotation": "270"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/top_middle",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "tile_position": "center",
+        "rotation": "270"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/center",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "tile_position": "middle_right",
+        "rotation": "270"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/bottom_middle",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "tile_position": "bottom_left",
+        "rotation": "270"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/top_left",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "tile_position": "bottom_middle",
+        "rotation": "270"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/middle_left",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "tile_position": "bottom_right",
+        "rotation": "270"
+      },
+      "apply": {
+        "model": "antarchy:block/giant_lily_pad/bottom_left",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "has_lotus": "true",
+        "rotation": "0"
+      },
+      "apply": {
+        "model": "antarchy:block/lotus_on_giant_lily_pad"
+      }
+    },
+    {
+      "when": {
+        "has_lotus": "true",
+        "rotation": "90"
+      },
+      "apply": {
+        "model": "antarchy:block/lotus_on_giant_lily_pad",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "has_lotus": "true",
+        "rotation": "180"
+      },
+      "apply": {
+        "model": "antarchy:block/lotus_on_giant_lily_pad",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "has_lotus": "true",
+        "rotation": "270"
+      },
+      "apply": {
+        "model": "antarchy:block/lotus_on_giant_lily_pad",
+        "y": 270
+      }
+    }
+  ]
+}

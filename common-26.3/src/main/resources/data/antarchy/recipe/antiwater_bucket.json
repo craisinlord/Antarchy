@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:water_bucket",
+    "antarchy:lucid_eye"
+  ],
+  "result": {
+    "id": "antarchy:antiwater_bucket"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "type": "entity",
+  "category": "thoraxis",
+  "folder": "antarchy:thoraxis",
+  "sort_order": 60,
+  "title": "guide.antarchy.entry.queen.title",
+  "subtitle": "guide.antarchy.entry.queen.subtitle",
+  "description": [
+    "guide.antarchy.entry.queen.description",
+    "guide.antarchy.entry.queen.description2",
+    "guide.antarchy.entry.queen.description3",
+    "guide.antarchy.entry.queen.description5",
+    "guide.antarchy.entry.queen.description6",
+    "guide.antarchy.entry.queen.description4"
+  ],
+  "entity": "antarchy:queen",
+  "cover_entity": "antarchy:queen",
+  "locator": "antarchy:queen",
+  "dimension": "antarchy:thoraxis",
+  "rotation": 45,
+  "render_scale": 0.5,
+  "green_tint": false,
+  "gallery": [
+    "antarchy:manticore",
+    "antarchy:princess",
+    {"item": "antarchy:queen_scale"},
+    {"item": "antarchy:princess_egg"},
+    {"item": "antarchy:blood_crystal_shard"},
+    {"item": "antarchy:music_disc_the_queen"}
+  ]
+}

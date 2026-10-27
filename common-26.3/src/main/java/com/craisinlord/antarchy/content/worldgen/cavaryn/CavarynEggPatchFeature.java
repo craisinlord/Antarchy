@@ -1,0 +1,172 @@
+package com.craisinlord.antarchy.content.worldgen.cavaryn;
+
+import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.block.CrawlingBlightEggBlock;
+import com.craisinlord.antarchy.content.block.SkulkingFrightEggBlock;
+import com.mojang.serialization.MapCodec;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.feature.Feature;
+
+public record CavarynEggPatchFeature() implements Feature {
+    private static final Identifier AMBER_MOSS_BLOCK_ID = Identifier.fromNamespaceAndPath(Antarchy.MODID, "amber_moss_block");
+    private static final int SEARCH_RADIUS = 8;
+    private static final int SEARCH_ATTEMPTS = 24;
+    private static final int VERTICAL_SCAN = 12;
+    private static final int MAX_RADIUS_Y = 3;
+
+    public static final MapCodec<CavarynEggPatchFeature> CODEC = MapCodec.unit(CavarynEggPatchFeature::new);
+
+    @Override
+    public MapCodec<CavarynEggPatchFeature> codec() {
+        return CODEC;
+    }
+
+    @Override
+    public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
+
+        Block amberMossBlock = getBlock(AMBER_MOSS_BLOCK_ID);
+        BlockPos center = findCavityCenter(level, origin, random);
+        if (center == null) {
+            return false;
+        }
+
+        EggType eggType = random.nextBoolean() ? EggType.CRAWLING_BLIGHT : EggType.SKULKING_FRIGHT;
+        return carveCavityAndPlaceEggs(level, center, random, eggType, amberMossBlock);
+    }
+
+    private static BlockPos findCavityCenter(WorldGenLevel level, BlockPos origin, RandomSource random) {
+        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
+        for (int attempt = 0; attempt < SEARCH_ATTEMPTS; attempt++) {
+            int x = origin.getX() + random.nextInt(SEARCH_RADIUS * 2 + 1) - SEARCH_RADIUS;
+            int z = origin.getZ() + random.nextInt(SEARCH_RADIUS * 2 + 1) - SEARCH_RADIUS;
+            int y = origin.getY() + random.nextInt(VERTICAL_SCAN * 2 + 1) - VERTICAL_SCAN;
+            y = Mth.clamp(y, level.getMinY() + MAX_RADIUS_Y + 2, level.getMaxY() + 1 - MAX_RADIUS_Y - 2);
+
+            mutable.set(x, y, z);
+            if (isSolidEnoughForCavity(level, mutable)) {
+                return mutable.immutable();
+            }
+        }
+        return null;
+    }
+
+    private static boolean isSolidEnoughForCavity(WorldGenLevel level, BlockPos center) {
+        BlockState centerState = level.getBlockState(center);
+        if (!blocksMotion(centerState) || centerState.is(Blocks.BEDROCK)) {
+            return false;
+        }
+
+        int solidCount = 0;
+        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
+        for (int dx = -2; dx <= 2; dx += 2) {
+            for (int dy = -1; dy <= 1; dy++) {
+                for (int dz = -2; dz <= 2; dz += 2) {
+                    mutable.set(center.getX() + dx, center.getY() + dy, center.getZ() + dz);
+                    if (blocksMotion(level.getBlockState(mutable))) {
+                        solidCount++;
+                    }
+                }
+            }
+        }
+        return solidCount >= 9;
+    }
+
+    private boolean carveCavityAndPlaceEggs(WorldGenLevel level, BlockPos center, RandomSource random, EggType eggType, Block amberMossBlock) {
+        int rx = 3 + random.nextInt(3);
+        int ry = 2 + random.nextInt(2);
+        int rz = 3 + random.nextInt(3);
+
+        for (int dx = -rx; dx <= rx; dx++) {
+            for (int dy = -ry; dy <= ry; dy++) {
+                for (int dz = -rz; dz <= rz; dz++) {
+                    double norm = (double)(dx * dx) / (rx * rx)
+                                + (double)(dy * dy) / (ry * ry)
+                                + (double)(dz * dz) / (rz * rz);
+                    if (norm > 1.0) {
+                        continue;
+                    }
+                    BlockPos pos = center.offset(dx, dy, dz);
+                    BlockState existing = level.getBlockState(pos);
+                    if (!existing.is(Blocks.BEDROCK) && blocksMotion(existing) && existing.getFluidState().isEmpty()) {
+                        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+                    }
+                }
+            }
+        }
+
+        List<BlockPos> eggPositions = new ArrayList<>();
+        for (int dx = -rx; dx <= rx; dx++) {
+            for (int dy = -ry - 1; dy <= ry; dy++) {
+                for (int dz = -rz; dz <= rz; dz++) {
+                    BlockPos pos = center.offset(dx, dy, dz);
+                    if (!level.getBlockState(pos).isAir()) {
+                        continue;
+                    }
+                    BlockPos below = pos.below();
+                    BlockState belowState = level.getBlockState(below);
+                    if (blocksMotion(belowState) && !belowState.isAir() && belowState.isFaceSturdy(level, below, Direction.UP)) {
+                        eggPositions.add(pos);
+                    }
+                }
+            }
+        }
+
+        if (eggPositions.isEmpty()) {
+            return false;
+        }
+
+        boolean placedAny = false;
+        for (BlockPos eggPos : eggPositions) {
+            if (random.nextFloat() > 0.65f) {
+                continue;
+            }
+
+            if (amberMossBlock != null) {
+                BlockPos floorPos = eggPos.below();
+                BlockState floorState = level.getBlockState(floorPos);
+                if (blocksMotion(floorState) && !floorState.is(Blocks.BEDROCK) && floorState.getFluidState().isEmpty()) {
+                    level.setBlock(floorPos, amberMossBlock.defaultBlockState(), 2);
+                }
+            }
+
+            BlockState eggState = eggType == EggType.CRAWLING_BLIGHT
+                    ? AntarchyObjects.CRAWLING_BLIGHT_EGGS.get().defaultBlockState()
+                    : AntarchyObjects.SKULKING_FRIGHT_EGGS.get().defaultBlockState();
+            eggState = eggState.setValue(
+                    eggType == EggType.CRAWLING_BLIGHT ? CrawlingBlightEggBlock.EGGS : SkulkingFrightEggBlock.EGGS,
+                    1 + random.nextInt(4));
+            level.setBlock(eggPos, eggState, 3);
+            placedAny = true;
+        }
+
+        return placedAny;
+    }
+
+    private static Block getBlock(Identifier id) {
+        Optional<Block> block = BuiltInRegistries.BLOCK.getOptional(id);
+        return block.orElse(null);
+    }
+
+    private enum EggType {
+        CRAWLING_BLIGHT,
+        SKULKING_FRIGHT
+    }
+
+    private static boolean blocksMotion(BlockState state) {
+        return state.isSolid() && !state.is(Blocks.COBWEB) && !state.is(Blocks.BAMBOO_SAPLING);
+    }
+}

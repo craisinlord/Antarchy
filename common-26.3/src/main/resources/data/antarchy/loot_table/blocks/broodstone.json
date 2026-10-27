@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:broodstone"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "antarchy:blocks/broodstone"
+}

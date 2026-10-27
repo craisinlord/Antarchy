@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "antarchy:tigers_eye"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "antarchy:tigers_eye"
+      }
+    ]
+  }
+}

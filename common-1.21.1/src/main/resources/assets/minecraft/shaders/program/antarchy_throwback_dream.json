@@ -1,0 +1,26 @@
+{
+  "blend": {
+    "func": "add",
+    "srcrgb": "one",
+    "dstrgb": "zero"
+  },
+  "vertex": "sobel",
+  "fragment": "antarchy_throwback_dream",
+  "attributes": [ "Position" ],
+  "samplers": [
+    { "name": "DiffuseSampler" },
+    { "name": "PrevSampler" }
+  ],
+  "uniforms": [
+    { "name": "ProjMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },
+    { "name": "InSize", "type": "float", "count": 2, "values": [ 1.0, 1.0 ] },
+    { "name": "OutSize", "type": "float", "count": 2, "values": [ 1.0, 1.0 ] },
+    { "name": "Baseline", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "Zone", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "Distortion", "type": "float", "count": 1, "values": [ 1.0 ] },
+    { "name": "DreamTime", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "Ghost", "type": "float", "count": 1, "values": [ 0.0 ] },
+    { "name": "Saturation", "type": "float", "count": 1, "values": [ 1.0 ] },
+    { "name": "Wake", "type": "float", "count": 1, "values": [ 1.0 ] }
+  ]
+}

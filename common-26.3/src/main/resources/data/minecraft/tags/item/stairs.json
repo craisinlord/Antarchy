@@ -1,0 +1,29 @@
+{
+  "replace": false,
+  "values": [
+    "antarchy:nyxite_stairs",
+    "antarchy:nyxite_brick_stairs",
+    "antarchy:polished_nyxite_stairs",
+    "antarchy:shellstone_stairs",
+    "antarchy:polished_shellstone_stairs",
+    "antarchy:shellstone_brick_stairs",
+    "antarchy:mossy_shellstone_brick_stairs",
+    "antarchy:dream_sandstone_stairs",
+    "antarchy:smooth_dream_sandstone_stairs",
+    "antarchy:typhonite_stairs",
+    "antarchy:typhonite_brick_stairs",
+    "antarchy:polished_typhonite_stairs",
+    "antarchy:cut_uranium_stairs",
+    "antarchy:cut_titanium_stairs",
+    "antarchy:broodstone_stairs",
+    "antarchy:polished_broodstone_stairs",
+    "antarchy:broodstone_brick_stairs",
+    "antarchy:myrmite_stairs",
+    "antarchy:polished_myrmite_stairs",
+    "antarchy:myrmite_brick_stairs",
+    "antarchy:mossy_myrmite_brick_stairs",
+    "antarchy:mossy_broodstone_brick_stairs",
+    "antarchy:mossy_nyxite_brick_stairs",
+    "antarchy:loam_brick_stairs"
+  ]
+}

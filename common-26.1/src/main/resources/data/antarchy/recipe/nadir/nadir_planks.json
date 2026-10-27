@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "planks",
+  "ingredients": [
+    "#antarchy:nadir_logs"
+  ],
+  "result": {
+    "count": 4,
+    "id": "antarchy:nadir_planks"
+  }
+}

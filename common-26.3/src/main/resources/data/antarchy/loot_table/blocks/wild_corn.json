@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "antarchy:wild_corn",
+        "state": {
+          "half": "lower"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:corn"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "antarchy:blocks/wild_corn"
+}

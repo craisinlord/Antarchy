@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "UTU",
+    "T T",
+    "U U"
+  ],
+  "key": {
+    "U": "antarchy:uranium_ingot",
+    "T": "antarchy:titanium_ingot"
+  },
+  "result": {
+    "id": "antarchy:ultimate_leggings"
+  }
+}

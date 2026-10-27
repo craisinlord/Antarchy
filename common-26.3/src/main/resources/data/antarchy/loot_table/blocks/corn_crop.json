@@ -1,0 +1,91 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "name": "antarchy:corn",
+              "condition": {
+                "type": "minecraft:match_block",
+                "blocks": "antarchy:corn_crop",
+                "state": {
+                  "half": "lower",
+                  "age": "3"
+                }
+              }
+            },
+            {
+              "type": "minecraft:item",
+              "name": "antarchy:corn_seeds",
+              "condition": {
+                "type": "minecraft:match_block",
+                "blocks": "antarchy:corn_crop",
+                "state": {
+                  "half": "lower"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "condition": {
+        "type": "minecraft:all_of",
+        "terms": [
+          {
+            "type": "minecraft:match_block",
+            "blocks": "antarchy:corn_crop",
+            "state": {
+              "half": "lower",
+              "age": "3"
+            }
+          },
+          {
+            "type": "minecraft:random_chance",
+            "chance": 0.5
+          }
+        ]
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:corn"
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "condition": {
+        "type": "minecraft:all_of",
+        "terms": [
+          {
+            "type": "minecraft:match_block",
+            "blocks": "antarchy:corn_crop",
+            "state": {
+              "half": "lower",
+              "age": "3"
+            }
+          },
+          {
+            "type": "minecraft:random_chance",
+            "chance": 0.5
+          }
+        ]
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:corn"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "antarchy:blocks/corn_crop"
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_sign_rot_1",
+  "textures": {
+    "all": "antarchy:block/ouranwood_sign",
+    "particle": "antarchy:block/ouranwood/ouranwood_planks"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:ore",
+  "size": 4,
+  "discard_chance_on_air_exposure": 0.0,
+  "targets": [
+    {
+      "target": {
+        "predicate_type": "minecraft:block_match",
+        "block": "antarchy:broodstone"
+      },
+      "state": "antarchy:broodstone_uranium_ore"
+    }
+  ]
+}

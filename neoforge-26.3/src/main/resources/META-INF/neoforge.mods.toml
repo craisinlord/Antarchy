@@ -1,0 +1,89 @@
+modLoader="javafml"
+loaderVersion="[2,)"
+license="All rights reserved"
+
+[[mods]]
+modId="antarchy"
+iconFile="../assets/antarchy/antarchy_logo.png"
+    iconBlur=false
+    version="${version}"
+    displayName="Antarchy"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/antarchy"
+    authors="CraisinLord"
+    description='''
+    ANTS! ANTS! ANTS! ANTS!
+    '''
+
+[[mixins]]
+    config = "antarchy-common.mixins.json"
+
+[[mixins]]
+    config = "antarchy-neoforge.mixins.json"
+
+[[dependencies.antarchy]]
+    modId="minecraft"
+    type="required"
+    versionRange="[26.3,26.4)"
+
+[[dependencies.antarchy]]
+    modId="neoforge"
+    type="required"
+    versionRange="[26.3,)"
+
+[[dependencies.antarchy]]
+    modId="anthology"
+    type="required"
+    versionRange="[1.0.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.antarchy]]
+modId="antos"
+    type="required"
+    versionRange="[${antos_version},)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.antarchy]]
+    modId="integrated_api"
+    type="required"
+    versionRange="[${intapi_version},)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.antarchy]]
+    modId="geckolib"
+    type="required"
+    versionRange="*"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.antarchy]]
+    modId="sizeable_foliage"
+    type="required"
+    versionRange="*"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.antarchy]]
+    modId="apple_cows"
+    type="incompatible"
+    versionRange="*"
+    ordering="NONE"
+    side="BOTH"
+    reason="Antarchy already includes Apple Cows. Remove the standalone Apple Cows mod."
+
+[[dependencies.antarchy]]
+    modId="hoverboards"
+    type="incompatible"
+    versionRange="*"
+    ordering="NONE"
+    side="BOTH"
+    reason="Antarchy already includes Hoverboards. Remove the standalone Hoverboards mod."
+
+[[dependencies.antarchy]]
+    modId="configured"
+    type="optional"
+    versionRange="*"
+    ordering="NONE"
+    reason="Enables an in-game config screen for Antarchy's settings; Antarchy works fully without it."

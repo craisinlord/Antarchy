@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "condition": {
+            "type": "minecraft:match_block",
+            "blocks": "antarchy:pink_milkweed",
+            "state": {
+              "half": "lower"
+            }
+          },
+          "name": "antarchy:pink_milkweed"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "antarchy:blocks/pink_milkweed"
+}

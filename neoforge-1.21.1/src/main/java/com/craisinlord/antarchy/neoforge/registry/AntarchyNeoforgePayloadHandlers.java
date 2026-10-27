@@ -181,5 +181,26 @@ public class AntarchyNeoforgePayloadHandlers {
                         com.craisinlord.antarchy.content.client.HordeClientState.update(payload.intensity())
                 )
         );
+        registrar.playToClient(
+                com.craisinlord.antarchy.content.network.ThrowbackZonePayload.TYPE,
+                com.craisinlord.antarchy.content.network.ThrowbackZonePayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() ->
+                        com.craisinlord.antarchy.content.client.ThrowbackClientState.update(payload.strength())
+                )
+        );
+        registrar.playToClient(
+                com.craisinlord.antarchy.content.network.AntDescentPayload.TYPE,
+                com.craisinlord.antarchy.content.network.AntDescentPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() ->
+                        com.craisinlord.antarchy.content.client.AntDescentClientState.handle(payload)
+                )
+        );
+        registrar.playToClient(
+                com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload.TYPE,
+                com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() ->
+                        com.craisinlord.antarchy.content.client.ElythiaEchoes.handleTest(payload.immediate())
+                )
+        );
     }
 }

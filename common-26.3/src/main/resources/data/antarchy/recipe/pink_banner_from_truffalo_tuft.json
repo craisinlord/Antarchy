@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "###",
+    "###",
+    " S "
+  ],
+  "key": {
+    "#": "antarchy:pink_truffalo_tuft",
+    "S": "minecraft:stick"
+  },
+  "result": {
+    "id": "minecraft:pink_banner"
+  }
+}

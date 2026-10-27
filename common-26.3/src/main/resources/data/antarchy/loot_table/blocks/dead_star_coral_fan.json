@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "condition": {
+        "type": "minecraft:match_tool",
+        "predicate": {
+          "components": {
+            "minecraft:enchantments": {
+              "minecraft:silk_touch": 1
+            }
+          }
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:dead_star_coral_fan"
+        }
+      ]
+    }
+  ]
+}

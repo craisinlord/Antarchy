@@ -27,6 +27,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
     private static final String SIZEABLE_FOLIAGE_MODID = "sizeable_foliage";
     private static final ResourceLocation CAMELLIA_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "camellia");
     private static final ResourceLocation SPIDER_LILY_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "spider_lily");
+    private static final net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> PRIMORDIAL_GROUND = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("antarchy", "primordial_ground"));
 
     private final Variant variant;
 
@@ -509,7 +510,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
             case FOREST -> 0.24F;
             default -> 0.45F;
         };
-        if (!isValidGround(level, groundPos) || random.nextFloat() > overgrowChance) {
+        if (!isValidGround(level, groundPos) || level.getBlockState(groundPos).is(PRIMORDIAL_GROUND) || random.nextFloat() > overgrowChance) {
             return;
         }
 
@@ -530,7 +531,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
                 continue;
             }
             BlockPos spreadPos = groundPos.offset(direction.stepX, 0, direction.stepZ);
-            if (isValidGround(level, spreadPos)) {
+            if (isValidGround(level, spreadPos) && !level.getBlockState(spreadPos).is(PRIMORDIAL_GROUND)) {
                 level.setBlock(spreadPos, replacement, 2);
             }
         }

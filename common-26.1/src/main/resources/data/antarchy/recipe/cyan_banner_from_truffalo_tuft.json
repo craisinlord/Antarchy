@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "###",
+    "###",
+    " S "
+  ],
+  "key": {
+    "#": "antarchy:cyan_truffalo_tuft",
+    "S": "minecraft:stick"
+  },
+  "result": {
+    "id": "minecraft:cyan_banner"
+  }
+}

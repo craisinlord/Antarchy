@@ -1,0 +1,31 @@
+package com.craisinlord.antarchy.content.worldgen.elythia;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
+import net.minecraft.util.valueproviders.IntProvider;
+import net.minecraft.util.valueproviders.IntProviders;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
+
+public record PeachTreeConfiguration(
+        Holder<BlockStateProvider> trunkProvider,
+        Holder<BlockStateProvider> foliageProvider,
+        IntProvider height,
+        IntProvider canopyRadius,
+        IntProvider branchCount,
+        int trunkWidth,
+        float fruitChance,
+        float topCanopyScale
+) {
+    public static final MapCodec<PeachTreeConfiguration> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            BlockStateProvider.CODEC.fieldOf("trunk_provider").forGetter(PeachTreeConfiguration::trunkProvider),
+            BlockStateProvider.CODEC.fieldOf("foliage_provider").forGetter(PeachTreeConfiguration::foliageProvider),
+            IntProviders.codec(4, 64).fieldOf("height").forGetter(PeachTreeConfiguration::height),
+            IntProviders.codec(2, 16).fieldOf("canopy_radius").forGetter(PeachTreeConfiguration::canopyRadius),
+            IntProviders.codec(1, 12).fieldOf("branch_count").forGetter(PeachTreeConfiguration::branchCount),
+            Codec.intRange(1, 2).optionalFieldOf("trunk_width", 1).forGetter(PeachTreeConfiguration::trunkWidth),
+            Codec.floatRange(0.0F, 1.0F).optionalFieldOf("fruit_chance", 0.45F).forGetter(PeachTreeConfiguration::fruitChance),
+            Codec.floatRange(0.2F, 1.2F).optionalFieldOf("top_canopy_scale", 0.8F).forGetter(PeachTreeConfiguration::topCanopyScale)
+    ).apply(instance, PeachTreeConfiguration::new));
+}

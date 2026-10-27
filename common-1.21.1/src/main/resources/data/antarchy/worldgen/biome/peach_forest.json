@@ -1,9 +1,9 @@
 {
-  "has_precipitation": false,
+  "has_precipitation": true,
   "temperature": 0.69,
   "downfall": 0.97,
   "effects": {
-    "fog_color": 8084735,
+    "fog_color": 10849791,
     "water_color": 5021432,
     "water_fog_color": 2502722,
     "sky_color": 8084735,
@@ -23,8 +23,7 @@
       "replace_current_music": true
     }
   },
-  "spawn_costs": {
-  },
+  "spawn_costs": {},
   "carvers": {
     "air": [],
     "liquid": []
@@ -72,7 +71,8 @@
       "antarchy:peach_tree",
       "antarchy:peach_forest_flora",
       "antarchy:elythia_rainbow_ant_nests",
-      "antarchy:giant_lily_pad_patch_peach_forest"
+      "antarchy:giant_lily_pad_patch_peach_forest",
+      "antarchy:throwback_nerd_pole"
     ],
     []
   ],
