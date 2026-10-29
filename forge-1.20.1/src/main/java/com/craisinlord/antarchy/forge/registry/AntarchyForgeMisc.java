@@ -124,6 +124,8 @@ public final class AntarchyForgeMisc {
             RECIPE_SERIALIZERS.register("americanize", () -> AmericanizeRecipe.SERIALIZER);
     public static final RegistryObject<net.minecraft.world.item.crafting.RecipeSerializer<com.craisinlord.antarchy.content.recipe.PortalGunVariantRecipe>> PORTAL_GUN_VARIANT_SERIALIZER =
             RECIPE_SERIALIZERS.register("portal_gun_variant", () -> com.craisinlord.antarchy.content.recipe.PortalGunVariantRecipe.SERIALIZER);
+    public static final RegistryObject<net.minecraft.world.item.crafting.RecipeSerializer<com.craisinlord.antarchy.content.recipe.BigBerthaVariantRecipe>> BIG_BERTHA_VARIANT_SERIALIZER =
+            RECIPE_SERIALIZERS.register("big_bertha_variant", () -> com.craisinlord.antarchy.content.recipe.BigBerthaVariantRecipe.SERIALIZER);
 
     public static final RegistryObject<Attribute> DOUBLE_DAMAGE_CHANCE = ATTRIBUTES.register(
             "double_damage_chance",
@@ -295,6 +297,8 @@ public final class AntarchyForgeMisc {
             () -> new ElythiaFloraFeature(NoneFeatureConfiguration.CODEC, ElythiaFloraFeature.Variant.FOREST));
     public static final RegistryObject<ElythiaFloraFeature> ELYTHIA_MEADOW_FLORA = FEATURES.register("elythia_meadow_flora",
             () -> new ElythiaFloraFeature(NoneFeatureConfiguration.CODEC, ElythiaFloraFeature.Variant.MEADOW));
+    public static final RegistryObject<ElythiaFloraFeature> PRIMORDIAL_PLAINS_FLORA = FEATURES.register("primordial_plains_flora",
+            () -> new ElythiaFloraFeature(NoneFeatureConfiguration.CODEC, ElythiaFloraFeature.Variant.PRIMORDIAL_PLAINS));
     public static final RegistryObject<ElythiaFloraFeature> PEACH_FOREST_FLORA = FEATURES.register("peach_forest_flora",
             () -> new ElythiaFloraFeature(NoneFeatureConfiguration.CODEC, ElythiaFloraFeature.Variant.PEACH_FOREST));
     public static final RegistryObject<ElythiaFloraFeature> FLOWER_FOREST_MILKWEED = FEATURES.register("flower_forest_milkweed",
@@ -432,6 +436,10 @@ public final class AntarchyForgeMisc {
 
     public static final RegistryObject<com.mojang.serialization.Codec<ElythiaRiverCarveFunction>> ELYTHIA_RIVER_CARVE = DENSITY_FUNCTION_TYPES.register("elythia_river_carve",
             () -> ElythiaRiverCarveFunction.KEY_CODEC.codec());
+    public static final RegistryObject<com.mojang.serialization.Codec<ElythiaHydrology>> ELYTHIA_HYDROLOGY = DENSITY_FUNCTION_TYPES.register("elythia_hydrology",
+            () -> ElythiaHydrology.KEY_CODEC.codec());
+    public static final RegistryObject<com.mojang.serialization.Codec<ElythiaShared>> ELYTHIA_SHARED = DENSITY_FUNCTION_TYPES.register("elythia_shared",
+            () -> ElythiaShared.KEY_CODEC.codec());
 
     private AntarchyForgeMisc() {}
 

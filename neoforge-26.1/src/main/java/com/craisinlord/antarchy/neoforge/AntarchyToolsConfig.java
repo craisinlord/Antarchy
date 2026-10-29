@@ -180,6 +180,12 @@ public final class AntarchyToolsConfig {
     private static final ModConfigSpec.DoubleValue RPO_LAUNCHER_LAUNCH_VELOCITY;
     private static final ModConfigSpec.DoubleValue RPO_LAUNCHER_EXPLOSION_DAMAGE;
     private static final ModConfigSpec.DoubleValue RPO_LAUNCHER_EXPLOSION_RADIUS;
+    private static final ModConfigSpec.DoubleValue ANVIL_CANNON_COOLDOWN_SECONDS;
+    private static final ModConfigSpec.DoubleValue ANVIL_CANNON_LAUNCH_VELOCITY;
+    private static final ModConfigSpec.DoubleValue ANVIL_CANNON_IMPACT_DAMAGE;
+    private static final ModConfigSpec.DoubleValue ANVIL_CANNON_IMPACT_KNOCKBACK;
+    private static final ModConfigSpec.DoubleValue ANVIL_CANNON_RECOIL_STRENGTH;
+    private static final ModConfigSpec.BooleanValue ANVIL_CANNON_DEGRADE_ON_IMPACT;
 
     private static final ModConfigSpec.BooleanValue SIZE_CHANGING_RAYS_ENABLED;
     private static final ModConfigSpec.DoubleValue  SIZE_RAY_COOLDOWN_SECONDS;
@@ -482,6 +488,15 @@ public final class AntarchyToolsConfig {
         RPO_LAUNCHER_EXPLOSION_RADIUS = b.comment("Radius in blocks of the ink explosion.")                 .defineInRange("explosionRadius", 4.0D, 0.5D, 32.0D);
         b.pop();
 
+        b.push("anvilCannon");
+        ANVIL_CANNON_COOLDOWN_SECONDS  = b.comment("Cooldown in seconds after firing. Set to 0 to disable.")                .defineInRange("cooldownSeconds", 2.5D, 0.0D, 3600.0D);
+        ANVIL_CANNON_LAUNCH_VELOCITY   = b.comment("Initial launch velocity applied to the fired anvil.")                    .defineInRange("launchVelocity",  2.2D, 0.1D, 20.0D);
+        ANVIL_CANNON_IMPACT_DAMAGE     = b.comment("Damage dealt by a fired anvil hitting an entity at launch speed.")        .defineInRange("impactDamage",    30.0D, 0.0D, 4096.0D);
+        ANVIL_CANNON_IMPACT_KNOCKBACK  = b.comment("Knockback strength applied to an entity hit by a fired anvil.")          .defineInRange("impactKnockback", 1.5D, 0.0D, 20.0D);
+        ANVIL_CANNON_RECOIL_STRENGTH   = b.comment("How hard the shooter is pushed backwards when firing.")                  .defineInRange("recoilStrength",  0.8D, 0.0D, 10.0D);
+        ANVIL_CANNON_DEGRADE_ON_IMPACT = b.comment("Whether a fired anvil lands one damage stage worse (anvil, chipped, damaged, destroyed).").define("degradeOnImpact", true);
+        b.pop();
+
         b.push("sizeRays");
         SIZE_CHANGING_RAYS_ENABLED = b
                 .comment(
@@ -695,6 +710,12 @@ public final class AntarchyToolsConfig {
     static double  rpoLauncherLaunchVelocity()                { return RPO_LAUNCHER_LAUNCH_VELOCITY.get(); }
     static double  rpoLauncherExplosionDamage()               { return RPO_LAUNCHER_EXPLOSION_DAMAGE.get(); }
     static double  rpoLauncherExplosionRadius()               { return RPO_LAUNCHER_EXPLOSION_RADIUS.get(); }
+    static double  anvilCannonCooldownSeconds()               { return ANVIL_CANNON_COOLDOWN_SECONDS.get(); }
+    static double  anvilCannonLaunchVelocity()                { return ANVIL_CANNON_LAUNCH_VELOCITY.get(); }
+    static double  anvilCannonImpactDamage()                  { return ANVIL_CANNON_IMPACT_DAMAGE.get(); }
+    static double  anvilCannonImpactKnockback()               { return ANVIL_CANNON_IMPACT_KNOCKBACK.get(); }
+    static double  anvilCannonRecoilStrength()                { return ANVIL_CANNON_RECOIL_STRENGTH.get(); }
+    static boolean anvilCannonDegradeOnImpact()               { return ANVIL_CANNON_DEGRADE_ON_IMPACT.get(); }
 
     static boolean sizeChangingRaysEnabled()                 { return SIZE_CHANGING_RAYS_ENABLED.get(); }
     static double  sizeRayCooldownSeconds()                  { return SIZE_RAY_COOLDOWN_SECONDS.get(); }

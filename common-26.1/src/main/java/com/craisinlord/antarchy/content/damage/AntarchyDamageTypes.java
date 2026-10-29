@@ -85,6 +85,12 @@ public final class AntarchyDamageTypes {
                     Identifier.fromNamespaceAndPath(Antarchy.MODID, "rpo_launcher_blast")
             );
 
+    public static final ResourceKey<DamageType> ANVIL_CANNON =
+            ResourceKey.create(
+                    Registries.DAMAGE_TYPE,
+                    Identifier.fromNamespaceAndPath(Antarchy.MODID, "anvil_cannon")
+            );
+
     public static final ResourceKey<DamageType> SPIT_BUG_DISRESPECT =
             ResourceKey.create(
                     Registries.DAMAGE_TYPE,

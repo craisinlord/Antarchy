@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "antarchy:primordial_loam",
     "antarchy:infested_rooted_dirt",
     "antarchy:infested_coarse_dirt",
     "antarchy:umbral_moss_block",

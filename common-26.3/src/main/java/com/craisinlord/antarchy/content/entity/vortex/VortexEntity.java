@@ -140,11 +140,15 @@ public class VortexEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<VortexEntity>("main_controller", 0, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("attack", ATTACK_ANIM)
                 .triggerableAnim("death", DEATH_ANIM));
     }
 
     private PlayState mainAnimController(AnimationTest<VortexEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         return switch (this.getAnimationState()) {
             case ANIM_FLY -> state.setAndContinue(FLY_ANIM);
             case ANIM_ATTACK -> state.setAndContinue(ATTACK_ANIM);

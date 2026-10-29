@@ -56,6 +56,7 @@ import com.geckolib.animatable.instance.AnimatableInstanceCache;
 import com.geckolib.animatable.manager.AnimatableManager;
 import com.geckolib.animation.AnimationController;
 import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
 import com.geckolib.util.GeckoLibUtil;
 
 public class BrutalflyEntity extends Monster implements GeoEntity {
@@ -191,7 +192,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<BrutalflyEntity>("main_controller", 0, state -> switch (this.getAnimationState()) {
+        controllers.add(new AnimationController<BrutalflyEntity>("main_controller", 0, state -> state.controller().isPlayingTriggeredAnimation() ? PlayState.CONTINUE : switch (this.getAnimationState()) {
             case ANIM_SPIT -> state.setAndContinue(SPIT_ANIM);
             case ANIM_SWIPE -> state.setAndContinue(SWIPE_ANIM);
             case ANIM_DEATH -> state.setAndContinue(DEATH_ANIM);
@@ -202,6 +203,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
             case ANIM_COCOON_HATCH -> state.setAndContinue(COOCON_HATCH_ANIM);
             default -> state.setAndContinue(IDLE_ANIM);
         })
+                .receiveTriggeredAnimations()
                 .triggerableAnim("spit", SPIT_ANIM)
                 .triggerableAnim("swipe", SWIPE_ANIM)
                 .triggerableAnim("death", DEATH_ANIM)

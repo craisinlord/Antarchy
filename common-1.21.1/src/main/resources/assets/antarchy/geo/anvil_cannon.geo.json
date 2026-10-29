@@ -1,0 +1,128 @@
+{
+	"format_version": "1.21.110",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 128,
+				"texture_height": 128,
+				"visible_bounds_width": 3,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "anvil_cannon",
+					"pivot": [0.125, 7, 3],
+					"cubes": [
+						{
+							"origin": [-4, 2, 0],
+							"size": [8, 8, 16],
+							"uv": {
+								"east": {"uv": [52, 52], "uv_size": [16, 8]},
+								"south": {"uv": [92, 52], "uv_size": [8, 8]},
+								"west": {"uv": [68, 52], "uv_size": [-16, 8]},
+								"up": {"uv": [68, 36], "uv_size": [8, 16]},
+								"down": {"uv": [76, 52], "uv_size": [8, -16]}
+							}
+						}
+					]
+				},
+				{
+					"name": "front",
+					"parent": "anvil_cannon",
+					"pivot": [0, 5, -3],
+					"cubes": [
+						{
+							"origin": [-6, 0, -24],
+							"size": [12, 12, 24],
+							"uv": {
+								"north": {"uv": [24, 24], "uv_size": [12, 12]},
+								"east": {"uv": [0, 24], "uv_size": [24, 12]},
+								"south": {"uv": [48, 12], "uv_size": [12, 12]},
+								"west": {"uv": [24, 24], "uv_size": [-24, 12]},
+								"up": {"uv": [37, 24], "uv_size": [24, 12], "uv_rotation": 90},
+								"down": {"uv": [24, 24], "uv_size": [-24, 12], "uv_rotation": 90}
+							}
+						}
+					]
+				},
+				{
+					"name": "cannon_tip",
+					"parent": "front",
+					"pivot": [0, 5, -3],
+					"cubes": [
+						{
+							"origin": [-6, 0, -24],
+							"size": [12, 12, 14],
+							"inflate": 0.2,
+							"uv": {
+								"north": {"uv": [14, 50], "uv_size": [12, 12]},
+								"east": {"uv": [0, 50], "uv_size": [14, 12]},
+								"south": {"uv": [40, 50], "uv_size": [12, 12]},
+								"west": {"uv": [14, 50], "uv_size": [-14, 12]},
+								"up": {"uv": [0, 50], "uv_size": [14, 12], "uv_rotation": 90},
+								"down": {"uv": [14, 50], "uv_size": [-14, 12], "uv_rotation": 90}
+							}
+						}
+					]
+				},
+				{
+					"name": "handle",
+					"parent": "anvil_cannon",
+					"pivot": [0.5, 17, 21],
+					"cubes": [
+						{"origin": [-1.5, 14, -8], "size": [3, 2, 8], "uv": [0, 77]},
+						{"origin": [-1.5, 12, -8], "size": [3, 2, 2], "uv": [42, 68]},
+						{"origin": [-1.5, 14, -2.5], "size": [3, 2, 12], "inflate": -0.2, "uv": [52, 60]},
+						{"origin": [-1.5, 14, 8], "size": [3, 2, 8], "uv": [0, 87]},
+						{"origin": [-1.5, 10, 14], "size": [3, 4, 2], "uv": [42, 62]}
+					]
+				},
+				{
+					"name": "anvil",
+					"parent": "anvil_cannon",
+					"pivot": [0, 0, -14],
+					"cubes": [
+						{
+							"origin": [-4, 1, -15],
+							"size": [8, 8, 2],
+							"uv": {
+								"north": {"uv": [24, 64], "uv_size": [8, 8]},
+								"east": {"uv": [22, 64], "uv_size": [2, 8]},
+								"south": {"uv": [24, 64], "uv_size": [8, 8]},
+								"west": {"uv": [24, 64], "uv_size": [-2, 8]},
+								"up": {"uv": [22, 64], "uv_size": [2, 8], "uv_rotation": 90},
+								"down": {"uv": [24, 64], "uv_size": [-2, 8], "uv_rotation": 90}
+							}
+						},
+						{
+							"origin": [-1.5, 3, -18],
+							"size": [3, 4, 3],
+							"uv": {
+								"north": {"uv": [75, 3], "uv_size": [3, 4]},
+								"east": {"uv": [72, 3], "uv_size": [3, 4]},
+								"south": {"uv": [81, 3], "uv_size": [3, 4]},
+								"west": {"uv": [75, 3], "uv_size": [-3, 4]},
+								"up": {"uv": [75, 0], "uv_size": [3, 3]},
+								"down": {"uv": [75, 3], "uv_size": [3, -3]}
+							}
+						},
+						{
+							"origin": [-3, 0, -23],
+							"size": [6, 10, 5],
+							"uv": {
+								"north": {"uv": [5, 67], "uv_size": [6, 10]},
+								"east": {"uv": [0, 67], "uv_size": [5, 10]},
+								"south": {"uv": [5, 67], "uv_size": [6, 10]},
+								"west": {"uv": [5, 67], "uv_size": [-5, 10]},
+								"up": {"uv": [5, 62], "uv_size": [6, 5]},
+								"down": {"uv": [11, 67], "uv_size": [-6, -5]}
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

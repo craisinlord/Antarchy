@@ -1,0 +1,392 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:add",
+      "argument1": {
+        "type": "minecraft:mul",
+        "argument1": {
+          "type": "minecraft:abs",
+          "argument": {
+            "type": "minecraft:noise",
+            "noise": "antarchy:elythia_river",
+            "xz_scale": 0.5,
+            "y_scale": 0.0
+          }
+        },
+        "argument2": {
+          "type": "minecraft:spline",
+          "spline": {
+            "coordinate": "antarchy:elythia_continents",
+            "points": [
+              {
+                "location": -0.3,
+                "value": 0.6,
+                "derivative": 0.0
+              },
+              {
+                "location": 0.4,
+                "value": 1.0,
+                "derivative": 0.0
+              }
+            ]
+          }
+        }
+      },
+      "argument2": {
+        "type": "minecraft:add",
+        "argument1": "antarchy:elythia_river_gate",
+        "argument2": {
+          "type": "minecraft:range_choice",
+          "input": "antarchy:elythia_continents",
+          "min_inclusive": -0.6,
+          "max_exclusive": -0.3,
+          "when_in_range": {
+            "type": "minecraft:range_choice",
+            "input": {
+              "type": "minecraft:abs",
+              "argument": {
+                "type": "minecraft:noise",
+                "noise": "antarchy:elythia_river",
+                "xz_scale": 0.5,
+                "y_scale": 0.0
+              }
+            },
+            "min_inclusive": 0.0,
+            "max_exclusive": 0.06,
+            "when_in_range": {
+              "type": "minecraft:mul",
+              "argument1": {
+                "type": "minecraft:range_choice",
+                "input": {
+                  "type": "minecraft:add",
+                  "argument1": {
+                    "type": "minecraft:abs",
+                    "argument": {
+                      "type": "minecraft:add",
+                      "argument1": {
+                        "type": "minecraft:mul",
+                        "argument1": {
+                          "type": "minecraft:add",
+                          "argument1": {
+                            "type": "minecraft:shifted_noise",
+                            "noise": "antarchy:elythia_river",
+                            "xz_scale": 0.5,
+                            "y_scale": 0.0,
+                            "shift_x": 6.0,
+                            "shift_y": 0.0,
+                            "shift_z": 0.0
+                          },
+                          "argument2": {
+                            "type": "minecraft:mul",
+                            "argument1": -1.0,
+                            "argument2": {
+                              "type": "minecraft:shifted_noise",
+                              "noise": "antarchy:elythia_river",
+                              "xz_scale": 0.5,
+                              "y_scale": 0.0,
+                              "shift_x": -6.0,
+                              "shift_y": 0.0,
+                              "shift_z": 0.0
+                            }
+                          }
+                        },
+                        "argument2": {
+                          "type": "minecraft:add",
+                          "argument1": {
+                            "type": "minecraft:shifted_noise",
+                            "noise": "antarchy:elythia_continentalness",
+                            "xz_scale": 0.25,
+                            "y_scale": 0.0,
+                            "shift_x": {
+                              "type": "minecraft:add",
+                              "argument1": "minecraft:shift_x",
+                              "argument2": 0.0
+                            },
+                            "shift_y": 0.0,
+                            "shift_z": {
+                              "type": "minecraft:add",
+                              "argument1": "minecraft:shift_z",
+                              "argument2": 3.0
+                            }
+                          },
+                          "argument2": {
+                            "type": "minecraft:mul",
+                            "argument1": -1.0,
+                            "argument2": {
+                              "type": "minecraft:shifted_noise",
+                              "noise": "antarchy:elythia_continentalness",
+                              "xz_scale": 0.25,
+                              "y_scale": 0.0,
+                              "shift_x": {
+                                "type": "minecraft:add",
+                                "argument1": "minecraft:shift_x",
+                                "argument2": 0.0
+                              },
+                              "shift_y": 0.0,
+                              "shift_z": {
+                                "type": "minecraft:add",
+                                "argument1": "minecraft:shift_z",
+                                "argument2": -3.0
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "argument2": {
+                        "type": "minecraft:mul",
+                        "argument1": -1.0,
+                        "argument2": {
+                          "type": "minecraft:mul",
+                          "argument1": {
+                            "type": "minecraft:add",
+                            "argument1": {
+                              "type": "minecraft:shifted_noise",
+                              "noise": "antarchy:elythia_river",
+                              "xz_scale": 0.5,
+                              "y_scale": 0.0,
+                              "shift_x": 0.0,
+                              "shift_y": 0.0,
+                              "shift_z": 6.0
+                            },
+                            "argument2": {
+                              "type": "minecraft:mul",
+                              "argument1": -1.0,
+                              "argument2": {
+                                "type": "minecraft:shifted_noise",
+                                "noise": "antarchy:elythia_river",
+                                "xz_scale": 0.5,
+                                "y_scale": 0.0,
+                                "shift_x": 0.0,
+                                "shift_y": 0.0,
+                                "shift_z": -6.0
+                              }
+                            }
+                          },
+                          "argument2": {
+                            "type": "minecraft:add",
+                            "argument1": {
+                              "type": "minecraft:shifted_noise",
+                              "noise": "antarchy:elythia_continentalness",
+                              "xz_scale": 0.25,
+                              "y_scale": 0.0,
+                              "shift_x": {
+                                "type": "minecraft:add",
+                                "argument1": "minecraft:shift_x",
+                                "argument2": 3.0
+                              },
+                              "shift_y": 0.0,
+                              "shift_z": {
+                                "type": "minecraft:add",
+                                "argument1": "minecraft:shift_z",
+                                "argument2": 0.0
+                              }
+                            },
+                            "argument2": {
+                              "type": "minecraft:mul",
+                              "argument1": -1.0,
+                              "argument2": {
+                                "type": "minecraft:shifted_noise",
+                                "noise": "antarchy:elythia_continentalness",
+                                "xz_scale": 0.25,
+                                "y_scale": 0.0,
+                                "shift_x": {
+                                  "type": "minecraft:add",
+                                  "argument1": "minecraft:shift_x",
+                                  "argument2": -3.0
+                                },
+                                "shift_y": 0.0,
+                                "shift_z": {
+                                  "type": "minecraft:add",
+                                  "argument1": "minecraft:shift_z",
+                                  "argument2": 0.0
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "argument2": {
+                    "type": "minecraft:mul",
+                    "argument1": -0.7,
+                    "argument2": {
+                      "type": "minecraft:abs",
+                      "argument": {
+                        "type": "minecraft:add",
+                        "argument1": {
+                          "type": "minecraft:mul",
+                          "argument1": {
+                            "type": "minecraft:add",
+                            "argument1": {
+                              "type": "minecraft:shifted_noise",
+                              "noise": "antarchy:elythia_river",
+                              "xz_scale": 0.5,
+                              "y_scale": 0.0,
+                              "shift_x": 6.0,
+                              "shift_y": 0.0,
+                              "shift_z": 0.0
+                            },
+                            "argument2": {
+                              "type": "minecraft:mul",
+                              "argument1": -1.0,
+                              "argument2": {
+                                "type": "minecraft:shifted_noise",
+                                "noise": "antarchy:elythia_river",
+                                "xz_scale": 0.5,
+                                "y_scale": 0.0,
+                                "shift_x": -6.0,
+                                "shift_y": 0.0,
+                                "shift_z": 0.0
+                              }
+                            }
+                          },
+                          "argument2": {
+                            "type": "minecraft:add",
+                            "argument1": {
+                              "type": "minecraft:shifted_noise",
+                              "noise": "antarchy:elythia_continentalness",
+                              "xz_scale": 0.25,
+                              "y_scale": 0.0,
+                              "shift_x": {
+                                "type": "minecraft:add",
+                                "argument1": "minecraft:shift_x",
+                                "argument2": 3.0
+                              },
+                              "shift_y": 0.0,
+                              "shift_z": {
+                                "type": "minecraft:add",
+                                "argument1": "minecraft:shift_z",
+                                "argument2": 0.0
+                              }
+                            },
+                            "argument2": {
+                              "type": "minecraft:mul",
+                              "argument1": -1.0,
+                              "argument2": {
+                                "type": "minecraft:shifted_noise",
+                                "noise": "antarchy:elythia_continentalness",
+                                "xz_scale": 0.25,
+                                "y_scale": 0.0,
+                                "shift_x": {
+                                  "type": "minecraft:add",
+                                  "argument1": "minecraft:shift_x",
+                                  "argument2": -3.0
+                                },
+                                "shift_y": 0.0,
+                                "shift_z": {
+                                  "type": "minecraft:add",
+                                  "argument1": "minecraft:shift_z",
+                                  "argument2": 0.0
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "argument2": {
+                          "type": "minecraft:mul",
+                          "argument1": {
+                            "type": "minecraft:add",
+                            "argument1": {
+                              "type": "minecraft:shifted_noise",
+                              "noise": "antarchy:elythia_river",
+                              "xz_scale": 0.5,
+                              "y_scale": 0.0,
+                              "shift_x": 0.0,
+                              "shift_y": 0.0,
+                              "shift_z": 6.0
+                            },
+                            "argument2": {
+                              "type": "minecraft:mul",
+                              "argument1": -1.0,
+                              "argument2": {
+                                "type": "minecraft:shifted_noise",
+                                "noise": "antarchy:elythia_river",
+                                "xz_scale": 0.5,
+                                "y_scale": 0.0,
+                                "shift_x": 0.0,
+                                "shift_y": 0.0,
+                                "shift_z": -6.0
+                              }
+                            }
+                          },
+                          "argument2": {
+                            "type": "minecraft:add",
+                            "argument1": {
+                              "type": "minecraft:shifted_noise",
+                              "noise": "antarchy:elythia_continentalness",
+                              "xz_scale": 0.25,
+                              "y_scale": 0.0,
+                              "shift_x": {
+                                "type": "minecraft:add",
+                                "argument1": "minecraft:shift_x",
+                                "argument2": 0.0
+                              },
+                              "shift_y": 0.0,
+                              "shift_z": {
+                                "type": "minecraft:add",
+                                "argument1": "minecraft:shift_z",
+                                "argument2": 3.0
+                              }
+                            },
+                            "argument2": {
+                              "type": "minecraft:mul",
+                              "argument1": -1.0,
+                              "argument2": {
+                                "type": "minecraft:shifted_noise",
+                                "noise": "antarchy:elythia_continentalness",
+                                "xz_scale": 0.25,
+                                "y_scale": 0.0,
+                                "shift_x": {
+                                  "type": "minecraft:add",
+                                  "argument1": "minecraft:shift_x",
+                                  "argument2": 0.0
+                                },
+                                "shift_y": 0.0,
+                                "shift_z": {
+                                  "type": "minecraft:add",
+                                  "argument1": "minecraft:shift_z",
+                                  "argument2": -3.0
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "min_inclusive": -1000000.0,
+                "max_exclusive": 0.0,
+                "when_in_range": 1.0,
+                "when_out_of_range": 0.0
+              },
+              "argument2": {
+                "type": "minecraft:spline",
+                "spline": {
+                  "coordinate": "antarchy:elythia_continents",
+                  "points": [
+                    {
+                      "location": -0.37,
+                      "value": 1.0,
+                      "derivative": 0.0
+                    },
+                    {
+                      "location": -0.3,
+                      "value": 0.0,
+                      "derivative": 0.0
+                    }
+                  ]
+                }
+              }
+            },
+            "when_out_of_range": 0.0
+          },
+          "when_out_of_range": 0.0
+        }
+      }
+    }
+  }
+}

@@ -56,7 +56,7 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
         }
 
         if (INFINITY_NAMESPACE.equals(player.serverLevel().dimension().location().getNamespace())) {
-            if (AntTransit.start(player, AntTeleportHelper.resolveReturnDestinationLevel(player), AntTransit.Kind.PRISM)) {
+            if (AntTransit.isActive(player) || AntTransit.start(player, AntTeleportHelper.resolveReturnDestinationLevel(player), AntTransit.Kind.PRISM)) {
                 return InteractionResult.CONSUME;
             }
             return AntTeleportHelper.teleportPlayerToReturnDestination(player);
@@ -68,6 +68,9 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
         }
 
         ResourceLocation warpTarget = dimensionId;
+        if (AntTransit.isActive(player)) {
+            return InteractionResult.CONSUME;
+        }
         if (AntTransit.startWarp(player, () -> InfinityCompat.get().requestWarp(player, warpTarget) != InfinityWarpResult.REJECTED,
                 "message.antarchy.rainbow_ant_failed_dimension_create")) {
             return InteractionResult.CONSUME;
@@ -126,7 +129,7 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
 
         if (this.isInInfinityDimension(serverPlayer.serverLevel())) {
             ServerLevel returnLevel = this.resolveReturnDestinationLevel(serverPlayer);
-            if (AntTransit.start(serverPlayer, returnLevel, AntTransit.Kind.PRISM)) {
+            if (AntTransit.isActive(serverPlayer) || AntTransit.start(serverPlayer, returnLevel, AntTransit.Kind.PRISM)) {
                 return InteractionResult.CONSUME;
             }
             AntTeleportHelper.prepareArrival(serverPlayer, returnLevel, returnPos -> {
@@ -179,6 +182,9 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
             return InteractionResult.CONSUME;
         }
 
+        if (AntTransit.isActive(serverPlayer)) {
+            return InteractionResult.CONSUME;
+        }
         if (AntTransit.startWarp(serverPlayer, () -> this.teleportToInfinity(serverPlayer, dimensionId), null)) {
             return InteractionResult.CONSUME;
         }

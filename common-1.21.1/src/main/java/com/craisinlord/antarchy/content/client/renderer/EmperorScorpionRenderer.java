@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.EmperorScorpionModel;
 import com.craisinlord.antarchy.content.entity.EmperorScorpionEntity;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import java.util.HashMap;
@@ -15,9 +16,12 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
+import software.bernie.geckolib.util.Color;
 
 public class EmperorScorpionRenderer extends GeoEntityRenderer<EmperorScorpionEntity> {
     private static final int CROSSFADE_TICKS = 12;
+    private static final ResourceLocation GLIMMER_TEXTURE = GlimmerEchoRendering.texture("emperor_scorpion");
+    private static final ResourceLocation GLIMMER_HARDEN_TEXTURE = GlimmerEchoRendering.texture("emperor_scorpion_harden");
     private final Map<Integer, HardenTransitionState> transitions = new HashMap<>();
 
     public EmperorScorpionRenderer(EntityRendererProvider.Context context) {
@@ -25,6 +29,17 @@ public class EmperorScorpionRenderer extends GeoEntityRenderer<EmperorScorpionEn
         this.shadowRadius = 3.0F;
         this.addRenderLayer(new EmperorScorpionHardenLayer(this));
         this.addRenderLayer(new EmperorScorpionEmissiveLayer(this));
+        this.addRenderLayer(new GlimmerEchoRendering.EmissiveLayer<>(this, GlimmerEchoRendering.emissiveTexture("emperor_scorpion")));
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(EmperorScorpionEntity animatable) {
+        return GlimmerEchoRendering.textureLocation(animatable, GLIMMER_TEXTURE, super.getTextureLocation(animatable));
+    }
+
+    @Override
+    public Color getRenderColor(EmperorScorpionEntity animatable, float partialTick, int packedLight) {
+        return GlimmerEchoRendering.renderColor(animatable, super.getRenderColor(animatable, partialTick, packedLight));
     }
 
     @Override
@@ -35,7 +50,7 @@ public class EmperorScorpionRenderer extends GeoEntityRenderer<EmperorScorpionEn
 
     @Override
     public RenderType getRenderType(EmperorScorpionEntity animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
-        return RenderType.entityCutoutNoCull(texture);
+        return GlimmerEchoRendering.renderType(animatable, texture, RenderType.entityCutoutNoCull(texture));
     }
 
     @Override
@@ -52,6 +67,9 @@ public class EmperorScorpionRenderer extends GeoEntityRenderer<EmperorScorpionEn
         public void render(PoseStack poseStack, EmperorScorpionEntity animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType,
                            MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick,
                            int packedLight, int packedOverlay) {
+            if (GlimmerEchoes.isGlimmerEcho(animatable)) {
+                return;
+            }
             RenderType emissiveType = RenderType.eyes(EmperorScorpionModel.EMISSIVE_TEXTURE);
             VertexConsumer emissiveBuffer = bufferSource.getBuffer(emissiveType);
             this.getRenderer().reRender(
@@ -123,7 +141,11 @@ public class EmperorScorpionRenderer extends GeoEntityRenderer<EmperorScorpionEn
                 return;
             }
 
-            RenderType hardenType = RenderType.entityTranslucent(EmperorScorpionModel.HARDEN_TEXTURE);
+            if (GlimmerEchoes.isGlimmerEcho(animatable)) {
+                alpha *= GlimmerEchoRendering.renderColor(animatable, Color.WHITE).getAlphaFloat();
+            }
+            ResourceLocation hardenTexture = GlimmerEchoRendering.textureLocation(animatable, GLIMMER_HARDEN_TEXTURE, EmperorScorpionModel.HARDEN_TEXTURE);
+            RenderType hardenType = RenderType.entityTranslucent(hardenTexture);
             VertexConsumer hardenBuffer = bufferSource.getBuffer(hardenType);
             int color = ((Math.max(0, Math.min(255, Math.round(alpha * 255.0F))) & 0xFF) << 24) | 0x00FFFFFF;
             this.getRenderer().reRender(

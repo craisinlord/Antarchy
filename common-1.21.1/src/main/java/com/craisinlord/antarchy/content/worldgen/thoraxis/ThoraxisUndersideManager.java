@@ -33,6 +33,7 @@ import net.minecraft.world.phys.Vec3;
 
 public final class ThoraxisUndersideManager {
     public static final int GRAVITY_FLIP_Y = 0;
+    public static final int MOUNTAIN_SURFACE_Y = -56;
     private static final net.minecraft.resources.ResourceLocation THORAXIS_DIMENSION = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "thoraxis");
     private static final GravityTransition TRANSITION = new GravityTransition(12);
     private static final GravityTransition THROAT_TRANSITION = new GravityTransition(12);

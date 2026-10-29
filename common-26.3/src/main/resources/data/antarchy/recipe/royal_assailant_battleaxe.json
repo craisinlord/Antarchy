@@ -8,7 +8,7 @@
   ],
   "key": {
     "S": "antarchy:queen_scale",
-    "B": "antarchy:big_bertha"
+    "B": "#antarchy:big_berthas"
   },
   "result": {
     "id": "antarchy:royal_assailant_battleaxe"

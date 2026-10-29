@@ -138,7 +138,7 @@ public class NyxiteSpikeFeature extends Feature<NyxiteSpikeConfiguration> {
                 break;
             }
 
-            level.setBlock(spikePos, spikeState, 3);
+            level.setBlock(spikePos, spikeState, 2);
             placedAny = true;
         }
         return placedAny;

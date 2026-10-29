@@ -175,6 +175,7 @@ public final class AntarchyNeoForgeClient {
         event.registerEntityRenderer(AntarchyNeoforgeEntites.ROYAL_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalBlackHoleRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.ROYAL_ASSAILANT_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalAssailantBlackHoleRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.CRITTER_CAGE_PROJECTILE.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(AntarchyNeoforgeEntites.LAUNCHED_ANVIL.get(), com.craisinlord.antarchy.content.client.renderer.LaunchedAnvilRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.WORM_HOOK_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.HUSH_PROJECTILE.get(), HushProjectileRenderer::new);
         event.registerEntityRenderer(AntarchyNeoforgeEntites.BRUTALFLY_ORB.get(), BrutalflyOrbRenderer::new);
@@ -530,9 +531,11 @@ public final class AntarchyNeoForgeClient {
         registerGeoItemExtension(event, AntarchyNeoforgeItems.PORTAL_GUN_LAYNCE.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
         registerGeoItemExtension(event, AntarchyNeoforgeItems.SQUIDZOOKA.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
         registerGeoItemExtension(event, AntarchyNeoforgeItems.RPO_LAUNCHER.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
+        registerGeoItemExtension(event, AntarchyNeoforgeItems.ANVIL_CANNON.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
         registerGeoItemExtension(event, AntarchyNeoforgeItems.WATER_CANNON.get(), HumanoidModel.ArmPose.CROSSBOW_HOLD);
         registerGeoItemExtension(event, AntarchyNeoforgeItems.BATTLE_AXE.get());
         registerGeoItemExtension(event, AntarchyNeoforgeItems.BIG_BERTHA.get());
+        registerGeoItemExtension(event, AntarchyNeoforgeItems.BIG_BETSY.get());
         registerGeoItemExtension(event, AntarchyNeoforgeItems.ROYAL_GUARDIAN_SWORD.get());
         registerGeoItemExtension(event, AntarchyNeoforgeItems.GIANT_FRYING_PAN.get());
     }

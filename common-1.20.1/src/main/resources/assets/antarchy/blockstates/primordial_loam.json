@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "antarchy:block/primordial_loam"
+      },
+      {
+        "model": "antarchy:block/primordial_loam",
+        "y": 90
+      },
+      {
+        "model": "antarchy:block/primordial_loam",
+        "y": 180
+      },
+      {
+        "model": "antarchy:block/primordial_loam",
+        "y": 270
+      }
+    ]
+  }
+}

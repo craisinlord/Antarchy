@@ -8,6 +8,7 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.BooleanValue ELYTHIA_FIREFLY_PARTICLES_ENABLED;
     private static final ModConfigSpec.BooleanValue ELYTHIA_FOG_ENABLED;
     private static final ModConfigSpec.BooleanValue ELYTHIA_GROUND_MIST_ENABLED;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_SOFT_CLOUDS_ENABLED;
     private static final ModConfigSpec.BooleanValue ELYTHIA_DREAM_SHADOWS_ENABLED;
     private static final ModConfigSpec.DoubleValue  ELYTHIA_DREAM_SHADOWS_STRENGTH;
     private static final ModConfigSpec.BooleanValue ELYTHIA_ALREADY_DREAMING;
@@ -18,6 +19,9 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.BooleanValue RAINBOW_ANT_PRISM;
     private static final ModConfigSpec.BooleanValue ELYTHIA_PURPLE_RAIN;
     private static final ModConfigSpec.BooleanValue ELYTHIA_ECHOES;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_EVENTS;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_RAIN_GROWTH;
+    private static final ModConfigSpec.BooleanValue THORAXIS_EVENTS;
     private static final ModConfigSpec.BooleanValue THROWBACK_ZONES_ENABLED;
     private static final ModConfigSpec.IntValue     THROWBACK_STRUCTURE_ZONE_RADIUS;
     private static final ModConfigSpec.DoubleValue  THROWBACK_WILD_ZONE_CHANCE;
@@ -93,6 +97,9 @@ public final class AntarchyMiscConfig {
         ELYTHIA_GROUND_MIST_ENABLED = b
                 .comment("Whether low ground mist drifts over Elythia meadows in the mornings. Client-side visual only.")
                 .define("groundMistEnabled", true);
+        ELYTHIA_SOFT_CLOUDS_ENABLED = b
+                .comment("Whether the low, mid and towering Elythia clouds use soft translucent clouds instead of solid blocky ones. Client-side visual only.")
+                .define("softCloudsEnabled", true);
         ELYTHIA_DREAM_SHADOWS_ENABLED = b
                 .comment("Whether shadows, caves, and nights in Elythia are tinted lavender instead of fading to black. Client-side visual only.")
                 .define("dreamShadowsEnabled", true);
@@ -123,6 +130,15 @@ public final class AntarchyMiscConfig {
         ELYTHIA_ECHOES = b
                 .comment("Whether a faint echo of yourself sometimes replays where you walked a few minutes earlier. Client-side visual only.")
                 .define("echoes", true);
+        ELYTHIA_EVENTS = b
+                .comment("Whether Elythia rolls sky, weather, and creature events such as auroras, meteor showers, lumen rain, towering clouds, and deer migrations.")
+                .define("events", true);
+        ELYTHIA_RAIN_GROWTH = b
+                .comment("Whether rain in Elythia makes exposed crops and saplings grow faster. Lumen rain doubles the effect.")
+                .define("rainGrowth", true);
+        THORAXIS_EVENTS = b
+                .comment("Whether Thoraxis rolls events such as weightlessness, temporal bubbles, upward antiwater rain, the watching eyes, blind skies, and dreamstorms.")
+                .define("thoraxisEvents", true);
         b.push("throwbackZones");
         THROWBACK_ZONES_ENABLED = b
                 .comment("Whether Throwback Zones appear around nostalgic structures and in the wild in Elythia.")
@@ -260,6 +276,7 @@ public final class AntarchyMiscConfig {
     static boolean elythiaFireflyParticlesEnabled()      { return ELYTHIA_FIREFLY_PARTICLES_ENABLED.get(); }
     static boolean elythiaFogEnabled()                   { return ELYTHIA_FOG_ENABLED.get(); }
     static boolean elythiaGroundMistEnabled()            { return ELYTHIA_GROUND_MIST_ENABLED.get(); }
+    static boolean elythiaSoftCloudsEnabled()            { return ELYTHIA_SOFT_CLOUDS_ENABLED.get(); }
     static boolean elythiaDreamShadowsEnabled()          { return ELYTHIA_DREAM_SHADOWS_ENABLED.get(); }
     static double  elythiaDreamShadowsStrength()         { return ELYTHIA_DREAM_SHADOWS_STRENGTH.get(); }
     static boolean elythiaAlreadyDreaming()             { return ELYTHIA_ALREADY_DREAMING.get(); }
@@ -270,6 +287,9 @@ public final class AntarchyMiscConfig {
     static boolean rainbowAntPrism()                     { return RAINBOW_ANT_PRISM.get(); }
     static boolean elythiaPurpleRain()                  { return ELYTHIA_PURPLE_RAIN.get(); }
     static boolean elythiaEchoes()                      { return ELYTHIA_ECHOES.get(); }
+    static boolean elythiaEvents()                      { return ELYTHIA_EVENTS.get(); }
+    static boolean elythiaRainGrowth()                  { return ELYTHIA_RAIN_GROWTH.get(); }
+    static boolean thoraxisEvents()                     { return THORAXIS_EVENTS.get(); }
     static boolean throwbackZonesEnabled()               { return THROWBACK_ZONES_ENABLED.get(); }
     static int     throwbackStructureZoneRadius()        { return THROWBACK_STRUCTURE_ZONE_RADIUS.get(); }
     static double  throwbackWildZoneChance()             { return THROWBACK_WILD_ZONE_CHANCE.get(); }

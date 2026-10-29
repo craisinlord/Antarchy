@@ -134,6 +134,7 @@ public final class AntarchyTags {
         public static final TagKey<Item> HFCS_CANNOT_AMERICANIZE = TagKey.create(Registries.ITEM, id("hfcs_cannot_americanize"));
         public static final TagKey<Item> TIGER_EYE_ARMOR = TagKey.create(Registries.ITEM, id("tigers_eye_armor"));
         public static final TagKey<Item> BIG_BERTHA_INGREDIENT = TagKey.create(Registries.ITEM, id("big_bertha_ingredient"));
+        public static final TagKey<Item> ANVIL_CANNON_AMMO = TagKey.create(Registries.ITEM, id("anvil_cannon_ammo"));
 
         private Items() {
         }
@@ -153,6 +154,8 @@ public final class AntarchyTags {
         public static final TagKey<Biome> MANTIS_OVERWORLD_SPAWN_BIOMES = TagKey.create(Registries.BIOME, id("mantis_overworld_spawn_biomes"));
         public static final TagKey<Biome> ELYTHIA_FIREFLY_PARTICLE_BIOMES = TagKey.create(Registries.BIOME, id("elythia_firefly_particle_biomes"));
         public static final TagKey<Biome> ELYTHIA_GROUND_MIST_BIOMES = TagKey.create(Registries.BIOME, id("elythia_ground_mist_biomes"));
+        public static final TagKey<Biome> ELYTHIA_TOWERING_CLOUD_BIOMES = TagKey.create(Registries.BIOME, id("elythia_towering_cloud_biomes"));
+        public static final TagKey<Biome> STRATOSHARK_SKY_SPAWN_BIOMES = TagKey.create(Registries.BIOME, id("stratoshark_sky_spawn_biomes"));
         public static final TagKey<Biome> WILD_CORN_SPAWN_BIOMES = TagKey.create(Registries.BIOME, id("wild_corn_spawn_biomes"));
         public static final TagKey<Biome> USES_HORDE_SYSTEM = TagKey.create(Registries.BIOME, id("uses_horde_system"));
 

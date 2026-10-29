@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyOrbEntity;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -36,7 +37,11 @@ public class BrutalflyOrbRenderer extends EntityRenderer<BrutalflyOrbEntity> {
         float red;
         float green;
         float blue;
-        if (entity.getOrbVariant() == BrutalflyOrbEntity.OrbVariant.POISON) {
+        if (GlimmerEchoes.isGlimmerEcho(entity)) {
+            red = GlimmerEchoRendering.GLIMMER_RED;
+            green = GlimmerEchoRendering.GLIMMER_GREEN;
+            blue = GlimmerEchoRendering.GLIMMER_BLUE;
+        } else if (entity.getOrbVariant() == BrutalflyOrbEntity.OrbVariant.POISON) {
             red = 0.32F;
             green = 0.92F;
             blue = 0.26F;

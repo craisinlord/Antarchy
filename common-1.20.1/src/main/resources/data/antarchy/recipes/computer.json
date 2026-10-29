@@ -7,9 +7,14 @@
     "B": {
       "item": "minecraft:copper_ingot"
     },
-    "C": {
-      "tag": "c:glass_blocks"
-    },
+    "C": [
+      {
+        "tag": "forge:glass"
+      },
+      {
+        "tag": "c:glass_blocks"
+      }
+    ],
     "D": {
       "item": "minecraft:repeater"
     },

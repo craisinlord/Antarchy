@@ -208,6 +208,7 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
             return PlayState.CONTINUE;
         }).setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>()));
         controllers.add(new AnimationController<KrakenEntity>("action_controller", 0, this::actionAnimController)
+                .receiveTriggeredAnimations()
                 .setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>())
                 .triggerableAnim("cry", CRY_ANIM)
                 .triggerableAnim("grab", GRAB_ANIM)
@@ -217,6 +218,9 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
     }
 
     private PlayState actionAnimController(AnimationTest<KrakenEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         return switch (this.getAnimationState()) {
             case ANIM_CRY -> state.setAndContinue(CRY_ANIM);
             case ANIM_GRAB -> state.setAndContinue(GRAB_ANIM);

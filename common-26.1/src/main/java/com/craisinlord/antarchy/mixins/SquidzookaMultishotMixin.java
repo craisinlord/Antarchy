@@ -3,6 +3,7 @@ package com.craisinlord.antarchy.mixins;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,8 +19,8 @@ public abstract class SquidzookaMultishotMixin {
         }
     }
 
-    @Inject(method = "isPrimaryItem", at = @At("HEAD"), cancellable = true)
-    private void antarchy$allowSquidzookaAsPrimaryItem(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(method = "isSupportedItem", at = @At("HEAD"), cancellable = true)
+    private void antarchy$allowSquidzookaAsSupportedItem(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         if (antarchy$isMultishot() && antarchy$isMultishotEnchantable(stack)) {
             cir.setReturnValue(true);
         }
@@ -27,7 +28,7 @@ public abstract class SquidzookaMultishotMixin {
 
     @Unique
     private boolean antarchy$isMultishot() {
-        return "Multishot".equals(((Enchantment) (Object) this).description().getString());
+        return ((Enchantment) (Object) this).effects().has(EnchantmentEffectComponents.PROJECTILE_COUNT);
     }
 
     @Unique

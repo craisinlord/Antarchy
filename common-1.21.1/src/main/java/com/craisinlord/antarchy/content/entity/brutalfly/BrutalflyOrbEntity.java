@@ -1,6 +1,8 @@
 package com.craisinlord.antarchy.content.entity.brutalfly;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -22,10 +24,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class BrutalflyOrbEntity extends ThrowableItemProjectile {
+public class BrutalflyOrbEntity extends ThrowableItemProjectile implements GlimmerEcho {
     private static final EntityDataAccessor<Integer> ORB_VARIANT =
             SynchedEntityData.defineId(BrutalflyOrbEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> LINGERING =
+            SynchedEntityData.defineId(BrutalflyOrbEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO =
             SynchedEntityData.defineId(BrutalflyOrbEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final String ORB_VARIANT_KEY = "OrbVariant";
@@ -34,6 +38,7 @@ public class BrutalflyOrbEntity extends ThrowableItemProjectile {
 
     private static final int MAX_FLIGHT_TICKS = 200;
     private static final int MAX_LIFETIME_TICKS = 100;
+    private static final int GLIMMER_MAX_LIFETIME_TICKS = 150;
     private static final float AREA_RADIUS = 2.75F;
 
     private int lingeringTicks;
@@ -51,6 +56,7 @@ public class BrutalflyOrbEntity extends ThrowableItemProjectile {
         super.defineSynchedData(builder);
         builder.define(ORB_VARIANT, OrbVariant.POISON.ordinal());
         builder.define(LINGERING, false);
+        builder.define(GLIMMER_ECHO, false);
     }
 
     public void setOrbVariant(OrbVariant variant) {
@@ -64,6 +70,16 @@ public class BrutalflyOrbEntity extends ThrowableItemProjectile {
 
     public boolean isLingeringOrb() {
         return this.entityData.get(LINGERING);
+    }
+
+    @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
     }
 
     public float getOrbRadius(float partialTick) {
@@ -125,7 +141,7 @@ public class BrutalflyOrbEntity extends ThrowableItemProjectile {
             this.applyAreaEffects();
         }
 
-        if (this.lingeringTicks >= MAX_LIFETIME_TICKS) {
+        if (this.lingeringTicks >= (this.isGlimmerEcho() ? GLIMMER_MAX_LIFETIME_TICKS : MAX_LIFETIME_TICKS)) {
             this.discard();
         }
     }
@@ -148,11 +164,11 @@ public class BrutalflyOrbEntity extends ThrowableItemProjectile {
         if (this.level() instanceof ServerLevel serverLevel) {
             double radius = this.getOrbRadius(0.0F) * 0.3D;
             if (this.getOrbVariant() == OrbVariant.POISON) {
-                serverLevel.sendParticles(ParticleTypes.WITCH, this.getX(), this.getY() + 0.15D, this.getZ(), 3, radius, 0.1D, radius, 0.02D);
-                serverLevel.sendParticles(ParticleTypes.ITEM_SLIME, this.getX(), this.getY() + 0.25D, this.getZ(), 2, radius, 0.15D, radius, 0.0D);
+                serverLevel.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.WITCH), this.getX(), this.getY() + 0.15D, this.getZ(), 3, radius, 0.1D, radius, 0.02D);
+                serverLevel.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.ITEM_SLIME), this.getX(), this.getY() + 0.25D, this.getZ(), 2, radius, 0.15D, radius, 0.0D);
             } else {
-                serverLevel.sendParticles(ParticleTypes.FALLING_HONEY, this.getX(), this.getY() + 0.2D, this.getZ(), 4, radius, 0.15D, radius, 0.0D);
-                serverLevel.sendParticles(ParticleTypes.DRIPPING_HONEY, this.getX(), this.getY() + 0.1D, this.getZ(), 2, radius, 0.1D, radius, 0.0D);
+                serverLevel.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.FALLING_HONEY), this.getX(), this.getY() + 0.2D, this.getZ(), 4, radius, 0.15D, radius, 0.0D);
+                serverLevel.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.DRIPPING_HONEY), this.getX(), this.getY() + 0.1D, this.getZ(), 2, radius, 0.1D, radius, 0.0D);
             }
         }
     }
@@ -201,26 +217,27 @@ public class BrutalflyOrbEntity extends ThrowableItemProjectile {
 
     private void spawnTravelParticles() {
         if (this.getOrbVariant() == OrbVariant.POISON) {
-            this.level().addParticle(ParticleTypes.WITCH, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
-            this.level().addParticle(ParticleTypes.ITEM_SLIME, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
+            this.level().addParticle(GlimmerEchoes.particle(this, ParticleTypes.WITCH), this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
+            this.level().addParticle(GlimmerEchoes.particle(this, ParticleTypes.ITEM_SLIME), this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
         } else {
-            this.level().addParticle(ParticleTypes.FALLING_HONEY, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
+            this.level().addParticle(GlimmerEchoes.particle(this, ParticleTypes.FALLING_HONEY), this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
         }
     }
 
     private void spawnLingeringParticles() {
         double radius = this.getOrbRadius(0.0F) * 0.28D;
         if (this.getOrbVariant() == OrbVariant.POISON) {
-            this.level().addParticle(ParticleTypes.WITCH, this.getX() + (this.random.nextDouble() - 0.5D) * radius, this.getY() + 0.15D, this.getZ() + (this.random.nextDouble() - 0.5D) * radius, 0.0D, 0.0D, 0.0D);
-            this.level().addParticle(ParticleTypes.ITEM_SLIME, this.getX() + (this.random.nextDouble() - 0.5D) * radius, this.getY() + 0.2D, this.getZ() + (this.random.nextDouble() - 0.5D) * radius, 0.0D, 0.0D, 0.0D);
+            this.level().addParticle(GlimmerEchoes.particle(this, ParticleTypes.WITCH), this.getX() + (this.random.nextDouble() - 0.5D) * radius, this.getY() + 0.15D, this.getZ() + (this.random.nextDouble() - 0.5D) * radius, 0.0D, 0.0D, 0.0D);
+            this.level().addParticle(GlimmerEchoes.particle(this, ParticleTypes.ITEM_SLIME), this.getX() + (this.random.nextDouble() - 0.5D) * radius, this.getY() + 0.2D, this.getZ() + (this.random.nextDouble() - 0.5D) * radius, 0.0D, 0.0D, 0.0D);
         } else {
-            this.level().addParticle(ParticleTypes.FALLING_HONEY, this.getX() + (this.random.nextDouble() - 0.5D) * radius, this.getY() + 0.1D, this.getZ() + (this.random.nextDouble() - 0.5D) * radius, 0.0D, 0.0D, 0.0D);
+            this.level().addParticle(GlimmerEchoes.particle(this, ParticleTypes.FALLING_HONEY), this.getX() + (this.random.nextDouble() - 0.5D) * radius, this.getY() + 0.1D, this.getZ() + (this.random.nextDouble() - 0.5D) * radius, 0.0D, 0.0D, 0.0D);
         }
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
+        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
         tag.putInt(ORB_VARIANT_KEY, this.getOrbVariant().ordinal());
         tag.putBoolean(LINGERING_KEY, this.isLingeringOrb());
         tag.putInt(LINGER_TICKS_KEY, this.lingeringTicks);
@@ -229,6 +246,7 @@ public class BrutalflyOrbEntity extends ThrowableItemProjectile {
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
+        this.setGlimmerEcho(tag.getBoolean(GlimmerEchoes.SAVE_KEY));
         this.setOrbVariant(OrbVariant.values()[Mth.clamp(tag.getInt(ORB_VARIANT_KEY), 0, OrbVariant.values().length - 1)]);
         this.entityData.set(LINGERING, tag.getBoolean(LINGERING_KEY));
         this.lingeringTicks = Math.max(0, tag.getInt(LINGER_TICKS_KEY));

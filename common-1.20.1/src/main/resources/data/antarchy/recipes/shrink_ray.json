@@ -10,9 +10,14 @@
     "U": {
       "item": "antarchy:uranium_ingot"
     },
-    "N": {
-      "tag": "c:ingots/netherite"
-    },
+    "N": [
+      {
+        "tag": "forge:ingots/netherite"
+      },
+      {
+        "tag": "c:ingots/netherite"
+      }
+    ],
     "C": {
       "item": "minecraft:comparator"
     }

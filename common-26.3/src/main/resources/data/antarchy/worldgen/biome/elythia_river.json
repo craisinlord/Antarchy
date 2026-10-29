@@ -20,6 +20,52 @@
       }
     },
     "minecraft:gameplay/creature_world_gen_spawn_probability": 0.04,
+    "minecraft:gameplay/natural_mob_spawns": {
+      "argument": {
+        "spawn_costs": {},
+        "spawns_by_category": {
+          "creature": [
+            {
+              "type": "antarchy:glimmer",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 2,
+                "min_inclusive": 1
+              },
+              "weight": 12
+            }
+          ],
+          "water_creature": [
+            {
+              "type": "antarchy:octopus_bomb",
+              "count": 1,
+              "weight": 2
+            }
+          ],
+          "water_ambient": [
+            {
+              "type": "antarchy:cheep",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 6,
+                "min_inclusive": 3
+              },
+              "weight": 10
+            },
+            {
+              "type": "minecraft:tropical_fish",
+              "count": {
+                "type": "minecraft:uniform",
+                "max_inclusive": 8,
+                "min_inclusive": 4
+              },
+              "weight": 20
+            }
+          ]
+        }
+      },
+      "modifier": "overlay"
+    },
     "minecraft:visual/fog_color": "#7b5cff",
     "minecraft:visual/sky_color": "#7b5cff",
     "minecraft:visual/water_fog_color": "#0b3c70"
@@ -39,22 +85,22 @@
     [],
     [],
     [
-      "minecraft:ore_coal_upper",
-      "minecraft:ore_coal_lower",
-      "minecraft:ore_iron_upper",
-      "minecraft:ore_iron_middle",
-      "minecraft:ore_iron_small",
-      "minecraft:ore_gold",
-      "minecraft:ore_gold_lower",
-      "minecraft:ore_redstone",
-      "minecraft:ore_redstone_lower",
-      "minecraft:ore_diamond",
-      "minecraft:ore_diamond_medium",
-      "minecraft:ore_diamond_large",
-      "minecraft:ore_diamond_buried",
-      "minecraft:ore_lapis",
-      "minecraft:ore_lapis_buried",
-      "minecraft:ore_copper"
+      "antarchy:elythia_ore_coal_upper",
+      "antarchy:elythia_ore_coal_lower",
+      "antarchy:elythia_ore_iron_upper",
+      "antarchy:elythia_ore_iron_middle",
+      "antarchy:elythia_ore_iron_small",
+      "antarchy:elythia_ore_gold",
+      "antarchy:elythia_ore_gold_lower",
+      "antarchy:elythia_ore_redstone",
+      "antarchy:elythia_ore_redstone_lower",
+      "antarchy:elythia_ore_diamond",
+      "antarchy:elythia_ore_diamond_medium",
+      "antarchy:elythia_ore_diamond_large",
+      "antarchy:elythia_ore_diamond_buried",
+      "antarchy:elythia_ore_lapis",
+      "antarchy:elythia_ore_lapis_buried",
+      "antarchy:elythia_ore_copper"
     ],
     [
       "antarchy:elythia_underground",
@@ -65,7 +111,7 @@
     [
       "antarchy:elythia_meadow_flora",
       "minecraft:patch_sugar_cane",
-      "antarchy:giant_lily_pad_patch"
+      "antarchy:giant_lily_pad_patch_river"
     ],
     []
   ]

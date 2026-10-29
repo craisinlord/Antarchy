@@ -8,6 +8,7 @@ import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
 import com.craisinlord.antarchy.content.entity.royal.RoyalHead;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -49,11 +50,53 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
     private static final ResourceLocation KING_ICE_BEAM_INNER = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/ice_beam_inner.png");
     private static final ResourceLocation KING_ICE_BEAM_END_1 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/ice_beam_end_1.png");
     private static final ResourceLocation KING_ICE_BEAM_END_2 = ResourceLocation.fromNamespaceAndPath("antarchy", "textures/entity/king/ice_beam_end_2.png");
+    private static final ResourceLocation GLIMMER_KING_TEXTURE = GlimmerEchoRendering.texture("king");
+    private static final ResourceLocation GLIMMER_QUEEN_TEXTURE = GlimmerEchoRendering.texture("queen");
+    private static final ResourceLocation[] GLIMMER_QUEEN_PURPLE_BEAM = glimmerBeam("queen_purple");
+    private static final ResourceLocation[] GLIMMER_QUEEN_RED_BEAM = glimmerBeam("queen_red");
+    private static final ResourceLocation[] GLIMMER_QUEEN_BLACK_BEAM = glimmerBeam("queen_black");
+    private static final ResourceLocation[] GLIMMER_KING_FIRE_BEAM = glimmerBeam("king_fire");
+    private static final ResourceLocation[] GLIMMER_KING_LIGHTNING_BEAM = glimmerBeam("king_lightning");
+    private static final ResourceLocation[] GLIMMER_KING_ICE_BEAM = glimmerBeam("king_ice");
+    private static final float GLIMMER_ALPHA = 0.78F;
+    private static final Color NORMAL_RENDER_COLOR = Color.ofRGBA(255, 255, 255, 255);
+    private static final int[] QUEEN_AFTERIMAGE_COLORS = {0x66FF5F6F, 0x4DFF4D60, 0x33FF3B52, 0x1FFF2944};
+    private static final int[] KING_AFTERIMAGE_COLORS = {0x66FFD966, 0x4DFFC94D, 0x33FFB52E, 0x1FFF8C14};
+
     public RoyalBossRenderer(EntityRendererProvider.Context context) {
         super(context, new RoyalBossModel());
         this.shadowRadius = 8.0F;
         this.addRenderLayer(new RoyalAfterimageLayer(this));
         this.addRenderLayer(new TemporalContractionGeoLayer<>(this));
+        this.addRenderLayer(new RoyalGlimmerEmissiveLayer(this));
+    }
+
+    private static ResourceLocation[] glimmerBeam(String name) {
+        return new ResourceLocation[]{
+                GlimmerEchoRendering.texture(name + "_beam_outer"),
+                GlimmerEchoRendering.texture(name + "_beam_inner"),
+                GlimmerEchoRendering.texture(name + "_beam_end_1"),
+                GlimmerEchoRendering.texture(name + "_beam_end_2")
+        };
+    }
+
+    private static final class RoyalGlimmerEmissiveLayer extends GeoRenderLayer<RoyalBossEntity> {
+        private final GlimmerEchoRendering.EmissiveLayer<RoyalBossEntity> king;
+        private final GlimmerEchoRendering.EmissiveLayer<RoyalBossEntity> queen;
+
+        private RoyalGlimmerEmissiveLayer(RoyalBossRenderer renderer) {
+            super(renderer);
+            this.king = new GlimmerEchoRendering.EmissiveLayer<>(renderer, GlimmerEchoRendering.emissiveTexture("king"));
+            this.queen = new GlimmerEchoRendering.EmissiveLayer<>(renderer, GlimmerEchoRendering.emissiveTexture("queen"));
+        }
+
+        @Override
+        public void render(PoseStack poseStack, RoyalBossEntity animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType,
+                           MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick,
+                           int packedLight, int packedOverlay) {
+            (animatable instanceof QueenEntity ? this.queen : this.king).render(poseStack, animatable, bakedModel,
+                    renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+        }
     }
 
     private static final class RoyalAfterimageLayer extends GeoRenderLayer<RoyalBossEntity> {
@@ -71,9 +114,7 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
             if (movement.lengthSqr() < 1.0E-5D) return;
             RenderType afterimageType = RenderType.entityTranslucent(this.getRenderer().getTextureLocation(animatable));
             VertexConsumer afterimageBuffer = bufferSource.getBuffer(afterimageType);
-            int[] colors = animatable instanceof QueenEntity
-                    ? new int[]{0x66FF5F6F, 0x4DFF4D60, 0x33FF3B52, 0x1FFF2944}
-                    : new int[]{0x66FFD966, 0x4DFFC94D, 0x33FFB52E, 0x1FFF8C14};
+            int[] colors = animatable instanceof QueenEntity ? QUEEN_AFTERIMAGE_COLORS : KING_AFTERIMAGE_COLORS;
             for (int i = colors.length - 1; i >= 0; i--) {
                 poseStack.pushPose();
                 Vec3 offset = movement.scale(-(i + 1) * 3.0D / RoyalBossEntity.MODEL_RENDER_SCALE);
@@ -96,17 +137,28 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
     }
 
     @Override
+    public ResourceLocation getTextureLocation(RoyalBossEntity animatable) {
+        return GlimmerEchoRendering.textureLocation(animatable,
+                animatable instanceof QueenEntity ? GLIMMER_QUEEN_TEXTURE : GLIMMER_KING_TEXTURE,
+                super.getTextureLocation(animatable));
+    }
+
+    @Override
     public RenderType getRenderType(RoyalBossEntity animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
-        return RenderType.entityCutoutNoCull(texture);
+        return GlimmerEchoRendering.renderType(animatable, texture, RenderType.entityCutoutNoCull(texture));
     }
 
     @Override
     public Color getRenderColor(RoyalBossEntity animatable, float partialTick, int packedLight) {
+        boolean glimmer = GlimmerEchoes.isGlimmerEcho(animatable);
         if (!animatable.isRoyalAccelerated()) {
-            return Color.ofRGBA(255, 255, 255, 255);
+            return GlimmerEchoRendering.renderColor(animatable, NORMAL_RENDER_COLOR);
         }
         float pulse = 0.5F + 0.5F * (float) Math.sin((animatable.tickCount + partialTick) * 0.4F);
         int green = 60 + Math.round(60.0F * pulse);
+        if (glimmer) {
+            return Color.ofRGBA(1.0F, green / 255.0F, green / 255.0F, GLIMMER_ALPHA);
+        }
         return Color.ofRGBA(255, green, green, 255);
     }
 
@@ -151,42 +203,67 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         Vec3 dir = axis.scale(1.0D / length);
         ResourceLocation outer = QUEEN_PURPLE_BEAM_OUTER;
         ResourceLocation inner = QUEEN_PURPLE_BEAM_INNER;
-        ResourceLocation[] endTextures = {QUEEN_PURPLE_BEAM_END_1, QUEEN_PURPLE_BEAM_END_2};
+        ResourceLocation endFirst = QUEEN_PURPLE_BEAM_END_1;
+        ResourceLocation endSecond = QUEEN_PURPLE_BEAM_END_2;
+        ResourceLocation[] glimmerBeam = GLIMMER_QUEEN_PURPLE_BEAM;
         if (entity instanceof KingEntity) {
-            switch (entity.getRoyalBeamElement()) {
+            RoyalBeamElement kingElement = entity.getRoyalBeamElement(beamHead);
+            glimmerBeam = switch (kingElement) {
+                case FIRE -> GLIMMER_KING_FIRE_BEAM;
+                case ICE -> GLIMMER_KING_ICE_BEAM;
+                default -> GLIMMER_KING_LIGHTNING_BEAM;
+            };
+            switch (kingElement) {
                 case FIRE -> {
                     outer = KING_FIRE_BEAM_OUTER;
                     inner = KING_FIRE_BEAM_INNER;
-                    endTextures = new ResourceLocation[]{KING_FIRE_BEAM_END_1, KING_FIRE_BEAM_END_2};
+                    endFirst = KING_FIRE_BEAM_END_1;
+                    endSecond = KING_FIRE_BEAM_END_2;
                 }
                 case LIGHTNING -> {
                     outer = KING_LIGHTNING_BEAM_OUTER;
                     inner = KING_LIGHTNING_BEAM_INNER;
-                    endTextures = new ResourceLocation[]{KING_LIGHTNING_BEAM_END_1, KING_LIGHTNING_BEAM_END_2};
+                    endFirst = KING_LIGHTNING_BEAM_END_1;
+                    endSecond = KING_LIGHTNING_BEAM_END_2;
                 }
                 case ICE -> {
                     outer = KING_ICE_BEAM_OUTER;
                     inner = KING_ICE_BEAM_INNER;
-                    endTextures = new ResourceLocation[]{KING_ICE_BEAM_END_1, KING_ICE_BEAM_END_2};
+                    endFirst = KING_ICE_BEAM_END_1;
+                    endSecond = KING_ICE_BEAM_END_2;
                 }
                 case GENERIC -> {
                 }
             }
         } else {
-            switch (entity.getRoyalBeamElement(beamHead)) {
+            RoyalBeamElement queenElement = entity.getRoyalBeamElement(beamHead);
+            glimmerBeam = switch (queenElement) {
+                case QUEEN_RED -> GLIMMER_QUEEN_RED_BEAM;
+                case QUEEN_BLACK -> GLIMMER_QUEEN_BLACK_BEAM;
+                default -> GLIMMER_QUEEN_PURPLE_BEAM;
+            };
+            switch (queenElement) {
                 case QUEEN_RED -> {
                     outer = QUEEN_RED_BEAM_OUTER;
                     inner = QUEEN_RED_BEAM_INNER;
-                    endTextures = new ResourceLocation[]{QUEEN_RED_BEAM_END_1, QUEEN_RED_BEAM_END_2};
+                    endFirst = QUEEN_RED_BEAM_END_1;
+                    endSecond = QUEEN_RED_BEAM_END_2;
                 }
                 case QUEEN_BLACK -> {
                     outer = QUEEN_BLACK_BEAM_OUTER;
                     inner = QUEEN_BLACK_BEAM_INNER;
-                    endTextures = new ResourceLocation[]{QUEEN_BLACK_BEAM_END_1, QUEEN_BLACK_BEAM_END_2};
+                    endFirst = QUEEN_BLACK_BEAM_END_1;
+                    endSecond = QUEEN_BLACK_BEAM_END_2;
                 }
                 default -> {
                 }
             }
+        }
+        if (GlimmerEchoes.isGlimmerEcho(entity)) {
+            outer = glimmerBeam[0];
+            inner = glimmerBeam[1];
+            endFirst = glimmerBeam[2];
+            endSecond = glimmerBeam[3];
         }
 
         float time = entity.tickCount + partialTick;
@@ -207,7 +284,7 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity> {
         VertexConsumer outerBuffer = bufferSource.getBuffer(BeamRenderTypes.beam(outer));
         drawLocalBeam(outerBuffer, pose, length, BEAM_OUTER_RADIUS, 8, outerV, 0.15F);
 
-        ResourceLocation endTexture = endTextures[(entity.tickCount / 2) % endTextures.length];
+        ResourceLocation endTexture = (entity.tickCount / 2) % 2 == 0 ? endFirst : endSecond;
         VertexConsumer endBuffer = bufferSource.getBuffer(BeamRenderTypes.beam(endTexture));
         drawBeamImpact(endBuffer, pose, (float) length - 1.5F, BEAM_INNER_RADIUS);
         poseStack.popPose();

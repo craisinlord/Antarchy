@@ -375,6 +375,7 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setOuranwoodDeer(AntarchyFabricEntities.OURANWOOD_DEER);
         AntarchyObjects.setRollyPolly(AntarchyFabricEntities.ROLLY_POLLY);
         AntarchyObjects.setGlimmer(AntarchyFabricEntities.GLIMMER);
+        AntarchyObjects.setStratoshark(AntarchyFabricEntities.STRATOSHARK);
         AntarchyObjects.setSpiritApple(() -> AntarchyFabricItems.SPIRIT_APPLE.get());
         AntarchyObjects.setGlimmeringEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.GLIMMERING));
         AntarchyObjects.setRoyalVitalityPenaltyEffect(() -> AntarchyFabricMisc.mobEffectHolder(AntarchyFabricMisc.ROYAL_VITALITY_PENALTY));
@@ -413,6 +414,7 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setCritterCageBlockEntity(() -> AntarchyFabricBlocks.CRITTER_CAGE_BLOCK_ENTITY.get());
         AntarchyObjects.setLucidAnchorBlockEntity(() -> AntarchyFabricBlocks.LUCID_ANCHOR_BLOCK_ENTITY.get());
         AntarchyObjects.setCritterCageProjectile(() -> AntarchyFabricEntities.CRITTER_CAGE_PROJECTILE.get());
+        AntarchyObjects.setLaunchedAnvil(() -> AntarchyFabricEntities.LAUNCHED_ANVIL.get());
         AntarchyObjects.setWormHookProjectile(() -> AntarchyFabricEntities.WORM_HOOK_PROJECTILE.get());
         AntarchyObjects.setWormHook(() -> AntarchyFabricItems.WORM_HOOK.get());
         AntarchyObjects.setCritterCageEntityTypeComponent(() -> AntarchyFabricMisc.CRITTER_CAGE_ENTITY_TYPE_COMPONENT.get());

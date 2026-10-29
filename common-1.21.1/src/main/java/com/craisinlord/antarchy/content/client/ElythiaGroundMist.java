@@ -45,7 +45,7 @@ public final class ElythiaGroundMist {
             return;
         }
 
-        double windAngle = hash01(morningIndex, 0xD2L) * Math.PI * 2.0D;
+        double windAngle = ElythiaWind.angle(level.getGameTime());
         double windX = Math.cos(windAngle) * WIND_SPEED;
         double windZ = Math.sin(windAngle) * WIND_SPEED;
         double peakAlpha = 0.18D + 0.2D * strength;

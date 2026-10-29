@@ -1042,6 +1042,8 @@ public final class AntarchyFabricBlocks {
 
     public static final DeferredBlock<Block> LOAM = BLOCKS.register("loam",
             () -> new Block(DeferredRegister.copyBlockProperties(Blocks.MUD)));
+    public static final DeferredBlock<Block> PRIMORDIAL_LOAM = BLOCKS.register("primordial_loam",
+            () -> new Block(DeferredRegister.copyBlockProperties(Blocks.MUD)));
     public static final DeferredBlock<Block> PACKED_LOAM = BLOCKS.register("packed_loam",
             () -> new Block(DeferredRegister.copyBlockProperties(Blocks.PACKED_MUD)));
     public static final DeferredBlock<Block> LOAM_BRICKS = BLOCKS.register("loam_bricks",

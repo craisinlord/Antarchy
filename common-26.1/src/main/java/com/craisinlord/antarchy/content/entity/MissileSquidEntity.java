@@ -151,10 +151,14 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<MissileSquidEntity>("main_controller", 0, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("attack", ATTACK_ANIM));
     }
 
     private PlayState mainAnimController(AnimationTest<MissileSquidEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         return switch (this.getAnimationState()) {
             case ANIM_ATTACK -> state.setAndContinue(ATTACK_ANIM);
             case ANIM_SWIM -> state.setAndContinue(SWIM_ANIM);

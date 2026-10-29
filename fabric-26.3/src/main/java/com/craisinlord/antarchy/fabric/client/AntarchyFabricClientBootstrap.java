@@ -164,6 +164,7 @@ public final class AntarchyFabricClientBootstrap {
         EntityRendererRegistry.register(AntarchyFabricEntities.ROYAL_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalBlackHoleRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.ROYAL_ASSAILANT_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalAssailantBlackHoleRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.CRITTER_CAGE_PROJECTILE.get(), ThrownItemRenderer::new);
+        EntityRendererRegistry.register(AntarchyFabricEntities.LAUNCHED_ANVIL.get(), com.craisinlord.antarchy.content.client.renderer.LaunchedAnvilRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.WORM_HOOK_PROJECTILE.get(), ThrownItemRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.HUSH_PROJECTILE.get(), HushProjectileRenderer::new);
         EntityRendererRegistry.register(AntarchyFabricEntities.BRUTALFLY_ORB.get(), BrutalflyOrbRenderer::new);
@@ -379,6 +380,7 @@ public final class AntarchyFabricClientBootstrap {
             if (client.player != null) {
                 ParalyzedClientHandler.clampPlayerInput(client.player);
                 com.craisinlord.antarchy.content.item.BigBerthaItem.clientTick(client.player);
+                com.craisinlord.antarchy.content.item.AnvilCannonItem.clientTick(client.player);
             }
             BrutalflyElytraClientHandler.tick();
             SpringyBootsClientHandler.tick();

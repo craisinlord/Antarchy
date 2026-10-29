@@ -158,6 +158,12 @@ public final class AntarchySettings {
     private static double rpoLauncherLaunchVelocity = 1.8D;
     private static double rpoLauncherExplosionDamage = 34.0D;
     private static double rpoLauncherExplosionRadius = 14.0D;
+    private static double anvilCannonCooldownSeconds = 2.5D;
+    private static double anvilCannonLaunchVelocity = 2.2D;
+    private static double anvilCannonImpactDamage = 30.0D;
+    private static double anvilCannonImpactKnockback = 1.5D;
+    private static double anvilCannonRecoilStrength = 0.8D;
+    private static boolean anvilCannonDegradeOnImpact = true;
     private static double sizeRayCooldownSeconds = 1.0D;
     private static boolean gravityGunEnabled = true;
     private static boolean gravityGunBlocksEnabled = true;
@@ -1220,6 +1226,12 @@ public final class AntarchySettings {
     public static double rpoLauncherLaunchVelocity() { return rpoLauncherLaunchVelocity; }
     public static double rpoLauncherExplosionDamage() { return rpoLauncherExplosionDamage; }
     public static double rpoLauncherExplosionRadius() { return rpoLauncherExplosionRadius; }
+    public static double anvilCannonCooldownSeconds() { return anvilCannonCooldownSeconds; }
+    public static double anvilCannonLaunchVelocity() { return anvilCannonLaunchVelocity; }
+    public static double anvilCannonImpactDamage() { return anvilCannonImpactDamage; }
+    public static double anvilCannonImpactKnockback() { return anvilCannonImpactKnockback; }
+    public static double anvilCannonRecoilStrength() { return anvilCannonRecoilStrength; }
+    public static boolean anvilCannonDegradeOnImpact() { return anvilCannonDegradeOnImpact; }
 
     public static double sizeRayCooldownSeconds() {
         return sizeRayCooldownSeconds;
@@ -1831,6 +1843,12 @@ public final class AntarchySettings {
     public static void setRpoLauncherLaunchVelocity(double value) { rpoLauncherLaunchVelocity = value; }
     public static void setRpoLauncherExplosionDamage(double value) { rpoLauncherExplosionDamage = value; }
     public static void setRpoLauncherExplosionRadius(double value) { rpoLauncherExplosionRadius = value; }
+    public static void setAnvilCannonCooldownSeconds(double value) { anvilCannonCooldownSeconds = value; }
+    public static void setAnvilCannonLaunchVelocity(double value) { anvilCannonLaunchVelocity = value; }
+    public static void setAnvilCannonImpactDamage(double value) { anvilCannonImpactDamage = value; }
+    public static void setAnvilCannonImpactKnockback(double value) { anvilCannonImpactKnockback = value; }
+    public static void setAnvilCannonRecoilStrength(double value) { anvilCannonRecoilStrength = value; }
+    public static void setAnvilCannonDegradeOnImpact(boolean value) { anvilCannonDegradeOnImpact = value; }
 
     public static void setSizeRayCooldownSeconds(double value) {
         sizeRayCooldownSeconds = value;

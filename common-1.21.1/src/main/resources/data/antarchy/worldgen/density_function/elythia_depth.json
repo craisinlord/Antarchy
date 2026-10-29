@@ -1,0 +1,14 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:add",
+    "argument1": {
+      "type": "minecraft:y_clamped_gradient",
+      "from_y": -24,
+      "to_y": 360,
+      "from_value": 1.5,
+      "to_value": -1.5
+    },
+    "argument2": "minecraft:overworld/offset"
+  }
+}

@@ -115,6 +115,16 @@ public final class AntarchyDamageSources {
         );
     }
 
+    public static DamageSource anvilCannon(ServerLevel level, Entity anvil, @Nullable Entity shooter) {
+        return new DamageSource(
+                level.registryAccess()
+                        .lookupOrThrow(Registries.DAMAGE_TYPE)
+                        .getOrThrow(AntarchyDamageTypes.ANVIL_CANNON),
+                anvil,
+                shooter
+        );
+    }
+
     public static DamageSource spitBugDisrespect(ServerLevel level, @Nullable Entity directEntity, @Nullable Entity causingEntity) {
         return new DamageSource(
                 level.registryAccess()

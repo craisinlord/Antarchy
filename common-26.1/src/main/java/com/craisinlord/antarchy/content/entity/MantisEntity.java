@@ -206,11 +206,15 @@ public class MantisEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<MantisEntity>("main_controller", 0, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("attack", ATTACK_ANIM)
                 .triggerableAnim("flyattack", FLY_ATTACK_ANIM));
     }
 
     private PlayState mainAnimController(AnimationTest<MantisEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         return switch (this.getAnimationState()) {
             case ANIM_WALK -> state.setAndContinue(WALK_ANIM);
             case ANIM_FLY -> state.setAndContinue(FLY_ANIM);

@@ -49,10 +49,10 @@ public final class ElythiaCloudField {
     public record Marker(FeatureKind kind, double x, double z, double radius, double orientation) {
     }
 
-    public static final Spec LOW = new Spec("low", 0x5EA1C10DL, Kind.VOXEL, 256, 16, 0.22D, 2, 1.0D,
-            0, 18.0D, 26.0D, 7, 3, 3, 1, 28, 1.0D, 6.0F, 4.0F);
-    public static final Spec MID = new Spec("mid", 0x2D7F00A3L, Kind.VOXEL, 256, 16, 0.15D, 3, 1.0D,
-            3, 18.0D, 26.0D, 4, 2, 3, 1, 15, 1.0D, 8.0F, 4.0F);
+    public static final Spec LOW = new Spec("low", 0x5EA1C10DL, Kind.VOXEL, 256, 16, 0.07D, 2, 1.0D,
+            0, 18.0D, 26.0D, 10, 3, 4, 2, 28, 1.0D, 6.0F, 4.0F);
+    public static final Spec MID = new Spec("mid", 0x2D7F00A3L, Kind.VOXEL, 256, 16, 0.04D, 3, 1.0D,
+            3, 18.0D, 26.0D, 5, 2, 3, 1, 15, 1.0D, 8.0F, 4.0F);
     public static final Spec HIGH = new Spec("high", 0x71C3E9B5L, Kind.WISP, 256, 64, 0.12D, 1, 1.0D,
             1, 60.0D, 75.0D, 0, 0, 0, 0, 0, 1.0D, 8.0F, 4.0F);
 
@@ -203,7 +203,10 @@ public final class ElythiaCloudField {
             vortices.add(new Vortex(x, z, radius, eddySign(spec, random) * (0.6D + random.nextDouble() * 0.4D), false));
         }
 
-        float[] raw = new float[n * n];
+        float[] background = new float[n * n];
+        float[] bases = new float[n * n];
+        float[] warpedX = new float[n * n];
+        float[] warpedZ = new float[n * n];
         for (int z = 0; z < n; z++) {
             for (int x = 0; x < n; x++) {
                 double wx = x + 0.5D;
@@ -216,15 +219,24 @@ public final class ElythiaCloudField {
                 double base = spec.kind() == Kind.WISP
                         ? wispBase(wx, wz, n, spec.seed())
                         : fbm(wx, wz, spec.baseSpacing(), n, spec.seed());
-                double value = base + weatherShift(x + 0.5D, z + 0.5D, n, spec);
-                for (Mask mask : masks) {
-                    value = mask.apply(value, wx, wz, base, n);
-                }
-                raw[z * n + x] = (float) value;
+                int i = z * n + x;
+                background[i] = (float) (base + weatherShift(x + 0.5D, z + 0.5D, n, spec));
+                bases[i] = (float) base;
+                warpedX[i] = (float) wx;
+                warpedZ[i] = (float) wz;
             }
         }
 
-        float threshold = quantile(raw, 1.0D - spec.coverage());
+        float backgroundThreshold = quantile(background, 1.0D - spec.coverage());
+        float[] raw = new float[n * n];
+        for (int i = 0; i < raw.length; i++) {
+            double value = background[i] - backgroundThreshold + 0.5D;
+            for (Mask mask : masks) {
+                value = mask.apply(value, warpedX[i], warpedZ[i], bases[i], n);
+            }
+            raw[i] = (float) value;
+        }
+        float threshold = 0.5F;
         float[] density = new float[n * n];
         byte[] heights = new byte[n * n];
 

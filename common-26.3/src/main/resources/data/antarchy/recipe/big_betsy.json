@@ -1,0 +1,12 @@
+{
+  "type": "antarchy:big_bertha_variant",
+  "category": "equipment",
+  "ingredients": [
+    "antarchy:big_bertha",
+    "minecraft:amethyst_shard",
+    "minecraft:netherite_ingot"
+  ],
+  "result": {
+    "id": "antarchy:big_betsy"
+  }
+}

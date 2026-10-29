@@ -33,6 +33,8 @@ public final class HerculesBeetleClientHandler {
         KingJudgmentFlashClientState.tick();
         HordeClientState.tick();
         com.craisinlord.antarchy.content.client.ThrowbackClientState.tick();
+        com.craisinlord.antarchy.content.client.ElythiaEventClient.tick();
+        com.craisinlord.antarchy.content.client.ThoraxisEventClient.tick();
         com.craisinlord.antarchy.content.client.ElythiaEchoes.tick();
         com.craisinlord.antarchy.content.client.AntTransitClientState.tick();
 

@@ -117,11 +117,15 @@ public class SkulkingFrightEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<SkulkingFrightEntity>("main_controller", 3, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("attackland", ATTACK_LAND_ANIM)
                 .triggerableAnim("attackair", ATTACK_AIR_ANIM));
     }
 
     private PlayState mainAnimController(AnimationTest<SkulkingFrightEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         if (attackAnimTicks > 0) {
             if (!this.onGround()) {
                 return state.setAndContinue(ATTACK_AIR_ANIM);

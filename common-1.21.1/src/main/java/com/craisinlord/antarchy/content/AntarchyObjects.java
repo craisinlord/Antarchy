@@ -174,6 +174,8 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity>> GLIMMER = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.stratoshark.StratosharkEntity>> STRATOSHARK = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.stratoshark.StratosharkEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<Item> SPIRIT_APPLE = (Supplier<Item>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<com.craisinlord.antarchy.content.entity.ElkaEntity>> ELKA = (Supplier<EntityType<com.craisinlord.antarchy.content.entity.ElkaEntity>>) UNBOUND;
@@ -408,6 +410,10 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<SimpleParticleType> LOTUS_POLLEN = (Supplier<SimpleParticleType>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<SimpleParticleType> TEMPORAL_GLINT_SLOW = (Supplier<SimpleParticleType>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<SimpleParticleType> TEMPORAL_GLINT_FAST = (Supplier<SimpleParticleType>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<SimpleParticleType> LUCID_BOLT_IMPACT_SMALL = (Supplier<SimpleParticleType>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<SimpleParticleType> LUCID_BOLT_IMPACT_LARGE = (Supplier<SimpleParticleType>) UNBOUND;
@@ -417,6 +423,8 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity>> CRITTER_CAGE_PROJECTILE =
             (Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity>>) UNBOUND;
+    public static Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.LaunchedAnvilEntity>> LAUNCHED_ANVIL =
+            (Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.LaunchedAnvilEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.WormHookProjectileEntity>> WORM_HOOK_PROJECTILE =
             (Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.WormHookProjectileEntity>>) UNBOUND;
@@ -789,6 +797,10 @@ public final class AntarchyObjects {
         GLIMMER = supplier;
     }
 
+    public static void setStratoshark(Supplier<EntityType<com.craisinlord.antarchy.content.entity.stratoshark.StratosharkEntity>> supplier) {
+        STRATOSHARK = supplier;
+    }
+
     public static void setLumen(Supplier<Fluid> supplier) {
         LUMEN = supplier;
     }
@@ -901,6 +913,11 @@ public final class AntarchyObjects {
         LOTUS_POLLEN = supplier;
     }
 
+    public static void setTemporalGlints(Supplier<SimpleParticleType> slow, Supplier<SimpleParticleType> fast) {
+        TEMPORAL_GLINT_SLOW = slow;
+        TEMPORAL_GLINT_FAST = fast;
+    }
+
     public static void setNightmareFireFlame(Supplier<SimpleParticleType> supplier) {
         NIGHTMARE_FIRE_FLAME = supplier;
     }
@@ -947,6 +964,10 @@ public final class AntarchyObjects {
 
     public static void setCritterCageProjectile(Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity>> supplier) {
         CRITTER_CAGE_PROJECTILE = supplier;
+    }
+
+    public static void setLaunchedAnvil(Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.LaunchedAnvilEntity>> supplier) {
+        LAUNCHED_ANVIL = supplier;
     }
 
     public static void setWormHookProjectile(Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.WormHookProjectileEntity>> supplier) {

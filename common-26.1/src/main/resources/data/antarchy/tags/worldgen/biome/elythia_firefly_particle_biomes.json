@@ -1,11 +1,13 @@
 {
   "replace": false,
   "values": [
-    "antarchy:elythia_meadow",
+    "antarchy:primordial_plains",
+    "antarchy:primordial_massif",
     "antarchy:truffalo_forest",
     "antarchy:butterfly_fields",
     "antarchy:ouranwood_forest",
     "antarchy:peach_forest",
-    "antarchy:sparse_ouranwood_forest"
+    "antarchy:sparse_ouranwood_forest",
+    "antarchy:fungal_reserve"
   ]
 }

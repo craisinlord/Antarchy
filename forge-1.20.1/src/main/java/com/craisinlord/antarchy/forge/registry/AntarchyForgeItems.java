@@ -487,6 +487,7 @@ public final class AntarchyForgeItems {
     public static final RegistryObject<net.minecraft.world.item.BlockItem> DREAM_SAND_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.DREAM_SAND);
     public static final RegistryObject<net.minecraft.world.item.BlockItem> ANTIGRAVEL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.ANTIGRAVEL);
     public static final RegistryObject<net.minecraft.world.item.BlockItem> LOAM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.LOAM);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> PRIMORDIAL_LOAM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.PRIMORDIAL_LOAM);
     public static final RegistryObject<net.minecraft.world.item.BlockItem> PACKED_LOAM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.PACKED_LOAM);
     public static final RegistryObject<net.minecraft.world.item.BlockItem> LOAM_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.LOAM_BRICKS);
     public static final RegistryObject<net.minecraft.world.item.BlockItem> LOAM_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.LOAM_BRICK_STAIRS);
@@ -1124,6 +1125,13 @@ public final class AntarchyForgeItems {
                     consumer.accept(AntarchyGeoItemExtensions.crossbowHold(this));
                 }
             });
+    public static final RegistryObject<AnvilCannonItem> ANVIL_CANNON = ITEMS.register("anvil_cannon",
+            () -> new AnvilCannonItem(new Item.Properties().stacksTo(1).durability(384).rarity(Rarity.RARE)) {
+                @Override
+                public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
+                    consumer.accept(AntarchyGeoItemExtensions.crossbowHold(this));
+                }
+            });
     public static final RegistryObject<BattleAxeItem> BATTLE_AXE = ITEMS.register("battle_axe",
             () -> new BattleAxeItem(Tiers.NETHERITE,
                     new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant(),
@@ -1149,6 +1157,15 @@ public final class AntarchyForgeItems {
     public static final RegistryObject<BigBerthaItem> BIG_BERTHA = ITEMS.register("big_bertha",
             () -> new BigBerthaItem(Tiers.NETHERITE,
                     new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()) {
+                @Override
+                public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
+                    consumer.accept(AntarchyGeoItemExtensions.plain(this));
+                }
+            });
+    public static final RegistryObject<BigBerthaItem> BIG_BETSY = ITEMS.register("big_betsy",
+            () -> new BigBerthaItem(Tiers.NETHERITE,
+                    new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant(),
+                    new ResourceLocation("antarchy", "textures/item/big_bertha/big_betsy.png")) {
                 @Override
                 public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
                     consumer.accept(AntarchyGeoItemExtensions.plain(this));

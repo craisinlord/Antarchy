@@ -104,7 +104,7 @@ public final class BedBugSurfaceClusterFeature extends Feature<NoneFeatureConfig
             level.setBlock(
                     eggPos,
                     AntarchyObjects.BED_BUG_EGG.get().defaultBlockState().setValue(BedBugEggBlock.EGGS, eggs),
-                    Block.UPDATE_ALL
+                    Block.UPDATE_CLIENTS
             );
             eggSpots.add(eggPos.immutable());
         }

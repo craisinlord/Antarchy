@@ -30,6 +30,7 @@ public class ThrowbackNerdPoleFeature extends Feature<NoneFeatureConfiguration> 
         BlockPos base = new BlockPos(zone.x(), surface, zone.z());
         BlockPos ground = base.below();
         if (!ThrowbackZones.isWildZoneBiome(level, base)
+                || !level.getChunk(base).getAllReferences().isEmpty()
                 || !level.getFluidState(base).isEmpty()
                 || !level.getFluidState(ground).isEmpty()
                 || !level.getBlockState(ground).isFaceSturdy(level, ground, Direction.UP)) {

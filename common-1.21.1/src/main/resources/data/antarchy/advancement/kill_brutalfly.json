@@ -1,0 +1,33 @@
+{
+  "parent": "antarchy:visit_elythia",
+  "criteria": {
+    "kill_brutalfly": {
+      "conditions": {
+        "entity": {
+          "type": "antarchy:brutalfly"
+        }
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.kill_brutalfly.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:brutalfly_wing"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.kill_brutalfly.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_brutalfly"
+    ]
+  ]
+}

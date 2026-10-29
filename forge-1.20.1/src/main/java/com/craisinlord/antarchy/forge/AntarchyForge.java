@@ -450,6 +450,7 @@ public class AntarchyForge {
         AntarchyObjects.setOuranwoodDeer(AntarchyForgeEntites.OURANWOOD_DEER);
         AntarchyObjects.setRollyPolly(AntarchyForgeEntites.ROLLY_POLLY);
         AntarchyObjects.setGlimmer(AntarchyForgeEntites.GLIMMER);
+        AntarchyObjects.setStratoshark(AntarchyForgeEntites.STRATOSHARK);
         AntarchyObjects.setSpiritApple(() -> AntarchyForgeItems.SPIRIT_APPLE.get());
         AntarchyObjects.setGlimmeringEffect(() -> AntarchyForgeMisc.GLIMMERING.get());
         AntarchyObjects.setRoyalVitalityPenaltyEffect(() -> AntarchyForgeMisc.ROYAL_VITALITY_PENALTY.get());
@@ -483,6 +484,7 @@ public class AntarchyForge {
         AntarchyObjects.setCritterCageBlock(() -> AntarchyForgeBlocks.CRITTER_CAGE_BLOCK.get());
         AntarchyObjects.setCritterCageBlockEntity(() -> AntarchyForgeBlocks.CRITTER_CAGE_BLOCK_ENTITY.get());
         AntarchyObjects.setCritterCageProjectile(() -> AntarchyForgeEntites.CRITTER_CAGE_PROJECTILE.get());
+        AntarchyObjects.setLaunchedAnvil(() -> AntarchyForgeEntites.LAUNCHED_ANVIL.get());
     }
 
     private static boolean isModLoaded(String modId) {

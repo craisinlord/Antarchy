@@ -210,11 +210,15 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<ButterflyEntity>("main_controller", 2, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("emerge", EMERGE_ANIM)
                 .triggerableAnim("pollinate", POLLINATE_ANIM));
     }
 
     private PlayState mainAnimController(AnimationTest<ButterflyEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         if (this.getActivityState() == ActivityState.EMERGING) {
             return state.setAndContinue(EMERGE_ANIM);
         }

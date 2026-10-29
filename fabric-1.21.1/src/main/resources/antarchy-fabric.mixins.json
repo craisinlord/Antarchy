@@ -26,6 +26,8 @@
     "infinity.AmendmentRareOresMixin"
   ],
   "client": [
+    "client.OuranwoodLeavesCullingMixin",
+    "client.SodiumOuranwoodLeavesCullingMixin",
     "client.SeparateLargeItemModelsMixin",
     "client.SeparateLargeItemGuiLightingMixin",
     "client.BrutalflyElytraExperienceBarMixin",
@@ -33,7 +35,8 @@
     "client.LiquidFogMixin",
     "client.GravityGunMouseScrollMixin",
     "client.KeybindingConflictFixMixin",
-    "client.CrossbowArmPoseMixin"
+    "client.CrossbowArmPoseMixin",
+    "client.AppleSkinOverlayMixin"
   ],
   "injectors": {
     "defaultRequire": 1

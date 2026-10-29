@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.ant.AntTeleportHelper;
+import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import com.craisinlord.antarchy.content.network.AntTransitPayload;
 import com.craisinlord.antarchy.content.network.AntTransitSync;
 import com.craisinlord.antarchy.content.network.TransitStyle;
@@ -30,12 +31,11 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -49,17 +49,19 @@ public final class AntTransit {
 
     private static final int TELEPORT_TICK = 45;
     private static final int SEARCH_TIMEOUT_TICKS = 450;
+    private static final int PREPARE_TIMEOUT_TICKS = 1200;
     private static final int ARRIVAL_PROTECTION_TICKS = 40;
     private static final int WAKE_UP_DELAY_TICKS = 30;
     private static final int MAX_GLIDE_TICKS = 1200;
     private static final int DROP_Y = 236;
     private static final int MIN_DROP_HEIGHT = 48;
-    private static final int SLOW_FALL_HEIGHT = 14;
-    private static final int SLOW_FALL_TICKS = 60;
+    private static final int GROUND_SCAN = 14;
+    private static final int POOF_HEIGHT = 4;
     private static final double HOLD_DISTANCE_SQR = 0.09D;
     private static final double DISC_RADIUS = 2.5D;
     private static final String ARRIVAL_FAILED = "message.antarchy.teleport_arrival_failed";
-    private static final String WARP_FAILED = "message.antarchy.rainbow_ant_failed_dimension_create";
+    private static final String PREPARING = "message.antarchy.transit_preparing";
+    private static final String WARP_FAILED ="message.antarchy.rainbow_ant_failed_dimension_create";
     private static final Map<UUID, State> STATES = new ConcurrentHashMap<>();
 
     private AntTransit() {
@@ -80,7 +82,11 @@ public final class AntTransit {
         if (style == null) {
             return false;
         }
-        State state = begin(player, style, destination, null);
+        State state = new State(style, player.serverLevel(), destination, player.position(), null);
+        state.waiting = true;
+        STATES.put(player.getUUID(), state);
+        player.displayClientMessage(Component.translatable(PREPARING), true);
+        player.playNotifySound(SoundEvents.AMETHYST_BLOCK_HIT, SoundSource.PLAYERS, 0.6F, 0.8F);
         AntTeleportHelper.prepareArrival(player, destination, arrival -> {
             state.arrival = arrival;
             state.searchDone = true;
@@ -92,14 +98,21 @@ public final class AntTransit {
         if (!AntarchySettings.rainbowAntPrism() || !available(player)) {
             return false;
         }
-        State state = begin(player, TransitStyle.PRISM_IN, null, warp);
+        State state = new State(TransitStyle.PRISM_IN, player.serverLevel(), null, player.position(), warp);
+        STATES.put(player.getUUID(), state);
+        begin(player, state);
         state.searchDone = true;
         state.warpFailureKey = failureKey;
         return true;
     }
 
+    public static boolean isActive(ServerPlayer player) {
+        return STATES.containsKey(player.getUUID());
+    }
+
     public static boolean isProtected(ServerPlayer player, DamageSource source) {
-        return STATES.containsKey(player.getUUID()) && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY);
+        State state = STATES.get(player.getUUID());
+        return state != null && !state.waiting && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY);
     }
 
     public static void tick(MinecraftServer server) {
@@ -111,7 +124,14 @@ public final class AntTransit {
             Map.Entry<UUID, State> entry = iterator.next();
             ServerPlayer player = server.getPlayerList().getPlayer(entry.getKey());
             State state = entry.getValue();
-            if (player == null || !player.isAlive() || !tick(player, state)) {
+            if (player == null) {
+                iterator.remove();
+                continue;
+            }
+            if (!player.isAlive() || !tick(player, state)) {
+                if (!state.teleported && !state.waiting) {
+                    AntTransitSync.send(player, payload(player, state, AntTransitPayload.PHASE_CANCEL, state.origin, false));
+                }
                 iterator.remove();
             }
         }
@@ -152,18 +172,18 @@ public final class AntTransit {
         };
     }
 
-    private static State begin(ServerPlayer player, TransitStyle style, ServerLevel destination, BooleanSupplier warp) {
+    private static void begin(ServerPlayer player, State state) {
         if (player.isPassenger()) {
             player.stopRiding();
         }
-        State state = new State(style, player.serverLevel(), destination, player.position(), warp);
-        STATES.put(player.getUUID(), state);
+        state.waiting = false;
+        state.tick = 0;
+        state.origin = player.position();
         AntTransitSync.sendToSelfAndTracking(player, payload(player, state, AntTransitPayload.PHASE_START, state.origin, false));
-        playAt(player, state.origin, startSound(style, player), 1.0F, startPitch(style));
-        if (style == TransitStyle.CAVARYN_IN) {
+        playAt(player, state.origin, startSound(state.style, player), 1.0F, startPitch(state.style));
+        if (state.style == TransitStyle.CAVARYN_IN) {
             player.playNotifySound(AntarchySoundEvents.CAVARYN_HEARTBEAT.get(), SoundSource.PLAYERS, 0.8F, 1.0F);
         }
-        return state;
     }
 
     private static SoundEvent startSound(TransitStyle style, ServerPlayer player) {
@@ -186,6 +206,24 @@ public final class AntTransit {
 
     private static boolean tick(ServerPlayer player, State state) {
         state.tick++;
+        if (state.waiting) {
+            if (player.level() != state.originLevel) {
+                return false;
+            }
+            if (state.tick > PREPARE_TIMEOUT_TICKS || (state.searchDone && state.arrival == null)) {
+                player.displayClientMessage(Component.translatable(ARRIVAL_FAILED), true);
+                return false;
+            }
+            if (state.searchDone) {
+                begin(player, state);
+            } else if (state.tick % 4 == 0) {
+                gathering(player, state);
+            }
+            return true;
+        }
+        if (state.teleported && player.isChangingDimension()) {
+            return true;
+        }
         if (!state.teleported) {
             if (player.level() != state.originLevel) {
                 if (state.warpRequested) {
@@ -275,6 +313,25 @@ public final class AntTransit {
         }
     }
 
+    private static void gathering(ServerPlayer player, State state) {
+        ServerLevel level = player.serverLevel();
+        Vec3 pos = player.position();
+        double angle = state.tick * 0.35D;
+        for (int i = 0; i < 2; i++) {
+            double a = angle + i * Math.PI;
+            double x = pos.x + Math.cos(a) * 0.9D;
+            double z = pos.z + Math.sin(a) * 0.9D;
+            switch (state.style) {
+                case ELYTHIA_IN, ELYTHIA_HOME -> level.sendParticles(ParticleTypes.END_ROD, x, pos.y + 0.1D, z, 0, 0.0D, 1.0D, 0.0D, 0.03D);
+                case THORAXIS_IN, THORAXIS_OUT -> level.sendParticles(ParticleTypes.REVERSE_PORTAL, x, pos.y + 0.1D, z, 0, 0.0D, 1.0D, 0.0D, 0.1D);
+                case CAVARYN_IN, CAVARYN_OUT -> level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, groundBelow(level, pos)),
+                        x, pos.y + 0.1D, z, 2, 0.1D, 0.05D, 0.1D, 0.1D);
+                case PRISM_IN, PRISM_OUT -> level.sendParticles(new DustParticleOptions(rainbow(state.tick * 0.02F + i * 0.5F), 1.0F),
+                        x, pos.y + 0.1D, z, 0, 0.0D, 1.0D, 0.0D, 0.05D);
+            }
+        }
+    }
+
     private static void arrive(ServerPlayer player, State state) {
         AntTeleportHelper.teleportPlayerWithCompanions(player, state.destination, state.arrival);
         boolean glide = false;
@@ -343,12 +400,15 @@ public final class AntTransit {
         if (player.getAbilities().flying) {
             return false;
         }
-        double ceiling = Math.max(DROP_Y, player.getY() + MIN_DROP_HEIGHT);
+        AABB box = player.getBoundingBox();
+        int top = Math.max(level.getHeight(Heightmap.Types.MOTION_BLOCKING, Mth.floor(box.minX), Mth.floor(box.minZ)),
+                level.getHeight(Heightmap.Types.MOTION_BLOCKING, Mth.floor(box.maxX), Mth.floor(box.maxZ)));
+        double floor = Math.max(player.getY(), top);
+        double ceiling = Math.max(DROP_Y, floor + MIN_DROP_HEIGHT);
         if (ceiling > level.getMaxBuildHeight() - 4) {
             return false;
         }
-        AABB box = player.getBoundingBox();
-        AABB column = new AABB(box.minX, box.maxY, box.minZ, box.maxX, ceiling + box.getYsize(), box.maxZ);
+        AABB column = new AABB(box.minX, floor + 1.0D, box.minZ, box.maxX, ceiling + box.getYsize(), box.maxZ);
         if (!level.noCollision(player, column) || level.containsAnyLiquid(column)) {
             return false;
         }
@@ -374,16 +434,17 @@ public final class AntTransit {
         if (!state.gliding) {
             return state.tick < ARRIVAL_PROTECTION_TICKS;
         }
-        if (state.tick > MAX_GLIDE_TICKS || player.isInWater() || player.getAbilities().flying
+        if (state.tick > MAX_GLIDE_TICKS || player.isInWater()
+                || AntarchyFluidChecks.isLumen(player.level().getFluidState(player.blockPosition()))
+                || player.getAbilities().flying
                 || player.isFallFlying() || (state.tick > 5 && player.onGround())) {
             return false;
         }
         player.resetFallDistance();
-        if (heightAboveGround(player) <= SLOW_FALL_HEIGHT) {
-            MobEffectInstance current = player.getEffect(MobEffects.SLOW_FALLING);
-            if (current == null || current.getDuration() < SLOW_FALL_TICKS / 2) {
-                player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, SLOW_FALL_TICKS, 0, true, false, true));
-            }
+        if (!state.poofed && heightAboveGround(player) <= POOF_HEIGHT) {
+            state.poofed = true;
+            player.serverLevel().sendParticles(ParticleTypes.CLOUD, player.getX(), player.getY() - heightAboveGround(player) + 0.2D, player.getZ(),
+                    20, 0.6D, 0.05D, 0.6D, 0.08D);
         }
         return true;
     }
@@ -392,7 +453,7 @@ public final class AntTransit {
         ServerLevel level = player.serverLevel();
         BlockPos.MutableBlockPos cursor = player.blockPosition().mutable();
         int startY = cursor.getY();
-        for (int depth = 0; depth <= SLOW_FALL_HEIGHT; depth++) {
+        for (int depth = 0; depth <= GROUND_SCAN; depth++) {
             cursor.setY(startY - depth);
             if (cursor.getY() < level.getMinBuildHeight()
                     || !level.getBlockState(cursor).getCollisionShape(level, cursor).isEmpty()
@@ -400,7 +461,7 @@ public final class AntTransit {
                 return depth;
             }
         }
-        return SLOW_FALL_HEIGHT + 1;
+        return GROUND_SCAN + 1;
     }
 
     private static BlockState groundBelow(ServerLevel level, Vec3 pos) {
@@ -425,15 +486,17 @@ public final class AntTransit {
         private final TransitStyle style;
         private final ServerLevel originLevel;
         private final ServerLevel destination;
-        private final Vec3 origin;
         private final BooleanSupplier warp;
-        private volatile Vec3 arrival;
-        private volatile boolean searchDone;
+        private Vec3 origin;
+        private Vec3 arrival;
+        private boolean searchDone;
+        private boolean waiting;
         private String warpFailureKey;
         private boolean warpRequested;
         private boolean teleported;
         private boolean sleeping;
         private boolean gliding;
+        private boolean poofed;
         private int tick;
 
         private State(TransitStyle style, ServerLevel originLevel, ServerLevel destination, Vec3 origin, BooleanSupplier warp) {

@@ -25,6 +25,7 @@ import java.util.Map;
 public class ElythiaFloraFeature implements Feature {
     public static final MapCodec<ElythiaFloraFeature> FOREST_CODEC = MapCodec.unit(() -> new ElythiaFloraFeature(Variant.FOREST));
     public static final MapCodec<ElythiaFloraFeature> MEADOW_CODEC = MapCodec.unit(() -> new ElythiaFloraFeature(Variant.MEADOW));
+    public static final MapCodec<ElythiaFloraFeature> PRIMORDIAL_PLAINS_CODEC = MapCodec.unit(() -> new ElythiaFloraFeature(Variant.PRIMORDIAL_PLAINS));
     public static final MapCodec<ElythiaFloraFeature> PEACH_FOREST_CODEC = MapCodec.unit(() -> new ElythiaFloraFeature(Variant.PEACH_FOREST));
     public static final MapCodec<ElythiaFloraFeature> BUTTERFLY_FIELDS_CODEC = MapCodec.unit(() -> new ElythiaFloraFeature(Variant.BUTTERFLY_FIELDS));
     public static final MapCodec<ElythiaFloraFeature> FLOWER_FOREST_MILKWEED_CODEC = MapCodec.unit(() -> new ElythiaFloraFeature(Variant.FLOWER_FOREST_MILKWEED));
@@ -32,6 +33,7 @@ public class ElythiaFloraFeature implements Feature {
     private static final String SIZEABLE_FOLIAGE_MODID = "sizeable_foliage";
     private static final Identifier CAMELLIA_ID = Identifier.fromNamespaceAndPath("antarchy", "camellia");
     private static final Identifier SPIDER_LILY_ID = Identifier.fromNamespaceAndPath("antarchy", "spider_lily");
+    private static final net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> PRIMORDIAL_GROUND = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, Identifier.fromNamespaceAndPath("antarchy", "primordial_ground"));
 
     private final Variant variant;
 
@@ -44,6 +46,7 @@ public class ElythiaFloraFeature implements Feature {
         return switch (this.variant) {
             case FOREST -> FOREST_CODEC;
             case MEADOW -> MEADOW_CODEC;
+            case PRIMORDIAL_PLAINS -> PRIMORDIAL_PLAINS_CODEC;
             case PEACH_FOREST -> PEACH_FOREST_CODEC;
             case BUTTERFLY_FIELDS -> BUTTERFLY_FIELDS_CODEC;
             case FLOWER_FOREST_MILKWEED -> FLOWER_FOREST_MILKWEED_CODEC;
@@ -56,14 +59,14 @@ public class ElythiaFloraFeature implements Feature {
         Map<Long, Integer> oceanFloorHeightCache = new HashMap<>();
         int attempts = switch (this.variant) {
             case FOREST -> 185;
-            case MEADOW -> 95;
+            case MEADOW, PRIMORDIAL_PLAINS -> 95;
             case PEACH_FOREST -> 120;
             case BUTTERFLY_FIELDS -> 150;
             case FLOWER_FOREST_MILKWEED -> 14;
         };
         int radius = switch (this.variant) {
             case FOREST -> 8;
-            case MEADOW, PEACH_FOREST -> 14;
+            case MEADOW, PRIMORDIAL_PLAINS, PEACH_FOREST -> 14;
             case BUTTERFLY_FIELDS -> 18;
             case FLOWER_FOREST_MILKWEED -> 8;
         };
@@ -79,6 +82,7 @@ public class ElythiaFloraFeature implements Feature {
             float torchflowerChance = switch (this.variant) {
                 case FOREST -> 0.24F;
                 case MEADOW -> 0.42F;
+                case PRIMORDIAL_PLAINS -> 0.08F;
                 case PEACH_FOREST -> 0.08F;
                 case BUTTERFLY_FIELDS -> 0.24F;
                 case FLOWER_FOREST_MILKWEED -> 0.0F;
@@ -90,6 +94,7 @@ public class ElythiaFloraFeature implements Feature {
 
         if (random.nextFloat() < switch (this.variant) {
             case MEADOW -> 0.1F;
+            case PRIMORDIAL_PLAINS -> 0.03F;
             case PEACH_FOREST -> 0.0F;
             case BUTTERFLY_FIELDS -> 0.12F;
             case FOREST -> 0.05F;
@@ -99,6 +104,7 @@ public class ElythiaFloraFeature implements Feature {
         }
         if (random.nextFloat() < switch (this.variant) {
             case MEADOW -> 0.16F;
+            case PRIMORDIAL_PLAINS -> 0.0F;
             case PEACH_FOREST -> 0.0F;
             case BUTTERFLY_FIELDS -> 0.95F;
             case FOREST -> 0.06F;
@@ -108,6 +114,7 @@ public class ElythiaFloraFeature implements Feature {
         }
         if (random.nextFloat() < switch (this.variant) {
             case MEADOW -> 0.16F;
+            case PRIMORDIAL_PLAINS -> 0.0F;
             case PEACH_FOREST -> 0.0F;
             case BUTTERFLY_FIELDS -> 0.95F;
             case FOREST -> 0.06F;
@@ -144,6 +151,10 @@ public class ElythiaFloraFeature implements Feature {
         placedAny |= this.placeSeagrass(level, origin, random, radius, oceanFloorHeightCache);
 
         return placedAny;
+    }
+
+    private boolean meadowLike() {
+        return this.variant == Variant.MEADOW || this.variant == Variant.PRIMORDIAL_PLAINS;
     }
 
     private boolean placeSelectedPlant(WorldGenLevel level, BlockPos plantPos, BlockPos groundPos, RandomSource random) {
@@ -190,7 +201,7 @@ public class ElythiaFloraFeature implements Feature {
         }
 
         float roll = random.nextFloat();
-        if (this.variant == Variant.MEADOW) {
+        if (this.meadowLike()) {
             if (roll < 0.34F) {
                 return placeSingle(level, plantPos, Blocks.SHORT_GRASS);
             }
@@ -355,11 +366,11 @@ public class ElythiaFloraFeature implements Feature {
             return false;
         }
 
-        int radius = this.variant == Variant.MEADOW ? 3 : this.variant == Variant.BUTTERFLY_FIELDS ? 3 : 2;
+        int radius = this.meadowLike() ? 3 : this.variant == Variant.BUTTERFLY_FIELDS ? 3 : 2;
         int plants = this.variant == Variant.BUTTERFLY_FIELDS
                 ? 4 + random.nextInt(5)
-                : 3 + random.nextInt(this.variant == Variant.MEADOW ? 4 : 3);
-        boolean bushEligible = this.variant == Variant.FOREST || this.variant == Variant.MEADOW;
+                : 3 + random.nextInt(this.meadowLike() ? 4 : 3);
+        boolean bushEligible = this.variant == Variant.FOREST || this.meadowLike();
         boolean placed = false;
         for (int i = 0; i < plants; i++) {
             BlockPos plantPos = samplePatchPos(level, patchCenter, radius, random, surfaceHeightCache);
@@ -391,7 +402,7 @@ public class ElythiaFloraFeature implements Feature {
             return false;
         }
 
-        int radius = this.variant == Variant.BUTTERFLY_FIELDS ? 5 : this.variant == Variant.MEADOW ? 4 : this.variant == Variant.FLOWER_FOREST_MILKWEED ? 3 : 3;
+        int radius = this.variant == Variant.BUTTERFLY_FIELDS ? 5 : this.meadowLike() ? 4 : this.variant == Variant.FLOWER_FOREST_MILKWEED ? 3 : 3;
         int plants = this.variant == Variant.BUTTERFLY_FIELDS ? 10 + random.nextInt(12) : this.variant == Variant.FLOWER_FOREST_MILKWEED ? 2 + random.nextInt(3) : 5 + random.nextInt(11);
         boolean placed = false;
         for (int i = 0; i < plants; i++) {
@@ -418,7 +429,7 @@ public class ElythiaFloraFeature implements Feature {
             return false;
         }
 
-        int radius = this.variant == Variant.BUTTERFLY_FIELDS ? 7 : this.variant == Variant.MEADOW ? 4 : this.variant == Variant.FLOWER_FOREST_MILKWEED ? 3 : 3;
+        int radius = this.variant == Variant.BUTTERFLY_FIELDS ? 7 : this.meadowLike() ? 4 : this.variant == Variant.FLOWER_FOREST_MILKWEED ? 3 : 3;
         int plants = this.variant == Variant.BUTTERFLY_FIELDS ? 14 + random.nextInt(16) : this.variant == Variant.FLOWER_FOREST_MILKWEED ? 2 + random.nextInt(4) : 4 + random.nextInt(9);
         boolean placed = false;
         for (int i = 0; i < plants; i++) {
@@ -442,7 +453,7 @@ public class ElythiaFloraFeature implements Feature {
     private boolean placeSeagrass(WorldGenLevel level, BlockPos origin, RandomSource random, int radius, Map<Long, Integer> oceanFloorHeightCache) {
         int attempts = switch (this.variant) {
             case FOREST -> 3;
-            case MEADOW -> 5;
+            case MEADOW, PRIMORDIAL_PLAINS -> 5;
             case PEACH_FOREST -> 3;
             case BUTTERFLY_FIELDS -> 3;
             case FLOWER_FOREST_MILKWEED -> 2;
@@ -521,13 +532,13 @@ public class ElythiaFloraFeature implements Feature {
             case FOREST -> 0.24F;
             default -> 0.45F;
         };
-        if (!isValidGround(level, groundPos) || random.nextFloat() > overgrowChance) {
+        if (!isValidGround(level, groundPos) || level.getBlockState(groundPos).is(PRIMORDIAL_GROUND) || random.nextFloat() > overgrowChance) {
             return;
         }
 
         BlockState replacement = variant == Variant.PEACH_FOREST
                 ? AntarchyObjects.BLUSH_MOSS_BLOCK.get().defaultBlockState()
-                : random.nextFloat() < 0.35F
+                : variant == Variant.FOREST && random.nextFloat() < 0.35F
                 ? Blocks.ROOTED_DIRT.defaultBlockState()
                 : Blocks.MOSS_BLOCK.defaultBlockState();
         level.setBlock(groundPos, replacement, 2);
@@ -542,7 +553,7 @@ public class ElythiaFloraFeature implements Feature {
                 continue;
             }
             BlockPos spreadPos = groundPos.offset(direction.stepX, 0, direction.stepZ);
-            if (isValidGround(level, spreadPos)) {
+            if (isValidGround(level, spreadPos) && !level.getBlockState(spreadPos).is(PRIMORDIAL_GROUND)) {
                 level.setBlock(spreadPos, replacement, 2);
             }
         }
@@ -613,6 +624,7 @@ public class ElythiaFloraFeature implements Feature {
     public enum Variant {
         FOREST,
         MEADOW,
+        PRIMORDIAL_PLAINS,
         PEACH_FOREST,
         BUTTERFLY_FIELDS,
         FLOWER_FOREST_MILKWEED

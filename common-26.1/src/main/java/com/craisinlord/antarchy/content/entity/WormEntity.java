@@ -226,10 +226,14 @@ public class WormEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<WormEntity>("main_controller", 0, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("attack", ATTACK_ANIM));
     }
 
     private PlayState mainAnimController(AnimationTest<WormEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         int animationState = this.entityData.get(ANIMATION_STATE);
         if (this.getGrowthStage() != GrowthStage.LARGE && animationState != ANIM_CRAWL) {
             return state.setAndContinue(IDLE_ANIM);

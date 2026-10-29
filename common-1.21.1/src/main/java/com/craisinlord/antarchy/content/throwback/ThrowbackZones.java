@@ -49,6 +49,7 @@ public final class ThrowbackZones {
     private static final int WILD_VERTICAL_RANGE = 48;
     private static final long REGION_SALT = 0x7B4C2A19E3D5F061L;
     public static final int APPROACH_DISTANCE = 24;
+    private static final int OTHER_STRUCTURE_MARGIN = 8;
 
     private ThrowbackZones() {
     }
@@ -155,7 +156,26 @@ public final class ThrowbackZones {
         if (!isWildZoneBiome(level, new BlockPos(zone.x(), surface, zone.z()))) {
             return Influence.NONE;
         }
+        if (isInsideOtherStructure(level, pos)) {
+            return Influence.NONE;
+        }
         return new Influence(strengthFor(distance, reach), distance <= zone.radius());
+    }
+
+    private static boolean isInsideOtherStructure(ServerLevel level, BlockPos pos) {
+        ChunkPos chunk = new ChunkPos(pos);
+        if (!level.hasChunk(chunk.x, chunk.z)) {
+            return false;
+        }
+        Registry<Structure> registry = level.registryAccess().registryOrThrow(Registries.STRUCTURE);
+        for (StructureStart start : level.structureManager().startsForStructure(
+                chunk,
+                structure -> !registry.wrapAsHolder(structure).is(STRUCTURE_ZONES))) {
+            if (start.getBoundingBox().inflatedBy(OTHER_STRUCTURE_MARGIN).isInside(pos)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static float distanceToBox(BoundingBox box, BlockPos pos) {

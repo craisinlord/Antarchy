@@ -3,8 +3,13 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
@@ -32,6 +37,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
@@ -46,8 +53,9 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.EnumSet;
+import java.util.UUID;
 
-public class MantisEntity extends Monster implements GeoEntity {
+public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
     private static final RawAnimation FLY_ANIM = RawAnimation.begin().thenLoop("fly");
@@ -73,6 +81,10 @@ public class MantisEntity extends Monster implements GeoEntity {
 
     private static final net.minecraft.network.syncher.EntityDataAccessor<Integer> ANIMATION_STATE =
             net.minecraft.network.syncher.SynchedEntityData.defineId(MantisEntity.class, net.minecraft.network.syncher.EntityDataSerializers.INT);
+    private static final net.minecraft.network.syncher.EntityDataAccessor<Boolean> GLIMMER_ECHO =
+            net.minecraft.network.syncher.SynchedEntityData.defineId(MantisEntity.class, net.minecraft.network.syncher.EntityDataSerializers.BOOLEAN);
+    private static final int BASE_XP_REWARD = 12;
+    private static final String GLIMMER_ECHO_OWNER_KEY = "GlimmerEchoOwner";
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     protected int attackAnimationTicks;
@@ -85,6 +97,8 @@ public class MantisEntity extends Monster implements GeoEntity {
     protected boolean attackDamageApplied;
     protected boolean attackStartedInFlight;
     private int configSyncTicks;
+    @Nullable
+    private UUID glimmerEchoOwner;
 
     public MantisEntity(EntityType<? extends MantisEntity> entityType, Level level) {
         super(entityType, level);
@@ -93,7 +107,7 @@ public class MantisEntity extends Monster implements GeoEntity {
         this.setPathfindingMalus(PathType.WATER_BORDER, 16.0F);
         this.setPathfindingMalus(PathType.LEAVES, -1.0F);
         this.setPathfindingMalus(PathType.FENCE, -1.0F);
-        this.xpReward = 12;
+        this.xpReward = BASE_XP_REWARD;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -172,6 +186,7 @@ public class MantisEntity extends Monster implements GeoEntity {
     protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(ANIMATION_STATE, ANIM_IDLE);
+        builder.define(GLIMMER_ECHO, false);
     }
 
     @Override
@@ -225,9 +240,57 @@ public class MantisEntity extends Monster implements GeoEntity {
     }
 
     @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
+        this.xpReward = glimmerEcho ? 0 : BASE_XP_REWARD;
+    }
+
+    @Override
+    public void setGlimmerEchoOwner(@Nullable UUID owner) {
+        this.glimmerEchoOwner = owner;
+    }
+
+    @Override
+    protected Component getTypeName() {
+        return this.isGlimmerEcho() ? Component.translatable("entity.antarchy.mantis.glimmer") : super.getTypeName();
+    }
+
+    @Override
+    protected ResourceKey<LootTable> getDefaultLootTable() {
+        return this.isGlimmerEcho() ? BuiltInLootTables.EMPTY : super.getDefaultLootTable();
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
+        if (this.glimmerEchoOwner != null) {
+            tag.putUUID(GLIMMER_ECHO_OWNER_KEY, this.glimmerEchoOwner);
+        }
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.setGlimmerEcho(tag.getBoolean(GlimmerEchoes.SAVE_KEY));
+        this.glimmerEchoOwner = tag.hasUUID(GLIMMER_ECHO_OWNER_KEY) ? tag.getUUID(GLIMMER_ECHO_OWNER_KEY) : null;
+    }
+
+    @Override
     public void tick() {
         super.tick();
         if (!this.level().isClientSide) {
+            if (this.isGlimmerEcho()) {
+                GlimmerEchoes.tickAmbient(this, 8, 2);
+                if (GlimmerEchoes.tickOwnedSummon(this, this.glimmerEchoOwner)) {
+                    return;
+                }
+            }
             if (this.configSyncTicks-- <= 0) {
                 this.configSyncTicks = 20;
                 this.syncConfiguredAttributes(true);
@@ -324,7 +387,7 @@ public class MantisEntity extends Monster implements GeoEntity {
     }
 
     protected double configuredAttackDamage() {
-        return AntarchySettings.mantisAttackDamage();
+        return AntarchySettings.mantisAttackDamage() * GlimmerEchoes.ownerDamageMultiplier(this, this.glimmerEchoOwner);
     }
 
     protected double configuredMovementSpeed() {
@@ -367,12 +430,19 @@ public class MantisEntity extends Monster implements GeoEntity {
         this.committedAttackTarget = target;
         this.committedAttackYaw = this.yBodyRot;
         this.attackAnimationTicks = ATTACK_ANIM_TICKS;
-        this.attackCooldownTicks = ATTACK_COOLDOWN_TICKS;
+        this.attackCooldownTicks = this.committedAttackCooldownTicks();
         this.attackDamageApplied = false;
         this.attackStartedInFlight = this.isFlyingNow();
         this.getNavigation().stop();
         this.setAggressive(true);
         this.playSound(AntarchySoundEvents.MANTIS_ATTACK.get(), 1.0F, 0.95F + this.random.nextFloat() * 0.1F);
+    }
+
+    private int committedAttackCooldownTicks() {
+        if (!this.isGlimmerEcho()) {
+            return ATTACK_COOLDOWN_TICKS;
+        }
+        return Math.max(1, (int) Math.round(ATTACK_COOLDOWN_TICKS * AntarchySettings.glimmerAlphaMantisCooldownMultiplier()));
     }
 
     protected void tickCommittedAttack() {
@@ -537,13 +607,21 @@ public class MantisEntity extends Monster implements GeoEntity {
     }
 
     private void syncConfiguredAttributes(boolean rescaleCurrentHealth) {
-        syncAttribute(this.getAttribute(Attributes.MAX_HEALTH), this.configuredMaxHealth(), rescaleCurrentHealth);
-        syncAttribute(this.getAttribute(Attributes.ATTACK_DAMAGE), this.configuredAttackDamage(), false);
-        syncAttribute(this.getAttribute(Attributes.MOVEMENT_SPEED), this.configuredMovementSpeed(), false);
-        syncAttribute(this.getAttribute(Attributes.FLYING_SPEED), this.configuredFlyingSpeed(), false);
+        this.syncMaxHealth(this.configuredMaxHealth(), rescaleCurrentHealth);
+        syncAttribute(this.getAttribute(Attributes.ATTACK_DAMAGE), this.configuredAttackDamage());
+        syncAttribute(this.getAttribute(Attributes.MOVEMENT_SPEED), this.configuredMovementSpeed());
+        syncAttribute(this.getAttribute(Attributes.FLYING_SPEED), this.configuredFlyingSpeed());
     }
 
-    private void syncAttribute(@Nullable AttributeInstance attributeInstance, double desiredValue, boolean rescaleCurrentHealth) {
+    private static void syncAttribute(@Nullable AttributeInstance attributeInstance, double desiredValue) {
+        if (attributeInstance == null || Math.abs(attributeInstance.getBaseValue() - desiredValue) < 1.0E-6D) {
+            return;
+        }
+        attributeInstance.setBaseValue(desiredValue);
+    }
+
+    private void syncMaxHealth(double desiredValue, boolean rescaleCurrentHealth) {
+        AttributeInstance attributeInstance = this.getAttribute(Attributes.MAX_HEALTH);
         if (attributeInstance == null) {
             return;
         }

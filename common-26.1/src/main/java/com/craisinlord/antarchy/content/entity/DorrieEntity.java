@@ -576,12 +576,16 @@ public class DorrieEntity extends Animal implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<DorrieEntity>("main_controller", 2, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("land", JUMP_LAND_ANIM)
                 .triggerableAnim("jump_start", JUMP_START_ANIM)
                 .triggerableAnim("quirk", QUIRK_ANIM));
     }
 
     private PlayState mainAnimController(AnimationTest<DorrieEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         state.controller().setAnimationSpeed(1.0D);
 
         if (landAnimTicks > 0) {

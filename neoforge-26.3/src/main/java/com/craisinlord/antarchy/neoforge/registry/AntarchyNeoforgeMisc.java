@@ -153,6 +153,8 @@ public final class AntarchyNeoforgeMisc {
             RECIPE_SERIALIZERS.register("americanize", () -> AmericanizeRecipe.SERIALIZER);
     public static final DeferredHolder<net.minecraft.world.item.crafting.RecipeSerializer<?>, net.minecraft.world.item.crafting.RecipeSerializer<com.craisinlord.antarchy.content.recipe.PortalGunVariantRecipe>> PORTAL_GUN_VARIANT_SERIALIZER =
             RECIPE_SERIALIZERS.register("portal_gun_variant", () -> com.craisinlord.antarchy.content.recipe.PortalGunVariantRecipe.SERIALIZER);
+    public static final DeferredHolder<net.minecraft.world.item.crafting.RecipeSerializer<?>, net.minecraft.world.item.crafting.RecipeSerializer<com.craisinlord.antarchy.content.recipe.BigBerthaVariantRecipe>> BIG_BERTHA_VARIANT_SERIALIZER =
+            RECIPE_SERIALIZERS.register("big_bertha_variant", () -> com.craisinlord.antarchy.content.recipe.BigBerthaVariantRecipe.SERIALIZER);
 
     public static final DeferredHolder<Attribute, Attribute> DOUBLE_DAMAGE_CHANCE = ATTRIBUTES.register(
             "double_damage_chance",
@@ -324,6 +326,8 @@ public final class AntarchyNeoforgeMisc {
             () -> ElythiaFloraFeature.FOREST_CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ElythiaFloraFeature>> ELYTHIA_MEADOW_FLORA = FEATURES.register("elythia_meadow_flora",
             () -> ElythiaFloraFeature.MEADOW_CODEC);
+    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ElythiaFloraFeature>> PRIMORDIAL_PLAINS_FLORA = FEATURES.register("primordial_plains_flora",
+            () -> ElythiaFloraFeature.PRIMORDIAL_PLAINS_CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ElythiaFloraFeature>> PEACH_FOREST_FLORA = FEATURES.register("peach_forest_flora",
             () -> ElythiaFloraFeature.PEACH_FOREST_CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ElythiaFloraFeature>> FLOWER_FOREST_MILKWEED = FEATURES.register("flower_forest_milkweed",
@@ -461,6 +465,9 @@ public final class AntarchyNeoforgeMisc {
 
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaRiverCarveFunction>> ELYTHIA_RIVER_CARVE = DENSITY_FUNCTION_TYPES.register("elythia_river_carve",
             () -> ElythiaRiverCarveFunction.CODEC);
+
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaHydrology>> ELYTHIA_HYDROLOGY = DENSITY_FUNCTION_TYPES.register("elythia_hydrology",
+            () -> ElythiaHydrology.CODEC);
 
     private AntarchyNeoforgeMisc() {}
 

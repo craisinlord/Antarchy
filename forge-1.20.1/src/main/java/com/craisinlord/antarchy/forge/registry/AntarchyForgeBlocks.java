@@ -786,6 +786,8 @@ public final class AntarchyForgeBlocks {
             () -> new AntigravelBlock(BlockBehaviour.Properties.copy(Blocks.GRAVEL)));
     public static final RegistryObject<Block> LOAM = BLOCKS.register("loam",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD)));
+    public static final RegistryObject<Block> PRIMORDIAL_LOAM = BLOCKS.register("primordial_loam",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD)));
     public static final RegistryObject<Block> PACKED_LOAM = BLOCKS.register("packed_loam",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.PACKED_MUD)));
     public static final RegistryObject<Block> LOAM_BRICKS = BLOCKS.register("loam_bricks",

@@ -382,12 +382,17 @@ public class JerryEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<JerryEntity>("main_controller", 3, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("attack", ATTACK_ANIM));
         controllers.add(new AnimationController<JerryEntity>("attack_controller", 0, this::attackAnimController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("attack", ATTACK_ANIM));
     }
 
     private PlayState mainAnimController(AnimationTest<JerryEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         Stage stage = this.getStage();
         if (stage == Stage.GAMMA) {
             return state.setAndContinue(state.isMoving() ? WALK_ANIM : IDLE_ANIM);
@@ -402,6 +407,9 @@ public class JerryEntity extends Monster implements GeoEntity {
     }
 
     private PlayState attackAnimController(AnimationTest<JerryEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         if (this.getStage() == Stage.GAMMA && this.entityData.get(ATTACK_ANIM_TICKS) > 0) {
             return state.setAndContinue(ATTACK_ANIM);
         }

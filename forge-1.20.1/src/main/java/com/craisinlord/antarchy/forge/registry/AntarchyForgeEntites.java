@@ -18,6 +18,7 @@ import com.craisinlord.antarchy.content.entity.OuranwoodDeerEntity;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity;
 import com.craisinlord.antarchy.content.entity.HushProjectileEntity;
 import com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity;
+import com.craisinlord.antarchy.content.entity.LaunchedAnvilEntity;
 import com.craisinlord.antarchy.content.entity.WormHookProjectileEntity;
 import com.craisinlord.antarchy.content.entity.HerculesBeetleEntity;
 import com.craisinlord.antarchy.content.entity.HoverboardEntity;
@@ -448,6 +449,12 @@ public final class AntarchyForgeEntites {
                     .clientTrackingRange(8)
                     .updateInterval(1)
                     .build("critter_cage_projectile"));
+    public static final RegistryObject<EntityType<LaunchedAnvilEntity>> LAUNCHED_ANVIL = ENTITY_TYPES.register("launched_anvil",
+            () -> EntityType.Builder.<LaunchedAnvilEntity>of(LaunchedAnvilEntity::new, MobCategory.MISC)
+                    .sized(0.98F, 0.98F)
+                    .clientTrackingRange(10)
+                    .updateInterval(1)
+                    .build("launched_anvil"));
     public static final RegistryObject<EntityType<WormHookProjectileEntity>> WORM_HOOK_PROJECTILE = ENTITY_TYPES.register("worm_hook_projectile",
             () -> EntityType.Builder.<WormHookProjectileEntity>of(WormHookProjectileEntity::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F)

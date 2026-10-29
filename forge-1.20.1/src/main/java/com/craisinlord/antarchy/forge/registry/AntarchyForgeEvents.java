@@ -6,6 +6,7 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.recipe.CustomBrewingRecipes;
+import com.craisinlord.antarchy.content.dispenser.AnvilCannonDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.RpoLauncherDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.SizeRayDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.BugSprayDispenseBehavior;
@@ -237,6 +238,7 @@ public final class AntarchyForgeEvents {
             CavarynHordeManager.tick(level);
             com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
             com.craisinlord.antarchy.content.entity.glimmer.GlimmerNightSpawner.tick(level);
+            com.craisinlord.antarchy.content.entity.stratoshark.StratosharkSkySpawner.tick(level);
             com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature.tickPendingSpawns(level);
         }
     }
@@ -1339,6 +1341,7 @@ public final class AntarchyForgeEvents {
             DispenserBlock.registerBehavior(AntarchyForgeItems.GROWTH_RAY.get(), new SizeRayDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyForgeItems.SQUIDZOOKA.get(), new SquidzookaDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyForgeItems.RPO_LAUNCHER.get(), new RpoLauncherDispenseBehavior());
+            DispenserBlock.registerBehavior(AntarchyForgeItems.ANVIL_CANNON.get(), new AnvilCannonDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyForgeItems.WATER_CANNON.get(), new WaterCannonDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyForgeItems.VORTEX_CHARGE.get(), new com.craisinlord.antarchy.content.dispenser.VortexChargeDispenseBehavior());
             DispenserBlock.registerBehavior(AntarchyForgeItems.EYE_OF_THE_STORM.get(), new com.craisinlord.antarchy.content.dispenser.EyeOfTheStormDispenseBehavior());

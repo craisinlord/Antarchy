@@ -1,7 +1,8 @@
 {
   "replace": false,
   "values": [
-    "antarchy:elythia_meadow",
-    "antarchy:butterfly_fields"
+    "antarchy:primordial_plains",
+    "antarchy:butterfly_fields",
+    "antarchy:fungal_reserve"
   ]
 }

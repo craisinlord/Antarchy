@@ -21,6 +21,7 @@ public final class AntarchyNeoforgeEvents {
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         CavarynCommand.register(event.getDispatcher());
+        com.craisinlord.antarchy.content.command.ElythiaCommand.register(event.getDispatcher());
         CaterpillarCommand.register(event.getDispatcher());
         DimensionalTearCommand.register(event.getDispatcher());
         QueenLocateCommand.register(event.getDispatcher());

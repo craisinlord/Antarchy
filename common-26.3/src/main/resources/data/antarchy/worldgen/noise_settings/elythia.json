@@ -1,5 +1,5 @@
 {
-  "sea_level": 60,
+  "sea_level": 100,
   "disable_mob_generation": false,
   "legacy_random_source": false,
   "default_block": "minecraft:stone",
@@ -11,7 +11,7 @@
   },
   "noise": {
     "min_y": -64,
-    "height": 512
+    "height": 432
   },
   "noise_router": {
     "temperature": {
@@ -30,9 +30,12 @@
       "xz_scale": 0.25,
       "y_scale": 0.0
     },
-    "continents": "minecraft:overworld/continents",
-    "erosion": "minecraft:overworld/erosion",
-    "depth": "minecraft:overworld/depth",
+    "continents": "antarchy:elythia_biome_continents",
+    "erosion": {
+      "type": "minecraft:cache",
+      "input": "antarchy:elythia_erosion"
+    },
+    "depth": "antarchy:elythia_depth",
     "ridges": "minecraft:overworld/ridges",
     "chunk_surface_level": {
       "type": "minecraft:interpolated",
@@ -77,9 +80,9 @@
                         "left": {
                           "type": "minecraft:gradient",
                           "axis": "y",
-                          "from_coordinate": 240,
+                          "from_coordinate": 280,
                           "from_value": 1.0,
-                          "to_coordinate": 256,
+                          "to_coordinate": 296,
                           "to_value": 0.0
                         },
                         "right": {
@@ -178,13 +181,13 @@
       "left": {
         "type": "minecraft:sub",
         "left": -0.225,
-        "right": "minecraft:overworld/erosion"
+        "right": "antarchy:elythia_erosion"
       },
       "right": {
         "type": "minecraft:max",
         "left": {
           "type": "minecraft:sub",
-          "left": "minecraft:overworld/depth",
+          "left": "antarchy:elythia_depth",
           "right": 0.9
         },
         "right": 0.0
@@ -213,11 +216,11 @@
   "material_rule": "antarchy:elythia",
   "spawn_target": [
     {
-      "minecraft:overworld/continents": [
+      "antarchy:elythia_continents": [
         -0.11,
         1.0
       ],
-      "minecraft:overworld/erosion": [
+      "antarchy:elythia_erosion": [
         -1.0,
         1.0
       ],
@@ -227,11 +230,11 @@
       ]
     },
     {
-      "minecraft:overworld/continents": [
+      "antarchy:elythia_continents": [
         -0.11,
         1.0
       ],
-      "minecraft:overworld/erosion": [
+      "antarchy:elythia_erosion": [
         -1.0,
         1.0
       ],
@@ -239,6 +242,19 @@
         0.16,
         1.0
       ]
+    }
+  ],
+  "debug_functions": [
+    {
+      "label": "hydrology",
+      "function": {
+        "type": "antarchy:elythia_hydrology",
+        "reserve": "antarchy:elythia_reserve_mask",
+        "river_level": "antarchy:elythia_river_level",
+        "river_channel": "antarchy:elythia_river_channel",
+        "lumen": "antarchy:elythia_lumen_selector",
+        "sea_level": 100
+      }
     }
   ]
 }

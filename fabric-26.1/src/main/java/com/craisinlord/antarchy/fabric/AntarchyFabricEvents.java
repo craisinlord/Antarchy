@@ -36,6 +36,7 @@ import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.server.level.ServerPlayer;
 import com.craisinlord.antarchy.content.dispenser.SquidzookaDispenseBehavior;
+import com.craisinlord.antarchy.content.dispenser.AnvilCannonDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.RpoLauncherDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.SizeRayDispenseBehavior;
 import com.craisinlord.antarchy.content.dispenser.WaterCannonDispenseBehavior;
@@ -84,6 +85,7 @@ public final class AntarchyFabricEvents {
 
         DispenserBlock.registerBehavior(AntarchyFabricItems.SQUIDZOOKA.get(), new SquidzookaDispenseBehavior());
         DispenserBlock.registerBehavior(AntarchyFabricItems.RPO_LAUNCHER.get(), new RpoLauncherDispenseBehavior());
+        DispenserBlock.registerBehavior(AntarchyFabricItems.ANVIL_CANNON.get(), new AnvilCannonDispenseBehavior());
         DispenserBlock.registerBehavior(AntarchyFabricItems.WATER_CANNON.get(), new WaterCannonDispenseBehavior());
         DispenserBlock.registerBehavior(AntarchyFabricItems.SHRINK_RAY.get(), new SizeRayDispenseBehavior());
         DispenserBlock.registerBehavior(AntarchyFabricItems.GROWTH_RAY.get(), new SizeRayDispenseBehavior());
@@ -187,6 +189,7 @@ public final class AntarchyFabricEvents {
                 CavarynHordeManager.tick(level);
                 com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
                 com.craisinlord.antarchy.content.entity.glimmer.GlimmerNightSpawner.tick(level);
+                com.craisinlord.antarchy.content.entity.stratoshark.StratosharkSkySpawner.tick(level);
                 ThoraxisUndersideManager.tick(level);
                 com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature.tickPendingSpawns(level);
                 tickInvertedPlayers(level, activeThisTick);

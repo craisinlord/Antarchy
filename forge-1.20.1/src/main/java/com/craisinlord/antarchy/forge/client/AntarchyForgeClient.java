@@ -169,6 +169,7 @@ public final class AntarchyForgeClient {
         event.registerEntityRenderer(AntarchyForgeEntites.ROYAL_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalBlackHoleRenderer::new);
         event.registerEntityRenderer(AntarchyForgeEntites.ROYAL_ASSAILANT_BLACK_HOLE.get(), com.craisinlord.antarchy.content.client.renderer.RoyalAssailantBlackHoleRenderer::new);
         event.registerEntityRenderer(AntarchyForgeEntites.CRITTER_CAGE_PROJECTILE.get(), ThrownItemRenderer::new);
+        event.registerEntityRenderer(AntarchyForgeEntites.LAUNCHED_ANVIL.get(), com.craisinlord.antarchy.content.client.renderer.LaunchedAnvilRenderer::new);
         event.registerEntityRenderer(AntarchyForgeEntites.WORM_HOOK_PROJECTILE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(AntarchyForgeEntites.HUSH_PROJECTILE.get(), HushProjectileRenderer::new);
         event.registerEntityRenderer(AntarchyForgeEntites.BRUTALFLY_ORB.get(), BrutalflyOrbRenderer::new);

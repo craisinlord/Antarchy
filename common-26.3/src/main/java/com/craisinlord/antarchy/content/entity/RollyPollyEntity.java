@@ -425,11 +425,15 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<RollyPollyEntity>("main_controller", 2, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("wheel_mode", ROLL_UP_ANIM)
                 .triggerableAnim("normal_mode", UNROLL_ANIM));
     }
 
     private PlayState mainAnimController(AnimationTest<RollyPollyEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         AnimationController<RollyPollyEntity> controller = state.controller();
         int transition = this.getAnimationState();
 

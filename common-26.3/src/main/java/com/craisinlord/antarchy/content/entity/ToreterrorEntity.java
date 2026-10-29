@@ -192,6 +192,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<ToreterrorEntity>("main_controller", 0, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("jump_attack", JUMP_ANIM)
                 .triggerableAnim("spin_attack_start", SPIN_START_ANIM)
                 .triggerableAnim("spin_attack", SPIN_LOOP_ANIM)
@@ -199,6 +200,9 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
     }
 
     private PlayState mainAnimController(AnimationTest<ToreterrorEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         int animState = this.getAnimationState();
         state.controller().setAnimationSpeed(1.0D);
         return switch (animState) {

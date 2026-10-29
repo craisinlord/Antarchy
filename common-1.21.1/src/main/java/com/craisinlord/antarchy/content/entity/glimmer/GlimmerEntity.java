@@ -6,6 +6,8 @@ import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
 import com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil;
+import com.craisinlord.antarchy.content.weather.ElythiaEvent;
+import com.craisinlord.antarchy.content.weather.ElythiaEvents;
 import com.craisinlord.antarchy.Antarchy;
 import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.CompoundTag;
@@ -73,8 +75,13 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
     );
     private static final ResourceKey<Biome> ELYTHIA_MEADOW = ResourceKey.create(
             Registries.BIOME,
-            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "elythia_meadow")
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "primordial_plains")
     );
+    private static final ResourceKey<Biome> ELYTHIA_RIVER = ResourceKey.create(
+            Registries.BIOME,
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "elythia_river")
+    );
+    private static final int LUMEN_SPAWN_RADIUS = 4;
     private static final ResourceKey<Biome> PEACH_FOREST = ResourceKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "peach_forest")
@@ -496,14 +503,32 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
 
     public static boolean checkGlimmerSpawnRules(EntityType<GlimmerEntity> type, ServerLevelAccessor level,
                                                    MobSpawnType spawnType, BlockPos pos, net.minecraft.util.RandomSource random) {
+        Holder<Biome> biome = level.getBiome(pos);
+        if (biome.is(ELYTHIA_RIVER)) {
+            return level.getLevel().isNight() && isNearLumen(level, pos);
+        }
         if (!net.minecraft.world.entity.animal.Animal.checkAnimalSpawnRules(type, level, spawnType, pos, random)) {
             return false;
         }
-        Holder<Biome> biome = level.getBiome(pos);
         if (biome.is(GLIMMERING_POOLS)) {
             return true;
         }
         return level.getLevel().isNight();
+    }
+
+    private static boolean isNearLumen(ServerLevelAccessor level, BlockPos pos) {
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (int dx = -LUMEN_SPAWN_RADIUS; dx <= LUMEN_SPAWN_RADIUS; dx++) {
+            for (int dz = -LUMEN_SPAWN_RADIUS; dz <= LUMEN_SPAWN_RADIUS; dz++) {
+                for (int dy = -2; dy <= 0; dy++) {
+                    cursor.setWithOffset(pos, dx, dy, dz);
+                    if (level.getFluidState(cursor).is(com.craisinlord.antarchy.content.AntarchyTags.Fluids.LUMEN)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -515,7 +540,9 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
 
         if (!this.level().isClientSide) {
             int fadeTicks = this.entityData.get(FADE_TICKS);
-            if (this.isTame() || this.level().getBiome(this.blockPosition()).is(GLIMMERING_POOLS)) {
+            if (this.isTame()
+                    || this.level() instanceof ServerLevel serverLevel && ElythiaEvents.isActive(serverLevel, ElythiaEvent.LUMEN_RAIN)
+                    || this.level().getBiome(this.blockPosition()).is(GLIMMERING_POOLS)) {
                 if (fadeTicks > 0) {
                     this.entityData.set(FADE_TICKS, 0);
                 }

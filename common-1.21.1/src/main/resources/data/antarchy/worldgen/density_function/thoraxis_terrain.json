@@ -1,0 +1,7 @@
+{
+  "type": "antarchy:thoraxis_terrain",
+  "regime_a": "antarchy:thoraxis_regime_a",
+  "regime_b": "antarchy:thoraxis_regime_b",
+  "shape": "antarchy:thoraxis_terrain_shape",
+  "detail": "antarchy:thoraxis_terrain_detail"
+}

@@ -1,60 +1,36 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import com.craisinlord.antarchy.Antarchy;
 import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.stream.Stream;
 import net.minecraft.core.Holder;
-import net.minecraft.core.QuartPos;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
 
 public final class ElythiaBiomeSource extends BiomeSource {
-    private static final ResourceKey<Biome> CLOUD_SEA = ResourceKey.create(
-            Registries.BIOME,
-            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "cloud_sea")
-    );
-
     public static final MapCodec<ElythiaBiomeSource> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            MultiNoiseBiomeSource.DIRECT_CODEC.forGetter(ElythiaBiomeSource::parameters),
-            Codec.INT.optionalFieldOf("cloud_sea_min_y", 250).forGetter(ElythiaBiomeSource::cloudSeaMinY)
+            MultiNoiseBiomeSource.DIRECT_CODEC.forGetter(ElythiaBiomeSource::parameters)
     ).apply(instance, ElythiaBiomeSource::new));
+
+    private static final int COLUMN_SLOTS = 16;
 
     private final Climate.ParameterList<Holder<Biome>> parameters;
     private final MultiNoiseBiomeSource delegate;
-    private final int cloudSeaMinY;
-    private final int cloudSeaMinQuartY;
-    private final Holder<Biome> cloudSeaHolder;
+    private final boolean columnCached;
+    private final ThreadLocal<ColumnCache> columns = ThreadLocal.withInitial(ColumnCache::new);
 
-    public ElythiaBiomeSource(Climate.ParameterList<Holder<Biome>> parameters, int cloudSeaMinY) {
+    public ElythiaBiomeSource(Climate.ParameterList<Holder<Biome>> parameters) {
         this.parameters = parameters;
-        this.cloudSeaMinY = cloudSeaMinY;
-        this.cloudSeaMinQuartY = QuartPos.fromBlock(cloudSeaMinY);
-        this.cloudSeaHolder = parameters.values().stream()
-                .map(Pair::getSecond)
-                .filter(holder -> holder.is(CLOUD_SEA))
-                .findFirst()
-                .orElse(null);
-        this.delegate = MultiNoiseBiomeSource.createFromList(new Climate.ParameterList<>(
-                parameters.values().stream()
-                        .filter(entry -> !entry.getSecond().is(CLOUD_SEA))
-                        .toList()
-        ));
+        this.delegate = MultiNoiseBiomeSource.createFromList(parameters);
+        this.columnCached = sharesDepth(parameters);
     }
 
     private Climate.ParameterList<Holder<Biome>> parameters() {
         return this.parameters;
-    }
-
-    private int cloudSeaMinY() {
-        return this.cloudSeaMinY;
     }
 
     @Override
@@ -69,9 +45,39 @@ public final class ElythiaBiomeSource extends BiomeSource {
 
     @Override
     public Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.Sampler sampler) {
-        if (this.cloudSeaHolder != null && y >= this.cloudSeaMinQuartY) {
-            return this.cloudSeaHolder;
+        if (!this.columnCached) {
+            return this.delegate.getNoiseBiome(x, y, z, sampler);
         }
-        return this.delegate.getNoiseBiome(x, y, z, sampler);
+        ColumnCache cache = this.columns.get();
+        int slot = (x & 3) << 2 | (z & 3);
+        long key = ChunkPos.asLong(x, z);
+        if (cache.samplers[slot] == sampler && cache.keys[slot] == key) {
+            return cache.biomes[slot];
+        }
+        Holder<Biome> biome = this.delegate.getNoiseBiome(x, y, z, sampler);
+        cache.samplers[slot] = sampler;
+        cache.keys[slot] = key;
+        cache.biomes[slot] = biome;
+        return biome;
+    }
+
+    private static boolean sharesDepth(Climate.ParameterList<Holder<Biome>> parameters) {
+        Climate.Parameter depth = null;
+        for (Pair<Climate.ParameterPoint, Holder<Biome>> entry : parameters.values()) {
+            Climate.Parameter current = entry.getFirst().depth();
+            if (depth == null) {
+                depth = current;
+            } else if (!depth.equals(current)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static final class ColumnCache {
+        private final long[] keys = new long[COLUMN_SLOTS];
+        private final Climate.Sampler[] samplers = new Climate.Sampler[COLUMN_SLOTS];
+        @SuppressWarnings("unchecked")
+        private final Holder<Biome>[] biomes = new Holder[COLUMN_SLOTS];
     }
 }

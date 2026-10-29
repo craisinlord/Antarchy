@@ -102,7 +102,7 @@ public final class BedBugNestFeature extends Feature<NoneFeatureConfiguration> {
                         continue;
                     }
 
-                    level.setBlock(mutable, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+                    level.setBlock(mutable, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
                     carved = true;
                 }
             }
@@ -127,7 +127,7 @@ public final class BedBugNestFeature extends Feature<NoneFeatureConfiguration> {
             }
 
             int eggs = 1 + random.nextInt(4);
-            level.setBlock(mutable, AntarchyObjects.BED_BUG_EGG.get().defaultBlockState().setValue(BedBugEggBlock.EGGS, eggs), Block.UPDATE_ALL);
+            level.setBlock(mutable, AntarchyObjects.BED_BUG_EGG.get().defaultBlockState().setValue(BedBugEggBlock.EGGS, eggs), Block.UPDATE_CLIENTS);
             eggSpots.add(mutable.immutable());
         }
 
@@ -135,7 +135,7 @@ public final class BedBugNestFeature extends Feature<NoneFeatureConfiguration> {
             BlockPos fallback = center.relative(direction, 2);
             if (level.getBlockState(fallback).isAir() && level.getBlockState(fallback.below()).isFaceSturdy(level, fallback.below(), Direction.UP)) {
                 int eggs = 1 + random.nextInt(4);
-                level.setBlock(fallback, AntarchyObjects.BED_BUG_EGG.get().defaultBlockState().setValue(BedBugEggBlock.EGGS, eggs), Block.UPDATE_ALL);
+                level.setBlock(fallback, AntarchyObjects.BED_BUG_EGG.get().defaultBlockState().setValue(BedBugEggBlock.EGGS, eggs), Block.UPDATE_CLIENTS);
                 eggSpots.add(fallback.immutable());
             }
         }

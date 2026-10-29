@@ -274,6 +274,7 @@ public class WaspEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<WaspEntity>("main_controller", 0, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("attack", ATTACK_ANIM));
     }
 
@@ -283,6 +284,9 @@ public class WaspEntity extends Monster implements GeoEntity {
     }
 
     private PlayState mainAnimController(AnimationTest<WaspEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         if (this.attackAnimTicks > 0) {
             return state.setAndContinue(ATTACK_ANIM);
         }

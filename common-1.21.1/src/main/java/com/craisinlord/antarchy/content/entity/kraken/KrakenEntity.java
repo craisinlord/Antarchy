@@ -8,6 +8,8 @@ import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
 import com.craisinlord.antarchy.content.entity.MissileSquidEntity;
 import com.craisinlord.antarchy.content.entity.OctopusBombEntity;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.multipart.MultipartEntityOwner;
 import com.craisinlord.anthology.multipart.MultipartLayout;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageTypes;
@@ -16,16 +18,20 @@ import java.util.List;
 import java.util.Objects;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
@@ -52,6 +58,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -65,7 +72,8 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.animation.keyframe.event.builtin.AutoPlayingSoundKeyframeHandler;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityOwner {
+public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityOwner, GlimmerEcho {
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO = SynchedEntityData.defineId(KrakenEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> ATTACK_STATE = SynchedEntityData.defineId(KrakenEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> ROARING = SynchedEntityData.defineId(KrakenEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> PHASE_TWO = SynchedEntityData.defineId(KrakenEntity.class, EntityDataSerializers.BOOLEAN);
@@ -94,6 +102,20 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
     private static final int ANIM_DEATH = 6;
 
     private static final int DEATH_ANIM_TICKS = 60;
+
+    private static final int BASE_XP_REWARD = 60;
+    private static final int GLIMMER_XP_REWARD = BASE_XP_REWARD * 5;
+    private static final int MINION_CAP = 12;
+    private static final int GLIMMER_MINION_CAP_BONUS = 4;
+    private static final int GLIMMER_EXTRA_MINIONS = 1;
+    private static final int GLIMMER_RING_DELAY_TICKS = 15;
+    private static final double GLIMMER_RING_RADIUS = 12.0D;
+    private static final float GLIMMER_RING_DAMAGE_FRACTION = 0.5F;
+    private static final double GLIMMER_STRIKE_HEIGHT = 20.0D;
+    private static final double GLIMMER_ABANDON_RANGE = 80.0D;
+    private static final int GLIMMER_ABANDON_TICKS = 600;
+    private static final ResourceKey<LootTable> GLIMMER_LOOT_TABLE = ResourceKey.create(Registries.LOOT_TABLE,
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "entities/kraken_glimmer"));
 
     private static final ResourceLocation PHASE_TWO_SPEED_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "kraken_phase_two_speed");
     private static final ResourceLocation PHASE_TWO_FLYING_SPEED_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "kraken_phase_two_flying_speed");
@@ -133,6 +155,8 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
     private int strafeRetargetTicks;
     private float orbitDirection = 1.0F;
     private boolean stormActive;
+    private int glimmerRingTicks;
+    private int glimmerAbandonTicks;
 
     @Nullable
     private Entity[] multipartParts;
@@ -140,7 +164,7 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
     public KrakenEntity(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
         this.moveControl = new FlyingMoveControl(this, 20, true);
-        this.xpReward = 60;
+        this.xpReward = BASE_XP_REWARD;
         this.bossEvent.setDarkenScreen(false);
     }
 
@@ -183,6 +207,7 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
         builder.define(ROARING, false);
         builder.define(PHASE_TWO, false);
         builder.define(ANIMATION_STATE, ANIM_NONE);
+        builder.define(GLIMMER_ECHO, false);
     }
 
     @Override
@@ -242,9 +267,15 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
 
     @Override
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnData) {
-        Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(com.craisinlord.antarchy.config.AntarchySettings.krakenHealth());
-        this.setHealth((float) com.craisinlord.antarchy.config.AntarchySettings.krakenHealth());
-        Objects.requireNonNull(this.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(com.craisinlord.antarchy.config.AntarchySettings.krakenAttackDamage());
+        double health = AntarchySettings.krakenHealth();
+        double attackDamage = AntarchySettings.krakenAttackDamage();
+        if (this.isGlimmerEcho()) {
+            health *= AntarchySettings.glimmerKrakenHealthMultiplier();
+            attackDamage *= AntarchySettings.glimmerKrakenDamageMultiplier();
+        }
+        Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(health);
+        this.setHealth((float) health);
+        Objects.requireNonNull(this.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(attackDamage);
         this.playSound(AntarchySoundEvents.KRAKEN_SUMMON.get(), 2.2F, 0.9F + this.random.nextFloat() * 0.08F);
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
     }
@@ -264,6 +295,14 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
             this.tickClientParticles();
             this.updateSwimRotation();
             return;
+        }
+
+        if (this.isGlimmerEcho() && !this.isDeadOrDying()) {
+            GlimmerEchoes.tickAmbient(this, 4, 8);
+            if (this.tickGlimmerAbandonment()) {
+                return;
+            }
+            this.tickGlimmerRing();
         }
 
         this.updateBossBarPlayers();
@@ -442,11 +481,13 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
         tag.putBoolean("SpawnedPhaseMinions", this.spawnedPhaseMinions);
         tag.putInt("LightningStrikeCooldown", this.lightningStrikeCooldown);
         tag.putInt("LightningAmbientCooldown", this.lightningAmbientCooldown);
+        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
+        this.setGlimmerEcho(tag.getBoolean(GlimmerEchoes.SAVE_KEY));
         this.attackCooldown = tag.getInt(ATTACK_COOLDOWN_KEY);
         this.actionTicks = tag.getInt(ACTION_TICKS_KEY);
         this.phaseTransitionTicks = tag.getInt(PHASE_TRANSITION_TICKS_KEY);
@@ -484,6 +525,90 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
         this.clearKrakenStorm();
         super.remove(reason);
         this.bossEvent.removeAllPlayers();
+    }
+
+    @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
+        this.xpReward = glimmerEcho ? GLIMMER_XP_REWARD : BASE_XP_REWARD;
+        this.bossEvent.setName(this.getDisplayName());
+    }
+
+    @Override
+    public float glimmerEchoDamageMultiplier() {
+        return this.isGlimmerEcho() ? (float) AntarchySettings.glimmerKrakenDamageMultiplier() : 1.0F;
+    }
+
+    @Override
+    protected Component getTypeName() {
+        return this.isGlimmerEcho() ? Component.translatable("entity.antarchy.kraken.glimmer") : super.getTypeName();
+    }
+
+    @Override
+    protected ResourceKey<LootTable> getDefaultLootTable() {
+        return this.isGlimmerEcho() ? GLIMMER_LOOT_TABLE : super.getDefaultLootTable();
+    }
+
+    private int scaledCooldown(int ticks) {
+        if (!this.isGlimmerEcho()) {
+            return ticks;
+        }
+        return Math.max(10, (int) Math.round(ticks * AntarchySettings.glimmerKrakenCooldownMultiplier()));
+    }
+
+    private boolean tickGlimmerAbandonment() {
+        if (this.tickCount % 20 != 0) {
+            return false;
+        }
+        LivingEntity target = this.getTarget();
+        if ((target != null && target.isAlive()) || GlimmerEchoes.hasPlayerWithin(this, GLIMMER_ABANDON_RANGE)) {
+            this.glimmerAbandonTicks = 0;
+            return false;
+        }
+        this.glimmerAbandonTicks += 20;
+        if (this.glimmerAbandonTicks < GLIMMER_ABANDON_TICKS) {
+            return false;
+        }
+        GlimmerEchoes.fadeAway(this);
+        return true;
+    }
+
+    private void tickGlimmerRing() {
+        if (this.glimmerRingTicks <= 0) {
+            return;
+        }
+        this.glimmerRingTicks--;
+        Vec3 center = this.position().add(0.0D, this.getBbHeight() * 0.3D, 0.0D);
+        if (this.level() instanceof ServerLevel serverLevel && this.glimmerRingTicks % 5 == 0) {
+            double progress = 1.0D - this.glimmerRingTicks / (double) GLIMMER_RING_DELAY_TICKS;
+            GlimmerEchoes.ring(serverLevel, center, 2.0D + GLIMMER_RING_RADIUS * progress, 40);
+        }
+        if (this.glimmerRingTicks == 0) {
+            this.applyGlimmerRing(center);
+        }
+    }
+
+    private void applyGlimmerRing(Vec3 center) {
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        double rangeSqr = GLIMMER_RING_RADIUS * GLIMMER_RING_RADIUS;
+        AABB ringArea = this.getBoundingBox().inflate(GLIMMER_RING_RADIUS);
+        List<Player> players = serverLevel.getEntitiesOfClass(Player.class, ringArea,
+                player -> player.isAlive() && !player.isSpectator() && player.distanceToSqr(center) <= rangeSqr);
+        float damage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) * GLIMMER_RING_DAMAGE_FRACTION;
+        for (Player player : players) {
+            if (player.hurt(AntarchyDamageSources.krakenMauling(serverLevel, this), damage)) {
+                this.knockAway(player, 1.2D, 0.45D);
+            }
+        }
+        GlimmerEchoes.ring(serverLevel, center, GLIMMER_RING_RADIUS + 1.0D, 56);
+        this.playSound(SoundEvents.AMETHYST_BLOCK_RESONATE, 2.5F, 0.6F);
     }
 
     public boolean isRoaring() {
@@ -550,7 +675,7 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
         if (--this.actionTicks <= 0) {
             this.actionTicks = 0;
             this.setRoaring(false);
-            this.attackCooldown = 18;
+            this.attackCooldown = this.scaledCooldown(18);
         }
     }
 
@@ -578,14 +703,14 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
         }
 
         if (this.phaseTransitionTicks % 8 == 0 && this.level() instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.SQUID_INK, this.getX(), this.getY() + 1.0D, this.getZ(), 12, 1.0D, 0.7D, 1.0D, 0.02D);
+            serverLevel.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.SQUID_INK),this.getX(), this.getY() + 1.0D, this.getZ(), 12, 1.0D, 0.7D, 1.0D, 0.02D);
         }
 
         if (--this.phaseTransitionTicks <= 0) {
             this.phaseTransitionTicks = 0;
             this.setPhaseTwo(true);
             this.applyPhaseTwoBuffs();
-            this.attackCooldown = 25;
+            this.attackCooldown = this.scaledCooldown(25);
             this.playSound(AntarchySoundEvents.KRAKEN_ROAR.get(), 2.0F, 0.72F);
         }
     }
@@ -630,7 +755,7 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
             this.holdGrabbedTarget(grabbedTarget);
             if (this.actionTicks <= 45 && this.actionTicks > 10 && this.actionTicks % 10 == 0) {
                 if (this.level() instanceof ServerLevel serverLevel) {
-                    grabbedTarget.hurt(AntarchyDamageSources.krakenMauling(serverLevel, this), 4.0F);
+                    grabbedTarget.hurt(AntarchyDamageSources.krakenMauling(serverLevel, this), 4.0F * this.glimmerEchoDamageMultiplier());
                 }
             }
         }
@@ -668,7 +793,7 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
         int finished = this.getAttackState();
         this.setAttackState(ATTACK_NONE);
         this.actionTicks = 0;
-        this.attackCooldown = this.isPhaseTwo() ? 12 : 18;
+        this.attackCooldown = this.scaledCooldown(this.isPhaseTwo() ? 12 : 18);
         this.grabbedTargetId = -1;
         this.lastAttackState = finished;
         this.updateAnimationState();
@@ -770,7 +895,7 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
         }
 
         if (this.level() instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.SPLASH, this.getX(), this.getY() + 0.8D, this.getZ(), 24, 1.2D, 0.4D, 1.2D, 0.08D);
+            serverLevel.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.SPLASH), this.getX(), this.getY() + 0.8D, this.getZ(), 24, 1.2D, 0.4D, 1.2D, 0.08D);
         }
     }
 
@@ -790,8 +915,12 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
             this.knockAway(player, 3.2D, 0.75D);
         }
 
-        serverLevel.sendParticles(ParticleTypes.SPLASH, this.getX(), this.getY() + 0.8D, this.getZ(), 40, 2.0D, 0.8D, 2.0D, 0.12D);
-        serverLevel.sendParticles(ParticleTypes.BUBBLE, this.getX(), this.getY() + 0.6D, this.getZ(), 30, 1.8D, 0.6D, 1.8D, 0.05D);
+        serverLevel.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.SPLASH), this.getX(), this.getY() + 0.8D, this.getZ(), 40, 2.0D, 0.8D, 2.0D, 0.12D);
+        serverLevel.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.BUBBLE), this.getX(), this.getY() + 0.6D, this.getZ(), 30, 1.8D, 0.6D, 1.8D, 0.05D);
+
+        if (this.isGlimmerEcho()) {
+            this.glimmerRingTicks = GLIMMER_RING_DELAY_TICKS;
+        }
     }
 
     private void holdGrabbedTarget(LivingEntity target) {
@@ -862,12 +991,14 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
         if (!this.isPhaseTwo() || this.phaseSummonCooldown > 0) {
             return;
         }
-        if (this.countNearbyMinions() >= 12) {
-            this.phaseSummonCooldown = 40;
+        int minionCap = this.isGlimmerEcho() ? MINION_CAP + GLIMMER_MINION_CAP_BONUS : MINION_CAP;
+        if (this.countNearbyMinions() >= minionCap) {
+            this.phaseSummonCooldown = this.scaledCooldown(40);
             return;
         }
-        this.spawnMinions(1 + this.random.nextInt(2), target);
-        this.phaseSummonCooldown = 90 + this.random.nextInt(50);
+        int extraMinions = this.isGlimmerEcho() ? GLIMMER_EXTRA_MINIONS : 0;
+        this.spawnMinions(1 + this.random.nextInt(2) + extraMinions, target);
+        this.phaseSummonCooldown = this.scaledCooldown(90 + this.random.nextInt(50));
     }
 
     private int countNearbyMinions() {
@@ -891,15 +1022,21 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
                 OctopusBombEntity bomb = AntarchyObjects.OCTOPUS_BOMB.get().create(serverLevel);
                 if (bomb == null) continue;
                 bomb.moveTo(spawnPos.x, spawnPos.y, spawnPos.z, this.getYRot(), 0.0F);
+                GlimmerEchoes.markSummon(this, bomb);
                 serverLevel.addFreshEntity(bomb);
                 bomb.launchAsProjectile(this, this.createBombLaunchVelocity(spawnPos, currentTarget));
-                serverLevel.sendParticles(ParticleTypes.BUBBLE, bomb.getX(), bomb.getY() + 0.4D, bomb.getZ(), 14, 0.3D, 0.25D, 0.3D, 0.03D);
+                serverLevel.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.BUBBLE), bomb.getX(), bomb.getY() + 0.4D, bomb.getZ(), 14, 0.3D, 0.25D, 0.3D, 0.03D);
             } else {
                 MissileSquidEntity squid = AntarchyObjects.MISSILE_SQUID.get().create(serverLevel);
                 if (squid == null) continue;
                 squid.moveTo(spawnPos.x, spawnPos.y, spawnPos.z, this.getYRot(), 0.0F);
+                GlimmerEchoes.markSummon(this, squid);
+                if (this.isGlimmerEcho()) {
+                    squid.setSpawnedByKraken(true);
+                    squid.setCanFly(true);
+                }
                 serverLevel.addFreshEntity(squid);
-                serverLevel.sendParticles(ParticleTypes.BUBBLE, squid.getX(), squid.getY() + 0.4D, squid.getZ(), 14, 0.3D, 0.25D, 0.3D, 0.03D);
+                serverLevel.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.BUBBLE), squid.getX(), squid.getY() + 0.4D, squid.getZ(), 14, 0.3D, 0.25D, 0.3D, 0.03D);
             }
             spawned++;
         }
@@ -1013,7 +1150,7 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
         }
 
         if (this.stormActive && --this.lightningAmbientCooldown <= 0) {
-            this.lightningAmbientCooldown = this.isPhaseTwo() ? 35 + this.random.nextInt(35) : 80 + this.random.nextInt(80);
+            this.lightningAmbientCooldown = this.scaledCooldown(this.isPhaseTwo() ? 35 + this.random.nextInt(35) : 80 + this.random.nextInt(80));
             int ambientBolts = this.isPhaseTwo() ? 4 : 2;
             for (int i = 0; i < ambientBolts; i++) {
                 this.spawnVisualLightning(serverLevel, this.getRandomStormStrikePos(serverLevel));
@@ -1023,16 +1160,17 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
         LivingEntity target = this.getTarget();
         if (target != null && target.isAlive()) {
             if (--this.lightningStrikeCooldown <= 0) {
-                this.lightningStrikeCooldown = this.isPhaseTwo() ? 26 + this.random.nextInt(20) : 60 + this.random.nextInt(80);
+                this.lightningStrikeCooldown = this.scaledCooldown(this.isPhaseTwo() ? 26 + this.random.nextInt(20) : 60 + this.random.nextInt(80));
                 int strikeBolts = this.isPhaseTwo() ? 2 : 1;
                 for (int i = 0; i < strikeBolts; i++) {
                     this.spawnVisualLightning(serverLevel, this.getTargetStormStrikePos(target));
                 }
+                float lightningDamage = this.isPhaseTwo() ? 12.0F : AntarchySettings.krakenLightningDamagePhaseOne();
                 target.hurt(AntarchyDamageSources.krakenLightning(serverLevel, this),
-                        this.isPhaseTwo() ? 12.0F : AntarchySettings.krakenLightningDamagePhaseOne());
+                        lightningDamage * this.glimmerEchoDamageMultiplier());
             }
         } else {
-            this.lightningStrikeCooldown = this.isPhaseTwo() ? 30 : 60;
+            this.lightningStrikeCooldown = this.scaledCooldown(this.isPhaseTwo() ? 30 : 60);
         }
     }
 
@@ -1116,7 +1254,9 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
 
         AttributeInstance attackDamage = this.getAttribute(Attributes.ATTACK_DAMAGE);
         if (attackDamage != null && !attackDamage.hasModifier(PHASE_TWO_DAMAGE_ID)) {
-            attackDamage.addPermanentModifier(PHASE_TWO_DAMAGE);
+            attackDamage.addPermanentModifier(this.isGlimmerEcho()
+                    ? new AttributeModifier(PHASE_TWO_DAMAGE_ID, PHASE_TWO_DAMAGE_BONUS * this.glimmerEchoDamageMultiplier(), AttributeModifier.Operation.ADD_VALUE)
+                    : PHASE_TWO_DAMAGE);
         }
     }
 
@@ -1137,6 +1277,11 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
     }
 
     private void spawnVisualLightning(ServerLevel serverLevel, Vec3 strikePos) {
+        if (this.isGlimmerEcho()) {
+            this.spawnGlimmerStrike(serverLevel, strikePos);
+            return;
+        }
+
         LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(serverLevel);
         if (bolt == null) {
             return;
@@ -1147,11 +1292,21 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
         serverLevel.addFreshEntity(bolt);
     }
 
+    private void spawnGlimmerStrike(ServerLevel serverLevel, Vec3 strikePos) {
+        GlimmerEchoes.column(serverLevel, strikePos, GLIMMER_STRIKE_HEIGHT, 60);
+        GlimmerEchoes.burst(serverLevel, strikePos.add(0.0D, GLIMMER_STRIKE_HEIGHT, 0.0D), 1.5D, 20);
+        GlimmerEchoes.burst(serverLevel, strikePos.add(0.0D, 0.5D, 0.0D), 1.2D, 36);
+        serverLevel.playSound(null, strikePos.x, strikePos.y, strikePos.z,
+                SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 4.0F, 1.3F + this.random.nextFloat() * 0.2F);
+        serverLevel.playSound(null, strikePos.x, strikePos.y, strikePos.z,
+                SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.HOSTILE, 1.5F, 0.7F);
+    }
+
     private void tickClientParticles() {
         if (this.isRoaring() || this.phaseTransitionTicks > 0 || this.getAttackState() != ATTACK_NONE) {
             if (this.tickCount % 3 == 0) {
                 this.level().addParticle(
-                        ParticleTypes.BUBBLE,
+                        GlimmerEchoes.particle(this, ParticleTypes.BUBBLE),
                         this.getX() + (this.random.nextDouble() - 0.5D) * this.getBbWidth(),
                         this.getY() + 0.8D + this.random.nextDouble() * 0.6D,
                         this.getZ() + (this.random.nextDouble() - 0.5D) * this.getBbWidth(),
@@ -1203,7 +1358,6 @@ public class KrakenEntity extends Monster implements GeoEntity, MultipartEntityO
 
         if (this.deathTime >= DEATH_ANIM_TICKS) {
             this.remove(RemovalReason.KILLED);
-            this.dropExperience(this);
         }
     }
 

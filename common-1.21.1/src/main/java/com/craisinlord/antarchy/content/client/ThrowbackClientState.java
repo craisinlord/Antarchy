@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.client;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
 import net.minecraft.client.Minecraft;
@@ -76,6 +77,11 @@ public final class ThrowbackClientState {
 
     public static float hungerHidden(float partialTick) {
         return Mth.lerp(partialTick, previousHungerHidden, hungerHidden);
+    }
+
+    public static boolean foodOverlaysHidden() {
+        return AntarchySettings.throwbackClassicFood()
+                && hungerHidden(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false)) > 0.01F;
     }
 
     public static float zone(float partialTick) {

@@ -571,6 +571,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<EmperorScorpionEntity>("main", 3, this::mainController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("snap", CLAW_ATTACK_ANIM)
                 .triggerableAnim("sting", STING_ATTACK_ANIM)
                 .triggerableAnim("harden", HARDEN_START_ANIM)
@@ -579,6 +580,9 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     }
 
     private PlayState mainController(AnimationTest<EmperorScorpionEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         return switch (this.getAnimationState()) {
             case ANIM_WALK -> state.setAndContinue(WALK_ANIM);
             case ANIM_CLAW_ATTACK -> state.setAndContinue(CLAW_ATTACK_ANIM);

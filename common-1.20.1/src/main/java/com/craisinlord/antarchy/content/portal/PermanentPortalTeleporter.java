@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.portal;
 
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaArrival;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.entity.ant.AntTeleportHelper;
 import java.util.Comparator;
@@ -33,6 +34,11 @@ public final class PermanentPortalTeleporter {
     private static final int SEARCH_RADIUS = 24;
     private static final int VERTICAL_SEARCH = 24;
     private static final int EXISTING_PORTAL_SEARCH_RADIUS = 128;
+    private static final int ELYTHIA_MIN_ARRIVAL_Y = ElythiaArrival.MIN_ARRIVAL_Y;
+    private static final ResourceKey<Level> ELYTHIA = ResourceKey.create(
+            net.minecraft.core.registries.Registries.DIMENSION,
+            new net.minecraft.resources.ResourceLocation(com.craisinlord.antarchy.Antarchy.MODID, "elythia")
+    );
 
     private PermanentPortalTeleporter() {
     }
@@ -104,6 +110,7 @@ public final class PermanentPortalTeleporter {
             return safePortalPosition != null ? safePortalPosition : existing.center();
         }
 
+        preferredPos = ElythiaArrival.nearestPlateau(destination, preferredPos);
         AntTeleportHelper.loadArrivalSearchArea(destination, preferredPos, SEARCH_RADIUS);
         Vec3 safe = findSafeArrivalPosition(entity, destination, preferredPos, type);
         if (safe != null) {
@@ -123,6 +130,9 @@ public final class PermanentPortalTeleporter {
             return new BlockPos(preferredPos.getX(), Mth.clamp(preferredPos.getY(), yRange[0] + 1, yRange[1] - 4), preferredPos.getZ());
         }
         BlockPos surface = destination.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, preferredPos);
+        if (destination.dimension() == ELYTHIA && surface.getY() < ELYTHIA_MIN_ARRIVAL_Y) {
+            return surface.atY(ELYTHIA_MIN_ARRIVAL_Y);
+        }
         if (surface.getY() > destination.getMinBuildHeight() + 1) {
             return surface;
         }
@@ -208,6 +218,9 @@ public final class PermanentPortalTeleporter {
         }
 
         for (BlockPos candidate : candidates) {
+            if (elythia && candidate.getY() < ELYTHIA_MIN_ARRIVAL_Y) {
+                continue;
+            }
             Vec3 safe = tryFindSafePosition(entity, destination, candidate);
             if (safe != null) {
                 return safe;
@@ -350,7 +363,7 @@ public final class PermanentPortalTeleporter {
         if (dim == AntarchySettings.termiteDestinationDimension()) {
             return new int[]{100, 200};
         }
-        if (type != PermanentPortalType.ELYTHIA && dim == AntarchySettings.brownAntDestinationDimension()) {
+        if (type != PermanentPortalType.ELYTHIA && dim != ELYTHIA && dim == AntarchySettings.brownAntDestinationDimension()) {
             return new int[]{75, 120};
         }
         return null;

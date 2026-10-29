@@ -4,17 +4,22 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import java.util.EnumSet;
 import java.util.Objects;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -47,6 +52,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -57,7 +63,7 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class BrutalflyEntity extends Monster implements GeoEntity {
+public class BrutalflyEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation FLY_ANIM = RawAnimation.begin().thenLoop("fly");
     private static final RawAnimation SPIT_ANIM = RawAnimation.begin().thenPlay("spit");
@@ -71,6 +77,8 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
     private static final EntityDataAccessor<Integer> ANIMATION_STATE =
             SynchedEntityData.defineId(BrutalflyEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> IS_COCOONED =
+            SynchedEntityData.defineId(BrutalflyEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO =
             SynchedEntityData.defineId(BrutalflyEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final int ANIM_IDLE = 0;
@@ -93,6 +101,12 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
     private static final int COCOON_HATCH_ANIM_TICKS = 40;
     private static final int COCOON_IDLE_ANIM_TICKS = 70;
     private static final int POST_COCOON_INVULNERABLE_TICKS = 100;
+    private static final int BASE_XP_REWARD = 80;
+    private static final int GLIMMER_XP_REWARD = BASE_XP_REWARD * 5;
+    private static final double GLIMMER_ABANDON_RANGE = 48.0D;
+    private static final int GLIMMER_ABANDON_TICKS = 600;
+    private static final ResourceKey<LootTable> GLIMMER_LOOT_TABLE = ResourceKey.create(Registries.LOOT_TABLE,
+            ResourceLocation.fromNamespaceAndPath(com.craisinlord.antarchy.Antarchy.MODID, "entities/brutalfly_glimmer"));
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private final ServerBossEvent bossEvent =
@@ -121,11 +135,12 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
     private int cocoonAnimTicks;
     private boolean pendingHatchAnim;
     private int postCocoonInvulnerableTicks;
+    private int glimmerAbandonTicks;
 
     public BrutalflyEntity(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
         this.moveControl = new FlyingMoveControl(this, 20, true);
-        this.xpReward = 80;
+        this.xpReward = BASE_XP_REWARD;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -144,6 +159,10 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnReason, @Nullable SpawnGroupData spawnData) {
         double maxHealth = AntarchySettings.brutalflyHealth();
         double swipeDamage = AntarchySettings.brutalflySwipeDamage();
+        if (this.isGlimmerEcho()) {
+            maxHealth *= AntarchySettings.glimmerBrutalflyHealthMultiplier();
+            swipeDamage *= AntarchySettings.glimmerBrutalflyDamageMultiplier();
+        }
         Objects.requireNonNull(this.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(maxHealth);
         this.setHealth((float) maxHealth);
         Objects.requireNonNull(this.getAttribute(Attributes.ATTACK_DAMAGE)).setBaseValue(swipeDamage);
@@ -161,6 +180,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
         super.defineSynchedData(builder);
         builder.define(ANIMATION_STATE, ANIM_IDLE);
         builder.define(IS_COCOONED, false);
+        builder.define(GLIMMER_ECHO, false);
     }
 
     @Override
@@ -230,6 +250,13 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
         if (this.isDeadOrDying()) {
             this.setAnimationState(ANIM_DEATH);
             return;
+        }
+
+        if (this.isGlimmerEcho()) {
+            GlimmerEchoes.tickAmbient(this, 3, 4);
+            if (this.tickGlimmerAbandonment()) {
+                return;
+            }
         }
 
         if (this.isCocooned()) {
@@ -352,6 +379,65 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
     }
 
     @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        boolean becameGlimmer = glimmerEcho && !this.isGlimmerEcho();
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
+        if (becameGlimmer) {
+            this.spitCooldown = this.scaledCooldown(this.spitCooldown);
+            this.meleeCooldown = this.scaledCooldown(this.meleeCooldown);
+        }
+        if (glimmerEcho && this.isCocooned()) {
+            this.setCocooned(false, null);
+        }
+        this.xpReward = glimmerEcho ? GLIMMER_XP_REWARD : BASE_XP_REWARD;
+        this.bossEvent.setName(this.getDisplayName());
+        this.bossEvent.setColor(glimmerEcho ? BossEvent.BossBarColor.BLUE : BossEvent.BossBarColor.YELLOW);
+    }
+
+    @Override
+    public float glimmerEchoDamageMultiplier() {
+        return this.isGlimmerEcho() ? (float) AntarchySettings.glimmerBrutalflyDamageMultiplier() : 1.0F;
+    }
+
+    @Override
+    protected Component getTypeName() {
+        return this.isGlimmerEcho() ? Component.translatable("entity.antarchy.brutalfly.glimmer") : super.getTypeName();
+    }
+
+    @Override
+    protected ResourceKey<LootTable> getDefaultLootTable() {
+        return this.isGlimmerEcho() ? GLIMMER_LOOT_TABLE : super.getDefaultLootTable();
+    }
+
+    private int scaledCooldown(int ticks) {
+        if (!this.isGlimmerEcho()) {
+            return ticks;
+        }
+        return Math.max(10, (int) Math.round(ticks * AntarchySettings.glimmerBrutalflyCooldownMultiplier()));
+    }
+
+    private boolean tickGlimmerAbandonment() {
+        if (this.tickCount % 20 != 0) {
+            return false;
+        }
+        if (GlimmerEchoes.hasPlayerWithin(this, GLIMMER_ABANDON_RANGE)) {
+            this.glimmerAbandonTicks = 0;
+            return false;
+        }
+        this.glimmerAbandonTicks += 20;
+        if (this.glimmerAbandonTicks < GLIMMER_ABANDON_TICKS) {
+            return false;
+        }
+        GlimmerEchoes.fadeAway(this);
+        return true;
+    }
+
+    @Override
     public net.minecraft.world.entity.EntityDimensions getDefaultDimensions(net.minecraft.world.entity.Pose pose) {
         if (isCocooned()) {
             return net.minecraft.world.entity.EntityDimensions.scalable(2.0F, 5.0F);
@@ -360,6 +446,9 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
     }
 
     public void setCocooned(boolean cocooned, @Nullable BlockPos anchor) {
+        if (cocooned && this.isGlimmerEcho()) {
+            return;
+        }
         this.entityData.set(IS_COCOONED, cocooned);
         this.anchorPos = anchor;
         this.refreshDimensions();
@@ -504,7 +593,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
         this.setAnimationState(ANIM_SPIT);
         this.animationTicks = 20;
         this.spitWindupTicks = SPIT_WINDUP_TICKS;
-        this.spitCooldown = this.getFightPhase().nextSpitCooldown(this.random);
+        this.spitCooldown = this.scaledCooldown(this.getFightPhase().nextSpitCooldown(this.random));
         this.gameEvent(GameEvent.PROJECTILE_SHOOT);
     }
 
@@ -522,19 +611,38 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
         this.playSound(AntarchySoundEvents.BRUTALFLY_SPIT.get(), 1.0F, 0.9F + this.random.nextFloat() * 0.2F);
         switch (this.getFightPhase()) {
             case PHASE_THREE -> {
-                this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.POISON, -14.0F);
-                this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.STICKY, 0.0F);
-                this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.POISON, 14.0F);
+                if (this.isGlimmerEcho()) {
+                    this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.POISON, -21.0F);
+                    this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.STICKY, -7.0F);
+                    this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.STICKY, 7.0F);
+                    this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.POISON, 21.0F);
+                } else {
+                    this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.POISON, -14.0F);
+                    this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.STICKY, 0.0F);
+                    this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.POISON, 14.0F);
+                }
             }
             case PHASE_TWO -> {
-                this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.POISON, -8.0F);
-                this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.STICKY, 8.0F);
+                if (this.isGlimmerEcho()) {
+                    this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.POISON, -12.0F);
+                    this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.STICKY, 0.0F);
+                    this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.POISON, 12.0F);
+                } else {
+                    this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.POISON, -8.0F);
+                    this.launchOrb(serverLevel, origin, target, BrutalflyOrbEntity.OrbVariant.STICKY, 8.0F);
+                }
             }
             default -> {
-                BrutalflyOrbEntity.OrbVariant variant = this.random.nextBoolean()
-                        ? BrutalflyOrbEntity.OrbVariant.POISON
-                        : BrutalflyOrbEntity.OrbVariant.STICKY;
-                this.launchOrb(serverLevel, origin, target, variant, 0.0F);
+                if (this.isGlimmerEcho()) {
+                    boolean poisonFirst = this.random.nextBoolean();
+                    this.launchOrb(serverLevel, origin, target, poisonFirst ? BrutalflyOrbEntity.OrbVariant.POISON : BrutalflyOrbEntity.OrbVariant.STICKY, -6.0F);
+                    this.launchOrb(serverLevel, origin, target, poisonFirst ? BrutalflyOrbEntity.OrbVariant.STICKY : BrutalflyOrbEntity.OrbVariant.POISON, 6.0F);
+                } else {
+                    BrutalflyOrbEntity.OrbVariant variant = this.random.nextBoolean()
+                            ? BrutalflyOrbEntity.OrbVariant.POISON
+                            : BrutalflyOrbEntity.OrbVariant.STICKY;
+                    this.launchOrb(serverLevel, origin, target, variant, 0.0F);
+                }
             }
         }
     }
@@ -551,6 +659,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
 
         Vec3 shot = this.createShotVector(origin, target, yawOffsetDegrees);
         orb.shoot(shot.x, shot.y, shot.z, 0.95F, 0.0F);
+        GlimmerEchoes.markSummon(this, orb);
         serverLevel.addFreshEntity(orb);
     }
 
@@ -586,7 +695,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
     private void startSwipe() {
         this.setAnimationState(ANIM_SWIPE);
         this.animationTicks = SWIPE_TICKS;
-        this.meleeCooldown = this.getFightPhase().nextMeleeCooldown(this.random);
+        this.meleeCooldown = this.scaledCooldown(this.getFightPhase().nextMeleeCooldown(this.random));
     }
 
     private void tickSwipe(LivingEntity target) {
@@ -736,6 +845,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
                     0.12D + this.random.nextDouble() * 0.15D,
                     (this.random.nextDouble() - 0.5D) * 0.35D
             );
+            GlimmerEchoes.markSummon(this, butterfly);
             serverLevel.addFreshEntity(butterfly);
         }
     }
@@ -771,6 +881,7 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
+        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
         tag.putBoolean("IsCocooned", this.isCocooned());
         tag.putInt("CocoonHits", this.cocoonHits);
         tag.putInt("CocoonHitCooldown", this.cocoonHitCooldownTicks);
@@ -784,7 +895,8 @@ public class BrutalflyEntity extends Monster implements GeoEntity {
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        if (tag.getBoolean("IsCocooned")) {
+        this.setGlimmerEcho(tag.getBoolean(GlimmerEchoes.SAVE_KEY));
+        if (tag.getBoolean("IsCocooned") && !this.isGlimmerEcho()) {
             BlockPos anchor = null;
             if (tag.contains("AnchorX")) {
                 anchor = new BlockPos(tag.getInt("AnchorX"), tag.getInt("AnchorY"), tag.getInt("AnchorZ"));

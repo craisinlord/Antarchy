@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "antarchy:tigers_eye"
+    },
+    {
+      "item": "antarchy:tigers_eye"
+    },
+    {
+      "item": "antarchy:tigers_eye"
+    },
+    {
+      "item": "antarchy:tigers_eye"
+    },
+    {
+      "item": "antarchy:spirit_apple"
+    },
+    {
+      "item": "antarchy:faded_memory"
+    },
+    {
+      "item": "antarchy:faded_memory"
+    },
+    {
+      "item": "antarchy:faded_memory"
+    },
+    {
+      "item": "antarchy:faded_memory"
+    }
+  ],
+  "result": {
+    "id": "antarchy:alpha_mantis_glimmer_sigil",
+    "count": 1
+  }
+}

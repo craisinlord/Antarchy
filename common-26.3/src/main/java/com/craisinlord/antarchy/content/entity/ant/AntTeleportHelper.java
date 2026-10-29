@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.entity.ant;
 
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaArrival;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
@@ -45,6 +47,7 @@ public final class AntTeleportHelper {
     private static final int ARRIVAL_VERTICAL_SEARCH = 24;
     private static final int EXPANDED_ARRIVAL_SEARCH_RADIUS = 48;
     private static final int EXPANDED_ARRIVAL_VERTICAL_SEARCH = 48;
+    private static final ResourceKey<Level> ELYTHIA = ResourceKey.create(Registries.DIMENSION, Identifier.fromNamespaceAndPath("antarchy", "elythia"));
 
     private AntTeleportHelper() {
     }
@@ -250,7 +253,7 @@ public final class AntTeleportHelper {
     }
 
     public static void prepareArrival(ServerPlayer player, ServerLevel destination, Consumer<Vec3> onArrival) {
-        BlockPos preferredPos = preferredArrivalPos(player, destination);
+        BlockPos preferredPos = ElythiaArrival.nearestPlateau(destination, preferredArrivalPos(player, destination));
         AntArrivalScheduler.request(player, destination, preferredPos, ARRIVAL_SEARCH_RADIUS, () -> {
             int[] yRange = getDimensionYRange(destination);
             if (yRange == null) {
@@ -286,7 +289,7 @@ public final class AntTeleportHelper {
 
     @Nullable
     public static Vec3 getDestinationPosition(ServerPlayer player, ServerLevel destination) {
-        return findSafeArrivalPosition(player, destination, preferredArrivalPos(player, destination));
+        return findSafeArrivalPosition(player, destination, ElythiaArrival.nearestPlateau(destination, preferredArrivalPos(player, destination)));
     }
 
     private static BlockPos preferredArrivalPos(ServerPlayer player, ServerLevel destination) {
@@ -421,6 +424,9 @@ public final class AntTeleportHelper {
     @Nullable
     private static int[] getDimensionYRange(ServerLevel destination) {
         ResourceKey<Level> dim = destination.dimension();
+        if (dim == ELYTHIA) {
+            return new int[]{ElythiaArrival.MIN_ARRIVAL_Y, 280};
+        }
         if (dim == PermanentPortalType.ELYTHIA.primaryDimension()) {
             return new int[]{64, 240};
         }

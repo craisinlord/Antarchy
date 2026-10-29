@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "antarchy:tigers_eye"
+    },
+    {
+      "item": "antarchy:tigers_eye"
+    },
+    {
+      "item": "antarchy:tigers_eye"
+    },
+    {
+      "item": "antarchy:tigers_eye"
+    },
+    {
+      "item": "antarchy:spirit_apple"
+    },
+    {
+      "item": "antarchy:king_scale"
+    }
+  ],
+  "result": {
+    "id": "antarchy:king_glimmer_sigil",
+    "count": 1
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:add",
+  "left": "antarchy:elythia_river_offset",
+  "right": {
+    "type": "minecraft:mul",
+    "left": -1.576,
+    "right": "antarchy:elythia_reserve_mask"
+  }
+}

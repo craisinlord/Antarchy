@@ -2,12 +2,15 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -24,6 +27,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -38,6 +42,8 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -53,7 +59,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class ScorpionEntity extends Monster implements GeoEntity {
+public class ScorpionEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final ResourceKey<net.minecraft.world.level.biome.Biome> DREAM_DUNES = ResourceKey.create(
             Registries.BIOME,
             ResourceLocation.fromNamespaceAndPath("antarchy", "dream_dunes")
@@ -63,6 +69,10 @@ public class ScorpionEntity extends Monster implements GeoEntity {
             SynchedEntityData.defineId(ScorpionEntity.class, EntityDataSerializers.INT);
     private static final String TEXTURE_VARIANT_KEY = "TextureVariant";
     private static final String SUMMON_OWNER_KEY = "SummonOwner";
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO =
+            SynchedEntityData.defineId(ScorpionEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final String GLIMMER_ECHO_OWNER_KEY = "GlimmerEchoOwner";
+    private static final int BASE_XP_REWARD = 5;
     public static final int BLUE_VARIANT = 0;
     public static final int GREEN_VARIANT = 1;
 
@@ -82,10 +92,37 @@ public class ScorpionEntity extends Monster implements GeoEntity {
     private boolean attackDamageApplied = false;
     @Nullable private LivingEntity attackTarget;
     @Nullable private UUID summonOwner;
+    @Nullable private UUID glimmerEchoOwner;
 
     public ScorpionEntity(EntityType<? extends ScorpionEntity> entityType, Level level) {
         super(entityType, level);
-        this.xpReward = 5;
+        this.xpReward = BASE_XP_REWARD;
+    }
+
+    @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
+        this.xpReward = glimmerEcho ? 0 : BASE_XP_REWARD;
+    }
+
+    @Override
+    public void setGlimmerEchoOwner(@Nullable UUID owner) {
+        this.glimmerEchoOwner = owner;
+    }
+
+    @Override
+    protected Component getTypeName() {
+        return this.isGlimmerEcho() ? Component.translatable("entity.antarchy.scorpion.glimmer") : super.getTypeName();
+    }
+
+    @Override
+    protected ResourceKey<LootTable> getDefaultLootTable() {
+        return this.isGlimmerEcho() ? BuiltInLootTables.EMPTY : super.getDefaultLootTable();
     }
 
     @Override
@@ -125,6 +162,7 @@ public class ScorpionEntity extends Monster implements GeoEntity {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(TEXTURE_VARIANT, BLUE_VARIANT);
+        builder.define(GLIMMER_ECHO, false);
     }
 
     @Override
@@ -152,6 +190,12 @@ public class ScorpionEntity extends Monster implements GeoEntity {
     @Override
     public void tick() {
         super.tick();
+        if (!this.level().isClientSide && this.isGlimmerEcho()) {
+            GlimmerEchoes.tickAmbient(this, 8, 2);
+            if (GlimmerEchoes.tickOwnedSummon(this, this.glimmerEchoOwner)) {
+                return;
+            }
+        }
         if (this.attackCooldownTicks > 0) {
             this.attackCooldownTicks--;
         }
@@ -172,6 +216,7 @@ public class ScorpionEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean doHurtTarget(net.minecraft.world.entity.Entity target) {
+        this.syncGlimmerAttackDamage();
         boolean hurt = super.doHurtTarget(target);
         if (hurt && target instanceof LivingEntity living) {
             int duration = this.level().getDifficulty() == Difficulty.HARD
@@ -183,10 +228,27 @@ public class ScorpionEntity extends Monster implements GeoEntity {
         return hurt;
     }
 
+    private void syncGlimmerAttackDamage() {
+        if (!this.isGlimmerEcho()) {
+            return;
+        }
+        AttributeInstance attackDamage = this.getAttribute(Attributes.ATTACK_DAMAGE);
+        if (attackDamage != null) {
+            attackDamage.setBaseValue(AntarchySettings.scorpionAttackDamage() * GlimmerEchoes.ownerDamageMultiplier(this, this.glimmerEchoOwner));
+        }
+    }
+
+    private int attackCooldownTicks() {
+        if (!this.isGlimmerEcho()) {
+            return ATTACK_COOLDOWN_TICKS;
+        }
+        return Math.max(1, (int) Math.round(ATTACK_COOLDOWN_TICKS * AntarchySettings.glimmerEmperorScorpionCooldownMultiplier()));
+    }
+
     private void beginAttack(LivingEntity target) {
         this.attackTarget = target;
         this.attackAnimTicks = ATTACK_ANIM_TICKS;
-        this.attackCooldownTicks = ATTACK_COOLDOWN_TICKS;
+        this.attackCooldownTicks = this.attackCooldownTicks();
         this.attackDamageApplied = false;
         this.getNavigation().stop();
         this.level().broadcastEntityEvent(this, ATTACK_ANIM_EVENT);
@@ -281,6 +343,10 @@ public class ScorpionEntity extends Monster implements GeoEntity {
         if (this.summonOwner != null) {
             tag.putUUID(SUMMON_OWNER_KEY, this.summonOwner);
         }
+        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
+        if (this.glimmerEchoOwner != null) {
+            tag.putUUID(GLIMMER_ECHO_OWNER_KEY, this.glimmerEchoOwner);
+        }
     }
 
     @Override
@@ -292,6 +358,8 @@ public class ScorpionEntity extends Monster implements GeoEntity {
             this.assignRandomTextureVariant();
         }
         this.summonOwner = tag.hasUUID(SUMMON_OWNER_KEY) ? tag.getUUID(SUMMON_OWNER_KEY) : null;
+        this.setGlimmerEcho(tag.getBoolean(GlimmerEchoes.SAVE_KEY));
+        this.glimmerEchoOwner = tag.hasUUID(GLIMMER_ECHO_OWNER_KEY) ? tag.getUUID(GLIMMER_ECHO_OWNER_KEY) : null;
     }
 
     @Override

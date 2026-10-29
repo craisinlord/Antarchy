@@ -15,7 +15,8 @@
     "infinity.WarpLogicMixin"
   ],
   "client": [
-    "infinity.ShaderPayloadRepeatSkipMixin"
+    "infinity.ShaderPayloadRepeatSkipMixin",
+    "compat.AppleSkinOverlayMixin"
   ],
   "injectors": {
     "defaultRequire": 1

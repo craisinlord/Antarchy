@@ -1,6 +1,7 @@
 package com.craisinlord.antarchy.neoforge.client;
 
 import com.craisinlord.antarchy.Antarchy;
+import com.craisinlord.antarchy.content.item.AnvilCannonItem;
 import com.craisinlord.antarchy.content.item.BigBerthaItem;
 import com.craisinlord.antarchy.content.item.RoyalGuardianSwordItem;
 import com.craisinlord.antarchy.content.network.BigBerthaModeCyclePayload;
@@ -24,6 +25,7 @@ public final class BigBerthaClientHandler {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player != null) {
             BigBerthaItem.clientTick(mc.player);
+            AnvilCannonItem.clientTick(mc.player);
         }
         if (mc.player == null || mc.level == null || mc.screen != null) {
             lastUseDown = false;

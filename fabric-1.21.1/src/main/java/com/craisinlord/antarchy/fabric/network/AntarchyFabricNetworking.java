@@ -60,6 +60,9 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.playS2C().register(com.craisinlord.antarchy.content.network.ThrowbackZonePayload.TYPE, com.craisinlord.antarchy.content.network.ThrowbackZonePayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(com.craisinlord.antarchy.content.network.AntTransitPayload.TYPE, com.craisinlord.antarchy.content.network.AntTransitPayload.STREAM_CODEC);
         PayloadTypeRegistry.playS2C().register(com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload.TYPE, com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(com.craisinlord.antarchy.content.network.ElythiaEventPayload.TYPE, com.craisinlord.antarchy.content.network.ElythiaEventPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(com.craisinlord.antarchy.content.network.ThoraxisEventPayload.TYPE, com.craisinlord.antarchy.content.network.ThoraxisEventPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(com.craisinlord.antarchy.content.network.ThoraxisBubbleUpdatePayload.TYPE, com.craisinlord.antarchy.content.network.ThoraxisBubbleUpdatePayload.STREAM_CODEC);
 
         PayloadTypeRegistry.playC2S().register(GravityGunPrimaryPayload.TYPE, GravityGunPrimaryPayload.STREAM_CODEC);
         PayloadTypeRegistry.playC2S().register(PortalGunPrimaryPayload.TYPE, PortalGunPrimaryPayload.STREAM_CODEC);

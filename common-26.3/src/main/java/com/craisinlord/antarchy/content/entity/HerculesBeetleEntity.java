@@ -284,6 +284,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<HerculesBeetleEntity>("main_controller", 0, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("cry", CRY_ANIM)
                 .triggerableAnim("attack", ATTACK_ANIM)
                 .triggerableAnim("charge_start", CHARGE_START_ANIM));
@@ -291,6 +292,9 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity {
     }
 
     private PlayState mainAnimController(AnimationTest<HerculesBeetleEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         if (this.isFlying() && (this.getAnimationState() == ANIM_CHARGE_START || this.getAnimationState() == ANIM_CHARGE)) {
             return state.setAndContinue(FLY_ANIM);
         }

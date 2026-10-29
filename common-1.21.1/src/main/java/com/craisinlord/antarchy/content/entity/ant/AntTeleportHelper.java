@@ -3,11 +3,15 @@ package com.craisinlord.antarchy.content.entity.ant;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.transit.AntTransit;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
+import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaArrival;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -163,7 +167,7 @@ public final class AntTeleportHelper {
             return InteractionResult.PASS;
         }
 
-        if (AntTransit.start(player, destination, transit)) {
+        if (AntTransit.isActive(player) || AntTransit.start(player, destination, transit)) {
             return InteractionResult.CONSUME;
         }
         arriveWithCompanions(player, destination);
@@ -264,6 +268,19 @@ public final class AntTeleportHelper {
 
     public static void prepareArrival(ServerPlayer player, ServerLevel destination, Consumer<Vec3> onArrival) {
         BlockPos preferredPos = preferredArrivalPos(player, destination);
+        if (!destination.dimension().equals(ThrowbackZones.ELYTHIA)) {
+            searchArrival(player, destination, preferredPos, onArrival);
+            return;
+        }
+        CompletableFuture.supplyAsync(() -> ElythiaArrival.nearestPlateau(destination, preferredPos), Util.backgroundExecutor())
+                .whenComplete((plateau, error) -> destination.getServer().execute(() -> {
+                    if (!player.hasDisconnected()) {
+                        searchArrival(player, destination, error != null || plateau == null ? preferredPos : plateau, onArrival);
+                    }
+                }));
+    }
+
+    private static void searchArrival(ServerPlayer player, ServerLevel destination, BlockPos preferredPos, Consumer<Vec3> onArrival) {
         AntArrivalScheduler.request(player, destination, preferredPos, ARRIVAL_SEARCH_RADIUS, () -> {
             int[] yRange = getDimensionYRange(destination);
             if (yRange == null) {
@@ -299,7 +316,7 @@ public final class AntTeleportHelper {
 
     @Nullable
     public static Vec3 getDestinationPosition(ServerPlayer player, ServerLevel destination) {
-        return findSafeArrivalPosition(player, destination, preferredArrivalPos(player, destination));
+        return findSafeArrivalPosition(player, destination, ElythiaArrival.nearestPlateau(destination, preferredArrivalPos(player, destination)));
     }
 
     private static BlockPos preferredArrivalPos(ServerPlayer player, ServerLevel destination) {
@@ -423,6 +440,9 @@ public final class AntTeleportHelper {
     @Nullable
     private static int[] getDimensionYRange(ServerLevel destination) {
         ResourceKey<Level> dim = destination.dimension();
+        if (dim == ThrowbackZones.ELYTHIA) {
+            return new int[]{ElythiaArrival.MIN_ARRIVAL_Y, 280};
+        }
         if (dim == PermanentPortalType.ELYTHIA.primaryDimension()) {
             return new int[]{64, 240};
         }

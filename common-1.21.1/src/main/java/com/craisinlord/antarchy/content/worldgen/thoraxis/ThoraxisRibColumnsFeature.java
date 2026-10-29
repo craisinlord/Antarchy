@@ -9,6 +9,8 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 
 public final class ThoraxisRibColumnsFeature extends Feature<ThoraxisRibColumnsConfiguration> {
+    private static final int ROOF_DIRECTION_Y = 128;
+
     public ThoraxisRibColumnsFeature(Codec<ThoraxisRibColumnsConfiguration> codec) {
         super(codec);
     }
@@ -21,7 +23,7 @@ public final class ThoraxisRibColumnsFeature extends Feature<ThoraxisRibColumnsC
         ThoraxisRibColumnsConfiguration config = context.config();
 
         int ribs = randomBetween(random, config.minRibs(), config.maxRibs());
-        boolean upward = origin.getY() < level.getHeight() / 2;
+        boolean upward = origin.getY() < ROOF_DIRECTION_Y;
         int direction = upward ? 1 : -1;
         int spread = 2 + random.nextInt(4);
 

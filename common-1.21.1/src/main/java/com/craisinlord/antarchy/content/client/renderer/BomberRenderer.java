@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.util.Color;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
@@ -18,16 +19,28 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 public class BomberRenderer extends GeoEntityRenderer<BomberEntity> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/bomber.png");
+    private static final ResourceLocation GLIMMER_TEXTURE = GlimmerEchoRendering.texture("bomber");
 
     public BomberRenderer(EntityRendererProvider.Context context) {
         super(context, new BomberModel());
         this.shadowRadius = 0.12F;
+        this.addRenderLayer(new GlimmerEchoRendering.EmissiveLayer<>(this, GlimmerEchoRendering.emissiveTexture("bomber")));
         this.addRenderLayer(new BomberFlashLayer(this));
     }
 
     @Override
+    public ResourceLocation getTextureLocation(BomberEntity animatable) {
+        return GlimmerEchoRendering.textureLocation(animatable, GLIMMER_TEXTURE, super.getTextureLocation(animatable));
+    }
+
+    @Override
     public RenderType getRenderType(BomberEntity animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
-        return RenderType.entityCutoutNoCull(texture);
+        return GlimmerEchoRendering.renderType(animatable, texture, RenderType.entityCutoutNoCull(texture));
+    }
+
+    @Override
+    public Color getRenderColor(BomberEntity animatable, float partialTick, int packedLight) {
+        return GlimmerEchoRendering.renderColor(animatable, super.getRenderColor(animatable, partialTick, packedLight));
     }
 
     @Override
@@ -49,7 +62,7 @@ public class BomberRenderer extends GeoEntityRenderer<BomberEntity> {
                 return;
             }
 
-            RenderType flashType = RenderType.eyes(TEXTURE);
+            RenderType flashType = RenderType.eyes(this.getRenderer().getTextureLocation(animatable));
             VertexConsumer flashBuffer = bufferSource.getBuffer(flashType);
             this.getRenderer().reRender(
                     bakedModel,

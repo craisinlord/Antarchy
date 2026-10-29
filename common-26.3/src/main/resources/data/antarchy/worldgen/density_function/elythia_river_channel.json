@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:cache",
+  "input": {
+    "type": "minecraft:spline",
+    "spline": {
+      "coordinate": "antarchy:elythia_river_distance",
+      "points": [
+        {
+          "location": 0.011,
+          "value": 1.0,
+          "derivative": 0.0
+        },
+        {
+          "location": 0.016,
+          "value": 0.0,
+          "derivative": 0.0
+        }
+      ]
+    }
+  }
+}

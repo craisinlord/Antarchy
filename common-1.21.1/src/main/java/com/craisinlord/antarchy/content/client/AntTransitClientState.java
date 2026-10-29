@@ -6,8 +6,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.ReceivingLevelScreen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public final class AntTransitClientState {
@@ -15,7 +21,14 @@ public final class AntTransitClientState {
     public static final float DISC_LIFETIME_TICKS = 60.0F;
     private static final float CANCEL_TICKS = 20.0F;
     private static final float WAKE_TICKS = 80.0F;
-    private static final float GLIDE_FALL_SPEED = 0.5F;
+    private static final int MAX_SINKING_TICKS = 520;
+    private static final int MAX_LOADING_TICKS = 600;
+    private static final double POOF_MIN_SPEED = 0.3D;
+    private static final double POOF_LEAD = 1.5D;
+    private static final double POOF_MARGIN = 2.0D;
+    private static final double POOF_SPEED = 0.05D;
+    private static final double POOF_DRAG = 0.4D;
+    private static final int POOF_SCAN = 12;
     private static final int MAX_GLIDE_TICKS = 1200;
     private static final float[] BLACK = {0.0F, 0.0F, 0.0F};
     private static final float[] WHITE = {1.0F, 0.97F, 0.92F};
@@ -26,6 +39,7 @@ public final class AntTransitClientState {
     private static Phase phase = Phase.NONE;
     private static TransitStyle style = TransitStyle.ELYTHIA_IN;
     private static int ticks;
+    private static int loadingTicks;
     private static float cancelFrom;
     private static boolean gliding;
     private static int glideTicks;
@@ -52,6 +66,7 @@ public final class AntTransitClientState {
                     phase = Phase.WAKING;
                     style = payload.style();
                     ticks = 0;
+                    loadingTicks = 0;
                     gliding = payload.glide();
                     glideTicks = 0;
                 }
@@ -80,6 +95,14 @@ public final class AntTransitClientState {
             return;
         }
         DISCS.values().removeIf(disc -> ++disc.age > DISC_LIFETIME_TICKS + 20.0F);
+        if (phase == Phase.SINKING && (player.isDeadOrDying() || ticks > MAX_SINKING_TICKS)) {
+            cancelFrom = Mth.clamp(ticks / SINK_TICKS, 0.0F, 1.0F);
+            phase = Phase.CANCELING;
+            ticks = 0;
+        }
+        if (phase == Phase.WAKING && ++loadingTicks < MAX_LOADING_TICKS && !loaded(minecraft, player)) {
+            return;
+        }
         if (phase != Phase.NONE) {
             ticks++;
             if ((phase == Phase.WAKING && ticks > WAKE_TICKS) || (phase == Phase.CANCELING && ticks > CANCEL_TICKS)) {
@@ -96,9 +119,52 @@ public final class AntTransitClientState {
             return;
         }
         Vec3 motion = player.getDeltaMovement();
-        if (motion.y < -GLIDE_FALL_SPEED) {
-            player.setDeltaMovement(motion.x, -GLIDE_FALL_SPEED, motion.z);
+        if (motion.y > -POOF_MIN_SPEED) {
+            return;
         }
+        double ground = groundDistance(player);
+        if (ground > Math.abs(motion.y) * POOF_LEAD + POOF_MARGIN) {
+            return;
+        }
+        player.setDeltaMovement(motion.x * POOF_DRAG, -POOF_SPEED, motion.z * POOF_DRAG);
+        poof(minecraft, player, ground);
+        gliding = false;
+    }
+
+    private static boolean loaded(Minecraft minecraft, LocalPlayer player) {
+        if (minecraft.screen instanceof ReceivingLevelScreen) {
+            return false;
+        }
+        BlockPos pos = player.blockPosition();
+        return minecraft.level.getChunkSource().hasChunk(pos.getX() >> 4, pos.getZ() >> 4);
+    }
+
+    private static double groundDistance(LocalPlayer player) {
+        BlockPos.MutableBlockPos cursor = BlockPos.containing(player.getX(), player.getY(), player.getZ()).mutable();
+        double feet = player.getY();
+        for (int depth = 0; depth <= POOF_SCAN; depth++) {
+            cursor.setY(Mth.floor(feet) - depth);
+            if (cursor.getY() < player.level().getMinBuildHeight()) {
+                return depth;
+            }
+            BlockState state = player.level().getBlockState(cursor);
+            if (!state.getCollisionShape(player.level(), cursor).isEmpty() || !state.getFluidState().isEmpty()) {
+                return feet - (cursor.getY() + 1.0D);
+            }
+        }
+        return POOF_SCAN + 1.0D;
+    }
+
+    private static void poof(Minecraft minecraft, LocalPlayer player, double ground) {
+        double y = player.getY() - Math.max(0.0D, ground) + 0.2D;
+        for (int i = 0; i < 24; i++) {
+            double angle = i * Math.PI * 2.0D / 24.0D;
+            minecraft.level.addParticle(ParticleTypes.CLOUD, player.getX() + Math.cos(angle) * 0.6D, y, player.getZ() + Math.sin(angle) * 0.6D,
+                    Math.cos(angle) * 0.25D, 0.02D, Math.sin(angle) * 0.25D);
+        }
+        minecraft.level.addParticle(ParticleTypes.GUST, player.getX(), y + 0.3D, player.getZ(), 0.0D, 0.0D, 0.0D);
+        minecraft.level.playLocalSound(player.getX(), player.getY(), player.getZ(), SoundEvents.WIND_CHARGE_BURST.value(),
+                SoundSource.PLAYERS, 0.8F, 0.8F, false);
     }
 
     public static boolean frozen() {

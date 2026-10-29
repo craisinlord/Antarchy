@@ -14,13 +14,17 @@ import com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -32,12 +36,15 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -57,11 +64,14 @@ import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -75,7 +85,7 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public abstract class RoyalBossEntity extends Monster implements GeoEntity, MultipartEntityOwner, BeamOwner {
+public abstract class RoyalBossEntity extends Monster implements GeoEntity, MultipartEntityOwner, BeamOwner, GlimmerEcho {
     public static final float MODEL_RENDER_SCALE = 2.0F;
     public static final float GAMEPLAY_WIDTH = 28.0F;
     public static final float GAMEPLAY_HEIGHT = 15.0F;
@@ -158,6 +168,12 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     private static final double MAX_BEAM_PITCH = Math.toRadians(55.0D);
     private static final int ELEVATED_TARGET_HEIGHT = 10;
     private static final float FACING_TURN_RATE = 6.0F;
+    private static final int BASE_XP_REWARD = 500;
+    private static final int GLIMMER_XP_REWARD = BASE_XP_REWARD * 5;
+    private static final double GLIMMER_ABANDON_RANGE = 80.0D;
+    private static final int GLIMMER_ABANDON_TICKS = 600;
+    private static final int GLIMMER_MIN_COOLDOWN_TICKS = 10;
+    private static final String GLIMMER_HEALTH_APPLIED_KEY = "GlimmerHealthApplied";
 
     protected static final double FLYING_MIN_HOVER = 2.5D;
     protected static final double FLYING_PREFERRED_HOVER = 6.0D;
@@ -172,6 +188,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     private static final EntityDataAccessor<Boolean> ACCELERATED =
             SynchedEntityData.defineId(RoyalBossEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> ROYAL_FLYING =
+            SynchedEntityData.defineId(RoyalBossEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO =
             SynchedEntityData.defineId(RoyalBossEntity.class, EntityDataSerializers.BOOLEAN);
     @SuppressWarnings("unchecked")
     private static final EntityDataAccessor<Integer>[] BEAM_ELEMENT = new EntityDataAccessor[] {
@@ -244,6 +262,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     private int royalStuckSampleTicks;
     private int royalStuckStrikes;
     private int royalTeleportCooldownTicks;
+    private int glimmerAbandonTicks;
+    private boolean glimmerHealthApplied;
 
     @Nullable
     private Entity[] multipartParts;
@@ -253,7 +273,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         for (int i = 0; i < this.beamControllers.length; i++) {
             this.beamControllers[i] = new BeamController(this);
         }
-        this.xpReward = 500;
+        this.xpReward = BASE_XP_REWARD;
         this.groundMoveControl = new RoyalGroundMoveControl(this);
         this.flyingMoveControl = new RoyalFlyingMoveControl(this, 20);
         this.groundNavigation = new GroundPathNavigation(this, level);
@@ -275,6 +295,12 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     protected abstract BossEvent.BossBarColor bossBarColor();
+
+    protected abstract double glimmerHealthMultiplier();
+
+    protected abstract double glimmerDamageMultiplier();
+
+    protected abstract double glimmerCooldownMultiplier();
 
     protected abstract SoundEvent royalIdleSound();
 
@@ -479,6 +505,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         super.defineSynchedData(builder);
         builder.define(ACCELERATED, false);
         builder.define(ROYAL_FLYING, true);
+        builder.define(GLIMMER_ECHO, false);
         for (int i = 0; i < 3; i++) {
             builder.define(BEAM_ACTIVE[i], false);
             builder.define(BEAM_ELEMENT[i], RoyalBeamElement.GENERIC.ordinal());
@@ -495,6 +522,116 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
 
     @Override
     public void checkDespawn() {
+    }
+
+    @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
+        this.xpReward = glimmerEcho ? GLIMMER_XP_REWARD : BASE_XP_REWARD;
+        this.bossEvent.setName(glimmerEcho ? this.getDisplayName() : Component.translatable(this.getType().getDescriptionId()));
+        this.bossEvent.setColor(glimmerEcho ? BossEvent.BossBarColor.BLUE : this.bossBarColor());
+    }
+
+    @Override
+    public float glimmerEchoDamageMultiplier() {
+        return this.isGlimmerEcho() ? (float) Math.max(0.0D, this.glimmerDamageMultiplier()) : 1.0F;
+    }
+
+    @Override
+    protected Component getTypeName() {
+        return this.isGlimmerEcho()
+                ? Component.translatable(this.getType().getDescriptionId() + ".glimmer")
+                : super.getTypeName();
+    }
+
+    @Override
+    protected ResourceKey<LootTable> getDefaultLootTable() {
+        if (!this.isGlimmerEcho()) {
+            return super.getDefaultLootTable();
+        }
+        return ResourceKey.create(Registries.LOOT_TABLE,
+                ResourceLocation.fromNamespaceAndPath("antarchy", "entities/" + this.geoName() + "_glimmer"));
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
+                                        MobSpawnType spawnReason, @Nullable SpawnGroupData spawnData) {
+        SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
+        this.applyGlimmerHealth();
+        return data;
+    }
+
+    private void applyGlimmerHealth() {
+        if (!this.isGlimmerEcho() || this.glimmerHealthApplied) {
+            return;
+        }
+        this.glimmerHealthApplied = true;
+        AttributeInstance maxHealth = this.getAttribute(Attributes.MAX_HEALTH);
+        if (maxHealth == null) {
+            return;
+        }
+        maxHealth.setBaseValue(maxHealth.getBaseValue() * Math.max(0.1D, this.glimmerHealthMultiplier()));
+        this.setHealth(this.getMaxHealth());
+    }
+
+    protected final int scaledRoyalCooldown(int ticks) {
+        if (!this.isGlimmerEcho() || ticks <= GLIMMER_MIN_COOLDOWN_TICKS) {
+            return ticks;
+        }
+        return Math.max(GLIMMER_MIN_COOLDOWN_TICKS,
+                (int) Math.round(ticks * Math.max(0.0D, this.glimmerCooldownMultiplier())));
+    }
+
+    protected final float royalAttackDamage() {
+        return (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) * this.glimmerEchoDamageMultiplier();
+    }
+
+    protected final ParticleOptions royalParticle(ParticleOptions normal) {
+        return GlimmerEchoes.particle(this, normal);
+    }
+
+    protected void onGlimmerFade() {
+        for (BeamController controller : this.beamControllers) {
+            controller.stop();
+        }
+        for (RoyalHead head : this.heads) {
+            if (head.beamActive() || head.shooting()) {
+                this.stopRoyalBeam(head);
+            }
+            head.reset();
+        }
+        for (RoyalAttackLane lane : RoyalAttackLane.values()) {
+            this.attackScheduler.cancel(lane);
+        }
+    }
+
+    private boolean tickGlimmerAbandonment() {
+        if (this.tickCount % 20 != 0) {
+            return false;
+        }
+        LivingEntity target = this.getTarget();
+        if (target != null && target.isAlive() || GlimmerEchoes.hasPlayerWithin(this, GLIMMER_ABANDON_RANGE)) {
+            this.glimmerAbandonTicks = 0;
+            return false;
+        }
+        this.glimmerAbandonTicks += 20;
+        if (this.glimmerAbandonTicks < GLIMMER_ABANDON_TICKS) {
+            return false;
+        }
+        this.onGlimmerFade();
+        GlimmerEchoes.fadeAway(this);
+        return true;
+    }
+
+    static void sendGlimmerLightning(ServerLevel level, double x, double y, double z) {
+        GlimmerEchoes.column(level, new Vec3(x, y, z), 14.4D, 48);
+        GlimmerEchoes.burst(level, new Vec3(x, y + 0.5D, z), 1.2D, 40);
+        level.playSound(null, x, y, z, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 2.0F, 1.25F);
     }
 
     @Override
@@ -587,6 +724,12 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     @Override
     public void tick() {
         super.tick();
+        if (!this.level().isClientSide && this.isGlimmerEcho() && !this.isDeadOrDying()) {
+            GlimmerEchoes.tickAmbient(this, 4, 12);
+            if (this.tickGlimmerAbandonment()) {
+                return;
+            }
+        }
         if (this.shouldClearObstruction()
                 && !this.level().isClientSide
                 && !this.isDeadOrDying()
@@ -737,15 +880,26 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                     this.beamLoopSoundTicks[index] = 20;
                     this.playRoyalSound(this.royalBeamLoopSound(), 1.0F);
                 }
+                boolean glimmerPierce = this.isGlimmerEcho();
+                Vec3 anchor = this.beamAnchor(head);
+                BeamSettings settings = this.royalBeamSettings();
                 controller.tick(
-                        this.beamAnchor(head),
+                        anchor,
                         this.beamDirection(head),
                         beamTarget,
-                        this.royalBeamSettings(),
-                        this.royalBeamTerrainMode(head),
+                        settings,
+                        glimmerPierce ? BeamTerrainMode.NONE : this.royalBeamTerrainMode(head),
                         end -> this.setRoyalBeamEndPosition(head.slot(), end),
                         this.royalBeamUsesTrackedAim());
                 Vec3 beamEnd = controller.beamEndPosition();
+                if (glimmerPierce && beamEnd != null) {
+                    Vec3 piercedEnd = this.glimmerPiercedBeamEnd(controller, anchor, beamEnd, beamTarget, settings);
+                    if (piercedEnd != beamEnd) {
+                        this.hurtAlongGlimmerPierce(anchor, beamEnd, piercedEnd, settings);
+                        this.setRoyalBeamEndPosition(head.slot(), piercedEnd);
+                        beamEnd = piercedEnd;
+                    }
+                }
                 if (beamEnd != null) {
                     this.tickRoyalBeamEffects(head, this.beamAnchor(head), beamEnd);
                 }
@@ -812,6 +966,71 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             }
             head.setBeamActive(true);
             activeBeams++;
+        }
+    }
+
+    private Vec3 glimmerPiercedBeamEnd(BeamController controller, Vec3 anchor, Vec3 clipEnd,
+                                       LivingEntity target, BeamSettings settings) {
+        Vec3 toEnd = clipEnd.subtract(anchor);
+        double clipLength = toEnd.length();
+        if (clipLength < 1.0E-4D) {
+            return clipEnd;
+        }
+        Vec3 direction = toEnd.scale(1.0D / clipLength);
+        net.minecraft.core.BlockPos blockedPos = net.minecraft.core.BlockPos.containing(clipEnd.add(direction.scale(0.05D)));
+        if (this.level().getBlockState(blockedPos).getCollisionShape(this.level(), blockedPos).isEmpty()) {
+            return clipEnd;
+        }
+        double committed = Math.min(settings.range(), Math.max(settings.pathStep(),
+                target.getEyePosition().subtract(anchor).dot(direction)));
+        int age = settings.durationTicks() - controller.beamTicks();
+        double progress = Mth.clamp(age / (double) settings.travelTicks(), 0.0D, 1.0D);
+        double piercedLength = Math.max(settings.pathStep(), committed * progress);
+        if (piercedLength <= clipLength + 0.05D) {
+            return clipEnd;
+        }
+        return anchor.add(direction.scale(piercedLength));
+    }
+
+    private void hurtAlongGlimmerPierce(Vec3 anchor, Vec3 clipEnd, Vec3 piercedEnd, BeamSettings settings) {
+        Vec3 direction = piercedEnd.subtract(anchor).normalize();
+        double start = anchor.distanceTo(clipEnd);
+        double length = anchor.distanceTo(piercedEnd);
+        float damage = this.scaleBeamDamage(settings.damage());
+        DamageSource source = this.damageSources().mobAttack(this);
+        Set<Integer> damaged = new HashSet<>();
+        for (double walked = start; walked < length; walked += settings.pathStep()) {
+            this.hurtGlimmerPierceAround(anchor.add(direction.scale(walked)), settings.pathDamageRadius(),
+                    damage, settings.knockback(), source, damaged);
+        }
+        this.hurtGlimmerPierceAround(piercedEnd, settings.impactDamageRadius(), damage, settings.knockback(), source, damaged);
+    }
+
+    private void hurtGlimmerPierceAround(Vec3 center, float radius, float damage, float knockback,
+                                         DamageSource source, Set<Integer> damaged) {
+        if (radius <= 0.0F || damage <= 0.0F) {
+            return;
+        }
+        for (LivingEntity living : this.level().getEntitiesOfClass(LivingEntity.class,
+                new AABB(center, center).inflate(radius), net.minecraft.world.entity.EntitySelector.NO_CREATIVE_OR_SPECTATOR)) {
+            if (damaged.contains(living.getId()) || !this.canBeamDamage(living)) {
+                continue;
+            }
+            AABB box = living.getBoundingBox();
+            Vec3 nearest = new Vec3(Mth.clamp(center.x, box.minX, box.maxX), Mth.clamp(center.y, box.minY, box.maxY),
+                    Mth.clamp(center.z, box.minZ, box.maxZ));
+            if (nearest.distanceToSqr(center) > radius * radius || !living.hurt(source, damage)) {
+                continue;
+            }
+            damaged.add(living.getId());
+            double strength = knockback * Math.max(0.0D, 1.0D - living.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
+            if (strength > 0.0D) {
+                Vec3 push = living.position().subtract(this.position()).multiply(1.0D, 0.0D, 1.0D).normalize().scale(strength);
+                Vec3 movement = living.getDeltaMovement();
+                living.setDeltaMovement(movement.x * 0.5D + push.x, Math.min(0.4D, movement.y * 0.5D + strength),
+                        movement.z * 0.5D + push.z);
+                living.hasImpulse = true;
+            }
         }
     }
 
@@ -1169,7 +1388,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     private void sendRoyalRelocationBurst(ServerLevel level) {
-        level.sendParticles(ParticleTypes.REVERSE_PORTAL,
+        level.sendParticles(this.royalParticle(ParticleTypes.REVERSE_PORTAL),
                 this.getX(), this.getY() + this.getBbHeight() * 0.5D, this.getZ(),
                 80, this.getBbWidth() * 0.3D, this.getBbHeight() * 0.3D, this.getBbWidth() * 0.3D, 0.2D);
     }
@@ -1256,12 +1475,12 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             double angle = Mth.TWO_PI * index / 40.0D;
             Vec3 point = this.position().add(GravityRotationUtil.vecPlayerToWorld(
                     Math.cos(angle) * radius, 0.3D, Math.sin(angle) * radius, gravity));
-            level.sendParticles(ParticleTypes.CLOUD, point.x, point.y, point.z, 1, 0.0D, 0.02D, 0.0D, 0.0D);
+            level.sendParticles(this.royalParticle(ParticleTypes.CLOUD), point.x, point.y, point.z, 1, 0.0D, 0.02D, 0.0D, 0.0D);
         }
     }
 
     private void performRoyalWingBuffet(ServerLevel level) {
-        float damage = (float) (this.getAttributeValue(Attributes.ATTACK_DAMAGE) * WING_BUFFET_DAMAGE_SCALE);
+        float damage = (float) (this.royalAttackDamage() * WING_BUFFET_DAMAGE_SCALE);
         DamageSource source = this.damageSources().mobAttack(this);
         var gravity = GravityApi.getGravityDirection(this);
         double radius = this.royalDeadZoneRadius() + 2.0D;
@@ -1302,7 +1521,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                         Math.cos(angle) * ringRadius, 1.0D, Math.sin(angle) * ringRadius, gravity));
                 Vec3 velocity = GravityRotationUtil.vecPlayerToWorld(
                         Math.cos(angle) * 0.45D, 0.04D, Math.sin(angle) * 0.45D, gravity);
-                level.sendParticles(ParticleTypes.CLOUD, point.x, point.y, point.z,
+                level.sendParticles(this.royalParticle(ParticleTypes.CLOUD), point.x, point.y, point.z,
                         0, velocity.x, velocity.y, velocity.z, 1.0D);
             }
         }
@@ -1380,12 +1599,12 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             Vec3 direction = line.scale(1.0D / length);
             for (double walked = 0.0D; walked <= length; walked += 2.0D) {
                 Vec3 point = origin.add(direction.scale(walked));
-                level.sendParticles(ParticleTypes.ELECTRIC_SPARK, point.x, point.y, point.z, 1, 0.05D, 0.05D, 0.05D, 0.0D);
+                level.sendParticles(this.royalParticle(ParticleTypes.ELECTRIC_SPARK), point.x, point.y, point.z, 1, 0.05D, 0.05D, 0.05D, 0.0D);
             }
         }
         for (int index = 0; index < 20; index++) {
             double angle = Mth.TWO_PI * index / 20.0D;
-            level.sendParticles(ParticleTypes.END_ROD,
+            level.sendParticles(this.royalParticle(ParticleTypes.END_ROD),
                     targetCenter.x + Math.cos(angle) * EXCAVATION_RADIUS, targetCenter.y,
                     targetCenter.z + Math.sin(angle) * EXCAVATION_RADIUS,
                     1, 0.0D, 0.0D, 0.0D, 0.0D);
@@ -1404,9 +1623,11 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         double depth = Math.min(length, EXCAVATION_DEPTH);
         for (double step = 1.5D; step <= depth; step += EXCAVATION_RADIUS) {
             Vec3 center = targetCenter.add(direction.scale(step));
-            RoyalBlockDestruction.destroySphere(level, this, center, EXCAVATION_RADIUS, EXCAVATION_MAX_BLOCKS,
-                    OBSTRUCTION_CLEAR_MAX_RESISTANCE, OBSTRUCTION_CLEAR_DROP_CHANCE);
-            level.sendParticles(ParticleTypes.EXPLOSION, center.x, center.y, center.z, 1, 0.4D, 0.4D, 0.4D, 0.0D);
+            if (!this.isGlimmerEcho()) {
+                RoyalBlockDestruction.destroySphere(level, this, center, EXCAVATION_RADIUS, EXCAVATION_MAX_BLOCKS,
+                        OBSTRUCTION_CLEAR_MAX_RESISTANCE, OBSTRUCTION_CLEAR_DROP_CHANCE);
+            }
+            level.sendParticles(this.royalParticle(ParticleTypes.EXPLOSION), center.x, center.y, center.z, 1, 0.4D, 0.4D, 0.4D, 0.0D);
         }
         level.playSound(null, targetCenter.x, targetCenter.y, targetCenter.z,
                 SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0F, 0.7F);
@@ -1703,7 +1924,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     private void tickBodyCrush() {
-        if (!(this.level() instanceof ServerLevel serverLevel)
+        if (this.isGlimmerEcho() || !(this.level() instanceof ServerLevel serverLevel)
                 || this.tickCount % (this.isFightingRoyalRival() ? RIVAL_BODY_CRUSH_INTERVAL_TICKS : BODY_CRUSH_INTERVAL_TICKS) != 0) {
             return;
         }
@@ -1766,7 +1987,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     protected boolean beginRoyalAttack(String id, RoyalAttackLane lane, int cooldownTicks, int activeTicks) {
-        return this.attackScheduler.start(id, lane, cooldownTicks, activeTicks);
+        return this.attackScheduler.start(id, lane, this.scaledRoyalCooldown(cooldownTicks), activeTicks);
     }
 
     protected boolean beginRoyalAttack(String id, RoyalAttackLane lane, int cooldownTicks, int windupTicks,
@@ -1776,7 +1997,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             protectedRecovery = Math.max(recoveryTicks,
                     HEAD_ATTACK_ANIMATION_TICKS - Math.max(0, windupTicks) - Math.max(1, activeTicks));
         }
-        return this.attackScheduler.start(id, lane, cooldownTicks, windupTicks, activeTicks, protectedRecovery, action);
+        return this.attackScheduler.start(id, lane, this.scaledRoyalCooldown(cooldownTicks), windupTicks, activeTicks,
+                protectedRecovery, action);
     }
 
     protected int animationRecovery(int animationTicks, int windupTicks, int activeTicks, int recoveryTicks) {
@@ -1789,7 +2011,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         }
         Vec3 anchor = this.headAnchor(head);
         double reach = this.biteReach();
-        float damage = (float) (this.getAttributeValue(Attributes.ATTACK_DAMAGE) * this.biteDamageMultiplier());
+        float damage = (float) (this.royalAttackDamage() * this.biteDamageMultiplier());
         DamageSource damageSource = this.damageSources().mobAttack(this);
         AABB box = new AABB(anchor, anchor).inflate(reach);
         for (LivingEntity living : this.level().getEntitiesOfClass(LivingEntity.class, box, entity -> entity.isAlive() && entity != this)) {
@@ -1980,7 +2202,6 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         }
         if (this.deathTime >= DEATH_TICKS) {
             this.remove(RemovalReason.KILLED);
-            this.dropExperience(this);
         }
     }
 
@@ -2148,6 +2369,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         tag.putBoolean("RoyalScalingInitialized", this.multiplayerScalingInitialized);
         tag.putInt("RoyalScalingParticipants", this.encounterParticipants.size());
         tag.putDouble("RoyalDamageMultiplier", this.royalDamageMultiplier);
+        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
+        tag.putBoolean(GLIMMER_HEALTH_APPLIED_KEY, this.glimmerHealthApplied);
     }
 
     @Override
@@ -2163,6 +2386,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             }
         }
         this.applyRoyalDamageModifier();
+        this.glimmerHealthApplied = tag.getBoolean(GLIMMER_HEALTH_APPLIED_KEY);
+        this.setGlimmerEcho(tag.getBoolean(GlimmerEchoes.SAVE_KEY));
     }
 
     @Override
@@ -2176,7 +2401,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     public float scaleRoyalDamage(double damage) {
-        return (float) (damage * this.royalDamageMultiplier);
+        return (float) (damage * this.royalDamageMultiplier * this.glimmerEchoDamageMultiplier());
     }
 
     private void applyRoyalDamageModifier() {

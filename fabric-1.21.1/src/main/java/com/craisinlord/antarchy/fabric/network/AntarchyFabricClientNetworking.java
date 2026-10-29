@@ -49,5 +49,11 @@ public final class AntarchyFabricClientNetworking {
                 context.client().execute(() -> com.craisinlord.antarchy.content.client.AntTransitClientState.handle(payload)));
         ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ElythiaEchoTestPayload.TYPE, (payload, context) ->
                 context.client().execute(() -> com.craisinlord.antarchy.content.client.ElythiaEchoes.handleTest(payload.immediate())));
+        ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ElythiaEventPayload.TYPE, (payload, context) ->
+                context.client().execute(() -> com.craisinlord.antarchy.content.client.ElythiaEventClient.handle(payload)));
+        ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ThoraxisEventPayload.TYPE, (payload, context) ->
+                context.client().execute(() -> com.craisinlord.antarchy.content.client.ThoraxisEventClient.handle(payload)));
+        ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ThoraxisBubbleUpdatePayload.TYPE, (payload, context) ->
+                context.client().execute(() -> com.craisinlord.antarchy.content.client.ThoraxisEventClient.handleUpdate(payload)));
     }
 }

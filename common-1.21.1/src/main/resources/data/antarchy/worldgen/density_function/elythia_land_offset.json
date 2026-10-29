@@ -1,0 +1,63 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:spline",
+      "spline": {
+        "coordinate": {
+          "type": "minecraft:add",
+          "argument1": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:max",
+              "argument1": "antarchy:elythia_land_raw_offset",
+              "argument2": -0.342524
+            },
+            "argument2": {
+              "type": "minecraft:add",
+              "argument1": {
+                "type": "minecraft:mul",
+                "argument1": 0.2,
+                "argument2": {
+                  "type": "minecraft:min",
+                  "argument1": "antarchy:elythia_land_raw_offset",
+                  "argument2": -0.342524
+                }
+              },
+              "argument2": 0.068505
+            }
+          },
+          "argument2": "antarchy:elythia_massif_offset"
+        },
+        "points": [
+          {
+            "location": -5.0,
+            "value": -5.0,
+            "derivative": 1.0
+          },
+          {
+            "location": 2.4,
+            "value": 2.4,
+            "derivative": 1.0
+          },
+          {
+            "location": 3.0,
+            "value": 2.85,
+            "derivative": 0.55
+          },
+          {
+            "location": 4.0,
+            "value": 3.2,
+            "derivative": 0.2
+          },
+          {
+            "location": 6.0,
+            "value": 3.35,
+            "derivative": 0.0
+          }
+        ]
+      }
+    }
+  }
+}

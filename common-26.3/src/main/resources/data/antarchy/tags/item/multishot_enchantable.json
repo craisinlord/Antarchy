@@ -3,6 +3,7 @@
   "values": [
     "#minecraft:enchantable/crossbow",
     "antarchy:squidzooka",
-    "antarchy:rpo_launcher"
+    "antarchy:rpo_launcher",
+    "antarchy:anvil_cannon"
   ]
 }

@@ -131,10 +131,14 @@ public class CrawlingBlightEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<CrawlingBlightEntity>("main_controller", 3, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("attack", ATTACK_ANIM));
     }
 
     private PlayState mainAnimController(AnimationTest<CrawlingBlightEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         if (attackAnimTicks > 0) {
             return state.setAndContinue(ATTACK_ANIM);
         }

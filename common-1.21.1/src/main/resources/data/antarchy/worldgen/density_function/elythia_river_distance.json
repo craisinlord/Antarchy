@@ -1,0 +1,11 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:min",
+      "argument1": "antarchy:elythia_river_water_distance",
+      "argument2": "antarchy:elythia_river_lumen_distance"
+    }
+  }
+}

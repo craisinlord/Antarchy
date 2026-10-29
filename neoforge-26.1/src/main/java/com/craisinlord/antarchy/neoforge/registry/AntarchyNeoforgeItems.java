@@ -513,6 +513,7 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_SAND_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_SAND);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> ANTIGRAVEL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ANTIGRAVEL);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> LOAM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LOAM);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> PRIMORDIAL_LOAM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PRIMORDIAL_LOAM);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> PACKED_LOAM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PACKED_LOAM);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> LOAM_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LOAM_BRICKS);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> LOAM_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LOAM_BRICK_STAIRS);
@@ -1080,6 +1081,8 @@ public final class AntarchyNeoforgeItems {
             id -> new SquidzookaItem(itemProps(id).stacksTo(1).durability(384).rarity(Rarity.RARE)));
     public static final DeferredItem<RpoLauncherItem> RPO_LAUNCHER = ITEMS.register("rpo_launcher",
             id -> new RpoLauncherItem(itemProps(id).stacksTo(1).durability(384).rarity(Rarity.RARE)));
+    public static final DeferredItem<AnvilCannonItem> ANVIL_CANNON = ITEMS.register("anvil_cannon",
+            id -> new AnvilCannonItem(itemProps(id).stacksTo(1).durability(384).rarity(Rarity.RARE)));
     public static final DeferredItem<BattleAxeItem> BATTLE_AXE = ITEMS.register("battle_axe",
             id -> new BattleAxeItem(ToolMaterial.NETHERITE,
                     itemProps(id).stacksTo(1).rarity(Rarity.RARE).fireResistant(),
@@ -1100,6 +1103,10 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<BigBerthaItem> BIG_BERTHA = ITEMS.register("big_bertha",
             id -> new BigBerthaItem(ToolMaterial.NETHERITE,
                     itemProps(id).stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
+    public static final DeferredItem<BigBerthaItem> BIG_BETSY = ITEMS.register("big_betsy",
+            id -> new BigBerthaItem(ToolMaterial.NETHERITE,
+                    itemProps(id).stacksTo(1).rarity(Rarity.EPIC).fireResistant(),
+                    Identifier.fromNamespaceAndPath("antarchy", "textures/item/big_bertha/big_betsy.png")));
 
     public static final DeferredItem<Item> KRAKEN_TENTACLE = ITEMS.registerSimpleItem("kraken_tentacle",
             props -> props.rarity(Rarity.RARE));

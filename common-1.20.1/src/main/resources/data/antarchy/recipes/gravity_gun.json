@@ -16,9 +16,14 @@
     "G": {
       "item": "antarchy:lucid_eye"
     },
-    "N": {
-      "tag": "c:ingots/netherite"
-    },
+    "N": [
+      {
+        "tag": "forge:ingots/netherite"
+      },
+      {
+        "tag": "c:ingots/netherite"
+      }
+    ],
     "C": {
       "item": "minecraft:comparator"
     },

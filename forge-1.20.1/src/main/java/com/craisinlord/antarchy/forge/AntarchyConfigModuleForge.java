@@ -596,6 +596,12 @@ public final class AntarchyConfigModuleForge {
         AntarchySettings.setRpoLauncherLaunchVelocity(AntarchyToolsConfig.rpoLauncherLaunchVelocity());
         AntarchySettings.setRpoLauncherExplosionDamage(AntarchyToolsConfig.rpoLauncherExplosionDamage());
         AntarchySettings.setRpoLauncherExplosionRadius(AntarchyToolsConfig.rpoLauncherExplosionRadius());
+        AntarchySettings.setAnvilCannonCooldownSeconds(AntarchyToolsConfig.anvilCannonCooldownSeconds());
+        AntarchySettings.setAnvilCannonLaunchVelocity(AntarchyToolsConfig.anvilCannonLaunchVelocity());
+        AntarchySettings.setAnvilCannonImpactDamage(AntarchyToolsConfig.anvilCannonImpactDamage());
+        AntarchySettings.setAnvilCannonImpactKnockback(AntarchyToolsConfig.anvilCannonImpactKnockback());
+        AntarchySettings.setAnvilCannonRecoilStrength(AntarchyToolsConfig.anvilCannonRecoilStrength());
+        AntarchySettings.setAnvilCannonDegradeOnImpact(AntarchyToolsConfig.anvilCannonDegradeOnImpact());
 
         AntarchySettings.setSizeChangingRaysEnabled(AntarchyToolsConfig.sizeChangingRaysEnabled());
         AntarchySettings.setSizeRayCooldownSeconds(AntarchyToolsConfig.sizeRayCooldownSeconds());

@@ -509,7 +509,7 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAM_SAND_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.DREAM_SAND);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> ANTIGRAVEL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.ANTIGRAVEL);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> LOAM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LOAM);
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> PRIMORDIAL_MOSS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PRIMORDIAL_MOSS);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> PRIMORDIAL_LOAM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PRIMORDIAL_LOAM);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> PACKED_LOAM_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.PACKED_LOAM);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> LOAM_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LOAM_BRICKS);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> LOAM_BRICK_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.LOAM_BRICK_STAIRS);
@@ -1087,6 +1087,8 @@ public final class AntarchyNeoforgeItems {
             () -> new SquidzookaItem(new Item.Properties().stacksTo(1).durability(384).rarity(Rarity.RARE)));
     public static final DeferredItem<RpoLauncherItem> RPO_LAUNCHER = ITEMS.register("rpo_launcher",
             () -> new RpoLauncherItem(new Item.Properties().stacksTo(1).durability(384).rarity(Rarity.RARE)));
+    public static final DeferredItem<AnvilCannonItem> ANVIL_CANNON = ITEMS.register("anvil_cannon",
+            () -> new AnvilCannonItem(new Item.Properties().stacksTo(1).durability(384).rarity(Rarity.RARE)));
     public static final DeferredItem<BattleAxeItem> BATTLE_AXE = ITEMS.register("battle_axe",
             () -> new BattleAxeItem(Tiers.NETHERITE,
                     new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant(),
@@ -1107,6 +1109,10 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<BigBerthaItem> BIG_BERTHA = ITEMS.register("big_bertha",
             () -> new BigBerthaItem(Tiers.NETHERITE,
                     new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
+    public static final DeferredItem<BigBerthaItem> BIG_BETSY = ITEMS.register("big_betsy",
+            () -> new BigBerthaItem(Tiers.NETHERITE,
+                    new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant(),
+                    ResourceLocation.fromNamespaceAndPath("antarchy", "textures/item/big_bertha/big_betsy.png")));
 
     public static final DeferredItem<Item> KRAKEN_TENTACLE = ITEMS.registerSimpleItem("kraken_tentacle",
             new Item.Properties().rarity(Rarity.RARE));
@@ -1142,6 +1148,39 @@ public final class AntarchyNeoforgeItems {
                             .build())));
     public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerBottleItem> GLIMMER_BOTTLE = ITEMS.register("glimmer_bottle",
             com.craisinlord.antarchy.content.item.GlimmerBottleItem::new);
+    public static final DeferredItem<Item> FADED_MEMORY = ITEMS.registerSimpleItem("faded_memory", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> TORETERROR_GLIMMER_SIGIL = ITEMS.register("toreterror_glimmer_sigil",
+            () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(
+                    com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.TORETERROR,
+                    new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> ALPHA_MANTIS_GLIMMER_SIGIL = ITEMS.register("alpha_mantis_glimmer_sigil",
+            () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(
+                    com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.ALPHA_MANTIS,
+                    new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> EMPEROR_SCORPION_GLIMMER_SIGIL = ITEMS.register("emperor_scorpion_glimmer_sigil",
+            () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(
+                    com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.EMPEROR_SCORPION,
+                    new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> BRUTALFLY_GLIMMER_SIGIL = ITEMS.register("brutalfly_glimmer_sigil",
+            () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(
+                    com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.BRUTALFLY,
+                    new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> HERCULES_BEETLE_GLIMMER_SIGIL = ITEMS.register("hercules_beetle_glimmer_sigil",
+            () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(
+                    com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.HERCULES_BEETLE,
+                    new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> KRAKEN_GLIMMER_SIGIL = ITEMS.register("kraken_glimmer_sigil",
+            () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(
+                    com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.KRAKEN,
+                    new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> KING_GLIMMER_SIGIL = ITEMS.register("king_glimmer_sigil",
+            () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(
+                    com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.KING,
+                    new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> QUEEN_GLIMMER_SIGIL = ITEMS.register("queen_glimmer_sigil",
+            () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(
+                    com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.QUEEN,
+                    new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
     public static final DeferredItem<DeferredSpawnEggItem> FLYING_SQUIRREL_SPAWN_EGG = ITEMS.register("flying_squirrel_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.FLYING_SQUIRREL, 0x7D6649, 0xDCC59C, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> CATERPILLAR_SPAWN_EGG = ITEMS.register("caterpillar_spawn_egg",

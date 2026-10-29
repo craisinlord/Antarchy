@@ -3,8 +3,10 @@
   "values": [
     "antarchy:butterfly_fields",
     "antarchy:elythia_lush_caves",
-    "antarchy:elythia_meadow",
+    "antarchy:primordial_plains",
+    "antarchy:primordial_massif",
     "antarchy:truffalo_forest",
+    "antarchy:truffalo_spires",
     "antarchy:elythia_river",
     "antarchy:moleworm_caves",
     "antarchy:ouranwood_forest",
@@ -13,6 +15,8 @@
     "antarchy:sparse_ouranwood_forest",
     "antarchy:elythia_ocean",
     "antarchy:elythia_coral_spikes",
-    "antarchy:fungal_ouranwood_forest"
+    "antarchy:fungal_ouranwood_forest",
+    "antarchy:fungal_reserve",
+    "antarchy:elythia_beach"
   ]
 }

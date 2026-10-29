@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "antarchy:block/primordial_loam/primordial_loam_top",
+    "side": "antarchy:block/primordial_loam/primordial_loam_side",
+    "bottom": "antarchy:block/loam/loam"
+  }
+}

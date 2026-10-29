@@ -16,6 +16,9 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
 public class ElythiaTuffBoulderFeature extends Feature<NoneFeatureConfiguration> {
+    private static final int FOOTPRINT = 4;
+    private static final int MAX_DROP = 1;
+
     public ElythiaTuffBoulderFeature(Codec<NoneFeatureConfiguration> codec) {
         super(codec);
     }
@@ -27,6 +30,9 @@ public class ElythiaTuffBoulderFeature extends Feature<NoneFeatureConfiguration>
         BlockPos origin = context.origin();
         BlockPos surfacePos = new BlockPos(origin.getX(), level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, origin.getX(), origin.getZ()) - 1, origin.getZ());
         if (!isSoil(level.getBlockState(surfacePos))) {
+            return false;
+        }
+        if (!isLevelGround(level, surfacePos)) {
             return false;
         }
 
@@ -107,6 +113,18 @@ public class ElythiaTuffBoulderFeature extends Feature<NoneFeatureConfiguration>
                 level.setBlock(slabPos, slabState, 2);
             }
         }
+    }
+
+    private static boolean isLevelGround(WorldGenLevel level, BlockPos surfacePos) {
+        for (int x = -FOOTPRINT; x <= FOOTPRINT; x += FOOTPRINT) {
+            for (int z = -FOOTPRINT; z <= FOOTPRINT; z += FOOTPRINT) {
+                int y = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, surfacePos.getX() + x, surfacePos.getZ() + z) - 1;
+                if (Math.abs(y - surfacePos.getY()) > MAX_DROP) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private static boolean isSoil(BlockState state) {

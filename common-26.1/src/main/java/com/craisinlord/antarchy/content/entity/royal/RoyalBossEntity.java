@@ -2116,6 +2116,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                 .triggerableAnim("bite", RawAnimation.begin().thenPlay("bite_2"))
                 .triggerableAnim("shoot", RawAnimation.begin().thenPlay("shoot_2")));
         controllers.add(new AnimationController<RoyalBossEntity>("body_action", 0, this::bodyActionPredicate)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("stomp", RawAnimation.begin().thenPlay("stomp"))
                 .triggerableAnim("minion_spawn", RawAnimation.begin().thenPlay("minion_spawn")));
     }
@@ -2135,6 +2136,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     private PlayState bodyActionPredicate(AnimationTest<RoyalBossEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         if (this.isDeadOrDying()) {
             return state.setAndContinue(DEATH_ANIM);
         }

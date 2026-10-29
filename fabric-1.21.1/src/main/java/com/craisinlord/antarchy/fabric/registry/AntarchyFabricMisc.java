@@ -9,6 +9,14 @@ import com.craisinlord.antarchy.content.worldgen.ants.RainbowAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.RedAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.TermiteNestFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBileCystFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBiowartGutDressingFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBroodNestDressingFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCarapaceRiftDressingFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCavityFunction;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynGlowcapGrottoDressingFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynMolewormWarrenDressingFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWormBoreDressingFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWormBoreFunction;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBileVeinFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCreepvineFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWallAmberMossFeature;
@@ -26,6 +34,8 @@ import com.craisinlord.antarchy.content.worldgen.thoraxis.TyphoniteSwirlFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.PotentNyxiteFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.QueenHavocTrailFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisIchorLakeFeature;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisTerrainFunction;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideMountainsFunction;
 import com.craisinlord.antarchy.fabric.content.fluid.AntiwaterFluid;
 import com.craisinlord.antarchy.content.effect.DreadMobEffect;
 import com.craisinlord.antarchy.content.effect.BleedingMobEffect;
@@ -38,6 +48,12 @@ import com.craisinlord.antarchy.content.effect.ShrinkMobEffect;
 import com.craisinlord.antarchy.content.effect.StinkyMobEffect;
 import com.craisinlord.antarchy.content.worldgen.elythia.CoralSpikeFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaBiomeSource;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaHydrology;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaShared;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverProject;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverSpan;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaColumnCache;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverFlatten;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverCarveFunction;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaFloraFeature;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaLargeTuffBoulderFeature;
@@ -266,6 +282,8 @@ public final class AntarchyFabricMisc {
             RECIPE_SERIALIZERS.register("americanize", () -> AmericanizeRecipe.SERIALIZER);
     public static final DeferredHolder<net.minecraft.world.item.crafting.RecipeSerializer<?>, net.minecraft.world.item.crafting.RecipeSerializer<com.craisinlord.antarchy.content.recipe.PortalGunVariantRecipe>> PORTAL_GUN_VARIANT_SERIALIZER =
             RECIPE_SERIALIZERS.register("portal_gun_variant", () -> com.craisinlord.antarchy.content.recipe.PortalGunVariantRecipe.SERIALIZER);
+    public static final DeferredHolder<net.minecraft.world.item.crafting.RecipeSerializer<?>, net.minecraft.world.item.crafting.RecipeSerializer<com.craisinlord.antarchy.content.recipe.BigBerthaVariantRecipe>> BIG_BERTHA_VARIANT_SERIALIZER =
+            RECIPE_SERIALIZERS.register("big_bertha_variant", () -> com.craisinlord.antarchy.content.recipe.BigBerthaVariantRecipe.SERIALIZER);
 
 
     public static final DeferredHolder<ArmorMaterial, ArmorMaterial> ULTIMATE_ARMOR_MATERIAL = ARMOR_MATERIALS.register("ultimate",
@@ -394,6 +412,10 @@ public final class AntarchyFabricMisc {
             () -> simpleParticleType());
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> LOTUS_POLLEN = PARTICLE_TYPES.register("lotus_pollen",
             () -> simpleParticleType());
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> TEMPORAL_GLINT_SLOW = PARTICLE_TYPES.register("temporal_glint_slow",
+            () -> simpleParticleType());
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> TEMPORAL_GLINT_FAST = PARTICLE_TYPES.register("temporal_glint_fast",
+            () -> simpleParticleType());
 
 
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> HYPNOTIC_GAS = PARTICLE_TYPES.register("hypnotic_gas",
@@ -486,6 +508,10 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<Potion, Potion> LONG_INVERSION = POTIONS.register("long_inversion",
             () -> new Potion("inversion", new MobEffectInstance(AnthologyEffects.inverted(), 2400)));
+    public static final DeferredHolder<Potion, Potion> REMEMBRANCE_POTION = POTIONS.register("remembrance",
+            () -> new Potion(new MobEffectInstance(mobEffectHolder(REMEMBRANCE), 3600)));
+    public static final DeferredHolder<Potion, Potion> LONG_REMEMBRANCE = POTIONS.register("long_remembrance",
+            () -> new Potion("remembrance", new MobEffectInstance(mobEffectHolder(REMEMBRANCE), 9600)));
     public static final DeferredHolder<Potion, Potion> COMMAND = POTIONS.register("command",
             () -> new Potion(new MobEffectInstance(mobEffectHolder(COMMANDED), 600)));
     public static final DeferredHolder<Potion, Potion> LONG_COMMAND = POTIONS.register("long_command",
@@ -697,6 +723,8 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<Feature<?>, ElythiaFloraFeature> ELYTHIA_MEADOW_FLORA = FEATURES.register("elythia_meadow_flora",
             () -> new ElythiaFloraFeature(NoneFeatureConfiguration.CODEC, ElythiaFloraFeature.Variant.MEADOW));
+    public static final DeferredHolder<Feature<?>, ElythiaFloraFeature> PRIMORDIAL_PLAINS_FLORA = FEATURES.register("primordial_plains_flora",
+            () -> new ElythiaFloraFeature(NoneFeatureConfiguration.CODEC, ElythiaFloraFeature.Variant.PRIMORDIAL_PLAINS));
 
 
     public static final DeferredHolder<Feature<?>, ElythiaFloraFeature> PEACH_FOREST_FLORA = FEATURES.register("peach_forest_flora",
@@ -761,6 +789,28 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaRiverCarveFunction>> ELYTHIA_RIVER_CARVE = DENSITY_FUNCTION_TYPES.register("elythia_river_carve",
             () -> ElythiaRiverCarveFunction.CODEC);
+
+
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaHydrology>> ELYTHIA_HYDROLOGY = DENSITY_FUNCTION_TYPES.register("elythia_hydrology",
+            () -> ElythiaHydrology.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaShared>> ELYTHIA_SHARED = DENSITY_FUNCTION_TYPES.register("elythia_shared",
+            () -> ElythiaShared.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaRiverProject>> ELYTHIA_RIVER_PROJECT = DENSITY_FUNCTION_TYPES.register("elythia_river_project",
+            () -> ElythiaRiverProject.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaRiverSpan>> ELYTHIA_RIVER_SPAN = DENSITY_FUNCTION_TYPES.register("elythia_river_span",
+            () -> ElythiaRiverSpan.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaColumnCache>> ELYTHIA_COLUMN_CACHE = DENSITY_FUNCTION_TYPES.register("elythia_column_cache",
+            () -> ElythiaColumnCache.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaRiverFlatten>> ELYTHIA_RIVER_FLATTEN = DENSITY_FUNCTION_TYPES.register("elythia_river_flatten",
+            () -> ElythiaRiverFlatten.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ThoraxisTerrainFunction>> THORAXIS_TERRAIN = DENSITY_FUNCTION_TYPES.register("thoraxis_terrain",
+            () -> ThoraxisTerrainFunction.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<CavarynWormBoreFunction>> CAVARYN_WORM_BORE = DENSITY_FUNCTION_TYPES.register("cavaryn_worm_bore",
+            () -> CavarynWormBoreFunction.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<CavarynCavityFunction>> CAVARYN_CAVITY = DENSITY_FUNCTION_TYPES.register("cavaryn_cavity",
+            () -> CavarynCavityFunction.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ThoraxisUndersideMountainsFunction>> THORAXIS_UNDERSIDE_MOUNTAINS = DENSITY_FUNCTION_TYPES.register("thoraxis_underside_mountains",
+            () -> ThoraxisUndersideMountainsFunction.CODEC);
 
 
     public static final DeferredHolder<Feature<?>, ElythiaPondFeature> ELYTHIA_POND = FEATURES.register("elythia_pond",
@@ -865,6 +915,20 @@ public final class AntarchyFabricMisc {
             () -> new com.craisinlord.antarchy.content.worldgen.cavaryn.SpitBugEggPatchFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.cavaryn.RollyCavesGiantCavernFeature> ROLLY_CAVES_GIANT_CAVERN = FEATURES.register("rolly_caves_giant_cavern",
             () -> new com.craisinlord.antarchy.content.worldgen.cavaryn.RollyCavesGiantCavernFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, CavarynWormBoreDressingFeature> CAVARYN_WORM_BORE_DRESSING = FEATURES.register("cavaryn_worm_bore_dressing",
+            () -> new CavarynWormBoreDressingFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, CavarynBroodNestDressingFeature> CAVARYN_BROOD_NEST_DRESSING = FEATURES.register("cavaryn_brood_nest_dressing",
+            () -> new CavarynBroodNestDressingFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, CavarynBroodNestDressingFeature> CAVARYN_BROOD_GALLERY_DRESSING = FEATURES.register("cavaryn_brood_gallery_dressing",
+            () -> new CavarynBroodNestDressingFeature(NoneFeatureConfiguration.CODEC, CavarynBroodNestDressingFeature.GALLERY_NOISE));
+    public static final DeferredHolder<Feature<?>, CavarynGlowcapGrottoDressingFeature> CAVARYN_GLOWCAP_GROTTO_DRESSING = FEATURES.register("cavaryn_glowcap_grotto_dressing",
+            () -> new CavarynGlowcapGrottoDressingFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, CavarynMolewormWarrenDressingFeature> CAVARYN_MOLEWORM_WARREN_DRESSING = FEATURES.register("cavaryn_moleworm_warren_dressing",
+            () -> new CavarynMolewormWarrenDressingFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, CavarynCarapaceRiftDressingFeature> CAVARYN_CARAPACE_RIFT_DRESSING = FEATURES.register("cavaryn_carapace_rift_dressing",
+            () -> new CavarynCarapaceRiftDressingFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, CavarynBiowartGutDressingFeature> CAVARYN_BIOWART_GUT_DRESSING = FEATURES.register("cavaryn_biowart_gut_dressing",
+            () -> new CavarynBiowartGutDressingFeature(NoneFeatureConfiguration.CODEC));
 
 
     public static final DeferredHolder<Feature<?>, CavarynWallAmberMossFeature> CAVARYN_WALL_AMBER_MOSS = FEATURES.register("cavaryn_wall_amber_moss",
@@ -922,6 +986,10 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<Feature<?>, CoralSpikeFeature> ELYTHIA_CORAL_SPIKE = FEATURES.register("elythia_coral_spike",
             () -> new CoralSpikeFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.reef.ElythiaReefFeature> ELYTHIA_REEF = FEATURES.register("elythia_reef",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.reef.ElythiaReefFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.TruffaloSpireFeature> TRUFFALO_SPIRE = FEATURES.register("truffalo_spire",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.TruffaloSpireFeature(NoneFeatureConfiguration.CODEC));
 
 
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.FallenOuranwoodFeature> FALLEN_OURANWOOD_TREE = FEATURES.register("fallen_ouranwood_tree",

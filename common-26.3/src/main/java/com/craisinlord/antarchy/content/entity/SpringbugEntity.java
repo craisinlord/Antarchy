@@ -168,6 +168,7 @@ public class SpringbugEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<SpringbugEntity>("main_controller", 2, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("hanging", HANGING_ANIM)
                 .triggerableAnim("jump", JUMP_ANIM)
                 .triggerableAnim("jump_end", JUMP_END_ANIM));
@@ -386,6 +387,9 @@ public class SpringbugEntity extends Monster implements GeoEntity {
     }
 
     private PlayState mainAnimController(AnimationTest<SpringbugEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         AttackState attackState = this.getAttackState();
         if (attackState == AttackState.CLINGING) {
             return state.setAndContinue(HANGING_ANIM);

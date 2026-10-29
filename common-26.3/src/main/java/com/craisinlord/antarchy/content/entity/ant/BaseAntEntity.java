@@ -185,6 +185,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<BaseAntEntity>("main_controller", 2, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("dance", DANCE_ANIM)
                 .triggerableAnim("attack", ATTACK_ANIM));
     }
@@ -1265,6 +1266,9 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     }
 
     private PlayState mainAnimController(AnimationTest<BaseAntEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         if (this.isDancing()) {
             state.controller().setAnimationSpeed(1.0D);
             return state.setAndContinue(DANCE_ANIM);

@@ -261,10 +261,14 @@ public class ScorpionEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<ScorpionEntity>("main", 3, this::mainController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("attack", ATTACK_ANIM));
     }
 
     private PlayState mainController(AnimationTest<ScorpionEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         if (this.attackAnimTicks > 0) {
             return state.setAndContinue(ATTACK_ANIM);
         }

@@ -2,13 +2,18 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import java.util.Objects;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -60,12 +65,16 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.animation.keyframe.event.builtin.AutoPlayingSoundKeyframeHandler;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class BomberEntity extends Monster implements GeoEntity {
+public class BomberEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final ResourceLocation INTENTIONALLY_EMPTY_SOUND_ID = ResourceLocation.withDefaultNamespace("intentionally_empty");
     private static final EntityDataAccessor<Integer> FUSE_TICKS_DATA =
             SynchedEntityData.defineId(BomberEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DETONATING_DATA =
             SynchedEntityData.defineId(BomberEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO_DATA =
+            SynchedEntityData.defineId(BomberEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final String GLIMMER_ECHO_OWNER_KEY = "GlimmerEchoOwner";
+    private static final int BASE_XP_REWARD = 8;
 
     private static final int DEFAULT_FUSE_TICKS = 120;
     private static final int EXPLODE_ANIM_START_TICKS = 25;
@@ -81,10 +90,11 @@ public class BomberEntity extends Monster implements GeoEntity {
 
     private int fuseTicks;
     private boolean detonating;
+    @Nullable private UUID glimmerEchoOwner;
 
     public BomberEntity(EntityType<? extends BomberEntity> entityType, Level level) {
         super(entityType, level);
-        this.xpReward = 8;
+        this.xpReward = BASE_XP_REWARD;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -111,6 +121,7 @@ public class BomberEntity extends Monster implements GeoEntity {
         super.defineSynchedData(builder);
         builder.define(FUSE_TICKS_DATA, 0);
         builder.define(DETONATING_DATA, false);
+        builder.define(GLIMMER_ECHO_DATA, false);
     }
 
     @Override
@@ -214,8 +225,52 @@ public class BomberEntity extends Monster implements GeoEntity {
     }
 
     @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO_DATA);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO_DATA, glimmerEcho);
+        this.xpReward = glimmerEcho ? 0 : BASE_XP_REWARD;
+    }
+
+    @Override
+    public void setGlimmerEchoOwner(@Nullable UUID owner) {
+        this.glimmerEchoOwner = owner;
+    }
+
+    @Override
+    protected Component getTypeName() {
+        return this.isGlimmerEcho() ? Component.translatable("entity.antarchy.bomber.glimmer") : super.getTypeName();
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
+        if (this.glimmerEchoOwner != null) {
+            tag.putUUID(GLIMMER_ECHO_OWNER_KEY, this.glimmerEchoOwner);
+        }
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.setGlimmerEcho(tag.getBoolean(GlimmerEchoes.SAVE_KEY));
+        this.glimmerEchoOwner = tag.hasUUID(GLIMMER_ECHO_OWNER_KEY) ? tag.getUUID(GLIMMER_ECHO_OWNER_KEY) : null;
+    }
+
+    @Override
     public void tick() {
         super.tick();
+
+        if (!this.level().isClientSide && this.isGlimmerEcho()) {
+            GlimmerEchoes.tickAmbient(this, 8, 1);
+            if (GlimmerEchoes.tickOwnedSummon(this, this.glimmerEchoOwner)) {
+                return;
+            }
+        }
 
         if (this.detonating && this.fuseTicks <= EXPLODE_ANIM_START_TICKS) {
             this.getNavigation().stop();
@@ -300,13 +355,16 @@ public class BomberEntity extends Monster implements GeoEntity {
                 z,
                 radius,
                 false,
-                ExplosionInteraction.TNT,
-                ParticleTypes.EXPLOSION_EMITTER,
-                ParticleTypes.EXPLOSION,
+                this.isGlimmerEcho() ? ExplosionInteraction.NONE : ExplosionInteraction.TNT,
+                GlimmerEchoes.particle(this, ParticleTypes.EXPLOSION_EMITTER),
+                GlimmerEchoes.particle(this, ParticleTypes.EXPLOSION),
                 BuiltInRegistries.SOUND_EVENT.getHolder(INTENTIONALLY_EMPTY_SOUND_ID).orElseThrow()
         );
+        if (this.isGlimmerEcho()) {
+            GlimmerEchoes.burst(serverLevel, explosionCenter, radius * 0.5D, 40);
+        }
 
-        double extraDamage = AntarchySettings.bomberExplosionDamage();
+        double extraDamage = AntarchySettings.bomberExplosionDamage() * GlimmerEchoes.ownerDamageMultiplier(this, this.glimmerEchoOwner);
         if (extraDamage > 0.0D) {
             AABB damageBox = this.getBoundingBox().inflate(radius * 2.0D);
             for (LivingEntity livingEntity : serverLevel.getEntitiesOfClass(LivingEntity.class, damageBox, entity -> entity.isAlive() && entity != this)) {

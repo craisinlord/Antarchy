@@ -1533,6 +1533,7 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<RoyalMountEntity>("main", 2, this::animController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("bite", BITE_ANIM)
                 .triggerableAnim("fly_bite", FLY_BITE_ANIM)
                 .triggerableAnim("shoot", SHOOT_ANIM)
@@ -1540,6 +1541,9 @@ public abstract class RoyalMountEntity extends TamableAnimal implements GeoEntit
     }
 
     private PlayState animController(AnimationTest<RoyalMountEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         return switch (this.getAnimState()) {
             case ANIM_WALK -> state.setAndContinue(WALK_ANIM);
             case ANIM_FLY, ANIM_FLY_BITE, ANIM_FLY_SHOOT -> state.setAndContinue(FLY_ANIM);

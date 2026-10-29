@@ -23,6 +23,6 @@ public class DimensionalTearRenderer extends GeoEntityRenderer<DimensionalTearEn
 
     @Override
     public @Nullable RenderType getRenderType(DimensionalTearEntity animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
-        return RenderType.entityTranslucent(DimensionalTearModel.TEXTURE);
+        return RenderType.entityTranslucent(this.getTextureLocation(animatable));
     }
 }

@@ -210,7 +210,7 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
         }
 
         return level.getLevel().dimension().equals(ELYTHIA_DIMENSION)
-                && pos.getY() >= 80
+                && pos.getY() >= 120
                 && !level.isEmptyBlock(pos)
                 && level.isEmptyBlock(pos.above())
                 && hasNearbyCanopy(level, pos);
@@ -1905,11 +1905,11 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
             return 0.0D;
         }
 
-        if (this.getY() >= 200.0D) {
+        if (this.getY() >= 240.0D) {
             return 0.0D;
         }
 
-        double yBias = Mth.clampedMap(this.getY(), 80.0D, 180.0D, 1.0D, 0.0D);
+        double yBias = Mth.clampedMap(this.getY(), 120.0D, 220.0D, 1.0D, 0.0D);
         return Math.min(1.0D, yBias + 0.20D);
     }
 
@@ -2248,8 +2248,8 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
         }
 
         private double getHeightBias(BlockPos origin) {
-            double yBias = Mth.clampedMap(origin.getY(), 80.0D, 170.0D, 1.0D, 0.0D);
-            if (origin.getY() >= 190) {
+            double yBias = Mth.clampedMap(origin.getY(), 120.0D, 210.0D, 1.0D, 0.0D);
+            if (origin.getY() >= 230) {
                 yBias = 0.0D;
             }
 

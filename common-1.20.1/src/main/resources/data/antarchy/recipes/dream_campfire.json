@@ -8,9 +8,14 @@
     "L": {
       "tag": "minecraft:logs"
     },
-    "S": {
-      "tag": "c:rods/wooden"
-    }
+    "S": [
+      {
+        "tag": "forge:rods/wooden"
+      },
+      {
+        "tag": "c:rods/wooden"
+      }
+    ]
   },
   "pattern": [
     " S ",

@@ -38,12 +38,12 @@ public final class ThrowbackDreamRenderer {
         }
         float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
         boolean elythia = AntarchySettings.throwbackDreamHaze() && minecraft.level.dimension().equals(ThrowbackZones.ELYTHIA);
-        float baseline = elythia ? ThrowbackClientState.baseline(partialTick) : 0.0F;
         float zone = elythia ? ThrowbackClientState.zone(partialTick) * dreamStrength() : 0.0F;
+        float baseline = elythia ? ThrowbackClientState.baseline(partialTick) * Mth.clamp(zone, 0.0F, 1.0F) : 0.0F;
         float wake = AntTransitClientState.saturation(partialTick);
         float prism = AntTransitClientState.prism(partialTick);
         boolean transit = Math.abs(wake - 1.0F) > ACTIVE_THRESHOLD || prism > ACTIVE_THRESHOLD;
-        if ((baseline < ACTIVE_THRESHOLD && zone < ACTIVE_THRESHOLD && !transit) || shaderPackActive()) {
+        if ((zone < ACTIVE_THRESHOLD && !transit) || shaderPackActive()) {
             return;
         }
         boolean dreaming = zone >= ACTIVE_THRESHOLD && prism <= ACTIVE_THRESHOLD;

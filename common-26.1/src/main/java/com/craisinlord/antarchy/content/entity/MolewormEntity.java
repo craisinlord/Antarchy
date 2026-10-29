@@ -114,10 +114,14 @@ public class MolewormEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<MolewormEntity>("main_controller", 0, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("dig", DIG_ANIM));
     }
 
     private PlayState mainAnimController(AnimationTest<MolewormEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         return switch (this.getAnimationState()) {
             case ANIM_WALK -> state.setAndContinue(WALK_ANIM);
             case ANIM_DIG -> state.setAndContinue(DIG_ANIM);

@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:cache",
+  "input": {
+    "type": "minecraft:min",
+    "left": "antarchy:elythia_river_water_distance",
+    "right": "antarchy:elythia_river_lumen_distance"
+  }
+}

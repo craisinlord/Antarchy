@@ -5,14 +5,18 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import java.util.EnumSet;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -65,6 +69,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -76,7 +82,7 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity {
+public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity, GlimmerEcho {
     private static final ResourceKey<Level> ELYTHIA_DIMENSION = ResourceKey.create(
             Registries.DIMENSION,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "elythia")
@@ -90,6 +96,8 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity {
             SynchedEntityData.defineId(ButterflyEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> TEXTURE_VARIANT =
             SynchedEntityData.defineId(ButterflyEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO =
+            SynchedEntityData.defineId(ButterflyEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final String ACTIVITY_STATE_KEY = "ActivityState";
     private static final String STAGE_TICKS_KEY = "StageTicks";
@@ -98,6 +106,9 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity {
     private static final String SAVED_FLOWER_Y_KEY = "SavedFlowerY";
     private static final String SAVED_FLOWER_Z_KEY = "SavedFlowerZ";
     private static final String HAS_NECTAR_KEY = "HasNectar";
+    private static final String GLIMMER_ECHO_OWNER_KEY = "GlimmerEchoOwner";
+    private static final String GLIMMER_AGE_KEY = "GlimmerAge";
+    private static final int GLIMMER_LIFETIME_TICKS = 200;
 
     private static final int EMERGE_TICKS = 34;
     private static final int FLOWER_SEARCH_COOLDOWN_MIN = 80;
@@ -130,6 +141,9 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity {
     private boolean hasNectar;
     private int cropsGrownSincePollination;
     private int stageTicks;
+    @Nullable
+    private UUID glimmerEchoOwner;
+    private int glimmerAge;
     @Nullable
     private ButterflyPollinateGoal butterflyPollinateGoal;
 
@@ -166,6 +180,7 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity {
         super.defineSynchedData(builder);
         builder.define(ACTIVITY_STATE, ActivityState.NORMAL.ordinal());
         builder.define(TEXTURE_VARIANT, 0);
+        builder.define(GLIMMER_ECHO, false);
     }
 
     @Override
@@ -249,6 +264,14 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity {
 
         if (this.level().isClientSide) {
             return;
+        }
+
+        if (this.isGlimmerEcho()) {
+            GlimmerEchoes.tickAmbient(this, 5, 1);
+            if (++this.glimmerAge >= GLIMMER_LIFETIME_TICKS) {
+                GlimmerEchoes.fadeQuietly(this);
+                return;
+            }
         }
 
         if (this.getActivityState() == ActivityState.EMERGING) {
@@ -354,7 +377,37 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(AntarchyTags.Items.BUTTERFLY_BREEDING_FOODS);
+        return !this.isGlimmerEcho() && stack.is(AntarchyTags.Items.BUTTERFLY_BREEDING_FOODS);
+    }
+
+    @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
+    }
+
+    @Override
+    public void setGlimmerEchoOwner(@Nullable UUID owner) {
+        this.glimmerEchoOwner = owner;
+    }
+
+    @Override
+    protected Component getTypeName() {
+        return this.isGlimmerEcho() ? Component.translatable("entity.antarchy.butterfly.glimmer") : super.getTypeName();
+    }
+
+    @Override
+    protected ResourceKey<LootTable> getDefaultLootTable() {
+        return this.isGlimmerEcho() ? BuiltInLootTables.EMPTY : super.getDefaultLootTable();
+    }
+
+    @Override
+    protected int getBaseExperienceReward() {
+        return this.isGlimmerEcho() ? 0 : super.getBaseExperienceReward();
     }
 
     public String getTextureVariantName() {
@@ -383,6 +436,11 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity {
         tag.putInt(STAGE_TICKS_KEY, this.stageTicks);
         tag.putInt(TEXTURE_VARIANT_KEY, this.getTextureVariant());
         tag.putBoolean(HAS_NECTAR_KEY, this.hasNectar);
+        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
+        tag.putInt(GLIMMER_AGE_KEY, this.glimmerAge);
+        if (this.glimmerEchoOwner != null) {
+            tag.putUUID(GLIMMER_ECHO_OWNER_KEY, this.glimmerEchoOwner);
+        }
         if (this.savedFlowerPos != null) {
             tag.putInt(SAVED_FLOWER_X_KEY, this.savedFlowerPos.getX());
             tag.putInt(SAVED_FLOWER_Y_KEY, this.savedFlowerPos.getY());
@@ -402,6 +460,9 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity {
             this.assignRandomTextureVariant();
         }
         this.hasNectar = tag.getBoolean(HAS_NECTAR_KEY);
+        this.setGlimmerEcho(tag.getBoolean(GlimmerEchoes.SAVE_KEY));
+        this.glimmerAge = tag.getInt(GLIMMER_AGE_KEY);
+        this.glimmerEchoOwner = tag.hasUUID(GLIMMER_ECHO_OWNER_KEY) ? tag.getUUID(GLIMMER_ECHO_OWNER_KEY) : null;
         this.savedFlowerPos = tag.contains(SAVED_FLOWER_X_KEY)
                 ? new BlockPos(tag.getInt(SAVED_FLOWER_X_KEY), tag.getInt(SAVED_FLOWER_Y_KEY), tag.getInt(SAVED_FLOWER_Z_KEY))
                 : null;
@@ -713,7 +774,7 @@ public class ButterflyEntity extends Animal implements FlyingAnimal, GeoEntity {
 
         @Override
         protected boolean canButterflyUse() {
-            if (!ButterflyEntity.this.hasNectar() || ButterflyEntity.this.cropsGrownSincePollination >= MAX_CROPS_GROWN_PER_POLLINATION) {
+            if (ButterflyEntity.this.isGlimmerEcho() || !ButterflyEntity.this.hasNectar() || ButterflyEntity.this.cropsGrownSincePollination >= MAX_CROPS_GROWN_PER_POLLINATION) {
                 return false;
             }
 

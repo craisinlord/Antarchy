@@ -1,0 +1,87 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:add",
+      "argument1": {
+        "type": "minecraft:mul",
+        "argument1": {
+          "type": "minecraft:spline",
+          "spline": {
+            "coordinate": "antarchy:elythia_massif_mask",
+            "points": [
+              {
+                "location": 0.0,
+                "value": 1.0,
+                "derivative": 0.0
+              },
+              {
+                "location": 0.5,
+                "value": 0.0,
+                "derivative": 0.0
+              }
+            ]
+          }
+        },
+        "argument2": {
+          "type": "minecraft:spline",
+          "spline": {
+            "coordinate": "antarchy:elythia_river_distance",
+            "points": [
+              {
+                "location": 0.03,
+                "value": 1.0,
+                "derivative": 0.0
+              },
+              {
+                "location": 0.07,
+                "value": 0.0,
+                "derivative": 0.0
+              }
+            ]
+          }
+        }
+      },
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": {
+          "type": "minecraft:spline",
+          "spline": {
+            "coordinate": "antarchy:elythia_massif_mask",
+            "points": [
+              {
+                "location": 0.0,
+                "value": 0.0,
+                "derivative": 0.0
+              },
+              {
+                "location": 0.5,
+                "value": 1.0,
+                "derivative": 0.0
+              }
+            ]
+          }
+        },
+        "argument2": {
+          "type": "minecraft:spline",
+          "spline": {
+            "coordinate": "antarchy:elythia_river_distance",
+            "points": [
+              {
+                "location": 0.016,
+                "value": 1.0,
+                "derivative": 0.0
+              },
+              {
+                "location": 0.034,
+                "value": 0.0,
+                "derivative": 0.0
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

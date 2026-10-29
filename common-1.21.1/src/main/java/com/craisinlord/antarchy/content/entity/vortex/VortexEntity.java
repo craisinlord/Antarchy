@@ -308,7 +308,6 @@ public class VortexEntity extends Monster implements GeoEntity {
         }
         if (this.deathTime >= DEATH_TICKS) {
             this.remove(RemovalReason.KILLED);
-            this.dropExperience(this);
         }
     }
 

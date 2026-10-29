@@ -74,8 +74,13 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
     );
     private static final ResourceKey<Biome> ELYTHIA_MEADOW = ResourceKey.create(
             Registries.BIOME,
-            Identifier.fromNamespaceAndPath(Antarchy.MODID, "elythia_meadow")
+            Identifier.fromNamespaceAndPath(Antarchy.MODID, "primordial_plains")
     );
+    private static final ResourceKey<Biome> ELYTHIA_RIVER = ResourceKey.create(
+            Registries.BIOME,
+            Identifier.fromNamespaceAndPath(Antarchy.MODID, "elythia_river")
+    );
+    private static final int LUMEN_SPAWN_RADIUS = 4;
     private static final ResourceKey<Biome> PEACH_FOREST = ResourceKey.create(
             Registries.BIOME,
             Identifier.fromNamespaceAndPath(Antarchy.MODID, "peach_forest")
@@ -497,14 +502,32 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
 
     public static boolean checkGlimmerSpawnRules(EntityType<GlimmerEntity> type, ServerLevelAccessor level,
                                                    EntitySpawnReason spawnType, BlockPos pos, net.minecraft.util.RandomSource random) {
+        Holder<Biome> biome = level.getBiome(pos);
+        if (biome.is(ELYTHIA_RIVER)) {
+            return level.getLevel().isDarkOutside() && isNearLumen(level, pos);
+        }
         if (!net.minecraft.world.entity.animal.Animal.checkAnimalSpawnRules(type, level, spawnType, pos, random)) {
             return false;
         }
-        Holder<Biome> biome = level.getBiome(pos);
         if (biome.is(GLIMMERING_POOLS)) {
             return true;
         }
         return level.getLevel().isDarkOutside();
+    }
+
+    private static boolean isNearLumen(ServerLevelAccessor level, BlockPos pos) {
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        for (int dx = -LUMEN_SPAWN_RADIUS; dx <= LUMEN_SPAWN_RADIUS; dx++) {
+            for (int dz = -LUMEN_SPAWN_RADIUS; dz <= LUMEN_SPAWN_RADIUS; dz++) {
+                for (int dy = -2; dy <= 0; dy++) {
+                    cursor.setWithOffset(pos, dx, dy, dz);
+                    if (level.getFluidState(cursor).is(com.craisinlord.antarchy.content.AntarchyTags.Fluids.LUMEN)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override

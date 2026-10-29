@@ -14,6 +14,8 @@ import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexSorting;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
@@ -27,7 +29,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
-import org.joml.Matrix4fStack;
 
 public final class ElythiaSkyRenderer {
     public static final ResourceKey<Level> ELYTHIA = ResourceKey.create(
@@ -42,9 +43,19 @@ public final class ElythiaSkyRenderer {
             -60.0F, 0.0F, 1.0F, 2.0F, 3.5F, 5.0F, 7.0F, 9.5F, 12.5F, 16.0F, 20.0F, 25.0F, 31.0F, 38.0F, 46.0F, 55.0F, 65.0F, 78.0F
     };
     private static final float SKY_FOG_CEILING = 24.0F;
+    private static final float HORIZON_FOG_REBUILD_TOLERANCE = 0.5F;
+    private static final int HORIZON_FOG_SEGMENTS = 48;
+    private static final int GLOW_SEGMENTS = 16;
 
     @org.jetbrains.annotations.Nullable
     private static VertexBuffer coloredStarBuffer = null;
+    @org.jetbrains.annotations.Nullable
+    private static VertexBuffer horizonFogBuffer = null;
+    private static boolean horizonFogEmpty;
+    private static float horizonFogStart = Float.NaN;
+    private static float horizonFogEnd = Float.NaN;
+    private static final Map<Float, VertexBuffer> GLOW_BUFFERS = new HashMap<>();
+    private static final VertexBuffer[] BODY_BUFFERS = new VertexBuffer[4];
 
     private ElythiaSkyRenderer() {
     }
@@ -140,25 +151,33 @@ public final class ElythiaSkyRenderer {
     }
 
     private static void renderHorizonFog(Matrix4f modelViewMatrix, Matrix4f projectionMatrix, float fogStart, float fogEnd) {
+        if (Float.isNaN(horizonFogStart)
+                || Math.abs(fogStart - horizonFogStart) > HORIZON_FOG_REBUILD_TOLERANCE
+                || Math.abs(fogEnd - horizonFogEnd) > HORIZON_FOG_REBUILD_TOLERANCE) {
+            rebuildHorizonFog(fogStart, fogEnd);
+        }
+        if (horizonFogEmpty || horizonFogBuffer == null) {
+            return;
+        }
         float[] fogColor = RenderSystem.getShaderFogColor();
-        float r = fogColor[0];
-        float g = fogColor[1];
-        float b = fogColor[2];
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableCull();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        RenderSystem.backupProjectionMatrix();
-        RenderSystem.setProjectionMatrix(projectionMatrix, VertexSorting.DISTANCE_TO_ORIGIN);
+        RenderSystem.setShaderColor(fogColor[0], fogColor[1], fogColor[2], 1.0F);
+        horizonFogBuffer.bind();
+        horizonFogBuffer.drawWithShader(modelViewMatrix, projectionMatrix, GameRenderer.getPositionColorShader());
+        VertexBuffer.unbind();
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableCull();
+        RenderSystem.disableBlend();
+    }
 
-        Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
-        modelViewStack.pushMatrix();
-        modelViewStack.set(modelViewMatrix);
-        RenderSystem.applyModelViewMatrix();
-
+    private static void rebuildHorizonFog(float fogStart, float fogEnd) {
+        horizonFogStart = fogStart;
+        horizonFogEnd = fogEnd;
         BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        int segments = 48;
+        int segments = HORIZON_FOG_SEGMENTS;
         for (int ring = 0; ring < HORIZON_FOG_ELEVATIONS.length - 1; ring++) {
             float lowElevation = (float) Math.toRadians(HORIZON_FOG_ELEVATIONS[ring]);
             float highElevation = (float) Math.toRadians(HORIZON_FOG_ELEVATIONS[ring + 1]);
@@ -178,19 +197,31 @@ public final class ElythiaSkyRenderer {
                 float s0 = Mth.sin(a0);
                 float c1 = Mth.cos(a1);
                 float s1 = Mth.sin(a1);
-                buffer.addVertex(c0 * lowRadius, lowY, s0 * lowRadius).setColor(r, g, b, lowAlpha);
-                buffer.addVertex(c1 * lowRadius, lowY, s1 * lowRadius).setColor(r, g, b, lowAlpha);
-                buffer.addVertex(c1 * highRadius, highY, s1 * highRadius).setColor(r, g, b, highAlpha);
-                buffer.addVertex(c0 * highRadius, highY, s0 * highRadius).setColor(r, g, b, highAlpha);
+                buffer.addVertex(c0 * lowRadius, lowY, s0 * lowRadius).setColor(1.0F, 1.0F, 1.0F, lowAlpha);
+                buffer.addVertex(c1 * lowRadius, lowY, s1 * lowRadius).setColor(1.0F, 1.0F, 1.0F, lowAlpha);
+                buffer.addVertex(c1 * highRadius, highY, s1 * highRadius).setColor(1.0F, 1.0F, 1.0F, highAlpha);
+                buffer.addVertex(c0 * highRadius, highY, s0 * highRadius).setColor(1.0F, 1.0F, 1.0F, highAlpha);
             }
         }
-        BufferUploader.drawWithShader(buffer.buildOrThrow());
+        MeshData mesh = buffer.build();
+        horizonFogEmpty = mesh == null;
+        if (mesh == null) {
+            return;
+        }
+        if (horizonFogBuffer == null) {
+            horizonFogBuffer = new VertexBuffer(VertexBuffer.Usage.DYNAMIC);
+        }
+        horizonFogBuffer.bind();
+        horizonFogBuffer.upload(mesh);
+        VertexBuffer.unbind();
+    }
 
-        modelViewStack.popMatrix();
-        RenderSystem.applyModelViewMatrix();
-        RenderSystem.restoreProjectionMatrix();
-        RenderSystem.enableCull();
-        RenderSystem.disableBlend();
+    private static VertexBuffer uploadStatic(BufferBuilder builder) {
+        VertexBuffer buffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
+        buffer.bind();
+        buffer.upload(builder.buildOrThrow());
+        VertexBuffer.unbind();
+        return buffer;
     }
 
     private static VertexBuffer buildColoredStarBuffer() {
@@ -287,19 +318,19 @@ public final class ElythiaSkyRenderer {
 
         float sun1Orbit = orbitAngle(timeDegrees, 1.0D, 0.0D);
         renderBodyGlow(modelViewMatrix, projectionMatrix, sun1Orbit, 0.0F, 0xD06BFF, rainLevel, 70.0F);
-        renderTexturedBody(modelViewMatrix, projectionMatrix, sun1Orbit, 0.0F, 38.0F, 0xD06BFF, 1.0F, SUN_TEXTURE, false, 0, orbitAngle(timeDegrees, 0.8D, 0.0D));
+        renderTexturedBody(modelViewMatrix, projectionMatrix, 0, sun1Orbit, 0.0F, 38.0F, 0xD06BFF, 1.0F, SUN_TEXTURE, false, 0, orbitAngle(timeDegrees, 0.8D, 0.0D));
 
         float sun2Orbit = orbitAngle(timeDegrees, 0.73D, 54.0D);
         renderBodyGlow(modelViewMatrix, projectionMatrix, sun2Orbit, -14.0F, 0xFF9A33, rainLevel, 70.0F);
-        renderTexturedBody(modelViewMatrix, projectionMatrix, sun2Orbit, -14.0F, 16.0F, 0xFF9A33, 1.0F, SUN_TEXTURE, false, 0, orbitAngle(timeDegrees, -0.5D, 0.0D));
+        renderTexturedBody(modelViewMatrix, projectionMatrix, 1, sun2Orbit, -14.0F, 16.0F, 0xFF9A33, 1.0F, SUN_TEXTURE, false, 0, orbitAngle(timeDegrees, -0.5D, 0.0D));
 
         float moon2Orbit = orbitAngle(timeDegrees, 1.27D, 228.0D);
         renderBodyGlow(modelViewMatrix, projectionMatrix, moon2Orbit, 36.0F, 0x4FD84D, rainLevel, 78.0F);
-        renderTexturedBody(modelViewMatrix, projectionMatrix, moon2Orbit, 36.0F, 14.0F, 0x4FD84D, 1.0F, MOON_TEXTURE, true, 1, orbitAngle(timeDegrees, 0.3D, 0.0D));
+        renderTexturedBody(modelViewMatrix, projectionMatrix, 2, moon2Orbit, 36.0F, 14.0F, 0x4FD84D, 1.0F, MOON_TEXTURE, true, 1, orbitAngle(timeDegrees, 0.3D, 0.0D));
 
         float moon3Orbit = orbitAngle(timeDegrees, 0.38D, 122.0D);
         renderBodyGlow(modelViewMatrix, projectionMatrix, moon3Orbit, -34.0F, 0xA3FF8F, rainLevel, 78.0F);
-        renderTexturedBody(modelViewMatrix, projectionMatrix, moon3Orbit, -34.0F, 12.0F, 0xA3FF8F, 1.0F, MOON_TEXTURE, true, 2, orbitAngle(timeDegrees, -0.6D, 0.0D));
+        renderTexturedBody(modelViewMatrix, projectionMatrix, 3, moon3Orbit, -34.0F, 12.0F, 0xA3FF8F, 1.0F, MOON_TEXTURE, true, 2, orbitAngle(timeDegrees, -0.6D, 0.0D));
     }
 
     private static float orbitAngle(double timeDegrees, double speed, double offset) {
@@ -332,38 +363,35 @@ public final class ElythiaSkyRenderer {
         float g = ((rgb >> 8) & 0xFF) / 255.0F;
         float b = (rgb & 0xFF) / 255.0F;
 
+        VertexBuffer glow = GLOW_BUFFERS.computeIfAbsent(glowRadius, ElythiaSkyRenderer::buildGlowBuffer);
+        Matrix4f matrix = new Matrix4f(modelViewMatrix).rotateX(orbitRad).rotateZ(yawRad);
+
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableCull();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        RenderSystem.backupProjectionMatrix();
-        RenderSystem.setProjectionMatrix(projectionMatrix, VertexSorting.DISTANCE_TO_ORIGIN);
-
-        Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
-        modelViewStack.pushMatrix();
-        modelViewStack.set(modelViewMatrix);
-        modelViewStack.rotateX(orbitRad);
-        modelViewStack.rotateZ(yawRad);
-        RenderSystem.applyModelViewMatrix();
-
-        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
-        buffer.addVertex(0.0F, SKY_RADIUS, 0.0F).setColor(r, g, b, alpha);
-        for (int i = 0; i <= 16; i++) {
-            float angle = i * Mth.TWO_PI / 16.0F;
-            buffer.addVertex(Mth.sin(angle) * glowRadius, SKY_RADIUS, Mth.cos(angle) * glowRadius).setColor(r, g, b, 0.0F);
-        }
-        BufferUploader.drawWithShader(buffer.buildOrThrow());
-
-        modelViewStack.popMatrix();
-        RenderSystem.applyModelViewMatrix();
-        RenderSystem.restoreProjectionMatrix();
+        RenderSystem.setShaderColor(r, g, b, alpha);
+        glow.bind();
+        glow.drawWithShader(matrix, projectionMatrix, GameRenderer.getPositionColorShader());
+        VertexBuffer.unbind();
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.enableCull();
         RenderSystem.disableBlend();
+    }
+
+    private static VertexBuffer buildGlowBuffer(float glowRadius) {
+        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
+        buffer.addVertex(0.0F, SKY_RADIUS, 0.0F).setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        for (int i = 0; i <= GLOW_SEGMENTS; i++) {
+            float angle = i * Mth.TWO_PI / GLOW_SEGMENTS;
+            buffer.addVertex(Mth.sin(angle) * glowRadius, SKY_RADIUS, Mth.cos(angle) * glowRadius).setColor(1.0F, 1.0F, 1.0F, 0.0F);
+        }
+        return uploadStatic(buffer);
     }
 
     private static void renderTexturedBody(
             Matrix4f modelViewMatrix,
             Matrix4f projectionMatrix,
+            int bodyIndex,
             float orbitDegrees,
             float yawDegrees,
             float radius,
@@ -388,19 +416,27 @@ public final class ElythiaSkyRenderer {
                 (rgb & 0xFF) / 255.0F,
                 alpha
         );
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, texture);
-        RenderSystem.backupProjectionMatrix();
-        RenderSystem.setProjectionMatrix(projectionMatrix, VertexSorting.DISTANCE_TO_ORIGIN);
+        VertexBuffer body = BODY_BUFFERS[bodyIndex];
+        if (body == null) {
+            body = buildBodyBuffer(radius, usePhaseSheet, phaseIndex);
+            BODY_BUFFERS[bodyIndex] = body;
+        }
+        Matrix4f matrix = new Matrix4f(modelViewMatrix)
+                .rotateX((float) Math.toRadians(orbitDegrees))
+                .rotateZ((float) Math.toRadians(yawDegrees))
+                .rotateY((float) Math.toRadians(selfRotationDegrees));
+        body.bind();
+        body.drawWithShader(matrix, projectionMatrix, GameRenderer.getPositionTexShader());
+        VertexBuffer.unbind();
 
-        Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
-        modelViewStack.pushMatrix();
-        modelViewStack.set(modelViewMatrix);
-        modelViewStack.rotateX((float) Math.toRadians(orbitDegrees));
-        modelViewStack.rotateZ((float) Math.toRadians(yawDegrees));
-        modelViewStack.rotateY((float) Math.toRadians(selfRotationDegrees));
-        RenderSystem.applyModelViewMatrix();
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.enableCull();
+        RenderSystem.disableBlend();
+    }
 
+    private static VertexBuffer buildBodyBuffer(float radius, boolean usePhaseSheet, int phaseIndex) {
         BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
         float halfSize = BODY_SIZE * 0.5F * (radius / 22.0F);
         float minU = 0.0F;
@@ -420,14 +456,6 @@ public final class ElythiaSkyRenderer {
         buffer.addVertex(-halfSize, SKY_RADIUS, halfSize).setUv(minU, maxV);
         buffer.addVertex(halfSize, SKY_RADIUS, halfSize).setUv(maxU, maxV);
         buffer.addVertex(halfSize, SKY_RADIUS, -halfSize).setUv(maxU, minV);
-        BufferUploader.drawWithShader(buffer.buildOrThrow());
-
-        modelViewStack.popMatrix();
-        RenderSystem.applyModelViewMatrix();
-        RenderSystem.restoreProjectionMatrix();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.enableCull();
-        RenderSystem.disableBlend();
+        return uploadStatic(buffer);
     }
 }

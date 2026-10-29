@@ -53,19 +53,11 @@
       "shift_y": 0,
       "shift_z": "minecraft:shift_z"
     },
-    "vegetation": {
-      "type": "minecraft:shifted_noise",
-      "noise": "minecraft:vegetation",
-      "xz_scale": 0.25,
-      "y_scale": 0,
-      "shift_x": "minecraft:shift_x",
-      "shift_y": 0,
-      "shift_z": "minecraft:shift_z"
-    },
+    "vegetation": "antarchy:cavaryn/humidity",
     "continents": "minecraft:overworld/continents",
     "erosion": "minecraft:overworld/erosion",
     "depth": "minecraft:overworld/depth",
-    "ridges": "minecraft:overworld/ridges",
+    "ridges": "antarchy:cavaryn/weirdness",
     "initial_density_without_jaggedness": 0,
     "final_density": {
       "type": "minecraft:max",
@@ -88,14 +80,42 @@
       },
       "argument2": {
         "type": "minecraft:min",
-        "argument1": "minecraft:overworld/caves/noodle",
+        "argument1": {
+          "type": "minecraft:min",
+          "argument1": "minecraft:overworld/caves/noodle",
+          "argument2": {
+            "type": "minecraft:range_choice",
+            "input": "minecraft:y",
+            "min_inclusive": 4,
+            "max_exclusive": 204,
+            "when_in_range": "antarchy:cavaryn_custom",
+            "when_out_of_range": 2
+          }
+        },
         "argument2": {
-          "type": "minecraft:range_choice",
-          "input": "minecraft:y",
-          "min_inclusive": 4,
-          "max_exclusive": 204,
-          "when_in_range": "antarchy:cavaryn_custom",
-          "when_out_of_range": 2
+          "type": "minecraft:min",
+          "argument1": {
+            "type": "minecraft:min",
+            "argument1": "antarchy:cavaryn_worm_bores",
+            "argument2": "antarchy:cavaryn_brood_galleries"
+          },
+          "argument2": {
+            "type": "minecraft:min",
+            "argument1": "antarchy:cavaryn_brood_nests",
+            "argument2": {
+              "type": "minecraft:min",
+              "argument1": "antarchy:cavaryn_glowcap_grottos",
+              "argument2": {
+                "type": "minecraft:min",
+                "argument1": "antarchy:cavaryn_moleworm_warrens",
+                "argument2": {
+                  "type": "minecraft:min",
+                  "argument1": "antarchy:cavaryn_carapace_rifts",
+                  "argument2": "antarchy:cavaryn_biowart_guts"
+                }
+              }
+            }
+          }
         }
       }
     },

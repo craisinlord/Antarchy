@@ -164,6 +164,7 @@ public class MolevoreEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<MolevoreEntity>("main_controller", 0, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("dig_up", DIG_UP_ANIM)
                 .triggerableAnim("claw_swipe", CLAW_SWIPE_ANIM)
                 .triggerableAnim("spin_charge", SPINNING_ANIM)
@@ -171,6 +172,9 @@ public class MolevoreEntity extends Monster implements GeoEntity {
     }
 
     private PlayState mainAnimController(AnimationTest<MolevoreEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         return switch (this.getActionState()) {
             case ACTION_DIG_UP -> state.setAndContinue(DIG_UP_ANIM);
             case ACTION_CLAW_SWIPE -> state.setAndContinue(CLAW_SWIPE_ANIM);

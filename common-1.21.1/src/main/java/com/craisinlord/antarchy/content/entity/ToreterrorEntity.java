@@ -5,13 +5,18 @@ import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -37,6 +42,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -55,11 +61,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class ToreterrorEntity extends Monster implements GeoEntity {
+public class ToreterrorEntity extends Monster implements GeoEntity, GlimmerEcho {
 
     private static final EntityDataAccessor<Integer> ANIMATION_STATE = SynchedEntityData.defineId(ToreterrorEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> PHASE_2 = SynchedEntityData.defineId(ToreterrorEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> JUMP_SHAKING = SynchedEntityData.defineId(ToreterrorEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO = SynchedEntityData.defineId(ToreterrorEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final int ANIM_IDLE = 0;
     private static final int ANIM_WALK = 1;
@@ -100,6 +107,19 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
     private static final double SPIN_ANIMATION_SPEED = 0.49D;
     private static final double JUMP_SHOCKWAVE_RADIUS = 6.0D;
 
+    private static final int BASE_XP_REWARD = 50;
+    private static final int GLIMMER_XP_REWARD = 250;
+    private static final int GLIMMER_RAPID_FIRE_INTERVAL = 3;
+    private static final int GLIMMER_BOMBER_COUNT = 4;
+    private static final int GLIMMER_BOMBER_THIRD_TICK = 52;
+    private static final int GLIMMER_PULSE_DELAY_TICKS = 15;
+    private static final double GLIMMER_PULSE_RADIUS = 9.0D;
+    private static final float GLIMMER_PULSE_DAMAGE_FRACTION = 0.6F;
+    private static final double GLIMMER_ABANDON_RANGE = 48.0D;
+    private static final int GLIMMER_ABANDON_TICKS = 600;
+    private static final ResourceKey<LootTable> GLIMMER_LOOT_TABLE = ResourceKey.create(Registries.LOOT_TABLE,
+            ResourceLocation.fromNamespaceAndPath(com.craisinlord.antarchy.Antarchy.MODID, "entities/toreterror_glimmer"));
+
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("Idle");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
     private static final RawAnimation SHOOT_ANIM = RawAnimation.begin().thenPlay("shoot").thenLoop("Idle");
@@ -130,6 +150,9 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
     private int shootAttackType;
     private boolean shootBomberFired;
     private boolean shootBomberFiredSecond;
+    private boolean shootBomberFiredThird;
+    private int glimmerPulseTicks;
+    private int glimmerAbandonTicks;
     private int rapidFireNextTick;
     private Vec3 spinDirection = Vec3.ZERO;
     private int spinStrafeSign = 1;
@@ -140,7 +163,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
 
     public ToreterrorEntity(EntityType<? extends ToreterrorEntity> entityType, Level level) {
         super(entityType, level);
-        this.xpReward = 50;
+        this.xpReward = BASE_XP_REWARD;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -157,7 +180,11 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
     @Override
     public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
             MobSpawnType spawnReason, net.minecraft.world.entity.SpawnGroupData spawnData) {
-        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.toreterrorHealth());
+        double health = AntarchySettings.toreterrorHealth();
+        if (this.isGlimmerEcho()) {
+            health *= AntarchySettings.glimmerToreterrorHealthMultiplier();
+        }
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, health);
         return super.finalizeSpawn(level, difficulty, spawnReason, spawnData);
     }
 
@@ -172,6 +199,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         builder.define(ANIMATION_STATE, ANIM_IDLE);
         builder.define(PHASE_2, false);
         builder.define(JUMP_SHAKING, false);
+        builder.define(GLIMMER_ECHO, false);
     }
 
     @Override
@@ -255,6 +283,14 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
             return;
         }
 
+        if (this.isGlimmerEcho()) {
+            GlimmerEchoes.tickAmbient(this, 3, 4);
+            if (this.tickGlimmerAbandonment()) {
+                return;
+            }
+            this.tickGlimmerPulse();
+        }
+
         if (this.shootAnimTicks > 0) {
             this.tickShootAnimation();
         } else if (this.jumpAnimTicks > 0) {
@@ -314,6 +350,88 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
     }
 
     @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
+        this.xpReward = glimmerEcho ? GLIMMER_XP_REWARD : BASE_XP_REWARD;
+        this.bossEvent.setName(this.getTypeName());
+        this.bossEvent.setColor(glimmerEcho ? BossEvent.BossBarColor.BLUE : BossEvent.BossBarColor.GREEN);
+    }
+
+    @Override
+    public float glimmerEchoDamageMultiplier() {
+        return this.isGlimmerEcho() ? (float) AntarchySettings.glimmerToreterrorDamageMultiplier() : 1.0F;
+    }
+
+    @Override
+    protected Component getTypeName() {
+        return this.isGlimmerEcho() ? Component.translatable("entity.antarchy.toreterror.glimmer") : super.getTypeName();
+    }
+
+    @Override
+    protected ResourceKey<LootTable> getDefaultLootTable() {
+        return this.isGlimmerEcho() ? GLIMMER_LOOT_TABLE : super.getDefaultLootTable();
+    }
+
+    private int scaledCooldown(int ticks) {
+        if (!this.isGlimmerEcho()) {
+            return ticks;
+        }
+        return Math.max(10, (int) Math.round(ticks * AntarchySettings.glimmerToreterrorCooldownMultiplier()));
+    }
+
+    private boolean tickGlimmerAbandonment() {
+        if (this.tickCount % 20 != 0) {
+            return false;
+        }
+        if (GlimmerEchoes.hasPlayerWithin(this, GLIMMER_ABANDON_RANGE)) {
+            this.glimmerAbandonTicks = 0;
+            return false;
+        }
+        this.glimmerAbandonTicks += 20;
+        if (this.glimmerAbandonTicks < GLIMMER_ABANDON_TICKS) {
+            return false;
+        }
+        GlimmerEchoes.fadeAway(this);
+        return true;
+    }
+
+    private void tickGlimmerPulse() {
+        if (this.glimmerPulseTicks <= 0) {
+            return;
+        }
+        this.glimmerPulseTicks--;
+        if (this.level() instanceof ServerLevel serverLevel && this.glimmerPulseTicks % 5 == 0) {
+            double progress = 1.0D - this.glimmerPulseTicks / (double) GLIMMER_PULSE_DELAY_TICKS;
+            GlimmerEchoes.ring(serverLevel, this.position(), 2.0D + GLIMMER_PULSE_RADIUS * progress, 32);
+        }
+        if (this.glimmerPulseTicks == 0) {
+            this.applyGlimmerPulse();
+        }
+    }
+
+    private void applyGlimmerPulse() {
+        if (!(this.level() instanceof ServerLevel serverLevel)) return;
+        AABB pulseArea = this.getBoundingBox().inflate(GLIMMER_PULSE_RADIUS, 1.5D, GLIMMER_PULSE_RADIUS);
+        List<LivingEntity> victims = this.level().getEntitiesOfClass(LivingEntity.class, pulseArea,
+                entity -> this.canTargetEntity(entity) && entity.onGround());
+        float damage = (float) AntarchySettings.toreterrorJumpAttackDamage() * GLIMMER_PULSE_DAMAGE_FRACTION * this.glimmerEchoDamageMultiplier();
+        for (LivingEntity victim : victims) {
+            if (victim.hurt(AntarchyDamageSources.toreterrorJump(serverLevel, this), damage)) {
+                Vec3 knockDir = victim.position().subtract(this.position()).normalize();
+                victim.push(knockDir.x * 1.2D, 0.45D, knockDir.z * 1.2D);
+                victim.hurtMarked = true;
+            }
+        }
+        GlimmerEchoes.ring(serverLevel, this.position(), GLIMMER_PULSE_RADIUS + 1.0D, 48);
+        this.playSound(SoundEvents.AMETHYST_BLOCK_RESONATE, 2.0F, 0.6F);
+    }
+
+    @Override
     protected net.minecraft.sounds.SoundEvent getAmbientSound() {
         return AntarchySoundEvents.TORETERROR_IDLE.get();
     }
@@ -361,6 +479,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         tag.putInt("ShootCooldown", this.shootCooldown);
         tag.putInt("JumpCooldown", this.jumpCooldown);
         tag.putInt("SpinCooldown", this.spinCooldown);
+        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
     }
 
     @Override
@@ -370,6 +489,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         this.shootCooldown = tag.getInt("ShootCooldown");
         this.jumpCooldown = tag.getInt("JumpCooldown");
         this.spinCooldown = tag.getInt("SpinCooldown");
+        this.setGlimmerEcho(tag.getBoolean(GlimmerEchoes.SAVE_KEY));
     }
 
     @Override
@@ -393,7 +513,6 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         }
         if (this.deathTime >= DEATH_TICKS) {
             this.remove(RemovalReason.KILLED);
-            this.dropExperience(this);
         }
     }
 
@@ -437,7 +556,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
             case ATTACK_RAPID_FIRE -> {
                 this.setAnimationState(ANIM_RAPID_SHOOT);
                 if (elapsed >= this.rapidFireNextTick && elapsed < RAPID_FIRE_END_TICK) {
-                    this.rapidFireNextTick += RAPID_FIRE_INTERVAL;
+                    this.rapidFireNextTick += this.isGlimmerEcho() ? GLIMMER_RAPID_FIRE_INTERVAL : RAPID_FIRE_INTERVAL;
                     this.fireRapidBomb();
                 }
             }
@@ -447,8 +566,12 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
                     this.shootBomberFired = true;
                     this.fireBomberBurst();
                 }
-                if (this.isPhase2() && !this.shootBomberFiredSecond && elapsed >= SHOOT_BOMBER_SECOND_TICK) {
+                if ((this.isPhase2() || this.isGlimmerEcho()) && !this.shootBomberFiredSecond && elapsed >= SHOOT_BOMBER_SECOND_TICK) {
                     this.shootBomberFiredSecond = true;
+                    this.fireBomberBurst();
+                }
+                if (this.isPhase2() && this.isGlimmerEcho() && !this.shootBomberFiredThird && elapsed >= GLIMMER_BOMBER_THIRD_TICK) {
+                    this.shootBomberFiredThird = true;
                     this.fireBomberBurst();
                 }
             }
@@ -465,7 +588,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         }
         this.shootAnimTicks--;
         if (this.shootAnimTicks <= 0) {
-            this.shootCooldown = 100 + this.random.nextInt(60);
+            this.shootCooldown = this.scaledCooldown(100 + this.random.nextInt(60));
         }
     }
 
@@ -489,6 +612,9 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
                 this.shockwaveApplied = true;
                 this.playSound(AntarchySoundEvents.TORETERROR_JUMP_LAND.get(), 1.2F, 0.9F + this.random.nextFloat() * 0.15F);
                 this.applyJumpShockwave();
+                if (this.isGlimmerEcho()) {
+                    this.glimmerPulseTicks = GLIMMER_PULSE_DELAY_TICKS;
+                }
                 this.jumpShakeTicks = JUMP_SHAKE_TICKS;
                 this.entityData.set(JUMP_SHAKING, true);
             } else if (this.jumpAnimTicks <= 10) {
@@ -502,7 +628,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         }
         this.jumpAnimTicks--;
         if (this.jumpAnimTicks <= 0) {
-            this.jumpCooldown = 140 + this.random.nextInt(80);
+            this.jumpCooldown = this.scaledCooldown(140 + this.random.nextInt(80));
         }
     }
 
@@ -580,7 +706,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         this.spinEndTicks--;
         if (this.spinEndTicks <= 0) {
             this.stopSpinSequence();
-            this.spinCooldown = 340 + this.random.nextInt(80);
+            this.spinCooldown = this.scaledCooldown(340 + this.random.nextInt(80));
             this.spinHitCooldowns.clear();
         }
     }
@@ -797,6 +923,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
             bomb.setPos(from.x, from.y, from.z);
             bomb.setDeltaMovement(vel);
             bomb.hasImpulse = true;
+            GlimmerEchoes.markSummon(this, bomb);
             serverLevel.addFreshEntity(bomb);
         }
     }
@@ -806,7 +933,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         LivingEntity target = this.getTarget();
         if (target == null) return;
         this.playSound(AntarchySoundEvents.TORETERROR_BOMBER_FIRE.get(), 1.1F, 0.9F + this.random.nextFloat() * 0.15F);
-        int count = 3;
+        int count = this.isGlimmerEcho() ? GLIMMER_BOMBER_COUNT : 3;
         for (int i = 0; i < count; i++) {
             BomberEntity bomber = AntarchyObjects.BOMBER.get().create(this.level());
             if (bomber == null) continue;
@@ -818,6 +945,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
             bomber.moveTo(this.getX() + vx * 0.5D, this.getEyeY(), this.getZ() + vz * 0.5D, this.getYRot(), 0);
             bomber.setDeltaMovement(vx, vy, vz);
             bomber.setTarget(target);
+            GlimmerEchoes.markSummon(this, bomber);
             serverLevel.addFreshEntity(bomber);
             bomber.primeFuse();
         }
@@ -827,7 +955,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         if (!(this.level() instanceof ServerLevel serverLevel)) return;
         AABB shockArea = this.getBoundingBox().inflate(JUMP_SHOCKWAVE_RADIUS, 2.0D, JUMP_SHOCKWAVE_RADIUS);
         List<LivingEntity> victims = this.level().getEntitiesOfClass(LivingEntity.class, shockArea, this::canTargetEntity);
-        float damage = (float) AntarchySettings.toreterrorJumpAttackDamage();
+        float damage = (float) AntarchySettings.toreterrorJumpAttackDamage() * this.glimmerEchoDamageMultiplier();
         for (LivingEntity victim : victims) {
             victim.hurt(AntarchyDamageSources.toreterrorJump(serverLevel, this), damage);
             Vec3 knockDir = victim.position().subtract(this.position()).normalize().add(0, 0.4D, 0);
@@ -836,6 +964,10 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
             victim.hurtMarked = true;
         }
         this.playSound(SoundEvents.GENERIC_EXPLODE.value(), 1.5F, 0.75F);
+        if (this.isGlimmerEcho()) {
+            GlimmerEchoes.burst(serverLevel, this.position().add(0.0D, 0.5D, 0.0D), 2.0D, 43);
+            return;
+        }
         serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.EXPLOSION, this.getX(), this.getY() + 0.5D, this.getZ(), 3, 1.0D, 0.3D, 1.0D, 0.0D);
         serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.SPLASH, this.getX(), this.getY() + 0.5D, this.getZ(), 40, 2.0D, 0.5D, 2.0D, 0.2D);
     }
@@ -844,7 +976,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
         if (!(this.level() instanceof ServerLevel)) return;
         AABB spinArea = this.getBoundingBox().inflate(SPIN_RADIUS, SPIN_RADIUS, SPIN_RADIUS);
         List<LivingEntity> victims = this.level().getEntitiesOfClass(LivingEntity.class, spinArea, this::canTargetEntity);
-        float damage = (float) AntarchySettings.toreterrorSpinDamage();
+        float damage = (float) AntarchySettings.toreterrorSpinDamage() * this.glimmerEchoDamageMultiplier();
         double knockback = AntarchySettings.toreterrorSpinKnockback();
         for (LivingEntity victim : victims) {
             UUID id = victim.getUUID();
@@ -886,6 +1018,7 @@ public class ToreterrorEntity extends Monster implements GeoEntity {
             ToreterrorEntity.this.shootAnimTicks = SHOOT_TOTAL_TICKS;
             ToreterrorEntity.this.shootBomberFired = false;
             ToreterrorEntity.this.shootBomberFiredSecond = false;
+            ToreterrorEntity.this.shootBomberFiredThird = false;
             ToreterrorEntity.this.rapidFireNextTick = 0;
             float roll = ToreterrorEntity.this.random.nextFloat();
             if (roll < 0.5F) ToreterrorEntity.this.shootAttackType = ATTACK_RAPID_FIRE;

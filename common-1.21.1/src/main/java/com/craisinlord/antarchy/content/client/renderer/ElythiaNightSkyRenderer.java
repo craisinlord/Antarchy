@@ -1,5 +1,7 @@
 package com.craisinlord.antarchy.content.client.renderer;
 
+import com.craisinlord.antarchy.content.client.ElythiaEventClient;
+import com.craisinlord.antarchy.content.weather.ElythiaEvent;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -26,9 +28,59 @@ public final class ElythiaNightSkyRenderer {
     private static final double METEOR_LIFE_TICKS = 18.0D;
     private static final float METEOR_CHANCE = 0.03F;
     private static final float SHOWER_METEOR_CHANCE = 0.3F;
-    private static final float SHOWER_NIGHT_CHANCE = 1.0F / 7.0F;
-    private static final float AURORA_NIGHT_CHANCE = 0.4F;
+    private static final double SHOWER_SLOT_TICKS = 26.0D;
+    private static final int SHOWER_LANES = 2;
+    private static final float STARFALL_METEOR_CHANCE = 0.45F;
+    private static final double STARFALL_SLOT_TICKS = 20.0D;
+    private static final int STARFALL_LANES = 4;
+    private static final float BOLIDE_CHANCE = 0.12F;
     private static final int AURORA_COLUMNS = 96;
+    private static final int AURORA_ROWS = 4;
+    private static final float[] AURORA_ROW_OFFSETS = new float[AURORA_ROWS];
+    private static final Vector3f[][] AURORA_POINTS = new Vector3f[AURORA_COLUMNS][AURORA_ROWS];
+    private static final float[][][] AURORA_COLORS = new float[AURORA_COLUMNS][AURORA_ROWS][4];
+
+    static {
+        for (Vector3f[] column : AURORA_POINTS) {
+            for (int row = 0; row < AURORA_ROWS; row++) {
+                column[row] = new Vector3f();
+            }
+        }
+    }
+    private static final float[] METEOR_HEAD = {1.0F, 0.95F, 1.0F};
+    private static final float[] METEOR_TAIL = {0.8F, 0.6F, 1.0F};
+    private static final float[][] SHOWER_PALETTE = {
+            {1.0F, 0.95F, 1.0F}, {0.85F, 0.75F, 1.0F}, {0.75F, 0.9F, 1.0F}
+    };
+    private static final float[][] STARFALL_PALETTE = {
+            {0.4F, 1.0F, 1.0F}, {1.0F, 0.5F, 0.85F}, {1.0F, 0.85F, 0.4F}, {0.7F, 0.5F, 1.0F}, {0.5F, 1.0F, 0.6F}, {1.0F, 1.0F, 1.0F}
+    };
+
+    private record AuroraStyle(int curtains, float baseElevation, float elevationStep, float height, float heightStep,
+                               float span, float spanStep, float azimuthStep, float speed, float[][] rowColors, boolean prism) {
+    }
+
+    private static final AuroraStyle VEIL = new AuroraStyle(2, 7.0F, 5.0F, 22.0F, 6.0F, 150.0F, 40.0F, 35.0F, 1.0F,
+            new float[][]{
+                    {0.3F, 1.0F, 0.5F, 0.0F},
+                    {0.3F, 1.0F, 0.5F, 1.0F},
+                    {0.3F, 0.85F, 0.75F, 0.55F},
+                    {0.65F, 0.35F, 1.0F, 0.0F}
+            }, false);
+    private static final AuroraStyle TIDE = new AuroraStyle(3, 8.0F, 7.0F, 36.0F, 6.0F, 230.0F, 35.0F, 70.0F, 1.6F,
+            new float[][]{
+                    {0.2F, 0.9F, 1.0F, 0.0F},
+                    {0.2F, 0.95F, 0.9F, 1.0F},
+                    {0.35F, 0.55F, 1.0F, 0.7F},
+                    {1.0F, 0.35F, 0.85F, 0.0F}
+            }, false);
+    private static final AuroraStyle PRISM = new AuroraStyle(4, 10.0F, 9.0F, 42.0F, 5.0F, 170.0F, 10.0F, 90.0F, 2.4F,
+            new float[][]{
+                    {1.0F, 1.0F, 1.0F, 0.0F},
+                    {1.0F, 1.0F, 1.0F, 1.0F},
+                    {1.0F, 1.0F, 1.0F, 0.75F},
+                    {1.0F, 1.0F, 1.0F, 0.0F}
+            }, true);
 
     private record Constellation(float azimuth, float elevation, float scale, float[][] points) {
     }
@@ -59,7 +111,6 @@ public final class ElythiaNightSkyRenderer {
         }
 
         long dayTime = level.getDayTime();
-        long nightIndex = Math.floorDiv(dayTime + 12000L, 24000L);
         float timeOfDay = Math.floorMod(dayTime, 24000L) + partialTick;
         double time = level.getGameTime() + partialTick;
 
@@ -88,8 +139,8 @@ public final class ElythiaNightSkyRenderer {
         RenderSystem.applyModelViewMatrix();
 
         BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        renderAurora(buffer, nightIndex, timeOfDay, time, night);
-        renderMeteors(buffer, nightIndex, time, night);
+        renderAurora(buffer, timeOfDay, time, night, partialTick);
+        renderMeteors(buffer, time, night, partialTick);
         MeshData mesh = buffer.build();
         if (mesh != null) {
             BufferUploader.drawWithShader(mesh);
@@ -103,92 +154,158 @@ public final class ElythiaNightSkyRenderer {
         RenderSystem.disableBlend();
     }
 
-    private static boolean renderAurora(BufferBuilder buffer, long nightIndex, float timeOfDay, double time, float night) {
-        if (hash01(nightIndex, 0xA0L) > AURORA_NIGHT_CHANCE) {
+    private static boolean renderAurora(BufferBuilder buffer, float timeOfDay, double time, float night, float partialTick) {
+        ElythiaEvent event = ElythiaEventClient.shown();
+        AuroraStyle style = switch (event) {
+            case AURORA -> VEIL;
+            case GRAND_AURORA -> TIDE;
+            case PRISM_AURORA -> PRISM;
+            default -> null;
+        };
+        if (style == null) {
             return false;
         }
+        long seed = ElythiaEventClient.seed();
         float window = smooth(1.0F - Math.abs(timeOfDay - 18000.0F) / 6500.0F);
-        float strength = 0.6F + 0.4F * hash01(nightIndex, 0xA1L);
-        float intensity = night * window * strength;
+        float strength = 0.6F + 0.4F * hash01(seed, 0xA1L);
+        float intensity = night * window * strength * ElythiaEventClient.strength(partialTick);
         if (intensity <= 0.01F) {
             return false;
         }
 
-        float centerAzimuth = hash01(nightIndex, 0xA2L) * 360.0F;
-        float[][] columns = new float[AURORA_COLUMNS][];
-        for (int curtain = 0; curtain < 2; curtain++) {
-            float baseElevation = 7.0F + curtain * 5.0F;
-            float height = 22.0F - curtain * 6.0F;
-            float span = 150.0F - curtain * 40.0F;
-            float alphaScale = curtain == 0 ? 1.0F : 0.55F;
-            float azimuthStart = centerAzimuth + curtain * 35.0F - span * 0.5F;
+        float centerAzimuth = hash01(seed, 0xA2L) * 360.0F;
+        float speed = style.speed();
+        float[][] rowColors = style.rowColors();
+        for (int curtain = 0; curtain < style.curtains(); curtain++) {
+            float baseElevation = style.baseElevation() + curtain * style.elevationStep();
+            float height = style.height() - curtain * style.heightStep();
+            float span = style.span() - curtain * style.spanStep();
+            float alphaScale = curtain == 0 ? 1.0F : 0.55F + 0.3F * hash01(seed + curtain, 0xA3L);
+            float azimuthStart = centerAzimuth + curtain * style.azimuthStep() - span * 0.5F;
+            AURORA_ROW_OFFSETS[0] = -1.5F;
+            AURORA_ROW_OFFSETS[1] = 0.0F;
+            AURORA_ROW_OFFSETS[2] = height * 0.45F;
+            AURORA_ROW_OFFSETS[3] = height;
 
             for (int j = 0; j < AURORA_COLUMNS; j++) {
                 float u = j / (float) (AURORA_COLUMNS - 1);
-                float azimuth = azimuthStart + u * span + 6.0F * Mth.sin((float) (u * 9.0F + time * 0.004D + curtain));
-                float bottom = baseElevation + 2.5F * Mth.sin((float) (u * 7.0F + time * 0.006D));
-                float shimmer = 0.55F + 0.45F * Mth.sin((float) (j * 0.9F + time * 0.05D + curtain))
-                        * Mth.sin((float) (j * 0.23F - time * 0.021D));
+                float azimuth = azimuthStart + u * span + 6.0F * Mth.sin((float) (u * 9.0F + time * 0.004D * speed + curtain));
+                float bottom = baseElevation + 2.5F * Mth.sin((float) (u * 7.0F + time * 0.006D * speed));
+                float shimmer = 0.55F + 0.45F * Mth.sin((float) (j * 0.9F + time * 0.05D * speed + curtain))
+                        * Mth.sin((float) (j * 0.23F - time * 0.021D * speed));
                 float alpha = intensity * alphaScale * Mth.sin(Mth.PI * u) * shimmer;
-                columns[j] = new float[]{azimuth, bottom, alpha};
+                float hue = style.prism() ? (float) (u * 1.3F + curtain * 0.27F + time * 0.0015D) : 0.0F;
+                for (int row = 0; row < AURORA_ROWS; row++) {
+                    skyPoint(azimuth, bottom + AURORA_ROW_OFFSETS[row], AURORA_POINTS[j][row]).mul(RADIUS);
+                    float[] color = AURORA_COLORS[j][row];
+                    float[] rowColor = rowColors[row];
+                    if (style.prism()) {
+                        int rgb = Mth.hsvToRgb(Mth.frac(hue + row * 0.06F), 0.75F - row * 0.1F, 1.0F);
+                        color[0] = (rgb >> 16 & 0xFF) / 255.0F;
+                        color[1] = (rgb >> 8 & 0xFF) / 255.0F;
+                        color[2] = (rgb & 0xFF) / 255.0F;
+                    } else {
+                        color[0] = rowColor[0];
+                        color[1] = rowColor[1];
+                        color[2] = rowColor[2];
+                    }
+                    color[3] = rowColor[3] * alpha;
+                }
             }
 
-            float[] rowOffsets = {-1.5F, 0.0F, height * 0.45F, height};
-            float[][] rowColors = {
-                    {0.3F, 1.0F, 0.5F, 0.0F},
-                    {0.3F, 1.0F, 0.5F, 1.0F},
-                    {0.3F, 0.85F, 0.75F, 0.55F},
-                    {0.65F, 0.35F, 1.0F, 0.0F}
-            };
             for (int j = 0; j < AURORA_COLUMNS - 1; j++) {
-                float[] left = columns[j];
-                float[] right = columns[j + 1];
-                for (int row = 0; row < rowOffsets.length - 1; row++) {
-                    auroraVertex(buffer, left, rowOffsets[row], rowColors[row]);
-                    auroraVertex(buffer, right, rowOffsets[row], rowColors[row]);
-                    auroraVertex(buffer, right, rowOffsets[row + 1], rowColors[row + 1]);
-                    auroraVertex(buffer, left, rowOffsets[row + 1], rowColors[row + 1]);
+                for (int row = 0; row < AURORA_ROWS - 1; row++) {
+                    auroraVertex(buffer, j, row);
+                    auroraVertex(buffer, j + 1, row);
+                    auroraVertex(buffer, j + 1, row + 1);
+                    auroraVertex(buffer, j, row + 1);
                 }
             }
         }
         return true;
     }
 
-    private static void auroraVertex(BufferBuilder buffer, float[] column, float elevationOffset, float[] color) {
-        Vector3f point = skyPoint(column[0], column[1] + elevationOffset).mul(RADIUS);
-        buffer.addVertex(point.x, point.y, point.z).setColor(color[0], color[1], color[2], color[3] * column[2]);
+    private static void auroraVertex(BufferBuilder buffer, int column, int row) {
+        Vector3f point = AURORA_POINTS[column][row];
+        float[] color = AURORA_COLORS[column][row];
+        buffer.addVertex(point.x, point.y, point.z).setColor(color[0], color[1], color[2], color[3]);
     }
 
-    private static boolean renderMeteors(BufferBuilder buffer, long nightIndex, double time, float night) {
+    private static boolean renderMeteors(BufferBuilder buffer, double time, float night, float partialTick) {
         if (night < 0.3F) {
             return false;
         }
-        boolean shower = hash01(nightIndex, 0xB0L) < SHOWER_NIGHT_CHANCE;
-        float chance = shower ? SHOWER_METEOR_CHANCE : METEOR_CHANCE;
-        long slot = (long) Math.floor(time / METEOR_SLOT_TICKS);
-        if (hash01(slot, 0xB1L) >= chance) {
+        ElythiaEvent event = ElythiaEventClient.shown();
+        float strength = ElythiaEventClient.strength(partialTick);
+        long seed = ElythiaEventClient.seed();
+        boolean drew = false;
+        if (event == ElythiaEvent.METEOR_SHOWER) {
+            for (int lane = 0; lane < SHOWER_LANES; lane++) {
+                float chance = Mth.lerp(strength, lane == 0 ? METEOR_CHANCE : 0.0F, SHOWER_METEOR_CHANCE);
+                drew |= renderMeteor(buffer, seed, lane, time, night, chance, SHOWER_SLOT_TICKS, SHOWER_PALETTE, false);
+            }
+        } else if (event == ElythiaEvent.STARFALL) {
+            for (int lane = 0; lane < STARFALL_LANES; lane++) {
+                float chance = Mth.lerp(strength, lane == 0 ? METEOR_CHANCE : 0.0F, STARFALL_METEOR_CHANCE);
+                drew |= renderMeteor(buffer, seed, lane, time, night, chance, STARFALL_SLOT_TICKS, STARFALL_PALETTE, true);
+            }
+        } else {
+            drew = renderMeteor(buffer, 0L, 0, time, night, METEOR_CHANCE, METEOR_SLOT_TICKS, null, false);
+        }
+        return drew;
+    }
+
+    private static boolean renderMeteor(BufferBuilder buffer, long seed, int lane, double time, float night, float chance,
+                                        double slotTicks, float[][] palette, boolean bolides) {
+        double laneTime = time + lane * slotTicks * 0.37D;
+        long slot = (long) Math.floor(laneTime / slotTicks);
+        long key = palette == null ? slot : slot * 31L + lane;
+        if (hash01(key, 0xB1L) >= chance) {
             return false;
         }
-        float progress = (float) ((time - slot * METEOR_SLOT_TICKS) / METEOR_LIFE_TICKS);
+        boolean bolide = bolides && hash01(key, 0xB6L) < BOLIDE_CHANCE;
+        double life = bolide ? METEOR_LIFE_TICKS * 1.6D : METEOR_LIFE_TICKS;
+        float progress = (float) ((laneTime - slot * slotTicks) / life);
         if (progress >= 1.0F) {
             return false;
         }
 
-        float azimuth = hash01(slot, 0xB2L) * 360.0F;
-        float elevation = 25.0F + hash01(slot, 0xB3L) * 45.0F;
-        float azimuthTravel = (hash01(slot, 0xB4L) - 0.5F) * 50.0F;
-        float elevationTravel = 10.0F + hash01(slot, 0xB5L) * 15.0F;
+        float azimuth;
+        float azimuthTravel;
+        float elevation;
+        if (palette == null) {
+            azimuth = hash01(key, 0xB2L) * 360.0F;
+            azimuthTravel = (hash01(key, 0xB4L) - 0.5F) * 50.0F;
+            elevation = 25.0F + hash01(key, 0xB3L) * 45.0F;
+        } else {
+            float radiant = hash01(seed, 0xB7L) * 360.0F;
+            float offset = (hash01(key, 0xB2L) - 0.5F) * 140.0F;
+            azimuth = radiant + offset;
+            azimuthTravel = Math.signum(offset) * (10.0F + hash01(key, 0xB4L) * 30.0F);
+            elevation = 35.0F + hash01(key, 0xB3L) * 40.0F;
+        }
+        float elevationTravel = 10.0F + hash01(key, 0xB5L) * 15.0F;
+        if (bolide) {
+            azimuthTravel *= 1.5F;
+            elevationTravel *= 1.5F;
+        }
         Vector3f start = skyPoint(azimuth, elevation);
         Vector3f end = skyPoint(azimuth + azimuthTravel, elevation - elevationTravel);
+        float tailLength = bolide ? 0.5F : palette == null ? 0.35F : 0.42F;
         Vector3f head = new Vector3f(start).lerp(end, progress).normalize(RADIUS);
-        Vector3f tail = new Vector3f(start).lerp(end, Math.max(0.0F, progress - 0.35F)).normalize(RADIUS);
-        Vector3f side = new Vector3f(head).sub(tail).cross(head).normalize(0.3F);
+        Vector3f tail = new Vector3f(start).lerp(end, Math.max(0.0F, progress - tailLength)).normalize(RADIUS);
+        Vector3f side = new Vector3f(head).sub(tail).cross(head).normalize(bolide ? 0.75F : 0.3F);
         float alpha = night * Mth.sin(Mth.PI * progress);
 
-        buffer.addVertex(head.x + side.x, head.y + side.y, head.z + side.z).setColor(1.0F, 0.95F, 1.0F, alpha);
-        buffer.addVertex(head.x - side.x, head.y - side.y, head.z - side.z).setColor(1.0F, 0.95F, 1.0F, alpha);
-        buffer.addVertex(tail.x, tail.y, tail.z).setColor(0.8F, 0.6F, 1.0F, 0.0F);
-        buffer.addVertex(tail.x, tail.y, tail.z).setColor(0.8F, 0.6F, 1.0F, 0.0F);
+        float[] headColor = palette == null ? METEOR_HEAD : palette[Math.min(palette.length - 1, (int) (hash01(key, 0xB8L) * palette.length))];
+        float[] tailColor = palette == null ? METEOR_TAIL : headColor;
+        buffer.addVertex(head.x + side.x, head.y + side.y, head.z + side.z).setColor(headColor[0], headColor[1], headColor[2], alpha);
+        buffer.addVertex(head.x - side.x, head.y - side.y, head.z - side.z).setColor(headColor[0], headColor[1], headColor[2], alpha);
+        buffer.addVertex(tail.x, tail.y, tail.z).setColor(tailColor[0], tailColor[1], tailColor[2], 0.0F);
+        buffer.addVertex(tail.x, tail.y, tail.z).setColor(tailColor[0], tailColor[1], tailColor[2], 0.0F);
+        if (bolide) {
+            skyQuad(buffer, head, 1.4F * Mth.sin(Mth.PI * progress), (float) time * 0.2F, 1.0F, 1.0F, 1.0F, alpha * 0.8F);
+        }
         return true;
     }
 
@@ -238,10 +355,14 @@ public final class ElythiaNightSkyRenderer {
     }
 
     private static Vector3f skyPoint(float azimuthDegrees, float elevationDegrees) {
+        return skyPoint(azimuthDegrees, elevationDegrees, new Vector3f());
+    }
+
+    private static Vector3f skyPoint(float azimuthDegrees, float elevationDegrees, Vector3f dest) {
         float azimuth = (float) Math.toRadians(azimuthDegrees);
         float elevation = (float) Math.toRadians(elevationDegrees);
         float horizontal = Mth.cos(elevation);
-        return new Vector3f(horizontal * Mth.sin(azimuth), Mth.sin(elevation), horizontal * Mth.cos(azimuth));
+        return dest.set(horizontal * Mth.sin(azimuth), Mth.sin(elevation), horizontal * Mth.cos(azimuth));
     }
 
     private static float smooth(float value) {

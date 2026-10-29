@@ -182,6 +182,7 @@ public class CaterpillarEntity extends Animal implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<CaterpillarEntity>("main_controller", 2, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>())
                 .triggerableAnim("eat", EAT_ANIM)
                 .triggerableAnim("pupate", PUPATION_ANIM)
@@ -189,6 +190,9 @@ public class CaterpillarEntity extends Animal implements GeoEntity {
     }
 
     private PlayState mainAnimController(AnimationTest<CaterpillarEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         if (this.getLifeStage() == LifeStage.PUPATING) {
             return state.setAndContinue(PUPATION_ANIM);
         }

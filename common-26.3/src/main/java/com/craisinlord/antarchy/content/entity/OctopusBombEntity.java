@@ -163,6 +163,7 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<OctopusBombEntity>("main_controller", 0, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>())
                 .triggerableAnim("Grab", GRAB_ANIM)
                 .triggerableAnim("Swipe", SWIPE_ANIM)
@@ -170,6 +171,9 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
     }
 
     private PlayState mainAnimController(AnimationTest<OctopusBombEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         return switch (this.getAnimationState()) {
             case ANIM_GRAB -> state.setAndContinue(GRAB_ANIM);
             case ANIM_SWIPE -> state.setAndContinue(SWIPE_ANIM);

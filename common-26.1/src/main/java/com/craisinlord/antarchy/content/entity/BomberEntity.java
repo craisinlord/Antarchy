@@ -220,6 +220,7 @@ public class BomberEntity extends Monster implements GeoEntity {
         controllers.add(new AnimationController<BomberEntity>("movement_controller", 0, this::movementAnimController)
                 .setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>()));
         controllers.add(new AnimationController<BomberEntity>("explode_controller", 0, this::explodeAnimController)
+                .receiveTriggeredAnimations()
                 .setSoundKeyframeHandler(new AutoPlayingSoundKeyframeHandler<>())
                 .triggerableAnim("explode", EXPLODE_ANIM));
     }
@@ -276,6 +277,9 @@ public class BomberEntity extends Monster implements GeoEntity {
     }
 
     private PlayState explodeAnimController(AnimationTest<BomberEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         if (this.isDetonating() && this.getFuseTicks() <= EXPLODE_ANIM_START_TICKS) {
             return state.setAndContinue(EXPLODE_ANIM);
         }

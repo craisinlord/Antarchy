@@ -6,6 +6,8 @@ import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.boss.BossCombatUtil;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
@@ -14,6 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -23,6 +26,7 @@ import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
@@ -35,6 +39,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -49,6 +54,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -65,13 +71,15 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class EmperorScorpionEntity extends Monster implements GeoEntity {
+public class EmperorScorpionEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final byte CLAW_ATTACK_EVENT = 4;
     private static final byte STING_ATTACK_EVENT = 5;
     private static final EntityDataAccessor<Integer> ANIMATION_STATE =
             SynchedEntityData.defineId(EmperorScorpionEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> HARDEN_PHASE =
             SynchedEntityData.defineId(EmperorScorpionEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO =
+            SynchedEntityData.defineId(EmperorScorpionEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final int DEATH_ANIM_TICKS = 40;
     private static final int ANIM_IDLE = 0;
@@ -107,6 +115,17 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     private static final double HOME_RETURN_SPEED = 1.0D;
     private static final int HOME_REPATH_INTERVAL_TICKS = 20;
     private static final double NEARBY_SCORPION_CHECK_RADIUS = 32.0D;
+    private static final int GLIMMER_XP_MULTIPLIER = 5;
+    private static final int GLIMMER_EXTRA_SCORPIONS = 2;
+    private static final int GLIMMER_PULSE_INTERVAL_TICKS = 40;
+    private static final int GLIMMER_PULSE_TELEGRAPH_TICKS = 15;
+    private static final double GLIMMER_PULSE_RADIUS = 6.0D;
+    private static final float GLIMMER_PULSE_DAMAGE_FRACTION = 0.4F;
+    private static final double GLIMMER_EFFECT_DURATION_MULTIPLIER = 1.5D;
+    private static final double GLIMMER_ABANDON_RANGE = 48.0D;
+    private static final int GLIMMER_ABANDON_TICKS = 600;
+    private static final ResourceKey<LootTable> GLIMMER_LOOT_TABLE = ResourceKey.create(Registries.LOOT_TABLE,
+            ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "entities/emperor_scorpion_glimmer"));
 
     private static final ResourceKey<Level> THORAXIS_KEY =
             ResourceKey.create(Registries.DIMENSION,
@@ -147,6 +166,8 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     @Nullable private LivingEntity attackTarget;
     private final Set<UUID> summonedScorpionIds = new HashSet<>();
     private boolean hasTakenDamage;
+    private int glimmerPulseTicks;
+    private int glimmerAbandonTicks;
 
     public EmperorScorpionEntity(EntityType<? extends EmperorScorpionEntity> entityType, Level level) {
         super(entityType, level);
@@ -168,7 +189,11 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     @Override
     public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
             MobSpawnType spawnReason, @Nullable net.minecraft.world.entity.SpawnGroupData spawnData) {
-        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, AntarchySettings.emperorScorpionHealth());
+        double health = AntarchySettings.emperorScorpionHealth();
+        if (this.isGlimmerEcho()) {
+            health *= AntarchySettings.glimmerEmperorScorpionHealthMultiplier();
+        }
+        ConfiguredMobSpawnUtil.applyConfiguredHealth(this, health);
         if (ThoraxisUndersideManager.isUndersideCeilingSpot(level, this.blockPosition(), this.getType())) {
             ThoraxisUndersideManager.applyUndersideInversion(this);
         }
@@ -180,6 +205,117 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         super.defineSynchedData(builder);
         builder.define(ANIMATION_STATE, ANIM_IDLE);
         builder.define(HARDEN_PHASE, HardenPhase.NONE.ordinal());
+        builder.define(GLIMMER_ECHO, false);
+    }
+
+    @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        boolean wasGlimmerEcho = this.isGlimmerEcho();
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
+        int baseXpReward = AntarchySettings.emperorScorpionXpReward();
+        this.xpReward = glimmerEcho ? baseXpReward * GLIMMER_XP_MULTIPLIER : baseXpReward;
+        if (glimmerEcho || wasGlimmerEcho) {
+            AttributeInstance attackDamage = this.getAttribute(Attributes.ATTACK_DAMAGE);
+            if (attackDamage != null) {
+                attackDamage.setBaseValue(AntarchySettings.emperorScorpionAttackDamage() * this.glimmerEchoDamageMultiplier());
+            }
+        }
+        this.bossEvent.setName(this.getDisplayName());
+        this.bossEvent.setColor(glimmerEcho ? BossEvent.BossBarColor.BLUE : BossEvent.BossBarColor.PURPLE);
+    }
+
+    @Override
+    public float glimmerEchoDamageMultiplier() {
+        return this.isGlimmerEcho() ? (float) AntarchySettings.glimmerEmperorScorpionDamageMultiplier() : 1.0F;
+    }
+
+    @Override
+    protected Component getTypeName() {
+        return this.isGlimmerEcho() ? Component.translatable("entity.antarchy.emperor_scorpion.glimmer") : super.getTypeName();
+    }
+
+    @Override
+    protected ResourceKey<LootTable> getDefaultLootTable() {
+        return this.isGlimmerEcho() ? GLIMMER_LOOT_TABLE : super.getDefaultLootTable();
+    }
+
+    private int scaledCooldown(int ticks) {
+        if (!this.isGlimmerEcho()) {
+            return ticks;
+        }
+        return Math.max(10, (int) Math.round(ticks * AntarchySettings.glimmerEmperorScorpionCooldownMultiplier()));
+    }
+
+    private int maxSummonedScorpions() {
+        int max = AntarchySettings.emperorScorpionMaxSummonedScorpions();
+        return this.isGlimmerEcho() ? max + GLIMMER_EXTRA_SCORPIONS : max;
+    }
+
+    private int maxNearbyScorpions() {
+        int max = AntarchySettings.emperorScorpionMaxNearbyScorpions();
+        return this.isGlimmerEcho() ? max + GLIMMER_EXTRA_SCORPIONS : max;
+    }
+
+    private boolean tickGlimmerAbandonment() {
+        if (this.tickCount % 20 != 0) {
+            return false;
+        }
+        if (GlimmerEchoes.hasPlayerWithin(this, GLIMMER_ABANDON_RANGE)) {
+            this.glimmerAbandonTicks = 0;
+            return false;
+        }
+        this.glimmerAbandonTicks += 20;
+        if (this.glimmerAbandonTicks < GLIMMER_ABANDON_TICKS) {
+            return false;
+        }
+        GlimmerEchoes.fadeAway(this);
+        return true;
+    }
+
+    private void tickGlimmerPulse() {
+        if (this.glimmerPulseTicks <= 0) {
+            this.glimmerPulseTicks = GLIMMER_PULSE_INTERVAL_TICKS;
+        }
+        this.glimmerPulseTicks--;
+        if (this.level() instanceof ServerLevel serverLevel
+                && this.glimmerPulseTicks > 0
+                && this.glimmerPulseTicks <= GLIMMER_PULSE_TELEGRAPH_TICKS
+                && this.glimmerPulseTicks % 5 == 0) {
+            double progress = 1.0D - this.glimmerPulseTicks / (double) GLIMMER_PULSE_TELEGRAPH_TICKS;
+            GlimmerEchoes.ring(serverLevel, this.position(), 1.5D + GLIMMER_PULSE_RADIUS * progress, 32);
+        }
+        if (this.glimmerPulseTicks == 0) {
+            this.applyGlimmerPulse();
+        }
+    }
+
+    private void applyGlimmerPulse() {
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        float damage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) * GLIMMER_PULSE_DAMAGE_FRACTION;
+        double rangeSqr = GLIMMER_PULSE_RADIUS * GLIMMER_PULSE_RADIUS;
+        for (ServerPlayer player : serverLevel.players()) {
+            if (!player.isAlive() || player.isSpectator() || player.isCreative() || player.distanceToSqr(this) > rangeSqr) {
+                continue;
+            }
+            if (player.hurt(AntarchyDamageSources.emperorScorpionSting(serverLevel, this), damage)) {
+                Vec3 offset = player.position().subtract(this.position());
+                Vec3 horizontal = new Vec3(offset.x, 0.0D, offset.z);
+                if (horizontal.lengthSqr() > 1.0E-4D) {
+                    horizontal = horizontal.normalize();
+                    player.push(horizontal.x * 1.1D, 0.4D, horizontal.z * 1.1D);
+                    player.hurtMarked = true;
+                }
+            }
+        }
+        GlimmerEchoes.ring(serverLevel, this.position(), GLIMMER_PULSE_RADIUS, 48);
+        this.playSound(SoundEvents.AMETHYST_BLOCK_RESONATE, 2.0F, 0.6F);
     }
 
     @Override
@@ -223,7 +359,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        if (this.hasTakenDamage || this.tickCount < AntarchySettings.emperorScorpionMinDespawnTicks()) {
+        if (this.isGlimmerEcho() || this.hasTakenDamage || this.tickCount < AntarchySettings.emperorScorpionMinDespawnTicks()) {
             return false;
         }
         return super.removeWhenFarAway(distanceToClosestPlayer);
@@ -265,6 +401,12 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     @Override
     public void tick() {
         super.tick();
+        if (!this.level().isClientSide && this.isGlimmerEcho() && this.isAlive()) {
+            GlimmerEchoes.tickAmbient(this, 3, 4);
+            if (this.tickGlimmerAbandonment()) {
+                return;
+            }
+        }
         if (!this.level().isClientSide) {
             this.tickEncounterState();
         }
@@ -324,8 +466,13 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         int poisonDuration = this.level().getDifficulty() == Difficulty.HARD
                 ? AntarchySettings.emperorScorpionPoisonTicks() * 2
                 : AntarchySettings.emperorScorpionPoisonTicks();
+        int weaknessDuration = AntarchySettings.emperorScorpionWeaknessTicks();
+        if (this.isGlimmerEcho()) {
+            poisonDuration = (int) Math.round(poisonDuration * GLIMMER_EFFECT_DURATION_MULTIPLIER);
+            weaknessDuration = (int) Math.round(weaknessDuration * GLIMMER_EFFECT_DURATION_MULTIPLIER);
+        }
         target.addEffect(new MobEffectInstance(MobEffects.POISON, poisonDuration, 1));
-        target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, AntarchySettings.emperorScorpionWeaknessTicks(), 0));
+        target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, weaknessDuration, 0));
         this.playSound(AntarchySoundEvents.EMPEROR_SCORPION_ATTACK.get(), 1.0F, 0.88F + this.random.nextFloat() * 0.08F);
         return true;
     }
@@ -341,11 +488,11 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         this.attackDamageApplied = false;
         this.getNavigation().stop();
         if (attackType == AttackType.CLAW) {
-            this.clawCooldownTicks = AntarchySettings.emperorScorpionClawCooldownTicks();
+            this.clawCooldownTicks = this.scaledCooldown(AntarchySettings.emperorScorpionClawCooldownTicks());
             this.level().broadcastEntityEvent(this, CLAW_ATTACK_EVENT);
             this.commitLunge(target, CLAW_LUNGE_SPEED, CLAW_LUNGE_LIFT);
         } else if (attackType == AttackType.STING) {
-            this.stingCooldownTicks = AntarchySettings.emperorScorpionStingCooldownTicks();
+            this.stingCooldownTicks = this.scaledCooldown(AntarchySettings.emperorScorpionStingCooldownTicks());
             this.level().broadcastEntityEvent(this, STING_ATTACK_EVENT);
             this.commitLunge(target, STING_LUNGE_SPEED, STING_LUNGE_LIFT);
         }
@@ -405,11 +552,11 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         switch (this.getHardenPhase()) {
             case CASTING -> {
                 if (this.hardenCastTicks % this.hardenCastSpawnTicks == 0
-                        && this.hardenSummonedScorpions < AntarchySettings.emperorScorpionMaxSummonedScorpions()
-                        && this.countOwnedNearbyScorpionMinions() < AntarchySettings.emperorScorpionMaxNearbyScorpions()) {
+                        && this.hardenSummonedScorpions < this.maxSummonedScorpions()
+                        && this.countOwnedNearbyScorpionMinions() < this.maxNearbyScorpions()) {
                     this.summonScorpionMinion();
                     this.hardenSummonedScorpions++;
-                    if (this.hardenSummonedScorpions >= AntarchySettings.emperorScorpionMaxSummonedScorpions()) {
+                    if (this.hardenSummonedScorpions >= this.maxSummonedScorpions()) {
                         this.beginHardening();
                         return;
                     }
@@ -435,6 +582,9 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
                     this.hardenHealTicks = HARDEN_HEAL_INTERVAL_TICKS;
                     this.heal(HARDEN_HEAL_AMOUNT);
                 }
+                if (this.isGlimmerEcho()) {
+                    this.tickGlimmerPulse();
+                }
             }
             case END -> {
                 GravityDirection direction = GravityApi.getGravityDirection(this);
@@ -451,7 +601,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     private void beginHardenCast() {
         this.setHardenPhase(HardenPhase.CASTING);
         this.hardenCastTicks = Math.max(1, AntarchySettings.emperorScorpionSummonIntervalTicks());
-        this.hardenCastSpawnTicks = Math.max(1, this.hardenCastTicks / Math.max(1, AntarchySettings.emperorScorpionMaxSummonedScorpions()));
+        this.hardenCastSpawnTicks = Math.max(1, this.hardenCastTicks / Math.max(1, this.maxSummonedScorpions()));
         this.hardenStateTicks = 0;
         this.hardenDurationTicks = 0;
         this.hardenHealTicks = 0;
@@ -472,6 +622,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         this.setHardenPhase(HardenPhase.ACTIVE);
         this.hardenDurationTicks = HARDEN_MIN_DURATION_TICKS + this.random.nextInt(HARDEN_MAX_DURATION_TICKS - HARDEN_MIN_DURATION_TICKS + 1);
         this.hardenHealTicks = HARDEN_HEAL_INTERVAL_TICKS;
+        this.glimmerPulseTicks = GLIMMER_PULSE_INTERVAL_TICKS;
     }
 
     private void beginHardeningEnd() {
@@ -507,6 +658,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         BlockPos spawnPos = this.findSummonSpawnPos(anchor.add(worldRing));
         Vec3 spawnCenter = Vec3.atCenterOf(spawnPos);
         scorpion.moveTo(spawnCenter.x, spawnCenter.y, spawnCenter.z, this.random.nextFloat() * 360.0F, 0.0F);
+        GlimmerEchoes.markSummon(this, scorpion);
         scorpion.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(spawnPos), MobSpawnType.MOB_SUMMONED, null);
         scorpion.setPersistenceRequired();
         scorpion.setSummonOwner(this.getUUID());
@@ -703,6 +855,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
         tag.putInt("HardenHealTicks", this.hardenHealTicks);
         tag.putInt("HardenSummonedScorpions", this.hardenSummonedScorpions);
         tag.putBoolean("HasTakenDamage", this.hasTakenDamage);
+        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
         if (this.encounterHome != null) {
             tag.putInt("EncounterHomeX", this.encounterHome.getX());
             tag.putInt("EncounterHomeY", this.encounterHome.getY());
@@ -713,6 +866,7 @@ public class EmperorScorpionEntity extends Monster implements GeoEntity {
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
+        this.setGlimmerEcho(tag.getBoolean(GlimmerEchoes.SAVE_KEY));
         if (tag.contains("HardenPhase")) {
             int phaseOrdinal = tag.getInt("HardenPhase");
             HardenPhase[] phases = HardenPhase.values();

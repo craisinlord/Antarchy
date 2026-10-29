@@ -8,6 +8,9 @@ import com.craisinlord.antarchy.content.effect.RoyalEffectHooks;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.antarchy.content.network.KingJudgmentFlashSync;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerSite;
+import com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -15,6 +18,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.protocol.game.ClientboundClearTitlesPacket;
@@ -47,6 +51,7 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.ChunkSource;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.AABB;
@@ -108,6 +113,8 @@ public class KingEntity extends RoyalBossEntity {
     private static final double TREE_ORBIT_RADIUS = 128.0D;
     private static final double TREE_ORBIT_ANGLE_STEP = 0.014D;
     private static final int TREE_ORBIT_PATH_SAMPLES = 16;
+    private static final int[] TREE_ORBIT_SAMPLE_ORDER = {16, 8, 4, 12, 2, 6, 10, 14, 1, 3, 5, 7, 9, 11, 13, 15};
+    private static final int TREE_PATROL_SEARCH_RETRY_TICKS = 20;
     private static final double COMBAT_ORBIT_ANGLE_STEP = 0.62D;
     private static final double KING_DAMAGE_MULTIPLIER = 1.5D;
     private static final double KING_FOLLOW_RANGE = 216.0D;
@@ -138,6 +145,11 @@ public class KingEntity extends RoyalBossEntity {
     private static final double GROUND_COMBAT_BITE_DISTANCE = 19.0D;
     private static final double GROUND_COMBAT_BITE_VARIANCE = 4.0D;
     private static final int ELEVATED_TARGET_TAKEOFF_TICKS = 40;
+    private static final int GLIMMER_DECREE_MIN_COOLDOWN = 160;
+    private static final int JUDGMENT_ACTIVE_TICKS = 9;
+    private static final int GLIMMER_JUDGMENT_ACTIVE_TICKS = 13;
+    private static final double TREE_PATROL_MIN_OFFSET = 24.0D;
+    private static final double TREE_PATROL_MAX_OFFSET = 304.0D;
     @Nullable
     private Vec3 patrolCenter;
     @Nullable
@@ -153,6 +165,7 @@ public class KingEntity extends RoyalBossEntity {
     private Vec3 treePatrolProgressPosition;
     private int treePatrolProgressTicks;
     private int treePatrolFailures;
+    private int treePatrolSearchCooldown;
     private int decreeCooldownTicks;
     private int activeDecreeTicks;
     private int decreeAnnouncementTicks;
@@ -243,6 +256,46 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     @Override
+    protected double glimmerHealthMultiplier() {
+        return AntarchySettings.glimmerKingHealthMultiplier();
+    }
+
+    @Override
+    protected double glimmerDamageMultiplier() {
+        return AntarchySettings.glimmerKingDamageMultiplier();
+    }
+
+    @Override
+    protected double glimmerCooldownMultiplier() {
+        return AntarchySettings.glimmerKingCooldownMultiplier();
+    }
+
+    @Override
+    public void onGlimmerSummoned(ServerLevel level, GlimmerSite.Match site, ServerPlayer summoner) {
+        if (!site.is(GlimmerSite.KINGS_TREE)) {
+            return;
+        }
+        BlockPos anchor = site.anchor();
+        int baseY = KingsTreeGridFeature.treeBaseY(level, anchor.getX(), anchor.getZ());
+        Vec3 center = new Vec3(anchor.getX() + 0.5D, 0.0D, anchor.getZ() + 0.5D);
+        double angle = Math.atan2(this.getZ() - center.z, this.getX() - center.x);
+        this.setTreePatrolHome(center, baseY + TREE_PATROL_MIN_OFFSET, baseY + TREE_PATROL_MAX_OFFSET,
+                Double.isFinite(angle) ? angle : 0.0D);
+    }
+
+    @Override
+    protected void onGlimmerFade() {
+        super.onGlimmerFade();
+        if (this.activeDecree != null) {
+            this.endDecree(null);
+        }
+        this.clearExile();
+        this.clearTithe();
+        this.clearTargetShot();
+        this.clearSeal();
+    }
+
+    @Override
     protected int maxConcurrentHeadAttacks(Phase phase) {
         return phase.maxConcurrentHeadAttacks();
     }
@@ -322,7 +375,7 @@ public class KingEntity extends RoyalBossEntity {
         this.getNavigation().stop();
         this.setDeltaMovement(this.getDeltaMovement().scale(0.7D));
         if (this.level() instanceof ServerLevel level && elapsedTicks % 3 == 0) {
-            level.sendParticles(nextPhase == Phase.THREE ? KING_GOLD_DUST : ParticleTypes.ELECTRIC_SPARK,
+            level.sendParticles(this.royalParticle(nextPhase == Phase.THREE ? KING_GOLD_DUST : ParticleTypes.ELECTRIC_SPARK),
                     this.getX(), this.getY() + this.getBbHeight() * 0.55D, this.getZ(),
                     18, this.getBbWidth() * 0.25D, this.getBbHeight() * 0.25D,
                     this.getBbWidth() * 0.25D, 0.08D);
@@ -354,6 +407,7 @@ public class KingEntity extends RoyalBossEntity {
         this.treePatrolProgressPosition = null;
         this.treePatrolProgressTicks = 0;
         this.treePatrolFailures = 0;
+        this.treePatrolSearchCooldown = 0;
         this.treePatrolBound = true;
     }
 
@@ -489,7 +543,7 @@ public class KingEntity extends RoyalBossEntity {
             direction = direction.scale(1.0D / distance);
             for (double walked = 0.0D; walked <= distance; walked += 2.5D) {
                 Vec3 point = start.add(direction.scale(walked));
-                level.sendParticles(particle, point.x, point.y, point.z, 2, 0.12D, 0.12D, 0.12D, 0.01D);
+                level.sendParticles(this.royalParticle(particle), point.x, point.y, point.z, 2, 0.12D, 0.12D, 0.12D, 0.01D);
             }
         }
         LivingEntity target = head.target(this.level());
@@ -543,11 +597,15 @@ public class KingEntity extends RoyalBossEntity {
                 break;
             }
             struck.add(next.getUUID());
-            LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level);
-            if (bolt != null) {
-                bolt.moveTo(next.getX(), next.getY(), next.getZ());
-                bolt.setVisualOnly(true);
-                level.addFreshEntity(bolt);
+            if (this.isGlimmerEcho()) {
+                sendGlimmerLightning(level, next.getX(), next.getY(), next.getZ());
+            } else {
+                LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level);
+                if (bolt != null) {
+                    bolt.moveTo(next.getX(), next.getY(), next.getZ());
+                    bolt.setVisualOnly(true);
+                    level.addFreshEntity(bolt);
+                }
             }
             next.hurt(this.damageSources().lightningBolt(), damage);
             from = next.position().add(0.0D, next.getBbHeight() * 0.5D, 0.0D);
@@ -581,7 +639,7 @@ public class KingEntity extends RoyalBossEntity {
     @Override
     public void tick() {
         super.tick();
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide || this.isRemoved()) {
             return;
         }
         this.tickRoyalBoundary((ServerLevel) this.level());
@@ -675,7 +733,7 @@ public class KingEntity extends RoyalBossEntity {
             double angle = (Math.PI * 2.0D * index) / COME_NO_CLOSER_PARTICLE_COUNT;
             double x = this.getX() + Math.cos(angle) * radius;
             double z = this.getZ() + Math.sin(angle) * radius;
-            serverLevel.sendParticles(keepOut ? ParticleTypes.END_ROD : KING_GOLD_DUST,
+            serverLevel.sendParticles(this.royalParticle(keepOut ? ParticleTypes.END_ROD : KING_GOLD_DUST),
                     x, this.getY() + 0.25D, z,
                     1, 0.0D, 0.0D, 0.0D, 0.0D);
         }
@@ -705,11 +763,18 @@ public class KingEntity extends RoyalBossEntity {
             this.treePatrolProgressPosition = this.position();
             this.treePatrolProgressTicks = 0;
         }
-        if (waypoint == null || this.position().distanceToSqr(waypoint) < 36.0D) {
+        if (this.treePatrolSearchCooldown > 0) {
+            this.treePatrolSearchCooldown--;
+        }
+        if ((waypoint == null || this.position().distanceToSqr(waypoint) < 36.0D)
+                && this.treePatrolSearchCooldown <= 0) {
             waypoint = this.findTreePatrolWaypoint(center, this.treePatrolAngle);
             this.treePatrolWaypoint = waypoint;
             this.treePatrolProgressPosition = this.position();
             this.treePatrolProgressTicks = 0;
+            if (waypoint == null) {
+                this.treePatrolSearchCooldown = TREE_PATROL_SEARCH_RETRY_TICKS;
+            }
         }
         if (waypoint != null) {
             this.getMoveControl().setWantedPosition(waypoint.x, waypoint.y, waypoint.z, 1.0D);
@@ -733,7 +798,7 @@ public class KingEntity extends RoyalBossEntity {
         double targetDistance = Math.sqrt(target.position().subtract(this.treePatrolCenter).multiply(1.0D, 0.0D, 1.0D).lengthSqr());
         if (targetDistance > warningRadius) {
             if (this.tickCount % 5 == 0) {
-                level.sendParticles(ParticleTypes.END_ROD, target.getX(), target.getY() + 1.0D, target.getZ(),
+                level.sendParticles(this.royalParticle(ParticleTypes.END_ROD), target.getX(), target.getY() + 1.0D, target.getZ(),
                         4, 0.3D, 0.5D, 0.3D, 0.02D);
             }
             if (targetDistance > boundaryRadius) {
@@ -818,20 +883,35 @@ public class KingEntity extends RoyalBossEntity {
     private boolean clearTreePatrolPath(Vec3 destination) {
         Vec3 start = this.position();
         AABB bounds = this.getBoundingBox();
-        for (int check = 0; check < TREE_ORBIT_PATH_SAMPLES; check++) {
-            int sample = check == 0 ? TREE_ORBIT_PATH_SAMPLES : check;
+        for (int sample : TREE_ORBIT_SAMPLE_ORDER) {
             double progress = sample / (double) TREE_ORBIT_PATH_SAMPLES;
             Vec3 point = start.lerp(destination, progress);
             AABB box = bounds.move(point.x - this.getX(), point.y - this.getY(), point.z - this.getZ());
-            if (!this.level().noCollision(this, box)) {
+            if (!this.patrolChunksLoaded(box.inflate(1.0D)) || !this.level().noCollision(this, box)) {
                 return false;
             }
         }
         return true;
     }
 
+    private boolean patrolChunksLoaded(AABB area) {
+        int minChunkX = SectionPos.blockToSectionCoord(Mth.floor(area.minX));
+        int maxChunkX = SectionPos.blockToSectionCoord(Mth.floor(area.maxX));
+        int minChunkZ = SectionPos.blockToSectionCoord(Mth.floor(area.minZ));
+        int maxChunkZ = SectionPos.blockToSectionCoord(Mth.floor(area.maxZ));
+        ChunkSource chunks = this.level().getChunkSource();
+        for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
+            for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
+                if (chunks.getChunkNow(chunkX, chunkZ) == null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private void clearLeavesAhead(ServerLevel level) {
-        if (!level.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING)) {
+        if (this.isGlimmerEcho() || !level.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_MOBGRIEFING)) {
             return;
         }
         Vec3 movement = this.getDeltaMovement().normalize().scale(1.5D);
@@ -954,8 +1034,8 @@ public class KingEntity extends RoyalBossEntity {
             case TAKEOFF -> {
                 if (--this.kingLandingStageTicks <= 0) {
                     this.kingLandingStage = KingLandingStage.AERIAL;
-                    this.groundAssaultCooldownTicks = GROUND_ASSAULT_COOLDOWN_MIN
-                            + this.random.nextInt(GROUND_ASSAULT_COOLDOWN_VARIANCE + 1);
+                    this.groundAssaultCooldownTicks = this.scaledRoyalCooldown(GROUND_ASSAULT_COOLDOWN_MIN
+                            + this.random.nextInt(GROUND_ASSAULT_COOLDOWN_VARIANCE + 1));
                     this.kingCombatWaypoint = null;
                 }
                 return;
@@ -1025,7 +1105,7 @@ public class KingEntity extends RoyalBossEntity {
             double angle = Mth.TWO_PI * index / 36.0D;
             Vec3 indicator = this.kingLandingWaypoint.add(GravityRotationUtil.vecPlayerToWorld(
                     0.0D, 0.2D, 0.0D, GravityApi.getGravityDirection(this)));
-            level.sendParticles(ParticleTypes.ELECTRIC_SPARK,
+            level.sendParticles(this.royalParticle(ParticleTypes.ELECTRIC_SPARK),
                     this.kingLandingWaypoint.x + Math.cos(angle) * radius,
                     indicator.y,
                     this.kingLandingWaypoint.z + Math.sin(angle) * radius,
@@ -1356,7 +1436,7 @@ public class KingEntity extends RoyalBossEntity {
                 arrow.setPos(this.targetShotPlayer.getX(), this.targetShotPlayer.getEyeY() - 0.1D, this.targetShotPlayer.getZ());
                 Vec3 direction = this.targetShotVictim.getEyePosition().subtract(arrow.position()).normalize();
                 arrow.setDeltaMovement(direction.scale(3.0D));
-                arrow.setBaseDamage(2.0D);
+                arrow.setBaseDamage(2.0D * this.glimmerEchoDamageMultiplier());
                 ((ServerLevel) this.level()).addFreshEntity(arrow);
                 this.targetShotPlayer.displayClientMessage(Component.literal("The King takes your shot."), true);
             }
@@ -1518,7 +1598,7 @@ public class KingEntity extends RoyalBossEntity {
             case KINGS_SEAL -> {
                 this.sealUntil = level.getGameTime() + 100L;
                 target.displayClientMessage(Component.literal("The King seals your inventory."), true);
-                level.sendParticles(KING_GOLD_DUST, target.getX(), target.getY() + 1.0D, target.getZ(),
+                level.sendParticles(this.royalParticle(KING_GOLD_DUST), target.getX(), target.getY() + 1.0D, target.getZ(),
                         30, 0.6D, 1.0D, 0.6D, 0.1D);
                 this.startSeal(target);
                 return true;
@@ -1621,7 +1701,7 @@ public class KingEntity extends RoyalBossEntity {
                         @Override public void onStart() {
                             KingEntity.this.triggerAnim("body_action", "minion_spawn");
                             KingEntity.this.playRoyalSound(AntarchySoundEvents.KING_DECREE_CAST.get(), 0.34F, 0.72F);
-                            level.sendParticles(KING_GOLD_DUST,
+                            level.sendParticles(KingEntity.this.royalParticle(KING_GOLD_DUST),
                                     KingEntity.this.getX(), KingEntity.this.getY() + 2.0D, KingEntity.this.getZ(),
                                     36, 5.0D, 2.0D, 5.0D, 0.12D);
                         }
@@ -1688,7 +1768,7 @@ public class KingEntity extends RoyalBossEntity {
                         KingEntity.this.setDeltaMovement(KingEntity.this.royalChargeDirection.scale(ROYAL_CHARGE_SPEED));
                         KingEntity.this.hasImpulse = true;
                         KingEntity.this.applyRoyalChargeHits(level);
-                        level.sendParticles(elapsedTicks % 3 == 0 ? ParticleTypes.END_ROD : KING_GOLD_DUST,
+                        level.sendParticles(KingEntity.this.royalParticle(elapsedTicks % 3 == 0 ? ParticleTypes.END_ROD : KING_GOLD_DUST),
                                 KingEntity.this.getX(), KingEntity.this.getY() + KingEntity.this.getBbHeight() * 0.5D,
                                 KingEntity.this.getZ(), 6, KingEntity.this.getBbWidth() * 0.3D,
                                 KingEntity.this.getBbHeight() * 0.22D, KingEntity.this.getBbWidth() * 0.3D, 0.03D);
@@ -1726,7 +1806,7 @@ public class KingEntity extends RoyalBossEntity {
         int samples = Math.max(6, (int) (length / 2.5D));
         for (int sample = 1; sample <= samples; sample++) {
             Vec3 point = origin.add(this.royalChargeDirection.scale(length * sample / samples));
-            level.sendParticles(sample % 4 == 0 ? ParticleTypes.END_ROD : KING_GOLD_DUST,
+            level.sendParticles(this.royalParticle(sample % 4 == 0 ? ParticleTypes.END_ROD : KING_GOLD_DUST),
                     point.x, point.y, point.z, 1, 0.025D, 0.025D, 0.025D, 0.0D);
         }
     }
@@ -1743,7 +1823,7 @@ public class KingEntity extends RoyalBossEntity {
                     0.0D, 0.45D, 0.0D, GravityApi.getGravityDirection(living));
             this.addGravityAwareImpulse(living, this.royalChargeDirection.scale(2.1D).add(lift));
             living.hasImpulse = true;
-            level.sendParticles(ParticleTypes.END_ROD, living.getX(), living.getY() + living.getBbHeight() * 0.5D,
+            level.sendParticles(this.royalParticle(ParticleTypes.END_ROD), living.getX(), living.getY() + living.getBbHeight() * 0.5D,
                     living.getZ(), 18, 0.55D, 0.7D, 0.55D, 0.08D);
         }
     }
@@ -1812,7 +1892,7 @@ public class KingEntity extends RoyalBossEntity {
             }
             if (mob.addEffect(new MobEffectInstance(commanded, AntarchySettings.kingRoyalMusterDurationTicks()), this)) {
                 applied++;
-                level.sendParticles(ParticleTypes.HAPPY_VILLAGER,
+                level.sendParticles(this.royalParticle(ParticleTypes.HAPPY_VILLAGER),
                         mob.getX(), mob.getY() + mob.getBbHeight() + 0.3D, mob.getZ(),
                         5, 0.3D, 0.2D, 0.3D, 0.02D);
             }
@@ -1861,7 +1941,7 @@ public class KingEntity extends RoyalBossEntity {
                             }
                         }
                     })) return;
-            this.fireballCooldownTicks = AntarchySettings.kingFireballCooldownTicks();
+            this.fireballCooldownTicks = this.scaledRoyalCooldown(AntarchySettings.kingFireballCooldownTicks());
         } else if ("iceball".equals(selected)) {
             if (!this.beginRoyalAttack("iceball", RoyalAttackLane.RIGHT_HEAD,
                     AntarchySettings.kingIceballCooldownTicks(), 16, 1, 5,
@@ -1879,7 +1959,7 @@ public class KingEntity extends RoyalBossEntity {
                             KingEntity.this.playRoyalSound(AntarchySoundEvents.KING_BEAM_SHOOT.get(), 1.2F);
                         }
                     })) return;
-            this.iceballCooldownTicks = AntarchySettings.kingIceballCooldownTicks();
+            this.iceballCooldownTicks = this.scaledRoyalCooldown(AntarchySettings.kingIceballCooldownTicks());
         } else {
             if (!this.beginRoyalAttack("ice_spikes", RoyalAttackLane.RIGHT_HEAD,
                     AntarchySettings.kingIceSpikeCooldownTicks(), 20, 1, 5,
@@ -1892,7 +1972,7 @@ public class KingEntity extends RoyalBossEntity {
                             KingEntity.this.playRoyalSound(AntarchySoundEvents.KING_ICE_SPIKES.get(), 0.28F, 0.8F);
                         }
                     })) return;
-            this.iceSpikeCooldownTicks = AntarchySettings.kingIceSpikeCooldownTicks();
+            this.iceSpikeCooldownTicks = this.scaledRoyalCooldown(AntarchySettings.kingIceSpikeCooldownTicks());
         }
     }
 
@@ -1927,7 +2007,7 @@ public class KingEntity extends RoyalBossEntity {
 
     private void performStomp(ServerLevel level, LivingEntity target) {
         DamageSource source = this.damageSources().mobAttack(this);
-        float base = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) * 1.4F;
+        float base = this.royalAttackDamage() * 1.4F;
         for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class,
                 this.getBoundingBox().inflate(STOMP_RADIUS),
                 e -> e.isAlive() && e instanceof Player)) {
@@ -1940,9 +2020,11 @@ public class KingEntity extends RoyalBossEntity {
             this.addGravityAwareImpulse(living, new Vec3(push.x, 0.0D, push.z).add(vertical));
             living.hasImpulse = true;
         }
-        RoyalBlockDestruction.destroySphere(level, this,
-                new Vec3(this.getX(), this.getY(), this.getZ()), STOMP_RADIUS * 0.5D, 96, 80.0D, 0.15F);
-        level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, this.getX(), this.getY(), this.getZ(), 6, 4.0D, 0.5D, 4.0D, 0.0D);
+        if (!this.isGlimmerEcho()) {
+            RoyalBlockDestruction.destroySphere(level, this,
+                    new Vec3(this.getX(), this.getY(), this.getZ()), STOMP_RADIUS * 0.5D, 96, 80.0D, 0.15F);
+        }
+        level.sendParticles(this.royalParticle(ParticleTypes.EXPLOSION_EMITTER), this.getX(), this.getY(), this.getZ(), 6, 4.0D, 0.5D, 4.0D, 0.0D);
         this.playRoyalSound(AntarchySoundEvents.KING_STOMP.get(), 0.8F);
     }
 
@@ -1964,7 +2046,7 @@ public class KingEntity extends RoyalBossEntity {
             living.hurt(this.damageSources().mobAttack(this), this.scaleRoyalDamage(6.0D));
         }
         this.spawnKingWingPressure(level, forward);
-        level.sendParticles(ParticleTypes.SWEEP_ATTACK, this.getX() + forward.x * 6.0D, this.getY() + 4.0D, this.getZ() + forward.z * 6.0D, 12, 4.0D, 2.0D, 4.0D, 0.0D);
+        level.sendParticles(this.royalParticle(ParticleTypes.SWEEP_ATTACK), this.getX() + forward.x * 6.0D, this.getY() + 4.0D, this.getZ() + forward.z * 6.0D, 12, 4.0D, 2.0D, 4.0D, 0.0D);
     }
 
     private void spawnKingWingPressure(ServerLevel level, Vec3 forward) {
@@ -1976,7 +2058,7 @@ public class KingEntity extends RoyalBossEntity {
             for (int sample = -3; sample <= 3; sample++) {
                 Vec3 point = origin.add(forward.scale(distance)).add(side.scale(width * sample / 3.0D));
                 Vec3 velocity = forward.scale(0.18D + band * 0.015D).add(0.0D, 0.025D, 0.0D);
-                level.sendParticles(sample % 2 == 0 ? KING_WHITE_DUST : ParticleTypes.CLOUD,
+                level.sendParticles(this.royalParticle(sample % 2 == 0 ? KING_WHITE_DUST : ParticleTypes.CLOUD),
                         point.x, point.y, point.z, 0, velocity.x, velocity.y, velocity.z, 1.0D);
             }
         }
@@ -2058,7 +2140,7 @@ public class KingEntity extends RoyalBossEntity {
         }
         if (this.activeDecree != null && hasCompletableParticipants && everyParticipantComplete) {
             this.projectRoyalSound(AntarchySoundEvents.KING_SUCCESS.get(), 4.0F, 1.0F, target);
-            this.endDecree(target);
+            this.completeActiveDecree(target);
             return;
         }
         if (this.decreeResponseGraceTicks > 0) {
@@ -2066,7 +2148,14 @@ public class KingEntity extends RoyalBossEntity {
         }
         if (this.activeDecree != null && --this.activeDecreeTicks <= 0) {
             this.projectRoyalSound(AntarchySoundEvents.KING_SUCCESS.get(), 4.0F, 1.0F, target);
-            this.endDecree(target);
+            this.completeActiveDecree(target);
+        }
+    }
+
+    private void completeActiveDecree(LivingEntity target) {
+        this.endDecree(target);
+        if (this.isGlimmerEcho() && target != null && target.isAlive()) {
+            this.startRoyalJudgmentBarrage(target);
         }
     }
 
@@ -2125,7 +2214,10 @@ public class KingEntity extends RoyalBossEntity {
             case TWO -> 0.82D;
             case THREE -> 0.65D;
         };
-        return Math.max(200, Mth.floor(AntarchySettings.royalDecreeCooldownTicks() * scale));
+        int cooldown = Math.max(200, Mth.floor(AntarchySettings.royalDecreeCooldownTicks() * scale));
+        return this.isGlimmerEcho()
+                ? Math.max(GLIMMER_DECREE_MIN_COOLDOWN, this.scaledRoyalCooldown(cooldown))
+                : cooldown;
     }
 
     private void endDecree(@Nullable LivingEntity target) {
@@ -2194,18 +2286,18 @@ public class KingEntity extends RoyalBossEntity {
             return;
         }
         this.beginRoyalAttack("royal_judgment", RoyalAttackLane.HAZARD, 80,
-                20, 9, 12, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                20, this.isGlimmerEcho() ? GLIMMER_JUDGMENT_ACTIVE_TICKS : JUDGMENT_ACTIVE_TICKS, 12, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
                     @Override
                     public void onStart() {
                         for (RoyalHead.Slot slot : RoyalHead.Slot.values()) {
                             KingEntity.this.triggerAnim(slot.controllerName(), "shoot");
                         }
-                        level.sendParticles(ParticleTypes.ELECTRIC_SPARK,
+                        level.sendParticles(KingEntity.this.royalParticle(ParticleTypes.ELECTRIC_SPARK),
                                 KingEntity.this.getX(), KingEntity.this.getY() + KingEntity.this.getBbHeight() * 0.7D,
                                 KingEntity.this.getZ(), 70, 4.0D, 3.0D, 4.0D, 0.12D);
                         KingEntity.this.sendRoyalJudgmentTelegraph(level, target, 0);
                         Vec3 targetFlash = target.getEyePosition();
-                        level.sendParticles(ParticleTypes.END_ROD, targetFlash.x, targetFlash.y, targetFlash.z,
+                        level.sendParticles(KingEntity.this.royalParticle(ParticleTypes.END_ROD), targetFlash.x, targetFlash.y, targetFlash.z,
                                 24, 0.35D, 0.45D, 0.35D, 0.04D);
                     }
 
@@ -2221,7 +2313,7 @@ public class KingEntity extends RoyalBossEntity {
                         if (target.isAlive() && target.level() == level) {
                             if (elapsedTicks == 0) {
                                 Vec3 targetFlash = target.getEyePosition();
-                                level.sendParticles(ParticleTypes.END_ROD, targetFlash.x, targetFlash.y, targetFlash.z,
+                                level.sendParticles(KingEntity.this.royalParticle(ParticleTypes.END_ROD), targetFlash.x, targetFlash.y, targetFlash.z,
                                         32, 0.45D, 0.55D, 0.45D, 0.05D);
                                 if (target instanceof ServerPlayer player) {
                                     KingJudgmentFlashSync.send(player, 12);
@@ -2254,7 +2346,7 @@ public class KingEntity extends RoyalBossEntity {
             int samples = Math.max(4, (int) (length / 2.0D));
             for (int sample = 1; sample <= samples; sample++) {
                 Vec3 point = origin.add(direction.scale(length * sample / samples));
-                level.sendParticles(ParticleTypes.ELECTRIC_SPARK, point.x, point.y, point.z,
+                level.sendParticles(this.royalParticle(ParticleTypes.ELECTRIC_SPARK), point.x, point.y, point.z,
                         1, 0.02D, 0.02D, 0.02D, 0.0D);
             }
         }
@@ -2262,7 +2354,7 @@ public class KingEntity extends RoyalBossEntity {
         for (int index = 0; index < 20; index++) {
             double angle = Mth.TWO_PI * index / 20.0D;
             Vec3 point = targetPoint.add(Math.cos(angle) * radius, 0.0D, Math.sin(angle) * radius);
-            level.sendParticles(ParticleTypes.ELECTRIC_SPARK, point.x, point.y, point.z,
+            level.sendParticles(this.royalParticle(ParticleTypes.ELECTRIC_SPARK), point.x, point.y, point.z,
                     1, 0.0D, 0.03D, 0.0D, 0.0D);
         }
     }
@@ -2278,6 +2370,7 @@ public class KingEntity extends RoyalBossEntity {
             bolt.setElement(RoyalBeamElement.KING_GOLD);
             bolt.setPos(origin.x, origin.y, origin.z);
             bolt.shoot(direction.x, direction.y, direction.z, 1.55F, 1.0F);
+            GlimmerEchoes.markSummon(this, bolt);
             level.addFreshEntity(bolt);
         }
         this.playRoyalSound(AntarchySoundEvents.KING_BEAM_SHOOT.get(), 1.15F);
@@ -2296,7 +2389,7 @@ public class KingEntity extends RoyalBossEntity {
         if (target == null || !target.isAlive()) return;
         long now = this.level().getGameTime();
         if (this.judgmentCooldowns.getOrDefault(target.getUUID(), 0L) <= now) {
-            this.judgmentCooldowns.put(target.getUUID(), now + 20L);
+            this.judgmentCooldowns.put(target.getUUID(), now + this.scaledRoyalCooldown(20));
             this.projectRoyalSound(AntarchySoundEvents.KING_JUDGEMENT.get(), 1.1F, 1.0F, target);
             target.hurt(this.damageSources().magic(), this.scaleRoyalDamage(6.0D));
         }

@@ -1,0 +1,39 @@
+{
+  "parent": "minecraft:adventure/root",
+  "criteria": {
+    "hold_both_berthas": {
+      "conditions": {
+        "items": [
+          {
+            "items": "antarchy:big_bertha"
+          },
+          {
+            "items": "antarchy:big_betsy"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancements.antarchy.sibling_rivalry.description"
+    },
+    "frame": "task",
+    "icon": {
+      "count": 1,
+      "id": "antarchy:big_betsy"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancements.antarchy.sibling_rivalry.title"
+    }
+  },
+  "requirements": [
+    [
+      "hold_both_berthas"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

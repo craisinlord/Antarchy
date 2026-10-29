@@ -64,6 +64,9 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     private static final EntityDataAccessor<Integer> ANIMATION_STATE =
             SynchedEntityData.defineId(BasiliskEntity.class, EntityDataSerializers.INT);
     private static final byte ATTACK_ENTITY_EVENT = 4;
+    private static final net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.Biome> FUNGAL_RESERVE = net.minecraft.resources.ResourceKey.create(
+            net.minecraft.core.registries.Registries.BIOME,
+            new net.minecraft.resources.ResourceLocation(com.craisinlord.antarchy.Antarchy.MODID, "fungal_reserve"));
     private static final int DEATH_TICKS = 25;
     private static final String TAG_HISS_COOLDOWN = "BasiliskHissCooldown";
     private static final String TAG_PREY_PETRIFY_COOLDOWN = "BasiliskPreyPetrifyCooldown";
@@ -140,7 +143,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
         }
 
         return level.getDifficulty() != Difficulty.PEACEFUL
-                && pos.getY() >= 60 && pos.getY() <= 100
+                && (pos.getY() >= 100 && pos.getY() <= 140 || level.getBiome(pos).is(FUNGAL_RESERVE))
                 && level.getMaxLocalRawBrightness(pos) <= AntarchySettings.basiliskSpawnMaxLightLevel()
                 && level.getEntitiesOfClass(BasiliskEntity.class, new AABB(pos).inflate(36.0D), Entity::isAlive).isEmpty()
                 && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);

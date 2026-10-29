@@ -3,6 +3,8 @@ package com.craisinlord.antarchy.content.entity.royal;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -35,9 +37,11 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class RoyalElementalProjectileEntity extends ThrowableProjectile implements GeoEntity {
+public class RoyalElementalProjectileEntity extends ThrowableProjectile implements GeoEntity, GlimmerEcho {
     private static final EntityDataAccessor<Integer> ATTACK_TYPE =
             SynchedEntityData.defineId(RoyalElementalProjectileEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO =
+            SynchedEntityData.defineId(RoyalElementalProjectileEntity.class, EntityDataSerializers.BOOLEAN);
     private static final int FIREBALL = 0;
     private static final int ICEBALL = 1;
     private static final int DREAM_FIREBALL = 2;
@@ -65,6 +69,7 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
         float speed = element == RoyalBeamElement.ICE ? ICEBALL_SPEED
                 : element == RoyalBeamElement.DREAM_FIRE ? DREAM_FIREBALL_SPEED : FIREBALL_SPEED;
         projectile.shoot(direction.x, direction.y, direction.z, speed, 0.0F);
+        GlimmerEchoes.markSummon(owner, projectile);
         return projectile;
     }
 
@@ -96,6 +101,17 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(ATTACK_TYPE, FIREBALL);
+        builder.define(GLIMMER_ECHO, false);
+    }
+
+    @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
     }
 
     public boolean isIceball() {
@@ -127,7 +143,7 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
         }
         super.tick();
         if (this.level().isClientSide) {
-            this.level().addParticle(this.getTrailParticle(),
+            this.level().addParticle(GlimmerEchoes.particle(this, this.getTrailParticle()),
                     this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
         }
     }
@@ -194,8 +210,10 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
                     ? royalBoss.scaleRoyalDamage(damage) : (float) damage);
             living.setRemainingFireTicks(Math.max(living.getRemainingFireTicks(), 120));
         }
-        igniteImpact(level, center, this.isDreamFireball());
-        level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, center.x, center.y, center.z, 4, 1.5D, 1.5D, 1.5D, 0.0D);
+        if (!this.isGlimmerEcho()) {
+            igniteImpact(level, center, this.isDreamFireball());
+        }
+        level.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.EXPLOSION_EMITTER), center.x, center.y, center.z, 4, 1.5D, 1.5D, 1.5D, 0.0D);
         level.playSound(null, BlockPos.containing(center), SoundEvents.GENERIC_EXPLODE.value(),
                 SoundSource.HOSTILE, this.isDreamFireball() ? 1.15F : 1.0F,
                 this.isDreamFireball() ? 0.78F : 0.92F);
@@ -234,8 +252,10 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
             living.setTicksFrozen(Math.min(living.getTicksRequiredToFreeze() + 80, living.getTicksFrozen() + 180));
             living.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 120, 3));
         }
-        coverInIce(level, center, AntarchySettings.kingIceballRadius(), AntarchySettings.kingElementalTerrainCap());
-        level.sendParticles(ParticleTypes.SNOWFLAKE, center.x, center.y, center.z, 80, 4.0D, 2.0D, 4.0D, 0.08D);
+        if (!this.isGlimmerEcho()) {
+            coverInIce(level, center, AntarchySettings.kingIceballRadius(), AntarchySettings.kingElementalTerrainCap());
+        }
+        level.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.SNOWFLAKE), center.x, center.y, center.z, 80, 4.0D, 2.0D, 4.0D, 0.08D);
     }
 
     private boolean canDamageWithImpact(LivingEntity target) {
@@ -280,12 +300,14 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("AttackType", this.entityData.get(ATTACK_TYPE));
+        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         this.setAttackType(tag.getInt("AttackType"));
+        this.setGlimmerEcho(tag.getBoolean(GlimmerEchoes.SAVE_KEY));
     }
 
     @Override

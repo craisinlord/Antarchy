@@ -478,6 +478,7 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<ManticoreEntity>("controller", 3, this::locomotionPredicate)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("bite", BITE_ANIM)
                 .triggerableAnim("fly_bite", FLY_BITE_ANIM)
                 .triggerableAnim("sting", STING_ANIM)
@@ -486,6 +487,9 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     }
 
     private PlayState locomotionPredicate(AnimationTest<ManticoreEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         if (!this.onGround()) {
             return state.setAndContinue(FLY_ANIM);
         }

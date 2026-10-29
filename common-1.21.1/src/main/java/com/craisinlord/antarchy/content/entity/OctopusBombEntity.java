@@ -2,12 +2,16 @@ package com.craisinlord.antarchy.content.entity;
 
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -31,6 +35,8 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
@@ -44,14 +50,18 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
-public class OctopusBombEntity extends Monster implements GeoEntity {
+public class OctopusBombEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final DustParticleOptions OCTOPUS_BOMB_INK_PARTICLE =
             new DustParticleOptions(new Vector3f(0.02F, 0.02F, 0.02F), 1.2F);
 
     private static final EntityDataAccessor<Integer> ATTACK_STATE = SynchedEntityData.defineId(OctopusBombEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> ANIMATION_STATE = SynchedEntityData.defineId(OctopusBombEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> CAN_FLY = SynchedEntityData.defineId(OctopusBombEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO = SynchedEntityData.defineId(OctopusBombEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final String GLIMMER_ECHO_OWNER_KEY = "GlimmerEchoOwner";
+    private static final int BASE_XP_REWARD = 15;
 
     private static final int ATTACK_NONE = 0;
     private static final int ATTACK_GRAB = 1;
@@ -92,10 +102,13 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
     private java.util.UUID explosiveLauncherId;
     private int explosiveArmTicks;
 
+    @Nullable
+    private UUID glimmerEchoOwner;
+
     public OctopusBombEntity(EntityType<? extends Monster> entityType, Level level) {
         super(entityType, level);
         this.moveControl = new SmoothSwimmingMoveControl(this, 80, 8, 0.06F, 0.12F, true);
-        this.xpReward = 15;
+        this.xpReward = BASE_XP_REWARD;
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -119,6 +132,40 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
         builder.define(ATTACK_STATE, ATTACK_NONE);
         builder.define(ANIMATION_STATE, ANIM_IDLE);
         builder.define(CAN_FLY, false);
+        builder.define(GLIMMER_ECHO, false);
+    }
+
+    @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
+        this.xpReward = glimmerEcho ? 0 : BASE_XP_REWARD;
+    }
+
+    @Override
+    public void setGlimmerEchoOwner(@Nullable UUID owner) {
+        this.glimmerEchoOwner = owner;
+    }
+
+    private int glimmerCooldown(int ticks) {
+        if (!this.isGlimmerEcho()) {
+            return ticks;
+        }
+        return Math.max(1, (int) Math.round(ticks * com.craisinlord.antarchy.config.AntarchySettings.glimmerKrakenCooldownMultiplier()));
+    }
+
+    @Override
+    protected Component getTypeName() {
+        return this.isGlimmerEcho() ? Component.translatable("entity.antarchy.octopus_bomb.glimmer") : super.getTypeName();
+    }
+
+    @Override
+    protected ResourceKey<LootTable> getDefaultLootTable() {
+        return this.isGlimmerEcho() ? BuiltInLootTables.EMPTY : super.getDefaultLootTable();
     }
 
     @Override
@@ -194,6 +241,12 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
     @Override
     public void tick() {
         super.tick();
+        if (!this.level().isClientSide && this.isGlimmerEcho()) {
+            GlimmerEchoes.tickAmbient(this, 8, 3);
+            if (GlimmerEchoes.tickOwnedSummon(this, this.glimmerEchoOwner)) {
+                return;
+            }
+        }
         this.setNoGravity(this.isInWater() || this.canFly());
 
         if (this.explosiveImpact && !this.level().isClientSide) {
@@ -293,6 +346,10 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
         tag.putBoolean("CanFly", this.canFly());
         tag.putBoolean("SpawnedByKraken", this.spawnedByKraken);
         tag.putInt("AnimationState", this.getAnimationState());
+        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
+        if (this.glimmerEchoOwner != null) {
+            tag.putUUID(GLIMMER_ECHO_OWNER_KEY, this.glimmerEchoOwner);
+        }
     }
 
     @Override
@@ -303,6 +360,8 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
         this.lastAttackState = tag.contains("LastAttackState") ? tag.getInt("LastAttackState") : ATTACK_NONE;
         this.setCanFly(tag.getBoolean("CanFly"));
         this.spawnedByKraken = tag.getBoolean("SpawnedByKraken");
+        this.setGlimmerEcho(tag.getBoolean(GlimmerEchoes.SAVE_KEY));
+        this.glimmerEchoOwner = tag.hasUUID(GLIMMER_ECHO_OWNER_KEY) ? tag.getUUID(GLIMMER_ECHO_OWNER_KEY) : null;
         this.grabbedTargetId = -1;
         this.actionTicks = 0;
         this.entityData.set(ATTACK_STATE, ATTACK_NONE);
@@ -415,8 +474,8 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
 
         serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(),
                 net.minecraft.sounds.SoundEvents.GENERIC_EXPLODE, net.minecraft.sounds.SoundSource.HOSTILE, 2.0F, 0.9F);
-        serverLevel.sendParticles(OCTOPUS_BOMB_INK_PARTICLE, this.getX(), this.getY(), this.getZ(), 125, radius * 0.5D, radius * 0.5D, radius * 0.5D, 0.1D);
-        serverLevel.sendParticles(OCTOPUS_BOMB_INK_PARTICLE, this.getX(), this.getY(), this.getZ(), 75, radius * 0.2D, radius * 0.2D, radius * 0.2D, 0.2D);
+        serverLevel.sendParticles(GlimmerEchoes.particle(this, OCTOPUS_BOMB_INK_PARTICLE), this.getX(), this.getY(), this.getZ(), 125, radius * 0.5D, radius * 0.5D, radius * 0.5D, 0.1D);
+        serverLevel.sendParticles(GlimmerEchoes.particle(this, OCTOPUS_BOMB_INK_PARTICLE), this.getX(), this.getY(), this.getZ(), 75, radius * 0.2D, radius * 0.2D, radius * 0.2D, 0.2D);
         serverLevel.sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY(), this.getZ(), 4, 0.5D, 0.5D, 0.5D, 0.0D);
         this.discard();
     }
@@ -427,14 +486,14 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
         Player nearbyPlayer = this.level().getNearestPlayer(this, INK_SPRAY_RANGE);
         if (nearbyPlayer == null || nearbyPlayer.isCreative() || nearbyPlayer.isSpectator()) return;
 
-        this.inkSprayCooldown = INK_SPRAY_COOLDOWN;
+        this.inkSprayCooldown = this.glimmerCooldown(INK_SPRAY_COOLDOWN);
         this.playSound(AntarchySoundEvents.KRAKEN_HURT.get(), 1.0F, 1.49F);
 
         double cx = this.getX();
         double cy = this.getY() + this.getBbHeight() * 0.5D;
         double cz = this.getZ();
-        serverLevel.sendParticles(OCTOPUS_BOMB_INK_PARTICLE, cx, cy, cz, 60, 2.0D, 1.2D, 2.0D, 0.04D);
-        serverLevel.sendParticles(OCTOPUS_BOMB_INK_PARTICLE, cx, cy, cz, 30, 3.5D, 1.8D, 3.5D, 0.02D);
+        serverLevel.sendParticles(GlimmerEchoes.particle(this, OCTOPUS_BOMB_INK_PARTICLE), cx, cy, cz, 60, 2.0D, 1.2D, 2.0D, 0.04D);
+        serverLevel.sendParticles(GlimmerEchoes.particle(this, OCTOPUS_BOMB_INK_PARTICLE), cx, cy, cz, 30, 3.5D, 1.8D, 3.5D, 0.02D);
     }
 
     private void tickPursuitMovement(LivingEntity target) {
@@ -493,7 +552,7 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
             this.holdGrabbedTarget(grabbed);
             if (this.actionTicks <= 45 && this.actionTicks > 10 && this.actionTicks % 10 == 0) {
                 if (this.level() instanceof ServerLevel serverLevel) {
-                    grabbed.hurt(AntarchyDamageSources.krakenMauling(serverLevel, this), 4.0F);
+                    grabbed.hurt(AntarchyDamageSources.krakenMauling(serverLevel, this), 4.0F * GlimmerEchoes.ownerDamageMultiplier(this, this.glimmerEchoOwner));
                 }
             }
         }
@@ -514,7 +573,7 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
         int finished = this.getAttackState();
         this.setAttackState(ATTACK_NONE);
         this.actionTicks = 0;
-        this.attackCooldown = 18;
+        this.attackCooldown = this.glimmerCooldown(18);
         this.grabbedTargetId = -1;
         this.lastAttackState = finished;
     }
@@ -538,7 +597,7 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
         AABB hitBox = this.getBoundingBox().inflate(7.0D, 3.0D, 7.0D);
         List<Player> players = this.level().getEntitiesOfClass(Player.class, hitBox,
                 p -> p.isAlive() && this.isTargetInFront(p, -0.15D));
-        float damage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE);
+        float damage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) * GlimmerEchoes.ownerDamageMultiplier(this, this.glimmerEchoOwner);
         for (Player player : players) {
             if (this.level() instanceof ServerLevel serverLevel) {
                 player.hurt(AntarchyDamageSources.krakenMauling(serverLevel, this), damage);
@@ -654,7 +713,6 @@ public class OctopusBombEntity extends Monster implements GeoEntity {
         if (this.deathTime == 1) this.setAnimationState(ANIM_DEATH);
         if (this.deathTime >= DEATH_ANIM_TICKS) {
             this.remove(RemovalReason.KILLED);
-            this.dropExperience(this);
         }
     }
 

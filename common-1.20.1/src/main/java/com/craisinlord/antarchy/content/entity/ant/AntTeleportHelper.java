@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.entity.ant;
 
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaArrival;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
 import java.util.ArrayList;
@@ -37,6 +38,10 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 public final class AntTeleportHelper {
+    private static final ResourceKey<Level> ELYTHIA = ResourceKey.create(
+            net.minecraft.core.registries.Registries.DIMENSION,
+            new ResourceLocation(com.craisinlord.antarchy.Antarchy.MODID, "elythia")
+    );
     private static final double COMPANION_FOLLOW_RADIUS = 16.0D;
     private static final int ARRIVAL_SEARCH_RADIUS = 24;
     private static final int ARRIVAL_VERTICAL_SEARCH = 24;
@@ -253,7 +258,7 @@ public final class AntTeleportHelper {
     }
 
     public static void prepareArrival(ServerPlayer player, ServerLevel destination, Consumer<Vec3> onArrival) {
-        BlockPos preferredPos = preferredArrivalPos(player, destination);
+        BlockPos preferredPos = ElythiaArrival.nearestPlateau(destination, preferredArrivalPos(player, destination));
         AntArrivalScheduler.request(player, destination, preferredPos, ARRIVAL_SEARCH_RADIUS, () -> {
             int[] yRange = getDimensionYRange(destination);
             if (yRange == null) {
@@ -289,7 +294,7 @@ public final class AntTeleportHelper {
 
     @Nullable
     public static Vec3 getDestinationPosition(ServerPlayer player, ServerLevel destination) {
-        return findSafeArrivalPosition(player, destination, preferredArrivalPos(player, destination));
+        return findSafeArrivalPosition(player, destination, ElythiaArrival.nearestPlateau(destination, preferredArrivalPos(player, destination)));
     }
 
     private static BlockPos preferredArrivalPos(ServerPlayer player, ServerLevel destination) {
@@ -413,6 +418,9 @@ public final class AntTeleportHelper {
     @Nullable
     private static int[] getDimensionYRange(ServerLevel destination) {
         ResourceKey<Level> dim = destination.dimension();
+        if (dim == ELYTHIA) {
+            return new int[]{ElythiaArrival.MIN_ARRIVAL_Y, 280};
+        }
         if (dim == PermanentPortalType.ELYTHIA.primaryDimension()) {
             return new int[]{64, 240};
         }

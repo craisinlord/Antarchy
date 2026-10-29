@@ -6,6 +6,7 @@ import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.block.OuranwoodAcornBlock;
 import com.craisinlord.antarchy.content.block.OuranwoodLeavesBlock;
+import it.unimi.dsi.fastutil.ints.IntArrays;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ItemParticleOption;
@@ -57,6 +58,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     private static final ResourceKey<Level> ELYTHIA_DIMENSION = ResourceKey.create(
@@ -124,6 +126,8 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     private static final double SHOULDER_X_OFFSET = 0.0D;
     private static final double SHOULDER_FORWARD_OFFSET = 0.0475D;
     private static final double SHOULDER_HEAD_Y_OFFSET = 0.26D;
+    private static final double SCORE_BOUND_EPSILON = 1.0E-6D;
+    private static final Predicate<BlockState> ACORN_BLOCK_PREDICATE = state -> state.getBlock() instanceof OuranwoodAcornBlock;
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
@@ -209,7 +213,7 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
         }
 
         return level.getLevel().dimension().equals(ELYTHIA_DIMENSION)
-                && pos.getY() >= 80
+                && pos.getY() >= 120
                 && !level.isEmptyBlock(pos)
                 && level.isEmptyBlock(pos.above())
                 && hasNearbyCanopy(level, pos);
@@ -1202,29 +1206,84 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
                 && this.recentGlideTarget.closerThan(targetStandPos, 4.0D);
     }
 
+    @Nullable
+    private BlockPos getRecentGlideTargetFrom(Vec3 launchFrom) {
+        if (this.recentGlideCooldown <= 0 || this.recentGlideLaunch == null || this.recentGlideTarget == null) {
+            return null;
+        }
+
+        BlockPos launchPos = BlockPos.containing(launchFrom);
+        return this.recentGlideLaunch.closerThan(launchPos, 4.0D) ? this.recentGlideTarget : null;
+    }
+
     boolean isAtStandPos(BlockPos standPos) {
         return Vec3.atBottomCenterOf(standPos).distanceToSqr(this.position()) <= 1.45D;
     }
 
+    private boolean isAtStandPos(int x, int y, int z) {
+        double dx = this.getX() - (x + 0.5D);
+        double dy = this.getY() - y;
+        double dz = this.getZ() - (z + 0.5D);
+        return dx * dx + dy * dy + dz * dz <= 1.45D;
+    }
+
     @Nullable BlockPos findClosestHarvestableAcorn() {
         BlockPos origin = this.blockPosition();
-        BlockPos bestPos = null;
+        int minX = origin.getX() - 16;
+        int minY = origin.getY() - 6;
+        int minZ = origin.getZ() - 16;
+        int maxX = origin.getX() + 16;
+        int maxY = origin.getY() + 8;
+        int maxZ = origin.getZ() + 16;
+        int width = maxX - minX + 1;
+        int height = maxY - minY + 1;
+        SquirrelBlockReader reader = new SquirrelBlockReader(this.level());
+        int bestX = 0;
+        int bestY = 0;
+        int bestZ = 0;
+        int bestIndex = -1;
         double bestDistance = Double.MAX_VALUE;
 
-        for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-16, -6, -16), origin.offset(16, 8, 16))) {
-            BlockState state = this.level().getBlockState(pos);
-            if (!isHarvestableAcorn(state)) {
-                continue;
-            }
+        for (int sectionZ = minZ >> 4; sectionZ <= maxZ >> 4; sectionZ++) {
+            int fromZ = Math.max(minZ, sectionZ << 4);
+            int toZ = Math.min(maxZ, (sectionZ << 4) + 15);
+            for (int sectionY = minY >> 4; sectionY <= maxY >> 4; sectionY++) {
+                int fromY = Math.max(minY, sectionY << 4);
+                int toY = Math.min(maxY, (sectionY << 4) + 15);
+                for (int sectionX = minX >> 4; sectionX <= maxX >> 4; sectionX++) {
+                    int fromX = Math.max(minX, sectionX << 4);
+                    int toX = Math.min(maxX, (sectionX << 4) + 15);
+                    if (!reader.sectionMayContain(fromX, fromY, fromZ, ACORN_BLOCK_PREDICATE)) {
+                        continue;
+                    }
 
-            double distance = origin.distSqr(pos);
-            if (distance < bestDistance) {
-                bestDistance = distance;
-                bestPos = pos.immutable();
+                    for (int z = fromZ; z <= toZ; z++) {
+                        for (int y = fromY; y <= toY; y++) {
+                            for (int x = fromX; x <= toX; x++) {
+                                if (!isHarvestableAcorn(reader.getBlockState(x, y, z))) {
+                                    continue;
+                                }
+
+                                double dx = origin.getX() - x;
+                                double dy = origin.getY() - y;
+                                double dz = origin.getZ() - z;
+                                double distance = dx * dx + dy * dy + dz * dz;
+                                int index = ((z - minZ) * height + (y - minY)) * width + (x - minX);
+                                if (distance < bestDistance || (distance == bestDistance && index < bestIndex)) {
+                                    bestDistance = distance;
+                                    bestIndex = index;
+                                    bestX = x;
+                                    bestY = y;
+                                    bestZ = z;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
-        return bestPos;
+        return bestIndex < 0 ? null : new BlockPos(bestX, bestY, bestZ);
     }
 
     @Nullable ItemEntity findClosestNutItem() {
@@ -1250,22 +1309,24 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     @Nullable BlockPos findAcornHarvestStandPos(BlockPos acornPos) {
         BlockPos bestPos = null;
         double bestScore = Double.MAX_VALUE;
+        Vec3 acornCenter = Vec3.atCenterOf(acornPos);
+        SquirrelBlockReader reader = new SquirrelBlockReader(this.level());
 
         for (int dx = -3; dx <= 3; dx++) {
             for (int dz = -3; dz <= 3; dz++) {
                 for (int dy = -3; dy <= 3; dy++) {
                     BlockPos standPos = acornPos.offset(dx, dy, dz);
-                    if (!isOpenStandPos(this.level(), standPos)) {
+                    double distanceToAcorn = Vec3.atBottomCenterOf(standPos).distanceToSqr(acornCenter);
+                    if (distanceToAcorn > 9.0D || !(distanceToAcorn - 1.0D < bestScore)) {
                         continue;
                     }
 
-                    double distanceToAcorn = Vec3.atBottomCenterOf(standPos).distanceToSqr(Vec3.atCenterOf(acornPos));
-                    if (distanceToAcorn > 9.0D) {
+                    if (!isOpenStandPos(reader, standPos.getX(), standPos.getY(), standPos.getZ())) {
                         continue;
                     }
 
                     double score = distanceToAcorn;
-                    if (isAdjacentToLog(this.level(), standPos)) {
+                    if (isAdjacentToLog(reader, standPos.getX(), standPos.getY(), standPos.getZ())) {
                         score -= 1.0D;
                     }
                     if (score < bestScore) {
@@ -1346,53 +1407,139 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
             preferredDirection = preferredDirection.normalize();
         }
 
-        for (int dx = -20; dx <= 20; dx++) {
-            for (int dz = -20; dz <= 20; dz++) {
-                for (int dy = -28; dy <= -2; dy++) {
-                    BlockPos supportPos = origin.offset(dx, dy, dz);
-                    BlockState supportState = this.level().getBlockState(supportPos);
-                    if (!isStandableSurface(supportState)) {
-                        continue;
-                    }
+        double posX = this.getX();
+        double posZ = this.getZ();
+        boolean hasPreferredDirection = preferredDirection.lengthSqr() > 1.0E-4D;
+        BlockPos recentTarget = this.getRecentGlideTargetFrom(this.position());
+        int columnCount = 41 * 41;
+        int[] columnOrder = new int[columnCount];
+        double[] columnDistance = new double[columnCount];
+        double[] columnAlignment = new double[columnCount];
+        boolean[] columnAligned = new boolean[columnCount];
+        double[] columnUpper = new double[columnCount];
+        int sortedCount = 0;
+        double maxDropTerm = Math.min(18.0D, 18.0D) * 0.8D;
 
-                    BlockPos standPos = supportPos.above();
-                    if (!isEmergencyLandingPos(this.level(), standPos)) {
-                        continue;
-                    }
-                    if (this.isRecentGlidePath(this.position(), standPos)) {
-                        continue;
-                    }
+        for (int column = 0; column < columnCount; column++) {
+            int dx = column / 41 - 20;
+            int dz = column % 41 - 20;
+            double standCenterX = origin.getX() + dx + 0.5D;
+            double standCenterZ = origin.getZ() + dz + 0.5D;
+            double horizontalDistance = Math.sqrt((standCenterX - posX) * (standCenterX - posX)
+                    + (standCenterZ - posZ) * (standCenterZ - posZ));
+            if (horizontalDistance < 3.0D || horizontalDistance > 28.0D) {
+                continue;
+            }
 
-                    Vec3 standCenter = Vec3.atBottomCenterOf(standPos);
-                    double horizontalDistance = Math.sqrt((standCenter.x - this.getX()) * (standCenter.x - this.getX())
-                            + (standCenter.z - this.getZ()) * (standCenter.z - this.getZ()));
-                    if (horizontalDistance < 3.0D || horizontalDistance > 28.0D) {
-                        continue;
-                    }
+            boolean aligned = false;
+            double alignmentTerm = 0.0D;
+            if (hasPreferredDirection) {
+                Vec3 toTarget = new Vec3(standCenterX - posX, 0.0D, standCenterZ - posZ);
+                if (toTarget.lengthSqr() > 1.0E-4D) {
+                    double alignment = preferredDirection.dot(toTarget.normalize());
+                    alignmentTerm = alignment * 10.0D;
+                    aligned = true;
+                }
+            }
 
-                    double verticalDrop = origin.getY() - standPos.getY();
-                    double score = horizontalDistance * 1.6D;
-                    score += Math.min(verticalDrop, 18.0D) * 0.8D;
-                    if (preferredDirection.lengthSqr() > 1.0E-4D) {
-                        Vec3 toTarget = new Vec3(standCenter.x - this.getX(), 0.0D, standCenter.z - this.getZ());
-                        if (toTarget.lengthSqr() > 1.0E-4D) {
-                            double alignment = preferredDirection.dot(toTarget.normalize());
-                            score += alignment * 10.0D;
-                        }
-                    }
-                    if (isAdjacentToLog(this.level(), standPos)) {
-                        score += 4.0D;
-                    }
-                    if (supportState.getBlock() instanceof OuranwoodLeavesBlock) {
-                        score += 6.0D;
-                    } else if (supportState.blocksMotion()) {
-                        score += 2.0D;
-                    }
+            double upper = horizontalDistance * 1.6D;
+            upper += maxDropTerm;
+            if (aligned) {
+                upper += alignmentTerm;
+            }
+            upper += 4.0D;
+            upper += 6.0D;
 
-                    if (score > bestScore) {
-                        bestScore = score;
-                        bestPos = standPos.immutable();
+            columnDistance[column] = horizontalDistance;
+            columnAlignment[column] = alignmentTerm;
+            columnAligned[column] = aligned;
+            columnUpper[column] = upper;
+            columnOrder[sortedCount++] = column;
+        }
+
+        IntArrays.quickSort(columnOrder, 0, sortedCount, (a, b) -> {
+            int compare = Double.compare(columnUpper[b], columnUpper[a]);
+            return compare != 0 ? compare : Integer.compare(a, b);
+        });
+
+        SquirrelBlockReader reader = new SquirrelBlockReader(this.level());
+        int bestIndex = Integer.MAX_VALUE;
+
+        for (int k = 0; k < sortedCount; k++) {
+            int column = columnOrder[k];
+            if (columnUpper[column] < bestScore) {
+                break;
+            }
+
+            int x = origin.getX() + column / 41 - 20;
+            int z = origin.getZ() + column % 41 - 20;
+            double horizontalDistance = columnDistance[column];
+            double alignmentTerm = columnAlignment[column];
+            boolean aligned = columnAligned[column];
+
+            for (int dy = -28; dy <= -2; dy++) {
+                int supportY = origin.getY() + dy;
+                if (reader.sectionHasOnlyAir(x, supportY, z)) {
+                    dy = (supportY | 15) - origin.getY();
+                    continue;
+                }
+
+                int standY = supportY + 1;
+                double verticalDrop = origin.getY() - standY;
+                double baseScore = horizontalDistance * 1.6D;
+                baseScore += Math.min(verticalDrop, 18.0D) * 0.8D;
+                if (aligned) {
+                    baseScore += alignmentTerm;
+                }
+                int index = column * 27 + (dy + 28);
+                double maxScore = baseScore + 4.0D + 6.0D;
+                if (!(maxScore > bestScore || (maxScore == bestScore && index < bestIndex))) {
+                    continue;
+                }
+
+                BlockState supportState = reader.getBlockState(x, supportY, z);
+                if (!isStandableSurface(supportState)) {
+                    continue;
+                }
+                if (!reader.isAir(x, standY, z)) {
+                    continue;
+                }
+                if (recentTarget != null && isWithinFourBlocks(recentTarget, x, standY, z)) {
+                    continue;
+                }
+
+                double surfaceBonus = 0.0D;
+                boolean hasSurfaceBonus = true;
+                if (supportState.getBlock() instanceof OuranwoodLeavesBlock) {
+                    surfaceBonus = 6.0D;
+                } else if (supportState.blocksMotion()) {
+                    surfaceBonus = 2.0D;
+                } else {
+                    hasSurfaceBonus = false;
+                }
+
+                double logScore = baseScore + 4.0D;
+                if (hasSurfaceBonus) {
+                    logScore += surfaceBonus;
+                }
+                if (!(logScore > bestScore || (logScore == bestScore && index < bestIndex))) {
+                    continue;
+                }
+
+                double score;
+                if (isAdjacentToLog(reader, x, standY, z)) {
+                    score = logScore;
+                } else {
+                    score = baseScore;
+                    if (hasSurfaceBonus) {
+                        score += surfaceBonus;
                     }
+                }
+
+                if (score > bestScore || (score == bestScore && index < bestIndex)) {
+                    bestScore = score;
+                    bestIndex = index;
+                    bestPos = new BlockPos(x, standY, z);
                 }
             }
         }
@@ -1410,27 +1557,41 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
         BlockPos bestPos = null;
         double bestScore = Double.NEGATIVE_INFINITY;
 
+        Vec3 from = this.position();
+        BlockPos recentTarget = this.getRecentGlideTargetFrom(from);
+        SquirrelBlockReader reader = new SquirrelBlockReader(this.level());
+
         for (int dx = -24; dx <= 24; dx++) {
+            int x = origin.getX() + dx;
+            double offsetX = x + 0.5D - from.x;
             for (int dz = -24; dz <= 24; dz++) {
+                int z = origin.getZ() + dz;
+                double offsetZ = z + 0.5D - from.z;
+                double horizontalDistance = Math.sqrt(offsetX * offsetX + offsetZ * offsetZ);
+                if (horizontalDistance < MIN_GLIDE_DISTANCE || horizontalDistance > MAX_GLIDE_DISTANCE) {
+                    continue;
+                }
+
                 for (int dy = -32; dy <= -1; dy++) {
-                    BlockPos supportPos = origin.offset(dx, dy, dz);
-                    if (!isStandableSurface(this.level().getBlockState(supportPos))) {
+                    int supportY = origin.getY() + dy;
+                    int standY = supportY + 1;
+                    double score = scoreGlideTargetFrom(from, x, standY, z);
+                    if (!(score > bestScore)) {
                         continue;
                     }
 
-                    BlockPos standPos = supportPos.above();
-                    if (!isOpenStandPos(this.level(), standPos)) {
+                    if (!isStandableSurface(reader.getBlockState(x, supportY, z))) {
                         continue;
                     }
-                    if (this.isRecentGlidePath(this.position(), standPos)) {
+                    if (!reader.isAir(x, standY, z) || !reader.isAir(x, standY + 1, z)) {
+                        continue;
+                    }
+                    if (recentTarget != null && isWithinFourBlocks(recentTarget, x, standY, z)) {
                         continue;
                     }
 
-                    double score = this.scoreGlideTarget(standPos);
-                    if (score > bestScore) {
-                        bestScore = score;
-                        bestPos = standPos.immutable();
-                    }
+                    bestScore = score;
+                    bestPos = new BlockPos(x, standY, z);
                 }
             }
         }
@@ -1446,21 +1607,15 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
 
         BlockPos origin = this.blockPosition();
         int minY = Math.max(this.level().getMinBuildHeight() + 1, origin.getY() - 40);
+        SquirrelBlockReader reader = new SquirrelBlockReader(this.level());
 
         for (int step = 4; step <= 18; step += 2) {
             int x = Mth.floor(this.getX() + preferredDirection.x * step);
             int z = Mth.floor(this.getZ() + preferredDirection.z * step);
 
-            for (int y = origin.getY() - 2; y >= minY; y--) {
-                BlockPos supportPos = new BlockPos(x, y, z);
-                if (!isStandableSurface(this.level().getBlockState(supportPos))) {
-                    continue;
-                }
-
-                BlockPos standPos = supportPos.above();
-                if (isEmergencyLandingPos(this.level(), standPos)) {
-                    return standPos;
-                }
+            BlockPos landing = findLandingInColumn(reader, x, z, origin.getY() - 2, minY);
+            if (landing != null) {
+                return landing;
             }
         }
 
@@ -1472,19 +1627,21 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
         Vec3 preferredDirection = this.getPreferredGlideDirection();
         BlockPos origin = this.blockPosition();
         int minY = Math.max(this.level().getMinBuildHeight() + 1, origin.getY() - 96);
+        SquirrelBlockReader reader = new SquirrelBlockReader(this.level());
 
         for (int forward = 4; forward <= 20; forward += 2) {
             double sampleX = this.getX() + preferredDirection.x * forward;
             double sampleZ = this.getZ() + preferredDirection.z * forward;
 
-            BlockPos landing = this.findLandingInColumn(Mth.floor(sampleX), Mth.floor(sampleZ), origin.getY() - 1, minY);
+            BlockPos landing = findLandingInColumn(reader, Mth.floor(sampleX), Mth.floor(sampleZ), origin.getY() - 1, minY);
             if (landing != null && !this.isRecentGlidePath(this.position(), landing)) {
                 return landing;
             }
 
             Vec3 side = new Vec3(-preferredDirection.z, 0.0D, preferredDirection.x);
             for (int lateral = 2; lateral <= 4; lateral += 2) {
-                BlockPos leftLanding = this.findLandingInColumn(
+                BlockPos leftLanding = findLandingInColumn(
+                        reader,
                         Mth.floor(sampleX + side.x * lateral),
                         Mth.floor(sampleZ + side.z * lateral),
                         origin.getY() - 1,
@@ -1494,7 +1651,8 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
                     return leftLanding;
                 }
 
-                BlockPos rightLanding = this.findLandingInColumn(
+                BlockPos rightLanding = findLandingInColumn(
+                        reader,
                         Mth.floor(sampleX - side.x * lateral),
                         Mth.floor(sampleZ - side.z * lateral),
                         origin.getY() - 1,
@@ -1506,21 +1664,23 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
             }
         }
 
-        BlockPos directLanding = this.findLandingInColumn(origin.getX(), origin.getZ(), origin.getY() - 1, minY);
+        BlockPos directLanding = findLandingInColumn(reader, origin.getX(), origin.getZ(), origin.getY() - 1, minY);
         return directLanding != null && !this.isRecentGlidePath(this.position(), directLanding) ? directLanding : null;
     }
 
     @Nullable
-    private BlockPos findLandingInColumn(int x, int z, int startY, int minY) {
+    private static BlockPos findLandingInColumn(SquirrelBlockReader reader, int x, int z, int startY, int minY) {
         for (int y = startY; y >= minY; y--) {
-            BlockPos supportPos = new BlockPos(x, y, z);
-            if (!isStandableSurface(this.level().getBlockState(supportPos))) {
+            if (reader.sectionHasOnlyAir(x, y, z)) {
+                y &= ~15;
+                continue;
+            }
+            if (!isStandableSurface(reader.getBlockState(x, y, z))) {
                 continue;
             }
 
-            BlockPos standPos = supportPos.above();
-            if (isEmergencyLandingPos(this.level(), standPos)) {
-                return standPos.immutable();
+            if (reader.isAir(x, y + 1, z)) {
+                return new BlockPos(x, y + 1, z);
             }
         }
 
@@ -1566,11 +1726,6 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
                 && isStandableSurface(level.getBlockState(pos.below()));
     }
 
-    private static boolean isEmergencyLandingPos(BlockGetter level, BlockPos pos) {
-        return level.getBlockState(pos).isAir()
-                && isStandableSurface(level.getBlockState(pos.below()));
-    }
-
     static boolean isOpenAir(BlockGetter level, BlockPos pos) {
         return level.getBlockState(pos).isAir()
                 && level.getBlockState(pos.above()).isAir();
@@ -1581,14 +1736,52 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
                 && isClimbPassable(level.getBlockState(pos.above()));
     }
 
-    static boolean isAdjacentToLog(BlockGetter level, BlockPos pos) {
+    static boolean hasNearbyCanopy(SquirrelBlockReader reader, int x, int y, int z) {
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
+                for (int dy = -2; dy <= 2; dy++) {
+                    if (isCanopySupport(reader.getBlockState(x + dx, y + dy, z + dz))) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    static boolean isOpenStandPos(SquirrelBlockReader reader, int x, int y, int z) {
+        return reader.isAir(x, y, z)
+                && reader.isAir(x, y + 1, z)
+                && isStandableSurface(reader.getBlockState(x, y - 1, z));
+    }
+
+    static boolean isOpenAir(SquirrelBlockReader reader, int x, int y, int z) {
+        return reader.isAir(x, y, z)
+                && reader.isAir(x, y + 1, z);
+    }
+
+    static boolean isOpenClimbPos(SquirrelBlockReader reader, int x, int y, int z) {
+        return isClimbPassable(reader.getBlockState(x, y, z))
+                && isClimbPassable(reader.getBlockState(x, y + 1, z));
+    }
+
+    static boolean isAdjacentToLog(SquirrelBlockReader reader, int x, int y, int z) {
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            if (level.getBlockState(pos.relative(direction)).is(net.minecraft.tags.BlockTags.LOGS)
-                    || level.getBlockState(pos.above().relative(direction)).is(net.minecraft.tags.BlockTags.LOGS)) {
+            int sx = x + direction.getStepX();
+            int sz = z + direction.getStepZ();
+            if (reader.getBlockState(sx, y, sz).is(net.minecraft.tags.BlockTags.LOGS)
+                    || reader.getBlockState(sx, y + 1, sz).is(net.minecraft.tags.BlockTags.LOGS)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static boolean isWithinFourBlocks(BlockPos pos, int x, int y, int z) {
+        double dx = pos.getX() - x;
+        double dy = pos.getY() - y;
+        double dz = pos.getZ() - z;
+        return dx * dx + dy * dy + dz * dz < 16.0D;
     }
 
     static boolean isHarvestableAcorn(BlockState state) {
@@ -1705,12 +1898,14 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     }
 
     double scoreGlideTargetFrom(Vec3 from, BlockPos standPos) {
-        Vec3 to = Vec3.atBottomCenterOf(standPos);
+        return scoreGlideTargetFrom(from, standPos.getX(), standPos.getY(), standPos.getZ());
+    }
 
-        double dx = to.x - from.x;
-        double dz = to.z - from.z;
+    static double scoreGlideTargetFrom(Vec3 from, int x, int y, int z) {
+        double dx = x + 0.5D - from.x;
+        double dz = z + 0.5D - from.z;
         double horizontalDistance = Math.sqrt(dx * dx + dz * dz);
-        double verticalDrop = from.y - to.y;
+        double verticalDrop = from.y - y;
 
         if (horizontalDistance < MIN_GLIDE_DISTANCE || horizontalDistance > MAX_GLIDE_DISTANCE) {
             return Double.NEGATIVE_INFINITY;
@@ -1904,11 +2099,11 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
             return 0.0D;
         }
 
-        if (this.getY() >= 200.0D) {
+        if (this.getY() >= 240.0D) {
             return 0.0D;
         }
 
-        double yBias = Mth.clampedMap(this.getY(), 80.0D, 180.0D, 1.0D, 0.0D);
+        double yBias = Mth.clampedMap(this.getY(), 120.0D, 220.0D, 1.0D, 0.0D);
         return Math.min(1.0D, yBias + 0.20D);
     }
 
@@ -1922,32 +2117,81 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     }
 
     @Nullable
-    private ClimbTarget findBestClimbTarget() {
+    private ClimbTarget findBestClimbTarget(boolean favorClimbing) {
         BlockPos origin = this.blockPosition();
-        boolean favorClimbing = this.shouldFavorClimbingFromGround();
         int horizontalRange = favorClimbing ? 24 : 10;
         ClimbTarget bestTarget = null;
         double bestScore = Double.NEGATIVE_INFINITY;
+        int bestIndex = Integer.MAX_VALUE;
         int currentY = Mth.floor(this.getY());
         int minimumTargetY = currentY + (favorClimbing ? Math.max(MIN_CLIMB_HEIGHT, GROUND_ESCAPE_MIN_CLIMB_HEIGHT) : MIN_CLIMB_HEIGHT);
         int maximumTargetY = currentY + MAX_CLIMB_HEIGHT;
+        double heightWeight = favorClimbing ? 10.0D : 4.5D;
+        double favorBonus = favorClimbing ? 20.0D : 0.0D;
+        double posX = this.getX();
+        double posY = this.getY();
+        double posZ = this.getZ();
+        int minX = origin.getX() - horizontalRange;
+        int minY = origin.getY() - 1;
+        int minZ = origin.getZ() - horizontalRange;
+        int width = horizontalRange * 2 + 1;
+        int count = width * width * 3;
+        int[] order = new int[count];
+        double[] walkDistances = new double[count];
+        double[] upperBounds = new double[count];
 
-        for (BlockPos baseStandPos : BlockPos.betweenClosed(origin.offset(-horizontalRange, -1, -horizontalRange), origin.offset(horizontalRange, 1, horizontalRange))) {
-            if (!isOpenStandPos(this.level(), baseStandPos)) {
+        for (int index = 0; index < count; index++) {
+            int x = minX + index % width;
+            int layer = index / width;
+            int y = minY + layer % 3;
+            int z = minZ + layer / 3;
+            double offsetX = posX - (x + 0.5D);
+            double offsetY = posY - y;
+            double offsetZ = posZ - (z + 0.5D);
+            double walkDistance = Math.sqrt(offsetX * offsetX + offsetY * offsetY + offsetZ * offsetZ);
+            walkDistances[index] = walkDistance;
+            upperBounds[index] = climbScoreUpperBound(MAX_CLIMB_HEIGHT, heightWeight, walkDistance, currentY - y, favorBonus);
+            order[index] = index;
+        }
+
+        IntArrays.quickSort(order, 0, count, (a, b) -> {
+            int compare = Double.compare(upperBounds[b], upperBounds[a]);
+            return compare != 0 ? compare : Integer.compare(a, b);
+        });
+
+        SquirrelBlockReader reader = new SquirrelBlockReader(this.level());
+
+        for (int k = 0; k < count; k++) {
+            int index = order[k];
+            if (upperBounds[index] + SCORE_BOUND_EPSILON < bestScore) {
+                break;
+            }
+
+            int x = minX + index % width;
+            int layer = index / width;
+            int y = minY + layer % 3;
+            int z = minZ + layer / 3;
+            if (!isOpenStandPos(reader, x, y, z)) {
                 continue;
             }
 
-            Direction attachDirection = this.findClimbAttachmentDirection(baseStandPos, null);
-            if (attachDirection == null || !this.isValidClimbColumnPos(baseStandPos, attachDirection)) {
+            Direction attachDirection = this.findClimbAttachmentDirection(reader, x, y, z, null);
+            if (attachDirection == null) {
                 continue;
             }
 
-            int reachableTopY = this.findHighestReachableClimbY(baseStandPos, maximumTargetY, attachDirection);
+            int reachableTopY = this.findHighestReachableClimbY(reader, x, y, z, maximumTargetY, attachDirection);
             if (reachableTopY < minimumTargetY) {
                 continue;
             }
 
-            BlockPos topStandPos = this.findBestClimbPerch(baseStandPos, minimumTargetY, reachableTopY + 2, attachDirection);
+            double walkDistance = walkDistances[index];
+            int maxClimbHeight = Math.min(MAX_CLIMB_HEIGHT, reachableTopY + 2 - currentY);
+            if (climbScoreUpperBound(maxClimbHeight, heightWeight, walkDistance, currentY - y, favorBonus) + SCORE_BOUND_EPSILON < bestScore) {
+                continue;
+            }
+
+            BlockPos topStandPos = this.findBestClimbPerch(reader, x, z, minimumTargetY, reachableTopY + 2, attachDirection, reachableTopY);
             if (topStandPos == null) {
                 continue;
             }
@@ -1963,16 +2207,17 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
                 continue;
             }
 
-            double walkDistance = Vec3.atBottomCenterOf(baseStandPos).distanceTo(this.position());
+            BlockPos baseStandPos = new BlockPos(x, y, z);
             double perchOffset = Vec3.atBottomCenterOf(topStandPos).distanceTo(Vec3.atBottomCenterOf(baseStandPos));
-            double score = climbHeight * (favorClimbing ? 10.0D : 4.5D) - walkDistance - perchOffset * 0.6D;
+            double score = climbHeight * heightWeight - walkDistance - perchOffset * 0.6D;
             if (favorClimbing) {
                 score += 20.0D;
             }
-            if (score > bestScore) {
+            if (score > bestScore || (score == bestScore && index < bestIndex)) {
                 bestScore = score;
+                bestIndex = index;
                 bestTarget = new ClimbTarget(
-                        baseStandPos.immutable(),
+                        baseStandPos,
                         topStandPos.immutable(),
                         attachDirection
                 );
@@ -1982,11 +2227,14 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
         return bestTarget;
     }
 
-    private int findHighestReachableClimbY(BlockPos baseStandPos, int maxTargetY, Direction preferredDirection) {
-        int highestOpenY = baseStandPos.getY();
-        for (int y = baseStandPos.getY(); y <= maxTargetY; y++) {
-            BlockPos columnPos = new BlockPos(baseStandPos.getX(), y, baseStandPos.getZ());
-            if (!this.isValidClimbColumnPos(columnPos, preferredDirection)) {
+    private static double climbScoreUpperBound(int climbHeight, double heightWeight, double walkDistance, int baseDropBelowCurrent, double favorBonus) {
+        return climbHeight * (heightWeight - 0.6D) - walkDistance - 0.6D * baseDropBelowCurrent + favorBonus;
+    }
+
+    private int findHighestReachableClimbY(SquirrelBlockReader reader, int x, int baseY, int z, int maxTargetY, Direction preferredDirection) {
+        int highestOpenY = baseY;
+        for (int y = baseY + 1; y <= maxTargetY; y++) {
+            if (!this.isValidClimbColumnPos(reader, x, y, z, preferredDirection)) {
                 break;
             }
             highestOpenY = y;
@@ -2004,7 +2252,11 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     }
 
     private boolean isValidClimbColumnPos(BlockPos pos, @Nullable Direction preferredDirection) {
-        return isOpenClimbPos(this.level(), pos) && this.findClimbAttachmentDirection(pos, preferredDirection) != null;
+        return this.isValidClimbColumnPos(new SquirrelBlockReader(this.level()), pos.getX(), pos.getY(), pos.getZ(), preferredDirection);
+    }
+
+    private boolean isValidClimbColumnPos(SquirrelBlockReader reader, int x, int y, int z, @Nullable Direction preferredDirection) {
+        return isOpenClimbPos(reader, x, y, z) && this.findClimbAttachmentDirection(reader, x, y, z, preferredDirection) != null;
     }
 
     private Vec3 getClimbAttachPoint(BlockPos climbColumnPos, @Nullable Direction preferredDirection) {
@@ -2027,19 +2279,24 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
 
     @Nullable
     private Direction findClimbAttachmentDirection(BlockPos pos, @Nullable Direction preferredDirection) {
+        return this.findClimbAttachmentDirection(new SquirrelBlockReader(this.level()), pos.getX(), pos.getY(), pos.getZ(), preferredDirection);
+    }
+
+    @Nullable
+    private Direction findClimbAttachmentDirection(SquirrelBlockReader reader, int x, int y, int z, @Nullable Direction preferredDirection) {
         if (preferredDirection != null
                 && preferredDirection.getAxis().isHorizontal()
-                && this.isValidClimbSupport(pos.relative(preferredDirection))) {
+                && isValidClimbSupport(reader.getBlockState(x + preferredDirection.getStepX(), y, z + preferredDirection.getStepZ()))) {
             return preferredDirection;
         }
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            BlockState supportState = this.level().getBlockState(pos.relative(direction));
+            BlockState supportState = reader.getBlockState(x + direction.getStepX(), y, z + direction.getStepZ());
             if (supportState.is(BlockTags.LOGS)) {
                 return direction;
             }
         }
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            BlockState supportState = this.level().getBlockState(pos.relative(direction));
+            BlockState supportState = reader.getBlockState(x + direction.getStepX(), y, z + direction.getStepZ());
             if (supportState.blocksMotion()) {
                 return direction;
             }
@@ -2047,46 +2304,59 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
         return null;
     }
 
-    private boolean isValidClimbSupport(BlockPos pos) {
-        BlockState state = this.level().getBlockState(pos);
+    private static boolean isValidClimbSupport(BlockState state) {
         return state.is(BlockTags.LOGS)
                 || (state.blocksMotion() && !state.is(BlockTags.LEAVES))
                 || state.is(BlockTags.LEAVES);
     }
 
     @Nullable
-    private BlockPos findBestClimbPerch(BlockPos baseStandPos, int minimumY, int maximumY, Direction preferredDirection) {
+    private BlockPos findBestClimbPerch(SquirrelBlockReader reader, int baseX, int baseZ, int minimumY, int maximumY, Direction preferredDirection, int knownValidColumnTopY) {
         BlockPos bestStandPos = null;
         double bestScore = Double.NEGATIVE_INFINITY;
         for (int y = maximumY; y >= minimumY; y--) {
+            if (!(y * 4.0D + 2.0D > bestScore)) {
+                break;
+            }
+
+            int columnState = y <= knownValidColumnTopY ? 1 : 0;
             for (int dx = -2; dx <= 2; dx++) {
                 for (int dz = -2; dz <= 2; dz++) {
                     if (Math.abs(dx) + Math.abs(dz) > 3) {
                         continue;
                     }
 
-                    BlockPos standPos = new BlockPos(baseStandPos.getX() + dx, y, baseStandPos.getZ() + dz);
-                    if (!isOpenStandPos(this.level(), standPos)) {
-                        continue;
-                    }
-
-                    BlockPos climbColumnPos = new BlockPos(baseStandPos.getX(), y, baseStandPos.getZ());
-                    if (!this.isValidClimbColumnPos(climbColumnPos, preferredDirection)) {
-                        continue;
-                    }
-
-                    if (!this.hasSideClimbSupportAt(standPos) && !isStandableSurface(this.level().getBlockState(standPos.above()))) {
-                        continue;
-                    }
-
                     double horizontalOffset = Math.sqrt(dx * dx + dz * dz);
-                    double score = y * 4.0D - horizontalOffset * 1.5D;
-                    if (isAdjacentToLog(this.level(), standPos)) {
+                    double baseScore = y * 4.0D - horizontalOffset * 1.5D;
+                    if (!(baseScore + 2.0D > bestScore)) {
+                        continue;
+                    }
+
+                    int standX = baseX + dx;
+                    int standZ = baseZ + dz;
+                    if (!isOpenStandPos(reader, standX, y, standZ)) {
+                        continue;
+                    }
+
+                    if (columnState == 0) {
+                        columnState = this.isValidClimbColumnPos(reader, baseX, y, baseZ, preferredDirection) ? 1 : -1;
+                    }
+                    if (columnState < 0) {
+                        continue;
+                    }
+
+                    if (this.findClimbAttachmentDirection(reader, standX, y, standZ, null) == null
+                            && !isStandableSurface(reader.getBlockState(standX, y + 1, standZ))) {
+                        continue;
+                    }
+
+                    double score = baseScore;
+                    if (isAdjacentToLog(reader, standX, y, standZ)) {
                         score += 2.0D;
                     }
                     if (score > bestScore) {
                         bestScore = score;
-                        bestStandPos = standPos.immutable();
+                        bestStandPos = new BlockPos(standX, y, standZ);
                     }
                 }
             }
@@ -2171,84 +2441,146 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
             int verticalDown = Mth.floor(Mth.lerp(heightBias, 8.0D, 4.0D));
             int verticalUp = Mth.floor(Mth.lerp(heightBias, 30.0D, 40.0D));
 
-            BlockPos bestPos = null;
-            double bestScore = Double.NEGATIVE_INFINITY;
+            double posX = FlyingSquirrelEntity.this.getX();
+            double posY = FlyingSquirrelEntity.this.getY();
+            double posZ = FlyingSquirrelEntity.this.getZ();
+            double minPreferredRise = Mth.lerp(heightBias, 0.0D, 8.0D);
+            double riseWeight = Mth.lerp(heightBias, 3.0D, 5.5D);
+            double distanceWeight = Mth.lerp(heightBias, 1.1D, 0.9D);
+            double highRiseBonus = Mth.lerp(heightBias, 10.0D, 18.0D);
+            double dropWeight = Mth.lerp(heightBias, 0.75D, 0.15D);
 
-            for (BlockPos candidate : BlockPos.betweenClosed(
-                    origin.offset(-horizontalRange, -verticalDown, -horizontalRange),
-                    origin.offset(horizontalRange, verticalUp, horizontalRange))) {
+            int minX = origin.getX() - horizontalRange;
+            int minY = origin.getY() - verticalDown;
+            int minZ = origin.getZ() - horizontalRange;
+            int width = horizontalRange * 2 + 1;
+            int height = verticalDown + verticalUp + 1;
 
-                if (!FlyingSquirrelEntity.isOpenStandPos(FlyingSquirrelEntity.this.level(), candidate)) {
-                    continue;
-                }
-
-                if (FlyingSquirrelEntity.this.isAtStandPos(candidate)) {
-                    continue;
-                }
-
-                boolean nearCanopy = FlyingSquirrelEntity.hasNearbyCanopy(
-                        FlyingSquirrelEntity.this.level(), candidate
-                );
-                boolean nearLog = FlyingSquirrelEntity.isAdjacentToLog(
-                        FlyingSquirrelEntity.this.level(), candidate
-                );
-
-                if (!nearCanopy && !nearLog) {
-                    continue;
-                }
-
-                double dx = candidate.getX() + 0.5D - FlyingSquirrelEntity.this.getX();
-                double dy = candidate.getY() - FlyingSquirrelEntity.this.getY();
-                double dz = candidate.getZ() + 0.5D - FlyingSquirrelEntity.this.getZ();
+            double[] columnDistance = new double[width * width];
+            double maxHorizontalDistance = 0.0D;
+            for (int column = 0; column < columnDistance.length; column++) {
+                int x = minX + column % width;
+                int z = minZ + column / width;
+                double dx = x + 0.5D - posX;
+                double dz = z + 0.5D - posZ;
                 double horizontalDistance = Math.sqrt(dx * dx + dz * dz);
+                columnDistance[column] = horizontalDistance;
+                maxHorizontalDistance = Math.max(maxHorizontalDistance, horizontalDistance);
+            }
 
-                if (horizontalDistance < 6.0D) {
-                    continue;
-                }
-
-                double minPreferredRise = Mth.lerp(heightBias, 0.0D, 8.0D);
+            int[] layerOrder = new int[height];
+            double[] layerUpper = new double[height];
+            int layerCount = 0;
+            for (int layer = 0; layer < height; layer++) {
+                double dy = minY + layer - posY;
                 if (heightBias > 0.15D && dy < minPreferredRise) {
                     continue;
                 }
+                layerUpper[layer] = this.scoreDestination(18.0D, dy, maxHorizontalDistance, heightBias, riseWeight, distanceWeight, highRiseBonus, dropWeight);
+                layerOrder[layerCount++] = layer;
+            }
 
-                double score = 0.0D;
+            IntArrays.quickSort(layerOrder, 0, layerCount, (a, b) -> {
+                int compare = Double.compare(layerUpper[b], layerUpper[a]);
+                return compare != 0 ? compare : Integer.compare(a, b);
+            });
 
-                if (nearCanopy) score += 10.0D;
-                if (nearLog) score += 8.0D;
+            SquirrelBlockReader reader = new SquirrelBlockReader(FlyingSquirrelEntity.this.level());
+            int bestX = 0;
+            int bestY = 0;
+            int bestZ = 0;
+            int bestIndex = -1;
+            double bestScore = Double.NEGATIVE_INFINITY;
 
-                score += Math.max(dy, 0.0D) * Mth.lerp(heightBias, 3.0D, 5.5D);
-                score += Math.min(horizontalDistance, 24.0D) * Mth.lerp(heightBias, 1.1D, 0.9D);
-
-                if (dy <= -4.0D && horizontalDistance >= 10.0D) {
-                    score += 18.0D * (1.0D - heightBias);
+            for (int k = 0; k < layerCount; k++) {
+                int layer = layerOrder[k];
+                if (layerUpper[layer] < bestScore) {
+                    break;
                 }
 
-                if (dy >= 12.0D) {
-                    score += Mth.lerp(heightBias, 10.0D, 18.0D);
-                }
-                if (horizontalDistance >= 12.0D) {
-                    score += 12.0D;
-                }
-                if (horizontalDistance >= 18.0D) {
-                    score += 10.0D;
-                }
+                int y = minY + layer;
+                double dy = y - posY;
+                for (int column = 0; column < columnDistance.length; column++) {
+                    double horizontalDistance = columnDistance[column];
+                    if (horizontalDistance < 6.0D) {
+                        continue;
+                    }
 
-                if (dy < -2.0D) {
-                    score += dy * Mth.lerp(heightBias, 0.75D, 0.15D);
-                }
+                    int index = ((column / width) * height + layer) * width + column % width;
+                    double maxScore = this.scoreDestination(18.0D, dy, horizontalDistance, heightBias, riseWeight, distanceWeight, highRiseBonus, dropWeight);
+                    if (!(maxScore > bestScore || (maxScore == bestScore && index < bestIndex))) {
+                        continue;
+                    }
 
-                if (score > bestScore) {
-                    bestScore = score;
-                    bestPos = candidate.immutable();
+                    int x = minX + column % width;
+                    int z = minZ + column / width;
+                    if (FlyingSquirrelEntity.this.isAtStandPos(x, y, z)) {
+                        continue;
+                    }
+
+                    if (!FlyingSquirrelEntity.isOpenStandPos(reader, x, y, z)) {
+                        continue;
+                    }
+
+                    boolean nearLog = FlyingSquirrelEntity.isAdjacentToLog(reader, x, y, z);
+                    double canopyScore = this.scoreDestination(nearLog ? 18.0D : 10.0D, dy, horizontalDistance, heightBias, riseWeight, distanceWeight, highRiseBonus, dropWeight);
+                    if (!(canopyScore > bestScore || (canopyScore == bestScore && index < bestIndex))) {
+                        continue;
+                    }
+
+                    boolean nearCanopy = FlyingSquirrelEntity.hasNearbyCanopy(reader, x, y, z);
+                    if (!nearCanopy && !nearLog) {
+                        continue;
+                    }
+
+                    double score = nearCanopy
+                            ? canopyScore
+                            : this.scoreDestination(8.0D, dy, horizontalDistance, heightBias, riseWeight, distanceWeight, highRiseBonus, dropWeight);
+
+                    if (score > bestScore || (score == bestScore && index < bestIndex)) {
+                        bestScore = score;
+                        bestIndex = index;
+                        bestX = x;
+                        bestY = y;
+                        bestZ = z;
+                    }
                 }
             }
 
-            return bestPos;
+            return bestIndex < 0 ? null : new BlockPos(bestX, bestY, bestZ);
+        }
+
+        private double scoreDestination(double baseScore, double dy, double horizontalDistance, double heightBias,
+                                        double riseWeight, double distanceWeight, double highRiseBonus, double dropWeight) {
+            double score = baseScore;
+
+            score += Math.max(dy, 0.0D) * riseWeight;
+            score += Math.min(horizontalDistance, 24.0D) * distanceWeight;
+
+            if (dy <= -4.0D && horizontalDistance >= 10.0D) {
+                score += 18.0D * (1.0D - heightBias);
+            }
+
+            if (dy >= 12.0D) {
+                score += highRiseBonus;
+            }
+            if (horizontalDistance >= 12.0D) {
+                score += 12.0D;
+            }
+            if (horizontalDistance >= 18.0D) {
+                score += 10.0D;
+            }
+
+            if (dy < -2.0D) {
+                score += dy * dropWeight;
+            }
+
+            return score;
         }
 
         private double getHeightBias(BlockPos origin) {
-            double yBias = Mth.clampedMap(origin.getY(), 80.0D, 170.0D, 1.0D, 0.0D);
-            if (origin.getY() >= 190) {
+            double yBias = Mth.clampedMap(origin.getY(), 120.0D, 210.0D, 1.0D, 0.0D);
+            if (origin.getY() >= 230) {
                 yBias = 0.0D;
             }
 
@@ -2309,7 +2641,7 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
                 return false;
             }
 
-            this.target = FlyingSquirrelEntity.this.findBestClimbTarget();
+            this.target = FlyingSquirrelEntity.this.findBestClimbTarget(favorClimbing);
             if (this.target != null) {
                 return true;
             }

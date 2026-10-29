@@ -1,8 +1,10 @@
 {
   "replace": false,
   "values": [
-    "antarchy:elythia_meadow",
-    "antarchy:truffalo_forest"
+    "antarchy:primordial_plains",
+    "antarchy:primordial_massif",
+    "antarchy:truffalo_forest",
+    "antarchy:truffalo_spires"
   ]
 }
 

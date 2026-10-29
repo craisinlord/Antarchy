@@ -58,7 +58,7 @@ import com.geckolib.util.GeckoLibUtil;
 
 public class BigBerthaItem extends Item implements GeoItem {
     private static final Identifier MODEL_LOCATION = Identifier.fromNamespaceAndPath("antarchy", "big_bertha");
-    private static final Identifier TEXTURE_LOCATION = Identifier.fromNamespaceAndPath("antarchy", "textures/item/big_bertha/big_bertha.png");
+    private static final Identifier DEFAULT_TEXTURE_LOCATION = Identifier.fromNamespaceAndPath("antarchy", "textures/item/big_bertha/big_bertha.png");
     private static final Identifier ANIMATION_LOCATION = Identifier.fromNamespaceAndPath("antarchy", "static_item");
     private static final String MODE_TAG = "antarchy.big_bertha_mode";
     public static final int MODE_TREMORSAURUS = 8;
@@ -74,14 +74,20 @@ public class BigBerthaItem extends Item implements GeoItem {
 
     public static int clientShakeTicks = 0;
     private static final Identifier ATTACK_RANGE_MODIFIER_ID = Identifier.fromNamespaceAndPath("antarchy", "big_bertha_attack_range");
+    private final Identifier textureLocation;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     public BigBerthaItem(ToolMaterial material, Item.Properties properties) {
+        this(material, properties, DEFAULT_TEXTURE_LOCATION);
+    }
+
+    public BigBerthaItem(ToolMaterial material, Item.Properties properties, Identifier textureLocation) {
         super(AntarchyItemProperties.configAttributes(
                 properties.sword(material,
                         (int) Math.round(AntarchySettings.bigBerthaAttackDamage()),
                         (float) AntarchySettings.bigBerthaAttackSpeed()),
                 () -> createBerthaAttributes(material)));
+        this.textureLocation = textureLocation;
         GeoItem.registerSyncedAnimatable(this);
     }
 
@@ -663,7 +669,7 @@ public class BigBerthaItem extends Item implements GeoItem {
             @Override
             public GeoItemRenderer<?> getGeoItemRenderer() {
                 if (this.renderer == null) {
-                    this.renderer = new AnimatedHeldItemRenderer<>(new ResourceBackedGeoItemModel<>(MODEL_LOCATION, TEXTURE_LOCATION, ANIMATION_LOCATION));
+                    this.renderer = new AnimatedHeldItemRenderer<>(new ResourceBackedGeoItemModel<>(MODEL_LOCATION, BigBerthaItem.this.textureLocation, ANIMATION_LOCATION));
                 }
 
                 return this.renderer;

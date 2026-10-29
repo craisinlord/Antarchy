@@ -159,6 +159,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<BedBugEntity>("main_controller", 2, this::mainAnimController)
+                .receiveTriggeredAnimations()
                 .triggerableAnim("bite", BITE_ANIM));
     }
 
@@ -336,6 +337,9 @@ public class BedBugEntity extends Animal implements GeoEntity {
     }
 
     private PlayState mainAnimController(AnimationTest<BedBugEntity> state) {
+        if (state.controller().isPlayingTriggeredAnimation()) {
+            return PlayState.CONTINUE;
+        }
         if (this.biteAnimationTicks > 0) {
             return state.setAndContinue(BITE_ANIM);
         }

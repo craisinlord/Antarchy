@@ -18,6 +18,7 @@
     "CriteriaTriggersAccessor",
     "DiodeBlockMixin",
     "DreamFireBlockMixin",
+    "ElythiaAquiferMixin",
     "EnchantmentApplicabilityMixin",
     "EnchantmentTableApplicabilityMixin",
     "ExperimentalSettingsLevelSummaryMixin",

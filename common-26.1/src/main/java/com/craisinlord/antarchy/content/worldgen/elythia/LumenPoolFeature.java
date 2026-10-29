@@ -19,6 +19,9 @@ public final class LumenPoolFeature extends Feature<NoneFeatureConfiguration> {
     private static final int SMALL_RADIUS_MAX = 4;
     private static final int LARGE_RADIUS_MIN = 5;
     private static final int LARGE_RADIUS_MAX = 6;
+    private static final int[] EDGE_SCAN_DISTANCES = {5, 9};
+    private static final int EDGE_DROP = 4;
+    private static final float EDGE_POOL_CHANCE = 0.1F;
 
     public LumenPoolFeature(Codec<NoneFeatureConfiguration> codec) {
         super(codec);
@@ -32,6 +35,9 @@ public final class LumenPoolFeature extends Feature<NoneFeatureConfiguration> {
 
         BlockPos center = findSurfaceCenter(level, origin);
         if (center == null) {
+            return false;
+        }
+        if (nearDrop(level, center) && random.nextFloat() >= EDGE_POOL_CHANCE) {
             return false;
         }
 
@@ -131,6 +137,23 @@ public final class LumenPoolFeature extends Feature<NoneFeatureConfiguration> {
                 level.setBlock(mutable, Blocks.AIR.defaultBlockState(), 2);
             }
         }
+    }
+
+    private static boolean nearDrop(WorldGenLevel level, BlockPos center) {
+        for (int distance : EDGE_SCAN_DISTANCES) {
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    if (dx == 0 && dz == 0) {
+                        continue;
+                    }
+                    int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, center.getX() + dx * distance, center.getZ() + dz * distance) - 1;
+                    if (y < center.getY() - EDGE_DROP) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private static BlockPos findSurfaceCenter(WorldGenLevel level, BlockPos origin) {
