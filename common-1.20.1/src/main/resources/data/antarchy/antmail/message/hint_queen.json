@@ -1,0 +1,20 @@
+{
+  "sender": "trayaurus@antmail.com",
+  "sender_display": "Dr. Trayaurus",
+  "sender_avatar_item": "antarchy:diamond_minecart",
+  "subject": "Mind the gap",
+  "body": "In Thoraxis there are holes where gravity just gives up. Fall into one and you come out the bottom, upside down. That's the Underside, and that's where the Queen is. I wouldn't. But you would.\n\nYour old friend,\nDr. T",
+  "trigger": {
+    "type": "random",
+    "pool": "antarchy:trayaurus_hints"
+  },
+  "once": true,
+  "conditions": {
+    "advancements": [
+      "antarchy:visit_thoraxis"
+    ],
+    "not_advancements": [
+      "antarchy:through_the_throat"
+    ]
+  }
+}

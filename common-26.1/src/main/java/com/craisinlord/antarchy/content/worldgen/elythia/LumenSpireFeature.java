@@ -40,7 +40,7 @@ public final class LumenSpireFeature extends Feature<NoneFeatureConfiguration> {
 
         int height = randomBetween(random, MIN_HEIGHT, MAX_HEIGHT);
         int levels = randomBetween(random, MIN_LEVELS, MAX_LEVELS);
-        if (base.getY() + height >= level.getMaxY() - 1) {
+        if (base.getY() + height >= (level.getMaxY() + 1) - 2) {
             return false;
         }
 

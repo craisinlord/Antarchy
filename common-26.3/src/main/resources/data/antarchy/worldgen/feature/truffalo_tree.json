@@ -1,9 +1,12 @@
 {
   "type": "antarchy:truffalo_tree",
   "trunk_provider": {
-    "id": "antarchy:truffalo_log",
-    "properties": {
-      "axis": "y"
+    "type": "minecraft:simple_state_provider",
+    "state": {
+      "id": "antarchy:truffalo_log",
+      "properties": {
+        "axis": "y"
+      }
     }
   },
   "height": {

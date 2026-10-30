@@ -174,6 +174,8 @@ public final class AntarchyFabricEvents {
                 com.craisinlord.antarchy.content.entity.glimmer.GlimmerNightSpawner.tick(level);
                 com.craisinlord.antarchy.content.entity.stratoshark.StratosharkSkySpawner.tick(level);
                 ThoraxisUndersideManager.tick(level);
+                com.craisinlord.antarchy.content.weather.ElythiaEvents.tick(level);
+                com.craisinlord.antarchy.content.weather.ElythiaRainGrowth.tick(level);
                 com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature.tickPendingSpawns(level);
                 tickInvertedPlayers(level, activeThisTick);
                 tickIchorPlayers(level);

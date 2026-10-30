@@ -1,0 +1,24 @@
+{
+  "name": "antarchy:royal_shrine/queen_shrine2_ground",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "antarchy:royal_shrine/queen_shrine2_ground",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "ignore_bounds": true,
+        "enhanced_terrain_adaptation": {
+          "type": "integrated_api:custom",
+          "carves": true,
+          "beards": true,
+          "kernel_size": 32,
+          "kernel_distance": 48,
+          "direction": "down"
+        },
+        "element_type": "integrated_api:integrated_api_single_pool_element"
+      }
+    }
+  ]
+}

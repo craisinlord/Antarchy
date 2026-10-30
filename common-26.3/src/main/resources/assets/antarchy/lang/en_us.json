@@ -1684,5 +1684,29 @@
     "guide.antarchy.archive_folder.antlas": "Antlas",
     "guide.antarchy.archive_folder.elythia": "Elythia",
     "guide.antarchy.archive_folder.cavaryn": "Cavaryn",
-    "guide.antarchy.archive_folder.thoraxis": "Thoraxis"
+    "guide.antarchy.archive_folder.thoraxis": "Thoraxis",
+    "biome.antarchy.dream_peaks": "Dream Peaks",
+    "biome.antarchy.glimmering_falls": "Glimmering Falls",
+    "biome.antarchy.shelfback_highlands": "Shelfback Highlands",
+    "biome.antarchy.truffalo_spires": "Truffalo Spires",
+    "message.antarchy.already_dreaming": "You are already dreaming..."
+    ,"guide.antarchy.disk.trayaurus_lab_notes.title": "DR. T'S LAB NOTES"
+    ,"guide.antarchy.disk.elythia.description": "Elythia field exam."
+    ,"guide.antarchy.disk.cavaryn.description": "Cavaryn field exam."
+    ,"guide.antarchy.disk.thoraxis.description": "Thoraxis field exam. Nightmare record."
+    ,"guide.antarchy.disk.brutalfly.description": "What's in the cocoons."
+    ,"guide.antarchy.disk.flying_squirrel.description": "Nuts. Trees. Drama."
+    ,"guide.antarchy.disk.glimmer.description": "Every Glimmer variant."
+    ,"guide.antarchy.disk.hercules_beetle.description": "Survive it. Tame it."
+    ,"guide.antarchy.disk.high_fructose_corn_syrup.description": "Makes any food better."
+    ,"guide.antarchy.disk.king.description": "Find the King."
+    ,"guide.antarchy.disk.queen.description": "Find the Queen."
+    ,"guide.antarchy.disk.kraken.description": "How to call the Kraken."
+    ,"guide.antarchy.disk.rainbow_ant.description": "Key to the multiverse."
+    ,"guide.antarchy.disk.temporal_fields.description": "Bending time."
+    ,"guide.antarchy.disk.bloodglass.description": "Hearts made of glass."
+    ,"guide.antarchy.disk.vortex.description": "Pull or push."
+    ,"guide.antarchy.disk.toreterror_arena.description": "Find the Toreterror."
+    ,"guide.antarchy.disk.basilisk_game.description": "Don't bite your tail."
+    ,"guide.antarchy.disk.trayaurus_lab_notes.description": "From the lab."
 }

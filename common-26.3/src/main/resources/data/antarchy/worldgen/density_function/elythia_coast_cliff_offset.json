@@ -1,59 +1,62 @@
 {
-  "type": "minecraft:cache",
-  "input": {
-    "type": "minecraft:add",
-    "left": "antarchy:elythia_ocean_floor_offset",
-    "right": {
-      "type": "minecraft:mul",
-      "left": {
-        "type": "minecraft:spline",
-        "spline": {
-          "coordinate": "antarchy:elythia_continents",
-          "points": [
-            {
-              "location": -0.43,
-              "value": 0.0,
-              "derivative": 0.0
-            },
-            {
-              "location": -0.415,
-              "value": 1.0,
-              "derivative": 0.0
-            }
-          ]
-        }
-      },
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache",
+    "input": {
+      "type": "minecraft:add",
+      "left": "antarchy:elythia_ocean_floor_offset",
       "right": {
-        "type": "minecraft:add",
+        "type": "minecraft:mul",
         "left": {
-          "type": "minecraft:add",
-          "left": "antarchy:elythia_land_offset",
-          "right": {
-            "type": "minecraft:mul",
-            "left": "antarchy:elythia_coast_near",
-            "right": {
-              "type": "minecraft:add",
-              "left": {
-                "type": "minecraft:add",
-                "left": {
-                  "type": "minecraft:max",
-                  "left": "antarchy:elythia_land_offset",
-                  "right": -0.263701
-                },
-                "right": {
-                  "type": "minecraft:mul",
-                  "left": -1.0,
-                  "right": "antarchy:elythia_land_offset"
-                }
+          "type": "minecraft:spline",
+          "spline": {
+            "coordinate": "antarchy:elythia_continents",
+            "points": [
+              {
+                "location": -0.43,
+                "value": 0.0,
+                "derivative": 0.0
               },
-              "right": 0.2
-            }
+              {
+                "location": -0.415,
+                "value": 1.0,
+                "derivative": 0.0
+              }
+            ]
           }
         },
         "right": {
-          "type": "minecraft:mul",
-          "left": -1.0,
-          "right": "antarchy:elythia_ocean_floor_offset"
+          "type": "minecraft:add",
+          "left": {
+            "type": "minecraft:add",
+            "left": "antarchy:elythia_land_offset",
+            "right": {
+              "type": "minecraft:mul",
+              "left": "antarchy:elythia_coast_near",
+              "right": {
+                "type": "minecraft:add",
+                "left": {
+                  "type": "minecraft:add",
+                  "left": {
+                    "type": "minecraft:max",
+                    "left": "antarchy:elythia_land_offset",
+                    "right": -0.263701
+                  },
+                  "right": {
+                    "type": "minecraft:mul",
+                    "left": -1.0,
+                    "right": "antarchy:elythia_land_offset"
+                  }
+                },
+                "right": 0.2
+              }
+            }
+          },
+          "right": {
+            "type": "minecraft:mul",
+            "left": -1.0,
+            "right": "antarchy:elythia_ocean_floor_offset"
+          }
         }
       }
     }

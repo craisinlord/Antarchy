@@ -1,40 +1,43 @@
 {
-  "type": "minecraft:cache",
-  "input": {
-    "type": "minecraft:add",
-    "left": "antarchy:elythia_coast_beach_offset",
-    "right": {
-      "type": "minecraft:mul",
-      "left": {
-        "type": "minecraft:spline",
-        "spline": {
-          "coordinate": {
-            "type": "minecraft:noise",
-            "noise": "antarchy:elythia_coast",
-            "xz_scale": 1.0,
-            "y_scale": 0
-          },
-          "points": [
-            {
-              "location": -0.15,
-              "value": 0.0,
-              "derivative": 0.0
-            },
-            {
-              "location": 0.15,
-              "value": 1.0,
-              "derivative": 0.0
-            }
-          ]
-        }
-      },
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache",
+    "input": {
+      "type": "minecraft:add",
+      "left": "antarchy:elythia_coast_beach_offset",
       "right": {
-        "type": "minecraft:add",
-        "left": "antarchy:elythia_coast_cliff_offset",
+        "type": "minecraft:mul",
+        "left": {
+          "type": "minecraft:spline",
+          "spline": {
+            "coordinate": {
+              "type": "minecraft:noise",
+              "noise": "antarchy:elythia_coast",
+              "xz_scale": 1.0,
+              "y_scale": 0
+            },
+            "points": [
+              {
+                "location": -0.15,
+                "value": 0.0,
+                "derivative": 0.0
+              },
+              {
+                "location": 0.15,
+                "value": 1.0,
+                "derivative": 0.0
+              }
+            ]
+          }
+        },
         "right": {
-          "type": "minecraft:mul",
-          "left": -1.0,
-          "right": "antarchy:elythia_coast_beach_offset"
+          "type": "minecraft:add",
+          "left": "antarchy:elythia_coast_cliff_offset",
+          "right": {
+            "type": "minecraft:mul",
+            "left": -1.0,
+            "right": "antarchy:elythia_coast_beach_offset"
+          }
         }
       }
     }

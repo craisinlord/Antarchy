@@ -37,30 +37,32 @@ public final class ThrowbackClientState {
         previousHungerHidden = hungerHidden;
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
-        boolean inElythia = minecraft.level != null
-                && player != null
-                && player.isAlive()
-                && minecraft.level.dimension().equals(ThrowbackZones.ELYTHIA);
+        boolean playing = minecraft.level != null && player != null && player.isAlive();
+        if (!playing) {
+            hungerHidden = 0.0F;
+            previousHungerHidden = 0.0F;
+        }
+        boolean inElythia = playing && minecraft.level.dimension().equals(ThrowbackZones.ELYTHIA);
         if (!inElythia) {
             baseline = 0.0F;
             zone = 0.0F;
             previousBaseline = 0.0F;
             previousZone = 0.0F;
             targetZone = 0.0F;
-            hungerHidden = 0.0F;
-            previousHungerHidden = 0.0F;
+        }
+        if (!playing || minecraft.isPaused()) {
             return;
         }
-        if (minecraft.isPaused()) {
+        MobEffectInstance remembrance = player.getEffect(AntarchyObjects.REMEMBRANCE_EFFECT.get());
+        float hungerTarget = remembrance != null ? 1.0F : 0.0F;
+        hungerHidden = Mth.clamp(hungerHidden + Mth.clamp(hungerTarget - hungerHidden, -HUNGER_FADE_RATE, HUNGER_FADE_RATE), 0.0F, 1.0F);
+        if (!inElythia) {
             return;
         }
         if (++ticksSinceSync >= STALE_SYNC_TICKS) {
             targetZone = 0.0F;
         }
         float target = targetZone;
-        MobEffectInstance remembrance = player.getEffect(AntarchyObjects.REMEMBRANCE_EFFECT.get());
-        float hungerTarget = remembrance != null ? 1.0F : 0.0F;
-        hungerHidden = Mth.clamp(hungerHidden + Mth.clamp(hungerTarget - hungerHidden, -HUNGER_FADE_RATE, HUNGER_FADE_RATE), 0.0F, 1.0F);
         if (remembrance != null && !remembrance.isAmbient()) {
             target = 1.0F;
         }

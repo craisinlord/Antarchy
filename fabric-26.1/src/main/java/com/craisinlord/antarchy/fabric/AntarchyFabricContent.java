@@ -538,6 +538,7 @@ public final class AntarchyFabricContent {
         HerculesBeetleImpactShakeSync.setSink((player, ticks) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, new com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload(ticks)));
         com.craisinlord.antarchy.content.network.KingJudgmentFlashSync.setSink((player, ticks) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, new com.craisinlord.antarchy.content.network.KingJudgmentFlashPayload(ticks)));
         HordeIntensitySync.setSink((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
+        com.craisinlord.antarchy.content.network.ElythiaEventSync.setSink(net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking::send);
         TigerEyeCamouflageSync.setSendToPlayer((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
         TigerEyeCamouflageSync.setSyncSelfAndTracking(AntarchyFabricNetworking::syncTigerEyeCamouflage);
         BloodCrystalKatanaItem.setTrailCallback(AntarchyFabricNetworking::syncKatanaTrail);

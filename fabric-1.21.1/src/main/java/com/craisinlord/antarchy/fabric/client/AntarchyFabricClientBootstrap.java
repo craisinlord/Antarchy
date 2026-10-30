@@ -208,6 +208,18 @@ public final class AntarchyFabricClientBootstrap {
 
     private static void registerColors() {
         ColorProviderRegistry.BLOCK.register(
+                (state, level, pos, tintIndex) -> level != null && pos != null
+                        ? com.craisinlord.antarchy.content.block.Fossils.color(com.craisinlord.antarchy.content.block.Fossils.entityAt(level, pos), tintIndex)
+                        : -1,
+                AntarchyFabricBlocks.MYRMITE_FOSSIL.get(),
+                AntarchyFabricBlocks.BROODSTONE_FOSSIL.get()
+        );
+        ColorProviderRegistry.ITEM.register(
+                (stack, tintIndex) -> com.craisinlord.antarchy.content.block.Fossils.color(com.craisinlord.antarchy.content.block.Fossils.entityOf(stack), tintIndex),
+                AntarchyFabricItems.MYRMITE_FOSSIL_ITEM.get(),
+                AntarchyFabricItems.BROODSTONE_FOSSIL_ITEM.get()
+        );
+        ColorProviderRegistry.BLOCK.register(
                 (state, level, pos, tintIndex) -> tintIndex == 0 ? bluestoneWireColor(state.getValue(com.craisinlord.antarchy.content.block.BluestoneWireBlock.POWER)) : -1,
                 AntarchyFabricBlocks.BLUESTONE_WIRE.get()
         );
@@ -392,6 +404,8 @@ public final class AntarchyFabricClientBootstrap {
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.GIANT_LILY_PAD.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.HUSHWEED.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.CRITTER_CAGE_BLOCK.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.MYRMITE_FOSSIL.get(), RenderType.cutout());
+        BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.BROODSTONE_FOSSIL.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.POTTED_GLOWCAP_MUSHROOM.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.CORNEA_STALK.get(), RenderType.cutout());
         BlockRenderLayerMap.INSTANCE.putBlock(AntarchyFabricBlocks.CORN_CROP.get(), RenderType.cutout());

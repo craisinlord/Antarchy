@@ -4,7 +4,6 @@ import com.craisinlord.antarchy.Antarchy;
 import com.mojang.serialization.Codec;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -29,9 +28,10 @@ public final class CavarynMolewormWarrenDressingFeature extends Feature<NoneFeat
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "biomite"),
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "loam")
     );
+    private static final CavarynBlockSet LINEABLE_BLOCKS = new CavarynBlockSet(LINEABLE);
     private static final double LINING_DEPTH = 1.4;
-    private static final float COARSE_CHANCE = 0.3F;
-    private static final float PODZOL_CHANCE = 0.25F;
+    private static final float COARSE_CHANCE = 0.15F;
+    private static final float PODZOL_CHANCE = 0.12F;
     private static final double MOUND_MIN_RADIUS = 2.5;
     private static final double MOUND_MAX_RADIUS = 4.5;
     private static final double MOUND_MIN_HEIGHT = 3.0;
@@ -168,6 +168,6 @@ public final class CavarynMolewormWarrenDressingFeature extends Feature<NoneFeat
     }
 
     private static boolean isLineable(BlockState state) {
-        return LINEABLE.contains(BuiltInRegistries.BLOCK.getKey(state.getBlock()));
+        return LINEABLE_BLOCKS.contains(state);
     }
 }

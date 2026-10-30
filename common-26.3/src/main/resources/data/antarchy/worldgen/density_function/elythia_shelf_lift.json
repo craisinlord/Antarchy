@@ -1,0 +1,38 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache",
+    "input": {
+      "type": "minecraft:mul",
+      "left": 1.25,
+      "right": {
+        "type": "minecraft:spline",
+        "spline": {
+          "coordinate": {
+            "type": "minecraft:noise",
+            "noise": "antarchy:elythia_shelf_body",
+            "xz_scale": 1.0,
+            "y_scale": 0.0
+          },
+          "points": [
+            {
+              "location": -0.6,
+              "value": 0.3,
+              "derivative": 0.0
+            },
+            {
+              "location": 0.0,
+              "value": 0.8,
+              "derivative": 0.0
+            },
+            {
+              "location": 0.6,
+              "value": 1.25,
+              "derivative": 0.0
+            }
+          ]
+        }
+      }
+    }
+  }
+}

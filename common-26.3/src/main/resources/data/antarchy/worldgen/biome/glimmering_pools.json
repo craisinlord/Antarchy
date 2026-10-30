@@ -1,61 +1,7 @@
 {
-  "has_precipitation": false,
+  "has_precipitation": true,
   "temperature": 0.76,
   "downfall": 1.0,
-  "attributes": {
-    "minecraft:audio/ambient_sounds": {
-      "mood": {
-        "sound": "minecraft:ambient.crimson_forest.mood",
-        "tick_delay": 6000,
-        "block_search_extent": 8,
-        "offset": 2.0
-      }
-    },
-    "minecraft:audio/background_music": {
-      "default": {
-        "sound": "antarchy:music.game.elythia",
-        "min_delay": 600,
-        "max_delay": 1800,
-        "replace_current_music": true
-      }
-    },
-    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.15,
-    "minecraft:gameplay/natural_mob_spawns": {
-      "argument": {
-        "spawn_costs": {},
-        "spawns_by_category": {
-          "creature": [
-            {
-              "type": "antarchy:glimmer",
-              "count": 1,
-              "weight": 36
-            }
-          ],
-          "underground_water_creature": [
-            {
-              "type": "minecraft:glow_squid",
-              "count": {
-                "type": "minecraft:uniform",
-                "max_inclusive": 4,
-                "min_inclusive": 2
-              },
-              "weight": 14
-            }
-          ]
-        }
-      },
-      "modifier": "overlay"
-    },
-    "minecraft:visual/fog_color": "#7b5cff",
-    "minecraft:visual/sky_color": "#7b5cff",
-    "minecraft:visual/water_fog_color": "#32513c"
-  },
-  "effects": {
-    "water_color": "#5a626b",
-    "foliage_color": "#2bc12d",
-    "grass_color": "#41ad28",
-    "grass_color_modifier": "none"
-  },
   "carvers": [],
   "features": [
     [],
@@ -90,16 +36,77 @@
     ],
     [
       "antarchy:elythia_underground",
-      "minecraft:large_dripstone",
-      "minecraft:pointed_dripstone"
+      "antarchy:elythia_large_dripstone",
+      "antarchy:elythia_pointed_dripstone"
     ],
     [],
     [
       "antarchy:ouranwood_trees_sparse",
       "antarchy:elythia_forest_flora",
       "antarchy:elythia_brown_ant_nests",
-      "antarchy:elythia_rainbow_ant_nests"
+      "antarchy:elythia_rainbow_ant_nests",
+      "antarchy:throwback_nerd_pole"
     ],
     []
-  ]
+  ],
+  "attributes": {
+    "minecraft:visual/fog_color": "#a58dff",
+    "minecraft:visual/sky_color": "#7b5cff",
+    "minecraft:visual/water_fog_color": "#32513c",
+    "minecraft:audio/ambient_sounds": {
+      "mood": {
+        "sound": "minecraft:ambient.crimson_forest.mood",
+        "tick_delay": 6000,
+        "block_search_extent": 8,
+        "offset": 2.0
+      }
+    },
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.elythia",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:gameplay/natural_mob_spawns": {
+      "modifier": "overlay",
+      "argument": {
+        "spawn_costs": {},
+        "spawns_by_category": {
+          "monster": [],
+          "creature": [
+            {
+              "type": "antarchy:glimmer",
+              "weight": 36,
+              "count": 1
+            }
+          ],
+          "ambient": [],
+          "axolotls": [],
+          "underground_water_creature": [
+            {
+              "type": "minecraft:glow_squid",
+              "weight": 14,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 2,
+                "max_inclusive": 4
+              }
+            }
+          ],
+          "water_creature": [],
+          "water_ambient": [],
+          "misc": []
+        }
+      }
+    },
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.15
+  },
+  "effects": {
+    "water_color": "#5a626b",
+    "foliage_color": "#2bc12d",
+    "grass_color": "#41ad28",
+    "grass_color_modifier": "none"
+  }
 }

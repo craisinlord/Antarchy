@@ -40,6 +40,7 @@ public final class CavarynWormBoreDressingFeature extends Feature<NoneFeatureCon
             ResourceLocation.withDefaultNamespace("rooted_dirt"),
             ResourceLocation.withDefaultNamespace("podzol")
     );
+    private static final CavarynBlockSet LINEABLE_BLOCKS = new CavarynBlockSet(LINEABLE);
     private static final double LINING_DEPTH = 1.8;
     private static final float MUD_CHANCE = 0.16F;
     private static final float CASTING_CHANCE = 0.035F;
@@ -143,7 +144,7 @@ public final class CavarynWormBoreDressingFeature extends Feature<NoneFeatureCon
     }
 
     private static boolean isLineable(BlockState state) {
-        return LINEABLE.contains(BuiltInRegistries.BLOCK.getKey(state.getBlock()));
+        return LINEABLE_BLOCKS.contains(state);
     }
 
     private static Block block(ResourceLocation id) {

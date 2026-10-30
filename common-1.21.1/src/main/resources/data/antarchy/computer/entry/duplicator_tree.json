@@ -7,5 +7,6 @@
   "subtitle": "guide.antarchy.entry.duplicator_tree.subtitle",
   "description": ["guide.antarchy.entry.duplicator_tree.description", "guide.antarchy.entry.duplicator_tree.description2"],
   "cover_item": "antarchy:duplicator_log",
-  "green_tint": false
+  "green_tint": false,
+  "lookup": ["antarchy:duplicator_sapling", "antarchy:duplicator_log"]
 }

@@ -1,5 +1,5 @@
 {
-  "has_precipitation": false,
+  "has_precipitation": true,
   "temperature": 0.78,
   "downfall": 1.0,
   "effects": {
@@ -46,6 +46,7 @@
       "antarchy:elythia_ore_redstone",
       "antarchy:elythia_ore_redstone_lower",
       "antarchy:elythia_ore_diamond",
+      "antarchy:elythia_ore_diamond_medium",
       "antarchy:elythia_ore_diamond_large",
       "antarchy:elythia_ore_diamond_buried",
       "antarchy:elythia_ore_lapis",

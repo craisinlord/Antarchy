@@ -1,0 +1,17 @@
+{
+  "sender": "trayaurus@antmail.com",
+  "sender_display": "Dr. Trayaurus",
+  "sender_avatar_item": "antarchy:diamond_minecart",
+  "subject": "The shiny ones",
+  "body": "Have you seen a Rainbow Ant? Every single one has a whole dimension inside it. Nobody believes me. They love Rainbow Sugar, which is just sugar, a uranium nugget and a bottle of corn syrup. You can find them in the Overworld forests and plains and all over Elythia.\n\nYour old friend,\nDr. T\n\n@archive:antarchy:rainbow_ant",
+  "trigger": {
+    "type": "random",
+    "pool": "antarchy:trayaurus_hints"
+  },
+  "once": true,
+  "conditions": {
+    "advancements": [
+      "antarchy:visit_elythia"
+    ]
+  }
+}

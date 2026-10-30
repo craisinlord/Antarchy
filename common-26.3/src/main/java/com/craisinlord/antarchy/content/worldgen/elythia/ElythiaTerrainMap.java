@@ -1,6 +1,5 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.fluid.AntarchyFluidChecks;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -15,26 +14,23 @@ import java.util.stream.IntStream;
 import javax.imageio.ImageIO;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.QuartPos;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.NoiseColumn;
-import net.minecraft.world.level.biome.BiomeResolver;
 import net.minecraft.world.level.biome.BiomeSource;
+import net.minecraft.world.level.biome.BiomeResolver;
+import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
-import net.minecraft.world.level.levelgen.RandomState;
-import net.minecraft.world.level.levelgen.densityfunction.DensityFunction;
 import net.minecraft.world.level.levelgen.densityfunction.DensitySampler;
+import net.minecraft.world.level.levelgen.densityfunction.DensitySamplerSet;
 import net.minecraft.world.level.levelgen.densityfunction.SamplerContext;
+import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.LevelResource;
-import org.jspecify.annotations.Nullable;
 
 public final class ElythiaTerrainMap {
-    private static final Identifier SURFACE_DENSITY = Identifier.fromNamespaceAndPath(Antarchy.MODID, "elythia_surface");
     private static final byte DRY = 0;
     private static final byte WATER = 1;
     private static final byte LUMEN = 2;
@@ -48,7 +44,10 @@ public final class ElythiaTerrainMap {
             Map.entry("antarchy:elythia_river", 0x4A90E0),
             Map.entry("antarchy:primordial_plains", 0x8CCB5E),
             Map.entry("antarchy:primordial_massif", 0xA8A096),
+            Map.entry("antarchy:shelfback_highlands", 0x6FA85A),
+            Map.entry("antarchy:glimmering_falls", 0x7FE0C8),
             Map.entry("antarchy:truffalo_forest", 0x7A5A3A),
+            Map.entry("antarchy:truffalo_spires", 0xB08A60),
             Map.entry("antarchy:butterfly_fields", 0xF0D060),
             Map.entry("antarchy:ouranwood_forest", 0x2F7A3A),
             Map.entry("antarchy:sparse_ouranwood_forest", 0x5A9A50),
@@ -79,31 +78,34 @@ public final class ElythiaTerrainMap {
         ChunkGenerator generator = level.getChunkSource().getGenerator();
         RandomState randomState = level.getChunkSource().randomState();
         BiomeSource biomeSource = generator.getBiomeSource();
-        DensitySampler surfaceDensity = level.registryAccess().lookupOrThrow(Registries.DENSITY_FUNCTION)
-                .getOptional(SURFACE_DENSITY)
-                .map(randomState::getSampler)
-                .orElseThrow(() -> new IllegalStateException("Density function " + SURFACE_DENSITY + " is not registered"));
+        Climate.Sampler sampler = randomState.createClimateSampler(SamplerContext.EMPTY_UNCACHED);
+        BiomeResolver resolver = biomeSource.createResolver(sampler);
+        NoiseGeneratorSettings settings = ((NoiseBasedChunkGenerator) generator).generatorSettings().value();
+        DensitySamplerSet samplers = randomState.samplersWithContext(SamplerContext.EMPTY_UNCACHED);
+        DensitySampler.Bound surfaceDensity = samplers.get(settings.noiseRouter().chunkSurfaceLevel());
         int seaLevel = generator.getSeaLevel();
-        ElythiaHydrology hydrology = findHydrology(generator);
-        DensitySampler reserveSampler = hydrology == null ? null : randomState.getSampler(hydrology.reserve());
-        DensitySampler riverLevelSampler = hydrology == null ? null : randomState.getSampler(hydrology.riverLevel());
-        DensitySampler riverChannelSampler = hydrology == null ? null : randomState.getSampler(hydrology.riverChannel());
-        DensitySampler lumenSampler = hydrology == null ? null : randomState.getSampler(hydrology.lumen());
+        ElythiaHydrology hydrology = settings.debugFunctions().functions().stream()
+                .map(NoiseGeneratorSettings.DebugFunctionEntry::function)
+                .filter(ElythiaHydrology.class::isInstance).map(ElythiaHydrology.class::cast)
+                .findFirst().orElse(null);
+        DensitySampler.Bound reserveDensity = hydrology == null ? null : samplers.get(hydrology.reserve());
+        DensitySampler.Bound riverLevelDensity = hydrology == null ? null : samplers.get(hydrology.riverLevel());
+        DensitySampler.Bound riverChannelDensity = hydrology == null ? null : samplers.get(hydrology.riverChannel());
+        DensitySampler.Bound lumenDensity = hydrology == null ? null : samplers.get(hydrology.lumen());
+        DensitySampler.Bound valleyDensity = hydrology == null ? null : samplers.get(hydrology.valley());
         int size = radius * 2 / step + 1;
         int columns = size * size;
         int[] heights = new int[columns];
         int[] floors = new int[columns];
         byte[] fluids = new byte[columns];
         String[] biomes = new String[columns];
-        int top = level.getMaxY();
+        int top = (level.getMaxY() + 1) - 1;
         int bottom = level.getMinY();
-        SamplerContext context = SamplerContext.EMPTY_UNCACHED;
 
         long start = System.nanoTime();
         ForkJoinPool pool = new ForkJoinPool(Math.max(1, Runtime.getRuntime().availableProcessors() / 2));
         try {
             pool.submit(() -> IntStream.range(0, size).parallel().forEach(row -> {
-                BiomeResolver resolver = biomeSource.createResolver(randomState.createClimateSampler(context));
                 int z = center.getZ() - radius + row * step;
                 for (int column = 0; column < size; column++) {
                     int x = center.getX() - radius + column * step;
@@ -125,13 +127,13 @@ public final class ElythiaTerrainMap {
                             }
                         }
                     } else {
-                        floor = solveSurface(surfaceDensity, context, x, z, bottom, top);
+                        floor = solveSurface(surfaceDensity, x, z, bottom, top);
                         y = floor;
-                        double reserveValue = hydrology == null ? 0.0D : reserveSampler.sampleValue(context, x, floor, z);
+                        double reserveValue = hydrology == null ? 0.0D : reserveDensity.sampleValue(x, floor, z);
                         boolean reserve = reserveValue >= 0.5D;
-                        double riverLevel = hydrology == null ? Double.NEGATIVE_INFINITY : riverLevelSampler.sampleValue(context, x, floor, z);
-                        if (reserveValue < 0.04D && floor < riverLevel - 1 && riverChannelSampler.sampleValue(context, x, floor, z) > 0.05D) {
-                            fluids[index] = lumenSampler.sampleValue(context, x, floor, z) > 0.5D ? LUMEN : WATER;
+                        double riverLevel = hydrology == null ? Double.NEGATIVE_INFINITY : ElythiaAquifer.level(riverLevelDensity.sampleValue(x, floor, z));
+                        if (reserveValue < 0.04D && floor < riverLevel - 1 && valleyDensity.sampleValue(x, floor, z) > 0.0D && riverChannelDensity.sampleValue(x, floor, z) > 0.0D) {
+                            fluids[index] = lumenDensity.sampleValue(x, floor, z) > 0.75D ? LUMEN : WATER;
                             y = (int) riverLevel - 1;
                         } else if (!reserve && floor < seaLevel - 1 && (reserveValue <= 0.0D || floor < seaLevel - 64)) {
                             fluids[index] = WATER;
@@ -212,34 +214,8 @@ public final class ElythiaTerrainMap {
         );
     }
 
-    private static @Nullable ElythiaHydrology findHydrology(ChunkGenerator generator) {
-        if (!(generator instanceof NoiseBasedChunkGenerator noiseGenerator)) {
-            return null;
-        }
-        for (NoiseGeneratorSettings.DebugFunctionEntry entry : noiseGenerator.generatorSettings().value().debugFunctions().functions()) {
-            DensityFunction function = entry.function();
-            if (function instanceof ElythiaHydrology hydrology) {
-                return hydrology;
-            }
-        }
-        return null;
-    }
-
-    private static int solveSurface(DensitySampler density, SamplerContext context, int x, int z, int bottom, int top) {
-        int lowY = 40;
-        int highY = 240;
-        double low = density.sampleValue(context, x, lowY, z);
-        double high = density.sampleValue(context, x, highY, z);
-        int y = low > 0.0D && low != high
-                ? Mth.clamp(Mth.floor(lowY + low / (low - high) * (highY - lowY)), bottom, top)
-                : top;
-        while (y < top && density.sampleValue(context, x, y + 1, z) > 0.0D) {
-            y++;
-        }
-        while (y > bottom && density.sampleValue(context, x, y, z) <= 0.0D) {
-            y--;
-        }
-        return y;
+    private static int solveSurface(DensitySampler.Bound density, int x, int z, int bottom, int top) {
+        return Mth.clamp(Mth.floor(density.sampleValue(x, 0, z)), bottom, top);
     }
 
     private static int scale(int color, float factor) {

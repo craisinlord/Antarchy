@@ -15,5 +15,6 @@
   "green_tint": false,
   "gallery": [
     {"item": "antarchy:rainbow_sugar"}
-  ]
+  ],
+  "lookup": ["antarchy:rainbow_sugar", "antarchy:rainbow_ant_nest", "antarchy:rainbow_ant_spawn_egg"]
 }

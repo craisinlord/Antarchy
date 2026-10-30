@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.neoforge.client;
 
+import com.craisinlord.antarchy.content.client.hud.ScreenTint;
 import com.craisinlord.antarchy.neoforge.registry.AntarchyNeoforgeMisc;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -22,7 +23,7 @@ public final class DreadHudRenderer {
         int color = (alpha << 24) | 0x120000;
         int width = minecraft.getWindow().getGuiScaledWidth();
         int height = minecraft.getWindow().getGuiScaledHeight();
-        guiGraphics.fill(0, 0, width, height, color);
+        ScreenTint.fill(guiGraphics, 0, 0, width, height, color);
         DreadClientHandler.render(guiGraphics);
     }
 }

@@ -571,6 +571,8 @@ public final class AntarchySettings {
     private static boolean elythiaFogEnabled = true;
     private static boolean elythiaGroundMistEnabled = true;
     private static boolean elythiaSoftCloudsEnabled = true;
+    private static boolean boatsClimbWaterSteps = true;
+    private static double boatWaterStepMaxHeight = 1.0D;
     private static boolean elythiaDreamShadowsEnabled = true;
     private static double elythiaDreamShadowsStrength = 1.0D;
     private static boolean elythiaAlreadyDreaming = true;
@@ -3067,6 +3069,10 @@ public final class AntarchySettings {
 
     public static boolean elythiaSoftCloudsEnabled() { return elythiaSoftCloudsEnabled; }
     public static void setElythiaSoftCloudsEnabled(boolean value) { elythiaSoftCloudsEnabled = value; }
+    public static boolean boatsClimbWaterSteps() { return boatsClimbWaterSteps; }
+    public static void setBoatsClimbWaterSteps(boolean value) { boatsClimbWaterSteps = value; }
+    public static double boatWaterStepMaxHeight() { return boatWaterStepMaxHeight; }
+    public static void setBoatWaterStepMaxHeight(double value) { boatWaterStepMaxHeight = value; }
     public static boolean elythiaDreamShadowsEnabled() { return elythiaDreamShadowsEnabled; }
     public static void setElythiaDreamShadowsEnabled(boolean value) { elythiaDreamShadowsEnabled = value; }
     public static double elythiaDreamShadowsStrength() { return elythiaDreamShadowsStrength; }

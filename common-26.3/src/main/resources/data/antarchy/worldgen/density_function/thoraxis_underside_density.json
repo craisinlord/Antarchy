@@ -1,37 +1,42 @@
 {
-  "type": "minecraft:squeeze",
-  "input": {
-    "type": "minecraft:mul",
-    "left": 0.72,
-    "right": {
+  "type": "minecraft:mul",
+  "left": 0.72,
+  "right": {
+    "type": "minecraft:add",
+    "left": {
       "type": "minecraft:add",
       "left": {
         "type": "minecraft:gradient",
         "axis": "y",
-        "from_coordinate": -96,
-        "from_value": -2.0,
+        "from_coordinate": -256,
         "to_coordinate": -1,
+        "from_value": -7.1368,
         "to_value": 1.05
       },
       "right": {
         "type": "minecraft:mul",
-        "left": 0.42,
+        "left": 0.032105,
+        "right": "antarchy:thoraxis_underside_mountains"
+      }
+    },
+    "right": {
+      "type": "minecraft:mul",
+      "left": 0.42,
+      "right": {
+        "type": "minecraft:add",
+        "left": {
+          "type": "minecraft:mul",
+          "left": 0.9,
+          "right": "antarchy:thoraxis_underside_noise"
+        },
         "right": {
-          "type": "minecraft:add",
-          "left": {
-            "type": "minecraft:mul",
-            "left": 0.9,
-            "right": "antarchy:thoraxis_underside_noise"
-          },
+          "type": "minecraft:mul",
+          "left": 0.35,
           "right": {
-            "type": "minecraft:mul",
-            "left": 0.35,
-            "right": {
-              "type": "minecraft:noise",
-              "noise": "minecraft:surface",
-              "xz_scale": 1.0,
-              "y_scale": 0.0
-            }
+            "type": "minecraft:noise",
+            "noise": "minecraft:surface",
+            "xz_scale": 1.0,
+            "y_scale": 0.0
           }
         }
       }

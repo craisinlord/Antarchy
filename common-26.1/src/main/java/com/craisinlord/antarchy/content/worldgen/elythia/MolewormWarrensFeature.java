@@ -163,7 +163,7 @@ public class MolewormWarrensFeature extends Feature<NoneFeatureConfiguration> {
         int minX = Mth.floor(center.x - radiusX - 1.5F);
         int maxX = Mth.floor(center.x + radiusX + 1.5F);
         int minY = Math.max(level.getMinY() + 1, Mth.floor(center.y - radiusY - 2.0F));
-        int maxY = Math.min(level.getMaxY() - 1, Mth.floor(center.y + radiusY + 2.0F));
+        int maxY = Math.min((level.getMaxY() + 1) - 2, Mth.floor(center.y + radiusY + 2.0F));
         int minZ = Mth.floor(center.z - radiusZ - 1.5F);
         int maxZ = Mth.floor(center.z + radiusZ + 1.5F);
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
@@ -211,7 +211,7 @@ public class MolewormWarrensFeature extends Feature<NoneFeatureConfiguration> {
         int minZ = Mth.floor(center.z - radiusZ);
         int maxZ = Mth.floor(center.z + radiusZ);
         int minY = Math.max(level.getMinY() + 2, Mth.floor(center.y - 6.0D));
-        int maxY = Math.min(level.getMaxY() - 3, Mth.floor(center.y + 3.0D));
+        int maxY = Math.min((level.getMaxY() + 1) - 4, Mth.floor(center.y + 3.0D));
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 
         for (int x = minX; x <= maxX; x++) {
@@ -245,7 +245,7 @@ public class MolewormWarrensFeature extends Feature<NoneFeatureConfiguration> {
         int minX = Mth.floor(center.x - radiusX);
         int maxX = Mth.floor(center.x + radiusX);
         int minY = Math.max(level.getMinY() + 2, Mth.floor(center.y - radiusY));
-        int maxY = Math.min(level.getMaxY() - 2, Mth.floor(center.y + radiusY + 1.0F));
+        int maxY = Math.min((level.getMaxY() + 1) - 3, Mth.floor(center.y + radiusY + 1.0F));
         int minZ = Mth.floor(center.z - radiusZ);
         int maxZ = Mth.floor(center.z + radiusZ);
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
@@ -284,7 +284,7 @@ public class MolewormWarrensFeature extends Feature<NoneFeatureConfiguration> {
         int minX = Mth.floor(center.x - radiusX);
         int maxX = Mth.floor(center.x + radiusX);
         int minY = Math.max(level.getMinY() + 2, Mth.floor(center.y - radiusY));
-        int maxY = Math.min(level.getMaxY() - 2, Mth.floor(center.y + radiusY));
+        int maxY = Math.min((level.getMaxY() + 1) - 3, Mth.floor(center.y + radiusY));
         int minZ = Mth.floor(center.z - radiusZ);
         int maxZ = Mth.floor(center.z + radiusZ);
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
@@ -379,7 +379,7 @@ public class MolewormWarrensFeature extends Feature<NoneFeatureConfiguration> {
     }
 
     private static boolean canAccess(WorldGenLevel level, int x, int y, int z) {
-        return canAccess(level, new BlockPos(x, Mth.clamp(y, level.getMinY() + 1, level.getMaxY() - 1), z));
+        return canAccess(level, new BlockPos(x, Mth.clamp(y, level.getMinY() + 1, (level.getMaxY() + 1) - 2), z));
     }
 
     private static boolean canAccess(WorldGenLevel level, BlockPos pos) {

@@ -42,7 +42,7 @@ public class BrutalflyCocoonFeature extends Feature<NoneFeatureConfiguration> {
                 continue;
             }
 
-            int searchTopY = Math.min(MAX_ANCHOR_Y, level.getMaxY() - 1);
+            int searchTopY = Math.min(MAX_ANCHOR_Y, (level.getMaxY() + 1) - 2);
             for (int y = searchTopY; y > groundY + 12; y--) {
                 pos.set(x, y, z);
                 if (!level.getBlockState(pos).is(BlockTags.LOGS)) {

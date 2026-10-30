@@ -1,35 +1,60 @@
 {
-  "type": "minecraft:cache",
-  "input": {
-    "type": "minecraft:add",
-    "left": "antarchy:elythia_ocean_floor_offset",
-    "right": {
-      "type": "minecraft:mul",
-      "left": {
-        "type": "minecraft:spline",
-        "spline": {
-          "coordinate": "antarchy:elythia_continents",
-          "points": [
-            {
-              "location": -0.4,
-              "value": 0.0,
-              "derivative": 0.0
-            },
-            {
-              "location": -0.385,
-              "value": 1.0,
-              "derivative": 0.0
-            }
-          ]
-        }
-      },
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache",
+    "input": {
+      "type": "minecraft:add",
+      "left": "antarchy:elythia_ocean_floor_offset",
       "right": {
-        "type": "minecraft:add",
-        "left": -0.468642,
+        "type": "minecraft:mul",
+        "left": {
+          "type": "minecraft:spline",
+          "spline": {
+            "coordinate": "antarchy:elythia_continents",
+            "points": [
+              {
+                "location": -0.46,
+                "value": 0.0,
+                "derivative": 0.0
+              },
+              {
+                "location": -0.4,
+                "value": 1.0,
+                "derivative": 0.0
+              }
+            ]
+          }
+        },
         "right": {
-          "type": "minecraft:mul",
-          "left": -1.0,
-          "right": "antarchy:elythia_ocean_floor_offset"
+          "type": "minecraft:add",
+          "left": {
+            "type": "minecraft:spline",
+            "spline": {
+              "coordinate": "antarchy:elythia_continents",
+              "points": [
+                {
+                  "location": -0.46,
+                  "value": -0.752412,
+                  "derivative": 3.0
+                },
+                {
+                  "location": -0.37,
+                  "value": -0.468642,
+                  "derivative": 0.8
+                },
+                {
+                  "location": -0.31,
+                  "value": -0.46076,
+                  "derivative": 0.0
+                }
+              ]
+            }
+          },
+          "right": {
+            "type": "minecraft:mul",
+            "left": -1.0,
+            "right": "antarchy:elythia_ocean_floor_offset"
+          }
         }
       }
     }

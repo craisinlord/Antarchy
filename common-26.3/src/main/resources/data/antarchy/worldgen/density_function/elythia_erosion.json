@@ -1,34 +1,59 @@
 {
-  "type": "minecraft:range_choice",
-  "input": "antarchy:elythia_massif_mask",
-  "min_inclusive": 0.5,
-  "max_exclusive": 10.0,
-  "when_in_range": 0.7,
-  "when_out_of_range": {
-    "type": "minecraft:max",
-    "left": {
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:range_choice",
+    "input": "antarchy:elythia_massif_mask",
+    "min_inclusive": 0.5,
+    "max_exclusive": 10.0,
+    "when_in_range": 0.7,
+    "when_out_of_range": {
       "type": "minecraft:max",
       "left": {
-        "type": "minecraft:min",
-        "left": "minecraft:overworld/erosion",
-        "right": 0.65
+        "type": "minecraft:max",
+        "left": {
+          "type": "minecraft:max",
+          "left": {
+            "type": "minecraft:max",
+            "left": {
+              "type": "minecraft:min",
+              "left": "minecraft:overworld/erosion",
+              "right": 0.65
+            },
+            "right": {
+              "type": "minecraft:range_choice",
+              "input": "antarchy:elythia_river_channel",
+              "min_inclusive": 0.3,
+              "max_exclusive": 10.0,
+              "when_in_range": 0.8,
+              "when_out_of_range": -1.0
+            }
+          },
+          "right": {
+            "type": "minecraft:range_choice",
+            "input": "antarchy:elythia_reserve_mask",
+            "min_inclusive": 0.2,
+            "max_exclusive": 10.0,
+            "when_in_range": 1.0,
+            "when_out_of_range": -1.0
+          }
+        },
+        "right": {
+          "type": "minecraft:range_choice",
+          "input": "antarchy:elythia_shelf_mask",
+          "min_inclusive": 0.3,
+          "max_exclusive": 10.0,
+          "when_in_range": 0.88,
+          "when_out_of_range": -1.0
+        }
       },
       "right": {
         "type": "minecraft:range_choice",
-        "input": "antarchy:elythia_river_channel",
-        "min_inclusive": 0.3,
+        "input": "antarchy:elythia_butte_presence",
+        "min_inclusive": 0.5,
         "max_exclusive": 10.0,
-        "when_in_range": 0.8,
+        "when_in_range": 0.91,
         "when_out_of_range": -1.0
       }
-    },
-    "right": {
-      "type": "minecraft:range_choice",
-      "input": "antarchy:elythia_reserve_mask",
-      "min_inclusive": 0.2,
-      "max_exclusive": 10.0,
-      "when_in_range": 1.0,
-      "when_out_of_range": -1.0
     }
   }
 }

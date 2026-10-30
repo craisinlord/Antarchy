@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -7,7 +8,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
@@ -15,9 +15,7 @@ public final class LumenLilyPadFeature implements Feature {
     public static final MapCodec<LumenLilyPadFeature> CODEC = MapCodec.unit(LumenLilyPadFeature::new);
 
     @Override
-    public MapCodec<LumenLilyPadFeature> codec() {
-        return CODEC;
-    }
+    public MapCodec<LumenLilyPadFeature> codec() { return CODEC; }
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {

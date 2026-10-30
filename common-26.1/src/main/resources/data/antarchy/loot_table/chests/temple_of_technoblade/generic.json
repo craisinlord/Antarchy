@@ -230,6 +230,15 @@
         }
       ],
       "rolls": 1.0
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "antarchy:inject/antroid_phone"
+        }
+      ]
     }
   ],
   "random_sequence": "antarchy:chests/temple_of_technoblade/generic"

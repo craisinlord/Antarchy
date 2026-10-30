@@ -1,12 +1,15 @@
 {
-  "type": "minecraft:add",
-  "left": {
-    "type": "minecraft:gradient",
-    "axis": "y",
-    "from_coordinate": -24,
-    "to_coordinate": 360,
-    "from_value": 1.5,
-    "to_value": -1.5
-  },
-  "right": "minecraft:overworld/offset"
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:add",
+    "left": {
+      "type": "minecraft:gradient",
+      "axis": "y",
+      "from_coordinate": -24,
+      "to_coordinate": 360,
+      "from_value": 1.5,
+      "to_value": -1.5
+    },
+    "right": "minecraft:overworld/offset"
+  }
 }

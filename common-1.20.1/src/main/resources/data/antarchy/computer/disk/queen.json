@@ -1,6 +1,7 @@
 {
   "category": "antarchy:thoraxis",
   "title": "guide.antarchy.disk.queen.title",
+  "description": "guide.antarchy.disk.queen.description",
   "entries": [
     "antarchy:queen",
     "antarchy:princess"

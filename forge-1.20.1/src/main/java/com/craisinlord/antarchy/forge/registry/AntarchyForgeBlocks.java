@@ -787,7 +787,7 @@ public final class AntarchyForgeBlocks {
     public static final RegistryObject<Block> LOAM = BLOCKS.register("loam",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD)));
     public static final RegistryObject<Block> PRIMORDIAL_LOAM = BLOCKS.register("primordial_loam",
-            () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD)));
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.MUD).sound(primordialLoamSoundType())));
     public static final RegistryObject<Block> PACKED_LOAM = BLOCKS.register("packed_loam",
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.PACKED_MUD)));
     public static final RegistryObject<Block> LOAM_BRICKS = BLOCKS.register("loam_bricks",
@@ -1029,6 +1029,15 @@ public final class AntarchyForgeBlocks {
 
     static Block createRawStorageBlock(Block copyFrom, MapColor mapColor) {
         return new Block(BlockBehaviour.Properties.copy(copyFrom).mapColor(mapColor).requiresCorrectToolForDrops());
+    }
+
+    private static SoundType primordialLoamSoundType() {
+        return new SoundType(1.0F, 1.0F,
+                SoundType.MUD.getBreakSound(),
+                SoundType.MOSS.getStepSound(),
+                SoundType.MUD.getPlaceSound(),
+                SoundType.MUD.getHitSound(),
+                SoundType.MUD.getFallSound());
     }
 
     private static SoundType antimetalSoundType() {

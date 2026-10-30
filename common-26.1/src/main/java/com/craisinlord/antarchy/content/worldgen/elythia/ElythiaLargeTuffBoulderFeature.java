@@ -87,7 +87,7 @@ public class ElythiaLargeTuffBoulderFeature extends Feature<NoneFeatureConfigura
         for (int x = -radius; x <= radius; x++) {
             for (int z = -radius; z <= radius; z++) {
                 BlockPos topPos = center.offset(x, 0, z);
-                while (topPos.getY() < level.getMaxY() && level.getBlockState(topPos.above()).is(Blocks.TUFF)) {
+                while (topPos.getY() < (level.getMaxY() + 1) - 1 && level.getBlockState(topPos.above()).is(Blocks.TUFF)) {
                     topPos = topPos.above();
                 }
 

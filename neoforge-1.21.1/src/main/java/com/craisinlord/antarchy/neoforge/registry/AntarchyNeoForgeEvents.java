@@ -27,6 +27,7 @@ import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
 import com.craisinlord.antarchy.content.entity.trades.ComputerScientistTradeManager;
 import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.craisinlord.antarchy.content.item.*;
+import com.craisinlord.antarchy.content.loot.AntarchyLootInjections;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateGearHelper;
 import com.craisinlord.antarchy.content.AntarchyTags;
@@ -73,6 +74,7 @@ import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.event.brewing.RegisterBrewingRecipesEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.event.entity.living.*;
@@ -100,6 +102,7 @@ public final class AntarchyNeoForgeEvents {
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onMissileSquidDeath);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onPermanentPortalSacrifice);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onLivingBreathe);
+        NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::onLootTableLoad);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::registerBrewingRecipes);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleNaturalRabbitReplacement);
         NeoForge.EVENT_BUS.addListener(AntarchyNeoForgeEvents::handleBlockToolModification);
@@ -272,6 +275,12 @@ public final class AntarchyNeoForgeEvents {
         PermanentPortalManager.handleSacrifice(event.getEntity());
         if (event.getEntity() instanceof RainbowAntEntity rainbowAnt) {
             rainbowAnt.tryIgniteInfinityPortalOnDeath();
+        }
+    }
+
+    public static void onLootTableLoad(LootTableLoadEvent event) {
+        if (AntarchyLootInjections.addsPhone(event.getName())) {
+            event.getTable().addPool(AntarchyLootInjections.phonePool().build());
         }
     }
 

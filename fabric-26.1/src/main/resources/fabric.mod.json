@@ -32,7 +32,7 @@
   ],
   "depends": {
     "antos": ">=${antos_version}",
-    "anthology": ">=1.0.0",
+    "anthology": ">=1.0.2",
     "fabricloader": ">=${fabric_loader_version}",
     "minecraft": "~${minecraft_version}",
     "java": ">=25",

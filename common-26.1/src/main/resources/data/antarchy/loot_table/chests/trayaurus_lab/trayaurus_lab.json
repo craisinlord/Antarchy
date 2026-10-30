@@ -469,6 +469,30 @@
         "min": 2.0,
         "max": 4.0
       }
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antos:floppy_disk",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "antos:floppy_disk": "antarchy:trayaurus_lab_notes"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antos:antroid_phone"
+        }
+      ]
     }
   ],
   "random_sequence": "antarchy:chests/trayaurus_lab"

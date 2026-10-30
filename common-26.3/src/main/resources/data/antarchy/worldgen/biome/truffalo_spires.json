@@ -1,0 +1,193 @@
+{
+  "has_precipitation": true,
+  "temperature": 0.82,
+  "downfall": 1.0,
+  "carvers": [],
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "antarchy:elythia_ore_coal_upper",
+      "antarchy:elythia_ore_coal_lower",
+      "antarchy:elythia_ore_iron_upper",
+      "antarchy:elythia_ore_iron_middle",
+      "antarchy:elythia_ore_iron_small",
+      "antarchy:elythia_ore_gold",
+      "antarchy:elythia_ore_gold_lower",
+      "antarchy:elythia_ore_redstone",
+      "antarchy:elythia_ore_redstone_lower",
+      "antarchy:elythia_ore_diamond",
+      "antarchy:elythia_ore_diamond_medium",
+      "antarchy:elythia_ore_diamond_large",
+      "antarchy:elythia_ore_diamond_buried",
+      "antarchy:elythia_ore_lapis",
+      "antarchy:elythia_ore_lapis_buried",
+      "antarchy:elythia_ore_copper"
+    ],
+    [
+      "antarchy:elythia_underground",
+      "antarchy:elythia_large_dripstone",
+      "antarchy:elythia_pointed_dripstone"
+    ],
+    [],
+    [
+      "antarchy:truffalo_spires",
+      "antarchy:truffalo_forest_trees",
+      "antarchy:truffalo_tall_trees",
+      "antarchy:elythia_meadow_tuff_boulders",
+      "antarchy:elythia_meadow_flora",
+      "antarchy:elythia_brown_ant_nests",
+      "antarchy:elythia_rainbow_ant_nests",
+      "minecraft:patch_sugar_cane",
+      "antarchy:giant_lily_pad_patch_river",
+      "antarchy:throwback_nerd_pole"
+    ],
+    []
+  ],
+  "attributes": {
+    "minecraft:visual/fog_color": "#b9d4ff",
+    "minecraft:visual/sky_color": "#7b5cff",
+    "minecraft:visual/water_fog_color": "#0b3c70",
+    "minecraft:audio/ambient_sounds": {
+      "mood": {
+        "sound": "minecraft:ambient.basalt_deltas.mood",
+        "tick_delay": 8000,
+        "block_search_extent": 8,
+        "offset": 2.0
+      }
+    },
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.elythia",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:gameplay/natural_mob_spawns": {
+      "modifier": "overlay",
+      "argument": {
+        "spawn_costs": {
+          "antarchy:alpha_mantis": {
+            "energy_budget": 0.1,
+            "charge": 18.0
+          },
+          "antarchy:mantis": {
+            "energy_budget": 0.1,
+            "charge": 15.0
+          }
+        },
+        "spawns_by_category": {
+          "creature": [
+            {
+              "type": "antarchy:caterpillar",
+              "weight": 24,
+              "count": 1
+            },
+            {
+              "type": "antarchy:apple_cow",
+              "weight": 20,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 3
+              }
+            },
+            {
+              "type": "antarchy:golden_apple_cow",
+              "weight": 16,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 3
+              }
+            },
+            {
+              "type": "antarchy:enchanted_golden_apple_cow",
+              "weight": 1,
+              "count": 1
+            },
+            {
+              "type": "minecraft:rabbit",
+              "weight": 16,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 3
+              }
+            },
+            {
+              "type": "antarchy:glimmer",
+              "weight": 2,
+              "count": 1
+            }
+          ],
+          "ambient": [
+            {
+              "type": "antarchy:butterfly",
+              "weight": 48,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 2,
+                "max_inclusive": 4
+              }
+            }
+          ],
+          "monster": [
+            {
+              "type": "antarchy:mantis",
+              "weight": 20,
+              "count": 1
+            },
+            {
+              "type": "antarchy:alpha_mantis",
+              "weight": 1,
+              "count": 1
+            }
+          ],
+          "axolotls": [],
+          "underground_water_creature": [],
+          "water_creature": [
+            {
+              "type": "antarchy:octopus_bomb",
+              "weight": 2,
+              "count": 1
+            }
+          ],
+          "water_ambient": [
+            {
+              "type": "antarchy:cheep",
+              "weight": 10,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 3,
+                "max_inclusive": 6
+              }
+            },
+            {
+              "type": "minecraft:tropical_fish",
+              "weight": 20,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 4,
+                "max_inclusive": 8
+              }
+            }
+          ],
+          "misc": []
+        }
+      }
+    },
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.2
+  },
+  "effects": {
+    "water_color": "#4c9ef8",
+    "foliage_color": "#2bc12d",
+    "grass_color": "#41ad28",
+    "grass_color_modifier": "none"
+  }
+}

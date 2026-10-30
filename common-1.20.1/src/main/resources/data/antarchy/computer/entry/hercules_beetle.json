@@ -22,5 +22,6 @@
     {
       "item": "antarchy:broodfruit"
     }
-  ]
+  ],
+  "lookup": ["antarchy:broodfruit", "antarchy:hercules_horn", "antarchy:hercules_beetle_spawn_egg"]
 }

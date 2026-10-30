@@ -1,10 +1,10 @@
 {
-  "type": "minecraft:add",
-  "argument1": {
-    "type": "minecraft:min",
+  "type": "minecraft:interpolated",
+  "argument": {
+    "type": "minecraft:add",
     "argument1": {
-      "type": "minecraft:cache_2d",
-      "argument": {
+      "type": "minecraft:min",
+      "argument1": {
         "type": "minecraft:clamp",
         "input": {
           "type": "minecraft:max",
@@ -96,12 +96,9 @@
         },
         "max": 2.0,
         "min": -2.0
-      }
+      },
+      "argument2": "antarchy:cavaryn_noise_cave"
     },
-    "argument2": {
-      "type": "minecraft:cache_all_in_cell",
-      "argument": "antarchy:cavaryn_noise_cave"
-    }
-  },
-  "argument2": -0.05
+    "argument2": -0.05
+  }
 }

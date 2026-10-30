@@ -1,0 +1,12 @@
+{
+  "sender": "trayaurus@antmail.com",
+  "sender_display": "Dr. Trayaurus",
+  "sender_avatar_item": "antarchy:diamond_minecart",
+  "subject": "You beat the Queen!",
+  "body": "You beat the Queen!! You went all the way down there and came back. That's more dangerous than anything I've ever done, and I built a cloning machine.\n\nShe should have dropped an egg too. Put it down and it'll hatch into a Princess bonded to whoever placed it. Same as the Prince, golden apples help it grow.\n\nYour old friend,\nDr. T\n\n@archive:antarchy:princess",
+  "trigger": {
+    "type": "advancement",
+    "value": "antarchy:down_with_the_queen",
+    "delay_minutes": 3
+  }
+}

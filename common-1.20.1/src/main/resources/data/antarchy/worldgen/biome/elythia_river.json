@@ -1,9 +1,9 @@
 {
-  "has_precipitation": false,
+  "has_precipitation": true,
   "temperature": 0.76,
   "downfall": 0.98,
   "effects": {
-    "fog_color": 8084735,
+    "fog_color": 10849791,
     "water_color": 5021432,
     "water_fog_color": 736368,
     "sky_color": 8084735,
@@ -33,7 +33,10 @@
     [],
     [],
     [],
-    [],
+    [
+      "antarchy:river_log_bridge",
+      "antarchy:river_stepping_stones"
+    ],
     [],
     [
       "antarchy:elythia_ore_coal_upper",
@@ -46,6 +49,7 @@
       "antarchy:elythia_ore_redstone",
       "antarchy:elythia_ore_redstone_lower",
       "antarchy:elythia_ore_diamond",
+      "antarchy:elythia_ore_diamond_medium",
       "antarchy:elythia_ore_diamond_large",
       "antarchy:elythia_ore_diamond_buried",
       "antarchy:elythia_ore_lapis",
@@ -54,14 +58,15 @@
     ],
     [
       "antarchy:elythia_underground",
-      "minecraft:large_dripstone",
-      "minecraft:pointed_dripstone"
+      "antarchy:elythia_large_dripstone",
+      "antarchy:elythia_pointed_dripstone"
     ],
     [],
     [
       "antarchy:elythia_meadow_flora",
       "minecraft:patch_sugar_cane",
-      "antarchy:giant_lily_pad_patch_river"
+      "antarchy:giant_lily_pad_patch_river",
+      "minecraft:seagrass_river"
     ],
     []
   ],
@@ -74,6 +79,12 @@
         "weight": 12,
         "minCount": 1,
         "maxCount": 2
+      },
+      {
+        "type": "minecraft:frog",
+        "weight": 14,
+        "minCount": 2,
+        "maxCount": 4
       }
     ],
     "ambient": [],

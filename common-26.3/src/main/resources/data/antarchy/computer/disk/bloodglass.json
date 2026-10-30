@@ -1,5 +1,6 @@
 {
   "category": "antarchy:thoraxis",
   "title": "guide.antarchy.disk.bloodglass.title",
+  "description": "guide.antarchy.disk.bloodglass.description",
   "entries": ["antarchy:bloodglass"]
 }

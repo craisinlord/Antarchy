@@ -1,0 +1,9 @@
+{
+  "pool": "minecraft:village/snowy/houses",
+  "element": {
+    "location": "antarchy:village/computer_scientist_house_snowy",
+    "processors": "minecraft:empty",
+    "projection": "rigid"
+  },
+  "weight": 1
+}

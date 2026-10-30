@@ -152,6 +152,8 @@ public final class AntarchyConfigCatalog {
                 || name.equals("elythiaFogEnabled")
                 || name.equals("elythiaGroundMistEnabled")
                 || name.equals("elythiaSoftCloudsEnabled")
+                || name.equals("boatsClimbWaterSteps")
+                || name.equals("boatWaterStepMaxHeight")
                 || name.equals("duplicatorTreeEnabled")
                 || name.equals("glowVinesUnderLeaves")
                 || name.equals("swingThroughGrassEnabled")

@@ -513,6 +513,8 @@ public class AntarchyNeoforge {
         AntarchyObjects.setCritterCageEntityTypeComponent(() -> AntarchyNeoforgeMisc.CRITTER_CAGE_ENTITY_TYPE_COMPONENT.get());
         AntarchyObjects.setCritterCagePrimaryColorComponent(() -> AntarchyNeoforgeMisc.CRITTER_CAGE_PRIMARY_COLOR_COMPONENT.get());
         AntarchyObjects.setCritterCageSecondaryColorComponent(() -> AntarchyNeoforgeMisc.CRITTER_CAGE_SECONDARY_COLOR_COMPONENT.get());
+        AntarchyObjects.setFossilEntityComponent(() -> AntarchyNeoforgeMisc.FOSSIL_ENTITY_COMPONENT.get());
+        AntarchyObjects.setFossilBlockEntity(() -> AntarchyNeoforgeBlocks.FOSSIL_BLOCK_ENTITY.get());
     }
 
     private static boolean isModLoaded(String modId) {

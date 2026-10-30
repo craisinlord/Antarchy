@@ -15,6 +15,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BooleanSupplier;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -38,6 +39,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
@@ -52,6 +54,7 @@ public final class AntTransit {
     private static final int PREPARE_TIMEOUT_TICKS = 1200;
     private static final int ARRIVAL_PROTECTION_TICKS = 40;
     private static final int WAKE_UP_DELAY_TICKS = 30;
+    private static final int LANDING_GRACE_TICKS = 15;
     private static final int MAX_GLIDE_TICKS = 1200;
     private static final int DROP_Y = 236;
     private static final int MIN_DROP_HEIGHT = 48;
@@ -178,12 +181,28 @@ public final class AntTransit {
         }
         state.waiting = false;
         state.tick = 0;
-        state.origin = player.position();
+        state.origin = settle(player);
         AntTransitSync.sendToSelfAndTracking(player, payload(player, state, AntTransitPayload.PHASE_START, state.origin, false));
         playAt(player, state.origin, startSound(state.style, player), 1.0F, startPitch(state.style));
         if (state.style == TransitStyle.CAVARYN_IN) {
             player.playNotifySound(AntarchySoundEvents.CAVARYN_HEARTBEAT.get(), SoundSource.PLAYERS, 0.8F, 1.0F);
         }
+    }
+
+    private static boolean grounded(ServerPlayer player) {
+        return player.onGround() || player.isPassenger() || player.getAbilities().flying
+                || player.isInWater() || player.isInLava() || player.onClimbable();
+    }
+
+    private static Vec3 settle(ServerPlayer player) {
+        Vec3 pos = player.position();
+        if (grounded(player)) {
+            return pos;
+        }
+        AABB box = player.getBoundingBox();
+        double drop = Shapes.collide(Direction.Axis.Y, box,
+                player.serverLevel().getBlockCollisions(player, box.expandTowards(0.0D, -GROUND_SCAN, 0.0D)), -GROUND_SCAN);
+        return drop > -GROUND_SCAN ? pos.add(0.0D, drop, 0.0D) : pos;
     }
 
     private static SoundEvent startSound(TransitStyle style, ServerPlayer player) {
@@ -215,7 +234,9 @@ public final class AntTransit {
                 return false;
             }
             if (state.searchDone) {
-                begin(player, state);
+                if (grounded(player) || ++state.landingTicks > LANDING_GRACE_TICKS) {
+                    begin(player, state);
+                }
             } else if (state.tick % 4 == 0) {
                 gathering(player, state);
             }
@@ -498,6 +519,7 @@ public final class AntTransit {
         private boolean gliding;
         private boolean poofed;
         private int tick;
+        private int landingTicks;
 
         private State(TransitStyle style, ServerLevel originLevel, ServerLevel destination, Vec3 origin, BooleanSupplier warp) {
             this.style = style;

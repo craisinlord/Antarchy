@@ -612,6 +612,28 @@ public final class AntarchyNeoforgeItems {
             () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.BROODSTONE_URANIUM_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_TITANIUM_ORE_ITEM = ITEMS.register("broodstone_titanium_ore",
             () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.BROODSTONE_TITANIUM_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_COPPER_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_COPPER_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_IRON_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_IRON_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_GOLD_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_GOLD_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_REDSTONE_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_REDSTONE_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_LAPIS_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.MYRMITE_LAPIS_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_DIAMOND_ORE_ITEM = ITEMS.register("myrmite_diamond_ore",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.MYRMITE_DIAMOND_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_EMERALD_ORE_ITEM = ITEMS.register("myrmite_emerald_ore",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.MYRMITE_EMERALD_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_COPPER_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_COPPER_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_IRON_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_IRON_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_GOLD_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_GOLD_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_REDSTONE_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_REDSTONE_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_LAPIS_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_LAPIS_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_DIAMOND_ORE_ITEM = ITEMS.register("broodstone_diamond_ore",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.BROODSTONE_DIAMOND_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_EMERALD_ORE_ITEM = ITEMS.register("broodstone_emerald_ore",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyNeoforgeBlocks.BROODSTONE_EMERALD_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.FossilBlockItem> MYRMITE_FOSSIL_ITEM = ITEMS.register("myrmite_fossil",
+            () -> new com.craisinlord.antarchy.content.item.FossilBlockItem(AntarchyNeoforgeBlocks.MYRMITE_FOSSIL.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.FossilBlockItem> BROODSTONE_FOSSIL_ITEM = ITEMS.register("broodstone_fossil",
+            () -> new com.craisinlord.antarchy.content.item.FossilBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_FOSSIL.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.POLISHED_NYXITE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> CHISELED_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.CHISELED_NYXITE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> NYXITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.NYXITE_BRICKS);

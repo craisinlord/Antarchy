@@ -23,5 +23,6 @@
     {
       "item": "antarchy:bluestone"
     }
-  ]
+  ],
+  "lookup": ["antarchy:vortex_lens", "antarchy:eye_of_the_storm", "antarchy:vortex_charge"]
 }

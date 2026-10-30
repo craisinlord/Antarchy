@@ -1,75 +1,78 @@
 {
-  "type": "minecraft:cache",
-  "input": {
-    "type": "minecraft:add",
-    "left": {
-      "type": "minecraft:spline",
-      "spline": {
-        "coordinate": "antarchy:elythia_continents",
-        "points": [
-          {
-            "location": -1.2,
-            "value": -1.193821,
-            "derivative": 0.0
-          },
-          {
-            "location": -0.8,
-            "value": -1.193821,
-            "derivative": 0.0
-          },
-          {
-            "location": -0.6,
-            "value": -1.099232,
-            "derivative": 0.0
-          },
-          {
-            "location": -0.45,
-            "value": -0.910055,
-            "derivative": 0.0
-          },
-          {
-            "location": -0.41,
-            "value": -0.657819,
-            "derivative": 0.0
-          },
-          {
-            "location": -0.385,
-            "value": -0.547466,
-            "derivative": 0.0
-          },
-          {
-            "location": -0.37,
-            "value": -0.531701,
-            "derivative": 0.0
-          }
-        ]
-      }
-    },
-    "right": {
-      "type": "minecraft:mul",
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache",
+    "input": {
+      "type": "minecraft:add",
       "left": {
         "type": "minecraft:spline",
         "spline": {
           "coordinate": "antarchy:elythia_continents",
           "points": [
             {
-              "location": -0.5,
-              "value": 0.063,
+              "location": -1.2,
+              "value": -1.193821,
               "derivative": 0.0
             },
             {
-              "location": -0.42,
-              "value": 0.0,
+              "location": -0.8,
+              "value": -1.193821,
+              "derivative": 0.0
+            },
+            {
+              "location": -0.6,
+              "value": -1.099232,
+              "derivative": 0.0
+            },
+            {
+              "location": -0.45,
+              "value": -0.910055,
+              "derivative": 0.0
+            },
+            {
+              "location": -0.41,
+              "value": -0.657819,
+              "derivative": 0.0
+            },
+            {
+              "location": -0.385,
+              "value": -0.547466,
+              "derivative": 0.0
+            },
+            {
+              "location": -0.37,
+              "value": -0.531701,
               "derivative": 0.0
             }
           ]
         }
       },
       "right": {
-        "type": "minecraft:noise",
-        "noise": "antarchy:elythia_terrain_roughness",
-        "xz_scale": 0.55,
-        "y_scale": 0
+        "type": "minecraft:mul",
+        "left": {
+          "type": "minecraft:spline",
+          "spline": {
+            "coordinate": "antarchy:elythia_continents",
+            "points": [
+              {
+                "location": -0.5,
+                "value": 0.063,
+                "derivative": 0.0
+              },
+              {
+                "location": -0.42,
+                "value": 0.0,
+                "derivative": 0.0
+              }
+            ]
+          }
+        },
+        "right": {
+          "type": "minecraft:noise",
+          "noise": "antarchy:elythia_terrain_roughness",
+          "xz_scale": 0.55,
+          "y_scale": 0
+        }
       }
     }
   }

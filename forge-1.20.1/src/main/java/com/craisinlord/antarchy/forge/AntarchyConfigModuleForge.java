@@ -31,6 +31,7 @@ public final class AntarchyConfigModuleForge {
         HerculesBeetleImpactShakeSync.setSink((player, ticks) -> AntarchyForgeNetworkCore.sendToPlayer(player, new HerculesBeetleImpactShakePayload(ticks)));
         KingJudgmentFlashSync.setSink((player, ticks) -> AntarchyForgeNetworkCore.sendToPlayer(player, new KingJudgmentFlashPayload(ticks)));
         HordeIntensitySync.setSink(AntarchyForgeNetworkCore::sendToPlayer);
+        com.craisinlord.antarchy.content.network.ElythiaEventSync.setSink(AntarchyForgeNetworkCore::sendToPlayer);
         AntarchyForge.modEventBusTempHolder.addListener(AntarchyConfigModuleForge::onConfigChange);
     }
 
@@ -692,9 +693,20 @@ public final class AntarchyConfigModuleForge {
         AntarchySettings.setDuplicatorTreeEnabled(AntarchyMiscConfig.duplicatorTreeEnabled());
         AntarchySettings.setGlowVinesUnderLeaves(AntarchyMiscConfig.glowVinesUnderLeaves());
         AntarchySettings.setSwingThroughGrassEnabled(AntarchyMiscConfig.swingThroughGrassEnabled());
+        AntarchySettings.setBoatsClimbWaterSteps(AntarchyMiscConfig.boatsClimbWaterSteps());
+        AntarchySettings.setBoatWaterStepMaxHeight(AntarchyMiscConfig.boatWaterStepMaxHeight());
         AntarchySettings.setFabricKeybindingConflictFixEnabled(AntarchyMiscConfig.fabricKeybindingConflictFixEnabled());
         AntarchySettings.setExperimentalSettingsPopupDisabled(AntarchyMiscConfig.experimentalSettingsPopupDisabled());
         AntarchySettings.setEntitySpecificFireOverlayEnabled(AntarchyMiscConfig.entitySpecificFireOverlayEnabled());
+        AntarchySettings.setElythiaEvents(AntarchyMiscConfig.elythiaEvents());
+        AntarchySettings.setElythiaAlreadyDreaming(AntarchyMiscConfig.elythiaAlreadyDreaming());
+        AntarchySettings.setElythiaDreamShadowsEnabled(AntarchyMiscConfig.elythiaDreamShadowsEnabled());
+        AntarchySettings.setElythiaDreamShadowsStrength(AntarchyMiscConfig.elythiaDreamShadowsStrength());
+        AntarchySettings.setElythiaPurpleRain(AntarchyMiscConfig.elythiaPurpleRain());
+        AntarchySettings.setElythiaClearWater(AntarchyMiscConfig.elythiaClearWater());
+        AntarchySettings.setElythiaGroundMistEnabled(AntarchyMiscConfig.elythiaGroundMistEnabled());
+        AntarchySettings.setElythiaFogEnabled(AntarchyMiscConfig.elythiaFogEnabled());
+        AntarchySettings.setElythiaRainGrowth(AntarchyMiscConfig.elythiaRainGrowth());
 
         AntarchySettings.setBloodCrystalArmorShieldRechargeTicks(AntarchyToolsConfig.bloodCrystalArmorShieldRechargeTicks());
         AntarchySettings.setBloodCrystalAppleShieldCount(AntarchyToolsConfig.bloodCrystalAppleShieldCount());

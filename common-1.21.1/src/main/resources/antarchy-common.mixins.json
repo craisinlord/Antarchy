@@ -5,6 +5,7 @@
     "compatibilityLevel":  "JAVA_21",
     "mixins":  [
                    "AbstractMinecartMixin",
+                   "BoatWaterStepMixin",
                    "PortalGunItemEntityRemovalMixin",
                    "RoyalBossMoveScanMixin",
                    "PortalGunZombieMixin",
@@ -100,6 +101,7 @@
                    "client.CavarynSkyMixin",
                    "client.CavarynHordeFogMixin",
                    "client.CavarynHordeLightTextureMixin",
+                   "client.CavarynDuskSkyMixin",
                    "client.ElythiaLightTextureMixin",
                    "client.ElythiaWaterFogMixin",
                    "client.ElythiaRainMixin",

@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -12,7 +13,6 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.MultifaceBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.phys.Vec3;
@@ -22,9 +22,7 @@ public class MolewormCaveEntranceFeature implements Feature {
     public static final MapCodec<MolewormCaveEntranceFeature> CODEC = MapCodec.unit(MolewormCaveEntranceFeature::new);
 
     @Override
-    public MapCodec<MolewormCaveEntranceFeature> codec() {
-        return CODEC;
-    }
+    public MapCodec<MolewormCaveEntranceFeature> codec() { return CODEC; }
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
@@ -95,7 +93,7 @@ public class MolewormCaveEntranceFeature implements Feature {
                 }
 
                 int surfaceY = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z) - 1;
-                if (surfaceY < level.getMinY() + 8 || surfaceY > level.getMaxY() - 7) {
+                if (surfaceY < level.getMinY() + 8 || surfaceY > (level.getMaxY() + 1) - 8) {
                     continue;
                 }
 
@@ -252,7 +250,7 @@ public class MolewormCaveEntranceFeature implements Feature {
         int minX = Mth.floor(center.x - radiusX - 1.5F);
         int maxX = Mth.floor(center.x + radiusX + 1.5F);
         int minY = Math.max(level.getMinY() + 1, Mth.floor(center.y - radiusY - 2.0F));
-        int maxY = Math.min(level.getMaxY() - 1, Mth.floor(center.y + radiusY + 2.0F));
+        int maxY = Math.min((level.getMaxY() + 1) - 2, Mth.floor(center.y + radiusY + 2.0F));
         int minZ = Mth.floor(center.z - radiusZ - 1.5F);
         int maxZ = Mth.floor(center.z + radiusZ + 1.5F);
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
@@ -299,7 +297,7 @@ public class MolewormCaveEntranceFeature implements Feature {
         int minZ = Mth.floor(center.z - radiusZ);
         int maxZ = Mth.floor(center.z + radiusZ);
         int minY = Math.max(level.getMinY() + 2, Mth.floor(center.y - 6.0D));
-        int maxY = Math.min(level.getMaxY() - 3, Mth.floor(center.y + 3.0D));
+        int maxY = Math.min((level.getMaxY() + 1) - 4, Mth.floor(center.y + 3.0D));
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 
         for (int x = minX; x <= maxX; x++) {
@@ -330,7 +328,7 @@ public class MolewormCaveEntranceFeature implements Feature {
         int minX = Mth.floor(center.x - radiusX);
         int maxX = Mth.floor(center.x + radiusX);
         int minY = Math.max(level.getMinY() + 2, Mth.floor(center.y - radiusY));
-        int maxY = Math.min(level.getMaxY() - 2, Mth.floor(center.y + radiusY + 1.0F));
+        int maxY = Math.min((level.getMaxY() + 1) - 3, Mth.floor(center.y + radiusY + 1.0F));
         int minZ = Mth.floor(center.z - radiusZ);
         int maxZ = Mth.floor(center.z + radiusZ);
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
@@ -450,12 +448,12 @@ public class MolewormCaveEntranceFeature implements Feature {
     }
 
     private static boolean canAccessColumn(WorldGenLevel level, int x, int z) {
-        int probeY = Mth.clamp((level.getMinY() + level.getMaxY() + 1) / 2, level.getMinY() + 1, level.getMaxY() - 1);
+        int probeY = Mth.clamp((level.getMinY() + (level.getMaxY() + 1)) / 2, level.getMinY() + 1, (level.getMaxY() + 1) - 2);
         return canAccess(level, x, probeY, z);
     }
 
     private static boolean canAccess(WorldGenLevel level, int x, int y, int z) {
-        return canAccess(level, new BlockPos(x, Mth.clamp(y, level.getMinY() + 1, level.getMaxY() - 1), z));
+        return canAccess(level, new BlockPos(x, Mth.clamp(y, level.getMinY() + 1, (level.getMaxY() + 1) - 2), z));
     }
 
     private static boolean canAccess(WorldGenLevel level, BlockPos pos) {
@@ -478,7 +476,7 @@ public class MolewormCaveEntranceFeature implements Feature {
         int minX = Mth.floor(center.x - radiusX);
         int maxX = Mth.floor(center.x + radiusX);
         int minY = Math.max(level.getMinY() + 2, Mth.floor(center.y - radiusY));
-        int maxY = Math.min(level.getMaxY() - 2, Mth.floor(center.y + radiusY));
+        int maxY = Math.min((level.getMaxY() + 1) - 3, Mth.floor(center.y + radiusY));
         int minZ = Mth.floor(center.z - radiusZ);
         int maxZ = Mth.floor(center.z + radiusZ);
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();

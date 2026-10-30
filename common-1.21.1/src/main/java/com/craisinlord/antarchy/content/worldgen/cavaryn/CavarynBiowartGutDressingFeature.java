@@ -27,6 +27,7 @@ public final class CavarynBiowartGutDressingFeature extends Feature<NoneFeatureC
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "broodstone"),
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "loam")
     );
+    private static final CavarynBlockSet LINEABLE_BLOCKS = new CavarynBlockSet(LINEABLE);
     private static final double LINING_DEPTH = 1.4;
     private static final ResourceLocation BIOMITE_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "biomite");
     private static final ResourceLocation BIOMITE_TURF_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "biomite_turf");
@@ -89,7 +90,7 @@ public final class CavarynBiowartGutDressingFeature extends Feature<NoneFeatureC
     }
 
     private static boolean isLineable(BlockState state) {
-        return LINEABLE.contains(BuiltInRegistries.BLOCK.getKey(state.getBlock()));
+        return LINEABLE_BLOCKS.contains(state);
     }
 
     private static Block block(ResourceLocation id) {

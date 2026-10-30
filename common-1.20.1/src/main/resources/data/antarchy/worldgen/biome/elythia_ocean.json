@@ -1,9 +1,9 @@
 {
-  "has_precipitation": false,
+  "has_precipitation": true,
   "temperature": 0.65,
   "downfall": 1.0,
   "effects": {
-    "fog_color": 8084735,
+    "fog_color": 10849791,
     "water_color": 5021432,
     "water_fog_color": 736368,
     "sky_color": 8084735,
@@ -46,6 +46,7 @@
       "antarchy:elythia_ore_redstone",
       "antarchy:elythia_ore_redstone_lower",
       "antarchy:elythia_ore_diamond",
+      "antarchy:elythia_ore_diamond_medium",
       "antarchy:elythia_ore_diamond_large",
       "antarchy:elythia_ore_diamond_buried",
       "antarchy:elythia_ore_lapis",
@@ -58,9 +59,9 @@
     [],
     [
       "minecraft:sea_pickle",
-      "minecraft:warm_ocean_vegetation",
       "minecraft:kelp_warm",
-      "antarchy:giant_lily_pad_patch_common"
+      "antarchy:giant_lily_pad_patch_common",
+      "antarchy:elythia_reef"
     ],
     []
   ],

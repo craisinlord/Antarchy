@@ -1,0 +1,27 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:min",
+      "argument1": {
+        "type": "minecraft:add",
+        "argument1": {
+          "type": "minecraft:add",
+          "argument1": {
+            "type": "minecraft:mul",
+            "argument1": 0.015764745,
+            "argument2": "antarchy:elythia_river_surface"
+          },
+          "argument2": -2.076646
+        },
+        "argument2": {
+          "type": "minecraft:mul",
+          "argument1": -1.0,
+          "argument2": "antarchy:elythia_river_depth"
+        }
+      },
+      "argument2": "antarchy:elythia_coast_offset"
+    }
+  }
+}

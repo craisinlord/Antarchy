@@ -1,7 +1,9 @@
 package com.craisinlord.antarchy.content.worldgen.cavaryn;
 
 import com.mojang.serialization.Codec;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,9 +16,8 @@ public final class CavarynCavityGrid {
     private static final double BLEND = 2.5;
     private static final double WOBBLE = 0.08;
     private static final double REACH_PADDING = BLEND + 1.5;
-    private static final double CLAW_RIDGES = 10.0;
 
-    private static final Map<Long, CavarynCavityGrid> BY_SALT = new ConcurrentHashMap<>();
+    private static final Map<Long, WeakReference<CavarynCavityGrid>> BY_SALT = new ConcurrentHashMap<>();
 
     private final Kind kind;
     private final long salt;
@@ -31,13 +32,19 @@ public final class CavarynCavityGrid {
     }
 
     public static CavarynCavityGrid create(Kind kind, long salt, CavarynWormBoreGrid.StartFilter startFilter) {
+        CavarynCavityGrid existing = forSalt(salt);
+        if (existing != null && existing.kind == kind) {
+            return existing;
+        }
+        BY_SALT.values().removeIf(reference -> reference.get() == null);
         CavarynCavityGrid grid = new CavarynCavityGrid(kind, salt, startFilter);
-        BY_SALT.put(salt, grid);
+        BY_SALT.put(salt, new WeakReference<>(grid));
         return grid;
     }
 
     public static CavarynCavityGrid forSalt(long salt) {
-        return BY_SALT.get(salt);
+        WeakReference<CavarynCavityGrid> reference = BY_SALT.get(salt);
+        return reference != null ? reference.get() : null;
     }
 
     public Kind kind() {
@@ -45,33 +52,37 @@ public final class CavarynCavityGrid {
     }
 
     public double signedDistance(int x, int y, int z) {
-        Shape[] candidates = this.candidates(x, z);
+        return this.signedDistance(x, y, z, -Double.MAX_VALUE);
+    }
+
+    public double signedDistance(int x, int y, int z, double floor) {
+        ColumnCache cache = this.candidates(x, z);
+        double py = y + 0.5;
+        if (py < cache.minY || py > cache.maxY) {
+            return Double.MAX_VALUE;
+        }
         double best = Double.MAX_VALUE;
         double px = x + 0.5;
-        double py = y + 0.5;
         double pz = z + 0.5;
-        for (Shape shape : candidates) {
+        for (Shape shape : cache.shapes) {
             if (py < shape.minY || py > shape.maxY) {
                 continue;
             }
-            double value = shape.signedDistance(px, py, pz);
+            double value = shape.signedDistance(px, py, pz, cache);
             best = best == Double.MAX_VALUE ? value : smoothMin(best, value);
+            if (best <= floor) {
+                return best;
+            }
         }
         return best;
     }
 
     public int[] verticalRange(int x, int z) {
-        Shape[] candidates = this.candidates(x, z);
-        if (candidates.length == 0) {
+        ColumnCache cache = this.candidates(x, z);
+        if (cache.shapes.length == 0) {
             return null;
         }
-        double min = Double.MAX_VALUE;
-        double max = -Double.MAX_VALUE;
-        for (Shape shape : candidates) {
-            min = Math.min(min, shape.minY);
-            max = Math.max(max, shape.maxY);
-        }
-        return new int[]{Mth.floor(min), Mth.ceil(max)};
+        return new int[]{Mth.floor(cache.minY), Mth.ceil(cache.maxY)};
     }
 
     public List<Chamber> chambersCenteredIn(int minX, int minZ, int maxX, int maxZ) {
@@ -101,12 +112,12 @@ public final class CavarynCavityGrid {
         return Math.min(a, b) - h * h * BLEND * 0.25;
     }
 
-    private Shape[] candidates(int x, int z) {
+    private ColumnCache candidates(int x, int z) {
         int qx = x >> 2;
         int qz = z >> 2;
         ColumnCache cache = this.columns.get();
         if (cache.valid && cache.qx == qx && cache.qz == qz) {
-            return cache.shapes;
+            return cache;
         }
         double minX = qx * 4.0;
         double minZ = qz * 4.0;
@@ -116,6 +127,8 @@ public final class CavarynCavityGrid {
         int cellZ = Math.floorDiv(qz * 4, this.kind.cellSize);
         int reach = this.kind.cellReach;
         List<Shape> found = new ArrayList<>();
+        double minY = Double.MAX_VALUE;
+        double maxY = -Double.MAX_VALUE;
         for (int dx = -reach; dx <= reach; dx++) {
             for (int dz = -reach; dz <= reach; dz++) {
                 for (Cavity cavity : this.cavities(cellX + dx, cellZ + dz)) {
@@ -127,6 +140,8 @@ public final class CavarynCavityGrid {
                             continue;
                         }
                         found.add(shape);
+                        minY = Math.min(minY, shape.minY);
+                        maxY = Math.max(maxY, shape.maxY);
                     }
                 }
             }
@@ -134,8 +149,10 @@ public final class CavarynCavityGrid {
         cache.qx = qx;
         cache.qz = qz;
         cache.shapes = found.toArray(new Shape[0]);
+        cache.minY = minY;
+        cache.maxY = maxY;
         cache.valid = true;
-        return cache.shapes;
+        return cache;
     }
 
     private Cavity[] cavities(int cellX, int cellZ) {
@@ -145,9 +162,7 @@ public final class CavarynCavityGrid {
             return cached;
         }
         Cavity[] generated = this.generate(cellX, cellZ);
-        if (this.cells.size() > MAX_CACHED_CELLS) {
-            this.cells.clear();
-        }
+        trim(this.cells, MAX_CACHED_CELLS);
         Cavity[] existing = this.cells.putIfAbsent(key, generated);
         return existing != null ? existing : generated;
     }
@@ -181,6 +196,8 @@ public final class CavarynCavityGrid {
                     builder.rift(start[0], start[1], start[2]);
                 } else if (kind == Kind.BIOWART_GUT) {
                     builder.gut(start[0], start[1], start[2]);
+                } else if (kind == Kind.CRUST_SHAFT) {
+                    builder.shaft(start[0], start[1], start[2]);
                 } else {
                     builder.nest(start[0], start[1], start[2]);
                 }
@@ -205,6 +222,9 @@ public final class CavarynCavityGrid {
             builder.gallery(own, this.anchor(cellX + 1, cellZ + (layer == 0 ? 1 : -1), layer), 0.5F);
             if (builder.shapes.size() > before) {
                 builder.junction(own);
+                if (layer == 1 && builder.random.nextFloat() < 0.4F) {
+                    builder.chimney(own);
+                }
             }
         }
         if (low != null && high != null && builder.random.nextFloat() < 0.45F) {
@@ -222,6 +242,19 @@ public final class CavarynCavityGrid {
         return this.startFilter.accepts(x, y, z) ? new double[]{x, y, z} : null;
     }
 
+    static <V> void trim(Map<Long, V> cells, int limit) {
+        int excess = cells.size() - limit;
+        if (excess <= 0) {
+            return;
+        }
+        excess += limit / 2;
+        Iterator<Long> keys = cells.keySet().iterator();
+        while (excess-- > 0 && keys.hasNext()) {
+            keys.next();
+            keys.remove();
+        }
+    }
+
     private static long mix(long value) {
         value = (value ^ (value >>> 30)) * 0xBF58476D1CE4E5B9L;
         value = (value ^ (value >>> 27)) * 0x94D049BB133111EBL;
@@ -231,10 +264,11 @@ public final class CavarynCavityGrid {
     public enum Kind implements StringRepresentable {
         BROOD_NEST("brood_nest", CavarynBiomeTable.BROODING_TUNNELS, true, 176, 2, 1, 0.45F, 34.0, 112.0, 40.0, 76.0),
         GLOWCAP_GROTTO("glowcap_grotto", CavarynBiomeTable.GLOWCAP_CAVES, true, 160, 3, 1, 0.6F, 50.0, 188.0, 96.0, 140.0),
-        BROOD_GALLERY("brood_gallery", CavarynBiomeTable.BROODING_TUNNELS, true, 96, 2, 0, 0.0F, 30.0, 92.0, 36.0, 70.0),
+        BROOD_GALLERY("brood_gallery", CavarynBiomeTable.BROODING_TUNNELS, true, 96, 2, 0, 0.0F, 30.0, 124.0, 36.0, 70.0),
         MOLEWORM_WARREN("moleworm_warren", CavarynBiomeTable.MOLEWORM_CAVES, false, 160, 3, 1, 0.5F, 40.0, 184.0, 66.0, 92.0),
         CARAPACE_RIFT("carapace_rift", CavarynBiomeTable.CAVARYN, true, 160, 4, 2, 0.5F, 100.0, 186.0, 130.0, 156.0),
-        BIOWART_GUT("biowart_gut", CavarynBiomeTable.BIOWART_CAVES, true, 176, 3, 1, 0.5F, 120.0, 186.0, 150.0, 172.0);
+        BIOWART_GUT("biowart_gut", CavarynBiomeTable.BIOWART_CAVES, true, 160, 3, 1, 0.6F, 100.0, 186.0, 112.0, 170.0),
+        CRUST_SHAFT("crust_shaft", null, false, 96, 1, 2, 0.5F, 120.0, 346.0, 326.0, 334.0);
 
         public static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
 
@@ -368,6 +402,11 @@ public final class CavarynCavityGrid {
             }
         }
 
+        void chimney(double[] point) {
+            double yaw = this.random.nextDouble() * Math.PI * 2.0;
+            this.walk(point[0], point[1], point[2], yaw, 4 + this.random.nextInt(2), 10.0, 13.0, 4.0 + this.random.nextDouble(), 1.1, 0.95, 0.8);
+        }
+
         void junction(double[] point) {
             double radius = 9.0 + this.random.nextDouble() * 3.0;
             this.chamber(point[0], point[1], point[2], radius, 6.0 + this.random.nextDouble() * 2.0, 3.0);
@@ -498,6 +537,37 @@ public final class CavarynCavityGrid {
             }
         }
 
+        void shaft(double x, double y, double z) {
+            XoroshiroRandomSource random = this.random;
+            double radius = 3.0 + random.nextDouble() * 3.0;
+            double throatY = 268.0 + random.nextDouble() * 8.0;
+            double throatX = x + random.nextGaussian() * 3.0;
+            double throatZ = z + random.nextGaussian() * 3.0;
+            this.shapes.add(new Tube(x, y, z, throatX, throatY, throatZ, radius * 1.9, 1.0));
+            double mouthBottom = 226.0 + random.nextDouble() * 8.0;
+            x = throatX + random.nextGaussian() * 2.0;
+            z = throatZ + random.nextGaussian() * 2.0;
+            this.shapes.add(new Tube(throatX, throatY, throatZ, x, mouthBottom, z, radius * 1.5, 1.0));
+            double bottom = 140.0 + random.nextDouble() * 40.0;
+            double driftX = random.nextGaussian() * 0.4;
+            double driftZ = random.nextGaussian() * 0.4;
+            y = mouthBottom + 4.0;
+            while (y > bottom) {
+                double length = 10.0 + random.nextDouble() * 4.0;
+                driftX = Mth.clamp(driftX * 0.7 + random.nextGaussian() * 0.25, -0.6, 0.6);
+                driftZ = Mth.clamp(driftZ * 0.7 + random.nextGaussian() * 0.25, -0.6, 0.6);
+                double nx = x + driftX * length;
+                double ny = Math.max(bottom, y - length);
+                double nz = z + driftZ * length;
+                double segmentRadius = radius * (0.85 + random.nextDouble() * 0.3);
+                this.shapes.add(new Tube(x, y, z, nx, ny, nz, segmentRadius, 1.0));
+                x = nx;
+                y = ny;
+                z = nz;
+            }
+            this.shapes.add(new Tube(x, y, z, x + 0.01, y - 6.0, z, radius * 1.4, 1.0));
+        }
+
         private double[] moleTunnel(double x, double y, double z, double yaw, int segments) {
             XoroshiroRandomSource random = this.random;
             double radius = 7.0 + random.nextDouble() * 2.0;
@@ -510,7 +580,7 @@ public final class CavarynCavityGrid {
                 double nx = x + Math.cos(yaw) * horizontal;
                 double ny = Mth.clamp(y + Math.sin(pitch) * length, this.kind.minY + 8.0, this.kind.maxY - 12.0);
                 double nz = z + Math.sin(yaw) * horizontal;
-                this.shapes.add(new Tube(x, y, z, nx, ny, nz, radius, 1.0, 0.45, 0.5));
+                this.shapes.add(new Tube(x, y, z, nx, ny, nz, radius, 1.0, 0.45, 0.3));
                 x = nx;
                 y = ny;
                 z = nz;
@@ -533,7 +603,7 @@ public final class CavarynCavityGrid {
                 double nx = x + Math.cos(yaw) * horizontal;
                 double ny = Math.min(target, y + Math.sin(pitch) * length);
                 double nz = z + Math.sin(yaw) * horizontal;
-                this.shapes.add(new Tube(x, y, z, nx, ny, nz, radius, 1.0, 0.45, 0.5));
+                this.shapes.add(new Tube(x, y, z, nx, ny, nz, radius, 1.0, 0.45, 0.3));
                 x = nx;
                 y = ny;
                 z = nz;
@@ -589,6 +659,38 @@ public final class CavarynCavityGrid {
         int qx;
         int qz;
         Shape[] shapes = new Shape[0];
+        double minY;
+        double maxY;
+        double trigX = Double.NaN;
+        double trigY = Double.NaN;
+        double trigZ = Double.NaN;
+        double sinX;
+        double cosX;
+        double sinY;
+        double cosY;
+        double sinZ;
+        double cosZ;
+
+        void wobbleAt(double px, double py, double pz) {
+            if (px != this.trigX) {
+                double angle = px * 0.31;
+                this.sinX = Math.sin(angle);
+                this.cosX = Math.cos(angle);
+                this.trigX = px;
+            }
+            if (py != this.trigY) {
+                double angle = py * 0.43;
+                this.sinY = Math.sin(angle);
+                this.cosY = Math.cos(angle);
+                this.trigY = py;
+            }
+            if (pz != this.trigZ) {
+                double angle = pz * 0.27;
+                this.sinZ = Math.sin(angle);
+                this.cosZ = Math.cos(angle);
+                this.trigZ = pz;
+            }
+        }
     }
 
     private static final class Cavity {
@@ -627,7 +729,7 @@ public final class CavarynCavityGrid {
         double minZ;
         double maxZ;
 
-        abstract double signedDistance(double px, double py, double pz);
+        abstract double signedDistance(double px, double py, double pz, ColumnCache cache);
     }
 
     private static final class Tube extends Shape {
@@ -675,7 +777,7 @@ public final class CavarynCavityGrid {
         }
 
         @Override
-        double signedDistance(double px, double py, double pz) {
+        double signedDistance(double px, double py, double pz, ColumnCache cache) {
             double rx = px - this.ax;
             double ry = py - this.ay;
             double rz = pz - this.az;
@@ -686,9 +788,24 @@ public final class CavarynCavityGrid {
             double sy = cy < 0.0 ? cy / (this.squash * this.floor) : cy / this.squash;
             double radius = this.radius;
             if (this.claw > 0.0) {
-                radius += this.claw * Math.sin(Math.atan2(cy, cx * this.sideX + cz * this.sideZ) * CLAW_RIDGES);
+                double across = cx * this.sideX + cz * this.sideZ;
+                double lengthSq = across * across + cy * cy;
+                if (lengthSq > 0.0) {
+                    double inverse = 1.0 / Math.sqrt(lengthSq);
+                    radius += this.claw * ridge(across * inverse, cy * inverse);
+                }
             }
             return Math.sqrt(cx * cx + sy * sy + cz * cz) - radius;
+        }
+
+        private static double ridge(double cos, double sin) {
+            double re2 = cos * cos - sin * sin;
+            double im2 = 2.0 * cos * sin;
+            double re4 = re2 * re2 - im2 * im2;
+            double im4 = 2.0 * re2 * im2;
+            double re8 = re4 * re4 - im4 * im4;
+            double im8 = 2.0 * re4 * im4;
+            return re8 * im2 + im8 * re2;
         }
     }
 
@@ -699,7 +816,10 @@ public final class CavarynCavityGrid {
         final double radius;
         final double height;
         final double depth;
-        final double phase;
+        final double sinPhase;
+        final double cosPhase;
+        final double sinDoublePhase;
+        final double cosDoublePhase;
 
         Chamber(double cx, double cy, double cz, double radius, double height, double depth, double phase) {
             this.cx = cx;
@@ -708,7 +828,10 @@ public final class CavarynCavityGrid {
             this.radius = radius;
             this.height = height;
             this.depth = depth;
-            this.phase = phase;
+            this.sinPhase = Math.sin(phase);
+            this.cosPhase = Math.cos(phase);
+            this.sinDoublePhase = Math.sin(phase * 2.0);
+            this.cosDoublePhase = Math.cos(phase * 2.0);
             double reach = radius * (1.0 + WOBBLE) + REACH_PADDING;
             this.minX = cx - reach;
             this.maxX = cx + reach;
@@ -739,13 +862,17 @@ public final class CavarynCavityGrid {
         }
 
         @Override
-        double signedDistance(double px, double py, double pz) {
+        double signedDistance(double px, double py, double pz, ColumnCache cache) {
             double offsetY = py - this.cy;
             double vertical = offsetY < 0.0 ? this.depth : this.height;
             double nx = (px - this.cx) / this.radius;
             double ny = offsetY / vertical;
             double nz = (pz - this.cz) / this.radius;
-            double wobble = 1.0 + WOBBLE * (Math.sin(px * 0.31 + this.phase) + Math.sin(pz * 0.27 - this.phase) + Math.sin(py * 0.43 + this.phase * 2.0)) / 3.0;
+            cache.wobbleAt(px, py, pz);
+            double waveX = cache.sinX * this.cosPhase + cache.cosX * this.sinPhase;
+            double waveZ = cache.sinZ * this.cosPhase - cache.cosZ * this.sinPhase;
+            double waveY = cache.sinY * this.cosDoublePhase + cache.cosY * this.sinDoublePhase;
+            double wobble = 1.0 + WOBBLE * (waveX + waveZ + waveY) / 3.0;
             return (Math.sqrt(nx * nx + ny * ny + nz * nz) - wobble) * Math.min(this.radius, this.depth);
         }
     }

@@ -39,6 +39,8 @@ public final class ElythiaTerrainMap {
             Map.entry("antarchy:elythia_river", 0x4A90E0),
             Map.entry("antarchy:primordial_plains", 0x8CCB5E),
             Map.entry("antarchy:primordial_massif", 0xA8A096),
+            Map.entry("antarchy:shelfback_highlands", 0x6FA85A),
+            Map.entry("antarchy:glimmering_falls", 0x7FE0C8),
             Map.entry("antarchy:truffalo_forest", 0x7A5A3A),
             Map.entry("antarchy:truffalo_spires", 0xB08A60),
             Map.entry("antarchy:butterfly_fields", 0xF0D060),
@@ -115,7 +117,7 @@ public final class ElythiaTerrainMap {
                         double reserveValue = hydrology == null ? 0.0D : hydrology.reserve().compute(point);
                         boolean reserve = reserveValue >= 0.5D;
                         double riverLevel = hydrology == null ? Double.NEGATIVE_INFINITY : ElythiaAquifer.level(hydrology.riverLevel().compute(point));
-                        if (reserveValue < 0.04D && floor < riverLevel - 1 && hydrology.riverChannel().compute(point) > 0.05D) {
+                        if (reserveValue < 0.04D && riverLevel > seaLevel && floor < riverLevel - 1 && hydrology.valley().compute(point) > 0.0D && hydrology.riverChannel().compute(point) > 0.0D) {
                             fluids[index] = hydrology.lumen().compute(point) > 0.75D ? LUMEN : WATER;
                             y = (int) riverLevel - 1;
                         } else if (!reserve && floor < seaLevel - 1 && (reserveValue <= 0.0D || floor < seaLevel - 64)) {

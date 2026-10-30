@@ -1043,7 +1043,7 @@ public final class AntarchyFabricBlocks {
     public static final DeferredBlock<Block> LOAM = BLOCKS.register("loam",
             () -> new Block(DeferredRegister.copyBlockProperties(Blocks.MUD)));
     public static final DeferredBlock<Block> PRIMORDIAL_LOAM = BLOCKS.register("primordial_loam",
-            () -> new Block(DeferredRegister.copyBlockProperties(Blocks.MUD)));
+            () -> new Block(DeferredRegister.copyBlockProperties(Blocks.MUD).sound(primordialLoamSoundType())));
     public static final DeferredBlock<Block> PACKED_LOAM = BLOCKS.register("packed_loam",
             () -> new Block(DeferredRegister.copyBlockProperties(Blocks.PACKED_MUD)));
     public static final DeferredBlock<Block> LOAM_BRICKS = BLOCKS.register("loam_bricks",
@@ -1410,6 +1410,16 @@ public final class AntarchyFabricBlocks {
     private static Block createRawStorageBlock(Block copyFrom, MapColor mapColor) {
         return new Block(DeferredRegister.copyBlockProperties(copyFrom).mapColor(mapColor).requiresCorrectToolForDrops());
     }
+
+    private static SoundType primordialLoamSoundType() {
+        return new SoundType(1.0F, 1.0F,
+                SoundType.MUD.getBreakSound(),
+                SoundType.MOSS.getStepSound(),
+                SoundType.MUD.getPlaceSound(),
+                SoundType.MUD.getHitSound(),
+                SoundType.MUD.getFallSound());
+    }
+
 
     private static SoundType antimetalSoundType() {
         return new SoundType(1.0F, 1.0F,

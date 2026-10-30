@@ -440,6 +440,8 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setCritterCageEntityTypeComponent(() -> AntarchyFabricMisc.CRITTER_CAGE_ENTITY_TYPE_COMPONENT.get());
         AntarchyObjects.setCritterCagePrimaryColorComponent(() -> AntarchyFabricMisc.CRITTER_CAGE_PRIMARY_COLOR_COMPONENT.get());
         AntarchyObjects.setCritterCageSecondaryColorComponent(() -> AntarchyFabricMisc.CRITTER_CAGE_SECONDARY_COLOR_COMPONENT.get());
+        AntarchyObjects.setFossilEntityComponent(() -> AntarchyFabricMisc.FOSSIL_ENTITY_COMPONENT.get());
+        AntarchyObjects.setFossilBlockEntity(() -> AntarchyFabricBlocks.FOSSIL_BLOCK_ENTITY.get());
         AntarchyObjects.bind(
                 AntarchyFabricEntities.EASTER_BUNNY,
                 AntarchyFabricEntities.FLYING_SQUIRREL,

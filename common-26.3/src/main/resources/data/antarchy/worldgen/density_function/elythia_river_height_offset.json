@@ -1,51 +1,57 @@
 {
-  "type": "minecraft:cache",
-  "input": {
-    "type": "minecraft:add",
-    "left": "antarchy:elythia_coast_offset",
-    "right": {
-      "type": "minecraft:mul",
-      "left": -1.0,
-      "right": {
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "antarchy:elythia_column_cache",
+    "argument": {
+      "type": "minecraft:cache",
+      "input": {
         "type": "minecraft:add",
-        "left": {
-          "type": "minecraft:mul",
-          "left": 0.15,
-          "right": {
-            "type": "minecraft:noise",
-            "noise": "antarchy:elythia_surface",
-            "xz_scale": 0.65,
-            "y_scale": 0
-          }
-        },
+        "left": "antarchy:elythia_coast_offset",
         "right": {
-          "type": "minecraft:add",
-          "left": {
-            "type": "minecraft:mul",
-            "left": 0.01,
-            "right": {
-              "type": "minecraft:noise",
-              "noise": "antarchy:elythia_surface_detail",
-              "xz_scale": 1.8,
-              "y_scale": 0
-            }
-          },
+          "type": "minecraft:mul",
+          "left": -1.0,
           "right": {
             "type": "minecraft:add",
             "left": {
               "type": "minecraft:mul",
-              "left": 0.002,
+              "left": 0.15,
               "right": {
                 "type": "minecraft:noise",
-                "noise": "antarchy:elythia_surface_edge",
-                "xz_scale": 4.2,
+                "noise": "antarchy:elythia_surface",
+                "xz_scale": 0.65,
                 "y_scale": 0
               }
             },
             "right": {
-              "type": "minecraft:mul",
-              "left": 0.003,
-              "right": "minecraft:overworld/ridges"
+              "type": "minecraft:add",
+              "left": {
+                "type": "minecraft:mul",
+                "left": 0.01,
+                "right": {
+                  "type": "minecraft:noise",
+                  "noise": "antarchy:elythia_surface_detail",
+                  "xz_scale": 1.8,
+                  "y_scale": 0
+                }
+              },
+              "right": {
+                "type": "minecraft:add",
+                "left": {
+                  "type": "minecraft:mul",
+                  "left": 0.002,
+                  "right": {
+                    "type": "minecraft:noise",
+                    "noise": "antarchy:elythia_surface_edge",
+                    "xz_scale": 4.2,
+                    "y_scale": 0
+                  }
+                },
+                "right": {
+                  "type": "minecraft:mul",
+                  "left": 0.003,
+                  "right": "minecraft:overworld/ridges"
+                }
+              }
             }
           }
         }

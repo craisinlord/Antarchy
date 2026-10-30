@@ -37,6 +37,7 @@ public final class ElythiaCloudRenderer {
     private static final float SOFT_PUFF_HEIGHT = 7.0F;
     private static final float SOFT_VERTICAL_SPREAD = 1.5F;
     private static final int SECTION_CELLS = 32;
+    private static final float CLEARING_DIM = 0.3F;
 
     private static final Layer[] LAYERS = {
             new Layer(ElythiaCloudField.LOW, 240.0F, 0.8D, 0.0D, 0.8F, true),
@@ -88,7 +89,7 @@ public final class ElythiaCloudRenderer {
         boolean softEnabled = AntarchySettings.elythiaSoftCloudsEnabled() && ElythiaSoftCloudPass.supported();
         ElythiaGiantCloudRenderer.render(minecraft, poseStack, projectionMatrix, level, cloudColor, status, wind,
                 camX, camY, camZ, partialTick, terrainFogEnd, softEnabled, softDraws);
-        float clearing = ElythiaGiantCloudRenderer.clearing(partialTick);
+        float clearing = ElythiaGiantCloudRenderer.clearing();
 
         for (int pass = status == CloudStatus.FANCY ? 0 : 1; pass < 2; pass++) {
             RenderType renderType = pass == 0 ? RenderType.cloudsDepthOnly() : RenderType.clouds();
@@ -115,7 +116,15 @@ public final class ElythiaCloudRenderer {
                 collectSoftDraws(layer, softDraws, visibility, frustum, wind, camX, camY, camZ, terrainFogEnd, cloudRange, depthFar);
             }
         }
-        ElythiaSoftCloudPass.render(softDraws, modelViewMatrix, projectionMatrix, cloudColor);
+        if (!softDraws.isEmpty()) {
+            float[] shaderFog = RenderSystem.getShaderFogColor();
+            double sunAngle = level.getTimeOfDay(partialTick) * Math.PI * 2.0D;
+            float sunEast = (float) (0.5D - 0.5D * Math.sin(sunAngle));
+            float sunStrength = Mth.clamp((float) Math.cos(sunAngle) * 3.0F + 0.3F, 0.0F, 0.85F);
+            ElythiaSoftCloudPass.render(softDraws, modelViewMatrix, projectionMatrix, new ElythiaSoftCloudPass.Frame(
+                    cloudColor, new float[]{shaderFog[0], shaderFog[1], shaderFog[2]}, sunEast, sunStrength,
+                    ElythiaGiantCloudRenderer.clearingData(), ElythiaGiantCloudRenderer.clearingCount(), clearing));
+        }
 
         RenderSystem.setShaderFogStart(terrainFogStart);
         RenderSystem.setShaderFogEnd(terrainFogEnd);
@@ -178,7 +187,8 @@ public final class ElythiaCloudRenderer {
         float fogEnd = Math.max(terrainFogEnd, vertical + cloudRange);
         forEachSection(layer, sections, frustum, wind, camX, camY, camZ, Math.min(fogEnd, depthFar),
                 (section, originX, originY, originZ) -> draws.add(
-                        new ElythiaSoftCloudPass.Draw(section.buffer(), originX, originY, originZ, fogEnd, visibility)));
+                        new ElythiaSoftCloudPass.Draw(section.buffer(), originX, originY, originZ, fogEnd, visibility,
+                                ElythiaSoftCloudPass.NO_GROWTH_LIMIT, true)));
     }
 
     private interface SectionConsumer {
@@ -411,13 +421,23 @@ public final class ElythiaCloudRenderer {
         }
     }
 
-    private static void softCube(BufferBuilder builder, float x0, float y0, float z0, float x1, float y1, float z1, float shade) {
-        quad(builder, shade, 1.0F, 0.0F, 1.0F, 0.0F, x0, y1, z0, x0, y1, z1, x1, y1, z1, x1, y1, z0);
-        quad(builder, shade, 1.0F, 0.0F, -1.0F, 0.0F, x0, y0, z0, x1, y0, z0, x1, y0, z1, x0, y0, z1);
-        quad(builder, shade, 1.0F, -1.0F, 0.0F, 0.0F, x0, y0, z0, x0, y0, z1, x0, y1, z1, x0, y1, z0);
-        quad(builder, shade, 1.0F, 1.0F, 0.0F, 0.0F, x1, y0, z0, x1, y1, z0, x1, y1, z1, x1, y0, z1);
-        quad(builder, shade, 1.0F, 0.0F, 0.0F, -1.0F, x0, y0, z0, x0, y1, z0, x1, y1, z0, x1, y0, z0);
-        quad(builder, shade, 1.0F, 0.0F, 0.0F, 1.0F, x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y1, z1);
+    private static void softCube(BufferBuilder builder, float x0, float y0, float z0, float x1, float y1, float z1, float height) {
+        float ambient = 0.5F + 0.5F * height;
+        softQuad(builder, ambient, 0.0F, 1.0F, 0.0F, x0, y1, z0, x0, y1, z1, x1, y1, z1, x1, y1, z0);
+        softQuad(builder, ambient, 0.0F, -1.0F, 0.0F, x0, y0, z0, x1, y0, z0, x1, y0, z1, x0, y0, z1);
+        softQuad(builder, ambient, -1.0F, 0.0F, 0.0F, x0, y0, z0, x0, y0, z1, x0, y1, z1, x0, y1, z0);
+        softQuad(builder, ambient, 1.0F, 0.0F, 0.0F, x1, y0, z0, x1, y1, z0, x1, y1, z1, x1, y0, z1);
+        softQuad(builder, ambient, 0.0F, 0.0F, -1.0F, x0, y0, z0, x0, y1, z0, x1, y1, z0, x1, y0, z0);
+        softQuad(builder, ambient, 0.0F, 0.0F, 1.0F, x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y1, z1);
+    }
+
+    private static void softQuad(BufferBuilder builder, float ambient, float normalX, float normalY, float normalZ,
+                                 float ax, float ay, float az, float bx, float by, float bz,
+                                 float cx, float cy, float cz, float dx, float dy, float dz) {
+        builder.addVertex(ax, ay, az).setUv(0.5F, 0.5F).setColor(ambient, 1.0F, 1.0F, 1.0F).setNormal(normalX, normalY, normalZ);
+        builder.addVertex(bx, by, bz).setUv(0.5F, 0.5F).setColor(ambient, 1.0F, 1.0F, 1.0F).setNormal(normalX, normalY, normalZ);
+        builder.addVertex(cx, cy, cz).setUv(0.5F, 0.5F).setColor(ambient, 1.0F, 1.0F, 1.0F).setNormal(normalX, normalY, normalZ);
+        builder.addVertex(dx, dy, dz).setUv(0.5F, 0.5F).setColor(ambient, 1.0F, 1.0F, 1.0F).setNormal(normalX, normalY, normalZ);
     }
 
     private static float neighbourhoodDensity(ElythiaCloudField field, int x, int z) {
@@ -510,7 +530,7 @@ public final class ElythiaCloudRenderer {
         }
 
         private float visibility(float clearing) {
-            return 1.0F - clearing;
+            return 1.0F - CLEARING_DIM * clearing;
         }
 
         private boolean soft() {

@@ -85,6 +85,9 @@ public final class ElythiaSkyRenderer {
         state.blue = blue + nightPurpleB * starBrightness;
         state.rainLevel = rainLevel;
         state.starBrightness = starBrightness;
+        state.dayTime = level.getOverworldClockTime();
+        state.gameTime = level.getGameTime() + partialTick;
+        state.partialTick = partialTick;
         state.timeDegrees = (dayTime + partialTick) * (360.0D / 24000.0D);
         state.sunAngle = timeOfDay * Mth.TWO_PI;
         state.sunriseColor = sunriseColor(timeOfDay);
@@ -116,6 +119,8 @@ public final class ElythiaSkyRenderer {
             AntarchySkyDraw.draw("Antarchy Elythia stars", RenderPipelines.DEBUG_QUADS, coloredStarMesh, modelView,
                     new Vector4f(starBrightness, starBrightness, starBrightness, starBrightness), null);
         }
+
+        ElythiaNightSkyRenderer.render(modelView, state.dayTime, state.gameTime, state.partialTick, state.starBrightness);
 
         if (state.darkDisc) {
             Matrix4f darkModelView = new Matrix4f(modelView).translate(0.0F, 12.0F, 0.0F);
@@ -313,6 +318,9 @@ public final class ElythiaSkyRenderer {
         float blue;
         float rainLevel;
         float starBrightness;
+        long dayTime;
+        double gameTime;
+        float partialTick;
         double timeDegrees;
         float sunAngle;
         float @Nullable [] sunriseColor;

@@ -12,7 +12,12 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.level.block.state.properties.SlabType;
+import net.minecraft.world.level.block.state.properties.StairsShape;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
@@ -136,16 +141,34 @@ public final class TruffaloSpireFeature extends Feature<NoneFeatureConfiguration
     }
 
     private static void carveTunnel(WorldGenLevel level, RandomSource random, BlockPos origin, Shape main) {
-        Direction.Axis axis = random.nextBoolean() ? Direction.Axis.X : Direction.Axis.Z;
         int centerY = main.ground + Mth.nextInt(random, 5, Math.max(5, Mth.floor(main.height * 0.4D)));
         double halfWidth = 2.2D + random.nextDouble() * 0.6D;
         double halfHeight = 2.6D + random.nextDouble() * 0.8D;
+        Hole hole = Hole.create(random, halfWidth, halfHeight, 0.9D, 0.7D);
+        carveHole(level, random, origin, main, centerY, hole);
+    }
+
+    private static void carveWindow(WorldGenLevel level, RandomSource random, BlockPos origin, Shape main) {
+        int y = main.ground + Mth.floor(main.height * (0.45D + random.nextDouble() * 0.2D));
+        if (main.radiusAt(y) < 2.5D) {
+            return;
+        }
+        double radius = 1.4D + random.nextDouble() * 0.6D;
+        Hole hole = Hole.create(random, radius, radius, 0.6D, 0.5D);
+        carveHole(level, random, origin, main, y, hole);
+    }
+
+    private static void carveHole(WorldGenLevel level, RandomSource random, BlockPos origin, Shape main, int centerY, Hole hole) {
+        Direction.Axis axis = random.nextBoolean() ? Direction.Axis.X : Direction.Axis.Z;
+        Direction positive = axis == Direction.Axis.X ? Direction.SOUTH : Direction.EAST;
         int length = Mth.ceil(main.radiusAt(centerY) * 1.4D) + 2;
         int centerX = Mth.floor(main.centerX(centerY));
         int centerZ = Mth.floor(main.centerZ(centerY));
-        int spanAcross = Mth.ceil(halfWidth);
-        int spanUp = Mth.ceil(halfHeight);
+        int spanAcross = Mth.ceil(hole.halfWidth * 1.1D + hole.wanderAcross) + 1;
+        int spanUp = Mth.ceil(hole.halfHeight * 1.1D + hole.wanderUp) + 1;
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
+        List<BlockPos> carved = new ArrayList<>();
+
         for (int along = -length; along <= length; along++) {
             for (int across = -spanAcross; across <= spanAcross; across++) {
                 int x = axis == Direction.Axis.X ? centerX + along : centerX + across;
@@ -154,50 +177,100 @@ public final class TruffaloSpireFeature extends Feature<NoneFeatureConfiguration
                     continue;
                 }
                 for (int v = -spanUp; v <= spanUp; v++) {
-                    double sx = across / halfWidth;
-                    double sy = v / halfHeight;
-                    if (sx * sx + sy * sy > 1.0D) {
+                    if (!hole.inside(along, across, v)) {
                         continue;
                     }
                     mutable.set(x, centerY + v, z);
                     if (isSpireBlock(level.getBlockState(mutable))) {
                         level.setBlock(mutable, Blocks.AIR.defaultBlockState(), 2);
+                        carved.add(mutable.immutable());
                     }
                 }
+            }
+        }
+
+        for (int along = -length; along <= length; along++) {
+            for (int across = -spanAcross; across <= spanAcross; across++) {
+                int x = axis == Direction.Axis.X ? centerX + along : centerX + across;
+                int z = axis == Direction.Axis.X ? centerZ + across : centerZ + along;
+                if (!withinReach(origin, x, z)) {
+                    continue;
+                }
+                for (int v = -spanUp; v <= spanUp; v++) {
+                    if (hole.inside(along, across, v)) {
+                        continue;
+                    }
+                    mutable.set(x, centerY + v, z);
+                    BlockState existing = level.getBlockState(mutable);
+                    if (!isFullSpireBlock(existing)) {
+                        continue;
+                    }
+                    BlockState rim = rimState(hole, along, across, v, existing, positive, random);
+                    if (rim != null) {
+                        level.setBlock(mutable, rim, 2);
+                    }
+                }
+            }
+        }
+
+        BlockState carpet = Blocks.MOSS_CARPET.defaultBlockState();
+        for (BlockPos pos : carved) {
+            if (!level.getBlockState(pos).isAir() || random.nextFloat() >= 0.35F) {
+                continue;
+            }
+            BlockState below = level.getBlockState(pos.below());
+            boolean bottomSlab = below.getBlock() instanceof SlabBlock && below.getValue(SlabBlock.TYPE) == SlabType.BOTTOM;
+            if (bottomSlab || isFullSpireBlock(below)) {
+                level.setBlock(pos, carpet, 2);
             }
         }
     }
 
-    private static void carveWindow(WorldGenLevel level, RandomSource random, BlockPos origin, Shape main) {
-        int y = main.ground + Mth.floor(main.height * (0.45D + random.nextDouble() * 0.2D));
-        if (main.radiusAt(y) < 2.5D) {
-            return;
+    private static BlockState rimState(Hole hole, int along, int across, int v, BlockState existing, Direction positive, RandomSource random) {
+        boolean lowNeg = hole.inside(along, across - 0.25D, v - 0.25D);
+        boolean lowPos = hole.inside(along, across + 0.25D, v - 0.25D);
+        boolean highNeg = hole.inside(along, across - 0.25D, v + 0.25D);
+        boolean highPos = hole.inside(along, across + 0.25D, v + 0.25D);
+        int open = (lowNeg ? 1 : 0) + (lowPos ? 1 : 0) + (highNeg ? 1 : 0) + (highPos ? 1 : 0);
+
+        if (open == 0) {
+            boolean touches = hole.inside(along, across - 1, v) || hole.inside(along, across + 1, v)
+                    || hole.inside(along, across, v - 1) || hole.inside(along, across, v + 1);
+            return touches && random.nextFloat() < 0.35F ? Blocks.MOSS_BLOCK.defaultBlockState() : null;
         }
-        Direction.Axis axis = random.nextBoolean() ? Direction.Axis.X : Direction.Axis.Z;
-        double radius = 1.4D + random.nextDouble() * 0.6D;
-        int length = Mth.ceil(main.radiusAt(y) * 1.4D) + 2;
-        int centerX = Mth.floor(main.centerX(y));
-        int centerZ = Mth.floor(main.centerZ(y));
-        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
-        int r = Mth.ceil(radius);
-        for (int along = -length; along <= length; along++) {
-            for (int across = -r; across <= r; across++) {
-                for (int v = -r; v <= r; v++) {
-                    if (across * across + v * v > radius * radius) {
-                        continue;
-                    }
-                    int x = axis == Direction.Axis.X ? centerX + along : centerX + across;
-                    int z = axis == Direction.Axis.X ? centerZ + across : centerZ + along;
-                    if (!withinReach(origin, x, z)) {
-                        continue;
-                    }
-                    mutable.set(x, y + v, z);
-                    if (isSpireBlock(level.getBlockState(mutable))) {
-                        level.setBlock(mutable, Blocks.AIR.defaultBlockState(), 2);
-                    }
-                }
-            }
+        if (open == 3) {
+            boolean lowSolid = !lowNeg || !lowPos;
+            return slab(existing, lowSolid ? SlabType.BOTTOM : SlabType.TOP);
         }
+        if (open == 2 && highNeg && highPos) {
+            return slab(existing, SlabType.BOTTOM);
+        }
+        if (open == 2 && lowNeg && lowPos) {
+            return slab(existing, SlabType.TOP);
+        }
+        if (open == 1 && (highNeg || highPos)) {
+            return stairs(existing, highNeg ? positive : positive.getOpposite(), Half.BOTTOM);
+        }
+        if (open == 1) {
+            return stairs(existing, lowNeg ? positive : positive.getOpposite(), Half.TOP);
+        }
+        return null;
+    }
+
+    private static BlockState slab(BlockState existing, SlabType type) {
+        BlockState base = existing.is(AntarchyObjects.SHELLSTONE.get())
+                ? AntarchyObjects.SHELLSTONE_SLAB.get().defaultBlockState()
+                : Blocks.TUFF_SLAB.defaultBlockState();
+        return base.setValue(SlabBlock.TYPE, type);
+    }
+
+    private static BlockState stairs(BlockState existing, Direction facing, Half half) {
+        BlockState base = existing.is(AntarchyObjects.SHELLSTONE.get())
+                ? AntarchyObjects.SHELLSTONE_STAIRS.get().defaultBlockState()
+                : Blocks.TUFF_STAIRS.defaultBlockState();
+        return base.setValue(StairBlock.FACING, facing)
+                .setValue(StairBlock.HALF, half)
+                .setValue(StairBlock.SHAPE, StairsShape.STRAIGHT);
     }
 
     private static void placeTrees(WorldGenLevel level, ChunkGenerator generator, RandomSource random, Shape main, List<BlockPos> ledges) {
@@ -271,6 +344,15 @@ public final class TruffaloSpireFeature extends Feature<NoneFeatureConfiguration
     }
 
     private static boolean isSpireBlock(BlockState state) {
+        return isFullSpireBlock(state)
+                || state.is(Blocks.MOSS_CARPET)
+                || state.is(Blocks.TUFF_SLAB)
+                || state.is(Blocks.TUFF_STAIRS)
+                || state.is(AntarchyObjects.SHELLSTONE_SLAB.get())
+                || state.is(AntarchyObjects.SHELLSTONE_STAIRS.get());
+    }
+
+    private static boolean isFullSpireBlock(BlockState state) {
         return state.is(AntarchyObjects.SHELLSTONE.get()) || state.is(Blocks.TUFF) || state.is(Blocks.MOSS_BLOCK);
     }
 
@@ -369,6 +451,47 @@ public final class TruffaloSpireFeature extends Feature<NoneFeatureConfiguration
                     + 0.12D * Math.sin(angle * 5.0D + this.phaseB - by * 0.09D);
             double edge = radius * lump + 0.5D;
             return distanceSq <= edge * edge;
+        }
+    }
+
+    private static final class Hole {
+        private final double halfWidth;
+        private final double halfHeight;
+        private final double wanderAcross;
+        private final double wanderUp;
+        private final double frequencyAcross;
+        private final double frequencyUp;
+        private final double phaseAcross;
+        private final double phaseUp;
+        private final double phaseSize;
+
+        private Hole(double halfWidth, double halfHeight, double wanderAcross, double wanderUp, double frequencyAcross,
+                     double frequencyUp, double phaseAcross, double phaseUp, double phaseSize) {
+            this.halfWidth = halfWidth;
+            this.halfHeight = halfHeight;
+            this.wanderAcross = wanderAcross;
+            this.wanderUp = wanderUp;
+            this.frequencyAcross = frequencyAcross;
+            this.frequencyUp = frequencyUp;
+            this.phaseAcross = phaseAcross;
+            this.phaseUp = phaseUp;
+            this.phaseSize = phaseSize;
+        }
+
+        static Hole create(RandomSource random, double halfWidth, double halfHeight, double wanderAcross, double wanderUp) {
+            double tau = Math.PI * 2.0D;
+            return new Hole(halfWidth, halfHeight, wanderAcross, wanderUp,
+                    0.25D + random.nextDouble() * 0.15D, 0.2D + random.nextDouble() * 0.15D,
+                    random.nextDouble() * tau, random.nextDouble() * tau, random.nextDouble() * tau);
+        }
+
+        boolean inside(double along, double across, double up) {
+            double offsetAcross = this.wanderAcross * Math.sin(along * this.frequencyAcross + this.phaseAcross);
+            double offsetUp = this.wanderUp * Math.sin(along * this.frequencyUp + this.phaseUp);
+            double scale = 1.0D + 0.06D * Math.sin(along * 0.45D + this.phaseSize);
+            double dx = (across - offsetAcross) / (this.halfWidth * scale);
+            double dy = (up - offsetUp) / (this.halfHeight * scale);
+            return dx * dx + dy * dy <= 1.0D;
         }
     }
 }

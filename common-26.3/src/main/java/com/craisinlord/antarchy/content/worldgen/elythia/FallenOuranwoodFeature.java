@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -13,7 +14,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
@@ -21,9 +21,8 @@ public class FallenOuranwoodFeature implements Feature {
     public static final MapCodec<FallenOuranwoodFeature> CODEC = MapCodec.unit(FallenOuranwoodFeature::new);
 
     @Override
-    public MapCodec<FallenOuranwoodFeature> codec() {
-        return CODEC;
-    }
+    public MapCodec<FallenOuranwoodFeature> codec() { return CODEC; }
+
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {

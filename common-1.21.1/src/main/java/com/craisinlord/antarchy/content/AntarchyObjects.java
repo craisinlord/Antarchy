@@ -439,6 +439,12 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<net.minecraft.core.component.DataComponentType<Integer>> CRITTER_CAGE_SECONDARY_COLOR_COMPONENT =
             (Supplier<net.minecraft.core.component.DataComponentType<Integer>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.ResourceLocation>> FOSSIL_ENTITY_COMPONENT =
+            (Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.ResourceLocation>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.FossilBlockEntity>> FOSSIL_BLOCK_ENTITY =
+            (Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.FossilBlockEntity>>) UNBOUND;
 
     private AntarchyObjects() {
     }
@@ -988,6 +994,14 @@ public final class AntarchyObjects {
 
     public static void setCritterCageSecondaryColorComponent(Supplier<net.minecraft.core.component.DataComponentType<Integer>> supplier) {
         CRITTER_CAGE_SECONDARY_COLOR_COMPONENT = supplier;
+    }
+
+    public static void setFossilEntityComponent(Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.ResourceLocation>> supplier) {
+        FOSSIL_ENTITY_COMPONENT = supplier;
+    }
+
+    public static void setFossilBlockEntity(Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.FossilBlockEntity>> supplier) {
+        FOSSIL_BLOCK_ENTITY = supplier;
     }
 
     public static BlockBehaviour.Properties shellstoneProperties() {

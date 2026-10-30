@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.Antarchy;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -13,12 +14,14 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SeaPickleBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
 public class CoralSpikeFeature implements Feature {
     public static final MapCodec<CoralSpikeFeature> CODEC = MapCodec.unit(CoralSpikeFeature::new);
+
+    @Override
+    public MapCodec<CoralSpikeFeature> codec() { return CODEC; }
 
     private record CoralSet(
             Block block,
@@ -39,10 +42,6 @@ public class CoralSpikeFeature implements Feature {
         new CoralSet(Blocks.HORN_CORAL_BLOCK,   Blocks.HORN_CORAL,   Blocks.HORN_CORAL_WALL_FAN,   Blocks.HORN_CORAL_FAN,   Blocks.DEAD_HORN_CORAL_BLOCK,   Blocks.DEAD_HORN_CORAL,   Blocks.DEAD_HORN_CORAL_WALL_FAN,   Blocks.DEAD_HORN_CORAL_FAN),
     };
 
-    @Override
-    public MapCodec<CoralSpikeFeature> codec() {
-        return CODEC;
-    }
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {

@@ -25,7 +25,7 @@ public final class ThoraxisBiomeSource extends BiomeSource {
     private static final double REGION_SPREAD = 0.64D;
     private static final double VERTICAL_SPREAD = 0.75D;
     private static final double DREAM_DUNES_SELECTOR_CUTOFF = 0.42D;
-    private static final double HILLS_SELECTOR_CUTOFF = 0.33D;
+    private static final double HILLS_SELECTOR_CUTOFF = 0.31D;
     private static final double NADIR_FOREST_SELECTOR_MIN = 0.51D;
     private static final double NADIR_FOREST_SELECTOR_MAX = 0.57D;
     private static final double DREAM_PEAKS_MASK = 0.22D;

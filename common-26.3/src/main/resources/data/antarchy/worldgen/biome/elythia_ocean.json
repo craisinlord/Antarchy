@@ -1,85 +1,7 @@
 {
-  "has_precipitation": false,
+  "has_precipitation": true,
   "temperature": 0.65,
   "downfall": 1.0,
-  "attributes": {
-    "minecraft:audio/ambient_sounds": {
-      "mood": {
-        "sound": "minecraft:ambient.underwater.loop",
-        "tick_delay": 6000,
-        "block_search_extent": 8,
-        "offset": 2.0
-      }
-    },
-    "minecraft:audio/background_music": {
-      "default": {
-        "sound": "antarchy:music.game.elythia",
-        "min_delay": 600,
-        "max_delay": 1800,
-        "replace_current_music": true
-      }
-    },
-    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.15,
-    "minecraft:gameplay/natural_mob_spawns": {
-      "argument": {
-        "spawn_costs": {},
-        "spawns_by_category": {
-          "monster": [
-            {
-              "type": "antarchy:missile_squid",
-              "count": {
-                "type": "minecraft:uniform",
-                "max_inclusive": 3,
-                "min_inclusive": 1
-              },
-              "weight": 12
-            }
-          ],
-          "water_creature": [
-            {
-              "type": "antarchy:octopus_bomb",
-              "count": {
-                "type": "minecraft:uniform",
-                "max_inclusive": 2,
-                "min_inclusive": 1
-              },
-              "weight": 4
-            }
-          ],
-          "water_ambient": [
-            {
-              "type": "antarchy:cheep",
-              "count": {
-                "type": "minecraft:uniform",
-                "max_inclusive": 6,
-                "min_inclusive": 3
-              },
-              "weight": 10
-            },
-            {
-              "type": "minecraft:tropical_fish",
-              "count": {
-                "type": "minecraft:uniform",
-                "max_inclusive": 8,
-                "min_inclusive": 4
-              },
-              "weight": 20
-            }
-          ]
-        }
-      },
-      "modifier": "overlay"
-    },
-    "minecraft:visual/fog_color": "#7b5cff",
-    "minecraft:visual/sky_color": "#7b5cff",
-    "minecraft:visual/water_fog_color": "#0b3c70"
-  },
-  "effects": {
-    "water_color": "#4c9ef8",
-    "foliage_color": "#2bc12d",
-    "grass_color": "#41ad28",
-    "grass_color_modifier": "none"
-  },
   "carvers": [],
   "features": [
     [],
@@ -112,10 +34,93 @@
     [],
     [
       "minecraft:sea_pickle",
-      "minecraft:warm_ocean_vegetation",
       "minecraft:kelp_warm",
-      "antarchy:giant_lily_pad_patch_common"
+      "antarchy:giant_lily_pad_patch_common",
+      "antarchy:elythia_reef"
     ],
     []
-  ]
+  ],
+  "attributes": {
+    "minecraft:visual/fog_color": "#a58dff",
+    "minecraft:visual/sky_color": "#7b5cff",
+    "minecraft:visual/water_fog_color": "#0b3c70",
+    "minecraft:audio/ambient_sounds": {
+      "mood": {
+        "sound": "minecraft:ambient.underwater.loop",
+        "tick_delay": 6000,
+        "block_search_extent": 8,
+        "offset": 2.0
+      }
+    },
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.elythia",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:gameplay/natural_mob_spawns": {
+      "modifier": "overlay",
+      "argument": {
+        "spawn_costs": {},
+        "spawns_by_category": {
+          "monster": [
+            {
+              "type": "antarchy:missile_squid",
+              "weight": 12,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 3
+              }
+            }
+          ],
+          "creature": [],
+          "ambient": [],
+          "axolotls": [],
+          "underground_water_creature": [],
+          "water_creature": [
+            {
+              "type": "antarchy:octopus_bomb",
+              "weight": 4,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 2
+              }
+            }
+          ],
+          "water_ambient": [
+            {
+              "type": "antarchy:cheep",
+              "weight": 10,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 3,
+                "max_inclusive": 6
+              }
+            },
+            {
+              "type": "minecraft:tropical_fish",
+              "weight": 20,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 4,
+                "max_inclusive": 8
+              }
+            }
+          ],
+          "misc": []
+        }
+      }
+    },
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.15
+  },
+  "effects": {
+    "water_color": "#4c9ef8",
+    "foliage_color": "#2bc12d",
+    "grass_color": "#41ad28",
+    "grass_color_modifier": "none"
+  }
 }

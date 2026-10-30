@@ -2,42 +2,6 @@
   "has_precipitation": false,
   "temperature": 2.0,
   "downfall": 0.0,
-  "attributes": {
-    "minecraft:audio/ambient_sounds": {
-      "mood": {
-        "sound": "antarchy:thoraxis_nightmare_wastes_mood",
-        "tick_delay": 8572,
-        "block_search_extent": 8,
-        "offset": 2.0
-      },
-      "additions": {
-        "sound": "antarchy:thoraxis_nightmare_wastes_biome_additions",
-        "tick_chance": 0.0005
-      }
-    },
-    "minecraft:audio/background_music": {
-      "default": {
-        "sound": "antarchy:music.game.thoraxis",
-        "min_delay": 600,
-        "max_delay": 1800,
-        "replace_current_music": true
-      }
-    },
-    "minecraft:visual/ambient_particles": [
-      {
-        "particle": {
-          "type": "minecraft:crimson_spore"
-        },
-        "probability": 0.005
-      }
-    ],
-    "minecraft:visual/fog_color": "#0f0000",
-    "minecraft:visual/sky_color": "#000000",
-    "minecraft:visual/water_fog_color": "#000000"
-  },
-  "effects": {
-    "water_color": "#050000"
-  },
   "carvers": [],
   "spawn_costs": {
     "antarchy:nightmare": {
@@ -109,5 +73,41 @@
     "water_creature": [],
     "water_ambient": [],
     "misc": []
+  },
+  "effects": {
+    "water_color": "#050000"
+  },
+  "attributes": {
+    "minecraft:visual/fog_color": "#0f0000",
+    "minecraft:visual/sky_color": "#080000",
+    "minecraft:visual/water_fog_color": "#000000",
+    "minecraft:audio/ambient_sounds": {
+      "mood": {
+        "sound": "antarchy:thoraxis_nightmare_wastes_mood",
+        "tick_delay": 8572,
+        "block_search_extent": 8,
+        "offset": 2.0
+      },
+      "additions": {
+        "sound": "antarchy:thoraxis_nightmare_wastes_biome_additions",
+        "tick_chance": 0.0005
+      }
+    },
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.thoraxis",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "minecraft:crimson_spore"
+        },
+        "probability": 0.005
+      }
+    ]
   }
 }

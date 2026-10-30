@@ -1,0 +1,20 @@
+{
+  "sender": "trayaurus@antmail.com",
+  "sender_display": "Dr. Trayaurus",
+  "sender_avatar_item": "antarchy:diamond_minecart",
+  "subject": "Termites",
+  "body": "Remember those termites back in the Overworld forests and plains? Right-click one and it'll take you to Cavaryn, if you're brave enough. Or put one in a Myrmite frame and you'll get a portal that stays open.\n\nYour old friend,\nDr. T",
+  "trigger": {
+    "type": "random",
+    "pool": "antarchy:trayaurus_hints"
+  },
+  "once": true,
+  "conditions": {
+    "advancements": [
+      "antarchy:visit_elythia"
+    ],
+    "not_advancements": [
+      "antarchy:visit_cavaryn"
+    ]
+  }
+}

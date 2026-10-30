@@ -1,5 +1,6 @@
 {
   "category": "antarchy:elythia",
   "title": "guide.antarchy.disk.flying_squirrel.title",
+  "description": "guide.antarchy.disk.flying_squirrel.description",
   "entries": ["antarchy:flying_squirrel"]
 }

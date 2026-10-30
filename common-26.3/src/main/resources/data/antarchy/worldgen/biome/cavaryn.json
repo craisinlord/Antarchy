@@ -75,7 +75,15 @@
     [],
     [],
     [],
-    [],
+    [
+      "antarchy:cavaryn_worm_bore_dressing",
+      "antarchy:cavaryn_brood_nest_dressing",
+      "antarchy:cavaryn_brood_gallery_dressing",
+      "antarchy:cavaryn_glowcap_grotto_dressing",
+      "antarchy:cavaryn_moleworm_warren_dressing",
+      "antarchy:cavaryn_carapace_rift_dressing",
+      "antarchy:cavaryn_biowart_gut_dressing"
+    ],
     [],
     [],
     [

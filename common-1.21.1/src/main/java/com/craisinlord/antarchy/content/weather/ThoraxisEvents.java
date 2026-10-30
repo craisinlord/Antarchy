@@ -77,6 +77,7 @@ public final class ThoraxisEvents extends SavedData {
     private static final float MAX_BUBBLE_RADIUS = 8.0F;
     private static final float SLOW_BUBBLE_RATE = 0.12F;
     private static final float FAST_BUBBLE_RATE = 3.0F;
+    private static final double BUBBLE_FIELD_CORE = 0.75D;
 
     private static final int SURGE_INTERVAL_TICKS = 100;
     private static final double SURGE_RADIUS = 40.0D;
@@ -537,6 +538,7 @@ public final class ThoraxisEvents extends SavedData {
         int remaining = (int) Math.max(1L, bubble.born() + bubble.life() - time);
         double rate = this.phase == ThoraxisEvent.Phase.ACTIVE ? bubble.rate() : 1.0D;
         TimeDilationFieldEntity field = TimeDilationFieldEntity.create(level, position, bubble.radius(), rate, remaining);
+        field.setFieldCore(BUBBLE_FIELD_CORE);
         HIDDEN_FIELDS.add(field.getUUID());
         level.addFreshEntity(field);
         UUID previous = this.bubbleFields.put(bubble.id(), field.getUUID());

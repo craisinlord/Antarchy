@@ -39,6 +39,7 @@ public final class ElythiaFireflyManager {
         if (level == null || mc.player == null) return;
         if (mc.isPaused()) return;
         if (!ElythiaSkyRenderer.shouldRender(level)) return;
+        com.craisinlord.antarchy.content.client.ElythiaGroundMist.tick(Minecraft.getInstance(), level, AntarchyForgeMisc.GROUND_MIST.get());
 
         long dayTime = level.getDayTime() % 24000L;
         if (dayTime < NIGHT_START || dayTime > NIGHT_END) return;

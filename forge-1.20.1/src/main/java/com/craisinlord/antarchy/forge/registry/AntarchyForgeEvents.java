@@ -26,6 +26,7 @@ import com.craisinlord.antarchy.content.entity.vortex.VortexEntity;
 import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
 import com.craisinlord.antarchy.content.horde.CavarynHordeManager;
 import com.craisinlord.antarchy.content.item.*;
+import com.craisinlord.antarchy.content.loot.AntarchyLootInjections;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateGearHelper;
 import com.craisinlord.antarchy.content.AntarchyTags;
@@ -71,6 +72,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -96,6 +98,7 @@ public final class AntarchyForgeEvents {
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::onMissileSquidDeath);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::onPermanentPortalSacrifice);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::onLivingBreathe);
+        MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::onLootTableLoad);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleNaturalRabbitReplacement);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::handleBlockToolModification);
         MinecraftForge.EVENT_BUS.addListener(AntarchyForgeEvents::onMobEffectApplicable);
@@ -247,6 +250,8 @@ public final class AntarchyForgeEvents {
         if (event.phase != TickEvent.Phase.END) return;
         for (ServerLevel level : event.getServer().getAllLevels()) {
             ThoraxisUndersideManager.tick(level);
+                com.craisinlord.antarchy.content.weather.ElythiaEvents.tick(level);
+                com.craisinlord.antarchy.content.weather.ElythiaRainGrowth.tick(level);
         }
     }
 
@@ -264,6 +269,12 @@ public final class AntarchyForgeEvents {
         PermanentPortalManager.handleSacrifice(event.getEntity());
         if (event.getEntity() instanceof RainbowAntEntity rainbowAnt) {
             rainbowAnt.tryIgniteInfinityPortalOnDeath();
+        }
+    }
+
+    public static void onLootTableLoad(LootTableLoadEvent event) {
+        if (AntarchyLootInjections.addsPhone(event.getName())) {
+            event.getTable().addPool(AntarchyLootInjections.phonePool().build());
         }
     }
 

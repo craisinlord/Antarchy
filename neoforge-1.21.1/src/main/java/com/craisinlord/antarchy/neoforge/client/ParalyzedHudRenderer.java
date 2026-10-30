@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.neoforge.client;
 
+import com.craisinlord.antarchy.content.client.hud.ScreenTint;
 import com.craisinlord.antarchy.neoforge.registry.AntarchyNeoforgeMisc;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -35,10 +36,10 @@ public final class ParalyzedHudRenderer {
         int width  = mc.getWindow().getGuiScaledWidth();
         int height = mc.getWindow().getGuiScaledHeight();
         int color = (alpha << 24) | 0x303030;
-        guiGraphics.fill(0, 0, width, height, color);
+        ScreenTint.fill(guiGraphics, 0, 0, width, height, color);
         int innerAlpha = Mth.clamp(alpha / 3, 0, 0xFF);
         int innerColor = (innerAlpha << 24) | 0x606060;
         int margin = Math.min(width, height) / 6;
-        guiGraphics.fill(margin, margin, width - margin, height - margin, innerColor);
+        ScreenTint.fill(guiGraphics, margin, margin, width - margin, height - margin, innerColor);
     }
 }

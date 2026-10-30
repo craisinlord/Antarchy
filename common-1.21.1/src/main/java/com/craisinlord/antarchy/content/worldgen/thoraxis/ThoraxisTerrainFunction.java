@@ -35,6 +35,10 @@ public final class ThoraxisTerrainFunction implements DensityFunction {
     private static final double WINDOW_THRESHOLD = 0.2D;
     private static final double WINDOW_BLEND = 0.1D;
     private static final double GRAND_THRESHOLD = 0.3D;
+    private static final double PINHOLE_SCALE = 2.0D;
+    private static final double PINHOLE_THRESHOLD = 0.33D;
+    private static final double PINHOLE_EDGE = 0.07D;
+    private static final double PINHOLE_DEPTH = 40.0D;
     private static final double GRAND_BLEND = 0.12D;
     private static final double BLEND_LIMIT = 6.0D;
 
@@ -406,6 +410,7 @@ public final class ThoraxisTerrainFunction implements DensityFunction {
             layout.bounds[TIERS] = TIER_TOP_Y;
             double step = (TIER_TOP_Y - TIER_BOTTOM_Y) / TIERS;
             double window = column.window;
+            boolean belowOpen = false;
             for (int k = 1; k < TIERS; k++) {
                 double offset = this.shape(x * 0.5D + k * 977.3D, z * 0.5D - k * 1301.7D);
                 double bound = TIER_BOTTOM_Y + k * step + offset * TIER_JITTER;
@@ -413,8 +418,16 @@ public final class ThoraxisTerrainFunction implements DensityFunction {
                 double holes = this.shape(x * 0.9D + k * 613.9D, z * 0.9D - k * 457.1D);
                 double open = Math.max(-6.0D, Math.min(12.0D, 10.0D + 34.0D * holes));
                 double solid = Math.max(7.0D, Math.min(12.0D, 10.0D + 12.0D * holes));
-                layout.plateHalf[k] = solid + (open - solid) * window;
-                layout.mirrorHole[k] = window * Math.max(0.0D, (-holes - 0.18D) * 120.0D);
+                double half = solid + (open - solid) * window;
+                double hole = window * Math.max(0.0D, (-holes - 0.18D) * 120.0D);
+                double pinhole = belowOpen ? 0.0D : this.pinhole(x, z, k * 1511.3D) * (1.0D - window);
+                if (pinhole > 0.0D) {
+                    half -= (half + 6.0D) * pinhole;
+                    hole += PINHOLE_DEPTH * pinhole;
+                }
+                layout.plateHalf[k] = half;
+                layout.mirrorHole[k] = hole;
+                belowOpen = pinhole > 0.5D;
             }
             layout.mirrorHole[0] = column.basin * 1.4D;
         }
@@ -441,6 +454,7 @@ public final class ThoraxisTerrainFunction implements DensityFunction {
         long modeSalt = layout.grand ? 0x80L : 0x60L;
         layout.strataCenters = new double[layers];
         layout.strataHalf = new double[layers];
+        boolean belowOpen = false;
         for (int k = 0; k < layers; k++) {
             double offset = this.shape(x * 0.6D + k * 1931.7D, z * 0.6D - k * 1213.3D);
             layout.strataCenters[k] = STRATA_FIRST_Y + k * spacing + offset * drift;
@@ -450,7 +464,15 @@ public final class ThoraxisTerrainFunction implements DensityFunction {
                 double holes = this.shape(x * 1.5D - k * 733.1D, z * 1.5D + k * 2711.9D);
                 double open = Math.max(-8.0D, Math.min(12.0D, 9.0D + 30.0D * holes));
                 double solid = Math.max(6.0D, Math.min(12.0D, 9.0D + 10.0D * holes));
-                layout.strataHalf[k] = layout.grand ? open : solid + (open - solid) * column.window;
+                double half = layout.grand ? open : solid + (open - solid) * column.window;
+                if (!layout.grand) {
+                    double pinhole = belowOpen ? 0.0D : this.pinhole(x, z, k * 2237.9D + 600.0D) * (1.0D - column.window);
+                    if (pinhole > 0.0D) {
+                        half -= (half + 6.0D) * pinhole;
+                    }
+                    belowOpen = pinhole > 0.5D;
+                }
+                layout.strataHalf[k] = half;
             }
         }
         layout.strandRadius = layout.grand ? GRAND_STRAND_RADIUS : STRAND_RADIUS;
@@ -576,6 +598,11 @@ public final class ThoraxisTerrainFunction implements DensityFunction {
                 layout.spires[tier][layout.spireCount[tier]++] = spire;
             }
         }
+    }
+
+    private double pinhole(int x, int z, double offset) {
+        double value = this.shape(x * PINHOLE_SCALE + offset, z * PINHOLE_SCALE - offset * 0.61D);
+        return smoothstep((-value - PINHOLE_THRESHOLD) / PINHOLE_EDGE);
     }
 
     private static double smoothstep(double t) {

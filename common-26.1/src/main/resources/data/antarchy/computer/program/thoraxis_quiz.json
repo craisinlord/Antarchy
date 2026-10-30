@@ -1,0 +1,98 @@
+{
+  "type": "quiz",
+  "title": "THORAXIS FIELD EXAM",
+  "green_tint": true,
+  "questions_per_run": 5,
+  "reward_on": "perfect",
+  "reward_limit": "once",
+  "questions": [
+    {
+      "question": "How do you get to Thoraxis?",
+      "answers": [
+        "Right-click a Red Ant",
+        "Right-click a Termite",
+        "Sleep in the Nether"
+      ],
+      "correct": 0,
+      "explanation": "Right-click a Red Ant. Sacrifice one in a Nyxite frame and you get a portal."
+    },
+    {
+      "question": "Where do Red Ants nest?",
+      "answers": [
+        "The Nether",
+        "Ocean floors",
+        "Snowy plains"
+      ],
+      "correct": 0,
+      "explanation": "The Nether. And they bite, so watch out."
+    },
+    {
+      "question": "What does Antiwater do?",
+      "answers": [
+        "Flows upward",
+        "Freezes instantly",
+        "Burns like lava"
+      ],
+      "correct": 0,
+      "explanation": "It flows up instead of down. It makes geysers too.",
+      "item": "antarchy:antiwater_bucket"
+    },
+    {
+      "question": "What is Bluestone?",
+      "answers": [
+        "Redstone, upside down",
+        "A kind of ice",
+        "Ancient lapis"
+      ],
+      "correct": 0,
+      "explanation": "Basically Redstone but upside down. You can even make upside down rails with it.",
+      "item": "antarchy:bluestone"
+    },
+    {
+      "question": "How do Dimensional Tears work?",
+      "answers": [
+        "They come in linked pairs",
+        "They lead to the Nether",
+        "They heal you"
+      ],
+      "correct": 0,
+      "explanation": "They come in pairs. Walk into one and you pop out of the other one."
+    },
+    {
+      "question": "How do you reach the Underside?",
+      "answers": [
+        "Fall through a gravity throat",
+        "Dig straight down",
+        "Use a Rainbow Ant"
+      ],
+      "correct": 0,
+      "explanation": "Fall through a gravity throat. You come out the bottom upside down."
+    },
+    {
+      "question": "When does the Nightmare hit hardest?",
+      "answers": [
+        "When your health is low",
+        "At noon",
+        "When you're sneaking"
+      ],
+      "correct": 0,
+      "explanation": "When you're low on health. So heal up before you fight it."
+    },
+    {
+      "question": "What does the Queen add in her final phase?",
+      "answers": [
+        "A time dilation field",
+        "A second Queen",
+        "A thunderstorm"
+      ],
+      "correct": 0,
+      "explanation": "Her own time dilation field. Anyone caught in it slows right down."
+    }
+  ],
+  "rewards": [
+    {
+      "type": "experience_levels",
+      "levels": 5
+    }
+  ]
+}

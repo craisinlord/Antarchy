@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:cache",
+  "input": {
+    "type": "antarchy:thoraxis_underside_mountains",
+    "mask": "antarchy:thoraxis_peaks_mask",
+    "style": "antarchy:thoraxis_peaks_style",
+    "shape": "antarchy:thoraxis_terrain_shape"
+  }
+}

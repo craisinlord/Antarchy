@@ -1,0 +1,47 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache",
+    "input": {
+      "type": "minecraft:add",
+      "left": {
+        "type": "minecraft:noise",
+        "noise": "antarchy:elythia_continentalness",
+        "xz_scale": 0.25,
+        "y_scale": 0.0,
+        "shift_x": {
+          "type": "minecraft:add",
+          "left": "minecraft:shift_x",
+          "right": 3.0
+        },
+        "shift_y": 0.0,
+        "shift_z": {
+          "type": "minecraft:add",
+          "left": "minecraft:shift_z",
+          "right": 0.0
+        }
+      },
+      "right": {
+        "type": "minecraft:mul",
+        "left": -1.0,
+        "right": {
+          "type": "minecraft:noise",
+          "noise": "antarchy:elythia_continentalness",
+          "xz_scale": 0.25,
+          "y_scale": 0.0,
+          "shift_x": {
+            "type": "minecraft:add",
+            "left": "minecraft:shift_x",
+            "right": -3.0
+          },
+          "shift_y": 0.0,
+          "shift_z": {
+            "type": "minecraft:add",
+            "left": "minecraft:shift_z",
+            "right": 0.0
+          }
+        }
+      }
+    }
+  }
+}

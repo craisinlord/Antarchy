@@ -33,7 +33,10 @@
     [],
     [],
     [],
-    [],
+    [
+      "antarchy:river_log_bridge",
+      "antarchy:river_stepping_stones"
+    ],
     [],
     [
       "antarchy:elythia_ore_coal_upper",
@@ -76,6 +79,12 @@
         "weight": 12,
         "minCount": 1,
         "maxCount": 2
+      },
+      {
+        "type": "minecraft:frog",
+        "weight": 14,
+        "minCount": 2,
+        "maxCount": 4
       }
     ],
     "ambient": [],

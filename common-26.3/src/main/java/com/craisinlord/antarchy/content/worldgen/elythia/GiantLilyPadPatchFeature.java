@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.block.GiantLilyPadBlock;
@@ -9,27 +10,29 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
 public final class GiantLilyPadPatchFeature implements Feature {
     public static final MapCodec<GiantLilyPadPatchFeature> CODEC = MapCodec.unit(() -> new GiantLilyPadPatchFeature(false));
-    public static final MapCodec<GiantLilyPadPatchFeature> PEACH_FOREST_CODEC = MapCodec.unit(() -> new GiantLilyPadPatchFeature(true));
-    private static final float PEACH_FOREST_LOTUS_CHANCE = 0.12F;
 
-    private final boolean peachForest;
-    private final float lotusChance;
+    public static final MapCodec<GiantLilyPadPatchFeature> PEACH_FOREST_CODEC = MapCodec.unit(() -> new GiantLilyPadPatchFeature(true));
 
     private GiantLilyPadPatchFeature(boolean peachForest) {
         this.peachForest = peachForest;
         this.lotusChance = peachForest ? PEACH_FOREST_LOTUS_CHANCE : 1.0F;
     }
 
-    @Override
     public MapCodec<GiantLilyPadPatchFeature> codec() {
         return this.peachForest ? PEACH_FOREST_CODEC : CODEC;
     }
+
+    private final boolean peachForest;
+
+    private static final float PEACH_FOREST_LOTUS_CHANCE = 0.12F;
+    private final float lotusChance;
+
+
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {

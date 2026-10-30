@@ -21,7 +21,7 @@
             "type": "minecraft:add",
             "argument1": {
               "type": "minecraft:flat_cache",
-              "argument": "antarchy:elythia_surface_offset"
+              "argument": "antarchy:elythia_butte_offset"
             },
             "argument2": {
               "type": "minecraft:range_choice",
@@ -45,28 +45,16 @@
             }
           },
           "argument2": {
-            "type": "minecraft:range_choice",
-            "input": "antarchy:elythia_depth",
-            "min_inclusive": 0.35,
-            "max_exclusive": 0.52,
-            "when_in_range": {
-              "type": "minecraft:range_choice",
-              "input": "minecraft:overworld/ridges",
-              "min_inclusive": -0.8,
-              "max_exclusive": -0.3,
-              "when_in_range": {
-                "type": "minecraft:mul",
-                "argument1": 0.07,
-                "argument2": {
-                  "type": "minecraft:noise",
-                  "noise": "antarchy:elythia_terrain_roughness",
-                  "xz_scale": 0.75,
-                  "y_scale": 0
-                }
-              },
-              "when_out_of_range": 0.0
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:mul",
+              "argument1": "antarchy:elythia_terrain_roughness",
+              "argument2": {
+                "type": "minecraft:flat_cache",
+                "argument": "antarchy:elythia_shelf_roughness_scale"
+              }
             },
-            "when_out_of_range": 0.0
+            "argument2": "antarchy:elythia_shelf_lip"
           }
         }
       }

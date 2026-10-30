@@ -20,6 +20,7 @@ public final class CavarynCavityFunction implements DensityFunction {
     public static final KeyDispatchDataCodec<CavarynCavityFunction> KEY_CODEC = KeyDispatchDataCodec.of(CODEC);
 
     private static final double SCALE = 0.35;
+    private static final double FLOOR = -1.0 / SCALE - 1.0E-9;
 
     private final CavarynCavityGrid.Kind kind;
     private final DensityFunction humidity;
@@ -67,7 +68,7 @@ public final class CavarynCavityFunction implements DensityFunction {
         if (this.grid == null) {
             return 1.0;
         }
-        double distance = this.grid.signedDistance(context.blockX(), context.blockY(), context.blockZ());
+        double distance = this.grid.signedDistance(context.blockX(), context.blockY(), context.blockZ(), FLOOR);
         return Mth.clamp(distance * SCALE, -1.0, 1.0);
     }
 
@@ -80,16 +81,19 @@ public final class CavarynCavityFunction implements DensityFunction {
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
+        if (this.grid != null) {
+            return visitor.apply(this);
+        }
         DensityFunction mappedHumidity = this.humidity.mapAll(visitor);
         DensityFunction mappedWeirdness = this.weirdness.mapAll(visitor);
         DensityFunction mappedDepth = this.depth.mapAll(visitor);
         NoiseHolder mappedNoise = visitor.visitNoise(this.noise);
-        CavarynCavityGrid mappedGrid = this.grid;
-        if (mappedGrid == null && mappedNoise.noise() != null) {
+        CavarynCavityGrid mappedGrid = null;
+        if (mappedNoise.noise() != null) {
             long salt = CavarynWormBoreFunction.saltFor(mappedNoise.getValue(1234.567, 89.123, -456.789), mappedNoise.getValue(-987.654, 12.345, 654.321));
             String biome = this.kind.biome();
             boolean strict = this.kind.strict();
-            mappedGrid = CavarynCavityGrid.create(this.kind, salt, (x, y, z) -> {
+            mappedGrid = CavarynCavityGrid.create(this.kind, salt, biome == null ? (x, y, z) -> true : (x, y, z) -> {
                 SinglePointContext point = new SinglePointContext(Mth.floor(x), Mth.floor(y), Mth.floor(z));
                 double humidity = mappedHumidity.compute(point);
                 double weirdness = mappedWeirdness.compute(point);

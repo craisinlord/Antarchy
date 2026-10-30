@@ -4,7 +4,100 @@
     "type": "minecraft:noise",
     "settings": "antarchy:cavaryn",
     "biome_source": {
-      "type": "minecraft:multi_noise",
+      "type": "antarchy:cavaryn_biome_source",
+      "surface_biomes": [
+        {
+          "parameters": {
+            "temperature": [
+              -1.0,
+              -0.15
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              1.0
+            ],
+            "erosion": [
+              -1.0,
+              1.0
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -2.0,
+              2.0
+            ],
+            "offset": 0.0
+          },
+          "biome": "antarchy:festering_wastes"
+        },
+        {
+          "parameters": {
+            "temperature": [
+              -0.15,
+              1.0
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              1.0
+            ],
+            "erosion": [
+              -1.0,
+              0.0
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -2.0,
+              2.0
+            ],
+            "offset": 0.0
+          },
+          "biome": "antarchy:corkscrew_thicket"
+        },
+        {
+          "parameters": {
+            "temperature": [
+              -0.15,
+              1.0
+            ],
+            "humidity": [
+              -1.0,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              1.0
+            ],
+            "erosion": [
+              0.0,
+              1.0
+            ],
+            "weirdness": [
+              -1.0,
+              1.0
+            ],
+            "depth": [
+              -2.0,
+              2.0
+            ],
+            "offset": 0.0
+          },
+          "biome": "antarchy:ossuary_wastes"
+        }
+      ],
+      "surface_min_y": 200,
       "biomes": [
         {
           "parameters": {
@@ -14,7 +107,7 @@
             ],
             "humidity": [
               -1.0,
-              0.1
+              0.05
             ],
             "continentalness": [
               -1.0,
@@ -55,8 +148,8 @@
               1.0
             ],
             "weirdness": [
-              -0.55,
-              0.55
+              -1.0,
+              0.25
             ],
             "depth": [
               -2.0,
@@ -73,97 +166,7 @@
               1.0
             ],
             "humidity": [
-              0.25,
-              1.0
-            ],
-            "continentalness": [
-              -1.0,
-              1.0
-            ],
-            "erosion": [
-              -1.0,
-              1.0
-            ],
-            "weirdness": [
-              -0.85,
-              -0.45
-            ],
-            "depth": [
-              -2.0,
-              -0.2
-            ],
-            "offset": 0.0
-          },
-          "biome": "antarchy:glowcap_caves"
-        },
-        {
-          "parameters": {
-            "temperature": [
-              -1.0,
-              1.0
-            ],
-            "humidity": [
-              0.25,
-              1.0
-            ],
-            "continentalness": [
-              -1.0,
-              1.0
-            ],
-            "erosion": [
-              -1.0,
-              1.0
-            ],
-            "weirdness": [
-              0.35,
-              1.0
-            ],
-            "depth": [
-              -2.0,
-              -0.2
-            ],
-            "offset": 0.0
-          },
-          "biome": "antarchy:biowart_caves"
-        },
-        {
-          "parameters": {
-            "temperature": [
-              -1.0,
-              1.0
-            ],
-            "humidity": [
-              0.25,
-              1.0
-            ],
-            "continentalness": [
-              -1.0,
-              1.0
-            ],
-            "erosion": [
-              -1.0,
-              1.0
-            ],
-            "weirdness": [
-              0.65,
-              1.0
-            ],
-            "depth": [
-              -2.0,
-              -0.2
-            ],
-            "offset": 0.0
-          },
-          "biome": "antarchy:biowart_caves"
-        },
-        {
-          "parameters": {
-            "temperature": [
-              -1.0,
-              1.0
-            ],
-            "humidity": [
-              0.1,
+              0.05,
               0.25
             ],
             "continentalness": [
@@ -175,8 +178,8 @@
               1.0
             ],
             "weirdness": [
-              -0.7,
-              0.8
+              -1.0,
+              0.25
             ],
             "depth": [
               -2.0,
@@ -185,6 +188,36 @@
             "offset": 0.0
           },
           "biome": "antarchy:cavaryn_moleworm_caves"
+        },
+        {
+          "parameters": {
+            "temperature": [
+              -1.0,
+              1.0
+            ],
+            "humidity": [
+              0.05,
+              1.0
+            ],
+            "continentalness": [
+              -1.0,
+              1.0
+            ],
+            "erosion": [
+              -1.0,
+              1.0
+            ],
+            "weirdness": [
+              0.25,
+              1.0
+            ],
+            "depth": [
+              -2.0,
+              -0.2
+            ],
+            "offset": 0.0
+          },
+          "biome": "antarchy:biowart_caves"
         },
         {
           "parameters": {

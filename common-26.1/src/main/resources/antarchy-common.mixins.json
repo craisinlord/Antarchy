@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AbstractMinecartMixin",
+    "BoatWaterStepMixin",
     "PortalGunItemEntityRemovalMixin",
     "RoyalBossMoveScanMixin",
     "PortalGunZombieMixin",
@@ -72,7 +73,10 @@
     "gravity.PlayerAttackMixin",
     "gravity.ServerChunkCacheAccessor",
     "compat.biolith.MultiNoiseBiomeSourceNullGuardMixin",
-    "time.PlayerTemporalTunerMixin"
+    "time.PlayerTemporalTunerMixin",
+    "ElythiaBedMixin",
+    "ElythiaSleepPlayerMixin",
+    "ElythiaSleepSkipMixin"
   ],
   "client": [
     "compat.stellarview.StellarViewLunaDirectionMixin",
@@ -107,7 +111,11 @@
     "client.TigerEyeArmorHideMixin",
     "client.TigerEyeNameTagHideMixin",
     "client.WolfRendererGrimMixin",
-    "gravity.client.FallingBlockRendererBlockEntityMixin"
+    "gravity.client.FallingBlockRendererBlockEntityMixin",
+    "client.ElythiaFogMixin",
+    "client.ElythiaWaterFogMixin",
+    "client.ElythiaRainMixin",
+    "client.ElythiaLightTextureMixin"
   ],
   "injectors": {
     "defaultRequire": 1

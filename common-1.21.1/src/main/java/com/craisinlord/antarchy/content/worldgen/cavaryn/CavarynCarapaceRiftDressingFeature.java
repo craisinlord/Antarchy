@@ -28,6 +28,7 @@ public final class CavarynCarapaceRiftDressingFeature extends Feature<NoneFeatur
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "broodstone"),
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "biomite")
     );
+    private static final CavarynBlockSet LINEABLE_BLOCKS = new CavarynBlockSet(LINEABLE);
     private static final double LINING_DEPTH = 1.5;
     private static final double BAND_SPACING = 9.0;
     private static final double BAND_THICKNESS = 2.5;
@@ -88,7 +89,7 @@ public final class CavarynCarapaceRiftDressingFeature extends Feature<NoneFeatur
     }
 
     private static boolean isLineable(BlockState state) {
-        return LINEABLE.contains(BuiltInRegistries.BLOCK.getKey(state.getBlock()));
+        return LINEABLE_BLOCKS.contains(state);
     }
 
     private static Block block(ResourceLocation id) {

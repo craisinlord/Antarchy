@@ -3,10 +3,10 @@
   "temperature": 0.68,
   "downfall": 0.35,
   "effects": {
-    "fog_color": 12034454,
+    "fog_color": 983040,
     "water_color": 9453328,
     "water_fog_color": 5643034,
-    "sky_color": 10787353,
+    "sky_color": 524288,
     "grass_color": 16744192,
     "foliage_color": 16722688,
     "grass_color_modifier": "none",
@@ -49,7 +49,19 @@
     ],
     [],
     [],
-    [],
+    [
+      "antarchy:myrmite_coal_ore",
+      "antarchy:myrmite_copper_ore",
+      "antarchy:myrmite_iron_ore",
+      "antarchy:myrmite_gold_ore",
+      "antarchy:myrmite_redstone_ore",
+      "antarchy:myrmite_lapis_ore",
+      "antarchy:myrmite_diamond_ore",
+      "antarchy:myrmite_emerald_ore",
+      "antarchy:myrmite_redstone_ore_rich",
+      "antarchy:myrmite_lapis_ore_rich",
+      "antarchy:myrmite_fossil"
+    ],
     [],
     [],
     [

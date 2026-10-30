@@ -1,41 +1,44 @@
 {
-  "type": "minecraft:cache",
-  "input": {
-    "type": "minecraft:max",
-    "left": {
-      "type": "minecraft:spline",
-      "spline": {
-        "coordinate": "antarchy:elythia_continents",
-        "points": [
-          {
-            "location": 0.0,
-            "value": 0.0,
-            "derivative": 0.0
-          },
-          {
-            "location": 0.1,
-            "value": 1.0,
-            "derivative": 0.0
-          }
-        ]
-      }
-    },
-    "right": {
-      "type": "minecraft:spline",
-      "spline": {
-        "coordinate": "minecraft:overworld/ridges",
-        "points": [
-          {
-            "location": 0.15,
-            "value": 0.0,
-            "derivative": 0.0
-          },
-          {
-            "location": 0.25,
-            "value": 1.0,
-            "derivative": 0.0
-          }
-        ]
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache",
+    "input": {
+      "type": "minecraft:max",
+      "left": {
+        "type": "minecraft:spline",
+        "spline": {
+          "coordinate": "antarchy:elythia_continents",
+          "points": [
+            {
+              "location": 0.0,
+              "value": 0.0,
+              "derivative": 0.0
+            },
+            {
+              "location": 0.1,
+              "value": 1.0,
+              "derivative": 0.0
+            }
+          ]
+        }
+      },
+      "right": {
+        "type": "minecraft:spline",
+        "spline": {
+          "coordinate": "minecraft:overworld/ridges",
+          "points": [
+            {
+              "location": 0.15,
+              "value": 0.0,
+              "derivative": 0.0
+            },
+            {
+              "location": 0.25,
+              "value": 1.0,
+              "derivative": 0.0
+            }
+          ]
+        }
       }
     }
   }

@@ -1,9 +1,9 @@
 {
+  "base_octave": -9,
+  "octave_count": 2,
+  "normalize": "legacy",
   "amplitude_modifiers": [
     1.0,
     0.3
-  ],
-  "base_amplitude": 1.1200895309320182,
-  "base_octave": -9,
-  "octave_count": 2
+  ]
 }

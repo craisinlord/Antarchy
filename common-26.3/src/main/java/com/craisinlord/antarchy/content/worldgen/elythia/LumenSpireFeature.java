@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -9,13 +10,14 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
 public final class LumenSpireFeature implements Feature {
     public static final MapCodec<LumenSpireFeature> CODEC = MapCodec.unit(LumenSpireFeature::new);
 
+    @Override
+    public MapCodec<LumenSpireFeature> codec() { return CODEC; }
     private static final int MIN_HEIGHT = 15;
     private static final int MAX_HEIGHT = 20;
     private static final int MIN_LEVELS = 3;
@@ -24,10 +26,6 @@ public final class LumenSpireFeature implements Feature {
     private static final int SHELF_RADIUS = SHAFT_RADIUS + 2;
     private static final int POOL_RADIUS = 2;
 
-    @Override
-    public MapCodec<LumenSpireFeature> codec() {
-        return CODEC;
-    }
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
@@ -39,7 +37,7 @@ public final class LumenSpireFeature implements Feature {
 
         int height = randomBetween(random, MIN_HEIGHT, MAX_HEIGHT);
         int levels = randomBetween(random, MIN_LEVELS, MAX_LEVELS);
-        if (base.getY() + height >= level.getMaxY() - 1) {
+        if (base.getY() + height >= (level.getMaxY() + 1) - 2) {
             return false;
         }
 

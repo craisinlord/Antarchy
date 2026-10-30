@@ -23,6 +23,8 @@ public final class AntarchySettings {
     private static boolean duplicatorTreeEnabled = true;
     private static boolean glowVinesUnderLeaves = true;
     private static boolean swingThroughGrassEnabled = true;
+    private static boolean boatsClimbWaterSteps = true;
+    private static double boatWaterStepMaxHeight = 1.0D;
     private static boolean fabricKeybindingConflictFixEnabled = true;
     private static boolean experimentalSettingsPopupDisabled = true;
     private static boolean unlockAllArchives = true;
@@ -746,6 +748,14 @@ public final class AntarchySettings {
         return swingThroughGrassEnabled;
     }
 
+    public static boolean boatsClimbWaterSteps() {
+        return boatsClimbWaterSteps;
+    }
+
+    public static double boatWaterStepMaxHeight() {
+        return boatWaterStepMaxHeight;
+    }
+
     public static boolean fabricKeybindingConflictFixEnabled() {
         return fabricKeybindingConflictFixEnabled;
     }
@@ -1438,6 +1448,14 @@ public final class AntarchySettings {
 
     public static void setSwingThroughGrassEnabled(boolean value) {
         swingThroughGrassEnabled = value;
+    }
+
+    public static void setBoatsClimbWaterSteps(boolean value) {
+        boatsClimbWaterSteps = value;
+    }
+
+    public static void setBoatWaterStepMaxHeight(double value) {
+        boatWaterStepMaxHeight = value;
     }
 
     public static void setFabricKeybindingConflictFixEnabled(boolean value) {
@@ -3194,4 +3212,48 @@ public final class AntarchySettings {
     public static int bossMagicWardDurationTicks() { return bossMagicWardDurationTicks; }
     public static int bossMagicWardTriggerBreaches() { return bossMagicWardTriggerBreaches; }
     public static java.util.List<String> magicBurstDamageNamespaces() { return magicBurstDamageNamespaces; }
+    private static int throwbackStructureZoneRadius = 10;
+    public static int throwbackStructureZoneRadius() { return throwbackStructureZoneRadius; }
+    public static void setThrowbackStructureZoneRadius(int value) { throwbackStructureZoneRadius = value; }
+
+    private static double throwbackWildZoneChance = 0.35D;
+    public static double throwbackWildZoneChance() { return throwbackWildZoneChance; }
+    public static void setThrowbackWildZoneChance(double value) { throwbackWildZoneChance = value; }
+
+    private static boolean elythiaEvents = true;
+    public static boolean elythiaEvents() { return elythiaEvents; }
+    public static void setElythiaEvents(boolean value) { elythiaEvents = value; }
+
+    private static boolean elythiaRainGrowth = true;
+    public static boolean elythiaRainGrowth() { return elythiaRainGrowth; }
+    public static void setElythiaRainGrowth(boolean value) { elythiaRainGrowth = value; }
+
+    private static boolean elythiaFogEnabled = true;
+    public static boolean elythiaFogEnabled() { return elythiaFogEnabled; }
+    public static void setElythiaFogEnabled(boolean value) { elythiaFogEnabled = value; }
+
+    private static boolean elythiaGroundMistEnabled = true;
+    public static boolean elythiaGroundMistEnabled() { return elythiaGroundMistEnabled; }
+    public static void setElythiaGroundMistEnabled(boolean value) { elythiaGroundMistEnabled = value; }
+
+    private static boolean elythiaClearWater = true;
+    public static boolean elythiaClearWater() { return elythiaClearWater; }
+    public static void setElythiaClearWater(boolean value) { elythiaClearWater = value; }
+
+    private static boolean elythiaPurpleRain = true;
+    public static boolean elythiaPurpleRain() { return elythiaPurpleRain; }
+    public static void setElythiaPurpleRain(boolean value) { elythiaPurpleRain = value; }
+
+    private static boolean elythiaDreamShadowsEnabled = true;
+    public static boolean elythiaDreamShadowsEnabled() { return elythiaDreamShadowsEnabled; }
+    public static void setElythiaDreamShadowsEnabled(boolean value) { elythiaDreamShadowsEnabled = value; }
+
+    private static double elythiaDreamShadowsStrength = 1.0D;
+    public static double elythiaDreamShadowsStrength() { return elythiaDreamShadowsStrength; }
+    public static void setElythiaDreamShadowsStrength(double value) { elythiaDreamShadowsStrength = value; }
+
+    private static boolean elythiaAlreadyDreaming = true;
+    public static boolean elythiaAlreadyDreaming() { return elythiaAlreadyDreaming; }
+    public static void setElythiaAlreadyDreaming(boolean value) { elythiaAlreadyDreaming = value; }
+
 }

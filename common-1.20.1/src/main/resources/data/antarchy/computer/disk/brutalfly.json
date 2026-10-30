@@ -1,6 +1,7 @@
 {
   "category": "antarchy:elythia",
   "title": "guide.antarchy.disk.brutalfly.title",
+  "description": "guide.antarchy.disk.brutalfly.description",
   "entries": [
     "antarchy:brutalfly"
   ]

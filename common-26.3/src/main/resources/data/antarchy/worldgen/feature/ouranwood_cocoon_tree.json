@@ -1,17 +1,23 @@
 {
   "type": "antarchy:ouranwood_cocoon_tree",
   "trunk_provider": {
-    "id": "antarchy:ouranwood_log",
-    "properties": {
-      "axis": "y"
+    "type": "minecraft:simple_state_provider",
+    "state": {
+      "id": "antarchy:ouranwood_log",
+      "properties": {
+        "axis": "y"
+      }
     }
   },
   "foliage_provider": {
-    "id": "antarchy:ouranwood_leaves",
-    "properties": {
-      "distance": "7",
-      "persistent": "false",
-      "waterlogged": "false"
+    "type": "minecraft:simple_state_provider",
+    "state": {
+      "id": "antarchy:ouranwood_leaves",
+      "properties": {
+        "distance": "7",
+        "persistent": "false",
+        "waterlogged": "false"
+      }
     }
   },
   "height": {

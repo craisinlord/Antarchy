@@ -152,6 +152,8 @@ public final class AntarchyConfigCatalog {
                 || name.equals("duplicatorTreeEnabled")
                 || name.equals("glowVinesUnderLeaves")
                 || name.equals("swingThroughGrassEnabled")
+                || name.equals("boatsClimbWaterSteps")
+                || name.equals("boatWaterStepMaxHeight")
                 || name.equals("fabricKeybindingConflictFixEnabled")
                 || name.equals("experimentalSettingsPopupDisabled")
                 || name.equals("unlockAllArchives")

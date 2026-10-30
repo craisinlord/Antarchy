@@ -30,6 +30,7 @@ public final class ElythiaEvents extends SavedData {
     private static final long DAY_TICKS = 24000L;
     private static final long DUSK_TICKS = 12000L;
     private static final int MIGRATION_TICKS = 20 * 300;
+    private static final int TOWERING_CLOUDS_TICKS = 20 * 60 * 15;
     private static final int FORCED_TICKS = 20 * 300;
     private static final int RAIN_WEATHER_TICKS = 20 * 600;
     private static final SavedData.Factory<ElythiaEvents> FACTORY =
@@ -120,7 +121,10 @@ public final class ElythiaEvents extends SavedData {
         long timeOfDay = Math.floorMod(level.getDayTime(), DAY_TICKS);
         long duration = switch (next.window()) {
             case NIGHT -> forced ? FORCED_TICKS : DAY_TICKS - timeOfDay;
-            case DAY -> forced ? MIGRATION_TICKS : Math.min(MIGRATION_TICKS, DUSK_TICKS - timeOfDay);
+            case DAY -> {
+                long length = next == ElythiaEvent.TOWERING_CLOUDS ? TOWERING_CLOUDS_TICKS : MIGRATION_TICKS;
+                yield forced ? length : Math.min(length, DUSK_TICKS - timeOfDay);
+            }
             case RAIN, NONE -> -1L;
         };
         if (next == ElythiaEvent.LUMEN_RAIN && !level.getLevelData().isRaining()) {
@@ -182,9 +186,9 @@ public final class ElythiaEvents extends SavedData {
         if (raining != this.wasRaining) {
             this.wasRaining = raining;
             this.setDirty();
-            if (raining && enabled && (this.event == ElythiaEvent.NONE || this.event.window() == ElythiaEvent.Window.NIGHT)) {
-                this.roll(level, ElythiaEvent.Window.RAIN);
-            }
+        }
+        if (raining && enabled && (this.event == ElythiaEvent.NONE || this.event.window() == ElythiaEvent.Window.NIGHT)) {
+            this.start(level, ElythiaEvent.LUMEN_RAIN, false);
         }
     }
 

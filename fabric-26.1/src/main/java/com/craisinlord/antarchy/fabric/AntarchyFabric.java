@@ -7,9 +7,11 @@ import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.entity.trades.DrTrayaurusTradeManager;
 import com.craisinlord.antarchy.content.entity.trades.ComputerScientistTradeManager;
 import com.craisinlord.antarchy.content.item.BloodCrystalShardItem;
+import com.craisinlord.antarchy.content.loot.AntarchyLootInjections;
 import com.craisinlord.antarchy.fabric.network.AntarchyFabricNetworking;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
+import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.Registry;
@@ -157,6 +159,11 @@ public final class AntarchyFabric implements ModInitializer {
         Antarchy.init();
         BloodCrystalShardItem.SYNC_BLOODGLASS = BloodglassManager::syncBloodglass;
         registerTradeReloadListener();
+        LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
+            if (source.isBuiltin() && AntarchyLootInjections.addsPhone(key.identifier())) {
+                tableBuilder.withPool(AntarchyLootInjections.phonePool());
+            }
+        });
     }
 
     private static void registerTradeReloadListener() {

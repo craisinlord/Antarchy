@@ -71,6 +71,392 @@
           {
             "type": "minecraft:condition",
             "if_true": {
+              "type": "minecraft:biome",
+              "biome_is": [
+                "antarchy:dream_peaks"
+              ]
+            },
+            "then_run": {
+              "type": "minecraft:sequence",
+              "sequence": [
+                {
+                  "type": "minecraft:condition",
+                  "if_true": {
+                    "type": "minecraft:noise_threshold",
+                    "noise": "antarchy:thoraxis_peaks_style",
+                    "min_threshold": 0.36,
+                    "max_threshold": 1.7976931348623157e+308
+                  },
+                  "then_run": {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:not",
+                      "invert": {
+                        "type": "minecraft:y_above",
+                        "anchor": {
+                          "absolute": -100
+                        },
+                        "surface_depth_multiplier": 0,
+                        "add_stone_depth": false
+                      }
+                    },
+                    "then_run": {
+                      "type": "minecraft:block",
+                      "result_state": "antarchy:pale_nyxite"
+                    }
+                  }
+                },
+                {
+                  "type": "minecraft:condition",
+                  "if_true": {
+                    "type": "minecraft:not",
+                    "invert": {
+                      "type": "minecraft:noise_threshold",
+                      "noise": "antarchy:thoraxis_peaks_style",
+                      "min_threshold": -0.08,
+                      "max_threshold": 0.36
+                    }
+                  },
+                  "then_run": {
+                    "type": "minecraft:sequence",
+                    "sequence": [
+                      {
+                        "type": "minecraft:condition",
+                        "if_true": {
+                          "type": "minecraft:y_above",
+                          "anchor": {
+                            "absolute": -170
+                          },
+                          "surface_depth_multiplier": 1,
+                          "add_stone_depth": false
+                        },
+                        "then_run": {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:not",
+                            "invert": {
+                              "type": "minecraft:y_above",
+                              "anchor": {
+                                "absolute": -167
+                              },
+                              "surface_depth_multiplier": 1,
+                              "add_stone_depth": false
+                            }
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": "antarchy:pale_nyxite"
+                          }
+                        }
+                      },
+                      {
+                        "type": "minecraft:condition",
+                        "if_true": {
+                          "type": "minecraft:y_above",
+                          "anchor": {
+                            "absolute": -158
+                          },
+                          "surface_depth_multiplier": 1,
+                          "add_stone_depth": false
+                        },
+                        "then_run": {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:not",
+                            "invert": {
+                              "type": "minecraft:y_above",
+                              "anchor": {
+                                "absolute": -155
+                              },
+                              "surface_depth_multiplier": 1,
+                              "add_stone_depth": false
+                            }
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": "antarchy:pale_nyxite"
+                          }
+                        }
+                      },
+                      {
+                        "type": "minecraft:condition",
+                        "if_true": {
+                          "type": "minecraft:y_above",
+                          "anchor": {
+                            "absolute": -146
+                          },
+                          "surface_depth_multiplier": 1,
+                          "add_stone_depth": false
+                        },
+                        "then_run": {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:not",
+                            "invert": {
+                              "type": "minecraft:y_above",
+                              "anchor": {
+                                "absolute": -143
+                              },
+                              "surface_depth_multiplier": 1,
+                              "add_stone_depth": false
+                            }
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": "antarchy:pale_nyxite"
+                          }
+                        }
+                      },
+                      {
+                        "type": "minecraft:condition",
+                        "if_true": {
+                          "type": "minecraft:y_above",
+                          "anchor": {
+                            "absolute": -134
+                          },
+                          "surface_depth_multiplier": 1,
+                          "add_stone_depth": false
+                        },
+                        "then_run": {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:not",
+                            "invert": {
+                              "type": "minecraft:y_above",
+                              "anchor": {
+                                "absolute": -131
+                              },
+                              "surface_depth_multiplier": 1,
+                              "add_stone_depth": false
+                            }
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": "antarchy:pale_nyxite"
+                          }
+                        }
+                      },
+                      {
+                        "type": "minecraft:condition",
+                        "if_true": {
+                          "type": "minecraft:y_above",
+                          "anchor": {
+                            "absolute": -122
+                          },
+                          "surface_depth_multiplier": 1,
+                          "add_stone_depth": false
+                        },
+                        "then_run": {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:not",
+                            "invert": {
+                              "type": "minecraft:y_above",
+                              "anchor": {
+                                "absolute": -119
+                              },
+                              "surface_depth_multiplier": 1,
+                              "add_stone_depth": false
+                            }
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": "antarchy:pale_nyxite"
+                          }
+                        }
+                      },
+                      {
+                        "type": "minecraft:condition",
+                        "if_true": {
+                          "type": "minecraft:y_above",
+                          "anchor": {
+                            "absolute": -110
+                          },
+                          "surface_depth_multiplier": 1,
+                          "add_stone_depth": false
+                        },
+                        "then_run": {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:not",
+                            "invert": {
+                              "type": "minecraft:y_above",
+                              "anchor": {
+                                "absolute": -107
+                              },
+                              "surface_depth_multiplier": 1,
+                              "add_stone_depth": false
+                            }
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": "antarchy:pale_nyxite"
+                          }
+                        }
+                      },
+                      {
+                        "type": "minecraft:condition",
+                        "if_true": {
+                          "type": "minecraft:y_above",
+                          "anchor": {
+                            "absolute": -98
+                          },
+                          "surface_depth_multiplier": 1,
+                          "add_stone_depth": false
+                        },
+                        "then_run": {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:not",
+                            "invert": {
+                              "type": "minecraft:y_above",
+                              "anchor": {
+                                "absolute": -95
+                              },
+                              "surface_depth_multiplier": 1,
+                              "add_stone_depth": false
+                            }
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": "antarchy:pale_nyxite"
+                          }
+                        }
+                      },
+                      {
+                        "type": "minecraft:condition",
+                        "if_true": {
+                          "type": "minecraft:y_above",
+                          "anchor": {
+                            "absolute": -86
+                          },
+                          "surface_depth_multiplier": 1,
+                          "add_stone_depth": false
+                        },
+                        "then_run": {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:not",
+                            "invert": {
+                              "type": "minecraft:y_above",
+                              "anchor": {
+                                "absolute": -83
+                              },
+                              "surface_depth_multiplier": 1,
+                              "add_stone_depth": false
+                            }
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": "antarchy:pale_nyxite"
+                          }
+                        }
+                      },
+                      {
+                        "type": "minecraft:condition",
+                        "if_true": {
+                          "type": "minecraft:y_above",
+                          "anchor": {
+                            "absolute": -74
+                          },
+                          "surface_depth_multiplier": 1,
+                          "add_stone_depth": false
+                        },
+                        "then_run": {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:not",
+                            "invert": {
+                              "type": "minecraft:y_above",
+                              "anchor": {
+                                "absolute": -71
+                              },
+                              "surface_depth_multiplier": 1,
+                              "add_stone_depth": false
+                            }
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": "antarchy:pale_nyxite"
+                          }
+                        }
+                      },
+                      {
+                        "type": "minecraft:condition",
+                        "if_true": {
+                          "type": "minecraft:y_above",
+                          "anchor": {
+                            "absolute": -62
+                          },
+                          "surface_depth_multiplier": 1,
+                          "add_stone_depth": false
+                        },
+                        "then_run": {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:not",
+                            "invert": {
+                              "type": "minecraft:y_above",
+                              "anchor": {
+                                "absolute": -59
+                              },
+                              "surface_depth_multiplier": 1,
+                              "add_stone_depth": false
+                            }
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": "antarchy:pale_nyxite"
+                          }
+                        }
+                      },
+                      {
+                        "type": "minecraft:condition",
+                        "if_true": {
+                          "type": "minecraft:y_above",
+                          "anchor": {
+                            "absolute": -50
+                          },
+                          "surface_depth_multiplier": 1,
+                          "add_stone_depth": false
+                        },
+                        "then_run": {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:not",
+                            "invert": {
+                              "type": "minecraft:y_above",
+                              "anchor": {
+                                "absolute": -47
+                              },
+                              "surface_depth_multiplier": 1,
+                              "add_stone_depth": false
+                            }
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": "antarchy:pale_nyxite"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "minecraft:block",
+                  "result_state": {
+                    "id": "antarchy:dream_sandstone",
+                    "properties": {
+                      "vertical_direction": "down"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "minecraft:condition",
+            "if_true": {
               "type": "minecraft:stone_depth",
               "add_surface_depth": true,
               "offset": 0,

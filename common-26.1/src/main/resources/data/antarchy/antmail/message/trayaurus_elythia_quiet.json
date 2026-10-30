@@ -1,0 +1,17 @@
+{
+  "sender": "trayaurus@antmail.com",
+  "sender_display": "Dr. Trayaurus",
+  "sender_avatar_item": "antarchy:diamond_minecart",
+  "subject": "It's quiet out there",
+  "body": "I heard the Toreterror went down, and the Basilisk before it. Elythia sounds different tonight. I opened the window for the first time in months.\n\nOnly a little. There are still ants. But thank you.\n\nYour old friend,\nDr. T",
+  "trigger": {
+    "type": "advancement",
+    "value": "antarchy:ant_arch_of_elythia",
+    "delay_minutes": 3
+  },
+  "conditions": {
+    "advancements": [
+      "antarchy:visit_cavaryn"
+    ]
+  }
+}

@@ -3,8 +3,7 @@
   "category": "equipment",
   "ingredients": [
     "antarchy:big_bertha",
-    "minecraft:amethyst_shard",
-    "minecraft:netherite_ingot"
+    "minecraft:amethyst_shard"
   ],
   "result": {
     "id": "antarchy:big_betsy"

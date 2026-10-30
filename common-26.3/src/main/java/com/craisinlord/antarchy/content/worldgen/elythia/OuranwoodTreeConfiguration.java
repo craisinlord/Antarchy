@@ -3,14 +3,13 @@ package com.craisinlord.antarchy.content.worldgen.elythia;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.Holder;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.util.valueproviders.IntProviders;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 
 public record OuranwoodTreeConfiguration(
-        Holder<BlockStateProvider> trunkProvider,
-        Holder<BlockStateProvider> foliageProvider,
+        net.minecraft.core.Holder<BlockStateProvider> trunkProvider,
+        net.minecraft.core.Holder<BlockStateProvider> foliageProvider,
         IntProvider height,
         IntProvider trunkRadius,
         IntProvider canopyRadius,

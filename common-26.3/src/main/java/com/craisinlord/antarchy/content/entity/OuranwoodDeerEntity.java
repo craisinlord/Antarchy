@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.entity;
 
+import net.minecraft.world.phys.AABB;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
@@ -112,9 +113,10 @@ public class OuranwoodDeerEntity extends Animal implements GeoEntity {
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.1D, stack -> stack.is(AntarchyTags.Items.OURANWOOD_DEER_FOOD), false));
         this.goalSelector.addGoal(4, new net.minecraft.world.entity.ai.goal.AvoidEntityGoal<>(this, Monster.class, 8.0F, 1.1D, 1.5D));
         this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.25D));
-        this.goalSelector.addGoal(6, new OuranwoodDeerStrollGoal());
-        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(6, new OuranwoodDeerMigrateGoal());
+        this.goalSelector.addGoal(7, new OuranwoodDeerStrollGoal());
+        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(9, new RandomLookAroundGoal(this));
     }
 
     @Override
@@ -260,6 +262,85 @@ public class OuranwoodDeerEntity extends Animal implements GeoEntity {
 
     private static final class DeerSpawnData implements SpawnGroupData {
         private boolean adultSpawned;
+    }
+
+    private final class OuranwoodDeerMigrateGoal extends Goal {
+        private static final int STRIDE = 16;
+        private static final double HERD_RADIUS = 16.0D;
+        private static final double MIGRATE_SPEED = 1.1D;
+        private static final int MAX_LEG_TICKS = 20 * 12;
+        private static final int RETRY_TICKS = 40;
+
+        private int legTicks;
+        private int retryCooldown;
+
+        private OuranwoodDeerMigrateGoal() {
+            this.setFlags(EnumSet.of(Flag.MOVE));
+        }
+
+        @Override
+        public boolean canUse() {
+            if (OuranwoodDeerEntity.this.isBaby() || OuranwoodDeerEntity.this.isVehicle() || OuranwoodDeerEntity.this.isLeashed()) {
+                return false;
+            }
+            if (this.retryCooldown > 0) {
+                this.retryCooldown--;
+                return false;
+            }
+            if (!(OuranwoodDeerEntity.this.level() instanceof ServerLevel level)) {
+                return false;
+            }
+            Vec3 heading = OuranwoodDeerMigration.heading(level);
+            if (heading == null) {
+                return false;
+            }
+            Vec3 target = this.pickTarget(heading);
+            if (target == null || !OuranwoodDeerEntity.this.getNavigation().moveTo(target.x, target.y, target.z, MIGRATE_SPEED)) {
+                this.retryCooldown = RETRY_TICKS;
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return this.legTicks < MAX_LEG_TICKS
+                    && !OuranwoodDeerEntity.this.getNavigation().isDone()
+                    && OuranwoodDeerEntity.this.level() instanceof ServerLevel level
+                    && OuranwoodDeerMigration.heading(level) != null;
+        }
+
+        @Override
+        public void start() {
+            this.legTicks = 0;
+        }
+
+        @Override
+        public void tick() {
+            this.legTicks++;
+        }
+
+        @Override
+        public void stop() {
+            OuranwoodDeerEntity.this.getNavigation().stop();
+        }
+
+        @Nullable
+        private Vec3 pickTarget(Vec3 heading) {
+            Vec3 position = OuranwoodDeerEntity.this.position();
+            Vec3 herdCenter = position;
+            int herdSize = 1;
+            AABB area = OuranwoodDeerEntity.this.getBoundingBox().inflate(HERD_RADIUS, 4.0D, HERD_RADIUS);
+            for (OuranwoodDeerEntity other : OuranwoodDeerEntity.this.level().getEntitiesOfClass(OuranwoodDeerEntity.class, area,
+                    deer -> deer != OuranwoodDeerEntity.this && deer.isAlive())) {
+                herdCenter = herdCenter.add(other.position());
+                herdSize++;
+            }
+            herdCenter = herdCenter.scale(1.0D / herdSize);
+            Vec3 cohesion = herdCenter.subtract(position).multiply(0.5D, 0.0D, 0.5D);
+            Vec3 goal = position.add(heading.scale(STRIDE)).add(cohesion);
+            return DefaultRandomPos.getPosTowards(OuranwoodDeerEntity.this, STRIDE, 7, goal, Math.PI / 3.0D);
+        }
     }
 
     private final class OuranwoodDeerStrollGoal extends Goal {

@@ -1,29 +1,29 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
 public final class LumenStreamFeature implements Feature {
     public static final MapCodec<LumenStreamFeature> CODEC = MapCodec.unit(LumenStreamFeature::new);
 
+    @Override
+    public MapCodec<LumenStreamFeature> codec() { return CODEC; }
     private static final int MAX_LENGTH = 36;
     private static final int MIN_LENGTH = 12;
     private static final int MAX_WIDTH = 2;
 
-    @Override
-    public MapCodec<LumenStreamFeature> codec() {
-        return CODEC;
-    }
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
@@ -47,9 +47,10 @@ public final class LumenStreamFeature implements Feature {
         int z = start.z();
         int previousSurfaceY = start.surfaceY();
         boolean placedAny = false;
+        Carved carved = new Carved();
 
         for (int step = 0; step < length; step++) {
-            int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) - 1;
+            int surfaceY = carved.surface(level, x, z);
             if (surfaceY <= level.getMinY() + 4) {
                 break;
             }
@@ -65,9 +66,9 @@ public final class LumenStreamFeature implements Feature {
                 break;
             }
 
-            placedAny |= carveChannelSegment(level, random, x, z, surfaceY, waterlineY, floorY, lumenBlockState, shellstoneState, tuffState, step);
+            placedAny |= carveChannelSegment(level, random, carved, x, z, surfaceY, waterlineY, floorY, lumenBlockState, shellstoneState, tuffState, step);
 
-            Direction nextDirection = chooseNextDirection(level, x, z, direction, random);
+            Direction nextDirection = chooseNextDirection(level, carved, x, z, direction, random);
             if (nextDirection == null) {
                 break;
             }
@@ -79,7 +80,7 @@ public final class LumenStreamFeature implements Feature {
         }
 
         if (placedAny) {
-            placedAny |= createTerminalBasin(level, random, x, z, lumenBlockState, shellstoneState, tuffState);
+            placedAny |= createTerminalBasin(level, random, carved, x, z, lumenBlockState, shellstoneState, tuffState);
         }
 
         return placedAny;
@@ -88,6 +89,7 @@ public final class LumenStreamFeature implements Feature {
     private static boolean carveChannelSegment(
             WorldGenLevel level,
             RandomSource random,
+            Carved carved,
             int centerX,
             int centerZ,
             int surfaceY,
@@ -111,7 +113,8 @@ public final class LumenStreamFeature implements Feature {
 
                 int worldX = centerX + dx;
                 int worldZ = centerZ + dz;
-                int localSurfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, worldX, worldZ) - 1;
+                boolean carvedColumn = carved.contains(worldX, worldZ);
+                int localSurfaceY = carved.surface(level, worldX, worldZ);
                 if (localSurfaceY < floorY + 1) {
                     continue;
                 }
@@ -123,12 +126,15 @@ public final class LumenStreamFeature implements Feature {
                 }
                 int localWaterlineY = Math.min(waterlineY, localSurfaceY - 1);
                 int localFloorY = localWaterlineY - localDepth;
+                if (carvedColumn) {
+                    localFloorY = Math.min(localFloorY, carved.floor(worldX, worldZ));
+                }
                 if (!hasSolidSubstrate(level, worldX, worldZ, localFloorY)) {
                     continue;
                 }
 
-                boolean edge = distance >= width - 0.45D;
-                boolean innerWall = !edge && distance >= width - 0.8D;
+                boolean edge = !carvedColumn && distance >= width - 0.45D;
+                boolean innerWall = !carvedColumn && !edge && distance >= width - 0.8D;
                 int bankTopY = Math.max(localWaterlineY + 1, Math.min(localSurfaceY, surfaceY));
                 for (int y = localSurfaceY; y > localFloorY; y--) {
                     mutable.set(worldX, y, worldZ);
@@ -151,6 +157,7 @@ public final class LumenStreamFeature implements Feature {
 
                 mutable.set(worldX, localFloorY, worldZ);
                 level.setBlock(mutable, random.nextFloat() < 0.65F ? shellstoneState : tuffState, 2);
+                carved.record(worldX, worldZ, localSurfaceY, localFloorY);
                 placedAny = true;
             }
         }
@@ -161,13 +168,14 @@ public final class LumenStreamFeature implements Feature {
     private static boolean createTerminalBasin(
             WorldGenLevel level,
             RandomSource random,
+            Carved carved,
             int centerX,
             int centerZ,
             BlockState lumenBlockState,
             BlockState shellstoneState,
             BlockState tuffState
     ) {
-        int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, centerX, centerZ) - 1;
+        int surfaceY = carved.surface(level, centerX, centerZ);
         int radius = 3 + random.nextInt(2);
         int waterlineY = surfaceY - 1;
         int maxDepth = 3 + random.nextInt(2);
@@ -187,7 +195,8 @@ public final class LumenStreamFeature implements Feature {
 
                 int worldX = centerX + dx;
                 int worldZ = centerZ + dz;
-                int localSurfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, worldX, worldZ) - 1;
+                boolean carvedColumn = carved.contains(worldX, worldZ);
+                int localSurfaceY = carved.surface(level, worldX, worldZ);
                 if (localSurfaceY < floorY + 1) {
                     continue;
                 }
@@ -196,8 +205,11 @@ public final class LumenStreamFeature implements Feature {
                 int localDepth = Math.max(2, Mth.floor((1.0D - (normalized * normalized)) * maxDepth));
                 int localWaterlineY = Math.min(waterlineY, localSurfaceY - 1);
                 int localFloorY = localWaterlineY - localDepth;
-                boolean edge = distance >= radius - 0.45D;
-                boolean innerWall = !edge && distance >= radius - 0.85D;
+                if (carvedColumn) {
+                    localFloorY = Math.min(localFloorY, carved.floor(worldX, worldZ));
+                }
+                boolean edge = !carvedColumn && distance >= radius - 0.45D;
+                boolean innerWall = !carvedColumn && !edge && distance >= radius - 0.85D;
                 int bankTopY = Math.max(localWaterlineY + 1, Math.min(localSurfaceY, surfaceY));
                 for (int y = localSurfaceY; y > localFloorY; y--) {
                     mutable.set(worldX, y, worldZ);
@@ -220,6 +232,7 @@ public final class LumenStreamFeature implements Feature {
 
                 mutable.set(worldX, localFloorY, worldZ);
                 level.setBlock(mutable, random.nextFloat() < 0.75F ? shellstoneState : tuffState, 2);
+                carved.record(worldX, worldZ, localSurfaceY, localFloorY);
                 placedAny = true;
             }
         }
@@ -274,7 +287,7 @@ public final class LumenStreamFeature implements Feature {
         return bestDirection;
     }
 
-    private static Direction chooseNextDirection(WorldGenLevel level, int x, int z, Direction current, RandomSource random) {
+    private static Direction chooseNextDirection(WorldGenLevel level, Carved carved, int x, int z, Direction current, RandomSource random) {
         Direction[] candidates = new Direction[] {
                 current,
                 turnLeft(current),
@@ -286,7 +299,7 @@ public final class LumenStreamFeature implements Feature {
         for (Direction candidate : candidates) {
             int nextX = x + candidate.getStepX() * 2;
             int nextZ = z + candidate.getStepZ() * 2;
-            int nextY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, nextX, nextZ) - 1;
+            int nextY = carved.surface(level, nextX, nextZ);
             int score = nextY * 8 + random.nextInt(3);
             if (score < bestScore) {
                 bestScore = score;
@@ -335,5 +348,35 @@ public final class LumenStreamFeature implements Feature {
     }
 
     private record StreamStart(int x, int z, int surfaceY) {
+    }
+
+    private static final class Carved {
+        private final Long2IntOpenHashMap surfaces = new Long2IntOpenHashMap();
+        private final Long2IntOpenHashMap floors = new Long2IntOpenHashMap();
+
+        boolean contains(int x, int z) {
+            return this.surfaces.containsKey(ChunkPos.pack(x, z));
+        }
+
+        int surface(WorldGenLevel level, int x, int z) {
+            long key = ChunkPos.pack(x, z);
+            return this.surfaces.containsKey(key)
+                    ? this.surfaces.get(key)
+                    : level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) - 1;
+        }
+
+        int floor(int x, int z) {
+            return this.floors.get(ChunkPos.pack(x, z));
+        }
+
+        void record(int x, int z, int surfaceY, int floorY) {
+            long key = ChunkPos.pack(x, z);
+            if (!this.surfaces.containsKey(key)) {
+                this.surfaces.put(key, surfaceY);
+                this.floors.put(key, floorY);
+            } else {
+                this.floors.put(key, Math.min(this.floors.get(key), floorY));
+            }
+        }
     }
 }

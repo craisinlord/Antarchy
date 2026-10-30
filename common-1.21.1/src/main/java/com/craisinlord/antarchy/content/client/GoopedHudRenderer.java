@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.client;
 
+import com.craisinlord.antarchy.content.client.hud.ScreenTint;
 import com.craisinlord.antarchy.content.effect.GoopedEffectHooks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -33,6 +34,6 @@ public final class GoopedHudRenderer {
         int alpha = Mth.clamp((int) ((0x38 + 0x20 * strength) * durationFade), 0, 0x70);
         int width = minecraft.getWindow().getGuiScaledWidth();
         int height = minecraft.getWindow().getGuiScaledHeight();
-        guiGraphics.fill(0, 0, width, height, (alpha << 24) | 0x16B846);
+        ScreenTint.fill(guiGraphics, 0, 0, width, height, (alpha << 24) | 0x16B846);
     }
 }

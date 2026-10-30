@@ -16,5 +16,6 @@
   "gallery_title": "guide.antarchy.gallery.drops",
   "gallery": [
     {"item": "antarchy:brutalfly_wing"}
-  ]
+  ],
+  "lookup": ["antarchy:brutalfly_elytra", "antarchy:brutalfly_wing", "antarchy:brutalfly_spawn_egg"]
 }

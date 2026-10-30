@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,20 +11,17 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
 public class ElythiaLargeTuffBoulderFeature implements Feature {
-    private static final int FOOTPRINT = 7;
-    private static final int MAX_DROP = 2;
-
     public static final MapCodec<ElythiaLargeTuffBoulderFeature> CODEC = MapCodec.unit(ElythiaLargeTuffBoulderFeature::new);
 
     @Override
-    public MapCodec<ElythiaLargeTuffBoulderFeature> codec() {
-        return CODEC;
-    }
+    public MapCodec<ElythiaLargeTuffBoulderFeature> codec() { return CODEC; }
+    private static final int FOOTPRINT = 7;
+    private static final int MAX_DROP = 2;
+
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
@@ -86,7 +84,7 @@ public class ElythiaLargeTuffBoulderFeature implements Feature {
         for (int x = -radius; x <= radius; x++) {
             for (int z = -radius; z <= radius; z++) {
                 BlockPos topPos = center.offset(x, 0, z);
-                while (topPos.getY() < level.getMaxY() && level.getBlockState(topPos.above()).is(Blocks.TUFF)) {
+                while (topPos.getY() < (level.getMaxY() + 1) - 1 && level.getBlockState(topPos.above()).is(Blocks.TUFF)) {
                     topPos = topPos.above();
                 }
 

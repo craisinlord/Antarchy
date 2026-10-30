@@ -11,7 +11,7 @@
           "modifier": {
             "type": "minecraft:set_components",
             "components": {
-              "antos:floppy_disk": "antarchy:chronosphere"
+              "antos:floppy_disk": "antarchy:temporal_fields"
             }
           }
         },

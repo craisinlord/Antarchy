@@ -1,0 +1,99 @@
+{
+  "type": "quiz",
+  "title": "ELYTHIA FIELD EXAM",
+  "green_tint": true,
+  "questions_per_run": 5,
+  "reward_on": "perfect",
+  "reward_limit": "once",
+  "questions": [
+    {
+      "question": "How do you get to Elythia?",
+      "answers": [
+        "Right-click a Brown Ant",
+        "Feed a Brown Ant sugar",
+        "Kill a Red Ant"
+      ],
+      "correct": 0,
+      "explanation": "Just right-click a Brown Ant! If you sacrifice one in a Mossy Ouranwood frame you get a portal that stays lit for good."
+    },
+    {
+      "question": "What do Brown Ants breed with?",
+      "answers": [
+        "Sugar",
+        "Wheat",
+        "Broodfruit"
+      ],
+      "correct": 0,
+      "explanation": "Sugar. They're harmless too, so they're super easy to farm.",
+      "item": "minecraft:sugar"
+    },
+    {
+      "question": "What tames a wild Glimmer?",
+      "answers": [
+        "A Spirit Apple",
+        "A Golden Carrot",
+        "A Glass Bottle"
+      ],
+      "correct": 0,
+      "explanation": "A Spirit Apple. The bottle is for catching one once it's already yours.",
+      "item": "antarchy:spirit_apple"
+    },
+    {
+      "question": "Which Glimmer comes from the Peach Forest?",
+      "answers": [
+        "Elka",
+        "Frog",
+        "Apple Cow"
+      ],
+      "correct": 0,
+      "explanation": "The Elka! What kind of Glimmer you get depends on where it was born."
+    },
+    {
+      "question": "Where does a Brutalfly start out?",
+      "answers": [
+        "In a cocoon under the trees",
+        "In a nest underground",
+        "In the Elythia Ocean"
+      ],
+      "correct": 0,
+      "explanation": "In a cocoon hanging under the trees. Leave the cocoon alone and you're fine."
+    },
+    {
+      "question": "Where does the Toreterror live?",
+      "answers": [
+        "An arena in the Elythia Ocean",
+        "The King's tree",
+        "The Underside"
+      ],
+      "correct": 0,
+      "explanation": "In an old arena out in the Elythia Ocean."
+    },
+    {
+      "question": "What happens if you break one of the King's Decrees?",
+      "answers": [
+        "Your hearts are halved for 30 seconds",
+        "He heals fully",
+        "He teleports away"
+      ],
+      "correct": 0,
+      "explanation": "Your hearts get cut in half for 30 seconds. So just do what he says."
+    },
+    {
+      "question": "What makes a royal hatchling grow?",
+      "answers": [
+        "Golden apples",
+        "Sugar",
+        "Broodfruit"
+      ],
+      "correct": 0,
+      "explanation": "Golden apples. Enchanted ones make them grow way faster.",
+      "item": "minecraft:golden_apple"
+    }
+  ],
+  "rewards": [
+    {
+      "type": "experience_levels",
+      "levels": 5
+    }
+  ]
+}

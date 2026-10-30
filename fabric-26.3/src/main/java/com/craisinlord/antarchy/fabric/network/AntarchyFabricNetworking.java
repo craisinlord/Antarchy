@@ -46,6 +46,7 @@ public final class AntarchyFabricNetworking {
     }
 
     private static void registerPayloadTypes() {
+        PayloadTypeRegistry.clientboundPlay().register(com.craisinlord.antarchy.content.network.ElythiaEventPayload.TYPE, com.craisinlord.antarchy.content.network.ElythiaEventPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(AntarchyGameResultPayload.TYPE, AntarchyGameResultPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(PortalGunIndicatorPayload.TYPE, PortalGunIndicatorPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(BloodglassStatePayload.TYPE, BloodglassStatePayload.STREAM_CODEC);

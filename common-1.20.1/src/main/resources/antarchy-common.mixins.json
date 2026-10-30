@@ -6,6 +6,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "AbstractMinecartMixin",
+    "BoatWaterStepMixin",
     "AccessorFireBlock",
     "AccessorRangedAttribute",
     "AmericanFoodConsumeMixin",
@@ -74,7 +75,10 @@
     "gravity.FallingBlockEntityBlockDataMixin",
     "gravity.PlayerAttackMixin",
     "gravity.ServerChunkCacheAccessor",
-    "time.PlayerTemporalTunerMixin"
+    "time.PlayerTemporalTunerMixin",
+    "ElythiaBedMixin",
+    "ElythiaSleepPlayerMixin",
+    "ElythiaSleepSkipMixin"
   ],
   "client": [
     "compat.stellarview.StellarViewLunaDirectionMixin",
@@ -105,7 +109,11 @@
     "client.TigerEyeNameTagHideMixin",
     "client.TemporalContractionLivingRendererMixin",
     "client.WolfRendererGrimMixin",
-    "gravity.client.FallingBlockRendererBlockEntityMixin"
+    "gravity.client.FallingBlockRendererBlockEntityMixin",
+    "client.ElythiaFogMixin",
+    "client.ElythiaWaterFogMixin",
+    "client.ElythiaRainMixin",
+    "client.ElythiaLightTextureMixin"
   ],
   "injectors": {
     "defaultRequire": 1

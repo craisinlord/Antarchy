@@ -1,0 +1,42 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "antarchy:elythia_shelf_lip",
+    "argument": {
+      "type": "minecraft:cache",
+      "input": "antarchy:elythia_surface_offset"
+    },
+    "mask": {
+      "type": "minecraft:cache",
+      "input": "antarchy:elythia_shelf_mask"
+    },
+    "lift": {
+      "type": "minecraft:cache",
+      "input": "antarchy:elythia_shelf_lift"
+    },
+    "phase": {
+      "type": "minecraft:cache",
+      "input": "antarchy:elythia_shelf_phase"
+    },
+    "step": {
+      "type": "minecraft:cache",
+      "input": "antarchy:elythia_shelf_step"
+    },
+    "riser": {
+      "type": "minecraft:cache",
+      "input": "antarchy:elythia_shelf_riser"
+    },
+    "warp": {
+      "type": "minecraft:cache",
+      "input": "antarchy:elythia_shelf_warp"
+    },
+    "tilt": 0.15,
+    "min_offset": -0.45,
+    "max_offset": 2.4,
+    "reach": 0.16,
+    "min_thickness": 3.0,
+    "max_thickness": 12.0,
+    "min_mask": 0.55,
+    "max_riser": 0.2
+  }
+}

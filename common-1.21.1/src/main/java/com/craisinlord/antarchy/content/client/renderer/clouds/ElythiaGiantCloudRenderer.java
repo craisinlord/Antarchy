@@ -30,9 +30,13 @@ import org.joml.Matrix4f;
 
 final class ElythiaGiantCloudRenderer {
     private static final ResourceLocation WHITE_TEXTURE = ResourceLocation.withDefaultNamespace("textures/misc/white.png");
-    private static final float BASE_Y = 226.0F;
+    private static final float BASE_Y = 234.0F;
     private static final float ALPHA = 0.8F;
-    private static final int ANCHOR_DIRECTIONS = 12;
+    private static final int ANCHOR_DIRECTIONS = 24;
+    private static final int MIN_DIRECTION_GAP = 3;
+    private static final float GROWTH_TICKS = 1800.0F;
+    private static final float CLEARING_FADE_TICKS = 1200.0F;
+    private static final int EXPOSURE_STEPS = 8;
     private static final int MIN_TOWERS = 3;
     private static final int MAX_TOWERS = 5;
     private static final int PUFF_CELLS = 2;
@@ -46,6 +50,11 @@ final class ElythiaGiantCloudRenderer {
     private static double anchorWindX;
     private static double anchorWindZ;
     private static long anchorRetryAt = Long.MIN_VALUE;
+    private static long anchorTime;
+    private static float clearingLevel;
+    private static double clearingTime = Double.NaN;
+    private static final float[] CLEARINGS = new float[ElythiaSoftCloudPass.MAX_CLEARINGS * 4];
+    private static int clearingCount;
 
     private record Mesh(ElythiaGiantCloud cloud, @Nullable MeshData data, ByteBufferBuilder bytes) {
     }
@@ -162,6 +171,9 @@ final class ElythiaGiantCloudRenderer {
     ) {
         float strength = ElythiaEventClient.strength(ElythiaEvent.TOWERING_CLOUDS, partialTick);
         long seed = ElythiaEventClient.seed();
+        double now = level.getGameTime() + partialTick;
+        updateClearing(now, anchored && anchorSeed == seed && strength > 0.0F && anyBuilt());
+        clearingCount = 0;
         if (strength <= 0.0F || anchorSeed != seed) {
             if (strength <= 0.0F || anchored) {
                 reset();
@@ -182,6 +194,8 @@ final class ElythiaGiantCloudRenderer {
             }
         }
 
+        float growthProgress = Mth.clamp((float) (now - anchorTime) / GROWTH_TICKS, 0.0F, 1.0F);
+        float growth = growthProgress * growthProgress * (3.0F - 2.0F * growthProgress);
         double driftX = (wind[0] - anchorWindX) * DRIFT_SCALE;
         double driftZ = (wind[1] - anchorWindZ) * DRIFT_SCALE;
         for (Tower tower : TOWERS) {
@@ -197,8 +211,19 @@ final class ElythiaGiantCloudRenderer {
             float offsetX = (float) (dx + giant.originX());
             float offsetY = (float) (BASE_Y - camY);
             float offsetZ = (float) (dz + giant.originZ());
+            if (clearingCount < ElythiaSoftCloudPass.MAX_CLEARINGS) {
+                int index = clearingCount * 4;
+                CLEARINGS[index] = (float) dx;
+                CLEARINGS[index + 1] = 0.0F;
+                CLEARINGS[index + 2] = (float) dz;
+                CLEARINGS[index + 3] = Math.max(giant.sizeX(), giant.sizeZ()) * ElythiaGiantCloud.VOXEL * 0.5F;
+                clearingCount++;
+            }
             if (tower.builtSoft) {
-                softDraws.add(new ElythiaSoftCloudPass.Draw(vertexBuffer, offsetX, offsetY, offsetZ, fogEnd, strength));
+                float towerHeight = giant.sizeY() * ElythiaGiantCloud.VOXEL;
+                float growthTop = offsetY + (0.3F + 0.7F * growth) * towerHeight + 40.0F;
+                softDraws.add(new ElythiaSoftCloudPass.Draw(vertexBuffer, offsetX, offsetY, offsetZ, fogEnd, strength,
+                        growthTop, false));
                 continue;
             }
             RenderSystem.setShaderFogStart(Math.max(terrainFogEnd * 0.5F, distance * 0.55F));
@@ -222,16 +247,32 @@ final class ElythiaGiantCloudRenderer {
         }
     }
 
-    static float clearing(float partialTick) {
-        if (!anchored || anchorSeed != ElythiaEventClient.seed()) {
-            return 0.0F;
-        }
+    static float clearing() {
+        return clearingLevel;
+    }
+
+    static float[] clearingData() {
+        return CLEARINGS;
+    }
+
+    static int clearingCount() {
+        return clearingCount;
+    }
+
+    private static boolean anyBuilt() {
         for (Tower tower : TOWERS) {
             if (tower.built) {
-                return ElythiaEventClient.strength(ElythiaEvent.TOWERING_CLOUDS, partialTick);
+                return true;
             }
         }
-        return 0.0F;
+        return false;
+    }
+
+    private static void updateClearing(double now, boolean active) {
+        double elapsed = Double.isNaN(clearingTime) ? 0.0D : Mth.clamp(now - clearingTime, 0.0D, 20.0D);
+        clearingTime = now;
+        float step = (float) (elapsed / CLEARING_FADE_TICKS);
+        clearingLevel = active ? Math.min(1.0F, clearingLevel + step) : Math.max(0.0F, clearingLevel - step);
     }
 
     private static void reset() {
@@ -253,39 +294,59 @@ final class ElythiaGiantCloudRenderer {
         double probe = Math.min(distance, Math.max(32.0D, minecraft.options.getEffectiveRenderDistance() * 16.0D - 24.0D));
         int wanted = MIN_TOWERS + random.nextInt(MAX_TOWERS - MIN_TOWERS + 1);
         int offset = random.nextInt(ANCHOR_DIRECTIONS);
-        List<Integer> chosen = new ArrayList<>();
-        for (int step = 0; step < ANCHOR_DIRECTIONS && chosen.size() < wanted; step++) {
-            int direction = (offset + step * 5) % ANCHOR_DIRECTIONS;
-            boolean spaced = true;
-            for (int other : chosen) {
-                int gap = Math.abs(direction - other);
-                if (Math.min(gap, ANCHOR_DIRECTIONS - gap) < 2) {
-                    spaced = false;
-                    break;
-                }
-            }
-            if (!spaced) {
-                continue;
-            }
+        double[] angles = new double[ANCHOR_DIRECTIONS];
+        int[] openness = new int[ANCHOR_DIRECTIONS];
+        for (int direction = 0; direction < ANCHOR_DIRECTIONS; direction++) {
             double angle = Math.PI * 2.0D * (direction + random.nextDouble() * 0.6D - 0.3D) / ANCHOR_DIRECTIONS;
             double cos = Math.cos(angle);
             double sin = Math.sin(angle);
-            if (!openSky(level, pos.set(camX + cos * probe, 64.0D, camZ + sin * probe))
-                    || !openSky(level, pos.set(camX + cos * probe * 0.5D, 64.0D, camZ + sin * probe * 0.5D))) {
-                continue;
-            }
-            boolean main = chosen.isEmpty();
-            double scale = main ? 1.0D : 0.55D + random.nextDouble() * 0.3D;
-            double reach = distance * (main ? 1.0D : 0.8D + random.nextDouble() * 0.35D);
-            chosen.add(direction);
-            TOWERS.add(new Tower(random.nextLong(), scale, camX + cos * reach, camZ + sin * reach));
+            angles[direction] = angle;
+            openness[direction] = (openSky(level, pos.set(camX + cos * probe, 64.0D, camZ + sin * probe)) ? 1 : 0)
+                    + (openSky(level, pos.set(camX + cos * probe * 0.5D, 64.0D, camZ + sin * probe * 0.5D)) ? 1 : 0);
         }
-        if (TOWERS.isEmpty()) {
+
+        int main = -1;
+        for (int step = 0; step < ANCHOR_DIRECTIONS; step++) {
+            int direction = (offset + step) % ANCHOR_DIRECTIONS;
+            if (openness[direction] > 0 && (main < 0 || openness[direction] > openness[main])) {
+                main = direction;
+            }
+        }
+        if (main < 0) {
             return false;
         }
+
+        List<Integer> chosen = new ArrayList<>();
+        chosen.add(main);
+        addTower(angles[main], distance, 1.0D, camX, camZ, random);
+        for (int step = 0; step < ANCHOR_DIRECTIONS && chosen.size() < wanted; step++) {
+            int direction = (offset + step * 7) % ANCHOR_DIRECTIONS;
+            if (openness[direction] == 0 || !spaced(direction, chosen)) {
+                continue;
+            }
+            double reach = chosen.size() <= 2 ? 0.5D + random.nextDouble() * 0.2D : 0.8D + random.nextDouble() * 0.3D;
+            chosen.add(direction);
+            addTower(angles[direction], distance * reach, 0.55D + random.nextDouble() * 0.3D, camX, camZ, random);
+        }
+        Antarchy.LOGGER.debug("Elythia towering clouds placed {} of {} towers", TOWERS.size(), wanted);
         anchorWindX = wind[0];
         anchorWindZ = wind[1];
+        anchorTime = level.getGameTime();
         anchored = true;
+        return true;
+    }
+
+    private static void addTower(double angle, double reach, double scale, double camX, double camZ, Random random) {
+        TOWERS.add(new Tower(random.nextLong(), scale, camX + Math.cos(angle) * reach, camZ + Math.sin(angle) * reach));
+    }
+
+    private static boolean spaced(int direction, List<Integer> chosen) {
+        for (int other : chosen) {
+            int gap = Math.abs(direction - other);
+            if (Math.min(gap, ANCHOR_DIRECTIONS - gap) < MIN_DIRECTION_GAP) {
+                return false;
+            }
+        }
         return true;
     }
 
@@ -340,8 +401,12 @@ final class ElythiaGiantCloudRenderer {
                         boolean openBelow = !giant.filled(bx, by - 1, bz) && !giant.filled(bx + 1, by - 1, bz + 1);
                         float light = 0.2F + 0.55F * Mth.clamp(py / totalHeight, 0.0F, 1.0F)
                                 + (openAbove ? 0.25F : 0.0F) - (openBelow ? 0.2F : 0.0F);
+                        int cx = bx + 1;
+                        int cy = by + 1;
+                        int cz = bz + 1;
                         softCube(builder, px - half, py - half * 0.85F, pz - half,
-                                px + half, py + half * 0.85F, pz + half, Mth.clamp(light, 0.0F, 1.0F));
+                                px + half, py + half * 0.85F, pz + half, Mth.clamp(light, 0.0F, 1.0F),
+                                exposure(giant, cx, cy, cz, 1), exposure(giant, cx, cy, cz, -1));
                     }
                 }
             }
@@ -361,22 +426,33 @@ final class ElythiaGiantCloudRenderer {
         return true;
     }
 
-    private static void softCube(BufferBuilder builder, float x0, float y0, float z0, float x1, float y1, float z1, float shade) {
-        softQuad(builder, shade, 0, 1, 0, x0, y1, z0, x0, y1, z1, x1, y1, z1, x1, y1, z0);
-        softQuad(builder, shade, 0, -1, 0, x0, y0, z0, x1, y0, z0, x1, y0, z1, x0, y0, z1);
-        softQuad(builder, shade, -1, 0, 0, x0, y0, z0, x0, y0, z1, x0, y1, z1, x0, y1, z0);
-        softQuad(builder, shade, 1, 0, 0, x1, y0, z0, x1, y1, z0, x1, y1, z1, x1, y0, z1);
-        softQuad(builder, shade, 0, 0, -1, x0, y0, z0, x0, y1, z0, x1, y1, z0, x1, y0, z0);
-        softQuad(builder, shade, 0, 0, 1, x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y1, z1);
+    private static float exposure(ElythiaGiantCloud giant, int x, int y, int z, int direction) {
+        int blocked = 0;
+        for (int step = 1; step <= EXPOSURE_STEPS; step++) {
+            if (giant.filled(x + direction * step, y + step / 2, z)) {
+                blocked++;
+            }
+        }
+        return 1.0F - Math.min(1.0F, blocked / 3.0F);
     }
 
-    private static void softQuad(BufferBuilder builder, float shade, int normalX, int normalY, int normalZ,
+    private static void softCube(BufferBuilder builder, float x0, float y0, float z0, float x1, float y1, float z1,
+                                 float ambient, float east, float west) {
+        softQuad(builder, ambient, east, west, 0, 1, 0, x0, y1, z0, x0, y1, z1, x1, y1, z1, x1, y1, z0);
+        softQuad(builder, ambient, east, west, 0, -1, 0, x0, y0, z0, x1, y0, z0, x1, y0, z1, x0, y0, z1);
+        softQuad(builder, ambient, east, west, -1, 0, 0, x0, y0, z0, x0, y0, z1, x0, y1, z1, x0, y1, z0);
+        softQuad(builder, ambient, east, west, 1, 0, 0, x1, y0, z0, x1, y1, z0, x1, y1, z1, x1, y0, z1);
+        softQuad(builder, ambient, east, west, 0, 0, -1, x0, y0, z0, x0, y1, z0, x1, y1, z0, x1, y0, z0);
+        softQuad(builder, ambient, east, west, 0, 0, 1, x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y1, z1);
+    }
+
+    private static void softQuad(BufferBuilder builder, float ambient, float east, float west, int normalX, int normalY, int normalZ,
                                  float ax, float ay, float az, float bx, float by, float bz,
                                  float cx, float cy, float cz, float dx, float dy, float dz) {
-        builder.addVertex(ax, ay, az).setUv(0.5F, 0.5F).setColor(shade, shade, shade, 1.0F).setNormal(normalX, normalY, normalZ);
-        builder.addVertex(bx, by, bz).setUv(0.5F, 0.5F).setColor(shade, shade, shade, 1.0F).setNormal(normalX, normalY, normalZ);
-        builder.addVertex(cx, cy, cz).setUv(0.5F, 0.5F).setColor(shade, shade, shade, 1.0F).setNormal(normalX, normalY, normalZ);
-        builder.addVertex(dx, dy, dz).setUv(0.5F, 0.5F).setColor(shade, shade, shade, 1.0F).setNormal(normalX, normalY, normalZ);
+        builder.addVertex(ax, ay, az).setUv(0.5F, 0.5F).setColor(ambient, east, west, 1.0F).setNormal(normalX, normalY, normalZ);
+        builder.addVertex(bx, by, bz).setUv(0.5F, 0.5F).setColor(ambient, east, west, 1.0F).setNormal(normalX, normalY, normalZ);
+        builder.addVertex(cx, cy, cz).setUv(0.5F, 0.5F).setColor(ambient, east, west, 1.0F).setNormal(normalX, normalY, normalZ);
+        builder.addVertex(dx, dy, dz).setUv(0.5F, 0.5F).setColor(ambient, east, west, 1.0F).setNormal(normalX, normalY, normalZ);
     }
 
     private static float hash(int x, int y, int z, long salt) {

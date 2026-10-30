@@ -551,6 +551,38 @@ public final class AntarchyNeoforgeBlocks {
             () -> createOre(Blocks.DEEPSLATE_EMERALD_ORE, 4, 8, MapColor.COLOR_YELLOW));
     public static final DeferredBlock<Block> BROODSTONE_TITANIUM_ORE = BLOCKS.register("broodstone_titanium_ore",
             () -> createOre(Blocks.DEEPSLATE_DIAMOND_ORE, 4, 8, MapColor.COLOR_LIGHT_BLUE));
+    public static final DeferredBlock<Block> MYRMITE_COPPER_ORE = BLOCKS.register("myrmite_copper_ore",
+            () -> createOre(Blocks.COPPER_ORE, 0, 0, MapColor.COLOR_ORANGE));
+    public static final DeferredBlock<Block> MYRMITE_IRON_ORE = BLOCKS.register("myrmite_iron_ore",
+            () -> createOre(Blocks.IRON_ORE, 0, 0, MapColor.RAW_IRON));
+    public static final DeferredBlock<Block> MYRMITE_GOLD_ORE = BLOCKS.register("myrmite_gold_ore",
+            () -> createOre(Blocks.GOLD_ORE, 0, 0, MapColor.GOLD));
+    public static final DeferredBlock<RedStoneOreBlock> MYRMITE_REDSTONE_ORE = BLOCKS.register("myrmite_redstone_ore",
+            () -> new RedStoneOreBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.REDSTONE_ORE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> MYRMITE_LAPIS_ORE = BLOCKS.register("myrmite_lapis_ore",
+            () -> createOre(Blocks.LAPIS_ORE, 2, 5, MapColor.LAPIS));
+    public static final DeferredBlock<Block> MYRMITE_DIAMOND_ORE = BLOCKS.register("myrmite_diamond_ore",
+            () -> createOre(Blocks.DIAMOND_ORE, 3, 7, MapColor.DIAMOND));
+    public static final DeferredBlock<Block> MYRMITE_EMERALD_ORE = BLOCKS.register("myrmite_emerald_ore",
+            () -> createOre(Blocks.EMERALD_ORE, 3, 7, MapColor.EMERALD));
+    public static final DeferredBlock<Block> BROODSTONE_COPPER_ORE = BLOCKS.register("broodstone_copper_ore",
+            () -> createOre(Blocks.DEEPSLATE_COPPER_ORE, 0, 0, MapColor.COLOR_ORANGE));
+    public static final DeferredBlock<Block> BROODSTONE_IRON_ORE = BLOCKS.register("broodstone_iron_ore",
+            () -> createOre(Blocks.DEEPSLATE_IRON_ORE, 0, 0, MapColor.RAW_IRON));
+    public static final DeferredBlock<Block> BROODSTONE_GOLD_ORE = BLOCKS.register("broodstone_gold_ore",
+            () -> createOre(Blocks.DEEPSLATE_GOLD_ORE, 0, 0, MapColor.GOLD));
+    public static final DeferredBlock<RedStoneOreBlock> BROODSTONE_REDSTONE_ORE = BLOCKS.register("broodstone_redstone_ore",
+            () -> new RedStoneOreBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_REDSTONE_ORE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> BROODSTONE_LAPIS_ORE = BLOCKS.register("broodstone_lapis_ore",
+            () -> createOre(Blocks.DEEPSLATE_LAPIS_ORE, 2, 5, MapColor.LAPIS));
+    public static final DeferredBlock<Block> BROODSTONE_DIAMOND_ORE = BLOCKS.register("broodstone_diamond_ore",
+            () -> createOre(Blocks.DEEPSLATE_DIAMOND_ORE, 3, 7, MapColor.DIAMOND));
+    public static final DeferredBlock<Block> BROODSTONE_EMERALD_ORE = BLOCKS.register("broodstone_emerald_ore",
+            () -> createOre(Blocks.DEEPSLATE_EMERALD_ORE, 3, 7, MapColor.EMERALD));
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.FossilBlock> MYRMITE_FOSSIL = BLOCKS.register("myrmite_fossil",
+            () -> new com.craisinlord.antarchy.content.block.FossilBlock(nyxiteProperties()));
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.FossilBlock> BROODSTONE_FOSSIL = BLOCKS.register("broodstone_fossil",
+            () -> new com.craisinlord.antarchy.content.block.FossilBlock(broodstoneProperties()));
     public static final DeferredBlock<RotatedPillarBlock> CHITIN_BLOCK = BLOCKS.register("chitin_block",
             () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BONE_BLOCK).requiresCorrectToolForDrops()));
     public static final DeferredBlock<UmbralMossBlock> UMBRAL_MOSS_BLOCK = BLOCKS.register("umbral_moss_block",
@@ -790,7 +822,7 @@ public final class AntarchyNeoforgeBlocks {
     public static final DeferredBlock<Block> LOAM = BLOCKS.register("loam",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.MUD)));
     public static final DeferredBlock<Block> PRIMORDIAL_LOAM = BLOCKS.register("primordial_loam",
-            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.MUD)));
+            () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.MUD).sound(primordialLoamSoundType())));
     public static final DeferredBlock<Block> PACKED_LOAM = BLOCKS.register("packed_loam",
             () -> new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.PACKED_MUD)));
     public static final DeferredBlock<Block> LOAM_BRICKS = BLOCKS.register("loam_bricks",
@@ -944,6 +976,12 @@ public final class AntarchyNeoforgeBlocks {
                     CritterCageBlockEntity::new,
                     CRITTER_CAGE_BLOCK.get()
             ).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.craisinlord.antarchy.content.block.entity.FossilBlockEntity>> FOSSIL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("fossil",
+            () -> BlockEntityType.Builder.of(
+                    com.craisinlord.antarchy.content.block.entity.FossilBlockEntity::new,
+                    MYRMITE_FOSSIL.get(),
+                    BROODSTONE_FOSSIL.get()
+            ).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity>> BLUESTONE_COMPARATOR_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("bluestone_comparator",
             () -> BlockEntityType.Builder.of(
                     (pos, state) -> new com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity(pos, state, AntarchyNeoforgeBlocks::bluestoneComparatorBlockEntityType),
@@ -1033,6 +1071,16 @@ public final class AntarchyNeoforgeBlocks {
     static Block createRawStorageBlock(Block copyFrom, MapColor mapColor) {
         return new Block(BlockBehaviour.Properties.ofFullCopy(copyFrom).mapColor(mapColor).requiresCorrectToolForDrops());
     }
+
+    private static SoundType primordialLoamSoundType() {
+        return new SoundType(1.0F, 1.0F,
+                SoundType.MUD.getBreakSound(),
+                SoundType.MOSS.getStepSound(),
+                SoundType.MUD.getPlaceSound(),
+                SoundType.MUD.getHitSound(),
+                SoundType.MUD.getFallSound());
+    }
+
 
     private static SoundType antimetalSoundType() {
         return new SoundType(1.0F, 1.0F,

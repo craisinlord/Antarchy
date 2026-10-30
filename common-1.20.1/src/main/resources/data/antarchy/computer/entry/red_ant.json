@@ -28,5 +28,7 @@
     "antarchy:emperor_scorpion",
     "antarchy:scorpion",
     "antarchy:bed_bug"
-  ]
+  ],
+  "lookup": ["antarchy:bluestone", "antarchy:antiwater_bucket", "antarchy:nyxite", "antarchy:red_ant_nest", "antarchy:red_ant_spawn_egg"],
+  "unlocked_by_default": true
 }

@@ -23,7 +23,7 @@ final class LumenWorldgenHelper {
 
     static boolean isSolidSupport(BlockState state) {
         return !state.isAir()
-                && blocksMotion(state)
+                && (state.isSolid() && !state.is(net.minecraft.world.level.block.Blocks.COBWEB) && !state.is(net.minecraft.world.level.block.Blocks.BAMBOO_SAPLING))
                 && state.getFluidState().isEmpty()
                 && !state.is(BlockTags.LOGS)
                 && !state.is(BlockTags.LEAVES);
@@ -40,17 +40,11 @@ final class LumenWorldgenHelper {
             if (state.is(BlockTags.LOGS) || state.is(BlockTags.LEAVES)) {
                 continue;
             }
-            if (!state.isAir() && blocksMotion(state)) {
+            if (!state.isAir() && (state.isSolid() && !state.is(net.minecraft.world.level.block.Blocks.COBWEB) && !state.is(net.minecraft.world.level.block.Blocks.BAMBOO_SAPLING))) {
                 break;
             }
         }
         return null;
-    }
-
-    private static boolean blocksMotion(BlockState state) {
-        return state.isSolid()
-                && !state.is(net.minecraft.world.level.block.Blocks.COBWEB)
-                && !state.is(net.minecraft.world.level.block.Blocks.BAMBOO_SAPLING);
     }
 
     static BlockState lumenState(BlockState lumenBlockState, boolean source) {

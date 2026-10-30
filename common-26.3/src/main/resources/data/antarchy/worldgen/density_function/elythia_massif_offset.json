@@ -1,86 +1,51 @@
 {
-  "type": "minecraft:cache",
-  "input": {
-    "type": "minecraft:mul",
-    "left": "antarchy:elythia_massif_mask",
-    "right": {
-      "type": "minecraft:add",
-      "left": {
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache",
+    "input": {
+      "type": "minecraft:mul",
+      "left": "antarchy:elythia_massif_mask",
+      "right": {
         "type": "minecraft:add",
-        "left": 0.3,
-        "right": {
-          "type": "minecraft:mul",
-          "left": {
-            "type": "minecraft:spline",
-            "spline": {
-              "coordinate": {
-                "type": "minecraft:noise",
-                "noise": "antarchy:elythia_massif_body",
-                "xz_scale": 1.0,
-                "y_scale": 0.0
-              },
-              "points": [
-                {
-                  "location": -0.45,
-                  "value": 0.3,
-                  "derivative": 0.0
-                },
-                {
-                  "location": 0.0,
-                  "value": 0.7,
-                  "derivative": 0.0
-                },
-                {
-                  "location": 0.45,
-                  "value": 1.0,
-                  "derivative": 0.0
-                }
-              ]
-            }
-          },
+        "left": {
+          "type": "minecraft:add",
+          "left": 0.3,
           "right": {
-            "type": "minecraft:add",
+            "type": "minecraft:mul",
             "left": {
-              "type": "minecraft:mul",
-              "left": 2.3,
-              "right": {
-                "type": "minecraft:spline",
-                "spline": {
-                  "coordinate": {
-                    "type": "minecraft:abs",
-                    "input": {
-                      "type": "minecraft:noise",
-                      "noise": "antarchy:elythia_massif_ridge",
-                      "xz_scale": 0.6,
-                      "y_scale": 0.0
-                    }
+              "type": "minecraft:spline",
+              "spline": {
+                "coordinate": {
+                  "type": "minecraft:noise",
+                  "noise": "antarchy:elythia_massif_body",
+                  "xz_scale": 1.0,
+                  "y_scale": 0.0
+                },
+                "points": [
+                  {
+                    "location": -0.45,
+                    "value": 0.3,
+                    "derivative": 0.0
                   },
-                  "points": [
-                    {
-                      "location": 0.0,
-                      "value": 1.0,
-                      "derivative": -3.2
-                    },
-                    {
-                      "location": 0.22,
-                      "value": 0.38,
-                      "derivative": -1.4
-                    },
-                    {
-                      "location": 0.55,
-                      "value": 0.0,
-                      "derivative": 0.0
-                    }
-                  ]
-                }
+                  {
+                    "location": 0.0,
+                    "value": 0.7,
+                    "derivative": 0.0
+                  },
+                  {
+                    "location": 0.45,
+                    "value": 1.0,
+                    "derivative": 0.0
+                  }
+                ]
               }
             },
             "right": {
-              "type": "minecraft:mul",
-              "left": 0.9,
-              "right": {
+              "type": "minecraft:add",
+              "left": {
                 "type": "minecraft:mul",
-                "left": {
+                "left": 2.3,
+                "right": {
                   "type": "minecraft:spline",
                   "spline": {
                     "coordinate": {
@@ -110,51 +75,89 @@
                       }
                     ]
                   }
-                },
+                }
+              },
+              "right": {
+                "type": "minecraft:mul",
+                "left": 0.9,
                 "right": {
-                  "type": "minecraft:spline",
-                  "spline": {
-                    "coordinate": {
-                      "type": "minecraft:abs",
-                      "input": {
-                        "type": "minecraft:noise",
-                        "noise": "antarchy:elythia_massif_spur",
-                        "xz_scale": 1.0,
-                        "y_scale": 0.0
-                      }
-                    },
-                    "points": [
-                      {
-                        "location": 0.0,
-                        "value": 1.0,
-                        "derivative": -3.0
+                  "type": "minecraft:mul",
+                  "left": {
+                    "type": "minecraft:spline",
+                    "spline": {
+                      "coordinate": {
+                        "type": "minecraft:abs",
+                        "input": {
+                          "type": "minecraft:noise",
+                          "noise": "antarchy:elythia_massif_ridge",
+                          "xz_scale": 0.6,
+                          "y_scale": 0.0
+                        }
                       },
-                      {
-                        "location": 0.3,
-                        "value": 0.2,
-                        "derivative": -0.6
+                      "points": [
+                        {
+                          "location": 0.0,
+                          "value": 1.0,
+                          "derivative": -3.2
+                        },
+                        {
+                          "location": 0.22,
+                          "value": 0.38,
+                          "derivative": -1.4
+                        },
+                        {
+                          "location": 0.55,
+                          "value": 0.0,
+                          "derivative": 0.0
+                        }
+                      ]
+                    }
+                  },
+                  "right": {
+                    "type": "minecraft:spline",
+                    "spline": {
+                      "coordinate": {
+                        "type": "minecraft:abs",
+                        "input": {
+                          "type": "minecraft:noise",
+                          "noise": "antarchy:elythia_massif_spur",
+                          "xz_scale": 1.0,
+                          "y_scale": 0.0
+                        }
                       },
-                      {
-                        "location": 0.6,
-                        "value": 0.0,
-                        "derivative": 0.0
-                      }
-                    ]
+                      "points": [
+                        {
+                          "location": 0.0,
+                          "value": 1.0,
+                          "derivative": -3.0
+                        },
+                        {
+                          "location": 0.3,
+                          "value": 0.2,
+                          "derivative": -0.6
+                        },
+                        {
+                          "location": 0.6,
+                          "value": 0.0,
+                          "derivative": 0.0
+                        }
+                      ]
+                    }
                   }
                 }
               }
             }
           }
-        }
-      },
-      "right": {
-        "type": "minecraft:mul",
-        "left": 0.05,
+        },
         "right": {
-          "type": "minecraft:noise",
-          "noise": "antarchy:elythia_surface_detail",
-          "xz_scale": 3.0,
-          "y_scale": 0.0
+          "type": "minecraft:mul",
+          "left": 0.05,
+          "right": {
+            "type": "minecraft:noise",
+            "noise": "antarchy:elythia_surface_detail",
+            "xz_scale": 3.0,
+            "y_scale": 0.0
+          }
         }
       }
     }

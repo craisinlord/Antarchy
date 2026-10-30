@@ -115,7 +115,7 @@ public class PeachForestMossyBoulderFeature extends Feature<NoneFeatureConfigura
         for (int x = -radius; x <= radius; x++) {
             for (int z = -radius; z <= radius; z++) {
                 BlockPos topPos = center.offset(x, 0, z);
-                while (topPos.getY() < level.getMaxY() && isBoulderBlock(level.getBlockState(topPos.above()))) {
+                while (topPos.getY() < (level.getMaxY() + 1) - 1 && isBoulderBlock(level.getBlockState(topPos.above()))) {
                     topPos = topPos.above();
                 }
 

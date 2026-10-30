@@ -18,5 +18,6 @@
   "gallery": [
     {"item": "antarchy:primordial_scute"},
     {"item": "antarchy:water_cannon"}
-  ]
+  ],
+  "lookup": ["antarchy:toreterror_glimmer_sigil"]
 }

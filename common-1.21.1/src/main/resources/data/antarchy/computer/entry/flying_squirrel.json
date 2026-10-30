@@ -9,5 +9,6 @@
   "entity": "antarchy:flying_squirrel",
   "rotation": 45,
   "render_scale": 0.8,
-  "green_tint": false
+  "green_tint": false,
+  "lookup": ["antarchy:flying_squirrel_spawn_egg"]
 }

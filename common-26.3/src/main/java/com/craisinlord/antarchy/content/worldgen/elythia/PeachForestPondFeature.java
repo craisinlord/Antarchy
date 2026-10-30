@@ -1,8 +1,7 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
-import com.mojang.serialization.Codec;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -15,42 +14,38 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
-public record PeachForestPondFeature(
-        int minRadius,
-        int maxRadius,
-        int minDepth,
-        int maxDepth
-) implements Feature {
-    public static final MapCodec<PeachForestPondFeature> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            Codec.intRange(1, 32).fieldOf("min_radius").forGetter(PeachForestPondFeature::minRadius),
-            Codec.intRange(1, 32).fieldOf("max_radius").forGetter(PeachForestPondFeature::maxRadius),
-            Codec.intRange(1, 16).fieldOf("min_depth").forGetter(PeachForestPondFeature::minDepth),
-            Codec.intRange(1, 16).fieldOf("max_depth").forGetter(PeachForestPondFeature::maxDepth)
-    ).apply(instance, PeachForestPondFeature::new));
+public class PeachForestPondFeature implements Feature {
+    public static final MapCodec<PeachForestPondFeature> CODEC = PeachForestPondConfiguration.CODEC.xmap(PeachForestPondFeature::new, PeachForestPondFeature::config);
+
+    private final PeachForestPondConfiguration config;
+
+    public PeachForestPondFeature(PeachForestPondConfiguration config) { this.config = config; }
+
+    public PeachForestPondConfiguration config() { return this.config; }
+
+    @Override
+    public MapCodec<PeachForestPondFeature> codec() { return CODEC; }
     private static final int NOISE_SAMPLES = 12;
     private static final Identifier CAMELLIA_ID = Identifier.fromNamespaceAndPath("antarchy", "camellia");
     private static final Identifier SPIDER_LILY_ID = Identifier.fromNamespaceAndPath("antarchy", "spider_lily");
 
-    @Override
-    public MapCodec<PeachForestPondFeature> codec() {
-        return CODEC;
-    }
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
+        PeachForestPondConfiguration config = this.config();
+
         int surfaceY = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, origin.getX(), origin.getZ()) - 1;
         BlockPos center = new BlockPos(origin.getX(), surfaceY, origin.getZ());
         if (!isSoil(level.getBlockState(center))) {
             return false;
         }
 
-        int radiusX = Mth.nextInt(random, this.minRadius, this.maxRadius);
-        int radiusZ = Mth.clamp(radiusX + random.nextInt(3) - 1, this.minRadius, this.maxRadius);
-        int depth = Mth.nextInt(random, this.minDepth, this.maxDepth);
+        int radiusX = Mth.nextInt(random, config.minRadius(), config.maxRadius());
+        int radiusZ = Mth.clamp(radiusX + random.nextInt(3) - 1, config.minRadius(), config.maxRadius());
+        int depth = Mth.nextInt(random, config.minDepth(), config.maxDepth());
         double[] edgeNoise = generateEdgeNoise(random);
         boolean placed = false;
 

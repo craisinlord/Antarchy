@@ -36,6 +36,7 @@ public final class CavarynGlowcapGrottoDressingFeature extends Feature<NoneFeatu
             ResourceLocation.withDefaultNamespace("rooted_dirt"),
             ResourceLocation.withDefaultNamespace("podzol")
     );
+    private static final CavarynBlockSet LINEABLE_BLOCKS = new CavarynBlockSet(LINEABLE);
     private static final double FLOOR_DEPTH = 1.6;
     private static final float MYCELIUM_CHANCE = 0.4F;
 
@@ -97,7 +98,7 @@ public final class CavarynGlowcapGrottoDressingFeature extends Feature<NoneFeatu
     }
 
     private static boolean isLineable(BlockState state) {
-        return LINEABLE.contains(BuiltInRegistries.BLOCK.getKey(state.getBlock()));
+        return LINEABLE_BLOCKS.contains(state);
     }
 
     private static Block block(ResourceLocation id) {

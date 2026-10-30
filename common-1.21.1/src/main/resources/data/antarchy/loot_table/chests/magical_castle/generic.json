@@ -478,6 +478,15 @@
       "conditions": [
         { "condition": "minecraft:random_chance", "chance": 0.03 }
       ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "antarchy:inject/antroid_phone"
+        }
+      ]
     }
   ],
   "random_sequence": "antarchy:chests/magical_castle/generic"

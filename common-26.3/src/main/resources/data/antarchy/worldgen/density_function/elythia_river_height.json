@@ -1,0 +1,22 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "antarchy:elythia_column_cache",
+    "argument": {
+      "type": "minecraft:cache",
+      "input": {
+        "type": "minecraft:add",
+        "left": 127.23,
+        "right": {
+          "type": "minecraft:mul",
+          "left": 63.4325,
+          "right": {
+            "type": "antarchy:elythia_river_project",
+            "argument": "antarchy:elythia_river_height_offset",
+            "guide": "antarchy:elythia_river_guide"
+          }
+        }
+      }
+    }
+  }
+}

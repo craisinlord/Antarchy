@@ -1,9 +1,9 @@
 {
-  "has_precipitation": false,
+  "has_precipitation": true,
   "temperature": 0.82,
   "downfall": 1.0,
   "effects": {
-    "fog_color": 8084735,
+    "fog_color": 10849791,
     "water_color": 5021432,
     "water_fog_color": 736368,
     "sky_color": 8084735,
@@ -55,6 +55,7 @@
       "antarchy:elythia_ore_redstone",
       "antarchy:elythia_ore_redstone_lower",
       "antarchy:elythia_ore_diamond",
+      "antarchy:elythia_ore_diamond_medium",
       "antarchy:elythia_ore_diamond_large",
       "antarchy:elythia_ore_diamond_buried",
       "antarchy:elythia_ore_lapis",
@@ -63,20 +64,22 @@
     ],
     [
       "antarchy:elythia_underground",
-      "minecraft:large_dripstone",
-      "minecraft:pointed_dripstone"
+      "antarchy:elythia_large_dripstone",
+      "antarchy:elythia_pointed_dripstone"
     ],
     [],
     [
       "antarchy:truffalo_forest_trees",
       "antarchy:truffalo_large_forest_trees",
+      "antarchy:truffalo_forest_tall_trees",
       "antarchy:elythia_meadow_large_tuff_boulders",
       "antarchy:elythia_meadow_tuff_boulders",
       "antarchy:elythia_meadow_flora",
       "antarchy:elythia_brown_ant_nests",
       "antarchy:elythia_rainbow_ant_nests",
       "minecraft:patch_sugar_cane",
-      "antarchy:giant_lily_pad_patch_river"
+      "antarchy:giant_lily_pad_patch_river",
+      "antarchy:throwback_nerd_pole"
     ],
     []
   ],

@@ -1,68 +1,7 @@
 {
-  "has_precipitation": false,
+  "has_precipitation": true,
   "temperature": 0.69,
   "downfall": 0.97,
-  "attributes": {
-    "minecraft:audio/ambient_sounds": {
-      "mood": {
-        "sound": "minecraft:ambient.crimson_forest.mood",
-        "tick_delay": 6000,
-        "block_search_extent": 8,
-        "offset": 2.0
-      }
-    },
-    "minecraft:audio/background_music": {
-      "default": {
-        "sound": "antarchy:music.game.elythia",
-        "min_delay": 600,
-        "max_delay": 1800,
-        "replace_current_music": true
-      }
-    },
-    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.28,
-    "minecraft:gameplay/natural_mob_spawns": {
-      "argument": {
-        "spawn_costs": {},
-        "spawns_by_category": {
-          "creature": [
-            {
-              "type": "antarchy:elka",
-              "count": {
-                "type": "minecraft:uniform",
-                "max_inclusive": 3,
-                "min_inclusive": 1
-              },
-              "weight": 22
-            },
-            {
-              "type": "minecraft:frog",
-              "count": {
-                "type": "minecraft:uniform",
-                "max_inclusive": 6,
-                "min_inclusive": 3
-              },
-              "weight": 25
-            },
-            {
-              "type": "antarchy:glimmer",
-              "count": 1,
-              "weight": 2
-            }
-          ]
-        }
-      },
-      "modifier": "overlay"
-    },
-    "minecraft:visual/fog_color": "#7b5cff",
-    "minecraft:visual/sky_color": "#7b5cff",
-    "minecraft:visual/water_fog_color": "#263042"
-  },
-  "effects": {
-    "water_color": "#4c9ef8",
-    "foliage_color": "#2bc12d",
-    "grass_color": "#ff90c1",
-    "grass_color_modifier": "none"
-  },
   "carvers": [],
   "features": [
     [],
@@ -95,8 +34,8 @@
     ],
     [
       "antarchy:elythia_underground",
-      "minecraft:large_dripstone",
-      "minecraft:pointed_dripstone"
+      "antarchy:elythia_large_dripstone",
+      "antarchy:elythia_pointed_dripstone"
     ],
     [],
     [
@@ -107,8 +46,77 @@
       "antarchy:peach_tree",
       "antarchy:peach_forest_flora",
       "antarchy:elythia_rainbow_ant_nests",
-      "antarchy:giant_lily_pad_patch_peach_forest"
+      "antarchy:giant_lily_pad_patch_peach_forest",
+      "antarchy:throwback_nerd_pole"
     ],
     []
-  ]
+  ],
+  "attributes": {
+    "minecraft:visual/fog_color": "#a58dff",
+    "minecraft:visual/sky_color": "#7b5cff",
+    "minecraft:visual/water_fog_color": "#263042",
+    "minecraft:audio/ambient_sounds": {
+      "mood": {
+        "sound": "minecraft:ambient.crimson_forest.mood",
+        "tick_delay": 6000,
+        "block_search_extent": 8,
+        "offset": 2.0
+      }
+    },
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.elythia",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:gameplay/natural_mob_spawns": {
+      "modifier": "overlay",
+      "argument": {
+        "spawn_costs": {},
+        "spawns_by_category": {
+          "monster": [],
+          "creature": [
+            {
+              "type": "antarchy:elka",
+              "weight": 22,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 3
+              }
+            },
+            {
+              "type": "minecraft:frog",
+              "weight": 25,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 3,
+                "max_inclusive": 6
+              }
+            },
+            {
+              "type": "antarchy:glimmer",
+              "weight": 2,
+              "count": 1
+            }
+          ],
+          "ambient": [],
+          "axolotls": [],
+          "underground_water_creature": [],
+          "water_creature": [],
+          "water_ambient": [],
+          "misc": []
+        }
+      }
+    },
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.28
+  },
+  "effects": {
+    "water_color": "#4c9ef8",
+    "foliage_color": "#2bc12d",
+    "grass_color": "#ff90c1",
+    "grass_color_modifier": "none"
+  }
 }

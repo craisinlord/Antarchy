@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.client;
 
+import com.craisinlord.antarchy.content.client.hud.ScreenTint;
 import net.minecraft.client.gui.GuiGraphics;
 
 public final class KingJudgmentFlashHudRenderer {
@@ -11,7 +12,7 @@ public final class KingJudgmentFlashHudRenderer {
         if (alpha <= 0) {
             return;
         }
-        guiGraphics.fill(0, 0, guiGraphics.guiWidth(), guiGraphics.guiHeight(),
+        ScreenTint.fill(guiGraphics, 0, 0, guiGraphics.guiWidth(), guiGraphics.guiHeight(),
                 alpha << 24 | 0x00FFFFFF);
     }
 }

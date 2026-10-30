@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -9,23 +10,20 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
 public class BrutalflyCocoonFeature implements Feature {
     public static final MapCodec<BrutalflyCocoonFeature> CODEC = MapCodec.unit(BrutalflyCocoonFeature::new);
 
+    @Override
+    public MapCodec<BrutalflyCocoonFeature> codec() { return CODEC; }
     private static final int MAX_ANCHOR_Y = 160;
     private static final int COCOON_CLEAR_RADIUS = 1;
     private static final int COCOON_CLEAR_MIN_Y_OFFSET = -16;
     private static final int COCOON_CLEAR_MAX_Y_OFFSET = -1;
     private static final int MIN_CANOPY_SUPPORTS = 4;
 
-    @Override
-    public MapCodec<BrutalflyCocoonFeature> codec() {
-        return CODEC;
-    }
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
@@ -41,7 +39,7 @@ public class BrutalflyCocoonFeature implements Feature {
                 continue;
             }
 
-            int searchTopY = Math.min(MAX_ANCHOR_Y, level.getMaxY() - 1);
+            int searchTopY = Math.min(MAX_ANCHOR_Y, (level.getMaxY() + 1) - 2);
             for (int y = searchTopY; y > groundY + 12; y--) {
                 pos.set(x, y, z);
                 if (!level.getBlockState(pos).is(BlockTags.LOGS)) {

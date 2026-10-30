@@ -792,7 +792,7 @@ public final class AntarchyNeoforgeBlocks {
     public static final DeferredBlock<Block> LOAM = BLOCKS.register("loam",
             id -> new Block(copyOf(id, Blocks.MUD)));
     public static final DeferredBlock<Block> PRIMORDIAL_LOAM = BLOCKS.register("primordial_loam",
-            id -> new Block(copyOf(id, Blocks.MUD)));
+            id -> new Block(copyOf(id, Blocks.MUD).sound(primordialLoamSoundType())));
     public static final DeferredBlock<Block> PACKED_LOAM = BLOCKS.register("packed_loam",
             id -> new Block(copyOf(id, Blocks.PACKED_MUD)));
     public static final DeferredBlock<Block> LOAM_BRICKS = BLOCKS.register("loam_bricks",
@@ -1048,6 +1048,16 @@ public final class AntarchyNeoforgeBlocks {
     static Block createRawStorageBlock(Identifier id, Block copyFrom, MapColor mapColor) {
         return new Block(copyOf(id, copyFrom).mapColor(mapColor).requiresCorrectToolForDrops());
     }
+
+    private static SoundType primordialLoamSoundType() {
+        return new SoundType(1.0F, 1.0F,
+                SoundType.MUD.getBreakSound(),
+                SoundType.MOSS.getStepSound(),
+                SoundType.MUD.getPlaceSound(),
+                SoundType.MUD.getHitSound(),
+                SoundType.MUD.getFallSound());
+    }
+
 
     private static SoundType antimetalSoundType() {
         return new SoundType(1.0F, 1.0F,

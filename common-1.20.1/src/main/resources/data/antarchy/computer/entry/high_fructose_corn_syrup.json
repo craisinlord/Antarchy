@@ -11,5 +11,6 @@
     "guide.antarchy.entry.high_fructose_corn_syrup.description3"
   ],
   "cover_item": "antarchy:high_fructose_corn_syrup",
-  "green_tint": false
+  "green_tint": false,
+  "lookup": ["antarchy:high_fructose_corn_syrup", "antarchy:corn", "antarchy:wild_corn"]
 }

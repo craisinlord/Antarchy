@@ -104,6 +104,8 @@ public final class ElythiaSkyRenderer {
             RenderSystem.disableBlend();
         }
 
+        ElythiaNightSkyRenderer.render(level, poseStack.last().pose(), projectionMatrix, partialTick, starBrightness);
+
         if (camera.getEntity() != null) {
             double horizon = camera.getEntity().getEyePosition(partialTick).y - level.getLevelData().getHorizonHeight(level);
             if (horizon < 0.0D) {

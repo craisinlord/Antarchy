@@ -273,6 +273,13 @@ public final class AntarchyNeoForgeClient {
     @SubscribeEvent
     public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
         event.register(
+                (state, level, pos, tintIndex) -> level != null && pos != null
+                        ? com.craisinlord.antarchy.content.block.Fossils.color(com.craisinlord.antarchy.content.block.Fossils.entityAt(level, pos), tintIndex)
+                        : -1,
+                AntarchyNeoforgeBlocks.MYRMITE_FOSSIL.get(),
+                AntarchyNeoforgeBlocks.BROODSTONE_FOSSIL.get()
+        );
+        event.register(
                 (state, level, pos, tintIndex) -> tintIndex == 0 ? bluestoneWireColor(state.getValue(com.craisinlord.antarchy.content.block.BluestoneWireBlock.POWER)) : -1,
                 AntarchyNeoforgeBlocks.BLUESTONE_WIRE.get()
         );
@@ -302,6 +309,11 @@ public final class AntarchyNeoForgeClient {
 
     @SubscribeEvent
     public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
+        event.register(
+                (stack, tintIndex) -> com.craisinlord.antarchy.content.block.Fossils.color(com.craisinlord.antarchy.content.block.Fossils.entityOf(stack), tintIndex),
+                AntarchyNeoforgeItems.MYRMITE_FOSSIL_ITEM.get(),
+                AntarchyNeoforgeItems.BROODSTONE_FOSSIL_ITEM.get()
+        );
         event.register(
                 (stack, tintIndex) -> FoliageColor.getDefaultColor(),
                 AntarchyNeoforgeItems.OURANWOOD_LEAVES_ITEM.get()
@@ -684,6 +696,8 @@ public final class AntarchyNeoForgeClient {
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.GIANT_LILY_PAD.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.HUSHWEED.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.CRITTER_CAGE_BLOCK.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.MYRMITE_FOSSIL.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.BROODSTONE_FOSSIL.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.CORNEA_STALK.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.CORN_CROP.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyNeoforgeBlocks.WILD_CORN.get(), RenderType.cutout());

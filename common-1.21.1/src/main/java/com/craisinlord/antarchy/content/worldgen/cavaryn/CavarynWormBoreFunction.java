@@ -19,6 +19,7 @@ public final class CavarynWormBoreFunction implements DensityFunction {
     public static final KeyDispatchDataCodec<CavarynWormBoreFunction> KEY_CODEC = KeyDispatchDataCodec.of(CODEC);
 
     private static final double SCALE = 0.35;
+    private static final double FLOOR = -1.0 / SCALE - 1.0E-9;
 
     private final DensityFunction humidity;
     private final DensityFunction weirdness;
@@ -64,7 +65,7 @@ public final class CavarynWormBoreFunction implements DensityFunction {
         if (this.grid == null) {
             return 1.0;
         }
-        double distance = this.grid.signedDistance(context.blockX(), context.blockY(), context.blockZ());
+        double distance = this.grid.signedDistance(context.blockX(), context.blockY(), context.blockZ(), FLOOR);
         return Mth.clamp(distance * SCALE, -1.0, 1.0);
     }
 
@@ -77,12 +78,15 @@ public final class CavarynWormBoreFunction implements DensityFunction {
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
+        if (this.grid != null) {
+            return visitor.apply(this);
+        }
         DensityFunction mappedHumidity = this.humidity.mapAll(visitor);
         DensityFunction mappedWeirdness = this.weirdness.mapAll(visitor);
         DensityFunction mappedDepth = this.depth.mapAll(visitor);
         NoiseHolder mappedNoise = visitor.visitNoise(this.noise);
-        CavarynWormBoreGrid mappedGrid = this.grid;
-        if (mappedGrid == null && mappedNoise.noise() != null) {
+        CavarynWormBoreGrid mappedGrid = null;
+        if (mappedNoise.noise() != null) {
             long salt = saltFor(mappedNoise.getValue(1234.567, 89.123, -456.789), mappedNoise.getValue(-987.654, 12.345, 654.321));
             mappedGrid = CavarynWormBoreGrid.create(salt, (x, y, z) -> {
                 SinglePointContext point = new SinglePointContext(Mth.floor(x), Mth.floor(y), Mth.floor(z));

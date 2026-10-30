@@ -17,6 +17,8 @@ public final class AntarchyFabricClientNetworking {
     }
 
     public static void register() {
+        ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ElythiaEventPayload.TYPE, (payload, context) ->
+                context.client().execute(() -> com.craisinlord.antarchy.content.client.ElythiaEventClient.handle(payload)));
         ClientPlayNetworking.registerGlobalReceiver(AntarchyGameResultPayload.TYPE, (payload, context) ->
                 context.client().execute(() -> com.craisinlord.antarchy.content.client.AntarchyGameClientState.update(payload)));
         com.craisinlord.antarchy.content.network.AntarchyGameNetworking.setSender(ClientPlayNetworking::send);

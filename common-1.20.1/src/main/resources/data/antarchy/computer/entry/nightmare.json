@@ -17,5 +17,6 @@
     {
       "item": "antarchy:nightmare_scale"
     }
-  ]
+  ],
+  "lookup": ["antarchy:nightmare_scale", "antarchy:nightmare_sword", "antarchy:nightmare_spawn_egg"]
 }

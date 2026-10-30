@@ -46,7 +46,7 @@
             "argument2": {
               "type": "minecraft:range_choice",
               "input": "antarchy:elythia_continents",
-              "min_inclusive": -0.6,
+              "min_inclusive": -1000000.0,
               "max_exclusive": -0.3,
               "when_in_range": {
                 "type": "minecraft:range_choice",
@@ -55,58 +55,18 @@
                   "argument": "antarchy:elythia_river_raw"
                 },
                 "min_inclusive": 0.0,
-                "max_exclusive": 0.06,
+                "max_exclusive": 0.2,
                 "when_in_range": {
                   "type": "minecraft:mul",
                   "argument1": {
-                    "type": "minecraft:range_choice",
-                    "input": {
-                      "type": "minecraft:add",
-                      "argument1": {
-                        "type": "minecraft:abs",
-                        "argument": {
-                          "type": "minecraft:add",
-                          "argument1": {
-                            "type": "minecraft:mul",
-                            "argument1": "antarchy:elythia_river_gradient_x",
-                            "argument2": "antarchy:elythia_continent_gradient_z"
-                          },
-                          "argument2": {
-                            "type": "minecraft:mul",
-                            "argument1": -1.0,
-                            "argument2": {
-                              "type": "minecraft:mul",
-                              "argument1": "antarchy:elythia_river_gradient_z",
-                              "argument2": "antarchy:elythia_continent_gradient_x"
-                            }
-                          }
-                        }
-                      },
-                      "argument2": {
-                        "type": "minecraft:mul",
-                        "argument1": -0.7,
-                        "argument2": {
-                          "type": "minecraft:abs",
-                          "argument": {
-                            "type": "minecraft:add",
-                            "argument1": {
-                              "type": "minecraft:mul",
-                              "argument1": "antarchy:elythia_river_gradient_x",
-                              "argument2": "antarchy:elythia_continent_gradient_x"
-                            },
-                            "argument2": {
-                              "type": "minecraft:mul",
-                              "argument1": "antarchy:elythia_river_gradient_z",
-                              "argument2": "antarchy:elythia_continent_gradient_z"
-                            }
-                          }
-                        }
-                      }
+                    "type": "antarchy:elythia_river_coast_fade",
+                    "argument": {
+                      "type": "minecraft:noise",
+                      "noise": "antarchy:elythia_river",
+                      "xz_scale": 0.5,
+                      "y_scale": 0.0
                     },
-                    "min_inclusive": -1000000.0,
-                    "max_exclusive": 0.0,
-                    "when_in_range": 1.0,
-                    "when_out_of_range": 0.0
+                    "continents": "antarchy:elythia_continents"
                   },
                   "argument2": {
                     "type": "minecraft:spline",

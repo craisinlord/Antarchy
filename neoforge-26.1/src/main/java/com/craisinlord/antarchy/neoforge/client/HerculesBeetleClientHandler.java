@@ -32,6 +32,7 @@ public final class HerculesBeetleClientHandler {
         HerculesBeetleImpactShakeClientState.tick();
         KingJudgmentFlashClientState.tick();
         HordeClientState.tick();
+            com.craisinlord.antarchy.content.client.ElythiaEventClient.tick();
 
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;

@@ -27,5 +27,6 @@
     {
       "item": "antarchy:prince_egg"
     }
-  ]
+  ],
+  "lookup": ["antarchy:king_scale"]
 }

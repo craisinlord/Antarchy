@@ -236,28 +236,6 @@
         "type": "minecraft:block",
         "result_state": "antarchy:broodstone"
       }
-    },
-    {
-      "type": "minecraft:condition",
-      "if_true": {
-        "type": "minecraft:not",
-        "invert": {
-          "type": "minecraft:y_above",
-          "add_stone_depth": false,
-          "anchor": {
-            "absolute": 40
-          },
-          "surface_depth_multiplier": 0
-        }
-      },
-      "then_run": {
-        "type": "minecraft:block",
-        "result_state": "antarchy:myrmite"
-      }
-    },
-    {
-      "type": "minecraft:block",
-      "result_state": "antarchy:myrmite"
     }
   ]
 }

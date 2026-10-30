@@ -1,6 +1,7 @@
 {
   "category": "antarchy:general",
   "title": "guide.antarchy.disk.rainbow_ant.title",
+  "description": "guide.antarchy.disk.rainbow_ant.description",
   "entries": [
     "antarchy:rainbow_ant"
   ]

@@ -752,11 +752,19 @@
     "tooltip.antarchy.glimmer_sigil.toreterror":  "Calls the Glimmer Toreterror to its arena",
     "tooltip.antarchy.glimmer_sigil.alpha_mantis":  "Calls the Glimmer Alpha Mantis to the Ruined Arena",
     "tooltip.antarchy.glimmer_sigil.use":  "Hold use at the boss's home after defeating it",
-    "message.antarchy.glimmer_sigil.peaceful":  "The sigil stays dim in Peaceful",
-    "message.antarchy.glimmer_sigil.not_defeated":  "You must defeat this boss before you can call its memory",
-    "message.antarchy.glimmer_sigil.wrong_site":  "The sigil only answers at the boss's home",
-    "message.antarchy.glimmer_sigil.occupied":  "This arena is already held by its guardian",
-    "message.antarchy.glimmer_sigil.no_space":  "There is no room for the memory to take shape",
+    "message.antarchy.glimmer_sigil.peaceful":  "The sigil stays dim in Peaceful difficulty",
+    "message.antarchy.glimmer_sigil.not_defeated":  "The sigil stays dim: defeat the %s first (advancement: %s)",
+    "message.antarchy.glimmer_sigil.wrong_site":  "The sigil stays dim: it only answers %s",
+    "message.antarchy.glimmer_sigil.occupied":  "The sigil stays dim: a %s already guards this place",
+    "message.antarchy.glimmer_sigil.site.toreterror":  "inside a Toreterror Arena",
+    "message.antarchy.glimmer_sigil.site.alpha_mantis":  "inside the Ruined Arena",
+    "message.antarchy.glimmer_sigil.site.emperor_scorpion":  "in the Dream Dunes",
+    "message.antarchy.glimmer_sigil.site.brutalfly":  "in the cocoon forests of Elythia",
+    "message.antarchy.glimmer_sigil.site.hercules_beetle":  "in the Cavaryn",
+    "message.antarchy.glimmer_sigil.site.kraken":  "over the oceans of Elythia",
+    "message.antarchy.glimmer_sigil.site.king":  "at a Royal Shrine or the King's Tree",
+    "message.antarchy.glimmer_sigil.site.queen":  "at a Royal Shrine or anywhere in the Underside",
+    "message.antarchy.glimmer_sigil.no_space":  "The sigil stays dim: there is no room here for the memory to take shape",
     "message.antarchy.glimmer_sigil.summoned":  "A glimmering memory takes shape",
     "item.antarchy.glimmer_bottle.contains":  "Contains: %s",
     "glimmer_variant.antarchy.apple_cow":  "Apple Cow",
@@ -816,8 +824,13 @@
     "item.antarchy.mantis_spawn_egg":  "Mantis Spawn Egg",
     "item.antarchy.alpha_mantis_spawn_egg":  "Alpha Mantis Spawn Egg",
     "biome.antarchy.moleworm_caves":  "Moleworm Caves",
+    "biome.antarchy.festering_wastes":  "Festering Wastes",
+    "biome.antarchy.corkscrew_thicket":  "Corkscrew Thicket",
+    "biome.antarchy.ossuary_wastes":  "Ossuary Wastes",
     "biome.antarchy.primordial_plains":  "Primordial Plains",
     "biome.antarchy.primordial_massif":  "Primordial Massif",
+    "biome.antarchy.shelfback_highlands":  "Shelfback Highlands",
+    "biome.antarchy.glimmering_falls":  "Glimmering Falls",
     "biome.antarchy.truffalo_forest":  "Truffalo Forest",
     "biome.antarchy.truffalo_spires":  "Truffalo Spires",
     "biome.antarchy.elythia_ocean":  "Elythian Ocean",
@@ -1413,6 +1426,23 @@
     "block.antarchy.myrmite_coal_ore":  "Myrmite Coal Ore",
     "block.antarchy.broodstone_uranium_ore":  "Broodstone Uranium Ore",
     "block.antarchy.broodstone_titanium_ore":  "Broodstone Titanium Ore",
+    "block.antarchy.myrmite_copper_ore":  "Myrmite Copper Ore",
+    "block.antarchy.broodstone_copper_ore":  "Broodstone Copper Ore",
+    "block.antarchy.myrmite_iron_ore":  "Myrmite Iron Ore",
+    "block.antarchy.broodstone_iron_ore":  "Broodstone Iron Ore",
+    "block.antarchy.myrmite_gold_ore":  "Myrmite Gold Ore",
+    "block.antarchy.broodstone_gold_ore":  "Broodstone Gold Ore",
+    "block.antarchy.myrmite_redstone_ore":  "Myrmite Redstone Ore",
+    "block.antarchy.broodstone_redstone_ore":  "Broodstone Redstone Ore",
+    "block.antarchy.myrmite_lapis_ore":  "Myrmite Lapis Lazuli Ore",
+    "block.antarchy.broodstone_lapis_ore":  "Broodstone Lapis Lazuli Ore",
+    "block.antarchy.myrmite_diamond_ore":  "Myrmite Diamond Ore",
+    "block.antarchy.broodstone_diamond_ore":  "Broodstone Diamond Ore",
+    "block.antarchy.myrmite_emerald_ore":  "Myrmite Emerald Ore",
+    "block.antarchy.broodstone_emerald_ore":  "Broodstone Emerald Ore",
+    "block.antarchy.myrmite_fossil":  "Myrmite Fossil",
+    "block.antarchy.broodstone_fossil":  "Broodstone Fossil",
+    "item.antarchy.fossilized":  "Fossilized %s",
     "item.antarchy.raw_bug_meat":  "Raw Bug Meat",
     "item.antarchy.cooked_bug_meat":  "Cooked Bug Meat",
     "item.antarchy.hercules_horn":  "Hercules Horn",
@@ -1739,4 +1769,23 @@
     "guide.antarchy.archive_folder.elythia": "Elythia",
     "guide.antarchy.archive_folder.cavaryn": "Cavaryn",
     "guide.antarchy.archive_folder.thoraxis": "Thoraxis"
+    ,"guide.antarchy.disk.trayaurus_lab_notes.title": "DR. T'S LAB NOTES"
+    ,"guide.antarchy.disk.elythia.description": "Elythia field exam."
+    ,"guide.antarchy.disk.cavaryn.description": "Cavaryn field exam."
+    ,"guide.antarchy.disk.thoraxis.description": "Thoraxis field exam. Nightmare record."
+    ,"guide.antarchy.disk.brutalfly.description": "What's in the cocoons."
+    ,"guide.antarchy.disk.flying_squirrel.description": "Nuts. Trees. Drama."
+    ,"guide.antarchy.disk.glimmer.description": "Every Glimmer variant."
+    ,"guide.antarchy.disk.hercules_beetle.description": "Survive it. Tame it."
+    ,"guide.antarchy.disk.high_fructose_corn_syrup.description": "Makes any food better."
+    ,"guide.antarchy.disk.king.description": "Find the King."
+    ,"guide.antarchy.disk.queen.description": "Find the Queen."
+    ,"guide.antarchy.disk.kraken.description": "How to call the Kraken."
+    ,"guide.antarchy.disk.rainbow_ant.description": "Key to the multiverse."
+    ,"guide.antarchy.disk.temporal_fields.description": "Bending time."
+    ,"guide.antarchy.disk.bloodglass.description": "Hearts made of glass."
+    ,"guide.antarchy.disk.vortex.description": "Pull or push."
+    ,"guide.antarchy.disk.toreterror_arena.description": "Find the Toreterror."
+    ,"guide.antarchy.disk.basilisk_game.description": "Don't bite your tail."
+    ,"guide.antarchy.disk.trayaurus_lab_notes.description": "From the lab."
 }

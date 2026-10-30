@@ -23,6 +23,7 @@ import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBiowartGutDressi
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBroodNestDressingFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCarapaceRiftDressingFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCavityFunction;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCavityUnionFunction;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynGlowcapGrottoDressingFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynMolewormWarrenDressingFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWormBoreDressingFeature;
@@ -159,6 +160,16 @@ public final class AntarchyNeoforgeMisc {
             RECIPE_SERIALIZERS.register("portal_gun_variant", () -> com.craisinlord.antarchy.content.recipe.PortalGunVariantRecipe.SERIALIZER);
     public static final DeferredHolder<net.minecraft.world.item.crafting.RecipeSerializer<?>, net.minecraft.world.item.crafting.RecipeSerializer<com.craisinlord.antarchy.content.recipe.BigBerthaVariantRecipe>> BIG_BERTHA_VARIANT_SERIALIZER =
             RECIPE_SERIALIZERS.register("big_bertha_variant", () -> com.craisinlord.antarchy.content.recipe.BigBerthaVariantRecipe.SERIALIZER);
+    public static final DeferredHolder<net.minecraft.core.component.DataComponentType<?>, net.minecraft.core.component.DataComponentType<net.minecraft.resources.ResourceLocation>> FOSSIL_ENTITY_COMPONENT =
+            DATA_COMPONENT_TYPES.register("fossil_entity",
+                    () -> net.minecraft.core.component.DataComponentType.<net.minecraft.resources.ResourceLocation>builder()
+                            .persistent(net.minecraft.resources.ResourceLocation.CODEC)
+                            .networkSynchronized(net.minecraft.resources.ResourceLocation.STREAM_CODEC)
+                            .build());
+    public static final DeferredHolder<net.minecraft.world.item.crafting.RecipeSerializer<?>, net.minecraft.world.item.crafting.RecipeSerializer<com.craisinlord.antarchy.content.recipe.FossilCookingRecipes.Smelting>> FOSSIL_SMELTING_SERIALIZER =
+            RECIPE_SERIALIZERS.register("fossil_smelting", () -> com.craisinlord.antarchy.content.recipe.FossilCookingRecipes.SMELTING_SERIALIZER);
+    public static final DeferredHolder<net.minecraft.world.item.crafting.RecipeSerializer<?>, net.minecraft.world.item.crafting.RecipeSerializer<com.craisinlord.antarchy.content.recipe.FossilCookingRecipes.Blasting>> FOSSIL_BLASTING_SERIALIZER =
+            RECIPE_SERIALIZERS.register("fossil_blasting", () -> com.craisinlord.antarchy.content.recipe.FossilCookingRecipes.BLASTING_SERIALIZER);
 
     public static final DeferredHolder<Attribute, Attribute> DOUBLE_DAMAGE_CHANCE = ATTRIBUTES.register(
             "double_damage_chance",
@@ -377,6 +388,8 @@ public final class AntarchyNeoforgeMisc {
             () -> new ElythiaPondFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, LumenPoolFeature> LUMEN_POOL = FEATURES.register("lumen_pools",
             () -> new LumenPoolFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, GlimmeringFallFeature> GLIMMERING_FALL = FEATURES.register("glimmering_fall",
+            () -> new GlimmeringFallFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, LumenLilyPadFeature> LUMEN_LILY_PADS = FEATURES.register("lumen_lily_pads",
             () -> new LumenLilyPadFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.GlimmeringReedFeature> GLIMMERING_REEDS = FEATURES.register("glimmering_reeds",
@@ -409,6 +422,10 @@ public final class AntarchyNeoforgeMisc {
             () -> new TruffaloSpireFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, FallenOuranwoodFeature> FALLEN_OURANWOOD_TREE = FEATURES.register("fallen_ouranwood_tree",
             () -> new FallenOuranwoodFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.RiverSteppingStonesFeature> RIVER_STEPPING_STONES = FEATURES.register("river_stepping_stones",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.RiverSteppingStonesFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.RiverLogBridgeFeature> RIVER_LOG_BRIDGE = FEATURES.register("river_log_bridge",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.RiverLogBridgeFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, FungalMushroomFeature> FUNGAL_MUSHROOM = FEATURES.register("fungal_mushroom",
             () -> new FungalMushroomFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, ThoraxisFissureFeature> THORAXIS_FISSURE = FEATURES.register("thoraxis_fissure",
@@ -461,6 +478,10 @@ public final class AntarchyNeoforgeMisc {
             () -> new CavarynMolewormWarrenDressingFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, CavarynCarapaceRiftDressingFeature> CAVARYN_CARAPACE_RIFT_DRESSING = FEATURES.register("cavaryn_carapace_rift_dressing",
             () -> new CavarynCarapaceRiftDressingFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynSpireDressingFeature> CAVARYN_SPIRE_DRESSING = FEATURES.register("cavaryn_spire_dressing",
+            () -> new com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynSpireDressingFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynRibcageDressingFeature> CAVARYN_RIBCAGE_DRESSING = FEATURES.register("cavaryn_ribcage_dressing",
+            () -> new com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynRibcageDressingFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, CavarynBiowartGutDressingFeature> CAVARYN_BIOWART_GUT_DRESSING = FEATURES.register("cavaryn_biowart_gut_dressing",
             () -> new CavarynBiowartGutDressingFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, CavarynWallAmberMossFeature> CAVARYN_WALL_AMBER_MOSS = FEATURES.register("cavaryn_wall_amber_moss",
@@ -497,6 +518,8 @@ public final class AntarchyNeoforgeMisc {
             () -> ElythiaBiomeSource.CODEC);
     public static final DeferredHolder<MapCodec<? extends BiomeSource>, MapCodec<ThoraxisBiomeSource>> THORAXIS_BIOME_SOURCE = BIOME_SOURCES.register("thoraxis_biome_source",
             () -> ThoraxisBiomeSource.CODEC);
+    public static final DeferredHolder<MapCodec<? extends BiomeSource>, MapCodec<com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBiomeSource>> CAVARYN_BIOME_SOURCE = BIOME_SOURCES.register("cavaryn_biome_source",
+            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBiomeSource.CODEC);
 
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaRiverCarveFunction>> ELYTHIA_RIVER_CARVE = DENSITY_FUNCTION_TYPES.register("elythia_river_carve",
             () -> ElythiaRiverCarveFunction.CODEC);
@@ -509,16 +532,32 @@ public final class AntarchyNeoforgeMisc {
             () -> ElythiaRiverProject.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaRiverSpan>> ELYTHIA_RIVER_SPAN = DENSITY_FUNCTION_TYPES.register("elythia_river_span",
             () -> ElythiaRiverSpan.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaRiverCoastFade>> ELYTHIA_RIVER_COAST_FADE = DENSITY_FUNCTION_TYPES.register("elythia_river_coast_fade",
+            () -> ElythiaRiverCoastFade.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaBasinFill>> ELYTHIA_BASIN_FILL = DENSITY_FUNCTION_TYPES.register("elythia_basin_fill",
+            () -> ElythiaBasinFill.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaColumnCache>> ELYTHIA_COLUMN_CACHE = DENSITY_FUNCTION_TYPES.register("elythia_column_cache",
             () -> ElythiaColumnCache.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaRiverFlatten>> ELYTHIA_RIVER_FLATTEN = DENSITY_FUNCTION_TYPES.register("elythia_river_flatten",
             () -> ElythiaRiverFlatten.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaShelfTerrace>> ELYTHIA_SHELF_TERRACE = DENSITY_FUNCTION_TYPES.register("elythia_shelf_terrace",
+            () -> ElythiaShelfTerrace.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaShelfLip>> ELYTHIA_SHELF_LIP = DENSITY_FUNCTION_TYPES.register("elythia_shelf_lip",
+            () -> ElythiaShelfLip.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ElythiaButteFunction>> ELYTHIA_BUTTE = DENSITY_FUNCTION_TYPES.register("elythia_butte",
+            () -> ElythiaButteFunction.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ThoraxisTerrainFunction>> THORAXIS_TERRAIN = DENSITY_FUNCTION_TYPES.register("thoraxis_terrain",
             () -> ThoraxisTerrainFunction.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<CavarynWormBoreFunction>> CAVARYN_WORM_BORE = DENSITY_FUNCTION_TYPES.register("cavaryn_worm_bore",
             () -> CavarynWormBoreFunction.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<CavarynCavityFunction>> CAVARYN_CAVITY = DENSITY_FUNCTION_TYPES.register("cavaryn_cavity",
             () -> CavarynCavityFunction.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynSpireFunction>> CAVARYN_SPIRES = DENSITY_FUNCTION_TYPES.register("cavaryn_spires",
+            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynSpireFunction.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynRibcageFunction>> CAVARYN_RIBCAGE = DENSITY_FUNCTION_TYPES.register("cavaryn_ribcage",
+            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynRibcageFunction.CODEC);
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<CavarynCavityUnionFunction>> CAVARYN_CAVITY_UNION = DENSITY_FUNCTION_TYPES.register("cavaryn_cavity_union",
+            () -> CavarynCavityUnionFunction.CODEC);
     public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<ThoraxisUndersideMountainsFunction>> THORAXIS_UNDERSIDE_MOUNTAINS = DENSITY_FUNCTION_TYPES.register("thoraxis_underside_mountains",
             () -> ThoraxisUndersideMountainsFunction.CODEC);
 

@@ -35,7 +35,7 @@ public abstract class ElythiaAquiferMixin {
         Aquifer aquifer = original.call(config, samplers, random, volume, fluidPicker);
         for (NoiseGeneratorSettings.DebugFunctionEntry entry : settings.debugFunctions().functions()) {
             if (entry.function() instanceof ElythiaHydrology hydrology) {
-                return new ElythiaAquifer(aquifer, hydrology, samplers);
+                return new ElythiaAquifer(aquifer, hydrology, samplers, settings.noiseRouter().chunkSurfaceLevel());
             }
         }
         return aquifer;

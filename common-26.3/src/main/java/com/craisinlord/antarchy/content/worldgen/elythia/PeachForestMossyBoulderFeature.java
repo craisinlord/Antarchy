@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -11,19 +12,16 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
 public class PeachForestMossyBoulderFeature implements Feature {
     public static final MapCodec<PeachForestMossyBoulderFeature> CODEC = MapCodec.unit(PeachForestMossyBoulderFeature::new);
 
+    @Override
+    public MapCodec<PeachForestMossyBoulderFeature> codec() { return CODEC; }
     private static final int ANGLE_SAMPLES = 16;
 
-    @Override
-    public MapCodec<PeachForestMossyBoulderFeature> codec() {
-        return CODEC;
-    }
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
@@ -114,7 +112,7 @@ public class PeachForestMossyBoulderFeature implements Feature {
         for (int x = -radius; x <= radius; x++) {
             for (int z = -radius; z <= radius; z++) {
                 BlockPos topPos = center.offset(x, 0, z);
-                while (topPos.getY() < level.getMaxY() && isBoulderBlock(level.getBlockState(topPos.above()))) {
+                while (topPos.getY() < (level.getMaxY() + 1) - 1 && isBoulderBlock(level.getBlockState(topPos.above()))) {
                     topPos = topPos.above();
                 }
 

@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.item;
 
+import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget;
@@ -8,9 +9,11 @@ import java.util.List;
 import java.util.Optional;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.DisplayInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -54,15 +57,17 @@ public class GlimmerSigilItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (level.getDifficulty() == Difficulty.PEACEFUL) {
-            if (!level.isClientSide) {
-                this.message(player, "peaceful");
+            if (player instanceof ServerPlayer serverPlayer) {
+                this.fail(serverPlayer, "peaceful");
             }
             return InteractionResultHolder.fail(stack);
         }
         if (level instanceof ServerLevel serverLevel && player instanceof ServerPlayer serverPlayer) {
             String failure = this.validate(serverLevel, serverPlayer).failure();
+            Antarchy.LOGGER.info("[GlimmerSigil] use {} by {} at {}: {}", this.target.bossKey(), player.getName().getString(),
+                    player.blockPosition(), failure == null ? "channel" : failure);
             if (failure != null) {
-                this.message(player, failure);
+                this.fail(serverPlayer, failure);
                 return InteractionResultHolder.fail(stack);
             }
             serverLevel.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -89,16 +94,23 @@ public class GlimmerSigilItem extends Item {
 
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity user) {
+        if (!level.isClientSide) {
+            Antarchy.LOGGER.info("[GlimmerSigil] finishUsingItem reached for {}", this.target.bossKey());
+        }
         if (!(level instanceof ServerLevel serverLevel) || !(user instanceof ServerPlayer player)) {
             return stack;
         }
         Validation validation = this.validate(serverLevel, player);
+        Antarchy.LOGGER.info("[GlimmerSigil] finish {} at {}: {}", this.target.bossKey(), player.blockPosition(),
+                validation.failure() == null ? "valid" : validation.failure());
         if (validation.failure() != null) {
-            this.message(player, validation.failure());
+            this.fail(player, validation.failure());
             return stack;
         }
         Mob boss = this.target.entityType().get().create(serverLevel);
         if (boss == null) {
+            Antarchy.LOGGER.info("[GlimmerSigil] {} entity could not be created", this.target.bossKey());
+            this.fail(player, "no_space");
             return stack;
         }
         if (boss instanceof GlimmerEcho echo) {
@@ -106,7 +118,7 @@ public class GlimmerSigilItem extends Item {
         }
         Vec3 spawn = this.findSpawn(serverLevel, boss, validation.site(), player.blockPosition());
         if (spawn == null) {
-            this.message(player, "no_space");
+            this.fail(player, "no_space");
             return stack;
         }
         boss.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(BlockPos.containing(spawn)), MobSpawnType.TRIGGERED, null);
@@ -115,13 +127,23 @@ public class GlimmerSigilItem extends Item {
         }
         boss.setPersistenceRequired();
         boss.setTarget(player);
-        serverLevel.addFreshEntity(boss);
+        boolean added = serverLevel.addFreshEntity(boss);
+        Antarchy.LOGGER.info("[GlimmerSigil] {} spawn at {} (site center {}): added={}", this.target.bossKey(),
+                BlockPos.containing(spawn), validation.site().spawnCenter(), added);
         GlimmerEchoes.burst(serverLevel, spawn.add(0.0D, boss.getBbHeight() * 0.5D, 0.0D), boss.getBbWidth(), 80);
         serverLevel.playSound(null, spawn.x, spawn.y, spawn.z, SoundEvents.BEACON_ACTIVATE, SoundSource.HOSTILE, 2.0F, 0.8F);
-        this.message(player, "summoned");
+        player.displayClientMessage(Component.translatable("message.antarchy.glimmer_sigil.summoned")
+                .withStyle(ChatFormatting.AQUA), false);
         stack.consume(1, player);
         player.getCooldowns().addCooldown(this, 40);
         return stack;
+    }
+
+    @Override
+    public void releaseUsing(ItemStack stack, Level level, LivingEntity user, int timeLeft) {
+        if (!level.isClientSide) {
+            Antarchy.LOGGER.info("[GlimmerSigil] released {} with {} ticks left", this.target.bossKey(), timeLeft);
+        }
     }
 
     @Override
@@ -221,9 +243,30 @@ public class GlimmerSigilItem extends Item {
         return level.noCollision(boss) ? boss.position() : null;
     }
 
-    private void message(Player player, String key) {
-        player.displayClientMessage(Component.translatable("message.antarchy.glimmer_sigil." + key)
-                .withStyle(ChatFormatting.AQUA), true);
+    private void fail(ServerPlayer player, String key) {
+        player.displayClientMessage(this.failureMessage(player, key).withStyle(ChatFormatting.AQUA), false);
+        player.serverLevel().playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.PLAYERS, 1.0F, 0.6F);
+        player.getCooldowns().addCooldown(this, 20);
+    }
+
+    private MutableComponent failureMessage(ServerPlayer player, String key) {
+        String base = "message.antarchy.glimmer_sigil." + key;
+        Component boss = this.target.entityType().get().getDescription();
+        return switch (key) {
+            case "not_defeated" -> Component.translatable(base, boss, this.advancementTitle(player));
+            case "wrong_site" -> Component.translatable(base,
+                    Component.translatable("message.antarchy.glimmer_sigil.site." + this.target.bossKey()));
+            case "occupied" -> Component.translatable(base, boss);
+            default -> Component.translatable(base);
+        };
+    }
+
+    private Component advancementTitle(ServerPlayer player) {
+        AdvancementHolder holder = player.server.getAdvancements().get(this.target.defeatAdvancement());
+        return holder == null ? Component.literal(this.target.defeatAdvancement().toString())
+                : holder.value().display().map(DisplayInfo::getTitle)
+                        .orElse(Component.literal(this.target.defeatAdvancement().toString()));
     }
 
     private record Validation(@Nullable GlimmerSite.Match site, @Nullable String failure) {

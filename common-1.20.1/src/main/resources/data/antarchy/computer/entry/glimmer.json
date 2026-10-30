@@ -17,5 +17,6 @@
   "entity": "antarchy:glimmer",
   "rotation": 45,
   "render_scale": 0.8,
-  "green_tint": false
+  "green_tint": false,
+  "lookup": ["antarchy:spirit_apple", "antarchy:glimmer_bottle", "antarchy:glimmer_spawn_egg"]
 }

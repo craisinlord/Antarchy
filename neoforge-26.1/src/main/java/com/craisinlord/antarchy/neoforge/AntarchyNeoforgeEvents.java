@@ -25,6 +25,7 @@ public final class AntarchyNeoforgeEvents {
         DimensionalTearCommand.register(event.getDispatcher());
         QueenLocateCommand.register(event.getDispatcher());
         RoyalCommand.register(event.getDispatcher());
+        com.craisinlord.antarchy.content.command.ElythiaCommand.register(event.getDispatcher());
         com.craisinlord.antarchy.content.command.PortalGunCommand.register(event.getDispatcher());
     }
 

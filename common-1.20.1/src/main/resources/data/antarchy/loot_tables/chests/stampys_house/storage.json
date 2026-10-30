@@ -192,6 +192,15 @@
         "min": 4.0,
         "max": 8.0
       }
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "name": "antarchy:inject/antroid_phone"
+        }
+      ]
     }
   ],
   "random_sequence": "antarchy:chests/stampys_house/storage"

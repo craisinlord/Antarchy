@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "antarchy:block/myrmite_redstone_ore"
+    },
+    "lit=true": {
+      "model": "antarchy:block/myrmite_redstone_ore"
+    }
+  }
+}

@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.sizeablefoliage.block.BigBushBlock;
 import com.craisinlord.sizeablefoliage.block.VeryTallGrassBlock;
@@ -16,7 +17,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import java.util.HashMap;
@@ -24,24 +24,21 @@ import java.util.Map;
 
 public class ElythiaFloraFeature implements Feature {
     public static final MapCodec<ElythiaFloraFeature> FOREST_CODEC = MapCodec.unit(() -> new ElythiaFloraFeature(Variant.FOREST));
+
     public static final MapCodec<ElythiaFloraFeature> MEADOW_CODEC = MapCodec.unit(() -> new ElythiaFloraFeature(Variant.MEADOW));
+
     public static final MapCodec<ElythiaFloraFeature> PRIMORDIAL_PLAINS_CODEC = MapCodec.unit(() -> new ElythiaFloraFeature(Variant.PRIMORDIAL_PLAINS));
+
     public static final MapCodec<ElythiaFloraFeature> PEACH_FOREST_CODEC = MapCodec.unit(() -> new ElythiaFloraFeature(Variant.PEACH_FOREST));
+
     public static final MapCodec<ElythiaFloraFeature> BUTTERFLY_FIELDS_CODEC = MapCodec.unit(() -> new ElythiaFloraFeature(Variant.BUTTERFLY_FIELDS));
+
     public static final MapCodec<ElythiaFloraFeature> FLOWER_FOREST_MILKWEED_CODEC = MapCodec.unit(() -> new ElythiaFloraFeature(Variant.FLOWER_FOREST_MILKWEED));
-
-    private static final String SIZEABLE_FOLIAGE_MODID = "sizeable_foliage";
-    private static final Identifier CAMELLIA_ID = Identifier.fromNamespaceAndPath("antarchy", "camellia");
-    private static final Identifier SPIDER_LILY_ID = Identifier.fromNamespaceAndPath("antarchy", "spider_lily");
-    private static final net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> PRIMORDIAL_GROUND = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, Identifier.fromNamespaceAndPath("antarchy", "primordial_ground"));
-
-    private final Variant variant;
 
     public ElythiaFloraFeature(Variant variant) {
         this.variant = variant;
     }
 
-    @Override
     public MapCodec<ElythiaFloraFeature> codec() {
         return switch (this.variant) {
             case FOREST -> FOREST_CODEC;
@@ -52,6 +49,16 @@ public class ElythiaFloraFeature implements Feature {
             case FLOWER_FOREST_MILKWEED -> FLOWER_FOREST_MILKWEED_CODEC;
         };
     }
+    private static final String SIZEABLE_FOLIAGE_MODID = "sizeable_foliage";
+    private static volatile Block veryShortGrass;
+    private static volatile Block veryTallGrass;
+    private static volatile Block torchflowerBush;
+    private static final Identifier CAMELLIA_ID = Identifier.fromNamespaceAndPath("antarchy", "camellia");
+    private static final Identifier SPIDER_LILY_ID = Identifier.fromNamespaceAndPath("antarchy", "spider_lily");
+    private static final net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> PRIMORDIAL_GROUND = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, Identifier.fromNamespaceAndPath("antarchy", "primordial_ground"));
+
+    private final Variant variant;
+
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
@@ -232,18 +239,35 @@ public class ElythiaFloraFeature implements Feature {
     }
 
     private static Block veryShortGrass() {
-        Block block = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath(SIZEABLE_FOLIAGE_MODID, "very_short_grass"));
-        return block == Blocks.AIR ? Blocks.SHORT_GRASS : block;
+        Block block = veryShortGrass;
+        if (block == null) {
+            block = foliageBlock("very_short_grass", Blocks.SHORT_GRASS);
+            veryShortGrass = block;
+        }
+        return block;
     }
 
     private static Block veryTallGrass() {
-        Block block = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath(SIZEABLE_FOLIAGE_MODID, "very_tall_grass"));
-        return block == Blocks.AIR ? Blocks.TALL_GRASS : block;
+        Block block = veryTallGrass;
+        if (block == null) {
+            block = foliageBlock("very_tall_grass", Blocks.TALL_GRASS);
+            veryTallGrass = block;
+        }
+        return block;
     }
 
     private static Block torchflowerBush() {
-        Block block = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath(SIZEABLE_FOLIAGE_MODID, "torchflower_bush"));
-        return block == Blocks.AIR ? Blocks.TORCHFLOWER : block;
+        Block block = torchflowerBush;
+        if (block == null) {
+            block = foliageBlock("torchflower_bush", Blocks.TORCHFLOWER);
+            torchflowerBush = block;
+        }
+        return block;
+    }
+
+    private static Block foliageBlock(String path, Block fallback) {
+        Block block = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath(SIZEABLE_FOLIAGE_MODID, path));
+        return block == Blocks.AIR ? fallback : block;
     }
 
     private static Block antarchyBlock(Identifier id) {
@@ -532,7 +556,8 @@ public class ElythiaFloraFeature implements Feature {
             case FOREST -> 0.24F;
             default -> 0.45F;
         };
-        if (!isValidGround(level, groundPos) || level.getBlockState(groundPos).is(PRIMORDIAL_GROUND) || random.nextFloat() > overgrowChance) {
+        BlockState groundState = level.getBlockState(groundPos);
+        if (!isValidGround(groundState) || groundState.is(PRIMORDIAL_GROUND) || random.nextFloat() > overgrowChance) {
             return;
         }
 
@@ -560,22 +585,23 @@ public class ElythiaFloraFeature implements Feature {
     }
 
     private static boolean isValidGround(WorldGenLevel level, BlockPos pos) {
-        BlockState state = level.getBlockState(pos);
+        return isValidGround(level.getBlockState(pos));
+    }
+
+    private static boolean isValidGround(BlockState state) {
         return isIntendedGround(state) && !state.is(BlockTags.LOGS) && !state.is(BlockTags.LEAVES) && !state.is(Blocks.TUFF);
     }
 
     private static boolean isValidPlantSpot(WorldGenLevel level, BlockPos plantPos, BlockPos groundPos) {
-        if (!isOpenPlantSpot(level, plantPos) || !isValidGround(level, groundPos)) {
+        if (!isOpenPlantSpot(level, plantPos)) {
             return false;
         }
 
         BlockState topState = level.getBlockState(groundPos);
-        return hasPlantHeadroom(level, plantPos, 3)
-                && Blocks.SHORT_GRASS.defaultBlockState().canSurvive(level, plantPos)
-                && !topState.is(BlockTags.LOGS)
-                && !topState.is(BlockTags.LEAVES)
-                && !topState.is(Blocks.TUFF)
-                && !topState.is(Blocks.TUFF_SLAB);
+        return isValidGround(topState)
+                && !topState.is(Blocks.TUFF_SLAB)
+                && hasPlantHeadroom(level, plantPos, 3)
+                && Blocks.SHORT_GRASS.defaultBlockState().canSurvive(level, plantPos);
     }
 
     private static boolean isIntendedGround(BlockState state) {
@@ -596,7 +622,7 @@ public class ElythiaFloraFeature implements Feature {
     }
 
     private static boolean hasPlantHeadroom(WorldGenLevel level, BlockPos pos, int height) {
-        for (int y = 0; y < height; y++) {
+        for (int y = 1; y < height; y++) {
             if (!isOpenPlantSpot(level, pos.above(y))) {
                 return false;
             }

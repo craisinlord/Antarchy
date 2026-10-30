@@ -1,0 +1,17 @@
+{
+  "sender": "trayaurus@antmail.com",
+  "sender_display": "Dr. Trayaurus",
+  "sender_avatar_item": "antarchy:diamond_minecart",
+  "subject": "About the squid",
+  "body": "A word of warning about the squid. They have a very big, very angry relative.\n\nIf you kill one while you have Bad Omen it might come up out of the sea after you, and the worse the omen the better the odds. And it doesn't just rule the sea. It commands the skies too. Somehow.\n\nYour old friend,\nDr. T\n\n@archive:antarchy:kraken",
+  "trigger": {
+    "type": "advancement",
+    "value": "antarchy:hints/kraken_hint",
+    "delay_minutes": 5
+  },
+  "conditions": {
+    "not_advancements": [
+      "antarchy:davy_jones_locker"
+    ]
+  }
+}

@@ -26,6 +26,14 @@
     "antarchy:uranium_door",
     "antarchy:uranium_trapdoor",
     "antarchy:uranium_bars",
-    "antarchy:uranium_bulb"
+    "antarchy:uranium_bulb",
+    "antarchy:myrmite_gold_ore",
+    "antarchy:broodstone_gold_ore",
+    "antarchy:myrmite_redstone_ore",
+    "antarchy:broodstone_redstone_ore",
+    "antarchy:myrmite_diamond_ore",
+    "antarchy:broodstone_diamond_ore",
+    "antarchy:myrmite_emerald_ore",
+    "antarchy:broodstone_emerald_ore"
   ]
 }

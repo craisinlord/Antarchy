@@ -15,7 +15,7 @@ public record TruffaloTreeConfiguration(
 ) implements FeatureConfiguration {
     public static final Codec<TruffaloTreeConfiguration> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             BlockStateProvider.CODEC.fieldOf("trunk_provider").forGetter(TruffaloTreeConfiguration::trunkProvider),
-            IntProviders.codec(4, 18).fieldOf("height").forGetter(TruffaloTreeConfiguration::height),
+            IntProviders.codec(4, 32).fieldOf("height").forGetter(TruffaloTreeConfiguration::height),
             Codec.INT.optionalFieldOf("tuft_radius", 1).forGetter(TruffaloTreeConfiguration::tuftRadius),
             Codec.INT.optionalFieldOf("tuft_height", 3).forGetter(TruffaloTreeConfiguration::tuftHeight)
     ).apply(instance, TruffaloTreeConfiguration::new));

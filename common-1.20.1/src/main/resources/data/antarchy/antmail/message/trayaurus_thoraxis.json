@@ -1,0 +1,12 @@
+{
+  "sender": "trayaurus@antmail.com",
+  "sender_display": "Dr. Trayaurus",
+  "sender_avatar_item": "antarchy:diamond_minecart",
+  "subject": "Which way is up?",
+  "body": "So you made it to Thoraxis! I've only read about it and honestly that was enough for me. Gravity is all wrong there, sometimes it's completely upside down, and the water flows up instead of down.\n\nIf you see a tear in the air, it has a twin somewhere else. Walk into one and you'll pop out of the other one, wherever that is.\n\nAlso don't go too deep. There's something living down there and I'd rather not think about it.\n\nYour old friend,\nDr. T",
+  "trigger": {
+    "type": "advancement",
+    "value": "antarchy:visit_thoraxis",
+    "delay_minutes": 5
+  }
+}

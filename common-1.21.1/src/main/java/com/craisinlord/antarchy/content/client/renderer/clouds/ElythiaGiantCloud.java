@@ -84,12 +84,12 @@ public final class ElythiaGiantCloud {
                     Math.cos(lean) * leanAmount * 0.4D, Math.sin(lean) * leanAmount * 0.4D, false);
         }
 
-        int skirt = 5 + random.nextInt(3);
+        int skirt = 9 + random.nextInt(4);
         for (int i = 0; i < skirt; i++) {
             double angle = random.nextDouble() * TWO_PI;
-            double distance = baseRadius * (1.0D + random.nextDouble() * 0.6D);
-            double radius = baseRadius * (0.35D + random.nextDouble() * 0.2D);
-            spheres.add(new Sphere(Math.cos(angle) * distance, -radius * 0.35D, Math.sin(angle) * distance, radius));
+            double distance = baseRadius * (1.0D + random.nextDouble() * 1.0D);
+            double radius = baseRadius * (0.25D + random.nextDouble() * 0.17D);
+            spheres.add(new Sphere(Math.cos(angle) * distance, -radius * 0.55D, Math.sin(angle) * distance, radius));
         }
 
         return rasterize(spheres);

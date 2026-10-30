@@ -42,6 +42,7 @@ public final class CavarynCreatureSpawner {
     private static final int ROLLY_POLLY_WEIGHT = 250;
     private static final int MEMBER_JITTER_RADIUS = 4;
     private static final int MEMBER_VERTICAL_SEARCH = 3;
+    private static final int COLUMN_VERTICAL_SEARCH = 24;
 
     private static final Map<Long, Long> AREA_COOLDOWNS = new HashMap<>();
 
@@ -142,7 +143,7 @@ public final class CavarynCreatureSpawner {
             if (!level.hasChunkAt(new BlockPos(x, origin.getY(), z))) {
                 continue;
             }
-            BlockPos floor = scanColumnForFloor(level, x, z);
+            BlockPos floor = scanColumnForFloor(level, x, z, origin.getY());
             if (floor != null) {
                 return floor;
             }
@@ -150,14 +151,20 @@ public final class CavarynCreatureSpawner {
         return null;
     }
 
-    private static BlockPos scanColumnForFloor(ServerLevel level, int x, int z) {
+    private static BlockPos scanColumnForFloor(ServerLevel level, int x, int z, int centerY) {
         int minY = level.getMinBuildHeight();
         int maxY = level.getMaxBuildHeight() - 1;
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
-        for (int y = minY; y <= maxY; y++) {
-            cursor.set(x, y, z);
-            if (isValidGroundSpawn(level, cursor)) {
-                return cursor.immutable();
+        for (int dy = 0; dy <= COLUMN_VERTICAL_SEARCH; dy++) {
+            for (int sign = -1; sign <= 1; sign += 2) {
+                int y = centerY + dy * sign;
+                if (y < minY || y > maxY || (dy == 0 && sign > 0)) {
+                    continue;
+                }
+                cursor.set(x, y, z);
+                if (isValidGroundSpawn(level, cursor)) {
+                    return cursor.immutable();
+                }
             }
         }
         return null;

@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -9,13 +10,14 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
 public final class LumenPoolFeature implements Feature {
     public static final MapCodec<LumenPoolFeature> CODEC = MapCodec.unit(LumenPoolFeature::new);
 
+    @Override
+    public MapCodec<LumenPoolFeature> codec() { return CODEC; }
     private static final int SMALL_RADIUS_MIN = 2;
     private static final int SMALL_RADIUS_MAX = 4;
     private static final int LARGE_RADIUS_MIN = 5;
@@ -24,10 +26,6 @@ public final class LumenPoolFeature implements Feature {
     private static final int EDGE_DROP = 4;
     private static final float EDGE_POOL_CHANCE = 0.1F;
 
-    @Override
-    public MapCodec<LumenPoolFeature> codec() {
-        return CODEC;
-    }
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {

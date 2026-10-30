@@ -1,46 +1,7 @@
 {
-  "has_precipitation": false,
+  "has_precipitation": true,
   "temperature": 0.78,
   "downfall": 0.95,
-  "attributes": {
-    "minecraft:audio/ambient_sounds": {
-      "mood": {
-        "sound": "minecraft:ambient.crimson_forest.mood",
-        "tick_delay": 6000,
-        "block_search_extent": 8,
-        "offset": 2.0
-      },
-      "additions": {
-        "sound": "antarchy:ambient.elythia.ouranwood_forest",
-        "tick_chance": 0.0005
-      }
-    },
-    "minecraft:audio/background_music": {
-      "default": {
-        "sound": "antarchy:music.game.elythia",
-        "min_delay": 600,
-        "max_delay": 1800,
-        "replace_current_music": true
-      }
-    },
-    "minecraft:visual/ambient_particles": [
-      {
-        "particle": {
-          "type": "minecraft:spore_blossom_air"
-        },
-        "probability": 0.009
-      }
-    ],
-    "minecraft:visual/fog_color": "#7b5cff",
-    "minecraft:visual/sky_color": "#7b5cff",
-    "minecraft:visual/water_fog_color": "#263042"
-  },
-  "effects": {
-    "water_color": "#4c9ef8",
-    "foliage_color": "#2bc12d",
-    "grass_color": "#41ad28",
-    "grass_color_modifier": "none"
-  },
   "spawn_costs": {
     "antarchy:basilisk": {
       "energy_budget": 0.1,
@@ -78,8 +39,8 @@
     ],
     [
       "antarchy:elythia_underground",
-      "minecraft:large_dripstone",
-      "minecraft:pointed_dripstone"
+      "antarchy:elythia_large_dripstone",
+      "antarchy:elythia_pointed_dripstone"
     ],
     [],
     [
@@ -88,7 +49,8 @@
       "antarchy:elythia_brown_ant_nests",
       "antarchy:elythia_rainbow_ant_nests",
       "antarchy:fallen_ouranwood_tree",
-      "antarchy:fungal_mushroom"
+      "antarchy:fungal_mushroom",
+      "antarchy:throwback_nerd_pole"
     ],
     []
   ],
@@ -147,5 +109,44 @@
     "water_creature": [],
     "water_ambient": [],
     "misc": []
+  },
+  "attributes": {
+    "minecraft:visual/fog_color": "#a58dff",
+    "minecraft:visual/sky_color": "#7b5cff",
+    "minecraft:visual/water_fog_color": "#263042",
+    "minecraft:audio/ambient_sounds": {
+      "mood": {
+        "sound": "minecraft:ambient.crimson_forest.mood",
+        "tick_delay": 6000,
+        "block_search_extent": 8,
+        "offset": 2.0
+      },
+      "additions": {
+        "sound": "antarchy:ambient.elythia.ouranwood_forest",
+        "tick_chance": 0.0005
+      }
+    },
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.elythia",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "minecraft:spore_blossom_air"
+        },
+        "probability": 0.009
+      }
+    ]
+  },
+  "effects": {
+    "water_color": "#4c9ef8",
+    "foliage_color": "#2bc12d",
+    "grass_color": "#41ad28",
+    "grass_color_modifier": "none"
   }
 }

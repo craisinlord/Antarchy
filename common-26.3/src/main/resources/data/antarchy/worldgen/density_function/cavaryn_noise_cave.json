@@ -8,8 +8,8 @@
         "type": "minecraft:gradient",
         "axis": "y",
         "from_coordinate": 232,
-        "from_value": 1.45,
         "to_coordinate": 20,
+        "from_value": 1.45,
         "to_value": 0.12
       },
       "right": {
@@ -26,6 +26,12 @@
             "type": "minecraft:abs",
             "input": {
               "type": "minecraft:interval_select",
+              "input": 1,
+              "thresholds": [
+                -0.5,
+                0.0,
+                0.5
+              ],
               "functions": [
                 {
                   "type": "minecraft:mul",
@@ -67,17 +73,6 @@
                   },
                   "right": 2.0
                 }
-              ],
-              "input": {
-                "type": "minecraft:interpolated",
-                "cell_size_xz": 4,
-                "cell_size_y": 8,
-                "input": 1
-              },
-              "thresholds": [
-                -0.5,
-                0.0,
-                0.5
               ]
             }
           },

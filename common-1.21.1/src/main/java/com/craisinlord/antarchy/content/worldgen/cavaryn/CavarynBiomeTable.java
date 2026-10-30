@@ -13,12 +13,10 @@ public final class CavarynBiomeTable {
     public static final List<String> BIOMES = List.of(CAVARYN, GLOWCAP_CAVES, BIOWART_CAVES, MOLEWORM_CAVES, WORMY_CAVES, BROODING_TUNNELS);
 
     public static final List<Entry> ENTRIES = List.of(
-            new Entry(CAVARYN, -1.0, 0.1, -1.0, 1.0, -2.0, -0.2),
-            new Entry(GLOWCAP_CAVES, 0.25, 1.0, -0.55, 0.55, -2.0, -0.2),
-            new Entry(GLOWCAP_CAVES, 0.25, 1.0, -0.85, -0.45, -2.0, -0.2),
-            new Entry(BIOWART_CAVES, 0.25, 1.0, 0.35, 1.0, -2.0, -0.2),
-            new Entry(BIOWART_CAVES, 0.25, 1.0, 0.65, 1.0, -2.0, -0.2),
-            new Entry(MOLEWORM_CAVES, 0.1, 0.25, -0.7, 0.8, -2.0, -0.2),
+            new Entry(CAVARYN, -1.0, 0.05, -1.0, 1.0, -2.0, -0.2),
+            new Entry(GLOWCAP_CAVES, 0.25, 1.0, -1.0, 0.25, -2.0, -0.2),
+            new Entry(MOLEWORM_CAVES, 0.05, 0.25, -1.0, 0.25, -2.0, -0.2),
+            new Entry(BIOWART_CAVES, 0.05, 1.0, 0.25, 1.0, -2.0, -0.2),
             new Entry(WORMY_CAVES, 0.14, 1.0, -0.7, 0.95, -0.2, 2.0),
             new Entry(BROODING_TUNNELS, -1.0, 0.14, -1.0, 1.0, -0.2, 2.0),
             new Entry(BROODING_TUNNELS, 0.14, 1.0, -1.0, -0.7, -0.2, 2.0),

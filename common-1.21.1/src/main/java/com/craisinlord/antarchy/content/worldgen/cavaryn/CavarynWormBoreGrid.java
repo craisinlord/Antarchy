@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.cavaryn;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ public final class CavarynWormBoreGrid {
     private static final double SWELL_AMOUNT = 0.1;
     private static final double MAX_RADIUS = 12.5;
 
-    private static final Map<Long, CavarynWormBoreGrid> BY_SALT = new ConcurrentHashMap<>();
+    private static final Map<Long, WeakReference<CavarynWormBoreGrid>> BY_SALT = new ConcurrentHashMap<>();
 
     private final long salt;
     private final StartFilter startFilter;
@@ -35,13 +36,19 @@ public final class CavarynWormBoreGrid {
     }
 
     public static CavarynWormBoreGrid create(long salt, StartFilter startFilter) {
+        CavarynWormBoreGrid existing = forSalt(salt);
+        if (existing != null) {
+            return existing;
+        }
+        BY_SALT.values().removeIf(reference -> reference.get() == null);
         CavarynWormBoreGrid grid = new CavarynWormBoreGrid(salt, startFilter);
-        BY_SALT.put(salt, grid);
+        BY_SALT.put(salt, new WeakReference<>(grid));
         return grid;
     }
 
     public static CavarynWormBoreGrid forSalt(long salt) {
-        return BY_SALT.get(salt);
+        WeakReference<CavarynWormBoreGrid> reference = BY_SALT.get(salt);
+        return reference != null ? reference.get() : null;
     }
 
     public static long salt(double first, double second) {
@@ -51,43 +58,47 @@ public final class CavarynWormBoreGrid {
     }
 
     public double signedDistance(int x, int y, int z) {
-        Segment[] candidates = this.candidates(x, z);
+        return this.signedDistance(x, y, z, -Double.MAX_VALUE);
+    }
+
+    public double signedDistance(int x, int y, int z, double floor) {
+        ColumnCache cache = this.candidates(x, z);
+        double py = y + 0.5;
+        if (py < cache.minY || py > cache.maxY) {
+            return Double.MAX_VALUE;
+        }
         double best = Double.MAX_VALUE;
         double px = x + 0.5;
-        double py = y + 0.5;
         double pz = z + 0.5;
-        for (Segment segment : candidates) {
+        for (Segment segment : cache.segments) {
             if (py < segment.minY || py > segment.maxY) {
                 continue;
             }
             double value = segment.signedDistance(px, py, pz);
             if (value < best) {
                 best = value;
+                if (best <= floor) {
+                    return best;
+                }
             }
         }
         return best;
     }
 
     public int[] verticalRange(int x, int z) {
-        Segment[] candidates = this.candidates(x, z);
-        if (candidates.length == 0) {
+        ColumnCache cache = this.candidates(x, z);
+        if (cache.segments.length == 0) {
             return null;
         }
-        double min = Double.MAX_VALUE;
-        double max = -Double.MAX_VALUE;
-        for (Segment segment : candidates) {
-            min = Math.min(min, segment.minY);
-            max = Math.max(max, segment.maxY);
-        }
-        return new int[]{Mth.floor(min), Mth.ceil(max)};
+        return new int[]{Mth.floor(cache.minY), Mth.ceil(cache.maxY)};
     }
 
-    private Segment[] candidates(int x, int z) {
+    private ColumnCache candidates(int x, int z) {
         int qx = x >> 2;
         int qz = z >> 2;
         ColumnCache cache = this.columns.get();
         if (cache.valid && cache.qx == qx && cache.qz == qz) {
-            return cache.segments;
+            return cache;
         }
         double minX = qx * 4.0;
         double minZ = qz * 4.0;
@@ -96,6 +107,8 @@ public final class CavarynWormBoreGrid {
         int cellX = Math.floorDiv(qx * 4, CELL_SIZE);
         int cellZ = Math.floorDiv(qz * 4, CELL_SIZE);
         List<Segment> found = new ArrayList<>();
+        double minY = Double.MAX_VALUE;
+        double maxY = -Double.MAX_VALUE;
         for (int dx = -CELL_REACH; dx <= CELL_REACH; dx++) {
             for (int dz = -CELL_REACH; dz <= CELL_REACH; dz++) {
                 for (Path path : this.paths(cellX + dx, cellZ + dz)) {
@@ -107,6 +120,8 @@ public final class CavarynWormBoreGrid {
                             continue;
                         }
                         found.add(segment);
+                        minY = Math.min(minY, segment.minY);
+                        maxY = Math.max(maxY, segment.maxY);
                     }
                 }
             }
@@ -114,8 +129,10 @@ public final class CavarynWormBoreGrid {
         cache.qx = qx;
         cache.qz = qz;
         cache.segments = found.toArray(new Segment[0]);
+        cache.minY = minY;
+        cache.maxY = maxY;
         cache.valid = true;
-        return cache.segments;
+        return cache;
     }
 
     private Path[] paths(int cellX, int cellZ) {
@@ -125,9 +142,7 @@ public final class CavarynWormBoreGrid {
             return cached;
         }
         Path[] generated = this.generate(cellX, cellZ);
-        if (this.cells.size() > MAX_CACHED_CELLS) {
-            this.cells.clear();
-        }
+        CavarynCavityGrid.trim(this.cells, MAX_CACHED_CELLS);
         Path[] existing = this.cells.putIfAbsent(key, generated);
         return existing != null ? existing : generated;
     }
@@ -214,6 +229,8 @@ public final class CavarynWormBoreGrid {
         int qx;
         int qz;
         Segment[] segments = new Segment[0];
+        double minY;
+        double maxY;
     }
 
     private static final class Path {

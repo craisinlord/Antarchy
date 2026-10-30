@@ -1899,6 +1899,342 @@
             {
               "type": "minecraft:condition",
               "if_true": {
+                "type": "minecraft:biome",
+                "biome_is": [
+                  "antarchy:shelfback_highlands"
+                ]
+              },
+              "then_run": {
+                "type": "minecraft:sequence",
+                "sequence": [
+                  {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:stone_depth",
+                      "offset": 0,
+                      "add_surface_depth": true,
+                      "secondary_depth_range": 0,
+                      "surface_type": "ceiling"
+                    },
+                    "then_run": {
+                      "type": "minecraft:sequence",
+                      "sequence": [
+                        {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:noise_threshold",
+                            "noise": "antarchy:surface_blend",
+                            "min_threshold": 0.25,
+                            "max_threshold": 10.0
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": {
+                              "Name": "minecraft:deepslate"
+                            }
+                          }
+                        },
+                        {
+                          "type": "minecraft:block",
+                          "result_state": {
+                            "Name": "minecraft:tuff"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:steep"
+                    },
+                    "then_run": {
+                      "type": "minecraft:condition",
+                      "if_true": {
+                        "type": "minecraft:stone_depth",
+                        "offset": 0,
+                        "add_surface_depth": true,
+                        "secondary_depth_range": 0,
+                        "surface_type": "floor"
+                      },
+                      "then_run": {
+                        "type": "minecraft:sequence",
+                        "sequence": [
+                          {
+                            "type": "minecraft:condition",
+                            "if_true": {
+                              "type": "minecraft:noise_threshold",
+                              "noise": "antarchy:surface_blend",
+                              "min_threshold": 0.3,
+                              "max_threshold": 10.0
+                            },
+                            "then_run": {
+                              "type": "minecraft:block",
+                              "result_state": {
+                                "Name": "minecraft:andesite"
+                              }
+                            }
+                          },
+                          {
+                            "type": "minecraft:condition",
+                            "if_true": {
+                              "type": "minecraft:noise_threshold",
+                              "noise": "antarchy:surface_blend",
+                              "min_threshold": -0.55,
+                              "max_threshold": -0.25
+                            },
+                            "then_run": {
+                              "type": "minecraft:block",
+                              "result_state": {
+                                "Name": "minecraft:stone"
+                              }
+                            }
+                          },
+                          {
+                            "type": "minecraft:block",
+                            "result_state": {
+                              "Name": "minecraft:tuff"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:stone_depth",
+                      "add_surface_depth": false,
+                      "offset": 0,
+                      "secondary_depth_range": 0,
+                      "surface_type": "floor"
+                    },
+                    "then_run": {
+                      "type": "minecraft:sequence",
+                      "sequence": [
+                        {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:water",
+                            "offset": -1,
+                            "surface_depth_multiplier": 0,
+                            "add_stone_depth": false
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": {
+                              "Name": "antarchy:primordial_loam"
+                            }
+                          }
+                        },
+                        {
+                          "type": "minecraft:block",
+                          "result_state": {
+                            "Name": "antarchy:loam"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:water",
+                      "offset": -1,
+                      "surface_depth_multiplier": 2,
+                      "add_stone_depth": false
+                    },
+                    "then_run": {
+                      "type": "minecraft:block",
+                      "result_state": {
+                        "Name": "antarchy:loam"
+                      }
+                    }
+                  },
+                  {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:water",
+                      "offset": -4,
+                      "surface_depth_multiplier": 3,
+                      "add_stone_depth": true
+                    },
+                    "then_run": {
+                      "type": "minecraft:block",
+                      "result_state": {
+                        "Name": "antarchy:loam"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "minecraft:condition",
+              "if_true": {
+                "type": "minecraft:biome",
+                "biome_is": [
+                  "antarchy:glimmering_falls"
+                ]
+              },
+              "then_run": {
+                "type": "minecraft:sequence",
+                "sequence": [
+                  {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:stone_depth",
+                      "offset": 0,
+                      "add_surface_depth": true,
+                      "secondary_depth_range": 0,
+                      "surface_type": "ceiling"
+                    },
+                    "then_run": {
+                      "type": "minecraft:block",
+                      "result_state": {
+                        "Name": "minecraft:tuff"
+                      }
+                    }
+                  },
+                  {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:steep"
+                    },
+                    "then_run": {
+                      "type": "minecraft:sequence",
+                      "sequence": [
+                        {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:noise_threshold",
+                            "noise": "antarchy:surface_blend",
+                            "min_threshold": 0.45,
+                            "max_threshold": 10.0
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": {
+                              "Name": "minecraft:deepslate"
+                            }
+                          }
+                        },
+                        {
+                          "type": "minecraft:sequence",
+                          "sequence": [
+                            {
+                              "type": "minecraft:condition",
+                              "if_true": {
+                                "type": "minecraft:noise_threshold",
+                                "noise": "antarchy:surface_blend",
+                                "min_threshold": 0.3,
+                                "max_threshold": 10.0
+                              },
+                              "then_run": {
+                                "type": "minecraft:block",
+                                "result_state": {
+                                  "Name": "minecraft:andesite"
+                                }
+                              }
+                            },
+                            {
+                              "type": "minecraft:condition",
+                              "if_true": {
+                                "type": "minecraft:noise_threshold",
+                                "noise": "antarchy:surface_blend",
+                                "min_threshold": -0.55,
+                                "max_threshold": -0.25
+                              },
+                              "then_run": {
+                                "type": "minecraft:block",
+                                "result_state": {
+                                  "Name": "minecraft:stone"
+                                }
+                              }
+                            },
+                            {
+                              "type": "minecraft:block",
+                              "result_state": {
+                                "Name": "minecraft:tuff"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:stone_depth",
+                      "add_surface_depth": false,
+                      "offset": 0,
+                      "secondary_depth_range": 0,
+                      "surface_type": "floor"
+                    },
+                    "then_run": {
+                      "type": "minecraft:sequence",
+                      "sequence": [
+                        {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:water",
+                            "offset": -1,
+                            "surface_depth_multiplier": 0,
+                            "add_stone_depth": false
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": {
+                              "Name": "antarchy:primordial_loam"
+                            }
+                          }
+                        },
+                        {
+                          "type": "minecraft:block",
+                          "result_state": {
+                            "Name": "antarchy:loam"
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:water",
+                      "offset": -1,
+                      "surface_depth_multiplier": 2,
+                      "add_stone_depth": false
+                    },
+                    "then_run": {
+                      "type": "minecraft:block",
+                      "result_state": {
+                        "Name": "antarchy:loam"
+                      }
+                    }
+                  },
+                  {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:water",
+                      "offset": -4,
+                      "surface_depth_multiplier": 3,
+                      "add_stone_depth": true
+                    },
+                    "then_run": {
+                      "type": "minecraft:block",
+                      "result_state": {
+                        "Name": "antarchy:loam"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "minecraft:condition",
+              "if_true": {
                 "type": "minecraft:stone_depth",
                 "add_surface_depth": false,
                 "offset": 0,

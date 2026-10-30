@@ -1,0 +1,9 @@
+{
+  "pool": "minecraft:village/taiga/houses",
+  "element": {
+    "location": "antarchy:village/computer_scientist_house_taiga",
+    "processors": "minecraft:empty",
+    "projection": "rigid"
+  },
+  "weight": 1
+}

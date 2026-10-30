@@ -1,5 +1,30 @@
 package com.craisinlord.antarchy.forge.registry;
 
+import com.craisinlord.antarchy.content.worldgen.elythia.GlimmeringFallFeature;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaButteFunction;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaShelfLip;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaShelfTerrace;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverFlatten;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaColumnCache;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaBasinFill;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverCoastFade;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverSpan;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverProject;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideMountainsFunction;
+import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisTerrainFunction;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBiomeTable;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBlockSet;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCavityGrid;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWormBoreGrid;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCavityFunction;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCavityUnionFunction;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWormBoreFunction;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBiowartGutDressingFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBroodNestDressingFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCarapaceRiftDressingFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynGlowcapGrottoDressingFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynMolewormWarrenDressingFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWormBoreDressingFeature;
 import com.craisinlord.anthology.effect.AnthologyEffects;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.client.particle.InvertedGeyserBaseParticleOptions;
@@ -511,4 +536,68 @@ public final class AntarchyForgeMisc {
     public static Holder<Attribute> attributeHolder(RegistryObject<? extends Attribute> attribute) {
         return BuiltInRegistries.ATTRIBUTE.wrapAsHolder(attribute.get());
     }
+
+    public static final RegistryObject<com.mojang.serialization.Codec<? extends DensityFunction>> CAVARYN_WORM_BORE = DENSITY_FUNCTION_TYPES.register("cavaryn_worm_bore",
+            () -> CavarynWormBoreFunction.CODEC.codec());
+    public static final RegistryObject<com.mojang.serialization.Codec<? extends DensityFunction>> CAVARYN_CAVITY = DENSITY_FUNCTION_TYPES.register("cavaryn_cavity",
+            () -> CavarynCavityFunction.CODEC.codec());
+    public static final RegistryObject<com.mojang.serialization.Codec<? extends DensityFunction>> CAVARYN_CAVITY_UNION = DENSITY_FUNCTION_TYPES.register("cavaryn_cavity_union",
+            () -> CavarynCavityUnionFunction.CODEC.codec());
+    public static final RegistryObject<CavarynWormBoreDressingFeature> CAVARYN_WORM_BORE_DRESSING = FEATURES.register("cavaryn_worm_bore_dressing",
+            () -> new CavarynWormBoreDressingFeature(NoneFeatureConfiguration.CODEC));
+    public static final RegistryObject<CavarynBroodNestDressingFeature> CAVARYN_BROOD_NEST_DRESSING = FEATURES.register("cavaryn_brood_nest_dressing",
+            () -> new CavarynBroodNestDressingFeature(NoneFeatureConfiguration.CODEC));
+    public static final RegistryObject<CavarynBroodNestDressingFeature> CAVARYN_BROOD_GALLERY_DRESSING = FEATURES.register("cavaryn_brood_gallery_dressing",
+            () -> new CavarynBroodNestDressingFeature(NoneFeatureConfiguration.CODEC, CavarynBroodNestDressingFeature.GALLERY_NOISE));
+    public static final RegistryObject<CavarynGlowcapGrottoDressingFeature> CAVARYN_GLOWCAP_GROTTO_DRESSING = FEATURES.register("cavaryn_glowcap_grotto_dressing",
+            () -> new CavarynGlowcapGrottoDressingFeature(NoneFeatureConfiguration.CODEC));
+    public static final RegistryObject<CavarynMolewormWarrenDressingFeature> CAVARYN_MOLEWORM_WARREN_DRESSING = FEATURES.register("cavaryn_moleworm_warren_dressing",
+            () -> new CavarynMolewormWarrenDressingFeature(NoneFeatureConfiguration.CODEC));
+    public static final RegistryObject<CavarynCarapaceRiftDressingFeature> CAVARYN_CARAPACE_RIFT_DRESSING = FEATURES.register("cavaryn_carapace_rift_dressing",
+            () -> new CavarynCarapaceRiftDressingFeature(NoneFeatureConfiguration.CODEC));
+    public static final RegistryObject<CavarynBiowartGutDressingFeature> CAVARYN_BIOWART_GUT_DRESSING = FEATURES.register("cavaryn_biowart_gut_dressing",
+            () -> new CavarynBiowartGutDressingFeature(NoneFeatureConfiguration.CODEC));
+
+
+    public static final RegistryObject<com.craisinlord.antarchy.content.worldgen.elythia.reef.ElythiaReefFeature> ELYTHIA_REEF = FEATURES.register("elythia_reef",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.reef.ElythiaReefFeature(NoneFeatureConfiguration.CODEC));
+
+
+    public static final RegistryObject<com.mojang.serialization.Codec<? extends DensityFunction>> THORAXIS_TERRAIN = DENSITY_FUNCTION_TYPES.register("thoraxis_terrain",
+            () -> ThoraxisTerrainFunction.CODEC.codec());
+    public static final RegistryObject<com.mojang.serialization.Codec<? extends DensityFunction>> THORAXIS_UNDERSIDE_MOUNTAINS = DENSITY_FUNCTION_TYPES.register("thoraxis_underside_mountains",
+            () -> ThoraxisUndersideMountainsFunction.CODEC.codec());
+
+
+
+    public static final RegistryObject<com.craisinlord.antarchy.content.worldgen.elythia.ThrowbackNerdPoleFeature> THROWBACK_NERD_POLE = FEATURES.register("throwback_nerd_pole",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.ThrowbackNerdPoleFeature(NoneFeatureConfiguration.CODEC));
+    public static final RegistryObject<com.mojang.serialization.Codec<? extends DensityFunction>> ELYTHIA_RIVER_PROJECT = DENSITY_FUNCTION_TYPES.register("elythia_river_project",
+            () -> ElythiaRiverProject.CODEC.codec());
+    public static final RegistryObject<com.mojang.serialization.Codec<? extends DensityFunction>> ELYTHIA_RIVER_SPAN = DENSITY_FUNCTION_TYPES.register("elythia_river_span",
+            () -> ElythiaRiverSpan.CODEC.codec());
+    public static final RegistryObject<com.mojang.serialization.Codec<? extends DensityFunction>> ELYTHIA_RIVER_COAST_FADE = DENSITY_FUNCTION_TYPES.register("elythia_river_coast_fade",
+            () -> ElythiaRiverCoastFade.CODEC.codec());
+    public static final RegistryObject<com.mojang.serialization.Codec<? extends DensityFunction>> ELYTHIA_BASIN_FILL = DENSITY_FUNCTION_TYPES.register("elythia_basin_fill",
+            () -> ElythiaBasinFill.CODEC.codec());
+    public static final RegistryObject<com.mojang.serialization.Codec<? extends DensityFunction>> ELYTHIA_COLUMN_CACHE = DENSITY_FUNCTION_TYPES.register("elythia_column_cache",
+            () -> ElythiaColumnCache.CODEC.codec());
+    public static final RegistryObject<com.mojang.serialization.Codec<? extends DensityFunction>> ELYTHIA_RIVER_FLATTEN = DENSITY_FUNCTION_TYPES.register("elythia_river_flatten",
+            () -> ElythiaRiverFlatten.CODEC.codec());
+    public static final RegistryObject<com.mojang.serialization.Codec<? extends DensityFunction>> ELYTHIA_SHELF_TERRACE = DENSITY_FUNCTION_TYPES.register("elythia_shelf_terrace",
+            () -> ElythiaShelfTerrace.CODEC.codec());
+    public static final RegistryObject<com.mojang.serialization.Codec<? extends DensityFunction>> ELYTHIA_SHELF_LIP = DENSITY_FUNCTION_TYPES.register("elythia_shelf_lip",
+            () -> ElythiaShelfLip.CODEC.codec());
+    public static final RegistryObject<com.mojang.serialization.Codec<? extends DensityFunction>> ELYTHIA_BUTTE = DENSITY_FUNCTION_TYPES.register("elythia_butte",
+            () -> ElythiaButteFunction.CODEC.codec());
+    public static final RegistryObject<GlimmeringFallFeature> GLIMMERING_FALL = FEATURES.register("glimmering_fall",
+            () -> new GlimmeringFallFeature(NoneFeatureConfiguration.CODEC));
+    public static final RegistryObject<com.craisinlord.antarchy.content.worldgen.elythia.TruffaloSpireFeature> TRUFFALO_SPIRE = FEATURES.register("truffalo_spire",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.TruffaloSpireFeature(NoneFeatureConfiguration.CODEC));
+    public static final RegistryObject<com.craisinlord.antarchy.content.worldgen.elythia.RiverSteppingStonesFeature> RIVER_STEPPING_STONES = FEATURES.register("river_stepping_stones",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.RiverSteppingStonesFeature(NoneFeatureConfiguration.CODEC));
+    public static final RegistryObject<com.craisinlord.antarchy.content.worldgen.elythia.RiverLogBridgeFeature> RIVER_LOG_BRIDGE = FEATURES.register("river_log_bridge",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.RiverLogBridgeFeature(NoneFeatureConfiguration.CODEC));
+    public static final RegistryObject<SimpleParticleType> GROUND_MIST = PARTICLE_TYPES.register("ground_mist", () -> new SimpleParticleType(true) {});
+
 }

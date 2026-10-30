@@ -36,14 +36,14 @@ displayTest="MATCH_VERSION"
 [[dependencies.${mod_id}]]
     modId="anthology"
     mandatory=true
-    versionRange="[1.0.0,)"
+    versionRange="[1.0.2,)"
     ordering="AFTER"
     side="BOTH"
 
 [[dependencies.${mod_id}]]
     modId="antos"
     mandatory=true
-    versionRange="[1.4.0,)"
+    versionRange="[1.6.2,)"
     ordering="AFTER"
     side="BOTH"
 

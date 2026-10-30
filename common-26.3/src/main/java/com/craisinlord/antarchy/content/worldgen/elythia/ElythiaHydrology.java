@@ -16,6 +16,8 @@ public record ElythiaHydrology(
         DensityFunction riverLevel,
         DensityFunction riverChannel,
         DensityFunction lumen,
+        DensityFunction floor,
+        DensityFunction valley,
         int seaLevel
 ) implements DensityFunction {
 
@@ -25,6 +27,8 @@ public record ElythiaHydrology(
                     DensityFunction.CODEC.fieldOf("river_level").forGetter(ElythiaHydrology::riverLevel),
                     DensityFunction.CODEC.fieldOf("river_channel").forGetter(ElythiaHydrology::riverChannel),
                     DensityFunction.CODEC.fieldOf("lumen").forGetter(ElythiaHydrology::lumen),
+                    DensityFunction.CODEC.fieldOf("floor").forGetter(ElythiaHydrology::floor),
+                    DensityFunction.CODEC.fieldOf("valley").forGetter(ElythiaHydrology::valley),
                     Codec.INT.fieldOf("sea_level").forGetter(ElythiaHydrology::seaLevel)
             ).apply(instance, ElythiaHydrology::new)
     );
@@ -40,12 +44,16 @@ public record ElythiaHydrology(
         DensityFunction rewrittenRiverLevel = rule.rewrite(this.riverLevel);
         DensityFunction rewrittenRiverChannel = rule.rewrite(this.riverChannel);
         DensityFunction rewrittenLumen = rule.rewrite(this.lumen);
+        DensityFunction rewrittenFloor = rule.rewrite(this.floor);
+        DensityFunction rewrittenValley = rule.rewrite(this.valley);
         return rewrittenReserve == this.reserve
                 && rewrittenRiverLevel == this.riverLevel
                 && rewrittenRiverChannel == this.riverChannel
                 && rewrittenLumen == this.lumen
+                && rewrittenFloor == this.floor
+                && rewrittenValley == this.valley
                 ? this
-                : new ElythiaHydrology(rewrittenReserve, rewrittenRiverLevel, rewrittenRiverChannel, rewrittenLumen, this.seaLevel);
+                : new ElythiaHydrology(rewrittenReserve, rewrittenRiverLevel, rewrittenRiverChannel, rewrittenLumen, rewrittenFloor, rewrittenValley, this.seaLevel);
     }
 
     @Override

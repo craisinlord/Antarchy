@@ -1,0 +1,9 @@
+{
+  "pool": "minecraft:village/savanna/houses",
+  "element": {
+    "location": "antarchy:village/computer_scientist_house_savanna",
+    "processors": "minecraft:empty",
+    "projection": "rigid"
+  },
+  "weight": 1
+}

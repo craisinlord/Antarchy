@@ -1,0 +1,20 @@
+{
+  "sender": "trayaurus@antmail.com",
+  "sender_display": "Dr. Trayaurus",
+  "sender_avatar_item": "antarchy:diamond_minecart",
+  "subject": "Out at sea",
+  "body": "Somewhere out in the Elythia Ocean there's a giant turtle with a cannon in its shell. Apparently it lives in some old arena. I have no idea where, but the computer scientists in the villages have a disk that does. They'll want a big stack of old floppies for it though.\n\nYour old friend,\nDr. T",
+  "trigger": {
+    "type": "random",
+    "pool": "antarchy:trayaurus_hints"
+  },
+  "once": true,
+  "conditions": {
+    "advancements": [
+      "antarchy:visit_elythia"
+    ],
+    "not_advancements": [
+      "antarchy:kill_toreterror"
+    ]
+  }
+}

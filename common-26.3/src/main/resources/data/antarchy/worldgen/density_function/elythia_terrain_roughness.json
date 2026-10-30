@@ -1,0 +1,35 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:mul",
+    "left": {
+      "type": "minecraft:spline",
+      "spline": {
+        "coordinate": "antarchy:elythia_depth",
+        "points": [
+          {
+            "location": 0.31,
+            "value": 0.0,
+            "derivative": 0.0
+          },
+          {
+            "location": 0.39,
+            "value": 1.0,
+            "derivative": 0.0
+          },
+          {
+            "location": 0.48,
+            "value": 1.0,
+            "derivative": 0.0
+          },
+          {
+            "location": 0.56,
+            "value": 0.0,
+            "derivative": 0.0
+          }
+        ]
+      }
+    },
+    "right": "antarchy:elythia_terrain_roughness_2d"
+  }
+}

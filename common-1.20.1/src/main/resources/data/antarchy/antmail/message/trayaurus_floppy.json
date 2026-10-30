@@ -1,0 +1,12 @@
+{
+  "sender": "trayaurus@antmail.com",
+  "sender_display": "Dr. Trayaurus",
+  "sender_avatar_item": "antarchy:diamond_minecart",
+  "subject": "You found a floppy!",
+  "body": "You found a floppy disk! Put it in a computer, or hold it in one hand and use your phone with the other. Whatever was on it stays with your account, even if you take the disk back out. Some have whole games on them.\n\nThe Disks app keeps track of every disk you've found, and leaves a blank spot for the ones you haven't.\n\nYour old friend,\nDr. T",
+  "trigger": {
+    "type": "advancement",
+    "value": "antarchy:hints/first_floppy",
+    "delay_minutes": 3
+  }
+}

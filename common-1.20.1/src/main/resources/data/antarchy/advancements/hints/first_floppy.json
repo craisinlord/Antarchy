@@ -1,0 +1,16 @@
+{
+  "criteria": {
+    "has_floppy": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "antos:floppy_disk"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

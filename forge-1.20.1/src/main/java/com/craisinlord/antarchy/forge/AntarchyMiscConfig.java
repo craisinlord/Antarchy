@@ -4,6 +4,15 @@ import net.minecraftforge.common.ForgeConfigSpec;
 
 public final class AntarchyMiscConfig {
     public static final ForgeConfigSpec SPEC;
+    private static final ForgeConfigSpec.BooleanValue ELYTHIA_ALREADY_DREAMING;
+    private static final ForgeConfigSpec.BooleanValue ELYTHIA_DREAM_SHADOWS_ENABLED;
+    private static final ForgeConfigSpec.DoubleValue ELYTHIA_DREAM_SHADOWS_STRENGTH;
+    private static final ForgeConfigSpec.BooleanValue ELYTHIA_PURPLE_RAIN;
+    private static final ForgeConfigSpec.BooleanValue ELYTHIA_CLEAR_WATER;
+    private static final ForgeConfigSpec.BooleanValue ELYTHIA_GROUND_MIST_ENABLED;
+    private static final ForgeConfigSpec.BooleanValue ELYTHIA_FOG_ENABLED;
+    private static final ForgeConfigSpec.BooleanValue ELYTHIA_EVENTS;
+    private static final ForgeConfigSpec.BooleanValue ELYTHIA_RAIN_GROWTH;
 
     private static final ForgeConfigSpec.BooleanValue ELYTHIA_FIREFLY_PARTICLES_ENABLED;
 
@@ -52,6 +61,8 @@ public final class AntarchyMiscConfig {
     private static final ForgeConfigSpec.BooleanValue DUPLICATOR_TREE_ENABLED;
     private static final ForgeConfigSpec.BooleanValue GLOW_VINES_UNDER_LEAVES;
     private static final ForgeConfigSpec.BooleanValue SWING_THROUGH_GRASS_ENABLED;
+    private static final ForgeConfigSpec.BooleanValue BOATS_CLIMB_WATER_STEPS;
+    private static final ForgeConfigSpec.DoubleValue  BOAT_WATER_STEP_MAX_HEIGHT;
     private static final ForgeConfigSpec.BooleanValue FABRIC_KEYBINDING_CONFLICT_FIX_ENABLED;
     private static final ForgeConfigSpec.BooleanValue EXPERIMENTAL_SETTINGS_POPUP_DISABLED;
     private static final ForgeConfigSpec.BooleanValue ENTITY_SPECIFIC_FIRE_OVERLAY_ENABLED;
@@ -60,6 +71,15 @@ public final class AntarchyMiscConfig {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
 
         b.push("elythia");
+        ELYTHIA_ALREADY_DREAMING = b.define("alreadyDreaming", true);
+        ELYTHIA_DREAM_SHADOWS_ENABLED = b.define("dreamShadowsEnabled", true);
+        ELYTHIA_DREAM_SHADOWS_STRENGTH = b.defineInRange("dreamShadowsStrength", 1.0D, 0.0D, 1.0D);
+        ELYTHIA_PURPLE_RAIN = b.define("purpleRain", true);
+        ELYTHIA_CLEAR_WATER = b.define("clearWater", true);
+        ELYTHIA_GROUND_MIST_ENABLED = b.define("groundMistEnabled", true);
+        ELYTHIA_FOG_ENABLED = b.define("fogEnabled", true);
+        ELYTHIA_EVENTS = b.define("events", true);
+        ELYTHIA_RAIN_GROWTH = b.define("rainGrowth", true);
         ELYTHIA_FIREFLY_PARTICLES_ENABLED = b
                 .comment("Whether firefly ambient particles appear at night in the Elythia dimension.")
                 .define("fireflyParticlesEnabled", true);
@@ -144,6 +164,8 @@ public final class AntarchyMiscConfig {
         DUPLICATOR_TREE_ENABLED              = b.comment("If false, duplicator trees do not generate and duplicator saplings produce nothing.").define("duplicatorTreeEnabled",           true);
         GLOW_VINES_UNDER_LEAVES              = b.comment("Whether glow vines can be placed and survive when attached under leaf blocks.")       .define("glowVinesUnderLeaves",             true);
         SWING_THROUGH_GRASS_ENABLED          = b.comment("If true, empty collision plants like grass do not block melee target picking.")      .define("swingThroughGrassEnabled",         true);
+        BOATS_CLIMB_WATER_STEPS = b.define("boatsClimbWaterSteps", true);
+        BOAT_WATER_STEP_MAX_HEIGHT = b.defineInRange("boatWaterStepMaxHeight", 1.0D, 0.0D, 4.0D);
         FABRIC_KEYBINDING_CONFLICT_FIX_ENABLED = b.define("fabricKeybindingConflictFixEnabled", true);
         EXPERIMENTAL_SETTINGS_POPUP_DISABLED = b.define("experimentalSettingsPopupDisabled", true);
         ENTITY_SPECIFIC_FIRE_OVERLAY_ENABLED = b.comment("If true, burning entities use soul fire / dream fire overlays where appropriate.")   .define("entitySpecificFireOverlayEnabled", true);
@@ -163,6 +185,8 @@ public final class AntarchyMiscConfig {
     static boolean duplicatorTreeEnabled()               { return DUPLICATOR_TREE_ENABLED.get(); }
     static boolean glowVinesUnderLeaves()                { return GLOW_VINES_UNDER_LEAVES.get(); }
     static boolean swingThroughGrassEnabled()            { return SWING_THROUGH_GRASS_ENABLED.get(); }
+    static boolean boatsClimbWaterSteps()                { return BOATS_CLIMB_WATER_STEPS.get(); }
+    static double  boatWaterStepMaxHeight()              { return BOAT_WATER_STEP_MAX_HEIGHT.get(); }
     static boolean fabricKeybindingConflictFixEnabled()  { return FABRIC_KEYBINDING_CONFLICT_FIX_ENABLED.get(); }
     static boolean experimentalSettingsPopupDisabled()   { return EXPERIMENTAL_SETTINGS_POPUP_DISABLED.get(); }
     static boolean entitySpecificFireOverlayEnabled()    { return ENTITY_SPECIFIC_FIRE_OVERLAY_ENABLED.get(); }
@@ -202,4 +226,20 @@ public final class AntarchyMiscConfig {
     static double  diamondMinecartMaxMobDamage()         { return DIAMOND_MINECART_MAX_MOB_DAMAGE.get(); }
     static double  hoverboardMaxSpeed()                  { return HOVERBOARD_MAX_SPEED.get(); }
     static double  hoverboardAcceleration()              { return HOVERBOARD_ACCELERATION.get(); }
+    static boolean elythiaEvents() { return ELYTHIA_EVENTS.get(); }
+    static boolean elythiaRainGrowth() { return ELYTHIA_RAIN_GROWTH.get(); }
+
+    static boolean elythiaFogEnabled() { return ELYTHIA_FOG_ENABLED.get(); }
+
+    static boolean elythiaGroundMistEnabled() { return ELYTHIA_GROUND_MIST_ENABLED.get(); }
+
+    static boolean elythiaClearWater() { return ELYTHIA_CLEAR_WATER.get(); }
+
+    static boolean elythiaPurpleRain() { return ELYTHIA_PURPLE_RAIN.get(); }
+
+    static boolean elythiaDreamShadowsEnabled() { return ELYTHIA_DREAM_SHADOWS_ENABLED.get(); }
+    static double elythiaDreamShadowsStrength() { return ELYTHIA_DREAM_SHADOWS_STRENGTH.get(); }
+
+    static boolean elythiaAlreadyDreaming() { return ELYTHIA_ALREADY_DREAMING.get(); }
+
 }

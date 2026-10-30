@@ -4,6 +4,15 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 
 public final class AntarchyMiscConfig {
     public static final ModConfigSpec SPEC;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_ALREADY_DREAMING;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_DREAM_SHADOWS_ENABLED;
+    private static final ModConfigSpec.DoubleValue ELYTHIA_DREAM_SHADOWS_STRENGTH;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_PURPLE_RAIN;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_CLEAR_WATER;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_GROUND_MIST_ENABLED;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_FOG_ENABLED;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_EVENTS;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_RAIN_GROWTH;
 
     private static final ModConfigSpec.BooleanValue ELYTHIA_FIREFLY_PARTICLES_ENABLED;
 
@@ -60,6 +69,15 @@ public final class AntarchyMiscConfig {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
 
         b.push("elythia");
+        ELYTHIA_ALREADY_DREAMING = b.define("alreadyDreaming", true);
+        ELYTHIA_DREAM_SHADOWS_ENABLED = b.define("dreamShadowsEnabled", true);
+        ELYTHIA_DREAM_SHADOWS_STRENGTH = b.defineInRange("dreamShadowsStrength", 1.0D, 0.0D, 1.0D);
+        ELYTHIA_PURPLE_RAIN = b.define("purpleRain", true);
+        ELYTHIA_CLEAR_WATER = b.define("clearWater", true);
+        ELYTHIA_GROUND_MIST_ENABLED = b.define("groundMistEnabled", true);
+        ELYTHIA_FOG_ENABLED = b.define("fogEnabled", true);
+        ELYTHIA_EVENTS = b.define("events", true);
+        ELYTHIA_RAIN_GROWTH = b.define("rainGrowth", true);
         ELYTHIA_FIREFLY_PARTICLES_ENABLED = b
                 .comment("Whether firefly ambient particles appear at night in the Elythia dimension.")
                 .define("fireflyParticlesEnabled", true);
@@ -202,4 +220,20 @@ public final class AntarchyMiscConfig {
     static double  diamondMinecartMaxMobDamage()         { return DIAMOND_MINECART_MAX_MOB_DAMAGE.get(); }
     static double  hoverboardMaxSpeed()                  { return HOVERBOARD_MAX_SPEED.get(); }
     static double  hoverboardAcceleration()              { return HOVERBOARD_ACCELERATION.get(); }
+    static boolean elythiaEvents() { return ELYTHIA_EVENTS.get(); }
+    static boolean elythiaRainGrowth() { return ELYTHIA_RAIN_GROWTH.get(); }
+
+    static boolean elythiaFogEnabled() { return ELYTHIA_FOG_ENABLED.get(); }
+
+    static boolean elythiaGroundMistEnabled() { return ELYTHIA_GROUND_MIST_ENABLED.get(); }
+
+    static boolean elythiaClearWater() { return ELYTHIA_CLEAR_WATER.get(); }
+
+    static boolean elythiaPurpleRain() { return ELYTHIA_PURPLE_RAIN.get(); }
+
+    static boolean elythiaDreamShadowsEnabled() { return ELYTHIA_DREAM_SHADOWS_ENABLED.get(); }
+    static double elythiaDreamShadowsStrength() { return ELYTHIA_DREAM_SHADOWS_STRENGTH.get(); }
+
+    static boolean elythiaAlreadyDreaming() { return ELYTHIA_ALREADY_DREAMING.get(); }
+
 }

@@ -1,17 +1,23 @@
 {
   "type": "antarchy:peach_tree",
   "trunk_provider": {
-    "id": "antarchy:peach_log",
-    "properties": {
-      "axis": "y"
+    "type": "minecraft:simple_state_provider",
+    "state": {
+      "id": "antarchy:peach_log",
+      "properties": {
+        "axis": "y"
+      }
     }
   },
   "foliage_provider": {
-    "id": "antarchy:peach_leaves",
-    "properties": {
-      "distance": "7",
-      "persistent": "false",
-      "waterlogged": "false"
+    "type": "minecraft:simple_state_provider",
+    "state": {
+      "id": "antarchy:peach_leaves",
+      "properties": {
+        "distance": "7",
+        "persistent": "false",
+        "waterlogged": "false"
+      }
     }
   },
   "height": {

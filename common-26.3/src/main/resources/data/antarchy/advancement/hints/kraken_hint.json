@@ -1,0 +1,30 @@
+{
+  "criteria": {
+    "killed_squid": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "minecraft:squid"
+          }
+        }
+      }
+    },
+    "bad_omen": {
+      "trigger": "minecraft:effects_changed",
+      "conditions": {
+        "effects": {
+          "minecraft:bad_omen": {}
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "killed_squid",
+      "bad_omen"
+    ]
+  ]
+}

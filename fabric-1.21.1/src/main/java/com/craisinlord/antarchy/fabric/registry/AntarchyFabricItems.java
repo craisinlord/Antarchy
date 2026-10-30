@@ -811,6 +811,24 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_COAL_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.MYRMITE_COAL_ORE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_URANIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_URANIUM_ORE, new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_TITANIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_TITANIUM_ORE, new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_COPPER_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.MYRMITE_COPPER_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_IRON_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.MYRMITE_IRON_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_GOLD_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.MYRMITE_GOLD_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_REDSTONE_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.MYRMITE_REDSTONE_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_LAPIS_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.MYRMITE_LAPIS_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_DIAMOND_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.MYRMITE_DIAMOND_ORE, new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_EMERALD_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.MYRMITE_EMERALD_ORE, new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_COPPER_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_COPPER_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_IRON_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_IRON_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_GOLD_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_GOLD_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_REDSTONE_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_REDSTONE_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_LAPIS_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_LAPIS_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_DIAMOND_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_DIAMOND_ORE, new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_EMERALD_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_EMERALD_ORE, new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.FossilBlockItem> MYRMITE_FOSSIL_ITEM = ITEMS.register("myrmite_fossil",
+            () -> new com.craisinlord.antarchy.content.item.FossilBlockItem(AntarchyFabricBlocks.MYRMITE_FOSSIL.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.FossilBlockItem> BROODSTONE_FOSSIL_ITEM = ITEMS.register("broodstone_fossil",
+            () -> new com.craisinlord.antarchy.content.item.FossilBlockItem(AntarchyFabricBlocks.BROODSTONE_FOSSIL.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
 
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.POLISHED_NYXITE);

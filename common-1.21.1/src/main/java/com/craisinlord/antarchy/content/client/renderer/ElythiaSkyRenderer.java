@@ -40,7 +40,7 @@ public final class ElythiaSkyRenderer {
     private static final float SKY_RADIUS = 100.0F;
     private static final float BODY_SIZE = 32.0F;
     private static final float[] HORIZON_FOG_ELEVATIONS = {
-            -60.0F, 0.0F, 1.0F, 2.0F, 3.5F, 5.0F, 7.0F, 9.5F, 12.5F, 16.0F, 20.0F, 25.0F, 31.0F, 38.0F, 46.0F, 55.0F, 65.0F, 78.0F
+            -60.0F, 0.0F, 1.0F, 2.0F, 3.5F, 5.0F, 7.0F, 9.5F, 12.5F, 16.0F, 20.0F, 25.0F, 31.0F, 38.0F, 46.0F, 55.0F, 65.0F, 78.0F, 90.0F
     };
     private static final float SKY_FOG_CEILING = 24.0F;
     private static final float HORIZON_FOG_REBUILD_TOLERANCE = 0.5F;

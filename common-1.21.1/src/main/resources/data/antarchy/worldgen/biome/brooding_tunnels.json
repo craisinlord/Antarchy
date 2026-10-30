@@ -3,10 +3,10 @@
   "temperature": 0.45,
   "downfall": 0.0,
   "effects": {
-    "fog_color": 655360,
+    "fog_color": 983040,
     "water_color": 327680,
     "water_fog_color": 0,
-    "sky_color": 262144,
+    "sky_color": 524288,
     "grass_color": 2763554,
     "foliage_color": 2763554,
     "mood_sound": {
@@ -51,7 +51,15 @@
     [],
     [
       "antarchy:broodstone_uranium_ore",
-      "antarchy:broodstone_titanium_ore"
+      "antarchy:broodstone_titanium_ore",
+      "antarchy:broodstone_copper_ore",
+      "antarchy:broodstone_iron_ore",
+      "antarchy:broodstone_gold_ore",
+      "antarchy:broodstone_redstone_ore",
+      "antarchy:broodstone_lapis_ore",
+      "antarchy:broodstone_diamond_ore",
+      "antarchy:broodstone_emerald_ore",
+      "antarchy:broodstone_fossil"
     ],
     [],
     [

@@ -33,6 +33,7 @@ public final class ElythiaFireflyManager {
             if (level == null || client.player == null) return;
             if (client.isPaused()) return;
             if (!ElythiaSkyRenderer.shouldRender(level)) return;
+            com.craisinlord.antarchy.content.client.ElythiaGroundMist.tick(Minecraft.getInstance(), level, AntarchyFabricMisc.GROUND_MIST.get());
 
             long dayTime = level.getOverworldClockTime() % 24000L;
             if (dayTime < NIGHT_START || dayTime > NIGHT_END) return;

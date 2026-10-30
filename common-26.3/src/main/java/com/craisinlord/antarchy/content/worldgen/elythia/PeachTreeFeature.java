@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.block.PeachLeavesBlock;
 import com.mojang.serialization.MapCodec;
@@ -20,7 +21,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
@@ -29,15 +29,11 @@ public class PeachTreeFeature implements Feature {
             config -> new PeachTreeFeature(config, false),
             PeachTreeFeature::config
     );
+
     public static final MapCodec<PeachTreeFeature> LARGE_CODEC = PeachTreeConfiguration.CODEC.xmap(
             config -> new PeachTreeFeature(config, true),
             PeachTreeFeature::config
     );
-    private static final Identifier PEACH_LOG_ID = Identifier.fromNamespaceAndPath(Antarchy.MODID, "peach_log");
-    private static final Identifier PEACH_LEAVES_ID = Identifier.fromNamespaceAndPath(Antarchy.MODID, "peach_leaves");
-
-    private final PeachTreeConfiguration config;
-    private final boolean large;
 
     public PeachTreeFeature(PeachTreeConfiguration config, boolean large) {
         this.config = config;
@@ -48,14 +44,20 @@ public class PeachTreeFeature implements Feature {
         return this.config;
     }
 
-    @Override
     public MapCodec<PeachTreeFeature> codec() {
         return this.large ? LARGE_CODEC : CODEC;
     }
 
+    private final PeachTreeConfiguration config;
+
+    private final boolean large;
+    private static final Identifier PEACH_LOG_ID = Identifier.fromNamespaceAndPath(Antarchy.MODID, "peach_log");
+    private static final Identifier PEACH_LEAVES_ID = Identifier.fromNamespaceAndPath(Antarchy.MODID, "peach_leaves");
+
+
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
-        PeachTreeConfiguration config = this.config;
+        PeachTreeConfiguration config = this.config();
         int height = config.height().sample(random);
         int canopyRadius = config.canopyRadius().sample(random);
         int trunkWidth = config.trunkWidth();

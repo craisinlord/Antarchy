@@ -1,7 +1,7 @@
 {
   "category": "antarchy:elythia",
   "title": "guide.antarchy.disk.elythia.title",
-  "entries": [
-    "antarchy:brown_ant"
-  ]
+  "description": "guide.antarchy.disk.elythia.description",
+  "entries": [],
+  "programs": ["antarchy:elythia_quiz"]
 }

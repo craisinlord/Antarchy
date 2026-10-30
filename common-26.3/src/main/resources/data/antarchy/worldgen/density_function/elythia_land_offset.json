@@ -1,60 +1,63 @@
 {
-  "type": "minecraft:cache",
-  "input": {
-    "type": "minecraft:spline",
-    "spline": {
-      "coordinate": {
-        "type": "minecraft:add",
-        "left": {
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache",
+    "input": {
+      "type": "minecraft:spline",
+      "spline": {
+        "coordinate": {
           "type": "minecraft:add",
           "left": {
-            "type": "minecraft:max",
-            "left": "antarchy:elythia_land_raw_offset",
-            "right": -0.342524
-          },
-          "right": {
             "type": "minecraft:add",
             "left": {
-              "type": "minecraft:mul",
-              "left": 0.2,
-              "right": {
-                "type": "minecraft:min",
-                "left": "antarchy:elythia_land_raw_offset",
-                "right": -0.342524
-              }
+              "type": "minecraft:max",
+              "left": "antarchy:elythia_land_raw_offset",
+              "right": -0.342524
             },
-            "right": 0.068505
+            "right": {
+              "type": "minecraft:add",
+              "left": {
+                "type": "minecraft:mul",
+                "left": 0.2,
+                "right": {
+                  "type": "minecraft:min",
+                  "left": "antarchy:elythia_land_raw_offset",
+                  "right": -0.342524
+                }
+              },
+              "right": 0.068505
+            }
+          },
+          "right": "antarchy:elythia_massif_offset"
+        },
+        "points": [
+          {
+            "location": -5.0,
+            "value": -5.0,
+            "derivative": 1.0
+          },
+          {
+            "location": 2.4,
+            "value": 2.4,
+            "derivative": 1.0
+          },
+          {
+            "location": 3.0,
+            "value": 2.85,
+            "derivative": 0.55
+          },
+          {
+            "location": 4.0,
+            "value": 3.2,
+            "derivative": 0.2
+          },
+          {
+            "location": 6.0,
+            "value": 3.35,
+            "derivative": 0.0
           }
-        },
-        "right": "antarchy:elythia_massif_offset"
-      },
-      "points": [
-        {
-          "location": -5.0,
-          "value": -5.0,
-          "derivative": 1.0
-        },
-        {
-          "location": 2.4,
-          "value": 2.4,
-          "derivative": 1.0
-        },
-        {
-          "location": 3.0,
-          "value": 2.85,
-          "derivative": 0.55
-        },
-        {
-          "location": 4.0,
-          "value": 3.2,
-          "derivative": 0.2
-        },
-        {
-          "location": 6.0,
-          "value": 3.35,
-          "derivative": 0.0
-        }
-      ]
+        ]
+      }
     }
   }
 }

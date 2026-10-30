@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -10,7 +11,6 @@ import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.phys.Vec3;
@@ -19,9 +19,7 @@ public class MolewormSurfaceMoundsFeature implements Feature {
     public static final MapCodec<MolewormSurfaceMoundsFeature> CODEC = MapCodec.unit(MolewormSurfaceMoundsFeature::new);
 
     @Override
-    public MapCodec<MolewormSurfaceMoundsFeature> codec() {
-        return CODEC;
-    }
+    public MapCodec<MolewormSurfaceMoundsFeature> codec() { return CODEC; }
 
     @Override
     public boolean place(WorldGenLevel level, ChunkGenerator chunkGenerator, RandomSource random, BlockPos origin) {
@@ -146,7 +144,7 @@ public class MolewormSurfaceMoundsFeature implements Feature {
         int minX = Mth.floor(center.x - radiusX - 1.0F);
         int maxX = Mth.floor(center.x + radiusX + 1.0F);
         int minY = Math.max(level.getMinY() + 1, Mth.floor(center.y - radiusY - 1.0F));
-        int maxY = Math.min(level.getMaxY() - 1, Mth.floor(center.y + radiusY + 1.0F));
+        int maxY = Math.min((level.getMaxY() + 1) - 2, Mth.floor(center.y + radiusY + 1.0F));
         int minZ = Mth.floor(center.z - radiusZ - 1.0F);
         int maxZ = Mth.floor(center.z + radiusZ + 1.0F);
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
@@ -293,12 +291,12 @@ public class MolewormSurfaceMoundsFeature implements Feature {
     }
 
     private static boolean canAccessColumn(WorldGenLevel level, int x, int z) {
-        int probeY = Mth.clamp((level.getMinY() + level.getMaxY() + 1) / 2, level.getMinY() + 1, level.getMaxY() - 1);
+        int probeY = Mth.clamp((level.getMinY() + (level.getMaxY() + 1)) / 2, level.getMinY() + 1, (level.getMaxY() + 1) - 2);
         return canAccess(level, x, probeY, z);
     }
 
     private static boolean canAccess(WorldGenLevel level, int x, int y, int z) {
-        return canAccess(level, new BlockPos(x, Mth.clamp(y, level.getMinY() + 1, level.getMaxY() - 1), z));
+        return canAccess(level, new BlockPos(x, Mth.clamp(y, level.getMinY() + 1, (level.getMaxY() + 1) - 2), z));
     }
 
     private static boolean canAccess(WorldGenLevel level, BlockPos pos) {

@@ -14,51 +14,37 @@
     "height": 208
   },
   "noise_router": {
-    "temperature": {
-      "type": "minecraft:noise",
-      "noise": "minecraft:temperature",
-      "shift_x": "minecraft:shift_x",
-      "shift_z": "minecraft:shift_z",
-      "xz_scale": 0.25,
-      "y_scale": 0
-    },
-    "vegetation": {
-      "type": "minecraft:noise",
-      "noise": "minecraft:vegetation",
-      "shift_x": "minecraft:shift_x",
-      "shift_z": "minecraft:shift_z",
-      "xz_scale": 0.25,
-      "y_scale": 0
-    },
-    "continents": "minecraft:overworld/continents",
-    "erosion": "minecraft:overworld/erosion",
+    "temperature": 0,
+    "vegetation": "antarchy:cavaryn/humidity",
+    "continents": 0,
+    "erosion": 0,
     "depth": "minecraft:overworld/depth",
-    "ridges": "minecraft:overworld/ridges",
+    "ridges": "antarchy:cavaryn/weirdness",
     "chunk_surface_level": -1000000.0,
     "final_density": {
-      "type": "minecraft:add",
+      "type": "minecraft:max",
       "left": {
         "type": "minecraft:max",
         "left": {
-          "type": "minecraft:max",
-          "left": {
-            "type": "minecraft:gradient",
-            "axis": "y",
-            "from_coordinate": 0,
-            "from_value": 4,
-            "to_coordinate": 12,
-            "to_value": -0.5
-          },
-          "right": {
-            "type": "minecraft:gradient",
-            "axis": "y",
-            "from_coordinate": 196,
-            "from_value": -0.5,
-            "to_coordinate": 207,
-            "to_value": 4
-          }
+          "type": "minecraft:gradient",
+          "axis": "y",
+          "from_coordinate": 0,
+          "to_coordinate": 12,
+          "from_value": 4,
+          "to_value": -0.5
         },
         "right": {
+          "type": "minecraft:gradient",
+          "axis": "y",
+          "from_coordinate": 196,
+          "to_coordinate": 207,
+          "from_value": -0.5,
+          "to_value": 4
+        }
+      },
+      "right": {
+        "type": "minecraft:min",
+        "left": {
           "type": "minecraft:min",
           "left": "minecraft:overworld/caves/noodle",
           "right": {
@@ -69,10 +55,19 @@
             "when_in_range": "antarchy:cavaryn_custom",
             "when_out_of_range": 2
           }
+        },
+        "right": {
+          "type": "antarchy:cavaryn_cavity_union",
+          "arguments": [
+            "antarchy:cavaryn_worm_bores",
+            "antarchy:cavaryn_brood_galleries",
+            "antarchy:cavaryn_brood_nests",
+            "antarchy:cavaryn_glowcap_grottos",
+            "antarchy:cavaryn_moleworm_warrens",
+            "antarchy:cavaryn_carapace_rifts",
+            "antarchy:cavaryn_biowart_guts"
+          ]
         }
-      },
-      "right": {
-        "type": "minecraft:beardifier"
       }
     }
   },

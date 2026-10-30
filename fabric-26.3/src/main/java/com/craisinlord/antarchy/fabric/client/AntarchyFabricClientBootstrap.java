@@ -323,6 +323,7 @@ public final class AntarchyFabricClientBootstrap {
         registry.register(AntarchyFabricMisc.INVERTED_GEYSER_POOF.get(), InvertedGeyserBaseParticle.Provider::new);
         registry.register(AntarchyFabricMisc.INVERTED_GEYSER_ERUPTION.get(), new InvertedGeyserEruptionParticle.Provider());
         registry.register(AntarchyFabricMisc.FIREFLY.get(), FireflyParticle.Provider::new);
+        registry.register(AntarchyFabricMisc.GROUND_MIST.get(), com.craisinlord.antarchy.content.client.particle.GroundMistParticle.Provider::new);
         registry.register(AntarchyFabricMisc.ORANGE_ASH.get(), OrangeAshParticle.Provider::new);
         registry.register(AntarchyFabricMisc.LUCID_BOLT_IMPACT_SMALL.get(), LucidBoltImpactParticle.SmallProvider::new);
         registry.register(AntarchyFabricMisc.LUCID_BOLT_IMPACT_LARGE.get(), LucidBoltImpactParticle.LargeProvider::new);
@@ -377,6 +378,7 @@ public final class AntarchyFabricClientBootstrap {
             HerculesBeetleImpactShakeClientState.tick();
             KingJudgmentFlashClientState.tick();
             HordeClientState.tick();
+            com.craisinlord.antarchy.content.client.ElythiaEventClient.tick();
             if (client.player != null) {
                 ParalyzedClientHandler.clampPlayerInput(client.player);
                 com.craisinlord.antarchy.content.item.BigBerthaItem.clientTick(client.player);

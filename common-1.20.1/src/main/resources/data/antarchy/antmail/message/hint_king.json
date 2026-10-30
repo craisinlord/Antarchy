@@ -1,0 +1,20 @@
+{
+  "sender": "trayaurus@antmail.com",
+  "sender_display": "Dr. Trayaurus",
+  "sender_avatar_item": "antarchy:diamond_minecart",
+  "subject": "The tree on the hill",
+  "body": "I've been reading up on the King. He lives all alone at a huge royal tree and he is not very nice.\n\nIn the middle of a fight he'll shout out Decrees, like KNEEL or DO NOT RUN or COME NO CLOSER. Whatever he says, do it fast. If you break one your hearts get cut in half for 30 seconds. I put where to find him in your Archive.\n\nYour old friend,\nDr. T\n\n@archive:antarchy:king",
+  "trigger": {
+    "type": "random",
+    "pool": "antarchy:trayaurus_hints"
+  },
+  "once": true,
+  "conditions": {
+    "advancements": [
+      "antarchy:visit_elythia"
+    ],
+    "not_advancements": [
+      "antarchy:down_with_the_king"
+    ]
+  }
+}

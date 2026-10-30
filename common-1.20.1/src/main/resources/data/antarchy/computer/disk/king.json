@@ -1,6 +1,7 @@
 {
   "category": "antarchy:elythia",
   "title": "guide.antarchy.disk.king.title",
+  "description": "guide.antarchy.disk.king.description",
   "entries": [
     "antarchy:king",
     "antarchy:prince"

@@ -1,19 +1,15 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.RandomState;
 
 public final class ElythiaArrival {
     public static final int MIN_ARRIVAL_Y = 101;
-    private static final ResourceKey<Level> ELYTHIA = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("antarchy", "elythia"));
     private static final int SEARCH_RADIUS = 192;
     private static final int SEARCH_STEP = 16;
     private static final int DIRECTIONS = 8;
@@ -22,7 +18,7 @@ public final class ElythiaArrival {
     }
 
     public static BlockPos nearestPlateau(ServerLevel level, BlockPos preferredPos) {
-        if (!level.dimension().equals(ELYTHIA)) {
+        if (!level.dimension().equals(ThrowbackZones.ELYTHIA)) {
             return preferredPos;
         }
         ChunkGenerator generator = level.getChunkSource().getGenerator();

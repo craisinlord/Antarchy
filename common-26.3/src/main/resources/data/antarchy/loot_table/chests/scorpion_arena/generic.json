@@ -136,6 +136,15 @@
           }
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "antarchy:inject/antroid_phone"
+        }
+      ]
     }
   ],
   "random_sequence": "antarchy:chests/scorpion_arena/generic"

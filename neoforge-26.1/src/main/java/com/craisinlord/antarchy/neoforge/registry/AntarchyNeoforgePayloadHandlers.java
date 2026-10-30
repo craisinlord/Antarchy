@@ -24,6 +24,11 @@ public class AntarchyNeoforgePayloadHandlers {
 
     static void registerPayloadHandlers(RegisterPayloadHandlersEvent event) {
         var registrar = event.registrar("1");
+        registrar.playToClient(
+                com.craisinlord.antarchy.content.network.ElythiaEventPayload.TYPE,
+                com.craisinlord.antarchy.content.network.ElythiaEventPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> com.craisinlord.antarchy.content.client.ElythiaEventClient.handle(payload))
+        );
         registrar.playToServer(
                 AntarchyGamePayload.TYPE,
                 AntarchyGamePayload.STREAM_CODEC,

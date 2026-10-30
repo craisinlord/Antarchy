@@ -1,0 +1,19 @@
+{
+  "type": "antarchy:elythia_shared",
+  "argument": {
+    "type": "minecraft:cache",
+    "input": {
+      "type": "antarchy:elythia_shelf_terrace",
+      "argument": "antarchy:elythia_surface_offset",
+      "mask": "antarchy:elythia_shelf_mask",
+      "lift": "antarchy:elythia_shelf_lift",
+      "phase": "antarchy:elythia_shelf_phase",
+      "step": "antarchy:elythia_shelf_step",
+      "riser": "antarchy:elythia_shelf_riser",
+      "warp": "antarchy:elythia_shelf_warp",
+      "tilt": 0.15,
+      "min_offset": -0.45,
+      "max_offset": 2.4
+    }
+  }
+}

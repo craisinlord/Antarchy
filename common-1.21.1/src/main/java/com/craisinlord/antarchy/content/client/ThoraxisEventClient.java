@@ -17,7 +17,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -328,17 +327,8 @@ public final class ThoraxisEventClient {
         }
         RandomSource random = level.random;
         Vec3 origin = player.position();
-        float up = underside ? -1.0F : 1.0F;
         switch (shown) {
             case WEIGHTLESS -> {
-                int count = Mth.ceil(presence * 5.0F);
-                for (int i = 0; i < count; i++) {
-                    level.addParticle(ParticleTypes.END_ROD,
-                            origin.x + (random.nextDouble() - 0.5D) * 24.0D,
-                            origin.y + (random.nextDouble() - 0.3D) * 8.0D * up,
-                            origin.z + (random.nextDouble() - 0.5D) * 24.0D,
-                            0.0D, 0.02D * up, 0.0D);
-                }
                 if (phase == ThoraxisEvent.Phase.WARNING && random.nextInt(80) == 0) {
                     level.playLocalSound(origin.x, origin.y, origin.z, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.AMBIENT,
                             0.8F, 0.5F + random.nextFloat() * 0.2F, false);

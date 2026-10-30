@@ -31,6 +31,7 @@ public final class AntarchyConfigModuleNeoforge {
         HerculesBeetleImpactShakeSync.setSink((player, ticks) -> PacketDistributor.sendToPlayer(player, new HerculesBeetleImpactShakePayload(ticks)));
         KingJudgmentFlashSync.setSink((player, ticks) -> PacketDistributor.sendToPlayer(player, new KingJudgmentFlashPayload(ticks)));
         HordeIntensitySync.setSink(PacketDistributor::sendToPlayer);
+        com.craisinlord.antarchy.content.network.ElythiaEventSync.setSink(PacketDistributor::sendToPlayer);
         AntarchyNeoforge.modEventBusTempHolder.addListener(AntarchyConfigModuleNeoforge::onConfigChange);
     }
 
@@ -695,6 +696,15 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setFabricKeybindingConflictFixEnabled(AntarchyMiscConfig.fabricKeybindingConflictFixEnabled());
         AntarchySettings.setExperimentalSettingsPopupDisabled(AntarchyMiscConfig.experimentalSettingsPopupDisabled());
         AntarchySettings.setEntitySpecificFireOverlayEnabled(AntarchyMiscConfig.entitySpecificFireOverlayEnabled());
+        AntarchySettings.setElythiaEvents(AntarchyMiscConfig.elythiaEvents());
+        AntarchySettings.setElythiaAlreadyDreaming(AntarchyMiscConfig.elythiaAlreadyDreaming());
+        AntarchySettings.setElythiaDreamShadowsEnabled(AntarchyMiscConfig.elythiaDreamShadowsEnabled());
+        AntarchySettings.setElythiaDreamShadowsStrength(AntarchyMiscConfig.elythiaDreamShadowsStrength());
+        AntarchySettings.setElythiaPurpleRain(AntarchyMiscConfig.elythiaPurpleRain());
+        AntarchySettings.setElythiaClearWater(AntarchyMiscConfig.elythiaClearWater());
+        AntarchySettings.setElythiaGroundMistEnabled(AntarchyMiscConfig.elythiaGroundMistEnabled());
+        AntarchySettings.setElythiaFogEnabled(AntarchyMiscConfig.elythiaFogEnabled());
+        AntarchySettings.setElythiaRainGrowth(AntarchyMiscConfig.elythiaRainGrowth());
 
         AntarchySettings.setBloodCrystalArmorShieldRechargeTicks(AntarchyToolsConfig.bloodCrystalArmorShieldRechargeTicks());
         AntarchySettings.setBloodCrystalAppleShieldCount(AntarchyToolsConfig.bloodCrystalAppleShieldCount());

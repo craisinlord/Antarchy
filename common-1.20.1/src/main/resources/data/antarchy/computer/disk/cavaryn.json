@@ -1,7 +1,7 @@
 {
   "category": "antarchy:cavaryn",
   "title": "guide.antarchy.disk.cavaryn.title",
-  "entries": [
-    "antarchy:termite"
-  ]
+  "description": "guide.antarchy.disk.cavaryn.description",
+  "entries": [],
+  "programs": ["antarchy:cavaryn_quiz"]
 }

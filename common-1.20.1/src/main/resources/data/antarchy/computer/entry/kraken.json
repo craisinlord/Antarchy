@@ -23,5 +23,6 @@
     {
       "item": "antarchy:kraken_tooth"
     }
-  ]
+  ],
+  "lookup": ["antarchy:kraken_spawn_egg", "antarchy:krakens_grasp", "antarchy:kraken_kalamari"]
 }

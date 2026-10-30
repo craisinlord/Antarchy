@@ -32,6 +32,6 @@ public abstract class ElythiaAquiferMixin {
             Operation<Aquifer> original
     ) {
         Aquifer aquifer = original.call(noiseChunk, chunkPos, router, random, minY, height, fluidPicker);
-        return router.veinToggle() instanceof ElythiaHydrology hydrology ? new ElythiaAquifer(aquifer, hydrology) : aquifer;
+        return router.veinToggle() instanceof ElythiaHydrology hydrology ? new ElythiaAquifer(aquifer, noiseChunk, hydrology) : aquifer;
     }
 }

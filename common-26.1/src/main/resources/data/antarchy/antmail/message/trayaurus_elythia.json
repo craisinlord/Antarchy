@@ -1,0 +1,12 @@
+{
+  "sender": "trayaurus@antmail.com",
+  "sender_display": "Dr. Trayaurus",
+  "sender_avatar_item": "antarchy:diamond_minecart",
+  "subject": "Welcome to Elythia",
+  "body": "You're here! Isn't it just beautiful? From my window, anyway. Mostly.\n\nLook for the little floating lights near the Glimmering Pools. Those are Glimmers, and a Spirit Apple will make one your friend. Stay away from the big cocoons under the trees... Grim's been spit at too many times.\n\nThe lab is out in the rolling fields.\n\nYour old friend,\nDr. T\n\n@archive:antarchy:glimmer",
+  "trigger": {
+    "type": "advancement",
+    "value": "antarchy:visit_elythia",
+    "delay_minutes": 5
+  }
+}

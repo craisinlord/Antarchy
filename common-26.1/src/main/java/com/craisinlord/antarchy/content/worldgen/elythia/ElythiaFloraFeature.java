@@ -25,6 +25,9 @@ import java.util.Map;
 
 public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
     private static final String SIZEABLE_FOLIAGE_MODID = "sizeable_foliage";
+    private static volatile Block veryShortGrass;
+    private static volatile Block veryTallGrass;
+    private static volatile Block torchflowerBush;
     private static final Identifier CAMELLIA_ID = Identifier.fromNamespaceAndPath("antarchy", "camellia");
     private static final Identifier SPIDER_LILY_ID = Identifier.fromNamespaceAndPath("antarchy", "spider_lily");
     private static final net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> PRIMORDIAL_GROUND = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK, Identifier.fromNamespaceAndPath("antarchy", "primordial_ground"));
@@ -218,18 +221,35 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
     }
 
     private static Block veryShortGrass() {
-        Block block = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath(SIZEABLE_FOLIAGE_MODID, "very_short_grass"));
-        return block == Blocks.AIR ? Blocks.SHORT_GRASS : block;
+        Block block = veryShortGrass;
+        if (block == null) {
+            block = foliageBlock("very_short_grass", Blocks.SHORT_GRASS);
+            veryShortGrass = block;
+        }
+        return block;
     }
 
     private static Block veryTallGrass() {
-        Block block = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath(SIZEABLE_FOLIAGE_MODID, "very_tall_grass"));
-        return block == Blocks.AIR ? Blocks.TALL_GRASS : block;
+        Block block = veryTallGrass;
+        if (block == null) {
+            block = foliageBlock("very_tall_grass", Blocks.TALL_GRASS);
+            veryTallGrass = block;
+        }
+        return block;
     }
 
     private static Block torchflowerBush() {
-        Block block = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath(SIZEABLE_FOLIAGE_MODID, "torchflower_bush"));
-        return block == Blocks.AIR ? Blocks.TORCHFLOWER : block;
+        Block block = torchflowerBush;
+        if (block == null) {
+            block = foliageBlock("torchflower_bush", Blocks.TORCHFLOWER);
+            torchflowerBush = block;
+        }
+        return block;
+    }
+
+    private static Block foliageBlock(String path, Block fallback) {
+        Block block = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath(SIZEABLE_FOLIAGE_MODID, path));
+        return block == Blocks.AIR ? fallback : block;
     }
 
     private static Block antarchyBlock(Identifier id) {
@@ -518,7 +538,8 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
             case FOREST -> 0.24F;
             default -> 0.45F;
         };
-        if (!isValidGround(level, groundPos) || level.getBlockState(groundPos).is(PRIMORDIAL_GROUND) || random.nextFloat() > overgrowChance) {
+        BlockState groundState = level.getBlockState(groundPos);
+        if (!isValidGround(groundState) || groundState.is(PRIMORDIAL_GROUND) || random.nextFloat() > overgrowChance) {
             return;
         }
 
@@ -546,22 +567,23 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
     }
 
     private static boolean isValidGround(WorldGenLevel level, BlockPos pos) {
-        BlockState state = level.getBlockState(pos);
+        return isValidGround(level.getBlockState(pos));
+    }
+
+    private static boolean isValidGround(BlockState state) {
         return isIntendedGround(state) && !state.is(BlockTags.LOGS) && !state.is(BlockTags.LEAVES) && !state.is(Blocks.TUFF);
     }
 
     private static boolean isValidPlantSpot(WorldGenLevel level, BlockPos plantPos, BlockPos groundPos) {
-        if (!isOpenPlantSpot(level, plantPos) || !isValidGround(level, groundPos)) {
+        if (!isOpenPlantSpot(level, plantPos)) {
             return false;
         }
 
         BlockState topState = level.getBlockState(groundPos);
-        return hasPlantHeadroom(level, plantPos, 3)
-                && Blocks.SHORT_GRASS.defaultBlockState().canSurvive(level, plantPos)
-                && !topState.is(BlockTags.LOGS)
-                && !topState.is(BlockTags.LEAVES)
-                && !topState.is(Blocks.TUFF)
-                && !topState.is(Blocks.TUFF_SLAB);
+        return isValidGround(topState)
+                && !topState.is(Blocks.TUFF_SLAB)
+                && hasPlantHeadroom(level, plantPos, 3)
+                && Blocks.SHORT_GRASS.defaultBlockState().canSurvive(level, plantPos);
     }
 
     private static boolean isIntendedGround(BlockState state) {
@@ -582,7 +604,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
     }
 
     private static boolean hasPlantHeadroom(WorldGenLevel level, BlockPos pos, int height) {
-        for (int y = 0; y < height; y++) {
+        for (int y = 1; y < height; y++) {
             if (!isOpenPlantSpot(level, pos.above(y))) {
                 return false;
             }

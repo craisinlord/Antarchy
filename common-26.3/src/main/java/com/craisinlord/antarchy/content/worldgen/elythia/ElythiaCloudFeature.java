@@ -1,26 +1,24 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
 public final class ElythiaCloudFeature implements Feature {
     public static final MapCodec<ElythiaCloudFeature> CODEC = MapCodec.unit(ElythiaCloudFeature::new);
 
+    @Override
+    public MapCodec<ElythiaCloudFeature> codec() { return CODEC; }
+
     private enum CloudSize {
         WISPY,
         SMALL,
         LARGE
-    }
-
-    @Override
-    public MapCodec<ElythiaCloudFeature> codec() {
-        return CODEC;
     }
 
     @Override

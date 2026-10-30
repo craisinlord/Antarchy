@@ -2,92 +2,6 @@
   "has_precipitation": false,
   "temperature": 2.0,
   "downfall": 0.0,
-  "attributes": {
-    "minecraft:audio/ambient_sounds": {
-      "mood": {
-        "sound": "antarchy:thoraxis_dream_dunes_mood",
-        "tick_delay": 8572,
-        "block_search_extent": 8,
-        "offset": 2.0
-      },
-      "additions": {
-        "sound": "antarchy:thoraxis_dream_dunes_biome_additions",
-        "tick_chance": 0.0005
-      }
-    },
-    "minecraft:audio/background_music": {
-      "default": {
-        "sound": "antarchy:music.game.thoraxis",
-        "min_delay": 600,
-        "max_delay": 1800,
-        "replace_current_music": true
-      }
-    },
-    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.03,
-    "minecraft:gameplay/natural_mob_spawns": {
-      "argument": {
-        "spawn_costs": {
-          "antarchy:emperor_scorpion": {
-            "energy_budget": 0.18,
-            "charge": 1.4
-          }
-        },
-        "spawns_by_category": {
-          "monster": [
-            {
-              "type": "antarchy:scorpion",
-              "count": {
-                "type": "minecraft:uniform",
-                "max_inclusive": 5,
-                "min_inclusive": 2
-              },
-              "weight": 40
-            },
-            {
-              "type": "antarchy:emperor_scorpion",
-              "count": 1,
-              "weight": 3
-            },
-            {
-              "type": "antarchy:manticore",
-              "count": {
-                "type": "minecraft:uniform",
-                "max_inclusive": 2,
-                "min_inclusive": 1
-              },
-              "weight": 12
-            }
-          ],
-          "creature": [
-            {
-              "type": "antarchy:bed_bug",
-              "count": {
-                "type": "minecraft:uniform",
-                "max_inclusive": 4,
-                "min_inclusive": 2
-              },
-              "weight": 15
-            }
-          ]
-        }
-      },
-      "modifier": "overlay"
-    },
-    "minecraft:visual/ambient_particles": [
-      {
-        "particle": {
-          "type": "minecraft:ash"
-        },
-        "probability": 0.004
-      }
-    ],
-    "minecraft:visual/fog_color": "#0f0000",
-    "minecraft:visual/sky_color": "#000000",
-    "minecraft:visual/water_fog_color": "#000000"
-  },
-  "effects": {
-    "water_color": "#050000"
-  },
   "carvers": [],
   "features": [
     [],
@@ -116,5 +30,105 @@
       "antarchy:cornea_stalk_patch",
       "antarchy:patch_ceiling_cornea_stalk"
     ]
-  ]
+  ],
+  "effects": {
+    "water_color": "#050000"
+  },
+  "attributes": {
+    "minecraft:visual/fog_color": "#0f0000",
+    "minecraft:visual/sky_color": "#080000",
+    "minecraft:visual/water_fog_color": "#000000",
+    "minecraft:audio/ambient_sounds": {
+      "mood": {
+        "sound": "antarchy:thoraxis_dream_dunes_mood",
+        "tick_delay": 8572,
+        "block_search_extent": 8,
+        "offset": 2.0
+      },
+      "additions": {
+        "sound": "antarchy:thoraxis_dream_dunes_biome_additions",
+        "tick_chance": 0.0005
+      }
+    },
+    "minecraft:audio/background_music": {
+      "default": {
+        "sound": "antarchy:music.game.thoraxis",
+        "min_delay": 600,
+        "max_delay": 1800,
+        "replace_current_music": true
+      }
+    },
+    "minecraft:visual/ambient_particles": [
+      {
+        "particle": {
+          "type": "minecraft:ash"
+        },
+        "probability": 0.004
+      }
+    ],
+    "minecraft:gameplay/natural_mob_spawns": {
+      "modifier": "overlay",
+      "argument": {
+        "spawn_costs": {
+          "antarchy:scorpion": {
+            "energy_budget": 0.15,
+            "charge": 0.7
+          },
+          "antarchy:manticore": {
+            "energy_budget": 0.12,
+            "charge": 1.0
+          },
+          "antarchy:emperor_scorpion": {
+            "energy_budget": 0.12,
+            "charge": 2.0
+          }
+        },
+        "spawns_by_category": {
+          "monster": [
+            {
+              "type": "antarchy:scorpion",
+              "weight": 40,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 2,
+                "max_inclusive": 5
+              }
+            },
+            {
+              "type": "antarchy:emperor_scorpion",
+              "weight": 3,
+              "count": 1
+            },
+            {
+              "type": "antarchy:manticore",
+              "weight": 12,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 2
+              }
+            }
+          ],
+          "creature": [
+            {
+              "type": "antarchy:bed_bug",
+              "weight": 15,
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 2,
+                "max_inclusive": 4
+              }
+            }
+          ],
+          "ambient": [],
+          "axolotls": [],
+          "underground_water_creature": [],
+          "water_creature": [],
+          "water_ambient": [],
+          "misc": []
+        }
+      }
+    },
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.03
+  }
 }
