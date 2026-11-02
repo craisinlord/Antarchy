@@ -261,7 +261,7 @@ public class VortexEntity extends Monster implements GeoEntity {
         vortex.setTravelDuration(Mth.clamp((int) Math.ceil(distance / drift.length()), 8, 36));
         vortex.setHoming(false);
         serverLevel.addFreshEntity(vortex);
-            serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_EXPLODE, this.getSoundSource(), 1.0F, 0.9F);
+        serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PHANTOM_FLAP, this.getSoundSource(), 1.0F, 0.9F);
     }
 
     private int countOwnedActiveVortexes() {
@@ -308,7 +308,6 @@ public class VortexEntity extends Monster implements GeoEntity {
         }
         if (this.deathTime >= DEATH_TICKS) {
             this.remove(RemovalReason.KILLED);
-            this.dropExperience();
         }
     }
 
@@ -323,12 +322,12 @@ public class VortexEntity extends Monster implements GeoEntity {
 
     @Override
     protected SoundEvent getHurtSound(DamageSource damageSource) {
-        return SoundEvents.GENERIC_HURT;
+        return SoundEvents.BLAZE_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.GENERIC_DEATH;
+        return SoundEvents.BLAZE_DEATH;
     }
 
     @Override

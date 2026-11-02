@@ -1,0 +1,36 @@
+package com.craisinlord.antarchy.mixins;
+
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaHydrology;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaHydrologyHolder;
+import net.minecraft.world.level.levelgen.NoiseRouter;
+import net.minecraft.world.level.levelgen.RandomState;
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+@Mixin(RandomState.class)
+public abstract class ElythiaRandomStateMixin implements ElythiaHydrologyHolder {
+    @Shadow
+    @Final
+    private NoiseRouter router;
+
+    @Unique
+    @Nullable
+    private ElythiaHydrology antarchy$hydrology;
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void antarchy$captureHydrology(CallbackInfo ci) {
+        this.antarchy$hydrology = ElythiaHydrology.find(this.router.veinToggle());
+    }
+
+    @Override
+    @Nullable
+    public ElythiaHydrology antarchy$hydrology() {
+        return this.antarchy$hydrology;
+    }
+}

@@ -227,6 +227,8 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SEASHELL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.SEASHELL);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> LUCID_ANCHOR_ITEM = ITEMS.register("lucid_anchor",
             () -> new LucidAnchorBlockItem(AntarchyFabricBlocks.LUCID_ANCHOR.get(), DeferredRegister.blockItemProperties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.FossilBlockItem> MYRMITE_FOSSIL_ITEM = ITEMS.register("myrmite_fossil", () -> new com.craisinlord.antarchy.content.item.FossilBlockItem(AntarchyFabricBlocks.MYRMITE_FOSSIL.get(), DeferredRegister.blockItemProperties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.FossilBlockItem> BROODSTONE_FOSSIL_ITEM = ITEMS.register("broodstone_fossil", () -> new com.craisinlord.antarchy.content.item.FossilBlockItem(AntarchyFabricBlocks.BROODSTONE_FOSSIL.get(), DeferredRegister.blockItemProperties().rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> UNDERTRIAL_SPAWNER_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.UNDERTRIAL_SPAWNER);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> UNDERVAULT_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.UNDERVAULT);
     public static final DeferredItem<Item> UNDERTRIAL_KEY = ITEMS.register("undertrial_key", () -> new Item(DeferredRegister.itemProperties()));
@@ -1393,7 +1395,7 @@ public final class AntarchyFabricItems {
             () -> new KrakensGraspItem(
                     DeferredRegister.itemProperties()
                             .stacksTo(1)
-                            .durability(250)
+                            .durability(2000)
                             .rarity(Rarity.EPIC)
                             .fireResistant()
             ));

@@ -1,4 +1,48 @@
 {
+  "music.throwback": {
+    "sounds": [
+      {
+        "name": "minecraft:music/game/calm1",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/calm2",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/calm3",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/hal2",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/hal3",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/hal4",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/piano2",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/piano3",
+        "stream": true
+      }
+    ]
+  },
+  "entity.player.hurt_classic": {
+    "subtitle": "subtitles.entity.player.hurt",
+    "sounds": [
+      {
+        "name": "minecraft:random/classic_hurt"
+      }
+    ]
+  },
   "thoraxis_nightmare_wastes_biome_additions": {
     "sounds": [
       { "name": "antarchy:thoraxis_nightmare_wastes_ambient", "type": "event", "weight": 5 },
@@ -1213,13 +1257,55 @@
         "name": "antarchy:wistful_wanderings",
         "type": "event",
         "stream": true,
-        "weight": 3
+        "weight": 18
       },
       {
-        "name": "minecraft:music.game",
-        "type": "event",
-        "stream": true,
-        "weight": 2
+        "name": "minecraft:music/game/calm1",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/calm2",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/calm3",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/hal1",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/hal2",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/hal3",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/hal4",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/nuance1",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/nuance2",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/piano1",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/piano2",
+        "stream": true
+      },
+      {
+        "name": "minecraft:music/game/piano3",
+        "stream": true
       }
     ]
   },

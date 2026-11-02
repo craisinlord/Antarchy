@@ -749,6 +749,8 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setIchorWitherEnabled(AntarchyMiscConfig.ichorWitherEnabled());
 
         AntarchySettings.setDuplicatorTreeEnabled(AntarchyMiscConfig.duplicatorTreeEnabled());
+        AntarchySettings.setFossilsEnabled(AntarchyMiscConfig.fossilsEnabled());
+        AntarchySettings.setFossilEntityBlacklist(AntarchyMiscConfig.fossilEntityBlacklist());
         AntarchySettings.setGlowVinesUnderLeaves(AntarchyMiscConfig.glowVinesUnderLeaves());
         AntarchySettings.setSwingThroughGrassEnabled(AntarchyMiscConfig.swingThroughGrassEnabled());
         AntarchySettings.setFabricKeybindingConflictFixEnabled(AntarchyMiscConfig.fabricKeybindingConflictFixEnabled());

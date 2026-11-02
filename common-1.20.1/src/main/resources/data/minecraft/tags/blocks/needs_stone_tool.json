@@ -46,6 +46,13 @@
     "antarchy:mossy_nyxite_bricks",
     "antarchy:mossy_nyxite_brick_stairs",
     "antarchy:mossy_nyxite_brick_slab",
-    "antarchy:mossy_nyxite_brick_wall"
+    "antarchy:mossy_nyxite_brick_wall",
+    "antarchy:myrmite_copper_ore",
+    "antarchy:broodstone_copper_ore",
+    "antarchy:myrmite_iron_ore",
+    "antarchy:broodstone_iron_ore",
+    "antarchy:myrmite_lapis_ore",
+    "antarchy:broodstone_lapis_ore",
+    "antarchy:broodstone_fossil"
   ]
 }

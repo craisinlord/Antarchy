@@ -26,7 +26,7 @@ import org.joml.Vector4f;
 import org.joml.Vector4fc;
 import org.jetbrains.annotations.Nullable;
 
-final class AntarchySkyDraw {
+public final class AntarchySkyDraw {
     static final Vector4fc WHITE = new Vector4f(1.0F, 1.0F, 1.0F, 1.0F);
     private static final int INITIAL_BUFFER_SIZE = 786432;
     private static final long VERTEX_ALIGNMENT = 16L;
@@ -41,17 +41,17 @@ final class AntarchySkyDraw {
     private AntarchySkyDraw() {
     }
 
-    record StaticMesh(GpuBuffer vertices, int indexCount, PrimitiveTopology topology) {
+    public record StaticMesh(GpuBuffer vertices, int indexCount, PrimitiveTopology topology) {
     }
 
-    static BufferBuilder begin(PrimitiveTopology topology, VertexFormat format) {
+    public static BufferBuilder begin(PrimitiveTopology topology, VertexFormat format) {
         if (byteBuffer == null) {
             byteBuffer = new ByteBufferBuilder(INITIAL_BUFFER_SIZE);
         }
         return new BufferBuilder(byteBuffer, topology, format);
     }
 
-    static StaticMesh upload(String label, MeshData mesh) {
+    public static StaticMesh upload(String label, MeshData mesh) {
         try (mesh) {
             GpuBuffer buffer = RenderSystem.getDevice().createBuffer(() -> label, GpuBuffer.USAGE_VERTEX, mesh.vertexBuffer());
             return new StaticMesh(buffer, mesh.drawState().indexCount(), mesh.drawState().primitiveTopology());
@@ -82,20 +82,45 @@ final class AntarchySkyDraw {
         return upload(label, builder.buildOrThrow());
     }
 
-    static Matrix4f modelView() {
+    public static Matrix4f modelView() {
         return RenderSystem.getModelViewMatrixCopy();
     }
 
-    static void draw(String label, RenderPipeline pipeline, MeshData mesh, Matrix4fc modelView, Vector4fc color, @Nullable Identifier texture) {
+    public static void draw(String label, RenderPipeline pipeline, MeshData mesh, Matrix4fc modelView, Vector4fc color, @Nullable Identifier texture) {
         try (mesh) {
             CommandEncoder encoder = RenderSystem.getDevice().createCommandEncoder();
             GpuBufferSlice vertices = encoder.transientMemory().uploadGpu(mesh.vertexBuffer(), VERTEX_ALIGNMENT, GpuBuffer.USAGE_VERTEX);
-            draw(label, pipeline, vertices, mesh.drawState().indexCount(), mesh.drawState().primitiveTopology(), modelView, color, texture);
+            draw(label, pipeline, vertices, mesh.drawState().indexCount(), mesh.drawState().primitiveTopology(), modelView, color, texture, null);
         }
     }
 
-    static void draw(String label, RenderPipeline pipeline, StaticMesh mesh, Matrix4fc modelView, Vector4fc color, @Nullable Identifier texture) {
-        draw(label, pipeline, mesh.vertices().slice(), mesh.indexCount(), mesh.topology(), modelView, color, texture);
+    public static void draw(String label, RenderPipeline pipeline, StaticMesh mesh, Matrix4fc modelView, Vector4fc color, @Nullable Identifier texture) {
+        draw(label, pipeline, mesh.vertices().slice(), mesh.indexCount(), mesh.topology(), modelView, color, texture, null);
+    }
+
+    public static void draw(String label, RenderPipeline pipeline, StaticMesh mesh, Matrix4fc modelView, Vector4fc color, @Nullable Identifier texture, @Nullable RenderTarget target) {
+        draw(label, pipeline, mesh.vertices().slice(), mesh.indexCount(), mesh.topology(), modelView, color, texture, target);
+    }
+
+    public static void draw(String label, RenderPipeline pipeline, StaticMesh mesh, Matrix4fc modelView, Vector4fc color,
+                            @Nullable Identifier texture, RenderPass renderPass) {
+        if (mesh.indexCount() <= 0) {
+            return;
+        }
+        RenderSystem.AutoStorageIndexBuffer indices = RenderSystem.getSequentialBuffer(mesh.topology());
+        GpuBuffer indexBuffer = indices.getBuffer(mesh.indexCount());
+        GpuBufferSlice transforms = RenderSystem.getDynamicUniforms()
+                .writeTransform(new Matrix4f(modelView), new Vector4f(color), new Vector3f(), new Matrix4f());
+        renderPass.setPipeline(RenderSystem.getCompiledPipeline(pipeline));
+        RenderSystem.bindDefaultUniforms(renderPass);
+        renderPass.setUniform("DynamicTransforms", transforms);
+        if (texture != null) {
+            AbstractTexture abstractTexture = Minecraft.getInstance().getTextureManager().getTexture(texture);
+            renderPass.setUniform("Sampler0", abstractTexture.getTextureView(), abstractTexture.getSampler());
+        }
+        renderPass.setVertexBuffer(0, mesh.vertices().slice());
+        renderPass.setIndexBuffer(indexBuffer, indices.type());
+        renderPass.drawIndexed(mesh.indexCount(), 1, 0, 0, 0);
     }
 
     private static void draw(
@@ -106,7 +131,8 @@ final class AntarchySkyDraw {
             PrimitiveTopology topology,
             Matrix4fc modelView,
             Vector4fc color,
-            @Nullable Identifier texture
+            @Nullable Identifier texture,
+            @Nullable RenderTarget target
     ) {
         if (indexCount <= 0) {
             return;
@@ -116,7 +142,9 @@ final class AntarchySkyDraw {
         GpuBufferSlice transforms = RenderSystem.getDynamicUniforms()
                 .writeTransform(new Matrix4f(modelView), new Vector4f(color), new Vector3f(), new Matrix4f());
         AbstractTexture abstractTexture = texture != null ? Minecraft.getInstance().getTextureManager().getTexture(texture) : null;
-        RenderTarget target = Minecraft.getInstance().gameRenderer.mainRenderTarget();
+        if (target == null) {
+            target = Minecraft.getInstance().gameRenderer.mainRenderTarget();
+        }
         try (RenderPass renderPass = RenderSystem.getDevice()
                 .createCommandEncoder()
                 .createRenderPass(() -> label, target.getColorTextureView(), Optional.empty(), target.getDepthTextureView(), OptionalDouble.empty())) {

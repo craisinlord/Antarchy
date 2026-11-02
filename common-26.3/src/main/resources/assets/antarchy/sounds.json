@@ -3180,5 +3180,11 @@
       { "name": "antarchy:mob/princess/walk3" },
       { "name": "antarchy:mob/princess/walk4" }
     ]
+  },
+  "entity.player.hurt_classic": {
+    "subtitle": "subtitles.entity.player.hurt",
+    "sounds": [
+      { "name": "minecraft:random/classic_hurt" }
+    ]
   }
 }

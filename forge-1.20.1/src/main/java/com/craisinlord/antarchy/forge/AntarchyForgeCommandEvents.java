@@ -23,9 +23,11 @@ public final class AntarchyForgeCommandEvents {
         CaterpillarCommand.register(event.getDispatcher());
         DimensionalTearCommand.register(event.getDispatcher());
         ElythiaCommand.register(event.getDispatcher());
+        com.craisinlord.antarchy.content.command.ThoraxisCommand.register(event.getDispatcher());
         QueenLocateCommand.register(event.getDispatcher());
         RoyalCommand.register(event.getDispatcher());
         com.craisinlord.antarchy.content.command.PortalGunCommand.register(event.getDispatcher());
+        com.craisinlord.antarchy.content.command.DimensionResetCommand.register(event.getDispatcher());
     }
 
     @SubscribeEvent

@@ -431,6 +431,7 @@ public final class AntarchyFabricSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> HOVERBOARD_MOUNT = registerSoundEvent("hoverboard_mount");
     public static final DeferredHolder<SoundEvent, SoundEvent> HOVERBOARD_DISMOUNT = registerSoundEvent("hoverboard_dismount");
     public static final DeferredHolder<SoundEvent, SoundEvent> HOVERBOARD_IDLE = registerSoundEvent("hoverboard_idle");
+    public static final DeferredHolder<SoundEvent, SoundEvent> PLAYER_HURT_CLASSIC = registerSoundEvent("entity.player.hurt_classic");
 
     private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String path) {
         return SOUND_EVENTS.register(path,

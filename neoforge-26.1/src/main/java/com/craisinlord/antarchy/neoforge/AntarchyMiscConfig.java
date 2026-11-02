@@ -12,7 +12,15 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.BooleanValue ELYTHIA_GROUND_MIST_ENABLED;
     private static final ModConfigSpec.BooleanValue ELYTHIA_FOG_ENABLED;
     private static final ModConfigSpec.BooleanValue ELYTHIA_EVENTS;
+    private static final ModConfigSpec.BooleanValue THORAXIS_EVENTS;
     private static final ModConfigSpec.BooleanValue ELYTHIA_RAIN_GROWTH;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_SOFT_CLOUDS_ENABLED;
+    private static final ModConfigSpec.BooleanValue THROWBACK_ZONES_ENABLED;
+    private static final ModConfigSpec.BooleanValue THROWBACK_NO_ATTACK_COOLDOWN;
+    private static final ModConfigSpec.BooleanValue THROWBACK_CLASSIC_HURT_SOUND;
+    private static final ModConfigSpec.BooleanValue THROWBACK_CLASSIC_FOOD;
+    private static final ModConfigSpec.BooleanValue FOSSILS_ENABLED;
+    private static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> FOSSIL_ENTITY_BLACKLIST;
 
     private static final ModConfigSpec.BooleanValue ELYTHIA_FIREFLY_PARTICLES_ENABLED;
 
@@ -77,10 +85,24 @@ public final class AntarchyMiscConfig {
         ELYTHIA_GROUND_MIST_ENABLED = b.define("groundMistEnabled", true);
         ELYTHIA_FOG_ENABLED = b.define("fogEnabled", true);
         ELYTHIA_EVENTS = b.define("events", true);
+        THORAXIS_EVENTS = b.define("thoraxisEvents", true);
         ELYTHIA_RAIN_GROWTH = b.define("rainGrowth", true);
+        ELYTHIA_SOFT_CLOUDS_ENABLED = b.define("softCloudsEnabled", true);
         ELYTHIA_FIREFLY_PARTICLES_ENABLED = b
                 .comment("Whether firefly ambient particles appear at night in the Elythia dimension.")
                 .define("fireflyParticlesEnabled", true);
+        b.pop();
+
+        b.push("throwback");
+        THROWBACK_ZONES_ENABLED = b.define("zonesEnabled", true);
+        THROWBACK_NO_ATTACK_COOLDOWN = b.define("noAttackCooldown", true);
+        THROWBACK_CLASSIC_HURT_SOUND = b.define("classicHurtSound", true);
+        THROWBACK_CLASSIC_FOOD = b.define("classicFood", true);
+        b.pop();
+
+        b.push("fossils");
+        FOSSILS_ENABLED = b.define("enabled", true);
+        FOSSIL_ENTITY_BLACKLIST = b.defineListAllowEmpty("entityBlacklist", () -> java.util.List.of(com.craisinlord.antarchy.config.AntarchySettings.defaultFossilEntityBlacklist().split(",")), entry -> entry instanceof String);
         b.pop();
 
         b.push("dreamSand");
@@ -221,7 +243,15 @@ public final class AntarchyMiscConfig {
     static double  hoverboardMaxSpeed()                  { return HOVERBOARD_MAX_SPEED.get(); }
     static double  hoverboardAcceleration()              { return HOVERBOARD_ACCELERATION.get(); }
     static boolean elythiaEvents() { return ELYTHIA_EVENTS.get(); }
+    static boolean thoraxisEvents() { return THORAXIS_EVENTS.get(); }
     static boolean elythiaRainGrowth() { return ELYTHIA_RAIN_GROWTH.get(); }
+    static boolean elythiaSoftCloudsEnabled() { return ELYTHIA_SOFT_CLOUDS_ENABLED.get(); }
+    static boolean throwbackZonesEnabled() { return THROWBACK_ZONES_ENABLED.get(); }
+    static boolean throwbackNoAttackCooldown() { return THROWBACK_NO_ATTACK_COOLDOWN.get(); }
+    static boolean throwbackClassicHurtSound() { return THROWBACK_CLASSIC_HURT_SOUND.get(); }
+    static boolean throwbackClassicFood() { return THROWBACK_CLASSIC_FOOD.get(); }
+    static boolean fossilsEnabled() { return FOSSILS_ENABLED.get(); }
+    static String fossilEntityBlacklist() { return String.join(",", FOSSIL_ENTITY_BLACKLIST.get()); }
 
     static boolean elythiaFogEnabled() { return ELYTHIA_FOG_ENABLED.get(); }
 

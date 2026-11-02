@@ -1,7 +1,10 @@
 {
   "type": "minecraft:stonecutting",
-  "ingredient": "antarchy:myrmite",
+  "ingredient": {
+    "item": "antarchy:myrmite"
+  },
   "result": {
     "id": "antarchy:myrmite_stairs"
   }
 }
+

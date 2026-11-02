@@ -9,10 +9,28 @@ public final class AntarchyMiscConfig {
     private static final ForgeConfigSpec.DoubleValue ELYTHIA_DREAM_SHADOWS_STRENGTH;
     private static final ForgeConfigSpec.BooleanValue ELYTHIA_PURPLE_RAIN;
     private static final ForgeConfigSpec.BooleanValue ELYTHIA_CLEAR_WATER;
+    private static final ForgeConfigSpec.BooleanValue BROWN_ANT_DESCENT;
+    private static final ForgeConfigSpec.BooleanValue RED_ANT_FLIP;
+    private static final ForgeConfigSpec.BooleanValue TERMITE_BURROW;
+    private static final ForgeConfigSpec.BooleanValue RAINBOW_ANT_PRISM;
     private static final ForgeConfigSpec.BooleanValue ELYTHIA_GROUND_MIST_ENABLED;
     private static final ForgeConfigSpec.BooleanValue ELYTHIA_FOG_ENABLED;
+    private static final ForgeConfigSpec.BooleanValue ELYTHIA_SOFT_CLOUDS_ENABLED;
+    private static final ForgeConfigSpec.BooleanValue ELYTHIA_ECHOES;
     private static final ForgeConfigSpec.BooleanValue ELYTHIA_EVENTS;
     private static final ForgeConfigSpec.BooleanValue ELYTHIA_RAIN_GROWTH;
+    private static final ForgeConfigSpec.BooleanValue THORAXIS_EVENTS;
+    private static final ForgeConfigSpec.BooleanValue THROWBACK_ZONES_ENABLED;
+    private static final ForgeConfigSpec.IntValue     THROWBACK_STRUCTURE_ZONE_RADIUS;
+    private static final ForgeConfigSpec.DoubleValue  THROWBACK_WILD_ZONE_CHANCE;
+    private static final ForgeConfigSpec.BooleanValue THROWBACK_NO_ATTACK_COOLDOWN;
+    private static final ForgeConfigSpec.BooleanValue THROWBACK_CLASSIC_HURT_SOUND;
+    private static final ForgeConfigSpec.BooleanValue THROWBACK_CLASSIC_FOOD;
+    private static final ForgeConfigSpec.BooleanValue THROWBACK_CLASSIC_MUSIC;
+    private static final ForgeConfigSpec.BooleanValue THROWBACK_DENSE_FOG;
+    private static final ForgeConfigSpec.BooleanValue THROWBACK_DREAM_HAZE;
+    private static final ForgeConfigSpec.DoubleValue  THROWBACK_DREAM_STRENGTH;
+    private static final ForgeConfigSpec.BooleanValue THROWBACK_AFTERIMAGES;
 
     private static final ForgeConfigSpec.BooleanValue ELYTHIA_FIREFLY_PARTICLES_ENABLED;
 
@@ -59,6 +77,8 @@ public final class AntarchyMiscConfig {
     private static final ForgeConfigSpec.DoubleValue HOVERBOARD_ACCELERATION;
 
     private static final ForgeConfigSpec.BooleanValue DUPLICATOR_TREE_ENABLED;
+    private static final ForgeConfigSpec.BooleanValue FOSSILS_ENABLED;
+    private static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> FOSSIL_ENTITY_BLACKLIST;
     private static final ForgeConfigSpec.BooleanValue GLOW_VINES_UNDER_LEAVES;
     private static final ForgeConfigSpec.BooleanValue SWING_THROUGH_GRASS_ENABLED;
     private static final ForgeConfigSpec.BooleanValue BOATS_CLIMB_WATER_STEPS;
@@ -76,13 +96,69 @@ public final class AntarchyMiscConfig {
         ELYTHIA_DREAM_SHADOWS_STRENGTH = b.defineInRange("dreamShadowsStrength", 1.0D, 0.0D, 1.0D);
         ELYTHIA_PURPLE_RAIN = b.define("purpleRain", true);
         ELYTHIA_CLEAR_WATER = b.define("clearWater", true);
+        BROWN_ANT_DESCENT = b
+                .comment("Whether brown ant trips to Elythia play the Descent, sinking into a void and gliding down from the sky, and trips home play the Waking.")
+                .define("brownAntDescent", true);
+        RED_ANT_FLIP = b
+                .comment("Whether red ant trips to and from Thoraxis play the Flip, where you fall upward as the world rolls over.")
+                .define("redAntFlip", true);
+        TERMITE_BURROW = b
+                .comment("Whether termite trips to and from Cavaryn play the Burrow, crumbling through the ground or bursting back out.")
+                .define("termiteBurrow", true);
+        RAINBOW_ANT_PRISM = b
+                .comment("Whether rainbow ant trips to and from Infinity dimensions play the Prism, splitting the world into color.")
+                .define("rainbowAntPrism", true);
         ELYTHIA_GROUND_MIST_ENABLED = b.define("groundMistEnabled", true);
         ELYTHIA_FOG_ENABLED = b.define("fogEnabled", true);
+        ELYTHIA_SOFT_CLOUDS_ENABLED = b
+                .comment("Whether the low, mid and towering Elythia clouds use soft translucent clouds instead of solid blocky ones. Client-side visual only.")
+                .define("softCloudsEnabled", true);
+        ELYTHIA_ECHOES = b
+                .comment("Whether a faint echo of yourself sometimes replays where you walked a few minutes earlier. Client-side visual only.")
+                .define("echoes", true);
         ELYTHIA_EVENTS = b.define("events", true);
         ELYTHIA_RAIN_GROWTH = b.define("rainGrowth", true);
+        THORAXIS_EVENTS = b
+                .comment("Whether Thoraxis rolls events such as weightlessness, temporal bubbles, upward antiwater rain, the watching eyes, blind skies, and dreamstorms.")
+                .define("thoraxisEvents", true);
         ELYTHIA_FIREFLY_PARTICLES_ENABLED = b
                 .comment("Whether firefly ambient particles appear at night in the Elythia dimension.")
                 .define("fireflyParticlesEnabled", true);
+        b.push("throwbackZones");
+        THROWBACK_ZONES_ENABLED = b
+                .comment("Whether Throwback Zones appear around nostalgic structures and in the wild in Elythia.")
+                .define("enabled", true);
+        THROWBACK_STRUCTURE_ZONE_RADIUS = b
+                .comment("How many blocks a Throwback Zone extends beyond a nostalgic structure.")
+                .defineInRange("structureZoneRadius", 10, 1, 128);
+        THROWBACK_WILD_ZONE_CHANCE = b
+                .comment("Chance that each 320x320 block region of Elythia contains a free-standing Throwback Zone.")
+                .defineInRange("wildZoneChance", 0.35D, 0.0D, 1.0D);
+        THROWBACK_NO_ATTACK_COOLDOWN = b
+                .comment("Whether players inside a Throwback Zone have no attack cooldown.")
+                .define("noAttackCooldown", true);
+        THROWBACK_CLASSIC_HURT_SOUND = b
+                .comment("Whether players inside a Throwback Zone use the classic hurt sound.")
+                .define("classicHurtSound", true);
+        THROWBACK_CLASSIC_FOOD = b
+                .comment("Whether hunger is hidden and paused inside a Throwback Zone, with food healing hearts directly like pre-Beta 1.8.")
+                .define("classicFood", true);
+        THROWBACK_CLASSIC_MUSIC = b
+                .comment("Whether classic music plays inside a Throwback Zone.")
+                .define("classicMusic", true);
+        THROWBACK_DENSE_FOG = b
+                .comment("Whether fog closes in inside a Throwback Zone.")
+                .define("denseFog", true);
+        THROWBACK_DREAM_HAZE = b
+                .comment("Whether the dream post effect and Elythia color grade are rendered.")
+                .define("dreamHaze", true);
+        THROWBACK_DREAM_STRENGTH = b
+                .comment("Strength of the dream post effect inside Throwback Zones, from 0.0 to 1.0.")
+                .defineInRange("dreamStrength", 1.0D, 0.0D, 1.0D);
+        THROWBACK_AFTERIMAGES = b
+                .comment("Whether the very faint afterimage part of the dream effect is rendered.")
+                .define("afterimages", true);
+        b.pop();
         b.pop();
 
         b.push("dreamSand");
@@ -162,6 +238,9 @@ public final class AntarchyMiscConfig {
 
         b.push("world");
         DUPLICATOR_TREE_ENABLED              = b.comment("If false, duplicator trees do not generate and duplicator saplings produce nothing.").define("duplicatorTreeEnabled",           true);
+        FOSSILS_ENABLED                      = b.comment("If false, Myrmite and Broodstone fossils no longer generate. Existing fossils still smelt into spawn eggs.").define("fossilsEnabled", true);
+        FOSSIL_ENTITY_BLACKLIST              = b.comment("Entity ids fossils can never contain. Use modid:* to exclude every entity from a mod. Fossils that already hold a blacklisted entity are rerolled to an allowed one.")
+                .defineListAllowEmpty(java.util.List.of("fossilEntityBlacklist"), () -> java.util.List.of(com.craisinlord.antarchy.config.AntarchySettings.defaultFossilEntityBlacklist().split(",")), entry -> entry instanceof String);
         GLOW_VINES_UNDER_LEAVES              = b.comment("Whether glow vines can be placed and survive when attached under leaf blocks.")       .define("glowVinesUnderLeaves",             true);
         SWING_THROUGH_GRASS_ENABLED          = b.comment("If true, empty collision plants like grass do not block melee target picking.")      .define("swingThroughGrassEnabled",         true);
         BOATS_CLIMB_WATER_STEPS = b.define("boatsClimbWaterSteps", true);
@@ -177,12 +256,18 @@ public final class AntarchyMiscConfig {
     private AntarchyMiscConfig() {}
 
     static boolean elythiaFireflyParticlesEnabled()      { return ELYTHIA_FIREFLY_PARTICLES_ENABLED.get(); }
+    static boolean brownAntDescent()                     { return BROWN_ANT_DESCENT.get(); }
+    static boolean redAntFlip()                          { return RED_ANT_FLIP.get(); }
+    static boolean termiteBurrow()                       { return TERMITE_BURROW.get(); }
+    static boolean rainbowAntPrism()                     { return RAINBOW_ANT_PRISM.get(); }
 
     static double  dreamSandFallingBlockGravityMultiplier() { return DREAM_SAND_FALLING_BLOCK_GRAVITY_MULTIPLIER.get(); }
 
     static boolean ichorWitherEnabled()                  { return ICHOR_WITHER_ENABLED.get(); }
 
     static boolean duplicatorTreeEnabled()               { return DUPLICATOR_TREE_ENABLED.get(); }
+    static boolean fossilsEnabled()                      { return FOSSILS_ENABLED.get(); }
+    static String  fossilEntityBlacklist()               { return String.join(",", FOSSIL_ENTITY_BLACKLIST.get()); }
     static boolean glowVinesUnderLeaves()                { return GLOW_VINES_UNDER_LEAVES.get(); }
     static boolean swingThroughGrassEnabled()            { return SWING_THROUGH_GRASS_ENABLED.get(); }
     static boolean boatsClimbWaterSteps()                { return BOATS_CLIMB_WATER_STEPS.get(); }
@@ -228,8 +313,24 @@ public final class AntarchyMiscConfig {
     static double  hoverboardAcceleration()              { return HOVERBOARD_ACCELERATION.get(); }
     static boolean elythiaEvents() { return ELYTHIA_EVENTS.get(); }
     static boolean elythiaRainGrowth() { return ELYTHIA_RAIN_GROWTH.get(); }
+    static boolean throwbackZonesEnabled()               { return THROWBACK_ZONES_ENABLED.get(); }
+    static int     throwbackStructureZoneRadius()        { return THROWBACK_STRUCTURE_ZONE_RADIUS.get(); }
+    static double  throwbackWildZoneChance()             { return THROWBACK_WILD_ZONE_CHANCE.get(); }
+    static boolean throwbackNoAttackCooldown()           { return THROWBACK_NO_ATTACK_COOLDOWN.get(); }
+    static boolean throwbackClassicHurtSound()           { return THROWBACK_CLASSIC_HURT_SOUND.get(); }
+    static boolean throwbackClassicFood()                { return THROWBACK_CLASSIC_FOOD.get(); }
+    static boolean throwbackClassicMusic()               { return THROWBACK_CLASSIC_MUSIC.get(); }
+    static boolean throwbackDenseFog()                   { return THROWBACK_DENSE_FOG.get(); }
+    static boolean throwbackDreamHaze()                  { return THROWBACK_DREAM_HAZE.get(); }
+    static double  throwbackDreamStrength()              { return THROWBACK_DREAM_STRENGTH.get(); }
+    static boolean throwbackAfterimages()                { return THROWBACK_AFTERIMAGES.get(); }
+    static boolean thoraxisEvents() { return THORAXIS_EVENTS.get(); }
 
     static boolean elythiaFogEnabled() { return ELYTHIA_FOG_ENABLED.get(); }
+
+    static boolean elythiaSoftCloudsEnabled() { return ELYTHIA_SOFT_CLOUDS_ENABLED.get(); }
+
+    static boolean elythiaEchoes() { return ELYTHIA_ECHOES.get(); }
 
     static boolean elythiaGroundMistEnabled() { return ELYTHIA_GROUND_MIST_ENABLED.get(); }
 

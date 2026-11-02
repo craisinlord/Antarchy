@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.block;
 
+import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.entity.FossilBlockEntity;
 import it.unimi.dsi.fastutil.HashCommon;
@@ -19,24 +20,56 @@ import org.jetbrains.annotations.Nullable;
 
 public final class Fossils {
     private static volatile List<ResourceLocation> entities;
+    private static volatile List<String> entitiesBlacklist;
 
     private Fossils() {
     }
 
     public static List<ResourceLocation> entities() {
+        List<String> blacklist = AntarchySettings.fossilEntityBlacklistEntries();
         List<ResourceLocation> cached = entities;
-        if (cached == null) {
+        if (cached == null || entitiesBlacklist != blacklist) {
             List<ResourceLocation> found = new ArrayList<>();
             for (EntityType<?> type : BuiltInRegistries.ENTITY_TYPE) {
-                if (SpawnEggItem.byId(type) != null) {
-                    found.add(BuiltInRegistries.ENTITY_TYPE.getKey(type));
+                ResourceLocation key = BuiltInRegistries.ENTITY_TYPE.getKey(type);
+                if (SpawnEggItem.byId(type) != null && !isBlacklisted(key, blacklist)) {
+                    found.add(key);
                 }
             }
             found.sort(Comparator.comparing(ResourceLocation::toString));
             cached = List.copyOf(found);
             entities = cached;
+            entitiesBlacklist = blacklist;
         }
         return cached;
+    }
+
+    public static boolean isBlacklisted(ResourceLocation entityId) {
+        return isBlacklisted(entityId, AntarchySettings.fossilEntityBlacklistEntries());
+    }
+
+    private static boolean isBlacklisted(ResourceLocation entityId, List<String> blacklist) {
+        String id = entityId.toString();
+        String namespaceWildcard = entityId.getNamespace() + ":*";
+        for (String entry : blacklist) {
+            if (entry.equals(id) || entry.equals(namespaceWildcard)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Nullable
+    public static ResourceLocation resolve(@Nullable ResourceLocation entityId) {
+        if (entityId == null || !isBlacklisted(entityId)) {
+            return entityId;
+        }
+        List<ResourceLocation> list = entities();
+        if (list.isEmpty()) {
+            return null;
+        }
+        long mixed = HashCommon.mix((long) entityId.hashCode() ^ 0x5DEECE66DL);
+        return list.get(Math.floorMod(mixed, list.size()));
     }
 
     @Nullable
@@ -60,7 +93,7 @@ public final class Fossils {
 
     @Nullable
     public static ResourceLocation entityOf(ItemStack stack) {
-        return stack.get(AntarchyObjects.FOSSIL_ENTITY_COMPONENT.get());
+        return resolve(stack.get(AntarchyObjects.FOSSIL_ENTITY_COMPONENT.get()));
     }
 
     @Nullable

@@ -326,6 +326,8 @@ public final class AntarchyObjects {
     public static Supplier<MobEffect> STINKY_EFFECT = (Supplier<MobEffect>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<MobEffect> GLIMMERING_EFFECT = (Supplier<MobEffect>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<MobEffect> REMEMBRANCE_EFFECT = (Supplier<MobEffect>) UNBOUND;
     public static Supplier<MobEffect> ROYAL_VITALITY_PENALTY_EFFECT = (Supplier<MobEffect>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<MobEffect> BLEEDING_EFFECT = (Supplier<MobEffect>) UNBOUND;
@@ -402,6 +404,9 @@ public final class AntarchyObjects {
     public static Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity>> LUCID_ANCHOR_BLOCK_ENTITY =
             (Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.FossilBlockEntity>> FOSSIL_BLOCK_ENTITY =
+            (Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.FossilBlockEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<SimpleParticleType> STINKY_GAS = (Supplier<SimpleParticleType>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<SimpleParticleType> BUG_SPRAY_PARTICLE = (Supplier<SimpleParticleType>) UNBOUND;
@@ -413,6 +418,10 @@ public final class AntarchyObjects {
     public static Supplier<SimpleParticleType> PEACH_LEAVES_PARTICLE = (Supplier<SimpleParticleType>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<SimpleParticleType> LOTUS_POLLEN = (Supplier<SimpleParticleType>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<SimpleParticleType> TEMPORAL_GLINT_SLOW = (Supplier<SimpleParticleType>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<SimpleParticleType> TEMPORAL_GLINT_FAST = (Supplier<SimpleParticleType>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<SimpleParticleType> LUCID_BOLT_IMPACT_SMALL = (Supplier<SimpleParticleType>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -830,6 +839,10 @@ public final class AntarchyObjects {
         GLIMMERING_EFFECT = supplier;
     }
 
+    public static void setRemembranceEffect(Supplier<MobEffect> supplier) {
+        REMEMBRANCE_EFFECT = supplier;
+    }
+
     public static void setRoyalVitalityPenaltyEffect(Supplier<MobEffect> supplier) {
         ROYAL_VITALITY_PENALTY_EFFECT = supplier;
     }
@@ -906,6 +919,11 @@ public final class AntarchyObjects {
         LOTUS_POLLEN = supplier;
     }
 
+    public static void setTemporalGlints(Supplier<SimpleParticleType> slow, Supplier<SimpleParticleType> fast) {
+        TEMPORAL_GLINT_SLOW = slow;
+        TEMPORAL_GLINT_FAST = fast;
+    }
+
     public static void setNightmareFireFlame(Supplier<SimpleParticleType> supplier) {
         NIGHTMARE_FIRE_FLAME = supplier;
     }
@@ -952,6 +970,10 @@ public final class AntarchyObjects {
 
     public static void setLucidAnchorBlockEntity(Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity>> supplier) {
         LUCID_ANCHOR_BLOCK_ENTITY = supplier;
+    }
+
+    public static void setFossilBlockEntity(Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.FossilBlockEntity>> supplier) {
+        FOSSIL_BLOCK_ENTITY = supplier;
     }
 
     public static void setCritterCageProjectile(Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity>> supplier) {

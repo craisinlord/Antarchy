@@ -590,6 +590,28 @@ public final class AntarchyForgeItems {
             () -> new net.minecraft.world.item.BlockItem(AntarchyForgeBlocks.BROODSTONE_URANIUM_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<net.minecraft.world.item.BlockItem> BROODSTONE_TITANIUM_ORE_ITEM = ITEMS.register("broodstone_titanium_ore",
             () -> new net.minecraft.world.item.BlockItem(AntarchyForgeBlocks.BROODSTONE_TITANIUM_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> MYRMITE_COPPER_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.MYRMITE_COPPER_ORE);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> MYRMITE_IRON_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.MYRMITE_IRON_ORE);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> MYRMITE_GOLD_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.MYRMITE_GOLD_ORE);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> MYRMITE_REDSTONE_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.MYRMITE_REDSTONE_ORE);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> MYRMITE_LAPIS_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.MYRMITE_LAPIS_ORE);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> MYRMITE_DIAMOND_ORE_ITEM = ITEMS.register("myrmite_diamond_ore",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyForgeBlocks.MYRMITE_DIAMOND_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> MYRMITE_EMERALD_ORE_ITEM = ITEMS.register("myrmite_emerald_ore",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyForgeBlocks.MYRMITE_EMERALD_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> BROODSTONE_COPPER_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.BROODSTONE_COPPER_ORE);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> BROODSTONE_IRON_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.BROODSTONE_IRON_ORE);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> BROODSTONE_GOLD_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.BROODSTONE_GOLD_ORE);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> BROODSTONE_REDSTONE_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.BROODSTONE_REDSTONE_ORE);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> BROODSTONE_LAPIS_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.BROODSTONE_LAPIS_ORE);
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> BROODSTONE_DIAMOND_ORE_ITEM = ITEMS.register("broodstone_diamond_ore",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyForgeBlocks.BROODSTONE_DIAMOND_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<net.minecraft.world.item.BlockItem> BROODSTONE_EMERALD_ORE_ITEM = ITEMS.register("broodstone_emerald_ore",
+            () -> new net.minecraft.world.item.BlockItem(AntarchyForgeBlocks.BROODSTONE_EMERALD_ORE.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<com.craisinlord.antarchy.content.item.FossilBlockItem> MYRMITE_FOSSIL_ITEM = ITEMS.register("myrmite_fossil",
+            () -> new com.craisinlord.antarchy.content.item.FossilBlockItem(AntarchyForgeBlocks.MYRMITE_FOSSIL.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<com.craisinlord.antarchy.content.item.FossilBlockItem> BROODSTONE_FOSSIL_ITEM = ITEMS.register("broodstone_fossil",
+            () -> new com.craisinlord.antarchy.content.item.FossilBlockItem(AntarchyForgeBlocks.BROODSTONE_FOSSIL.get(), new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<net.minecraft.world.item.BlockItem> POLISHED_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.POLISHED_NYXITE);
     public static final RegistryObject<net.minecraft.world.item.BlockItem> CHISELED_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.CHISELED_NYXITE);
     public static final RegistryObject<net.minecraft.world.item.BlockItem> NYXITE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.NYXITE_BRICKS);
@@ -1185,7 +1207,7 @@ public final class AntarchyForgeItems {
 
     public static final RegistryObject<KrakensGraspItem> KRAKENS_GRASP = ITEMS.register("krakens_grasp",
             () -> new KrakensGraspItem(
-                    new Item.Properties().stacksTo(1).durability(250).rarity(Rarity.EPIC).fireResistant()));
+                    new Item.Properties().stacksTo(1).durability(2000).rarity(Rarity.EPIC).fireResistant()));
 
     public static final RegistryObject<ForgeSpawnEggItem> EASTER_BUNNY_SPAWN_EGG = ITEMS.register("easter_bunny_spawn_egg",
             () -> new ForgeSpawnEggItem(AntarchyForgeEntites.EASTER_BUNNY, 0xFFF2B2, 0xFF85B5, new Item.Properties()));
@@ -1206,6 +1228,39 @@ public final class AntarchyForgeItems {
                             .build())));
     public static final RegistryObject<com.craisinlord.antarchy.content.item.GlimmerBottleItem> GLIMMER_BOTTLE = ITEMS.register("glimmer_bottle",
             com.craisinlord.antarchy.content.item.GlimmerBottleItem::new);
+    public static final RegistryObject<Item> FADED_MEMORY = ITEMS.registerSimpleItem("faded_memory", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final RegistryObject<com.craisinlord.antarchy.content.item.GlimmerSigilItem> TORETERROR_GLIMMER_SIGIL = ITEMS.register("toreterror_glimmer_sigil",
+            () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(
+                    com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.TORETERROR,
+                    new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final RegistryObject<com.craisinlord.antarchy.content.item.GlimmerSigilItem> ALPHA_MANTIS_GLIMMER_SIGIL = ITEMS.register("alpha_mantis_glimmer_sigil",
+            () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(
+                    com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.ALPHA_MANTIS,
+                    new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final RegistryObject<com.craisinlord.antarchy.content.item.GlimmerSigilItem> EMPEROR_SCORPION_GLIMMER_SIGIL = ITEMS.register("emperor_scorpion_glimmer_sigil",
+            () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(
+                    com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.EMPEROR_SCORPION,
+                    new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final RegistryObject<com.craisinlord.antarchy.content.item.GlimmerSigilItem> BRUTALFLY_GLIMMER_SIGIL = ITEMS.register("brutalfly_glimmer_sigil",
+            () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(
+                    com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.BRUTALFLY,
+                    new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final RegistryObject<com.craisinlord.antarchy.content.item.GlimmerSigilItem> HERCULES_BEETLE_GLIMMER_SIGIL = ITEMS.register("hercules_beetle_glimmer_sigil",
+            () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(
+                    com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.HERCULES_BEETLE,
+                    new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final RegistryObject<com.craisinlord.antarchy.content.item.GlimmerSigilItem> KRAKEN_GLIMMER_SIGIL = ITEMS.register("kraken_glimmer_sigil",
+            () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(
+                    com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.KRAKEN,
+                    new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final RegistryObject<com.craisinlord.antarchy.content.item.GlimmerSigilItem> KING_GLIMMER_SIGIL = ITEMS.register("king_glimmer_sigil",
+            () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(
+                    com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.KING,
+                    new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final RegistryObject<com.craisinlord.antarchy.content.item.GlimmerSigilItem> QUEEN_GLIMMER_SIGIL = ITEMS.register("queen_glimmer_sigil",
+            () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(
+                    com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.QUEEN,
+                    new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
     public static final RegistryObject<ForgeSpawnEggItem> FLYING_SQUIRREL_SPAWN_EGG = ITEMS.register("flying_squirrel_spawn_egg",
             () -> new ForgeSpawnEggItem(AntarchyForgeEntites.FLYING_SQUIRREL, 0x7D6649, 0xDCC59C, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> CATERPILLAR_SPAWN_EGG = ITEMS.register("caterpillar_spawn_egg",

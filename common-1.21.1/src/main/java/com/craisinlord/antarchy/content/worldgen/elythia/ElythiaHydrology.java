@@ -6,6 +6,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.Arrays;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.DensityFunctions;
+import org.jetbrains.annotations.Nullable;
 
 public record ElythiaHydrology(
         DensityFunction reserve,
@@ -30,6 +32,28 @@ public record ElythiaHydrology(
     );
 
     public static final KeyDispatchDataCodec<ElythiaHydrology> KEY_CODEC = KeyDispatchDataCodec.of(CODEC);
+
+    /**
+     * Finds the hydrology in a noise router's vein_toggle slot. Router fields decode through HOLDER_HELPER_CODEC, so the
+     * slot holds a {@code HolderHolder} (and possibly cache markers) around the hydrology until {@code NoiseChunk.wrap}
+     * unwraps it, and with C2ME's density function compiler that unwrap never happens.
+     */
+    @Nullable
+    public static ElythiaHydrology find(@Nullable DensityFunction function) {
+        for (int depth = 0; function != null && depth < 8; depth++) {
+            if (function instanceof ElythiaHydrology hydrology) {
+                return hydrology;
+            }
+            if (function instanceof DensityFunctions.HolderHolder holder) {
+                function = holder.function().value();
+            } else if (function instanceof DensityFunctions.MarkerOrMarked marked) {
+                function = marked.wrapped();
+            } else {
+                return null;
+            }
+        }
+        return null;
+    }
 
     @Override
     public double compute(FunctionContext context) {

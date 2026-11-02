@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -61,11 +62,18 @@ public final class DimensionalTearFeature extends Feature<NoneFeatureConfigurati
     }
 
     private static boolean isUsablePocket(WorldGenLevel level, BlockPos pos) {
+        if (!canAccess(level, pos) || !level.getBlockState(pos).getCollisionShape(level, pos).isEmpty()) {
+            return false;
+        }
+        if (!canAccess(level, pos.offset(-2, -2, -4)) || !canAccess(level, pos.offset(2, 3, 4))) {
+            return false;
+        }
+        BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos();
         for (int dx = -2; dx <= 2; dx++) {
             for (int dy = -2; dy <= 3; dy++) {
                 for (int dz = -4; dz <= 4; dz++) {
-                    BlockPos checkPos = pos.offset(dx, dy, dz);
-                    if (!canAccess(level, checkPos) || !level.getBlockState(checkPos).getCollisionShape(level, checkPos).isEmpty()) {
+                    checkPos.set(pos.getX() + dx, pos.getY() + dy, pos.getZ() + dz);
+                    if (!level.getBlockState(checkPos).getCollisionShape(level, checkPos).isEmpty()) {
                         return false;
                     }
                 }
@@ -75,6 +83,14 @@ public final class DimensionalTearFeature extends Feature<NoneFeatureConfigurati
     }
 
     private static boolean canAccess(WorldGenLevel level, BlockPos pos) {
-        return !(level instanceof WorldGenRegion region) || region.ensureCanWrite(pos);
+        if (!(level instanceof WorldGenRegion region)) {
+            return true;
+        }
+        if (level.isOutsideBuildHeight(pos)) {
+            return false;
+        }
+        ChunkPos center = region.getCenter();
+        return pos.getX() >= center.getMinBlockX() - 16 && pos.getX() <= center.getMaxBlockX() + 16
+                && pos.getZ() >= center.getMinBlockZ() - 16 && pos.getZ() <= center.getMaxBlockZ() + 16;
     }
 }

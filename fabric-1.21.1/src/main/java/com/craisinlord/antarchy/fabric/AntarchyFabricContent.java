@@ -81,8 +81,6 @@ public final class AntarchyFabricContent {
         FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.LUCID_EYE.get()), potionHolder(AntarchyFabricMisc.INVERSION));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.INVERSION), Ingredient.of(Items.REDSTONE), potionHolder(AntarchyFabricMisc.LONG_INVERSION));
-            builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.FADED_MEMORY.get()), potionHolder(AntarchyFabricMisc.REMEMBRANCE_POTION));
-            builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.REMEMBRANCE_POTION), Ingredient.of(Items.REDSTONE), potionHolder(AntarchyFabricMisc.LONG_REMEMBRANCE));
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.STINK_BUG_ITEM.get()), potionHolder(AntarchyFabricMisc.STINKY_POTION));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.STINKY_POTION), Ingredient.of(Items.REDSTONE), potionHolder(AntarchyFabricMisc.LONG_STINKY));
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.BASILISK_FANG.get()), potionHolder(AntarchyFabricMisc.PARALYSIS));

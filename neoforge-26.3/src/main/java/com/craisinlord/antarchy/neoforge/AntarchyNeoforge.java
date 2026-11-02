@@ -248,6 +248,7 @@ public class AntarchyNeoforge {
                 AntarchyNeoforgeSounds.DIMENSIONAL_TEAR_CLOSE
         );
         AntarchySoundEvents.bindHoverboardSounds(AntarchyNeoforgeSounds.HOVERBOARD_MOUNT, AntarchyNeoforgeSounds.HOVERBOARD_DISMOUNT, AntarchyNeoforgeSounds.HOVERBOARD_IDLE);
+        AntarchySoundEvents.bindThrowbackSounds(AntarchyNeoforgeSounds.PLAYER_HURT_CLASSIC);
         bindCommonObjects();
         ScorpionWhipTetherSync.setSink((player, targetId) -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(
                 player,
@@ -302,7 +303,11 @@ public class AntarchyNeoforge {
     private static void bindCommonObjects() {
         com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity.TYPE = AntarchyNeoforgeEntites.UPWARD_FALLING_BLOCK;
         AntarchyObjects.setLucidAnchor(() -> AntarchyNeoforgeBlocks.LUCID_ANCHOR.get());
+        AntarchyObjects.setMyrmiteFossil(() -> AntarchyNeoforgeBlocks.MYRMITE_FOSSIL.get());
+        AntarchyObjects.setBroodstoneFossil(() -> AntarchyNeoforgeBlocks.BROODSTONE_FOSSIL.get());
         AntarchyObjects.setLucidAnchorBlockEntity(() -> AntarchyNeoforgeBlocks.LUCID_ANCHOR_BLOCK_ENTITY.get());
+        AntarchyObjects.setFossilBlockEntity(() -> AntarchyNeoforgeBlocks.FOSSIL_BLOCK_ENTITY.get());
+        AntarchyObjects.setFossilEntityComponent(() -> AntarchyNeoforgeMisc.FOSSIL_ENTITY_COMPONENT.get());
         PermanentPortalType.bindBlocks(
                 () -> AntarchyNeoforgeBlocks.MOSSY_OURANWOOD_WOOD.get(),
                 () -> AntarchyNeoforgeBlocks.ELYTHIA_PORTAL.get(),
@@ -450,6 +455,7 @@ public class AntarchyNeoforge {
         AntarchyObjects.setStratoshark(AntarchyNeoforgeEntites.STRATOSHARK);
         AntarchyObjects.setSpiritApple(() -> AntarchyNeoforgeItems.SPIRIT_APPLE.get());
         AntarchyObjects.setGlimmeringEffect(() -> AntarchyNeoforgeMisc.GLIMMERING);
+        AntarchyObjects.setRemembranceEffect(() -> AntarchyNeoforgeMisc.REMEMBRANCE);
         AntarchyObjects.setRoyalVitalityPenaltyEffect(() -> AntarchyNeoforgeMisc.ROYAL_VITALITY_PENALTY);
         AntarchyObjects.setBleedingEffect(() -> AntarchyNeoforgeMisc.BLEEDING);
         AntarchyObjects.setBloodMoonEffect(() -> AntarchyNeoforgeMisc.BLOOD_MOON);

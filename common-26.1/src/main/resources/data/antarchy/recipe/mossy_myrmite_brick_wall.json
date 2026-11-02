@@ -2,7 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": "antarchy:mossy_myrmite_bricks"
+    "#": {
+      "item": "antarchy:mossy_myrmite_bricks"
+    }
   },
   "pattern": [
     "###",
@@ -13,3 +15,4 @@
     "id": "antarchy:mossy_myrmite_brick_wall"
   }
 }
+

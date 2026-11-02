@@ -32,6 +32,7 @@ public final class AntarchyConfigModuleNeoforge {
         KingJudgmentFlashSync.setSink((player, ticks) -> PacketDistributor.sendToPlayer(player, new KingJudgmentFlashPayload(ticks)));
         HordeIntensitySync.setSink(PacketDistributor::sendToPlayer);
         com.craisinlord.antarchy.content.network.ElythiaEventSync.setSink(PacketDistributor::sendToPlayer);
+        com.craisinlord.antarchy.content.network.ThrowbackZoneSync.setSink(PacketDistributor::sendToPlayer);
         AntarchyNeoforge.modEventBusTempHolder.addListener(AntarchyConfigModuleNeoforge::onConfigChange);
     }
 
@@ -697,6 +698,7 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setExperimentalSettingsPopupDisabled(AntarchyMiscConfig.experimentalSettingsPopupDisabled());
         AntarchySettings.setEntitySpecificFireOverlayEnabled(AntarchyMiscConfig.entitySpecificFireOverlayEnabled());
         AntarchySettings.setElythiaEvents(AntarchyMiscConfig.elythiaEvents());
+        AntarchySettings.setThoraxisEvents(AntarchyMiscConfig.thoraxisEvents());
         AntarchySettings.setElythiaAlreadyDreaming(AntarchyMiscConfig.elythiaAlreadyDreaming());
         AntarchySettings.setElythiaDreamShadowsEnabled(AntarchyMiscConfig.elythiaDreamShadowsEnabled());
         AntarchySettings.setElythiaDreamShadowsStrength(AntarchyMiscConfig.elythiaDreamShadowsStrength());
@@ -705,6 +707,13 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setElythiaGroundMistEnabled(AntarchyMiscConfig.elythiaGroundMistEnabled());
         AntarchySettings.setElythiaFogEnabled(AntarchyMiscConfig.elythiaFogEnabled());
         AntarchySettings.setElythiaRainGrowth(AntarchyMiscConfig.elythiaRainGrowth());
+        AntarchySettings.setElythiaSoftCloudsEnabled(AntarchyMiscConfig.elythiaSoftCloudsEnabled());
+        AntarchySettings.setThrowbackZonesEnabled(AntarchyMiscConfig.throwbackZonesEnabled());
+        AntarchySettings.setThrowbackNoAttackCooldown(AntarchyMiscConfig.throwbackNoAttackCooldown());
+        AntarchySettings.setThrowbackClassicHurtSound(AntarchyMiscConfig.throwbackClassicHurtSound());
+        AntarchySettings.setThrowbackClassicFood(AntarchyMiscConfig.throwbackClassicFood());
+        AntarchySettings.setFossilsEnabled(AntarchyMiscConfig.fossilsEnabled());
+        AntarchySettings.setFossilEntityBlacklist(AntarchyMiscConfig.fossilEntityBlacklist());
 
         AntarchySettings.setBloodCrystalArmorShieldRechargeTicks(AntarchyToolsConfig.bloodCrystalArmorShieldRechargeTicks());
         AntarchySettings.setBloodCrystalAppleShieldCount(AntarchyToolsConfig.bloodCrystalAppleShieldCount());

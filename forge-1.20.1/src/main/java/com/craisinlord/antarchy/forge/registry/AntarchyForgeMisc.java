@@ -45,6 +45,7 @@ import com.craisinlord.antarchy.content.worldgen.ants.RedAntNestFeature;
 import com.craisinlord.antarchy.content.worldgen.ants.TermiteNestFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBileCystFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBileVeinFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.FossilOreFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCreepvineFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynEggPatchFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWallAmberMossFeature;
@@ -79,6 +80,7 @@ import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -149,6 +151,10 @@ public final class AntarchyForgeMisc {
             RECIPE_SERIALIZERS.register("americanize", () -> AmericanizeRecipe.SERIALIZER);
     public static final RegistryObject<net.minecraft.world.item.crafting.RecipeSerializer<com.craisinlord.antarchy.content.recipe.PortalGunVariantRecipe>> PORTAL_GUN_VARIANT_SERIALIZER =
             RECIPE_SERIALIZERS.register("portal_gun_variant", () -> com.craisinlord.antarchy.content.recipe.PortalGunVariantRecipe.SERIALIZER);
+    public static final RegistryObject<net.minecraft.world.item.crafting.RecipeSerializer<com.craisinlord.antarchy.content.recipe.FossilCookingRecipes.Smelting>> FOSSIL_SMELTING_SERIALIZER =
+            RECIPE_SERIALIZERS.register("fossil_smelting", () -> com.craisinlord.antarchy.content.recipe.FossilCookingRecipes.SMELTING_SERIALIZER);
+    public static final RegistryObject<net.minecraft.world.item.crafting.RecipeSerializer<com.craisinlord.antarchy.content.recipe.FossilCookingRecipes.Blasting>> FOSSIL_BLASTING_SERIALIZER =
+            RECIPE_SERIALIZERS.register("fossil_blasting", () -> com.craisinlord.antarchy.content.recipe.FossilCookingRecipes.BLASTING_SERIALIZER);
     public static final RegistryObject<net.minecraft.world.item.crafting.RecipeSerializer<com.craisinlord.antarchy.content.recipe.BigBerthaVariantRecipe>> BIG_BERTHA_VARIANT_SERIALIZER =
             RECIPE_SERIALIZERS.register("big_bertha_variant", () -> com.craisinlord.antarchy.content.recipe.BigBerthaVariantRecipe.SERIALIZER);
 
@@ -186,6 +192,11 @@ public final class AntarchyForgeMisc {
     public static final RegistryObject<com.craisinlord.antarchy.content.effect.RoyalVitalityPenaltyEffect> ROYAL_VITALITY_PENALTY = MOB_EFFECTS.register("royal_vitality_penalty", com.craisinlord.antarchy.content.effect.RoyalVitalityPenaltyEffect::new);
     public static final RegistryObject<ShrinkMobEffect> SHRINKING_EFFECT = MOB_EFFECTS.register("shrinking", ShrinkMobEffect::new);
     public static final RegistryObject<GrowthMobEffect> GROWTH_EFFECT = MOB_EFFECTS.register("growth", GrowthMobEffect::new);
+    public static final RegistryObject<com.craisinlord.antarchy.content.effect.RemembranceMobEffect> REMEMBRANCE = MOB_EFFECTS.register("remembrance", com.craisinlord.antarchy.content.effect.RemembranceMobEffect::new);
+    public static final RegistryObject<Potion> REMEMBRANCE_POTION = POTIONS.register("remembrance",
+            () -> new Potion(new MobEffectInstance(REMEMBRANCE.get(), 3600)));
+    public static final RegistryObject<Potion> LONG_REMEMBRANCE = POTIONS.register("long_remembrance",
+            () -> new Potion("remembrance", new MobEffectInstance(REMEMBRANCE.get(), 9600)));
 
     public static final RegistryObject<Potion> INVERSION = POTIONS.register("inversion",
             () -> new Potion(new MobEffectInstance(AnthologyEffects.inverted(), 600)));
@@ -258,6 +269,10 @@ public final class AntarchyForgeMisc {
     public static final RegistryObject<SimpleParticleType> PEACH_LEAVES_PARTICLE = PARTICLE_TYPES.register("peach_leaves_particle",
             () -> new SimpleParticleType(true));
     public static final RegistryObject<SimpleParticleType> LOTUS_POLLEN = PARTICLE_TYPES.register("lotus_pollen",
+            () -> new SimpleParticleType(true));
+    public static final RegistryObject<SimpleParticleType> TEMPORAL_GLINT_SLOW = PARTICLE_TYPES.register("temporal_glint_slow",
+            () -> new SimpleParticleType(true));
+    public static final RegistryObject<SimpleParticleType> TEMPORAL_GLINT_FAST = PARTICLE_TYPES.register("temporal_glint_fast",
             () -> new SimpleParticleType(true));
     public static final RegistryObject<SimpleParticleType> HYPNOTIC_GAS = PARTICLE_TYPES.register("hypnotic_gas",
             () -> new SimpleParticleType(true));
@@ -406,6 +421,8 @@ public final class AntarchyForgeMisc {
             () -> new ChitinSpikeFeature(ChitinSpikeConfiguration.CODEC));
     public static final RegistryObject<CavarynBileVeinFeature> CAVARYN_BILE_VEINS = FEATURES.register("cavaryn_bile_veins",
             () -> new CavarynBileVeinFeature(NoneFeatureConfiguration.CODEC));
+    public static final RegistryObject<FossilOreFeature> FOSSIL_ORE = FEATURES.register("fossil_ore",
+            () -> new FossilOreFeature(OreConfiguration.CODEC));
     public static final RegistryObject<CavarynBileCystFeature> CAVARYN_BILE_CYSTS = FEATURES.register("cavaryn_bile_cysts",
             () -> new CavarynBileCystFeature(NoneFeatureConfiguration.CODEC));
     public static final RegistryObject<CavarynCreepvineFeature> CAVARYN_CREEPVINE = FEATURES.register("cavaryn_creepvine",
@@ -543,6 +560,16 @@ public final class AntarchyForgeMisc {
             () -> CavarynCavityFunction.CODEC.codec());
     public static final RegistryObject<com.mojang.serialization.Codec<? extends DensityFunction>> CAVARYN_CAVITY_UNION = DENSITY_FUNCTION_TYPES.register("cavaryn_cavity_union",
             () -> CavarynCavityUnionFunction.CODEC.codec());
+    public static final RegistryObject<com.mojang.serialization.Codec<? extends DensityFunction>> CAVARYN_SPIRES = DENSITY_FUNCTION_TYPES.register("cavaryn_spires",
+            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynSpireFunction.CODEC.codec());
+    public static final RegistryObject<com.mojang.serialization.Codec<? extends DensityFunction>> CAVARYN_RIBCAGE = DENSITY_FUNCTION_TYPES.register("cavaryn_ribcage",
+            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynRibcageFunction.CODEC.codec());
+    public static final RegistryObject<com.mojang.serialization.Codec<com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBiomeSource>> CAVARYN_BIOME_SOURCE = BIOME_SOURCES.register("cavaryn_biome_source",
+            () -> com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBiomeSource.CODEC);
+    public static final RegistryObject<com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynSpireDressingFeature> CAVARYN_SPIRE_DRESSING = FEATURES.register("cavaryn_spire_dressing",
+            () -> new com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynSpireDressingFeature(NoneFeatureConfiguration.CODEC));
+    public static final RegistryObject<com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynRibcageDressingFeature> CAVARYN_RIBCAGE_DRESSING = FEATURES.register("cavaryn_ribcage_dressing",
+            () -> new com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynRibcageDressingFeature(NoneFeatureConfiguration.CODEC));
     public static final RegistryObject<CavarynWormBoreDressingFeature> CAVARYN_WORM_BORE_DRESSING = FEATURES.register("cavaryn_worm_bore_dressing",
             () -> new CavarynWormBoreDressingFeature(NoneFeatureConfiguration.CODEC));
     public static final RegistryObject<CavarynBroodNestDressingFeature> CAVARYN_BROOD_NEST_DRESSING = FEATURES.register("cavaryn_brood_nest_dressing",

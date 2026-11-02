@@ -21,7 +21,9 @@
                   "predicate": {
                     "components": {
                       "minecraft:enchantments": {
-                        "minecraft:silk_touch": 1
+                        "levels": {
+                          "minecraft:silk_touch": 1
+                        }
                       }
                     }
                   }

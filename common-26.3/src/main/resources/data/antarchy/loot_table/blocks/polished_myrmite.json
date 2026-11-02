@@ -9,9 +9,11 @@
           "name": "antarchy:polished_myrmite"
         }
       ],
-      "condition": {
-        "type": "minecraft:survives_explosion"
-      }
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
     }
   ],
   "random_sequence": "antarchy:blocks/polished_myrmite"

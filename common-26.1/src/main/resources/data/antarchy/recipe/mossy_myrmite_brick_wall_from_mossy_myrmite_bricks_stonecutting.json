@@ -1,7 +1,10 @@
 {
   "type": "minecraft:stonecutting",
-  "ingredient": "antarchy:mossy_myrmite_bricks",
+  "ingredient": {
+    "item": "antarchy:mossy_myrmite_bricks"
+  },
   "result": {
     "id": "antarchy:mossy_myrmite_brick_wall"
   }
 }
+

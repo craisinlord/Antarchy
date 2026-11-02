@@ -1708,5 +1708,17 @@
     ,"guide.antarchy.disk.vortex.description": "Pull or push."
     ,"guide.antarchy.disk.toreterror_arena.description": "Find the Toreterror."
     ,"guide.antarchy.disk.basilisk_game.description": "Don't bite your tail."
-    ,"guide.antarchy.disk.trayaurus_lab_notes.description": "From the lab."
+    ,"guide.antarchy.disk.trayaurus_lab_notes.description": "From the lab.",
+  "effect.antarchy.remembrance": "Remembrance",
+  "item.minecraft.potion.effect.remembrance": "Potion of Remembrance",
+  "item.minecraft.potion.effect.long_remembrance": "Potion of Remembrance",
+  "item.minecraft.splash_potion.effect.remembrance": "Splash Potion of Remembrance",
+  "item.minecraft.splash_potion.effect.long_remembrance": "Splash Potion of Remembrance",
+  "item.minecraft.lingering_potion.effect.remembrance": "Lingering Potion of Remembrance",
+  "item.minecraft.lingering_potion.effect.long_remembrance": "Lingering Potion of Remembrance",
+  "item.minecraft.tipped_arrow.effect.remembrance": "Arrow of Remembrance",
+  "item.minecraft.tipped_arrow.effect.long_remembrance": "Arrow of Remembrance",
+  "block.antarchy.myrmite_fossil": "Myrmite Fossil",
+  "block.antarchy.broodstone_fossil": "Broodstone Fossil",
+  "item.antarchy.fossilized": "Fossilized %s"
 }

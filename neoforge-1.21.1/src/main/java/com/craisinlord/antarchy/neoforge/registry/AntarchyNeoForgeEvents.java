@@ -1200,8 +1200,6 @@ public final class AntarchyNeoForgeEvents {
         });
         event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.LUCID_EYE.get(), AntarchyNeoforgeMisc.INVERSION);
         event.getBuilder().addMix(AntarchyNeoforgeMisc.INVERSION, Items.REDSTONE, AntarchyNeoforgeMisc.LONG_INVERSION);
-        event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.FADED_MEMORY.get(), AntarchyNeoforgeMisc.REMEMBRANCE_POTION);
-        event.getBuilder().addMix(AntarchyNeoforgeMisc.REMEMBRANCE_POTION, Items.REDSTONE, AntarchyNeoforgeMisc.LONG_REMEMBRANCE);
         event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.STINK_BUG.get(), AntarchyNeoforgeMisc.STINKY_POTION);
         event.getBuilder().addMix(AntarchyNeoforgeMisc.STINKY_POTION, Items.REDSTONE, AntarchyNeoforgeMisc.LONG_STINKY);
         event.getBuilder().addMix(Potions.AWKWARD, AntarchyNeoforgeItems.BASILISK_FANG.get(), AntarchyNeoforgeMisc.PARALYSIS);

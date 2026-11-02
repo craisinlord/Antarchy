@@ -152,6 +152,8 @@ public final class AntarchyFabricBlocks {
             () -> new SeashellBlock(DeferredRegister.copyBlockProperties(Blocks.TURTLE_EGG).noOcclusion()));
     public static final DeferredBlock<LucidAnchorBlock> LUCID_ANCHOR = BLOCKS.register("lucid_anchor",
             () -> new LucidAnchorBlock(DeferredRegister.copyBlockProperties(Blocks.BEACON).strength(3.0F)));
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.FossilBlock> MYRMITE_FOSSIL = BLOCKS.register("myrmite_fossil", () -> new com.craisinlord.antarchy.content.block.FossilBlock(nyxiteProperties()));
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.FossilBlock> BROODSTONE_FOSSIL = BLOCKS.register("broodstone_fossil", () -> new com.craisinlord.antarchy.content.block.FossilBlock(broodstoneProperties()));
     public static final DeferredBlock<CritterCageBlock> CRITTER_CAGE_BLOCK = BLOCKS.register("critter_cage_block",
             () -> new CritterCageBlock(DeferredRegister.blockProperties().strength(5.0F, 6.0F).sound(net.minecraft.world.level.block.SoundType.METAL).noOcclusion()));
     public static final DeferredBlock<PortalGunPortalMasterBlock> PORTAL_GUN_PORTAL_MASTER = BLOCKS.register("portal_gun_portal_master",
@@ -1216,6 +1218,7 @@ public final class AntarchyFabricBlocks {
                     LucidAnchorBlockEntity::new,
                     LUCID_ANCHOR.get()
             ).build());
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.craisinlord.antarchy.content.block.entity.FossilBlockEntity>> FOSSIL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("fossil", () -> FabricBlockEntityTypeBuilder.create(com.craisinlord.antarchy.content.block.entity.FossilBlockEntity::new, MYRMITE_FOSSIL.get(), BROODSTONE_FOSSIL.get()).build());
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CritterCageBlockEntity>> CRITTER_CAGE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("critter_cage_block",
             () -> FabricBlockEntityTypeBuilder.create(
                     CritterCageBlockEntity::new,

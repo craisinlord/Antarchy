@@ -384,14 +384,14 @@ public final class AntarchyToolsConfig {
         b.pop();
 
         b.push("attitudeAdjuster");
-        ATTITUDE_ADJUSTER_BASE_DAMAGE = b.comment("Base attack damage of the Attitude Adjuster.").defineInRange("baseDamage", 47.0D, 0.0D, 4096.0D);
+        ATTITUDE_ADJUSTER_BASE_DAMAGE = b.comment("Base attack damage of the Attitude Adjuster.").defineInRange("baseDamage", 61.0D, 0.0D, 4096.0D);
         ATTITUDE_ADJUSTER_BREAKS_BLOCKS = b.comment("If true, player ground slams can break a small patch of blocks on impact.").define("breaksBlocks", true);
         b.pop();
 
         b.push("krakensGrasp");
-        KRAKENS_GRASP_ATTACK_DAMAGE                  = b.comment("Melee attack damage of Kraken's Grasp.")                                    .defineInRange("attackDamage",                    16.0D, 0.0D, 4096.0D);
+        KRAKENS_GRASP_ATTACK_DAMAGE                  = b.comment("Melee attack damage of Kraken's Grasp.")                                    .defineInRange("attackDamage",                    40.0D, 0.0D, 4096.0D);
         KRAKENS_GRASP_ATTACK_SPEED                   = b.comment("Attack speed of Kraken's Grasp.")                                           .defineInRange("attackSpeed",                    -2.9D, -10.0D, 10.0D);
-        KRAKENS_GRASP_THROWN_DAMAGE                  = b.comment("Damage dealt when the thrown trident hits an entity.")                      .defineInRange("thrownDamage",                    16.0D, 0.0D, 4096.0D);
+        KRAKENS_GRASP_THROWN_DAMAGE                  = b.comment("Damage dealt when the thrown trident hits an entity.")                      .defineInRange("thrownDamage",                    45.0D, 0.0D, 4096.0D);
         KRAKENS_GRASP_LIGHTNING_DAMAGE               = b.comment("Bonus damage from the lightning strike on every hit.")                      .defineInRange("lightningDamage",                  6.0D, 0.0D, 4096.0D);
         KRAKENS_GRASP_INNATE_LOYALTY                 = b.comment("Whether Kraken's Grasp automatically returns to its thrower like an enchanted Loyalty trident.").define("innateLoyalty", true);
         KRAKENS_GRASP_INNATE_LOYALTY_LEVEL           = b.comment("Effective Loyalty level used for the innate return, from 1 to 3.")           .defineInRange("innateLoyaltyLevel",                  3, 1, 3);

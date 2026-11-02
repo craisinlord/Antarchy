@@ -9,6 +9,10 @@ public final class AntarchySettings {
     private static boolean easterBunnyEnabled = true;
     private static int easterBunnyNaturalSpawnChancePercent = 1;
     private static boolean rainbowAntsLeadToInfinityDimensions = true;
+    private static boolean brownAntDescent = true;
+    private static boolean redAntFlip = true;
+    private static boolean termiteBurrow = true;
+    private static boolean rainbowAntPrism = true;
     private static double rainbowAntInfinityEasterEggChance = 0.01D;
     private static boolean brownAntRequiresReagent = false;
     private static boolean brownAntRightClickDimension = true;
@@ -21,6 +25,10 @@ public final class AntarchySettings {
     private static boolean termiteRightClickDimension = true;
     private static boolean antsStealFromChests = true;
     private static boolean duplicatorTreeEnabled = true;
+    private static boolean fossilsEnabled = true;
+    private static final String DEFAULT_FOSSIL_ENTITY_BLACKLIST = "minecraft:ender_dragon,minecraft:wither,minecraft:elder_guardian,minecraft:warden,antarchy:alpha_mantis,antarchy:brutalfly,antarchy:emperor_scorpion,antarchy:hercules_beetle,antarchy:kraken,antarchy:toreterror,antarchy:king,antarchy:queen,antarchy:prince,antarchy:princess";
+    private static String fossilEntityBlacklist = DEFAULT_FOSSIL_ENTITY_BLACKLIST;
+    private static java.util.List<String> fossilEntityBlacklistEntries = parseEntryList(DEFAULT_FOSSIL_ENTITY_BLACKLIST);
     private static boolean glowVinesUnderLeaves = true;
     private static boolean swingThroughGrassEnabled = true;
     private static boolean boatsClimbWaterSteps = true;
@@ -65,11 +73,11 @@ public final class AntarchySettings {
     private static double bigBerthaAttackDamage = 62.0D;
     private static double bigBerthaReachBonus = 3.0D;
     private static double bigBerthaAttackSpeed = -3.0D;
-    private static double attitudeAdjusterBaseDamage = 47.0D;
+    private static double attitudeAdjusterBaseDamage = 61.0D;
     private static boolean attitudeAdjusterBreaksBlocks = true;
-    private static double krakensGraspAttackDamage = 16.0D;
+    private static double krakensGraspAttackDamage = 40.0D;
     private static double krakensGraspAttackSpeed = -2.9D;
-    private static double krakensGraspThrownDamage = 32.0D;
+    private static double krakensGraspThrownDamage = 45.0D;
     private static double krakensGraspLightningDamage = 6.0D;
     private static boolean krakensGraspInnateLoyalty = true;
     private static int krakensGraspInnateLoyaltyLevel = 3;
@@ -590,6 +598,30 @@ public final class AntarchySettings {
     private static double toreterrorSpinDamage = 6.0D;
     private static double toreterrorSpinKnockback = 0.9D;
     private static double toreterrorProjectileDamageMultiplier = 0.5D;
+    private static double glimmerToreterrorHealthMultiplier = 1.75D;
+    private static double glimmerToreterrorDamageMultiplier = 1.35D;
+    private static double glimmerToreterrorCooldownMultiplier = 0.65D;
+    private static double glimmerBrutalflyHealthMultiplier = 1.75D;
+    private static double glimmerBrutalflyDamageMultiplier = 1.35D;
+    private static double glimmerBrutalflyCooldownMultiplier = 0.65D;
+    private static double glimmerKrakenHealthMultiplier = 1.75D;
+    private static double glimmerKrakenDamageMultiplier = 1.35D;
+    private static double glimmerKrakenCooldownMultiplier = 0.65D;
+    private static double glimmerKingHealthMultiplier = 1.75D;
+    private static double glimmerKingDamageMultiplier = 1.35D;
+    private static double glimmerKingCooldownMultiplier = 0.65D;
+    private static double glimmerQueenHealthMultiplier = 1.75D;
+    private static double glimmerQueenDamageMultiplier = 1.35D;
+    private static double glimmerQueenCooldownMultiplier = 0.65D;
+    private static double glimmerAlphaMantisHealthMultiplier = 1.75D;
+    private static double glimmerAlphaMantisDamageMultiplier = 1.35D;
+    private static double glimmerAlphaMantisCooldownMultiplier = 0.65D;
+    private static double glimmerEmperorScorpionHealthMultiplier = 1.75D;
+    private static double glimmerEmperorScorpionDamageMultiplier = 1.35D;
+    private static double glimmerEmperorScorpionCooldownMultiplier = 0.65D;
+    private static double glimmerHerculesBeetleHealthMultiplier = 1.75D;
+    private static double glimmerHerculesBeetleDamageMultiplier = 1.35D;
+    private static double glimmerHerculesBeetleCooldownMultiplier = 0.65D;
     private static double waterBombDamage = 6.0D;
     private static int waterBombLifetimeTicks = 120;
     private static double waterBombGravity = 0.12D;
@@ -688,6 +720,15 @@ public final class AntarchySettings {
         return easterBunnyNaturalSpawnChancePercent;
     }
 
+    public static boolean brownAntDescent() { return brownAntDescent; }
+    public static void setBrownAntDescent(boolean value) { brownAntDescent = value; }
+    public static boolean redAntFlip() { return redAntFlip; }
+    public static void setRedAntFlip(boolean value) { redAntFlip = value; }
+    public static boolean termiteBurrow() { return termiteBurrow; }
+    public static void setTermiteBurrow(boolean value) { termiteBurrow = value; }
+    public static boolean rainbowAntPrism() { return rainbowAntPrism; }
+    public static void setRainbowAntPrism(boolean value) { rainbowAntPrism = value; }
+
     public static boolean rainbowAntsLeadToInfinityDimensions() {
         return rainbowAntsLeadToInfinityDimensions;
     }
@@ -738,6 +779,22 @@ public final class AntarchySettings {
 
     public static boolean duplicatorTreeEnabled() {
         return duplicatorTreeEnabled;
+    }
+
+    public static boolean fossilsEnabled() {
+        return fossilsEnabled;
+    }
+
+    public static String fossilEntityBlacklist() {
+        return fossilEntityBlacklist;
+    }
+
+    public static java.util.List<String> fossilEntityBlacklistEntries() {
+        return fossilEntityBlacklistEntries;
+    }
+
+    public static String defaultFossilEntityBlacklist() {
+        return DEFAULT_FOSSIL_ENTITY_BLACKLIST;
     }
 
     public static boolean glowVinesUnderLeaves() {
@@ -1440,6 +1497,26 @@ public final class AntarchySettings {
 
     public static void setDuplicatorTreeEnabled(boolean value) {
         duplicatorTreeEnabled = value;
+    }
+
+    public static void setFossilsEnabled(boolean value) {
+        fossilsEnabled = value;
+    }
+
+    public static void setFossilEntityBlacklist(String value) {
+        fossilEntityBlacklist = value == null ? "" : value;
+        fossilEntityBlacklistEntries = parseEntryList(fossilEntityBlacklist);
+    }
+
+    private static java.util.List<String> parseEntryList(String value) {
+        java.util.List<String> entries = new java.util.ArrayList<>();
+        for (String part : value.split(",")) {
+            String entry = part.trim().toLowerCase(java.util.Locale.ROOT);
+            if (!entry.isEmpty()) {
+                entries.add(entry);
+            }
+        }
+        return java.util.List.copyOf(entries);
     }
 
     public static void setGlowVinesUnderLeaves(boolean value) {
@@ -3072,6 +3149,54 @@ public final class AntarchySettings {
     public static void setToreterrorSpinKnockback(double v) { toreterrorSpinKnockback = v; }
     public static double toreterrorProjectileDamageMultiplier() { return toreterrorProjectileDamageMultiplier; }
     public static void setToreterrorProjectileDamageMultiplier(double v) { toreterrorProjectileDamageMultiplier = v; }
+    public static double glimmerToreterrorHealthMultiplier() { return glimmerToreterrorHealthMultiplier; }
+    public static void setGlimmerToreterrorHealthMultiplier(double v) { glimmerToreterrorHealthMultiplier = v; }
+    public static double glimmerToreterrorDamageMultiplier() { return glimmerToreterrorDamageMultiplier; }
+    public static void setGlimmerToreterrorDamageMultiplier(double v) { glimmerToreterrorDamageMultiplier = v; }
+    public static double glimmerToreterrorCooldownMultiplier() { return glimmerToreterrorCooldownMultiplier; }
+    public static void setGlimmerToreterrorCooldownMultiplier(double v) { glimmerToreterrorCooldownMultiplier = v; }
+    public static double glimmerBrutalflyHealthMultiplier() { return glimmerBrutalflyHealthMultiplier; }
+    public static void setGlimmerBrutalflyHealthMultiplier(double v) { glimmerBrutalflyHealthMultiplier = v; }
+    public static double glimmerBrutalflyDamageMultiplier() { return glimmerBrutalflyDamageMultiplier; }
+    public static void setGlimmerBrutalflyDamageMultiplier(double v) { glimmerBrutalflyDamageMultiplier = v; }
+    public static double glimmerBrutalflyCooldownMultiplier() { return glimmerBrutalflyCooldownMultiplier; }
+    public static void setGlimmerBrutalflyCooldownMultiplier(double v) { glimmerBrutalflyCooldownMultiplier = v; }
+    public static double glimmerKrakenHealthMultiplier() { return glimmerKrakenHealthMultiplier; }
+    public static void setGlimmerKrakenHealthMultiplier(double v) { glimmerKrakenHealthMultiplier = v; }
+    public static double glimmerKrakenDamageMultiplier() { return glimmerKrakenDamageMultiplier; }
+    public static void setGlimmerKrakenDamageMultiplier(double v) { glimmerKrakenDamageMultiplier = v; }
+    public static double glimmerKrakenCooldownMultiplier() { return glimmerKrakenCooldownMultiplier; }
+    public static void setGlimmerKrakenCooldownMultiplier(double v) { glimmerKrakenCooldownMultiplier = v; }
+    public static double glimmerKingHealthMultiplier() { return glimmerKingHealthMultiplier; }
+    public static void setGlimmerKingHealthMultiplier(double v) { glimmerKingHealthMultiplier = v; }
+    public static double glimmerKingDamageMultiplier() { return glimmerKingDamageMultiplier; }
+    public static void setGlimmerKingDamageMultiplier(double v) { glimmerKingDamageMultiplier = v; }
+    public static double glimmerKingCooldownMultiplier() { return glimmerKingCooldownMultiplier; }
+    public static void setGlimmerKingCooldownMultiplier(double v) { glimmerKingCooldownMultiplier = v; }
+    public static double glimmerQueenHealthMultiplier() { return glimmerQueenHealthMultiplier; }
+    public static void setGlimmerQueenHealthMultiplier(double v) { glimmerQueenHealthMultiplier = v; }
+    public static double glimmerQueenDamageMultiplier() { return glimmerQueenDamageMultiplier; }
+    public static void setGlimmerQueenDamageMultiplier(double v) { glimmerQueenDamageMultiplier = v; }
+    public static double glimmerQueenCooldownMultiplier() { return glimmerQueenCooldownMultiplier; }
+    public static void setGlimmerQueenCooldownMultiplier(double v) { glimmerQueenCooldownMultiplier = v; }
+    public static double glimmerAlphaMantisHealthMultiplier() { return glimmerAlphaMantisHealthMultiplier; }
+    public static void setGlimmerAlphaMantisHealthMultiplier(double v) { glimmerAlphaMantisHealthMultiplier = v; }
+    public static double glimmerAlphaMantisDamageMultiplier() { return glimmerAlphaMantisDamageMultiplier; }
+    public static void setGlimmerAlphaMantisDamageMultiplier(double v) { glimmerAlphaMantisDamageMultiplier = v; }
+    public static double glimmerAlphaMantisCooldownMultiplier() { return glimmerAlphaMantisCooldownMultiplier; }
+    public static void setGlimmerAlphaMantisCooldownMultiplier(double v) { glimmerAlphaMantisCooldownMultiplier = v; }
+    public static double glimmerEmperorScorpionHealthMultiplier() { return glimmerEmperorScorpionHealthMultiplier; }
+    public static void setGlimmerEmperorScorpionHealthMultiplier(double v) { glimmerEmperorScorpionHealthMultiplier = v; }
+    public static double glimmerEmperorScorpionDamageMultiplier() { return glimmerEmperorScorpionDamageMultiplier; }
+    public static void setGlimmerEmperorScorpionDamageMultiplier(double v) { glimmerEmperorScorpionDamageMultiplier = v; }
+    public static double glimmerEmperorScorpionCooldownMultiplier() { return glimmerEmperorScorpionCooldownMultiplier; }
+    public static void setGlimmerEmperorScorpionCooldownMultiplier(double v) { glimmerEmperorScorpionCooldownMultiplier = v; }
+    public static double glimmerHerculesBeetleHealthMultiplier() { return glimmerHerculesBeetleHealthMultiplier; }
+    public static void setGlimmerHerculesBeetleHealthMultiplier(double v) { glimmerHerculesBeetleHealthMultiplier = v; }
+    public static double glimmerHerculesBeetleDamageMultiplier() { return glimmerHerculesBeetleDamageMultiplier; }
+    public static void setGlimmerHerculesBeetleDamageMultiplier(double v) { glimmerHerculesBeetleDamageMultiplier = v; }
+    public static double glimmerHerculesBeetleCooldownMultiplier() { return glimmerHerculesBeetleCooldownMultiplier; }
+    public static void setGlimmerHerculesBeetleCooldownMultiplier(double v) { glimmerHerculesBeetleCooldownMultiplier = v; }
     public static double waterBombDamage() { return waterBombDamage; }
     public static void setWaterBombDamage(double v) { waterBombDamage = v; }
     public static int waterBombLifetimeTicks() { return waterBombLifetimeTicks; }
@@ -3219,6 +3344,33 @@ public final class AntarchySettings {
     private static double throwbackWildZoneChance = 0.35D;
     public static double throwbackWildZoneChance() { return throwbackWildZoneChance; }
     public static void setThrowbackWildZoneChance(double value) { throwbackWildZoneChance = value; }
+    private static boolean throwbackZonesEnabled = true;
+    private static boolean throwbackNoAttackCooldown = true;
+    private static boolean throwbackClassicHurtSound = true;
+    private static boolean throwbackClassicFood = true;
+    private static boolean throwbackClassicMusic = true;
+    private static boolean throwbackDenseFog = true;
+    private static boolean throwbackDreamHaze = true;
+    private static double throwbackDreamStrength = 1.0D;
+    private static boolean throwbackAfterimages = true;
+    public static boolean throwbackZonesEnabled() { return throwbackZonesEnabled; }
+    public static void setThrowbackZonesEnabled(boolean value) { throwbackZonesEnabled = value; }
+    public static boolean throwbackNoAttackCooldown() { return throwbackNoAttackCooldown; }
+    public static void setThrowbackNoAttackCooldown(boolean value) { throwbackNoAttackCooldown = value; }
+    public static boolean throwbackClassicHurtSound() { return throwbackClassicHurtSound; }
+    public static void setThrowbackClassicHurtSound(boolean value) { throwbackClassicHurtSound = value; }
+    public static boolean throwbackClassicFood() { return throwbackClassicFood; }
+    public static void setThrowbackClassicFood(boolean value) { throwbackClassicFood = value; }
+    public static boolean throwbackClassicMusic() { return throwbackClassicMusic; }
+    public static void setThrowbackClassicMusic(boolean value) { throwbackClassicMusic = value; }
+    public static boolean throwbackDenseFog() { return throwbackDenseFog; }
+    public static void setThrowbackDenseFog(boolean value) { throwbackDenseFog = value; }
+    public static boolean throwbackDreamHaze() { return throwbackDreamHaze; }
+    public static void setThrowbackDreamHaze(boolean value) { throwbackDreamHaze = value; }
+    public static double throwbackDreamStrength() { return throwbackDreamStrength; }
+    public static void setThrowbackDreamStrength(double value) { throwbackDreamStrength = value; }
+    public static boolean throwbackAfterimages() { return throwbackAfterimages; }
+    public static void setThrowbackAfterimages(boolean value) { throwbackAfterimages = value; }
     private static boolean elythiaEvents = true;
     public static boolean elythiaEvents() { return elythiaEvents; }
     public static void setElythiaEvents(boolean value) { elythiaEvents = value; }
@@ -3227,6 +3379,10 @@ public final class AntarchySettings {
     public static boolean elythiaRainGrowth() { return elythiaRainGrowth; }
     public static void setElythiaRainGrowth(boolean value) { elythiaRainGrowth = value; }
 
+    private static boolean thoraxisEvents = true;
+    public static boolean thoraxisEvents() { return thoraxisEvents; }
+    public static void setThoraxisEvents(boolean value) { thoraxisEvents = value; }
+
     private static boolean elythiaFogEnabled = true;
     public static boolean elythiaFogEnabled() { return elythiaFogEnabled; }
     public static void setElythiaFogEnabled(boolean value) { elythiaFogEnabled = value; }
@@ -3234,6 +3390,14 @@ public final class AntarchySettings {
     private static boolean elythiaGroundMistEnabled = true;
     public static boolean elythiaGroundMistEnabled() { return elythiaGroundMistEnabled; }
     public static void setElythiaGroundMistEnabled(boolean value) { elythiaGroundMistEnabled = value; }
+
+    private static boolean elythiaSoftCloudsEnabled = true;
+    public static boolean elythiaSoftCloudsEnabled() { return elythiaSoftCloudsEnabled; }
+    public static void setElythiaSoftCloudsEnabled(boolean value) { elythiaSoftCloudsEnabled = value; }
+
+    private static boolean elythiaEchoes = true;
+    public static boolean elythiaEchoes() { return elythiaEchoes; }
+    public static void setElythiaEchoes(boolean value) { elythiaEchoes = value; }
 
     private static boolean elythiaClearWater = true;
     public static boolean elythiaClearWater() { return elythiaClearWater; }

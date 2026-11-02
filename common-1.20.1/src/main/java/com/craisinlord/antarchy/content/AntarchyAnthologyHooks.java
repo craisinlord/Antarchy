@@ -64,6 +64,7 @@ public final class AntarchyAnthologyHooks {
         CameraShake.addStrengthSource(cameraPos -> HerculesBeetleImpactShakeClientState.getTicks() / 25.0F * 2.0F);
         CameraShake.addStrengthSource(cameraPos -> BigBerthaItem.clientShakeTicks / 25.0F * 2.0F);
         CameraShake.addStrengthSource(cameraPos -> AnvilCannonItem.clientShakeTicks / 12.0F * 1.2F);
+        GravityHooks.addCameraRollSource(com.craisinlord.antarchy.content.client.AntTransitClientState::roll);
         ContractionAfterimages.addActivator(living -> living instanceof Player player
                 && TemporalTunerItem.isAvailable(player)
                 && TimeDilationApi.getRate(living) > 1.0D);

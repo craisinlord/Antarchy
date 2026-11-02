@@ -32,6 +32,7 @@ import org.joml.Vector3f;
 
 public final class AttitudeAdjusterSlamManager {
     private static final int SLAM_TIMEOUT_TICKS = 40;
+    private static final double SLAM_REFERENCE_BASE_DAMAGE = 47.0D;
     private static final int PLAYER_SLAM_COOLDOWN_TICKS = 28;
     private static final double GROUNDED_VERTICAL_KNOCKBACK = 1.35D;
     private static final double GROUNDED_HORIZONTAL_KNOCKBACK = 0.5D;
@@ -138,7 +139,9 @@ public final class AttitudeAdjusterSlamManager {
             }
             Player attacker = level.getPlayerByUUID(state.attackerId);
             double impactSpeed = Math.max(Math.abs(Math.min(target.getDeltaMovement().y, state.startDownwardVelocity)), Math.max(0.0D, target.fallDistance * 0.125D));
-            float bonusDamage = (float) Mth.clamp(impactSpeed * SLAM_BONUS_DAMAGE_SCALE, 4.0D, SLAM_MAX_BONUS_DAMAGE);
+            double scale = slamDamageScale();
+            float bonusDamage = (float) (Mth.clamp(impactSpeed * SLAM_BONUS_DAMAGE_SCALE, 4.0D, SLAM_MAX_BONUS_DAMAGE) * scale);
+            target.invulnerableTime = 0;
             if (attacker != null) {
                 target.hurt(level.damageSources().playerAttack(attacker), bonusDamage);
             } else {
@@ -173,7 +176,7 @@ public final class AttitudeAdjusterSlamManager {
             BlockPos groundPos = getSlamSurfacePos(player, gravityDown);
             double localVerticalSpeed = GravityRotationUtil.vecWorldToPlayer(player.getDeltaMovement(), gravityDown == Direction.UP ? GravityDirection.UP : GravityDirection.DOWN).y;
             double impactStrength = Math.max(Math.abs(Math.min(localVerticalSpeed, PLAYER_SLAM_START_VELOCITY)), Math.max(state.startFallDistance, player.fallDistance) * 0.15D);
-            float damage = (float) Mth.clamp(PLAYER_SLAM_BASE_DAMAGE + impactStrength * PLAYER_SLAM_DAMAGE_SCALE * 10.0D, PLAYER_SLAM_BASE_DAMAGE, PLAYER_SLAM_MAX_DAMAGE);
+            float damage = (float) (Mth.clamp(PLAYER_SLAM_BASE_DAMAGE + impactStrength * PLAYER_SLAM_DAMAGE_SCALE * 10.0D, PLAYER_SLAM_BASE_DAMAGE, PLAYER_SLAM_MAX_DAMAGE) * slamDamageScale());
             AABB area = new AABB(impactPos.x - PLAYER_SLAM_RADIUS, impactPos.y - 1.5D, impactPos.z - PLAYER_SLAM_RADIUS, impactPos.x + PLAYER_SLAM_RADIUS, impactPos.y + 2.5D, impactPos.z + PLAYER_SLAM_RADIUS);
             Vec3 awayFromSurface = new Vec3(-gravityDown.getStepX(), -gravityDown.getStepY(), -gravityDown.getStepZ());
             for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, area, candidate -> candidate.isAlive() && candidate != player)) {
@@ -288,6 +291,10 @@ public final class AttitudeAdjusterSlamManager {
             horizontal = fallback.multiply(1.0D, 0.0D, 1.0D);
         }
         return horizontal.lengthSqr() < 1.0E-4D ? new Vec3(1.0D, 0.0D, 0.0D) : horizontal.normalize();
+    }
+
+    private static double slamDamageScale() {
+        return Math.max(AntarchySettings.attitudeAdjusterBaseDamage(), 0.0D) / SLAM_REFERENCE_BASE_DAMAGE;
     }
 
     private static double resistanceScale(LivingEntity entity) {

@@ -63,7 +63,7 @@ public final class GroundMistParticle extends TextureSheetParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+        return GroundMistRenderType.INSTANCE;
     }
 
     public static final class Provider implements ParticleProvider<SimpleParticleType> {

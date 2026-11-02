@@ -3,9 +3,11 @@
   "pools": [
     {
       "rolls": 1,
-      "condition": {
-        "type": "minecraft:survives_explosion"
-      },
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
       "entries": [
         {
           "type": "minecraft:alternatives",
@@ -13,28 +15,32 @@
             {
               "type": "minecraft:item",
               "name": "antarchy:myrmite_coal_ore",
-              "condition": {
-                "type": "minecraft:match_tool",
-                "predicate": {
-                  "components": {
-                    "minecraft:enchantments": {
-                      "minecraft:silk_touch": 1
+              "conditions": [
+                {
+                  "condition": "minecraft:match_tool",
+                  "predicate": {
+                    "components": {
+                      "minecraft:enchantments": {
+                        "levels": {
+                          "minecraft:silk_touch": 1
+                        }
+                      }
                     }
                   }
                 }
-              }
+              ]
             },
             {
               "type": "minecraft:item",
               "name": "minecraft:coal",
-              "modifier": [
+              "functions": [
                 {
-                  "type": "minecraft:apply_bonus",
+                  "function": "minecraft:apply_bonus",
                   "enchantment": "minecraft:fortune",
                   "formula": "minecraft:ore_drops"
                 },
                 {
-                  "type": "minecraft:explosion_decay"
+                  "function": "minecraft:explosion_decay"
                 }
               ]
             }

@@ -26,7 +26,7 @@ public class RedAntNestFeature extends BaseAntNestFeature {
 
     @Override
     protected BlockPos resolveNestPos(WorldGenLevel level, BlockPos origin) {
-        int startY = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, origin.getX(), origin.getZ()) - 1;
+        int startY = Math.min(level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, origin.getX(), origin.getZ()) - 1, origin.getY());
         int minY = level.getMinY() + 1;
 
         for (int y = startY; y >= minY; y--) {

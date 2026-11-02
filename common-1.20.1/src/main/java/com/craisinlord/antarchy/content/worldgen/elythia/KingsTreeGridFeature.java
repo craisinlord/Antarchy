@@ -117,6 +117,10 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
         return placed;
     }
 
+    public static int treeBaseY(ServerLevel level, int centerX, int centerZ) {
+        return treeBaseY(level, level.getChunkSource().getGenerator(), centerX, centerZ);
+    }
+
     private static int treeBaseY(WorldGenLevel level, ChunkGenerator generator, int centerX, int centerZ) {
         ServerLevel serverLevel = level.getLevel();
         long treeKey = ((long) centerX << 32) ^ (centerZ & 0xffffffffL);
@@ -194,7 +198,7 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
                 centerX - 512.0D, serverLevel.getMinBuildHeight(), centerZ - 512.0D,
                 centerX + 512.0D, serverLevel.getMaxBuildHeight(), centerZ + 512.0D);
         List<KingEntity> treeKings = serverLevel.getEntitiesOfClass(KingEntity.class, searchBox,
-                king -> king.isAlive() && king.isTreePatrolFor(treeCenter));
+                king -> king.isAlive() && !com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes.isGlimmerEcho(king) && king.isTreePatrolFor(treeCenter));
         if (!treeKings.isEmpty()) {
             for (int index = 1; index < treeKings.size(); index++) {
                 treeKings.get(index).discard();

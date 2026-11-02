@@ -1,6 +1,7 @@
 {
   "required": true,
   "package": "com.craisinlord.antarchy.forge.mixins",
+  "plugin": "com.craisinlord.antarchy.forge.mixins.AntarchyForgeMixinPlugin",
   "refmap": "antarchy-forge.mixins.refmap.json",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
@@ -9,10 +10,16 @@
     "item.BucketItemThoraxisWaterMixin",
     "entity.ParalyzedMobFreezeMixin",
     "infinity.AmendmentRareOresMixin",
-    "infinity.ConfigGenInvocationMixin"
+    "infinity.ConfigGenInvocationMixin",
+    "infinity.ConfigGeneratorPatchMixin",
+    "infinity.PortalCreatorPatchMixin",
+    "infinity.WarpLogicPatchMixin"
   ],
   "client": [
-    "client.LiquidBlockRendererMixin"
+    "infinity.ShaderPayloadRepeatSkipMixin",
+    "client.LiquidBlockRendererMixin",
+    "client.ThrowbackHungerBarMixin",
+    "compat.AppleSkinOverlayMixin"
   ],
   "injectors": {
     "defaultRequire": 1

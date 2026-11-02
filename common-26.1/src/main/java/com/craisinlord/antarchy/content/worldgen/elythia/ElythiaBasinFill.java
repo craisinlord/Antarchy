@@ -19,7 +19,7 @@ public final class ElythiaBasinFill implements DensityFunction {
     private static final double RIM_HIGH = -0.39D;
     private static final double OPEN_LOW = -0.45D;
     private static final double OPEN_HIGH = -0.39D;
-    private static final double NONE = -1.0D;
+    private static final double SOFTNESS = 0.02D;
     private static final int[] RADII = {48, 96, 144, 192};
     private static final double[][] DIRECTIONS = directions(8);
     private static final int GRID_SHIFT = 4;
@@ -40,38 +40,47 @@ public final class ElythiaBasinFill implements DensityFunction {
     @Override
     public double compute(FunctionContext context) {
         double value = this.argument.compute(context);
-        if (value >= CEILING || value < DEEP) {
+        if (value >= CEILING + SOFTNESS || value < DEEP) {
             return value;
         }
-        int x = context.blockX();
-        int z = context.blockZ();
-        int cellX = x >> GRID_SHIFT;
-        int cellZ = z >> GRID_SHIFT;
-        double tx = (double) (x - (cellX << GRID_SHIFT)) / GRID;
-        double tz = (double) (z - (cellZ << GRID_SHIFT)) / GRID;
+        double u = (double) context.blockX() / GRID - 0.5D;
+        double v = (double) context.blockZ() / GRID - 0.5D;
+        int cellX = Mth.floor(u);
+        int cellZ = Mth.floor(v);
+        double tx = u - cellX;
+        double tz = v - cellZ;
         FloorCache cache = this.floors.get();
-        double floor = Mth.lerp2(tx, tz,
-                this.floor(cache, cellX, cellZ),
-                this.floor(cache, cellX + 1, cellZ),
-                this.floor(cache, cellX, cellZ + 1),
-                this.floor(cache, cellX + 1, cellZ + 1));
-        return Math.max(value, floor);
+        double rim = 0.0D;
+        double target = 0.0D;
+        double open = 0.0D;
+        for (int i = 0; i < 3; i++) {
+            double weightX = spline(tx, i);
+            for (int j = 0; j < 3; j++) {
+                double weight = weightX * spline(tz, j);
+                int slot = this.point(cache, cellX + i, cellZ + j);
+                rim += weight * cache.rims[slot];
+                target += weight * cache.targets[slot];
+                open += weight * cache.opens[slot];
+            }
+        }
+        double enclosed = value + rim * lift(target - value);
+        double inland = value + open * lift(CEILING - value);
+        return Math.max(enclosed, inland);
     }
 
-    private double floor(FloorCache cache, int cellX, int cellZ) {
+    private int point(FloorCache cache, int cellX, int cellZ) {
         long key = (long) cellX << 32 | (cellZ & 0xFFFFFFFFL);
         int slot = (int) ((cellX * 31L + cellZ) & (CACHE_SLOTS - 1));
         if (cache.filled[slot] && cache.keys[slot] == key) {
-            return cache.values[slot];
+            return slot;
         }
-        double floor = this.computeFloor(cellX << GRID_SHIFT, cellZ << GRID_SHIFT);
+        this.computePoint(cache, slot, cellX << GRID_SHIFT, cellZ << GRID_SHIFT);
         cache.keys[slot] = key;
-        cache.values[slot] = floor;
         cache.filled[slot] = true;
-        return floor;
+        return slot;
     }
 
-    private double computeFloor(int x, int z) {
+    private void computePoint(FloorCache cache, int slot, int x, int z) {
         double fill = Double.NEGATIVE_INFINITY;
         double lowest = Double.POSITIVE_INFINITY;
         for (int radius : RADII) {
@@ -84,14 +93,34 @@ public final class ElythiaBasinFill implements DensityFunction {
             fill = Math.max(fill, ring);
             lowest = Math.min(lowest, ring);
             if (fill >= CEILING) {
-                return CEILING;
+                cache.rims[slot] = 1.0D;
+                cache.targets[slot] = CEILING;
+                cache.opens[slot] = 0.0D;
+                return;
             }
         }
-        double rim = smooth((fill - RIM_LOW) / (RIM_HIGH - RIM_LOW));
-        double enclosedFloor = Mth.lerp(rim, NONE, Math.min(fill, CEILING));
-        double open = smooth((lowest - OPEN_LOW) / (OPEN_HIGH - OPEN_LOW));
-        double inlandFloor = Mth.lerp(open, NONE, CEILING);
-        return Math.max(enclosedFloor, inlandFloor);
+        cache.rims[slot] = smooth((fill - RIM_LOW) / (RIM_HIGH - RIM_LOW));
+        cache.targets[slot] = Math.min(fill, CEILING);
+        cache.opens[slot] = smooth((lowest - OPEN_LOW) / (OPEN_HIGH - OPEN_LOW));
+    }
+
+    private static double spline(double t, int index) {
+        return switch (index) {
+            case 0 -> 0.5D * (1.0D - t) * (1.0D - t);
+            case 1 -> 0.5D + t - t * t;
+            default -> 0.5D * t * t;
+        };
+    }
+
+    private static double lift(double gap) {
+        if (gap <= -SOFTNESS) {
+            return 0.0D;
+        }
+        if (gap >= SOFTNESS) {
+            return gap;
+        }
+        double shifted = gap + SOFTNESS;
+        return shifted * shifted / (4.0D * SOFTNESS);
     }
 
     private static double smooth(double t) {
@@ -137,7 +166,9 @@ public final class ElythiaBasinFill implements DensityFunction {
 
     private static final class FloorCache {
         private final long[] keys = new long[CACHE_SLOTS];
-        private final double[] values = new double[CACHE_SLOTS];
+        private final double[] rims = new double[CACHE_SLOTS];
+        private final double[] targets = new double[CACHE_SLOTS];
+        private final double[] opens = new double[CACHE_SLOTS];
         private final boolean[] filled = new boolean[CACHE_SLOTS];
     }
 }

@@ -196,6 +196,8 @@ public final class CavarynCavityGrid {
                     builder.rift(start[0], start[1], start[2]);
                 } else if (kind == Kind.BIOWART_GUT) {
                     builder.gut(start[0], start[1], start[2]);
+                } else if (kind == Kind.CRUST_SHAFT) {
+                    builder.shaft(start[0], start[1], start[2]);
                 } else {
                     builder.nest(start[0], start[1], start[2]);
                 }
@@ -265,7 +267,8 @@ public final class CavarynCavityGrid {
         BROOD_GALLERY("brood_gallery", CavarynBiomeTable.BROODING_TUNNELS, true, 96, 2, 0, 0.0F, 30.0, 124.0, 36.0, 70.0),
         MOLEWORM_WARREN("moleworm_warren", CavarynBiomeTable.MOLEWORM_CAVES, false, 160, 3, 1, 0.5F, 40.0, 184.0, 66.0, 92.0),
         CARAPACE_RIFT("carapace_rift", CavarynBiomeTable.CAVARYN, true, 160, 4, 2, 0.5F, 100.0, 186.0, 130.0, 156.0),
-        BIOWART_GUT("biowart_gut", CavarynBiomeTable.BIOWART_CAVES, true, 160, 3, 1, 0.6F, 100.0, 186.0, 112.0, 170.0);
+        BIOWART_GUT("biowart_gut", CavarynBiomeTable.BIOWART_CAVES, true, 160, 3, 1, 0.6F, 100.0, 186.0, 112.0, 170.0),
+        CRUST_SHAFT("crust_shaft", null, false, 96, 1, 2, 0.5F, 120.0, 346.0, 326.0, 334.0);
 
         public static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
 
@@ -532,6 +535,37 @@ public final class CavarynCavityGrid {
                 yaw += Math.PI * (0.5 + random.nextDouble());
                 hub = level < 2 ? this.ramp(hub[0] + Math.cos(yaw) * radius * 0.7, hub[1], hub[2] + Math.sin(yaw) * radius * 0.7, yaw, 26.0 + random.nextDouble() * 6.0) : null;
             }
+        }
+
+        void shaft(double x, double y, double z) {
+            XoroshiroRandomSource random = this.random;
+            double radius = 3.0 + random.nextDouble() * 3.0;
+            double throatY = 268.0 + random.nextDouble() * 8.0;
+            double throatX = x + random.nextGaussian() * 3.0;
+            double throatZ = z + random.nextGaussian() * 3.0;
+            this.shapes.add(new Tube(x, y, z, throatX, throatY, throatZ, radius * 1.9, 1.0));
+            double mouthBottom = 226.0 + random.nextDouble() * 8.0;
+            x = throatX + random.nextGaussian() * 2.0;
+            z = throatZ + random.nextGaussian() * 2.0;
+            this.shapes.add(new Tube(throatX, throatY, throatZ, x, mouthBottom, z, radius * 1.5, 1.0));
+            double bottom = 140.0 + random.nextDouble() * 40.0;
+            double driftX = random.nextGaussian() * 0.4;
+            double driftZ = random.nextGaussian() * 0.4;
+            y = mouthBottom + 4.0;
+            while (y > bottom) {
+                double length = 10.0 + random.nextDouble() * 4.0;
+                driftX = Mth.clamp(driftX * 0.7 + random.nextGaussian() * 0.25, -0.6, 0.6);
+                driftZ = Mth.clamp(driftZ * 0.7 + random.nextGaussian() * 0.25, -0.6, 0.6);
+                double nx = x + driftX * length;
+                double ny = Math.max(bottom, y - length);
+                double nz = z + driftZ * length;
+                double segmentRadius = radius * (0.85 + random.nextDouble() * 0.3);
+                this.shapes.add(new Tube(x, y, z, nx, ny, nz, segmentRadius, 1.0));
+                x = nx;
+                y = ny;
+                z = nz;
+            }
+            this.shapes.add(new Tube(x, y, z, x + 0.01, y - 6.0, z, radius * 1.4, 1.0));
         }
 
         private double[] moleTunnel(double x, double y, double z, double yaw, int segments) {

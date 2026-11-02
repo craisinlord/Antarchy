@@ -65,11 +65,11 @@ public final class AntarchySettings {
     private static double bigBerthaAttackDamage = 62.0D;
     private static double bigBerthaReachBonus = 3.0D;
     private static double bigBerthaAttackSpeed = -3.0D;
-    private static double attitudeAdjusterBaseDamage = 47.0D;
+    private static double attitudeAdjusterBaseDamage = 61.0D;
     private static boolean attitudeAdjusterBreaksBlocks = true;
-    private static double krakensGraspAttackDamage = 16.0D;
+    private static double krakensGraspAttackDamage = 40.0D;
     private static double krakensGraspAttackSpeed = -2.9D;
-    private static double krakensGraspThrownDamage = 32.0D;
+    private static double krakensGraspThrownDamage = 45.0D;
     private static double krakensGraspLightningDamage = 6.0D;
     private static boolean krakensGraspInnateLoyalty = true;
     private static int krakensGraspInnateLoyaltyLevel = 3;
@@ -3212,6 +3212,29 @@ public final class AntarchySettings {
     public static int bossMagicWardDurationTicks() { return bossMagicWardDurationTicks; }
     public static int bossMagicWardTriggerBreaches() { return bossMagicWardTriggerBreaches; }
     public static java.util.List<String> magicBurstDamageNamespaces() { return magicBurstDamageNamespaces; }
+    private static boolean throwbackZonesEnabled = true;
+    private static boolean fossilsEnabled = true;
+    private static final String DEFAULT_FOSSIL_ENTITY_BLACKLIST = "minecraft:ender_dragon,minecraft:wither,minecraft:elder_guardian,minecraft:warden,antarchy:alpha_mantis,antarchy:brutalfly,antarchy:emperor_scorpion,antarchy:hercules_beetle,antarchy:kraken,antarchy:toreterror,antarchy:king,antarchy:queen,antarchy:prince,antarchy:princess";
+    private static String fossilEntityBlacklist = DEFAULT_FOSSIL_ENTITY_BLACKLIST;
+    private static java.util.List<String> fossilEntityBlacklistEntries = parseEntryList(DEFAULT_FOSSIL_ENTITY_BLACKLIST);
+    public static boolean fossilsEnabled() { return fossilsEnabled; }
+    public static void setFossilsEnabled(boolean value) { fossilsEnabled = value; }
+    public static String fossilEntityBlacklist() { return fossilEntityBlacklist; }
+    public static java.util.List<String> fossilEntityBlacklistEntries() { return fossilEntityBlacklistEntries; }
+    public static String defaultFossilEntityBlacklist() { return DEFAULT_FOSSIL_ENTITY_BLACKLIST; }
+    public static void setFossilEntityBlacklist(String value) { fossilEntityBlacklist = value == null ? "" : value; fossilEntityBlacklistEntries = parseEntryList(fossilEntityBlacklist); }
+    private static java.util.List<String> parseEntryList(String value) { return java.util.Arrays.stream(value.split(",")).map(String::trim).filter(entry -> !entry.isEmpty()).toList(); }
+    public static boolean throwbackZonesEnabled() { return throwbackZonesEnabled; }
+    public static void setThrowbackZonesEnabled(boolean value) { throwbackZonesEnabled = value; }
+    private static boolean throwbackNoAttackCooldown = true;
+    public static boolean throwbackNoAttackCooldown() { return throwbackNoAttackCooldown; }
+    public static void setThrowbackNoAttackCooldown(boolean value) { throwbackNoAttackCooldown = value; }
+    private static boolean throwbackClassicHurtSound = true;
+    public static boolean throwbackClassicHurtSound() { return throwbackClassicHurtSound; }
+    public static void setThrowbackClassicHurtSound(boolean value) { throwbackClassicHurtSound = value; }
+    private static boolean throwbackClassicFood = true;
+    public static boolean throwbackClassicFood() { return throwbackClassicFood; }
+    public static void setThrowbackClassicFood(boolean value) { throwbackClassicFood = value; }
     private static int throwbackStructureZoneRadius = 10;
     public static int throwbackStructureZoneRadius() { return throwbackStructureZoneRadius; }
     public static void setThrowbackStructureZoneRadius(int value) { throwbackStructureZoneRadius = value; }
@@ -3224,6 +3247,10 @@ public final class AntarchySettings {
     public static boolean elythiaEvents() { return elythiaEvents; }
     public static void setElythiaEvents(boolean value) { elythiaEvents = value; }
 
+    private static boolean thoraxisEvents = true;
+    public static boolean thoraxisEvents() { return thoraxisEvents; }
+    public static void setThoraxisEvents(boolean value) { thoraxisEvents = value; }
+
     private static boolean elythiaRainGrowth = true;
     public static boolean elythiaRainGrowth() { return elythiaRainGrowth; }
     public static void setElythiaRainGrowth(boolean value) { elythiaRainGrowth = value; }
@@ -3235,6 +3262,10 @@ public final class AntarchySettings {
     private static boolean elythiaGroundMistEnabled = true;
     public static boolean elythiaGroundMistEnabled() { return elythiaGroundMistEnabled; }
     public static void setElythiaGroundMistEnabled(boolean value) { elythiaGroundMistEnabled = value; }
+
+    private static boolean elythiaSoftCloudsEnabled = true;
+    public static boolean elythiaSoftCloudsEnabled() { return elythiaSoftCloudsEnabled; }
+    public static void setElythiaSoftCloudsEnabled(boolean value) { elythiaSoftCloudsEnabled = value; }
 
     private static boolean elythiaClearWater = true;
     public static boolean elythiaClearWater() { return elythiaClearWater; }

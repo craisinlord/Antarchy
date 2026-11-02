@@ -285,6 +285,11 @@
     "entity.antarchy.enchanted_golden_apple_cow":  "Enchanted Golden Apple Cow",
     "entity.antarchy.easter_bunny":  "Easter Bunny",
     "entity.antarchy.glimmer":  "Glimmer",
+    "entity.antarchy.brutalfly.glimmer":  "Glimmer Brutalfly",
+    "entity.antarchy.kraken.glimmer":  "Glimmer Kraken",
+    "entity.antarchy.king.glimmer":  "Glimmer King",
+    "entity.antarchy.queen.glimmer":  "Glimmer Queen",
+    "entity.antarchy.toreterror.glimmer":  "Glimmer Toreterror",
     "entity.antarchy.ouranwood_deer":  "Ouranwood Deer",
     "entity.antarchy.elka":  "Elka",
     "entity.antarchy.dorrie":  "Dorrie",
@@ -772,6 +777,9 @@
     "item.antarchy.mantis_spawn_egg":  "Mantis Spawn Egg",
     "item.antarchy.alpha_mantis_spawn_egg":  "Alpha Mantis Spawn Egg",
     "biome.antarchy.moleworm_caves":  "Moleworm Caves",
+    "biome.antarchy.festering_wastes":  "Festering Wastes",
+    "biome.antarchy.corkscrew_thicket":  "Corkscrew Thicket",
+    "biome.antarchy.ossuary_wastes":  "Ossuary Wastes",
     "biome.antarchy.primordial_plains":  "Primordial Plains",
     "biome.antarchy.primordial_massif":  "Primordial Massif",
     "biome.antarchy.truffalo_forest":  "Truffalo Forest",
@@ -792,6 +800,7 @@
     "message.antarchy.rainbow_ant_infinity_missing":  "Infinity must be installed for rainbow ant dimensions to work.",
     "message.antarchy.rainbow_ant_needs_reagent":  "This rainbow ant needs a reagent before it can open a dimension.",
     "message.antarchy.teleport_arrival_failed":  "No safe arrival spot was found. Teleportation was canceled.",
+    "message.antarchy.transit_preparing":  "The ant is finding you a way through...",
     "message.antarchy.red_ant_activated":  "The red ant is ready to open its destination.",
     "message.antarchy.red_ant_needs_reagent":  "This red ant needs a reagent before it can open its destination.",
     "message.antarchy.termite_activated":  "The termite is ready to open its destination.",
@@ -830,6 +839,7 @@
     "effect.antarchy.bloodglass_ward":  "Bloodglass Ward",
     "effect.antarchy.bloodglass_ward.description":  "Gives hearts that shatter, absorbing an entire hit of damage. They regenerate over time.",
     "effect.antarchy.glimmering":  "Glimmering",
+    "effect.antarchy.remembrance": "Remembrance",
     "effect.antarchy.glimmering.description":  "Passes through entities and attacks unharmed, like a spirit. Grants a lighter step and a higher jump.",
     "death.attack.flytrap_mauling":  "%1$s was mauled to death by a plant",
     "death.attack.flytrap_mauling.player":  "%1$s was mauled to death by a plant",
@@ -933,6 +943,8 @@
     "advancements.antarchy.water_cannon_craft.description":  "Obtain a Water Cannon.",
     "advancements.antarchy.kill_toreterror.title":  "More like Tore-Terrible Aim!",
     "advancements.antarchy.kill_toreterror.description":  "Defeat the Toreterror.",
+    "advancements.antarchy.kill_brutalfly.title":  "Swatted",
+    "advancements.antarchy.kill_brutalfly.description":  "Defeat the Brutalfly",
     "advancements.antarchy.down_with_the_king.title":  "Down with the King",
     "advancements.antarchy.down_with_the_king.description":  "Defeat the King.",
     "advancements.antarchy.down_with_the_queen.title":  "Down with the Queen",
@@ -1227,6 +1239,14 @@
     "item.minecraft.tipped_arrow.effect.strong_growing":  "Arrow of Growth II",
     "item.minecraft.tipped_arrow.effect.extreme_growing":  "Arrow of Growth III",
     "item.minecraft.potion.effect.stinky":  "Potion of Stink",
+    "item.minecraft.potion.effect.remembrance":  "Potion of Remembrance",
+    "item.minecraft.potion.effect.long_remembrance":  "Potion of Remembrance",
+    "item.minecraft.splash_potion.effect.remembrance":  "Splash Potion of Remembrance",
+    "item.minecraft.splash_potion.effect.long_remembrance":  "Splash Potion of Remembrance",
+    "item.minecraft.lingering_potion.effect.remembrance":  "Lingering Potion of Remembrance",
+    "item.minecraft.lingering_potion.effect.long_remembrance":  "Lingering Potion of Remembrance",
+    "item.minecraft.tipped_arrow.effect.remembrance":  "Arrow of Remembrance",
+    "item.minecraft.tipped_arrow.effect.long_remembrance":  "Arrow of Remembrance",
     "item.minecraft.potion.effect.long_stinky":  "Potion of Stink",
     "item.minecraft.splash_potion.effect.stinky":  "Splash Potion of Stink",
     "item.minecraft.splash_potion.effect.long_stinky":  "Splash Potion of Stink",
@@ -1359,6 +1379,23 @@
     "block.antarchy.myrmite_coal_ore":  "Myrmite Coal Ore",
     "block.antarchy.broodstone_uranium_ore":  "Broodstone Uranium Ore",
     "block.antarchy.broodstone_titanium_ore":  "Broodstone Titanium Ore",
+    "block.antarchy.myrmite_copper_ore":  "Myrmite Copper Ore",
+    "block.antarchy.broodstone_copper_ore":  "Broodstone Copper Ore",
+    "block.antarchy.myrmite_iron_ore":  "Myrmite Iron Ore",
+    "block.antarchy.broodstone_iron_ore":  "Broodstone Iron Ore",
+    "block.antarchy.myrmite_gold_ore":  "Myrmite Gold Ore",
+    "block.antarchy.broodstone_gold_ore":  "Broodstone Gold Ore",
+    "block.antarchy.myrmite_redstone_ore":  "Myrmite Redstone Ore",
+    "block.antarchy.broodstone_redstone_ore":  "Broodstone Redstone Ore",
+    "block.antarchy.myrmite_lapis_ore":  "Myrmite Lapis Lazuli Ore",
+    "block.antarchy.broodstone_lapis_ore":  "Broodstone Lapis Lazuli Ore",
+    "block.antarchy.myrmite_diamond_ore":  "Myrmite Diamond Ore",
+    "block.antarchy.broodstone_diamond_ore":  "Broodstone Diamond Ore",
+    "block.antarchy.myrmite_emerald_ore":  "Myrmite Emerald Ore",
+    "block.antarchy.broodstone_emerald_ore":  "Broodstone Emerald Ore",
+    "block.antarchy.myrmite_fossil":  "Myrmite Fossil",
+    "block.antarchy.broodstone_fossil":  "Broodstone Fossil",
+    "item.antarchy.fossilized":  "Fossilized %s",
     "item.antarchy.raw_bug_meat":  "Raw Bug Meat",
     "item.antarchy.cooked_bug_meat":  "Cooked Bug Meat",
     "item.antarchy.hercules_horn":  "Hercules Horn",
@@ -1716,4 +1753,68 @@
     ,"guide.antarchy.disk.toreterror_arena.description": "Find the Toreterror."
     ,"guide.antarchy.disk.basilisk_game.description": "Don't bite your tail."
     ,"guide.antarchy.disk.trayaurus_lab_notes.description": "From the lab."
+    ,"message.antarchy.dimension_reset.header": "Antarchy 2.3.0 has new terrain. Pick dimensions to reset:"
+    ,"message.antarchy.dimension_reset.toggle_on": "[✔ %s]"
+    ,"message.antarchy.dimension_reset.toggle_off": "[✘ %s]"
+    ,"message.antarchy.dimension_reset.toggle_hover": "Click to toggle %s"
+    ,"message.antarchy.dimension_reset.confirm": "[Reset]"
+    ,"message.antarchy.dimension_reset.confirm_hover": "Deletes the selected dimensions next time the world loads. Can't be undone."
+    ,"message.antarchy.dimension_reset.cancel": "[Cancel]"
+    ,"message.antarchy.dimension_reset.cancel_hover": "Cancel the reset"
+    ,"message.antarchy.dimension_reset.dismiss": "[Ignore]"
+    ,"message.antarchy.dimension_reset.dismiss_hover": "Hide this. %s brings it back."
+    ,"message.antarchy.dimension_reset.queued": "Resetting next load: %s"
+    ,"message.antarchy.dimension_reset.confirmed": "%s will reset next time the world loads. Restart or relog."
+    ,"message.antarchy.dimension_reset.cancelled": "Reset cancelled."
+    ,"message.antarchy.dimension_reset.nothing_queued": "No reset queued."
+    ,"message.antarchy.dimension_reset.dismissed": "Hidden. %s brings it back."
+    ,"message.antarchy.dimension_reset.none_selected": "Pick a dimension first."
+    ,"message.antarchy.dimension_reset.not_legacy": "%s has no old terrain."
+    ,"message.antarchy.dimension_reset.no_legacy": "No old terrain to reset."
+    ,"message.antarchy.dimension_reset.relocated": "%s was reset, so you got moved somewhere safe."
+    ,"message.antarchy.dimension_reset.dimension.elythia": "Elythia"
+    ,"message.antarchy.dimension_reset.dimension.thoraxis": "Thoraxis"
+    ,"message.antarchy.dimension_reset.dimension.cavaryn": "Cavaryn",
+    "entity.antarchy.bomber.glimmer": "Glimmer Bomber",
+    "entity.antarchy.mantis.glimmer": "Glimmer Mantis",
+    "entity.antarchy.alpha_mantis.glimmer": "Glimmer Alpha Mantis",
+    "entity.antarchy.emperor_scorpion.glimmer": "Glimmer Emperor Scorpion",
+    "entity.antarchy.scorpion.glimmer": "Glimmer Scorpion",
+    "entity.antarchy.butterfly.glimmer": "Glimmer Butterfly",
+    "entity.antarchy.hercules_beetle.glimmer": "Glimmer Hercules Beetle",
+    "entity.antarchy.missile_squid.glimmer": "Glimmer Missile Squid",
+    "entity.antarchy.octopus_bomb.glimmer": "Glimmer Octopus Bomb",
+    "entity.antarchy.manticore.glimmer": "Glimmer Manticore",
+    "item.antarchy.toreterror_glimmer_sigil": "Toreterror Glimmer Sigil",
+    "item.antarchy.alpha_mantis_glimmer_sigil": "Alpha Mantis Glimmer Sigil",
+    "item.antarchy.emperor_scorpion_glimmer_sigil": "Emperor Scorpion Glimmer Sigil",
+    "tooltip.antarchy.glimmer_sigil.emperor_scorpion": "Calls the Glimmer Emperor Scorpion in the Dream Dunes",
+    "item.antarchy.brutalfly_glimmer_sigil": "Brutalfly Glimmer Sigil",
+    "tooltip.antarchy.glimmer_sigil.brutalfly": "Calls the Glimmer Brutalfly in the cocoon forests of Elythia",
+    "item.antarchy.hercules_beetle_glimmer_sigil": "Hercules Beetle Glimmer Sigil",
+    "tooltip.antarchy.glimmer_sigil.hercules_beetle": "Calls the Glimmer Hercules Beetle in the Cavaryn",
+    "item.antarchy.kraken_glimmer_sigil": "Kraken Glimmer Sigil",
+    "tooltip.antarchy.glimmer_sigil.kraken": "Calls the Glimmer Kraken over the oceans of Elythia",
+    "item.antarchy.king_glimmer_sigil": "King Glimmer Sigil",
+    "tooltip.antarchy.glimmer_sigil.king": "Calls the Glimmer King at a Royal Shrine or the King's Tree",
+    "item.antarchy.queen_glimmer_sigil": "Queen Glimmer Sigil",
+    "tooltip.antarchy.glimmer_sigil.queen": "Calls the Glimmer Queen at a Royal Shrine or anywhere in the Underside",
+    "item.antarchy.faded_memory": "Faded Memory",
+    "tooltip.antarchy.glimmer_sigil.toreterror": "Calls the Glimmer Toreterror to its arena",
+    "tooltip.antarchy.glimmer_sigil.alpha_mantis": "Calls the Glimmer Alpha Mantis to the Ruined Arena",
+    "tooltip.antarchy.glimmer_sigil.use": "Hold use at the boss's home after defeating it",
+    "message.antarchy.glimmer_sigil.peaceful": "The sigil stays dim in Peaceful difficulty",
+    "message.antarchy.glimmer_sigil.not_defeated": "The sigil stays dim: defeat the %s first (advancement: %s)",
+    "message.antarchy.glimmer_sigil.wrong_site": "The sigil stays dim: it only answers %s",
+    "message.antarchy.glimmer_sigil.occupied": "The sigil stays dim: a %s already guards this place",
+    "message.antarchy.glimmer_sigil.site.toreterror": "inside a Toreterror Arena",
+    "message.antarchy.glimmer_sigil.site.alpha_mantis": "inside the Ruined Arena",
+    "message.antarchy.glimmer_sigil.site.emperor_scorpion": "in the Dream Dunes",
+    "message.antarchy.glimmer_sigil.site.brutalfly": "in the cocoon forests of Elythia",
+    "message.antarchy.glimmer_sigil.site.hercules_beetle": "in the Cavaryn",
+    "message.antarchy.glimmer_sigil.site.kraken": "over the oceans of Elythia",
+    "message.antarchy.glimmer_sigil.site.king": "at a Royal Shrine or the King's Tree",
+    "message.antarchy.glimmer_sigil.site.queen": "at a Royal Shrine or anywhere in the Underside",
+    "message.antarchy.glimmer_sigil.no_space": "The sigil stays dim: there is no room here for the memory to take shape",
+    "message.antarchy.glimmer_sigil.summoned": "A glimmering memory takes shape"
 }

@@ -279,6 +279,8 @@ public final class AntarchyNeoforgeItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> SEASHELL_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.SEASHELL);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> LUCID_ANCHOR_ITEM = ITEMS.register("lucid_anchor",
             id -> new LucidAnchorBlockItem(AntarchyNeoforgeBlocks.LUCID_ANCHOR.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.FossilBlockItem> MYRMITE_FOSSIL_ITEM = ITEMS.register("myrmite_fossil", id -> new com.craisinlord.antarchy.content.item.FossilBlockItem(AntarchyNeoforgeBlocks.MYRMITE_FOSSIL.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.FossilBlockItem> BROODSTONE_FOSSIL_ITEM = ITEMS.register("broodstone_fossil", id -> new com.craisinlord.antarchy.content.item.FossilBlockItem(AntarchyNeoforgeBlocks.BROODSTONE_FOSSIL.get(), blockItemProps(id).rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> UNDERTRIAL_SPAWNER_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.UNDERTRIAL_SPAWNER);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> UNDERVAULT_ITEM = ITEMS.registerSimpleBlockItem(AntarchyNeoforgeBlocks.UNDERVAULT);
     public static final DeferredItem<Item> UNDERTRIAL_KEY = ITEMS.register("undertrial_key", id -> new Item(itemProps(id)));
@@ -1121,7 +1123,7 @@ public final class AntarchyNeoforgeItems {
 
     public static final DeferredItem<KrakensGraspItem> KRAKENS_GRASP = ITEMS.register("krakens_grasp",
             id -> new KrakensGraspItem(
-                    itemProps(id).stacksTo(1).durability(250).rarity(Rarity.EPIC).fireResistant()));
+                    itemProps(id).stacksTo(1).durability(2000).rarity(Rarity.EPIC).fireResistant()));
 
     public static final DeferredItem<SpawnEggItem> EASTER_BUNNY_SPAWN_EGG = ITEMS.register("easter_bunny_spawn_egg",
             id -> new SpawnEggItem(itemProps(id).spawnEgg(AntarchyNeoforgeEntites.EASTER_BUNNY.get())));

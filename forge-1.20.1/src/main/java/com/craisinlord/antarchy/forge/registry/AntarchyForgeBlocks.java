@@ -548,6 +548,38 @@ public final class AntarchyForgeBlocks {
             () -> createOre(Blocks.DEEPSLATE_EMERALD_ORE, 4, 8, MapColor.COLOR_YELLOW));
     public static final RegistryObject<Block> BROODSTONE_TITANIUM_ORE = BLOCKS.register("broodstone_titanium_ore",
             () -> createOre(Blocks.DEEPSLATE_DIAMOND_ORE, 4, 8, MapColor.COLOR_LIGHT_BLUE));
+    public static final RegistryObject<Block> MYRMITE_COPPER_ORE = BLOCKS.register("myrmite_copper_ore",
+            () -> createOre(Blocks.COPPER_ORE, 0, 0, MapColor.COLOR_ORANGE));
+    public static final RegistryObject<Block> MYRMITE_IRON_ORE = BLOCKS.register("myrmite_iron_ore",
+            () -> createOre(Blocks.IRON_ORE, 0, 0, MapColor.RAW_IRON));
+    public static final RegistryObject<Block> MYRMITE_GOLD_ORE = BLOCKS.register("myrmite_gold_ore",
+            () -> createOre(Blocks.GOLD_ORE, 0, 0, MapColor.GOLD));
+    public static final RegistryObject<net.minecraft.world.level.block.RedStoneOreBlock> MYRMITE_REDSTONE_ORE = BLOCKS.register("myrmite_redstone_ore",
+            () -> new net.minecraft.world.level.block.RedStoneOreBlock(BlockBehaviour.Properties.copy(Blocks.REDSTONE_ORE).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> MYRMITE_LAPIS_ORE = BLOCKS.register("myrmite_lapis_ore",
+            () -> createOre(Blocks.LAPIS_ORE, 2, 5, MapColor.LAPIS));
+    public static final RegistryObject<Block> MYRMITE_DIAMOND_ORE = BLOCKS.register("myrmite_diamond_ore",
+            () -> createOre(Blocks.DIAMOND_ORE, 3, 7, MapColor.DIAMOND));
+    public static final RegistryObject<Block> MYRMITE_EMERALD_ORE = BLOCKS.register("myrmite_emerald_ore",
+            () -> createOre(Blocks.EMERALD_ORE, 3, 7, MapColor.EMERALD));
+    public static final RegistryObject<Block> BROODSTONE_COPPER_ORE = BLOCKS.register("broodstone_copper_ore",
+            () -> createOre(Blocks.DEEPSLATE_COPPER_ORE, 0, 0, MapColor.COLOR_ORANGE));
+    public static final RegistryObject<Block> BROODSTONE_IRON_ORE = BLOCKS.register("broodstone_iron_ore",
+            () -> createOre(Blocks.DEEPSLATE_IRON_ORE, 0, 0, MapColor.RAW_IRON));
+    public static final RegistryObject<Block> BROODSTONE_GOLD_ORE = BLOCKS.register("broodstone_gold_ore",
+            () -> createOre(Blocks.DEEPSLATE_GOLD_ORE, 0, 0, MapColor.GOLD));
+    public static final RegistryObject<net.minecraft.world.level.block.RedStoneOreBlock> BROODSTONE_REDSTONE_ORE = BLOCKS.register("broodstone_redstone_ore",
+            () -> new net.minecraft.world.level.block.RedStoneOreBlock(BlockBehaviour.Properties.copy(Blocks.DEEPSLATE_REDSTONE_ORE).requiresCorrectToolForDrops()));
+    public static final RegistryObject<Block> BROODSTONE_LAPIS_ORE = BLOCKS.register("broodstone_lapis_ore",
+            () -> createOre(Blocks.DEEPSLATE_LAPIS_ORE, 2, 5, MapColor.LAPIS));
+    public static final RegistryObject<Block> BROODSTONE_DIAMOND_ORE = BLOCKS.register("broodstone_diamond_ore",
+            () -> createOre(Blocks.DEEPSLATE_DIAMOND_ORE, 3, 7, MapColor.DIAMOND));
+    public static final RegistryObject<Block> BROODSTONE_EMERALD_ORE = BLOCKS.register("broodstone_emerald_ore",
+            () -> createOre(Blocks.DEEPSLATE_EMERALD_ORE, 3, 7, MapColor.EMERALD));
+    public static final RegistryObject<com.craisinlord.antarchy.content.block.FossilBlock> MYRMITE_FOSSIL = BLOCKS.register("myrmite_fossil",
+            () -> new com.craisinlord.antarchy.content.block.FossilBlock(nyxiteProperties()));
+    public static final RegistryObject<com.craisinlord.antarchy.content.block.FossilBlock> BROODSTONE_FOSSIL = BLOCKS.register("broodstone_fossil",
+            () -> new com.craisinlord.antarchy.content.block.FossilBlock(broodstoneProperties()));
     public static final RegistryObject<RotatedPillarBlock> CHITIN_BLOCK = BLOCKS.register("chitin_block",
             () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.BONE_BLOCK).requiresCorrectToolForDrops()));
     public static final RegistryObject<UmbralMossBlock> UMBRAL_MOSS_BLOCK = BLOCKS.register("umbral_moss_block",
@@ -975,6 +1007,12 @@ public final class AntarchyForgeBlocks {
             () -> BlockEntityType.Builder.of(
                     (pos, state) -> new QueenTrailSpawnMarkerBlockEntity(pos, state, AntarchyForgeBlocks::queenTrailSpawnMarkerBlockEntityType),
                     QUEEN_TRAIL_SPAWN_MARKER.get()
+            ).build(null));
+    public static final RegistryObject<BlockEntityType<com.craisinlord.antarchy.content.block.entity.FossilBlockEntity>> FOSSIL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("fossil",
+            () -> BlockEntityType.Builder.of(
+                    com.craisinlord.antarchy.content.block.entity.FossilBlockEntity::new,
+                    MYRMITE_FOSSIL.get(),
+                    BROODSTONE_FOSSIL.get()
             ).build(null));
     public static final RegistryObject<BlockEntityType<UndertrialSpawnerBlockEntity>> UNDERTRIAL_SPAWNER_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("undertrial_spawner",
             () -> BlockEntityType.Builder.of((pos, state) -> new UndertrialSpawnerBlockEntity(pos, state, AntarchyForgeBlocks::undertrialSpawnerBlockEntityType), UNDERTRIAL_SPAWNER.get()).build(null));

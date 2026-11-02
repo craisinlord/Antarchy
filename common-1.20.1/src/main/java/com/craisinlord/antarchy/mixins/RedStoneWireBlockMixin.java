@@ -7,6 +7,8 @@ import com.craisinlord.antarchy.content.block.BluestoneRepeaterBlock;
 import com.craisinlord.antarchy.content.block.BluestoneSignalHelper;
 import com.craisinlord.antarchy.content.block.BluestoneTorchBlock;
 import com.craisinlord.antarchy.content.block.BluestoneWireBlock;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -17,7 +19,6 @@ import net.minecraft.world.level.block.state.properties.RedstoneSide;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(RedStoneWireBlock.class)
@@ -44,14 +45,15 @@ public class RedStoneWireBlockMixin {
         }
     }
 
-    @Redirect(
+    @WrapOperation(
             method = "calculateTargetStrength",
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/level/Level;getBestNeighborSignal(Lnet/minecraft/core/BlockPos;)I"
-            )
+            ),
+            require = 0
     )
-    private int antarchy$ignoreBluestonePowerForRedstone(Level level, BlockPos pos) {
+    private int antarchy$ignoreBluestonePowerForRedstone(Level level, BlockPos pos, Operation<Integer> original) {
         int signal = 0;
         for (Direction direction : Direction.values()) {
             BlockPos neighborPos = pos.relative(direction);

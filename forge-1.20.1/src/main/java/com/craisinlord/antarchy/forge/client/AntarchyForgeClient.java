@@ -273,6 +273,13 @@ public final class AntarchyForgeClient {
     @SubscribeEvent
     public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
         event.register(
+                (state, level, pos, tintIndex) -> level != null && pos != null
+                        ? com.craisinlord.antarchy.content.block.Fossils.color(com.craisinlord.antarchy.content.block.Fossils.entityAt(level, pos), tintIndex)
+                        : -1,
+                AntarchyForgeBlocks.MYRMITE_FOSSIL.get(),
+                AntarchyForgeBlocks.BROODSTONE_FOSSIL.get()
+        );
+        event.register(
                 (state, level, pos, tintIndex) -> tintIndex == 0 ? bluestoneWireColor(state.getValue(com.craisinlord.antarchy.content.block.BluestoneWireBlock.POWER)) : -1,
                 AntarchyForgeBlocks.BLUESTONE_WIRE.get()
         );
@@ -302,6 +309,11 @@ public final class AntarchyForgeClient {
 
     @SubscribeEvent
     public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
+        event.register(
+                (stack, tintIndex) -> com.craisinlord.antarchy.content.block.Fossils.color(com.craisinlord.antarchy.content.block.Fossils.entityOf(stack), tintIndex),
+                AntarchyForgeItems.MYRMITE_FOSSIL_ITEM.get(),
+                AntarchyForgeItems.BROODSTONE_FOSSIL_ITEM.get()
+        );
         event.register(
                 (stack, tintIndex) -> FoliageColor.getDefaultColor(),
                 AntarchyForgeItems.OURANWOOD_LEAVES_ITEM.get()
@@ -342,6 +354,8 @@ public final class AntarchyForgeClient {
         event.registerSpriteSet(AntarchyForgeMisc.PEACH_LEAVES_PARTICLE.get(), PeachLeavesParticle.Provider::new);
         event.registerSpriteSet(AntarchyForgeMisc.BUG_SPRAY_PARTICLE.get(), com.craisinlord.antarchy.content.client.particle.BugSprayParticle.Provider::new);
         event.registerSpriteSet(AntarchyForgeMisc.LOTUS_POLLEN.get(), com.craisinlord.antarchy.content.client.particle.LotusPollenParticle.Provider::new);
+        event.registerSpriteSet(AntarchyForgeMisc.TEMPORAL_GLINT_SLOW.get(), com.craisinlord.antarchy.content.client.particle.TemporalGlintParticle::slow);
+        event.registerSpriteSet(AntarchyForgeMisc.TEMPORAL_GLINT_FAST.get(), com.craisinlord.antarchy.content.client.particle.TemporalGlintParticle::fast);
         event.registerSpriteSet(AntarchyForgeMisc.HYPNOTIC_GAS.get(), HypnoticGasParticle.Provider::new);
         event.registerSpriteSet(AntarchyForgeMisc.HYPNOTIC_GAS_DOWN.get(), sprites -> new HypnoticGasParticle.Provider(sprites, true));
         event.registerSpecial(AntarchyForgeMisc.HYPNOTIC_GAS_CLOUD.get(), new HypnoticGasCloudParticle.Provider());
@@ -426,6 +440,8 @@ public final class AntarchyForgeClient {
             TigerEyeClientHooks.setCamouflageKeyTextSupplier(() -> AntarchyKeyBindings.TIGERS_EYE_CAMOUFLAGE.getTranslatedKeyMessage());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.UNDERTRIAL_SPAWNER.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.UNDERVAULT.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.MYRMITE_FOSSIL.get(), RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.BROODSTONE_FOSSIL.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.ANTIMETAL_RAIL.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.ANTIMETAL_POWERED_RAIL.get(), RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(AntarchyForgeBlocks.ANTIMETAL_DETECTOR_RAIL.get(), RenderType.cutout());

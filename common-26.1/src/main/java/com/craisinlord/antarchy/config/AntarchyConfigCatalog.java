@@ -104,6 +104,9 @@ public final class AntarchyConfigCatalog {
         if (setterType == String.class && ResourceKey.class.isAssignableFrom(getterType)) {
             return ValueType.STRING;
         }
+        if (setterType == String.class && getterType == String.class) {
+            return ValueType.STRING;
+        }
         return null;
     }
 
@@ -149,6 +152,11 @@ public final class AntarchyConfigCatalog {
                 || name.startsWith("portalGunMoon")
                 || name.equals("hushweedSporeLifetimeSeconds")
                 || name.equals("elythiaFireflyParticlesEnabled")
+                || name.equals("elythiaSoftCloudsEnabled")
+                || name.equals("thoraxisEvents")
+                || name.equals("throwbackZonesEnabled")
+                || name.startsWith("throwback")
+                || name.startsWith("fossil")
                 || name.equals("duplicatorTreeEnabled")
                 || name.equals("glowVinesUnderLeaves")
                 || name.equals("swingThroughGrassEnabled")

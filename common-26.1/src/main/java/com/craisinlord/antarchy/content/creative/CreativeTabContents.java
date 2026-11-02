@@ -284,6 +284,8 @@ public final class CreativeTabContents {
             entry("myrmite_coal_ore", "building_blocks"),
             entry("broodstone_uranium_ore", "building_blocks"),
             entry("broodstone_titanium_ore", "building_blocks"),
+            entry("myrmite_fossil", "building_blocks"),
+            entry("broodstone_fossil", "building_blocks"),
             entry("bile_vein", "building_blocks"),
             entry("chitin_block", "building_blocks"),
             entry("chitin_spike", "building_blocks"),

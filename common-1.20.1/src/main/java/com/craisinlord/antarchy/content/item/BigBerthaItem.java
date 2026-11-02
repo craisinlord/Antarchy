@@ -379,6 +379,9 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
 
     private void cycleMode(Level level, Player player, ItemStack stack) {
         BossMode nextMode = getMode(stack).next();
+        while (!nextMode.isAvailable()) {
+            nextMode = nextMode.next();
+        }
         setMode(stack, nextMode);
         clearSpinState(stack);
         if (!level.isClientSide) {
@@ -691,6 +694,18 @@ public class BigBerthaItem extends SwordItem implements GeoItem, com.craisinlord
                 case TREMORSAURUS -> FORSAKEN;
                 case FORSAKEN -> NONE;
             };
+        }
+
+        private boolean isAvailable() {
+            return switch (this) {
+                case TREMORSAURUS -> alexsCavesEntityPresent("tremorsaurus");
+                case FORSAKEN -> alexsCavesEntityPresent("forsaken");
+                default -> true;
+            };
+        }
+
+        private static boolean alexsCavesEntityPresent(String path) {
+            return net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.containsKey(new ResourceLocation("alexscaves", path));
         }
 
         private static BossMode fromId(int id) {

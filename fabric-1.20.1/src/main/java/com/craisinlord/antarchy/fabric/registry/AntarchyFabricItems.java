@@ -1690,7 +1690,7 @@ public final class AntarchyFabricItems {
             () -> new KrakensGraspItem(
                     new Item.Properties()
                             .stacksTo(1)
-                            .durability(250)
+                            .durability(2000)
                             .rarity(Rarity.EPIC)
                             .fireResistant()
             ));

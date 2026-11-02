@@ -2,8 +2,12 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "S": "minecraft:stone",
-    "C": "antarchy:chitin"
+    "S": {
+      "item": "minecraft:stone"
+    },
+    "C": {
+      "item": "antarchy:chitin"
+    }
   },
   "pattern": [
     "SSS",

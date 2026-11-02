@@ -11,7 +11,10 @@ import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
 public final class CavarynRibcageGrid {
     public static final int CELL_SIZE = 320;
     private static final int MAX_CACHED_CELLS = 1024;
-    private static final float SKELETON_CHANCE = 0.45F;
+    private static final float SKELETON_CHANCE = 0.8F;
+    private static final int START_ATTEMPTS = 4;
+    private static final int HEADING_ATTEMPTS = 6;
+    private static final double MIN_LENGTH = 100.0;
     private static final double SEGMENT_LENGTH = 12.0;
     private static final double RIB_SPACING = 10.0;
     private static final int RIB_SEGMENTS = 9;
@@ -162,25 +165,40 @@ public final class CavarynRibcageGrid {
         if (random.nextFloat() >= SKELETON_CHANCE) {
             return new Skeleton[0];
         }
-        double x = cellX * (double) CELL_SIZE + CELL_SIZE * (0.25 + random.nextDouble() * 0.5);
-        double z = cellZ * (double) CELL_SIZE + CELL_SIZE * (0.25 + random.nextDouble() * 0.5);
         double y = 238.0 + random.nextDouble() * 10.0;
-        double yaw = random.nextDouble() * Math.PI * 2.0;
         double length = 150.0 + random.nextDouble() * 90.0;
         double ribWidth = 18.0 + random.nextDouble() * 8.0;
         double ribHeight = 30.0 + random.nextDouble() * 10.0;
         double sweep = 0.15 + random.nextDouble() * 0.2;
-        if (!this.filter.accepts(x, z)) {
+        double bestX = 0.0;
+        double bestZ = 0.0;
+        double bestYaw = 0.0;
+        double bestInside = 0.0;
+        for (int attempt = 0; attempt < START_ATTEMPTS; attempt++) {
+            double x = cellX * (double) CELL_SIZE + CELL_SIZE * (0.2 + random.nextDouble() * 0.6);
+            double z = cellZ * (double) CELL_SIZE + CELL_SIZE * (0.2 + random.nextDouble() * 0.6);
+            if (!this.filter.accepts(x, z)) {
+                continue;
+            }
+            double baseYaw = random.nextDouble() * Math.PI * 2.0;
+            for (int turn = 0; turn < HEADING_ATTEMPTS; turn++) {
+                double yaw = baseYaw + turn * Math.PI * 2.0 / HEADING_ATTEMPTS;
+                double inside = 0.0;
+                while (inside < length && this.filter.accepts(x + Math.cos(yaw) * (inside + 40.0), z + Math.sin(yaw) * (inside + 40.0))) {
+                    inside += 20.0;
+                }
+                if (inside > bestInside) {
+                    bestInside = inside;
+                    bestX = x;
+                    bestZ = z;
+                    bestYaw = yaw;
+                }
+            }
+        }
+        if (bestInside < MIN_LENGTH) {
             return new Skeleton[0];
         }
-        double inside = 0.0;
-        while (inside < length && this.filter.accepts(x + Math.cos(yaw) * (inside + 40.0), z + Math.sin(yaw) * (inside + 40.0))) {
-            inside += 20.0;
-        }
-        if (inside < 100.0) {
-            return new Skeleton[0];
-        }
-        return new Skeleton[]{new Builder(random).build(x, y, z, yaw, Math.min(length, inside), ribWidth, ribHeight, sweep)};
+        return new Skeleton[]{new Builder(random).build(bestX, y, bestZ, bestYaw, Math.min(length, bestInside), ribWidth, ribHeight, sweep)};
     }
 
     private static long mix(long value) {

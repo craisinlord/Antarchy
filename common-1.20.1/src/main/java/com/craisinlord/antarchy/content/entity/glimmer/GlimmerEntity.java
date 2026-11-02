@@ -6,6 +6,8 @@ import com.craisinlord.antarchy.content.advancement.AntarchyAdvancements;
 import com.craisinlord.antarchy.content.advancement.AntarchyAdvancementTriggers;
 import com.craisinlord.antarchy.content.client.particle.GlimmerParticles;
 import com.craisinlord.antarchy.content.entity.ConfiguredMobSpawnUtil;
+import com.craisinlord.antarchy.content.weather.ElythiaEvent;
+import com.craisinlord.antarchy.content.weather.ElythiaEvents;
 import com.craisinlord.antarchy.Antarchy;
 import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.CompoundTag;
@@ -538,7 +540,9 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
 
         if (!this.level().isClientSide) {
             int fadeTicks = this.entityData.get(FADE_TICKS);
-            if (this.isTame() || this.level().getBiome(this.blockPosition()).is(GLIMMERING_POOLS)) {
+            if (this.isTame()
+                    || this.level() instanceof ServerLevel serverLevel && ElythiaEvents.isActive(serverLevel, ElythiaEvent.LUMEN_RAIN)
+                    || this.level().getBiome(this.blockPosition()).is(GLIMMERING_POOLS)) {
                 if (fadeTicks > 0) {
                     this.entityData.set(FADE_TICKS, 0);
                 }

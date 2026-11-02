@@ -1149,7 +1149,7 @@ public final class AntarchyNeoforgeItems {
 
     public static final DeferredItem<KrakensGraspItem> KRAKENS_GRASP = ITEMS.register("krakens_grasp",
             () -> new KrakensGraspItem(
-                    new Item.Properties().stacksTo(1).durability(250).rarity(Rarity.EPIC).fireResistant()));
+                    new Item.Properties().stacksTo(1).durability(2000).rarity(Rarity.EPIC).fireResistant()));
 
     public static final DeferredItem<DeferredSpawnEggItem> EASTER_BUNNY_SPAWN_EGG = ITEMS.register("easter_bunny_spawn_egg",
             () -> new DeferredSpawnEggItem(AntarchyNeoforgeEntites.EASTER_BUNNY, 0xFFF2B2, 0xFF85B5, new Item.Properties()));

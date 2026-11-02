@@ -55,6 +55,8 @@ public final class ThoraxisSpikeFeature extends Feature<ThoraxisSpikeConfigurati
     private boolean placeSphere(WorldGenLevel level, BlockPos center, int radius, RandomSource random) {
         boolean placedAny = false;
         int actualRadius = Math.max(1, radius);
+        BlockState nyxite = AntarchyObjects.NYXITE.get().defaultBlockState();
+        BlockPos.MutableBlockPos target = new BlockPos.MutableBlockPos();
         for (int x = -actualRadius; x <= actualRadius; x++) {
             for (int y = -actualRadius; y <= actualRadius; y++) {
                 for (int z = -actualRadius; z <= actualRadius; z++) {
@@ -63,14 +65,16 @@ public final class ThoraxisSpikeFeature extends Feature<ThoraxisSpikeConfigurati
                         continue;
                     }
 
-                    BlockPos target = center.offset(x, y, z);
+                    target.set(center.getX() + x, center.getY() + y, center.getZ() + z);
                     BlockState state = level.getBlockState(target);
                     if (state.is(Blocks.BEDROCK)) {
                         continue;
                     }
 
                     if (!state.isAir() || !state.canBeReplaced() || !state.getFluidState().isEmpty() || random.nextFloat() < 0.65F) {
-                        level.setBlock(target, AntarchyObjects.NYXITE.get().defaultBlockState(), 2);
+                        if (state != nyxite) {
+                            level.setBlock(target, nyxite, 2);
+                        }
                         placedAny = true;
                     }
                 }

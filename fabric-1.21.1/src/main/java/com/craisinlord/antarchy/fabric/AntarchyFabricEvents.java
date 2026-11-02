@@ -78,6 +78,7 @@ public final class AntarchyFabricEvents {
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.clear());
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             PortalGunSavedData.clearMissingGuns(handler.player);
+            com.craisinlord.antarchy.content.migration.DimensionResetManager.onPlayerJoin(handler.player);
         });
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             CavarynCommand.register(dispatcher);
@@ -88,6 +89,7 @@ public final class AntarchyFabricEvents {
             com.craisinlord.antarchy.content.command.PortalGunCommand.register(dispatcher);
             com.craisinlord.antarchy.content.command.ElythiaCommand.register(dispatcher);
             com.craisinlord.antarchy.content.command.ThoraxisCommand.register(dispatcher);
+            com.craisinlord.antarchy.content.command.DimensionResetCommand.register(dispatcher);
         });
 
         DispenserBlock.registerBehavior(AntarchyFabricItems.SQUIDZOOKA.get(), new SquidzookaDispenseBehavior());

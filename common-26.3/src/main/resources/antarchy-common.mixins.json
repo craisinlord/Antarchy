@@ -76,7 +76,9 @@
     "time.PlayerTemporalTunerMixin",
     "ElythiaBedMixin",
     "ElythiaSleepPlayerMixin",
-    "ElythiaSleepSkipMixin"
+    "ElythiaSleepSkipMixin",
+    "ThrowbackPlayerMixin",
+    "ThrowbackFoodDataMixin"
   ],
   "client": [
     "compat.stellarview.StellarViewLunaDirectionMixin",
@@ -90,6 +92,8 @@
     "client.CavarynHordeLightTextureMixin",
     "client.CavarynHordeLightmapMixin",
     "client.ElythiaSkyMixin",
+    "client.ElythiaCloudMixin",
+    "client.LevelRendererStateAccessor",
     "client.ElytraModelAccessor",
     "client.FrogRendererElythiaMixin",
     "client.GameRendererSwingThroughGrassMixin",

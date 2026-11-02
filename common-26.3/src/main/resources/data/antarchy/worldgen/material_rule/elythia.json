@@ -266,95 +266,147 @@
               ]
             },
             "then_run": {
-              "type": "minecraft:sequence",
-              "sequence": [
-                {
-                  "type": "minecraft:condition",
-                  "if_true": {
-                    "type": "minecraft:stone_depth",
-                    "add_surface_depth": false,
-                    "offset": 0,
-                    "secondary_depth_range": 0,
-                    "surface_type": "floor"
+              "type": "minecraft:condition",
+              "if_true": {
+                "type": "minecraft:not",
+                "invert": {
+                  "type": "minecraft:y_above",
+                  "anchor": {
+                    "absolute": 103
                   },
-                  "then_run": {
-                    "type": "minecraft:sequence",
-                    "sequence": [
-                      {
-                        "type": "minecraft:condition",
-                        "if_true": {
-                          "type": "minecraft:water",
-                          "offset": 0,
-                          "surface_depth_multiplier": 0,
-                          "add_stone_depth": false
-                        },
-                        "then_run": {
-                          "type": "minecraft:sequence",
-                          "sequence": [
-                            {
-                              "type": "minecraft:condition",
-                              "if_true": {
-                                "type": "minecraft:steep"
-                              },
-                              "then_run": {
-                                "type": "minecraft:block",
-                                "result_state": "antarchy:shellstone"
-                              }
-                            },
-                            {
-                              "type": "minecraft:condition",
-                              "if_true": {
-                                "type": "minecraft:y_above",
-                                "anchor": {
-                                  "absolute": 103
+                  "surface_depth_multiplier": 0,
+                  "add_stone_depth": false
+                }
+              },
+              "then_run": {
+                "type": "minecraft:sequence",
+                "sequence": [
+                  {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:stone_depth",
+                      "add_surface_depth": false,
+                      "offset": 0,
+                      "secondary_depth_range": 0,
+                      "surface_type": "floor"
+                    },
+                    "then_run": {
+                      "type": "minecraft:sequence",
+                      "sequence": [
+                        {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:water",
+                            "offset": 0,
+                            "surface_depth_multiplier": 0,
+                            "add_stone_depth": false
+                          },
+                          "then_run": {
+                            "type": "minecraft:sequence",
+                            "sequence": [
+                              {
+                                "type": "minecraft:condition",
+                                "if_true": {
+                                  "type": "minecraft:steep"
                                 },
-                                "surface_depth_multiplier": 0,
-                                "add_stone_depth": false
+                                "then_run": {
+                                  "type": "minecraft:block",
+                                  "result_state": "antarchy:shellstone"
+                                }
                               },
-                              "then_run": {
+                              {
                                 "type": "minecraft:block",
-                                "result_state": "antarchy:shellstone"
+                                "result_state": "minecraft:sand"
                               }
-                            },
-                            {
-                              "type": "minecraft:block",
-                              "result_state": "minecraft:sand"
-                            }
-                          ]
+                            ]
+                          }
                         }
-                      }
-                    ]
-                  }
-                },
-                {
-                  "type": "minecraft:condition",
-                  "if_true": {
-                    "type": "minecraft:steep"
+                      ]
+                    }
                   },
-                  "then_run": {
+                  {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:steep"
+                    },
+                    "then_run": {
+                      "type": "minecraft:block",
+                      "result_state": "antarchy:shellstone"
+                    }
+                  },
+                  {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:stone_depth",
+                      "add_surface_depth": false,
+                      "offset": 0,
+                      "secondary_depth_range": 4,
+                      "surface_type": "floor"
+                    },
+                    "then_run": {
+                      "type": "minecraft:block",
+                      "result_state": "minecraft:gravel"
+                    }
+                  },
+                  {
                     "type": "minecraft:block",
                     "result_state": "antarchy:shellstone"
                   }
-                },
-                {
-                  "type": "minecraft:condition",
-                  "if_true": {
-                    "type": "minecraft:stone_depth",
-                    "add_surface_depth": false,
-                    "offset": 0,
-                    "secondary_depth_range": 4,
-                    "surface_type": "floor"
-                  },
-                  "then_run": {
-                    "type": "minecraft:block",
-                    "result_state": "minecraft:gravel"
-                  }
-                },
-                {
-                  "type": "minecraft:block",
-                  "result_state": "antarchy:shellstone"
-                }
+                ]
+              }
+            }
+          },
+          {
+            "type": "minecraft:condition",
+            "if_true": {
+              "type": "minecraft:biome",
+              "biome_is": [
+                "antarchy:elythia_ocean",
+                "antarchy:elythia_coral_spikes"
               ]
+            },
+            "then_run": {
+              "type": "minecraft:condition",
+              "if_true": {
+                "type": "minecraft:y_above",
+                "anchor": {
+                  "absolute": 103
+                },
+                "surface_depth_multiplier": 0,
+                "add_stone_depth": false
+              },
+              "then_run": {
+                "type": "minecraft:sequence",
+                "sequence": [
+                  {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:steep"
+                    },
+                    "then_run": {
+                      "type": "minecraft:block",
+                      "result_state": "antarchy:shellstone"
+                    }
+                  },
+                  {
+                    "type": "minecraft:condition",
+                    "if_true": {
+                      "type": "minecraft:not",
+                      "invert": {
+                        "type": "minecraft:stone_depth",
+                        "add_surface_depth": true,
+                        "offset": 0,
+                        "secondary_depth_range": 0,
+                        "surface_type": "floor"
+                      }
+                    },
+                    "then_run": {
+                      "type": "minecraft:block",
+                      "result_state": "antarchy:shellstone"
+                    }
+                  }
+                ]
+              }
             }
           },
           {
@@ -450,8 +502,44 @@
                   }
                 },
                 {
-                  "type": "minecraft:block",
-                  "result_state": "antarchy:shellstone"
+                  "type": "minecraft:sequence",
+                  "sequence": [
+                    {
+                      "type": "minecraft:condition",
+                      "if_true": {
+                        "type": "minecraft:not",
+                        "invert": {
+                          "type": "minecraft:y_above",
+                          "anchor": {
+                            "absolute": 103
+                          },
+                          "surface_depth_multiplier": 0,
+                          "add_stone_depth": false
+                        }
+                      },
+                      "then_run": {
+                        "type": "minecraft:block",
+                        "result_state": "antarchy:shellstone"
+                      }
+                    },
+                    {
+                      "type": "minecraft:condition",
+                      "if_true": {
+                        "type": "minecraft:not",
+                        "invert": {
+                          "type": "minecraft:stone_depth",
+                          "add_surface_depth": true,
+                          "offset": 0,
+                          "secondary_depth_range": 0,
+                          "surface_type": "floor"
+                        }
+                      },
+                      "then_run": {
+                        "type": "minecraft:block",
+                        "result_state": "antarchy:shellstone"
+                      }
+                    }
+                  ]
                 }
               ]
             }

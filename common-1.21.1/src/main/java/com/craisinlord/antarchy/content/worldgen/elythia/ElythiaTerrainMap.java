@@ -76,7 +76,8 @@ public final class ElythiaTerrainMap {
         Climate.Sampler sampler = randomState.sampler();
         DensityFunction surfaceDensity = randomState.router().initialDensityWithoutJaggedness();
         int seaLevel = generator.getSeaLevel();
-        ElythiaHydrology hydrology = randomState.router().veinToggle() instanceof ElythiaHydrology found ? found : null;
+        ElythiaHydrology captured = ((ElythiaHydrologyHolder) (Object) randomState).antarchy$hydrology();
+        ElythiaHydrology hydrology = captured != null ? captured : ElythiaHydrology.find(randomState.router().veinToggle());
         int size = radius * 2 / step + 1;
         int columns = size * size;
         int[] heights = new int[columns];

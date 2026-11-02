@@ -19,6 +19,7 @@ import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynMolewormWarrenDr
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWormBoreDressingFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWormBoreFunction;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBileVeinFeature;
+import com.craisinlord.antarchy.content.worldgen.cavaryn.FossilOreFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCreepvineFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWallAmberMossFeature;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.HangingCreeprootsFeature;
@@ -146,6 +147,7 @@ import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.material.Fluid;
 import com.craisinlord.antarchy.fabric.AntarchyFabricContent;
@@ -925,6 +927,8 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<Feature<?>, CavarynBileVeinFeature> CAVARYN_BILE_VEINS = FEATURES.register("cavaryn_bile_veins",
             () -> new CavarynBileVeinFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, FossilOreFeature> FOSSIL_ORE = FEATURES.register("fossil_ore",
+            () -> new FossilOreFeature(OreConfiguration.CODEC));
 
 
     public static final DeferredHolder<Feature<?>, CavarynBileCystFeature> CAVARYN_BILE_CYSTS = FEATURES.register("cavaryn_bile_cysts",

@@ -101,6 +101,9 @@ public final class AntarchyConfigCatalog {
         if (setterType == float.class && getterType == float.class) {
             return ValueType.FLOAT;
         }
+        if (setterType == String.class && getterType == String.class) {
+            return ValueType.STRING;
+        }
         if (setterType == String.class && ResourceKey.class.isAssignableFrom(getterType)) {
             return ValueType.STRING;
         }
@@ -131,6 +134,8 @@ public final class AntarchyConfigCatalog {
 
     private static boolean isMiscSetting(String name) {
         return name.equals("disableInfinityBookPortalCreation")
+                || name.equals("fossilsEnabled")
+                || name.equals("fossilEntityBlacklist")
                 || name.equals("rainbowAntsLeadToInfinityDimensions")
                 || name.equals("permanentPortalsEnabled")
                 || name.equals("permanentPortalsFlintAndSteelEnabled")

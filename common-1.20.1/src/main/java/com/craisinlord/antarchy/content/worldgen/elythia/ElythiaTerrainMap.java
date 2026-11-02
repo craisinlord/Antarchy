@@ -76,7 +76,8 @@ public final class ElythiaTerrainMap {
         Climate.Sampler sampler = randomState.sampler();
         DensityFunction surfaceDensity = randomState.router().initialDensityWithoutJaggedness();
         int seaLevel = generator.getSeaLevel();
-        ElythiaHydrology hydrology = randomState.router().veinToggle() instanceof ElythiaHydrology found ? found : null;
+        ElythiaHydrology captured = ((ElythiaHydrologyHolder) (Object) randomState).antarchy$hydrology();
+        ElythiaHydrology hydrology = captured != null ? captured : ElythiaHydrology.find(randomState.router().veinToggle());
         int size = radius * 2 / step + 1;
         int columns = size * size;
         int[] heights = new int[columns];
@@ -117,7 +118,7 @@ public final class ElythiaTerrainMap {
                         double reserveValue = hydrology == null ? 0.0D : hydrology.reserve().compute(point);
                         boolean reserve = reserveValue >= 0.5D;
                         double riverLevel = hydrology == null ? Double.NEGATIVE_INFINITY : ElythiaAquifer.level(hydrology.riverLevel().compute(point));
-                        if (reserveValue < 0.04D && floor < riverLevel - 1 && hydrology.valley().compute(point) > 0.0D && hydrology.riverChannel().compute(point) > 0.0D) {
+                        if (reserveValue < 0.04D && riverLevel > seaLevel && floor < riverLevel - 1 && hydrology.valley().compute(point) > 0.0D && hydrology.riverChannel().compute(point) > 0.0D) {
                             fluids[index] = hydrology.lumen().compute(point) > 0.75D ? LUMEN : WATER;
                             y = (int) riverLevel - 1;
                         } else if (!reserve && floor < seaLevel - 1 && (reserveValue <= 0.0D || floor < seaLevel - 64)) {

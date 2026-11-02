@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "food",
+  "category": "misc",
   "key": {
     "#": {
       "tag": "antarchy:corndog_meats"

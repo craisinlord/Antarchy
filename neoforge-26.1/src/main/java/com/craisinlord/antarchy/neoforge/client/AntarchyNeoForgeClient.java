@@ -49,6 +49,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RegisterFluidModelsEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
@@ -70,6 +71,10 @@ import java.util.List;
 
 @EventBusSubscriber(modid = Antarchy.MODID, value = Dist.CLIENT)
 public final class AntarchyNeoForgeClient {
+    @SubscribeEvent
+    public static void tickThrowbackState(ClientTickEvent.Post event) {
+        com.craisinlord.antarchy.content.client.ThrowbackClientState.tick();
+    }
     private static final Identifier DR_TRAYAURUS_TEXTURE = Identifier.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/dr_trayaurus.png");
     private static final Identifier OURANWOOD_BOAT_TEXTURE = Identifier.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/boat/ouranwood.png");
     private static final Identifier OURANWOOD_CHEST_BOAT_TEXTURE = Identifier.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/chest_boat/ouranwood.png");

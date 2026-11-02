@@ -320,6 +320,8 @@ public final class AntarchyObjects {
     public static Supplier<Holder<MobEffect>> STINKY_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Holder<MobEffect>> GLIMMERING_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Holder<MobEffect>> REMEMBRANCE_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
     public static Supplier<Holder<MobEffect>> ROYAL_VITALITY_PENALTY_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<Holder<MobEffect>> BLEEDING_EFFECT = (Supplier<Holder<MobEffect>>) UNBOUND;
@@ -380,6 +382,10 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<Block> LUCID_ANCHOR = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<Block> MYRMITE_FOSSIL = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<Block> BROODSTONE_FOSSIL = (Supplier<Block>) UNBOUND;
+    @SuppressWarnings("unchecked")
     public static Supplier<BlockEntityType<AntNestBlockEntity>> ANT_NEST_BLOCK_ENTITY = (Supplier<BlockEntityType<AntNestBlockEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<BlockEntityType<DreamCampfireBlockEntity>> DREAM_CAMPFIRE_BLOCK_ENTITY = (Supplier<BlockEntityType<DreamCampfireBlockEntity>>) UNBOUND;
@@ -395,6 +401,9 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity>> LUCID_ANCHOR_BLOCK_ENTITY =
             (Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.FossilBlockEntity>> FOSSIL_BLOCK_ENTITY =
+            (Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.FossilBlockEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<SimpleParticleType> STINKY_GAS = (Supplier<SimpleParticleType>) UNBOUND;
     @SuppressWarnings("unchecked")
@@ -414,6 +423,9 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.util.Unit>> AMERICAN_COMPONENT =
             (Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.util.Unit>>) UNBOUND;
+    @SuppressWarnings("unchecked")
+    public static Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.Identifier>> FOSSIL_ENTITY_COMPONENT =
+            (Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.Identifier>>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity>> CRITTER_CAGE_PROJECTILE =
             (Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity>>) UNBOUND;
@@ -828,6 +840,10 @@ public final class AntarchyObjects {
         GLIMMERING_EFFECT = supplier;
     }
 
+    public static void setRemembranceEffect(Supplier<Holder<MobEffect>> supplier) {
+        REMEMBRANCE_EFFECT = supplier;
+    }
+
     public static void setRoyalVitalityPenaltyEffect(Supplier<Holder<MobEffect>> supplier) {
         ROYAL_VITALITY_PENALTY_EFFECT = supplier;
     }
@@ -867,6 +883,9 @@ public final class AntarchyObjects {
     public static void setLucidAnchor(Supplier<Block> supplier) {
         LUCID_ANCHOR = supplier;
     }
+
+    public static void setMyrmiteFossil(Supplier<Block> supplier) { MYRMITE_FOSSIL = supplier; }
+    public static void setBroodstoneFossil(Supplier<Block> supplier) { BROODSTONE_FOSSIL = supplier; }
 
     public static void setStarCoralBlock(Supplier<Block> supplier) {
         STAR_CORAL_BLOCK = supplier;
@@ -946,6 +965,14 @@ public final class AntarchyObjects {
 
     public static void setLucidAnchorBlockEntity(Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.LucidAnchorBlockEntity>> supplier) {
         LUCID_ANCHOR_BLOCK_ENTITY = supplier;
+    }
+
+    public static void setFossilBlockEntity(Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.FossilBlockEntity>> supplier) {
+        FOSSIL_BLOCK_ENTITY = supplier;
+    }
+
+    public static void setFossilEntityComponent(Supplier<net.minecraft.core.component.DataComponentType<net.minecraft.resources.Identifier>> supplier) {
+        FOSSIL_ENTITY_COMPONENT = supplier;
     }
 
     public static void setCritterCageProjectile(Supplier<net.minecraft.world.entity.EntityType<com.craisinlord.antarchy.content.entity.CritterCageProjectileEntity>> supplier) {

@@ -77,6 +77,8 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.DoubleValue HOVERBOARD_ACCELERATION;
 
     private static final ModConfigSpec.BooleanValue DUPLICATOR_TREE_ENABLED;
+    private static final ModConfigSpec.BooleanValue FOSSILS_ENABLED;
+    private static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> FOSSIL_ENTITY_BLACKLIST;
     private static final ModConfigSpec.BooleanValue GLOW_VINES_UNDER_LEAVES;
     private static final ModConfigSpec.BooleanValue SWING_THROUGH_GRASS_ENABLED;
     private static final ModConfigSpec.BooleanValue FABRIC_KEYBINDING_CONFLICT_FIX_ENABLED;
@@ -261,6 +263,9 @@ public final class AntarchyMiscConfig {
 
         b.push("world");
         DUPLICATOR_TREE_ENABLED              = b.comment("If false, duplicator trees do not generate and duplicator saplings produce nothing.").define("duplicatorTreeEnabled",           true);
+        FOSSILS_ENABLED                      = b.comment("If false, Myrmite and Broodstone fossils no longer generate. Existing fossils still smelt into spawn eggs.").define("fossilsEnabled", true);
+        FOSSIL_ENTITY_BLACKLIST              = b.comment("Entity ids fossils can never contain. Use modid:* to exclude every entity from a mod. Fossils that already hold a blacklisted entity are rerolled to an allowed one.")
+                .defineListAllowEmpty("fossilEntityBlacklist", java.util.List.of(com.craisinlord.antarchy.config.AntarchySettings.defaultFossilEntityBlacklist().split(",")), entry -> entry instanceof String);
         GLOW_VINES_UNDER_LEAVES              = b.comment("Whether glow vines can be placed and survive when attached under leaf blocks.")       .define("glowVinesUnderLeaves",             true);
         SWING_THROUGH_GRASS_ENABLED          = b.comment("If true, empty collision plants like grass do not block melee target picking.")      .define("swingThroughGrassEnabled",         true);
         FABRIC_KEYBINDING_CONFLICT_FIX_ENABLED = b.define("fabricKeybindingConflictFixEnabled", true);
@@ -307,6 +312,8 @@ public final class AntarchyMiscConfig {
     static boolean ichorWitherEnabled()                  { return ICHOR_WITHER_ENABLED.get(); }
 
     static boolean duplicatorTreeEnabled()               { return DUPLICATOR_TREE_ENABLED.get(); }
+    static boolean fossilsEnabled()                      { return FOSSILS_ENABLED.get(); }
+    static String  fossilEntityBlacklist()               { return String.join(",", FOSSIL_ENTITY_BLACKLIST.get()); }
     static boolean glowVinesUnderLeaves()                { return GLOW_VINES_UNDER_LEAVES.get(); }
     static boolean swingThroughGrassEnabled()            { return SWING_THROUGH_GRASS_ENABLED.get(); }
     static boolean fabricKeybindingConflictFixEnabled()  { return FABRIC_KEYBINDING_CONFLICT_FIX_ENABLED.get(); }

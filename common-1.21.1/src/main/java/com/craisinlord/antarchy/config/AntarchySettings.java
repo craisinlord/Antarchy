@@ -21,6 +21,10 @@ public final class AntarchySettings {
     private static boolean termiteRightClickDimension = true;
     private static boolean antsStealFromChests = true;
     private static boolean duplicatorTreeEnabled = true;
+    private static boolean fossilsEnabled = true;
+    private static final String DEFAULT_FOSSIL_ENTITY_BLACKLIST = "minecraft:ender_dragon,minecraft:wither,minecraft:elder_guardian,minecraft:warden,antarchy:alpha_mantis,antarchy:brutalfly,antarchy:emperor_scorpion,antarchy:hercules_beetle,antarchy:kraken,antarchy:toreterror,antarchy:king,antarchy:queen,antarchy:prince,antarchy:princess";
+    private static String fossilEntityBlacklist = DEFAULT_FOSSIL_ENTITY_BLACKLIST;
+    private static java.util.List<String> fossilEntityBlacklistEntries = parseEntryList(DEFAULT_FOSSIL_ENTITY_BLACKLIST);
     private static boolean glowVinesUnderLeaves = true;
     private static boolean swingThroughGrassEnabled = true;
     private static boolean fabricKeybindingConflictFixEnabled = true;
@@ -63,11 +67,11 @@ public final class AntarchySettings {
     private static double bigBerthaAttackDamage = 62.0D;
     private static double bigBerthaReachBonus = 3.0D;
     private static double bigBerthaAttackSpeed = -3.0D;
-    private static double attitudeAdjusterBaseDamage = 47.0D;
+    private static double attitudeAdjusterBaseDamage = 61.0D;
     private static boolean attitudeAdjusterBreaksBlocks = true;
-    private static double krakensGraspAttackDamage = 16.0D;
+    private static double krakensGraspAttackDamage = 40.0D;
     private static double krakensGraspAttackSpeed = -2.9D;
-    private static double krakensGraspThrownDamage = 32.0D;
+    private static double krakensGraspThrownDamage = 45.0D;
     private static double krakensGraspLightningDamage = 6.0D;
     private static boolean krakensGraspInnateLoyalty = true;
     private static int krakensGraspInnateLoyaltyLevel = 3;
@@ -791,6 +795,22 @@ public final class AntarchySettings {
         return duplicatorTreeEnabled;
     }
 
+    public static boolean fossilsEnabled() {
+        return fossilsEnabled;
+    }
+
+    public static String fossilEntityBlacklist() {
+        return fossilEntityBlacklist;
+    }
+
+    public static java.util.List<String> fossilEntityBlacklistEntries() {
+        return fossilEntityBlacklistEntries;
+    }
+
+    public static String defaultFossilEntityBlacklist() {
+        return DEFAULT_FOSSIL_ENTITY_BLACKLIST;
+    }
+
     public static boolean glowVinesUnderLeaves() {
         return glowVinesUnderLeaves;
     }
@@ -1483,6 +1503,26 @@ public final class AntarchySettings {
 
     public static void setDuplicatorTreeEnabled(boolean value) {
         duplicatorTreeEnabled = value;
+    }
+
+    public static void setFossilsEnabled(boolean value) {
+        fossilsEnabled = value;
+    }
+
+    public static void setFossilEntityBlacklist(String value) {
+        fossilEntityBlacklist = value == null ? "" : value;
+        fossilEntityBlacklistEntries = parseEntryList(fossilEntityBlacklist);
+    }
+
+    private static java.util.List<String> parseEntryList(String value) {
+        java.util.List<String> entries = new java.util.ArrayList<>();
+        for (String part : value.split(",")) {
+            String entry = part.trim().toLowerCase(java.util.Locale.ROOT);
+            if (!entry.isEmpty()) {
+                entries.add(entry);
+            }
+        }
+        return java.util.List.copyOf(entries);
     }
 
     public static void setGlowVinesUnderLeaves(boolean value) {

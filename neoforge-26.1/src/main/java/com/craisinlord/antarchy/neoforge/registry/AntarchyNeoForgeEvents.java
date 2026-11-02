@@ -212,7 +212,9 @@ public final class AntarchyNeoForgeEvents {
     static void tickThoraxisUnderside(ServerTickEvent.Post event) {
         for (ServerLevel level : event.getServer().getAllLevels()) {
             ThoraxisUndersideManager.tick(level);
+            com.craisinlord.antarchy.content.weather.ThoraxisEvents.tick(level);
                 com.craisinlord.antarchy.content.weather.ElythiaEvents.tick(level);
+            com.craisinlord.antarchy.content.throwback.ThrowbackZoneTracker.tick(level);
                 com.craisinlord.antarchy.content.weather.ElythiaRainGrowth.tick(level);
         }
     }

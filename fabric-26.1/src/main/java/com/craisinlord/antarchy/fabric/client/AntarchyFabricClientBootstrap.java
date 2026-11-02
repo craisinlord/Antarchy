@@ -374,6 +374,7 @@ public final class AntarchyFabricClientBootstrap {
     private static void registerClientCallbacks() {
         TigerEyeClientHooks.setCamouflageKeyTextSupplier(() -> AntarchyKeyBindings.TIGERS_EYE_CAMOUFLAGE.getTranslatedKeyMessage());
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            com.craisinlord.antarchy.content.client.ThrowbackClientState.tick();
             HerculesBeetleImpactShakeClientState.tick();
             KingJudgmentFlashClientState.tick();
             HordeClientState.tick();

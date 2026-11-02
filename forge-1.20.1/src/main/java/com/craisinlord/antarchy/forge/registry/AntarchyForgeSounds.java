@@ -267,6 +267,8 @@ public final class AntarchyForgeSounds {
     public static final RegistryObject<SoundEvent> HOVERBOARD_MOUNT = registerSoundEvent("hoverboard_mount");
     public static final RegistryObject<SoundEvent> HOVERBOARD_DISMOUNT = registerSoundEvent("hoverboard_dismount");
     public static final RegistryObject<SoundEvent> HOVERBOARD_IDLE = registerSoundEvent("hoverboard_idle");
+    public static final RegistryObject<SoundEvent> MUSIC_THROWBACK = registerSoundEvent("music.throwback");
+    public static final RegistryObject<SoundEvent> PLAYER_HURT_CLASSIC = registerSoundEvent("entity.player.hurt_classic");
 
     private AntarchyForgeSounds() {}
 

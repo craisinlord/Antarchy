@@ -77,6 +77,7 @@ public final class AntarchyFabricEvents {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             CavarynCommand.register(dispatcher);
             com.craisinlord.antarchy.content.command.ElythiaCommand.register(dispatcher);
+            com.craisinlord.antarchy.content.command.ThoraxisCommand.register(dispatcher);
             CaterpillarCommand.register(dispatcher);
             DimensionalTearCommand.register(dispatcher);
             QueenLocateCommand.register(dispatcher);
@@ -174,7 +175,9 @@ public final class AntarchyFabricEvents {
                 com.craisinlord.antarchy.content.entity.glimmer.GlimmerNightSpawner.tick(level);
                 com.craisinlord.antarchy.content.entity.stratoshark.StratosharkSkySpawner.tick(level);
                 ThoraxisUndersideManager.tick(level);
+                com.craisinlord.antarchy.content.weather.ThoraxisEvents.tick(level);
                 com.craisinlord.antarchy.content.weather.ElythiaEvents.tick(level);
+                com.craisinlord.antarchy.content.throwback.ThrowbackZoneTracker.tick(level);
                 com.craisinlord.antarchy.content.weather.ElythiaRainGrowth.tick(level);
                 com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature.tickPendingSpawns(level);
                 tickInvertedPlayers(level, activeThisTick);

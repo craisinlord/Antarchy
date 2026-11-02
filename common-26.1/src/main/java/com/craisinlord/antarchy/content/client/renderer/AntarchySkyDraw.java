@@ -24,7 +24,7 @@ import org.joml.Vector4f;
 import org.joml.Vector4fc;
 import org.jetbrains.annotations.Nullable;
 
-final class AntarchySkyDraw {
+public final class AntarchySkyDraw {
     static final Vector4fc WHITE = new Vector4f(1.0F, 1.0F, 1.0F, 1.0F);
 
     @Nullable
@@ -35,10 +35,10 @@ final class AntarchySkyDraw {
     private AntarchySkyDraw() {
     }
 
-    record StaticMesh(GpuBuffer vertices, int indexCount, VertexFormat.Mode mode) {
+    public record StaticMesh(GpuBuffer vertices, int indexCount, VertexFormat.Mode mode) {
     }
 
-    static StaticMesh upload(String label, MeshData mesh) {
+    public static StaticMesh upload(String label, MeshData mesh) {
         try (mesh) {
             GpuBuffer buffer = RenderSystem.getDevice().createBuffer(() -> label, GpuBuffer.USAGE_VERTEX, mesh.vertexBuffer());
             return new StaticMesh(buffer, mesh.drawState().indexCount(), mesh.drawState().mode());
@@ -69,19 +69,23 @@ final class AntarchySkyDraw {
         return upload(label, builder.buildOrThrow());
     }
 
-    static Matrix4f modelView() {
+    public static Matrix4f modelView() {
         return new Matrix4f(RenderSystem.getModelViewMatrix());
     }
 
-    static void draw(String label, RenderPipeline pipeline, MeshData mesh, Matrix4fc modelView, Vector4fc color, @Nullable Identifier texture) {
+    public static void draw(String label, RenderPipeline pipeline, MeshData mesh, Matrix4fc modelView, Vector4fc color, @Nullable Identifier texture) {
         try (mesh) {
             GpuBuffer vertices = pipeline.getVertexFormat().uploadImmediateVertexBuffer(mesh.vertexBuffer());
-            draw(label, pipeline, vertices, mesh.drawState().indexCount(), mesh.drawState().mode(), modelView, color, texture);
+            draw(label, pipeline, vertices, mesh.drawState().indexCount(), mesh.drawState().mode(), modelView, color, texture, null);
         }
     }
 
-    static void draw(String label, RenderPipeline pipeline, StaticMesh mesh, Matrix4fc modelView, Vector4fc color, @Nullable Identifier texture) {
-        draw(label, pipeline, mesh.vertices(), mesh.indexCount(), mesh.mode(), modelView, color, texture);
+    public static void draw(String label, RenderPipeline pipeline, StaticMesh mesh, Matrix4fc modelView, Vector4fc color, @Nullable Identifier texture) {
+        draw(label, pipeline, mesh.vertices(), mesh.indexCount(), mesh.mode(), modelView, color, texture, null);
+    }
+
+    public static void draw(String label, RenderPipeline pipeline, StaticMesh mesh, Matrix4fc modelView, Vector4fc color, @Nullable Identifier texture, @Nullable RenderTarget target) {
+        draw(label, pipeline, mesh.vertices(), mesh.indexCount(), mesh.mode(), modelView, color, texture, target);
     }
 
     private static void draw(
@@ -92,7 +96,8 @@ final class AntarchySkyDraw {
             VertexFormat.Mode mode,
             Matrix4fc modelView,
             Vector4fc color,
-            @Nullable Identifier texture
+            @Nullable Identifier texture,
+            @Nullable RenderTarget target
     ) {
         if (indexCount <= 0) {
             return;
@@ -101,7 +106,9 @@ final class AntarchySkyDraw {
         GpuBuffer indexBuffer = indices.getBuffer(indexCount);
         GpuBufferSlice transforms = RenderSystem.getDynamicUniforms().writeTransform(modelView, color, new Vector3f(), new Matrix4f());
         AbstractTexture abstractTexture = texture != null ? Minecraft.getInstance().getTextureManager().getTexture(texture) : null;
-        RenderTarget target = Minecraft.getInstance().getMainRenderTarget();
+        if (target == null) {
+            target = Minecraft.getInstance().getMainRenderTarget();
+        }
         try (RenderPass renderPass = RenderSystem.getDevice()
                 .createCommandEncoder()
                 .createRenderPass(() -> label, target.getColorTextureView(), OptionalInt.empty(), target.getDepthTextureView(), OptionalDouble.empty())) {

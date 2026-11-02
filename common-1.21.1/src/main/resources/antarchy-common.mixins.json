@@ -30,6 +30,7 @@
                    "ThrowbackFoodDataMixin",
                    "ThrowbackPlayerMixin",
                    "ElythiaAquiferMixin",
+                   "ElythiaRandomStateMixin",
                    "NoiseChunkGeneratorProfilerMixin",
                    "ChunkGeneratorProfilerMixin",
                    "StructureProfilerMixin",

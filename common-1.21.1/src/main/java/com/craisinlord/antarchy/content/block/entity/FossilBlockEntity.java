@@ -26,7 +26,7 @@ public class FossilBlockEntity extends BlockEntity {
 
     @Nullable
     public ResourceLocation entityId() {
-        return this.entityId != null ? this.entityId : Fossils.entityAt(this.worldPosition);
+        return this.entityId != null ? Fossils.resolve(this.entityId) : Fossils.entityAt(this.worldPosition);
     }
 
     @Override

@@ -1,13 +1,17 @@
 package com.craisinlord.antarchy.content.entity.ant;
 
-import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaArrival;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.transit.AntTransit;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
+import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
+import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaArrival;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -38,10 +42,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 public final class AntTeleportHelper {
-    private static final ResourceKey<Level> ELYTHIA = ResourceKey.create(
-            net.minecraft.core.registries.Registries.DIMENSION,
-            new ResourceLocation(com.craisinlord.antarchy.Antarchy.MODID, "elythia")
-    );
     private static final double COMPANION_FOLLOW_RADIUS = 16.0D;
     private static final int ARRIVAL_SEARCH_RADIUS = 24;
     private static final int ARRIVAL_VERTICAL_SEARCH = 24;
@@ -149,13 +149,13 @@ public final class AntTeleportHelper {
         }
 
         if (entityTypeId.equals(new ResourceLocation("antarchy", "brown_ant"))) {
-            return teleportToOrFromConfiguredDimension(player, AntarchySettings.brownAntDestinationDimension());
+            return teleportToOrFromConfiguredDimension(player, AntarchySettings.brownAntDestinationDimension(), AntTransit.Kind.ELYTHIA);
         }
         if (entityTypeId.equals(new ResourceLocation("antarchy", "red_ant"))) {
-            return teleportToOrFromConfiguredDimension(player, AntarchySettings.redAntDestinationDimension());
+            return teleportToOrFromConfiguredDimension(player, AntarchySettings.redAntDestinationDimension(), AntTransit.Kind.THORAXIS);
         }
         if (entityTypeId.equals(new ResourceLocation("antarchy", "termite"))) {
-            return teleportToOrFromConfiguredDimension(player, AntarchySettings.termiteDestinationDimension());
+            return teleportToOrFromConfiguredDimension(player, AntarchySettings.termiteDestinationDimension(), AntTransit.Kind.CAVARYN);
         }
         if (entityTypeId.equals(new ResourceLocation("antarchy", "rainbow_ant"))) {
             return RainbowAntEntity.teleportPlayerFromStoredData(player, entityData);
@@ -165,6 +165,10 @@ public final class AntTeleportHelper {
     }
 
     private static InteractionResult teleportToOrFromConfiguredDimension(ServerPlayer player, ResourceKey<Level> configuredDimensionKey) {
+        return teleportToOrFromConfiguredDimension(player, configuredDimensionKey, null);
+    }
+
+    private static InteractionResult teleportToOrFromConfiguredDimension(ServerPlayer player, ResourceKey<Level> configuredDimensionKey, @Nullable AntTransit.Kind transit) {
         ServerLevel destination = player.serverLevel().dimension() == configuredDimensionKey
                 ? resolveReturnDestinationLevel(player)
                 : player.server.getLevel(configuredDimensionKey);
@@ -172,6 +176,9 @@ public final class AntTeleportHelper {
             return InteractionResult.PASS;
         }
 
+        if (AntTransit.isActive(player) || AntTransit.start(player, destination, transit)) {
+            return InteractionResult.CONSUME;
+        }
         arriveWithCompanions(player, destination);
         return InteractionResult.CONSUME;
     }
@@ -206,7 +213,18 @@ public final class AntTeleportHelper {
             return InteractionResult.SUCCESS;
         }
 
-        return teleportToOrFromConfiguredDimension(serverPlayer, ant.destinationDimension());
+        return teleportToOrFromConfiguredDimension(serverPlayer, ant.destinationDimension(), transitKind(ant));
+    }
+
+    @Nullable
+    private static AntTransit.Kind transitKind(BaseAntEntity ant) {
+        if (ant instanceof BrownAntEntity) {
+            return AntTransit.Kind.ELYTHIA;
+        }
+        if (ant instanceof RedAntEntity) {
+            return AntTransit.Kind.THORAXIS;
+        }
+        return ant instanceof TermiteEntity ? AntTransit.Kind.CAVARYN : null;
     }
 
     static boolean isRightClickDimensionEnabled(BaseAntEntity ant) {
@@ -258,7 +276,20 @@ public final class AntTeleportHelper {
     }
 
     public static void prepareArrival(ServerPlayer player, ServerLevel destination, Consumer<Vec3> onArrival) {
-        BlockPos preferredPos = ElythiaArrival.nearestPlateau(destination, preferredArrivalPos(player, destination));
+        BlockPos preferredPos = preferredArrivalPos(player, destination);
+        if (!destination.dimension().equals(ThrowbackZones.ELYTHIA)) {
+            searchArrival(player, destination, preferredPos, onArrival);
+            return;
+        }
+        CompletableFuture.supplyAsync(() -> ElythiaArrival.nearestPlateau(destination, preferredPos), Util.backgroundExecutor())
+                .whenComplete((plateau, error) -> destination.getServer().execute(() -> {
+                    if (!player.hasDisconnected()) {
+                        searchArrival(player, destination, error != null || plateau == null ? preferredPos : plateau, onArrival);
+                    }
+                }));
+    }
+
+    private static void searchArrival(ServerPlayer player, ServerLevel destination, BlockPos preferredPos, Consumer<Vec3> onArrival) {
         AntArrivalScheduler.request(player, destination, preferredPos, ARRIVAL_SEARCH_RADIUS, () -> {
             int[] yRange = getDimensionYRange(destination);
             if (yRange == null) {
@@ -418,7 +449,7 @@ public final class AntTeleportHelper {
     @Nullable
     private static int[] getDimensionYRange(ServerLevel destination) {
         ResourceKey<Level> dim = destination.dimension();
-        if (dim == ELYTHIA) {
+        if (dim == ThrowbackZones.ELYTHIA) {
             return new int[]{ElythiaArrival.MIN_ARRIVAL_Y, 280};
         }
         if (dim == PermanentPortalType.ELYTHIA.primaryDimension()) {
@@ -603,7 +634,7 @@ public final class AntTeleportHelper {
         return true;
     }
 
-    private static InteractionResult failArrival(ServerPlayer player) {
+    public static InteractionResult failArrival(ServerPlayer player) {
         player.displayClientMessage(Component.translatable("message.antarchy.teleport_arrival_failed"), true);
         return InteractionResult.CONSUME;
     }

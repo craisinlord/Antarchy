@@ -172,6 +172,22 @@
     "antarchy:loam_brick_stairs",
     "antarchy:loam_brick_slab",
     "antarchy:loam_brick_wall",
-    "antarchy:chiseled_loam_bricks"
+    "antarchy:chiseled_loam_bricks",
+    "antarchy:myrmite_copper_ore",
+    "antarchy:broodstone_copper_ore",
+    "antarchy:myrmite_iron_ore",
+    "antarchy:broodstone_iron_ore",
+    "antarchy:myrmite_gold_ore",
+    "antarchy:broodstone_gold_ore",
+    "antarchy:myrmite_redstone_ore",
+    "antarchy:broodstone_redstone_ore",
+    "antarchy:myrmite_lapis_ore",
+    "antarchy:broodstone_lapis_ore",
+    "antarchy:myrmite_diamond_ore",
+    "antarchy:broodstone_diamond_ore",
+    "antarchy:myrmite_emerald_ore",
+    "antarchy:broodstone_emerald_ore",
+    "antarchy:myrmite_fossil",
+    "antarchy:broodstone_fossil"
   ]
 }

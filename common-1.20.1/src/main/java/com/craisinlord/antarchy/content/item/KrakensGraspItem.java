@@ -91,6 +91,7 @@ public class KrakensGraspItem extends TridentItem {
 
     public static void strikeLightning(LivingEntity target, ServerLevel level) {
         strikeLightningAt(level, target.getX(), target.getY(), target.getZ());
+        target.invulnerableTime = 0;
         target.hurt(level.damageSources().lightningBolt(), (float) AntarchySettings.krakensGraspLightningDamage());
         level.sendParticles(ParticleTypes.ELECTRIC_SPARK, target.getX(), target.getY(0.7D), target.getZ(), 10, 0.25D, 0.25D, 0.25D, 0.02D);
     }

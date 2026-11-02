@@ -1,14 +1,19 @@
 package com.craisinlord.antarchy.content.client;
 
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import com.craisinlord.antarchy.content.client.hud.ScreenTint;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.player.Player;
 
 public final class GlimmeringHudRenderer {
-    private static final int TINT_ALPHA = 0x40;
+    private static final int MAX_ALPHA = 0x40;
     private static final int TINT_RGB = 0x66CCFF;
+    private static final float FADE_SPEED = 0.05F;
+
+    private static float fadeProgress = 0.0F;
 
     private GlimmeringHudRenderer() {
     }
@@ -17,12 +22,18 @@ public final class GlimmeringHudRenderer {
         Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
         MobEffect glimmering = AntarchyObjects.GLIMMERING_EFFECT.get();
-        if (player == null || player.isDeadOrDying() || glimmering == null || !player.hasEffect(glimmering)) {
+        boolean active = player != null && !player.isDeadOrDying() && glimmering != null && player.hasEffect(glimmering);
+
+        fadeProgress = active
+                ? Math.min(1.0F, fadeProgress + FADE_SPEED)
+                : Math.max(0.0F, fadeProgress - FADE_SPEED);
+        if (fadeProgress <= 0.0F) {
             return;
         }
 
+        int alpha = Mth.floor(MAX_ALPHA * fadeProgress);
         int width = minecraft.getWindow().getGuiScaledWidth();
         int height = minecraft.getWindow().getGuiScaledHeight();
-        guiGraphics.fill(0, 0, width, height, (TINT_ALPHA << 24) | TINT_RGB);
+        ScreenTint.fill(guiGraphics, 0, 0, width, height, (alpha << 24) | TINT_RGB);
     }
 }

@@ -6,11 +6,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
+import software.bernie.geckolib.core.object.Color;
 
 public class WaterBombRenderer extends GeoEntityRenderer<WaterBombEntity> {
 
@@ -25,6 +28,16 @@ public class WaterBombRenderer extends GeoEntityRenderer<WaterBombEntity> {
         float appliedPitch = Mth.lerp(partialTick, animatable.xRotO, animatable.getXRot());
         poseStack.mulPose(Axis.YP.rotationDegrees(appliedYaw - 90.0F));
         poseStack.mulPose(Axis.XP.rotationDegrees(-appliedPitch));
+    }
+
+    @Override
+    public RenderType getRenderType(WaterBombEntity animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
+        return GlimmerEchoRendering.renderType(animatable, texture, super.getRenderType(animatable, texture, bufferSource, partialTick));
+    }
+
+    @Override
+    public Color getRenderColor(WaterBombEntity animatable, float partialTick, int packedLight) {
+        return GlimmerEchoRendering.renderColor(animatable, super.getRenderColor(animatable, partialTick, packedLight));
     }
 
     @Override

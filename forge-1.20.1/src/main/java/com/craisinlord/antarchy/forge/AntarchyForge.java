@@ -250,6 +250,7 @@ public class AntarchyForge {
                 AntarchyForgeSounds.DIMENSIONAL_TEAR_CLOSE
         );
         AntarchySoundEvents.bindHoverboardSounds(AntarchyForgeSounds.HOVERBOARD_MOUNT, AntarchyForgeSounds.HOVERBOARD_DISMOUNT, AntarchyForgeSounds.HOVERBOARD_IDLE);
+        AntarchySoundEvents.bindThrowbackSounds(AntarchyForgeSounds.MUSIC_THROWBACK, AntarchyForgeSounds.PLAYER_HURT_CLASSIC);
         bindCommonObjects();
         ScorpionWhipTetherSync.setSink((player, targetId) -> AntarchyForgeNetworkCore.sendToTrackingEntity(
                 player,
@@ -303,6 +304,7 @@ public class AntarchyForge {
         com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity.TYPE = AntarchyForgeEntites.UPWARD_FALLING_BLOCK;
         AntarchyObjects.setLucidAnchor(() -> AntarchyForgeBlocks.LUCID_ANCHOR.get());
         AntarchyObjects.setLucidAnchorBlockEntity(() -> AntarchyForgeBlocks.LUCID_ANCHOR_BLOCK_ENTITY.get());
+        AntarchyObjects.setFossilBlockEntity(() -> AntarchyForgeBlocks.FOSSIL_BLOCK_ENTITY.get());
         PermanentPortalType.bindBlocks(
                 () -> AntarchyForgeBlocks.MOSSY_OURANWOOD_WOOD.get(),
                 () -> AntarchyForgeBlocks.ELYTHIA_PORTAL.get(),
@@ -453,6 +455,7 @@ public class AntarchyForge {
         AntarchyObjects.setStratoshark(AntarchyForgeEntites.STRATOSHARK);
         AntarchyObjects.setSpiritApple(() -> AntarchyForgeItems.SPIRIT_APPLE.get());
         AntarchyObjects.setGlimmeringEffect(() -> AntarchyForgeMisc.GLIMMERING.get());
+        AntarchyObjects.setRemembranceEffect(() -> AntarchyForgeMisc.REMEMBRANCE.get());
         AntarchyObjects.setRoyalVitalityPenaltyEffect(() -> AntarchyForgeMisc.ROYAL_VITALITY_PENALTY.get());
         AntarchyObjects.setBleedingEffect(() -> AntarchyForgeMisc.BLEEDING.get());
         AntarchyObjects.setBloodMoonEffect(() -> AntarchyForgeMisc.BLOOD_MOON.get());
@@ -474,6 +477,7 @@ public class AntarchyForge {
         AntarchyObjects.setPeachLeavesParticle(() -> AntarchyForgeMisc.PEACH_LEAVES_PARTICLE.get());
         AntarchyObjects.setBugSprayParticle(() -> AntarchyForgeMisc.BUG_SPRAY_PARTICLE.get());
         AntarchyObjects.setLotusPollen(() -> AntarchyForgeMisc.LOTUS_POLLEN.get());
+        AntarchyObjects.setTemporalGlints(() -> AntarchyForgeMisc.TEMPORAL_GLINT_SLOW.get(), () -> AntarchyForgeMisc.TEMPORAL_GLINT_FAST.get());
         AntarchyObjects.setNightmareFireFlame(() -> AntarchyForgeMisc.NIGHTMARE_FIRE_FLAME.get());
         AntarchyObjects.setLucidBoltImpactSmall(() -> AntarchyForgeMisc.LUCID_BOLT_IMPACT_SMALL.get());
         AntarchyObjects.setLucidBoltImpactLarge(() -> AntarchyForgeMisc.LUCID_BOLT_IMPACT_LARGE.get());

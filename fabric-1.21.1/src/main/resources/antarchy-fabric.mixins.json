@@ -36,7 +36,8 @@
     "client.GravityGunMouseScrollMixin",
     "client.KeybindingConflictFixMixin",
     "client.CrossbowArmPoseMixin",
-    "client.AppleSkinOverlayMixin"
+    "client.AppleSkinOverlayMixin",
+    "client.GroundMistRenderOrderMixin"
   ],
   "injectors": {
     "defaultRequire": 1

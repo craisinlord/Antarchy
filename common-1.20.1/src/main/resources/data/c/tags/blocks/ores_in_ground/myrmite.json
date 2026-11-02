@@ -1,6 +1,13 @@
 {
   "replace": false,
   "values": [
-    "antarchy:myrmite_coal_ore"
+    "antarchy:myrmite_coal_ore",
+    "antarchy:myrmite_copper_ore",
+    "antarchy:myrmite_iron_ore",
+    "antarchy:myrmite_gold_ore",
+    "antarchy:myrmite_redstone_ore",
+    "antarchy:myrmite_lapis_ore",
+    "antarchy:myrmite_diamond_ore",
+    "antarchy:myrmite_emerald_ore"
   ]
 }

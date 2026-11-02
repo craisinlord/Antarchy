@@ -239,6 +239,7 @@ public final class AntarchyForgeEvents {
         if (event.phase != TickEvent.Phase.END) return;
         for (ServerLevel level : event.getServer().getAllLevels()) {
             CavarynHordeManager.tick(level);
+            com.craisinlord.antarchy.content.throwback.ThrowbackZoneTracker.tick(level);
             com.craisinlord.antarchy.content.horde.CavarynCreatureSpawner.tick(level);
             com.craisinlord.antarchy.content.entity.glimmer.GlimmerNightSpawner.tick(level);
             com.craisinlord.antarchy.content.entity.stratoshark.StratosharkSkySpawner.tick(level);
@@ -252,12 +253,14 @@ public final class AntarchyForgeEvents {
             ThoraxisUndersideManager.tick(level);
                 com.craisinlord.antarchy.content.weather.ElythiaEvents.tick(level);
                 com.craisinlord.antarchy.content.weather.ElythiaRainGrowth.tick(level);
+                com.craisinlord.antarchy.content.weather.ThoraxisEvents.tick(level);
         }
     }
 
     static void tickAntArrivals(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.tick(event.getServer());
+        com.craisinlord.antarchy.content.transit.AntTransit.tick(event.getServer());
     }
 
     private static int badOmenLevel(Player player) {

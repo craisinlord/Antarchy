@@ -125,6 +125,8 @@ public final class AntarchyNeoforgeBlocks {
             id -> new SeashellBlock(copyOf(id, Blocks.TURTLE_EGG).noOcclusion()));
     public static final DeferredBlock<LucidAnchorBlock> LUCID_ANCHOR = BLOCKS.register("lucid_anchor",
             id -> new LucidAnchorBlock(copyOf(id, Blocks.BEACON).strength(3.0F)));
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.FossilBlock> MYRMITE_FOSSIL = BLOCKS.register("myrmite_fossil", id -> new com.craisinlord.antarchy.content.block.FossilBlock(nyxiteProperties(id)));
+    public static final DeferredBlock<com.craisinlord.antarchy.content.block.FossilBlock> BROODSTONE_FOSSIL = BLOCKS.register("broodstone_fossil", id -> new com.craisinlord.antarchy.content.block.FossilBlock(broodstoneProperties(id)));
     public static final DeferredBlock<CritterCageBlock> CRITTER_CAGE_BLOCK = BLOCKS.register("critter_cage_block",
             id -> new CritterCageBlock(propertiesOf(id).strength(5.0F, 6.0F).sound(net.minecraft.world.level.block.SoundType.METAL).noOcclusion()));
     public static final DeferredBlock<PortalGunPortalMasterBlock> PORTAL_GUN_PORTAL_MASTER = BLOCKS.register("portal_gun_portal_master",
@@ -941,6 +943,7 @@ public final class AntarchyNeoforgeBlocks {
                     LucidAnchorBlockEntity::new,
                     LUCID_ANCHOR.get()
             ));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<com.craisinlord.antarchy.content.block.entity.FossilBlockEntity>> FOSSIL_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("fossil", () -> new BlockEntityType<>(com.craisinlord.antarchy.content.block.entity.FossilBlockEntity::new, MYRMITE_FOSSIL.get(), BROODSTONE_FOSSIL.get()));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CritterCageBlockEntity>> CRITTER_CAGE_BLOCK_ENTITY = BLOCK_ENTITY_TYPES.register("critter_cage_block",
             () -> new BlockEntityType<>(
                     CritterCageBlockEntity::new,

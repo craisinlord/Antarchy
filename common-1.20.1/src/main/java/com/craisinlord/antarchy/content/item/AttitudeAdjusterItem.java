@@ -20,7 +20,7 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 
 public class AttitudeAdjusterItem extends SwordItem {
-    private static final float ATTACK_SPEED = -3.6F;
+    private static final float ATTACK_SPEED = -3.2F;
     private static final int USE_DURATION = 12;
     private final Tier tier;
 

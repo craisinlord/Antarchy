@@ -29,6 +29,11 @@ public class AntarchyNeoforgePayloadHandlers {
                 com.craisinlord.antarchy.content.network.ElythiaEventPayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> com.craisinlord.antarchy.content.client.ElythiaEventClient.handle(payload))
         );
+        registrar.playToClient(
+                com.craisinlord.antarchy.content.network.ThrowbackZonePayload.TYPE,
+                com.craisinlord.antarchy.content.network.ThrowbackZonePayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> com.craisinlord.antarchy.content.client.ThrowbackClientState.update(payload.strength()))
+        );
         registrar.playToServer(
                 AntarchyGamePayload.TYPE,
                 AntarchyGamePayload.STREAM_CODEC,

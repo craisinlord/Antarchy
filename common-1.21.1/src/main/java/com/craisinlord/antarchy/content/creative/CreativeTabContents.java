@@ -420,14 +420,6 @@ public final class CreativeTabContents {
             entry("undertrial_key", "tools_and_utilities"),
             entry("reverie_bottle", "tools_and_utilities"),
             entry("glimmer_bottle", "tools_and_utilities"),
-            entry("toreterror_glimmer_sigil", "tools_and_utilities"),
-            entry("alpha_mantis_glimmer_sigil", "tools_and_utilities"),
-            entry("emperor_scorpion_glimmer_sigil", "tools_and_utilities"),
-            entry("brutalfly_glimmer_sigil", "tools_and_utilities"),
-            entry("hercules_beetle_glimmer_sigil", "tools_and_utilities"),
-            entry("kraken_glimmer_sigil", "tools_and_utilities"),
-            entry("king_glimmer_sigil", "tools_and_utilities"),
-            entry("queen_glimmer_sigil", "tools_and_utilities"),
             entry("critter_cage", "tools_and_utilities"),
             entry("worm_hook", "tools_and_utilities"),
             entry("ultimate_pickaxe", "tools_and_utilities"),
@@ -525,7 +517,6 @@ public final class CreativeTabContents {
             entry("tigers_eye_block", "building_blocks"),
             entry("blood_crystal_apple", "ingredients"),
             entry("spirit_apple", "ingredients"),
-            entry("faded_memory", "ingredients"),
             entry("mantis_claw", "combat"),
             entry("hercules_horn", "ingredients"),
             entry("king_scale", "ingredients"),
@@ -637,7 +628,7 @@ public final class CreativeTabContents {
     );
 
     private static final List<String> ANTARCHY_POTION_FAMILIES = List.of(
-            "inversion", "long_inversion", "remembrance", "long_remembrance", "stinky", "long_stinky",
+            "inversion", "long_inversion", "stinky", "long_stinky",
             "paralysis", "long_paralysis", "haste", "strong_haste", "shrinking",
             "strong_shrinking", "extreme_shrinking", "growing", "strong_growing", "extreme_growing",
             "command", "long_command", "time_dilation", "long_time_dilation", "time_contraction", "long_time_contraction"
