@@ -12,7 +12,37 @@ import net.minecraft.world.phys.Vec3;
 import java.util.function.Predicate;
 
 public final class CustomFluidPhysicsChecks {
+    public static final int TOUCHING_NONE = 0;
+    public static final int TOUCHING_ANTIWATER = 1;
+    public static final int TOUCHING_WATERLIKE = 2;
+
     private CustomFluidPhysicsChecks() {
+    }
+
+    public static int classifyTouchingFluid(Entity entity) {
+        AABB box = entity.getBoundingBox().deflate(0.001D);
+        Level level = entity.level();
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
+        int touching = TOUCHING_NONE;
+        for (int x = Mth.floor(box.minX); x < Mth.ceil(box.maxX); x++) {
+            for (int y = Mth.floor(box.minY); y < Mth.ceil(box.maxY); y++) {
+                for (int z = Mth.floor(box.minZ); z < Mth.ceil(box.maxZ); z++) {
+                    cursor.set(x, y, z);
+                    FluidState fluidState = level.getFluidState(cursor);
+                    boolean antiwater = AntarchyFluidChecks.isAntiwater(fluidState);
+                    if (!antiwater && !AntarchyFluidChecks.usesWaterLikePhysics(fluidState)) {
+                        continue;
+                    }
+                    if (y + fluidState.getHeight(level, cursor) >= box.minY) {
+                        if (antiwater) {
+                            return TOUCHING_ANTIWATER;
+                        }
+                        touching = TOUCHING_WATERLIKE;
+                    }
+                }
+            }
+        }
+        return touching;
     }
 
     public static boolean isTouchingAntiwater(Entity entity) {

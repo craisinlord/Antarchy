@@ -18,6 +18,7 @@
     "frame": "challenge",
     "icon": {
       "item": "antarchy:brutalfly_wing"
+
     },
     "show_toast": true,
     "title": {
@@ -28,6 +29,5 @@
     [
       "kill_brutalfly"
     ]
-  ],
-  "sends_telemetry_event": true
+  ]
 }

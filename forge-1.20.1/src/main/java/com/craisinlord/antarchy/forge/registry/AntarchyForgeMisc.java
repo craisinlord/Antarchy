@@ -12,10 +12,6 @@ import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverSpan;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverProject;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideMountainsFunction;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisTerrainFunction;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBiomeTable;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBlockSet;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCavityGrid;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWormBoreGrid;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCavityFunction;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCavityUnionFunction;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWormBoreFunction;
@@ -85,9 +81,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConf
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
-import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public final class AntarchyForgeMisc {
     private static final DeferredRegister<PoiType> POI_TYPES = DeferredRegister.create(Registries.POINT_OF_INTEREST_TYPE, Antarchy.MODID);
@@ -125,7 +119,6 @@ public final class AntarchyForgeMisc {
                     holder -> holder.value() == PEST_CONTROL_POI.get(), com.google.common.collect.ImmutableSet.of(), com.google.common.collect.ImmutableSet.of(), net.minecraft.sounds.SoundEvents.VILLAGER_WORK_FLETCHER));
     private static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, Antarchy.MODID);
     private static final DeferredRegister<Potion> POTIONS = DeferredRegister.create(Registries.POTION, Antarchy.MODID);
-    private static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, Antarchy.MODID);
     private static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(Registries.FLUID, Antarchy.MODID);
     private static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(Registries.PARTICLE_TYPE, Antarchy.MODID);
     private static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(Registries.FEATURE, Antarchy.MODID);
@@ -401,8 +394,6 @@ public final class AntarchyForgeMisc {
             () -> new FallenOuranwoodFeature(NoneFeatureConfiguration.CODEC));
     public static final RegistryObject<FungalMushroomFeature> FUNGAL_MUSHROOM = FEATURES.register("fungal_mushroom",
             () -> new FungalMushroomFeature(NoneFeatureConfiguration.CODEC));
-    public static final RegistryObject<ThoraxisFissureFeature> THORAXIS_FISSURE = FEATURES.register("thoraxis_fissure",
-            () -> new ThoraxisFissureFeature(ThoraxisFissureConfiguration.CODEC));
     public static final RegistryObject<ThoraxisTransitionThroatFeature> THORAXIS_TRANSITION_THROAT = FEATURES.register("thoraxis_transition_throat",
             ThoraxisTransitionThroatFeature::new);
     public static final RegistryObject<QueenHavocTrailFeature> QUEEN_HAVOC_TRAIL = FEATURES.register("queen_havoc_trail",
@@ -463,8 +454,6 @@ public final class AntarchyForgeMisc {
             () -> new com.craisinlord.antarchy.content.worldgen.mushroom.GlowcapHugeMushroomWorldgenFeature(NoneFeatureConfiguration.CODEC));
     public static final RegistryObject<LucidAntiwaterPoolFeature> LUCID_ANTIWATER_POOL = FEATURES.register("lucid_antiwater_pool",
             () -> new LucidAntiwaterPoolFeature(ThoraxisAntiwaterPoolConfiguration.CODEC));
-    public static final RegistryObject<ThoraxisDuneFeature> THORAXIS_DUNE = FEATURES.register("thoraxis_dune",
-            () -> new ThoraxisDuneFeature(ThoraxisDuneConfiguration.CODEC));
     public static final RegistryObject<DimensionalTearFeature> DIMENSIONAL_TEAR = FEATURES.register("dimensional_tear",
             () -> new DimensionalTearFeature(NoneFeatureConfiguration.CODEC));
 
@@ -490,7 +479,6 @@ public final class AntarchyForgeMisc {
         VILLAGER_PROFESSIONS.register(modEventBus);
         MOB_EFFECTS.register(modEventBus);
         POTIONS.register(modEventBus);
-        FLUID_TYPES.register(modEventBus);
         FLUIDS.register(modEventBus);
         PARTICLE_TYPES.register(modEventBus);
         FEATURES.register(modEventBus);

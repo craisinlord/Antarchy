@@ -4,7 +4,6 @@ import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.client.AntTransitClientState;
 import com.craisinlord.antarchy.content.client.ThrowbackClientState;
-import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.DeltaTracker;
@@ -37,9 +36,9 @@ public final class ThrowbackDreamRenderer {
             return;
         }
         float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
-        boolean elythia = AntarchySettings.throwbackDreamHaze() && minecraft.level.dimension().equals(ThrowbackZones.ELYTHIA);
-        float zone = elythia ? ThrowbackClientState.zone(partialTick) * dreamStrength() : 0.0F;
-        float baseline = elythia ? ThrowbackClientState.baseline(partialTick) * Mth.clamp(zone, 0.0F, 1.0F) : 0.0F;
+        boolean haze = AntarchySettings.throwbackDreamHaze();
+        float zone = haze ? ThrowbackClientState.zone(partialTick) * dreamStrength() : 0.0F;
+        float baseline = haze ? ThrowbackClientState.baseline(partialTick) * Mth.clamp(zone, 0.0F, 1.0F) : 0.0F;
         float wake = AntTransitClientState.saturation(partialTick);
         float prism = AntTransitClientState.prism(partialTick);
         boolean transit = Math.abs(wake - 1.0F) > ACTIVE_THRESHOLD || prism > ACTIVE_THRESHOLD;

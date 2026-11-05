@@ -69,10 +69,8 @@ import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConf
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
-import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import java.util.function.Function;
 
@@ -112,7 +110,6 @@ public final class AntarchyNeoforgeMisc {
                     holder -> holder.value() == PEST_CONTROL_POI.get(), com.google.common.collect.ImmutableSet.of(), com.google.common.collect.ImmutableSet.of(), net.minecraft.sounds.SoundEvents.VILLAGER_WORK_FLETCHER));
     private static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, Antarchy.MODID);
     private static final DeferredRegister<Potion> POTIONS = DeferredRegister.create(Registries.POTION, Antarchy.MODID);
-    private static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, Antarchy.MODID);
     private static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(Registries.FLUID, Antarchy.MODID);
     private static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(Registries.PARTICLE_TYPE, Antarchy.MODID);
     private static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(Registries.FEATURE, Antarchy.MODID);
@@ -271,6 +268,8 @@ public final class AntarchyNeoforgeMisc {
     public static final DeferredHolder<Fluid, Fluid> FLOWING_LUMEN = FLUIDS.register("flowing_lumen",
             () -> new BaseFlowingFluid.Flowing(lumenProperties()));
 
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> REMEMBRANCE_FLAME = PARTICLE_TYPES.register("remembrance_flame",
+            () -> new SimpleParticleType(true));
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> DREAM_FIRE_FLAME = PARTICLE_TYPES.register("dream_fire_flame",
             () -> new SimpleParticleType(true));
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BUG_SPRAY_PARTICLE = PARTICLE_TYPES.register("bug_spray",
@@ -338,6 +337,10 @@ public final class AntarchyNeoforgeMisc {
             () -> new OuranwoodTreeFeature(OuranwoodTreeConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, OuranwoodCocoonTreeFeature> OURANWOOD_COCOON_TREE = FEATURES.register("ouranwood_cocoon_tree",
             () -> new OuranwoodCocoonTreeFeature(OuranwoodTreeConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.CranberryTreeFeature> CRANBERRY_TREE_FEATURE = FEATURES.register("cranberry_tree",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.CranberryTreeFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.CranberryGroveFeature> CRANBERRY_GROVE_FEATURE = FEATURES.register("cranberry_grove",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.CranberryGroveFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, PeachTreeFeature> PEACH_TREE_FEATURE = FEATURES.register("peach_tree",
             () -> new PeachTreeFeature(PeachTreeConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, PeachTreeFeature> PEACH_LARGE_TREE_FEATURE = FEATURES.register("peach_large_tree",
@@ -370,8 +373,16 @@ public final class AntarchyNeoforgeMisc {
             () -> new ElythiaFloraFeature(NoneFeatureConfiguration.CODEC, ElythiaFloraFeature.Variant.BUTTERFLY_FIELDS));
     public static final DeferredHolder<Feature<?>, ElythiaSurfaceCoverFeature> ELYTHIA_SURFACE_COVER = FEATURES.register("elythia_surface_cover",
             () -> new ElythiaSurfaceCoverFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.TruffledLoamFeature> TRUFFLED_LOAM = FEATURES.register("truffled_loam",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.TruffledLoamFeature(NoneFeatureConfiguration.CODEC));
+
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.ThrowbackNerdPoleFeature> THROWBACK_NERD_POLE = FEATURES.register("throwback_nerd_pole",
             () -> new com.craisinlord.antarchy.content.worldgen.elythia.ThrowbackNerdPoleFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.ElythiaMountainScreeFeature> ELYTHIA_MOUNTAIN_SCREE = FEATURES.register("elythia_mountain_scree",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.ElythiaMountainScreeFeature(NoneFeatureConfiguration.CODEC));
+
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.ElythiaGeologyFeature> ELYTHIA_GEOLOGY = FEATURES.register("elythia_geology",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.ElythiaGeologyFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, ElythiaUndergroundFeature> ELYTHIA_UNDERGROUND = FEATURES.register("elythia_underground",
             () -> new ElythiaUndergroundFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, BrutalflyCocoonFeature> BRUTALFLY_COCOON = FEATURES.register("brutalfly_cocoon",
@@ -408,12 +419,16 @@ public final class AntarchyNeoforgeMisc {
             () -> new LumenStreamFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, LumenSpireFeature> LUMEN_SPIRE = FEATURES.register("lumen_spires",
             () -> new LumenSpireFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.ElythiaStoneTorFeature> ELYTHIA_STONE_TOR = FEATURES.register("elythia_stone_tor",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.ElythiaStoneTorFeature(com.craisinlord.antarchy.content.worldgen.elythia.StoneTorConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.ElythiaStoneRuinFeature> ELYTHIA_STONE_RUIN = FEATURES.register("elythia_stone_ruin",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.ElythiaStoneRuinFeature(com.craisinlord.antarchy.content.worldgen.elythia.StoneRuinConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, ElythiaTuffBoulderFeature> ELYTHIA_TUFF_BOULDER = FEATURES.register("elythia_tuff_boulder",
-            () -> new ElythiaTuffBoulderFeature(NoneFeatureConfiguration.CODEC));
+            () -> new ElythiaTuffBoulderFeature(com.craisinlord.antarchy.content.worldgen.elythia.BoulderPaletteConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, ElythiaLargeTuffBoulderFeature> ELYTHIA_LARGE_TUFF_BOULDER = FEATURES.register("elythia_large_tuff_boulder",
-            () -> new ElythiaLargeTuffBoulderFeature(NoneFeatureConfiguration.CODEC));
+            () -> new ElythiaLargeTuffBoulderFeature(com.craisinlord.antarchy.content.worldgen.elythia.BoulderPaletteConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, PeachForestMossyBoulderFeature> PEACH_FOREST_MOSSY_BOULDER = FEATURES.register("peach_forest_mossy_boulder",
-            () -> new PeachForestMossyBoulderFeature(NoneFeatureConfiguration.CODEC));
+            () -> new PeachForestMossyBoulderFeature(com.craisinlord.antarchy.content.worldgen.elythia.BoulderPaletteConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, PeachForestPondFeature> PEACH_FOREST_POND = FEATURES.register("peach_forest_pond",
             () -> new PeachForestPondFeature(PeachForestPondConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, CoralSpikeFeature> ELYTHIA_CORAL_SPIKE = FEATURES.register("elythia_coral_spike",
@@ -430,8 +445,6 @@ public final class AntarchyNeoforgeMisc {
             () -> new com.craisinlord.antarchy.content.worldgen.elythia.RiverLogBridgeFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, FungalMushroomFeature> FUNGAL_MUSHROOM = FEATURES.register("fungal_mushroom",
             () -> new FungalMushroomFeature(NoneFeatureConfiguration.CODEC));
-    public static final DeferredHolder<Feature<?>, ThoraxisFissureFeature> THORAXIS_FISSURE = FEATURES.register("thoraxis_fissure",
-            () -> new ThoraxisFissureFeature(ThoraxisFissureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, ThoraxisTransitionThroatFeature> THORAXIS_TRANSITION_THROAT = FEATURES.register("thoraxis_transition_throat",
             ThoraxisTransitionThroatFeature::new);
     public static final DeferredHolder<Feature<?>, QueenHavocTrailFeature> QUEEN_HAVOC_TRAIL = FEATURES.register("queen_havoc_trail",
@@ -510,8 +523,6 @@ public final class AntarchyNeoforgeMisc {
             () -> new com.craisinlord.antarchy.content.worldgen.mushroom.GlowcapHugeMushroomWorldgenFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, LucidAntiwaterPoolFeature> LUCID_ANTIWATER_POOL = FEATURES.register("lucid_antiwater_pool",
             () -> new LucidAntiwaterPoolFeature(ThoraxisAntiwaterPoolConfiguration.CODEC));
-    public static final DeferredHolder<Feature<?>, ThoraxisDuneFeature> THORAXIS_DUNE = FEATURES.register("thoraxis_dune",
-            () -> new ThoraxisDuneFeature(ThoraxisDuneConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, DimensionalTearFeature> DIMENSIONAL_TEAR = FEATURES.register("dimensional_tear",
             () -> new DimensionalTearFeature(NoneFeatureConfiguration.CODEC));
 
@@ -572,7 +583,6 @@ public final class AntarchyNeoforgeMisc {
         VILLAGER_PROFESSIONS.register(modEventBus);
         MOB_EFFECTS.register(modEventBus);
         POTIONS.register(modEventBus);
-        FLUID_TYPES.register(modEventBus);
         FLUIDS.register(modEventBus);
         PARTICLE_TYPES.register(modEventBus);
         FEATURES.register(modEventBus);

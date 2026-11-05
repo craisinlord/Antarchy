@@ -654,8 +654,4 @@ public final class AntarchyFabricEntities {
         return ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(Antarchy.MODID, name));
     }
 
-    public static void register() {
-        ENTITY_TYPES.register();
-    }
-
 }

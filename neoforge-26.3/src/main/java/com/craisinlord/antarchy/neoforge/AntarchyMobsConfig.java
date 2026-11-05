@@ -52,6 +52,9 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue SPRINGBUG_CAMOUFLAGE_ALPHA;
 
     private static final ModConfigSpec.DoubleValue EMPEROR_SCORPION_HEALTH;
+    private static final ModConfigSpec.DoubleValue GLIMMER_EMPEROR_SCORPION_HEALTH_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue GLIMMER_EMPEROR_SCORPION_DAMAGE_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue GLIMMER_EMPEROR_SCORPION_COOLDOWN_MULTIPLIER;
     private static final ModConfigSpec.DoubleValue EMPEROR_SCORPION_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue EMPEROR_SCORPION_MOVEMENT_SPEED;
     private static final ModConfigSpec.DoubleValue EMPEROR_SCORPION_ARMOR;
@@ -80,6 +83,9 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue SCORPION_KNOCKBACK_RESISTANCE;
 
     private static final ModConfigSpec.DoubleValue  KRAKEN_HEALTH;
+    private static final ModConfigSpec.DoubleValue GLIMMER_KRAKEN_HEALTH_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue GLIMMER_KRAKEN_DAMAGE_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue GLIMMER_KRAKEN_COOLDOWN_MULTIPLIER;
     private static final ModConfigSpec.DoubleValue  KRAKEN_ATTACK_DAMAGE;
     private static final ModConfigSpec.BooleanValue KRAKEN_SQUID_SPAWN_ENABLED;
     private static final ModConfigSpec.BooleanValue KRAKEN_MASS_SPAWN_ENABLED;
@@ -95,6 +101,12 @@ public final class AntarchyMobsConfig {
 
     private static final ModConfigSpec.DoubleValue KING_HEALTH;
     private static final ModConfigSpec.DoubleValue QUEEN_HEALTH;
+    private static final ModConfigSpec.DoubleValue GLIMMER_KING_HEALTH_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue GLIMMER_KING_DAMAGE_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue GLIMMER_KING_COOLDOWN_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue GLIMMER_QUEEN_HEALTH_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue GLIMMER_QUEEN_DAMAGE_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue GLIMMER_QUEEN_COOLDOWN_MULTIPLIER;
     private static final ModConfigSpec.DoubleValue KING_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue QUEEN_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue ROYAL_BOSS_ARMOR;
@@ -147,6 +159,9 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue PRINCESS_FOLLOW_RANGE;
 
     private static final ModConfigSpec.DoubleValue BRUTALFLY_HEALTH;
+    private static final ModConfigSpec.DoubleValue GLIMMER_BRUTALFLY_HEALTH_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue GLIMMER_BRUTALFLY_DAMAGE_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue GLIMMER_BRUTALFLY_COOLDOWN_MULTIPLIER;
     private static final ModConfigSpec.DoubleValue BRUTALFLY_SWIPE_DAMAGE;
     private static final ModConfigSpec.DoubleValue BRUTALFLY_SPIT_DAMAGE;
     private static final ModConfigSpec.DoubleValue BRUTALFLY_DAMAGE_RANGE;
@@ -169,6 +184,9 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.IntValue    ALPHA_MANTIS_SUMMON_INTERVAL_TICKS;
     private static final ModConfigSpec.IntValue    ALPHA_MANTIS_MAX_MINIONS;
     private static final ModConfigSpec.DoubleValue ALPHA_MANTIS_DAMAGE_RANGE;
+    private static final ModConfigSpec.DoubleValue GLIMMER_ALPHA_MANTIS_HEALTH_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue GLIMMER_ALPHA_MANTIS_DAMAGE_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue GLIMMER_ALPHA_MANTIS_COOLDOWN_MULTIPLIER;
 
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_HEALTH;
     private static final ModConfigSpec.DoubleValue ROLLY_POLLY_MOVEMENT_SPEED;
@@ -273,6 +291,9 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.IntValue     BASILISK_PREY_PETRIFY_TICKS;
 
     private static final ModConfigSpec.DoubleValue  TORETERROR_HEALTH;
+    private static final ModConfigSpec.DoubleValue  GLIMMER_TORETERROR_HEALTH_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue  GLIMMER_TORETERROR_DAMAGE_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue  GLIMMER_TORETERROR_COOLDOWN_MULTIPLIER;
     private static final ModConfigSpec.DoubleValue  TORETERROR_DAMAGE_RANGE;
     private static final ModConfigSpec.DoubleValue  TORETERROR_JUMP_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue  TORETERROR_JUMP_ATTACK_KNOCKBACK;
@@ -316,6 +337,9 @@ public final class AntarchyMobsConfig {
     private static final ModConfigSpec.DoubleValue GLIMMER_HEALTH;
 
     private static final ModConfigSpec.DoubleValue HERCULES_BEETLE_HEALTH;
+    private static final ModConfigSpec.DoubleValue GLIMMER_HERCULES_BEETLE_HEALTH_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue GLIMMER_HERCULES_BEETLE_DAMAGE_MULTIPLIER;
+    private static final ModConfigSpec.DoubleValue GLIMMER_HERCULES_BEETLE_COOLDOWN_MULTIPLIER;
     private static final ModConfigSpec.DoubleValue HERCULES_BEETLE_ATTACK_DAMAGE;
     private static final ModConfigSpec.DoubleValue HERCULES_BEETLE_CHARGE_DAMAGE;
     private static final ModConfigSpec.DoubleValue HERCULES_BEETLE_DAMAGE_RANGE;
@@ -470,6 +494,9 @@ public final class AntarchyMobsConfig {
 
         b.push("emperorScorpion");
         EMPEROR_SCORPION_HEALTH = b.comment("Base max health.").defineInRange("health", 300.0D, 1.0D, 32768.0D);
+        GLIMMER_EMPEROR_SCORPION_HEALTH_MULTIPLIER = b.defineInRange("glimmerHealthMultiplier", 1.75D, 0.1D, 100.0D);
+        GLIMMER_EMPEROR_SCORPION_DAMAGE_MULTIPLIER = b.defineInRange("glimmerDamageMultiplier", 1.35D, 0.0D, 100.0D);
+        GLIMMER_EMPEROR_SCORPION_COOLDOWN_MULTIPLIER = b.defineInRange("glimmerCooldownMultiplier", 0.65D, 0.0D, 10.0D);
         EMPEROR_SCORPION_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 28.0D, 0.0D, 1024.0D);
         EMPEROR_SCORPION_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.384D, 0.0D, 10.0D);
         EMPEROR_SCORPION_ARMOR = b.comment("Base armor value.").defineInRange("armor", 22.0D, 0.0D, 1024.0D);
@@ -506,6 +533,9 @@ public final class AntarchyMobsConfig {
 
         b.push("kraken");
         KRAKEN_HEALTH                            = b.comment("Base max health.")                                                                                            .defineInRange("health",                          1500.0D, 1.0D, 32768.0D);
+        GLIMMER_KRAKEN_HEALTH_MULTIPLIER = b.defineInRange("glimmerHealthMultiplier", 1.75D, 0.1D, 100.0D);
+        GLIMMER_KRAKEN_DAMAGE_MULTIPLIER = b.defineInRange("glimmerDamageMultiplier", 1.35D, 0.0D, 100.0D);
+        GLIMMER_KRAKEN_COOLDOWN_MULTIPLIER = b.defineInRange("glimmerCooldownMultiplier", 0.65D, 0.05D, 10.0D);
         KRAKEN_ATTACK_DAMAGE                     = b.comment("Base attack damage.")                                                                                         .defineInRange("attackDamage",                     45.0D,  0.0D, 1024.0D);
         KRAKEN_SQUID_SPAWN_ENABLED               = b.comment("If true, a player killing a Missile Squid has a 1/100 chance to spawn a single Kraken nearby.")                       .define("squidSpawnEnabled",  true);
         KRAKEN_MASS_SPAWN_ENABLED                = b.comment("If true, a player killing a Missile Squid has a 1/500 chance to spawn 10 Krakens. Independent from the single spawn.").define("massSpawnEnabled",  true);
@@ -522,7 +552,13 @@ public final class AntarchyMobsConfig {
 
         b.push("royalBosses");
         KING_HEALTH = b.comment("Base max health for the King.").defineInRange("kingHealth", 3400.0D, 1.0D, 32768.0D);
+        GLIMMER_KING_HEALTH_MULTIPLIER = b.defineInRange("glimmerKingHealthMultiplier", 1.75D, 0.1D, 100.0D);
+        GLIMMER_KING_DAMAGE_MULTIPLIER = b.defineInRange("glimmerKingDamageMultiplier", 1.35D, 0.0D, 100.0D);
+        GLIMMER_KING_COOLDOWN_MULTIPLIER = b.defineInRange("glimmerKingCooldownMultiplier", 0.65D, 0.05D, 10.0D);
         QUEEN_HEALTH = b.comment("Base max health for the Queen.").defineInRange("queenHealth", 4300.0D, 1.0D, 32768.0D);
+        GLIMMER_QUEEN_HEALTH_MULTIPLIER = b.defineInRange("glimmerQueenHealthMultiplier", 1.75D, 0.1D, 100.0D);
+        GLIMMER_QUEEN_DAMAGE_MULTIPLIER = b.defineInRange("glimmerQueenDamageMultiplier", 1.35D, 0.0D, 100.0D);
+        GLIMMER_QUEEN_COOLDOWN_MULTIPLIER = b.defineInRange("glimmerQueenCooldownMultiplier", 0.65D, 0.05D, 10.0D);
         KING_ATTACK_DAMAGE = b.comment("Base attack damage for the King.").defineInRange("kingAttackDamage", 50.0D, 0.0D, 1024.0D);
         QUEEN_ATTACK_DAMAGE = b.comment("Base attack damage for the Queen.").defineInRange("queenAttackDamage", 45.0D, 0.0D, 1024.0D);
         ROYAL_BOSS_ARMOR = b.comment("Base armor value shared by King and Queen.").defineInRange("armor", 20.0D, 0.0D, 1024.0D);
@@ -610,6 +646,9 @@ public final class AntarchyMobsConfig {
 
         b.push("brutalfly");
         BRUTALFLY_HEALTH      = b.comment("Base max health.")                                          .defineInRange("health",      200.0D, 1.0D, 32768.0D);
+        GLIMMER_BRUTALFLY_HEALTH_MULTIPLIER = b.defineInRange("glimmerHealthMultiplier", 1.75D, 0.1D, 100.0D);
+        GLIMMER_BRUTALFLY_DAMAGE_MULTIPLIER = b.defineInRange("glimmerDamageMultiplier", 1.35D, 0.0D, 100.0D);
+        GLIMMER_BRUTALFLY_COOLDOWN_MULTIPLIER = b.defineInRange("glimmerCooldownMultiplier", 0.65D, 0.05D, 10.0D);
         BRUTALFLY_SWIPE_DAMAGE = b.comment("Damage dealt by a claw swipe.")                           .defineInRange("swipeDamage",  15.0D, 0.0D, 1024.0D);
         BRUTALFLY_SPIT_DAMAGE  = b.comment("Direct hit damage from a spit orb before lingering effect.").defineInRange("spitDamage",   5.0D, 0.0D, 1024.0D);
         BRUTALFLY_DAMAGE_RANGE = b.comment("Range in blocks a player must be within for the Brutalfly to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
@@ -636,6 +675,9 @@ public final class AntarchyMobsConfig {
         ALPHA_MANTIS_SUMMON_INTERVAL_TICKS = b.comment("Ticks between mantis minion summons while in combat.")          .defineInRange("summonIntervalTicks",   300, 20, 72000);
         ALPHA_MANTIS_MAX_MINIONS           = b.comment("Maximum summoned mantises alive near the alpha at once.")       .defineInRange("maxMinions",              4, 0, 32);
         ALPHA_MANTIS_DAMAGE_RANGE          = b.comment("Range in blocks a player must be within for the Alpha Mantis to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
+        GLIMMER_ALPHA_MANTIS_HEALTH_MULTIPLIER = b.defineInRange("glimmerHealthMultiplier", 1.75D, 0.1D, 100.0D);
+        GLIMMER_ALPHA_MANTIS_DAMAGE_MULTIPLIER = b.defineInRange("glimmerDamageMultiplier", 1.35D, 0.0D, 100.0D);
+        GLIMMER_ALPHA_MANTIS_COOLDOWN_MULTIPLIER = b.defineInRange("glimmerCooldownMultiplier", 0.65D, 0.0D, 10.0D);
         b.pop();
 
         b.push("rollyPolly");
@@ -886,6 +928,9 @@ public final class AntarchyMobsConfig {
 
         b.push("herculesBeetle");
         HERCULES_BEETLE_HEALTH = b.comment("Base max health.").defineInRange("health", 500.0D, 1.0D, 32768.0D);
+        GLIMMER_HERCULES_BEETLE_HEALTH_MULTIPLIER = b.defineInRange("glimmerHealthMultiplier", 1.75D, 0.1D, 100.0D);
+        GLIMMER_HERCULES_BEETLE_DAMAGE_MULTIPLIER = b.defineInRange("glimmerDamageMultiplier", 1.35D, 0.0D, 100.0D);
+        GLIMMER_HERCULES_BEETLE_COOLDOWN_MULTIPLIER = b.defineInRange("glimmerCooldownMultiplier", 0.65D, 0.05D, 10.0D);
         HERCULES_BEETLE_ATTACK_DAMAGE = b.comment("Base melee damage for ground and flying attacks.").defineInRange("attackDamage", 30.0D, 0.0D, 1024.0D);
         HERCULES_BEETLE_CHARGE_DAMAGE = b.comment("AOE impact damage dealt when a charge collides.").defineInRange("chargeDamage", 40.0D, 0.0D, 1024.0D);
         HERCULES_BEETLE_DAMAGE_RANGE = b.comment("Range in blocks a player must be within for the Hercules Beetle to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
@@ -893,6 +938,9 @@ public final class AntarchyMobsConfig {
 
         b.push("toreterror");
         TORETERROR_HEALTH                  = b.comment("Base max health.").defineInRange("health", 300.0D, 1.0D, 32768.0D);
+        GLIMMER_TORETERROR_HEALTH_MULTIPLIER = b.defineInRange("glimmerHealthMultiplier", 1.75D, 0.1D, 100.0D);
+        GLIMMER_TORETERROR_DAMAGE_MULTIPLIER = b.defineInRange("glimmerDamageMultiplier", 1.35D, 0.0D, 100.0D);
+        GLIMMER_TORETERROR_COOLDOWN_MULTIPLIER = b.defineInRange("glimmerCooldownMultiplier", 0.65D, 0.0D, 10.0D);
         TORETERROR_DAMAGE_RANGE            = b.comment("Range in blocks a player must be within for the Toreterror to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
         TORETERROR_JUMP_ATTACK_DAMAGE      = b.comment("Damage dealt by the jump shockwave.").defineInRange("jumpAttackDamage", 14.0D, 0.0D, 1024.0D);
         TORETERROR_JUMP_ATTACK_KNOCKBACK   = b.comment("Knockback strength of the jump shockwave.").defineInRange("jumpAttackKnockback", 2.5D, 0.0D, 10.0D);
@@ -996,6 +1044,9 @@ public final class AntarchyMobsConfig {
     static double  springbugCamouflageAlpha()                { return SPRINGBUG_CAMOUFLAGE_ALPHA.get(); }
 
     static double  emperorScorpionHealth()                  { return EMPEROR_SCORPION_HEALTH.get(); }
+    static double  glimmerEmperorScorpionHealthMultiplier() { return GLIMMER_EMPEROR_SCORPION_HEALTH_MULTIPLIER.get(); }
+    static double  glimmerEmperorScorpionDamageMultiplier()  { return GLIMMER_EMPEROR_SCORPION_DAMAGE_MULTIPLIER.get(); }
+    static double  glimmerEmperorScorpionCooldownMultiplier() { return GLIMMER_EMPEROR_SCORPION_COOLDOWN_MULTIPLIER.get(); }
     static double  emperorScorpionAttackDamage()             { return EMPEROR_SCORPION_ATTACK_DAMAGE.get(); }
     static double  emperorScorpionMovementSpeed()            { return EMPEROR_SCORPION_MOVEMENT_SPEED.get(); }
     static double  emperorScorpionArmor()                    { return EMPEROR_SCORPION_ARMOR.get(); }
@@ -1024,6 +1075,9 @@ public final class AntarchyMobsConfig {
     static double  scorpionKnockbackResistance()             { return SCORPION_KNOCKBACK_RESISTANCE.get(); }
 
     static double  krakenHealth()                           { return KRAKEN_HEALTH.get(); }
+    static double  glimmerKrakenHealthMultiplier() { return GLIMMER_KRAKEN_HEALTH_MULTIPLIER.get(); }
+    static double  glimmerKrakenDamageMultiplier() { return GLIMMER_KRAKEN_DAMAGE_MULTIPLIER.get(); }
+    static double  glimmerKrakenCooldownMultiplier() { return GLIMMER_KRAKEN_COOLDOWN_MULTIPLIER.get(); }
     static double  krakenAttackDamage()                     { return KRAKEN_ATTACK_DAMAGE.get(); }
     static boolean krakenSquidSpawnEnabled()                { return KRAKEN_SQUID_SPAWN_ENABLED.get(); }
     static boolean krakenMassSpawnEnabled()                 { return KRAKEN_MASS_SPAWN_ENABLED.get(); }
@@ -1038,7 +1092,13 @@ public final class AntarchyMobsConfig {
     static float   krakenLightningDamagePhaseOne()          { return KRAKEN_LIGHTNING_DAMAGE_PHASE_ONE.get().floatValue(); }
 
     static double  kingHealth()                             { return KING_HEALTH.get(); }
+    static double  glimmerKingHealthMultiplier() { return GLIMMER_KING_HEALTH_MULTIPLIER.get(); }
+    static double  glimmerKingDamageMultiplier() { return GLIMMER_KING_DAMAGE_MULTIPLIER.get(); }
+    static double  glimmerKingCooldownMultiplier() { return GLIMMER_KING_COOLDOWN_MULTIPLIER.get(); }
     static double  queenHealth()                            { return QUEEN_HEALTH.get(); }
+    static double  glimmerQueenHealthMultiplier() { return GLIMMER_QUEEN_HEALTH_MULTIPLIER.get(); }
+    static double  glimmerQueenDamageMultiplier() { return GLIMMER_QUEEN_DAMAGE_MULTIPLIER.get(); }
+    static double  glimmerQueenCooldownMultiplier() { return GLIMMER_QUEEN_COOLDOWN_MULTIPLIER.get(); }
     static double  kingAttackDamage()                       { return KING_ATTACK_DAMAGE.get(); }
     static double  queenAttackDamage()                      { return QUEEN_ATTACK_DAMAGE.get(); }
     static double  royalBossArmor()                         { return ROYAL_BOSS_ARMOR.get(); }
@@ -1122,6 +1182,9 @@ public final class AntarchyMobsConfig {
     static double  princessFollowRange()                    { return PRINCESS_FOLLOW_RANGE.get(); }
 
     static double  brutalflyHealth()                        { return BRUTALFLY_HEALTH.get(); }
+    static double  glimmerBrutalflyHealthMultiplier()       { return GLIMMER_BRUTALFLY_HEALTH_MULTIPLIER.get(); }
+    static double  glimmerBrutalflyDamageMultiplier()       { return GLIMMER_BRUTALFLY_DAMAGE_MULTIPLIER.get(); }
+    static double  glimmerBrutalflyCooldownMultiplier()     { return GLIMMER_BRUTALFLY_COOLDOWN_MULTIPLIER.get(); }
     static double  brutalflySwipeDamage()                   { return BRUTALFLY_SWIPE_DAMAGE.get(); }
     static double  brutalflySpitDamage()                    { return BRUTALFLY_SPIT_DAMAGE.get(); }
     static double  brutalflyDamageRange()                   { return BRUTALFLY_DAMAGE_RANGE.get(); }
@@ -1143,6 +1206,9 @@ public final class AntarchyMobsConfig {
     static int     alphaMantisSummonIntervalTicks()         { return ALPHA_MANTIS_SUMMON_INTERVAL_TICKS.get(); }
     static int     alphaMantisMaxMinions()                  { return ALPHA_MANTIS_MAX_MINIONS.get(); }
     static double  alphaMantisDamageRange()                 { return ALPHA_MANTIS_DAMAGE_RANGE.get(); }
+    static double  glimmerAlphaMantisHealthMultiplier()     { return GLIMMER_ALPHA_MANTIS_HEALTH_MULTIPLIER.get(); }
+    static double  glimmerAlphaMantisDamageMultiplier()     { return GLIMMER_ALPHA_MANTIS_DAMAGE_MULTIPLIER.get(); }
+    static double  glimmerAlphaMantisCooldownMultiplier()   { return GLIMMER_ALPHA_MANTIS_COOLDOWN_MULTIPLIER.get(); }
     static double  rollyPollyHealth()                       { return ROLLY_POLLY_HEALTH.get(); }
     static double  rollyPollyMovementSpeed()                { return ROLLY_POLLY_MOVEMENT_SPEED.get(); }
     static double  rollyPollyRollSpeedMultiplier()          { return ROLLY_POLLY_ROLL_SPEED_MULTIPLIER.get(); }
@@ -1231,6 +1297,9 @@ public final class AntarchyMobsConfig {
     static double  vortexLensLaunchStrength()               { return VORTEX_LENS_LAUNCH_STRENGTH.get(); }
 
     static double  toreterrorHealth()                       { return TORETERROR_HEALTH.get(); }
+    static double  glimmerToreterrorHealthMultiplier()      { return GLIMMER_TORETERROR_HEALTH_MULTIPLIER.get(); }
+    static double  glimmerToreterrorDamageMultiplier()      { return GLIMMER_TORETERROR_DAMAGE_MULTIPLIER.get(); }
+    static double  glimmerToreterrorCooldownMultiplier()    { return GLIMMER_TORETERROR_COOLDOWN_MULTIPLIER.get(); }
     static double  toreterrorDamageRange()                  { return TORETERROR_DAMAGE_RANGE.get(); }
     static double  toreterrorJumpAttackDamage()             { return TORETERROR_JUMP_ATTACK_DAMAGE.get(); }
     static double  toreterrorJumpAttackKnockback()          { return TORETERROR_JUMP_ATTACK_KNOCKBACK.get(); }
@@ -1274,6 +1343,9 @@ public final class AntarchyMobsConfig {
     static double  ouranwoodDeerHealth()                    { return OURANWOOD_DEER_HEALTH.get(); }
     static double  glimmerHealth()                          { return GLIMMER_HEALTH.get(); }
     static double  herculesBeetleHealth()                   { return HERCULES_BEETLE_HEALTH.get(); }
+    static double  glimmerHerculesBeetleHealthMultiplier() { return GLIMMER_HERCULES_BEETLE_HEALTH_MULTIPLIER.get(); }
+    static double  glimmerHerculesBeetleDamageMultiplier() { return GLIMMER_HERCULES_BEETLE_DAMAGE_MULTIPLIER.get(); }
+    static double  glimmerHerculesBeetleCooldownMultiplier() { return GLIMMER_HERCULES_BEETLE_COOLDOWN_MULTIPLIER.get(); }
     static double  herculesBeetleAttackDamage()             { return HERCULES_BEETLE_ATTACK_DAMAGE.get(); }
     static double  herculesBeetleChargeDamage()             { return HERCULES_BEETLE_CHARGE_DAMAGE.get(); }
     static double  herculesBeetleDamageRange()              { return HERCULES_BEETLE_DAMAGE_RANGE.get(); }

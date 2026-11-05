@@ -22,6 +22,7 @@ public final class PortalGunServerEvents {
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof net.minecraft.server.level.ServerPlayer player) {
             com.craisinlord.antarchy.content.portalgun.PortalGunSavedData.clearMissingGuns(player);
+            com.craisinlord.antarchy.content.migration.DimensionResetManager.onPlayerJoin(player);
         }
     }
 }

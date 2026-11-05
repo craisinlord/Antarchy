@@ -6,12 +6,8 @@ import com.craisinlord.antarchy.content.entity.ant.BrownAntEntity;
 import com.craisinlord.antarchy.content.entity.ant.RedAntEntity;
 import com.craisinlord.antarchy.content.entity.ant.TermiteEntity;
 import com.craisinlord.antarchy.Antarchy;
-import com.craisinlord.antarchy.mixins.PoiTypesAccessor;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
@@ -20,7 +16,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public enum PermanentPortalType {
@@ -106,17 +101,6 @@ public enum PermanentPortalType {
 
     public ResourceKey<PoiType> poiKey() {
         return ResourceKey.create(Registries.POINT_OF_INTEREST_TYPE, Identifier.fromNamespaceAndPath(Antarchy.MODID, this.id + "_portal"));
-    }
-
-    public static void registerPoiStates(Registry<PoiType> registry) {
-        Map<BlockState, Holder<PoiType>> stateMap = PoiTypesAccessor.antarchy$getTypeByState();
-        for (PermanentPortalType type : values()) {
-            registry.get(type.poiKey()).ifPresent(poi -> {
-                for (BlockState state : type.portalBlock().getStateDefinition().getPossibleStates()) {
-                    stateMap.putIfAbsent(state, poi);
-                }
-            });
-        }
     }
 
     public TagKey<Block> frameTag() {

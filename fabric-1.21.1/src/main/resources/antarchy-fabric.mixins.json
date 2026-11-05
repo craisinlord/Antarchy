@@ -4,7 +4,6 @@
   "refmap": "antarchy.mixins.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "AntiwaterLivingEntityMixin",
     "AntiwaterItemEntityMixin",
     "LivingEntityJumpingAccessor",
     "WaterlikeFluidLivingEntityMixin",

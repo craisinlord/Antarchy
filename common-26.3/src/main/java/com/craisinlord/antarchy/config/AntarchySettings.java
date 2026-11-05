@@ -124,12 +124,25 @@ public final class AntarchySettings {
     private static ResourceKey<Level> brownAntDestinationDimension = dimensionKey("antarchy:elythia");
     private static ResourceKey<Level> redAntDestinationDimension = dimensionKey("antarchy:thoraxis");
     private static ResourceKey<Level> termiteDestinationDimension = dimensionKey("antarchy:cavaryn");
+    private static boolean brownAntDescent = true;
+    private static boolean redAntFlip = true;
+    private static boolean termiteBurrow = true;
+    private static boolean rainbowAntPrism = true;
     private static ResourceKey<Level> rainbowAntNonInfinityFallbackDimension = dimensionKey("antarchy:elythia");
     private static double krakenHealth = 1800.0D;
+    private static double glimmerKrakenHealthMultiplier = 1.75D;
+    private static double glimmerKrakenDamageMultiplier = 1.35D;
+    private static double glimmerKrakenCooldownMultiplier = 0.65D;
     private static double krakenAttackDamage = 45.0D;
     private static double octopusBombHealth = 100.0D;
     private static double octopusBombAttackDamage = 16.0D;
     private static double brutalflyHealth = 500.0D;
+    private static double glimmerBrutalflyHealthMultiplier = 1.75D;
+    private static double glimmerBrutalflyDamageMultiplier = 1.35D;
+    private static double glimmerBrutalflyCooldownMultiplier = 0.65D;
+    private static double glimmerHerculesBeetleHealthMultiplier = 1.75D;
+    private static double glimmerHerculesBeetleDamageMultiplier = 1.35D;
+    private static double glimmerHerculesBeetleCooldownMultiplier = 0.65D;
     private static double brutalflySwipeDamage = 15.0D;
     private static double brutalflySpitDamage = 5.0D;
     private static double mantisHealth = 50.0D;
@@ -282,7 +295,13 @@ public final class AntarchySettings {
     private static double princessKnockbackResistance = 0.5D;
     private static double princessFollowRange = 48.0D;
     private static double kingHealth = 3400.0D;
+    private static double glimmerKingHealthMultiplier = 1.75D;
+    private static double glimmerKingDamageMultiplier = 1.35D;
+    private static double glimmerKingCooldownMultiplier = 0.65D;
     private static double queenHealth = 4300.0D;
+    private static double glimmerQueenHealthMultiplier = 1.75D;
+    private static double glimmerQueenDamageMultiplier = 1.35D;
+    private static double glimmerQueenCooldownMultiplier = 0.65D;
     private static double kingAttackDamage = 50.0D;
     private static double queenAttackDamage = 45.0D;
     private static double royalBossSoundVolume = 4.5D;
@@ -400,6 +419,9 @@ public final class AntarchySettings {
     private static final int     reverieAmbientPulseIntervalMinTicks = 12;
     private static final int     reverieAmbientPulseIntervalMaxTicks = 19;
     private static double emperorScorpionHealth = 420.0D;
+    private static double glimmerEmperorScorpionHealthMultiplier = 1.75D;
+    private static double glimmerEmperorScorpionDamageMultiplier = 1.35D;
+    private static double glimmerEmperorScorpionCooldownMultiplier = 0.65D;
     private static double emperorScorpionAttackDamage = 28.0D;
     private static double emperorScorpionMovementSpeed = 0.384D;
     private static double emperorScorpionArmor = 22.0D;
@@ -585,6 +607,12 @@ public final class AntarchySettings {
     private static int bloodCrystalLeggingsDurability = 126;
     private static int bloodCrystalBootsDurability = 109;
     private static double toreterrorHealth = 450.0D;
+    private static double glimmerToreterrorHealthMultiplier = 1.75D;
+    private static double glimmerToreterrorDamageMultiplier = 1.35D;
+    private static double glimmerToreterrorCooldownMultiplier = 0.65D;
+    private static double glimmerAlphaMantisHealthMultiplier = 1.75D;
+    private static double glimmerAlphaMantisDamageMultiplier = 1.35D;
+    private static double glimmerAlphaMantisCooldownMultiplier = 0.65D;
     private static double toreterrorJumpAttackDamage = 14.0D;
     private static double toreterrorJumpAttackKnockback = 2.5D;
     private static double toreterrorSpinDamage = 6.0D;
@@ -1054,6 +1082,11 @@ public final class AntarchySettings {
         return termiteDestinationDimension;
     }
 
+    public static boolean brownAntDescent() { return brownAntDescent; }
+    public static boolean redAntFlip() { return redAntFlip; }
+    public static boolean termiteBurrow() { return termiteBurrow; }
+    public static boolean rainbowAntPrism() { return rainbowAntPrism; }
+
     public static ResourceKey<Level> rainbowAntNonInfinityFallbackDimension() {
         return rainbowAntNonInfinityFallbackDimension;
     }
@@ -1061,6 +1094,13 @@ public final class AntarchySettings {
     public static double krakenHealth() {
         return krakenHealth;
     }
+
+    public static double glimmerKrakenHealthMultiplier() { return glimmerKrakenHealthMultiplier; }
+    public static void setGlimmerKrakenHealthMultiplier(double value) { glimmerKrakenHealthMultiplier = value; }
+    public static double glimmerKrakenDamageMultiplier() { return glimmerKrakenDamageMultiplier; }
+    public static void setGlimmerKrakenDamageMultiplier(double value) { glimmerKrakenDamageMultiplier = value; }
+    public static double glimmerKrakenCooldownMultiplier() { return glimmerKrakenCooldownMultiplier; }
+    public static void setGlimmerKrakenCooldownMultiplier(double value) { glimmerKrakenCooldownMultiplier = value; }
 
     public static double krakenAttackDamage() {
         return krakenAttackDamage;
@@ -1091,6 +1131,19 @@ public final class AntarchySettings {
     public static double brutalflyHealth() {
         return brutalflyHealth;
     }
+
+    public static double glimmerBrutalflyHealthMultiplier() { return glimmerBrutalflyHealthMultiplier; }
+    public static void setGlimmerBrutalflyHealthMultiplier(double value) { glimmerBrutalflyHealthMultiplier = value; }
+    public static double glimmerBrutalflyDamageMultiplier() { return glimmerBrutalflyDamageMultiplier; }
+    public static void setGlimmerBrutalflyDamageMultiplier(double value) { glimmerBrutalflyDamageMultiplier = value; }
+    public static double glimmerBrutalflyCooldownMultiplier() { return glimmerBrutalflyCooldownMultiplier; }
+    public static void setGlimmerBrutalflyCooldownMultiplier(double value) { glimmerBrutalflyCooldownMultiplier = value; }
+    public static double glimmerHerculesBeetleHealthMultiplier() { return glimmerHerculesBeetleHealthMultiplier; }
+    public static void setGlimmerHerculesBeetleHealthMultiplier(double value) { glimmerHerculesBeetleHealthMultiplier = value; }
+    public static double glimmerHerculesBeetleDamageMultiplier() { return glimmerHerculesBeetleDamageMultiplier; }
+    public static void setGlimmerHerculesBeetleDamageMultiplier(double value) { glimmerHerculesBeetleDamageMultiplier = value; }
+    public static double glimmerHerculesBeetleCooldownMultiplier() { return glimmerHerculesBeetleCooldownMultiplier; }
+    public static void setGlimmerHerculesBeetleCooldownMultiplier(double value) { glimmerHerculesBeetleCooldownMultiplier = value; }
 
     public static double brutalflySwipeDamage() {
         return brutalflySwipeDamage;
@@ -1730,6 +1783,11 @@ public final class AntarchySettings {
         termiteDestinationDimension = dimensionKey(value);
     }
 
+    public static void setBrownAntDescent(boolean value) { brownAntDescent = value; }
+    public static void setRedAntFlip(boolean value) { redAntFlip = value; }
+    public static void setTermiteBurrow(boolean value) { termiteBurrow = value; }
+    public static void setRainbowAntPrism(boolean value) { rainbowAntPrism = value; }
+
     public static void setRainbowAntNonInfinityFallbackDimension(String value) {
         rainbowAntNonInfinityFallbackDimension = dimensionKey(value);
     }
@@ -2227,8 +2285,20 @@ public final class AntarchySettings {
 
     public static double kingHealth() { return kingHealth; }
     public static void setKingHealth(double v) { kingHealth = v; }
+    public static double glimmerKingHealthMultiplier() { return glimmerKingHealthMultiplier; }
+    public static void setGlimmerKingHealthMultiplier(double value) { glimmerKingHealthMultiplier = value; }
+    public static double glimmerKingDamageMultiplier() { return glimmerKingDamageMultiplier; }
+    public static void setGlimmerKingDamageMultiplier(double value) { glimmerKingDamageMultiplier = value; }
+    public static double glimmerKingCooldownMultiplier() { return glimmerKingCooldownMultiplier; }
+    public static void setGlimmerKingCooldownMultiplier(double value) { glimmerKingCooldownMultiplier = value; }
 
     public static double queenHealth() { return queenHealth; }
+    public static double glimmerQueenHealthMultiplier() { return glimmerQueenHealthMultiplier; }
+    public static void setGlimmerQueenHealthMultiplier(double value) { glimmerQueenHealthMultiplier = value; }
+    public static double glimmerQueenDamageMultiplier() { return glimmerQueenDamageMultiplier; }
+    public static void setGlimmerQueenDamageMultiplier(double value) { glimmerQueenDamageMultiplier = value; }
+    public static double glimmerQueenCooldownMultiplier() { return glimmerQueenCooldownMultiplier; }
+    public static void setGlimmerQueenCooldownMultiplier(double value) { glimmerQueenCooldownMultiplier = value; }
     public static void setQueenHealth(double v) { queenHealth = v; }
 
     public static double kingAttackDamage() { return kingAttackDamage; }
@@ -2581,6 +2651,12 @@ public final class AntarchySettings {
 
     public static double emperorScorpionHealth() { return emperorScorpionHealth; }
     public static void setEmperorScorpionHealth(double value) { emperorScorpionHealth = value; }
+    public static double glimmerEmperorScorpionHealthMultiplier() { return glimmerEmperorScorpionHealthMultiplier; }
+    public static void setGlimmerEmperorScorpionHealthMultiplier(double value) { glimmerEmperorScorpionHealthMultiplier = value; }
+    public static double glimmerEmperorScorpionDamageMultiplier() { return glimmerEmperorScorpionDamageMultiplier; }
+    public static void setGlimmerEmperorScorpionDamageMultiplier(double value) { glimmerEmperorScorpionDamageMultiplier = value; }
+    public static double glimmerEmperorScorpionCooldownMultiplier() { return glimmerEmperorScorpionCooldownMultiplier; }
+    public static void setGlimmerEmperorScorpionCooldownMultiplier(double value) { glimmerEmperorScorpionCooldownMultiplier = value; }
 
     public static double scorpionWhipBaseDamage() { return scorpionWhipBaseDamage; }
     public static void setScorpionWhipBaseDamage(double value) { scorpionWhipBaseDamage = value; }
@@ -3062,6 +3138,18 @@ public final class AntarchySettings {
 
     public static double toreterrorHealth() { return toreterrorHealth; }
     public static void setToreterrorHealth(double v) { toreterrorHealth = v; }
+    public static double glimmerToreterrorHealthMultiplier() { return glimmerToreterrorHealthMultiplier; }
+    public static void setGlimmerToreterrorHealthMultiplier(double v) { glimmerToreterrorHealthMultiplier = v; }
+    public static double glimmerToreterrorDamageMultiplier() { return glimmerToreterrorDamageMultiplier; }
+    public static void setGlimmerToreterrorDamageMultiplier(double v) { glimmerToreterrorDamageMultiplier = v; }
+    public static double glimmerToreterrorCooldownMultiplier() { return glimmerToreterrorCooldownMultiplier; }
+    public static void setGlimmerToreterrorCooldownMultiplier(double v) { glimmerToreterrorCooldownMultiplier = v; }
+    public static double glimmerAlphaMantisHealthMultiplier() { return glimmerAlphaMantisHealthMultiplier; }
+    public static void setGlimmerAlphaMantisHealthMultiplier(double v) { glimmerAlphaMantisHealthMultiplier = v; }
+    public static double glimmerAlphaMantisDamageMultiplier() { return glimmerAlphaMantisDamageMultiplier; }
+    public static void setGlimmerAlphaMantisDamageMultiplier(double v) { glimmerAlphaMantisDamageMultiplier = v; }
+    public static double glimmerAlphaMantisCooldownMultiplier() { return glimmerAlphaMantisCooldownMultiplier; }
+    public static void setGlimmerAlphaMantisCooldownMultiplier(double v) { glimmerAlphaMantisCooldownMultiplier = v; }
     public static double toreterrorJumpAttackDamage() { return toreterrorJumpAttackDamage; }
     public static void setToreterrorJumpAttackDamage(double v) { toreterrorJumpAttackDamage = v; }
     public static double toreterrorJumpAttackKnockback() { return toreterrorJumpAttackKnockback; }
@@ -3235,6 +3323,21 @@ public final class AntarchySettings {
     private static boolean throwbackClassicFood = true;
     public static boolean throwbackClassicFood() { return throwbackClassicFood; }
     public static void setThrowbackClassicFood(boolean value) { throwbackClassicFood = value; }
+    private static boolean throwbackClassicMusic = true;
+    public static boolean throwbackClassicMusic() { return throwbackClassicMusic; }
+    public static void setThrowbackClassicMusic(boolean value) { throwbackClassicMusic = value; }
+    private static boolean throwbackDenseFog = true;
+    public static boolean throwbackDenseFog() { return throwbackDenseFog; }
+    public static void setThrowbackDenseFog(boolean value) { throwbackDenseFog = value; }
+    private static boolean throwbackDreamHaze = true;
+    public static boolean throwbackDreamHaze() { return throwbackDreamHaze; }
+    public static void setThrowbackDreamHaze(boolean value) { throwbackDreamHaze = value; }
+    private static double throwbackDreamStrength = 1.0D;
+    public static double throwbackDreamStrength() { return throwbackDreamStrength; }
+    public static void setThrowbackDreamStrength(double value) { throwbackDreamStrength = value; }
+    private static boolean throwbackAfterimages = true;
+    public static boolean throwbackAfterimages() { return throwbackAfterimages; }
+    public static void setThrowbackAfterimages(boolean value) { throwbackAfterimages = value; }
     private static int throwbackStructureZoneRadius = 10;
     public static int throwbackStructureZoneRadius() { return throwbackStructureZoneRadius; }
     public static void setThrowbackStructureZoneRadius(int value) { throwbackStructureZoneRadius = value; }
@@ -3246,6 +3349,9 @@ public final class AntarchySettings {
     private static boolean elythiaEvents = true;
     public static boolean elythiaEvents() { return elythiaEvents; }
     public static void setElythiaEvents(boolean value) { elythiaEvents = value; }
+    private static boolean elythiaEchoes = true;
+    public static boolean elythiaEchoes() { return elythiaEchoes; }
+    public static void setElythiaEchoes(boolean value) { elythiaEchoes = value; }
 
     private static boolean thoraxisEvents = true;
     public static boolean thoraxisEvents() { return thoraxisEvents; }

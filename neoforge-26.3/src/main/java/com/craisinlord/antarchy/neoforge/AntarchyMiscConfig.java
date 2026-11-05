@@ -12,6 +12,7 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.BooleanValue ELYTHIA_GROUND_MIST_ENABLED;
     private static final ModConfigSpec.BooleanValue ELYTHIA_FOG_ENABLED;
     private static final ModConfigSpec.BooleanValue ELYTHIA_EVENTS;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_ECHOES;
     private static final ModConfigSpec.BooleanValue THORAXIS_EVENTS;
     private static final ModConfigSpec.BooleanValue ELYTHIA_RAIN_GROWTH;
     private static final ModConfigSpec.BooleanValue ELYTHIA_SOFT_CLOUDS_ENABLED;
@@ -19,6 +20,11 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.BooleanValue THROWBACK_NO_ATTACK_COOLDOWN;
     private static final ModConfigSpec.BooleanValue THROWBACK_CLASSIC_HURT_SOUND;
     private static final ModConfigSpec.BooleanValue THROWBACK_CLASSIC_FOOD;
+    private static final ModConfigSpec.BooleanValue THROWBACK_CLASSIC_MUSIC;
+    private static final ModConfigSpec.BooleanValue THROWBACK_DENSE_FOG;
+    private static final ModConfigSpec.BooleanValue THROWBACK_DREAM_HAZE;
+    private static final ModConfigSpec.DoubleValue THROWBACK_DREAM_STRENGTH;
+    private static final ModConfigSpec.BooleanValue THROWBACK_AFTERIMAGES;
     private static final ModConfigSpec.BooleanValue FOSSILS_ENABLED;
     private static final ModConfigSpec.ConfigValue<java.util.List<? extends String>> FOSSIL_ENTITY_BLACKLIST;
 
@@ -85,6 +91,7 @@ public final class AntarchyMiscConfig {
         ELYTHIA_GROUND_MIST_ENABLED = b.define("groundMistEnabled", true);
         ELYTHIA_FOG_ENABLED = b.define("fogEnabled", true);
         ELYTHIA_EVENTS = b.define("events", true);
+        ELYTHIA_ECHOES = b.define("echoes", true);
         THORAXIS_EVENTS = b.define("thoraxisEvents", true);
         ELYTHIA_RAIN_GROWTH = b.define("rainGrowth", true);
         ELYTHIA_SOFT_CLOUDS_ENABLED = b.define("softCloudsEnabled", true);
@@ -98,6 +105,11 @@ public final class AntarchyMiscConfig {
         THROWBACK_NO_ATTACK_COOLDOWN = b.define("noAttackCooldown", true);
         THROWBACK_CLASSIC_HURT_SOUND = b.define("classicHurtSound", true);
         THROWBACK_CLASSIC_FOOD = b.define("classicFood", true);
+        THROWBACK_CLASSIC_MUSIC = b.define("classicMusic", true);
+        THROWBACK_DENSE_FOG = b.define("denseFog", true);
+        THROWBACK_DREAM_HAZE = b.define("dreamHaze", true);
+        THROWBACK_DREAM_STRENGTH = b.defineInRange("dreamStrength", 1.0D, 0.0D, 1.0D);
+        THROWBACK_AFTERIMAGES = b.define("afterimages", true);
         b.pop();
 
         b.push("fossils");
@@ -243,6 +255,7 @@ public final class AntarchyMiscConfig {
     static double  hoverboardMaxSpeed()                  { return HOVERBOARD_MAX_SPEED.get(); }
     static double  hoverboardAcceleration()              { return HOVERBOARD_ACCELERATION.get(); }
     static boolean elythiaEvents() { return ELYTHIA_EVENTS.get(); }
+    static boolean elythiaEchoes() { return ELYTHIA_ECHOES.get(); }
     static boolean thoraxisEvents() { return THORAXIS_EVENTS.get(); }
     static boolean elythiaRainGrowth() { return ELYTHIA_RAIN_GROWTH.get(); }
     static boolean elythiaSoftCloudsEnabled() { return ELYTHIA_SOFT_CLOUDS_ENABLED.get(); }
@@ -250,6 +263,11 @@ public final class AntarchyMiscConfig {
     static boolean throwbackNoAttackCooldown() { return THROWBACK_NO_ATTACK_COOLDOWN.get(); }
     static boolean throwbackClassicHurtSound() { return THROWBACK_CLASSIC_HURT_SOUND.get(); }
     static boolean throwbackClassicFood() { return THROWBACK_CLASSIC_FOOD.get(); }
+    static boolean throwbackClassicMusic() { return THROWBACK_CLASSIC_MUSIC.get(); }
+    static boolean throwbackDenseFog() { return THROWBACK_DENSE_FOG.get(); }
+    static boolean throwbackDreamHaze() { return THROWBACK_DREAM_HAZE.get(); }
+    static double throwbackDreamStrength() { return THROWBACK_DREAM_STRENGTH.get(); }
+    static boolean throwbackAfterimages() { return THROWBACK_AFTERIMAGES.get(); }
     static boolean fossilsEnabled() { return FOSSILS_ENABLED.get(); }
     static String fossilEntityBlacklist() { return String.join(",", FOSSIL_ENTITY_BLACKLIST.get()); }
 

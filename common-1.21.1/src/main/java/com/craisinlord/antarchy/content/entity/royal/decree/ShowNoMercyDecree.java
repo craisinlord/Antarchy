@@ -11,4 +11,8 @@ public final class ShowNoMercyDecree implements RoyalDecree {
         return king.ticksSincePlayerDamage(target) > IDLE_DAMAGE_LIMIT_TICKS
                 ? Evaluation.VIOLATED : Evaluation.COMPLIANT;
     }
+    @Override
+    public int countdownTicks(KingEntity king, LivingEntity target) {
+        return (int) Math.max(0L, IDLE_DAMAGE_LIMIT_TICKS - king.ticksSincePlayerDamage(target));
+    }
 }

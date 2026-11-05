@@ -20,6 +20,7 @@ public interface GlimmerSite {
     String BIOME = "biome";
     String KINGS_TREE = "kings_tree";
     String UNDERSIDE = "underside";
+    String THORAXIS_SURFACE = "thoraxis_surface";
 
     Optional<Match> find(ServerLevel level, BlockPos pos);
 
@@ -43,6 +44,10 @@ public interface GlimmerSite {
 
     static GlimmerSite underside() {
         return new UndersideSite();
+    }
+
+    static GlimmerSite thoraxisSurface() {
+        return new ThoraxisSurfaceSite();
     }
 
     static GlimmerSite anyOf(GlimmerSite... sites) {
@@ -115,6 +120,19 @@ public interface GlimmerSite {
                 return Optional.empty();
             }
             return Optional.of(new Match(around(pos, HORIZONTAL, VERTICAL), UNDERSIDE, pos, pos));
+        }
+    }
+
+    record ThoraxisSurfaceSite() implements GlimmerSite {
+        private static final int HORIZONTAL = 32;
+        private static final int VERTICAL = 24;
+
+        @Override
+        public Optional<Match> find(ServerLevel level, BlockPos pos) {
+            if (!ThoraxisUndersideManager.isThoraxis(level) || pos.getY() < 0) {
+                return Optional.empty();
+            }
+            return Optional.of(new Match(around(pos, HORIZONTAL, VERTICAL), THORAXIS_SURFACE, pos, pos));
         }
     }
 

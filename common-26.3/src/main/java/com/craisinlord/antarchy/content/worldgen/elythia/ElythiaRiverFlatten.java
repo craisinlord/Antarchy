@@ -36,7 +36,7 @@ public record ElythiaRiverFlatten(DensityFunction argument, DensityFunction grad
     }
 
     @Override
-    public int domainAxes() { return DensityFunction.ALL_AXES; }
+    public int domainAxes() { return ElythiaField.planarAxes(this.argument, this.gradientX, this.gradientZ); }
 
     @Override
     public MapCodec<ElythiaRiverFlatten> codec() { return CODEC; }

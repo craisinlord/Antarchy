@@ -4,6 +4,7 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.boss.BossCombatUtil;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
@@ -13,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.Difficulty;
@@ -37,6 +39,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.List;
 
 public class AlphaMantisEntity extends MantisEntity {
     private static final double ALPHA_ATTACK_START_RANGE = 6.0D;
@@ -50,6 +53,14 @@ public class AlphaMantisEntity extends MantisEntity {
     private static final int RESET_DELAY_TICKS = 300;
     private static final double HOME_RETURN_SPEED = 1.05D;
     private static final int HOME_REPATH_INTERVAL_TICKS = 20;
+    private static final int BASE_XP_REWARD = 60;
+    private static final int GLIMMER_XP_REWARD = 300;
+    private static final int GLIMMER_EXTRA_MINIONS_PER_WAVE = 1;
+    private static final int GLIMMER_EXTRA_MAX_MINIONS = 2;
+    private static final double GLIMMER_PULSE_RADIUS = 8.0D;
+    private static final float GLIMMER_PULSE_DAMAGE_FRACTION = 0.5F;
+    private static final double GLIMMER_ABANDON_RANGE = 48.0D;
+    private static final int GLIMMER_ABANDON_TICKS = 600;
 
     private final ServerBossEvent bossEvent =
             new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this.getUUID(), Component.translatable("entity.antarchy.alpha_mantis"), BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.PROGRESS);
@@ -59,12 +70,13 @@ public class AlphaMantisEntity extends MantisEntity {
     private int disengageTicks;
     private int homeRepathCooldown;
     private boolean halfHealthTransitionComplete;
+    private int glimmerAbandonTicks;
     @Nullable
     private BlockPos encounterHome;
 
     public AlphaMantisEntity(EntityType<? extends AlphaMantisEntity> entityType, Level level) {
         super(entityType, level);
-        this.xpReward = 60;
+        this.xpReward = BASE_XP_REWARD;
         this.summonCooldownTicks = AntarchySettings.alphaMantisSummonIntervalTicks() / 2;
     }
 
@@ -180,12 +192,38 @@ public class AlphaMantisEntity extends MantisEntity {
 
     @Override
     protected double configuredMaxHealth() {
-        return AntarchySettings.alphaMantisHealth();
+        return AntarchySettings.alphaMantisHealth() * (this.isGlimmerEcho() ? AntarchySettings.glimmerAlphaMantisHealthMultiplier() : 1.0D);
     }
 
     @Override
     protected double configuredAttackDamage() {
-        return AntarchySettings.alphaMantisAttackDamage();
+        return AntarchySettings.alphaMantisAttackDamage() * this.glimmerEchoDamageMultiplier();
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        super.setGlimmerEcho(glimmerEcho);
+        this.xpReward = glimmerEcho ? GLIMMER_XP_REWARD : BASE_XP_REWARD;
+        this.bossEvent.setName(this.getTypeName());
+        this.bossEvent.setColor(glimmerEcho ? BossEvent.BossBarColor.BLUE : BossEvent.BossBarColor.GREEN);
+        if (glimmerEcho) {
+            this.summonCooldownTicks = Math.min(this.summonCooldownTicks, this.summonIntervalTicks() / 2);
+        }
+    }
+
+    @Override
+    public float glimmerEchoDamageMultiplier() {
+        return this.isGlimmerEcho() ? (float) AntarchySettings.glimmerAlphaMantisDamageMultiplier() : 1.0F;
+    }
+
+    @Override
+    protected Component getTypeName() {
+        return this.isGlimmerEcho() ? Component.translatable("entity.antarchy.alpha_mantis.glimmer") : super.getTypeName();
+    }
+
+    private int summonIntervalTicks() {
+        int interval = AntarchySettings.alphaMantisSummonIntervalTicks();
+        return this.isGlimmerEcho() ? Math.min(interval, Math.max(20, (int) Math.round(interval * AntarchySettings.glimmerAlphaMantisCooldownMultiplier()))) : interval;
     }
 
     @Override
@@ -210,6 +248,18 @@ public class AlphaMantisEntity extends MantisEntity {
             return;
         }
 
+        if (this.isGlimmerEcho() && this.tickCount % 20 == 0) {
+            if (GlimmerEchoes.hasPlayerWithin(this, GLIMMER_ABANDON_RANGE)) {
+                this.glimmerAbandonTicks = 0;
+            } else {
+                this.glimmerAbandonTicks += 20;
+                if (this.glimmerAbandonTicks >= GLIMMER_ABANDON_TICKS) {
+                    GlimmerEchoes.fadeAway(this);
+                    return;
+                }
+            }
+        }
+
         this.tickEncounterState();
         this.tickPhaseTransition();
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
@@ -231,7 +281,7 @@ public class AlphaMantisEntity extends MantisEntity {
             this.summonCooldownTicks--;
             return;
         }
-        this.summonCooldownTicks = AntarchySettings.alphaMantisSummonIntervalTicks();
+        this.summonCooldownTicks = this.summonIntervalTicks();
 
         if (!(this.level() instanceof ServerLevel serverLevel)) {
             return;
@@ -242,12 +292,12 @@ public class AlphaMantisEntity extends MantisEntity {
                 this.getBoundingBox().inflate(32.0D),
                 mantis -> mantis.isAlive() && !(mantis instanceof AlphaMantisEntity)
         ).size();
-        int maxMinions = AntarchySettings.alphaMantisMaxMinions();
+        int maxMinions = AntarchySettings.alphaMantisMaxMinions() + (this.isGlimmerEcho() ? GLIMMER_EXTRA_MAX_MINIONS : 0);
         if (nearbyMinions >= maxMinions) {
             return;
         }
 
-        int toSummon = Math.min(1 + this.random.nextInt(2), maxMinions - nearbyMinions);
+        int toSummon = Math.min(1 + this.random.nextInt(2) + (this.isGlimmerEcho() ? GLIMMER_EXTRA_MINIONS_PER_WAVE : 0), maxMinions - nearbyMinions);
         for (int i = 0; i < toSummon; i++) {
             MantisEntity minion = AntarchyObjects.MANTIS.get().create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
             if (minion == null) {
@@ -263,6 +313,7 @@ public class AlphaMantisEntity extends MantisEntity {
                     0.0F
             );
             minion.finalizeSpawn(serverLevel, serverLevel.getCurrentDifficultyAt(minion.blockPosition()), EntitySpawnReason.MOB_SUMMONED, null);
+            GlimmerEchoes.markSummon(this, minion);
             minion.setTarget(target);
             serverLevel.addFreshEntity(minion);
         }
@@ -359,7 +410,7 @@ public class AlphaMantisEntity extends MantisEntity {
         Vec3 localVelocity = this.toLocal(this.getDeltaMovement());
         this.setDeltaMovement(this.toWorld(0.0D, localVelocity.y, 0.0D));
         this.setAggressive(false);
-        this.summonCooldownTicks = Math.min(this.summonCooldownTicks, AntarchySettings.alphaMantisSummonIntervalTicks() / 2);
+        this.summonCooldownTicks = this.isGlimmerEcho() ? 0 : Math.min(this.summonCooldownTicks, this.summonIntervalTicks() / 2);
     }
 
     private void tickPhaseTransition() {
@@ -370,6 +421,26 @@ public class AlphaMantisEntity extends MantisEntity {
         this.getNavigation().stop();
         Vec3 localVelocity = this.toLocal(this.getDeltaMovement());
         this.setDeltaMovement(this.toWorld(0.0D, localVelocity.y, 0.0D));
+        if (this.isGlimmerEcho() && this.level() instanceof ServerLevel serverLevel) {
+            if (this.phaseTransitionTicks % 5 == 0) {
+                double progress = 1.0D - this.phaseTransitionTicks / (double) PHASE_TRANSITION_TICKS;
+                GlimmerEchoes.ring(serverLevel, this.position(), 1.5D + GLIMMER_PULSE_RADIUS * progress, 32);
+            }
+            if (this.phaseTransitionTicks == 0) {
+                AABB pulseArea = this.getBoundingBox().inflate(GLIMMER_PULSE_RADIUS, 2.0D, GLIMMER_PULSE_RADIUS);
+                List<Player> victims = serverLevel.getEntitiesOfClass(Player.class, pulseArea,
+                        player -> player.isAlive() && !player.isCreative() && !player.isSpectator());
+                float damage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE) * GLIMMER_PULSE_DAMAGE_FRACTION;
+                for (Player victim : victims) {
+                    if (victim.hurtServer(serverLevel, this.damageSources().mobAttack(this), damage)) {
+                        Vec3 knockDir = victim.position().subtract(this.position()).normalize();
+                        victim.push(knockDir.x * 1.6D, 0.5D, knockDir.z * 1.6D);
+                    }
+                }
+                GlimmerEchoes.ring(serverLevel, this.position(), GLIMMER_PULSE_RADIUS, 48);
+                this.playSound(SoundEvents.AMETHYST_BLOCK_RESONATE, 2.0F, 0.7F);
+            }
+        }
         if (this.phaseTransitionTicks <= 0 && this.getTarget() != null) {
             this.setAggressive(true);
         }

@@ -12,10 +12,6 @@ import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverSpan;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverProject;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideMountainsFunction;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisTerrainFunction;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBiomeTable;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBlockSet;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCavityGrid;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWormBoreGrid;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCavityFunction;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCavityUnionFunction;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWormBoreFunction;
@@ -67,7 +63,6 @@ import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.effect.MobEffect;
@@ -86,10 +81,8 @@ import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConf
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
-import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
@@ -133,7 +126,6 @@ public final class AntarchyNeoforgeMisc {
                     new Int2ObjectOpenHashMap<>()));
     private static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, Antarchy.MODID);
     private static final DeferredRegister<Potion> POTIONS = DeferredRegister.create(Registries.POTION, Antarchy.MODID);
-    private static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, Antarchy.MODID);
     private static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(Registries.FLUID, Antarchy.MODID);
     private static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(Registries.PARTICLE_TYPE, Antarchy.MODID);
     private static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(Registries.FEATURE, Antarchy.MODID);
@@ -321,6 +313,10 @@ public final class AntarchyNeoforgeMisc {
             () -> new SimpleParticleType(true));
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> UNDERVAULT_CONNECTION = PARTICLE_TYPES.register("undervault_connection",
             () -> new SimpleParticleType(true));
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> TEMPORAL_GLINT_SLOW = PARTICLE_TYPES.register("temporal_glint_slow",
+            () -> new SimpleParticleType(true));
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> TEMPORAL_GLINT_FAST = PARTICLE_TYPES.register("temporal_glint_fast",
+            () -> new SimpleParticleType(true));
     public static final DeferredHolder<ParticleType<?>, ParticleType<InvertedGeyserBaseParticleOptions>> INVERTED_GEYSER_BASE = PARTICLE_TYPES.register("inverted_geyser_base",
             () -> particleType(InvertedGeyserBaseParticleOptions::codec, InvertedGeyserBaseParticleOptions::streamCodec));
     public static final DeferredHolder<ParticleType<?>, ParticleType<InvertedGeyserParticleOptions>> INVERTED_GEYSER_PLUME = PARTICLE_TYPES.register("inverted_geyser_plume",
@@ -426,8 +422,6 @@ public final class AntarchyNeoforgeMisc {
             () -> new FallenOuranwoodFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, FungalMushroomFeature> FUNGAL_MUSHROOM = FEATURES.register("fungal_mushroom",
             () -> new FungalMushroomFeature(NoneFeatureConfiguration.CODEC));
-    public static final DeferredHolder<Feature<?>, ThoraxisFissureFeature> THORAXIS_FISSURE = FEATURES.register("thoraxis_fissure",
-            () -> new ThoraxisFissureFeature(ThoraxisFissureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, ThoraxisTransitionThroatFeature> THORAXIS_TRANSITION_THROAT = FEATURES.register("thoraxis_transition_throat",
             ThoraxisTransitionThroatFeature::new);
     public static final DeferredHolder<Feature<?>, QueenHavocTrailFeature> QUEEN_HAVOC_TRAIL = FEATURES.register("queen_havoc_trail",
@@ -487,8 +481,6 @@ public final class AntarchyNeoforgeMisc {
             () -> new com.craisinlord.antarchy.content.worldgen.mushroom.GlowcapHugeMushroomWorldgenFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, LucidAntiwaterPoolFeature> LUCID_ANTIWATER_POOL = FEATURES.register("lucid_antiwater_pool",
             () -> new LucidAntiwaterPoolFeature(ThoraxisAntiwaterPoolConfiguration.CODEC));
-    public static final DeferredHolder<Feature<?>, ThoraxisDuneFeature> THORAXIS_DUNE = FEATURES.register("thoraxis_dune",
-            () -> new ThoraxisDuneFeature(ThoraxisDuneConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, DimensionalTearFeature> DIMENSIONAL_TEAR = FEATURES.register("dimensional_tear",
             () -> new DimensionalTearFeature(NoneFeatureConfiguration.CODEC));
 
@@ -515,7 +507,6 @@ public final class AntarchyNeoforgeMisc {
         VILLAGER_PROFESSIONS.register(modEventBus);
         MOB_EFFECTS.register(modEventBus);
         POTIONS.register(modEventBus);
-        FLUID_TYPES.register(modEventBus);
         FLUIDS.register(modEventBus);
         PARTICLE_TYPES.register(modEventBus);
         FEATURES.register(modEventBus);

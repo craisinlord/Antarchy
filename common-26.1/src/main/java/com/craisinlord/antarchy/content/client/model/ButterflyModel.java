@@ -9,6 +9,8 @@ import com.geckolib.renderer.base.GeoRenderState;
 
 public class ButterflyModel extends GeoModel<ButterflyEntity> {
     public static final DataTicket<String> TEXTURE_VARIANT = DataTicket.create("antarchy_butterfly_texture_variant", String.class);
+    public static final DataTicket<Boolean> GLIMMER_ECHO = DataTicket.create("antarchy_butterfly_glimmer_echo", Boolean.class);
+    public static final Identifier GLIMMER_TEXTURE = Identifier.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/glimmer/butterfly_glimmer.png");
     private static final String TEXTURE_PATH_PREFIX = "textures/entity/butterfly/butterfly_";
     private static final String DEFAULT_TEXTURE_VARIANT = "brown";
 
@@ -16,6 +18,7 @@ public class ButterflyModel extends GeoModel<ButterflyEntity> {
     public void addAdditionalStateData(ButterflyEntity animatable, Object relatedObject, GeoRenderState renderState) {
         super.addAdditionalStateData(animatable, relatedObject, renderState);
         renderState.addGeckolibData(TEXTURE_VARIANT, animatable.getTextureVariantName());
+        renderState.addGeckolibData(GLIMMER_ECHO, animatable.isGlimmerEcho());
     }
 
     @Override
@@ -25,6 +28,9 @@ public class ButterflyModel extends GeoModel<ButterflyEntity> {
 
     @Override
     public Identifier getTextureResource(GeoRenderState renderState) {
+        if (renderState.getOrDefaultGeckolibData(GLIMMER_ECHO, false)) {
+            return GLIMMER_TEXTURE;
+        }
         return Identifier.fromNamespaceAndPath(
                 Antarchy.MODID,
                 TEXTURE_PATH_PREFIX + renderState.getOrDefaultGeckolibData(TEXTURE_VARIANT, DEFAULT_TEXTURE_VARIANT) + ".png"

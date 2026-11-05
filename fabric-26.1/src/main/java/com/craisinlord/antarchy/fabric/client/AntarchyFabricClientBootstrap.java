@@ -65,6 +65,8 @@ public final class AntarchyFabricClientBootstrap {
     }
 
     public static void register() {
+        net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.AntTransitPayload.TYPE,
+                (payload, context) -> context.client().execute(() -> com.craisinlord.antarchy.content.client.AntTransitClientState.handle(payload)));
         AntarchyArchivePreviews.register();
         AntarchyKeyBindings.register();
         MenuScreens.register(AntarchyFabricMisc.DORRIE_INVENTORY_MENU.get(), com.craisinlord.antarchy.content.client.screen.DorrieInventoryScreen::new);
@@ -77,6 +79,19 @@ public final class AntarchyFabricClientBootstrap {
         registerFluids();
         registerItemProperties();
         registerClientCallbacks();
+        LevelRenderEvents.AFTER_TRANSLUCENT_TERRAIN.register(context -> {
+            if (context.poseStack() != null) {
+                net.minecraft.client.Minecraft minecraft = net.minecraft.client.Minecraft.getInstance();
+                com.craisinlord.antarchy.content.client.renderer.AntTransitGroundRenderer.render(context.poseStack(), context.bufferSource(),
+                        context.levelState().cameraRenderState.pos, minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(false));
+                com.craisinlord.antarchy.content.client.ElythiaEchoes.render(context.poseStack(), context.bufferSource(),
+                        context.levelState().cameraRenderState.pos, minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(false));
+                com.craisinlord.antarchy.content.client.renderer.ThoraxisRainRenderer.render(context.poseStack(), context.bufferSource(),
+                        context.levelState().cameraRenderState.pos, minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(false));
+                com.craisinlord.antarchy.content.client.renderer.ThoraxisBubbleRenderer.render(context.poseStack(), context.bufferSource(),
+                        context.levelState().cameraRenderState.pos, minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(false));
+            }
+        });
     }
 
     private static void registerRenderers() {
@@ -208,6 +223,32 @@ public final class AntarchyFabricClientBootstrap {
     }
 
     private static void registerColors() {
+        BlockColorRegistry.register(List.of(
+                new BlockTintSource() {
+                    @Override
+                    public int color(BlockState state) {
+                        return -1;
+                    }
+
+                    @Override
+                    public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+                        return com.craisinlord.antarchy.content.block.Fossils.color(
+                                level.getBlockEntity(pos) instanceof com.craisinlord.antarchy.content.block.entity.FossilBlockEntity entity ? entity.entityId() : com.craisinlord.antarchy.content.block.Fossils.entityAt(pos), 0);
+                    }
+                },
+                new BlockTintSource() {
+                    @Override
+                    public int color(BlockState state) {
+                        return -1;
+                    }
+
+                    @Override
+                    public int colorInWorld(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+                        return com.craisinlord.antarchy.content.block.Fossils.color(
+                                level.getBlockEntity(pos) instanceof com.craisinlord.antarchy.content.block.entity.FossilBlockEntity entity ? entity.entityId() : com.craisinlord.antarchy.content.block.Fossils.entityAt(pos), 1);
+                    }
+                }
+        ), AntarchyFabricBlocks.MYRMITE_FOSSIL.get(), AntarchyFabricBlocks.BROODSTONE_FOSSIL.get());
         BlockColorRegistry.register(List.of(new BlockTintSource() {
             @Override
             public int color(BlockState state) {
@@ -234,6 +275,7 @@ public final class AntarchyFabricClientBootstrap {
         BlockColorRegistry.register(List.of(BlockTintSources.grass()), AntarchyFabricBlocks.SPIDER_LILY.get());
         BlockColorRegistry.register(List.of(BlockTintSources.grass()), AntarchyFabricBlocks.POTTED_SPIDER_LILY.get());
         ItemTintSources.ID_MAPPER.put(Identifier.fromNamespaceAndPath(Antarchy.MODID, "critter_cage"), CritterCageTintSource.MAP_CODEC);
+        ItemTintSources.ID_MAPPER.put(Identifier.fromNamespaceAndPath(Antarchy.MODID, "fossil"), FossilTintSource.MAP_CODEC);
     }
 
     private static void registerFluids() {
@@ -323,6 +365,8 @@ public final class AntarchyFabricClientBootstrap {
         registry.register(AntarchyFabricMisc.INVERTED_GEYSER_ERUPTION.get(), new InvertedGeyserEruptionParticle.Provider());
         registry.register(AntarchyFabricMisc.FIREFLY.get(), FireflyParticle.Provider::new);
         registry.register(AntarchyFabricMisc.GROUND_MIST.get(), com.craisinlord.antarchy.content.client.particle.GroundMistParticle.Provider::new);
+        registry.register(AntarchyFabricMisc.TEMPORAL_GLINT_SLOW.get(), com.craisinlord.antarchy.content.client.particle.TemporalGlintParticle::slow);
+        registry.register(AntarchyFabricMisc.TEMPORAL_GLINT_FAST.get(), com.craisinlord.antarchy.content.client.particle.TemporalGlintParticle::fast);
         registry.register(AntarchyFabricMisc.ORANGE_ASH.get(), OrangeAshParticle.Provider::new);
         registry.register(AntarchyFabricMisc.LUCID_BOLT_IMPACT_SMALL.get(), LucidBoltImpactParticle.SmallProvider::new);
         registry.register(AntarchyFabricMisc.LUCID_BOLT_IMPACT_LARGE.get(), LucidBoltImpactParticle.LargeProvider::new);
@@ -347,6 +391,7 @@ public final class AntarchyFabricClientBootstrap {
                     registrationHelper.register((RenderLayer) new GoopedLivingLayer(playerParent));
                     registrationHelper.register((RenderLayer) new GlimmeringLivingLayer(playerParent));
                     registrationHelper.register((RenderLayer) new com.craisinlord.antarchy.content.client.renderer.RoyalIndicatorLivingLayer(playerParent));
+                    registrationHelper.register((RenderLayer) new com.craisinlord.antarchy.content.client.renderer.TemporalContractionAvatarLayer(playerParent));
                     registrationHelper.register((RenderLayer) new BrutalflyElytraLayer(playerParent));
                     registrationHelper.register((RenderLayer) new com.craisinlord.antarchy.content.client.renderer.ManticoreWingsLayer(playerParent));
                     registrationHelper.register((RenderLayer) new FallenKingCrownLayer(playerParent));
@@ -374,11 +419,14 @@ public final class AntarchyFabricClientBootstrap {
     private static void registerClientCallbacks() {
         TigerEyeClientHooks.setCamouflageKeyTextSupplier(() -> AntarchyKeyBindings.TIGERS_EYE_CAMOUFLAGE.getTranslatedKeyMessage());
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            com.craisinlord.antarchy.content.client.AntTransitClientState.tick();
+            com.craisinlord.antarchy.content.client.ElythiaEchoes.tick();
             com.craisinlord.antarchy.content.client.ThrowbackClientState.tick();
             HerculesBeetleImpactShakeClientState.tick();
             KingJudgmentFlashClientState.tick();
             HordeClientState.tick();
             com.craisinlord.antarchy.content.client.ElythiaEventClient.tick();
+            com.craisinlord.antarchy.content.client.ThoraxisEventClient.tick();
             if (client.player != null) {
                 ParalyzedClientHandler.clampPlayerInput(client.player);
                 com.craisinlord.antarchy.content.item.BigBerthaItem.clientTick(client.player);

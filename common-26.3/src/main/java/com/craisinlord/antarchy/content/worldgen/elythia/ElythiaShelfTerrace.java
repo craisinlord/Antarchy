@@ -49,7 +49,7 @@ public record ElythiaShelfTerrace(DensityFunction argument, DensityFunction mask
     }
 
     @Override
-    public int domainAxes() { return DensityFunction.ALL_AXES; }
+    public int domainAxes() { return ElythiaField.planarAxes(this.argument, this.mask, this.lift, this.phase, this.step, this.riser, this.warp); }
 
     @Override
     public MapCodec<ElythiaShelfTerrace> codec() { return CODEC; }

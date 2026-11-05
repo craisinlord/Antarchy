@@ -67,12 +67,39 @@ public final class CavarynBiomeTable {
         return own < other;
     }
 
+    public static boolean excludedByClimate(String biome, double humidity, double weirdness) {
+        for (Entry own : ENTRIES) {
+            if (own.biome().equals(biome) && !beatenInDepthBand(own, biome, humidity, weirdness)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean beatenInDepthBand(Entry own, String biome, double humidity, double weirdness) {
+        double ownFitness = own.climateFitness(humidity, weirdness);
+        for (Entry other : ENTRIES) {
+            if (!other.biome().equals(biome) && other.sameDepthBand(own) && other.climateFitness(humidity, weirdness) < ownFitness) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public record Entry(String biome, double humidityMin, double humidityMax, double weirdnessMin, double weirdnessMax, double depthMin, double depthMax) {
         double fitness(double humidity, double weirdness, double depth) {
+            double d = distance(depth, this.depthMin, this.depthMax);
+            return this.climateFitness(humidity, weirdness) + d * d;
+        }
+
+        double climateFitness(double humidity, double weirdness) {
             double h = distance(humidity, this.humidityMin, this.humidityMax);
             double w = distance(weirdness, this.weirdnessMin, this.weirdnessMax);
-            double d = distance(depth, this.depthMin, this.depthMax);
-            return h * h + w * w + d * d;
+            return h * h + w * w;
+        }
+
+        boolean sameDepthBand(Entry other) {
+            return this.depthMin == other.depthMin && this.depthMax == other.depthMax;
         }
 
         private static double distance(double value, double min, double max) {

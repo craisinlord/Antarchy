@@ -62,15 +62,15 @@ public record GroundMoltingVinesFeature() implements Feature {
                 if (!level.getBlockState(mutable).canBeReplaced()) {
                     continue;
                 }
-                if (AntarchyFluidChecks.hasBileNearby(level, mutable, 1)) {
-                    continue;
-                }
                 BlockPos belowPos = mutable.below();
                 BlockState belowState = level.getBlockState(belowPos);
                 if (!belowState.isFaceSturdy(level, belowPos, Direction.UP)) {
                     continue;
                 }
                 if (!level.getBlockState(mutable.above()).canBeReplaced()) {
+                    continue;
+                }
+                if (AntarchyFluidChecks.hasBileNearby(level, mutable, 1)) {
                     continue;
                 }
                 return mutable.immutable();

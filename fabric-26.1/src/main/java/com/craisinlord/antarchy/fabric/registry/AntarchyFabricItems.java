@@ -13,7 +13,6 @@ import com.craisinlord.antarchy.content.item.ultimate.UltimateSwordItem;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateArmorItem;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateBowItem;
 import com.craisinlord.antarchy.content.item.ultimate.UltimateCrossbowItem;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
@@ -33,7 +32,6 @@ import net.minecraft.world.item.component.Consumables;
 import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 
@@ -651,6 +649,20 @@ public final class AntarchyFabricItems {
     public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_COAL_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.MYRMITE_COAL_ORE);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_URANIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_URANIUM_ORE, new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_TITANIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_TITANIUM_ORE, new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_COPPER_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.MYRMITE_COPPER_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_IRON_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.MYRMITE_IRON_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_GOLD_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.MYRMITE_GOLD_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_REDSTONE_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.MYRMITE_REDSTONE_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_LAPIS_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.MYRMITE_LAPIS_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_DIAMOND_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.MYRMITE_DIAMOND_ORE, new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MYRMITE_EMERALD_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.MYRMITE_EMERALD_ORE, new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_COPPER_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_COPPER_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_IRON_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_IRON_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_GOLD_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_GOLD_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_REDSTONE_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_REDSTONE_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_LAPIS_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_LAPIS_ORE);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_DIAMOND_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_DIAMOND_ORE, new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> BROODSTONE_EMERALD_ORE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.BROODSTONE_EMERALD_ORE, new Item.Properties().rarity(Rarity.UNCOMMON));
 
     public static final DeferredItem<net.minecraft.world.item.BlockItem> POLISHED_NYXITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyFabricBlocks.POLISHED_NYXITE);
 
@@ -1608,6 +1620,15 @@ public final class AntarchyFabricItems {
 
     public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerBottleItem> GLIMMER_BOTTLE = ITEMS.register("glimmer_bottle",
             () -> new com.craisinlord.antarchy.content.item.GlimmerBottleItem(DeferredRegister.itemProperties()));
+    public static final DeferredItem<Item> FADED_MEMORY = ITEMS.registerSimpleItem("faded_memory", new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> TORETERROR_GLIMMER_SIGIL = ITEMS.register("toreterror_glimmer_sigil", () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.TORETERROR, DeferredRegister.itemProperties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> ALPHA_MANTIS_GLIMMER_SIGIL = ITEMS.register("alpha_mantis_glimmer_sigil", () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.ALPHA_MANTIS, DeferredRegister.itemProperties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> EMPEROR_SCORPION_GLIMMER_SIGIL = ITEMS.register("emperor_scorpion_glimmer_sigil", () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.EMPEROR_SCORPION, DeferredRegister.itemProperties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> BRUTALFLY_GLIMMER_SIGIL = ITEMS.register("brutalfly_glimmer_sigil", () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.BRUTALFLY, DeferredRegister.itemProperties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> HERCULES_BEETLE_GLIMMER_SIGIL = ITEMS.register("hercules_beetle_glimmer_sigil", () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.HERCULES_BEETLE, DeferredRegister.itemProperties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> KRAKEN_GLIMMER_SIGIL = ITEMS.register("kraken_glimmer_sigil", () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.KRAKEN, DeferredRegister.itemProperties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> KING_GLIMMER_SIGIL = ITEMS.register("king_glimmer_sigil", () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.KING, DeferredRegister.itemProperties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final DeferredItem<com.craisinlord.antarchy.content.item.GlimmerSigilItem> QUEEN_GLIMMER_SIGIL = ITEMS.register("queen_glimmer_sigil", () -> new com.craisinlord.antarchy.content.item.GlimmerSigilItem(com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.QUEEN, DeferredRegister.itemProperties().stacksTo(16).rarity(Rarity.RARE)));
 
     public static Item cloudBucketItem() {
         return CLOUD_BUCKET.get();
@@ -1615,19 +1636,6 @@ public final class AntarchyFabricItems {
 
     public static Item diamondMinecartItem() {
         return DIAMOND_MINECART_ITEM.get();
-    }
-
-    public static Ingredient bloodCrystalRepairIngredient() {
-        return Ingredient.of(BuiltInRegistries.ITEM.getOptional(Identifier.fromNamespaceAndPath(Antarchy.MODID, "blood_crystal_shard"))
-                .orElse(Items.AIR));
-    }
-
-    public static Ingredient ultimateRepairIngredient() {
-        return Ingredient.of(TITANIUM_INGOT.get());
-    }
-
-    public static void register() {
-        ITEMS.register();
     }
 
 }

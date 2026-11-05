@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "antarchy:block/rockite_redstone_ore"
+  }
+}

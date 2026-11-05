@@ -22,10 +22,9 @@ public final class TemporalTunerItem extends Item {
     }
 
     public static boolean isAvailable(Player player) {
-        return player.getInventory().contains(stack -> stack.getItem() instanceof TemporalTunerItem)
-                && (player.getMainHandItem().getItem() instanceof TemporalTunerItem
+        return player.getMainHandItem().getItem() instanceof TemporalTunerItem
                 || player.getOffhandItem().getItem() instanceof TemporalTunerItem
-                || hasHotbarTuner(player));
+                || hasHotbarTuner(player);
     }
 
     private static boolean hasHotbarTuner(Player player) {

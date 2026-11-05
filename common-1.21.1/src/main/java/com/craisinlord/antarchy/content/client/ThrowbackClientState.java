@@ -2,11 +2,12 @@ package com.craisinlord.antarchy.content.client;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
-import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.level.Level;
 
 public final class ThrowbackClientState {
     private static final float BASELINE_RATE = 0.05F;
@@ -14,6 +15,7 @@ public final class ThrowbackClientState {
     private static final int STALE_SYNC_TICKS = 20 * 15;
     private static final float HUNGER_FADE_RATE = 0.1F;
 
+    private static ResourceKey<Level> lastDimension;
     private static float baseline;
     private static float previousBaseline;
     private static float zone;
@@ -42,8 +44,9 @@ public final class ThrowbackClientState {
             hungerHidden = 0.0F;
             previousHungerHidden = 0.0F;
         }
-        boolean inElythia = playing && minecraft.level.dimension().equals(ThrowbackZones.ELYTHIA);
-        if (!inElythia) {
+        ResourceKey<Level> dimension = playing ? minecraft.level.dimension() : null;
+        if (!playing || dimension != lastDimension) {
+            lastDimension = dimension;
             baseline = 0.0F;
             zone = 0.0F;
             previousBaseline = 0.0F;
@@ -56,9 +59,6 @@ public final class ThrowbackClientState {
         MobEffectInstance remembrance = player.getEffect(AntarchyObjects.REMEMBRANCE_EFFECT.get());
         float hungerTarget = remembrance != null ? 1.0F : 0.0F;
         hungerHidden = Mth.clamp(hungerHidden + Mth.clamp(hungerTarget - hungerHidden, -HUNGER_FADE_RATE, HUNGER_FADE_RATE), 0.0F, 1.0F);
-        if (!inElythia) {
-            return;
-        }
         if (++ticksSinceSync >= STALE_SYNC_TICKS) {
             targetZone = 0.0F;
         }

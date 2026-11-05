@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
+import org.jetbrains.annotations.Nullable;
 
 public final class ElythiaBasinFill implements DensityFunction {
 
@@ -27,10 +28,16 @@ public final class ElythiaBasinFill implements DensityFunction {
     private static final int CACHE_SLOTS = 256;
 
     private final DensityFunction argument;
-    private final ThreadLocal<FloorCache> floors = ThreadLocal.withInitial(FloorCache::new);
+    @Nullable
+    private final ThreadLocal<FloorCache> floors;
 
     public ElythiaBasinFill(DensityFunction argument) {
+        this(argument, null);
+    }
+
+    private ElythiaBasinFill(DensityFunction argument, @Nullable ThreadLocal<FloorCache> floors) {
         this.argument = argument;
+        this.floors = floors;
     }
 
     public DensityFunction argument() {
@@ -40,7 +47,7 @@ public final class ElythiaBasinFill implements DensityFunction {
     @Override
     public double compute(FunctionContext context) {
         double value = this.argument.compute(context);
-        if (value >= CEILING + SOFTNESS || value < DEEP) {
+        if (this.floors == null || value >= CEILING + SOFTNESS || value < DEEP) {
             return value;
         }
         double u = (double) context.blockX() / GRID - 0.5D;
@@ -146,7 +153,8 @@ public final class ElythiaBasinFill implements DensityFunction {
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new ElythiaBasinFill(this.argument.mapAll(visitor)));
+        ThreadLocal<FloorCache> shared = this.floors != null ? this.floors : ThreadLocal.withInitial(FloorCache::new);
+        return visitor.apply(new ElythiaBasinFill(this.argument.mapAll(visitor), shared));
     }
 
     @Override
@@ -162,6 +170,16 @@ public final class ElythiaBasinFill implements DensityFunction {
     @Override
     public KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return KEY_CODEC;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return this == other || (this.floors != null && other instanceof ElythiaBasinFill fill && fill.floors == this.floors);
+    }
+
+    @Override
+    public int hashCode() {
+        return System.identityHashCode(this.floors != null ? this.floors : this);
     }
 
     private static final class FloorCache {

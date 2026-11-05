@@ -23,7 +23,15 @@ public record CavarynCavityUnionFunction(List<DensityFunction> arguments) implem
     @Override
     public DensitySampler compileSampler(CompileContext context) {
         DensitySampler[] samplers = this.arguments.stream().map(argument -> argument.compileSampler(context)).toArray(DensitySampler[]::new);
-        return new Sampler(samplers, this.range().min());
+        float floor = this.range().min();
+        CavarynColumn.Source[] sources = new CavarynColumn.Source[samplers.length];
+        for (int i = 0; i < samplers.length; i++) {
+            if (!(samplers[i] instanceof CavarynColumn.Source source)) {
+                return new Sampler(samplers, floor);
+            }
+            sources[i] = source;
+        }
+        return new ColumnSampler(sources, floor);
     }
 
     @Override
@@ -72,6 +80,91 @@ public record CavarynCavityUnionFunction(List<DensityFunction> arguments) implem
                 }
             }
             return best;
+        }
+    }
+
+    private static final class ColumnSampler implements DensitySampler {
+        private final ThreadLocal<ColumnSet> columns;
+
+        ColumnSampler(CavarynColumn.Source[] sources, float floor) {
+            this.columns = ThreadLocal.withInitial(() -> new ColumnSet(sources, floor));
+        }
+
+        @Override
+        public void sampleVolume(SamplerContext context, DensityBuffer outputBuffer, DensityVolume volume) {
+            DensitySampler.sampleVolumeNaive(context, outputBuffer, volume, this.columns.get());
+        }
+
+        @Override
+        public float sampleValue(SamplerContext context, int blockX, int blockY, int blockZ) {
+            return this.columns.get().sampleValue(context, blockX, blockY, blockZ);
+        }
+    }
+
+    private static final class ColumnSet implements DensitySampler {
+        private final CavarynColumn[] columns;
+        private final CavarynColumn[] active;
+        private final float floor;
+        private int activeCount;
+        private boolean loaded;
+        private int qx;
+        private int qz;
+        private double activeMinY;
+        private double activeMaxY;
+
+        ColumnSet(CavarynColumn.Source[] sources, float floor) {
+            this.columns = new CavarynColumn[sources.length];
+            for (int i = 0; i < sources.length; i++) {
+                this.columns[i] = sources[i].newColumn();
+            }
+            this.active = new CavarynColumn[sources.length];
+            this.floor = floor;
+        }
+
+        @Override
+        public void sampleVolume(SamplerContext context, DensityBuffer outputBuffer, DensityVolume volume) {
+            DensitySampler.sampleVolumeNaive(context, outputBuffer, volume, this);
+        }
+
+        @Override
+        public float sampleValue(SamplerContext context, int blockX, int blockY, int blockZ) {
+            int currentQx = blockX >> 2;
+            int currentQz = blockZ >> 2;
+            if (!this.loaded || this.qx != currentQx || this.qz != currentQz) {
+                this.load(currentQx, currentQz);
+            }
+            double py = blockY + 0.5;
+            if (py < this.activeMinY || py > this.activeMaxY) {
+                return 1.0F;
+            }
+            float best = 1.0F;
+            for (int i = 0; i < this.activeCount; i++) {
+                best = Math.min(best, (float) CavarynColumn.density(this.active[i].signedDistance(blockX, blockY, blockZ, CavarynColumn.FLOOR)));
+                if (best <= this.floor) {
+                    return best;
+                }
+            }
+            return best;
+        }
+
+        private void load(int currentQx, int currentQz) {
+            int count = 0;
+            double min = Double.MAX_VALUE;
+            double max = -Double.MAX_VALUE;
+            for (CavarynColumn column : this.columns) {
+                column.load(currentQx, currentQz);
+                if (!column.isEmpty()) {
+                    this.active[count++] = column;
+                    min = Math.min(min, column.minY());
+                    max = Math.max(max, column.maxY());
+                }
+            }
+            this.activeCount = count;
+            this.activeMinY = min;
+            this.activeMaxY = max;
+            this.qx = currentQx;
+            this.qz = currentQz;
+            this.loaded = true;
         }
     }
 }

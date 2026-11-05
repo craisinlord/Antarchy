@@ -7,6 +7,8 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideManager;
@@ -16,6 +18,9 @@ import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.server.level.ServerLevel;
@@ -62,14 +67,19 @@ import com.geckolib.animation.object.PlayState;
 import com.geckolib.animation.RawAnimation;
 import com.geckolib.util.GeckoLibUtil;
 
-public class ManticoreEntity extends Monster implements GeoEntity {
+public class ManticoreEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final String SUMMONER_KEY = "QueenSummoner";
     private static final String PLAYER_SUMMONER_KEY = "PlayerSummoner";
     private static final int LOST_SUMMONER_GRACE_TICKS = 200;
     private static final int TAKEOFF_COOLDOWN_TICKS = 40;
     private static final int STING_COOLDOWN_TICKS = 60;
+    private static final int GLIMMER_MIN_STING_COOLDOWN_TICKS = 10;
+    private static final Identifier GLIMMER_DAMAGE_ID = Identifier.fromNamespaceAndPath("antarchy", "manticore_glimmer_damage");
     private static final float STING_CHANCE = 0.35F;
     private static final int SWARM_RETARGET_INTERVAL = 40;
+    private static final int BASE_XP_REWARD = 12;
+    private static final String GLIMMER_ECHO_OWNER_KEY = "GlimmerEchoOwner";
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO = SynchedEntityData.defineId(ManticoreEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> FLYING = SynchedEntityData.defineId(ManticoreEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
@@ -91,11 +101,13 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     private int takeoffCooldown;
     private int stingCooldown;
     private boolean wasFlyingLastTick;
+    @Nullable
+    private UUID glimmerEchoOwner;
 
     public ManticoreEntity(EntityType<? extends ManticoreEntity> type, Level level) {
         super(type, level);
         this.moveControl = new FlyingMoveControl(this, 10, true);
-        this.xpReward = 12;
+        this.xpReward = BASE_XP_REWARD;
     }
 
     @Override
@@ -216,6 +228,28 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(FLYING, false);
+        builder.define(GLIMMER_ECHO, false);
+    }
+
+    @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
+        this.xpReward = glimmerEcho ? 0 : BASE_XP_REWARD;
+    }
+
+    @Override
+    public void setGlimmerEchoOwner(@Nullable UUID owner) {
+        this.glimmerEchoOwner = owner;
+    }
+
+    @Override
+    protected Component getTypeName() {
+        return this.isGlimmerEcho() ? Component.translatable("entity.antarchy.manticore.glimmer") : super.getTypeName();
     }
 
     @Override
@@ -223,6 +257,12 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         super.tick();
         if (this.level().isClientSide()) {
             return;
+        }
+        if (this.isGlimmerEcho()) {
+            GlimmerEchoes.tickAmbient(this, 8, 3);
+            if (GlimmerEchoes.tickOwnedSummon(this, this.glimmerEchoOwner)) {
+                return;
+            }
         }
 
         this.tickQueenSummonInversionRule();
@@ -423,10 +463,15 @@ public class ManticoreEntity extends Monster implements GeoEntity {
     void performSting(LivingEntity enemy) {
         this.swing(InteractionHand.MAIN_HAND, SwingAnimation.DEFAULT);
         this.playSound(AntarchySoundEvents.MANTICORE_BITE.get(), 0.9F, 0.95F + this.random.nextFloat() * 0.1F);
-        if (this.level() instanceof ServerLevel serverLevel && enemy.hurtServer(serverLevel, this.damageSources().mobAttack(this), (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE))) {
+        float damage = (float) this.getAttributeValue(Attributes.ATTACK_DAMAGE)
+                * GlimmerEchoes.ownerDamageMultiplier(this, this.glimmerEchoOwner);
+        if (this.level() instanceof ServerLevel serverLevel && enemy.hurtServer(serverLevel, this.damageSources().mobAttack(this), damage)) {
             enemy.addEffect(new MobEffectInstance(MobEffects.POISON, AntarchySettings.manticoreStingPoisonTicks(), 0), this);
         }
-        this.stingCooldown = STING_COOLDOWN_TICKS;
+        this.stingCooldown = this.isGlimmerEcho()
+                ? Math.max(GLIMMER_MIN_STING_COOLDOWN_TICKS, (int) Math.round(STING_COOLDOWN_TICKS
+                        * Math.max(0.0D, AntarchySettings.glimmerQueenCooldownMultiplier())))
+                : STING_COOLDOWN_TICKS;
         this.triggerAnim("controller", "sting");
     }
 
@@ -436,7 +481,21 @@ public class ManticoreEntity extends Monster implements GeoEntity {
 
     @Override
     public boolean doHurtTarget(ServerLevel level, Entity target) {
-        boolean hurt = super.doHurtTarget(level, target);
+        float multiplier = GlimmerEchoes.ownerDamageMultiplier(this, this.glimmerEchoOwner);
+        var attackDamage = this.getAttribute(Attributes.ATTACK_DAMAGE);
+        boolean scaled = multiplier != 1.0F && attackDamage != null;
+        if (scaled) {
+            attackDamage.addOrUpdateTransientModifier(new net.minecraft.world.entity.ai.attributes.AttributeModifier(
+                    GLIMMER_DAMAGE_ID, multiplier - 1.0D, net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+        }
+        boolean hurt;
+        try {
+            hurt = super.doHurtTarget(level, target);
+        } finally {
+            if (scaled) {
+                attackDamage.removeModifier(GLIMMER_DAMAGE_ID);
+            }
+        }
         if (hurt) {
             this.playSound(AntarchySoundEvents.MANTICORE_BITE.get(), 0.9F, 0.95F + this.random.nextFloat() * 0.1F);
             this.triggerAnim("controller", this.onGround() ? "bite" : "fly_bite");
@@ -477,6 +536,8 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         super.addAdditionalSaveData(tag);
         tag.storeNullable(SUMMONER_KEY, UUIDUtil.CODEC, this.summonerId);
         tag.storeNullable(PLAYER_SUMMONER_KEY, UUIDUtil.CODEC, this.playerSummonerId);
+        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
+        tag.storeNullable(GLIMMER_ECHO_OWNER_KEY, UUIDUtil.CODEC, this.glimmerEchoOwner);
     }
 
     @Override
@@ -484,6 +545,8 @@ public class ManticoreEntity extends Monster implements GeoEntity {
         super.readAdditionalSaveData(tag);
         this.summonerId = tag.read(SUMMONER_KEY, UUIDUtil.CODEC).orElse(null);
         this.playerSummonerId = tag.read(PLAYER_SUMMONER_KEY, UUIDUtil.CODEC).orElse(null);
+        this.setGlimmerEcho(tag.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
+        this.glimmerEchoOwner = tag.read(GLIMMER_ECHO_OWNER_KEY, UUIDUtil.CODEC).orElse(null);
         this.lostSummonerTicks = 0;
     }
 

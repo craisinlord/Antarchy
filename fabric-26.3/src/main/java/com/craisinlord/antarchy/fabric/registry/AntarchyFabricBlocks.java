@@ -33,7 +33,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.AmethystClusterBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DropExperienceBlock;
-import net.minecraft.world.level.block.GlowLichenBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
@@ -41,7 +40,6 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.WallBlock;
-import net.minecraft.world.level.block.VineBlock;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -717,6 +715,34 @@ public final class AntarchyFabricBlocks {
 
     public static final DeferredBlock<Block> BROODSTONE_TITANIUM_ORE = BLOCKS.register("broodstone_titanium_ore",
             () -> createOre(Blocks.DEEPSLATE_DIAMOND_ORE, 4, 8, MapColor.COLOR_LIGHT_BLUE));
+    public static final DeferredBlock<Block> MYRMITE_COPPER_ORE = BLOCKS.register("myrmite_copper_ore",
+            () -> createOre(Blocks.COPPER_ORE, 0, 0, MapColor.COLOR_ORANGE));
+    public static final DeferredBlock<Block> MYRMITE_IRON_ORE = BLOCKS.register("myrmite_iron_ore",
+            () -> createOre(Blocks.IRON_ORE, 0, 0, MapColor.RAW_IRON));
+    public static final DeferredBlock<Block> MYRMITE_GOLD_ORE = BLOCKS.register("myrmite_gold_ore",
+            () -> createOre(Blocks.GOLD_ORE, 0, 0, MapColor.GOLD));
+    public static final DeferredBlock<net.minecraft.world.level.block.RedStoneOreBlock> MYRMITE_REDSTONE_ORE = BLOCKS.register("myrmite_redstone_ore",
+            () -> new net.minecraft.world.level.block.RedStoneOreBlock(DeferredRegister.copyBlockProperties(Blocks.REDSTONE_ORE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> MYRMITE_LAPIS_ORE = BLOCKS.register("myrmite_lapis_ore",
+            () -> createOre(Blocks.LAPIS_ORE, 2, 5, MapColor.LAPIS));
+    public static final DeferredBlock<Block> MYRMITE_DIAMOND_ORE = BLOCKS.register("myrmite_diamond_ore",
+            () -> createOre(Blocks.DIAMOND_ORE, 3, 7, MapColor.DIAMOND));
+    public static final DeferredBlock<Block> MYRMITE_EMERALD_ORE = BLOCKS.register("myrmite_emerald_ore",
+            () -> createOre(Blocks.EMERALD_ORE, 3, 7, MapColor.EMERALD));
+    public static final DeferredBlock<Block> BROODSTONE_COPPER_ORE = BLOCKS.register("broodstone_copper_ore",
+            () -> createOre(Blocks.DEEPSLATE_COPPER_ORE, 0, 0, MapColor.COLOR_ORANGE));
+    public static final DeferredBlock<Block> BROODSTONE_IRON_ORE = BLOCKS.register("broodstone_iron_ore",
+            () -> createOre(Blocks.DEEPSLATE_IRON_ORE, 0, 0, MapColor.RAW_IRON));
+    public static final DeferredBlock<Block> BROODSTONE_GOLD_ORE = BLOCKS.register("broodstone_gold_ore",
+            () -> createOre(Blocks.DEEPSLATE_GOLD_ORE, 0, 0, MapColor.GOLD));
+    public static final DeferredBlock<net.minecraft.world.level.block.RedStoneOreBlock> BROODSTONE_REDSTONE_ORE = BLOCKS.register("broodstone_redstone_ore",
+            () -> new net.minecraft.world.level.block.RedStoneOreBlock(DeferredRegister.copyBlockProperties(Blocks.DEEPSLATE_REDSTONE_ORE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> BROODSTONE_LAPIS_ORE = BLOCKS.register("broodstone_lapis_ore",
+            () -> createOre(Blocks.DEEPSLATE_LAPIS_ORE, 2, 5, MapColor.LAPIS));
+    public static final DeferredBlock<Block> BROODSTONE_DIAMOND_ORE = BLOCKS.register("broodstone_diamond_ore",
+            () -> createOre(Blocks.DEEPSLATE_DIAMOND_ORE, 3, 7, MapColor.DIAMOND));
+    public static final DeferredBlock<Block> BROODSTONE_EMERALD_ORE = BLOCKS.register("broodstone_emerald_ore",
+            () -> createOre(Blocks.DEEPSLATE_EMERALD_ORE, 3, 7, MapColor.EMERALD));
 
     public static final DeferredBlock<RotatedPillarBlock> CHITIN_BLOCK = BLOCKS.register("chitin_block",
             () -> new RotatedPillarBlock(DeferredRegister.copyBlockProperties(Blocks.BONE_BLOCK).requiresCorrectToolForDrops()));
@@ -1276,10 +1302,6 @@ public final class AntarchyFabricBlocks {
         return POTENT_NYXITE_BLOCK_ENTITY.get();
     }
 
-    private static BlockEntityType<SeashellBlockEntity> seashellBlockEntityType() {
-        return SEASHELL_BLOCK_ENTITY.get();
-    }
-
     private static BlockEntityType<com.craisinlord.antarchy.content.block.entity.BluestoneComparatorBlockEntity> bluestoneComparatorBlockEntityType() {
         return BLUESTONE_COMPARATOR_BLOCK_ENTITY.get();
     }
@@ -1436,11 +1458,6 @@ public final class AntarchyFabricBlocks {
     private static SoundType antimetalScaffoldingSoundType() {
         SoundEvent scaffold = AntarchyFabricSounds.ANTIMETAL_SCAFFOLD.get();
         return new SoundType(1.0F, 1.0F, scaffold, scaffold, scaffold, scaffold, scaffold);
-    }
-
-    public static void register() {
-        BLOCKS.register();
-        BLOCK_ENTITY_TYPES.register();
     }
 
     public static void registerStripping() {

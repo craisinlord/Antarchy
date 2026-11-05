@@ -43,11 +43,16 @@ public final class AntarchyFabricNetworking {
         registerServerReceivers();
         com.craisinlord.antarchy.content.network.AntarchyGameNetworkHandler.setResultSender(ServerPlayNetworking::send);
         com.craisinlord.antarchy.content.portalgun.PortalGunIndicatorSync.setSender(ServerPlayNetworking::send);
+        com.craisinlord.antarchy.content.network.ThoraxisEventSync.setSink(ServerPlayNetworking::send);
+        com.craisinlord.antarchy.content.network.AntTransitSync.setSink(ServerPlayNetworking::send);
+        com.craisinlord.antarchy.content.network.AntTransitSync.setSink(ServerPlayNetworking::send);
     }
 
     private static void registerPayloadTypes() {
         PayloadTypeRegistry.clientboundPlay().register(com.craisinlord.antarchy.content.network.ElythiaEventPayload.TYPE, com.craisinlord.antarchy.content.network.ElythiaEventPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(com.craisinlord.antarchy.content.network.ThrowbackZonePayload.TYPE, com.craisinlord.antarchy.content.network.ThrowbackZonePayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(com.craisinlord.antarchy.content.network.ThoraxisEventPayload.TYPE, com.craisinlord.antarchy.content.network.ThoraxisEventPayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(com.craisinlord.antarchy.content.network.ThoraxisBubbleUpdatePayload.TYPE, com.craisinlord.antarchy.content.network.ThoraxisBubbleUpdatePayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(AntarchyGameResultPayload.TYPE, AntarchyGameResultPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(PortalGunIndicatorPayload.TYPE, PortalGunIndicatorPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(BloodglassStatePayload.TYPE, BloodglassStatePayload.STREAM_CODEC);
@@ -59,6 +64,7 @@ public final class AntarchyFabricNetworking {
         PayloadTypeRegistry.clientboundPlay().register(HerculesBeetleImpactShakePayload.TYPE, HerculesBeetleImpactShakePayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(KingJudgmentFlashPayload.TYPE, KingJudgmentFlashPayload.STREAM_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(HordeIntensityPayload.TYPE, HordeIntensityPayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(AntTransitPayload.TYPE, AntTransitPayload.STREAM_CODEC);
 
         PayloadTypeRegistry.serverboundPlay().register(GravityGunPrimaryPayload.TYPE, GravityGunPrimaryPayload.STREAM_CODEC);
         PayloadTypeRegistry.serverboundPlay().register(PortalGunPrimaryPayload.TYPE, PortalGunPrimaryPayload.STREAM_CODEC);

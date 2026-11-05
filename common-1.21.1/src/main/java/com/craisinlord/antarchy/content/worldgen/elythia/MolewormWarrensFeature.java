@@ -366,6 +366,7 @@ public class MolewormWarrensFeature extends Feature<NoneFeatureConfiguration> {
                 || state.is(Blocks.MOSS_BLOCK)
                 || state.is(Blocks.PODZOL)
                 || state.is(Blocks.STONE)
+                || state.is(ElythiaGeologyFeature.NATURAL_STONE)
                 || state.is(Blocks.DEEPSLATE)
                 || state.is(Blocks.GRAVEL)
                 || state.is(Blocks.TUFF)

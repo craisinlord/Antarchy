@@ -139,7 +139,7 @@ public final class AntarchySettings {
     private static double mantisMovementSpeed = 0.42D;
     private static double mantisFlyingSpeed = 0.77D;
     private static boolean mantisIgnoreLightLevel = false;
-    private static double alphaMantisHealth = 380.0D;
+    private static double alphaMantisHealth = 420.0D;
     private static double alphaMantisAttackDamage = 18.0D;
     private static double alphaMantisMovementSpeed = 0.546D;
     private static double alphaMantisFlyingSpeed = 0.77D;
@@ -409,17 +409,17 @@ public final class AntarchySettings {
     private static double emperorScorpionFollowRange = 80.0D;
     private static int emperorScorpionXpReward = 25;
     private static int emperorScorpionClawAnimTicks = 23;
-    private static int emperorScorpionClawHitTick = 12;
+    private static int emperorScorpionClawHitTick = 6;
     private static int emperorScorpionClawCooldownTicks = 28;
     private static int emperorScorpionStingAnimTicks = 25;
-    private static int emperorScorpionStingHitTick = 13;
+    private static int emperorScorpionStingHitTick = 9;
     private static int emperorScorpionStingCooldownTicks = 60;
     private static int emperorScorpionPoisonTicks = 300;
     private static int emperorScorpionWeaknessTicks = 120;
     private static int emperorScorpionSummonIntervalTicks = 140;
     private static int emperorScorpionMaxSummonedScorpions = 4;
     private static int emperorScorpionMaxNearbyScorpions = 4;
-    private static int emperorScorpionHardenCooldownTicks = 2400;
+    private static int emperorScorpionHardenCooldownTicks = 1200;
     private static double emperorScorpionDamageRange = 25.0D;
     private static int emperorScorpionMinDespawnTicks = 6000;
     private static double scorpionHealth = 30.0D;
@@ -454,7 +454,7 @@ public final class AntarchySettings {
     private static double herculesBeetleDamageRange = 25.0D;
     private static double toreterrorDamageRange = 25.0D;
     private static double brutalflyDamageRange = 25.0D;
-    private static double alphaMantisDamageRange = 25.0D;
+    private static double alphaMantisDamageRange = 48.0D;
     private static float krakenLightningDamagePhaseOne = 6.0F;
     private static double lucidHealth = 70.0D;
     private static double lucidAttackDamage = 4.0D;
@@ -574,6 +574,9 @@ public final class AntarchySettings {
     private static boolean elythiaFireflyParticlesEnabled = true;
     private static boolean elythiaFogEnabled = true;
     private static boolean elythiaGroundMistEnabled = true;
+    private static boolean elythiaGrassWindEnabled = true;
+    private static boolean elythiaWindSoundsEnabled = true;
+    private static int primordialGrassDrawDistance = 192;
     private static boolean elythiaSoftCloudsEnabled = true;
     private static boolean boatsClimbWaterSteps = true;
     private static double boatWaterStepMaxHeight = 1.0D;
@@ -591,8 +594,10 @@ public final class AntarchySettings {
     private static boolean elythiaRainGrowth = true;
     private static boolean thoraxisEvents = true;
     private static boolean throwbackZonesEnabled = true;
-    private static int throwbackStructureZoneRadius = 10;
-    private static double throwbackWildZoneChance = 0.35D;
+    private static int throwbackTorchRadius = 24;
+    private static int throwbackWildZoneMinRadius = 48;
+    private static int throwbackWildZoneMaxRadius = 72;
+    private static double throwbackWildZoneChance = 0.25D;
     private static boolean throwbackNoAttackCooldown = true;
     private static boolean throwbackClassicHurtSound = true;
     private static boolean throwbackClassicFood = true;
@@ -3104,6 +3109,13 @@ public final class AntarchySettings {
     public static boolean elythiaFogEnabled() { return elythiaFogEnabled; }
     public static void setElythiaFogEnabled(boolean value) { elythiaFogEnabled = value; }
 
+    public static boolean elythiaGrassWindEnabled() { return elythiaGrassWindEnabled; }
+    public static void setElythiaGrassWindEnabled(boolean value) { elythiaGrassWindEnabled = value; }
+    public static boolean elythiaWindSoundsEnabled() { return elythiaWindSoundsEnabled; }
+    public static void setElythiaWindSoundsEnabled(boolean value) { elythiaWindSoundsEnabled = value; }
+    public static int primordialGrassDrawDistance() { return primordialGrassDrawDistance; }
+    public static void setPrimordialGrassDrawDistance(int value) { primordialGrassDrawDistance = Math.max(32, Math.min(512, value)); }
+
     public static boolean elythiaGroundMistEnabled() { return elythiaGroundMistEnabled; }
     public static void setElythiaGroundMistEnabled(boolean value) { elythiaGroundMistEnabled = value; }
 
@@ -3142,8 +3154,12 @@ public final class AntarchySettings {
 
     public static boolean throwbackZonesEnabled() { return throwbackZonesEnabled; }
     public static void setThrowbackZonesEnabled(boolean value) { throwbackZonesEnabled = value; }
-    public static int throwbackStructureZoneRadius() { return throwbackStructureZoneRadius; }
-    public static void setThrowbackStructureZoneRadius(int value) { throwbackStructureZoneRadius = value; }
+    public static int throwbackTorchRadius() { return throwbackTorchRadius; }
+    public static void setThrowbackTorchRadius(int value) { throwbackTorchRadius = value; }
+    public static int throwbackWildZoneMinRadius() { return throwbackWildZoneMinRadius; }
+    public static void setThrowbackWildZoneMinRadius(int value) { throwbackWildZoneMinRadius = value; }
+    public static int throwbackWildZoneMaxRadius() { return throwbackWildZoneMaxRadius; }
+    public static void setThrowbackWildZoneMaxRadius(int value) { throwbackWildZoneMaxRadius = value; }
     public static double throwbackWildZoneChance() { return throwbackWildZoneChance; }
     public static void setThrowbackWildZoneChance(double value) { throwbackWildZoneChance = value; }
     public static boolean throwbackNoAttackCooldown() { return throwbackNoAttackCooldown; }

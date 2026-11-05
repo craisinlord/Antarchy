@@ -104,6 +104,16 @@ public final class ElythiaButteFunction implements DensityFunction {
         return KEY_CODEC;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        return this == other || (this.grid != null && other instanceof ElythiaButteFunction butte && butte.grid == this.grid && butte.output == this.output);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.grid != null ? 31 * System.identityHashCode(this.grid) + this.output.ordinal() : System.identityHashCode(this);
+    }
+
     public enum Output implements StringRepresentable {
         OFFSET("offset"),
         PRESENCE("presence"),

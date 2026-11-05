@@ -61,15 +61,15 @@ public record MoltingVinesFeature() implements Feature {
                 if (!level.getBlockState(mutable).canBeReplaced()) {
                     continue;
                 }
-                if (AntarchyFluidChecks.hasBileNearby(level, mutable, 1)) {
-                    continue;
-                }
                 BlockPos abovePos = mutable.above();
                 BlockState aboveState = level.getBlockState(abovePos);
                 if (!aboveState.isFaceSturdy(level, abovePos, net.minecraft.core.Direction.DOWN)) {
                     continue;
                 }
                 if (!level.getBlockState(mutable.below()).canBeReplaced()) {
+                    continue;
+                }
+                if (AntarchyFluidChecks.hasBileNearby(level, mutable, 1)) {
                     continue;
                 }
                 return mutable.immutable();

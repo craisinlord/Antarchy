@@ -6,31 +6,154 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "antarchy:hercules_horn",
-          "modifier": [
-            {
-              "type": "minecraft:set_count",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 1,
-                "max": 2
-              }
-            },
-            {
-              "type": "minecraft:enchanted_count_increase",
-              "enchantment": "minecraft:looting",
-              "count": {
-                "type": "minecraft:uniform",
-                "min": 0.0,
-                "max": 1.0
-              }
-            }
-          ]
+          "name": "antarchy:hercules_horn"
+        }
+      ],
+      "conditions": [
+        {
+          "entity": "this",
+          "predicate": {
+            "nbt": "{GlimmerEcho:false}"
+          },
+          "condition": "minecraft:entity_properties"
         }
       ],
       "condition": {
         "type": "minecraft:killed_by_player"
-      }
+      },
+      "modifier": [
+        {
+          "count": {
+            "type": "minecraft:uniform",
+            "min": 1.0,
+            "max": 2.0
+          },
+          "type": "minecraft:set_count"
+        },
+        {
+          "enchantment": "minecraft:looting",
+          "count": {
+            "type": "minecraft:uniform",
+            "min": 0.0,
+            "max": 1.0
+          },
+          "type": "minecraft:enchanted_count_increase"
+        }
+      ]
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:faded_memory"
+        }
+      ],
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "entity": "this",
+          "predicate": {
+            "nbt": "{GlimmerEcho:true}"
+          },
+          "condition": "minecraft:entity_properties"
+        }
+      ],
+      "condition": {
+        "type": "minecraft:killed_by_player"
+      },
+      "modifier": [
+        {
+          "count": {
+            "type": "minecraft:uniform",
+            "min": 8.0,
+            "max": 14.0
+          },
+          "type": "minecraft:set_count"
+        },
+        {
+          "enchantment": "minecraft:looting",
+          "count": {
+            "type": "minecraft:uniform",
+            "min": 0.0,
+            "max": 1.0
+          },
+          "type": "minecraft:enchanted_count_increase"
+        }
+      ]
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:hercules_horn"
+        }
+      ],
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "entity": "this",
+          "predicate": {
+            "nbt": "{GlimmerEcho:true}"
+          },
+          "condition": "minecraft:entity_properties"
+        }
+      ],
+      "condition": {
+        "type": "minecraft:killed_by_player"
+      },
+      "modifier": [
+        {
+          "count": {
+            "type": "minecraft:uniform",
+            "min": 3.0,
+            "max": 5.0
+          },
+          "type": "minecraft:set_count"
+        },
+        {
+          "enchantment": "minecraft:looting",
+          "count": {
+            "type": "minecraft:uniform",
+            "min": 0.0,
+            "max": 1.0
+          },
+          "type": "minecraft:enchanted_count_increase"
+        }
+      ]
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:tigers_eye"
+        }
+      ],
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "entity": "this",
+          "predicate": {
+            "nbt": "{GlimmerEcho:true}"
+          },
+          "condition": "minecraft:entity_properties"
+        }
+      ],
+      "condition": {
+        "type": "minecraft:killed_by_player"
+      },
+      "modifier": [
+        {
+          "count": {
+            "type": "minecraft:uniform",
+            "min": 2.0,
+            "max": 5.0
+          },
+          "type": "minecraft:set_count"
+        }
+      ]
     }
   ],
   "random_sequence": "antarchy:entities/hercules_beetle"

@@ -1045,6 +1045,10 @@ public class OuranwoodTreeFeature implements Feature {
                 }
 
                 targetPos.set(centerX + x, centerY, centerZ + z);
+                if (!canWriteAt(level, targetPos)) {
+                    continue;
+                }
+
                 if (!isReplaceableState(readState(pending, level, targetPos))) {
                     continue;
                 }
@@ -1326,7 +1330,7 @@ public class OuranwoodTreeFeature implements Feature {
                 long neighborKey = neighborPos.asLong();
                 BlockState neighbor = states.get(neighborKey);
                 if (neighbor == null) {
-                    neighbor = level.getBlockState(neighborPos);
+                    neighbor = readState(pending, level, neighborPos);
                 }
                 if (neighbor.is(BlockTags.LOGS)) {
                     bestDistance = 1;
@@ -1768,6 +1772,9 @@ public class OuranwoodTreeFeature implements Feature {
     }
 
     protected static BlockState readState(WorldGenLevel level, BlockPos pos) {
+        if (!canWriteAt(level, pos)) {
+            return Blocks.AIR.defaultBlockState();
+        }
         TreePlacement placement = ACTIVE_PLACEMENT.get();
         if (placement != null && placement.pendingLeaves != null) {
             BlockState state = placement.pendingLeaves.get(pos.asLong());
@@ -1779,6 +1786,9 @@ public class OuranwoodTreeFeature implements Feature {
     }
 
     private static BlockState readState(@Nullable Long2ObjectOpenHashMap<BlockState> pending, WorldGenLevel level, BlockPos pos) {
+        if (!canWriteAt(level, pos)) {
+            return Blocks.AIR.defaultBlockState();
+        }
         if (pending != null) {
             BlockState state = pending.get(pos.asLong());
             if (state != null) {
@@ -1789,7 +1799,7 @@ public class OuranwoodTreeFeature implements Feature {
     }
 
     protected static boolean canWriteAt(WorldGenLevel level, BlockPos pos) {
-        return !(level instanceof WorldGenRegion region) || region.ensureCanWrite(pos);
+        return !(level instanceof WorldGenRegion region) || region.isWithinWriteZone(pos);
     }
 
     protected static boolean canReplace(WorldGenLevel level, BlockPos pos) {

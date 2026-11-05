@@ -38,7 +38,7 @@ public record ElythiaBasinFill(DensityFunction argument) implements DensityFunct
     }
 
     @Override
-    public int domainAxes() { return DensityFunction.ALL_AXES; }
+    public int domainAxes() { return ElythiaField.planarAxes(this.argument); }
 
     @Override
     public MapCodec<ElythiaBasinFill> codec() { return CODEC; }
@@ -103,7 +103,7 @@ public record ElythiaBasinFill(DensityFunction argument) implements DensityFunct
                 double weightX = spline(tx, i);
                 for (int j = 0; j < 3; j++) {
                     double weight = weightX * spline(tz, j);
-                    int slot = this.point(cache, cellX + i, cellZ + j);
+                    int slot = this.point(cache, cellX + i, cellZ + j, context);
                     rim += weight * cache.rims[slot];
                     target += weight * cache.targets[slot];
                     open += weight * cache.opens[slot];
@@ -114,19 +114,19 @@ public record ElythiaBasinFill(DensityFunction argument) implements DensityFunct
             return Math.max(enclosed, inland);
         }
 
-        private int point(FloorCache cache, int cellX, int cellZ) {
+        private int point(FloorCache cache, int cellX, int cellZ, ElythiaField.Point context) {
             long key = (long) cellX << 32 | (cellZ & 0xFFFFFFFFL);
             int slot = (int) ((cellX * 31L + cellZ) & (CACHE_SLOTS - 1));
             if (cache.filled[slot] && cache.keys[slot] == key) {
                 return slot;
             }
-            this.computePoint(cache, slot, cellX << GRID_SHIFT, cellZ << GRID_SHIFT);
+            this.computePoint(cache, slot, cellX << GRID_SHIFT, cellZ << GRID_SHIFT, context);
             cache.keys[slot] = key;
             cache.filled[slot] = true;
             return slot;
         }
 
-        private void computePoint(FloorCache cache, int slot, int x, int z) {
+        private void computePoint(FloorCache cache, int slot, int x, int z, ElythiaField.Point context) {
             double fill = Double.NEGATIVE_INFINITY;
             double lowest = Double.POSITIVE_INFINITY;
             for (int radius : RADII) {
@@ -134,7 +134,7 @@ public record ElythiaBasinFill(DensityFunction argument) implements DensityFunct
                 for (double[] direction : DIRECTIONS) {
                     int sampleX = x + (int) Math.round(direction[0] * radius);
                     int sampleZ = z + (int) Math.round(direction[1] * radius);
-                    ring = Math.min(ring, this.argument.compute(new ElythiaField.Point(sampleX, 0, sampleZ)));
+                    ring = Math.min(ring, this.argument.compute(context.at(sampleX, 0, sampleZ)));
                 }
                 fill = Math.max(fill, ring);
                 lowest = Math.min(lowest, ring);

@@ -5,6 +5,8 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.anthology.time.TimeDilationApi;
 import com.craisinlord.anthology.time.TimeDilationFieldEntity;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.antarchy.content.entity.BlockSuction;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
@@ -39,7 +41,7 @@ import com.geckolib.animation.object.PlayState;
 import com.geckolib.animation.RawAnimation;
 import com.geckolib.util.GeckoLibUtil;
 
-public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilationAnchor {
+public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilationAnchor, GlimmerEcho {
     private static final EntityDataAccessor<Float> RADIUS =
             SynchedEntityData.defineId(RoyalBlackHoleEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Boolean> COLLAPSING =
@@ -48,6 +50,9 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilat
             SynchedEntityData.defineId(RoyalBlackHoleEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> EFFECT_RADIUS =
             SynchedEntityData.defineId(RoyalBlackHoleEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO =
+            SynchedEntityData.defineId(RoyalBlackHoleEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final double GLIMMER_COLLAPSE_RADIUS_SCALE = 1.25D;
     private static final String OWNER_KEY = "OwnerUuid";
     private static final String AGE_KEY = "Age";
     private static final String ACTIVE_KEY = "ActiveTicks";
@@ -130,6 +135,17 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilat
         builder.define(COLLAPSING, false);
         builder.define(VISUAL_GROWTH, 1.0F);
         builder.define(EFFECT_RADIUS, (float) (DEFAULT_RADIUS * EFFECT_GROWTH_START));
+        builder.define(GLIMMER_ECHO, false);
+    }
+
+    @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
     }
 
     public void setRadius(double radius) {
@@ -183,7 +199,7 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilat
             this.entityData.set(EFFECT_RADIUS, (float) this.computeEffectRadius());
             this.ensureAttachedDilationField();
             this.applyPull();
-            if (this.pullsTerrainBlocks() && this.age % BLOCK_SUCTION_INTERVAL == 0
+            if (!this.isGlimmerEcho() && this.pullsTerrainBlocks() && this.age % BLOCK_SUCTION_INTERVAL == 0
                     && this.level() instanceof ServerLevel level) {
                 this.pullTerrainBlocks(level);
             }
@@ -358,7 +374,7 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilat
             return;
         }
         Vec3 center = this.effectCenter();
-        double radius = this.effectRadius();
+        double radius = this.effectRadius() * (this.isGlimmerEcho() ? GLIMMER_COLLAPSE_RADIUS_SCALE : 1.0D);
         DamageSource source = this.ownerEntity() != null
                 ? this.damageSources().mobAttack(this.ownerEntity())
                 : this.damageSources().magic();
@@ -375,11 +391,14 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilat
             living.setDeltaMovement(launch.x, 1.1D * falloff + 0.4D, launch.z);
             living.needsSync = true;
         }
-        if (level.getGameRules().get(GameRules.MOB_GRIEFING)) {
+        if (!this.isGlimmerEcho() && level.getGameRules().get(GameRules.MOB_GRIEFING)) {
             RoyalBlockDestruction.destroySphere(level, this, center, radius * 0.4D, 160, 60.0D, 0.1F);
         }
-        level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, center.x, center.y, center.z, 8, 3.0D, 3.0D, 3.0D, 0.0D);
-        level.sendParticles(ParticleTypes.REVERSE_PORTAL, center.x, center.y, center.z, 120, 4.0D, 4.0D, 4.0D, 0.6D);
+        level.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.EXPLOSION_EMITTER), center.x, center.y, center.z, 8, 3.0D, 3.0D, 3.0D, 0.0D);
+        level.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.REVERSE_PORTAL), center.x, center.y, center.z, 120, 4.0D, 4.0D, 4.0D, 0.6D);
+        if (this.isGlimmerEcho()) {
+            GlimmerEchoes.ring(level, center, radius, 64);
+        }
     }
 
     private boolean isImmune(Entity entity) {
@@ -412,7 +431,7 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilat
             double px = center.x + Math.cos(angle) * r;
             double pz = center.z + Math.sin(angle) * r;
             double py = center.y + (this.random.nextDouble() - 0.5D) * 3.0D;
-            this.level().addParticle(ParticleTypes.PORTAL, px, py, pz,
+            this.level().addParticle(GlimmerEchoes.particle(this, ParticleTypes.PORTAL), px, py, pz,
                     (center.x - px) * 0.18D, (center.y - py) * 0.18D, (center.z - pz) * 0.18D);
         }
     }
@@ -444,6 +463,7 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilat
         this.suckedBlocks = input.getIntOr(SUCKED_BLOCKS_KEY, 0);
         this.entityData.set(EFFECT_RADIUS, (float) this.computeEffectRadius());
         this.ownerId = input.read(OWNER_KEY, UUIDUtil.CODEC).orElse(null);
+        this.setGlimmerEcho(input.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
         this.dilationFieldId = input.read(DILATION_FIELD_KEY, UUIDUtil.CODEC).orElse(null);
         this.travelTicksRemaining = Math.max(0, input.getIntOr(TRAVEL_TICKS_KEY, 0));
         if (this.travelTicksRemaining > 0 && input.read(DESTINATION_X_KEY, com.mojang.serialization.Codec.DOUBLE).isPresent()) {
@@ -462,6 +482,7 @@ public class RoyalBlackHoleEntity extends Entity implements GeoEntity, TimeDilat
         output.putInt(ANIMATION_AGE_KEY, this.animationAge);
         output.putInt(SUCKED_BLOCKS_KEY, this.suckedBlocks);
         output.storeNullable(OWNER_KEY, UUIDUtil.CODEC, this.ownerId);
+        output.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
         output.storeNullable(DILATION_FIELD_KEY, UUIDUtil.CODEC, this.dilationFieldId);
         output.putInt(TRAVEL_TICKS_KEY, this.travelTicksRemaining);
         if (this.destination != null) {

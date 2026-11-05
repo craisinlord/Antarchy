@@ -140,8 +140,8 @@
     ],
     [
       "antarchy:elythia_underground",
-      "minecraft:large_dripstone",
-      "minecraft:pointed_dripstone"
+      "antarchy:elythia_large_dripstone",
+      "antarchy:elythia_pointed_dripstone"
     ],
     [],
     [
@@ -150,7 +150,8 @@
       "antarchy:elythia_brown_ant_nests",
       "antarchy:elythia_rainbow_ant_nests",
       "antarchy:fallen_ouranwood_tree",
-      "antarchy:fungal_mushroom"
+      "antarchy:fungal_mushroom",
+      "antarchy:throwback_nerd_pole"
     ],
     []
   ]

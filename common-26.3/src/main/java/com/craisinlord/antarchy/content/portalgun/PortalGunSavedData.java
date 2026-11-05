@@ -222,6 +222,15 @@ public final class PortalGunSavedData extends SavedData {
         return clearMatching(server, record -> true);
     }
 
+    public static void clearAntarchyDimensions(MinecraftServer server, Set<String> dimensionPaths) {
+        PortalGunSavedData data = get(server);
+        boolean removed = data.pairs.keySet().removeIf(key -> "antarchy".equals(key.dimension().getNamespace())
+                && dimensionPaths.contains(key.dimension().getPath()));
+        if (removed) {
+            data.setDirty();
+        }
+    }
+
     private static int clearMatching(MinecraftServer server, java.util.function.Predicate<PairRecord> filter) {
         PortalGunSavedData data = get(server);
         Set<UUID> portalIds = new HashSet<>();

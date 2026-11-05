@@ -1,0 +1,10 @@
+{
+  "type": "antarchy:elythia_stone_ruin",
+  "config": {
+    "bricks": "antarchy:zebra_stone_bricks",
+    "pillar": "antarchy:zebra_stone_pillar",
+    "chiseled": "antarchy:chiseled_zebra_stone",
+    "slab": "antarchy:zebra_stone_brick_slab",
+    "wall": "antarchy:zebra_stone_brick_wall"
+  }
+}

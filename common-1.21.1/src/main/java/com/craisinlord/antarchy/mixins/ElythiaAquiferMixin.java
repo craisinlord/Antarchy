@@ -41,8 +41,6 @@ public abstract class ElythiaAquiferMixin {
             @Local(argsOnly = true) RandomState randomState
     ) {
         Aquifer aquifer = original.call(noiseChunk, chunkPos, router, random, minY, height, fluidPicker);
-        // Prefer the hydrology captured on RandomState before C2ME's density function compiler rebuilt the router, and give
-        // it this chunk's vanilla caches. That is exactly what vanilla hands the aquifer, whatever the router turned into.
         ElythiaHydrology captured = ((ElythiaHydrologyHolder) (Object) randomState).antarchy$hydrology();
         ElythiaHydrology hydrology;
         if (captured != null) {

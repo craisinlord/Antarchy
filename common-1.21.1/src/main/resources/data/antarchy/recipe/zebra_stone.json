@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "S": {
+      "item": "antarchy:rockite"
+    },
+    "P": {
+      "item": "minecraft:white_dye"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "SPS",
+    "SSS"
+  ],
+  "result": {
+    "count": 8,
+    "id": "antarchy:zebra_stone"
+  }
+}

@@ -67,6 +67,9 @@ public final class CavarynWormBoreDressingFeature extends Feature<NoneFeatureCon
         RandomSource random = context.random();
         int originX = context.origin().getX() & ~15;
         int originZ = context.origin().getZ() & ~15;
+        if (!grid.hasCandidates(originX, originZ)) {
+            return false;
+        }
         int minBuild = level.getMinY() + 6;
         int maxBuild = (level.getMaxY() + 1) - 7;
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();

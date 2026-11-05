@@ -36,7 +36,7 @@ public record ElythiaRiverCoastFade(DensityFunction argument, DensityFunction co
     }
 
     @Override
-    public int domainAxes() { return DensityFunction.ALL_AXES; }
+    public int domainAxes() { return ElythiaField.planarAxes(); }
 
     @Override
     public MapCodec<ElythiaRiverCoastFade> codec() { return CODEC; }
@@ -54,10 +54,10 @@ public record ElythiaRiverCoastFade(DensityFunction argument, DensityFunction co
         public double compute(ElythiaField.Point context) {
             int x = context.blockX();
             int z = context.blockZ();
-            double riverX = sample(this.argument, x + STEP, z) - sample(this.argument, x - STEP, z);
-            double riverZ = sample(this.argument, x, z + STEP) - sample(this.argument, x, z - STEP);
-            double coastX = sample(this.continents, x + STEP, z) - sample(this.continents, x - STEP, z);
-            double coastZ = sample(this.continents, x, z + STEP) - sample(this.continents, x, z - STEP);
+            double riverX = sample(this.argument, context, x + STEP, z) - sample(this.argument, context, x - STEP, z);
+            double riverZ = sample(this.argument, context, x, z + STEP) - sample(this.argument, context, x, z - STEP);
+            double coastX = sample(this.continents, context, x + STEP, z) - sample(this.continents, context, x - STEP, z);
+            double coastZ = sample(this.continents, context, x, z + STEP) - sample(this.continents, context, x, z - STEP);
             double river = riverX * riverX + riverZ * riverZ;
             double coast = coastX * coastX + coastZ * coastZ;
             if (river < MIN_GRADIENT || coast < MIN_GRADIENT) {
@@ -68,8 +68,8 @@ public record ElythiaRiverCoastFade(DensityFunction argument, DensityFunction co
             return t * t * (3.0D - 2.0D * t);
         }
 
-        private static double sample(ElythiaField function, int x, int z) {
-            return function.compute(new ElythiaField.Point(x, 0, z));
+        private static double sample(ElythiaField function, ElythiaField.Point context, int x, int z) {
+            return function.compute(context.at(x, 0, z));
         }
     }
 }

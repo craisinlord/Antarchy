@@ -3,6 +3,8 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.damage.AntarchyDamageSources;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -39,11 +41,12 @@ import com.geckolib.animation.object.PlayState;
 import com.geckolib.animation.RawAnimation;
 import com.geckolib.util.GeckoLibUtil;
 
-public class WaterBombEntity extends ThrowableProjectile implements GeoEntity {
+public class WaterBombEntity extends ThrowableProjectile implements GeoEntity, GlimmerEcho {
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
 
     private static final EntityDataAccessor<Boolean> HUGE = SynchedEntityData.defineId(WaterBombEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO = SynchedEntityData.defineId(WaterBombEntity.class, EntityDataSerializers.BOOLEAN);
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private int lifetimeTicks;
@@ -68,6 +71,17 @@ public class WaterBombEntity extends ThrowableProjectile implements GeoEntity {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(HUGE, false);
+        builder.define(GLIMMER_ECHO, false);
+    }
+
+    @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
     }
 
     public boolean isHuge() {
@@ -88,8 +102,8 @@ public class WaterBombEntity extends ThrowableProjectile implements GeoEntity {
         this.hitCooldowns.entrySet().removeIf(e -> e.getValue() <= 0);
 
         if (this.level() instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.DRIPPING_WATER, this.getX(), this.getY(), this.getZ(), 3, 0.15D, 0.15D, 0.15D, 0.0D);
-            serverLevel.sendParticles(ParticleTypes.SPLASH, this.getX(), this.getY(), this.getZ(), 2, 0.1D, 0.1D, 0.1D, 0.01D);
+            serverLevel.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.DRIPPING_WATER), this.getX(), this.getY(), this.getZ(), 3, 0.15D, 0.15D, 0.15D, 0.0D);
+            serverLevel.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.SPLASH), this.getX(), this.getY(), this.getZ(), 2, 0.1D, 0.1D, 0.1D, 0.01D);
         }
 
         this.lifetimeTicks--;
@@ -107,7 +121,7 @@ public class WaterBombEntity extends ThrowableProjectile implements GeoEntity {
         UUID id = entity.getUUID();
         if (this.hitCooldowns.getOrDefault(id, 0) > 0) return;
 
-        float damage = (float) AntarchySettings.waterBombDamage() * (this.isHuge() ? 3.0F : 1.0F);
+        float damage = (float) AntarchySettings.waterBombDamage() * (this.isHuge() ? 3.0F : 1.0F) * GlimmerEchoes.damageMultiplier(this.getOwner());
         if (this.level() instanceof ServerLevel serverLevel && living.hurtServer(serverLevel, AntarchyDamageSources.waterSoaked(this.level(), this, this.getOwner()), damage)) {
             this.hitCooldowns.put(id, 15);
             Vec3 knockDir = living.position().subtract(this.position()).normalize();
@@ -150,6 +164,7 @@ public class WaterBombEntity extends ThrowableProjectile implements GeoEntity {
         super.addAdditionalSaveData(output);
         output.putInt("LifetimeTicks", this.lifetimeTicks);
         output.putBoolean("Huge", this.isHuge());
+        output.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
     }
 
     @Override
@@ -157,6 +172,7 @@ public class WaterBombEntity extends ThrowableProjectile implements GeoEntity {
         super.readAdditionalSaveData(input);
         this.lifetimeTicks = input.getIntOr("LifetimeTicks", AntarchySettings.waterBombLifetimeTicks());
         input.read("Huge", Codec.BOOL).ifPresent(huge -> this.entityData.set(HUGE, huge));
+        this.setGlimmerEcho(input.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
     }
 
     private void realignToMotion() {

@@ -3,6 +3,9 @@ package com.craisinlord.antarchy.content.entity.royal;
 import net.minecraft.util.Prediction;
 import net.minecraft.world.entity.EntityTypes;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerSite;
+import com.craisinlord.antarchy.content.worldgen.elythia.KingsTreeGridFeature;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.effect.RoyalEffectEligibility;
@@ -114,6 +117,10 @@ public class KingEntity extends RoyalBossEntity {
     private static final double ROYAL_CHARGE_MAX_RANGE = 50.0D;
     private static final int CHAIN_LIGHTNING_INTERVAL = 12;
     private static final int CHAIN_LIGHTNING_JUMPS = 4;
+    private static final int GLIMMER_JUDGMENT_ACTIVE_TICKS = 13;
+    private static final int GLIMMER_DECREE_MIN_COOLDOWN = 120;
+    private static final double TREE_PATROL_MIN_OFFSET = 24.0D;
+    private static final double TREE_PATROL_MAX_OFFSET = 72.0D;
     private static final double CHAIN_LIGHTNING_JUMP_RANGE = 9.0D;
     private static final int ICE_FREEZE_PER_TICK = 7;
     private static final int BEHAVIOR_SCORE_CAP = 12;
@@ -395,6 +402,46 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     @Override
+    protected double glimmerHealthMultiplier() {
+        return AntarchySettings.glimmerKingHealthMultiplier();
+    }
+
+    @Override
+    protected double glimmerDamageMultiplier() {
+        return AntarchySettings.glimmerKingDamageMultiplier();
+    }
+
+    @Override
+    protected double glimmerCooldownMultiplier() {
+        return AntarchySettings.glimmerKingCooldownMultiplier();
+    }
+
+    @Override
+    public void onGlimmerSummoned(ServerLevel level, GlimmerSite.Match site, ServerPlayer summoner) {
+        if (!site.is(GlimmerSite.KINGS_TREE)) {
+            return;
+        }
+        BlockPos anchor = site.anchor();
+        int baseY = KingsTreeGridFeature.treeBaseY(level, anchor.getX(), anchor.getZ());
+        Vec3 center = new Vec3(anchor.getX() + 0.5D, 0.0D, anchor.getZ() + 0.5D);
+        double angle = Math.atan2(this.getZ() - center.z, this.getX() - center.x);
+        this.setTreePatrolHome(center, baseY + TREE_PATROL_MIN_OFFSET, baseY + TREE_PATROL_MAX_OFFSET,
+                Double.isFinite(angle) ? angle : 0.0D);
+    }
+
+    @Override
+    protected void onGlimmerFade() {
+        super.onGlimmerFade();
+        if (this.activeDecree != null) {
+            this.endDecree(null);
+        }
+        this.clearExile();
+        this.clearTithe();
+        this.clearTargetShot();
+        this.clearSeal();
+    }
+
+    @Override
     protected SoundEvent royalIdleSound() {
         return AntarchySoundEvents.KING_IDLE.get();
     }
@@ -555,11 +602,15 @@ public class KingEntity extends RoyalBossEntity {
                 break;
             }
             struck.add(next.getUUID());
-            LightningBolt bolt = EntityTypes.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
-            if (bolt != null) {
-                bolt.snapTo(next.getX(), next.getY(), next.getZ());
-                bolt.setVisualOnly(true);
-                level.addFreshEntity(bolt);
+            if (this.isGlimmerEcho()) {
+                RoyalBossEntity.sendGlimmerLightning(level, next.getX(), next.getY(), next.getZ());
+            } else {
+                LightningBolt bolt = EntityTypes.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
+                if (bolt != null) {
+                    bolt.snapTo(next.getX(), next.getY(), next.getZ());
+                    bolt.setVisualOnly(true);
+                    level.addFreshEntity(bolt);
+                }
             }
             next.hurt(this.damageSources().lightningBolt(), damage);
             from = next.position().add(0.0D, next.getBbHeight() * 0.5D, 0.0D);
@@ -847,6 +898,9 @@ public class KingEntity extends RoyalBossEntity {
     }
 
     private void clearLeavesAhead(ServerLevel level) {
+        if (this.isGlimmerEcho()) {
+            return;
+        }
         if (!level.getGameRules().get(GameRules.MOB_GRIEFING)) {
             return;
         }
@@ -1372,7 +1426,7 @@ public class KingEntity extends RoyalBossEntity {
                 arrow.setPos(this.targetShotPlayer.getX(), this.targetShotPlayer.getEyeY() - 0.1D, this.targetShotPlayer.getZ());
                 Vec3 direction = this.targetShotVictim.getEyePosition().subtract(arrow.position()).normalize();
                 arrow.setDeltaMovement(direction.scale(3.0D));
-                arrow.setBaseDamage(2.0D);
+                arrow.setBaseDamage(2.0D * this.glimmerEchoDamageMultiplier());
                 ((ServerLevel) this.level()).addFreshEntity(arrow);
                 this.targetShotPlayer.sendOverlayMessage(Component.literal("The King takes your shot."));
             }
@@ -1956,8 +2010,10 @@ public class KingEntity extends RoyalBossEntity {
             this.addGravityAwareImpulse(living, new Vec3(push.x, 0.0D, push.z).add(vertical));
             living.needsSync = true;
         }
-        RoyalBlockDestruction.destroySphere(level, this,
-                new Vec3(this.getX(), this.getY(), this.getZ()), STOMP_RADIUS * 0.5D, 96, 80.0D, 0.15F);
+        if (!this.isGlimmerEcho()) {
+            RoyalBlockDestruction.destroySphere(level, this,
+                    new Vec3(this.getX(), this.getY(), this.getZ()), STOMP_RADIUS * 0.5D, 96, 80.0D, 0.15F);
+        }
         level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, this.getX(), this.getY(), this.getZ(), 6, 4.0D, 0.5D, 4.0D, 0.0D);
         this.playRoyalSound(AntarchySoundEvents.KING_STOMP.get(), 0.8F);
     }
@@ -2074,7 +2130,7 @@ public class KingEntity extends RoyalBossEntity {
         }
         if (this.activeDecree != null && hasCompletableParticipants && everyParticipantComplete) {
             this.projectRoyalSound(AntarchySoundEvents.KING_SUCCESS.get(), 4.0F, 1.0F, target);
-            this.endDecree(target);
+            this.completeActiveDecree(target);
             return;
         }
         if (this.decreeResponseGraceTicks > 0) {
@@ -2082,7 +2138,7 @@ public class KingEntity extends RoyalBossEntity {
         }
         if (this.activeDecree != null && --this.activeDecreeTicks <= 0) {
             this.projectRoyalSound(AntarchySoundEvents.KING_SUCCESS.get(), 4.0F, 1.0F, target);
-            this.endDecree(target);
+            this.completeActiveDecree(target);
         }
     }
 
@@ -2141,7 +2197,15 @@ public class KingEntity extends RoyalBossEntity {
             case TWO -> 0.82D;
             case THREE -> 0.65D;
         };
-        return Math.max(200, Mth.floor(AntarchySettings.royalDecreeCooldownTicks() * scale));
+        int cooldown = Math.max(200, Mth.floor(AntarchySettings.royalDecreeCooldownTicks() * scale));
+        return this.isGlimmerEcho() ? Math.max(GLIMMER_DECREE_MIN_COOLDOWN, this.scaledRoyalCooldown(cooldown)) : cooldown;
+    }
+
+    private void completeActiveDecree(@Nullable LivingEntity target) {
+        this.endDecree(target);
+        if (this.isGlimmerEcho() && target != null && target.isAlive()) {
+            this.startRoyalJudgmentBarrage(target);
+        }
     }
 
     private void endDecree(@Nullable LivingEntity target) {
@@ -2210,18 +2274,18 @@ public class KingEntity extends RoyalBossEntity {
             return;
         }
         this.beginRoyalAttack("royal_judgment", RoyalAttackLane.HAZARD, 80,
-                20, 9, 12, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
+                20, this.isGlimmerEcho() ? GLIMMER_JUDGMENT_ACTIVE_TICKS : 9, 12, new com.craisinlord.antarchy.content.entity.royal.attack.RoyalAttackScheduler.Action() {
                     @Override
                     public void onStart() {
                         for (RoyalHead.Slot slot : RoyalHead.Slot.values()) {
                             KingEntity.this.triggerAnim(slot.controllerName(), "shoot");
                         }
-                        level.sendParticles(ParticleTypes.ELECTRIC_SPARK,
+                        level.sendParticles(KingEntity.this.royalParticle(ParticleTypes.ELECTRIC_SPARK),
                                 KingEntity.this.getX(), KingEntity.this.getY() + KingEntity.this.getBbHeight() * 0.7D,
                                 KingEntity.this.getZ(), 70, 4.0D, 3.0D, 4.0D, 0.12D);
                         KingEntity.this.sendRoyalJudgmentTelegraph(level, target, 0);
                         Vec3 targetFlash = target.getEyePosition();
-                        level.sendParticles(ParticleTypes.END_ROD, targetFlash.x, targetFlash.y, targetFlash.z,
+                        level.sendParticles(KingEntity.this.royalParticle(ParticleTypes.END_ROD), targetFlash.x, targetFlash.y, targetFlash.z,
                                 24, 0.35D, 0.45D, 0.35D, 0.04D);
                     }
 
@@ -2237,7 +2301,7 @@ public class KingEntity extends RoyalBossEntity {
                         if (target.isAlive() && target.level() == level) {
                             if (elapsedTicks == 0) {
                                 Vec3 targetFlash = target.getEyePosition();
-                                level.sendParticles(ParticleTypes.END_ROD, targetFlash.x, targetFlash.y, targetFlash.z,
+                                level.sendParticles(KingEntity.this.royalParticle(ParticleTypes.END_ROD), targetFlash.x, targetFlash.y, targetFlash.z,
                                         32, 0.45D, 0.55D, 0.45D, 0.05D);
                                 if (target instanceof ServerPlayer player) {
                                     KingJudgmentFlashSync.send(player, 12);
@@ -2270,7 +2334,7 @@ public class KingEntity extends RoyalBossEntity {
             int samples = Math.max(4, (int) (length / 2.0D));
             for (int sample = 1; sample <= samples; sample++) {
                 Vec3 point = origin.add(direction.scale(length * sample / samples));
-                level.sendParticles(ParticleTypes.ELECTRIC_SPARK, point.x, point.y, point.z,
+                level.sendParticles(this.royalParticle(ParticleTypes.ELECTRIC_SPARK), point.x, point.y, point.z,
                         1, 0.02D, 0.02D, 0.02D, 0.0D);
             }
         }
@@ -2278,7 +2342,7 @@ public class KingEntity extends RoyalBossEntity {
         for (int index = 0; index < 20; index++) {
             double angle = Mth.TWO_PI * index / 20.0D;
             Vec3 point = targetPoint.add(Math.cos(angle) * radius, 0.0D, Math.sin(angle) * radius);
-            level.sendParticles(ParticleTypes.ELECTRIC_SPARK, point.x, point.y, point.z,
+            level.sendParticles(this.royalParticle(ParticleTypes.ELECTRIC_SPARK), point.x, point.y, point.z,
                     1, 0.0D, 0.03D, 0.0D, 0.0D);
         }
     }
@@ -2294,6 +2358,7 @@ public class KingEntity extends RoyalBossEntity {
             bolt.setElement(RoyalBeamElement.KING_GOLD);
             bolt.setPos(origin.x, origin.y, origin.z);
             bolt.shoot(direction.x, direction.y, direction.z, 1.55F, 1.0F);
+            GlimmerEchoes.markSummon(this, bolt);
             level.addFreshEntity(bolt);
         }
         this.playRoyalSound(AntarchySoundEvents.KING_BEAM_SHOOT.get(), 1.15F);

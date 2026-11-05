@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "minecraft:compass"
+    },
+    {
+      "item": "antarchy:molevore_nose"
+    },
+    {
+      "item": "antarchy:primordial_loam"
+    }
+  ],
+  "result": {
+    "id": "antarchy:snout_compass",
+    "count": 1
+  }
+}

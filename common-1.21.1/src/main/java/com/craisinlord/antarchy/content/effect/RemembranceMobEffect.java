@@ -5,6 +5,6 @@ import net.minecraft.world.effect.MobEffectCategory;
 
 public final class RemembranceMobEffect extends MobEffect {
     public RemembranceMobEffect() {
-        super(MobEffectCategory.NEUTRAL, 0xF2C46D);
+        super(MobEffectCategory.NEUTRAL, 0xE8A07A);
     }
 }

@@ -1,0 +1,14 @@
+{
+  "variants": {
+    "type=double": {
+      "model": "antarchy:block/tidestone_bricks"
+    },
+    "type=bottom": {
+      "model": "antarchy:block/tidestone_brick_slab"
+    },
+    "type=top": {
+      "model": "antarchy:block/tidestone_brick_slab_top"
+    }
+  }
+}
+

@@ -53,6 +53,9 @@
     "antarchy:broodstone_iron_ore",
     "antarchy:myrmite_lapis_ore",
     "antarchy:broodstone_lapis_ore",
-    "antarchy:broodstone_fossil"
+    "antarchy:broodstone_fossil",
+    "antarchy:rockite_copper_ore",
+    "antarchy:rockite_iron_ore",
+    "antarchy:rockite_lapis_ore"
   ]
 }

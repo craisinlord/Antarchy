@@ -1,0 +1,13 @@
+{
+  "type": "antarchy:elythia_stone_ruin",
+  "config": {
+    "bricks": "antarchy:rockite_bricks",
+    "pillar": "antarchy:rockite_pillar",
+    "chiseled": "antarchy:chiseled_rockite_bricks",
+    "slab": "antarchy:rockite_brick_slab",
+    "wall": "antarchy:rockite_brick_wall",
+    "cracked": "antarchy:cracked_rockite_bricks",
+    "mossy": "antarchy:mossy_rockite_bricks",
+    "loot_table": "antarchy:chests/rockite_ruin"
+  }
+}

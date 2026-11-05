@@ -128,6 +128,10 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     private static final double SHOULDER_HEAD_Y_OFFSET = 0.26D;
     private static final double SCORE_BOUND_EPSILON = 1.0E-6D;
     private static final Predicate<BlockState> ACORN_BLOCK_PREDICATE = state -> state.getBlock() instanceof OuranwoodAcornBlock;
+    private static final int MAX_CLIMB_SCAN_CANDIDATES = 49 * 49 * 3;
+    private static final ThreadLocal<ClimbScanBuffers> CLIMB_SCAN_BUFFERS = ThreadLocal.withInitial(ClimbScanBuffers::new);
+    private static final int FAILED_CLIMB_SCAN_MEMORY_TICKS = 100;
+    private static final int MAX_CLIMB_SEARCH_COOLDOWN = 40;
 
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
@@ -181,6 +185,7 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     private int nextBestGlideScanTick;
     @Nullable
     private BlockPos cachedBestGlideTarget;
+    private int nextForcedLandingScanTick;
     private int nextNutScanTick;
     @Nullable
     private ItemEntity cachedNutItem;
@@ -462,7 +467,8 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
                     }
                     rescueTarget = this.cachedBestGlideTarget;
                 }
-                if (rescueTarget == null) {
+                if (rescueTarget == null && this.tickCount >= this.nextForcedLandingScanTick) {
+                    this.nextForcedLandingScanTick = this.tickCount + 5;
                     rescueTarget = this.findForcedFallLanding();
                 }
                 if (rescueTarget != null && this.isRecentEmergencyGlideTarget(rescueTarget)) {
@@ -1750,9 +1756,9 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
     }
 
     static boolean isOpenStandPos(SquirrelBlockReader reader, int x, int y, int z) {
-        return reader.isAir(x, y, z)
-                && reader.isAir(x, y + 1, z)
-                && isStandableSurface(reader.getBlockState(x, y - 1, z));
+        return isStandableSurface(reader.getBlockState(x, y - 1, z))
+                && reader.isAir(x, y, z)
+                && reader.isAir(x, y + 1, z);
     }
 
     static boolean isOpenAir(SquirrelBlockReader reader, int x, int y, int z) {
@@ -1939,6 +1945,10 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
                 return false;
             }
 
+            if (FlyingSquirrelEntity.this.isIdleFarFromPlayers()) {
+                return false;
+            }
+
             if (FlyingSquirrelEntity.this.isGliding()
                     || FlyingSquirrelEntity.this.isClimbingTrunk()
                     || FlyingSquirrelEntity.this.isPickingUpNut()
@@ -2089,6 +2099,10 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
         }
     }
 
+    private boolean isIdleFarFromPlayers() {
+        return !this.isTame() && this.getNoActionTime() >= 100;
+    }
+
     private double getClimbBias() {
         if (!this.onGround()) {
             return 0.0D;
@@ -2136,9 +2150,10 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
         int minZ = origin.getZ() - horizontalRange;
         int width = horizontalRange * 2 + 1;
         int count = width * width * 3;
-        int[] order = new int[count];
-        double[] walkDistances = new double[count];
-        double[] upperBounds = new double[count];
+        ClimbScanBuffers buffers = CLIMB_SCAN_BUFFERS.get();
+        int[] order = buffers.order;
+        double[] walkDistances = buffers.walkDistances;
+        double[] upperBounds = buffers.upperBounds;
 
         for (int index = 0; index < count; index++) {
             int x = minX + index % width;
@@ -2289,19 +2304,17 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
                 && isValidClimbSupport(reader.getBlockState(x + preferredDirection.getStepX(), y, z + preferredDirection.getStepZ()))) {
             return preferredDirection;
         }
+        Direction firstSolidDirection = null;
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             BlockState supportState = reader.getBlockState(x + direction.getStepX(), y, z + direction.getStepZ());
             if (supportState.is(BlockTags.LOGS)) {
                 return direction;
             }
-        }
-        for (Direction direction : Direction.Plane.HORIZONTAL) {
-            BlockState supportState = reader.getBlockState(x + direction.getStepX(), y, z + direction.getStepZ());
-            if (supportState.blocksMotion()) {
-                return direction;
+            if (firstSolidDirection == null && supportState.blocksMotion()) {
+                firstSolidDirection = direction;
             }
         }
-        return null;
+        return firstSolidDirection;
     }
 
     private static boolean isValidClimbSupport(BlockState state) {
@@ -2499,6 +2512,9 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
                 }
 
                 int y = minY + layer;
+                if (this.isSupportLayerEmpty(reader, minX, minZ, width, y - 1)) {
+                    continue;
+                }
                 double dy = y - posY;
                 for (int column = 0; column < columnDistance.length; column++) {
                     double horizontalDistance = columnDistance[column];
@@ -2550,6 +2566,19 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
             return bestIndex < 0 ? null : new BlockPos(bestX, bestY, bestZ);
         }
 
+        private boolean isSupportLayerEmpty(SquirrelBlockReader reader, int minX, int minZ, int width, int supportY) {
+            int maxChunkX = (minX + width - 1) >> 4;
+            int maxChunkZ = (minZ + width - 1) >> 4;
+            for (int chunkX = minX >> 4; chunkX <= maxChunkX; chunkX++) {
+                for (int chunkZ = minZ >> 4; chunkZ <= maxChunkZ; chunkZ++) {
+                    if (!reader.sectionHasOnlyAir(chunkX << 4, supportY, chunkZ << 4)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
         private double scoreDestination(double baseScore, double dy, double horizontalDistance, double heightBias,
                                         double riseWeight, double distanceWeight, double highRiseBonus, double dropWeight) {
             double score = baseScore;
@@ -2593,6 +2622,12 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
         }
     }
 
+    private static final class ClimbScanBuffers {
+        private final int[] order = new int[MAX_CLIMB_SCAN_CANDIDATES];
+        private final double[] walkDistances = new double[MAX_CLIMB_SCAN_CANDIDATES];
+        private final double[] upperBounds = new double[MAX_CLIMB_SCAN_CANDIDATES];
+    }
+
     private static final class ClimbTarget {
         private final BlockPos baseStandPos;
         private final BlockPos topStandPos;
@@ -2619,6 +2654,11 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
         private double lastDistanceToBase;
         private boolean climbing;
         private int attachDirectionRefreshTick;
+        private boolean failedScanValid;
+        private long failedScanOrigin;
+        private boolean failedScanFavorClimbing;
+        private int failedScanExpiryTick;
+        private int failedScanStreak;
 
         private ClimbGoal() {
             this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
@@ -2626,12 +2666,16 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
 
         @Override
         public boolean canUse() {
-            boolean favorClimbing = FlyingSquirrelEntity.this.shouldFavorClimbingFromGround();
-
             if (this.searchCooldown > 0) {
                 this.searchCooldown--;
                 return false;
             }
+
+            if (FlyingSquirrelEntity.this.isIdleFarFromPlayers()) {
+                return false;
+            }
+
+            boolean favorClimbing = FlyingSquirrelEntity.this.shouldFavorClimbingFromGround();
 
             if (FlyingSquirrelEntity.this.isOrderedToSit()
                     || FlyingSquirrelEntity.this.isGliding()
@@ -2641,12 +2685,28 @@ public class FlyingSquirrelEntity extends TamableAnimal implements GeoEntity {
                 return false;
             }
 
-            this.target = FlyingSquirrelEntity.this.findBestClimbTarget(favorClimbing);
-            if (this.target != null) {
-                return true;
+            long origin = FlyingSquirrelEntity.this.blockPosition().asLong();
+            boolean rememberedFailure = this.failedScanValid
+                    && this.failedScanOrigin == origin
+                    && this.failedScanFavorClimbing == favorClimbing
+                    && FlyingSquirrelEntity.this.tickCount < this.failedScanExpiryTick;
+            if (!rememberedFailure) {
+                boolean excludedTargetActive = FlyingSquirrelEntity.this.recentFailedClimbCooldown > 0;
+                this.target = FlyingSquirrelEntity.this.findBestClimbTarget(favorClimbing);
+                if (this.target != null) {
+                    this.failedScanValid = false;
+                    this.failedScanStreak = 0;
+                    return true;
+                }
+                this.failedScanValid = !excludedTargetActive;
+                this.failedScanOrigin = origin;
+                this.failedScanFavorClimbing = favorClimbing;
+                this.failedScanExpiryTick = FlyingSquirrelEntity.this.tickCount + FAILED_CLIMB_SCAN_MEMORY_TICKS;
             }
 
-            this.searchCooldown = favorClimbing ? 10 : 20;
+            int baseCooldown = favorClimbing ? 10 : 20;
+            this.searchCooldown = Math.min(MAX_CLIMB_SEARCH_COOLDOWN, baseCooldown << Math.min(this.failedScanStreak, 2));
+            this.failedScanStreak++;
             return false;
         }
 

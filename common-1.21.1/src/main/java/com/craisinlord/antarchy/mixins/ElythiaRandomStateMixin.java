@@ -14,10 +14,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/**
- * Captures Elythia's hydrology right after the router is wired. C2ME's density function compiler swaps the router for
- * compiled functions at the end of this constructor, which hides the hydrology from {@link ElythiaAquiferMixin}.
- */
 @Mixin(RandomState.class)
 public abstract class ElythiaRandomStateMixin implements ElythiaHydrologyHolder {
     @Shadow

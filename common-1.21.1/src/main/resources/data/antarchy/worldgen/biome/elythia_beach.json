@@ -14,7 +14,7 @@
       "sound": "minecraft:ambient.crimson_forest.mood",
       "tick_delay": 7000,
       "block_search_extent": 8,
-      "offset": 2.0
+      "offset": 2
     },
     "music": {
       "sound": "antarchy:music.game.elythia",
@@ -36,6 +36,7 @@
     [],
     [],
     [
+      "antarchy:elythia_geology",
       "antarchy:elythia_ore_coal_upper",
       "antarchy:elythia_ore_coal_lower",
       "antarchy:elythia_ore_iron_upper",

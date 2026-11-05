@@ -2,10 +2,13 @@
   "replace": false,
   "values": [
     "antarchy:primordial_plains",
+    "antarchy:elythia_meadow",
     "antarchy:primordial_massif",
     "antarchy:shelfback_highlands",
     "antarchy:truffalo_forest",
-    "antarchy:truffalo_spires"
+    "antarchy:truffalo_spires",
+    "antarchy:cranberry_fields",
+    "antarchy:zebra_scarps",
+    "antarchy:rockite_barrens"
   ]
 }
-

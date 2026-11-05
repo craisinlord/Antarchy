@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "group": "iron_ingot",
+  "ingredient": {
+    "item": "antarchy:rockite_iron_ore"
+  },
+  "result": {
+    "id": "minecraft:iron_ingot"
+  },
+  "experience": 0.7,
+  "cookingtime": 100
+}

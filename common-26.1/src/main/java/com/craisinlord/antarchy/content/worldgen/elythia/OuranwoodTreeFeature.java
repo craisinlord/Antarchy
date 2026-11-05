@@ -18,8 +18,10 @@ import java.util.List;
 import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -38,6 +40,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import org.jetbrains.annotations.Nullable;
 
 public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
+    private static final int FEATURE_WRITE_RADIUS = 1;
     private static final ThreadLocal<TreePlacement> ACTIVE_PLACEMENT = new ThreadLocal<>();
 
     private static final class TreePlacement {
@@ -1013,6 +1016,10 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
                 }
 
                 targetPos.set(centerX + x, centerY, centerZ + z);
+                if (!canWriteAt(level, targetPos)) {
+                    continue;
+                }
+
                 if (!isReplaceableState(readState(pending, level, targetPos))) {
                     continue;
                 }
@@ -1757,7 +1764,13 @@ public class OuranwoodTreeFeature extends Feature<OuranwoodTreeConfiguration> {
     }
 
     protected static boolean canWriteAt(WorldGenLevel level, BlockPos pos) {
-        return !(level instanceof WorldGenRegion region) || region.ensureCanWrite(pos);
+        if (!(level instanceof WorldGenRegion region)) {
+            return true;
+        }
+        ChunkPos center = region.getCenter();
+        return Math.abs(SectionPos.blockToSectionCoord(pos.getX()) - center.x()) <= FEATURE_WRITE_RADIUS
+                && Math.abs(SectionPos.blockToSectionCoord(pos.getZ()) - center.z()) <= FEATURE_WRITE_RADIUS
+                && region.ensureCanWrite(pos);
     }
 
     protected static boolean canReplace(WorldGenLevel level, BlockPos pos) {

@@ -3,12 +3,15 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.entity.kraken.KrakenEntity;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityDirection;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import com.craisinlord.anthology.gravity.GravityTransition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
+import net.minecraft.network.chat.Component;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -60,9 +63,10 @@ import com.geckolib.util.GeckoLibUtil;
 import java.util.List;
 import java.util.UUID;
 
-public class MissileSquidEntity extends Monster implements GeoEntity {
+public class MissileSquidEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final EntityDataAccessor<Integer> ANIMATION_STATE = SynchedEntityData.defineId(MissileSquidEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> CAN_FLY = SynchedEntityData.defineId(MissileSquidEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO = SynchedEntityData.defineId(MissileSquidEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final String BITE_COOLDOWN_KEY = "BiteCooldown";
     private static final String CAN_FLY_KEY = "CanFly";
@@ -96,6 +100,8 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
     private boolean launchedFromSquidzooka;
     private boolean armedAfterLanding;
     private boolean spawnedByKraken;
+    @Nullable
+    private UUID glimmerEchoOwner;
     @Nullable
     private UUID launchOwnerUuid;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
@@ -135,6 +141,24 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
         super.defineSynchedData(builder);
         builder.define(ANIMATION_STATE, ANIM_IDLE);
         builder.define(CAN_FLY, false);
+        builder.define(GLIMMER_ECHO, false);
+    }
+
+    @Override
+    public boolean isGlimmerEcho() { return this.entityData.get(GLIMMER_ECHO); }
+
+    @Override
+    public void setGlimmerEcho(boolean value) {
+        this.entityData.set(GLIMMER_ECHO, value);
+        this.xpReward = value ? 0 : 6;
+    }
+
+    @Override
+    public void setGlimmerEchoOwner(@Nullable UUID owner) { this.glimmerEchoOwner = owner; }
+
+    @Override
+    protected Component getTypeName() {
+        return this.isGlimmerEcho() ? Component.translatable("entity.antarchy.missile_squid.glimmer") : super.getTypeName();
     }
 
     @Override
@@ -193,6 +217,12 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
     @Override
     public void tick() {
         super.tick();
+        if (!this.level().isClientSide() && this.isGlimmerEcho()) {
+            GlimmerEchoes.tickAmbient(this, 8, 2);
+            if (GlimmerEchoes.tickOwnedSummon(this, this.glimmerEchoOwner)) {
+                return;
+            }
+        }
         LivingEntity attachedTarget = this.getAttachedTarget();
         this.setNoGravity(attachedTarget != null || (!this.launchedFromSquidzooka && (this.isInWater() || this.canFly())));
 
@@ -325,6 +355,8 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
         output.putBoolean(ARMED_AFTER_LANDING_KEY, this.armedAfterLanding);
         output.putInt(ACTION_ANIM_TICKS_KEY, this.actionAnimationTicks);
         output.putBoolean(SPAWNED_BY_KRAKEN_KEY, this.spawnedByKraken);
+        output.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
+        if (this.glimmerEchoOwner != null) output.store("GlimmerEchoOwner", UUIDUtil.CODEC, this.glimmerEchoOwner);
         output.storeNullable(LAUNCH_OWNER_KEY, UUIDUtil.CODEC, this.launchOwnerUuid);
     }
 
@@ -337,6 +369,8 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
         this.armedAfterLanding = input.getBooleanOr(ARMED_AFTER_LANDING_KEY, false);
         this.actionAnimationTicks = Math.max(0, input.getIntOr(ACTION_ANIM_TICKS_KEY, 0));
         this.spawnedByKraken = input.getBooleanOr(SPAWNED_BY_KRAKEN_KEY, false);
+        this.setGlimmerEcho(input.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
+        this.glimmerEchoOwner = input.read("GlimmerEchoOwner", UUIDUtil.CODEC).orElse(null);
         this.launchOwnerUuid = input.read(LAUNCH_OWNER_KEY, UUIDUtil.CODEC).orElse(null);
         this.updateAnimationState();
     }
@@ -663,7 +697,7 @@ public class MissileSquidEntity extends Monster implements GeoEntity {
         if (this.biteCooldown <= 0) {
             Vec3 previousMovement = target.getDeltaMovement();
             boolean hurt = this.level() instanceof ServerLevel serverLevel
-                    && target.hurtServer(serverLevel, this.damageSources().mobAttack(this), LATCH_DAMAGE);
+                    && target.hurtServer(serverLevel, this.damageSources().mobAttack(this), LATCH_DAMAGE * GlimmerEchoes.ownerDamageMultiplier(this, this.glimmerEchoOwner));
             target.setDeltaMovement(previousMovement);
             if (hurt) {
                 this.playActionAnimation(ANIM_ATTACK, ATTACK_ANIM_TICKS);

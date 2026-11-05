@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "group": "coal",
+  "ingredient": {
+    "item": "antarchy:rockite_coal_ore"
+  },
+  "result": {
+    "id": "minecraft:coal"
+  },
+  "experience": 0.1,
+  "cookingtime": 200
+}

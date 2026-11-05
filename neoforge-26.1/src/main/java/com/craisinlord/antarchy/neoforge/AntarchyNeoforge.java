@@ -248,7 +248,7 @@ public class AntarchyNeoforge {
                 AntarchyNeoforgeSounds.DIMENSIONAL_TEAR_CLOSE
         );
         AntarchySoundEvents.bindHoverboardSounds(AntarchyNeoforgeSounds.HOVERBOARD_MOUNT, AntarchyNeoforgeSounds.HOVERBOARD_DISMOUNT, AntarchyNeoforgeSounds.HOVERBOARD_IDLE);
-        AntarchySoundEvents.bindThrowbackSounds(AntarchyNeoforgeSounds.PLAYER_HURT_CLASSIC);
+        AntarchySoundEvents.bindThrowbackSounds(AntarchyNeoforgeSounds.THROWBACK_MUSIC, AntarchyNeoforgeSounds.PLAYER_HURT_CLASSIC);
         bindCommonObjects();
         ScorpionWhipTetherSync.setSink((player, targetId) -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(
                 player,
@@ -258,7 +258,7 @@ public class AntarchyNeoforge {
                 player,
                 new com.craisinlord.antarchy.content.network.WormHookTetherPayload(player.getId(), hookId)
         ));
-        AntarchyObjects.setWormHookProjectile(() -> AntarchyNeoforgeEntites.WORM_HOOK_PROJECTILE.get());
+        AntarchyObjects.setWormHookProjectile(() -> AntarchyNeoforgeEntities.WORM_HOOK_PROJECTILE.get());
         AntarchyObjects.setWormHook(() -> AntarchyNeoforgeItems.WORM_HOOK.get());
         BloodCrystalKatanaItem.setTrailCallback((player, durationTicks) -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(
                 player,
@@ -272,7 +272,7 @@ public class AntarchyNeoforge {
         AntarchyNeoForgeAttachments.register(modEventBus);
         AntarchyNeoForgeEvents.register(modEventBus);
         AntarchyNeoforgeSounds.register(modEventBus);
-        AntarchyNeoforgeEntites.register(modEventBus);
+        AntarchyNeoforgeEntities.register(modEventBus);
         AntarchyNeoforgeBlocks.register(modEventBus);
         AntarchyNeoforgeItems.register(modEventBus);
         AntarchyNeoForgeFluidTypes.register(modEventBus);
@@ -301,7 +301,7 @@ public class AntarchyNeoforge {
     }
 
     private static void bindCommonObjects() {
-        com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity.TYPE = AntarchyNeoforgeEntites.UPWARD_FALLING_BLOCK;
+        com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity.TYPE = AntarchyNeoforgeEntities.UPWARD_FALLING_BLOCK;
         AntarchyObjects.setLucidAnchor(() -> AntarchyNeoforgeBlocks.LUCID_ANCHOR.get());
         AntarchyObjects.setMyrmiteFossil(() -> AntarchyNeoforgeBlocks.MYRMITE_FOSSIL.get());
         AntarchyObjects.setBroodstoneFossil(() -> AntarchyNeoforgeBlocks.BROODSTONE_FOSSIL.get());
@@ -317,30 +317,30 @@ public class AntarchyNeoforge {
                 () -> AntarchyNeoforgeBlocks.CAVARYN_PORTAL.get()
         );
         AntarchyObjects.bind(
-                AntarchyNeoforgeEntites.EASTER_BUNNY,
-                AntarchyNeoforgeEntites.FLYING_SQUIRREL,
-                AntarchyNeoforgeEntites.KRAKEN,
-                AntarchyNeoforgeEntites.MISSILE_SQUID,
-                AntarchyNeoforgeEntites.MOLEWORM,
-                AntarchyNeoforgeEntites.MANTIS,
-                AntarchyNeoforgeEntites.BED_BUG,
-                AntarchyNeoforgeEntites.WASP,
-                AntarchyNeoforgeEntites.BOMBER,
-                AntarchyNeoforgeEntites.SCORPION,
-                AntarchyNeoforgeEntites.CATERPILLAR,
-                AntarchyNeoforgeEntites.BUTTERFLY,
-                AntarchyNeoforgeEntites.REVERIE,
-                AntarchyNeoforgeEntites.FLYTRAP,
-                AntarchyNeoforgeEntites.BRUTALFLY,
-                AntarchyNeoforgeEntites.BRUTALFLY_ORB,
-                AntarchyNeoforgeEntites.HUSH_PROJECTILE,
-                AntarchyNeoforgeEntites.TORETERROR,
-                AntarchyNeoforgeEntites.WATER_BOMB,
-                AntarchyNeoforgeEntites.CRAWLING_BLIGHT,
-                AntarchyNeoforgeEntites.SKULKING_FRIGHT,
-                AntarchyNeoforgeEntites.STINK_BUG,
-                AntarchyNeoforgeEntites.CHEEP,
-                AntarchyNeoforgeEntites.DORRIE,
+                AntarchyNeoforgeEntities.EASTER_BUNNY,
+                AntarchyNeoforgeEntities.FLYING_SQUIRREL,
+                AntarchyNeoforgeEntities.KRAKEN,
+                AntarchyNeoforgeEntities.MISSILE_SQUID,
+                AntarchyNeoforgeEntities.MOLEWORM,
+                AntarchyNeoforgeEntities.MANTIS,
+                AntarchyNeoforgeEntities.BED_BUG,
+                AntarchyNeoforgeEntities.WASP,
+                AntarchyNeoforgeEntities.BOMBER,
+                AntarchyNeoforgeEntities.SCORPION,
+                AntarchyNeoforgeEntities.CATERPILLAR,
+                AntarchyNeoforgeEntities.BUTTERFLY,
+                AntarchyNeoforgeEntities.REVERIE,
+                AntarchyNeoforgeEntities.FLYTRAP,
+                AntarchyNeoforgeEntities.BRUTALFLY,
+                AntarchyNeoforgeEntities.BRUTALFLY_ORB,
+                AntarchyNeoforgeEntities.HUSH_PROJECTILE,
+                AntarchyNeoforgeEntities.TORETERROR,
+                AntarchyNeoforgeEntities.WATER_BOMB,
+                AntarchyNeoforgeEntities.CRAWLING_BLIGHT,
+                AntarchyNeoforgeEntities.SKULKING_FRIGHT,
+                AntarchyNeoforgeEntities.STINK_BUG,
+                AntarchyNeoforgeEntities.CHEEP,
+                AntarchyNeoforgeEntities.DORRIE,
                 () -> AntarchyNeoforgeBlocks.DUPLICATOR_LOG.get(),
                 () -> AntarchyNeoforgeBlocks.DUPLICATOR_SAPLING.get(),
                 () -> AntarchyNeoforgeBlocks.DUCT_TAPE.get(),
@@ -418,26 +418,26 @@ public class AntarchyNeoforge {
                 () -> AntarchyNeoforgeMisc.BLOODGLASS_MAX_HEARTS,
                 () -> AntarchyNeoforgeMisc.BLOODGLASS_WARD
         );
-        AntarchyObjects.setOctopusBomb(AntarchyNeoforgeEntites.OCTOPUS_BOMB);
-        AntarchyObjects.setTentacle(AntarchyNeoforgeEntites.TENTACLE);
-        AntarchyObjects.setNightmare(AntarchyNeoforgeEntites.NIGHTMARE);
-        AntarchyObjects.setNightmarePortal(AntarchyNeoforgeEntites.NIGHTMARE_PORTAL);
-        AntarchyObjects.setDimensionalTear(AntarchyNeoforgeEntites.DIMENSIONAL_TEAR);
-        AntarchyObjects.setNightmareBite(AntarchyNeoforgeEntites.NIGHTMARE_BITE);
-        AntarchyObjects.setLucid(AntarchyNeoforgeEntites.LUCID);
-        AntarchyObjects.setVortex(AntarchyNeoforgeEntites.VORTEX);
-        AntarchyObjects.setWindVortex(() -> AntarchyNeoforgeEntites.WIND_VORTEX.get());
-        AntarchyObjects.setRoyalBlackHole(() -> AntarchyNeoforgeEntites.ROYAL_BLACK_HOLE.get());
-        AntarchyObjects.setRoyalAssailantBlackHole(() -> AntarchyNeoforgeEntites.ROYAL_ASSAILANT_BLACK_HOLE.get());
-        AntarchyObjects.setVortexChargeProjectile(() -> AntarchyNeoforgeEntites.VORTEX_CHARGE_PROJECTILE.get());
-        AntarchyObjects.setPrince(() -> AntarchyNeoforgeEntites.PRINCE.get());
-        AntarchyObjects.setPrincess(() -> AntarchyNeoforgeEntites.PRINCESS.get());
-        AntarchyObjects.setKing(() -> AntarchyNeoforgeEntites.KING.get());
-        AntarchyObjects.setQueen(() -> AntarchyNeoforgeEntites.QUEEN.get());
-        AntarchyObjects.setManticore(() -> AntarchyNeoforgeEntites.MANTICORE.get());
-        AntarchyObjects.setRoyalBolt(() -> AntarchyNeoforgeEntites.ROYAL_BOLT.get());
-        AntarchyObjects.setRoyalElementalProjectile(() -> AntarchyNeoforgeEntites.ROYAL_ELEMENTAL_PROJECTILE.get());
-        AntarchyObjects.setRoyalIceSpike(() -> AntarchyNeoforgeEntites.ROYAL_ICE_SPIKE.get());
+        AntarchyObjects.setOctopusBomb(AntarchyNeoforgeEntities.OCTOPUS_BOMB);
+        AntarchyObjects.setTentacle(AntarchyNeoforgeEntities.TENTACLE);
+        AntarchyObjects.setNightmare(AntarchyNeoforgeEntities.NIGHTMARE);
+        AntarchyObjects.setNightmarePortal(AntarchyNeoforgeEntities.NIGHTMARE_PORTAL);
+        AntarchyObjects.setDimensionalTear(AntarchyNeoforgeEntities.DIMENSIONAL_TEAR);
+        AntarchyObjects.setNightmareBite(AntarchyNeoforgeEntities.NIGHTMARE_BITE);
+        AntarchyObjects.setLucid(AntarchyNeoforgeEntities.LUCID);
+        AntarchyObjects.setVortex(AntarchyNeoforgeEntities.VORTEX);
+        AntarchyObjects.setWindVortex(() -> AntarchyNeoforgeEntities.WIND_VORTEX.get());
+        AntarchyObjects.setRoyalBlackHole(() -> AntarchyNeoforgeEntities.ROYAL_BLACK_HOLE.get());
+        AntarchyObjects.setRoyalAssailantBlackHole(() -> AntarchyNeoforgeEntities.ROYAL_ASSAILANT_BLACK_HOLE.get());
+        AntarchyObjects.setVortexChargeProjectile(() -> AntarchyNeoforgeEntities.VORTEX_CHARGE_PROJECTILE.get());
+        AntarchyObjects.setPrince(() -> AntarchyNeoforgeEntities.PRINCE.get());
+        AntarchyObjects.setPrincess(() -> AntarchyNeoforgeEntities.PRINCESS.get());
+        AntarchyObjects.setKing(() -> AntarchyNeoforgeEntities.KING.get());
+        AntarchyObjects.setQueen(() -> AntarchyNeoforgeEntities.QUEEN.get());
+        AntarchyObjects.setManticore(() -> AntarchyNeoforgeEntities.MANTICORE.get());
+        AntarchyObjects.setRoyalBolt(() -> AntarchyNeoforgeEntities.ROYAL_BOLT.get());
+        AntarchyObjects.setRoyalElementalProjectile(() -> AntarchyNeoforgeEntities.ROYAL_ELEMENTAL_PROJECTILE.get());
+        AntarchyObjects.setRoyalIceSpike(() -> AntarchyNeoforgeEntities.ROYAL_ICE_SPIKE.get());
         AntarchyObjects.setPrinceEgg(() -> AntarchyNeoforgeBlocks.PRINCE_EGG.get());
         AntarchyObjects.setPrincessEgg(() -> AntarchyNeoforgeBlocks.PRINCESS_EGG.get());
         AntarchyObjects.setRoyalEggBlockEntity(() -> AntarchyNeoforgeBlocks.ROYAL_EGG_BLOCK_ENTITY.get());
@@ -445,21 +445,21 @@ public class AntarchyNeoforge {
         AntarchyObjects.setVortexLensBlockEntity(() -> AntarchyNeoforgeBlocks.VORTEX_LENS_BLOCK_ENTITY.get());
         AntarchyObjects.setDimensionalTearMarker(() -> AntarchyNeoforgeBlocks.DIMENSIONAL_TEAR_MARKER.get());
         AntarchyObjects.setDimensionalTearMarkerBlockEntity(() -> AntarchyNeoforgeBlocks.DIMENSIONAL_TEAR_MARKER_BLOCK_ENTITY.get());
-        AntarchyObjects.setKrakensGraspTrident(AntarchyNeoforgeEntites.KRAKENS_GRASP_TRIDENT);
+        AntarchyObjects.setKrakensGraspTrident(AntarchyNeoforgeEntities.KRAKENS_GRASP_TRIDENT);
         AntarchyObjects.setLotus(() -> AntarchyNeoforgeBlocks.LOTUS.get());
         AntarchyObjects.setKrakenTentacle(() -> AntarchyNeoforgeItems.KRAKEN_TENTACLE.get());
         AntarchyObjects.setKrakensGrasp(() -> AntarchyNeoforgeItems.KRAKENS_GRASP.get());
-        AntarchyObjects.setOuranwoodDeer(AntarchyNeoforgeEntites.OURANWOOD_DEER);
-        AntarchyObjects.setRollyPolly(AntarchyNeoforgeEntites.ROLLY_POLLY);
-        AntarchyObjects.setGlimmer(AntarchyNeoforgeEntites.GLIMMER);
-        AntarchyObjects.setStratoshark(AntarchyNeoforgeEntites.STRATOSHARK);
+        AntarchyObjects.setOuranwoodDeer(AntarchyNeoforgeEntities.OURANWOOD_DEER);
+        AntarchyObjects.setRollyPolly(AntarchyNeoforgeEntities.ROLLY_POLLY);
+        AntarchyObjects.setGlimmer(AntarchyNeoforgeEntities.GLIMMER);
+        AntarchyObjects.setStratoshark(AntarchyNeoforgeEntities.STRATOSHARK);
         AntarchyObjects.setSpiritApple(() -> AntarchyNeoforgeItems.SPIRIT_APPLE.get());
         AntarchyObjects.setGlimmeringEffect(() -> AntarchyNeoforgeMisc.GLIMMERING);
         AntarchyObjects.setRemembranceEffect(() -> AntarchyNeoforgeMisc.REMEMBRANCE);
         AntarchyObjects.setRoyalVitalityPenaltyEffect(() -> AntarchyNeoforgeMisc.ROYAL_VITALITY_PENALTY);
         AntarchyObjects.setBleedingEffect(() -> AntarchyNeoforgeMisc.BLEEDING);
         AntarchyObjects.setBloodMoonEffect(() -> AntarchyNeoforgeMisc.BLOOD_MOON);
-        AntarchyObjects.setElka(AntarchyNeoforgeEntites.ELKA);
+        AntarchyObjects.setElka(AntarchyNeoforgeEntities.ELKA);
         AntarchyObjects.setPeach(() -> AntarchyNeoforgeItems.PEACH.get());
         AntarchyObjects.setCorn(() -> AntarchyNeoforgeItems.CORN.get());
         AntarchyObjects.setCornSeeds(() -> AntarchyNeoforgeItems.CORN_SEEDS.get());
@@ -482,14 +482,15 @@ public class AntarchyNeoforge {
         AntarchyObjects.setNightmareFireFlame(() -> AntarchyNeoforgeMisc.NIGHTMARE_FIRE_FLAME.get());
         AntarchyObjects.setLucidBoltImpactSmall(() -> AntarchyNeoforgeMisc.LUCID_BOLT_IMPACT_SMALL.get());
         AntarchyObjects.setLucidBoltImpactLarge(() -> AntarchyNeoforgeMisc.LUCID_BOLT_IMPACT_LARGE.get());
+        AntarchyObjects.setTemporalGlints(() -> AntarchyNeoforgeMisc.TEMPORAL_GLINT_SLOW.get(), () -> AntarchyNeoforgeMisc.TEMPORAL_GLINT_FAST.get());
         AntarchyObjects.setDorrieInventoryMenu(AntarchyNeoforgeMisc.DORRIE_INVENTORY_MENU);
         AntarchyObjects.setRoyalJudgmentMenu(AntarchyNeoforgeMisc.ROYAL_JUDGMENT_MENU);
         AntarchyObjects.setGiantFryingPanMenu(AntarchyNeoforgeMisc.GIANT_FRYING_PAN_MENU);
         AntarchyObjects.setCritterCage(() -> AntarchyNeoforgeItems.CRITTER_CAGE.get());
         AntarchyObjects.setCritterCageBlock(() -> AntarchyNeoforgeBlocks.CRITTER_CAGE_BLOCK.get());
         AntarchyObjects.setCritterCageBlockEntity(() -> AntarchyNeoforgeBlocks.CRITTER_CAGE_BLOCK_ENTITY.get());
-        AntarchyObjects.setCritterCageProjectile(() -> AntarchyNeoforgeEntites.CRITTER_CAGE_PROJECTILE.get());
-        AntarchyObjects.setLaunchedAnvil(() -> AntarchyNeoforgeEntites.LAUNCHED_ANVIL.get());
+        AntarchyObjects.setCritterCageProjectile(() -> AntarchyNeoforgeEntities.CRITTER_CAGE_PROJECTILE.get());
+        AntarchyObjects.setLaunchedAnvil(() -> AntarchyNeoforgeEntities.LAUNCHED_ANVIL.get());
         AntarchyObjects.setCritterCageEntityTypeComponent(() -> AntarchyNeoforgeMisc.CRITTER_CAGE_ENTITY_TYPE_COMPONENT.get());
         AntarchyObjects.setCritterCagePrimaryColorComponent(() -> AntarchyNeoforgeMisc.CRITTER_CAGE_PRIMARY_COLOR_COMPONENT.get());
         AntarchyObjects.setCritterCageSecondaryColorComponent(() -> AntarchyNeoforgeMisc.CRITTER_CAGE_SECONDARY_COLOR_COMPONENT.get());

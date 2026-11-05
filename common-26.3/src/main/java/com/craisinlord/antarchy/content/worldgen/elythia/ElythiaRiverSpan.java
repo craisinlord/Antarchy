@@ -34,7 +34,7 @@ public record ElythiaRiverSpan(DensityFunction argument, double scale) implement
     }
 
     @Override
-    public int domainAxes() { return DensityFunction.ALL_AXES; }
+    public int domainAxes() { return ElythiaField.planarAxes(); }
 
     @Override
     public MapCodec<ElythiaRiverSpan> codec() { return CODEC; }
@@ -52,9 +52,9 @@ public record ElythiaRiverSpan(DensityFunction argument, double scale) implement
         public double compute(ElythiaField.Point context) {
             int x = context.blockX();
             int z = context.blockZ();
-            double value = this.sample(x, z);
-            double gradientX = (this.sample(x + STEP, z) - this.sample(x - STEP, z)) / (2.0D * STEP);
-            double gradientZ = (this.sample(x, z + STEP) - this.sample(x, z - STEP)) / (2.0D * STEP);
+            double value = this.sample(context, x, z);
+            double gradientX = (this.sample(context, x + STEP, z) - this.sample(context, x - STEP, z)) / (2.0D * STEP);
+            double gradientZ = (this.sample(context, x, z + STEP) - this.sample(context, x, z - STEP)) / (2.0D * STEP);
             double gradient = Math.sqrt(gradientX * gradientX + gradientZ * gradientZ);
             if (gradient < MIN_GRADIENT) {
                 return MAX_VALUE;
@@ -62,8 +62,8 @@ public record ElythiaRiverSpan(DensityFunction argument, double scale) implement
             return Math.min(MAX_VALUE, Math.abs(value) / gradient * this.scale);
         }
 
-        private double sample(int x, int z) {
-            return this.argument.compute(new ElythiaField.Point(x, 0, z));
+        private double sample(ElythiaField.Point context, int x, int z) {
+            return this.argument.compute(context.at(x, 0, z));
         }
     }
 }

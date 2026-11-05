@@ -23,14 +23,11 @@ import com.craisinlord.antarchy.content.item.OuranwoodBoatOnlyItem;
 import com.craisinlord.antarchy.content.item.OuranwoodChestBoatItem;
 import com.craisinlord.antarchy.content.item.RainbowSugarItem;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.PlaceOnWaterBlockItem;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -38,9 +35,7 @@ import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraft.sounds.SoundEvents;
 
-import java.util.Collection;
 import java.util.EnumMap;
-import java.util.List;
 
 public final class AntarchyForgeItems {
     static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Antarchy.MODID);
@@ -262,59 +257,59 @@ public final class AntarchyForgeItems {
     public static final RegistryObject<net.minecraft.world.item.HangingSignItem> OURANWOOD_HANGING_SIGN_ITEM = ITEMS.register("ouranwood_hanging_sign",
             () -> new net.minecraft.world.item.HangingSignItem(AntarchyForgeBlocks.OURANWOOD_HANGING_SIGN.get(), AntarchyForgeBlocks.OURANWOOD_WALL_HANGING_SIGN.get(), new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> OURANWOOD_BOAT = ITEMS.register("ouranwood_boat",
-            () -> new OuranwoodBoatOnlyItem(AntarchyForgeEntites.OURANWOOD_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
+            () -> new OuranwoodBoatOnlyItem(AntarchyForgeEntities.OURANWOOD_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> OURANWOOD_CHEST_BOAT = ITEMS.register("ouranwood_chest_boat",
-            () -> new OuranwoodChestBoatItem(AntarchyForgeEntites.OURANWOOD_CHEST_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
+            () -> new OuranwoodChestBoatItem(AntarchyForgeEntities.OURANWOOD_CHEST_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> HOVERBOARD = ITEMS.register("hoverboard",
-            () -> new HoverboardItem(AntarchyForgeEntites.HOVERBOARD, null, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, null, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> HOVERBOARD_WHITE = ITEMS.register("hoverboard_white",
-            () -> new HoverboardItem(AntarchyForgeEntites.HOVERBOARD, DyeColor.WHITE, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.WHITE, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> HOVERBOARD_ORANGE = ITEMS.register("hoverboard_orange",
-            () -> new HoverboardItem(AntarchyForgeEntites.HOVERBOARD, DyeColor.ORANGE, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.ORANGE, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> HOVERBOARD_MAGENTA = ITEMS.register("hoverboard_magenta",
-            () -> new HoverboardItem(AntarchyForgeEntites.HOVERBOARD, DyeColor.MAGENTA, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.MAGENTA, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> HOVERBOARD_LIGHT_BLUE = ITEMS.register("hoverboard_light_blue",
-            () -> new HoverboardItem(AntarchyForgeEntites.HOVERBOARD, DyeColor.LIGHT_BLUE, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.LIGHT_BLUE, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> HOVERBOARD_YELLOW = ITEMS.register("hoverboard_yellow",
-            () -> new HoverboardItem(AntarchyForgeEntites.HOVERBOARD, DyeColor.YELLOW, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.YELLOW, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> HOVERBOARD_LIME = ITEMS.register("hoverboard_lime",
-            () -> new HoverboardItem(AntarchyForgeEntites.HOVERBOARD, DyeColor.LIME, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.LIME, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> HOVERBOARD_PINK = ITEMS.register("hoverboard_pink",
-            () -> new HoverboardItem(AntarchyForgeEntites.HOVERBOARD, DyeColor.PINK, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.PINK, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> HOVERBOARD_GRAY = ITEMS.register("hoverboard_gray",
-            () -> new HoverboardItem(AntarchyForgeEntites.HOVERBOARD, DyeColor.GRAY, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.GRAY, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> HOVERBOARD_LIGHT_GRAY = ITEMS.register("hoverboard_light_gray",
-            () -> new HoverboardItem(AntarchyForgeEntites.HOVERBOARD, DyeColor.LIGHT_GRAY, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.LIGHT_GRAY, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> HOVERBOARD_CYAN = ITEMS.register("hoverboard_cyan",
-            () -> new HoverboardItem(AntarchyForgeEntites.HOVERBOARD, DyeColor.CYAN, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.CYAN, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> HOVERBOARD_PURPLE = ITEMS.register("hoverboard_purple",
-            () -> new HoverboardItem(AntarchyForgeEntites.HOVERBOARD, DyeColor.PURPLE, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.PURPLE, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> HOVERBOARD_BLUE = ITEMS.register("hoverboard_blue",
-            () -> new HoverboardItem(AntarchyForgeEntites.HOVERBOARD, DyeColor.BLUE, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.BLUE, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> HOVERBOARD_BROWN = ITEMS.register("hoverboard_brown",
-            () -> new HoverboardItem(AntarchyForgeEntites.HOVERBOARD, DyeColor.BROWN, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.BROWN, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> HOVERBOARD_GREEN = ITEMS.register("hoverboard_green",
-            () -> new HoverboardItem(AntarchyForgeEntites.HOVERBOARD, DyeColor.GREEN, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.GREEN, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> HOVERBOARD_RED = ITEMS.register("hoverboard_red",
-            () -> new HoverboardItem(AntarchyForgeEntites.HOVERBOARD, DyeColor.RED, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.RED, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> HOVERBOARD_BLACK = ITEMS.register("hoverboard_black",
-            () -> new HoverboardItem(AntarchyForgeEntites.HOVERBOARD, DyeColor.BLACK, new Item.Properties().stacksTo(1)));
+            () -> new HoverboardItem(AntarchyForgeEntities.HOVERBOARD, DyeColor.BLACK, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<net.minecraft.world.item.SignItem> PEACH_SIGN_ITEM = ITEMS.register("peach_sign",
             () -> new net.minecraft.world.item.SignItem(new Item.Properties().stacksTo(16), AntarchyForgeBlocks.PEACH_SIGN.get(), AntarchyForgeBlocks.PEACH_WALL_SIGN.get()));
     public static final RegistryObject<net.minecraft.world.item.HangingSignItem> PEACH_HANGING_SIGN_ITEM = ITEMS.register("peach_hanging_sign",
             () -> new net.minecraft.world.item.HangingSignItem(AntarchyForgeBlocks.PEACH_HANGING_SIGN.get(), AntarchyForgeBlocks.PEACH_WALL_HANGING_SIGN.get(), new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> PEACH_BOAT = ITEMS.register("peach_boat",
-            () -> new PeachBoatOnlyItem(AntarchyForgeEntites.PEACH_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
+            () -> new PeachBoatOnlyItem(AntarchyForgeEntities.PEACH_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> PEACH_CHEST_BOAT = ITEMS.register("peach_chest_boat",
-            () -> new PeachChestBoatItem(AntarchyForgeEntites.PEACH_CHEST_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
+            () -> new PeachChestBoatItem(AntarchyForgeEntities.PEACH_CHEST_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<net.minecraft.world.item.SignItem> NADIR_SIGN_ITEM = ITEMS.register("nadir_sign",
             () -> new net.minecraft.world.item.SignItem(new Item.Properties().stacksTo(16), AntarchyForgeBlocks.NADIR_SIGN.get(), AntarchyForgeBlocks.NADIR_WALL_SIGN.get()));
     public static final RegistryObject<net.minecraft.world.item.HangingSignItem> NADIR_HANGING_SIGN_ITEM = ITEMS.register("nadir_hanging_sign",
             () -> new net.minecraft.world.item.HangingSignItem(AntarchyForgeBlocks.NADIR_HANGING_SIGN.get(), AntarchyForgeBlocks.NADIR_WALL_HANGING_SIGN.get(), new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> NADIR_BOAT = ITEMS.register("nadir_boat",
-            () -> new NadirBoatOnlyItem(AntarchyForgeEntites.NADIR_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
+            () -> new NadirBoatOnlyItem(AntarchyForgeEntities.NADIR_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> NADIR_CHEST_BOAT = ITEMS.register("nadir_chest_boat",
-            () -> new NadirChestBoatItem(AntarchyForgeEntites.NADIR_CHEST_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
+            () -> new NadirChestBoatItem(AntarchyForgeEntities.NADIR_CHEST_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<net.minecraft.world.item.BlockItem> ROYAL_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.ROYAL_LOG);
     public static final RegistryObject<net.minecraft.world.item.BlockItem> ROYAL_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.ROYAL_WOOD);
     public static final RegistryObject<net.minecraft.world.item.BlockItem> STRIPPED_ROYAL_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.STRIPPED_ROYAL_LOG);
@@ -336,9 +331,9 @@ public final class AntarchyForgeItems {
     public static final RegistryObject<net.minecraft.world.item.HangingSignItem> ROYAL_HANGING_SIGN_ITEM = ITEMS.register("royal_hanging_sign",
             () -> new net.minecraft.world.item.HangingSignItem(AntarchyForgeBlocks.ROYAL_HANGING_SIGN.get(), AntarchyForgeBlocks.ROYAL_WALL_HANGING_SIGN.get(), new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ROYAL_BOAT = ITEMS.register("royal_boat",
-            () -> new RoyalBoatOnlyItem(AntarchyForgeEntites.ROYAL_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
+            () -> new RoyalBoatOnlyItem(AntarchyForgeEntities.ROYAL_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> ROYAL_CHEST_BOAT = ITEMS.register("royal_chest_boat",
-            () -> new RoyalChestBoatItem(AntarchyForgeEntites.ROYAL_CHEST_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
+            () -> new RoyalChestBoatItem(AntarchyForgeEntities.ROYAL_CHEST_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<BlockItem> TRUFFALO_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.TRUFFALO_LOG);
     public static final RegistryObject<BlockItem> TRUFFALO_WOOD_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.TRUFFALO_WOOD);
     public static final RegistryObject<BlockItem> STRIPPED_TRUFFALO_LOG_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.STRIPPED_TRUFFALO_LOG);
@@ -358,9 +353,9 @@ public final class AntarchyForgeItems {
     public static final RegistryObject<HangingSignItem> TRUFFALO_HANGING_SIGN_ITEM = ITEMS.register("truffalo_hanging_sign",
             () -> new HangingSignItem(AntarchyForgeBlocks.TRUFFALO_HANGING_SIGN.get(), AntarchyForgeBlocks.TRUFFALO_WALL_HANGING_SIGN.get(), new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> TRUFFALO_BOAT = ITEMS.register("truffalo_boat",
-            () -> new TruffaloBoatOnlyItem(AntarchyForgeEntites.TRUFFALO_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
+            () -> new TruffaloBoatOnlyItem(AntarchyForgeEntities.TRUFFALO_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> TRUFFALO_CHEST_BOAT = ITEMS.register("truffalo_chest_boat",
-            () -> new TruffaloChestBoatItem(AntarchyForgeEntites.TRUFFALO_CHEST_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
+            () -> new TruffaloChestBoatItem(AntarchyForgeEntities.TRUFFALO_CHEST_BOAT_ENTITY, new Item.Properties().stacksTo(1)));
     public static final RegistryObject<BlockItem> TRUFFALO_TUFT_WHITE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.TRUFFALO_TUFT_WHITE);
     public static final RegistryObject<BlockItem> TRUFFALO_TUFT_ORANGE_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.TRUFFALO_TUFT_ORANGE);
     public static final RegistryObject<BlockItem> TRUFFALO_TUFT_MAGENTA_ITEM = ITEMS.registerSimpleBlockItem(AntarchyForgeBlocks.TRUFFALO_TUFT_MAGENTA);
@@ -876,7 +871,7 @@ public final class AntarchyForgeItems {
     public static final RegistryObject<Item> FLYTRAP_GOO = ITEMS.registerSimpleItem("flytrap_goo",
             new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final RegistryObject<VortexChargeItem> VORTEX_CHARGE = ITEMS.register("vortex_charge",
-            () -> new VortexChargeItem(new Item.Properties().stacksTo(64).rarity(Rarity.RARE), AntarchyForgeEntites.VORTEX_CHARGE_PROJECTILE));
+            () -> new VortexChargeItem(new Item.Properties().stacksTo(64).rarity(Rarity.RARE), AntarchyForgeEntities.VORTEX_CHARGE_PROJECTILE));
     public static final RegistryObject<Item> RAW_URANIUM_SCRAP = ITEMS.registerSimpleItem("raw_uranium_scrap", new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final RegistryObject<Item> RAW_TITANIUM_SCRAP = ITEMS.registerSimpleItem("raw_titanium_scrap", new Item.Properties().rarity(Rarity.UNCOMMON));
     public static final RegistryObject<Item> RAW_URANIUM = ITEMS.registerSimpleItem("raw_uranium", new Item.Properties().rarity(Rarity.UNCOMMON));
@@ -1027,7 +1022,7 @@ public final class AntarchyForgeItems {
     public static final RegistryObject<SizeRayItem> SHRINK_RAY = ITEMS.register("shrink_ray",
             () -> new SizeRayItem(
                     new Item.Properties().stacksTo(1).durability(512).rarity(Rarity.RARE).fireResistant(),
-                    AntarchyForgeEntites.SHRINK_RAY_PROJECTILE,
+                    AntarchyForgeEntities.SHRINK_RAY_PROJECTILE,
                     SizeRayProjectileEntity.SizeRayType.SHRINK,
                     new ResourceLocation(Antarchy.MODID, "geo/shrink_ray.geo.json"),
                     new ResourceLocation(Antarchy.MODID, "textures/models/item/shrink_ray.png"),
@@ -1042,7 +1037,7 @@ public final class AntarchyForgeItems {
     public static final RegistryObject<SizeRayItem> GROWTH_RAY = ITEMS.register("growth_ray",
             () -> new SizeRayItem(
                     new Item.Properties().stacksTo(1).durability(512).rarity(Rarity.RARE).fireResistant(),
-                    AntarchyForgeEntites.GROWTH_RAY_PROJECTILE,
+                    AntarchyForgeEntities.GROWTH_RAY_PROJECTILE,
                     SizeRayProjectileEntity.SizeRayType.GROWTH,
                     new ResourceLocation(Antarchy.MODID, "geo/growth_ray.geo.json"),
                     new ResourceLocation(Antarchy.MODID, "textures/models/item/growth_ray.png"),
@@ -1064,8 +1059,8 @@ public final class AntarchyForgeItems {
     public static final RegistryObject<PortalGunItem> PORTAL_GUN = ITEMS.register("portal_gun",
             () -> new PortalGunItem(
                     new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
-                    AntarchyForgeEntites.PORTAL_GUN_PORTAL,
-                    AntarchyForgeEntites.PORTAL_GUN_PROJECTILE,
+                    AntarchyForgeEntities.PORTAL_GUN_PORTAL,
+                    AntarchyForgeEntities.PORTAL_GUN_PROJECTILE,
                     AntarchyForgeBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyForgeBlocks.PORTAL_GUN_PORTAL_BASE,
                     com.craisinlord.antarchy.content.portalgun.PortalGunVariant.DEFAULT
@@ -1078,8 +1073,8 @@ public final class AntarchyForgeItems {
     public static final RegistryObject<PortalGunItem> PORTAL_GUN_ATLAS = ITEMS.register("portal_gun_atlas",
             () -> new PortalGunItem(
                     new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
-                    AntarchyForgeEntites.PORTAL_GUN_PORTAL,
-                    AntarchyForgeEntites.PORTAL_GUN_PROJECTILE,
+                    AntarchyForgeEntities.PORTAL_GUN_PORTAL,
+                    AntarchyForgeEntities.PORTAL_GUN_PROJECTILE,
                     AntarchyForgeBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyForgeBlocks.PORTAL_GUN_PORTAL_BASE,
                     com.craisinlord.antarchy.content.portalgun.PortalGunVariant.ATLAS
@@ -1092,8 +1087,8 @@ public final class AntarchyForgeItems {
     public static final RegistryObject<PortalGunItem> PORTAL_GUN_P_BODY = ITEMS.register("portal_gun_p_body",
             () -> new PortalGunItem(
                     new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
-                    AntarchyForgeEntites.PORTAL_GUN_PORTAL,
-                    AntarchyForgeEntites.PORTAL_GUN_PROJECTILE,
+                    AntarchyForgeEntities.PORTAL_GUN_PORTAL,
+                    AntarchyForgeEntities.PORTAL_GUN_PROJECTILE,
                     AntarchyForgeBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyForgeBlocks.PORTAL_GUN_PORTAL_BASE,
                     com.craisinlord.antarchy.content.portalgun.PortalGunVariant.P_BODY
@@ -1106,8 +1101,8 @@ public final class AntarchyForgeItems {
     public static final RegistryObject<PortalGunItem> PORTAL_GUN_CRAISIN = ITEMS.register("portal_gun_craisin",
             () -> new PortalGunItem(
                     new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
-                    AntarchyForgeEntites.PORTAL_GUN_PORTAL,
-                    AntarchyForgeEntites.PORTAL_GUN_PROJECTILE,
+                    AntarchyForgeEntities.PORTAL_GUN_PORTAL,
+                    AntarchyForgeEntities.PORTAL_GUN_PROJECTILE,
                     AntarchyForgeBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyForgeBlocks.PORTAL_GUN_PORTAL_BASE,
                     com.craisinlord.antarchy.content.portalgun.PortalGunVariant.CRAISIN
@@ -1120,8 +1115,8 @@ public final class AntarchyForgeItems {
     public static final RegistryObject<PortalGunItem> PORTAL_GUN_LAYNCE = ITEMS.register("portal_gun_laynce",
             () -> new PortalGunItem(
                     new Item.Properties().stacksTo(1).durability(256).rarity(Rarity.RARE),
-                    AntarchyForgeEntites.PORTAL_GUN_PORTAL,
-                    AntarchyForgeEntites.PORTAL_GUN_PROJECTILE,
+                    AntarchyForgeEntities.PORTAL_GUN_PORTAL,
+                    AntarchyForgeEntities.PORTAL_GUN_PROJECTILE,
                     AntarchyForgeBlocks.PORTAL_GUN_PORTAL_MASTER,
                     AntarchyForgeBlocks.PORTAL_GUN_PORTAL_BASE,
                     com.craisinlord.antarchy.content.portalgun.PortalGunVariant.LAYNCE
@@ -1167,7 +1162,7 @@ public final class AntarchyForgeItems {
             () -> new AttitudeAdjusterItem(ATTITUDE_ADJUSTER_TIER,
                     new Item.Properties().stacksTo(1).durability(ATTITUDE_ADJUSTER_TIER.getUses()).rarity(Rarity.EPIC).fireResistant()));
     public static final RegistryObject<DiamondMinecartItem> DIAMOND_MINECART_ITEM = ITEMS.register("diamond_minecart",
-            () -> new DiamondMinecartItem(AntarchyForgeEntites.DIAMOND_MINECART, new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+            () -> new DiamondMinecartItem(AntarchyForgeEntities.DIAMOND_MINECART, new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
     public static final RegistryObject<ReverieBottleItem> REVERIE_BOTTLE = ITEMS.register("reverie_bottle",
             () -> new ReverieBottleItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
     public static final RegistryObject<Item> BIG_BERTHA_BLADE = ITEMS.registerSimpleItem("big_bertha_blade",
@@ -1210,15 +1205,15 @@ public final class AntarchyForgeItems {
                     new Item.Properties().stacksTo(1).durability(2000).rarity(Rarity.EPIC).fireResistant()));
 
     public static final RegistryObject<ForgeSpawnEggItem> EASTER_BUNNY_SPAWN_EGG = ITEMS.register("easter_bunny_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.EASTER_BUNNY, 0xFFF2B2, 0xFF85B5, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.EASTER_BUNNY, 0xFFF2B2, 0xFF85B5, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> DORRIE_SPAWN_EGG = ITEMS.register("dorrie_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.DORRIE, 0x6F8CFF, 0xD2F2FF, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.DORRIE, 0x6F8CFF, 0xD2F2FF, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> OURANWOOD_DEER_SPAWN_EGG = ITEMS.register("ouranwood_deer_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.OURANWOOD_DEER, 0x8A6D4B, 0xE8D9B5, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.OURANWOOD_DEER, 0x8A6D4B, 0xE8D9B5, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> GLIMMER_SPAWN_EGG = ITEMS.register("glimmer_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.GLIMMER, 0x7DFFFF, 0x2AC7D0, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.GLIMMER, 0x7DFFFF, 0x2AC7D0, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> ELKA_SPAWN_EGG = ITEMS.register("elka_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.ELKA, 0x6B2FA0, 0xFFFFFF, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.ELKA, 0x6B2FA0, 0xFFFFFF, new Item.Properties()));
     public static final RegistryObject<net.minecraft.world.item.Item> SPIRIT_APPLE = ITEMS.register("spirit_apple",
             () -> new com.craisinlord.antarchy.content.item.SpiritAppleItem(new Item.Properties()
                     .food(new FoodProperties.Builder()
@@ -1262,91 +1257,91 @@ public final class AntarchyForgeItems {
                     com.craisinlord.antarchy.content.glimmerecho.GlimmerSigilTarget.QUEEN,
                     new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
     public static final RegistryObject<ForgeSpawnEggItem> FLYING_SQUIRREL_SPAWN_EGG = ITEMS.register("flying_squirrel_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.FLYING_SQUIRREL, 0x7D6649, 0xDCC59C, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.FLYING_SQUIRREL, 0x7D6649, 0xDCC59C, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> CATERPILLAR_SPAWN_EGG = ITEMS.register("caterpillar_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.CATERPILLAR, 0xA8D96A, 0xF4E04D, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.CATERPILLAR, 0xA8D96A, 0xF4E04D, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> BUTTERFLY_SPAWN_EGG = ITEMS.register("butterfly_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.BUTTERFLY, 0x7A4A1E, 0xFF7A00, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.BUTTERFLY, 0x7A4A1E, 0xFF7A00, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> REVERIE_SPAWN_EGG = ITEMS.register("reverie_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.REVERIE, 0xF2F2F2, 0xBFC3C7, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.REVERIE, 0xF2F2F2, 0xBFC3C7, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> BRUTALFLY_SPAWN_EGG = ITEMS.register("brutalfly_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.BRUTALFLY, 0x4A2214, 0xFF8A1D, new Item.Properties().rarity(Rarity.EPIC)));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.BRUTALFLY, 0x4A2214, 0xFF8A1D, new Item.Properties().rarity(Rarity.EPIC)));
     public static final RegistryObject<ForgeSpawnEggItem> KING_SPAWN_EGG = ITEMS.register("king_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.KING, 0xFFFFFF, 0xD4AF37, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.KING, 0xFFFFFF, 0xD4AF37, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
     public static final RegistryObject<ForgeSpawnEggItem> QUEEN_SPAWN_EGG = ITEMS.register("queen_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.QUEEN, 0x080608, 0xB11226, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.QUEEN, 0x080608, 0xB11226, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
     public static final RegistryObject<ForgeSpawnEggItem> PRINCE_SPAWN_EGG = ITEMS.register("prince_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.PRINCE, 0xFFFFFF, 0xD4AF37, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.PRINCE, 0xFFFFFF, 0xD4AF37, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
     public static final RegistryObject<ForgeSpawnEggItem> PRINCESS_SPAWN_EGG = ITEMS.register("princess_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.PRINCESS, 0x3B0A45, 0xB11226, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.PRINCESS, 0x3B0A45, 0xB11226, new Item.Properties().rarity(Rarity.EPIC).fireResistant()));
     public static final RegistryObject<ForgeSpawnEggItem> RED_ANT_SPAWN_EGG = ITEMS.register("red_ant_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.RED_ANT, 0xA31818, 0x2B0909, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.RED_ANT, 0xA31818, 0x2B0909, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> BROWN_ANT_SPAWN_EGG = ITEMS.register("brown_ant_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.BROWN_ANT, 0x6A4320, 0x26160A, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.BROWN_ANT, 0x6A4320, 0x26160A, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> RAINBOW_ANT_SPAWN_EGG = ITEMS.register("rainbow_ant_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.RAINBOW_ANT, 0x56D4F0, 0xF66DBB, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.RAINBOW_ANT, 0x56D4F0, 0xF66DBB, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> TERMITE_SPAWN_EGG = ITEMS.register("termite_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.TERMITE, 0xD4B96A, 0xFF6B1A, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.TERMITE, 0xD4B96A, 0xFF6B1A, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> MOLEWORM_SPAWN_EGG = ITEMS.register("moleworm_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.MOLEWORM, 0xB8B8B8, 0x8A623A, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.MOLEWORM, 0xB8B8B8, 0x8A623A, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> WORM_SPAWN_EGG = ITEMS.register("worm_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.WORM, 0x7A5742, 0xE4D2A6, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.WORM, 0x7A5742, 0xE4D2A6, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> MANTIS_SPAWN_EGG = ITEMS.register("mantis_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.MANTIS, 0xF8F8F2, 0x63B44A, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.MANTIS, 0xF8F8F2, 0x63B44A, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> ALPHA_MANTIS_SPAWN_EGG = ITEMS.register("alpha_mantis_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.ALPHA_MANTIS, 0x8FDD6C, 0x2F5D22, new Item.Properties().rarity(Rarity.UNCOMMON)));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.ALPHA_MANTIS, 0x8FDD6C, 0x2F5D22, new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<ForgeSpawnEggItem> ROLLY_POLLY_SPAWN_EGG = ITEMS.register("rolly_polly_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.ROLLY_POLLY, 0x7284A3, 0xBCC8DB, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.ROLLY_POLLY, 0x7284A3, 0xBCC8DB, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> MOLEVORE_SPAWN_EGG = ITEMS.register("molevore_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.MOLEVORE, 0x4A4A4A, 0x6B4A2B, new Item.Properties().rarity(Rarity.UNCOMMON)));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.MOLEVORE, 0x4A4A4A, 0x6B4A2B, new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<ForgeSpawnEggItem> FLYTRAP_SPAWN_EGG = ITEMS.register("flytrap_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.FLYTRAP, 0x4C8F3A, 0xFF2FB3, new Item.Properties().rarity(Rarity.UNCOMMON)));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.FLYTRAP, 0x4C8F3A, 0xFF2FB3, new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<ForgeSpawnEggItem> APPLE_COW_SPAWN_EGG = ITEMS.register("apple_cow_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.APPLE_COW, 0xFF1A1A, 0x32FF32, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.APPLE_COW, 0xFF1A1A, 0x32FF32, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> GOLDEN_APPLE_COW_SPAWN_EGG = ITEMS.register("golden_apple_cow_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.GOLDEN_APPLE_COW, 0xFFE14A, 0x32FF32, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.GOLDEN_APPLE_COW, 0xFFE14A, 0x32FF32, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> ENCHANTED_GOLDEN_APPLE_COW_SPAWN_EGG = ITEMS.register("enchanted_golden_apple_cow_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.ENCHANTED_GOLDEN_APPLE_COW, 0x7040B6, 0xFFE14A, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.ENCHANTED_GOLDEN_APPLE_COW, 0x7040B6, 0xFFE14A, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> DR_TRAYAURUS_SPAWN_EGG = ITEMS.register("dr_trayaurus_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.DR_TRAYAURUS, 0xB7A27B, 0x4A3D29, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.DR_TRAYAURUS, 0xB7A27B, 0x4A3D29, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> WASP_SPAWN_EGG = ITEMS.register("wasp_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.WASP, 0x111111, 0xF1D800, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.WASP, 0x111111, 0xF1D800, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> BOMBER_SPAWN_EGG = ITEMS.register("bomber_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.BOMBER, 0x7A7A7A, 0xB32020, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.BOMBER, 0x7A7A7A, 0xB32020, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> SPRINGBUG_SPAWN_EGG = ITEMS.register("springbug_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.SPRINGBUG, 0x0A1636, 0x8A3E00, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.SPRINGBUG, 0x0A1636, 0x8A3E00, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> SPIT_BUG_SPAWN_EGG = ITEMS.register("spit_bug_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.SPIT_BUG, 0x6B4A2B, 0x7ED957, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.SPIT_BUG, 0x6B4A2B, 0x7ED957, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> STINK_BUG_SPAWN_EGG = ITEMS.register("stink_bug_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.STINK_BUG, 0x111111, 0xFF7A00, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.STINK_BUG, 0x111111, 0xFF7A00, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> STRATOSHARK_SPAWN_EGG = ITEMS.register("stratoshark_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.STRATOSHARK, 0xDDEAF4, 0x7F96A8, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.STRATOSHARK, 0xDDEAF4, 0x7F96A8, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> KRAKEN_SPAWN_EGG = ITEMS.register("kraken_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.KRAKEN, 0x163C53, 0x4F8E99, new Item.Properties().rarity(Rarity.EPIC)));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.KRAKEN, 0x163C53, 0x4F8E99, new Item.Properties().rarity(Rarity.EPIC)));
     public static final RegistryObject<ForgeSpawnEggItem> MISSILE_SQUID_SPAWN_EGG = ITEMS.register("missile_squid_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.MISSILE_SQUID, 0xD88FA7, 0x8D5269, new Item.Properties().rarity(Rarity.UNCOMMON)));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.MISSILE_SQUID, 0xD88FA7, 0x8D5269, new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<ForgeSpawnEggItem> OCTOPUS_BOMB_SPAWN_EGG = ITEMS.register("octopus_bomb_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.OCTOPUS_BOMB, 0xC882C8, 0x5C1A7A, new Item.Properties().rarity(Rarity.UNCOMMON)));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.OCTOPUS_BOMB, 0xC882C8, 0x5C1A7A, new Item.Properties().rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<ForgeSpawnEggItem> NIGHTMARE_SPAWN_EGG = ITEMS.register("nightmare_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.NIGHTMARE, 0x22121C, 0xB51B2D, new Item.Properties().rarity(Rarity.RARE)));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.NIGHTMARE, 0x22121C, 0xB51B2D, new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<ForgeSpawnEggItem> BED_BUG_SPAWN_EGG = ITEMS.register("bed_bug_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.BED_BUG, 0x3B2218, 0x611111, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.BED_BUG, 0x3B2218, 0x611111, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> LUCID_SPAWN_EGG = ITEMS.register("lucid_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.LUCID, 0xE53935, 0xF4D03F, new Item.Properties().rarity(Rarity.RARE)));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.LUCID, 0xE53935, 0xF4D03F, new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<ForgeSpawnEggItem> VORTEX_SPAWN_EGG = ITEMS.register("vortex_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.VORTEX, 0x36FF6A, 0x0A5C2A, new Item.Properties().rarity(Rarity.RARE)));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.VORTEX, 0x36FF6A, 0x0A5C2A, new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<ForgeSpawnEggItem> SCORPION_SPAWN_EGG = ITEMS.register("scorpion_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.SCORPION, 0xA8D8FF, 0xE04B5A, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.SCORPION, 0xA8D8FF, 0xE04B5A, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> BASILISK_SPAWN_EGG = ITEMS.register("basilisk_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.BASILISK, 0x4A7C40, 0xD4A040, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.BASILISK, 0x4A7C40, 0xD4A040, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> EMPEROR_SCORPION_SPAWN_EGG = ITEMS.register("emperor_scorpion_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.EMPEROR_SCORPION, 0x3A3242, 0xD8CDB4, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.EMPEROR_SCORPION, 0x3A3242, 0xD8CDB4, new Item.Properties()));
     public static final RegistryObject<LucidEyeItem> LUCID_EYE = ITEMS.register("lucid_eye",
             () -> new LucidEyeItem(new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON)));
     public static final RegistryObject<LucidPearlItem> LUCID_PEARL = ITEMS.register("lucid_pearl",
             () -> new LucidPearlItem(
                     new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON),
-                    AntarchyForgeEntites.LUCID_PEARL_PROJECTILE
+                    AntarchyForgeEntities.LUCID_PEARL_PROJECTILE
             ));
     public static final RegistryObject<RoyalAssailantStaffItem> ROYAL_ASSAILANT_STAFF = ITEMS.register("royal_assailant_staff",
             () -> new RoyalAssailantStaffItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
@@ -1366,19 +1361,19 @@ public final class AntarchyForgeItems {
     public static final RegistryObject<PrimordialArmorItem> PRIMORDIAL_BOOTS = ITEMS.register("primordial_boots",
             () -> new PrimordialArmorItem(PRIMORDIAL_ARMOR_MATERIAL, ArmorItem.Type.BOOTS, new Item.Properties().stacksTo(1).rarity(Rarity.RARE).fireResistant()));
     public static final RegistryObject<ForgeSpawnEggItem> CRAWLING_BLIGHT_SPAWN_EGG = ITEMS.register("crawling_blight_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.CRAWLING_BLIGHT, 0x6B3A1F, 0x6B0000, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.CRAWLING_BLIGHT, 0x6B3A1F, 0x6B0000, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> SKULKING_FRIGHT_SPAWN_EGG = ITEMS.register("skulking_fright_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.SKULKING_FRIGHT, 0x2D5A1B, 0x8B0000, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.SKULKING_FRIGHT, 0x2D5A1B, 0x8B0000, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> MANTICORE_SPAWN_EGG = ITEMS.register("manticore_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.MANTICORE, 0xA3AEE9, 0x956570, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.MANTICORE, 0xA3AEE9, 0x956570, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> HERCULES_BEETLE_SPAWN_EGG = ITEMS.register("hercules_beetle_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.HERCULES_BEETLE, 0x6B1F2A, 0xD4AF37, new Item.Properties().rarity(Rarity.RARE)));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.HERCULES_BEETLE, 0x6B1F2A, 0xD4AF37, new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<ForgeSpawnEggItem> JERRY_SPAWN_EGG = ITEMS.register("jerry_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.JERRY, 0x6D2232, 0x8ED34A, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.JERRY, 0x6D2232, 0x8ED34A, new Item.Properties()));
     public static final RegistryObject<ForgeSpawnEggItem> TORETERROR_SPAWN_EGG = ITEMS.register("toreterror_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.TORETERROR, 0x90EE90, 0x5C4033, new Item.Properties().rarity(Rarity.EPIC)));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.TORETERROR, 0x90EE90, 0x5C4033, new Item.Properties().rarity(Rarity.EPIC)));
     public static final RegistryObject<ForgeSpawnEggItem> CHEEP_SPAWN_EGG = ITEMS.register("cheep_spawn_egg",
-            () -> new ForgeSpawnEggItem(AntarchyForgeEntites.CHEEP, 0xAA22FF, 0x22FF44, new Item.Properties()));
+            () -> new ForgeSpawnEggItem(AntarchyForgeEntities.CHEEP, 0xAA22FF, 0x22FF44, new Item.Properties()));
     public static final RegistryObject<Item> CHEEP_ITEM = ITEMS.register("cheep",
             () -> new Item(new Item.Properties()
                     .food(new net.minecraft.world.food.FoodProperties.Builder()
@@ -1392,7 +1387,7 @@ public final class AntarchyForgeItems {
                             .saturationMod(0.6F)
                             .build())));
     public static final RegistryObject<MobBucketItem> CHEEP_BUCKET = ITEMS.register("cheep_bucket",
-            () -> new MobBucketItem(AntarchyForgeEntites.CHEEP, () -> net.minecraft.world.level.material.Fluids.WATER, () -> SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
+            () -> new MobBucketItem(AntarchyForgeEntities.CHEEP, () -> net.minecraft.world.level.material.Fluids.WATER, () -> SoundEvents.BUCKET_EMPTY_FISH, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
     private AntarchyForgeItems() {}
 
     private static final java.util.Map<ArmorItem.Type, Integer> BASE_DURABILITY = java.util.Map.of(
@@ -1468,10 +1463,6 @@ public final class AntarchyForgeItems {
                 return knockbackResistance;
             }
         };
-    }
-
-    public static Collection<RegistryObject<Item>> getItemEntries() {
-        return ITEMS.getEntries();
     }
 
     public static void register(IEventBus modEventBus) {

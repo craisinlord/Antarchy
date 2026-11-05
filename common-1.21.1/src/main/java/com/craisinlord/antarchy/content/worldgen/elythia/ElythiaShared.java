@@ -1,11 +1,13 @@
 package com.craisinlord.antarchy.content.worldgen.elythia;
 
 import com.mojang.serialization.MapCodec;
+import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
+import org.jetbrains.annotations.Nullable;
 
 public final class ElythiaShared implements DensityFunction {
     public static final MapCodec<ElythiaShared> CODEC = DensityFunction.HOLDER_HELPER_CODEC
@@ -14,10 +16,17 @@ public final class ElythiaShared implements DensityFunction {
     public static final KeyDispatchDataCodec<ElythiaShared> KEY_CODEC = KeyDispatchDataCodec.of(CODEC);
 
     private final DensityFunction argument;
-    private final Map<Visitor, DensityFunction> mapped = Collections.synchronizedMap(new WeakHashMap<>());
+    @Nullable
+    private final Object origin;
+    private final Map<Visitor, WeakReference<DensityFunction>> mapped = Collections.synchronizedMap(new WeakHashMap<>());
 
     public ElythiaShared(DensityFunction argument) {
+        this(argument, null);
+    }
+
+    private ElythiaShared(DensityFunction argument, @Nullable Object origin) {
         this.argument = argument;
+        this.origin = origin;
     }
 
     public DensityFunction argument() {
@@ -36,12 +45,14 @@ public final class ElythiaShared implements DensityFunction {
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        DensityFunction previous = this.mapped.get(visitor);
+        WeakReference<DensityFunction> reference = this.mapped.get(visitor);
+        DensityFunction previous = reference == null ? null : reference.get();
         if (previous != null) {
             return previous;
         }
-        DensityFunction result = visitor.apply(new ElythiaShared(this.argument.mapAll(visitor)));
-        this.mapped.put(visitor, result);
+        Object mappedOrigin = this.origin != null ? this.origin : new Object();
+        DensityFunction result = visitor.apply(new ElythiaShared(this.argument.mapAll(visitor), mappedOrigin));
+        this.mapped.put(visitor, new WeakReference<>(result));
         return result;
     }
 
@@ -62,11 +73,11 @@ public final class ElythiaShared implements DensityFunction {
 
     @Override
     public boolean equals(Object other) {
-        return this == other;
+        return this == other || (this.origin != null && other instanceof ElythiaShared shared && shared.origin == this.origin);
     }
 
     @Override
     public int hashCode() {
-        return System.identityHashCode(this);
+        return System.identityHashCode(this.origin != null ? this.origin : this);
     }
 }

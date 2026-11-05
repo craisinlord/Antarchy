@@ -23,19 +23,31 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class AntimetalInversionMixin {
 
     private static final int ANTIMETAL_INVERTED_REFRESH_TICKS = 20;
+    private static final int ANTIMETAL_INVERTED_REFRESH_THRESHOLD_TICKS = 12;
+    private static final int ANTIMETAL_PLAYER_SCAN_INTERVAL_TICKS = 2;
+    private static final int ANTIMETAL_MOB_SCAN_INTERVAL_TICKS = 10;
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void antarchy$tickOverheadInversion(CallbackInfo ci) {
         LivingEntity entity = (LivingEntity) (Object) this;
         if (entity.level().isClientSide()) return;
         if (entity instanceof Player player && player.isSpectator()) return;
+        MobEffectInstance existing = entity.getActiveEffectsMap().isEmpty() ? null : entity.getEffect(AntarchyObjects.INVERTED_EFFECT.get());
+        if (existing != null) {
+            if (existing.getDuration() > ANTIMETAL_INVERTED_REFRESH_THRESHOLD_TICKS) return;
+        } else if (!antarchy$isScanPhase(entity)) {
+            return;
+        }
         if (!antarchy$isDirectlyBelowAntimetal(entity)) return;
 
-        MobEffectInstance existing = entity.getEffect(AntarchyObjects.INVERTED_EFFECT.get());
-        if (existing == null || existing.getDuration() <= 5) {
-            entity.addEffect(new MobEffectInstance(AntarchyObjects.INVERTED_EFFECT.get(), ANTIMETAL_INVERTED_REFRESH_TICKS, 0, false, false, false));
-            antarchy$spawnInversionParticles(entity);
-        }
+        entity.addEffect(new MobEffectInstance(AntarchyObjects.INVERTED_EFFECT.get(), ANTIMETAL_INVERTED_REFRESH_TICKS, 0, false, false, false));
+        antarchy$spawnInversionParticles(entity);
+    }
+
+    private static boolean antarchy$isScanPhase(LivingEntity entity) {
+        int interval = entity instanceof Player ? ANTIMETAL_PLAYER_SCAN_INTERVAL_TICKS : ANTIMETAL_MOB_SCAN_INTERVAL_TICKS;
+        long phase = (long) entity.getUUID().hashCode() + entity.level().getGameTime();
+        return Math.floorMod(phase, interval) == 0;
     }
 
     private static boolean antarchy$isDirectlyBelowAntimetal(LivingEntity entity) {
@@ -46,11 +58,12 @@ public abstract class AntimetalInversionMixin {
         int maxY = Mth.floor(bounds.maxY);
         int minZ = Mth.floor(bounds.minZ);
         int maxZ = Mth.floor(bounds.maxZ);
+        BlockPos.MutableBlockPos above = new BlockPos.MutableBlockPos();
 
         for (int x = minX; x <= maxX; x++) {
             for (int y = minY; y <= maxY; y++) {
                 for (int z = minZ; z <= maxZ; z++) {
-                    BlockPos above = new BlockPos(x, y + 1, z);
+                    above.set(x, y + 1, z);
                     if (entity.level().getBlockState(above).is(AntarchyTags.Blocks.ANTIMETAL_INVERSION_BLOCKS)) {
                         return true;
                     }

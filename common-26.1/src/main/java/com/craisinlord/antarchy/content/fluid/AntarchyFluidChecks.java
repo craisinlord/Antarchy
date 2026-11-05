@@ -5,7 +5,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 
 public final class AntarchyFluidChecks {
@@ -58,12 +60,19 @@ public final class AntarchyFluidChecks {
                 for (int dz = -radius; dz <= radius; dz++) {
                     mutable.set(center.getX() + dx, center.getY() + dy, center.getZ() + dz);
                     BlockState state = level.getBlockState(mutable);
-                    if (isBile(state.getFluidState()) || isBileVein(state)) {
+                    Fluid fluid = state.getFluidState().getType();
+                    if (fluid == BileRefs.BILE || fluid == BileRefs.FLOWING_BILE || state.getBlock() == BileRefs.BILE_VEIN) {
                         return true;
                     }
                 }
             }
         }
         return false;
+    }
+
+    private static final class BileRefs {
+        static final Fluid BILE = BuiltInRegistries.FLUID.getOptional(BILE_ID).orElse(null);
+        static final Fluid FLOWING_BILE = BuiltInRegistries.FLUID.getOptional(FLOWING_BILE_ID).orElse(null);
+        static final Block BILE_VEIN = BuiltInRegistries.BLOCK.getOptional(BILE_VEIN_ID).orElse(null);
     }
 }

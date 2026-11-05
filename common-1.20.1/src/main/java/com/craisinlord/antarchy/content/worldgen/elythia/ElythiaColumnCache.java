@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.DensityFunction;
+import org.jetbrains.annotations.Nullable;
 
 public final class ElythiaColumnCache implements DensityFunction {
     public static final MapCodec<ElythiaColumnCache> CODEC = DensityFunction.HOLDER_HELPER_CODEC
@@ -11,21 +12,21 @@ public final class ElythiaColumnCache implements DensityFunction {
             .xmap(ElythiaColumnCache::new, ElythiaColumnCache::argument);
     public static final KeyDispatchDataCodec<ElythiaColumnCache> KEY_CODEC = KeyDispatchDataCodec.of(CODEC);
 
-    private static final int BITS = 5;
+    private static final int BITS = 6;
     private static final int MASK = (1 << BITS) - 1;
     private static final int SIZE = 1 << (BITS * 2);
 
     private final DensityFunction argument;
-    private final boolean active;
-    private volatile Entry[] entries;
+    @Nullable
+    private final Entry[] entries;
 
     public ElythiaColumnCache(DensityFunction argument) {
-        this(argument, false);
+        this(argument, null);
     }
 
-    private ElythiaColumnCache(DensityFunction argument, boolean active) {
+    private ElythiaColumnCache(DensityFunction argument, @Nullable Entry[] entries) {
         this.argument = argument;
-        this.active = active;
+        this.entries = entries;
     }
 
     public DensityFunction argument() {
@@ -34,17 +35,13 @@ public final class ElythiaColumnCache implements DensityFunction {
 
     @Override
     public double compute(FunctionContext context) {
-        if (!this.active) {
+        Entry[] table = this.entries;
+        if (table == null) {
             return this.argument.compute(context);
         }
         int x = context.blockX();
         int z = context.blockZ();
         long key = ChunkPos.asLong(x, z);
-        Entry[] table = this.entries;
-        if (table == null) {
-            table = new Entry[SIZE];
-            this.entries = table;
-        }
         int index = (x & MASK) << BITS | (z & MASK);
         Entry entry = table[index];
         if (entry != null && entry.key() == key) {
@@ -64,7 +61,8 @@ public final class ElythiaColumnCache implements DensityFunction {
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new ElythiaColumnCache(this.argument.mapAll(visitor), true));
+        Entry[] table = this.entries != null ? this.entries : new Entry[SIZE];
+        return visitor.apply(new ElythiaColumnCache(this.argument.mapAll(visitor), table));
     }
 
     @Override
@@ -84,12 +82,12 @@ public final class ElythiaColumnCache implements DensityFunction {
 
     @Override
     public boolean equals(Object other) {
-        return this == other;
+        return this == other || (this.entries != null && other instanceof ElythiaColumnCache cache && cache.entries == this.entries);
     }
 
     @Override
     public int hashCode() {
-        return System.identityHashCode(this);
+        return System.identityHashCode(this.entries != null ? this.entries : this);
     }
 
     private record Entry(long key, double value) {

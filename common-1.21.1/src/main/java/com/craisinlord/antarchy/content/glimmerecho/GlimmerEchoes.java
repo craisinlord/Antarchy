@@ -1,6 +1,9 @@
 package com.craisinlord.antarchy.content.glimmerecho;
 
 import java.util.UUID;
+import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
@@ -19,6 +22,7 @@ public final class GlimmerEchoes {
     private static final DustParticleOptions BURST = new DustParticleOptions(new Vector3f(0.7F, 0.95F, 1.0F), 1.6F);
 
     private static final int RING_SEGMENTS = 8;
+    private static final double KILL_CREDIT_RANGE = 64.0D;
 
     private GlimmerEchoes() {
     }
@@ -105,6 +109,20 @@ public final class GlimmerEchoes {
             }
         }
         return false;
+    }
+
+    public static void shareSigilBossKill(LivingEntity boss, DamageSource source) {
+        if (!(boss.level() instanceof ServerLevel level)
+                || !(source.getEntity() instanceof Player || boss.getKillCredit() instanceof Player)
+                || !GlimmerSigilTarget.isSigilBoss(boss.getType())) {
+            return;
+        }
+        double rangeSqr = KILL_CREDIT_RANGE * KILL_CREDIT_RANGE;
+        for (ServerPlayer player : level.players()) {
+            if (!player.isSpectator() && player.distanceToSqr(boss) <= rangeSqr) {
+                CriteriaTriggers.PLAYER_KILLED_ENTITY.trigger(player, boss, source);
+            }
+        }
     }
 
     public static void fadeAway(LivingEntity entity) {

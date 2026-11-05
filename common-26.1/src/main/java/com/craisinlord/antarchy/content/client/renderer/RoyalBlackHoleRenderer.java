@@ -30,6 +30,7 @@ public class RoyalBlackHoleRenderer extends GeoEntityRenderer<RoyalBlackHoleEnti
     public void addRenderData(RoyalBlackHoleEntity animatable, Void relatedObject, EntityRenderState renderState, float partialTick) {
         super.addRenderData(animatable, relatedObject, renderState, partialTick);
         renderState.addGeckolibData(VISUAL_GROWTH, animatable.visualGrowth());
+        renderState.addGeckolibData(RoyalBlackHoleModel.GLIMMER_ECHO, animatable.isGlimmerEcho());
     }
 
     @Override

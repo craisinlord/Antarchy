@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
@@ -25,6 +26,10 @@ public class RoyalLeavesBlock extends LeavesBlock {
     public static final BooleanProperty WATERLOGGED = LeavesBlock.WATERLOGGED;
     public static final int ROYAL_MAX_DISTANCE = 16;
     public static final int ROYAL_DECAY_DISTANCE = ROYAL_MAX_DISTANCE + 1;
+
+    public boolean hidesNeighborFace(BlockGetter level, BlockPos pos, BlockState state, BlockState neighborState, Direction direction) {
+        return LeafFaceCulling.hidesNeighborFace(level, pos, neighborState);
+    }
 
     public RoyalLeavesBlock(BlockBehaviour.Properties properties) {
         super(AmbientLeavesBlockSoundPlayer.noAmbientSound(), properties);

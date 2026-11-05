@@ -43,7 +43,7 @@ public record ElythiaButteFunction(Output output, DensityFunction argument, Dens
     }
 
     @Override
-    public int domainAxes() { return DensityFunction.ALL_AXES; }
+    public int domainAxes() { return ElythiaField.planarAxes(this.argument, this.mask); }
 
     @Override
     public MapCodec<ElythiaButteFunction> codec() { return CODEC; }

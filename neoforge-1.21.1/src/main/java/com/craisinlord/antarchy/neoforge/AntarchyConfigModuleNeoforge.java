@@ -718,6 +718,9 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setElythiaFireflyParticlesEnabled(AntarchyMiscConfig.elythiaFireflyParticlesEnabled());
         AntarchySettings.setElythiaFogEnabled(AntarchyMiscConfig.elythiaFogEnabled());
         AntarchySettings.setElythiaGroundMistEnabled(AntarchyMiscConfig.elythiaGroundMistEnabled());
+        AntarchySettings.setElythiaGrassWindEnabled(AntarchyMiscConfig.elythiaGrassWindEnabled());
+        AntarchySettings.setElythiaWindSoundsEnabled(AntarchyMiscConfig.elythiaWindSoundsEnabled());
+        AntarchySettings.setPrimordialGrassDrawDistance(AntarchyMiscConfig.primordialGrassDrawDistance());
         AntarchySettings.setElythiaSoftCloudsEnabled(AntarchyMiscConfig.elythiaSoftCloudsEnabled());
         AntarchySettings.setElythiaDreamShadowsEnabled(AntarchyMiscConfig.elythiaDreamShadowsEnabled());
         AntarchySettings.setElythiaDreamShadowsStrength(AntarchyMiscConfig.elythiaDreamShadowsStrength());
@@ -733,7 +736,9 @@ public final class AntarchyConfigModuleNeoforge {
         AntarchySettings.setElythiaRainGrowth(AntarchyMiscConfig.elythiaRainGrowth());
         AntarchySettings.setThoraxisEvents(AntarchyMiscConfig.thoraxisEvents());
         AntarchySettings.setThrowbackZonesEnabled(AntarchyMiscConfig.throwbackZonesEnabled());
-        AntarchySettings.setThrowbackStructureZoneRadius(AntarchyMiscConfig.throwbackStructureZoneRadius());
+        AntarchySettings.setThrowbackTorchRadius(AntarchyMiscConfig.throwbackTorchRadius());
+        AntarchySettings.setThrowbackWildZoneMinRadius(AntarchyMiscConfig.throwbackWildZoneMinRadius());
+        AntarchySettings.setThrowbackWildZoneMaxRadius(AntarchyMiscConfig.throwbackWildZoneMaxRadius());
         AntarchySettings.setThrowbackWildZoneChance(AntarchyMiscConfig.throwbackWildZoneChance());
         AntarchySettings.setThrowbackNoAttackCooldown(AntarchyMiscConfig.throwbackNoAttackCooldown());
         AntarchySettings.setThrowbackClassicHurtSound(AntarchyMiscConfig.throwbackClassicHurtSound());

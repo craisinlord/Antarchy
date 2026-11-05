@@ -225,6 +225,7 @@ public final class AntarchySoundEvents {
     public static Supplier<SoundEvent> HOVERBOARD_DISMOUNT = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> HOVERBOARD_IDLE = (Supplier<SoundEvent>) UNBOUND;
     public static Supplier<SoundEvent> PLAYER_HURT_CLASSIC = (Supplier<SoundEvent>) UNBOUND;
+    public static Supplier<SoundEvent> THROWBACK_MUSIC = (Supplier<SoundEvent>) UNBOUND;
 
     private AntarchySoundEvents() {
     }
@@ -667,7 +668,8 @@ public final class AntarchySoundEvents {
         HOVERBOARD_IDLE = idle;
     }
 
-    public static void bindThrowbackSounds(Supplier<SoundEvent> playerHurtClassic) {
+    public static void bindThrowbackSounds(Supplier<SoundEvent> throwbackMusic, Supplier<SoundEvent> playerHurtClassic) {
+        THROWBACK_MUSIC = throwbackMusic;
         PLAYER_HURT_CLASSIC = playerHurtClassic;
     }
 }

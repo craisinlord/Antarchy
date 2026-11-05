@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "antarchy:tidestone"
+    }
+  },
+  "result": {
+    "id": "antarchy:polished_tidestone",
+    "count": 4
+  }
+}

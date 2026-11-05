@@ -3,6 +3,8 @@ package com.craisinlord.antarchy.content.entity.royal;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityTypes;
 import com.craisinlord.antarchy.config.AntarchySettings;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.antarchy.content.entity.royal.beam.RoyalBeamElement;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -26,11 +28,13 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
-public class RoyalBoltEntity extends AbstractHurtingProjectile {
+public class RoyalBoltEntity extends AbstractHurtingProjectile implements GlimmerEcho {
     private static final DustParticleOptions KING_GOLD_TRAIL =
             new DustParticleOptions(ARGB.colorFromFloat(1.0F, 1.0F, 0.72F, 0.12F), 1.35F);
     private static final EntityDataAccessor<Integer> ELEMENT =
             SynchedEntityData.defineId(RoyalBoltEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO =
+            SynchedEntityData.defineId(RoyalBoltEntity.class, EntityDataSerializers.BOOLEAN);
 
     public RoyalBoltEntity(EntityType<? extends RoyalBoltEntity> entityType, Level level) {
         super(entityType, level);
@@ -40,6 +44,17 @@ public class RoyalBoltEntity extends AbstractHurtingProjectile {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(ELEMENT, RoyalBeamElement.GENERIC.ordinal());
+        builder.define(GLIMMER_ECHO, false);
+    }
+
+    @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
     }
 
     public void setElement(RoyalBeamElement element) {
@@ -55,12 +70,14 @@ public class RoyalBoltEntity extends AbstractHurtingProjectile {
     public void addAdditionalSaveData(ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("Element", this.entityData.get(ELEMENT));
+        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
     }
 
     @Override
     public void readAdditionalSaveData(ValueInput tag) {
         super.readAdditionalSaveData(tag);
         tag.getInt("Element").ifPresent(element -> this.entityData.set(ELEMENT, element));
+        this.setGlimmerEcho(tag.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
     }
 
     @Override
@@ -80,6 +97,9 @@ public class RoyalBoltEntity extends AbstractHurtingProjectile {
 
     @Override
     protected ParticleOptions getTrailParticle() {
+        if (this.isGlimmerEcho()) {
+            return GlimmerEchoes.dust();
+        }
         return switch (this.getElement()) {
             case FIRE -> ParticleTypes.FLAME;
             case LIGHTNING -> ParticleTypes.ELECTRIC_SPARK;
@@ -119,6 +139,7 @@ public class RoyalBoltEntity extends AbstractHurtingProjectile {
         if (owner instanceof RoyalMountEntity mount) {
             damage *= mount.projectileDamageMultiplier();
         }
+        damage *= GlimmerEchoes.ownerDamageMultiplier(this, owner == null ? null : owner.getUUID());
         DamageSource boltSource = this.damageSources().mobProjectile(this, owner instanceof LivingEntity le ? le : null);
         target.hurtServer(hitLevel, boltSource, damage);
         if (target instanceof LivingEntity living) {
@@ -130,7 +151,9 @@ public class RoyalBoltEntity extends AbstractHurtingProjectile {
                     living.setTicksFrozen(Math.min(living.getTicksRequiredToFreeze() + 40, living.getTicksFrozen() + 140));
                 }
                 case LIGHTNING -> {
-                    if (this.level() instanceof ServerLevel serverLevel) {
+                    if (this.level() instanceof ServerLevel glimmerLevel && this.isGlimmerEcho()) {
+                        RoyalBossEntity.sendGlimmerLightning(glimmerLevel, target.getX(), target.getY(), target.getZ());
+                    } else if (this.level() instanceof ServerLevel serverLevel) {
                         LightningBolt bolt = EntityTypes.LIGHTNING_BOLT.create(serverLevel, EntitySpawnReason.TRIGGERED);
                         if (bolt != null) {
                             bolt.snapTo(target.getX(), target.getY(), target.getZ());

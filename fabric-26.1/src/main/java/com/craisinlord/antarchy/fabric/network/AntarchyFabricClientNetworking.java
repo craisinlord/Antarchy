@@ -19,6 +19,10 @@ public final class AntarchyFabricClientNetworking {
     public static void register() {
         ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ElythiaEventPayload.TYPE, (payload, context) ->
                 context.client().execute(() -> com.craisinlord.antarchy.content.client.ElythiaEventClient.handle(payload)));
+        ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ThoraxisEventPayload.TYPE, (payload, context) ->
+                context.client().execute(() -> com.craisinlord.antarchy.content.client.ThoraxisEventClient.handle(payload)));
+        ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ThoraxisBubbleUpdatePayload.TYPE, (payload, context) ->
+                context.client().execute(() -> com.craisinlord.antarchy.content.client.ThoraxisEventClient.handleUpdate(payload)));
         ClientPlayNetworking.registerGlobalReceiver(com.craisinlord.antarchy.content.network.ThrowbackZonePayload.TYPE, (payload, context) ->
                 context.client().execute(() -> com.craisinlord.antarchy.content.client.ThrowbackClientState.update(payload.strength())));
         ClientPlayNetworking.registerGlobalReceiver(AntarchyGameResultPayload.TYPE, (payload, context) ->

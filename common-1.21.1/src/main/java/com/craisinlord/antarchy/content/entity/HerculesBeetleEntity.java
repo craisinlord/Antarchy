@@ -78,7 +78,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -187,7 +186,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private final ServerBossEvent bossEvent =
-            new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this.getUUID(), Component.translatable("entity.antarchy.hercules_beetle"), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS);
+            new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(this, Component.translatable("entity.antarchy.hercules_beetle"), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS);
 
     private int actionTicks;
     private int actionHitTick;
@@ -863,16 +862,11 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             amount *= 0.5F;
         }
 
-        float preHealth = this.getHealth();
-
         if (!this.level().isClientSide && !this.isTame() && !this.isKnockedDown() && !this.isDeadOrDying()) {
             float knockThreshold = Math.max(1.0F, this.getMaxHealth() * 0.05F);
             if (this.getHealth() - amount <= knockThreshold) {
                 float allowedDamage = Math.max(0.0F, this.getHealth() - knockThreshold);
                 boolean hurt = allowedDamage <= 0.0F || super.hurt(source, allowedDamage);
-                if (hurt) {
-                    BossCombatUtil.clampHalfHealthCrossing(this, preHealth);
-                }
                 if (hurt && this.isAlive()) {
                     this.enterKnockedDown();
                 }
@@ -880,11 +874,14 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             }
         }
 
-        boolean hurt = super.hurt(source, amount);
-        if (hurt) {
-            BossCombatUtil.clampHalfHealthCrossing(this, preHealth);
-        }
-        return hurt;
+        return super.hurt(source, amount);
+    }
+
+    @Override
+    protected void actuallyHurt(DamageSource source, float amount) {
+        float preHealth = this.getHealth();
+        super.actuallyHurt(source, amount);
+        BossCombatUtil.clampHalfHealthCrossing(this, preHealth, source);
     }
 
     @Override
@@ -1262,10 +1259,9 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
                 break;
             }
             BlockState state = level.getBlockState(pos);
-            BlockEntity blockEntity = level.getBlockEntity(pos);
             if (state.isAir()
                     || state.is(AntarchyTags.Blocks.HERCULES_BEETLE_CHARGE_IMMUNE_BLOCKS)
-                    || blockEntity != null
+                    || level.getBlockEntity(pos) != null
                     || state.getDestroySpeed(level, pos) < 0.0F) {
                 continue;
             }
@@ -1290,10 +1286,9 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
                 break;
             }
             BlockState state = serverLevel.getBlockState(pos);
-            BlockEntity blockEntity = serverLevel.getBlockEntity(pos);
             if (state.isAir()
                     || state.is(AntarchyTags.Blocks.HERCULES_BEETLE_CHARGE_IMMUNE_BLOCKS)
-                    || blockEntity != null
+                    || serverLevel.getBlockEntity(pos) != null
                     || state.getDestroySpeed(serverLevel, pos) < 0.0F) {
                 continue;
             }
@@ -1318,10 +1313,9 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
                 break;
             }
             BlockState state = serverLevel.getBlockState(pos);
-            BlockEntity blockEntity = serverLevel.getBlockEntity(pos);
             if (state.isAir()
                     || state.is(AntarchyTags.Blocks.HERCULES_BEETLE_CHARGE_IMMUNE_BLOCKS)
-                    || blockEntity != null
+                    || serverLevel.getBlockEntity(pos) != null
                     || state.getDestroySpeed(serverLevel, pos) < 0.0F) {
                 continue;
             }
@@ -1763,8 +1757,36 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
     }
 
     private final class HerculesCombatGoal extends Goal {
+        private static final int REPATH_INTERVAL_TICKS = 4;
+        private static final int REPATH_FAILURE_INTERVAL_TICKS = 10;
+        private static final double REPATH_TARGET_MOVED_SQR = 1.0D;
+
+        private long nextRepathTick;
+        private boolean lastRepathStarted;
+        private boolean lastRepathFlying;
+        private Vec3 lastRepathTargetPos = Vec3.ZERO;
+
         HerculesCombatGoal() {
             this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        @Override
+        public void start() {
+            this.nextRepathTick = 0L;
+        }
+
+        private void repathToTarget(LivingEntity target) {
+            boolean flying = HerculesBeetleEntity.this.isFlying();
+            long gameTime = HerculesBeetleEntity.this.level().getGameTime();
+            boolean targetMoved = target.position().distanceToSqr(this.lastRepathTargetPos) > REPATH_TARGET_MOVED_SQR;
+            boolean movedSinceSuccess = targetMoved && this.lastRepathStarted;
+            if (gameTime < this.nextRepathTick && !movedSinceSuccess && flying == this.lastRepathFlying) {
+                return;
+            }
+            this.lastRepathStarted = HerculesBeetleEntity.this.getNavigation().moveTo(target, flying ? 1.2D : 1.0D);
+            this.lastRepathFlying = flying;
+            this.lastRepathTargetPos = target.position();
+            this.nextRepathTick = gameTime + (this.lastRepathStarted ? REPATH_INTERVAL_TICKS : REPATH_FAILURE_INTERVAL_TICKS);
         }
 
         @Override
@@ -1807,6 +1829,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
             }
 
             if (HerculesBeetleEntity.this.isInBusyAnimation() || HerculesBeetleEntity.this.chargeTicksRemaining > 0) {
+                this.nextRepathTick = 0L;
                 return;
             }
 
@@ -1833,8 +1856,7 @@ public class HerculesBeetleEntity extends TamableAnimal implements GeoEntity, Fl
                 return;
             }
 
-            double speed = HerculesBeetleEntity.this.isFlying() ? 1.2D : 1.0D;
-            HerculesBeetleEntity.this.getNavigation().moveTo(target, speed);
+            this.repathToTarget(target);
         }
     }
 }

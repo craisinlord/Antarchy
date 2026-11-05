@@ -18,8 +18,6 @@ public record CavarynCavityFunction(CavarynCavityGrid.Kind kind, DensityFunction
                     DensityFunction.CODEC.fieldOf("depth").forGetter(CavarynCavityFunction::depth),
                     NormalNoise.CODEC.fieldOf("noise").forGetter(CavarynCavityFunction::noise)
             ).apply(instance, CavarynCavityFunction::new));
-    private static final double SCALE = 0.35;
-    private static final double FLOOR = -1.0 / SCALE - 1.0E-9;
 
     public static long saltFor(double first, double second) {
         return CavarynWormBoreGrid.salt(first, second);
@@ -39,6 +37,9 @@ public record CavarynCavityFunction(CavarynCavityGrid.Kind kind, DensityFunction
             SamplerContext samplerContext = SamplerContext.EMPTY_UNCACHED;
             double h = humiditySampler.sampleValue(samplerContext, bx, by, bz);
             double w = weirdnessSampler.sampleValue(samplerContext, bx, by, bz);
+            if (CavarynBiomeTable.excludedByClimate(this.kind.biome(), h, w)) {
+                return false;
+            }
             double d = depthSampler.sampleValue(samplerContext, bx, by, bz);
             String biome = this.kind.biome();
             return this.kind.strict()
@@ -68,7 +69,12 @@ public record CavarynCavityFunction(CavarynCavityGrid.Kind kind, DensityFunction
         return CODEC;
     }
 
-    private record Sampler(CavarynCavityGrid grid) implements DensitySampler {
+    private record Sampler(CavarynCavityGrid grid) implements DensitySampler, CavarynColumn.Source {
+        @Override
+        public CavarynColumn newColumn() {
+            return this.grid.newColumn();
+        }
+
         @Override
         public void sampleVolume(SamplerContext context, DensityBuffer outputBuffer, DensityVolume volume) {
             DensitySampler.sampleVolumeNaive(context, outputBuffer, volume, this);
@@ -76,7 +82,7 @@ public record CavarynCavityFunction(CavarynCavityGrid.Kind kind, DensityFunction
 
         @Override
         public float sampleValue(SamplerContext context, int blockX, int blockY, int blockZ) {
-            return (float) Mth.clamp(this.grid.signedDistance(blockX, blockY, blockZ, FLOOR) * SCALE, -1.0, 1.0);
+            return (float) CavarynColumn.density(this.grid.signedDistance(blockX, blockY, blockZ, CavarynColumn.FLOOR));
         }
     }
 }

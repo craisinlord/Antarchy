@@ -1,23 +1,17 @@
 {
   "type": "antarchy:ouranwood_young_tree",
   "trunk_provider": {
-    "type": "minecraft:simple_state_provider",
-    "state": {
-      "id": "antarchy:ouranwood_log",
-      "properties": {
-        "axis": "y"
-      }
+    "id": "antarchy:ouranwood_log",
+    "properties": {
+      "axis": "y"
     }
   },
   "foliage_provider": {
-    "type": "minecraft:simple_state_provider",
-    "state": {
-      "id": "antarchy:ouranwood_leaves",
-      "properties": {
-        "distance": "7",
-        "persistent": "false",
-        "waterlogged": "false"
-      }
+    "id": "antarchy:ouranwood_leaves",
+    "properties": {
+      "distance": "7",
+      "persistent": "false",
+      "waterlogged": "false"
     }
   },
   "height": {

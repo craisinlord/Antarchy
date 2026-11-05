@@ -52,6 +52,9 @@ public final class CavarynBiowartGutDressingFeature extends Feature<NoneFeatureC
 
         int originX = context.origin().getX() & ~15;
         int originZ = context.origin().getZ() & ~15;
+        if (!grid.hasCandidates(originX, originZ)) {
+            return false;
+        }
         int minBuild = level.getMinY() + 6;
         int maxBuild = (level.getMaxY() + 1) - 8;
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();

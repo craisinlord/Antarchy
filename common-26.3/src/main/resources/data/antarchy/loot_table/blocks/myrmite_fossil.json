@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "antarchy:myrmite_fossil",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "source": "block_entity",
+              "include": [
+                "antarchy:fossil_entity"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "random_sequence": "antarchy:blocks/myrmite_fossil"
+}

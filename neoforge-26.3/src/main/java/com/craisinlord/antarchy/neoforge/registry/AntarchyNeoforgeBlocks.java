@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.neoforge.registry;
 
 import com.craisinlord.antarchy.Antarchy;
-import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.*;
 import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
@@ -25,7 +24,6 @@ import com.craisinlord.antarchy.content.fluid.LumenLiquidBlock;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
 import com.craisinlord.antarchy.neoforge.content.block.WildCornBlock;
 import com.craisinlord.antarchy.neoforge.AntarchyWoodTypes;
-import com.craisinlord.antarchy.neoforge.content.fluid.AntiwaterFluidType;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -42,9 +40,7 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.FlowingFluid;
-import net.minecraft.world.level.material.FluidState;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -535,6 +531,34 @@ public final class AntarchyNeoforgeBlocks {
             id -> createOre(id, Blocks.DEEPSLATE_EMERALD_ORE, 4, 8, MapColor.COLOR_YELLOW));
     public static final DeferredBlock<Block> BROODSTONE_TITANIUM_ORE = BLOCKS.register("broodstone_titanium_ore",
             id -> createOre(id, Blocks.DEEPSLATE_DIAMOND_ORE, 4, 8, MapColor.COLOR_LIGHT_BLUE));
+    public static final DeferredBlock<Block> MYRMITE_COPPER_ORE = BLOCKS.register("myrmite_copper_ore",
+            id -> createOre(id, Blocks.COPPER_ORE, 0, 0, MapColor.COLOR_ORANGE));
+    public static final DeferredBlock<Block> MYRMITE_IRON_ORE = BLOCKS.register("myrmite_iron_ore",
+            id -> createOre(id, Blocks.IRON_ORE, 0, 0, MapColor.RAW_IRON));
+    public static final DeferredBlock<Block> MYRMITE_GOLD_ORE = BLOCKS.register("myrmite_gold_ore",
+            id -> createOre(id, Blocks.GOLD_ORE, 0, 0, MapColor.GOLD));
+    public static final DeferredBlock<net.minecraft.world.level.block.RedStoneOreBlock> MYRMITE_REDSTONE_ORE = BLOCKS.register("myrmite_redstone_ore",
+            id -> new net.minecraft.world.level.block.RedStoneOreBlock(copyOf(id, Blocks.REDSTONE_ORE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> MYRMITE_LAPIS_ORE = BLOCKS.register("myrmite_lapis_ore",
+            id -> createOre(id, Blocks.LAPIS_ORE, 2, 5, MapColor.LAPIS));
+    public static final DeferredBlock<Block> MYRMITE_DIAMOND_ORE = BLOCKS.register("myrmite_diamond_ore",
+            id -> createOre(id, Blocks.DIAMOND_ORE, 3, 7, MapColor.DIAMOND));
+    public static final DeferredBlock<Block> MYRMITE_EMERALD_ORE = BLOCKS.register("myrmite_emerald_ore",
+            id -> createOre(id, Blocks.EMERALD_ORE, 3, 7, MapColor.EMERALD));
+    public static final DeferredBlock<Block> BROODSTONE_COPPER_ORE = BLOCKS.register("broodstone_copper_ore",
+            id -> createOre(id, Blocks.DEEPSLATE_COPPER_ORE, 0, 0, MapColor.COLOR_ORANGE));
+    public static final DeferredBlock<Block> BROODSTONE_IRON_ORE = BLOCKS.register("broodstone_iron_ore",
+            id -> createOre(id, Blocks.DEEPSLATE_IRON_ORE, 0, 0, MapColor.RAW_IRON));
+    public static final DeferredBlock<Block> BROODSTONE_GOLD_ORE = BLOCKS.register("broodstone_gold_ore",
+            id -> createOre(id, Blocks.DEEPSLATE_GOLD_ORE, 0, 0, MapColor.GOLD));
+    public static final DeferredBlock<net.minecraft.world.level.block.RedStoneOreBlock> BROODSTONE_REDSTONE_ORE = BLOCKS.register("broodstone_redstone_ore",
+            id -> new net.minecraft.world.level.block.RedStoneOreBlock(copyOf(id, Blocks.DEEPSLATE_REDSTONE_ORE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> BROODSTONE_LAPIS_ORE = BLOCKS.register("broodstone_lapis_ore",
+            id -> createOre(id, Blocks.DEEPSLATE_LAPIS_ORE, 2, 5, MapColor.LAPIS));
+    public static final DeferredBlock<Block> BROODSTONE_DIAMOND_ORE = BLOCKS.register("broodstone_diamond_ore",
+            id -> createOre(id, Blocks.DEEPSLATE_DIAMOND_ORE, 3, 7, MapColor.DIAMOND));
+    public static final DeferredBlock<Block> BROODSTONE_EMERALD_ORE = BLOCKS.register("broodstone_emerald_ore",
+            id -> createOre(id, Blocks.DEEPSLATE_EMERALD_ORE, 3, 7, MapColor.EMERALD));
     public static final DeferredBlock<RotatedPillarBlock> CHITIN_BLOCK = BLOCKS.register("chitin_block",
             id -> new RotatedPillarBlock(copyOf(id, Blocks.BONE_BLOCK).requiresCorrectToolForDrops()));
     public static final DeferredBlock<UmbralMossBlock> UMBRAL_MOSS_BLOCK = BLOCKS.register("umbral_moss_block",
@@ -623,21 +647,21 @@ public final class AntarchyNeoforgeBlocks {
             id -> new Block(copyOf(id, Blocks.OCHRE_FROGLIGHT)));
     public static final DeferredBlock<AntNestBlock> RED_ANT_NEST = BLOCKS.register("red_ant_nest",
             id -> new AntNestBlock(
-                    AntarchyNeoforgeEntites.RED_ANT,
+                    AntarchyNeoforgeEntities.RED_ANT,
                     AntarchyNeoforgeItems::antNestBlockEntityType,
                     true,
                     copyOf(id, Blocks.MAGMA_BLOCK).lightLevel(state -> 3).noLootTable()
             ));
     public static final DeferredBlock<AntNestBlock> BROWN_ANT_NEST = BLOCKS.register("brown_ant_nest",
-            id -> new AntNestBlock(AntarchyNeoforgeEntites.BROWN_ANT, AntarchyNeoforgeItems::antNestBlockEntityType, copyOf(id, Blocks.DIRT).noLootTable()));
+            id -> new AntNestBlock(AntarchyNeoforgeEntities.BROWN_ANT, AntarchyNeoforgeItems::antNestBlockEntityType, copyOf(id, Blocks.DIRT).noLootTable()));
     public static final DeferredBlock<AntNestBlock> RAINBOW_ANT_NEST = BLOCKS.register("rainbow_ant_nest",
-            id -> new AntNestBlock(AntarchyNeoforgeEntites.RAINBOW_ANT, AntarchyNeoforgeItems::antNestBlockEntityType, copyOf(id, Blocks.DIRT).noLootTable()));
+            id -> new AntNestBlock(AntarchyNeoforgeEntities.RAINBOW_ANT, AntarchyNeoforgeItems::antNestBlockEntityType, copyOf(id, Blocks.DIRT).noLootTable()));
     public static final DeferredBlock<AntNestBlock> TERMITE_NEST = BLOCKS.register("termite_nest",
-            id -> new AntNestBlock(AntarchyNeoforgeEntites.TERMITE, AntarchyNeoforgeItems::antNestBlockEntityType, copyOf(id, Blocks.DIRT).noLootTable()));
+            id -> new AntNestBlock(AntarchyNeoforgeEntities.TERMITE, AntarchyNeoforgeItems::antNestBlockEntityType, copyOf(id, Blocks.DIRT).noLootTable()));
 
     public static final DeferredBlock<com.craisinlord.antarchy.content.block.AntTrapBlock> ANT_TRAP = BLOCKS.register("ant_trap",
             id -> new com.craisinlord.antarchy.content.block.AntTrapBlock(
-                    () -> java.util.List.of(AntarchyNeoforgeEntites.RED_ANT.get(), AntarchyNeoforgeEntites.BROWN_ANT.get(), AntarchyNeoforgeEntites.RAINBOW_ANT.get(), AntarchyNeoforgeEntites.TERMITE.get()),
+                    () -> java.util.List.of(AntarchyNeoforgeEntities.RED_ANT.get(), AntarchyNeoforgeEntities.BROWN_ANT.get(), AntarchyNeoforgeEntities.RAINBOW_ANT.get(), AntarchyNeoforgeEntities.TERMITE.get()),
                     AntarchyNeoforgeItems::antNestBlockEntityType, copyOf(id, Blocks.OAK_PRESSURE_PLATE).noOcclusion()));
     public static final DeferredBlock<Block> URANIUM_ORE = BLOCKS.register("uranium_ore",
             id -> createOre(id, Blocks.EMERALD_ORE, 4, 8, MapColor.COLOR_YELLOW));

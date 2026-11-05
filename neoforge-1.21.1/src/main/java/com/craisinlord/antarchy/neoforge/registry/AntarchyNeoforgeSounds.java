@@ -11,6 +11,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class AntarchyNeoforgeSounds {
     private static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registries.SOUND_EVENT, Antarchy.MODID);
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> ELYTHIA_GRASS_WIND = registerSoundEvent("ambient.elythia.grass_wind");
     public static final DeferredHolder<SoundEvent, SoundEvent> SQUIDZOOKA_FIRE = registerSoundEvent("squidzooka_fire");
     public static final DeferredHolder<SoundEvent, SoundEvent> SHRINK_RAY_CHARGE = registerSoundEvent("shrink_ray_charge");
     public static final DeferredHolder<SoundEvent, SoundEvent> SHRINK_RAY_LOOP = registerSoundEvent("shrink_ray_loop");

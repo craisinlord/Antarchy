@@ -1,5 +1,5 @@
 {
-  "feature": "minecraft:ore_iron",
+  "feature": "antarchy:elythia_ore_iron",
   "placement": [
     {
       "type": "minecraft:count",

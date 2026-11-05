@@ -9,6 +9,7 @@ import net.minecraft.resources.Identifier;
 
 public class ScorpionModel extends GeoModel<ScorpionEntity> {
     public static final DataTicket<Integer> TEXTURE_VARIANT = DataTicket.create("antarchy_scorpion_texture_variant", Integer.class);
+    public static final DataTicket<Boolean> GLIMMER_ECHO = DataTicket.create("antarchy_scorpion_glimmer_echo", Boolean.class);
 
     private static final Identifier MODEL =
             Identifier.fromNamespaceAndPath(Antarchy.MODID, "scorpion");
@@ -20,6 +21,8 @@ public class ScorpionModel extends GeoModel<ScorpionEntity> {
             Identifier.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/scorpion/scorpion_blue_emissive.png");
     private static final Identifier GREEN_EMISSIVE_TEXTURE =
             Identifier.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/scorpion/scorpion_green_emissive.png");
+    private static final Identifier GLIMMER_TEXTURE = Identifier.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/glimmer/scorpion_glimmer.png");
+    private static final Identifier GLIMMER_EMISSIVE_TEXTURE = Identifier.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/glimmer/scorpion_glimmer_emissive.png");
     private static final Identifier ANIMATION =
             Identifier.fromNamespaceAndPath(Antarchy.MODID, "scorpion");
 
@@ -27,6 +30,7 @@ public class ScorpionModel extends GeoModel<ScorpionEntity> {
     public void addAdditionalStateData(ScorpionEntity animatable, Object relatedObject, GeoRenderState renderState) {
         super.addAdditionalStateData(animatable, relatedObject, renderState);
         renderState.addGeckolibData(TEXTURE_VARIANT, animatable.getTextureVariant());
+        renderState.addGeckolibData(GLIMMER_ECHO, animatable.isGlimmerEcho());
     }
 
     @Override
@@ -45,10 +49,16 @@ public class ScorpionModel extends GeoModel<ScorpionEntity> {
     }
 
     public static Identifier textureFor(GeoRenderState renderState) {
+        if (renderState.getOrDefaultGeckolibData(GLIMMER_ECHO, false)) {
+            return GLIMMER_TEXTURE;
+        }
         return isGreen(renderState) ? GREEN_TEXTURE : BLUE_TEXTURE;
     }
 
     public static Identifier emissiveTextureFor(GeoRenderState renderState) {
+        if (renderState.getOrDefaultGeckolibData(GLIMMER_ECHO, false)) {
+            return GLIMMER_EMISSIVE_TEXTURE;
+        }
         return isGreen(renderState) ? GREEN_EMISSIVE_TEXTURE : BLUE_EMISSIVE_TEXTURE;
     }
 

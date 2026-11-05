@@ -1,0 +1,14 @@
+{
+  "variants": {
+    "type=double": {
+      "model": "antarchy:block/arkrose_bricks"
+    },
+    "type=bottom": {
+      "model": "antarchy:block/arkrose_brick_slab"
+    },
+    "type=top": {
+      "model": "antarchy:block/arkrose_brick_slab_top"
+    }
+  }
+}
+

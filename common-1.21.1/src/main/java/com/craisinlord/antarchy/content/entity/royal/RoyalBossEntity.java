@@ -116,7 +116,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     private static final float PHASE_THREE_THRESHOLD = 0.35F;
 
     private static final int BITE_DURATION_TICKS = 16;
-    private static final int BITE_HIT_TICK = 6;
+    private static final int BITE_HIT_TICK = 12;
     private static final int HEAD_ATTACK_ANIMATION_TICKS = 25;
     private static final int DEATH_TICKS = 60;
     private static final double CRUSH_RADIUS = 3.5D;
@@ -162,6 +162,14 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     private static final int STUCK_TELEPORT_STRIKES = 4;
     private static final int STUCK_TELEPORT_COOLDOWN_TICKS = 600;
     private static final int STUCK_TELEPORT_ATTEMPTS = 16;
+    private static final double RETALIATION_TARGET_RANGE = 384.0D;
+    private static final int RETALIATION_HOLD_TICKS = 600;
+    private static final double REPRISAL_TRIGGER_DISTANCE = 96.0D;
+    private static final int REPRISAL_RECENT_HIT_TICKS = 200;
+    private static final int REPRISAL_PRESSURE_TICKS = 60;
+    private static final int REPRISAL_TELEGRAPH_TICKS = 40;
+    private static final int REPRISAL_COOLDOWN_TICKS = 300;
+    private static final int REPRISAL_RETRY_TICKS = 40;
     private static final int LANDING_FOR_COMBAT_TIMEOUT_TICKS = 120;
     private static final int GROUND_SCAN_DEPTH = 48;
     private static final int GROUND_SCAN_RISE = 24;
@@ -231,8 +239,8 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             new RoyalHead(RoyalHead.Slot.RIGHT)
     };
     private final int[] beamLoopSoundTicks = new int[3];
-    private final int[] assignedHeadCounts = new int[3];
     private int beamVolleyLimit;
+    private int nextBeamHeadIndex;
     @Nullable
     private Phase beamVolleyPhase;
     private final MoveControl groundMoveControl;
@@ -262,8 +270,15 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     private int royalStuckSampleTicks;
     private int royalStuckStrikes;
     private int royalTeleportCooldownTicks;
+    private int royalReprisalPressureTicks;
+    private int royalReprisalTelegraphTicks;
+    @Nullable
+    private java.util.UUID retaliationAttackerId;
+    private long retaliationHitTime;
+    private boolean retaliationHitWasDistant;
     private int glimmerAbandonTicks;
     private boolean glimmerHealthApplied;
+    private boolean royalInWallCached;
 
     @Nullable
     private Entity[] multipartParts;
@@ -288,7 +303,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             this.navigation = this.groundNavigation;
         }
         this.bossEvent = new com.craisinlord.antarchy.content.boss.EntityLinkedServerBossEvent(
-                this.getUUID(),
+                this,
                 Component.translatable(entityType.getDescriptionId()),
                 this.bossBarColor(),
                 BossEvent.BossBarOverlay.PROGRESS);
@@ -455,12 +470,136 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     protected void registerRoyalTargetGoals() {
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setUnseenMemoryTicks(ROYAL_UNSEEN_MEMORY_TICKS));
+        this.targetSelector.addGoal(1, new RoyalRetaliationTargetGoal().setUnseenMemoryTicks(ROYAL_UNSEEN_MEMORY_TICKS));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true)
                 .setUnseenMemoryTicks(ROYAL_UNSEEN_MEMORY_TICKS));
     }
 
     protected static final int ROYAL_UNSEEN_MEMORY_TICKS = 400;
+
+    protected final class RoyalRetaliationTargetGoal extends HurtByTargetGoal {
+        protected RoyalRetaliationTargetGoal() {
+            super(RoyalBossEntity.this);
+        }
+
+        @Override
+        public boolean canUse() {
+            LivingEntity attacker = RoyalBossEntity.this.getLastHurtByMob();
+            return attacker != null && RoyalBossEntity.this.acceptsRetaliationFrom(attacker) && super.canUse();
+        }
+
+        @Override
+        protected double getFollowDistance() {
+            return Math.max(super.getFollowDistance(), RETALIATION_TARGET_RANGE);
+        }
+
+        @Override
+        public void start() {
+            super.start();
+            this.setUnseenMemoryTicks(ROYAL_UNSEEN_MEMORY_TICKS);
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            LivingEntity target = RoyalBossEntity.this.getTarget();
+            if (target != null && target.isAlive() && target.level() == RoyalBossEntity.this.level()
+                    && RoyalBossEntity.this.canAttack(target)
+                    && target.distanceToSqr(RoyalBossEntity.this) <= RETALIATION_TARGET_RANGE * RETALIATION_TARGET_RANGE
+                    && RoyalBossEntity.this.ticksSinceRetaliationHit(target) <= RETALIATION_HOLD_TICKS) {
+                return true;
+            }
+            if (!super.canContinueToUse()) {
+                return false;
+            }
+            target = RoyalBossEntity.this.getTarget();
+            if (target == null) {
+                return false;
+            }
+            double followRange = super.getFollowDistance();
+            return target.distanceToSqr(RoyalBossEntity.this) <= followRange * followRange;
+        }
+    }
+
+    @Override
+    public boolean canAttack(LivingEntity target) {
+        return target.level() == this.level() && super.canAttack(target);
+    }
+
+    protected boolean allowsRoyalTeleport() {
+        return true;
+    }
+
+    protected boolean isRoyalTeleportDestinationValid(double x, double z) {
+        return true;
+    }
+
+    protected boolean acceptsRetaliationFrom(LivingEntity attacker) {
+        return true;
+    }
+
+    private long ticksSinceRetaliationHit(LivingEntity target) {
+        return target.getUUID().equals(this.retaliationAttackerId)
+                ? this.level().getGameTime() - this.retaliationHitTime
+                : Long.MAX_VALUE;
+    }
+
+    protected boolean canRoyalReprisalTeleport(LivingEntity target) {
+        return this.allowsRoyalTeleport() && !this.blocksRoyalAttacksForMovement();
+    }
+
+    protected void onRoyalReprisalTeleport() {
+    }
+
+    private void tickRoyalDistantReprisal(LivingEntity target) {
+        if (!(this.level() instanceof ServerLevel level)) {
+            return;
+        }
+        boolean distantAttacker = target instanceof Player
+                && this.retaliationHitWasDistant
+                && target.distanceToSqr(this) > REPRISAL_TRIGGER_DISTANCE * REPRISAL_TRIGGER_DISTANCE
+                && this.ticksSinceRetaliationHit(target) <= REPRISAL_RECENT_HIT_TICKS;
+        if (this.royalReprisalTelegraphTicks <= 0) {
+            this.royalReprisalPressureTicks = distantAttacker ? this.royalReprisalPressureTicks + 1 : 0;
+            if (this.royalReprisalPressureTicks >= REPRISAL_PRESSURE_TICKS
+                    && this.royalTeleportCooldownTicks <= 0
+                    && this.canRoyalReprisalTeleport(target)) {
+                this.royalReprisalPressureTicks = 0;
+                this.royalReprisalTelegraphTicks = REPRISAL_TELEGRAPH_TICKS;
+                level.playSound(null, target.getX(), target.getY(), target.getZ(),
+                        this.royalBeamStartSound(), SoundSource.HOSTILE, 2.0F, 0.6F);
+                level.playSound(null, this.getX(), this.getY(), this.getZ(),
+                        this.royalBeamStartSound(), SoundSource.HOSTILE, 3.0F, 0.6F);
+            }
+            return;
+        }
+        if (this.royalReprisalTelegraphTicks % 4 == 0) {
+            double radius = 2.0D + this.royalReprisalTelegraphTicks * 0.1D;
+            double angle = this.royalReprisalTelegraphTicks * 0.8D;
+            level.sendParticles(this.royalParticle(ParticleTypes.REVERSE_PORTAL),
+                    target.getX() + Math.cos(angle) * radius, target.getY() + 1.0D, target.getZ() + Math.sin(angle) * radius,
+                    12, 0.2D, 0.8D, 0.2D, 0.02D);
+            level.sendParticles(this.royalParticle(ParticleTypes.REVERSE_PORTAL),
+                    target.getX() - Math.cos(angle) * radius, target.getY() + 1.0D, target.getZ() - Math.sin(angle) * radius,
+                    12, 0.2D, 0.8D, 0.2D, 0.02D);
+            this.sendRoyalRelocationBurst(level);
+        }
+        if (--this.royalReprisalTelegraphTicks > 0) {
+            return;
+        }
+        if (!distantAttacker) {
+            return;
+        }
+        if (this.isFiringRoyalBeam() || !this.canRoyalReprisalTeleport(target)) {
+            this.royalTeleportCooldownTicks = Math.max(this.royalTeleportCooldownTicks, REPRISAL_RETRY_TICKS);
+            return;
+        }
+        if (this.tryRoyalRecoveryTeleport(target)) {
+            this.onRoyalReprisalTeleport();
+            this.royalTeleportCooldownTicks = REPRISAL_COOLDOWN_TICKS;
+        } else {
+            this.royalTeleportCooldownTicks = Math.max(this.royalTeleportCooldownTicks, REPRISAL_RETRY_TICKS);
+        }
+    }
 
     protected SoundEvent royalWingBuffetSound() {
         return this.royalBiteSound();
@@ -730,7 +869,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                 return;
             }
         }
-        if (this.shouldClearObstruction()
+        if (!this.isGlimmerEcho() && this.shouldClearObstruction()
                 && !this.level().isClientSide
                 && !this.isDeadOrDying()
                 && this.tickCount % (this.isFightingRoyalRival() ? RIVAL_OBSTRUCTION_CLEAR_INTERVAL_TICKS : OBSTRUCTION_CLEAR_INTERVAL_TICKS) == 0
@@ -761,7 +900,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         }
 
         this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
-        this.attackScheduler.tick();
+        if (!this.isDeadOrDying()) {
+            this.attackScheduler.tick();
+        }
         if (this.recoveryWindowTicks > 0) {
             this.recoveryWindowTicks--;
         }
@@ -791,6 +932,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             return;
         }
 
+        if (this.getTarget() != null && this.getTarget().level() != this.level()) {
+            this.setTarget(null);
+        }
         LivingEntity primaryTarget = this.getTarget();
         if (primaryTarget == null || !primaryTarget.isAlive() || !this.canAttack(primaryTarget)) {
             for (RoyalHead head : this.heads) {
@@ -806,6 +950,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
 
         this.tickCombatLocomotionMode(primaryTarget);
         this.tickRoyalStuckRecovery(primaryTarget);
+        this.tickRoyalDistantReprisal(primaryTarget);
         boolean movementBlocksAttacks = this.blocksRoyalAttacksForMovement();
         if (!movementBlocksAttacks) {
             boolean aeriallyStabilized = this.steerTowardTarget(primaryTarget);
@@ -846,6 +991,14 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                 activeHeadAttacks++;
             }
         }
+    }
+
+    @Override
+    public boolean isInWall() {
+        if (this.tickCount % OBSTRUCTION_CLEAR_INTERVAL_TICKS == 0) {
+            this.royalInWallCached = super.isInWall();
+        }
+        return this.royalInWallCached;
     }
 
     @Override
@@ -912,7 +1065,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         if (!allowScheduling || this.recoveryWindowTicks > 0) {
             return;
         }
-        for (RoyalHead head : this.heads) {
+        int firstHead = this.nextBeamHeadIndex;
+        for (int offset = 0; offset < this.heads.length; offset++) {
+            RoyalHead head = this.heads[(firstHead + offset) % this.heads.length];
             int index = head.slot().ordinal();
             if (activeBeams >= this.beamVolleyLimit) {
                 continue;
@@ -966,6 +1121,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             }
             head.setBeamActive(true);
             activeBeams++;
+            this.nextBeamHeadIndex = (index + 1) % this.heads.length;
         }
     }
 
@@ -1042,6 +1198,13 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         return false;
     }
 
+    protected void onRoyalKnockedBack(LivingEntity living) {
+    }
+
+    protected boolean ignoresRoyalAltitudeCeiling() {
+        return false;
+    }
+
     protected boolean isRoyalRecoveryActive() {
         return this.recoveryWindowTicks > 0;
     }
@@ -1079,8 +1242,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         LinkedHashSet<ServerPlayer> players = new LinkedHashSet<>(this.bossEvent.getPlayers());
         players.addAll(level.getPlayers(player -> player.isAlive()
                 && !player.isSpectator()
+                && !player.isCreative()
                 && player.distanceToSqr(this) <= range * range));
-        players.removeIf(player -> !player.isAlive() || player.isSpectator() || player.level() != level
+        players.removeIf(player -> !player.isAlive() || player.isSpectator() || player.isCreative() || player.level() != level
                 || player.distanceToSqr(this) > range * range);
         return List.copyOf(players);
     }
@@ -1097,6 +1261,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         double encounterRange = Math.max(32.0D, this.getAttributeValue(Attributes.FOLLOW_RANGE));
         List<ServerPlayer> players = level.getPlayers(player -> player.isAlive()
                 && !player.isSpectator()
+                && !player.isCreative()
                 && player.distanceToSqr(this) <= encounterRange * encounterRange);
         if (target instanceof ServerPlayer player && player.isAlive() && !players.contains(player)) {
             players.add(player);
@@ -1157,10 +1322,13 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             }
             return;
         }
-        List<Player> candidates = this.level().getEntitiesOfClass(
-                Player.class,
-                this.getBoundingBox().inflate(AntarchySettings.royalBossFollowRange()),
-                player -> player.isAlive() && this.canAttack(player));
+        AABB candidateArea = this.getBoundingBox().inflate(AntarchySettings.royalBossFollowRange());
+        List<Player> candidates = new java.util.ArrayList<>();
+        for (Player player : this.level().players()) {
+            if (candidateArea.intersects(player.getBoundingBox()) && player.isAlive() && this.canAttack(player)) {
+                candidates.add(player);
+            }
+        }
         if (candidates.isEmpty()) {
             for (RoyalHead head : this.heads) {
                 head.setTarget(fallback);
@@ -1168,7 +1336,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             return;
         }
 
-        Arrays.fill(this.assignedHeadCounts, 0);
+        int[] assignedHeadCounts = new int[candidates.size()];
         for (RoyalHead head : this.heads) {
             Vec3 anchor = this.headAnchor(head);
             int bestIndex = 0;
@@ -1176,13 +1344,13 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             double bestDistance = Double.MAX_VALUE;
             for (int i = 0; i < candidates.size(); i++) {
                 double distance = candidates.get(i).position().distanceToSqr(anchor);
-                if (this.assignedHeadCounts[i] < bestCount || (this.assignedHeadCounts[i] == bestCount && distance < bestDistance)) {
+                if (assignedHeadCounts[i] < bestCount || (assignedHeadCounts[i] == bestCount && distance < bestDistance)) {
                     bestIndex = i;
-                    bestCount = this.assignedHeadCounts[i];
+                    bestCount = assignedHeadCounts[i];
                     bestDistance = distance;
                 }
             }
-            this.assignedHeadCounts[bestIndex]++;
+            assignedHeadCounts[bestIndex]++;
             head.setTarget(candidates.get(bestIndex));
         }
     }
@@ -1306,7 +1474,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     private void onRoyalMovementObstructed(LivingEntity target) {
-        if (this.level() instanceof ServerLevel serverLevel) {
+        if (!this.isGlimmerEcho() && this.level() instanceof ServerLevel serverLevel) {
             this.clearRoyalPathTowardWanted(serverLevel);
         }
         if (this.royalStuckStrikes >= STUCK_TAKEOFF_STRIKES) {
@@ -1358,8 +1526,18 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         }
     }
 
+    protected final boolean royalBoxClear(AABB box) {
+        Level level = this.level();
+        if (!RoyalSectionScan.chunksPresent(level, box.inflate(1.0D))) {
+            return false;
+        }
+        return RoyalSectionScan.isAllAir(level, box)
+                ? RoyalSectionScan.noEntityOrBorderCollision(level, this, box)
+                : level.noCollision(this, box);
+    }
+
     private boolean tryRoyalRecoveryTeleport(LivingEntity target) {
-        if (!(this.level() instanceof ServerLevel level)) {
+        if (!(this.level() instanceof ServerLevel level) || !this.allowsRoyalTeleport()) {
             return false;
         }
         boolean inverted = GravityApi.isGravityInverted(this);
@@ -1368,12 +1546,15 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             double radius = 22.0D + this.random.nextDouble() * 14.0D;
             double x = target.getX() + Math.cos(angle) * radius;
             double z = target.getZ() + Math.sin(angle) * radius;
+            if (!this.isRoyalTeleportDestinationValid(x, z)) {
+                continue;
+            }
             double y = inverted
                     ? target.getY() + target.getBbHeight() - this.getBbHeight()
                     : this.groundYBelow(x, z, target.getY() + 1.0D)
                     + (this.isRoyalFlying() ? FLYING_PREFERRED_HOVER : 0.1D);
             AABB box = this.getBoundingBox().move(x - this.getX(), y - this.getY(), z - this.getZ());
-            if (!level.noCollision(this, box) || level.containsAnyLiquid(box)) {
+            if (!this.royalBoxClear(box) || level.containsAnyLiquid(box)) {
                 continue;
             }
             this.sendRoyalRelocationBurst(level);
@@ -1511,6 +1692,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             this.addGravityAwareImpulse(living, outward.scale(WING_BUFFET_PUSH).add(lift));
             living.hasImpulse = true;
             living.hurtMarked = true;
+            this.onRoyalKnockedBack(living);
         }
         for (int ring = 1; ring <= 3; ring++) {
             double ringRadius = this.getBbWidth() * 0.22D * ring;
@@ -1903,6 +2085,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         if (this.onGround()) {
             this.setDeltaMovement(this.getDeltaMovement().add(0.0D, 0.2D, 0.0D));
         }
+        if (this.ignoresRoyalAltitudeCeiling()) {
+            return;
+        }
         double groundY = this.groundYBelow(this.getX(), this.getZ());
         double ceiling = groundY + FLYING_MAX_HOVER_ABOVE_GROUND;
         LivingEntity target = this.getTarget();
@@ -2135,6 +2320,9 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     @Override
     public void die(DamageSource damageSource) {
         if (!this.level().isClientSide) {
+            for (RoyalAttackLane lane : RoyalAttackLane.values()) {
+                this.attackScheduler.cancel(lane);
+            }
             this.stopTriggeredAnim("wing_action", null);
             this.stopTriggeredAnim("head_left", null);
             this.stopTriggeredAnim("head_center", null);
@@ -2224,7 +2412,13 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
         }
         float cap = (float) AntarchySettings.royalBossMaxSingleHitDamage();
         float cappedAmount = amount <= cap ? amount : cap + (amount - cap) * (float) AntarchySettings.royalBossHitOverflowRate();
-        return super.hurt(source, cappedAmount);
+        boolean hurt = super.hurt(source, cappedAmount);
+        if (hurt && !this.level().isClientSide && source.getEntity() instanceof LivingEntity attacker && attacker != this) {
+            this.retaliationAttackerId = attacker.getUUID();
+            this.retaliationHitTime = this.level().getGameTime();
+            this.retaliationHitWasDistant = attacker.distanceToSqr(this) > REPRISAL_TRIGGER_DISTANCE * REPRISAL_TRIGGER_DISTANCE;
+        }
+        return hurt;
     }
 
     @Override

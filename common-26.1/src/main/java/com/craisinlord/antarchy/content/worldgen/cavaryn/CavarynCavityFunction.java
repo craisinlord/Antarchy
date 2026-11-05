@@ -7,7 +7,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import org.jetbrains.annotations.Nullable;
 
-public final class CavarynCavityFunction implements DensityFunction {
+public final class CavarynCavityFunction implements DensityFunction, CavarynColumn.Source {
     public static final MapCodec<CavarynCavityFunction> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
                     CavarynCavityGrid.Kind.CODEC.fieldOf("kind").forGetter(CavarynCavityFunction::kind),
@@ -18,9 +18,6 @@ public final class CavarynCavityFunction implements DensityFunction {
             ).apply(instance, CavarynCavityFunction::new)
     );
     public static final KeyDispatchDataCodec<CavarynCavityFunction> KEY_CODEC = KeyDispatchDataCodec.of(CODEC);
-
-    private static final double SCALE = 0.35;
-    private static final double FLOOR = -1.0 / SCALE - 1.0E-9;
 
     private final CavarynCavityGrid.Kind kind;
     private final DensityFunction humidity;
@@ -68,8 +65,17 @@ public final class CavarynCavityFunction implements DensityFunction {
         if (this.grid == null) {
             return 1.0;
         }
-        double distance = this.grid.signedDistance(context.blockX(), context.blockY(), context.blockZ(), FLOOR);
-        return Mth.clamp(distance * SCALE, -1.0, 1.0);
+        return CavarynColumn.density(this.grid.signedDistance(context.blockX(), context.blockY(), context.blockZ(), CavarynColumn.FLOOR));
+    }
+
+    @Override
+    public boolean bound() {
+        return this.grid != null;
+    }
+
+    @Override
+    public CavarynColumn newColumn() {
+        return this.grid == null ? null : this.grid.newColumn();
     }
 
     @Override
@@ -97,6 +103,9 @@ public final class CavarynCavityFunction implements DensityFunction {
                 SinglePointContext point = new SinglePointContext(Mth.floor(x), Mth.floor(y), Mth.floor(z));
                 double humidity = mappedHumidity.compute(point);
                 double weirdness = mappedWeirdness.compute(point);
+                if (CavarynBiomeTable.excludedByClimate(biome, humidity, weirdness)) {
+                    return false;
+                }
                 double depth = mappedDepth.compute(point);
                 return strict
                         ? CavarynBiomeTable.isOnly(biome, humidity, weirdness, depth)

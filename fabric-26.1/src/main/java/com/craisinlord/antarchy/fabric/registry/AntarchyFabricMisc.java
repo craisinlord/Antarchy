@@ -12,10 +12,6 @@ import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverSpan;
 import com.craisinlord.antarchy.content.worldgen.elythia.ElythiaRiverProject;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisUndersideMountainsFunction;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisTerrainFunction;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBiomeTable;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynBlockSet;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCavityGrid;
-import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWormBoreGrid;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCavityFunction;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynCavityUnionFunction;
 import com.craisinlord.antarchy.content.worldgen.cavaryn.CavarynWormBoreFunction;
@@ -106,10 +102,6 @@ import com.craisinlord.antarchy.content.worldgen.truffalo.TruffaloTreeFeature;
 import com.craisinlord.antarchy.content.worldgen.royal.RoyalTreeConfiguration;
 import com.craisinlord.antarchy.content.worldgen.royal.RoyalTreeFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBiomeSource;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisDuneConfiguration;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisDuneFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisFissureConfiguration;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisFissureFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisTransitionThroatFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBloodCrystalConfiguration;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBloodCrystalFeature;
@@ -121,7 +113,6 @@ import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisSpikeFeature;
 import com.craisinlord.antarchy.content.client.particle.InvertedGeyserBaseParticleOptions;
 import com.craisinlord.antarchy.content.client.particle.InvertedGeyserParticleOptions;
 
-import java.util.List;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.advancements.criterion.EntitySubPredicate;
@@ -142,13 +133,11 @@ import net.minecraft.world.entity.npc.villager.VillagerProfession;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.equipment.EquipmentAsset;
 import net.minecraft.world.item.equipment.EquipmentAssets;
-import net.minecraft.world.item.Item;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.equipment.ArmorMaterial;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -433,6 +422,10 @@ public final class AntarchyFabricMisc {
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> UNDERVAULT_CONNECTION = PARTICLE_TYPES.register("undervault_connection",
             () -> simpleParticleType());
 
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> TEMPORAL_GLINT_SLOW = PARTICLE_TYPES.register("temporal_glint_slow",
+            () -> simpleParticleType());
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> TEMPORAL_GLINT_FAST = PARTICLE_TYPES.register("temporal_glint_fast",
+            () -> simpleParticleType());
     public static final DeferredHolder<ParticleType<?>, ParticleType<InvertedGeyserBaseParticleOptions>> INVERTED_GEYSER_BASE = PARTICLE_TYPES.register("inverted_geyser_base",
             () -> particleType(InvertedGeyserBaseParticleOptions::codec, InvertedGeyserBaseParticleOptions::streamCodec));
 
@@ -742,9 +735,6 @@ public final class AntarchyFabricMisc {
     public static final DeferredHolder<Feature<?>, PeachForestPondFeature> PEACH_FOREST_POND = FEATURES.register("peach_forest_pond",
             () -> new PeachForestPondFeature(PeachForestPondConfiguration.CODEC));
 
-    public static final DeferredHolder<Feature<?>, ThoraxisFissureFeature> THORAXIS_FISSURE = FEATURES.register("thoraxis_fissure",
-            () -> new ThoraxisFissureFeature(ThoraxisFissureConfiguration.CODEC));
-
     public static final DeferredHolder<Feature<?>, ThoraxisTransitionThroatFeature> THORAXIS_TRANSITION_THROAT = FEATURES.register("thoraxis_transition_throat",
             ThoraxisTransitionThroatFeature::new);
     public static final DeferredHolder<Feature<?>, QueenHavocTrailFeature> QUEEN_HAVOC_TRAIL = FEATURES.register("queen_havoc_trail",
@@ -823,9 +813,6 @@ public final class AntarchyFabricMisc {
     public static final DeferredHolder<Feature<?>, LucidAntiwaterPoolFeature> LUCID_ANTIWATER_POOL = FEATURES.register("lucid_antiwater_pool",
             () -> new LucidAntiwaterPoolFeature(ThoraxisAntiwaterPoolConfiguration.CODEC));
 
-    public static final DeferredHolder<Feature<?>, ThoraxisDuneFeature> THORAXIS_DUNE = FEATURES.register("thoraxis_dune",
-            () -> new ThoraxisDuneFeature(ThoraxisDuneConfiguration.CODEC));
-
     public static final DeferredHolder<Feature<?>, DimensionalTearFeature> DIMENSIONAL_TEAR = FEATURES.register("dimensional_tear",
             () -> new DimensionalTearFeature(NoneFeatureConfiguration.CODEC));
 
@@ -861,10 +848,6 @@ public final class AntarchyFabricMisc {
 
     public static Holder<Attribute> attributeHolder(DeferredHolder<Attribute, ? extends Attribute> attribute) {
         return BuiltInRegistries.ATTRIBUTE.wrapAsHolder(attribute.get());
-    }
-
-    private static TagKey<Item> repairTag(String path) {
-        return TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(Antarchy.MODID, path));
     }
 
     private static ResourceKey<EquipmentAsset> equipmentAsset(String path) {
@@ -971,23 +954,6 @@ public final class AntarchyFabricMisc {
                 return streamCodecFactory.apply(this);
             }
         };
-    }
-
-    public static void register() {
-        POI_TYPES.register();
-        VILLAGER_PROFESSIONS.register();
-        FLUIDS.register();
-        ATTRIBUTES.register();
-        PARTICLE_TYPES.register();
-        FEATURES.register();
-        BIOME_SOURCES.register();
-        DENSITY_FUNCTION_TYPES.register();
-        ENTITY_SUB_PREDICATES.register();
-        MOB_EFFECTS.register();
-        POTIONS.register();
-        MENUS.register();
-        DATA_COMPONENT_TYPES.register();
-        RECIPE_SERIALIZERS.register();
     }
 
 

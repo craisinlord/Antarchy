@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.fabric;
 
+import com.craisinlord.antarchy.fabric.registry.AntarchyFabricRegistries;
 import com.craisinlord.anthology.effect.AnthologyEffects;
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.compat.infinity.InfinityCompat;
@@ -37,11 +38,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricBlocks;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricItems;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntities;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricCreativeModeTabs;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricSounds;
 import com.craisinlord.antarchy.fabric.registry.AntarchyFabricMisc;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricEntityAttributes;
-import com.craisinlord.antarchy.fabric.registry.AntarchyFabricSpawnPlacements;
 
 public final class AntarchyFabricContent {
 
@@ -78,7 +76,17 @@ public final class AntarchyFabricContent {
 
     public static void register() {
         com.craisinlord.antarchy.content.entity.UpwardFallingBlockEntity.TYPE = AntarchyFabricEntities.UPWARD_FALLING_BLOCK;
+        registerBrewingRecipes();
+        AntarchyFabricRegistries.registerAll();
+        bindCommonContent();
+        bindNetworkSinks();
+        registerEventsAndCompat();
+    }
+
+    private static void registerBrewingRecipes() {
         FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
+            builder.registerPotionRecipe(Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.FADED_MEMORY.get()), potionHolder(AntarchyFabricMisc.REMEMBRANCE_POTION));
+            builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.REMEMBRANCE_POTION), Ingredient.of(Items.REDSTONE), potionHolder(AntarchyFabricMisc.LONG_REMEMBRANCE));
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.LUCID_EYE.get()), potionHolder(AntarchyFabricMisc.INVERSION));
             builder.registerPotionRecipe(potionHolder(AntarchyFabricMisc.INVERSION), Ingredient.of(Items.REDSTONE), potionHolder(AntarchyFabricMisc.LONG_INVERSION));
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.STINK_BUG_ITEM.get()), potionHolder(AntarchyFabricMisc.STINKY_POTION));
@@ -103,29 +111,9 @@ public final class AntarchyFabricContent {
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.SPRINGBUG_LEG.get()), Potions.LEAPING);
             builder.registerPotionRecipe(net.minecraft.world.item.alchemy.Potions.AWKWARD, Ingredient.of(AntarchyFabricItems.CORNEA_EAR.get()), net.minecraft.world.item.alchemy.Potions.NIGHT_VISION);
         });
+    }
 
-        AntarchyFabricSounds.SOUND_EVENTS.register();
-        AntarchyFabricMisc.ARMOR_MATERIALS.register();
-        AntarchyFabricMisc.FLUIDS.register();
-        AntarchyFabricBlocks.BLOCKS.register();
-        AntarchyFabricBlocks.registerStripping();
-        AntarchyFabricEntities.ENTITY_TYPES.register();
-        AntarchyFabricMisc.ATTRIBUTES.register();
-        AntarchyFabricEntityAttributes.register();
-        AntarchyFabricSpawnPlacements.register();
-        AntarchyFabricBlocks.BLOCK_ENTITY_TYPES.register();
-        AntarchyFabricMisc.PARTICLE_TYPES.register();
-        AntarchyFabricMisc.FEATURES.register();
-        AntarchyFabricMisc.BIOME_SOURCES.register();
-        AntarchyFabricMisc.DENSITY_FUNCTION_TYPES.register();
-        AntarchyFabricMisc.ENTITY_SUB_PREDICATES.register();
-        AntarchyFabricMisc.MOB_EFFECTS.register();
-        AntarchyFabricMisc.POTIONS.register();
-        AntarchyFabricItems.ITEMS.register();
-        AntarchyFabricMisc.MENUS.register();
-        AntarchyFabricMisc.DATA_COMPONENT_TYPES.register();
-        AntarchyFabricMisc.RECIPE_SERIALIZERS.register();
-        AntarchyFabricCreativeModeTabs.CREATIVE_MODE_TABS.register();
+    private static void bindCommonContent() {
         DispenserBlock.registerBehavior(AntarchyFabricItems.VORTEX_CHARGE.get(), new com.craisinlord.antarchy.content.dispenser.VortexChargeDispenseBehavior());
         DispenserBlock.registerBehavior(AntarchyFabricItems.EYE_OF_THE_STORM.get(), new com.craisinlord.antarchy.content.dispenser.EyeOfTheStormDispenseBehavior());
 
@@ -382,6 +370,8 @@ public final class AntarchyFabricContent {
         AntarchyObjects.setRoyalEggBlockEntity(() -> AntarchyFabricBlocks.ROYAL_EGG_BLOCK_ENTITY.get());
         AntarchyObjects.setVortexLens(() -> AntarchyFabricBlocks.VORTEX_LENS.get());
         AntarchyObjects.setVortexLensBlockEntity(() -> AntarchyFabricBlocks.VORTEX_LENS_BLOCK_ENTITY.get());
+        AntarchyObjects.setRemembranceTorch(() -> AntarchyFabricBlocks.REMEMBRANCE_TORCH.get());
+        AntarchyObjects.setRemembranceTorchBlockEntity(() -> AntarchyFabricBlocks.REMEMBRANCE_TORCH_BLOCK_ENTITY.get());
         AntarchyObjects.setDimensionalTearMarker(() -> AntarchyFabricBlocks.DIMENSIONAL_TEAR_MARKER.get());
         AntarchyObjects.setDimensionalTearMarkerBlockEntity(() -> AntarchyFabricBlocks.DIMENSIONAL_TEAR_MARKER_BLOCK_ENTITY.get());
         AntarchyObjects.setKrakensGraspTrident(AntarchyFabricEntities.KRAKENS_GRASP_TRIDENT);
@@ -553,6 +543,9 @@ public final class AntarchyFabricContent {
         VortexChargeProjectileEntity.projectileTypeSupplier = () -> AntarchyFabricEntities.VORTEX_CHARGE_PROJECTILE.get();
         VortexChargeProjectileEntity.windVortexTypeSupplier = () -> AntarchyFabricEntities.WIND_VORTEX.get();
 
+    }
+
+    private static void bindNetworkSinks() {
         ScorpionWhipTetherSync.setSink(AntarchyFabricNetworking::syncScorpionWhipTether);
         WormHookTetherSync.setSink(AntarchyFabricNetworking::syncWormHookTether);
         HerculesBeetleImpactShakeSync.setSink((player, ticks) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, new com.craisinlord.antarchy.content.network.HerculesBeetleImpactShakePayload(ticks)));
@@ -566,8 +559,9 @@ public final class AntarchyFabricContent {
         TigerEyeCamouflageSync.setSendToPlayer((player, payload) -> net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(player, payload));
         TigerEyeCamouflageSync.setSyncSelfAndTracking(AntarchyFabricNetworking::syncTigerEyeCamouflage);
         BloodCrystalKatanaItem.setTrailCallback(AntarchyFabricNetworking::syncKatanaTrail);
-        AntarchyFabricMisc.POI_TYPES.register();
-        AntarchyFabricMisc.VILLAGER_PROFESSIONS.register();
+    }
+
+    private static void registerEventsAndCompat() {
         AntarchyFabricEvents.register();
 
         if (isSupportedInfinityLoaded()) {

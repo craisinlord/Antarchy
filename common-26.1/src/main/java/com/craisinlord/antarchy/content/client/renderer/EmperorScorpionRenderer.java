@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.EmperorScorpionModel;
 import com.craisinlord.antarchy.content.entity.EmperorScorpionEntity;
+import com.craisinlord.antarchy.content.client.renderer.GlimmerEchoRendering;
 import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.renderer.GeoEntityRenderer;
 import com.geckolib.renderer.base.GeoRenderState;
@@ -40,7 +41,15 @@ public class EmperorScorpionRenderer extends GeoEntityRenderer<EmperorScorpionEn
 
     @Override
     public RenderType getRenderType(LivingEntityRenderState renderState, Identifier texture) {
+        if (renderState.getOrDefaultGeckolibData(EmperorScorpionModel.GLIMMER_ECHO, false)) {
+            return RenderTypes.entityTranslucent(texture);
+        }
         return RenderTypes.entityCutout(texture);
+    }
+
+    @Override
+    public int getRenderColor(EmperorScorpionEntity animatable, Void relatedObject, float partialTick) {
+        return GlimmerEchoRendering.renderColor(animatable.isGlimmerEcho(), super.getRenderColor(animatable, relatedObject, partialTick));
     }
 
     @Override
@@ -70,7 +79,10 @@ public class EmperorScorpionRenderer extends GeoEntityRenderer<EmperorScorpionEn
                 return;
             }
 
-            submitModelCopy(renderPassInfo, renderTasks, RenderTypes.eyes(EmperorScorpionModel.EMISSIVE_TEXTURE),
+            Identifier emissiveTexture = renderPassInfo.getOrDefaultGeckolibData(EmperorScorpionModel.GLIMMER_ECHO, false)
+                    ? EmperorScorpionModel.GLIMMER_EMISSIVE_TEXTURE
+                    : EmperorScorpionModel.EMISSIVE_TEXTURE;
+            submitModelCopy(renderPassInfo, renderTasks, RenderTypes.eyes(emissiveTexture),
                     0xF000F0, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
         }
     }
@@ -130,8 +142,14 @@ public class EmperorScorpionRenderer extends GeoEntityRenderer<EmperorScorpionEn
                 return;
             }
 
+            boolean glimmerEcho = renderPassInfo.getOrDefaultGeckolibData(EmperorScorpionModel.GLIMMER_ECHO, false);
+            if (glimmerEcho) {
+                alpha *= GlimmerEchoRendering.ALPHA;
+            }
+
             int color = ((Math.max(0, Math.min(255, Math.round(alpha * 255.0F))) & 0xFF) << 24) | 0x00FFFFFF;
-            submitModelCopy(renderPassInfo, renderTasks, RenderTypes.entityTranslucent(EmperorScorpionModel.HARDEN_TEXTURE),
+            Identifier hardenTexture = glimmerEcho ? EmperorScorpionModel.GLIMMER_HARDEN_TEXTURE : EmperorScorpionModel.HARDEN_TEXTURE;
+            submitModelCopy(renderPassInfo, renderTasks, RenderTypes.entityTranslucent(hardenTexture),
                     renderPassInfo.packedLight(), renderPassInfo.packedOverlay(), color);
         }
     }

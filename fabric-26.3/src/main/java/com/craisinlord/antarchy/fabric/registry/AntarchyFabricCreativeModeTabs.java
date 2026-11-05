@@ -31,8 +31,7 @@ public final class AntarchyFabricCreativeModeTabs {
         });
     }
 
-    public static void register() {
-        CREATIVE_MODE_TABS.register();
+    public static void registerRedstoneTabEntries() {
         CreativeModeTabEvents.modifyOutputEvent(net.minecraft.world.item.CreativeModeTabs.REDSTONE_BLOCKS).register(entries -> {
             entries.accept(AntarchyFabricItems.BLUESTONE_DUST.get());
             entries.accept(AntarchyFabricItems.BLUESTONE_BLOCK_ITEM.get());

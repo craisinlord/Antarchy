@@ -62,10 +62,33 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity, Living
         super(context, new RoyalBossModel());
         this.shadowRadius = 8.0F * RoyalBossEntity.MODEL_RENDER_SCALE;
         this.withRenderLayer(new RoyalAfterimageLayer(this));
+        this.withRenderLayer(new RoyalGlimmerEmissiveLayer(this));
         this.withRenderLayer(new TemporalContractionGeoLayer<>(this));
     }
 
     private record AfterimageData(boolean active, Vec3 movement, boolean queen) {
+    }
+
+    private static final class RoyalGlimmerEmissiveLayer extends GeoRenderLayer<RoyalBossEntity, Void, LivingEntityRenderState> {
+        private RoyalGlimmerEmissiveLayer(GeoRenderer<RoyalBossEntity, Void, LivingEntityRenderState> renderer) {
+            super(renderer);
+        }
+
+        @Override
+        public void submitRenderTask(RenderPassInfo<LivingEntityRenderState> renderPassInfo, SubmitNodeCollector renderTasks) {
+            if (!renderPassInfo.willRender() || !renderPassInfo.getOrDefaultGeckolibData(RoyalBossModel.GLIMMER_ECHO, false)) {
+                return;
+            }
+            String name = renderPassInfo.getGeckolibData(RoyalBossModel.GEO_NAME);
+            PoseStack poseStack = renderPassInfo.poseStack();
+            renderTasks.order(1).submitCustomGeometry(poseStack, RenderTypes.eyes(GlimmerEchoRendering.emissiveTexture(name)), (pose, buffer) -> {
+                poseStack.pushPose();
+                poseStack.last().set(pose);
+                renderPassInfo.renderPosed(() -> renderPassInfo.model().render(renderPassInfo, buffer, 0xF000F0,
+                        OverlayTexture.NO_OVERLAY, GlimmerEchoRendering.emissiveColor()));
+                poseStack.popPose();
+            });
+        }
     }
 
     private static final class RoyalAfterimageLayer extends GeoRenderLayer<RoyalBossEntity, Void, LivingEntityRenderState> {
@@ -118,17 +141,19 @@ public class RoyalBossRenderer extends GeoEntityRenderer<RoyalBossEntity, Living
 
     @Override
     public RenderType getRenderType(LivingEntityRenderState renderState, Identifier texture) {
-        return RenderTypes.entityCutout(texture);
+        return renderState.getOrDefaultGeckolibData(RoyalBossModel.GLIMMER_ECHO, false)
+                ? RenderTypes.entityTranslucent(texture) : RenderTypes.entityCutout(texture);
     }
 
     @Override
     public int getRenderColor(RoyalBossEntity animatable, Void relatedObject, float partialTick) {
-        if (!animatable.isRoyalAccelerated()) {
-            return ARGB.color(255, 255, 255, 255);
+        int normal = ARGB.color(255, 255, 255, 255);
+        if (animatable.isRoyalAccelerated()) {
+            float pulse = 0.5F + 0.5F * (float) Math.sin((animatable.tickCount + partialTick) * 0.4F);
+            int green = 60 + Math.round(60.0F * pulse);
+            normal = ARGB.color(255, 255, green, green);
         }
-        float pulse = 0.5F + 0.5F * (float) Math.sin((animatable.tickCount + partialTick) * 0.4F);
-        int green = 60 + Math.round(60.0F * pulse);
-        return ARGB.color(255, 255, green, green);
+        return GlimmerEchoRendering.renderColor(animatable.isGlimmerEcho(), normal);
     }
 
     @Override

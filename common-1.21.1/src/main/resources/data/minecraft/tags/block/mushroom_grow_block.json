@@ -1,6 +1,7 @@
 {
   "values": [
     "minecraft:mycelium",
-    "antarchy:amber_moss_block"
+    "antarchy:amber_moss_block",
+    "antarchy:primordial_moss_block"
   ]
 }

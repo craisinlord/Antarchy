@@ -6,6 +6,7 @@ import com.craisinlord.antarchy.compat.infinity.InfinityWarpResult;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.portal.RainbowPortalIgniter;
+import com.craisinlord.antarchy.content.transit.AntTransit;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -59,6 +60,10 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
         }
 
         if (INFINITY_NAMESPACE.equals(player.level().dimension().identifier().getNamespace())) {
+            ServerLevel returnLevel = AntTeleportHelper.resolveReturnDestinationLevel(player);
+            if (AntTransit.isActive(player) || AntTransit.start(player, returnLevel, AntTransit.Kind.PRISM)) {
+                return InteractionResult.CONSUME;
+            }
             return AntTeleportHelper.teleportPlayerToReturnDestination(player);
         }
 
@@ -67,6 +72,13 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
             return AntTeleportHelper.teleportPlayerToDimension(player, AntarchySettings.rainbowAntNonInfinityFallbackDimension());
         }
 
+        if (AntTransit.isActive(player)) {
+            return InteractionResult.CONSUME;
+        }
+        if (AntTransit.startWarp(player, () -> InfinityCompat.get().requestWarp(player, dimensionId) != InfinityWarpResult.REJECTED,
+                "message.antarchy.rainbow_ant_failed_dimension_create")) {
+            return InteractionResult.CONSUME;
+        }
         InfinityWarpResult result = InfinityCompat.get().requestWarp(player, dimensionId);
         if (result == InfinityWarpResult.REJECTED) {
             player.sendOverlayMessage(Component.translatable("message.antarchy.rainbow_ant_failed_dimension_create"));
@@ -121,6 +133,9 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
 
         if (this.isInInfinityDimension(serverPlayer.level())) {
             ServerLevel returnLevel = this.resolveReturnDestinationLevel(serverPlayer);
+            if (AntTransit.isActive(serverPlayer) || AntTransit.start(serverPlayer, returnLevel, AntTransit.Kind.PRISM)) {
+                return InteractionResult.CONSUME;
+            }
             AntTeleportHelper.prepareArrival(serverPlayer, returnLevel, returnPos -> {
                 if (returnPos == null) {
                     serverPlayer.sendOverlayMessage(Component.translatable("message.antarchy.teleport_arrival_failed"));
@@ -171,6 +186,12 @@ public class RainbowAntEntity extends BaseAntEntity implements GeoEntity {
             return InteractionResult.CONSUME;
         }
 
+        if (AntTransit.isActive(serverPlayer)) {
+            return InteractionResult.CONSUME;
+        }
+        if (AntTransit.startWarp(serverPlayer, () -> this.teleportToInfinity(serverPlayer, dimensionId), null)) {
+            return InteractionResult.CONSUME;
+        }
         if (!this.teleportToInfinity(serverPlayer, dimensionId)) {
             return InteractionResult.CONSUME;
         }

@@ -29,17 +29,28 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.lang.ref.WeakReference;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration> {
     private static final Map<ServerLevel, Set<Long>> CLAIMED_TREE_KINGS = new WeakHashMap<>();
     private static final ConcurrentLinkedQueue<PendingKingSpawn> PENDING_KING_SPAWNS = new ConcurrentLinkedQueue<>();
+    private static final int SPAWN_RETRY_TICKS = 100;
+    private static final int SPAWN_ANGLES = 16;
+    private static final double[] SPAWN_RADII = {96.0D, 80.0D, 64.0D};
+    private static final double[] SPAWN_HEIGHT_OFFSETS = {0.0D, 18.0D, -12.0D, 32.0D};
     private static final int TREE_MIN_X = -191;
     private static final int TREE_MAX_X = 192;
     private static final int TREE_MIN_Z = -227;
     private static final int TREE_MAX_Z = 227;
     private static final int TREE_BOTTOM_Y = -22;
     private static final int TREE_TOP_Y = 335;
+
+    public static int treeBaseY(ServerLevel level, int centerX, int centerZ) {
+        int surfaceY = level.getChunkSource().getGenerator().getBaseHeight(centerX, centerZ,
+                Heightmap.Types.WORLD_SURFACE_WG, level, level.getChunkSource().randomState());
+        return Math.clamp(surfaceY, level.getMinY() - TREE_BOTTOM_Y, level.getMaxY() - 1 - TREE_TOP_Y);
+    }
 
     public KingsTreeGridFeature(Codec<NoneFeatureConfiguration> codec) {
         super(codec);
@@ -99,7 +110,8 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
 
         for (int tileX = minTileX; tileX <= maxTileX; tileX++) {
             for (int tileZ = minTileZ; tileZ <= maxTileZ; tileZ++) {
-                Optional<StructureTemplate> template = templates.get(tileLocation(tileX, tileZ));
+                var location = tileLocation(tileX, tileZ);
+                Optional<StructureTemplate> template = templates.get(location);
                 if (template.isEmpty()) {
                     continue;
                 }
@@ -107,6 +119,7 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
                 boolean tilePlaced = template.get().placeInWorld(level, tileOrigin, tileOrigin, settings, random, 2);
                 placed |= tilePlaced;
                 centralTilePlaced |= tileX == 0 && tileZ == 0 && tilePlaced;
+                templates.remove(location);
             }
         }
         if (centralTilePlaced) {
@@ -116,33 +129,73 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
     }
 
     private static void queueTreeKing(ServerLevel serverLevel, int centerX, int centerZ, int baseY) {
-        long treeKey = ((long) centerX << 32) ^ (centerZ & 0xffffffffL);
+        long treeKey = KingsTreeSavedData.treeKey(centerX, centerZ);
         synchronized (CLAIMED_TREE_KINGS) {
             if (!CLAIMED_TREE_KINGS.computeIfAbsent(serverLevel, ignored -> new java.util.HashSet<>()).add(treeKey)) {
                 return;
             }
         }
-        PENDING_KING_SPAWNS.add(new PendingKingSpawn(serverLevel, centerX, centerZ, baseY));
+        PENDING_KING_SPAWNS.add(new PendingKingSpawn(new WeakReference<>(serverLevel), centerX, centerZ, baseY, 0L));
+    }
+
+    private static void restoreSavedTrees(ServerLevel level, KingsTreeSavedData saved) {
+        if (!saved.markRestored()) {
+            return;
+        }
+        synchronized (CLAIMED_TREE_KINGS) {
+            Set<Long> claimed = CLAIMED_TREE_KINGS.computeIfAbsent(level, ignored -> new java.util.HashSet<>());
+            for (long treeKey : saved.pendingTrees()) {
+                if (claimed.add(treeKey)) {
+                    PENDING_KING_SPAWNS.add(new PendingKingSpawn(new WeakReference<>(level),
+                            KingsTreeSavedData.centerX(treeKey), KingsTreeSavedData.centerZ(treeKey),
+                            saved.treeBaseHeights().get(treeKey), 0L));
+                }
+            }
+            claimed.addAll(saved.treeBaseHeights().keySet());
+        }
     }
 
     public static void tickPendingSpawns(ServerLevel level) {
+        KingsTreeSavedData saved = KingsTreeSavedData.get(level);
+        restoreSavedTrees(level, saved);
         int pendingCount = PENDING_KING_SPAWNS.size();
         for (int index = 0; index < pendingCount; index++) {
             PendingKingSpawn pending = PENDING_KING_SPAWNS.poll();
             if (pending == null) {
                 return;
             }
-            if (pending.level() != level || !spawnTreeKing(pending)) {
+            ServerLevel pendingLevel = pending.level().get();
+            if (pendingLevel == null) {
+                continue;
+            }
+            if (pendingLevel != level) {
                 PENDING_KING_SPAWNS.add(pending);
+                continue;
+            }
+            long treeKey = KingsTreeSavedData.treeKey(pending.centerX(), pending.centerZ());
+            if (!saved.claim(treeKey, pending.baseY())) {
+                continue;
+            }
+            if (level.getGameTime() < pending.nextAttemptTick()) {
+                PENDING_KING_SPAWNS.add(pending);
+            } else if (spawnTreeKing(level, pending)) {
+                saved.complete(treeKey);
+            } else {
+                PENDING_KING_SPAWNS.add(pending.retryAt(level.getGameTime() + SPAWN_RETRY_TICKS));
             }
         }
     }
 
-    private static boolean spawnTreeKing(PendingKingSpawn pending) {
-        ServerLevel serverLevel = pending.level();
+    private static boolean spawnTreeKing(ServerLevel serverLevel, PendingKingSpawn pending) {
         int centerX = pending.centerX();
         int centerZ = pending.centerZ();
         int baseY = pending.baseY();
+        double minimumY = baseY + 24.0D;
+        double maximumY = baseY + 304.0D;
+        double spawnY = minimumY + (maximumY - minimumY) * 0.65D;
+        if (!hasLoadedSpawnCandidate(serverLevel, centerX, centerZ, spawnY)) {
+            return false;
+        }
         Vec3 treeCenter = new Vec3(centerX + 0.5D, 0.0D, centerZ + 0.5D);
         AABB searchBox = new AABB(
                 centerX - 512.0D, serverLevel.getMinY(), centerZ - 512.0D,
@@ -159,9 +212,6 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
         if (king == null) {
             return true;
         }
-        double minimumY = baseY + 24.0D;
-        double maximumY = baseY + 304.0D;
-        double spawnY = minimumY + (maximumY - minimumY) * 0.65D;
         Vec3 spawn = findSafeKingSpawn(serverLevel, king, centerX, centerZ, spawnY);
         if (spawn == null) {
             return false;
@@ -178,14 +228,12 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
 
     private static Vec3 findSafeKingSpawn(ServerLevel level, KingEntity king,
                                           int centerX, int centerZ, double spawnY) {
-        double[] radii = {96.0D, 80.0D, 64.0D};
-        double[] heightOffsets = {0.0D, 18.0D, -12.0D, 32.0D};
-        for (double radius : radii) {
-            for (int angleIndex = 0; angleIndex < 16; angleIndex++) {
-                double angle = angleIndex * Math.PI * 2.0D / 16.0D;
+        for (double radius : SPAWN_RADII) {
+            for (int angleIndex = 0; angleIndex < SPAWN_ANGLES; angleIndex++) {
+                double angle = angleIndex * Math.PI * 2.0D / SPAWN_ANGLES;
                 double x = centerX + 0.5D + Math.cos(angle) * radius;
                 double z = centerZ + 0.5D + Math.sin(angle) * radius;
-                for (double heightOffset : heightOffsets) {
+                for (double heightOffset : SPAWN_HEIGHT_OFFSETS) {
                     Vec3 candidate = new Vec3(x, spawnY + heightOffset, z);
                     BlockPos blockPos = BlockPos.containing(candidate);
                     if (!areCollisionChunksLoaded(level, blockPos.offset(-8, -8, -8), blockPos.offset(8, 16, 8))) {
@@ -201,6 +249,21 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
         return null;
     }
 
+    private static boolean hasLoadedSpawnCandidate(ServerLevel level, int centerX, int centerZ, double spawnY) {
+        for (double radius : SPAWN_RADII) {
+            for (int angleIndex = 0; angleIndex < SPAWN_ANGLES; angleIndex++) {
+                double angle = angleIndex * Math.PI * 2.0D / SPAWN_ANGLES;
+                double x = centerX + 0.5D + Math.cos(angle) * radius;
+                double z = centerZ + 0.5D + Math.sin(angle) * radius;
+                BlockPos blockPos = BlockPos.containing(x, spawnY, z);
+                if (areCollisionChunksLoaded(level, blockPos.offset(-8, -8, -8), blockPos.offset(8, 16, 8))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private static boolean areCollisionChunksLoaded(ServerLevel level, BlockPos min, BlockPos max) {
         var chunkSource = level.getChunkSource();
         for (int chunkX = min.getX() >> 4; chunkX <= max.getX() >> 4; chunkX++) {
@@ -213,7 +276,10 @@ public final class KingsTreeGridFeature extends Feature<NoneFeatureConfiguration
         return true;
     }
 
-    private record PendingKingSpawn(ServerLevel level, int centerX, int centerZ, int baseY) {
+    private record PendingKingSpawn(WeakReference<ServerLevel> level, int centerX, int centerZ, int baseY, long nextAttemptTick) {
+        private PendingKingSpawn retryAt(long tick) {
+            return new PendingKingSpawn(this.level, this.centerX, this.centerZ, this.baseY, tick);
+        }
     }
 
     private static Identifier tileLocation(int tileX, int tileZ) {

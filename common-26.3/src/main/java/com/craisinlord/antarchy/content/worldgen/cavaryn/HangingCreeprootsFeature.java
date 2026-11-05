@@ -56,13 +56,11 @@ public record HangingCreeprootsFeature() implements Feature {
                 if (!level.getBlockState(mutable).canBeReplaced()) {
                     continue;
                 }
-                if (AntarchyFluidChecks.hasBileNearby(level, mutable, 1)) {
-                    continue;
-                }
 
                 BlockPos abovePos = mutable.above();
                 BlockState aboveState = level.getBlockState(abovePos);
-                if (aboveState.isFaceSturdy(level, abovePos, net.minecraft.core.Direction.DOWN)) {
+                if (aboveState.isFaceSturdy(level, abovePos, net.minecraft.core.Direction.DOWN)
+                        && !AntarchyFluidChecks.hasBileNearby(level, mutable, 1)) {
                     return mutable.immutable();
                 }
             }

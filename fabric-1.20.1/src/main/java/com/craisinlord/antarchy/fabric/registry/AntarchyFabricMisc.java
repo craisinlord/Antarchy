@@ -79,10 +79,6 @@ import com.craisinlord.antarchy.content.worldgen.truffalo.TruffaloTreeFeature;
 import com.craisinlord.antarchy.content.worldgen.royal.RoyalTreeConfiguration;
 import com.craisinlord.antarchy.content.worldgen.royal.RoyalTreeFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBiomeSource;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisDuneConfiguration;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisDuneFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisFissureConfiguration;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisFissureFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisTransitionThroatFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBloodCrystalConfiguration;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBloodCrystalFeature;
@@ -768,9 +764,6 @@ public final class AntarchyFabricMisc {
             () -> new PeachForestPondFeature(PeachForestPondConfiguration.CODEC));
 
 
-    public static final DeferredHolder<Feature<?>, ThoraxisFissureFeature> THORAXIS_FISSURE = FEATURES.register("thoraxis_fissure",
-            () -> new ThoraxisFissureFeature(ThoraxisFissureConfiguration.CODEC));
-
     public static final DeferredHolder<Feature<?>, ThoraxisTransitionThroatFeature> THORAXIS_TRANSITION_THROAT = FEATURES.register("thoraxis_transition_throat",
             ThoraxisTransitionThroatFeature::new);
     public static final DeferredHolder<Feature<?>, QueenHavocTrailFeature> QUEEN_HAVOC_TRAIL = FEATURES.register("queen_havoc_trail",
@@ -868,9 +861,6 @@ public final class AntarchyFabricMisc {
     public static final DeferredHolder<Feature<?>, LucidAntiwaterPoolFeature> LUCID_ANTIWATER_POOL = FEATURES.register("lucid_antiwater_pool",
             () -> new LucidAntiwaterPoolFeature(ThoraxisAntiwaterPoolConfiguration.CODEC));
 
-
-    public static final DeferredHolder<Feature<?>, ThoraxisDuneFeature> THORAXIS_DUNE = FEATURES.register("thoraxis_dune",
-            () -> new ThoraxisDuneFeature(ThoraxisDuneConfiguration.CODEC));
 
     public static final DeferredHolder<Feature<?>, DimensionalTearFeature> DIMENSIONAL_TEAR = FEATURES.register("dimensional_tear",
             () -> new DimensionalTearFeature(NoneFeatureConfiguration.CODEC));

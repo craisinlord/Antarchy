@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "antarchy:faded_memory",
+    "minecraft:deepslate",
+    "antarchy:hercules_horn"
+  ],
+  "result": {
+    "id": "antarchy:hercules_beetle_glimmer_sigil",
+    "count": 1
+  }
+}

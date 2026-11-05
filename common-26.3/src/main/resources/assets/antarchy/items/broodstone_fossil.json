@@ -1,0 +1,10 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "antarchy:item/broodstone_fossil",
+    "tints": [
+      {"type": "antarchy:fossil", "layer": 0},
+      {"type": "antarchy:fossil", "layer": 1}
+    ]
+  }
+}

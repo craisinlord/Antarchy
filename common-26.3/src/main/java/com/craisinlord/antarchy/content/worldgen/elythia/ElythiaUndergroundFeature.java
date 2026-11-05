@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
 public class ElythiaUndergroundFeature implements Feature {
+    private static final int CAVITY_ATTEMPTS = 6;
     public static final MapCodec<ElythiaUndergroundFeature> CODEC = MapCodec.unit(ElythiaUndergroundFeature::new);
 
     @Override
@@ -39,12 +40,15 @@ public class ElythiaUndergroundFeature implements Feature {
     }
 
     private BlockPos findCavity(WorldGenLevel level, BlockPos origin, RandomSource random) {
-        for (int attempt = 0; attempt < 20; attempt++) {
-            BlockPos candidate = origin.offset(random.nextInt(17) - 8, random.nextInt(25) - 12, random.nextInt(17) - 8);
+        BlockPos.MutableBlockPos airPos = new BlockPos.MutableBlockPos();
+        for (int attempt = 0; attempt < CAVITY_ATTEMPTS; attempt++) {
+            int x = origin.getX() + random.nextInt(17) - 8;
+            int y = origin.getY() + random.nextInt(25) - 12;
+            int z = origin.getZ() + random.nextInt(17) - 8;
             for (int dy = -6; dy <= 6; dy++) {
-                BlockPos airPos = candidate.above(dy);
+                airPos.set(x, y + dy, z);
                 if (this.isUsableCavity(level, airPos)) {
-                    return airPos;
+                    return airPos.immutable();
                 }
             }
         }

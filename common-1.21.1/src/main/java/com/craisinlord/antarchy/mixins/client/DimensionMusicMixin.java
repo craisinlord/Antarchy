@@ -37,13 +37,14 @@ public abstract class DimensionMusicMixin {
             return;
         }
 
-        if (level.dimension().equals(ThrowbackZones.ELYTHIA)) {
+        boolean inZone = AntarchySettings.throwbackClassicMusic() && ThrowbackClientState.zone(1.0F) > THROWBACK_MUSIC_THRESHOLD;
+        if (inZone || level.dimension().equals(ThrowbackZones.ELYTHIA)) {
             SoundInstance current = ((MusicManagerAccessor) minecraft.getMusicManager()).antarchy$getCurrentMusic();
             if (current != null && minecraft.getSoundManager().isActive(current)) {
                 cir.setReturnValue(antarchy$continue(current.getLocation()));
                 return;
             }
-            if (AntarchySettings.throwbackClassicMusic() && ThrowbackClientState.zone(1.0F) > THROWBACK_MUSIC_THRESHOLD) {
+            if (inZone) {
                 if (antarchy$throwbackMusic == null) {
                     antarchy$throwbackMusic = new Music(BuiltInRegistries.SOUND_EVENT.wrapAsHolder(AntarchySoundEvents.THROWBACK_MUSIC.get()), 0, 40, false);
                 }

@@ -22,6 +22,8 @@ public final class CavarynWormBoreGrid {
     private static final double SWELL_PERIOD = 40.0;
     private static final double SWELL_AMOUNT = 0.1;
     private static final double MAX_RADIUS = 12.5;
+    private static final double FAR_DISTANCE = 3.0;
+    private static final Segment[] NO_SEGMENTS = new Segment[0];
 
     private static final Map<Long, WeakReference<CavarynWormBoreGrid>> BY_SALT = new ConcurrentHashMap<>();
 
@@ -62,53 +64,41 @@ public final class CavarynWormBoreGrid {
     }
 
     public double signedDistance(int x, int y, int z, double floor) {
-        ColumnCache cache = this.candidates(x, z);
-        double py = y + 0.5;
-        if (py < cache.minY || py > cache.maxY) {
-            return Double.MAX_VALUE;
-        }
-        double best = Double.MAX_VALUE;
-        double px = x + 0.5;
-        double pz = z + 0.5;
-        for (Segment segment : cache.segments) {
-            if (py < segment.minY || py > segment.maxY) {
-                continue;
-            }
-            double value = segment.signedDistance(px, py, pz);
-            if (value < best) {
-                best = value;
-                if (best <= floor) {
-                    return best;
-                }
-            }
-        }
-        return best;
+        return this.candidates(x, z).signedDistance(x, y, z, floor);
     }
 
     public int[] verticalRange(int x, int z) {
         ColumnCache cache = this.candidates(x, z);
-        if (cache.segments.length == 0) {
+        if (cache.count == 0) {
             return null;
         }
         return new int[]{Mth.floor(cache.minY), Mth.ceil(cache.maxY)};
     }
 
-    private ColumnCache candidates(int x, int z) {
-        int qx = x >> 2;
-        int qz = z >> 2;
+    public boolean hasCandidates(int x, int z) {
         ColumnCache cache = this.columns.get();
-        if (cache.valid && cache.qx == qx && cache.qz == qz) {
-            return cache;
-        }
-        double minX = qx * 4.0;
-        double minZ = qz * 4.0;
-        double maxX = minX + 4.0;
-        double maxZ = minZ + 4.0;
-        int cellX = Math.floorDiv(qx * 4, CELL_SIZE);
-        int cellZ = Math.floorDiv(qz * 4, CELL_SIZE);
+        cache.loadChunk(x >> 4, z >> 4);
+        return cache.chunkSegments.length > 0;
+    }
+
+    CavarynColumn newColumn() {
+        return new ColumnCache();
+    }
+
+    private ColumnCache candidates(int x, int z) {
+        ColumnCache cache = this.columns.get();
+        cache.load(x >> 2, z >> 2);
+        return cache;
+    }
+
+    private Segment[] collectChunk(int chunkX, int chunkZ) {
+        double minX = chunkX * 16.0;
+        double minZ = chunkZ * 16.0;
+        double maxX = minX + 16.0;
+        double maxZ = minZ + 16.0;
+        int cellX = Math.floorDiv(chunkX * 16, CELL_SIZE);
+        int cellZ = Math.floorDiv(chunkZ * 16, CELL_SIZE);
         List<Segment> found = new ArrayList<>();
-        double minY = Double.MAX_VALUE;
-        double maxY = -Double.MAX_VALUE;
         for (int dx = -CELL_REACH; dx <= CELL_REACH; dx++) {
             for (int dz = -CELL_REACH; dz <= CELL_REACH; dz++) {
                 for (Path path : this.paths(cellX + dx, cellZ + dz)) {
@@ -120,31 +110,21 @@ public final class CavarynWormBoreGrid {
                             continue;
                         }
                         found.add(segment);
-                        minY = Math.min(minY, segment.minY);
-                        maxY = Math.max(maxY, segment.maxY);
                     }
                 }
             }
         }
-        cache.qx = qx;
-        cache.qz = qz;
-        cache.segments = found.toArray(new Segment[0]);
-        cache.minY = minY;
-        cache.maxY = maxY;
-        cache.valid = true;
-        return cache;
+        return found.isEmpty() ? NO_SEGMENTS : found.toArray(new Segment[0]);
     }
 
     private Path[] paths(int cellX, int cellZ) {
-        long key = ((long) cellX << 32) ^ (cellZ & 0xFFFFFFFFL);
+        Long key = ((long) cellX << 32) ^ (cellZ & 0xFFFFFFFFL);
         Path[] cached = this.cells.get(key);
         if (cached != null) {
             return cached;
         }
-        Path[] generated = this.generate(cellX, cellZ);
         CavarynCavityGrid.trim(this.cells, MAX_CACHED_CELLS);
-        Path[] existing = this.cells.putIfAbsent(key, generated);
-        return existing != null ? existing : generated;
+        return this.cells.computeIfAbsent(key, ignored -> this.generate(cellX, cellZ));
     }
 
     private Path[] generate(int cellX, int cellZ) {
@@ -224,13 +204,102 @@ public final class CavarynWormBoreGrid {
         boolean accepts(double x, double y, double z);
     }
 
-    private static final class ColumnCache {
+    private final class ColumnCache implements CavarynColumn {
         boolean valid;
         int qx;
         int qz;
-        Segment[] segments = new Segment[0];
+        boolean chunkValid;
+        int chunkX;
+        int chunkZ;
+        Segment[] chunkSegments = NO_SEGMENTS;
+        Segment[] segments = NO_SEGMENTS;
+        int count;
         double minY;
         double maxY;
+
+        void loadChunk(int chunkX, int chunkZ) {
+            if (this.chunkValid && this.chunkX == chunkX && this.chunkZ == chunkZ) {
+                return;
+            }
+            this.chunkSegments = CavarynWormBoreGrid.this.collectChunk(chunkX, chunkZ);
+            this.chunkX = chunkX;
+            this.chunkZ = chunkZ;
+            this.chunkValid = true;
+        }
+
+        @Override
+        public void load(int qx, int qz) {
+            if (this.valid && this.qx == qx && this.qz == qz) {
+                return;
+            }
+            this.loadChunk(qx >> 2, qz >> 2);
+            Segment[] source = this.chunkSegments;
+            if (this.segments.length < source.length) {
+                this.segments = new Segment[source.length];
+            }
+            double minX = qx * 4.0;
+            double minZ = qz * 4.0;
+            double maxX = minX + 4.0;
+            double maxZ = minZ + 4.0;
+            int found = 0;
+            double minY = Double.MAX_VALUE;
+            double maxY = -Double.MAX_VALUE;
+            for (Segment segment : source) {
+                if (segment.maxX < minX || segment.minX > maxX || segment.maxZ < minZ || segment.minZ > maxZ) {
+                    continue;
+                }
+                this.segments[found++] = segment;
+                minY = Math.min(minY, segment.minY);
+                maxY = Math.max(maxY, segment.maxY);
+            }
+            this.qx = qx;
+            this.qz = qz;
+            this.count = found;
+            this.minY = minY;
+            this.maxY = maxY;
+            this.valid = true;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return this.count == 0;
+        }
+
+        @Override
+        public double minY() {
+            return this.minY;
+        }
+
+        @Override
+        public double maxY() {
+            return this.maxY;
+        }
+
+        @Override
+        public double signedDistance(int x, int y, int z, double floor) {
+            double py = y + 0.5;
+            if (py < this.minY || py > this.maxY) {
+                return Double.MAX_VALUE;
+            }
+            double best = Double.MAX_VALUE;
+            double px = x + 0.5;
+            double pz = z + 0.5;
+            Segment[] current = this.segments;
+            for (int i = 0; i < this.count; i++) {
+                Segment segment = current[i];
+                if (py < segment.minY || py > segment.maxY) {
+                    continue;
+                }
+                double value = segment.signedDistance(px, py, pz);
+                if (value < best) {
+                    best = value;
+                    if (best <= floor) {
+                        return best;
+                    }
+                }
+            }
+            return best;
+        }
     }
 
     private static final class Path {
@@ -277,6 +346,7 @@ public final class CavarynWormBoreGrid {
         final double maxY;
         final double minZ;
         final double maxZ;
+        final double outerRadius;
 
         Segment(double ax, double ay, double az, double bx, double by, double bz, double start, double radius, double phase) {
             this.ax = ax;
@@ -290,7 +360,8 @@ public final class CavarynWormBoreGrid {
             this.start = start;
             this.radius = radius;
             this.phase = phase;
-            double reach = Math.min(MAX_RADIUS, radius * (1.0 + SWELL_AMOUNT)) + 2.5;
+            this.outerRadius = Math.min(MAX_RADIUS, radius * (1.0 + SWELL_AMOUNT));
+            double reach = this.outerRadius + 2.5;
             this.minX = Math.min(ax, bx) - reach;
             this.maxX = Math.max(ax, bx) + reach;
             this.minY = Math.min(ay, by) - reach;
@@ -308,6 +379,10 @@ public final class CavarynWormBoreGrid {
             double cy = ry - this.dy * t;
             double cz = rz - this.dz * t;
             double distance = Math.sqrt(cx * cx + cy * cy + cz * cz);
+            double outside = distance - this.outerRadius;
+            if (outside >= FAR_DISTANCE) {
+                return outside;
+            }
             double along = this.start + this.length * t;
             double swell = 1.0 + SWELL_AMOUNT * Math.sin(along * (Math.PI * 2.0 / SWELL_PERIOD) + this.phase);
             double ribPhase = along / RIB_SPACING;

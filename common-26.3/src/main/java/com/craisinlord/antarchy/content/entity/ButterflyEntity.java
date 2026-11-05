@@ -5,13 +5,17 @@ import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import com.craisinlord.anthology.gravity.GravityApi;
 import com.craisinlord.anthology.gravity.GravityRotationUtil;
 import java.util.EnumSet;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Predicate;
 import net.minecraft.world.level.block.BonemealSource;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -77,7 +81,7 @@ import com.geckolib.animation.object.PlayState;
 import com.geckolib.animation.RawAnimation;
 import com.geckolib.util.GeckoLibUtil;
 
-public class ButterflyEntity extends Animal implements GeoEntity {
+public class ButterflyEntity extends Animal implements GeoEntity, GlimmerEcho {
     private static final ResourceKey<Level> ELYTHIA_DIMENSION = ResourceKey.create(
             Registries.DIMENSION,
             Identifier.fromNamespaceAndPath(Antarchy.MODID, "elythia")
@@ -91,6 +95,8 @@ public class ButterflyEntity extends Animal implements GeoEntity {
             SynchedEntityData.defineId(ButterflyEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> TEXTURE_VARIANT =
             SynchedEntityData.defineId(ButterflyEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO =
+            SynchedEntityData.defineId(ButterflyEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final String ACTIVITY_STATE_KEY = "ActivityState";
     private static final String STAGE_TICKS_KEY = "StageTicks";
@@ -99,6 +105,9 @@ public class ButterflyEntity extends Animal implements GeoEntity {
     private static final String SAVED_FLOWER_Y_KEY = "SavedFlowerY";
     private static final String SAVED_FLOWER_Z_KEY = "SavedFlowerZ";
     private static final String HAS_NECTAR_KEY = "HasNectar";
+    private static final String GLIMMER_ECHO_OWNER_KEY = "GlimmerEchoOwner";
+    private static final String GLIMMER_AGE_KEY = "GlimmerAge";
+    private static final int GLIMMER_LIFETIME_TICKS = 200;
 
     private static final int EMERGE_TICKS = 34;
     private static final int FLOWER_SEARCH_COOLDOWN_MIN = 80;
@@ -129,6 +138,8 @@ public class ButterflyEntity extends Animal implements GeoEntity {
     BlockPos savedFlowerPos;
     int remainingCooldownBeforeLocatingNewFlower = Mth.nextInt(this.random, FLOWER_SEARCH_COOLDOWN_MIN, FLOWER_SEARCH_COOLDOWN_MAX);
     private boolean hasNectar;
+    @Nullable private UUID glimmerEchoOwner;
+    private int glimmerAge;
     private int cropsGrownSincePollination;
     private int stageTicks;
     @Nullable
@@ -167,6 +178,7 @@ public class ButterflyEntity extends Animal implements GeoEntity {
         super.defineSynchedData(builder);
         builder.define(ACTIVITY_STATE, ActivityState.NORMAL.ordinal());
         builder.define(TEXTURE_VARIANT, 0);
+        builder.define(GLIMMER_ECHO, false);
     }
 
     @Override
@@ -254,6 +266,14 @@ public class ButterflyEntity extends Animal implements GeoEntity {
 
         if (this.level().isClientSide()) {
             return;
+        }
+
+        if (this.isGlimmerEcho()) {
+            GlimmerEchoes.tickAmbient(this, 5, 1);
+            if (++this.glimmerAge >= GLIMMER_LIFETIME_TICKS) {
+                GlimmerEchoes.fadeQuietly(this);
+                return;
+            }
         }
 
         if (this.getActivityState() == ActivityState.EMERGING) {
@@ -359,7 +379,32 @@ public class ButterflyEntity extends Animal implements GeoEntity {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(AntarchyTags.Items.BUTTERFLY_BREEDING_FOODS);
+        return !this.isGlimmerEcho() && stack.is(AntarchyTags.Items.BUTTERFLY_BREEDING_FOODS);
+    }
+
+    @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
+    }
+
+    @Override
+    public void setGlimmerEchoOwner(@Nullable UUID owner) {
+        this.glimmerEchoOwner = owner;
+    }
+
+    @Override
+    protected net.minecraft.network.chat.Component getTypeName() {
+        return this.isGlimmerEcho() ? net.minecraft.network.chat.Component.translatable("entity.antarchy.butterfly.glimmer") : super.getTypeName();
+    }
+
+    @Override
+    protected int getBaseExperienceReward(ServerLevel level) {
+        return this.isGlimmerEcho() ? 0 : super.getBaseExperienceReward(level);
     }
 
     public String getTextureVariantName() {
@@ -388,6 +433,9 @@ public class ButterflyEntity extends Animal implements GeoEntity {
         tag.putInt(STAGE_TICKS_KEY, this.stageTicks);
         tag.putInt(TEXTURE_VARIANT_KEY, this.getTextureVariant());
         tag.putBoolean(HAS_NECTAR_KEY, this.hasNectar);
+        tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
+        tag.putInt(GLIMMER_AGE_KEY, this.glimmerAge);
+        tag.storeNullable(GLIMMER_ECHO_OWNER_KEY, UUIDUtil.CODEC, this.glimmerEchoOwner);
         if (this.savedFlowerPos != null) {
             tag.putInt(SAVED_FLOWER_X_KEY, this.savedFlowerPos.getX());
             tag.putInt(SAVED_FLOWER_Y_KEY, this.savedFlowerPos.getY());
@@ -408,6 +456,9 @@ public class ButterflyEntity extends Animal implements GeoEntity {
             this.assignRandomTextureVariant();
         }
         this.hasNectar = tag.getBooleanOr(HAS_NECTAR_KEY, false);
+        this.setGlimmerEcho(tag.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
+        this.glimmerAge = tag.getIntOr(GLIMMER_AGE_KEY, 0);
+        this.glimmerEchoOwner = tag.read(GLIMMER_ECHO_OWNER_KEY, UUIDUtil.CODEC).orElse(null);
         this.savedFlowerPos = tag.getInt(SAVED_FLOWER_X_KEY).isPresent()
                 ? new BlockPos(tag.getIntOr(SAVED_FLOWER_X_KEY, 0), tag.getIntOr(SAVED_FLOWER_Y_KEY, 0), tag.getIntOr(SAVED_FLOWER_Z_KEY, 0))
                 : null;

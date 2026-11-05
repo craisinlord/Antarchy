@@ -10,6 +10,7 @@ public final class AntarchyFabricSounds {
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registries.SOUND_EVENT, Antarchy.MODID);
 
 
+    public static final DeferredHolder<SoundEvent, SoundEvent> ELYTHIA_GRASS_WIND = registerSoundEvent("ambient.elythia.grass_wind");
     public static final DeferredHolder<SoundEvent, SoundEvent> SQUIDZOOKA_FIRE = registerSoundEvent("squidzooka_fire");
 
 
@@ -602,11 +603,6 @@ public final class AntarchyFabricSounds {
     private static DeferredHolder<SoundEvent, SoundEvent> registerSoundEvent(String path) {
         return SOUND_EVENTS.register(path,
                 () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, path)));
-    }
-
-
-    public static void register() {
-        SOUND_EVENTS.register();
     }
 
 }

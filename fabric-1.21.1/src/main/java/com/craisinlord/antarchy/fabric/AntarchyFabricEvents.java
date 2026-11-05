@@ -105,6 +105,8 @@ public final class AntarchyFabricEvents {
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.UMBRAL_MOSS_BLOCK.get().asItem(), 0.65f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.UMBRAL_MOSS_CARPET.get().asItem(), 0.3f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.BLUSH_MOSS_BLOCK.get().asItem(), 0.65f);
+        ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.PRIMORDIAL_MOSS_BLOCK.get().asItem(), 0.65f);
+        ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.PRIMORDIAL_MOSS_CARPET.get().asItem(), 0.3f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.BLUSH_MOSS_CARPET.get().asItem(), 0.3f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricBlocks.HUSHWEED.get().asItem(), 0.65f);
         ComposterBlock.COMPOSTABLES.put(AntarchyFabricItems.CORNEA_EAR.get(), 0.65f);

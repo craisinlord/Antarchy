@@ -2,12 +2,15 @@ package com.craisinlord.antarchy.mixins.client;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.client.ElythiaFog;
+import com.craisinlord.antarchy.content.client.ThrowbackClientState;
+import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
 import com.craisinlord.antarchy.content.client.renderer.ElythiaSkyRenderer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.fog.FogData;
 import net.minecraft.client.renderer.fog.FogRenderer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,8 +25,7 @@ public abstract class ElythiaFogMixin {
     @Inject(method = "setupFog", at = @At("RETURN"))
     private void antarchy$elythiaFogDistance(Camera camera, int renderDistanceInChunks, DeltaTracker deltaTracker,
                                             float darkenWorldAmount, ClientLevel level, CallbackInfoReturnable<FogData> cir) {
-        if (!AntarchySettings.elythiaFogEnabled() || camera.getFluidInCamera() != FogType.NONE
-                || !ElythiaSkyRenderer.shouldRender(level)) {
+        if (camera.getFluidInCamera() != FogType.NONE || !level.dimension().equals(ThrowbackZones.ELYTHIA)) {
             return;
         }
         Entity entity = camera.entity();
@@ -34,7 +36,19 @@ public abstract class ElythiaFogMixin {
         float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
         float distance = renderDistanceInChunks * 16.0F;
         FogData fog = cir.getReturnValue();
-        fog.environmentalStart = ElythiaFog.start(level, distance, partialTick);
-        fog.environmentalEnd = ElythiaFog.end(level, distance, partialTick);
+        if (AntarchySettings.elythiaFogEnabled() && ElythiaSkyRenderer.shouldRender(level)) {
+            fog.environmentalStart = ElythiaFog.start(level, distance, partialTick);
+            fog.environmentalEnd = ElythiaFog.end(level, distance, partialTick);
+        }
+        if (AntarchySettings.throwbackDenseFog()) {
+            float zone = ThrowbackClientState.zone(partialTick);
+            if (zone > 0.01F) {
+                float denseEnd = Math.min(fog.environmentalEnd, Mth.clamp(distance * 0.4F, 48.0F, 96.0F));
+                float fogEnd = Mth.lerp(zone, fog.environmentalEnd, denseEnd);
+                float fogStart = Mth.lerp(zone, fog.environmentalStart, denseEnd * 0.25F);
+                fog.environmentalStart = Math.min(fogStart, fogEnd * 0.6F);
+                fog.environmentalEnd = fogEnd;
+            }
+        }
     }
 }

@@ -1,0 +1,17 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "antarchy:block/cranberry_wood",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "antarchy:block/cranberry_wood"
+    },
+    "axis=z": {
+      "model": "antarchy:block/cranberry_wood",
+      "x": 90
+    }
+  }
+}
+

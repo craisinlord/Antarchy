@@ -1,5 +1,6 @@
 package com.craisinlord.antarchy.content.client.renderer.glimmer;
 
+import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.client.model.glimmer.GlimmerFrogModel;
 import com.craisinlord.antarchy.content.client.model.glimmer.GlimmerModel;
 import com.craisinlord.antarchy.content.entity.glimmer.GlimmerEntity;
@@ -7,6 +8,7 @@ import com.craisinlord.antarchy.content.entity.glimmer.GlimmerVariant;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -15,6 +17,9 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
@@ -31,6 +36,25 @@ public class GlimmerRenderer extends GeoEntityRenderer<GlimmerEntity> {
         this.shadowRadius = SHADOW_RADIUS;
         this.addRenderLayer(new GlimmerEmissiveLayer(this));
         this.frogModel = new GlimmerFrogModel(context.bakeLayer(ModelLayers.FROG));
+        GlimmerEntity.setClientPickFilter(GlimmerRenderer::localPlayerCanInteract);
+    }
+
+    private static boolean localPlayerCanInteract(GlimmerEntity glimmer) {
+        Player player = Minecraft.getInstance().player;
+        if (player == null) {
+            return false;
+        }
+        if (player.isSecondaryUseActive() && player.getMainHandItem().isEmpty()) {
+            return true;
+        }
+        return isInteractionItem(player.getMainHandItem()) || isInteractionItem(player.getOffhandItem());
+    }
+
+    private static boolean isInteractionItem(ItemStack stack) {
+        return stack.is(AntarchyObjects.SPIRIT_APPLE.get())
+                || stack.is(Items.GLASS_BOTTLE)
+                || stack.is(Items.SHEARS)
+                || stack.is(Items.NAME_TAG);
     }
 
     @Override

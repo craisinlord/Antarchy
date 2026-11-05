@@ -1,0 +1,7 @@
+{
+  "type": "antarchy:elythia_tuff_boulder",
+  "config": {
+    "block": "antarchy:conglomerate",
+    "capped": false
+  }
+}

@@ -8,6 +8,9 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.BooleanValue ELYTHIA_FIREFLY_PARTICLES_ENABLED;
     private static final ModConfigSpec.BooleanValue ELYTHIA_FOG_ENABLED;
     private static final ModConfigSpec.BooleanValue ELYTHIA_GROUND_MIST_ENABLED;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_GRASS_WIND_ENABLED;
+    private static final ModConfigSpec.BooleanValue ELYTHIA_WIND_SOUNDS_ENABLED;
+    private static final ModConfigSpec.IntValue     PRIMORDIAL_GRASS_DRAW_DISTANCE;
     private static final ModConfigSpec.BooleanValue ELYTHIA_SOFT_CLOUDS_ENABLED;
     private static final ModConfigSpec.BooleanValue ELYTHIA_DREAM_SHADOWS_ENABLED;
     private static final ModConfigSpec.DoubleValue  ELYTHIA_DREAM_SHADOWS_STRENGTH;
@@ -23,7 +26,9 @@ public final class AntarchyMiscConfig {
     private static final ModConfigSpec.BooleanValue ELYTHIA_RAIN_GROWTH;
     private static final ModConfigSpec.BooleanValue THORAXIS_EVENTS;
     private static final ModConfigSpec.BooleanValue THROWBACK_ZONES_ENABLED;
-    private static final ModConfigSpec.IntValue     THROWBACK_STRUCTURE_ZONE_RADIUS;
+    private static final ModConfigSpec.IntValue     THROWBACK_TORCH_RADIUS;
+    private static final ModConfigSpec.IntValue     THROWBACK_WILD_ZONE_MIN_RADIUS;
+    private static final ModConfigSpec.IntValue     THROWBACK_WILD_ZONE_MAX_RADIUS;
     private static final ModConfigSpec.DoubleValue  THROWBACK_WILD_ZONE_CHANCE;
     private static final ModConfigSpec.BooleanValue THROWBACK_NO_ATTACK_COOLDOWN;
     private static final ModConfigSpec.BooleanValue THROWBACK_CLASSIC_HURT_SOUND;
@@ -96,6 +101,9 @@ public final class AntarchyMiscConfig {
         ELYTHIA_FOG_ENABLED = b
                 .comment("Whether Elythia uses its denser atmospheric fog. Client-side visual only.")
                 .define("fogEnabled", true);
+        ELYTHIA_GRASS_WIND_ENABLED = b.define("grassWindEnabled", true);
+        PRIMORDIAL_GRASS_DRAW_DISTANCE = b.defineInRange("grassDrawDistance", 192, 32, 512);
+        ELYTHIA_WIND_SOUNDS_ENABLED = b.define("windSoundsEnabled", true);
         ELYTHIA_GROUND_MIST_ENABLED = b
                 .comment("Whether low ground mist drifts over Elythia meadows in the mornings. Client-side visual only.")
                 .define("groundMistEnabled", true);
@@ -143,14 +151,20 @@ public final class AntarchyMiscConfig {
                 .define("thoraxisEvents", true);
         b.push("throwbackZones");
         THROWBACK_ZONES_ENABLED = b
-                .comment("Whether Throwback Zones appear around nostalgic structures and in the wild in Elythia.")
+                .comment("Whether Remembrance Torches create Throwback Zones.")
                 .define("enabled", true);
-        THROWBACK_STRUCTURE_ZONE_RADIUS = b
-                .comment("How many blocks a Throwback Zone extends beyond a nostalgic structure.")
-                .defineInRange("structureZoneRadius", 10, 1, 128);
+        THROWBACK_TORCH_RADIUS = b
+                .comment("How many blocks a placed or structure Remembrance Torch reaches. Nerd pole torches use wildZoneMinRadius and wildZoneMaxRadius instead.")
+                .defineInRange("torchRadius", 24, 1, 128);
+        THROWBACK_WILD_ZONE_MIN_RADIUS = b
+                .comment("Smallest radius in blocks for a nerd pole torch. Applies to newly generated poles.")
+                .defineInRange("wildZoneMinRadius", 48, 1, 128);
+        THROWBACK_WILD_ZONE_MAX_RADIUS = b
+                .comment("Largest radius in blocks for a nerd pole torch. Applies to newly generated poles. Treated as the minimum if set lower than it.")
+                .defineInRange("wildZoneMaxRadius", 72, 1, 128);
         THROWBACK_WILD_ZONE_CHANCE = b
                 .comment("Chance that each 320x320 block region of Elythia contains a free-standing Throwback Zone.")
-                .defineInRange("wildZoneChance", 0.35D, 0.0D, 1.0D);
+                .defineInRange("wildZoneChance", 0.25D, 0.0D, 1.0D);
         THROWBACK_NO_ATTACK_COOLDOWN = b
                 .comment("Whether players inside a Throwback Zone have no attack cooldown.")
                 .define("noAttackCooldown", true);
@@ -280,6 +294,9 @@ public final class AntarchyMiscConfig {
 
     static boolean elythiaFireflyParticlesEnabled()      { return ELYTHIA_FIREFLY_PARTICLES_ENABLED.get(); }
     static boolean elythiaFogEnabled()                   { return ELYTHIA_FOG_ENABLED.get(); }
+    static boolean elythiaGrassWindEnabled() { return ELYTHIA_GRASS_WIND_ENABLED.get(); }
+    static boolean elythiaWindSoundsEnabled() { return ELYTHIA_WIND_SOUNDS_ENABLED.get(); }
+    static int primordialGrassDrawDistance() { return PRIMORDIAL_GRASS_DRAW_DISTANCE.get(); }
     static boolean elythiaGroundMistEnabled()            { return ELYTHIA_GROUND_MIST_ENABLED.get(); }
     static boolean elythiaSoftCloudsEnabled()            { return ELYTHIA_SOFT_CLOUDS_ENABLED.get(); }
     static boolean elythiaDreamShadowsEnabled()          { return ELYTHIA_DREAM_SHADOWS_ENABLED.get(); }
@@ -296,7 +313,9 @@ public final class AntarchyMiscConfig {
     static boolean elythiaRainGrowth()                  { return ELYTHIA_RAIN_GROWTH.get(); }
     static boolean thoraxisEvents()                     { return THORAXIS_EVENTS.get(); }
     static boolean throwbackZonesEnabled()               { return THROWBACK_ZONES_ENABLED.get(); }
-    static int     throwbackStructureZoneRadius()        { return THROWBACK_STRUCTURE_ZONE_RADIUS.get(); }
+    static int     throwbackTorchRadius()                { return THROWBACK_TORCH_RADIUS.get(); }
+    static int     throwbackWildZoneMinRadius()          { return THROWBACK_WILD_ZONE_MIN_RADIUS.get(); }
+    static int     throwbackWildZoneMaxRadius()          { return THROWBACK_WILD_ZONE_MAX_RADIUS.get(); }
     static double  throwbackWildZoneChance()             { return THROWBACK_WILD_ZONE_CHANCE.get(); }
     static boolean throwbackNoAttackCooldown()           { return THROWBACK_NO_ATTACK_COOLDOWN.get(); }
     static boolean throwbackClassicHurtSound()           { return THROWBACK_CLASSIC_HURT_SOUND.get(); }

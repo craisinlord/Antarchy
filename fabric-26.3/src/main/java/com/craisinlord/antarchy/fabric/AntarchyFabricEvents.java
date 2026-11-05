@@ -71,12 +71,15 @@ public final class AntarchyFabricEvents {
         ServerLifecycleEvents.SERVER_STOPPING.register(com.craisinlord.antarchy.content.portalgun.PortalGunResetManager::clear);
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.entity.ant.AntArrivalScheduler.clear());
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.portalgun.PortalGunMoonAimSync.clear());
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> com.craisinlord.antarchy.content.transit.AntTransit.clear());
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             PortalGunSavedData.clearMissingGuns(handler.player);
+            com.craisinlord.antarchy.content.migration.DimensionResetManager.onPlayerJoin(handler.player);
         });
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             CavarynCommand.register(dispatcher);
             com.craisinlord.antarchy.content.command.ElythiaCommand.register(dispatcher);
+            com.craisinlord.antarchy.content.command.DimensionResetCommand.register(dispatcher);
             com.craisinlord.antarchy.content.command.ThoraxisCommand.register(dispatcher);
             CaterpillarCommand.register(dispatcher);
             DimensionalTearCommand.register(dispatcher);
@@ -168,6 +171,7 @@ public final class AntarchyFabricEvents {
         });
 
         ServerTickEvents.END_SERVER_TICK.register(server -> {
+            com.craisinlord.antarchy.content.transit.AntTransit.tick(server);
             Set<UUID> activeThisTick = new HashSet<>();
             for (ServerLevel level : server.getAllLevels()) {
                 CavarynHordeManager.tick(level);

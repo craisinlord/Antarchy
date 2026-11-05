@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "antarchy:faded_memory",
+    "minecraft:deepslate",
+    "antarchy:brutalfly_wing"
+  ],
+  "result": {
+    "id": "antarchy:brutalfly_glimmer_sigil",
+    "count": 1
+  }
+}

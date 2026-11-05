@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "antarchy:myrmite_bricks"
-    }
+    "#": "antarchy:myrmite_bricks"
   },
   "pattern": [
     "#  ",
@@ -16,4 +14,3 @@
     "id": "antarchy:myrmite_brick_stairs"
   }
 }
-

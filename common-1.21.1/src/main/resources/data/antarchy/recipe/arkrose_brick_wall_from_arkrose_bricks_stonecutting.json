@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:arkrose_bricks"
+  },
+  "result": {
+    "id": "antarchy:arkrose_brick_wall",
+    "count": 1
+  }
+}

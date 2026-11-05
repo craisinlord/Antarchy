@@ -16,6 +16,18 @@ public final class CavarynCavityGrid {
     private static final double BLEND = 2.5;
     private static final double WOBBLE = 0.08;
     private static final double REACH_PADDING = BLEND + 1.5;
+    private static final Shape[] NO_SHAPES = new Shape[0];
+    private static final int WOBBLE_Y_TABLE_SIZE = 512;
+    private static final double[] SIN_Y = new double[WOBBLE_Y_TABLE_SIZE];
+    private static final double[] COS_Y = new double[WOBBLE_Y_TABLE_SIZE];
+
+    static {
+        for (int y = 0; y < WOBBLE_Y_TABLE_SIZE; y++) {
+            double angle = (y + 0.5) * 0.43;
+            SIN_Y[y] = Math.sin(angle);
+            COS_Y[y] = Math.cos(angle);
+        }
+    }
 
     private static final Map<Long, WeakReference<CavarynCavityGrid>> BY_SALT = new ConcurrentHashMap<>();
 
@@ -56,33 +68,25 @@ public final class CavarynCavityGrid {
     }
 
     public double signedDistance(int x, int y, int z, double floor) {
-        ColumnCache cache = this.candidates(x, z);
-        double py = y + 0.5;
-        if (py < cache.minY || py > cache.maxY) {
-            return Double.MAX_VALUE;
-        }
-        double best = Double.MAX_VALUE;
-        double px = x + 0.5;
-        double pz = z + 0.5;
-        for (Shape shape : cache.shapes) {
-            if (py < shape.minY || py > shape.maxY) {
-                continue;
-            }
-            double value = shape.signedDistance(px, py, pz, cache);
-            best = best == Double.MAX_VALUE ? value : smoothMin(best, value);
-            if (best <= floor) {
-                return best;
-            }
-        }
-        return best;
+        return this.candidates(x, z).signedDistance(x, y, z, floor);
     }
 
     public int[] verticalRange(int x, int z) {
         ColumnCache cache = this.candidates(x, z);
-        if (cache.shapes.length == 0) {
+        if (cache.count == 0) {
             return null;
         }
         return new int[]{Mth.floor(cache.minY), Mth.ceil(cache.maxY)};
+    }
+
+    public boolean hasCandidates(int x, int z) {
+        ColumnCache cache = this.columns.get();
+        cache.loadChunk(x >> 4, z >> 4);
+        return cache.chunkShapes.length > 0;
+    }
+
+    CavarynColumn newColumn() {
+        return new ColumnCache();
     }
 
     public List<Chamber> chambersCenteredIn(int minX, int minZ, int maxX, int maxZ) {
@@ -113,22 +117,20 @@ public final class CavarynCavityGrid {
     }
 
     private ColumnCache candidates(int x, int z) {
-        int qx = x >> 2;
-        int qz = z >> 2;
         ColumnCache cache = this.columns.get();
-        if (cache.valid && cache.qx == qx && cache.qz == qz) {
-            return cache;
-        }
-        double minX = qx * 4.0;
-        double minZ = qz * 4.0;
-        double maxX = minX + 4.0;
-        double maxZ = minZ + 4.0;
-        int cellX = Math.floorDiv(qx * 4, this.kind.cellSize);
-        int cellZ = Math.floorDiv(qz * 4, this.kind.cellSize);
+        cache.load(x >> 2, z >> 2);
+        return cache;
+    }
+
+    private Shape[] collectChunk(int chunkX, int chunkZ) {
+        double minX = chunkX * 16.0;
+        double minZ = chunkZ * 16.0;
+        double maxX = minX + 16.0;
+        double maxZ = minZ + 16.0;
+        int cellX = Math.floorDiv(chunkX * 16, this.kind.cellSize);
+        int cellZ = Math.floorDiv(chunkZ * 16, this.kind.cellSize);
         int reach = this.kind.cellReach;
         List<Shape> found = new ArrayList<>();
-        double minY = Double.MAX_VALUE;
-        double maxY = -Double.MAX_VALUE;
         for (int dx = -reach; dx <= reach; dx++) {
             for (int dz = -reach; dz <= reach; dz++) {
                 for (Cavity cavity : this.cavities(cellX + dx, cellZ + dz)) {
@@ -140,31 +142,21 @@ public final class CavarynCavityGrid {
                             continue;
                         }
                         found.add(shape);
-                        minY = Math.min(minY, shape.minY);
-                        maxY = Math.max(maxY, shape.maxY);
                     }
                 }
             }
         }
-        cache.qx = qx;
-        cache.qz = qz;
-        cache.shapes = found.toArray(new Shape[0]);
-        cache.minY = minY;
-        cache.maxY = maxY;
-        cache.valid = true;
-        return cache;
+        return found.isEmpty() ? NO_SHAPES : found.toArray(new Shape[0]);
     }
 
     private Cavity[] cavities(int cellX, int cellZ) {
-        long key = ((long) cellX << 32) ^ (cellZ & 0xFFFFFFFFL);
+        Long key = ((long) cellX << 32) ^ (cellZ & 0xFFFFFFFFL);
         Cavity[] cached = this.cells.get(key);
         if (cached != null) {
             return cached;
         }
-        Cavity[] generated = this.generate(cellX, cellZ);
         trim(this.cells, MAX_CACHED_CELLS);
-        Cavity[] existing = this.cells.putIfAbsent(key, generated);
-        return existing != null ? existing : generated;
+        return this.cells.computeIfAbsent(key, ignored -> this.generate(cellX, cellZ));
     }
 
     private Cavity[] generate(int cellX, int cellZ) {
@@ -654,42 +646,142 @@ public final class CavarynCavityGrid {
         }
     }
 
-    private static final class ColumnCache {
+    private final class ColumnCache implements CavarynColumn {
         boolean valid;
         int qx;
         int qz;
-        Shape[] shapes = new Shape[0];
+        boolean chunkValid;
+        int chunkX;
+        int chunkZ;
+        Shape[] chunkShapes = NO_SHAPES;
+        Shape[] shapes = NO_SHAPES;
+        int count;
         double minY;
         double maxY;
-        double trigX = Double.NaN;
-        double trigY = Double.NaN;
-        double trigZ = Double.NaN;
-        double sinX;
-        double cosX;
-        double sinY;
-        double cosY;
-        double sinZ;
-        double cosZ;
+        boolean wobbleReady;
+        double[] sinX;
+        double[] cosX;
+        double[] sinZ;
+        double[] cosZ;
+        int blockX;
+        int blockY;
+        int blockZ;
 
-        void wobbleAt(double px, double py, double pz) {
-            if (px != this.trigX) {
-                double angle = px * 0.31;
-                this.sinX = Math.sin(angle);
-                this.cosX = Math.cos(angle);
-                this.trigX = px;
+        void loadChunk(int chunkX, int chunkZ) {
+            if (this.chunkValid && this.chunkX == chunkX && this.chunkZ == chunkZ) {
+                return;
             }
-            if (py != this.trigY) {
-                double angle = py * 0.43;
-                this.sinY = Math.sin(angle);
-                this.cosY = Math.cos(angle);
-                this.trigY = py;
+            this.chunkShapes = CavarynCavityGrid.this.collectChunk(chunkX, chunkZ);
+            this.chunkX = chunkX;
+            this.chunkZ = chunkZ;
+            this.chunkValid = true;
+        }
+
+        @Override
+        public void load(int qx, int qz) {
+            if (this.valid && this.qx == qx && this.qz == qz) {
+                return;
             }
-            if (pz != this.trigZ) {
-                double angle = pz * 0.27;
-                this.sinZ = Math.sin(angle);
-                this.cosZ = Math.cos(angle);
-                this.trigZ = pz;
+            this.loadChunk(qx >> 2, qz >> 2);
+            Shape[] source = this.chunkShapes;
+            if (this.shapes.length < source.length) {
+                this.shapes = new Shape[source.length];
             }
+            double minX = qx * 4.0;
+            double minZ = qz * 4.0;
+            double maxX = minX + 4.0;
+            double maxZ = minZ + 4.0;
+            int found = 0;
+            double minY = Double.MAX_VALUE;
+            double maxY = -Double.MAX_VALUE;
+            for (Shape shape : source) {
+                if (shape.maxX < minX || shape.minX > maxX || shape.maxZ < minZ || shape.minZ > maxZ) {
+                    continue;
+                }
+                this.shapes[found++] = shape;
+                minY = Math.min(minY, shape.minY);
+                maxY = Math.max(maxY, shape.maxY);
+            }
+            this.qx = qx;
+            this.qz = qz;
+            this.count = found;
+            this.minY = minY;
+            this.maxY = maxY;
+            this.wobbleReady = false;
+            this.valid = true;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return this.count == 0;
+        }
+
+        @Override
+        public double minY() {
+            return this.minY;
+        }
+
+        @Override
+        public double maxY() {
+            return this.maxY;
+        }
+
+        @Override
+        public double signedDistance(int x, int y, int z, double floor) {
+            double py = y + 0.5;
+            if (py < this.minY || py > this.maxY) {
+                return Double.MAX_VALUE;
+            }
+            this.blockX = x;
+            this.blockY = y;
+            this.blockZ = z;
+            double best = Double.MAX_VALUE;
+            double px = x + 0.5;
+            double pz = z + 0.5;
+            Shape[] current = this.shapes;
+            for (int i = 0; i < this.count; i++) {
+                Shape shape = current[i];
+                if (py < shape.minY || py > shape.maxY) {
+                    continue;
+                }
+                double value = shape.signedDistance(px, py, pz, this);
+                best = best == Double.MAX_VALUE ? value : smoothMin(best, value);
+                if (best <= floor) {
+                    return best;
+                }
+            }
+            return best;
+        }
+
+        void prepareWobble() {
+            if (this.wobbleReady) {
+                return;
+            }
+            if (this.sinX == null) {
+                this.sinX = new double[4];
+                this.cosX = new double[4];
+                this.sinZ = new double[4];
+                this.cosZ = new double[4];
+            }
+            for (int i = 0; i < 4; i++) {
+                double angleX = (this.qx * 4 + i + 0.5) * 0.31;
+                double angleZ = (this.qz * 4 + i + 0.5) * 0.27;
+                this.sinX[i] = Math.sin(angleX);
+                this.cosX[i] = Math.cos(angleX);
+                this.sinZ[i] = Math.sin(angleZ);
+                this.cosZ[i] = Math.cos(angleZ);
+            }
+            this.wobbleReady = true;
+        }
+
+        double sinY() {
+            int y = this.blockY;
+            return y >= 0 && y < WOBBLE_Y_TABLE_SIZE ? SIN_Y[y] : Math.sin((y + 0.5) * 0.43);
+        }
+
+        double cosY() {
+            int y = this.blockY;
+            return y >= 0 && y < WOBBLE_Y_TABLE_SIZE ? COS_Y[y] : Math.cos((y + 0.5) * 0.43);
         }
     }
 
@@ -868,10 +960,12 @@ public final class CavarynCavityGrid {
             double nx = (px - this.cx) / this.radius;
             double ny = offsetY / vertical;
             double nz = (pz - this.cz) / this.radius;
-            cache.wobbleAt(px, py, pz);
-            double waveX = cache.sinX * this.cosPhase + cache.cosX * this.sinPhase;
-            double waveZ = cache.sinZ * this.cosPhase - cache.cosZ * this.sinPhase;
-            double waveY = cache.sinY * this.cosDoublePhase + cache.cosY * this.sinDoublePhase;
+            cache.prepareWobble();
+            int indexX = cache.blockX & 3;
+            int indexZ = cache.blockZ & 3;
+            double waveX = cache.sinX[indexX] * this.cosPhase + cache.cosX[indexX] * this.sinPhase;
+            double waveZ = cache.sinZ[indexZ] * this.cosPhase - cache.cosZ[indexZ] * this.sinPhase;
+            double waveY = cache.sinY() * this.cosDoublePhase + cache.cosY() * this.sinDoublePhase;
             double wobble = 1.0 + WOBBLE * (waveX + waveZ + waveY) / 3.0;
             return (Math.sqrt(nx * nx + ny * ny + nz * nz) - wobble) * Math.min(this.radius, this.depth);
         }

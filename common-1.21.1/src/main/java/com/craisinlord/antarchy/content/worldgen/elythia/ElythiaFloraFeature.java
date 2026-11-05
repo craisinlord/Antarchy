@@ -27,6 +27,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
     private static final String SIZEABLE_FOLIAGE_MODID = "sizeable_foliage";
     private static volatile Block veryShortGrass;
     private static volatile Block veryTallGrass;
+    private static final float PRIMORDIAL_CLUMP_CHANCE = 0.01F;
     private static volatile Block torchflowerBush;
     private static final ResourceLocation CAMELLIA_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "camellia");
     private static final ResourceLocation SPIDER_LILY_ID = ResourceLocation.fromNamespaceAndPath("antarchy", "spider_lily");
@@ -61,6 +62,14 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
         };
         boolean placedAny = false;
 
+        if (this.variant == Variant.PRIMORDIAL_PLAINS && random.nextFloat() < PRIMORDIAL_CLUMP_CHANCE) {
+            BlockPos clumpCenter = sampleSurface(level, origin, random, 12, surfaceHeightCache);
+            if (clumpCenter != null) {
+                placedAny |= this.placeTorchflowersAround(level, clumpCenter, random, surfaceHeightCache);
+                placedAny |= this.placePitcherPlantsAround(level, clumpCenter, random, surfaceHeightCache);
+            }
+        }
+
         int torchflowerPatchRolls = switch (this.variant) {
             case BUTTERFLY_FIELDS -> 2 + random.nextInt(3);
             case PEACH_FOREST -> 1;
@@ -71,7 +80,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
             float torchflowerChance = switch (this.variant) {
                 case FOREST -> 0.24F;
                 case MEADOW -> 0.42F;
-                case PRIMORDIAL_PLAINS -> 0.08F;
+                case PRIMORDIAL_PLAINS -> 0.0F;
                 case PEACH_FOREST -> 0.08F;
                 case BUTTERFLY_FIELDS -> 0.24F;
                 case FLOWER_FOREST_MILKWEED -> 0.0F;
@@ -83,7 +92,7 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
 
         if (random.nextFloat() < switch (this.variant) {
             case MEADOW -> 0.1F;
-            case PRIMORDIAL_PLAINS -> 0.03F;
+            case PRIMORDIAL_PLAINS -> 0.0F;
             case PEACH_FOREST -> 0.0F;
             case BUTTERFLY_FIELDS -> 0.12F;
             case FOREST -> 0.05F;
@@ -147,6 +156,9 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
     }
 
     private boolean placeSelectedPlant(WorldGenLevel level, BlockPos plantPos, BlockPos groundPos, RandomSource random) {
+        if (this.meadowLike() && level.getBlockState(groundPos).is(PRIMORDIAL_GROUND)) {
+            return placeSingle(level, plantPos, com.craisinlord.antarchy.content.block.ElythiaPalette.PRIMORDIAL_GRASS.get());
+        }
         if (this.variant == Variant.BUTTERFLY_FIELDS) {
             float roll = random.nextFloat();
             if (roll < 0.18F) {
@@ -368,10 +380,10 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
 
     private boolean placeTorchflowerPatch(WorldGenLevel level, BlockPos origin, RandomSource random, Map<Long, Integer> surfaceHeightCache) {
         BlockPos patchCenter = sampleSurface(level, origin, random, this.variant == Variant.FOREST ? 8 : 12, surfaceHeightCache);
-        if (patchCenter == null) {
-            return false;
-        }
+        return patchCenter != null && this.placeTorchflowersAround(level, patchCenter, random, surfaceHeightCache);
+    }
 
+    private boolean placeTorchflowersAround(WorldGenLevel level, BlockPos patchCenter, RandomSource random, Map<Long, Integer> surfaceHeightCache) {
         int radius = this.meadowLike() ? 3 : this.variant == Variant.BUTTERFLY_FIELDS ? 3 : 2;
         int plants = this.variant == Variant.BUTTERFLY_FIELDS
                 ? 4 + random.nextInt(5)
@@ -404,10 +416,10 @@ public class ElythiaFloraFeature extends Feature<NoneFeatureConfiguration> {
 
     private boolean placePitcherPatch(WorldGenLevel level, BlockPos origin, RandomSource random, Map<Long, Integer> surfaceHeightCache) {
         BlockPos patchCenter = sampleSurface(level, origin, random, this.variant == Variant.FOREST ? 8 : 13, surfaceHeightCache);
-        if (patchCenter == null) {
-            return false;
-        }
+        return patchCenter != null && this.placePitcherPlantsAround(level, patchCenter, random, surfaceHeightCache);
+    }
 
+    private boolean placePitcherPlantsAround(WorldGenLevel level, BlockPos patchCenter, RandomSource random, Map<Long, Integer> surfaceHeightCache) {
         int radius = this.variant == Variant.BUTTERFLY_FIELDS ? 5 : this.meadowLike() ? 4 : this.variant == Variant.FLOWER_FOREST_MILKWEED ? 3 : 3;
         int plants = this.variant == Variant.BUTTERFLY_FIELDS ? 10 + random.nextInt(12) : this.variant == Variant.FLOWER_FOREST_MILKWEED ? 2 + random.nextInt(3) : 5 + random.nextInt(11);
         boolean placed = false;

@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.DensityFunction;
+import org.jetbrains.annotations.Nullable;
 
 public final class ElythiaRiverProject implements DensityFunction {
 
@@ -25,23 +26,23 @@ public final class ElythiaRiverProject implements DensityFunction {
     private static final int GRID_SHIFT = 2;
     private static final int GRID_SIZE = 1 << GRID_SHIFT;
     private static final int GRID_MASK = ~(GRID_SIZE - 1);
-    private static final int SLOT_BITS = 5;
+    private static final int SLOT_BITS = 6;
     private static final int SLOT_MASK = (1 << SLOT_BITS) - 1;
     private static final int SLOTS = 1 << (SLOT_BITS * 2);
 
     private final DensityFunction argument;
     private final DensityFunction guide;
-    private final boolean active;
-    private volatile Entry[] lattice;
+    @Nullable
+    private final Entry[] lattice;
 
     public ElythiaRiverProject(DensityFunction argument, DensityFunction guide) {
-        this(argument, guide, false);
+        this(argument, guide, null);
     }
 
-    private ElythiaRiverProject(DensityFunction argument, DensityFunction guide, boolean active) {
+    private ElythiaRiverProject(DensityFunction argument, DensityFunction guide, @Nullable Entry[] lattice) {
         this.argument = argument;
         this.guide = guide;
-        this.active = active;
+        this.lattice = lattice;
     }
 
     public DensityFunction argument() {
@@ -57,7 +58,7 @@ public final class ElythiaRiverProject implements DensityFunction {
         int x = context.blockX();
         int y = context.blockY();
         int z = context.blockZ();
-        if (!this.active) {
+        if (this.lattice == null) {
             return this.project(x, y, z, context);
         }
         int x0 = x & GRID_MASK;
@@ -81,10 +82,6 @@ public final class ElythiaRiverProject implements DensityFunction {
         int gridZ = z >> GRID_SHIFT;
         long key = ChunkPos.pack(gridX, gridZ);
         Entry[] table = this.lattice;
-        if (table == null) {
-            table = new Entry[SLOTS];
-            this.lattice = table;
-        }
         int index = (gridX & SLOT_MASK) << SLOT_BITS | (gridZ & SLOT_MASK);
         Entry entry = table[index];
         if (entry != null && entry.key() == key) {
@@ -136,7 +133,8 @@ public final class ElythiaRiverProject implements DensityFunction {
 
     @Override
     public DensityFunction mapAll(Visitor visitor) {
-        return visitor.apply(new ElythiaRiverProject(this.argument.mapAll(visitor), this.guide.mapAll(visitor), true));
+        Entry[] table = this.lattice != null ? this.lattice : new Entry[SLOTS];
+        return visitor.apply(new ElythiaRiverProject(this.argument.mapAll(visitor), this.guide.mapAll(visitor), table));
     }
 
     @Override
@@ -156,12 +154,12 @@ public final class ElythiaRiverProject implements DensityFunction {
 
     @Override
     public boolean equals(Object other) {
-        return this == other;
+        return this == other || (this.lattice != null && other instanceof ElythiaRiverProject project && project.lattice == this.lattice);
     }
 
     @Override
     public int hashCode() {
-        return System.identityHashCode(this);
+        return System.identityHashCode(this.lattice != null ? this.lattice : this);
     }
 
     private record Entry(long key, double value) {

@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.fabric.registry;
 
 import java.util.function.Supplier;
 
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
@@ -9,6 +10,7 @@ public class DeferredHolder<R, T extends R> implements Supplier<T> {
     private final ResourceKey<?> registryKey;
     private final ResourceLocation id;
     private T value;
+    private volatile Holder<R> registeredHolder;
 
     DeferredHolder(ResourceKey<?> registryKey, ResourceLocation id) {
         this.registryKey = registryKey;
@@ -17,6 +19,14 @@ public class DeferredHolder<R, T extends R> implements Supplier<T> {
 
     void bind(T value) {
         this.value = value;
+    }
+
+    Holder<R> registeredHolder() {
+        return this.registeredHolder;
+    }
+
+    void cacheRegisteredHolder(Holder<R> holder) {
+        this.registeredHolder = holder;
     }
 
     public ResourceLocation getId() {

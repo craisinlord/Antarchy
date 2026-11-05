@@ -347,17 +347,17 @@ final class ReefPlanner {
                                 int centerX, int centerZ, int radius, int maxFloor, int sea) {
         int ci = grid.indexX(centerX);
         int cj = grid.indexZ(centerZ);
-        if (grid.biome(sampler, ci, cj, ELYTHIA_OCEAN, ELYTHIA_CORAL_SPIKES) != ReefFloorGrid.OCEAN
-                || grid.height(sampler, ci, cj) > maxFloor) {
+        if (grid.biome(sampler, ci, cj, ELYTHIA_OCEAN, ELYTHIA_CORAL_SPIKES) != ReefFloorGrid.OCEAN) {
             return false;
         }
         double reach = radius * 0.85D;
+        int[] ringI = new int[8];
+        int[] ringJ = new int[8];
         for (int k = 0; k < 8; k++) {
             double angle = k * Math.PI / 4.0D;
-            int i = grid.indexX(centerX + Math.cos(angle) * reach);
-            int j = grid.indexZ(centerZ + Math.sin(angle) * reach);
-            if (grid.biome(sampler, i, j, ELYTHIA_OCEAN, ELYTHIA_CORAL_SPIKES) == ReefFloorGrid.SPIKES
-                    || grid.height(sampler, i, j) > sea - 3) {
+            ringI[k] = grid.indexX(centerX + Math.cos(angle) * reach);
+            ringJ[k] = grid.indexZ(centerZ + Math.sin(angle) * reach);
+            if (grid.biome(sampler, ringI[k], ringJ[k], ELYTHIA_OCEAN, ELYTHIA_CORAL_SPIKES) == ReefFloorGrid.SPIKES) {
                 return false;
             }
         }
@@ -369,16 +369,11 @@ final class ReefPlanner {
             for (int j = 0; j < grid.size(); j++) {
                 long dx = grid.pointX(i) - centerX;
                 long dz = grid.pointZ(j) - centerZ;
-                long distance = dx * dx + dz * dz;
-                if (distance > limit) {
+                if (dx * dx + dz * dz > limit) {
                     continue;
                 }
                 byte biome = grid.biome(sampler, i, j, ELYTHIA_OCEAN, ELYTHIA_CORAL_SPIKES);
                 if (biome == ReefFloorGrid.SPIKES) {
-                    return false;
-                }
-                int floor = grid.height(sampler, i, j);
-                if (floor > sea - 3 || (distance <= inner && floor > maxFloor)) {
                     return false;
                 }
                 total++;
@@ -387,6 +382,28 @@ final class ReefPlanner {
                 }
             }
         }
-        return total > 0 && ocean >= total * MIN_OCEAN_SHARE;
+        if (total == 0 || ocean < total * MIN_OCEAN_SHARE || grid.height(sampler, ci, cj) > maxFloor) {
+            return false;
+        }
+        for (int k = 0; k < 8; k++) {
+            if (grid.height(sampler, ringI[k], ringJ[k]) > sea - 3) {
+                return false;
+            }
+        }
+        for (int i = 0; i < grid.size(); i++) {
+            for (int j = 0; j < grid.size(); j++) {
+                long dx = grid.pointX(i) - centerX;
+                long dz = grid.pointZ(j) - centerZ;
+                long distance = dx * dx + dz * dz;
+                if (distance > limit) {
+                    continue;
+                }
+                int floor = grid.height(sampler, i, j);
+                if (floor > sea - 3 || (distance <= inner && floor > maxFloor)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

@@ -57,14 +57,14 @@ public record CavarynCreepvineFeature() implements Feature {
                 if (!level.getBlockState(mutable).canBeReplaced()) {
                     continue;
                 }
-                if (AntarchyFluidChecks.hasBileNearby(level, mutable, 1)) {
-                    continue;
-                }
 
                 for (Direction direction : Direction.Plane.HORIZONTAL) {
                     BlockPos supportPos = mutable.relative(direction);
                     BlockState supportState = level.getBlockState(supportPos);
                     if (supportState.isFaceSturdy(level, supportPos, direction.getOpposite())) {
+                        if (AntarchyFluidChecks.hasBileNearby(level, mutable, 1)) {
+                            break;
+                        }
                         return new Anchor(mutable.immutable(), direction);
                     }
                 }

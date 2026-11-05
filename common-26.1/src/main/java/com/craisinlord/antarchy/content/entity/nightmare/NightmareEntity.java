@@ -631,9 +631,6 @@ public class NightmareEntity extends Monster implements GeoEntity {
         }
         if (this.deathTime >= DEATH_TICKS) {
             this.remove(RemovalReason.KILLED);
-            if (this.level() instanceof ServerLevel serverLevel) {
-                this.dropExperience(serverLevel, this);
-            }
         }
     }
 

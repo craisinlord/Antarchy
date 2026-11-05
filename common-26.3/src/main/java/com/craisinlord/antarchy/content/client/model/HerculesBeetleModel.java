@@ -9,6 +9,9 @@ import net.minecraft.resources.Identifier;
 
 public class HerculesBeetleModel extends GeoModel<HerculesBeetleEntity> {
     public static final DataTicket<Boolean> SADDLED = DataTicket.create("antarchy_hercules_beetle_saddled", Boolean.class);
+    public static final DataTicket<Boolean> GLIMMER_ECHO = DataTicket.create("antarchy_hercules_beetle_glimmer_echo", Boolean.class);
+    public static final Identifier GLIMMER_TEXTURE = Identifier.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/glimmer/hercules_beetle_glimmer.png");
+    public static final Identifier GLIMMER_EMISSIVE_TEXTURE = Identifier.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/glimmer/hercules_beetle_glimmer_emissive.png");
 
     private static final Identifier TEXTURE =
             Identifier.fromNamespaceAndPath(Antarchy.MODID, "textures/entity/hercules_beetle/hercules_beetle.png");
@@ -21,6 +24,7 @@ public class HerculesBeetleModel extends GeoModel<HerculesBeetleEntity> {
     public void addAdditionalStateData(HerculesBeetleEntity animatable, Object relatedObject, GeoRenderState renderState) {
         super.addAdditionalStateData(animatable, relatedObject, renderState);
         renderState.addGeckolibData(SADDLED, animatable.hasSaddle());
+        renderState.addGeckolibData(GLIMMER_ECHO, animatable.isGlimmerEcho());
     }
 
     @Override
@@ -30,6 +34,9 @@ public class HerculesBeetleModel extends GeoModel<HerculesBeetleEntity> {
 
     @Override
     public Identifier getTextureResource(GeoRenderState renderState) {
+        if (renderState.getOrDefaultGeckolibData(GLIMMER_ECHO, false)) {
+            return GLIMMER_TEXTURE;
+        }
         return renderState.getOrDefaultGeckolibData(SADDLED, false) ? TEXTURE_SADDLED : TEXTURE;
     }
 

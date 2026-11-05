@@ -1,7 +1,7 @@
 {
   "has_precipitation": true,
   "temperature": 0.78,
-  "downfall": 1.0,
+  "downfall": 1,
   "effects": {
     "fog_color": 6245375,
     "water_color": 3461580,
@@ -14,7 +14,7 @@
       "sound": "minecraft:ambient.underwater.loop",
       "tick_delay": 6000,
       "block_search_extent": 8,
-      "offset": 2.0
+      "offset": 2
     },
     "music": {
       "sound": "antarchy:music.game.elythia",
@@ -36,6 +36,7 @@
     [],
     [],
     [
+      "antarchy:elythia_geology",
       "antarchy:elythia_ore_coal_upper",
       "antarchy:elythia_ore_coal_lower",
       "antarchy:elythia_ore_iron_upper",

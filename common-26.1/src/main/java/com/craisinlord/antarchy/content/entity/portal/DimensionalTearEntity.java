@@ -5,6 +5,8 @@ import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
 import com.craisinlord.antarchy.content.entity.ManticoreEntity;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
 import com.craisinlord.antarchy.content.entity.royal.QueenEntity;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,7 +53,7 @@ import com.geckolib.animation.object.PlayState;
 import com.geckolib.animation.RawAnimation;
 import com.geckolib.util.GeckoLibUtil;
 
-public class DimensionalTearEntity extends Entity implements GeoEntity {
+public class DimensionalTearEntity extends Entity implements GeoEntity, GlimmerEcho {
     public enum TearState {
         NORMAL,
         UNSTABLE,
@@ -62,6 +64,8 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
 
     private static final EntityDataAccessor<Integer> STATE =
             SynchedEntityData.defineId(DimensionalTearEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO =
+            SynchedEntityData.defineId(DimensionalTearEntity.class, EntityDataSerializers.BOOLEAN);
     private static final RawAnimation ACTIVE_IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation CALM_IDLE_ANIM = RawAnimation.begin().thenLoop("idle2");
     private static final RawAnimation OPENING_ANIM = RawAnimation.begin().thenPlay("opening").thenLoop("idle2");
@@ -144,6 +148,17 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(STATE, TearState.NORMAL.ordinal());
+        builder.define(GLIMMER_ECHO, false);
+    }
+
+    @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
     }
 
     @Override
@@ -261,7 +276,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         }
         LivingEntity target = queen.getTarget();
         for (int i = 0; i < this.queenManticoreCount; i++) {
-            if (ManticoreEntity.countSummonedBy(level, queen.getUUID()) >= com.craisinlord.antarchy.config.AntarchySettings.queenManticoreCap()) {
+            if (ManticoreEntity.countSummonedBy(level, queen.getUUID()) >= queen.manticoreCap()) {
                 break;
             }
             ManticoreEntity manticore = AntarchyObjects.MANTICORE.get().create(level, EntitySpawnReason.MOB_SUMMONED);
@@ -276,6 +291,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
             }
             manticore.finalizeSpawn(level, level.getCurrentDifficultyAt(BlockPos.containing(exit)), EntitySpawnReason.MOB_SUMMONED, null);
             manticore.markQueenSummoned(queen.getUUID());
+            GlimmerEchoes.markSummon(queen, manticore);
             if (target != null && target.isAlive()) {
                 manticore.setTarget(target);
             }
@@ -461,7 +477,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         }
         double spread = state == TearState.NORMAL ? 0.65D : 1.15D;
         this.level().addParticle(
-                state == TearState.LUCID ? ParticleTypes.END_ROD : ParticleTypes.PORTAL,
+                GlimmerEchoes.particle(this, state == TearState.LUCID ? ParticleTypes.END_ROD : ParticleTypes.PORTAL),
                 this.getX() + (this.random.nextDouble() - 0.5D) * spread,
                 this.getY() + 1.3D + (this.random.nextDouble() - 0.5D) * spread,
                 this.getZ() + (this.random.nextDouble() - 0.5D) * spread,
@@ -512,6 +528,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         output.putInt("NextEventTicks", this.nextEventTicks);
         output.putInt("PendingEvent", this.pendingEvent.ordinal());
         output.putBoolean("GauntletVisualOnly", this.gauntletVisualOnly);
+        output.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
         output.storeNullable("LinkedTearId", UUIDUtil.CODEC, this.linkedTearId);
         output.putDouble("LinkedX", this.linkedFallbackPos.x);
         output.putDouble("LinkedY", this.linkedFallbackPos.y);
@@ -533,6 +550,7 @@ public class DimensionalTearEntity extends Entity implements GeoEntity {
         TearState[] states = TearState.values();
         this.pendingEvent = event >= 0 && event < states.length ? states[event] : TearState.NORMAL;
         this.gauntletVisualOnly = input.getBooleanOr("GauntletVisualOnly", false);
+        this.setGlimmerEcho(input.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
         input.read("LinkedTearId", UUIDUtil.CODEC).ifPresent(id -> this.linkedTearId = id);
         this.linkedFallbackPos = new Vec3(input.getDoubleOr("LinkedX", 0.0D), input.getDoubleOr("LinkedY", 0.0D), input.getDoubleOr("LinkedZ", 0.0D));
         input.read("QueenOwner", UUIDUtil.CODEC).ifPresent(id -> {

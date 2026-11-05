@@ -21,6 +21,7 @@ public class Antarchy {
         ServerGoingToStartEvent.EVENT.addListener(Antarchy::serverAboutToStart);
     }
     private static void serverAboutToStart(final ServerGoingToStartEvent event) {
+        com.craisinlord.antarchy.content.migration.DimensionResetManager.onServerGoingToStart(event.server());
         VillagePoolAdditions.apply(event.server());
     }
 }

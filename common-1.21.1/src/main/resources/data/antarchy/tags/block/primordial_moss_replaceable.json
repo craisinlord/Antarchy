@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:moss_replaceable",
+    "antarchy:rockite",
+    "antarchy:loam",
+    "antarchy:primordial_loam",
+    "antarchy:primordial_moss_block"
+  ]
+}

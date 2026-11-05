@@ -274,11 +274,17 @@ public class FlyingSquirrelNavigation extends GroundPathNavigation {
     }
 
     private BlockPos adjustNavigationTarget(BlockPos desiredTarget) {
-        if (this.isNavigationStandPos(desiredTarget) || this.isNavigationTransitionPos(desiredTarget)) {
+        SquirrelBlockReader reader = new SquirrelBlockReader(this.level);
+        int x = desiredTarget.getX();
+        int y = desiredTarget.getY();
+        int z = desiredTarget.getZ();
+        if (FlyingSquirrelEntity.isOpenStandPos(reader, x, y, z)
+                || (FlyingSquirrelEntity.isStandableSurface(reader.getBlockState(x, y - 1, z))
+                && FlyingSquirrelEntity.hasNearbyCanopy(reader, x, y, z))) {
             return desiredTarget.immutable();
         }
 
-        BlockPos adjusted = this.findNearbyNavigationStandPos(desiredTarget, 4, 4);
+        BlockPos adjusted = this.findNearbyNavigationStandPos(reader, desiredTarget, 4, 4);
         return adjusted != null ? adjusted : desiredTarget.immutable();
     }
 
@@ -292,28 +298,35 @@ public class FlyingSquirrelNavigation extends GroundPathNavigation {
     }
 
     @Nullable
-    private BlockPos findNearbyNavigationStandPos(BlockPos targetPos, int horizontalRadius, int verticalRadius) {
+    private BlockPos findNearbyNavigationStandPos(SquirrelBlockReader reader, BlockPos targetPos, int horizontalRadius, int verticalRadius) {
         BlockPos bestPos = null;
         double bestScore = Double.NEGATIVE_INFINITY;
+        Vec3 targetCenter = Vec3.atBottomCenterOf(targetPos);
 
         for (BlockPos candidate : BlockPos.betweenClosed(
                 targetPos.offset(-horizontalRadius, -verticalRadius, -horizontalRadius),
                 targetPos.offset(horizontalRadius, verticalRadius, horizontalRadius))) {
 
-            if (!this.isNavigationStandPos(candidate)) {
+            double distanceScore = -Vec3.atBottomCenterOf(candidate).distanceToSqr(targetCenter);
+            int rise = candidate.getY() - targetPos.getY();
+            if (!(scoreNavigationStandPos(distanceScore, true, true, rise) > bestScore)) {
                 continue;
             }
 
-            double score = -Vec3.atBottomCenterOf(candidate).distanceToSqr(Vec3.atBottomCenterOf(targetPos));
-            if (FlyingSquirrelEntity.isAdjacentToLog(this.level, candidate)) {
-                score += 6.0D;
+            int x = candidate.getX();
+            int y = candidate.getY();
+            int z = candidate.getZ();
+            if (!FlyingSquirrelEntity.isOpenStandPos(reader, x, y, z)) {
+                continue;
             }
-            if (FlyingSquirrelEntity.hasNearbyCanopy(this.level, candidate)) {
-                score += 4.0D;
+
+            boolean nearLog = FlyingSquirrelEntity.isAdjacentToLog(reader, x, y, z);
+            if (!(scoreNavigationStandPos(distanceScore, nearLog, true, rise) > bestScore)) {
+                continue;
             }
-            if (candidate.getY() > targetPos.getY()) {
-                score += (candidate.getY() - targetPos.getY()) * 0.35D;
-            }
+
+            boolean nearCanopy = FlyingSquirrelEntity.hasNearbyCanopy(reader, x, y, z);
+            double score = scoreNavigationStandPos(distanceScore, nearLog, nearCanopy, rise);
 
             if (score > bestScore) {
                 bestScore = score;
@@ -322,6 +335,20 @@ public class FlyingSquirrelNavigation extends GroundPathNavigation {
         }
 
         return bestPos;
+    }
+
+    private static double scoreNavigationStandPos(double distanceScore, boolean nearLog, boolean nearCanopy, int rise) {
+        double score = distanceScore;
+        if (nearLog) {
+            score += 6.0D;
+        }
+        if (nearCanopy) {
+            score += 4.0D;
+        }
+        if (rise > 0) {
+            score += rise * 0.35D;
+        }
+        return score;
     }
 
     private boolean shouldGlideBetween(Vec3 fromPos, BlockPos standPos) {
@@ -344,37 +371,48 @@ public class FlyingSquirrelNavigation extends GroundPathNavigation {
         BlockPos origin = this.squirrel.blockPosition();
         GlideLaunchPlan bestPlan = null;
         double bestScore = Double.NEGATIVE_INFINITY;
+        Vec3 squirrelPos = this.squirrel.position();
+        SquirrelBlockReader reader = null;
 
         for (BlockPos candidate : BlockPos.betweenClosed(
                 origin.offset(-LAUNCH_EDGE_SEARCH_RADIUS, -2, -LAUNCH_EDGE_SEARCH_RADIUS),
                 origin.offset(LAUNCH_EDGE_SEARCH_RADIUS, 2, LAUNCH_EDGE_SEARCH_RADIUS))) {
 
-            if (!FlyingSquirrelEntity.isOpenStandPos(this.level, candidate)) {
-                continue;
-            }
-
-            if (!this.hasLaunchEdgeToward(candidate, targetStandPos)) {
-                continue;
-            }
-            if (!this.squirrel.isAtStandPos(candidate)
-                    && Vec3.atBottomCenterOf(candidate).distanceToSqr(this.squirrel.position()) > 36.0D) {
-                continue;
-            }
-
-            if (this.squirrel.isRecentGlidePath(Vec3.atBottomCenterOf(candidate), targetStandPos)) {
-                continue;
-            }
-
             Vec3 launchPos = Vec3.atBottomCenterOf(candidate);
+            double launchDistanceSqr = launchPos.distanceToSqr(squirrelPos);
+            boolean atStandPos = launchDistanceSqr <= 1.45D;
+            if (!atStandPos && launchDistanceSqr > 36.0D) {
+                continue;
+            }
+
             double glideScore = this.squirrel.scoreGlideTargetFrom(launchPos, targetStandPos);
             if (glideScore == Double.NEGATIVE_INFINITY) {
                 continue;
             }
 
-            double walkDistance = launchPos.distanceTo(this.squirrel.position());
+            double walkDistance = launchPos.distanceTo(squirrelPos);
             double score = glideScore - walkDistance * 1.75D;
-            if (this.squirrel.isAtStandPos(candidate)) {
+            if (atStandPos) {
                 score += 3.0D;
+            }
+
+            if (!(score > bestScore)) {
+                continue;
+            }
+
+            if (this.squirrel.isRecentGlidePath(launchPos, targetStandPos)) {
+                continue;
+            }
+
+            if (reader == null) {
+                reader = new SquirrelBlockReader(this.level);
+            }
+            if (!FlyingSquirrelEntity.isOpenStandPos(reader, candidate.getX(), candidate.getY(), candidate.getZ())) {
+                continue;
+            }
+
+            if (!this.hasLaunchEdgeToward(reader, candidate, targetStandPos)) {
+                continue;
             }
 
             if (score > bestScore) {
@@ -391,6 +429,15 @@ public class FlyingSquirrelNavigation extends GroundPathNavigation {
         BlockPos edgePos = launchStandPos.relative(launchDirection);
         return FlyingSquirrelEntity.isOpenAir(this.level, edgePos)
                 && !FlyingSquirrelEntity.isStandableSurface(this.level.getBlockState(edgePos.below()));
+    }
+
+    private boolean hasLaunchEdgeToward(SquirrelBlockReader reader, BlockPos launchStandPos, BlockPos targetStandPos) {
+        Direction launchDirection = this.getLaunchDirectionToward(launchStandPos, targetStandPos);
+        int x = launchStandPos.getX() + launchDirection.getStepX();
+        int y = launchStandPos.getY();
+        int z = launchStandPos.getZ() + launchDirection.getStepZ();
+        return FlyingSquirrelEntity.isOpenAir(reader, x, y, z)
+                && !FlyingSquirrelEntity.isStandableSurface(reader.getBlockState(x, y - 1, z));
     }
 
     private Direction getLaunchDirectionToward(BlockPos launchStandPos, BlockPos targetStandPos) {

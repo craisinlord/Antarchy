@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "antarchy:polished_myrmite"
-    }
+    "#": "antarchy:polished_myrmite"
   },
   "pattern": [
     "#  ",
@@ -16,4 +14,3 @@
     "id": "antarchy:polished_myrmite_stairs"
   }
 }
-

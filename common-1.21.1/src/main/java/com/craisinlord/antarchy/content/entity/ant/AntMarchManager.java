@@ -15,9 +15,12 @@ import java.util.WeakHashMap;
 final class AntMarchManager {
     private static final Object INSTANCES_LOCK = new Object();
     private static final WeakHashMap<ServerLevel, AntMarchManager> INSTANCES = new WeakHashMap<>();
+    private static final long CLEANUP_INTERVAL_TICKS = 200L;
 
     
     private final Map<UUID, TreeMap<Integer, BaseAntEntity>> marches = new HashMap<>();
+
+    private long lastCleanupGameTime = -CLEANUP_INTERVAL_TICKS;
 
     private AntMarchManager() {}
 
@@ -79,7 +82,11 @@ final class AntMarchManager {
     }
 
     
-    synchronized void cleanup() {
+    synchronized void cleanup(long gameTime) {
+        if (gameTime - this.lastCleanupGameTime < CLEANUP_INTERVAL_TICKS) {
+            return;
+        }
+        this.lastCleanupGameTime = gameTime;
         Iterator<Map.Entry<UUID, TreeMap<Integer, BaseAntEntity>>> marchIter = marches.entrySet().iterator();
         while (marchIter.hasNext()) {
             Map.Entry<UUID, TreeMap<Integer, BaseAntEntity>> entry = marchIter.next();

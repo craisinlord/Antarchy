@@ -146,8 +146,8 @@ public class BasiliskEntity extends Monster implements GeoEntity {
         return level.getDifficulty() != Difficulty.PEACEFUL
                 && (pos.getY() >= 100 && pos.getY() <= 140 || level.getBiome(pos).is(FUNGAL_RESERVE))
                 && level.getMaxLocalRawBrightness(pos) <= AntarchySettings.basiliskSpawnMaxLightLevel()
-                && level.getEntitiesOfClass(BasiliskEntity.class, new AABB(pos).inflate(36.0D), Entity::isAlive).isEmpty()
-                && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random);
+                && Monster.checkMonsterSpawnRules(entityType, level, spawnReason, pos, random)
+                && level.getEntitiesOfClass(BasiliskEntity.class, new AABB(pos).inflate(36.0D), Entity::isAlive).isEmpty();
     }
 
     @Override
@@ -160,7 +160,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new PersistentNearestAttackableTargetGoal<>(Player.class, 5,
                 entity -> entity instanceof Player player && this.canTargetPlayer(player)));
-        this.targetSelector.addGoal(3, new PersistentNearestAttackableTargetGoal<>(LivingEntity.class, 5,
+        this.targetSelector.addGoal(3, new PersistentNearestAttackableTargetGoal<>(LivingEntity.class, 20,
                 entity -> entity != this && entity.getType().is(AntarchyTags.Entities.BASILISK_PREY)));
     }
 
@@ -397,11 +397,8 @@ public class BasiliskEntity extends Monster implements GeoEntity {
         if (player.distanceToSqr(this) > AntarchySettings.basiliskGazeRange() * AntarchySettings.basiliskGazeRange()) {
             return false;
         }
-        if (!this.hasLineOfSight(player)) {
-            return false;
-        }
 
-        return this.isPlayerGazingAtMe(player) && this.isFacingPlayerForGaze(player);
+        return this.isPlayerGazingAtMe(player) && this.isFacingPlayerForGaze(player) && this.hasLineOfSight(player);
     }
 
     private boolean isPlayerGazingAtMe(Player player) {
@@ -720,6 +717,8 @@ public class BasiliskEntity extends Monster implements GeoEntity {
     }
 
     private final class BasiliskMeleeAttackGoal extends MeleeAttackGoal {
+        private boolean wasInMeleeRange;
+
         private BasiliskMeleeAttackGoal() {
             super(BasiliskEntity.this, 1.2D, true);
         }
@@ -736,12 +735,19 @@ public class BasiliskEntity extends Monster implements GeoEntity {
                 BasiliskEntity.this.getLookControl().setLookAt(target, 30.0F, 30.0F);
             }
 
-            super.tick();
-
             if (target != null && BasiliskEntity.this.isWithinMeleeAttackRange(target)) {
+                this.wasInMeleeRange = true;
                 this.stopMovement();
                 this.checkAndPerformAttack(target);
+                return;
             }
+
+            if (this.wasInMeleeRange && target != null) {
+                this.wasInMeleeRange = false;
+                BasiliskEntity.this.getNavigation().moveTo(target, 1.2D);
+            }
+
+            super.tick();
         }
 
         private void stopMovement() {
@@ -761,6 +767,7 @@ public class BasiliskEntity extends Monster implements GeoEntity {
 
         @Override
         public void start() {
+            this.wasInMeleeRange = false;
             LivingEntity target = BasiliskEntity.this.getTarget();
             if (target != null && !BasiliskEntity.this.isBusyWithAction()) {
                 BasiliskEntity.this.getNavigation().moveTo(target, 1.2D);

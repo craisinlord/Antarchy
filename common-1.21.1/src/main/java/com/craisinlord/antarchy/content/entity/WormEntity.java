@@ -58,6 +58,8 @@ public class WormEntity extends Monster implements GeoEntity {
         MEDIUM(1, EntityDimensions.scalable(0.9F, 1.5F), 20.0D, 0.25D, 4.0D, 24.0D, 0.2D, 5),
         LARGE(2, EntityDimensions.scalable(1.35F, 2.75F), 36.0D, 0.22D, 7.0D, 28.0D, 0.45D, 8);
 
+        private static final GrowthStage[] STAGES = values();
+
         private final int id;
         private final EntityDimensions dimensions;
         private final double health;
@@ -80,7 +82,7 @@ public class WormEntity extends Monster implements GeoEntity {
         }
 
         public static GrowthStage byId(int id) {
-            for (GrowthStage stage : values()) {
+            for (GrowthStage stage : STAGES) {
                 if (stage.id == id) return stage;
             }
             return LARGE;
@@ -95,6 +97,7 @@ public class WormEntity extends Monster implements GeoEntity {
     );
     private static final ResourceLocation LOAM_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "loam");
     private static final ResourceLocation MUCUS_ID = ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "mucus");
+    private static Block cachedMucusBlock;
     private static final int MUCUS_TRAIL_INTERVAL = 6;
     private static final double MUCUS_TRAIL_MIN_DISTANCE_SQR = 0.36D;
     private static final EntityDataAccessor<Integer> ANIMATION_STATE = SynchedEntityData.defineId(WormEntity.class, EntityDataSerializers.INT);
@@ -324,8 +327,10 @@ public class WormEntity extends Monster implements GeoEntity {
     }
 
     private boolean placeFloorMucus(BlockPos pos) {
-        Optional<Block> mucus = BuiltInRegistries.BLOCK.getOptional(MUCUS_ID);
-        if (mucus.isEmpty() || !(mucus.get() instanceof MultifaceBlock mucusBlock)) {
+        if (cachedMucusBlock == null) {
+            cachedMucusBlock = BuiltInRegistries.BLOCK.getOptional(MUCUS_ID).orElse(null);
+        }
+        if (!(cachedMucusBlock instanceof MultifaceBlock mucusBlock)) {
             return false;
         }
 

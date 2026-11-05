@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.glimmerecho;
 
 import com.craisinlord.antarchy.Antarchy;
 import com.craisinlord.antarchy.content.AntarchyObjects;
+import java.util.List;
 import java.util.function.Supplier;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -25,21 +26,21 @@ public record GlimmerSigilTarget(
     public static final GlimmerSigilTarget TORETERROR = new GlimmerSigilTarget(
             "toreterror",
             () -> AntarchyObjects.TORETERROR.get(),
-            structureSite("toreterror"),
+            biomeSite("toreterror"),
             id("kill_toreterror"),
             SpawnMode.GROUND);
 
     public static final GlimmerSigilTarget ALPHA_MANTIS = new GlimmerSigilTarget(
             "alpha_mantis",
             () -> registeredMob("alpha_mantis"),
-            structureSite("alpha_mantis"),
+            biomeSite("alpha_mantis"),
             id("bugged_out"),
             SpawnMode.GROUND);
 
     public static final GlimmerSigilTarget EMPEROR_SCORPION = new GlimmerSigilTarget(
             "emperor_scorpion",
             () -> registeredMob("emperor_scorpion"),
-            biomeSite("emperor_scorpion"),
+            GlimmerSite.thoraxisSurface(),
             id("sting_operation"),
             SpawnMode.GROUND);
 
@@ -67,16 +68,28 @@ public record GlimmerSigilTarget(
     public static final GlimmerSigilTarget KING = new GlimmerSigilTarget(
             "king",
             () -> AntarchyObjects.KING.get(),
-            GlimmerSite.anyOf(structureSite("king"), GlimmerSite.kingsTree()),
+            GlimmerSite.anyOf(GlimmerSite.kingsTree(), biomeSite("king")),
             id("down_with_the_king"),
             SpawnMode.AIR);
 
     public static final GlimmerSigilTarget QUEEN = new GlimmerSigilTarget(
             "queen",
             () -> AntarchyObjects.QUEEN.get(),
-            GlimmerSite.anyOf(structureSite("queen"), GlimmerSite.underside()),
+            GlimmerSite.anyOf(structureSite("queen"), GlimmerSite.underside(), GlimmerSite.thoraxisSurface()),
             id("down_with_the_queen"),
             SpawnMode.AIR);
+
+    private static final List<GlimmerSigilTarget> ALL = List.of(
+            TORETERROR, ALPHA_MANTIS, EMPEROR_SCORPION, BRUTALFLY, HERCULES_BEETLE, KRAKEN, KING, QUEEN);
+
+    public static boolean isSigilBoss(EntityType<?> type) {
+        for (GlimmerSigilTarget target : ALL) {
+            if (target.entityType().get() == type) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @SuppressWarnings("unchecked")
     private static EntityType<? extends Mob> registeredMob(String path) {

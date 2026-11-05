@@ -33,11 +33,6 @@ public record ElythiaHydrology(
 
     public static final KeyDispatchDataCodec<ElythiaHydrology> KEY_CODEC = KeyDispatchDataCodec.of(CODEC);
 
-    /**
-     * Finds the hydrology in a noise router's vein_toggle slot. Router fields decode through HOLDER_HELPER_CODEC, so the
-     * slot holds a {@code HolderHolder} (and possibly cache markers) around the hydrology until {@code NoiseChunk.wrap}
-     * unwraps it, and with C2ME's density function compiler that unwrap never happens.
-     */
     @Nullable
     public static ElythiaHydrology find(@Nullable DensityFunction function) {
         for (int depth = 0; function != null && depth < 8; depth++) {

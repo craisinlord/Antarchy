@@ -5,6 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -13,8 +14,10 @@ public class FlyingSquirrelNavigation extends GroundPathNavigation {
     private static final double MIN_GLIDE_DISTANCE = 10.0D;
     private static final double MAX_GLIDE_DISTANCE = 64.0D;
     private static final double MIN_GLIDE_HEIGHT = 3.0D;
+    private static final double MAX_LAUNCH_DROP = 32.0D;
     private static final int LAUNCH_EDGE_SEARCH_RADIUS = 7;
     private static final int REPATH_INTERVAL = 10;
+    private static final double NO_PROGRESS_PATH_DISTANCE_SQR = 2.25D;
 
     private final FlyingSquirrelEntity squirrel;
     @Nullable
@@ -33,6 +36,7 @@ public class FlyingSquirrelNavigation extends GroundPathNavigation {
     private boolean glideStarted;
     private int repathDelay;
     private int repathFailStreak;
+    private long lastRequestOrigin;
 
     public FlyingSquirrelNavigation(FlyingSquirrelEntity squirrel, Level level) {
         super(squirrel, level);
@@ -41,6 +45,18 @@ public class FlyingSquirrelNavigation extends GroundPathNavigation {
     }
 
     boolean requestTravelTo(BlockPos target, double speed, String purpose) {
+        long origin = this.squirrel.blockPosition().asLong();
+        if (this.repathDelay > 0
+                && !this.glidingToLaunch
+                && !this.glideStarted
+                && this.requestedTarget != null
+                && this.requestedTarget.equals(target)
+                && this.requestedSpeed == speed
+                && this.lastRequestOrigin == origin) {
+            this.requestedPurpose = purpose;
+            return true;
+        }
+        this.lastRequestOrigin = origin;
         this.requestedTarget = target.immutable();
         this.requestedPurpose = purpose;
         this.requestedSpeed = speed;
@@ -234,7 +250,7 @@ public class FlyingSquirrelNavigation extends GroundPathNavigation {
         Path path = super.createPath(target, 0);
         if (path != null) {
             boolean started = super.moveTo(path, speed);
-            if (started) {
+            if (started && !this.isNoProgressPath(path)) {
                 this.repathFailStreak = 0;
                 this.repathDelay = REPATH_INTERVAL;
                 return true;
@@ -244,6 +260,20 @@ public class FlyingSquirrelNavigation extends GroundPathNavigation {
         this.repathDelay = REPATH_INTERVAL * Math.min(this.repathFailStreak, 4);
         this.speedModifier = speed;
         return true;
+    }
+
+    private boolean isNoProgressPath(Path path) {
+        if (path.canReach()) {
+            return false;
+        }
+        Node endNode = path.getEndNode();
+        if (endNode == null) {
+            return true;
+        }
+        double dx = endNode.x + 0.5D - this.mob.getX();
+        double dy = endNode.y - this.mob.getY();
+        double dz = endNode.z + 0.5D - this.mob.getZ();
+        return dx * dx + dy * dy + dz * dz <= NO_PROGRESS_PATH_DISTANCE_SQR;
     }
 
     private void tickPathToPositionFallback() {
@@ -369,6 +399,10 @@ public class FlyingSquirrelNavigation extends GroundPathNavigation {
     @Nullable
     private GlideLaunchPlan findLaunchPlan(BlockPos targetStandPos) {
         BlockPos origin = this.squirrel.blockPosition();
+        if (origin.getY() + 2 - targetStandPos.getY() <= MIN_GLIDE_DISTANCE
+                || origin.getY() - 2 - targetStandPos.getY() > MAX_LAUNCH_DROP) {
+            return null;
+        }
         GlideLaunchPlan bestPlan = null;
         double bestScore = Double.NEGATIVE_INFINITY;
         Vec3 squirrelPos = this.squirrel.position();

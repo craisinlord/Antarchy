@@ -30,6 +30,10 @@ public abstract class ElythiaEchoRenderMixin {
     private void antarchy$renderEchoes(DeltaTracker deltaTracker, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer,
                                        LightTexture lightTexture, Matrix4f frustumMatrix, Matrix4f projectionMatrix, CallbackInfo ci) {
         float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
+        net.minecraft.client.renderer.culling.Frustum grassFrustum = new net.minecraft.client.renderer.culling.Frustum(frustumMatrix, projectionMatrix);
+        net.minecraft.world.phys.Vec3 grassCamera = camera.getPosition();
+        grassFrustum.prepare(grassCamera.x, grassCamera.y, grassCamera.z);
+        com.craisinlord.antarchy.content.client.renderer.PrimordialGrassRenderer.render(this.renderBuffers.bufferSource(), camera, grassFrustum, partialTick);
         ElythiaEchoes.render(new PoseStack(), this.renderBuffers.bufferSource(), camera, partialTick);
         AntTransitGroundRenderer.render(new PoseStack(), this.renderBuffers.bufferSource(), camera, partialTick);
     }

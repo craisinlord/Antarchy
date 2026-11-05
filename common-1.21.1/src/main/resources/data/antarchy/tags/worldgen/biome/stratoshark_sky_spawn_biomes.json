@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "antarchy:primordial_plains",
+    "antarchy:elythia_meadow",
     "antarchy:primordial_massif",
     "antarchy:shelfback_highlands",
     "antarchy:glimmering_falls",
@@ -14,6 +15,11 @@
     "antarchy:fungal_reserve",
     "antarchy:glimmering_pools",
     "antarchy:peach_forest",
-    "antarchy:elythia_beach"
+    "antarchy:elythia_beach",
+    "antarchy:conglomerate_shore",
+    "antarchy:arkrose_strand",
+    "antarchy:cranberry_fields",
+    "antarchy:zebra_scarps",
+    "antarchy:rockite_barrens"
   ]
 }

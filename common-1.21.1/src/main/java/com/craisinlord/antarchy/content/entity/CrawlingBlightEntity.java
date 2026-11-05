@@ -196,7 +196,6 @@ public class CrawlingBlightEntity extends Monster implements GeoEntity {
 
     @Override
     public void tick() {
-        CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
         super.tick();
         CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
         if (attackAnimTicks > 0) {

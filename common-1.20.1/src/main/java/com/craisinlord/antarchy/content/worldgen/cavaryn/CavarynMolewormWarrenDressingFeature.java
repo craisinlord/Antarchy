@@ -56,6 +56,9 @@ public final class CavarynMolewormWarrenDressingFeature extends Feature<NoneFeat
         RandomSource random = context.random();
         int originX = context.origin().getX() & ~15;
         int originZ = context.origin().getZ() & ~15;
+        if (!grid.hasCandidates(originX, originZ)) {
+            return false;
+        }
         int minBuild = level.getMinBuildHeight() + 6;
         int maxBuild = level.getMaxBuildHeight() - 8;
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();

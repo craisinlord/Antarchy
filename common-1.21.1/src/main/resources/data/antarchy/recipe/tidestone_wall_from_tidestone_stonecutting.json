@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:tidestone"
+  },
+  "result": {
+    "id": "antarchy:tidestone_wall",
+    "count": 1
+  }
+}

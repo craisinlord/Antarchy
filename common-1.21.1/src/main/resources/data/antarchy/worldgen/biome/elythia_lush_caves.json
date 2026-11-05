@@ -1,7 +1,7 @@
 {
   "has_precipitation": true,
   "temperature": 0.72,
-  "downfall": 1.0,
+  "downfall": 1,
   "effects": {
     "fog_color": 10849791,
     "water_color": 5021432,
@@ -20,7 +20,7 @@
       "sound": "minecraft:ambient.cave",
       "tick_delay": 60000,
       "block_search_extent": 8,
-      "offset": 2.0
+      "offset": 2
     },
     "music": {
       "sound": "antarchy:music.game.elythia",
@@ -41,7 +41,9 @@
     [],
     [],
     [],
-    [],
+    [
+      "antarchy:elythia_geology"
+    ],
     [
       "antarchy:elythia_large_dripstone",
       "antarchy:elythia_pointed_dripstone",

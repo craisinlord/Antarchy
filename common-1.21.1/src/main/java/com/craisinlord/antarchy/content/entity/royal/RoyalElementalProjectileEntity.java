@@ -20,6 +20,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -210,7 +211,7 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
                     ? royalBoss.scaleRoyalDamage(damage) : (float) damage);
             living.setRemainingFireTicks(Math.max(living.getRemainingFireTicks(), 120));
         }
-        if (!this.isGlimmerEcho()) {
+        if (!this.isGlimmerEcho() && level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
             igniteImpact(level, center, this.isDreamFireball());
         }
         level.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.EXPLOSION_EMITTER), center.x, center.y, center.z, 4, 1.5D, 1.5D, 1.5D, 0.0D);
@@ -252,7 +253,7 @@ public class RoyalElementalProjectileEntity extends ThrowableProjectile implemen
             living.setTicksFrozen(Math.min(living.getTicksRequiredToFreeze() + 80, living.getTicksFrozen() + 180));
             living.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 120, 3));
         }
-        if (!this.isGlimmerEcho()) {
+        if (!this.isGlimmerEcho() && level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
             coverInIce(level, center, AntarchySettings.kingIceballRadius(), AntarchySettings.kingElementalTerrainCap());
         }
         level.sendParticles(GlimmerEchoes.particle(this, ParticleTypes.SNOWFLAKE), center.x, center.y, center.z, 80, 4.0D, 2.0D, 4.0D, 0.08D);

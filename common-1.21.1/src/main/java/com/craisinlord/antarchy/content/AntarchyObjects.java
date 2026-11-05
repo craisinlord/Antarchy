@@ -81,6 +81,9 @@ public final class AntarchyObjects {
     @SuppressWarnings("unchecked")
     public static Supplier<EntityType<DimensionalTearEntity>> DIMENSIONAL_TEAR = (Supplier<EntityType<DimensionalTearEntity>>) UNBOUND;
     @SuppressWarnings("unchecked")
+    public static Supplier<Block> REMEMBRANCE_TORCH = (Supplier<Block>) UNBOUND;
+    public static Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.RemembranceTorchBlockEntity>> REMEMBRANCE_TORCH_BLOCK_ENTITY =
+            (Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.RemembranceTorchBlockEntity>>) UNBOUND;
     public static Supplier<Block> DIMENSIONAL_TEAR_MARKER = (Supplier<Block>) UNBOUND;
     @SuppressWarnings("unchecked")
     public static Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.DimensionalTearMarkerBlockEntity>> DIMENSIONAL_TEAR_MARKER_BLOCK_ENTITY =
@@ -675,6 +678,16 @@ public final class AntarchyObjects {
 
     public static void setDimensionalTear(Supplier<EntityType<DimensionalTearEntity>> supplier) {
         DIMENSIONAL_TEAR = supplier;
+    }
+
+    public static void setRemembranceTorch(Supplier<Block> supplier) {
+        REMEMBRANCE_TORCH = supplier;
+    }
+
+    public static void setRemembranceTorchBlockEntity(
+            Supplier<BlockEntityType<com.craisinlord.antarchy.content.block.entity.RemembranceTorchBlockEntity>> supplier
+    ) {
+        REMEMBRANCE_TORCH_BLOCK_ENTITY = supplier;
     }
 
     public static void setDimensionalTearMarker(Supplier<Block> supplier) {

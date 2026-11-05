@@ -104,9 +104,6 @@ public class DeferredRegister<T> {
     }
 
     @SuppressWarnings("deprecation")
-    public static BlockBehaviour.Properties legacyCopyBlockProperties(BlockBehaviour block) {
-        return withBlockId(BlockBehaviour.Properties.ofLegacyCopy(block));
-    }
 
     public static BlockBehaviour.Properties withBlockId(BlockBehaviour.Properties properties) {
         ResourceKey<Block> key = currentKey(Registries.BLOCK);

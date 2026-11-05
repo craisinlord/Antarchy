@@ -78,6 +78,8 @@ public class MissileSquidEntity extends Monster implements GeoEntity, GlimmerEch
     private static final String ARMED_AFTER_LANDING_KEY = "ArmedAfterLanding";
     private static final String ACTION_ANIM_TICKS_KEY = "ActionAnimTicks";
     private static final String SPAWNED_BY_KRAKEN_KEY = "SpawnedByKraken";
+    private static final String KRAKEN_OWNER_KEY = "KrakenOwner";
+    private static final int KRAKEN_OWNER_GRACE_TICKS = 200;
     private static final double AGGRO_SPEED = 0.5D;
     private static final double PATROL_SPEED = 0.28D;
     private static final double ATTACH_RANGE_SQR = 2.25D;
@@ -92,9 +94,12 @@ public class MissileSquidEntity extends Monster implements GeoEntity, GlimmerEch
     private static final RawAnimation SWIM_ANIM = RawAnimation.begin().thenLoop("swim");
     private static final RawAnimation ATTACK_ANIM = RawAnimation.begin().thenPlay("attack");
 
+    private static final int PATROL_SEARCH_RETRY_TICKS = 10;
+
     @Nullable
     private Vec3 patrolTarget;
     private int patrolRetargetTicks;
+    private boolean patrolSearchFailed;
     private int strafeRetargetTicks;
     private int biteCooldown;
     private int actionAnimationTicks;
@@ -107,6 +112,9 @@ public class MissileSquidEntity extends Monster implements GeoEntity, GlimmerEch
     private UUID launchOwnerUuid;
     @Nullable
     private UUID glimmerEchoOwner;
+    @Nullable
+    private UUID krakenOwner;
+    private int krakenOwnerMissingTicks;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     public MissileSquidEntity(EntityType<? extends Monster> entityType, Level level) {
@@ -161,6 +169,34 @@ public class MissileSquidEntity extends Monster implements GeoEntity, GlimmerEch
     @Override
     public void setGlimmerEchoOwner(@Nullable UUID owner) {
         this.glimmerEchoOwner = owner;
+    }
+
+    public void setKrakenOwner(@Nullable UUID owner) {
+        this.krakenOwner = owner;
+    }
+
+    public boolean isOwnedByKraken(UUID owner) {
+        return owner.equals(this.krakenOwner);
+    }
+
+    private boolean tickKrakenOwner() {
+        if (this.krakenOwner == null || this.tickCount % 20 != 0 || !(this.level() instanceof ServerLevel serverLevel)) {
+            return false;
+        }
+        Entity owner = serverLevel.getEntity(this.krakenOwner);
+        if (owner != null && owner.isAlive()) {
+            this.krakenOwnerMissingTicks = 0;
+            return false;
+        }
+        if (owner == null) {
+            this.krakenOwnerMissingTicks += 20;
+            if (this.krakenOwnerMissingTicks < KRAKEN_OWNER_GRACE_TICKS) {
+                return false;
+            }
+        }
+        serverLevel.sendParticles(ParticleTypes.SQUID_INK, this.getX(), this.getY() + this.getBbHeight() * 0.5D, this.getZ(), 10, 0.3D, 0.3D, 0.3D, 0.02D);
+        this.discard();
+        return true;
     }
 
     private int glimmerCooldown(int ticks) {
@@ -237,6 +273,12 @@ public class MissileSquidEntity extends Monster implements GeoEntity, GlimmerEch
             if (GlimmerEchoes.tickOwnedSummon(this, this.glimmerEchoOwner)) {
                 return;
             }
+        }
+        if (!this.level().isClientSide && this.tickKrakenOwner()) {
+            return;
+        }
+        if (this.isDeadOrDying()) {
+            return;
         }
         LivingEntity attachedTarget = this.getAttachedTarget();
         this.setNoGravity(attachedTarget != null || (!this.launchedFromSquidzooka && (this.isInWater() || this.canFly())));
@@ -373,6 +415,9 @@ public class MissileSquidEntity extends Monster implements GeoEntity, GlimmerEch
         if (this.glimmerEchoOwner != null) {
             tag.putUUID(GLIMMER_ECHO_OWNER_KEY, this.glimmerEchoOwner);
         }
+        if (this.krakenOwner != null) {
+            tag.putUUID(KRAKEN_OWNER_KEY, this.krakenOwner);
+        }
     }
 
     @Override
@@ -387,6 +432,7 @@ public class MissileSquidEntity extends Monster implements GeoEntity, GlimmerEch
         this.launchOwnerUuid = tag.hasUUID(LAUNCH_OWNER_KEY) ? tag.getUUID(LAUNCH_OWNER_KEY) : null;
         this.setGlimmerEcho(tag.getBoolean(GlimmerEchoes.SAVE_KEY));
         this.glimmerEchoOwner = tag.hasUUID(GLIMMER_ECHO_OWNER_KEY) ? tag.getUUID(GLIMMER_ECHO_OWNER_KEY) : null;
+        this.krakenOwner = tag.hasUUID(KRAKEN_OWNER_KEY) ? tag.getUUID(KRAKEN_OWNER_KEY) : null;
         this.updateAnimationState();
     }
 
@@ -425,9 +471,9 @@ public class MissileSquidEntity extends Monster implements GeoEntity, GlimmerEch
     private void tickPatrolMovement() {
         this.strafeRetargetTicks = 0;
 
-        if (this.patrolRetargetTicks-- <= 0 || this.patrolTarget == null || this.position().distanceToSqr(this.patrolTarget) < 3.0D) {
-            this.patrolRetargetTicks = 24 + this.random.nextInt(18);
+        if (this.patrolRetargetTicks-- <= 0 || this.patrolTarget == null || (!this.patrolSearchFailed && this.position().distanceToSqr(this.patrolTarget) < 3.0D)) {
             this.patrolTarget = this.findPatrolTarget();
+            this.patrolRetargetTicks = this.patrolSearchFailed ? PATROL_SEARCH_RETRY_TICKS : 24 + this.random.nextInt(18);
         }
 
         if (this.patrolTarget != null) {
@@ -443,9 +489,9 @@ public class MissileSquidEntity extends Monster implements GeoEntity, GlimmerEch
         BlockPos origin = this.blockPosition();
         for (int attempt = 0; attempt < 16; attempt++) {
             BlockPos candidate = origin.offset(this.random.nextInt(17) - 8, this.random.nextInt(7) - 3, this.random.nextInt(17) - 8);
-            boolean candidateOpen = this.level().isEmptyBlock(candidate) || this.level().getFluidState(candidate).is(FluidTags.WATER);
-            boolean aboveOpen = this.level().isEmptyBlock(candidate.above()) || this.level().getFluidState(candidate.above()).is(FluidTags.WATER);
             if (this.canFly()) {
+                boolean candidateOpen = this.level().isEmptyBlock(candidate) || this.level().getFluidState(candidate).is(FluidTags.WATER);
+                boolean aboveOpen = this.level().isEmptyBlock(candidate.above()) || this.level().getFluidState(candidate.above()).is(FluidTags.WATER);
                 if (!candidateOpen || !aboveOpen) {
                     continue;
                 }
@@ -453,9 +499,11 @@ public class MissileSquidEntity extends Monster implements GeoEntity, GlimmerEch
                 continue;
             }
 
+            this.patrolSearchFailed = false;
             return Vec3.atCenterOf(candidate);
         }
 
+        this.patrolSearchFailed = true;
         return this.position();
     }
 

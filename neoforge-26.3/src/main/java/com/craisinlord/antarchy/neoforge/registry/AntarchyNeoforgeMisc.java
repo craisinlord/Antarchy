@@ -67,7 +67,6 @@ import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.effect.MobEffect;
@@ -84,10 +83,8 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
-import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
@@ -131,7 +128,6 @@ public final class AntarchyNeoforgeMisc {
                     new Int2ObjectOpenHashMap<>()));
     private static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, Antarchy.MODID);
     private static final DeferredRegister<Potion> POTIONS = DeferredRegister.create(Registries.POTION, Antarchy.MODID);
-    private static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, Antarchy.MODID);
     private static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(Registries.FLUID, Antarchy.MODID);
     private static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(Registries.PARTICLE_TYPE, Antarchy.MODID);
     private static final DeferredRegister<MapCodec<? extends Feature>> FEATURES = DeferredRegister.create(Registries.FEATURE_TYPE, Antarchy.MODID);
@@ -319,6 +315,10 @@ public final class AntarchyNeoforgeMisc {
             () -> new SimpleParticleType(true));
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> UNDERVAULT_CONNECTION = PARTICLE_TYPES.register("undervault_connection",
             () -> new SimpleParticleType(true));
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> TEMPORAL_GLINT_SLOW = PARTICLE_TYPES.register("temporal_glint_slow",
+            () -> new SimpleParticleType(true));
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> TEMPORAL_GLINT_FAST = PARTICLE_TYPES.register("temporal_glint_fast",
+            () -> new SimpleParticleType(true));
     public static final DeferredHolder<ParticleType<?>, ParticleType<InvertedGeyserBaseParticleOptions>> INVERTED_GEYSER_BASE = PARTICLE_TYPES.register("inverted_geyser_base",
             () -> particleType(InvertedGeyserBaseParticleOptions::codec, InvertedGeyserBaseParticleOptions::streamCodec));
     public static final DeferredHolder<ParticleType<?>, ParticleType<InvertedGeyserParticleOptions>> INVERTED_GEYSER_PLUME = PARTICLE_TYPES.register("inverted_geyser_plume",
@@ -424,8 +424,6 @@ public final class AntarchyNeoforgeMisc {
             () -> FallenOuranwoodFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<FungalMushroomFeature>> FUNGAL_MUSHROOM = FEATURES.register("fungal_mushroom",
             () -> FungalMushroomFeature.CODEC);
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ThoraxisFissureFeature>> THORAXIS_FISSURE = FEATURES.register("thoraxis_fissure",
-            () -> ThoraxisFissureFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ThoraxisTransitionThroatFeature>> THORAXIS_TRANSITION_THROAT = FEATURES.register("thoraxis_transition_throat",
             () -> ThoraxisTransitionThroatFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<QueenHavocTrailFeature>> QUEEN_HAVOC_TRAIL = FEATURES.register("queen_havoc_trail",
@@ -485,8 +483,6 @@ public final class AntarchyNeoforgeMisc {
             () -> com.craisinlord.antarchy.content.worldgen.mushroom.GlowcapHugeMushroomWorldgenFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<LucidAntiwaterPoolFeature>> LUCID_ANTIWATER_POOL = FEATURES.register("lucid_antiwater_pool",
             () -> LucidAntiwaterPoolFeature.CODEC);
-    public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<ThoraxisDuneFeature>> THORAXIS_DUNE = FEATURES.register("thoraxis_dune",
-            () -> ThoraxisDuneFeature.CODEC);
     public static final DeferredHolder<MapCodec<? extends Feature>, MapCodec<DimensionalTearFeature>> DIMENSIONAL_TEAR = FEATURES.register("dimensional_tear",
             () -> DimensionalTearFeature.CODEC);
 
@@ -511,7 +507,6 @@ public final class AntarchyNeoforgeMisc {
         VILLAGER_PROFESSIONS.register(modEventBus);
         MOB_EFFECTS.register(modEventBus);
         POTIONS.register(modEventBus);
-        FLUID_TYPES.register(modEventBus);
         FLUIDS.register(modEventBus);
         PARTICLE_TYPES.register(modEventBus);
         FEATURES.register(modEventBus);

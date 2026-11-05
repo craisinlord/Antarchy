@@ -2,6 +2,7 @@ package com.craisinlord.antarchy.content.client.renderer;
 
 import com.craisinlord.antarchy.content.client.model.BrutalflyModel;
 import com.craisinlord.antarchy.content.entity.brutalfly.BrutalflyEntity;
+import com.craisinlord.antarchy.content.client.renderer.GlimmerEchoRendering;
 import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.renderer.GeoEntityRenderer;
 import com.geckolib.renderer.base.GeoRenderState;
@@ -42,9 +43,18 @@ public class BrutalflyRenderer extends GeoEntityRenderer<BrutalflyEntity, Living
     }
 
     @Override
+    public int getRenderColor(BrutalflyEntity animatable, Void relatedObject, float partialTick) {
+        return GlimmerEchoRendering.renderColor(animatable.isGlimmerEcho(), super.getRenderColor(animatable, relatedObject, partialTick));
+    }
+
+    @Override
     public RenderType getRenderType(LivingEntityRenderState renderState, Identifier texture) {
         if (renderState.getOrDefaultGeckolibData(COCOONED, false)) {
             return RenderTypes.entityCutout(texture);
+        }
+
+        if (renderState.getOrDefaultGeckolibData(BrutalflyModel.GLIMMER_ECHO, false)) {
+            return RenderTypes.entityTranslucent(texture);
         }
 
         return super.getRenderType(renderState, texture);
@@ -69,8 +79,6 @@ public class BrutalflyRenderer extends GeoEntityRenderer<BrutalflyEntity, Living
     }
 
     private static final class BrutalflyEmissiveLayer extends GeoRenderLayer<BrutalflyEntity, Void, LivingEntityRenderState> {
-        private static final RenderType EMISSIVE_TYPE = RenderTypes.eyes(BrutalflyModel.EMISSIVE_TEXTURE);
-
         private BrutalflyEmissiveLayer(GeoRenderer<BrutalflyEntity, Void, LivingEntityRenderState> renderer) {
             super(renderer);
         }
@@ -80,11 +88,14 @@ public class BrutalflyRenderer extends GeoEntityRenderer<BrutalflyEntity, Living
             if (!renderPassInfo.willRender()) {
                 return;
             }
+            boolean glimmerEcho = renderPassInfo.getOrDefaultGeckolibData(BrutalflyModel.GLIMMER_ECHO, false);
+            RenderType emissiveType = RenderTypes.eyes(glimmerEcho ? BrutalflyModel.GLIMMER_EMISSIVE_TEXTURE : BrutalflyModel.EMISSIVE_TEXTURE);
             PoseStack poseStack = renderPassInfo.poseStack();
-            renderTasks.order(1).submitCustomGeometry(poseStack, EMISSIVE_TYPE, (pose, buffer) -> {
+            renderTasks.order(1).submitCustomGeometry(poseStack, emissiveType, (pose, buffer) -> {
                 poseStack.pushPose();
                 poseStack.last().set(pose);
-                renderPassInfo.renderPosed(() -> renderPassInfo.model().render(renderPassInfo, buffer, 0xF000F0, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF));
+                renderPassInfo.renderPosed(() -> renderPassInfo.model().render(renderPassInfo, buffer, 0xF000F0, OverlayTexture.NO_OVERLAY,
+                        glimmerEcho ? GlimmerEchoRendering.emissiveColor() : 0xFFFFFFFF));
                 poseStack.popPose();
             });
         }

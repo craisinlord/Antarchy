@@ -158,6 +158,9 @@ public class BomberEntity extends Monster implements GeoEntity, GlimmerEcho {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return super.hurt(source, amount);
+        }
         if (source.is(DamageTypeTags.IS_FIRE) || source.is(DamageTypeTags.IS_EXPLOSION)) {
             this.primeFuse();
         }
@@ -249,6 +252,8 @@ public class BomberEntity extends Monster implements GeoEntity, GlimmerEcho {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
+        tag.putBoolean("Detonating", this.detonating);
+        tag.putInt("FuseTicks", this.fuseTicks);
         if (this.glimmerEchoOwner != null) {
             tag.putUUID(GLIMMER_ECHO_OWNER_KEY, this.glimmerEchoOwner);
         }
@@ -258,6 +263,10 @@ public class BomberEntity extends Monster implements GeoEntity, GlimmerEcho {
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         this.setGlimmerEcho(tag.getBoolean(GlimmerEchoes.SAVE_KEY));
+        this.detonating = tag.getBoolean("Detonating");
+        this.fuseTicks = Math.max(0, tag.getInt("FuseTicks"));
+        this.entityData.set(DETONATING_DATA, this.detonating);
+        this.entityData.set(FUSE_TICKS_DATA, this.fuseTicks);
         this.glimmerEchoOwner = tag.hasUUID(GLIMMER_ECHO_OWNER_KEY) ? tag.getUUID(GLIMMER_ECHO_OWNER_KEY) : null;
     }
 
@@ -367,7 +376,7 @@ public class BomberEntity extends Monster implements GeoEntity, GlimmerEcho {
         double extraDamage = AntarchySettings.bomberExplosionDamage() * GlimmerEchoes.ownerDamageMultiplier(this, this.glimmerEchoOwner);
         if (extraDamage > 0.0D) {
             AABB damageBox = this.getBoundingBox().inflate(radius * 2.0D);
-            for (LivingEntity livingEntity : serverLevel.getEntitiesOfClass(LivingEntity.class, damageBox, entity -> entity.isAlive() && entity != this)) {
+            for (LivingEntity livingEntity : serverLevel.getEntitiesOfClass(LivingEntity.class, damageBox, entity -> entity.isAlive() && entity != this && !(entity instanceof ToreterrorEntity))) {
                 double distance = explosionCenter.distanceTo(livingEntity.position());
                 double falloff = radius <= 0.0F ? 0.0D : Math.max(0.0D, 1.0D - distance / radius);
                 if (falloff <= 0.0D) {

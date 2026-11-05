@@ -178,7 +178,6 @@ public class SkulkingFrightEntity extends Monster implements GeoEntity {
 
     @Override
     public void tick() {
-        CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
         super.tick();
         CavarynBurrowingMobBehavior.moveOutOfBlocks(this);
         if (!this.level().isClientSide() && !this.onGround() && this.tickCount % 80 == 0) {

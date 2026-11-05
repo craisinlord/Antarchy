@@ -2,7 +2,6 @@ package com.craisinlord.antarchy.mixins.client;
 
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.client.ThrowbackClientState;
-import com.craisinlord.antarchy.content.throwback.ThrowbackZones;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.FogRenderer;
@@ -23,7 +22,6 @@ public abstract class ThrowbackFogMixin {
         float zone = ThrowbackClientState.zone(partialTick);
         if (zone <= 0.01F
                 || camera.getEntity() == null
-                || !camera.getEntity().level().dimension().equals(ThrowbackZones.ELYTHIA)
                 || camera.getFluidInCamera() != FogType.NONE) {
             return;
         }

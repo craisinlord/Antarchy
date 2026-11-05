@@ -103,10 +103,6 @@ import com.craisinlord.antarchy.content.worldgen.truffalo.TruffaloTreeFeature;
 import com.craisinlord.antarchy.content.worldgen.royal.RoyalTreeConfiguration;
 import com.craisinlord.antarchy.content.worldgen.royal.RoyalTreeFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBiomeSource;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisDuneConfiguration;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisDuneFeature;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisFissureConfiguration;
-import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisFissureFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisTransitionThroatFeature;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBloodCrystalConfiguration;
 import com.craisinlord.antarchy.content.worldgen.thoraxis.ThoraxisBloodCrystalFeature;
@@ -411,6 +407,8 @@ public final class AntarchyFabricMisc {
             ));
 
 
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> REMEMBRANCE_FLAME = PARTICLE_TYPES.register("remembrance_flame",
+            () -> simpleParticleType());
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> DREAM_FIRE_FLAME = PARTICLE_TYPES.register("dream_fire_flame",
             () -> simpleParticleType());
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BUG_SPRAY_PARTICLE = PARTICLE_TYPES.register("bug_spray",
@@ -713,6 +711,10 @@ public final class AntarchyFabricMisc {
             () -> new OuranwoodCocoonTreeFeature(OuranwoodTreeConfiguration.CODEC));
 
 
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.CranberryTreeFeature> CRANBERRY_TREE_FEATURE = FEATURES.register("cranberry_tree",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.CranberryTreeFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.CranberryGroveFeature> CRANBERRY_GROVE_FEATURE = FEATURES.register("cranberry_grove",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.CranberryGroveFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, PeachTreeFeature> PEACH_TREE_FEATURE = FEATURES.register("peach_tree",
             () -> new PeachTreeFeature(PeachTreeConfiguration.CODEC));
 
@@ -770,10 +772,18 @@ public final class AntarchyFabricMisc {
 
     public static final DeferredHolder<Feature<?>, ElythiaSurfaceCoverFeature> ELYTHIA_SURFACE_COVER = FEATURES.register("elythia_surface_cover",
             () -> new ElythiaSurfaceCoverFeature(NoneFeatureConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.TruffledLoamFeature> TRUFFLED_LOAM = FEATURES.register("truffled_loam",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.TruffledLoamFeature(NoneFeatureConfiguration.CODEC));
+
     public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.ThrowbackNerdPoleFeature> THROWBACK_NERD_POLE = FEATURES.register("throwback_nerd_pole",
             () -> new com.craisinlord.antarchy.content.worldgen.elythia.ThrowbackNerdPoleFeature(NoneFeatureConfiguration.CODEC));
 
 
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.ElythiaMountainScreeFeature> ELYTHIA_MOUNTAIN_SCREE = FEATURES.register("elythia_mountain_scree",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.ElythiaMountainScreeFeature(NoneFeatureConfiguration.CODEC));
+
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.ElythiaGeologyFeature> ELYTHIA_GEOLOGY = FEATURES.register("elythia_geology",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.ElythiaGeologyFeature(NoneFeatureConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, ElythiaUndergroundFeature> ELYTHIA_UNDERGROUND = FEATURES.register("elythia_underground",
             () -> new ElythiaUndergroundFeature(NoneFeatureConfiguration.CODEC));
 
@@ -880,24 +890,25 @@ public final class AntarchyFabricMisc {
             () -> new LumenSpireFeature(NoneFeatureConfiguration.CODEC));
 
 
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.ElythiaStoneTorFeature> ELYTHIA_STONE_TOR = FEATURES.register("elythia_stone_tor",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.ElythiaStoneTorFeature(com.craisinlord.antarchy.content.worldgen.elythia.StoneTorConfiguration.CODEC));
+    public static final DeferredHolder<Feature<?>, com.craisinlord.antarchy.content.worldgen.elythia.ElythiaStoneRuinFeature> ELYTHIA_STONE_RUIN = FEATURES.register("elythia_stone_ruin",
+            () -> new com.craisinlord.antarchy.content.worldgen.elythia.ElythiaStoneRuinFeature(com.craisinlord.antarchy.content.worldgen.elythia.StoneRuinConfiguration.CODEC));
     public static final DeferredHolder<Feature<?>, ElythiaTuffBoulderFeature> ELYTHIA_TUFF_BOULDER = FEATURES.register("elythia_tuff_boulder",
-            () -> new ElythiaTuffBoulderFeature(NoneFeatureConfiguration.CODEC));
+            () -> new ElythiaTuffBoulderFeature(com.craisinlord.antarchy.content.worldgen.elythia.BoulderPaletteConfiguration.CODEC));
 
 
     public static final DeferredHolder<Feature<?>, ElythiaLargeTuffBoulderFeature> ELYTHIA_LARGE_TUFF_BOULDER = FEATURES.register("elythia_large_tuff_boulder",
-            () -> new ElythiaLargeTuffBoulderFeature(NoneFeatureConfiguration.CODEC));
+            () -> new ElythiaLargeTuffBoulderFeature(com.craisinlord.antarchy.content.worldgen.elythia.BoulderPaletteConfiguration.CODEC));
 
 
     public static final DeferredHolder<Feature<?>, PeachForestMossyBoulderFeature> PEACH_FOREST_MOSSY_BOULDER = FEATURES.register("peach_forest_mossy_boulder",
-            () -> new PeachForestMossyBoulderFeature(NoneFeatureConfiguration.CODEC));
+            () -> new PeachForestMossyBoulderFeature(com.craisinlord.antarchy.content.worldgen.elythia.BoulderPaletteConfiguration.CODEC));
 
 
     public static final DeferredHolder<Feature<?>, PeachForestPondFeature> PEACH_FOREST_POND = FEATURES.register("peach_forest_pond",
             () -> new PeachForestPondFeature(PeachForestPondConfiguration.CODEC));
 
-
-    public static final DeferredHolder<Feature<?>, ThoraxisFissureFeature> THORAXIS_FISSURE = FEATURES.register("thoraxis_fissure",
-            () -> new ThoraxisFissureFeature(ThoraxisFissureConfiguration.CODEC));
 
     public static final DeferredHolder<Feature<?>, ThoraxisTransitionThroatFeature> THORAXIS_TRANSITION_THROAT = FEATURES.register("thoraxis_transition_throat",
             ThoraxisTransitionThroatFeature::new);
@@ -1017,9 +1028,6 @@ public final class AntarchyFabricMisc {
             () -> new LucidAntiwaterPoolFeature(ThoraxisAntiwaterPoolConfiguration.CODEC));
 
 
-    public static final DeferredHolder<Feature<?>, ThoraxisDuneFeature> THORAXIS_DUNE = FEATURES.register("thoraxis_dune",
-            () -> new ThoraxisDuneFeature(ThoraxisDuneConfiguration.CODEC));
-
     public static final DeferredHolder<Feature<?>, DimensionalTearFeature> DIMENSIONAL_TEAR = FEATURES.register("dimensional_tear",
             () -> new DimensionalTearFeature(NoneFeatureConfiguration.CODEC));
 
@@ -1067,19 +1075,21 @@ public final class AntarchyFabricMisc {
 
 
     public static Holder<MobEffect> mobEffectHolder(DeferredHolder<MobEffect, ? extends MobEffect> effect) {
-        return BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect.get());
+        Holder<MobEffect> holder = effect.registeredHolder();
+        if (holder != null) {
+            return holder;
+        }
+        holder = BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect.get());
+        if (holder.kind() == Holder.Kind.REFERENCE) {
+            effect.cacheRegisteredHolder(holder);
+        }
+        return holder;
     }
 
 
 
     public static Holder<Attribute> attributeHolder(DeferredHolder<Attribute, ? extends Attribute> attribute) {
         return BuiltInRegistries.ATTRIBUTE.wrapAsHolder(attribute.get());
-    }
-
-
-
-    private static Holder<ArmorMaterial> armorMaterialHolder(DeferredHolder<ArmorMaterial, ? extends ArmorMaterial> material) {
-        return BuiltInRegistries.ARMOR_MATERIAL.wrapAsHolder(material.get());
     }
 
 
@@ -1200,25 +1210,6 @@ public final class AntarchyFabricMisc {
                 return streamCodecFactory.apply(this);
             }
         };
-    }
-
-
-    public static void register() {
-        POI_TYPES.register();
-        VILLAGER_PROFESSIONS.register();
-        ARMOR_MATERIALS.register();
-        FLUIDS.register();
-        ATTRIBUTES.register();
-        PARTICLE_TYPES.register();
-        FEATURES.register();
-        BIOME_SOURCES.register();
-        DENSITY_FUNCTION_TYPES.register();
-        ENTITY_SUB_PREDICATES.register();
-        MOB_EFFECTS.register();
-        POTIONS.register();
-        MENUS.register();
-        DATA_COMPONENT_TYPES.register();
-        RECIPE_SERIALIZERS.register();
     }
 
 }

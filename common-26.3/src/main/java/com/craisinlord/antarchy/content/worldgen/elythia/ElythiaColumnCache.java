@@ -30,7 +30,7 @@ public record ElythiaColumnCache(DensityFunction argument) implements DensityFun
     }
 
     @Override
-    public int domainAxes() { return DensityFunction.ALL_AXES; }
+    public int domainAxes() { return ElythiaField.planarAxes(this.argument); }
 
     @Override
     public MapCodec<ElythiaColumnCache> codec() { return CODEC; }

@@ -642,6 +642,9 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
         private static final int ATTACK_COOLDOWN_TICKS = 20;
 
         private int attackCooldown;
+        private int nextChaseRepathTick;
+        @Nullable
+        private Vec3 lastChaseTargetPos;
 
         BowlingAttackGoal() {
             this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
@@ -693,7 +696,12 @@ public class RollyPollyEntity extends TamableAnimal implements GeoEntity {
                 return;
             }
 
-            RollyPollyEntity.this.getNavigation().moveTo(target, CHARGE_SPEED);
+            if (RollyPollyEntity.this.tickCount >= this.nextChaseRepathTick
+                    || this.lastChaseTargetPos == null
+                    || target.distanceToSqr(this.lastChaseTargetPos) > 1.0D) {
+                this.lastChaseTargetPos = target.position();
+                this.nextChaseRepathTick = RollyPollyEntity.this.tickCount + (RollyPollyEntity.this.getNavigation().moveTo(target, CHARGE_SPEED) ? 4 : 10);
+            }
 
             if (this.attackCooldown <= 0 && RollyPollyEntity.this.distanceToSqr(target) <= HIT_RANGE_SQR) {
                 this.attackCooldown = ATTACK_COOLDOWN_TICKS;

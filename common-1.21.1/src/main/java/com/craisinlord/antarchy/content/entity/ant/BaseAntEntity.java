@@ -5,6 +5,7 @@ import com.craisinlord.antarchy.content.AntarchyGameRules;
 import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
@@ -53,10 +54,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.JukeboxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -100,12 +103,16 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     private static final double FOOD_CHEST_SEARCH_RADIUS = 20.0D;
     private static final int GROUND_FOOD_CACHE_INTERVAL_TICKS = 20;
     private static final int NEST_CACHE_INTERVAL_TICKS = 20;
-    private static final int STUCK_WARN_TICKS = 60;
-    private static final int STUCK_REPEAT_TICKS = 100;
     private static final int RETURN_NAV_FAILURE_STREAK = 20;
     private static final int RETURN_NAV_FAILURE_COOLDOWN = 200;
     private static final int JUKEBOX_SCAN_INTERVAL_TICKS = 40;
     private static final int CHEST_REPATH_TICKS = 12;
+    private static final int FORAGE_REPATH_TICKS = 6;
+    private static final int FORAGE_REPATH_FAILURE_TICKS = 20;
+    private static final int MARCH_URGENT_REPATH_TICKS = 2;
+    private static final int MARCH_REPATH_FAILURE_TICKS = 10;
+    private static final int NEST_RETURN_RETRY_TICKS = 5;
+    private static final int FORCED_STROLL_RETRY_TICKS = 10;
     private static final double GROUND_FOOD_MOVE_SPEED = 1.12D;
     private static final double CHEST_MOVE_SPEED = 1.02D;
     private static final double SHARED_CHEST_MOVE_SPEED = 1.04D;
@@ -149,7 +156,6 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     @Nullable
     private ItemEntity cachedNearestGroundFood;
     private int nextGroundFoodCacheTick;
-    private int stuckDetectorTicks;
     private int returnToNestFailureCooldownTick;
     private boolean cachedHasUsableNest;
     private boolean nestCacheDirty = true;
@@ -157,6 +163,16 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     private int nextJukeboxScanTick;
     private double cachedDanceRadius = 1.0D;
     private int nextIdleSoundTick;
+    private int nextForageRepathTick;
+    private int nextMarchUrgentRepathTick;
+    private int nextNestReturnRetryTick;
+    @Nullable
+    private AntMarchManager marchManager;
+    private int sharedFoodCacheTick = -1;
+    @Nullable
+    private BlockPos sharedFoodCachePos;
+    @Nullable
+    private ItemEntity sharedFoodCacheResult;
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 
     protected BaseAntEntity(EntityType<? extends Animal> entityType, Level level) {
@@ -220,7 +236,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         if (!this.level().isClientSide && (this.tickCount <= 1 || this.tickCount % ATTRIBUTE_SYNC_INTERVAL_TICKS == 0)) {
             this.syncConfiguredAttributes();
             if (this.level() instanceof ServerLevel serverLevel) {
-                AntMarchManager.get(serverLevel).cleanup();
+                this.marchManager(serverLevel).cleanup(serverLevel.getGameTime());
             }
         }
 
@@ -266,8 +282,14 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
             return;
         }
 
-        this.tickLeaderStuckDetector();
         this.tickIdleSound();
+    }
+
+    private AntMarchManager marchManager(ServerLevel serverLevel) {
+        if (this.marchManager == null) {
+            this.marchManager = AntMarchManager.get(serverLevel);
+        }
+        return this.marchManager;
     }
 
     @Override
@@ -277,37 +299,10 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         this.nextJukeboxScanTick = 0;
     }
 
-    
-    private void tickLeaderStuckDetector() {
-        if (this.level().isClientSide || !this.isMarchLeader()) {
-            return;
-        }
-
-        boolean anyMoveGoalRunning = false;
-        for (var wrapped : this.goalSelector.getAvailableGoals()) {
-            if (wrapped.isRunning() && wrapped.getGoal().getFlags().contains(Goal.Flag.MOVE)) {
-                anyMoveGoalRunning = true;
-                break;
-            }
-        }
-
-        if (!anyMoveGoalRunning && this.getNavigation().isDone()) {
-            this.stuckDetectorTicks++;
-        } else {
-            this.stuckDetectorTicks = 0;
-        }
-    }
-
-    private static void logDebug(String message, Object... args) {
-    }
-
-    private static void logWarn(String message, Object... args) {
-    }
-
     @Override
     public void remove(Entity.RemovalReason reason) {
         if (!this.level().isClientSide && this.isInMarch() && this.level() instanceof ServerLevel serverLevel) {
-            AntMarchManager.get(serverLevel).unregister(this.marchLeaderUuid, this.marchOrder);
+            this.marchManager(serverLevel).unregister(this.marchLeaderUuid, this.marchOrder);
         }
         super.remove(reason);
     }
@@ -641,8 +636,16 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
             return true;
         }
 
-        this.getNavigation().moveTo(nearestFood, GROUND_FOOD_MOVE_SPEED);
+        if (this.tickCount >= this.nextForageRepathTick) {
+            this.scheduleForageRepath(this.getNavigation().moveTo(nearestFood, GROUND_FOOD_MOVE_SPEED));
+        }
         return true;
+    }
+
+    private void scheduleForageRepath(boolean moved) {
+        Path path = this.getNavigation().getPath();
+        boolean reachable = moved && path != null && path.canReach();
+        this.nextForageRepathTick = this.tickCount + (reachable ? FORAGE_REPATH_TICKS : FORAGE_REPATH_FAILURE_TICKS);
     }
 
     private boolean handleChestFoodForaging() {
@@ -660,8 +663,9 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
             return this.stealFoodFromChest(chestPos);
         }
 
-        if (this.getNavigation().isDone() || this.tickCount % CHEST_REPATH_TICKS == 0) {
-            this.getNavigation().moveTo(chestCenter.x, chestCenter.y, chestCenter.z, CHEST_MOVE_SPEED);
+        if (this.tickCount >= this.nextForageRepathTick
+                && (this.getNavigation().isDone() || this.tickCount % CHEST_REPATH_TICKS == 0)) {
+            this.scheduleForageRepath(this.getNavigation().moveTo(chestCenter.x, chestCenter.y, chestCenter.z, CHEST_MOVE_SPEED));
         }
         return true;
     }
@@ -682,8 +686,9 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
             return this.stealFoodFromChest(chestPos);
         }
 
-        if (this.getNavigation().isDone() || this.tickCount % CHEST_REPATH_TICKS == 0) {
-            this.getNavigation().moveTo(chestCenter.x, chestCenter.y, chestCenter.z, SHARED_CHEST_MOVE_SPEED);
+        if (this.tickCount >= this.nextForageRepathTick
+                && (this.getNavigation().isDone() || this.tickCount % CHEST_REPATH_TICKS == 0)) {
+            this.scheduleForageRepath(this.getNavigation().moveTo(chestCenter.x, chestCenter.y, chestCenter.z, SHARED_CHEST_MOVE_SPEED));
         }
         return true;
     }
@@ -708,7 +713,9 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
             return true;
         }
 
-        this.getNavigation().moveTo(nearestFood, SHARED_GROUND_FOOD_MOVE_SPEED);
+        if (this.tickCount >= this.nextForageRepathTick) {
+            this.scheduleForageRepath(this.getNavigation().moveTo(nearestFood, SHARED_GROUND_FOOD_MOVE_SPEED));
+        }
         return true;
     }
 
@@ -735,22 +742,59 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
 
     @Nullable
     private BlockPos findClosestFoodChest() {
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return null;
+        }
+
         BlockPos origin = this.blockPosition();
+        int radius = (int) FOOD_CHEST_SEARCH_RADIUS;
+        int minChunkX = (origin.getX() - radius) >> 4;
+        int maxChunkX = (origin.getX() + radius) >> 4;
+        int minChunkZ = (origin.getZ() - radius) >> 4;
+        int maxChunkZ = (origin.getZ() + radius) >> 4;
+        List<ChestBlockEntity> chests = null;
+
+        for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
+            for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
+                if (!serverLevel.hasChunk(chunkX, chunkZ)) {
+                    continue;
+                }
+
+                LevelChunk chunk = serverLevel.getChunk(chunkX, chunkZ);
+                for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
+                    if (!(blockEntity instanceof ChestBlockEntity chestBlockEntity)) {
+                        continue;
+                    }
+
+                    BlockPos pos = blockEntity.getBlockPos();
+                    if (Math.abs(pos.getX() - origin.getX()) > radius
+                            || Math.abs(pos.getY() - origin.getY()) > 2
+                            || Math.abs(pos.getZ() - origin.getZ()) > radius) {
+                        continue;
+                    }
+
+                    if (chests == null) {
+                        chests = new ArrayList<>();
+                    }
+                    chests.add(chestBlockEntity);
+                }
+            }
+        }
+
         BlockPos bestPos = null;
         double bestDistance = Double.MAX_VALUE;
+        if (chests != null) {
+            for (ChestBlockEntity chest : chests) {
+                if (this.findStealableFoodSlot(chest) < 0) {
+                    continue;
+                }
 
-        for (BlockPos pos : BlockPos.betweenClosed(
-                origin.offset(-(int) FOOD_CHEST_SEARCH_RADIUS, -2, -(int) FOOD_CHEST_SEARCH_RADIUS),
-                origin.offset((int) FOOD_CHEST_SEARCH_RADIUS, 2, (int) FOOD_CHEST_SEARCH_RADIUS))) {
-            BlockEntity blockEntity = this.level().getBlockEntity(pos);
-            if (!(blockEntity instanceof ChestBlockEntity chestBlockEntity) || this.findStealableFoodSlot(chestBlockEntity) < 0) {
-                continue;
-            }
-
-            double distance = pos.distSqr(origin);
-            if (distance < bestDistance) {
-                bestDistance = distance;
-                bestPos = pos.immutable();
+                BlockPos pos = chest.getBlockPos();
+                double distance = pos.distSqr(origin);
+                if (distance < bestDistance) {
+                    bestDistance = distance;
+                    bestPos = pos.immutable();
+                }
             }
         }
 
@@ -781,6 +825,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     private void clearFoodChestTarget() {
         this.targetFoodChestPos = null;
         this.nextFoodChestSearchTick = 0;
+        this.nextForageRepathTick = 0;
         this.cachedFoodChestValidationPos = null;
         this.cachedFoodChestValidationResult = false;
         this.nextFoodChestValidationTick = 0;
@@ -848,7 +893,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
             return;
         }
 
-        BaseAntEntity leader = AntMarchManager.get(serverLevel).getLeader(this.marchLeaderUuid);
+        BaseAntEntity leader = this.marchManager(serverLevel).getLeader(this.marchLeaderUuid);
         if (leader == null || !leader.isAlive() || !this.canShareMarchWith(leader)) {
             this.leaveMarch();
             return;
@@ -864,7 +909,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
             return false;
         }
 
-        AntMarchManager manager = AntMarchManager.get(serverLevel);
+        AntMarchManager manager = this.marchManager(serverLevel);
         List<BaseAntEntity> candidates = manager.getParticipantsNear(this, MARCH_SEARCH_RADIUS, 3.0D);
 
         BaseAntEntity targetMarchAnt = candidates.stream()
@@ -896,7 +941,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         this.marchLeaderUuid = this.getUUID();
         this.marchOrder = 0;
         if (this.level() instanceof ServerLevel serverLevel) {
-            AntMarchManager.get(serverLevel).register(this.marchLeaderUuid, this.marchOrder, this);
+            this.marchManager(serverLevel).register(this.marchLeaderUuid, this.marchOrder, this);
         }
     }
 
@@ -908,7 +953,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         this.marchOrder = order;
         this.nextMarchFollowRepathTick = 0;
         if (this.level() instanceof ServerLevel serverLevel) {
-            AntMarchManager.get(serverLevel).register(this.marchLeaderUuid, this.marchOrder, this);
+            this.marchManager(serverLevel).register(this.marchLeaderUuid, this.marchOrder, this);
         }
     }
 
@@ -918,7 +963,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         }
 
         if (this.level() instanceof ServerLevel serverLevel) {
-            AntMarchManager.get(serverLevel).unregister(this.marchLeaderUuid, this.marchOrder);
+            this.marchManager(serverLevel).unregister(this.marchLeaderUuid, this.marchOrder);
         }
         this.marchLeaderUuid = null;
         this.marchOrder = -1;
@@ -930,7 +975,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
             return false;
         }
 
-        AntMarchManager manager = AntMarchManager.get(serverLevel);
+        AntMarchManager manager = this.marchManager(serverLevel);
         BaseAntEntity leader = manager.getLeader(this.marchLeaderUuid);
         if (leader == null) {
             this.leaveMarch();
@@ -944,13 +989,21 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
 
         Vec3 followTarget = this.getMarchFollowTarget(predecessor);
         double distanceToTarget = this.distanceToSqr(followTarget.x, followTarget.y, followTarget.z);
+        boolean navDone = this.getNavigation().isDone();
+        boolean urgent = navDone || distanceToTarget > 4.0D;
         if (distanceToTarget > 0.04D
-                && (this.getNavigation().isDone()
-                || distanceToTarget > 4.0D
-                || this.tickCount >= this.nextMarchFollowRepathTick)) {
+                && this.tickCount >= (urgent ? this.nextMarchUrgentRepathTick : this.nextMarchFollowRepathTick)
+                && !(navDone && this.blockPosition().equals(BlockPos.containing(followTarget.x, followTarget.y, followTarget.z)))) {
             double followSpeed = distanceToTarget > 4.0D ? MARCH_FOLLOW_CATCHUP_SPEED : MARCH_FOLLOW_SPEED;
-            this.getNavigation().moveTo(followTarget.x, followTarget.y, followTarget.z, followSpeed);
-            this.nextMarchFollowRepathTick = this.tickCount + MARCH_FOLLOW_REPATH_TICKS;
+            boolean moved = this.getNavigation().moveTo(followTarget.x, followTarget.y, followTarget.z, followSpeed);
+            Path path = this.getNavigation().getPath();
+            if (!moved || (navDone && (path == null || !path.canReach()))) {
+                this.nextMarchFollowRepathTick = this.tickCount + MARCH_REPATH_FAILURE_TICKS;
+                this.nextMarchUrgentRepathTick = this.nextMarchFollowRepathTick;
+            } else {
+                this.nextMarchFollowRepathTick = this.tickCount + MARCH_FOLLOW_REPATH_TICKS;
+                this.nextMarchUrgentRepathTick = this.tickCount + MARCH_URGENT_REPATH_TICKS;
+            }
         }
         return true;
     }
@@ -1029,8 +1082,9 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
             return;
         }
 
-        if (this.tickCount % 10 == 0 || this.getNavigation().isDone()) {
+        if (this.tickCount % 10 == 0 || (this.getNavigation().isDone() && this.tickCount >= this.nextNestReturnRetryTick)) {
             this.getNavigation().moveTo(entrance.x, entrance.y, entrance.z, Math.min(speed, NEST_RETURN_MOVE_SPEED));
+            this.nextNestReturnRetryTick = this.tickCount + NEST_RETURN_RETRY_TICKS;
         }
     }
 
@@ -1061,9 +1115,14 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
 
     private boolean hasUsableNest() {
         if (this.nestCacheDirty || this.tickCount >= this.nextNestCacheTick) {
-            this.cachedHasUsableNest = this.nestPos != null
-                    && this.level().getBlockEntity(this.nestPos) instanceof AntNestBlockEntity nestBlockEntity
-                    && nestBlockEntity.canAccept(this.getType());
+            if (this.nestPos == null) {
+                this.cachedHasUsableNest = false;
+            } else if (this.level().isLoaded(this.nestPos)) {
+                this.cachedHasUsableNest = this.level().getBlockEntity(this.nestPos) instanceof AntNestBlockEntity nestBlockEntity
+                        && nestBlockEntity.canAccept(this.getType());
+            } else if (this.nestCacheDirty) {
+                this.cachedHasUsableNest = true;
+            }
             this.nestCacheDirty = false;
             this.nextNestCacheTick = this.tickCount + NEST_CACHE_INTERVAL_TICKS;
         }
@@ -1083,6 +1142,10 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
     private void invalidateGroundFoodCache() {
         this.cachedNearestGroundFood = null;
         this.nextGroundFoodCacheTick = 0;
+        this.nextForageRepathTick = 0;
+        this.sharedFoodCacheTick = -1;
+        this.sharedFoodCachePos = null;
+        this.sharedFoodCacheResult = null;
     }
 
     private boolean canRunAntMovementGoals() {
@@ -1091,7 +1154,8 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
 
     private boolean hasForageTarget() {
         return this.isAntGriefingEnabled()
-                && (this.nearestGroundFood() != null || this.getCurrentFoodChestPos() != null);
+                && (this.nearestGroundFood() != null
+                || (AntarchySettings.antsStealFromChests() && this.getCurrentFoodChestPos() != null));
     }
 
     private boolean sharesNestWith(BaseAntEntity otherAnt) {
@@ -1221,26 +1285,35 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         BlockPos center = this.blockPosition();
         BlockPos closest = null;
         double closestDistanceSqr = Double.MAX_VALUE;
+        int minChunkX = (center.getX() - radius) >> 4;
+        int maxChunkX = (center.getX() + radius) >> 4;
+        int minChunkZ = (center.getZ() - radius) >> 4;
+        int maxChunkZ = (center.getZ() + radius) >> 4;
 
-        for (BlockPos pos : BlockPos.betweenClosed(
-                center.getX() - radius, center.getY() - radius, center.getZ() - radius,
-                center.getX() + radius, center.getY() + radius, center.getZ() + radius)) {
-            if (!pos.closerToCenterThan(this.position(), danceRadius)) {
-                continue;
-            }
+        for (int chunkX = minChunkX; chunkX <= maxChunkX; chunkX++) {
+            for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++) {
+                if (!this.level().hasChunk(chunkX, chunkZ)) {
+                    continue;
+                }
 
-            if (!this.level().getBlockState(pos).is(Blocks.JUKEBOX)) {
-                continue;
-            }
+                LevelChunk chunk = this.level().getChunk(chunkX, chunkZ);
+                for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
+                    if (!(blockEntity instanceof JukeboxBlockEntity)) {
+                        continue;
+                    }
 
-            if (!this.isJukeboxPlayingFromState(pos)) {
-                continue;
-            }
+                    BlockPos pos = blockEntity.getBlockPos();
+                    if (!pos.closerToCenterThan(this.position(), danceRadius)
+                            || !this.isJukeboxPlayingFromState(pos)) {
+                        continue;
+                    }
 
-            double distanceSqr = this.distanceToSqr(Vec3.atCenterOf(pos));
-            if (distanceSqr < closestDistanceSqr) {
-                closestDistanceSqr = distanceSqr;
-                closest = pos.immutable();
+                    double distanceSqr = this.distanceToSqr(Vec3.atCenterOf(pos));
+                    if (distanceSqr < closestDistanceSqr) {
+                        closestDistanceSqr = distanceSqr;
+                        closest = pos.immutable();
+                    }
+                }
             }
         }
 
@@ -1363,19 +1436,9 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
             this.findNearestNestIfNeeded();
         }
         if (this.nestPos != null) {
-            if (this.isMarchLeader()) {
-                logDebug(
-                        "[Antarchy] March leader {} picked up {} and is heading to nest at {}.",
-                        this.getUUID(), carriedFood.getItem(), this.nestPos);
-            }
             Vec3 entrance = Vec3.atBottomCenterOf(this.nestPos.above());
             this.getNavigation().moveTo(entrance.x, entrance.y, entrance.z, FOOD_RETURN_MOVE_SPEED);
         } else {
-            if (this.isMarchLeader()) {
-                logWarn(
-                        "[Antarchy] March leader {} picked up {} but has no nest — stroll fallback. pos={}",
-                        this.getUUID(), carriedFood.getItem(), this.blockPosition());
-            }
             this.getNavigation().stop();
         }
     }
@@ -1410,7 +1473,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
             return null;
         }
 
-        BaseAntEntity leader = AntMarchManager.get(serverLevel).getLeader(this.marchLeaderUuid);
+        BaseAntEntity leader = this.marchManager(serverLevel).getLeader(this.marchLeaderUuid);
         if (leader == null || leader == this) {
             return null;
         }
@@ -1437,7 +1500,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
             return null;
         }
 
-        BaseAntEntity leader = AntMarchManager.get(serverLevel).getLeader(this.marchLeaderUuid);
+        BaseAntEntity leader = this.marchManager(serverLevel).getLeader(this.marchLeaderUuid);
         if (leader == null || leader == this) {
             return null;
         }
@@ -1453,7 +1516,11 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
 
     @Nullable
     private ItemEntity findNearestGroundFoodAt(BlockPos foodPos) {
-        return this.level().getEntitiesOfClass(
+        if (this.sharedFoodCacheTick == this.tickCount && foodPos.equals(this.sharedFoodCachePos)) {
+            return this.sharedFoodCacheResult;
+        }
+
+        ItemEntity nearest = this.level().getEntitiesOfClass(
                         ItemEntity.class,
                         new AABB(foodPos).inflate(2.0D, 1.5D, 2.0D),
                         itemEntity -> itemEntity.isAlive()
@@ -1462,6 +1529,10 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
                 .stream()
                 .min(Comparator.comparingDouble(this::distanceToSqr))
                 .orElse(null);
+        this.sharedFoodCacheTick = this.tickCount;
+        this.sharedFoodCachePos = foodPos;
+        this.sharedFoodCacheResult = nearest;
+        return nearest;
     }
 
     @Nullable
@@ -1565,11 +1636,6 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         public boolean canContinueToUse() {
             if (navDoneStreak >= RETURN_NAV_FAILURE_STREAK) {
                 returnToNestFailureCooldownTick = tickCount + RETURN_NAV_FAILURE_COOLDOWN;
-                logDebug(
-                        "[Antarchy] AntReturnToNestGoal giving up — nav failed for {} ticks. "
-                        + "leader={} pos={} nestPos={} reason={} cooldown={}t",
-                        navDoneStreak, getUUID(), blockPosition(), nestPos,
-                        getReturnToNestReason(), RETURN_NAV_FAILURE_COOLDOWN);
                 return false;
             }
             return shouldUseReturnToNestGoal();
@@ -1578,20 +1644,10 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         @Override
         public void start() {
             navDoneStreak = 0;
-            if (isMarchLeader()) {
-                logDebug(
-                        "[Antarchy] AntReturnToNestGoal START — leader={} nestPos={} carrying={} reason={}",
-                        getUUID(), nestPos, isCarryingFood(), getReturnToNestReason());
-            }
         }
 
         @Override
         public void stop() {
-            if (isMarchLeader()) {
-                logDebug(
-                        "[Antarchy] AntReturnToNestGoal STOP  — leader={} nestPos={} carrying={} navDone={}",
-                        getUUID(), nestPos, isCarryingFood(), getNavigation().isDone());
-            }
             navDoneStreak = 0;
         }
 
@@ -1600,13 +1656,6 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
             tickReturnToNestGoal();
             if (getNavigation().isDone()) {
                 navDoneStreak++;
-                if (isMarchLeader() && navDoneStreak == RETURN_NAV_FAILURE_STREAK) {
-                    logDebug(
-                            "[Antarchy] AntReturnToNestGoal nav stalled for {} ticks — will give up next canContinueToUse. "
-                            + "leader={} pos={} nestPos={} carrying={} reason={}",
-                            navDoneStreak, getUUID(), blockPosition(), nestPos,
-                            isCarryingFood(), getReturnToNestReason());
-                }
             } else {
                 navDoneStreak = 0;
             }
@@ -1622,26 +1671,6 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         @Override
         public boolean canContinueToUse() {
             return shouldUseForageGoal();
-        }
-
-        @Override
-        public void start() {
-            if (isMarchLeader()) {
-                logDebug(
-                        "[Antarchy] AntForageGoal START — leader={} pos={} groundFood={} chest={}",
-                        getUUID(), blockPosition(),
-                        nearestGroundFood() != null ? nearestGroundFood().blockPosition() : "null",
-                        getCurrentFoodChestPos());
-            }
-        }
-
-        @Override
-        public void stop() {
-            if (isMarchLeader()) {
-                logDebug(
-                        "[Antarchy] AntForageGoal STOP  — leader={} pos={} carrying={}",
-                        getUUID(), blockPosition(), isCarryingFood());
-            }
         }
 
         @Override
@@ -1673,6 +1702,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         private static final int FORWARD_SEARCH_RADIUS = 8;
         private static final int WIDE_SEARCH_RADIUS = 16;
         private static final int MIN_DISTANCE_SQR = 4;
+        private int nextForcedStrollTick;
 
         AntRandomStrollGoal(double speedModifier) {
             super(BaseAntEntity.this, speedModifier, 5);
@@ -1680,6 +1710,9 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         @Override
         public boolean canUse() {
             if (isMarchLeader() || (isCarryingFood() && !hasUsableNest())) {
+                if (tickCount < this.nextForcedStrollTick) {
+                    return false;
+                }
                 Vec3 pos = getPosition();
                 if (pos != null) {
                     wantedX = pos.x;
@@ -1687,6 +1720,7 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
                     wantedZ = pos.z;
                     return true;
                 }
+                this.nextForcedStrollTick = tickCount + FORCED_STROLL_RETRY_TICKS;
                 return false;
             }
             return super.canUse();
@@ -1735,11 +1769,12 @@ public abstract class BaseAntEntity extends Animal implements GeoEntity {
         }
 
         private boolean isValidStrollPos(BlockPos pos) {
-            BlockState floor = level().getBlockState(pos.below());
-            FluidState fluidBelow = level().getFluidState(pos.below());
             if (!level().getBlockState(pos).isAir()) return false;
+            BlockPos below = pos.below();
+            BlockState floor = level().getBlockState(below);
+            FluidState fluidBelow = floor.getFluidState();
             if (!fluidBelow.isEmpty() && !BaseAntEntity.this.canTraverseFluidFloor(fluidBelow)) return false;
-            if (!floor.isFaceSturdy(level(), pos.below(), Direction.UP)) return false;
+            if (!floor.isFaceSturdy(level(), below, Direction.UP)) return false;
             AABB box = getBoundingBox().move(
                     pos.getX() + 0.5D - getX(),
                     pos.getY() - getY(),

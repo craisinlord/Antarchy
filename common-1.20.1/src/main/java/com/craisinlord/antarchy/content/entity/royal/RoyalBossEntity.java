@@ -229,7 +229,6 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             new RoyalHead(RoyalHead.Slot.RIGHT)
     };
     private final int[] beamLoopSoundTicks = new int[3];
-    private final int[] assignedHeadCounts = new int[3];
     private int beamVolleyLimit;
     @Nullable
     private Phase beamVolleyPhase;
@@ -732,7 +731,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
                 return;
             }
         }
-        if (this.shouldClearObstruction()
+        if (!this.isGlimmerEcho() && this.shouldClearObstruction()
                 && !this.level().isClientSide
                 && !this.isDeadOrDying()
                 && this.tickCount % (this.isFightingRoyalRival() ? RIVAL_OBSTRUCTION_CLEAR_INTERVAL_TICKS : OBSTRUCTION_CLEAR_INTERVAL_TICKS) == 0
@@ -1170,7 +1169,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             return;
         }
 
-        Arrays.fill(this.assignedHeadCounts, 0);
+        int[] assignedHeadCounts = new int[candidates.size()];
         for (RoyalHead head : this.heads) {
             Vec3 anchor = this.headAnchor(head);
             int bestIndex = 0;
@@ -1178,13 +1177,13 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
             double bestDistance = Double.MAX_VALUE;
             for (int i = 0; i < candidates.size(); i++) {
                 double distance = candidates.get(i).position().distanceToSqr(anchor);
-                if (this.assignedHeadCounts[i] < bestCount || (this.assignedHeadCounts[i] == bestCount && distance < bestDistance)) {
+                if (assignedHeadCounts[i] < bestCount || (assignedHeadCounts[i] == bestCount && distance < bestDistance)) {
                     bestIndex = i;
-                    bestCount = this.assignedHeadCounts[i];
+                    bestCount = assignedHeadCounts[i];
                     bestDistance = distance;
                 }
             }
-            this.assignedHeadCounts[bestIndex]++;
+            assignedHeadCounts[bestIndex]++;
             head.setTarget(candidates.get(bestIndex));
         }
     }
@@ -1308,7 +1307,7 @@ public abstract class RoyalBossEntity extends Monster implements GeoEntity, Mult
     }
 
     private void onRoyalMovementObstructed(LivingEntity target) {
-        if (this.level() instanceof ServerLevel serverLevel) {
+        if (!this.isGlimmerEcho() && this.level() instanceof ServerLevel serverLevel) {
             this.clearRoyalPathTowardWanted(serverLevel);
         }
         if (this.royalStuckStrikes >= STUCK_TAKEOFF_STRIKES) {

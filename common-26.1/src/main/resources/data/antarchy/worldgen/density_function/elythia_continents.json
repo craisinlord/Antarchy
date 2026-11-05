@@ -1,7 +1,7 @@
 {
   "type": "antarchy:elythia_shared",
   "argument": {
-    "type": "minecraft:flat_cache",
+    "type": "minecraft:cache_2d",
     "argument": {
       "type": "antarchy:elythia_basin_fill",
       "argument": {

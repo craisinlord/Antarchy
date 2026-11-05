@@ -1,5 +1,6 @@
 {
   "values": [
-    "#antarchy:missile_squid_spawn_biomes"
+    "#antarchy:is_elythia_ocean",
+    "#minecraft:is_ocean"
   ]
 }

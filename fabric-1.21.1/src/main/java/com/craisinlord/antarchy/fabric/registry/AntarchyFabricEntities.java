@@ -723,9 +723,4 @@ public final class AntarchyFabricEntities {
                 .build(name);
     }
 
-
-    public static void register() {
-        ENTITY_TYPES.register();
-    }
-
 }

@@ -527,7 +527,7 @@ public final class AntarchyMobsConfig {
 
 
         b.push("emperorScorpion");
-        EMPEROR_SCORPION_HEALTH = b.comment("Base max health.").defineInRange("health", 300.0D, 1.0D, 32768.0D);
+        EMPEROR_SCORPION_HEALTH = b.comment("Base max health.").defineInRange("health", 420.0D, 1.0D, 32768.0D);
         EMPEROR_SCORPION_ATTACK_DAMAGE = b.comment("Base attack damage.").defineInRange("attackDamage", 28.0D, 0.0D, 1024.0D);
         EMPEROR_SCORPION_MOVEMENT_SPEED = b.comment("Base movement speed.").defineInRange("movementSpeed", 0.384D, 0.0D, 10.0D);
         EMPEROR_SCORPION_ARMOR = b.comment("Base armor value.").defineInRange("armor", 22.0D, 0.0D, 1024.0D);
@@ -535,26 +535,26 @@ public final class AntarchyMobsConfig {
         EMPEROR_SCORPION_FOLLOW_RANGE = b.comment("Base follow range.").defineInRange("followRange", 80.0D, 1.0D, 256.0D);
         EMPEROR_SCORPION_XP_REWARD = b.comment("Base experience reward.").defineInRange("xpReward", 25, 0, 100000);
         EMPEROR_SCORPION_CLAW_ANIM_TICKS = b.comment("Ticks for the claw attack animation window.").defineInRange("clawAnimTicks", 23, 1, 400);
-        EMPEROR_SCORPION_CLAW_HIT_TICK = b.comment("Tick during the claw animation when damage is applied.").defineInRange("clawHitTick", 12, 0, 400);
+        EMPEROR_SCORPION_CLAW_HIT_TICK = b.comment("Ticks remaining in the claw animation when damage is applied. Clamped to 1 through clawAnimTicks.").defineInRange("clawHitTick", 6, 0, 400);
         EMPEROR_SCORPION_CLAW_COOLDOWN_TICKS = b.comment("Ticks between claw attacks.").defineInRange("clawCooldownTicks", 28, 0, 2000);
         EMPEROR_SCORPION_STING_ANIM_TICKS = b.comment("Ticks for the sting attack animation window.").defineInRange("stingAnimTicks", 25, 1, 400);
-        EMPEROR_SCORPION_STING_HIT_TICK = b.comment("Tick during the sting animation when damage is applied.").defineInRange("stingHitTick", 13, 0, 400);
+        EMPEROR_SCORPION_STING_HIT_TICK = b.comment("Ticks remaining in the sting animation when damage is applied. Clamped to 1 through stingAnimTicks.").defineInRange("stingHitTick", 9, 0, 400);
         EMPEROR_SCORPION_STING_COOLDOWN_TICKS = b.comment("Ticks between sting attacks.").defineInRange("stingCooldownTicks", 60, 0, 2000);
         EMPEROR_SCORPION_POISON_TICKS = b.comment("Ticks the Poison effect from a sting lasts.").defineInRange("poisonTicks", 300, 0, 20000);
         EMPEROR_SCORPION_WEAKNESS_TICKS = b.comment("Ticks the Weakness effect from a sting lasts.").defineInRange("weaknessTicks", 120, 0, 20000);
         EMPEROR_SCORPION_SUMMON_INTERVAL_TICKS = b.comment("Ticks between minion scorpion summons while hardened.").defineInRange("summonIntervalTicks", 140, 20, 72000);
         EMPEROR_SCORPION_MAX_SUMMONED_SCORPIONS = b.comment("Maximum scorpions summoned per hardening cast.").defineInRange("maxSummonedScorpions", 4, 0, 32);
         EMPEROR_SCORPION_MAX_NEARBY_SCORPIONS = b.comment("Maximum owned scorpion minions allowed near this scorpion at once.").defineInRange("maxNearbyScorpions", 4, 0, 32);
-        EMPEROR_SCORPION_HARDEN_COOLDOWN_TICKS = b.comment("Cooldown in ticks before the Emperor Scorpion can harden and summon again.").defineInRange("hardenCooldownTicks", 2400, 0, 200000);
+        EMPEROR_SCORPION_HARDEN_COOLDOWN_TICKS = b.comment("Cooldown in ticks before the Emperor Scorpion can harden and summon again.").defineInRange("hardenCooldownTicks", 1200, 0, 200000);
         EMPEROR_SCORPION_DAMAGE_RANGE = b
-                .comment("Range in blocks a player must be within for the Emperor Scorpion to be able to take damage. Prevents cheesing it from outside its aggro range.")
+                .comment("Attacker distance in blocks at which the Emperor Scorpion takes full damage. Damage falls off beyond this and reaches zero at 5/3 of this range.")
                 .defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
         EMPEROR_SCORPION_MIN_DESPAWN_TICKS = b
-                .comment("Minimum ticks after spawning before the Emperor Scorpion can despawn from being far away. It also never despawns once it has taken damage. 6000 ticks = 5 minutes.")
+                .comment("Minimum ticks after spawning before the Emperor Scorpion can despawn from being far away. It also won't despawn after taking damage until its encounter resets. 6000 ticks = 5 minutes.")
                 .defineInRange("minDespawnTicks", 6000, 0, 1000000);
         GLIMMER_EMPEROR_SCORPION_HEALTH_MULTIPLIER = b.comment("Max health multiplier for the Glimmer Emperor Scorpion summoned with a Glimmer Sigil.").defineInRange("glimmerHealthMultiplier", 1.75D, 0.1D, 100.0D);
         GLIMMER_EMPEROR_SCORPION_DAMAGE_MULTIPLIER = b.comment("Damage multiplier for the Glimmer Emperor Scorpion's attacks.").defineInRange("glimmerDamageMultiplier", 1.35D, 0.0D, 100.0D);
-        GLIMMER_EMPEROR_SCORPION_COOLDOWN_MULTIPLIER = b.comment("Cooldown multiplier for the Glimmer Emperor Scorpion's claw, sting and harden cooldowns (lower = more often).").defineInRange("glimmerCooldownMultiplier", 0.65D, 0.05D, 10.0D);
+        GLIMMER_EMPEROR_SCORPION_COOLDOWN_MULTIPLIER = b.comment("Cooldown multiplier for the Glimmer Emperor Scorpion's claw, sting and venom cooldowns (lower = more often). Harden is exempt.").defineInRange("glimmerCooldownMultiplier", 0.65D, 0.05D, 10.0D);
         b.pop();
 
         b.push("scorpion");
@@ -706,16 +706,16 @@ public final class AntarchyMobsConfig {
 
 
         b.push("alphaMantis");
-        ALPHA_MANTIS_HEALTH                = b.comment("Base max health.")                                              .defineInRange("health",             250.0D, 1.0D, 32768.0D);
+        ALPHA_MANTIS_HEALTH                = b.comment("Base max health.")                                              .defineInRange("health",             420.0D, 1.0D, 32768.0D);
         ALPHA_MANTIS_ATTACK_DAMAGE         = b.comment("Base attack damage.")                                           .defineInRange("attackDamage",        18.0D, 0.0D, 1024.0D);
         ALPHA_MANTIS_MOVEMENT_SPEED        = b.comment("Base movement speed.")                                          .defineInRange("movementSpeed",       0.546D, 0.0D, 10.0D);
         ALPHA_MANTIS_FLYING_SPEED          = b.comment("Base flying speed.")                                            .defineInRange("flyingSpeed",         0.77D, 0.0D, 10.0D);
         ALPHA_MANTIS_SUMMON_INTERVAL_TICKS = b.comment("Ticks between mantis minion summons while in combat.")          .defineInRange("summonIntervalTicks",   300, 20, 72000);
         ALPHA_MANTIS_MAX_MINIONS           = b.comment("Maximum summoned mantises alive near the alpha at once.")       .defineInRange("maxMinions",              4, 0, 32);
-        ALPHA_MANTIS_DAMAGE_RANGE          = b.comment("Range in blocks a player must be within for the Alpha Mantis to be able to take damage. Prevents cheesing it from outside its aggro range.").defineInRange("damageRange", 25.0D, 1.0D, 256.0D);
+        ALPHA_MANTIS_DAMAGE_RANGE          = b.comment("Attacker distance in blocks at which the Alpha Mantis takes full damage. Damage then falls off gradually and reaches zero at 5/3 of this distance.").defineInRange("damageRange", 48.0D, 1.0D, 256.0D);
         GLIMMER_ALPHA_MANTIS_HEALTH_MULTIPLIER   = b.comment("Max health multiplier for the Glimmer Alpha Mantis summoned with a Glimmer Sigil.").defineInRange("glimmerHealthMultiplier", 1.75D, 0.1D, 100.0D);
         GLIMMER_ALPHA_MANTIS_DAMAGE_MULTIPLIER   = b.comment("Attack damage multiplier for the Glimmer Alpha Mantis.").defineInRange("glimmerDamageMultiplier", 1.35D, 0.0D, 100.0D);
-        GLIMMER_ALPHA_MANTIS_COOLDOWN_MULTIPLIER = b.comment("Minion summon interval multiplier for the Glimmer Alpha Mantis (lower = summons more often).").defineInRange("glimmerCooldownMultiplier", 0.65D, 0.05D, 10.0D);
+        GLIMMER_ALPHA_MANTIS_COOLDOWN_MULTIPLIER = b.comment("Attack cooldown and minion summon interval multiplier for the Glimmer Alpha Mantis (lower = more often).").defineInRange("glimmerCooldownMultiplier", 0.65D, 0.05D, 10.0D);
         b.pop();
 
 

@@ -58,7 +58,6 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.Comparator;
 import java.util.EnumSet;
 
 public class BedBugEntity extends Animal implements GeoEntity {
@@ -201,7 +200,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
             this.setTarget(null);
         }
 
-        if (this.eggNestPos != null && !this.level().getBlockState(this.eggNestPos).is(AntarchyObjects.BED_BUG_EGG.get())) {
+        if (this.eggNestPos != null && this.level().isLoaded(this.eggNestPos) && !this.level().getBlockState(this.eggNestPos).is(AntarchyObjects.BED_BUG_EGG.get())) {
             this.eggNestPos = this.findNearbyEggNest();
         }
 
@@ -439,7 +438,7 @@ public class BedBugEntity extends Animal implements GeoEntity {
     private ItemEntity nearestRottenFlesh() {
         if (this.tickCount >= this.nextFoodSearchTick || (this.cachedRottenFlesh != null && !this.cachedRottenFlesh.isAlive())) {
             this.cachedRottenFlesh = this.findNearestRottenFlesh();
-            this.nextFoodSearchTick = this.tickCount + 5;
+            this.nextFoodSearchTick = this.tickCount + 10;
         }
         return this.cachedRottenFlesh;
     }
@@ -478,16 +477,22 @@ public class BedBugEntity extends Animal implements GeoEntity {
 
     @Nullable
     private ItemEntity findNearestRottenFlesh() {
-        return this.level().getEntitiesOfClass(
-                        ItemEntity.class,
-                        this.getBoundingBox().inflate(FOOD_SEARCH_RADIUS, 2.0D, FOOD_SEARCH_RADIUS),
-                        itemEntity -> itemEntity.isAlive()
-                                && !itemEntity.getItem().isEmpty()
-                                && itemEntity.getItem().is(Items.ROTTEN_FLESH)
-                                && !this.isTemporarilyIgnoredFood(itemEntity))
-                .stream()
-                .min(Comparator.comparingDouble(this::distanceToSqr))
-                .orElse(null);
+        ItemEntity nearest = null;
+        double nearestDistance = Double.MAX_VALUE;
+        for (ItemEntity itemEntity : this.level().getEntitiesOfClass(
+                ItemEntity.class,
+                this.getBoundingBox().inflate(FOOD_SEARCH_RADIUS, 2.0D, FOOD_SEARCH_RADIUS),
+                item -> item.isAlive()
+                        && !item.getItem().isEmpty()
+                        && item.getItem().is(Items.ROTTEN_FLESH)
+                        && !this.isTemporarilyIgnoredFood(item))) {
+            double distance = this.distanceToSqr(itemEntity);
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearest = itemEntity;
+            }
+        }
+        return nearest;
     }
 
     @Nullable

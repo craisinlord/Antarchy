@@ -112,10 +112,14 @@ public final class AntarchyFabric implements ModInitializer {
             Registries.PLACED_FEATURE,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "red_ant_nest")
     );
+    private static final ResourceKey<PlacedFeature> ELYTHIA_URANIUM_ORE = ResourceKey.create(
+            Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "elythia_uranium_ore"));
     private static final ResourceKey<PlacedFeature> URANIUM_ORE = ResourceKey.create(
             Registries.PLACED_FEATURE,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "uranium_ore")
     );
+    private static final ResourceKey<PlacedFeature> ELYTHIA_TITANIUM_ORE = ResourceKey.create(
+            Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "elythia_titanium_ore"));
     private static final ResourceKey<PlacedFeature> TITANIUM_ORE = ResourceKey.create(
             Registries.PLACED_FEATURE,
             ResourceLocation.fromNamespaceAndPath(Antarchy.MODID, "titanium_ore")
@@ -297,12 +301,12 @@ public final class AntarchyFabric implements ModInitializer {
         BiomeModifications.addFeature(
                 BiomeSelectors.tag(IS_ELYTHIA),
                 GenerationStep.Decoration.UNDERGROUND_ORES,
-                URANIUM_ORE
+                ELYTHIA_URANIUM_ORE
         );
         BiomeModifications.addFeature(
                 BiomeSelectors.tag(IS_ELYTHIA),
                 GenerationStep.Decoration.UNDERGROUND_ORES,
-                TITANIUM_ORE
+                ELYTHIA_TITANIUM_ORE
         );
         BiomeModifications.addFeature(
                 BiomeSelectors.tag(IS_ELYTHIA),

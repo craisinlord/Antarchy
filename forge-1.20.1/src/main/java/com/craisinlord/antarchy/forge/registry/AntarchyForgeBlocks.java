@@ -1,7 +1,6 @@
 package com.craisinlord.antarchy.forge.registry;
 
 import com.craisinlord.antarchy.Antarchy;
-import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchyObjects;
 import com.craisinlord.antarchy.content.block.*;
 import com.craisinlord.antarchy.content.block.entity.AntNestBlockEntity;
@@ -25,7 +24,6 @@ import com.craisinlord.antarchy.content.fluid.LumenLiquidBlock;
 import com.craisinlord.antarchy.content.portal.PermanentPortalType;
 import com.craisinlord.antarchy.forge.content.block.WildCornBlock;
 import com.craisinlord.antarchy.forge.AntarchyWoodTypes;
-import com.craisinlord.antarchy.forge.content.fluid.AntiwaterFluidType;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
@@ -41,11 +39,9 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.FlowingFluid;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.registries.RegistryObject;
 
 public final class AntarchyForgeBlocks {
@@ -668,21 +664,21 @@ public final class AntarchyForgeBlocks {
             () -> new Block(BlockBehaviour.Properties.copy(Blocks.OCHRE_FROGLIGHT)));
     public static final RegistryObject<AntNestBlock> RED_ANT_NEST = BLOCKS.register("red_ant_nest",
             () -> new AntNestBlock(
-                    AntarchyForgeEntites.RED_ANT,
+                    AntarchyForgeEntities.RED_ANT,
                     AntarchyForgeItems::antNestBlockEntityType,
                     true,
                     BlockBehaviour.Properties.copy(Blocks.MAGMA_BLOCK).lightLevel(state -> 3).noLootTable()
             ));
     public static final RegistryObject<AntNestBlock> BROWN_ANT_NEST = BLOCKS.register("brown_ant_nest",
-            () -> new AntNestBlock(AntarchyForgeEntites.BROWN_ANT, AntarchyForgeItems::antNestBlockEntityType, BlockBehaviour.Properties.copy(Blocks.DIRT).noLootTable()));
+            () -> new AntNestBlock(AntarchyForgeEntities.BROWN_ANT, AntarchyForgeItems::antNestBlockEntityType, BlockBehaviour.Properties.copy(Blocks.DIRT).noLootTable()));
     public static final RegistryObject<AntNestBlock> RAINBOW_ANT_NEST = BLOCKS.register("rainbow_ant_nest",
-            () -> new AntNestBlock(AntarchyForgeEntites.RAINBOW_ANT, AntarchyForgeItems::antNestBlockEntityType, BlockBehaviour.Properties.copy(Blocks.DIRT).noLootTable()));
+            () -> new AntNestBlock(AntarchyForgeEntities.RAINBOW_ANT, AntarchyForgeItems::antNestBlockEntityType, BlockBehaviour.Properties.copy(Blocks.DIRT).noLootTable()));
     public static final RegistryObject<AntNestBlock> TERMITE_NEST = BLOCKS.register("termite_nest",
-            () -> new AntNestBlock(AntarchyForgeEntites.TERMITE, AntarchyForgeItems::antNestBlockEntityType, BlockBehaviour.Properties.copy(Blocks.DIRT).noLootTable()));
+            () -> new AntNestBlock(AntarchyForgeEntities.TERMITE, AntarchyForgeItems::antNestBlockEntityType, BlockBehaviour.Properties.copy(Blocks.DIRT).noLootTable()));
 
     public static final RegistryObject<com.craisinlord.antarchy.content.block.AntTrapBlock> ANT_TRAP = BLOCKS.register("ant_trap",
             () -> new com.craisinlord.antarchy.content.block.AntTrapBlock(
-                    () -> java.util.List.of(AntarchyForgeEntites.RED_ANT.get(), AntarchyForgeEntites.BROWN_ANT.get(), AntarchyForgeEntites.RAINBOW_ANT.get(), AntarchyForgeEntites.TERMITE.get()),
+                    () -> java.util.List.of(AntarchyForgeEntities.RED_ANT.get(), AntarchyForgeEntities.BROWN_ANT.get(), AntarchyForgeEntities.RAINBOW_ANT.get(), AntarchyForgeEntities.TERMITE.get()),
                     AntarchyForgeItems::antNestBlockEntityType, BlockBehaviour.Properties.copy(Blocks.OAK_PRESSURE_PLATE).noOcclusion()));
     public static final RegistryObject<Block> URANIUM_ORE = BLOCKS.register("uranium_ore",
             () -> createOre(Blocks.EMERALD_ORE, 4, 8, MapColor.COLOR_YELLOW));

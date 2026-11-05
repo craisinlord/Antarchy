@@ -67,6 +67,9 @@ public final class CavarynWormBoreDressingFeature implements Feature {
 
         int originX = origin.getX() & ~15;
         int originZ = origin.getZ() & ~15;
+        if (!grid.hasCandidates(originX, originZ)) {
+            return false;
+        }
         int minBuild = level.getMinY() + 6;
         int maxBuild = (level.getMaxY() + 1) - 7;
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();

@@ -152,6 +152,7 @@ public final class AntarchyConfigCatalog {
                 || name.startsWith("portalGunMoon")
                 || name.equals("hushweedSporeLifetimeSeconds")
                 || name.equals("elythiaFireflyParticlesEnabled")
+                || name.equals("elythiaEchoes")
                 || name.equals("elythiaSoftCloudsEnabled")
                 || name.equals("thoraxisEvents")
                 || name.equals("throwbackZonesEnabled")

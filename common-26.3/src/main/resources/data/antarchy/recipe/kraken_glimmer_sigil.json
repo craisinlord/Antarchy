@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "antarchy:faded_memory",
+    "minecraft:deepslate",
+    "antarchy:kraken_tooth"
+  ],
+  "result": {
+    "id": "antarchy:kraken_glimmer_sigil",
+    "count": 1
+  }
+}

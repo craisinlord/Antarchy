@@ -22,6 +22,8 @@ public final class AntarchyNeoforgeEvents {
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         CavarynCommand.register(event.getDispatcher());
         com.craisinlord.antarchy.content.command.ElythiaCommand.register(event.getDispatcher());
+        com.craisinlord.antarchy.content.command.DimensionResetCommand.register(event.getDispatcher());
+        com.craisinlord.antarchy.content.command.ThoraxisCommand.register(event.getDispatcher());
         CaterpillarCommand.register(event.getDispatcher());
         DimensionalTearCommand.register(event.getDispatcher());
         QueenLocateCommand.register(event.getDispatcher());
@@ -31,6 +33,7 @@ public final class AntarchyNeoforgeEvents {
 
     @SubscribeEvent
     public static void onServerStopping(ServerStoppingEvent event) {
+        com.craisinlord.antarchy.content.transit.AntTransit.clear();
         com.craisinlord.antarchy.content.portalgun.PortalGunProjectileEntity.releaseAllProjectileTickets();
     }
 }

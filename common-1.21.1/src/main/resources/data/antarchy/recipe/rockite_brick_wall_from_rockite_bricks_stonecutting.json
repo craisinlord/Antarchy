@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "antarchy:rockite_bricks"
+  },
+  "result": {
+    "id": "antarchy:rockite_brick_wall",
+    "count": 1
+  }
+}

@@ -3,6 +3,8 @@ package com.craisinlord.antarchy.content.entity;
 import com.craisinlord.antarchy.config.AntarchySettings;
 import com.craisinlord.antarchy.content.AntarchySoundEvents;
 import com.craisinlord.antarchy.content.AntarchyTags;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEcho;
+import com.craisinlord.antarchy.content.glimmerecho.GlimmerEchoes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -36,6 +38,13 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import java.util.UUID;
 import org.jetbrains.annotations.Nullable;
 import com.geckolib.animatable.GeoEntity;
 import com.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -48,7 +57,7 @@ import com.geckolib.util.GeckoLibUtil;
 
 import java.util.EnumSet;
 
-public class MantisEntity extends Monster implements GeoEntity {
+public class MantisEntity extends Monster implements GeoEntity, GlimmerEcho {
     private static final RawAnimation IDLE_ANIM = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation WALK_ANIM = RawAnimation.begin().thenLoop("walk");
     private static final RawAnimation FLY_ANIM = RawAnimation.begin().thenLoop("fly");
@@ -74,6 +83,9 @@ public class MantisEntity extends Monster implements GeoEntity {
 
     private static final net.minecraft.network.syncher.EntityDataAccessor<Integer> ANIMATION_STATE =
             net.minecraft.network.syncher.SynchedEntityData.defineId(MantisEntity.class, net.minecraft.network.syncher.EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> GLIMMER_ECHO = SynchedEntityData.defineId(MantisEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final int BASE_XP_REWARD = 12;
+    private static final String GLIMMER_ECHO_OWNER_KEY = "GlimmerEchoOwner";
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     protected int attackAnimationTicks;
@@ -86,6 +98,8 @@ public class MantisEntity extends Monster implements GeoEntity {
     protected boolean attackDamageApplied;
     protected boolean attackStartedInFlight;
     private int configSyncTicks;
+    @Nullable
+    private UUID glimmerEchoOwner;
 
     public MantisEntity(EntityType<? extends MantisEntity> entityType, Level level) {
         super(entityType, level);
@@ -173,6 +187,50 @@ public class MantisEntity extends Monster implements GeoEntity {
     protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(ANIMATION_STATE, ANIM_IDLE);
+        builder.define(GLIMMER_ECHO, false);
+    }
+
+    @Override
+    public boolean isGlimmerEcho() {
+        return this.entityData.get(GLIMMER_ECHO);
+    }
+
+    @Override
+    public void setGlimmerEcho(boolean glimmerEcho) {
+        this.entityData.set(GLIMMER_ECHO, glimmerEcho);
+        this.xpReward = glimmerEcho ? 0 : BASE_XP_REWARD;
+    }
+
+    @Override
+    public void setGlimmerEchoOwner(@Nullable UUID owner) {
+        this.glimmerEchoOwner = owner;
+    }
+
+    @Override
+    protected Component getTypeName() {
+        return this.isGlimmerEcho() ? Component.translatable("entity.antarchy.mantis.glimmer") : super.getTypeName();
+    }
+
+    @Override
+    public void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.putBoolean(GlimmerEchoes.SAVE_KEY, this.isGlimmerEcho());
+        if (this.glimmerEchoOwner != null) {
+            output.putString(GLIMMER_ECHO_OWNER_KEY, this.glimmerEchoOwner.toString());
+        }
+    }
+
+    @Override
+    public void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
+        this.setGlimmerEcho(input.getBooleanOr(GlimmerEchoes.SAVE_KEY, false));
+        this.glimmerEchoOwner = input.getString(GLIMMER_ECHO_OWNER_KEY).flatMap(value -> {
+            try {
+                return java.util.Optional.of(UUID.fromString(value));
+            } catch (IllegalArgumentException exception) {
+                return java.util.Optional.empty();
+            }
+        }).orElse(null);
     }
 
     @Override
@@ -233,6 +291,12 @@ public class MantisEntity extends Monster implements GeoEntity {
     public void tick() {
         super.tick();
         if (!this.level().isClientSide()) {
+            if (this.isGlimmerEcho()) {
+                GlimmerEchoes.tickAmbient(this, 8, 2);
+                if (GlimmerEchoes.tickOwnedSummon(this, this.glimmerEchoOwner)) {
+                    return;
+                }
+            }
             if (this.configSyncTicks-- <= 0) {
                 this.configSyncTicks = 20;
                 this.syncConfiguredAttributes(true);
@@ -372,12 +436,19 @@ public class MantisEntity extends Monster implements GeoEntity {
         this.committedAttackTarget = target;
         this.committedAttackYaw = this.yBodyRot;
         this.attackAnimationTicks = ATTACK_ANIM_TICKS;
-        this.attackCooldownTicks = ATTACK_COOLDOWN_TICKS;
+        this.attackCooldownTicks = this.committedAttackCooldownTicks();
         this.attackDamageApplied = false;
         this.attackStartedInFlight = this.isFlyingNow();
         this.getNavigation().stop();
         this.setAggressive(true);
         this.playSound(AntarchySoundEvents.MANTIS_ATTACK.get(), 1.0F, 0.95F + this.random.nextFloat() * 0.1F);
+    }
+
+    private int committedAttackCooldownTicks() {
+        if (!this.isGlimmerEcho()) {
+            return ATTACK_COOLDOWN_TICKS;
+        }
+        return Math.max(1, (int) Math.round(ATTACK_COOLDOWN_TICKS * AntarchySettings.glimmerAlphaMantisCooldownMultiplier()));
     }
 
     protected void tickCommittedAttack() {

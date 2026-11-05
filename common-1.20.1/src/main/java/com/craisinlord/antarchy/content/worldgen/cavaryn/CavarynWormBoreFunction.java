@@ -7,7 +7,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import org.jetbrains.annotations.Nullable;
 
-public final class CavarynWormBoreFunction implements DensityFunction {
+public final class CavarynWormBoreFunction implements DensityFunction, CavarynColumn.Source {
     public static final MapCodec<CavarynWormBoreFunction> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
                     DensityFunction.HOLDER_HELPER_CODEC.fieldOf("humidity").forGetter(CavarynWormBoreFunction::humidity),
@@ -17,9 +17,6 @@ public final class CavarynWormBoreFunction implements DensityFunction {
             ).apply(instance, CavarynWormBoreFunction::new)
     );
     public static final KeyDispatchDataCodec<CavarynWormBoreFunction> KEY_CODEC = KeyDispatchDataCodec.of(CODEC);
-
-    private static final double SCALE = 0.35;
-    private static final double FLOOR = -1.0 / SCALE - 1.0E-9;
 
     private final DensityFunction humidity;
     private final DensityFunction weirdness;
@@ -65,8 +62,17 @@ public final class CavarynWormBoreFunction implements DensityFunction {
         if (this.grid == null) {
             return 1.0;
         }
-        double distance = this.grid.signedDistance(context.blockX(), context.blockY(), context.blockZ(), FLOOR);
-        return Mth.clamp(distance * SCALE, -1.0, 1.0);
+        return CavarynColumn.density(this.grid.signedDistance(context.blockX(), context.blockY(), context.blockZ(), CavarynColumn.FLOOR));
+    }
+
+    @Override
+    public boolean bound() {
+        return this.grid != null;
+    }
+
+    @Override
+    public CavarynColumn newColumn() {
+        return this.grid == null ? null : this.grid.newColumn();
     }
 
     @Override
@@ -90,11 +96,12 @@ public final class CavarynWormBoreFunction implements DensityFunction {
             long salt = saltFor(mappedNoise.getValue(1234.567, 89.123, -456.789), mappedNoise.getValue(-987.654, 12.345, 654.321));
             mappedGrid = CavarynWormBoreGrid.create(salt, (x, y, z) -> {
                 SinglePointContext point = new SinglePointContext(Mth.floor(x), Mth.floor(y), Mth.floor(z));
-                return CavarynBiomeTable.WORMY_CAVES.equals(CavarynBiomeTable.winner(
-                        mappedHumidity.compute(point),
-                        mappedWeirdness.compute(point),
-                        mappedDepth.compute(point)
-                ));
+                double humidity = mappedHumidity.compute(point);
+                double weirdness = mappedWeirdness.compute(point);
+                if (CavarynBiomeTable.excludedByClimate(CavarynBiomeTable.WORMY_CAVES, humidity, weirdness)) {
+                    return false;
+                }
+                return CavarynBiomeTable.WORMY_CAVES.equals(CavarynBiomeTable.winner(humidity, weirdness, mappedDepth.compute(point)));
             });
         }
         return visitor.apply(new CavarynWormBoreFunction(mappedHumidity, mappedWeirdness, mappedDepth, mappedNoise, mappedGrid));

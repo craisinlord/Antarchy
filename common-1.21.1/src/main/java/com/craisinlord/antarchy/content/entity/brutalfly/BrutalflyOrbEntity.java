@@ -204,7 +204,7 @@ public class BrutalflyOrbEntity extends ThrowableItemProjectile implements Glimm
     }
 
     private void beginLingering(Vec3 location) {
-        if (this.isLingeringOrb()) {
+        if (this.level().isClientSide || this.isLingeringOrb()) {
             return;
         }
 
