@@ -17,6 +17,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -709,6 +710,9 @@ public class GlimmerEntity extends TamableAnimal implements GeoEntity {
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int dx = -LUMEN_SPAWN_RADIUS; dx <= LUMEN_SPAWN_RADIUS; dx++) {
             for (int dz = -LUMEN_SPAWN_RADIUS; dz <= LUMEN_SPAWN_RADIUS; dz++) {
+                if (!level.hasChunk(SectionPos.blockToSectionCoord(pos.getX() + dx), SectionPos.blockToSectionCoord(pos.getZ() + dz))) {
+                    continue;
+                }
                 for (int dy = -2; dy <= 0; dy++) {
                     cursor.setWithOffset(pos, dx, dy, dz);
                     if (level.getFluidState(cursor).is(com.craisinlord.antarchy.content.AntarchyTags.Fluids.LUMEN)) {
